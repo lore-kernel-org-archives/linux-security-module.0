@@ -2,187 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF673C6FA89
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Sep 2022 19:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD61C6FA89
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Sep 2022 19:48:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229542AbiILTlh (ORCPT
+        id S229732AbiILTsY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Sep 2022 15:41:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36126 "EHLO
+        Mon, 12 Sep 2022 15:48:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229677AbiILTlg (ORCPT
+        with ESMTP id S229727AbiILTsX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Sep 2022 15:41:36 -0400
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1C7F476C2
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Sep 2022 12:41:34 -0700 (PDT)
+        Mon, 12 Sep 2022 15:48:23 -0400
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEAD348C92
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Sep 2022 12:48:20 -0700 (PDT)
 Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MRH6518qGzMrFy4;
-        Mon, 12 Sep 2022 21:41:33 +0200 (CEST)
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MRHFt3FvmzMsc6b;
+        Mon, 12 Sep 2022 21:48:18 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MRH643kQTzx5;
-        Mon, 12 Sep 2022 21:41:32 +0200 (CEST)
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MRHFs5MtKzx2;
+        Mon, 12 Sep 2022 21:48:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1663011693;
-        bh=coFaAtWyK4IFitTb0Comb5myJb3hPKAKsW/b7ihpOII=;
+        s=20191114; t=1663012098;
+        bh=IwU3+VamkRAy7BQ3AohS/iTXiC76aZ0wOsi6jhNo5sI=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=LQoV6pwBQLjrYsbdWgZVN90w6vXvn3/XnND8Km95An6QFEyerDQ1Xojb5Q9rpIoCo
-         dzmJpW0uo7z8iI9RcQDg9HWlqd7KQAsceMYJ4z+IXH3JX9FGCNkwmmr7QB/rE/Qy0p
-         +X5D4oOAM1RJwKFAH9xHtPbhjTMkgBpdpi0/nLHA=
-Message-ID: <2c4db214-e425-3e40-adeb-9e406c3ea2f9@digikod.net>
-Date:   Mon, 12 Sep 2022 21:41:32 +0200
+        b=WjytErI/AM0bBqF8z2+jmgh5xX8hmi/gDyUS4wCuuMXSo2Mao8QEJNAoWxdldKAI3
+         STgWeJsbzQ7A29AGHzLApBHmXAeLJeznGW12iV8QKgN9woPENcfRbYIRUtN/3Y1IgM
+         G1/wkzzGlKpOMPzDUJPXkq9b/Q/8aZc0hbW0hFes=
+Message-ID: <5e288153-ca6b-a91d-a3fd-cd2b1e102b3e@digikod.net>
+Date:   Mon, 12 Sep 2022 21:48:17 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v6 2/5] landlock: Support file truncation
+Subject: Re: [PATCH v1] selftests/landlock: Fix out-of-tree builds
 Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+To:     Shuah Khan <skhan@linuxfoundation.org>,
+        Anders Roxell <anders.roxell@linaro.org>
+Cc:     Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-kselftest@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-References: <20220908195805.128252-1-gnoack3000@gmail.com>
- <20220908195805.128252-3-gnoack3000@gmail.com>
+References: <20220909103402.1501802-1-mic@digikod.net>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20220908195805.128252-3-gnoack3000@gmail.com>
+In-Reply-To: <20220909103402.1501802-1-mic@digikod.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Shuah, could you please merge this patch (and the USERCFLAGS/USERLDFLAGS 
+one if that's OK) to -next? This is fixing an issue in the current 6.0-rc5 .
 
-On 08/09/2022 21:58, Günther Noack wrote:
-> Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
+Anders, can you please check that this fixes your issue? 
+https://lore.kernel.org/r/CADYN=9JM1nnjC9LypHqrz7JJjbZLpm8rArDUy4zgYYrajErBnA@mail.gmail.com
 
-[...]
 
-> @@ -761,6 +762,47 @@ static bool collect_domain_accesses(
->   	return ret;
->   }
+On 09/09/2022 12:34, Mickaël Salaün wrote:
+> These changes simplify the Makefile and handle these 5 ways to build
+> Landlock tests:
+> - make -C tools/testing/selftests/landlock
+> - make -C tools/testing/selftests TARGETS=landlock gen_tar
+> - make TARGETS=landlock kselftest-gen_tar
+> - make TARGETS=landlock O=build kselftest-gen_tar
+> - make -C /tmp/linux TARGETS=landlock O=/tmp/build kselftest-gen_tar
+> 
+> This also makes $(KHDR_INCLUDES) available to other test collections
+> when building in their directory.
+> 
+> Fixes: f1227dc7d041 ("selftests/landlock: fix broken include of linux/landlock.h")
+> Fixes: 3bb267a36185 ("selftests: drop khdr make target")
+> Cc: Anders Roxell <anders.roxell@linaro.org>
+> Cc: Guillaume Tucker <guillaume.tucker@collabora.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Shuah Khan <skhan@linuxfoundation.org>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20220909103402.1501802-1-mic@digikod.net
+> ---
+>   tools/testing/selftests/landlock/Makefile | 19 ++++++++++---------
+>   tools/testing/selftests/lib.mk            |  4 ++++
+>   2 files changed, 14 insertions(+), 9 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
+> index 02868ac3bc71..6632bfff486b 100644
+> --- a/tools/testing/selftests/landlock/Makefile
+> +++ b/tools/testing/selftests/landlock/Makefile
+> @@ -1,6 +1,11 @@
+>   # SPDX-License-Identifier: GPL-2.0
+> +#
+> +# First run: make -C ../../../.. headers_install
 >   
-> +/**
-> + * get_path_access_rights - Returns the subset of rights in access_request
-> + * which are permitted for the given path.
-> + *
-> + * @domain: The domain that defines the current restrictions.
-> + * @path: The path to get access rights for.
-> + * @access_request: The rights we are interested in.
-> + *
-> + * Returns: The access mask of the rights that are permitted on the given path,
-> + * which are also a subset of access_request (to save some calculation time).
-> + */
-> +static inline access_mask_t
-> +get_path_access_rights(const struct landlock_ruleset *const domain,
-> +		       const struct path *const path,
-> +		       access_mask_t access_request)
-> +{
-> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
-> +	unsigned long access_bit;
-> +	unsigned long access_req;
+>   CFLAGS += -Wall -O2 $(KHDR_INCLUDES)
+> +LDLIBS += -lcap
 > +
-> +	init_layer_masks(domain, access_request, &layer_masks);
-> +	if (!check_access_path_dual(domain, path, access_request, &layer_masks,
-> +				    NULL, 0, NULL, NULL)) {
-> +		/*
-> +		 * Return immediately for successful accesses and for cases
-> +		 * where everything is permitted because the path belongs to an
-> +		 * internal filesystem.
-> +		 */
-> +		return access_request;
-> +	}
-> +
-> +	access_req = access_request;
-> +	for_each_set_bit(access_bit, &access_req, ARRAY_SIZE(layer_masks)) {
-> +		if (layer_masks[access_bit]) {
-> +			/* If any layer vetoed the access right, remove it. */
-> +			access_request &= ~BIT_ULL(access_bit);
-> +		}
-> +	}
-
-This seems to be redundant with the value returned by 
-init_layer_masks(), which should be passed to check_access_path_dual() 
-to avoid useless path walk.
-
-This function is pretty similar to check_access_path(). Can't you change 
-it to use an access_mask_t pointer and get almost the same thing?
-
-
-> +	return access_request;
-> +}
-> +
->   /**
->    * current_check_refer_path - Check if a rename or link action is allowed
->    *
-> @@ -1142,6 +1184,11 @@ static int hook_path_rmdir(const struct path *const dir,
->   	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_REMOVE_DIR);
->   }
+> +LOCAL_HDRS += common.h
 >   
-> +static int hook_path_truncate(const struct path *const path)
-> +{
-> +	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
-> +}
-> +
->   /* File hooks */
+>   src_test := $(wildcard *_test.c)
 >   
->   static inline access_mask_t get_file_access(const struct file *const file)
-> @@ -1159,22 +1206,55 @@ static inline access_mask_t get_file_access(const struct file *const file)
->   	/* __FMODE_EXEC is indeed part of f_flags, not f_mode. */
->   	if (file->f_flags & __FMODE_EXEC)
->   		access |= LANDLOCK_ACCESS_FS_EXECUTE;
-> +
->   	return access;
->   }
+> @@ -8,14 +13,10 @@ TEST_GEN_PROGS := $(src_test:.c=)
 >   
->   static int hook_file_open(struct file *const file)
->   {
-> +	access_mask_t access_req, access_rights;
-
-"access_request" is used for access_mask_t, and "access_req" for 
-unsigned int. I'd like to stick to this convention.
-
-
-> +	const access_mask_t optional_rights = LANDLOCK_ACCESS_FS_TRUNCATE;
-
-You use "rights" often and I'm having some trouble to find a rational 
-for that (compared to "access")…
-
-
->   	const struct landlock_ruleset *const dom =
->   		landlock_get_current_domain();
+>   TEST_GEN_PROGS_EXTENDED := true
 >   
-> -	if (!dom)
-> +	if (!dom) {
-> +		/* Grant all rights. */
-> +		landlock_file(file)->rights = LANDLOCK_MASK_ACCESS_FS;
->   		return 0;
-> +	}
+> -OVERRIDE_TARGETS := 1
+> -top_srcdir := ../../../..
+> -include ../lib.mk
+> -
+> -khdr_dir = $(top_srcdir)/usr/include
+> +# Static linking for short targets:
+> +$(TEST_GEN_PROGS_EXTENDED): LDFLAGS += -static
+>   
+> -$(OUTPUT)/true: true.c
+> -	$(LINK.c) $< $(LDLIBS) -o $@ -static
+> +include ../lib.mk
+>   
+> -$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_harness.h common.h
+> -	$(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
+> +# Static linking for targets with $(OUTPUT)/ prefix:
+> +$(TEST_GEN_PROGS_EXTENDED): LDFLAGS += -static
+> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+> index d44c72b3abe3..9d4cb94cf437 100644
+> --- a/tools/testing/selftests/lib.mk
+> +++ b/tools/testing/selftests/lib.mk
+> @@ -42,6 +42,10 @@ endif
+>   selfdir = $(realpath $(dir $(filter %/lib.mk,$(MAKEFILE_LIST))))
+>   top_srcdir = $(selfdir)/../../..
+>   
+> +ifeq ($(KHDR_INCLUDES),)
+> +KHDR_INCLUDES := -isystem $(top_srcdir)/usr/include
+> +endif
 > +
->   	/*
->   	 * Because a file may be opened with O_PATH, get_file_access() may
->   	 * return 0.  This case will be handled with a future Landlock
->   	 * evolution.
->   	 */
-> -	return check_access_path(dom, &file->f_path, get_file_access(file));
-> +	access_req = get_file_access(file);
-> +	access_rights = get_path_access_rights(dom, &file->f_path,
-> +					       access_req | optional_rights);
-> +	if (access_req & ~access_rights)
-> +		return -EACCES;
-
-We should add a test to make sure this (optional_rights) logic is 
-correct (and doesn't change), with a matrix of cases involving a ruleset 
-handling either FS_WRITE, FS_TRUNCATE or both. This should be easy to do 
-with test variants.
-
-
-> +
-> +	/*
-> +	 * For operations on already opened files (i.e. ftruncate()), it is the
-> +	 * access rights at the time of open() which decide whether the
-> +	 * operation is permitted. Therefore, we record the relevant subset of
-> +	 * file access rights in the opened struct file.
-> +	 */
-> +	landlock_file(file)->rights = access_rights;
-> +
-> +	return 0;
-> +}
+>   # The following are built by lib.mk common compile rules.
+>   # TEST_CUSTOM_PROGS should be used by tests that require
+>   # custom build rule and prevent common build rule use.
+> 
+> base-commit: 7e18e42e4b280c85b76967a9106a13ca61c16179
