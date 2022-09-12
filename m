@@ -2,242 +2,112 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB330C6FA82
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Sep 2022 15:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53284C6FA82
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Sep 2022 17:00:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229777AbiILPqx (ORCPT
+        id S229670AbiILRAJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Sep 2022 11:46:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52736 "EHLO
+        Mon, 12 Sep 2022 13:00:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229577AbiILPqv (ORCPT
+        with ESMTP id S229650AbiILRAI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Sep 2022 11:46:51 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5D02ED63;
-        Mon, 12 Sep 2022 08:46:50 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id d12-20020a05600c34cc00b003a83d20812fso7492975wmq.1;
-        Mon, 12 Sep 2022 08:46:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date;
-        bh=tlHc5SL6klavmLXNHsuFObOY4qTxwFirbaKea93oDWw=;
-        b=MoiSIX1/vhHewmEUqi4c8R0aNvsg4lyRmE75DsF58eRwkpE2rgs3ChmOhTcygbBZsI
-         bcSnjTQRGYQx4wW52vN/L8UUY76J6qNpNvvLiE8fWmJV7BmqfGthgN/2c1N0XKhJDWhr
-         NHBxQWzpC9nS/lX/+FpHOJjvAxbEnmnxCO3Q3Lng072XLVHFjaNB1029X9PqPC6dtL+3
-         XRZW89xHS/dK87u5RUESDp4wyIj94l+BAamXZnY44zbDRCxDwRVy88qXh42sxN1eKuAm
-         f8EaxZF0nWvgIs6qUlP9s5TCDcIay7+zcJQ6FIZIHS6l3PEcIgvcGdhfRdr/Y5RlXZxa
-         UReA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=tlHc5SL6klavmLXNHsuFObOY4qTxwFirbaKea93oDWw=;
-        b=ohZH6e8vrWnGFGfAKZnHWrUwm2StD6Ex6+b3ID7MKcqI068FV1frwo50FLwA3bbmOa
-         iJIeoNn5dpQc2WipfANPROsu0X03TnSkuB0bMmD3FrtndUGPk06eerxFYb5Qt8VdNTTH
-         uawJ/YZdn2O4bDQed95S4bR/HamjsPlfMlBSfxNa3PP/8pnW9Ra6/QKtQ7/N5OUjvhKQ
-         p5QYUMGb1xatvOsQDnIwBzCQz7W17IMAGnR8vSJr3M6hoLryY2U8hRAtrYXOM3UJD6x2
-         tX4FDZ/w6DwsXoT1xy/Oi2XMnVbgwtapCv/clCYJhJg9fsocVwoeKOwjDpsgIx2Qiytd
-         bd4A==
-X-Gm-Message-State: ACgBeo1tw9xzN/iuuahn1hnvX89AbDlD/x3pbSyOdCdBWyei9m8sGhvk
-        g90/xUWCKoCjoiIYvWmOA48=
-X-Google-Smtp-Source: AA6agR5xLFlQ15JR02wbgn/L378ErKcZnZ6tUkhahRHeIFlZxB1OUR55agNcE1ZKywYhHXxOStH1HQ==
-X-Received: by 2002:a7b:c848:0:b0:3b4:73f4:2320 with SMTP id c8-20020a7bc848000000b003b473f42320mr7285695wml.124.1662997608918;
-        Mon, 12 Sep 2022 08:46:48 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id c8-20020a05600c0a4800b003a62052053csm13644407wmq.18.2022.09.12.08.46.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Sep 2022 08:46:48 -0700 (PDT)
-Date:   Mon, 12 Sep 2022 17:46:46 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH v6 5/5] landlock: Document Landlock's file truncation
- support
-Message-ID: <Yx9UZocFXQ9TbZnO@nuc>
-References: <20220908195805.128252-1-gnoack3000@gmail.com>
- <20220908195805.128252-6-gnoack3000@gmail.com>
- <2f9c6131-3140-9c47-cf95-f7fa3cf759ee@digikod.net>
+        Mon, 12 Sep 2022 13:00:08 -0400
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CDC2DF42
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Sep 2022 10:00:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1663002006; bh=66J1fNK0sXY52O7nedBCC9IIs1jy9eMRcGcxQ2S+brc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=T6xgQDNDSqBsXPH935mIIWsRCRn/4EY5IljL9Xy4mLKKoOew94HtDPF/Dq5m33qB2jHeEcaFikWgAmMly5aNhp9RDn9i/TbqB+ZAumLPAlCSAZm+vQiMaGiUak8RR0RSzKsH+oypHnjBj+d8hu0oo1mDcqTxUt0AbjAi1ex0qAcxxPRt+ZKpgX4G/Ak6f8RkkUxwjs32yGsx5paH+6uxyHBgw5pZlHIjYddpCPRJpxQWofFK7eq9GQBG19BwpSs1qJKub0xOx/cj4zkKXMjloZ7an7cYe0oS9dEHw+y7pnDW1IS+kEpj5NM7hrSD5qNtURDdpWuivW1ZGK4/7qn4MQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1663002006; bh=lKDl45kQPks3UdTqJKmMp7PvQXsrY6kbNR6CaDY9PaK=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Wx4QWcCBXJ+9AKxdDT+vrRL6QZg74hLN4PuylEIHIOaVY7ZDdoebgzfUHk6nhN2p0HQOhYZY9zDA2GAIG/Ch69xLPyTBcjLZhivjNc1V6jEh3Z5NsF5dhql4YsdpfMetimtJ+kZuCODF7KHPqo4U+FqYZr6rFBbLDiL7/s7AjCgyWIpz8zcad95abT9RHp1jefgzrM5dUaSTiFBAOPtgiBZsVcwj7CXtK4nn5wagN22IixGiB1CD9zyzTt79UvFasAlW+hjv6vM1If0XrNqa3+TQFdaqWWPjpR7oee5KzwcIaTjsxl4IgQODzbXl9dk+E9RrHH0bGtM52jN50v/qAA==
+X-YMail-OSG: QZzvfBQVM1n2b9dzFzRp9qsRiWRmRIUoEmAle_qTp2dJPqorUjloYcqlC_kQhbH
+ v_Ft2cxz82oHJ7C28S7FN7HXnCtAD2_GWpp4LRvTKxIEKpMaWYN.M5aaUJyDNA8X23wLS8LuoCmM
+ HYhVHvXFJPO7cG5HoFTJIFdAbCEoqbNAzlI.5Nqo1C2qVVpFogry.ALmD5kVFKOMaY532Gz8SC6U
+ xZgEmdRutN.sTw7VCmyfDN7b0F5LHNxrytBYgfx27HEU39MIhHlqeAwTGErhZ_ERVXdkiY5ZWK8L
+ g_zX3JvcSwBFu5n3Ej7Gxw.Y.GC6Io6rXWN7NAG8tr9uXhNXOzUuTOnHCf1RzmtgBB4b.SStv7X7
+ FaWqRNsUdaRhyKRYaj7K334XQY9ZgZFaLbJ0Htf.iz1wVk6W_iCsSUU5Fk3OuDMpAgFdr5ORaQHP
+ N0BqyqM3a865zCoBqF3a3sAmrjjOwpjkzR0vOS9lmnsgGskRoEU2tNa5.3EMx4zeZit3T.LDvf_i
+ iPHlTfj2RmfZ28j6qRuDnpwgBDWj6h5rRhCDC0U4la5RPjkwtTdSedBYcloAuAxS6Kmhx0yu7lVa
+ foWkz_mnFl9KlpYTyYaoGaUJqkfrvfUyhnzWsTxZP64njd_.VGYxvQ7mcgU0o9.is75e4TvZ0VGk
+ MO7G2KY0Z2XhIuVpKnqq4d.KmmZJPioEFNLgZna0hIrv.2M3EztDmNg43clJFRa3ekKe7t2yOrGM
+ NUgrvy_qq8ZjH7UsGi8n3VK0z4zS0LanGNG.XBPp9O2wbvfxhT49vqR1Z1QVqZuD6wPFsahYCerN
+ NQxIgt1kQn4ZcFdzbP8kQMVoRu8cUhlFCk3_wOp9zF9SCq4PJb10.dMgPBNFygm_pu6VMPzAL5mr
+ JK9Rb4esGxceTl2c926iYRLSjBq4IruHcA6lqxXOvQ1rTITijlyoKJYbzo0VK6F1ffOjcOEQG3WP
+ vVFwUiSMxz1PhEoSQBMqYB2Ed2F_AzwsTClGa2zElohtYk8IpNXXtaQKv2QX2gcbDfekmElW0EII
+ kGSnRO2p9eeoubs_n0hzt3i4KS_D2HiLU7BINLShWHCHwNVW__MHK1bPC4MHF_cKmrWm_kYDEGea
+ 6BmuKZz4IZDnfN703teu.Bfbr0a9AmHdD79rNHXyI66J9kO2IsTLdi2k6PX5YSWupsmZV9_QG23G
+ 7bsOa18CCI1Zw5xpUWiJtjU9.aiH52DwLZb5lwOCQg_lnYydtZWElHbaMVeKSMTJkN.SHYM3NNst
+ 3.cd3zPEQuXp.MFcN7IjLfB1Tkzg9umhogIwmPCX2XtRq1dU700GBcifHSyT59qbunZtVAl9G6gA
+ mpVIAz33O7_jCJXkYbGcnIVEPAr2FR8LrOR17ljyjJUtfEynV4veFiB_TqIe3JztOjMAoFxpU2FE
+ x.n2h6TMZwxa2R1YDR3rgDxZALvEzyOJp0STB1wUax0t.LniL7leb9aj2IyurfnyFLHnF6LPKZda
+ d6s5vg0M2ehkjvS3kfU6.AXodYuznbn2AyeZbu25tWOaE.2Dx1X9BUGiNiaiUUHw4A6OPeUCqnns
+ CXtTgM4N65asNciWMg6CdVd2iMxhUjcqrmH1cKLJOcMlf6n3nIettqRk66UI1WMRV.c0Nrd3ClBl
+ OtolPntnieGD2R5beM8TJS8YsL7a.UunI115bnmcDstMzRsViR68suDuVblmiW.VJQNqtXOk8RJU
+ SDuRrtwS8UWXf.OhzMqtOISWY5dDBwoZX5NLOuAYeqcTrz7JhHy3BMpFcVDvvN..sLyVZZlfqyJM
+ z5T.uwRlic_dz.NNNnZz.P8mLkKvVr_CTirs_FQvgL9MFxj5ZCihabG66nTllYTxOYMLWBbDHTna
+ p_ki0QFu657cEOKjLT33kLlP4VQroNl9.pwG_wH7Ovo255Y9W8hSILvB6oMHz13TVvEFYsVeRzFQ
+ eh0Jyu_LG7jLMpzcqxf6DCtYpVfCz7GhClNi_d0eYljAKyQCRRHRJTkE2D96900CHkgRM_khUa6w
+ zrG6NaipGtyuiEl3oYX6WI_eWIoaw1HOnHa61JyD_pKTr0KNXBoj1loWnmBYBBU9ycIX81CB0Js3
+ KyZmeAWc2Qh5f2k7_vERvwMeZ4.gJyHbu__uA4M5Dvytofbd8R_RrX7qbyF6u0Q2pFL0e0T3Flsn
+ 8BzGJ0q3Vbm4DZ_BEboP2._Tf4lKiNkm38LYMlGgoa4httgEWI7UdrMbBkzEEnSzEHpSGWPo.iyn
+ JnQ9RsqhDedNsi1P1GX5lxmOaKuVJsTEpMxORXjiQkTtIP7CCKyyUcZjSSfhdCFFg312boVpLtna
+ lRWdibHIkFQ--
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 12 Sep 2022 17:00:06 +0000
+Received: by hermes--production-gq1-5499fdd576-dlgnq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 70b580c9c7f5073724570de758dcb345;
+          Mon, 12 Sep 2022 17:00:04 +0000 (UTC)
+Message-ID: <48dd3c0e-f652-798f-9cb9-a53aaae6dcb9@schaufler-ca.com>
+Date:   Mon, 12 Sep 2022 10:00:04 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2f9c6131-3140-9c47-cf95-f7fa3cf759ee@digikod.net>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH linux-next] smack: lsm: remove the unneeded result
+ variable
+Content-Language: en-US
+To:     cgel.zte@gmail.com
+Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Xu Panda <xu.panda@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>, casey@schaufler-ca.com
+References: <20220912100535.18125-1-xu.panda@zte.com.cn>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20220912100535.18125-1-xu.panda@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20612 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 09, 2022 at 03:51:35PM +0200, Mickaël Salaün wrote:
-> 
-> On 08/09/2022 21:58, Günther Noack wrote:
-> > Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
-> > 
-> > Adapt the backwards compatibility example and discussion to remove the
-> > truncation flag where needed.
-> > 
-> > Point out potential surprising behaviour related to truncate.
-> > 
-> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > ---
-> >   Documentation/userspace-api/landlock.rst | 62 +++++++++++++++++++++---
-> >   1 file changed, 54 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> > index b8ea59493964..57802fd1e09b 100644
-> > --- a/Documentation/userspace-api/landlock.rst
-> > +++ b/Documentation/userspace-api/landlock.rst
-> > @@ -8,7 +8,7 @@ Landlock: unprivileged access control
-> >   =====================================
-> >   :Author: Mickaël Salaün
-> > -:Date: May 2022
-> > +:Date: September 2022
-> >   The goal of Landlock is to enable to restrict ambient rights (e.g. global
-> >   filesystem access) for a set of processes.  Because Landlock is a stackable
-> > @@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
-> >               LANDLOCK_ACCESS_FS_MAKE_FIFO |
-> >               LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-> >               LANDLOCK_ACCESS_FS_MAKE_SYM |
-> > -            LANDLOCK_ACCESS_FS_REFER,
-> > +            LANDLOCK_ACCESS_FS_REFER |
-> > +            LANDLOCK_ACCESS_FS_TRUNCATE,
-> >       };
-> >   Because we may not know on which kernel version an application will be
-> > @@ -69,16 +70,26 @@ should try to protect users as much as possible whatever the kernel they are
-> >   using.  To avoid binary enforcement (i.e. either all security features or
-> >   none), we can leverage a dedicated Landlock command to get the current version
-> >   of the Landlock ABI and adapt the handled accesses.  Let's check if we should
-> > -remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
-> > -starting with the second version of the ABI.
-> > +remove the `LANDLOCK_ACCESS_FS_REFER` or `LANDLOCK_ACCESS_FS_TRUNCATE` access
-> > +rights, which are only supported starting with the second and third version of
-> > +the ABI.
-> >   .. code-block:: c
-> >       int abi;
-> >       abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
-> > -    if (abi < 2) {
-> > -        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-> > +    switch (abi) {
-> > +    case -1:
-> > +            perror("The running kernel does not enable to use Landlock");
-> > +            return 1;
-> > +    case 1:
-> > +            /* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
-> > +            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-> > +            __attribute__((fallthrough));
-> > +    case 2:
-> > +            /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-> > +            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-> >       }
-> >   This enables to create an inclusive ruleset that will contain our rules.
-> > @@ -127,8 +138,8 @@ descriptor.
-> >   It may also be required to create rules following the same logic as explained
-> >   for the ruleset creation, by filtering access rights according to the Landlock
-> > -ABI version.  In this example, this is not required because
-> > -`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
-> > +ABI version.  In this example, this is not required because all of the requested
-> > +``allowed_access`` rights are already available in ABI 1.
-> 
-> This fix is correct, but it should not be part of this series. FYI, I have a
-> patch almost ready to fix some documentation style issues. Please remove
-> this hunk for the next series. I'll deal with the merge conflicts if any.
+On 9/12/2022 3:05 AM, cgel.zte@gmail.com wrote:
+> From: Xu Panda <xu.panda@zte.com.cn>
+>
+> Return the value smk_ptrace_rule_check() directly instead of storing it
+> in another redundant variable.
+>
+> Reported-by: Zeal Robot <zealci@zte.com.cn>
+> Signed-off-by: Xu Panda <xu.panda@zte.com.cn>
 
-Can you please clarify what part of it should not be part of this
-series?
+Added to https://github.com/cschaufler/smack-next#next.
+Thank you.
 
-In this hunk, I've started using double backquote, but I've also
-changed the meaning of the sentence slightly so that it is still
-correct when the truncate right is introduced.
-
-It is still correct that the backwards compatibility check is not
-required because LANDLOCK_ACCESS_FS_REFER is not allowed by any rule.
-But with the new truncate flag, LANDLOCK_ACCESS_FS_TRUNCATE may also
-not be allowed by any rule so that we can skip this check.
-
-Should I remove this hunk entirely?
-
-Or maybe rather phrase it like
-
-  It may also be required to create rules following the same logic as
-  explained for the ruleset creation, by filtering access rights
-  according to the Landlock ABI version. In this example, this is not
-  required because `LANDLOCK_ACCESS_FS_REFER` and
-  `LANDLOCK_ACCESS_FS_TRUNCATE` are not allowed by any rule.
- 
-?
-
-> >   We now have a ruleset with one rule allowing read access to ``/usr`` while
-> >   denying all other handled accesses for the filesystem.  The next step is to
-> > @@ -251,6 +262,32 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
-> >   process, a sandboxed process should have a subset of the target process rules,
-> >   which means the tracee must be in a sub-domain of the tracer.
-> > +Truncating files
-> > +----------------
-> > +
-> > +The operations covered by `LANDLOCK_ACCESS_FS_WRITE_FILE` and
-> 
-> I investigated and in fact we should use double backquotes almost everywhere
-> because it render the same as when using "%" in header files. Please change
-> this for the next series. I'll do the same on the patch I just talk about.
-
-Done. I'm changing double backquote style only in the hunks I touched
-so that it'll be easier to merge.
-
-> 
-> 
-> > +`LANDLOCK_ACCESS_FS_TRUNCATE` both change the contents of a file and sometimes
-> > +overlap in non-intuitive ways.  It is recommended to always specify both of
-> > +these together.
-> > +
-> > +A particularly surprising example is :manpage:`creat(2)`.  The name suggests
-> > +that this system call requires the rights to create and write files.  However,
-> > +it also requires the truncate right if an existing file under the same name is
-> > +already present.
-> > +
-> > +It should also be noted that truncating files does not require the
-> > +`LANDLOCK_ACCESS_FS_WRITE_FILE` right.  Apart from the :manpage:`truncate(2)`
-> > +system call, this can also be done through :manpage:`open(2)` with the flags
-> > +`O_RDONLY | O_TRUNC`.
-> > +
-> > +When opening a file, the availability of the `LANDLOCK_ACCESS_FS_TRUNCATE` right
-> > +is associated with the newly created file descriptor and will be used for
-> > +subsequent truncation attempts using :manpage:`ftruncate(2)`.  It is possible to
-> > +have multiple open file descriptors for the same file, where one grants the
-> > +right to truncate the file and the other does not.  It is also possible to pass
-> > +such file descriptors between processes, keeping their Landlock properties, even
-> > +when these processes don't have an enforced Landlock ruleset.
-> 
-> Good addition. Please do not use contractions ("don't").
-
-Done, thanks.
-
-> 
-> 
-> > +
-> >   Compatibility
-> >   =============
-> > @@ -397,6 +434,15 @@ Starting with the Landlock ABI version 2, it is now possible to securely
-> >   control renaming and linking thanks to the new `LANDLOCK_ACCESS_FS_REFER`
-> >   access right.
-> > +File truncation (ABI < 3)
-> > +-------------------------
-> > +
-> > +File truncation could not be denied before the third Landlock ABI, so it is
-> > +always allowed when using a kernel that only supports the first or second ABI.
-> > +
-> > +Starting with the Landlock ABI version 3, it is now possible to securely control
-> > +truncation thanks to the new `LANDLOCK_ACCESS_FS_TRUNCATE` access right.
-
-Changed backquote style here as well.
-
-Thanks for the review!
-
-—Günther
-
--- 
+> ---
+>  security/smack/smack_lsm.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 16e24a6cdc7c..b6306d71c908 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -497,13 +497,11 @@ static int smack_ptrace_access_check(struct task_struct *ctp, unsigned int mode)
+>   */
+>  static int smack_ptrace_traceme(struct task_struct *ptp)
+>  {
+> -       int rc;
+>         struct smack_known *skp;
+>
+>         skp = smk_of_task(smack_cred(current_cred()));
+>
+> -       rc = smk_ptrace_rule_check(ptp, skp, PTRACE_MODE_ATTACH, __func__);
+> -       return rc;
+> +       return smk_ptrace_rule_check(ptp, skp, PTRACE_MODE_ATTACH, __func__);
+>  }
+>
+>  /**
