@@ -2,99 +2,77 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF465ECAAA1
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Sep 2022 10:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F7FECAAA1
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Sep 2022 11:39:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbiILKGD (ORCPT
+        id S229569AbiILLjn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Sep 2022 06:06:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42622 "EHLO
+        Mon, 12 Sep 2022 07:39:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229831AbiILKF5 (ORCPT
+        with ESMTP id S229610AbiILLjm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Sep 2022 06:05:57 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D4BA36DFB;
-        Mon, 12 Sep 2022 03:05:52 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id q62-20020a17090a17c400b00202a3497516so5323902pja.1;
-        Mon, 12 Sep 2022 03:05:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=PsU/slrk28JmyCysqbUZO1ZiE18Wx7mJDBo1ZXvuwys=;
-        b=Nq0wbQ8lera+YzcLAvtRX6hpjblCOdD24/jPJmZD1feCm2KR7HHgSTJ6V2fUvHz/8L
-         X956PotxxC4KFIRnzPNl7PZpDA1I8NrIyKs6LE8nGzv+Y2iE6o2EvU6pxPKyrQsAx1JW
-         bsMTtsZz88zu1IPJi5KhIxHe9P7EL6LdMU7rwij5AW2RDmiZ0Eg7JAmrP+qbSYwyIVOE
-         3RmPOkPbjEw3yrVVN25y2Vv2CcS2/pWuzTogZ5edR1RrOpEb17BaopzIpYwC15np9C37
-         +HNg4n3ha2U8jMn38lqEz15PY2SJ+SunLXtVlaZ72Pgpa6UzmCoTxGSvVaupqrPxvSp0
-         4nNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=PsU/slrk28JmyCysqbUZO1ZiE18Wx7mJDBo1ZXvuwys=;
-        b=Hw64C/zDaxGhiBsS/lAboaiPlmoIe3Aw1JuYyFeBemIezQQ0nOxaDJrhFLT6itqc2W
-         mStENfQRJSygK7ZaSE8FuJDBHFYX+YGQMASWncY0IFn+Qmoo84YGPq9M7h0/KGkXd9xG
-         Lh56AQrYTbo3y/I6jCbjJejXnZsl2cjRHoml7zgsYE9hEAiavPyzjkFLvufko+CE9dhq
-         OTYl8OkH2ysSOniH2IrTxDckw8wmapLJCt/ky5edabZAcY7xThdbdEr5lmR/pVzIZTgY
-         uRHBnPxl5crpWsK0fvhvHJjO+dGVoWbEsa61zguWMAiJbMi2W/h3tYpSRASnCqq5PXs/
-         CJVQ==
-X-Gm-Message-State: ACgBeo3hdp0brxSxUPO1Dm6gxYuaH663Oh7yMJlsiZq+mbvAxOOQGHL0
-        L5Z78MJ7/BbY7Oww4nG7rvE=
-X-Google-Smtp-Source: AA6agR6kFVteYifY0p1vHTHgGFs4TO4N8UT2u/CsC8FNzSrz8uIXrdshgBKy188+Urgox7X6Aznx6g==
-X-Received: by 2002:a17:902:e74c:b0:177:f3be:2812 with SMTP id p12-20020a170902e74c00b00177f3be2812mr19710861plf.123.1662977152249;
-        Mon, 12 Sep 2022 03:05:52 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id p3-20020a654903000000b004215af667cdsm5252280pgs.41.2022.09.12.03.05.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Sep 2022 03:05:51 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: xu.panda@zte.com.cn
-To:     casey@schaufler-ca.com
-Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xu Panda <xu.panda@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH linux-next] smack: lsm: remove the unneeded result variable
-Date:   Mon, 12 Sep 2022 10:05:36 +0000
-Message-Id: <20220912100535.18125-1-xu.panda@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        Mon, 12 Sep 2022 07:39:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EC385F70;
+        Mon, 12 Sep 2022 04:39:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C3B3611D1;
+        Mon, 12 Sep 2022 11:39:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 209FBC433D6;
+        Mon, 12 Sep 2022 11:39:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662982780;
+        bh=YVloGXKhM56QYWGpSw8QQeiGROxDfWLZpZwICrSsIAg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=t0Se/KfGFqagOtYwm/o8hI1IqCbIl8HIsFfaIcXFAAmOj2/jzd5gb80aGjnQ1+Ch9
+         bYo9U682DtubhmpfMjJuJvAlhlHrXao1P+/5cB3zUueTH4kjOSLAEYY97T5l/iSKNx
+         Em86vqrhfi9xbp7PKIzu7s1HQ27iMvHd2L5FlPEvjDFNCIyw1EkS4LtisBBfOYw7S6
+         TATuCivyicc9JayzxW9bpAhD1k/yscBifcczfr7n0OkGcVTcuBfjIIgNXBsC6p5JxZ
+         RkKISEQh5Qk1Irbfa2PRGX4GBkSTXenmWSZQc4j0yuhy40sD+y7vE/yxY+KTC8TCeg
+         ayO5yvVQHk5TQ==
+Date:   Mon, 12 Sep 2022 14:39:32 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Gaosheng Cui <cuigaosheng1@huawei.com>
+Cc:     dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] security/keys: remove request_key_conswq and
+ keyring_search_instkey() declarations
+Message-ID: <Yx8adIc2FC0jdJuM@kernel.org>
+References: <20220909060452.1121620-1-cuigaosheng1@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220909060452.1121620-1-cuigaosheng1@huawei.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Xu Panda <xu.panda@zte.com.cn>
+"KEYS: Remove orphan declarations from security/keys/internal.h"
 
-Return the value smk_ptrace_rule_check() directly instead of storing it
-in another redundant variable.
+On Fri, Sep 09, 2022 at 02:04:52PM +0800, Gaosheng Cui wrote:
+> request_key_conswq has been removed since
+> commit 76181c134f87 ("KEYS: Make request_key() and co fundamentally
+> asynchronous").
+> 
+> keyring_search_instkey() has been removed since
+> commit b5f545c880a2 ("[PATCH] keys: Permit running process to
+> instantiate keys").
+> 
+> so remove the declare for them from header file.
+> 
+> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Xu Panda <xu.panda@zte.com.cn>
----
- security/smack/smack_lsm.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+"
+Remove the following orphan declarations from security/keys/internal.h:
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 16e24a6cdc7c..b6306d71c908 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -497,13 +497,11 @@ static int smack_ptrace_access_check(struct task_struct *ctp, unsigned int mode)
-  */
- static int smack_ptrace_traceme(struct task_struct *ptp)
- {
--       int rc;
-        struct smack_known *skp;
+1. request_key_conswq()
+2. keyring_search_instkey()
+"
 
-        skp = smk_of_task(smack_cred(current_cred()));
+Then add two fixes tags after that.
 
--       rc = smk_ptrace_rule_check(ptp, skp, PTRACE_MODE_ATTACH, __func__);
--       return rc;
-+       return smk_ptrace_rule_check(ptp, skp, PTRACE_MODE_ATTACH, __func__);
- }
-
- /**
--- 
-2.15.2
+BR, Jarkko
 
