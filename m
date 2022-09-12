@@ -2,543 +2,212 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C968C6FA82
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Sep 2022 17:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66451C6FA8B
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Sep 2022 17:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229737AbiILRSm (ORCPT
+        id S230109AbiILRT5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Sep 2022 13:18:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50186 "EHLO
+        Mon, 12 Sep 2022 13:19:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230134AbiILRSi (ORCPT
+        with ESMTP id S230128AbiILRTt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Sep 2022 13:18:38 -0400
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F5883F1E9;
-        Mon, 12 Sep 2022 10:18:30 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MRCx04S0FzMpnfm;
-        Mon, 12 Sep 2022 19:18:28 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MRCwz6qmJzMpnPg;
-        Mon, 12 Sep 2022 19:18:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1663003108;
-        bh=2Uk30r8pmRe/ld776LvZpsq35ehKVpVP7n0A9IIQXW4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=dr03yTryVL7CI4A8phwV/oBp2Ng2+9eoJNj/XWoQrafndGvMsGEm+vVpLC+Ud22+0
-         bSRPrX8tzg8FlTOcm7lh3bdxuvpZKj/lIXwOHcXfWMzvczYNs8TFWWe7b6d6qIJ0am
-         HgiDRuiwcEufRDlj8/qJK2fB1wkStt96k1oniE2o=
-Message-ID: <246d2e64-d8e8-c629-cb72-b81d673b3181@digikod.net>
-Date:   Mon, 12 Sep 2022 19:18:27 +0200
-MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v7 09/18] landlock: implement TCP network hooks
+        Mon, 12 Sep 2022 13:19:49 -0400
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2045.outbound.protection.outlook.com [40.107.21.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F3D9616F;
+        Mon, 12 Sep 2022 10:19:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=S4FFm8tFc/CLhBCPgOeA+X/Ade2j9FGblQs84Jd08kixUmXDt794w33QoUvMDjDB3AR/eGy4Orcok7RJuKd7M+Q55CmLsg16vI0xG9P8FKnjTom7r3ULws87/NLO0kBvzwAPx8/VYfDAb8HVzUftKo02HSoIWhdAosSlppFhgrrM9IXAELCZ9sPB8aeVDQmIPKEECY85oRrSKk3TARk7MZ4IB15qBe7cN9oakk9mef6LnFBezlMiuqb1ChIKdLHczREN4RPTL9wFOGa/X/w5+HxPtGNmPKvqCtGO3SmeV9Y1MBqVLAeu7vbeHB1Oxg8EUbzZJ0J/AhSl8UMIBrur5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tZMnnhonGJM2GtBdbo8rJv6VR1Q8BI9tAG1BohAYfqQ=;
+ b=iobavHucy6Y8rM6YjyGLCuS+TyZzBd8dT9zclLcZucKSmyMEdbVD/l5+jnijvdGN7mtmbFgdCN0eMY1DUOkjv4H5RX0hmELrYCCuLWZITMKW/DTiAHT9PdMRO1gf/8L0hjCbxTSc1s/UAiGm2vGGadYEV51U6NG3Vqd2FgK7qgAjMLW4V9x5X5H57rOqHA2MTkVLZpYiIukKMqOfP+LMdQnOJQOPaoKAhM2rqorBtdrHR8IouBwUFB8B4kf5NmjxgTCFPHNUM9Mcmc2ERpsK7JWpcTuOdmX3KMmRI5yTCa94+Z2HANPrW8hKyQ5FLJvJ3iQDAwkS+kAHrIbMGOBXYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tZMnnhonGJM2GtBdbo8rJv6VR1Q8BI9tAG1BohAYfqQ=;
+ b=P7cB7qlC4A0It/Oretbb0M6lelzzxYPNZgLm/H3P3a0qGEhQXfQSmf4sT2ucJT2msqKpAWOr8/pO8Drh3OcEGN8t/OIXB9EMZpZbWPgj4AAFAgN0coIDOhJ4PTbHKtSfInudO99yDPgwXJX14SubcMyF/4Bj0rj2NibDKEws7CU=
+Received: from AM9PR04MB8211.eurprd04.prod.outlook.com (2603:10a6:20b:3ea::17)
+ by DBBPR04MB7499.eurprd04.prod.outlook.com (2603:10a6:10:203::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.22; Mon, 12 Sep
+ 2022 17:19:44 +0000
+Received: from AM9PR04MB8211.eurprd04.prod.outlook.com
+ ([fe80::dd7d:c23f:d6f:db70]) by AM9PR04MB8211.eurprd04.prod.outlook.com
+ ([fe80::dd7d:c23f:d6f:db70%8]) with mapi id 15.20.5612.022; Mon, 12 Sep 2022
+ 17:19:44 +0000
+From:   Varun Sethi <V.Sethi@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Pankaj Gupta <pankaj.gupta@nxp.com>
+CC:     "jarkko@kernel.org" <jarkko@kernel.org>,
+        "a.fatoum@pengutronix.de" <a.fatoum@pengutronix.de>,
+        "Jason@zx2c4.com" <Jason@zx2c4.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "sumit.garg@linaro.org" <sumit.garg@linaro.org>,
+        "david@sigma-star.at" <david@sigma-star.at>,
+        "michael@walle.cc" <michael@walle.cc>,
+        "john.ernberg@actia.se" <john.ernberg@actia.se>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "j.luebbe@pengutronix.de" <j.luebbe@pengutronix.de>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Sahil Malhotra <sahil.malhotra@nxp.com>,
+        Kshitiz Varshney <kshitiz.varshney@nxp.com>,
+        Horia Geanta <horia.geanta@nxp.com>
+Subject: RE: [EXT] Re: [RFC PATCH HBK: 2/8] hw-bound-key: flag-is_hbk added to
+ the tfm
+Thread-Topic: [EXT] Re: [RFC PATCH HBK: 2/8] hw-bound-key: flag-is_hbk added
+ to the tfm
+Thread-Index: AQHYwbSVJxssHkcinkOJLgRDaMQm8K3R9HsAgAGdVwCAAAD6gIAAKqCAgAADO4CAAgk08A==
+Date:   Mon, 12 Sep 2022 17:19:44 +0000
+Message-ID: <AM9PR04MB8211C7D59379D4C9F877D20EE8449@AM9PR04MB8211.eurprd04.prod.outlook.com>
+References: <20220906065157.10662-1-pankaj.gupta@nxp.com>
+ <20220906065157.10662-3-pankaj.gupta@nxp.com>
+ <YxbsBiCrIQT/0xz6@gondor.apana.org.au>
+ <DU2PR04MB86308036FB517BF8CAD3D32795419@DU2PR04MB8630.eurprd04.prod.outlook.com>
+ <YxhHkz+UlE9XAG/Z@gondor.apana.org.au>
+ <DU2PR04MB86308DB7CFBC7A31CEB612D295419@DU2PR04MB8630.eurprd04.prod.outlook.com>
+ <YxhuC3QlurfSgdXG@gondor.apana.org.au>
+In-Reply-To: <YxhuC3QlurfSgdXG@gondor.apana.org.au>
+Accept-Language: en-US
 Content-Language: en-US
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
-        gnoack3000@gmail.com
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, anton.sirazetdinov@huawei.com
-References: <20220829170401.834298-1-konstantin.meskhidze@huawei.com>
- <20220829170401.834298-10-konstantin.meskhidze@huawei.com>
- <71dd7517-4d3c-b644-18bd-cb792d68bcd8@digikod.net>
- <0a107eec-7dbc-e01c-e16c-00daa678d5df@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <0a107eec-7dbc-e01c-e16c-00daa678d5df@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9PR04MB8211:EE_|DBBPR04MB7499:EE_
+x-ms-office365-filtering-correlation-id: fdf7ce46-3d4a-4ca3-4385-08da94e2fc88
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 3jVPYMV5MxNKyFaEfkIJcWTD/hUmUvOy1kmsWDpcVzi7v6rKaQuWFJpQYrzECTQvKNoWFa4we7XBAqSaxGWrLfDrJBilbitNuHh5Yjmt60seJ9OKzIlU+18zfhYY/YxuQrAE9p4esgt0hwCgX15Ih60MBTg+slJe4tLtp2Yq2baVcxxr8UDaOeuBB7p9oxrSk8V1Li956Y54Q9JOeLCf5i8a4HrmAC+76aQ5DLUsSX20Pa36kMEzIrT7ExMmRZAMLyfdKcpxue6xVNXuhCGwIyOuAGsmt7fPlseKJR9M5cG0Y7nnCoofzQP7QrOo34/h2xTAh+Ofn1EwtauejWx+c4RdOusxPEtOaQl+F3whv/E+kCJNizgQtEn1RDlK8fIPZNY/wScdt2M/ldv68qX57dao5Beh7qA9C2gAVVRkTDHsIj3IE3Gn2THWj7atIWTJk8jMkocPFRdH1iRQqDh3PlI6H+ovvQlb8Dyk9MlBZkY8Tx0XylwDpTrjXFnxj3nogeI4IZ91VQYYr/QBB8Jv6OHkFKmniWz/f9KqzAG8uUWYbPY9gXKuZ+bB0A2GWmDlcIGpTkfm308C4vyXpBR/M3pgR6gdeM0HvVGP0r58oguSIfd1bp1H5B3siqLsOmUXfEVvpsPHHJEcgvqarz/fc+W36PIFbLSfwY6jNLvBFfE5rlRbX1IShz5e0rKy5GZFt+AMsnXmW4UC+oO8P24VgA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8211.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230019)(4636009)(396003)(39860400002)(346002)(136003)(376002)(366004)(451199012)(316002)(110136005)(45080400002)(54906003)(41300700001)(6506007)(7696005)(966005)(122000001)(4326008)(66556008)(38100700002)(8676002)(71200400001)(76116006)(53546011)(478600001)(9686003)(66946007)(33656002)(64756008)(86362001)(38070700005)(5660300002)(52536014)(8936002)(7416002)(186003)(55016003)(2906002)(55236004)(26005)(83380400001)(66446008)(66476007)(6636002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?+0HtFVW9RQy/AiGHLLVq3+cH5iZ86/QPlI/aQuifyGNObZDafebvctEOAiFD?=
+ =?us-ascii?Q?zR4XJY4K9sRNPk3MPriseKuVqeji6ZE39v0GkSNQZDHbrYe9bHG0UCv7BE4i?=
+ =?us-ascii?Q?qd0AuB7cvsHTKhChZJphUzk5um8c0C1vRvAX1WZp3M2L7y3BLfHv5pleHQYR?=
+ =?us-ascii?Q?qnEdJofOdlq3+OzV4inxtTrGE97raC6JrqjVikCcEWgRNvGu4OEzQsoZeSn4?=
+ =?us-ascii?Q?4b/ApyzCUX66puOljE/En10FWjQLqaQgF1WEwUNA6EQgIh8WsmhWwrXXM2Fn?=
+ =?us-ascii?Q?GlHwlIsR9NsLszjQ4WrDa7+KwhjoUsNuXv/bhxEeUR02o/VYih5UZZmaWyHv?=
+ =?us-ascii?Q?xP87tTsV8/zvfpvNtE6UI0q9w1SfDcJNwedOWcQTkkC5Msn+xquk4+3RqpX4?=
+ =?us-ascii?Q?qoodszcGaaUefmeDr8S1eVKw3KxCz6nc/w4Ov8xz1QD7XCsZE/GFmU0oPCri?=
+ =?us-ascii?Q?MGkBovOMOuj81uHzAKZh/znKa3Zl3g+5jCcy4Zd7uJb8c65x5hhO+qH/dwVo?=
+ =?us-ascii?Q?xOeLWzzXCONWhdH9nwyxel3gyURKIzdd/GMweZzXNlDTA/X47W8MZbqQeXgW?=
+ =?us-ascii?Q?ScsqaXnqtbKJIXFO76MK3GCZNKy4v3lwrmO68oB5YEpt7kWyv/sPLTmCA+db?=
+ =?us-ascii?Q?POIxZEjNLBTJKgJJ2TthELjesA1g+0yWriPSg5T5tw4te6vET+bczKD0z3BE?=
+ =?us-ascii?Q?w/NgDjuG9We/LamSN/T2LZbWd98k3QvspNbTdklR0BxNh8zwJU3DO8EbYt9K?=
+ =?us-ascii?Q?QGEOFlyyB6uWMg1I6fCaKAfsufZCVHjMembHeQioRhWXRlQg/aAUEY+JOzcM?=
+ =?us-ascii?Q?ZT//+I9JRwPqbNKe1bbcZePPZZMOkFEVtIegO1KpUP26g9aatm/JBgVmPDJP?=
+ =?us-ascii?Q?1nWQOUMq8tKDnv5BRUNn6XOuDuUSIFblMyAFUjdO2fsqp12qAkbM1eqe2gro?=
+ =?us-ascii?Q?PZXdPAf0h4JOePV4T5w6FKiBRRFvdrDWHlR7phZp9WMFacw6NYAZtfZVIrEm?=
+ =?us-ascii?Q?k9QiSVIz5NIfbSXjjOsrNqbbJDmVMozVnkc7SL4ODyrULGwC6M8/ngel3kff?=
+ =?us-ascii?Q?ELRQkxL14oZF+MCuH3WUxzhIOHFNbtR80sOxtgN3B1uEywPHMRCM1YQMXhMd?=
+ =?us-ascii?Q?TIphDTB16/+RfNQIsJg4BvVJBjyLQ4HhTVJfzmNCRSpKpoBvu+IHUrgJAnPh?=
+ =?us-ascii?Q?GhtYIDMIN1TxOHHYlGoSWKObpm4Vodf+6+KXv/bOum64TYuSu8qU81Isu5xO?=
+ =?us-ascii?Q?GcdmXsv8t0kCAvqgKeLidspQpLrJNvfDW+mSDLjqI5AGEldvTGcV5rNDtJyL?=
+ =?us-ascii?Q?vTpipxCmPBcWgP0zD6bcdcxjd+ZkecX7geS8OXxBSRxBvxDljqyxB+lbNmKd?=
+ =?us-ascii?Q?W5yS7d09eTbIXL/vCaB0s+cMHnSgk0eqiN/rJgDPyL72Iz2ZrhMOO1NoMJRJ?=
+ =?us-ascii?Q?cD46Kpralcd0fhwLVcoxgd+xt+TkAzZ9ffa1ro69Ht6Lt12654QB+nW64hid?=
+ =?us-ascii?Q?Rj+rpWBhqsLmzSGUG/cCEIjPTLByPUjQ3XslrcWxgzpLXHChTw+BnWY9UdMI?=
+ =?us-ascii?Q?emHF/4J6dg1WITbNqhk=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8211.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdf7ce46-3d4a-4ca3-4385-08da94e2fc88
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2022 17:19:44.6186
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wGaBfj+wpnUDc+EsIqRYUYnZvKFviz6AcQTnkMfI4u35hoy7uTKV0yeMhOnwA8Pq
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7499
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 10/09/2022 22:28, Konstantin Meskhidze (A) wrote:
-> 
-> 
-> 9/6/2022 11:08 AM, Mickaël Salaün пишет:
->>
->> On 29/08/2022 19:03, Konstantin Meskhidze wrote:
->>> This patch adds support of socket_bind() and socket_connect() hooks.
->>> It's possible to restrict binding and connecting of TCP types of
->>> sockets to particular ports. It's just basic idea of how Landlock
->>
->> I guess it's not a basic idea anymore.
-> 
->     Got it. Will be fixed.
->>
->>
->>> could support network confinement.
->>>
->>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>> ---
->>>
->>> Changes since v6:
->>> * Updates copyright.
->>> * Refactors landlock_append_net_rule() and check_socket_access()
->>>     functions with landlock_id type.
->>>
->>> Changes since v5:
->>> * Fixes some logic errors.
->>> * Formats code with clang-format-14.
->>>
->>> Changes since v4:
->>> * Factors out CONFIG_INET into make file.
->>> * Refactors check_socket_access().
->>> * Adds helper get_port().
->>> * Adds CONFIG_IPV6 in get_port(), hook_socket_bind/connect
->>> functions to support AF_INET6 family.
->>> * Adds AF_UNSPEC family support in hook_socket_bind/connect
->>> functions.
->>> * Refactors add_rule_net_service() and landlock_add_rule
->>> syscall to support network rule inserting.
->>> * Refactors init_layer_masks() to support network rules.
->>>
->>> Changes since v3:
->>> * Splits commit.
->>> * Adds SECURITY_NETWORK in config.
->>> * Adds IS_ENABLED(CONFIG_INET) if a kernel has no INET configuration.
->>> * Adds hook_socket_bind and hook_socket_connect hooks.
->>>
->>> ---
->>>    security/landlock/Kconfig    |   1 +
->>>    security/landlock/Makefile   |   2 +
->>>    security/landlock/net.c      | 161 +++++++++++++++++++++++++++++++++++
->>>    security/landlock/net.h      |  26 ++++++
->>>    security/landlock/setup.c    |   2 +
->>>    security/landlock/syscalls.c |  59 ++++++++++++-
->>>    6 files changed, 248 insertions(+), 3 deletions(-)
->>>    create mode 100644 security/landlock/net.c
->>>    create mode 100644 security/landlock/net.h
->>>
->>> diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
->>> index 8e33c4e8ffb8..10c099097533 100644
->>> --- a/security/landlock/Kconfig
->>> +++ b/security/landlock/Kconfig
->>> @@ -3,6 +3,7 @@
->>>    config SECURITY_LANDLOCK
->>>    	bool "Landlock support"
->>>    	depends on SECURITY && !ARCH_EPHEMERAL_INODES
->>> +	select SECURITY_NETWORK
->>>    	select SECURITY_PATH
->>>    	help
->>>    	  Landlock is a sandboxing mechanism that enables processes to restrict
->>> diff --git a/security/landlock/Makefile b/security/landlock/Makefile
->>> index 7bbd2f413b3e..53d3c92ae22e 100644
->>> --- a/security/landlock/Makefile
->>> +++ b/security/landlock/Makefile
->>> @@ -2,3 +2,5 @@ obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
->>>
->>>    landlock-y := setup.o syscalls.o object.o ruleset.o \
->>>    	cred.o ptrace.o fs.o
->>> +
->>> +landlock-$(CONFIG_INET) += net.o
->>> \ No newline at end of file
->>> diff --git a/security/landlock/net.c b/security/landlock/net.c
->>> new file mode 100644
->>> index 000000000000..0d249ad619bf
->>> --- /dev/null
->>> +++ b/security/landlock/net.c
->>> @@ -0,0 +1,161 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * Landlock LSM - Network management and hooks
->>> + *
->>> + * Copyright © 2022 Huawei Tech. Co., Ltd.
->>> + * Copyright © 2022 Microsoft Corporation
->>> + */
->>> +
->>> +#include <linux/in.h>
->>> +#include <linux/net.h>
->>> +#include <linux/socket.h>
->>> +#include <net/ipv6.h>
->>> +
->>
->> #include "common.h"
-> 
->     This include is in net.h one.
-
-There is no use of it in net.h it should only be here.
+Hi Herbert
+Please find response inline.
 
 
->>
->>> +#include "cred.h"
->>> +#include "limits.h"
->>> +#include "net.h"
->>
->> #include "ruleset.h"
-> 
->     The same as above.
+Regards
+Varun
 
-ruleset.h should be included both in net.h and net.c because it is used 
-in both.
-
-
->>
->>> +
->>> +int landlock_append_net_rule(struct landlock_ruleset *const ruleset, u16 port,
->>> +			     u32 access_rights)
->>
->> Please constify all arguments, in this function and others.
-> 
->     Ok. Thanks.
->>
->>> +{
->>> +	int err;
->>> +	const struct landlock_id id = {
->>> +		.key.data = port,
->>> +		.type = LANDLOCK_KEY_NET_PORT,
->>> +	};
->>> +	BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
->>> +
->>> +	/* Transforms relative access rights to absolute ones. */
->>> +	access_rights |= LANDLOCK_MASK_ACCESS_NET &
->>> +			 ~landlock_get_net_access_mask(ruleset, 0);
->>> +
->>> +	mutex_lock(&ruleset->lock);
->>> +	err = landlock_insert_rule(ruleset, id, access_rights);
->>> +	mutex_unlock(&ruleset->lock);
->>> +
->>> +	return err;
->>> +}
->>> +
->>> +static int check_socket_access(const struct landlock_ruleset *const domain,
->>> +			       u16 port, access_mask_t access_request)
->>> +{
->>> +	bool allowed = false;
->>> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
->>> +	const struct landlock_rule *rule;
->>> +	access_mask_t handled_access;
->>> +	const struct landlock_id id = {
->>> +		.key.data = port,
->>> +		.type = LANDLOCK_KEY_NET_PORT,
->>> +	};
->>> +
->>> +	if (WARN_ON_ONCE(!domain))
->>> +		return 0;
->>> +	if (WARN_ON_ONCE(domain->num_layers < 1))
->>> +		return -EACCES;
->>> +
->>> +	rule = landlock_find_rule(domain, id);
->>> +	handled_access = init_layer_masks(domain, access_request, &layer_masks,
->>> +					  LANDLOCK_KEY_NET_PORT);
->>> +	allowed = unmask_layers(rule, handled_access, &layer_masks,
->>> +				ARRAY_SIZE(layer_masks));
->>> +
->>> +	return allowed ? 0 : -EACCES;
->>> +}
->>> +
->>> +static u16 get_port(const struct sockaddr *const address)
->>> +{
->>> +	/* Gets port value in host byte order. */
->>> +	switch (address->sa_family) {
->>> +	case AF_UNSPEC:
->>> +	case AF_INET: {
->>> +		const struct sockaddr_in *const sockaddr =
->>> +			(struct sockaddr_in *)address;
->>> +		return ntohs(sockaddr->sin_port);
->>> +	}
->>> +#if IS_ENABLED(CONFIG_IPV6)
->>> +	case AF_INET6: {
->>> +		const struct sockaddr_in6 *const sockaddr_ip6 =
->>> +			(struct sockaddr_in6 *)address;
->>> +		return ntohs(sockaddr_ip6->sin6_port);
->>> +	}
->>> +#endif
->>> +	}
->>> +	WARN_ON_ONCE(1);
->>> +	return 0;
->>> +}
->>> +
->>> +static int hook_socket_bind(struct socket *sock, struct sockaddr *address,
->>> +			    int addrlen)
->>> +{
->>> +	const struct landlock_ruleset *const dom =
->>> +		landlock_get_current_domain();
->>> +
->>> +	if (!dom)
->>> +		return 0;
->>> +
->>> +	/* Check if it's a TCP socket. */
->>> +	if (sock->type != SOCK_STREAM)
->>> +		return 0;
->>> +
->>> +	switch (address->sa_family) {
->>> +	case AF_UNSPEC:
->>> +	case AF_INET:
->>> +#if IS_ENABLED(CONFIG_IPV6)
->>> +	case AF_INET6:
->>> +#endif
->>> +		return check_socket_access(dom, get_port(address),
->>> +					   LANDLOCK_ACCESS_NET_BIND_TCP);
->>> +	default:
->>> +		return 0;
->>> +	}
->>> +}
->>> +
->>> +static int hook_socket_connect(struct socket *sock, struct sockaddr *address,
->>> +			       int addrlen)
->>> +{
->>> +	const struct landlock_ruleset *const dom =
->>> +		landlock_get_current_domain();
->>> +
->>> +	if (!dom)
->>> +		return 0;
->>> +
->>> +	/* Check if it's a TCP socket. */
->>> +	if (sock->type != SOCK_STREAM)
->>> +		return 0;
->>> +
->>> +	/* Check if the hook is AF_INET* socket's action. */
->>> +	switch (address->sa_family) {
->>> +	case AF_INET:
->>> +#if IS_ENABLED(CONFIG_IPV6)
->>> +	case AF_INET6:
->>> +#endif
->>> +		return check_socket_access(dom, get_port(address),
->>> +					   LANDLOCK_ACCESS_NET_CONNECT_TCP);
->>> +	case AF_UNSPEC: {
->>> +		u16 i;
->>
->> break line
-> 
->     Do you mean adding empty line here?
-
-yes
-
-
->>
->>> +		/*
->>> +		 * If just in a layer a mask supports connect access,
->>> +		 * the socket_connect() hook with AF_UNSPEC family flag
->>> +		 * must be banned. This prevents from disconnecting already
->>> +		 * connected sockets.
->>> +		 */
->>> +		for (i = 0; i < dom->num_layers; i++) {
->>> +			if (landlock_get_net_access_mask(dom, i) &
->>> +			    LANDLOCK_ACCESS_NET_CONNECT_TCP)
->>> +				return -EACCES;
->>> +		}
->>> +	}
->>> +	}
->>> +	return 0;
->>> +}
->>> +
->>> +static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
->>> +	LSM_HOOK_INIT(socket_bind, hook_socket_bind),
->>> +	LSM_HOOK_INIT(socket_connect, hook_socket_connect),
->>> +};
->>> +
->>> +__init void landlock_add_net_hooks(void)
->>> +{
->>> +	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
->>> +			   LANDLOCK_NAME);
->>> +}
->>> diff --git a/security/landlock/net.h b/security/landlock/net.h
->>> new file mode 100644
->>> index 000000000000..2c63a8f1b258
->>> --- /dev/null
->>> +++ b/security/landlock/net.h
->>> @@ -0,0 +1,26 @@
->>> +/* SPDX-License-Identifier: GPL-2.0-only */
->>> +/*
->>> + * Landlock LSM - Network management and hooks
->>> + *
->>> + * Copyright © 2022 Huawei Tech. Co., Ltd.
->>> + */
->>> +
->>> +#ifndef _SECURITY_LANDLOCK_NET_H
->>> +#define _SECURITY_LANDLOCK_NET_H
->>> +
->>> +#include "common.h"
->>> +#include "ruleset.h"
->>> +#include "setup.h"
->>> +
->>> +#if IS_ENABLED(CONFIG_INET)
->>> +__init void landlock_add_net_hooks(void);
->>> +
->>> +int landlock_append_net_rule(struct landlock_ruleset *const ruleset, u16 port,
->>> +			     u32 access_hierarchy);
->>> +#else /* IS_ENABLED(CONFIG_INET) */
->>> +static inline void landlock_add_net_hooks(void)
->>> +{
->>> +}
->>> +#endif /* IS_ENABLED(CONFIG_INET) */
->>> +
->>> +#endif /* _SECURITY_LANDLOCK_NET_H */
->>> diff --git a/security/landlock/setup.c b/security/landlock/setup.c
->>> index f8e8e980454c..8059dc0b47d3 100644
->>> --- a/security/landlock/setup.c
->>> +++ b/security/landlock/setup.c
->>> @@ -14,6 +14,7 @@
->>>    #include "fs.h"
->>>    #include "ptrace.h"
->>>    #include "setup.h"
->>> +#include "net.h"
->>>
->>>    bool landlock_initialized __lsm_ro_after_init = false;
->>>
->>> @@ -28,6 +29,7 @@ static int __init landlock_init(void)
->>>    	landlock_add_cred_hooks();
->>>    	landlock_add_ptrace_hooks();
->>>    	landlock_add_fs_hooks();
->>> +	landlock_add_net_hooks();
->>>    	landlock_initialized = true;
->>>    	pr_info("Up and running.\n");
->>>    	return 0;
->>> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
->>> index 641155f6f6f8..16880e951346 100644
->>> --- a/security/landlock/syscalls.c
->>> +++ b/security/landlock/syscalls.c
->>> @@ -29,6 +29,7 @@
->>>    #include "cred.h"
->>>    #include "fs.h"
->>>    #include "limits.h"
->>> +#include "net.h"
->>>    #include "ruleset.h"
->>>    #include "setup.h"
->>>
->>> @@ -74,7 +75,8 @@ static void build_check_abi(void)
->>>    {
->>>    	struct landlock_ruleset_attr ruleset_attr;
->>>    	struct landlock_path_beneath_attr path_beneath_attr;
->>> -	size_t ruleset_size, path_beneath_size;
->>> +	struct landlock_net_service_attr net_service_attr;
->>> +	size_t ruleset_size, path_beneath_size, net_service_size;
->>>
->>>    	/*
->>>    	 * For each user space ABI structures, first checks that there is no
->>> @@ -90,6 +92,11 @@ static void build_check_abi(void)
->>>    	path_beneath_size += sizeof(path_beneath_attr.parent_fd);
->>>    	BUILD_BUG_ON(sizeof(path_beneath_attr) != path_beneath_size);
->>>    	BUILD_BUG_ON(sizeof(path_beneath_attr) != 12);
->>> +
->>> +	net_service_size = sizeof(net_service_attr.allowed_access);
->>> +	net_service_size += sizeof(net_service_attr.port);
->>> +	BUILD_BUG_ON(sizeof(net_service_attr) != net_service_size);
->>> +	BUILD_BUG_ON(sizeof(net_service_attr) != 10);
->>>    }
->>>
->>>    /* Ruleset handling */
->>> @@ -322,13 +329,54 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
->>>    	return err;
->>>    }
->>>
->>> +static int add_rule_net_service(struct landlock_ruleset *ruleset,
->>> +				const void __user *const rule_attr)
->>> +{
->>> +#if IS_ENABLED(CONFIG_INET)
->>> +	struct landlock_net_service_attr net_service_attr;
->>> +	int res;
->>> +	u32 mask;
->>> +
->>> +	/* Copies raw user space buffer, only one type for now. */
->>> +	res = copy_from_user(&net_service_attr, rule_attr,
->>> +			     sizeof(net_service_attr));
->>> +	if (res)
->>> +		return -EFAULT;
->>> +
->>> +	/*
->>> +	 * Informs about useless rule: empty allowed_access (i.e. deny rules)
->>> +	 * are ignored by network actions.
->>> +	 */
->>> +	if (!net_service_attr.allowed_access)
->>> +		return -ENOMSG;
->>> +
->>> +	/*
->>> +	 * Checks that allowed_access matches the @ruleset constraints
->>> +	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
->>> +	 */
->>> +	mask = landlock_get_net_access_mask(ruleset, 0);
->>> +	if ((net_service_attr.allowed_access | mask) != mask)
->>> +		return -EINVAL;
->>> +
->>> +	/* Denies inserting a rule with port 0. */
->>> +	if (net_service_attr.port == 0)
->>> +		return -EINVAL;
->>> +
->>> +	/* Imports the new rule. */
->>> +	return landlock_append_net_rule(ruleset, net_service_attr.port,
->>> +					net_service_attr.allowed_access);
->>> +#else /* IS_ENABLED(CONFIG_INET) */
->>> +	return -EAFNOSUPPORT;
->>
->> I think this is the right approach to return -EAFNOSUPPORT here instead
->> of with landlock_create_ruleset() because if some network features are
->> not available this means that they will be denied. Only allowing some
->> exception (i.e. with a rule) would not make sense because it could work
->> at the end. This should be explained in the documentation.
->>
->> Landlock libraries would have to handle this error type as not-an-error
->> most of the time though, except when users want to be sure the running
->> system support such network feature.
->>
->> Any though?
-> 
->     Yeah. I think the same - it's possible to create ruleset with network
-> access attributes but if INET is not configured, it would be impossible
-> to apply network rules and even try to call network syscalls
-> corresponding applied attributes.
-> 
->    Please could you explain more detailed about not-an-error handling logic?
-
-It will depend on the best-effort level user space wants. Applications 
-should already know by that time that there is no network support from 
-the kernel.
-
-Günther, what do you think about that?
-
-
->>
->>
->>> +#endif /* IS_ENABLED(CONFIG_INET) */
->>> +}
->>> +
->>>    /**
->>>     * sys_landlock_add_rule - Add a new rule to a ruleset
->>>     *
->>>     * @ruleset_fd: File descriptor tied to the ruleset that should be extended
->>>     *		with the new rule.
->>> - * @rule_type: Identify the structure type pointed to by @rule_attr (only
->>> - *             LANDLOCK_RULE_PATH_BENEATH for now).
->>> + * @rule_type: Identify the structure type pointed to by @rule_attr:
->>> + *             LANDLOCK_RULE_PATH_BENEATH or LANDLOCK_RULE_NET_SERVICE.
->>
->> %LANDLOCK_RULE_PATH_BENEATH or %LANDLOCK_RULE_NET_SERVICE.
->>
->     Got it.
->>
->>>     * @rule_attr: Pointer to a rule (only of type &struct
->>>     *             landlock_path_beneath_attr for now).
->>>     * @flags: Must be 0.
->>> @@ -339,6 +387,8 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
->>>     * Possible returned errors are:
->>>     *
->>>     * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
->>> + * - EAFNOSUPPORT: @rule_type is LANDLOCK_RULE_NET_SERVICE but TCP/IP is not
->>
->> %EAFNOSUPPORT
->> %LANDLOCK_RULE_NET_SERVICE
->>
->> BTW, I'll send a patch soon to fix some documentation style
->> inconsistency, including the missing "%" for defined values (e.g. errno).
->>
->    That would be great. Thanks.
->>
->>> + *   supported by the running kernel;
->>>     * - EINVAL: @flags is not 0, or inconsistent access in the rule (i.e.
->>>     *   &landlock_path_beneath_attr.allowed_access is not a subset of the rule's
->>>     *   accesses);
->>> @@ -374,6 +424,9 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
->>>    	case LANDLOCK_RULE_PATH_BENEATH:
->>>    		err = add_rule_path_beneath(ruleset, rule_attr);
->>>    		break;
->>> +	case LANDLOCK_RULE_NET_SERVICE:
->>> +		err = add_rule_net_service(ruleset, rule_attr);
->>> +		break;
->>>    	default:
->>>    		err = -EINVAL;
->>>    		break;
->>> --
->>> 2.25.1
->>>
->> .
+> -----Original Message-----
+> From: Herbert Xu <herbert@gondor.apana.org.au>
+> Sent: Wednesday, September 7, 2022 3:40 PM
+> To: Pankaj Gupta <pankaj.gupta@nxp.com>
+> Cc: jarkko@kernel.org; a.fatoum@pengutronix.de; Jason@zx2c4.com;
+> jejb@linux.ibm.com; zohar@linux.ibm.com; dhowells@redhat.com;
+> sumit.garg@linaro.org; david@sigma-star.at; michael@walle.cc;
+> john.ernberg@actia.se; jmorris@namei.org; serge@hallyn.com;
+> davem@davemloft.net; j.luebbe@pengutronix.de; ebiggers@kernel.org;
+> richard@nod.at; keyrings@vger.kernel.org; linux-crypto@vger.kernel.org; l=
+inux-
+> integrity@vger.kernel.org; linux-kernel@vger.kernel.org; linux-security-
+> module@vger.kernel.org; Sahil Malhotra <sahil.malhotra@nxp.com>; Kshitiz
+> Varshney <kshitiz.varshney@nxp.com>; Horia Geanta <horia.geanta@nxp.com>;
+> Varun Sethi <V.Sethi@nxp.com>
+> Subject: Re: [EXT] Re: [RFC PATCH HBK: 2/8] hw-bound-key: flag-is_hbk add=
+ed
+> to the tfm
+>=20
+> Caution: EXT Email
+>=20
+> On Wed, Sep 07, 2022 at 09:58:45AM +0000, Pankaj Gupta wrote:
+> >
+> > There are 3rd party IP(s), which uses kernel for crypto-algorithm's ope=
+rations.
+> > Modifying the algorithm name in these IP(s), is not always allowed or e=
+asy to
+> maintain.
+>=20
+> So the objective is to support out-of-tree modules?
+[Varun] No, the intention is not to use out of tree modules but to allow se=
+amless use of crytpo ciphers with keys backed by security co-processors (ke=
+ys only visible to security co-processors), by Linux kernel and userspace c=
+omponents. Hardware backed keys are being introduced as a variant of existi=
+ng Trusted keys, with the difference that these are not un-sealed and relea=
+sed in plain to the kernel memory. With the current patchset, the existing =
+set of ciphers can be used along with newly introduced hardware backed flag=
+. The security co-processor driver is able to interpret the flag and subseq=
+uently program the hardware, to interpret the supplied key as a hardware ba=
+cked key.
+>=20
+> There is no way I'm merging this then.
+>=20
+> Thanks,
+> --
+> Email: Herbert Xu <herbert@gondor.apana.org.au> Home Page:
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fgondor=
+.ap
+> ana.org.au%2F~herbert%2F&amp;data=3D05%7C01%7CV.Sethi%40nxp.com%7Cd
+> ec165619848426b9c9008da90b946da%7C686ea1d3bc2b4c6fa92cd99c5c30163
+> 5%7C0%7C0%7C637981422690327443%7CUnknown%7CTWFpbGZsb3d8eyJWIj
+> oiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C300
+> 0%7C%7C%7C&amp;sdata=3DkKaGEvKOmUbV8hCh6T9Fswfo39jg%2BqbxYavPcfJS
+> h3E%3D&amp;reserved=3D0
+> PGP Key:
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fgondor=
+.ap
+> ana.org.au%2F~herbert%2Fpubkey.txt&amp;data=3D05%7C01%7CV.Sethi%40nxp.
+> com%7Cdec165619848426b9c9008da90b946da%7C686ea1d3bc2b4c6fa92cd99
+> c5c301635%7C0%7C0%7C637981422690327443%7CUnknown%7CTWFpbGZsb3
+> d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3
+> D%7C3000%7C%7C%7C&amp;sdata=3DvSNYijBOH5mCmOzZW02R0sNzNNrtTWkD
+> vF8%2FpwlTUqk%3D&amp;reserved=3D0
