@@ -2,39 +2,38 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A54D2C6FA83
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Sep 2022 17:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 621D9C6FA89
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Sep 2022 18:39:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229539AbiILRrR (ORCPT
+        id S230256AbiILSjJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Sep 2022 13:47:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57188 "EHLO
+        Mon, 12 Sep 2022 14:39:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229510AbiILRrQ (ORCPT
+        with ESMTP id S230196AbiILSiu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Sep 2022 13:47:16 -0400
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [IPv6:2001:1600:3:17::42ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D5B1D320
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Sep 2022 10:47:14 -0700 (PDT)
+        Mon, 12 Sep 2022 14:38:50 -0400
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2920319C2C
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Sep 2022 11:37:11 -0700 (PDT)
 Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MRDZ94qd7zMqphv;
-        Mon, 12 Sep 2022 19:47:13 +0200 (CEST)
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MRFgp3yCDzMqgPX;
+        Mon, 12 Sep 2022 20:37:10 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MRDZ82VTyz3d;
-        Mon, 12 Sep 2022 19:47:12 +0200 (CEST)
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MRFgn4Hw7z3Y;
+        Mon, 12 Sep 2022 20:37:09 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1663004833;
-        bh=QE7XU4x2GAWq8J4XtCiqJ5pj1Z1e485TxnAQzT2woLQ=;
+        s=20191114; t=1663007830;
+        bh=ky1nClPljWIM6vArVhth4/gMKoMFtE47EE1MTmDa5Gw=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ZfWGpZ5OYti6R2fz4lvz0ehzj7nPfp8o6/XR8dlhnKSz2l8QGaIcCO06057y5fDDn
-         Cmlw4RAqv4y1205Zc2L3WfF0rtG8nyMJ2uZ1urtV6h6CwK9ls2TPcWakXhqw3q0jwU
-         v7rmmX7XiZKYnoDU+mnETcOEpGd3UFLQhW12ky94=
-Message-ID: <b0bdf697-1789-d579-6b6b-a6aca73d4b11@digikod.net>
-Date:   Mon, 12 Sep 2022 19:47:11 +0200
+        b=0GUePxShnRXVWzjyPE9nSl0GVn8XlmXhdwRHHb7UQzMLxRF+GTu/3Uz6SnhPb+lW/
+         egiWVJjraCBNVDXOI7eYyRINkKbiuM3rJUXsKCrdhPhce2td9PfTy9Lc/QIAqEXrQW
+         CGPdotlu95J3PqVjvsCuJGcG0NGXbnzmyL7SPC5k=
+Message-ID: <bce9b221-e379-7731-31c3-38df5cda6152@digikod.net>
+Date:   Mon, 12 Sep 2022 20:37:09 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v6 5/5] landlock: Document Landlock's file truncation
- support
+Subject: Re: [PATCH v6 2/5] landlock: Support file truncation
 Content-Language: en-US
 To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
 Cc:     linux-security-module@vger.kernel.org,
@@ -44,120 +43,278 @@ Cc:     linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 References: <20220908195805.128252-1-gnoack3000@gmail.com>
- <20220908195805.128252-6-gnoack3000@gmail.com>
- <2f9c6131-3140-9c47-cf95-f7fa3cf759ee@digikod.net> <Yx9UZocFXQ9TbZnO@nuc>
+ <20220908195805.128252-3-gnoack3000@gmail.com>
+ <b5984fd3-6310-9803-8b33-99715beeccfb@digikod.net> <Yx9QMbOA3i2i12ve@nuc>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <Yx9UZocFXQ9TbZnO@nuc>
+In-Reply-To: <Yx9QMbOA3i2i12ve@nuc>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 12/09/2022 17:46, Günther Noack wrote:
-> On Fri, Sep 09, 2022 at 03:51:35PM +0200, Mickaël Salaün wrote:
+
+On 12/09/2022 17:28, Günther Noack wrote:
+> On Fri, Sep 09, 2022 at 03:51:16PM +0200, Mickaël Salaün wrote:
 >>
 >> On 08/09/2022 21:58, Günther Noack wrote:
->>> Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
+>>> Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
 >>>
->>> Adapt the backwards compatibility example and discussion to remove the
->>> truncation flag where needed.
+>>> This flag hooks into the path_truncate LSM hook and covers file
+>>> truncation using truncate(2), ftruncate(2), open(2) with O_TRUNC, as
+>>> well as creat().
 >>>
->>> Point out potential surprising behaviour related to truncate.
+>>> This change also increments the Landlock ABI version, updates
+>>> corresponding selftests, and updates code documentation to document
+>>> the flag.
+>>>
+>>> The following operations are restricted:
+>>>
+>>> open(): requires the LANDLOCK_ACCESS_FS_TRUNCATE right if a file gets
+>>> implicitly truncated as part of the open() (e.g. using O_TRUNC).
+>>>
+>>> Notable special cases:
+>>> * open(..., O_RDONLY|O_TRUNC) can truncate files as well in Linux
+>>> * open() with O_TRUNC does *not* need the TRUNCATE right when it
+>>>     creates a new file.
+>>>
+>>> truncate() (on a path): requires the LANDLOCK_ACCESS_FS_TRUNCATE
+>>> right.
+>>>
+>>> ftruncate() (on a file): requires that the file had the TRUNCATE right
+>>> when it was previously opened.
 >>>
 >>> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 >>> ---
->>>    Documentation/userspace-api/landlock.rst | 62 +++++++++++++++++++++---
->>>    1 file changed, 54 insertions(+), 8 deletions(-)
+>>>    include/uapi/linux/landlock.h                | 18 ++--
+>>>    security/landlock/fs.c                       | 88 +++++++++++++++++++-
+>>>    security/landlock/fs.h                       | 18 ++++
+>>>    security/landlock/limits.h                   |  2 +-
+>>>    security/landlock/setup.c                    |  1 +
+>>>    security/landlock/syscalls.c                 |  2 +-
+>>>    tools/testing/selftests/landlock/base_test.c |  2 +-
+>>>    tools/testing/selftests/landlock/fs_test.c   |  7 +-
+>>>    8 files changed, 124 insertions(+), 14 deletions(-)
 >>>
->>> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
->>> index b8ea59493964..57802fd1e09b 100644
->>> --- a/Documentation/userspace-api/landlock.rst
->>> +++ b/Documentation/userspace-api/landlock.rst
->>> @@ -8,7 +8,7 @@ Landlock: unprivileged access control
->>>    =====================================
->>>    :Author: Mickaël Salaün
->>> -:Date: May 2022
->>> +:Date: September 2022
->>>    The goal of Landlock is to enable to restrict ambient rights (e.g. global
->>>    filesystem access) for a set of processes.  Because Landlock is a stackable
->>> @@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
->>>                LANDLOCK_ACCESS_FS_MAKE_FIFO |
->>>                LANDLOCK_ACCESS_FS_MAKE_BLOCK |
->>>                LANDLOCK_ACCESS_FS_MAKE_SYM |
->>> -            LANDLOCK_ACCESS_FS_REFER,
->>> +            LANDLOCK_ACCESS_FS_REFER |
->>> +            LANDLOCK_ACCESS_FS_TRUNCATE,
->>>        };
->>>    Because we may not know on which kernel version an application will be
->>> @@ -69,16 +70,26 @@ should try to protect users as much as possible whatever the kernel they are
->>>    using.  To avoid binary enforcement (i.e. either all security features or
->>>    none), we can leverage a dedicated Landlock command to get the current version
->>>    of the Landlock ABI and adapt the handled accesses.  Let's check if we should
->>> -remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
->>> -starting with the second version of the ABI.
->>> +remove the `LANDLOCK_ACCESS_FS_REFER` or `LANDLOCK_ACCESS_FS_TRUNCATE` access
->>> +rights, which are only supported starting with the second and third version of
->>> +the ABI.
->>>    .. code-block:: c
->>>        int abi;
->>>        abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
->>> -    if (abi < 2) {
->>> -        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
->>> +    switch (abi) {
->>> +    case -1:
->>> +            perror("The running kernel does not enable to use Landlock");
->>> +            return 1;
->>> +    case 1:
->>> +            /* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
->>> +            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
->>> +            __attribute__((fallthrough));
->>> +    case 2:
->>> +            /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
->>> +            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
->>>        }
->>>    This enables to create an inclusive ruleset that will contain our rules.
->>> @@ -127,8 +138,8 @@ descriptor.
->>>    It may also be required to create rules following the same logic as explained
->>>    for the ruleset creation, by filtering access rights according to the Landlock
->>> -ABI version.  In this example, this is not required because
->>> -`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
->>> +ABI version.  In this example, this is not required because all of the requested
->>> +``allowed_access`` rights are already available in ABI 1.
+>>> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+>>> index 23df4e0e8ace..8c0124c5cbe6 100644
+>>> --- a/include/uapi/linux/landlock.h
+>>> +++ b/include/uapi/linux/landlock.h
+>>> + * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file with :manpage:`truncate(2)`,
+>>> + *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)` with
+>>> + *   `O_TRUNC`. The right to truncate a file gets carried along with an opened
+>>> + *   file descriptor for the purpose of :manpage:`ftruncate(2)`.
 >>
->> This fix is correct, but it should not be part of this series. FYI, I have a
->> patch almost ready to fix some documentation style issues. Please remove
->> this hunk for the next series. I'll deal with the merge conflicts if any.
+>> You can add a bit to explain that it is the same behavior as for
+>> LANDLOCK_ACCESS_FS_{READ,WRITE}_FILE .
 > 
-> Can you please clarify what part of it should not be part of this
-> series?
+> Done.
+> 
+>>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+>>> index a9dbd99d9ee7..1b546edf69a6 100644
+>>> --- a/security/landlock/fs.c
+>>> +++ b/security/landlock/fs.c
+>>> +static inline access_mask_t
+>>> +get_path_access_rights(const struct landlock_ruleset *const domain,
+>>> +		       const struct path *const path,
+>>> +		       access_mask_t access_request)
+>>> +{
+>>> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+>>> +	unsigned long access_bit;
+>>> +	unsigned long access_req;
+>>
+>> unsigned long access_bit, long access_req;
+> 
+> Done. Made it unsigned long access_bit, access_req;
+> 
+>>> +	init_layer_masks(domain, access_request, &layer_masks);
+>>> +	if (!check_access_path_dual(domain, path, access_request, &layer_masks,
+>>> +				    NULL, 0, NULL, NULL)) {
+>>> +		/*
+>>> +		 * Return immediately for successful accesses and for cases
+>>
+>> Returns
+> 
+> Done.
+> 
+>>> +		 * where everything is permitted because the path belongs to an
+>>> +		 * internal filesystem.
+>>> +		 */
+>>> +		return access_request;
+>>> +	}
+>>> +
+>>> +	access_req = access_request;
+>>> +	for_each_set_bit(access_bit, &access_req, ARRAY_SIZE(layer_masks)) {
+>>> +		if (layer_masks[access_bit]) {
+>>> +			/* If any layer vetoed the access right, remove it. */
+>>> +			access_request &= ~BIT_ULL(access_bit);
+>>> +		}
+>>> +	}
+>>> +	return access_request;
+>>> +}
+>>> +
+>>>    /**
+>>>     * current_check_refer_path - Check if a rename or link action is allowed
+>>>     *
+>>> @@ -1142,6 +1184,11 @@ static int hook_path_rmdir(const struct path *const dir,
+>>>    	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_REMOVE_DIR);
+>>>    }
+>>> +static int hook_path_truncate(const struct path *const path)
+>>> +{
+>>> +	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
+>>> +}
+>>> +
+>>>    /* File hooks */
+>>>    static inline access_mask_t get_file_access(const struct file *const file)
+>>> @@ -1159,22 +1206,55 @@ static inline access_mask_t get_file_access(const struct file *const file)
+>>>    	/* __FMODE_EXEC is indeed part of f_flags, not f_mode. */
+>>>    	if (file->f_flags & __FMODE_EXEC)
+>>>    		access |= LANDLOCK_ACCESS_FS_EXECUTE;
+>>> +
+>>
+>> Not needed.
+> 
+> Done.
+> 
+>>>    	return access;
+>>>    }
+>>>    static int hook_file_open(struct file *const file)
+>>>    {
+>>> +	access_mask_t access_req, access_rights;
+>>> +	const access_mask_t optional_rights = LANDLOCK_ACCESS_FS_TRUNCATE;
+>>>    	const struct landlock_ruleset *const dom =
+>>>    		landlock_get_current_domain();
+>>> -	if (!dom)
+>>> +	if (!dom) {
+>>> +		/* Grant all rights. */
+>>
+>> Something like:
+>> Grants all rights, even if most of them are not checked here, it is more
+>> consistent.
+> 
+> Done.
+> 
+>>> +		landlock_file(file)->rights = LANDLOCK_MASK_ACCESS_FS;
+>>>    		return 0;
+>>> +	}
+>>> +
+>>>    	/*
+>>>    	 * Because a file may be opened with O_PATH, get_file_access() may
+>>>    	 * return 0.  This case will be handled with a future Landlock
+>>>    	 * evolution.
+>>>    	 */
+>>> -	return check_access_path(dom, &file->f_path, get_file_access(file));
+>>> +	access_req = get_file_access(file);
+>>> +	access_rights = get_path_access_rights(dom, &file->f_path,
+>>> +					       access_req | optional_rights);
+>>> +	if (access_req & ~access_rights)
+>>> +		return -EACCES;
+>>> +
+>>> +	/*
+>>> +	 * For operations on already opened files (i.e. ftruncate()), it is the
+>>> +	 * access rights at the time of open() which decide whether the
+>>> +	 * operation is permitted. Therefore, we record the relevant subset of
+>>> +	 * file access rights in the opened struct file.
+>>> +	 */
+>>> +	landlock_file(file)->rights = access_rights;
+>>> +
+>>
+>> Style preferences, but why do you use a new line here? I try to group code
+>> blocks until the return.
+> 
+> Thanks, done. I just do this habitually and overlooked that I was at
+> odds with the surrounding style. I don't have a strong preference.
+> 
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int hook_file_truncate(struct file *const file)
+>>> +{
+>>> +	/*
+>>> +	 * We permit truncation if the truncation right was available at the
+>>
+>> Allows truncation if the related right was…
+>>
+>>
+>>> +	 * time of opening the file.
+>>
+>> …to get a consistent access check as for read, write and execute operations.
+> 
+> Done.
+> 
+> I'm also adding this note here:
+> 
+>    Note: For checks done based on the file's Landlock rights, we enforce
+>    them independently of whether the current thread is in a Landlock
+>    domain, so that open files passed between independent processes
+>    retain their behaviour.
+> 
+> to explain that this is why we don't check for "if (!dom)" as we do in
+> other cases.
+> 
+> 
+>> This kind of explanation could be used to complete the documentation as
+>> well. The idea being to mimic the file mode check.
+> 
+> Added it to the documentation.
+> 
+>>
+>>
+>>> +	 */
+>>> +	if (!(landlock_file(file)->rights & LANDLOCK_ACCESS_FS_TRUNCATE))
+>>
+>> I prefer to invert the "if" logic and return -EACCES by default.
+> 
+> Done. Thanks for pointing it out.
+> 
+>>> +		return -EACCES;
+>>> +
+>>> +	return 0;
+>>>    }
+> 
+> 
+>>> diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+>>> index 8db7acf9109b..275ba5375839 100644
+>>> --- a/security/landlock/fs.h
+>>> +++ b/security/landlock/fs.h
+>>> @@ -36,6 +36,18 @@ struct landlock_inode_security {
+>>>    	struct landlock_object __rcu *object;
+>>>    };
+>>> +/**
+>>> + * struct landlock_file_security - File security blob
+>>> + *
+>>> + * This information is populated when opening a file in hook_file_open, and
+>>> + * tracks the relevant Landlock access rights that were available at the time
+>>> + * of opening the file. Other LSM hooks use these rights in order to authorize
+>>> + * operations on already opened files.
+>>> + */
+>>> +struct landlock_file_security {
+>>> +	access_mask_t rights;
+>>
+>> I think it would make it more consistent to name it "access" to be in line
+>> with struct landlock_layer and other types.
+> 
+> Done.
 
-My mistake, I guess I was reviewing something else… I was thinking about 
-style changes, but it is not the case here. Using "``" is correct.
+Hmm, actually, "allowed_access" is more explicit. We could use other 
+access-related fields for other purposes (e.g. cache).
 
 
 > 
-> In this hunk, I've started using double backquote, but I've also
-> changed the meaning of the sentence slightly so that it is still
-> correct when the truncate right is introduced.
+> I also added a brief documentation for the access field, to point out
+> that this is not the *full* set of rights which was available at
+> open() time, but it's just the subset of rights that is needed to
+> authorize later operations on the file:
 > 
-> It is still correct that the backwards compatibility check is not
-> required because LANDLOCK_ACCESS_FS_REFER is not allowed by any rule.
-> But with the new truncate flag, LANDLOCK_ACCESS_FS_TRUNCATE may also
-> not be allowed by any rule so that we can skip this check.
-> 
-> Should I remove this hunk entirely?
+>    @access: Access rights that were available at the time of opening the
+>    file. This is not necessarily the full set of access rights available
+>    at that time, but it's the necessary subset as needed to authorize
+>    later operations on the open file.
 
-Keep your changes, it's better like this.
-
+Good!
 
 > 
-> Or maybe rather phrase it like
+> Thanks for the review! Fixes will be in the next version.
 > 
->    It may also be required to create rules following the same logic as
->    explained for the ruleset creation, by filtering access rights
->    according to the Landlock ABI version. In this example, this is not
->    required because `LANDLOCK_ACCESS_FS_REFER` and
->    `LANDLOCK_ACCESS_FS_TRUNCATE` are not allowed by any rule.
->   
-> ?
+> -Günther
+> 
