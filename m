@@ -2,181 +2,140 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6382AC6FA8D
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Sep 2022 16:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF73C6FA82
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Sep 2022 19:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229907AbiIOQMI (ORCPT
+        id S229498AbiIOTdG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Sep 2022 12:12:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34884 "EHLO
+        Thu, 15 Sep 2022 15:33:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229832AbiIOQMG (ORCPT
+        with ESMTP id S229458AbiIOTdF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Sep 2022 12:12:06 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 162179AFBA
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Sep 2022 09:12:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CB579B82145
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Sep 2022 16:12:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D3DFC433D6
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Sep 2022 16:12:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663258322;
-        bh=biii+7n43gDq9XV3lLWEwCgiBUcjGdS9pCCJ+UVSt80=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KY92zLXe4muQeT1lP6R9O5WWgH7s5lQ+vChsWGQh8DGyYNJ6977AySX8t8+qdp7v3
-         aLfeeEhEodnbotQKGT6sCZ6Drv8TMMhccqgAIWerpQs6aV6eQDUCEKuUL3Qi2k+wIT
-         htRuqYdkNUN5O+PyusMCvjYSdy5m30dnl0szn8dppzVlJo5e9sPcKsJJQl2uPJfG/F
-         u4qKF2QS8Tqzks05KCbYy7TNpHRciwFKTO7fqmillcE6nWWrJgq7woUJo09OJEasvV
-         FUXY1Xlm6GUwumTZNgYKLh3w+i7EFTEqNW9bU7iV3G2XP/cq8BVnHW5h4lDXTwRQD4
-         FGPpWinZS+7uw==
-Received: by mail-ej1-f54.google.com with SMTP id 13so14269803ejn.3
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Sep 2022 09:12:02 -0700 (PDT)
-X-Gm-Message-State: ACrzQf0+pjTA2xb6k+TqVSs6srQ8xPt0zMEJv2fwnpi5B1hw1PKBnek3
-        u7mrx9Wpse0aaFzPqNvqmLzAmEAZaYRxwFxMbBMbFA==
-X-Google-Smtp-Source: AMsMyM6A+1amQaBgdn6PNz6+7XLx4sQcOmwWWgNA8pV7010ZefQzIPoOFXBCHMTh3iKNuMgzYaiNCa6qWPB+3IVAEF8=
-X-Received: by 2002:a17:906:9bd3:b0:778:c8e0:fcee with SMTP id
- de19-20020a1709069bd300b00778c8e0fceemr471268ejc.275.1663258310370; Thu, 15
- Sep 2022 09:11:50 -0700 (PDT)
+        Thu, 15 Sep 2022 15:33:05 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC18F9D12A;
+        Thu, 15 Sep 2022 12:33:04 -0700 (PDT)
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28FJWahU038290;
+        Thu, 15 Sep 2022 19:32:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=1UYNl1C7PuGQg+256/Y1Bpci7fnwfWgV1fHw2B6kGAE=;
+ b=VS4dZ7+qZ72oh4x2956gpCHkG+ccSgROyt8NguV0HQpTd0672RhBw0gkpNwvIms2k8Yl
+ GdmXhWqe6Pc05vO4iEySfxWd3t+OoKH7/dQUZPI6fjLTw1o+XNjubBoLQ1heYgtOL36+
+ KKQaNB3pQnbfGPYyHnVoxR1eggnKBGw8OAJmbqgZKTsuUxpdTwcpIy0gZvU94H481nDH
+ hqrPm41YE9SHj/Ttj46hQRltnxvRwjTlgi6Lu6/NtGjaAgVmIWm3QUeFu6g6llcsRW+h
+ VkPz/oGbT2YqK7nB0Tqn4Gc2f7g+gqQRykXJ3EwEvcLupKQA/ddLWNoKPTg5FP6HoGeo gg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jmaa4004c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Sep 2022 19:32:39 +0000
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28FJWcJi038370;
+        Thu, 15 Sep 2022 19:32:39 GMT
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jmaa4003h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Sep 2022 19:32:38 +0000
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28FJK3TM005461;
+        Thu, 15 Sep 2022 19:32:37 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma01dal.us.ibm.com with ESMTP id 3jm91qgg4t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Sep 2022 19:32:37 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28FJWahs4653628
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Sep 2022 19:32:36 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CF9BCAE062;
+        Thu, 15 Sep 2022 19:32:36 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3CEDAE05C;
+        Thu, 15 Sep 2022 19:32:36 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 15 Sep 2022 19:32:36 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, serge@hallyn.com, brauner@kernel.org,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        jpenumak@redhat.com, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v14 12/26] ima: Only accept AUDIT rules for non-init_ima_ns namespaces for now
+Date:   Thu, 15 Sep 2022 15:32:07 -0400
+Message-Id: <20220915193221.1728029-13-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20220915193221.1728029-1-stefanb@linux.ibm.com>
+References: <20220915193221.1728029-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-References: <20220909120736.1027040-1-roberto.sassu@huaweicloud.com> <20220909120736.1027040-12-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20220909120736.1027040-12-roberto.sassu@huaweicloud.com>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Thu, 15 Sep 2022 17:11:39 +0100
-X-Gmail-Original-Message-ID: <CACYkzJ7uraUdmGV9gMmTZs1OMb_3Q2DttoaxU-irmrXFudOweQ@mail.gmail.com>
-Message-ID: <CACYkzJ7uraUdmGV9gMmTZs1OMb_3Q2DttoaxU-irmrXFudOweQ@mail.gmail.com>
-Subject: Re: [PATCH v17 11/12] selftests/bpf: Add test for bpf_verify_pkcs7_signature()
- kfunc
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
-        john.fastabend@gmail.com, sdf@google.com, haoluo@google.com,
-        jolsa@kernel.org, mykolal@fb.com, dhowells@redhat.com,
-        jarkko@kernel.org, rostedt@goodmis.org, mingo@redhat.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        shuah@kernel.org, bpf@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        deso@posteo.net, memxor@gmail.com,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Joanne Koong <joannelkoong@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: yomP0ib_mE1-PUbx-1Px4x9dT7tgYfQS
+X-Proofpoint-ORIG-GUID: rTDpZRYRixe968O2t7PXYB7A2xQWFDJ9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-15_10,2022-09-14_04,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ clxscore=1015 impostorscore=0 lowpriorityscore=0 suspectscore=0 mlxscore=0
+ spamscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2209130000
+ definitions=main-2209150119
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 9, 2022 at 1:10 PM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
+For non-init_ima_ns namespaces, only accept AUDIT rules for now. Reject
+all rules that require support for measuring, appraisal, and hashing.
 
-[...]
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Acked-by: Christian Brauner <brauner@kernel.org>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-> +}
-> diff --git a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
-> new file mode 100644
-> index 000000000000..4ceab545d99a
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
-> @@ -0,0 +1,100 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
-> + *
-> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
-> + */
-> +
-> +#include "vmlinux.h"
-> +#include <errno.h>
-> +#include <bpf/bpf_helpers.h>
-> +#include <bpf/bpf_tracing.h>
-> +
-> +#define MAX_DATA_SIZE (1024 * 1024)
-> +#define MAX_SIG_SIZE 1024
-> +
-> +typedef __u8 u8;
-> +typedef __u16 u16;
-> +typedef __u32 u32;
-> +typedef __u64 u64;
+---
+v9:
+  - Jump to err_audit when unsupported rules are detected
+---
+ security/integrity/ima/ima_policy.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-I think you can avoid this and just use u32 and u64 directly.
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 18fd19ecb402..e81eebc7d41e 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -1865,6 +1865,17 @@ static int ima_parse_rule(struct ima_namespace *ns,
+ 			result = -EINVAL;
+ 			break;
+ 		}
++
++		/* IMA namespace only accepts AUDIT rules */
++		if (ns != &init_ima_ns && result == 0) {
++			switch (entry->action) {
++			case MEASURE:
++			case APPRAISE:
++			case HASH:
++				result = -EINVAL;
++				goto err_audit;
++			}
++		}
+ 	}
+ 	if (!result && !ima_validate_rule(entry))
+ 		result = -EINVAL;
+@@ -1886,6 +1897,7 @@ static int ima_parse_rule(struct ima_namespace *ns,
+ 				     "verity rules should include d-ngv2");
+ 	}
+ 
++err_audit:
+ 	audit_log_format(ab, "res=%d", !result);
+ 	audit_log_end(ab);
+ 	return result;
+-- 
+2.36.1
 
-> +
-> +struct bpf_dynptr {
-> +       __u64 :64;
-> +       __u64 :64;
-> +} __attribute__((aligned(8)));
-> +
-
-I think you are doing this because including the uapi headers causes
-type conflicts.
-This does happen quite often. What do other folks think about doing
-something like
-
-#define DYNPTR(x) ((void *)x)
-
-It seems like this will be an issue anytime we use the helpers with
-vmlinux.h and users
-will always have to define this type in their tests.
-
-- KP
-
-> +extern struct bpf_key *bpf_lookup_user_key(__u32 serial, __u64 flags) __ksym;
-> +extern struct bpf_key *bpf_lookup_system_key(__u64 id) __ksym;
-> +extern void bpf_key_put(struct bpf_key *key) __ksym;
-> +extern int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr,
-> +                                     struct bpf_dynptr *sig_ptr,
-> +                                     struct bpf_key *trusted_keyring) __ksym;
-> +
-> +u32 monitored_pid;
-> +u32 user_keyring_serial;
-> +u64 system_keyring_id;
-> +
-> +struct data {
-> +       u8 data[MAX_DATA_SIZE];
-> +       u32 data_len;
-> +       u8 sig[MAX_SIG_SIZE];
-> +       u32 sig_len;
-> +};
-> +
-> +struct {
-> +       __uint(type, BPF_MAP_TYPE_ARRAY);
-> +       __uint(max_entries, 1);
-> +       __type(key, __u32);
-> +       __type(value, struct data);
-> +} data_input SEC(".maps");
-> +
-> +char _license[] SEC("license") = "GPL";
-> +
-> +SEC("lsm.s/bpf")
-> +int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
-> +{
-> +       struct bpf_dynptr data_ptr, sig_ptr;
-> +       struct data *data_val;
-> +       struct bpf_key *trusted_keyring;
-> +       u32 pid;
-> +       u64 value;
-> +       int ret, zero = 0;
-> +
-> +       pid = bpf_get_current_pid_tgid() >> 32;
-> +       if (pid != monitored_pid)
-> +               return 0;
-> +
-> +       data_val = bpf_map_lookup_elem(&data_input, &zero);
-> +       if (!data_val)
-> +               return 0;
-> +
-> +       bpf_probe_read(&value, sizeof(value), &attr->value);
-> +
-> +       bpf_copy_from_user(data_val, sizeof(struct data),
->
-
-[...]
-
-> --
-> 2.25.1
->
