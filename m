@@ -2,120 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6775DC6FA89
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Sep 2022 15:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6382AC6FA8D
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Sep 2022 16:12:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229869AbiIOPul (ORCPT
+        id S229907AbiIOQMI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Sep 2022 11:50:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35602 "EHLO
+        Thu, 15 Sep 2022 12:12:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229743AbiIOPuk (ORCPT
+        with ESMTP id S229832AbiIOQMG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Sep 2022 11:50:40 -0400
-Received: from sonic302-27.consmr.mail.ne1.yahoo.com (sonic302-27.consmr.mail.ne1.yahoo.com [66.163.186.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D9735A3CE
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Sep 2022 08:50:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1663257038; bh=71YgQPkufQtgj1Hjl3JdpU1PFutij7n90ncMGUq5TiA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=QjzWchNkAXLDSk11Xats4BbvPF4DuVSth4Hc7Rk2qj994hcZ55UQ6ZUIrwYb0eveOGwKvhxuu3GG8CXPrKOstpO+knkj9Lt8DMZjXW71GudQ69QOi3RXYxf+nQa9CgfKa3AMFWJLNrT3pKwzV5GE2/QogdqqCwYxWkBDZgY4f+rXicb+vllK1ILINslp1EhvkXZPJi2s7I/CGybWy3m1g4rhz6HDi4RL3lZYUA7q/f6gdxpYOblfDqM/O3/Bz8p+Wu0vdOE5dChjg3HMk+AtFlAfZ/GrcTwgu+vOxlUr6KMcuSbAVkVbaQsAYK6XxEiLK+2nFKvmuIGvQWktOnIuKg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1663257038; bh=6yviBBNC32dDwrurkQcgYkgHWtjYEub2m1MRJY1PDOG=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Rj3vRxCqNY3ThpenkJzts4vQqsHaCA8fQc6Qe1WoXHjTAiGSYNDfa4A6/lS3RJNMwstYZZYDbNkmbEXSVz1kCJRGRzqejmxWWS+hW7mnGKLTihGuNTjRdZ2v5sle4fSV0xeVv6qoMbltT4lauJkuerHvTeM6JiyW3oFcYQytwL7VA/5AIt5bk8KfXs+rJJjkg7mLQKJq248MX9lErCDEbK+Fv/iljooQeVLLU5CCtfTP1LD+9acDxgN3gx0wZdyBqOI1l4ygRdk2q6OfIKlXmB8XcIShCx9mo/UYbEX0v75WI9ufhksjgRQJLydwMuN7uLZ9/B3UXJbIf5aBsOY5gg==
-X-YMail-OSG: mL1JSuUVM1kzJqenl8imonXmAhAcEfl9bbeXiKBGuB_07asbG3BImcvofhy5uA3
- rk_wvv7HGT61fnySwfa5ldCH.iQ4ISj06oeVB2BQ0hY0y_o8LdtHFDT211ntM1VVO3e9T9JumQoo
- NKwkoec_VkiN3A5wzZxv9lqCftQubLMQrE10Tf28UOxWKn6rphgA4Vg8dRL5obX3orIdK9q2qnp4
- wFUZZt5TY0RpnWtZjQYCyKID3d7at6cW7FIsmEVFpFYzDlwtxSvqKhTVUIAhq4PbAYBpls6L9Ni7
- 6WeXJK67CSqe1n9nNAaoY_fRJUxcu_YCLurNqvb_gKZ3UeCBc1t9liHRjOvDKQd1X3m2Y7ivP906
- _EML2euKkAG7MipeCOVxc8r.eW2z_RglrbxF56Don7nreLh0jIQK2ptQ6yDSsBDZibdYYedO9lnF
- PhKppCdHjsKj91AZH0pS_VhhT2hJUClx.NmY6ALv499wXo3RGOiOJ7zSeRqoHUMVh5_ALPIEWwaR
- BaEst.KU58RSjown_l8OtQgeUvsC9fIuDvTBjLzCPI4zbjQh7jpguC84WQUdpUAh15qISjzxFvMr
- iaGHgoB6HNd0Bt8Tl9_cc.B120jaSQnHxdc7hyM0fD.BQuhXzWvFvzOzJovJ9SrcVR3tTGCwp3TK
- 9zrZIyMw5Wr8bCBb2aThKiavIJdDdel0WKhAMx6..Zi4zb8zq5r5w_fU8kcQs.Ctvmhx3dURW6DW
- 4_LsQZj00KQ8Y9kmuHZ.SIIWDynBo5DkFi49lcryRIODxyUbEb3thJXuETJcz6hiZ138tPamlHtR
- jS5VSgNbUPc8NJ7h1WdE2D.E9mZE7aQrxyNatvLLgncqLxWFAs6f5KUhiejtPsd2Y5etmly7Zlg_
- .Iab6fex2vndLoXEl6NHL_rwScRy7BZ.tj2sWztWCttriVpTx0r8H3qqCwv_cfsmC101e__ORh9h
- 735eKTCVHQGMHgvE9C7iW6f0sUQ8.bKsn5CMJ_eIch7ay6PifiKk8v0KDYLAH79RapUwIo4oKBH7
- k_opFKJDECVFyV88vFygVOa2nN2H4Ufx3N08Vt7XccJamPNCNglSDBQsQSHoSoJdz7.hoET5bBOF
- wC7UoI3PqzvXY0jsxEk2VTwFbaidMz8tTIurC3koVQstZTwL6D9cy2esvA8cuA7aKUoBSqvZ0JN_
- yMTyo4MzQxH6Sdo1.3xcpvVHe72aqi9dDYz6CDVPL.TgayjVm_YWZCR.2P86VbRlWk.pUjtnWTuN
- wL3MY51WuMen8cut.DE7Hij0e4ClkG8PH6FKWRqAhrmzSb5WF0V.PAKtinMZj1JBcgl3eDbGH6WS
- UU6k4HjzjLB7wygjgRmvHe7Lc1OOHQoCe6bs7zYq6DUxqf_15fXBLiBfI5ciJiE9usNPNeqs0owG
- UCNK7hq9tcxLNrG18eQMWQHsW5B540assQm9x9WlcblCrRMtEPR5MkySUs4F2jSe3UMx.ynXYoq4
- Iyp8VVmL9puimjZ6.rnJHyvyvfqagESYG9FZG.o3swrveeRZWwUnbolG8da.I.jwXty0R91CNT4q
- aQfB0.5d4voPxnCnA6n24o2Uy0RpVbonhWmr74wdT4aitrhdOwus1Hb1kJpSwwcSNuE0NTe48Bb3
- 5_ohl8yaSAvl36FV1Cm3DV6r3A5NxdV5QIHbrtSzCNf1MnMKigcGttJ6bo_WGcSedDfz9_4b0q4J
- .dhEnlyjyGL.ImqkZ5hMZktiXm0xjnvWoPZAgOWJKmLIQx7TMudDW.Us7VSMEHm5jdz5ZDxM5iVz
- 1J5M4SsPNqzKs44WMnsPHU.1Ff_fk0aFyJkeAW3iAQLxhow7Oa3xXQOv3ZxUo8dT.Cf_gOmdD4h2
- X7eknlXJRsOFquII2J6_cfA9GtMeFb.loIXaoAa0NpNZzI2P5.OLD5OVKeulZr2Prbm3gywRvQoE
- _5hRmwlfGFsk7_iZRxl_EClFFBYzwO72HhcoDlNIFyLhnRuqDvXVF9ChE8a0H1w7mKhToxoi.P5V
- 7CVaFPlIFE76WSFRF4gaTaqcRa9w31Z6AW1ZpNeerDOuwCTs7yuZk9hi2.WP1zcoQbfVKkTuPTFR
- ebRZ_3A5p6W00SWx9H1Brll7MELGYa_A1LECQUpv0h9_q9gqgoSXo1cVETK2GUO_kSJgPhkQx40f
- DEjVpKao_nb35pMg3CeM7GfOlHASl809atzJ0DnNw1WuwIpd4LX3Ta8lIujmtx4H.yPJ.VFw20PU
- VdUgyex0u0F43AGfBm.CSqoiMaKi4dispDAYqzuHY9JejS_7fI5or52A-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Thu, 15 Sep 2022 15:50:38 +0000
-Received: by hermes--production-ne1-544744cc75-zkxbp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 408511d94d43d702f94fc6f08a7012d0;
-          Thu, 15 Sep 2022 15:50:36 +0000 (UTC)
-Message-ID: <c2a2ca9b-3fc1-c034-6cc2-4400838c3354@schaufler-ca.com>
-Date:   Thu, 15 Sep 2022 08:50:35 -0700
+        Thu, 15 Sep 2022 12:12:06 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 162179AFBA
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Sep 2022 09:12:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CB579B82145
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Sep 2022 16:12:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D3DFC433D6
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Sep 2022 16:12:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663258322;
+        bh=biii+7n43gDq9XV3lLWEwCgiBUcjGdS9pCCJ+UVSt80=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KY92zLXe4muQeT1lP6R9O5WWgH7s5lQ+vChsWGQh8DGyYNJ6977AySX8t8+qdp7v3
+         aLfeeEhEodnbotQKGT6sCZ6Drv8TMMhccqgAIWerpQs6aV6eQDUCEKuUL3Qi2k+wIT
+         htRuqYdkNUN5O+PyusMCvjYSdy5m30dnl0szn8dppzVlJo5e9sPcKsJJQl2uPJfG/F
+         u4qKF2QS8Tqzks05KCbYy7TNpHRciwFKTO7fqmillcE6nWWrJgq7woUJo09OJEasvV
+         FUXY1Xlm6GUwumTZNgYKLh3w+i7EFTEqNW9bU7iV3G2XP/cq8BVnHW5h4lDXTwRQD4
+         FGPpWinZS+7uw==
+Received: by mail-ej1-f54.google.com with SMTP id 13so14269803ejn.3
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Sep 2022 09:12:02 -0700 (PDT)
+X-Gm-Message-State: ACrzQf0+pjTA2xb6k+TqVSs6srQ8xPt0zMEJv2fwnpi5B1hw1PKBnek3
+        u7mrx9Wpse0aaFzPqNvqmLzAmEAZaYRxwFxMbBMbFA==
+X-Google-Smtp-Source: AMsMyM6A+1amQaBgdn6PNz6+7XLx4sQcOmwWWgNA8pV7010ZefQzIPoOFXBCHMTh3iKNuMgzYaiNCa6qWPB+3IVAEF8=
+X-Received: by 2002:a17:906:9bd3:b0:778:c8e0:fcee with SMTP id
+ de19-20020a1709069bd300b00778c8e0fceemr471268ejc.275.1663258310370; Thu, 15
+ Sep 2022 09:11:50 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: LSM stacking in next for 6.1?
-Content-Language: en-US
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
-        John Johansen <john.johansen@canonical.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
-        SElinux list <selinux@vger.kernel.org>, casey@schaufler-ca.com
-References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
- <791e13b5-bebd-12fc-53de-e9a86df23836@schaufler-ca.com>
- <8ac2731c-a1db-df7b-3690-dac2b371e431@I-love.SAKURA.ne.jp>
- <CAHC9VhQGnEcoYeGpwbbXbMrG1dOvJ=2ohd4zPYoqBJK9p1mSjQ@mail.gmail.com>
- <854c05ad-888e-b882-bb97-65f4ca289bc6@I-love.SAKURA.ne.jp>
- <CAHC9VhSDL+wuPGNB3axkksqVTjnxU8pS8Axz7skPk3zjBbRJXw@mail.gmail.com>
- <b6ccb6a2-b6b0-b6ad-9f19-8ff3180d04ba@I-love.SAKURA.ne.jp>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <b6ccb6a2-b6b0-b6ad-9f19-8ff3180d04ba@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20612 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20220909120736.1027040-1-roberto.sassu@huaweicloud.com> <20220909120736.1027040-12-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20220909120736.1027040-12-roberto.sassu@huaweicloud.com>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Thu, 15 Sep 2022 17:11:39 +0100
+X-Gmail-Original-Message-ID: <CACYkzJ7uraUdmGV9gMmTZs1OMb_3Q2DttoaxU-irmrXFudOweQ@mail.gmail.com>
+Message-ID: <CACYkzJ7uraUdmGV9gMmTZs1OMb_3Q2DttoaxU-irmrXFudOweQ@mail.gmail.com>
+Subject: Re: [PATCH v17 11/12] selftests/bpf: Add test for bpf_verify_pkcs7_signature()
+ kfunc
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, sdf@google.com, haoluo@google.com,
+        jolsa@kernel.org, mykolal@fb.com, dhowells@redhat.com,
+        jarkko@kernel.org, rostedt@goodmis.org, mingo@redhat.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        shuah@kernel.org, bpf@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, memxor@gmail.com,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Joanne Koong <joannelkoong@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/15/2022 7:27 AM, Tetsuo Handa wrote:
-> On 2022/09/14 22:56, Paul Moore wrote:
->> On Fri, Sep 9, 2022 at 7:33 AM Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>> Inclusion into upstream is far from the goal.
->> For better or worse, there is a long history of the upstream Linux
->> Kernel focusing only on in-tree kernel code, I see no reason why we
->> should change that now for LSMs.
-> Because we can't afford accepting/maintaining whatever LSMs that are proposed.
+On Fri, Sep 9, 2022 at 1:10 PM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
 
-We've done a reasonable job so far. Part of the process of getting a security
-module upstream is demonstrating that it will (1) add value, (2) get used and
-(3) continue to be maintained.  Several modules have been proposed that looked
-like they would add value and get used, but that the author(s) had no means to
-maintain.
+[...]
 
-> Do you think that we are going to accept/maintain whatever LSMs that are proposed
-> if we get to the point to "The commitment I made to Paul some years ago now was
-> that the stacking would eventually include making all combinations possible" ?
-> I don't think so.
+> +}
+> diff --git a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+> new file mode 100644
+> index 000000000000..4ceab545d99a
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+> @@ -0,0 +1,100 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
+> + *
+> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+> + */
+> +
+> +#include "vmlinux.h"
+> +#include <errno.h>
+> +#include <bpf/bpf_helpers.h>
+> +#include <bpf/bpf_tracing.h>
+> +
+> +#define MAX_DATA_SIZE (1024 * 1024)
+> +#define MAX_SIG_SIZE 1024
+> +
+> +typedef __u8 u8;
+> +typedef __u16 u16;
+> +typedef __u32 u32;
+> +typedef __u64 u64;
 
-Neither do I. What I want to do is break down the existing technical barrier.
-If Redhat wants to continue with their "SELinux only" position, that's their
-call. If Ubuntu wants to take a more inclusive approach they should be able
-to. That does not mean that every bizarre and/or unnatural security module
-that's proposed should be included in the mainline.
+I think you can avoid this and just use u32 and u64 directly.
 
-> Although the upstream Linux Kernel focuses only on in-tree kernel code,
-> CONFIG_MODULES=y is not limited for in-tree kernel code. It is used by e.g.
-> device vendors to deliver their out-of-tree driver code.
+> +
+> +struct bpf_dynptr {
+> +       __u64 :64;
+> +       __u64 :64;
+> +} __attribute__((aligned(8)));
+> +
 
-I see this argument all the time. The response is "get your driver upstream".
-Vendors/developers who whine "It's too hard" get no sympathy from me.
+I think you are doing this because including the uapi headers causes
+type conflicts.
+This does happen quite often. What do other folks think about doing
+something like
 
->  Then, I see no reason
-> why we can't do the same for LSMs. We simply don't need to "provide efforts for
-> fixing bugs in whatever LSMs"; we simply should "allow whatever LSMs to exist".
+#define DYNPTR(x) ((void *)x)
+
+It seems like this will be an issue anytime we use the helpers with
+vmlinux.h and users
+will always have to define this type in their tests.
+
+- KP
+
+> +extern struct bpf_key *bpf_lookup_user_key(__u32 serial, __u64 flags) __ksym;
+> +extern struct bpf_key *bpf_lookup_system_key(__u64 id) __ksym;
+> +extern void bpf_key_put(struct bpf_key *key) __ksym;
+> +extern int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr,
+> +                                     struct bpf_dynptr *sig_ptr,
+> +                                     struct bpf_key *trusted_keyring) __ksym;
+> +
+> +u32 monitored_pid;
+> +u32 user_keyring_serial;
+> +u64 system_keyring_id;
+> +
+> +struct data {
+> +       u8 data[MAX_DATA_SIZE];
+> +       u32 data_len;
+> +       u8 sig[MAX_SIG_SIZE];
+> +       u32 sig_len;
+> +};
+> +
+> +struct {
+> +       __uint(type, BPF_MAP_TYPE_ARRAY);
+> +       __uint(max_entries, 1);
+> +       __type(key, __u32);
+> +       __type(value, struct data);
+> +} data_input SEC(".maps");
+> +
+> +char _license[] SEC("license") = "GPL";
+> +
+> +SEC("lsm.s/bpf")
+> +int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
+> +{
+> +       struct bpf_dynptr data_ptr, sig_ptr;
+> +       struct data *data_val;
+> +       struct bpf_key *trusted_keyring;
+> +       u32 pid;
+> +       u64 value;
+> +       int ret, zero = 0;
+> +
+> +       pid = bpf_get_current_pid_tgid() >> 32;
+> +       if (pid != monitored_pid)
+> +               return 0;
+> +
+> +       data_val = bpf_map_lookup_elem(&data_input, &zero);
+> +       if (!data_val)
+> +               return 0;
+> +
+> +       bpf_probe_read(&value, sizeof(value), &attr->value);
+> +
+> +       bpf_copy_from_user(data_val, sizeof(struct data),
+>
+
+[...]
+
+> --
+> 2.25.1
 >
