@@ -2,323 +2,173 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0BAECAAD8
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Sep 2022 12:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E446C6FA86
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Sep 2022 13:21:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231175AbiIPM7M (ORCPT
+        id S230000AbiIPNV0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Sep 2022 08:59:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47534 "EHLO
+        Fri, 16 Sep 2022 09:21:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231154AbiIPM7J (ORCPT
+        with ESMTP id S231207AbiIPNVZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Sep 2022 08:59:09 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C718886884;
-        Fri, 16 Sep 2022 05:59:06 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220916125903euoutp02b8b1518db86853f047bc7a1cb06288ed~VWK5r6vLl0589505895euoutp02j;
-        Fri, 16 Sep 2022 12:59:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220916125903euoutp02b8b1518db86853f047bc7a1cb06288ed~VWK5r6vLl0589505895euoutp02j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1663333143;
-        bh=7S6fZCvxbKnL2G64Qtc1c+1jERgxR3HM3+9/H/MbFmQ=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=WLPwzbVaIOD+mp+5f/IzT6skdFY/q9QaMoY3j+yKmy1E8AmOOY3i1zjOt4nN/BX93
-         W5mXx1PmgEFgMDXGbuSRD8O9OOP6El5rSc9UvrmU7WKBMwNFOHgyUOkgpEq1YwwiDH
-         BSLwOhkwKX0evsQDpDy1bTU7k0gMXPHRoD/luWqQ=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220916125903eucas1p2af44e7ca2f96c5a0e2fed06e2bbc1017~VWK5VffOE0598605986eucas1p2N;
-        Fri, 16 Sep 2022 12:59:03 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 3E.CE.19378.71374236; Fri, 16
-        Sep 2022 13:59:03 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220916125902eucas1p2cb16b02813a264bfaff6cb5946121cbb~VWK406eoz0600206002eucas1p2P;
-        Fri, 16 Sep 2022 12:59:02 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220916125902eusmtrp14ca487e700130cd46842838b3d47384d~VWK4z1zSX0946509465eusmtrp1s;
-        Fri, 16 Sep 2022 12:59:02 +0000 (GMT)
-X-AuditID: cbfec7f5-a35ff70000014bb2-f3-632473177d84
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id AC.AA.07473.61374236; Fri, 16
-        Sep 2022 13:59:02 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220916125902eusmtip1ff1f913de333188522e1eddf71055936~VWK4n9KDJ0825708257eusmtip1p;
-        Fri, 16 Sep 2022 12:59:02 +0000 (GMT)
-Received: from localhost (106.210.248.110) by CAMSVWEXC01.scsc.local
-        (2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Fri, 16 Sep 2022 13:59:01 +0100
-Date:   Fri, 16 Sep 2022 14:59:00 +0200
-From:   Joel Granados <j.granados@samsung.com>
-To:     Paul Moore <paul@paul-moore.com>
-CC:     <linux-security-module@vger.kernel.org>, <selinux@vger.kernel.org>,
-        <io-uring@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH 2/3] selinux: implement the security_uring_cmd() LSM
- hook
-Message-ID: <20220916125900.yvgnbpqm3j2cxpvd@localhost>
+        Fri, 16 Sep 2022 09:21:25 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41B6558B50;
+        Fri, 16 Sep 2022 06:21:23 -0700 (PDT)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28GCux5t022063;
+        Fri, 16 Sep 2022 13:20:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : from : to : cc : references : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=Srgf2qKYxVi9JvK1f8yknBSY0qAUpFinRzk4DDhX3Kk=;
+ b=NR+LRvggLk+hm1zBwza0NvT1o4w5wqGnCEr01CKuVkPTqkReHPPxwc0zK9XWChTLcvlZ
+ GxmrVpDCErUZH9ghIyqj/9qVPB4hg0Gf1DNIN70N3a6k4NEzJpwj4Dg6RCOttiiV3XkT
+ PQ6B74OsKQ5dbZ2thEl5yum7WSzQmBoPU3PglXwo/rULuTNSjTTXYveSf7pjQEBfsfI+
+ /xTTU5jmn3QmhEl77gSUMhr/8Sl7SVC7Jpkh081bvVRmyWZYfGf6Er/14pe+3XII/78s
+ Yttg87Z693/tf8eYBWC3V6MiuCkBdPh752cZXrHKDofhEBfyipvtlQwANcctx4FIwEBm dQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jmsckhekj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 16 Sep 2022 13:20:58 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28GCvcUX025095;
+        Fri, 16 Sep 2022 13:20:58 GMT
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jmsckheju-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 16 Sep 2022 13:20:58 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28GDKtT0017033;
+        Fri, 16 Sep 2022 13:20:56 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma03dal.us.ibm.com with ESMTP id 3jm918x9sy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 16 Sep 2022 13:20:56 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28GDKtI94457110
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 16 Sep 2022 13:20:55 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 92BF7B2065;
+        Fri, 16 Sep 2022 13:20:55 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 73192B206A;
+        Fri, 16 Sep 2022 13:20:55 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 16 Sep 2022 13:20:55 +0000 (GMT)
+Message-ID: <7f6a66e8-3b55-c8bb-e745-9251810283ab@linux.ibm.com>
+Date:   Fri, 16 Sep 2022 09:20:55 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="ajzavhv4aawhfwou"
-Content-Disposition: inline
-In-Reply-To: <20220907081729.r3ork6q3wnvv7rrv@localhost>
-X-Originating-IP: [106.210.248.110]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsWy7djPc7rixSrJBvNPsFr8nXSM3aJ58Xo2
-        i3et51gsPvQ8YrO4MeEpo8XtSdNZLM4fP8buwO7x+9ckRo9NqzrZPPbPXcPusXbvC0aPz5vk
-        AlijuGxSUnMyy1KL9O0SuDLe/JnEXDDFo+LTrpksDYyrrbsYOTkkBEwkfqxexdrFyMUhJLCC
-        UeLo2XmMIAkhgS+MEufum0MkPjNK3PxzkR2m48Tfh2wQieWMEgtfv2OB6ACqejodatRWRonn
-        LffZQBIsAqoSs/ong41lE9CROP/mDjOILSKgIrH46XpGkAZmgXuMEjdObGYCSQgL+EtsvDcV
-        rIFXwFzi8tGP7BC2oMTJmU/AtjELVEhcPdwPtI0DyJaWWP6PAyTMKWAh0bn5P9SlyhIHlx2C
-        smsl1h47ww6yS0JgNqfEm9aHTBAJF4mPPQuYIWxhiVfHt0A1yEicntzDAmFnS+ycsguqpkBi
-        1smpbCB7JQSsJfrO5ECEHSXW72hghgjzSdx4KwhxJZ/EpG3TocK8Eh1tQhDVahI7mrYyTmBU
-        noXkr1lI/pqF8BdEWEdiwe5PbBjC2hLLFr5mhrBtJdate8+ygJF9FaN4amlxbnpqsXFearle
-        cWJucWleul5yfu4mRmAaO/3v+NcdjCtefdQ7xMjEwXiIUQWo+dGG1RcYpVjy8vNSlUR4VT1V
-        koV4UxIrq1KL8uOLSnNSiw8xSnOwKInzJmduSBQSSE8sSc1OTS1ILYLJMnFwSjUwTW5Rsli9
-        ZmYI++Hz8zsY1379/KUz02vKydN9FrJzNP6LP91TartOQUxrwaw3a88Kva76ef/vDMfDxvrc
-        d87MzfX8w9P+b13b5m0b7TeUyXefc2lnfqouGD/nifwjh/iiHRvyn0YtSK+YGdn7e+omof7w
-        TYGrNc/arNRMrNOebC6VEmpkVvZcc9WZK5raFjuvbvzBfeXVnO6dnx3+fTsdXfzjIzPvpW0n
-        a5227jRObTrIr5KWyjBZ6xAHu9qOVpPkUxLthldTts4QCrnN57jGdNWvnf4aHDIMEWvmPlsl
-        vrdFe6a3k/p2+yD1W63+GbdNvz7PCb3E8XWjZZfSq/L/6fln2Mv/u9f/03i3dYLjXiWW4oxE
-        Qy3mouJEADutF0DeAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDIsWRmVeSWpSXmKPExsVy+t/xu7pixSrJBiseKFj8nXSM3aJ58Xo2
-        i3et51gsPvQ8YrO4MeEpo8XtSdNZLM4fP8buwO7x+9ckRo9NqzrZPPbPXcPusXbvC0aPz5vk
-        Alij9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DI2
-        /H7KWjDJo2Ljlx2sDYwrrbsYOTkkBEwkTvx9yNbFyMUhJLCUUWLRkb+sEAkZiU9XPrJD2MIS
-        f651QRV9ZJS4PmEXK4SzlVFi7sPzYB0sAqoSs/onM4LYbAI6Euff3GEGsUUEVCQWP13PCNLA
-        LHCHUeLlnIcsIAlhAV+JNe8OMYHYvALmEpePgqwDmfqOSeLVh5OMEAlBiZMzn4A1MAuUSZz9
-        cxfoDg4gW1pi+T8OkDCngIVE5+b/UKcqSxxcdgjKrpV4dX834wRG4VlIJs1CMmkWwiSIsJbE
-        jX8vmTCEtSWWLXzNDGHbSqxb955lASP7KkaR1NLi3PTcYkO94sTc4tK8dL3k/NxNjMCo3nbs
-        5+YdjPNefdQ7xMjEwXiIUQWo89GG1RcYpVjy8vNSlUR4VT1VkoV4UxIrq1KL8uOLSnNSiw8x
-        mgKDcSKzlGhyPjDd5JXEG5oZmBqamFkamFqaGSuJ83oWdCQKCaQnlqRmp6YWpBbB9DFxcEo1
-        MInGx9283mLWFDOXZ/WdG3k3g69xlvtcSdxhNktigWuOwL3CQpcZsms0/Vgr9Y8tC1hddTDy
-        7qnwmctXGDQ7Z9iJ11Wts7w/3363iufib+zJoYeYkuQT0ku+PbW75FOm3jO95esmJZdNcx73
-        2p9UOfSFNa59pd2ePTwrDTZKHdxzS3Py/m3Hb84X2nxIwU9e+LdJ/0OjJy09s/kFmytY1dUz
-        77hv/tN3oLO6cNFciT+qoT4LVgYyc+e8uvrvvIW+vsCkLZNmnOZNnTd/yRu2I+t/CBQd7Jhk
-        9y6uTF5W5qjcwYzAU996zW03Hm7dGyc6z4zvveJXs/UPCr7+77wVN/VKfmYPk+WZ2dpONzJ7
-        5ymxFGckGmoxFxUnAgCIAAPMfwMAAA==
-X-CMS-MailID: 20220916125902eucas1p2cb16b02813a264bfaff6cb5946121cbb
-X-Msg-Generator: CA
-X-RootMTR: 20220901201553eucas1p258ee1cba97c888aab172d31d9c06e922
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220901201553eucas1p258ee1cba97c888aab172d31d9c06e922
-References: <166120321387.369593.7400426327771894334.stgit@olly>
-        <CGME20220901201553eucas1p258ee1cba97c888aab172d31d9c06e922@eucas1p2.samsung.com>
-        <166120327379.369593.4939320600435400704.stgit@olly>
-        <20220901201551.hmdrvthtin4gkdz3@localhost>
-        <CAHC9VhTDJogwcYhm2xc29kyO74CZ4wcCysySUr1CX6GcUkPf0Q@mail.gmail.com>
-        <20220907081729.r3ork6q3wnvv7rrv@localhost>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH v14 00/26] ima: Namespace IMA with audit support in IMA-ns
+Content-Language: en-US
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, serge@hallyn.com, brauner@kernel.org,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        jpenumak@redhat.com
+References: <20220915193221.1728029-1-stefanb@linux.ibm.com>
+ <7234a3e5-8b3c-3ac4-2e06-c6cffa46c10e@schaufler-ca.com>
+ <556b21f9-56ae-7ff6-c38a-9ca856438a66@linux.ibm.com>
+In-Reply-To: <556b21f9-56ae-7ff6-c38a-9ca856438a66@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: BCRHHPiWVSAsGiphRpdZELpNL8gZVsM6
+X-Proofpoint-ORIG-GUID: 8QHSi_Ibh99Wqk0nOXJbQ6wp7uCU0-T1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-16_08,2022-09-16_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ adultscore=0 clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0
+ spamscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209160092
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---ajzavhv4aawhfwou
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello.
-
-Took the time to re-run my performance tests on the current LSM patch
-for io_uring_cmd. I'll explain what I did and then give the results:
-
-How I ran it:
-I took a version of the kernel with the patch a0d2212773d1 and then
-compiled two versions: The first was the vanilla kernel and the other
-was the same except for the LSM hook called from io_uring_cmd removed.
-Same kernel configurations. For my tests I used one of the test files
-=66rom FIO called t/io_uring.c which is basically a READ test. I ran my
-tests on both an nvme device and the null device (/dev/null). For the
-first I did not change io_uring.c and for the second I replaced the
-admin calls with dummy data that was not really needed for testing with
-/dev/null. These are the arguments I used for the test
-"./t/io_uring -b4096 -d128 -c32 -s32 -p0 -F1 -B0 -O0 -P1 -u1 -n1"
-Finally, I'm taking the max of several samples.
-
-Results:
-+-------------------------------------+------------------------+-----------=
-------------+
-|                Name                 | /dev/ng0n1 (BW: MiB/s) | /dev/null =
-(BW: GiB/s) |
-+-------------------------------------+------------------------+-----------=
-------------+
-| (A) for-next (vanilla)              |                   1341 |           =
-      30.16 |
-| (B) for-next (no io_uring_cmd hook) |                   1362 |           =
-      40.61 |
-| [1-(A/B)] * 100                     |             1.54185022 |          2=
-5.732578183 |
-+-------------------------------------+------------------------+-----------=
-------------+
-
-So on a device (dev/ng0n1) there is a 1% performance difference on a
-read. Whereas on the null device (dev/null) there is a 25% difference on
-a read.
-
-This difference is interesting and expected as there is a lot more stuff
-happening when we go through the actual device.
-
-Best
-
-Joel
-
-On Wed, Sep 07, 2022 at 10:17:29AM +0200, Joel Granados wrote:
-> Hey Paul
->=20
-> On Thu, Sep 01, 2022 at 05:30:38PM -0400, Paul Moore wrote:
-> > On Thu, Sep 1, 2022 at 4:15 PM Joel Granados <j.granados@samsung.com> w=
-rote:
-> > > Hey Paul
-> > >
-> > > I realize that you have already sent this upstream but I wanted to sh=
-are
-> > > the Selinux part of the testing that we did to see if there is any
-> > > feedback.
-> > >
-> > > With my tests I see that the selinux_uring_cmd hook is run and it
-> > > results in a "avc : denied" when I run it with selinux in permissive
-> > > mode with an unpriviledged user. I assume that this is the expected
-> > > behavior. Here is how I tested
-> > >
-> > > *** With the patch:
-> > > * I ran the io_uring_passthrough.c test on a char device with an
-> > >   unpriviledged user.
-> > > * I took care of changing the permissions of /dev/ng0n1 to 666 prior
-> > >   to any testing.
-> > > * made sure that Selinux was in permissive mode.
-> > > * Made sure to have audit activated by passing "audit=3D1" to the ker=
-nel
-> > > * After noticing that some audit messages where getting lost I upped =
-the
-> > >   backlog limit to 256
-> > > * Prior to executing the test, I also placed a breakpoint inside
-> > >   selinux_uring_cmd to make sure that it was executed.
-> > > * This is the output of the audit when I executed the test:
-> > >
-> > >   [  136.615924] audit: type=3D1400 audit(1662043624.701:94): avc:  d=
-enied  { create } for  pid=3D263 comm=3D"io_uring_passth" anonclass=3D[io_u=
-ring] scontext=3Dsystem_u:system_r:kernel_t tcontext=3Dsystem_u:object_r:ke=
-rnel_t tclass=3Danon_inode permissive=3D1
-> > >   [  136.621036] audit: type=3D1300 audit(1662043624.701:94): arch=3D=
-c000003e syscall=3D425 success=3Dyes exit=3D3 a0=3D40 a1=3D7ffca29835a0 a2=
-=3D7ffca29835a0 a3=3D561529be2300 items=3D0 ppid=3D252 pid=3D263 auid=3D100=
-1 uid=3D1001 gid=3D1002 euid=3D1001 suid=3D1001 fsuid=3D1001 egid=3D1002 sg=
-id=3D1002 fsgid=3D1002 tty=3Dpts1 ses=3D3 comm=3D"io_uring_passth" exe=3D"/=
-mnt/src/liburing/test/io_uring_passthrough.t" subj=3Dsystem_u:system_r:kern=
-el_t key=3D(null)
-> > >   [  136.624812] audit: type=3D1327 audit(1662043624.701:94): proctit=
-le=3D2F6D6E742F7372632F6C69627572696E672F746573742F696F5F7572696E675F706173=
-737468726F7567682E74002F6465762F6E67306E31
-> > >   [  136.626074] audit: type=3D1400 audit(1662043624.702:95): avc:  d=
-enied  { map } for  pid=3D263 comm=3D"io_uring_passth" path=3D"anon_inode:[=
-io_uring]" dev=3D"anon_inodefs" ino=3D11715 scontext=3Dsystem_u:system_r:ke=
-rnel_t tcontext=3Dsystem_u:object_r:kernel_t tclass=3Danon_inode permissive=
-=3D1
-> > >   [  136.628012] audit: type=3D1400 audit(1662043624.702:95): avc:  d=
-enied  { read write } for  pid=3D263 comm=3D"io_uring_passth" path=3D"anon_=
-inode:[io_uring]" dev=3D"anon_inodefs" ino=3D11715 scontext=3Dsystem_u:syst=
-em_r:kernel_t tcontext=3Dsystem_u:object_r:kernel_t tclass=3Danon_inode per=
-missive=3D1
-> > >   [  136.629873] audit: type=3D1300 audit(1662043624.702:95): arch=3D=
-c000003e syscall=3D9 success=3Dyes exit=3D140179765297152 a0=3D0 a1=3D1380 =
-a2=3D3 a3=3D8001 items=3D0 ppid=3D252 pid=3D263 auid=3D1001 uid=3D1001 gid=
-=3D1002 euid=3D1001 suid=3D1001 fsuid=3D1001 egid=3D1002 sgid=3D1002 fsgid=
-=3D1002 tty=3Dpts1 ses=3D3 comm=3D"io_uring_passth" exe=3D"/mnt/src/liburin=
-g/test/io_uring_passthrough.t" subj=3Dsystem_u:system_r:kernel_t key=3D(nul=
-l)
-> > >   [  136.632415] audit: type=3D1327 audit(1662043624.702:95): proctit=
-le=3D2F6D6E742F7372632F6C69627572696E672F746573742F696F5F7572696E675F706173=
-737468726F7567682E74002F6465762F6E67306E31
-> > >   [  136.633652] audit: type=3D1400 audit(1662043624.705:96): avc:  d=
-enied  { cmd } for  pid=3D263 comm=3D"io_uring_passth" path=3D"/dev/ng0n1" =
-dev=3D"devtmpfs" ino=3D120 scontext=3Dsystem_u:system_r:kernel_t tcontext=
-=3Dsystem_u:object_r:device_t tclass=3Dio_uring permissive=3D1
-> > >   [  136.635384] audit: type=3D1336 audit(1662043624.705:96): uring_o=
-p=3D46 items=3D0 ppid=3D252 pid=3D263 uid=3D1001 gid=3D1002 euid=3D1001 sui=
-d=3D1001 fsuid=3D1001 egid=3D1002 sgid=3D1002 fsgid=3D1002 subj=3Dsystem_u:=
-system_r:kernel_t key=3D(null)
-> > >   [  136.636863] audit: type=3D1336 audit(1662043624.705:96): uring_o=
-p=3D46 items=3D0 ppid=3D252 pid=3D263 uid=3D1001 gid=3D1002 euid=3D1001 sui=
-d=3D1001 fsuid=3D1001 egid=3D1002 sgid=3D1002 fsgid=3D1002 subj=3Dsystem_u:=
-system_r:kernel_t key=3D(null)
-> > >
-> > > * From the output on time 136.633652 I see that the access should have
-> > >   been denied had selinux been enforcing.
-> > > * I also saw that the breakpoint hit.
-> > >
-> > > *** Without the patch:
-> > > * I ran the io_uring_passthrough.c test on a char device with an
-> > >   unpriviledged user.
-> > > * I took care of changing the permissions of /dev/ng0n1 to 666 prior
-> > >   to any testing.
-> > > * made sure that Selinux was in permissive mode.
-> > > * Made sure to have audit activated by passing "audit=3D1" to the ker=
-nel
-> > > * After noticing that some audit messages where getting lost I upped =
-the
-> > >   backlog limit to 256
-> > > * There were no audit messages when I executed the test.
-> > >
-> > > As with my smack tests I would really appreciate feecback on the
-> > > approach I took to testing and it's validity.
-> >=20
-> > Hi Joel,
-> >=20
-> > Thanks for the additional testing and verification!  Work like this is
-> > always welcome, regardless if the patch has already been merged
-> > upstream.
-> np
->=20
-> >=20
-> > As far as you test approach is concerned, I think you are on the right
-> > track, I might suggest resolving the other SELinux/AVC denials you are
-> > seeing with your test application to help reduce the noise in the
-> > logs.  Are you familiar with the selinux-testsuite (link below)?
-> >=20
-> > * https://protect2.fireeye.com/v1/url?k=3D6f356c96-0ebe79ac-6f34e7d9-74=
-fe4860008a-01002a6e4c92bb3e&q=3D1&e=3D46f33488-9311-49fa-9747-da210f2d147d&=
-u=3Dhttps%3A%2F%2Fgithub.com%2FSELinuxProject%2Fselinux-testsuite
-> Thx. Could not figure out how to remove the AVC from a quick look at the
-> page, but I'll probably figures something out :).
->=20
-> ATM, I'm doing a performance test on the io_uring_passtrhough
-> path to see how much, if any, perf we loose.
->=20
-> Thx again
->=20
-> Best
->=20
-> Joel
->=20
-> >=20
-> > --=20
-> > paul-moore.com
 
 
+On 9/16/22 06:54, Stefan Berger wrote:
+> 
+> 
+> On 9/15/22 20:56, Casey Schaufler wrote:
+>> On 9/15/2022 12:31 PM, Stefan Berger wrote:
+>>> The goal of this series of patches is to start with the namespacing of
+>>> IMA and support auditing within an IMA namespace (IMA-ns) as the first
+>>> step.
+>>>
+>>> In this series the IMA namespace is piggybacking on the user namespace
+>>> and therefore an IMA namespace is created when a user namespace is
+>>> created, although this is done late when SecurityFS is mounted inside
+>>> a user namespace. The advantage of piggybacking on the user namespace
+>>> is that the user namespace can provide the keys infrastructure that IMA
+>>> appraisal support will need later on.
+>>>
+>>> We chose the goal of supporting auditing within an IMA namespace 
+>>> since it
+>>> requires the least changes to IMA. Following this series, auditing 
+>>> within
+>>> an IMA namespace can be activated by a root running the following lines
+>>> that rely on a statically linked busybox to be installed on the host for
+>>> execution within the minimal container environment:
+>>>
+>>> As root (since audit rules may now only be set by root):
+>>
+>> How about calling out the required capabilities? You don't need
+>> to be root, you need a specific set of capabilities. It would be
+>> very useful for the purposes of understanding the security value
+>> of the patch set to know this.
+>>
+> CAP_AUDIT_WRITE?
+> 
 
---ajzavhv4aawhfwou
-Content-Type: application/pgp-signature; name="signature.asc"
+Currently the capabilities that are required are CAP_SYS_ADMIN, which I 
+could change to CAP_AUDIT_WRITE. This would result in the following 
+change to 26/26:
 
------BEGIN PGP SIGNATURE-----
+  diff --git a/security/integrity/ima/ima_policy.c 
+b/security/integrity/ima/ima_policy.c
+index 760e79bb5a34..40cd19d38f23 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -1396,15 +1396,15 @@ static unsigned int 
+ima_parse_appraise_algos(char *arg)
+  }
 
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmMkcwgACgkQupfNUreW
-QU9KIgv+KPms+bdDy7mZLQHCn26Q5KAgdB/I9W/EXwEnA1UNCz2ynb3ItPIq8Y2X
-4hPXWehxRJfgu+sSUjGW5klfV3rgfpErMm7XqkwvaG34FDfHd/JK9bi7+xywD1nW
-CZucd2o5xFp4tVuTNuo+VXwHIJOZRml9C01ji98vhTcmE9nBCxv5mSrmx7ZPrMPF
-f38tc7ckONumFxrGpIWXWn5l16o+yH6EobHnPDZSIS/hg4vRcbAPK/FwmMs/F/iG
-P7TLMBcTzj4KLqsHX0Iu2I6ZPFaass8+bOtqBJYmGWYTL5nyUVqeVxWrjKJCmhxf
-HFtDeBpg8wCDitWlZ0TFV1KcnycuLUof+0p9sVfWAn/EGkPh1R76gNiJXgo/Te2i
-hnZHy0jHW4k+msmLUHconZb9gOJSvwP35FMEGIzc0Qg4g4elwUo/2RNRzHK+fEE+
-jkRaE2X0owmv7jevH7sJOEftjuur1V3s5lKcY0T5/EPKU5qWyEw+FpzL50quQD8f
-uuyOkngI
-=P0TM
------END PGP SIGNATURE-----
+  /*
+- * Either host root with CAP_SYS_ADMIN in current user namespace or
+- * root with CAP_SYS_ADMIN on the host entering a namespace may set
++ * Either host root with CAP_AUDIT_WRITE in current user namespace or
++ * root with CAP_AUDIT_WRITE on the host entering a namespace may set
+   * audit rules inside a namespace.
+   */
+  static bool may_set_audit_rule_in_ns(kuid_t uid, struct user_namespace 
+*user_ns)
+  {
+         return (uid_eq(uid, GLOBAL_ROOT_UID) &&
+-               ns_capable(user_ns, CAP_SYS_ADMIN))
+-               || capable(CAP_SYS_ADMIN);
++               ns_capable(user_ns, CAP_AUDIT_WRITE))
++               || capable(CAP_AUDIT_WRITE);
+  }
+  static int ima_parse_rule(struct user_namespace *user_ns,
+                           char *rule, struct ima_rule_entry *entry)
 
---ajzavhv4aawhfwou--
+
+What this check is to prevent is that non-root users spawn a user 
+namespace and set IMA-audit rules which enables them to flood the audit 
+log. From what I see non-root users have the full capability set in a 
+user namespace they spawn. So it has to be filtered to root maybe with 
+CAP_SYS_WRITE instead of CAP_SYS_ADMIN.
