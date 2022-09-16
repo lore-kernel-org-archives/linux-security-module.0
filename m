@@ -2,65 +2,67 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7AE8C32771
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Sep 2022 19:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3F2ECAAA1
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Sep 2022 00:56:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230051AbiIOTeM (ORCPT
+        id S229652AbiIPA4l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Sep 2022 15:34:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36762 "EHLO
+        Thu, 15 Sep 2022 20:56:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229886AbiIOTd3 (ORCPT
+        with ESMTP id S229501AbiIPA4k (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Sep 2022 15:33:29 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFFF89D8FF;
-        Thu, 15 Sep 2022 12:33:16 -0700 (PDT)
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28FJVErB001204;
-        Thu, 15 Sep 2022 19:32:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=whl2GHMtNnzVs294V7Y+yivlxzZK4XMiEqwPy/cTN9Q=;
- b=EG1Pz18tDb7VvG9tnBIpkV1QOztUO3u+DctNcLNn9dz7CukXebqBQAIFz8fUrxwb/ZxL
- mUxKK3s8Yue3JkCY+zL/GxE2A/I1/fNN/lvTfWRMlUi5yhKDFymlsP40Gvui0ZjMEm6R
- fx+/5eDllNXfZUTeT+R9mDLUeh9hL1MH8Ka6hQq/j/YtTGkHC9bnoPu+AeEMmK2Pr9Ql
- p486AseIPJlFYEBc0iR25qSXBGGoxWUOlcfi0DU0k9/gyGX9pwzKt8t2tpbiO2RAH8hX
- UMROqxpxDX2OC8eoAwNDJi+THb2ZPl1ibfBxmO0/FFx/+1qjeyFnv0zPMc6fOZYFDmI0 Tw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jma9eg25c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Sep 2022 19:32:38 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28FJVjdB006410;
-        Thu, 15 Sep 2022 19:32:37 GMT
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jma9eg23x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Sep 2022 19:32:37 +0000
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28FJKftU023899;
-        Thu, 15 Sep 2022 19:32:36 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma05wdc.us.ibm.com with ESMTP id 3jm9160ddr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Sep 2022 19:32:36 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28FJWZ013736248
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Sep 2022 19:32:35 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 18036AE05C;
-        Thu, 15 Sep 2022 19:32:35 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5CF9AE063;
-        Thu, 15 Sep 2022 19:32:34 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 15 Sep 2022 19:32:34 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
+        Thu, 15 Sep 2022 20:56:40 -0400
+Received: from sonic306-28.consmr.mail.ne1.yahoo.com (sonic306-28.consmr.mail.ne1.yahoo.com [66.163.189.90])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0180586B7F
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Sep 2022 17:56:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1663289798; bh=xKRiN+tRII6o9SvC/3zJQA9qwLpa7PTjKW/Ff3H5skQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=NFozRvUvVllyDxNm8mGpQuWHNfVe+0Vmd/ZxLGtyvDHNAFhVPihyJf93g1EQQONlgqSEraxWM2sTEVOfKS7eq+cOV7dMKI7WTJSC//J0RUU+HvsQYI02jErc/+PBQ4CbbQgo046/+oqjqlD03pCNJPxB1RUW8A7roxsDiv2FMG+gtYLlrRJnVn3Jcb7waBr5tfKfwMZqdLg5DHAM9bHfYZWCwZHHxk9n+OLchbJdzhMlQ0G3/B5paKde1VaWcMGmJZ8GiSGUgYdwMmTqZtMCyv2vjweL4O9vH1YHIvjH+9D2TY4O9KTX4ETM/qlRVt6EOMAW+lsCocOESbJO/psVDg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1663289798; bh=WmbW9yzUc/no9nIGRczo+NjTt/C2LrnnvT/LDS/tlmf=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jubetYHTnYnbe+plg91aXvQq7Gzu4RAHvHoK+1Yxi3sLZ60qd+fW5ZbR6y4+nbM2qJD/CQMebGxYdJs7eyhti4ADt8aAu+f0z7sG4UH0dXiOp2dsI1Jpvr3ht7XfCB1900W/2b+0LwBAmcl2MhjueK10ywLOtTVMh2KoA+f5ztjFgp5VCnYh0FXYERL93xszZJsBNwoJpYMsc/emFZhyFcA6uFNgO5yULhLVprj64RAGWfgRaEpmIxGyDFwsocqeM1dv+nWHr7RfXcxQCZQaB6P2pwqBXiGIJJZMilKNapACLr0bX/vSF2xicHHVOJqng8H0w930Ct2yw6T8xwvF4w==
+X-YMail-OSG: fcI8zmcVM1nySX6lXTbLEFjZgYiOVpZpFxRJjJrjqht1j8DWMgd8dKkoU7fLH95
+ BNDqUW3VENgZamOE4TKh4Ve0neoNuxMGhdJYJ26xm71ueJ5yztC9YAf_KmVk.P.WYHL.OnSmz6VV
+ F8RpEnJu8NvZ_cXXNA4HBl8.sHuYEfUHq81bVBqYlH23Nk9.lU6IbFBT0EFfAjwEhbq_yKG1GEX2
+ HsIFcDolc0njG9Yscj5Q6LBnOwJyjAIdpHM2.fJfq_PFNy5MfvAIDG36gDDLy_XJUjprczwHa6Kh
+ gGVOHWTVMjW9HVVOhbJ3jOnXd7x0eDYTRPulHswYIDvWzurhhZBvpoO49E4aDPYSh3oPHrx1qSC_
+ ISkkYvz37HTdskMw8BBMBQfYKEt8myY8yP1u3gnl_52ot42IgXh6hRSucG7QGTD1_B5YmwxfXEss
+ VJyYnkGwtVdBlfXCKzuMUCn57TLd59BPhCh2TB3FroMYu70GaoyCjOV1MIMtxCwq1UoHawe7Ejm4
+ lpPyhmJ.1YlSGZ5PKsP51MtnxeL1A1sjnIgSJlIEvIdHN27gNVhXbiLoPNQxYWlGXO8iObAhnPSD
+ QN2N_KnNNDOM6Pgk1vQiqKStegE2eisFkirZXywn.mc56hAk7wjX.6n.mebAXieUtDjmlpS.ZdYH
+ uPIa5z2CCVrzhh.7tHvt5ox7M2qxZg8onOsnPe8exln4yPv5NTVe.lYav592bq5To2BUQxmy8XMU
+ ZCKsECZzzn47dMi4Wl.Nq2gFofhmBjWzFsklHgBN5pgpOevVMy23aUUYX9Ilb9StI4dDRJI2jfXD
+ PE5XQCGkRaywik686Fj72._YPsOTQtOsv8l2arh1X5jOWPYRuH99VwPdtXodQMq_kk80fHn1i8.Z
+ fcF.eXuoOdeD49wNT.OhI5i6wZ52q9DaoAtaK2qgluleNBcHsz.BPTnPhZjuHXtyWrU7YoOS2kK7
+ 1ClQ4iQNNP2gEOdovsOym4vH96aLsXXHfpWfgZWSc.KjMb00vT.xvnDCeB6ncaQbk2eJHgQwJqVY
+ lDjiVHgd_iA1B4OhOTJu8YZFAkkicMKSkLvJUfSPCj.KFjsS4YIs2gODpXSMJrxduqnek86nnw3h
+ v0WKcWPl5dGHeazK6NofxQkjMSu9gXpWiY8FRt7bmoTlqY6zHCSyGGzs7cdR2GRvkqMQggGiBwcG
+ rEhUpAzbDo287MXBwG9vVLfFeVRAM6XKjkwDUbL0f9NLyks8B71BiF366OKyhguhVfeWFzPCfV1D
+ 1I6ISkDtf7tSc4IpRVQHC1pmQNuS9dFJMk9v0moddp35AecVKgcjHiT6rCrUGw8NqBv55SYsXhOR
+ vs_4xxIQNCN9vmR_w9Hgkhq6yDlpV9O_6rFmZg7GBQ0jTrPKFCI2HyA5yJeaaleuAkAJec4_XPTu
+ fBu1D.rMNewQQ8kn7CBZyc.wnaCNBjE7OjbY2u255uqsJqwg0u.vOVxWWfjO0UH6yM6r4PKjDAA7
+ AfNTR8ZeBofsYuoY5nf8aS3YkbEKRT52I08adwzYNvgYnwqBUvfvzsUaEyL9WeCgD9EJgWSCAuCc
+ g5vGgkePv3yCCAAV0bUuEyG4Ec6zH5sV9f_TY9hJoJlNH0OdZ5C9Trvvkf4RFM9EknJtr_ZhuGww
+ lm2clJFDMioDM8CIWbfv.EFoZs5C3tIKhvB749LWIWqCl1r3IGZqAbMAL1QXyRHPou8iRT2bJIUn
+ 17EqDQJHEAaKFXmeGO5vRUjvprLREavnzfw8VET0Nxqc6U_TDgaZ_5ZrVUxTk4_k7eu1ALh7UwSH
+ P47WTLn6dSqaT8mJv67xewLMkstsvD1tLfTSaKKuJJG7veeXgpVwFIgfK_DX.o_eYA5jtU35OdR6
+ qMpXGVEL.dHlmb5pCidBuL2yAtA2dpZl1Z27TmUfPbqeSkaJoYghyLrhPY8lmlkJOI3WxjKTQJZL
+ PTr4Kpkb22gI3ZMG5kDIylbrjkcsXmgSrBPiDiRhzjEbMeeUPjAna.mLReO9GUTvo.NJbxh5rMMD
+ 8wGT9wXdJRxKKGy5o89LqHttmDnPNk0M_4zHzmSbYRxKRGxVNlDjjFceSm8TtqOoKzRxieVKW8X7
+ jHvmU3CbXO0CR5uQ9tuPqJNLIoNJQLkyYa8COe7EPK79jxcOScsEoaVYhgGv1cio1HN8RBOGp2aY
+ 6AuZrT3Jc8piHv1UhMokg8ly8MdzVeOuOSKwG2SfhtK.6.4GoxFwoVyrBwl_dxup2XzW4mh6VejP
+ ZI8ndST0gVUDtRrXIOSdl4XaE4_KLz6dhFRyHBw8bKnJ3TrBk_68kE0dD82jZ9SBA7F1kJPyACpU
+ -
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Fri, 16 Sep 2022 00:56:38 +0000
+Received: by hermes--production-ne1-544744cc75-mbjj6 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 906197aefc0e524116a4d5e4b45ad582;
+          Fri, 16 Sep 2022 00:56:33 +0000 (UTC)
+Message-ID: <7234a3e5-8b3c-3ac4-2e06-c6cffa46c10e@schaufler-ca.com>
+Date:   Thu, 15 Sep 2022 17:56:32 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH v14 00/26] ima: Namespace IMA with audit support in IMA-ns
+Content-Language: en-US
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, serge@hallyn.com, brauner@kernel.org,
         containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
         ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
@@ -69,144 +71,38 @@ Cc:     zohar@linux.ibm.com, serge@hallyn.com, brauner@kernel.org,
         jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
         paul@paul-moore.com, rgb@redhat.com,
         linux-security-module@vger.kernel.org, jmorris@namei.org,
-        jpenumak@redhat.com, John Johansen <john.johansen@canonical.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Micah Morton <mortonm@chromium.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v14 01/26] securityfs: rework dentry creation
-Date:   Thu, 15 Sep 2022 15:31:56 -0400
-Message-Id: <20220915193221.1728029-2-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220915193221.1728029-1-stefanb@linux.ibm.com>
+        jpenumak@redhat.com, casey@schaufler-ca.com
 References: <20220915193221.1728029-1-stefanb@linux.ibm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: tE6g5nFDFaXTZuujIDoCO8q_2Z7CVO2r
-X-Proofpoint-ORIG-GUID: iUgp-spUYq-jKX2fy8SMbHKTv-fUU6eM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-15_10,2022-09-14_04,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- suspectscore=0 clxscore=1011 priorityscore=1501 adultscore=0 spamscore=0
- mlxlogscore=999 malwarescore=0 lowpriorityscore=0 impostorscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209150119
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20220915193221.1728029-1-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20612 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Christian Brauner <brauner@kernel.org>
+On 9/15/2022 12:31 PM, Stefan Berger wrote:
+> The goal of this series of patches is to start with the namespacing of
+> IMA and support auditing within an IMA namespace (IMA-ns) as the first
+> step.
+>
+> In this series the IMA namespace is piggybacking on the user namespace
+> and therefore an IMA namespace is created when a user namespace is
+> created, although this is done late when SecurityFS is mounted inside
+> a user namespace. The advantage of piggybacking on the user namespace
+> is that the user namespace can provide the keys infrastructure that IMA
+> appraisal support will need later on.
+>
+> We chose the goal of supporting auditing within an IMA namespace since it
+> requires the least changes to IMA. Following this series, auditing within
+> an IMA namespace can be activated by a root running the following lines
+> that rely on a statically linked busybox to be installed on the host for
+> execution within the minimal container environment:
+>
+> As root (since audit rules may now only be set by root):
 
-When securityfs creates a new file or directory via
-securityfs_create_dentry() it will take an additional reference on the
-newly created dentry after it has attached the new inode to the new
-dentry and added it to the hashqueues.
-If we contrast this with debugfs, which has the same underlying logic as
-securityfs, it uses a similar pairing as securityfs. Where securityfs
-has the securityfs_create_dentry() and securityfs_remove() pairing,
-debugfs has the __debugfs_create_file() and debugfs_remove() pairing.
-
-In contrast to securityfs, debugfs doesn't take an additional reference
-on the newly created dentry in __debugfs_create_file() which would need
-to be put in debugfs_remove().
-
-The additional dget() isn't a problem per se. In the current
-implementation of securityfs each created dentry pins the filesystem via
-securityfs_create_dentry() until it is removed. Since it is virtually
-guaranteed that there is at least one user of securityfs that has created
-dentries the initial securityfs mount cannot go away until all dentries
-have been removed.
-
-Since most of the users of the initial securityfs mount don't go away
-until the system is shutdown the initial securityfs won't go away when
-unmounted. Instead a mount will usually surface the same superblock as
-before. The additional dget() doesn't matter in this scenario since it
-is required that all dentries have been cleaned up by the respective
-users before the superblock can be destroyed, i.e. superblock shutdown
-is tied to the lifetime of the associated dentries.
-
-However, in order to support ima namespaces we need to extend securityfs
-to support being mounted outside of the initial user namespace. For
-namespaced users the pinning logic doesn't make sense. Whereas in the
-initial namespace the securityfs instance and the associated data
-structures of its users can't go away for reason explained earlier users
-of non-initial securityfs instances do go away when the last users of
-the namespace are gone.
-
-So for those users we neither want to duplicate the pinning logic nor
-make the global securityfs instance display different information based
-on the namespace. Both options would be really messy and hacky.
-
-Instead we will simply give each namespace its own securityfs instance
-similar to how each ipc namespace has its own mqueue instance and all
-entries in there are cleaned up on umount or when the last user of the
-associated namespace is gone.
-
-This means that the superblock's lifetime isn't tied to the dentries.
-Instead the last umount, without any fds kept open, will trigger a clean
-shutdown. But now the additional dget() gets in the way. Instead of
-being able to rely on the generic superblock shutdown logic we would
-need to drop the additional dentry reference during superblock shutdown
-for all associated users. That would force the use of a generic
-coordination mechanism for current and future users of securityfs which
-is unnecessary. Simply remove the additional dget() in
-securityfs_dentry_create().
-
-In securityfs_remove() we will call dget() to take an additional
-reference on the dentry about to be removed. After simple_unlink() or
-simple_rmdir() have dropped the dentry refcount we can call d_delete()
-which will either turn the dentry into negative dentry if our earlier
-dget() is the only reference to the dentry, i.e. it has no other users,
-or remove it from the hashqueues in case there are additional users.
-
-All of these changes should not have any effect on the userspace
-semantics of the initial securityfs mount.
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Cc: John Johansen <john.johansen@canonical.com>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: Micah Morton <mortonm@chromium.org>
-Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-Cc: James Morris <jmorris@namei.org>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
-
----
-v13:
-  - Slight improvements in 1st paragraph of commit message
----
- security/inode.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/security/inode.c b/security/inode.c
-index 6c326939750d..13e6780c4444 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -159,7 +159,6 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
- 		inode->i_fop = fops;
- 	}
- 	d_instantiate(dentry, inode);
--	dget(dentry);
- 	inode_unlock(dir);
- 	return dentry;
- 
-@@ -302,10 +301,12 @@ void securityfs_remove(struct dentry *dentry)
- 	dir = d_inode(dentry->d_parent);
- 	inode_lock(dir);
- 	if (simple_positive(dentry)) {
-+		dget(dentry);
- 		if (d_is_dir(dentry))
- 			simple_rmdir(dir, dentry);
- 		else
- 			simple_unlink(dir, dentry);
-+		d_delete(dentry);
- 		dput(dentry);
- 	}
- 	inode_unlock(dir);
--- 
-2.36.1
+How about calling out the required capabilities? You don't need
+to be root, you need a specific set of capabilities. It would be
+very useful for the purposes of understanding the security value
+of the patch set to know this.
 
