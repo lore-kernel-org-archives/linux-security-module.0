@@ -2,80 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB95ECAAD8
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Sep 2022 20:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A253BC54EE9
+	for <linux-security-module@archiver.kernel.org>; Sat, 17 Sep 2022 09:16:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229850AbiIPUUU (ORCPT
+        id S229550AbiIQJQk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Sep 2022 16:20:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56340 "EHLO
+        Sat, 17 Sep 2022 05:16:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbiIPUUS (ORCPT
+        with ESMTP id S229517AbiIQJQj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Sep 2022 16:20:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1438B580A0;
-        Fri, 16 Sep 2022 13:20:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A46B962D91;
-        Fri, 16 Sep 2022 20:20:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0980DC433B5;
-        Fri, 16 Sep 2022 20:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663359616;
-        bh=nRLV12Mb0YiipccVdbD4fD+/s41J01u+MTPMkL8uEHw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=rNow7IWEtKu45jLz8tknCNlcqG+XDyoqf8ccLCDHisIV2O9YQaVkLiWhlL0oS50ME
-         QO1MjiIH7l9axIHErFpRLeKG8g01Gm1oP1rbz4co9sLO1Oqrcm0JF2+wzGKy9B7IjH
-         C3X7PBlnTQ7kDlnAATiowhE4CBlYonhmm71CLZpBKyCrVPZiXwhSerqimzVJ+TdIUy
-         fPLNJJFjC3TRiIX8n0kFx5QzpYKMAzMXBi6ye4JgN1yHXoeT7Edv4vxjzUCXcxoD5o
-         4OL/8IMz35IfYe8nDb7Vu6+Htidzg5AZuna2RHZpiPq8wo1acAY3DlBrr5FamcXvmq
-         FiJ15jEtmIDNg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D98EAC73FFD;
-        Fri, 16 Sep 2022 20:20:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sat, 17 Sep 2022 05:16:39 -0400
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3740645F64;
+        Sat, 17 Sep 2022 02:16:37 -0700 (PDT)
+Date:   Sat, 17 Sep 2022 09:16:20 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail3; t=1663406192; x=1663665392;
+        bh=WtH1XiJMuAo2t7Ag08kalVAzbnlWzm46SLxhU7NTyU4=;
+        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+         Subject:Reply-To:Feedback-ID:Message-ID;
+        b=wrMZSanWm0KJNnm3ykOCdOL3myVpKchYhLarOh+NsiXJB3cNn0XiZL2PXDM6LtgBL
+         3apqAbQLnHqEh+eoVn63MLzOc906v+d+cUbfJ7xjwtZPIpLDp0VA5MAShrxzjReeR5
+         M7EvduAsjV/qy4vIacG6Y4U/isHOKKOzBg/bah+2GmOqPNKtrznVv1st9g2xOZEqkV
+         XUeyh6D0dktGbx7x+5AFx72NVxUZP4NlfAo2XDtrCaycemsJPpqV6rVhIEdjUd7wzp
+         0MAp+ypX4PO1Rlcbi6BYF02vair4YktlZi5QGPL6Pye/WVA25lTRB3xEw+Nwd0/b0a
+         sZMpKhkpZNHrw==
+To:     linux-kernel@vger.kernel.org
+From:   Orlando Chamberlain <redecorating@protonmail.com>
+Cc:     jarkko@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        gargaditya08@live.com, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Orlando Chamberlain <redecorating@protonmail.com>,
+        stable@vger.kernel.org, Samuel Jiang <chyishian.jiang@gmail.com>
+Subject: [PATCHv2 1/1] efi: Correct Macmini DMI match in uefi cert quirk
+Message-ID: <20220917091532.3607-1-redecorating@protonmail.com>
+Feedback-ID: 28131841:user:proton
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next] bpf: use bpf_capable() instead of CAP_SYS_ADMIN for
- blinding decision
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166335961587.27465.6441988777317672518.git-patchwork-notify@kernel.org>
-Date:   Fri, 16 Sep 2022 20:20:15 +0000
-References: <20220905090149.61221-1-ykaliuta@redhat.com>
-In-Reply-To: <20220905090149.61221-1-ykaliuta@redhat.com>
-To:     Yauheni Kaliuta <ykaliuta@redhat.com>
-Cc:     bpf@vger.kernel.org, andrii@kernel.org,
-        alexei.starovoitov@gmail.com, jbenc@redhat.com,
-        daniel@iogearbox.net, serge@hallyn.com,
-        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello:
+It turns out Apple doesn't capitalise the "mini" in "Macmini" in DMI, which
+is inconsistent with other model line names.
 
-This patch was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
+Correct the capitalisation of Macmini in the quirk for skipping loading
+platform certs on T2 Macs.
 
-On Mon,  5 Sep 2022 12:01:49 +0300 you wrote:
-> The full CAP_SYS_ADMIN requirement for blining looks too strict
-> nowadays. These days given unpriv eBPF is disabled by default, the
-> main users for constant blinding coming from unpriv in particular
-> via cBPF -> eBPF migration (e.g. old-style socket filters).
-> 
-> Discussion: https://lore.kernel.org/bpf/20220831090655.156434-1-ykaliuta@redhat.com/
-> 
-> [...]
+Currently users get:
 
-Here is the summary with links:
-  - [bpf-next] bpf: use bpf_capable() instead of CAP_SYS_ADMIN for blinding decision
-    https://git.kernel.org/bpf/bpf-next/c/bfeb7e399bac
+------------[ cut here ]------------
+[Firmware Bug]: Page fault caused by firmware at PA: 0xffffa30640054000
+WARNING: CPU: 1 PID: 8 at arch/x86/platform/efi/quirks.c:735 efi_crash_grac=
+efully_on_page_fault+0x55/0xe0
+Modules linked in:
+CPU: 1 PID: 8 Comm: kworker/u12:0 Not tainted 5.18.14-arch1-2-t2 #1 4535eb3=
+fc40fd08edab32a509fbf4c9bc52d111e
+Hardware name: Apple Inc. Macmini8,1/Mac-7BA5B2DFE22DDD8C, BIOS 1731.120.10=
+.0.0 (iBridge: 19.16.15071.0.0,0) 04/24/2022
+Workqueue: efi_rts_wq efi_call_rts
+...
+---[ end trace 0000000000000000 ]---
+efi: Froze efi_rts_wq and disabled EFI Runtime Services
+integrity: Couldn't get size: 0x8000000000000015
+integrity: MODSIGN: Couldn't get UEFI db list
+efi: EFI Runtime Services are disabled!
+integrity: Couldn't get size: 0x8000000000000015
+integrity: Couldn't get UEFI dbx list
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Fixes: 155ca952c7ca ("efi: Do not import certificates from UEFI Secure Boot=
+ for T2 Macs")
+Cc: stable@vger.kernel.org
+Cc: Aditya Garg <gargaditya08@live.com>
+Tested-by: Samuel Jiang <chyishian.jiang@gmail.com>
+Signed-off-by: Orlando Chamberlain <redecorating@protonmail.com>
+---
+v1->v2: Clarified in commit message that this is for a dmi match string
+ security/integrity/platform_certs/load_uefi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integ=
+rity/platform_certs/load_uefi.c
+index 093894a640dc..b78753d27d8e 100644
+--- a/security/integrity/platform_certs/load_uefi.c
++++ b/security/integrity/platform_certs/load_uefi.c
+@@ -31,7 +31,7 @@ static const struct dmi_system_id uefi_skip_cert[] =3D {
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,1") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,2") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir9,1") },
+-=09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacMini8,1") },
++=09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "Macmini8,1") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacPro7,1") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,1") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,2") },
+--=20
+2.37.1
 
 
