@@ -2,102 +2,149 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A253BC54EE9
-	for <linux-security-module@archiver.kernel.org>; Sat, 17 Sep 2022 09:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A53ECAAD3
+	for <linux-security-module@archiver.kernel.org>; Sat, 17 Sep 2022 14:13:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229550AbiIQJQk (ORCPT
+        id S229683AbiIQON6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 17 Sep 2022 05:16:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35576 "EHLO
+        Sat, 17 Sep 2022 10:13:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbiIQJQj (ORCPT
+        with ESMTP id S229655AbiIQON4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 17 Sep 2022 05:16:39 -0400
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3740645F64;
-        Sat, 17 Sep 2022 02:16:37 -0700 (PDT)
-Date:   Sat, 17 Sep 2022 09:16:20 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail3; t=1663406192; x=1663665392;
-        bh=WtH1XiJMuAo2t7Ag08kalVAzbnlWzm46SLxhU7NTyU4=;
-        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-         Subject:Reply-To:Feedback-ID:Message-ID;
-        b=wrMZSanWm0KJNnm3ykOCdOL3myVpKchYhLarOh+NsiXJB3cNn0XiZL2PXDM6LtgBL
-         3apqAbQLnHqEh+eoVn63MLzOc906v+d+cUbfJ7xjwtZPIpLDp0VA5MAShrxzjReeR5
-         M7EvduAsjV/qy4vIacG6Y4U/isHOKKOzBg/bah+2GmOqPNKtrznVv1st9g2xOZEqkV
-         XUeyh6D0dktGbx7x+5AFx72NVxUZP4NlfAo2XDtrCaycemsJPpqV6rVhIEdjUd7wzp
-         0MAp+ypX4PO1Rlcbi6BYF02vair4YktlZi5QGPL6Pye/WVA25lTRB3xEw+Nwd0/b0a
-         sZMpKhkpZNHrw==
-To:     linux-kernel@vger.kernel.org
-From:   Orlando Chamberlain <redecorating@protonmail.com>
-Cc:     jarkko@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        gargaditya08@live.com, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Orlando Chamberlain <redecorating@protonmail.com>,
-        stable@vger.kernel.org, Samuel Jiang <chyishian.jiang@gmail.com>
-Subject: [PATCHv2 1/1] efi: Correct Macmini DMI match in uefi cert quirk
-Message-ID: <20220917091532.3607-1-redecorating@protonmail.com>
-Feedback-ID: 28131841:user:proton
+        Sat, 17 Sep 2022 10:13:56 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 833AF32BB1;
+        Sat, 17 Sep 2022 07:13:55 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8AEB9153B;
+        Sat, 17 Sep 2022 07:14:01 -0700 (PDT)
+Received: from FVFF77S0Q05N (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D04083F71A;
+        Sat, 17 Sep 2022 07:13:52 -0700 (PDT)
+Date:   Sat, 17 Sep 2022 15:13:40 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     guoren@kernel.org
+Cc:     tglx@linutronix.de, peterz@infradead.org, luto@kernel.org,
+        Conor.Dooley@microchip.com, xianting.tian@linux.alibaba.com,
+        daolu@rivosinc.com, arnd@arndb.de, linux-kernel@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Guo Ren <guoren@linux.alibaba.com>
+Subject: Re: [RFC PATCH] generic_entry: Add stackleak support
+Message-ID: <YyXWFI6OdVecqYcp@FVFF77S0Q05N>
+References: <20220907014809.919979-1-guoren@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220907014809.919979-1-guoren@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-It turns out Apple doesn't capitalise the "mini" in "Macmini" in DMI, which
-is inconsistent with other model line names.
+On Tue, Sep 06, 2022 at 09:48:09PM -0400, guoren@kernel.org wrote:
+> From: Guo Ren <guoren@linux.alibaba.com>
+> 
+> Make generic_entry supports basic STACKLEAK, and no arch custom
+> code is needed.
 
-Correct the capitalisation of Macmini in the quirk for skipping loading
-platform certs on T2 Macs.
+IIUC, this change is going to cause redundant work to be done on x86 (since it
+erases the stack in its entry assembly). It also means any arch relying upon
+this will not clear some stack contents that could be cleared from assembly
+later in the return to userspace path, after the C entry code stack frames are
+gone.
 
-Currently users get:
+I assume you're adding this so that riscv can use stackleak? WHy can't it call
+stackleak_erase*() later in the return-to-userspce path?
 
-------------[ cut here ]------------
-[Firmware Bug]: Page fault caused by firmware at PA: 0xffffa30640054000
-WARNING: CPU: 1 PID: 8 at arch/x86/platform/efi/quirks.c:735 efi_crash_grac=
-efully_on_page_fault+0x55/0xe0
-Modules linked in:
-CPU: 1 PID: 8 Comm: kworker/u12:0 Not tainted 5.18.14-arch1-2-t2 #1 4535eb3=
-fc40fd08edab32a509fbf4c9bc52d111e
-Hardware name: Apple Inc. Macmini8,1/Mac-7BA5B2DFE22DDD8C, BIOS 1731.120.10=
-.0.0 (iBridge: 19.16.15071.0.0,0) 04/24/2022
-Workqueue: efi_rts_wq efi_call_rts
-...
----[ end trace 0000000000000000 ]---
-efi: Froze efi_rts_wq and disabled EFI Runtime Services
-integrity: Couldn't get size: 0x8000000000000015
-integrity: MODSIGN: Couldn't get UEFI db list
-efi: EFI Runtime Services are disabled!
-integrity: Couldn't get size: 0x8000000000000015
-integrity: Couldn't get UEFI dbx list
+> Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
+> Signed-off-by: Guo Ren <guoren@kernel.org>
+> ---
+>  drivers/firmware/efi/libstub/Makefile | 4 +++-
+>  include/linux/stackleak.h             | 3 +++
+>  kernel/entry/common.c                 | 5 +++++
+>  security/Kconfig.hardening            | 2 +-
+>  4 files changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> index d0537573501e..bb6ad37a9690 100644
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -19,7 +19,7 @@ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ \
+>  # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
+>  # disable the stackleak plugin
+>  cflags-$(CONFIG_ARM64)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
+> -				   -fpie $(DISABLE_STACKLEAK_PLUGIN) \
+> +				   -fpie \
+>  				   $(call cc-option,-mbranch-protection=none)
+>  cflags-$(CONFIG_ARM)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
+>  				   -fno-builtin -fpic \
+> @@ -27,6 +27,8 @@ cflags-$(CONFIG_ARM)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
+>  cflags-$(CONFIG_RISCV)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
+>  				   -fpic
+>  
+> +cflags-$(CONFIG_GCC_PLUGIN_STACKLEAK) += $(DISABLE_STACKLEAK_PLUGIN)
+> +
+>  cflags-$(CONFIG_EFI_GENERIC_STUB) += -I$(srctree)/scripts/dtc/libfdt
+>  
+>  KBUILD_CFLAGS			:= $(cflags-y) -Os -DDISABLE_BRANCH_PROFILING \
 
-Fixes: 155ca952c7ca ("efi: Do not import certificates from UEFI Secure Boot=
- for T2 Macs")
-Cc: stable@vger.kernel.org
-Cc: Aditya Garg <gargaditya08@live.com>
-Tested-by: Samuel Jiang <chyishian.jiang@gmail.com>
-Signed-off-by: Orlando Chamberlain <redecorating@protonmail.com>
----
-v1->v2: Clarified in commit message that this is for a dmi match string
- security/integrity/platform_certs/load_uefi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Huh; is there a latent bug here where x86's EFI stub is instrumented with
+stackleak?
 
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integ=
-rity/platform_certs/load_uefi.c
-index 093894a640dc..b78753d27d8e 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -31,7 +31,7 @@ static const struct dmi_system_id uefi_skip_cert[] =3D {
- =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,1") },
- =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,2") },
- =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir9,1") },
--=09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacMini8,1") },
-+=09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "Macmini8,1") },
- =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacPro7,1") },
- =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,1") },
- =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,2") },
---=20
-2.37.1
+Thanks,
+Mark.
 
-
+> diff --git a/include/linux/stackleak.h b/include/linux/stackleak.h
+> index c36e7a3b45e7..9890802a5868 100644
+> --- a/include/linux/stackleak.h
+> +++ b/include/linux/stackleak.h
+> @@ -76,8 +76,11 @@ static inline void stackleak_task_init(struct task_struct *t)
+>  # endif
+>  }
+>  
+> +void noinstr stackleak_erase(void);
+> +
+>  #else /* !CONFIG_GCC_PLUGIN_STACKLEAK */
+>  static inline void stackleak_task_init(struct task_struct *t) { }
+> +static inline void stackleak_erase(void) {}
+>  #endif
+>  
+>  #endif
+> diff --git a/kernel/entry/common.c b/kernel/entry/common.c
+> index 063068a9ea9b..6acb1d6a1396 100644
+> --- a/kernel/entry/common.c
+> +++ b/kernel/entry/common.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/livepatch.h>
+>  #include <linux/audit.h>
+>  #include <linux/tick.h>
+> +#include <linux/stackleak.h>
+>  
+>  #include "common.h"
+>  
+> @@ -194,6 +195,10 @@ static void exit_to_user_mode_prepare(struct pt_regs *regs)
+>  
+>  	lockdep_assert_irqs_disabled();
+>  
+> +#ifndef CONFIG_HAVE_ARCH_STACKLEAK
+> +	stackleak_erase();
+> +#endif
+> +
+>  	/* Flush pending rcuog wakeup before the last need_resched() check */
+>  	tick_nohz_user_enter_prepare();
+>  
+> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+> index bd2aabb2c60f..3329482beb8d 100644
+> --- a/security/Kconfig.hardening
+> +++ b/security/Kconfig.hardening
+> @@ -152,7 +152,7 @@ config GCC_PLUGIN_STRUCTLEAK_VERBOSE
+>  config GCC_PLUGIN_STACKLEAK
+>  	bool "Poison kernel stack before returning from syscalls"
+>  	depends on GCC_PLUGINS
+> -	depends on HAVE_ARCH_STACKLEAK
+> +	depends on HAVE_ARCH_STACKLEAK || GENERIC_ENTRY
+>  	help
+>  	  This option makes the kernel erase the kernel stack before
+>  	  returning from system calls. This has the effect of leaving
+> -- 
+> 2.36.1
+> 
