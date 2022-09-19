@@ -2,75 +2,100 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F29EAC6FA90
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Sep 2022 07:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20373ECAAD3
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Sep 2022 08:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbiISHa2 (ORCPT
+        id S229681AbiISIKh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Sep 2022 03:30:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41292 "EHLO
+        Mon, 19 Sep 2022 04:10:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbiISHa1 (ORCPT
+        with ESMTP id S229604AbiISIKg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Sep 2022 03:30:27 -0400
-X-Greylist: delayed 420 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 19 Sep 2022 00:30:24 PDT
-Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898531A052;
-        Mon, 19 Sep 2022 00:30:24 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id E41421357; Mon, 19 Sep 2022 09:23:17 +0200 (CEST)
-From:   Nikolaus Voss <nv@vosn.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 16 Sep 2022 07:45:29 +0200
-Subject: [PATCH] KEYS: encrypted: fix key instantiation with user-provided
- data
-Message-Id: <20220919072317.E41421357@mail.steuer-voss.de>
+        Mon, 19 Sep 2022 04:10:36 -0400
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C87DA13D32
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Sep 2022 01:10:35 -0700 (PDT)
+Received: by mail-il1-f199.google.com with SMTP id x14-20020a056e021cae00b002f1d5aca8c6so18818142ill.5
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Sep 2022 01:10:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date;
+        bh=q3nttBvEn2pG4Dwb57sJB9DDnZkjfuTq728A1BAZF78=;
+        b=Q82K/5NexCmFeuMtinPKPSiiiT+5QOOBzdeqzI/gs03X2DM6GYcd3zd+jlQiWe+WQQ
+         DA+6r6zk4slJhET1BjGBGpy1cGAEL0pZLz0kbbN2EyMqTuHrizSfbBmq7f4nZpQZ46Xn
+         zH10JtkSghusJ5pMEmeP3bqamY0LrLYMI/2EVRukLHe4o4n/vcuWfmaeEz74CSKqaBzH
+         IhB5VE9UaukZi3nL5gFQoHXaYQDGIv5D7oEL4U3iExYBrcijEORJD734thksyyLNSMbS
+         BO91q6liZIZe2s4qOgxYSiIWatIR3j2O4iLnUVebukC49IRGrq0Fm/07eENu0sXC6IWF
+         G7hw==
+X-Gm-Message-State: ACgBeo0aQnyLj+XhmqeSt+jdXFjU55kWd6uAhv91VQO7piXiS9JsuNiz
+        FoITCZOQC6sW16ncVwwS54KAaYJ4qCgEZl2wqqC1HhkRCvf/
+X-Google-Smtp-Source: AMsMyM6F9/Y1MiESdlE9sTUXyQj2iIT5+uHNCGp7mnUisa/aD7Y7MvTjXswhxOwFtyg4VRIwXspdW+aJwqLU7XzCQDgPAN5OqqLx
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:1683:b0:35a:4772:edc2 with SMTP id
+ f3-20020a056638168300b0035a4772edc2mr7579890jat.128.1663575035215; Mon, 19
+ Sep 2022 01:10:35 -0700 (PDT)
+Date:   Mon, 19 Sep 2022 01:10:35 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000008058305e9033f85@google.com>
+Subject: [syzbot] KMSAN: uninit-value in tomoyo_path_chown
+From:   syzbot <syzbot+541e21dcc32c4046cba9@syzkaller.appspotmail.com>
+To:     glider@google.com, jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, paul@paul-moore.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
-decrypted data") added key instantiation with user provided decrypted data.
-The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
-Fix this to use hex2bin instead.
+Hello,
 
-Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided decrypted data")
-Cc: stable <stable@kernel.org>
-Signed-off-by: Nikolaus Voss <nikolaus.voss@haag-streit.com>
+syzbot found the following issue on:
+
+HEAD commit:    3a2b6b904ea7 x86: kmsan: enable KMSAN builds for x86
+git tree:       https://github.com/google/kmsan.git master
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13719145080000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8e64bc5364a1307e
+dashboard link: https://syzkaller.appspot.com/bug?extid=541e21dcc32c4046cba9
+compiler:       clang version 15.0.0 (https://github.com/llvm/llvm-project.git 610139d2d9ce6746b3c617fb3e2f7886272d26ff), GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cac995080000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16816c33080000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+541e21dcc32c4046cba9@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in tomoyo_path_chown+0x121/0x240 security/tomoyo/tomoyo.c:366
+ tomoyo_path_chown+0x121/0x240 security/tomoyo/tomoyo.c:366
+ security_path_chown+0x17d/0x260 security/security.c:1224
+ chown_common+0x9f2/0xef0 fs/open.c:729
+ vfs_fchown fs/open.c:802 [inline]
+ ksys_fchown+0x229/0x360 fs/open.c:813
+ __do_sys_fchown fs/open.c:821 [inline]
+ __se_sys_fchown fs/open.c:819 [inline]
+ __x64_sys_fchown+0x8a/0xe0 fs/open.c:819
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Local variable newattrs created at:
+ chown_common+0xd1/0xef0 fs/open.c:708
+ vfs_fchown fs/open.c:802 [inline]
+ ksys_fchown+0x229/0x360 fs/open.c:813
+
+CPU: 0 PID: 3490 Comm: syz-executor426 Not tainted 6.0.0-rc2-syzkaller-47460-g3a2b6b904ea7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+=====================================================
+
+
 ---
- security/keys/encrypted-keys/encrypted.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index e05cfc2e49ae..1e313982af02 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -627,7 +627,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
- 			pr_err("encrypted key: instantiation of keys using provided decrypted data is disabled since CONFIG_USER_DECRYPTED_DATA is set to false\n");
- 			return ERR_PTR(-EINVAL);
- 		}
--		if (strlen(decrypted_data) != decrypted_datalen) {
-+		if (strlen(decrypted_data) != decrypted_datalen * 2) {
- 			pr_err("encrypted key: decrypted data provided does not match decrypted data length provided\n");
- 			return ERR_PTR(-EINVAL);
- 		}
-@@ -791,8 +791,8 @@ static int encrypted_init(struct encrypted_key_payload *epayload,
- 		ret = encrypted_key_decrypt(epayload, format, hex_encoded_iv);
- 	} else if (decrypted_data) {
- 		get_random_bytes(epayload->iv, ivsize);
--		memcpy(epayload->decrypted_data, decrypted_data,
--				   epayload->decrypted_datalen);
-+		ret = hex2bin(epayload->decrypted_data, decrypted_data,
-+			      epayload->decrypted_datalen);
- 	} else {
- 		get_random_bytes(epayload->iv, ivsize);
- 		get_random_bytes(epayload->decrypted_data, epayload->decrypted_datalen);
--- 
-2.34.1
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
