@@ -2,118 +2,94 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A981ECAAD8
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Sep 2022 07:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA389C6FA92
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Sep 2022 08:01:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230110AbiITH7J (ORCPT
+        id S230171AbiITIBZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 20 Sep 2022 03:59:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54634 "EHLO
+        Tue, 20 Sep 2022 04:01:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229988AbiITH7G (ORCPT
+        with ESMTP id S230201AbiITIAz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 20 Sep 2022 03:59:06 -0400
-Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D37C627F;
-        Tue, 20 Sep 2022 00:59:02 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id 896546B57; Tue, 20 Sep 2022 09:58:56 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.steuer-voss.de (Postfix) with ESMTP id 869E36A84;
-        Tue, 20 Sep 2022 09:58:56 +0200 (CEST)
-Date:   Tue, 20 Sep 2022 09:58:56 +0200 (CEST)
-From:   Nikolaus Voss <nv@vosn.de>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Yael Tzur <yaelt@google.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KEYS: encrypted: fix key instantiation with user-provided
- data
-In-Reply-To: <YylKR1UQZGhN0+UW@kernel.org>
-Message-ID: <372b91d-5ee6-ae24-2279-0dc7621489c@vosn.de>
-References: <20220919072317.E41421357@mail.steuer-voss.de> <YylKR1UQZGhN0+UW@kernel.org>
+        Tue, 20 Sep 2022 04:00:55 -0400
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30ECE25C5;
+        Tue, 20 Sep 2022 01:00:51 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4MWv3F1xcyz9xtn2;
+        Tue, 20 Sep 2022 15:55:05 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwAno13_ciljaChgAA--.64537S3;
+        Tue, 20 Sep 2022 09:00:23 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+        dhowells@redhat.com, jarkko@kernel.org, rostedt@goodmis.org,
+        mingo@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, shuah@kernel.org
+Cc:     bpf@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, memxor@gmail.com,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v18 01/13] bpf: Allow kfuncs to be used in LSM programs
+Date:   Tue, 20 Sep 2022 09:59:39 +0200
+Message-Id: <20220920075951.929132-2-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220920075951.929132-1-roberto.sassu@huaweicloud.com>
+References: <20220920075951.929132-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwAno13_ciljaChgAA--.64537S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruF15tF4kCFWUGF1kZFyxXwb_yoWfurc_Cw
+        4jg3WxArn5CFWIqa10kF4SqrZrKa4YqFn5C3s0gws3Jwn8G3yDArWYgF9IqFWkX397X3yf
+        tFn3CwsIqr17XjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbfkYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r18M2
+        8IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK
+        021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F
+        4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8
+        JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
+        0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
+        JVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwI
+        xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+        Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7
+        IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK
+        8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+        0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOpnQUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgABBF1jj39AmAAAsR
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 20 Sep 2022, Jarkko Sakkinen wrote:
-> On Fri, Sep 16, 2022 at 07:45:29AM +0200, Nikolaus Voss wrote:
->> Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
->> decrypted data") added key instantiation with user provided decrypted data.
->> The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
->> Fix this to use hex2bin instead.
->>
->> Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided decrypted data")
->> Cc: stable <stable@kernel.org>
->> Signed-off-by: Nikolaus Voss <nikolaus.voss@haag-streit.com>
->> ---
->>  security/keys/encrypted-keys/encrypted.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
->> index e05cfc2e49ae..1e313982af02 100644
->> --- a/security/keys/encrypted-keys/encrypted.c
->> +++ b/security/keys/encrypted-keys/encrypted.c
->> @@ -627,7 +627,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
->>  			pr_err("encrypted key: instantiation of keys using provided decrypted data is disabled since CONFIG_USER_DECRYPTED_DATA is set to false\n");
->>  			return ERR_PTR(-EINVAL);
->>  		}
->> -		if (strlen(decrypted_data) != decrypted_datalen) {
->> +		if (strlen(decrypted_data) != decrypted_datalen * 2) {
->
-> This looks wrong. What does cap decrypted_data, and why strnlen()
-> is not used?
+From: KP Singh <kpsingh@kernel.org>
 
-This is a plausibility check to ensure the user-specified key length 
-(decrypted_datalen) matches the length of the user specified key. 
-strnlen() would not add any extra security here, the data has already been 
-copied.
+In preparation for the addition of new kfuncs, allow kfuncs defined in the
+tracing subsystem to be used in LSM programs by mapping the LSM program
+type to the TRACING hook.
 
->
->>  			pr_err("encrypted key: decrypted data provided does not match decrypted data length provided\n");
->
-> Using pr_err() is probably wrong here and has different prefix
-> than elsewhere in the file (also most of other uses of pr_err()
-> are wrong apparently). Nothing bad is really happening.
+Signed-off-by: KP Singh <kpsingh@kernel.org>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Acked-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+---
+ kernel/bpf/btf.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-It actually _is_ an error preventing key instatiation. User space keyctl 
-cannot be verbose about the reason why instantiation failed so it makes 
-sense to be verbose in kernel space. To me, this seems consistent with 
-other occurrences of pr_err() in this file, maybe I misunderstood you?
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index b3940c605aac..dd60cd0efcf8 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -7381,6 +7381,7 @@ static int bpf_prog_type_to_kfunc_hook(enum bpf_prog_type prog_type)
+ 	case BPF_PROG_TYPE_STRUCT_OPS:
+ 		return BTF_KFUNC_HOOK_STRUCT_OPS;
+ 	case BPF_PROG_TYPE_TRACING:
++	case BPF_PROG_TYPE_LSM:
+ 		return BTF_KFUNC_HOOK_TRACING;
+ 	case BPF_PROG_TYPE_SYSCALL:
+ 		return BTF_KFUNC_HOOK_SYSCALL;
+-- 
+2.25.1
 
-Btw, this patch changes neither string length checking nor log levels.
-
->
-> And who does make any sense of that error message anyway?
->
-> For one, I don't understand it.
->
->>  			return ERR_PTR(-EINVAL);
->>  		}
->> @@ -791,8 +791,8 @@ static int encrypted_init(struct encrypted_key_payload *epayload,
->>  		ret = encrypted_key_decrypt(epayload, format, hex_encoded_iv);
->>  	} else if (decrypted_data) {
->>  		get_random_bytes(epayload->iv, ivsize);
->> -		memcpy(epayload->decrypted_data, decrypted_data,
->> -				   epayload->decrypted_datalen);
->> +		ret = hex2bin(epayload->decrypted_data, decrypted_data,
->> +			      epayload->decrypted_datalen);
->>  	} else {
->>  		get_random_bytes(epayload->iv, ivsize);
->>  		get_random_bytes(epayload->decrypted_data, epayload->decrypted_datalen);
->> --
->> 2.34.1
->>
->
->
-> BR, Jarkko
->
-
-Jarkko, thanks for the review!
-
-Niko
