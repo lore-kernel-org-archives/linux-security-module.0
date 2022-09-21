@@ -2,73 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B32C6FA91
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Sep 2022 13:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 601C5ECAAD8
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Sep 2022 13:43:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229771AbiIUNB4 (ORCPT
+        id S229701AbiIUNnk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Sep 2022 09:01:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47222 "EHLO
+        Wed, 21 Sep 2022 09:43:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbiIUNBw (ORCPT
+        with ESMTP id S229580AbiIUNnj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Sep 2022 09:01:52 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F25CB8C45C;
-        Wed, 21 Sep 2022 06:01:50 -0700 (PDT)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MXdjH1byBzMn8Z;
-        Wed, 21 Sep 2022 20:57:07 +0800 (CST)
-Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
- (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Wed, 21 Sep
- 2022 21:01:48 +0800
-From:   GUO Zihua <guozihua@huawei.com>
-To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>
-Subject: [PATCH v5 0/2] ima: Handle -ESTALE returned by ima_filter_rule_match()
-Date:   Wed, 21 Sep 2022 20:58:02 +0800
-Message-ID: <20220921125804.59490-1-guozihua@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 21 Sep 2022 09:43:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 236A440569
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Sep 2022 06:43:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B260962BA4
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Sep 2022 13:43:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2198BC433B5
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Sep 2022 13:43:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663767818;
+        bh=Gmuw7RYv066IxRae4zmwgZqYaBan3eu2R7Ak+x42SkI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=epzRSJ0jyAlPZ16JH3+XPj16W+fgflBh69EoIUoCn+iYNALhGhq0EGN7hyvK6/xnz
+         tCrpO2MgL9f/JKcaFVIpdYkwWnKD81N8BqNwoKaIfVpULQLmOvz2ZVdroMjawrta0o
+         ltKZ/KorHpLGLupVh7L0N+yDipDQXa6ThxHz29DxoZb9DXxNv+/aKxvEEYH4WGYHYT
+         oaAootsA0LfuR1MUG3VujCM5P1GmGhokDptfnnqRKL295GKdkC9Z7vl9faJN982WEV
+         SSAWusvTxydhhjpXEPqqtH0teulP5+KXcoBUaMngLqObOmac7yPzK5i/UYTPtLUnEo
+         byWIA2B/BIBDA==
+Received: by mail-wr1-f54.google.com with SMTP id t7so9912775wrm.10
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Sep 2022 06:43:38 -0700 (PDT)
+X-Gm-Message-State: ACrzQf26OcoBC9UiI53uRfc8uhL3q4i5sLz0dXKrdO2qDh80FIl2D+g0
+        J4g77+L8UDxclKgqCpPP82LQO02TBh23L6sGGr/uJw==
+X-Google-Smtp-Source: AMsMyM79gcUQDdS+aheFYCBSJgkOeTa2g6z7vtIVxydF5XAVlYV8l3YcMmi9Yn+KvZ/xQuuFPV3NVrj9PpUfx7TqFJ4=
+X-Received: by 2002:a2e:920a:0:b0:26c:f7b:95db with SMTP id
+ k10-20020a2e920a000000b0026c0f7b95dbmr9324650ljg.156.1663767805783; Wed, 21
+ Sep 2022 06:43:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.175.31]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+References: <20220920075951.929132-1-roberto.sassu@huaweicloud.com> <20220920075951.929132-3-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20220920075951.929132-3-roberto.sassu@huaweicloud.com>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Wed, 21 Sep 2022 15:43:14 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7or3+zwZShXC7TdzhSbN4O9wEk6KEkbRBFh85=HZ87PQ@mail.gmail.com>
+Message-ID: <CACYkzJ7or3+zwZShXC7TdzhSbN4O9wEk6KEkbRBFh85=HZ87PQ@mail.gmail.com>
+Subject: Re: [PATCH v18 02/13] btf: Export bpf_dynptr definition
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, sdf@google.com, haoluo@google.com,
+        jolsa@kernel.org, mykolal@fb.com, dhowells@redhat.com,
+        jarkko@kernel.org, rostedt@goodmis.org, mingo@redhat.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        shuah@kernel.org, bpf@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, memxor@gmail.com,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-IMA happens to measure extra files if LSM based rules are specified and
-the corresponding LSM is updating its policy.
+On Tue, Sep 20, 2022 at 10:01 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> eBPF dynamic pointers is a new feature recently added to upstream. It binds
+> together a pointer to a memory area and its size. The internal kernel
+> structure bpf_dynptr_kern is not accessible by eBPF programs in user space.
+> They instead see bpf_dynptr, which is then translated to the internal
+> kernel structure by the eBPF verifier.
+>
+> The problem is that it is not possible to include at the same time the uapi
+> include linux/bpf.h and the vmlinux BTF vmlinux.h, as they both contain the
+> definition of some structures/enums. The compiler complains saying that the
+> structures/enums are redefined.
+>
+> As bpf_dynptr is defined in the uapi include linux/bpf.h, this makes it
+> impossible to include vmlinux.h. However, in some cases, e.g. when using
+> kfuncs, vmlinux.h has to be included. The only option until now was to
+> include vmlinux.h and add the definition of bpf_dynptr directly in the eBPF
+> program source code from linux/bpf.h.
+>
+> Solve the problem by using the same approach as for bpf_timer (which also
+> follows the same scheme with the _kern suffix for the internal kernel
+> structure).
+>
+> Add the following line in one of the dynamic pointer helpers,
+> bpf_dynptr_from_mem():
+>
+> BTF_TYPE_EMIT(struct bpf_dynptr);
+>
+> Cc: stable@vger.kernel.org
+> Cc: Joanne Koong <joannelkoong@gmail.com>
+> Fixes: 97e03f521050c ("bpf: Add verifier support for dynptrs")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Acked-by: Yonghong Song <yhs@fb.com>
 
-The root cause is explained in the second patch.
+I tested this out and it works, however for the BPF signing use case
+where "bpf_dynptr_kern" is added to struct bpf_prog_aux one still
+ends up defining the __ksym extern with bpf_dynptr_kern.
 
-GUO Zihua (2):
-  ima: Simplify ima_lsm_copy_rule
-  ima: Handle -ESTALE returned by ima_filter_rule_match()
+But let's discuss that when the series is posted.
 
- security/integrity/ima/ima_policy.c | 51 ++++++++++++++++++++---------
- 1 file changed, 35 insertions(+), 16 deletions(-)
----
-
-v5:
-  Updated code to avoid reusing rule. Fixed a potential mem leak caused
-by race condition. Updated commit message for the first patch based on
-Mimi's feedback.
-
-v4:
-  Use a tempory rule instead of updating the rule in place. To do that,
-also update ima_lsm_copy_rule so we can make use of it.
-
-v3:
-  Update current rule instead of just retrying, as suggested by Mimi
-
-v2:
-  Fixes message errors pointed out by Mimi
-
--- 
-2.17.1
-
+Tested-by: KP Singh <kpsingh@kernel.org>
