@@ -2,207 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBE9C6FA91
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Sep 2022 10:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517F7C6FA86
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Sep 2022 11:16:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbiIVKBR (ORCPT
+        id S229794AbiIVLQv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Sep 2022 06:01:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35708 "EHLO
+        Thu, 22 Sep 2022 07:16:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229825AbiIVKBL (ORCPT
+        with ESMTP id S229649AbiIVLQu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Sep 2022 06:01:11 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCAA8ABD68
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 03:01:04 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id x21so5722882edd.11
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 03:01:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date;
-        bh=J0qXhAwEzoWbz8NYi11IkHID2B4LQANK3dOrOzpzswM=;
-        b=EokOGSnIK46rPF0cq5JkkwoxMv8EWDs4JGCatOPqqwqHOk7VVx5cN8Z4pR+ia19ty1
-         VqbQSXqeshUYwMZ3zrCOl7xa1Ko5uzNEIMPgxPrjtsxjj41DS8jAO/bEcdDQ/as0CWRM
-         nREFoJ1c8pSocKsEIwnMPLVEKtIQBV6T9xxvX/IQK/epJuPQz9hPJgQlyp1q+cHNC5QN
-         SakGEbkKVrr2uXSo8Br/Q7V99tS7MtCVSQz/gAZPhJ52pPxBDEYWn3wo1+oSLvR6TtqG
-         YA0T0qlFkn9yuqpyfIA+LIgVX/Kdh0EUzhpm1c21Qq3a3jZDWMXd6Zt4P7uJEInaI5cg
-         TCQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=J0qXhAwEzoWbz8NYi11IkHID2B4LQANK3dOrOzpzswM=;
-        b=E8Khffq3RGevwZgnIRUDhPsBNkl0j7QZPBovY5zWSqK2wbDXiPewxRHfEvOGCW2olL
-         zQRnO0YRcvnTQZdauxDfgZ79u0V7yNkYPQ1DR2P8fVGKE+7xLWDYFTqOfJgd3ns2TvI3
-         9oQW1oi4y8GUh+3mMcnimy/xzsq0w0MIqBumFEjbz1qsO/lOgalyvwoF7wM4MTqlS84P
-         v8nHVLihWhQle+mwlXDBTidZIri9cpTsxeGmUiQjfDHckUPam0QEKezyLEVaz7ZBVBkW
-         YuqB2/5Y63JG5mRfJXhxgCDgm8JQdlLsSs8rUNXi36vF0eDE7vVquhxdtMN5mWttbSOc
-         5RHg==
-X-Gm-Message-State: ACrzQf2aiQ8LnTTeaq/gqzX6ioiEWb8ASBniSYevMunUbVM+QmXlupMn
-        lqQVjb4GFa1jF46jfzVWibocin+ayfY2ZRBVHTdwRg==
-X-Google-Smtp-Source: AMsMyM61YoKKgXD2TA5sZVWJ9BLcFHrwIAfLChpAAtUcovDLpwWQQCNKsZ+/eUBPUBz41TArDzkEfh374RGFsFLM0oI=
-X-Received: by 2002:aa7:cb87:0:b0:43b:e650:6036 with SMTP id
- r7-20020aa7cb87000000b0043be6506036mr2455207edt.350.1663840862990; Thu, 22
- Sep 2022 03:01:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220921153646.931277075@linuxfoundation.org>
-In-Reply-To: <20220921153646.931277075@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Thu, 22 Sep 2022 15:30:51 +0530
-Message-ID: <CA+G9fYs5BDHc2638p7br6-RzQzdJjxOOUvujyssy0bOWKOtLCg@mail.gmail.com>
-Subject: Re: [PATCH 5.15 00/45] 5.15.70-rc1 review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-        slade@sladewatkins.com, Coiby Xu <coxu@redhat.com>,
-        Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Michal Suchanek <msuchanek@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 22 Sep 2022 07:16:50 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B52DE0EE;
+        Thu, 22 Sep 2022 04:16:47 -0700 (PDT)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28MBCkjq019080;
+        Thu, 22 Sep 2022 11:16:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=VfeMk0I8CyGmHAproj3iFDcN1iVRvDX2EbPo3dGUoHU=;
+ b=ZsSbQLpGk2nsEzC/Zv6mUrhbGYU6bmq9uwFJORd22PFRX9NCZQaM1lCdzX/L8Jdrjang
+ sl8xksCo1VYB6WK8en7rcr8FYTapwROdDzB0zAxnOFwaS15X7CU8HpkSx3XWdhppQMTu
+ Ou+PBe2pldqkEe94W1KFwfyASpXUmPI0Mbb6YD1FANcm9E+Ihpy1Csb4DQDcgFiNGFfH
+ Ug+t5nkMOXl8KMgLcpsRlIwQPcwEmjywOHZFCstsfC1/labQNw4w3G1IJZXoYCIE1aJI
+ V+1HBef3iuxU1fpPPa3YiSHN/EuYTOxR6FQVDI9pt2XIOCOUBgcwbGBxzVxC6uO1awc+ uA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jrpmp83eq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Sep 2022 11:16:34 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28MBGXpH008491;
+        Thu, 22 Sep 2022 11:16:33 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jrpmp83bv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Sep 2022 11:16:33 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28MB75ft025530;
+        Thu, 22 Sep 2022 11:11:30 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma02dal.us.ibm.com with ESMTP id 3jn5va8bba-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Sep 2022 11:11:30 +0000
+Received: from smtpav05.dal12v.mail.ibm.com ([9.208.128.132])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28MBBUMJ1508090
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Sep 2022 11:11:30 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B169E58052;
+        Thu, 22 Sep 2022 11:11:28 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3F5B158065;
+        Thu, 22 Sep 2022 11:11:28 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.73.181])
+        by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Thu, 22 Sep 2022 11:11:28 +0000 (GMT)
+Message-ID: <ce948f9e5639345026679b31a818cc12a247ce60.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 2/2] ima: Handle -ESTALE returned by
+ ima_filter_rule_match()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     GUO Zihua <guozihua@huawei.com>, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Thu, 22 Sep 2022 07:09:57 -0400
+In-Reply-To: <20220921125804.59490-3-guozihua@huawei.com>
+References: <20220921125804.59490-1-guozihua@huawei.com>
+         <20220921125804.59490-3-guozihua@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: mwfEG8_b1bKJ5ffsvDXjbwyrebLvu5Oe
+X-Proofpoint-GUID: 33ygfeGxtpU_f8UJmvQG2muEPdBe0PX6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-22_07,2022-09-22_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 clxscore=1015 phishscore=0 adultscore=0 malwarescore=0
+ suspectscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209220074
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 21 Sept 2022 at 21:19, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.15.70 release.
-> There are 45 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 23 Sep 2022 15:36:33 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.15.70-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi Scott,
 
-Results from Linaro=E2=80=99s test farm.
-Regressions on arm64 allmodconfig builds failed.
+On Wed, 2022-09-21 at 20:58 +0800, GUO Zihua wrote:
+>                 }
+> -               if (!rc)
+> -                       return false;
+> +
+> +               if (rc == -ESTALE && !rule_reinitialized) {
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Ok, this limits allocating ima_lsm_copy_rule() to the first -ESTALE,
 
-* arm64, build failed.
-  - clang-12-allmodconfig
-  - clang-13-allmodconfig
-  - clang-14-allmodconfig
-  - clang-nightly-allmodconfig
-  - gcc-10-allmodconfig
-  - gcc-11-allmodconfig
-  - gcc-12-allmodconfig
+> +                       lsm_rule = ima_lsm_copy_rule(rule);
+> +                       if (lsm_rule) {
+> +                               rule_reinitialized = true;
+> +                               goto retry;
 
-> Coiby Xu <coxu@redhat.com>
->     arm64: kexec_file: use more system keyrings to verify kernel image si=
-gnature
+but "retry" is also limited to the first -ESTALE.
 
-Build errors:
----------------
-arch/arm64/kernel/kexec_image.c:136:23: error:
-'kexec_kernel_verify_pe_sig' undeclared here (not in a function); did
-you mean 'arch_kexec_kernel_verify_sig'?
-  136 |         .verify_sig =3D kexec_kernel_verify_pe_sig,
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
-      |                       arch_kexec_kernel_verify_sig
+> +                       }
+> +               }
+> +               if (!rc) {
+> +                       result = false;
+> +                       goto out;
+> +               }
+>         }
+> -       return true;
+> +       result = true;
+> +
+> +out:
+> +       if (rule_reinitialized) {
+> +               for (i = 0; i < MAX_LSM_RULES; i++)
+> +                       ima_filter_rule_free(lsm_rule->lsm[i].rule);
+> +               kfree(lsm_rule);
+> +       }
+> +       return result;
+>  }
 
+-- 
 
-## Build
-* kernel: 5.15.70-rc1
-* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
-* git branch: linux-5.15.y
-* git commit: 16d41e601858766935e69e3f9d62db810e5d277d
-* git describe: v5.15.69-46-g16d41e601858
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15=
-.69-46-g16d41e601858
+thanks,
 
-## Test Regressions (compared to v5.15.69)
-* arm64, build
-  - clang-12-allmodconfig
-  - clang-13-allmodconfig
-  - clang-14-allmodconfig
-  - clang-nightly-allmodconfig
-  - gcc-10-allmodconfig
-  - gcc-11-allmodconfig
-  - gcc-12-allmodconfig
+Mimi
 
-## No Metric Regressions (compared to v5.15.69)
-
-## No Test Fixes (compared to v5.15.69)
-
-## No Metric Fixes (compared to v5.15.69)
-
-## Test result summary
-total: 106713, pass: 94034, fail: 687, skip: 11680, xfail: 312
-
-## Build Summary
-* arc: 10 total, 10 passed, 0 failed
-* arm: 339 total, 336 passed, 3 failed
-* arm64: 72 total, 63 passed, 9 failed
-* i386: 61 total, 55 passed, 6 failed
-* mips: 62 total, 59 passed, 3 failed
-* parisc: 14 total, 14 passed, 0 failed
-* powerpc: 69 total, 66 passed, 3 failed
-* riscv: 27 total, 27 passed, 0 failed
-* s390: 30 total, 27 passed, 3 failed
-* sh: 26 total, 24 passed, 2 failed
-* sparc: 14 total, 14 passed, 0 failed
-* x86_64: 65 total, 63 passed, 2 failed
-
-## Test suites summary
-* fwts
-* igt-gpu-tools
-* kunit
-* kvm-unit-tests
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-cap_bounds
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-filecaps
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-fsx
-* ltp-hugetlb
-* ltp-io
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-open-posix-tests
-* ltp-pty
-* ltp-sched
-* ltp-securebits
-* ltp-syscalls
-* ltp-tracing
-* network-basic-tests
-* packetdrill
-* rcutorture
-* v4l2-compliance
-* vdso
-
---
-Linaro LKFT
-https://lkft.linaro.org
