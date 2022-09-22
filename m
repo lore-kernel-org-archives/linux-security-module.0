@@ -2,52 +2,53 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D447C6FA95
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Sep 2022 15:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE02CC6FA82
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Sep 2022 15:18:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231837AbiIVPSv (ORCPT
+        id S232038AbiIVPSw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Sep 2022 11:18:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41268 "EHLO
+        Thu, 22 Sep 2022 11:18:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231878AbiIVPSj (ORCPT
+        with ESMTP id S231895AbiIVPSk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Sep 2022 11:18:39 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA69EEFA49;
-        Thu, 22 Sep 2022 08:18:10 -0700 (PDT)
+        Thu, 22 Sep 2022 11:18:40 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79D89EEEB2;
+        Thu, 22 Sep 2022 08:18:15 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7BA97B83839;
-        Thu, 22 Sep 2022 15:18:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5E1FC433D6;
-        Thu, 22 Sep 2022 15:18:06 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 28072B8383A;
+        Thu, 22 Sep 2022 15:18:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 528D3C433C1;
+        Thu, 22 Sep 2022 15:18:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663859888;
-        bh=MWeoZ0/V2lTZ/MXNnA/IeO/jY7FHURW/VBDh8GSymc8=;
+        s=k20201202; t=1663859892;
+        bh=wRLQBjqKBkGDMEA9rYRGCPX37nxIsgYV3S/j/np45MA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FLGl7N8lJMoDKQZ/3BQacSRkHAatnJPvU4RC6wM4+oiYtij5bs0xjXvyGJC1N0ZVj
-         475r143tX6Lj6JvI+v+gL8J7sMaazeYiVWyhFGtAOXxplrgj8N4cUe7MmBppzqpcKZ
-         cTTTiRSIRX32DtGgHFOMwvPZsM0HCST0+K8g2SMyjDWJnllAflWMiQKJSGVE8PUCoa
-         cK1iUMIE2Tk1oPylDP+1964k4Q3zZ2A4PSsqej2OdRjneVHscZMYGZbJao2cmW2VLo
-         crKe1wh1ogbV/yk3/PGsbHhVlO/kRhrvhOhwX7vsH7lFfZNsCUOIPes8f2nVbkDDFw
-         vbrgygeIhoR6g==
+        b=kAcwfZd1whvXZVcwP0sgWpSQgrmjBfbh45imc+zGiIqmUbFFBmM/FfQtEfn47qZVE
+         b0z+YcfguI+UykRgrCMQz+ub5AnG3Lik9Rle2H62a2NvxSc2N57ANI54Q7WEfMPDr3
+         5L4PkzHrCx36eWFF8jJiG73lzmzfAgCfBrYSkALHpunw2ws4gutfz4c89PaklJHfMG
+         huA/ehPUQbH54raI/NTrWUd8CfrYem/x+7LVUpTZJrzvPI2qyMia0lAFMLXTpiUDFe
+         ssitr6vCuL5DzRI1pTjMURcwo4L26y1avDJZhKhNzbqYnbHaDFB3LmPnfWSxEx2Ulq
+         lHk+LUEriaTyw==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH 09/29] security: add set acl hook
-Date:   Thu, 22 Sep 2022 17:17:07 +0200
-Message-Id: <20220922151728.1557914-10-brauner@kernel.org>
+Subject: [PATCH 11/29] smack: implement set acl hook
+Date:   Thu, 22 Sep 2022 17:17:09 +0200
+Message-Id: <20220922151728.1557914-12-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220922151728.1557914-1-brauner@kernel.org>
 References: <20220922151728.1557914-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5184; i=brauner@kernel.org; h=from:subject; bh=MWeoZ0/V2lTZ/MXNnA/IeO/jY7FHURW/VBDh8GSymc8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSTr1FTc89qXrBKZuuIV1+IMj3W9Eb0SSbGNa7MTXATfmOcZ XdrZUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJG58Qz/7BU82QWfPvrUGZkVl3m0XT Y4+MtHH+ddL88yrZ4iP3XhH0aGL9NfnCva3eOml931KXT/40+LFMN8Q15N/vE0S/ralX+LeAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3480; i=brauner@kernel.org; h=from:subject; bh=wRLQBjqKBkGDMEA9rYRGCPX37nxIsgYV3S/j/np45MA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSTr1FTm/wg9eP+5hOurkLtNpdpzvObzf7BcEvX+SmzhfOND Cyw2dZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykx4/hf32Ht0HHif97XdzqZZgm39 8lY3H0zMGlIUsbpLobt9T+f8HwV/6RznubnH9mluueCi1s03T7dfljT2Nk6kHP7ZZTP3HIsAAA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -73,95 +74,60 @@ security hook for setting posix acls and pass down the posix acls in
 their appropriate vfs format instead of hacking it through a void
 pointer stored in the uapi format.
 
-In the next patches we implement the hooks for the few security modules
-that do actually have restrictions on posix acls.
+I spent considerate time in the security module infrastructure and
+audited all codepaths. Smack has no restrictions based on the posix
+acl values passed through it. The capability hook doesn't need to be
+called either because it only has restrictions on security.* xattrs. So
+this all becomes a very simple hook for smack.
 
 Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
- include/linux/lsm_hook_defs.h |  2 ++
- include/linux/lsm_hooks.h     |  4 ++++
- include/linux/security.h      | 11 +++++++++++
- security/security.c           |  9 +++++++++
- 4 files changed, 26 insertions(+)
+ security/smack/smack_lsm.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 806448173033..9f7bce6927b1 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -145,6 +145,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
- LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
- LSM_HOOK(int, 0, inode_removexattr, struct user_namespace *mnt_userns,
- 	 struct dentry *dentry, const char *name)
-+LSM_HOOK(int, 0, inode_set_acl, struct user_namespace *mnt_userns,
-+	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
- LSM_HOOK(int, 0, inode_need_killpriv, struct dentry *dentry)
- LSM_HOOK(int, 0, inode_killpriv, struct user_namespace *mnt_userns,
- 	 struct dentry *dentry)
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 84a0d7e02176..28246c5d190c 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -435,6 +435,10 @@
-  *	Check permission before removing the extended attribute
-  *	identified by @name for @dentry.
-  *	Return 0 if permission is granted.
-+ * @inode_set_acl:
-+ *	Check permission before setting the posix acls
-+ *	The posix acls in @kacl are identified by @acl_name.
-+ *	Return 0 if permission is granted.
-  * @inode_getsecurity:
-  *	Retrieve a copy of the extended attribute representation of the
-  *	security label associated with @name for @inode via @buffer.  Note that
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 1bc362cb413f..db9b97786075 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -359,6 +359,9 @@ int security_inode_getattr(const struct path *path);
- int security_inode_setxattr(struct user_namespace *mnt_userns,
- 			    struct dentry *dentry, const char *name,
- 			    const void *value, size_t size, int flags);
-+int security_inode_set_acl(struct user_namespace *mnt_userns,
-+			   struct dentry *dentry, const char *acl_name,
-+			   struct posix_acl *kacl);
- void security_inode_post_setxattr(struct dentry *dentry, const char *name,
- 				  const void *value, size_t size, int flags);
- int security_inode_getxattr(struct dentry *dentry, const char *name);
-@@ -869,6 +872,14 @@ static inline int security_inode_setxattr(struct user_namespace *mnt_userns,
- 	return cap_inode_setxattr(dentry, name, value, size, flags);
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 001831458fa2..ec6d55632b4f 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1393,6 +1393,29 @@ static int smack_inode_removexattr(struct user_namespace *mnt_userns,
+ 	return 0;
  }
  
-+static inline int security_inode_set_acl(struct user_namespace *mnt_userns,
-+					 struct dentry *dentry,
-+					 const char *acl_name,
-+					 struct posix_acl *kacl)
++/**
++ * smack_inode_set_acl - Smack check for setting posix acls
++ * @mnt_userns: the userns attached to the mnt this request came from
++ * @dentry: the object
++ * @acl_name: name of the posix acl
++ * @kacl: the posix acls
++ *
++ * Returns 0 if access is permitted, an error code otherwise
++ */
++static int smack_inode_set_acl(struct user_namespace *mnt_userns,
++			       struct dentry *dentry, const char *acl_name,
++			       struct posix_acl *kacl)
 +{
-+	return 0;
++	struct smk_audit_info ad;
++	int rc;
++
++	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
++	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
++	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_WRITE, &ad);
++	rc = smk_bu_inode(d_backing_inode(dentry), MAY_WRITE, rc);
++	return rc;
 +}
 +
- static inline void security_inode_post_setxattr(struct dentry *dentry,
- 		const char *name, const void *value, size_t size, int flags)
- { }
-diff --git a/security/security.c b/security/security.c
-index 14d30fec8a00..56d48e7254d6 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1370,6 +1370,15 @@ int security_inode_setxattr(struct user_namespace *mnt_userns,
- 	return evm_inode_setxattr(mnt_userns, dentry, name, value, size);
- }
- 
-+int security_inode_set_acl(struct user_namespace *mnt_userns,
-+			   struct dentry *dentry, const char *acl_name,
-+			   struct posix_acl *kacl)
-+{
-+	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-+		return 0;
-+	return call_int_hook(inode_set_acl, 0, mnt_userns, dentry, acl_name, kacl);
-+}
-+
- void security_inode_post_setxattr(struct dentry *dentry, const char *name,
- 				  const void *value, size_t size, int flags)
- {
+ /**
+  * smack_inode_getsecurity - get smack xattrs
+  * @mnt_userns: active user namespace
+@@ -4772,6 +4795,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(inode_post_setxattr, smack_inode_post_setxattr),
+ 	LSM_HOOK_INIT(inode_getxattr, smack_inode_getxattr),
+ 	LSM_HOOK_INIT(inode_removexattr, smack_inode_removexattr),
++	LSM_HOOK_INIT(inode_set_acl, smack_inode_set_acl),
+ 	LSM_HOOK_INIT(inode_getsecurity, smack_inode_getsecurity),
+ 	LSM_HOOK_INIT(inode_setsecurity, smack_inode_setsecurity),
+ 	LSM_HOOK_INIT(inode_listsecurity, smack_inode_listsecurity),
 -- 
 2.34.1
 
