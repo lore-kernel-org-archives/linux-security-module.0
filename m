@@ -2,100 +2,156 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB1AC6FA8B
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Sep 2022 19:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8E5C54EE9
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Sep 2022 19:38:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230294AbiIVTH7 (ORCPT
+        id S232137AbiIVTii (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Sep 2022 15:07:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49640 "EHLO
+        Thu, 22 Sep 2022 15:38:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232256AbiIVTH6 (ORCPT
+        with ESMTP id S232000AbiIVTih (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Sep 2022 15:07:58 -0400
-Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5486EFFA5B
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 12:07:56 -0700 (PDT)
-Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-1225219ee46so15290724fac.2
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 12:07:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=2E/C7DbYFbgaIr08r5WQJJ8lH65h8Rlpzk3fsg7D9e8=;
-        b=Sc2t84MYNifRdpTZz6LHCdTHbGpHtePPoew2qsdF9HHe8gStsU2qKwHjLQmE1+oPPg
-         I1EurkRBUsiV216mZSYCjX649kwgi5p9dGPj50oSNxaH8t9N5Lyt/GsKj+zklmLR6qEr
-         6R4aHXhiCm/iktm0j/EoGmNd0poPj6lF+d3aisz2dZom3AWJS8ZfcYs8qIfw2l7FOMBe
-         HWJ3KinBwLAunUH38CmELQ+uYEnv7YZf9KTUM3+NhHM3aV3rTSVddlmYen3IgFOvDILn
-         1pehVy8LfZjvBTsHHkBR3BUiOkMUko7Ppki5o5o9Li47YyyXPlz3/ARUMXM7puPuP26M
-         yXxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=2E/C7DbYFbgaIr08r5WQJJ8lH65h8Rlpzk3fsg7D9e8=;
-        b=IPjUvpbmEuo4lO6RbLoJSqjqyyexISdgTbIWKHdXW/W8ZdombTQejxlrWF4xdPq67j
-         jr7MyLhsacvv/PKM9vPNZHM/0NqaLSQ9EbDF/FIeWOeqruzpWu++m0/nskEomcizDz8H
-         AJB2PQliIQ3saWsjGK57r2kxrSkD/Gq9soMyfLAw8FDCdQgP9Id9yOy9dY6AEQD00SE3
-         eWzXqtMlC0XhL0bHZNbmzEgA/HwE4pHc/eBMLoWTJ4tm76819OICZKYMihZ8f5XvuTi7
-         MYpRmWGbgGnxndjI9s3jYt7I+VUgVDDtjETQD6JOZIcYQdcqHJHDkJIxiaDmfVojdSma
-         LYuA==
-X-Gm-Message-State: ACrzQf2KITT2RbPCMqddLqmBjTAN6T4tKop/BoacPlo43SxYWyKfKS8q
-        gOGxyx3BRkvzhWGYkkhstU+5oXRJKwsGb4wjAMuu
-X-Google-Smtp-Source: AMsMyM6d9RAgQ5lrUQAwZbu3DJT1/UNg9egieC9LHbxthXW7OebfrM1G5JLCjS1iPUbSyY1utPnUyQOKNNFWojmurr0=
-X-Received: by 2002:a05:6870:600c:b0:12d:9e19:9860 with SMTP id
- t12-20020a056870600c00b0012d9e199860mr2966449oaa.172.1663873675323; Thu, 22
- Sep 2022 12:07:55 -0700 (PDT)
+        Thu, 22 Sep 2022 15:38:37 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C0F010B232;
+        Thu, 22 Sep 2022 12:38:32 -0700 (PDT)
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28MIlMRJ009291;
+        Thu, 22 Sep 2022 19:38:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=a2ZHrjSOmetjLTAzI4FxKlACz/dALJaSDE7BGJpKrAk=;
+ b=JQwt2ycrhazHtj6wVpCa2HFZgsEpf9qvhR0cjbK1JHT6itvGfuKwEr+YY+SULO7uPe8k
+ 0ZwXF3iipeM+BjLlOZ+gLx8s1J+wVNCIz3qa63JaFbMeS2dzo+/ZMxcE3A7NE/QTdDXi
+ LMRmGgTcntbDsIBzL2/6HS0SvUikY939MOtPREc3pMc8IjWIeJj18fzVY3kq1wph7KSf
+ GC2n1ZEWOSO+/TbotEAc1ip0qMy1OTvTBRJH/ycrWM5MT9XquW6uUqh3Zjth7QSTHWTg
+ XBdKRreEsDZ9aWr63neweilCM/9qP0IxhuwXg0RDFVJLAzenuCc3MxKKzGBGcnltzUQG tA== 
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jrvtrjhuq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Sep 2022 19:38:20 +0000
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28MJadJ2007777;
+        Thu, 22 Sep 2022 19:38:19 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma03wdc.us.ibm.com with ESMTP id 3jn5v9txpr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Sep 2022 19:38:18 +0000
+Received: from smtpav03.dal12v.mail.ibm.com ([9.208.128.129])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28MJcJrx4457106
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Sep 2022 19:38:19 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6A66D5803F;
+        Thu, 22 Sep 2022 19:38:17 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5678158061;
+        Thu, 22 Sep 2022 19:38:17 +0000 (GMT)
+Received: from localhost (unknown [9.41.178.242])
+        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Thu, 22 Sep 2022 19:38:17 +0000 (GMT)
+From:   Nathan Lynch <nathanl@linux.ibm.com>
+To:     linuxppc-dev@lists.ozlabs.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     jmorris@namei.org, mpe@ellerman.id.au, paul@paul-moore.com,
+        serge@hallyn.com, ajd@linux.ibm.com, gcwilson@linux.ibm.com,
+        nayna@linux.ibm.com
+Subject: [PATCH 1/2] powerpc/pseries: block untrusted device tree changes when locked down
+Date:   Thu, 22 Sep 2022 14:38:16 -0500
+Message-Id: <20220922193817.106041-2-nathanl@linux.ibm.com>
+X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20220922193817.106041-1-nathanl@linux.ibm.com>
+References: <20220922193817.106041-1-nathanl@linux.ibm.com>
 MIME-Version: 1.0
-References: <20220922151728.1557914-1-brauner@kernel.org> <d74030ae-4b9a-5b39-c203-4b813decd9eb@schaufler-ca.com>
- <CAHk-=whLbq9oX5HDaMpC59qurmwj6geteNcNOtQtb5JN9J0qFw@mail.gmail.com> <16ca7e4c-01df-3585-4334-6be533193ba6@schaufler-ca.com>
-In-Reply-To: <16ca7e4c-01df-3585-4334-6be533193ba6@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 22 Sep 2022 15:07:44 -0400
-Message-ID: <CAHC9VhQRST66pVuNM0WGJsh-W01mDD-bX=GpFxCceUJ1FMWrmg@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/29] acl: add vfs posix acl api
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: yPTDTIhBVKuhg-hbW0Np0JmBchhm2y1l
+X-Proofpoint-GUID: yPTDTIhBVKuhg-hbW0Np0JmBchhm2y1l
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-22_14,2022-09-22_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1015
+ mlxscore=0 spamscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209220126
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 22, 2022 at 2:54 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 9/22/2022 10:57 AM, Linus Torvalds wrote:
-> > On Thu, Sep 22, 2022 at 9:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> Could we please see the entire patch set on the LSM list?
-> > While I don't think that's necessarily wrong, I would like to point
-> > out that the gitweb interface actually does make it fairly easy to
-> > just see the whole patch-set.
-> >
-> > IOW, that
-> >
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git/log/?h=fs.acl.rework
-> >
-> > that Christian pointed to is not a horrible way to see it all. Go to
-> > the top-most commit, and it's easy to follow the parent links.
->
-> I understand that the web interface is fine for browsing the changes.
-> It isn't helpful for making comments on the changes. The discussion
-> on specific patches (e.g. selinux) may have impact on other parts of
-> the system (e.g. integrity) or be relevant elsewhere (e.g. smack). It
-> can be a real problem if the higher level mailing list (the LSM list
-> in this case) isn't included.
+The /proc/powerpc/ofdt interface allows the root user to freely alter
+the in-kernel device tree, enabling arbitrary physical address writes
+via drivers that could bind to malicious device nodes, thus making it
+possible to disable lockdown.
 
-This is probably one of those few cases where Casey and I are in
-perfect agreement.  I'd much rather see the patches hit my inbox than
-have to go hunting for them and then awkwardly replying to them (and
-yes, I know there are ways to do that, I just personally find it
-annoying).  I figure we are all deluged with email on a daily basis
-and have developed mechanisms to deal with that in a sane way, what is
-29 more patches on the pile?
+Historically this interface has been used on the pseries platform to
+facilitate the runtime addition and removal of processor, memory, and
+device resources (aka Dynamic Logical Partitioning or DLPAR). Years
+ago, the processor and memory use cases were migrated to designs that
+happen to be lockdown-friendly: device tree updates are communicated
+directly to the kernel from firmware without passing through untrusted
+user space. I/O device DLPAR via the "drmgr" command in powerpc-utils
+remains the sole legitimate user of /proc/powerpc/ofdt, but it is
+already broken in lockdown since it uses /dev/mem to allocate argument
+buffers for the rtas syscall. So only illegitimate uses of the
+interface should see a behavior change when running on a locked down
+kernel.
 
+Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+---
+ arch/powerpc/platforms/pseries/reconfig.c | 5 +++++
+ include/linux/security.h                  | 1 +
+ security/security.c                       | 1 +
+ 3 files changed, 7 insertions(+)
+
+diff --git a/arch/powerpc/platforms/pseries/reconfig.c b/arch/powerpc/platforms/pseries/reconfig.c
+index cad7a0c93117..599bd2c78514 100644
+--- a/arch/powerpc/platforms/pseries/reconfig.c
++++ b/arch/powerpc/platforms/pseries/reconfig.c
+@@ -10,6 +10,7 @@
+ #include <linux/kernel.h>
+ #include <linux/notifier.h>
+ #include <linux/proc_fs.h>
++#include <linux/security.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ 
+@@ -361,6 +362,10 @@ static ssize_t ofdt_write(struct file *file, const char __user *buf, size_t coun
+ 	char *kbuf;
+ 	char *tmp;
+ 
++	rv = security_locked_down(LOCKDOWN_DEVICE_TREE);
++	if (rv)
++		return rv;
++
+ 	kbuf = memdup_user_nul(buf, count);
+ 	if (IS_ERR(kbuf))
+ 		return PTR_ERR(kbuf);
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 7bd0c490703d..1ca8dbacd3cc 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -122,6 +122,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_XMON_WR,
+ 	LOCKDOWN_BPF_WRITE_USER,
+ 	LOCKDOWN_DBG_WRITE_KERNEL,
++	LOCKDOWN_DEVICE_TREE,
+ 	LOCKDOWN_INTEGRITY_MAX,
+ 	LOCKDOWN_KCORE,
+ 	LOCKDOWN_KPROBES,
+diff --git a/security/security.c b/security/security.c
+index 4b95de24bc8d..2863fc31eec6 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -60,6 +60,7 @@ const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_XMON_WR] = "xmon write access",
+ 	[LOCKDOWN_BPF_WRITE_USER] = "use of bpf to write user RAM",
+ 	[LOCKDOWN_DBG_WRITE_KERNEL] = "use of kgdb/kdb to write kernel RAM",
++	[LOCKDOWN_DEVICE_TREE] = "modifying device tree contents",
+ 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+ 	[LOCKDOWN_KCORE] = "/proc/kcore access",
+ 	[LOCKDOWN_KPROBES] = "use of kprobes",
 -- 
-paul-moore.com
+2.37.3
+
