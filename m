@@ -2,93 +2,151 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 366BCC32771
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Sep 2022 03:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF06C6FA82
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Sep 2022 09:19:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbiIVDAa (ORCPT
+        id S230326AbiIVJTD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Sep 2022 23:00:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36344 "EHLO
+        Thu, 22 Sep 2022 05:19:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbiIVDA3 (ORCPT
+        with ESMTP id S230282AbiIVJTA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Sep 2022 23:00:29 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18E626716E
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Sep 2022 20:00:27 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MY0Km34GCzWgrl;
-        Thu, 22 Sep 2022 10:56:28 +0800 (CST)
-Received: from cgs.huawei.com (10.244.148.83) by
- kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Thu, 22 Sep 2022 11:00:24 +0800
-From:   Gaosheng Cui <cuigaosheng1@huawei.com>
-To:     <john.johansen@canonical.com>, <paul@paul-moore.com>,
-        <jmorris@namei.org>, <serge@hallyn.com>, <cuigaosheng1@huawei.com>
-CC:     <apparmor@lists.ubuntu.com>,
-        <linux-security-module@vger.kernel.org>
-Subject: [PATCH] apparmor: Simply obtain the newest label on a cred
-Date:   Thu, 22 Sep 2022 11:00:24 +0800
-Message-ID: <20220922030024.1282700-1-cuigaosheng1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 22 Sep 2022 05:19:00 -0400
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6340D01FF
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 02:18:58 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MY8q42vzDzMpp3C;
+        Thu, 22 Sep 2022 11:18:56 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MY8q33bClzMpqBg;
+        Thu, 22 Sep 2022 11:18:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1663838336;
+        bh=8ipCPB4pKXRV6TrsUlS2CzuBZxTxzXnW/77T24GZdvw=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=xseITF0l/bp5WwRAAG+8FkEbdBCdO2uesWyVDifcc1+q9YMjwnidpXWcabjEzqDWJ
+         eWiP2wCDppgL2auGnGW6XlscfhyHatGU5b0oX8VoMxcDIo+zMZjquGyTCaNelv8kBm
+         NwmBohRLafuf9Fv9C63Nt9plXy+928Dc1JRX2C0Q=
+Message-ID: <2879477f-82d9-9d39-13b6-9cc60a3f14c7@digikod.net>
+Date:   Thu, 22 Sep 2022 11:18:54 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.244.148.83]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi500012.china.huawei.com (7.221.188.12)
-X-CFilter-Loop: Reflected
+User-Agent: 
+Subject: Re: [PATCH v1] selftests/landlock: Fix out-of-tree builds
+Content-Language: en-US
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To:     Shuah Khan <skhan@linuxfoundation.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Guillaume Tucker <guillaume.tucker@collabora.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20220909103402.1501802-1-mic@digikod.net>
+ <5e288153-ca6b-a91d-a3fd-cd2b1e102b3e@digikod.net>
+ <21feac5f-27d1-60ca-0c06-6605f3f27474@digikod.net>
+In-Reply-To: <21feac5f-27d1-60ca-0c06-6605f3f27474@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-aa_get_newest_cred_label(__task_cred(task)) can do the same things as
-aa_get_newest_label(__aa_task_raw_label(task)), so we can replace it
-and remove __aa_task_raw_label() to simply code.
+I plan to push it to Linus tomorrow, I'd like to get some feedback by 
+then though.
 
-Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
----
- security/apparmor/include/cred.h | 13 -------------
- security/apparmor/task.c         |  2 +-
- 2 files changed, 1 insertion(+), 14 deletions(-)
 
-diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
-index 0b9ae4804ef7..58fdc72af664 100644
---- a/security/apparmor/include/cred.h
-+++ b/security/apparmor/include/cred.h
-@@ -63,19 +63,6 @@ static inline struct aa_label *aa_get_newest_cred_label(const struct cred *cred)
- 	return aa_get_newest_label(aa_cred_raw_label(cred));
- }
- 
--/**
-- * __aa_task_raw_label - retrieve another task's label
-- * @task: task to query  (NOT NULL)
-- *
-- * Returns: @task's label without incrementing its ref count
-- *
-- * If @task != current needs to be called in RCU safe critical section
-- */
--static inline struct aa_label *__aa_task_raw_label(struct task_struct *task)
--{
--	return aa_cred_raw_label(__task_cred(task));
--}
--
- /**
-  * aa_current_raw_label - find the current tasks confining label
-  *
-diff --git a/security/apparmor/task.c b/security/apparmor/task.c
-index 503dc0877fb1..0a8f9fa7ca0a 100644
---- a/security/apparmor/task.c
-+++ b/security/apparmor/task.c
-@@ -31,7 +31,7 @@ struct aa_label *aa_get_task_label(struct task_struct *task)
- 	struct aa_label *p;
- 
- 	rcu_read_lock();
--	p = aa_get_newest_label(__aa_task_raw_label(task));
-+	p = aa_get_newest_cred_label(__task_cred(task));
- 	rcu_read_unlock();
- 
- 	return p;
--- 
-2.25.1
-
+On 14/09/2022 16:43, Mickaël Salaün wrote:
+> I took the liberty to pushed it in -next with my tree:
+> https://git.kernel.org/mic/c/a52540522c9541bfa3e499d2edba7bc0ca73a4ca
+> 
+> Please let me know when you can take it in your tree to include it in
+> the next -rc.
+> 
+> Regards,
+>    Mickaël
+> 
+> On 12/09/2022 21:48, Mickaël Salaün wrote:
+>> Shuah, could you please merge this patch (and the USERCFLAGS/USERLDFLAGS
+>> one if that's OK) to -next? This is fixing an issue in the current 6.0-rc5 .
+>>
+>> Anders, can you please check that this fixes your issue?
+>> https://lore.kernel.org/r/CADYN=9JM1nnjC9LypHqrz7JJjbZLpm8rArDUy4zgYYrajErBnA@mail.gmail.com
+>>
+>>
+>> On 09/09/2022 12:34, Mickaël Salaün wrote:
+>>> These changes simplify the Makefile and handle these 5 ways to build
+>>> Landlock tests:
+>>> - make -C tools/testing/selftests/landlock
+>>> - make -C tools/testing/selftests TARGETS=landlock gen_tar
+>>> - make TARGETS=landlock kselftest-gen_tar
+>>> - make TARGETS=landlock O=build kselftest-gen_tar
+>>> - make -C /tmp/linux TARGETS=landlock O=/tmp/build kselftest-gen_tar
+>>>
+>>> This also makes $(KHDR_INCLUDES) available to other test collections
+>>> when building in their directory.
+>>>
+>>> Fixes: f1227dc7d041 ("selftests/landlock: fix broken include of linux/landlock.h")
+>>> Fixes: 3bb267a36185 ("selftests: drop khdr make target")
+>>> Cc: Anders Roxell <anders.roxell@linaro.org>
+>>> Cc: Guillaume Tucker <guillaume.tucker@collabora.com>
+>>> Cc: Mark Brown <broonie@kernel.org>
+>>> Cc: Shuah Khan <skhan@linuxfoundation.org>
+>>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>>> Link: https://lore.kernel.org/r/20220909103402.1501802-1-mic@digikod.net
+>>> ---
+>>>     tools/testing/selftests/landlock/Makefile | 19 ++++++++++---------
+>>>     tools/testing/selftests/lib.mk            |  4 ++++
+>>>     2 files changed, 14 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
+>>> index 02868ac3bc71..6632bfff486b 100644
+>>> --- a/tools/testing/selftests/landlock/Makefile
+>>> +++ b/tools/testing/selftests/landlock/Makefile
+>>> @@ -1,6 +1,11 @@
+>>>     # SPDX-License-Identifier: GPL-2.0
+>>> +#
+>>> +# First run: make -C ../../../.. headers_install
+>>>     
+>>>     CFLAGS += -Wall -O2 $(KHDR_INCLUDES)
+>>> +LDLIBS += -lcap
+>>> +
+>>> +LOCAL_HDRS += common.h
+>>>     
+>>>     src_test := $(wildcard *_test.c)
+>>>     
+>>> @@ -8,14 +13,10 @@ TEST_GEN_PROGS := $(src_test:.c=)
+>>>     
+>>>     TEST_GEN_PROGS_EXTENDED := true
+>>>     
+>>> -OVERRIDE_TARGETS := 1
+>>> -top_srcdir := ../../../..
+>>> -include ../lib.mk
+>>> -
+>>> -khdr_dir = $(top_srcdir)/usr/include
+>>> +# Static linking for short targets:
+>>> +$(TEST_GEN_PROGS_EXTENDED): LDFLAGS += -static
+>>>     
+>>> -$(OUTPUT)/true: true.c
+>>> -	$(LINK.c) $< $(LDLIBS) -o $@ -static
+>>> +include ../lib.mk
+>>>     
+>>> -$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_harness.h common.h
+>>> -	$(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
+>>> +# Static linking for targets with $(OUTPUT)/ prefix:
+>>> +$(TEST_GEN_PROGS_EXTENDED): LDFLAGS += -static
+>>> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+>>> index d44c72b3abe3..9d4cb94cf437 100644
+>>> --- a/tools/testing/selftests/lib.mk
+>>> +++ b/tools/testing/selftests/lib.mk
+>>> @@ -42,6 +42,10 @@ endif
+>>>     selfdir = $(realpath $(dir $(filter %/lib.mk,$(MAKEFILE_LIST))))
+>>>     top_srcdir = $(selfdir)/../../..
+>>>     
+>>> +ifeq ($(KHDR_INCLUDES),)
+>>> +KHDR_INCLUDES := -isystem $(top_srcdir)/usr/include
+>>> +endif
+>>> +
+>>>     # The following are built by lib.mk common compile rules.
+>>>     # TEST_CUSTOM_PROGS should be used by tests that require
+>>>     # custom build rule and prevent common build rule use.
+>>>
+>>> base-commit: 7e18e42e4b280c85b76967a9106a13ca61c16179
