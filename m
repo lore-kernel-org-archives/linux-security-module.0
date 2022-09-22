@@ -2,151 +2,207 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF06C6FA82
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Sep 2022 09:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBE9C6FA91
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Sep 2022 10:01:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230326AbiIVJTD (ORCPT
+        id S229649AbiIVKBR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Sep 2022 05:19:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57050 "EHLO
+        Thu, 22 Sep 2022 06:01:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230282AbiIVJTA (ORCPT
+        with ESMTP id S229825AbiIVKBL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Sep 2022 05:19:00 -0400
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6340D01FF
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 02:18:58 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MY8q42vzDzMpp3C;
-        Thu, 22 Sep 2022 11:18:56 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MY8q33bClzMpqBg;
-        Thu, 22 Sep 2022 11:18:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1663838336;
-        bh=8ipCPB4pKXRV6TrsUlS2CzuBZxTxzXnW/77T24GZdvw=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=xseITF0l/bp5WwRAAG+8FkEbdBCdO2uesWyVDifcc1+q9YMjwnidpXWcabjEzqDWJ
-         eWiP2wCDppgL2auGnGW6XlscfhyHatGU5b0oX8VoMxcDIo+zMZjquGyTCaNelv8kBm
-         NwmBohRLafuf9Fv9C63Nt9plXy+928Dc1JRX2C0Q=
-Message-ID: <2879477f-82d9-9d39-13b6-9cc60a3f14c7@digikod.net>
-Date:   Thu, 22 Sep 2022 11:18:54 +0200
+        Thu, 22 Sep 2022 06:01:11 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCAA8ABD68
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 03:01:04 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id x21so5722882edd.11
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 03:01:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date;
+        bh=J0qXhAwEzoWbz8NYi11IkHID2B4LQANK3dOrOzpzswM=;
+        b=EokOGSnIK46rPF0cq5JkkwoxMv8EWDs4JGCatOPqqwqHOk7VVx5cN8Z4pR+ia19ty1
+         VqbQSXqeshUYwMZ3zrCOl7xa1Ko5uzNEIMPgxPrjtsxjj41DS8jAO/bEcdDQ/as0CWRM
+         nREFoJ1c8pSocKsEIwnMPLVEKtIQBV6T9xxvX/IQK/epJuPQz9hPJgQlyp1q+cHNC5QN
+         SakGEbkKVrr2uXSo8Br/Q7V99tS7MtCVSQz/gAZPhJ52pPxBDEYWn3wo1+oSLvR6TtqG
+         YA0T0qlFkn9yuqpyfIA+LIgVX/Kdh0EUzhpm1c21Qq3a3jZDWMXd6Zt4P7uJEInaI5cg
+         TCQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=J0qXhAwEzoWbz8NYi11IkHID2B4LQANK3dOrOzpzswM=;
+        b=E8Khffq3RGevwZgnIRUDhPsBNkl0j7QZPBovY5zWSqK2wbDXiPewxRHfEvOGCW2olL
+         zQRnO0YRcvnTQZdauxDfgZ79u0V7yNkYPQ1DR2P8fVGKE+7xLWDYFTqOfJgd3ns2TvI3
+         9oQW1oi4y8GUh+3mMcnimy/xzsq0w0MIqBumFEjbz1qsO/lOgalyvwoF7wM4MTqlS84P
+         v8nHVLihWhQle+mwlXDBTidZIri9cpTsxeGmUiQjfDHckUPam0QEKezyLEVaz7ZBVBkW
+         YuqB2/5Y63JG5mRfJXhxgCDgm8JQdlLsSs8rUNXi36vF0eDE7vVquhxdtMN5mWttbSOc
+         5RHg==
+X-Gm-Message-State: ACrzQf2aiQ8LnTTeaq/gqzX6ioiEWb8ASBniSYevMunUbVM+QmXlupMn
+        lqQVjb4GFa1jF46jfzVWibocin+ayfY2ZRBVHTdwRg==
+X-Google-Smtp-Source: AMsMyM61YoKKgXD2TA5sZVWJ9BLcFHrwIAfLChpAAtUcovDLpwWQQCNKsZ+/eUBPUBz41TArDzkEfh374RGFsFLM0oI=
+X-Received: by 2002:aa7:cb87:0:b0:43b:e650:6036 with SMTP id
+ r7-20020aa7cb87000000b0043be6506036mr2455207edt.350.1663840862990; Thu, 22
+ Sep 2022 03:01:02 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v1] selftests/landlock: Fix out-of-tree builds
-Content-Language: en-US
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To:     Shuah Khan <skhan@linuxfoundation.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Guillaume Tucker <guillaume.tucker@collabora.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20220909103402.1501802-1-mic@digikod.net>
- <5e288153-ca6b-a91d-a3fd-cd2b1e102b3e@digikod.net>
- <21feac5f-27d1-60ca-0c06-6605f3f27474@digikod.net>
-In-Reply-To: <21feac5f-27d1-60ca-0c06-6605f3f27474@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20220921153646.931277075@linuxfoundation.org>
+In-Reply-To: <20220921153646.931277075@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 22 Sep 2022 15:30:51 +0530
+Message-ID: <CA+G9fYs5BDHc2638p7br6-RzQzdJjxOOUvujyssy0bOWKOtLCg@mail.gmail.com>
+Subject: Re: [PATCH 5.15 00/45] 5.15.70-rc1 review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+        slade@sladewatkins.com, Coiby Xu <coxu@redhat.com>,
+        Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Michal Suchanek <msuchanek@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I plan to push it to Linus tomorrow, I'd like to get some feedback by 
-then though.
+On Wed, 21 Sept 2022 at 21:19, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.15.70 release.
+> There are 45 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 23 Sep 2022 15:36:33 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.15.70-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+Results from Linaro=E2=80=99s test farm.
+Regressions on arm64 allmodconfig builds failed.
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+* arm64, build failed.
+  - clang-12-allmodconfig
+  - clang-13-allmodconfig
+  - clang-14-allmodconfig
+  - clang-nightly-allmodconfig
+  - gcc-10-allmodconfig
+  - gcc-11-allmodconfig
+  - gcc-12-allmodconfig
+
+> Coiby Xu <coxu@redhat.com>
+>     arm64: kexec_file: use more system keyrings to verify kernel image si=
+gnature
+
+Build errors:
+---------------
+arch/arm64/kernel/kexec_image.c:136:23: error:
+'kexec_kernel_verify_pe_sig' undeclared here (not in a function); did
+you mean 'arch_kexec_kernel_verify_sig'?
+  136 |         .verify_sig =3D kexec_kernel_verify_pe_sig,
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                       arch_kexec_kernel_verify_sig
 
 
-On 14/09/2022 16:43, Mickaël Salaün wrote:
-> I took the liberty to pushed it in -next with my tree:
-> https://git.kernel.org/mic/c/a52540522c9541bfa3e499d2edba7bc0ca73a4ca
-> 
-> Please let me know when you can take it in your tree to include it in
-> the next -rc.
-> 
-> Regards,
->    Mickaël
-> 
-> On 12/09/2022 21:48, Mickaël Salaün wrote:
->> Shuah, could you please merge this patch (and the USERCFLAGS/USERLDFLAGS
->> one if that's OK) to -next? This is fixing an issue in the current 6.0-rc5 .
->>
->> Anders, can you please check that this fixes your issue?
->> https://lore.kernel.org/r/CADYN=9JM1nnjC9LypHqrz7JJjbZLpm8rArDUy4zgYYrajErBnA@mail.gmail.com
->>
->>
->> On 09/09/2022 12:34, Mickaël Salaün wrote:
->>> These changes simplify the Makefile and handle these 5 ways to build
->>> Landlock tests:
->>> - make -C tools/testing/selftests/landlock
->>> - make -C tools/testing/selftests TARGETS=landlock gen_tar
->>> - make TARGETS=landlock kselftest-gen_tar
->>> - make TARGETS=landlock O=build kselftest-gen_tar
->>> - make -C /tmp/linux TARGETS=landlock O=/tmp/build kselftest-gen_tar
->>>
->>> This also makes $(KHDR_INCLUDES) available to other test collections
->>> when building in their directory.
->>>
->>> Fixes: f1227dc7d041 ("selftests/landlock: fix broken include of linux/landlock.h")
->>> Fixes: 3bb267a36185 ("selftests: drop khdr make target")
->>> Cc: Anders Roxell <anders.roxell@linaro.org>
->>> Cc: Guillaume Tucker <guillaume.tucker@collabora.com>
->>> Cc: Mark Brown <broonie@kernel.org>
->>> Cc: Shuah Khan <skhan@linuxfoundation.org>
->>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->>> Link: https://lore.kernel.org/r/20220909103402.1501802-1-mic@digikod.net
->>> ---
->>>     tools/testing/selftests/landlock/Makefile | 19 ++++++++++---------
->>>     tools/testing/selftests/lib.mk            |  4 ++++
->>>     2 files changed, 14 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
->>> index 02868ac3bc71..6632bfff486b 100644
->>> --- a/tools/testing/selftests/landlock/Makefile
->>> +++ b/tools/testing/selftests/landlock/Makefile
->>> @@ -1,6 +1,11 @@
->>>     # SPDX-License-Identifier: GPL-2.0
->>> +#
->>> +# First run: make -C ../../../.. headers_install
->>>     
->>>     CFLAGS += -Wall -O2 $(KHDR_INCLUDES)
->>> +LDLIBS += -lcap
->>> +
->>> +LOCAL_HDRS += common.h
->>>     
->>>     src_test := $(wildcard *_test.c)
->>>     
->>> @@ -8,14 +13,10 @@ TEST_GEN_PROGS := $(src_test:.c=)
->>>     
->>>     TEST_GEN_PROGS_EXTENDED := true
->>>     
->>> -OVERRIDE_TARGETS := 1
->>> -top_srcdir := ../../../..
->>> -include ../lib.mk
->>> -
->>> -khdr_dir = $(top_srcdir)/usr/include
->>> +# Static linking for short targets:
->>> +$(TEST_GEN_PROGS_EXTENDED): LDFLAGS += -static
->>>     
->>> -$(OUTPUT)/true: true.c
->>> -	$(LINK.c) $< $(LDLIBS) -o $@ -static
->>> +include ../lib.mk
->>>     
->>> -$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_harness.h common.h
->>> -	$(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
->>> +# Static linking for targets with $(OUTPUT)/ prefix:
->>> +$(TEST_GEN_PROGS_EXTENDED): LDFLAGS += -static
->>> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
->>> index d44c72b3abe3..9d4cb94cf437 100644
->>> --- a/tools/testing/selftests/lib.mk
->>> +++ b/tools/testing/selftests/lib.mk
->>> @@ -42,6 +42,10 @@ endif
->>>     selfdir = $(realpath $(dir $(filter %/lib.mk,$(MAKEFILE_LIST))))
->>>     top_srcdir = $(selfdir)/../../..
->>>     
->>> +ifeq ($(KHDR_INCLUDES),)
->>> +KHDR_INCLUDES := -isystem $(top_srcdir)/usr/include
->>> +endif
->>> +
->>>     # The following are built by lib.mk common compile rules.
->>>     # TEST_CUSTOM_PROGS should be used by tests that require
->>>     # custom build rule and prevent common build rule use.
->>>
->>> base-commit: 7e18e42e4b280c85b76967a9106a13ca61c16179
+## Build
+* kernel: 5.15.70-rc1
+* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
+* git branch: linux-5.15.y
+* git commit: 16d41e601858766935e69e3f9d62db810e5d277d
+* git describe: v5.15.69-46-g16d41e601858
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15=
+.69-46-g16d41e601858
+
+## Test Regressions (compared to v5.15.69)
+* arm64, build
+  - clang-12-allmodconfig
+  - clang-13-allmodconfig
+  - clang-14-allmodconfig
+  - clang-nightly-allmodconfig
+  - gcc-10-allmodconfig
+  - gcc-11-allmodconfig
+  - gcc-12-allmodconfig
+
+## No Metric Regressions (compared to v5.15.69)
+
+## No Test Fixes (compared to v5.15.69)
+
+## No Metric Fixes (compared to v5.15.69)
+
+## Test result summary
+total: 106713, pass: 94034, fail: 687, skip: 11680, xfail: 312
+
+## Build Summary
+* arc: 10 total, 10 passed, 0 failed
+* arm: 339 total, 336 passed, 3 failed
+* arm64: 72 total, 63 passed, 9 failed
+* i386: 61 total, 55 passed, 6 failed
+* mips: 62 total, 59 passed, 3 failed
+* parisc: 14 total, 14 passed, 0 failed
+* powerpc: 69 total, 66 passed, 3 failed
+* riscv: 27 total, 27 passed, 0 failed
+* s390: 30 total, 27 passed, 3 failed
+* sh: 26 total, 24 passed, 2 failed
+* sparc: 14 total, 14 passed, 0 failed
+* x86_64: 65 total, 63 passed, 2 failed
+
+## Test suites summary
+* fwts
+* igt-gpu-tools
+* kunit
+* kvm-unit-tests
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-cap_bounds
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-filecaps
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-fsx
+* ltp-hugetlb
+* ltp-io
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-open-posix-tests
+* ltp-pty
+* ltp-sched
+* ltp-securebits
+* ltp-syscalls
+* ltp-tracing
+* network-basic-tests
+* packetdrill
+* rcutorture
+* v4l2-compliance
+* vdso
+
+--
+Linaro LKFT
+https://lkft.linaro.org
