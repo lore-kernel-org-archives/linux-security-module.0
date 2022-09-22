@@ -2,90 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97235ECAAD8
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Sep 2022 19:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E265CC32771
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Sep 2022 01:10:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229658AbiIUTL3 (ORCPT
+        id S229704AbiIVBKX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Sep 2022 15:11:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52524 "EHLO
+        Wed, 21 Sep 2022 21:10:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbiIUTL2 (ORCPT
+        with ESMTP id S229523AbiIVBKW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Sep 2022 15:11:28 -0400
-Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D86B85E
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Sep 2022 12:11:27 -0700 (PDT)
-Received: by mail-oo1-xc29.google.com with SMTP id v3-20020a4aad83000000b00475e04866e6so1045071oom.5
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Sep 2022 12:11:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=C6JfGK1tBYgjb4fy17yxr7GLC0kh0NNF0V5iaM+9QGU=;
-        b=Ni2c+BqoOXeS3nLSTxnjeIjcIa2qayOkxe0nWKz2o3hNaJ4/dDAy2e/ekHyVdlTRHo
-         NJAFT+GSxHgfe60MX7+4dv9rnEFGT/GNpPGh+CZKzvOYgmBu0bThCPZcL4MhjpjAVmHd
-         ex/YcmN4jAsk2KLJl6WLOJbMOg/5V+IXwM6YJ6uOnn6fxpOFhDWJBH9CFQ/32jQgNn6N
-         7r4T4AemZdTWg0tRbjDEIgeSD08peVGMn6HfqXqhdyZ9OAm7O6sOwoHAVm/A525Hckxk
-         VW0Vc/m1CCiED0f23i/Dd2lfqxIZEvWVKvqQCJK+1I2snDJmDLqtxYD8mtzv4dxq3SO1
-         crPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=C6JfGK1tBYgjb4fy17yxr7GLC0kh0NNF0V5iaM+9QGU=;
-        b=LxmB0ENHIz74ecfL8W5gHiGc5lvg4Z2SPke11KigfqDX/5FuyiqQEKsCvENleixttn
-         pKSFGUXK/UAytNk1OsNzynpj/Zc/aWEEn7x3oViB2MxtrJvdrNMHxrlqFoxAdVsUYw12
-         /xayvD7OqrFvKEFkgKv7CwqwGTBUTZqEIBAUPTnKk21EABDAxgni6BL+98jMWW+O16Um
-         /DV8OAm9JvUxaWsIcH0Wj/zaOTpcm78Jrma/S0PDwc+JcqJnD2/q113aEpBAvqOubwOl
-         vBNnWLcrEAZEOpJp0tAfJUiMwr3Gx/iCNhTiS6ij4mSFEW0wL1VlIe77MRmhgOeISHo8
-         b2mA==
-X-Gm-Message-State: ACrzQf1nUi/Nuy5k2IaN1JJjt/fNzUcMNqu315Y70Cv7jlsqGWiC+yk9
-        JwlnxKu7zrW0l0c5EAaRU9r4+rl0DpZkyW2f0fL1
-X-Google-Smtp-Source: AMsMyM61l9THiW+6SygkYyTbi79WLho61206Yyq1f6KpS4f7ypFiMkAPdxN9c6wB5+ow1AG+GzLerVDYl7fO/TDqlqc=
-X-Received: by 2002:a4a:ae85:0:b0:44b:4ac7:9e10 with SMTP id
- u5-20020a4aae85000000b0044b4ac79e10mr11108383oon.24.1663787486605; Wed, 21
- Sep 2022 12:11:26 -0700 (PDT)
+        Wed, 21 Sep 2022 21:10:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B0D8DFD0;
+        Wed, 21 Sep 2022 18:10:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BE15B63343;
+        Thu, 22 Sep 2022 01:10:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 11191C433D7;
+        Thu, 22 Sep 2022 01:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663809020;
+        bh=JQYpUNVHmmWqqXAXWDbpfQz1G7DdV3xIEvXth+vs+eE=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=c0PJHJkL4zQlong+cLZwqtdSIVI1lzbtkLA2s3IdFJOKBUq2IL6fozJFi4bAp9yQI
+         2qBAluRvsHqdjKJOPdnM14aGcMdp+0EifvqIQ4bG4w/gHxuxmmmRiC8wR4TXn8qv12
+         BiXIYJ4+/47tqw0RsBTBktnTbDqtJdBS7A8ew/GDFOJwEhYkv2lmsgVVaPmqWrxUlE
+         KJoe/CFeVri62F4CZHA6ei5JhDZf35duMIEQgqi15k0ZATIf6VZZt+9x3q3+YpDcLE
+         MJzIo+cqgNfmTWz7+NAbjU1UlpnbLSIK1t0DD96PXhQf9IvYeAuwscpkkCHbFJe9JZ
+         nSSdkyw676YnA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E3658E21ECF;
+        Thu, 22 Sep 2022 01:10:19 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20220921185426.1663357-1-jeffxu@chromium.org> <20220921185426.1663357-2-jeffxu@chromium.org>
-In-Reply-To: <20220921185426.1663357-2-jeffxu@chromium.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 21 Sep 2022 15:11:15 -0400
-Message-ID: <CAHC9VhS-jv5cpSdq7dxFGYH=z=5grQceNMyjroeL2KHdrVUV6g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] Add CONFIG_SECURITY_SELINUX_PERMISSIVE_DONTAUDIT
-To:     jeffxu@chromium.org
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        jorgelo@chromium.org, groeck@chromium.org,
-        Luis Hector Chavez <lhchavez@google.com>,
-        Luis Hector Chavez <lhchavez@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v18 00/13] bpf: Add kfuncs for PKCS#7 signature verification
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166380901992.22214.9738927038585872619.git-patchwork-notify@kernel.org>
+Date:   Thu, 22 Sep 2022 01:10:19 +0000
+References: <20220920075951.929132-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20220920075951.929132-1-roberto.sassu@huaweicloud.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+        dhowells@redhat.com, jarkko@kernel.org, rostedt@goodmis.org,
+        mingo@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, shuah@kernel.org, bpf@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, memxor@gmail.com, roberto.sassu@huawei.com
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 21, 2022 at 2:54 PM <jeffxu@chromium.org> wrote:
->
-> From: Jeff Xu <jeffxu@chromium.org>
->
-> When SECURITY_SELINUX_DEVELOP=y and the system is running in permissive
-> mode, it is useful to disable logging from permissive domain, so audit
-> log does not get spamed.
->
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> Signed-off-by: Luis Hector Chavez <lhchavez@google.com>
-> Tested-by: Luis Hector Chavez <lhchavez@chromium.org>
-> Tested-by: Jeff Xu<jeffxu@chromium.org>
-> ---
->  security/selinux/Kconfig | 10 ++++++++++
->  security/selinux/avc.c   |  9 +++++++++
->  2 files changed, 19 insertions(+)
+Hello:
 
-I'm sorry, but I can't accept this into the upstream kernel.
-Permissive mode, both per-domain and system-wide, is not intended to
-be a long term solution.  Permissive mode should really only be used
-as a development tool or emergency "hotfix" with the proper solution
-being either an adjustment of the existing policy (SELinux policy
-booleans, labeling changes, etc.) or the development of a new policy
-module which better fits your use case.
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
+On Tue, 20 Sep 2022 09:59:38 +0200 you wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> One of the desirable features in security is the ability to restrict import
+> of data to a given system based on data authenticity. If data import can be
+> restricted, it would be possible to enforce a system-wide policy based on
+> the signing keys the system owner trusts.
+> 
+> [...]
+
+Here is the summary with links:
+  - [v18,01/13] bpf: Allow kfuncs to be used in LSM programs
+    https://git.kernel.org/bpf/bpf-next/c/d15bf1501c75
+  - [v18,02/13] btf: Export bpf_dynptr definition
+    https://git.kernel.org/bpf/bpf-next/c/00f146413ccb
+  - [v18,03/13] bpf: Move dynptr type check to is_dynptr_type_expected()
+    https://git.kernel.org/bpf/bpf-next/c/e9e315b4a5de
+  - [v18,04/13] btf: Allow dynamic pointer parameters in kfuncs
+    https://git.kernel.org/bpf/bpf-next/c/b8d31762a0ae
+  - [v18,05/13] bpf: Export bpf_dynptr_get_size()
+    https://git.kernel.org/bpf/bpf-next/c/51df48657185
+  - [v18,06/13] KEYS: Move KEY_LOOKUP_ to include/linux/key.h and define KEY_LOOKUP_ALL
+    https://git.kernel.org/bpf/bpf-next/c/90fd8f26edd4
+  - [v18,07/13] bpf: Add bpf_lookup_*_key() and bpf_key_put() kfuncs
+    https://git.kernel.org/bpf/bpf-next/c/f3cf4134c5c6
+  - [v18,08/13] bpf: Add bpf_verify_pkcs7_signature() kfunc
+    https://git.kernel.org/bpf/bpf-next/c/865b0566d8f1
+  - [v18,09/13] selftests/bpf: Compile kernel with everything as built-in
+    https://git.kernel.org/bpf/bpf-next/c/94fd7420faa0
+  - [v18,10/13] selftests/bpf: Add verifier tests for bpf_lookup_*_key() and bpf_key_put()
+    https://git.kernel.org/bpf/bpf-next/c/7c036ed9e006
+  - [v18,11/13] selftests/bpf: Add additional tests for bpf_lookup_*_key()
+    https://git.kernel.org/bpf/bpf-next/c/ecce368d6e6d
+  - [v18,12/13] selftests/bpf: Add test for bpf_verify_pkcs7_signature() kfunc
+    https://git.kernel.org/bpf/bpf-next/c/fc97590668ae
+  - [v18,13/13] selftests/bpf: Add tests for dynamic pointers parameters in kfuncs
+    https://git.kernel.org/bpf/bpf-next/c/b94fa9f9dcf9
+
+You are awesome, thank you!
 -- 
-paul-moore.com
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
