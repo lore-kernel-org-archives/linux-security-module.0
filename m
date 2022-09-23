@@ -2,123 +2,148 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CDCC6FA83
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 19:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E14C07E9D
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 20:35:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231474AbiIWTQ4 (ORCPT
+        id S233273AbiIWUf3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Sep 2022 15:16:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34498 "EHLO
+        Fri, 23 Sep 2022 16:35:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbiIWTQz (ORCPT
+        with ESMTP id S232995AbiIWUeB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Sep 2022 15:16:55 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A1C412C687;
-        Fri, 23 Sep 2022 12:16:54 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id D7BDD1F88F;
-        Fri, 23 Sep 2022 19:16:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1663960612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=M7ZPOnaCl1bvAhxAcIcfHQhBd3XlM8j/v3z+xwYqH9Y=;
-        b=RxICWe9ShUOJ30yrxK1Sg337ibKGDWiBuCCfxe3PxnQDXehTnWoUAxFGm5efJJElnCRWYC
-        T/EEFnwjXDbp1a3EUY+qRjBlZgJmh01Kq/w3WmKQrPle99zuvPSp1ZWQvpmJBRW3Md/Gh+
-        hUMW16JhjAIT9slsMZQE8GgUslBWn+U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1663960612;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=M7ZPOnaCl1bvAhxAcIcfHQhBd3XlM8j/v3z+xwYqH9Y=;
-        b=3o5yz8IUMFuZYyHXKnE++yxz0+3AfWIuGDj2UVpRZKJG7D+gcy2qYgZToe/bEoYUVe37Df
-        Pa8q+QubOpYRpICg==
-Received: from kitsune.suse.cz (kitsune.suse.cz [10.100.12.127])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 841FF2C15C;
-        Fri, 23 Sep 2022 19:16:51 +0000 (UTC)
-Date:   Fri, 23 Sep 2022 21:16:50 +0200
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Philipp Rudo <prudo@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, Baoquan He <bhe@redhat.com>,
-        Alexander Egorenkov <egorenar@linux.ibm.com>,
-        "open list:S390" <linux-s390@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
-        <linuxppc-dev@lists.ozlabs.org>,
-        "open list:KEXEC" <kexec@lists.infradead.org>,
-        Coiby Xu <coxu@redhat.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Morse <james.morse@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH 5.15 0/6] arm64: kexec_file: use more system keyrings to
- verify kernel image signature + dependencies
-Message-ID: <20220923191650.GX28810@kitsune.suse.cz>
-References: <cover.1663951201.git.msuchanek@suse.de>
- <67337b60a4d3cae00794d3cfd0e5add9899f18b7.camel@linux.ibm.com>
+        Fri, 23 Sep 2022 16:34:01 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00B3F14D30F;
+        Fri, 23 Sep 2022 13:28:46 -0700 (PDT)
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28NKPDua007507;
+        Fri, 23 Sep 2022 20:28:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=C1ePJ8Mf307F7nByJ7BtKcM8WaOumNsqo6SgWuWLwEw=;
+ b=Xzb0PKVSMLpfwtNDd4ZmIgKg6KYRwRWpQYVfhC8USQLDiyZrvilCdgpwLCdlGM32a1As
+ iXu9bmQ2286Z0uXLI6QV8+zPdDTeym/eKx2tDiqiV1Gk6TQsDhIKhIpElC6p4vqJz21C
+ sEjpG19MY8HoLIA2GWagHijQH5teyNaJnmQgZyY1YRhQwKZk9Iq46TmL/WHwXUtibcOz
+ hCO9Lzzhw3WCL4gUih28SQ8SrUub13FKNWQRiR9kaiGZAJY/CSHxQwOhKEezslEFTVoR
+ bs0ewsqo9RNILomoX6jp+l/vgUvAsAGM3T2d9VEbNP+YoJhSlPjM7Ju0aH1cu3QyHll2 ow== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jsktj02w9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Sep 2022 20:28:33 +0000
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28NKPWwo009551;
+        Fri, 23 Sep 2022 20:28:32 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jsktj02vt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Sep 2022 20:28:32 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28NKL9TY024646;
+        Fri, 23 Sep 2022 20:28:31 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma02dal.us.ibm.com with ESMTP id 3jn5vamg9w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Sep 2022 20:28:31 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28NKSUlT7340554
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Sep 2022 20:28:30 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1B69358054;
+        Fri, 23 Sep 2022 20:28:30 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E0B958058;
+        Fri, 23 Sep 2022 20:28:29 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.173.46])
+        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 23 Sep 2022 20:28:29 +0000 (GMT)
+Message-ID: <0f9387c9ceec0819de7bdb8b3635af8fa8236973.camel@linux.ibm.com>
+Subject: Re: [PATCH -next 1/4] ima: Use DECLARE_FLEX_ARRAY() helper in
+ ima_modsig
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Gaosheng Cui <cuigaosheng1@huawei.com>, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 23 Sep 2022 16:28:28 -0400
+In-Reply-To: <20220905075837.1083216-2-cuigaosheng1@huawei.com>
+References: <20220905075837.1083216-1-cuigaosheng1@huawei.com>
+         <20220905075837.1083216-2-cuigaosheng1@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: -EumnrV6P_ZEykrDwuIzUAun3irb-r9e
+X-Proofpoint-ORIG-GUID: 1VEcZepvLU4jde-VqGfHDtl1Nq8N4AiX
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67337b60a4d3cae00794d3cfd0e5add9899f18b7.camel@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-23_08,2022-09-22_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1011 bulkscore=0 adultscore=0 malwarescore=0
+ suspectscore=0 spamscore=0 mlxlogscore=999 impostorscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209230130
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+Hi Gaosheng,
 
-On Fri, Sep 23, 2022 at 03:03:36PM -0400, Mimi Zohar wrote:
-> On Fri, 2022-09-23 at 19:10 +0200, Michal Suchanek wrote:
-> > Hello,
-> > 
-> > this is backport of commit 0d519cadf751
-> > ("arm64: kexec_file: use more system keyrings to verify kernel image signature")
-> > to table 5.15 tree including the preparatory patches.
-> > 
-> > Some patches needed minor adjustment for context.
+Thank you for the patches.
+
+On Mon, 2022-09-05 at 15:58 +0800, Gaosheng Cui wrote:
+> Zero-length arrays are deprecated and we are moving towards adopting
+> C99 flexible-array members instead. So, replace zero-length array
+> declaration with the new DECLARE_FLEX_ARRAY() helper macro in struct
+> modsig.
 > 
-> In general when backporting this patch set, there should be a
-> dependency on backporting these commits as well.  In this instance for
-> linux-5.15.y, they've already been backported.
+> This helper allows for a flexible-array member in a union.
 > 
-> 543ce63b664e ("lockdown: Fix kexec lockdown bypass with ima policy")
-> af16df54b89d ("ima: force signature verification when CONFIG_KEXEC_SIG is configured")
+> Link: KSPP#21
+> Link: KSPP#193
+> Link: KSPP#197
 
-Thanks for bringing these up. It might be in general useful to backport
-these fixes as well.
+The above shortened link is a bit confusing.  The #193 complete link is
+mentioned in the cover letter.  In all cases being modified the "[]" 
+notation is used.  Is this a boiler plate patch description or are all
+three of these links really applicable to each of the patches?  
 
-However, this patchset does one very specific thing: it lifts the x86
-kexec_file signature verification to arch-independent and uses it on
-arm64 to unify all features (and any existing warts) between EFI
-architectures.
+- Eliminate fake flexible arrays from the kernel ("variable length"
+one-element and zero-length arrays) #21
+- Replace fake flexible-array declarations with the
+DECLARE_FLEX_ARRAY() helper macro #193
+- Address -Wzero-length-array warnings reported by Clang #197
 
-So unless I am missing something the fixes you pointed out are
-completely independent of this.
+> Link: https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
 
-Thanks
+Shouldn't this link be in the cover letter?  And the applicable
+link(s), as shown in the cover letter, here in the patches?
 
-Michal
+-- 
+thanks,
+
+Mimi
+
+> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+> ---
+>  security/integrity/ima/ima_modsig.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
+> index fb25723c65bc..d132383dbb64 100644
+> --- a/security/integrity/ima/ima_modsig.c
+> +++ b/security/integrity/ima/ima_modsig.c
+> @@ -29,7 +29,7 @@ struct modsig {
+>  	 * storing the signature.
+>  	 */
+>  	int raw_pkcs7_len;
+> -	u8 raw_pkcs7[];
+> +	DECLARE_FLEX_ARRAY(u8, raw_pkcs7);
+>  };
+>  
+>  /*
+
+
