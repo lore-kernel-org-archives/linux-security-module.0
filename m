@@ -2,164 +2,188 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8132CC07E9D
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 20:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF6FAC6FA83
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 21:03:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbiIWUzH (ORCPT
+        id S231593AbiIWVDU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Sep 2022 16:55:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37506 "EHLO
+        Fri, 23 Sep 2022 17:03:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232518AbiIWUzB (ORCPT
+        with ESMTP id S232523AbiIWVCy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Sep 2022 16:55:01 -0400
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [IPv6:2001:1600:3:17::190b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 663EC12AFF
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 13:54:58 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MZ4Ch60ZMzMqpZ1;
-        Fri, 23 Sep 2022 22:54:56 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MZ4Cg5q7MzMpqBP;
-        Fri, 23 Sep 2022 22:54:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1663966496;
-        bh=lIgDO8/tqI86dlPLEX5uql/AhNN7ffMK8T3OeVzote0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=bNg0zdsTCW+chaxy8cGseP3vC0TuBq7nUO0crzcZqfurAVQzgxV2mkuvQo/IhZovA
-         bT5Sw+QLEydWkeQ7l3Uuirs2ShRXMUs6y/whqGz1au+7m0iv4GKjnm9J/bzra/K/X8
-         mXPjFxye9/vn7KZJllFZAJXsuuFdfBiqxkUK1on0=
-Message-ID: <5233611f-1dba-3ecb-670f-fff61820e9d6@digikod.net>
-Date:   Fri, 23 Sep 2022 22:54:55 +0200
-MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v6 3/5] selftests/landlock: Selftests for file truncation
- support
-Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
+        Fri, 23 Sep 2022 17:02:54 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 555EB11D0E6;
+        Fri, 23 Sep 2022 14:02:14 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id z13so3100631ejp.6;
+        Fri, 23 Sep 2022 14:02:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date;
+        bh=VKZTH+Io4cV6sl5rrCGea2z2/wkx+/IsG1EnC+sYkFQ=;
+        b=BgyQk+x3yhCpoPMwskTNTpkJTg92SAVrbG+O7SH08cTikz1+XOVEpq85b4bbs9Pnc1
+         KHdKu3HTvB57q9R0VQ3Mhdsl0wWtdw7RpnbACSvBJ5AYjznvqJjBhAMzLS5XlTYMmNAt
+         eeGSBPCvI0m0ZFP53RWRGubsmI+ubvIoNDkoB1tqOK6W4ng84A0tucszo/g9RYlH6R3n
+         aEH3/7RtDiSD0hAS5c6mNkj0GUIF2Km87bvb+8Mt3txQj4GeUTwyiamfNekHZxFipsId
+         Mp5XjNiTgu6sczBXFsdEozQQF9zEjAN8IqxGdsIHzTRN4O+nXyCWRRE7eCJgDYu4cXA5
+         rkrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=VKZTH+Io4cV6sl5rrCGea2z2/wkx+/IsG1EnC+sYkFQ=;
+        b=MearxsXz6j7LjvB5/ITsUHo/wbO0TWhC5J3Wlohd0eqR7CKJwA6+n9vtdXcjDaoVBx
+         YyqAe2bKjqjKbys9AjtvKOxfoBHyfiXJPIBjZVoXrScwj9NuEqA2Kg6SQcQSKLtyVt+K
+         AGBS+KmM7ik6zH9ekOf8qhHkAjNl2S47l/mmJqBRRlIm/NwI9V9T36hG/wz+HJzFBWNo
+         VpjPhOsBx7Brp9sq3ZPr2PaNmeU3GapTUTJ6+YXpeWq189ntGPUyb8MNl+rI+7PzOSIE
+         u7egNRCw/7F08BMf2+HpiTlntSdM5FGQJAelgxCsmHxCsdSnrpe6wRKGK9eGkDie10ia
+         qo2A==
+X-Gm-Message-State: ACrzQf2YNmOIa3QO1wnj+B4U/n0LdO7AvqlHGGkTl4IsvjvkALDp1pno
+        BWFN0atJ4IzjXI6CE0r8ikU=
+X-Google-Smtp-Source: AMsMyM5mlFUgZouerKyNqEfmd7hoz5QNx9ae6GvCyC3/HMiuULVo4WtuwxeVOR5Ko8/BWs0NfkFxTg==
+X-Received: by 2002:a17:907:728e:b0:782:8e91:64c8 with SMTP id dt14-20020a170907728e00b007828e9164c8mr5424036ejc.36.1663966932675;
+        Fri, 23 Sep 2022 14:02:12 -0700 (PDT)
+Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id 1-20020a170906210100b0073dd8e5a39fsm4434163ejt.156.2022.09.23.14.02.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Sep 2022 14:02:12 -0700 (PDT)
+Date:   Fri, 23 Sep 2022 23:02:10 +0200
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-References: <20220908195805.128252-1-gnoack3000@gmail.com>
- <20220908195805.128252-4-gnoack3000@gmail.com>
- <3f3b7798-c3e1-e257-5094-0033e7605062@digikod.net> <Yy3x3b3+CrD/rb0J@nuc>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <Yy3x3b3+CrD/rb0J@nuc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] samples/landlock: Print hints about ABI versions
+Message-ID: <Yy4e0nTiO6dv/Eif@nuc>
+References: <20220923154207.3311629-1-mic@digikod.net>
+ <20220923154207.3311629-2-mic@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220923154207.3311629-2-mic@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Reviewed-by: Günther Noack <gnoack3000@gmail.com>
 
-On 23/09/2022 19:50, Günther Noack wrote:
-> On Fri, Sep 16, 2022 at 07:05:44PM +0200, Mickaël Salaün wrote:
->> I'd like to have tests similar to base_test.c:ruleset_fd_transfer to check
->> ftruncate with different kind of file descriptors and not-sandboxed
->> processes. That would require some code refactoring to reuse the FD passing
->> code.
-> 
-> Done. I factored out the FD sending and receiving into helper function in common.h.
+This patch is a strict improvement over what the sample code was
+before, so that's fine with me review wise.
 
-Please use a dedicated patch for this refactoring.
+I still think it would be good to point out more explicitly that the
+"refer" right needs a different fallback strategy for the best effort
+mode than the other rights will do in the future, as discussed in [1].
 
+In many "best effort" scenarios that people need for their code, the
+part that is actually fixed are the access rights that their code
+declares that it needs. So if they actually need the "refer" right for
+their programs to work, they cannot use Landlock on kernels that only
+support Landlock ABI v1, because under ABI v1 they will never be able
+to hardlink or rename between directories when Landlock is enabled.
+
+The way that the sandboxer example is dealing with it, it just gives
+the user a smaller set of access rights than they requested if the
+kernel just supports ABI v1. It's somewhat reasonable for the
+sandboxer tool to do because it doesn't give hard guarantees in its
+command line interface, but it might not be negotiable in more
+practical examples. :)
+
+[1] https://docs.google.com/document/d/1SkFpl_Xxyl4E6G2uYIlzL0gY2PFo-Nl8ikblLvnpvlU/edit
+
+—Günther
+
+On Fri, Sep 23, 2022 at 05:42:05PM +0200, Mickaël Salaün wrote:
+> Extend the help with the latest Landlock ABI version supported by the
+> sandboxer.
 > 
->> On 08/09/2022 21:58, Günther Noack wrote:
->>> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
->>> index 87b28d14a1aa..ddc8c7e57e86 100644
->>> --- a/tools/testing/selftests/landlock/fs_test.c
->>> +++ b/tools/testing/selftests/landlock/fs_test.c
->>> ...
->>> +TEST_F_FORK(layout1, truncate)
->>> +{
->>> +	const char *const file_rwt = file1_s1d1;
->>> +	const char *const file_rw = file2_s1d1;
->>> +	const char *const file_rt = file1_s1d2;
->>> +	const char *const file_t = file2_s1d2;
->>> +	const char *const file_none = file1_s1d3;
->>> +	const char *const dir_t = dir_s2d1;
->>> +	const char *const file_in_dir_t = file1_s2d1;
->>> +	const char *const dir_w = dir_s3d1;
->>> +	const char *const file_in_dir_w = file1_s3d1;
->>> +	int file_rwt_fd, file_rw_fd;
->>
->> These variables are unused now.
+> Inform users about the sandboxer or the kernel not being up-to-date.
 > 
-> Good catch, done.
+> Make the version check code easier to update and harder to misuse.
 > 
->>> +TEST_F_FORK(layout1, ftruncate)
->>
->> Great!
->>
->>> +{
->>> +	/*
->>> +	 * This test opens a new file descriptor at different stages of
->>> +	 * Landlock restriction:
->>> +	 *
->>> +	 * without restriction:                    ftruncate works
->>> +	 * something else but truncate restricted: ftruncate works
->>> +	 * truncate restricted and permitted:      ftruncate works
->>> +	 * truncate restricted and not permitted:  ftruncate fails
->>> +	 *
->>> +	 * Whether this works or not is expected to depend on the time when the
->>> +	 * FD was opened, not to depend on the time when ftruncate() was
->>> +	 * called.
->>> +	 */
->>> +	const char *const path = file1_s1d1;
->>> +	int fd0, fd1, fd2, fd3;
->>
->> You can rename them fd_layer0, fd_layer1…
+> Cc: Günther Noack <gnoack3000@gmail.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20220923154207.3311629-2-mic@digikod.net
+> ---
+>  samples/landlock/sandboxer.c | 37 ++++++++++++++++++++++++++++--------
+>  1 file changed, 29 insertions(+), 8 deletions(-)
 > 
-> Done.
+> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> index 3e404e51ec64..f29bb3c72230 100644
+> --- a/samples/landlock/sandboxer.c
+> +++ b/samples/landlock/sandboxer.c
+> @@ -162,11 +162,10 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
+>  	LANDLOCK_ACCESS_FS_MAKE_SYM | \
+>  	LANDLOCK_ACCESS_FS_REFER)
+>  
+> -#define ACCESS_ABI_2 ( \
+> -	LANDLOCK_ACCESS_FS_REFER)
+> -
+>  /* clang-format on */
+>  
+> +#define LANDLOCK_ABI_LAST 2
+> +
+>  int main(const int argc, char *const argv[], char *const *const envp)
+>  {
+>  	const char *cmd_path;
+> @@ -196,8 +195,12 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  			"\nexample:\n"
+>  			"%s=\"/bin:/lib:/usr:/proc:/etc:/dev/urandom\" "
+>  			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+> -			"%s bash -i\n",
+> +			"%s bash -i\n\n",
+>  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv[0]);
+> +		fprintf(stderr,
+> +			"This sandboxer can use Landlock features "
+> +			"up to ABI version %d.\n",
+> +			LANDLOCK_ABI_LAST);
+>  		return 1;
+>  	}
+>  
+> @@ -225,12 +228,30 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  		}
+>  		return 1;
+>  	}
+> +
+>  	/* Best-effort security. */
+> -	if (abi < 2) {
+> -		ruleset_attr.handled_access_fs &= ~ACCESS_ABI_2;
+> -		access_fs_ro &= ~ACCESS_ABI_2;
+> -		access_fs_rw &= ~ACCESS_ABI_2;
+> +	switch (abi) {
+> +	case 1:
+> +		/* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
+> +		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
+> +
+> +		fprintf(stderr,
+> +			"Hint: You should update the running kernel "
+> +			"to leverage Landlock features "
+> +			"provided by ABI version %d (instead of %d).\n",
+> +			LANDLOCK_ABI_LAST, abi);
+> +		__attribute__((fallthrough));
+> +	case LANDLOCK_ABI_LAST:
+> +		break;
+> +	default:
+> +		fprintf(stderr,
+> +			"Hint: You should update this sandboxer "
+> +			"to leverage Landlock features "
+> +			"provided by ABI version %d (instead of %d).\n",
+> +			abi, LANDLOCK_ABI_LAST);
+>  	}
+> +	access_fs_ro &= ruleset_attr.handled_access_fs;
+> +	access_fs_rw &= ruleset_attr.handled_access_fs;
+>  
+>  	ruleset_fd =
+>  		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> -- 
+> 2.37.2
 > 
->>> +	fd0 = open(path, O_WRONLY);
->>> +	EXPECT_EQ(0, test_ftruncate(fd0));
->>> +
->>> +	landlock_single_path(_metadata, path,
->>> +			     LANDLOCK_ACCESS_FS_READ_FILE |
->>> +				     LANDLOCK_ACCESS_FS_WRITE_FILE,
->>> +			     LANDLOCK_ACCESS_FS_WRITE_FILE);
->>
->> I'd prefer to follow the current way to write rule layers: write all struct
->> rule at first and then call each enforcement steps. It is a bit more verbose
->> but easier to understand errors. The list of test_ftruncate checks are
->> straightforward to follow.
-> 
-> Done.
-> 
-> 
->>> +	fd1 = open(path, O_WRONLY);
->>> +	EXPECT_EQ(0, test_ftruncate(fd0));
->>> +	EXPECT_EQ(0, test_ftruncate(fd1));
->>> +
->>> +	landlock_single_path(_metadata, path, LANDLOCK_ACCESS_FS_TRUNCATE,
->>> +			     LANDLOCK_ACCESS_FS_TRUNCATE);
->>> +
->>> +	fd2 = open(path, O_WRONLY);
->>> +	EXPECT_EQ(0, test_ftruncate(fd0));
->>> +	EXPECT_EQ(0, test_ftruncate(fd1));
->>> +	EXPECT_EQ(0, test_ftruncate(fd2));
->>> +
->>> +	landlock_single_path(_metadata, path,
->>> +			     LANDLOCK_ACCESS_FS_TRUNCATE |
->>> +				     LANDLOCK_ACCESS_FS_WRITE_FILE,
->>> +			     LANDLOCK_ACCESS_FS_WRITE_FILE);
->>> +
->>> +	fd3 = open(path, O_WRONLY);
->>> +	EXPECT_EQ(0, test_ftruncate(fd0));
->>> +	EXPECT_EQ(0, test_ftruncate(fd1));
->>> +	EXPECT_EQ(0, test_ftruncate(fd2));
->>> +	EXPECT_EQ(EACCES, test_ftruncate(fd3));
->>> +
->>> +	ASSERT_EQ(0, close(fd0));
->>> +	ASSERT_EQ(0, close(fd1));
->>> +	ASSERT_EQ(0, close(fd2));
->>> +	ASSERT_EQ(0, close(fd3));
->>> +}
->>> +
->>>    /* clang-format off */
->>>    FIXTURE(layout1_bind) {};
->>>    /* clang-format on */
-> 
+
+-- 
