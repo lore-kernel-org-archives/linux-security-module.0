@@ -2,313 +2,531 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6405C6FA83
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 21:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 477B8C04A95
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 22:23:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232230AbiIWVS1 (ORCPT
+        id S230047AbiIWWXR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Sep 2022 17:18:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39504 "EHLO
+        Fri, 23 Sep 2022 18:23:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229891AbiIWVS1 (ORCPT
+        with ESMTP id S232018AbiIWWXO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Sep 2022 17:18:27 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 323B6122062;
-        Fri, 23 Sep 2022 14:18:25 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id m3so1780407eda.12;
-        Fri, 23 Sep 2022 14:18:25 -0700 (PDT)
+        Fri, 23 Sep 2022 18:23:14 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 959AE14A781
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 15:23:12 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id bj12so3334634ejb.13
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 15:23:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date;
-        bh=CxNVJCG+UUr7eCNEDbpdIaXHXHpkGcKSASsSG6Nw1bk=;
-        b=SePYN+Rt9D5x7wl4KLMKc+uog4p6QZ8DF7ImE0GQW0cwrD7LIfSixmZn9n8y6dTVCL
-         Cb36fFHJYJzSRNn8CdspPjapiex9OLLTfLeZwuaZf1pA1Acl72BkIHEboWuGEgWbKDFQ
-         d+5tMhaEL7pEcxWuYDpOurg6kIvCwZZYtukbkLLQGkdbulpkaefVJIyF35oJb3UcPWYc
-         PSiIvSxNrGqJbCqrICAOFJER2AAcWdrtwlmdhBlBJj5wFHI51XIk7dwGaF4CYOtv6XYE
-         gUqe1YYyLxTZ+7mzaxmpzpOP/LJbRrt+MWF4LNURY9k8uzEWRH2DU8AG1T4WkKEEkY6J
-         O6pg==
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=4oqyTkBBDw3LTmTITK5vyNnI1QkI4Y5DdLpXejtCHoY=;
+        b=bhDnbELAevvPVnhReDF/VQ1fkqPSkrWfUHJ7AefH7oNQZeJGyiIjM/rldTaMG7QWtw
+         kf43gw25L4/r1LH8DT3ukacprjz6fYGnpWTn1oB9Rw3NAuD3cbr8h4h4C9NVvsYoobL0
+         yPFfbQfjket+9sK2EgAcIj2bcXDD+sWXu+LsM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=CxNVJCG+UUr7eCNEDbpdIaXHXHpkGcKSASsSG6Nw1bk=;
-        b=spmXMDLf/PH/JEX1JlO+x5Jj3Hz6Ww9Hsx6V7jYY6JtkZw58SHiMipgvCJLzoHcAhL
-         hXCqTT4el+wqXYWA6/Vm7HdHNll8fUp3DsVIaE7RDe9LNtNpMWtl9JcR/GgK5O88C/sy
-         ycwCSJuKOa0KJw2b5jP2MwRLM1A/uU5/QCVzaaY5cntyoxfd8gkWnFSy7ptZKwYFaYZ5
-         miMXwBnkQdpYMqDq4onlDgYloSIgzK4KrOqwolIcIwn2fMpU+JmZYHUXsepNVzF9UfkE
-         2ntTZ+Exdea+hlHj5k4zrYf4CDzMWu2nwO4i81VqHewsa4CRqM4Z/mhZ9jbQe5ttaz/m
-         ks0A==
-X-Gm-Message-State: ACrzQf2YLJxqPB+rSfoRuOcejKEWR9SoXR5sp0ve8Pr8UvYcHkAShuLZ
-        Y5ug5vZu+JBogoqBdHk12jI=
-X-Google-Smtp-Source: AMsMyM643XCG4N0MXgC3vPzlSDW4H2Sz0sxFHzn2hMNQcI1SkEX6cKy0I06usqd2/rsb0ezQYs/hcg==
-X-Received: by 2002:aa7:c9c4:0:b0:452:1d98:1be3 with SMTP id i4-20020aa7c9c4000000b004521d981be3mr10412024edt.289.1663967903496;
-        Fri, 23 Sep 2022 14:18:23 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id w23-20020a170906185700b0073d71792c8dsm4550820eje.180.2022.09.23.14.18.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Sep 2022 14:18:23 -0700 (PDT)
-Date:   Fri, 23 Sep 2022 23:18:21 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Alejandro Colomar <alx.manpages@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] landlock: Fix documentation style
-Message-ID: <Yy4ineDopP/BivHj@nuc>
-References: <20220923154207.3311629-1-mic@digikod.net>
- <20220923154207.3311629-4-mic@digikod.net>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=4oqyTkBBDw3LTmTITK5vyNnI1QkI4Y5DdLpXejtCHoY=;
+        b=lc59qDRbytBnt+i+e1G7CCg7F20n6SctfUpaF/nMGyXivo5hJaKnjv0qRqw2WzRRC2
+         9I6stVUhi9o3IzHGj2LDPuSLWmYTuDno0MYc7qtuNIL3yv6KCFUFPipk8acuBPylvplN
+         lF1YYSgbppjaNb5P0ZnG+WYt6of7baGysuWBK6vSHum9UOlSmzpuOk5Gd+Z5CNOx0Sg/
+         jXJ98VXhgJKJPTL/43iIFcDxg5+NjjBrFVH4DvqQ5J69ldc6emHXhYsI1998dZH8njH5
+         Urd6/r+UvmwSci5b2czcSb7G3IE9zAvmH5w36nKuCAI1GJxnEpv2dz2JQOKHjgpU4Jec
+         FxRg==
+X-Gm-Message-State: ACrzQf1u+EmfgPn1Il97ESZHjVZX9ibk+qeNS8FHyLiB7I2q8aG6rIKF
+        /osVxQtCz9gRrRdR1s/FlHqRm3RIc6OgVw==
+X-Google-Smtp-Source: AMsMyM7QUmQsyVhLx4eHj6DeONfblKZPkfkOQEgHOm3XoUoF8V5aFAvbNjhCnaixvFghP4QEGLyjcQ==
+X-Received: by 2002:a17:907:7d8f:b0:782:3481:3d0d with SMTP id oz15-20020a1709077d8f00b0078234813d0dmr9099557ejc.74.1663971790731;
+        Fri, 23 Sep 2022 15:23:10 -0700 (PDT)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com. [209.85.128.53])
+        by smtp.gmail.com with ESMTPSA id k7-20020a17090632c700b00770812e2394sm4460383ejk.160.2022.09.23.15.23.10
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Sep 2022 15:23:10 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id i203-20020a1c3bd4000000b003b3df9a5ecbso4140522wma.1
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 15:23:10 -0700 (PDT)
+X-Received: by 2002:a7b:c389:0:b0:3b4:a67a:2ef7 with SMTP id
+ s9-20020a7bc389000000b003b4a67a2ef7mr14181065wmj.180.1663971779214; Fri, 23
+ Sep 2022 15:22:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220923154207.3311629-4-mic@digikod.net>
+References: <20220823222526.1524851-1-evgreen@chromium.org>
+ <20220823152108.v2.3.Ieb1215f598bc9df56b0e29e5977eae4fcca25e15@changeid> <202209201552.DF8C511D23@keescook>
+In-Reply-To: <202209201552.DF8C511D23@keescook>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Fri, 23 Sep 2022 15:22:21 -0700
+X-Gmail-Original-Message-ID: <CAE=gft6AEKiYUf9yZ1Z6F0w+=S2KJvZ6HVK+eVsQ3fF1u+HaVQ@mail.gmail.com>
+Message-ID: <CAE=gft6AEKiYUf9yZ1Z6F0w+=S2KJvZ6HVK+eVsQ3fF1u+HaVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] security: keys: trusted: Include TPM2 creation data
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Matthew Garrett <mgarrett@aurora.tech>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        apronin@chromium.org, Daniil Lunev <dlunev@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 23, 2022 at 05:42:07PM +0200, Mickaël Salaün wrote:
-> It seems that all code should use double backquotes, which is also used
-> to convert "%" defines.  Let's use an homogeneous style and remove all
-> use of simple backquotes (which should only be used for emphasis).
-> 
-> Cc: Günther Noack <gnoack3000@gmail.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20220923154207.3311629-4-mic@digikod.net
-> ---
->  Documentation/security/landlock.rst      |  4 +--
->  Documentation/userspace-api/landlock.rst | 25 ++++++++-------
->  include/uapi/linux/landlock.h            | 10 +++---
->  security/landlock/syscalls.c             | 40 ++++++++++++------------
->  4 files changed, 40 insertions(+), 39 deletions(-)
-> 
-> diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
-> index cc9617f3175b..c0029d5d02eb 100644
-> --- a/Documentation/security/landlock.rst
-> +++ b/Documentation/security/landlock.rst
-> @@ -54,8 +54,8 @@ content of a listed inode.  Indeed, a file name is local to its parent
->  directory, and an inode can be referenced by multiple file names thanks to
->  (hard) links.  Being able to unlink a file only has a direct impact on the
->  directory, not the unlinked inode.  This is the reason why
-> -`LANDLOCK_ACCESS_FS_REMOVE_FILE` or `LANDLOCK_ACCESS_FS_REFER` are not allowed
-> -to be tied to files but only to directories.
-> +``LANDLOCK_ACCESS_FS_REMOVE_FILE`` or ``LANDLOCK_ACCESS_FS_REFER`` are not
-> +allowed to be tied to files but only to directories.
->  
->  Tests
->  =====
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 83bae71bf042..cec780c2f497 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -69,7 +69,7 @@ should try to protect users as much as possible whatever the kernel they are
->  using.  To avoid binary enforcement (i.e. either all security features or
->  none), we can leverage a dedicated Landlock command to get the current version
->  of the Landlock ABI and adapt the handled accesses.  Let's check if we should
-> -remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
-> +remove the ``LANDLOCK_ACCESS_FS_REFER`` access right which is only supported
->  starting with the second version of the ABI.
->  
->  .. code-block:: c
-> @@ -128,7 +128,7 @@ descriptor.
->  It may also be required to create rules following the same logic as explained
->  for the ruleset creation, by filtering access rights according to the Landlock
->  ABI version.  In this example, this is not required because
-> -`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
-> +``LANDLOCK_ACCESS_FS_REFER`` is not allowed by any rule.
->  
->  We now have a ruleset with one rule allowing read access to ``/usr`` while
->  denying all other handled accesses for the filesystem.  The next step is to
-> @@ -154,8 +154,8 @@ The current thread is now ready to sandbox itself with the ruleset.
->      }
->      close(ruleset_fd);
->  
-> -If the `landlock_restrict_self` system call succeeds, the current thread is now
-> -restricted and this policy will be enforced on all its subsequently created
-> +If the ``landlock_restrict_self`` system call succeeds, the current thread is
-> +now restricted and this policy will be enforced on all its subsequently created
->  children as well.  Once a thread is landlocked, there is no way to remove its
->  security policy; only adding more restrictions is allowed.  These threads are
->  now in a new Landlock domain, merge of their parent one (if any) with the new
-> @@ -175,7 +175,8 @@ depend on their location (i.e. parent directories).  This is particularly
->  relevant when we want to allow linking or renaming.  Indeed, having consistent
->  access rights per directory enables to change the location of such directory
->  without relying on the destination directory access rights (except those that
-> -are required for this operation, see `LANDLOCK_ACCESS_FS_REFER` documentation).
-> +are required for this operation, see ``LANDLOCK_ACCESS_FS_REFER``
-> +documentation).
->  Having self-sufficient hierarchies also helps to tighten the required access
->  rights to the minimal set of data.  This also helps avoid sinkhole directories,
->  i.e.  directories where data can be linked to but not linked from.  However,
-> @@ -259,7 +260,7 @@ Backward and forward compatibility
->  
->  Landlock is designed to be compatible with past and future versions of the
->  kernel.  This is achieved thanks to the system call attributes and the
-> -associated bitflags, particularly the ruleset's `handled_access_fs`.  Making
-> +associated bitflags, particularly the ruleset's ``handled_access_fs``.  Making
->  handled access right explicit enables the kernel and user space to have a clear
->  contract with each other.  This is required to make sure sandboxing will not
->  get stricter with a system update, which could break applications.
-> @@ -394,7 +395,7 @@ according to the potentially lost constraints.  To protect against privilege
->  escalations through renaming or linking, and for the sake of simplicity,
->  Landlock previously limited linking and renaming to the same directory.
->  Starting with the Landlock ABI version 2, it is now possible to securely
-> -control renaming and linking thanks to the new `LANDLOCK_ACCESS_FS_REFER`
-> +control renaming and linking thanks to the new ``LANDLOCK_ACCESS_FS_REFER``
->  access right.
->  
->  .. _kernel_support:
-> @@ -403,14 +404,14 @@ Kernel support
->  ==============
->  
->  Landlock was first introduced in Linux 5.13 but it must be configured at build
-> -time with `CONFIG_SECURITY_LANDLOCK=y`.  Landlock must also be enabled at boot
-> +time with ``CONFIG_SECURITY_LANDLOCK=y``.  Landlock must also be enabled at boot
->  time as the other security modules.  The list of security modules enabled by
-> -default is set with `CONFIG_LSM`.  The kernel configuration should then
-> -contains `CONFIG_LSM=landlock,[...]` with `[...]`  as the list of other
-> +default is set with ``CONFIG_LSM``.  The kernel configuration should then
-> +contains ``CONFIG_LSM=landlock,[...]`` with ``[...]``  as the list of other
->  potentially useful security modules for the running system (see the
-> -`CONFIG_LSM` help).
-> +``CONFIG_LSM`` help).
->  
-> -If the running kernel does not have `landlock` in `CONFIG_LSM`, then we can
-> +If the running kernel does not have ``landlock`` in ``CONFIG_LSM``, then we can
->  still enable it by adding ``lsm=landlock,[...]`` to
->  Documentation/admin-guide/kernel-parameters.rst thanks to the bootloader
->  configuration.
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index 23df4e0e8ace..9c4bcc37a455 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -26,7 +26,7 @@ struct landlock_ruleset_attr {
->  	 * Landlock filesystem access rights that are not part of
->  	 * handled_access_fs are allowed.  This is needed for backward
->  	 * compatibility reasons.  One exception is the
-> -	 * LANDLOCK_ACCESS_FS_REFER access right, which is always implicitly
-> +	 * %LANDLOCK_ACCESS_FS_REFER access right, which is always implicitly
+On Tue, Sep 20, 2022 at 4:04 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Tue, Aug 23, 2022 at 03:25:19PM -0700, Evan Green wrote:
+> > In addition to the private key and public key, the TPM2_Create
+> > command may also return creation data, a creation hash, and a creation
+> > ticket. These fields allow the TPM to attest to the contents of a
+> > specified set of PCRs at the time the trusted key was created. Encrypted
+> > hibernation will use this to ensure that PCRs settable only by the
+> > kernel were set properly at the time of creation, indicating this is an
+> > authentic hibernate key.
+> >
+> > Encode these additional parameters into the ASN.1 created to represent
+> > the key blob. The new fields are made optional so that they don't bloat
+> > key blobs which don't need them, and to ensure interoperability with
+> > old blobs.
+> >
+> > ---
+> >
+> > (no changes since v1)
+> >
+> > This is a replacement for Matthew's original patch here:
+> > https://patchwork.kernel.org/patch/12096489/
+> >
+> > That patch was written before the exported key format was switched to
+> > ASN.1. This patch accomplishes the same thing (saving, loading, and
+> > getting pointers to the creation data) while utilizing the new ASN.1
+> > format.
+>
+> This part (between your S-o-b and the "---") should got below the "---"
+> after your S-o-b, otherwise tooling will include it in the commit log
+> (or lose your S-o-b).
 
-At the risk of asking a newbie question, why is this access right
-prefixed with % in this command, but most others are surrounded by
-double-backticks in other places?
+Will fix.
 
-According to [1], % is used to denote a constant - should these
-LANDLOCK_ACCESS_FS* rights not all be showing up as constants?
+>
+> >
+> > Signed-off-by: Evan Green <evgreen@chromium.org>
+> > ---
+> >  include/keys/trusted-type.h               |   8 +
+> >  security/keys/trusted-keys/tpm2key.asn1   |   5 +-
+> >  security/keys/trusted-keys/trusted_tpm2.c | 202 +++++++++++++++++++---
+> >  3 files changed, 190 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
+> > index 4eb64548a74f1a..209086fed240a5 100644
+> > --- a/include/keys/trusted-type.h
+> > +++ b/include/keys/trusted-type.h
+> > @@ -22,15 +22,23 @@
+> >  #define MAX_BLOB_SIZE                        512
+> >  #define MAX_PCRINFO_SIZE             64
+> >  #define MAX_DIGEST_SIZE                      64
+> > +#define MAX_CREATION_DATA            412
+> > +#define MAX_TK                               76
+> >
+> >  struct trusted_key_payload {
+> >       struct rcu_head rcu;
+> >       unsigned int key_len;
+> >       unsigned int blob_len;
+> > +     unsigned int creation_len;
+> > +     unsigned int creation_hash_len;
+> > +     unsigned int tk_len;
+> >       unsigned char migratable;
+> >       unsigned char old_format;
+> >       unsigned char key[MAX_KEY_SIZE + 1];
+> >       unsigned char blob[MAX_BLOB_SIZE];
+> > +     unsigned char *creation;
+> > +     unsigned char *creation_hash;
+> > +     unsigned char *tk;
+> >  };
+> >
+> >  struct trusted_key_options {
+> > diff --git a/security/keys/trusted-keys/tpm2key.asn1 b/security/keys/trusted-keys/tpm2key.asn1
+> > index f57f869ad60068..1bfbf290e523a3 100644
+> > --- a/security/keys/trusted-keys/tpm2key.asn1
+> > +++ b/security/keys/trusted-keys/tpm2key.asn1
+> > @@ -7,5 +7,8 @@ TPMKey ::= SEQUENCE {
+> >       emptyAuth       [0] EXPLICIT BOOLEAN OPTIONAL,
+> >       parent          INTEGER ({tpm2_key_parent}),
+> >       pubkey          OCTET STRING ({tpm2_key_pub}),
+> > -     privkey         OCTET STRING ({tpm2_key_priv})
+> > +     privkey         OCTET STRING ({tpm2_key_priv}),
+> > +     creationData    [1] EXPLICIT OCTET STRING OPTIONAL ({tpm2_key_creation_data}),
+> > +     creationHash    [2] EXPLICIT OCTET STRING OPTIONAL ({tpm2_key_creation_hash}),
+> > +     creationTk      [3] EXPLICIT OCTET STRING OPTIONAL ({tpm2_key_creation_tk})
+> >       }
+>
+> Maybe include a link (or named reference) to these fields from the TPM
+> spec?
 
-[1] https://docs.kernel.org/doc-guide/kernel-doc.html#highlights-and-cross-references
+Sure. The TPM spec names their structure types (TPM2B_CREATION_DATA,
+TPM2B_DIGEST, etc), so I'll add comments with the names of the types
+as well as the command they came out of.
 
-Apart from this item, this change looks good.
+>
+> > [...]
+> > @@ -46,6 +49,26 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+> >
+> >       pub_len = get_unaligned_be16(src) + 2;
+> >       pub = src;
+> > +     src += pub_len;
+> > +
+> > +     creation_data_len = get_unaligned_be16(src);
+> > +     if (creation_data_len) {
+> > +             creation_data_len += 2;
+> > +             creation_data = src;
+> > +             src += creation_data_len;
+> > +
+> > +             creation_hash_len = get_unaligned_be16(src) + 2;
+> > +             creation_hash = src;
+> > +             src += creation_hash_len;
+> > +
+> > +             /*
+> > +              * The creation ticket (TPMT_TK_CREATION) consists of a 2 byte
+> > +              * tag, 4 byte handle, and then a TPM2B_DIGEST, which is a 2
+> > +              * byte length followed by data.
+> > +              */
+> > +             creation_tk_len = get_unaligned_be16(src + 6) + 8;
+> > +             creation_tk = src;
+> > +     }
+> >
+> >       if (!scratch)
+> >               return -ENOMEM;
+>
+> I don't see anything in this code (even before your patch) actually
+> checking length against the "len" argument to tpm2_key_encode(). I think
+> that needs to be fixed so proper bounds checking can be done here.
+> Otherwise how do we know if we're running off the end of "src"?
+>
+> Yes, I realize if we have a malicious TPM everything goes out the
+> window, but TPMs don't always behave -- this code should likely be more
+> defensive. Or, I've misunderstood where "src" is coming from.
+> Regardless, my question stands: what is checking "len"?
 
->  	 * handled, but must still be explicitly handled to add new rules with
->  	 * this access right.
->  	 */
-> @@ -128,11 +128,11 @@ struct landlock_path_beneath_attr {
->   *   hierarchy must also always have the same or a superset of restrictions of
->   *   the source hierarchy.  If it is not the case, or if the domain doesn't
->   *   handle this access right, such actions are denied by default with errno
-> - *   set to EXDEV.  Linking also requires a LANDLOCK_ACCESS_FS_MAKE_* access
-> - *   right on the destination directory, and renaming also requires a
-> - *   LANDLOCK_ACCESS_FS_REMOVE_* access right on the source's (file or
-> + *   set to ``EXDEV``.  Linking also requires a ``LANDLOCK_ACCESS_FS_MAKE_*``
-> + *   access right on the destination directory, and renaming also requires a
-> + *   ``LANDLOCK_ACCESS_FS_REMOVE_*`` access right on the source's (file or
->   *   directory) parent.  Otherwise, such actions are denied with errno set to
-> - *   EACCES.  The EACCES errno prevails over EXDEV to let user space
-> + *   ``EACCES``.  The ``EACCES`` errno prevails over ``EXDEV`` to let user space
->   *   efficiently deal with an unrecoverable error.
->   *
->   * .. warning::
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index 735a0865ea11..2ca0ccbd905a 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -149,10 +149,10 @@ static const struct file_operations ruleset_fops = {
->   *
->   * Possible returned errors are:
->   *
-> - * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
-> - * - EINVAL: unknown @flags, or unknown access, or too small @size;
-> - * - E2BIG or EFAULT: @attr or @size inconsistencies;
-> - * - ENOMSG: empty &landlock_ruleset_attr.handled_access_fs.
-> + * - %EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
-> + * - %EINVAL: unknown @flags, or unknown access, or too small @size;
-> + * - %E2BIG or %EFAULT: @attr or @size inconsistencies;
-> + * - %ENOMSG: empty &landlock_ruleset_attr.handled_access_fs.
->   */
->  SYSCALL_DEFINE3(landlock_create_ruleset,
->  		const struct landlock_ruleset_attr __user *const, attr,
-> @@ -280,7 +280,7 @@ static int get_path_from_fd(const s32 fd, struct path *const path)
->   * @ruleset_fd: File descriptor tied to the ruleset that should be extended
->   *		with the new rule.
->   * @rule_type: Identify the structure type pointed to by @rule_attr (only
-> - *             LANDLOCK_RULE_PATH_BENEATH for now).
-> + *             %LANDLOCK_RULE_PATH_BENEATH for now).
->   * @rule_attr: Pointer to a rule (only of type &struct
->   *             landlock_path_beneath_attr for now).
->   * @flags: Must be 0.
-> @@ -290,17 +290,17 @@ static int get_path_from_fd(const s32 fd, struct path *const path)
->   *
->   * Possible returned errors are:
->   *
-> - * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
-> - * - EINVAL: @flags is not 0, or inconsistent access in the rule (i.e.
-> + * - %EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
-> + * - %EINVAL: @flags is not 0, or inconsistent access in the rule (i.e.
->   *   &landlock_path_beneath_attr.allowed_access is not a subset of the
->   *   ruleset handled accesses);
-> - * - ENOMSG: Empty accesses (e.g. &landlock_path_beneath_attr.allowed_access);
-> - * - EBADF: @ruleset_fd is not a file descriptor for the current thread, or a
-> + * - %ENOMSG: Empty accesses (e.g. &landlock_path_beneath_attr.allowed_access);
-> + * - %EBADF: @ruleset_fd is not a file descriptor for the current thread, or a
->   *   member of @rule_attr is not a file descriptor as expected;
-> - * - EBADFD: @ruleset_fd is not a ruleset file descriptor, or a member of
-> + * - %EBADFD: @ruleset_fd is not a ruleset file descriptor, or a member of
->   *   @rule_attr is not the expected file descriptor type;
-> - * - EPERM: @ruleset_fd has no write access to the underlying ruleset;
-> - * - EFAULT: @rule_attr inconsistency.
-> + * - %EPERM: @ruleset_fd has no write access to the underlying ruleset;
-> + * - %EFAULT: @rule_attr inconsistency.
->   */
->  SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
->  		const enum landlock_rule_type, rule_type,
-> @@ -378,20 +378,20 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
->   * @flags: Must be 0.
->   *
->   * This system call enables to enforce a Landlock ruleset on the current
-> - * thread.  Enforcing a ruleset requires that the task has CAP_SYS_ADMIN in its
-> + * thread.  Enforcing a ruleset requires that the task has %CAP_SYS_ADMIN in its
->   * namespace or is running with no_new_privs.  This avoids scenarios where
->   * unprivileged tasks can affect the behavior of privileged children.
->   *
->   * Possible returned errors are:
->   *
-> - * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
-> - * - EINVAL: @flags is not 0.
-> - * - EBADF: @ruleset_fd is not a file descriptor for the current thread;
-> - * - EBADFD: @ruleset_fd is not a ruleset file descriptor;
-> - * - EPERM: @ruleset_fd has no read access to the underlying ruleset, or the
-> + * - %EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
-> + * - %EINVAL: @flags is not 0.
-> + * - %EBADF: @ruleset_fd is not a file descriptor for the current thread;
-> + * - %EBADFD: @ruleset_fd is not a ruleset file descriptor;
-> + * - %EPERM: @ruleset_fd has no read access to the underlying ruleset, or the
->   *   current thread is not running with no_new_privs, or it doesn't have
-> - *   CAP_SYS_ADMIN in its namespace.
-> - * - E2BIG: The maximum number of stacked rulesets is reached for the current
-> + *   %CAP_SYS_ADMIN in its namespace.
-> + * - %E2BIG: The maximum number of stacked rulesets is reached for the current
->   *   thread.
->   */
->  SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
-> -- 
-> 2.37.2
-> 
+Sure, will add checks of len to my hunk and the bit above.
 
--- 
+>
+> > @@ -63,26 +86,81 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+> >       }
+> >
+> >       /*
+> > -      * Assume both octet strings will encode to a 2 byte definite length
+> > +      * Assume each octet string will encode to a 2 byte definite length.
+> > +      * Each optional octet string consumes one extra byte.
+> >        *
+> > -      * Note: For a well behaved TPM, this warning should never
+> > -      * trigger, so if it does there's something nefarious going on
+> > +      * Note: For a well behaved TPM, this warning should never trigger, so
+> > +      * if it does there's something nefarious going on
+> >        */
+> > -     if (WARN(work - scratch + pub_len + priv_len + 14 > SCRATCH_SIZE,
+> > -              "BUG: scratch buffer is too small"))
+> > -             return -EINVAL;
+> > +     if (WARN(work - scratch + pub_len + priv_len + creation_data_len +
+> > +              creation_hash_len + creation_tk_len + (7 * 5) + 3 >
+> > +              SCRATCH_SIZE,
+> > +              "BUG: scratch buffer is too small")) {
+> > +             rc = -EINVAL;
+> > +             goto err;
+> > +     }
+> >
+> >       work = asn1_encode_integer(work, end_work, options->keyhandle);
+> >       work = asn1_encode_octet_string(work, end_work, pub, pub_len);
+> >       work = asn1_encode_octet_string(work, end_work, priv, priv_len);
+> > +     if (creation_data_len) {
+> > +             u8 *scratch2 = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
+> > +             u8 *work2;
+> > +             u8 *end_work2 = scratch2 + SCRATCH_SIZE;
+> > +
+> > +             if (!scratch2) {
+> > +                     rc = -ENOMEM;
+> > +                     goto err;
+> > +             }
+> > +
+> > +             work2 = asn1_encode_octet_string(scratch2,
+> > +                                              end_work2,
+> > +                                              creation_data,
+> > +                                              creation_data_len);
+> > +
+> > +             work = asn1_encode_tag(work,
+> > +                                    end_work,
+> > +                                    1,
+> > +                                    scratch2,
+> > +                                    work2 - scratch2);
+> > +
+> > +             work2 = asn1_encode_octet_string(scratch2,
+> > +                                              end_work2,
+> > +                                              creation_hash,
+> > +                                              creation_hash_len);
+> > +
+> > +             work = asn1_encode_tag(work,
+> > +                                    end_work,
+> > +                                    2,
+> > +                                    scratch2,
+> > +                                    work2 - scratch2);
+> > +
+> > +             work2 = asn1_encode_octet_string(scratch2,
+> > +                                              end_work2,
+> > +                                              creation_tk,
+> > +                                              creation_tk_len);
+> > +
+> > +             work = asn1_encode_tag(work,
+> > +                                    end_work,
+> > +                                    3,
+> > +                                    scratch2,
+> > +                                    work2 - scratch2);
+> > +
+> > +             kfree(scratch2);
+> > +     }
+> >
+> >       work1 = payload->blob;
+> >       work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
+> >                                    scratch, work - scratch);
+> > -     if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
+> > -             return PTR_ERR(work1);
+> > +     if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed")) {
+> > +             rc = PTR_ERR(work1);
+> > +             goto err;
+>
+> I find the addition of the word "BUG" in a WARN() to be confusing. :) I
+> realize this is just copying the existing style, though.
+
+It wasn't my favorite either, but I felt an urge to be consistent. So
+far I've lft this as-is, holler if I should change it.
+
+>
+> > +     }
+> >
+> >       return work1 - payload->blob;
+> > +err:
+> > +     kfree(scratch);
+> > +     return rc;
+> >  }
+> >
+> >  struct tpm2_key_context {
+> > @@ -91,15 +169,21 @@ struct tpm2_key_context {
+> >       u32 pub_len;
+> >       const u8 *priv;
+> >       u32 priv_len;
+> > +     const u8 *creation_data;
+> > +     u32 creation_data_len;
+> > +     const u8 *creation_hash;
+> > +     u32 creation_hash_len;
+> > +     const u8 *creation_tk;
+> > +     u32 creation_tk_len;
+> >  };
+> >
+> >  static int tpm2_key_decode(struct trusted_key_payload *payload,
+> > -                        struct trusted_key_options *options,
+> > -                        u8 **buf)
+> > +                        struct trusted_key_options *options)
+> >  {
+> > +     u64 data_len;
+> >       int ret;
+> >       struct tpm2_key_context ctx;
+> > -     u8 *blob;
+> > +     u8 *blob, *buf;
+> >
+> >       memset(&ctx, 0, sizeof(ctx));
+> >
+> > @@ -108,21 +192,57 @@ static int tpm2_key_decode(struct trusted_key_payload *payload,
+> >       if (ret < 0)
+> >               return ret;
+> >
+> > -     if (ctx.priv_len + ctx.pub_len > MAX_BLOB_SIZE)
+> > +     data_len = ctx.priv_len + ctx.pub_len + ctx.creation_data_len +
+> > +                ctx.creation_hash_len + ctx.creation_tk_len;
+> > +
+> > +     if (data_len > MAX_BLOB_SIZE)
+> >               return -EINVAL;
+> >
+> > -     blob = kmalloc(ctx.priv_len + ctx.pub_len + 4, GFP_KERNEL);
+> > -     if (!blob)
+> > +     buf = kmalloc(data_len + 4, GFP_KERNEL);
+> > +     if (!buf)
+> >               return -ENOMEM;
+> >
+> > -     *buf = blob;
+> > +     blob = buf;
+> >       options->keyhandle = ctx.parent;
+> >
+> >       memcpy(blob, ctx.priv, ctx.priv_len);
+> >       blob += ctx.priv_len;
+> >
+> >       memcpy(blob, ctx.pub, ctx.pub_len);
+> > +     blob += ctx.pub_len;
+> > +     if (ctx.creation_data_len) {
+> > +             memcpy(blob, ctx.creation_data, ctx.creation_data_len);
+> > +             blob += ctx.creation_data_len;
+> > +     }
+> > +
+> > +     if (ctx.creation_hash_len) {
+> > +             memcpy(blob, ctx.creation_hash, ctx.creation_hash_len);
+> > +             blob += ctx.creation_hash_len;
+> > +     }
+> >
+> > +     if (ctx.creation_tk_len) {
+> > +             memcpy(blob, ctx.creation_tk, ctx.creation_tk_len);
+> > +             blob += ctx.creation_tk_len;
+> > +     }
+> > +
+> > +     /*
+> > +      * Copy the buffer back into the payload blob since the creation
+> > +      * info will be used after loading.
+> > +      */
+> > +     payload->blob_len = blob - buf;
+> > +     memcpy(payload->blob, buf, payload->blob_len);
+> > +     if (ctx.creation_data_len) {
+> > +             payload->creation = payload->blob + ctx.priv_len + ctx.pub_len;
+> > +             payload->creation_len = ctx.creation_data_len;
+> > +             payload->creation_hash = payload->creation + ctx.creation_data_len;
+> > +             payload->creation_hash_len = ctx.creation_hash_len;
+> > +             payload->tk = payload->creation_hash +
+> > +                           payload->creation_hash_len;
+> > +
+> > +             payload->tk_len = ctx.creation_tk_len;
+> > +     }
+> > +
+> > +     kfree(buf);
+> >       return 0;
+> >  }
+> >
+> > @@ -185,6 +305,42 @@ int tpm2_key_priv(void *context, size_t hdrlen,
+> >       return 0;
+> >  }
+> >
+> > +int tpm2_key_creation_data(void *context, size_t hdrlen,
+> > +                        unsigned char tag,
+> > +                        const void *value, size_t vlen)
+> > +{
+> > +     struct tpm2_key_context *ctx = context;
+> > +
+> > +     ctx->creation_data = value;
+> > +     ctx->creation_data_len = vlen;
+> > +
+> > +     return 0;
+> > +}
+>
+> What is hdrlen here? Or rather, what kinds of bounds checking is needed
+> here?
+
+The prototype of asn1_action_t looks like this:
+
+typedef int (*asn1_action_t)(void *context,
+     size_t hdrlen, /* In case of ANY type */
+     unsigned char tag, /* In case of ANY type */
+     const void *value, size_t vlen);
+
+I'm not an ASN.1 expert, but from studying asn1_ber_decoder(), it
+looks like the core unit of an ASN.1 thing is a TLV, and hdrlen
+represents the number of bytes in the datastream that make up the {TL}
+portion. Based on the ANY comment above this seems to maybe be useful
+for certain generic/undefined object types, but I think it's not
+relevant to the types we're using. The vlen arg is the L value of the
+TLV, which is what we save away in tpm2_key_context. In
+asn1_ber_decoder(), I do see checks that what they pass for vlen stays
+within the bounds of the source data buffer (since I knew you'd ask
+:)).
+
+
+>
+> > +
+> > +int tpm2_key_creation_hash(void *context, size_t hdrlen,
+> > +                        unsigned char tag,
+> > +                        const void *value, size_t vlen)
+> > +{
+> > +     struct tpm2_key_context *ctx = context;
+> > +
+> > +     ctx->creation_hash = value;
+> > +     ctx->creation_hash_len = vlen;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +int tpm2_key_creation_tk(void *context, size_t hdrlen,
+> > +                      unsigned char tag,
+> > +                      const void *value, size_t vlen)
+> > +{
+> > +     struct tpm2_key_context *ctx = context;
+> > +
+> > +     ctx->creation_tk = value;
+> > +     ctx->creation_tk_len = vlen;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> >  /**
+> >   * tpm_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
+> >   *
+> > @@ -229,6 +385,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> >                     struct trusted_key_options *options)
+> >  {
+> >       int blob_len = 0;
+> > +     unsigned int offset;
+> >       struct tpm_buf buf;
+> >       u32 hash;
+> >       u32 flags;
+> > @@ -317,13 +474,14 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> >               rc = -E2BIG;
+> >               goto out;
+> >       }
+> > -     if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 4 + blob_len) {
+> > +     offset = TPM_HEADER_SIZE + 4;
+> > +     if (tpm_buf_length(&buf) < offset + blob_len) {
+> >               rc = -EFAULT;
+> >               goto out;
+> >       }
+> >
+> >       blob_len = tpm2_key_encode(payload, options,
+> > -                                &buf.data[TPM_HEADER_SIZE + 4],
+> > +                                &buf.data[offset],
+> >                                  blob_len);
+> >
+> >  out:
+> > @@ -370,13 +528,11 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+> >       int rc;
+> >       u32 attrs;
+> >
+> > -     rc = tpm2_key_decode(payload, options, &blob);
+> > -     if (rc) {
+> > -             /* old form */
+> > -             blob = payload->blob;
+> > +     rc = tpm2_key_decode(payload, options);
+> > +     if (rc)
+> >               payload->old_format = 1;
+> > -     }
+> >
+> > +     blob = payload->blob;
+> >       /* new format carries keyhandle but old format doesn't */
+> >       if (!options->keyhandle)
+> >               return -EINVAL;
+> > @@ -433,8 +589,6 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+> >                       (__be32 *) &buf.data[TPM_HEADER_SIZE]);
+> >
+> >  out:
+> > -     if (blob != payload->blob)
+> > -             kfree(blob);
+> >       tpm_buf_destroy(&buf);
+> >
+> >       if (rc > 0)
+> > --
+> > 2.31.0
+> >
+>
+> Otherwise looks good!
+
+Thank you for reviewing it!
+-Evan
