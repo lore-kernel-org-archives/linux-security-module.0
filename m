@@ -2,181 +2,141 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 610CCC07E9D
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 17:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD24C07E9D
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 18:08:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229577AbiIWRu2 (ORCPT
+        id S232829AbiIWSIQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Sep 2022 13:50:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48334 "EHLO
+        Fri, 23 Sep 2022 14:08:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230018AbiIWRu0 (ORCPT
+        with ESMTP id S232833AbiIWSHx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Sep 2022 13:50:26 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B41A53D1B;
-        Fri, 23 Sep 2022 10:50:25 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id b35so1277932edf.0;
-        Fri, 23 Sep 2022 10:50:25 -0700 (PDT)
+        Fri, 23 Sep 2022 14:07:53 -0400
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FA93147F3E
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 11:05:36 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id g130so722997oia.13
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 11:05:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date;
-        bh=Ni29tjS3Hw4tGE/3CqxcnWG6R4VNkp8dMW8hLmThRR0=;
-        b=gkk5a+qFdycLQsd1+XQBb7mFKbYD60XO6meTGnCtuKD/ZnDfjf6JvZtqTiz+E2cX2V
-         9QWvBjbKXx++2qgdLJjTfczv74zwVdyIpehZtx+O4IjwjgUnwC6jhWomuaR3HrPJWE6F
-         i/PomlRrhYrT64sNVlnbcmBMTngzRwzAVjfEPw9sDWWu61AVubb9uxFj9Ni02J7GoFSX
-         aQb1ooDLtSgcNFAtzsR/mDh9rBRray4etVlgubwAhJ2tuXiXJOlG0sBeWVkQSjCF43mD
-         XHW+m5M1ta1T32ZfSXNd/3ERtdyQIlCktdm47IR1OjJxCGm42eHAia+YykZpguuzJlYh
-         KJGg==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=bpT+eOiJl+cyU9eJqXUypqFlFRt6ud1Md4OM97/rk+w=;
+        b=R1GJB+AouAk3pawmDZ0oHCpDvF2g72CrphB9ks9XpPepbQTg+LhSYpQzutk2kWCUPF
+         q9d9GM3w3AhoWmAzeb0SAg/G+MVGpoQBC5j59VKqq3f5KCnbeKq/DjYYEvit2nThI/qa
+         WOv77a4Su9yqpI/eHfK6SxW+72qlEImdoiKL9rsweB1KYRXZS2Vghkql98hp3fy1h51g
+         QX3OJfKC+bWxrPDhgGsamQ1ntytNKZmMY0lIl1Zl+4IVX7x6kORCG52rSh5TG2TtM2Bl
+         zx4kbSx9k9J9JHJQaTZXV1KoddU/PgvMXDHeMoR2gvZ28OwvmNG2Qgqn4xiudzHDBwdT
+         e5OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=Ni29tjS3Hw4tGE/3CqxcnWG6R4VNkp8dMW8hLmThRR0=;
-        b=aR8jIX2BLI2K4flf5i0VFBt6LR9ZfIKfLEssVl0rrLLgpm9pXd1bc4T9cxFfA53JIL
-         Li1lGjDKYFi5q6vT61P747w0fmrIqnANjmfX30s3JbYLPF12Bl9BtvSQ4qLYK0ZMX263
-         29hFX2bfgvBUA87nKzrU6q5bzFMDp2wAUpZr67GnMAOkwGcnOMX4jE9YBkE6Ja4lDSdT
-         fjnmKaSnk5V/tU3pUTOxxxkNiie5DMhEmEMJl+0twWa4dm37ewLbQVzCkTZtFK2ABYoo
-         yQeQA9fsz7B7NEYGiF+mggYuu21xZKHfqujDAo6tCz7INstwAwW0kS/tJuppqh7GkuyQ
-         x1Xw==
-X-Gm-Message-State: ACrzQf0P3e0aizClCrYV0MIpw4PKGIMsyr14NRu+JzTI5tg2IjA+Zghs
-        LnRZmNobeyLrzhkIo8IdNksAZMg37HA=
-X-Google-Smtp-Source: AMsMyM5jOHm0uRKQwITdvwb3qhVYSEJW6AG16LEd6nDLZ6hhG1wbAq/E2LCk9+krbCCgFFedtIQ6NA==
-X-Received: by 2002:a05:6402:35c5:b0:450:4b7d:9c49 with SMTP id z5-20020a05640235c500b004504b7d9c49mr9663203edc.149.1663955423761;
-        Fri, 23 Sep 2022 10:50:23 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id g7-20020aa7c847000000b0044e01e2533asm1623436edt.43.2022.09.23.10.50.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Sep 2022 10:50:23 -0700 (PDT)
-Date:   Fri, 23 Sep 2022 19:50:21 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH v6 3/5] selftests/landlock: Selftests for file truncation
- support
-Message-ID: <Yy3x3b3+CrD/rb0J@nuc>
-References: <20220908195805.128252-1-gnoack3000@gmail.com>
- <20220908195805.128252-4-gnoack3000@gmail.com>
- <3f3b7798-c3e1-e257-5094-0033e7605062@digikod.net>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=bpT+eOiJl+cyU9eJqXUypqFlFRt6ud1Md4OM97/rk+w=;
+        b=5lV8hWA1ATbwV4qI/ylZnxMBdYBbJ6YGCyKY73KFLsTBsySFx8YCmSM5JGFA2MFp3X
+         K75Qwh7SSvO/f4humifgaL8qKbt89UsBWtBFBsvUn9qdvFbbAFvAlia53X2nYUlS+jzp
+         NXg72pkWbyIDLAUAKR9+WezQeeSz62NWJqelEFRyP2HOtrvEGQLWr8Pi7kK55zHTbUxD
+         k1i9DObBpTcTKFTVO1/lZsN/BR19Eaw6uc2/In6wZMkdcwJhbMn5kmzvw8aFPc/mVkFD
+         wX/BvLdcZihi+Nv6+VMHpynju/0hnnu+YYuxCRQrFHO0rbt+wW8185Lg8yVInAGHFya4
+         KU8A==
+X-Gm-Message-State: ACrzQf38jR0BomFTBCfyxia9yDffZa76MysToCDI8KKUa7rUVipuH8f2
+        4uVB73M1e1pWBz4GoVM/UAkKA/xYqb86kDlWsUwu
+X-Google-Smtp-Source: AMsMyM4mR82f6R8iww4Osb/fvO7jmXvCZjnpt/uKLpsrrzJMhmC+8prTDqSV8MOeLfQE1+xw29NrA4Ojovbz9PbawEY=
+X-Received: by 2002:a05:6808:144b:b0:350:a06a:f8cb with SMTP id
+ x11-20020a056808144b00b00350a06af8cbmr9597052oiv.51.1663956300241; Fri, 23
+ Sep 2022 11:05:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3f3b7798-c3e1-e257-5094-0033e7605062@digikod.net>
+References: <20220921185426.1663357-1-jeffxu@chromium.org> <20220921185426.1663357-2-jeffxu@chromium.org>
+ <CAHC9VhS-jv5cpSdq7dxFGYH=z=5grQceNMyjroeL2KHdrVUV6g@mail.gmail.com> <CABi2SkXRxomrYn-xUf3B+XswmQjXZUJXmYJECmr_nBfrZWwqkA@mail.gmail.com>
+In-Reply-To: <CABi2SkXRxomrYn-xUf3B+XswmQjXZUJXmYJECmr_nBfrZWwqkA@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 23 Sep 2022 14:04:49 -0400
+Message-ID: <CAHC9VhRuUZxdsVQftqWa0zEuNAxk8ur0-TZp5KecJ537hRONRQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] Add CONFIG_SECURITY_SELINUX_PERMISSIVE_DONTAUDIT
+To:     Jeff Xu <jeffxu@chromium.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        jorgelo@chromium.org, groeck@chromium.org,
+        Luis Hector Chavez <lhchavez@google.com>,
+        Luis Hector Chavez <lhchavez@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 16, 2022 at 07:05:44PM +0200, Mickaël Salaün wrote:
-> I'd like to have tests similar to base_test.c:ruleset_fd_transfer to check
-> ftruncate with different kind of file descriptors and not-sandboxed
-> processes. That would require some code refactoring to reuse the FD passing
-> code.
+On Fri, Sep 23, 2022 at 1:43 PM Jeff Xu <jeffxu@chromium.org> wrote:
+> On Wed, Sep 21, 2022 at 12:11 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Wed, Sep 21, 2022 at 2:54 PM <jeffxu@chromium.org> wrote:
+> > >
+> > > From: Jeff Xu <jeffxu@chromium.org>
+> > >
+> > > When SECURITY_SELINUX_DEVELOP=y and the system is running in permissive
+> > > mode, it is useful to disable logging from permissive domain, so audit
+> > > log does not get spamed.
+> > >
+> > > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> > > Signed-off-by: Luis Hector Chavez <lhchavez@google.com>
+> > > Tested-by: Luis Hector Chavez <lhchavez@chromium.org>
+> > > Tested-by: Jeff Xu<jeffxu@chromium.org>
+> > > ---
+> > >  security/selinux/Kconfig | 10 ++++++++++
+> > >  security/selinux/avc.c   |  9 +++++++++
+> > >  2 files changed, 19 insertions(+)
+> >
+> > I'm sorry, but I can't accept this into the upstream kernel.
+> > Permissive mode, both per-domain and system-wide, is not intended to
+> > be a long term solution.  Permissive mode should really only be used
+> > as a development tool or emergency "hotfix" with the proper solution
+> > being either an adjustment of the existing policy (SELinux policy
+> > booleans, labeling changes, etc.) or the development of a new policy
+> > module which better fits your use case.
+>
+> Thanks for the response.
+> For a system that wants to control a few daemons, is there a
+> recommended pattern from selinux ?
 
-Done. I factored out the FD sending and receiving into helper function in common.h.
+Guidance on how to write a SELinux policy for an application is a bit
+beyond what I have time for in this email, but others on this mailing
+list might be able to help.  There has definitely been a lot written
+on the subject, both available online and offline.  My suggestion
+would be to start "small" with a single SELinux domain for the
+application and a single type for any configuration, data, or log
+files it might need; get this initial domain working properly and then
+you can add increasing levels of access control granularity until
+you've met your security requirements.  If you've never done this
+before, go slow, the start might be challenging as you get used to the
+tools, but you can do it :)
 
-> On 08/09/2022 21:58, Günther Noack wrote:
-> > diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> > index 87b28d14a1aa..ddc8c7e57e86 100644
-> > --- a/tools/testing/selftests/landlock/fs_test.c
-> > +++ b/tools/testing/selftests/landlock/fs_test.c
-> > ...
-> > +TEST_F_FORK(layout1, truncate)
-> > +{
-> > +	const char *const file_rwt = file1_s1d1;
-> > +	const char *const file_rw = file2_s1d1;
-> > +	const char *const file_rt = file1_s1d2;
-> > +	const char *const file_t = file2_s1d2;
-> > +	const char *const file_none = file1_s1d3;
-> > +	const char *const dir_t = dir_s2d1;
-> > +	const char *const file_in_dir_t = file1_s2d1;
-> > +	const char *const dir_w = dir_s3d1;
-> > +	const char *const file_in_dir_w = file1_s3d1;
-> > +	int file_rwt_fd, file_rw_fd;
-> 
-> These variables are unused now.
+> I read this blog about unconfined domain (unconfined_t), maybe this is one way ?
+> https://wiki.gentoo.org/wiki/SELinux/Tutorials/What_is_this_unconfined_thingie_and_tell_me_about_attributes
 
-Good catch, done.
+It is important to remember that an unconfined domain is, as the name
+would imply, effectively unconfined by SELinux.  Perhaps this is what
+you want, but generally speaking if you are running SELinux it is
+because you have a need or desire for additional access controls
+beyond the legacy Linux discretionary access controls.
 
-> > +TEST_F_FORK(layout1, ftruncate)
-> 
-> Great!
-> 
-> > +{
-> > +	/*
-> > +	 * This test opens a new file descriptor at different stages of
-> > +	 * Landlock restriction:
-> > +	 *
-> > +	 * without restriction:                    ftruncate works
-> > +	 * something else but truncate restricted: ftruncate works
-> > +	 * truncate restricted and permitted:      ftruncate works
-> > +	 * truncate restricted and not permitted:  ftruncate fails
-> > +	 *
-> > +	 * Whether this works or not is expected to depend on the time when the
-> > +	 * FD was opened, not to depend on the time when ftruncate() was
-> > +	 * called.
-> > +	 */
-> > +	const char *const path = file1_s1d1;
-> > +	int fd0, fd1, fd2, fd3;
-> 
-> You can rename them fd_layer0, fd_layer1…
+> I have two questions on unconfined domain:
+> 1> Is unconfined_t domain supported in SECURITY_SELINUX_DEVELOP=n mode ?
 
-Done.
+Yes.  The SECURITY_SELINUX_DEVELOP kernel build configuration only
+enables the admin to boot the kernel initially in permissive mode
+and/or determine the SELinux mode using the "enforcing=X" kernel
+command line option and a sysfs/securityfs tunable under
+/sys/fs/selinux/enforce.  The unconfined_t domain is defined purely in
+the SELinux policy and not the kernel; you could write a SELinux
+policy without it you wanted, or you could grant unconfined_t-like
+permissions to multiple different domains in your policy.  It's been a
+while since I played with it, but I believe the SELinux reference
+policy (refpol) provides a macro interface to define an arbitrary
+domain with unconfined_t-like permissions.
 
-> > +	fd0 = open(path, O_WRONLY);
-> > +	EXPECT_EQ(0, test_ftruncate(fd0));
-> > +
-> > +	landlock_single_path(_metadata, path,
-> > +			     LANDLOCK_ACCESS_FS_READ_FILE |
-> > +				     LANDLOCK_ACCESS_FS_WRITE_FILE,
-> > +			     LANDLOCK_ACCESS_FS_WRITE_FILE);
-> 
-> I'd prefer to follow the current way to write rule layers: write all struct
-> rule at first and then call each enforcement steps. It is a bit more verbose
-> but easier to understand errors. The list of test_ftruncate checks are
-> straightforward to follow.
+> 2> will unconfined_t domain log also as permissive domain ?
 
-Done.
-
-
-> > +	fd1 = open(path, O_WRONLY);
-> > +	EXPECT_EQ(0, test_ftruncate(fd0));
-> > +	EXPECT_EQ(0, test_ftruncate(fd1));
-> > +
-> > +	landlock_single_path(_metadata, path, LANDLOCK_ACCESS_FS_TRUNCATE,
-> > +			     LANDLOCK_ACCESS_FS_TRUNCATE);
-> > +
-> > +	fd2 = open(path, O_WRONLY);
-> > +	EXPECT_EQ(0, test_ftruncate(fd0));
-> > +	EXPECT_EQ(0, test_ftruncate(fd1));
-> > +	EXPECT_EQ(0, test_ftruncate(fd2));
-> > +
-> > +	landlock_single_path(_metadata, path,
-> > +			     LANDLOCK_ACCESS_FS_TRUNCATE |
-> > +				     LANDLOCK_ACCESS_FS_WRITE_FILE,
-> > +			     LANDLOCK_ACCESS_FS_WRITE_FILE);
-> > +
-> > +	fd3 = open(path, O_WRONLY);
-> > +	EXPECT_EQ(0, test_ftruncate(fd0));
-> > +	EXPECT_EQ(0, test_ftruncate(fd1));
-> > +	EXPECT_EQ(0, test_ftruncate(fd2));
-> > +	EXPECT_EQ(EACCES, test_ftruncate(fd3));
-> > +
-> > +	ASSERT_EQ(0, close(fd0));
-> > +	ASSERT_EQ(0, close(fd1));
-> > +	ASSERT_EQ(0, close(fd2));
-> > +	ASSERT_EQ(0, close(fd3));
-> > +}
-> > +
-> >   /* clang-format off */
-> >   FIXTURE(layout1_bind) {};
-> >   /* clang-format on */
+The intent of the unconfined_t domain is that there would be no access
+denials due to SELinux and thus no AVC audit records related to the
+unconfined_t domain.  It is not permissive in the sense of the SELinux
+"mode" (enforcing/permissive/disabled), but it is permissive in the
+sense that it is given a large number of permissions.
 
 -- 
+paul-moore.com
