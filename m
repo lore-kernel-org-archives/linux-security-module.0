@@ -2,55 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A701FC6FA82
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 05:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A095C6FA82
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 07:04:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbiIWF6g (ORCPT
+        id S229846AbiIWHEI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Sep 2022 01:58:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33772 "EHLO
+        Fri, 23 Sep 2022 03:04:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbiIWF6c (ORCPT
+        with ESMTP id S229571AbiIWHEH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Sep 2022 01:58:32 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1809912207B;
-        Thu, 22 Sep 2022 22:58:31 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 2241368AFE; Fri, 23 Sep 2022 07:58:27 +0200 (CEST)
-Date:   Fri, 23 Sep 2022 07:58:26 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 00/29] acl: add vfs posix acl api
-Message-ID: <20220923055826.GA15662@lst.de>
-References: <20220922151728.1557914-1-brauner@kernel.org> <d74030ae-4b9a-5b39-c203-4b813decd9eb@schaufler-ca.com> <CAHk-=whLbq9oX5HDaMpC59qurmwj6geteNcNOtQtb5JN9J0qFw@mail.gmail.com> <16ca7e4c-01df-3585-4334-6be533193ba6@schaufler-ca.com> <CAHC9VhQRST66pVuNM0WGJsh-W01mDD-bX=GpFxCceUJ1FMWrmg@mail.gmail.com> <20220922215731.GA28876@mail.hallyn.com> <CAHC9VhSBwavTLcgkgJ-AYwH9wzECi3B7BtwdKOx5FJ3n7M+WYg@mail.gmail.com>
+        Fri, 23 Sep 2022 03:04:07 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0511911ED4D;
+        Fri, 23 Sep 2022 00:04:06 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4MYjmv3XxYz4x3w;
+        Fri, 23 Sep 2022 17:03:59 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+        s=201909; t=1663916640;
+        bh=1iXxSu50WtbEc6IZd3//2X2o8ST6IxoIkqMeTSYP8WY=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=TnT637an4yLiiy8/YYhlUVAXWl0vaSFXC4tDJF6Rty/P1MLmQR6xbgT72sJFlbfRL
+         RF5RJ8c2WR7Ae2BtCeTL8DgPfaFWG0Swuw5ceQn3V4Rgc1uxzh875Qm4jtoKsEF0Gy
+         eDU9bd6SZ4Si+hveVGsYo3RJngifYZnCJ3qrnptyxKRcHIY6TyIOk11UW7oCFIXJwW
+         2zDfGhFW/HXO16o/4GlTGDqrlhQ0N0Wgf8+SnCZF2GHPDwGahrnym4EgixY1wAOzYp
+         WVZwA5af2O0LekH6IflX4pCEMH5vdyTTw3w/3zIJMiGYt/xCOfIJNpLqqtBknJkYeA
+         Wka1ga3IEMMhQ==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Paul Moore <paul@paul-moore.com>,
+        Nathan Lynch <nathanl@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
+        ajd@linux.ibm.com, gcwilson@linux.ibm.com, nayna@linux.ibm.com
+Subject: Re: [PATCH 1/2] powerpc/pseries: block untrusted device tree
+ changes when locked down
+In-Reply-To: <CAHC9VhQG_jEh_H8pV-qJgX2oX_fyGjXoBV7_EJOgvOd4ndc+Xw@mail.gmail.com>
+References: <20220922193817.106041-1-nathanl@linux.ibm.com>
+ <20220922193817.106041-2-nathanl@linux.ibm.com>
+ <CAHC9VhQG_jEh_H8pV-qJgX2oX_fyGjXoBV7_EJOgvOd4ndc+Xw@mail.gmail.com>
+Date:   Fri, 23 Sep 2022 17:03:59 +1000
+Message-ID: <87zgeqzi5c.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhSBwavTLcgkgJ-AYwH9wzECi3B7BtwdKOx5FJ3n7M+WYg@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 22, 2022 at 06:13:44PM -0400, Paul Moore wrote:
-> In my opinion, sending the entire patchset to the relevant lists
-> should be the default for all the reasons mentioned above.
+Paul Moore <paul@paul-moore.com> writes:
+> On Thu, Sep 22, 2022 at 3:38 PM Nathan Lynch <nathanl@linux.ibm.com> wrote:
+>>
+>> The /proc/powerpc/ofdt interface allows the root user to freely alter
+>> the in-kernel device tree, enabling arbitrary physical address writes
+>> via drivers that could bind to malicious device nodes, thus making it
+>> possible to disable lockdown.
+>>
+>> Historically this interface has been used on the pseries platform to
+>> facilitate the runtime addition and removal of processor, memory, and
+>> device resources (aka Dynamic Logical Partitioning or DLPAR). Years
+>> ago, the processor and memory use cases were migrated to designs that
+>> happen to be lockdown-friendly: device tree updates are communicated
+>> directly to the kernel from firmware without passing through untrusted
+>> user space. I/O device DLPAR via the "drmgr" command in powerpc-utils
+>> remains the sole legitimate user of /proc/powerpc/ofdt, but it is
+>> already broken in lockdown since it uses /dev/mem to allocate argument
+>> buffers for the rtas syscall. So only illegitimate uses of the
+>> interface should see a behavior change when running on a locked down
+>> kernel.
+>>
+>> Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+>> ---
+>>  arch/powerpc/platforms/pseries/reconfig.c | 5 +++++
+>>  include/linux/security.h                  | 1 +
+>>  security/security.c                       | 1 +
+>>  3 files changed, 7 insertions(+)
+>
+> A couple of small nits below, but in general this seems reasonable.
+> However, as we are currently at -rc6 I would like us to wait to merge
+> this until after the upcoming merge window closes (I don't like
+> merging new functionality into -next at -rc6).
 
-Agreed.  I'm perfectly fine when people minimize the CCs to actual
-people (but then for the entire patch set), but having only the
-partial series in an mbox just makes it useful.  Either the list
-or person on everything or nothing.  I can't actually do anything
-with a partial CC except for either ignoring it or shoting at
-you that I need the entire series to do something useful with it.
+It's a bug fix, not a new feature IMHO.
 
-(although in this case I did get all of it anyway).
+I'd like to take it via the powerpc tree.
+
+cheers
