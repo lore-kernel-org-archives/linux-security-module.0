@@ -2,96 +2,136 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF31C6FA82
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 14:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DB7ECAAD8
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 14:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230227AbiIWObr (ORCPT
+        id S230418AbiIWOmP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Sep 2022 10:31:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45420 "EHLO
+        Fri, 23 Sep 2022 10:42:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231693AbiIWOb2 (ORCPT
+        with ESMTP id S229627AbiIWOmO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Sep 2022 10:31:28 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D858813EEA2
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 07:31:25 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id g12so240006ilj.5
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 07:31:25 -0700 (PDT)
+        Fri, 23 Sep 2022 10:42:14 -0400
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C3EB388
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 07:42:13 -0700 (PDT)
+Received: by mail-ot1-x331.google.com with SMTP id h9-20020a9d5549000000b0063727299bb4so145402oti.9
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 07:42:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=HGCf2CEH8Pze7w6/yHjPsApA3KSaCMjYFuFN/oMe1oY=;
-        b=COf4mUkCy0J/hewdcFUot+/GptzPuCtGrmUOOSuIET0uLNlUSmhQW5R/5K6aCcAuDS
-         Boeerq18H9HPShuMX4r8Kpm3nozSvzzIDtHvIKJPwl67AKZ7vpnFjt9Ylj8MPZZbRP/3
-         2+6Zjczk0/PxHue8RsLCnj0AtZwPwD2YzIGsY=
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=HO2AvJTBi2QfRYWbbvhuQ6oKeOfsWSwPhLgWOk8zYZY=;
+        b=NHXgpkbklpQY1dujkTxtgfpxjRfII6eFpWmZSiA94BsmX9afxqU758gbbWdD1qv4DZ
+         JoTmy1STKapeGJaAgqqjvA+xpmdZWFxiMRR3inRInB+3S7y8k9Cs6sQzjVaNL0b3Fn1H
+         PStOgZVxWclUZJQHy8i0NeYGisONz5lsSzTX8eVG2s5pGmMVrnRKNJbfHyeE5teKHP45
+         WJvJnzu3R1+twTmRMEHTMm+QNhtaQrSTgjISgkdk+uPageY2jCkJPpMh8O/cK+mHXBNC
+         lHemW5id3LXX/oEy5gYDrOhXB4BryhiqdHQ1zof+3HYEO5MojDCqpnl/MRHH9B9V7kPe
+         DQpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=HGCf2CEH8Pze7w6/yHjPsApA3KSaCMjYFuFN/oMe1oY=;
-        b=t/u4x8QFJneYdPk1l2ubJsrTTuBVWKY+WB3UL8l2IxdaGqqKbfARGFbv0rmsz/7J2G
-         gYWZGvC3FRB/sLcYL913A7vLZnDZcZmO7RAFLeg/9L3moXaMUTEedzlLLSuZj7/ZCKd6
-         qmeAk3TMR+ttutBRDz7CATzbRi/L5u0IOGZ5D9GoULFm/T/CByVVDLSBI2uRP5V4WRbv
-         7gULeUe6fjG/iUpKWdz8rXEDBXLQ4BFJjnExYnVYXVz8TtmzViVcaoGyXsqKx80FlllQ
-         7iHcXbdjtUPRE/9QUv6dImlA/fKepK6JHUXVexPT4lxQQB+eOlU747Z00dGclaK0DuZK
-         mYrA==
-X-Gm-Message-State: ACrzQf0FMcxLVxHmejjyhOBLZNVUfPcWPL7xFoK698JmN9dDlQJ/C49N
-        C+wmS6qa+jriLugm2XcxMZVs4w==
-X-Google-Smtp-Source: AMsMyM6tXJVRa8Ovs7CGzDxQ/BOFGz+7XqZt8CHp4EsyF8+4qZpAiKek3gXenARMzODcfNx5yMo7tA==
-X-Received: by 2002:a92:730c:0:b0:2f5:7dd7:45f7 with SMTP id o12-20020a92730c000000b002f57dd745f7mr4279062ilc.12.1663943485147;
-        Fri, 23 Sep 2022 07:31:25 -0700 (PDT)
-Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id c37-20020a023b25000000b0034a56f2f120sm3378709jaa.155.2022.09.23.07.31.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Sep 2022 07:31:24 -0700 (PDT)
-Message-ID: <0d7e2c9d-dffc-d68e-c475-7933806d3ffa@linuxfoundation.org>
-Date:   Fri, 23 Sep 2022 08:31:23 -0600
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=HO2AvJTBi2QfRYWbbvhuQ6oKeOfsWSwPhLgWOk8zYZY=;
+        b=p8XhD5NBDiYtQtBmQHNYOmQzsg4wjOVZvtXvmMfxgy+/Li2eT21PwCFE982nwC01RJ
+         6rDIpyfq9TOQQePXbDNEAGcAwN9bYGWsjtqgmzQtSAtwrN16EsxRl7/HFF/nNj556k1s
+         K/BPORM6vPXq2HtWVK9Udqbs1ZhFtUxvtG+3J/sKiMsHurZF7+3J0zgQNWAM4pZAbvc9
+         WAievrmxCr9GaqpHdTixGjpvxdZlkwMhss5A4EnlJGChKnFv+mKsPXrjuqk3G4hfQHT9
+         byvfFVogyuo8scLfRg9Aq9bKnMiBJ+nYyxdUi9ENPXcxKCnrez2MPqqg0kT5/yR0SUhg
+         f8Cg==
+X-Gm-Message-State: ACrzQf1D0/X6CyNS9sPSNZzkfeglJs1GelyCDK2yO6jBzwKsHw1kZae/
+        SDO2vD7uwpiPsnIvwDltRRJ5JoRm1JL4HtRwb/Le
+X-Google-Smtp-Source: AMsMyM7D3kMRKr/61cWceGGLPP8+nkrbp44T14E6MBNWlxKrHZ7Y8XAD0aPfsm+uqT+6w6wN/CfDBmHsj4twkIhQwhQ=
+X-Received: by 2002:a9d:1b70:0:b0:658:cfeb:d221 with SMTP id
+ l103-20020a9d1b70000000b00658cfebd221mr4096556otl.34.1663944132441; Fri, 23
+ Sep 2022 07:42:12 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v1] selftests/landlock: Fix out-of-tree builds
-Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Guillaume Tucker <guillaume.tucker@collabora.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <20220909103402.1501802-1-mic@digikod.net>
- <5e288153-ca6b-a91d-a3fd-cd2b1e102b3e@digikod.net>
- <21feac5f-27d1-60ca-0c06-6605f3f27474@digikod.net>
- <2879477f-82d9-9d39-13b6-9cc60a3f14c7@digikod.net>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <2879477f-82d9-9d39-13b6-9cc60a3f14c7@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20220922151728.1557914-1-brauner@kernel.org> <d74030ae-4b9a-5b39-c203-4b813decd9eb@schaufler-ca.com>
+ <CAHk-=whLbq9oX5HDaMpC59qurmwj6geteNcNOtQtb5JN9J0qFw@mail.gmail.com> <20220923084539.vazq4eiceovoclcf@wittgenstein>
+In-Reply-To: <20220923084539.vazq4eiceovoclcf@wittgenstein>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 23 Sep 2022 10:42:01 -0400
+Message-ID: <CAHC9VhRroVU6vOoNtpdRYXVkjJZZ+nwXC5sObGoPDw0d4Z1UBw@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/29] acl: add vfs posix acl api
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/22/22 03:18, Mickaël Salaün wrote:
-> I plan to push it to Linus tomorrow, I'd like to get some feedback by then though.
-> 
-> 
-> On 14/09/2022 16:43, Mickaël Salaün wrote:
->> I took the liberty to pushed it in -next with my tree:
->> https://git.kernel.org/mic/c/a52540522c9541bfa3e499d2edba7bc0ca73a4ca
->>
->> Please let me know when you can take it in your tree to include it in
->> the next -rc.
->>
->> Regards,
->>    Mickaël
->>
+On Fri, Sep 23, 2022 at 4:46 AM Christian Brauner <brauner@kernel.org> wrote:
+> On Thu, Sep 22, 2022 at 10:57:38AM -0700, Linus Torvalds wrote:
+> > On Thu, Sep 22, 2022 at 9:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > >
+> > > Could we please see the entire patch set on the LSM list?
+> >
+> > While I don't think that's necessarily wrong, I would like to point
+> > out that the gitweb interface actually does make it fairly easy to
+> > just see the whole patch-set.
+> >
+> > IOW, that
+> >
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git/log/?h=fs.acl.rework
+> >
+> > that Christian pointed to is not a horrible way to see it all. Go to
+> > the top-most commit, and it's easy to follow the parent links.
+> >
+> > It's a bit more work to see them in another order, but I find the
+> > easiest way is actually to just follow the parent links to get the
+> > overview of what is going on (reading just the commit messages), and
+> > then after that you "reverse course" and use the browser back button
+> > to just go the other way while looking at the details of the patches.
+> >
+> > And I suspect a lot of people are happier *without* large patch-sets
+> > being posted to the mailing lists when most patches aren't necessarily
+> > at all relevant to that mailing list except as context.
+>
+> The problem is also that it's impossible to please both parties here.
 
-Looks good to me. Thanks for doing this. Linux Plumbers travel and
-subsequent being under the weather caused the delay in a response
-to this patch.
+Oh the trials and tribulations of Linux Kernel development! ;)
 
-I also saw your pull request to Linus.
+I'm joking, but I do understand the difficulty of pleasing a large
+group of people with very different desires.
 
-thanks,
--- Shuah
+> A good portion of people doesn't like being flooded with patches they
+> don't really care about and the other portion gets worked up when they
+> only see a single patch.
+
+You are obviously never going to be able to make everyone happy, and
+everyone with a solution to share obviously has some bias (I'm
+definitely including myself in this statement), but I tend to fall
+back on the idea that upstream kernel development has always required
+those involved to deal with a large amount of email, so sending a full
+patchset is not new.
+
+> So honestly I just always make a judgement call based on the series. But
+> b4 makes it so so easy to just retrieve the whole series. So even if I
+> only receive a single patch and am curious then I just use b4.
+
+As I mentioned previously in this thread, the issue is more on the
+reply side.  Reading from lore or b4 isn't terrible for me, but
+replying is a pain for me and my mail setup.
+
+> I've even got it integrated into mutt directly:
+
+I'm glad it works for you.  Although I would like to take this
+opportunity to remind anyone still following this tangent that not
+everyone uses mutt, some of us* really dislike it, but due to the
+magic of email we are still able to participate with other mail
+clients, services, and tools.
+
+* I'm using "us" somewhat liberally here, I have no data to back up my
+claims.  However, I'm fully prepared to accept the idea that I'm the
+only person out of the thousands of kernel devs who dislikes mutt.
+Bring it on haters, just know that you're all wrong ;)
+
+-- 
+paul-moore.com
