@@ -2,114 +2,84 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1970C6FA82
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 09:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A552EECAAD8
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 10:43:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbiIWJbM (ORCPT
+        id S231781AbiIWKnn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Sep 2022 05:31:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40750 "EHLO
+        Fri, 23 Sep 2022 06:43:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231915AbiIWJad (ORCPT
+        with ESMTP id S230453AbiIWKnc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Sep 2022 05:30:33 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4ABF1183B
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 02:29:47 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MYmwV5RZRzWgwL;
-        Fri, 23 Sep 2022 17:25:46 +0800 (CST)
-Received: from [10.67.110.176] (10.67.110.176) by
- kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 23 Sep 2022 17:29:44 +0800
-Subject: Re: [PATCH] apparmor: Simply obtain the newest label on a cred
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-CC:     <john.johansen@canonical.com>, <paul@paul-moore.com>,
-        <jmorris@namei.org>, <apparmor@lists.ubuntu.com>,
-        <linux-security-module@vger.kernel.org>
-References: <20220922030024.1282700-1-cuigaosheng1@huawei.com>
- <20220922145612.GA23772@mail.hallyn.com>
-From:   cuigaosheng <cuigaosheng1@huawei.com>
-Message-ID: <9a193f21-5f78-d045-762a-8f04caae7e2d@huawei.com>
-Date:   Fri, 23 Sep 2022 17:29:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Fri, 23 Sep 2022 06:43:32 -0400
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 028F9106F7B
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 03:43:29 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MYpf75bC2zMqBrF;
+        Fri, 23 Sep 2022 12:43:27 +0200 (CEST)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MYpf71WHBzMpnPk;
+        Fri, 23 Sep 2022 12:43:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1663929807;
+        bh=uSg7A5h8Ds8U3JESiel2hWeoIMHZGPIKjv8p4UrWwvg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jEVqym8Jnw4LyNOzTSRyROirzSZM4326S4ySqaLhO4Q/w1O3hJXCepNHYNlQjHkqi
+         sVgCHGcw0pzAq6tEN2S01B0jYRyZ+Gm4j+R3z2vRXaImC247k91d6q1vAo3Q+uuOxw
+         GjHOLZS0Zhd0Wm3s+WgOiCU/piIULJSfcUaNA0h4=
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Mark Brown <broonie@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [GIT PULL] Landlock fix for v6.0 #2
+Date:   Fri, 23 Sep 2022 12:43:22 +0200
+Message-Id: <20220923104322.3182116-1-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <20220922145612.GA23772@mail.hallyn.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.176]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemi500012.china.huawei.com (7.221.188.12)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> On Thu, Sep 22, 2022 at 11:00:24AM +0800, Gaosheng Cui wrote:
->> aa_get_newest_cred_label(__task_cred(task)) can do the same things as
->> aa_get_newest_label(__aa_task_raw_label(task)), so we can replace it
->> and remove __aa_task_raw_label() to simply code.
-> nitpick -
->
-> "to simplify the code".
->
-Thanks for taking the time to review this patch, I have made a patch v2 and submitted it.
+Hi Linus,
 
-link: https://patchwork.kernel.org/project/linux-security-module/list/?series=679790
+This change fixes out-of-tree builds for Landlock tests, which was
+initially identified here:
+https://lore.kernel.org/r/CADYN=9JM1nnjC9LypHqrz7JJjbZLpm8rArDUy4zgYYrajErBnA@mail.gmail.com
 
-On 2022/9/22 22:56, Serge E. Hallyn wrote:
-> On Thu, Sep 22, 2022 at 11:00:24AM +0800, Gaosheng Cui wrote:
->> aa_get_newest_cred_label(__task_cred(task)) can do the same things as
->> aa_get_newest_label(__aa_task_raw_label(task)), so we can replace it
->> and remove __aa_task_raw_label() to simply code.
-> nitpick -
->
-> "to simplify the code".
->
->> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
->> ---
->>   security/apparmor/include/cred.h | 13 -------------
->>   security/apparmor/task.c         |  2 +-
->>   2 files changed, 1 insertion(+), 14 deletions(-)
->>
->> diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
->> index 0b9ae4804ef7..58fdc72af664 100644
->> --- a/security/apparmor/include/cred.h
->> +++ b/security/apparmor/include/cred.h
->> @@ -63,19 +63,6 @@ static inline struct aa_label *aa_get_newest_cred_label(const struct cred *cred)
->>   	return aa_get_newest_label(aa_cred_raw_label(cred));
->>   }
->>   
->> -/**
->> - * __aa_task_raw_label - retrieve another task's label
->> - * @task: task to query  (NOT NULL)
->> - *
->> - * Returns: @task's label without incrementing its ref count
->> - *
->> - * If @task != current needs to be called in RCU safe critical section
->> - */
->> -static inline struct aa_label *__aa_task_raw_label(struct task_struct *task)
->> -{
->> -	return aa_cred_raw_label(__task_cred(task));
->> -}
->> -
->>   /**
->>    * aa_current_raw_label - find the current tasks confining label
->>    *
->> diff --git a/security/apparmor/task.c b/security/apparmor/task.c
->> index 503dc0877fb1..0a8f9fa7ca0a 100644
->> --- a/security/apparmor/task.c
->> +++ b/security/apparmor/task.c
->> @@ -31,7 +31,7 @@ struct aa_label *aa_get_task_label(struct task_struct *task)
->>   	struct aa_label *p;
->>   
->>   	rcu_read_lock();
->> -	p = aa_get_newest_label(__aa_task_raw_label(task));
->> +	p = aa_get_newest_cred_label(__task_cred(task));
->>   	rcu_read_unlock();
->>   
->>   	return p;
->> -- 
->> 2.25.1
-> .
+Please pull this Landlock fix for v6.0-rc7 .  This change merged
+cleanly with your tree, and have been successfully tested in the latest
+linux-next releases for a week.
+
+Regards,
+ Mickaël
+
+--
+The following changes since commit 80e78fcce86de0288793a0ef0f6acf37656ee4cf:
+
+  Linux 6.0-rc5 (2022-09-11 16:22:01 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.0-rc7
+
+for you to fetch changes up to a52540522c9541bfa3e499d2edba7bc0ca73a4ca:
+
+  selftests/landlock: Fix out-of-tree builds (2022-09-14 16:37:38 +0200)
+
+----------------------------------------------------------------
+Landlock fix for v6.0-rc7
+
+----------------------------------------------------------------
+Mickaël Salaün (1):
+      selftests/landlock: Fix out-of-tree builds
+
+ tools/testing/selftests/landlock/Makefile | 19 ++++++++++---------
+ tools/testing/selftests/lib.mk            |  4 ++++
+ 2 files changed, 14 insertions(+), 9 deletions(-)
