@@ -2,105 +2,99 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB68CC6FA82
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 07:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76248C6FA90
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 08:45:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbiIWHMs (ORCPT
+        id S230415AbiIWIpv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Sep 2022 03:12:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49736 "EHLO
+        Fri, 23 Sep 2022 04:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229673AbiIWHMr (ORCPT
+        with ESMTP id S230354AbiIWIps (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Sep 2022 03:12:47 -0400
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6056E12386A;
-        Fri, 23 Sep 2022 00:12:46 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Fri, 23 Sep 2022 04:45:48 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 535F1FFA52;
+        Fri, 23 Sep 2022 01:45:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4MYjz03jXvz4x3w;
-        Fri, 23 Sep 2022 17:12:44 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-        s=201909; t=1663917164;
-        bh=kxWYcawWkDsL3TwlfeLJQOQEaNorwtdowRSsbnTQqLM=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=ctLGeQJFpKJv/zX3tcVU0BqtR/Dr3hq17VSASc+ICLxpUstLEV9Xl1YWv3U1cPcEy
-         nUX+7kZUG4sSGFJgFOqqZ3PO5+sjoE7lLLCfQYaFaDxRhWYlobLitJXo831s2zTkvF
-         ZJtM/RQQt194V3otmlCzJqnOZzwkOAvsOX/Y5tZ3Ukr4IBGVpv0pWWubIlLZtrwoc4
-         0YWYjIeRSB3iRgD6UhJkT4MMJxDdfcrO8pp4D8yn2fHl3GZc1sXiVn0Crvy4eFfyaH
-         YsYitlmXS9842JGtyGyMVBWW+FKaPdYy/aqnufp1Hd53rbUeOIeX8l1+LQqoHHsuvh
-         o4OTbsOwhVQZw==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Paul Moore <paul@paul-moore.com>,
-        Nathan Lynch <nathanl@linux.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
-        ajd@linux.ibm.com, gcwilson@linux.ibm.com, nayna@linux.ibm.com
-Subject: Re: [PATCH 2/2] powerpc/rtas: block error injection when locked down
-In-Reply-To: <CAHC9VhTWMFbCxQFAEJZzS3Kd5cSFigmvHac5y5ypVU7TqRqpTA@mail.gmail.com>
-References: <20220922193817.106041-1-nathanl@linux.ibm.com>
- <20220922193817.106041-3-nathanl@linux.ibm.com>
- <CAHC9VhTWMFbCxQFAEJZzS3Kd5cSFigmvHac5y5ypVU7TqRqpTA@mail.gmail.com>
-Date:   Fri, 23 Sep 2022 17:12:44 +1000
-Message-ID: <87wn9uzhqr.fsf@mpe.ellerman.id.au>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0CFAAB80CB8;
+        Fri, 23 Sep 2022 08:45:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30503C43145;
+        Fri, 23 Sep 2022 08:45:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663922744;
+        bh=VOeV0Bwix53e9PcTJ/28Rd0x7ixxeEzA1kmKTwpUcqo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lmLbn6TwgnLT13CkMX9Wc+c2qkJCWdOSwuPUpW4SlcSMk36qoCzUtorg8PGjZfmLG
+         b9e84XCnsS6+WyNCI46ikNItJouIS9S9tD/K6EkrgXAmWNP4Az+IHxzseqvPZIjvUL
+         X6Nrg9iNqgKJ8BM4xozc89hG/Jc35CTv94/zBzeC4rC+OJDxa8cy3bU4OmPESFZShr
+         YTGDcsSwSGFRZq2YwvqHRJXMm4si7W3CY5xk/mQLaJo5etUtEeopQeHjo/tzTFpJqo
+         /NXtnsZrkNfnfHMZNokJd8Wbox4rs1Sun3DTTJJm5WHdC2JsUckuVNbLuB0CWVyT72
+         AcqQEfvFIV2Zg==
+Date:   Fri, 23 Sep 2022 10:45:39 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 00/29] acl: add vfs posix acl api
+Message-ID: <20220923084539.vazq4eiceovoclcf@wittgenstein>
+References: <20220922151728.1557914-1-brauner@kernel.org>
+ <d74030ae-4b9a-5b39-c203-4b813decd9eb@schaufler-ca.com>
+ <CAHk-=whLbq9oX5HDaMpC59qurmwj6geteNcNOtQtb5JN9J0qFw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whLbq9oX5HDaMpC59qurmwj6geteNcNOtQtb5JN9J0qFw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Paul Moore <paul@paul-moore.com> writes:
-> On Thu, Sep 22, 2022 at 3:38 PM Nathan Lynch <nathanl@linux.ibm.com> wrote:
->>
->> The error injection facility on pseries VMs allows corruption of
->> arbitrary guest memory, potentially enabling a sufficiently privileged
->> user to disable lockdown or perform other modifications of the running
->> kernel via the rtas syscall.
->>
->> Block the PAPR error injection facility from being opened or called
->> when locked down.
->>
->> Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
->> ---
->>  arch/powerpc/kernel/rtas.c | 25 ++++++++++++++++++++++++-
->>  include/linux/security.h   |  1 +
->>  security/security.c        |  1 +
->>  3 files changed, 26 insertions(+), 1 deletion(-)
->
-> ...
->
->> diff --git a/include/linux/security.h b/include/linux/security.h
->> index 1ca8dbacd3cc..b5d5138ae66a 100644
->> --- a/include/linux/security.h
->> +++ b/include/linux/security.h
->> @@ -123,6 +123,7 @@ enum lockdown_reason {
->>         LOCKDOWN_BPF_WRITE_USER,
->>         LOCKDOWN_DBG_WRITE_KERNEL,
->>         LOCKDOWN_DEVICE_TREE,
->> +       LOCKDOWN_RTAS_ERROR_INJECTION,
->
-> With the understanding that I've never heard of RTAS until now, are
-> there any other RTAS events that would require a lockdown reason?  As
-> a follow up, is it important to distinguish between different RTAS
-> lockdown reasons?
->
-> I'm trying to determine if we can just call it LOCKDOWN_RTAS.
+On Thu, Sep 22, 2022 at 10:57:38AM -0700, Linus Torvalds wrote:
+> On Thu, Sep 22, 2022 at 9:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >
+> > Could we please see the entire patch set on the LSM list?
+> 
+> While I don't think that's necessarily wrong, I would like to point
+> out that the gitweb interface actually does make it fairly easy to
+> just see the whole patch-set.
+> 
+> IOW, that
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git/log/?h=fs.acl.rework
+> 
+> that Christian pointed to is not a horrible way to see it all. Go to
+> the top-most commit, and it's easy to follow the parent links.
+> 
+> It's a bit more work to see them in another order, but I find the
+> easiest way is actually to just follow the parent links to get the
+> overview of what is going on (reading just the commit messages), and
+> then after that you "reverse course" and use the browser back button
+> to just go the other way while looking at the details of the patches.
+> 
+> And I suspect a lot of people are happier *without* large patch-sets
+> being posted to the mailing lists when most patches aren't necessarily
+> at all relevant to that mailing list except as context.
 
-Yes I think we should.
+The problem is also that it's impossible to please both parties here.
 
-Currently it only locks down the error injection calls, not all of RTAS.
+A good portion of people doesn't like being flooded with patches they
+don't really care about and the other portion gets worked up when they
+only see a single patch.
 
-But firmware can/will add new RTAS calls in future, so it's always
-possible something will need to be added to the list of things that need
-to be blocked during lockdown.
+So honestly I just always make a judgement call based on the series. But
+b4 makes it so so easy to just retrieve the whole series. So even if I
+only receive a single patch and am curious then I just use b4.
 
-So I think calling it LOCKDOWN_RTAS would be more general and future
-proof, and can be read to mean "lockdown the parts of RTAS that need
-to be locked down".
+I've even got it integrated into mutt directly:
 
-Similarly we have LOCKDOWN_ACPI_TABLES which locks down modification to
-ACPI data, but doesn't disable ACPI use entirely AIUI.
+# Pipe message to b4 to download patches and threads
+macro index,pager A "<pipe-message>b4 am --apply-cover-trailers --sloppy-trailers --add-my-sob --guess-base --check-newer-revisions --no-cache --quilt-ready <enter>"
+macro index,pager M "<pipe-message>b4 mbox <enter>"
 
-cheers
+
