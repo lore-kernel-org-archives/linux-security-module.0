@@ -2,123 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 638DCECAAD8
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 01:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C64DC6FA8E
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 04:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231162AbiIWB2V (ORCPT
+        id S229953AbiIWECA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Sep 2022 21:28:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55330 "EHLO
+        Fri, 23 Sep 2022 00:02:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbiIWB2U (ORCPT
+        with ESMTP id S229687AbiIWEB7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Sep 2022 21:28:20 -0400
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4B601176DE
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 18:28:18 -0700 (PDT)
-Received: by mail-oi1-x22a.google.com with SMTP id t62so14608482oie.10
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 18:28:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=s/6p8wN+VGvSrnwRHCNxYJbAlNC9MCYqHdn8E1KltBc=;
-        b=MiEmXExP/Uly7GSmB4QzuSnXDeHlqxx2OYMWx1W1iLm6vljxXfeG/Z1YepMPzxT3Vr
-         pjf3zh1pkkU+//zUrJhF4e4JGkNqdyppztz4T8wJ/uCNDG9n1+wm2AxbOTmrrnSjbib3
-         iMJkLUI1e210eZUYsproVon8WIbSm9FDnQrMocQmAf+cwSoPvcJxl/EQW1gPOTO1a1v0
-         uKM3uV4+5qY4zCW/+rO28NdwsOmv63e8AuEiKOD5G1dvIwDKIFKt7sQe31/J+fhjZf9J
-         3P9O5j8Qmjl6gy2o2ER9gscgaXthVC4wjW5i2vSOkefhL6zf7xf6j0QhCmz9O5sjsKwf
-         W2mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=s/6p8wN+VGvSrnwRHCNxYJbAlNC9MCYqHdn8E1KltBc=;
-        b=hbjFfZi4vXs85lvNZpmTrOdbQLqWJPsh5CBD2sg8JrcWe2m9Ug/z/Q0C4DFbdII5sz
-         ou/Ui89UYHECxzlFu24+ooDRgzuEpW1ijEl4f1OUHcFyu/ZUin83kGPjQ5as2KIOBi3P
-         qftQ+gEPOibgAUkfJJSCeTSszu1bOeT8DN//ng5CYNBQntaqxW12IgH7Ci+oqQQ8k5l8
-         0ky7qCP/riCUggDPNFBhgGKnG2sWBhMlFVAheVY7YwYMYG7ysbnBoaJ0LIZUYqnV4MZd
-         nqiqMXveqRsoYMP5VqqmXgRbjmsqbGSX47Su1FQtK7HBi1mcueZoRYhF5/y2R0Mbl6lD
-         QRkA==
-X-Gm-Message-State: ACrzQf2J3IIAirw79Maj121+ShsyGvrjYkDsPFKMoXnM6+lXKNtZuKbJ
-        SuiQ6ndDZyuLMCZkQEWVqyl4uieFoXo7CqQ0Bsoencczgw==
-X-Google-Smtp-Source: AMsMyM7Yf+KZZuONXI++p3mR8psQkZBWvo4g+9yZJfNGgyny4tIddm5WbnhMos4FwWrI0S/BZoFi1lqAinau9cVB2O0=
-X-Received: by 2002:a05:6808:144b:b0:350:a06a:f8cb with SMTP id
- x11-20020a056808144b00b00350a06af8cbmr7833965oiv.51.1663896497881; Thu, 22
- Sep 2022 18:28:17 -0700 (PDT)
+        Fri, 23 Sep 2022 00:01:59 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 366E3ADCDD;
+        Thu, 22 Sep 2022 21:01:56 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MYdgX3Sp1zpVFS;
+        Fri, 23 Sep 2022 11:59:04 +0800 (CST)
+Received: from [10.67.110.173] (10.67.110.173) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Fri, 23 Sep 2022 12:01:55 +0800
+Message-ID: <77c9c86b-85a6-aa87-e084-59a70bb47167@huawei.com>
+Date:   Fri, 23 Sep 2022 12:01:54 +0800
 MIME-Version: 1.0
-References: <20220922193817.106041-1-nathanl@linux.ibm.com> <20220922193817.106041-3-nathanl@linux.ibm.com>
-In-Reply-To: <20220922193817.106041-3-nathanl@linux.ibm.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 22 Sep 2022 21:28:07 -0400
-Message-ID: <CAHC9VhTWMFbCxQFAEJZzS3Kd5cSFigmvHac5y5ypVU7TqRqpTA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] powerpc/rtas: block error injection when locked down
-To:     Nathan Lynch <nathanl@linux.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmorris@namei.org,
-        mpe@ellerman.id.au, serge@hallyn.com, ajd@linux.ibm.com,
-        gcwilson@linux.ibm.com, nayna@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v5 2/2] ima: Handle -ESTALE returned by
+ ima_filter_rule_match()
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>
+References: <20220921125804.59490-1-guozihua@huawei.com>
+ <20220921125804.59490-3-guozihua@huawei.com>
+ <ce948f9e5639345026679b31a818cc12a247ce60.camel@linux.ibm.com>
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+In-Reply-To: <ce948f9e5639345026679b31a818cc12a247ce60.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 22, 2022 at 3:38 PM Nathan Lynch <nathanl@linux.ibm.com> wrote:
->
-> The error injection facility on pseries VMs allows corruption of
-> arbitrary guest memory, potentially enabling a sufficiently privileged
-> user to disable lockdown or perform other modifications of the running
-> kernel via the rtas syscall.
->
-> Block the PAPR error injection facility from being opened or called
-> when locked down.
->
-> Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
-> ---
->  arch/powerpc/kernel/rtas.c | 25 ++++++++++++++++++++++++-
->  include/linux/security.h   |  1 +
->  security/security.c        |  1 +
->  3 files changed, 26 insertions(+), 1 deletion(-)
+On 2022/9/22 19:09, Mimi Zohar wrote:
+> Hi Scott,
+> 
+> On Wed, 2022-09-21 at 20:58 +0800, GUO Zihua wrote:
+>>                  }
+>> -               if (!rc)
+>> -                       return false;
+>> +
+>> +               if (rc == -ESTALE && !rule_reinitialized) {
+> 
+> Ok, this limits allocating ima_lsm_copy_rule() to the first -ESTALE,
+> 
+>> +                       lsm_rule = ima_lsm_copy_rule(rule);
+>> +                       if (lsm_rule) {
+>> +                               rule_reinitialized = true;
+>> +                               goto retry;
+> 
+> but "retry" is also limited to the first -ESTALE.
 
-...
+Technically we would only need one retry. This loop is looping on all 
+the lsm members of one rule, and ima_lsm_copy_rule would update all the 
+lsm members of this rule. The "lsm member" here refers to LSM defined 
+properties like obj_user, obj_role etc. These members are of AND 
+relation, meaning all lsm members together would form one LSM rule.
 
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 1ca8dbacd3cc..b5d5138ae66a 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -123,6 +123,7 @@ enum lockdown_reason {
->         LOCKDOWN_BPF_WRITE_USER,
->         LOCKDOWN_DBG_WRITE_KERNEL,
->         LOCKDOWN_DEVICE_TREE,
-> +       LOCKDOWN_RTAS_ERROR_INJECTION,
+As of the scenario you mentioned, I think it should be really rare. 
+Spending to much time and code on this might not worth it.
+> 
+>> +                       }
+>> +               }
+>> +               if (!rc) {
+>> +                       result = false;
+>> +                       goto out;
+>> +               }
+>>          }
+>> -       return true;
+>> +       result = true;
+>> +
+>> +out:
+>> +       if (rule_reinitialized) {
+>> +               for (i = 0; i < MAX_LSM_RULES; i++)
+>> +                       ima_filter_rule_free(lsm_rule->lsm[i].rule);
+>> +               kfree(lsm_rule);
+>> +       }
+>> +       return result;
+>>   }
+> 
 
-With the understanding that I've never heard of RTAS until now, are
-there any other RTAS events that would require a lockdown reason?  As
-a follow up, is it important to distinguish between different RTAS
-lockdown reasons?
-
-I'm trying to determine if we can just call it LOCKDOWN_RTAS.
-
->         LOCKDOWN_INTEGRITY_MAX,
->         LOCKDOWN_KCORE,
->         LOCKDOWN_KPROBES,
-> diff --git a/security/security.c b/security/security.c
-> index 2863fc31eec6..6518b239ada2 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -61,6 +61,7 @@ const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
->         [LOCKDOWN_BPF_WRITE_USER] = "use of bpf to write user RAM",
->         [LOCKDOWN_DBG_WRITE_KERNEL] = "use of kgdb/kdb to write kernel RAM",
->         [LOCKDOWN_DEVICE_TREE] = "modifying device tree contents",
-> +       [LOCKDOWN_RTAS_ERROR_INJECTION] = "RTAS error injection",
-
-See above.
-
->         [LOCKDOWN_INTEGRITY_MAX] = "integrity",
->         [LOCKDOWN_KCORE] = "/proc/kcore access",
->         [LOCKDOWN_KPROBES] = "use of kprobes",
-> --
-> 2.37.3
 
 -- 
-paul-moore.com
+Best
+GUO Zihua
