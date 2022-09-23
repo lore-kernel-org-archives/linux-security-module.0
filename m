@@ -2,131 +2,136 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C87C6FA86
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Sep 2022 22:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC69C6FA8B
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 01:19:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231646AbiIVWN7 (ORCPT
+        id S229677AbiIWBTA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Sep 2022 18:13:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57396 "EHLO
+        Thu, 22 Sep 2022 21:19:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231499AbiIVWN6 (ORCPT
+        with ESMTP id S232244AbiIWBSr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Sep 2022 18:13:58 -0400
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35DF8112FCD
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 15:13:56 -0700 (PDT)
-Received: by mail-oi1-x22a.google.com with SMTP id j188so14261036oih.0
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 15:13:56 -0700 (PDT)
+        Thu, 22 Sep 2022 21:18:47 -0400
+Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66743115F61
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 18:18:46 -0700 (PDT)
+Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-1278a61bd57so16379909fac.7
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Sep 2022 18:18:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=lVxzQXoJt8yJlDUfwhT+9PZwkUKntLnGspL2HrKQRnw=;
-        b=2rNsM24o5o8hp8REt3SbWPwTx8H5Ez3ZVvyMWYf5FOdHA8xvcb/s6T3cf9ZhMiy3OP
-         MDdYwXnChE4uteJTJDHMEi8RLXFZGzmOTkgTSBHYlLbQL2LOCNWn0DqhjSlw8EX/xU5S
-         SCZiL+x23crfmJ/eL3IASKIFIVOL3SKGMReJgMvJTl9GR/r6TUXJq04VuznLBC8FZlK5
-         gwnkH0J8ZvFAX8tkJnFHz+4rwP5HuXjWm16MDs1da8iT1dmxlTlJuv45gp2mH/hITSlE
-         doBl/3YfKxuORFXqyNLacs3tmmDXNmz4gUtP8RWBRXj3USNFf82tUbXoz6a1mNVkhty+
-         GxRw==
+        bh=wauY9icRcEzEDbhLIuBAjc38+zIZU9tq0CBry9g6Ooc=;
+        b=slE4TJt9/dXDYfy+rMRKeN5k8cMVUfrps+7LGvGQhlqHE6ERCjN/lfbKJ4KjF9nXeo
+         6AJfMTUFZk/R3ITkRAB/Iu6XNtGdRXBPvSyxmSSN46t4/ltDu6V8cBEYShJL5X92F18m
+         G47uf8YuxIn+QgNPctzUMP3X6nCwc3O2N7GYJfAX+lJn8dMhfM1Fs9wWxlcxmEFakRjg
+         FhXSZXSyWPYguhFhFLJaTPt3Tkf8N/sWD6l6MqxIPratLG/PZSTYa5OdrMZZxjtYgoFG
+         Yr38vg6UpQ7rqJipbno3wA0356WdNtTAe8GeHQaSCsCsZefmQgqMzuM5E1DiycXT6Um/
+         qm2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=lVxzQXoJt8yJlDUfwhT+9PZwkUKntLnGspL2HrKQRnw=;
-        b=3BmEDKWqIog6YP87mejj9sWW9/El0AQ62Yaec/NQo8THQoDIiJzd5qE3as7nSXJJgK
-         E+7SqVf/OKKVEeoyhh7YMwVlbnXdJqYaxlcW/wm+OsUEoXNq8P1oxbPtK+aQMwO/MlXS
-         Lj8j5qP/x7hWw23AWT4uLzeQgeXDfO7P6Nss3iaJormbHt3go2cRwWvF6gN9pRaeOmar
-         G8EkMt9nC8WsnmMFj2EFbSrqaF/QMRulg3ux9UlRgH2wD7oro30uvwr5BKIX0EPXxdbA
-         9g0DvwMhj2rJeRHmFPWHMISJwg/kY3erKtmGqfnuF7CIISrxzvqHuef6yzBkWDiSvass
-         PDZQ==
-X-Gm-Message-State: ACrzQf3iYGvzDOOJjXSiFBj2yFc/A5qHs/yjGVMdzj+GlBIrDFGG5NgA
-        E1Y5fBkDuSGjbLtjs06UvWlRdGPQozLxIf9WuHOsA3hZCQ==
-X-Google-Smtp-Source: AMsMyM5Onvxiq8nCOD2wBV8RegfymgeU0WI0iCMUw//aI9XM1Wpuhd5pGa5VlijH5GzJXc0eysR5lfHbW/Qiu2J+BYc=
-X-Received: by 2002:a05:6808:144b:b0:350:a06a:f8cb with SMTP id
- x11-20020a056808144b00b00350a06af8cbmr7536588oiv.51.1663884834071; Thu, 22
- Sep 2022 15:13:54 -0700 (PDT)
+        bh=wauY9icRcEzEDbhLIuBAjc38+zIZU9tq0CBry9g6Ooc=;
+        b=f4hKMwm7MM5u9PMsid5R6laMzdWRiEjkn6F/DpSkZtJcNOQ+M+iSvzFPYESBTJ7d4E
+         Hl8p3pjv6Zy0aY3m6PG75891nD+y1CKDDwuab+uRFaI4dUyN5rY0ZzvS9cYSneZS/CVH
+         dQeq31iLgvrcbCV7AgRR7AfbK8jGFB0zPy0v/eFrfM/r1vz4wTpypzPfHOl0Q/osHCgu
+         fF/YcFP3syGvlamfGkKMDRYBhwpzlnhjYgg6q3sU8nMFTHSkJBh3ifHyDDKRfN4bvioP
+         5qBKpSu0ni0evGudPtuv//hV0YDSvAQofuTR5J63BPu4hcJcphcQQnqIB7neV0cXPoEc
+         Gkqw==
+X-Gm-Message-State: ACrzQf0n/64cabYgQnCNMXafTAohAprEavWSmwvlF+/m8WoWJEmO0K0r
+        J+0mP7ifweK6qCdDZIdCUikbpeUcUiedhP9pkCAA
+X-Google-Smtp-Source: AMsMyM7nqnRFdhUa3AKhiMDrdqfkMkNMtS+CAPxM0mIQs/OrjYyKafG9iMOvWz5ktyQ7ZfkZNj8lp2r17TUOYM734bw=
+X-Received: by 2002:a05:6870:600c:b0:12d:9e19:9860 with SMTP id
+ t12-20020a056870600c00b0012d9e199860mr3740124oaa.172.1663895925469; Thu, 22
+ Sep 2022 18:18:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220922151728.1557914-1-brauner@kernel.org> <d74030ae-4b9a-5b39-c203-4b813decd9eb@schaufler-ca.com>
- <CAHk-=whLbq9oX5HDaMpC59qurmwj6geteNcNOtQtb5JN9J0qFw@mail.gmail.com>
- <16ca7e4c-01df-3585-4334-6be533193ba6@schaufler-ca.com> <CAHC9VhQRST66pVuNM0WGJsh-W01mDD-bX=GpFxCceUJ1FMWrmg@mail.gmail.com>
- <20220922215731.GA28876@mail.hallyn.com>
-In-Reply-To: <20220922215731.GA28876@mail.hallyn.com>
+References: <20220922193817.106041-1-nathanl@linux.ibm.com> <20220922193817.106041-2-nathanl@linux.ibm.com>
+In-Reply-To: <20220922193817.106041-2-nathanl@linux.ibm.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 22 Sep 2022 18:13:44 -0400
-Message-ID: <CAHC9VhSBwavTLcgkgJ-AYwH9wzECi3B7BtwdKOx5FJ3n7M+WYg@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/29] acl: add vfs posix acl api
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
+Date:   Thu, 22 Sep 2022 21:18:34 -0400
+Message-ID: <CAHC9VhQG_jEh_H8pV-qJgX2oX_fyGjXoBV7_EJOgvOd4ndc+Xw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] powerpc/pseries: block untrusted device tree changes
+ when locked down
+To:     Nathan Lynch <nathanl@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmorris@namei.org,
+        mpe@ellerman.id.au, serge@hallyn.com, ajd@linux.ibm.com,
+        gcwilson@linux.ibm.com, nayna@linux.ibm.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 22, 2022 at 5:57 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> On Thu, Sep 22, 2022 at 03:07:44PM -0400, Paul Moore wrote:
-> > On Thu, Sep 22, 2022 at 2:54 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > On 9/22/2022 10:57 AM, Linus Torvalds wrote:
-> > > > On Thu, Sep 22, 2022 at 9:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > >> Could we please see the entire patch set on the LSM list?
-> > > > While I don't think that's necessarily wrong, I would like to point
-> > > > out that the gitweb interface actually does make it fairly easy to
-> > > > just see the whole patch-set.
-> > > >
-> > > > IOW, that
-> > > >
-> > > >   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git/log/?h=fs.acl.rework
-> > > >
-> > > > that Christian pointed to is not a horrible way to see it all. Go to
-> > > > the top-most commit, and it's easy to follow the parent links.
-> > >
-> > > I understand that the web interface is fine for browsing the changes.
-> > > It isn't helpful for making comments on the changes. The discussion
-> > > on specific patches (e.g. selinux) may have impact on other parts of
-> > > the system (e.g. integrity) or be relevant elsewhere (e.g. smack). It
-> > > can be a real problem if the higher level mailing list (the LSM list
-> > > in this case) isn't included.
-> >
-> > This is probably one of those few cases where Casey and I are in
-> > perfect agreement.  I'd much rather see the patches hit my inbox than
-> > have to go hunting for them and then awkwardly replying to them (and
-> > yes, I know there are ways to do that, I just personally find it
-> > annoying).  I figure we are all deluged with email on a daily basis
-> > and have developed mechanisms to deal with that in a sane way, what is
-> > 29 more patches on the pile?
+On Thu, Sep 22, 2022 at 3:38 PM Nathan Lynch <nathanl@linux.ibm.com> wrote:
 >
-> Even better than the web interface, is find the message-id in any of the
-> emails you did get, and run
+> The /proc/powerpc/ofdt interface allows the root user to freely alter
+> the in-kernel device tree, enabling arbitrary physical address writes
+> via drivers that could bind to malicious device nodes, thus making it
+> possible to disable lockdown.
 >
-> b4 mbox 20220922151728.1557914-1-brauner@kernel.org
+> Historically this interface has been used on the pseries platform to
+> facilitate the runtime addition and removal of processor, memory, and
+> device resources (aka Dynamic Logical Partitioning or DLPAR). Years
+> ago, the processor and memory use cases were migrated to designs that
+> happen to be lockdown-friendly: device tree updates are communicated
+> directly to the kernel from firmware without passing through untrusted
+> user space. I/O device DLPAR via the "drmgr" command in powerpc-utils
+> remains the sole legitimate user of /proc/powerpc/ofdt, but it is
+> already broken in lockdown since it uses /dev/mem to allocate argument
+> buffers for the rtas syscall. So only illegitimate uses of the
+> interface should see a behavior change when running on a locked down
+> kernel.
 >
-> In general I'd agree with sending the whole set to the lsm list, but
-> then one needs to start knowing which lists do and don't want the whole
-> set...  b4 mbox and lei are now how I read all kernel related lists.
+> Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+> ---
+>  arch/powerpc/platforms/pseries/reconfig.c | 5 +++++
+>  include/linux/security.h                  | 1 +
+>  security/security.c                       | 1 +
+>  3 files changed, 7 insertions(+)
 
-In my opinion, sending the entire patchset to the relevant lists
-should be the default for all the reasons mentioned above.  All the
-other methods are fine, and I don't want to stop anyone from using
-their favorite tool, but *requiring* the use of a separate tool to
-properly review and comment on patches gets us away from the
-email-is-universal argument.  Yes, all the other tools mentioned are
-still based in a world of email, but if you are not emailing the
-relevant stakeholders directly (or indirectly via a list), you are
-placing another hurdle in front of the reviewers by requiring them to
-leave their email client based workflow and jump over to lore, b4,
-etc. to review the patchset.
+A couple of small nits below, but in general this seems reasonable.
+However, as we are currently at -rc6 I would like us to wait to merge
+this until after the upcoming merge window closes (I don't like
+merging new functionality into -next at -rc6).
 
-The lore.kernel.org instance is wonderful, full stop, and the b4 tool
-is equally wonderful, full stop, but they are tools intended to assist
-and optimize; they should not replace the practice of sending patches,
-with the full context, to the relevant parties.
+https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/tree/README.md
+
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 7bd0c490703d..1ca8dbacd3cc 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -122,6 +122,7 @@ enum lockdown_reason {
+>         LOCKDOWN_XMON_WR,
+>         LOCKDOWN_BPF_WRITE_USER,
+>         LOCKDOWN_DBG_WRITE_KERNEL,
+> +       LOCKDOWN_DEVICE_TREE,
+
+I would suggest moving LOCKDOWN_DEVICE_TREE to be next to
+LOCKDOWN_ACPI_TABLES.  It's not a hard requirement, but it seems like
+a nice idea to group similar things when we can.
+
+>         LOCKDOWN_INTEGRITY_MAX,
+>         LOCKDOWN_KCORE,
+>         LOCKDOWN_KPROBES,
+> diff --git a/security/security.c b/security/security.c
+> index 4b95de24bc8d..2863fc31eec6 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -60,6 +60,7 @@ const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+>         [LOCKDOWN_XMON_WR] = "xmon write access",
+>         [LOCKDOWN_BPF_WRITE_USER] = "use of bpf to write user RAM",
+>         [LOCKDOWN_DBG_WRITE_KERNEL] = "use of kgdb/kdb to write kernel RAM",
+> +       [LOCKDOWN_DEVICE_TREE] = "modifying device tree contents",
+
+Might as well move this one too.
+
+>         [LOCKDOWN_INTEGRITY_MAX] = "integrity",
+>         [LOCKDOWN_KCORE] = "/proc/kcore access",
+>         [LOCKDOWN_KPROBES] = "use of kprobes",
+> --
+> 2.37.3
 
 -- 
 paul-moore.com
