@@ -2,84 +2,151 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A552EECAAD8
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 10:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9CCECAAD8
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 11:19:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231781AbiIWKnn (ORCPT
+        id S231208AbiIWLTv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Sep 2022 06:43:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46492 "EHLO
+        Fri, 23 Sep 2022 07:19:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230453AbiIWKnc (ORCPT
+        with ESMTP id S230110AbiIWLTt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Sep 2022 06:43:32 -0400
-Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 028F9106F7B
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 03:43:29 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MYpf75bC2zMqBrF;
-        Fri, 23 Sep 2022 12:43:27 +0200 (CEST)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MYpf71WHBzMpnPk;
-        Fri, 23 Sep 2022 12:43:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1663929807;
-        bh=uSg7A5h8Ds8U3JESiel2hWeoIMHZGPIKjv8p4UrWwvg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jEVqym8Jnw4LyNOzTSRyROirzSZM4326S4ySqaLhO4Q/w1O3hJXCepNHYNlQjHkqi
-         sVgCHGcw0pzAq6tEN2S01B0jYRyZ+Gm4j+R3z2vRXaImC247k91d6q1vAo3Q+uuOxw
-         GjHOLZS0Zhd0Wm3s+WgOiCU/piIULJSfcUaNA0h4=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Guillaume Tucker <guillaume.tucker@collabora.com>,
-        Mark Brown <broonie@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Fri, 23 Sep 2022 07:19:49 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D32AB23BF5;
+        Fri, 23 Sep 2022 04:19:47 -0700 (PDT)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28NA0lIN008001;
+        Fri, 23 Sep 2022 11:19:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=eVLNts8du4/dAkRp2IkzA6R7Xd1NbFI7u6ng0l298JY=;
+ b=XrgMgVsB2oFn2cwjXlvJc/Wq3twkcyVqTN+CL9h8eAhPo9WyQuvQlaIxTrFLGqBs1JHh
+ dzmQT6e2Qj4nb0YGXv6Dh+RVyTrKDMtqdq4aoJE4aEhtcy9kQlNpG/ZSNQXQ6Wh1/lae
+ caxsWBY5HjesbVfeXDvQh9E8E49cgKoxQxEpjceeKoUcC5L3y0/dcWCWzy/G1qymptPy
+ 63OJv4gBSKko1ONhcLVTF9USTD8TtRCl7Qy+h53mYkYX1/x9PQhrjlpIjB7DmeBdIAhO
+ 4IT5IIciuOqYPEl2S/9bXTMC0Lzoh0AzyGOUwE9bSbqVPM3gx/VipMeDsXIQqB4IbvRn 6A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3js7bdqqkt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Sep 2022 11:19:30 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28NAZpKK025246;
+        Fri, 23 Sep 2022 11:19:29 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3js7bdqqkh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Sep 2022 11:19:29 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28NB7vW7008033;
+        Fri, 23 Sep 2022 11:19:28 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma02wdc.us.ibm.com with ESMTP id 3jn5v9y764-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Sep 2022 11:19:28 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com ([9.208.128.115])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28NBJR2o61407676
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Sep 2022 11:19:28 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B463058055;
+        Fri, 23 Sep 2022 11:19:27 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BEC675804E;
+        Fri, 23 Sep 2022 11:19:26 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.5.8])
+        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 23 Sep 2022 11:19:26 +0000 (GMT)
+Message-ID: <f321c638bf5572088a8c5e4d7027c3a797bdd568.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 2/2] ima: Handle -ESTALE returned by
+ ima_filter_rule_match()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     "Guozihua (Scott)" <guozihua@huawei.com>,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock fix for v6.0 #2
-Date:   Fri, 23 Sep 2022 12:43:22 +0200
-Message-Id: <20220923104322.3182116-1-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date:   Fri, 23 Sep 2022 07:19:26 -0400
+In-Reply-To: <77c9c86b-85a6-aa87-e084-59a70bb47167@huawei.com>
+References: <20220921125804.59490-1-guozihua@huawei.com>
+         <20220921125804.59490-3-guozihua@huawei.com>
+         <ce948f9e5639345026679b31a818cc12a247ce60.camel@linux.ibm.com>
+         <77c9c86b-85a6-aa87-e084-59a70bb47167@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: kp1VsAdDHC_zCWXYY3Gg28rQXQq5hYnz
+X-Proofpoint-ORIG-GUID: IM5NrmwD8jcVmKOq1Gj04LtNdKIDMcdq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-23_03,2022-09-22_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 mlxscore=0 adultscore=0 malwarescore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209230072
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On Fri, 2022-09-23 at 12:01 +0800, Guozihua (Scott) wrote:
+> On 2022/9/22 19:09, Mimi Zohar wrote:
+> > Hi Scott,
+> > 
+> > On Wed, 2022-09-21 at 20:58 +0800, GUO Zihua wrote:
+> >>                  }
+> >> -               if (!rc)
+> >> -                       return false;
+> >> +
+> >> +               if (rc == -ESTALE && !rule_reinitialized) {
+> > 
+> > Ok, this limits allocating ima_lsm_copy_rule() to the first -ESTALE,
+> > 
+> >> +                       lsm_rule = ima_lsm_copy_rule(rule);
+> >> +                       if (lsm_rule) {
+> >> +                               rule_reinitialized = true;
+> >> +                               goto retry;
+> > 
+> > but "retry" is also limited to the first -ESTALE.
+> 
+> Technically we would only need one retry. This loop is looping on all 
+> the lsm members of one rule, and ima_lsm_copy_rule would update all the 
+> lsm members of this rule. The "lsm member" here refers to LSM defined 
+> properties like obj_user, obj_role etc. These members are of AND 
+> relation, meaning all lsm members together would form one LSM rule.
+> 
+> As of the scenario you mentioned, I think it should be really rare. 
+> Spending to much time and code on this might not worth it.
+> > 
+> >> +                       }
+> >> +               }
 
-This change fixes out-of-tree builds for Landlock tests, which was
-initially identified here:
-https://lore.kernel.org/r/CADYN=9JM1nnjC9LypHqrz7JJjbZLpm8rArDUy4zgYYrajErBnA@mail.gmail.com
+Either there can be multiple LSM fields and the memory is allocated
+once and freed once at the end, as you suggested, or the memory should
+be freed here and rule_reinitialized reset, minimizing the code change.
 
-Please pull this Landlock fix for v6.0-rc7 .  This change merged
-cleanly with your tree, and have been successfully tested in the latest
-linux-next releases for a week.
+> >> +               if (!rc) {
+> >> +                       result = false;
+> >> +                       goto out;
+> >> +               }
+> >>          }
+> >> -       return true;
+> >> +       result = true;
+> >> +
+> >> +out:
+> >> +       if (rule_reinitialized) {
+> >> +               for (i = 0; i < MAX_LSM_RULES; i++)
+> >> +                       ima_filter_rule_free(lsm_rule->lsm[i].rule);
+> >> +               kfree(lsm_rule);
+> >> +       }
+> >> +       return result;
+> >>   }
 
-Regards,
- Mickaël
+-- 
+thanks,
 
---
-The following changes since commit 80e78fcce86de0288793a0ef0f6acf37656ee4cf:
+Mimi
 
-  Linux 6.0-rc5 (2022-09-11 16:22:01 -0400)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.0-rc7
-
-for you to fetch changes up to a52540522c9541bfa3e499d2edba7bc0ca73a4ca:
-
-  selftests/landlock: Fix out-of-tree builds (2022-09-14 16:37:38 +0200)
-
-----------------------------------------------------------------
-Landlock fix for v6.0-rc7
-
-----------------------------------------------------------------
-Mickaël Salaün (1):
-      selftests/landlock: Fix out-of-tree builds
-
- tools/testing/selftests/landlock/Makefile | 19 ++++++++++---------
- tools/testing/selftests/lib.mk            |  4 ++++
- 2 files changed, 14 insertions(+), 9 deletions(-)
