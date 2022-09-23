@@ -2,131 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2152C6FA82
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 08:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EACC3C6FA82
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 09:21:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230520AbiIWIxI (ORCPT
+        id S230316AbiIWJVX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Sep 2022 04:53:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40930 "EHLO
+        Fri, 23 Sep 2022 05:21:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbiIWIxG (ORCPT
+        with ESMTP id S230116AbiIWJVX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Sep 2022 04:53:06 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59351126B47;
-        Fri, 23 Sep 2022 01:53:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0F51BB825D5;
-        Fri, 23 Sep 2022 08:53:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82E77C433C1;
-        Fri, 23 Sep 2022 08:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663923182;
-        bh=6UkifW9opBuMiDyAjvnxiHu2FKrBLty2CaTZoLX1Qf8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fuMMxSihZdLFcnHxLfHUb1BkuwfWdTeggmnBd3ei4gKudohhYIFgUKLJumYoKoCti
-         x62wROUR3srA6pEupaT2QuwXqAMyTDOCbvPrRyhK331ablFW6VjJjjL9Lgeo16Xkbn
-         kcP6mqIfuGDyX/GE0SuxV7ZFBUQlgR8Hv3voEXFGe0eTwnSBLo0f7i1UbDxI3wxOye
-         KWS90gaEv/h5cv+t8dSHarFtQegDs0wGdSTLIyJ+jhLiT5ojCi3QmlVq6NVq8a+W5N
-         Jgy2EIk59xsdbPHu3tTY35yY0RMk9AYXnL3e4rJBaG332J12GTsVh2GB9/0mn853lw
-         W1fO3xgL+uqag==
-Date:   Fri, 23 Sep 2022 10:52:56 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 00/29] acl: add vfs posix acl api
-Message-ID: <20220923085256.2ic6ivf4iuacu5sg@wittgenstein>
-References: <20220922151728.1557914-1-brauner@kernel.org>
- <d74030ae-4b9a-5b39-c203-4b813decd9eb@schaufler-ca.com>
- <CAHk-=whLbq9oX5HDaMpC59qurmwj6geteNcNOtQtb5JN9J0qFw@mail.gmail.com>
- <16ca7e4c-01df-3585-4334-6be533193ba6@schaufler-ca.com>
- <CAHC9VhQRST66pVuNM0WGJsh-W01mDD-bX=GpFxCceUJ1FMWrmg@mail.gmail.com>
- <20220922215731.GA28876@mail.hallyn.com>
- <CAHC9VhSBwavTLcgkgJ-AYwH9wzECi3B7BtwdKOx5FJ3n7M+WYg@mail.gmail.com>
+        Fri, 23 Sep 2022 05:21:23 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BFDB10F71E
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 02:21:21 -0700 (PDT)
+Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.56])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MYmkY2QnXzlXDr;
+        Fri, 23 Sep 2022 17:17:09 +0800 (CST)
+Received: from cgs.huawei.com (10.244.148.83) by
+ kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Fri, 23 Sep 2022 17:21:18 +0800
+From:   Gaosheng Cui <cuigaosheng1@huawei.com>
+To:     <john.johansen@canonical.com>, <paul@paul-moore.com>,
+        <jmorris@namei.org>, <serge@hallyn.com>, <cuigaosheng1@huawei.com>
+CC:     <apparmor@lists.ubuntu.com>,
+        <linux-security-module@vger.kernel.org>
+Subject: [PATCH v2] apparmor: Simplify obtain the newest label on a cred
+Date:   Fri, 23 Sep 2022 17:21:18 +0800
+Message-ID: <20220923092118.515552-1-cuigaosheng1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhSBwavTLcgkgJ-AYwH9wzECi3B7BtwdKOx5FJ3n7M+WYg@mail.gmail.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.244.148.83]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemi500012.china.huawei.com (7.221.188.12)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 22, 2022 at 06:13:44PM -0400, Paul Moore wrote:
-> On Thu, Sep 22, 2022 at 5:57 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > On Thu, Sep 22, 2022 at 03:07:44PM -0400, Paul Moore wrote:
-> > > On Thu, Sep 22, 2022 at 2:54 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > > On 9/22/2022 10:57 AM, Linus Torvalds wrote:
-> > > > > On Thu, Sep 22, 2022 at 9:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > > >> Could we please see the entire patch set on the LSM list?
-> > > > > While I don't think that's necessarily wrong, I would like to point
-> > > > > out that the gitweb interface actually does make it fairly easy to
-> > > > > just see the whole patch-set.
-> > > > >
-> > > > > IOW, that
-> > > > >
-> > > > >   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git/log/?h=fs.acl.rework
-> > > > >
-> > > > > that Christian pointed to is not a horrible way to see it all. Go to
-> > > > > the top-most commit, and it's easy to follow the parent links.
-> > > >
-> > > > I understand that the web interface is fine for browsing the changes.
-> > > > It isn't helpful for making comments on the changes. The discussion
-> > > > on specific patches (e.g. selinux) may have impact on other parts of
-> > > > the system (e.g. integrity) or be relevant elsewhere (e.g. smack). It
-> > > > can be a real problem if the higher level mailing list (the LSM list
-> > > > in this case) isn't included.
-> > >
-> > > This is probably one of those few cases where Casey and I are in
-> > > perfect agreement.  I'd much rather see the patches hit my inbox than
-> > > have to go hunting for them and then awkwardly replying to them (and
-> > > yes, I know there are ways to do that, I just personally find it
-> > > annoying).  I figure we are all deluged with email on a daily basis
-> > > and have developed mechanisms to deal with that in a sane way, what is
-> > > 29 more patches on the pile?
-> >
-> > Even better than the web interface, is find the message-id in any of the
-> > emails you did get, and run
-> >
-> > b4 mbox 20220922151728.1557914-1-brauner@kernel.org
-> >
-> > In general I'd agree with sending the whole set to the lsm list, but
-> > then one needs to start knowing which lists do and don't want the whole
-> > set...  b4 mbox and lei are now how I read all kernel related lists.
-> 
-> In my opinion, sending the entire patchset to the relevant lists
-> should be the default for all the reasons mentioned above.  All the
-> other methods are fine, and I don't want to stop anyone from using
-> their favorite tool, but *requiring* the use of a separate tool to
-> properly review and comment on patches gets us away from the
-> email-is-universal argument.  Yes, all the other tools mentioned are
-> still based in a world of email, but if you are not emailing the
-> relevant stakeholders directly (or indirectly via a list), you are
-> placing another hurdle in front of the reviewers by requiring them to
-> leave their email client based workflow and jump over to lore, b4,
-> etc. to review the patchset.
-> 
-> The lore.kernel.org instance is wonderful, full stop, and the b4 tool
-> is equally wonderful, full stop, but they are tools intended to assist
-> and optimize; they should not replace the practice of sending patches,
-> with the full context, to the relevant parties.
+In aa_get_task_label(), aa_get_newest_cred_label(__task_cred(task))
+can do the same things as aa_get_newest_label(__aa_task_raw_label(task)),
+so we can replace it and remove __aa_task_raw_label() to simplify the code.
 
-I'm happy to send all of v2 to the security mailing list.
+Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+---
+v2:
+- Fix the commit message, change simply to simplify. Thanks!
+ security/apparmor/include/cred.h | 13 -------------
+ security/apparmor/task.c         |  2 +-
+ 2 files changed, 1 insertion(+), 14 deletions(-)
 
-But for v1 could you compromise and just use b4?
+diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
+index 0b9ae4804ef7..58fdc72af664 100644
+--- a/security/apparmor/include/cred.h
++++ b/security/apparmor/include/cred.h
+@@ -63,19 +63,6 @@ static inline struct aa_label *aa_get_newest_cred_label(const struct cred *cred)
+ 	return aa_get_newest_label(aa_cred_raw_label(cred));
+ }
+ 
+-/**
+- * __aa_task_raw_label - retrieve another task's label
+- * @task: task to query  (NOT NULL)
+- *
+- * Returns: @task's label without incrementing its ref count
+- *
+- * If @task != current needs to be called in RCU safe critical section
+- */
+-static inline struct aa_label *__aa_task_raw_label(struct task_struct *task)
+-{
+-	return aa_cred_raw_label(__task_cred(task));
+-}
+-
+ /**
+  * aa_current_raw_label - find the current tasks confining label
+  *
+diff --git a/security/apparmor/task.c b/security/apparmor/task.c
+index 503dc0877fb1..0a8f9fa7ca0a 100644
+--- a/security/apparmor/task.c
++++ b/security/apparmor/task.c
+@@ -31,7 +31,7 @@ struct aa_label *aa_get_task_label(struct task_struct *task)
+ 	struct aa_label *p;
+ 
+ 	rcu_read_lock();
+-	p = aa_get_newest_label(__aa_task_raw_label(task));
++	p = aa_get_newest_cred_label(__task_cred(task));
+ 	rcu_read_unlock();
+ 
+ 	return p;
+-- 
+2.25.1
 
-b4 mbox 20220922151728.1557914-1-brauner@kernel.org
-
-This would mean you could provide reviews for v1 and we don't need to
-fragment the v1 discussion because of a resend to include a mailing list.
