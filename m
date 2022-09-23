@@ -2,148 +2,278 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E14C07E9D
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 20:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 096D3C04A95
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Sep 2022 20:53:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233273AbiIWUf3 (ORCPT
+        id S233119AbiIWUxv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Sep 2022 16:35:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49226 "EHLO
+        Fri, 23 Sep 2022 16:53:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232995AbiIWUeB (ORCPT
+        with ESMTP id S232753AbiIWUxa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Sep 2022 16:34:01 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00B3F14D30F;
-        Fri, 23 Sep 2022 13:28:46 -0700 (PDT)
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28NKPDua007507;
-        Fri, 23 Sep 2022 20:28:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=C1ePJ8Mf307F7nByJ7BtKcM8WaOumNsqo6SgWuWLwEw=;
- b=Xzb0PKVSMLpfwtNDd4ZmIgKg6KYRwRWpQYVfhC8USQLDiyZrvilCdgpwLCdlGM32a1As
- iXu9bmQ2286Z0uXLI6QV8+zPdDTeym/eKx2tDiqiV1Gk6TQsDhIKhIpElC6p4vqJz21C
- sEjpG19MY8HoLIA2GWagHijQH5teyNaJnmQgZyY1YRhQwKZk9Iq46TmL/WHwXUtibcOz
- hCO9Lzzhw3WCL4gUih28SQ8SrUub13FKNWQRiR9kaiGZAJY/CSHxQwOhKEezslEFTVoR
- bs0ewsqo9RNILomoX6jp+l/vgUvAsAGM3T2d9VEbNP+YoJhSlPjM7Ju0aH1cu3QyHll2 ow== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jsktj02w9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Sep 2022 20:28:33 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28NKPWwo009551;
-        Fri, 23 Sep 2022 20:28:32 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jsktj02vt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Sep 2022 20:28:32 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28NKL9TY024646;
-        Fri, 23 Sep 2022 20:28:31 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma02dal.us.ibm.com with ESMTP id 3jn5vamg9w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Sep 2022 20:28:31 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28NKSUlT7340554
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Sep 2022 20:28:30 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1B69358054;
-        Fri, 23 Sep 2022 20:28:30 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2E0B958058;
-        Fri, 23 Sep 2022 20:28:29 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.173.46])
-        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 23 Sep 2022 20:28:29 +0000 (GMT)
-Message-ID: <0f9387c9ceec0819de7bdb8b3635af8fa8236973.camel@linux.ibm.com>
-Subject: Re: [PATCH -next 1/4] ima: Use DECLARE_FLEX_ARRAY() helper in
- ima_modsig
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Gaosheng Cui <cuigaosheng1@huawei.com>, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 23 Sep 2022 16:28:28 -0400
-In-Reply-To: <20220905075837.1083216-2-cuigaosheng1@huawei.com>
-References: <20220905075837.1083216-1-cuigaosheng1@huawei.com>
-         <20220905075837.1083216-2-cuigaosheng1@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -EumnrV6P_ZEykrDwuIzUAun3irb-r9e
-X-Proofpoint-ORIG-GUID: 1VEcZepvLU4jde-VqGfHDtl1Nq8N4AiX
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Fri, 23 Sep 2022 16:53:30 -0400
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F66F08A0
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Sep 2022 13:53:26 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MZ49x2KMxzMqJ3F;
+        Fri, 23 Sep 2022 22:53:25 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MZ49v4FbDzMppMm;
+        Fri, 23 Sep 2022 22:53:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1663966405;
+        bh=Sy8Qe7yyNodDWdxuir5PEFXPJgoKcFpmwJZUYBiDMy0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=jXqqro7ab8vlWheOfGaSMxYtyeRnaeNYaDrx5/+EBWD57nav3VTeAXhiUKheu+/2L
+         cUzWMIfuA3f0KdIMyFoToOooTfcuYDG4FlRYpK7BWwTmjhQ983iR8xBXqsi+Zw63NI
+         1EH0eFGrr9kPCA7Nw63dTVMf/WDl5SA+J0976PdM=
+Message-ID: <0dea6e07-dd98-0d3c-4c2b-7f45e06374ed@digikod.net>
+Date:   Fri, 23 Sep 2022 22:53:23 +0200
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-23_08,2022-09-22_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 clxscore=1011 bulkscore=0 adultscore=0 malwarescore=0
- suspectscore=0 spamscore=0 mlxlogscore=999 impostorscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209230130
+User-Agent: 
+Subject: Re: [PATCH v6 2/5] landlock: Support file truncation
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+References: <20220908195805.128252-1-gnoack3000@gmail.com>
+ <20220908195805.128252-3-gnoack3000@gmail.com>
+ <2c4db214-e425-3e40-adeb-9e406c3ea2f9@digikod.net> <Yy2W14NMQBvfG9Fw@nuc>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <Yy2W14NMQBvfG9Fw@nuc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Gaosheng,
 
-Thank you for the patches.
-
-On Mon, 2022-09-05 at 15:58 +0800, Gaosheng Cui wrote:
-> Zero-length arrays are deprecated and we are moving towards adopting
-> C99 flexible-array members instead. So, replace zero-length array
-> declaration with the new DECLARE_FLEX_ARRAY() helper macro in struct
-> modsig.
+On 23/09/2022 13:21, Günther Noack wrote:
+> On Mon, Sep 12, 2022 at 09:41:32PM +0200, Mickaël Salaün wrote:
+>>
+>> On 08/09/2022 21:58, Günther Noack wrote:
+>>> Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
+>>
+>> [...]
+>>
+>>> @@ -761,6 +762,47 @@ static bool collect_domain_accesses(
+>>>    	return ret;
+>>>    }
+>>> +/**
+>>> + * get_path_access_rights - Returns the subset of rights in access_request
+>>> + * which are permitted for the given path.
+>>> + *
+>>> + * @domain: The domain that defines the current restrictions.
+>>> + * @path: The path to get access rights for.
+>>> + * @access_request: The rights we are interested in.
+>>> + *
+>>> + * Returns: The access mask of the rights that are permitted on the given path,
+>>> + * which are also a subset of access_request (to save some calculation time).
+>>> + */
+>>> +static inline access_mask_t
+>>> +get_path_access_rights(const struct landlock_ruleset *const domain,
+>>> +		       const struct path *const path,
+>>> +		       access_mask_t access_request)
+>>> +{
+>>> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+>>> +	unsigned long access_bit;
+>>> +	unsigned long access_req;
+>>> +
+>>> +	init_layer_masks(domain, access_request, &layer_masks);
+>>> +	if (!check_access_path_dual(domain, path, access_request, &layer_masks,
+>>> +				    NULL, 0, NULL, NULL)) {
+>>> +		/*
+>>> +		 * Return immediately for successful accesses and for cases
+>>> +		 * where everything is permitted because the path belongs to an
+>>> +		 * internal filesystem.
+>>> +		 */
+>>> +		return access_request;
+>>> +	}
+>>> +
+>>> +	access_req = access_request;
+>>> +	for_each_set_bit(access_bit, &access_req, ARRAY_SIZE(layer_masks)) {
+>>> +		if (layer_masks[access_bit]) {
+>>> +			/* If any layer vetoed the access right, remove it. */
+>>> +			access_request &= ~BIT_ULL(access_bit);
+>>> +		}
+>>> +	}
+>>
+>> This seems to be redundant with the value returned by init_layer_masks(),
+>> which should be passed to check_access_path_dual() to avoid useless path
+>> walk.
 > 
-> This helper allows for a flexible-array member in a union.
+> True, I'll use the result of init_layer_masks() to feed it back to
+> check_access_path_dual() to avoid a bit of computation.
 > 
-> Link: KSPP#21
-> Link: KSPP#193
-> Link: KSPP#197
-
-The above shortened link is a bit confusing.  The #193 complete link is
-mentioned in the cover letter.  In all cases being modified the "[]" 
-notation is used.  Is this a boiler plate patch description or are all
-three of these links really applicable to each of the patches?  
-
-- Eliminate fake flexible arrays from the kernel ("variable length"
-one-element and zero-length arrays) #21
-- Replace fake flexible-array declarations with the
-DECLARE_FLEX_ARRAY() helper macro #193
-- Address -Wzero-length-array warnings reported by Clang #197
-
-> Link: https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-
-Shouldn't this link be in the cover letter?  And the applicable
-link(s), as shown in the cover letter, here in the patches?
-
--- 
-thanks,
-
-Mimi
-
-> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
-> ---
->  security/integrity/ima/ima_modsig.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Like this:
 > 
-> diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-> index fb25723c65bc..d132383dbb64 100644
-> --- a/security/integrity/ima/ima_modsig.c
-> +++ b/security/integrity/ima/ima_modsig.c
-> @@ -29,7 +29,7 @@ struct modsig {
->  	 * storing the signature.
->  	 */
->  	int raw_pkcs7_len;
-> -	u8 raw_pkcs7[];
-> +	DECLARE_FLEX_ARRAY(u8, raw_pkcs7);
->  };
->  
->  /*
+>          effective_access_request =
+> 		init_layer_masks(domain, access_request, &layer_masks);
+> 	if (!check_access_path_dual(domain, path, effective_access_request,
+> 	    &layer_masks, NULL, 0, NULL, NULL)) {
+> 		// ...
+> 	}
+
+correct
+
+> 
+> Overall, the approach here is:
+> 
+> * Initialize the layer_masks, so that it has a bit set for every
+>    access right in access_request and layer where that access right is
+>    handled.
+> 
+> * check_access_path_dual() with only the first few parameters -- this
+>    will clear all the bits in layer masks which are actually permitted
+>    according to the individual rules.
+> 
+>    As a special case, this *may* return 0 immediately, in which case we
+>    can (a) save a bit of calculation in the loop below and (b) we might
+>    be in the case where access is permitted because it's a file from a
+>    special file system (even though not all bits are cleared). If
+>    check_access_path_dual() returns 0, we return the full requested
+>    access_request that we received as input. >
+> * In the loop below, if there are any bits left in layer_masks, those
+>    are rights which are not permitted for the given path. We remove
+>    these from access_request and return the modified access_request.
+> 
+> 
+>> This function is pretty similar to check_access_path(). Can't you change it
+>> to use an access_mask_t pointer and get almost the same thing?
+> 
+> I'm shying away from this approach. Many of the existing different use
+> cases are already realized by "doing if checks deep down". I think it
+> would make the code more understandable if we managed to model these
+> differences between use cases already at the layer of function calls.
+> (This is particularly true for check_access_path_dual(), where in
+> order to find out how the "single" case works, you need to disentangle
+> to a large extent how the much more complicated dual case works.)
+
+I agree that check_access_path_dual() is complex, but I couldn't find a 
+better way.
 
 
+> 
+> If you want to unify these two functions, what do you think of the
+> approach of just using get_path_access_rights() instead of
+> check_access_path()?
+> 
+> Basically, it would turn
+> 
+> return check_access_path(dom, path, access_request);
+> 
+> into
+> 
+> if (get_path_access_rights(dom, path, access_request) == access_request)
+> 	return 0;
+> return -EACCES;
+> 
+> This is slightly more verbose in the places where it's called, but it
+> would be more orthogonal, and it would also clarify that -EACCES is
+> the only possible error in the "single" path walk case.
+> 
+> Let me know what you think.
+
+What about adding an additional argument `access_mask_t *const 
+access_allowed` to check_access_path_dual() which returns the set of 
+accesses (i.e. access_masked_parent1 & access_masked_parent2) that could 
+then be stored to landlock_file(file)->allowed_access? If this argument 
+is NULL it should just be ignored. What is left from 
+get_path_access_rights() could then be merged into hook_file_open().
+
+
+> 
+>>> +	return access_request;
+>>> +}
+>>> +
+>>>    /**
+>>>     * current_check_refer_path - Check if a rename or link action is allowed
+>>>     *
+>>> @@ -1142,6 +1184,11 @@ static int hook_path_rmdir(const struct path *const dir,
+>>>    	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_REMOVE_DIR);
+>>>    }
+>>> +static int hook_path_truncate(const struct path *const path)
+>>> +{
+>>> +	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
+>>> +}
+>>> +
+>>>    /* File hooks */
+>>>    static inline access_mask_t get_file_access(const struct file *const file)
+>>> @@ -1159,22 +1206,55 @@ static inline access_mask_t get_file_access(const struct file *const file)
+>>>    	/* __FMODE_EXEC is indeed part of f_flags, not f_mode. */
+>>>    	if (file->f_flags & __FMODE_EXEC)
+>>>    		access |= LANDLOCK_ACCESS_FS_EXECUTE;
+>>> +
+>>>    	return access;
+>>>    }
+>>>    static int hook_file_open(struct file *const file)
+>>>    {
+>>> +	access_mask_t access_req, access_rights;
+>>
+>> "access_request" is used for access_mask_t, and "access_req" for unsigned
+>> int. I'd like to stick to this convention.
+> 
+> Done.
+> 
+>>> +	const access_mask_t optional_rights = LANDLOCK_ACCESS_FS_TRUNCATE;
+>>
+>> You use "rights" often and I'm having some trouble to find a rational for
+>> that (compared to "access")…
+> 
+> Done. Didn't realize you already had a different convention here.
+> 
+> I'm renaming get_path_access_rights() to get_path_access() as well
+> then (and I'll rename get_file_access() to
+> get_required_file_open_access() - that's more verbose, but it sounded
+> too similar to get_path_access(), and it might be better to clarify
+> that this is a helper for the file_open hook). Does that sound
+> reasonable?
+
+I think it is better, but I'm not convinced this helper is useful.
+
+> 
+> 
+>>>    	const struct landlock_ruleset *const dom =
+>>>    		landlock_get_current_domain();
+>>> -	if (!dom)
+>>> +	if (!dom) {
+>>> +		/* Grant all rights. */
+>>> +		landlock_file(file)->rights = LANDLOCK_MASK_ACCESS_FS;
+>>>    		return 0;
+>>> +	}
+>>> +
+>>>    	/*
+>>>    	 * Because a file may be opened with O_PATH, get_file_access() may
+>>>    	 * return 0.  This case will be handled with a future Landlock
+>>>    	 * evolution.
+>>>    	 */
+>>> -	return check_access_path(dom, &file->f_path, get_file_access(file));
+>>> +	access_req = get_file_access(file);
+>>> +	access_rights = get_path_access_rights(dom, &file->f_path,
+>>> +					       access_req | optional_rights);
+>>> +	if (access_req & ~access_rights)
+>>> +		return -EACCES;
+>>
+>> We should add a test to make sure this (optional_rights) logic is correct
+>> (and doesn't change), with a matrix of cases involving a ruleset handling
+>> either FS_WRITE, FS_TRUNCATE or both. This should be easy to do with test
+>> variants.
+> 
+> OK, adding one to the selftests.
+> 
+>>> +	/*
+>>> +	 * For operations on already opened files (i.e. ftruncate()), it is the
+>>> +	 * access rights at the time of open() which decide whether the
+>>> +	 * operation is permitted. Therefore, we record the relevant subset of
+>>> +	 * file access rights in the opened struct file.
+>>> +	 */
+>>> +	landlock_file(file)->rights = access_rights;
+>>> +
+>>> +	return 0;
+>>> +}
+> 
