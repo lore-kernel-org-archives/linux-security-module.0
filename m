@@ -2,95 +2,97 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31053C6FA90
-	for <linux-security-module@archiver.kernel.org>; Sat, 24 Sep 2022 09:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7245C07E9D
+	for <linux-security-module@archiver.kernel.org>; Sat, 24 Sep 2022 09:21:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233405AbiIXJTY (ORCPT
+        id S229708AbiIXJVY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 24 Sep 2022 05:19:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40144 "EHLO
+        Sat, 24 Sep 2022 05:21:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233391AbiIXJTY (ORCPT
+        with ESMTP id S229573AbiIXJVX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 24 Sep 2022 05:19:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9595812B5FB;
-        Sat, 24 Sep 2022 02:19:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sat, 24 Sep 2022 05:21:23 -0400
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08D2A12F758
+        for <linux-security-module@vger.kernel.org>; Sat, 24 Sep 2022 02:21:23 -0700 (PDT)
+Received: from [192.168.192.83] (unknown [50.126.114.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 284E961221;
-        Sat, 24 Sep 2022 09:19:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A21C433D6;
-        Sat, 24 Sep 2022 09:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1664011162;
-        bh=+S04GeAW3/TLKjCQ5LxuuH1wKpbCajXi/U4ujhoS9mk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YAMjQHP6GB5PCvySH2eTGeFQa4Eu4alKUt9TbSyCeCJ0oyKGebB/oTW/EXr8SDuUQ
-         707Ema6O87JlR18n+dCXEG5gMDZi61PE7BeadC2oZltOeUqsokaNoBDT7Vr17ZFrxj
-         M5KYBbsgcz1iyAAKuAY/JiluhGQmF0jE/Ot3/Q/4=
-Date:   Sat, 24 Sep 2022 11:19:19 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Michal Suchanek <msuchanek@suse.de>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Philipp Rudo <prudo@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, Baoquan He <bhe@redhat.com>,
-        Alexander Egorenkov <egorenar@linux.ibm.com>,
-        "open list:S390" <linux-s390@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
-        <linuxppc-dev@lists.ozlabs.org>,
-        "open list:KEXEC" <kexec@lists.infradead.org>,
-        Coiby Xu <coxu@redhat.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Morse <james.morse@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH 5.15 0/6] arm64: kexec_file: use more system keyrings to
- verify kernel image signature + dependencies
-Message-ID: <Yy7Ll1QJ+u+nkic9@kroah.com>
-References: <cover.1663951201.git.msuchanek@suse.de>
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 2B9943F121;
+        Sat, 24 Sep 2022 09:21:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1664011281;
+        bh=o4c3l0kNYfnCILC+LMrCcqunU9BVFBwuA+Uw3QWtLmA=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=KplvA8MJ4AapHEy7QV5fKanMj4I6BnyLH/eW4wGYW0/8bQuT0oqTv0tLrA+KFyFPU
+         zQW0L1bEyW/jYAE0gUS6RieFgH1FjewpCRru0h+4d056puLLG0k8ZMrAk3ggD9LvkD
+         EKBcM2LRrTsJJxJG+6wd+kwGTOm43q8jqpul2w+KGEbo9GAMRIjZOirpsSnbR7+Vqd
+         Oq15b3K9S1GWVZlLzFyCpFQIZoWxjKsTdeK6+fZHFg18YcbAuX0hnkyyuFLIP3lekS
+         3gEKeHQZtNlFc6/ADWZn3FIjWDvRDahac6yLg9x4m5Eht4BNXzQE/Z2vlCUAraFZsB
+         SlEubRXFwKxHw==
+Message-ID: <b493f609-3dbd-77fd-8290-1e48eb0059f8@canonical.com>
+Date:   Sat, 24 Sep 2022 02:21:17 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1663951201.git.msuchanek@suse.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] apparmor: make __aa_path_perm() static
+Content-Language: en-US
+To:     Xiu Jianfeng <xiujianfeng@huawei.com>, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
+References: <20220914074607.194838-1-xiujianfeng@huawei.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20220914074607.194838-1-xiujianfeng@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 23, 2022 at 07:10:28PM +0200, Michal Suchanek wrote:
-> Hello,
+On 9/14/22 00:46, Xiu Jianfeng wrote:
+> Make __aa_path_perm() static as it's only used inside apparmor/file.c.
 > 
-> this is backport of commit 0d519cadf751
-> ("arm64: kexec_file: use more system keyrings to verify kernel image signature")
-> to table 5.15 tree including the preparatory patches.
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-This feels to me like a new feature for arm64, one that has never worked
-before and you are just making it feature-parity with x86, right?
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-Or is this a regression fix somewhere?  Why is this needed in 5.15.y and
-why can't people who need this new feature just use a newer kernel
-version (5.19?)
+> ---
+>   security/apparmor/file.c         | 6 +++---
+>   security/apparmor/include/file.h | 3 ---
+>   2 files changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/security/apparmor/file.c b/security/apparmor/file.c
+> index e1b7e93602e4..14f7d7ef3f54 100644
+> --- a/security/apparmor/file.c
+> +++ b/security/apparmor/file.c
+> @@ -265,9 +265,9 @@ unsigned int aa_str_perms(struct aa_dfa *dfa, unsigned int start,
+>   	return state;
+>   }
+>   
+> -int __aa_path_perm(const char *op, struct aa_profile *profile, const char *name,
+> -		   u32 request, struct path_cond *cond, int flags,
+> -		   struct aa_perms *perms)
+> +static int __aa_path_perm(const char *op, struct aa_profile *profile, const char *name,
+> +			  u32 request, struct path_cond *cond, int flags,
+> +			  struct aa_perms *perms)
+>   {
+>   	int e = 0;
+>   
+> diff --git a/security/apparmor/include/file.h b/security/apparmor/include/file.h
+> index 029cb20e322d..17dca3502230 100644
+> --- a/security/apparmor/include/file.h
+> +++ b/security/apparmor/include/file.h
+> @@ -189,9 +189,6 @@ unsigned int aa_str_perms(struct aa_dfa *dfa, unsigned int start,
+>   			  const char *name, struct path_cond *cond,
+>   			  struct aa_perms *perms);
+>   
+> -int __aa_path_perm(const char *op, struct aa_profile *profile,
+> -		   const char *name, u32 request, struct path_cond *cond,
+> -		   int flags, struct aa_perms *perms);
+>   int aa_path_perm(const char *op, struct aa_label *label,
+>   		 const struct path *path, int flags, u32 request,
+>   		 struct path_cond *cond);
 
-thanks,
-
-greg k-h
