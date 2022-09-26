@@ -2,65 +2,72 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7907C07E9D
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Sep 2022 15:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C249C6FA92
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Sep 2022 15:26:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236629AbiIZP0L (ORCPT
+        id S236637AbiIZP0L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Mon, 26 Sep 2022 11:26:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49390 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236742AbiIZPYH (ORCPT
+        with ESMTP id S236755AbiIZPYL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Sep 2022 11:24:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A42DF33E0D;
-        Mon, 26 Sep 2022 07:09:52 -0700 (PDT)
+        Mon, 26 Sep 2022 11:24:11 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F6521E19;
+        Mon, 26 Sep 2022 07:09:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 954BB60DEF;
-        Mon, 26 Sep 2022 14:09:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16C43C43141;
-        Mon, 26 Sep 2022 14:09:48 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id D7741CE114D;
+        Mon, 26 Sep 2022 14:09:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0FBDC4347C;
+        Mon, 26 Sep 2022 14:09:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664201391;
-        bh=OG4oY2BAy3VXyJdjDoNyWSOuP5VC2qvzPpQAEMpU/Vo=;
+        s=k20201202; t=1664201386;
+        bh=aar05o0GKlj5qSpKpK91BAhaPuQi2P7Jz1CKbiFrK24=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PpLACuFpUlAKzOH7mep6qM/ESg3mr/7NC9B7mgNsgIjgKMFqkw0CgGaNMUW9nrmU2
-         qExOjnocUpB5d10G4vWDad5dHqCsCPEL4i/NGEQS6OXOSrMt4ojUfII/XXbcAd0C+V
-         DebLvUtzxmFfQ9eMdsnTnTN+lvUsCBTnsUYSkdUaWUSlvn4B3uoW1aQSKl9eDIftCc
-         Y1zw3i7KGQstkh0kGO3IAf8deQTQbTN5Gn/Q9lKGNC67Im3Nq8G8maik5YsKBx8iXZ
-         zYS/CLHFBBHFo7XFc08Ls0fNQfO/aVzaLEADYockaUdU6Wt+GO0IgocuUmXi+ivGvU
-         MWNYrjdVDHRJg==
+        b=sU2RrOnhjqjIiqa1dUKHTO7+jM6NbQJJyrLOmW3SFgIjBS4eUyplbHJ3pazkRZEXh
+         7MfK35DuOolpGIpJDV2G0Ele5bPv0sWOamjJO3DWeWUIX9JD8Iqp2u1DgUijloya5i
+         08h8TcD7rzh2KGkrUJNVdkgw3ncV7chHfedtAwH3zh/u3tbMd0RnJucFRTohgL51xW
+         1NLxM8+spzlp3eZp8reK8sg7CHFkXQE6EAzCT8PQEijFlhSx3xK7lLjUDUR1Uvf0Yq
+         FxaaiOhpTHSv0oHByJpnRI4rxL1/ykcda0Z+UH+wd+ZTd6a8ElD6Of6VtY1ugK0WFl
+         89ImsAR320X1Q==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-unionfs@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v2 27/30] ovl: use stub posix acl handlers
-Date:   Mon, 26 Sep 2022 16:08:24 +0200
-Message-Id: <20220926140827.142806-28-brauner@kernel.org>
+Subject: [PATCH v2 25/30] xattr: use posix acl api
+Date:   Mon, 26 Sep 2022 16:08:22 +0200
+Message-Id: <20220926140827.142806-26-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220926140827.142806-1-brauner@kernel.org>
 References: <20220926140827.142806-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5066; i=brauner@kernel.org; h=from:subject; bh=OG4oY2BAy3VXyJdjDoNyWSOuP5VC2qvzPpQAEMpU/Vo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSQbbnI6UvKpfH7WGVvvybJvNwVms93evnAuZ6Rmxs/SHzyi K1jDO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaipM/w38V4lkvilCmBR7M4N7hZKd gZruh8myybIVX9mn2N8t2odwz/S7nK5mczXbu8xbh33wZDNxFBleey2g9XsT1NP+AS9m8xAwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7587; i=brauner@kernel.org; h=from:subject; bh=aar05o0GKlj5qSpKpK91BAhaPuQi2P7Jz1CKbiFrK24=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSQbbnLauXujI5NRPlcxf81xU87oN18MC3YbL578mkep+Hf5 P26vjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlsrmP4HyL6NeNsy7k5Ry3P6u68d3 tj5PFo/1aXgvKuCiNWPk+V14wMM/7EZb8xLei9tXD7172nl4uzirVM/NO5RiB1seadBZlr+QA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Now that ovl supports the get and set acl inode operations and the vfs
-has been switched to the new posi api, ovl can simply rely on the stub
-posix acl handlers. The custom xattr handlers and associated unused
-helpers can be removed.
+In previous patches we built a new posix api solely around get and set
+inode operations. Now that we have all the pieces in place we can switch
+the system calls and the vfs over to only rely on this api when
+interacting with posix acls. This finally removes all type unsafety and
+type conversion issues explained in detail in [1] that we aim to get rid
+of.
 
+With the new posix acl api we immediately translate into an appropriate
+kernel internal struct posix_acl format both when getting and setting
+posix acls. This is a stark contrast to before were we hacked unsafe raw
+values into the uapi struct that was stored in a void pointer relying
+and having filesystems and security modules hack around in the uapi
+struct as well.
+
+Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
 
@@ -68,142 +75,209 @@ Notes:
     /* v2 */
     unchanged
 
- fs/overlayfs/super.c | 101 ++-----------------------------------------
- 1 file changed, 4 insertions(+), 97 deletions(-)
+ fs/internal.h                   |  1 +
+ fs/xattr.c                      | 62 ++++++++++++++++++++++++++++-----
+ include/linux/posix_acl_xattr.h | 10 ++++--
+ io_uring/xattr.c                |  2 ++
+ 4 files changed, 64 insertions(+), 11 deletions(-)
 
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 8a13319db1d3..0c7ae79b10b1 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -998,83 +998,6 @@ static unsigned int ovl_split_lowerdirs(char *str)
- 	return ctr;
+diff --git a/fs/internal.h b/fs/internal.h
+index 87e96b9024ce..743a4029cd2e 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -206,6 +206,7 @@ struct xattr_ctx {
+ 		const void __user *cvalue;
+ 		void __user *value;
+ 	};
++	struct posix_acl *acl;
+ 	void *kvalue;
+ 	size_t size;
+ 	/* Attribute name */
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 0b9a84921c4d..b716f7b5858b 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -171,6 +171,9 @@ __vfs_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ {
+ 	const struct xattr_handler *handler;
+ 
++	if (is_posix_acl_xattr(name))
++		return -EOPNOTSUPP;
++
+ 	handler = xattr_resolve_name(inode, &name);
+ 	if (IS_ERR(handler))
+ 		return PTR_ERR(handler);
+@@ -392,6 +395,9 @@ __vfs_getxattr(struct dentry *dentry, struct inode *inode, const char *name,
+ {
+ 	const struct xattr_handler *handler;
+ 
++	if (is_posix_acl_xattr(name))
++		return -EOPNOTSUPP;
++
+ 	handler = xattr_resolve_name(inode, &name);
+ 	if (IS_ERR(handler))
+ 		return PTR_ERR(handler);
+@@ -464,6 +470,9 @@ __vfs_removexattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 	struct inode *inode = d_inode(dentry);
+ 	const struct xattr_handler *handler;
+ 
++	if (is_posix_acl_xattr(name))
++		return -EOPNOTSUPP;
++
+ 	handler = xattr_resolve_name(inode, &name);
+ 	if (IS_ERR(handler))
+ 		return PTR_ERR(handler);
+@@ -573,19 +582,41 @@ int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
+ 	return error;
  }
  
--static int __maybe_unused
--ovl_posix_acl_xattr_get(const struct xattr_handler *handler,
--			struct dentry *dentry, struct inode *inode,
--			const char *name, void *buffer, size_t size)
--{
--	return ovl_xattr_get(dentry, inode, handler->name, buffer, size);
--}
--
--static int __maybe_unused
--ovl_posix_acl_xattr_set(const struct xattr_handler *handler,
--			struct user_namespace *mnt_userns,
--			struct dentry *dentry, struct inode *inode,
--			const char *name, const void *value,
--			size_t size, int flags)
--{
--	struct dentry *workdir = ovl_workdir(dentry);
--	struct inode *realinode = ovl_inode_real(inode);
--	struct posix_acl *acl = NULL;
--	int err;
--
--	/* Check that everything is OK before copy-up */
--	if (value) {
--		/* The above comment can be understood in two ways:
--		 *
--		 * 1. We just want to check whether the basic POSIX ACL format
--		 *    is ok. For example, if the header is correct and the size
--		 *    is sane.
--		 * 2. We want to know whether the ACL_{GROUP,USER} entries can
--		 *    be mapped according to the underlying filesystem.
--		 *
--		 * Currently, we only check 1. If we wanted to check 2. we
--		 * would need to pass the mnt_userns and the fs_userns of the
--		 * underlying filesystem. But frankly, I think checking 1. is
--		 * enough to start the copy-up.
--		 */
--		acl = vfs_set_acl_prepare(&init_user_ns, &init_user_ns, value, size);
--		if (IS_ERR(acl))
--			return PTR_ERR(acl);
--	}
--	err = -EOPNOTSUPP;
--	if (!IS_POSIXACL(d_inode(workdir)))
--		goto out_acl_release;
--	if (!realinode->i_op->set_acl)
--		goto out_acl_release;
--	if (handler->flags == ACL_TYPE_DEFAULT && !S_ISDIR(inode->i_mode)) {
--		err = acl ? -EACCES : 0;
--		goto out_acl_release;
--	}
--	err = -EPERM;
--	if (!inode_owner_or_capable(&init_user_ns, inode))
--		goto out_acl_release;
--
--	posix_acl_release(acl);
--
--	/*
--	 * Check if sgid bit needs to be cleared (actual setacl operation will
--	 * be done with mounter's capabilities and so that won't do it for us).
--	 */
--	if (unlikely(inode->i_mode & S_ISGID) &&
--	    handler->flags == ACL_TYPE_ACCESS &&
--	    !in_group_p(inode->i_gid) &&
--	    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID)) {
--		struct iattr iattr = { .ia_valid = ATTR_KILL_SGID };
--
--		err = ovl_setattr(&init_user_ns, dentry, &iattr);
--		if (err)
--			return err;
--	}
--
--	err = ovl_xattr_set(dentry, inode, handler->name, value, size, flags);
--	return err;
--
--out_acl_release:
--	posix_acl_release(acl);
--	return err;
--}
--
- static int ovl_own_xattr_get(const struct xattr_handler *handler,
- 			     struct dentry *dentry, struct inode *inode,
- 			     const char *name, void *buffer, size_t size)
-@@ -1107,22 +1030,6 @@ static int ovl_other_xattr_set(const struct xattr_handler *handler,
- 	return ovl_xattr_set(dentry, inode, name, value, size, flags);
+-static void setxattr_convert(struct user_namespace *mnt_userns,
+-			     struct dentry *d, struct xattr_ctx *ctx)
++static int setxattr_convert(struct user_namespace *mnt_userns, struct dentry *d,
++			    struct xattr_ctx *ctx)
+ {
+-	if (ctx->size && is_posix_acl_xattr(ctx->kname->name))
+-		posix_acl_fix_xattr_from_user(ctx->kvalue, ctx->size);
++	struct posix_acl *acl;
++
++	if (!ctx->size || !is_posix_acl_xattr(ctx->kname->name))
++		return 0;
++
++	/*
++	 * Note that posix_acl_from_xattr() uses GFP_NOFS when it probably
++	 * doesn't need to here.
++	 */
++	acl = posix_acl_from_xattr(current_user_ns(), ctx->kvalue, ctx->size);
++	if (IS_ERR(acl))
++		return PTR_ERR(acl);
++
++	ctx->acl = acl;
++	return 0;
  }
  
--static const struct xattr_handler __maybe_unused
--ovl_posix_acl_access_xattr_handler = {
--	.name = XATTR_NAME_POSIX_ACL_ACCESS,
--	.flags = ACL_TYPE_ACCESS,
--	.get = ovl_posix_acl_xattr_get,
--	.set = ovl_posix_acl_xattr_set,
--};
--
--static const struct xattr_handler __maybe_unused
--ovl_posix_acl_default_xattr_handler = {
--	.name = XATTR_NAME_POSIX_ACL_DEFAULT,
--	.flags = ACL_TYPE_DEFAULT,
--	.get = ovl_posix_acl_xattr_get,
--	.set = ovl_posix_acl_xattr_set,
--};
--
- static const struct xattr_handler ovl_own_trusted_xattr_handler = {
- 	.prefix	= OVL_XATTR_TRUSTED_PREFIX,
- 	.get = ovl_own_xattr_get,
-@@ -1143,8 +1050,8 @@ static const struct xattr_handler ovl_other_xattr_handler = {
+ int do_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		struct xattr_ctx *ctx)
+ {
+-	setxattr_convert(mnt_userns, dentry, ctx);
++	int error;
++
++	error = setxattr_convert(mnt_userns, dentry, ctx);
++	if (error)
++		return error;
++
++	if (is_posix_acl_xattr(ctx->kname->name))
++		return vfs_set_acl(mnt_userns, dentry,
++				   ctx->kname->name, ctx->acl);
++
+ 	return vfs_setxattr(mnt_userns, dentry, ctx->kname->name,
+-			ctx->kvalue, ctx->size, ctx->flags);
++			    ctx->kvalue, ctx->size, ctx->flags);
+ }
  
- static const struct xattr_handler *ovl_trusted_xattr_handlers[] = {
- #ifdef CONFIG_FS_POSIX_ACL
--	&ovl_posix_acl_access_xattr_handler,
--	&ovl_posix_acl_default_xattr_handler,
-+	&posix_acl_access_xattr_handler,
-+	&posix_acl_default_xattr_handler,
- #endif
- 	&ovl_own_trusted_xattr_handler,
- 	&ovl_other_xattr_handler,
-@@ -1153,8 +1060,8 @@ static const struct xattr_handler *ovl_trusted_xattr_handlers[] = {
+ static long
+@@ -597,6 +628,7 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
+ 	struct xattr_ctx ctx = {
+ 		.cvalue   = value,
+ 		.kvalue   = NULL,
++		.acl	  = NULL,
+ 		.size     = size,
+ 		.kname    = &kname,
+ 		.flags    = flags,
+@@ -610,6 +642,7 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
+ 	error = do_setxattr(mnt_userns, d, &ctx);
  
- static const struct xattr_handler *ovl_user_xattr_handlers[] = {
+ 	kvfree(ctx.kvalue);
++	posix_acl_release(ctx.acl);
+ 	return error;
+ }
+ 
+@@ -690,10 +723,18 @@ do_getxattr(struct user_namespace *mnt_userns, struct dentry *d,
+ 			return -ENOMEM;
+ 	}
+ 
+-	error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
++	if (is_posix_acl_xattr(ctx->kname->name)) {
++		ctx->acl = vfs_get_acl(mnt_userns, d, ctx->kname->name);
++		if (IS_ERR(ctx->acl))
++			return PTR_ERR(ctx->acl);
++
++		error = vfs_posix_acl_to_xattr(mnt_userns, d_inode(d), ctx->acl,
++					       ctx->kvalue, ctx->size);
++		posix_acl_release(ctx->acl);
++	} else {
++		error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
++	}
+ 	if (error > 0) {
+-		if (is_posix_acl_xattr(kname))
+-			posix_acl_fix_xattr_to_user(ctx->kvalue, error);
+ 		if (ctx->size && copy_to_user(ctx->value, ctx->kvalue, error))
+ 			error = -EFAULT;
+ 	} else if (error == -ERANGE && ctx->size >= XATTR_SIZE_MAX) {
+@@ -868,6 +909,9 @@ removexattr(struct user_namespace *mnt_userns, struct dentry *d,
+ 	if (error < 0)
+ 		return error;
+ 
++	if (is_posix_acl_xattr(kname))
++		return vfs_remove_acl(mnt_userns, d, kname);
++
+ 	return vfs_removexattr(mnt_userns, d, kname);
+ }
+ 
+diff --git a/include/linux/posix_acl_xattr.h b/include/linux/posix_acl_xattr.h
+index 3bd8fac436bc..0294b3489a81 100644
+--- a/include/linux/posix_acl_xattr.h
++++ b/include/linux/posix_acl_xattr.h
+@@ -33,6 +33,8 @@ posix_acl_xattr_count(size_t size)
+ }
+ 
  #ifdef CONFIG_FS_POSIX_ACL
--	&ovl_posix_acl_access_xattr_handler,
--	&ovl_posix_acl_default_xattr_handler,
-+	&posix_acl_access_xattr_handler,
-+	&posix_acl_default_xattr_handler,
++struct posix_acl *posix_acl_from_xattr(struct user_namespace *user_ns,
++				       const void *value, size_t size);
+ void posix_acl_fix_xattr_from_user(void *value, size_t size);
+ void posix_acl_fix_xattr_to_user(void *value, size_t size);
+ void posix_acl_getxattr_idmapped_mnt(struct user_namespace *mnt_userns,
+@@ -42,6 +44,12 @@ ssize_t vfs_posix_acl_to_xattr(struct user_namespace *mnt_userns,
+ 			       struct inode *inode, const struct posix_acl *acl,
+ 			       void *buffer, size_t size);
+ #else
++static inline struct posix_acl *
++posix_acl_from_xattr(struct user_namespace *user_ns, const void *value,
++		     size_t size)
++{
++	return ERR_PTR(-EOPNOTSUPP);
++}
+ static inline void posix_acl_fix_xattr_from_user(void *value, size_t size)
+ {
+ }
+@@ -63,8 +71,6 @@ static inline ssize_t vfs_posix_acl_to_xattr(struct user_namespace *mnt_userns,
+ }
  #endif
- 	&ovl_own_user_xattr_handler,
- 	&ovl_other_xattr_handler,
+ 
+-struct posix_acl *posix_acl_from_xattr(struct user_namespace *user_ns, 
+-				       const void *value, size_t size);
+ int posix_acl_to_xattr(struct user_namespace *user_ns,
+ 		       const struct posix_acl *acl, void *buffer, size_t size);
+ struct posix_acl *vfs_set_acl_prepare(struct user_namespace *mnt_userns,
+diff --git a/io_uring/xattr.c b/io_uring/xattr.c
+index 84180afd090b..5b2548649272 100644
+--- a/io_uring/xattr.c
++++ b/io_uring/xattr.c
+@@ -8,6 +8,7 @@
+ #include <linux/namei.h>
+ #include <linux/io_uring.h>
+ #include <linux/xattr.h>
++#include <linux/posix_acl_xattr.h>
+ 
+ #include <uapi/linux/io_uring.h>
+ 
+@@ -31,6 +32,7 @@ void io_xattr_cleanup(struct io_kiocb *req)
+ 
+ 	kfree(ix->ctx.kname);
+ 	kvfree(ix->ctx.kvalue);
++	posix_acl_release(ix->ctx.acl);
+ }
+ 
+ static void io_xattr_finish(struct io_kiocb *req, int ret)
 -- 
 2.34.1
 
