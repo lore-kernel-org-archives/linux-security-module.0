@@ -2,101 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A221C6FA82
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Sep 2022 04:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE78C6FA82
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Sep 2022 06:47:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230173AbiIZEKM (ORCPT
+        id S233673AbiIZGrh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Sep 2022 00:10:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41452 "EHLO
+        Mon, 26 Sep 2022 02:47:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230128AbiIZEKK (ORCPT
+        with ESMTP id S233274AbiIZGrg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Sep 2022 00:10:10 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2414418B07;
-        Sun, 25 Sep 2022 21:10:10 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id q35-20020a17090a752600b002038d8a68fbso11223091pjk.0;
-        Sun, 25 Sep 2022 21:10:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=QXx7+gasdp/tRu8MKoP7DQMufnq8TjN+RgzEpBKVsEw=;
-        b=aRBd+tNx7vgqnqHU4SI2W50W4viohf76z7y+HybIy83QPiBCiVfmmO22HrUObPWdc0
-         +GArZinaDp/xTtreqi8xIEDrlsbZBtu/gS+xon4xBG/VNd3+EzehGSew2HHuR5HZwEpw
-         5zy7clQcMdH63b/VDXpsJx4IYn/BKrPnA/9bzOzahX0VFg1x2If9dnrxvvQquihyX2Js
-         V2u9FyRXUDRwWjO67TueMrYhM9RJzGPwoSaMBoRoXcOUM0sUbOienLLNxbVU5Tz65JDN
-         DjGvJs+LDbxtM1C+QLHspsVYUqkBrFq10wPVzDgG9CdtKZNFSfGu+OHC4FYQ/1CLsAsG
-         JovA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=QXx7+gasdp/tRu8MKoP7DQMufnq8TjN+RgzEpBKVsEw=;
-        b=EC9bUshVUmLTJUjiZ9OoYIUicD9bxC6AgzLjWT8XwGbOULZ8cACxZtzILtEgsc8NrP
-         Naly0BloFfVNYPu0Y3Pj/56hDMWxxdgveF0/9c2Q+X0WNCCqnbfdSEuftSSkBTmrpum9
-         ve5r2cZ2nmnIullltYFLjzWyRPoRJStY11THKlQ6jvphuKh54FjH4BX1s8AzFHre99v2
-         Ns3rTz5fKF47YTSv/xHT0PEIWRKyS2hwJW1wdTpLamSy75saWccKDvpALOT1Z13T8/Az
-         rMAutnhnr2LOU4F8HR8bKrtmk1ViwBHv8EK4T8HXOp3d2NqG2uNu7c9OgUNJZYJDgJhT
-         nSXA==
-X-Gm-Message-State: ACrzQf3TosknIfeu0TMzRPI4qXUUv3KMvyc6LAi16wWDv6hSecRPxVNO
-        +ZBeGYS3x7JpvY/A/bBjJUg=
-X-Google-Smtp-Source: AMsMyM4RANYU/mCUOSxvA5XQCTiwf3Fb28XPjlF+w3taGFwXYuC1AWVPtxTdsIMOxHnr75Ho7qj+Mw==
-X-Received: by 2002:a17:903:264e:b0:176:e9d3:64b6 with SMTP id je14-20020a170903264e00b00176e9d364b6mr20468288plb.172.1664165409633;
-        Sun, 25 Sep 2022 21:10:09 -0700 (PDT)
-Received: from [192.168.11.9] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
-        by smtp.gmail.com with ESMTPSA id e6-20020a170902d38600b00173411a4385sm10051455pld.43.2022.09.25.21.10.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Sep 2022 21:10:09 -0700 (PDT)
-Message-ID: <19799dac-6e16-83d8-c21e-eb0895dda108@gmail.com>
-Date:   Mon, 26 Sep 2022 13:10:04 +0900
+        Mon, 26 Sep 2022 02:47:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEF6224BE0;
+        Sun, 25 Sep 2022 23:47:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4FB5061503;
+        Mon, 26 Sep 2022 06:47:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D481C433D6;
+        Mon, 26 Sep 2022 06:47:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1664174854;
+        bh=Y2sNyycpz3WfUGxxxwkrxUxDfizPmjY1zyzAphv6PIM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=R01HPFGgQkDQRVV6X/B85xXIWfuTBp4FYgiRlfvicfMadW+sS9Aa4uveH3JqL9r23
+         Ff6Sw3/AUKjIe4eR/Md3V2qY3UjWduTwexkEjHI2Udigby3+gkYfFqPtAt3lvzZ5yX
+         uFPWzkAzYRCDL1i9yqqNN14LCX5p+qNGKO1nNU1M=
+Date:   Mon, 26 Sep 2022 08:47:32 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Philipp Rudo <prudo@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, Baoquan He <bhe@redhat.com>,
+        Alexander Egorenkov <egorenar@linux.ibm.com>,
+        "open list:S390" <linux-s390@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
+        <linuxppc-dev@lists.ozlabs.org>,
+        "open list:KEXEC" <kexec@lists.infradead.org>,
+        Coiby Xu <coxu@redhat.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James Morse <james.morse@arm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: Re: [PATCH 5.15 0/6] arm64: kexec_file: use more system keyrings to
+ verify kernel image signature + dependencies
+Message-ID: <YzFLBJukjDy7uNVl@kroah.com>
+References: <cover.1663951201.git.msuchanek@suse.de>
+ <Yy7Ll1QJ+u+nkic9@kroah.com>
+ <20220924094521.GY28810@kitsune.suse.cz>
+ <Yy7YTnJKkv1UtvWF@kroah.com>
+ <20220924115523.GZ28810@kitsune.suse.cz>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v1 2/3] landlock: Slightly improve documentation and fix
- spelling
-Content-Language: en-US
-To:     Bagas Sanjaya <bagasdotme@gmail.com>
-Cc:     alx.manpages@gmail.com, corbet@lwn.net, gnoack3000@gmail.com,
-        jmorris@namei.org, konstantin.meskhidze@huawei.com,
-        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
-        mic@digikod.net, paul@paul-moore.com, serge@hallyn.com,
-        Akira Yokosawa <akiyks@gmail.com>
-References: <Yy8GNAAmq6t6Kt66@debian.me>
- <9055c684-bfd0-10b2-7209-7b9898f05a88@gmail.com>
- <964ecd62-7684-6d7c-c801-25907549f0bb@gmail.com>
-From:   Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <964ecd62-7684-6d7c-c801-25907549f0bb@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220924115523.GZ28810@kitsune.suse.cz>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 26 Sep 2022 08:46:18 +0700, Bagas Sanjaya wrote:
-> On 9/26/22 08:09, Akira Yokosawa wrote:
->> Wait!
->> Bagas, your suggestion is _against_ the preference of kernel documentation.
->> See https://www.kernel.org/doc/html/latest/doc-guide/sphinx.html#cross-referencing
->>
->> Or do you have some good reason to add labels at the beginning of
->> rst docs?
->>
+On Sat, Sep 24, 2022 at 01:55:23PM +0200, Michal Suchánek wrote:
+> On Sat, Sep 24, 2022 at 12:13:34PM +0200, Greg Kroah-Hartman wrote:
+> > On Sat, Sep 24, 2022 at 11:45:21AM +0200, Michal Suchánek wrote:
+> > > On Sat, Sep 24, 2022 at 11:19:19AM +0200, Greg Kroah-Hartman wrote:
+> > > > On Fri, Sep 23, 2022 at 07:10:28PM +0200, Michal Suchanek wrote:
+> > > > > Hello,
+> > > > > 
+> > > > > this is backport of commit 0d519cadf751
+> > > > > ("arm64: kexec_file: use more system keyrings to verify kernel image signature")
+> > > > > to table 5.15 tree including the preparatory patches.
+> > > > 
+> > > > This feels to me like a new feature for arm64, one that has never worked
+> > > > before and you are just making it feature-parity with x86, right?
+> > > > 
+> > > > Or is this a regression fix somewhere?  Why is this needed in 5.15.y and
+> > > > why can't people who need this new feature just use a newer kernel
+> > > > version (5.19?)
+> > > 
+> > > It's half-broken implementation of the kexec kernel verification. At the time
+> > > it was implemented for arm64 we had the platform and secondary keyrings
+> > > and x86 was using them but on arm64 the initial implementation ignores
+> > > them.
+> > 
+> > Ok, so it's something that never worked.  Adding support to get it to
+> > work doesn't really fall into the stable kernel rules, right?
 > 
-> Ah, I don't see that :doc: directive is possible in that case, thanks.
+> Not sure. It was defective, not using the facilities available at the
+> time correctly. Which translates to kernels that can be kexec'd on x86
+> failing to kexec on arm64 without any explanation (signed with same key,
+> built for the appropriate arch).
+
+Feature parity across architectures is not a "regression", but rather a
+"this feature is not implemented for this architecture yet" type of
+thing.
+
+> > Again, what's wrong with 5.19 for anyone who wants this?  Who does want
+> > this?
 > 
-> BTW, I prefer the link text be not full path to document (like
-> Documentation/path/to/foo.rst), but rather either the linked doc's title
-> or custom text.
+> Not sure, really.
+> 
+> The final patch was repeatedly backported to stable and failed to build
+> because the prerequisites were missing.
 
-Again, your preference is _against_ the preference mentioned in the
-cross-referencing section, quoted below:
+That's because it was tagged, but now that you show the full set of
+requirements, it's pretty obvious to me that this is not relevant for
+going this far back.
 
-    For most use cases, the former is preferred, as it is cleaner and more suited
-    for people reading the source files. If you come across a :doc: usage that
-    isn't adding any value, please feel free to convert it to just the document path.
+thanks,
 
-        Thanks, Akira
-
+greg k-h
