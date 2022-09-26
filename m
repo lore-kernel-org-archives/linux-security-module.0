@@ -2,72 +2,67 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C249C6FA92
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Sep 2022 15:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CD1C32771
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Sep 2022 15:26:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236637AbiIZP0L (ORCPT
+        id S236651AbiIZP0N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Sep 2022 11:26:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56892 "EHLO
+        Mon, 26 Sep 2022 11:26:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236755AbiIZPYL (ORCPT
+        with ESMTP id S236766AbiIZPYM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Sep 2022 11:24:11 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F6521E19;
-        Mon, 26 Sep 2022 07:09:49 -0700 (PDT)
+        Mon, 26 Sep 2022 11:24:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3D87357E7;
+        Mon, 26 Sep 2022 07:09:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id D7741CE114D;
-        Mon, 26 Sep 2022 14:09:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0FBDC4347C;
-        Mon, 26 Sep 2022 14:09:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D497360DEE;
+        Mon, 26 Sep 2022 14:09:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7852BC433B5;
+        Mon, 26 Sep 2022 14:09:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664201386;
-        bh=aar05o0GKlj5qSpKpK91BAhaPuQi2P7Jz1CKbiFrK24=;
+        s=k20201202; t=1664201394;
+        bh=tsHZxf+7T4w2/fDCOIsIiq9SLjyT7i4Vdx94LyHNlQk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sU2RrOnhjqjIiqa1dUKHTO7+jM6NbQJJyrLOmW3SFgIjBS4eUyplbHJ3pazkRZEXh
-         7MfK35DuOolpGIpJDV2G0Ele5bPv0sWOamjJO3DWeWUIX9JD8Iqp2u1DgUijloya5i
-         08h8TcD7rzh2KGkrUJNVdkgw3ncV7chHfedtAwH3zh/u3tbMd0RnJucFRTohgL51xW
-         1NLxM8+spzlp3eZp8reK8sg7CHFkXQE6EAzCT8PQEijFlhSx3xK7lLjUDUR1Uvf0Yq
-         FxaaiOhpTHSv0oHByJpnRI4rxL1/ykcda0Z+UH+wd+ZTd6a8ElD6Of6VtY1ugK0WFl
-         89ImsAR320X1Q==
+        b=j0lXqeodykiqJH/skr3L80jhaBqJDdzuUUMj2XbU0RnpTe/SyQSY1sOdjW0EPLFO2
+         h0WphFgtHWYogslrinbZ5WPMSF5+RvARsamq+yrxgcgYnWbTYM/modlNPBC3FSz5YT
+         9FU3IbVEcgtoGacZc2PoQaviCkzOd99X8r2ildq7WH1gpl9d/NeAnj5AMBFTOyYZ0F
+         FARL9qqc33omBtVR7Nt86sEr5AVusVFx2LTlR6G8kya3qKRxdQfZwj+ZLKrqV71ECt
+         TMINonfDLuBjoWoHAPtdjVOR7UfKnIPhThLOsND0FSLlJxUtBLlfX0ACMObicjybAJ
+         lSHkOjk9TACAg==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v2 25/30] xattr: use posix acl api
-Date:   Mon, 26 Sep 2022 16:08:22 +0200
-Message-Id: <20220926140827.142806-26-brauner@kernel.org>
+        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Hyunchul Lee <hyc.lee@gmail.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        linux-cifs@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v2 28/30] cifs: use stub posix acl handlers
+Date:   Mon, 26 Sep 2022 16:08:25 +0200
+Message-Id: <20220926140827.142806-29-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220926140827.142806-1-brauner@kernel.org>
 References: <20220926140827.142806-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7587; i=brauner@kernel.org; h=from:subject; bh=aar05o0GKlj5qSpKpK91BAhaPuQi2P7Jz1CKbiFrK24=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSQbbnLauXujI5NRPlcxf81xU87oN18MC3YbL578mkep+Hf5 P26vjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlsrmP4HyL6NeNsy7k5Ry3P6u68d3 tj5PFo/1aXgvKuCiNWPk+V14wMM/7EZb8xLei9tXD7172nl4uzirVM/NO5RiB1seadBZlr+QA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=15327; i=brauner@kernel.org; h=from:subject; bh=tsHZxf+7T4w2/fDCOIsIiq9SLjyT7i4Vdx94LyHNlQk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSQbbnJ+a3Hs3JO1glHZzfbr91zIe7O0T0LuLXf4zTqmla+e Xzz9uaOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiBWsZGTr4fNX90jbNOb6lrrH6ku YarvXdxtYTVa+yXvwdzvx4Picjw9KmkLebG5+dKv056YBXIsMiluzuaQ4fb3MyegoenmW1mxEA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In previous patches we built a new posix api solely around get and set
-inode operations. Now that we have all the pieces in place we can switch
-the system calls and the vfs over to only rely on this api when
-interacting with posix acls. This finally removes all type unsafety and
-type conversion issues explained in detail in [1] that we aim to get rid
-of.
+Now that cifs supports the get and set acl inode operations and the vfs
+has been switched to the new posi api, cifs can simply rely on the stub
+posix acl handlers. The custom xattr handlers and associated unused
+helpers can be removed.
 
-With the new posix acl api we immediately translate into an appropriate
-kernel internal struct posix_acl format both when getting and setting
-posix acls. This is a stark contrast to before were we hacked unsafe raw
-values into the uapi struct that was stored in a void pointer relying
-and having filesystems and security modules hack around in the uapi
-struct as well.
-
-Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
 
@@ -75,209 +70,442 @@ Notes:
     /* v2 */
     unchanged
 
- fs/internal.h                   |  1 +
- fs/xattr.c                      | 62 ++++++++++++++++++++++++++++-----
- include/linux/posix_acl_xattr.h | 10 ++++--
- io_uring/xattr.c                |  2 ++
- 4 files changed, 64 insertions(+), 11 deletions(-)
+ fs/cifs/cifsproto.h |   8 --
+ fs/cifs/cifssmb.c   | 298 --------------------------------------------
+ fs/cifs/xattr.c     |  68 +---------
+ 3 files changed, 4 insertions(+), 370 deletions(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 87e96b9024ce..743a4029cd2e 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -206,6 +206,7 @@ struct xattr_ctx {
- 		const void __user *cvalue;
- 		void __user *value;
- 	};
-+	struct posix_acl *acl;
- 	void *kvalue;
- 	size_t size;
- 	/* Attribute name */
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 0b9a84921c4d..b716f7b5858b 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -171,6 +171,9 @@ __vfs_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- {
- 	const struct xattr_handler *handler;
+diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h
+index 279e867dee2e..9259da1b885d 100644
+--- a/fs/cifs/cifsproto.h
++++ b/fs/cifs/cifsproto.h
+@@ -542,18 +542,10 @@ extern int CIFSSMBGetCIFSACL(const unsigned int xid, struct cifs_tcon *tcon,
+ 			__u16 fid, struct cifs_ntsd **acl_inf, __u32 *buflen);
+ extern int CIFSSMBSetCIFSACL(const unsigned int, struct cifs_tcon *, __u16,
+ 			struct cifs_ntsd *, __u32, int);
+-extern int CIFSSMBGetPosixACL(const unsigned int xid, struct cifs_tcon *tcon,
+-		const unsigned char *searchName,
+-		char *acl_inf, const int buflen, const int acl_type,
+-		const struct nls_table *nls_codepage, int remap_special_chars);
+ extern int cifs_do_get_acl(const unsigned int xid, struct cifs_tcon *tcon,
+ 			   const unsigned char *searchName,
+ 			   struct posix_acl **acl, const int acl_type,
+ 			   const struct nls_table *nls_codepage, int remap);
+-extern int CIFSSMBSetPosixACL(const unsigned int xid, struct cifs_tcon *tcon,
+-		const unsigned char *fileName,
+-		const char *local_acl, const int buflen, const int acl_type,
+-		const struct nls_table *nls_codepage, int remap_special_chars);
+ extern int cifs_do_set_acl(const unsigned int xid, struct cifs_tcon *tcon,
+ 			   const unsigned char *fileName,
+ 			   const struct posix_acl *acl, const int acl_type,
+diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+index 7b47d0def5d2..ddef789a6fcb 100644
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -2914,304 +2914,6 @@ CIFSSMB_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
  
-+	if (is_posix_acl_xattr(name))
-+		return -EOPNOTSUPP;
-+
- 	handler = xattr_resolve_name(inode, &name);
- 	if (IS_ERR(handler))
- 		return PTR_ERR(handler);
-@@ -392,6 +395,9 @@ __vfs_getxattr(struct dentry *dentry, struct inode *inode, const char *name,
- {
- 	const struct xattr_handler *handler;
+ #ifdef CONFIG_CIFS_POSIX
  
-+	if (is_posix_acl_xattr(name))
-+		return -EOPNOTSUPP;
-+
- 	handler = xattr_resolve_name(inode, &name);
- 	if (IS_ERR(handler))
- 		return PTR_ERR(handler);
-@@ -464,6 +470,9 @@ __vfs_removexattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	struct inode *inode = d_inode(dentry);
- 	const struct xattr_handler *handler;
- 
-+	if (is_posix_acl_xattr(name))
-+		return -EOPNOTSUPP;
-+
- 	handler = xattr_resolve_name(inode, &name);
- 	if (IS_ERR(handler))
- 		return PTR_ERR(handler);
-@@ -573,19 +582,41 @@ int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
- 	return error;
- }
- 
--static void setxattr_convert(struct user_namespace *mnt_userns,
--			     struct dentry *d, struct xattr_ctx *ctx)
-+static int setxattr_convert(struct user_namespace *mnt_userns, struct dentry *d,
-+			    struct xattr_ctx *ctx)
- {
--	if (ctx->size && is_posix_acl_xattr(ctx->kname->name))
--		posix_acl_fix_xattr_from_user(ctx->kvalue, ctx->size);
-+	struct posix_acl *acl;
-+
-+	if (!ctx->size || !is_posix_acl_xattr(ctx->kname->name))
-+		return 0;
-+
-+	/*
-+	 * Note that posix_acl_from_xattr() uses GFP_NOFS when it probably
-+	 * doesn't need to here.
-+	 */
-+	acl = posix_acl_from_xattr(current_user_ns(), ctx->kvalue, ctx->size);
-+	if (IS_ERR(acl))
-+		return PTR_ERR(acl);
-+
-+	ctx->acl = acl;
-+	return 0;
- }
- 
- int do_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		struct xattr_ctx *ctx)
- {
--	setxattr_convert(mnt_userns, dentry, ctx);
-+	int error;
-+
-+	error = setxattr_convert(mnt_userns, dentry, ctx);
-+	if (error)
-+		return error;
-+
-+	if (is_posix_acl_xattr(ctx->kname->name))
-+		return vfs_set_acl(mnt_userns, dentry,
-+				   ctx->kname->name, ctx->acl);
-+
- 	return vfs_setxattr(mnt_userns, dentry, ctx->kname->name,
--			ctx->kvalue, ctx->size, ctx->flags);
-+			    ctx->kvalue, ctx->size, ctx->flags);
- }
- 
- static long
-@@ -597,6 +628,7 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
- 	struct xattr_ctx ctx = {
- 		.cvalue   = value,
- 		.kvalue   = NULL,
-+		.acl	  = NULL,
- 		.size     = size,
- 		.kname    = &kname,
- 		.flags    = flags,
-@@ -610,6 +642,7 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
- 	error = do_setxattr(mnt_userns, d, &ctx);
- 
- 	kvfree(ctx.kvalue);
-+	posix_acl_release(ctx.acl);
- 	return error;
- }
- 
-@@ -690,10 +723,18 @@ do_getxattr(struct user_namespace *mnt_userns, struct dentry *d,
- 			return -ENOMEM;
+-/*Convert an Access Control Entry from wire format to local POSIX xattr format*/
+-static void cifs_convert_ace(struct posix_acl_xattr_entry *ace,
+-			     struct cifs_posix_ace *cifs_ace)
+-{
+-	/* u8 cifs fields do not need le conversion */
+-	ace->e_perm = cpu_to_le16(cifs_ace->cifs_e_perm);
+-	ace->e_tag  = cpu_to_le16(cifs_ace->cifs_e_tag);
+-	ace->e_id   = cpu_to_le32(le64_to_cpu(cifs_ace->cifs_uid));
+-/*
+-	cifs_dbg(FYI, "perm %d tag %d id %d\n",
+-		 ace->e_perm, ace->e_tag, ace->e_id);
+-*/
+-
+-	return;
+-}
+-
+-/* Convert ACL from CIFS POSIX wire format to local Linux POSIX ACL xattr */
+-static int cifs_copy_posix_acl(char *trgt, char *src, const int buflen,
+-			       const int acl_type, const int size_of_data_area)
+-{
+-	int size =  0;
+-	int i;
+-	__u16 count;
+-	struct cifs_posix_ace *pACE;
+-	struct cifs_posix_acl *cifs_acl = (struct cifs_posix_acl *)src;
+-	struct posix_acl_xattr_header *local_acl = (void *)trgt;
+-
+-	if (le16_to_cpu(cifs_acl->version) != CIFS_ACL_VERSION)
+-		return -EOPNOTSUPP;
+-
+-	if (acl_type == ACL_TYPE_ACCESS) {
+-		count = le16_to_cpu(cifs_acl->access_entry_count);
+-		pACE = &cifs_acl->ace_array[0];
+-		size = sizeof(struct cifs_posix_acl);
+-		size += sizeof(struct cifs_posix_ace) * count;
+-		/* check if we would go beyond end of SMB */
+-		if (size_of_data_area < size) {
+-			cifs_dbg(FYI, "bad CIFS POSIX ACL size %d vs. %d\n",
+-				 size_of_data_area, size);
+-			return -EINVAL;
+-		}
+-	} else if (acl_type == ACL_TYPE_DEFAULT) {
+-		count = le16_to_cpu(cifs_acl->access_entry_count);
+-		size = sizeof(struct cifs_posix_acl);
+-		size += sizeof(struct cifs_posix_ace) * count;
+-/* skip past access ACEs to get to default ACEs */
+-		pACE = &cifs_acl->ace_array[count];
+-		count = le16_to_cpu(cifs_acl->default_entry_count);
+-		size += sizeof(struct cifs_posix_ace) * count;
+-		/* check if we would go beyond end of SMB */
+-		if (size_of_data_area < size)
+-			return -EINVAL;
+-	} else {
+-		/* illegal type */
+-		return -EINVAL;
+-	}
+-
+-	size = posix_acl_xattr_size(count);
+-	if ((buflen == 0) || (local_acl == NULL)) {
+-		/* used to query ACL EA size */
+-	} else if (size > buflen) {
+-		return -ERANGE;
+-	} else /* buffer big enough */ {
+-		struct posix_acl_xattr_entry *ace = (void *)(local_acl + 1);
+-
+-		local_acl->a_version = cpu_to_le32(POSIX_ACL_XATTR_VERSION);
+-		for (i = 0; i < count ; i++) {
+-			cifs_convert_ace(&ace[i], pACE);
+-			pACE++;
+-		}
+-	}
+-	return size;
+-}
+-
+-static void convert_ace_to_cifs_ace(struct cifs_posix_ace *cifs_ace,
+-				     const struct posix_acl_xattr_entry *local_ace)
+-{
+-	cifs_ace->cifs_e_perm = le16_to_cpu(local_ace->e_perm);
+-	cifs_ace->cifs_e_tag =  le16_to_cpu(local_ace->e_tag);
+-	/* BB is there a better way to handle the large uid? */
+-	if (local_ace->e_id == cpu_to_le32(-1)) {
+-	/* Probably no need to le convert -1 on any arch but can not hurt */
+-		cifs_ace->cifs_uid = cpu_to_le64(-1);
+-	} else
+-		cifs_ace->cifs_uid = cpu_to_le64(le32_to_cpu(local_ace->e_id));
+-/*
+-	cifs_dbg(FYI, "perm %d tag %d id %d\n",
+-		 ace->e_perm, ace->e_tag, ace->e_id);
+-*/
+-}
+-
+-/* Convert ACL from local Linux POSIX xattr to CIFS POSIX ACL wire format */
+-static __u16 ACL_to_cifs_posix(char *parm_data, const char *pACL,
+-			       const int buflen, const int acl_type)
+-{
+-	__u16 rc = 0;
+-	struct cifs_posix_acl *cifs_acl = (struct cifs_posix_acl *)parm_data;
+-	struct posix_acl_xattr_header *local_acl = (void *)pACL;
+-	struct posix_acl_xattr_entry *ace = (void *)(local_acl + 1);
+-	int count;
+-	int i;
+-
+-	if ((buflen == 0) || (pACL == NULL) || (cifs_acl == NULL))
+-		return 0;
+-
+-	count = posix_acl_xattr_count((size_t)buflen);
+-	cifs_dbg(FYI, "setting acl with %d entries from buf of length %d and version of %d\n",
+-		 count, buflen, le32_to_cpu(local_acl->a_version));
+-	if (le32_to_cpu(local_acl->a_version) != 2) {
+-		cifs_dbg(FYI, "unknown POSIX ACL version %d\n",
+-			 le32_to_cpu(local_acl->a_version));
+-		return 0;
+-	}
+-	cifs_acl->version = cpu_to_le16(1);
+-	if (acl_type == ACL_TYPE_ACCESS) {
+-		cifs_acl->access_entry_count = cpu_to_le16(count);
+-		cifs_acl->default_entry_count = cpu_to_le16(0xFFFF);
+-	} else if (acl_type == ACL_TYPE_DEFAULT) {
+-		cifs_acl->default_entry_count = cpu_to_le16(count);
+-		cifs_acl->access_entry_count = cpu_to_le16(0xFFFF);
+-	} else {
+-		cifs_dbg(FYI, "unknown ACL type %d\n", acl_type);
+-		return 0;
+-	}
+-	for (i = 0; i < count; i++)
+-		convert_ace_to_cifs_ace(&cifs_acl->ace_array[i], &ace[i]);
+-	if (rc == 0) {
+-		rc = (__u16)(count * sizeof(struct cifs_posix_ace));
+-		rc += sizeof(struct cifs_posix_acl);
+-		/* BB add check to make sure ACL does not overflow SMB */
+-	}
+-	return rc;
+-}
+-
+-int
+-CIFSSMBGetPosixACL(const unsigned int xid, struct cifs_tcon *tcon,
+-		   const unsigned char *searchName,
+-		   char *acl_inf, const int buflen, const int acl_type,
+-		   const struct nls_table *nls_codepage, int remap)
+-{
+-/* SMB_QUERY_POSIX_ACL */
+-	TRANSACTION2_QPI_REQ *pSMB = NULL;
+-	TRANSACTION2_QPI_RSP *pSMBr = NULL;
+-	int rc = 0;
+-	int bytes_returned;
+-	int name_len;
+-	__u16 params, byte_count;
+-
+-	cifs_dbg(FYI, "In GetPosixACL (Unix) for path %s\n", searchName);
+-
+-queryAclRetry:
+-	rc = smb_init(SMB_COM_TRANSACTION2, 15, tcon, (void **) &pSMB,
+-		(void **) &pSMBr);
+-	if (rc)
+-		return rc;
+-
+-	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
+-		name_len =
+-			cifsConvertToUTF16((__le16 *) pSMB->FileName,
+-					   searchName, PATH_MAX, nls_codepage,
+-					   remap);
+-		name_len++;     /* trailing null */
+-		name_len *= 2;
+-		pSMB->FileName[name_len] = 0;
+-		pSMB->FileName[name_len+1] = 0;
+-	} else {
+-		name_len = copy_path_name(pSMB->FileName, searchName);
+-	}
+-
+-	params = 2 /* level */  + 4 /* rsrvd */  + name_len /* incl null */ ;
+-	pSMB->TotalDataCount = 0;
+-	pSMB->MaxParameterCount = cpu_to_le16(2);
+-	/* BB find exact max data count below from sess structure BB */
+-	pSMB->MaxDataCount = cpu_to_le16(4000);
+-	pSMB->MaxSetupCount = 0;
+-	pSMB->Reserved = 0;
+-	pSMB->Flags = 0;
+-	pSMB->Timeout = 0;
+-	pSMB->Reserved2 = 0;
+-	pSMB->ParameterOffset = cpu_to_le16(
+-		offsetof(struct smb_com_transaction2_qpi_req,
+-			 InformationLevel) - 4);
+-	pSMB->DataCount = 0;
+-	pSMB->DataOffset = 0;
+-	pSMB->SetupCount = 1;
+-	pSMB->Reserved3 = 0;
+-	pSMB->SubCommand = cpu_to_le16(TRANS2_QUERY_PATH_INFORMATION);
+-	byte_count = params + 1 /* pad */ ;
+-	pSMB->TotalParameterCount = cpu_to_le16(params);
+-	pSMB->ParameterCount = pSMB->TotalParameterCount;
+-	pSMB->InformationLevel = cpu_to_le16(SMB_QUERY_POSIX_ACL);
+-	pSMB->Reserved4 = 0;
+-	inc_rfc1001_len(pSMB, byte_count);
+-	pSMB->ByteCount = cpu_to_le16(byte_count);
+-
+-	rc = SendReceive(xid, tcon->ses, (struct smb_hdr *) pSMB,
+-		(struct smb_hdr *) pSMBr, &bytes_returned, 0);
+-	cifs_stats_inc(&tcon->stats.cifs_stats.num_acl_get);
+-	if (rc) {
+-		cifs_dbg(FYI, "Send error in Query POSIX ACL = %d\n", rc);
+-	} else {
+-		/* decode response */
+-
+-		rc = validate_t2((struct smb_t2_rsp *)pSMBr);
+-		/* BB also check enough total bytes returned */
+-		if (rc || get_bcc(&pSMBr->hdr) < 2)
+-			rc = -EIO;      /* bad smb */
+-		else {
+-			__u16 data_offset = le16_to_cpu(pSMBr->t2.DataOffset);
+-			__u16 count = le16_to_cpu(pSMBr->t2.DataCount);
+-			rc = cifs_copy_posix_acl(acl_inf,
+-				(char *)&pSMBr->hdr.Protocol+data_offset,
+-				buflen, acl_type, count);
+-		}
+-	}
+-	cifs_buf_release(pSMB);
+-	if (rc == -EAGAIN)
+-		goto queryAclRetry;
+-	return rc;
+-}
+-
+-int
+-CIFSSMBSetPosixACL(const unsigned int xid, struct cifs_tcon *tcon,
+-		   const unsigned char *fileName,
+-		   const char *local_acl, const int buflen,
+-		   const int acl_type,
+-		   const struct nls_table *nls_codepage, int remap)
+-{
+-	struct smb_com_transaction2_spi_req *pSMB = NULL;
+-	struct smb_com_transaction2_spi_rsp *pSMBr = NULL;
+-	char *parm_data;
+-	int name_len;
+-	int rc = 0;
+-	int bytes_returned = 0;
+-	__u16 params, byte_count, data_count, param_offset, offset;
+-
+-	cifs_dbg(FYI, "In SetPosixACL (Unix) for path %s\n", fileName);
+-setAclRetry:
+-	rc = smb_init(SMB_COM_TRANSACTION2, 15, tcon, (void **) &pSMB,
+-		      (void **) &pSMBr);
+-	if (rc)
+-		return rc;
+-	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
+-		name_len =
+-			cifsConvertToUTF16((__le16 *) pSMB->FileName, fileName,
+-					   PATH_MAX, nls_codepage, remap);
+-		name_len++;     /* trailing null */
+-		name_len *= 2;
+-	} else {
+-		name_len = copy_path_name(pSMB->FileName, fileName);
+-	}
+-	params = 6 + name_len;
+-	pSMB->MaxParameterCount = cpu_to_le16(2);
+-	/* BB find max SMB size from sess */
+-	pSMB->MaxDataCount = cpu_to_le16(1000);
+-	pSMB->MaxSetupCount = 0;
+-	pSMB->Reserved = 0;
+-	pSMB->Flags = 0;
+-	pSMB->Timeout = 0;
+-	pSMB->Reserved2 = 0;
+-	param_offset = offsetof(struct smb_com_transaction2_spi_req,
+-				InformationLevel) - 4;
+-	offset = param_offset + params;
+-	parm_data = ((char *) &pSMB->hdr.Protocol) + offset;
+-	pSMB->ParameterOffset = cpu_to_le16(param_offset);
+-
+-	/* convert to on the wire format for POSIX ACL */
+-	data_count = ACL_to_cifs_posix(parm_data, local_acl, buflen, acl_type);
+-
+-	if (data_count == 0) {
+-		rc = -EOPNOTSUPP;
+-		goto setACLerrorExit;
+-	}
+-	pSMB->DataOffset = cpu_to_le16(offset);
+-	pSMB->SetupCount = 1;
+-	pSMB->Reserved3 = 0;
+-	pSMB->SubCommand = cpu_to_le16(TRANS2_SET_PATH_INFORMATION);
+-	pSMB->InformationLevel = cpu_to_le16(SMB_SET_POSIX_ACL);
+-	byte_count = 3 /* pad */  + params + data_count;
+-	pSMB->DataCount = cpu_to_le16(data_count);
+-	pSMB->TotalDataCount = pSMB->DataCount;
+-	pSMB->ParameterCount = cpu_to_le16(params);
+-	pSMB->TotalParameterCount = pSMB->ParameterCount;
+-	pSMB->Reserved4 = 0;
+-	inc_rfc1001_len(pSMB, byte_count);
+-	pSMB->ByteCount = cpu_to_le16(byte_count);
+-	rc = SendReceive(xid, tcon->ses, (struct smb_hdr *) pSMB,
+-			 (struct smb_hdr *) pSMBr, &bytes_returned, 0);
+-	if (rc)
+-		cifs_dbg(FYI, "Set POSIX ACL returned %d\n", rc);
+-
+-setACLerrorExit:
+-	cifs_buf_release(pSMB);
+-	if (rc == -EAGAIN)
+-		goto setAclRetry;
+-	return rc;
+-}
+-
+ #ifdef CONFIG_FS_POSIX_ACL
+ /**
+  * cifs_init_posix_acl - convert ACL from cifs to POSIX ACL format
+diff --git a/fs/cifs/xattr.c b/fs/cifs/xattr.c
+index 998fa51f9b68..293ffe89d6b2 100644
+--- a/fs/cifs/xattr.c
++++ b/fs/cifs/xattr.c
+@@ -200,32 +200,6 @@ static int cifs_xattr_set(const struct xattr_handler *handler,
+ 		}
+ 		break;
+ 	}
+-
+-#ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
+-	case XATTR_ACL_ACCESS:
+-#ifdef CONFIG_CIFS_POSIX
+-		if (!value)
+-			goto out;
+-		if (sb->s_flags & SB_POSIXACL)
+-			rc = CIFSSMBSetPosixACL(xid, pTcon, full_path,
+-				value, (const int)size,
+-				ACL_TYPE_ACCESS, cifs_sb->local_nls,
+-				cifs_remap(cifs_sb));
+-#endif  /* CONFIG_CIFS_POSIX */
+-		break;
+-
+-	case XATTR_ACL_DEFAULT:
+-#ifdef CONFIG_CIFS_POSIX
+-		if (!value)
+-			goto out;
+-		if (sb->s_flags & SB_POSIXACL)
+-			rc = CIFSSMBSetPosixACL(xid, pTcon, full_path,
+-				value, (const int)size,
+-				ACL_TYPE_DEFAULT, cifs_sb->local_nls,
+-				cifs_remap(cifs_sb));
+-#endif  /* CONFIG_CIFS_POSIX */
+-		break;
+-#endif /* CONFIG_CIFS_ALLOW_INSECURE_LEGACY */
  	}
  
--	error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
-+	if (is_posix_acl_xattr(ctx->kname->name)) {
-+		ctx->acl = vfs_get_acl(mnt_userns, d, ctx->kname->name);
-+		if (IS_ERR(ctx->acl))
-+			return PTR_ERR(ctx->acl);
-+
-+		error = vfs_posix_acl_to_xattr(mnt_userns, d_inode(d), ctx->acl,
-+					       ctx->kvalue, ctx->size);
-+		posix_acl_release(ctx->acl);
-+	} else {
-+		error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
-+	}
- 	if (error > 0) {
--		if (is_posix_acl_xattr(kname))
--			posix_acl_fix_xattr_to_user(ctx->kvalue, error);
- 		if (ctx->size && copy_to_user(ctx->value, ctx->kvalue, error))
- 			error = -EFAULT;
- 	} else if (error == -ERANGE && ctx->size >= XATTR_SIZE_MAX) {
-@@ -868,6 +909,9 @@ removexattr(struct user_namespace *mnt_userns, struct dentry *d,
- 	if (error < 0)
- 		return error;
+ out:
+@@ -366,27 +340,6 @@ static int cifs_xattr_get(const struct xattr_handler *handler,
+ 		}
+ 		break;
+ 	}
+-#ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
+-	case XATTR_ACL_ACCESS:
+-#ifdef CONFIG_CIFS_POSIX
+-		if (sb->s_flags & SB_POSIXACL)
+-			rc = CIFSSMBGetPosixACL(xid, pTcon, full_path,
+-				value, size, ACL_TYPE_ACCESS,
+-				cifs_sb->local_nls,
+-				cifs_remap(cifs_sb));
+-#endif  /* CONFIG_CIFS_POSIX */
+-		break;
+-
+-	case XATTR_ACL_DEFAULT:
+-#ifdef CONFIG_CIFS_POSIX
+-		if (sb->s_flags & SB_POSIXACL)
+-			rc = CIFSSMBGetPosixACL(xid, pTcon, full_path,
+-				value, size, ACL_TYPE_DEFAULT,
+-				cifs_sb->local_nls,
+-				cifs_remap(cifs_sb));
+-#endif  /* CONFIG_CIFS_POSIX */
+-		break;
+-#endif /* ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY */
+ 	}
  
-+	if (is_posix_acl_xattr(kname))
-+		return vfs_remove_acl(mnt_userns, d, kname);
-+
- 	return vfs_removexattr(mnt_userns, d, kname);
- }
+ 	/* We could add an additional check for streams ie
+@@ -525,21 +478,6 @@ static const struct xattr_handler smb3_ntsd_full_xattr_handler = {
+ 	.set = cifs_xattr_set,
+ };
  
-diff --git a/include/linux/posix_acl_xattr.h b/include/linux/posix_acl_xattr.h
-index 3bd8fac436bc..0294b3489a81 100644
---- a/include/linux/posix_acl_xattr.h
-+++ b/include/linux/posix_acl_xattr.h
-@@ -33,6 +33,8 @@ posix_acl_xattr_count(size_t size)
- }
- 
- #ifdef CONFIG_FS_POSIX_ACL
-+struct posix_acl *posix_acl_from_xattr(struct user_namespace *user_ns,
-+				       const void *value, size_t size);
- void posix_acl_fix_xattr_from_user(void *value, size_t size);
- void posix_acl_fix_xattr_to_user(void *value, size_t size);
- void posix_acl_getxattr_idmapped_mnt(struct user_namespace *mnt_userns,
-@@ -42,6 +44,12 @@ ssize_t vfs_posix_acl_to_xattr(struct user_namespace *mnt_userns,
- 			       struct inode *inode, const struct posix_acl *acl,
- 			       void *buffer, size_t size);
- #else
-+static inline struct posix_acl *
-+posix_acl_from_xattr(struct user_namespace *user_ns, const void *value,
-+		     size_t size)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
- static inline void posix_acl_fix_xattr_from_user(void *value, size_t size)
- {
- }
-@@ -63,8 +71,6 @@ static inline ssize_t vfs_posix_acl_to_xattr(struct user_namespace *mnt_userns,
- }
- #endif
- 
--struct posix_acl *posix_acl_from_xattr(struct user_namespace *user_ns, 
--				       const void *value, size_t size);
- int posix_acl_to_xattr(struct user_namespace *user_ns,
- 		       const struct posix_acl *acl, void *buffer, size_t size);
- struct posix_acl *vfs_set_acl_prepare(struct user_namespace *mnt_userns,
-diff --git a/io_uring/xattr.c b/io_uring/xattr.c
-index 84180afd090b..5b2548649272 100644
---- a/io_uring/xattr.c
-+++ b/io_uring/xattr.c
-@@ -8,6 +8,7 @@
- #include <linux/namei.h>
- #include <linux/io_uring.h>
- #include <linux/xattr.h>
-+#include <linux/posix_acl_xattr.h>
- 
- #include <uapi/linux/io_uring.h>
- 
-@@ -31,6 +32,7 @@ void io_xattr_cleanup(struct io_kiocb *req)
- 
- 	kfree(ix->ctx.kname);
- 	kvfree(ix->ctx.kvalue);
-+	posix_acl_release(ix->ctx.acl);
- }
- 
- static void io_xattr_finish(struct io_kiocb *req, int ret)
+-
+-static const struct xattr_handler cifs_posix_acl_access_xattr_handler = {
+-	.name = XATTR_NAME_POSIX_ACL_ACCESS,
+-	.flags = XATTR_ACL_ACCESS,
+-	.get = cifs_xattr_get,
+-	.set = cifs_xattr_set,
+-};
+-
+-static const struct xattr_handler cifs_posix_acl_default_xattr_handler = {
+-	.name = XATTR_NAME_POSIX_ACL_DEFAULT,
+-	.flags = XATTR_ACL_DEFAULT,
+-	.get = cifs_xattr_get,
+-	.set = cifs_xattr_set,
+-};
+-
+ const struct xattr_handler *cifs_xattr_handlers[] = {
+ 	&cifs_user_xattr_handler,
+ 	&cifs_os2_xattr_handler,
+@@ -549,7 +487,9 @@ const struct xattr_handler *cifs_xattr_handlers[] = {
+ 	&smb3_ntsd_xattr_handler, /* alias for above since avoiding "cifs" */
+ 	&cifs_cifs_ntsd_full_xattr_handler,
+ 	&smb3_ntsd_full_xattr_handler, /* alias for above since avoiding "cifs" */
+-	&cifs_posix_acl_access_xattr_handler,
+-	&cifs_posix_acl_default_xattr_handler,
++#ifdef CONFIG_XFS_POSIX_ACL
++	&posix_acl_access_xattr_handler,
++	&posix_acl_default_xattr_handler,
++#endif
+ 	NULL
+ };
 -- 
 2.34.1
 
