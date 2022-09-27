@@ -2,161 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B860C07E9D
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Sep 2022 23:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 097E8C6FA86
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Sep 2022 23:24:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231879AbiI0XPo (ORCPT
+        id S231879AbiI0XYV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Sep 2022 19:15:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60954 "EHLO
+        Tue, 27 Sep 2022 19:24:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231298AbiI0XPn (ORCPT
+        with ESMTP id S231880AbiI0XYU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Sep 2022 19:15:43 -0400
-Received: from sonic304-28.consmr.mail.ne1.yahoo.com (sonic304-28.consmr.mail.ne1.yahoo.com [66.163.191.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED313EA598
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Sep 2022 16:15:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1664320540; bh=N1+ZIo9TbKcqDQ5rFjbCt6U4JF2yW5ERfW0z48+hWF0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=iVHMejBFX/+V68heYIcUFxNOqBm9asKcnHFErI+zoCVtrTC0fpjUXtpkFQrND+8im47nzCvUyPKxYXO+wN5ytS0j4IEXEXjzkYeBx0uN173iklp8b+5bH4BYIfqf2Ie4bFgDsHgKB78cokYQ9ItskKnMrYIpoPKPK2j1jzwBiF//dJJk3bz2R5xxIj6bWbkvsvSfvFChsXMVKnTT9t739m73Y/Qk6KWrZQ4djBqzh3Ru/vOU/W2g8jaG0zV+IzBslKpIIcpOxNHcl/GmOTdjuBXGXvyObtunIJY4M90kdvpCNPJSrL/g+wmAF7eK8Dv5+hEfiX8OCeFcLIUUjdk1rg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1664320540; bh=SyRRkdLWaJJxZ0HiA4fSMERItv2ynZVB4STd+qTUubw=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jTUQeI8AX2B+6cAfT7J50SNspYCLlNx6pwrDf6jKQHyBXW5pEVmBEA4M0FGhjZAEcs4SPOuUJQCSDiW88h0D8Dgd6qZnixhSOvx/JB2xbwtbEY8Nvp6ZxMx6g9LppJqmkAaI1RKYSNWtWaiXX0r3tkEjI9IaiUzUbY15xSHql7Cp01zVN5topetUlW2GY9uDKGYxtNGcbJ1O8BwhUG1y9vxchxmgTBxO19fkhF8nP3jxQ+w6TcyTswsXsNleZ+3M/CgMvN8ScFGmguLlM5P3c8okTb3rNHm8JrlsAhTBRF+Bw1mmrErxvyKceIVbuUQGsMjZMsB8U1cY5NcoGqz8EQ==
-X-YMail-OSG: BfsSpZIVM1nqh0DHj1bT23Lr1EEaSD5dU2yuY18IGqhTBF_XjYS6TqDZJgcnBoy
- 8G1BmgT.4xHDrOHkxtTC6KXYaPm2Q8wIns4zSxKq1bJhtpDKAln9Bniq8gPTvV8s.eD6tEewbmRj
- kL7JJ78BdN9CSeaCZKE6L8aGX1c7805KzaaFHqeNPWi5RdWKbV8iglKUtmecl38r3HDq6.YXn8rZ
- vrlfLEMgpSY24iz9evgrlFI1bj9leSik8HID92rrLWW3fhqZnUaWsLKpfim7cmRsMGfL1MAtiEqy
- GZpbQxR2hMMiQFcvsymGxW2KXKuBkJ_f2KFqHSSgeN001FIm9.nu4Wu2oWLefLKeZWjxqYsUXkNh
- 2yyvUhmJjRgY2KCLk.TvUiQ1g3N0PnC3Iz1D6HS6Szl6Jrjc5wVkTLT8dQDZUVM1ClQ.BTSB7yyf
- Mus4iT46oOCe5NpFYXHJadiYy8bNGip4xV0DaPVZtlZqnda5xF2ZOK.wkKwB4xGbNAZufMLyvR3z
- Oz_DFA9rt00hmPSea6t6p3160RCB04ab1zKFjw5jVE2I7m.4tvoUrkWF9HYbVjIR1oZxPLLM96LO
- YIcGYjTPvM6bFhEbMnk3kfubqD5ztG_OgpT_2cbjfjMQlUTAj6b6wzBu.mW47mctlR5AYLahtFsn
- LwRlD3An_i6JyJ45r8eAkfTqkPOdWvgrv4f6.9Wvj.uzF25XecL9dC_ixug6GO_rOHR7EmLz3MSv
- hQdVhBXrRFI0yLXb_3GkZq4zqvqr9Ah1I7qp6FmIen8OzczJNfqaxZWtBZdUPyFfzEc8KZbwMQfH
- iy9ieQk_v2iMuHd8W2HDavYuVdg1aP72eWJB9O6ya1oxtq6vw16BuNUUqHxkRYmZ.dkqRXQc97Fq
- z_STuesErAO2pHprnlfBVbcAdmatDjXjHFrcjayfr8RtCvzmpdMql59ZnH_PDrx2QMIDvGv1NMI4
- x2oUyXTTNkxTlwC8Z0VqxvAz4kKIbQ.GdRPrr4Arkvioue8S9jB.LSzgVEetICPb6aYXadGwDmCy
- RKo7fzoXFC4isZQUMjiq_0c8rqhBZn0BpoEdOVSglLdu1l8ewZzxOXBk3ODQb1jN8DunUeeNFQkW
- QQ7HFIS30UPmadmI0r1ljEH2bjRe5PcVP1Afue0SKKyhA.gtLVFZ0APYQjJfsArYKVOkXCeb35X8
- .xwKhqe5nAVsQrfGVHrODv4Hr.fGSoeZoNvAt8PM3_K7gXlgmeUSYLY4SI1c2KgPonFJMFbm7o__
- 16YTicANGlZ7zgIyunIdX5ytSbads6h0RFUTu0tghoiNUsq8XljgSIiuVQBjhv3vEHPSpEYJ0On.
- ihRZwA.nSp3PyZ_7NfjfOUW3K8uRZGlxab2wa.Sw7mzjJwjGuu0k1roQQWQekJYllJlAC0N96Z5r
- qsQC4pG5iyVrq1JjzJNTeDs72g1qRFwsin_dyCkGFRt01VliD33o3XKKylJRIOTWv9I5mllPXdaD
- _EzggUR_MHpC_6oYCs8x1jQYF8q.xj5U0XtcJmyuDBadxlOneA09PJTNKgNEel5fRo6gWqjl1w9g
- q1X.SSjxO5zHo0oZYbFrFF5qC02ylMeJTKBybRG_pc6enw2tWF4hova762.PPVnPAWGImnbxwhZw
- G5piyHj3znTdPE0PyuAUqRBSOPX9ICItyZzWvOj4NUNMSn.SHAxi.yh9i8ck1XgVfbr7m2_G2dFy
- NV.JA5MzvVDUcPk4EjBgtnzvssaaEE9GAPiWYZl_2Pk.ngUi66s7GeiEJhpAlEHmzUW83EJiV5Cm
- UxJJPKkjwuCVkwBL7q9.S4HUkHVk7QiJTSbEJlAf6BOCQl2BB3UGbEG8q2IdbKL.AtRlZJBi4e1n
- hiTiwOR3Hn.ZSFfzCNEkFMH_us1w5p4ypLQdz63hqKrQkYpuoMzJEOTuHRneLs4Iydqz3GZX03Xw
- qwm8Wv.oX1viNr1z06nVqMoMqUYUqDoyI0vqItFl8vXcMLa6IL7gSMm31GMoooPIw5y2k8_pSaI4
- V.8aBYQbRREONgXkC7Yu3hQ5BnpoWrt4ddZqc_CmNEGTqHQ6BfxQadClqwFJ9Tb5DwQIpeR0kDcG
- 5MpiSBjt8goIznTkk4OJyY_ZgYSGtNipEJYyqBccGl2d2x12SW6IWAVBrIjImCie3rGlBr3oZWn3
- LRoz2aFG.jqnLMPmDAWBl.Gtw3qlqj6I9Nhpx0uUigc.08DZO6BODn2w.ClMkuiQJXAaq4f5IYn0
- xWKax7u5A0sErdRidIKtSKeqWr3qKZtzF5H0LYa1QJ5rE58DXegxnm6FyEoYA0o2_lfgNmTxBYgx
- BkAX3nxEiz6191q4HjhGsbiUFYwkV8ytiUkwN4Fpm67V7Bg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Tue, 27 Sep 2022 23:15:40 +0000
-Received: by hermes--production-bf1-759bcdd488-mc79z (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID aa3837e369269596f7dd6b5d88f196ef;
-          Tue, 27 Sep 2022 23:15:34 +0000 (UTC)
-Message-ID: <4385f332-8b49-827f-502c-5458e14224ef@schaufler-ca.com>
-Date:   Tue, 27 Sep 2022 16:15:32 -0700
+        Tue, 27 Sep 2022 19:24:20 -0400
+Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 992431D31A
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Sep 2022 16:24:18 -0700 (PDT)
+Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-131886d366cso3639875fac.10
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Sep 2022 16:24:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=KfB+fJnhHE2zNulRQQ9KUqULi3PBY5621b0zSJ+rRiI=;
+        b=eau9HmKWyfvAuZEwtj7QmoK1HfJjCFwMuGix17udzmlKEuY9lkpqohrD8wt66JHwRT
+         KSb6sLNqwfRowI6r24gS+Zlb3hfVff9y/t86iE4vRCCd8Wu4+5O/4s5NeMKfgSdL25d0
+         4q4wxZ2TkMP/C5fgo0cocvMGfHF7nF9wQ5WEh4m8G54JES3Snsl8aJtJX6AiVdZoZ69k
+         IECpUZuksJFAsF+Ji9+YHOxewd0pA+3uj9PaBBYcuJS8D/yxcIYLdlq5cCO6Nsork0j7
+         s23g1jmzUfjyYTlhzE9TD+j0pK3IuZNVK8zklyluBLFDWDfKjz0yKU+N1f+nCKoAf8DG
+         ksoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=KfB+fJnhHE2zNulRQQ9KUqULi3PBY5621b0zSJ+rRiI=;
+        b=CEY71RrSDAaGrIwhdHYSCZLkhXx8pUUhTV7ZCQvmuZURZGy4UhJS6Jvz5eabGwVPVy
+         DNZP1FGzP0qKFfOwL54zDK+fqPMQtI/S+sAmRWqa+/47bu44lqi8hy6GWZhI2FzsBE6s
+         z06vsBeL5TvIqYuI0J2Lh6BZGyz1HE2272la5UlUj2hlVUwSCx2Bv7FQLm1ponnkvMtH
+         7vHHARyGYKdWnEG+XbTa3+eyFebj2LgYqcc5BpCbik51sStRn3PBoCvE0ekPgz//qZjo
+         VWHG6OTwdpI4D9iId+dxFR+gQj2qeet+5vhkGfwZR3xg28L0DL+Qk5vsQPxpRzEe5vhO
+         ArGg==
+X-Gm-Message-State: ACrzQf0HlwLqX4i50655mQF5EJndezgaDle4PPVdDmCPljoxhhSou2Nm
+        6VKiK0/3HogHqqp/7sGqV/BbHTjCtEF5VLZd3FVrbVG/ng==
+X-Google-Smtp-Source: AMsMyM6wd85jvS0PvhSbxvF1obwpMq99dFhlTudrpP66jnQIV+3XyzCJE77VYyMHZTqUd1kmc1lJlvv3EpWrA2BlTrM=
+X-Received: by 2002:a05:6870:a916:b0:131:9361:116a with SMTP id
+ eq22-20020a056870a91600b001319361116amr2006434oab.172.1664321057952; Tue, 27
+ Sep 2022 16:24:17 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v2 12/30] smack: implement set acl hook
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Cc:     Seth Forshee <sforshee@kernel.org>, Christoph Hellwig <hch@lst.de>,
+References: <20220926140827.142806-1-brauner@kernel.org> <99173046-ab2e-14de-7252-50cac1f05d27@schaufler-ca.com>
+ <20220927074101.GA17464@lst.de> <a0cf3efb-dea1-9cb0-2365-2bcc2ca1fdba@schaufler-ca.com>
+In-Reply-To: <a0cf3efb-dea1-9cb0-2365-2bcc2ca1fdba@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 27 Sep 2022 19:24:07 -0400
+Message-ID: <CAHC9VhToUZici98r10UJOQhE48j-58hUheT0P8GE9nC38p=ijQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/30] acl: add vfs posix acl api
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org, casey@schaufler-ca.com
-References: <20220926140827.142806-1-brauner@kernel.org>
- <20220926140827.142806-13-brauner@kernel.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20220926140827.142806-13-brauner@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20702 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/26/2022 7:08 AM, Christian Brauner wrote:
-> The current way of setting and getting posix acls through the generic
-> xattr interface is error prone and type unsafe. The vfs needs to
-> interpret and fixup posix acls before storing or reporting it to
-> userspace. Various hacks exist to make this work. The code is hard to
-> understand and difficult to maintain in it's current form. Instead of
-> making this work by hacking posix acls through xattr handlers we are
-> building a dedicated posix acl api around the get and set inode
-> operations. This removes a lot of hackiness and makes the codepaths
-> easier to maintain. A lot of background can be found in [1].
+On Tue, Sep 27, 2022 at 10:13 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> So far posix acls were passed as a void blob to the security and
-> integrity modules. Some of them like evm then proceed to interpret the
-> void pointer and convert it into the kernel internal struct posix acl
-> representation to perform their integrity checking magic. This is
-> obviously pretty problematic as that requires knowledge that only the
-> vfs is guaranteed to have and has lead to various bugs. Add a proper
-> security hook for setting posix acls and pass down the posix acls in
-> their appropriate vfs format instead of hacking it through a void
-> pointer stored in the uapi format.
+> On 9/27/2022 12:41 AM, Christoph Hellwig wrote:
+> > On Mon, Sep 26, 2022 at 05:22:45PM -0700, Casey Schaufler wrote:
+> >> I suggest that you might focus on the acl/evm interface rather than the entire
+> >> LSM interface. Unless there's a serious plan to make ima/evm into a proper LSM
+> >> I don't see how the breadth of this patch set is appropriate.
+> > Umm. The problem is the historically the Linux xattr interface was
+> > intended for unstructured data, while some of it is very much structured
+> > and requires interpretation by the VFS and associated entities.  So
+> > splitting these out and add proper interface is absolutely the right
+> > thing to do and long overdue (also for other thing like capabilities).
+> > It might make things a little more verbose for LSM, but it fixes a very
+> > real problem.
 >
-> I spent considerate time in the security module infrastructure and
-> audited all codepaths. Smack has no restrictions based on the posix
-> acl values passed through it. The capability hook doesn't need to be
-> called either because it only has restrictions on security.* xattrs. So
-> this all becomes a very simple hook for smack.
->
-> Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
-> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> Here's the problem I see. All of the LSMs see xattrs, except for their own,
+> as opaque objects. Introducing LSM hooks to address the data interpretation
+> issues between VFS and EVM, which is not an LSM, adds to an already overlarge
+> and interface. And the "real" users of the interface don't need the new hook.
+> I'm not saying that the ACL doesn't have problems. I'm not saying that the
+> solution you've proposed isn't better than what's there now. I am saying that
+> using LSM as a conduit between VFS and EVM at the expense of the rest of the
+> modules is dubious. A lot of change to LSM for no value to LSM.
 
-The Smack hook looks fine.
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+Let's take a step back and look not just at the LSM changes, but the
+patchset as a whole.  Forgive my paraphrasing, but what Christian is
+trying to do here is introduce a proper ACL API in the kernel to
+remove a lot of kludges, special-cases, etc. in the VFS layer,
+enabling better type checking, code abstractions, and all the nice
+things you get when you have nice APIs.  This is admirable work, even
+if it does result in some duplication at the LSM layer (and below).
 
-> ---
->
-> Notes:
->     /* v2 */
->     unchanged
->
->  security/smack/smack_lsm.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 001831458fa2..ec6d55632b4f 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -1393,6 +1393,29 @@ static int smack_inode_removexattr(struct user_namespace *mnt_userns,
->  	return 0;
->  }
->  
-> +/**
-> + * smack_inode_set_acl - Smack check for setting posix acls
-> + * @mnt_userns: the userns attached to the mnt this request came from
-> + * @dentry: the object
-> + * @acl_name: name of the posix acl
-> + * @kacl: the posix acls
-> + *
-> + * Returns 0 if access is permitted, an error code otherwise
-> + */
-> +static int smack_inode_set_acl(struct user_namespace *mnt_userns,
-> +			       struct dentry *dentry, const char *acl_name,
-> +			       struct posix_acl *kacl)
-> +{
-> +	struct smk_audit_info ad;
-> +	int rc;
-> +
-> +	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
-> +	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
-> +	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_WRITE, &ad);
-> +	rc = smk_bu_inode(d_backing_inode(dentry), MAY_WRITE, rc);
-> +	return rc;
-> +}
-> +
->  /**
->   * smack_inode_getsecurity - get smack xattrs
->   * @mnt_userns: active user namespace
-> @@ -4772,6 +4795,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
->  	LSM_HOOK_INIT(inode_post_setxattr, smack_inode_post_setxattr),
->  	LSM_HOOK_INIT(inode_getxattr, smack_inode_getxattr),
->  	LSM_HOOK_INIT(inode_removexattr, smack_inode_removexattr),
-> +	LSM_HOOK_INIT(inode_set_acl, smack_inode_set_acl),
->  	LSM_HOOK_INIT(inode_getsecurity, smack_inode_getsecurity),
->  	LSM_HOOK_INIT(inode_setsecurity, smack_inode_setsecurity),
->  	LSM_HOOK_INIT(inode_listsecurity, smack_inode_listsecurity),
+It is my opinion that the impact to the LSM, both at the LSM layer,
+and in the individual affected LSMs is not significant enough to
+outweigh the other advantages offered by this patchset.
+
+-- 
+paul-moore.com
