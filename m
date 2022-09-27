@@ -2,146 +2,182 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 642E3C6FA92
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Sep 2022 15:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FA8C6FA8E
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Sep 2022 16:24:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232670AbiI0Pzs (ORCPT
+        id S232739AbiI0QYI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Sep 2022 11:55:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45058 "EHLO
+        Tue, 27 Sep 2022 12:24:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232095AbiI0PzU (ORCPT
+        with ESMTP id S231993AbiI0QYH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Sep 2022 11:55:20 -0400
-Received: from sonic309-26.consmr.mail.ne1.yahoo.com (sonic309-26.consmr.mail.ne1.yahoo.com [66.163.184.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A08B520A3
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Sep 2022 08:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1664294113; bh=coTCryraE6//vMjy1fLNSb3iLSlfq45ZwjApzHKRKSA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ifJFkPZAiDgxg3b8dewqsWRLosTfAlHt1Wu/BKCyk0fZPEF1qEAuuJTf65QofysxHB4+WLyPgnyWlK6tTggYZHpe7aXO3SADJ/RnHkCnFOIKdN+NoDUBPgOAyAsExr2Muv88YdQixLCUcua5yE6avlEYATf+tpmOmPxYGBWhPLO+8TCYw92r+ECgXrKNxiDWtJGv3JqqlFnLjAJJ9j1SvnBKXT1fZil3BUPymTld5vw1DtXewplD2kXhEspFTOEFZWFEbcT2m+OjshXd/lculqu0vjuTMxayPQ/GGFP0bnvxJtYa3kJd4fR9cMcVolLQkFrLq5G6j5T09DR0MvK8CA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1664294113; bh=GeOY8SOWF1/gY0IM3llxq40hYNxBSa97GwVoZBxMvZN=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=hXZ9usewk0J1q9NmC4PXA8au8hnUinCRw7uX5xjFGBf8WmxIdxj4tEWcFj5wxsw9SbAk2izJ6yK2dgH3WfdnPGihat+WxtuOke6riQ+SAY/BVnhMo/Dv5ryDFCNlJzC7LLNi65fY0XwCLjhXGvvf6oHRT7NBUQb1cXuZTXIbxRzB6pYeBdJzUSKOlOlfOoOf/2tUICGldsOPj0Uvp3nFzKQF8CIIpQUSwMZKRV5jhSpAPCCbEsNMsNDDdbTwVZh+utcwxaIt1msBX0N33dEmLY8aWciKoZ9iC+33CaltOq+GkSSW2+2XOsmBmvJFI1oO5h50jvUIAXw9KIP4XCyuCQ==
-X-YMail-OSG: SpRhvFYVM1kIRV.2K3KkpFBeNZffM9hZxbo.yTLr9Ne9BGVlUiFIXL3PYbmz2TR
- 2n6iqN3v95yDHSfpui4yrl7CNCRwyy3IqoXONw0UJ9Pv.CRTOIGSBbzT8_wtj2V7YYn.cRw6m4Rq
- 19q2D0tfH94UxLRUT6ZYn8s_UA5PISHZRkv._s4TDcHadFKnvLUHWOuRTCE9BHKJXIXqCD9tgO81
- 3VfR4hKP.UbllvcyikfSXzF4vPSP7Tv0K_XGzZkjqmf4kjS.I6sMI.FMFeFV8GlHmhhJKJjBtVEr
- O8fSnUVe7vg1Ci0GR3KI7ooTAVCzOTyGR9hWq5mMJDf1tRXiV_pQ8d4pf4utTgvHxSWSc5LYjrj8
- eFgjaQ.njps3itc5mD8UfwZVsNo_tLwSku3z4xf.k5JMJsLPUynx7AKDFqKDyrq1sehUVUjxBe2U
- RSoSsLyrwylRpf4jJAJb6fSLK_Z1n41mqaF_N2lepfN.f2ZcCcaLda1VN3MmD1huRH92n4kNgaCo
- hR5h.9syLz_mh.3p548UrLJnd_wHUREz5pOhH2TaI3rrDAZoAysVpN9m7Fn3lrJfJx3TuZlUfV5m
- _0i5WgLRwjpAeGkt2gjgCcCY.kAxsi8GgSoQSLS63RC50BQOy6wFnP6con58vXswIf.9MT1TaG2d
- Zx_W1iz.c7.6UCm4t2M2Sil0.dVCKsmW0tpTmDv_XUFEYPiUhz0KIHdOYQ8Ns4Ru.vJ4Wkqw223P
- ptUsPpTtOHUFjAjzlKAN6N0hcJA6txTBvr3pO7T18Fp.fa6rJoIw.MydHYxKa.DG6SrrkuCGCG8p
- UrSNkrov8LU.mHurWm5_ziZiTs6107zD68vrKWnRUgpRBNK_VXMi4UDGkx8RjKWCS1EKkHXynZQC
- 85gl86R_D6Ulr2m1I2vUu7CYuULUXDJVvbGNWglMRtri_vtR1Cy4ecNzzRkLomz72tSQQBezXi47
- lZXT3LJ.OGz8QbWVsqHSjfuMRewhr7VGkPew9bDeaDzRsn1QyeEVY3aXefhbio7kpw74TrTgvO5D
- hTOPhGNkZBKIV_L09wnNEQXdsUINbPUAvJdydFAP0RE_qx0azTuAj5H2PR7ybhwtkfEQtEnqaP6.
- 7IizKxswAirWdcZkJzPoAFqz43RfNaURE1bUv7Z3APxQVp1MPZoOyJNG0ADKjpf7blwg0NRopKgG
- ErqLDGNDLCPl2drQTZuO8_PyZ6TUK3NXQ8BH.eDCnlWCsl_MvEUxMfrdTonS0HGx5_n6v8La3VTX
- sl2OKfFtTDaQAM2Rm72XUqPnlXflgjC4yafpZlvtaxpI2rMTlRPthsTCIZkXNYUTfcDKLs7uzhJt
- ojzBa7s6Tv8SoYWhJsDG.Th6PqC95zq0d8if8Lgwwyr3g6sB7USS32URPoWc4KxPrZnH09KSu.U7
- 2B2_OTkEUb_bOB086X2v6KRHODBm8lPFhXXHxyNLQ0alb9bVLTqsbEPQbPnv6JHCMsst9hSg2FyC
- Z_wdW0KPFC.Zo5dVAh2nPNWHPH0sCzFxVq_6fnjtW51hKdTUBC7Myxog8qp1Qwc4gTvbVngLnfPU
- 8JwQ_DeYnEz0zCvEM2LzkgoC901PSK2qlu0.axAkO0w9._Mv_51eo5LnhS3EKzQtu497fuC6DxqN
- F6akW6kTZ3WVKsF1dOavduJNki_t7tr.euOx5pIH4LbjRFNVUyPKM6wVkPScB9RZ5gmYG226a9M.
- oB1XNdwSkEaoD.89nfEjDB_cWztVwf49Gk2wga6Asi.7dLVUIbAEo8Op6Zla8_.q6.YV00WMszX5
- afQDoHdssgkTxCmNM5Sjh62E4ruj7nQ.GQr.fHR4Uu6VvZhwyt_gMRs.LkQ.5vBiUJNvm6U08GQp
- epXPpuTb27baD.CCuhe6GpXHPWH7PZoVnkpvVSITsTKyAYob.jK7Qj.qHSdRAVxNmZ8BWpUkQ2jY
- 5_Gbb8lSQ1vvMhnCnVw2mvaPnlN8dxGhQqi_ocGSdFxAX8iiNxDeTrj7CRHjUjshkhSN1g4upgjY
- t6ja9dW4wWnDuuXvCJRyP.pEc_MtB6C1CXYf5ETi5AC5u_5cWNHbvVJAhiHoEqKsQhs62R5iKPl7
- nwh6X477gsX5m6ve678zbmP5gI7dg8BUk7KtXi8yk511ud49WZKfnOZIUSFW1kgWB37yJvgq9WdD
- rCwGRTnVOrkvVOgwEDWdQKqF1f4px9bWsVIpv3SSwTjfcv4E6PyQ1su73klbDi8GDTjkGg3d63ew
- MnV9J5kDidBvMmi2lldxhccixlTkon1Mr8R4gZJb38lQG0Est8nvt6hjKV7pgSNh2i2OjEM8ApTH
- vaIZeBl0RJXZgJjYFRoYX7GEHPM0PXIA-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Tue, 27 Sep 2022 15:55:13 +0000
-Received: by hermes--production-bf1-759bcdd488-6vlh5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 257e07de7080f81fa365df07b75f3a66;
-          Tue, 27 Sep 2022 15:55:10 +0000 (UTC)
-Message-ID: <4954ef66-52ff-52de-9d7d-41da1b070b13@schaufler-ca.com>
-Date:   Tue, 27 Sep 2022 08:55:07 -0700
+        Tue, 27 Sep 2022 12:24:07 -0400
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D31B15E452
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Sep 2022 09:24:03 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4McQ1F2SLfzMqKy5;
+        Tue, 27 Sep 2022 18:24:01 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4McQ1C6yrSzx0;
+        Tue, 27 Sep 2022 18:23:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1664295841;
+        bh=YhvKIaFsE/mTgyc5JuWtSNn0I9aERdaCkohDydV2LIM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=KyFyHY7cdvTSpdBHZn45J5FcQox5j5iIFwuRHWUMZFqPYnPS1drDIiiJlOn3Mha/e
+         w0Aca54KcYDFwSdpwwBHV3yQv+6l2WYaKNHH3w6Hm6v3LdC4E0a1iYEBrd/VcQPl4w
+         c615IeZx2pmVcMjX9cWk2Qg3fwj8qEh2qS5mpv4E=
+Message-ID: <80be55d6-ffd4-5c3e-3076-70ec10ed91bf@digikod.net>
+Date:   Tue, 27 Sep 2022 18:23:59 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v2 00/30] acl: add vfs posix acl api
+User-Agent: 
+Subject: Re: [PATCH v1 1/3] samples/landlock: Print hints about ABI versions
 Content-Language: en-US
-To:     Seth Forshee <sforshee@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, casey@schaufler-ca.com
-References: <20220926140827.142806-1-brauner@kernel.org>
- <99173046-ab2e-14de-7252-50cac1f05d27@schaufler-ca.com>
- <20220927074101.GA17464@lst.de>
- <a0cf3efb-dea1-9cb0-2365-2bcc2ca1fdba@schaufler-ca.com>
- <YzMT2axDeni7L1O8@do-x1extreme>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <YzMT2axDeni7L1O8@do-x1extreme>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20702 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20220923154207.3311629-1-mic@digikod.net>
+ <20220923154207.3311629-2-mic@digikod.net> <Yy4e0nTiO6dv/Eif@nuc>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <Yy4e0nTiO6dv/Eif@nuc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/27/2022 8:16 AM, Seth Forshee wrote:
-> On Tue, Sep 27, 2022 at 07:11:17AM -0700, Casey Schaufler wrote:
->> On 9/27/2022 12:41 AM, Christoph Hellwig wrote:
->>> On Mon, Sep 26, 2022 at 05:22:45PM -0700, Casey Schaufler wrote:
->>>> I suggest that you might focus on the acl/evm interface rather than the entire
->>>> LSM interface. Unless there's a serious plan to make ima/evm into a proper LSM
->>>> I don't see how the breadth of this patch set is appropriate.
->>> Umm. The problem is the historically the Linux xattr interface was
->>> intended for unstructured data, while some of it is very much structured
->>> and requires interpretation by the VFS and associated entities.  So
->>> splitting these out and add proper interface is absolutely the right
->>> thing to do and long overdue (also for other thing like capabilities).
->>> It might make things a little more verbose for LSM, but it fixes a very
->>> real problem.
->> Here's the problem I see. All of the LSMs see xattrs, except for their own,
->> as opaque objects. Introducing LSM hooks to address the data interpretation
->> issues between VFS and EVM, which is not an LSM, adds to an already overlarge
->> and interface. And the "real" users of the interface don't need the new hook.
->> I'm not saying that the ACL doesn't have problems. I'm not saying that the
->> solution you've proposed isn't better than what's there now. I am saying that
->> using LSM as a conduit between VFS and EVM at the expense of the rest of the
->> modules is dubious. A lot of change to LSM for no value to LSM.
+
+On 23/09/2022 23:02, Günther Noack wrote:
+> Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+> 
+> This patch is a strict improvement over what the sample code was
+> before, so that's fine with me review wise.
+> 
+> I still think it would be good to point out more explicitly that the
+> "refer" right needs a different fallback strategy for the best effort
+> mode than the other rights will do in the future, as discussed in [1].
+> 
+> In many "best effort" scenarios that people need for their code, the
+> part that is actually fixed are the access rights that their code
+> declares that it needs. So if they actually need the "refer" right for
+> their programs to work, they cannot use Landlock on kernels that only
+> support Landlock ABI v1, because under ABI v1 they will never be able
+> to hardlink or rename between directories when Landlock is enabled.
+> 
+> The way that the sandboxer example is dealing with it, it just gives
+> the user a smaller set of access rights than they requested if the
+> kernel just supports ABI v1. It's somewhat reasonable for the
+> sandboxer tool to do because it doesn't give hard guarantees in its
+> command line interface, but it might not be negotiable in more
+> practical examples. :)
+> 
+> [1] https://docs.google.com/document/d/1SkFpl_Xxyl4E6G2uYIlzL0gY2PFo-Nl8ikblLvnpvlU/edit
+
+I agree. The sandboxer is a sample, and such sandboxer is not the best 
+place to configure Landlock according to the app semantic. At the end it 
+should be done in the app itself.
+
+I would like this sample to be as simple as possible but still useful. 
+To properly handle all "refer" use cases, it would require a dedicated 
+configuration (e.g. LL_FS_REFER), which will make it more difficult to 
+understand, and this approach will not scale with future (FS) access rights.
+
+We can maybe add a comment in this sample to explain that. Your 
+explanation looks like a good start. If you agree, could you send a 
+patch to add such comment (on top of this series)?
+
+> 
+> —Günther
+> 
+> On Fri, Sep 23, 2022 at 05:42:05PM +0200, Mickaël Salaün wrote:
+>> Extend the help with the latest Landlock ABI version supported by the
+>> sandboxer.
 >>
->> I am not adamant about this. A whole lot worse has been done for worse reasons.
->> But as Paul says, we're overdue to make an effort to keep the LSM interface sane.
-> So I assume the alternative you have in mind would be to use the
-> existing setxattr hook?
-
-That is how it works today.
-
->  I worry about type confusion if an LSM does
-> someday want to look inside the ACL data.
-
-I suggest that changes to system behavior based on the content of
-an ACL really belongs in the ACL code, not in an LSM. Can I imagine
-someone wanting to add SELinux policy that controls what entries
-are allowed to be set by a particular domain? Sure, but I can't see
-how that would be popular with existing ACL fans.
-
->  Unless LSMs aren't supposed to
-> look inside of xattr data, but in that case why pass the data pointer on
-> to the LSMs?
-
-So that the LSM can look at it's own xattr data.
-
-> Note that the caller of this new hook does not have access to the uapi
-> xattr data, and I think this is the right place for the new hook to be
-> called as it's the interface that stacked filesystems like overlayfs
-> will use to write ACLs to the lower filesystems.
-
-I'm not saying anything about the organization of the calling code.
-Why is it calling
-
-	security_acl_hooha(...)
-
-instead of
-
-	evm_acl_hooha(...)
-
-
->
-> Seth
+>> Inform users about the sandboxer or the kernel not being up-to-date.
+>>
+>> Make the version check code easier to update and harder to misuse.
+>>
+>> Cc: Günther Noack <gnoack3000@gmail.com>
+>> Cc: Paul Moore <paul@paul-moore.com>
+>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>> Link: https://lore.kernel.org/r/20220923154207.3311629-2-mic@digikod.net
+>> ---
+>>   samples/landlock/sandboxer.c | 37 ++++++++++++++++++++++++++++--------
+>>   1 file changed, 29 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+>> index 3e404e51ec64..f29bb3c72230 100644
+>> --- a/samples/landlock/sandboxer.c
+>> +++ b/samples/landlock/sandboxer.c
+>> @@ -162,11 +162,10 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
+>>   	LANDLOCK_ACCESS_FS_MAKE_SYM | \
+>>   	LANDLOCK_ACCESS_FS_REFER)
+>>   
+>> -#define ACCESS_ABI_2 ( \
+>> -	LANDLOCK_ACCESS_FS_REFER)
+>> -
+>>   /* clang-format on */
+>>   
+>> +#define LANDLOCK_ABI_LAST 2
+>> +
+>>   int main(const int argc, char *const argv[], char *const *const envp)
+>>   {
+>>   	const char *cmd_path;
+>> @@ -196,8 +195,12 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>>   			"\nexample:\n"
+>>   			"%s=\"/bin:/lib:/usr:/proc:/etc:/dev/urandom\" "
+>>   			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+>> -			"%s bash -i\n",
+>> +			"%s bash -i\n\n",
+>>   			ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv[0]);
+>> +		fprintf(stderr,
+>> +			"This sandboxer can use Landlock features "
+>> +			"up to ABI version %d.\n",
+>> +			LANDLOCK_ABI_LAST);
+>>   		return 1;
+>>   	}
+>>   
+>> @@ -225,12 +228,30 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>>   		}
+>>   		return 1;
+>>   	}
+>> +
+>>   	/* Best-effort security. */
+>> -	if (abi < 2) {
+>> -		ruleset_attr.handled_access_fs &= ~ACCESS_ABI_2;
+>> -		access_fs_ro &= ~ACCESS_ABI_2;
+>> -		access_fs_rw &= ~ACCESS_ABI_2;
+>> +	switch (abi) {
+>> +	case 1:
+>> +		/* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
+>> +		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
+>> +
+>> +		fprintf(stderr,
+>> +			"Hint: You should update the running kernel "
+>> +			"to leverage Landlock features "
+>> +			"provided by ABI version %d (instead of %d).\n",
+>> +			LANDLOCK_ABI_LAST, abi);
+>> +		__attribute__((fallthrough));
+>> +	case LANDLOCK_ABI_LAST:
+>> +		break;
+>> +	default:
+>> +		fprintf(stderr,
+>> +			"Hint: You should update this sandboxer "
+>> +			"to leverage Landlock features "
+>> +			"provided by ABI version %d (instead of %d).\n",
+>> +			abi, LANDLOCK_ABI_LAST);
+>>   	}
+>> +	access_fs_ro &= ruleset_attr.handled_access_fs;
+>> +	access_fs_rw &= ruleset_attr.handled_access_fs;
+>>   
+>>   	ruleset_fd =
+>>   		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>> -- 
+>> 2.37.2
+>>
+> 
