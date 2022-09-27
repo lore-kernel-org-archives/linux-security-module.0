@@ -2,210 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12739C6FA82
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Sep 2022 16:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 546DCC6FA83
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Sep 2022 16:54:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232607AbiI0QvN (ORCPT
+        id S231666AbiI0Qyf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Sep 2022 12:51:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51198 "EHLO
+        Tue, 27 Sep 2022 12:54:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233265AbiI0QuO (ORCPT
+        with ESMTP id S232532AbiI0QyN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Sep 2022 12:50:14 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC1A5FDE6
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Sep 2022 09:50:11 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id d24so9615639pls.4
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Sep 2022 09:50:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=Y5IIjhYcp6pllpBstUKppAn5vOER8d/5NeFiMFC+AZ4=;
-        b=KtOFCJo06CDDr+BAxpO/ygHq6cEPoZynIvZgbfM1UHBzDuHQUJ5CbEi4ZoiG9svTxR
-         pKrL9ectGlvt8OIUq4guOEuCs5QSQsuOcd71aO/aHyyn3G+JRcxLp4QddwkV6WaeekXJ
-         p/dLQjZ0L0skPBXMyfxZMM9L8/y7cz6FrOn3c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=Y5IIjhYcp6pllpBstUKppAn5vOER8d/5NeFiMFC+AZ4=;
-        b=hBuXVR0ox8L3VTdJvIAVBIMlZdaT7ySz+Xqvm7FBqCh+h2osxNfIpc/VhRkL0xO29T
-         vFJuAqKXwXOto8tMJE2kSEaiE1Za71Wyzw6Ls5UJDssWONWrzEzv/ccBYaowldz7kRiA
-         c2s1TcqI3CQ4cDheAUtfeDGZnXOuRCfnHy06Tiphv/rmdaCd01986t6752ye9w/N2vAN
-         H354Dsxt0noBU9RjtndaQpv5HX5CwjKMm3ZagqFn6gieCFv28pZTfjrxhctbh0qY+fDh
-         fv0Mxu+dOEVIOqwTj3sPgqazFU20WA0c4U6UztSq99LK1/ewPaVYLhlzQggFxaI9cf+s
-         V/0g==
-X-Gm-Message-State: ACrzQf3pXAzZ+9jbiyVdTpcadbKHi7gFC53mBZnwiP3RORueTyAyGWV6
-        katFuez2jKl1h0WyXT6Id5YQxw==
-X-Google-Smtp-Source: AMsMyM4ctE5xgYsg5LsKG4IlQynNCZ/9CXt4peHvCFJnISdc8MiKkgtgmmifk2yFFB9mBJnY2OBKVA==
-X-Received: by 2002:a17:90a:1096:b0:202:c5a9:bf1e with SMTP id c22-20020a17090a109600b00202c5a9bf1emr5669884pja.3.1664297411430;
-        Tue, 27 Sep 2022 09:50:11 -0700 (PDT)
-Received: from evgreen-glaptop.lan ([73.231.74.141])
-        by smtp.gmail.com with ESMTPSA id p13-20020a63950d000000b00434272fe870sm1753509pgd.88.2022.09.27.09.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Sep 2022 09:50:10 -0700 (PDT)
-From:   Evan Green <evgreen@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-integrity@vger.kernel.org, apronin@chromium.org,
-        dlunev@google.com, jarkko@kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Ben Boeckel <me@benboeckel.net>, rjw@rjwysocki.net,
-        corbet@lwn.net, linux-pm@vger.kernel.org, zohar@linux.ibm.com,
-        Kees Cook <keescook@chromium.org>,
-        Eric Biggers <ebiggers@kernel.org>, jejb@linux.ibm.com,
-        gwendal@chromium.org, Matthew Garrett <mgarrett@aurora.tech>,
-        Evan Green <evgreen@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Hao Wu <hao.wu@rubrik.com>, James Morris <jmorris@namei.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v3 06/11] security: keys: trusted: Verify creation data
-Date:   Tue, 27 Sep 2022 09:49:17 -0700
-Message-Id: <20220927094559.v3.6.I6cdb522cb5ea28fcd1e35b4cd92cbd067f99269a@changeid>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20220927164922.3383711-1-evgreen@chromium.org>
-References: <20220927164922.3383711-1-evgreen@chromium.org>
+        Tue, 27 Sep 2022 12:54:13 -0400
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [IPv6:2001:1600:3:17::8faf])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8009CFB314
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Sep 2022 09:52:46 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4McQfC4NM4zMqnZC;
+        Tue, 27 Sep 2022 18:52:35 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4McQfB5Tpwz3j;
+        Tue, 27 Sep 2022 18:52:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1664297555;
+        bh=zz9l4xpKfZ/apNznukdF5CRsTs4o3l6iVFdsTZpnrBw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=NlYeqLYZNCrL/XPHBSWu4pPUXsK8dfEBITM9q/9z3YnRYjjlB5Ewt0C6C0Wzi/Zi3
+         0d/k49Bkkj7P9rvrMoer54C8BSSlXatP+0vLrbSb2KfB0qm1B7NjgxA8/w/Zsa734h
+         Bi+p1bjBUayuxsT4rm8hOv6AzvDs5fl1r+Gkdma4=
+Message-ID: <2200767d-ef88-b8dc-b5bd-f0b8e65d4cef@digikod.net>
+Date:   Tue, 27 Sep 2022 18:52:34 +0200
 MIME-Version: 1.0
+User-Agent: 
+Subject: Re: [PATCH v1 3/3] landlock: Fix documentation style
+Content-Language: en-US
+To:     Bagas Sanjaya <bagasdotme@gmail.com>
+Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20220923154207.3311629-1-mic@digikod.net>
+ <20220923154207.3311629-4-mic@digikod.net> <Yy7S07GpqZEY4J8n@debian.me>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <Yy7S07GpqZEY4J8n@debian.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-If a loaded key contains creation data, ask the TPM to verify that
-creation data. This allows users like encrypted hibernate to know that
-the loaded and parsed creation data has not been tampered with.
 
-Suggested-by: Matthew Garrett <mjg59@google.com>
-Signed-off-by: Evan Green <evgreen@chromium.org>
+On 24/09/2022 11:50, Bagas Sanjaya wrote:
+> On Fri, Sep 23, 2022 at 05:42:07PM +0200, Mickaël Salaün wrote:
+>> It seems that all code should use double backquotes, which is also used
+>> to convert "%" defines.  Let's use an homogeneous style and remove all
+>> use of simple backquotes (which should only be used for emphasis).
+>>
+> 
+> A little nit: the kernel log content at the opening paragraph should
+> also be in inline code:
 
----
-Source material for this change is at:
-https://patchwork.kernel.org/project/linux-pm/patch/20210220013255.1083202-9-matthewgarrett@google.com/
+Is there some precedent? Explicit quotes (") seems more appropriate 
+because we are talking about a text string (not a command nor a code 
+snippet).
 
-Changes in v3:
- - Changed funky tag to suggested-by (Kees). Matthew, holler if you want
-   something different.
-
-Changes in v2:
- - Adjust hash len by 2 due to new ASN.1 storage, and add underflow
-   check.
-
- include/linux/tpm.h                       |  1 +
- security/keys/trusted-keys/trusted_tpm2.c | 77 ++++++++++++++++++++++-
- 2 files changed, 77 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 8320cbac6f4009..438f8bc0a50582 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -224,6 +224,7 @@ enum tpm2_command_codes {
- 	TPM2_CC_SELF_TEST	        = 0x0143,
- 	TPM2_CC_STARTUP		        = 0x0144,
- 	TPM2_CC_SHUTDOWN	        = 0x0145,
-+	TPM2_CC_CERTIFYCREATION	        = 0x014A,
- 	TPM2_CC_NV_READ                 = 0x014E,
- 	TPM2_CC_CREATE		        = 0x0153,
- 	TPM2_CC_LOAD		        = 0x0157,
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index a7ad83bc0e5396..c76a1b5a2e8471 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -703,6 +703,74 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 	return rc;
- }
- 
-+/**
-+ * tpm2_certify_creation() - execute a TPM2_CertifyCreation command
-+ *
-+ * @chip: TPM chip to use
-+ * @payload: the key data in clear and encrypted form
-+ * @blob_handle: the loaded TPM handle of the key
-+ *
-+ * Return: 0 on success
-+ *         -EINVAL on tpm error status
-+ *         < 0 error from tpm_send or tpm_buf_init
-+ */
-+static int tpm2_certify_creation(struct tpm_chip *chip,
-+				 struct trusted_key_payload *payload,
-+				 u32 blob_handle)
-+{
-+	struct tpm_header *head;
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CERTIFYCREATION);
-+	if (rc)
-+		return rc;
-+
-+	/* Use TPM_RH_NULL for signHandle */
-+	tpm_buf_append_u32(&buf, 0x40000007);
-+
-+	/* Object handle */
-+	tpm_buf_append_u32(&buf, blob_handle);
-+
-+	/* Auth */
-+	tpm_buf_append_u32(&buf, 9);
-+	tpm_buf_append_u32(&buf, TPM2_RS_PW);
-+	tpm_buf_append_u16(&buf, 0);
-+	tpm_buf_append_u8(&buf, 0);
-+	tpm_buf_append_u16(&buf, 0);
-+
-+	/* Qualifying data */
-+	tpm_buf_append_u16(&buf, 0);
-+
-+	/* Creation data hash */
-+	if (payload->creation_hash_len < 2) {
-+		rc = -EINVAL;
-+		goto out;
-+	}
-+
-+	tpm_buf_append_u16(&buf, payload->creation_hash_len - 2);
-+	tpm_buf_append(&buf, payload->creation_hash + 2,
-+		       payload->creation_hash_len - 2);
-+
-+	/* signature scheme */
-+	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
-+
-+	/* creation ticket */
-+	tpm_buf_append(&buf, payload->tk, payload->tk_len);
-+
-+	rc = tpm_transmit_cmd(chip, &buf, 6, "certifying creation data");
-+	if (rc)
-+		goto out;
-+
-+	head = (struct tpm_header *)buf.data;
-+
-+	if (be32_to_cpu(head->return_code) != TPM2_RC_SUCCESS)
-+		rc = -EINVAL;
-+out:
-+	tpm_buf_destroy(&buf);
-+	return rc;
-+}
-+
- /**
-  * tpm2_unseal_trusted() - unseal the payload of a trusted key
-  *
-@@ -728,8 +796,15 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
- 		goto out;
- 
- 	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
--	tpm2_flush_context(chip, blob_handle);
-+	if (rc)
-+		goto flush;
-+
-+	if (payload->creation_len)
-+		rc = tpm2_certify_creation(chip, payload, blob_handle);
- 
-+
-+flush:
-+	tpm2_flush_context(chip, blob_handle);
- out:
- 	tpm_put_ops(chip);
- 
--- 
-2.31.0
-
+> 
+> ---- >8 ----
+> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> index cec780c2f4973c..5dbd577b5f58b7 100644
+> --- a/Documentation/userspace-api/landlock.rst
+> +++ b/Documentation/userspace-api/landlock.rst
+> @@ -19,10 +19,10 @@ unexpected/malicious behaviors in user space applications.  Landlock empowers
+>   any process, including unprivileged ones, to securely restrict themselves.
+>   
+>   We can quickly make sure that Landlock is enabled in the running system by
+> -looking for "landlock: Up and running" in kernel logs (as root): ``dmesg | grep
+> -landlock || journalctl -kg landlock`` .  Developers can also easily check for
+> -Landlock support with a :ref:`related system call <landlock_abi_versions>`.  If
+> -Landlock is not currently supported, we need to :ref:`configure the kernel
+> +looking for ``landlock: Up and running`` in kernel logs (as root): ``dmesg |
+> +grep landlock || journalctl -kg landlock`` .  Developers can also easily check
+> +for Landlock support with a :ref:`related system call <landlock_abi_versions>`.
+> +If Landlock is not currently supported, we need to :ref:`configure the kernel
+>   appropriately <kernel_support>`.
+>   
+>   Landlock rules
+> 
+> Thanks.
+> 
