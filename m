@@ -2,86 +2,252 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DC5C32771
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 16:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A4AC32771
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 18:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234221AbiI1Qtb (ORCPT
+        id S232725AbiI1ScO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Sep 2022 12:49:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35404 "EHLO
+        Wed, 28 Sep 2022 14:32:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233713AbiI1Qta (ORCPT
+        with ESMTP id S232518AbiI1ScM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Sep 2022 12:49:30 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C2AA7DF73
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Sep 2022 09:49:28 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id o2so673172ils.0
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Sep 2022 09:49:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=tyxXa+fqMw9TkY4KQgG89eDPP5BtjkA+pZDm/WZOUiI=;
-        b=BdcdM2XrtsetmBhZplbKazKdWb4E6gdw2OS01Z5mTiLoaX2kosi5tKy74/MYEpktqp
-         +vRZZuhzqVN9f0qIPilK3eq8V6+bt05fJC20yMi8qBxx6/XZW9ANOcXKHTP5n1L/Jf1U
-         kTOztVeWsfO+YKF5wjTX3oReXyuOhDonAjj50=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=tyxXa+fqMw9TkY4KQgG89eDPP5BtjkA+pZDm/WZOUiI=;
-        b=Cpcf1BCq6nL4wAKOFlcvq1XrytlSon9zZFIwl7pqxxqaa0aYnX9j0Jt49N63MDU58p
-         RxKj1NEKpzhZLjMFDFmzvU3KeXKLTA9X0cAfQGC2Kq5hCVrczHuncR/+c52bjAMyCrK7
-         dY+YUIsYBUMhCIi67pq7MN4WflLlqn7nK+LI1wXhDcRKp1Ml0KQhmebCS5HzufGG014O
-         XaUDL1vMui/XSL+QwxParOzyhsH2+7or7jh3u9zTfhKlHkHWWQmRDucKII4UY9FgW2ok
-         0aYjd622PneOiydH7dCB3QZ/wk0AZkFeSg48Su8HLN0qm9bzwqbKrJ6l8t/tzmzAxH5G
-         lCkA==
-X-Gm-Message-State: ACrzQf1lmXu2X70hCWxiGYQqvccC6uwpl0tPAhzBmXp1WysaWdFMRFHI
-        P3oox/uwqO9g+d5IB8fTkUOteHQeS4WirC1RFtesXw==
-X-Google-Smtp-Source: AMsMyM7+bphBwdxvhSyNVO1ypaG14gwvteR+YyN14PU7dGQeWrrAkJ7QYDW0erl81sKbHAWMj0ge880qz2QspRZ/mq0=
-X-Received: by 2002:a05:6e02:2186:b0:2f5:cc0b:fb14 with SMTP id
- j6-20020a056e02218600b002f5cc0bfb14mr14894803ila.315.1664383767861; Wed, 28
- Sep 2022 09:49:27 -0700 (PDT)
+        Wed, 28 Sep 2022 14:32:12 -0400
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39F3C7B2B1;
+        Wed, 28 Sep 2022 11:32:06 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Md4pX1XDxzMqKj6;
+        Wed, 28 Sep 2022 20:32:04 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Md4pW2xBnzMpnPh;
+        Wed, 28 Sep 2022 20:32:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1664389924;
+        bh=eflJSf6YLiRl3SjoPJuiiOT14gIGxe9VqHb7grpS9H4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=qwFCm/3kxNfYhCz9plcG3oKiQQwKdhpG0gajN30wlRhgEmebN0CGycqm16+TCv1Z7
+         7RMSoYLAzufUXNw9zrs0I5AILe/27PL1pdqqa+7qQa6HU17HVN8mihNcLIV80paS7h
+         oU8GuSzKnsejXQFEN5QeHRcRfKyn3pD1YTU7Wk4g=
+Message-ID: <e5b0b338-c4e5-8348-1fe0-1d434235dc01@digikod.net>
+Date:   Wed, 28 Sep 2022 20:32:02 +0200
 MIME-Version: 1.0
-References: <20220921185426.1663357-1-jeffxu@chromium.org> <20220921185426.1663357-2-jeffxu@chromium.org>
- <CAHC9VhS-jv5cpSdq7dxFGYH=z=5grQceNMyjroeL2KHdrVUV6g@mail.gmail.com>
- <CABi2SkXRxomrYn-xUf3B+XswmQjXZUJXmYJECmr_nBfrZWwqkA@mail.gmail.com>
- <CAHC9VhRuUZxdsVQftqWa0zEuNAxk8ur0-TZp5KecJ537hRONRQ@mail.gmail.com>
- <875yhe6ial.fsf@defensec.nl> <CABi2SkW4P+s-+5X7UGYYp1tUtT350_7UfQx_KYqHAyYe31ORWw@mail.gmail.com>
- <CAHC9VhTGDJjFm-3abKtXia-k5jyz7ngV+ZcUkof-=Vt1toLyBw@mail.gmail.com>
-In-Reply-To: <CAHC9VhTGDJjFm-3abKtXia-k5jyz7ngV+ZcUkof-=Vt1toLyBw@mail.gmail.com>
-From:   Jeff Xu <jeffxu@chromium.org>
-Date:   Wed, 28 Sep 2022 09:49:17 -0700
-Message-ID: <CABi2SkUYUJadPMh2yNYgYBH+BqDKs8hhNg7TLKrAahKwVQRUbg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] Add CONFIG_SECURITY_SELINUX_PERMISSIVE_DONTAUDIT
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Dominick Grift <dominick.grift@defensec.nl>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        jorgelo@chromium.org, groeck@chromium.org,
-        Luis Hector Chavez <lhchavez@google.com>,
-        Luis Hector Chavez <lhchavez@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Subject: Re: [PATCH v6 2/5] landlock: Support file truncation
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+References: <20220908195805.128252-1-gnoack3000@gmail.com>
+ <20220908195805.128252-3-gnoack3000@gmail.com>
+ <2c4db214-e425-3e40-adeb-9e406c3ea2f9@digikod.net> <Yy2W14NMQBvfG9Fw@nuc>
+ <0dea6e07-dd98-0d3c-4c2b-7f45e06374ed@digikod.net> <YzCZVuP1d9GpQt+k@nuc>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <YzCZVuP1d9GpQt+k@nuc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 26, 2022 at 2:41 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Mon, Sep 26, 2022 at 2:03 PM Jeff Xu <jeffxu@chromium.org> wrote:
-> > Thanks for details about the unconfined_t domain, this is one option.
-> >
-> > IMHO: between permissive domain + audit log and unconfined_t, there might
-> > be room for letting each permissive domain decide its own audit logging
-> > strategy. The reasons are ...
->
-> I'm sorry, but I don't want to support a permissive mode that doesn't
-> generate denial records in the upstream kernel at this point in time.
->
-No problem, I understand.
 
-Thanks
-Best Regards
-Jeff
+On 25/09/2022 20:09, Günther Noack wrote:
+> On Fri, Sep 23, 2022 at 10:53:23PM +0200, Mickaël Salaün wrote:
+>> On 23/09/2022 13:21, Günther Noack wrote:
+>>> On Mon, Sep 12, 2022 at 09:41:32PM +0200, Mickaël Salaün wrote:
+>>>> On 08/09/2022 21:58, Günther Noack wrote:
+>>>>> Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
+>>>>
+>>>> [...]
+>>>>
+>>>>> +/**
+>>>>> + * get_path_access_rights - Returns the subset of rights in access_request
+>>>>> + * which are permitted for the given path.
+>>>>> + *
+>>>>> + * @domain: The domain that defines the current restrictions.
+>>>>> + * @path: The path to get access rights for.
+>>>>> + * @access_request: The rights we are interested in.
+>>>>> + *
+>>>>> + * Returns: The access mask of the rights that are permitted on the given path,
+>>>>> + * which are also a subset of access_request (to save some calculation time).
+>>>>> + */
+>>>>> +static inline access_mask_t
+>>>>> +get_path_access_rights(const struct landlock_ruleset *const domain,
+>>>>> +		       const struct path *const path,
+>>>>> +		       access_mask_t access_request)
+>>>>> +{
+>>>>> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+>>>>> +	unsigned long access_bit;
+>>>>> +	unsigned long access_req;
+>>>>> +
+>>>>> +	init_layer_masks(domain, access_request, &layer_masks);
+>>>>> +	if (!check_access_path_dual(domain, path, access_request, &layer_masks,
+>>>>> +				    NULL, 0, NULL, NULL)) {
+>>>>> +		/*
+>>>>> +		 * Return immediately for successful accesses and for cases
+>>>>> +		 * where everything is permitted because the path belongs to an
+>>>>> +		 * internal filesystem.
+>>>>> +		 */
+>>>>> +		return access_request;
+>>>>> +	}
+>>>>> +
+>>>>> +	access_req = access_request;
+>>>>> +	for_each_set_bit(access_bit, &access_req, ARRAY_SIZE(layer_masks)) {
+>>>>> +		if (layer_masks[access_bit]) {
+>>>>> +			/* If any layer vetoed the access right, remove it. */
+>>>>> +			access_request &= ~BIT_ULL(access_bit);
+>>>>> +		}
+>>>>> +	}
+>>>>
+>>>> This seems to be redundant with the value returned by init_layer_masks(),
+>>>> which should be passed to check_access_path_dual() to avoid useless path
+>>>> walk.
+>>>
+>>> True, I'll use the result of init_layer_masks() to feed it back to
+>>> check_access_path_dual() to avoid a bit of computation.
+>>>
+>>> Like this:
+>>>
+>>>           effective_access_request =
+>>> 		init_layer_masks(domain, access_request, &layer_masks);
+>>> 	if (!check_access_path_dual(domain, path, effective_access_request,
+>>> 	    &layer_masks, NULL, 0, NULL, NULL)) {
+>>> 		// ...
+>>> 	}
+>>
+>> correct
+>>
+>>>
+>>> Overall, the approach here is:
+>>>
+>>> * Initialize the layer_masks, so that it has a bit set for every
+>>>     access right in access_request and layer where that access right is
+>>>     handled.
+>>>
+>>> * check_access_path_dual() with only the first few parameters -- this
+>>>     will clear all the bits in layer masks which are actually permitted
+>>>     according to the individual rules.
+>>>
+>>>     As a special case, this *may* return 0 immediately, in which case we
+>>>     can (a) save a bit of calculation in the loop below and (b) we might
+>>>     be in the case where access is permitted because it's a file from a
+>>>     special file system (even though not all bits are cleared). If
+>>>     check_access_path_dual() returns 0, we return the full requested
+>>>     access_request that we received as input. >
+>>> * In the loop below, if there are any bits left in layer_masks, those
+>>>     are rights which are not permitted for the given path. We remove
+>>>     these from access_request and return the modified access_request.
+>>>
+>>>
+>>>> This function is pretty similar to check_access_path(). Can't you change it
+>>>> to use an access_mask_t pointer and get almost the same thing?
+>>>
+>>> I'm shying away from this approach. Many of the existing different use
+>>> cases are already realized by "doing if checks deep down". I think it
+>>> would make the code more understandable if we managed to model these
+>>> differences between use cases already at the layer of function calls.
+>>> (This is particularly true for check_access_path_dual(), where in
+>>> order to find out how the "single" case works, you need to disentangle
+>>> to a large extent how the much more complicated dual case works.)
+>>
+>> I agree that check_access_path_dual() is complex, but I couldn't find a
+>> better way.
+> 
+> It seems out of the scope of this patch set, but I sometimes find it
+> OK to just duplicate the code and have a set of tests to demonstrate
+> that the two variants do the same thing.
+> 
+> check_access_path_dual() is mostly complex because of performance
+> reasons, as far as I can tell, and it might be possible to check its
+> results against a parallel implementation of it which runs slower,
+> uses more memory, but is more obviously correct. (I have used one
+> myself to check against when developing the truncate patch set.)
+> 
+>>> If you want to unify these two functions, what do you think of the
+>>> approach of just using get_path_access_rights() instead of
+>>> check_access_path()?
+>>>
+>>> Basically, it would turn
+>>>
+>>> return check_access_path(dom, path, access_request);
+>>>
+>>> into
+>>>
+>>> if (get_path_access_rights(dom, path, access_request) == access_request)
+>>> 	return 0;
+>>> return -EACCES;
+>>>
+>>> This is slightly more verbose in the places where it's called, but it
+>>> would be more orthogonal, and it would also clarify that -EACCES is
+>>> the only possible error in the "single" path walk case.
+>>>
+>>> Let me know what you think.
+>>
+>> What about adding an additional argument `access_mask_t *const
+>> access_allowed` to check_access_path_dual() which returns the set of
+>> accesses (i.e. access_masked_parent1 & access_masked_parent2) that could
+>> then be stored to landlock_file(file)->allowed_access? If this argument is
+>> NULL it should just be ignored. What is left from get_path_access_rights()
+>> could then be merged into hook_file_open().
+> 
+> IMHO, check_access_path_dual() does not seem like the right place to
+> add this. This functionality is not needed in any of the "dual path"
+> cases so far, and I'm not sure what it would mean. The necessary
+> information can also be easily derived from the resulting layer_masks,
+> which is already exposed in the check_access_path_dual() interface,
+> and I also believe that this approach is at least equally fast as
+> updating it on the fly when changing the layer_masks.
+> 
+> I could be convinced to add a `access_mask_t *const access_allowed`
+> argument to check_access_path() if you prefer that, but then again, in
+> that case the returned boolean can be reconstructed from the new
+> access_allowed variable, and we could as well make check_access_path()
+> return the access_allowed result instead of the boolean and let
+> callers check equality with what they expected...? (I admittedly don't
+> have a good setup to test the performance right now, but it looks like
+> a negligible difference to me?)
 
-> --
-> paul-moore.com
+Good idea, let's try to make check_access_path_dual() returns the 
+allowed accesses (according to the request) and rename it to 
+get_access_path_dual(). unmask_layers() could be changed to return the 
+still-denied accesses instead of a boolean, and we could use this values 
+(for potential both parents) to return allowed_parent1 & allowed_parent2 
+(with access_mask_t types). This would also simplify is_eaccess() and 
+its calls could be moved to current_check_refer_path(). This would merge 
+get_path_access_rights() into check_access_path_dual() and make the 
+errno codes more explicit per hook or defined in check_access_path().
+
+
+> 
+> Here are the options we have discussed, in the order that I would
+> prefer them:
+> 
+> * to keep it as a separate function as it already is,
+>    slightly duplicating check_access_path(). (I think it's cleaner,
+>    because the code path for the rest of the hooks other than
+>    security_file_open() stays simpler.)
+> 
+> * to make check_access_path() return the access_allowed access mask
+>    and make callers check that it covers the access_request that they
+>    asked for (see example from my previous mail on this thread). (This
+>    is equivalent to discarding the existing check_access_path() and
+>    using the get_path_access() function instead.)
+> 
+> * to add a `access_mask_t *const access_allowed` argument to
+>    check_access_path(), which is calculated if it's non-NULL based on
+>    the layer_masks result. It would be used from the security_file_open
+>    hook.
+> 
+> * to add a `access_mask_t *const access_allowed` argument to
+>    check_access_path_dual(). This doesn't make much sense, IMHO,
+>    because an on-the-fly calculation of this result does not look like
+>    a performance benefit to me, and calculating it based on the two
+>    resulting layer_masks is already possible now. It's also not clear
+>    to me what it would mean to calculate an access_allowed on two paths
+>    at once, and what that would be used for.
+> 
+> Let me know which option you prefer. In the end, I don't feel that
+> strongly about it and I'm happy to do this either way.
