@@ -2,158 +2,212 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BD9C04A95
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 16:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8B6C04A95
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 16:34:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234067AbiI1Qdv (ORCPT
+        id S231919AbiI1QeM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Sep 2022 12:33:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51846 "EHLO
+        Wed, 28 Sep 2022 12:34:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231919AbiI1Qdu (ORCPT
+        with ESMTP id S234046AbiI1QeL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Sep 2022 12:33:50 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7ABE24F0E;
-        Wed, 28 Sep 2022 09:33:48 -0700 (PDT)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28SGWftt001897;
-        Wed, 28 Sep 2022 16:33:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=YxGK65bERyHGDZ0NikSMS6Pq247mdVcfcfK5VTcrENA=;
- b=lVYXE/nwpL2wNycJGv6Vp4n8wouzb9Gmx9x2Uuau434NIVBpYcCZFTfdZZnf1818nlPO
- HBgd2VlI8VKdj8CNiEsQRhO3aPZm1UF0bB3RkHF5FlGIPG//UHGy9nxzzQGgo1PBmbp7
- YKjsMSDi0NGc/3O4wvGml0qvM3z7TRpXjN7Feoz+WVQ050EV3FJN7aTti45tY+3DoIuS
- OTR3eH+UzZuDStT7R5AtZmC8ZtrcSPg69giyoMG6/RTkoMCQyHmLbqfNtJtRlptnshmq
- ukX+Nmst6qo/Z2UWAysgUPGiBNfB9AR3CQkCbKQstygzKYhxHentaQshn3hfvHjoBRV5 gw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jvqxp4ggu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Sep 2022 16:33:43 +0000
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28SEuxhE004743;
-        Wed, 28 Sep 2022 16:33:42 GMT
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jvqxp4ggc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Sep 2022 16:33:42 +0000
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28SGLFMt013293;
-        Wed, 28 Sep 2022 16:33:42 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma05wdc.us.ibm.com with ESMTP id 3jssh9v936-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Sep 2022 16:33:42 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com ([9.208.128.114])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28SGXfjb3474034
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Sep 2022 16:33:41 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E0D1D5805C;
-        Wed, 28 Sep 2022 16:33:40 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B136D58059;
-        Wed, 28 Sep 2022 16:33:39 +0000 (GMT)
-Received: from sig-9-65-238-59.ibm.com (unknown [9.65.238.59])
-        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 28 Sep 2022 16:33:39 +0000 (GMT)
-Message-ID: <42dbb8f6bc0a3e8339a5283bf26a50bd7bec3767.camel@linux.ibm.com>
-Subject: Re: [PATCH] KEYS: encrypted: fix key instantiation with
- user-provided data
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nikolaus Voss <nv@vosn.de>
-Cc:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yael Tzur <yaelt@google.com>
-Date:   Wed, 28 Sep 2022 12:33:39 -0400
-In-Reply-To: <2fe0144d-ee19-ec17-9566-16bce6386925@vosn.de>
-References: <20220919072317.E41421357@mail.steuer-voss.de>
-           <53730789a41358673b1715dd650706e9ffcb1199.camel@linux.ibm.com>
-           <35fd816-d755-967-5712-b5496875ac7a@vosn.de>
-          <2ee1e3e68d847001c4bf856d980a553e52de5023.camel@linux.ibm.com>
-          <439012d8-dd4-7fd2-3788-49cf72faa99@vosn.de>
-         <6b4229386dced275f745619f190f64a71b7c0aec.camel@linux.ibm.com>
-         <2fe0144d-ee19-ec17-9566-16bce6386925@vosn.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
+        Wed, 28 Sep 2022 12:34:11 -0400
+Received: from sonic304-27.consmr.mail.ne1.yahoo.com (sonic304-27.consmr.mail.ne1.yahoo.com [66.163.191.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 933A01A22C
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Sep 2022 09:34:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1664382849; bh=7GD3XaQSzZc6R1JMtZJ+V4XWK83doEoxRcgUzn26FoY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=GeKJ6iekUkiXl4J4supPFhaiBhTiHoatvkVFLcpJkxdhc3JuM58+EUdfY/9vMu4A/3Vgsc3Ja+r+Kc4RGEtuxYp7LMciOXFnRp1h4zA7+yc505vSCtJcQvEAwd7q8I0DQhY6jmYKuSQhajFv3mGtknWdLQq/Y8o90LLiUDEcIOSkXCEEmMJ8CCDs209QDyWhNwCSdjrM4Gp/yDCPPTGmgDtnMagek5PyykZqX1UcgztZNSKVN04169xZd+H2SHJDdo7Fgwre01nD40HJliYNUmJ/vEE70lS09LxatbzQYRI0NmK75voCas5nNMVv1S29zfv+vG/VN5Jl7/dX2yNB8A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1664382849; bh=9HDmEb0h7VqmVFiaZkb3I4lZt1yFrL0SfBxfOUolbsk=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZpTEEYn3PPKYxgYgNZehONC06/jV2n/FCXsPvgOkLAchaAWxhR66cbM6mkGhT3J+nMr5T/cE8qa4zgd9SoQhogc4nDQFRYFPHCpLMlWfJ/ZkrU2IWk+tdYmYTVlBuALvkLfYshz6MNCF8idYRT+FYag+7ffAzNMavA8SGYYFqPJsth0A1JCLdggypzr4kbcUM6igm/ntqxi/937VJSuH4BEJm1FQtPaOqn6qi86dBAHls/T1GeD3B2B0jdduuXEyrTHfnTjPLYKXduHDMFfYbjGwcGuYnvP3kYZAJnVauXLCCM7L4XrvlaFM5lGsxQKquVsMWoKV1xa4oT19bnwjsw==
+X-YMail-OSG: EYBYW0EVM1nhyu87cgMqoQJlPetue2wiA28SUUGjU7W4RB5VkGd8aK.hR1nlXNa
+ 2BMWpU6hSbBJu9JW0mEtMa2KdhDSx4KsdxUydM7QynSq7Le9Qt4116En0LmPkhE7GQtpcnsbhoVX
+ YASGIjDT4.Kzy.JsvryUCBf0Bnqfsh2jHGFufj2YAPAWWkxOdylNXn2BJH4J7wcpMuCsLz9azfYO
+ ma7kQPtrVb7kGCepbw2jIo9gEXZ4umGdjIarduaCpm61eVB7ooF2rQV.wLhtBIgDcRcUOcSalxEu
+ qhmWwTw0bjP64hDAu81_5rKJBpRHnUwj1lZSWITBz0WDjyFc.AIlM9lEkI3CyYwa8B9ndChVArqS
+ JtHvGjxzcsJKTqI2yu3f05jUiQUatSDwTooXc0.Ic8Pbdgc.MShFGPKIXcL4LgrufXd.nf9aBq9O
+ oeWHqHQDufoeTFKl6xNvndh40Gjqx9SunQyV.U80S4i5uCgR3LipWWBsJ3cMeG9YygAu1NI8gce4
+ pzq9AYqlpua8wNU6._540MNsoz1A_2R1q0SfogedC2gpvZibb0DbUsIiAEVfOsVC604ciMJHrKNC
+ 6ZeQVM9o3M4VXpMI3hsYtjrQmny3w3L_4hYGXNJdfk3L_Y70twXaEneFVOYSpEDK1kda6xBF_sYo
+ ZhxpkbUSsjehnE0uXIuHAUBineOr3vVN9WyzrU0KlLgulXEv6ff2sEhGesKbYh4bxUnAloO7yrom
+ dztvS3UVSV2.IJxLk21YWtzStqEBih8mHaYQDveu3erZInMXydMYxwmzuh8alvlEURv9oWKMBvKC
+ zkxpcjPdSMepBUbfat8iJg2arQvqkckM7bNsM5mWy7RbfuQtekGQWh9sQ.jfvNW.yQ4cxLaL2LgG
+ L5X6tbxMkIlxPxZDOZToHfhRVmln4.hOXLMWZotfcsq7Hn2xA067Mwx07lqNbMAAD8jWq63t3.si
+ WaYAWv.yKDmjERIG9gpbWJpQ2tYsOgz2e8nY._s.L2uQZKKTea3MhrIMtDTHygAqa5QA4cBzamZq
+ 0xqexBEf1f0vHAJiDMzehDV.a3u563d1H8uv17bauMlQ8rQ47tJgEOzomOrCmtJ9pLDGvSCdrJtA
+ 0CdN5hr9sLcPt2IuCOhgJZDafd_Q2vDoFJfZapz0YoaUutRk9V3vAxCcqNLtLeu7G45hoyjyrKrQ
+ 06JzUlFiqQMKdzJUtOrcR4U1j.tz4FbK26Nf.55GKC1jWWw4RrH8x3MOmD6c7OpjfZeC_0RqVoMa
+ HMaOC6YDeI93ArRohcQuj7gURLQ.IYkHgpAZ61yY71_XJsDaeMl5_54bYYff6o5Dvk5n8lkJ7l0v
+ AE7RpgrtnQb1ul9Klbl1X0t387nhGPJMVA5rXg2sPvirSjnmxK5bkYuJk7scpwN0UYUR2lEpTobf
+ rGNBE6uuNqCnCfbn4AFH7QAQWQ5JVwhbKDDhnncbf47NM.ULKzRmB.SxJM7_KwVD6bcWDEF08Yx4
+ qMbEovrjkfBjXy8wGCAJOGx.yMmkFj9ZLwF0UPToLjIlZ97t8MLTLrZ5wXGwvXjApCX0bPh7jjHO
+ cQhUjNbj.eJBVYkITjAyZq2FzbexSjL.76slRn3XKA_ETiKfDFgN.Xlz5_drtPhUNZAUAPBGB4gC
+ E26V_0_3iFC.Zbz74.BIUVEp3XCcqE_3il1ws4FnWP05U3WDbkk5PTv7tT1pWBkC8ziln5fUCfK_
+ tbzSLc0KMuhreYlDy__eiuxPC41itapfJClKAYya0a77ciQZPDPjCsHxfmpvvY3v175Fi5kE_ciO
+ DH333sqKE7WHuTEK2ZATvbDVq13fKNpu3GKWrXd1NrR5GnyZRD1o1cjVe5eclWPDEYksFpo8WD_w
+ lLmu0ah26sALtkw9RTciCmotzgousJBo7MIAM64TLblWIjY7BtR5UoLaqMHcCdUeZ3_9A0ea8zEh
+ ES78f3wfgKhHHeQsAM_.hqfH4FUZ1e6FYNXGtdlTqbwuHQeGaJKC_ESMAiv8YrSMEAPuilHlXmig
+ zfSb6vKNLByF.F6aegjiV5dAiNCqx3O8gE0ghTMDTCLQdkTsgHphyClFKMfVA3Eiu196l.tE9AHj
+ jwZdvJwdTRi8vj19RyC9KAyInh860ssTCEwIzugWIDn.nFNzPn_D0dCWhhy2d0T4OEJxTLK5sbsG
+ 80LqDwKU.FsOBlKcBDW8BnsfNfuryUw8vMByKDbnTuMQ4gxPzn5W4zunzdyfV9DocuqQ58rel8jd
+ yJdK30WdwUBf_E9e7gFTqrStoFuxORKAZEKsFr5xxhIuL0x6Y4MV4WpmEuqb2KxBacotuswEJ._u
+ BZjP5iUCPQHANlo5LOTuYg62zdyHz1byniU2587gJBQuK
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Wed, 28 Sep 2022 16:34:09 +0000
+Received: by hermes--production-gq1-7dfd88c84d-h7f6x (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a2bdf6f43be4df31fa68c8e6e37af63a;
+          Wed, 28 Sep 2022 16:34:08 +0000 (UTC)
+Message-ID: <6ea0cd27-6076-4d49-1a93-cba1879f0ca5@schaufler-ca.com>
+Date:   Wed, 28 Sep 2022 09:34:06 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v3 11/29] smack: implement get, set and remove acl hook
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     Seth Forshee <sforshee@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org, casey@schaufler-ca.com
+References: <20220928160843.382601-1-brauner@kernel.org>
+ <20220928160843.382601-12-brauner@kernel.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20220928160843.382601-12-brauner@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: hIywS9S9ebs2kWr8-Xst2qFiBsJQ_hsC
-X-Proofpoint-GUID: sh6o-FOlLD1aPHMsdoQc-1wtAeHSbW90
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-28_07,2022-09-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- mlxlogscore=999 impostorscore=0 mlxscore=0 suspectscore=0 spamscore=0
- priorityscore=1501 phishscore=0 bulkscore=0 lowpriorityscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209280099
+X-Mailer: WebService/1.1.20702 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-09-28 at 14:08 +0200, Nikolaus Voss wrote:
-> On Wed, 21 Sep 2022, Mimi Zohar wrote:
-> > On Wed, 2022-09-21 at 09:24 +0200, Nikolaus Voss wrote:
-> >> On Tue, 20 Sep 2022, Mimi Zohar wrote:
-> >>> On Tue, 2022-09-20 at 18:23 +0200, Nikolaus Voss wrote:
-> >>>> On Tue, 20 Sep 2022, Mimi Zohar wrote:
-> >>>>> On Fri, 2022-09-16 at 07:45 +0200, Nikolaus Voss wrote:
-> >>>>>> Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
-> >>>>>> decrypted data") added key instantiation with user provided decrypted data.
-> >>>>>> The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
-> >>>>>> Fix this to use hex2bin instead.
-> >>>>>
-> >>>>> Thanks, Nikolaus.  We iterated a number of times over what would be the
-> >>>>> safest userspace input.  One of the last changes was that the key data
-> >>>>> should be hex-ascii-encoded.  Unfortunately, the LTP
-> >>>>> testcases/kernel/syscalls/keyctl09.c example isn't hex-ascii-encoded
-> >>>>> and the example in Documentation/security/keys/trusted-encrypted.rst
-> >>>>> just cat's a file.  Both expect the length to be the length of the
-> >>>>> userspace provided data.   With this patch, when hex2bin() fails, there
-> >>>>> is no explanation.
-> >>>>
-> >>>> That's true. But it's true for all occurrences of hex2bin() in this file.
-> >>>> I could pr_err() an explanation, improve the trusted-encrypted.rst example
-> >>>> and respin the patch. Should I, or do you have another suggestion?
-> >>>
-> >>>> I wasn't aware of keyctl09.c, but quickly looking into it, the user data
-> >>>> _is_ hex-ascii-encoded, only the length is "wrong": Imho, the specified
-> >>>> length should be the binary length as this is consistent with key-length
-> >>>> specs in other cases (e.g. when loading the key from a blob).
-> >>>> keyctl09.c could be easy to fix, if only the length is modified. Should
-> >>>> I propose a patch? What is the correct/appropriate workflow there?
-> >>>
-> >>> I'm concerned that this change breaks existing encrypted keys created
-> >>> with user-provided data.  Otherwise I'm fine with your suggestion.
-> >>
-> >> Ok, but this change does not touch the hex-ascii format of encrypted key
-> >> blobs?
-> >
-> > True, but any persistent data based on this key would be affected.
-> 
-> Persistent data is stored encypted with e.g. the master key in hex-ascii 
-> already and should not be affected. Only persistent data stored 
-> unencrypted is affected, but the encrypted-keys stuff is just about 
-> avoiding that. Or do I still misunderstand something?
+On 9/28/2022 9:08 AM, Christian Brauner wrote:
+> The current way of setting and getting posix acls through the generic
+> xattr interface is error prone and type unsafe. The vfs needs to
+> interpret and fixup posix acls before storing or reporting it to
+> userspace. Various hacks exist to make this work. The code is hard to
+> understand and difficult to maintain in it's current form. Instead of
+> making this work by hacking posix acls through xattr handlers we are
+> building a dedicated posix acl api around the get and set inode
+> operations. This removes a lot of hackiness and makes the codepaths
+> easier to maintain. A lot of background can be found in [1].
+>
+> So far posix acls were passed as a void blob to the security and
+> integrity modules. Some of them like evm then proceed to interpret the
+> void pointer and convert it into the kernel internal struct posix acl
+> representation to perform their integrity checking magic. This is
+> obviously pretty problematic as that requires knowledge that only the
+> vfs is guaranteed to have and has lead to various bugs. Add a proper
+> security hook for setting posix acls and pass down the posix acls in
+> their appropriate vfs format instead of hacking it through a void
+> pointer stored in the uapi format.
+>
+> I spent considerate time in the security module infrastructure and
+> audited all codepaths. Smack has no restrictions based on the posix
+> acl values passed through it. The capability hook doesn't need to be
+> called either because it only has restrictions on security.* xattrs. So
+> these all becomes very simple hooks for smack.
+>
+> Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 
-Perhaps an existing encrypted key usage example would help clarify what
-is meant by persistent data.  The two original encrypted key usages are
-the EVM HMAC key and ecryptfs.  The EVM key is an encrypted key used to
-calculate the EVM HMAC, which is stored in security.evm.  In that
-scenario, the persistent data would be the data stored in security.evm.
+BTW: The Smack testsuite is https://github.com/smack-team/smack-testsuite.git
 
-Would this patch break existing kernel/application persistent data
-based on encrypted keys created with user-provided data?
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 
--- 
-thanks,
-
-Mimi
-
+> ---
+>
+> Notes:
+>     /* v2 */
+>     unchanged
+>     
+>     /* v3 */
+>     Paul Moore <paul@paul-moore.com>:
+>     - Add get, and remove acl hook
+>
+>  security/smack/smack_lsm.c | 69 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+>
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 001831458fa2..8247e8fd43d0 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -1393,6 +1393,72 @@ static int smack_inode_removexattr(struct user_namespace *mnt_userns,
+>  	return 0;
+>  }
+>  
+> +/**
+> + * smack_inode_set_acl - Smack check for setting posix acls
+> + * @mnt_userns: the userns attached to the mnt this request came from
+> + * @dentry: the object
+> + * @acl_name: name of the posix acl
+> + * @kacl: the posix acls
+> + *
+> + * Returns 0 if access is permitted, an error code otherwise
+> + */
+> +static int smack_inode_set_acl(struct user_namespace *mnt_userns,
+> +			       struct dentry *dentry, const char *acl_name,
+> +			       struct posix_acl *kacl)
+> +{
+> +	struct smk_audit_info ad;
+> +	int rc;
+> +
+> +	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
+> +	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
+> +	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_WRITE, &ad);
+> +	rc = smk_bu_inode(d_backing_inode(dentry), MAY_WRITE, rc);
+> +	return rc;
+> +}
+> +
+> +/**
+> + * smack_inode_get_acl - Smack check for getting posix acls
+> + * @mnt_userns: the userns attached to the mnt this request came from
+> + * @dentry: the object
+> + * @acl_name: name of the posix acl
+> + *
+> + * Returns 0 if access is permitted, an error code otherwise
+> + */
+> +static int smack_inode_get_acl(struct user_namespace *mnt_userns,
+> +			       struct dentry *dentry, const char *acl_name)
+> +{
+> +	struct smk_audit_info ad;
+> +	int rc;
+> +
+> +	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
+> +	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
+> +
+> +	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_READ, &ad);
+> +	rc = smk_bu_inode(d_backing_inode(dentry), MAY_READ, rc);
+> +	return rc;
+> +}
+> +
+> +/**
+> + * smack_inode_remove_acl - Smack check for getting posix acls
+> + * @mnt_userns: the userns attached to the mnt this request came from
+> + * @dentry: the object
+> + * @acl_name: name of the posix acl
+> + *
+> + * Returns 0 if access is permitted, an error code otherwise
+> + */
+> +static int smack_inode_remove_acl(struct user_namespace *mnt_userns,
+> +				  struct dentry *dentry, const char *acl_name)
+> +{
+> +	struct smk_audit_info ad;
+> +	int rc;
+> +
+> +	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
+> +	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
+> +	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_WRITE, &ad);
+> +	rc = smk_bu_inode(d_backing_inode(dentry), MAY_WRITE, rc);
+> +	return rc;
+> +}
+> +
+>  /**
+>   * smack_inode_getsecurity - get smack xattrs
+>   * @mnt_userns: active user namespace
+> @@ -4772,6 +4838,9 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+>  	LSM_HOOK_INIT(inode_post_setxattr, smack_inode_post_setxattr),
+>  	LSM_HOOK_INIT(inode_getxattr, smack_inode_getxattr),
+>  	LSM_HOOK_INIT(inode_removexattr, smack_inode_removexattr),
+> +	LSM_HOOK_INIT(inode_set_acl, smack_inode_set_acl),
+> +	LSM_HOOK_INIT(inode_get_acl, smack_inode_get_acl),
+> +	LSM_HOOK_INIT(inode_remove_acl, smack_inode_remove_acl),
+>  	LSM_HOOK_INIT(inode_getsecurity, smack_inode_getsecurity),
+>  	LSM_HOOK_INIT(inode_setsecurity, smack_inode_setsecurity),
+>  	LSM_HOOK_INIT(inode_listsecurity, smack_inode_listsecurity),
