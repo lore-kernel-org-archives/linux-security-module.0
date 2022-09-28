@@ -2,216 +2,115 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3619C32771
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 13:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B112C04A95
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 14:12:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234196AbiI1NlT (ORCPT
+        id S234214AbiI1OMH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Sep 2022 09:41:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57738 "EHLO
+        Wed, 28 Sep 2022 10:12:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233179AbiI1NlJ (ORCPT
+        with ESMTP id S231703AbiI1OMG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Sep 2022 09:41:09 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E0E97D78;
-        Wed, 28 Sep 2022 06:41:08 -0700 (PDT)
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28SDarhw029178;
-        Wed, 28 Sep 2022 13:40:54 GMT
+        Wed, 28 Sep 2022 10:12:06 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F9499E2C8;
+        Wed, 28 Sep 2022 07:12:05 -0700 (PDT)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28SCYGnl006798;
+        Wed, 28 Sep 2022 14:11:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  mime-version : content-transfer-encoding; s=pp1;
- bh=Mh2fWVk3fNEf2DhAYeJxnFE3lkUUL1QVUTXLHpMXmPg=;
- b=jyl7wRTq6Gk7BW8atbRWFccufGg4KPj/S7tcFRjs5qIxcEC7zV+gz/QA69AzERRzo0sN
- DPOii7OJ7uzMHb5kbu+G+nOnnHm0PkgPsHY3Hp7Y0UkC2VFIwlBeU8hUhnx4hmxq0Dvv
- WGS7oHbuWHJgy3+fqcyKT3hBHSpK3NRTHQUUywr0lSUF2XgSfsBVYTbcNidy2wZ0pgmy
- qp234ogI149MIknflBq4UjYuSTSbra15mh7aKlNBhTJFoM04bQTOvpPXv4dbSs2J1+Fw
- kbjwOEVGIBAp23dKpFLcKp1J+PTcrFYSrVmMuI5v7iWpouTCW297+4JUJnOxP76/sdFX NQ== 
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jvmtr50aj-1
+ bh=2qfwID3iDQdHFwDSNCdNKGmKTyUW+HPVTmc7dFG8/NU=;
+ b=KwLgNRfNok8OahPwxgAxiGNaoHtT0b0XBE+3pGKmo/KWHs0ez+/LPD+iLiu5GkJpHwk8
+ 7NVjlw0OXx9Gg2yxjythgtXjyr2WbMqmubJsR7HlHiNnpfNfeW+DQImFB0vhusXwHtLp
+ lAI6NDUMpDpYfYgvrOZ8CxzPzTntwWEcJlgof29gtCTyweii2DyxQCUjLkmQ0hM2jN5F
+ jelt4aYRASuGw0x40OiG1AFLgH4MY+JDD2yMmk72fumeFC6Q0HsgJWv1pMHntCsNfnVy
+ 5cJ981R2k1NwWJhnELS1TiYK2d/wcq7kqHTO6NJxGC09hu0hUPYKoxfDgnBQOCegQYyO mQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jvpcwb5pt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Sep 2022 13:40:54 +0000
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28SDb6Q8020722;
-        Wed, 28 Sep 2022 13:40:51 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma04fra.de.ibm.com with ESMTP id 3jssh9409c-1
+        Wed, 28 Sep 2022 14:11:48 +0000
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28SDbN2q018490;
+        Wed, 28 Sep 2022 14:11:48 GMT
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jvpcwb5pa-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Sep 2022 13:40:51 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28SDeniI52035980
+        Wed, 28 Sep 2022 14:11:48 +0000
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28SE6oVc019244;
+        Wed, 28 Sep 2022 14:11:47 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma01dal.us.ibm.com with ESMTP id 3jsshajae5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Sep 2022 14:11:47 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com ([9.208.128.114])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28SEBjwd10748614
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Sep 2022 13:40:49 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04E65A4054;
-        Wed, 28 Sep 2022 13:40:49 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A260A4060;
-        Wed, 28 Sep 2022 13:40:48 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 28 Sep 2022 13:40:48 +0000 (GMT)
-Received: from intelligence.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id B95496016C;
-        Wed, 28 Sep 2022 20:02:40 +1000 (AEST)
-Message-ID: <591a3e016605181e119496992027ae21700a2c3b.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 2/2] powerpc/rtas: block error injection when locked
- down
-From:   Andrew Donnellan <ajd@linux.ibm.com>
-To:     Nathan Lynch <nathanl@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     jmorris@namei.org, mpe@ellerman.id.au, paul@paul-moore.com,
-        serge@hallyn.com, gcwilson@linux.ibm.com, nayna@linux.ibm.com
-Date:   Wed, 28 Sep 2022 20:02:40 +1000
-In-Reply-To: <20220926131643.146502-3-nathanl@linux.ibm.com>
-References: <20220926131643.146502-1-nathanl@linux.ibm.com>
-         <20220926131643.146502-3-nathanl@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.3-1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 28 Sep 2022 14:11:46 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C176058070;
+        Wed, 28 Sep 2022 14:11:45 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6AF4358058;
+        Wed, 28 Sep 2022 14:11:44 +0000 (GMT)
+Received: from sig-9-65-238-59.ibm.com (unknown [9.65.238.59])
+        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Sep 2022 14:11:44 +0000 (GMT)
+Message-ID: <5e304b17fe709d2b2f30b991d5ffc4711d27a075.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 2/2] ima: Handle -ESTALE returned by
+ ima_filter_rule_match()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     "Guozihua (Scott)" <guozihua@huawei.com>,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Wed, 28 Sep 2022 10:11:43 -0400
+In-Reply-To: <7ac3e330-e77c-95d8-7d3b-29e243b57251@huawei.com>
+References: <20220921125804.59490-1-guozihua@huawei.com>
+         <20220921125804.59490-3-guozihua@huawei.com>
+         <ce948f9e5639345026679b31a818cc12a247ce60.camel@linux.ibm.com>
+         <77c9c86b-85a6-aa87-e084-59a70bb47167@huawei.com>
+         <f321c638bf5572088a8c5e4d7027c3a797bdd568.camel@linux.ibm.com>
+         <7ac3e330-e77c-95d8-7d3b-29e243b57251@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: mG5ysnGAlMM9Fev4UY_3wOPa0iaGdcWB
-X-Proofpoint-ORIG-GUID: mG5ysnGAlMM9Fev4UY_3wOPa0iaGdcWB
+X-Proofpoint-GUID: 23Dq_TGVV4wtaHlEprzBXYS1W1BgN42o
+X-Proofpoint-ORIG-GUID: -l7MlE2jINQHwGnb_yNeA2OjCOWhSqR2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-28_06,2022-09-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
- phishscore=0 clxscore=1015 priorityscore=1501 mlxscore=0 adultscore=0
- bulkscore=0 lowpriorityscore=0 impostorscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209280083
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ phishscore=0 mlxlogscore=999 adultscore=0 suspectscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209280085
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2022-09-26 at 08:16 -0500, Nathan Lynch wrote:
-> The error injection facility on pseries VMs allows corruption of
-> arbitrary guest memory, potentially enabling a sufficiently
-> privileged
-> user to disable lockdown or perform other modifications of the
-> running
-> kernel via the rtas syscall.
-> 
-> Block the PAPR error injection facility from being opened or called
-> when locked down.
-> 
-> Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+On Sat, 2022-09-24 at 14:05 +0800, Guozihua (Scott) wrote:
 
-Is there any circumstance (short of arbitrary code execution etc) where
-the rtas_call() check will actually trigger rather than the sys_rtas()
-check? (Not that it matters, defence in depth is good.)
+> I might have overlooked something, but if I understands the code 
+> correctly, we would be copying the same rule over and over again till 
+> the loop ends in that case. ima_lsm_update_rule() would replace the rule 
+> node on the rule list without updating the rule in place. Although 
+> synchronize_rcu() should prevent a UAF, the rule in ima_match_rules() 
+> would not be updated. Meaning SELinux would always return -ESTALE before 
+> we copy and retry as we keep passing in the outdated rule entry.
 
-Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
-
-> ---
->  arch/powerpc/kernel/rtas.c | 25 ++++++++++++++++++++++++-
->  include/linux/security.h   |  1 +
->  security/security.c        |  1 +
->  3 files changed, 26 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/kernel/rtas.c b/arch/powerpc/kernel/rtas.c
-> index 693133972294..c2540d393f1c 100644
-> --- a/arch/powerpc/kernel/rtas.c
-> +++ b/arch/powerpc/kernel/rtas.c
-> @@ -23,6 +23,7 @@
->  #include <linux/memblock.h>
->  #include <linux/slab.h>
->  #include <linux/reboot.h>
-> +#include <linux/security.h>
->  #include <linux/syscalls.h>
->  #include <linux/of.h>
->  #include <linux/of_fdt.h>
-> @@ -464,6 +465,9 @@ void rtas_call_unlocked(struct rtas_args *args,
-> int token, int nargs, int nret,
->         va_end(list);
->  }
->  
-> +static int ibm_open_errinjct_token;
-> +static int ibm_errinjct_token;
-> +
->  int rtas_call(int token, int nargs, int nret, int *outputs, ...)
->  {
->         va_list list;
-> @@ -476,6 +480,16 @@ int rtas_call(int token, int nargs, int nret,
-> int *outputs, ...)
->         if (!rtas.entry || token == RTAS_UNKNOWN_SERVICE)
->                 return -1;
->  
-> +       if (token == ibm_open_errinjct_token || token ==
-> ibm_errinjct_token) {
-> +               /*
-> +                * It would be nicer to not discard the error value
-> +                * from security_locked_down(), but callers expect an
-> +                * RTAS status, not an errno.
-> +                */
-> +               if
-> (security_locked_down(LOCKDOWN_RTAS_ERROR_INJECTION))
-> +                       return -1;
-> +       }
-> +
->         if ((mfmsr() & (MSR_IR|MSR_DR)) != (MSR_IR|MSR_DR)) {
->                 WARN_ON_ONCE(1);
->                 return -1;
-> @@ -1227,6 +1241,14 @@ SYSCALL_DEFINE1(rtas, struct rtas_args __user
-> *, uargs)
->         if (block_rtas_call(token, nargs, &args))
->                 return -EINVAL;
->  
-> +       if (token == ibm_open_errinjct_token || token ==
-> ibm_errinjct_token) {
-> +               int err;
-> +
-> +               err =
-> security_locked_down(LOCKDOWN_RTAS_ERROR_INJECTION);
-> +               if (err)
-> +                       return err;
-> +       }
-> +
->         /* Need to handle ibm,suspend_me call specially */
->         if (token == rtas_token("ibm,suspend-me")) {
->  
-> @@ -1325,7 +1347,8 @@ void __init rtas_initialize(void)
->  #ifdef CONFIG_RTAS_ERROR_LOGGING
->         rtas_last_error_token = rtas_token("rtas-last-error");
->  #endif
-> -
-> +       ibm_open_errinjct_token = rtas_token("ibm,open-errinjct");
-> +       ibm_errinjct_token = rtas_token("ibm,errinjct");
->         rtas_syscall_filter_init();
->  }
->  
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 39e7c0e403d9..70f89dc3a712 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -123,6 +123,7 @@ enum lockdown_reason {
->         LOCKDOWN_XMON_WR,
->         LOCKDOWN_BPF_WRITE_USER,
->         LOCKDOWN_DBG_WRITE_KERNEL,
-> +       LOCKDOWN_RTAS_ERROR_INJECTION,
->         LOCKDOWN_INTEGRITY_MAX,
->         LOCKDOWN_KCORE,
->         LOCKDOWN_KPROBES,
-> diff --git a/security/security.c b/security/security.c
-> index 51bf66d4f472..eabe3ce7e74e 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -61,6 +61,7 @@ const char *const
-> lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
->         [LOCKDOWN_XMON_WR] = "xmon write access",
->         [LOCKDOWN_BPF_WRITE_USER] = "use of bpf to write user RAM",
->         [LOCKDOWN_DBG_WRITE_KERNEL] = "use of kgdb/kdb to write
-> kernel RAM",
-> +       [LOCKDOWN_RTAS_ERROR_INJECTION] = "RTAS error injection",
->         [LOCKDOWN_INTEGRITY_MAX] = "integrity",
->         [LOCKDOWN_KCORE] = "/proc/kcore access",
->         [LOCKDOWN_KPROBES] = "use of kprobes",
+After reviewing this patch set again, the code looks fine.  The commit
+message is still a bit off, but I've pushed the patch set out to next-
+integrity-testing, waiting for some Reviewed-by/Tested-by tags.
 
 -- 
-Andrew Donnellan    OzLabs, ADL Canberra
-ajd@linux.ibm.com   IBM Australia Limited
+thanks,
+
+Mimi
 
