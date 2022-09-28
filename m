@@ -2,94 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A63F6C6FA83
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 02:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B69BC32771
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 07:44:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230385AbiI1Cc2 (ORCPT
+        id S233445AbiI1Hoc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Sep 2022 22:32:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52444 "EHLO
+        Wed, 28 Sep 2022 03:44:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229818AbiI1Cc1 (ORCPT
+        with ESMTP id S233818AbiI1Hni (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Sep 2022 22:32:27 -0400
+        Wed, 28 Sep 2022 03:43:38 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0168E119A;
-        Tue, 27 Sep 2022 19:32:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 842BD10D645;
+        Wed, 28 Sep 2022 00:40:38 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 530C6B81E5A;
-        Wed, 28 Sep 2022 02:32:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F5B5C433D6;
-        Wed, 28 Sep 2022 02:32:23 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A41C4B81E8A;
+        Wed, 28 Sep 2022 07:40:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C00C433D7;
+        Wed, 28 Sep 2022 07:40:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664332344;
-        bh=PL2FMsLKGpn9FSub/HBKXmqfJ+EeTMDzVV4Voy27WZY=;
+        s=k20201202; t=1664350835;
+        bh=gPbGDOSS/QTrrkYZ9vASwt0DO6D8M/g3laHN6g51Hdg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p1EuZrC0rLPe7I5kXFJmOCDIp3WawnFWd0s4wALhOgaKUNXcgRdEZi6n2KDwhwSmm
-         BL/PcB/gz2QKr4pMOtLZ5NP+ZIW7ji3K1G59DUyh/VS+CW0LDCanKEVxYdZSMVYzFh
-         68VqFqJ4q1vUl04GWg8kbqGe0qVCTL6DXIBs4RgJL2TKzu308yAAWCLx65fc2G5IM7
-         YM7BIW8jRw6n2XczwmVy8D6GN78ZF5JDxt2W22Z3Hu8XpHPehPZ3wKWBiQ9BhPiY6F
-         ycQaJu31KzPHHVGvnzTyMBc/gKVgvDDSZdU3gfLFD2fMMN4R9yEW4PE67zbibrDbAv
-         pNTvjD0f1WvOw==
-Date:   Wed, 28 Sep 2022 05:32:19 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        David Howells <dhowells@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [GIT PULL] linux-tpmdd updates for v6.0-rc1
-Message-ID: <YzOyMwnNnzetJYU2@kernel.org>
-References: <20220928005852.10729-1-jarkko@kernel.org>
+        b=LrSyo4qKiVmMLXmefSO13P9tVI/vfi24MC/PegDBJ0WEtsz7C1PikekWH3JmaBmlM
+         rNWAuwOBf9O4T9J+NLJ2j7qtiCbUIEH4W4JsVE+0DgFbO8B3LhgLCCyunNcU/zRPce
+         YDX5IWG8eXY7wH4is1KSDjFhwE7dHaTiCSZZquSDWzRziIdygMDPel0jZt9+AEu5RA
+         Mi83+RmfcQay9W2ChXku+O2lXQINLA7YP7vcGpc2p4b2ohNUwf/3Q82SAcyUG30N8d
+         U9AcPzGJCRjJlvSdx6GERObUQA3iJizetBuAjOdl6OBqwuCLN+5PWhfhGemq9OTny9
+         qFktB6GfGWIXQ==
+Date:   Wed, 28 Sep 2022 09:40:30 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 16/30] acl: add vfs_get_acl()
+Message-ID: <20220928074030.3dnytkvt7fibytlu@wittgenstein>
+References: <20220926140827.142806-1-brauner@kernel.org>
+ <20220926140827.142806-17-brauner@kernel.org>
+ <CAHC9VhSyf9c-EtD_V856ZGTbFamwWh=bxPh7aPdarkqhdE7WZw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220928005852.10729-1-jarkko@kernel.org>
+In-Reply-To: <CAHC9VhSyf9c-EtD_V856ZGTbFamwWh=bxPh7aPdarkqhdE7WZw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 28, 2022 at 03:58:52AM +0300, Jarkko Sakkinen wrote:
-> Hi,
+On Tue, Sep 27, 2022 at 06:55:25PM -0400, Paul Moore wrote:
+> On Mon, Sep 26, 2022 at 11:24 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > In previous patches we implemented get and set inode operations for all
+> > non-stacking filesystems that support posix acls but didn't yet
+> > implement get and/or set acl inode operations. This specifically
+> > affected cifs and 9p.
+> >
+> > Now we can build a posix acl api based solely on get and set inode
+> > operations. We add a new vfs_get_acl() api that can be used to get posix
+> > acls. This finally removes all type unsafety and type conversion issues
+> > explained in detail in [1] that we aim to get rid of.
+> >
+> > After we finished building the vfs api we can switch stacking
+> > filesystems to rely on the new posix api and then finally switch the
+> > xattr system calls themselves to rely on the posix acl api.
+> >
+> > Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+> > Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> > ---
+> >
+> > Notes:
+> >     /* v2 */
+> >     unchanged
+> >
+> >  fs/posix_acl.c                  | 131 ++++++++++++++++++++++++++++++--
+> >  include/linux/posix_acl.h       |   9 +++
+> >  include/linux/posix_acl_xattr.h |  10 +++
+> >  3 files changed, 142 insertions(+), 8 deletions(-)
 > 
-> Just some bug fixes.
+> ...
 > 
-> BR, Jarkko
+> > diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+> > index ef0908a4bc46..18873be583a9 100644
+> > --- a/fs/posix_acl.c
+> > +++ b/fs/posix_acl.c
+> > @@ -1369,3 +1439,48 @@ int vfs_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+> >         return error;
+> >  }
+> >  EXPORT_SYMBOL(vfs_set_acl);
+> > +
+> > +/**
+> > + * vfs_get_acl - get posix acls
+> > + * @mnt_userns: user namespace of the mount
+> > + * @dentry: the dentry based on which to retrieve the posix acls
+> > + * @acl_name: the name of the posix acl
+> > + *
+> > + * This function retrieves @kacl from the filesystem. The caller must all
+> > + * posix_acl_release() on @kacl.
+> > + *
+> > + * Return: On success POSIX ACLs in VFS format, on error negative errno.
+> > + */
+> > +struct posix_acl *vfs_get_acl(struct user_namespace *mnt_userns,
+> > +                             struct dentry *dentry, const char *acl_name)
+> > +{
+> > +       struct inode *inode = d_inode(dentry);
+> > +       struct posix_acl *acl;
+> > +       int acl_type, error;
+> > +
+> > +       acl_type = posix_acl_type(acl_name);
+> > +       if (acl_type < 0)
+> > +               return ERR_PTR(-EINVAL);
+> > +
+> > +       /*
+> > +        * The VFS has no restrictions on reading POSIX ACLs so calling
+> > +        * something like xattr_permission() isn't needed. Only LSMs get a say.
+> > +        */
+> > +       error = security_inode_getxattr(dentry, acl_name);
+> > +       if (error)
+> > +               return ERR_PTR(error);
 > 
-> The following changes since commit f76349cf41451c5c42a99f18a9163377e4b364ff:
-> 
->   Linux 6.0-rc7 (2022-09-25 14:01:02 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/ tags/tpmdd-next-v6.0-rc1
-> 
-> for you to fetch changes up to 603fd3d42e144ca36e8340c81b0144c5e7f8b9c2:
-> 
->   selftest: tpm2: Add Client.__del__() to close /dev/tpm* handle (2022-09-28 03:53:47 +0300)
-> 
-> ----------------------------------------------------------------
-> tpmdd updates for Linux v6.0-rc1
-> 
-> ----------------------------------------------------------------
-> Stefan Berger (1):
->       selftest: tpm2: Add Client.__del__() to close /dev/tpm* handle
-> 
-> Vincenzo Frascino (1):
->       security/keys: Remove inconsistent __user annotation
-> 
-> Wolfram Sang (1):
->       char: move from strlcpy with unused retval to strscpy
-> 
->  drivers/char/tpm/tpm_ppi.c           | 2 +-
->  security/keys/keyring.c              | 2 +-
->  tools/testing/selftests/tpm2/tpm2.py | 4 ++++
->  3 files changed, 6 insertions(+), 2 deletions(-)
+> I understand the desire to reuse the security_inode_getxattr() hook
+> here, it makes perfect sense, but given that this patchset introduces
+> an ACL specific setter hook I think it makes sense to have a matching
+> getter hook.  It's arguably a little silly given the current crop of
+> LSMs and their approach to ACLs, but if we are going to differentiate
+> on the write side I think we might as well be consistent and
+> differentiate on the read side as well.
 
-Oops, please ignore.
-
-BR, Jarkko
+Sure, I don't mind doing that. I'll add the infrastructure and then the
+individual LSMs can add their own hooks.
