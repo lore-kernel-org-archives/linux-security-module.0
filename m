@@ -2,87 +2,93 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B18C6FA90
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 16:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C130AC6FA8E
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 16:13:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234075AbiI1QNj (ORCPT
+        id S234608AbiI1QNl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Sep 2022 12:13:39 -0400
+        Wed, 28 Sep 2022 12:13:41 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234457AbiI1QNU (ORCPT
+        with ESMTP id S234550AbiI1QNb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Sep 2022 12:13:20 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 191668683A;
-        Wed, 28 Sep 2022 09:13:18 -0700 (PDT)
+        Wed, 28 Sep 2022 12:13:31 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7145B97528;
+        Wed, 28 Sep 2022 09:13:27 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AA147B8214D;
-        Wed, 28 Sep 2022 16:13:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00496C433D7;
-        Wed, 28 Sep 2022 16:13:13 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 198CDB820FA;
+        Wed, 28 Sep 2022 16:13:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96668C43470;
+        Wed, 28 Sep 2022 16:13:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664381596;
-        bh=n55Uy3v4zGJJiKbXY2RW8eOQMf7e2bWtM0CE5ysw6BM=;
+        s=k20201202; t=1664381603;
+        bh=b3gB2/tZ/ar0HvnCiBSOOYD4rc846nc+lFia47BkhEo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jPgGeoFt2AZsjM0qb8W4plVawIbkdiMVFRX/SXji47JENYdbepA5+i5vj6U39mk06
-         5nW9OycDEva5rNCoHZ5EGtnuo95Aqwc3CTji/9WokQ9927N9NNpRgAw/tppxSH8iAk
-         1JszKWq4nnTJWrUM6aPQSKUQBmn0EwE+IC3qkBqTWBb/pyVJAiq3zHKqAUBK+nCs7N
-         trZDXvIeefX53Ae/b05iN73qnqUECR2V2CDTxdkDwVEbaeRRzkoWmEh8POHE8yn0xq
-         pGYqc6OijtHnnCV/v4DU59iAn+XndKNzAdGi0fplDRPLZ2v7vqNv549gClhXOHQYH1
-         Z/nEDrt9EI9Rw==
+        b=Makb5PoEjneSPYFcsETWp9IkEg+vtGVQ2l3yZxa3KvEWvLNMymPvmSwQhcmlPnStX
+         /86Gx9Swas++rKJmQOL+etYFAvxfIHZI0+xoZ4rLC5Ayw14CVk5HlDvQ89bqu4qGCZ
+         /bHB60s0J1itFOGhVpixveecw9TrVLnMY//2aGN8vMRK4T3rsPy8jziR8cXidAFlKH
+         NWd5/8dz//BKg0xWCGDdnnaFPgUp+cDm/XypqoPB6T95Nbt/ZltIBhDTrHQnQB+nVX
+         SDuo4GadGhmn1+UsjL2JH/SGaD3gEWfXTexo2FfSBLUuXfcEuCZwzaqWkKQPDup1+f
+         a2J8pXOjflyWQ==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-integrity@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v3 10/29] selinux: implement get, set and remove acl hook
-Date:   Wed, 28 Sep 2022 18:08:24 +0200
-Message-Id: <20220928160843.382601-11-brauner@kernel.org>
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH v3 13/29] evm: add post set acl hook
+Date:   Wed, 28 Sep 2022 18:08:27 +0200
+Message-Id: <20220928160843.382601-14-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220928160843.382601-1-brauner@kernel.org>
 References: <20220928160843.382601-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3679; i=brauner@kernel.org; h=from:subject; bh=n55Uy3v4zGJJiKbXY2RW8eOQMf7e2bWtM0CE5ysw6BM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSbFFYfvfBMvEWfv1s7NblE8QdrffjDE1IJLb4S2+xkn6e3 PcjtKGVhEONikBVTZHFoNwmXW85TsdkoUwNmDisTyBAGLk4BmEhDMcM/dVE934Z1Dcar7hw8OuUYk2 d5UvOT7vSvos0eM9TatgkvY/ifxG6qkN8Yk+HlsOR5/W9ly7M2e+cL3FCQNlqVsFqKPZARAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2983; i=brauner@kernel.org; h=from:subject; bh=b3gB2/tZ/ar0HvnCiBSOOYD4rc846nc+lFia47BkhEo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSbFNas1+0w1k0xnHCIj8NU51PuVeZE1hs3bmmlTaxaJdqz m+lKRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERYpBkZfvxWO+biPyWZY+/OVRw8zJ O2T0xdF9TxzSr7XLCsvXYCHyPDtDyZtCXyLHOsLj06z6T2ftbpe8v+Jyc/fH6+ZJPAsvmt3AA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The current way of setting and getting posix acls through the generic
-xattr interface is error prone and type unsafe. The vfs needs to
-interpret and fixup posix acls before storing or reporting it to
-userspace. Various hacks exist to make this work. The code is hard to
-understand and difficult to maintain in it's current form. Instead of
-making this work by hacking posix acls through xattr handlers we are
-building a dedicated posix acl api around the get and set inode
-operations. This removes a lot of hackiness and makes the codepaths
-easier to maintain. A lot of background can be found in [1].
+The security_inode_post_setxattr() hook is used by security modules to
+update their own security.* xattrs. Consequently none of the security
+modules operate on posix acls. So we don't need an additional security
+hook when post setting posix acls.
 
-So far posix acls were passed as a void blob to the security and
-integrity modules. Some of them like evm then proceed to interpret the
-void pointer and convert it into the kernel internal struct posix acl
-representation to perform their integrity checking magic. This is
-obviously pretty problematic as that requires knowledge that only the
-vfs is guaranteed to have and has lead to various bugs. Add a proper
-security hook for setting posix acls and pass down the posix acls in
-their appropriate vfs format instead of hacking it through a void
-pointer stored in the uapi format.
+However, the integrity subsystem wants to be informed about posix acl
+changes and specifically evm to update their hashes when the xattrs
+change. The callchain for evm_inode_post_setxattr() is:
 
-I spent considerate time in the security module infrastructure and
-audited all codepaths. SELinux has no restrictions based on the posix
-acl values passed through it. The capability hook doesn't need to be
-called either because it only has restrictions on security.* xattrs. So
-these are all fairly simply hooks for SELinux.
+-> evm_inode_post_setxattr()
+   -> evm_update_evmxattr()
+      -> evm_calc_hmac()
+         -> evm_calc_hmac_or_hash()
 
-Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+and evm_cacl_hmac_or_hash() walks the global list of protected xattr
+names evm_config_xattrnames. This global list can be modified via
+/sys/security/integrity/evm/evm_xattrs. The write to "evm_xattrs" is
+restricted to security.* xattrs and the default xattrs in
+evm_config_xattrnames only contains security.* xattrs as well.
+
+So the actual value for posix acls is currently completely irrelevant
+for evm during evm_inode_post_setxattr() and frankly it should stay that
+way in the future to not cause the vfs any more headaches. But if the
+actual posix acl values matter then evm shouldn't operate on the binary
+void blob and try to hack around in the uapi struct anyway. Instead it
+should then in the future add a dedicated hook which takes a struct
+posix_acl argument passing the posix acls in the proper vfs format.
+
+For now it is sufficient to make evm_inode_post_set_acl() a wrapper
+around evm_inode_post_setxattr() not passing any actual values down.
+This will still cause the hashes to be updated as before.
+
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
 
@@ -91,54 +97,42 @@ Notes:
     unchanged
     
     /* v3 */
-    Paul Moore <paul@paul-moore.com>:
-    - Add get, and remove acl hook
+    Reviewed-by: Paul Moore <paul@paul-moore.com>
 
- security/selinux/hooks.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ include/linux/evm.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 79573504783b..0e3cd67e5e92 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3239,6 +3239,27 @@ static int selinux_inode_setxattr(struct user_namespace *mnt_userns,
- 			    &ad);
+diff --git a/include/linux/evm.h b/include/linux/evm.h
+index 86139be48992..117ac01b2432 100644
+--- a/include/linux/evm.h
++++ b/include/linux/evm.h
+@@ -44,6 +44,12 @@ static inline int evm_inode_remove_acl(struct user_namespace *mnt_userns,
+ {
+ 	return evm_inode_set_acl(mnt_userns, dentry, acl_name, NULL);
+ }
++static inline void evm_inode_post_set_acl(struct dentry *dentry,
++					  const char *acl_name,
++					  struct posix_acl *kacl)
++{
++	return evm_inode_post_setxattr(dentry, acl_name, NULL, 0);
++}
+ extern int evm_inode_init_security(struct inode *inode,
+ 				   const struct xattr *xattr_array,
+ 				   struct xattr *evm);
+@@ -131,6 +137,13 @@ static inline int evm_inode_remove_acl(struct user_namespace *mnt_userns,
+ 	return 0;
  }
  
-+static int selinux_inode_set_acl(struct user_namespace *mnt_userns,
-+				 struct dentry *dentry, const char *acl_name,
-+				 struct posix_acl *kacl)
++static inline void evm_inode_post_set_acl(struct dentry *dentry,
++					  const char *acl_name,
++					  struct posix_acl *kacl)
 +{
-+	return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
++	return;
 +}
 +
-+static int selinux_inode_get_acl(struct user_namespace *mnt_userns,
-+				 struct dentry *dentry, const char *acl_name)
-+{
-+	const struct cred *cred = current_cred();
-+
-+	return dentry_has_perm(cred, dentry, FILE__GETATTR);
-+}
-+
-+static int selinux_inode_remove_acl(struct user_namespace *mnt_userns,
-+				    struct dentry *dentry, const char *acl_name)
-+{
-+	return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
-+}
-+
- static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
- 					const void *value, size_t size,
- 					int flags)
-@@ -7063,6 +7084,9 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_getxattr, selinux_inode_getxattr),
- 	LSM_HOOK_INIT(inode_listxattr, selinux_inode_listxattr),
- 	LSM_HOOK_INIT(inode_removexattr, selinux_inode_removexattr),
-+	LSM_HOOK_INIT(inode_set_acl, selinux_inode_set_acl),
-+	LSM_HOOK_INIT(inode_get_acl, selinux_inode_get_acl),
-+	LSM_HOOK_INIT(inode_remove_acl, selinux_inode_remove_acl),
- 	LSM_HOOK_INIT(inode_getsecurity, selinux_inode_getsecurity),
- 	LSM_HOOK_INIT(inode_setsecurity, selinux_inode_setsecurity),
- 	LSM_HOOK_INIT(inode_listsecurity, selinux_inode_listsecurity),
+ static inline int evm_inode_init_security(struct inode *inode,
+ 					  const struct xattr *xattr_array,
+ 					  struct xattr *evm)
 -- 
 2.34.1
 
