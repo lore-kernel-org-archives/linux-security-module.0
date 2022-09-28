@@ -2,112 +2,177 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A53C32771
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 09:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26220C04A95
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 09:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231425AbiI1JnO (ORCPT
+        id S233134AbiI1Jw0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Sep 2022 05:43:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51090 "EHLO
+        Wed, 28 Sep 2022 05:52:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbiI1JnN (ORCPT
+        with ESMTP id S233129AbiI1JwY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Sep 2022 05:43:13 -0400
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD0A382859;
-        Wed, 28 Sep 2022 02:43:11 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4McrxN6D9Sz9v7Vq;
-        Wed, 28 Sep 2022 17:37:12 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwDnY14aFzRjjICBAA--.43012S2;
-        Wed, 28 Sep 2022 10:42:57 +0100 (CET)
-Message-ID: <6e142c3526df693abfab6e1293a27828267cc45e.camel@huaweicloud.com>
-Subject: Re: Closing the BPF map permission loophole
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>
-Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-Date:   Wed, 28 Sep 2022 11:42:48 +0200
-In-Reply-To: <439dd1e5-71b8-49ed-8268-02b3428a55a4@www.fastmail.com>
-References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
-         <8e243ad132ecf2885fc65c33c7793f0703937890.camel@huaweicloud.com>
-         <7f7c3337-74f1-424e-a14d-578c4c7ee2fe@www.fastmail.com>
-         <65546f56be138ab326544b7b2e59bb3175ec884a.camel@huaweicloud.com>
-         <b0c00f80-c11e-4f5d-ba63-2e9fb7cad561@www.fastmail.com>
-         <9aba20351924aa0d82d258205030ad4f2c404de2.camel@huaweicloud.com>
-         <98a26e5c-d44f-4e65-8186-c4e94918daa1@www.fastmail.com>
-         <06a47f11778ca9d074c815e57dc1c75d073b3a85.camel@huaweicloud.com>
-         <439dd1e5-71b8-49ed-8268-02b3428a55a4@www.fastmail.com>
+        Wed, 28 Sep 2022 05:52:24 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A4BEA74E9;
+        Wed, 28 Sep 2022 02:52:22 -0700 (PDT)
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28S81Gup018918;
+        Wed, 28 Sep 2022 09:52:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=u+IAU1I5EWQVsXbd/vLEYMrAO0IB/qt/OWrRKE9lRsg=;
+ b=Y9XNnQiyx0stccq6s66aNEUjwPiu1WfZcsZ08dOzfaAmybKLmM66lyLUMnOGl6tgzf71
+ b8ds0eYJ5NYw+Sf/BHzTGBlrZmG+XRbvqiq6zp7v+7HMdguwmQbIkrE6rFzCeHCkNO8U
+ cm9GbvevlmNhwBvwe7ayIBjmMSrV4hyve+cGAvcOybURNDYExmfnIaq/qQfJhnWu8aZj
+ ymX1I3f1L1W6vzIgsoZ0v6ghQfpWhHPy1meBrzw2Wy9xZ+YFDMUbfMKdfaERS21VoJBS
+ 7L8JwKwHgFo6HJ0irm9hAD3B7+xq71eKkxM1pxleOWm9sJrLXXMX0l07L3SNQ5Tq4hGv hA== 
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jvjd0uuhx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Sep 2022 09:52:01 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28S9pXJ8028631;
+        Wed, 28 Sep 2022 09:51:59 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma06ams.nl.ibm.com with ESMTP id 3jss5j51qh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Sep 2022 09:51:59 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28S9pvun60228066
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Sep 2022 09:51:57 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0C85511C050;
+        Wed, 28 Sep 2022 09:51:57 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6151111C04A;
+        Wed, 28 Sep 2022 09:51:56 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Sep 2022 09:51:56 +0000 (GMT)
+Received: from intelligence.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id B2A466016C;
+        Wed, 28 Sep 2022 19:51:33 +1000 (AEST)
+Message-ID: <2cc0121f92a7aa86f2bc9c58f180dc9f37e7989a.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 1/2] powerpc/pseries: block untrusted device tree
+ changes when locked down
+From:   Andrew Donnellan <ajd@linux.ibm.com>
+To:     Nathan Lynch <nathanl@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     jmorris@namei.org, mpe@ellerman.id.au, paul@paul-moore.com,
+        serge@hallyn.com, gcwilson@linux.ibm.com, nayna@linux.ibm.com
+Date:   Wed, 28 Sep 2022 19:51:31 +1000
+In-Reply-To: <20220926131643.146502-2-nathanl@linux.ibm.com>
+References: <20220926131643.146502-1-nathanl@linux.ibm.com>
+         <20220926131643.146502-2-nathanl@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+User-Agent: Evolution 3.38.3-1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwDnY14aFzRjjICBAA--.43012S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww1Dtw4UWw1fuF45XF1xuFg_yoW8Xw1xpF
-        4ktw18tF1DXr1S9a9YvF17Ga45X348JrsxK3sFvFyFvrn8Xr10va1jkry5AF97Zrn7Kw10
-        vFsYyFy3Aay7ZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-        AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
-        IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
-        KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAJBF1jj4OIJgAAsQ
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: YlZ7y0Q6VJB1_2FLzx8c0XLaJgR-JRGK
+X-Proofpoint-GUID: YlZ7y0Q6VJB1_2FLzx8c0XLaJgR-JRGK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-28_03,2022-09-27_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ suspectscore=0 mlxscore=0 clxscore=1011 impostorscore=0 malwarescore=0
+ spamscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209280058
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-09-28 at 09:52 +0100, Lorenz Bauer wrote:
-> On Mon, 26 Sep 2022, at 17:18, Roberto Sassu wrote:
-> > Uhm, if I get what you mean, you would like to add DAC controls to
-> > the
-> > pinned map to decide if you can get a fd and with which modes.
-> > 
-> > The problem I see is that a map exists regardless of the pinned
-> > path
-> > (just by ID).
+On Mon, 2022-09-26 at 08:16 -0500, Nathan Lynch wrote:
+> The /proc/powerpc/ofdt interface allows the root user to freely alter
+> the in-kernel device tree, enabling arbitrary physical address writes
+> via drivers that could bind to malicious device nodes, thus making it
+> possible to disable lockdown.
 > 
-> Can you spell this out for me? I imagine you're talking about
-> MAP_GET_FD_BY_ID, but that is CAP_SYS_ADMIN only, right? Not great
-> maybe, but no gaping hole IMO.
+> Historically this interface has been used on the pseries platform to
+> facilitate the runtime addition and removal of processor, memory, and
+> device resources (aka Dynamic Logical Partitioning or DLPAR). Years
+> ago, the processor and memory use cases were migrated to designs that
+> happen to be lockdown-friendly: device tree updates are communicated
+> directly to the kernel from firmware without passing through
+> untrusted
+> user space. I/O device DLPAR via the "drmgr" command in powerpc-utils
+> remains the sole legitimate user of /proc/powerpc/ofdt, but it is
+> already broken in lockdown since it uses /dev/mem to allocate
+> argument
+> buffers for the rtas syscall. So only illegitimate uses of the
+> interface should see a behavior change when running on a locked down
+> kernel.
+> 
+> Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
 
-+linux-security-module ML (they could be interested in this topic as
-well)
+Seems sensible to me.
 
-Good to know! I didn't realize it before.
+Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
 
-I figured out better what you mean by escalating privileges.
+> ---
+>  arch/powerpc/platforms/pseries/reconfig.c | 5 +++++
+>  include/linux/security.h                  | 1 +
+>  security/security.c                       | 1 +
+>  3 files changed, 7 insertions(+)
+> 
+> diff --git a/arch/powerpc/platforms/pseries/reconfig.c
+> b/arch/powerpc/platforms/pseries/reconfig.c
+> index cad7a0c93117..599bd2c78514 100644
+> --- a/arch/powerpc/platforms/pseries/reconfig.c
+> +++ b/arch/powerpc/platforms/pseries/reconfig.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/notifier.h>
+>  #include <linux/proc_fs.h>
+> +#include <linux/security.h>
+>  #include <linux/slab.h>
+>  #include <linux/of.h>
+>  
+> @@ -361,6 +362,10 @@ static ssize_t ofdt_write(struct file *file,
+> const char __user *buf, size_t coun
+>         char *kbuf;
+>         char *tmp;
+>  
+> +       rv = security_locked_down(LOCKDOWN_DEVICE_TREE);
+> +       if (rv)
+> +               return rv;
+> +
+>         kbuf = memdup_user_nul(buf, count);
+>         if (IS_ERR(kbuf))
+>                 return PTR_ERR(kbuf);
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 7bd0c490703d..39e7c0e403d9 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -114,6 +114,7 @@ enum lockdown_reason {
+>         LOCKDOWN_IOPORT,
+>         LOCKDOWN_MSR,
+>         LOCKDOWN_ACPI_TABLES,
+> +       LOCKDOWN_DEVICE_TREE,
+>         LOCKDOWN_PCMCIA_CIS,
+>         LOCKDOWN_TIOCSSERIAL,
+>         LOCKDOWN_MODULE_PARAMETERS,
+> diff --git a/security/security.c b/security/security.c
+> index 4b95de24bc8d..51bf66d4f472 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -52,6 +52,7 @@ const char *const
+> lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+>         [LOCKDOWN_IOPORT] = "raw io port access",
+>         [LOCKDOWN_MSR] = "raw MSR access",
+>         [LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
+> +       [LOCKDOWN_DEVICE_TREE] = "modifying device tree contents",
+>         [LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
+>         [LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
+>         [LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
 
-Pin a read-only fd, get a read-write fd from the pinned path.
-
-What you want to do is, if I pin a read-only fd, I should get read-only 
-fds too, right?
-
-I think here there could be different views. From my perspective,
-pinning is just creating a new link to an existing object. Accessing
-the link does not imply being able to access the object itself (the
-same happens for files).
-
-I understand what you want to achieve. If I have to choose a solution,
-that would be doing something similar to files, i.e. add owner and mode
-information to the bpf_map structure (m_uid, m_gid, m_mode). We could
-add the MAP_CHMOD and MAP_CHOWN operations to the bpf() system call to
-modify the new fields.
-
-When you pin the map, the inode will get the owner and mode from
-bpf_map. bpf_obj_get() will then do DAC-style verification similar to
-MAC-style verification (with security_bpf_map()).
-
-Roberto
+-- 
+Andrew Donnellan    OzLabs, ADL Canberra
+ajd@linux.ibm.com   IBM Australia Limited
 
