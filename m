@@ -2,141 +2,131 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B517CC32771
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 11:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD07C54EE9
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Sep 2022 12:08:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233858AbiI1LYb (ORCPT
+        id S233308AbiI1MIs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Sep 2022 07:24:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33660 "EHLO
+        Wed, 28 Sep 2022 08:08:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233919AbiI1LYS (ORCPT
+        with ESMTP id S230357AbiI1MIs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Sep 2022 07:24:18 -0400
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C8F8E99AE;
-        Wed, 28 Sep 2022 04:24:10 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Mcv9x07Zgz9xHf0;
-        Wed, 28 Sep 2022 19:18:13 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwBHP5PDLjRjJ5yAAA--.16292S2;
-        Wed, 28 Sep 2022 12:23:54 +0100 (CET)
-Message-ID: <fe9fe2443b8401a076330a3019bd46f6c815a023.camel@huaweicloud.com>
-Subject: Re: Closing the BPF map permission loophole
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Toke =?ISO-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@kernel.org>,
-        Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>
-Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-Date:   Wed, 28 Sep 2022 13:23:45 +0200
-In-Reply-To: <87mtajss8j.fsf@toke.dk>
-References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
-         <8e243ad132ecf2885fc65c33c7793f0703937890.camel@huaweicloud.com>
-         <7f7c3337-74f1-424e-a14d-578c4c7ee2fe@www.fastmail.com>
-         <65546f56be138ab326544b7b2e59bb3175ec884a.camel@huaweicloud.com>
-         <b0c00f80-c11e-4f5d-ba63-2e9fb7cad561@www.fastmail.com>
-         <9aba20351924aa0d82d258205030ad4f2c404de2.camel@huaweicloud.com>
-         <98a26e5c-d44f-4e65-8186-c4e94918daa1@www.fastmail.com>
-         <06a47f11778ca9d074c815e57dc1c75d073b3a85.camel@huaweicloud.com>
-         <439dd1e5-71b8-49ed-8268-02b3428a55a4@www.fastmail.com>
-         <6e142c3526df693abfab6e1293a27828267cc45e.camel@huaweicloud.com>
-         <87mtajss8j.fsf@toke.dk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Wed, 28 Sep 2022 08:08:48 -0400
+Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC0B65551;
+        Wed, 28 Sep 2022 05:08:44 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id 37908933; Wed, 28 Sep 2022 14:08:38 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.steuer-voss.de (Postfix) with ESMTP id 3449D597;
+        Wed, 28 Sep 2022 14:08:38 +0200 (CEST)
+Date:   Wed, 28 Sep 2022 14:08:38 +0200 (CEST)
+From:   Nikolaus Voss <nv@vosn.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+cc:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yael Tzur <yaelt@google.com>
+Subject: Re: [PATCH] KEYS: encrypted: fix key instantiation with user-provided
+ data
+In-Reply-To: <6b4229386dced275f745619f190f64a71b7c0aec.camel@linux.ibm.com>
+Message-ID: <2fe0144d-ee19-ec17-9566-16bce6386925@vosn.de>
+References: <20220919072317.E41421357@mail.steuer-voss.de>   <53730789a41358673b1715dd650706e9ffcb1199.camel@linux.ibm.com>   <35fd816-d755-967-5712-b5496875ac7a@vosn.de>  <2ee1e3e68d847001c4bf856d980a553e52de5023.camel@linux.ibm.com> 
+ <439012d8-dd4-7fd2-3788-49cf72faa99@vosn.de> <6b4229386dced275f745619f190f64a71b7c0aec.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwBHP5PDLjRjJ5yAAA--.16292S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uFy5tr47Kw1rWF4fCFWxZwb_yoW8Kr43pF
-        W8t3Z0kF4DJr1Fka9a9w1fJFy0v3yrGFnrWr13AryrZFyDZw1rtr40kF45uF92vr1Ikw1j
-        vr4Fka43Za4kZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAJBF1jj4OJHwABsp
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-09-28 at 12:33 +0200, Toke Høiland-Jørgensen wrote:
-> Roberto Sassu <roberto.sassu@huaweicloud.com> writes:
-> 
-> > On Wed, 2022-09-28 at 09:52 +0100, Lorenz Bauer wrote:
-> > > On Mon, 26 Sep 2022, at 17:18, Roberto Sassu wrote:
-> > > > Uhm, if I get what you mean, you would like to add DAC controls
-> > > > to
-> > > > the
-> > > > pinned map to decide if you can get a fd and with which modes.
-> > > > 
-> > > > The problem I see is that a map exists regardless of the pinned
-> > > > path
-> > > > (just by ID).
-> > > 
-> > > Can you spell this out for me? I imagine you're talking about
-> > > MAP_GET_FD_BY_ID, but that is CAP_SYS_ADMIN only, right? Not
-> > > great
-> > > maybe, but no gaping hole IMO.
-> > 
-> > +linux-security-module ML (they could be interested in this topic
-> > as
-> > well)
-> > 
-> > Good to know! I didn't realize it before.
-> > 
-> > I figured out better what you mean by escalating privileges.
-> > 
-> > Pin a read-only fd, get a read-write fd from the pinned path.
-> > 
-> > What you want to do is, if I pin a read-only fd, I should get read-
-> > only 
-> > fds too, right?
-> > 
-> > I think here there could be different views. From my perspective,
-> > pinning is just creating a new link to an existing object.
-> > Accessing
-> > the link does not imply being able to access the object itself (the
-> > same happens for files).
-> > 
-> > I understand what you want to achieve. If I have to choose a
-> > solution,
-> > that would be doing something similar to files, i.e. add owner and
-> > mode
-> > information to the bpf_map structure (m_uid, m_gid, m_mode). We
-> > could
-> > add the MAP_CHMOD and MAP_CHOWN operations to the bpf() system call
-> > to
-> > modify the new fields.
-> > 
-> > When you pin the map, the inode will get the owner and mode from
-> > bpf_map. bpf_obj_get() will then do DAC-style verification similar
-> > to
-> > MAC-style verification (with security_bpf_map()).
-> 
-> As someone pointed out during the discussing at LPC, this will
-> effectively allow a user to create files owned by someone else, which
-> is
-> probably not a good idea either from a security PoV. (I.e., user A
-> pins
-> map owned by user B, so A creates a file owned by B).
+On Wed, 21 Sep 2022, Mimi Zohar wrote:
+> On Wed, 2022-09-21 at 09:24 +0200, Nikolaus Voss wrote:
+>> On Tue, 20 Sep 2022, Mimi Zohar wrote:
+>>> On Tue, 2022-09-20 at 18:23 +0200, Nikolaus Voss wrote:
+>>>> On Tue, 20 Sep 2022, Mimi Zohar wrote:
+>>>>> On Fri, 2022-09-16 at 07:45 +0200, Nikolaus Voss wrote:
+>>>>>> Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
+>>>>>> decrypted data") added key instantiation with user provided decrypted data.
+>>>>>> The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
+>>>>>> Fix this to use hex2bin instead.
+>>>>>
+>>>>> Thanks, Nikolaus.  We iterated a number of times over what would be the
+>>>>> safest userspace input.  One of the last changes was that the key data
+>>>>> should be hex-ascii-encoded.  Unfortunately, the LTP
+>>>>> testcases/kernel/syscalls/keyctl09.c example isn't hex-ascii-encoded
+>>>>> and the example in Documentation/security/keys/trusted-encrypted.rst
+>>>>> just cat's a file.  Both expect the length to be the length of the
+>>>>> userspace provided data.   With this patch, when hex2bin() fails, there
+>>>>> is no explanation.
+>>>>
+>>>> That's true. But it's true for all occurrences of hex2bin() in this file.
+>>>> I could pr_err() an explanation, improve the trusted-encrypted.rst example
+>>>> and respin the patch. Should I, or do you have another suggestion?
+>>>
+>>>> I wasn't aware of keyctl09.c, but quickly looking into it, the user data
+>>>> _is_ hex-ascii-encoded, only the length is "wrong": Imho, the specified
+>>>> length should be the binary length as this is consistent with key-length
+>>>> specs in other cases (e.g. when loading the key from a blob).
+>>>> keyctl09.c could be easy to fix, if only the length is modified. Should
+>>>> I propose a patch? What is the correct/appropriate workflow there?
+>>>
+>>> I'm concerned that this change breaks existing encrypted keys created
+>>> with user-provided data.  Otherwise I'm fine with your suggestion.
+>>
+>> Ok, but this change does not touch the hex-ascii format of encrypted key
+>> blobs?
+>
+> True, but any persistent data based on this key would be affected.
 
-Uhm, I see what you mean. Right, it is not a good idea, the owner of
-the file should the one that pinned the map.
+Persistent data is stored encypted with e.g. the master key in hex-ascii 
+already and should not be affected. Only persistent data stored 
+unencrypted is affected, but the encrypted-keys stuff is just about 
+avoiding that. Or do I still misunderstand something?
 
-Other than that, DAC verification on the map would be still correct, as
-it would be independent from the DAC verification of the file.
+>
+>>
+>>>
+>>> The LTP example decrypted data length is 32, but the minimum decrypted
+>>> data size is  20.  So it's a bit more than just changing the LTP
+>>> decrypted data size.   The modified LTP test should work on kernels
+>>> with and without this patch.
+>>
+>> So this would mean OR-ing old and new variant for the test?
+>>
+>> The current implementation of the test will fail anyway as the key size is
+>> below the minimum of 20 and thus should have failed before.
+>
+> The existing keyctl09 test is a plain text string.  Converting it to
+> hex-ascii (e.g. hexdump, xdd) solves the length issue.  For those
+> already using encrypted keys with user provided data, this might also
+> resolve the persistent data usage case mentioned above.
 
-Roberto
+The unencrypted data from testcases/kernel/syscalls/keyctl/keyctl09.c 
+looks like hex-ascii to me:
+#define ENCRYPTED_KEY_VALID_PAYLOAD    "new enc32 user:masterkey 32 abcdefABCDEF1234567890aaaaaaaaaa"
+
+And beeing it hex-ascii is checked in encrypted.c driver:
+ 		for (i = 0; i < strlen(decrypted_data); i++) {
+ 			if (!isxdigit(decrypted_data[i])) {
+ 				pr_err("encrypted key: decrypted data provided must contain only hexadecimal characters\n");
+ 				return ERR_PTR(-EINVAL);
+ 			}
+ 		}
+
+It was never possible to provide unencrypted data other than hex-ascii, it 
+just wasn't decoded to binary, so the resulting key was simply wrong and 
+rendered CONFIG_USER_DECRYPTED_DATA useless. Because the resulting binary 
+key was limited to the hex-ascii range of values.
+
+> Perhaps keep the existing test.  On success issue a warning. 
+> On failure, retry with the converted plain text string.
+
+With that being said, I would expect the existing test fail and the 
+corrected test to pass.
+
+Niko
 
