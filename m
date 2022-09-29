@@ -2,206 +2,197 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6883C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 22:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAFAC433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 23:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230102AbiI2Wdh (ORCPT
+        id S229550AbiI2X0I (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Sep 2022 18:33:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53514 "EHLO
+        Thu, 29 Sep 2022 19:26:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230108AbiI2Wcg (ORCPT
+        with ESMTP id S229451AbiI2X0G (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Sep 2022 18:32:36 -0400
-Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D54E3A1D71
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Sep 2022 15:30:56 -0700 (PDT)
-Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-131886d366cso3477788fac.10
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Sep 2022 15:30:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=tgQfEA4Iu0kSJxT5pMBFZLIcD7ZpTlADi2N73CRf2gw=;
-        b=KUxkW5RSz1VuzlyqokJ33tD2rkbRPSbvkfPSQNCI8CObz3Z6F9bGdq1g6oNRFLA4+r
-         aOKLEFcnSLXpU/ccj6w7eVfmhaKZqKGaJHzaXn8U6iRR1xYC+fwx7Z66LWz+LcBmsyjQ
-         Do7iwQKwAictrk+rOR+Tyf32/7AstqoYlmF8WUhGYX1qa9wUniesmimcGemebVTIpp29
-         4klA/ADhVHJWHKStfmW1JfqrFspNFlbHISKwB7kgl2djJy7FQD4iKoqBFLpyMGgBBH+w
-         2DzPtajccfaAzn9xUYQ6060CdlnTHdpObC6V/A4EA9ZlLuEj0MLyoYLF84OdOTJ94NDX
-         u1Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=tgQfEA4Iu0kSJxT5pMBFZLIcD7ZpTlADi2N73CRf2gw=;
-        b=pMWkIApMRUObChzeypQcI14WQiwmEOHjnEcPWdWRQutLkZnUXpBHVju/DRHHUJbSZ/
-         BKSOjvk9vl5RajGbjsoaIww66Uyqkufy0RP1/GMQ6b/JhFSjjUJXRy3VadjAjprS85E4
-         K9wvdbuu6FUsyNfGTnOHWdHhth0hsEG1ur7qDfjI8/GKmOZ7W2I4KeS+vy8wFARMzLus
-         Ql0X2RrLnUjWQn+4RIrlS+m7Fu++t7z40nKO2cjrGXRKH1uBTzZANyLh3lBd22l+BfS9
-         LXNzuOIM5DjkKs7eTlSlH/sZCAc1qCz7m7GIJaRqJePYIZUNFsiqaTqzW7EyvekWvOQz
-         lloA==
-X-Gm-Message-State: ACrzQf2rNcuKYYjf3mz2sGHmr6u480zBJ3s6u00eIZkD5ols5QoDc5Io
-        x1lShDmxp2DBVbck3qnh9zkB3nVF6XAmHZeXxy8S
-X-Google-Smtp-Source: AMsMyM7p2rLc6XIDbhZW2c/58B+z9Tkw7UC4dFbMt8ZxNuVuO1D6KINe+yWjD0ebpztfS9m5FLprH2OyZfJsW+9OS7U=
-X-Received: by 2002:a05:6870:41cb:b0:131:9656:cc30 with SMTP id
- z11-20020a05687041cb00b001319656cc30mr7985099oac.51.1664490654817; Thu, 29
- Sep 2022 15:30:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
- <8e243ad132ecf2885fc65c33c7793f0703937890.camel@huaweicloud.com>
- <7f7c3337-74f1-424e-a14d-578c4c7ee2fe@www.fastmail.com> <65546f56be138ab326544b7b2e59bb3175ec884a.camel@huaweicloud.com>
- <b0c00f80-c11e-4f5d-ba63-2e9fb7cad561@www.fastmail.com> <9aba20351924aa0d82d258205030ad4f2c404de2.camel@huaweicloud.com>
- <98a26e5c-d44f-4e65-8186-c4e94918daa1@www.fastmail.com> <06a47f11778ca9d074c815e57dc1c75d073b3a85.camel@huaweicloud.com>
- <439dd1e5-71b8-49ed-8268-02b3428a55a4@www.fastmail.com> <6e142c3526df693abfab6e1293a27828267cc45e.camel@huaweicloud.com>
- <87mtajss8j.fsf@toke.dk> <fe9fe2443b8401a076330a3019bd46f6c815a023.camel@huaweicloud.com>
- <CAHC9VhRKq=BMtAat2_+0VvYk91hnryUHg+wbZRhu2BDB9ehC2A@mail.gmail.com> <3a9efcd6c8f7fa3908230ef5be0e0ad224a730ff.camel@huaweicloud.com>
-In-Reply-To: <3a9efcd6c8f7fa3908230ef5be0e0ad224a730ff.camel@huaweicloud.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 29 Sep 2022 18:30:43 -0400
-Message-ID: <CAHC9VhTWsP99PxJLebbm04HdSAfF4QyhU0kwZZQnduET3jfKjw@mail.gmail.com>
-Subject: Re: Closing the BPF map permission loophole
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@kernel.org>,
-        Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>, bpf@vger.kernel.org,
+        Thu, 29 Sep 2022 19:26:06 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47DEF16B245;
+        Thu, 29 Sep 2022 16:26:02 -0700 (PDT)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28TNOS2P024770;
+        Thu, 29 Sep 2022 23:25:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=FaD6yuSKBClnHw8RZpnLuXDaLorg73jLGhIeAXDkIZE=;
+ b=DqMKk5jGDSewFhYuaxXIfRQjwpwYeGkQXUPuX1ZHIy2KjgOd2Hl73AV/44gH0xkpZoAj
+ 1hotrODuGZuK/3cNUrV+3Uz8dqBXaBv6+G7ZAU9CmUQKPJj1psbYEitek2DJiQe1aF6I
+ 3D1huF4YKxxqe1//OtowFpR88nc+5Jj0SPQk8AmMK4JSp3nKtyyZYB1Ga1WCC9oZaISR
+ HvP6FiLYgdcke+rg5Hr9FubRAqcqSymGiMwSkVjNNlx51v/XdfX9tpqVWFz4TJLBVRMW
+ 4JN5Kx7EtZQ1SPox+k5Ztob/tmojoXE5AgF0KwPAk9R6p3bdfjIN7XXvJU0eUVDmU453 9w== 
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3jwn0tg0n9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Sep 2022 23:25:50 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28TNLPBv026510;
+        Thu, 29 Sep 2022 23:25:49 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma02dal.us.ibm.com with ESMTP id 3jsshaxc67-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Sep 2022 23:25:49 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com ([9.208.128.113])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28TNPm735309058
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Sep 2022 23:25:49 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4C7F158055;
+        Thu, 29 Sep 2022 23:25:48 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C5355806A;
+        Thu, 29 Sep 2022 23:25:47 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.161.243])
+        by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Thu, 29 Sep 2022 23:25:47 +0000 (GMT)
+Message-ID: <41a0deedf4f035b8470f5fe237d192c9b30b9ba6.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 12/29] integrity: implement get and set acl hook
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     Seth Forshee <sforshee@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Date:   Thu, 29 Sep 2022 19:25:46 -0400
+In-Reply-To: <20220928160843.382601-13-brauner@kernel.org>
+References: <20220928160843.382601-1-brauner@kernel.org>
+         <20220928160843.382601-13-brauner@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: CA9a3H-UeGMrjSJgOU5tTtl3wcVWxrb_
+X-Proofpoint-GUID: CA9a3H-UeGMrjSJgOU5tTtl3wcVWxrb_
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-29_13,2022-09-29_03,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ adultscore=0 mlxscore=0 clxscore=1011 impostorscore=0 malwarescore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209290144
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 29, 2022 at 3:55 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Wed, 2022-09-28 at 20:24 -0400, Paul Moore wrote:
-> > I only became aware of this when the LSM list was CC'd so I'm a
-> > little
-> > behind on what is going on here ... looking quickly through the
-> > mailing list archive it looks like there is an issue with BPF map
-> > permissions not matching well with their associated fd permissions,
-> > yes?  From a LSM perspective, there are a couple of hooks that
-> > currently use the fd's permissions (read/write) to determine the
-> > appropriate access control check.
->
-> From what I understood, access control on maps is done in two steps.
-> First, whenever someone attempts to get a fd to a map
-> security_bpf_map() is called. LSM implementations could check access if
-> the current process has the right to access the map (whose label can be
-> assigned at map creation time with security_bpf_map_alloc()).
+Hi Christian,
 
-[NOTE: SELinux is currently the only LSM which provides BPF access
-controls, so they are going to be my example here and in the rest of
-this email.]
+On Wed, 2022-09-28 at 18:08 +0200, Christian Brauner wrote:
+> The current way of setting and getting posix acls through the generic
+> xattr interface is error prone and type unsafe. The vfs needs to
+> interpret and fixup posix acls before storing or reporting it to
+> userspace. Various hacks exist to make this work. The code is hard to
+> understand and difficult to maintain in it's current form. Instead of
+> making this work by hacking posix acls through xattr handlers we are
+> building a dedicated posix acl api around the get and set inode
+> operations. This removes a lot of hackiness and makes the codepaths
+> easier to maintain. A lot of background can be found in [1].
+> 
+> So far posix acls were passed as a void blob to the security and
+> integrity modules. Some of them like evm then proceed to interpret the
+> void pointer and convert it into the kernel internal struct posix acl
+> representation to perform their integrity checking magic. This is
+> obviously pretty problematic as that requires knowledge that only the
+> vfs is guaranteed to have and has lead to various bugs. Add a proper
+> security hook for setting posix acls and pass down the posix acls in
+> their appropriate vfs format instead of hacking it through a void
+> pointer stored in the uapi format.
+> 
+> I spent considerate time in the security module and integrity
+> infrastructure and audited all codepaths. EVM is the only part that
+> really has restrictions based on the actual posix acl values passed
+> through it
 
-In the case of SELinux, security_bpf_map() does check the access
-between the current task and the BPF map itself (which inherits its
-security label from its creator), with the actual permission requested
-being determined by the fmode_t parameter passed to the LSM hook.
-Looking at the current BPF code, the callers seem to take that from
-various different places (bpf_attr:{file_flags,map_flags,open_flags}).
-This could be due solely to the different operations being done by the
-callers, which would make me believe everything is correct, but given
-this thread it seems reasonable for someone with a better
-understanding of BPF than me to double check this.  Can you help
-verify that everything is okay here?
+(e.g. i_mode).
 
-> Second, whenever the holder of the obtained fd wants to do an operation
-> on the map (lookup, update, delete, ...), eBPF checks if the fd modes
-> are compatible with the operation to perform (e.g. lookup requires
-> FMODE_CAN_READ).
+> Before this dedicated hook EVM used to translate from the
+> uapi posix acl format sent to it in the form of a void pointer into the
+> vfs format. This is not a good thing. Instead of hacking around in the
+> uapi struct give EVM the posix acls in the appropriate vfs format and
+> perform sane permissions checks that mirror what it used to to in the
+> generic xattr hook.
+> 
+> IMA doesn't have any restrictions on posix acls. When posix acls are
+> changed it just wants to update its appraisal status.
 
-To be clear, from what I can see, it looks like the LSM is not
-checking the fd modes, but rather the modes stored in the bpf_attr,
-which I get the impression do not always match the fd modes.  Yes?
-No?
+to trigger an EVM re-validation.
 
-There is also LSM/SELinux code which checks the permissions when a BPF
-map is passed between tasks via a fd.  Currently the SELinux check
-only looks at the file:f_mode to get the permissions to check, but if
-the f_mode bits are not the authoritative record of what is allowed in
-the BPF map, perhaps we need to change that to use one of the bpf_attr
-mode bits (my gut feeling is bpf_attr:open_flags)?
+> The removal of posix acls is equivalent to passing NULL to the posix set
+> acl hooks. This is the same as before through the generic xattr api.
+> 
+> Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 
-> One problem is that the second part is missing for some operations
-> dealing with the map fd:
->
-> Map iterators:
-> https://lore.kernel.org/bpf/20220906170301.256206-1-roberto.sassu@huaweicloud.com/
 
-You'll need to treat me like an idiot when it comes to BPF maps ;)
+> ---
 
-I did a very quick read on them right now and it looks like a BPF map
-iterator would just be a combination of BPF read and execute ("bpf {
-map_read prog_run }" in SELinux policy terms).  Would it make more
-sense to just use the existing security_bpf_map() and
-security_bpf_prog() hooks here?
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index 23d484e05e6f..7904786b610f 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -8,7 +8,7 @@
+>   *
+>   * File: evm_main.c
+>   *	implements evm_inode_setxattr, evm_inode_post_setxattr,
+> - *	evm_inode_removexattr, and evm_verifyxattr
+> + *	evm_inode_removexattr, evm_verifyxattr, and evm_inode_set_acl.
+>   */
+>  
+>  #define pr_fmt(fmt) "EVM: "fmt
+> @@ -670,6 +670,74 @@ int evm_inode_removexattr(struct user_namespace *mnt_userns,
+>  	return evm_protect_xattr(mnt_userns, dentry, xattr_name, NULL, 0);
+>  }
+>  
+> +static int evm_inode_set_acl_change(struct user_namespace *mnt_userns,
+> +				    struct dentry *dentry, const char *name,
+> +				    struct posix_acl *kacl)
+> +{
+> +#ifdef CONFIG_FS_POSIX_ACL
+> +	int rc;
+> +
+> +	umode_t mode;
+> +	struct inode *inode = d_backing_inode(dentry);
+> +
+> +	if (!kacl)
+> +		return 1;
+> +
+> +	rc = posix_acl_update_mode(mnt_userns, inode, &mode, &kacl);
+> +	if (rc || (inode->i_mode != mode))
 
-> Map fd directly used by eBPF programs without system call:
-> https://lore.kernel.org/bpf/20220926154430.1552800-1-roberto.sassu@huaweicloud.com/
+acl_res in the existing evm_xattr_acl_change() code is based on the
+init_user_ns.  Is that the same here?   Is it guaranteed?
 
-Another instance of "can you please explain this use case?" ;)
+> +		return 1;
+> +#endif
+> +	return 0;
+> +}
+> +
+> +/**
+> + * evm_inode_set_acl - protect the EVM extended attribute for posix acls
 
-I'm not going to hazard too much of a guess here, but if the map is
-being passed between tasks and a fd is generated from that map, we may
-be able to cover this with logic similar
-security/selinux/hooks.c:bpf_fd_pass() ... but I'm really stretching
-my weak understanding of BPF here.
+^from posix acls
 
-> Another problem is that there is no DAC, only MAC (work in progress). I
-> don't know exactly the status of enabling unprivileged eBPF.
 
-It is my opinion that we need to ensure both DAC and MAC are present
-in the code.  This thread makes me worry that some eBPF DAC controls
-are being ignored because one can currently say "we're okay because
-you need privilege!".  That may be true today, but I can imagine a
-time in the not too distant future where unpriv eBPF is allowed and we
-suddenly have to bolt on a lot of capable() checks ... which is a
-great recipe for privilege escalation bugs.
+> + * @mnt_userns: user namespace of the idmapped mount
+> + * @dentry: pointer to the affected dentry
+> + * @acl_name: name of the posix acl
+> + * @kacl: pointer to the posix acls
 
-> Apart from this, now the discussion is focusing on the following
-> problem. A map (kernel object) can be referenced in two ways: by ID or
-> by path. By ID requires CAP_ADMIN, so we can consider by path for now.
->
-> Given a map fd, the holder of that fd can create a new reference
-> (pinning) to the map in the bpf filesystem (a new file whose private
-> data contains the address of the kernel object).
->
-> Pinning a map does not have a corresponding permission. Any fd mode is
-> sufficient to do the operation. Furthermore, subsequent requests to
-> obtain a map fd by path could result in receiving a read-write fd,
-> while at the time of pinning the fd was read-only.
-
-Since the maps carry their own label I think we are mostly okay, even
-if the map is passed between tasks by some non-fd related mechanism.
-However, I am now slightly worried that if a fd is obtained with perms
-that don't match the underlying map and that fd is then passed to
-another task the access control check on the fd passing would not be
-correct.  Operations on the map from a SELinux perspective should
-still be okay (the map has its own label), but still.
-
-I'm wondering if we do want to move the SELinux BPF fd passing code to
-check the bpf_attr:open_flags perms.  Thoughts?
-
-> While this does not seem to me a concern from MAC perspective, as
-> attempts to get a map fd still have to pass through security_bpf_map(),
-> in general this should be fixed without relying on LSMs.
-
-Agreed.  The access controls need to work both for DAC and DAC+LSM.
-
-> > Is the plan to ensure that the map and fd permissions are correct at
-> > the core BPF level, or do we need to do some additional checks in the
-> > LSMs (currently only SELinux)?
->
-> Should we add a new map_pin permission in SELinux?
-
-Maybe?  Maybe not?  I don't know, can you help me understand map
-pinning a bit more first?
-
-> Should we have DAC to restrict pinnning without LSMs?
-
-Similar to above.
+Prevent modifying posix acls causing the EVM HMAC to be re-calculated
+and 'security.evm' xattr updated, unless the existing 'security.evm' is
+valid.
 
 -- 
-paul-moore.com
+thanks,
+
+Mimi
+
