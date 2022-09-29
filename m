@@ -2,52 +2,57 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AFAC433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 15:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6FDC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 15:31:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234954AbiI2PbZ (ORCPT
+        id S235751AbiI2Pby (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Sep 2022 11:31:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46106 "EHLO
+        Thu, 29 Sep 2022 11:31:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235024AbiI2PbO (ORCPT
+        with ESMTP id S235182AbiI2PbX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Sep 2022 11:31:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13D44606BA;
-        Thu, 29 Sep 2022 08:31:00 -0700 (PDT)
+        Thu, 29 Sep 2022 11:31:23 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E8107B78D;
+        Thu, 29 Sep 2022 08:31:07 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0866E618F2;
-        Thu, 29 Sep 2022 15:31:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A26AAC433D6;
-        Thu, 29 Sep 2022 15:30:57 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3124EB824F2;
+        Thu, 29 Sep 2022 15:31:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAB7AC433D6;
+        Thu, 29 Sep 2022 15:31:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664465459;
-        bh=K6s8vI2sOeNMRvZ6vq87dFIG86TusA2TQq40cYai+ys=;
+        s=k20201202; t=1664465465;
+        bh=Wv6iKZu0aoRLyxN0ldIbWhr6Keudw8mZlau3z7iYs6I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T34q55Oj0uB1VQcHxmmV66iqxEPK7wtRtYdDSUx9ICOM+0aWxUcWryfy5I/GmzXMX
-         hLFoLD+uWiDAzYpaBMkW7h9FG90fp2H7XQ+GB3K5Kwk9sWYQE8i7Oav4etiuI0KMnB
-         /DntAl7brVJ4M7hfZOWhLRI8a66G9XYTYN81YJZc0aLio2CBkMqDmEudqLRtFTq4Pk
-         6fyVvzDUa0kfwgRaRYMZRsTEx6zYQ+2ILg4niyi43iZSXijcI/sLhZjyHquD3GYpbx
-         +/bBoQ+I+1wJGEx8MaLF0+tCZRxhGmbMWgf16lb+O7hW9TNbYJWNbHR7Wv4BD8X0CP
-         vfsH8Dkkvnj9Q==
+        b=Bn9+H6DNlq1M+dcQm0VWBZVjLX+Nn8eyuUBy23+r5sKgn1CGD4DFlwxWrZDoe6hKM
+         vZoUQ7GkRAu67IJSdZsttSgnx1qMEx7Wg9mZCL2j2brBmxz+8fyVKOUI7KgWxx6EIi
+         iJdQJDE63NHOzRnCyL8b1FpnsOR26hdP+/s3lYehCy2pbJzRFXZSKwKcJhKZ69dElf
+         Zce5y7b+XUCv57lA7b1omw03JQ8WFAkGDibLPNm9qDKwR8i1HEXtdNE9/9PqnKWz/l
+         C3MPUWCdEkuNw0TqtGrqBhi8RNIcvi7CMeDhk3DQmUGRN28fsPZzP/5srAdpGLCzNx
+         11xNGww9c4oPg==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v4 03/30] fs: rename current get acl method
-Date:   Thu, 29 Sep 2022 17:30:13 +0200
-Message-Id: <20220929153041.500115-4-brauner@kernel.org>
+        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Hyunchul Lee <hyc.lee@gmail.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        linux-cifs@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v4 05/30] cifs: implement get acl method
+Date:   Thu, 29 Sep 2022 17:30:15 +0200
+Message-Id: <20220929153041.500115-6-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220929153041.500115-1-brauner@kernel.org>
 References: <20220929153041.500115-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=40807; i=brauner@kernel.org; h=from:subject; bh=K6s8vI2sOeNMRvZ6vq87dFIG86TusA2TQq40cYai+ys=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSb7hKqzL61/K+p8Vw9Bu24CTvXPpOY3H8rUeGqxJ1s1oh6 mT2pHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpfM7IcKlB88+H5n0ZigGv0nfITY 6IlpAxt3cqOXZYPHZN05fGMIb/ue0TgybmR/y3n6nBeTdy8VHtxytsnt89denC8QQN1SMX2AA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13025; i=brauner@kernel.org; h=from:subject; bh=Wv6iKZu0aoRLyxN0ldIbWhr6Keudw8mZlau3z7iYs6I=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSb7hJadWBn0b2/qoWn3pRzueud/Ms/YVOK4N7oNkXT6y0e D55ZdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkcyfDH67++I4Ul+O9d/kt7Bifbw svDTCc/ubzf69jTpvybtduOMnIsPft4VStzpNTedOtam4Vp3O/2Ozist9txicG7/MTZji3sAIA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -63,1064 +68,385 @@ building a dedicated posix acl api around the get and set inode
 operations. This removes a lot of hackiness and makes the codepaths
 easier to maintain. A lot of background can be found in [1].
 
-The current inode operation for getting posix acls takes an inode
-argument but various filesystems (e.g., 9p, cifs, overlayfs) need access
-to the dentry. In contrast to the ->set_acl() inode operation we cannot
-simply extend ->get_acl() to take a dentry argument. The ->get_acl()
-inode operation is called from:
+In order to build a type safe posix api around get and set acl we need
+all filesystem to implement get and set acl.
 
-acl_permission_check()
--> check_acl()
-   -> get_acl()
+So far cifs wasn't able to implement get and set acl inode operations
+because it needs access to the dentry. Now that we extended the set acl
+inode operation to take a dentry argument and added a new get acl inode
+operation that takes a dentry argument we can let cifs implement get and
+set acl inode operations.
 
-which is part of generic_permission() which in turn is part of
-inode_permission(). Both generic_permission() and inode_permission() are
-called in the ->permission() handler of various filesystems (e.g.,
-overlayfs). So simply passing a dentry argument to ->get_acl() would
-amount to also having to pass a dentry argument to ->permission(). We
-should avoid this unnecessary change.
+This is mostly a copy and paste of the codepaths currently used in cifs'
+posix acl xattr handler. After we have fully implemented the posix acl
+api and switched the vfs over to it, the cifs specific posix acl xattr
+handler and associated code will be removed and the code duplication
+will go away.
 
-So instead of extending the existing inode operation rename it from
-->get_acl() to ->get_inode_acl() and add a ->get_acl() method later that
-passes a dentry argument and which filesystems that need access to the
-dentry can implement instead of ->get_inode_acl(). Filesystems like cifs
-which allow setting and getting posix acls but not using them for
-permission checking during lookup can simply not implement
-->get_inode_acl().
-
-This is intended to be a non-functional change.
+Note, until the vfs has been switched to the new posix acl api this
+patch is a non-functional change.
 
 Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
-Suggested-by/Inspired-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
 
 Notes:
     /* v2 */
-    unchanged
+    Christian Brauner (Microsoft) <brauner@kernel.org>:
+    - Surface acl error in all cases.
     
     /* v3 */
     unchanged
     
     /* v4 */
-    Reviewed-by: Christoph Hellwig <hch@lst.de>
-    
-    Christoph Hellwig <hch@lst.de>:
-    - Also rename get_acl() to get_inode_acl().
+    unchanged
 
- Documentation/filesystems/locking.rst |  4 +--
- Documentation/filesystems/porting.rst |  4 +--
- Documentation/filesystems/vfs.rst     |  2 +-
- fs/9p/vfs_inode_dotl.c                |  4 +--
- fs/bad_inode.c                        |  2 +-
- fs/btrfs/inode.c                      |  6 ++--
- fs/ceph/dir.c                         |  2 +-
- fs/ceph/inode.c                       |  2 +-
- fs/erofs/inode.c                      |  6 ++--
- fs/erofs/namei.c                      |  2 +-
- fs/ext2/file.c                        |  2 +-
- fs/ext2/namei.c                       |  4 +--
- fs/ext4/file.c                        |  2 +-
- fs/ext4/ialloc.c                      |  2 +-
- fs/ext4/namei.c                       |  4 +--
- fs/f2fs/file.c                        |  2 +-
- fs/f2fs/namei.c                       |  4 +--
- fs/fuse/dir.c                         |  4 +--
- fs/gfs2/inode.c                       |  4 +--
- fs/jffs2/dir.c                        |  2 +-
- fs/jffs2/file.c                       |  2 +-
- fs/jfs/file.c                         |  2 +-
- fs/jfs/namei.c                        |  2 +-
- fs/ksmbd/smb2pdu.c                    |  4 +--
- fs/ksmbd/smbacl.c                     |  2 +-
- fs/ksmbd/vfs.c                        |  4 +--
- fs/namei.c                            |  4 +--
- fs/nfs/nfs3acl.c                      |  6 ++--
- fs/nfs/nfs3proc.c                     |  4 +--
- fs/nfsd/nfs2acl.c                     |  4 +--
- fs/nfsd/nfs3acl.c                     |  4 +--
- fs/nfsd/nfs4acl.c                     |  4 +--
- fs/ntfs3/file.c                       |  2 +-
- fs/ntfs3/namei.c                      |  4 +--
- fs/ocfs2/file.c                       |  4 +--
- fs/ocfs2/namei.c                      |  2 +-
- fs/orangefs/inode.c                   |  2 +-
- fs/orangefs/namei.c                   |  2 +-
- fs/overlayfs/dir.c                    |  2 +-
- fs/overlayfs/inode.c                  |  6 ++--
- fs/posix_acl.c                        | 43 ++++++++++++++-------------
- fs/reiserfs/file.c                    |  2 +-
- fs/reiserfs/namei.c                   |  4 +--
- fs/reiserfs/xattr_acl.c               |  2 +-
- fs/xfs/xfs_iops.c                     |  6 ++--
- include/linux/fs.h                    |  6 ++--
- include/linux/posix_acl.h             |  2 +-
- 47 files changed, 98 insertions(+), 97 deletions(-)
+ fs/cifs/cifsacl.c   |  67 +++++++++++++++
+ fs/cifs/cifsfs.c    |   2 +
+ fs/cifs/cifsproto.h |   6 ++
+ fs/cifs/cifssmb.c   | 196 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 271 insertions(+)
 
-diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index 4bb2627026ec..1cd2930e54ee 100644
---- a/Documentation/filesystems/locking.rst
-+++ b/Documentation/filesystems/locking.rst
-@@ -70,7 +70,7 @@ prototypes::
- 	const char *(*get_link) (struct dentry *, struct inode *, struct delayed_call *);
- 	void (*truncate) (struct inode *);
- 	int (*permission) (struct inode *, int, unsigned int);
--	struct posix_acl * (*get_acl)(struct inode *, int, bool);
-+	struct posix_acl * (*get_inode_acl)(struct inode *, int, bool);
- 	int (*setattr) (struct dentry *, struct iattr *);
- 	int (*getattr) (const struct path *, struct kstat *, u32, unsigned int);
- 	ssize_t (*listxattr) (struct dentry *, char *, size_t);
-@@ -103,7 +103,7 @@ readlink:	no
- get_link:	no
- setattr:	exclusive
- permission:	no (may not block if called in rcu-walk mode)
--get_acl:	no
-+get_inode_acl:	no
- getattr:	no
- listxattr:	no
- fiemap:		no
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index aee9aaf9f3df..93592ff0b3d8 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -462,8 +462,8 @@ ERR_PTR(...).
- argument; instead of passing IPERM_FLAG_RCU we add MAY_NOT_BLOCK into mask.
+diff --git a/fs/cifs/cifsacl.c b/fs/cifs/cifsacl.c
+index fa480d62f313..a6730e0eb57b 100644
+--- a/fs/cifs/cifsacl.c
++++ b/fs/cifs/cifsacl.c
+@@ -13,6 +13,7 @@
+ #include <linux/string.h>
+ #include <linux/keyctl.h>
+ #include <linux/key-type.h>
++#include <uapi/linux/posix_acl.h>
+ #include <keys/user-type.h>
+ #include "cifspdu.h"
+ #include "cifsglob.h"
+@@ -20,6 +21,8 @@
+ #include "cifsproto.h"
+ #include "cifs_debug.h"
+ #include "fs_context.h"
++#include "cifs_fs_sb.h"
++#include "cifs_unicode.h"
  
- generic_permission() has also lost the check_acl argument; ACL checking
--has been taken to VFS and filesystems need to provide a non-NULL ->i_op->get_acl
--to read an ACL from disk.
-+has been taken to VFS and filesystems need to provide a non-NULL
-+->i_op->get_inode_acl to read an ACL from disk.
- 
- ---
- 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 6cd6953e175b..4fc6f1e23012 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -432,7 +432,7 @@ As of kernel 2.6.22, the following members are defined:
- 		const char *(*get_link) (struct dentry *, struct inode *,
- 					 struct delayed_call *);
- 		int (*permission) (struct user_namespace *, struct inode *, int);
--		struct posix_acl * (*get_acl)(struct inode *, int, bool);
-+		struct posix_acl * (*get_inode_acl)(struct inode *, int, bool);
- 		int (*setattr) (struct user_namespace *, struct dentry *, struct iattr *);
- 		int (*getattr) (struct user_namespace *, const struct path *, struct kstat *, u32, unsigned int);
- 		ssize_t (*listxattr) (struct dentry *, char *, size_t);
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index 5cfa4b4f070f..0d1a7f2c579d 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -983,14 +983,14 @@ const struct inode_operations v9fs_dir_inode_operations_dotl = {
- 	.getattr = v9fs_vfs_getattr_dotl,
- 	.setattr = v9fs_vfs_setattr_dotl,
- 	.listxattr = v9fs_listxattr,
--	.get_acl = v9fs_iop_get_acl,
-+	.get_inode_acl = v9fs_iop_get_acl,
- };
- 
- const struct inode_operations v9fs_file_inode_operations_dotl = {
- 	.getattr = v9fs_vfs_getattr_dotl,
- 	.setattr = v9fs_vfs_setattr_dotl,
- 	.listxattr = v9fs_listxattr,
--	.get_acl = v9fs_iop_get_acl,
-+	.get_inode_acl = v9fs_iop_get_acl,
- };
- 
- const struct inode_operations v9fs_symlink_inode_operations_dotl = {
-diff --git a/fs/bad_inode.c b/fs/bad_inode.c
-index bc67beab5f16..524406b838ff 100644
---- a/fs/bad_inode.c
-+++ b/fs/bad_inode.c
-@@ -177,7 +177,7 @@ static const struct inode_operations bad_inode_ops =
- 	.setattr	= bad_inode_setattr,
- 	.listxattr	= bad_inode_listxattr,
- 	.get_link	= bad_inode_get_link,
--	.get_acl	= bad_inode_get_acl,
-+	.get_inode_acl	= bad_inode_get_acl,
- 	.fiemap		= bad_inode_fiemap,
- 	.update_time	= bad_inode_update_time,
- 	.atomic_open	= bad_inode_atomic_open,
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 29884b729ca3..27b836693570 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -11441,7 +11441,7 @@ static const struct inode_operations btrfs_dir_inode_operations = {
- 	.mknod		= btrfs_mknod,
- 	.listxattr	= btrfs_listxattr,
- 	.permission	= btrfs_permission,
--	.get_acl	= btrfs_get_acl,
-+	.get_inode_acl	= btrfs_get_acl,
- 	.set_acl	= btrfs_set_acl,
- 	.update_time	= btrfs_update_time,
- 	.tmpfile        = btrfs_tmpfile,
-@@ -11494,7 +11494,7 @@ static const struct inode_operations btrfs_file_inode_operations = {
- 	.listxattr      = btrfs_listxattr,
- 	.permission	= btrfs_permission,
- 	.fiemap		= btrfs_fiemap,
--	.get_acl	= btrfs_get_acl,
-+	.get_inode_acl	= btrfs_get_acl,
- 	.set_acl	= btrfs_set_acl,
- 	.update_time	= btrfs_update_time,
- 	.fileattr_get	= btrfs_fileattr_get,
-@@ -11505,7 +11505,7 @@ static const struct inode_operations btrfs_special_inode_operations = {
- 	.setattr	= btrfs_setattr,
- 	.permission	= btrfs_permission,
- 	.listxattr	= btrfs_listxattr,
--	.get_acl	= btrfs_get_acl,
-+	.get_inode_acl	= btrfs_get_acl,
- 	.set_acl	= btrfs_set_acl,
- 	.update_time	= btrfs_update_time,
- };
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index e7e2ebac330d..6c7026cc8988 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -2033,7 +2033,7 @@ const struct inode_operations ceph_dir_iops = {
- 	.getattr = ceph_getattr,
- 	.setattr = ceph_setattr,
- 	.listxattr = ceph_listxattr,
--	.get_acl = ceph_get_acl,
-+	.get_inode_acl = ceph_get_acl,
- 	.set_acl = ceph_set_acl,
- 	.mknod = ceph_mknod,
- 	.symlink = ceph_symlink,
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index a23fc1e90f66..c43d289f74a5 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -126,7 +126,7 @@ const struct inode_operations ceph_file_iops = {
- 	.setattr = ceph_setattr,
- 	.getattr = ceph_getattr,
- 	.listxattr = ceph_listxattr,
--	.get_acl = ceph_get_acl,
-+	.get_inode_acl = ceph_get_acl,
- 	.set_acl = ceph_set_acl,
+ /* security id for everyone/world system group */
+ static const struct cifs_sid sid_everyone = {
+@@ -1668,3 +1671,67 @@ id_mode_to_cifs_acl(struct inode *inode, const char *path, __u64 *pnmode,
+ 	kfree(pntsd);
+ 	return rc;
+ }
++
++struct posix_acl *cifs_get_acl(struct user_namespace *mnt_userns,
++			       struct dentry *dentry, int type)
++{
++#if defined(CONFIG_CIFS_ALLOW_INSECURE_LEGACY) && defined(CONFIG_CIFS_POSIX)
++	struct posix_acl *acl = NULL;
++	ssize_t rc = -EOPNOTSUPP;
++	unsigned int xid;
++	struct super_block *sb = dentry->d_sb;
++	struct cifs_sb_info *cifs_sb = CIFS_SB(sb);
++	struct tcon_link *tlink;
++	struct cifs_tcon *pTcon;
++	const char *full_path;
++	void *page;
++
++	tlink = cifs_sb_tlink(cifs_sb);
++	if (IS_ERR(tlink))
++		return ERR_CAST(tlink);
++	pTcon = tlink_tcon(tlink);
++
++	xid = get_xid();
++	page = alloc_dentry_path();
++
++	full_path = build_path_from_dentry(dentry, page);
++	if (IS_ERR(full_path)) {
++		acl = ERR_CAST(full_path);
++		goto out;
++	}
++
++	/* return alt name if available as pseudo attr */
++	switch (type) {
++	case ACL_TYPE_ACCESS:
++		if (sb->s_flags & SB_POSIXACL)
++			rc = cifs_do_get_acl(xid, pTcon, full_path, &acl,
++					     ACL_TYPE_ACCESS,
++					     cifs_sb->local_nls,
++					     cifs_remap(cifs_sb));
++		break;
++
++	case ACL_TYPE_DEFAULT:
++		if (sb->s_flags & SB_POSIXACL)
++			rc = cifs_do_get_acl(xid, pTcon, full_path, &acl,
++					     ACL_TYPE_DEFAULT,
++					     cifs_sb->local_nls,
++					     cifs_remap(cifs_sb));
++		break;
++	}
++
++	if (rc < 0) {
++		if (rc == -EINVAL)
++			acl = ERR_PTR(-EOPNOTSUPP);
++		else
++			acl = ERR_PTR(rc);
++	}
++
++out:
++	free_dentry_path(page);
++	free_xid(xid);
++	cifs_put_tlink(tlink);
++	return acl;
++#else
++	return ERR_PTR(-EOPNOTSUPP);
++#endif
++}
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index f54d8bf2732a..5c00d79fda99 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -1128,6 +1128,7 @@ const struct inode_operations cifs_dir_inode_ops = {
+ 	.symlink = cifs_symlink,
+ 	.mknod   = cifs_mknod,
+ 	.listxattr = cifs_listxattr,
++	.get_acl = cifs_get_acl,
  };
  
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 95a403720e8c..f8dccc9167fe 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -379,7 +379,7 @@ int erofs_getattr(struct user_namespace *mnt_userns, const struct path *path,
- const struct inode_operations erofs_generic_iops = {
- 	.getattr = erofs_getattr,
- 	.listxattr = erofs_listxattr,
--	.get_acl = erofs_get_acl,
-+	.get_inode_acl = erofs_get_acl,
- 	.fiemap = erofs_fiemap,
+ const struct inode_operations cifs_file_inode_ops = {
+@@ -1136,6 +1137,7 @@ const struct inode_operations cifs_file_inode_ops = {
+ 	.permission = cifs_permission,
+ 	.listxattr = cifs_listxattr,
+ 	.fiemap = cifs_fiemap,
++	.get_acl = cifs_get_acl,
  };
  
-@@ -387,12 +387,12 @@ const struct inode_operations erofs_symlink_iops = {
- 	.get_link = page_get_link,
- 	.getattr = erofs_getattr,
- 	.listxattr = erofs_listxattr,
--	.get_acl = erofs_get_acl,
-+	.get_inode_acl = erofs_get_acl,
- };
- 
- const struct inode_operations erofs_fast_symlink_iops = {
- 	.get_link = simple_get_link,
- 	.getattr = erofs_getattr,
- 	.listxattr = erofs_listxattr,
--	.get_acl = erofs_get_acl,
-+	.get_inode_acl = erofs_get_acl,
- };
-diff --git a/fs/erofs/namei.c b/fs/erofs/namei.c
-index fd75506799c4..bc38a92c90db 100644
---- a/fs/erofs/namei.c
-+++ b/fs/erofs/namei.c
-@@ -237,6 +237,6 @@ const struct inode_operations erofs_dir_iops = {
- 	.lookup = erofs_lookup,
- 	.getattr = erofs_getattr,
- 	.listxattr = erofs_listxattr,
--	.get_acl = erofs_get_acl,
-+	.get_inode_acl = erofs_get_acl,
- 	.fiemap = erofs_fiemap,
- };
-diff --git a/fs/ext2/file.c b/fs/ext2/file.c
-index eb97aa3d700e..6b4bebe982ca 100644
---- a/fs/ext2/file.c
-+++ b/fs/ext2/file.c
-@@ -200,7 +200,7 @@ const struct inode_operations ext2_file_inode_operations = {
- 	.listxattr	= ext2_listxattr,
- 	.getattr	= ext2_getattr,
- 	.setattr	= ext2_setattr,
--	.get_acl	= ext2_get_acl,
-+	.get_inode_acl	= ext2_get_acl,
- 	.set_acl	= ext2_set_acl,
- 	.fiemap		= ext2_fiemap,
- 	.fileattr_get	= ext2_fileattr_get,
-diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
-index 5fd9a22d2b70..c38dbdbc7013 100644
---- a/fs/ext2/namei.c
-+++ b/fs/ext2/namei.c
-@@ -427,7 +427,7 @@ const struct inode_operations ext2_dir_inode_operations = {
- 	.listxattr	= ext2_listxattr,
- 	.getattr	= ext2_getattr,
- 	.setattr	= ext2_setattr,
--	.get_acl	= ext2_get_acl,
-+	.get_inode_acl	= ext2_get_acl,
- 	.set_acl	= ext2_set_acl,
- 	.tmpfile	= ext2_tmpfile,
- 	.fileattr_get	= ext2_fileattr_get,
-@@ -438,6 +438,6 @@ const struct inode_operations ext2_special_inode_operations = {
- 	.listxattr	= ext2_listxattr,
- 	.getattr	= ext2_getattr,
- 	.setattr	= ext2_setattr,
--	.get_acl	= ext2_get_acl,
-+	.get_inode_acl	= ext2_get_acl,
- 	.set_acl	= ext2_set_acl,
- };
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 109d07629f81..aaf1d9c8b997 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -934,7 +934,7 @@ const struct inode_operations ext4_file_inode_operations = {
- 	.setattr	= ext4_setattr,
- 	.getattr	= ext4_file_getattr,
- 	.listxattr	= ext4_listxattr,
--	.get_acl	= ext4_get_acl,
-+	.get_inode_acl	= ext4_get_acl,
- 	.set_acl	= ext4_set_acl,
- 	.fiemap		= ext4_fiemap,
- 	.fileattr_get	= ext4_fileattr_get,
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index f73e5eb43eae..da589f0b6513 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -871,7 +871,7 @@ static int ext4_xattr_credits_for_new_inode(struct inode *dir, mode_t mode,
- 	struct super_block *sb = dir->i_sb;
- 	int nblocks = 0;
- #ifdef CONFIG_EXT4_FS_POSIX_ACL
--	struct posix_acl *p = get_acl(dir, ACL_TYPE_DEFAULT);
-+	struct posix_acl *p = get_inode_acl(dir, ACL_TYPE_DEFAULT);
- 
- 	if (IS_ERR(p))
- 		return PTR_ERR(p);
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 3a31b662f661..f7adc4b46f93 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -4181,7 +4181,7 @@ const struct inode_operations ext4_dir_inode_operations = {
- 	.setattr	= ext4_setattr,
- 	.getattr	= ext4_getattr,
- 	.listxattr	= ext4_listxattr,
--	.get_acl	= ext4_get_acl,
-+	.get_inode_acl	= ext4_get_acl,
- 	.set_acl	= ext4_set_acl,
- 	.fiemap         = ext4_fiemap,
- 	.fileattr_get	= ext4_fileattr_get,
-@@ -4192,6 +4192,6 @@ const struct inode_operations ext4_special_inode_operations = {
- 	.setattr	= ext4_setattr,
- 	.getattr	= ext4_getattr,
- 	.listxattr	= ext4_listxattr,
--	.get_acl	= ext4_get_acl,
-+	.get_inode_acl	= ext4_get_acl,
- 	.set_acl	= ext4_set_acl,
- };
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index d5523625f590..adbc783c57e5 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -999,7 +999,7 @@ int f2fs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- const struct inode_operations f2fs_file_inode_operations = {
- 	.getattr	= f2fs_getattr,
- 	.setattr	= f2fs_setattr,
--	.get_acl	= f2fs_get_acl,
-+	.get_inode_acl	= f2fs_get_acl,
- 	.set_acl	= f2fs_set_acl,
- 	.listxattr	= f2fs_listxattr,
- 	.fiemap		= f2fs_fiemap,
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index bf00d5057abb..eef19990d34d 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -1376,7 +1376,7 @@ const struct inode_operations f2fs_dir_inode_operations = {
- 	.tmpfile	= f2fs_tmpfile,
- 	.getattr	= f2fs_getattr,
- 	.setattr	= f2fs_setattr,
--	.get_acl	= f2fs_get_acl,
-+	.get_inode_acl	= f2fs_get_acl,
- 	.set_acl	= f2fs_set_acl,
- 	.listxattr	= f2fs_listxattr,
- 	.fiemap		= f2fs_fiemap,
-@@ -1394,7 +1394,7 @@ const struct inode_operations f2fs_symlink_inode_operations = {
- const struct inode_operations f2fs_special_inode_operations = {
- 	.getattr	= f2fs_getattr,
- 	.setattr	= f2fs_setattr,
--	.get_acl	= f2fs_get_acl,
-+	.get_inode_acl	= f2fs_get_acl,
- 	.set_acl	= f2fs_set_acl,
- 	.listxattr	= f2fs_listxattr,
- };
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index b585b04e815e..14a15fd7a5ec 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1917,7 +1917,7 @@ static const struct inode_operations fuse_dir_inode_operations = {
- 	.permission	= fuse_permission,
- 	.getattr	= fuse_getattr,
- 	.listxattr	= fuse_listxattr,
--	.get_acl	= fuse_get_acl,
-+	.get_inode_acl	= fuse_get_acl,
- 	.set_acl	= fuse_set_acl,
- 	.fileattr_get	= fuse_fileattr_get,
- 	.fileattr_set	= fuse_fileattr_set,
-@@ -1939,7 +1939,7 @@ static const struct inode_operations fuse_common_inode_operations = {
- 	.permission	= fuse_permission,
- 	.getattr	= fuse_getattr,
- 	.listxattr	= fuse_listxattr,
--	.get_acl	= fuse_get_acl,
-+	.get_inode_acl	= fuse_get_acl,
- 	.set_acl	= fuse_set_acl,
- 	.fileattr_get	= fuse_fileattr_get,
- 	.fileattr_set	= fuse_fileattr_set,
-diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
-index f2bc97c6862f..3e525825f667 100644
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -2142,7 +2142,7 @@ static const struct inode_operations gfs2_file_iops = {
- 	.getattr = gfs2_getattr,
- 	.listxattr = gfs2_listxattr,
- 	.fiemap = gfs2_fiemap,
--	.get_acl = gfs2_get_acl,
-+	.get_inode_acl = gfs2_get_acl,
- 	.set_acl = gfs2_set_acl,
- 	.update_time = gfs2_update_time,
- 	.fileattr_get = gfs2_fileattr_get,
-@@ -2164,7 +2164,7 @@ static const struct inode_operations gfs2_dir_iops = {
- 	.getattr = gfs2_getattr,
- 	.listxattr = gfs2_listxattr,
- 	.fiemap = gfs2_fiemap,
--	.get_acl = gfs2_get_acl,
-+	.get_inode_acl = gfs2_get_acl,
- 	.set_acl = gfs2_set_acl,
- 	.update_time = gfs2_update_time,
- 	.atomic_open = gfs2_atomic_open,
-diff --git a/fs/jffs2/dir.c b/fs/jffs2/dir.c
-index c0aabbcbfd58..f399b390b5f6 100644
---- a/fs/jffs2/dir.c
-+++ b/fs/jffs2/dir.c
-@@ -62,7 +62,7 @@ const struct inode_operations jffs2_dir_inode_operations =
- 	.rmdir =	jffs2_rmdir,
- 	.mknod =	jffs2_mknod,
- 	.rename =	jffs2_rename,
--	.get_acl =	jffs2_get_acl,
-+	.get_inode_acl =	jffs2_get_acl,
- 	.set_acl =	jffs2_set_acl,
- 	.setattr =	jffs2_setattr,
- 	.listxattr =	jffs2_listxattr,
-diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
-index ba86acbe12d3..3cf71befa475 100644
---- a/fs/jffs2/file.c
-+++ b/fs/jffs2/file.c
-@@ -64,7 +64,7 @@ const struct file_operations jffs2_file_operations =
- 
- const struct inode_operations jffs2_file_inode_operations =
- {
--	.get_acl =	jffs2_get_acl,
-+	.get_inode_acl =	jffs2_get_acl,
- 	.set_acl =	jffs2_set_acl,
- 	.setattr =	jffs2_setattr,
- 	.listxattr =	jffs2_listxattr,
-diff --git a/fs/jfs/file.c b/fs/jfs/file.c
-index e3eb9c36751f..88663465aecd 100644
---- a/fs/jfs/file.c
-+++ b/fs/jfs/file.c
-@@ -133,7 +133,7 @@ const struct inode_operations jfs_file_inode_operations = {
- 	.fileattr_get	= jfs_fileattr_get,
- 	.fileattr_set	= jfs_fileattr_set,
- #ifdef CONFIG_JFS_POSIX_ACL
--	.get_acl	= jfs_get_acl,
-+	.get_inode_acl	= jfs_get_acl,
- 	.set_acl	= jfs_set_acl,
- #endif
- };
-diff --git a/fs/jfs/namei.c b/fs/jfs/namei.c
-index 9db4f5789c0e..b50afaf7966f 100644
---- a/fs/jfs/namei.c
-+++ b/fs/jfs/namei.c
-@@ -1525,7 +1525,7 @@ const struct inode_operations jfs_dir_inode_operations = {
- 	.fileattr_get	= jfs_fileattr_get,
- 	.fileattr_set	= jfs_fileattr_set,
- #ifdef CONFIG_JFS_POSIX_ACL
--	.get_acl	= jfs_get_acl,
-+	.get_inode_acl	= jfs_get_acl,
- 	.set_acl	= jfs_set_acl,
- #endif
- };
-diff --git a/fs/ksmbd/smb2pdu.c b/fs/ksmbd/smb2pdu.c
-index 19a273b8da65..cf7c0b6f5163 100644
---- a/fs/ksmbd/smb2pdu.c
-+++ b/fs/ksmbd/smb2pdu.c
-@@ -2484,9 +2484,9 @@ static void ksmbd_acls_fattr(struct smb_fattr *fattr,
- 	fattr->cf_dacls = NULL;
- 
- 	if (IS_ENABLED(CONFIG_FS_POSIX_ACL)) {
--		fattr->cf_acls = get_acl(inode, ACL_TYPE_ACCESS);
-+		fattr->cf_acls = get_inode_acl(inode, ACL_TYPE_ACCESS);
- 		if (S_ISDIR(inode->i_mode))
--			fattr->cf_dacls = get_acl(inode, ACL_TYPE_DEFAULT);
-+			fattr->cf_dacls = get_inode_acl(inode, ACL_TYPE_DEFAULT);
- 	}
+ const struct inode_operations cifs_symlink_inode_ops = {
+diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h
+index 3bc94bcc7177..953fd910da70 100644
+--- a/fs/cifs/cifsproto.h
++++ b/fs/cifs/cifsproto.h
+@@ -225,6 +225,8 @@ extern struct cifs_ntsd *get_cifs_acl(struct cifs_sb_info *, struct inode *,
+ 				      const char *, u32 *, u32);
+ extern struct cifs_ntsd *get_cifs_acl_by_fid(struct cifs_sb_info *,
+ 				const struct cifs_fid *, u32 *, u32);
++extern struct posix_acl *cifs_get_acl(struct user_namespace *mnt_userns,
++				      struct dentry *dentry, int type);
+ extern int set_cifs_acl(struct cifs_ntsd *, __u32, struct inode *,
+ 				const char *, int);
+ extern unsigned int setup_authusers_ACE(struct cifs_ace *pace);
+@@ -542,6 +544,10 @@ extern int CIFSSMBGetPosixACL(const unsigned int xid, struct cifs_tcon *tcon,
+ 		const unsigned char *searchName,
+ 		char *acl_inf, const int buflen, const int acl_type,
+ 		const struct nls_table *nls_codepage, int remap_special_chars);
++extern int cifs_do_get_acl(const unsigned int xid, struct cifs_tcon *tcon,
++			   const unsigned char *searchName,
++			   struct posix_acl **acl, const int acl_type,
++			   const struct nls_table *nls_codepage, int remap);
+ extern int CIFSSMBSetPosixACL(const unsigned int xid, struct cifs_tcon *tcon,
+ 		const unsigned char *fileName,
+ 		const char *local_acl, const int buflen, const int acl_type,
+diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+index 7aa91e272027..4c0871771c76 100644
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -3212,6 +3212,202 @@ CIFSSMBSetPosixACL(const unsigned int xid, struct cifs_tcon *tcon,
+ 	return rc;
  }
  
-diff --git a/fs/ksmbd/smbacl.c b/fs/ksmbd/smbacl.c
-index ae318fcbef9f..deda11615b4c 100644
---- a/fs/ksmbd/smbacl.c
-+++ b/fs/ksmbd/smbacl.c
-@@ -1287,7 +1287,7 @@ int smb_check_perm_dacl(struct ksmbd_conn *conn, struct path *path,
- 	}
- 
- 	if (IS_ENABLED(CONFIG_FS_POSIX_ACL)) {
--		posix_acls = get_acl(d_inode(path->dentry), ACL_TYPE_ACCESS);
-+		posix_acls = get_inode_acl(d_inode(path->dentry), ACL_TYPE_ACCESS);
- 		if (posix_acls && !found) {
- 			unsigned int id = -1;
- 
-diff --git a/fs/ksmbd/vfs.c b/fs/ksmbd/vfs.c
-index 430962dd2efa..f350d98872f9 100644
---- a/fs/ksmbd/vfs.c
-+++ b/fs/ksmbd/vfs.c
-@@ -1365,7 +1365,7 @@ static struct xattr_smb_acl *ksmbd_vfs_make_xattr_posix_acl(struct user_namespac
- 	if (!IS_ENABLED(CONFIG_FS_POSIX_ACL))
- 		return NULL;
- 
--	posix_acls = get_acl(inode, acl_type);
-+	posix_acls = get_inode_acl(inode, acl_type);
- 	if (!posix_acls)
- 		return NULL;
- 
-@@ -1874,7 +1874,7 @@ int ksmbd_vfs_inherit_posix_acl(struct user_namespace *user_ns,
- 	if (!IS_ENABLED(CONFIG_FS_POSIX_ACL))
- 		return -EOPNOTSUPP;
- 
--	acls = get_acl(parent_inode, ACL_TYPE_DEFAULT);
-+	acls = get_inode_acl(parent_inode, ACL_TYPE_DEFAULT);
- 	if (!acls)
- 		return -ENOENT;
- 	pace = acls->a_entries;
-diff --git a/fs/namei.c b/fs/namei.c
-index 53b4bc094db2..e699571d4b27 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -297,13 +297,13 @@ static int check_acl(struct user_namespace *mnt_userns,
- 		acl = get_cached_acl_rcu(inode, ACL_TYPE_ACCESS);
- 	        if (!acl)
- 	                return -EAGAIN;
--		/* no ->get_acl() calls in RCU mode... */
-+		/* no ->get_inode_acl() calls in RCU mode... */
- 		if (is_uncached_acl(acl))
- 			return -ECHILD;
- 	        return posix_acl_permission(mnt_userns, inode, acl, mask);
- 	}
- 
--	acl = get_acl(inode, ACL_TYPE_ACCESS);
-+	acl = get_inode_acl(inode, ACL_TYPE_ACCESS);
- 	if (IS_ERR(acl))
- 		return PTR_ERR(acl);
- 	if (acl) {
-diff --git a/fs/nfs/nfs3acl.c b/fs/nfs/nfs3acl.c
-index 22890d97a9e4..74d11e3c4205 100644
---- a/fs/nfs/nfs3acl.c
-+++ b/fs/nfs/nfs3acl.c
-@@ -265,14 +265,14 @@ int nfs3_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	if (S_ISDIR(inode->i_mode)) {
- 		switch(type) {
- 		case ACL_TYPE_ACCESS:
--			alloc = get_acl(inode, ACL_TYPE_DEFAULT);
-+			alloc = get_inode_acl(inode, ACL_TYPE_DEFAULT);
- 			if (IS_ERR(alloc))
- 				goto fail;
- 			dfacl = alloc;
- 			break;
- 
- 		case ACL_TYPE_DEFAULT:
--			alloc = get_acl(inode, ACL_TYPE_ACCESS);
-+			alloc = get_inode_acl(inode, ACL_TYPE_ACCESS);
- 			if (IS_ERR(alloc))
- 				goto fail;
- 			dfacl = acl;
-@@ -313,7 +313,7 @@ nfs3_list_one_acl(struct inode *inode, int type, const char *name, void *data,
- 	struct posix_acl *acl;
- 	char *p = data + *result;
- 
--	acl = get_acl(inode, type);
-+	acl = get_inode_acl(inode, type);
- 	if (IS_ERR_OR_NULL(acl))
- 		return 0;
- 
-diff --git a/fs/nfs/nfs3proc.c b/fs/nfs/nfs3proc.c
-index 1597eef40d54..bcfb117bdac9 100644
---- a/fs/nfs/nfs3proc.c
-+++ b/fs/nfs/nfs3proc.c
-@@ -997,7 +997,7 @@ static const struct inode_operations nfs3_dir_inode_operations = {
- 	.setattr	= nfs_setattr,
- #ifdef CONFIG_NFS_V3_ACL
- 	.listxattr	= nfs3_listxattr,
--	.get_acl	= nfs3_get_acl,
-+	.get_inode_acl	= nfs3_get_acl,
- 	.set_acl	= nfs3_set_acl,
- #endif
- };
-@@ -1008,7 +1008,7 @@ static const struct inode_operations nfs3_file_inode_operations = {
- 	.setattr	= nfs_setattr,
- #ifdef CONFIG_NFS_V3_ACL
- 	.listxattr	= nfs3_listxattr,
--	.get_acl	= nfs3_get_acl,
-+	.get_inode_acl	= nfs3_get_acl,
- 	.set_acl	= nfs3_set_acl,
- #endif
- };
-diff --git a/fs/nfsd/nfs2acl.c b/fs/nfsd/nfs2acl.c
-index c74b626cb1d8..335c56e66c4f 100644
---- a/fs/nfsd/nfs2acl.c
-+++ b/fs/nfsd/nfs2acl.c
-@@ -55,7 +55,7 @@ static __be32 nfsacld_proc_getacl(struct svc_rqst *rqstp)
- 		goto out;
- 
- 	if (resp->mask & (NFS_ACL|NFS_ACLCNT)) {
--		acl = get_acl(inode, ACL_TYPE_ACCESS);
-+		acl = get_inode_acl(inode, ACL_TYPE_ACCESS);
- 		if (acl == NULL) {
- 			/* Solaris returns the inode's minimum ACL. */
- 			acl = posix_acl_from_mode(inode->i_mode, GFP_KERNEL);
-@@ -69,7 +69,7 @@ static __be32 nfsacld_proc_getacl(struct svc_rqst *rqstp)
- 	if (resp->mask & (NFS_DFACL|NFS_DFACLCNT)) {
- 		/* Check how Solaris handles requests for the Default ACL
- 		   of a non-directory! */
--		acl = get_acl(inode, ACL_TYPE_DEFAULT);
-+		acl = get_inode_acl(inode, ACL_TYPE_DEFAULT);
- 		if (IS_ERR(acl)) {
- 			resp->status = nfserrno(PTR_ERR(acl));
- 			goto fail;
-diff --git a/fs/nfsd/nfs3acl.c b/fs/nfsd/nfs3acl.c
-index 61748c2322ac..42eaaade5798 100644
---- a/fs/nfsd/nfs3acl.c
-+++ b/fs/nfsd/nfs3acl.c
-@@ -47,7 +47,7 @@ static __be32 nfsd3_proc_getacl(struct svc_rqst *rqstp)
- 	resp->mask = argp->mask;
- 
- 	if (resp->mask & (NFS_ACL|NFS_ACLCNT)) {
--		acl = get_acl(inode, ACL_TYPE_ACCESS);
-+		acl = get_inode_acl(inode, ACL_TYPE_ACCESS);
- 		if (acl == NULL) {
- 			/* Solaris returns the inode's minimum ACL. */
- 			acl = posix_acl_from_mode(inode->i_mode, GFP_KERNEL);
-@@ -61,7 +61,7 @@ static __be32 nfsd3_proc_getacl(struct svc_rqst *rqstp)
- 	if (resp->mask & (NFS_DFACL|NFS_DFACLCNT)) {
- 		/* Check how Solaris handles requests for the Default ACL
- 		   of a non-directory! */
--		acl = get_acl(inode, ACL_TYPE_DEFAULT);
-+		acl = get_inode_acl(inode, ACL_TYPE_DEFAULT);
- 		if (IS_ERR(acl)) {
- 			resp->status = nfserrno(PTR_ERR(acl));
- 			goto fail;
-diff --git a/fs/nfsd/nfs4acl.c b/fs/nfsd/nfs4acl.c
-index bb8e2f6d7d03..518203821790 100644
---- a/fs/nfsd/nfs4acl.c
-+++ b/fs/nfsd/nfs4acl.c
-@@ -135,7 +135,7 @@ nfsd4_get_nfs4_acl(struct svc_rqst *rqstp, struct dentry *dentry,
- 	unsigned int flags = 0;
- 	int size = 0;
- 
--	pacl = get_acl(inode, ACL_TYPE_ACCESS);
-+	pacl = get_inode_acl(inode, ACL_TYPE_ACCESS);
- 	if (!pacl)
- 		pacl = posix_acl_from_mode(inode->i_mode, GFP_KERNEL);
- 
-@@ -147,7 +147,7 @@ nfsd4_get_nfs4_acl(struct svc_rqst *rqstp, struct dentry *dentry,
- 
- 	if (S_ISDIR(inode->i_mode)) {
- 		flags = NFS4_ACL_DIR;
--		dpacl = get_acl(inode, ACL_TYPE_DEFAULT);
-+		dpacl = get_inode_acl(inode, ACL_TYPE_DEFAULT);
- 		if (IS_ERR(dpacl)) {
- 			error = PTR_ERR(dpacl);
- 			goto rel_pacl;
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index ee5101e6bd68..c5e4a886593d 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -1255,7 +1255,7 @@ const struct inode_operations ntfs_file_inode_operations = {
- 	.setattr	= ntfs3_setattr,
- 	.listxattr	= ntfs_listxattr,
- 	.permission	= ntfs_permission,
--	.get_acl	= ntfs_get_acl,
-+	.get_inode_acl	= ntfs_get_acl,
- 	.set_acl	= ntfs_set_acl,
- 	.fiemap		= ntfs_fiemap,
- };
-diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
-index bc22cc321a74..053cc0e0f8b5 100644
---- a/fs/ntfs3/namei.c
-+++ b/fs/ntfs3/namei.c
-@@ -367,7 +367,7 @@ const struct inode_operations ntfs_dir_inode_operations = {
- 	.mknod		= ntfs_mknod,
- 	.rename		= ntfs_rename,
- 	.permission	= ntfs_permission,
--	.get_acl	= ntfs_get_acl,
-+	.get_inode_acl	= ntfs_get_acl,
- 	.set_acl	= ntfs_set_acl,
- 	.setattr	= ntfs3_setattr,
- 	.getattr	= ntfs_getattr,
-@@ -379,7 +379,7 @@ const struct inode_operations ntfs_special_inode_operations = {
- 	.setattr	= ntfs3_setattr,
- 	.getattr	= ntfs_getattr,
- 	.listxattr	= ntfs_listxattr,
--	.get_acl	= ntfs_get_acl,
-+	.get_inode_acl	= ntfs_get_acl,
- 	.set_acl	= ntfs_set_acl,
- };
- // clang-format on
-diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-index 9c67edd215d5..af900aaa9275 100644
---- a/fs/ocfs2/file.c
-+++ b/fs/ocfs2/file.c
-@@ -2712,7 +2712,7 @@ const struct inode_operations ocfs2_file_iops = {
- 	.permission	= ocfs2_permission,
- 	.listxattr	= ocfs2_listxattr,
- 	.fiemap		= ocfs2_fiemap,
--	.get_acl	= ocfs2_iop_get_acl,
-+	.get_inode_acl	= ocfs2_iop_get_acl,
- 	.set_acl	= ocfs2_iop_set_acl,
- 	.fileattr_get	= ocfs2_fileattr_get,
- 	.fileattr_set	= ocfs2_fileattr_set,
-@@ -2722,7 +2722,7 @@ const struct inode_operations ocfs2_special_file_iops = {
- 	.setattr	= ocfs2_setattr,
- 	.getattr	= ocfs2_getattr,
- 	.permission	= ocfs2_permission,
--	.get_acl	= ocfs2_iop_get_acl,
-+	.get_inode_acl	= ocfs2_iop_get_acl,
- 	.set_acl	= ocfs2_iop_set_acl,
- };
- 
-diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-index 961d1cf54388..c5ffded7ac92 100644
---- a/fs/ocfs2/namei.c
-+++ b/fs/ocfs2/namei.c
-@@ -2916,7 +2916,7 @@ const struct inode_operations ocfs2_dir_iops = {
- 	.permission	= ocfs2_permission,
- 	.listxattr	= ocfs2_listxattr,
- 	.fiemap         = ocfs2_fiemap,
--	.get_acl	= ocfs2_iop_get_acl,
-+	.get_inode_acl	= ocfs2_iop_get_acl,
- 	.set_acl	= ocfs2_iop_set_acl,
- 	.fileattr_get	= ocfs2_fileattr_get,
- 	.fileattr_set	= ocfs2_fileattr_set,
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 825872d8d377..8974b0fbf00d 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -975,7 +975,7 @@ static int orangefs_fileattr_set(struct user_namespace *mnt_userns,
- 
- /* ORANGEFS2 implementation of VFS inode operations for files */
- static const struct inode_operations orangefs_file_inode_operations = {
--	.get_acl = orangefs_get_acl,
-+	.get_inode_acl = orangefs_get_acl,
- 	.set_acl = orangefs_set_acl,
- 	.setattr = orangefs_setattr,
- 	.getattr = orangefs_getattr,
-diff --git a/fs/orangefs/namei.c b/fs/orangefs/namei.c
-index 600e8eee541f..75c1a3dcf68c 100644
---- a/fs/orangefs/namei.c
-+++ b/fs/orangefs/namei.c
-@@ -430,7 +430,7 @@ static int orangefs_rename(struct user_namespace *mnt_userns,
- /* ORANGEFS implementation of VFS inode operations for directories */
- const struct inode_operations orangefs_dir_inode_operations = {
- 	.lookup = orangefs_lookup,
--	.get_acl = orangefs_get_acl,
-+	.get_inode_acl = orangefs_get_acl,
- 	.set_acl = orangefs_set_acl,
- 	.create = orangefs_create,
- 	.unlink = orangefs_unlink,
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 6b03457f72bb..7bece7010c00 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -1311,7 +1311,7 @@ const struct inode_operations ovl_dir_inode_operations = {
- 	.permission	= ovl_permission,
- 	.getattr	= ovl_getattr,
- 	.listxattr	= ovl_listxattr,
--	.get_acl	= ovl_get_acl,
-+	.get_inode_acl	= ovl_get_acl,
- 	.update_time	= ovl_update_time,
- 	.fileattr_get	= ovl_fileattr_get,
- 	.fileattr_set	= ovl_fileattr_set,
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index 0fbcb590af84..9bc4582e956b 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -517,7 +517,7 @@ struct posix_acl *ovl_get_acl(struct inode *inode, int type, bool rcu)
- 		const struct cred *old_cred;
- 
- 		old_cred = ovl_override_creds(inode->i_sb);
--		acl = get_acl(realinode, type);
-+		acl = get_inode_acl(realinode, type);
- 		revert_creds(old_cred);
- 	}
- 	/*
-@@ -721,7 +721,7 @@ static const struct inode_operations ovl_file_inode_operations = {
- 	.permission	= ovl_permission,
- 	.getattr	= ovl_getattr,
- 	.listxattr	= ovl_listxattr,
--	.get_acl	= ovl_get_acl,
-+	.get_inode_acl	= ovl_get_acl,
- 	.update_time	= ovl_update_time,
- 	.fiemap		= ovl_fiemap,
- 	.fileattr_get	= ovl_fileattr_get,
-@@ -741,7 +741,7 @@ static const struct inode_operations ovl_special_inode_operations = {
- 	.permission	= ovl_permission,
- 	.getattr	= ovl_getattr,
- 	.listxattr	= ovl_listxattr,
--	.get_acl	= ovl_get_acl,
-+	.get_inode_acl	= ovl_get_acl,
- 	.update_time	= ovl_update_time,
- };
- 
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 97b368b15289..3749d07881cc 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -63,7 +63,7 @@ struct posix_acl *get_cached_acl_rcu(struct inode *inode, int type)
- 	if (acl == ACL_DONT_CACHE) {
- 		struct posix_acl *ret;
- 
--		ret = inode->i_op->get_acl(inode, type, LOOKUP_RCU);
-+		ret = inode->i_op->get_inode_acl(inode, type, LOOKUP_RCU);
- 		if (!IS_ERR(ret))
- 			acl = ret;
- 	}
-@@ -105,7 +105,7 @@ void forget_all_cached_acls(struct inode *inode)
- }
- EXPORT_SYMBOL(forget_all_cached_acls);
- 
--struct posix_acl *get_acl(struct inode *inode, int type)
-+struct posix_acl *get_inode_acl(struct inode *inode, int type)
- {
- 	void *sentinel;
- 	struct posix_acl **p;
-@@ -113,7 +113,7 @@ struct posix_acl *get_acl(struct inode *inode, int type)
- 
- 	/*
- 	 * The sentinel is used to detect when another operation like
--	 * set_cached_acl() or forget_cached_acl() races with get_acl().
-+	 * set_cached_acl() or forget_cached_acl() races with get_inode_acl().
- 	 * It is guaranteed that is_uncached_acl(sentinel) is true.
- 	 */
- 
-@@ -132,24 +132,24 @@ struct posix_acl *get_acl(struct inode *inode, int type)
- 	 * current value of the ACL will not be ACL_NOT_CACHED and so our own
- 	 * sentinel will not be set; another task will update the cache.  We
- 	 * could wait for that other task to complete its job, but it's easier
--	 * to just call ->get_acl to fetch the ACL ourself.  (This is going to
--	 * be an unlikely race.)
-+	 * to just call ->get_inode_acl to fetch the ACL ourself.  (This is
-+	 * going to be an unlikely race.)
- 	 */
- 	cmpxchg(p, ACL_NOT_CACHED, sentinel);
- 
- 	/*
--	 * Normally, the ACL returned by ->get_acl will be cached.
-+	 * Normally, the ACL returned by ->get_inode_acl will be cached.
- 	 * A filesystem can prevent that by calling
--	 * forget_cached_acl(inode, type) in ->get_acl.
-+	 * forget_cached_acl(inode, type) in ->get_inode_acl.
- 	 *
--	 * If the filesystem doesn't have a get_acl() function at all, we'll
--	 * just create the negative cache entry.
-+	 * If the filesystem doesn't have a get_inode_acl() function at all,
-+	 * we'll just create the negative cache entry.
- 	 */
--	if (!inode->i_op->get_acl) {
-+	if (!inode->i_op->get_inode_acl) {
- 		set_cached_acl(inode, type, NULL);
- 		return NULL;
- 	}
--	acl = inode->i_op->get_acl(inode, type, false);
-+	acl = inode->i_op->get_inode_acl(inode, type, false);
- 
- 	if (IS_ERR(acl)) {
- 		/*
-@@ -168,7 +168,7 @@ struct posix_acl *get_acl(struct inode *inode, int type)
- 		posix_acl_release(acl);
- 	return acl;
- }
--EXPORT_SYMBOL(get_acl);
-+EXPORT_SYMBOL(get_inode_acl);
- 
- /*
-  * Init a fresh posix_acl
-@@ -599,7 +599,7 @@ int
- 	if (!inode->i_op->set_acl)
- 		return -EOPNOTSUPP;
- 
--	acl = get_acl(inode, ACL_TYPE_ACCESS);
-+	acl = get_inode_acl(inode, ACL_TYPE_ACCESS);
- 	if (IS_ERR_OR_NULL(acl)) {
- 		if (acl == ERR_PTR(-EOPNOTSUPP))
- 			return 0;
-@@ -629,7 +629,7 @@ posix_acl_create(struct inode *dir, umode_t *mode,
- 	if (S_ISLNK(*mode) || !IS_POSIXACL(dir))
- 		return 0;
- 
--	p = get_acl(dir, ACL_TYPE_DEFAULT);
-+	p = get_inode_acl(dir, ACL_TYPE_DEFAULT);
- 	if (!p || p == ERR_PTR(-EOPNOTSUPP)) {
- 		*mode &= ~current_umask();
- 		return 0;
-@@ -1044,7 +1044,8 @@ posix_acl_from_xattr_kgid(struct user_namespace *mnt_userns,
-  * Filesystems that store POSIX ACLs in the unaltered uapi format should use
-  * posix_acl_from_xattr() when reading them from the backing store and
-  * converting them into the struct posix_acl VFS format. The helper is
-- * specifically intended to be called from the ->get_acl() inode operation.
-+ * specifically intended to be called from the ->get_inode_acl() inode
-+ * operation.
-  *
-  * The posix_acl_from_xattr() function will map the raw {g,u}id values stored
-  * in ACL_{GROUP,USER} entries into the filesystem idmapping in @fs_userns. The
-@@ -1052,11 +1053,11 @@ posix_acl_from_xattr_kgid(struct user_namespace *mnt_userns,
-  * correct k{g,u}id_t. The returned struct posix_acl can be cached.
-  *
-  * Note that posix_acl_from_xattr() does not take idmapped mounts into account.
-- * If it did it calling is from the ->get_acl() inode operation would return
-- * POSIX ACLs mapped according to an idmapped mount which would mean that the
-- * value couldn't be cached for the filesystem. Idmapped mounts are taken into
-- * account on the fly during permission checking or right at the VFS -
-- * userspace boundary before reporting them to the user.
-+ * If it did it calling is from the ->get_inode_acl() inode operation would
-+ * return POSIX ACLs mapped according to an idmapped mount which would mean
-+ * that the value couldn't be cached for the filesystem. Idmapped mounts are
-+ * taken into account on the fly during permission checking or right at the VFS
-+ * - userspace boundary before reporting them to the user.
-  *
-  * Return: Allocated struct posix_acl on success, NULL for a valid header but
-  *         without actual POSIX ACL entries, or ERR_PTR() encoded error code.
-@@ -1126,7 +1127,7 @@ posix_acl_xattr_get(const struct xattr_handler *handler,
- 	if (S_ISLNK(inode->i_mode))
- 		return -EOPNOTSUPP;
- 
--	acl = get_acl(inode, handler->flags);
-+	acl = get_inode_acl(inode, handler->flags);
- 	if (IS_ERR(acl))
- 		return PTR_ERR(acl);
- 	if (acl == NULL)
-diff --git a/fs/reiserfs/file.c b/fs/reiserfs/file.c
-index 6e228bfbe7ef..467d13da198f 100644
---- a/fs/reiserfs/file.c
-+++ b/fs/reiserfs/file.c
-@@ -256,7 +256,7 @@ const struct inode_operations reiserfs_file_inode_operations = {
- 	.setattr = reiserfs_setattr,
- 	.listxattr = reiserfs_listxattr,
- 	.permission = reiserfs_permission,
--	.get_acl = reiserfs_get_acl,
-+	.get_inode_acl = reiserfs_get_acl,
- 	.set_acl = reiserfs_set_acl,
- 	.fileattr_get = reiserfs_fileattr_get,
- 	.fileattr_set = reiserfs_fileattr_set,
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index 3d7a35d6a18b..4d428e8704bc 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -1659,7 +1659,7 @@ const struct inode_operations reiserfs_dir_inode_operations = {
- 	.setattr = reiserfs_setattr,
- 	.listxattr = reiserfs_listxattr,
- 	.permission = reiserfs_permission,
--	.get_acl = reiserfs_get_acl,
-+	.get_inode_acl = reiserfs_get_acl,
- 	.set_acl = reiserfs_set_acl,
- 	.fileattr_get = reiserfs_fileattr_get,
- 	.fileattr_set = reiserfs_fileattr_set,
-@@ -1683,6 +1683,6 @@ const struct inode_operations reiserfs_special_inode_operations = {
- 	.setattr = reiserfs_setattr,
- 	.listxattr = reiserfs_listxattr,
- 	.permission = reiserfs_permission,
--	.get_acl = reiserfs_get_acl,
-+	.get_inode_acl = reiserfs_get_acl,
- 	.set_acl = reiserfs_set_acl,
- };
-diff --git a/fs/reiserfs/xattr_acl.c b/fs/reiserfs/xattr_acl.c
-index 966ba48e33ec..93fe414fed18 100644
---- a/fs/reiserfs/xattr_acl.c
-+++ b/fs/reiserfs/xattr_acl.c
-@@ -372,7 +372,7 @@ int reiserfs_cache_default_acl(struct inode *inode)
- 	if (IS_PRIVATE(inode))
- 		return 0;
- 
--	acl = get_acl(inode, ACL_TYPE_DEFAULT);
-+	acl = get_inode_acl(inode, ACL_TYPE_DEFAULT);
- 
- 	if (acl && !IS_ERR(acl)) {
- 		int size = reiserfs_acl_size(acl->a_count);
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index ebc55195fa91..af9f8162bed9 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1089,7 +1089,7 @@ xfs_vn_tmpfile(
- }
- 
- static const struct inode_operations xfs_inode_operations = {
--	.get_acl		= xfs_get_acl,
-+	.get_inode_acl		= xfs_get_acl,
- 	.set_acl		= xfs_set_acl,
- 	.getattr		= xfs_vn_getattr,
- 	.setattr		= xfs_vn_setattr,
-@@ -1116,7 +1116,7 @@ static const struct inode_operations xfs_dir_inode_operations = {
- 	.rmdir			= xfs_vn_unlink,
- 	.mknod			= xfs_vn_mknod,
- 	.rename			= xfs_vn_rename,
--	.get_acl		= xfs_get_acl,
-+	.get_inode_acl		= xfs_get_acl,
- 	.set_acl		= xfs_set_acl,
- 	.getattr		= xfs_vn_getattr,
- 	.setattr		= xfs_vn_setattr,
-@@ -1143,7 +1143,7 @@ static const struct inode_operations xfs_dir_ci_inode_operations = {
- 	.rmdir			= xfs_vn_unlink,
- 	.mknod			= xfs_vn_mknod,
- 	.rename			= xfs_vn_rename,
--	.get_acl		= xfs_get_acl,
-+	.get_inode_acl		= xfs_get_acl,
- 	.set_acl		= xfs_set_acl,
- 	.getattr		= xfs_vn_getattr,
- 	.setattr		= xfs_vn_setattr,
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bfb4522a4a6d..11cddd040578 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -560,8 +560,8 @@ struct posix_acl;
- #define ACL_NOT_CACHED ((void *)(-1))
- /*
-  * ACL_DONT_CACHE is for stacked filesystems, that rely on underlying fs to
-- * cache the ACL.  This also means that ->get_acl() can be called in RCU mode
-- * with the LOOKUP_RCU flag.
-+ * cache the ACL.  This also means that ->get_inode_acl() can be called in RCU
-+ * mode with the LOOKUP_RCU flag.
-  */
- #define ACL_DONT_CACHE ((void *)(-3))
- 
-@@ -2138,7 +2138,7 @@ struct inode_operations {
- 	struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned int);
- 	const char * (*get_link) (struct dentry *, struct inode *, struct delayed_call *);
- 	int (*permission) (struct user_namespace *, struct inode *, int);
--	struct posix_acl * (*get_acl)(struct inode *, int, bool);
-+	struct posix_acl * (*get_inode_acl)(struct inode *, int, bool);
- 
- 	int (*readlink) (struct dentry *, char __user *,int);
- 
-diff --git a/include/linux/posix_acl.h b/include/linux/posix_acl.h
-index cd16a756cd1e..07e171b4428a 100644
---- a/include/linux/posix_acl.h
-+++ b/include/linux/posix_acl.h
-@@ -128,6 +128,6 @@ static inline void forget_all_cached_acls(struct inode *inode)
- }
- #endif /* CONFIG_FS_POSIX_ACL */
- 
--struct posix_acl *get_acl(struct inode *inode, int type);
-+struct posix_acl *get_inode_acl(struct inode *inode, int type);
- 
- #endif  /* __LINUX_POSIX_ACL_H */
++#ifdef CONFIG_FS_POSIX_ACL
++/**
++ * cifs_init_posix_acl - convert ACL from cifs to POSIX ACL format
++ * @ace: POSIX ACL entry to store converted ACL into
++ * @cifs_ace: ACL in cifs format
++ *
++ * Convert an Access Control Entry from wire format to local POSIX xattr
++ * format.
++ *
++ * Note that the @cifs_uid member is used to store both {g,u}id_t.
++ */
++static void cifs_init_posix_acl(struct posix_acl_entry *ace,
++				struct cifs_posix_ace *cifs_ace)
++{
++	/* u8 cifs fields do not need le conversion */
++	ace->e_perm = cifs_ace->cifs_e_perm;
++	ace->e_tag = cifs_ace->cifs_e_tag;
++
++	switch (ace->e_tag) {
++	case ACL_USER:
++		ace->e_uid = make_kuid(&init_user_ns,
++				       le64_to_cpu(cifs_ace->cifs_uid));
++		break;
++	case ACL_GROUP:
++		ace->e_gid = make_kgid(&init_user_ns,
++				       le64_to_cpu(cifs_ace->cifs_uid));
++		break;
++	}
++	return;
++}
++
++/**
++ * cifs_to_posix_acl - copy cifs ACL format to POSIX ACL format
++ * @acl: ACLs returned in POSIX ACL format
++ * @src: ACLs in cifs format
++ * @acl_type: type of POSIX ACL requested
++ * @size_of_data_area: size of SMB we got
++ *
++ * This function converts ACLs from cifs format to POSIX ACL format.
++ * If @acl is NULL then the size of the buffer required to store POSIX ACLs in
++ * their uapi format is returned.
++ */
++static int cifs_to_posix_acl(struct posix_acl **acl, char *src,
++			     const int acl_type, const int size_of_data_area)
++{
++	int size =  0;
++	__u16 count;
++	struct cifs_posix_ace *pACE;
++	struct cifs_posix_acl *cifs_acl = (struct cifs_posix_acl *)src;
++	struct posix_acl *kacl = NULL;
++	struct posix_acl_entry *pa, *pe;
++
++	if (le16_to_cpu(cifs_acl->version) != CIFS_ACL_VERSION)
++		return -EOPNOTSUPP;
++
++	if (acl_type == ACL_TYPE_ACCESS) {
++		count = le16_to_cpu(cifs_acl->access_entry_count);
++		pACE = &cifs_acl->ace_array[0];
++		size = sizeof(struct cifs_posix_acl);
++		size += sizeof(struct cifs_posix_ace) * count;
++		/* check if we would go beyond end of SMB */
++		if (size_of_data_area < size) {
++			cifs_dbg(FYI, "bad CIFS POSIX ACL size %d vs. %d\n",
++				 size_of_data_area, size);
++			return -EINVAL;
++		}
++	} else if (acl_type == ACL_TYPE_DEFAULT) {
++		count = le16_to_cpu(cifs_acl->access_entry_count);
++		size = sizeof(struct cifs_posix_acl);
++		size += sizeof(struct cifs_posix_ace) * count;
++		/* skip past access ACEs to get to default ACEs */
++		pACE = &cifs_acl->ace_array[count];
++		count = le16_to_cpu(cifs_acl->default_entry_count);
++		size += sizeof(struct cifs_posix_ace) * count;
++		/* check if we would go beyond end of SMB */
++		if (size_of_data_area < size)
++			return -EINVAL;
++	} else {
++		/* illegal type */
++		return -EINVAL;
++	}
++
++	/* Allocate number of POSIX ACLs to store in VFS format. */
++	kacl = posix_acl_alloc(count, GFP_NOFS);
++	if (!kacl)
++		return -ENOMEM;
++
++	FOREACH_ACL_ENTRY(pa, kacl, pe) {
++		cifs_init_posix_acl(pa, pACE);
++		pACE++;
++	}
++
++	*acl = kacl;
++	return 0;
++}
++
++int cifs_do_get_acl(const unsigned int xid, struct cifs_tcon *tcon,
++		    const unsigned char *searchName, struct posix_acl **acl,
++		    const int acl_type, const struct nls_table *nls_codepage,
++		    int remap)
++{
++/* SMB_QUERY_POSIX_ACL */
++	TRANSACTION2_QPI_REQ *pSMB = NULL;
++	TRANSACTION2_QPI_RSP *pSMBr = NULL;
++	int rc = 0;
++	int bytes_returned;
++	int name_len;
++	__u16 params, byte_count;
++
++	cifs_dbg(FYI, "In GetPosixACL (Unix) for path %s\n", searchName);
++
++queryAclRetry:
++	rc = smb_init(SMB_COM_TRANSACTION2, 15, tcon, (void **) &pSMB,
++		(void **) &pSMBr);
++	if (rc)
++		return rc;
++
++	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
++		name_len =
++			cifsConvertToUTF16((__le16 *) pSMB->FileName,
++					   searchName, PATH_MAX, nls_codepage,
++					   remap);
++		name_len++;     /* trailing null */
++		name_len *= 2;
++		pSMB->FileName[name_len] = 0;
++		pSMB->FileName[name_len+1] = 0;
++	} else {
++		name_len = copy_path_name(pSMB->FileName, searchName);
++	}
++
++	params = 2 /* level */  + 4 /* rsrvd */  + name_len /* incl null */ ;
++	pSMB->TotalDataCount = 0;
++	pSMB->MaxParameterCount = cpu_to_le16(2);
++	/* BB find exact max data count below from sess structure BB */
++	pSMB->MaxDataCount = cpu_to_le16(4000);
++	pSMB->MaxSetupCount = 0;
++	pSMB->Reserved = 0;
++	pSMB->Flags = 0;
++	pSMB->Timeout = 0;
++	pSMB->Reserved2 = 0;
++	pSMB->ParameterOffset = cpu_to_le16(
++		offsetof(struct smb_com_transaction2_qpi_req,
++			 InformationLevel) - 4);
++	pSMB->DataCount = 0;
++	pSMB->DataOffset = 0;
++	pSMB->SetupCount = 1;
++	pSMB->Reserved3 = 0;
++	pSMB->SubCommand = cpu_to_le16(TRANS2_QUERY_PATH_INFORMATION);
++	byte_count = params + 1 /* pad */ ;
++	pSMB->TotalParameterCount = cpu_to_le16(params);
++	pSMB->ParameterCount = pSMB->TotalParameterCount;
++	pSMB->InformationLevel = cpu_to_le16(SMB_QUERY_POSIX_ACL);
++	pSMB->Reserved4 = 0;
++	inc_rfc1001_len(pSMB, byte_count);
++	pSMB->ByteCount = cpu_to_le16(byte_count);
++
++	rc = SendReceive(xid, tcon->ses, (struct smb_hdr *) pSMB,
++		(struct smb_hdr *) pSMBr, &bytes_returned, 0);
++	cifs_stats_inc(&tcon->stats.cifs_stats.num_acl_get);
++	if (rc) {
++		cifs_dbg(FYI, "Send error in Query POSIX ACL = %d\n", rc);
++	} else {
++		/* decode response */
++
++		rc = validate_t2((struct smb_t2_rsp *)pSMBr);
++		/* BB also check enough total bytes returned */
++		if (rc || get_bcc(&pSMBr->hdr) < 2)
++			rc = -EIO;      /* bad smb */
++		else {
++			__u16 data_offset = le16_to_cpu(pSMBr->t2.DataOffset);
++			__u16 count = le16_to_cpu(pSMBr->t2.DataCount);
++			rc = cifs_to_posix_acl(acl,
++				(char *)&pSMBr->hdr.Protocol+data_offset,
++				acl_type, count);
++		}
++	}
++	cifs_buf_release(pSMB);
++	/*
++	 * The else branch after SendReceive() doesn't return EAGAIN so if we
++	 * allocated @acl in cifs_to_posix_acl() we are guaranteed to return
++	 * here and don't leak POSIX ACLs.
++	 */
++	if (rc == -EAGAIN)
++		goto queryAclRetry;
++	return rc;
++}
++#else
++int cifs_do_get_acl(const unsigned int xid, struct cifs_tcon *tcon,
++		    const unsigned char *searchName, struct posix_acl **acl,
++		    const int acl_type, const struct nls_table *nls_codepage,
++		    int remap)
++{
++	return -EOPNOTSUPP;
++}
++#endif /* CONFIG_FS_POSIX_ACL */
++
+ int
+ CIFSGetExtAttr(const unsigned int xid, struct cifs_tcon *tcon,
+ 	       const int netfid, __u64 *pExtAttrBits, __u64 *pMask)
 -- 
 2.34.1
 
