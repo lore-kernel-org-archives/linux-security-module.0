@@ -2,296 +2,206 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEC1C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 19:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6883C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 22:33:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbiI2TWi (ORCPT
+        id S230102AbiI2Wdh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Sep 2022 15:22:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53788 "EHLO
+        Thu, 29 Sep 2022 18:33:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229982AbiI2TWh (ORCPT
+        with ESMTP id S230108AbiI2Wcg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Sep 2022 15:22:37 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 723E7146F84;
-        Thu, 29 Sep 2022 12:22:35 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id y100so2773123ede.6;
-        Thu, 29 Sep 2022 12:22:35 -0700 (PDT)
+        Thu, 29 Sep 2022 18:32:36 -0400
+Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D54E3A1D71
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Sep 2022 15:30:56 -0700 (PDT)
+Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-131886d366cso3477788fac.10
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Sep 2022 15:30:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date;
-        bh=hnZY0i/n0jhCagORyV/ydNhN2EhRuILceXmEQm5eGAE=;
-        b=REUvWOESwGGjPRqpCbQX2ps/nBoNqO1RMiT0fQ6tOPBA2mwQdg9c1Q+H1rOBexP2Yg
-         M8b74R2zL/FiVbUUQhqt7VtNsXGEXuZ8ULDZP6cKHNM9Poyg0ZAu93WwRhQypKgRo5ZZ
-         Iltc9dolTiEWDG2x1UtFy5lgWSi1hcyQUj0+D89WVbbzcDXar54Qew6om+fMrklKcjea
-         oISjMPy3xuPpJXi9X1GHgIJGyfByP0uby6BCjctur1qgWhDAPCKFlYJx64TmsaQrmagY
-         rATpxKSxFY5yQvScOzT3MD96NMtandaQ0/BMVM2UbmD433shh5M/peAfuZLBnSxBzT5g
-         45LA==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=tgQfEA4Iu0kSJxT5pMBFZLIcD7ZpTlADi2N73CRf2gw=;
+        b=KUxkW5RSz1VuzlyqokJ33tD2rkbRPSbvkfPSQNCI8CObz3Z6F9bGdq1g6oNRFLA4+r
+         aOKLEFcnSLXpU/ccj6w7eVfmhaKZqKGaJHzaXn8U6iRR1xYC+fwx7Z66LWz+LcBmsyjQ
+         Do7iwQKwAictrk+rOR+Tyf32/7AstqoYlmF8WUhGYX1qa9wUniesmimcGemebVTIpp29
+         4klA/ADhVHJWHKStfmW1JfqrFspNFlbHISKwB7kgl2djJy7FQD4iKoqBFLpyMGgBBH+w
+         2DzPtajccfaAzn9xUYQ6060CdlnTHdpObC6V/A4EA9ZlLuEj0MLyoYLF84OdOTJ94NDX
+         u1Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=hnZY0i/n0jhCagORyV/ydNhN2EhRuILceXmEQm5eGAE=;
-        b=HyeF0fxb93M0/Xefkwt7qoSVPu3YbCEFF6Gtres85FxFrr2TC5t6cJ8DHybZB3FVFF
-         a0mWKYR5jpaabod38SiWtNbVqlQndgZNJz6JdLpSsRreZ72JfF76nLUIPF06zc+/mSOl
-         mKYaNMiWGBmu6Gjn4Z3cMcl0Hb9CmabZPLRgF97KVnd1PmL01xNjz73Z7KiuaLYY7pc+
-         9Wdr+Zb/O1/veYJIe8gzmdyNJorNd9CUqP0+ftPdnoVnCt06/CSWIW1saGQZpBElqBYa
-         8iyhEKeCA9fLd7HDzVQUpOpJNSN+5IsSgMZciBp6f7YcrV9QWHLKzQD6TQYdkbM8wOEB
-         Mn4Q==
-X-Gm-Message-State: ACrzQf2LHJ5dO+8l5M9LfqfO/OUi6wYnYyxMt5yqN1mfQGPFqpzxdmP+
-        tL+W+Bmmeho4aB3/+d7rs4IDBUIHpyg=
-X-Google-Smtp-Source: AMsMyM4dzDH0Fdl44hJph4ObGk/wxfEphNqpEX7+n/38JQO7RaVXpha+lF0hN4GmQpRcz0j7IVLzZQ==
-X-Received: by 2002:aa7:da0c:0:b0:458:f56:5a00 with SMTP id r12-20020aa7da0c000000b004580f565a00mr4642845eds.298.1664479353878;
-        Thu, 29 Sep 2022 12:22:33 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id p6-20020aa7cc86000000b004574f4326b8sm237576edt.30.2022.09.29.12.22.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 12:22:33 -0700 (PDT)
-Date:   Thu, 29 Sep 2022 21:22:31 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH v6 2/5] landlock: Support file truncation
-Message-ID: <YzXwdwxIl1KD8TMM@nuc>
-References: <20220908195805.128252-1-gnoack3000@gmail.com>
- <20220908195805.128252-3-gnoack3000@gmail.com>
- <2c4db214-e425-3e40-adeb-9e406c3ea2f9@digikod.net>
- <Yy2W14NMQBvfG9Fw@nuc>
- <0dea6e07-dd98-0d3c-4c2b-7f45e06374ed@digikod.net>
- <YzCZVuP1d9GpQt+k@nuc>
- <e5b0b338-c4e5-8348-1fe0-1d434235dc01@digikod.net>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=tgQfEA4Iu0kSJxT5pMBFZLIcD7ZpTlADi2N73CRf2gw=;
+        b=pMWkIApMRUObChzeypQcI14WQiwmEOHjnEcPWdWRQutLkZnUXpBHVju/DRHHUJbSZ/
+         BKSOjvk9vl5RajGbjsoaIww66Uyqkufy0RP1/GMQ6b/JhFSjjUJXRy3VadjAjprS85E4
+         K9wvdbuu6FUsyNfGTnOHWdHhth0hsEG1ur7qDfjI8/GKmOZ7W2I4KeS+vy8wFARMzLus
+         Ql0X2RrLnUjWQn+4RIrlS+m7Fu++t7z40nKO2cjrGXRKH1uBTzZANyLh3lBd22l+BfS9
+         LXNzuOIM5DjkKs7eTlSlH/sZCAc1qCz7m7GIJaRqJePYIZUNFsiqaTqzW7EyvekWvOQz
+         lloA==
+X-Gm-Message-State: ACrzQf2rNcuKYYjf3mz2sGHmr6u480zBJ3s6u00eIZkD5ols5QoDc5Io
+        x1lShDmxp2DBVbck3qnh9zkB3nVF6XAmHZeXxy8S
+X-Google-Smtp-Source: AMsMyM7p2rLc6XIDbhZW2c/58B+z9Tkw7UC4dFbMt8ZxNuVuO1D6KINe+yWjD0ebpztfS9m5FLprH2OyZfJsW+9OS7U=
+X-Received: by 2002:a05:6870:41cb:b0:131:9656:cc30 with SMTP id
+ z11-20020a05687041cb00b001319656cc30mr7985099oac.51.1664490654817; Thu, 29
+ Sep 2022 15:30:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e5b0b338-c4e5-8348-1fe0-1d434235dc01@digikod.net>
+References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
+ <8e243ad132ecf2885fc65c33c7793f0703937890.camel@huaweicloud.com>
+ <7f7c3337-74f1-424e-a14d-578c4c7ee2fe@www.fastmail.com> <65546f56be138ab326544b7b2e59bb3175ec884a.camel@huaweicloud.com>
+ <b0c00f80-c11e-4f5d-ba63-2e9fb7cad561@www.fastmail.com> <9aba20351924aa0d82d258205030ad4f2c404de2.camel@huaweicloud.com>
+ <98a26e5c-d44f-4e65-8186-c4e94918daa1@www.fastmail.com> <06a47f11778ca9d074c815e57dc1c75d073b3a85.camel@huaweicloud.com>
+ <439dd1e5-71b8-49ed-8268-02b3428a55a4@www.fastmail.com> <6e142c3526df693abfab6e1293a27828267cc45e.camel@huaweicloud.com>
+ <87mtajss8j.fsf@toke.dk> <fe9fe2443b8401a076330a3019bd46f6c815a023.camel@huaweicloud.com>
+ <CAHC9VhRKq=BMtAat2_+0VvYk91hnryUHg+wbZRhu2BDB9ehC2A@mail.gmail.com> <3a9efcd6c8f7fa3908230ef5be0e0ad224a730ff.camel@huaweicloud.com>
+In-Reply-To: <3a9efcd6c8f7fa3908230ef5be0e0ad224a730ff.camel@huaweicloud.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 29 Sep 2022 18:30:43 -0400
+Message-ID: <CAHC9VhTWsP99PxJLebbm04HdSAfF4QyhU0kwZZQnduET3jfKjw@mail.gmail.com>
+Subject: Re: Closing the BPF map permission loophole
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@kernel.org>,
+        Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 28, 2022 at 08:32:02PM +0200, Mickaël Salaün wrote:
-> On 25/09/2022 20:09, Günther Noack wrote:
-> > On Fri, Sep 23, 2022 at 10:53:23PM +0200, Mickaël Salaün wrote:
-> > > On 23/09/2022 13:21, Günther Noack wrote:
-> > > > On Mon, Sep 12, 2022 at 09:41:32PM +0200, Mickaël Salaün wrote:
-> > > > > On 08/09/2022 21:58, Günther Noack wrote:
-> > > > > > Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
-> > > > > 
-> > > > > [...]
-> > > > > 
-> > > > > > +/**
-> > > > > > + * get_path_access_rights - Returns the subset of rights in access_request
-> > > > > > + * which are permitted for the given path.
-> > > > > > + *
-> > > > > > + * @domain: The domain that defines the current restrictions.
-> > > > > > + * @path: The path to get access rights for.
-> > > > > > + * @access_request: The rights we are interested in.
-> > > > > > + *
-> > > > > > + * Returns: The access mask of the rights that are permitted on the given path,
-> > > > > > + * which are also a subset of access_request (to save some calculation time).
-> > > > > > + */
-> > > > > > +static inline access_mask_t
-> > > > > > +get_path_access_rights(const struct landlock_ruleset *const domain,
-> > > > > > +		       const struct path *const path,
-> > > > > > +		       access_mask_t access_request)
-> > > > > > +{
-> > > > > > +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
-> > > > > > +	unsigned long access_bit;
-> > > > > > +	unsigned long access_req;
-> > > > > > +
-> > > > > > +	init_layer_masks(domain, access_request, &layer_masks);
-> > > > > > +	if (!check_access_path_dual(domain, path, access_request, &layer_masks,
-> > > > > > +				    NULL, 0, NULL, NULL)) {
-> > > > > > +		/*
-> > > > > > +		 * Return immediately for successful accesses and for cases
-> > > > > > +		 * where everything is permitted because the path belongs to an
-> > > > > > +		 * internal filesystem.
-> > > > > > +		 */
-> > > > > > +		return access_request;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	access_req = access_request;
-> > > > > > +	for_each_set_bit(access_bit, &access_req, ARRAY_SIZE(layer_masks)) {
-> > > > > > +		if (layer_masks[access_bit]) {
-> > > > > > +			/* If any layer vetoed the access right, remove it. */
-> > > > > > +			access_request &= ~BIT_ULL(access_bit);
-> > > > > > +		}
-> > > > > > +	}
-> > > > > 
-> > > > > This seems to be redundant with the value returned by init_layer_masks(),
-> > > > > which should be passed to check_access_path_dual() to avoid useless path
-> > > > > walk.
-> > > > 
-> > > > True, I'll use the result of init_layer_masks() to feed it back to
-> > > > check_access_path_dual() to avoid a bit of computation.
-> > > > 
-> > > > Like this:
-> > > > 
-> > > >           effective_access_request =
-> > > > 		init_layer_masks(domain, access_request, &layer_masks);
-> > > > 	if (!check_access_path_dual(domain, path, effective_access_request,
-> > > > 	    &layer_masks, NULL, 0, NULL, NULL)) {
-> > > > 		// ...
-> > > > 	}
-> > > 
-> > > correct
-> > > 
-> > > > 
-> > > > Overall, the approach here is:
-> > > > 
-> > > > * Initialize the layer_masks, so that it has a bit set for every
-> > > >     access right in access_request and layer where that access right is
-> > > >     handled.
-> > > > 
-> > > > * check_access_path_dual() with only the first few parameters -- this
-> > > >     will clear all the bits in layer masks which are actually permitted
-> > > >     according to the individual rules.
-> > > > 
-> > > >     As a special case, this *may* return 0 immediately, in which case we
-> > > >     can (a) save a bit of calculation in the loop below and (b) we might
-> > > >     be in the case where access is permitted because it's a file from a
-> > > >     special file system (even though not all bits are cleared). If
-> > > >     check_access_path_dual() returns 0, we return the full requested
-> > > >     access_request that we received as input. >
-> > > > * In the loop below, if there are any bits left in layer_masks, those
-> > > >     are rights which are not permitted for the given path. We remove
-> > > >     these from access_request and return the modified access_request.
-> > > > 
-> > > > 
-> > > > > This function is pretty similar to check_access_path(). Can't you change it
-> > > > > to use an access_mask_t pointer and get almost the same thing?
-> > > > 
-> > > > I'm shying away from this approach. Many of the existing different use
-> > > > cases are already realized by "doing if checks deep down". I think it
-> > > > would make the code more understandable if we managed to model these
-> > > > differences between use cases already at the layer of function calls.
-> > > > (This is particularly true for check_access_path_dual(), where in
-> > > > order to find out how the "single" case works, you need to disentangle
-> > > > to a large extent how the much more complicated dual case works.)
-> > > 
-> > > I agree that check_access_path_dual() is complex, but I couldn't find a
-> > > better way.
-> > 
-> > It seems out of the scope of this patch set, but I sometimes find it
-> > OK to just duplicate the code and have a set of tests to demonstrate
-> > that the two variants do the same thing.
-> > 
-> > check_access_path_dual() is mostly complex because of performance
-> > reasons, as far as I can tell, and it might be possible to check its
-> > results against a parallel implementation of it which runs slower,
-> > uses more memory, but is more obviously correct. (I have used one
-> > myself to check against when developing the truncate patch set.)
-> > 
-> > > > If you want to unify these two functions, what do you think of the
-> > > > approach of just using get_path_access_rights() instead of
-> > > > check_access_path()?
-> > > > 
-> > > > Basically, it would turn
-> > > > 
-> > > > return check_access_path(dom, path, access_request);
-> > > > 
-> > > > into
-> > > > 
-> > > > if (get_path_access_rights(dom, path, access_request) == access_request)
-> > > > 	return 0;
-> > > > return -EACCES;
-> > > > 
-> > > > This is slightly more verbose in the places where it's called, but it
-> > > > would be more orthogonal, and it would also clarify that -EACCES is
-> > > > the only possible error in the "single" path walk case.
-> > > > 
-> > > > Let me know what you think.
-> > > 
-> > > What about adding an additional argument `access_mask_t *const
-> > > access_allowed` to check_access_path_dual() which returns the set of
-> > > accesses (i.e. access_masked_parent1 & access_masked_parent2) that could
-> > > then be stored to landlock_file(file)->allowed_access? If this argument is
-> > > NULL it should just be ignored. What is left from get_path_access_rights()
-> > > could then be merged into hook_file_open().
-> > 
-> > IMHO, check_access_path_dual() does not seem like the right place to
-> > add this. This functionality is not needed in any of the "dual path"
-> > cases so far, and I'm not sure what it would mean. The necessary
-> > information can also be easily derived from the resulting layer_masks,
-> > which is already exposed in the check_access_path_dual() interface,
-> > and I also believe that this approach is at least equally fast as
-> > updating it on the fly when changing the layer_masks.
-> > 
-> > I could be convinced to add a `access_mask_t *const access_allowed`
-> > argument to check_access_path() if you prefer that, but then again, in
-> > that case the returned boolean can be reconstructed from the new
-> > access_allowed variable, and we could as well make check_access_path()
-> > return the access_allowed result instead of the boolean and let
-> > callers check equality with what they expected...? (I admittedly don't
-> > have a good setup to test the performance right now, but it looks like
-> > a negligible difference to me?)
-> 
-> Good idea, let's try to make check_access_path_dual() returns the allowed
-> accesses (according to the request) and rename it to get_access_path_dual().
-> unmask_layers() could be changed to return the still-denied accesses instead
-> of a boolean, and we could use this values (for potential both parents) to
-> return allowed_parent1 & allowed_parent2 (with access_mask_t types). This
-> would also simplify is_eaccess() and its calls could be moved to
-> current_check_refer_path(). This would merge get_path_access_rights() into
-> check_access_path_dual() and make the errno codes more explicit per hook or
-> defined in check_access_path().
+On Thu, Sep 29, 2022 at 3:55 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Wed, 2022-09-28 at 20:24 -0400, Paul Moore wrote:
+> > I only became aware of this when the LSM list was CC'd so I'm a
+> > little
+> > behind on what is going on here ... looking quickly through the
+> > mailing list archive it looks like there is an issue with BPF map
+> > permissions not matching well with their associated fd permissions,
+> > yes?  From a LSM perspective, there are a couple of hooks that
+> > currently use the fd's permissions (read/write) to determine the
+> > appropriate access control check.
+>
+> From what I understood, access control on maps is done in two steps.
+> First, whenever someone attempts to get a fd to a map
+> security_bpf_map() is called. LSM implementations could check access if
+> the current process has the right to access the map (whose label can be
+> assigned at map creation time with security_bpf_map_alloc()).
 
-Thanks for the review!
+[NOTE: SELinux is currently the only LSM which provides BPF access
+controls, so they are going to be my example here and in the rest of
+this email.]
 
-I'm afraid I don't understand this approach at the moment. I'm
-probably still missing some insight about how the "refer" logic works
-which would make this clearer.
+In the case of SELinux, security_bpf_map() does check the access
+between the current task and the BPF map itself (which inherits its
+security label from its creator), with the actual permission requested
+being determined by the fmode_t parameter passed to the LSM hook.
+Looking at the current BPF code, the callers seem to take that from
+various different places (bpf_attr:{file_flags,map_flags,open_flags}).
+This could be due solely to the different operations being done by the
+callers, which would make me believe everything is correct, but given
+this thread it seems reasonable for someone with a better
+understanding of BPF than me to double check this.  Can you help
+verify that everything is okay here?
 
-With the proposed changes to check_access_path_dual(), it sounds like
-we would have to change the logic of the "refer" implementation quite
-a bit, which would expand the scope of the "truncate" patch set beyond
-what it was originally meant to do. Is this check_access_path_dual()
-refactoring something you'd insist on for the truncate patch set, or
-would you be OK with doing that separately?
+> Second, whenever the holder of the obtained fd wants to do an operation
+> on the map (lookup, update, delete, ...), eBPF checks if the fd modes
+> are compatible with the operation to perform (e.g. lookup requires
+> FMODE_CAN_READ).
 
-For the truncate patch set, what do you think of the lighter
-refactoring options, which I had outlined in my previous mail? - see
-the four bullet points quoted here:
+To be clear, from what I can see, it looks like the LSM is not
+checking the fd modes, but rather the modes stored in the bpf_attr,
+which I get the impression do not always match the fd modes.  Yes?
+No?
 
-> > Here are the options we have discussed, in the order that I would
-> > prefer them:
-> > 
-> > * to keep it as a separate function as it already is,
-> >    slightly duplicating check_access_path(). (I think it's cleaner,
-> >    because the code path for the rest of the hooks other than
-> >    security_file_open() stays simpler.)
-> > 
-> > * to make check_access_path() return the access_allowed access mask
-> >    and make callers check that it covers the access_request that they
-> >    asked for (see example from my previous mail on this thread). (This
-> >    is equivalent to discarding the existing check_access_path() and
-> >    using the get_path_access() function instead.)
-> > 
-> > * to add a `access_mask_t *const access_allowed` argument to
-> >    check_access_path(), which is calculated if it's non-NULL based on
-> >    the layer_masks result. It would be used from the security_file_open
-> >    hook.
-> > 
-> > * to add a `access_mask_t *const access_allowed` argument to
-> >    check_access_path_dual(). This doesn't make much sense, IMHO,
-> >    because an on-the-fly calculation of this result does not look like
-> >    a performance benefit to me, and calculating it based on the two
-> >    resulting layer_masks is already possible now. It's also not clear
-> >    to me what it would mean to calculate an access_allowed on two paths
-> >    at once, and what that would be used for.
-> > 
-> > Let me know which option you prefer. In the end, I don't feel that
-> > strongly about it and I'm happy to do this either way.
+There is also LSM/SELinux code which checks the permissions when a BPF
+map is passed between tasks via a fd.  Currently the SELinux check
+only looks at the file:f_mode to get the permissions to check, but if
+the f_mode bits are not the authoritative record of what is allowed in
+the BPF map, perhaps we need to change that to use one of the bpf_attr
+mode bits (my gut feeling is bpf_attr:open_flags)?
 
-Thanks,
-Günther
+> One problem is that the second part is missing for some operations
+> dealing with the map fd:
+>
+> Map iterators:
+> https://lore.kernel.org/bpf/20220906170301.256206-1-roberto.sassu@huaweicloud.com/
+
+You'll need to treat me like an idiot when it comes to BPF maps ;)
+
+I did a very quick read on them right now and it looks like a BPF map
+iterator would just be a combination of BPF read and execute ("bpf {
+map_read prog_run }" in SELinux policy terms).  Would it make more
+sense to just use the existing security_bpf_map() and
+security_bpf_prog() hooks here?
+
+> Map fd directly used by eBPF programs without system call:
+> https://lore.kernel.org/bpf/20220926154430.1552800-1-roberto.sassu@huaweicloud.com/
+
+Another instance of "can you please explain this use case?" ;)
+
+I'm not going to hazard too much of a guess here, but if the map is
+being passed between tasks and a fd is generated from that map, we may
+be able to cover this with logic similar
+security/selinux/hooks.c:bpf_fd_pass() ... but I'm really stretching
+my weak understanding of BPF here.
+
+> Another problem is that there is no DAC, only MAC (work in progress). I
+> don't know exactly the status of enabling unprivileged eBPF.
+
+It is my opinion that we need to ensure both DAC and MAC are present
+in the code.  This thread makes me worry that some eBPF DAC controls
+are being ignored because one can currently say "we're okay because
+you need privilege!".  That may be true today, but I can imagine a
+time in the not too distant future where unpriv eBPF is allowed and we
+suddenly have to bolt on a lot of capable() checks ... which is a
+great recipe for privilege escalation bugs.
+
+> Apart from this, now the discussion is focusing on the following
+> problem. A map (kernel object) can be referenced in two ways: by ID or
+> by path. By ID requires CAP_ADMIN, so we can consider by path for now.
+>
+> Given a map fd, the holder of that fd can create a new reference
+> (pinning) to the map in the bpf filesystem (a new file whose private
+> data contains the address of the kernel object).
+>
+> Pinning a map does not have a corresponding permission. Any fd mode is
+> sufficient to do the operation. Furthermore, subsequent requests to
+> obtain a map fd by path could result in receiving a read-write fd,
+> while at the time of pinning the fd was read-only.
+
+Since the maps carry their own label I think we are mostly okay, even
+if the map is passed between tasks by some non-fd related mechanism.
+However, I am now slightly worried that if a fd is obtained with perms
+that don't match the underlying map and that fd is then passed to
+another task the access control check on the fd passing would not be
+correct.  Operations on the map from a SELinux perspective should
+still be okay (the map has its own label), but still.
+
+I'm wondering if we do want to move the SELinux BPF fd passing code to
+check the bpf_attr:open_flags perms.  Thoughts?
+
+> While this does not seem to me a concern from MAC perspective, as
+> attempts to get a map fd still have to pass through security_bpf_map(),
+> in general this should be fixed without relying on LSMs.
+
+Agreed.  The access controls need to work both for DAC and DAC+LSM.
+
+> > Is the plan to ensure that the map and fd permissions are correct at
+> > the core BPF level, or do we need to do some additional checks in the
+> > LSMs (currently only SELinux)?
+>
+> Should we add a new map_pin permission in SELinux?
+
+Maybe?  Maybe not?  I don't know, can you help me understand map
+pinning a bit more first?
+
+> Should we have DAC to restrict pinnning without LSMs?
+
+Similar to above.
 
 -- 
+paul-moore.com
