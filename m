@@ -2,79 +2,45 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 313A1C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 11:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B038FC433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 11:40:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235352AbiI2Lj1 (ORCPT
+        id S235389AbiI2Lkv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Sep 2022 07:39:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59648 "EHLO
+        Thu, 29 Sep 2022 07:40:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235165AbiI2Lj1 (ORCPT
+        with ESMTP id S235374AbiI2Lkt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Sep 2022 07:39:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EE7A14F8D0;
-        Thu, 29 Sep 2022 04:39:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EE9E161032;
-        Thu, 29 Sep 2022 11:39:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8F8BC433C1;
-        Thu, 29 Sep 2022 11:39:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664451565;
-        bh=rQDTzrXTterZ1Cn2Ac6CQ/I9r2LXiXCBGwWtNKTHfLw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iIFQdHmkyUFs+8O9Jo1p5AsH7JaV52l0qbkGO2Xz6oIdiIh6D4jWVgO+PwJFHxa48
-         KhPsMIStetAEcIIeokb5oyS4WwOqIieB24kzgc/juwM8CP8L4pm+EZE+RU3mxonqzb
-         R3picy2Tu4d1x6aaI4Vw0LAwsY8GisVF3g09nvoE0tlxljxZV/Ajhmnvjr7RT8mIRR
-         xiMziw4jG5I+LvvxxzIfTSgWGkcLbMiyTOtl/rzNGYwQj0CQdwVqsAtUxeUJFFBbG+
-         KQ6qVjcdLD41eKWDVNTR2Ljb56dnzHTMWRczRIYo+aJKsKiH+MWjYsnn7uCv0oUmgN
-         UiDlhK3Kz6WiA==
-Date:   Thu, 29 Sep 2022 13:39:20 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Thu, 29 Sep 2022 07:40:49 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA85010F72A;
+        Thu, 29 Sep 2022 04:40:47 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 6D46268BFE; Thu, 29 Sep 2022 13:40:44 +0200 (CEST)
+Date:   Thu, 29 Sep 2022 13:40:44 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        Seth Forshee <sforshee@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 23/29] xattr: use posix acl api
-Message-ID: <20220929113920.nkmhmg3si7s7hpbk@wittgenstein>
-References: <20220928160843.382601-1-brauner@kernel.org>
- <20220928160843.382601-24-brauner@kernel.org>
- <20220929082535.GC3699@lst.de>
- <20220929091027.ddw6kbdy2s7ywvh4@wittgenstein>
- <20220929094623.ajw7kauqwwwovd44@wittgenstein>
- <20220929105128.GA16410@lst.de>
+Subject: Re: [PATCH v3 29/29] acl: remove a slew of now unused helpers
+Message-ID: <20220929114044.GA19911@lst.de>
+References: <20220928160843.382601-1-brauner@kernel.org> <20220928160843.382601-30-brauner@kernel.org> <20220929082555.GD3699@lst.de> <20220929082822.yhy7szlt3gpbqh34@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220929105128.GA16410@lst.de>
+In-Reply-To: <20220929082822.yhy7szlt3gpbqh34@wittgenstein>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 29, 2022 at 12:51:28PM +0200, Christoph Hellwig wrote:
-> On Thu, Sep 29, 2022 at 11:46:23AM +0200, Christian Brauner wrote:
-> > +int do_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-> > +	       struct xattr_ctx *ctx)
-> 
-> I'd just pass name, value an size instead of this weird context thing,
-> same for the read size.  Otherwise this looks fine, though.
+On Thu, Sep 29, 2022 at 10:28:22AM +0200, Christian Brauner wrote:
+> I would like to do this in a follow-up series because afaict we need to
+> massage how the ->list() handler is currently used to infer xattrs
+> support. I think adressing this in a follow-up series would be better.
+> There'll be more cleanups possibly anyway, I think.
 
-Ok.
-
-> 
-> > index 84180afd090b..b766ddfc6bc3 100644
-> > --- a/io_uring/xattr.c
-> > +++ b/io_uring/xattr.c
-> > @@ -8,6 +8,7 @@
-> >  #include <linux/namei.h>
-> >  #include <linux/io_uring.h>
-> >  #include <linux/xattr.h>
-> > +#include <linux/posix_acl_xattr.h>
-> 
-> This looks spurious.
-> 
-
-Yes, leftover and already removed in the tree. Thanks!
+True, the weird list handling complicates things a bit.  But it is a lot
+of dead wood now and we should clean it up rather sooner than later.
