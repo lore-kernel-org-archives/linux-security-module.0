@@ -2,60 +2,97 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F996C6FA82
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 08:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E92D6C04A95
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 08:25:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235143AbiI2IRf (ORCPT
+        id S235354AbiI2IZs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Sep 2022 04:17:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57538 "EHLO
+        Thu, 29 Sep 2022 04:25:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235232AbiI2IRb (ORCPT
+        with ESMTP id S235411AbiI2IZk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Sep 2022 04:17:31 -0400
+        Thu, 29 Sep 2022 04:25:40 -0400
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00FF913E7F2;
-        Thu, 29 Sep 2022 01:17:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D04672BE2D;
+        Thu, 29 Sep 2022 01:25:38 -0700 (PDT)
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 6DB8D68BFE; Thu, 29 Sep 2022 10:17:27 +0200 (CEST)
-Date:   Thu, 29 Sep 2022 10:17:27 +0200
+        id 924F468BFE; Thu, 29 Sep 2022 10:25:35 +0200 (CEST)
+Date:   Thu, 29 Sep 2022 10:25:35 +0200
 From:   Christoph Hellwig <hch@lst.de>
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 14/29] acl: add vfs_set_acl()
-Message-ID: <20220929081727.GB3699@lst.de>
-References: <20220928160843.382601-1-brauner@kernel.org> <20220928160843.382601-15-brauner@kernel.org>
+Subject: Re: [PATCH v3 23/29] xattr: use posix acl api
+Message-ID: <20220929082535.GC3699@lst.de>
+References: <20220928160843.382601-1-brauner@kernel.org> <20220928160843.382601-24-brauner@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220928160843.382601-15-brauner@kernel.org>
+In-Reply-To: <20220928160843.382601-24-brauner@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> +EXPORT_SYMBOL(vfs_set_acl);
-
-I think all this stackable file system infrastucture should be
-EXPORT_SYMBOL_GPL, like a lot of the other internal stuff.
-
-> +int xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
-> +		     const char *name, int mask)
-
-Hmm.  The only think ACLs actually need from xattr_permission are
-the immutable / append check and the HAS_UNMAPPED_ID one.  I'd rather
-open code that, or if you cane come up with a sane name do a smaller
-helper rather than doing all the strcmp on the prefixes for now
-good reason.
-
-> +static inline int vfs_set_acl(struct user_namespace *mnt_userns,
-> +			      struct dentry *dentry, const char *name,
-> +			      struct posix_acl *acl)
-> +{
+On Wed, Sep 28, 2022 at 06:08:37PM +0200, Christian Brauner wrote:
+> +static int setxattr_convert(struct user_namespace *mnt_userns, struct dentry *d,
+> +			    struct xattr_ctx *ctx)
+>  {
+> -	if (ctx->size && is_posix_acl_xattr(ctx->kname->name))
+> -		posix_acl_fix_xattr_from_user(ctx->kvalue, ctx->size);
+> +	struct posix_acl *acl;
+> +
+> +	if (!ctx->size || !is_posix_acl_xattr(ctx->kname->name))
+> +		return 0;
+> +
+> +	/*
+> +	 * Note that posix_acl_from_xattr() uses GFP_NOFS when it probably
+> +	 * doesn't need to here.
+> +	 */
+> +	acl = posix_acl_from_xattr(current_user_ns(), ctx->kvalue, ctx->size);
+> +	if (IS_ERR(acl))
+> +		return PTR_ERR(acl);
+> +
+> +	ctx->acl = acl;
 > +	return 0;
 
-Should this really return 0 if ACLs are not supported?
+why is this called setxattr_convert when it is clearly about ACLs only?
+
+> +
+> +	error = setxattr_convert(mnt_userns, dentry, ctx);
+> +	if (error)
+> +		return error;
+> +
+> +	if (is_posix_acl_xattr(ctx->kname->name))
+> +		return vfs_set_acl(mnt_userns, dentry,
+> +				   ctx->kname->name, ctx->acl);
+
+Also instead of doing two checks for ACLs why not do just one?  And then
+have a comment helper to convert and set which can live in posix_acl.c.
+
+No need to store anything in a context with that either.
+
+> @@ -610,6 +642,7 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
+>  	error = do_setxattr(mnt_userns, d, &ctx);
+>  
+>  	kvfree(ctx.kvalue);
+> +	posix_acl_release(ctx.acl);
+>  	return error;
+
+And I don't think there is any good reason to not release the ACL
+right after the call to vfs_set_acl.  Which means there is no need to
+store anything in the ctx.
+
+> +	if (is_posix_acl_xattr(ctx->kname->name)) {
+> +		ctx->acl = vfs_get_acl(mnt_userns, d, ctx->kname->name);
+> +		if (IS_ERR(ctx->acl))
+> +			return PTR_ERR(ctx->acl);
+> +
+> +		error = vfs_posix_acl_to_xattr(mnt_userns, d_inode(d), ctx->acl,
+> +					       ctx->kvalue, ctx->size);
+> +		posix_acl_release(ctx->acl);
+
+An while this is just a small function body I still think splitting it
+into a helper and moving it to posix_acl.c would be a bit cleaner.
