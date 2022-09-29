@@ -2,85 +2,64 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31283C04A95
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 08:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFB3C04A95
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 08:28:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235315AbiI2I0L (ORCPT
+        id S233899AbiI2I2l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Sep 2022 04:26:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54384 "EHLO
+        Thu, 29 Sep 2022 04:28:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235392AbiI2I0C (ORCPT
+        with ESMTP id S235172AbiI2I2a (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Sep 2022 04:26:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BAF86EF2B;
-        Thu, 29 Sep 2022 01:26:00 -0700 (PDT)
+        Thu, 29 Sep 2022 04:28:30 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A9C81114E7;
+        Thu, 29 Sep 2022 01:28:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1875162077;
-        Thu, 29 Sep 2022 08:26:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95EC5C433D6;
-        Thu, 29 Sep 2022 08:25:57 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 37676B823AE;
+        Thu, 29 Sep 2022 08:28:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75B2BC433D6;
+        Thu, 29 Sep 2022 08:28:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664439959;
-        bh=ZGTcZaZidzwnb+P5lXnjE44J9zl+dgJ+T6Toyp6G8z0=;
+        s=k20201202; t=1664440107;
+        bh=NFQLnM0Y7pIBQy6gT+tauG6QxQ0FDdDdzcgEgSmGaik=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gL2THj/D4HENX7TDZHJ+qgxHg6/hIVyzBE2OhRzp3xQqa7aaE32AvgCsU0pgWrYCx
-         7tiXDDyNtGwrdDqEWVtErsbkh7Sw7dl3Atn/W3hcnbvYOekFAgu0xvBFcGbWfr6SCI
-         7COCme+wtcMuauLi37ZP+fh3usBiyNA9SE86LzOKOW3v8US+KY/17VvVMe9F4tVu0y
-         s+aJglqAlNDLXXap7BeHgWkMOIHQ0cLhxmie0fapJKcd07h9Pfz+K9aarszpTDjDwU
-         VVc47co0SKitcEqyD8YDLrvFU+1dbktT75HVJPacuMNSXn7F9yXZv9b7Q5R0E5cFuG
-         pwjYi2OO2pdJw==
-Date:   Thu, 29 Sep 2022 10:25:54 +0200
+        b=naT3yPhNw31XW4TGyR7vQZiovPLLmQw1v90KQLxhLFezPJkaBjGlGS12HYnvFHMVu
+         2WVNoROX6xWZsBWH8GOY+o9rhPIgtMv3kskvwSXzsW0i2ZnuIOOGSJlmRpPN4z6Btq
+         szXWL0kgKfMdFFum+h2z/9wd8kqsnN5UPyNRhq8BhKUCfpms4FtxmDJYMyRpBPCuSg
+         2qcWvHnzKTJxx93WmNXOp+3sURs0fnehCtVsKk0QLMDxMJyKkCKX6qne3c6pTwdXG3
+         Ljz47b5n0jj/qtp0j4eLaq5iPMhDdFFJJ54LdIJgCvMz/0LHlHG612mcbLdBEbFjBB
+         cInngnGISIiPg==
+Date:   Thu, 29 Sep 2022 10:28:22 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 14/29] acl: add vfs_set_acl()
-Message-ID: <20220929082554.5rclj4ioo37qg254@wittgenstein>
+Subject: Re: [PATCH v3 29/29] acl: remove a slew of now unused helpers
+Message-ID: <20220929082822.yhy7szlt3gpbqh34@wittgenstein>
 References: <20220928160843.382601-1-brauner@kernel.org>
- <20220928160843.382601-15-brauner@kernel.org>
- <20220929081727.GB3699@lst.de>
+ <20220928160843.382601-30-brauner@kernel.org>
+ <20220929082555.GD3699@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220929081727.GB3699@lst.de>
+In-Reply-To: <20220929082555.GD3699@lst.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 29, 2022 at 10:17:27AM +0200, Christoph Hellwig wrote:
-> > +EXPORT_SYMBOL(vfs_set_acl);
+On Thu, Sep 29, 2022 at 10:25:55AM +0200, Christoph Hellwig wrote:
+> On Wed, Sep 28, 2022 at 06:08:43PM +0200, Christian Brauner wrote:
+> > Now that the posix acl api is active we can remove all the hacky helpers
+> > we had to keep around for all these years and also remove the set and
+> > get posix acl xattr handler methods as they aren't needed anymore.
 > 
-> I think all this stackable file system infrastucture should be
-> EXPORT_SYMBOL_GPL, like a lot of the other internal stuff.
+> I think we can also remove all the xattr handlers for ACLs now, can't we?
 
-Ok, sounds good.
-
-> 
-> > +int xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
-> > +		     const char *name, int mask)
-> 
-> Hmm.  The only think ACLs actually need from xattr_permission are
-> the immutable / append check and the HAS_UNMAPPED_ID one.  I'd rather
-> open code that, or if you cane come up with a sane name do a smaller
-> helper rather than doing all the strcmp on the prefixes for now
-> good reason.
-
-I'll see if a little helper makes more sense than open-coding.
-
-> 
-> > +static inline int vfs_set_acl(struct user_namespace *mnt_userns,
-> > +			      struct dentry *dentry, const char *name,
-> > +			      struct posix_acl *acl)
-> > +{
-> > +	return 0;
-> 
-> Should this really return 0 if ACLs are not supported?
-
-Yeah, we should probably -EOPNOTSUPP for all of:
-vfs_{get,set,remove}_acl() in this case. Good point, thanks!
+I would like to do this in a follow-up series because afaict we need to
+massage how the ->list() handler is currently used to infer xattrs
+support. I think adressing this in a follow-up series would be better.
+There'll be more cleanups possibly anyway, I think.
