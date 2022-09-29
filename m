@@ -2,86 +2,70 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C95C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 15:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB1DC43217
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 15:34:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235912AbiI2PeS (ORCPT
+        id S235982AbiI2PeT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Sep 2022 11:34:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45876 "EHLO
+        Thu, 29 Sep 2022 11:34:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235659AbiI2Pci (ORCPT
+        with ESMTP id S235716AbiI2Pcj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Sep 2022 11:32:38 -0400
+        Thu, 29 Sep 2022 11:32:39 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 931BA15564D;
-        Thu, 29 Sep 2022 08:31:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C53E7F102;
+        Thu, 29 Sep 2022 08:31:59 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1EC51B824F8;
-        Thu, 29 Sep 2022 15:31:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55844C433C1;
-        Thu, 29 Sep 2022 15:31:46 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D819DB824FC;
+        Thu, 29 Sep 2022 15:31:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F12BC433D6;
+        Thu, 29 Sep 2022 15:31:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664465509;
-        bh=FKw385C5yH1om9Vc9Pe5irQuBZjCqwkBowirbqj/DvI=;
+        s=k20201202; t=1664465516;
+        bh=Y0Dv8oZ2kBLQjXHBMHpdSe9JSNhpBV74YIaZbY44/Kg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vF0JQg/PWEOuVooCOqllw5EcIfTT51+dqlHWzkUDiKx8N50eJ2O1OitUYvVeUsOjw
-         0nmHdQRtowIe7NJLVQmm4fEiv/mgecC7DRo34DSvh2QzWI/YzItwwMkBcCunHg/MNi
-         6NfAenWfDm3bamVs+3xd6ZjJS/YFwtInomR/CauC7KVrk3gPwfPTQNRQmIv3IUEADy
-         c/CyuB2OPZK8jq5VHEdR1v2REdWaADhbbtk5IyktCbJTObxEgEqi20W1CgjoMqEHQy
-         mLLzyb6T780g1yLe6UgNDb9k9I7TXBgeldD0KXOCS+WGQhRhVpAugSSpTjU2Y9zBIr
-         m/WV6eyDW7WIw==
+        b=ehm2/KrWABTPehDDk+QoP6cN1cYxDzL1lar8Vcwt/dReiZD/93M6Dr2Tgc5P77tem
+         LbVtUhNHx0sZm68pZPZiFInI0+JwFAMXzXqhIhm/edvk5rKHKRliJ5OaPHcOjgI8gn
+         Ev9H1qdLEj4lr3A03XjBk8NjcXv5f/u1FVqgMsaxJNtoYDzPm7QLa9LhKnlg4+3YvW
+         NA1keq2u1ToGui+y95YQOuMMIgIOUxMxg3mfgVMSWoFBL284/mOlqCIZO+AXHMHm5l
+         XYyKtBMqryPcpCjj+bqOsKJPZeE08O/h+wDDpvtbeuRjrkjYN2XvtQ5h8DB6qPvSPT
+         h0TZyGkvcgn0w==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-unionfs@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v4 21/30] ovl: implement get acl method
-Date:   Thu, 29 Sep 2022 17:30:31 +0200
-Message-Id: <20220929153041.500115-22-brauner@kernel.org>
+Subject: [PATCH v4 24/30] xattr: use posix acl api
+Date:   Thu, 29 Sep 2022 17:30:34 +0200
+Message-Id: <20220929153041.500115-25-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220929153041.500115-1-brauner@kernel.org>
 References: <20220929153041.500115-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6985; i=brauner@kernel.org; h=from:subject; bh=FKw385C5yH1om9Vc9Pe5irQuBZjCqwkBowirbqj/DvI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSb7hKda3Xb60DBLaaQ853XWG0n6Ojvmq/oJObx5CvvmoAD B5STOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACayopbhn+6kVoOZ79/uMPt37dkkMX dL5Q9MGgc18hr4mz9IRzqe5GVk+GWz20U7/G6Kv153g+LD4O+c7Ne1GYNZOoX2cd+4vvcKEwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7733; i=brauner@kernel.org; h=from:subject; bh=Y0Dv8oZ2kBLQjXHBMHpdSe9JSNhpBV74YIaZbY44/Kg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSb7hIz/ThPu9xKJ6+HzfVCoUrZN38xrxU9ffq/e51fFYRX 6Ct1lLIwiHExyIopsji0m4TLLeep2GyUqQEzh5UJZAgDF6cAXOQnI8M99gOvHGS+LnbjO3nfbu8rp0 OS1jWvDqcdiihZaBol7a7C8Fdyl+GCqgD1X/8m+XPuXzhvq4hc/J7uK3zt5mcWaLLqP2EHAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The current way of setting and getting posix acls through the generic
-xattr interface is error prone and type unsafe. The vfs needs to
-interpret and fixup posix acls before storing or reporting it to
-userspace. Various hacks exist to make this work. The code is hard to
-understand and difficult to maintain in it's current form. Instead of
-making this work by hacking posix acls through xattr handlers we are
-building a dedicated posix acl api around the get and set inode
-operations. This removes a lot of hackiness and makes the codepaths
-easier to maintain. A lot of background can be found in [1].
+In previous patches we built a new posix api solely around get and set
+inode operations. Now that we have all the pieces in place we can switch
+the system calls and the vfs over to only rely on this api when
+interacting with posix acls. This finally removes all type unsafety and
+type conversion issues explained in detail in [1] that we aim to get rid
+of.
 
-In order to build a type safe posix api around get and set acl we need
-all filesystem to implement get and set acl.
-
-Now that we have added get and set acl inode operations that allow easy
-access to the dentry we give overlayfs it's own get and set acl inode
-operations.
-
-Since overlayfs is a stacking filesystem it will use the newly added
-posix acl api when retrieving posix acls from the relevant layer.
-
-Since overlayfs can also be mounted on top of idmapped layers. If
-idmapped layers are used overlayfs must take the layer's idmapping into
-account after it retrieved the posix acls from the relevant layer.
-
-Note, until the vfs has been switched to the new posix acl api this
-patch is a non-functional change.
+With the new posix acl api we immediately translate into an appropriate
+kernel internal struct posix_acl format both when getting and setting
+posix acls. This is a stark contrast to before were we hacked unsafe raw
+values into the uapi struct that was stored in a void pointer relying
+and having filesystems and security modules hack around in the uapi
+struct as well.
 
 Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
@@ -89,163 +73,196 @@ Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 
 Notes:
     /* v2 */
-    Miklos Szeredi <mszeredi@redhat.com>
-    - Use IS_ERR_OR_NULL() macro.
+    unchanged
     
     /* v3 */
     unchanged
     
     /* v4 */
-    unchanged
+    Christoph Hellwig <hch@lst.de>:
+    - Add do_set_acl() and do_get_acl() to fs/posix_acl.c and fs/internal.h that
+      wrap all the conversion and call them from fs/xattr.c. This allows to
+      simplify the whole patch and remove unneeded helpers.
 
- fs/overlayfs/dir.c       |  3 +-
- fs/overlayfs/inode.c     | 61 ++++++++++++++++++++++++++++++++++++----
- fs/overlayfs/overlayfs.h | 10 +++++--
- 3 files changed, 65 insertions(+), 9 deletions(-)
+ fs/internal.h                   |  4 ++++
+ fs/posix_acl.c                  | 37 +++++++++++++++++++++++++++++++++
+ fs/xattr.c                      | 31 +++++++++++++++++----------
+ include/linux/posix_acl_xattr.h | 10 +++++++--
+ 4 files changed, 69 insertions(+), 13 deletions(-)
 
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 7bece7010c00..eb49d5d7b56f 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -1311,7 +1311,8 @@ const struct inode_operations ovl_dir_inode_operations = {
- 	.permission	= ovl_permission,
- 	.getattr	= ovl_getattr,
- 	.listxattr	= ovl_listxattr,
--	.get_inode_acl	= ovl_get_acl,
-+	.get_inode_acl	= ovl_get_inode_acl,
-+	.get_acl	= ovl_get_acl,
- 	.update_time	= ovl_update_time,
- 	.fileattr_get	= ovl_fileattr_get,
- 	.fileattr_set	= ovl_fileattr_set,
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index 9bc4582e956b..c25b4fd530db 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -14,6 +14,8 @@
- #include <linux/fileattr.h>
- #include <linux/security.h>
- #include <linux/namei.h>
-+#include <linux/posix_acl.h>
-+#include <linux/posix_acl_xattr.h>
- #include "overlayfs.h"
- 
- 
-@@ -460,9 +462,9 @@ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
-  * of the POSIX ACLs retrieved from the lower layer to this function to not
-  * alter the POSIX ACLs for the underlying filesystem.
-  */
--static void ovl_idmap_posix_acl(struct inode *realinode,
--				struct user_namespace *mnt_userns,
--				struct posix_acl *acl)
-+void ovl_idmap_posix_acl(struct inode *realinode,
-+			 struct user_namespace *mnt_userns,
-+			 struct posix_acl *acl)
- {
- 	struct user_namespace *fs_userns = i_user_ns(realinode);
- 
-@@ -495,7 +497,7 @@ static void ovl_idmap_posix_acl(struct inode *realinode,
-  *
-  * This is obviously only relevant when idmapped layers are used.
-  */
--struct posix_acl *ovl_get_acl(struct inode *inode, int type, bool rcu)
-+struct posix_acl *ovl_get_inode_acl(struct inode *inode, int type, bool rcu)
- {
- 	struct inode *realinode = ovl_inode_real(inode);
- 	struct posix_acl *acl, *clone;
-@@ -547,6 +549,51 @@ struct posix_acl *ovl_get_acl(struct inode *inode, int type, bool rcu)
- 	posix_acl_release(acl);
- 	return clone;
+diff --git a/fs/internal.h b/fs/internal.h
+index a95b1500ed65..1e67b4b9a4d1 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -222,3 +222,7 @@ int setxattr_copy(const char __user *name, struct xattr_ctx *ctx);
+ int do_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		struct xattr_ctx *ctx);
+ int may_write_xattr(struct user_namespace *mnt_userns, struct inode *inode);
++int do_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
++	       const char *acl_name, const void *kvalue, size_t size);
++ssize_t do_get_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
++		   const char *acl_name, void *kvalue, size_t size);
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index 01209603afc9..52e72a219daa 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -1551,3 +1551,40 @@ int vfs_remove_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 	return error;
  }
+ EXPORT_SYMBOL_GPL(vfs_remove_acl);
 +
-+static struct posix_acl *ovl_get_acl_path(const struct path *path,
-+					  const char *acl_name)
++int do_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
++	       const char *acl_name, const void *kvalue, size_t size)
 +{
-+	struct posix_acl *real_acl, *clone;
-+	struct user_namespace *mnt_userns;
-+
-+	mnt_userns = mnt_user_ns(path->mnt);
-+
-+	real_acl = vfs_get_acl(mnt_userns, path->dentry, acl_name);
-+	if (IS_ERR_OR_NULL(real_acl))
-+		return real_acl;
-+
-+	if (!is_idmapped_mnt(path->mnt))
-+		return real_acl;
-+
-+	/*
-+        * We cannot alter the ACLs returned from the relevant layer as that
-+        * would alter the cached values filesystem wide for the lower
-+        * filesystem. Instead we can clone the ACLs and then apply the
-+        * relevant idmapping of the layer.
-+        */
-+	clone = posix_acl_clone(real_acl, GFP_KERNEL);
-+	if (clone)
-+		ovl_idmap_posix_acl(d_inode(path->dentry), mnt_userns, clone);
-+	else
-+		clone = ERR_PTR(-ENOMEM);
-+	/* Drop reference to original posix acls. */
-+	posix_acl_release(real_acl);
-+	return clone;
-+}
-+
-+struct posix_acl *ovl_get_acl(struct user_namespace *mnt_userns,
-+			      struct dentry *dentry, int type)
-+{
++	int error;
 +	struct posix_acl *acl = NULL;
-+	const struct cred *old_cred;
-+	struct path realpath;
 +
-+	ovl_path_real(dentry, &realpath);
-+	old_cred = ovl_override_creds(dentry->d_sb);
-+	acl = ovl_get_acl_path(&realpath, posix_acl_xattr_name(type));
-+	revert_creds(old_cred);
-+	return acl;
++	if (size) {
++		/*
++		 * Note that posix_acl_from_xattr() uses GFP_NOFS when it
++		 * probably doesn't need to here.
++		 */
++		acl = posix_acl_from_xattr(current_user_ns(), kvalue, size);
++		if (IS_ERR(acl))
++			return PTR_ERR(acl);
++	}
++
++	error = vfs_set_acl(mnt_userns, dentry, acl_name, acl);
++	posix_acl_release(acl);
++	return error;
 +}
- #endif
++
++ssize_t do_get_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
++		   const char *acl_name, void *kvalue, size_t size)
++{
++	ssize_t error;
++	struct posix_acl *acl;
++
++	acl = vfs_get_acl(mnt_userns, dentry, acl_name);
++	if (IS_ERR(acl))
++		return PTR_ERR(acl);
++
++	error = vfs_posix_acl_to_xattr(mnt_userns, d_inode(dentry),
++				       acl, kvalue, size);
++	posix_acl_release(acl);
++	return error;
++}
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 6303f1c62796..5417c36588a9 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -186,6 +186,9 @@ __vfs_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ {
+ 	const struct xattr_handler *handler;
  
- int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags)
-@@ -721,7 +768,8 @@ static const struct inode_operations ovl_file_inode_operations = {
- 	.permission	= ovl_permission,
- 	.getattr	= ovl_getattr,
- 	.listxattr	= ovl_listxattr,
--	.get_inode_acl	= ovl_get_acl,
-+	.get_inode_acl	= ovl_get_inode_acl,
-+	.get_acl	= ovl_get_acl,
- 	.update_time	= ovl_update_time,
- 	.fiemap		= ovl_fiemap,
- 	.fileattr_get	= ovl_fileattr_get,
-@@ -741,7 +789,8 @@ static const struct inode_operations ovl_special_inode_operations = {
- 	.permission	= ovl_permission,
- 	.getattr	= ovl_getattr,
- 	.listxattr	= ovl_listxattr,
--	.get_inode_acl	= ovl_get_acl,
-+	.get_inode_acl	= ovl_get_inode_acl,
-+	.get_acl	= ovl_get_acl,
- 	.update_time	= ovl_update_time,
- };
++	if (is_posix_acl_xattr(name))
++		return -EOPNOTSUPP;
++
+ 	handler = xattr_resolve_name(inode, &name);
+ 	if (IS_ERR(handler))
+ 		return PTR_ERR(handler);
+@@ -407,6 +410,9 @@ __vfs_getxattr(struct dentry *dentry, struct inode *inode, const char *name,
+ {
+ 	const struct xattr_handler *handler;
  
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index ee93c825b06b..68a3030332e9 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -592,9 +592,15 @@ int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
- ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size);
++	if (is_posix_acl_xattr(name))
++		return -EOPNOTSUPP;
++
+ 	handler = xattr_resolve_name(inode, &name);
+ 	if (IS_ERR(handler))
+ 		return PTR_ERR(handler);
+@@ -479,6 +485,9 @@ __vfs_removexattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 	struct inode *inode = d_inode(dentry);
+ 	const struct xattr_handler *handler;
+ 
++	if (is_posix_acl_xattr(name))
++		return -EOPNOTSUPP;
++
+ 	handler = xattr_resolve_name(inode, &name);
+ 	if (IS_ERR(handler))
+ 		return PTR_ERR(handler);
+@@ -588,17 +597,13 @@ int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
+ 	return error;
+ }
+ 
+-static void setxattr_convert(struct user_namespace *mnt_userns,
+-			     struct dentry *d, struct xattr_ctx *ctx)
+-{
+-	if (ctx->size && is_posix_acl_xattr(ctx->kname->name))
+-		posix_acl_fix_xattr_from_user(ctx->kvalue, ctx->size);
+-}
+-
+ int do_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		struct xattr_ctx *ctx)
+ {
+-	setxattr_convert(mnt_userns, dentry, ctx);
++	if (is_posix_acl_xattr(ctx->kname->name))
++		return do_set_acl(mnt_userns, dentry, ctx->kname->name,
++				  ctx->kvalue, ctx->size);
++
+ 	return vfs_setxattr(mnt_userns, dentry, ctx->kname->name,
+ 			ctx->kvalue, ctx->size, ctx->flags);
+ }
+@@ -705,10 +710,11 @@ do_getxattr(struct user_namespace *mnt_userns, struct dentry *d,
+ 			return -ENOMEM;
+ 	}
+ 
+-	error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
++	if (is_posix_acl_xattr(ctx->kname->name))
++		error = do_get_acl(mnt_userns, d, kname, ctx->kvalue, ctx->size);
++	else
++		error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
+ 	if (error > 0) {
+-		if (is_posix_acl_xattr(kname))
+-			posix_acl_fix_xattr_to_user(ctx->kvalue, error);
+ 		if (ctx->size && copy_to_user(ctx->value, ctx->kvalue, error))
+ 			error = -EFAULT;
+ 	} else if (error == -ERANGE && ctx->size >= XATTR_SIZE_MAX) {
+@@ -883,6 +889,9 @@ removexattr(struct user_namespace *mnt_userns, struct dentry *d,
+ 	if (error < 0)
+ 		return error;
+ 
++	if (is_posix_acl_xattr(kname))
++		return vfs_remove_acl(mnt_userns, d, kname);
++
+ 	return vfs_removexattr(mnt_userns, d, kname);
+ }
+ 
+diff --git a/include/linux/posix_acl_xattr.h b/include/linux/posix_acl_xattr.h
+index 3bd8fac436bc..0294b3489a81 100644
+--- a/include/linux/posix_acl_xattr.h
++++ b/include/linux/posix_acl_xattr.h
+@@ -33,6 +33,8 @@ posix_acl_xattr_count(size_t size)
+ }
  
  #ifdef CONFIG_FS_POSIX_ACL
--struct posix_acl *ovl_get_acl(struct inode *inode, int type, bool rcu);
-+struct posix_acl *ovl_get_inode_acl(struct inode *inode, int type, bool rcu);
-+struct posix_acl *ovl_get_acl(struct user_namespace *mnt_userns,
-+			      struct dentry *dentry, int type);
-+void ovl_idmap_posix_acl(struct inode *realinode,
-+			 struct user_namespace *mnt_userns,
-+			 struct posix_acl *acl);
++struct posix_acl *posix_acl_from_xattr(struct user_namespace *user_ns,
++				       const void *value, size_t size);
+ void posix_acl_fix_xattr_from_user(void *value, size_t size);
+ void posix_acl_fix_xattr_to_user(void *value, size_t size);
+ void posix_acl_getxattr_idmapped_mnt(struct user_namespace *mnt_userns,
+@@ -42,6 +44,12 @@ ssize_t vfs_posix_acl_to_xattr(struct user_namespace *mnt_userns,
+ 			       struct inode *inode, const struct posix_acl *acl,
+ 			       void *buffer, size_t size);
  #else
--#define ovl_get_acl	NULL
-+#define ovl_get_inode_acl	NULL
-+#define ovl_get_acl		NULL
++static inline struct posix_acl *
++posix_acl_from_xattr(struct user_namespace *user_ns, const void *value,
++		     size_t size)
++{
++	return ERR_PTR(-EOPNOTSUPP);
++}
+ static inline void posix_acl_fix_xattr_from_user(void *value, size_t size)
+ {
+ }
+@@ -63,8 +71,6 @@ static inline ssize_t vfs_posix_acl_to_xattr(struct user_namespace *mnt_userns,
+ }
  #endif
  
- int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags);
+-struct posix_acl *posix_acl_from_xattr(struct user_namespace *user_ns, 
+-				       const void *value, size_t size);
+ int posix_acl_to_xattr(struct user_namespace *user_ns,
+ 		       const struct posix_acl *acl, void *buffer, size_t size);
+ struct posix_acl *vfs_set_acl_prepare(struct user_namespace *mnt_userns,
 -- 
 2.34.1
 
