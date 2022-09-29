@@ -2,45 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B038FC433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 11:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E010C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Sep 2022 11:50:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235389AbiI2Lkv (ORCPT
+        id S235156AbiI2LuV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Sep 2022 07:40:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38776 "EHLO
+        Thu, 29 Sep 2022 07:50:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235374AbiI2Lkt (ORCPT
+        with ESMTP id S235050AbiI2LuT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Sep 2022 07:40:49 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA85010F72A;
-        Thu, 29 Sep 2022 04:40:47 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 6D46268BFE; Thu, 29 Sep 2022 13:40:44 +0200 (CEST)
-Date:   Thu, 29 Sep 2022 13:40:44 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        Seth Forshee <sforshee@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 29/29] acl: remove a slew of now unused helpers
-Message-ID: <20220929114044.GA19911@lst.de>
-References: <20220928160843.382601-1-brauner@kernel.org> <20220928160843.382601-30-brauner@kernel.org> <20220929082555.GD3699@lst.de> <20220929082822.yhy7szlt3gpbqh34@wittgenstein>
+        Thu, 29 Sep 2022 07:50:19 -0400
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F1C2AE222;
+        Thu, 29 Sep 2022 04:50:08 -0700 (PDT)
+Date:   Thu, 29 Sep 2022 11:49:56 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail3; t=1664452202; x=1664711402;
+        bh=WtH1XiJMuAo2t7Ag08kalVAzbnlWzm46SLxhU7NTyU4=;
+        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+         Subject:Reply-To:Feedback-ID:Message-ID;
+        b=Mp2BmKbJWOuTGrcIJoPHC0MHj8lnJeeNTqljJjrOsuOCJ+Ez6hyCL4UtQwJjtsTXd
+         GHCEMsJF44x6y7o/G+wZmEDul2Vr+orSquypidICfFOc2IMgxFbF0H8neHs2bInJ5F
+         eXe7fHcQqlp3bzgS5K7qoID3/Hc5zme5zWlr92NxIvrD1YjXOn2w8MB0LeqkeEr53W
+         pRi/a4VzWQ3tyqOMPoIVPkV1JD0Xam6/PKC0tW/OPNyMH6iVEczKnIC7K19tqbBHCF
+         7TRx/ODy0XrvBhaZh4tV1OcKG8f4tdC7kN8hGk7iO0YS8qpJdvdnZX7spkEedd4QTL
+         dkPUjNfVseQkg==
+To:     linux-kernel@vger.kernel.org
+From:   Orlando Chamberlain <redecorating@protonmail.com>
+Cc:     jarkko@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        gargaditya08@live.com, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Orlando Chamberlain <redecorating@protonmail.com>,
+        stable@vger.kernel.org, Samuel Jiang <chyishian.jiang@gmail.com>
+Subject: [PATCHv2 RESEND] efi: Correct Macmini DMI match in uefi cert quirk
+Message-ID: <20220929114906.85021-1-redecorating@protonmail.com>
+Feedback-ID: 28131841:user:proton
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220929082822.yhy7szlt3gpbqh34@wittgenstein>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 29, 2022 at 10:28:22AM +0200, Christian Brauner wrote:
-> I would like to do this in a follow-up series because afaict we need to
-> massage how the ->list() handler is currently used to infer xattrs
-> support. I think adressing this in a follow-up series would be better.
-> There'll be more cleanups possibly anyway, I think.
+It turns out Apple doesn't capitalise the "mini" in "Macmini" in DMI, which
+is inconsistent with other model line names.
 
-True, the weird list handling complicates things a bit.  But it is a lot
-of dead wood now and we should clean it up rather sooner than later.
+Correct the capitalisation of Macmini in the quirk for skipping loading
+platform certs on T2 Macs.
+
+Currently users get:
+
+------------[ cut here ]------------
+[Firmware Bug]: Page fault caused by firmware at PA: 0xffffa30640054000
+WARNING: CPU: 1 PID: 8 at arch/x86/platform/efi/quirks.c:735 efi_crash_grac=
+efully_on_page_fault+0x55/0xe0
+Modules linked in:
+CPU: 1 PID: 8 Comm: kworker/u12:0 Not tainted 5.18.14-arch1-2-t2 #1 4535eb3=
+fc40fd08edab32a509fbf4c9bc52d111e
+Hardware name: Apple Inc. Macmini8,1/Mac-7BA5B2DFE22DDD8C, BIOS 1731.120.10=
+.0.0 (iBridge: 19.16.15071.0.0,0) 04/24/2022
+Workqueue: efi_rts_wq efi_call_rts
+...
+---[ end trace 0000000000000000 ]---
+efi: Froze efi_rts_wq and disabled EFI Runtime Services
+integrity: Couldn't get size: 0x8000000000000015
+integrity: MODSIGN: Couldn't get UEFI db list
+efi: EFI Runtime Services are disabled!
+integrity: Couldn't get size: 0x8000000000000015
+integrity: Couldn't get UEFI dbx list
+
+Fixes: 155ca952c7ca ("efi: Do not import certificates from UEFI Secure Boot=
+ for T2 Macs")
+Cc: stable@vger.kernel.org
+Cc: Aditya Garg <gargaditya08@live.com>
+Tested-by: Samuel Jiang <chyishian.jiang@gmail.com>
+Signed-off-by: Orlando Chamberlain <redecorating@protonmail.com>
+---
+v1->v2: Clarified in commit message that this is for a dmi match string
+ security/integrity/platform_certs/load_uefi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integ=
+rity/platform_certs/load_uefi.c
+index 093894a640dc..b78753d27d8e 100644
+--- a/security/integrity/platform_certs/load_uefi.c
++++ b/security/integrity/platform_certs/load_uefi.c
+@@ -31,7 +31,7 @@ static const struct dmi_system_id uefi_skip_cert[] =3D {
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,1") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,2") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir9,1") },
+-=09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacMini8,1") },
++=09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "Macmini8,1") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacPro7,1") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,1") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,2") },
+--=20
+2.37.1
+
+
