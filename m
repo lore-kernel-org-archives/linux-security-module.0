@@ -2,54 +2,54 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5060C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 16:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A3CC4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 16:02:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231945AbiI3QC4 (ORCPT
+        id S231946AbiI3QC5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Sep 2022 12:02:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33628 "EHLO
+        Fri, 30 Sep 2022 12:02:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231775AbiI3QCS (ORCPT
+        with ESMTP id S231853AbiI3QCS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Fri, 30 Sep 2022 12:02:18 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 054751B34B9;
-        Fri, 30 Sep 2022 09:02:14 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id a13so6606044edj.0;
-        Fri, 30 Sep 2022 09:02:14 -0700 (PDT)
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DA0C1B3A45;
+        Fri, 30 Sep 2022 09:02:16 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id nb11so9974317ejc.5;
+        Fri, 30 Sep 2022 09:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=7mkbYIT0lyMbYQ60i8bXJR6CMNT1pJkoeHZZ5DPZ4IM=;
-        b=OaP+7KFzTlEnJt+iZNALX3EGzH6HiqJvDEEO8jC2klp8ppaRpH+kBqLgnAu2RkNsI7
-         Bg8BELHbdgH1fO0kkr1/Sw7R+A+EmyJgYfB5ihvi1gRr7+lNhwLCabcbnU933I/DvVYq
-         aaa4x2VqKqlAcnKnn30HBFWjAbKXQbICpXOOLyoAB5e7oebeHCfzQP7QZnxEzyvB4tfX
-         sKk0HqRxkzeBzHBDe5dQKQSSo5isMFHd9TC4fvoBxoC8MrkhCrQ9lEQKAN3bwdqKvOkV
-         MRJ53mQT4V7Sd678ksvdBgAQpXOsLYdbp+M2BXbGzCGG+kUlnhcL5MeeOW+4WDFCKffD
-         geAg==
+        bh=C+GyJq5HgV0Z7OWkJYmIbswU12VCmy8zCOP8Qkw/Jxk=;
+        b=CCRGRJOufx+mg2aoyxpmDIdQ9ZbPwRbNqH7uNo9Ul+rzcw89FssJZfByRUozRyKGBf
+         Ks7JXx3H5xjIzBh8gj1369ysjCcFlxeoAvLs9Pd8LjLHMELF2wr+0vppKbJZzjoJ6Twe
+         kzLAnpaAd1w/D1exrxeK35/OJEFJKs5Tof0kOjn6Wkm+VFtE9zH1MEzISk7fKt8SG0QH
+         PI2TVHUdTwwDJtCzK9Mq/C95m/gk2exYhEXo/qiVqoVbUL1neOBw/BUSU5JCstHSyFUS
+         udiLj+8y7aC38LhL8wKiFlsRbREbAKwH1EPvUFK6VoMRcIhJN9XRTp4WhV97+LA4L5pt
+         CSzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=7mkbYIT0lyMbYQ60i8bXJR6CMNT1pJkoeHZZ5DPZ4IM=;
-        b=IYIDVSimY+os7f8X2UmQVTlN51YwI3EqtTOsZSgD98clWxruG0UeqcjfmbLwR5V3L+
-         5LrDf1mxIXVxpK2ZhaH2IA28swAicDgVTCaobCOK8RNWd4k0H3wq/js9bG2reNBEo4vK
-         Gf2nwtAb9pIDKxQZeN66fgqbh7Iqnpbm2N6JCb9nAWsrUVmZeQNXzQUc/660RGpYFL3V
-         3i21+9d6dqNMc9Cot5dtbjUaQcig+V2ls7ZTyvPwRYgnN9WEu2r/lZQy3SBhzAx4OuK9
-         g90WKjjagNz+tvuTfyNUvw44i/AmCz8au7bFES52F5XYwZXf14OYBoRgyWf7z9e6LvX2
-         bSGw==
-X-Gm-Message-State: ACrzQf2CssB5fEhmT+P4x3x+c/YHhnJmvQLeP+jajA6aA+BzbOrFWtWd
-        2X9PzZwhSd1Y86S+HGGD4HKEC9/YnQI=
-X-Google-Smtp-Source: AMsMyM7wWy7UXrzkHV/brcq/gODLW68ZQaRz2XmrOK/WFpJ+QUarqJTevlqyAk99KQ9oBM2tjbfpgQ==
-X-Received: by 2002:a50:cdd8:0:b0:457:269a:decf with SMTP id h24-20020a50cdd8000000b00457269adecfmr8394285edj.359.1664553733081;
-        Fri, 30 Sep 2022 09:02:13 -0700 (PDT)
+        bh=C+GyJq5HgV0Z7OWkJYmIbswU12VCmy8zCOP8Qkw/Jxk=;
+        b=54aVk462zhl7m9c6MB4e6MA413mfrrdOh1C+7ylFqPiqS5DGVGP5920MmxKJVqcRwL
+         F91bKz6kGLSnOWZwyYDoO1KxLBEckNJDOr03K4mcbb1XWr/Cst2+HWUPuHcylgpEaGJE
+         itJngoXaBP8wpb8C0yvSOEhAMIphpUO1qlFK+gI82DHUoZmY4BX5Cqzeqd/2zj+0AoKC
+         oLpM7hJKumVbH+Ed8xzTXyHWpF9qNcl7Bsug0guUfJyQW/jan4nglUI73ru/3ciCILFW
+         jJryMou1CVjybAFdvu824FUUiBy5s47tH1WNWFElkJcaiPUiAVQMAfjww6LVFMwQVokI
+         fLqg==
+X-Gm-Message-State: ACrzQf3BnFErVER+6RqWDAW8c8UI8SD84rg9gkbH4wOmZfuogbCouzI3
+        EXCHEf9nuMKBmV3p6RpfPCdMTvc6pkk=
+X-Google-Smtp-Source: AMsMyM7029mwtxLlTXW+vuLatElzrzmMciDXtOc+5zIDzcDsh9BJqoNohMfrWA6In0YfUlUz4BNktg==
+X-Received: by 2002:a17:906:9b8b:b0:782:20fd:8597 with SMTP id dd11-20020a1709069b8b00b0078220fd8597mr6849275ejc.423.1664553734640;
+        Fri, 30 Sep 2022 09:02:14 -0700 (PDT)
 Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id f18-20020a05640214d200b004588ef795easm927583edx.34.2022.09.30.09.02.12
+        by smtp.gmail.com with ESMTPSA id f18-20020a05640214d200b004588ef795easm927583edx.34.2022.09.30.09.02.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 09:02:12 -0700 (PDT)
+        Fri, 30 Sep 2022 09:02:14 -0700 (PDT)
 From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To:     linux-security-module@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -59,9 +59,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-fsdevel@vger.kernel.org,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
         =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH v7 4/7] selftests/landlock: Test open() and ftruncate() in multiple scenarios
-Date:   Fri, 30 Sep 2022 18:01:41 +0200
-Message-Id: <20220930160144.141504-5-gnoack3000@gmail.com>
+Subject: [PATCH v7 6/7] samples/landlock: Extend sample tool to support LANDLOCK_ACCESS_FS_TRUNCATE
+Date:   Fri, 30 Sep 2022 18:01:43 +0200
+Message-Id: <20220930160144.141504-7-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20220930160144.141504-1-gnoack3000@gmail.com>
 References: <20220930160144.141504-1-gnoack3000@gmail.com>
@@ -71,121 +71,65 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This test uses multiple fixture variants to exercise a broader set of
-scnenarios.
+Update the sandboxer sample to restrict truncate actions. This is
+automatically enabled by default if the running kernel supports
+LANDLOCK_ACCESS_FS_TRUNCATE, except for the paths listed in the
+LL_FS_RW environment variable.
 
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- tools/testing/selftests/landlock/fs_test.c | 96 ++++++++++++++++++++++
- 1 file changed, 96 insertions(+)
+ samples/landlock/sandboxer.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 718543fd3dfc..308f6f36e8c0 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -3445,6 +3445,102 @@ TEST_F_FORK(layout1, ftruncate)
- 	ASSERT_EQ(0, close(fd_layer3));
- }
+diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+index 3e404e51ec64..771b6b10d519 100644
+--- a/samples/landlock/sandboxer.c
++++ b/samples/landlock/sandboxer.c
+@@ -76,7 +76,8 @@ static int parse_path(char *env_path, const char ***const path_list)
+ #define ACCESS_FILE ( \
+ 	LANDLOCK_ACCESS_FS_EXECUTE | \
+ 	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+-	LANDLOCK_ACCESS_FS_READ_FILE)
++	LANDLOCK_ACCESS_FS_READ_FILE | \
++	LANDLOCK_ACCESS_FS_TRUNCATE)
  
-+/* clang-format off */
-+FIXTURE(ftruncate) {};
-+/* clang-format on */
-+
-+FIXTURE_SETUP(ftruncate)
-+{
-+	prepare_layout(_metadata);
-+	create_file(_metadata, file1_s1d1);
-+}
-+
-+FIXTURE_TEARDOWN(ftruncate)
-+{
-+	EXPECT_EQ(0, remove_path(file1_s1d1));
-+	cleanup_layout(_metadata);
-+}
-+
-+FIXTURE_VARIANT(ftruncate)
-+{
-+	const __u64 handled;
-+	const __u64 permitted;
-+	const int expected_open_result;
-+	const int expected_ftruncate_result;
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(ftruncate, w_w) {
-+	/* clang-format on */
-+	.handled = LANDLOCK_ACCESS_FS_WRITE_FILE,
-+	.permitted = LANDLOCK_ACCESS_FS_WRITE_FILE,
-+	.expected_open_result = 0,
-+	.expected_ftruncate_result = 0,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(ftruncate, t_t) {
-+	/* clang-format on */
-+	.handled = LANDLOCK_ACCESS_FS_TRUNCATE,
-+	.permitted = LANDLOCK_ACCESS_FS_TRUNCATE,
-+	.expected_open_result = 0,
-+	.expected_ftruncate_result = 0,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(ftruncate, wt_w) {
-+	/* clang-format on */
-+	.handled = LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_TRUNCATE,
-+	.permitted = LANDLOCK_ACCESS_FS_WRITE_FILE,
-+	.expected_open_result = 0,
-+	.expected_ftruncate_result = EACCES,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(ftruncate, wt_wt) {
-+	/* clang-format on */
-+	.handled = LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_TRUNCATE,
-+	.permitted = LANDLOCK_ACCESS_FS_WRITE_FILE |
-+		     LANDLOCK_ACCESS_FS_TRUNCATE,
-+	.expected_open_result = 0,
-+	.expected_ftruncate_result = 0,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(ftruncate, wt_t) {
-+	/* clang-format on */
-+	.handled = LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_TRUNCATE,
-+	.permitted = LANDLOCK_ACCESS_FS_TRUNCATE,
-+	.expected_open_result = EACCES,
-+};
-+
-+TEST_F_FORK(ftruncate, open_and_ftruncate)
-+{
-+	const char *const path = file1_s1d1;
-+	const struct rule rules[] = {
-+		{
-+			.path = path,
-+			.access = variant->permitted,
-+		},
-+		{},
-+	};
-+	int fd, ruleset_fd;
-+
-+	/* Enable Landlock. */
-+	ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
-+	ASSERT_LE(0, ruleset_fd);
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	fd = open(path, O_WRONLY);
-+	EXPECT_EQ(variant->expected_open_result, (fd < 0 ? errno : 0));
-+	if (fd >= 0) {
-+		EXPECT_EQ(variant->expected_ftruncate_result,
-+			  test_ftruncate(fd));
-+		ASSERT_EQ(0, close(fd));
-+	}
-+}
-+
- /* clang-format off */
- FIXTURE(layout1_bind) {};
  /* clang-format on */
+ 
+@@ -160,10 +161,8 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
+ 	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
+ 	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
+ 	LANDLOCK_ACCESS_FS_MAKE_SYM | \
+-	LANDLOCK_ACCESS_FS_REFER)
+-
+-#define ACCESS_ABI_2 ( \
+-	LANDLOCK_ACCESS_FS_REFER)
++	LANDLOCK_ACCESS_FS_REFER | \
++	LANDLOCK_ACCESS_FS_TRUNCATE)
+ 
+ /* clang-format on */
+ 
+@@ -226,11 +225,17 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 		return 1;
+ 	}
+ 	/* Best-effort security. */
+-	if (abi < 2) {
+-		ruleset_attr.handled_access_fs &= ~ACCESS_ABI_2;
+-		access_fs_ro &= ~ACCESS_ABI_2;
+-		access_fs_rw &= ~ACCESS_ABI_2;
++	switch (abi) {
++	case 1:
++		/* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
++		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
++		__attribute__((fallthrough));
++	case 2:
++		/* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
++		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
+ 	}
++	access_fs_ro &= ruleset_attr.handled_access_fs;
++	access_fs_rw &= ruleset_attr.handled_access_fs;
+ 
+ 	ruleset_fd =
+ 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
 -- 
 2.37.3
 
