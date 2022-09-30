@@ -2,164 +2,130 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71665C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 11:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67011C433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 12:24:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231520AbiI3Lvn (ORCPT
+        id S230174AbiI3MYz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Sep 2022 07:51:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52086 "EHLO
+        Fri, 30 Sep 2022 08:24:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229613AbiI3LvY (ORCPT
+        with ESMTP id S230481AbiI3MYu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Sep 2022 07:51:24 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28C061A3B3;
-        Fri, 30 Sep 2022 04:48:41 -0700 (PDT)
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28UBdYDV019077;
-        Fri, 30 Sep 2022 11:48:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=0873zP5Ym+NOoGbTgp2b/lpLQtIk2kqoBQisl8b298I=;
- b=ti268sbw8kkegFPmKD+o2R62JYPm85bOMOH35csJnjmnVVDy3/Ym3MD3HWEchrdwoAKp
- HQRfvp1+tsCOqE8MniUKpNup4CP2V3BTXsCaiQfgCdVAT8m5HO7CY5SNSuarXrfNuqAc
- nEnc9EXsergkHq7LdaHhG9Zykwn3bPtupYBObwozecVTrHCsqMtZApDQ1uqOcdOsjzln
- 2ZpplS9xvGS/vl+BU5zbVCEEg3KdNf1B/4Xa5TTNe7L4ebgX23CEz/yxkIhUtUEYLPaK
- 03OhkZkrIRlCzC1C6sZx+7WOitVrd5IpSLdmp06FQfEi3AKWX90GWokfxxlBmWECuHBE vw== 
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3jwy8js633-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 30 Sep 2022 11:48:35 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28UBZdTL027705;
-        Fri, 30 Sep 2022 11:48:34 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma03dal.us.ibm.com with ESMTP id 3jsshaj3d1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 30 Sep 2022 11:48:34 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28UBmWX154657334
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Sep 2022 11:48:33 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BCB2258061;
-        Fri, 30 Sep 2022 11:48:32 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C973458050;
-        Fri, 30 Sep 2022 11:48:31 +0000 (GMT)
-Received: from sig-9-65-252-31.ibm.com (unknown [9.65.252.31])
-        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 30 Sep 2022 11:48:31 +0000 (GMT)
-Message-ID: <e55cf916e5d5a50e293c7dc5b4f00802578eb6d6.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 13/30] evm: add post set acl hook
-From:   Mimi Zohar <zohar@linux.ibm.com>
+        Fri, 30 Sep 2022 08:24:50 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7338CD6A
+        for <linux-security-module@vger.kernel.org>; Fri, 30 Sep 2022 05:24:46 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a26so8692924ejc.4
+        for <linux-security-module@vger.kernel.org>; Fri, 30 Sep 2022 05:24:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=HUp6tY7BvFiK36PUZyugtk+P/q3Weh4h3BX2ULpDD6Y=;
+        b=be9bYEFgXIONSG2q3vd7TXbJZVwafGFXbeJUj5TQ3ZC0F5JPvFK71a5HVbFuJ+69MX
+         WhLFMkbEVdf/6Qhg0hdk1uyvSMz0QAlCz7bpWIJPMiUZ1hX6oT4hoFyjG+gaOQ7iF7a5
+         B3Xwbj9aeuu87JYrU1N3veon8DjYCbHVLaI60=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=HUp6tY7BvFiK36PUZyugtk+P/q3Weh4h3BX2ULpDD6Y=;
+        b=TAnTkwsJ7rm06bEbj3qYDV+pIiiDDeujmIOvTK0AJ/LI8xVGzxVjduEl+AZ3Vmygl6
+         GqRlFPB4jxNt4vKWr7RvQMftT3Ox+NmU8ipMjAhnRpP5MujHxtPRlcEzEov/IhdZDu7n
+         JiQNoAg1uLcnNjcbbRhyCgaJ4FBWRnWcgcXUum28GjyQN6x1lTXYo+dndelc5eGChWuM
+         aw3mkM98xYzCpzvfwK+waqHu6u6euCbm2B0yGVkbMerxr57lrH8uescnEgYgZ4JkgeSr
+         LZhpa9x8gpqZFIIF7KLTKrXmJPIcJlMALUnlm0BrJtBsO7JcL/IL8pKOFMbhD0SktCZk
+         Gn2A==
+X-Gm-Message-State: ACrzQf2B1OeRPdG+KhxrmfAXSmhsRrsK8su3T0QKIOrvebLwKXUORa4O
+        epb1EENM6KWlgovrAMaQtKjz+K4TC/tz9WmXP4bRGg==
+X-Google-Smtp-Source: AMsMyM6OvmiM71+JGp+MO6pATIntaRsnLf/VayvxlL7km/w2mkpnHlKCD3XGLHJxbGSXrozN/JWJrdhTJrBtKTjElpU=
+X-Received: by 2002:a17:906:4fd1:b0:787:434f:d755 with SMTP id
+ i17-20020a1709064fd100b00787434fd755mr6119881ejw.356.1664540685052; Fri, 30
+ Sep 2022 05:24:45 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220929153041.500115-1-brauner@kernel.org> <20220929153041.500115-5-brauner@kernel.org>
+ <CAJfpegterbOyGGDbHY8LidzR45TTbhHdRG728mQQi_LaNMS3PA@mail.gmail.com>
+ <20220930090949.cl3ajz7r4ub6jrae@wittgenstein> <CAJfpegsu9r84J-3wN=z8OOzHd+7YRBn9CNFMDWSbftCEm0e27A@mail.gmail.com>
+ <20220930100557.7hqjrz77s3wcbrxx@wittgenstein>
+In-Reply-To: <20220930100557.7hqjrz77s3wcbrxx@wittgenstein>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 30 Sep 2022 14:24:33 +0200
+Message-ID: <CAJfpegvJUSowMaS7s_vLWvznLmfpkEfbvZbb_Vo-H8VewucByA@mail.gmail.com>
+Subject: Re: [PATCH v4 04/30] fs: add new get acl method
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>
-Date:   Fri, 30 Sep 2022 07:48:31 -0400
-In-Reply-To: <20220930084438.4wuyeyogdthiwmmn@wittgenstein>
-References: <20220929153041.500115-1-brauner@kernel.org>
-         <20220929153041.500115-14-brauner@kernel.org>
-         <9b71392a68d9441697fcca12b30e26578ed7423f.camel@linux.ibm.com>
-         <20220930084438.4wuyeyogdthiwmmn@wittgenstein>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: DmaeM5xkdOJbPTPE18LTj3-t0IYbOto4
-X-Proofpoint-GUID: DmaeM5xkdOJbPTPE18LTj3-t0IYbOto4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-30_04,2022-09-29_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=982 mlxscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0
- impostorscore=0 clxscore=1015 spamscore=0 adultscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2209130000
- definitions=main-2209300073
+        Steve French <sfrench@samba.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Christian,
+On Fri, 30 Sept 2022 at 12:06, Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Fri, Sep 30, 2022 at 11:43:07AM +0200, Miklos Szeredi wrote:
+> > On Fri, 30 Sept 2022 at 11:09, Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > On Fri, Sep 30, 2022 at 10:53:05AM +0200, Miklos Szeredi wrote:
+> > > > On Thu, 29 Sept 2022 at 17:31, Christian Brauner <brauner@kernel.org> wrote:
+> > > >
+> > > > > This adds a new ->get_acl() inode operations which takes a dentry
+> > > > > argument which filesystems such as 9p, cifs, and overlayfs can implement
+> > > > > to get posix acls.
+> > > >
+> > > > This is confusing.   For example overlayfs ends up with two functions
+> > > > that are similar, but not quite the same:
+> > > >
+> > > >  ovl_get_acl -> ovl_get_acl_path -> vfs_get_acl -> __get_acl(mnt_userns, ...)
+> > > >
+> > > >  ovl_get_inode_acl -> get_inode_acl -> __get_acl(&init_user_ns, ...)
+> > > >
+> > > > So what's the difference and why do we need both?  If one can retrive
+> > > > the acl without dentry, then why do we need the one with the dentry?
+> > >
+> > > The ->get_inode_acl() method is called during generic_permission() and
+> > > inode_permission() both of which are called from various filesystems in
+> > > their ->permission inode operations. There's no dentry available during
+> > > the permission inode operation and there are filesystems like 9p and
+> > > cifs that need a dentry.
+> >
+> > This doesn't answer the question about why we need two for overlayfs
+> > and what's the difference between them.
+>
+> Oh sorry, I misunderstood your questions then. The reason why I didn't
+> consolidate them was simply the different in permission checking.
+> So currently in current mainline overlayfs does acl = get_acl() in it's
+> get acl method and does vfs_getxattr() in ovl_posix_acl_xattr_get().
+>
+> The difference is that vfs_getxattr() goes through regular lsm hooks
+> checking whereas get_acl() does not. So I thought that using get_acl()
+> was done to not call lsm hooks in there. If that's not the case then I
+> can consolidate both into one implementation.
 
-On Fri, 2022-09-30 at 10:44 +0200, Christian Brauner wrote:
-> On Thu, Sep 29, 2022 at 09:44:45PM -0400, Mimi Zohar wrote: 
-> > On Thu, 2022-09-29 at 17:30 +0200, Christian Brauner wrote:
-> > > The security_inode_post_setxattr() hook is used by security modules to
-> > > update their own security.* xattrs. Consequently none of the security
-> > > modules operate on posix acls. So we don't need an additional security
-> > > hook when post setting posix acls.
-> > > 
-> > > However, the integrity subsystem wants to be informed about posix acl
-> > > changes and specifically evm to update their hashes when the xattrs
-> > > change. 
-> > 
-> > ^... to be informed about posix acl changes in order to reset the EVM
-> > status flag.
-> 
-> Substituted.
->  
-> 
-> > 
-> > > The callchain for evm_inode_post_setxattr() is:
-> > > 
-> > > -> evm_inode_post_setxattr()
-> > 
-> > Resets the EVM status flag for both EVM signatures and HMAC.
-> > 
-> > >    -> evm_update_evmxattr()
-> > 
-> > evm_update_evmxattr() is only called for "security.evm", not acls.
+So there are two paths to getting an acl: 1) permission checking and
+2) retrieving the value via getxattr(2).
 
-After re-reading the code with fresh eyes, I made a mistake here. 
-Please revert these suggestions.
+This is a similar situation as reading a symlink vs. following it.
+When following a symlink overlayfs always reads the link on the
+underlying fs just as if it was a readlink(2) call, calling
+security_inode_readlink() instead of security_inode_follow_link().
+This is logical: we are reading the link from the underlying storage,
+and following it on overlayfs.
 
-> 
-> I've added both comments but note that I'm explaining this in the
-> paragraph below as well.
+Applying the same logic to acl: we do need to call the
+security_inode_getxattr() on the underlying fs, even if just want to
+check permissions on overlay.  This is currently not done, which is an
+inconsistency.
 
-Agreed.
+Maybe adding the check to ovl_get_acl() is the right way to go, but
+I'm a little afraid of a performance regression.  Will look into that.
 
-> 
-> > 
-> > >       -> evm_calc_hmac()
-> > >          -> evm_calc_hmac_or_hash()
-> > > 
-> > > and evm_cacl_hmac_or_hash() walks the global list of protected xattr
-> > > names evm_config_xattrnames. This global list can be modified via
-> > > /sys/security/integrity/evm/evm_xattrs. The write to "evm_xattrs" is
-> > > restricted to security.* xattrs and the default xattrs in
-> > > evm_config_xattrnames only contains security.* xattrs as well.
-> > > 
-> > > So the actual value for posix acls is currently completely irrelevant
-> > > for evm during evm_inode_post_setxattr() and frankly it should stay that
-> > > way in the future to not cause the vfs any more headaches. But if the
-> > > actual posix acl values matter then evm shouldn't operate on the binary
-> > > void blob and try to hack around in the uapi struct anyway. Instead it
-> > > should then in the future add a dedicated hook which takes a struct
-> > > posix_acl argument passing the posix acls in the proper vfs format.
-> > > 
-> > > For now it is sufficient to make evm_inode_post_set_acl() a wrapper
-> > > around evm_inode_post_setxattr() not passing any actual values down.
-> > > This will still cause the hashes to be updated as before.
-> > 
-> > ^This will cause the EVM status flag to be reset.
-> 
-> Substituted.
+So this patchset nicely reveals how acl retrieval could be done two
+ways, and how overlayfs employed both for different purposes.  But
+what would be even nicer if there was just one way to retrieve the acl
+and overlayfs and cifs be moved over to that.
 
-My mistake.  Can you replace it with:
-
-This will still cause the EVM status flag to be reset and EVM HMAC's to
-be updated as before.
-
--- 
-thanks,
-
-Mimi
-
+Thanks,
+Miklos
