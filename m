@@ -2,83 +2,137 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A46DDC4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 08:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B270C433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 09:02:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231162AbiI3IxX (ORCPT
+        id S230113AbiI3JCJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Sep 2022 04:53:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35606 "EHLO
+        Fri, 30 Sep 2022 05:02:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231143AbiI3IxV (ORCPT
+        with ESMTP id S231268AbiI3JCI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Sep 2022 04:53:21 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40037166F3D
-        for <linux-security-module@vger.kernel.org>; Fri, 30 Sep 2022 01:53:18 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id lh5so7610181ejb.10
-        for <linux-security-module@vger.kernel.org>; Fri, 30 Sep 2022 01:53:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=K8KYCzJbYIonb5+JjExfvqHNImT94GXAowWxcjjUc7w=;
-        b=UbVe2z+e99x30ztqmjuZaau50NzRYpAXXdcigzuCF5BNCUIbVBhbJfcQWvhlX8D/U5
-         eItiTp4HfYmDOKMpeU0EQ0E5Jav8uAuBcIF3YZd9nK3ilHz8B+0Mz5F0EPxWtbetvNYS
-         kaZiR/miCc4Jb9Uf9pVGizA2kCCGKyrjYhM9s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=K8KYCzJbYIonb5+JjExfvqHNImT94GXAowWxcjjUc7w=;
-        b=Mr9P5DILQDFbjV7/5lTFeBmIEQzx9R4cc97T+wPdndB9iZ1uUE7I3m9yjCyTG55KrN
-         jIpx+b+teUBer7b4k3+saQDyLegDyHwyMe3NrjGHL990V013xJtMzrbC3TxmWLQiOT+m
-         d+4hKSgU7zFYoVLyLQtfJ3us2T3ieSUEW4mbVi1OPGzm25zkVKbIV9IrhN0mFvUo3F0c
-         TYr2AueLdf7VaDsbcsmowHZlqeGTVdn7b6XvbRiehv5GJSxG6LusaTj/CB05Z2w6pXUt
-         bKaK+Z/wtLF+Af2jRexsF8M21cVgQo2yusj/RUiG7PaBTHdauMTflF1FdMZV5MNsfd9z
-         TTxQ==
-X-Gm-Message-State: ACrzQf1WxfMbDemBe91vlc0WZhug6QOOC+KgLbizYa7mI9AkkgN4yZFh
-        oIuQUW9Z2pLRzycs73fSdqKYzxrtmGV7Ai1XXAV20w==
-X-Google-Smtp-Source: AMsMyM7acy/+/V1jGIdnMmBrA7NWTJ3L9r00p2DzykegLSnUX1KkGVSMv2aly2+YOcIN5vzawkqnZ4Kzcmli1dYauKI=
-X-Received: by 2002:a17:906:478d:b0:783:2270:e85a with SMTP id
- cw13-20020a170906478d00b007832270e85amr5745460ejc.371.1664527996814; Fri, 30
- Sep 2022 01:53:16 -0700 (PDT)
+        Fri, 30 Sep 2022 05:02:08 -0400
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 026731F4955
+        for <linux-security-module@vger.kernel.org>; Fri, 30 Sep 2022 02:02:04 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Mf43t4FVLzMqD50;
+        Fri, 30 Sep 2022 11:02:02 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Mf43s2cmgzMppDL;
+        Fri, 30 Sep 2022 11:02:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1664528522;
+        bh=aC4QKGPDZMbJdQ0W7A9p/17bN27c9EdicPq0RM/j37k=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=YbJXZ2P1SH+4l0eTUOF0o+v3sT5NgpeRB462Hwg1gQMOdv15ux8YAUHlVk0hChXry
+         5kFZoSnjBMgXsZnEDEYh5SGbY6149JEHn2vnpkf53Fe37Shujjl0rnc/dZ1XgPCcnh
+         W3QVYxCXUQa7LHz+PZ6lSsH3VrstGomdm1jifM2c=
+Message-ID: <48bb80b5-3bc0-7072-c02d-d62a02c75bf3@digikod.net>
+Date:   Fri, 30 Sep 2022 11:02:00 +0200
 MIME-Version: 1.0
-References: <20220929153041.500115-1-brauner@kernel.org> <20220929153041.500115-5-brauner@kernel.org>
-In-Reply-To: <20220929153041.500115-5-brauner@kernel.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 30 Sep 2022 10:53:05 +0200
-Message-ID: <CAJfpegterbOyGGDbHY8LidzR45TTbhHdRG728mQQi_LaNMS3PA@mail.gmail.com>
-Subject: Re: [PATCH v4 04/30] fs: add new get acl method
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Subject: Re: [mic:next 4/9] fs/open.c:191: undefined reference to
+ `security_file_truncate'
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        John Johansen <john.johansen@canonical.com>
+References: <202209301029.GH8uhPky-lkp@intel.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <202209301029.GH8uhPky-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 29 Sept 2022 at 17:31, Christian Brauner <brauner@kernel.org> wrote:
+This build error arises when CONFIG_SECURITY_PATH is disabled. Indeed, 
+security_file_truncate() is only defined in security/security.c for such 
+option.
 
-> This adds a new ->get_acl() inode operations which takes a dentry
-> argument which filesystems such as 9p, cifs, and overlayfs can implement
-> to get posix acls.
+I have pushed the (rebased) fix in my next branch. FYI, you can keep the 
+current Acked-by.
 
-This is confusing.   For example overlayfs ends up with two functions
-that are similar, but not quite the same:
+Original patch: 
+https://lore.kernel.org/all/20220908195805.128252-2-gnoack3000@gmail.com/
 
- ovl_get_acl -> ovl_get_acl_path -> vfs_get_acl -> __get_acl(mnt_userns, ...)
 
- ovl_get_inode_acl -> get_inode_acl -> __get_acl(&init_user_ns, ...)
-
-So what's the difference and why do we need both?  If one can retrive
-the acl without dentry, then why do we need the one with the dentry?
-(BTW in both cases the mnt_userns for the underlying fs is available
-and used to translate the acl.)
-
-If a filesystem cannot implement a get_acl() without a dentry, then
-what will happen to caller's that don't have a dentry?
-
-Thanks,
-Miklos
+On 30/09/2022 04:57, kernel test robot wrote:
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git next
+> head:   054fdc359167ae7c17a5fb47c0edbf5cb4b737b0
+> commit: 0052f28b7cba97cefa48623ef087d1c1cc06078f [4/9] security: create file_truncate hook from path_truncate hook
+> config: x86_64-rhel-8.3-func
+> compiler: gcc-11 (Debian 11.3.0-5) 11.3.0
+> reproduce (this is a W=1 build):
+>          # https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/commit/?id=0052f28b7cba97cefa48623ef087d1c1cc06078f
+>          git remote add mic git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
+>          git fetch --no-tags mic next
+>          git checkout 0052f28b7cba97cefa48623ef087d1c1cc06078f
+>          # save the config file
+>          mkdir build_dir && cp config build_dir/.config
+>          make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
+> 
+> If you fix the issue, kindly add following tag where applicable
+> | Reported-by: kernel test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>):
+> 
+>     ld: fs/open.o: in function `do_sys_ftruncate':
+>>> fs/open.c:191: undefined reference to `security_file_truncate'
+>     ld: fs/namei.o: in function `handle_truncate':
+>>> fs/namei.c:3214: undefined reference to `security_file_truncate'
+> 
+> 
+> vim +191 fs/open.c
+> 
+>     155	
+>     156	long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
+>     157	{
+>     158		struct inode *inode;
+>     159		struct dentry *dentry;
+>     160		struct fd f;
+>     161		int error;
+>     162	
+>     163		error = -EINVAL;
+>     164		if (length < 0)
+>     165			goto out;
+>     166		error = -EBADF;
+>     167		f = fdget(fd);
+>     168		if (!f.file)
+>     169			goto out;
+>     170	
+>     171		/* explicitly opened as large or we are on 64-bit box */
+>     172		if (f.file->f_flags & O_LARGEFILE)
+>     173			small = 0;
+>     174	
+>     175		dentry = f.file->f_path.dentry;
+>     176		inode = dentry->d_inode;
+>     177		error = -EINVAL;
+>     178		if (!S_ISREG(inode->i_mode) || !(f.file->f_mode & FMODE_WRITE))
+>     179			goto out_putf;
+>     180	
+>     181		error = -EINVAL;
+>     182		/* Cannot ftruncate over 2^31 bytes without large file support */
+>     183		if (small && length > MAX_NON_LFS)
+>     184			goto out_putf;
+>     185	
+>     186		error = -EPERM;
+>     187		/* Check IS_APPEND on real upper inode */
+>     188		if (IS_APPEND(file_inode(f.file)))
+>     189			goto out_putf;
+>     190		sb_start_write(inode->i_sb);
+>   > 191		error = security_file_truncate(f.file);
+>     192		if (!error)
+>     193			error = do_truncate(file_mnt_user_ns(f.file), dentry, length,
+>     194					    ATTR_MTIME | ATTR_CTIME, f.file);
+>     195		sb_end_write(inode->i_sb);
+>     196	out_putf:
+>     197		fdput(f);
+>     198	out:
+>     199		return error;
+>     200	}
+>     201	
+> 
