@@ -2,206 +2,131 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F3ADC433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 16:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9D4C43217
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 18:25:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231950AbiI3QC6 (ORCPT
+        id S231224AbiI3SZb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Sep 2022 12:02:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35630 "EHLO
+        Fri, 30 Sep 2022 14:25:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231332AbiI3QCT (ORCPT
+        with ESMTP id S229971AbiI3SZ2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Sep 2022 12:02:19 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 268C11B0E31;
-        Fri, 30 Sep 2022 09:02:17 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id nb11so9974419ejc.5;
-        Fri, 30 Sep 2022 09:02:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=3yKms8AKRzFfDi33PhwXrFrwuGPdadmIT5ZGKIDnFV8=;
-        b=HUjcbO5qLJL7WhMNzFFYSeT2a5hNyYd+VbCLDZ1E5WE/w7qTCbjxBZKzrz1JE1e/PP
-         LEAxmLnyHCyHEfR1V0sydyzOLCi8/dbxOChArQS3vigArM6l1WFOOVVDkthvJpx0EbJb
-         8N9OssMrfXdCPOZ83LQwdyllDXYN46jsvb8i93lX3RbXQQZ05rnWWiqk2XW63JuBma9U
-         xG9CfQsLuLRvGE830+40tQ0SGvGj98NQozDeyx2fEhprWoa7YJhn72sGtEsfY0KgaM3t
-         1IYww6hGXGXN8Z4iUc/NQsl0/9KVowa5lLSPsi9hxMwk6u1g1SM+BgDpph9rNp6Me8Xn
-         bi0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=3yKms8AKRzFfDi33PhwXrFrwuGPdadmIT5ZGKIDnFV8=;
-        b=ShgbkU51mJHaOKSSEod8WJ+9kUSIbxR8j2njqQN+hVrVfDAzls+RnryhhY5X3/xpjI
-         P1SktwXnw2a02jsMSU2dRVCdGcckN/HSl06St90TlznPYlk7Mvz+lZa9Z0ZpKBrgKPxl
-         FabTD1MNRp+jhYMLuIqD07oHIJmpNfhji4WaX1Y1zMT9H8vjrGaRzqMPbGBEtlpzdwP5
-         ustZHzfHGMpeRLX0Fd2nhvW11NPqP4sJ54EyKaaFT7Gi3kVIaWKBY9/tRbv7nGQLfxUM
-         wBZaPS215hkEG8nwHZSCoRSvkjI2sulQk/0CqTNihMrzsr6Nrh7JqfCJo4vwaiYkhm0Q
-         Gyxw==
-X-Gm-Message-State: ACrzQf2DpGIPfP5oJNflhq5QNn+qogwd0A+jaYX1aH2Y/B9IwTiymZ+C
-        pLQzNV0fURIdaca5M02N+bR0v/xnXnc=
-X-Google-Smtp-Source: AMsMyM71Xfnl7pGLFZKvWI7hVFP4JDPanUWCO92/4jNSgbGKb48qeuV1lNCErW1UCKK/z2ODbm9hYQ==
-X-Received: by 2002:a17:906:8a57:b0:781:9705:df89 with SMTP id gx23-20020a1709068a5700b007819705df89mr7067153ejc.266.1664553735400;
-        Fri, 30 Sep 2022 09:02:15 -0700 (PDT)
-Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id f18-20020a05640214d200b004588ef795easm927583edx.34.2022.09.30.09.02.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 09:02:15 -0700 (PDT)
-From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH v7 7/7] landlock: Document Landlock's file truncation support
-Date:   Fri, 30 Sep 2022 18:01:44 +0200
-Message-Id: <20220930160144.141504-8-gnoack3000@gmail.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20220930160144.141504-1-gnoack3000@gmail.com>
-References: <20220930160144.141504-1-gnoack3000@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 30 Sep 2022 14:25:28 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 960F34F1AD;
+        Fri, 30 Sep 2022 11:25:27 -0700 (PDT)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28UH9lap002536;
+        Fri, 30 Sep 2022 18:25:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=bknH+dbcboDXEWTRzFi/K8Jjc4/8maT6NVgSJREjqvY=;
+ b=fw10nc8p6Rx4Qh29g3SuoH7w0qTrs3dgZHPRkhvccqSIYlZVQfvsMniniwdAprYwb+sb
+ YqhoZLJNgUYmQGVHabIUSnfvDhQ+9XxxFA6Fwuf8xTK756naywDPYnQ8OCLysi+nF3w2
+ gVWoXHbnR91sH9YJM6WrTZJX13HaWgXNzBtlyOQ5UaGwntWXbF1vQk0NIbS14FxAIl1P
+ EdPXsldiBZEPmMVUwrZ7gRZT2ZYtDUkZgL4ML14ehY0YHhUtG8E7SeERJkagqyj+Xu6e
+ OsZkxxGIcHKk3vCc4qvVDD+78qfhDtrKSRhphTJXwmy86JGkkagt58A9dUJ6LmeHw1/F sg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3jx4cca6wp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Sep 2022 18:25:14 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28UHoeXD023220;
+        Fri, 30 Sep 2022 18:25:14 GMT
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3jx4cca6wa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Sep 2022 18:25:14 +0000
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28UIL0j9013539;
+        Fri, 30 Sep 2022 18:25:13 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma03wdc.us.ibm.com with ESMTP id 3jssha23mk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Sep 2022 18:25:13 +0000
+Received: from smtpav01.dal12v.mail.ibm.com ([9.208.128.133])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28UIPDRG46006616
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Sep 2022 18:25:13 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 169F958058;
+        Fri, 30 Sep 2022 18:25:12 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 55CE25805D;
+        Fri, 30 Sep 2022 18:25:11 +0000 (GMT)
+Received: from sig-9-65-252-31.ibm.com (unknown [9.65.252.31])
+        by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 30 Sep 2022 18:25:11 +0000 (GMT)
+Message-ID: <fbce35c31f543527d171dd9988b29248d740fb17.camel@linux.ibm.com>
+Subject: Re: [PATCHv2 RESEND] efi: Correct Macmini DMI match in uefi cert
+ quirk
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Orlando Chamberlain <redecorating@protonmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     jarkko@kernel.org, dmitry.kasatkin@gmail.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, gargaditya08@live.com,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
+        Samuel Jiang <chyishian.jiang@gmail.com>
+Date:   Fri, 30 Sep 2022 14:24:32 -0400
+In-Reply-To: <20220929114906.85021-1-redecorating@protonmail.com>
+References: <20220929114906.85021-1-redecorating@protonmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 18Q1LshBfFbh_D6A_7OEMP3ptjxfwuII
+X-Proofpoint-GUID: C6t5GrmqtwZ5DyzMtwDQEyoEciFaE2g3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-30_04,2022-09-29_03,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 malwarescore=0 impostorscore=0 mlxlogscore=718 adultscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 spamscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209300113
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
+Hi Orlando,
 
-Adapt the backwards compatibility example and discussion to remove the
-truncation flag where needed.
+On Thu, 2022-09-29 at 11:49 +0000, Orlando Chamberlain wrote:
+> It turns out Apple doesn't capitalise the "mini" in "Macmini" in DMI, which
+> is inconsistent with other model line names.
+> 
+> Correct the capitalisation of Macmini in the quirk for skipping loading
+> platform certs on T2 Macs.
+> 
+> Currently users get:
+> 
+> ------------[ cut here ]------------
+> [Firmware Bug]: Page fault caused by firmware at PA: 0xffffa30640054000
+> WARNING: CPU: 1 PID: 8 at arch/x86/platform/efi/quirks.c:735 efi_crash_gracefully_on_page_fault+0x55/0xe0
+> Modules linked in:
+> CPU: 1 PID: 8 Comm: kworker/u12:0 Not tainted 5.18.14-arch1-2-t2 #1 4535eb3fc40fd08edab32a509fbf4c9bc52d111e
+> Hardware name: Apple Inc. Macmini8,1/Mac-7BA5B2DFE22DDD8C, BIOS 1731.120.10.0.0 (iBridge: 19.16.15071.0.0,0) 04/24/2022
+> Workqueue: efi_rts_wq efi_call_rts
+> ...
+> ---[ end trace 0000000000000000 ]---
+> efi: Froze efi_rts_wq and disabled EFI Runtime Services
+> integrity: Couldn't get size: 0x8000000000000015
+> integrity: MODSIGN: Couldn't get UEFI db list
+> efi: EFI Runtime Services are disabled!
+> integrity: Couldn't get size: 0x8000000000000015
+> integrity: Couldn't get UEFI dbx list
+> 
+> Fixes: 155ca952c7ca ("efi: Do not import certificates from UEFI Secure Boot for T2 Macs")
+> Cc: stable@vger.kernel.org
+> Cc: Aditya Garg <gargaditya08@live.com>
+> Tested-by: Samuel Jiang <chyishian.jiang@gmail.com>
+> Signed-off-by: Orlando Chamberlain <redecorating@protonmail.com>
 
-Point out potential surprising behaviour related to truncate.
+Thanks!  The patch is now queued in the next-integrity branch.
 
-Signed-off-by: Günther Noack <gnoack3000@gmail.com>
----
- Documentation/userspace-api/landlock.rst | 66 +++++++++++++++++++++---
- 1 file changed, 59 insertions(+), 7 deletions(-)
+Mimi
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index b8ea59493964..408029b120bd 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -8,7 +8,7 @@ Landlock: unprivileged access control
- =====================================
- 
- :Author: Mickaël Salaün
--:Date: May 2022
-+:Date: September 2022
- 
- The goal of Landlock is to enable to restrict ambient rights (e.g. global
- filesystem access) for a set of processes.  Because Landlock is a stackable
-@@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_MAKE_FIFO |
-             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
--            LANDLOCK_ACCESS_FS_REFER,
-+            LANDLOCK_ACCESS_FS_REFER |
-+            LANDLOCK_ACCESS_FS_TRUNCATE,
-     };
- 
- Because we may not know on which kernel version an application will be
-@@ -69,16 +70,27 @@ should try to protect users as much as possible whatever the kernel they are
- using.  To avoid binary enforcement (i.e. either all security features or
- none), we can leverage a dedicated Landlock command to get the current version
- of the Landlock ABI and adapt the handled accesses.  Let's check if we should
--remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
--starting with the second version of the ABI.
-+remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
-+access rights, which are only supported starting with the second and third
-+version of the ABI.
- 
- .. code-block:: c
- 
-     int abi;
- 
-     abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
--    if (abi < 2) {
-+    if (abi < 0) {
-+        perror("The running kernel does not enable to use Landlock");
-+        return 0;  /* Degrade gracefully if Landlock is not handled. */
-+    }
-+    switch (abi) {
-+    case 1:
-+        /* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
-         ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-+        __attribute__((fallthrough));
-+    case 2:
-+        /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-+        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-     }
- 
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -127,8 +139,8 @@ descriptor.
- 
- It may also be required to create rules following the same logic as explained
- for the ruleset creation, by filtering access rights according to the Landlock
--ABI version.  In this example, this is not required because
--`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
-+ABI version.  In this example, this is not required because all of the requested
-+``allowed_access`` rights are already available in ABI 1.
- 
- We now have a ruleset with one rule allowing read access to ``/usr`` while
- denying all other handled accesses for the filesystem.  The next step is to
-@@ -251,6 +263,37 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
- process, a sandboxed process should have a subset of the target process rules,
- which means the tracee must be in a sub-domain of the tracer.
- 
-+Truncating files
-+----------------
-+
-+The operations covered by ``LANDLOCK_ACCESS_FS_WRITE_FILE`` and
-+``LANDLOCK_ACCESS_FS_TRUNCATE`` both change the contents of a file and sometimes
-+overlap in non-intuitive ways.  It is recommended to always specify both of
-+these together.
-+
-+A particularly surprising example is :manpage:`creat(2)`.  The name suggests
-+that this system call requires the rights to create and write files.  However,
-+it also requires the truncate right if an existing file under the same name is
-+already present.
-+
-+It should also be noted that truncating files does not require the
-+``LANDLOCK_ACCESS_FS_WRITE_FILE`` right.  Apart from the :manpage:`truncate(2)`
-+system call, this can also be done through :manpage:`open(2)` with the flags
-+``O_RDONLY | O_TRUNC``.
-+
-+When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE``
-+right is associated with the newly created file descriptor and will be used for
-+subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavior is
-+similar to opening a file for reading or writing, where permissions are checked
-+during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
-+:manpage:`write(2)` calls.
-+
-+As a consequence, it is possible to have multiple open file descriptors for the
-+same file, where one grants the right to truncate the file and the other does
-+not.  It is also possible to pass such file descriptors between processes,
-+keeping their Landlock properties, even when these processes do not have an
-+enforced Landlock ruleset.
-+
- Compatibility
- =============
- 
-@@ -397,6 +440,15 @@ Starting with the Landlock ABI version 2, it is now possible to securely
- control renaming and linking thanks to the new `LANDLOCK_ACCESS_FS_REFER`
- access right.
- 
-+File truncation (ABI < 3)
-+-------------------------
-+
-+File truncation could not be denied before the third Landlock ABI, so it is
-+always allowed when using a kernel that only supports the first or second ABI.
-+
-+Starting with the Landlock ABI version 3, it is now possible to securely control
-+truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
-+
- .. _kernel_support:
- 
- Kernel support
--- 
-2.37.3
+
 
