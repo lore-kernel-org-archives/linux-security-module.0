@@ -2,279 +2,207 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0A8C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 07:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D338C433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 08:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230484AbiI3Hm5 (ORCPT
+        id S229743AbiI3ILg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Sep 2022 03:42:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39732 "EHLO
+        Fri, 30 Sep 2022 04:11:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbiI3Hms (ORCPT
+        with ESMTP id S229981AbiI3ILd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Sep 2022 03:42:48 -0400
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 184DB123D8F;
-        Fri, 30 Sep 2022 00:42:45 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Mf29W56MBz9y2yl;
-        Fri, 30 Sep 2022 15:36:47 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwDXzpLYnTZjAoSIAA--.21710S2;
-        Fri, 30 Sep 2022 08:42:25 +0100 (CET)
-Message-ID: <d635b82cff36d920e4b9b2943de352a6171c72b4.camel@huaweicloud.com>
-Subject: Re: Closing the BPF map permission loophole
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     Toke =?ISO-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@kernel.org>,
-        Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>, bpf@vger.kernel.org,
+        Fri, 30 Sep 2022 04:11:33 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2CC1BB6C8;
+        Fri, 30 Sep 2022 01:11:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 19253B8275F;
+        Fri, 30 Sep 2022 08:11:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95CC2C433D6;
+        Fri, 30 Sep 2022 08:11:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664525488;
+        bh=RnAuN7ArCjMiR+Ns0K2qV+ZE4a1puMppCM/ESDvAdqY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XNS9QTOb+k/X3bfWTicAbw6Yglb4mTvfnHuAnDCvTHwYGar6LmarlYTAgmUTtx3ai
+         +UxmG66pUrQv6oWe2xhu7QgL9L7Y1t8fhjNCtXgYkXNeisJIRWGdDbhr8m4dcFaSfl
+         TDQBM2qXIPM51TNWzLt/dEeaMTMKiVU7OutjZSWLWvDkkrLC8rOqbj3J82iDUW20mp
+         KpwSVZ+QrpHIJURH8E7EXJiay59fKvxdPzaBRCvwjeIUm/tVb4dPRzi9YqvMZWH6oy
+         X5AhQ0gBMMToDavvAPM6+FEIj8wIC/OUhntY8ovmnvZal604gmd9+loNXYWHcYf6G2
+         7UHjO/qrVUo2g==
+Date:   Fri, 30 Sep 2022 10:11:23 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Date:   Fri, 30 Sep 2022 09:42:13 +0200
-In-Reply-To: <24b60b5d-2664-89e6-1aa4-088623781455@schaufler-ca.com>
-References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
-         <8e243ad132ecf2885fc65c33c7793f0703937890.camel@huaweicloud.com>
-         <7f7c3337-74f1-424e-a14d-578c4c7ee2fe@www.fastmail.com>
-         <65546f56be138ab326544b7b2e59bb3175ec884a.camel@huaweicloud.com>
-         <b0c00f80-c11e-4f5d-ba63-2e9fb7cad561@www.fastmail.com>
-         <9aba20351924aa0d82d258205030ad4f2c404de2.camel@huaweicloud.com>
-         <98a26e5c-d44f-4e65-8186-c4e94918daa1@www.fastmail.com>
-         <06a47f11778ca9d074c815e57dc1c75d073b3a85.camel@huaweicloud.com>
-         <439dd1e5-71b8-49ed-8268-02b3428a55a4@www.fastmail.com>
-         <6e142c3526df693abfab6e1293a27828267cc45e.camel@huaweicloud.com>
-         <87mtajss8j.fsf@toke.dk>
-         <fe9fe2443b8401a076330a3019bd46f6c815a023.camel@huaweicloud.com>
-         <CAHC9VhRKq=BMtAat2_+0VvYk91hnryUHg+wbZRhu2BDB9ehC2A@mail.gmail.com>
-         <3a9efcd6c8f7fa3908230ef5be0e0ad224a730ff.camel@huaweicloud.com>
-         <24b60b5d-2664-89e6-1aa4-088623781455@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+Subject: Re: [PATCH v4 12/30] integrity: implement get and set acl hook
+Message-ID: <20220930081123.dwoijem2fpy6ubpp@wittgenstein>
+References: <20220929153041.500115-1-brauner@kernel.org>
+ <20220929153041.500115-13-brauner@kernel.org>
+ <CAHC9VhSxr-aUj7mqKo05B5Oj=5FWeajx_mNjR_EszzpYR1YozA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwDXzpLYnTZjAoSIAA--.21710S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Xr1UZr4kKFy3uryUtry7Wrg_yoWxKrWrpF
-        W8t3WUKF4DJryrAw4vqw15JF15trWfJrnrXrn8tr15Z34q9r1fKr48tF45uFyvyr17Gw1j
-        vr4Utr9xZryDAFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBF1jj3+cOwABsl
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSxr-aUj7mqKo05B5Oj=5FWeajx_mNjR_EszzpYR1YozA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2022-09-29 at 08:27 -0700, Casey Schaufler wrote:
-> On 9/29/2022 12:54 AM, Roberto Sassu wrote:
-> > On Wed, 2022-09-28 at 20:24 -0400, Paul Moore wrote:
-> > > On Wed, Sep 28, 2022 at 7:24 AM Roberto Sassu
-> > > <roberto.sassu@huaweicloud.com> wrote
-> > > > On Wed, 2022-09-28 at 12:33 +0200, Toke Høiland-Jørgensen
-> > > > wrote:
-> > > > > Roberto Sassu <roberto.sassu@huaweicloud.com> writes:
-> > > > > 
-> > > > > > On Wed, 2022-09-28 at 09:52 +0100, Lorenz Bauer wrote:
-> > > > > > > On Mon, 26 Sep 2022, at 17:18, Roberto Sassu wrote:
-> > > > > > > > Uhm, if I get what you mean, you would like to add DAC
-> > > > > > > > controls
-> > > > > > > > to
-> > > > > > > > the
-> > > > > > > > pinned map to decide if you can get a fd and with which
-> > > > > > > > modes.
-> > > > > > > > 
-> > > > > > > > The problem I see is that a map exists regardless of
-> > > > > > > > the
-> > > > > > > > pinned
-> > > > > > > > path
-> > > > > > > > (just by ID).
-> > > > > > > Can you spell this out for me? I imagine you're talking
-> > > > > > > about
-> > > > > > > MAP_GET_FD_BY_ID, but that is CAP_SYS_ADMIN only, right?
-> > > > > > > Not
-> > > > > > > great
-> > > > > > > maybe, but no gaping hole IMO.
-> > > > > > +linux-security-module ML (they could be interested in this
-> > > > > > topic
-> > > > > > as
-> > > > > > well)
-> > > > > > 
-> > > > > > Good to know! I didn't realize it before.
-> > > > > > 
-> > > > > > I figured out better what you mean by escalating
-> > > > > > privileges.
-> > > > > > 
-> > > > > > Pin a read-only fd, get a read-write fd from the pinned
-> > > > > > path.
-> > > > > > 
-> > > > > > What you want to do is, if I pin a read-only fd, I should
-> > > > > > get
-> > > > > > read-
-> > > > > > only
-> > > > > > fds too, right?
-> > > > > > 
-> > > > > > I think here there could be different views. From my
-> > > > > > perspective,
-> > > > > > pinning is just creating a new link to an existing object.
-> > > > > > Accessing
-> > > > > > the link does not imply being able to access the object
-> > > > > > itself
-> > > > > > (the
-> > > > > > same happens for files).
-> > > > > > 
-> > > > > > I understand what you want to achieve. If I have to choose
-> > > > > > a
-> > > > > > solution,
-> > > > > > that would be doing something similar to files, i.e. add
-> > > > > > owner
-> > > > > > and
-> > > > > > mode
-> > > > > > information to the bpf_map structure (m_uid, m_gid,
-> > > > > > m_mode). We
-> > > > > > could
-> > > > > > add the MAP_CHMOD and MAP_CHOWN operations to the bpf()
-> > > > > > system
-> > > > > > call
-> > > > > > to
-> > > > > > modify the new fields.
-> > > > > > 
-> > > > > > When you pin the map, the inode will get the owner and mode
-> > > > > > from
-> > > > > > bpf_map. bpf_obj_get() will then do DAC-style verification
-> > > > > > similar
-> > > > > > to
-> > > > > > MAC-style verification (with security_bpf_map()).
-> > > > > As someone pointed out during the discussing at LPC, this
-> > > > > will
-> > > > > effectively allow a user to create files owned by someone
-> > > > > else,
-> > > > > which
-> > > > > is
-> > > > > probably not a good idea either from a security PoV. (I.e.,
-> > > > > user
-> > > > > A
-> > > > > pins
-> > > > > map owned by user B, so A creates a file owned by B).
-> > > > Uhm, I see what you mean. Right, it is not a good idea, the
-> > > > owner
-> > > > of
-> > > > the file should the one that pinned the map.
-> > > > 
-> > > > Other than that, DAC verification on the map would be still
-> > > > correct, as
-> > > > it would be independent from the DAC verification of the file.
-> > > I only became aware of this when the LSM list was CC'd so I'm a
-> > > little
-> > > behind on what is going on here ... looking quickly through the
-> > > mailing list archive it looks like there is an issue with BPF map
-> > > permissions not matching well with their associated fd
-> > > permissions,
-> > > yes?  From a LSM perspective, there are a couple of hooks that
-> > > currently use the fd's permissions (read/write) to determine the
-> > > appropriate access control check.
-> > > From what I understood, access control on maps is done in two
-> > > steps.
-> > First, whenever someone attempts to get a fd to a map
-> > security_bpf_map() is called. LSM implementations could check
-> > access if
-> > the current process has the right to access the map (whose label
-> > can be
-> > assigned at map creation time with security_bpf_map_alloc()).
-> > 
-> > Second, whenever the holder of the obtained fd wants to do an
-> > operation
-> > on the map (lookup, update, delete, ...), eBPF checks if the fd
-> > modes
-> > are compatible with the operation to perform (e.g. lookup requires
-> > FMODE_CAN_READ).
-> > 
-> > One problem is that the second part is missing for some operations
-> > dealing with the map fd:
-> > 
-> > Map iterators:
-> > https://lore.kernel.org/bpf/20220906170301.256206-1-roberto.sassu@huaweicloud.com/
-> > 
-> > Map fd directly used by eBPF programs without system call:
-> > https://lore.kernel.org/bpf/20220926154430.1552800-1-roberto.sassu@huaweicloud.com/
-> > 
-> > Another problem is that there is no DAC, only MAC (work in
-> > progress). I
-> > don't know exactly the status of enabling unprivileged eBPF.
-> > 
-> > Apart from this, now the discussion is focusing on the following
-> > problem. A map (kernel object) can be referenced in two ways: by ID
-> > or
-> > by path. By ID requires CAP_ADMIN, so we can consider by path for
-> > now.
-> > 
-> > Given a map fd, the holder of that fd can create a new reference
-> > (pinning) to the map in the bpf filesystem (a new file whose
-> > private
-> > data contains the address of the kernel object).
-> > 
-> > Pinning a map does not have a corresponding permission. Any fd mode
-> > is
-> > sufficient to do the operation. Furthermore, subsequent requests to
-> > obtain a map fd by path could result in receiving a read-write fd,
-> > while at the time of pinning the fd was read-only.
-> > 
-> > While this does not seem to me a concern from MAC perspective, as
-> > attempts to get a map fd still have to pass through
-> > security_bpf_map(),
-> > in general this should be fixed without relying on LSMs.
-> > 
-> > > Is the plan to ensure that the map and fd permissions are correct
-> > > at
-> > > the core BPF level, or do we need to do some additional checks in
-> > > the
-> > > LSMs (currently only SELinux)?
-> > Should we add a new map_pin permission in SELinux?
-> > 
-> > Should we have DAC to restrict pinnning without LSMs?
+On Thu, Sep 29, 2022 at 03:14:42PM -0400, Paul Moore wrote:
+> On Thu, Sep 29, 2022 at 11:33 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > The current way of setting and getting posix acls through the generic
+> > xattr interface is error prone and type unsafe. The vfs needs to
+> > interpret and fixup posix acls before storing or reporting it to
+> > userspace. Various hacks exist to make this work. The code is hard to
+> > understand and difficult to maintain in it's current form. Instead of
+> > making this work by hacking posix acls through xattr handlers we are
+> > building a dedicated posix acl api around the get and set inode
+> > operations. This removes a lot of hackiness and makes the codepaths
+> > easier to maintain. A lot of background can be found in [1].
+> >
+> > So far posix acls were passed as a void blob to the security and
+> > integrity modules. Some of them like evm then proceed to interpret the
+> > void pointer and convert it into the kernel internal struct posix acl
+> > representation to perform their integrity checking magic. This is
+> > obviously pretty problematic as that requires knowledge that only the
+> > vfs is guaranteed to have and has lead to various bugs. Add a proper
+> > security hook for setting posix acls and pass down the posix acls in
+> > their appropriate vfs format instead of hacking it through a void
+> > pointer stored in the uapi format.
+> >
+> > I spent considerate time in the security module and integrity
+> > infrastructure and audited all codepaths. EVM is the only part that
+> > really has restrictions based on the actual posix acl values passed
+> > through it. Before this dedicated hook EVM used to translate from the
+> > uapi posix acl format sent to it in the form of a void pointer into the
+> > vfs format. This is not a good thing. Instead of hacking around in the
+> > uapi struct give EVM the posix acls in the appropriate vfs format and
+> > perform sane permissions checks that mirror what it used to to in the
+> > generic xattr hook.
+> >
+> > IMA doesn't have any restrictions on posix acls. When posix acls are
+> > changed it just wants to update its appraisal status.
+> >
+> > The removal of posix acls is equivalent to passing NULL to the posix set
+> > acl hooks. This is the same as before through the generic xattr api.
+> >
+> > Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+> > Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> > ---
+> >
+> > Notes:
+> >     /* v2 */
+> >     unchanged
+> >
+> >     /* v3 */
+> >     Paul Moore <paul@paul-moore.com>:
+> >     - Add get, and remove acl hook
+> >
+> >     /* v4 */
+> >     unchanged
+> >
+> >  include/linux/evm.h                   | 23 +++++++++
+> >  include/linux/ima.h                   | 21 ++++++++
+> >  security/integrity/evm/evm_main.c     | 70 ++++++++++++++++++++++++++-
+> >  security/integrity/ima/ima_appraise.c |  9 ++++
+> >  security/security.c                   | 21 +++++++-
+> >  5 files changed, 141 insertions(+), 3 deletions(-)
 > 
-> As you've hinted above, DAC hasn't been an issue because there isn't
-> unprivileged eBPF. Even with privileged eBPF I expect that there are
-> going to be cases where not having DAC controls will surprise
-> someone.
-> The less BPF looks like low level kernel internals and the more it
-> looks
-> like general userspace code, the more likely this is to be an issue.
+> ...
 > 
-> Or ...
+> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> > index 23d484e05e6f..7904786b610f 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -8,7 +8,7 @@
+> >   *
+> >   * File: evm_main.c
+> >   *     implements evm_inode_setxattr, evm_inode_post_setxattr,
+> > - *     evm_inode_removexattr, and evm_verifyxattr
+> > + *     evm_inode_removexattr, evm_verifyxattr, and evm_inode_set_acl.
+> >   */
+> >
+> >  #define pr_fmt(fmt) "EVM: "fmt
+> > @@ -670,6 +670,74 @@ int evm_inode_removexattr(struct user_namespace *mnt_userns,
+> >         return evm_protect_xattr(mnt_userns, dentry, xattr_name, NULL, 0);
+> >  }
+> >
+> > +static int evm_inode_set_acl_change(struct user_namespace *mnt_userns,
+> > +                                   struct dentry *dentry, const char *name,
+> > +                                   struct posix_acl *kacl)
+> > +{
+> > +#ifdef CONFIG_FS_POSIX_ACL
+> > +       int rc;
+> > +
+> > +       umode_t mode;
+> > +       struct inode *inode = d_backing_inode(dentry);
+> > +
+> > +       if (!kacl)
+> > +               return 1;
+> > +
+> > +       rc = posix_acl_update_mode(mnt_userns, inode, &mode, &kacl);
+> > +       if (rc || (inode->i_mode != mode))
+> > +               return 1;
+> > +#endif
+> > +       return 0;
+> > +}
 > 
-> If you are treating maps as kernel internal data structures you don't
-> need DAC. If you are treating them as user accessible named objects
-> you
-> do need DAC. Security modules that implement MAC may chose to control
-> kernel internal data access (e.g. SElinux) in addition to named
-> objects,
-> so you may want to accommodate that as well. If you do decide that
-> maps
-> are named objects Smack (and possibly AppArmor) needs significant
-> work.
-> Probably audit and IMA, too.
+> I'm not too bothered by it either way, but one might consider pulling
+> the #ifdef outside the function definition, for example:
+> 
+> #ifdef CONFIG_FS_POSIX_ACL
+> static int evm_inode_foo(...)
+> {
+>   /* ... stuff ... */
+> }
+> #else
+> static int evm_inode_foo(...)
+> {
+>   return 0;
+> }
+> #endif /* CONFIG_FS_POSIX_ACL */
+> 
+> > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> > index bde74fcecee3..698a8ae2fe3e 100644
+> > --- a/security/integrity/ima/ima_appraise.c
+> > +++ b/security/integrity/ima/ima_appraise.c
+> > @@ -770,6 +770,15 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+> >         return result;
+> >  }
+> >
+> > +int ima_inode_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+> > +                     const char *acl_name, struct posix_acl *kacl)
+> > +{
+> > +       if (evm_revalidate_status(acl_name))
+> > +               ima_reset_appraise_flags(d_backing_inode(dentry), 0);
+> > +
+> > +       return 0;
+> > +}
+> 
+> While the ima_inode_set_acl() implementation above looks okay for the
+> remove case, I do see that the ima_inode_setxattr() function has a
+> call to validate_hash_algo() before calling
+> ima_reset_appraise_flags().  IANAIE (I Am Not An Ima Expert), but it
+> seems like we would still want that check in the ACL case.
 
-To me a map seems more than just a kernel object. User space gets a
-reference to it through a fd, similarly to files. It seems a named
-object because a map can be accessed by user space through a path
-(pinned map) or by ID (user space can provide the ID to get a map fd
-through a system call).
+Ah, you might've missed this bug...
+The fact that they call validate_hash_algo() on posix acls is a bug in
+ima. It's a type safety bug. IMA uses posix acls passed through the void
+pointer as struct evm_ima_xattr:
 
-I'm more familiar with SELinux and Smack. But following what has been
-done for SELinux, doing the same for Smack seems straightforward (even
-easier, as you have more simple permissions).
+ 	const struct evm_ima_xattr_data *xvalue = xattr_value;
 
-Roberto
+	result = validate_hash_algo(dentry, xvalue, xattr_value_len);
 
+I reported this to them a little while ago and Mimi sent a fix for it
+that's in -next:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=5926586f291b53cb8a0c9631fc19489be1186e2d
+
+IOW, what I have here seems correct.
