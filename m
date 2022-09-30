@@ -2,104 +2,291 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2BD5C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 14:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16271C433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 15:56:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231795AbiI3OMG (ORCPT
+        id S229743AbiI3P4Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Sep 2022 10:12:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49498 "EHLO
+        Fri, 30 Sep 2022 11:56:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231853AbiI3OLh (ORCPT
+        with ESMTP id S230236AbiI3P4P (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Sep 2022 10:11:37 -0400
-Received: from mail-oo1-xc2c.google.com (mail-oo1-xc2c.google.com [IPv6:2607:f8b0:4864:20::c2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB44C1A0D16
-        for <linux-security-module@vger.kernel.org>; Fri, 30 Sep 2022 07:11:23 -0700 (PDT)
-Received: by mail-oo1-xc2c.google.com with SMTP id c13-20020a4ac30d000000b0047663e3e16bso2303132ooq.6
-        for <linux-security-module@vger.kernel.org>; Fri, 30 Sep 2022 07:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=+02lWUnQnVpnIW75GUY8RdFtLVPFU6flJQgBwpnhGBU=;
-        b=rt5DQ1gpYyGWOabp0rvarti0MXhPdro0zgBzGjdJTaVn4/FqeqPqFXgSFzQsik2ABd
-         9gsm3BPQAiQpVGKpvObwIPzi9rg//WYfatrw+sxudu9uNLCFZHSsH038qSLByxlif17I
-         BwL+l7VEMY5C5gkCZxAU6RyD+YxD+bW/RNMAxit/EbqYk+ZMjyaNb74drfob5aOGywia
-         xR3NyIekUQE6WaeyzlsKxuulWSZW76djBTE+3habFDW2TsMc1jnMluI+MSpnlIVE5Fsb
-         uYEpJQJkg1pO0wSBzS01JkOGnsjjM4FORQilbPczPZC8TRFrh2om7f4JPILCTsaDuNXm
-         dxXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=+02lWUnQnVpnIW75GUY8RdFtLVPFU6flJQgBwpnhGBU=;
-        b=O3QS1DPeyBJWgpH8qdf1wHXn7jj+NYOJQCb9H4UnkzfC/PDq0tO5swcd/iPFC/xKJw
-         t6TwXpepk4iwQNC42r6Q/2XK3fWke8yP/IYU15uKGw2Qa/deIU8OB/AFGBdoF+c/h3rn
-         9GR9xPet20yb1ZsFmuv3Us8GghV/NhxCUdGAa6LFDUMXXHkQ4XjBZPXV34g67wjTGERU
-         BD0KAIZZWKxPihB2IwpZ4YRZrkN4D7yFCdjS210+e2fBze14MoMeJeSBp78GeoNQT9Yw
-         RL5ohLKlali7dMYh3DJhlaRALDdTKw5pOdS8+zF4I7uDWhNlthO5NpQ323IU/LY8H4fS
-         zF7Q==
-X-Gm-Message-State: ACrzQf1dJKzmaW2V6YIRGVqmUAitpSx5zDvzqN2izL915HMbPm/SesgC
-        Ltu4HMkCNLYq68TIblGUlITzdRQgNrqmDoDmnm4l
-X-Google-Smtp-Source: AMsMyM6IyQ5sGNm/pGDeJJQ5vn5WZ1By4iKoxvFogUYrIwPYfUksEqpPNIf9trER/6ncZB31spquEFt73Tpwxy4slys=
-X-Received: by 2002:a4a:c10a:0:b0:476:4a59:4e4b with SMTP id
- s10-20020a4ac10a000000b004764a594e4bmr3452742oop.24.1664547082349; Fri, 30
- Sep 2022 07:11:22 -0700 (PDT)
+        Fri, 30 Sep 2022 11:56:15 -0400
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7899EC9025
+        for <linux-security-module@vger.kernel.org>; Fri, 30 Sep 2022 08:56:11 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MfFFk0MhqzMqf6D;
+        Fri, 30 Sep 2022 17:56:10 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MfFFg55gpzMppqq;
+        Fri, 30 Sep 2022 17:56:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1664553369;
+        bh=UKXPbMFPyMr6RyxLKlYoOyTIHnocW/7l0PtbQOyKhZ8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=QYOWs5iPJ6Dlmsjgh9FgOax5Ja6GM8UtvRtXUL+d33qcOtLWS1k0j8dDPicAr8SB4
+         WAxWOWvW7102qmIYeO/hL9IBEwE3loX/unkYI8bcAlHj/tTjYyD2F1bCmH2Nq67Mti
+         IfyHeJ57ah4QIeYcb+hK9PJfPmCtWcdKnpa3eaAo=
+Message-ID: <b6813af1-c56f-29ba-b17a-c0f4dda809c8@digikod.net>
+Date:   Fri, 30 Sep 2022 17:56:07 +0200
 MIME-Version: 1.0
-References: <20220929153041.500115-1-brauner@kernel.org> <20220929153041.500115-13-brauner@kernel.org>
- <CAHC9VhSxr-aUj7mqKo05B5Oj=5FWeajx_mNjR_EszzpYR1YozA@mail.gmail.com> <53f18ae71d0b8811fbd23c87a80447bc159832e0.camel@linux.ibm.com>
-In-Reply-To: <53f18ae71d0b8811fbd23c87a80447bc159832e0.camel@linux.ibm.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 30 Sep 2022 10:11:11 -0400
-Message-ID: <CAHC9VhRn6Lojr-ct0YJb6R6oO66-p+6Pa9YBY=bxu_wsKs9bYQ@mail.gmail.com>
-Subject: Re: [PATCH v4 12/30] integrity: implement get and set acl hook
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Subject: Re: [PATCH v6 2/5] landlock: Support file truncation
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+References: <20220908195805.128252-1-gnoack3000@gmail.com>
+ <20220908195805.128252-3-gnoack3000@gmail.com>
+ <2c4db214-e425-3e40-adeb-9e406c3ea2f9@digikod.net> <Yy2W14NMQBvfG9Fw@nuc>
+ <0dea6e07-dd98-0d3c-4c2b-7f45e06374ed@digikod.net> <YzCZVuP1d9GpQt+k@nuc>
+ <e5b0b338-c4e5-8348-1fe0-1d434235dc01@digikod.net> <YzXwdwxIl1KD8TMM@nuc>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <YzXwdwxIl1KD8TMM@nuc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 29, 2022 at 11:19 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> Hi Paul,
->
-> On Thu, 2022-09-29 at 15:14 -0400, Paul Moore wrote:
-> > > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> > > index bde74fcecee3..698a8ae2fe3e 100644
-> > > --- a/security/integrity/ima/ima_appraise.c
-> > > +++ b/security/integrity/ima/ima_appraise.c
-> > > @@ -770,6 +770,15 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
-> > >         return result;
-> > >  }
-> > >
-> > > +int ima_inode_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-> > > +                     const char *acl_name, struct posix_acl *kacl)
-> > > +{
-> > > +       if (evm_revalidate_status(acl_name))
-> > > +               ima_reset_appraise_flags(d_backing_inode(dentry), 0);
-> > > +
-> > > +       return 0;
-> > > +}
-> >
-> > While the ima_inode_set_acl() implementation above looks okay for the
-> > remove case, I do see that the ima_inode_setxattr() function has a
-> > call to validate_hash_algo() before calling
-> > ima_reset_appraise_flags().  IANAIE (I Am Not An Ima Expert), but it
-> > seems like we would still want that check in the ACL case.
->
-> Thanks, Paul.  The "ima: fix blocking of security.ima xattrs of
-> unsupported algorithms" patch in next-integrity branch, moves the hash
-> algorithm checking earlier.
 
-Okay, thanks.  When comparing against the status quo I usually just
-stick with what is in Linus' tree, but I'm happy to hear this patch is
-correct.
+On 29/09/2022 21:22, Günther Noack wrote:
+> On Wed, Sep 28, 2022 at 08:32:02PM +0200, Mickaël Salaün wrote:
+>> On 25/09/2022 20:09, Günther Noack wrote:
+>>> On Fri, Sep 23, 2022 at 10:53:23PM +0200, Mickaël Salaün wrote:
+>>>> On 23/09/2022 13:21, Günther Noack wrote:
+>>>>> On Mon, Sep 12, 2022 at 09:41:32PM +0200, Mickaël Salaün wrote:
+>>>>>> On 08/09/2022 21:58, Günther Noack wrote:
+>>>>>>> Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
+>>>>>>
+>>>>>> [...]
+>>>>>>
+>>>>>>> +/**
+>>>>>>> + * get_path_access_rights - Returns the subset of rights in access_request
+>>>>>>> + * which are permitted for the given path.
+>>>>>>> + *
+>>>>>>> + * @domain: The domain that defines the current restrictions.
+>>>>>>> + * @path: The path to get access rights for.
+>>>>>>> + * @access_request: The rights we are interested in.
+>>>>>>> + *
+>>>>>>> + * Returns: The access mask of the rights that are permitted on the given path,
+>>>>>>> + * which are also a subset of access_request (to save some calculation time).
+>>>>>>> + */
+>>>>>>> +static inline access_mask_t
+>>>>>>> +get_path_access_rights(const struct landlock_ruleset *const domain,
+>>>>>>> +		       const struct path *const path,
+>>>>>>> +		       access_mask_t access_request)
+>>>>>>> +{
+>>>>>>> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+>>>>>>> +	unsigned long access_bit;
+>>>>>>> +	unsigned long access_req;
+>>>>>>> +
+>>>>>>> +	init_layer_masks(domain, access_request, &layer_masks);
+>>>>>>> +	if (!check_access_path_dual(domain, path, access_request, &layer_masks,
+>>>>>>> +				    NULL, 0, NULL, NULL)) {
+>>>>>>> +		/*
+>>>>>>> +		 * Return immediately for successful accesses and for cases
+>>>>>>> +		 * where everything is permitted because the path belongs to an
+>>>>>>> +		 * internal filesystem.
+>>>>>>> +		 */
+>>>>>>> +		return access_request;
+>>>>>>> +	}
+>>>>>>> +
+>>>>>>> +	access_req = access_request;
+>>>>>>> +	for_each_set_bit(access_bit, &access_req, ARRAY_SIZE(layer_masks)) {
+>>>>>>> +		if (layer_masks[access_bit]) {
+>>>>>>> +			/* If any layer vetoed the access right, remove it. */
+>>>>>>> +			access_request &= ~BIT_ULL(access_bit);
+>>>>>>> +		}
+>>>>>>> +	}
+>>>>>>
+>>>>>> This seems to be redundant with the value returned by init_layer_masks(),
+>>>>>> which should be passed to check_access_path_dual() to avoid useless path
+>>>>>> walk.
+>>>>>
+>>>>> True, I'll use the result of init_layer_masks() to feed it back to
+>>>>> check_access_path_dual() to avoid a bit of computation.
+>>>>>
+>>>>> Like this:
+>>>>>
+>>>>>            effective_access_request =
+>>>>> 		init_layer_masks(domain, access_request, &layer_masks);
+>>>>> 	if (!check_access_path_dual(domain, path, effective_access_request,
+>>>>> 	    &layer_masks, NULL, 0, NULL, NULL)) {
+>>>>> 		// ...
+>>>>> 	}
+>>>>
+>>>> correct
+>>>>
+>>>>>
+>>>>> Overall, the approach here is:
+>>>>>
+>>>>> * Initialize the layer_masks, so that it has a bit set for every
+>>>>>      access right in access_request and layer where that access right is
+>>>>>      handled.
+>>>>>
+>>>>> * check_access_path_dual() with only the first few parameters -- this
+>>>>>      will clear all the bits in layer masks which are actually permitted
+>>>>>      according to the individual rules.
+>>>>>
+>>>>>      As a special case, this *may* return 0 immediately, in which case we
+>>>>>      can (a) save a bit of calculation in the loop below and (b) we might
+>>>>>      be in the case where access is permitted because it's a file from a
+>>>>>      special file system (even though not all bits are cleared). If
+>>>>>      check_access_path_dual() returns 0, we return the full requested
+>>>>>      access_request that we received as input. >
+>>>>> * In the loop below, if there are any bits left in layer_masks, those
+>>>>>      are rights which are not permitted for the given path. We remove
+>>>>>      these from access_request and return the modified access_request.
+>>>>>
+>>>>>
+>>>>>> This function is pretty similar to check_access_path(). Can't you change it
+>>>>>> to use an access_mask_t pointer and get almost the same thing?
+>>>>>
+>>>>> I'm shying away from this approach. Many of the existing different use
+>>>>> cases are already realized by "doing if checks deep down". I think it
+>>>>> would make the code more understandable if we managed to model these
+>>>>> differences between use cases already at the layer of function calls.
+>>>>> (This is particularly true for check_access_path_dual(), where in
+>>>>> order to find out how the "single" case works, you need to disentangle
+>>>>> to a large extent how the much more complicated dual case works.)
+>>>>
+>>>> I agree that check_access_path_dual() is complex, but I couldn't find a
+>>>> better way.
+>>>
+>>> It seems out of the scope of this patch set, but I sometimes find it
+>>> OK to just duplicate the code and have a set of tests to demonstrate
+>>> that the two variants do the same thing.
+>>>
+>>> check_access_path_dual() is mostly complex because of performance
+>>> reasons, as far as I can tell, and it might be possible to check its
+>>> results against a parallel implementation of it which runs slower,
+>>> uses more memory, but is more obviously correct. (I have used one
+>>> myself to check against when developing the truncate patch set.)
+>>>
+>>>>> If you want to unify these two functions, what do you think of the
+>>>>> approach of just using get_path_access_rights() instead of
+>>>>> check_access_path()?
+>>>>>
+>>>>> Basically, it would turn
+>>>>>
+>>>>> return check_access_path(dom, path, access_request);
+>>>>>
+>>>>> into
+>>>>>
+>>>>> if (get_path_access_rights(dom, path, access_request) == access_request)
+>>>>> 	return 0;
+>>>>> return -EACCES;
+>>>>>
+>>>>> This is slightly more verbose in the places where it's called, but it
+>>>>> would be more orthogonal, and it would also clarify that -EACCES is
+>>>>> the only possible error in the "single" path walk case.
+>>>>>
+>>>>> Let me know what you think.
+>>>>
+>>>> What about adding an additional argument `access_mask_t *const
+>>>> access_allowed` to check_access_path_dual() which returns the set of
+>>>> accesses (i.e. access_masked_parent1 & access_masked_parent2) that could
+>>>> then be stored to landlock_file(file)->allowed_access? If this argument is
+>>>> NULL it should just be ignored. What is left from get_path_access_rights()
+>>>> could then be merged into hook_file_open().
+>>>
+>>> IMHO, check_access_path_dual() does not seem like the right place to
+>>> add this. This functionality is not needed in any of the "dual path"
+>>> cases so far, and I'm not sure what it would mean. The necessary
+>>> information can also be easily derived from the resulting layer_masks,
+>>> which is already exposed in the check_access_path_dual() interface,
+>>> and I also believe that this approach is at least equally fast as
+>>> updating it on the fly when changing the layer_masks.
+>>>
+>>> I could be convinced to add a `access_mask_t *const access_allowed`
+>>> argument to check_access_path() if you prefer that, but then again, in
+>>> that case the returned boolean can be reconstructed from the new
+>>> access_allowed variable, and we could as well make check_access_path()
+>>> return the access_allowed result instead of the boolean and let
+>>> callers check equality with what they expected...? (I admittedly don't
+>>> have a good setup to test the performance right now, but it looks like
+>>> a negligible difference to me?)
+>>
+>> Good idea, let's try to make check_access_path_dual() returns the allowed
+>> accesses (according to the request) and rename it to get_access_path_dual().
+>> unmask_layers() could be changed to return the still-denied accesses instead
+>> of a boolean, and we could use this values (for potential both parents) to
+>> return allowed_parent1 & allowed_parent2 (with access_mask_t types). This
+>> would also simplify is_eaccess() and its calls could be moved to
+>> current_check_refer_path(). This would merge get_path_access_rights() into
+>> check_access_path_dual() and make the errno codes more explicit per hook or
+>> defined in check_access_path().
+> 
+> Thanks for the review!
+> 
+> I'm afraid I don't understand this approach at the moment. I'm
+> probably still missing some insight about how the "refer" logic works
+> which would make this clearer.
+> 
+> With the proposed changes to check_access_path_dual(), it sounds like
+> we would have to change the logic of the "refer" implementation quite
+> a bit, which would expand the scope of the "truncate" patch set beyond
+> what it was originally meant to do. Is this check_access_path_dual()
+> refactoring something you'd insist on for the truncate patch set, or
+> would you be OK with doing that separately?
 
--- 
-paul-moore.com
+I'd like to avoid stacking debts and I prefer to refactor code instead, 
+but I got your point. Here is another proposal closer to yours. Let's 
+rename check_access_path_dual() to is_access_to_paths_allowed(), make it 
+returns a boolean (allowed_parent1 && allowed_parent2), and move the 
+EACCES/EXDEV logic to (only) after the second call to 
+check_access_path_dual() by current_check_refer_path() (because the if 
+(old_dentry->d_parent == new_dir->dentry) branch cannot return EXDEV).
+
+check_access_path() either returns 0 or -EACCES, and we should add a 
+WARN_ON_ONCE(access_request & LANDLOCK_ACCESS_FS_REFER) to make sure 
+this remains correct.
+
+The get_path_access_rights() logic can be moved to hook_file_open() to 
+make it more readable.
+
+
+> 
+> For the truncate patch set, what do you think of the lighter
+> refactoring options, which I had outlined in my previous mail? - see
+> the four bullet points quoted here:
+> 
+>>> Here are the options we have discussed, in the order that I would
+>>> prefer them:
+>>>
+>>> * to keep it as a separate function as it already is,
+>>>     slightly duplicating check_access_path(). (I think it's cleaner,
+>>>     because the code path for the rest of the hooks other than
+>>>     security_file_open() stays simpler.)
+>>>
+>>> * to make check_access_path() return the access_allowed access mask
+>>>     and make callers check that it covers the access_request that they
+>>>     asked for (see example from my previous mail on this thread). (This
+>>>     is equivalent to discarding the existing check_access_path() and
+>>>     using the get_path_access() function instead.)
+>>>
+>>> * to add a `access_mask_t *const access_allowed` argument to
+>>>     check_access_path(), which is calculated if it's non-NULL based on
+>>>     the layer_masks result. It would be used from the security_file_open
+>>>     hook.
+>>>
+>>> * to add a `access_mask_t *const access_allowed` argument to
+>>>     check_access_path_dual(). This doesn't make much sense, IMHO,
+>>>     because an on-the-fly calculation of this result does not look like
+>>>     a performance benefit to me, and calculating it based on the two
+>>>     resulting layer_masks is already possible now. It's also not clear
+>>>     to me what it would mean to calculate an access_allowed on two paths
+>>>     at once, and what that would be used for.
+>>>
+>>> Let me know which option you prefer. In the end, I don't feel that
+>>> strongly about it and I'm happy to do this either way.
+> 
+> Thanks,
+> Günther
+> 
