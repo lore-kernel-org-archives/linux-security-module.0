@@ -2,131 +2,321 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9D4C43217
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 18:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6490DC433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 18:32:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231224AbiI3SZb (ORCPT
+        id S231688AbiI3Scb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Sep 2022 14:25:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53396 "EHLO
+        Fri, 30 Sep 2022 14:32:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbiI3SZ2 (ORCPT
+        with ESMTP id S231668AbiI3Sca (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Sep 2022 14:25:28 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 960F34F1AD;
-        Fri, 30 Sep 2022 11:25:27 -0700 (PDT)
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28UH9lap002536;
-        Fri, 30 Sep 2022 18:25:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=bknH+dbcboDXEWTRzFi/K8Jjc4/8maT6NVgSJREjqvY=;
- b=fw10nc8p6Rx4Qh29g3SuoH7w0qTrs3dgZHPRkhvccqSIYlZVQfvsMniniwdAprYwb+sb
- YqhoZLJNgUYmQGVHabIUSnfvDhQ+9XxxFA6Fwuf8xTK756naywDPYnQ8OCLysi+nF3w2
- gVWoXHbnR91sH9YJM6WrTZJX13HaWgXNzBtlyOQ5UaGwntWXbF1vQk0NIbS14FxAIl1P
- EdPXsldiBZEPmMVUwrZ7gRZT2ZYtDUkZgL4ML14ehY0YHhUtG8E7SeERJkagqyj+Xu6e
- OsZkxxGIcHKk3vCc4qvVDD+78qfhDtrKSRhphTJXwmy86JGkkagt58A9dUJ6LmeHw1/F sg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3jx4cca6wp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 30 Sep 2022 18:25:14 +0000
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28UHoeXD023220;
-        Fri, 30 Sep 2022 18:25:14 GMT
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3jx4cca6wa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 30 Sep 2022 18:25:14 +0000
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28UIL0j9013539;
-        Fri, 30 Sep 2022 18:25:13 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma03wdc.us.ibm.com with ESMTP id 3jssha23mk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 30 Sep 2022 18:25:13 +0000
-Received: from smtpav01.dal12v.mail.ibm.com ([9.208.128.133])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28UIPDRG46006616
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Sep 2022 18:25:13 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 169F958058;
-        Fri, 30 Sep 2022 18:25:12 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 55CE25805D;
-        Fri, 30 Sep 2022 18:25:11 +0000 (GMT)
-Received: from sig-9-65-252-31.ibm.com (unknown [9.65.252.31])
-        by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 30 Sep 2022 18:25:11 +0000 (GMT)
-Message-ID: <fbce35c31f543527d171dd9988b29248d740fb17.camel@linux.ibm.com>
-Subject: Re: [PATCHv2 RESEND] efi: Correct Macmini DMI match in uefi cert
- quirk
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Orlando Chamberlain <redecorating@protonmail.com>,
-        linux-kernel@vger.kernel.org
-Cc:     jarkko@kernel.org, dmitry.kasatkin@gmail.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, gargaditya08@live.com,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-        Samuel Jiang <chyishian.jiang@gmail.com>
-Date:   Fri, 30 Sep 2022 14:24:32 -0400
-In-Reply-To: <20220929114906.85021-1-redecorating@protonmail.com>
-References: <20220929114906.85021-1-redecorating@protonmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 18Q1LshBfFbh_D6A_7OEMP3ptjxfwuII
-X-Proofpoint-GUID: C6t5GrmqtwZ5DyzMtwDQEyoEciFaE2g3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-30_04,2022-09-29_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 malwarescore=0 impostorscore=0 mlxlogscore=718 adultscore=0
- lowpriorityscore=0 suspectscore=0 mlxscore=0 spamscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209300113
+        Fri, 30 Sep 2022 14:32:30 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9122214E753;
+        Fri, 30 Sep 2022 11:32:28 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id b2so10799019eja.6;
+        Fri, 30 Sep 2022 11:32:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date;
+        bh=dE6obZiIgfKr0o00fT11Cpooh4R4nzb/jAZ1FqF/O4g=;
+        b=bbAyirm0fXi75Lqp0T6cxdK0fTjVxb9UoDECZk4FEGzOsOPPfTHUfk3+bwPfbMEaC9
+         wg6LC7W03/Eoh6nSEAbwd70/YZ8bDTvAPbk4oyfXwt7sCvXINRMNpKZ2yuM9wavcF141
+         5WqCfKlnMAOidlf1ByY2Fi0Vs6QXGAlAFUjl9x8L7d31dZ3Or7Z0ooCfhnpTjOgaA0i2
+         NDnXuFtNap5lagLwG0L8d3i9GFwltqjZ8gH3ju8q/LlX9qoROXsLCZdAngm52re2ua4T
+         pU2Y8RovMDrLK470+g+R6wYgt6cNj2vc9T7px5XYVaho/4II0bp7vrXX4JYEYG/TD2dP
+         RRuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=dE6obZiIgfKr0o00fT11Cpooh4R4nzb/jAZ1FqF/O4g=;
+        b=jDIustHNIG3Zp+FN52pqKEjGxObZ3tXcPXUOgudZ4cWzqa93FSMcmo4mC3WwPTV+tt
+         JBU+eYhH/7uIEUAWOG2EmgbJ3us75wRo7L4u/rdA4Rbs/o66xtAMAC4Xij3I63JRgKds
+         crofooB6F4kwAFZuNnD1bMtT5oG9WQUEUp/2KojLowwj09UgLbdqaF9WbftTYVCo1p4P
+         0I4BTTox/JYHyHSCziUAsM0GA+16r5xlT4f0sWSXMOrnCaBUVUobgDtHF9bSup9173SS
+         qX5nTdG8LTm/CnZH8rCukgn2b0kFMdRXNVb0KD+M8rVAopT3LGaMrEyWqgqu6hhNDTHR
+         yhig==
+X-Gm-Message-State: ACrzQf16zc+5H3VMpRFpYD8l918BNX+dpqvm8RBJUpgaaMCoFiX1chj9
+        SkYPNXL4CXB6qEjyBuheYNbO8l6bbus=
+X-Google-Smtp-Source: AMsMyM43GrRlCSrPxlzmuYESg1LvIYHtaVUeVcds1EugnEIeU7WGTWaDfY0e0PAOAmegd7Cb59I9Cg==
+X-Received: by 2002:a17:907:2c41:b0:77d:8aed:cf7c with SMTP id hf1-20020a1709072c4100b0077d8aedcf7cmr7377335ejc.447.1664562746965;
+        Fri, 30 Sep 2022 11:32:26 -0700 (PDT)
+Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id d10-20020a170906304a00b0073d5948855asm1346999ejd.1.2022.09.30.11.32.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Sep 2022 11:32:26 -0700 (PDT)
+Date:   Fri, 30 Sep 2022 20:32:24 +0200
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Subject: Re: [PATCH v7 5/7] selftests/landlock: Test FD passing from a
+ Landlock-restricted to an unrestricted process
+Message-ID: <Yzc2ONgHFHwGS6y3@nuc>
+References: <20220930160144.141504-1-gnoack3000@gmail.com>
+ <20220930160144.141504-6-gnoack3000@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220930160144.141504-6-gnoack3000@gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Orlando,
-
-On Thu, 2022-09-29 at 11:49 +0000, Orlando Chamberlain wrote:
-> It turns out Apple doesn't capitalise the "mini" in "Macmini" in DMI, which
-> is inconsistent with other model line names.
+On Fri, Sep 30, 2022 at 06:01:42PM +0200, Günther Noack wrote:
+> A file descriptor created in a restricted process carries Landlock
+> restrictions with it which will apply even if the same opened file is
+> used from an unrestricted process.
 > 
-> Correct the capitalisation of Macmini in the quirk for skipping loading
-> platform certs on T2 Macs.
+> This change extracts suitable FD-passing helpers from base_test.c and
+> moves them to common.h. We use the fixture variants from the ftruncate
+> fixture to exercise the same scenarios as in the open_and_ftruncate
+> test, but doing the Landlock restriction and open() in a different
+> process than the ftruncate() call.
 > 
-> Currently users get:
+> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> ---
+>  tools/testing/selftests/landlock/base_test.c | 36 +----------
+>  tools/testing/selftests/landlock/common.h    | 67 ++++++++++++++++++++
+>  tools/testing/selftests/landlock/fs_test.c   | 62 ++++++++++++++++++
+>  3 files changed, 132 insertions(+), 33 deletions(-)
 > 
-> ------------[ cut here ]------------
-> [Firmware Bug]: Page fault caused by firmware at PA: 0xffffa30640054000
-> WARNING: CPU: 1 PID: 8 at arch/x86/platform/efi/quirks.c:735 efi_crash_gracefully_on_page_fault+0x55/0xe0
-> Modules linked in:
-> CPU: 1 PID: 8 Comm: kworker/u12:0 Not tainted 5.18.14-arch1-2-t2 #1 4535eb3fc40fd08edab32a509fbf4c9bc52d111e
-> Hardware name: Apple Inc. Macmini8,1/Mac-7BA5B2DFE22DDD8C, BIOS 1731.120.10.0.0 (iBridge: 19.16.15071.0.0,0) 04/24/2022
-> Workqueue: efi_rts_wq efi_call_rts
-> ...
-> ---[ end trace 0000000000000000 ]---
-> efi: Froze efi_rts_wq and disabled EFI Runtime Services
-> integrity: Couldn't get size: 0x8000000000000015
-> integrity: MODSIGN: Couldn't get UEFI db list
-> efi: EFI Runtime Services are disabled!
-> integrity: Couldn't get size: 0x8000000000000015
-> integrity: Couldn't get UEFI dbx list
+> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+> index 72cdae277b02..6d1b6eedb432 100644
+> --- a/tools/testing/selftests/landlock/base_test.c
+> +++ b/tools/testing/selftests/landlock/base_test.c
+> @@ -263,23 +263,6 @@ TEST(ruleset_fd_transfer)
+>  		.allowed_access = LANDLOCK_ACCESS_FS_READ_DIR,
+>  	};
+>  	int ruleset_fd_tx, dir_fd;
+> -	union {
+> -		/* Aligned ancillary data buffer. */
+> -		char buf[CMSG_SPACE(sizeof(ruleset_fd_tx))];
+> -		struct cmsghdr _align;
+> -	} cmsg_tx = {};
+> -	char data_tx = '.';
+> -	struct iovec io = {
+> -		.iov_base = &data_tx,
+> -		.iov_len = sizeof(data_tx),
+> -	};
+> -	struct msghdr msg = {
+> -		.msg_iov = &io,
+> -		.msg_iovlen = 1,
+> -		.msg_control = &cmsg_tx.buf,
+> -		.msg_controllen = sizeof(cmsg_tx.buf),
+> -	};
+> -	struct cmsghdr *cmsg;
+>  	int socket_fds[2];
+>  	pid_t child;
+>  	int status;
+> @@ -298,33 +281,20 @@ TEST(ruleset_fd_transfer)
+>  				    &path_beneath_attr, 0));
+>  	ASSERT_EQ(0, close(path_beneath_attr.parent_fd));
+>  
+> -	cmsg = CMSG_FIRSTHDR(&msg);
+> -	ASSERT_NE(NULL, cmsg);
+> -	cmsg->cmsg_len = CMSG_LEN(sizeof(ruleset_fd_tx));
+> -	cmsg->cmsg_level = SOL_SOCKET;
+> -	cmsg->cmsg_type = SCM_RIGHTS;
+> -	memcpy(CMSG_DATA(cmsg), &ruleset_fd_tx, sizeof(ruleset_fd_tx));
+> -
+>  	/* Sends the ruleset FD over a socketpair and then close it. */
+>  	ASSERT_EQ(0, socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0,
+>  				socket_fds));
+> -	ASSERT_EQ(sizeof(data_tx), sendmsg(socket_fds[0], &msg, 0));
+> +	ASSERT_EQ(0, send_fd(socket_fds[0], ruleset_fd_tx));
+>  	ASSERT_EQ(0, close(socket_fds[0]));
+>  	ASSERT_EQ(0, close(ruleset_fd_tx));
+>  
+>  	child = fork();
+>  	ASSERT_LE(0, child);
+>  	if (child == 0) {
+> -		int ruleset_fd_rx;
+> +		int ruleset_fd_rx = recv_fd(socket_fds[1]);
+>  
+> -		*(char *)msg.msg_iov->iov_base = '\0';
+> -		ASSERT_EQ(sizeof(data_tx),
+> -			  recvmsg(socket_fds[1], &msg, MSG_CMSG_CLOEXEC));
+> -		ASSERT_EQ('.', *(char *)msg.msg_iov->iov_base);
+> +		ASSERT_LE(0, ruleset_fd_rx);
+>  		ASSERT_EQ(0, close(socket_fds[1]));
+> -		cmsg = CMSG_FIRSTHDR(&msg);
+> -		ASSERT_EQ(cmsg->cmsg_len, CMSG_LEN(sizeof(ruleset_fd_tx)));
+> -		memcpy(&ruleset_fd_rx, CMSG_DATA(cmsg), sizeof(ruleset_fd_tx));
+>  
+>  		/* Enforces the received ruleset on the child. */
+>  		ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
+> diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
+> index 7ba18eb23783..8ec8971e9580 100644
+> --- a/tools/testing/selftests/landlock/common.h
+> +++ b/tools/testing/selftests/landlock/common.h
+> @@ -10,6 +10,7 @@
+>  #include <errno.h>
+>  #include <linux/landlock.h>
+>  #include <sys/capability.h>
+> +#include <sys/socket.h>
+>  #include <sys/syscall.h>
+>  #include <sys/types.h>
+>  #include <sys/wait.h>
+> @@ -187,3 +188,69 @@ clear_cap(struct __test_metadata *const _metadata, const cap_value_t caps)
+>  {
+>  	_effective_cap(_metadata, caps, CAP_CLEAR);
+>  }
+> +
+> +/* Receives an FD from a UNIX socket. Returns the received FD, -1 on error. */
+> +__maybe_unused static int recv_fd(int usock)
+
+Ah bummer, the definition of "__maybe_unused" is not visible here
+(last minute change before sending it off...). Will fix it.
+
+> +{
+> +	int fd_rx;
+> +	union {
+> +		/* Aligned ancillary data buffer. */
+> +		char buf[CMSG_SPACE(sizeof(fd_rx))];
+> +		struct cmsghdr _align;
+> +	} cmsg_rx = {};
+> +	char data = '\0';
+> +	struct iovec io = {
+> +		.iov_base = &data,
+> +		.iov_len = sizeof(data),
+> +	};
+> +	struct msghdr msg = {
+> +		.msg_iov = &io,
+> +		.msg_iovlen = 1,
+> +		.msg_control = &cmsg_rx.buf,
+> +		.msg_controllen = sizeof(cmsg_rx.buf),
+> +	};
+> +	struct cmsghdr *cmsg;
+> +	int res;
+> +
+> +	res = recvmsg(usock, &msg, MSG_CMSG_CLOEXEC);
+> +	if (res < 0)
+> +		return -1;
+> +
+> +	cmsg = CMSG_FIRSTHDR(&msg);
+> +	if (cmsg->cmsg_len != CMSG_LEN(sizeof(fd_rx)))
+> +		return -1;
+> +
+> +	memcpy(&fd_rx, CMSG_DATA(cmsg), sizeof(fd_rx));
+> +	return fd_rx;
+> +}
+> +
+> +/* Sends an FD on a UNIX socket. Returns 0 on success or -1 on error. */
+> +__maybe_unused static int send_fd(int usock, int fd_tx)
+> +{
+> +	union {
+> +		/* Aligned ancillary data buffer. */
+> +		char buf[CMSG_SPACE(sizeof(fd_tx))];
+> +		struct cmsghdr _align;
+> +	} cmsg_tx = {};
+> +	char data_tx = '.';
+> +	struct iovec io = {
+> +		.iov_base = &data_tx,
+> +		.iov_len = sizeof(data_tx),
+> +	};
+> +	struct msghdr msg = {
+> +		.msg_iov = &io,
+> +		.msg_iovlen = 1,
+> +		.msg_control = &cmsg_tx.buf,
+> +		.msg_controllen = sizeof(cmsg_tx.buf),
+> +	};
+> +	struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
+> +
+> +	cmsg->cmsg_len = CMSG_LEN(sizeof(fd_tx));
+> +	cmsg->cmsg_level = SOL_SOCKET;
+> +	cmsg->cmsg_type = SCM_RIGHTS;
+> +	memcpy(CMSG_DATA(cmsg), &fd_tx, sizeof(fd_tx));
+> +
+> +	if (sendmsg(usock, &msg, 0) < 0)
+> +		return -1;
+> +	return 0;
+> +}
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index 308f6f36e8c0..93ed80a25a74 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -3541,6 +3541,68 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
+>  	}
+>  }
+>  
+> +TEST_F_FORK(ftruncate, open_and_ftruncate_in_different_processes)
+> +{
+> +	int child, fd, status;
+> +	int socket_fds[2];
+> +
+> +	ASSERT_EQ(0, socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0,
+> +				socket_fds));
+> +
+> +	child = fork();
+> +	ASSERT_LE(0, child);
+> +	if (child == 0) {
+> +		/*
+> +		 * Enable Landlock in the child process, open a file descriptor
+> +		 * where truncation is forbidden and send it to the
+> +		 * non-landlocked parent process.
+> +		 */
+> +		const char *const path = file1_s1d1;
+> +		const struct rule rules[] = {
+> +			{
+> +				.path = path,
+> +				.access = variant->permitted,
+> +			},
+> +			{},
+> +		};
+> +		int fd, ruleset_fd;
+> +
+> +		/* Enable Landlock. */
+> +		ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
+> +		ASSERT_LE(0, ruleset_fd);
+> +		enforce_ruleset(_metadata, ruleset_fd);
+> +		ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +		fd = open(path, O_WRONLY);
+> +		ASSERT_EQ(variant->expected_open_result, (fd < 0 ? errno : 0));
+> +
+> +		if (fd >= 0) {
+> +			ASSERT_EQ(0, send_fd(socket_fds[0], fd));
+> +			ASSERT_EQ(0, close(fd));
+> +		}
+> +
+> +		ASSERT_EQ(0, close(socket_fds[0]));
+> +
+> +		_exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
+> +	}
+> +
+> +	if (variant->expected_open_result == 0) {
+> +		fd = recv_fd(socket_fds[1]);
+> +		ASSERT_LE(0, fd);
+> +
+> +		EXPECT_EQ(variant->expected_ftruncate_result,
+> +			  test_ftruncate(fd));
+> +		ASSERT_EQ(0, close(fd));
+> +	}
+> +
+> +	ASSERT_EQ(child, waitpid(child, &status, 0));
+> +	ASSERT_EQ(1, WIFEXITED(status));
+> +	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
+> +
+> +	ASSERT_EQ(0, close(socket_fds[0]));
+> +	ASSERT_EQ(0, close(socket_fds[1]));
+> +}
+> +
+>  /* clang-format off */
+>  FIXTURE(layout1_bind) {};
+>  /* clang-format on */
+> -- 
+> 2.37.3
 > 
-> Fixes: 155ca952c7ca ("efi: Do not import certificates from UEFI Secure Boot for T2 Macs")
-> Cc: stable@vger.kernel.org
-> Cc: Aditya Garg <gargaditya08@live.com>
-> Tested-by: Samuel Jiang <chyishian.jiang@gmail.com>
-> Signed-off-by: Orlando Chamberlain <redecorating@protonmail.com>
 
-Thanks!  The patch is now queued in the next-integrity branch.
-
-Mimi
-
-
-
+-- 
