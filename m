@@ -2,310 +2,112 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E45AC433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Sep 2022 20:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A15CC433F5
+	for <linux-security-module@archiver.kernel.org>; Sat,  1 Oct 2022 14:36:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230512AbiI3UoL (ORCPT
+        id S229588AbiJAOgG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Sep 2022 16:44:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56154 "EHLO
+        Sat, 1 Oct 2022 10:36:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230378AbiI3UoK (ORCPT
+        with ESMTP id S229561AbiJAOgF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Sep 2022 16:44:10 -0400
-Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A6B91F11EC
-        for <linux-security-module@vger.kernel.org>; Fri, 30 Sep 2022 13:44:09 -0700 (PDT)
-Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-11e9a7135easo6791597fac.6
-        for <linux-security-module@vger.kernel.org>; Fri, 30 Sep 2022 13:44:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=iucWMdDiXC2TzuXfdi9T/RexEPt6mASkDyRuKHp0nGk=;
-        b=QNomiRi8MIk+nkky+IZB5LI/82IfHCRGbhjORCOGXYi2taJclvcaj9h0BC/5ty2uFz
-         jEcOM2AW5dg+1Xf8ChSH6YIB+NYKDh22hcec3FOK+Lm49uy41DIT5487mMMlyMqfrhAg
-         JcvORgpMpePdPwB4GY0zCHzjYKbE0w7o/oB9pbRYHHx7e2OvGRvpsshjGUVgIpn4s23S
-         knvMZxwQDRPCDBzqrEwPcPJtvesLX7e/K9Zt7znqV/EbzmSqZ/U4lhah8E+z6wWOCHPh
-         KFbyzD97WP7SaIvEtWetBlJoF80pEKCMAi9DcUJ5YBFRQNqRDupUEVzaSMTyRmbLJB6n
-         mv4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=iucWMdDiXC2TzuXfdi9T/RexEPt6mASkDyRuKHp0nGk=;
-        b=NIYfH6MjVWHFRKi4BbKDJvWQnf6XAo6l7lhxOj8hjzjfawP1uCoP1zhxvK9NtZXEBI
-         GBWvrjvmzMbqb4Kd3yjg+lBGNEYEn4fXviBH+/rU0IQ+pdN04qTBRGnGCM8d3lc4A82F
-         zNSSo9A/VsV9EOSfPfnoMoCatNLjCRZJ02ZFr+2Jh6/P+SuPqAanSTH+vJXVnD7ga16b
-         oy8MV8G8kKDh+LNlbuiOJa7cy1tlp5vhG9OZcdC02srfZvOBaba3KKxFA4NR1odA5aPR
-         I/abqVYAhI3dKJiYZmotx8ayHyBnSCQHAZAWK3ehNVv1hteS3h6n5jPKWIZdSfMI9T7e
-         3+4g==
-X-Gm-Message-State: ACrzQf0iLPj59ZxBK84O26iRr12fX6K468tIBsrfpejnAhczkYxbanDL
-        zaIx7unyu+8eCba13m7yIl8qFIyYe3uNS/ceFkWU
-X-Google-Smtp-Source: AMsMyM5dUMbQwflRokmshGAAmFzsWuNnxzT8N9Z5DYrFyfpo8o3jdz18dW6ioZVGf3qD8aShmYyW3TbKATI2GhI0uOE=
-X-Received: by 2002:a05:6870:a916:b0:131:9361:116a with SMTP id
- eq22-20020a056870a91600b001319361116amr39386oab.172.1664570643929; Fri, 30
- Sep 2022 13:44:03 -0700 (PDT)
+        Sat, 1 Oct 2022 10:36:05 -0400
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE09D5852A
+        for <linux-security-module@vger.kernel.org>; Sat,  1 Oct 2022 07:35:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1664634958; bh=vxt0scj2WI8k0i1OmYCcdDb1bWHVTBE3/rho9ilmZaw=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=gbr4XEWxfeD2RUurAR6moiA+8kVk5cbmYqbro6sHGH/dih18Dzy6GUJs5Y4VuDqqmiPbqKp9RWuj48yh8bXYZbDGrFH7RJo3z+Mqjd/xKJw5ubwZ7pAuqlX7TImVQHhroNuwmfONoIzLF2QZLFoZCvaIhQV73Ns2eOgGc01G1x1VHUP6474i5Cse/7ALCFGllhOKhF2fNuBT34h/zqYYpLTMi3ukhkBrulJO+1jStVLbYY696+7O2wQk1hmvspp/iBgP1vx2EzAIcjF3Ju84KbW8uuDdzEdhqAXso3NwyOH/iFC0iDd1bQM3OF+zXVt8kXZ7ds3bYY3Bkc5pBDPH7w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1664634958; bh=T87kChdqKKUL+LVlTgksZH6VtJt3KXndbAMwO3Cbufd=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=XiR/6I/g6nu/uKBSaZSt5xUGRZZ/XQSmLC9dGc/CbxBQS5dGmb63Hk1OEn1mgWRqqadDVo/7aVLtrlyWzM7vc+KxjJoVpqI9ADpkSHn+GJD2MeMMXMu2oSPj1ApwfFVx8wxRfts/Gx5qFjJ6uSVnWbff7b+vbFxDjZNabLYASbkgt6P51cYRNi1Ayx0lfXWLe96JrtErrGWDJFL3O4DuHWFyzYDIEGyGNuulOqftLJRUyg7/DkvlUVj6LthmSm6eCh8jn5e4oEvuMSkzbidiRaOS41JsGXg/i8qJCTM6EwcyN1YtH70e6DRrSfpjgcQZSu9tjK77uEcFHhPhoYQjlQ==
+X-YMail-OSG: .mVPwH4VM1mzmeo0q2o8RkQhiaTlDzy_rb3D4n.I449gMftCUDk5Y7M8XQxBY8w
+ SYQmkRFbrpM3xpb.R.dUHy4M49kdHyk6EUmLYljPegHvUlG8v14LUhKY8KDUBwROJ55teldBQ6PO
+ 6MJr3ANPW_q7UyX9U30VwBz1smKszXAkvqIZmRwTPLq_g6w6NpFGhh8tVwrlHw0mnrndOlR1r4zq
+ JNA.6VsWY9r6.j.U5Sxn3GwKV3y0AuujtersLuOseJwgicicPCPVfivSfR07gJUY_K5MSqF5gr49
+ 4zuY.UK7EaX9ITiNJ9xfpgTX4eo05o.UPYxTOZhRm6BEdXj7JrXlb1VFgKOuXMRgssTSNQBMYR8S
+ AVuspP8deeZpfVOiIZbHZbBPoF3delQNK9NcHSV5OOXqtRLimGBuOQaDtLg6Bxx2InwmMzzFl7qW
+ 39L9z9yVYlSFcCo9ZMBLmBkGMJKpDaDvx3PtMsIRfgtXoRdFNLcUxOcqtbNIG7DlxH1wy2F2NOtb
+ ZBCg32dAi_nxNUVSXFHte9X0a4INV7FzsLkeYpl.4Cm8u7M7jBJdZVqwi8N12k.QBlKaceZ59rJB
+ Vwka7GsgLEEU4kwH6T.xgjc.piBvWa1QJuiYNDwgCXZS_qlEP4jVr17VDx4FXgUH91ZWQmPmQ5jO
+ 6fObsOpgE.VO5s39GtlBzQDSyZws6Hkp_jYMUE3G.gloDnoFzS4y4fGuN3LPnDff7NIw27_AM6b3
+ X4eA98zXpklq93GPAekhmLYW6IShYWgijljXBYlrlSc.A6VnWmhhUtMz4ogmOHGZqp8HY0T.GDrs
+ QCtEnM6MFF9GQxQgRm1rSHWA72Po6yTatvfrvemvaOO2gJsUJWXWwZwt2CoZocPRwKwKsnSGmFtL
+ E56xJ_CuALi2MSXW0c05tcKaOYiullpXRncIervsl.UrA3O9gfTfNUHntzH7AtaMe4gUwmFR9cLT
+ VFswxYolFxuUsfmQFLGjLDx.Bwo3fairgn3gJ99DKTk9XPFTc24Ki7zcVU9IuPeb2AylvlfTz3t9
+ gcUP9bl6KboGF2c3gGx5zz11HT0.Si3a4Miz93CJMKwFs_E4UdPn3gkojtuWXZMsXvXI.BqMLMNc
+ REr91JlHFVrv.eEk6B6mCNZFqPl0V61WUxiOY4RF9mOwDFfBHC1ujkWwx5a9.qAnToUPjD1q2Kp7
+ 6BNGSzFx_CpVWY8x1GdHo1C9py3FqTFvnjxVAiwq8BHPo1LVvjM5wnlaYm27lM7UApl1mqBRXaQb
+ NaONyd4pmAYpkzFuZE9KYfaJCGsc8a.sadErC4GfqtRltYFRQla_tDbdhoeJHtRQH9l2iubgYKN2
+ fq7ih0s7VWXHkR0kGSWgrSugHcFu0a0Tsr2ufq9k3vC8mFyPneEJ.eSPw4NnyiWkoXkfpLg.ultg
+ yU7VoqKfxluIfQCBJHGUfleMd2FOZ2EHqMW0fkWX8Jvaf9ddtOT30uqdGcKp5rW8oLl_gmjC7csX
+ 1FZeJ3zImToW0EQchSvnn_WAPwPLbxmYDfqKr.Ma2D1VExbNvCLsUiGherLoNWiK2uYCkJsFVnnO
+ QCCAFXfV4kFFmj0g6aIl9JVq2W2Y7qgM9CM7tzkdFV3fvvWTHothewFdpwd3zBTQVdVrUKFAPTq9
+ TzBkMV.iQSMziaGBsmpcY7.m7_mnnkPJy7HAZqdkwrR3hXXJAAjeeZPzdBoUcKNKZCeSM1dW4Ip5
+ A2adv3u77GcaP6I8EQRoQ5OkqIokEsJpu._vzf0bApD8DmQ1QLJAtDHqiTjuKHfdo7743p2KW.1r
+ juyXrBzcT2d2cz0PBm2S7odd055apGqnfOCSh_ISG9meiME8AeCQm21NwGLdQrjaDqVo0TQrX8.H
+ CPuT8V5.SUwhKFyuDY4o9U_jAzxsk4Wg3ck8xb7fp61sXd6TwyjuKnvoqrLJrdC_4zB0E7SzoiF8
+ OHkF6M4raPglLdl5pUQiGkaU_9_Of8jP8I_xIIRte353YnxGDAM5E7dHU5fdcHQNLx6VnVh0FOaU
+ zo._E4HhfBmAmalCPzHoiJWHPd29I1B1XLmCoUwOsCgzMKP0dBxNSRgKzhO1lQnvhpB5HZZtNufa
+ K.pZOjlJ.vOx.FU2GDLHDsN__TSrbWRWjL3i9m5aGtDrnqzMmtPuFJ9rnnGlhmylpVtROtcuHdAR
+ ZvQZ.leGrIZBFbdy3BK36Zph7HFs7AbwkKj684ravjD9.yfWC2VfCFSrye3KfAqYSf9.R8AZzYM2
+ CxMKKJOSQ9jq1QTd60brBsPVAXsPmbrbMpl3ujfvpyjRoP7rnCGaUTNrlOkKFeVUL8MKW6_x9ZzB
+ ADUZzej8O8Xe1vp9jMFU-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Sat, 1 Oct 2022 14:35:58 +0000
+Received: by hermes--production-ne1-6944b4579f-2q8q8 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f225e0ff16af69e7cd92456424fba450;
+          Sat, 01 Oct 2022 14:35:57 +0000 (UTC)
+Message-ID: <37208884-5153-d922-e787-e830860df05e@schaufler-ca.com>
+Date:   Sat, 1 Oct 2022 07:35:55 -0700
 MIME-Version: 1.0
-References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
- <8e243ad132ecf2885fc65c33c7793f0703937890.camel@huaweicloud.com>
- <7f7c3337-74f1-424e-a14d-578c4c7ee2fe@www.fastmail.com> <65546f56be138ab326544b7b2e59bb3175ec884a.camel@huaweicloud.com>
- <b0c00f80-c11e-4f5d-ba63-2e9fb7cad561@www.fastmail.com> <9aba20351924aa0d82d258205030ad4f2c404de2.camel@huaweicloud.com>
- <98a26e5c-d44f-4e65-8186-c4e94918daa1@www.fastmail.com> <06a47f11778ca9d074c815e57dc1c75d073b3a85.camel@huaweicloud.com>
- <439dd1e5-71b8-49ed-8268-02b3428a55a4@www.fastmail.com> <6e142c3526df693abfab6e1293a27828267cc45e.camel@huaweicloud.com>
- <87mtajss8j.fsf@toke.dk> <fe9fe2443b8401a076330a3019bd46f6c815a023.camel@huaweicloud.com>
- <CAHC9VhRKq=BMtAat2_+0VvYk91hnryUHg+wbZRhu2BDB9ehC2A@mail.gmail.com>
- <3a9efcd6c8f7fa3908230ef5be0e0ad224a730ff.camel@huaweicloud.com>
- <CAHC9VhTWsP99PxJLebbm04HdSAfF4QyhU0kwZZQnduET3jfKjw@mail.gmail.com> <4c5c64f32ced8c9402db8c93ba0c29c5379ff75a.camel@huaweicloud.com>
-In-Reply-To: <4c5c64f32ced8c9402db8c93ba0c29c5379ff75a.camel@huaweicloud.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 30 Sep 2022 16:43:53 -0400
-Message-ID: <CAHC9VhTXcD11Xyg=C1sOdY1+d8GwJVjK1V-gB-2CuRNe=zk9gA@mail.gmail.com>
-Subject: Re: Closing the BPF map permission loophole
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@kernel.org>,
-        Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Subject: [GIT PULL] Smack patches for 6.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <37208884-5153-d922-e787-e830860df05e.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.20702 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 30, 2022 at 5:57 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Thu, 2022-09-29 at 18:30 -0400, Paul Moore wrote:
-> > On Thu, Sep 29, 2022 at 3:55 AM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > On Wed, 2022-09-28 at 20:24 -0400, Paul Moore wrote:
-> > > > I only became aware of this when the LSM list was CC'd so I'm a
-> > > > little
-> > > > behind on what is going on here ... looking quickly through the
-> > > > mailing list archive it looks like there is an issue with BPF map
-> > > > permissions not matching well with their associated fd
-> > > > permissions,
-> > > > yes?  From a LSM perspective, there are a couple of hooks that
-> > > > currently use the fd's permissions (read/write) to determine the
-> > > > appropriate access control check.
-> > >
-> > > From what I understood, access control on maps is done in two
-> > > steps.
-> > > First, whenever someone attempts to get a fd to a map
-> > > security_bpf_map() is called. LSM implementations could check
-> > > access if
-> > > the current process has the right to access the map (whose label
-> > > can be
-> > > assigned at map creation time with security_bpf_map_alloc()).
-> >
-> > [NOTE: SELinux is currently the only LSM which provides BPF access
-> > controls, so they are going to be my example here and in the rest of
-> > this email.]
-> >
-> > In the case of SELinux, security_bpf_map() does check the access
-> > between the current task and the BPF map itself (which inherits its
-> > security label from its creator), with the actual permission
-> > requested
-> > being determined by the fmode_t parameter passed to the LSM hook.
-> > Looking at the current BPF code, the callers seem to take that from
-> > various different places
-> > (bpf_attr:{file_flags,map_flags,open_flags}).
-> > This could be due solely to the different operations being done by
-> > the
-> > callers, which would make me believe everything is correct, but given
-> > this thread it seems reasonable for someone with a better
-> > understanding of BPF than me to double check this.  Can you help
-> > verify that everything is okay here?
->
-> I also don't have concerns on this part. eBPF maintainers can help to
-> confirm.
->
-> > Second, whenever the holder of the obtained fd wants to do an
-> > > operation
-> > > on the map (lookup, update, delete, ...), eBPF checks if the fd
-> > > modes
-> > > are compatible with the operation to perform (e.g. lookup requires
-> > > FMODE_CAN_READ).
-> >
-> > To be clear, from what I can see, it looks like the LSM is not
-> > checking the fd modes, but rather the modes stored in the bpf_attr,
-> > which I get the impression do not always match the fd modes.  Yes?
-> > No?
->
-> Correct, there is no revalidation. Fd modes represent what LSMs granted
-> to the fd holder.
+Hello Linus,
 
-The "fd modes represent what LSMs grant the fd holder" comment doesn't
-make much sense to me, can you clarify this?  LSMs by design are not
-authoritative so I'm not sure how they would "grant" fd mode bits;
-LSMs can deny a process the ability to open a file, but that's about
-it.
+Here is the Smack pull request for v6.1.
 
-> eBPF allows operations on the object behind the fd
-> depending on the stored fd modes (for maps, not sure about the other
-> object types).
+There are two minor code clean-ups. One removes constants
+left over from the old mount API. The other gets rid of an
+unneeded variable. The other change fixes a flaw in handling
+IPv6 labeling. All have spent time in -next and pass Smack
+regression tests. Thank you.
 
-Yes, it definitely seems as though BPF does not care at all about
-permissions at the fd level.  That seems odd to me, and I wonder how
-many BPF users truly understand that, but I suppose as long as
-unprivileged BPF is not allowed, there is at least some ability to
-dismiss the security concerns from a DAC perspective.  As mentioned
-previously, I do worry about that becoming a problem in the future.
+The following changes since commit b90cb1053190353cc30f0fef0ef1f378ccc063c5:
 
-I am also growing increasingly concerned that the BPF fd passing check
-in bpf_fd_pass() is not correct, but it isn't clear to me what the
-correct thing is in this case.  How does one determine what access can
-potentially be requested when a BPF fd is passed between processes if
-the fd mode bits are not meaningful?  I'm not sure we have any other
-information to go on at this point in the code ... do we just have to
-assume that all passed maps are read/write (and programs can be run)
-regardless of the fd mode bits?
+  Linux 6.0-rc3 (2022-08-28 15:05:29 -0700)
 
-> > There is also LSM/SELinux code which checks the permissions when a
-> > BPF
-> > map is passed between tasks via a fd.  Currently the SELinux check
-> > only looks at the file:f_mode to get the permissions to check, but if
-> > the f_mode bits are not the authoritative record of what is allowed
-> > in
-> > the BPF map, perhaps we need to change that to use one of the
-> > bpf_attr
-> > mode bits (my gut feeling is bpf_attr:open_flags)?
-> >
-> > > One problem is that the second part is missing for some operations
-> > > dealing with the map fd:
-> > >
-> > > Map iterators:
-> > > https://lore.kernel.org/bpf/20220906170301.256206-1-roberto.sassu@huaweicloud.com/
-> >
-> > You'll need to treat me like an idiot when it comes to BPF maps ;)
->
-> Argh, sorry!
+are available in the Git repository at:
 
-No worries :)
+  https://github.com/cschaufler/smack-next tags/Smack-for-6.1
 
-> > I did a very quick read on them right now and it looks like a BPF map
-> > iterator would just be a combination of BPF read and execute ("bpf {
-> > map_read prog_run }" in SELinux policy terms).  Would it make more
-> > sense to just use the existing security_bpf_map() and
-> > security_bpf_prog() hooks here?
->
-> If I can make an example, if you have a linked list, a map iterator is
-> like calling a function for each element of the list, allowing the
-> function to read and write the element.
+for you to fetch changes up to cc71271f5b793d619f8a7d2ef905374102533c75:
 
-Thanks, that matches with what I found and why I thought an iterator
-matches well with a map read and program run permission.  Do you
-agree?
+  smack: cleanup obsolete mount option flags (2022-09-27 10:33:03 -0700)
 
-> For now I didn't think about programs. Lorenz, which reported this
-> issue in the first place, is planning on rethinking access control on
-> all eBPF objects.
+----------------------------------------------------------------
+Smack updates for v6.1
 
-That's probably not a bad idea, or at the very least I think it would
-be a very good idea to draft a document about how eBPF access control
-is supposed to work.  Start with the DAC side of things and we can
-extend it to include those LSMs which provide eBPF controls.  Does
-something like that already exist?
+----------------------------------------------------------------
+Lontke Michael (1):
+      SMACK: Add sk_clone_security LSM hook
 
-> When you create a map iterator, you pass the program you want to run
-> and a map reference to bpftool (user space). bpftool first retrieves
-> the fds for the program and the map (thus, security_bpf_prog() and
-> security_bpf_map() are called).
+Xiu Jianfeng (1):
+      smack: cleanup obsolete mount option flags
 
-Okay, that's good, we should have the right LSM controls in place at
-this point in the process.
+Xu Panda (1):
+      smack: lsm: remove the unneeded result variable
 
-> The fds are then passed to the kernel
-> with another system call to create the map iterator. The map iterator
-> is a named kernel object, with a corresponding file in the bpf
-> filesystem.
+ security/smack/smack.h     |  9 ---------
+ security/smack/smack_lsm.c | 20 +++++++++++++++++---
+ 2 files changed, 17 insertions(+), 12 deletions(-)
 
-The iterator has no additional user data, or system state, beyond the
-associated BPF program and map data, yes?  If that is the case I think
-we may be able to avoid treating it as a proper object from a SELinux
-perspective as long as we ensure that access is checked against the
-associated map and program.
-
-> Reading that file causes the iteration to start, by running
-> the program for each map element.
-
-... and we should definitely have an LSM access control check here,
-although as mentioned above we may be able to just leverage the
-existing security_bpf_map() and security_bpf_prog() hooks.  Do we do
-that currently?
-
-> The only missing part is checking the fd modes granted by LSMs at the
-> time the map iterator is created. If the map iterator allows read and
-> write, both FMODE_CAN_READ and FMODE_CAN_WRITE should be set.
-
-Does the kernel enforce this from a DAC perspective?
-
-> > > Map fd directly used by eBPF programs without system call:
-> > > https://lore.kernel.org/bpf/20220926154430.1552800-1-roberto.sassu@huaweicloud.com/
-> >
-> > Another instance of "can you please explain this use case?" ;)
->
-> Lorenz discovered that. Despite LSMs check which permissions user space
-> requested for a map fd, there is no corresponding check of the fd
-> modes. Normally, a map fd is passed in a system call to perform a map
-> operation. In this case, it is not. It is set in the program code, and
-> eBPF transforms the map fd into a map address suitable to be passed to
-> kernel helpers which directly access the kernel object.
-
-Yes, the LSMs use the fmode_t bits that are passed to
-security_bpf_map() to determine the requested access permissions for
-the map operation.  When I looked at the callers yesterday, it looked
-like all of the security_bpf_map() callers were passing fmode_t bits
-from a bpf_attr and not directly from the fd.  I need some help in
-verifying that this is correct, but from what I've read thus far it
-appears that the BPF code in general is not concerned about fd mode
-bits.
-
-> > I'm wondering if we do want to move the SELinux BPF fd passing code
-> > to
-> > check the bpf_attr:open_flags perms.  Thoughts?
->
-> Seems correct as it is, but I'm not completely familiar with this work.
-> As long as you ensure that the fd holder has the right to access the
-> map, then it will be still responsibility of eBPF to just check the fd
-> modes.
-
-Looking at this further, I don't believe we would have the open_flags
-perms at the time the BPF fd was passed anyway.
-
-> > While this does not seem to me a concern from MAC perspective, as
-> > > attempts to get a map fd still have to pass through
-> > > security_bpf_map(),
-> > > in general this should be fixed without relying on LSMs.
-> >
-> > Agreed.  The access controls need to work both for DAC and DAC+LSM.
->
-> @all, what do you think?
-
-It is worth reminding everyone this is pretty much how the rest of the
-kernel works, you can't ignore the DAC controls (file mode bits,
-capabilities, etc.) in favor of a pure LSM-based system, and you can't
-avoid the necessary LSM hooks because "LSMs are stupid".  People build
-Linux systems both as DAC only and DAC+LSM, we need to make sure we
-can Do The Right Thing in both cases.
-
-> > Is the plan to ensure that the map and fd permissions are correct
-> > > > at
-> > > > the core BPF level, or do we need to do some additional checks in
-> > > > the
-> > > > LSMs (currently only SELinux)?
-> > >
-> > > Should we add a new map_pin permission in SELinux?
-> >
-> > Maybe?  Maybe not?  I don't know, can you help me understand map
-> > pinning a bit more first?
->
-> I'm not completely sure that this is correct. Pinning a map seems to me
-> like creating a new dentry for the inode.
-
-Once again, can someone explain BPF map pinning?
-
--- 
-paul-moore.com
