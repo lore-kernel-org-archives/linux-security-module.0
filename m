@@ -2,108 +2,138 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53A0C433F5
-	for <linux-security-module@archiver.kernel.org>; Sun,  2 Oct 2022 11:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA969C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Oct 2022 20:45:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229823AbiJBLhF (ORCPT
+        id S229880AbiJCUpM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 2 Oct 2022 07:37:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45592 "EHLO
+        Mon, 3 Oct 2022 16:45:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229665AbiJBLhE (ORCPT
+        with ESMTP id S229536AbiJCUpJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 2 Oct 2022 07:37:04 -0400
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96A49356DD
-        for <linux-security-module@vger.kernel.org>; Sun,  2 Oct 2022 04:37:03 -0700 (PDT)
-Received: from [192.168.192.83] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id DFB233F158;
-        Sun,  2 Oct 2022 11:37:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1664710622;
-        bh=nLCLZycZ5/d9aO/J5MwbxVeyC1WPSKE9lqA0v8wIgsQ=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=kqV3v5hqdhazGotBcpvi0HRTl5g6flDHck0oC7eAjkheDdIxjVSqd9qjB1V1faswX
-         yWyBBjIj1gdN3aMIw4MXxxOdnSXU5n4n/jgAOyOo8pzArGP+ldxsPv1AH/x75tS+FQ
-         B5Vhe37UOnZOLlMR2z6R5i3mTDIVon3g2M1Uh6S9Pw/mD69UoOj6exfoMpI0PuiWG0
-         GWD2NW3VA9mh8DE+GaSZgbyq0b/C7sbciYExZ4OTi44eLZ/J3RD+YE1/B2mzjHf1oS
-         ZTNKwkjvm8usitwvVY6ZLJTVdYYOObNaHHdOG6ZvDC7K03m7iO/P/hGN7fQx4IAgNz
-         Lz1sU3KUXwiRg==
-Message-ID: <0ee9668b-e7e8-97fd-02bb-f0cb6a14b30f@canonical.com>
-Date:   Sun, 2 Oct 2022 04:36:59 -0700
+        Mon, 3 Oct 2022 16:45:09 -0400
+Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC29011C24
+        for <linux-security-module@vger.kernel.org>; Mon,  3 Oct 2022 13:45:07 -0700 (PDT)
+Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-12c8312131fso14383173fac.4
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Oct 2022 13:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date;
+        bh=GRFNXX+YGfhDX+aHBP2Nz6DfcCY9saOPFr6kWqxKvSw=;
+        b=bgZGNnvMfKlPZeCu2f8GtaIjwdo06nqJhgXiyYNQ70/MUamPjQWWzAf65cmL5RILAE
+         I7nH4hrqujTzVWRbE2pEXakx6VUL2nOHnb+VNd0x+MB2Y1cl/U5Ht+rO2x1y10PDTlV5
+         Z2V7/SXtMOHPEw8abFgHd2Gp0kgJ+wrvHcQXMudNNtVVm559+X3L2IyrvdeiFUU1Gz3o
+         o3zUQqtnt1PRlePPqjk7k+JQReKz8lEGTc8XWB5IMmkWYpNvZwtBcXfXhEMm2i/Q5D+w
+         W8q1b/cPC8Ehf2hi6u7SErrjisY3JcZVlx+rbaZv/uw5VRfW1gLHmKRuRSeH/zEJAW0N
+         6NSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=GRFNXX+YGfhDX+aHBP2Nz6DfcCY9saOPFr6kWqxKvSw=;
+        b=eiB7Zdls3FCqc0C9xO4nxz2sr0C3pLgepsq/jae7OOAKz1srVMDzzGdjLZrR3Ql+tc
+         Jx2Et8LZ19Lu5CxzX1s7hpzi6wnGbSl5KFK9qROu9Y1JLv2g+YDQDAM5BB4hcF/wcM5i
+         5HMCrwtVSigv0paidpXnYsuLihoeHav1pg0CmavLWX5shkdl2oK4B7fd3tY0RitqgqxO
+         pYC36lile6jWlg4u+142VsM+36oiAzqAhRJM7rXrFUZfi5KGy2DNSkfFgzkBVI8qViOe
+         AKbhaOOxR42uvL2QFqLdOO1Em+do1yLHVh1usPMZDgADLU1IafKANvCpkoYF7gspxtIJ
+         glvA==
+X-Gm-Message-State: ACrzQf2O6fIinnYOsOuF3x/WWostNJCyGFE93WRMyQU9fzwtKCLbfU3k
+        oU5pmDUJWLdCt7psuSKvLoIct/bDAE/9pZ8N2jbxDkjV8lEP
+X-Google-Smtp-Source: AMsMyM6AE4a3eyvYdZWj3InHKQ/Qj8Brq1+zlkvrSHcqTMaSz+NckPDuyvb00NvT+s/IkwROhhSGYn8ZYIUjKuyHlhs=
+X-Received: by 2002:a05:6870:a916:b0:131:9361:116a with SMTP id
+ eq22-20020a056870a91600b001319361116amr6560165oab.172.1664829906962; Mon, 03
+ Oct 2022 13:45:06 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] apparmor: fix obsoleted comments for aa_getprocattr() and
- audit_resource()
-Content-Language: en-US
-To:     Gaosheng Cui <cuigaosheng1@huawei.com>, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com
-Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
-References: <20220926114838.1699096-1-cuigaosheng1@huawei.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20220926114838.1699096-1-cuigaosheng1@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 3 Oct 2022 16:44:56 -0400
+Message-ID: <CAHC9VhQF6oLGHN=fHSN568iM-mP7yDpMWH=OKwSRADu4Rb5-Dw@mail.gmail.com>
+Subject: [GIT PULL] SELinux patches for v6.1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/26/22 04:48, Gaosheng Cui wrote:
-> Update the comments for aa_getprocattr() and audit_resource(), the
-> args of them have beed changed since commit 76a1d263aba3 ("apparmor:
-> switch getprocattr to using label_print fns()").
-> 
-> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+Hi Linus,
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+Six SELinux patches, all are simple and easily understood, but a list
+of the highlights is below:
 
-I have pulled this into my tree
+- Use 'grep -E' instead of 'egrep' in the SELinux policy install
+script.  Fun fact, this seems to be GregKH's *second* dedicated
+SELinux patch since we transitioned to git (ignoring merges, the SPDX
+stuff, and a trivial fs reference removal when lustre was yanked); the
+first was back in 2011 when selinuxfs was placed in /sys/fs/selinux.
+Oh, the memories ...
 
-> ---
->   security/apparmor/procattr.c | 11 +++++------
->   security/apparmor/resource.c |  2 ++
->   2 files changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/security/apparmor/procattr.c b/security/apparmor/procattr.c
-> index 86ad26ef72ed..197d41f9c32b 100644
-> --- a/security/apparmor/procattr.c
-> +++ b/security/apparmor/procattr.c
-> @@ -17,14 +17,13 @@
->   
->   
->   /**
-> - * aa_getprocattr - Return the profile information for @profile
-> - * @profile: the profile to print profile info about  (NOT NULL)
-> - * @string: Returns - string containing the profile info (NOT NULL)
-> + * aa_getprocattr - Return the label information for @label
-> + * @label: the label to print label info about  (NOT NULL)
-> + * @string: Returns - string containing the label info (NOT NULL)
->    *
-> - * Requires: profile != NULL
-> + * Requires: label != NULL && string != NULL
->    *
-> - * Creates a string containing the namespace_name://profile_name for
-> - * @profile.
-> + * Creates a string containing the label information for @label.
->    *
->    * Returns: size of string placed in @string else error code on failure
->    */
-> diff --git a/security/apparmor/resource.c b/security/apparmor/resource.c
-> index 1ae4874251a9..4c1869bb31ec 100644
-> --- a/security/apparmor/resource.c
-> +++ b/security/apparmor/resource.c
-> @@ -45,6 +45,8 @@ static void audit_cb(struct audit_buffer *ab, void *va)
->    * @profile: profile being enforced  (NOT NULL)
->    * @resource: rlimit being auditing
->    * @value: value being set
-> + * @peer: aa_albel of the task being set
-> + * @info: info being auditing
->    * @error: error value
->    *
->    * Returns: 0 or sa->error else other error code on failure
+- Convert the SELinux policy boolean values to use signed integer
+types throughout the SELinux kernel code.  Prior to this we were using
+a mix of signed and unsigned integers which was probably okay in this
+particular case, but it is definitely not a good idea in general.
 
+- Remove a reference to the SELinux runtime disable functionality in
+/etc/selinux/config as we are in the process of deprecating that.  See
+<https://github.com/SELinuxProject/selinux-kernel/wiki/DEPRECATE-runtime-di=
+sable>
+for more background on this if you missed the previous notes on the
+deprecation.
+
+- Minor cleanups: remove unneeded variables and function parameter
+constification.
+
+Please merge for v6.1,
+-Paul
+
+--
+The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868=
+:
+
+ Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20221003
+
+for you to fetch changes up to 2fe2fb4ce60be9005d7bfdd5665be03b8efb5b13:
+
+ selinux: remove runtime disable message in the install_policy.sh script
+   (2022-09-20 14:12:25 -0400)
+
+----------------------------------------------------------------
+selinux/stable-6.1 PR 20221003
+
+----------------------------------------------------------------
+Christian G=C3=B6ttsche (2):
+     selinux: use int arrays for boolean values
+     selinux: declare read-only parameters const
+
+Greg Kroah-Hartman (1):
+     selinux: use "grep -E" instead of "egrep"
+
+Paul Moore (1):
+     selinux: remove runtime disable message in the install_policy.sh scrip=
+t
+
+Xu Panda (1):
+     selinux: remove the unneeded result variable
+
+ye xingchen (1):
+     selinux: remove an unneeded variable in sel_make_class_dir_entries()
+
+scripts/selinux/install_policy.sh |  5 ++---
+security/selinux/hooks.c          | 24 +++++++++---------------
+security/selinux/selinuxfs.c      | 15 ++++++---------
+security/selinux/ss/context.h     | 17 +++++++++--------
+security/selinux/ss/ebitmap.c     | 21 +++++++++++----------
+security/selinux/ss/ebitmap.h     | 18 +++++++++---------
+security/selinux/ss/mls_types.h   |  4 ++--
+7 files changed, 48 insertions(+), 56 deletions(-)
+
+--=20
+paul-moore.com
