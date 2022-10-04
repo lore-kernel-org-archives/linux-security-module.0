@@ -2,66 +2,66 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6567C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Oct 2022 01:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6BAC43217
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Oct 2022 01:03:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229711AbiJDBDq (ORCPT
+        id S229556AbiJDBDq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Mon, 3 Oct 2022 21:03:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47830 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbiJDBDo (ORCPT
+        with ESMTP id S229696AbiJDBDp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Oct 2022 21:03:44 -0400
+        Mon, 3 Oct 2022 21:03:45 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2A7539B96;
-        Mon,  3 Oct 2022 18:03:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59AEF39BA1;
+        Mon,  3 Oct 2022 18:03:44 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8F57C61215;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B958D61237;
         Tue,  4 Oct 2022 01:03:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F2D73C433C1;
-        Tue,  4 Oct 2022 01:03:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 26186C433D6;
+        Tue,  4 Oct 2022 01:03:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1664845423;
-        bh=5s3K9rJI8dEgeYCSV/L1VS0YPx2lcRP3kt/p7mVGEDE=;
+        bh=ih1Ua6plqATyfmALYk/lBmAsXu3cjXf7P5URbdDs4o4=;
         h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=kvScv3+rFHE7nkb4BCspJAwq+AkymlYOLRNVD2XbGrS2KBcGko7hIvuXeW4hLCl/I
-         P3+lPTFml3OHCXvxLWdeqP200IR8AmveqaTwQl7TxWx+4eKAOPYbJJxuB4YQwaZwJV
-         eZlbYj3mm847gkTRmKhQPB2ybpkuIGHvvWcJw9iRLHKZPJmKlW5vcLe9jtJXb84OrV
-         HJ/F9yz3XV/1TQS2EyrjE1TwoSKWKiBEH6lLQyOCRft6zADsWiyM8dkdLOgfpO3vvM
-         W6pgfvCBXSXz7cSV22H1uRBUq/iWmOz+uwtWruc0L3qhDu0Hqda3/wH8kmuRBBwPHD
-         ZO5FXmCvPmNLg==
+        b=cmYcUPDHY8jZRQ3s8gmnRG9AddxEdLpDc4aNjdsei7OSaNIhDFzWhVXxUSG1kdjm1
+         I6Ah79UlCLBo5Mm5s+90oXJgLTpBIBuzl4S0UIamjWRvKk328RWav9g3imvUC5Qh6f
+         HtYOXMP2QFlWCYDzkNafuqPfaDSskZBbaF+MIBeIwVlDvq4bMq2ycNpHppAAF4mekq
+         WkkocMctpD3FcIuYSyxaSg5R5eO+7mtCh3zdOHAxXMmrlsevH09BTYIBA4pa0WFfq/
+         TgirqiLlzn7UVcEAPkzcQTlqBtN8K6CQYH2uVbBRc/rRzP7zxxslcIpVKsySIrI74r
+         4BKF7wLkG96gA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E1B2EE49FA7;
-        Tue,  4 Oct 2022 01:03:42 +0000 (UTC)
-Subject: Re: [GIT PULL] Smack patches for 6.1
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0D267E49FA3;
+        Tue,  4 Oct 2022 01:03:43 +0000 (UTC)
+Subject: Re: [GIT PULL] SELinux patches for v6.1
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <37208884-5153-d922-e787-e830860df05e@schaufler-ca.com>
-References: <37208884-5153-d922-e787-e830860df05e.ref@schaufler-ca.com> <37208884-5153-d922-e787-e830860df05e@schaufler-ca.com>
+In-Reply-To: <CAHC9VhQF6oLGHN=fHSN568iM-mP7yDpMWH=OKwSRADu4Rb5-Dw@mail.gmail.com>
+References: <CAHC9VhQF6oLGHN=fHSN568iM-mP7yDpMWH=OKwSRADu4Rb5-Dw@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <37208884-5153-d922-e787-e830860df05e@schaufler-ca.com>
-X-PR-Tracked-Remote: https://github.com/cschaufler/smack-next tags/Smack-for-6.1
-X-PR-Tracked-Commit-Id: cc71271f5b793d619f8a7d2ef905374102533c75
+X-PR-Tracked-Message-Id: <CAHC9VhQF6oLGHN=fHSN568iM-mP7yDpMWH=OKwSRADu4Rb5-Dw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20221003
+X-PR-Tracked-Commit-Id: 2fe2fb4ce60be9005d7bfdd5665be03b8efb5b13
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 74a0f84590eefaf0b55941e8bd8c476b35cdd40b
-Message-Id: <166484542291.7481.3502643617185303980.pr-tracker-bot@kernel.org>
-Date:   Tue, 04 Oct 2022 01:03:42 +0000
-To:     Casey Schaufler <casey@schaufler-ca.com>
+X-PR-Merge-Commit-Id: e816da29bc0cf0504afddd314a2d71b694b5d7af
+Message-Id: <166484542304.7481.17443359591527469807.pr-tracker-bot@kernel.org>
+Date:   Tue, 04 Oct 2022 01:03:43 +0000
+To:     Paul Moore <paul@paul-moore.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Sat, 1 Oct 2022 07:35:55 -0700:
+The pull request you sent on Mon, 3 Oct 2022 16:44:56 -0400:
 
-> https://github.com/cschaufler/smack-next tags/Smack-for-6.1
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20221003
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/74a0f84590eefaf0b55941e8bd8c476b35cdd40b
+https://git.kernel.org/torvalds/c/e816da29bc0cf0504afddd314a2d71b694b5d7af
 
 Thank you!
 
