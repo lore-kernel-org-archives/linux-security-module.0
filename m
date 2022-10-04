@@ -2,69 +2,138 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 729D6C43217
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Oct 2022 18:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19770C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Oct 2022 19:53:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229928AbiJDSTH (ORCPT
+        id S229774AbiJDTx5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Oct 2022 14:19:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44844 "EHLO
+        Tue, 4 Oct 2022 15:53:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230058AbiJDSTC (ORCPT
+        with ESMTP id S229470AbiJDTx5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Oct 2022 14:19:02 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA912716D;
-        Tue,  4 Oct 2022 11:19:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ECA75B81B5D;
-        Tue,  4 Oct 2022 18:18:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A1C91C433D7;
-        Tue,  4 Oct 2022 18:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664907538;
-        bh=AIrUoDqg/M9+tdmX5ufBdihZXWm/+zf2ByElhwq5NDE=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=mE0c5ZwS6nRD64EennuevaW3U1NvrFa1/KhgtLsv6NwoTL9WxAMepL/1NmqV7sgDx
-         q8GKC14x7UoCiL8EWDvvi13ibjEMC0ghgq1zKUmvzf0DfBosNg7u+cNKmI1gsdHnbk
-         2zs/yZe8CE8Fq3ctozOiW1pFiH2CyzbTkKlRiO85sUDCgHX1qfzn3mEQzNYRLZQ2p9
-         HPTNfR1tS+FwBPzoni+xBzn72aiWnAMX5u+d5+Fm2e4qhiNqkYoK7JXWbGRxnDtVRg
-         Z/Fl+Yyzse6aUkk18Rdk5y6YibEo/3VtgJJuvqhv/hYZyp92thuY5y5zHOEi6G3yNF
-         p8kL0I8O0OCVA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 90903E21ED6;
-        Tue,  4 Oct 2022 18:18:58 +0000 (UTC)
-Subject: Re: [GIT PULL] Landlock updates for v6.1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20221004171414.974585-1-mic@digikod.net>
-References: <20221004171414.974585-1-mic@digikod.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20221004171414.974585-1-mic@digikod.net>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.1-rc1
-X-PR-Tracked-Commit-Id: 2fff00c81d4c37a037cf704d2d219fbcb45aea3c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 522667b24f08009591c90e75bfe2ffb67f555498
-Message-Id: <166490753858.15936.847758454163279583.pr-tracker-bot@kernel.org>
-Date:   Tue, 04 Oct 2022 18:18:58 +0000
-To:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+        Tue, 4 Oct 2022 15:53:57 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C72C86B156;
+        Tue,  4 Oct 2022 12:53:53 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id k6so15806920vsc.8;
+        Tue, 04 Oct 2022 12:53:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=xkszvkhII4xDvrxq+/QSArRSuSw7PRfJuBnEaKt781Y=;
+        b=RRbidPjdTfWfCfqlcBkFh3ZheGyIy0inBbR+XwnPPm3rEkG/L6+eDuGjBQkjgi5Weq
+         ElZkgAzwUFEcg8DTEuZBcCta0D/fesg/rm/Ebqo2jdsbLlvazTQlqMcRU1hOf4jDYycU
+         qr5z+z61cjUqAIJFDeqOFiGKdTONKIR3qtYOgAgHY3r0GFVUmDlgY1u9xUq+DZUZTX9Y
+         4e3UyzPMd89zhA3uKtY6I8Bh8P7rRaF5gG0pRSxfBMcg5IbE0cYuDmUbuU772LcqXlC7
+         8eaUe79dlaPiqY2WRBuKIw5jI3ihLdJnRTZieZ8/PbOqsDepzedVeQK6EQV0+38hbiiK
+         1TIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=xkszvkhII4xDvrxq+/QSArRSuSw7PRfJuBnEaKt781Y=;
+        b=iOec4ASiV2Dx/1ej2h4lxZ7tQEJSCq/z8/3G50jhFTgfMGKVH8wfWhPZuf7/F8sBYj
+         WNuXgI8Qih7AUPYUwR4ShyEa2QF129J3QeqAOThIIC8WjBG+oUTbxySrW3hZiDDa4wwS
+         4fsJkNWZLwLnqRwJnbXA54mvhceER9meFBXNbZJnQS5GCM3UQ6YlsQR6TirVeCdLRqnZ
+         MvqQQR950dfGYiLdmipofsbhEUN2SOBrVpgb+TtXaw71z2nRXw36zUnzn+0avkzCxEy5
+         Ccq+QIYKGns0/o/OKaEJLuZlnjN/pS/7FaU0X3O30TwCXxOMQXSPljlKSqmlr8L3md1v
+         8NyA==
+X-Gm-Message-State: ACrzQf29V09jFRPOQXOFYkw0930kPAwGSH0fBsMtf1RcQfxSKlk5J5aa
+        9asiNTnjOpxGM1DdwPUhqcE9syb0a2TSps2UKaWuHfna
+X-Google-Smtp-Source: AMsMyM5ryhcP5pfIqc3FnqJrgtKMD/iEU0XEHMXf1YVWjqD2uGz/z+gUNMBK6EPKlCtI70+7726pbTNC9P0g8Wt30BU=
+X-Received: by 2002:a05:6102:215a:b0:39a:c2c6:cc5d with SMTP id
+ h26-20020a056102215a00b0039ac2c6cc5dmr11212375vsg.61.1664913232751; Tue, 04
+ Oct 2022 12:53:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220929153041.500115-1-brauner@kernel.org> <20220929153041.500115-5-brauner@kernel.org>
+ <CAJfpegterbOyGGDbHY8LidzR45TTbhHdRG728mQQi_LaNMS3PA@mail.gmail.com>
+ <20220930090949.cl3ajz7r4ub6jrae@wittgenstein> <CAJfpegsu9r84J-3wN=z8OOzHd+7YRBn9CNFMDWSbftCEm0e27A@mail.gmail.com>
+In-Reply-To: <CAJfpegsu9r84J-3wN=z8OOzHd+7YRBn9CNFMDWSbftCEm0e27A@mail.gmail.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Tue, 4 Oct 2022 14:53:41 -0500
+Message-ID: <CAH2r5muRDdy1s4xS7bHePEF3t84qGaX3rDXUgGLY1k_XG4vuAg@mail.gmail.com>
+Subject: Re: [PATCH v4 04/30] fs: add new get acl method
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-security-module@vger.kernel.org,
+        Steve French <sfrench@samba.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Tue,  4 Oct 2022 19:14:14 +0200:
+On Fri, Sep 30, 2022 at 5:06 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> On Fri, 30 Sept 2022 at 11:09, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Fri, Sep 30, 2022 at 10:53:05AM +0200, Miklos Szeredi wrote:
+> > > On Thu, 29 Sept 2022 at 17:31, Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > > This adds a new ->get_acl() inode operations which takes a dentry
+> > > > argument which filesystems such as 9p, cifs, and overlayfs can implement
+> > > > to get posix acls.
+...
+> > > So what's the difference and why do we need both?  If one can retrive
+> > > the acl without dentry, then why do we need the one with the dentry?
+> >
+> > The ->get_inode_acl() method is called during generic_permission() and
+> > inode_permission() both of which are called from various filesystems in
+> > their ->permission inode operations. There's no dentry available during
+> > the permission inode operation and there are filesystems like 9p and
+> > cifs that need a dentry.
+>
+> This doesn't answer the question about why we need two for overlayfs
+> and what's the difference between them.
+> >
+> > > If a filesystem cannot implement a get_acl() without a dentry, then
+> > > what will happen to caller's that don't have a dentry?
+> >
+> > This happens today for cifs where posix acls can be created and read but
+> > they cannot be used for permission checking where no inode is available.
+> > New filesystems shouldn't have this issue.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.1-rc1
+Can you give an example of this?   How can you read an ACL without an
+inode or open file struct?  ACL wouldn't fit in a dentry right?  By
+the way there is an option that we can use on open to return the
+"maximal access" that that user/group has for the file (a 32 bit mask
+showing whether the effective user has read, write, append, read
+attributes, write acl etc. permissions).  Would this be helpful for
+you to have us do when you revalidate dentries?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/522667b24f08009591c90e75bfe2ffb67f555498
+> That's weird, how does it make sense to set acl on a filesystem that
+> cannot use it for permission checking?   Maybe the permission checking
+> is done by the server?
+>
+> Steve?
 
-Thank you!
+It doesn't do much good to check if user1 on client1 can access the
+file on server if any user on client2 can access the file - unless the
+server is checking ACLs, so the server checks are the more important
+ones.
+
+The permission checking on the client doesn't really matter in many
+scenarios (the security checks that matter are usually only on the
+server).    The ACLs are stored on the server and evaluated by the
+server so duplicating ACL evaluation on BOTH client and server only
+helps in cases where the server doesn't know who the local Linux user
+is (e.g. single user mounts - where all local users use the same
+authenticated session).  It is common e.g. to mount with "noperm"
+mount option - in which case the client checks are turned off (since
+the server ones are the checks that matter the most).
+
+Note that the SMB3 protocol (and also NFSv4.1/4.2) support a richer
+ACL model on the server that is more secure (or at least more
+granular) in some scenarios than the simpler POSIX ACL model.
+
+Are there examples of how this would work for the richacl examples
+(e.g. NFSv4.1/4.2 or cifs.ko or NTFS or ...)?
+
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thanks,
+
+Steve
