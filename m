@@ -2,60 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4065C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Oct 2022 13:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5AAC433FE
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Oct 2022 14:20:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229518AbiJDNjj (ORCPT
+        id S229564AbiJDOUM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Oct 2022 09:39:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55960 "EHLO
+        Tue, 4 Oct 2022 10:20:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229621AbiJDNjQ (ORCPT
+        with ESMTP id S229523AbiJDOUL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Oct 2022 09:39:16 -0400
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9640A564F0;
-        Tue,  4 Oct 2022 06:39:07 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Mhf1h2yB1z4xHW;
-        Wed,  5 Oct 2022 00:39:04 +1100 (AEDT)
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-To:     Nathan Lynch <nathanl@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        Tue, 4 Oct 2022 10:20:11 -0400
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 718D51401E
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Oct 2022 07:20:08 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Mhfp3314rz9v7Vl;
+        Tue,  4 Oct 2022 22:14:03 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwA3L5MDQTxj4XuZAA--.43765S2;
+        Tue, 04 Oct 2022 15:19:53 +0100 (CET)
+Message-ID: <f3ec924e5617b78488c51402fe6fdae66d4a41f6.camel@huaweicloud.com>
+Subject: Re: [PATCH v5 2/2] ima: Handle -ESTALE returned by
+ ima_filter_rule_match()
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        "Guozihua (Scott)" <guozihua@huawei.com>,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     nayna@linux.ibm.com, jmorris@namei.org, paul@paul-moore.com,
-        ajd@linux.ibm.com, serge@hallyn.com, gcwilson@linux.ibm.com,
-        mpe@ellerman.id.au
-In-Reply-To: <20220926131643.146502-1-nathanl@linux.ibm.com>
-References: <20220926131643.146502-1-nathanl@linux.ibm.com>
-Subject: Re: [PATCH v2 0/2] powerpc/pseries: restrict error injection and DT changes when locked down
-Message-Id: <166488995179.779920.16022330580724234832.b4-ty@ellerman.id.au>
-Date:   Wed, 05 Oct 2022 00:25:51 +1100
+        Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Tue, 04 Oct 2022 16:19:44 +0200
+In-Reply-To: <5e304b17fe709d2b2f30b991d5ffc4711d27a075.camel@linux.ibm.com>
+References: <20220921125804.59490-1-guozihua@huawei.com>
+         <20220921125804.59490-3-guozihua@huawei.com>
+         <ce948f9e5639345026679b31a818cc12a247ce60.camel@linux.ibm.com>
+         <77c9c86b-85a6-aa87-e084-59a70bb47167@huawei.com>
+         <f321c638bf5572088a8c5e4d7027c3a797bdd568.camel@linux.ibm.com>
+         <7ac3e330-e77c-95d8-7d3b-29e243b57251@huawei.com>
+         <5e304b17fe709d2b2f30b991d5ffc4711d27a075.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwA3L5MDQTxj4XuZAA--.43765S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrur1xAFykXF18uw4kur4xtFb_yoWftFg_ur
+        ZayFykAw4UJFZ7Ja9xKrWYqrWfKFyj9rn8AryrKwnxJrn5ZF4xWrs5urnFyr4kGa4vq3sx
+        Grs7Aa43Awsa9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUboxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+        AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+        AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
+        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
+        IF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnI
+        WIevJa73UjIFyTuYvjxUrR6zUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBF1jj3-SdAABsg
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 26 Sep 2022 08:16:41 -0500, Nathan Lynch wrote:
-> Add two new lockdown reasons for use in powerpc's pseries platform
-> code.
+On Wed, 2022-09-28 at 10:11 -0400, Mimi Zohar wrote:
+> On Sat, 2022-09-24 at 14:05 +0800, Guozihua (Scott) wrote:
 > 
-> The pseries platform allows hardware-level error injection via certain
-> calls to the RTAS (Run Time Abstraction Services) firmware. ACPI-based
-> error injection is already restricted in lockdown; this facility
-> should be restricted for the same reasons.
+> > I might have overlooked something, but if I understands the code 
+> > correctly, we would be copying the same rule over and over again
+> > till 
+> > the loop ends in that case. ima_lsm_update_rule() would replace the
+> > rule 
+> > node on the rule list without updating the rule in place. Although 
+> > synchronize_rcu() should prevent a UAF, the rule in
+> > ima_match_rules() 
+> > would not be updated. Meaning SELinux would always return -ESTALE
+> > before 
+> > we copy and retry as we keep passing in the outdated rule entry.
 > 
-> [...]
+> After reviewing this patch set again, the code looks fine.  The
+> commit
+> message is still a bit off, but I've pushed the patch set out to
+> next-
+> integrity-testing, waiting for some Reviewed-by/Tested-by tags.
 
-Applied to powerpc/next.
+The patches look ok for me. For both:
 
-[1/2] powerpc/pseries: block untrusted device tree changes when locked down
-      https://git.kernel.org/powerpc/c/99df7a2810b6d24651d4887ab61a142e042fb235
-[2/2] powerpc/rtas: block error injection when locked down
-      https://git.kernel.org/powerpc/c/b8f3e48834fe8c86b4f21739c6effd160e2c2c19
+Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-cheers
+Roberto
+
