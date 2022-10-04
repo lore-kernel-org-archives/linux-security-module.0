@@ -2,183 +2,211 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CD1C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Oct 2022 19:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D06CEC433FE
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Oct 2022 20:37:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229496AbiJDT45 (ORCPT
+        id S229530AbiJDUhE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Oct 2022 15:56:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56238 "EHLO
+        Tue, 4 Oct 2022 16:37:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiJDT44 (ORCPT
+        with ESMTP id S229500AbiJDUhD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Oct 2022 15:56:56 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3239969F57;
-        Tue,  4 Oct 2022 12:56:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 9472FCE1130;
-        Tue,  4 Oct 2022 19:56:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A4A3C433D6;
-        Tue,  4 Oct 2022 19:56:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664913411;
-        bh=GfL4r5h9LYSL1i5p8SAT7q2qLfvRM5YkSsR0KjXVu+M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rBUNsZ9hVYedW7xKP9DiO2+4sPO6Q61rlPFC/mcSTbnb0ioBzyG6DS0lCI0PWqQrE
-         7XbHJYYH43giSEv0RtYgqqFxQSdieZVXiZc+GVveL8Fx1Us3QxODQw74yRqsMBn1bE
-         umvSorfHBTcucEbFqGmtNWcksXrTAU90HrDKJNWe9qAuvt2CN6vMEdpdSB852MsKJF
-         5jgkyN/8JQZSleBVu9NueFpwyHbuLPp6jo8OD/gJv39dL6l7ex6ZXotAg+hhszr3YM
-         IF17xttGdStUMZg/DdG99YyYhF+vDpP90ZQh4j3OqRanTMou/PKtubN9qIif8CVLau
-         YPYsLJJtGGGiQ==
-Date:   Tue, 4 Oct 2022 12:56:49 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH v8 4/9] landlock: Support file truncation
-Message-ID: <YzyQASSaeVqRlTsO@dev-arch.thelio-3990X>
-References: <20221001154908.49665-1-gnoack3000@gmail.com>
- <20221001154908.49665-5-gnoack3000@gmail.com>
+        Tue, 4 Oct 2022 16:37:03 -0400
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1585E5072B;
+        Tue,  4 Oct 2022 13:37:01 -0700 (PDT)
+Received: from in01.mta.xmission.com ([166.70.13.51]:48246)
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1ofoex-002GnZ-Me; Tue, 04 Oct 2022 14:36:59 -0600
+Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:35366 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1ofoew-006tp6-DP; Tue, 04 Oct 2022 14:36:59 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAHC9VhShpEVTuogj4h74PxbEeTUNn4odo8SE6GBvb6sGUM0LHw@mail.gmail.com>
+Date:   Tue, 04 Oct 2022 15:36:14 -0500
+In-Reply-To: <CAHC9VhShpEVTuogj4h74PxbEeTUNn4odo8SE6GBvb6sGUM0LHw@mail.gmail.com>
+        (Paul Moore's message of "Mon, 3 Oct 2022 18:37:59 -0400")
+Message-ID: <87sfk3mim9.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221001154908.49665-5-gnoack3000@gmail.com>
+Content-Type: text/plain
+X-XM-SPF: eid=1ofoew-006tp6-DP;;;mid=<87sfk3mim9.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX1/CNA2V/chByfUqrnUOWta2brEHwV7NaoA=
+X-SA-Exim-Connect-IP: 68.110.29.46
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [GIT PULL] LSM patches for v6.1
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Günther,
 
-On Sat, Oct 01, 2022 at 05:49:03PM +0200, Günther Noack wrote:
-> Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
-> 
-> This flag hooks into the path_truncate LSM hook and covers file
-> truncation using truncate(2), ftruncate(2), open(2) with O_TRUNC, as
-> well as creat().
-> 
-> This change also increments the Landlock ABI version, updates
-> corresponding selftests, and updates code documentation to document
-> the flag.
-> 
-> The following operations are restricted:
-> 
-> open(): requires the LANDLOCK_ACCESS_FS_TRUNCATE right if a file gets
-> implicitly truncated as part of the open() (e.g. using O_TRUNC).
-> 
-> Notable special cases:
-> * open(..., O_RDONLY|O_TRUNC) can truncate files as well in Linux
-> * open() with O_TRUNC does *not* need the TRUNCATE right when it
->   creates a new file.
-> 
-> truncate() (on a path): requires the LANDLOCK_ACCESS_FS_TRUNCATE
-> right.
-> 
-> ftruncate() (on a file): requires that the file had the TRUNCATE right
-> when it was previously opened.
-> 
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+Linus,
+Please don't pull the user namespace bits of this code.
 
-I just bisected a crash in QEMU with Debian's arm64 configuration to
-this change in -next as commit b40deebe7679 ("landlock: Support file
-truncation"), which I was able to reproduce like so:
+Paul Moore <paul@paul-moore.com> writes:
 
-$ mkdir -p build/deb
+> Hi Linus,
+>
+> - Add a LSM hook for user namespace creation, with implementations for
+> both the BPF LSM and SELinux.  Even though the changes are fairly
+> small, this is the bulk of the diffstat as we are also including BPF
+> LSM selftests for the new hook.  It's also the most contentious of the
+> changes in this pull request with Eric Biederman NACK'ing the LSM hook
+> multiple times during its development and discussion upstream.  While
+> I've never taken NACK's lightly, I'm sending these patches to you
+> because it is my belief that they are of good quality, satisfy a
+> long-standing need of users and distros, and are in keeping with the
+> existing nature of the LSM layer and the Linux Kernel as a whole.  The
+> patches in this pull request implement a LSM hook for user namespace
+> creation that allows for a granular approach, configurable at runtime,
+> which enables both monitoring and control of user namespaces.  The
+> general consensus has been that this is far preferable to the other
+> solutions that have been adopted downstream including outright removal
+> from the kernel, disabling via system wide sysctls, or various other
+> out-of-tree mechanisms that users have been forced to adopt since we
+> haven't been able to provide them an upstream solution for their
+> requests.
+>
+> Eric has been steadfast in his objections to this LSM hook,
+> explaining that any restrictions on the user namespace could have
+> significant impact on userspace.  While there is the possibility of
+> impacting userspace, it is important to note that this solution only
+> impacts userspace when it is requested based on the runtime
+> configuration supplied by the distro/admin/user.
 
-$ cd build/deb
 
-$ curl -LSsO http://ftp.us.debian.org/debian/pool/main/l/linux-signed-arm64/linux-image-5.19.0-2-arm64_5.19.11-1_arm64.deb
 
-$ ar x linux-image-5.19.0-2-arm64_5.19.11-1_arm64.deb
+> Frederick (the
+> pathset author), the LSM/security community, and myself have tried to
+> work with Eric during development of this patchset to find a mutually
+> acceptable solution, but Eric's approach and unwillingness to engage
+> in a meaningful way have made this impossible.  I have CC'd Eric
+> directly on this pull request so he has a chance to provide his side
+> of the story; there have been no objections outside of Eric's.
 
-$ tar xJf data.tar.xz
+Paul I am not unwilling.  I have not had much time, or energy.
+It feels like every disease that has been going around has made
+it's way into my household in the last couple of months.  Including
+my son catching COVID just a little while ago.  Inspite of that
+I have taken time to engage but the things I have asked for
+have not happened, so I have started nacking the patchset.
 
-$ cp boot/config-5.19.0-2-arm64 ../.config
 
-$ cd ../..
+I have asked on multiple occasions what the problem that is being solved
+with this hook so I could understand the problem, and I have asked that
+the problem be documented in the patchset.  Something that has not
+happened.
 
-$ make -skj"$(nproc)" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- O=build olddefconfig Image.gz
 
-$ qemu-system-aarch64 \
--machine virt,gic-version=max,virtualization=true \
--cpu max,pauth-impdef=true \
--kernel build/arch/arm64/boot/Image.gz \
--append "console=ttyAMA0 earlycon" \
--display none \
--initrd .../rootfs.cpio \
--m 512m \
--nodefaults \
--no-reboot \
--serial mon:stdio
-...
-[    0.000000] Linux version 6.0.0-rc7+ (nathan@dev-arch.thelio-3990X) (aarch64-linux-gnu-gcc (GCC) 12.2.0, GNU ld (GNU Binutils) 2.39) #1 SMP Tue Oct 4 12:48:50 MST 2022
-...
-[    0.518570] Unable to handle kernel paging request at virtual address ffff00000851ff8a
-[    0.518785] Mem abort info:
-[    0.518867]   ESR = 0x0000000097c0c061
-[    0.519001]   EC = 0x25: DABT (current EL), IL = 32 bits
-[    0.519155]   SET = 0, FnV = 0
-[    0.519267]   EA = 0, S1PTW = 0
-[    0.519386]   FSC = 0x21: alignment fault
-[    0.519524] Data abort info:
-[    0.519615]   Access size = 8 byte(s)
-[    0.519722]   SSE = 0, SRT = 0
-[    0.519817]   SF = 1, AR = 1
-[    0.519920]   CM = 0, WnR = 1
-[    0.520040] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000041711000
-[    0.520225] [ffff00000851ff8a] pgd=180000005fff8003, p4d=180000005fff8003, pud=180000005fff7003, pmd=180000005ffbd003, pte=006800004851ff07
-[    0.521121] Internal error: Oops: 97c0c061 [#1] SMP
-[    0.521364] Modules linked in:
-[    0.521592] CPU: 0 PID: 9 Comm: kworker/u2:0 Not tainted 6.0.0-rc7+ #1
-[    0.521863] Hardware name: linux,dummy-virt (DT)
-[    0.522325] Workqueue: events_unbound async_run_entry_fn
-[    0.522973] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    0.523193] pc : apparmor_file_alloc_security+0x98/0x1e0
-[    0.523431] lr : apparmor_file_alloc_security+0x48/0x1e0
-[    0.523594] sp : ffff800008093960
-[    0.523708] x29: ffff800008093960 x28: ffff800008093b30 x27: ffff000002602600
-[    0.523978] x26: ffffd79796ecf8c0 x25: ffff00000241e705 x24: ffffd79797d98068
-[    0.524199] x23: ffff00000851ff82 x22: ffff00000851ff80 x21: 0000000000000002
-[    0.524431] x20: ffffd79796ff5000 x19: ffff00000241ceb0 x18: ffffffffffffffff
-[    0.524647] x17: 000000000000003f x16: ffffd79797678008 x15: 0000000000000000
-[    0.524850] x14: 0000000000000001 x13: 0000000000000000 x12: 0000000000000006
-[    0.525087] x11: ffff00001feef940 x10: ffffd7979768f8a0 x9 : ffffd79796c1e51c
-[    0.525325] x8 : ffff00000851ffa0 x7 : 0000000000000000 x6 : 0000000000001e0b
-[    0.525531] x5 : ffff00000851ff80 x4 : ffff800008093990 x3 : ffff000002419700
-[    0.525745] x2 : 0000000000000001 x1 : ffff00000851ff8a x0 : ffff00000241ceb0
-[    0.526034] Call trace:
-[    0.526166]  apparmor_file_alloc_security+0x98/0x1e0
-[    0.526424]  security_file_alloc+0x6c/0xf0
-[    0.526570]  __alloc_file+0x5c/0xf0
-[    0.526699]  alloc_empty_file+0x68/0x10c
-[    0.526816]  path_openat+0x50/0x106c
-[    0.526929]  do_filp_open+0x88/0x13c
-[    0.527041]  filp_open+0x110/0x1b0
-[    0.527143]  do_name+0xbc/0x230
-[    0.527256]  write_buffer+0x40/0x60
-[    0.527359]  unpack_to_rootfs+0x100/0x2bc
-[    0.527479]  do_populate_rootfs+0x70/0x134
-[    0.527602]  async_run_entry_fn+0x40/0x1c0
-[    0.527723]  process_one_work+0x1f4/0x450
-[    0.527851]  worker_thread+0x188/0x4c0
-[    0.527980]  kthread+0xe0/0xe4
-[    0.528066]  ret_from_fork+0x10/0x20
-[    0.528317] Code: 52800002 d2800000 d2800013 910022e1 (c89ffc20)
-[    0.528736] ---[ end trace 0000000000000000 ]---
-...
+I have told you that from a this violates the design of the user
+namespace, and said that because of that this is not something that
+should be done casually, and it feels like you have simply brushed aside
+the objection.  Instead of doing digging into this and showing that
+this change to the design won't enable new problems.
 
-A rootfs is available at [1] but I don't think it should be necessary
-for reproducing this. If there is any additional information I can
-provide or patches I can test, I am more than happy to do so!
 
-[1]: https://github.com/ClangBuiltLinux/boot-utils/raw/bf2fd3500d87f78a914bfc3769b2240f5632e5b9/images/arm64/rootfs.cpio.zst
 
-Cheers,
-Nathan
+From my limited amount of information I have into what people want to do
+this appears to be shooting the messenger (the user namespace), given
+that there is practically nothing to the user namespace itself.
+
+This can be seen by considering a version of the linux kernel that does
+not support privilege changes on exec.  In such a kernel everything that
+is enabled as root in a user namespace would largely be enabled for all
+applications all of the time.  As with user namespaces the only
+restriction really needed is not to be able to modify a namespace
+created by another user.  In such a kernel I strongly suspect the
+problem that is trying to be solved by the create_user_ns hook is not
+being solved.
+
+
+
+There is the issue that Serge Hallyn demonstrated that if the concern is
+about exploiting functionality the user namespace makes available
+then setns is enough, if the user ever creates a user namespace for
+any purpose.  Which makes fine grained limiting of user namespace
+creation seem questionable.
+
+
+There is the issue that you are adding a hook into the code user
+namespace for out of tree code (LSM policies).  Code that has not shown
+itself to be particularly fixable once a buggy version is deployed.
+Examples of long time code challenges because of such out of tree code
+include /proc/net pointing to /proc/self/net instead of
+/proc/thread-self/net, and the same_thread_group check in
+__ptrace_may_access.  When I added that same_thread_group check in
+__ptrace_may_access I got the impression the LSM folks were going to fix
+their LSMs so that it could be removed.
+
+Usually when adding something for out of tree code, it is appropriate
+to have a discussion on linux-api and to document the change.  Something
+you have not done.
+
+
+As a maintainer I am still getting bug reports about software that
+attempts to lock down a container without using user namespaces.
+I have to tell them the fix is use user namespaces.  I am concerned
+that there will be random policies in place that encourage people
+to perform less secure work-arounds in their user space applications
+to get around whatever security polices will be invoked.  Something I
+have not seen addressed.
+
+
+This whole notion that you are going to randomly deny access to the user
+namespace for random reasons and aren't willing to discuss those reasons
+makes me supremely uncomfortable, and has me thinking that it will
+result in a choice of maintaining user namespaces or breaking userspace
+at some point.  I would really like some reassurance that we are not
+going in that direction.
+
+
+
+There is also the issue of the what happens in practice when you deny
+creation of a user namespace.  Something I have asked to be explored,
+and to which I have seen no one take the time and do.  Something that
+won't happen in linux-next as the userspace polices that trigger the
+new behavior are not there.
+
+As far as I can tell there are a couple of scenarios that can
+happen if you deny creation of a user namespace to an application.
+
+1. It will decide it does not have what it needs and exit.
+2. It will silently fallback on pre-usernamespace code that does
+   not use a sandbox.  In my testing this is what chrome appears
+   to do.
+3. It won't try and create a user namespace so nothing happens.
+4. It will be an program searching for a kernel exploit and it will
+   just try another way to exploit the system.
+
+Given that some applications will become less secure when denied access
+to user namespace creation killing those applications with an
+uncatchable signal rather than letting continue silently seems more
+appropriate.  I suggested this but the suggestion received no traction
+in our discussion.
+
+Now that I have taken the time to verify my suspicions I am going to be
+modifying the enforcement of max_user_namespaces to user an uncatchable
+signal.  The entire notion of tricking an application to thinking it is
+running on an old kernel that does not support user namespaces,
+resulting in a silent down-grade of application security does not make
+me at all comfortable.
+
+
+As someone who is going to have to deal with the aftermath of adding
+this security hook in the years ahead I would really appreciate that we
+think these things through before we merge this and wind up in a very
+unpleasant situation with no good choices in the years ahead.
+
+I hope I have made my objections clear enough that they can be
+understood this time around.
+
+Eric
