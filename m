@@ -2,98 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 283DEC433F5
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Oct 2022 07:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 207BAC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Oct 2022 10:04:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbiJEHP1 (ORCPT
+        id S229831AbiJEKEe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Oct 2022 03:15:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53744 "EHLO
+        Wed, 5 Oct 2022 06:04:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229791AbiJEHPS (ORCPT
+        with ESMTP id S229548AbiJEKEd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Oct 2022 03:15:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F811F612;
-        Wed,  5 Oct 2022 00:15:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5AA4161591;
-        Wed,  5 Oct 2022 07:15:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7BC1C433D6;
-        Wed,  5 Oct 2022 07:15:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664954113;
-        bh=jHllR/gyYN/9+h7RHJKtJlpYxKNsfGctLD7XiiybBnI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CGb8Ci/7XvGiVBsfghO4RYoI8qMvWh5rpO8rsCHQA/aJ4apgzRDCKUbhlAsXsfhta
-         xmY6+s4PYxNkBcYAP4wFFvWo1bzidaS8KdQQrhm/w4NR97hq/mFhRjva8+bHRgb5w3
-         r6Oc/Q7InlHMhqN/n7iMoNY2ALIo1YdTJk5Z+jmG+EUQ4R5kHtVotFTXJRnWQdn32r
-         hzLTp6bzvgvvdow6/oCaNckXmK5CUT+dANAlfMIisN2TNRlApfEcKSbrP+U0uHQUfO
-         qKOJGivJtAXxcPRQOWCcxaMOufuPdOCKsyfryxsBVOD1s+lxGwXzI/THus0eG8EnQe
-         pwg35EVchR6KA==
-Date:   Wed, 5 Oct 2022 09:15:08 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Steve French <smfrench@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Wed, 5 Oct 2022 06:04:33 -0400
+Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 193F05726D;
+        Wed,  5 Oct 2022 03:04:30 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id 80BDB10D3; Wed,  5 Oct 2022 12:04:22 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.steuer-voss.de (Postfix) with ESMTP id 7DFAB10D2;
+        Wed,  5 Oct 2022 12:04:22 +0200 (CEST)
+Date:   Wed, 5 Oct 2022 12:04:22 +0200 (CEST)
+From:   Nikolaus Voss <nv@vosn.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+cc:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Steve French <sfrench@samba.org>
-Subject: Re: [PATCH v4 04/30] fs: add new get acl method
-Message-ID: <20221005071508.lc7qg6cffqrhbc4d@wittgenstein>
-References: <20220929153041.500115-1-brauner@kernel.org>
- <20220929153041.500115-5-brauner@kernel.org>
- <CAJfpegterbOyGGDbHY8LidzR45TTbhHdRG728mQQi_LaNMS3PA@mail.gmail.com>
- <20220930090949.cl3ajz7r4ub6jrae@wittgenstein>
- <CAJfpegsu9r84J-3wN=z8OOzHd+7YRBn9CNFMDWSbftCEm0e27A@mail.gmail.com>
- <CAH2r5muRDdy1s4xS7bHePEF3t84qGaX3rDXUgGLY1k_XG4vuAg@mail.gmail.com>
+        linux-kernel@vger.kernel.org, Yael Tzur <yaelt@google.com>
+Subject: Re: [PATCH] KEYS: encrypted: fix key instantiation with user-provided
+ data
+In-Reply-To: <42dbb8f6bc0a3e8339a5283bf26a50bd7bec3767.camel@linux.ibm.com>
+Message-ID: <aac62bfc-2425-ffeb-1c49-e0963bdbfa99@vosn.de>
+References: <20220919072317.E41421357@mail.steuer-voss.de>    <53730789a41358673b1715dd650706e9ffcb1199.camel@linux.ibm.com>    <35fd816-d755-967-5712-b5496875ac7a@vosn.de>   <2ee1e3e68d847001c4bf856d980a553e52de5023.camel@linux.ibm.com>  
+ <439012d8-dd4-7fd2-3788-49cf72faa99@vosn.de>  <6b4229386dced275f745619f190f64a71b7c0aec.camel@linux.ibm.com>  <2fe0144d-ee19-ec17-9566-16bce6386925@vosn.de> <42dbb8f6bc0a3e8339a5283bf26a50bd7bec3767.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAH2r5muRDdy1s4xS7bHePEF3t84qGaX3rDXUgGLY1k_XG4vuAg@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 04, 2022 at 02:53:41PM -0500, Steve French wrote:
-> On Fri, Sep 30, 2022 at 5:06 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Fri, 30 Sept 2022 at 11:09, Christian Brauner <brauner@kernel.org> wrote:
-> > >
-> > > On Fri, Sep 30, 2022 at 10:53:05AM +0200, Miklos Szeredi wrote:
-> > > > On Thu, 29 Sept 2022 at 17:31, Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > > This adds a new ->get_acl() inode operations which takes a dentry
-> > > > > argument which filesystems such as 9p, cifs, and overlayfs can implement
-> > > > > to get posix acls.
-> ...
-> > > > So what's the difference and why do we need both?  If one can retrive
-> > > > the acl without dentry, then why do we need the one with the dentry?
-> > >
-> > > The ->get_inode_acl() method is called during generic_permission() and
-> > > inode_permission() both of which are called from various filesystems in
-> > > their ->permission inode operations. There's no dentry available during
-> > > the permission inode operation and there are filesystems like 9p and
-> > > cifs that need a dentry.
-> >
-> > This doesn't answer the question about why we need two for overlayfs
-> > and what's the difference between them.
-> > >
-> > > > If a filesystem cannot implement a get_acl() without a dentry, then
-> > > > what will happen to caller's that don't have a dentry?
-> > >
-> > > This happens today for cifs where posix acls can be created and read but
-> > > they cannot be used for permission checking where no inode is available.
-> > > New filesystems shouldn't have this issue.
-> 
-> Can you give an example of this?   How can you read an ACL without an
-> inode or open file struct?  ACL wouldn't fit in a dentry right?  By
+On Wed, 28 Sep 2022, Mimi Zohar wrote:
+> On Wed, 2022-09-28 at 14:08 +0200, Nikolaus Voss wrote:
+>> On Wed, 21 Sep 2022, Mimi Zohar wrote:
+>>> On Wed, 2022-09-21 at 09:24 +0200, Nikolaus Voss wrote:
+>>>> On Tue, 20 Sep 2022, Mimi Zohar wrote:
+>>>>> On Tue, 2022-09-20 at 18:23 +0200, Nikolaus Voss wrote:
+>>>>>> On Tue, 20 Sep 2022, Mimi Zohar wrote:
+>>>>>>> On Fri, 2022-09-16 at 07:45 +0200, Nikolaus Voss wrote:
+>>>>>>>> Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
+>>>>>>>> decrypted data") added key instantiation with user provided decrypted data.
+>>>>>>>> The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
+>>>>>>>> Fix this to use hex2bin instead.
+>>>>>>>
+>>>>>>> Thanks, Nikolaus.  We iterated a number of times over what would be the
+>>>>>>> safest userspace input.  One of the last changes was that the key data
+>>>>>>> should be hex-ascii-encoded.  Unfortunately, the LTP
+>>>>>>> testcases/kernel/syscalls/keyctl09.c example isn't hex-ascii-encoded
+>>>>>>> and the example in Documentation/security/keys/trusted-encrypted.rst
+>>>>>>> just cat's a file.  Both expect the length to be the length of the
+>>>>>>> userspace provided data.   With this patch, when hex2bin() fails, there
+>>>>>>> is no explanation.
+>>>>>>
+>>>>>> That's true. But it's true for all occurrences of hex2bin() in this file.
+>>>>>> I could pr_err() an explanation, improve the trusted-encrypted.rst example
+>>>>>> and respin the patch. Should I, or do you have another suggestion?
+>>>>>
+>>>>>> I wasn't aware of keyctl09.c, but quickly looking into it, the user data
+>>>>>> _is_ hex-ascii-encoded, only the length is "wrong": Imho, the specified
+>>>>>> length should be the binary length as this is consistent with key-length
+>>>>>> specs in other cases (e.g. when loading the key from a blob).
+>>>>>> keyctl09.c could be easy to fix, if only the length is modified. Should
+>>>>>> I propose a patch? What is the correct/appropriate workflow there?
+>>>>>
+>>>>> I'm concerned that this change breaks existing encrypted keys created
+>>>>> with user-provided data.  Otherwise I'm fine with your suggestion.
+>>>>
+>>>> Ok, but this change does not touch the hex-ascii format of encrypted key
+>>>> blobs?
+>>>
+>>> True, but any persistent data based on this key would be affected.
+>>
+>> Persistent data is stored encypted with e.g. the master key in hex-ascii
+>> already and should not be affected. Only persistent data stored
+>> unencrypted is affected, but the encrypted-keys stuff is just about
+>> avoiding that. Or do I still misunderstand something?
+>
+> Perhaps an existing encrypted key usage example would help clarify what
+> is meant by persistent data.  The two original encrypted key usages are
+> the EVM HMAC key and ecryptfs.  The EVM key is an encrypted key used to
+> calculate the EVM HMAC, which is stored in security.evm.  In that
+> scenario, the persistent data would be the data stored in security.evm.
+>
+> Would this patch break existing kernel/application persistent data
+> based on encrypted keys created with user-provided data?
 
-We're just talking about thet fact that
-{g,s}etxattr(system.posix_acl_{access,default}) work on cifs but
-getting acls based on inode operations isn't supported. Consequently you
-can't use the acls for permission checking in the vfs for cifs. If as
-you say below that's intentional because the client doesn't perform
-access checks then that's probably fine.
+As far as I can tell, it does not.
+
+Niko
