@@ -2,102 +2,140 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 207BAC4332F
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Oct 2022 10:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A55DC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Oct 2022 12:39:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229831AbiJEKEe (ORCPT
+        id S229942AbiJEMj1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Oct 2022 06:04:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56804 "EHLO
+        Wed, 5 Oct 2022 08:39:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229548AbiJEKEd (ORCPT
+        with ESMTP id S229507AbiJEMj0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Oct 2022 06:04:33 -0400
-Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 193F05726D;
-        Wed,  5 Oct 2022 03:04:30 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id 80BDB10D3; Wed,  5 Oct 2022 12:04:22 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.steuer-voss.de (Postfix) with ESMTP id 7DFAB10D2;
-        Wed,  5 Oct 2022 12:04:22 +0200 (CEST)
-Date:   Wed, 5 Oct 2022 12:04:22 +0200 (CEST)
-From:   Nikolaus Voss <nv@vosn.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-cc:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yael Tzur <yaelt@google.com>
-Subject: Re: [PATCH] KEYS: encrypted: fix key instantiation with user-provided
- data
-In-Reply-To: <42dbb8f6bc0a3e8339a5283bf26a50bd7bec3767.camel@linux.ibm.com>
-Message-ID: <aac62bfc-2425-ffeb-1c49-e0963bdbfa99@vosn.de>
-References: <20220919072317.E41421357@mail.steuer-voss.de>    <53730789a41358673b1715dd650706e9ffcb1199.camel@linux.ibm.com>    <35fd816-d755-967-5712-b5496875ac7a@vosn.de>   <2ee1e3e68d847001c4bf856d980a553e52de5023.camel@linux.ibm.com>  
- <439012d8-dd4-7fd2-3788-49cf72faa99@vosn.de>  <6b4229386dced275f745619f190f64a71b7c0aec.camel@linux.ibm.com>  <2fe0144d-ee19-ec17-9566-16bce6386925@vosn.de> <42dbb8f6bc0a3e8339a5283bf26a50bd7bec3767.camel@linux.ibm.com>
+        Wed, 5 Oct 2022 08:39:26 -0400
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A018440E3F;
+        Wed,  5 Oct 2022 05:39:25 -0700 (PDT)
+Received: from in02.mta.xmission.com ([166.70.13.52]:53254)
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1og3gJ-00BjAv-M8; Wed, 05 Oct 2022 06:39:23 -0600
+Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:50842 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1og3gI-00CVVW-HM; Wed, 05 Oct 2022 06:39:23 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAHC9VhShpEVTuogj4h74PxbEeTUNn4odo8SE6GBvb6sGUM0LHw@mail.gmail.com>
+        <87sfk3mim9.fsf@email.froward.int.ebiederm.org>
+        <CAHk-=wiCqicQrnQPeHbDF7ECKHk_ceYzZK5dYq7y5nZTZhpB8g@mail.gmail.com>
+Date:   Wed, 05 Oct 2022 07:38:45 -0500
+In-Reply-To: <CAHk-=wiCqicQrnQPeHbDF7ECKHk_ceYzZK5dYq7y5nZTZhpB8g@mail.gmail.com>
+        (Linus Torvalds's message of "Tue, 4 Oct 2022 13:55:17 -0700")
+Message-ID: <87r0zmigx6.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain
+X-XM-SPF: eid=1og3gI-00CVVW-HM;;;mid=<87r0zmigx6.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX18MKibCyEaL4f/gAWn5QHd12mbofl/2n5I=
+X-SA-Exim-Connect-IP: 68.110.29.46
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [GIT PULL] LSM patches for v6.1
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 28 Sep 2022, Mimi Zohar wrote:
-> On Wed, 2022-09-28 at 14:08 +0200, Nikolaus Voss wrote:
->> On Wed, 21 Sep 2022, Mimi Zohar wrote:
->>> On Wed, 2022-09-21 at 09:24 +0200, Nikolaus Voss wrote:
->>>> On Tue, 20 Sep 2022, Mimi Zohar wrote:
->>>>> On Tue, 2022-09-20 at 18:23 +0200, Nikolaus Voss wrote:
->>>>>> On Tue, 20 Sep 2022, Mimi Zohar wrote:
->>>>>>> On Fri, 2022-09-16 at 07:45 +0200, Nikolaus Voss wrote:
->>>>>>>> Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
->>>>>>>> decrypted data") added key instantiation with user provided decrypted data.
->>>>>>>> The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
->>>>>>>> Fix this to use hex2bin instead.
->>>>>>>
->>>>>>> Thanks, Nikolaus.  We iterated a number of times over what would be the
->>>>>>> safest userspace input.  One of the last changes was that the key data
->>>>>>> should be hex-ascii-encoded.  Unfortunately, the LTP
->>>>>>> testcases/kernel/syscalls/keyctl09.c example isn't hex-ascii-encoded
->>>>>>> and the example in Documentation/security/keys/trusted-encrypted.rst
->>>>>>> just cat's a file.  Both expect the length to be the length of the
->>>>>>> userspace provided data.   With this patch, when hex2bin() fails, there
->>>>>>> is no explanation.
->>>>>>
->>>>>> That's true. But it's true for all occurrences of hex2bin() in this file.
->>>>>> I could pr_err() an explanation, improve the trusted-encrypted.rst example
->>>>>> and respin the patch. Should I, or do you have another suggestion?
->>>>>
->>>>>> I wasn't aware of keyctl09.c, but quickly looking into it, the user data
->>>>>> _is_ hex-ascii-encoded, only the length is "wrong": Imho, the specified
->>>>>> length should be the binary length as this is consistent with key-length
->>>>>> specs in other cases (e.g. when loading the key from a blob).
->>>>>> keyctl09.c could be easy to fix, if only the length is modified. Should
->>>>>> I propose a patch? What is the correct/appropriate workflow there?
->>>>>
->>>>> I'm concerned that this change breaks existing encrypted keys created
->>>>> with user-provided data.  Otherwise I'm fine with your suggestion.
->>>>
->>>> Ok, but this change does not touch the hex-ascii format of encrypted key
->>>> blobs?
->>>
->>> True, but any persistent data based on this key would be affected.
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+
+> On Tue, Oct 4, 2022 at 1:37 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
 >>
->> Persistent data is stored encypted with e.g. the master key in hex-ascii
->> already and should not be affected. Only persistent data stored
->> unencrypted is affected, but the encrypted-keys stuff is just about
->> avoiding that. Or do I still misunderstand something?
+>> Please don't pull the user namespace bits of this code.
 >
-> Perhaps an existing encrypted key usage example would help clarify what
-> is meant by persistent data.  The two original encrypted key usages are
-> the EVM HMAC key and ecryptfs.  The EVM key is an encrypted key used to
-> calculate the EVM HMAC, which is stored in security.evm.  In that
-> scenario, the persistent data would be the data stored in security.evm.
+> Eric, already done.
 >
-> Would this patch break existing kernel/application persistent data
-> based on encrypted keys created with user-provided data?
+> And I think you are in denial about how many problems the
+> user-namespace stuff has caused.
+>
+> Distros are literally turning it off entirely because the whole "let
+> users create their own namespace" has *NOT* been a great success.
+>
+> I personally think it was a mistake. We're stuck with it, but we most
+> definitely need knobs to manage it that isn't just "enable/disable
+> USER_NS" in the kernel config.
+>
+> So this whole "don't do this" approach you have is not acceptable.
+>
+> 99% of all code does NOT WANT the user namespace thing, and it's been
+> a big new attack surface for the kernel getting things subtly wrong.
 
-As far as I can tell, it does not.
+Yes. I know, and I keep saying geez guys isn't this the problem?
+And I get told nope.  That isn't it.
 
-Niko
+
+> I do not understand your "people need to be able to do this with no
+> controls", when the alternative is to literally turn it off ENTIRELY.
+
+We already have /proc/sys/user/max_user_namespaces.  It is a per userns
+control so you can run it in as fine grain as you like.  A little
+cumbersome perhaps but real.
+
+> I'm not saying that an LSM is the only place to do it, but I don't
+> think there have been any better suggestions either.
+
+I don't know.  I tried to have the conversation and Paul shut it down.
+Effectively he said that where two or more out of tree LSM policies want
+something it makes no sense to discussion the actual reasons people want
+to use the hook.
+
+> Put another way: your "no limits are acceptable" is simply not
+> realistic, and you haven't given any sane alternatives that I am aware
+> of. No way to say "sure, let trusted system apps create their
+> namespaces, but not random things".
+
+That isn't my position at all, that isn't even the case in the current
+code.
+
+In there current code there are two mechanisms that can be used to limit
+things to secure system apps.  There is
+/proc/sys/user/max_user_namespaces, and the security_capable hook in the
+LSM.
+
+I can imagine that /proc/sys/user/max_user_namespaces could be a bit
+awkward to use as things need to be shuffled around a bit to get
+a user namespace in place that you can use to set your number additional
+user namespaces to 0, for the untrusted apps.
+
+I can imagine that security_capable being a little unintuitive to find
+but it has a parameter telling you it wants a capability from a
+non-default user namespace.
+
+It would be the easiest thing in the world in security_capable to
+ask is this a trusted app, if not the answer is no.
+
+
+
+My big objections are: Paul Moore shutdown the entire discussion into
+why this is needed and alternatives, and that the mechanism the hook
+is using silently breaks userspace applications.
+
+In particular chrome's sandbox is silently disabled.  So in practice I
+see this change advocating for silently stripping security from
+userspace applications.
+
+There is a security trade-off between attack surface and securing
+applications here that I could never get the conversation around too.
+
+My sense is that Paul figures with the policy in userspace (AKA the code
+that actually uses these hooks), that it is completely out of scope to
+consider what functionality the hooks make available.
+
+In short I completely failed to have any reasonable conversations about
+this code or it's implications, and it breaks userspace.
+
+Eric
+
