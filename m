@@ -2,236 +2,121 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E95BDC433F5
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Oct 2022 18:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E13C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Oct 2022 18:54:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231429AbiJESyR (ORCPT
+        id S230438AbiJESy4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Oct 2022 14:54:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59962 "EHLO
+        Wed, 5 Oct 2022 14:54:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230515AbiJESyM (ORCPT
+        with ESMTP id S230487AbiJESyy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Oct 2022 14:54:12 -0400
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE3746E8AB
-        for <linux-security-module@vger.kernel.org>; Wed,  5 Oct 2022 11:54:10 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MjNyn3d9yzMqFtD;
-        Wed,  5 Oct 2022 20:54:09 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MjNym73gdz3d;
-        Wed,  5 Oct 2022 20:54:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1664996049;
-        bh=B0K/MavY19bc8L2j/r6kSHr/iMKERSXvdBIMwiY/YwU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=dTPpB9C37unGo9fGnDQnz6AUvVNpa8P9bc5B+X+DaBmqnviX3GCU/3vYqQD4V2nyU
-         BkcNdg5Zf7kSfm9S9iYcTcGr7Ha1f+2OQ2ENSna808lNmWDt1JGlXRuL/QO+EaApot
-         qSt2XYVQ9dfaSU2Cep95dffcDW2QyGR1eWncIMpg=
-Message-ID: <16f036ca-fd68-2e89-2ceb-0b9e211a4b23@digikod.net>
-Date:   Wed, 5 Oct 2022 20:54:08 +0200
+        Wed, 5 Oct 2022 14:54:54 -0400
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11A2617E3D
+        for <linux-security-module@vger.kernel.org>; Wed,  5 Oct 2022 11:54:51 -0700 (PDT)
+Received: by mail-oi1-x22f.google.com with SMTP id q10so18616286oib.5
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Oct 2022 11:54:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qFz8bcXSm8NKx+cQ2WBeXMjTdSUy3qZJoPO+EKQrt+k=;
+        b=NgFXCEoOwxhznFgovrwNaSKvGa6GrTCOnIddMQRVCb83LQHPPOqAQigJIqyEA6Mu9U
+         2op2a7Ahuy/CUAf5CiVfnXr3zzMZQcbrbZ+Ya2KCsxmxB/NBv+f7R4h7bK3Db/Bb/ZhC
+         mycMkLuYRZGr8SBQPoJVFxfkwMQN1keAVyeXI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qFz8bcXSm8NKx+cQ2WBeXMjTdSUy3qZJoPO+EKQrt+k=;
+        b=vugBvD8yWPEnRGLtuLgedhMKMHDyv8Mnp2yH+KGQ37p9U2xRKXZIyX2STuyW09t6UN
+         c1XZL53h0eyJWkRVrNHz5qCsmpPN6jLWUfeV7a0vC82+lppuyN5FSWxnbF1TGRuxXw1d
+         kBQxFc0zCaLoBhxT+6K+Fh8wzDP2eDKPLgNfmaBLVcu7IEMLA0/fdgwcVF/0CbEwUe9g
+         XlsjjAGzzElx9XR5xM700unGZAISfsSBQsoU1kHW9UQbLoivG+puJcxBSQnURUhee2Y9
+         8SNOr2n+ShNI9MMKof07EY52BuUphHonB1JbFnvEeMD0BAJRmVQmOGxCVfZ4hUBpprI0
+         1t6A==
+X-Gm-Message-State: ACrzQf04FCiJHeLy7f0WFHCL+jtYrWc1qLRULJyRE0YbvyF+e5EvVECN
+        js5WVAAE6vLFW6KHDf8elcACp7izIDAW+Q==
+X-Google-Smtp-Source: AMsMyM63yJl60N+H2XgKEmu7AqSTG0T/ReuOGCYXZoT5o8eds1hWo3nau3MWuDpAiTTQvagluAKLOA==
+X-Received: by 2002:a05:6808:1186:b0:351:99bf:876c with SMTP id j6-20020a056808118600b0035199bf876cmr616448oil.54.1664996089471;
+        Wed, 05 Oct 2022 11:54:49 -0700 (PDT)
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com. [209.85.160.54])
+        by smtp.gmail.com with ESMTPSA id x131-20020acae089000000b00350743ac8eesm4652236oig.41.2022.10.05.11.54.48
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Oct 2022 11:54:48 -0700 (PDT)
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-131dda37dddso19944586fac.0
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Oct 2022 11:54:48 -0700 (PDT)
+X-Received: by 2002:a05:6870:c888:b0:12c:7f3b:d67d with SMTP id
+ er8-20020a056870c88800b0012c7f3bd67dmr569402oab.229.1664996088058; Wed, 05
+ Oct 2022 11:54:48 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v8 3/9] landlock: Refactor check_access_path_dual() into
- is_access_to_paths_allowed()
-Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        linux-security-module@vger.kernel.org
-Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-References: <20221001154908.49665-1-gnoack3000@gmail.com>
- <20221001154908.49665-4-gnoack3000@gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20221001154908.49665-4-gnoack3000@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <CAHC9VhShpEVTuogj4h74PxbEeTUNn4odo8SE6GBvb6sGUM0LHw@mail.gmail.com>
+ <87sfk3mim9.fsf@email.froward.int.ebiederm.org> <CAHk-=wiCqicQrnQPeHbDF7ECKHk_ceYzZK5dYq7y5nZTZhpB8g@mail.gmail.com>
+ <87r0zmigx6.fsf@email.froward.int.ebiederm.org>
+In-Reply-To: <87r0zmigx6.fsf@email.froward.int.ebiederm.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 5 Oct 2022 11:54:32 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wihQGNanXu3aeN12rsq+2K9BDkZEij-9HWtbVxFbXg1rw@mail.gmail.com>
+Message-ID: <CAHk-=wihQGNanXu3aeN12rsq+2K9BDkZEij-9HWtbVxFbXg1rw@mail.gmail.com>
+Subject: Re: [GIT PULL] LSM patches for v6.1
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Great!
+On Wed, Oct 5, 2022 at 5:39 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> We already have /proc/sys/user/max_user_namespaces.  It is a per userns
+> control so you can run it in as fine grain as you like.  A little
+> cumbersome perhaps but real.
 
-On 01/10/2022 17:49, Günther Noack wrote:
-> * Rename it to is_access_to_paths_allowed()
-> * Make it return true iff the access is allowed
-> * Calculate the EXDEV/EACCES error code in the one place where it's needed
+It's not that it's cumbersome.
 
-Can you please replace these bullet points with (one-sentence) paragraphs?
+It's that it is *USELESS*.
 
+Sure, it limits the memory footprint of somebody who does the
+fork-bomb equivalent of user namespaces, but that's the least of the
+problems.
 
-> 
-> Suggested-by: Mickaël Salaün <mic@digikod.net>
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> ---
->   security/landlock/fs.c | 89 +++++++++++++++++++++---------------------
->   1 file changed, 44 insertions(+), 45 deletions(-)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index a9dbd99d9ee7..083dd3d359de 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -430,7 +430,7 @@ is_eacces(const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS],
->   }
->   
->   /**
-> - * check_access_path_dual - Check accesses for requests with a common path
-> + * is_access_to_paths_allowed - Check accesses for requests with a common path
->    *
->    * @domain: Domain to check against.
->    * @path: File hierarchy to walk through.
-> @@ -465,14 +465,10 @@ is_eacces(const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS],
->    * allow the request.
->    *
->    * Returns:
-> - * - 0 if the access request is granted;
-> - * - -EACCES if it is denied because of access right other than
-> - *   LANDLOCK_ACCESS_FS_REFER;
-> - * - -EXDEV if the renaming or linking would be a privileged escalation
-> - *   (according to each layered policies), or if LANDLOCK_ACCESS_FS_REFER is
-> - *   not allowed by the source or the destination.
-> + * - true if the access request is granted;
-> + * - false otherwise
+Just think of normal users. They'd want a limited number of user
+namespaces for things like sandboxing (whether google chrome or
+whatever).
 
-Missing final dot.
+So distros do want to allow people a few of them.
 
+But they want to be able to do so in a *controlled* manner. Not a "ok,
+this user can create five user namespaces and do whatever they want in
+them". Because we've had the issues where some kernel part has gotten
+things wrong, and thought "local NS root means root" or similar.
 
->    */
-> -static int check_access_path_dual(
-> +static bool is_access_to_paths_allowed(
->   	const struct landlock_ruleset *const domain,
->   	const struct path *const path,
->   	const access_mask_t access_request_parent1,
-> @@ -492,17 +488,17 @@ static int check_access_path_dual(
->   	(*layer_masks_child2)[LANDLOCK_NUM_ACCESS_FS] = NULL;
->   
->   	if (!access_request_parent1 && !access_request_parent2)
-> -		return 0;
-> +		return true;
->   	if (WARN_ON_ONCE(!domain || !path))
-> -		return 0;
-> +		return true;
->   	if (is_nouser_or_private(path->dentry))
-> -		return 0;
-> +		return true;
->   	if (WARN_ON_ONCE(domain->num_layers < 1 || !layer_masks_parent1))
-> -		return -EACCES;
-> +		return false;
->   
->   	if (unlikely(layer_masks_parent2)) {
->   		if (WARN_ON_ONCE(!dentry_child1))
-> -			return -EACCES;
-> +			return false;
->   		/*
->   		 * For a double request, first check for potential privilege
->   		 * escalation by looking at domain handled accesses (which are
-> @@ -513,7 +509,7 @@ static int check_access_path_dual(
->   		is_dom_check = true;
->   	} else {
->   		if (WARN_ON_ONCE(dentry_child1 || dentry_child2))
-> -			return -EACCES;
-> +			return false;
->   		/* For a simple request, only check for requested accesses. */
->   		access_masked_parent1 = access_request_parent1;
->   		access_masked_parent2 = access_request_parent2;
-> @@ -622,24 +618,7 @@ static int check_access_path_dual(
->   	}
->   	path_put(&walker_path);
->   
-> -	if (allowed_parent1 && allowed_parent2)
-> -		return 0;
-> -
-> -	/*
-> -	 * This prioritizes EACCES over EXDEV for all actions, including
-> -	 * renames with RENAME_EXCHANGE.
-> -	 */
-> -	if (likely(is_eacces(layer_masks_parent1, access_request_parent1) ||
-> -		   is_eacces(layer_masks_parent2, access_request_parent2)))
-> -		return -EACCES;
-> -
-> -	/*
-> -	 * Gracefully forbids reparenting if the destination directory
-> -	 * hierarchy is not a superset of restrictions of the source directory
-> -	 * hierarchy, or if LANDLOCK_ACCESS_FS_REFER is not allowed by the
-> -	 * source or the destination.
-> -	 */
-> -	return -EXDEV;
-> +	return allowed_parent1 && allowed_parent2;
->   }
->   
->   static inline int check_access_path(const struct landlock_ruleset *const domain,
-> @@ -649,8 +628,10 @@ static inline int check_access_path(const struct landlock_ruleset *const domain,
->   	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
->   
->   	access_request = init_layer_masks(domain, access_request, &layer_masks);
-> -	return check_access_path_dual(domain, path, access_request,
-> -				      &layer_masks, NULL, 0, NULL, NULL);
-> +	if (is_access_to_paths_allowed(domain, path, access_request,
-> +				       &layer_masks, NULL, 0, NULL, NULL))
-> +		return 0;
-> +	return -EACCES;
->   }
->   
->   static inline int current_check_access_path(const struct path *const path,
-> @@ -711,8 +692,9 @@ static inline access_mask_t maybe_remove(const struct dentry *const dentry)
->    * file.  While walking from @dir to @mnt_root, we record all the domain's
->    * allowed accesses in @layer_masks_dom.
->    *
-> - * This is similar to check_access_path_dual() but much simpler because it only
-> - * handles walking on the same mount point and only check one set of accesses.
-> + * This is similar to is_access_to_paths_allowed() but much simpler because it
-> + * only handles walking on the same mount point and only checks one set of
-> + * accesses.
->    *
->    * Returns:
->    * - true if all the domain access rights are allowed for @dir;
-> @@ -857,10 +839,11 @@ static int current_check_refer_path(struct dentry *const old_dentry,
->   		access_request_parent1 = init_layer_masks(
->   			dom, access_request_parent1 | access_request_parent2,
->   			&layer_masks_parent1);
-> -		return check_access_path_dual(dom, new_dir,
-> -					      access_request_parent1,
-> -					      &layer_masks_parent1, NULL, 0,
-> -					      NULL, NULL);
-> +		if (is_access_to_paths_allowed(
-> +			    dom, new_dir, access_request_parent1,
-> +			    &layer_masks_parent1, NULL, 0, NULL, NULL))
-> +			return 0;
-> +		return -EACCES;
->   	}
->   
->   	access_request_parent1 |= LANDLOCK_ACCESS_FS_REFER;
-> @@ -886,11 +869,27 @@ static int current_check_refer_path(struct dentry *const old_dentry,
->   	 * parent access rights.  This will be useful to compare with the
->   	 * destination parent access rights.
->   	 */
-> -	return check_access_path_dual(dom, &mnt_dir, access_request_parent1,
-> -				      &layer_masks_parent1, old_dentry,
-> -				      access_request_parent2,
-> -				      &layer_masks_parent2,
-> -				      exchange ? new_dentry : NULL);
-> +	if (is_access_to_paths_allowed(
-> +		    dom, &mnt_dir, access_request_parent1, &layer_masks_parent1,
-> +		    old_dentry, access_request_parent2, &layer_masks_parent2,
-> +		    exchange ? new_dentry : NULL))
-> +		return 0;
-> +
-> +	/*
-> +	 * This prioritizes EACCES over EXDEV for all actions, including
-> +	 * renames with RENAME_EXCHANGE.
-> +	 */
-> +	if (likely(is_eacces(&layer_masks_parent1, access_request_parent1) ||
-> +		   is_eacces(&layer_masks_parent2, access_request_parent2)))
-> +		return -EACCES;
-> +
-> +	/*
-> +	 * Gracefully forbids reparenting if the destination directory
-> +	 * hierarchy is not a superset of restrictions of the source directory
-> +	 * hierarchy, or if LANDLOCK_ACCESS_FS_REFER is not allowed by the
-> +	 * source or the destination.
-> +	 */
-> +	return -EXDEV;
->   }
->   
->   /* Inode hooks */
+So it's not about the number of namespaces. AT ALL. It's about *who*
+and *what* does them.
+
+> I don't know.  I tried to have the conversation and Paul shut it down.
+
+I really get the feeling that the problem here is that you're not even
+acknowledging the whole issue to begin with, since you mention that
+"max_user_namespaces" not once, but twice in the email.
+
+> It would be the easiest thing in the world in security_capable to
+> ask is this a trusted app, if not the answer is no.
+
+Isn't this *literally* what security_create_user_ns() would basically be doing?
+
+IOW, letting the LSM just say "this app is trusted to create a new
+user namespace".
+
+And that is what the LSM model is literally designed for. Because the
+kernel doesn't inherently know "I trust this app". It doesn't know the
+difference between "google-chrome" and "l33t-crack3r". It needs some
+kind of external set of rules.
+
+See?
+
+               Linus
