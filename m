@@ -2,80 +2,97 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E553C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Oct 2022 07:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E38C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Oct 2022 07:41:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230318AbiJFHP4 (ORCPT
+        id S230352AbiJFHlD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Oct 2022 03:15:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58828 "EHLO
+        Thu, 6 Oct 2022 03:41:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230247AbiJFHPm (ORCPT
+        with ESMTP id S229727AbiJFHlB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Oct 2022 03:15:42 -0400
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A1A64B986;
-        Thu,  6 Oct 2022 00:15:32 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4MjjHD5grrz9yFGb;
-        Thu,  6 Oct 2022 15:09:28 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwD3c153gD5jT52hAA--.1959S2;
-        Thu, 06 Oct 2022 08:15:12 +0100 (CET)
-Message-ID: <d3274b577152654246895501513c12a33b3485c0.camel@huaweicloud.com>
-Subject: Re: Closing the BPF map permission loophole
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>
-Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Date:   Thu, 06 Oct 2022 09:15:01 +0200
-In-Reply-To: <21be7356-8710-408a-94e3-1a0d3f5f842e@www.fastmail.com>
-References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
-         <21be7356-8710-408a-94e3-1a0d3f5f842e@www.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Thu, 6 Oct 2022 03:41:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B60408F940;
+        Thu,  6 Oct 2022 00:41:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4ABE26186B;
+        Thu,  6 Oct 2022 07:41:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2864AC43470;
+        Thu,  6 Oct 2022 07:40:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665042059;
+        bh=kGenI/jk5ijf8spPWifalIgcDvhyFZb7xm1JyKIXBxI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IDv83JM/0cQwQvJArwcT1dwOvhvgfxXwx5CpX4p+4AtoU3tqpUzvG0pSO0SMiOujR
+         8ZXwUyC6CJE8VN5cxgmU9tgJjqbdJR2DiK8op4CyvflxI7XAnjuaBVSKmV4raC53Xe
+         xP+qyAPlTwILOXXydJpZQVzawvztXWV5m10d1+iPnuDkUzsa49zGnBKMY/BfY8FVC4
+         0W2w9cXjD9e+woiMu4GPgiHbAY+VCN/76AFTIwRzizKd35hx22pUNB3Q0EBDvDttmg
+         eOxMri/dcLiTjFIoQ8qX45J4Qm5BGkUSo2DqeGLbmzjCW5uY8SbMz0qn9pXNunu7Et
+         FQp63ijmsZm+w==
+Date:   Thu, 6 Oct 2022 09:40:54 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Steve French <smfrench@gmail.com>, linux-fsdevel@vger.kernel.org,
+        Seth Forshee <sforshee@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-security-module@vger.kernel.org,
+        Steve French <sfrench@samba.org>
+Subject: Re: [PATCH v4 04/30] fs: add new get acl method
+Message-ID: <20221006074054.sif5cjou4edas2mz@wittgenstein>
+References: <20220929153041.500115-1-brauner@kernel.org>
+ <20220929153041.500115-5-brauner@kernel.org>
+ <CAJfpegterbOyGGDbHY8LidzR45TTbhHdRG728mQQi_LaNMS3PA@mail.gmail.com>
+ <20220930090949.cl3ajz7r4ub6jrae@wittgenstein>
+ <CAJfpegsu9r84J-3wN=z8OOzHd+7YRBn9CNFMDWSbftCEm0e27A@mail.gmail.com>
+ <CAH2r5muRDdy1s4xS7bHePEF3t84qGaX3rDXUgGLY1k_XG4vuAg@mail.gmail.com>
+ <20221005071508.lc7qg6cffqrhbc4d@wittgenstein>
+ <CAJfpegviBdPx25oLTNHCg661GfMa92NKOadSr=QnaFAhzkkN2Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwD3c153gD5jT52hAA--.1959S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYU7kC6x804xWl14x267AKxVW8JVW5JwAF
-        c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-        0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
-        wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjc
-        xK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-        FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-        0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY
-        04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-        0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
-        0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-        W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8
-        JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrR6zUU
-        UUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQARBF1jj4Ph4gABsk
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJfpegviBdPx25oLTNHCg661GfMa92NKOadSr=QnaFAhzkkN2Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-09-28 at 09:54 +0100, Lorenz Bauer wrote:
-> On Thu, 15 Sep 2022, at 11:30, Lorenz Bauer wrote:
-> > Hi list,
-> > 
-> > Here is a summary of the talk I gave at LPC '22 titled "Closing the
-> > BPF 
-> > map permission loophole", with slides at [0].
+On Thu, Oct 06, 2022 at 08:31:47AM +0200, Miklos Szeredi wrote:
+> On Wed, 5 Oct 2022 at 09:15, Christian Brauner <brauner@kernel.org> wrote:
 > 
-> I've put this topic on the agenda of the 2022-10-06 BPF office hours
-> to get some maintainer attention. Details are here: 
-> https://docs.google.com/spreadsheets/d/1LfrDXZ9-fdhvPEp_LHkxAMYyxxpwBXjywWa0AejEveU/edit
+> > We're just talking about thet fact that
+> > {g,s}etxattr(system.posix_acl_{access,default}) work on cifs but
+> > getting acls based on inode operations isn't supported. Consequently you
+> > can't use the acls for permission checking in the vfs for cifs. If as
+> > you say below that's intentional because the client doesn't perform
+> > access checks then that's probably fine.
+> 
+> Now I just need to wrap my head around how this interacts with all the
+> uid/gid transformations.
 
-Thanks for setting this up. I would include security people, they might
-be interested as well to join.
+Currently it doesn't because cifs doesn't support idmapped mounts.
 
-Roberto
+> 
+> Do these (userns, mnt_userns) even make sense for the case of remotely
+> checked permissions?
 
+Namespaces are local concepts. They are relevant for permission checking
+and are e.g., used to generate a {g,u}id that may be sent to a server. A
+concrete example would be a network filesystems that would change the
+ownership of a file and the client calls it's ->setattr() inode
+operation. The fs_userns and/or mnt_userns is used to generate a raw
+{g,u}id value to be sent to the server (So all netns call from_kuid()
+ultimately to send a raw {g,u}id over the wire. The server can then do
+whatever additional permission checking it wants based on that {g,u}id.
+
+For acls it's the same. We use the namespaces to generate the raw values
+and send them to the server that stores them. Either in the acl uapi
+format or if the netfs has a custom format for acls or translate them
+into it's own acl format. The server can then use them for permission
+checking however it wants. But if the server allows the client to
+retrieve them during permission checking in the vfs then we need to
+translate that raw format from the server into the proper local format
+again at which point the namespaces are relevant again.
+I hope that helped.
