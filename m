@@ -2,109 +2,75 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFADAC433F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Oct 2022 14:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C91C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Oct 2022 14:42:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232038AbiJFOR1 (ORCPT
+        id S231594AbiJFOmP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Oct 2022 10:17:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44298 "EHLO
+        Thu, 6 Oct 2022 10:42:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231924AbiJFOQt (ORCPT
+        with ESMTP id S229540AbiJFOmO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Oct 2022 10:16:49 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1545CAE210
-        for <linux-security-module@vger.kernel.org>; Thu,  6 Oct 2022 07:14:15 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id o65so1362946iof.4
-        for <linux-security-module@vger.kernel.org>; Thu, 06 Oct 2022 07:14:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uPoSw2DcS8I2PL1GAxLCIjBZkmIbahmymE7q5ESqNH4=;
-        b=J9UmphxOwRlKuKwKJGEStMq2njru+PiIwGVLUfPBPq5L+NiQWR0X0ph0BMc2W5nbt8
-         4fY0afnp5OGHoR48WDeXsZwHxoMN5k4f3cAvRzRwXhvGYbcMUIpKQGeu62j2J2SnGy+J
-         Xj/w4pUH+FdGPKiKioCFBigar50r6VlCGptHXogYu0vEHZthEC9POAERgLfXsIlNUJAT
-         4LL5lhcH/9QJf5wjtvXr093IFQ5FVgHnW9DKsbH5n9oFVp8IFEYJH/pVve/xHlsOIZTb
-         JrrThpZZTRv6pIFAUlojtCkCpeK6hrRAxbyXE8fkyWQe0FnS13WwHzjaGBDQmYXcBSxS
-         r/Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uPoSw2DcS8I2PL1GAxLCIjBZkmIbahmymE7q5ESqNH4=;
-        b=2YfOlj8kPDyPf+AgLqJGCPrDgoiac0W09RsJXKP3xxbd7QbUM5wyPqKSiqRv0p6Wtd
-         uLgjX48dXOufpt8+NRaW47q6UWvCs1is1S2MhEmc9y+JZt8HKaF09rmdDqhJWNPsglQW
-         0ank/HrwNTTTy6yEkvNI2DWA2MSOf8Mxw/KVeIDwA1fBF60/0Elhue+zO71pQYw+jI01
-         tHNTlAiZS+4wmH2ULe90RBdpNLT6e9On7WPuVWvcJcAaKSyUd09xSJL4+Er5XNGQhids
-         SMIBlZlrZMWrtYDhfv1qpwjhlDwwTC52MK/9HGkFaJ0TKfq/tkL7fPF8DKYLJiPVIc0w
-         uJxA==
-X-Gm-Message-State: ACrzQf0cGB6eTGJiQU98gktQL+c+dd7svSQkOxxySTA08xp3ujkBwUa5
-        2f83cBaZy8P6SdbQtcNGrELXq9kq3p5+seBxW/AbIg==
-X-Google-Smtp-Source: AMsMyM6kii+MO2rLiB+gLKVkRtdEKc2Fqc0GkifGVmj9R/yf+5vbD7WJTCsBBNNUYIzb2JEn4WLbsp9vBGxMSZlBt2Y=
-X-Received: by 2002:a6b:5d07:0:b0:6bb:7253:a439 with SMTP id
- r7-20020a6b5d07000000b006bb7253a439mr37286iob.2.1665065653849; Thu, 06 Oct
- 2022 07:14:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221006082735.1321612-1-keescook@chromium.org>
- <20221006082735.1321612-2-keescook@chromium.org> <20221006090506.paqjf537cox7lqrq@wittgenstein>
-In-Reply-To: <20221006090506.paqjf537cox7lqrq@wittgenstein>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 6 Oct 2022 16:13:37 +0200
-Message-ID: <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Jorge Merlino <jorge.merlino@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
+        Thu, 6 Oct 2022 10:42:14 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36596A99F1;
+        Thu,  6 Oct 2022 07:42:13 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 296Eg7p8007809
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 6 Oct 2022 10:42:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1665067329; bh=S2x0j0IMfjyHgJEcjGYF7+KaBoxh4wuOGf7JhVXcjJo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=IAetTbAqYiQV5GylQ6WUizemjFS+jog/L9doNU8rV1tn1SFK4r+vhdrTOuUbuuTls
+         /U4G0xPiXz3Efu1pjUVi/u1wG4K59l/gzv8CIZcFlm6VJYZgCMNzCJ60Ua6CzFSz6k
+         67oJH2lffqyMwBwcIq45kzrg1sOPD8Z/qUFpxUv8qHaXCQ6l+5bcQOqtMgvXxyzf1+
+         IqQI6XJTIk6E43ucxFDSGppkCM/oC5RcFyg2cC4sLZzQU4yt40/I4I5FBU63FNYlJG
+         AW70mHa+Fy4eOaL1gGNTymqHZL/kG5njC61rbKVGKgeJPDBpS70BFklh37zhZYvlcx
+         icsaTZmBTvS0Q==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 6CF8715C35F2; Thu,  6 Oct 2022 10:42:07 -0400 (EDT)
+Date:   Thu, 6 Oct 2022 10:42:07 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Todd Kjos <tkjos@google.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Prashanth Prahlad <pprahlad@redhat.com>,
-        Micah Morton <mortonm@chromium.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Andrei Vagin <avagin@gmail.com>, linux-kernel@vger.kernel.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] LSM patches for v6.1
+Message-ID: <Yz7pPxopFQyUyr28@mit.edu>
+References: <CAHC9VhShpEVTuogj4h74PxbEeTUNn4odo8SE6GBvb6sGUM0LHw@mail.gmail.com>
+ <87sfk3mim9.fsf@email.froward.int.ebiederm.org>
+ <CAHk-=wiCqicQrnQPeHbDF7ECKHk_ceYzZK5dYq7y5nZTZhpB8g@mail.gmail.com>
+ <87r0zmigx6.fsf@email.froward.int.ebiederm.org>
+ <CAHk-=wihQGNanXu3aeN12rsq+2K9BDkZEij-9HWtbVxFbXg1rw@mail.gmail.com>
+ <87h70h5d36.fsf@email.froward.int.ebiederm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h70h5d36.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 6, 2022 at 11:05 AM Christian Brauner <brauner@kernel.org> wrote:
-> On Thu, Oct 06, 2022 at 01:27:34AM -0700, Kees Cook wrote:
-> > The check_unsafe_exec() counting of n_fs would not add up under a heavily
-> > threaded process trying to perform a suid exec, causing the suid portion
-> > to fail. This counting error appears to be unneeded, but to catch any
-> > possible conditions, explicitly unshare fs_struct on exec, if it ends up
->
-> Isn't this a potential uapi break? Afaict, before this change a call to
-> clone{3}(CLONE_FS) followed by an exec in the child would have the
-> parent and child share fs information. So if the child e.g., changes the
-> working directory post exec it would also affect the parent. But after
-> this change here this would no longer be true. So a child changing a
-> workding directoro would not affect the parent anymore. IOW, an exec is
-> accompanied by an unshare(CLONE_FS). Might still be worth trying ofc but
-> it seems like a non-trivial uapi change but there might be few users
-> that do clone{3}(CLONE_FS) followed by an exec.
+Eric, there's one thing I don't get about why you hate LSM's having
+the ability to prevent user name spaces, and yet you are OK with
+(indeed, touting) /proc/sys/user/max_user_namespaces.
 
-I believe the following code in Chromium explicitly relies on this
-behavior, but I'm not sure whether this code is in active use anymore:
+If we set max_user_namespaces to N, won't the N+1'th application get
+an error when they try to create a user namespace?  One of your
+arguments about why having LSM's forcing a error of say, EPERM, is
+that applications that don't check for error returns might get
+confused.  (Those are buggy applications; so they should be fixed ---
+isn't that your argument about why we shouldn't be freaking out over
+security bugs caused by kernel bugs and user namespaces.)  But if you
+set max_user_namespaces, that same application will now fail with say,
+ENOSPC.
 
-https://source.chromium.org/chromium/chromium/src/+/main:sandbox/linux/suid/sandbox.c;l=101?q=CLONE_FS&sq=&ss=chromium
+And if in fact there is a buggy application that will create a
+security exposure because they aren't checking !@#@?! error returns,
+an attacker can simply create N user namespaces --- and then trigger
+the buggy applicaion, at which point, they will have 0wned the system.
+
+    	  	      	       	      - Ted
