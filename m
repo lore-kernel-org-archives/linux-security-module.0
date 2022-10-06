@@ -2,111 +2,113 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E8DC433F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Oct 2022 09:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C068C43219
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Oct 2022 10:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231343AbiJFJIU (ORCPT
+        id S231247AbiJFKsq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Oct 2022 05:08:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49616 "EHLO
+        Thu, 6 Oct 2022 06:48:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231332AbiJFJIQ (ORCPT
+        with ESMTP id S230144AbiJFKsp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Oct 2022 05:08:16 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65ECC97EDB
-        for <linux-security-module@vger.kernel.org>; Thu,  6 Oct 2022 02:08:12 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id b2so3126723eja.6
-        for <linux-security-module@vger.kernel.org>; Thu, 06 Oct 2022 02:08:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=LOmauc4/I+JOFn6hd++WyIkQgMu2EEj3PH+I8MZLpXs=;
-        b=gLSt9SBU3vDLigUT7CXmfVcRPqBbvuk1NIjKx2WYizeVaspg1ngnkGVg30OZzHD2Uq
-         BkJ3OavLluXln54nRyQp4pbSUDJCt50b8+qD39kx76U6HgK6Ng5/30qkdq+EoyQYMCLO
-         wvURxS/wd5nVUMS3mCeBDb6ZhmpBMeeZMJu34=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=LOmauc4/I+JOFn6hd++WyIkQgMu2EEj3PH+I8MZLpXs=;
-        b=T0eDNCWOAIiMPrs/zIR08K3tVAG7T8S66HRo077lohYbb0UjZD9GhiUzbtZJeAe6tC
-         dV6wo6KDR7XugnbuTfZqQX38RiClAaiv+cQUmhQvar2N5ihd+wGPpWDxXK073oBJ9NcY
-         f9T1W6pjDNhrzQ9JMw4EfD3y9Zazbrr6G6ewG5lR4vVJpPLGLgQt+tL2C/0PZY6t6gZ7
-         JUAzrjubnVAjsy81nI94ux6M+Nyfx8kTo9rgbLzgXoSKSAaUsOeD3XHXCD+wXZvFNtth
-         gaqZqGXkGpeud0ZjlC3qiBfAjYt7CGWWXyiJff6BgcCp5iJK6jLFey6UvgMHbr9P2zO8
-         Wd0g==
-X-Gm-Message-State: ACrzQf1nTailoxIEDdACmqJlf4mZSJV7vCkv2KJkqLw+L6Z6Co2mH80N
-        AKar3+GyK+qjHiVnrzJpMj/WJQbmF3ynJH1k9v/ERg==
-X-Google-Smtp-Source: AMsMyM4YkhkFXQT12yDXIwQTtnqe00pW77bh19zMOLn7DBOoQvKQZ4lv3YU0rgzeOINUl4plxi6NYMWwealeLbFD9CE=
-X-Received: by 2002:a17:906:7315:b0:782:66dc:4b76 with SMTP id
- di21-20020a170906731500b0078266dc4b76mr2988551ejc.751.1665047290545; Thu, 06
- Oct 2022 02:08:10 -0700 (PDT)
+        Thu, 6 Oct 2022 06:48:45 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93DE098373
+        for <linux-security-module@vger.kernel.org>; Thu,  6 Oct 2022 03:48:42 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-405-DgXWoVwcNIW55WKjoHfY8Q-1; Thu, 06 Oct 2022 11:48:39 +0100
+X-MC-Unique: DgXWoVwcNIW55WKjoHfY8Q-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Thu, 6 Oct
+ 2022 11:48:37 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.040; Thu, 6 Oct 2022 11:48:37 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christian Brauner' <brauner@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+CC:     Eric Biederman <ebiederm@xmission.com>,
+        Jorge Merlino <jorge.merlino@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "John Johansen" <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Todd Kjos <tkjos@google.com>,
+        "Ondrej Mosnacek" <omosnace@redhat.com>,
+        Prashanth Prahlad <pprahlad@redhat.com>,
+        Micah Morton <mortonm@chromium.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+Subject: RE: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
+Thread-Topic: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
+Thread-Index: AQHY2WLGFfe2CPUaDEa6axdLVGgCBq4BLZlw
+Date:   Thu, 6 Oct 2022 10:48:36 +0000
+Message-ID: <cd4c600f91404387bb7be0d727c3c337@AcuMS.aculab.com>
+References: <20221006082735.1321612-1-keescook@chromium.org>
+ <20221006082735.1321612-2-keescook@chromium.org>
+ <20221006090506.paqjf537cox7lqrq@wittgenstein>
+In-Reply-To: <20221006090506.paqjf537cox7lqrq@wittgenstein>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <20220929153041.500115-1-brauner@kernel.org> <20220929153041.500115-5-brauner@kernel.org>
- <CAJfpegterbOyGGDbHY8LidzR45TTbhHdRG728mQQi_LaNMS3PA@mail.gmail.com>
- <20220930090949.cl3ajz7r4ub6jrae@wittgenstein> <CAJfpegsu9r84J-3wN=z8OOzHd+7YRBn9CNFMDWSbftCEm0e27A@mail.gmail.com>
- <CAH2r5muRDdy1s4xS7bHePEF3t84qGaX3rDXUgGLY1k_XG4vuAg@mail.gmail.com>
- <20221005071508.lc7qg6cffqrhbc4d@wittgenstein> <CAJfpegviBdPx25oLTNHCg661GfMa92NKOadSr=QnaFAhzkkN2Q@mail.gmail.com>
- <20221006074054.sif5cjou4edas2mz@wittgenstein>
-In-Reply-To: <20221006074054.sif5cjou4edas2mz@wittgenstein>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 6 Oct 2022 11:07:59 +0200
-Message-ID: <CAJfpegtu3u3_mAz4rHwVqPO0GyD=7m+Gt+iF0=ZrYr5kLtUPJQ@mail.gmail.com>
-Subject: Re: [PATCH v4 04/30] fs: add new get acl method
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Steve French <smfrench@gmail.com>, linux-fsdevel@vger.kernel.org,
-        Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org,
-        Steve French <sfrench@samba.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 6 Oct 2022 at 09:41, Christian Brauner <brauner@kernel.org> wrote:
->
-> On Thu, Oct 06, 2022 at 08:31:47AM +0200, Miklos Szeredi wrote:
-> > On Wed, 5 Oct 2022 at 09:15, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > > We're just talking about thet fact that
-> > > {g,s}etxattr(system.posix_acl_{access,default}) work on cifs but
-> > > getting acls based on inode operations isn't supported. Consequently you
-> > > can't use the acls for permission checking in the vfs for cifs. If as
-> > > you say below that's intentional because the client doesn't perform
-> > > access checks then that's probably fine.
-> >
-> > Now I just need to wrap my head around how this interacts with all the
-> > uid/gid transformations.
->
-> Currently it doesn't because cifs doesn't support idmapped mounts.
->
-> >
-> > Do these (userns, mnt_userns) even make sense for the case of remotely
-> > checked permissions?
->
-> Namespaces are local concepts. They are relevant for permission checking
-> and are e.g., used to generate a {g,u}id that may be sent to a server. A
-> concrete example would be a network filesystems that would change the
-> ownership of a file and the client calls it's ->setattr() inode
-> operation. The fs_userns and/or mnt_userns is used to generate a raw
-> {g,u}id value to be sent to the server (So all netns call from_kuid()
-> ultimately to send a raw {g,u}id over the wire. The server can then do
-> whatever additional permission checking it wants based on that {g,u}id.
->
-> For acls it's the same. We use the namespaces to generate the raw values
-> and send them to the server that stores them. Either in the acl uapi
-> format or if the netfs has a custom format for acls or translate them
-> into it's own acl format. The server can then use them for permission
-> checking however it wants. But if the server allows the client to
-> retrieve them during permission checking in the vfs then we need to
-> translate that raw format from the server into the proper local format
-> again at which point the namespaces are relevant again.
-> I hope that helped.
+RnJvbTogQ2hyaXN0aWFuIEJyYXVuZXINCj4gU2VudDogMDYgT2N0b2JlciAyMDIyIDEwOjA1DQo+
+IA0KPiBPbiBUaHUsIE9jdCAwNiwgMjAyMiBhdCAwMToyNzozNEFNIC0wNzAwLCBLZWVzIENvb2sg
+d3JvdGU6DQo+ID4gVGhlIGNoZWNrX3Vuc2FmZV9leGVjKCkgY291bnRpbmcgb2Ygbl9mcyB3b3Vs
+ZCBub3QgYWRkIHVwIHVuZGVyIGEgaGVhdmlseQ0KPiA+IHRocmVhZGVkIHByb2Nlc3MgdHJ5aW5n
+IHRvIHBlcmZvcm0gYSBzdWlkIGV4ZWMsIGNhdXNpbmcgdGhlIHN1aWQgcG9ydGlvbg0KPiA+IHRv
+IGZhaWwuIFRoaXMgY291bnRpbmcgZXJyb3IgYXBwZWFycyB0byBiZSB1bm5lZWRlZCwgYnV0IHRv
+IGNhdGNoIGFueQ0KPiA+IHBvc3NpYmxlIGNvbmRpdGlvbnMsIGV4cGxpY2l0bHkgdW5zaGFyZSBm
+c19zdHJ1Y3Qgb24gZXhlYywgaWYgaXQgZW5kcyB1cA0KPiANCj4gSXNuJ3QgdGhpcyBhIHBvdGVu
+dGlhbCB1YXBpIGJyZWFrPyBBZmFpY3QsIGJlZm9yZSB0aGlzIGNoYW5nZSBhIGNhbGwgdG8NCj4g
+Y2xvbmV7M30oQ0xPTkVfRlMpIGZvbGxvd2VkIGJ5IGFuIGV4ZWMgaW4gdGhlIGNoaWxkIHdvdWxk
+IGhhdmUgdGhlDQo+IHBhcmVudCBhbmQgY2hpbGQgc2hhcmUgZnMgaW5mb3JtYXRpb24uIFNvIGlm
+IHRoZSBjaGlsZCBlLmcuLCBjaGFuZ2VzIHRoZQ0KPiB3b3JraW5nIGRpcmVjdG9yeSBwb3N0IGV4
+ZWMgaXQgd291bGQgYWxzbyBhZmZlY3QgdGhlIHBhcmVudC4gQnV0IGFmdGVyDQo+IHRoaXMgY2hh
+bmdlIGhlcmUgdGhpcyB3b3VsZCBubyBsb25nZXIgYmUgdHJ1ZS4gU28gYSBjaGlsZCBjaGFuZ2lu
+ZyBhDQo+IHdvcmtkaW5nIGRpcmVjdG9ybyB3b3VsZCBub3QgYWZmZWN0IHRoZSBwYXJlbnQgYW55
+bW9yZS4gSU9XLCBhbiBleGVjIGlzDQo+IGFjY29tcGFuaWVkIGJ5IGFuIHVuc2hhcmUoQ0xPTkVf
+RlMpLiBNaWdodCBzdGlsbCBiZSB3b3J0aCB0cnlpbmcgb2ZjIGJ1dA0KPiBpdCBzZWVtcyBsaWtl
+IGEgbm9uLXRyaXZpYWwgdWFwaSBjaGFuZ2UgYnV0IHRoZXJlIG1pZ2h0IGJlIGZldyB1c2Vycw0K
+PiB0aGF0IGRvIGNsb25lezN9KENMT05FX0ZTKSBmb2xsb3dlZCBieSBhbiBleGVjLg0KDQpUaGUg
+dGhvdWdodCBvZiB0aGF0IGlzIGVudGlyZWx5IGhvcnJpZC4uLg0KDQpJIHByZXN1bWUgYSBzdWlk
+IGV4ZWMgd2lsbCBmYWlsIGluIHRoYXQgY2FzZT8NCg0KSWYgdGhlIG9sZCBjb2RlIGlzIHRyeWlu
+ZyB0byBjb21wYXJlIHRoZSBudW1iZXIgb2YgdGhyZWFkcw0Kd2l0aCB0aGUgbnVtYmVyIG9mIHVz
+ZXJzIG9mIHRoZSBmcyB0YWJsZSBpc24ndCBpcyBqdXN0IGJ1Z2d5Pw0KSWYgYSB0aHJlYWQgdW5z
+aGFyZXMgdGhlIGZzIHRhYmxlIHRoZXJlIGNhbiBiZSBhbm90aGVyDQpyZWZlcmVuY2Ugc29tZXdo
+ZXJlIGVsc2UgLSB3aGljaCBpcyB3aGF0IChJIHByZXN1bWUpIGlzIGJlaW5nDQp0ZXN0ZWQgZm9y
+Lg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJv
+YWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24g
+Tm86IDEzOTczODYgKFdhbGVzKQ0K
 
-Yes, I got it now.
-
-Thanks,
-Miklos
