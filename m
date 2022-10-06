@@ -2,125 +2,178 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67471C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Oct 2022 12:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A34C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Oct 2022 12:55:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231757AbiJFMy7 (ORCPT
+        id S231316AbiJFMzk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Oct 2022 08:54:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49114 "EHLO
+        Thu, 6 Oct 2022 08:55:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231765AbiJFMyc (ORCPT
+        with ESMTP id S230461AbiJFMzN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Oct 2022 08:54:32 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89C7D63DE;
-        Thu,  6 Oct 2022 05:53:59 -0700 (PDT)
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 296CAnM1013905;
-        Thu, 6 Oct 2022 12:52:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : reply-to : to : cc : date : in-reply-to : references : content-type
- : mime-version : content-transfer-encoding; s=pp1;
- bh=CYgo/2rN5z6rrw2ZjFqAtZ+Y7uhvzyRCXa/pxROV9zk=;
- b=KyLpF3nO6PH+ZUmSb8hNmUNkt0+AaAT/G8aadOACy79mYO12ugTnRf+vcqa6P1WWIkkw
- 3U7WEcDUdCa4ZrqiHUU6Ryr0hF0yUZ6ZPyILzt6olnkbH5G/qC+iCr3HQTvlumU5sQah
- UD96II9w0xB5VhPTSOg/CRwiBCO+KsXsM9NoVnFlkuEK0L/WjOCFNYHmTC53Jn/D/BfW
- XbFJm6Ox+yCZuWkJijzYy3wzY13MzP9HqtgG6k2+xlImSavuEIoDmNl4mp6EwFnVE0VS
- K2rYHWDpU48J0Or/KQA7/2VxqUjlhexc891nTiU8Qc8S5yoiyZNj2pSNgp2iGRFW4/ao Tw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3k1wptk3m2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Oct 2022 12:52:29 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 296CBYvW020519;
-        Thu, 6 Oct 2022 12:52:28 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3k1wptk3kd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Oct 2022 12:52:28 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 296CpnJJ018175;
-        Thu, 6 Oct 2022 12:52:27 GMT
-Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
-        by ppma03dal.us.ibm.com with ESMTP id 3jxd6aaskb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Oct 2022 12:52:27 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 296CqQmF21430934
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Oct 2022 12:52:26 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B4A07805E;
-        Thu,  6 Oct 2022 13:22:45 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1B0F97805C;
-        Thu,  6 Oct 2022 13:22:40 +0000 (GMT)
-Received: from [IPv6:2601:5c4:4300:c551:a71:90ff:fec2:f05b] (unknown [9.163.75.48])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Oct 2022 13:22:40 +0000 (GMT)
-Message-ID: <0c6bbab890df1eaccbc6882a2ca86e483e70bd93.camel@linux.ibm.com>
-Subject: Re: [PATCH v0 6/8] KEYS: trusted: caam based black key
-From:   James Bottomley <jejb@linux.ibm.com>
-Reply-To: jejb@linux.ibm.com
-To:     list.lkml.keyrings@me.benboeckel.net,
-        Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc:     jarkko@kernel.org, a.fatoum@pengutronix.de, gilad@benyossef.com,
-        Jason@zx2c4.com, zohar@linux.ibm.com, dhowells@redhat.com,
-        sumit.garg@linaro.org, david@sigma-star.at, michael@walle.cc,
-        john.ernberg@actia.se, jmorris@namei.org, serge@hallyn.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        j.luebbe@pengutronix.de, ebiggers@kernel.org, richard@nod.at,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, sahil.malhotra@nxp.com,
-        kshitiz.varshney@nxp.com, horia.geanta@nxp.com, V.Sethi@nxp.com
-Date:   Thu, 06 Oct 2022 08:52:20 -0400
-In-Reply-To: <Yz7NOB1vePLE4yoB@megas.dev.benboeckel.internal>
-References: <20221006130837.17587-1-pankaj.gupta@nxp.com>
-         <20221006130837.17587-7-pankaj.gupta@nxp.com>
-         <Yz7NOB1vePLE4yoB@megas.dev.benboeckel.internal>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Thu, 6 Oct 2022 08:55:13 -0400
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4689A59A7;
+        Thu,  6 Oct 2022 05:54:32 -0700 (PDT)
+Received: from in02.mta.xmission.com ([166.70.13.52]:52790)
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1ogQMl-001wrk-SK; Thu, 06 Oct 2022 06:52:43 -0600
+Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:37142 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1ogQMk-00FeG7-Lp; Thu, 06 Oct 2022 06:52:43 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAHC9VhShpEVTuogj4h74PxbEeTUNn4odo8SE6GBvb6sGUM0LHw@mail.gmail.com>
+        <87sfk3mim9.fsf@email.froward.int.ebiederm.org>
+        <CAHk-=wiCqicQrnQPeHbDF7ECKHk_ceYzZK5dYq7y5nZTZhpB8g@mail.gmail.com>
+        <87r0zmigx6.fsf@email.froward.int.ebiederm.org>
+        <CAHk-=wihQGNanXu3aeN12rsq+2K9BDkZEij-9HWtbVxFbXg1rw@mail.gmail.com>
+Date:   Thu, 06 Oct 2022 07:52:13 -0500
+In-Reply-To: <CAHk-=wihQGNanXu3aeN12rsq+2K9BDkZEij-9HWtbVxFbXg1rw@mail.gmail.com>
+        (Linus Torvalds's message of "Wed, 5 Oct 2022 11:54:32 -0700")
+Message-ID: <87h70h5d36.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: w0L2TfLfJepXNX9F2oQfOhqz5iBZvgOm
-X-Proofpoint-ORIG-GUID: DNOgdM8HEVDeZSOXkp86VoWgZK-DQp2J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-10-06_01,2022-10-06_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 impostorscore=0 mlxlogscore=867 clxscore=1011 spamscore=0
- malwarescore=0 phishscore=0 mlxscore=0 suspectscore=0 priorityscore=1501
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2210060072
+Content-Type: text/plain
+X-XM-SPF: eid=1ogQMk-00FeG7-Lp;;;mid=<87h70h5d36.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX18bJ2eMLHkzxYk/0SFWDcGQLZA8+RhXvg0=
+X-SA-Exim-Connect-IP: 68.110.29.46
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [GIT PULL] LSM patches for v6.1
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2022-10-06 at 08:42 -0400, Ben Boeckel wrote:
-> On Thu, Oct 06, 2022 at 18:38:35 +0530, Pankaj Gupta wrote:
-> > - CAAM supports two types of black keys:
-> >   -- Plain key encrypted with ECB
-> >   -- Plain key encrypted with CCM
-> 
-> What is a "black key"? Is this described in the documentation or
-> local comments at all? (I know I'm unfamiliar with CAAM, but maybe
-> this should be mentioned somewhere?).
-> 
-> >   Note: Due to robustness, default encytption used for black key is
-> > CCM.
->                                      ^^^^^^^^^^ encryption
-> 
-> What "robustness"? Surely there's some more technical details
-> involved here?
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-The crypto advice for the past decade or more has been never use ECB
-it's insecure, so anything could be regarded as robust compared to it
-... however that does beg the question of why ECB is even offered in a
-modern system?  Surely it's nothing more than a user trap (choose this
-secure option only if you don't want security).
+> On Wed, Oct 5, 2022 at 5:39 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>
+>> We already have /proc/sys/user/max_user_namespaces.  It is a per userns
+>> control so you can run it in as fine grain as you like.  A little
+>> cumbersome perhaps but real.
+>
+> It's not that it's cumbersome.
+>
+> It's that it is *USELESS*.
 
-James
+Not quite.  Because you can have lower settings inside created user
+namespaces, it is easy to create a user namespace so inside of
+a sandbox you can't create more user namespaces.
+
+> Sure, it limits the memory footprint of somebody who does the
+> fork-bomb equivalent of user namespaces, but that's the least of the
+> problems.
+>
+> Just think of normal users. They'd want a limited number of user
+> namespaces for things like sandboxing (whether google chrome or
+> whatever).
+>
+> So distros do want to allow people a few of them.
+>
+> But they want to be able to do so in a *controlled* manner. Not a "ok,
+> this user can create five user namespaces and do whatever they want in
+> them". Because we've had the issues where some kernel part has gotten
+> things wrong, and thought "local NS root means root" or similar.
+>
+> So it's not about the number of namespaces. AT ALL. It's about *who*
+> and *what* does them.
+
+I see your concern that I am not acknowledging the current state of play
+of user namespaces, and what problems they may be causing people.  Let
+me describe what I understand the current state to be and you can
+correct me where I am wrong.
+
+At this point every old-school distro I am aware of enables user
+namespaces by default. (I don't know what android and chrome-os do).  As
+best I have been able to determine the bugs that are turning up are the
+same kinds of bugs and at roughly the same rates as bugs turn up
+anywhere else in the user/kernel interface.
+
+There is a common trend that shows up when people examine posted
+exploits (especially exploits connected to CVEs), a lot of the exploits
+create user namespaces.  As best as I have been able to determine this
+has two causes.  Arranging the conditions so that the bugs can be
+triggered without using user namespaces is more difficult.  There is
+more attack surface when user namespaces are enabled.
+
+Even so it is my sense that for a typical linux desktop the additional
+risk of running with user namespaces enabled is negligible.  My sense is
+that there is a modest probability that there is a exploitable kernel
+bug with user namespaces disabled, and that enabling them only slightly
+increases the probability that there is an exploitable kernel bug.
+
+The conclusion I draw from that is that it is ok to leave the use of
+namespaces enabled by default for most people most of the time.
+
+As best as I can determine it takes running on separate machines, or
+possibly running inside of virtual machines to provide reasonable safety
+from an attacker who manages to run arbitrary unprivileged userspace
+code.  I don't believe disabling user namespaces appreciably moves the
+needle.
+
+In the linux desktop space there is chrome, and things like flatpak
+that use sandboxes to run applications.  Making the gain of being able
+to construct your own sandboxes something that has practical utility.
+I believe that sandboxes make it more difficult for attackers to
+achieve the ability to run arbitrary unprivileged userspace code.
 
 
+So I think user namespaces are better default on.  Having user
+namespaces default on means that people find them available and use
+them.  Asking people to code for enviroments where user namespaces
+may be on, may be off to the best I believe will encourage people
+not to use the best tools that are available for securing their
+applications, and so will be a net detriment to the community.
+
+That is why max_user_namespaces looks like all it is good for is
+preventing the user namespace equivalent of fork bombs, but is in fact
+trivially capable of disabling user namespaces in sandboxes.
+
+I do think there are cases where things get locked down and sandboxed
+and tight that people should disable anything and everything they don't
+need.  That in those case you want to implement the principle of least
+privilege.  I see no problem with supporting those kinds of systems.
+
+>> I don't know.  I tried to have the conversation and Paul shut it down.
+>
+> I really get the feeling that the problem here is that you're not even
+> acknowledging the whole issue to begin with, since you mention that
+> "max_user_namespaces" not once, but twice in the email.
+
+Mentioning max_user_namespaces was my point that I very much see the
+need for some controls.  That there are some already existing and
+that is the one I built in the kernel already.  Not a contention
+that these are good enough.
+
+Saying Paul was the one who shut things down was probably going a bit
+too far.  But I am very frustrated that the my attempts to figure out
+what was going on.
+
+
+>> It would be the easiest thing in the world in security_capable to
+>> ask is this a trusted app, if not the answer is no.
+>
+> Isn't this *literally* what security_create_user_ns() would basically
+> be doing?
+
+The actual implementation of security_create_user_ns() current creates
+regressions in userspace.
+
+So I think the current implementation needs to be reverted, and the
+current failure paths in create_user_ns with the same behavior need to
+be fixed and we can talk about what are appropriate mechanisms to add
+to the kernel.
+
+I trust you can handle the revert of the regression.  At the moment I
+have spent way more time on this then I have time for.  My family needs
+me.
+
+Eric
