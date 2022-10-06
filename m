@@ -2,113 +2,103 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6B8C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Oct 2022 22:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5EFC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Oct 2022 01:11:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbiJEWj5 (ORCPT
+        id S229758AbiJFBLB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Oct 2022 18:39:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52064 "EHLO
+        Wed, 5 Oct 2022 21:11:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229660AbiJEWj4 (ORCPT
+        with ESMTP id S229875AbiJFBLA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Oct 2022 18:39:56 -0400
-Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD2412D21
-        for <linux-security-module@vger.kernel.org>; Wed,  5 Oct 2022 15:39:54 -0700 (PDT)
-Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-1321a1e94b3so341723fac.1
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Oct 2022 15:39:54 -0700 (PDT)
+        Wed, 5 Oct 2022 21:11:00 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 317A818386
+        for <linux-security-module@vger.kernel.org>; Wed,  5 Oct 2022 18:10:58 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-35befab86a4so4581037b3.8
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Oct 2022 18:10:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=7/IEhAoDkrzzX8X0U3ubIc7ql44z59RBqzANu2Z5Uf0=;
-        b=kZ23b8E7E6/0FLR94upG7egESjzi3A1tyWH40/a3UzVA1adzmBn18Dczn8uaxvuKCl
-         Tr/HaGWe+RPW+BXG7sX14nJg/D1KRz0nKztxkwZbiC3RHZlEJa+4QEfA+8Xptm+YcDsb
-         YSPidZ/h7S49vbmAt5BBra97njX2wVHj2jDIXrjIaQExOO3Iii6dQ1B8YYqQiGKKvWWz
-         2T+Zcbdco8UaftMSpx6qbmGvgGxKvU9qApbz0VU52uZg41EzPl4GEnzHOs25lhXI2jn9
-         n+0FsmAm4RIm+Yoa93PmnrUqhXVcrie44VIuZgQIR0RtZ3r81CrDmSvC98bxfjp68XJI
-         Axuw==
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kd6uSgjH1+Yt+U7MvGJA0bVOBesvmMMXybPQlHwpLU8=;
+        b=dQD5/Hi56H7YE2l1G+d6UMrNAiTB/eymMdbuJOr7YWNuCh4+aDTv4xamvZrzrdhw5Z
+         5Q2akDPDSTkI+2UDB2B85ky7RGLQKdxmFEutX6OjSHHEJv0CculN0D3r0zVIwO71SMjS
+         9gQmBpCWPrr0V3q2OxUGGDW6Kte2uJvBGKpBHhinReEa0AtW+HydOieI+iIgc1ey/0lR
+         6P14xyNSrX0BsYl0IoUItQYuas3adwL8FVP1BlgwYsIl9idxE5qJzs9/qmf2BnpqPSCa
+         j+CypBSy6MVEas51zjYtlduisMIM3xpeBhzGa8kj5b5zn/t8kwBo6IFN9d3FQbpnpJS9
+         3F4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=7/IEhAoDkrzzX8X0U3ubIc7ql44z59RBqzANu2Z5Uf0=;
-        b=5bajf4yM5H68xT1tl+wjpXffyUufFRAilChnM+ZZUVukGnqqEr3qQe/CTTxqgRQTLt
-         s869TIGAbJVkx7kIGU63JQM8QrnwvLprfZCbiFZMiORB8x9JNApAXq70MuKhu17O41gI
-         qCiYc4zjBVx8zR6og4+Lr6AlF2IEY1/D6WQCmD6E3j/n5suoznwV9RctcHyo7q4Lvh7g
-         nLWbYsltn/vwm/4yFoGzh1OOXXcWY7eJ3x2BRA+DpPyTVV1xEe6I/gVXQ1SS3EPRf+oL
-         NH/E+kFlP1oUml+QO+Dzesz2RyKpHduDxawPXxHB9j63zoNEek3rFuHo9eKa4ffSkUZq
-         zBwQ==
-X-Gm-Message-State: ACrzQf0/joTq1OZmAigfzsRNO0HENLuHyLPVat7tvlVvf8Z6lIOjAltM
-        CuiWTvsfFTQe1hJRzV8jG2vAfO98MFoJHwIvYFQzFaG4uA==
-X-Google-Smtp-Source: AMsMyM5AAhn8YgtcxdVMXOFsfKzzHCfetyAskkmbd280FHnRv2Kq5uc0B6aaAvruABfTQT9GgQ8/MZ2CUNz/QhJvBA4=
-X-Received: by 2002:a05:6870:a916:b0:131:9361:116a with SMTP id
- eq22-20020a056870a91600b001319361116amr1042018oab.172.1665009594158; Wed, 05
- Oct 2022 15:39:54 -0700 (PDT)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kd6uSgjH1+Yt+U7MvGJA0bVOBesvmMMXybPQlHwpLU8=;
+        b=nIivlHeeYW62AaeG4gxzoWh+7NpFC5COqnEpQqS3t5m9UIaunmAqXfRq1Y5Bul9ZHV
+         uk3VputNjb5FdfQ8UyuhYH/jdJU8HKbld+InIal4ABkAyJ1lxMGOWKwA90ruT3Y9WXUB
+         0Pb75Gdk7s+dWS5NQC+Mb0PA+mi/Tn2ZZT/VZWIbOHZ8HMvtmaOGYqcNPY7g70sYsUdz
+         6vtzh1YxL/rj5I7Eu1MNBHQcEmDVqqHl456V/6xtoe6jimQ9Je7l+9ekjguDQsJFMWzN
+         CBPaPuaStCI8pmpMaxFPsmc/UJS+m3b8Hn/Nx3YJPPxiDuNFz0w8NAV3tB21S1qefs8/
+         TBeQ==
+X-Gm-Message-State: ACrzQf1qeDUh+DhPSpIIsTRditMpvftUtyYapRH+qqVS9DhyzzKymewl
+        GL94Vy88VMDJv4TS8muICmSO1wWn4V4v9npu3KIkDmOso5kC
+X-Google-Smtp-Source: AMsMyM4xPUs8z6Cc1VNpk6wu4Gy3keHf3cvXZlVatZFo61KH/uy5JR1qmd8ZH0BhcOeT9mVzAt8Ryr3VwA2/4zeI1Vs=
+X-Received: by 2002:a81:1b09:0:b0:35d:cf91:aadc with SMTP id
+ b9-20020a811b09000000b0035dcf91aadcmr2440333ywb.47.1665018657331; Wed, 05 Oct
+ 2022 18:10:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHC9VhShpEVTuogj4h74PxbEeTUNn4odo8SE6GBvb6sGUM0LHw@mail.gmail.com>
- <87sfk3mim9.fsf@email.froward.int.ebiederm.org> <CAHk-=wiCqicQrnQPeHbDF7ECKHk_ceYzZK5dYq7y5nZTZhpB8g@mail.gmail.com>
- <87r0zmigx6.fsf@email.froward.int.ebiederm.org> <CAHC9VhSK=oYxV=MzT7BLD3TuzQYiX0aY7h1aPb25wuRN=vPyKg@mail.gmail.com>
- <87a66ae15h.fsf@email.froward.int.ebiederm.org> <CAHC9VhTmfRhYCJibpZ20ibH-JhVMrwbpFdCtKUz5tqFHsjLRiw@mail.gmail.com>
- <874jwic66q.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <874jwic66q.fsf@email.froward.int.ebiederm.org>
+References: <20221001154908.49665-1-gnoack3000@gmail.com> <20221001154908.49665-2-gnoack3000@gmail.com>
+In-Reply-To: <20221001154908.49665-2-gnoack3000@gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 5 Oct 2022 18:39:43 -0400
-Message-ID: <CAHC9VhQ+WRgtrdzc_WedFM8=LMdApBDLORV56pCk_KSNkH0ugg@mail.gmail.com>
-Subject: Re: [GIT PULL] LSM patches for v6.1
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 5 Oct 2022 21:10:46 -0400
+Message-ID: <CAHC9VhRB1h4syH_5=Ezg5uAvxbVQ-Va8eRhW5rdLJZQ-GafqEA@mail.gmail.com>
+Subject: Re: [PATCH v8 1/9] security: Create file_truncate hook from
+ path_truncate hook
+To:     =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        John Johansen <john.johansen@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 5, 2022 at 5:28 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> Paul Moore <paul@paul-moore.com> writes:
-> > On Wed, Oct 5, 2022 at 11:33 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >> Paul Moore <paul@paul-moore.com> writes:
-> >> > On Wed, Oct 5, 2022 at 8:39 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >> >> Linus Torvalds <torvalds@linux-foundation.org> writes:
-> >
-> > ...
-> >
-> >> >> Effectively he said that where two or more out of tree LSM policies want
-> >> >> something it makes no sense to discussion the actual reasons people want
-> >> >> to use the hook.
-> >> >
-> >> > Runtime kernel configuration is inherently "out of tree", this
-> >> > includes not only loadable LSM security policies (e.g. a SELinux
-> >> > policy), the system's firewall configuration, things like sysctl.conf,
-> >> > and countless others.  Please understand that "out of tree" in this
-> >> > context is not the same as when it is used in the context of kernel
-> >> > code; the former is actually a positive thing ("look we can configure
-> >> > the kernel behavior the way we want!") while the latter is a
-> >> > maintenance and support nightmare.
-> >>
-> >> Paul are you saying my experience with /proc/net pointing incorrectly at
-> >> /proc/self/net instead of /proc/thread-self/net is invalid?
-> >
-> > My comment was that runtime kernel configuration is always going to be
-> > out of tree due to its very nature, and conflating runtime
-> > configuration with kernel code is a mistake.
+On Sat, Oct 1, 2022 at 11:49 AM G=C3=BCnther Noack <gnoack3000@gmail.com> w=
+rote:
+>
+> Like path_truncate, the file_truncate hook also restricts file
+> truncation, but is called in the cases where truncation is attempted
+> on an already-opened file.
+>
+> This is required in a subsequent commit to handle ftruncate()
+> operations differently to truncate() operations.
+>
+> Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Acked-by: John Johansen <john.johansen@canonical.com>
+> Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
+> ---
+>  fs/namei.c                    |  2 +-
+>  fs/open.c                     |  2 +-
+>  include/linux/lsm_hook_defs.h |  1 +
+>  include/linux/lsm_hooks.h     | 10 +++++++++-
+>  include/linux/security.h      |  6 ++++++
+>  security/apparmor/lsm.c       |  6 ++++++
+>  security/security.c           |  5 +++++
+>  security/tomoyo/tomoyo.c      | 13 +++++++++++++
+>  8 files changed, 42 insertions(+), 3 deletions(-)
 
-...
+I agree with Micka=C3=ABl's comments regarding the formatting, but
+otherwise it looks okay to me from a LSM perspective.  If you make the
+whitespace changes you can add my ACK.
 
-> Given that the logic and it's bugs are going to be out of tree I do not
-> agree that we should only consider what goes into the kernel when
-> looking into that kind of code.  Instead we should treat it will all of
-> the due diligence that we attempt to use when creating a system call.
-> That very much has not happened here.
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-Eric, I disagree with most of what you said, to the point where we
-could probably go round and round in circles for days on this and not
-be any closer to an agreeable conclusion.  I don't know about you, but
-that is not my idea of time well spent, especially since Linus has
-already voiced his opinion on the matter.  I will end my comments here
-with the hope that someday soon you can at least find the ability to
-respect the consensus decision, even if you can't bring yourself to
-agree with it.
-
--- 
+--=20
 paul-moore.com
