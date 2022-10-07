@@ -2,127 +2,68 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF0DBC4332F
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Oct 2022 11:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CEAC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Oct 2022 17:35:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229722AbiJGL6R convert rfc822-to-8bit (ORCPT
+        id S229734AbiJGRfL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Oct 2022 07:58:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46554 "EHLO
+        Fri, 7 Oct 2022 13:35:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbiJGL6Q (ORCPT
+        with ESMTP id S229692AbiJGRfK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Oct 2022 07:58:16 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7F5CCF860
-        for <linux-security-module@vger.kernel.org>; Fri,  7 Oct 2022 04:58:12 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-25-ABR5MNZQOUi4UB5yYMDNEA-1; Fri, 07 Oct 2022 12:58:08 +0100
-X-MC-Unique: ABR5MNZQOUi4UB5yYMDNEA-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Fri, 7 Oct
- 2022 12:58:06 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.040; Fri, 7 Oct 2022 12:58:06 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Theodore Ts'o' <tytso@mit.edu>, Kees Cook <keescook@chromium.org>
-CC:     Jorge Merlino <jorge.merlino@canonical.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Jann Horn <jannh@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Todd Kjos <tkjos@google.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Prashanth Prahlad <pprahlad@redhat.com>,
-        Micah Morton <mortonm@chromium.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
-Subject: RE: [PATCH] Fix race condition when exec'ing setuid files
-Thread-Topic: [PATCH] Fix race condition when exec'ing setuid files
-Thread-Index: AQHY2e33//tmcksZekaHt2mlO/Dtmq4C0tkw
-Date:   Fri, 7 Oct 2022 11:58:06 +0000
-Message-ID: <f01aae2a5936450f889fa5a7d350d363@AcuMS.aculab.com>
-References: <202209131456.76A13BC5E4@keescook>
- <202210061301.207A20C8E5@keescook> <Yz+Dln7AAMU+Oj9X@mit.edu>
-In-Reply-To: <Yz+Dln7AAMU+Oj9X@mit.edu>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 7 Oct 2022 13:35:10 -0400
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81DF542E71
+        for <linux-security-module@vger.kernel.org>; Fri,  7 Oct 2022 10:35:09 -0700 (PDT)
+Received: by mail-oi1-x236.google.com with SMTP id m130so6286863oif.6
+        for <linux-security-module@vger.kernel.org>; Fri, 07 Oct 2022 10:35:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dk6tQJdYrdVnt5J0XTqD1Ykt5Zifw0rjbpHHEmz3lLs=;
+        b=GMO4QHCYRB7uW89yNSgBKu6So0atvk7I30X3cih57CLaErtXYhsr8vnxtQWwL55U0T
+         u94Axl9dsJMl0J6xnuCJaCsc50hud9rOR4EWTE4kguwkaFySGG9XyrrUE/LP5e2aLBhW
+         XcR6E/8yzPbF8LSsulYQJFXrGiAPIHNT1BmzVkOBzj8AJp33/0blQPBamAw4RNwELvbR
+         bOpyrb4ga/h/VtXBpTFBFwQdLFw5jvoL6GmX69coKW8W+DTVNH3aa0y+S8UJ3iN3cIHZ
+         Xlp0cOjSFVkx+fmhwO5CnzYAl/TaeZmGdWATulskMeLyO8b55VWIWlFYq33pTsCq2lMo
+         pgvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dk6tQJdYrdVnt5J0XTqD1Ykt5Zifw0rjbpHHEmz3lLs=;
+        b=1AyhbdlM3GVn8ZDKcCXROXSYW2TRu4JU/CmjvwixyrUAqPZoMNRcg6O4f9kn2CP++1
+         A+zokQEMDOtvL7hysS3sQhuG/iePKuZw8PQKr3stFrpHlIEuOfn85c2YTO47ue7cg/t5
+         dG/E6O2J29Puxh3fxr8kLF0IbwIFCHvN5E7X0wGySb7b8qnKeLSp9qjlKJEV7p4blZHI
+         iQUCYeguFIzggXuGn3I19M2wj371cwwO8oJ6xbiypF0IDdp+xZZu1FK2DY5u0hGAetNu
+         7T0yzwalfMCiacyLbnCMp6YqfHfYxsgihRIy/cQigIbtDz4LZMsA1u5UBZG5KRzFbgLx
+         ZZug==
+X-Gm-Message-State: ACrzQf21gNNBchOIA8GLHukEpo6LWCXNlzbxmTcqDaJeWsKKUTr+v8yn
+        D95+sUubWXwhhp7pjnOAZwOtvTenf0zxtp1nTQQZgFa6D8PI
+X-Google-Smtp-Source: AMsMyM6HOob3OhYe+iDodY/fdaWV2GZRIkRuW67saGDP2dd9w/7MHUwV1/LY76uwHOehBToBbFtWYduOjNB4W270Dzw=
+X-Received: by 2002:a05:6808:144b:b0:350:a06a:f8cb with SMTP id
+ x11-20020a056808144b00b00350a06af8cbmr8293565oiv.51.1665164108830; Fri, 07
+ Oct 2022 10:35:08 -0700 (PDT)
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 7 Oct 2022 13:34:58 -0400
+Message-ID: <CAHC9VhSzQtFkksJ5zBnhOYCpvDGNjjn7SKoC4MmopepWzb+Hfg@mail.gmail.com>
+Subject: IORING_OP_SENDMSG_ZC should enable auditing just like IORING_OP_SENDMSG
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-audit@redhat.com,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Theodore Ts'o
-> Sent: 07 October 2022 02:41
-> 
-> On Thu, Oct 06, 2022 at 01:20:35PM -0700, Kees Cook wrote:
-> >
-> > So the question, then, is "why are they trying to exec while actively
-> > spawning new threads?" That appears to be the core problem here, and as
-> > far as I can tell, the kernel has behaved this way for a very long time.
-> > I don't think the kernel should fix this, either, because it leads to a
-> > very weird state for userspace, where the thread spawner may suddenly
-> > die due to the exec happening in another thread. This really looks like
-> > something userspace needs to handle correctly (i.e. don't try to exec
-> > while actively spawning threads).
-> 
-> One of the classic failure modes is when a threaded program calls a
-> library, and that library might try to do a fork/exec (or call
-> system(3) to run some command.  e.g., such as running "lvm create ..."
-> or to spawn some kind of helper daemon.
-> 
-> There are a number of stack overflow questions about this, and there
-> are some solutions to _some_ of the problems, such as using
-> pthread_atfork(), and knowing that you are about to call fork/exec,
-> and use some out of band mechanism to to make sure no threads get
-> spawned until the fork/exec is completed --- but if you don't know
-> that a library is going to do a fork/exec, well, life is tough.
+Commit 493108d95f14 ("io_uring/net: zerocopy sendmsg") added a new
+zerocopy sendmsg command to io_uring, but it enabled the
+io_op_def:audit_skip flag, causing the operation to bypass auditing.
+As far as I can see, the SENDMSG_ZC operation should be subject to
+auditing just as SENDMSG.
 
-Or that a library thread is about to create a new thread.
-
-> One technique even advocated by a stack overflow article is "avoid
-> using threads whenver possible".  :-/
-
-Doesn't fork() only create the current thread in the new process?
-So by the time exec() runs there is a nice single threaded process
-with an fd table that isn't shared.
-
-For helpers there is always (a properly implemented) posix_spawn() :-)
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+-- 
+paul-moore.com
