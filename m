@@ -2,135 +2,62 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D42C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Oct 2022 21:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF723C433FE
+	for <linux-security-module@archiver.kernel.org>; Sat,  8 Oct 2022 06:34:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbiJGVzl (ORCPT
+        id S229458AbiJHGep (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Oct 2022 17:55:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42476 "EHLO
+        Sat, 8 Oct 2022 02:34:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229728AbiJGVzk (ORCPT
+        with ESMTP id S229445AbiJHGeo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Oct 2022 17:55:40 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 203CAA5701;
-        Fri,  7 Oct 2022 14:55:35 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id ot12so14056844ejb.1;
-        Fri, 07 Oct 2022 14:55:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bL6Ak5H09U4S+Zi1JkNWbIYx87jdydRMPmWHkn6vK/w=;
-        b=Y706H0GOJhZ7Gon4KbJgWnbNacILzsNQtkf8QI+f3DsqXmlpb4qTaulfNTPfcadvUR
-         Eor7xteScanx6qnVke2V3xYp89/BRgVZu9GZTO6Jx33zZYthyFdl0T0p7kXPmRd2wskL
-         E2wNYEW+R1KYFDeUHiAChgQzAw1qoMCG+jM3wjxix6Z7unW0x9iV6SnjsCyYyRPATB6L
-         /OZ3gZ4iJkRu/mgqudFWCzoHoyUZxK/k9DlpzGID5b9FqhXGpGQiGFgMz05A1IULwCTX
-         qBeY7szcCNrpRIHCYoLX7kmFyRzlscXgkwFNMJ+uthNI9Ruv5P+lQnnep0VN4mrnElYq
-         5myw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bL6Ak5H09U4S+Zi1JkNWbIYx87jdydRMPmWHkn6vK/w=;
-        b=yVZkBDnZnBPbl25JnY7j1DRNdfEZvGYLc49DqOBLKTBElcTIViZW3b7gGYTp9X9dGZ
-         XDC+1sKU+Bo7zaueoL/WCgQB/gTyHoE9gaxl/Zv2Q2wHJwgZk3OleT5dlAj7YdwJ1PPg
-         W/giSctAiBh4aBPKPJrMqmNW3j3dviI9nU8DTmOTb6VcCeD61+0w+Ai1llYI3qjBkneL
-         i8hEEqnpFwljs9rSQVeS0X43VnVPdThCnRfjQqzhDeokp52YIst0UbXPh0VTxSSV2ue+
-         Wy2cPh1wrkVQfC1siFizhUeKljCMzuoNPdho4keVmHjcC4GOtFpIlr8BBpVJl4ZQ6RRA
-         w0lA==
-X-Gm-Message-State: ACrzQf0DEgjSfJHlDNVfp2HlKPjt7J4QJC764BWbez6ReSP3IZGtSRBN
-        yZzKTMUy3HlvKtGmaZRYo+lBiyeqGZnMlvvGisqFQv0apaY=
-X-Google-Smtp-Source: AMsMyM7kk5o5QxWBEHe6uZTqnP+cWLvaL+QMSa7AFJXRTfkmaac9dVZZqbAxjyvrBJ8jJv5Q+3+gzc3DMYH58Su/8ic=
-X-Received: by 2002:a17:906:fe45:b0:788:15a5:7495 with SMTP id
- wz5-20020a170906fe4500b0078815a57495mr5696459ejb.633.1665179733473; Fri, 07
- Oct 2022 14:55:33 -0700 (PDT)
+        Sat, 8 Oct 2022 02:34:44 -0400
+Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A345012A9E;
+        Fri,  7 Oct 2022 23:34:42 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R221e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0VRZ.ife_1665210853;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0VRZ.ife_1665210853)
+          by smtp.aliyun-inc.com;
+          Sat, 08 Oct 2022 14:34:38 +0800
+From:   Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To:     john.johansen@canonical.com
+Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH 1/3] AppArmor: Fix kernel-doc
+Date:   Sat,  8 Oct 2022 14:34:09 +0800
+Message-Id: <20221008063411.14829-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
-References: <CAHC9VhTGE1cf_WtDn4aDUY=E-m--4iZXWiNTwPZrP9AVoq17cw@mail.gmail.com>
- <CAHC9VhT2LK_P+_LuBYDEHnkNkAX6fhNArN_N5bF1qwGed+Kyww@mail.gmail.com>
- <CAADnVQ+kRCfKn6MCvfYGhpHF0fUWBU-qJqvM=1YPfj02jM9zKw@mail.gmail.com> <CAHC9VhRcr03ZCURFi=EJyPvB3sgi44_aC5ixazC43Zs2bNJiDw@mail.gmail.com>
-In-Reply-To: <CAHC9VhRcr03ZCURFi=EJyPvB3sgi44_aC5ixazC43Zs2bNJiDw@mail.gmail.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Fri, 7 Oct 2022 14:55:21 -0700
-Message-ID: <CAADnVQJ5VgTNiEhEhOtESRrK0q3-pUSbZfAWL=tXv-s2GXqq8Q@mail.gmail.com>
-Subject: Re: SO_PEERSEC protections in sk_getsockopt()?
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Martin KaFai Lau <martin.lau@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 7, 2022 at 1:06 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Fri, Oct 7, 2022 at 3:13 PM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> > On Fri, Oct 7, 2022 at 10:43 AM Paul Moore <paul@paul-moore.com> wrote:
-> > > On Wed, Oct 5, 2022 at 4:44 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > >
-> > > > Hi Martin,
-> > > >
-> > > > In commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
-> > > > sockptr_t argument") I see you wrapped the getsockopt value/len
-> > > > pointers with sockptr_t and in the SO_PEERSEC case you pass the
-> > > > sockptr_t:user field to avoid having to update the LSM hook and
-> > > > implementations.  I think that's fine, especially as you note that
-> > > > eBPF does not support fetching the SO_PEERSEC information, but I think
-> > > > it would be good to harden this case to prevent someone from calling
-> > > > sk_getsockopt(SO_PEERSEC) with kernel pointers.  What do you think of
-> > > > something like this?
-> > > >
-> > > >   static int sk_getsockopt(...)
-> > > >   {
-> > > >     /* ... */
-> > > >     case SO_PEERSEC:
-> > > >       if (optval.is_kernel || optlen.is_kernel)
-> > > >         return -EINVAL;
-> > > >       return security_socket_getpeersec_stream(...);
-> > > >     /* ... */
-> > > >   }
-> > >
-> > > Any thoughts on this Martin, Alexei?  It would be nice to see this
-> > > fixed soon ...
-> >
-> > 'fixed' ?
-> > I don't see any bug.
-> > Maybe WARN_ON_ONCE can be added as a precaution, but also dubious value.
->
-> Prior to the change it was impossible to call
-> sock_getsockopt(SO_PEERSEC) with a kernel address space pointer, now
-> with 4ff09db1b79b is it possible to call sk_getsockopt(SO_PEERSEC)
-> with a kernel address space pointer and cause problems.
+security/apparmor/audit.c:93: warning: expecting prototype for audit_base(). Prototype was for audit_pre() instead.
 
-No. It's not possible. There is no path in the kernel that
-can do that.
+Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=2339
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ security/apparmor/audit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Perhaps there
-> are no callers in the kernel that do such a thing at the moment, but
-> it seems like an easy mistake for someone to make, and the code to
-> catch it is both trivial and out of any critical path.
+diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
+index 8dfdda98fbf1..5a7978aa4b19 100644
+--- a/security/apparmor/audit.c
++++ b/security/apparmor/audit.c
+@@ -83,7 +83,7 @@ static const char *const aa_class_names[] = {
+  */
+ 
+ /**
+- * audit_base - core AppArmor function.
++ * audit_pre() - core AppArmor function.
+  * @ab: audit buffer to fill (NOT NULL)
+  * @ca: audit structure containing data to audit (NOT NULL)
+  *
+-- 
+2.20.1.7.g153144c
 
-Not easy at all.
-There is only way place in the whole kernel that does:
-                return sk_getsockopt(sk, SOL_SOCKET, optname,
-                                     KERNEL_SOCKPTR(optval),
-                                     KERNEL_SOCKPTR(optlen));
-
-and there is an allowlist of optname-s right in front of it.
-SO_PEERSEC is not there.
-For security_socket_getpeersec_stream to be called with kernel
-address the developer would need to add SO_PEERSEC to that allowlist.
-Which will be trivially caught during the code review.
-
-> This is one of those cases where preventing a future problem is easy,
-> I think it would be foolish of us to ignore it.
-
-Disagree. It's just a typical example of defensive programming
-which I'm strongly against.
-By that argument we should be checking all pointers for NULL
-"because it's easy to do".
