@@ -2,217 +2,163 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD4FC433F5
-	for <linux-security-module@archiver.kernel.org>; Sat,  8 Oct 2022 11:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81AF6C433FE
+	for <linux-security-module@archiver.kernel.org>; Sun,  9 Oct 2022 22:01:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbiJHLT6 (ORCPT
+        id S230207AbiJIWBZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 8 Oct 2022 07:19:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33488 "EHLO
+        Sun, 9 Oct 2022 18:01:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229605AbiJHLT4 (ORCPT
+        with ESMTP id S230227AbiJIWBY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 8 Oct 2022 07:19:56 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2856AF014;
-        Sat,  8 Oct 2022 04:19:55 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id m15so10056630edb.13;
-        Sat, 08 Oct 2022 04:19:55 -0700 (PDT)
+        Sun, 9 Oct 2022 18:01:24 -0400
+Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A60ED1F9D0
+        for <linux-security-module@vger.kernel.org>; Sun,  9 Oct 2022 15:01:22 -0700 (PDT)
+Received: by mail-oo1-xc2a.google.com with SMTP id c13-20020a4ac30d000000b0047663e3e16bso6905312ooq.6
+        for <linux-security-module@vger.kernel.org>; Sun, 09 Oct 2022 15:01:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=se/66gn3QF2F5Lo6VpmJfEFqwp0VLrLyYHLNBf+zDrg=;
-        b=KVvBq/xKCICDJZD2SDMj37lIBU8ww2AHjlVm4PGv64sRlrhWz7+A/E9vC5noaJ2K84
-         OxfMv9+VPGr6ELRjK4f91ot952R8gZZ81kF01Q8ReSjoWwNKkzu+4PrSj3sASUZkaxoe
-         Tdk+LuGpKYro73dPX63nHaA5KPDqfA2LJT8cMsBlqIrIy1zOvdVQCcwsArIwz+cMm1gJ
-         LNf95JJ50rillKCx7VpecsTp/JMnh95Dli/MVcFNTFO3JpcqVRi/9rRI20v4ov/bFygV
-         bYLsPSfOPgmLSLvOOu8wGYl6ePTzBjQi+1Bw/7KLRJIfn0L+B2NjflQ4wiWm1uwEdMqy
-         RJVA==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uCRLYNKaUNlApcpDFpNyoRTJy58BtqMBs8QGQONvN8k=;
+        b=vGC2eDM3rEem/eh/5h8SDEjqOetEl07JAHYwzB9ONsarnjg7j3usGYgj54DnxwISnN
+         zJb7uM4oIhyXpc84kXLleo7oYgPeZpggHIhpAlSud3HZ+U8x6UCb2MJeKWUn0dNtvMHX
+         QiKZgUNGZE+TTEp2USGjQEhcGrmonl4I+UQObvkjIBPrQ8GTLtkAlELA9o+0NpFbf195
+         uiZyfI6RadwMh8lW2i3BEf1VXZAopWlsLrS8w3sO11x2uEEsltqe7N6BDaT2NNxFtr8d
+         /X/CODbWkumcwphx0PQANx9dRTxEyZz62XHdzRqo5GlxUGiD4yhC+jyizLgCaPqXHe6/
+         dRRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=se/66gn3QF2F5Lo6VpmJfEFqwp0VLrLyYHLNBf+zDrg=;
-        b=TOM6WOvUtZJWL8Wnbeb2qiZiYRlBSIF1i6ALgwy++41n9DENi/uw4fL7q8Iw96nuKS
-         edOuKgDi/8mws9rZ3nVcAGNxeGzrBJBI3mE8HRfMRxZEafp2f+zTQn46Jp5FGc7dYvtr
-         8EG+VMQOtH7j4a7FP7rqKIoCXOfRTBYKFuvYy0ajlj8shzWMRMvoq+2NPi3O6lrgzoUJ
-         FVJdRuATG+j0pVNP4kQKVOFXtWu0dV2qXfS+u2iUF7yGG7DIkta44si67lCcSlngHjH4
-         L3YfjcEGf8ZZl+bKNJz+YQj5+GBOpPueR0rWdM9HiYz/l6vfhT+OB0FcUjfyfGoidRAx
-         6aLQ==
-X-Gm-Message-State: ACrzQf2g0VMvxiZKMdmjyvxjmeYFzGNliok4qhiHOdz8dqi0yDkZgRFJ
-        Q6DXNBoPl6dRLapwLQHMa83rcB1YdMM=
-X-Google-Smtp-Source: AMsMyM6Gp6q+Z6GtsALS2bH6ywkjvHK9ncABFofwxkYl8UhmG+8ZNlMOVmoUkXUjk4x6uGSjEwxnWg==
-X-Received: by 2002:aa7:d392:0:b0:458:800a:c47 with SMTP id x18-20020aa7d392000000b00458800a0c47mr8470372edq.5.1665227993600;
-        Sat, 08 Oct 2022 04:19:53 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id b17-20020a50b411000000b00454546561cfsm3246072edh.82.2022.10.08.04.19.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Oct 2022 04:19:53 -0700 (PDT)
-Date:   Sat, 8 Oct 2022 13:19:51 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH v9 11/11] landlock: Document Landlock's file truncation
- support
-Message-ID: <Y0Fc1y5vGmiBzUHW@nuc>
-References: <20221008111336.74806-1-gnoack3000@gmail.com>
- <20221008111336.74806-2-gnoack3000@gmail.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uCRLYNKaUNlApcpDFpNyoRTJy58BtqMBs8QGQONvN8k=;
+        b=ff64oACVDQSWP8tWFkjvAygPzggRzyL+EPSlnK2WXmFZMerh5Bu/QimzkPA3+Pmomj
+         8iCS68G/P4t+CAu5v2+qej+CQ5CSNY/wkWah3MFf33jLeljDCmWCvut98C1uJNPbnJp+
+         i1ZdPnZlH1azLC7+aR6LPxUlJNaJs7IMDwT1fD0zuW5Oe64pvKqhhXKTl05qSI5b8yxp
+         sgYIG04EVk84udD3TD9/px4tjxPFtwGjZypkplPyIBhNRkMVSChgQQgCJ3kB2OdIs0n3
+         dotptDU7K9p/Hc2jievfKGbn/7nwLypC93Cby9lT4rNqbqcshRUNOv86BIGv3FVCfxkb
+         DB3Q==
+X-Gm-Message-State: ACrzQf1RAsDryqjxSthWT9vQiCMq7oyCrChZ+MJgvSamySaganv/vyr0
+        fJKB/OBo9ZzTEjtlfIcLN1EzO5ngt4J5y7wHsK/LA1oBGA==
+X-Google-Smtp-Source: AMsMyM4asPKdAkOMP82nbVM7coRwFd3bhcIe35xgsbLTxbleHkmJxrxhoowiCfpYkkfMYzO+c4pIpcQeh1JWVfTh1ws=
+X-Received: by 2002:a05:6830:6403:b0:661:9295:af6b with SMTP id
+ cj3-20020a056830640300b006619295af6bmr2613406otb.287.1665352881919; Sun, 09
+ Oct 2022 15:01:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221008111336.74806-2-gnoack3000@gmail.com>
+References: <CAHC9VhTGE1cf_WtDn4aDUY=E-m--4iZXWiNTwPZrP9AVoq17cw@mail.gmail.com>
+ <CAHC9VhT2LK_P+_LuBYDEHnkNkAX6fhNArN_N5bF1qwGed+Kyww@mail.gmail.com>
+ <CAADnVQ+kRCfKn6MCvfYGhpHF0fUWBU-qJqvM=1YPfj02jM9zKw@mail.gmail.com>
+ <CAHC9VhRcr03ZCURFi=EJyPvB3sgi44_aC5ixazC43Zs2bNJiDw@mail.gmail.com> <CAADnVQJ5VgTNiEhEhOtESRrK0q3-pUSbZfAWL=tXv-s2GXqq8Q@mail.gmail.com>
+In-Reply-To: <CAADnVQJ5VgTNiEhEhOtESRrK0q3-pUSbZfAWL=tXv-s2GXqq8Q@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sun, 9 Oct 2022 18:01:10 -0400
+Message-ID: <CAHC9VhRmghJcZeUM6NS6J24tBOBxrZckwc2DqbqqqYif8hzopA@mail.gmail.com>
+Subject: Re: SO_PEERSEC protections in sk_getsockopt()?
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Martin KaFai Lau <martin.lau@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Sorry, please ignore this thread -- I messed it up and accidentally sent it with the wrong Reply-To headers.
+On Fri, Oct 7, 2022 at 5:55 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> On Fri, Oct 7, 2022 at 1:06 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Fri, Oct 7, 2022 at 3:13 PM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > > On Fri, Oct 7, 2022 at 10:43 AM Paul Moore <paul@paul-moore.com> wrote:
+> > > > On Wed, Oct 5, 2022 at 4:44 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > > >
+> > > > > Hi Martin,
+> > > > >
+> > > > > In commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
+> > > > > sockptr_t argument") I see you wrapped the getsockopt value/len
+> > > > > pointers with sockptr_t and in the SO_PEERSEC case you pass the
+> > > > > sockptr_t:user field to avoid having to update the LSM hook and
+> > > > > implementations.  I think that's fine, especially as you note that
+> > > > > eBPF does not support fetching the SO_PEERSEC information, but I think
+> > > > > it would be good to harden this case to prevent someone from calling
+> > > > > sk_getsockopt(SO_PEERSEC) with kernel pointers.  What do you think of
+> > > > > something like this?
+> > > > >
+> > > > >   static int sk_getsockopt(...)
+> > > > >   {
+> > > > >     /* ... */
+> > > > >     case SO_PEERSEC:
+> > > > >       if (optval.is_kernel || optlen.is_kernel)
+> > > > >         return -EINVAL;
+> > > > >       return security_socket_getpeersec_stream(...);
+> > > > >     /* ... */
+> > > > >   }
+> > > >
+> > > > Any thoughts on this Martin, Alexei?  It would be nice to see this
+> > > > fixed soon ...
+> > >
+> > > 'fixed' ?
+> > > I don't see any bug.
+> > > Maybe WARN_ON_ONCE can be added as a precaution, but also dubious value.
+> >
+> > Prior to the change it was impossible to call
+> > sock_getsockopt(SO_PEERSEC) with a kernel address space pointer, now
+> > with 4ff09db1b79b is it possible to call sk_getsockopt(SO_PEERSEC)
+> > with a kernel address space pointer and cause problems.
+>
+> No. It's not possible. There is no path in the kernel that
+> can do that.
 
-—Günther
+If we look at the very next sentence in my last reply you see that I
+acknowledge that there may be no callers that currently do that, but
+it seems like an easy mistake for someone to make.  I've seen kernel
+coding errors similar to this in the past, it seems like a reasonable
+thing to protect against, especially considering it is well outside of
+any performance critical path.
 
-On Sat, Oct 08, 2022 at 01:13:36PM +0200, Günther Noack wrote:
-> Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
-> 
-> Adapt the backwards compatibility example and discussion to remove the
-> truncation flag where needed.
-> 
-> Point out potential surprising behaviour related to truncate.
-> 
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> ---
->  Documentation/userspace-api/landlock.rst | 67 +++++++++++++++++++++---
->  1 file changed, 60 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index cec780c2f497..d8cd8cd9ce25 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -8,7 +8,7 @@ Landlock: unprivileged access control
->  =====================================
->  
->  :Author: Mickaël Salaün
-> -:Date: September 2022
-> +:Date: October 2022
->  
->  The goal of Landlock is to enable to restrict ambient rights (e.g. global
->  filesystem access) for a set of processes.  Because Landlock is a stackable
-> @@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
->              LANDLOCK_ACCESS_FS_MAKE_FIFO |
->              LANDLOCK_ACCESS_FS_MAKE_BLOCK |
->              LANDLOCK_ACCESS_FS_MAKE_SYM |
-> -            LANDLOCK_ACCESS_FS_REFER,
-> +            LANDLOCK_ACCESS_FS_REFER |
-> +            LANDLOCK_ACCESS_FS_TRUNCATE,
->      };
->  
->  Because we may not know on which kernel version an application will be
-> @@ -69,16 +70,28 @@ should try to protect users as much as possible whatever the kernel they are
->  using.  To avoid binary enforcement (i.e. either all security features or
->  none), we can leverage a dedicated Landlock command to get the current version
->  of the Landlock ABI and adapt the handled accesses.  Let's check if we should
-> -remove the ``LANDLOCK_ACCESS_FS_REFER`` access right which is only supported
-> -starting with the second version of the ABI.
-> +remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
-> +access rights, which are only supported starting with the second and third
-> +version of the ABI.
->  
->  .. code-block:: c
->  
->      int abi;
->  
->      abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
-> -    if (abi < 2) {
-> +    if (abi < 0) {
-> +        /* Degrades gracefully if Landlock is not handled. */
-> +        perror("The running kernel does not enable to use Landlock");
-> +        return 0;
-> +    }
-> +    switch (abi) {
-> +    case 1:
-> +        /* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
->          ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-> +        __attribute__((fallthrough));
-> +    case 2:
-> +        /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-> +        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
->      }
->  
->  This enables to create an inclusive ruleset that will contain our rules.
-> @@ -127,8 +140,8 @@ descriptor.
->  
->  It may also be required to create rules following the same logic as explained
->  for the ruleset creation, by filtering access rights according to the Landlock
-> -ABI version.  In this example, this is not required because
-> -``LANDLOCK_ACCESS_FS_REFER`` is not allowed by any rule.
-> +ABI version.  In this example, this is not required because all of the requested
-> +``allowed_access`` rights are already available in ABI 1.
->  
->  We now have a ruleset with one rule allowing read access to ``/usr`` while
->  denying all other handled accesses for the filesystem.  The next step is to
-> @@ -252,6 +265,37 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
->  process, a sandboxed process should have a subset of the target process rules,
->  which means the tracee must be in a sub-domain of the tracer.
->  
-> +Truncating files
-> +----------------
-> +
-> +The operations covered by ``LANDLOCK_ACCESS_FS_WRITE_FILE`` and
-> +``LANDLOCK_ACCESS_FS_TRUNCATE`` both change the contents of a file and sometimes
-> +overlap in non-intuitive ways.  It is recommended to always specify both of
-> +these together.
-> +
-> +A particularly surprising example is :manpage:`creat(2)`.  The name suggests
-> +that this system call requires the rights to create and write files.  However,
-> +it also requires the truncate right if an existing file under the same name is
-> +already present.
-> +
-> +It should also be noted that truncating files does not require the
-> +``LANDLOCK_ACCESS_FS_WRITE_FILE`` right.  Apart from the :manpage:`truncate(2)`
-> +system call, this can also be done through :manpage:`open(2)` with the flags
-> +``O_RDONLY | O_TRUNC``.
-> +
-> +When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE``
-> +right is associated with the newly created file descriptor and will be used for
-> +subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavior is
-> +similar to opening a file for reading or writing, where permissions are checked
-> +during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
-> +:manpage:`write(2)` calls.
-> +
-> +As a consequence, it is possible to have multiple open file descriptors for the
-> +same file, where one grants the right to truncate the file and the other does
-> +not.  It is also possible to pass such file descriptors between processes,
-> +keeping their Landlock properties, even when these processes do not have an
-> +enforced Landlock ruleset.
-> +
->  Compatibility
->  =============
->  
-> @@ -398,6 +442,15 @@ Starting with the Landlock ABI version 2, it is now possible to securely
->  control renaming and linking thanks to the new ``LANDLOCK_ACCESS_FS_REFER``
->  access right.
->  
-> +File truncation (ABI < 3)
-> +-------------------------
-> +
-> +File truncation could not be denied before the third Landlock ABI, so it is
-> +always allowed when using a kernel that only supports the first or second ABI.
-> +
-> +Starting with the Landlock ABI version 3, it is now possible to securely control
-> +truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
-> +
->  .. _kernel_support:
->  
->  Kernel support
-> -- 
-> 2.38.0
-> 
+> > Perhaps there
+> > are no callers in the kernel that do such a thing at the moment, but
+> > it seems like an easy mistake for someone to make, and the code to
+> > catch it is both trivial and out of any critical path.
+>
+> Not easy at all.
+> There is only way place in the whole kernel that does:
+>                 return sk_getsockopt(sk, SOL_SOCKET, optname,
+>                                      KERNEL_SOCKPTR(optval),
+>                                      KERNEL_SOCKPTR(optlen));
+>
+> and there is an allowlist of optname-s right in front of it.
+> SO_PEERSEC is not there.
+> For security_socket_getpeersec_stream to be called with kernel
+> address the developer would need to add SO_PEERSEC to that allowlist.
+> Which will be trivially caught during the code review.
+
+A couple of things come to mind ... First, the concern isn't the
+existing caller(s), as mentioned above, but future callers.  Second,
+while the kernel code review process is good, the number of serious
+kernel bugs that have passed uncaught through the code review process
+is staggering.
+
+> > This is one of those cases where preventing a future problem is easy,
+> > I think it would be foolish of us to ignore it.
+>
+> Disagree. It's just a typical example of defensive programming
+> which I'm strongly against.
+
+That's a pretty bold statement, good luck with that.
+
+> By that argument we should be checking all pointers for NULL
+> "because it's easy to do".
+
+That's not the argument being made here, but based on your previous
+statements of trusting code review to catch bugs and your opposition
+to defensive programming it seems pretty unlikely we're going to find
+common ground.
+
+I'll take care of this in the LSM tree.
 
 -- 
+paul-moore.com
