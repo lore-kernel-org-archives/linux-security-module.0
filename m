@@ -2,111 +2,76 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C25C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Oct 2022 15:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BFAC4321E
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Oct 2022 20:57:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229676AbiJJP41 (ORCPT
+        id S231180AbiJJU5H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Oct 2022 11:56:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34280 "EHLO
+        Mon, 10 Oct 2022 16:57:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbiJJP40 (ORCPT
+        with ESMTP id S231246AbiJJU4o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Oct 2022 11:56:26 -0400
-Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95CE073939
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Oct 2022 08:56:25 -0700 (PDT)
-Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-131ea99262dso12911050fac.9
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Oct 2022 08:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FBlJGaToZEu6D+RvSCyaxxmx/t2AwVYuPW5gPgMk1tk=;
-        b=7tmLSoXRtJfH4Dbqoikvsfh+/gCulAYIx1NWrvmt1/bxZ67ZOUWZ5K/xrU2OfEpG1f
-         Rgl678+XBpgr/SDRuN4IqJ/YhV4Xbe+LDX6unNVPmsuTisLqfNr7/LEOnRjKWgAhKMGI
-         6R2S6gpT9InaefaMZ33djbJe3Oeg5sifZ2SNHzyNzDu4QrfRGS6GRuRjE4hQlZV04YIo
-         sVRYmrFMPmaNs7QE6I9BRei46/v+FGizKrTFY2yTY+Wf3pS+MRFLuy43CuqDfFRxyCYr
-         LJaDMo9Yerb9kPup/5YnxIs8AMcaFd6t1bQ6eiobj0LLGjE+kZDPShNKAi4F2s0bMIq0
-         atjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FBlJGaToZEu6D+RvSCyaxxmx/t2AwVYuPW5gPgMk1tk=;
-        b=mz25cEzSyDoEMd4NYLWn1w9r5DII/CEJK71vHiZ26wMvF1j/MQLJ5Ya1ILUXRDFWjd
-         4NJPPMTa8RcqJcxqXUP4R67iUd3VXikWSfbiB2IwYnl7XQLLZTfkVOkTRcBv1ifY0FAG
-         vkK7w9+oI4nuyBD5oBRHjPir8nt8mhq4RoB06F9FHfc2USX5cTxCpPpYTV1Q/81nNdQW
-         hlT5gCQK3JwSUhTD3qnRIBdur3dbDw5q32w0btY0JnYAsuZJx1hhYT3Kd/vJbZ1Ejdwj
-         o6gc8PXkwjPZZv07y1PPr+g9420x+14iUsDTS4kXBJB6PFZpqBFUFfg/t8XRcII2pow2
-         CzaQ==
-X-Gm-Message-State: ACrzQf00vl7qNAxlDF+mtnCL14/fDwF5YXNAcoyRlRN3jst3EymFVNbk
-        kEvE9REAXpSYFh3NQASsQXQWpVj3MxLHuplkdBFE
-X-Google-Smtp-Source: AMsMyM7E58PKEIMT2pMlaK++ErltMfDSbBzoHG8lkSaC1jHVQXN22/TbjZ4o5ZhdmawyCSdC9gyK7IrpZVO6jOcWxRw=
-X-Received: by 2002:a05:6870:9612:b0:136:66cc:6d5a with SMTP id
- d18-20020a056870961200b0013666cc6d5amr5406856oaq.172.1665417384952; Mon, 10
- Oct 2022 08:56:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHC9VhTGE1cf_WtDn4aDUY=E-m--4iZXWiNTwPZrP9AVoq17cw@mail.gmail.com>
- <CAHC9VhT2LK_P+_LuBYDEHnkNkAX6fhNArN_N5bF1qwGed+Kyww@mail.gmail.com>
- <CAADnVQ+kRCfKn6MCvfYGhpHF0fUWBU-qJqvM=1YPfj02jM9zKw@mail.gmail.com>
- <CAHC9VhRcr03ZCURFi=EJyPvB3sgi44_aC5ixazC43Zs2bNJiDw@mail.gmail.com>
- <CAADnVQJ5VgTNiEhEhOtESRrK0q3-pUSbZfAWL=tXv-s2GXqq8Q@mail.gmail.com>
- <df4df4eb70594d65b40865ca00ecad09@AcuMS.aculab.com> <CAHC9VhQRywim8vKGUM+=US0nq_fqZH7MShaV2tC14gw5xUrSDA@mail.gmail.com>
- <ffe2b21ce6e04b07891261641b4d1f5b@AcuMS.aculab.com>
-In-Reply-To: <ffe2b21ce6e04b07891261641b4d1f5b@AcuMS.aculab.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 10 Oct 2022 11:56:14 -0400
-Message-ID: <CAHC9VhTBdLtK_spOS9axuYfHRb=zx3TFqKY2cvfy9tRd0ep-sg@mail.gmail.com>
-Subject: Re: SO_PEERSEC protections in sk_getsockopt()?
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Martin KaFai Lau <martin.lau@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 10 Oct 2022 16:56:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A8050726;
+        Mon, 10 Oct 2022 13:56:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D632661027;
+        Mon, 10 Oct 2022 20:56:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 46302C433D6;
+        Mon, 10 Oct 2022 20:56:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665435397;
+        bh=gD/RNkGki+nKosGNPSgm0cUt77MPBk2qELNOwNPFOu4=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=b3mhGbL/0WXlGx9bkQDih3NtfDXDV7dQ+uS68uomnXh2qDdqx6Shmdts8mwP+nKuC
+         rMDvrJNuWA74z7JHKA7InI6INUVBGG5ZtJ61oY/LFOhnXHMS+McR1y0BclA87fawX6
+         n/1c5SCqpGuOODRmeVdqDwXGhiF3MSH1uNGWqfiHW38l3xYNJCxaHQfhAfk7SRoyzL
+         nSjIXTmEk/JSImWliIRi8DJPILw4WJTDpudVUj/mHyCj2vHaXRrBqg/E7XuswjAVut
+         zZUv5Its0N7ZeUt3XCBEAdb2y4e5U5Vh8+ZowSHw2qNYk4vasE32wQuaGBUd2a6itk
+         ScdJY4g64lSmA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 33CC0E2A05F;
+        Mon, 10 Oct 2022 20:56:37 +0000 (UTC)
+Subject: Re: [GIT PULL] tpmdd updates for Linux v6.1-rc1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20221004213003.57166-1-jarkko@kernel.org>
+References: <20221004213003.57166-1-jarkko@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20221004213003.57166-1-jarkko@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/ tags/tpmdd-next-v6.1-rc1
+X-PR-Tracked-Commit-Id: 2d869f0b458547386fbcd8cf3004b271b7347b7f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ada3bfb6492a6d0d3eca50f3b61315fe032efc72
+Message-Id: <166543539720.11766.18059815416011359689.pr-tracker-bot@kernel.org>
+Date:   Mon, 10 Oct 2022 20:56:37 +0000
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 10, 2022 at 11:34 AM David Laight <David.Laight@aculab.com> wrote:
-> From: Paul Moore
-> > Sent: 10 October 2022 14:19
-> ....
-> > > It isn't really ideal for the buffer pointer either.
-> > > That started as a single field (assuming the caller
-> > > has verified the user/kernel status), then the is_kernel
-> > > field was added for architectures where user/kernel
-> > > addresses use the same values.
-> > > Then a horrid bug (forgotten where) forced the is_kernel
-> > > field be used everywhere.
-> > > Again a structure with two pointers would be much safer.
-> >
-> > Any chance you have plans to work on this David?
->
-> I'd only spend any significant time on it if there
-> is a reasonable chance of the patches being accepted.
->
-> My use would be an out-of-tree non-GPL module calling
-> kernel_getsockopt().
-> The main in-tree user is bpf - which seems to need an
-> ever-increasing number of socket options, but support has
-> been added one by one.
->
-> While most getsockopt() calls just return set values, SCTP
-> uses some to retrieve the result of values negotiated with
-> the peer. The number of valid data streams is needed for
-> even trivial SCTP applications.
-> However I've a workaround for a bug in 5.1 to 5.8 that
-> returned the wrong values (my tests didn't check negotiation)
-> that also obtains the values on later kernels.
-> So I'm not (yet) in a hurry!
+The pull request you sent on Wed,  5 Oct 2022 00:30:02 +0300:
 
-It looks like it might still be a good idea to add hardening/support
-for the LSM hook as your needs still seem a bit far off, but I
-appreciate the background - thanks!
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/ tags/tpmdd-next-v6.1-rc1
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ada3bfb6492a6d0d3eca50f3b61315fe032efc72
+
+Thank you!
 
 -- 
-paul-moore.com
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
