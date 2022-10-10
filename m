@@ -2,112 +2,88 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF575C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Oct 2022 15:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD87C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Oct 2022 15:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229688AbiJJPP6 (ORCPT
+        id S229777AbiJJPee (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Oct 2022 11:15:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47634 "EHLO
+        Mon, 10 Oct 2022 11:34:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbiJJPP5 (ORCPT
+        with ESMTP id S229701AbiJJPed (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Oct 2022 11:15:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B85DC5756D;
-        Mon, 10 Oct 2022 08:15:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3C89660F7B;
-        Mon, 10 Oct 2022 15:15:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49220C433C1;
-        Mon, 10 Oct 2022 15:15:53 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="edLZ0aGR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-        t=1665414951;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nXnY72mFsROmabRvf0J+Pa5RaskNobc+nX3HeIF4L9E=;
-        b=edLZ0aGRKciBgrABCWwLTufhUStuvzwDRVkxkjKFePW+lIvwIpj0q6oKVCBECn48iexD0q
-        f7ldV0FN6C5s9vl2nK7StLKdvr8cL1OjlA2j46fZFDVa+UAmKdnQOqkv/DyQDLX+HIniGg
-        DvENCbC1YiSe+oWCytb5/z0zOJAMvXA=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b7dc69e1 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-        Mon, 10 Oct 2022 15:15:51 +0000 (UTC)
-Date:   Mon, 10 Oct 2022 09:15:48 -0600
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc:     'Herbert Xu' <herbert@gondor.apana.org.au>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "a.fatoum@pengutronix.de" <a.fatoum@pengutronix.de>,
-        "gilad@benyossef.com" <gilad@benyossef.com>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "sumit.garg@linaro.org" <sumit.garg@linaro.org>,
-        "david@sigma-star.at" <david@sigma-star.at>,
-        "michael@walle.cc" <michael@walle.cc>,
-        "john.ernberg@actia.se" <john.ernberg@actia.se>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "j.luebbe@pengutronix.de" <j.luebbe@pengutronix.de>,
-        "ebiggers@kernel.org" <ebiggers@kernel.org>,
-        "richard@nod.at" <richard@nod.at>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Sahil Malhotra <sahil.malhotra@nxp.com>,
-        Kshitiz Varshney <kshitiz.varshney@nxp.com>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Varun Sethi <V.Sethi@nxp.com>
-Subject: Re: [EXT] Re: [PATCH v0 3/8] crypto: hbk flags & info added to the
- tfm
-Message-ID: <Y0Q3JKnWSNIC4Xlu@zx2c4.com>
-References: <20221006130837.17587-1-pankaj.gupta@nxp.com>
- <20221006130837.17587-4-pankaj.gupta@nxp.com>
- <Yz/OEwDtyTm+VH0p@gondor.apana.org.au>
- <DU2PR04MB8630CBBB8ABDC3768320C18195209@DU2PR04MB8630.eurprd04.prod.outlook.com>
+        Mon, 10 Oct 2022 11:34:33 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F96A71709
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Oct 2022 08:34:29 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-30-qZZPPUTDMaCpoudlwyzcJw-1; Mon, 10 Oct 2022 16:34:26 +0100
+X-MC-Unique: qZZPPUTDMaCpoudlwyzcJw-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Mon, 10 Oct
+ 2022 16:34:25 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.040; Mon, 10 Oct 2022 16:34:25 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Paul Moore' <paul@paul-moore.com>
+CC:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Martin KaFai Lau <martin.lau@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "Network Development" <netdev@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
+Subject: RE: SO_PEERSEC protections in sk_getsockopt()?
+Thread-Topic: SO_PEERSEC protections in sk_getsockopt()?
+Thread-Index: AQHY2peNL0l8xeG/wU6MBAmpwQpDnq4HlZFQ///6VQCAADOmEA==
+Date:   Mon, 10 Oct 2022 15:34:24 +0000
+Message-ID: <ffe2b21ce6e04b07891261641b4d1f5b@AcuMS.aculab.com>
+References: <CAHC9VhTGE1cf_WtDn4aDUY=E-m--4iZXWiNTwPZrP9AVoq17cw@mail.gmail.com>
+ <CAHC9VhT2LK_P+_LuBYDEHnkNkAX6fhNArN_N5bF1qwGed+Kyww@mail.gmail.com>
+ <CAADnVQ+kRCfKn6MCvfYGhpHF0fUWBU-qJqvM=1YPfj02jM9zKw@mail.gmail.com>
+ <CAHC9VhRcr03ZCURFi=EJyPvB3sgi44_aC5ixazC43Zs2bNJiDw@mail.gmail.com>
+ <CAADnVQJ5VgTNiEhEhOtESRrK0q3-pUSbZfAWL=tXv-s2GXqq8Q@mail.gmail.com>
+ <df4df4eb70594d65b40865ca00ecad09@AcuMS.aculab.com>
+ <CAHC9VhQRywim8vKGUM+=US0nq_fqZH7MShaV2tC14gw5xUrSDA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQRywim8vKGUM+=US0nq_fqZH7MShaV2tC14gw5xUrSDA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <DU2PR04MB8630CBBB8ABDC3768320C18195209@DU2PR04MB8630.eurprd04.prod.outlook.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 10, 2022 at 11:15:00AM +0000, Pankaj Gupta wrote:
-> > Nack.  You still have not provided a convincing argument why this is necessary
-> > since there are plenty of existing drivers in the kernel already providing similar
-> > features.
-> > 
-> CAAM is used as a trusted source for trusted keyring. CAAM can expose
-> these keys either as plain key or HBK(hardware bound key- managed by
-> the hardware only and never visible in plain outside of hardware).
-> 
-> Thus, Keys that are inside CAAM-backed-trusted-keyring, can either be
-> plain key or HBK. So the trusted-key-payload requires additional flag
-> & info(key-encryption-protocol)  to help differentiate it from each
-> other. Now when CAAM trusted-key is presented to the kernel crypto
-> framework, the additional information associated with the key, needs
-> to be passed to the hardware driver. Currently the kernel keyring and
-> kernel crypto frameworks are associated for plain key, but completely
-> dis-associated for HBK. This patch addresses this problem.
-> 
-> Similar capabilities (trusted source), are there in other crypto
-> accelerators on NXP SoC(s). Having hardware specific crypto algorithm
-> name, does not seems to be a scalable solution.
+RnJvbTogUGF1bCBNb29yZQ0KPiBTZW50OiAxMCBPY3RvYmVyIDIwMjIgMTQ6MTkNCi4uLi4NCj4g
+PiBJdCBpc24ndCByZWFsbHkgaWRlYWwgZm9yIHRoZSBidWZmZXIgcG9pbnRlciBlaXRoZXIuDQo+
+ID4gVGhhdCBzdGFydGVkIGFzIGEgc2luZ2xlIGZpZWxkIChhc3N1bWluZyB0aGUgY2FsbGVyDQo+
+ID4gaGFzIHZlcmlmaWVkIHRoZSB1c2VyL2tlcm5lbCBzdGF0dXMpLCB0aGVuIHRoZSBpc19rZXJu
+ZWwNCj4gPiBmaWVsZCB3YXMgYWRkZWQgZm9yIGFyY2hpdGVjdHVyZXMgd2hlcmUgdXNlci9rZXJu
+ZWwNCj4gPiBhZGRyZXNzZXMgdXNlIHRoZSBzYW1lIHZhbHVlcy4NCj4gPiBUaGVuIGEgaG9ycmlk
+IGJ1ZyAoZm9yZ290dGVuIHdoZXJlKSBmb3JjZWQgdGhlIGlzX2tlcm5lbA0KPiA+IGZpZWxkIGJl
+IHVzZWQgZXZlcnl3aGVyZS4NCj4gPiBBZ2FpbiBhIHN0cnVjdHVyZSB3aXRoIHR3byBwb2ludGVy
+cyB3b3VsZCBiZSBtdWNoIHNhZmVyLg0KPiANCj4gQW55IGNoYW5jZSB5b3UgaGF2ZSBwbGFucyB0
+byB3b3JrIG9uIHRoaXMgRGF2aWQ/DQoNCkknZCBvbmx5IHNwZW5kIGFueSBzaWduaWZpY2FudCB0
+aW1lIG9uIGl0IGlmIHRoZXJlDQppcyBhIHJlYXNvbmFibGUgY2hhbmNlIG9mIHRoZSBwYXRjaGVz
+IGJlaW5nIGFjY2VwdGVkLg0KDQpNeSB1c2Ugd291bGQgYmUgYW4gb3V0LW9mLXRyZWUgbm9uLUdQ
+TCBtb2R1bGUgY2FsbGluZw0Ka2VybmVsX2dldHNvY2tvcHQoKS4NClRoZSBtYWluIGluLXRyZWUg
+dXNlciBpcyBicGYgLSB3aGljaCBzZWVtcyB0byBuZWVkIGFuDQpldmVyLWluY3JlYXNpbmcgbnVt
+YmVyIG9mIHNvY2tldCBvcHRpb25zLCBidXQgc3VwcG9ydCBoYXMNCmJlZW4gYWRkZWQgb25lIGJ5
+IG9uZS4NCg0KV2hpbGUgbW9zdCBnZXRzb2Nrb3B0KCkgY2FsbHMganVzdCByZXR1cm4gc2V0IHZh
+bHVlcywgU0NUUA0KdXNlcyBzb21lIHRvIHJldHJpZXZlIHRoZSByZXN1bHQgb2YgdmFsdWVzIG5l
+Z290aWF0ZWQgd2l0aA0KdGhlIHBlZXIuIFRoZSBudW1iZXIgb2YgdmFsaWQgZGF0YSBzdHJlYW1z
+IGlzIG5lZWRlZCBmb3INCmV2ZW4gdHJpdmlhbCBTQ1RQIGFwcGxpY2F0aW9ucy4NCkhvd2V2ZXIg
+SSd2ZSBhIHdvcmthcm91bmQgZm9yIGEgYnVnIGluIDUuMSB0byA1LjggdGhhdA0KcmV0dXJuZWQg
+dGhlIHdyb25nIHZhbHVlcyAobXkgdGVzdHMgZGlkbid0IGNoZWNrIG5lZ290aWF0aW9uKQ0KdGhh
+dCBhbHNvIG9idGFpbnMgdGhlIHZhbHVlcyBvbiBsYXRlciBrZXJuZWxzLg0KU28gSSdtIG5vdCAo
+eWV0KSBpbiBhIGh1cnJ5IQ0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2Vz
+aWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVL
+DQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-Do you mean to say that other drivers that use hardware-backed keys do
-so by setting "cra_name" to something particular? Like instead of "aes"
-it'd be "aes-but-special-for-this-driver"? If so, that would seem to
-break the design of the crypto API. Which driver did you see that does
-this? Or perhaps, more generally, what are the drivers that Herbert is
-talking about when he mentions the "plenty of existing drivers" that
-already do this?
-
-Jason
