@@ -2,331 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D65C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Oct 2022 10:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF177C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Oct 2022 10:37:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231864AbiJJKfk (ORCPT
+        id S231654AbiJJKha (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Oct 2022 06:35:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46894 "EHLO
+        Mon, 10 Oct 2022 06:37:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231853AbiJJKfj (ORCPT
+        with ESMTP id S230253AbiJJKh3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Oct 2022 06:35:39 -0400
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20D025724F
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Oct 2022 03:35:36 -0700 (PDT)
+        Mon, 10 Oct 2022 06:37:29 -0400
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [IPv6:2001:1600:4:17::42aa])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3ED85AC62
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Oct 2022 03:37:27 -0700 (PDT)
 Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MmFg95HKLzMq28v;
-        Mon, 10 Oct 2022 12:35:33 +0200 (CEST)
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MmFjK1zGZzMq29V;
+        Mon, 10 Oct 2022 12:37:25 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MmFg81GMqzMpqBX;
-        Mon, 10 Oct 2022 12:35:32 +0200 (CEST)
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MmFjJ4zSDzMpnPn;
+        Mon, 10 Oct 2022 12:37:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1665398133;
-        bh=YVsUNl5dnjRWyIDlPk90gHFmLrtccIs1cb6q3DYF5dA=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=OEdWpXorzoIv/NoKTZfqa+xjcrGKYAaAEMHWptB4JDNIEdbc1qUCRrPLZKdWNzWTx
-         wviacXQLd9ckdiwVl3v/PfR7acu+hypPVli65DTJwukWySpLqL4hTmuP6vpqx+76sK
-         VnONisUBJHJwX7SstSkj5LePMM82BI/FSlNzi6gs=
-Message-ID: <b8566973-63bc-441f-96b9-f822e9944127@digikod.net>
-Date:   Mon, 10 Oct 2022 12:35:31 +0200
+        s=20191114; t=1665398245;
+        bh=uGtmlFV1t4O58D6gKx+CfFlrT1XKHkbzaBaS6lk+eOo=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=JZyVWnBQa3YRVMLm0JN5xY7zbXvoSDmYbV/Gm2YJUkhWwqf3h42gyjKLGRJW2KmuF
+         85ro87abYaa17CbPg8FpF0fJR+HpxH3101+c0aVZKcCyGPnePhywQWZ/HVJMx7crjY
+         k+OnasS0DjnZ9PgsSR4tPsC5mXCqyGVvx1Z6pK1Q=
+Message-ID: <b4b49d93-72a1-b7b4-68e4-2bd03034ee77@digikod.net>
+Date:   Mon, 10 Oct 2022 12:37:24 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v9 00/11] landlock: truncate support
+Subject: Re: [PATCH v7 16/18] seltests/landlock: add invalid input data test
 Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        Nathan Chancellor <nathan@kernel.org>
-Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-References: <20221008100935.73706-1-gnoack3000@gmail.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20221008100935.73706-1-gnoack3000@gmail.com>
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, anton.sirazetdinov@huawei.com
+References: <20220829170401.834298-1-konstantin.meskhidze@huawei.com>
+ <20220829170401.834298-17-konstantin.meskhidze@huawei.com>
+ <d91e3fcc-2320-e98c-7d54-458b749c87a8@digikod.net>
+ <47ddb2ea-3bc7-533a-9b0d-2b2d3950644c@huawei.com>
+ <36de86ad-460c-81d0-b5bd-4d54bd05d201@digikod.net>
+In-Reply-To: <36de86ad-460c-81d0-b5bd-4d54bd05d201@digikod.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thanks Günther! This series looks good and is now in -next with some 
-minor cosmetic comment changes.
 
-Nathan, could you please confirm that this series work for you?
+On 12/09/2022 19:22, Mickaël Salaün wrote:
+> 
+> On 10/09/2022 22:51, Konstantin Meskhidze (A) wrote:
+>>
+>>
+>> 9/6/2022 11:09 AM, Mickaël Salaün пишет:
+>>>
+>>> On 29/08/2022 19:03, Konstantin Meskhidze wrote:
+>>>> This patch adds rules with invalid user space supplied data:
+>>>>        - out of range ruleset attribute;
+>>>>        - unhandled allowed access;
+>>>>        - zero port value;
+>>>>        - zero access value;
+>>>>
+>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>>>> ---
+>>>>
+>>>> Changes since v6:
+>>>> * Adds invalid ruleset attribute test.
+>>>>
+>>>> Changes since v5:
+>>>> * Formats code with clang-format-14.
+>>>>
+>>>> Changes since v4:
+>>>> * Refactors code with self->port variable.
+>>>>
+>>>> Changes since v3:
+>>>> * Adds inval test.
+>>>>
+>>>> ---
+>>>>     tools/testing/selftests/landlock/net_test.c | 66 ++++++++++++++++++++-
+>>>>     1 file changed, 65 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+>>>> index a93224d1521b..067ba45f58a5 100644
+>>>> --- a/tools/testing/selftests/landlock/net_test.c
+>>>> +++ b/tools/testing/selftests/landlock/net_test.c
+>>>> @@ -26,9 +26,12 @@
+>>>>
+>>>>     #define IP_ADDRESS "127.0.0.1"
+>>>>
+>>>> -/* Number pending connections queue to be hold */
+>>>> +/* Number pending connections queue to be hold. */
+>>>
+>>> Patch of a previous patch?
+>>>
+>>>
+>>>>     #define BACKLOG 10
+>>>>
+>>>> +/* Invalid attribute, out of landlock network access range. */
+>>>> +#define LANDLOCK_INVAL_ATTR 7
+>>>> +
+>>>>     FIXTURE(socket)
+>>>>     {
+>>>>     	uint port[MAX_SOCKET_NUM];
+>>>> @@ -719,4 +722,65 @@ TEST_F(socket, ruleset_expanding)
+>>>>     	/* Closes socket 1. */
+>>>>     	ASSERT_EQ(0, close(sockfd_1));
+>>>>     }
+>>>> +
+>>>> +TEST_F(socket, inval)
+>>>> +{
+>>>> +	struct landlock_ruleset_attr ruleset_attr = {
+>>>> +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP
+>>>> +	};
+>>>> +	struct landlock_ruleset_attr ruleset_attr_inval = {
+>>>> +		.handled_access_net = LANDLOCK_INVAL_ATTR
+>>>
+>>> Please add a test similar to TEST_F_FORK(layout1,
+>>> file_and_dir_access_rights) instead of explicitly defining and only
+>>> testing LANDLOCK_INVAL_ATTR.
+>>>
+>>      Do you want fs test to be in this commit or maybe its better to add
+>> it into "[PATCH v7 01/18] landlock: rename access mask" one.
+
+Just to make it clear, I didn't suggested an FS test, but a new network 
+test similar to layout1.file_and_dir_access_rights but only related to 
+the network. It should replace/extend the content of this patch (16/18).
 
 
-On 08/10/2022 12:09, Günther Noack wrote:
-> The goal of these patches is to work towards a more complete coverage
-> of file system operations that are restrictable with Landlock.
 > 
-> Motivation
-> ----------
-> 
-> The known set of currently unsupported file system operations in
-> Landlock is described at [1]. Out of the operations listed there,
-> truncate is the only one that modifies file contents, so these patches
-> should make it possible to prevent the direct modification of file
-> contents with Landlock.
-> 
-> Apart from Landlock, file truncation can also be restricted using
-> seccomp-bpf, but it is more difficult to use (requires BPF, requires
-> keeping up-to-date syscall lists) and it is not configurable by file
-> hierarchy, as Landlock is. The simplicity and flexibility of the
-> Landlock approach makes it worthwhile adding.
-> 
-> Implementation overview
-> -----------------------
-> 
-> The patch introduces the truncation restriction feature as an
-> additional bit in the access_mask_t bitmap, in line with the existing
-> supported operations.
-> 
-> The truncation flag covers both the truncate(2) and ftruncate(2)
-> families of syscalls, as well as open(2) with the O_TRUNC flag.
-> This includes usages of creat() in the case where existing regular
-> files are overwritten.
-> 
-> Additionally, this patch set introduces a new Landlock security blob
-> associated with opened files, to track the available Landlock access
-> rights at the time of opening the file. This is in line with Unix's
-> general approach of checking the read and write permissions during
-> open(), and associating this previously checked authorization with the
-> opened file.
-> 
-> In order to treat truncate(2) and ftruncate(2) calls differently in an
-> LSM hook, we split apart the existing security_path_truncate hook into
-> security_path_truncate (for truncation by path) and
-> security_file_truncate (for truncation of previously opened files).
-> 
-> We also implement the file_alloc_security hook, in order to override
-> the access rights in the file security blob, in cases where the file
-> is opened by other means than open(2), but where the opened file still
-> supports ftruncate(2). This is also demonstrated in a selftest, using
-> memfd_create(2).
-> 
-> Relationship between "truncate" and "write" rights
-> --------------------------------------------------
-> 
-> While it's possible to use the "write file" and "truncate" rights
-> independent of each other, it simplifies the mental model for
-> userspace callers to always use them together.
-> 
-> Specifically, the following behaviours might be surprising for users
-> when using these independently:
-> 
->   * The commonly creat() syscall requires the truncate right when
->     overwriting existing files, as it is equivalent to open(2) with
->     O_TRUNC|O_CREAT|O_WRONLY.
->   * The "write file" right is not always required to truncate a file,
->     even through the open(2) syscall (when using O_RDONLY|O_TRUNC).
-> 
-> Nevertheless, keeping the two flags separate is the correct approach
-> to guarantee backwards compatibility for existing Landlock users.
-> 
-> When the "truncate" right is checked for ftruncate(2)
-> -----------------------------------------------------
-> 
-> Notably, for the purpose of ftruncate(2), the Landlock truncation
-> access right is looked up when *opening* the file, not when calling
-> ftruncate(). The availability of the truncate right is associated with
-> the opened file and is later checked to authorize ftruncate(2)
-> operations.
-> 
-> This is similar to how the write mode gets remembered after a
-> open(..., O_WRONLY) to authorize later write() operations.
-> 
-> These opened file descriptors can also be passed between processes and
-> will continue to enforce their truncation properties when these
-> processes attempt an ftruncate().
-> 
-> These patches are based on master, commit e8bc52cb8df8 ("Merge tag
-> 'driver-core-6.1-rc1' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core").
-> 
-> Best regards,
-> Günther
-> 
-> [1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
-> 
-> Past discussions:
-> V1: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
-> V2: https://lore.kernel.org/all/20220712211405.14705-1-gnoack3000@gmail.com/
-> V3: https://lore.kernel.org/all/20220804193746.9161-1-gnoack3000@gmail.com/
-> V4: https://lore.kernel.org/all/20220814192603.7387-1-gnoack3000@gmail.com/
-> V5: https://lore.kernel.org/all/20220817203006.21769-1-gnoack3000@gmail.com/
-> V6: https://lore.kernel.org/all/20220908195805.128252-1-gnoack3000@gmail.com/
-> V7: https://lore.kernel.org/all/20220930160144.141504-1-gnoack3000@gmail.com/
-> V8: https://lore.kernel.org/all/20221001154908.49665-1-gnoack3000@gmail.com/
-> 
-> Changelog:
-> 
-> V9:
-> * Implement file_alloc_security hook
->    * Needs to grant all Landlock rights by default for use cases where
->      files are opened by other means than open(2), i.e. memfd_create(2)
->    * Discovered and fixed by Mickaël Salaün on his -next branch
->    * Add a selftest for the memfd_create(2) example
-> * file_open_hook: Reorder the logic a bit as discussed in review
-> * selftests: Return -errno from recv_fd() and send_fd()
-> * Rebase to master branch
-> * Reorder __maybe_unused patch before its use
-> * Various small formatting and documentation fixes in code,
->    documentation and commit messages
-> 
-> V8:
-> * landlock: Refactor check_access_path_dual() into
->    is_access_to_paths_allowed(), as suggested by Mickaël Salaün on the
->    v7 review. Added this as a separate commit.
-> * landlock truncate feature: inline get_path_access()
-> * Documentation: update documentation date to October 2022
-> * selftests: locally #define __maybe_unused (checkpatch started
->    complaining about it, but the header where it's defined is not
->    usable from selftests)
-> 
-> V7:
-> * security: Create file_truncate hook
->    * Fix the build on kernels without CONFIG_SECURITY_PATH (fixed by
->      Mickaël Salaün)
->    * lsm_hooks.h: Document file_truncate hook
->    * fs/open.c: undo accidental indentation changes
-> * landlock: Support file truncation
->    * Use the init_layer_masks() result as input for
->      check_access_path_dual()
->    * Naming
->      * Rename the landlock_file_security.allowed_access field
->        (previously called "rights")
->      * Rename get_path_access_rights() to get_path_access()
->      * Rename get_file_access() to get_required_file_open_access() to
->        avoid confusion with get_path_access()
->      * Use "access_request" for access_mask_t variables, access_req for
->        unsigned long
->    * Documentation:
->      * Fixed some comments according to review
->      * Added comments to get_required_file_open_access() and
->        init_layer_masks()
-> * selftests:
->    * remove unused variables
->    * rename fd0,...,fd3 to fd_layer0,...,fd_layer3.
->    * test_ftruncate: define layers on top and inline the helper function
-> * New tests (both added as separate commits)
->    * More exhaustive ftruncate test: Add open_and_ftruncate test that
->      exercises ftruncate more thoroughly with fixture variants
->    * FD-passing test: exercise restricted file descriptors getting
->      passed between processes, also using the same fixture variants
-> * Documentation: integrate review comments by Mickaël Salaün
->    * do not use contraptions (don't)
->    * use double backquotes in all touched lines
->    * add the read/write open() analogy to the truncation docs
->    * in code example, check for abi<0 explicitly and fix indentation
-> 
-> V6:
-> * LSM hooks: create file_truncate hook in addition to path_truncate.
->    Use it in the existing path_truncate call sites where appropriate.
-> * landlock: check LANDLOCK_ACCESS_FS_TRUNCATE right during open(), and
->    associate that right with the opened struct file in a security blob.
->    Introduce get_path_access_rights() helper function.
-> * selftests: test ftruncate in a separate test, to exercise that
->    the rights are associated with the file descriptor.
-> * Documentation: Rework documentation to reflect new ftruncate() semantics.
-> * Applied small fixes by Mickaël Salaün which he added on top of V5, in
->    https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
->    (I hope I found them all.)
-> 
-> V5:
-> * Documentation
->    * Fix wording in userspace-api headers and in landlock.rst.
->    * Move the truncation limitation section one to the bottom.
->    * Move all .rst changes into the documentation commit.
-> * selftests
->    * Remove _metadata argument from helpers where it became unnecessary.
->    * Open writable file descriptors at the top of both tests, before Landlock
->      is enabled, to exercise ftruncate() independently from open().
->    * Simplify test_ftruncate and decouple it from exercising open().
->    * test_creat(): Return errno on close() failure (it does not conflict).
->    * Fix /* comment style */
->    * Reorder blocks of EXPECT_EQ checks to be consistent within a test.
->    * Add missing |O_TRUNC to a check in one test.
->    * Put the truncate_unhandled test before the other.
-> 
-> V4:
->   * Documentation
->     * Clarify wording and syntax as discussed in review.
->     * Use a less confusing error message in the example.
->   * selftests:
->     * Stop using ASSERT_EQ in test helpers, return EBADFD instead.
->       (This is an intentionally uncommon error code, so that the source
->       of the error is clear and the test can distinguish test setup
->       failures from failures in the actual system call under test.)
->   * samples/Documentation:
->     * Use additional clarifying comments in the kernel backwards
->       compatibility logic.
-> 
-> V3:
->   * selftests:
->     * Explicitly test ftruncate with readonly file descriptors
->       (returns EINVAL).
->     * Extract test_ftruncate, test_truncate, test_creat helpers,
->       which simplified the previously mixed usage of EXPECT/ASSERT.
->     * Test creat() behaviour as part of the big truncation test.
->     * Stop testing the truncate64(2) and ftruncate64(2) syscalls.
->       This simplifies the tests a bit. The kernel implementations are the
->       same as for truncate(2) and ftruncate(2), so there is little benefit
->       from testing them exhaustively. (We aren't testing all open(2)
->       variants either.)
->   * samples/landlock/sandboxer.c:
->     * Use switch() to implement best effort mode.
->   * Documentation:
->     * Give more background on surprising truncation behaviour.
->     * Use switch() in the example too, to stay in-line with the sample tool.
->     * Small fixes in header file to address previous comments.
-> * misc:
->    * Fix some typos and const usages.
-> 
-> V2:
->   * Documentation: Mention the truncation flag where needed.
->   * Documentation: Point out connection between truncation and file writing.
->   * samples: Add file truncation to the landlock/sandboxer.c sample tool.
->   * selftests: Exercise open(2) with O_TRUNC and creat(2) exhaustively.
->   * selftests: Exercise truncation syscalls when the truncate right
->     is not handled by Landlock.
-> 
-> Günther Noack (11):
->    security: Create file_truncate hook from path_truncate hook
->    landlock: Refactor check_access_path_dual() into
->      is_access_to_paths_allowed()
->    landlock: Document init_layer_masks() helper
->    landlock: Support file truncation
->    selftests/landlock: Test file truncation support
->    selftests/landlock: Test open() and ftruncate() in multiple scenarios
->    selftests/landlock: Locally define __maybe_unused
->    selftests/landlock: Test FD passing from restricted to unrestricted
->      processes
->    selftests/landlock: Test ftruncate on FDs created by memfd_create(2)
->    samples/landlock: Extend sample tool to support
->      LANDLOCK_ACCESS_FS_TRUNCATE
->    landlock: Document Landlock's file truncation support
-> 
->   Documentation/userspace-api/landlock.rst     |  67 ++-
->   fs/namei.c                                   |   2 +-
->   fs/open.c                                    |   2 +-
->   include/linux/lsm_hook_defs.h                |   1 +
->   include/linux/lsm_hooks.h                    |  10 +-
->   include/linux/security.h                     |   6 +
->   include/uapi/linux/landlock.h                |  21 +-
->   samples/landlock/sandboxer.c                 |  12 +-
->   security/apparmor/lsm.c                      |   6 +
->   security/landlock/fs.c                       | 204 ++++++--
->   security/landlock/fs.h                       |  24 +
->   security/landlock/limits.h                   |   2 +-
->   security/landlock/setup.c                    |   1 +
->   security/landlock/syscalls.c                 |   2 +-
->   security/security.c                          |   5 +
->   security/tomoyo/tomoyo.c                     |  13 +
->   tools/testing/selftests/landlock/base_test.c |  38 +-
->   tools/testing/selftests/landlock/common.h    |  85 +++-
->   tools/testing/selftests/landlock/fs_test.c   | 468 ++++++++++++++++++-
->   19 files changed, 854 insertions(+), 115 deletions(-)
-> 
-> 
-> base-commit: e8bc52cb8df80c31c73c726ab58ea9746e9ff734
+> You can squash all the new tests patches (except the "move helper
+> function").
+You should move most of your patch descriptions in a comment above the 
+related tests. The commit message should list all the new tests and 
+quickly explain which part of the kernel is covered (i.e. mostly the TCP 
+part of Landlock). You can get some inspiration from 
+https://git.kernel.org/mic/c/f4056b9266b571c63f30cda70c2d89f7b7e8bb7b
+
+You need to rebase on top of my next branch (from today).
