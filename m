@@ -2,149 +2,332 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 803D3C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Oct 2022 21:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9B9C43217
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Oct 2022 21:58:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229605AbiJJVfz (ORCPT
+        id S229472AbiJJV6g (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Oct 2022 17:35:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35304 "EHLO
+        Mon, 10 Oct 2022 17:58:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbiJJVfy (ORCPT
+        with ESMTP id S229506AbiJJV6e (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Oct 2022 17:35:54 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ACC67D1D3
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Oct 2022 14:35:51 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id bg9-20020a05600c3c8900b003bf249616b0so7087930wmb.3
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Oct 2022 14:35:51 -0700 (PDT)
+        Mon, 10 Oct 2022 17:58:34 -0400
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F0072EFD
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Oct 2022 14:58:32 -0700 (PDT)
+Received: by mail-qk1-x734.google.com with SMTP id x13so4941739qkg.11
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Oct 2022 14:58:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VMldxqHe7oqZnxhOWbNDSf+/ipc4cdrY3PI40/wIFyY=;
-        b=CAEjxiNCW9LHGV0xN0Q++SUzIDZqtVfDFAw45WPF7haNM/KA16A0B7RWvuzWIX4/Tg
-         u4rVcvonRwwbM+VKFKRgS+gqIftQVevj3jrBCQuhibhDTjXeX63XVCHR4iHyB6O7L38z
-         AeBm6A46eDkB5FzYqTvpSF0KewaxxhG9qiX05EX21km//OEPWyb7Dd8kO+Wf8FMMwRtj
-         7YUouRiS4jFlHvoTM7OX1ayed0QHJKGrKUEQpbLLsu4tZqbc4wDwe81sJSfUo+Hxi6j9
-         b8rfj36BGLda+/XjH5/Beh0FU0mPZY/E6Q4oqA3K6qc+0XUvje2G2qlvtZEMXJQjhFP/
-         peNw==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:user-agent:message-id:date
+         :cc:to:from:subject:from:to:cc:subject:date:message-id:reply-to;
+        bh=+HjSmW9tpglN5ccFyvz+dD73Sw0/OvglxWepA2Jo0J8=;
+        b=I/cO6PrHGUWOsL079qORX34o7QDdY+XbrAZk6JT2+Jt1kfnaFdzRSOl/qfyitom0dH
+         Xuk8Ybmy8+vrVK8V+qRhhhK6vNkfUpZ3rCkBryMi421KFVXVtwdI3TdAiJ7CIMwSeHcK
+         IHcaGVlrfrKah17oUVaAej/Dz9ZxMxZDRjBfkpFNVPpBN2oUJAXqx+CGn7m2+LTJ98d/
+         U9GLTQ/153XOameRzBvhqcn0dMhyQQy9PnF8SATTj6KkC4P8vSX7TM1nNrVB5y9NEk/s
+         A3qWCehFe+mcSBWdobPZAjQrXIJKj34IfaVpwpjOQna3OuZFH4E5Cigk2jo5OybFr2o5
+         xcKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VMldxqHe7oqZnxhOWbNDSf+/ipc4cdrY3PI40/wIFyY=;
-        b=iH4L62/aAlzjAbCkYsVqwadmUeK/bYKFNI5EBRIkIWZnwEoaWwmB/r30WlVkN5GszM
-         GqUg/cpHTZCDOSbAc0IH6SQEWihxvUyM4r0TufQcGimOMnba1ahhDdA4bS1U3QBgrkoC
-         KIJL5zKYHPbMC99nGqAYcYbO9H3P1P3Cjw6Zph6wjS6TROvI9ZgVPeFydRniARrSAp7n
-         6xt0/hGu4kCrp8k8GlAGuMPEZOwDYmP8v6yttwtpXiCmkfZfb1l2z54MjC6SmpNh58JP
-         pAWmwMu0LQGPMIt9WpIGGpvoVthrhFtfO3/WMjLl6mwXXvOfs8YlSb73n8CZVfRQfC4d
-         MCww==
-X-Gm-Message-State: ACrzQf1/LVvOhUHFw6d7IDSmpTxos2I4fXLJpNu04ybV3E+iUsoeDgLC
-        Yt8kEXiEwIkDGju424OaZe85/w==
-X-Google-Smtp-Source: AMsMyM5/zWG+cYg4AJpExgutt6xqdD3M9Ya1ZzEuWcFffeTxg7i3FbXoZgFGVEUzHmTeWTpvgmTmHQ==
-X-Received: by 2002:a05:600c:444b:b0:3b4:cb9e:bd5c with SMTP id v11-20020a05600c444b00b003b4cb9ebd5cmr21012193wmn.124.1665437749904;
-        Mon, 10 Oct 2022 14:35:49 -0700 (PDT)
-Received: from smtpclient.apple (17-14-114.cgnat.fonira.net. [185.17.14.114])
-        by smtp.gmail.com with ESMTPSA id l5-20020adfe9c5000000b0022da3977ec5sm9674476wrn.113.2022.10.10.14.35.48
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Oct 2022 14:35:49 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
-Subject: Re: [EXT] [PATCH v0 3/8] crypto: hbk flags & info added to the tfm
-From:   David Gstir <david@sigma-star.at>
-In-Reply-To: <Y0Q3JKnWSNIC4Xlu@zx2c4.com>
-Date:   Mon, 10 Oct 2022 23:35:47 +0200
-Cc:     Pankaj Gupta <pankaj.gupta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        "gilad@benyossef.com" <gilad@benyossef.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        "michael@walle.cc" <michael@walle.cc>,
-        "john.ernberg@actia.se" <john.ernberg@actia.se>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Sahil Malhotra <sahil.malhotra@nxp.com>,
-        Kshitiz Varshney <kshitiz.varshney@nxp.com>,
-        =?utf-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
-        Varun Sethi <V.Sethi@nxp.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6A3D70F9-1206-4EBB-BFCC-CA3733688EFC@sigma-star.at>
-References: <20221006130837.17587-1-pankaj.gupta@nxp.com>
- <20221006130837.17587-4-pankaj.gupta@nxp.com>
- <Yz/OEwDtyTm+VH0p@gondor.apana.org.au>
- <DU2PR04MB8630CBBB8ABDC3768320C18195209@DU2PR04MB8630.eurprd04.prod.outlook.com>
- <Y0Q3JKnWSNIC4Xlu@zx2c4.com>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-X-Mailer: Apple Mail (2.3696.120.41.1.1)
+        h=content-transfer-encoding:mime-version:user-agent:message-id:date
+         :cc:to:from:subject:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+HjSmW9tpglN5ccFyvz+dD73Sw0/OvglxWepA2Jo0J8=;
+        b=2GKA+rxURu0rXZxnhmdYgcsvocTV03QqmYNWIJ04cp/ePPNGL7Rm+qTjmmpgDJg5F2
+         3VxkEozp1e8RcLGXZYCgvUSofdfNcg3SiIOiI4nWu5G7dgG9ISqslnA+R2rRDwr2+jPx
+         pwaCuUanIGEYvVPHR0xA/GXkmApYRllPQobCfB5WRC+zovv0tHiIhQhXd0bBCI4jV0mc
+         nAEstp2gAYSa9JJNU7uB/Hey6oQDkeectsDxFtr6FdLJmVenQJ1M6Rdp8FVPEbUmt1to
+         npApcA1AQs+jeOEZXMgSHfI+yVqOtXq94ceybc3Ja4f5wSrN7VyVmdButdk6N9pLPF52
+         vgfQ==
+X-Gm-Message-State: ACrzQf16Ydl4DTE6TbT68fxdTqNbK8Nlg23keiTdNQFowA1Ielb1O/Yz
+        P1cmxJKRA2Gq311MN/SpZcbHP0qOGMdo
+X-Google-Smtp-Source: AMsMyM7ogY72hWnpOfhJWsmDxAUR5/egyXlfT+Ho6XupmrhseZgpozxqJTvuHhrjZpMX3PDMt+xbcA==
+X-Received: by 2002:a05:620a:1097:b0:6ea:b98f:ff2f with SMTP id g23-20020a05620a109700b006eab98fff2fmr10132300qkk.101.1665439111504;
+        Mon, 10 Oct 2022 14:58:31 -0700 (PDT)
+Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
+        by smtp.gmail.com with ESMTPSA id u4-20020a05622a198400b00398ed306034sm5181214qtc.81.2022.10.10.14.58.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Oct 2022 14:58:30 -0700 (PDT)
+Subject: [PATCH] lsm: make security_socket_getpeersec_stream() sockptr_t safe
+From:   Paul Moore <paul@paul-moore.com>
+To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     netdev@vger.kernel.org,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Mon, 10 Oct 2022 17:58:29 -0400
+Message-ID: <166543910984.474337.2779830480340611497.stgit@olly>
+User-Agent: StGit/1.5
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
+sockptr_t argument") made it possible to call sk_getsockopt()
+with both user and kernel address space buffers through the use of
+the sockptr_t type.  Unfortunately at the time of conversion the
+security_socket_getpeersec_stream() LSM hook was written to only
+accept userspace buffers, and in a desire to avoid having to change
+the LSM hook the commit author simply passed the sockptr_t's
+userspace buffer pointer.  Since the only sk_getsockopt() callers
+at the time of conversion which used kernel sockptr_t buffers did
+not allow SO_PEERSEC, and hence the
+security_socket_getpeersec_stream() hook, this was acceptable but
+also very fragile as future changes presented the possibility of
+silently passing kernel space pointers to the LSM hook.
 
+There are several ways to protect against this, including careful
+code review of future commits, but since relying on code review to
+catch bugs is a recipe for disaster and the upstream eBPF maintainer
+is "strongly against defensive programming", this patch updates the
+LSM hook, and all of the implementations to support sockptr_t and
+safely handle both user and kernel space buffers.
 
-> On 10.10.2022, at 17:15, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->=20
-> On Mon, Oct 10, 2022 at 11:15:00AM +0000, Pankaj Gupta wrote:
->>> Nack.  You still have not provided a convincing argument why this is =
-necessary
->>> since there are plenty of existing drivers in the kernel already =
-providing similar
->>> features.
->>>=20
->> CAAM is used as a trusted source for trusted keyring. CAAM can expose
->> these keys either as plain key or HBK(hardware bound key- managed by
->> the hardware only and never visible in plain outside of hardware).
->>=20
->> Thus, Keys that are inside CAAM-backed-trusted-keyring, can either be
->> plain key or HBK. So the trusted-key-payload requires additional flag
->> & info(key-encryption-protocol)  to help differentiate it from each
->> other. Now when CAAM trusted-key is presented to the kernel crypto
->> framework, the additional information associated with the key, needs
->> to be passed to the hardware driver. Currently the kernel keyring and
->> kernel crypto frameworks are associated for plain key, but completely
->> dis-associated for HBK. This patch addresses this problem.
->>=20
->> Similar capabilities (trusted source), are there in other crypto
->> accelerators on NXP SoC(s). Having hardware specific crypto algorithm
->> name, does not seems to be a scalable solution.
->=20
-> Do you mean to say that other drivers that use hardware-backed keys do
-> so by setting "cra_name" to something particular? Like instead of =
-"aes"
-> it'd be "aes-but-special-for-this-driver"? If so, that would seem to
-> break the design of the crypto API. Which driver did you see that does
-> this? Or perhaps, more generally, what are the drivers that Herbert is
-> talking about when he mentions the "plenty of existing drivers" that
-> already do this?
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ include/linux/lsm_hook_defs.h |    2 +-
+ include/linux/lsm_hooks.h     |    4 ++--
+ include/linux/security.h      |   11 +++++++----
+ net/core/sock.c               |    3 ++-
+ security/apparmor/lsm.c       |   29 +++++++++++++----------------
+ security/security.c           |    6 +++---
+ security/selinux/hooks.c      |   13 ++++++-------
+ security/smack/smack_lsm.c    |   19 ++++++++++---------
+ 8 files changed, 44 insertions(+), 43 deletions(-)
 
-I believe what Herbert means are drivers registered with the cipher name=20=
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index ec119da1d89b4..6abde829b6e5e 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -302,7 +302,7 @@ LSM_HOOK(int, 0, socket_setsockopt, struct socket *sock, int level, int optname)
+ LSM_HOOK(int, 0, socket_shutdown, struct socket *sock, int how)
+ LSM_HOOK(int, 0, socket_sock_rcv_skb, struct sock *sk, struct sk_buff *skb)
+ LSM_HOOK(int, 0, socket_getpeersec_stream, struct socket *sock,
+-	 char __user *optval, int __user *optlen, unsigned len)
++	 sockptr_t optval, sockptr_t optlen, unsigned int len)
+ LSM_HOOK(int, 0, socket_getpeersec_dgram, struct socket *sock,
+ 	 struct sk_buff *skb, u32 *secid)
+ LSM_HOOK(int, 0, sk_alloc_security, struct sock *sk, int family, gfp_t priority)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 4ec80b96c22e7..883f0f252f062 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -962,8 +962,8 @@
+  *	SO_GETPEERSEC.  For tcp sockets this can be meaningful if the
+  *	socket is associated with an ipsec SA.
+  *	@sock is the local socket.
+- *	@optval userspace memory where the security state is to be copied.
+- *	@optlen userspace int where the module should copy the actual length
++ *	@optval memory where the security state is to be copied.
++ *	@optlen memory where the module should copy the actual length
+  *	of the security state.
+  *	@len as input is the maximum length to copy to userspace provided
+  *	by the caller.
+diff --git a/include/linux/security.h b/include/linux/security.h
+index ca1b7109c0dbb..0e419c595cee5 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -31,6 +31,7 @@
+ #include <linux/err.h>
+ #include <linux/string.h>
+ #include <linux/mm.h>
++#include <linux/sockptr.h>
+ 
+ struct linux_binprm;
+ struct cred;
+@@ -1411,8 +1412,8 @@ int security_socket_getsockopt(struct socket *sock, int level, int optname);
+ int security_socket_setsockopt(struct socket *sock, int level, int optname);
+ int security_socket_shutdown(struct socket *sock, int how);
+ int security_sock_rcv_skb(struct sock *sk, struct sk_buff *skb);
+-int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
+-				      int __user *optlen, unsigned len);
++int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
++				      sockptr_t optlen, unsigned int len);
+ int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb, u32 *secid);
+ int security_sk_alloc(struct sock *sk, int family, gfp_t priority);
+ void security_sk_free(struct sock *sk);
+@@ -1548,8 +1549,10 @@ static inline int security_sock_rcv_skb(struct sock *sk,
+ 	return 0;
+ }
+ 
+-static inline int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
+-						    int __user *optlen, unsigned len)
++static inline int security_socket_getpeersec_stream(struct socket *sock,
++						    sockptr_t optval,
++						    sockptr_t optlen,
++						    unsigned int len)
+ {
+ 	return -ENOPROTOOPT;
+ }
+diff --git a/net/core/sock.c b/net/core/sock.c
+index eeb6cbac6f499..70064415349d6 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1793,7 +1793,8 @@ int sk_getsockopt(struct sock *sk, int level, int optname,
+ 		break;
+ 
+ 	case SO_PEERSEC:
+-		return security_socket_getpeersec_stream(sock, optval.user, optlen.user, len);
++		return security_socket_getpeersec_stream(sock,
++							 optval, optlen, len);
+ 
+ 	case SO_MARK:
+ 		v.val = sk->sk_mark;
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index f56070270c69d..89e84ef54e8eb 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1103,11 +1103,10 @@ static struct aa_label *sk_peer_label(struct sock *sk)
+  * Note: for tcp only valid if using ipsec or cipso on lan
+  */
+ static int apparmor_socket_getpeersec_stream(struct socket *sock,
+-					     char __user *optval,
+-					     int __user *optlen,
++					     sockptr_t optval, sockptr_t optlen,
+ 					     unsigned int len)
+ {
+-	char *name;
++	char *name = NULL;
+ 	int slen, error = 0;
+ 	struct aa_label *label;
+ 	struct aa_label *peer;
+@@ -1124,23 +1123,21 @@ static int apparmor_socket_getpeersec_stream(struct socket *sock,
+ 	/* don't include terminating \0 in slen, it breaks some apps */
+ 	if (slen < 0) {
+ 		error = -ENOMEM;
+-	} else {
+-		if (slen > len) {
+-			error = -ERANGE;
+-		} else if (copy_to_user(optval, name, slen)) {
+-			error = -EFAULT;
+-			goto out;
+-		}
+-		if (put_user(slen, optlen))
+-			error = -EFAULT;
+-out:
+-		kfree(name);
+-
++		goto done;
++	}
++	if (slen > len) {
++		error = -ERANGE;
++		goto done_len;
+ 	}
+ 
++	if (copy_to_sockptr(optval, name, slen))
++		error = -EFAULT;
++done_len:
++	if (copy_to_sockptr(optlen, &slen, sizeof(slen)))
++		error = -EFAULT;
+ done:
+ 	end_current_label_crit_section(label);
+-
++	kfree(name);
+ 	return error;
+ }
+ 
+diff --git a/security/security.c b/security/security.c
+index 79d82cb6e4696..f27c885ee98db 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2267,11 +2267,11 @@ int security_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ }
+ EXPORT_SYMBOL(security_sock_rcv_skb);
+ 
+-int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
+-				      int __user *optlen, unsigned len)
++int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
++				      sockptr_t optlen, unsigned int len)
+ {
+ 	return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
+-				optval, optlen, len);
++			     optval, optlen, len);
+ }
+ 
+ int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb, u32 *secid)
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index f553c370397ee..0bdddeba90a6c 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -5119,11 +5119,12 @@ static int selinux_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ 	return err;
+ }
+ 
+-static int selinux_socket_getpeersec_stream(struct socket *sock, char __user *optval,
+-					    int __user *optlen, unsigned len)
++static int selinux_socket_getpeersec_stream(struct socket *sock,
++					    sockptr_t optval, sockptr_t optlen,
++					    unsigned int len)
+ {
+ 	int err = 0;
+-	char *scontext;
++	char *scontext = NULL;
+ 	u32 scontext_len;
+ 	struct sk_security_struct *sksec = sock->sk->sk_security;
+ 	u32 peer_sid = SECSID_NULL;
+@@ -5139,17 +5140,15 @@ static int selinux_socket_getpeersec_stream(struct socket *sock, char __user *op
+ 				      &scontext_len);
+ 	if (err)
+ 		return err;
+-
+ 	if (scontext_len > len) {
+ 		err = -ERANGE;
+ 		goto out_len;
+ 	}
+ 
+-	if (copy_to_user(optval, scontext, scontext_len))
++	if (copy_to_sockptr(optval, scontext, scontext_len))
+ 		err = -EFAULT;
+-
+ out_len:
+-	if (put_user(scontext_len, optlen))
++	if (copy_to_sockptr(optlen, &scontext_len, sizeof(scontext_len)))
+ 		err = -EFAULT;
+ 	kfree(scontext);
+ 	return err;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index b6306d71c9088..2bd7fadf7fb4c 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4006,12 +4006,12 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+  * returns zero on success, an error code otherwise
+  */
+ static int smack_socket_getpeersec_stream(struct socket *sock,
+-					  char __user *optval,
+-					  int __user *optlen, unsigned len)
++					  sockptr_t optval, sockptr_t optlen,
++					  unsigned int len)
+ {
+ 	struct socket_smack *ssp;
+ 	char *rcp = "";
+-	int slen = 1;
++	u32 slen = 1;
+ 	int rc = 0;
+ 
+ 	ssp = sock->sk->sk_security;
+@@ -4019,15 +4019,16 @@ static int smack_socket_getpeersec_stream(struct socket *sock,
+ 		rcp = ssp->smk_packet->smk_known;
+ 		slen = strlen(rcp) + 1;
+ 	}
+-
+-	if (slen > len)
++	if (slen > len) {
+ 		rc = -ERANGE;
+-	else if (copy_to_user(optval, rcp, slen) != 0)
+-		rc = -EFAULT;
++		goto out_len;
++	}
+ 
+-	if (put_user(slen, optlen) != 0)
++	if (copy_to_sockptr(optval, rcp, slen))
++		rc = -EFAULT;
++out_len:
++	if (copy_to_sockptr(optlen, &slen, sizeof(slen)))
+ 		rc = -EFAULT;
+-
+ 	return rc;
+ }
+ 
 
-prefix =E2=80=9Cp=E2=80=9D. E.g. [1] registers multiple =E2=80=9Cpaes=E2=80=
-=9D variants. There was a
-previous patch set for CAAM where this was suggested as well [2].
-
-- David
-
-[1] =
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dr=
-ivers/crypto/ccree/cc_cipher.c#n1011
-[2] =
-https://lore.kernel.org/linux-crypto/20200716073610.GA28215@gondor.apana.o=
-rg.au/=
