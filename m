@@ -2,118 +2,113 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE8CC433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Oct 2022 11:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1A3C43219
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Oct 2022 15:14:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229585AbiJLLOB (ORCPT
+        id S229681AbiJLPOp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Oct 2022 07:14:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51480 "EHLO
+        Wed, 12 Oct 2022 11:14:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbiJLLNq (ORCPT
+        with ESMTP id S229496AbiJLPOo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Oct 2022 07:13:46 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB62AC1D99;
-        Wed, 12 Oct 2022 04:13:45 -0700 (PDT)
-Received: from fraeml701-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4MnVM12bWSz688Cb;
-        Wed, 12 Oct 2022 19:10:53 +0800 (CST)
-Received: from lhrpeml500004.china.huawei.com (7.191.163.9) by
- fraeml701-chm.china.huawei.com (10.206.15.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.31; Wed, 12 Oct 2022 13:13:42 +0200
-Received: from [10.122.132.241] (10.122.132.241) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 12 Oct 2022 12:13:42 +0100
-Message-ID: <534c5a0b-4c78-0524-a145-200ae3dea368@huawei.com>
-Date:   Wed, 12 Oct 2022 14:13:41 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v7 02/18] landlock: refactor
- landlock_find_rule/insert_rule
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <hukeping@huawei.com>, <anton.sirazetdinov@huawei.com>
-References: <20220829170401.834298-1-konstantin.meskhidze@huawei.com>
- <20220829170401.834298-3-konstantin.meskhidze@huawei.com>
- <431e5311-7072-3a20-af75-d81907b22d61@digikod.net>
- <1ba8c972-1b81-dd85-c24b-83525511083e@huawei.com>
- <01283d8a-3319-af3c-7139-466fe22ca8e4@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <01283d8a-3319-af3c-7139-466fe22ca8e4@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
+        Wed, 12 Oct 2022 11:14:44 -0400
+Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF1E510B;
+        Wed, 12 Oct 2022 08:14:34 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id 391EE9BB; Wed, 12 Oct 2022 17:14:29 +0200 (CEST)
+From:   Nikolaus Voss <nv@vosn.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Yael Tzur <yaelt@google.com>,
+        Cyril Hrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>
+Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 12 Oct 2022 17:09:27 +0200
+Subject: [PATCH v2] KEYS: encrypted: fix key instantiation with user-provided
+ data
+Message-Id: <20221012151429.391EE9BB@mail.steuer-voss.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
+decrypted data") added key instantiation with user provided decrypted data.
+The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
+Fix this to use hex2bin instead.
 
+Keys created from user provided decrypted data saved with "keyctl pipe"
+are still valid, however if the key is recreated from decrypted data the
+old key must be converted to the correct format. This can be done with a
+small shell script, e.g.:
 
-10/12/2022 1:06 PM, Mickaël Salaün пишет:
-> 
-> On 12/10/2022 10:37, Konstantin Meskhidze (A) wrote:
->> 
->> 
->> 9/6/2022 11:07 AM, Mickaël Salaün пишет:
->>> Good to see such clean commit!
->>>
->>> On 29/08/2022 19:03, Konstantin Meskhidze wrote:
->>>> Adds a new landlock_key union and landlock_id structure to support
->>>> a socket port rule type. Refactors landlock_insert_rule() and
->>>> landlock_find_rule() to support coming network modifications.
->>>
->>>> This patch also adds is_object_pointer() and get_root() helpers.
->>>
->>> Please explain a bit what these helpers do.
->>>
->>>
->>>> Now adding or searching a rule in a ruleset depends on a landlock id
->>>> argument provided in refactored functions mentioned above.
->>>
->>> More explanation:
->>> A struct landlock_id identifies a unique entry in a ruleset: either a
->>> kernel object (e.g inode) or a typed data (e.g. TCP port). There is one
->>> red-black tree per key type.
->>>
->>>>
->>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>>
->>> Because most changes come from
->>> https://git.kernel.org/mic/c/8f4104b3dc59e7f110c9b83cdf034d010a2d006f
->>> and
->>> https://git.kernel.org/mic/c/7d6cf40a6f81adf607ad3cc17aaa11e256beeea4
->>> you can append
->>> Co-developed-by: Mickaël Salaün <mic@digikod.net>
->> 
->>     Do I need to add Co-developed-by: Mickaël Salaün <mic@digikod.net>
->>     and Signed-off-by: Mickaël Salaün <mic@digikod.net> or just
->>     Co-developed-by: Mickaël Salaün <mic@digikod.net> ????
->> 
->>     Cause Submiting patches article says:
->>     https://www.kernel.org/doc/html/latest/process/submitting-patches.html
->> 
->>     "...Since Co-developed-by: denotes authorship, every Co-developed-by:
->> must be immediately followed by a Signed-off-by: of the associated
->> co-author...."
->> 
->>     Is this correct signing for this patch:
->> 
->>     Co-developed-by: Mickaël Salaün <mic@digikod.net>
->>     Signed-off-by: Mickaël Salaün <mic@digikod.net>
->>     Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> 
-> Because I'll merge your patches in my tree, I'll add my Signed-off-by to
-> all patches. You can then just add Co-developed-by after your
-> Signed-off-by for this one and I'll add the rest.
+BROKENKEY=abcdefABCDEF1234567890aaaaaaaaaa
+NEWKEY=$(echo -ne $BROKENKEY | xxd -p -c64)
+keyctl add user masterkey "$(cat masterkey.bin)" @u
+keyctl add encrypted testkey "new user:masterkey 32 $NEWKEY" @u
 
-   Ok. I got it. Thanks for the explaning.
-> .
+It is encouraged to switch to a new key because the effective key size
+of the old keys is only half of the specified size.
+
+The corresponding test for the Linux Test Project ltp has been fixed
+with this patch:
+https://lists.linux.it/pipermail/ltp/2022-October/031060.html
+
+Changes
+=======
+v2: - clarify commit message, add example to recover old/broken keys
+    - improve example in Documentation/security/keys/trusted-encrypted.rst
+    - add link to ltp patch
+
+Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided decrypted data")
+Cc: stable <stable@kernel.org>
+Signed-off-by: Nikolaus Voss <nikolaus.voss@haag-streit.com>
+---
+ Documentation/security/keys/trusted-encrypted.rst | 3 ++-
+ security/keys/encrypted-keys/encrypted.c          | 6 +++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+index 0bfb4c339748..e81e47db0b4c 100644
+--- a/Documentation/security/keys/trusted-encrypted.rst
++++ b/Documentation/security/keys/trusted-encrypted.rst
+@@ -350,7 +350,8 @@ Load an encrypted key "evm" from saved blob::
+ 
+ Instantiate an encrypted key "evm" using user-provided decrypted data::
+ 
+-    $ keyctl add encrypted evm "new default user:kmk 32 `cat evm_decrypted_data.blob`" @u
++    $ evmkey=abcdefABCDEF1234567890aaaaaaaaaaabcdefABCDEF1234567890aaaaaaaaaa
++    $ keyctl add encrypted evm "new default user:kmk 32 $evmkey" @u
+     794890253
+ 
+     $ keyctl print 794890253
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index e05cfc2e49ae..1e313982af02 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -627,7 +627,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
+ 			pr_err("encrypted key: instantiation of keys using provided decrypted data is disabled since CONFIG_USER_DECRYPTED_DATA is set to false\n");
+ 			return ERR_PTR(-EINVAL);
+ 		}
+-		if (strlen(decrypted_data) != decrypted_datalen) {
++		if (strlen(decrypted_data) != decrypted_datalen * 2) {
+ 			pr_err("encrypted key: decrypted data provided does not match decrypted data length provided\n");
+ 			return ERR_PTR(-EINVAL);
+ 		}
+@@ -791,8 +791,8 @@ static int encrypted_init(struct encrypted_key_payload *epayload,
+ 		ret = encrypted_key_decrypt(epayload, format, hex_encoded_iv);
+ 	} else if (decrypted_data) {
+ 		get_random_bytes(epayload->iv, ivsize);
+-		memcpy(epayload->decrypted_data, decrypted_data,
+-				   epayload->decrypted_datalen);
++		ret = hex2bin(epayload->decrypted_data, decrypted_data,
++			      epayload->decrypted_datalen);
+ 	} else {
+ 		get_random_bytes(epayload->iv, ivsize);
+ 		get_random_bytes(epayload->decrypted_data, epayload->decrypted_datalen);
+-- 
+2.34.1
+
