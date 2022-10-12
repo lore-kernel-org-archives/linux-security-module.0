@@ -2,113 +2,85 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1A3C43219
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Oct 2022 15:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D07C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Oct 2022 21:14:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229681AbiJLPOp (ORCPT
+        id S230024AbiJLVOs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Oct 2022 11:14:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59956 "EHLO
+        Wed, 12 Oct 2022 17:14:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbiJLPOo (ORCPT
+        with ESMTP id S230034AbiJLVOr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Oct 2022 11:14:44 -0400
-Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF1E510B;
-        Wed, 12 Oct 2022 08:14:34 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id 391EE9BB; Wed, 12 Oct 2022 17:14:29 +0200 (CEST)
-From:   Nikolaus Voss <nv@vosn.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Yael Tzur <yaelt@google.com>,
-        Cyril Hrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 12 Oct 2022 17:09:27 +0200
-Subject: [PATCH v2] KEYS: encrypted: fix key instantiation with user-provided
- data
-Message-Id: <20221012151429.391EE9BB@mail.steuer-voss.de>
+        Wed, 12 Oct 2022 17:14:47 -0400
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B5E1162F9
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Oct 2022 14:14:34 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MnllX3JxtzMpvW1;
+        Wed, 12 Oct 2022 23:14:32 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MnllV5LYyzMppqp;
+        Wed, 12 Oct 2022 23:14:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1665609272;
+        bh=XmjSicC4hYC+1A7pG8Edb0BlTaLN98y6T76Fm2lChYo=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=BijU0W5dbOqFEFzsl42HfXcLOIRcNx7g0Klz4LVSfmnZqFAy4Qxx0wt6JRLC7LiiN
+         +paCvtyQ0UpEOMj55k8K0WeVinscf7pla44LU2QUC3Q+/R7J0K4nrI+g5Hs28jfKYk
+         edyM/vBF0Q2h4ZfnwsFxrXizYQ0cf3wTkI9lwI0M=
+Message-ID: <b5ddec1b-c086-9421-bc64-cdb59324594d@digikod.net>
+Date:   Wed, 12 Oct 2022 23:14:30 +0200
+MIME-Version: 1.0
+User-Agent: 
+Subject: Re: [PATCH v38 01/39] LSM: Identify modules by more than name
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc:     linux-audit@redhat.com, jmorris@namei.org, selinux@vger.kernel.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org
+References: <20220927195421.14713-1-casey@schaufler-ca.com>
+ <20220927195421.14713-2-casey@schaufler-ca.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20220927195421.14713-2-casey@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
-decrypted data") added key instantiation with user provided decrypted data.
-The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
-Fix this to use hex2bin instead.
+Please Cc me for the next versions.
 
-Keys created from user provided decrypted data saved with "keyctl pipe"
-are still valid, however if the key is recreated from decrypted data the
-old key must be converted to the correct format. This can be done with a
-small shell script, e.g.:
 
-BROKENKEY=abcdefABCDEF1234567890aaaaaaaaaa
-NEWKEY=$(echo -ne $BROKENKEY | xxd -p -c64)
-keyctl add user masterkey "$(cat masterkey.bin)" @u
-keyctl add encrypted testkey "new user:masterkey 32 $NEWKEY" @u
+On 27/09/2022 21:53, Casey Schaufler wrote:
+> Create a struct lsm_id to contain identifying information
+> about Linux Security Modules (LSMs). At inception this contains
+> a single member, which is the name of the module. Change the
+> security_add_hooks() interface to use this structure. Change
+> the individual modules to maintain their own struct lsm_id and
+> pass it to security_add_hooks().
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
 
-It is encouraged to switch to a new key because the effective key size
-of the old keys is only half of the specified size.
+[...]
 
-The corresponding test for the Linux Test Project ltp has been fixed
-with this patch:
-https://lists.linux.it/pipermail/ltp/2022-October/031060.html
+> diff --git a/security/landlock/setup.c b/security/landlock/setup.c
+> index f8e8e980454c..fc7b69c5839e 100644
+> --- a/security/landlock/setup.c
+> +++ b/security/landlock/setup.c
+> @@ -23,6 +23,10 @@ struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
+>   	.lbs_superblock = sizeof(struct landlock_superblock_security),
+>   };
+>   
+> +struct lsm_id landlock_lsmid __lsm_ro_after_init = {
+> +	.lsm      = LANDLOCK_NAME,
 
-Changes
-=======
-v2: - clarify commit message, add example to recover old/broken keys
-    - improve example in Documentation/security/keys/trusted-encrypted.rst
-    - add link to ltp patch
+Please only use one space after ".lsm". This applies for other commits 
+as well.
 
-Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided decrypted data")
-Cc: stable <stable@kernel.org>
-Signed-off-by: Nikolaus Voss <nikolaus.voss@haag-streit.com>
----
- Documentation/security/keys/trusted-encrypted.rst | 3 ++-
- security/keys/encrypted-keys/encrypted.c          | 6 +++---
- 2 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index 0bfb4c339748..e81e47db0b4c 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -350,7 +350,8 @@ Load an encrypted key "evm" from saved blob::
- 
- Instantiate an encrypted key "evm" using user-provided decrypted data::
- 
--    $ keyctl add encrypted evm "new default user:kmk 32 `cat evm_decrypted_data.blob`" @u
-+    $ evmkey=abcdefABCDEF1234567890aaaaaaaaaaabcdefABCDEF1234567890aaaaaaaaaa
-+    $ keyctl add encrypted evm "new default user:kmk 32 $evmkey" @u
-     794890253
- 
-     $ keyctl print 794890253
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index e05cfc2e49ae..1e313982af02 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -627,7 +627,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
- 			pr_err("encrypted key: instantiation of keys using provided decrypted data is disabled since CONFIG_USER_DECRYPTED_DATA is set to false\n");
- 			return ERR_PTR(-EINVAL);
- 		}
--		if (strlen(decrypted_data) != decrypted_datalen) {
-+		if (strlen(decrypted_data) != decrypted_datalen * 2) {
- 			pr_err("encrypted key: decrypted data provided does not match decrypted data length provided\n");
- 			return ERR_PTR(-EINVAL);
- 		}
-@@ -791,8 +791,8 @@ static int encrypted_init(struct encrypted_key_payload *epayload,
- 		ret = encrypted_key_decrypt(epayload, format, hex_encoded_iv);
- 	} else if (decrypted_data) {
- 		get_random_bytes(epayload->iv, ivsize);
--		memcpy(epayload->decrypted_data, decrypted_data,
--				   epayload->decrypted_datalen);
-+		ret = hex2bin(epayload->decrypted_data, decrypted_data,
-+			      epayload->decrypted_datalen);
- 	} else {
- 		get_random_bytes(epayload->iv, ivsize);
- 		get_random_bytes(epayload->decrypted_data, epayload->decrypted_datalen);
--- 
-2.34.1
-
+This command will do the trick:
+FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch --tree-filter 
+"clang-format-14 -i security/landlock/*.[ch]" v6.0-rc7..
