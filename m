@@ -2,75 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2D2C43217
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Oct 2022 15:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C362DC43219
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Oct 2022 16:00:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229710AbiJMPxj (ORCPT
+        id S229493AbiJMQAD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Oct 2022 11:53:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48980 "EHLO
+        Thu, 13 Oct 2022 12:00:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229559AbiJMPxh (ORCPT
+        with ESMTP id S229544AbiJMQAB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Oct 2022 11:53:37 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 055D037F8F;
-        Thu, 13 Oct 2022 08:53:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9CA40B81F2C;
-        Thu, 13 Oct 2022 15:53:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A35DC433D6;
-        Thu, 13 Oct 2022 15:53:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665676414;
-        bh=YzdQzqYCyfET0fM/MNECfwA8EB9VdQS1H3xHN/FUVCY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=n5kZt9IxNwbFUJ7uTABKjvmucrBVtjDy3GQq6abjckutI9UxKNkCf0Xmpo1ZDw4kv
-         3ktI08DHgw1SGNL2ZTVIaQl2lcKuB7OgrafTbYNRIQvOk5tq6DsavmE5bQeYKpVaQy
-         M6WqbH3G+1GzTVxYS3p6b3s6Ryrao+txpPVMb0wE42ZwwCtYto2y6O42zJZibi2tbw
-         pOWxM1NEHUze5sJ0IzF4ud5vfJc7vwtvtxACRUSuAQ/YEFk/O0Mkf/8IlUXHqs2zlV
-         WigK1WS6pGfeYMOxrsq3WzQIAhbE58TIZHOqyJddPosgbrKrDV5h0zuP1EPRK+5yh5
-         S+cfxsnhndmGA==
-Date:   Thu, 13 Oct 2022 08:53:33 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
+        Thu, 13 Oct 2022 12:00:01 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77B127B12
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 08:59:59 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id 207so2581548ybn.1
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 08:59:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DjZ4bHtWh7+B3zm3ZOOTvlCPfk07gc+YS2Fa3DuClcY=;
+        b=z65tTNuu5IjqXFQz2UXXKyYyuzKvIMOhj0ajDBeRywjV44SIZazG3rDoq1PJ6O7UuD
+         J4mjj5PWrTqFXiBYQgPOHqi+cv4wTe7IBtcxPnfx4G1g2ZeZ3D0AKGGMgrqUqNArGx0g
+         MybcTG85MMeMka5bMEB67GwEItRabBEk505azrFLeUylTGA/vI64sUrqSuyohNINNiJH
+         Cf2C+8FXB6NKfKeddlf1/raNqRhdaUhhPENkPAKEG1iuMiSdKLhqGUIsxtIwWZrQk7xW
+         wreFCMi/KmSANpBWXqKvjn4bmM/QzAxpQwCG6ZdLB69NgOAoBVUteDUH9LgVRPZJWpgx
+         vNow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DjZ4bHtWh7+B3zm3ZOOTvlCPfk07gc+YS2Fa3DuClcY=;
+        b=ZJBqxUjytFonDWTsz9MKEt+RAKrTDajYILWiN+UgCkxrg/43gmH6opBNiii38o5xvP
+         hQH66DMTudfs0FPv+I8XbfMBc0PvX9vLuknnFmNfoBafVZY6XYQ2iyVECNVEFQwV7kIo
+         8pvpmsgZJUxRgE8y0lfU7+1FYH8pJypM5+IKF9agkmKKkxMbcaQlXxjPsCjIoMrRFhxO
+         71P1XYc1HSTKTRErC/MQFwBx/Bf5NWraT75Y5UokmnNS/dSE2RElMybWYmfrpvIZqcFD
+         FBYxhWmH8j0sZAY51lF8oXP6RkLj9H+TMWJir8eSFpJ10DfYtzo4l/3tyOr5m7kTvR5a
+         0fvA==
+X-Gm-Message-State: ACrzQf24MPV7KtjDrXqn6i0L71uUx+CYxXdhpOZe1bbjOXr59xzUmM4Q
+        BcDhyhPyfBqO4CR5OTFF+rsYr0uAKKDx9Ta+/i8E
+X-Google-Smtp-Source: AMsMyM6ekHioKdLRU9IaF0u9DuOLyzXR1r0vs+sR5cWo2O4AWrFXg0Pd9Ibvgv+X2NgXeNca5XH/vV0NdNhzOWvkm40=
+X-Received: by 2002:a05:6902:724:b0:6c0:1784:b6c7 with SMTP id
+ l4-20020a056902072400b006c01784b6c7mr625781ybt.15.1665676798894; Thu, 13 Oct
+ 2022 08:59:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <166543910984.474337.2779830480340611497.stgit@olly> <20221013085333.26288e44@kernel.org>
+In-Reply-To: <20221013085333.26288e44@kernel.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 13 Oct 2022 11:59:47 -0400
+Message-ID: <CAHC9VhT5A6M27PO1_NKgqaRJXkTyZv_kjfPF=VNSLZ1nx5GFrA@mail.gmail.com>
+Subject: Re: [PATCH] lsm: make security_socket_getpeersec_stream() sockptr_t safe
+To:     Jakub Kicinski <kuba@kernel.org>
 Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         netdev@vger.kernel.org,
         Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: Re: [PATCH] lsm: make security_socket_getpeersec_stream() sockptr_t
- safe
-Message-ID: <20221013085333.26288e44@kernel.org>
-In-Reply-To: <166543910984.474337.2779830480340611497.stgit@olly>
-References: <166543910984.474337.2779830480340611497.stgit@olly>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 10 Oct 2022 17:58:29 -0400 Paul Moore wrote:
-> Commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
-> sockptr_t argument") made it possible to call sk_getsockopt()
-> with both user and kernel address space buffers through the use of
-> the sockptr_t type.  Unfortunately at the time of conversion the
-> security_socket_getpeersec_stream() LSM hook was written to only
-> accept userspace buffers, and in a desire to avoid having to change
-> the LSM hook the commit author simply passed the sockptr_t's
-> userspace buffer pointer.  Since the only sk_getsockopt() callers
-> at the time of conversion which used kernel sockptr_t buffers did
-> not allow SO_PEERSEC, and hence the
-> security_socket_getpeersec_stream() hook, this was acceptable but
-> also very fragile as future changes presented the possibility of
-> silently passing kernel space pointers to the LSM hook.
-> 
-> There are several ways to protect against this, including careful
-> code review of future commits, but since relying on code review to
-> catch bugs is a recipe for disaster and the upstream eBPF maintainer
-> is "strongly against defensive programming", this patch updates the
-> LSM hook, and all of the implementations to support sockptr_t and
-> safely handle both user and kernel space buffers.
+On Thu, Oct 13, 2022 at 11:53 AM Jakub Kicinski <kuba@kernel.org> wrote:
+> On Mon, 10 Oct 2022 17:58:29 -0400 Paul Moore wrote:
+> > Commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
+> > sockptr_t argument") made it possible to call sk_getsockopt()
+> > with both user and kernel address space buffers through the use of
+> > the sockptr_t type.  Unfortunately at the time of conversion the
+> > security_socket_getpeersec_stream() LSM hook was written to only
+> > accept userspace buffers, and in a desire to avoid having to change
+> > the LSM hook the commit author simply passed the sockptr_t's
+> > userspace buffer pointer.  Since the only sk_getsockopt() callers
+> > at the time of conversion which used kernel sockptr_t buffers did
+> > not allow SO_PEERSEC, and hence the
+> > security_socket_getpeersec_stream() hook, this was acceptable but
+> > also very fragile as future changes presented the possibility of
+> > silently passing kernel space pointers to the LSM hook.
+> >
+> > There are several ways to protect against this, including careful
+> > code review of future commits, but since relying on code review to
+> > catch bugs is a recipe for disaster and the upstream eBPF maintainer
+> > is "strongly against defensive programming", this patch updates the
+> > LSM hook, and all of the implementations to support sockptr_t and
+> > safely handle both user and kernel space buffers.
+>
+> Code seems sane, FWIW, but the commit message sounds petty,
+> which is likely why nobody is willing to ack it.
 
-Code seems sane, FWIW, but the commit message sounds petty,
-which is likely why nobody is willing to ack it.
+Heh, feel free to look at Alexei's comments to my original email; the
+commit description seems spot on to me.
+
+FWIW, once Casey and John give a thumbs up on their respective code
+areas I do plan to pull this into the lsm/next tree with, or without,
+any ACKs from the netdev/bpf folks.  It would be nice if I could get
+an ACK from you guys, but since netdev/bpf feels comfortable merging
+small security/ code without ACKs from the LSM folks, I see no problem
+merging small netdev/bpf code with ACKs from the netdev/bpf folks.
+
+-- 
+paul-moore.com
