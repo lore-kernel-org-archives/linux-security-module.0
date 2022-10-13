@@ -2,159 +2,402 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374C8C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Oct 2022 22:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08BF3C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Oct 2022 22:37:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229782AbiJMWhH (ORCPT
+        id S229801AbiJMWhI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Oct 2022 18:37:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43534 "EHLO
+        Thu, 13 Oct 2022 18:37:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229724AbiJMWhE (ORCPT
+        with ESMTP id S229745AbiJMWhF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Oct 2022 18:37:04 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8D7926116
+        Thu, 13 Oct 2022 18:37:05 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27E9111A940
         for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 15:37:00 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id s196so1468721pgs.3
+Received: by mail-pj1-x102d.google.com with SMTP id p3-20020a17090a284300b0020a85fa3ffcso6216307pjf.2
         for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 15:37:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RwwHIW9ubgGCNZI9bpt1owrfiGZeXb5wwl1H6trWtBY=;
-        b=NPbuugnsa8ZjJmuKOsOOSrzjod1kIYqRgRjmTGaTWJUUqeqq4o26Thx5EwcjH8ntOg
-         2FXLuaMoSoMJWiLmgy0LqmQpFgBGbd/D2jky5NbREy2VZpMXlHQhUgKFk4GR4LHv+2Yh
-         AhE40vgIjDEMlzjYgT0H7Xngnyh4qql/BXqpA=
+        bh=4QtMvi+okgythLC0BZ5AgbF6b/T036dwH9EuwQzqT3w=;
+        b=oPHpU2FNCIKE86DHkbE5v7YdCVfFxuOh2IeHYY2DreHarIwYexNLRoxwOscPXlk54Z
+         2XsBONOx9Ca9mdC2873canzK4z+yM15aoISs7hNWPzcT1YPJUreGCcYGFpRBB6gle9kl
+         5vsX6q8Bvc8b4zxMGfPt3LYcWr74dN592yUGU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RwwHIW9ubgGCNZI9bpt1owrfiGZeXb5wwl1H6trWtBY=;
-        b=TfFtIte0l1cDbXGm8CU+tzbRLHpgCiR6eAVA+SiaJoAa1t8jLMDO5izXTP5GjjK03B
-         sJ/0kQU8P/knxYqMMnv6LYiCYQz6myfM4DeFplTQ+JNAo4dn+QOsBlCHXfEe/aHKbTic
-         ohqzhmBpmfofZjg77/7i9/ppVOnDvp6FK+AvqcXGqT/LfHMM89C4EkFk5mOF6tQGDcil
-         4HV+EvSObuYQ/RAZ21kptpZ4IOVK621SQFo9bS0C4W16ih2lOmYV4bhhVYCKSiRxWZvf
-         bd/crq1sbmTV1lsQeujDuoYBbPl5cjtJgzgrs0BcmHQXHciVXzZE4Yl0FFP/5S36my4R
-         iN1Q==
-X-Gm-Message-State: ACrzQf12xUaS0FQPaed8Cmcfb8ApmvXLkBKujL0P1NXymwJQNxMKhHQ4
-        E92E5O3BU5wPyzKBC0uDZa2Fjg==
-X-Google-Smtp-Source: AMsMyM7usifpi6LURddo97Cesgs33dYbMjwLNWCksMM3VKB/UvdMIMsKuI4q2JXtvsvm+MCed0mIbA==
-X-Received: by 2002:a63:4753:0:b0:462:b3f0:a984 with SMTP id w19-20020a634753000000b00462b3f0a984mr1760357pgk.501.1665700619583;
-        Thu, 13 Oct 2022 15:36:59 -0700 (PDT)
+        bh=4QtMvi+okgythLC0BZ5AgbF6b/T036dwH9EuwQzqT3w=;
+        b=S/VX/ABoE7vS8w6N6+FNud2teJn8psMBhlHo0jZQbb1C4PUUOzPymCQ94twRKsFfrs
+         mcLE+whcx5pUfoEOFatxE06pfcb4Bu2NyFXV2PzUd5D60AZHqF29QgYTPgzQOvi1hZL/
+         EKovQJvqJV/PSeIU/tAXAnq+b8SzcNIHVHelAMQeBWEuI7GYzo98O9WXj+q2jyHLmywj
+         ZRl0MJxUu6zcU53doVwaZmyZSAA6ycJhL3PL9uR3claXYrQNPaPWULGESmktZP4xpk0D
+         82L+TTSuqc8fCkXA8Gij97vWPVHaD+ZJiMz2OVEO7TM1bufM1PoIAQSIVc+nsdUUAslz
+         qvOw==
+X-Gm-Message-State: ACrzQf0hdnMg9qJZa86gFAV9yPG4zlZ14YvAaJ6VlgmHTYEim59WUTLo
+        MVVES+oYdnrpye6Pyz/1Cd5OWA==
+X-Google-Smtp-Source: AMsMyM7DkLAz0Cr9hMytTafIU8DIO/pBbqK97OoNMRskAoB4QQPwJmbuNvvmOIVcxdwboNWl3p7lxw==
+X-Received: by 2002:a17:90b:1e0b:b0:20d:7ddf:9b08 with SMTP id pg11-20020a17090b1e0b00b0020d7ddf9b08mr2169714pjb.187.1665700618898;
+        Thu, 13 Oct 2022 15:36:58 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a6-20020a170902710600b0016d773aae60sm363047pll.19.2022.10.13.15.36.55
+        by smtp.gmail.com with ESMTPSA id q135-20020a632a8d000000b004277f43b736sm188041pgq.92.2022.10.13.15.36.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 13 Oct 2022 15:36:56 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Mimi Zohar <zohar@linux.ibm.com>
 Cc:     Kees Cook <keescook@chromium.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Petr Vorel <pvorel@suse.cz>,
-        Jonathan McDowell <noodles@fb.com>,
-        Borislav Petkov <bp@suse.de>, Takashi Iwai <tiwai@suse.de>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        KP Singh <kpsingh@kernel.org>,
+        Petr Vorel <pvorel@suse.cz>, Borislav Petkov <bp@suse.de>,
+        Takashi Iwai <tiwai@suse.de>,
+        Jonathan McDowell <noodles@fb.com>,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, KP Singh <kpsingh@kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
         John Johansen <john.johansen@canonical.com>,
         linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: [PATCH 4/9] ima: Move ima_file_free() into LSM
-Date:   Thu, 13 Oct 2022 15:36:49 -0700
-Message-Id: <20221013223654.659758-4-keescook@chromium.org>
+Subject: [PATCH 2/9] security: Move trivial IMA hooks into LSM
+Date:   Thu, 13 Oct 2022 15:36:47 -0700
+Message-Id: <20221013223654.659758-2-keescook@chromium.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221013222702.never.990-kees@kernel.org>
 References: <20221013222702.never.990-kees@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3106; h=from:subject; bh=j7SUgkDxPUE08MqOt4a9Z07kxHXSo2qyUDZKl6O5dvY=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjSJME98uVBOBVBjxVK8UcpHvXl8yakzz5L2nvmUUm /7U1ct+JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCY0iTBAAKCRCJcvTf3G3AJlXUD/ 9LlocRqLBjy5RTiLduzQ0vovRa//i2jiaWLU4i+ih50alFhDMD02D29Huhx1Bpfkxw3tEd5uirD4Qm woZnL++HqvBws+6hGWHagdC04silwQ+UneqsQ9+EwvYKkgPjAXUf8EqEiroy2E5PW6tvyWQGp7DE04 5fMsRSD1C33QHyVeVM7PoXVrtGzW7ZXZRlq9qLdxpIfMps7lsUPsMQTc2kI0mXBsFDmzmFC+dvs9Kk TBA2b7kANBV4ws5RZBLHQlcNlcorhUbixldb3SD4Igl+MJgA67JGenetiOgFwYTBZT1K73uJbk5yUk WZQc601AOB4dC1ijypfacOlZMsqn3UAybG24Vl3JBK6k9KVLuk//880teg87CIZ3aouwk8oaGFjJCb MGXsSIxvhXFzaDBaD+6ZerRPCd6plADAlHpnOft2dB4URCIbURA0fsBQocvf8yBHNcbIDACPNQ+vsD o2HdBbh3bSEvxx+IZz7MNSOJtcgg19X9ybRdJ2DWUahXj4tAVcVFScJ9Y59q3grUFY4qHgtvQuDUsV VXEVwWI71XFXuUiZWOk3URctGgJ8R6g+ke4PyNtO7Os8N9dDI8SUiFqBidQyChnIfDZLrBJ3kZBTvq Fucu8VZ0mHiRAoMrfyl5lQR9vABa7Kxyt11ZCZCO9fEMV4YrarDv6b7dG5ZA==
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11716; h=from:subject; bh=JPYrXEme63zNrHu8RasMAYqzn5dsYfwQ9sKlRFYwCmg=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjSJMEBD/MwZ0ABEhYQJlMhma7ILk1MIOCXpU03Rs0 Pj96qRKJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCY0iTBAAKCRCJcvTf3G3AJgJlEA Cl24Ozc1VocmsUXHG32wY4+VYx+AcAuzOiJniFxKvvLj9WZt1tVP6AZjctFfMVwWIYt2Nlp0w5NaLq KR6DqQStima1UGNyAr4KydA8JnaQnpwN77IwaHZ1ICYrUrKzOrdOXu5F+QhyxgHODuswpWPtwVK+ew x8JxGGC1WNatLweiisDHYYWDztKqyLRM5zAdyVG29XHOoXyKvEcLVuYuRaJFLZhCgoL6rWTqQHibTE L3ZJ15erp8I3sBCswkF/cutq1D/h4FkF0ipjXmE4sq5Q4sDFAMLzsVeLoS+77uNySIufqHNEzEJvsv MtkRe9YfjdQ1ebLBOmRTwJ4DK9ygu5UYyEFE3DVjl6s9WCF7xoeeyw1xGeAmWZCGEISesOX3EK1qc6 QG2Qvh0zysfKi4bQh+X/w7YHus44k+O8wibXQXMCOeMA7MayrCMPXDiSLOU13TyewKQKYAR1MaNfMo T2CssSFp7cVYpPa2V1ko6UScmuAnLVwuzGlDI97OoskTZeNpZUCU0SDObm1+NrjbO/OVm4Oz6q3Rry hToO3DDPLYNqpYUahPlARDjFN5Yd85npwGh+K3T3xS75m7UM1ZXJnG1yltz+N2SBik1ARXebC7yHhh PymeAcPzWH1I8+VKQ4In6NgU0I2xesFr6C2GXdeu8txN30aQHn3wLGlT3Y0A==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The file_free_security hook already exists for managing notification of
-released files. Use the LSM hook instead of open-coded stacking.
+This moves the trivial hard-coded stacking of IMA LSM hooks into the
+existing LSM infrastructure.
 
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
 Cc: Paul Moore <paul@paul-moore.com>
 Cc: James Morris <jmorris@namei.org>
 Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: "Mickaël Salaün" <mic@digikod.net>
 Cc: Petr Vorel <pvorel@suse.cz>
-Cc: Jonathan McDowell <noodles@fb.com>
 Cc: Borislav Petkov <bp@suse.de>
 Cc: Takashi Iwai <tiwai@suse.de>
-Cc: linux-integrity@vger.kernel.org
+Cc: Jonathan McDowell <noodles@fb.com>
 Cc: linux-security-module@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/file_table.c                   | 1 -
- include/linux/ima.h               | 6 ------
- security/integrity/ima/ima_main.c | 3 ++-
- 3 files changed, 2 insertions(+), 8 deletions(-)
+ include/linux/ima.h               | 50 -----------------------------
+ security/integrity/ima/ima_main.c | 40 +++++++++++++++++-------
+ security/security.c               | 52 ++++++-------------------------
+ 3 files changed, 37 insertions(+), 105 deletions(-)
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 99c6796c9f28..fa707d221a43 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -311,7 +311,6 @@ static void __fput(struct file *file)
- 	eventpoll_release(file);
- 	locks_remove_file(file);
- 
--	ima_file_free(file);
- 	if (unlikely(file->f_flags & FASYNC)) {
- 		if (file->f_op->fasync)
- 			file->f_op->fasync(-1, file, 0);
 diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 6dc5143f89f2..9f18df366064 100644
+index 81708ca0ebc7..3c641cc65270 100644
 --- a/include/linux/ima.h
 +++ b/include/linux/ima.h
-@@ -19,7 +19,6 @@ extern enum hash_algo ima_get_current_hash_algo(void);
+@@ -16,20 +16,10 @@ struct linux_binprm;
+ 
+ #ifdef CONFIG_IMA
+ extern enum hash_algo ima_get_current_hash_algo(void);
+-extern int ima_bprm_check(struct linux_binprm *bprm);
  extern int ima_file_check(struct file *file, int mask);
  extern void ima_post_create_tmpfile(struct user_namespace *mnt_userns,
  				    struct inode *inode);
--extern void ima_file_free(struct file *file);
+ extern void ima_file_free(struct file *file);
+-extern int ima_file_mmap(struct file *file, unsigned long prot);
+-extern int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot);
+-extern int ima_load_data(enum kernel_load_data_id id, bool contents);
+-extern int ima_post_load_data(char *buf, loff_t size,
+-			      enum kernel_load_data_id id, char *description);
+-extern int ima_read_file(struct file *file, enum kernel_read_file_id id,
+-			 bool contents);
+-extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+-			      enum kernel_read_file_id id);
  extern void ima_post_path_mknod(struct user_namespace *mnt_userns,
  				struct dentry *dentry);
  extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
-@@ -56,11 +55,6 @@ static inline void ima_post_create_tmpfile(struct user_namespace *mnt_userns,
- {
+@@ -56,11 +46,6 @@ static inline enum hash_algo ima_get_current_hash_algo(void)
+ 	return HASH_ALGO__LAST;
  }
  
--static inline void ima_file_free(struct file *file)
+-static inline int ima_bprm_check(struct linux_binprm *bprm)
 -{
--	return;
+-	return 0;
+-}
+-
+ static inline int ima_file_check(struct file *file, int mask)
+ {
+ 	return 0;
+@@ -76,41 +61,6 @@ static inline void ima_file_free(struct file *file)
+ 	return;
+ }
+ 
+-static inline int ima_file_mmap(struct file *file, unsigned long prot)
+-{
+-	return 0;
+-}
+-
+-static inline int ima_file_mprotect(struct vm_area_struct *vma,
+-				    unsigned long prot)
+-{
+-	return 0;
+-}
+-
+-static inline int ima_load_data(enum kernel_load_data_id id, bool contents)
+-{
+-	return 0;
+-}
+-
+-static inline int ima_post_load_data(char *buf, loff_t size,
+-				     enum kernel_load_data_id id,
+-				     char *description)
+-{
+-	return 0;
+-}
+-
+-static inline int ima_read_file(struct file *file, enum kernel_read_file_id id,
+-				bool contents)
+-{
+-	return 0;
+-}
+-
+-static inline int ima_post_read_file(struct file *file, void *buf, loff_t size,
+-				     enum kernel_read_file_id id)
+-{
+-	return 0;
 -}
 -
  static inline void ima_post_path_mknod(struct user_namespace *mnt_userns,
  				       struct dentry *dentry)
  {
 diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index b3b79d030a67..94379ba40b58 100644
+index e617863af5ff..2cff001b02e4 100644
 --- a/security/integrity/ima/ima_main.c
 +++ b/security/integrity/ima/ima_main.c
-@@ -183,7 +183,7 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
+@@ -395,6 +395,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ /**
+  * ima_file_mmap - based on policy, collect/store measurement.
+  * @file: pointer to the file to be measured (May be NULL)
++ * @reqprot: contains the protection that will be applied by the kernel.
+  * @prot: contains the protection that will be applied by the kernel.
   *
-  * Flag files that changed, based on i_version
+  * Measure files being mmapped executable based on the ima_must_measure()
+@@ -403,11 +404,12 @@ static int process_measurement(struct file *file, const struct cred *cred,
+  * On success return 0.  On integrity appraisal error, assuming the file
+  * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
   */
--void ima_file_free(struct file *file)
-+static void ima_file_free(struct file *file)
+-int ima_file_mmap(struct file *file, unsigned long prot)
++static int ima_file_mmap(struct file *file, unsigned long reqprot,
++			 unsigned long prot, unsigned long flags)
  {
- 	struct inode *inode = file_inode(file);
- 	struct integrity_iint_cache *iint;
-@@ -1085,6 +1085,7 @@ static struct security_hook_list ima_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
- 	LSM_HOOK_INIT(mmap_file, ima_file_mmap),
- 	LSM_HOOK_INIT(file_mprotect, ima_file_mprotect),
-+	LSM_HOOK_INIT(file_free_security, ima_file_free),
- 	LSM_HOOK_INIT(kernel_read_file, ima_read_file),
- 	LSM_HOOK_INIT(kernel_post_read_file, ima_post_read_file),
- 	LSM_HOOK_INIT(kernel_load_data, ima_load_data),
+ 	u32 secid;
+ 
+-	if (file && (prot & PROT_EXEC)) {
++	if (file && (reqprot & PROT_EXEC)) {
+ 		security_current_getsecid_subj(&secid);
+ 		return process_measurement(file, current_cred(), secid, NULL,
+ 					   0, MAY_EXEC, MMAP_CHECK);
+@@ -419,6 +421,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+ /**
+  * ima_file_mprotect - based on policy, limit mprotect change
+  * @vma: vm_area_struct protection is set to
++ * @reqprot: contains the protection that were requested.
+  * @prot: contains the protection that will be applied by the kernel.
+  *
+  * Files can be mmap'ed read/write and later changed to execute to circumvent
+@@ -429,7 +432,8 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+  *
+  * On mprotect change success, return 0.  On failure, return -EACESS.
+  */
+-int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
++static int ima_file_mprotect(struct vm_area_struct *vma,
++			     unsigned long reqprot, unsigned long prot)
+ {
+ 	struct ima_template_desc *template = NULL;
+ 	struct file *file;
+@@ -483,7 +487,7 @@ int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
+  * On success return 0.  On integrity appraisal error, assuming the file
+  * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
+  */
+-int ima_bprm_check(struct linux_binprm *bprm)
++static int ima_bprm_check(struct linux_binprm *bprm)
+ {
+ 	int ret;
+ 	u32 secid;
+@@ -706,8 +710,8 @@ void ima_post_path_mknod(struct user_namespace *mnt_userns,
+  *
+  * For permission return 0, otherwise return -EACCES.
+  */
+-int ima_read_file(struct file *file, enum kernel_read_file_id read_id,
+-		  bool contents)
++static int ima_read_file(struct file *file, enum kernel_read_file_id read_id,
++			 bool contents)
+ {
+ 	enum ima_hooks func;
+ 	u32 secid;
+@@ -756,8 +760,8 @@ const int read_idmap[READING_MAX_ID] = {
+  * On success return 0.  On integrity appraisal error, assuming the file
+  * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
+  */
+-int ima_post_read_file(struct file *file, void *buf, loff_t size,
+-		       enum kernel_read_file_id read_id)
++static int ima_post_read_file(struct file *file, char *buf, loff_t size,
++			      enum kernel_read_file_id read_id)
+ {
+ 	enum ima_hooks func;
+ 	u32 secid;
+@@ -790,7 +794,7 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+  *
+  * For permission return 0, otherwise return -EACCES.
+  */
+-int ima_load_data(enum kernel_load_data_id id, bool contents)
++static int ima_load_data(enum kernel_load_data_id id, bool contents)
+ {
+ 	bool ima_enforce, sig_enforce;
+ 
+@@ -844,9 +848,9 @@ int ima_load_data(enum kernel_load_data_id id, bool contents)
+  * On success return 0.  On integrity appraisal error, assuming the file
+  * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
+  */
+-int ima_post_load_data(char *buf, loff_t size,
+-		       enum kernel_load_data_id load_id,
+-		       char *description)
++static int ima_post_load_data(char *buf, loff_t size,
++			      enum kernel_load_data_id load_id,
++			      char *description)
+ {
+ 	if (load_id == LOADING_FIRMWARE) {
+ 		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
+@@ -1077,6 +1081,18 @@ static int __init init_ima(void)
+ 
+ late_initcall(init_ima);	/* Start IMA after the TPM is available */
+ 
++static struct security_hook_list ima_hooks[] __lsm_ro_after_init = {
++	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
++	LSM_HOOK_INIT(mmap_file, ima_file_mmap),
++	LSM_HOOK_INIT(file_mprotect, ima_file_mprotect),
++	LSM_HOOK_INIT(kernel_read_file, ima_read_file),
++	LSM_HOOK_INIT(kernel_post_read_file, ima_post_read_file),
++	LSM_HOOK_INIT(kernel_load_data, ima_load_data),
++	LSM_HOOK_INIT(kernel_post_load_data, ima_post_load_data),
++};
++
+ void __init integrity_lsm_ima_init(void)
+ {
++	pr_info("Integrity LSM enabling IMA\n");
++	integrity_add_lsm_hooks(ima_hooks, ARRAY_SIZE(ima_hooks));
+ }
+diff --git a/security/security.c b/security/security.c
+index 14d30fec8a00..8f7c1b5fa5fa 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -862,12 +862,7 @@ int security_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file)
+ 
+ int security_bprm_check(struct linux_binprm *bprm)
+ {
+-	int ret;
+-
+-	ret = call_int_hook(bprm_check_security, 0, bprm);
+-	if (ret)
+-		return ret;
+-	return ima_bprm_check(bprm);
++	return call_int_hook(bprm_check_security, 0, bprm);
+ }
+ 
+ void security_bprm_committing_creds(struct linux_binprm *bprm)
+@@ -1589,12 +1584,8 @@ static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
+ int security_mmap_file(struct file *file, unsigned long prot,
+ 			unsigned long flags)
+ {
+-	int ret;
+-	ret = call_int_hook(mmap_file, 0, file, prot,
+-					mmap_prot(file, prot), flags);
+-	if (ret)
+-		return ret;
+-	return ima_file_mmap(file, prot);
++	return call_int_hook(mmap_file, 0, file, prot,
++			     mmap_prot(file, prot), flags);
+ }
+ 
+ int security_mmap_addr(unsigned long addr)
+@@ -1605,12 +1596,7 @@ int security_mmap_addr(unsigned long addr)
+ int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
+ 			    unsigned long prot)
+ {
+-	int ret;
+-
+-	ret = call_int_hook(file_mprotect, 0, vma, reqprot, prot);
+-	if (ret)
+-		return ret;
+-	return ima_file_mprotect(vma, prot);
++	return call_int_hook(file_mprotect, 0, vma, reqprot, prot);
+ }
+ 
+ int security_file_lock(struct file *file, unsigned int cmd)
+@@ -1746,35 +1732,20 @@ int security_kernel_module_request(char *kmod_name)
+ int security_kernel_read_file(struct file *file, enum kernel_read_file_id id,
+ 			      bool contents)
+ {
+-	int ret;
+-
+-	ret = call_int_hook(kernel_read_file, 0, file, id, contents);
+-	if (ret)
+-		return ret;
+-	return ima_read_file(file, id, contents);
++	return call_int_hook(kernel_read_file, 0, file, id, contents);
+ }
+ EXPORT_SYMBOL_GPL(security_kernel_read_file);
+ 
+ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+ 				   enum kernel_read_file_id id)
+ {
+-	int ret;
+-
+-	ret = call_int_hook(kernel_post_read_file, 0, file, buf, size, id);
+-	if (ret)
+-		return ret;
+-	return ima_post_read_file(file, buf, size, id);
++	return call_int_hook(kernel_post_read_file, 0, file, buf, size, id);
+ }
+ EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
+ 
+ int security_kernel_load_data(enum kernel_load_data_id id, bool contents)
+ {
+-	int ret;
+-
+-	ret = call_int_hook(kernel_load_data, 0, id, contents);
+-	if (ret)
+-		return ret;
+-	return ima_load_data(id, contents);
++	return call_int_hook(kernel_load_data, 0, id, contents);
+ }
+ EXPORT_SYMBOL_GPL(security_kernel_load_data);
+ 
+@@ -1782,13 +1753,8 @@ int security_kernel_post_load_data(char *buf, loff_t size,
+ 				   enum kernel_load_data_id id,
+ 				   char *description)
+ {
+-	int ret;
+-
+-	ret = call_int_hook(kernel_post_load_data, 0, buf, size, id,
+-			    description);
+-	if (ret)
+-		return ret;
+-	return ima_post_load_data(buf, size, id, description);
++	return call_int_hook(kernel_post_load_data, 0, buf, size, id,
++			     description);
+ }
+ EXPORT_SYMBOL_GPL(security_kernel_post_load_data);
+ 
 -- 
 2.34.1
 
