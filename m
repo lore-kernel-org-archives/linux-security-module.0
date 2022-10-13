@@ -2,50 +2,50 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56603C43217
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Oct 2022 22:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6DDC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Oct 2022 22:37:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229791AbiJMWhP (ORCPT
+        id S229852AbiJMWhV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Oct 2022 18:37:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43578 "EHLO
+        Thu, 13 Oct 2022 18:37:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229796AbiJMWhI (ORCPT
+        with ESMTP id S229811AbiJMWhK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Oct 2022 18:37:08 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7826153826
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 15:37:02 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id l4so3092677plb.8
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 15:37:02 -0700 (PDT)
+        Thu, 13 Oct 2022 18:37:10 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F89E19B67C
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 15:37:03 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id n7so3124701plp.1
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 15:37:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YsVURujdxv2TmCZAOzBG5PyJ5Db0orOcMu9GXfW9Fck=;
-        b=Q6uQT6cZ6HlnR383h6WH/uQ3S8aFq0qFNpnMDAPTNxVKhhUPExQlulnkpOZFEcG4DO
-         rkvGu+fypFN8ukziyyJYzxxpoBTmyy1iUMJDn54cWfAj/wTnNaO3mMX3ID9iCOFpoe8X
-         RsBJfdcTkFBtAvNEDyiSrCSfUxIE9g7TpRhNg=
+        bh=BUjOn5k+MDTd5PUbkTwlrTScouGBjar5cnIPsWYV3Wg=;
+        b=XGpcmGIGlJvbK+PB64IhAkNpyqWLSCW2DYyaXePgdi05Efu5gl3N0K/4rH7qa7wR2G
+         NhgH5dEPf4bukJHrR7zvYZrFreOBcpgAzxeVjzSSwrYkx4aMtW4lC77LLu3BXkyNO5Mx
+         WRVlvhh8AeS/RL37yp6cImouUfSHqHYIF71eE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YsVURujdxv2TmCZAOzBG5PyJ5Db0orOcMu9GXfW9Fck=;
-        b=jvYPE+R19UB8ydc5Hehqh8JRapcOA5HcNlTdIX47ZX5bB8as+f9ZFDc/adfJxka+83
-         jTt2rxv6B7QQGeAyf5UK3iyVHdPCQhAEoUvJyjT4AS1WAbxHiujv/BZ45p5SlJVTnufC
-         rIN0kzf8DNgBQHc5N56FWgA7L7FfzGE9Tm7olX8A9YwCYv3L7gHREMpR90256pJkHAxx
-         2Ib614ow3puUUfk5qO7ez5fws3lW4L3uLHRzzWk+AkSscLpLGNoWd2azwiM0RzqV0ozM
-         lquu27tVdYov/a8ARl+gk9ZoLc8INQbqve4c6zV0LpEu86yYTZjW6ocyQyzTRqQQrJm8
-         ejOA==
-X-Gm-Message-State: ACrzQf1HwmZS7nqAM2wEek7y0noWbqCWv/JodYRJaWwYM8PusKiIMk1C
-        hJIxMm84dIyHygNubZU7NV8Rvw==
-X-Google-Smtp-Source: AMsMyM7imnz6ZZQ3TevCrG0iuI2bK+HUr3oLsWudqm7wRbi/ZzdALNZlnC9CYelAiPLCRmpxIoMRsw==
-X-Received: by 2002:a17:902:da90:b0:17e:c64c:99c2 with SMTP id j16-20020a170902da9000b0017ec64c99c2mr1943103plx.85.1665700621712;
-        Thu, 13 Oct 2022 15:37:01 -0700 (PDT)
+        bh=BUjOn5k+MDTd5PUbkTwlrTScouGBjar5cnIPsWYV3Wg=;
+        b=eSzX4XGuC96zZ5mcikAI+xqD4WxfXxOfcZ3ryNBKNVNo7SmcZDgzpG8ddRumOB2S9y
+         DZHyvarRvSAwFiO0GOtS/E8sqxJPlaQWoX5MuApipSB+qHlmvKgZrna671QSi3TOXOTS
+         Ae9ZZLA8Z2H8an8il+PyAmuc3iAlg7235qGTFfxGC1x2k2WkHr80AGLScv4xH5vm+1tN
+         HtlOZ77iQ/okMV60gL+QpQzqyF/oSbrLjxe18TTrAym7oldAljvPHnktMbWZ8+ojTukj
+         FI8QOjgmMEHQ3Jpexztv2NPHt1EgMp1jprZF0xZO/YJa1HhEYz5j6QiAWPPaOUUN1FA4
+         YiOw==
+X-Gm-Message-State: ACrzQf2dVedEJckSSwgFIVVcHoyS76CtBH3tJ6oe0U93MDrY79iI9ev7
+        neUgWjfjXYuuBVIM4nVd4FFuww==
+X-Google-Smtp-Source: AMsMyM7lmGE7iSzcgY7jgVxZ9Mj/vs91Xdkm9UEpv0CL1c5bc3mYipHsQLdJBURHMD2yFwzNrwyn2g==
+X-Received: by 2002:a17:90b:180f:b0:20d:4e7f:5f52 with SMTP id lw15-20020a17090b180f00b0020d4e7f5f52mr13961271pjb.119.1665700622896;
+        Thu, 13 Oct 2022 15:37:02 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e2-20020a17090ab38200b0020aaa678098sm234714pjr.49.2022.10.13.15.36.57
+        by smtp.gmail.com with ESMTPSA id f8-20020a170902ce8800b00179eb1576bbsm322449plg.190.2022.10.13.15.36.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 13 Oct 2022 15:37:00 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -54,216 +54,172 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Takashi Iwai <tiwai@suse.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         Jonathan McDowell <noodles@fb.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         KP Singh <kpsingh@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         John Johansen <john.johansen@canonical.com>,
         linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: [PATCH 5/9] LSM: Introduce inode_post_setattr hook
-Date:   Thu, 13 Oct 2022 15:36:50 -0700
-Message-Id: <20221013223654.659758-5-keescook@chromium.org>
+Subject: [PATCH 7/9] ima: Move ima_file_check() into LSM
+Date:   Thu, 13 Oct 2022 15:36:52 -0700
+Message-Id: <20221013223654.659758-7-keescook@chromium.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221013222702.never.990-kees@kernel.org>
 References: <20221013222702.never.990-kees@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7546; h=from:subject; bh=Xca597ImY3Tk10E6V1MSqwTfNHEUXjfa0mP2kJeVjWU=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjSJMESltMyWfjIAxwaRChBzXRUlWazuBJOtIDnt/w 1MfQKfKJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCY0iTBAAKCRCJcvTf3G3AJvKrEA Cv4dUFIPRnCesIjZqkLeNcMzFfxbwiPE1sa41CkqiusWgCWPpw9xThOQPNFPRXFGxfmAC4WWW1s8Pg Egp8ySPdL2Z2ZoFWspeAtEgLvpvnmuRcX6fwwpY2ScnK5la6MfxFZkePaPw3Id+v98xX/AHDV1pWNb vs8AhqXnNpd3RRPq/KFMBRDfTo+AzEHouQwqd5mlYQASMCBHJoRkJEAzhRhKOAbNE8Un0qFFOJM127 f+ack2Ke7ExNavXK4FkwW2up2biDDSZlkFUKz7WtrVP+2dS2WsYjcjfUfjUvXLm2fuSJyTDpyYSnZg W1Vs4h3zeVaiPxoX+hqHJml8C9VfVSJ9TyAL9EnML3kB6wPrlAYaqYr/P4FBqsahnbuK/7vQT0Qs/F 2KI+L2CxqiFt0ts5Kh7SShJDqx8Dm/dCYydir3f9GaGEb6RkbgNa8H7dBgr9Tlen2YDZSz3/wB/V3p r9zop5w9BfLKWggfjpWH9k4e6NNtTN7hk1PuK/D+wMADD2V6v6bJl59WNYw1ImFIlznT+6PlF00Wah zmdHVen0w0epT+QxM9hC6wN3T/hhqp0jbalmg2KFioZBCZzR3xgqQpLeWgKM3lmcI7hv1IJ2iN7MQq ScwM1fPFxBDOAqCV+moVHEi1Vs8HGXUZc8I8Xrbi4Dx7pg5pfU3LkeZ3D/eg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5346; h=from:subject; bh=riUsZQZoVxlZeA/zVYk5CSKXRI6ewCrtesJchBkc+2o=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjSJMF+CD8myWrdyIkpdz8Alc9mimWJRlQS/0/dBUs QZL6Lr2JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCY0iTBQAKCRCJcvTf3G3AJprMD/ 9DPdjF0nwZkAf61pNj44lk1w0pWPPsk+HTALzRGT8PvX4Qvtb+QPpOc+DSnxDdxsG1ExBqHxyr7PwY QKSjmLiFPdg77UH6m5Ifh8aXoRh7/Go0JSkxa8fLFjiuyqCzHSg5qsNwlUgGDuF+1tq/Obcl5272w0 zfvSXVlJxLxilUYRIm8jBLu5sQt9sFpBh2v4OlCdwo9Yfd2iP6wRBOY3XHSFQ6WNhPZkCPFQ/2eaCe aOHcJzozEs+UJ3k8VpfAybP2MK6ULPjPHEq7Nn+89BLF0DhnQLFKPoTqpG87NbtJuEHwcvKuPaqsjK epfWQ5HPx/WUNCbCPLkWrG3RJ5aYI/ZdHoWrhEGwPLILXvGO1xMyfgONsq3O89wwqROU95CEal7mqm 0bNbFa+3i1Qr7rHNNb7pXMtjr4H21i9/Uds+CZSMWkqaD/VLq1ahOxnoRHRuP8b4EpjZjUZxJY5XJp gro3IQrX94VDspAGt+cbC94kD5veVUHLyK0K3KyFbpc2vAvsmPP9XzupgcI84gEE0Voobxv4bGcBDU qJ+a7mbzxlbv9e3e2rzF9Twie6YgFoYm5r2iGk1VuNy88PEpTY28MpO474gixLp0ejVmwclt4uriEa PZzfyuo3/VsLdMZ3MrVpZ6/Y/jhjTOD9IPJdoIQq/LAwm+ES2ll6ez08qjfg==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-IMA and EVM need to hook after setattr finishes. Introduce this hook and
-move IMA and EVM's open-coded stacking to use it.
+The "file_open" hook in the LSM is the correct place to add the
+ima_file_check() callback. Rename it to ima_file_open(), and use the
+newly created helper to construct the permissions mask from the file
+flags and fmode.
+
+For reference, the LSM hooks across an open are:
+
+    do_filp_open(dfd, filename, open_flags)
+        path_openat(nameidata, open_flags, flags)
+            file = alloc_empty_file(open_flags, current_cred());
+            do_open(nameidata, file, open_flags)
+                may_open(path, acc_mode, open_flag)
+                    inode_permission(inode, MAY_OPEN | acc_mode)
+---->                   security_inode_permission(inode, acc_mode)
+                vfs_open(path, file)
+                    do_dentry_open(file, path->dentry->d_inode, open)
+---->                   security_file_open(f)
+                        open()
+
+The open-coded hook in the VFS and NFS are removed, as they are fully
+covered by the security_file_open() hook.
 
 Cc: Mimi Zohar <zohar@linux.ibm.com>
 Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
 Cc: Paul Moore <paul@paul-moore.com>
 Cc: James Morris <jmorris@namei.org>
 Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Takashi Iwai <tiwai@suse.de>
 Cc: Jonathan McDowell <noodles@fb.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
 Cc: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/attr.c                             |  3 +--
- include/linux/evm.h                   |  6 ------
- include/linux/ima.h                   |  9 ---------
- include/linux/lsm_hook_defs.h         |  3 +++
- security/integrity/evm/evm_main.c     | 10 +++++++++-
- security/integrity/ima/ima.h          |  2 ++
- security/integrity/ima/ima_appraise.c |  2 +-
- security/integrity/ima/ima_main.c     |  1 +
- security/security.c                   |  8 ++++++++
- 9 files changed, 25 insertions(+), 19 deletions(-)
+ fs/namei.c                        |  2 --
+ fs/nfsd/vfs.c                     |  6 ------
+ include/linux/ima.h               |  6 ------
+ security/integrity/ima/ima_main.c | 14 +++++++-------
+ 4 files changed, 7 insertions(+), 21 deletions(-)
 
-diff --git a/fs/attr.c b/fs/attr.c
-index 1552a5f23d6b..e5731057426b 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -423,8 +423,7 @@ int notify_change(struct user_namespace *mnt_userns, struct dentry *dentry,
- 
- 	if (!error) {
- 		fsnotify_change(dentry, ia_valid);
--		ima_inode_post_setattr(mnt_userns, dentry);
--		evm_inode_post_setattr(dentry, ia_valid);
-+		security_inode_post_setattr(mnt_userns, dentry, ia_valid);
+diff --git a/fs/namei.c b/fs/namei.c
+index 53b4bc094db2..d9bd3887e823 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3555,8 +3555,6 @@ static int do_open(struct nameidata *nd,
+ 	error = may_open(mnt_userns, &nd->path, acc_mode, open_flag);
+ 	if (!error && !(file->f_mode & FMODE_OPENED))
+ 		error = vfs_open(&nd->path, file);
+-	if (!error)
+-		error = ima_file_check(file, op->acc_mode);
+ 	if (!error && do_truncate)
+ 		error = handle_truncate(mnt_userns, file);
+ 	if (unlikely(error > 0)) {
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 9f486b788ed0..33fe326272df 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -762,12 +762,6 @@ __nfsd_open(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type,
+ 		goto out_nfserr;
  	}
  
- 	return error;
-diff --git a/include/linux/evm.h b/include/linux/evm.h
-index aa63e0b3c0a2..53f402bfb9f1 100644
---- a/include/linux/evm.h
-+++ b/include/linux/evm.h
-@@ -23,7 +23,6 @@ extern enum integrity_status evm_verifyxattr(struct dentry *dentry,
- 					     struct integrity_iint_cache *iint);
- extern int evm_inode_setattr(struct user_namespace *mnt_userns,
- 			     struct dentry *dentry, struct iattr *attr);
--extern void evm_inode_post_setattr(struct dentry *dentry, int ia_valid);
- extern int evm_inode_setxattr(struct user_namespace *mnt_userns,
- 			      struct dentry *dentry, const char *name,
- 			      const void *value, size_t size);
-@@ -75,11 +74,6 @@ static inline int evm_inode_setattr(struct user_namespace *mnt_userns,
- 	return 0;
- }
- 
--static inline void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
--{
--	return;
--}
+-	host_err = ima_file_check(file, may_flags);
+-	if (host_err) {
+-		fput(file);
+-		goto out_nfserr;
+-	}
 -
- static inline int evm_inode_setxattr(struct user_namespace *mnt_userns,
- 				     struct dentry *dentry, const char *name,
- 				     const void *value, size_t size)
+ 	if (may_flags & NFSD_MAY_64BIT_COOKIE)
+ 		file->f_mode |= FMODE_64BITHASH;
+ 	else
 diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 9f18df366064..70180b9bd974 100644
+index 70180b9bd974..cf1e48a2d97d 100644
 --- a/include/linux/ima.h
 +++ b/include/linux/ima.h
-@@ -127,20 +127,11 @@ static inline void ima_post_key_create_or_update(struct key *keyring,
+@@ -16,7 +16,6 @@ struct linux_binprm;
  
- #ifdef CONFIG_IMA_APPRAISE
- extern bool is_ima_appraise_enabled(void);
--extern void ima_inode_post_setattr(struct user_namespace *mnt_userns,
--				   struct dentry *dentry);
- #else
- static inline bool is_ima_appraise_enabled(void)
- {
- 	return 0;
+ #ifdef CONFIG_IMA
+ extern enum hash_algo ima_get_current_hash_algo(void);
+-extern int ima_file_check(struct file *file, int mask);
+ extern void ima_post_create_tmpfile(struct user_namespace *mnt_userns,
+ 				    struct inode *inode);
+ extern void ima_post_path_mknod(struct user_namespace *mnt_userns,
+@@ -45,11 +44,6 @@ static inline enum hash_algo ima_get_current_hash_algo(void)
+ 	return HASH_ALGO__LAST;
  }
--
--static inline void ima_inode_post_setattr(struct user_namespace *mnt_userns,
--					  struct dentry *dentry)
+ 
+-static inline int ima_file_check(struct file *file, int mask)
 -{
--	return;
+-	return 0;
 -}
 -
- #endif /* CONFIG_IMA_APPRAISE */
- 
- #if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 806448173033..0b01473eee8a 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -135,6 +135,9 @@ LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
- 	 bool rcu)
- LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
- LSM_HOOK(int, 0, inode_setattr, struct dentry *dentry, struct iattr *attr)
-+LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr,
-+	 struct user_namespace *mnt_userns, struct dentry *dentry,
-+	 unsigned int ia_valid)
- LSM_HOOK(int, 0, inode_getattr, const struct path *path)
- LSM_HOOK(int, 0, inode_setxattr, struct user_namespace *mnt_userns,
- 	 struct dentry *dentry, const char *name, const void *value,
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 1ef965089417..aca689dc0576 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -817,7 +817,9 @@ int evm_inode_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
-  * This function is called from notify_change(), which expects the caller
-  * to lock the inode's i_mutex.
-  */
--void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
-+static void evm_inode_post_setattr(struct user_namespace *mnt_userns,
-+				   struct dentry *dentry,
-+				   unsigned int ia_valid)
+ static inline void ima_post_create_tmpfile(struct user_namespace *mnt_userns,
+ 					   struct inode *inode)
  {
- 	if (!evm_revalidate_status(NULL))
- 		return;
-@@ -905,6 +907,12 @@ static int __init init_evm(void)
- 
- late_initcall(init_evm);
- 
-+static struct security_hook_list evm_hooks[] __lsm_ro_after_init = {
-+	LSM_HOOK_INIT(inode_post_setattr, evm_inode_post_setattr),
-+};
-+
- void __init integrity_lsm_evm_init(void)
- {
-+	pr_info("Integrity LSM enabling EVM\n");
-+	integrity_add_lsm_hooks(evm_hooks, ARRAY_SIZE(evm_hooks));
- }
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 15a369df4c00..5c95ea6e6c94 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -176,6 +176,8 @@ int ima_inode_setxattr(struct user_namespace *mnt_userns,
- 		       int flags);
- int ima_inode_removexattr(struct user_namespace *mnt_userns,
- 			  struct dentry *dentry, const char *xattr_name);
-+void ima_inode_post_setattr(struct user_namespace *mnt_userns,
-+			    struct dentry *dentry, unsigned int ia_valid);
- #endif
- 
- /*
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index ddd9df6b7dac..ccd54b50fe48 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -631,7 +631,7 @@ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file)
-  * to lock the inode's i_mutex.
-  */
- void ima_inode_post_setattr(struct user_namespace *mnt_userns,
--			    struct dentry *dentry)
-+			    struct dentry *dentry, unsigned int ia_valid)
- {
- 	struct inode *inode = d_backing_inode(dentry);
- 	struct integrity_iint_cache *iint;
 diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 94379ba40b58..ffebd3236f24 100644
+index ffebd3236f24..823d660b53ec 100644
 --- a/security/integrity/ima/ima_main.c
 +++ b/security/integrity/ima/ima_main.c
-@@ -1093,6 +1093,7 @@ static struct security_hook_list ima_hooks[] __lsm_ro_after_init = {
- #ifdef CONFIG_IMA_APPRAISE
- 	LSM_HOOK_INIT(inode_setxattr, ima_inode_setxattr),
- 	LSM_HOOK_INIT(inode_removexattr, ima_inode_removexattr),
-+	LSM_HOOK_INIT(inode_post_setattr, ima_inode_post_setattr),
- #endif
- };
+@@ -12,7 +12,7 @@
+  *
+  * File: ima_main.c
+  *	implements the IMA hooks: ima_bprm_check, ima_file_mmap,
+- *	and ima_file_check.
++ *	and ima_file_open.
+  */
  
-diff --git a/security/security.c b/security/security.c
-index ca731132a0e9..af42264ad3e2 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1333,6 +1333,14 @@ int security_inode_setattr(struct user_namespace *mnt_userns,
+ #include <linux/module.h>
+@@ -504,25 +504,24 @@ static int ima_bprm_check(struct linux_binprm *bprm)
  }
- EXPORT_SYMBOL_GPL(security_inode_setattr);
  
-+void security_inode_post_setattr(struct user_namespace *mnt_userns,
-+			   struct dentry *dentry, unsigned int ia_valid)
-+{
-+	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-+		return;
-+	call_void_hook(inode_post_setattr, mnt_userns, dentry, ia_valid);
-+}
-+
- int security_inode_getattr(const struct path *path)
+ /**
+- * ima_file_check - based on policy, collect/store measurement.
++ * ima_file_open - based on policy, collect/store measurement.
+  * @file: pointer to the file to be measured
+- * @mask: contains MAY_READ, MAY_WRITE, MAY_EXEC or MAY_APPEND
+  *
+  * Measure files based on the ima_must_measure() policy decision.
+  *
+  * On success return 0.  On integrity appraisal error, assuming the file
+  * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
+  */
+-int ima_file_check(struct file *file, int mask)
++static int ima_file_open(struct file *file)
  {
- 	if (unlikely(IS_PRIVATE(d_backing_inode(path->dentry))))
++	u32 perms = file_to_perms(file);
+ 	u32 secid;
+ 
+ 	security_current_getsecid_subj(&secid);
++
+ 	return process_measurement(file, current_cred(), secid, NULL, 0,
+-				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
+-					   MAY_APPEND), FILE_CHECK);
++				   perms, FILE_CHECK);
+ }
+-EXPORT_SYMBOL_GPL(ima_file_check);
+ 
+ static int __ima_inode_hash(struct inode *inode, struct file *file, char *buf,
+ 			    size_t buf_size)
+@@ -1085,6 +1084,7 @@ static struct security_hook_list ima_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
+ 	LSM_HOOK_INIT(mmap_file, ima_file_mmap),
+ 	LSM_HOOK_INIT(file_mprotect, ima_file_mprotect),
++	LSM_HOOK_INIT(file_open, ima_file_open),
+ 	LSM_HOOK_INIT(file_free_security, ima_file_free),
+ 	LSM_HOOK_INIT(kernel_read_file, ima_read_file),
+ 	LSM_HOOK_INIT(kernel_post_read_file, ima_post_read_file),
 -- 
 2.34.1
 
