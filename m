@@ -2,95 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA82C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Oct 2022 21:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA5FDC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Oct 2022 21:55:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229800AbiJMVtO (ORCPT
+        id S229567AbiJMVzG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Oct 2022 17:49:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36900 "EHLO
+        Thu, 13 Oct 2022 17:55:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229788AbiJMVtH (ORCPT
+        with ESMTP id S229921AbiJMVzB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Oct 2022 17:49:07 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C7C8196B42
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 14:49:02 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id n18-20020a17090ade9200b0020b0012097cso6655853pjv.0
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 14:49:02 -0700 (PDT)
+        Thu, 13 Oct 2022 17:55:01 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C617332DA5
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 14:54:50 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-35ad0584879so30010107b3.7
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 14:54:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20210112.gappssmtp.com; s=20210112;
-        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oj7DYXRn/lwcs5aiTYIeKDOFw4+lQjw1vEVLiJXMDzU=;
-        b=uv0ocZU3ciB5Mu/CgbO+C9FW9iMg7BIF5Z+0ArnVELFpUpgAA/blyPPZa5VUVAzsMy
-         8ss/XiIdtSPaYo1Hq3UQm/u06YP+RqByPscv060LCUaUQzNKoo8O6GvB7q2We9YP6FWw
-         jRSh1EupQujK4IRK4oHevTPIawLykDK13ApeShMITlCcQISsIGELRa1l9Jt0GHRSph1c
-         dj8IUZeaa0/jd9UAv5YTQZ3xKO6C/B/zkbp/agj42SrIGLLFVg6K6yqYKBuzddJJIxfK
-         JdwyYielzGNljVqX9sgZqXXp4agHyz7hVB9Pp36eFkJEdFaiP6zl3/6g6dzP+CGE3pdr
-         Pesg==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pMIVAykxBe38/iC/E6uc7T7wvmS7tw/OTeZ758Y5Y7o=;
+        b=P9IbXagKldqPlhXR/Ynxm74++40pPNmrIoKj68/ZaL40Wbei+ACwPUSuWAl+FrQ2So
+         B7tQeT+IPJtEryxCbbTzWRzvxaKKFxqqkupLRDwCRZ3Rzvup4fin04QZw5pR8Szdkttz
+         xLoGJmkmhX0lqgAFM8sBVqC8PBZpSnq9vZKRUv2nel9s8FTBihHQdUm+ai3lfUbStLCN
+         Ilt1ZF2yLG5ZHPbw78eV5Bmfs0dBUr4RBQd2m8lybcBxjwGo3hEZFzfZTo7uSyP415AA
+         IlafW7O47qwp53T7yWpEmIoiTGNoiW3iaa165UcV/apUNWyGhMcWNdgl7i7SkiNQ0lb3
+         Ko0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
-         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Oj7DYXRn/lwcs5aiTYIeKDOFw4+lQjw1vEVLiJXMDzU=;
-        b=L3ZR63xZ0G+7LXWhM8Hbj9BgbUZ/rgFrAX9/EFIoPHVsk7g7RwCs923yRKwOhQrucF
-         g0TSJpTxhTiWMtjvYKv9Si6hQqfb8IGdEteLxVF6cprINWmnJobL7KtQyQjry1J9jpEU
-         RQ9d7woDkkAsOx3DCpJLynwWFD4xEgC8ptjfck7p3KR0vFI57bgu1GOvBtIr/T1s5Rah
-         Bkw6uPOztBjan4HYuUq2TfPTtIvlmKwum/24RCqtT53vrONJHI+j5gScTQsq6U++dxa9
-         VB+qDLVDvc8+y8GuJJWIBzjLo1nIc9izRxqTg5kpp126U6+Z6OKun3m4WVjBDY7AgqyB
-         zrcQ==
-X-Gm-Message-State: ACrzQf1QTMPuOZMWe2wYFA0R99SGvlGAAAO7NegqsC+NLt8dURYCSSaC
-        eIRNQDFMTs4nSZOZGX6yUO4joA==
-X-Google-Smtp-Source: AMsMyM5JRji+Ck9EEzDOpU/prtu9nNzoo+5EQ62VP0n5mfMjSIUrKoZs3BbPS3y2ac90l5O+O3MKoQ==
-X-Received: by 2002:a17:90b:1c87:b0:20a:e485:4e21 with SMTP id oo7-20020a17090b1c8700b0020ae4854e21mr2025804pjb.194.1665697741676;
-        Thu, 13 Oct 2022 14:49:01 -0700 (PDT)
-Received: from localhost ([50.221.140.188])
-        by smtp.gmail.com with ESMTPSA id t10-20020a1709027fca00b00178aaf6247bsm333100plb.21.2022.10.13.14.49.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Oct 2022 14:49:01 -0700 (PDT)
-Subject: [PATCH] MAINTAINERS: git://github -> https://github.com for cschaufler
-Date:   Thu, 13 Oct 2022 14:46:37 -0700
-Message-Id: <20221013214637.30807-1-palmer@rivosinc.com>
-X-Mailer: git-send-email 2.38.0
+        bh=pMIVAykxBe38/iC/E6uc7T7wvmS7tw/OTeZ758Y5Y7o=;
+        b=lcuIVI7gYMxQNBnuVWS4/ZuNJaqwOrA2oNPiupaBNa79KTNFLdC3nfOUkBDJQc6TNc
+         Ry+kR/xPje2XhUG4H/Vbl4xhdIverDzx7hCX5QY+8hkgNLhMFzCg4Qbxq0s6dkwfpS17
+         3Wuc+R20VUZbqKseCKyl5pa1eDAuEcN65WRdgmYoWN8D4cUWdbbm+K6rdxuwtxDcNHKf
+         3WR6+N/ejuW4kpiYT+vVSW15y+CXdymyGigmhkSaOEWgQDiexRZDoiDGqRL8SZC759eb
+         0+vyb6MLLzX+A9/qhXOToPyaiYXUbIgKDcLVjbPmh1GzqByFmFjoWaVS4oIQz8/eCO2j
+         uAaA==
+X-Gm-Message-State: ACrzQf0PFV8igncHZLNfFkoIM75FrhZ5K70qi+Fa1uZQ75q2mhEbWVF9
+        WGKaWNlo1NHb4gKVhWfSoOmSFH8ghyAQCagXoCEf
+X-Google-Smtp-Source: AMsMyM4JEMdMZBfMMOEelszS2FpP9sTFphB2c0U7BQE0LEIVEYbWEkduPrNlOO6ZaZ5zQ40oGab8VSOjZhfOIxy4NMA=
+X-Received: by 2002:a0d:ebc1:0:b0:360:5a77:4d78 with SMTP id
+ u184-20020a0debc1000000b003605a774d78mr1942006ywe.336.1665698052305; Thu, 13
+ Oct 2022 14:54:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc:        linux-kernel@vger.kernel.org,
-           Palmer Dabbelt <palmer@rivosinc.com>,
-           Conor Dooley <conor.dooley@microchip.com>
-From:   Palmer Dabbelt <palmer@rivosinc.com>
-To:     casey@schaufler-ca.com, linux-security-module@vger.kernel.org
+References: <20221013214637.30807-1-palmer@rivosinc.com>
+In-Reply-To: <20221013214637.30807-1-palmer@rivosinc.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 13 Oct 2022 17:54:00 -0400
+Message-ID: <CAHC9VhTPt40PFC5NASOjOK+fqJym5JOyb8UrwAL7DGDQWqVwqA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: git://github -> https://github.com for cschaufler
+To:     Palmer Dabbelt <palmer@rivosinc.com>
+Cc:     casey@schaufler-ca.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Github deprecated the git:// links about a year ago, so let's move to
-the https:// URLs instead.
+On Thu, Oct 13, 2022 at 5:49 PM Palmer Dabbelt <palmer@rivosinc.com> wrote:
+>
+> Github deprecated the git:// links about a year ago, so let's move to
+> the https:// URLs instead.
+>
+> Reported-by: Conor Dooley <conor.dooley@microchip.com>
+> Link: https://github.blog/2021-09-01-improving-git-protocol-security-github/
+> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+> ---
+> I've split these up by github username so folks can take them
+> independently, as some of these repos have been renamed at github and
+> thus need more than just a sed to fix them.
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reported-by: Conor Dooley <conor.dooley@microchip.com>
-Link: https://github.blog/2021-09-01-improving-git-protocol-security-github/
-Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
----
-I've split these up by github username so folks can take them
-independently, as some of these repos have been renamed at github and
-thus need more than just a sed to fix them.
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Casey is the one who needs to ACK this (and he has an email delay at
+the moment), but the URL looks good to me.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index daadd0de77a9..019cdb48e254 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18723,7 +18723,7 @@ M:	Casey Schaufler <casey@schaufler-ca.com>
- L:	linux-security-module@vger.kernel.org
- S:	Maintained
- W:	http://schaufler-ca.com
--T:	git git://github.com/cschaufler/smack-next
-+T:	git https://github.com/cschaufler/smack-next
- F:	Documentation/admin-guide/LSM/Smack.rst
- F:	security/smack/
- 
+Reviewed-by: Paul Moore <paul@paul-moore.com>
+
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index daadd0de77a9..019cdb48e254 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18723,7 +18723,7 @@ M:      Casey Schaufler <casey@schaufler-ca.com>
+>  L:     linux-security-module@vger.kernel.org
+>  S:     Maintained
+>  W:     http://schaufler-ca.com
+> -T:     git git://github.com/cschaufler/smack-next
+> +T:     git https://github.com/cschaufler/smack-next
+>  F:     Documentation/admin-guide/LSM/Smack.rst
+>  F:     security/smack/
+>
+> --
+> 2.38.0
+
 -- 
-2.38.0
-
+paul-moore.com
