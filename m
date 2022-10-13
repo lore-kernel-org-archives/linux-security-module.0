@@ -2,81 +2,75 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8708FC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Oct 2022 10:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2D2C43217
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Oct 2022 15:53:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229660AbiJMKEn (ORCPT
+        id S229710AbiJMPxj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Oct 2022 06:04:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40880 "EHLO
+        Thu, 13 Oct 2022 11:53:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229705AbiJMKEl (ORCPT
+        with ESMTP id S229559AbiJMPxh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Oct 2022 06:04:41 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DBA82DEE;
-        Thu, 13 Oct 2022 03:04:40 -0700 (PDT)
-Received: from fsav118.sakura.ne.jp (fsav118.sakura.ne.jp [27.133.134.245])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 29DA47B6033225;
-        Thu, 13 Oct 2022 19:04:07 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav118.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp);
- Thu, 13 Oct 2022 19:04:07 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 29DA47NY033222
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 13 Oct 2022 19:04:07 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <9907d724-4668-cd50-7454-1a8ca86542b0@I-love.SAKURA.ne.jp>
-Date:   Thu, 13 Oct 2022 19:04:05 +0900
+        Thu, 13 Oct 2022 11:53:37 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 055D037F8F;
+        Thu, 13 Oct 2022 08:53:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9CA40B81F2C;
+        Thu, 13 Oct 2022 15:53:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A35DC433D6;
+        Thu, 13 Oct 2022 15:53:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665676414;
+        bh=YzdQzqYCyfET0fM/MNECfwA8EB9VdQS1H3xHN/FUVCY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=n5kZt9IxNwbFUJ7uTABKjvmucrBVtjDy3GQq6abjckutI9UxKNkCf0Xmpo1ZDw4kv
+         3ktI08DHgw1SGNL2ZTVIaQl2lcKuB7OgrafTbYNRIQvOk5tq6DsavmE5bQeYKpVaQy
+         M6WqbH3G+1GzTVxYS3p6b3s6Ryrao+txpPVMb0wE42ZwwCtYto2y6O42zJZibi2tbw
+         pOWxM1NEHUze5sJ0IzF4ud5vfJc7vwtvtxACRUSuAQ/YEFk/O0Mkf/8IlUXHqs2zlV
+         WigK1WS6pGfeYMOxrsq3WzQIAhbE58TIZHOqyJddPosgbrKrDV5h0zuP1EPRK+5yh5
+         S+cfxsnhndmGA==
+Date:   Thu, 13 Oct 2022 08:53:33 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH] lsm: make security_socket_getpeersec_stream() sockptr_t
+ safe
+Message-ID: <20221013085333.26288e44@kernel.org>
+In-Reply-To: <166543910984.474337.2779830480340611497.stgit@olly>
+References: <166543910984.474337.2779830480340611497.stgit@olly>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.3
-Subject: Re: [PATCH v38 04/39] LSM: Maintain a table of LSM attribute data
-Content-Language: en-US
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     linux-audit@redhat.com, jmorris@namei.org, selinux@vger.kernel.org,
-        keescook@chromium.org, john.johansen@canonical.com,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org
-References: <20220927195421.14713-1-casey@schaufler-ca.com>
- <20220927195421.14713-5-casey@schaufler-ca.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20220927195421.14713-5-casey@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2022/09/28 4:53, Casey Schaufler wrote:
-> @@ -483,6 +491,16 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
->  {
->  	int i;
->  
-> +	/*
-> +	 * A security module may call security_add_hooks() more
-> +	 * than once. Landlock is one such case.
-> +	 */
-> +	if (lsm_id == 0 || lsm_idlist[lsm_id - 1] != lsmid)
-> +		lsm_idlist[lsm_id++] = lsmid;
-> +
-> +	if (lsm_id > LSMID_ENTRIES)
-> +		panic("%s Too many LSMs registered.\n", __func__);
+On Mon, 10 Oct 2022 17:58:29 -0400 Paul Moore wrote:
+> Commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
+> sockptr_t argument") made it possible to call sk_getsockopt()
+> with both user and kernel address space buffers through the use of
+> the sockptr_t type.  Unfortunately at the time of conversion the
+> security_socket_getpeersec_stream() LSM hook was written to only
+> accept userspace buffers, and in a desire to avoid having to change
+> the LSM hook the commit author simply passed the sockptr_t's
+> userspace buffer pointer.  Since the only sk_getsockopt() callers
+> at the time of conversion which used kernel sockptr_t buffers did
+> not allow SO_PEERSEC, and hence the
+> security_socket_getpeersec_stream() hook, this was acceptable but
+> also very fragile as future changes presented the possibility of
+> silently passing kernel space pointers to the LSM hook.
+> 
+> There are several ways to protect against this, including careful
+> code review of future commits, but since relying on code review to
+> catch bugs is a recipe for disaster and the upstream eBPF maintainer
+> is "strongly against defensive programming", this patch updates the
+> LSM hook, and all of the implementations to support sockptr_t and
+> safely handle both user and kernel space buffers.
 
-I'm not happy with LSMID_ENTRIES. This is a way towards forever forbidding LKM-based LSMs.
-
-I'm fine with using UAPI-visible constants for switching /proc/ files.
-But TOMOYO does not need such constant because TOMOYO does not use /proc/ files.
-
-Also, lsm_self_attr() will be limited for LSM modules which use /proc/ files, and
-therefore I think prctl() will be already there.
-
-> +
->  	for (i = 0; i < count; i++) {
->  		hooks[i].lsmid = lsmid;
->  		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
-
+Code seems sane, FWIW, but the commit message sounds petty,
+which is likely why nobody is willing to ack it.
