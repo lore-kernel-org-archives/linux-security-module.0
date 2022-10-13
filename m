@@ -2,102 +2,262 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA5FDC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Oct 2022 21:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE3DC43217
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Oct 2022 22:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbiJMVzG (ORCPT
+        id S229698AbiJMWhA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Oct 2022 17:55:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58104 "EHLO
+        Thu, 13 Oct 2022 18:37:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229921AbiJMVzB (ORCPT
+        with ESMTP id S229594AbiJMWg7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Oct 2022 17:55:01 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C617332DA5
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 14:54:50 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-35ad0584879so30010107b3.7
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 14:54:50 -0700 (PDT)
+        Thu, 13 Oct 2022 18:36:59 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111E4BC630
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 15:36:58 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id q9so2752791pgq.8
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 15:36:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pMIVAykxBe38/iC/E6uc7T7wvmS7tw/OTeZ758Y5Y7o=;
-        b=P9IbXagKldqPlhXR/Ynxm74++40pPNmrIoKj68/ZaL40Wbei+ACwPUSuWAl+FrQ2So
-         B7tQeT+IPJtEryxCbbTzWRzvxaKKFxqqkupLRDwCRZ3Rzvup4fin04QZw5pR8Szdkttz
-         xLoGJmkmhX0lqgAFM8sBVqC8PBZpSnq9vZKRUv2nel9s8FTBihHQdUm+ai3lfUbStLCN
-         Ilt1ZF2yLG5ZHPbw78eV5Bmfs0dBUr4RBQd2m8lybcBxjwGo3hEZFzfZTo7uSyP415AA
-         IlafW7O47qwp53T7yWpEmIoiTGNoiW3iaa165UcV/apUNWyGhMcWNdgl7i7SkiNQ0lb3
-         Ko0Q==
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ceH/RO/hzWXDxSnFXezZugzYqMJL0QzXH8UIXIXwz2A=;
+        b=RdhSRBgdbmEcHTzPfBXbR/j//1diduAVoeDH1mUi7dimeFgOmnh8JxLdvqI6aFAqBz
+         +W54LtdTNlzsY0BuVAZcaQ18xSVO9N4yN4MAX4tdqqKJ7gE+3ebIB5Mxixuf0FmFxpfX
+         1xPv6UCAlHueIHgZUQRe7YD+3yXNAwKrcBkjI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pMIVAykxBe38/iC/E6uc7T7wvmS7tw/OTeZ758Y5Y7o=;
-        b=lcuIVI7gYMxQNBnuVWS4/ZuNJaqwOrA2oNPiupaBNa79KTNFLdC3nfOUkBDJQc6TNc
-         Ry+kR/xPje2XhUG4H/Vbl4xhdIverDzx7hCX5QY+8hkgNLhMFzCg4Qbxq0s6dkwfpS17
-         3Wuc+R20VUZbqKseCKyl5pa1eDAuEcN65WRdgmYoWN8D4cUWdbbm+K6rdxuwtxDcNHKf
-         3WR6+N/ejuW4kpiYT+vVSW15y+CXdymyGigmhkSaOEWgQDiexRZDoiDGqRL8SZC759eb
-         0+vyb6MLLzX+A9/qhXOToPyaiYXUbIgKDcLVjbPmh1GzqByFmFjoWaVS4oIQz8/eCO2j
-         uAaA==
-X-Gm-Message-State: ACrzQf0PFV8igncHZLNfFkoIM75FrhZ5K70qi+Fa1uZQ75q2mhEbWVF9
-        WGKaWNlo1NHb4gKVhWfSoOmSFH8ghyAQCagXoCEf
-X-Google-Smtp-Source: AMsMyM4JEMdMZBfMMOEelszS2FpP9sTFphB2c0U7BQE0LEIVEYbWEkduPrNlOO6ZaZ5zQ40oGab8VSOjZhfOIxy4NMA=
-X-Received: by 2002:a0d:ebc1:0:b0:360:5a77:4d78 with SMTP id
- u184-20020a0debc1000000b003605a774d78mr1942006ywe.336.1665698052305; Thu, 13
- Oct 2022 14:54:12 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ceH/RO/hzWXDxSnFXezZugzYqMJL0QzXH8UIXIXwz2A=;
+        b=AEzvwX3g73En3bEXtaNVuIvtXqObEKMU36mVhRNCeaFw3w+5FKTkMG1UW/0VEFsEex
+         sX1VGlIEnBsLnuqaCx1kSjiP8bQcGFhM3WwjPynDha5mBJFgCvR/9n/Z0x/OS3MWEXFV
+         /r7G21wewVTxqB4H6l40O5MRTp/L/GxNxC1+fL4vV4LaGyWb3R6QYbbx80qCXIPWkIvp
+         lJSBhZnGI9iyEmvz7C5PvnqRxyRX8wli6hUf2R3giqWlkBYfrpiaUKkeleQmz+htxCof
+         H7HAfi3AHg9a0u7Qwr6xRBID48UrEbKmgYTHkD37K2DrFc0jJ2jjILKXx8g70qKpRI0s
+         Z2SQ==
+X-Gm-Message-State: ACrzQf0a3ky0ZybynFZJgaSWHmJQKnHXyZi7rn2gDQrY3CTJjROHtIY7
+        pZcWpQXXRWxJGBJMoErMGlc6NQ==
+X-Google-Smtp-Source: AMsMyM5yQgu7plQb5tA8UN7RTNMLDoQSRx/AdI4uSOPG/bXTseMCJK5g17Varuq0uDdYUYmvddK0dA==
+X-Received: by 2002:a63:1162:0:b0:450:a0e9:c996 with SMTP id 34-20020a631162000000b00450a0e9c996mr1848284pgr.140.1665700617354;
+        Thu, 13 Oct 2022 15:36:57 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id t21-20020a635355000000b0043c9da02729sm210127pgl.6.2022.10.13.15.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Oct 2022 15:36:55 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Borislav Petkov <bp@suse.de>,
+        Jonathan McDowell <noodles@fb.com>,
+        Takashi Iwai <tiwai@suse.de>, Petr Vorel <pvorel@suse.cz>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        KP Singh <kpsingh@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: [PATCH 3/9] ima: Move xattr hooks into LSM
+Date:   Thu, 13 Oct 2022 15:36:48 -0700
+Message-Id: <20221013223654.659758-3-keescook@chromium.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221013222702.never.990-kees@kernel.org>
+References: <20221013222702.never.990-kees@kernel.org>
 MIME-Version: 1.0
-References: <20221013214637.30807-1-palmer@rivosinc.com>
-In-Reply-To: <20221013214637.30807-1-palmer@rivosinc.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 13 Oct 2022 17:54:00 -0400
-Message-ID: <CAHC9VhTPt40PFC5NASOjOK+fqJym5JOyb8UrwAL7DGDQWqVwqA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: git://github -> https://github.com for cschaufler
-To:     Palmer Dabbelt <palmer@rivosinc.com>
-Cc:     casey@schaufler-ca.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7063; h=from:subject; bh=UwVZQhUAV34kLZLvWg3gW0Y3AxAoqPtrDDTwL+QIuyQ=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjSJMEHh/BpJ8T/UrB3miOUYuzJYjTTQP/es9Hk0XI dfZG4xuJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCY0iTBAAKCRCJcvTf3G3AJpZ/EA CGzX2dABmN4vM8z88raKKj3Nl+cOZLLMTHDR3tYm9/U+nievEWZnBIMlbRSDXwjwhv8yOEwkXHomUz EOhnf8FmyzCzjBzXnEacLLLfu6c+5Saz5VuJI11paPu8IUUHHbI8A2c2OOjXaunaJ0pNAuWBpzwIjJ nSNOFNj20t+3vJ/urzKa9/Pqyg8zDHFD9qqpqaBtGGoUwjY3m7XrMqpeKtruZlJUoixyAKUCBR2G+E qW868F9IuhZf12kNaRzP9ehAlWXDreKSeD9GCy8U4uy/FxHNU0llHWLXPJlznr6rSrOov5sVsAOh4Q 92NaFx4RN8V24y4Bkgxkr36IkQ+5+x4uVSNvPGIUVme+c2kVGxGFf9Z5IfDxgYkbyPBl64CF3alsB7 9Jcz7EIvyrYTFXKJapKa3vqpUrdC7L1TJrBfC8OGD2a3nk1E/Z73ZX6TKvIDfOwqY+0SP9s+ptf76q F1AL5hiY+SDsmrM8Q1aWF+Z95WVrcbfNJNezm6/hS9xn3IEeeEdiDeugPyFCMHbzxJ4Zu+GXw+rgPB aoYvjD+300H3Q//lbzYWmc3NCxS0rEwy44q2AQ+r+uqoAMcaa3j3YrJdYPCRearUIv1xpNBoeAzUtb Lr7vob6z1IlkP5lAd+cjBvbd9IbQKJNYK/WtqiqjtVs8HzFa6aaYPjxGpRYw==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 13, 2022 at 5:49 PM Palmer Dabbelt <palmer@rivosinc.com> wrote:
->
-> Github deprecated the git:// links about a year ago, so let's move to
-> the https:// URLs instead.
->
-> Reported-by: Conor Dooley <conor.dooley@microchip.com>
-> Link: https://github.blog/2021-09-01-improving-git-protocol-security-github/
-> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
-> ---
-> I've split these up by github username so folks can take them
-> independently, as some of these repos have been renamed at github and
-> thus need more than just a sed to fix them.
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Move the xattr IMA hooks into normal LSM layer. As with SELinux and
+Smack, handle calling cap_inode_setxattr() internally.
 
-Casey is the one who needs to ACK this (and he has an email delay at
-the moment), but the URL looks good to me.
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Jonathan McDowell <noodles@fb.com>
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Petr Vorel <pvorel@suse.cz>
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/linux/ima.h                   | 16 ----------------
+ security/integrity/ima/ima.h          | 10 ++++++++++
+ security/integrity/ima/ima_appraise.c | 19 ++++++++++++++++---
+ security/integrity/ima/ima_main.c     |  4 ++++
+ security/security.c                   | 10 ++--------
+ 5 files changed, 32 insertions(+), 27 deletions(-)
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
-
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index daadd0de77a9..019cdb48e254 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18723,7 +18723,7 @@ M:      Casey Schaufler <casey@schaufler-ca.com>
->  L:     linux-security-module@vger.kernel.org
->  S:     Maintained
->  W:     http://schaufler-ca.com
-> -T:     git git://github.com/cschaufler/smack-next
-> +T:     git https://github.com/cschaufler/smack-next
->  F:     Documentation/admin-guide/LSM/Smack.rst
->  F:     security/smack/
->
-> --
-> 2.38.0
-
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 3c641cc65270..6dc5143f89f2 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -135,9 +135,6 @@ static inline void ima_post_key_create_or_update(struct key *keyring,
+ extern bool is_ima_appraise_enabled(void);
+ extern void ima_inode_post_setattr(struct user_namespace *mnt_userns,
+ 				   struct dentry *dentry);
+-extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+-		       const void *xattr_value, size_t xattr_value_len);
+-extern int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name);
+ #else
+ static inline bool is_ima_appraise_enabled(void)
+ {
+@@ -150,19 +147,6 @@ static inline void ima_inode_post_setattr(struct user_namespace *mnt_userns,
+ 	return;
+ }
+ 
+-static inline int ima_inode_setxattr(struct dentry *dentry,
+-				     const char *xattr_name,
+-				     const void *xattr_value,
+-				     size_t xattr_value_len)
+-{
+-	return 0;
+-}
+-
+-static inline int ima_inode_removexattr(struct dentry *dentry,
+-					const char *xattr_name)
+-{
+-	return 0;
+-}
+ #endif /* CONFIG_IMA_APPRAISE */
+ 
+ #if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index be965a8715e4..15a369df4c00 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -168,6 +168,16 @@ int __init ima_init_digests(void);
+ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+ 			  void *lsm_data);
+ 
++/* LSM hooks */
++#ifdef CONFIG_IMA_APPRAISE
++int ima_inode_setxattr(struct user_namespace *mnt_userns,
++		       struct dentry *dentry, const char *xattr_name,
++		       const void *xattr_value, size_t xattr_value_len,
++		       int flags);
++int ima_inode_removexattr(struct user_namespace *mnt_userns,
++			  struct dentry *dentry, const char *xattr_name);
++#endif
++
+ /*
+  * used to protect h_table and sha_table
+  */
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index bde74fcecee3..ddd9df6b7dac 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -744,8 +744,10 @@ static int validate_hash_algo(struct dentry *dentry,
+ 	return -EACCES;
+ }
+ 
+-int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+-		       const void *xattr_value, size_t xattr_value_len)
++int ima_inode_setxattr(struct user_namespace *mnt_userns,
++		       struct dentry *dentry, const char *xattr_name,
++		       const void *xattr_value, size_t xattr_value_len,
++		       int flags)
+ {
+ 	const struct evm_ima_xattr_data *xvalue = xattr_value;
+ 	int digsig = 0;
+@@ -754,6 +756,11 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ 	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
+ 				   xattr_value_len);
+ 	if (result == 1) {
++		result = cap_inode_setxattr(dentry, xattr_name, xattr_value,
++					    xattr_value_len, flags);
++		if (result)
++			return result;
++
+ 		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
+ 			return -EINVAL;
+ 		digsig = (xvalue->type == EVM_IMA_XATTR_DIGSIG);
+@@ -770,11 +777,17 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ 	return result;
+ }
+ 
+-int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
++int ima_inode_removexattr(struct user_namespace *mnt_userns,
++			  struct dentry *dentry, const char *xattr_name)
+ {
+ 	int result;
+ 
+ 	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
++	if (result == 1) {
++		result = cap_inode_removexattr(mnt_userns, dentry, xattr_name);
++		if (result)
++			return result;
++	}
+ 	if (result == 1 || evm_revalidate_status(xattr_name)) {
+ 		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
+ 		if (result == 1)
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2cff001b02e4..b3b79d030a67 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -1089,6 +1089,10 @@ static struct security_hook_list ima_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(kernel_post_read_file, ima_post_read_file),
+ 	LSM_HOOK_INIT(kernel_load_data, ima_load_data),
+ 	LSM_HOOK_INIT(kernel_post_load_data, ima_post_load_data),
++#ifdef CONFIG_IMA_APPRAISE
++	LSM_HOOK_INIT(inode_setxattr, ima_inode_setxattr),
++	LSM_HOOK_INIT(inode_removexattr, ima_inode_removexattr),
++#endif
+ };
+ 
+ void __init integrity_lsm_ima_init(void)
+diff --git a/security/security.c b/security/security.c
+index 8f7c1b5fa5fa..ca731132a0e9 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1349,7 +1349,7 @@ int security_inode_setxattr(struct user_namespace *mnt_userns,
+ 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+ 		return 0;
+ 	/*
+-	 * SELinux and Smack integrate the cap call,
++	 * SELinux, Smack, and IMA integrate the cap call,
+ 	 * so assume that all LSMs supplying this call do so.
+ 	 */
+ 	ret = call_int_hook(inode_setxattr, 1, mnt_userns, dentry, name, value,
+@@ -1357,9 +1357,6 @@ int security_inode_setxattr(struct user_namespace *mnt_userns,
+ 
+ 	if (ret == 1)
+ 		ret = cap_inode_setxattr(dentry, name, value, size, flags);
+-	if (ret)
+-		return ret;
+-	ret = ima_inode_setxattr(dentry, name, value, size);
+ 	if (ret)
+ 		return ret;
+ 	return evm_inode_setxattr(mnt_userns, dentry, name, value, size);
+@@ -1396,15 +1393,12 @@ int security_inode_removexattr(struct user_namespace *mnt_userns,
+ 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+ 		return 0;
+ 	/*
+-	 * SELinux and Smack integrate the cap call,
++	 * SELinux, Smack, and IMA integrate the cap call,
+ 	 * so assume that all LSMs supplying this call do so.
+ 	 */
+ 	ret = call_int_hook(inode_removexattr, 1, mnt_userns, dentry, name);
+ 	if (ret == 1)
+ 		ret = cap_inode_removexattr(mnt_userns, dentry, name);
+-	if (ret)
+-		return ret;
+-	ret = ima_inode_removexattr(dentry, name);
+ 	if (ret)
+ 		return ret;
+ 	return evm_inode_removexattr(mnt_userns, dentry, name);
 -- 
-paul-moore.com
+2.34.1
+
