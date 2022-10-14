@@ -2,96 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFCEC43219
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 17:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D60C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 19:19:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229827AbiJNR7s (ORCPT
+        id S231176AbiJNTTs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Oct 2022 13:59:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44418 "EHLO
+        Fri, 14 Oct 2022 15:19:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229894AbiJNR7q (ORCPT
+        with ESMTP id S229560AbiJNTTr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Oct 2022 13:59:46 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A9255F5F
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Oct 2022 10:59:38 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id t12-20020a17090a3b4c00b0020b04251529so5405028pjf.5
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Oct 2022 10:59:38 -0700 (PDT)
+        Fri, 14 Oct 2022 15:19:47 -0400
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 675A617E37
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Oct 2022 12:19:43 -0700 (PDT)
+Received: by mail-qk1-x733.google.com with SMTP id f8so3129911qkg.3
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Oct 2022 12:19:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lIA5kCd21RHEnMbxdNImt2sQ/3g725z4r3mMj6tBAeg=;
-        b=hfa/QWPjWqnauRAj8LTTvkLH8F/ZfZmIPDY/huHYxu5usQnH2THr+sGzN/cWVm8Hg4
-         hi3JZA4hN2jg9g1okYOWDiwT/CAMzepro+6AZLKfW7vNz8Rp+A8Q9bPaTIzbcberVsYN
-         2A0sqgFqWi0uCLu/Ii+aL2/kLXUD86KYe2af4=
+        d=ziepe.ca; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AoUaVX7WeSWMFX3nree3fUpxXXfgx6Q4WFZ3tSVkQHg=;
+        b=UiEjKjYPArwu+erj/QUVX0fUkhEFZapV4R65wkaTG4gFBsMcgJkyatk9panVMud2En
+         ULChv0jbZe6RCkW9Iub/eHAKRijGlZZLlyB/QtBtT8Jd2DMUP/dA/wbvumatgVajvxbP
+         G7SxU8S1iwmPUTUEjd4IaN98wy6rQ8LTLC+JOHaboTX6clRtjnZnCfMw6W74UA5pn3tr
+         f4O0lOsL1wNhPGua2PNkidmINtdhwvKbbfBBogrEW1mfetqWW+iVvZDMD0V2+7XBDAhI
+         qJKG3H0SORHdEHhf5ZgcnL9I0h1XitsYBQy83ToiZvytz5BMG8lso5aBrU5+WRL62ScD
+         yTsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lIA5kCd21RHEnMbxdNImt2sQ/3g725z4r3mMj6tBAeg=;
-        b=h7edoaOqOuJFKdQ/MyyINxX/LurFObrSd8aiBGQovmzUbIdtX5eE+ZRJp8cFFf+zyT
-         14uoRPSXrTS1OX4RUIGzMZmsACHLZMWjnkMHROcEyTda3wuq4+iS21fH0hnGkNXbwSgF
-         5yHU9LY/tWfSBmtPmKki8xQWmCHXLHzeaVikW26fbMkaQd0/OFNgW5kfiXc82fD19bVM
-         2J4t1yax2TUeIaj5EYs5avxN3/vPlA0+xX0MdGo+XVCiuihyiQY+Vi4aU/jgo6en0kSs
-         GkdKtnEkjYtod8zRJuECylxajjKcnYkf2ZP5c6+BI+c7uj9n00MwgqzcbQAjqzggdKC4
-         JHHQ==
-X-Gm-Message-State: ACrzQf3MDlEfDtlUFeG2pRaoXH9trbQKDQxN+s5bSFrYlc9eIibqIXD6
-        X7ogxDOqRn9D5zHWOSYafoYs9g==
-X-Google-Smtp-Source: AMsMyM4TRh2gr+kOS0rnlcc/KQKS33NEffPf3pWG7t7imgdj7HB2jOO7UNnIZR4eUJsSLYpCw3FUVA==
-X-Received: by 2002:a17:90b:3d8:b0:20a:8e90:8e8c with SMTP id go24-20020a17090b03d800b0020a8e908e8cmr6907001pjb.138.1665770377827;
-        Fri, 14 Oct 2022 10:59:37 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w11-20020a170902ca0b00b0017f7fa6808csm2015707pld.87.2022.10.14.10.59.36
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AoUaVX7WeSWMFX3nree3fUpxXXfgx6Q4WFZ3tSVkQHg=;
+        b=V6pFRCzAvDmPDQj0ZYF9iGwvZ0vIMsosE9n6CPTlKdkomN3pZah6ffeUtIPPwAlrUp
+         TUdbsiFN6MibzF88y/njFMVHFMP+C05S3ZHIGr/HNK7PGwHRdorl3+ROcHA2dyxmjFpN
+         x8b+TOgrdNE8hXNwXabDoBG14vf7jycNonECL8quE247ZZOOVI/QMX16+d6OOH0BXh+J
+         p0T5Qu2jALgQvIq4bpPYxA+cz6CTpXWW5FiknK00UQtBnHvI3KjvC1Vh88AIdzXwh3cw
+         +dJ3D533teMltD/+zeTDXnYyxwWbDzExQvlm1OGVjW6Jpi6x6Wn+k2451PuYlok+Wgct
+         KJZQ==
+X-Gm-Message-State: ACrzQf0Mi6dxn6TwnWMhmATJkldulSSVukui4t6Y8ld6EVWvxFD0wsQ4
+        OWy/MPgrydvpRuhk4GcvhjwJxQ==
+X-Google-Smtp-Source: AMsMyM5kq8HSA0NWVB8q1M2PQnkKFbfau0narXlYBV62ON1xN11WXriiPNcPad7RxtFAPMdU5bCjTw==
+X-Received: by 2002:a37:bd84:0:b0:6cf:6049:f12a with SMTP id n126-20020a37bd84000000b006cf6049f12amr4919050qkf.697.1665775183082;
+        Fri, 14 Oct 2022 12:19:43 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-122-23.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.122.23])
+        by smtp.gmail.com with ESMTPSA id x78-20020a376351000000b006ce3cffa2c8sm3020159qkb.43.2022.10.14.12.19.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Oct 2022 10:59:36 -0700 (PDT)
-Date:   Fri, 14 Oct 2022 10:59:35 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, KP Singh <kpsingh@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 1/9] integrity: Prepare for having "ima" and "evm"
- available in "integrity" LSM
-Message-ID: <202210141050.A8DF7D10@keescook>
-References: <20221013222702.never.990-kees@kernel.org>
- <20221013223654.659758-1-keescook@chromium.org>
- <08a8b202-69b4-e154-28f5-337a898acf61@digikod.net>
+        Fri, 14 Oct 2022 12:19:42 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1ojQDd-003BJU-IB;
+        Fri, 14 Oct 2022 16:19:41 -0300
+Date:   Fri, 14 Oct 2022 16:19:41 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Pankaj Gupta <pankaj.gupta@nxp.com>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "a.fatoum@pengutronix.de" <a.fatoum@pengutronix.de>,
+        "gilad@benyossef.com" <gilad@benyossef.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "sumit.garg@linaro.org" <sumit.garg@linaro.org>,
+        "david@sigma-star.at" <david@sigma-star.at>,
+        "michael@walle.cc" <michael@walle.cc>,
+        "john.ernberg@actia.se" <john.ernberg@actia.se>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "j.luebbe@pengutronix.de" <j.luebbe@pengutronix.de>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Sahil Malhotra <sahil.malhotra@nxp.com>,
+        Kshitiz Varshney <kshitiz.varshney@nxp.com>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Varun Sethi <V.Sethi@nxp.com>
+Subject: Re: [EXT] Re: [PATCH v0 3/8] crypto: hbk flags & info added to the
+ tfm
+Message-ID: <Y0m2TU5k78I1AR+p@ziepe.ca>
+References: <20221006130837.17587-1-pankaj.gupta@nxp.com>
+ <20221006130837.17587-4-pankaj.gupta@nxp.com>
+ <Yz/OEwDtyTm+VH0p@gondor.apana.org.au>
+ <DU2PR04MB8630CBBB8ABDC3768320C18195209@DU2PR04MB8630.eurprd04.prod.outlook.com>
+ <Y0Q3JKnWSNIC4Xlu@zx2c4.com>
+ <Y0UxY51KQoKCq59o@gondor.apana.org.au>
+ <Y0XLqd/+C1sxq2G0@zx2c4.com>
+ <Y0aDiLp7BztzwNez@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <08a8b202-69b4-e154-28f5-337a898acf61@digikod.net>
+In-Reply-To: <Y0aDiLp7BztzwNez@gondor.apana.org.au>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 14, 2022 at 04:40:01PM +0200, Mickaël Salaün wrote:
-> This is not backward compatible
+On Wed, Oct 12, 2022 at 05:06:16PM +0800, Herbert Xu wrote:
 
-Why? Nothing will be running LSM hooks until init finishes, at which
-point the integrity inode cache will be allocated. And ima and evm don't
-start up until lateinit.
+> > Rather, drivers that do AES should be called "aes". For this hardware
+> > key situation, I guess that means keys have a type (in-memory vs
+> > hardware-resident). Then, a crypto operation takes an "algorithm" and a
+> > "key", and the abstraction then picks the best implementation that's
+> > compatible with both the "algorithm" and the "key".
+> 
+> No the key is already in a specific hardware bound to some driver.
+> The user already knows where the key is and therefore they know
+> which driver it is.
 
->, but can easily be fixed thanks to
-> DEFINE_LSM().order
+Do they?
 
-That forces the LSM to be enabled, which may not be desired?
+We have HW that can do HW resident keys as as well, in our case it is
+plugged into the storage system with fscrypt and all the crypto
+operations are being done "inline" as the data is DMA'd into/out of
+the storage. So, no crypto API here.
 
-> Side node: I proposed an alternative to that but it was Nacked:
-> https://lore.kernel.org/all/20210222150608.808146-1-mic@digikod.net/
+I would say the user knows about the key and its binding in the sense
+they loaded a key into the storage device and mounted a fscrypt
+filesystem from that storage device - but the kernel may not know this
+explicitly.
 
-Yeah, for the reasons pointed out -- that can't work. The point is to
-not have The Default LSM. I do think Casey's NAK was rather prickly,
-though. ;)
+> > If you don't want a proliferation of different ways of doing the same
+> > thing, maybe the requirement should be that the author of this series
+> > also converts the existing "paes" kludge to use the new thing he's
+> > proposing?
+> 
+> Yes that would definitely be a good idea.  We should also talk to the
+> people who added paes in the first place, i.e., s390.
 
--- 
-Kees Cook
+Yes, it would be nice to see a comprehensive understand on how HW
+resident keys can be modeled in the keyring. Almost every computer now
+has a TPM that is also quite capable of doing operations with these
+kinds of keys. Seeing the whole picture, including how we generate and
+load/save/provision these things seems important.
+
+Jason
