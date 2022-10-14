@@ -2,37 +2,37 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36761C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 13:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD860C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 13:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229963AbiJNNw7 (ORCPT
+        id S230075AbiJNNx0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Oct 2022 09:52:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38444 "EHLO
+        Fri, 14 Oct 2022 09:53:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229961AbiJNNw4 (ORCPT
+        with ESMTP id S230003AbiJNNxQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Oct 2022 09:52:56 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E301BF86F;
-        Fri, 14 Oct 2022 06:52:31 -0700 (PDT)
+        Fri, 14 Oct 2022 09:53:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D00301D0679;
+        Fri, 14 Oct 2022 06:52:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 07D12B8235A;
-        Fri, 14 Oct 2022 13:52:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBCBCC433D7;
-        Fri, 14 Oct 2022 13:52:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2F3F561B27;
+        Fri, 14 Oct 2022 13:52:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4308DC433C1;
+        Fri, 14 Oct 2022 13:52:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665755532;
-        bh=pBh+PKuK//OgSe36JRn1Cfl4rfyNKhi8umyVj3qBs/0=;
+        s=k20201202; t=1665755573;
+        bh=qa/nkLRZZlwVbA9hanFq24bZyUalUJx/CypuGXgINzQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rZa23zvH+fEdyLPU9uGUklfd8bdc0+vG7B/JA+vr/3K3aufTILoFIjkGGnGm76AyW
-         dahSs2CAWQKkXSUJN+pTYnuetRxTIv896Urq8kxgAflWl9KUkSOk7RIEuxkB2kqOb/
-         KOwqCUax0HyHwt4MptZD6grI8ciIhovPJNa/SJq8hhOhjc5yYfpCzoL6Rx7BLclv6G
-         EKt69sbjwBLRFqSMG5vfS04Ha8skRPU49nBng/wpUv7VjTSaPumObUd2MxIKoRMVBR
-         Y393rODzOXMlYuESplLs4p13a54uWq88sb437VueeYk8yol4co/8/VpVAPODGqlVBT
-         JoUUdOUzv3EMA==
+        b=Y2iilNWTa1D9g95WsmaBHkdPoUn8UtPyv+dKr2uHXEW4GD5u/J5MYmOX+f01WT3HA
+         vTpFzabO33pjULyRBTCBEJWw1jGxwS+8ONbwd8zVEDoerdUVx0CiWGHIX7rrK4D1a+
+         ezeXr29H9HVTB3hRyqtoXoZGbh9t2HPEwYX4FzUgp2DuVrKVLb1U3TbXkajQ0G15JO
+         GgI7cOdWA050lkCRTfWjKBpiGlmVb1rVggzwvJM5Sc64mXXYjnPIKjyo1y5SdwmU/M
+         Bep4+BRt8zm1a0qKW4589clx79VyXKbtzsXBl3qPWBMyiXGw9zF+Ygt06sjm9b92MY
+         kYXD+OGACluvw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nathan Lynch <nathanl@linux.ibm.com>,
@@ -40,18 +40,19 @@ Cc:     Nathan Lynch <nathanl@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>, jmorris@namei.org,
         serge@hallyn.com, ldufour@linux.ibm.com, npiggin@gmail.com,
-        paulus@ozlabs.org, sourabhjain@linux.ibm.com, ajd@linux.ibm.com,
-        christophe.leroy@csgroup.eu, casey@schaufler-ca.com,
-        lucien.xin@gmail.com, davem@davemloft.net, omosnace@redhat.com,
-        tkjos@google.com, mcgrof@kernel.org, mortonm@chromium.org,
-        brauner@kernel.org, linuxppc-dev@lists.ozlabs.org,
+        christophe.leroy@csgroup.eu, sourabhjain@linux.ibm.com,
+        ajd@linux.ibm.com, paulus@ozlabs.org, casey@schaufler-ca.com,
+        lucien.xin@gmail.com, davem@davemloft.net, tkjos@google.com,
+        omosnace@redhat.com, daniel.thompson@linaro.org,
+        mortonm@chromium.org, brauner@kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.0 09/11] powerpc/rtas: block error injection when locked down
-Date:   Fri, 14 Oct 2022 09:51:35 -0400
-Message-Id: <20221014135139.2109024-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.19 08/10] powerpc/rtas: block error injection when locked down
+Date:   Fri, 14 Oct 2022 09:52:19 -0400
+Message-Id: <20221014135222.2109334-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221014135139.2109024-1-sashal@kernel.org>
-References: <20221014135139.2109024-1-sashal@kernel.org>
+In-Reply-To: <20221014135222.2109334-1-sashal@kernel.org>
+References: <20221014135222.2109334-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -147,7 +148,7 @@ index 693133972294..c2540d393f1c 100644
  }
  
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 7bd0c490703d..0ca55306f1eb 100644
+index 3cc127bb5bfd..9b0ec28e96bf 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
 @@ -122,6 +122,7 @@ enum lockdown_reason {
@@ -159,7 +160,7 @@ index 7bd0c490703d..0ca55306f1eb 100644
  	LOCKDOWN_KCORE,
  	LOCKDOWN_KPROBES,
 diff --git a/security/security.c b/security/security.c
-index 4b95de24bc8d..11e2c8757275 100644
+index 8b62654ff3f9..48a5d07d0ffc 100644
 --- a/security/security.c
 +++ b/security/security.c
 @@ -60,6 +60,7 @@ const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
