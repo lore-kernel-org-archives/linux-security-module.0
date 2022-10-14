@@ -2,114 +2,61 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E21AC433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 06:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F972C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 08:43:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbiJNGk2 (ORCPT
+        id S229684AbiJNInI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Oct 2022 02:40:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34576 "EHLO
+        Fri, 14 Oct 2022 04:43:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbiJNGk1 (ORCPT
+        with ESMTP id S229507AbiJNInH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Oct 2022 02:40:27 -0400
-Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 600F03CBC2;
-        Thu, 13 Oct 2022 23:40:16 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id B6E851321; Fri, 14 Oct 2022 08:40:10 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.steuer-voss.de (Postfix) with ESMTP id B46441316;
-        Fri, 14 Oct 2022 08:40:10 +0200 (CEST)
-Date:   Fri, 14 Oct 2022 08:40:10 +0200 (CEST)
-From:   Nikolaus Voss <nv@vosn.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-cc:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Yael Tzur <yaelt@google.com>,
-        Cyril Hrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] KEYS: encrypted: fix key instantiation with user-provided
- data
-In-Reply-To: <924a29d81cc7e0d3e2f62f693a0d8fcef97b9779.camel@linux.ibm.com>
-Message-ID: <c620d6ed-d97f-b0c3-574-7b3cd63a7799@vosn.de>
-References: <20221013064308.857011E25@mail.steuer-voss.de> <924a29d81cc7e0d3e2f62f693a0d8fcef97b9779.camel@linux.ibm.com>
+        Fri, 14 Oct 2022 04:43:07 -0400
+Received: from out30-56.freemail.mail.aliyun.com (out30-56.freemail.mail.aliyun.com [115.124.30.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D92C91C39DB;
+        Fri, 14 Oct 2022 01:43:05 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R221e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0VS755BC_1665736981;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0VS755BC_1665736981)
+          by smtp.aliyun-inc.com;
+          Fri, 14 Oct 2022 16:43:02 +0800
+From:   Yang Li <yang.lee@linux.alibaba.com>
+To:     john.johansen@canonical.com
+Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] apparmor: Fix spelling of function name in comment block
+Date:   Fri, 14 Oct 2022 16:42:55 +0800
+Message-Id: <20221014084255.26103-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-448557197-1665729610=:29571"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+'resouce' -> 'resource'
 
---8323329-448557197-1665729610=:29571
-Content-Type: text/plain; charset=ISO-8859-15; format=flowed
-Content-Transfer-Encoding: 8BIT
+Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=2396
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ security/apparmor/resource.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, 13 Oct 2022, Mimi Zohar wrote:
-> On Thu, 2022-10-13 at 08:39 +0200, Nikolaus Voss wrote:
->> Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
->> decrypted data") added key instantiation with user provided decrypted data.
->> The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
->> Fix this to use hex2bin instead.
->>
->> Old keys created from user provided decrypted data saved with "keyctl pipe"
->> are still valid, however if the key is recreated from decrypted data the
->> old key must be converted to the correct format. This can be done with a
->> small shell script, e.g.:
->>
->> BROKENKEY=abcdefABCDEF1234567890aaaaaaaaaa
->> NEWKEY=$(echo -ne $BROKENKEY | xxd -p -c32)
->> keyctl add user masterkey "$(cat masterkey.bin)" @u
->> keyctl add encrypted testkey "new user:masterkey 32 $NEWKEY" @u
->>
->> It is encouraged to switch to a new key because the effective key size
->> of the old keys is only half of the specified size.
->
-> Both the old and new decrypted data size is 32 bytes.  Is the above
-> statement necessary, especially since the Documentation example does
-> the equivalent?
+diff --git a/security/apparmor/resource.c b/security/apparmor/resource.c
+index ed543f4edfd9..d7dbacc9a369 100644
+--- a/security/apparmor/resource.c
++++ b/security/apparmor/resource.c
+@@ -66,7 +66,7 @@ static int audit_resource(struct aa_profile *profile, unsigned int resource,
+ }
+ 
+ /**
+- * aa_map_resouce - map compiled policy resource to internal #
++ * aa_map_resource - map compiled policy resource to internal #
+  * @resource: flattened policy resource number
+  *
+  * Returns: resource # for the current architecture.
+-- 
+2.20.1.7.g153144c
 
-The old key has the same byte size but all bytes must be within the 
-hex-ascíi range of characters, otherwise it is refused by the kernel.
-So if you wanted a 32 bytes key you get 16 effective bytes for the key. 
-In the above example the string size of the $BROKENKEY is 32, while 
-the string size of the $NEWKEY is 64.
-
-If you do
-
-$ echo $NEWKEY
-6162636465664142434445463132333435363738393061616161616161616161
-
-for the example, the range problem is obvious, so $NEWKEY is still broken. 
-That's why it should only be used to recover data which should be 
-reencypted with a new key. If you count exactly, the effective key size is 
-_slightly_ longer than half of the specified size, but it is still a 
-severe security problem.
-
->
->> The corresponding test for the Linux Test Project ltp has also been
->> fixed (see link below).
->
-> The LTP patch still needs to be revised, but the "Link" is a reference
-> to the discussion.  Is the above statement necessary?
-
-As long as the patch is not accepted the discussion is helpful. But feel 
-free to delete it upon integration ;-).
-
->
->>
->> Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided decrypted data")
->> Cc: stable <stable@kernel.org>
->> Link: https://lore.kernel.org/ltp/20221006081709.92303897@mail.steuer-voss.de/
->> Signed-off-by: Nikolaus Voss <nikolaus.voss@haag-streit.com>
->
-> Otherwise,
->
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-
-Thanks Mimi!
---8323329-448557197-1665729610=:29571--
