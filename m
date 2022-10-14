@@ -2,110 +2,174 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D32C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 11:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36761C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 13:53:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbiJNLjo (ORCPT
+        id S229963AbiJNNw7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Oct 2022 07:39:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55676 "EHLO
+        Fri, 14 Oct 2022 09:52:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbiJNLjn (ORCPT
+        with ESMTP id S229961AbiJNNw4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Oct 2022 07:39:43 -0400
-Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5CDE116F;
-        Fri, 14 Oct 2022 04:39:38 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id 831DD495; Fri, 14 Oct 2022 13:39:34 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.steuer-voss.de (Postfix) with ESMTP id 815E831D;
-        Fri, 14 Oct 2022 13:39:34 +0200 (CEST)
-Date:   Fri, 14 Oct 2022 13:39:34 +0200 (CEST)
-From:   Nikolaus Voss <nv@vosn.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-cc:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Yael Tzur <yaelt@google.com>,
-        Cyril Hrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] KEYS: encrypted: fix key instantiation with user-provided
- data
-In-Reply-To: <16fe5265c49fcecdf613fe9dd660efe4ae8d452e.camel@linux.ibm.com>
-Message-ID: <1b621acf-a1f1-ec9b-21f6-d081d69ed74@vosn.de>
-References: <20221013064308.857011E25@mail.steuer-voss.de>  <924a29d81cc7e0d3e2f62f693a0d8fcef97b9779.camel@linux.ibm.com>  <c620d6ed-d97f-b0c3-574-7b3cd63a7799@vosn.de> <16fe5265c49fcecdf613fe9dd660efe4ae8d452e.camel@linux.ibm.com>
+        Fri, 14 Oct 2022 09:52:56 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E301BF86F;
+        Fri, 14 Oct 2022 06:52:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 07D12B8235A;
+        Fri, 14 Oct 2022 13:52:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBCBCC433D7;
+        Fri, 14 Oct 2022 13:52:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665755532;
+        bh=pBh+PKuK//OgSe36JRn1Cfl4rfyNKhi8umyVj3qBs/0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rZa23zvH+fEdyLPU9uGUklfd8bdc0+vG7B/JA+vr/3K3aufTILoFIjkGGnGm76AyW
+         dahSs2CAWQKkXSUJN+pTYnuetRxTIv896Urq8kxgAflWl9KUkSOk7RIEuxkB2kqOb/
+         KOwqCUax0HyHwt4MptZD6grI8ciIhovPJNa/SJq8hhOhjc5yYfpCzoL6Rx7BLclv6G
+         EKt69sbjwBLRFqSMG5vfS04Ha8skRPU49nBng/wpUv7VjTSaPumObUd2MxIKoRMVBR
+         Y393rODzOXMlYuESplLs4p13a54uWq88sb437VueeYk8yol4co/8/VpVAPODGqlVBT
+         JoUUdOUzv3EMA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Nathan Lynch <nathanl@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, jmorris@namei.org,
+        serge@hallyn.com, ldufour@linux.ibm.com, npiggin@gmail.com,
+        paulus@ozlabs.org, sourabhjain@linux.ibm.com, ajd@linux.ibm.com,
+        christophe.leroy@csgroup.eu, casey@schaufler-ca.com,
+        lucien.xin@gmail.com, davem@davemloft.net, omosnace@redhat.com,
+        tkjos@google.com, mcgrof@kernel.org, mortonm@chromium.org,
+        brauner@kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.0 09/11] powerpc/rtas: block error injection when locked down
+Date:   Fri, 14 Oct 2022 09:51:35 -0400
+Message-Id: <20221014135139.2109024-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221014135139.2109024-1-sashal@kernel.org>
+References: <20221014135139.2109024-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-2142412134-1665747574=:33507"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Nathan Lynch <nathanl@linux.ibm.com>
 
---8323329-2142412134-1665747574=:33507
-Content-Type: text/plain; charset=ISO-8859-15; format=flowed
-Content-Transfer-Encoding: 8BIT
+[ Upstream commit b8f3e48834fe8c86b4f21739c6effd160e2c2c19 ]
 
-On Fri, 14 Oct 2022, Mimi Zohar wrote:
-> On Fri, 2022-10-14 at 08:40 +0200, Nikolaus Voss wrote:
->> On Thu, 13 Oct 2022, Mimi Zohar wrote:
->>> On Thu, 2022-10-13 at 08:39 +0200, Nikolaus Voss wrote:
->>>> Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
->>>> decrypted data") added key instantiation with user provided decrypted data.
->>>> The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
->>>> Fix this to use hex2bin instead.
->>>>
->>>> Old keys created from user provided decrypted data saved with "keyctl pipe"
->>>> are still valid, however if the key is recreated from decrypted data the
->>>> old key must be converted to the correct format. This can be done with a
->>>> small shell script, e.g.:
->>>>
->>>> BROKENKEY=abcdefABCDEF1234567890aaaaaaaaaa
->>>> NEWKEY=$(echo -ne $BROKENKEY | xxd -p -c32)
->>>> keyctl add user masterkey "$(cat masterkey.bin)" @u
->>>> keyctl add encrypted testkey "new user:masterkey 32 $NEWKEY" @u
->>>>
->>>> It is encouraged to switch to a new key because the effective key size
->>>> of the old keys is only half of the specified size.
->>>
->>> Both the old and new decrypted data size is 32 bytes.  Is the above
->>> statement necessary, especially since the Documentation example does
->>> the equivalent?
->>
->> The old key has the same byte size but all bytes must be within the
->> hex-ascíi range of characters, otherwise it is refused by the kernel.
->> So if you wanted a 32 bytes key you get 16 effective bytes for the key.
->> In the above example the string size of the $BROKENKEY is 32, while
->> the string size of the $NEWKEY is 64.
->>
->> If you do
->>
->> $ echo $NEWKEY
->> 6162636465664142434445463132333435363738393061616161616161616161
->>
->> for the example, the range problem is obvious, so $NEWKEY is still broken.
->> That's why it should only be used to recover data which should be
->> reencypted with a new key. If you count exactly, the effective key size is
->> _slightly_ longer than half of the specified size, but it is still a
->> severe security problem.
->
-> So the issue with NEWKEY isn't the "effective key size of the old keys
-> is only half of the specified size", but that the old key, itself, is
-> limited to the hex-ascii range of characters.
+The error injection facility on pseries VMs allows corruption of
+arbitrary guest memory, potentially enabling a sufficiently privileged
+user to disable lockdown or perform other modifications of the running
+kernel via the rtas syscall.
 
-The latter resulting in the former. If for BROKENKEY 32 bytes were 
-specified, a brute force attacker knowing the key properties would only 
-need to try at most 2^(16*8) keys, as if the key was only 16 bytes long. 
-This is what I mean with "effective size" in contrast to the key's byte 
-size which is 32 in my example.
+Block the PAPR error injection facility from being opened or called
+when locked down.
 
-The security issue is a result of the combination of limiting the input 
-range to hex-ascii and using memcpy() instead of hex2bin(). It could have 
-been fixed either by allowing binary input or using hex2bin() (and 
-doubling the ascii input key length). I chose the latter.
+Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+Acked-by: Paul Moore <paul@paul-moore.com> (LSM)
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20220926131643.146502-3-nathanl@linux.ibm.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/powerpc/kernel/rtas.c | 25 ++++++++++++++++++++++++-
+ include/linux/security.h   |  1 +
+ security/security.c        |  1 +
+ 3 files changed, 26 insertions(+), 1 deletion(-)
 
-Niko
---8323329-2142412134-1665747574=:33507--
+diff --git a/arch/powerpc/kernel/rtas.c b/arch/powerpc/kernel/rtas.c
+index 693133972294..c2540d393f1c 100644
+--- a/arch/powerpc/kernel/rtas.c
++++ b/arch/powerpc/kernel/rtas.c
+@@ -23,6 +23,7 @@
+ #include <linux/memblock.h>
+ #include <linux/slab.h>
+ #include <linux/reboot.h>
++#include <linux/security.h>
+ #include <linux/syscalls.h>
+ #include <linux/of.h>
+ #include <linux/of_fdt.h>
+@@ -464,6 +465,9 @@ void rtas_call_unlocked(struct rtas_args *args, int token, int nargs, int nret,
+ 	va_end(list);
+ }
+ 
++static int ibm_open_errinjct_token;
++static int ibm_errinjct_token;
++
+ int rtas_call(int token, int nargs, int nret, int *outputs, ...)
+ {
+ 	va_list list;
+@@ -476,6 +480,16 @@ int rtas_call(int token, int nargs, int nret, int *outputs, ...)
+ 	if (!rtas.entry || token == RTAS_UNKNOWN_SERVICE)
+ 		return -1;
+ 
++	if (token == ibm_open_errinjct_token || token == ibm_errinjct_token) {
++		/*
++		 * It would be nicer to not discard the error value
++		 * from security_locked_down(), but callers expect an
++		 * RTAS status, not an errno.
++		 */
++		if (security_locked_down(LOCKDOWN_RTAS_ERROR_INJECTION))
++			return -1;
++	}
++
+ 	if ((mfmsr() & (MSR_IR|MSR_DR)) != (MSR_IR|MSR_DR)) {
+ 		WARN_ON_ONCE(1);
+ 		return -1;
+@@ -1227,6 +1241,14 @@ SYSCALL_DEFINE1(rtas, struct rtas_args __user *, uargs)
+ 	if (block_rtas_call(token, nargs, &args))
+ 		return -EINVAL;
+ 
++	if (token == ibm_open_errinjct_token || token == ibm_errinjct_token) {
++		int err;
++
++		err = security_locked_down(LOCKDOWN_RTAS_ERROR_INJECTION);
++		if (err)
++			return err;
++	}
++
+ 	/* Need to handle ibm,suspend_me call specially */
+ 	if (token == rtas_token("ibm,suspend-me")) {
+ 
+@@ -1325,7 +1347,8 @@ void __init rtas_initialize(void)
+ #ifdef CONFIG_RTAS_ERROR_LOGGING
+ 	rtas_last_error_token = rtas_token("rtas-last-error");
+ #endif
+-
++	ibm_open_errinjct_token = rtas_token("ibm,open-errinjct");
++	ibm_errinjct_token = rtas_token("ibm,errinjct");
+ 	rtas_syscall_filter_init();
+ }
+ 
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 7bd0c490703d..0ca55306f1eb 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -122,6 +122,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_XMON_WR,
+ 	LOCKDOWN_BPF_WRITE_USER,
+ 	LOCKDOWN_DBG_WRITE_KERNEL,
++	LOCKDOWN_RTAS_ERROR_INJECTION,
+ 	LOCKDOWN_INTEGRITY_MAX,
+ 	LOCKDOWN_KCORE,
+ 	LOCKDOWN_KPROBES,
+diff --git a/security/security.c b/security/security.c
+index 4b95de24bc8d..11e2c8757275 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -60,6 +60,7 @@ const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_XMON_WR] = "xmon write access",
+ 	[LOCKDOWN_BPF_WRITE_USER] = "use of bpf to write user RAM",
+ 	[LOCKDOWN_DBG_WRITE_KERNEL] = "use of kgdb/kdb to write kernel RAM",
++	[LOCKDOWN_RTAS_ERROR_INJECTION] = "RTAS error injection",
+ 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+ 	[LOCKDOWN_KCORE] = "/proc/kcore access",
+ 	[LOCKDOWN_KPROBES] = "use of kprobes",
+-- 
+2.35.1
+
