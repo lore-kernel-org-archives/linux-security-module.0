@@ -2,134 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 110F0C43217
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 03:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F55C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 03:51:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbiJNDS7 (ORCPT
+        id S229662AbiJNDvT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Oct 2022 23:18:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36074 "EHLO
+        Thu, 13 Oct 2022 23:51:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbiJNDSe (ORCPT
+        with ESMTP id S229827AbiJNDvR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Oct 2022 23:18:34 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E89E1AF2C;
-        Thu, 13 Oct 2022 20:18:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id E7F38CE1C9D;
-        Fri, 14 Oct 2022 03:18:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C47C433B5;
-        Fri, 14 Oct 2022 03:18:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665717510;
-        bh=XdPGgMOKnebM+bZev/ZKP6wiusPUf6c3wma5ZTnpm0o=;
-        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-        b=NxEBMe6pbFjKd5o5ykIa5BBRdhg0vXYTfKC2h/D5ORGx4SQhCcGSoE7R+BgRKqfFB
-         Rylt70PtJEJ6PROIB3006reKSYCVr/UMrnreQvIlLB8Gtg9j4hrgG7Kfd1gTHVSMFD
-         i4OuVq5ePV43QQA+lzCIkX4z4ODh2uWUl9poGO5vnpf7cD6e1gutexipao9jTzA1dE
-         9SZ4HB8qoHNFI29le+vTlFj/Up3dUyUU2Oc8hcBk9m+WrPxanjr9r7+y/ehilr3Z4K
-         XX2qYX0JEFAu5pJlnwAwPheP+kme30rgei6t5F6FvG2a+ivCnxv2LyQRoKnJTvkAjs
-         FUg8zL6DGDsSA==
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 7304527C0054;
-        Thu, 13 Oct 2022 23:18:27 -0400 (EDT)
-Received: from imap48 ([10.202.2.98])
-  by compute2.internal (MEProxy); Thu, 13 Oct 2022 23:18:27 -0400
-X-ME-Sender: <xms:AdVIYzOOj40fYDS1rOvXIoESyi161w0DmwR247bhjuKHqLFeT9OiDA>
-    <xme:AdVIY99529hlGQo-8KK9C30W0jlvvwwm75Z23pVzj3dmAFAsNJ7f6r-P3PWWqRCOA
-    Phzta6qNL1zttkMjs8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeekuddgieelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehn
-    ugihucfnuhhtohhmihhrshhkihdfuceolhhuthhosehkvghrnhgvlhdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepgeejhfehkeejleffheetkefhtdduuedtieehheekgfekudeggfff
-    udejuddufeeknecuffhomhgrihhnpegthhhrohhmihhumhdrohhrghenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhguhidomhgvshhmthhp
-    rghuthhhphgvrhhsohhnrghlihhthidqudduiedukeehieefvddqvdeifeduieeitdekqd
-    hluhhtoheppehkvghrnhgvlhdrohhrgheslhhinhhugidrlhhuthhordhush
-X-ME-Proxy: <xmx:AdVIYySW5Tdj3xc9QCIj2mq3H0rlkZatHo_4MuZZWFFBYFhYq8rSyA>
-    <xmx:AdVIY3uxuPeTfHWQd84oguwbXb3jq_lpHxPlgcluwo9B3Bp9AzVjRg>
-    <xmx:AdVIY7fXv-y_hn4d5Su6ASkwBxzA9fYhaSJ9rz-aLpvt3ull2hzjEQ>
-    <xmx:A9VIY5GVCHHHXumAGXj3B2GHtzhL21R2t0gobETwrTSxeyRxILj7NXJ9Hqc>
-Feedback-ID: ieff94742:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 878A331A03F7; Thu, 13 Oct 2022 23:18:25 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-1047-g9e4af4ada4-fm-20221005.001-g9e4af4ad
-Mime-Version: 1.0
-Message-Id: <2032f766-1704-486b-8f24-a670c0b3cb32@app.fastmail.com>
-In-Reply-To: <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
-References: <20221006082735.1321612-1-keescook@chromium.org>
- <20221006082735.1321612-2-keescook@chromium.org>
- <20221006090506.paqjf537cox7lqrq@wittgenstein>
- <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
-Date:   Thu, 13 Oct 2022 20:18:04 -0700
-From:   "Andy Lutomirski" <luto@kernel.org>
-To:     "Jann Horn" <jannh@google.com>,
-        "Christian Brauner" <brauner@kernel.org>
-Cc:     "Kees Cook" <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Jorge Merlino" <jorge.merlino@canonical.com>,
-        "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
-        "Andrew Morton" <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        "John Johansen" <john.johansen@canonical.com>,
-        "Paul Moore" <paul@paul-moore.com>,
-        "James Morris" <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Stephen Smalley" <stephen.smalley.work@gmail.com>,
-        "Eric Paris" <eparis@parisplace.org>,
-        "Richard Haines" <richard_c_haines@btinternet.com>,
-        "Casey Schaufler" <casey@schaufler-ca.com>,
-        "Xin Long" <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Todd Kjos" <tkjos@google.com>,
-        "Ondrej Mosnacek" <omosnace@redhat.com>,
-        "Prashanth Prahlad" <pprahlad@redhat.com>,
-        "Micah Morton" <mortonm@chromium.org>,
-        "Fenghua Yu" <fenghua.yu@intel.com>,
-        "Andrei Vagin" <avagin@gmail.com>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
-Content-Type: text/plain
+        Thu, 13 Oct 2022 23:51:17 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4019A196B43
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 20:51:16 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id y8so3739370pfp.13
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 20:51:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aVCyBiCZDn5HkUxGUrbOX8V30hdrNq+pu/fmdZO+DQs=;
+        b=HYlxMKmQBMJ9fQa4DX257S7pyPvD4niaVRVid6SVUtghjyhVqc8WffD4/S5xaeixP7
+         xwHkyg/KF4sYlgaAl8BcdmuY0ZYKKkEOaPizXkgCZHsEhZFYqg8KwJjUXVMeqHpGCeGn
+         qITgM9WLwMwaKCWxp+Fn9qj/NHW1gNB9COrXkTn5M4tPqI3a0ND+f+iUwA530eNfJSc9
+         7nsOdQcD8oeimSZGP/PyHDJFVAokfMYb2noeuu5NWV/23LRhgGapuY7XRBK1LCZBitFr
+         LiqRzWKeqdRUAcyzr99Mn0vMb9dnaZuK9PnUQOkPJ60FvM92tOqO8mC/Icibc+rSxTpP
+         UaGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aVCyBiCZDn5HkUxGUrbOX8V30hdrNq+pu/fmdZO+DQs=;
+        b=cVSI496YxxPoQXGEnGaNyc6BGWZTfcl4m6WDojgQ0JNCOSwRaGXYQvaylilfJEU4pI
+         O0JGzFn5mMRP2zf7GZcxXe2vz0obQkEgGHuJVxle9+A+eVxQdzfhSBzOVzxD4/N9sitM
+         X+V34LshX5b4LDfyIxkcdllRKzbqY4NxzTHF/NBzKzTSVKnS/2MyO/R37on7CAP1Gx6+
+         Gmg44k13oI/ENal94eE3s5KfW29X5nVwrBklnfg+K7RV1Vbh00z8yG+LmoFRRYAhpac+
+         mNCrzuUVZ6ul38op3JhNRyH2B6O5vp+rQuvUEscOe6dHzWH+zQ8u834m9TORz2y6dRnQ
+         fZhw==
+X-Gm-Message-State: ACrzQf2kHIAWWzGwQu+1MlHazF4Wwdc/7mR7mKdMQv0qZSCFVOzZQAOJ
+        LQrQCdp6tEWFYcL9A9CCodQ5186/+xzp898l
+X-Google-Smtp-Source: AMsMyM6Y0+7i6TkCO2N10Y3MJBF+2t9Jcy2YiUF6UBoHedlFmXGOnANBBOw2nEyrpT+dnGwWj8Gm6w==
+X-Received: by 2002:a05:6a00:b84:b0:565:caea:38bc with SMTP id g4-20020a056a000b8400b00565caea38bcmr2978288pfj.80.1665719475513;
+        Thu, 13 Oct 2022 20:51:15 -0700 (PDT)
+Received: from localhost ([50.221.140.188])
+        by smtp.gmail.com with ESMTPSA id e63-20020a621e42000000b00565cbad9616sm492123pfe.6.2022.10.13.20.51.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Oct 2022 20:51:14 -0700 (PDT)
+Date:   Thu, 13 Oct 2022 20:51:14 -0700 (PDT)
+X-Google-Original-Date: Thu, 13 Oct 2022 20:05:01 PDT (-0700)
+Subject:     Re: [PATCH] MAINTAINERS: git://github -> https://github.com for cschaufler
+In-Reply-To: <CAHC9VhTPt40PFC5NASOjOK+fqJym5JOyb8UrwAL7DGDQWqVwqA@mail.gmail.com>
+CC:     casey@schaufler-ca.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Conor Dooley <conor.dooley@microchip.com>
+From:   Palmer Dabbelt <palmer@rivosinc.com>
+To:     paul@paul-moore.com
+Message-ID: <mhng-3a781b98-6c44-4ae5-bf58-75cb4eeb2dd0@palmer-ri-x1c9a>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On Thu, Oct 6, 2022, at 7:13 AM, Jann Horn wrote:
-> On Thu, Oct 6, 2022 at 11:05 AM Christian Brauner <brauner@kernel.org> wrote:
->> On Thu, Oct 06, 2022 at 01:27:34AM -0700, Kees Cook wrote:
->> > The check_unsafe_exec() counting of n_fs would not add up under a heavily
->> > threaded process trying to perform a suid exec, causing the suid portion
->> > to fail. This counting error appears to be unneeded, but to catch any
->> > possible conditions, explicitly unshare fs_struct on exec, if it ends up
+On Thu, 13 Oct 2022 14:54:00 PDT (-0700), paul@paul-moore.com wrote:
+> On Thu, Oct 13, 2022 at 5:49 PM Palmer Dabbelt <palmer@rivosinc.com> wrote:
 >>
->> Isn't this a potential uapi break? Afaict, before this change a call to
->> clone{3}(CLONE_FS) followed by an exec in the child would have the
->> parent and child share fs information. So if the child e.g., changes the
->> working directory post exec it would also affect the parent. But after
->> this change here this would no longer be true. So a child changing a
->> workding directoro would not affect the parent anymore. IOW, an exec is
->> accompanied by an unshare(CLONE_FS). Might still be worth trying ofc but
->> it seems like a non-trivial uapi change but there might be few users
->> that do clone{3}(CLONE_FS) followed by an exec.
+>> Github deprecated the git:// links about a year ago, so let's move to
+>> the https:// URLs instead.
+>>
+>> Reported-by: Conor Dooley <conor.dooley@microchip.com>
+>> Link: https://github.blog/2021-09-01-improving-git-protocol-security-github/
+>> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+>> ---
+>> I've split these up by github username so folks can take them
+>> independently, as some of these repos have been renamed at github and
+>> thus need more than just a sed to fix them.
+>> ---
+>>  MAINTAINERS | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> I believe the following code in Chromium explicitly relies on this
-> behavior, but I'm not sure whether this code is in active use anymore:
+> Casey is the one who needs to ACK this (and he has an email delay at
+> the moment), but the URL looks good to me.
+
+No worries, I'm in no rush to merge this.  Conor just pointed out the 
+RISC-V KVM URL having this issue so I scripted a patch for everyone.   
+Feel free to just take it through your tree if you want, otherwise I'll 
+keep it around locally and hopefully remember to send something once 
+it's Ack'd.
+
+Just note that "MAINTAINERS: git://github -> https://github.com for" was 
+a scripting mistake, it should probably be "MAINTAINERS: 
+git://github.com -> https://github.com".  If I have to re-spin this I'll 
+fix it, but if someone else is taking it then it's probably best to 
+fixup.
+
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
 >
-> https://source.chromium.org/chromium/chromium/src/+/main:sandbox/linux/suid/sandbox.c;l=101?q=CLONE_FS&sq=&ss=chromium
-
-Wait, this is absolutely nucking futs.  On a very quick inspection, the sharable things like this are fs, files, sighand, and io.    files and sighand get unshared, which makes sense.  fs supposedly checks for extra refs and prevents gaining privilege.  io is... ignored!  At least it's not immediately obvious that io is a problem.
-
-But seriously, this makes no sense at all.  It should not be possible to exec a program and then, without ptrace, change its cwd out from under it.  Do we really need to preserve this behavior?
-
---Andy
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index daadd0de77a9..019cdb48e254 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -18723,7 +18723,7 @@ M:      Casey Schaufler <casey@schaufler-ca.com>
+>>  L:     linux-security-module@vger.kernel.org
+>>  S:     Maintained
+>>  W:     http://schaufler-ca.com
+>> -T:     git git://github.com/cschaufler/smack-next
+>> +T:     git https://github.com/cschaufler/smack-next
+>>  F:     Documentation/admin-guide/LSM/Smack.rst
+>>  F:     security/smack/
+>>
+>> --
+>> 2.38.0
