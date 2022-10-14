@@ -2,161 +2,160 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A685C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 14:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65223C4167B
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 15:36:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229554AbiJNOkM (ORCPT
+        id S230411AbiJNPgG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Oct 2022 10:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34312 "EHLO
+        Fri, 14 Oct 2022 11:36:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229920AbiJNOkK (ORCPT
+        with ESMTP id S229906AbiJNPgF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Oct 2022 10:40:10 -0400
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 692CE2CCB9
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Oct 2022 07:40:04 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MppvR2nLHzMqyHl;
-        Fri, 14 Oct 2022 16:40:03 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MppvP5kXxzxl;
-        Fri, 14 Oct 2022 16:40:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1665758403;
-        bh=jcCyesxrLlJfomHPKJJgCzzHqJeECuX0/FAdPkYkMYg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=0csy4yyyeK2AmSYMeuhklSJZQhYq/NrsNgOTjTFHzuuLeF8Nu9NCkXSmcEUZuZN7V
-         anHbM8mogDSj/xeRu1co7NT85d/1itjhoCUOh6JjJrU4XOSCA1qsPu8DGe4Yv/9CEK
-         oeWOxoxwmciRMsy8Z5R4M5DiS3bjdiUUFWK/h8Xg=
-Message-ID: <08a8b202-69b4-e154-28f5-337a898acf61@digikod.net>
-Date:   Fri, 14 Oct 2022 16:40:01 +0200
+        Fri, 14 Oct 2022 11:36:05 -0400
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C08A12FFBB
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Oct 2022 08:36:03 -0700 (PDT)
+Received: by mail-il1-x135.google.com with SMTP id g13so2727602ile.0
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Oct 2022 08:36:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ytj3+kIoMyv4FX1lyc9tQ8OGwlhuPVWv2RqpKd5YyDU=;
+        b=JR0xr0fIsskJTzO427SqrUgqb1DWjVVtwkmODGGjkSZJ4FMfX2ZsXK6Mm2spguP5Fi
+         nyMmB82X0MA3h2JOCrtW3gl25dxsj4jiveXGKR6Z8STGPeeVjmS2VTjycP+RBn0tVhJl
+         RTnAEkh5Qc5sIHtelNV80ZV0a1sV1g2AGrc8jU/2ZL2m19qrw9p6cxMlxHCX1YxptKvv
+         NWg2UfEw3P0qeI86qPSMdLeiUDU5LTngBxTc3KHC3yReE92Ufkh4RP9JTPdhqddOZWDg
+         6zCkai4UfclKgR3ffQ4VMj7CkN9eR7ciGLAV2JgtjXPGADfXQqzzW05FazqVHzwOwv/N
+         dRvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ytj3+kIoMyv4FX1lyc9tQ8OGwlhuPVWv2RqpKd5YyDU=;
+        b=xq04ztFYrPkZUvwkCYH6/Im5N5mvl3Gmx2B4HOH+0Ej/lHORrQtAN2dbCHzliWRWgZ
+         SistCEACnJ58OhwdVvDbwEcUUk6N1KVV/mz0XhgBLI5x3IyWOG3GmwaC5uWA9BWBbYyz
+         RlCJOOD8Oz8KRAvvhfguSzpXpYlXUX+83XHiU9zwNeicxu1Qk3uvUpPv64tlL6Nk9hMD
+         6QTLBHdfihjm71Gy9dqi1rOnKkBMgkLpt4f5aAOEpe1CRD0fKY2YF7ejk4G5Jyhfm11F
+         gUebDwF62zb5fIfXAftmh2UHSjalGeCqUT9pNtBN+UafXFAvAfdkOgVWPfe0c8VnlxPx
+         OU+g==
+X-Gm-Message-State: ACrzQf3V9TKuckZqdBdi/vQf9WmSqJzuC9uk/h6pLinLnuKSLWm5DTjd
+        DVYKZDNeS2uRm8qj1YwXexW19NZdjOhbp0ibEfqlCg==
+X-Google-Smtp-Source: AMsMyM7SIvsGjFVFdZwPi/xpWspvv9GkH6JpuhbcRadzt8f/XtARZ9xDpqKEwls7AQ8KnXFNx+6y9OAVQ6OkLrOgJ1E=
+X-Received: by 2002:a05:6e02:1c27:b0:2fc:6aa7:edda with SMTP id
+ m7-20020a056e021c2700b002fc6aa7eddamr2701536ilh.177.1665761762432; Fri, 14
+ Oct 2022 08:36:02 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH 1/9] integrity: Prepare for having "ima" and "evm"
- available in "integrity" LSM
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>, Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, KP Singh <kpsingh@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+References: <20221006082735.1321612-1-keescook@chromium.org>
+ <20221006082735.1321612-2-keescook@chromium.org> <20221006090506.paqjf537cox7lqrq@wittgenstein>
+ <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com> <2032f766-1704-486b-8f24-a670c0b3cb32@app.fastmail.com>
+In-Reply-To: <2032f766-1704-486b-8f24-a670c0b3cb32@app.fastmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 14 Oct 2022 17:35:26 +0200
+Message-ID: <CAG48ez3hM+-V39QpFaNfRJxVrQVBu2Dm-B-xFN2GEt9p81Vd2Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jorge Merlino <jorge.merlino@canonical.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
         John Johansen <john.johansen@canonical.com>,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20221013222702.never.990-kees@kernel.org>
- <20221013223654.659758-1-keescook@chromium.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20221013223654.659758-1-keescook@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Todd Kjos <tkjos@google.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Prashanth Prahlad <pprahlad@redhat.com>,
+        Micah Morton <mortonm@chromium.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Oct 14, 2022 at 5:18 AM Andy Lutomirski <luto@kernel.org> wrote:
+> On Thu, Oct 6, 2022, at 7:13 AM, Jann Horn wrote:
+> > On Thu, Oct 6, 2022 at 11:05 AM Christian Brauner <brauner@kernel.org> =
+wrote:
+> >> On Thu, Oct 06, 2022 at 01:27:34AM -0700, Kees Cook wrote:
+> >> > The check_unsafe_exec() counting of n_fs would not add up under a he=
+avily
+> >> > threaded process trying to perform a suid exec, causing the suid por=
+tion
+> >> > to fail. This counting error appears to be unneeded, but to catch an=
+y
+> >> > possible conditions, explicitly unshare fs_struct on exec, if it end=
+s up
+> >>
+> >> Isn't this a potential uapi break? Afaict, before this change a call t=
+o
+> >> clone{3}(CLONE_FS) followed by an exec in the child would have the
+> >> parent and child share fs information. So if the child e.g., changes t=
+he
+> >> working directory post exec it would also affect the parent. But after
+> >> this change here this would no longer be true. So a child changing a
+> >> workding directoro would not affect the parent anymore. IOW, an exec i=
+s
+> >> accompanied by an unshare(CLONE_FS). Might still be worth trying ofc b=
+ut
+> >> it seems like a non-trivial uapi change but there might be few users
+> >> that do clone{3}(CLONE_FS) followed by an exec.
+> >
+> > I believe the following code in Chromium explicitly relies on this
+> > behavior, but I'm not sure whether this code is in active use anymore:
+> >
+> > https://source.chromium.org/chromium/chromium/src/+/main:sandbox/linux/=
+suid/sandbox.c;l=3D101?q=3DCLONE_FS&sq=3D&ss=3Dchromium
+>
+> Wait, this is absolutely nucking futs.  On a very quick inspection, the s=
+harable things like this are fs, files, sighand, and io.    files and sigha=
+nd get unshared, which makes sense.  fs supposedly checks for extra refs an=
+d prevents gaining privilege.  io is... ignored!  At least it's not immedia=
+tely obvious that io is a problem.
+>
+> But seriously, this makes no sense at all.  It should not be possible to =
+exec a program and then, without ptrace, change its cwd out from under it. =
+ Do we really need to preserve this behavior?
 
-On 14/10/2022 00:36, Kees Cook wrote:
-> Move "integrity" LSM to the end of the Kconfig list and prepare for
-> having ima and evm LSM initialization called from the top-level
-> "integrity" LSM.
-> 
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Mimi Zohar <zohar@linux.ibm.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: "Mickaël Salaün" <mic@digikod.net>
-> Cc: linux-security-module@vger.kernel.org
-> Cc: linux-integrity@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->   security/Kconfig                  | 10 +++++-----
->   security/integrity/evm/evm_main.c |  4 ++++
->   security/integrity/iint.c         | 17 +++++++++++++----
->   security/integrity/ima/ima_main.c |  4 ++++
->   security/integrity/integrity.h    |  6 ++++++
->   5 files changed, 32 insertions(+), 9 deletions(-)
-> 
-> diff --git a/security/Kconfig b/security/Kconfig
-> index e6db09a779b7..d472e87a2fc4 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -246,11 +246,11 @@ endchoice
->   
->   config LSM
->   	string "Ordered list of enabled LSMs"
-> -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-> -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-> -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-> -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
-> -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
-> +	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf,integrity" if DEFAULT_SECURITY_SMACK
-> +	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf,integrity" if DEFAULT_SECURITY_APPARMOR
-> +	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf,integrity" if DEFAULT_SECURITY_TOMOYO
-> +	default "landlock,lockdown,yama,loadpin,safesetid,bpf,integrity" if DEFAULT_SECURITY_DAC
-> +	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf,integrity"
+I agree that this is pretty wild.
 
-This is not backward compatible, but can easily be fixed thanks to 
-DEFINE_LSM().order
+The single user I'm aware of is Chrome, and as far as I know, they use
+it for establishing their sandbox on systems where unprivileged user
+namespaces are disabled - see
+<https://chromium.googlesource.com/chromium/src/+/main/docs/linux/suid_sand=
+box.md>.
+They also have seccomp-based sandboxing, but IIRC there are some small
+holes that mean it's still useful for them to be able to set up
+namespaces, like how sendmsg() on a unix domain socket can specify a
+file path as the destination address.
 
-Side node: I proposed an alternative to that but it was Nacked: 
-https://lore.kernel.org/all/20210222150608.808146-1-mic@digikod.net/
+(By the way, I think maybe Chrome wouldn't need this wacky trick with
+the shared fs_struct if the "NO_NEW_PRIVS permits chroot()" thing had
+ever landed that you
+(https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.1327=
+858005.git.luto@amacapital.net/)
+and Micka=C3=ABl Sala=C3=BCn proposed in the past... or alternatively, if t=
+here
+was a way to properly filter all the syscalls that Chrome has to
+permit for renderers.)
 
-
->   	help
->   	  A comma-separated list of LSMs, in initialization order.
->   	  Any LSMs left off this list will be ignored. This can be
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> index 2e6fb6e2ffd2..1ef965089417 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -904,3 +904,7 @@ static int __init init_evm(void)
->   }
->   
->   late_initcall(init_evm);
-> +
-> +void __init integrity_lsm_evm_init(void)
-> +{
-> +}
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index 8638976f7990..4f322324449d 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -18,7 +18,6 @@
->   #include <linux/file.h>
->   #include <linux/uaccess.h>
->   #include <linux/security.h>
-> -#include <linux/lsm_hooks.h>
->   #include "integrity.h"
->   
->   static struct rb_root integrity_iint_tree = RB_ROOT;
-> @@ -172,19 +171,29 @@ static void init_once(void *foo)
->   	mutex_init(&iint->mutex);
->   }
->   
-> -static int __init integrity_iintcache_init(void)
-> +void __init integrity_add_lsm_hooks(struct security_hook_list *hooks,
-> +				    int count)
-> +{
-> +	security_add_hooks(hooks, count, "integrity");
-> +}
-> +
-> +static int __init integrity_lsm_init(void)
->   {
->   	iint_cache =
->   	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cache),
->   			      0, SLAB_PANIC, init_once);
-> +
-> +	integrity_lsm_ima_init();
-> +	integrity_lsm_evm_init();
-> +
->   	return 0;
->   }
-> +
->   DEFINE_LSM(integrity) = {
->   	.name = "integrity",
-> -	.init = integrity_iintcache_init,
-> +	.init = integrity_lsm_init,
-
-For backward compatibility, there should be an ".order = 
-LSM_ORDER_FIRST," here.
+(But also, to be clear, I don't speak for Chrome, this is just my
+understanding of how their stuff works.)
