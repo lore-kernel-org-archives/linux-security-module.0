@@ -2,101 +2,114 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A7FC4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 03:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E21AC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 06:40:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229886AbiJNDyX (ORCPT
+        id S229678AbiJNGk2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Oct 2022 23:54:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37822 "EHLO
+        Fri, 14 Oct 2022 02:40:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229788AbiJNDyT (ORCPT
+        with ESMTP id S229533AbiJNGk1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Oct 2022 23:54:19 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7FC2196B43
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 20:54:16 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id i3so3753208pfc.11
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Oct 2022 20:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BQMeWu4NUS5XHxpYjKe5lPkeUdCMvZeCueelrFJNv7g=;
-        b=hVsj8yBrgKuKkK7M8xkb+HyKOAR1jqjYGdTOSBbuFw1xtWaGZRldfWed4W2s4PX8vj
-         gMHC+/MyceBR4MHXpZkl8R1pYEcZzKSZwB0eAGg1tk/SYjiAH2KDJtEmiRns8TV0xEj3
-         Z26bm3qSWSWPK1j2fJ6oI+/9oCd9hoET+A3WM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BQMeWu4NUS5XHxpYjKe5lPkeUdCMvZeCueelrFJNv7g=;
-        b=VDnR8Yooy3qa4lgUAL6YY9aBxBZ3g6DT2ftB0NliHZk6UYi+VI11GwTp6KEI1SGUi0
-         Fd7+YpEUXVwaKDT8RB64gd08ObhDuwBLptgL6FaYM82qjdENjvHsvUP8lOGdRdN5EZ8o
-         YKKzBHBNWyGOwNh3EvNm0OQxSRv4TQYncfq2idfzT046AWzGc7Woal81wsY1MXDti9hC
-         vMJtXyEEgSrtVyaim/0NwqqWOCituSU/6yVlBw9cwZPYhOKjKRs3EyN3c2gHI5cv34b+
-         1PSizypiS3G247uhsFzTZUwZR4CDlw3Zl5rR7aCNccp7gxBfI9x16t+ri9fhuZ//1YA+
-         axJw==
-X-Gm-Message-State: ACrzQf0qciOoHoANIZ97W/GZf+bNDpbZwh8ewM4Koa91guWSpVrJ8Lxw
-        ZhhmV++MfK1Eb9ND+zIt6bCqrg==
-X-Google-Smtp-Source: AMsMyM7vCfA8wFrsyDJjLw6KB1kvioIeLEFXGEDdVpYcSJdvjz4XjS2+1dICHf/21nwZwt5L/DrvHw==
-X-Received: by 2002:a63:591c:0:b0:464:bb3b:d1ad with SMTP id n28-20020a63591c000000b00464bb3bd1admr2830780pgb.146.1665719656162;
-        Thu, 13 Oct 2022 20:54:16 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h4-20020a17090a710400b0020ae09e9724sm474301pjk.53.2022.10.13.20.54.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Oct 2022 20:54:15 -0700 (PDT)
-Date:   Thu, 13 Oct 2022 20:54:14 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Jann Horn <jannh@google.com>,
-        Christian Brauner <brauner@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jorge Merlino <jorge.merlino@canonical.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
+        Fri, 14 Oct 2022 02:40:27 -0400
+Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 600F03CBC2;
+        Thu, 13 Oct 2022 23:40:16 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id B6E851321; Fri, 14 Oct 2022 08:40:10 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.steuer-voss.de (Postfix) with ESMTP id B46441316;
+        Fri, 14 Oct 2022 08:40:10 +0200 (CEST)
+Date:   Fri, 14 Oct 2022 08:40:10 +0200 (CEST)
+From:   Nikolaus Voss <nv@vosn.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+cc:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Todd Kjos <tkjos@google.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Prashanth Prahlad <pprahlad@redhat.com>,
-        Micah Morton <mortonm@chromium.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
-Message-ID: <202210132052.32AE372@keescook>
-References: <20221006082735.1321612-1-keescook@chromium.org>
- <20221006082735.1321612-2-keescook@chromium.org>
- <20221006090506.paqjf537cox7lqrq@wittgenstein>
- <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
- <2032f766-1704-486b-8f24-a670c0b3cb32@app.fastmail.com>
+        "Serge E. Hallyn" <serge@hallyn.com>, Yael Tzur <yaelt@google.com>,
+        Cyril Hrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] KEYS: encrypted: fix key instantiation with user-provided
+ data
+In-Reply-To: <924a29d81cc7e0d3e2f62f693a0d8fcef97b9779.camel@linux.ibm.com>
+Message-ID: <c620d6ed-d97f-b0c3-574-7b3cd63a7799@vosn.de>
+References: <20221013064308.857011E25@mail.steuer-voss.de> <924a29d81cc7e0d3e2f62f693a0d8fcef97b9779.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2032f766-1704-486b-8f24-a670c0b3cb32@app.fastmail.com>
+Content-Type: multipart/mixed; boundary="8323329-448557197-1665729610=:29571"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 13, 2022 at 08:18:04PM -0700, Andy Lutomirski wrote:
-> But seriously, this makes no sense at all.  It should not be possible to exec a program and then, without ptrace, change its cwd out from under it.  Do we really need to preserve this behavior?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Yup, already abandoned:
-https://lore.kernel.org/lkml/202210061301.207A20C8E5@keescook/
+--8323329-448557197-1665729610=:29571
+Content-Type: text/plain; charset=ISO-8859-15; format=flowed
+Content-Transfer-Encoding: 8BIT
 
--- 
-Kees Cook
+On Thu, 13 Oct 2022, Mimi Zohar wrote:
+> On Thu, 2022-10-13 at 08:39 +0200, Nikolaus Voss wrote:
+>> Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
+>> decrypted data") added key instantiation with user provided decrypted data.
+>> The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
+>> Fix this to use hex2bin instead.
+>>
+>> Old keys created from user provided decrypted data saved with "keyctl pipe"
+>> are still valid, however if the key is recreated from decrypted data the
+>> old key must be converted to the correct format. This can be done with a
+>> small shell script, e.g.:
+>>
+>> BROKENKEY=abcdefABCDEF1234567890aaaaaaaaaa
+>> NEWKEY=$(echo -ne $BROKENKEY | xxd -p -c32)
+>> keyctl add user masterkey "$(cat masterkey.bin)" @u
+>> keyctl add encrypted testkey "new user:masterkey 32 $NEWKEY" @u
+>>
+>> It is encouraged to switch to a new key because the effective key size
+>> of the old keys is only half of the specified size.
+>
+> Both the old and new decrypted data size is 32 bytes.  Is the above
+> statement necessary, especially since the Documentation example does
+> the equivalent?
+
+The old key has the same byte size but all bytes must be within the 
+hex-ascíi range of characters, otherwise it is refused by the kernel.
+So if you wanted a 32 bytes key you get 16 effective bytes for the key. 
+In the above example the string size of the $BROKENKEY is 32, while 
+the string size of the $NEWKEY is 64.
+
+If you do
+
+$ echo $NEWKEY
+6162636465664142434445463132333435363738393061616161616161616161
+
+for the example, the range problem is obvious, so $NEWKEY is still broken. 
+That's why it should only be used to recover data which should be 
+reencypted with a new key. If you count exactly, the effective key size is 
+_slightly_ longer than half of the specified size, but it is still a 
+severe security problem.
+
+>
+>> The corresponding test for the Linux Test Project ltp has also been
+>> fixed (see link below).
+>
+> The LTP patch still needs to be revised, but the "Link" is a reference
+> to the discussion.  Is the above statement necessary?
+
+As long as the patch is not accepted the discussion is helpful. But feel 
+free to delete it upon integration ;-).
+
+>
+>>
+>> Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided decrypted data")
+>> Cc: stable <stable@kernel.org>
+>> Link: https://lore.kernel.org/ltp/20221006081709.92303897@mail.steuer-voss.de/
+>> Signed-off-by: Nikolaus Voss <nikolaus.voss@haag-streit.com>
+>
+> Otherwise,
+>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+
+Thanks Mimi!
+--8323329-448557197-1665729610=:29571--
