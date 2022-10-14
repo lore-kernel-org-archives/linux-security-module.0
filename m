@@ -2,142 +2,96 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E56C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 16:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFCEC43219
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Oct 2022 17:59:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbiJNQZ3 (ORCPT
+        id S229827AbiJNR7s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Oct 2022 12:25:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42810 "EHLO
+        Fri, 14 Oct 2022 13:59:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229969AbiJNQZ1 (ORCPT
+        with ESMTP id S229894AbiJNR7q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Oct 2022 12:25:27 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AC2A57548
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Oct 2022 09:25:25 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id 81so6200011ybf.7
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Oct 2022 09:25:25 -0700 (PDT)
+        Fri, 14 Oct 2022 13:59:46 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A9255F5F
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Oct 2022 10:59:38 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id t12-20020a17090a3b4c00b0020b04251529so5405028pjf.5
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Oct 2022 10:59:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NcdIdCoD13PsVdF7VemIWCKC21xbZgC+dlVWP2DevsU=;
-        b=0XzxQYtHFbIrXn8AS8vsoqDTkWCOBrHLEQFRujV8atSDmeImDUO47FOUArU55vzqNA
-         moMrG/7iYJbwyioQ7slGp1rAYns2UOfNyN8xtPsP9ZvQkF8+sFK+bH1W2Cnuzy4l6tny
-         n0XJmGsvSBeHB50i30Vo7KKjsyS3ZnsvUqBZQUH5Ta/m5YjDbLiwlJuW37qfRIdd6asi
-         JVBMNr5PUIuRElKOVHzDZb9UPTRMclwFFDpSI1E0th8GiBX9BNpXbbj3r+KE9v3xhG65
-         3Bs5ADQcT2I8MrYHafd6NHU4zxo8MNAjyGNRvzc/Jhsr1yY9J9eThlJ0mg8ypzRFcZ9X
-         HaWg==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lIA5kCd21RHEnMbxdNImt2sQ/3g725z4r3mMj6tBAeg=;
+        b=hfa/QWPjWqnauRAj8LTTvkLH8F/ZfZmIPDY/huHYxu5usQnH2THr+sGzN/cWVm8Hg4
+         hi3JZA4hN2jg9g1okYOWDiwT/CAMzepro+6AZLKfW7vNz8Rp+A8Q9bPaTIzbcberVsYN
+         2A0sqgFqWi0uCLu/Ii+aL2/kLXUD86KYe2af4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NcdIdCoD13PsVdF7VemIWCKC21xbZgC+dlVWP2DevsU=;
-        b=vrsPCdir9ODupGoDZHjvys6J5ct6b4I+iGAAMjHugEBHXwXrOb0NhooIo7vz6cZ6sM
-         B584tqj65y8y8VjQXVFjRtWFnpW/4G/6t1HdqCoHhcpo5VxG0CC0lAX3IQRn2RUK16uD
-         R240sE6oRYBo7xKwAAcdOihglLfqW4SctoslLlVduy+5z2A0NOiHbyu8lIdkOGAkV8pf
-         Lcx8M6c/1UCFOzgCZ4EtZ9w/N4RWPhpF/Le2BNhfZKc2I804+r3pqKNNCNe1tr0KevDc
-         Zn7aKKEZYq1XhLmGRFRdx8PeQrxR8W6cG9nwt4wIQ4vX+JPxGlxyVrrwzUnGFb1DgGfV
-         t2hg==
-X-Gm-Message-State: ACrzQf2qJLOrD0+YMC5d7f4fL+iI03HQSdhUi1hy25VwL3lY2W45BBXY
-        wUWY32zgf5MgDUBXJG8x6RBb/9SFNllGeovRaic1
-X-Google-Smtp-Source: AMsMyM6ady9Wb/I8bWW9rB+anqAQUZjNjnrqoCisyeI5hegnDjV4ximcDWV1xI5TfdzL4x9FJGsT6gLoO0Pu/Uib5Fo=
-X-Received: by 2002:a25:9a88:0:b0:6b9:c29a:2f4b with SMTP id
- s8-20020a259a88000000b006b9c29a2f4bmr5348869ybo.236.1665764724292; Fri, 14
- Oct 2022 09:25:24 -0700 (PDT)
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lIA5kCd21RHEnMbxdNImt2sQ/3g725z4r3mMj6tBAeg=;
+        b=h7edoaOqOuJFKdQ/MyyINxX/LurFObrSd8aiBGQovmzUbIdtX5eE+ZRJp8cFFf+zyT
+         14uoRPSXrTS1OX4RUIGzMZmsACHLZMWjnkMHROcEyTda3wuq4+iS21fH0hnGkNXbwSgF
+         5yHU9LY/tWfSBmtPmKki8xQWmCHXLHzeaVikW26fbMkaQd0/OFNgW5kfiXc82fD19bVM
+         2J4t1yax2TUeIaj5EYs5avxN3/vPlA0+xX0MdGo+XVCiuihyiQY+Vi4aU/jgo6en0kSs
+         GkdKtnEkjYtod8zRJuECylxajjKcnYkf2ZP5c6+BI+c7uj9n00MwgqzcbQAjqzggdKC4
+         JHHQ==
+X-Gm-Message-State: ACrzQf3MDlEfDtlUFeG2pRaoXH9trbQKDQxN+s5bSFrYlc9eIibqIXD6
+        X7ogxDOqRn9D5zHWOSYafoYs9g==
+X-Google-Smtp-Source: AMsMyM4TRh2gr+kOS0rnlcc/KQKS33NEffPf3pWG7t7imgdj7HB2jOO7UNnIZR4eUJsSLYpCw3FUVA==
+X-Received: by 2002:a17:90b:3d8:b0:20a:8e90:8e8c with SMTP id go24-20020a17090b03d800b0020a8e908e8cmr6907001pjb.138.1665770377827;
+        Fri, 14 Oct 2022 10:59:37 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id w11-20020a170902ca0b00b0017f7fa6808csm2015707pld.87.2022.10.14.10.59.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Oct 2022 10:59:36 -0700 (PDT)
+Date:   Fri, 14 Oct 2022 10:59:35 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, KP Singh <kpsingh@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/9] integrity: Prepare for having "ima" and "evm"
+ available in "integrity" LSM
+Message-ID: <202210141050.A8DF7D10@keescook>
+References: <20221013222702.never.990-kees@kernel.org>
+ <20221013223654.659758-1-keescook@chromium.org>
+ <08a8b202-69b4-e154-28f5-337a898acf61@digikod.net>
 MIME-Version: 1.0
-References: <166543910984.474337.2779830480340611497.stgit@olly>
- <20221013085333.26288e44@kernel.org> <CAHC9VhT5A6M27PO1_NKgqaRJXkTyZv_kjfPF=VNSLZ1nx5GFrA@mail.gmail.com>
- <CAADnVQ+1RZWuvjCEAro0OW9+1w12U2R6v3+kTR5T7pWvPC7gLg@mail.gmail.com>
-In-Reply-To: <CAADnVQ+1RZWuvjCEAro0OW9+1w12U2R6v3+kTR5T7pWvPC7gLg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 14 Oct 2022 12:25:12 -0400
-Message-ID: <CAHC9VhRModyV8B9o7_DqkanWf79GzPGMtirw=xCt2wexp5RJ6w@mail.gmail.com>
-Subject: Re: [PATCH] lsm: make security_socket_getpeersec_stream() sockptr_t safe
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        selinux@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <08a8b202-69b4-e154-28f5-337a898acf61@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 14, 2022 at 11:51 AM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
-> On Thu, Oct 13, 2022 at 8:59 AM Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > On Thu, Oct 13, 2022 at 11:53 AM Jakub Kicinski <kuba@kernel.org> wrote:
-> > > On Mon, 10 Oct 2022 17:58:29 -0400 Paul Moore wrote:
-> > > > Commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
-> > > > sockptr_t argument") made it possible to call sk_getsockopt()
-> > > > with both user and kernel address space buffers through the use of
-> > > > the sockptr_t type.  Unfortunately at the time of conversion the
-> > > > security_socket_getpeersec_stream() LSM hook was written to only
-> > > > accept userspace buffers, and in a desire to avoid having to change
-> > > > the LSM hook the commit author simply passed the sockptr_t's
-> > > > userspace buffer pointer.  Since the only sk_getsockopt() callers
-> > > > at the time of conversion which used kernel sockptr_t buffers did
-> > > > not allow SO_PEERSEC, and hence the
-> > > > security_socket_getpeersec_stream() hook, this was acceptable but
-> > > > also very fragile as future changes presented the possibility of
-> > > > silently passing kernel space pointers to the LSM hook.
-> > > >
-> > > > There are several ways to protect against this, including careful
-> > > > code review of future commits, but since relying on code review to
-> > > > catch bugs is a recipe for disaster and the upstream eBPF maintainer
-> > > > is "strongly against defensive programming", this patch updates the
-> > > > LSM hook, and all of the implementations to support sockptr_t and
-> > > > safely handle both user and kernel space buffers.
-> > >
-> > > Code seems sane, FWIW, but the commit message sounds petty,
-> > > which is likely why nobody is willing to ack it.
-> >
-> > Heh, feel free to look at Alexei's comments to my original email; the
-> > commit description seems spot on to me.
->
-> Paul,
->
-> The commit message:
-> "
-> also very fragile as future changes presented the possibility of
-> silently passing kernel space pointers to the LSM hook.
-> "
-> shows that you do not understand how copy_from_user works.
->
-> Martin's change didn't introduce any fragility.
-> Do you realize that user space can pass any 64-bit value
-> as 'user pointer' via syscall, right?
-> And that value may just as well be a valid kernel address.
-> copy_from_user always had a check to prevent reading kernel
-> memory. It will simply return an error when it sees
-> kernel address.
->
-> Your patch itself is not wrong per-se, but it's doing
-> not what you think it's doing.
-> Right now the patch is useless, but
-> if switch statement in sol_socket_sockopt() would be relaxed
-> the bpf progs would be able to pass kernel pointers
-> to security_socket_getpeersec which makes little sense at this point.
-> So the code you're adding will be a dead code without a test
-> for the foreseeable future.
-> Because of that I can only add my Nack.
+On Fri, Oct 14, 2022 at 04:40:01PM +0200, Mickaël Salaün wrote:
+> This is not backward compatible
 
-Oh don't worry, I've already registered your NACK because the patch
-has a three line diff in net/core/sock.c and it's going in via the LSM
-tree.  I'll CC you on the pull request and mention your NACK to Linus,
-you can feel free to make whatever argument you believe justifies your
-objection at that point in time.
+Why? Nothing will be running LSM hooks until init finishes, at which
+point the integrity inode cache will be allocated. And ima and evm don't
+start up until lateinit.
 
-However, just so I'm clear on your new objection, you are basically
-saying that copy_to_sockptr() shouldn't exist?  If you honestly
-believe that, and you aren't just picking on this patch because of a
-grudge, I would encourage you to submit a patch removing
-copy_to_sockptr() and friends from the kernel and let's see what
-happens; please CC me on the patch(es) as I think the discussion for
-that would be very interesting :)
+>, but can easily be fixed thanks to
+> DEFINE_LSM().order
+
+That forces the LSM to be enabled, which may not be desired?
+
+> Side node: I proposed an alternative to that but it was Nacked:
+> https://lore.kernel.org/all/20210222150608.808146-1-mic@digikod.net/
+
+Yeah, for the reasons pointed out -- that can't work. The point is to
+not have The Default LSM. I do think Casey's NAK was rather prickly,
+though. ;)
 
 -- 
-paul-moore.com
+Kees Cook
