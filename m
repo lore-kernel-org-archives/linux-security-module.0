@@ -2,167 +2,228 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4688EC43217
-	for <linux-security-module@archiver.kernel.org>; Sun, 16 Oct 2022 14:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30884C433FE
+	for <linux-security-module@archiver.kernel.org>; Sun, 16 Oct 2022 18:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbiJPOw5 (ORCPT
+        id S229791AbiJPSLn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 16 Oct 2022 10:52:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41970 "EHLO
+        Sun, 16 Oct 2022 14:11:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbiJPOw5 (ORCPT
+        with ESMTP id S229574AbiJPSLh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 16 Oct 2022 10:52:57 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B01B926AEE
-        for <linux-security-module@vger.kernel.org>; Sun, 16 Oct 2022 07:52:53 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id y205so10695740yby.13
-        for <linux-security-module@vger.kernel.org>; Sun, 16 Oct 2022 07:52:53 -0700 (PDT)
+        Sun, 16 Oct 2022 14:11:37 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1BD1183BA;
+        Sun, 16 Oct 2022 11:11:35 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id w18so20397745ejq.11;
+        Sun, 16 Oct 2022 11:11:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZdHbgEIqE71zqzvD5lFD1iP09tkUsZi6uBS+RZqLGJk=;
-        b=xXVGCqLxPehqC5Kal6037wodgHSecfAsuPSBzWQ1Qeq8zBWBTXn9mdDlsJBBC86wgu
-         BEu3uRO4I8S2rBj/1d0f+w3HAueW4w1XOC9ZVr9Lf4QHaBy+3VSrFcyT3D0ETHq0tro5
-         WeQItCzXuyvYdRGjxz6MVk7LJmambgDKgjknFbutI5rOwqXi8PdxIXv9xrZ8/CsjD1M2
-         nii1cSrUGoM6RoC80IICwGYWlPbJd3esCsbrdDZo9aXJC4FNMPHL9iICqeeE3oacb2A1
-         mDtZ/ycDJq5IbDQWTm7H+hhCB9Jk1sGLLpAmZFXlW0qQbm867+JfIg1/pgPsalj8gjm5
-         a7mw==
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MZf9JSBULdHyGwtYSiGEH5QlAz834It5LucVZbQQMtY=;
+        b=i1NppKAe+TF8yd75dMhjwNOm31MlLb+F+hAxD6OvjSBAf/A+2PtIOQhUiTp1LfQeU+
+         kCHsglt+F3tjc0mtL+qCmR8LEziKGr7IgXXL0sN4TL2ON6G4D3k/vo4QB1ks8nuzruo0
+         kuK2dU5f6UwGADSXe9DX7HYIh9hi7nmGL+ARj8fTAJqNguJV1CnSowd2j34COZVxO22h
+         LLuebhpzQSoawoJ8pVjRbXRwkG3On60YBGa9vHL4xgfuXTDO2hJgObOZ82k+DeFfH2qi
+         um+CrrHcQOYngRHNEvbuEhnythjA/wQ5OBDk1x7r0VsBM//Bx3oHKNdwnAB/CMCmEwaH
+         GM+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZdHbgEIqE71zqzvD5lFD1iP09tkUsZi6uBS+RZqLGJk=;
-        b=12edXFe7+/e0l5V4UHyrBtY7+lbbdWZNXRHaMOFECOY1D8sxYpvypfu2GB2BvD60gL
-         RTaFVl2AaaoxJ9qkXk+vrCw7sEEPM5v1ta35TByoGVp1gTDvgjnX1BXLq7GwtDUG/h4x
-         aS7OkmymIsJHiIrEW1yZy2tqaX7lgo81A3k/0shs/RY0dSDfNtK0MaiR7Pg20Z+pE7+u
-         Cq8zlhI9ugfBamqoAz9yfBE5+QqjIPmQRVRLWldIQ7nyQw8ozFk8tjBqfnAA+6w025kh
-         0HFBsUKBbpifsziFFqspGCRx6FgRgNnN6l0lbvGnfQplVsvwLgUfnkgdYdYKat0Jw1Qq
-         KQPg==
-X-Gm-Message-State: ACrzQf3/nglBhA/PRDiVmcEvOkKLrUb4uZmCh8GPs7yWE1c9MiW0zKTN
-        F6dontZ1bABCntbaS0abjSvw26fWNnGi1HECTZWn
-X-Google-Smtp-Source: AMsMyM5gRTtPYzoabg/Y0bfdBfHZFAndDRmG+NHcskvOABLdhFlFTzIX3FhB4/EANoTxAQAz9MQgBJzs6ZnzTF97bUA=
-X-Received: by 2002:a05:6902:724:b0:6c0:1784:b6c7 with SMTP id
- l4-20020a056902072400b006c01784b6c7mr5849058ybt.15.1665931972823; Sun, 16 Oct
- 2022 07:52:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <0000000000008caae305ab9a5318@google.com> <000000000000618a8205eb160404@google.com>
-In-Reply-To: <000000000000618a8205eb160404@google.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 16 Oct 2022 10:52:41 -0400
-Message-ID: <CAHC9VhRt2vpArZ=bOrkBOGiAuoTdEcp2PRP5NtbyEZkuMHvopA@mail.gmail.com>
-Subject: Re: [syzbot] general protection fault in security_inode_getattr
-To:     syzbot <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com>
-Cc:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
-        daniel@iogearbox.net, dvyukov@google.com, hdanton@sina.com,
-        jmorris@namei.org, john.fastabend@gmail.com, kafai@fb.com,
-        kpsingh@chromium.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MZf9JSBULdHyGwtYSiGEH5QlAz834It5LucVZbQQMtY=;
+        b=2RgwRwwL5SD6biTr5S+vCwA2F5HrPShKNNzFhVCaV+NXljpU3yIaJiRap6s+R3ctRj
+         DfxJ9klodlPCdNqcDUGg3ggtRhN7cv/TFKhLVnBsQtDN24wrkfqAJFaxxQGhM1/WIJ42
+         VLIkKdyOOBZlcbFGJ3JqFFevuKvNnKr2sRvAOR0GUWpy9hlZkiAbVExvtAWA/JQ4NtXi
+         YpcKSHspk5xovMjILyJN0e/xIHKqscgN74aeIKSJnFpcAGQjWK9VHxv7LmJAMZ5DoRtF
+         LY92WOj3Tiskb0GRDBY50TOMXFL7KBjxVJEyNI63z37UKmABGHnOWSP7kHp3Hm8S+IXH
+         Q36g==
+X-Gm-Message-State: ACrzQf1DVgtj5BVNaKj8/pgoZ3EyNrIiU+VKbuVFPuicTugzWyBM60nH
+        uO2nZMkV8h5MxLdxGN4MVsU=
+X-Google-Smtp-Source: AMsMyM4zyxnWSURG70b3gbwyRkfwoySww19BUFH3STZNefgnInJDcc3lc1fSKxpKUL22rknv5zRnhg==
+X-Received: by 2002:a17:907:e93:b0:78d:b8ff:9b5f with SMTP id ho19-20020a1709070e9300b0078db8ff9b5fmr6090711ejc.12.1665943894226;
+        Sun, 16 Oct 2022 11:11:34 -0700 (PDT)
+Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id c22-20020a170906155600b007081282cbd8sm4854579ejd.76.2022.10.16.11.11.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Oct 2022 11:11:33 -0700 (PDT)
+Date:   Sun, 16 Oct 2022 20:11:31 +0200
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     Nathan Chancellor <nathan@kernel.org>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        netdev@vger.kernel.org, omosnace@redhat.com, serge@hallyn.com,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
-        tonymarislogistics@yandex.com, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Subject: Re: [PATCH v9 00/11] landlock: truncate support
+Message-ID: <Y0xJUy3igQXWPAeq@nuc>
+References: <20221008100935.73706-1-gnoack3000@gmail.com>
+ <b8566973-63bc-441f-96b9-f822e9944127@digikod.net>
+ <Y0g+TEgGGhZDm7MX@dev-arch.thelio-3990X>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Y0g+TEgGGhZDm7MX@dev-arch.thelio-3990X>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Oct 15, 2022 at 1:24 PM syzbot
-<syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com> wrote:
->
-> syzbot has found a reproducer for the following issue on:
->
-> HEAD commit:    55be6084c8e0 Merge tag 'timers-core-2022-10-05' of git://g..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=147637c6880000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=df75278aabf0681a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f07cc9be8d1d226947ed
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1585a0c2880000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1480a464880000
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/6c791937c012/disk-55be6084.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/cb21a2879b4c/vmlinux-55be6084.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/2d56267ed26f/mount_1.gz
->
-> The issue was bisected to:
->
-> commit 35697c12d7ffd31a56d3c9604066a166b75d0169
-> Author: Yonghong Song <yhs@fb.com>
-> Date:   Thu Jan 16 17:40:04 2020 +0000
->
->     selftests/bpf: Fix test_progs send_signal flakiness with nmi mode
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13032139900000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=10832139900000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17032139900000
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com
-> Fixes: 35697c12d7ff ("selftests/bpf: Fix test_progs send_signal flakiness with nmi mode")
->
-> general protection fault, probably for non-canonical address 0xdffffc000000000d: 0000 [#1] PREEMPT SMP KASAN
-> KASAN: null-ptr-deref in range [0x0000000000000068-0x000000000000006f]
-> CPU: 0 PID: 3761 Comm: syz-executor352 Not tainted 6.0.0-syzkaller-09589-g55be6084c8e0 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
-> RIP: 0010:d_backing_inode include/linux/dcache.h:542 [inline]
-> RIP: 0010:security_inode_getattr+0x46/0x140 security/security.c:1345
-> Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 04 01 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 5d 08 48 8d 7b 68 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 d7 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
-> RSP: 0018:ffffc9000400f578 EFLAGS: 00010212
-> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: 000000000000000d RSI: ffffffff83bd72fe RDI: 0000000000000068
-> RBP: ffffc9000400f750 R08: 0000000000000005 R09: 0000000000000000
-> R10: 0000000000000000 R11: 000000000008c07d R12: ffff8880763dca48
-> R13: ffffc9000400f750 R14: 00000000000007ff R15: 0000000000000000
-> FS:  00007f246f27e700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f246f27e718 CR3: 00000000717a9000 CR4: 0000000000350ef0
-> Call Trace:
->  <TASK>
->  vfs_getattr+0x22/0x60 fs/stat.c:158
->  ovl_copy_up_one+0x12c/0x2870 fs/overlayfs/copy_up.c:965
->  ovl_copy_up_flags+0x150/0x1d0 fs/overlayfs/copy_up.c:1047
->  ovl_maybe_copy_up+0x140/0x190 fs/overlayfs/copy_up.c:1079
->  ovl_open+0xf1/0x2d0 fs/overlayfs/file.c:152
->  do_dentry_open+0x6cc/0x13f0 fs/open.c:882
->  do_open fs/namei.c:3557 [inline]
->  path_openat+0x1c92/0x28f0 fs/namei.c:3691
->  do_filp_open+0x1b6/0x400 fs/namei.c:3718
->  do_sys_openat2+0x16d/0x4c0 fs/open.c:1310
->  do_sys_open fs/open.c:1326 [inline]
->  __do_sys_open fs/open.c:1334 [inline]
->  __se_sys_open fs/open.c:1330 [inline]
->  __x64_sys_open+0x119/0x1c0 fs/open.c:1330
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> RIP: 0033:0x7f246f2f2b49
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f246f27e2f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-> RAX: ffffffffffffffda RBX: 00007f246f3774b0 RCX: 00007f246f2f2b49
-> RDX: 0000000000000000 RSI: 0000000000000300 RDI: 0000000020000140
-> RBP: 00007f246f3442ac R08: 00007f246f27e700 R09: 0000000000000000
-> R10: 00007f246f27e700 R11: 0000000000000246 R12: 0031656c69662f2e
-> R13: 79706f636174656d R14: 0079616c7265766f R15: 00007f246f3774b8
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
+On Thu, Oct 13, 2022 at 09:35:24AM -0700, Nathan Chancellor wrote:
+> Hi Mickaël and Günther,
+> 
+> On Mon, Oct 10, 2022 at 12:35:31PM +0200, Mickaël Salaün wrote:
+> > Thanks Günther! This series looks good and is now in -next with some minor
+> > cosmetic comment changes.
+> > 
+> > Nathan, could you please confirm that this series work for you?
+> 
+> First of all, let me apologize for the delay in response. I am just now
+> getting back online after a week long vacation, which was definitely
+> poorly timed with the merge window :/
+> 
+> Unfortunately, with this series applied on top of commit e8bc52cb8df8
+> ("Merge tag 'driver-core-6.1-rc1' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core") as
+> indicated by the base commit information at the bottom of the cover
+> letter, I can still reproduce the original crash I reported. What is
+> even more odd is that I should be using the exact same tool versions
+> that Günther is, as I am also using Arch Linux as my distribution.
+> 
+> I have attached the exact .config that the build system produced after
+> my build, just in case there is something else in our environment that
+> could be causing difficulties in reproducing.
+> 
+> For what it is worth, I can reproduce this in a fresh Arch Linux
+> container, which should hopefully remove most environment concerns.
+> 
+> $ podman run \
+>     --interactive \
+>     --tty \
+>     --rm
+>     --volume .../linux-next:/linux-next \
+>     --workdir /linux-next \
+>     docker.io/archlinux:base-devel
+> # pacman -Syyu --noconfirm \
+>     aarch64-linux-gnu-gcc \
+>     bc \
+>     git \
+>     pahole \
+>     python3 \
+>     qemu-system-aarch64
+> ...
+> 
+> # aarch64-linux-gnu-gcc --version | head -1
+> aarch64-linux-gnu-gcc (GCC) 12.2.0
+> 
+> # aarch64-linux-gnu-as --version | head -1
+> GNU assembler (GNU Binutils) 2.39
+> 
+> # qemu-system-aarch64 --version | head -1
+> QEMU emulator version 7.1.0
+> 
+> # git log --first-parent --oneline e8bc52cb8df8^..
+> 5622ae16a601 landlock: Document Landlock's file truncation support
+> 6c8a1dadeae1 samples/landlock: Extend sample tool to support LANDLOCK_ACCESS_FS_TRUNCATE
+> d19c9ba61c75 selftests/landlock: Test ftruncate on FDs created by memfd_create(2)
+> bf5e5018edb5 selftests/landlock: Test FD passing from restricted to unrestricted processes
+> 4a7f660a22b2 selftests/landlock: Locally define __maybe_unused
+> 1a9015ef7014 selftests/landlock: Test open() and ftruncate() in multiple scenarios
+> 79bb219d0b7c selftests/landlock: Test file truncation support
+> dd3d0e23543e landlock: Support file truncation
+> dcade986e070 landlock: Document init_layer_masks() helper
+> 873afb813b11 landlock: Refactor check_access_path_dual() into is_access_to_paths_allowed()
+> cdda4d440c96 security: Create file_truncate hook from path_truncate hook
+> e8bc52cb8df8 Merge tag 'driver-core-6.1-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core
+> 
+> # mkdir build
+> 
+> # mv .config build
+> 
+> # mv rootfs.cpio build
+> 
+> # make -skj"$(nproc)" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- O=build Image.gz
+> 
+> # qemu-system-aarch64 \
+>     -machine virt,gic-version=max,virtualization=true \
+>     -cpu max,pauth-impdef=true \
+>     -kernel build/arch/arm64/boot/Image.gz \
+>     -append "console=ttyAMA0 earlycon" \
+>     -display none \
+>     -initrd build/rootfs.cpio \
+>     -m 512m \
+>     -nodefaults \
+>     -no-reboot \
+>     -serial mon:stdio
+> ...
+> [    0.000000] Linux version 6.0.0-08005-g5622ae16a601 (root@82bc572c5e5f) (aarch64-linux-gnu-gcc (GCC) 12.2.0, GNU ld (GNU Binutils) 2.39) #1 SMP Thu Oct 13 16:30:30 UTC 2022
+> ...
+> [    0.491767] Trying to unpack rootfs image as initramfs...
+> [    0.494156] Unable to handle kernel paging request at virtual address ffff00000851036a
+> [    0.494389] Mem abort info:
+> [    0.494466]   ESR = 0x0000000097c0c061
+> [    0.494601]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    0.494756]   SET = 0, FnV = 0
+> [    0.494957]   EA = 0, S1PTW = 0
+> [    0.495070]   FSC = 0x21: alignment fault
+> [    0.495214] Data abort info:
+> [    0.495298]   Access size = 8 byte(s)
+> [    0.495408]   SSE = 0, SRT = 0
+> [    0.495519]   SF = 1, AR = 1
+> [    0.495636]   CM = 0, WnR = 1
+> [    0.495759] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000041645000
+> [    0.495938] [ffff00000851036a] pgd=180000005fff8003, p4d=180000005fff8003, pud=180000005fff7003, pmd=180000005ffbd003, pte=0068000048510f07
+> [    0.496779] Internal error: Oops: 0000000097c0c061 [#1] SMP
+> [    0.497081] Modules linked in:
+> [    0.497341] CPU: 0 PID: 9 Comm: kworker/u2:0 Not tainted 6.0.0-08005-g5622ae16a601 #1
+> [    0.497643] Hardware name: linux,dummy-virt (DT)
+> [    0.497987] Workqueue: events_unbound async_run_entry_fn
+> [    0.498635] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [    0.498882] pc : apparmor_file_alloc_security+0x98/0x210
+> [    0.499132] lr : apparmor_file_alloc_security+0x48/0x210
+> [    0.499297] sp : ffff800008093960
+> [    0.499403] x29: ffff800008093960 x28: ffff800008093b30 x27: ffff000002201500
+> [    0.499679] x26: ffffa4c2a0e55de0 x25: ffff00000201cd05 x24: ffffa4c2a1cd0068
+> [    0.499901] x23: ffff000008510362 x22: ffff000008510360 x21: 0000000000000002
+> [    0.500153] x20: ffffa4c2a0f72000 x19: ffff00000201b2b0 x18: ffffffffffffffff
+> [    0.500375] x17: 000000000000003f x16: ffffa4c2a15d5008 x15: 0000000000000000
+> [    0.500606] x14: 0000000000000001 x13: 0000000000002578 x12: ffff00001fef1eb8
+> [    0.500830] x11: ffffa4c2a15ec860 x10: 0000000000000007 x9 : ffffa4c2a0bce9ec
+> [    0.501061] x8 : ffff000008510380 x7 : 0000000000000000 x6 : 0000000000001e23
+> [    0.501284] x5 : ffff000008510360 x4 : ffff800008093990 x3 : ffff000002017d80
+> [    0.501500] x2 : 0000000000000001 x1 : ffff00000851036a x0 : ffff00000201b2b0
+> [    0.501800] Call trace:
+> [    0.501957]  apparmor_file_alloc_security+0x98/0x210
+> [    0.502241]  security_file_alloc+0x6c/0xf0
+> [    0.502401]  __alloc_file+0x5c/0x100
+> [    0.502520]  alloc_empty_file+0x68/0x110
+> [    0.502630]  path_openat+0x50/0x1090
+> [    0.502743]  do_filp_open+0x88/0x13c
+> [    0.502858]  filp_open+0x110/0x1b0
+> [    0.502961]  do_name+0xbc/0x230
+> [    0.503105]  write_buffer+0x40/0x60
+> [    0.503234]  unpack_to_rootfs+0x100/0x2bc
+> [    0.503375]  do_populate_rootfs+0x70/0x134
+> [    0.503516]  async_run_entry_fn+0x40/0x1e0
+> [    0.503653]  process_one_work+0x1f4/0x460
+> [    0.503783]  worker_thread+0x188/0x4e0
+> [    0.503902]  kthread+0xe0/0xe4
+> [    0.503999]  ret_from_fork+0x10/0x20
+> [    0.504279] Code: 52800002 d2800000 d2800013 910022e1 (c89ffc20)
+> [    0.504647] ---[ end trace 0000000000000000 ]---
+> ...
+> 
+> I am not sure what else I can provide in order to reproduce this but I
+> am happy to do whatever is needed to get to the bottom of this.
 
-It doesn't look like this is a problem with
-security_inode_getattr()/d_backing_inode() as it appears that the
-passed path struct pointer has a bogus/NULL path->dentry pointer and
-to the best of my knowledge it would appear that vfs_getattr() (the
-caller) requires a valid path->dentry value.
+Thank you Nathan! I am able to reproduce this now with the .config you
+provided and will have a look.
 
-Looking quickly at the code, I wonder if there is something wonky
-going on in the overlayfs code, specifically ovl_copy_up_flags() and
-ovl_copy_up_one() as they have to play a number of tricks to handle
-the transparent overlays and copy up operations.  I'm not an overlayfs
-expert, but that seems like a good place to start digging further into
-this.
+—Günther
 
 -- 
-paul-moore.com
