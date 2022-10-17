@@ -2,85 +2,90 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EECD8C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Oct 2022 18:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A21C4321E
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Oct 2022 18:16:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229794AbiJQSPB (ORCPT
+        id S230182AbiJQSQ4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Oct 2022 14:15:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39834 "EHLO
+        Mon, 17 Oct 2022 14:16:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbiJQSPA (ORCPT
+        with ESMTP id S230203AbiJQSQz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Oct 2022 14:15:00 -0400
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31771EEE3
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Oct 2022 11:14:59 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id b25so7162539qkk.7
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Oct 2022 11:14:59 -0700 (PDT)
+        Mon, 17 Oct 2022 14:16:55 -0400
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD0AC74CFE
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Oct 2022 11:16:47 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id t186so14220869yba.12
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Oct 2022 11:16:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:user-agent:message-id:date
-         :to:from:subject:from:to:cc:subject:date:message-id:reply-to;
-        bh=aU8h9+ypy+2PCxvwWU9GRNf0d9lpWVNRA9Yo734m55o=;
-        b=faQ/MA50+ZojtouKxrRjDRvSw/3y/CARqZKBACdeEJwvv5/5MNzRopeu/s6GJHpZwN
-         0SmYylIgWrAOmg8nCNqOBOAtHNZ3bAZs4Mva0QADTU5YSS4QaRlCwEKQj/PZWoic6x28
-         NrTohhPSVn5xhN75pUPRLjx2wWOcNhxTUKS1YyjNXSkB/279g0JuRRaAbdoQW3DasuAh
-         UuzE6NYmYBmazqp+Qi/IFBW+dS1D8f2GWAV+NZf+lOHZ+y92/UfItL6vzPLxrLxytOFJ
-         khjmpDV+V/Qjq3Tc2nloA3wXDGT1XSgBr7BqaFmNXnx7zzqPnvM0cIWo50yVOgsUwJyu
-         hSBA==
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=re4sAlYmP46Ps54s9+Rc0/9KShWmdIukkLH5HLDkCa0=;
+        b=tPWuv3ZxR+juLMtYGHK/E3z9UspixPcvIArtKOZAVC4ZQibg3deOqys6XIvktWpiYV
+         4C7LJnOnfzPv39C3282xe1EmiJVlNWVA2nHAesoGOLzak34O5w8gVHug5InVkqKOroTu
+         8lfLFnomACkboux9iXXCjqDu0Kk+CvZZKrkQ/pHzoyqHQLPeBwZm/GrRsZ4uA6Ce77J0
+         lMH0L4dDBNgSg97rTtSz+rDhSOZgpKpgncos/TodnDVJ+sA5FHLKWa4hX71KEVmbFtBS
+         L98ZFnrvIgKjGW1TUQ1H/L2kellilwmpFsWlDSaNOgDct1Zwc0QfLabNJ5uDnIfYYhE4
+         c4dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:user-agent:message-id:date
-         :to:from:subject:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aU8h9+ypy+2PCxvwWU9GRNf0d9lpWVNRA9Yo734m55o=;
-        b=ZJg49We4t4fsJhbZOuO+cozwyJPNv5Vz4uvi9uqbOo0jAxAY/OasPRvQ2AMgTv75zC
-         0FE81cv5k/HYU+3Y94NN/0OC4a/L+RLCrd6/iThGjcrxeTHGIAPFcFZO8qMqG5NsgJvJ
-         CIUu7MqlQ/5NdAUce0G68CzjiwPr3WnMqli0hACaR5H+AJc0lNSMOOvX/VOnL0RX6IqH
-         1scNmg/i4Vi5BugpSZmwREdJPiiCu4gNF0QE8bSdxk7CXRjLjn8EnuHHkuZ/bH+ANEOQ
-         nFsvs4j8w75210C3RfShoJNXr4c55/yqdIHgoJsdKXCX74i7KU/cMqQfH+RKrqJnHuZ3
-         3xYA==
-X-Gm-Message-State: ACrzQf1pkxSFaVD8pChRhHBr8fWcRD262IzgQv4brnsuW4Tm6mqphaKJ
-        pQW2jCXPA3QBz6q4oPRfx+78CPaTGQFn
-X-Google-Smtp-Source: AMsMyM59uPcyQ/+V/blhAJoVUJjMmwyuPZpaLLMuEZkFpp8Nv/J2eApp4GR+QIsa0Ib7LKMlQaToZA==
-X-Received: by 2002:a37:65c1:0:b0:6ee:9097:9ce3 with SMTP id z184-20020a3765c1000000b006ee90979ce3mr8824965qkb.620.1666030498612;
-        Mon, 17 Oct 2022 11:14:58 -0700 (PDT)
-Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
-        by smtp.gmail.com with ESMTPSA id g13-20020ac8580d000000b00399d5d564b7sm341019qtg.56.2022.10.17.11.14.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Oct 2022 11:14:58 -0700 (PDT)
-Subject: [PATCH] fs: edit a comment made in bad taste
-From:   Paul Moore <paul@paul-moore.com>
-To:     linux-security-module@vger.kernel.org
-Date:   Mon, 17 Oct 2022 14:14:57 -0400
-Message-ID: <166603049758.227260.3219849022705789477.stgit@olly>
-User-Agent: StGit/1.5
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=re4sAlYmP46Ps54s9+Rc0/9KShWmdIukkLH5HLDkCa0=;
+        b=3/KJwiNEthr/uccxwV+PsWT5bI5ApnCG+ZvoPTAmUmWrlrExCPG9eni2ATrD1sCb4q
+         GdfE1bl5C9cW9MI6uH5eoEjm13F7/9PUGmC2Dy15ZvxmFWpdv6yb//2Y0OsEFLDbG50h
+         e0Xjoh8SfRRxe58fQuDYOwLe4eiaLMKK0P9gQjAsIPrVrT++uYTgmgoGjTyMW248B9MY
+         KxiiA8ryC+Gi40aaKTxtfuSVhwf3OZFPoPhqr6ID4RrZ/Mpmd5xXvMaBr5HG2C/ZDQ20
+         5tmDYtRwejFA0kbDaDNvAcBbRAjz2L4nGIyvikYvuMYHH0122xHsAUTAbMfgg4IuHy9c
+         MRhQ==
+X-Gm-Message-State: ACrzQf37ZmHOG0w5WBIEim8zwSA9l647j1oq36vVFEqeW6nwi6yhLrM9
+        vB/x88Cd5wf7lzg5ys5Ey8IzkH2aEprGj+jXsqTfTXRybg==
+X-Google-Smtp-Source: AMsMyM41pBe8Y43QnorNN5T0b7wDkUfxkwGG+Ws9eGijL1DQ5ZMzKKznlMw0QwuWqcqceyjBYr56UQpyTxlvM2EjPmA=
+X-Received: by 2002:a25:22d4:0:b0:6c3:6ec7:3dc9 with SMTP id
+ i203-20020a2522d4000000b006c36ec73dc9mr9910866ybi.520.1666030605750; Mon, 17
+ Oct 2022 11:16:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <166603049758.227260.3219849022705789477.stgit@olly>
+In-Reply-To: <166603049758.227260.3219849022705789477.stgit@olly>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 17 Oct 2022 14:16:34 -0400
+Message-ID: <CAHC9VhTy5FGpr58ZR9faqKTkURKxZcP1UU-s_1JJsDT5xd1O4g@mail.gmail.com>
+Subject: Re: [PATCH] fs: edit a comment made in bad taste
+To:     linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I know nobody likes a buzzkill, but I figure it's best to keep the
-bad jokes appropriate for small children.
+On Mon, Oct 17, 2022 at 2:14 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> I know nobody likes a buzzkill, but I figure it's best to keep the
+> bad jokes appropriate for small children.
+>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  include/linux/fs_context.h |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- include/linux/fs_context.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Normally I sit on my own patches for a day or two, if not longer, to
+let people review and/or comment on the changes, but this is trivial
+and The Right Thing To Do in my eyes so I'm committing it now to
+lsm/next.
 
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index 13fa6f3df8e46..6fbf49cc10e47 100644
---- a/include/linux/fs_context.h
-+++ b/include/linux/fs_context.h
-@@ -99,7 +99,7 @@ struct fs_context {
- 	const struct cred	*cred;		/* The mounter's credentials */
- 	struct p_log		log;		/* Logging buffer */
- 	const char		*source;	/* The source name (eg. dev path) */
--	void			*security;	/* Linux S&M options */
-+	void			*security;	/* LSM options */
- 	void			*s_fs_info;	/* Proposed s_fs_info */
- 	unsigned int		sb_flags;	/* Proposed superblock flags (SB_*) */
- 	unsigned int		sb_flags_mask;	/* Superblock flags that were changed */
+> diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+> index 13fa6f3df8e46..6fbf49cc10e47 100644
+> --- a/include/linux/fs_context.h
+> +++ b/include/linux/fs_context.h
+> @@ -99,7 +99,7 @@ struct fs_context {
+>         const struct cred       *cred;          /* The mounter's credentials */
+>         struct p_log            log;            /* Logging buffer */
+>         const char              *source;        /* The source name (eg. dev path) */
+> -       void                    *security;      /* Linux S&M options */
+> +       void                    *security;      /* LSM options */
+>         void                    *s_fs_info;     /* Proposed s_fs_info */
+>         unsigned int            sb_flags;       /* Proposed superblock flags (SB_*) */
+>         unsigned int            sb_flags_mask;  /* Superblock flags that were changed */
 
+-- 
+paul-moore.com
