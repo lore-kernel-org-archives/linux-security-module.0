@@ -2,181 +2,78 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1DCC4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 18:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B1DC43217
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Oct 2022 14:30:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229882AbiJRScc (ORCPT
+        id S230370AbiJQOaO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 14:32:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38434 "EHLO
+        Mon, 17 Oct 2022 10:30:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229775AbiJRScc (ORCPT
+        with ESMTP id S230306AbiJQOaN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Oct 2022 14:32:32 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E4EF88A33
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 11:32:30 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id f205so6876345yba.2
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 11:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L16nsXH834AKuMsM1DMh0J2GdKedU+LxwtqcL0kTxPI=;
-        b=XO8YUb/HBgZcSFvKYW3v1o26TnjeGANLpJgT83ktEA5S3Wpn8WFZv1ed3CMM3+J+2M
-         BZy26UEEhByJ/XoGJuZMOT70oocT1eWbj1tLh2Y05Y9NNDzK3f5PWHipzgAtlbBsTCd6
-         z1uWBMk+2CzW7mvcTmvhwAFbUpRAHM2d3K+NNH4uyCu+TuNeU/EyxIXMq9RxRoVeaY3R
-         YnRpBEZ+pNJUGKqB6hHn2TOYXx8KD5M398NxDBe1fooI4f1dfNY0GnWJR71p1MLgb3x9
-         FxW4UmbW9u+j2FVcEubUkGusDH8gGJAxJtHMYJNxZrved0o3fbCGFZYNZYhT4fIIRjzo
-         Iq9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L16nsXH834AKuMsM1DMh0J2GdKedU+LxwtqcL0kTxPI=;
-        b=6HGObjfXxi/I7HCgpVkIlW6f94krE0baxn2XRVYjkZjBswfifjSBWwK+QJEnqH6Vrr
-         XK2OqAwRN+HVXXC3vMp/OeSccIqR6E8zay+2X4f10UaNl4Iz8lP0gcHeJ7PkW/2AqAQJ
-         B56kGOyTK3ZPQgWlbCVkR9HdtCNqfkXyJP4rQ7/VraGx8Yp05EeeZRlIjZPYJFFHLr2w
-         ijzli7hhuaZl9IXPvZGfe1BGTGTEZupMHeolFRwYKTHVaE40GXjrnmFZZ1o8q590rsAT
-         Cw2KyaXVDUiBMyQnAXJuykHySsmzFqCBQB1x7DqMcmydHJm5X/Eg7IXPN5OMauxGkSMB
-         QwuA==
-X-Gm-Message-State: ACrzQf3SaCbmiBNHK3ss3mLINOIs0jjkiMqevM7BtVAtwP/3BWmI/5wP
-        J30VueuUapuhnW5hgWKBAHi4Kuxy8TQJIEVmIgnj
-X-Google-Smtp-Source: AMsMyM549fr2F8ghdaTmpS/lhPUsehNpD3P88Hit4TOUZZUVZsJ34NGZDgq0dmFRGFU5YGCDaHopXFJifv1b36RZvn0=
-X-Received: by 2002:a05:6902:724:b0:6c0:1784:b6c7 with SMTP id
- l4-20020a056902072400b006c01784b6c7mr3615835ybt.15.1666117949646; Tue, 18 Oct
- 2022 11:32:29 -0700 (PDT)
+        Mon, 17 Oct 2022 10:30:13 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B82DD4B98D;
+        Mon, 17 Oct 2022 07:30:10 -0700 (PDT)
+Received: from fsav119.sakura.ne.jp (fsav119.sakura.ne.jp [27.133.134.246])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 29HET4N6008933;
+        Mon, 17 Oct 2022 23:29:04 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav119.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp);
+ Mon, 17 Oct 2022 23:29:04 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 29HET4ge008929
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 17 Oct 2022 23:29:04 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <4a3a6527-4a19-699a-d7a5-21249254522b@I-love.SAKURA.ne.jp>
+Date:   Mon, 17 Oct 2022 23:29:01 +0900
 MIME-Version: 1.0
-References: <20221008100935.73706-1-gnoack3000@gmail.com> <b8566973-63bc-441f-96b9-f822e9944127@digikod.net>
- <Y0g+TEgGGhZDm7MX@dev-arch.thelio-3990X> <Y0xJUy3igQXWPAeq@nuc>
- <Y0xkZqKoE3rRJefh@nuc> <ea8117e5-7f5c-7598-5d6a-868184a6e4ae@digikod.net>
- <CAHC9VhR8SQo9x_cv6BZQSwt0rrjeGh-t+YV10GrA3PbC+yHrxw@mail.gmail.com> <Y07rP/YNYxvQzOei@nuc>
-In-Reply-To: <Y07rP/YNYxvQzOei@nuc>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 18 Oct 2022 14:32:18 -0400
-Message-ID: <CAHC9VhRamtwyA00A1j+8cd+UtZy7THu6VFch6qe0ESTx+bc+jA@mail.gmail.com>
-Subject: Re: [PATCH v9 00/11] landlock: truncate support
-To:     =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
-Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Subject: Re: [syzbot] general protection fault in security_inode_getattr
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>, miklos@szeredi.hu,
+        linux-unionfs@vger.kernel.org
+Cc:     dvyukov@google.com, hdanton@sina.com,
+        linux-fsdevel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com>,
+        yhs@fb.com, omosnace@redhat.com
+References: <0000000000008caae305ab9a5318@google.com>
+ <000000000000618a8205eb160404@google.com>
+ <CAHC9VhRt2vpArZ=bOrkBOGiAuoTdEcp2PRP5NtbyEZkuMHvopA@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhRt2vpArZ=bOrkBOGiAuoTdEcp2PRP5NtbyEZkuMHvopA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 18, 2022 at 2:06 PM G=C3=BCnther Noack <gnoack3000@gmail.com> w=
-rote:
->
-> On Tue, Oct 18, 2022 at 01:12:48PM -0400, Paul Moore wrote:
-> > On Mon, Oct 17, 2022 at 5:16 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
-et> wrote:
-> > > On 16/10/2022 22:07, G=C3=BCnther Noack wrote:
-> >
-> > ...
-> >
-> > > > Proposed fix
-> > > > ------------
-> > > >
-> > > > I think the LSM framework should ensure that security blobs are
-> > > > pointer-aligned.
-> > > >
-> > > > The LSM framework takes the role of a memory allocator here, and
-> > > > memory allocators should normally return aligned addresses, in my
-> > > > understanding. -- It seems reasonable for AppArmor to make that
-> > > > assumption.
-> > > >
-> > > > The proposed one-line fix is: Change lsm_set_blob_size() in
-> > > > security/security.c, where the positions of the individual security
-> > > > blobs are calculated, so that each allocated blob is aligned to a
-> > > > pointer size boundary.
-> > > >
-> > > > if (*need > 0) {
-> > > >    *lbs =3D ALIGN(*lbs, sizeof(void *));   // NEW
-> > > >
-> > > >    offset =3D *lbs;
-> > > >    *lbs +=3D *need;
-> > > >    *need =3D offset;
-> > > > }
-> > >
-> > > This looks good to me. This fix should be part of patch 4/11 since it
-> > > only affects Landlock for now.
-> >
-> > Hi G=C3=BCnther,
-> >
-> > Sorry for not seeing this email sooner; I had thought the landlock
-> > truncate work was largely resolved with just a few small things for
-> > you to sort out with Micka=C3=ABl so I wasn't following this thread ver=
-y
-> > closely anymore.
-> >
-> > Regarding the fix, yes, I think the solution is to fixup the LSM
-> > security blob allocator to properly align the entries.  As you already
-> > mentioned, that's common behavior elsewhere and I see no reason why we
-> > should deviate from that in the LSM allocator.  Honestly, looking at
-> > the rest of the allocator right now I can see a few other things to
-> > improve, but those can wait for a later time so as to not conflict
-> > with this work (/me adds a new entry to my todo list).
-> >
-> > Other than that, I might suggest the lsm_set_blob_size()
-> > implementation below as it seems cleaner to me and should be
-> > functionally equivalent ... at least on quick inspection, if I've done
-> > something dumb with the code below please feel free to ignore me ;)
-> >
-> >   static void __init lsm_set_blob_size(int *need, int *lbs)
-> >   {
-> >     if (*need <=3D 0)
-> >       return;
-> >
-> >     *need =3D ALIGN(*need, sizeof(void *));
-> >     *lbs +=3D *need;
-> >   }
->
-> Hello Paul,
->
-> thanks for the reply. Sounds good, I'll go forward with this approach
-> then and send a V10 soon.
->
-> Implementation-wise for this function, I think this is the closest to
-> your suggestion I can get:
->
-> static void __init lsm_set_blob_size(int *need, int *lbs)
-> {
->   int offset;
->
->   if (*need <=3D 0)
->     return;
->
->   offset =3D ALIGN(*lbs, sizeof(void *));
->   *lbs =3D offset + *need;
->   *need =3D offset;
-> }
->
-> This differs from your suggestion in that:
->
-> - *need gets assigned to the offset at the end. (It's a bit unusual:
->   *need is both used to specify the requested blob size when calling
->   the function, and for returning the allocated offset from the
->   function call.)
->
-> - This implementation aligns the blob's start offset, not the end
->   offset. (probably makes no real difference in practice)
->
-> As suggested by Micka=C3=ABl, I'll make this fix part of the "Landlock:
-> Support file truncation" patch, so that people backporting it won't
-> accidentally leave it out.
+On 2022/10/16 23:52, Paul Moore wrote:
+> It doesn't look like this is a problem with
+> security_inode_getattr()/d_backing_inode() as it appears that the
+> passed path struct pointer has a bogus/NULL path->dentry pointer and
+> to the best of my knowledge it would appear that vfs_getattr() (the
+> caller) requires a valid path->dentry value.
+> 
+> Looking quickly at the code, I wonder if there is something wonky
+> going on in the overlayfs code, specifically ovl_copy_up_flags() and
+> ovl_copy_up_one() as they have to play a number of tricks to handle
+> the transparent overlays and copy up operations.  I'm not an overlayfs
+> expert, but that seems like a good place to start digging further into
+> this.
 
-That's all fine with me, the important thing is to make sure the
-landlock truncate patches don't break anything.  We'll cleanup the
-allocator later.
+Right. This is a bug in overlayfs code. Probably due to some race condition,
+ovl_copy_up_flags() is calling ovl_copy_up_one() with "next" dentry with
+"struct ovl_entry"->numlower == 0. As a result, ovl_path_lower() from
+ovl_copy_up_one() fills ctx.lowerpath with NULLs, and vfs_getattr() gets
+surprised by ctx.lowerpath.dentry == NULL.
 
---=20
-paul-moore.com
+If we can't avoid selecting a dentry with "struct ovl_entry"->numlower == 0 using
+some lock, I guess that we would need to use a workaround suggested by Hillf Danton
+at https://groups.google.com/g/syzkaller-bugs/c/xDcxFKSppfE/m/b38Tv7LoAAAJ .
+
