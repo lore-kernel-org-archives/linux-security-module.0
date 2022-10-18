@@ -2,183 +2,137 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95319C43219
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 15:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 272A4C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 17:13:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230304AbiJRPxV (ORCPT
+        id S230026AbiJRRNE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 11:53:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38514 "EHLO
+        Tue, 18 Oct 2022 13:13:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbiJRPxT (ORCPT
+        with ESMTP id S230036AbiJRRNC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Oct 2022 11:53:19 -0400
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD0D8C97EA;
-        Tue, 18 Oct 2022 08:53:04 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4MsHls6RwJz9xrpj;
-        Tue, 18 Oct 2022 23:27:05 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwD3fgUbx05jE5UGAA--.19528S2;
-        Tue, 18 Oct 2022 16:32:53 +0100 (CET)
-Message-ID: <1b41c633bbd31b82b02fdbae718f2f11ac862181.camel@huaweicloud.com>
-Subject: Re: [PATCH 4/9] ima: Move ima_file_free() into LSM
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Christian Brauner <brauner@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Petr Vorel <pvorel@suse.cz>,
-        Jonathan McDowell <noodles@fb.com>,
-        Borislav Petkov <bp@suse.de>, Takashi Iwai <tiwai@suse.de>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        KP Singh <kpsingh@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Date:   Tue, 18 Oct 2022 17:32:40 +0200
-In-Reply-To: <20221018150213.7n4sv7rtsh6lshd5@wittgenstein>
-References: <20221013222702.never.990-kees@kernel.org>
-         <20221013223654.659758-4-keescook@chromium.org>
-         <20221018150213.7n4sv7rtsh6lshd5@wittgenstein>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Tue, 18 Oct 2022 13:13:02 -0400
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0993BED983
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 10:13:01 -0700 (PDT)
+Received: by mail-yb1-xb2b.google.com with SMTP id 81so17767060ybf.7
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 10:13:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mfdbluYgB5V+LL+aMgFXBt1BUBV2mMzClPRkIMfQtRE=;
+        b=WhdKk792ZP3Bo8QTG2ybSRTF7GCOSQK5CET9zQobOLcag9wngcqrnr8EEXdjrZeRBC
+         26G/5RkPvu0DeLhAMCt4vwLZoOrm8FUs9emyx69PxMnUTGuKyhV+Ushr1xfYsfbNE8Lm
+         uATLgWuJYEaMgH+zflG1skmb4KaHaeM8AlHzW+Bna7phDYjGe9V3HzIxtiYhApidsDRw
+         ZCKgtkooC0VQy+YL0ozJlFQb7aS8f7Bqbd5mYyShHfYzKhQV/QSHZRo9qzvL9g2zxpvv
+         0Tmq6SRqApzKDt9G5NphBiGsja/OyeffaD6qO4MdrCaby2+4UMDD5Tzym0aSngwEvAJ0
+         WPXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mfdbluYgB5V+LL+aMgFXBt1BUBV2mMzClPRkIMfQtRE=;
+        b=X2d8Ou0LPokJS+xgwMZ7DgmZ9whencVL5G4ito0sLMmxqIX7Ymrs2QN2ArUQQfZ+zN
+         KGti5ZpmcxytovOgFwD0XhnX3daTUBi5kVDy797XhFiLoZ9RvWcuRVtiisvGPv4YwMgw
+         IWovDbRaYNzdzhuPcz7P2KzJS+uzPqPq7kDLeD1F9vl5rTLMFnHWjX5e8l0/NNkVEumH
+         f7SZEVbOiYwaA+z2PFt5Ghd+QKBXV47dFXemz5ZSTZyCqSyl5mZx/CPMd+UQdhGUwwgn
+         jDZSlvP4P07iNavZieFNX/rFDluTEUFCkGFBTuOBcM08VjBudeXmG2YPYtIMDOzVb+Dw
+         5v1w==
+X-Gm-Message-State: ACrzQf1SFxT3d/ekoaTIDeRko8XZ7m+VR0SQQAWUixIUHnSBWlqWOdeb
+        fR9f0OLJnlfw50MhVg2yOfjC4xIV5mGbiWGJU4mflqS9I6P4
+X-Google-Smtp-Source: AMsMyM4RJoLbAjT06kxnuaYzagTk76zFUhPifz7+UGwws+zwn1LFl6s9MLpwlfF3LDDN2f2GmJY2eSEGu+dLJ6O91j8=
+X-Received: by 2002:a25:9a88:0:b0:6b9:c29a:2f4b with SMTP id
+ s8-20020a259a88000000b006b9c29a2f4bmr3425735ybo.236.1666113179690; Tue, 18
+ Oct 2022 10:12:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwD3fgUbx05jE5UGAA--.19528S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXr1ktw18Kr1rJr43Gr4UJwb_yoWrAr43pF
-        s3t3W5Crn3Jryjgr97Canrua4Fg39agryxuFyrW348tFnxtFyvvFy3Cr1Y9F4UJry0krWx
-        tF4UKry5Z3WjyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x
-        0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02
-        F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4I
-        kC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IY
-        c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
-        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF
-        0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIx
-        AIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E
-        87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1rMa5UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBF1jj4BjMQACsu
-X-CFilter-Loop: Reflected
+References: <20221008100935.73706-1-gnoack3000@gmail.com> <b8566973-63bc-441f-96b9-f822e9944127@digikod.net>
+ <Y0g+TEgGGhZDm7MX@dev-arch.thelio-3990X> <Y0xJUy3igQXWPAeq@nuc>
+ <Y0xkZqKoE3rRJefh@nuc> <ea8117e5-7f5c-7598-5d6a-868184a6e4ae@digikod.net>
+In-Reply-To: <ea8117e5-7f5c-7598-5d6a-868184a6e4ae@digikod.net>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 18 Oct 2022 13:12:48 -0400
+Message-ID: <CAHC9VhR8SQo9x_cv6BZQSwt0rrjeGh-t+YV10GrA3PbC+yHrxw@mail.gmail.com>
+Subject: Re: [PATCH v9 00/11] landlock: truncate support
+To:     =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     Nathan Chancellor <nathan@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-10-18 at 17:02 +0200, Christian Brauner wrote:
-> On Thu, Oct 13, 2022 at 03:36:49PM -0700, Kees Cook wrote:
-> > The file_free_security hook already exists for managing
-> > notification of
-> > released files. Use the LSM hook instead of open-coded stacking.
-> > 
-> > Cc: Mimi Zohar <zohar@linux.ibm.com>
-> > Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Cc: James Morris <jmorris@namei.org>
-> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> > Cc: Petr Vorel <pvorel@suse.cz>
-> > Cc: Jonathan McDowell <noodles@fb.com>
-> > Cc: Borislav Petkov <bp@suse.de>
-> > Cc: Takashi Iwai <tiwai@suse.de>
-> > Cc: linux-integrity@vger.kernel.org
-> > Cc: linux-security-module@vger.kernel.org
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > ---
-> >  fs/file_table.c                   | 1 -
-> >  include/linux/ima.h               | 6 ------
-> >  security/integrity/ima/ima_main.c | 3 ++-
-> >  3 files changed, 2 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/fs/file_table.c b/fs/file_table.c
-> > index 99c6796c9f28..fa707d221a43 100644
-> > --- a/fs/file_table.c
-> > +++ b/fs/file_table.c
-> > @@ -311,7 +311,6 @@ static void __fput(struct file *file)
-> >  	eventpoll_release(file);
-> >  	locks_remove_file(file);
-> >  
-> > -	ima_file_free(file);
-> >  	if (unlikely(file->f_flags & FASYNC)) {
-> >  		if (file->f_op->fasync)
-> >  			file->f_op->fasync(-1, file, 0);
-> > diff --git a/include/linux/ima.h b/include/linux/ima.h
-> > index 6dc5143f89f2..9f18df366064 100644
-> > --- a/include/linux/ima.h
-> > +++ b/include/linux/ima.h
-> > @@ -19,7 +19,6 @@ extern enum hash_algo
-> > ima_get_current_hash_algo(void);
-> >  extern int ima_file_check(struct file *file, int mask);
-> >  extern void ima_post_create_tmpfile(struct user_namespace
-> > *mnt_userns,
-> >  				    struct inode *inode);
-> > -extern void ima_file_free(struct file *file);
-> >  extern void ima_post_path_mknod(struct user_namespace *mnt_userns,
-> >  				struct dentry *dentry);
-> >  extern int ima_file_hash(struct file *file, char *buf, size_t
-> > buf_size);
-> > @@ -56,11 +55,6 @@ static inline void
-> > ima_post_create_tmpfile(struct user_namespace *mnt_userns,
-> >  {
-> >  }
-> >  
-> > -static inline void ima_file_free(struct file *file)
-> > -{
-> > -	return;
-> > -}
-> > -
-> >  static inline void ima_post_path_mknod(struct user_namespace
-> > *mnt_userns,
-> >  				       struct dentry *dentry)
-> >  {
-> > diff --git a/security/integrity/ima/ima_main.c
-> > b/security/integrity/ima/ima_main.c
-> > index b3b79d030a67..94379ba40b58 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -183,7 +183,7 @@ static void ima_check_last_writer(struct
-> > integrity_iint_cache *iint,
-> >   *
-> >   * Flag files that changed, based on i_version
-> >   */
-> > -void ima_file_free(struct file *file)
-> > +static void ima_file_free(struct file *file)
-> >  {
-> >  	struct inode *inode = file_inode(file);
-> >  	struct integrity_iint_cache *iint;
-> > @@ -1085,6 +1085,7 @@ static struct security_hook_list ima_hooks[]
-> > __lsm_ro_after_init = {
-> >  	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
-> >  	LSM_HOOK_INIT(mmap_file, ima_file_mmap),
-> >  	LSM_HOOK_INIT(file_mprotect, ima_file_mprotect),
-> > +	LSM_HOOK_INIT(file_free_security, ima_file_free),
-> 
-> This doesn't work afaict. If the file is opened for writing ima may
-> update xattrs. But by the time security_file_free() is called
-> put_file_access() has already been called which will have given up
-> write
-> access to the file's mount.
-> 
-> So you would have to - just one of the possibilities - have to move
-> security_file_free() out of file_free() and into the old
-> ima_file_free()
-> location. But that might cause semantic changes for other LSMs.
+On Mon, Oct 17, 2022 at 5:16 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+> On 16/10/2022 22:07, G=C3=BCnther Noack wrote:
 
-Hi
+...
 
-I also did this work before. In my implementation, I created a new
-security hook called security_file_pre_free().
+> > Proposed fix
+> > ------------
+> >
+> > I think the LSM framework should ensure that security blobs are
+> > pointer-aligned.
+> >
+> > The LSM framework takes the role of a memory allocator here, and
+> > memory allocators should normally return aligned addresses, in my
+> > understanding. -- It seems reasonable for AppArmor to make that
+> > assumption.
+> >
+> > The proposed one-line fix is: Change lsm_set_blob_size() in
+> > security/security.c, where the positions of the individual security
+> > blobs are calculated, so that each allocated blob is aligned to a
+> > pointer size boundary.
+> >
+> > if (*need > 0) {
+> >    *lbs =3D ALIGN(*lbs, sizeof(void *));   // NEW
+> >
+> >    offset =3D *lbs;
+> >    *lbs +=3D *need;
+> >    *need =3D offset;
+> > }
+>
+> This looks good to me. This fix should be part of patch 4/11 since it
+> only affects Landlock for now.
 
-https://github.com/robertosassu/linux/commit/692c9d36fff865435b23b3cb765d31f3584f6263
+Hi G=C3=BCnther,
 
-If useful, the whole patch set is available at:
+Sorry for not seeing this email sooner; I had thought the landlock
+truncate work was largely resolved with just a few small things for
+you to sort out with Micka=C3=ABl so I wasn't following this thread very
+closely anymore.
 
-https://github.com/robertosassu/linux/commits/ima-evm-lsm-v1-devel-v3
+Regarding the fix, yes, I think the solution is to fixup the LSM
+security blob allocator to properly align the entries.  As you already
+mentioned, that's common behavior elsewhere and I see no reason why we
+should deviate from that in the LSM allocator.  Honestly, looking at
+the rest of the allocator right now I can see a few other things to
+improve, but those can wait for a later time so as to not conflict
+with this work (/me adds a new entry to my todo list).
 
-Roberto
+Other than that, I might suggest the lsm_set_blob_size()
+implementation below as it seems cleaner to me and should be
+functionally equivalent ... at least on quick inspection, if I've done
+something dumb with the code below please feel free to ignore me ;)
 
+  static void __init lsm_set_blob_size(int *need, int *lbs)
+  {
+    if (*need <=3D 0)
+      return;
+
+    *need =3D ALIGN(*need, sizeof(void *));
+    *lbs +=3D *need;
+  }
+
+--=20
+paul-moore.com
