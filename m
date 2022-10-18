@@ -2,57 +2,54 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D0B8C4167B
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 11:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32851C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 11:59:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229489AbiJRL6d (ORCPT
+        id S230245AbiJRL7M (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 07:58:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56866 "EHLO
+        Tue, 18 Oct 2022 07:59:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230295AbiJRL5t (ORCPT
+        with ESMTP id S229552AbiJRL6a (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Oct 2022 07:57:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61C0CABF0E;
-        Tue, 18 Oct 2022 04:57:41 -0700 (PDT)
+        Tue, 18 Oct 2022 07:58:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2403BD04B;
+        Tue, 18 Oct 2022 04:57:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8DE2B61537;
-        Tue, 18 Oct 2022 11:57:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63EF0C433D6;
-        Tue, 18 Oct 2022 11:57:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BF4F4614C5;
+        Tue, 18 Oct 2022 11:57:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D356C4347C;
+        Tue, 18 Oct 2022 11:57:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666094260;
-        bh=/36RdDbWTYv5Sty34tUdSgX7+QC8v28HlUFKGb8oVbI=;
+        s=k20201202; t=1666094268;
+        bh=hFYo1nWG3IGi3c8YSHVE4TO4Ui1ovDkUd8xlTtAUV2E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DDwmU+C7P4yjTQ06+cPdG7TIFl89ZztJirOwn2nOfAzlY4cnVqDNRHVQuoC6udIBb
-         IqyJXYjcUCnPUHKAzN4eVdyumnYpsiCemK7XbMlFHN4PdEWIOfPT4lOi/OFpi2Hn+a
-         fVyglqakpjxwOS3lroXUHyLkTzAPfa3MiYIFAykNZD5V04BQTkSnWVCFC7Y6+m3yAx
-         HhS6dut9EXqcsJJBefbme+UZY5WBpVz495CQbgWY3vUd6iVPJfMR/Qk16q4wyGsphl
-         YHViCdy4NE57vxaXXy3POw8qS57ui162LRK55tAvuC4o9bQvgOyCX3dvNAmLBoS9FY
-         whmyZopT3H/lg==
+        b=XsoP9nNLTaWeBPlkWrhZpiWjQwW1RT0yntiTQd5T0U+OsWLQ55lO4RxTI73R+CZEu
+         9RD7cxgB3JHcXTIOPxxbdH6IqLFyM6WgXsv79BaeDgHU+oiTSAUqVGCi2OSfET8xqL
+         RCCmMfOFFUsejA4T+oB9X7uGpkllPcECNEEVMSHcfqtDf0ZH4/9g0uuADK+7haYC59
+         ddrzqw/zAnSImJu497+A4lOJI2NRtxT2cbyPCcG3OY87FrSKoAlKBcpwpKAI8dJP0v
+         VFn6mfCGP/O57wMf8NWD4v0oMfEaiXBoBSm544Db+3u/PyU7h58nDRfm2TIYL6wBKl
+         CoON9jThtWbQg==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        v9fs-developer@lists.sourceforge.net,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v5 08/30] 9p: implement set acl method
-Date:   Tue, 18 Oct 2022 13:56:38 +0200
-Message-Id: <20221018115700.166010-9-brauner@kernel.org>
+Subject: [PATCH v5 11/30] smack: implement get, set and remove acl hook
+Date:   Tue, 18 Oct 2022 13:56:41 +0200
+Message-Id: <20221018115700.166010-12-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221018115700.166010-1-brauner@kernel.org>
 References: <20221018115700.166010-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6470; i=brauner@kernel.org; h=from:subject; bh=/36RdDbWTYv5Sty34tUdSgX7+QC8v28HlUFKGb8oVbI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST7TVHziJfIU30pz6bYziAv6izSueGR5b+byircV7dvVN4Q HpXWUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJGIHkaGp3+X9if1rLRaeC5bcUmiUC P/0Z62La1tYs8O3OBV+vpDh5GhLWbb/r1Ljth+2Xm2T+xD9MU70/+qMJW5/FvOVZO2TK+cEwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5544; i=brauner@kernel.org; h=from:subject; bh=hFYo1nWG3IGi3c8YSHVE4TO4Ui1ovDkUd8xlTtAUV2E=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST7TVFj1Otx7X5/4cnWAG/+pzV3v8z4Mk26uJv5s/aiPY+P p4ZWdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkiwMjw8Fjfz+qLsjMWy0q+Ta9pJ SPQUHr5tzavD/Zf+b3uqRMfszwV3TTzZzVR7YHzRGfPC+zaOdeA8M9mR+0v1oeX3RdzIOdhwsA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -68,196 +65,137 @@ building a dedicated posix acl api around the get and set inode
 operations. This removes a lot of hackiness and makes the codepaths
 easier to maintain. A lot of background can be found in [1].
 
-In order to build a type safe posix api around get and set acl we need
-all filesystem to implement get and set acl.
+So far posix acls were passed as a void blob to the security and
+integrity modules. Some of them like evm then proceed to interpret the
+void pointer and convert it into the kernel internal struct posix acl
+representation to perform their integrity checking magic. This is
+obviously pretty problematic as that requires knowledge that only the
+vfs is guaranteed to have and has lead to various bugs. Add a proper
+security hook for setting posix acls and pass down the posix acls in
+their appropriate vfs format instead of hacking it through a void
+pointer stored in the uapi format.
 
-So far 9p implemented a ->get_inode_acl() operation that didn't require
-access to the dentry in order to allow (limited) permission checking via
-posix acls in the vfs. Now that we have get and set acl inode operations
-that take a dentry argument we can give 9p get and set acl inode
-operations.
-
-This is mostly a light refactoring of the codepaths currently used in 9p
-posix acl xattr handler. After we have fully implemented the posix acl
-api and switched the vfs over to it, the 9p specific posix acl xattr
-handler and associated code will be removed.
-
-Note, until the vfs has been switched to the new posix acl api this
-patch is a non-functional change.
+I spent considerate time in the security module infrastructure and
+audited all codepaths. Smack has no restrictions based on the posix
+acl values passed through it. The capability hook doesn't need to be
+called either because it only has restrictions on security.* xattrs. So
+these all becomes very simple hooks for smack.
 
 Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
 
 Notes:
     /* v2 */
-    Al Viro <viro@zeniv.linux.org.uk>:
-    - Fix leak due to early return instead of goto.
-    
-    Christian Brauner (Microsoft) <brauner@kernel.org>:
-    - Fix leak and call kfree() when we skip setting posix acls because acl can be
-      represented by mode bits.
+    unchanged
     
     /* v3 */
-    unchanged
+    Paul Moore <paul@paul-moore.com>:
+    - Add get, and remove acl hook
     
     /* v4 */
-    unchanged
+    Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
     
     /* v5 */
-    unchanged
+    Acked-by: Paul Moore <paul@paul-moore.com>:
+    
+    Paul Moore <paul@paul-moore.com>:
+    - Add whitespace between set_field and curacc calls for consistency.
 
- fs/9p/acl.c            | 94 ++++++++++++++++++++++++++++++++++++++++++
- fs/9p/acl.h            |  3 ++
- fs/9p/vfs_inode_dotl.c |  2 +
- 3 files changed, 99 insertions(+)
+ security/smack/smack_lsm.c | 71 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
 
-diff --git a/fs/9p/acl.c b/fs/9p/acl.c
-index 67f8b57c67e0..135b26cee63a 100644
---- a/fs/9p/acl.c
-+++ b/fs/9p/acl.c
-@@ -151,6 +151,100 @@ struct posix_acl *v9fs_iop_get_acl(struct user_namespace *mnt_userns,
- 	return v9fs_get_cached_acl(d_inode(dentry), type);
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index b6306d71c908..cadef2f6a75e 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1392,6 +1392,74 @@ static int smack_inode_removexattr(struct user_namespace *mnt_userns,
+ 	return 0;
  }
  
-+int v9fs_iop_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-+		     struct posix_acl *acl, int type)
++/**
++ * smack_inode_set_acl - Smack check for setting posix acls
++ * @mnt_userns: the userns attached to the mnt this request came from
++ * @dentry: the object
++ * @acl_name: name of the posix acl
++ * @kacl: the posix acls
++ *
++ * Returns 0 if access is permitted, an error code otherwise
++ */
++static int smack_inode_set_acl(struct user_namespace *mnt_userns,
++			       struct dentry *dentry, const char *acl_name,
++			       struct posix_acl *kacl)
 +{
-+	int retval;
-+	size_t size = 0;
-+	void *value = NULL;
-+	const char *acl_name;
-+	struct v9fs_session_info *v9ses;
-+	struct inode *inode = d_inode(dentry);
++	struct smk_audit_info ad;
++	int rc;
 +
-+	if (acl) {
-+		retval = posix_acl_valid(inode->i_sb->s_user_ns, acl);
-+		if (retval)
-+			goto err_out;
++	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
++	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
 +
-+		size = posix_acl_xattr_size(acl->a_count);
-+
-+		value = kzalloc(size, GFP_NOFS);
-+		if (!value) {
-+			retval = -ENOMEM;
-+			goto err_out;
-+		}
-+
-+		retval = posix_acl_to_xattr(&init_user_ns, acl, value, size);
-+		if (retval < 0)
-+			goto err_out;
-+	}
-+
-+	/*
-+	 * set the attribute on the remote. Without even looking at the
-+	 * xattr value. We leave it to the server to validate
-+	 */
-+	acl_name = posix_acl_xattr_name(type);
-+	v9ses = v9fs_dentry2v9ses(dentry);
-+	if ((v9ses->flags & V9FS_ACCESS_MASK) != V9FS_ACCESS_CLIENT) {
-+		retval = v9fs_xattr_set(dentry, acl_name, value, size, 0);
-+		goto err_out;
-+	}
-+
-+	if (S_ISLNK(inode->i_mode)) {
-+		retval = -EOPNOTSUPP;
-+		goto err_out;
-+	}
-+
-+	if (!inode_owner_or_capable(&init_user_ns, inode)) {
-+		retval = -EPERM;
-+		goto err_out;
-+	}
-+
-+	switch (type) {
-+	case ACL_TYPE_ACCESS:
-+		if (acl) {
-+			struct iattr iattr = {};
-+			struct posix_acl *acl_mode = acl;
-+
-+			retval = posix_acl_update_mode(&init_user_ns, inode,
-+						       &iattr.ia_mode,
-+						       &acl_mode);
-+			if (retval)
-+				goto err_out;
-+			if (!acl_mode) {
-+				/*
-+				 * ACL can be represented by the mode bits.
-+				 * So don't update ACL below.
-+				 */
-+				kfree(value);
-+				value = NULL;
-+				size = 0;
-+			}
-+			iattr.ia_valid = ATTR_MODE;
-+			/*
-+			 * FIXME should we update ctime ?
-+			 * What is the following setxattr update the mode ?
-+			 */
-+			v9fs_vfs_setattr_dotl(&init_user_ns, dentry, &iattr);
-+		}
-+		break;
-+	case ACL_TYPE_DEFAULT:
-+		if (!S_ISDIR(inode->i_mode)) {
-+			retval = acl ? -EINVAL : 0;
-+			goto err_out;
-+		}
-+		break;
-+	}
-+
-+	retval = v9fs_xattr_set(dentry, acl_name, value, size, 0);
-+	if (!retval)
-+		set_cached_acl(inode, type, acl);
-+
-+err_out:
-+	kfree(value);
-+	return retval;
++	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_WRITE, &ad);
++	rc = smk_bu_inode(d_backing_inode(dentry), MAY_WRITE, rc);
++	return rc;
 +}
 +
- static int v9fs_set_acl(struct p9_fid *fid, int type, struct posix_acl *acl)
- {
- 	int retval;
-diff --git a/fs/9p/acl.h b/fs/9p/acl.h
-index 359dab4da900..4c60a2bce5de 100644
---- a/fs/9p/acl.h
-+++ b/fs/9p/acl.h
-@@ -12,6 +12,8 @@ struct posix_acl *v9fs_iop_get_inode_acl(struct inode *inode, int type,
- 				   bool rcu);
- struct posix_acl *v9fs_iop_get_acl(struct user_namespace *mnt_userns,
- 					  struct dentry *dentry, int type);
-+int v9fs_iop_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-+		     struct posix_acl *acl, int type);
- int v9fs_acl_chmod(struct inode *inode, struct p9_fid *fid);
- int v9fs_set_create_acl(struct inode *inode, struct p9_fid *fid,
- 			struct posix_acl *dacl, struct posix_acl *acl);
-@@ -21,6 +23,7 @@ void v9fs_put_acl(struct posix_acl *dacl, struct posix_acl *acl);
- #else
- #define v9fs_iop_get_inode_acl	NULL
- #define v9fs_iop_get_acl NULL
-+#define v9fs_iop_set_acl NULL
- static inline int v9fs_get_acl(struct inode *inode, struct p9_fid *fid)
- {
- 	return 0;
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index a4211fcb9168..03c1743c4aff 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -985,6 +985,7 @@ const struct inode_operations v9fs_dir_inode_operations_dotl = {
- 	.listxattr = v9fs_listxattr,
- 	.get_inode_acl = v9fs_iop_get_inode_acl,
- 	.get_acl = v9fs_iop_get_acl,
-+	.set_acl = v9fs_iop_set_acl,
- };
- 
- const struct inode_operations v9fs_file_inode_operations_dotl = {
-@@ -993,6 +994,7 @@ const struct inode_operations v9fs_file_inode_operations_dotl = {
- 	.listxattr = v9fs_listxattr,
- 	.get_inode_acl = v9fs_iop_get_inode_acl,
- 	.get_acl = v9fs_iop_get_acl,
-+	.set_acl = v9fs_iop_set_acl,
- };
- 
- const struct inode_operations v9fs_symlink_inode_operations_dotl = {
++/**
++ * smack_inode_get_acl - Smack check for getting posix acls
++ * @mnt_userns: the userns attached to the mnt this request came from
++ * @dentry: the object
++ * @acl_name: name of the posix acl
++ *
++ * Returns 0 if access is permitted, an error code otherwise
++ */
++static int smack_inode_get_acl(struct user_namespace *mnt_userns,
++			       struct dentry *dentry, const char *acl_name)
++{
++	struct smk_audit_info ad;
++	int rc;
++
++	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
++	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
++
++	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_READ, &ad);
++	rc = smk_bu_inode(d_backing_inode(dentry), MAY_READ, rc);
++	return rc;
++}
++
++/**
++ * smack_inode_remove_acl - Smack check for getting posix acls
++ * @mnt_userns: the userns attached to the mnt this request came from
++ * @dentry: the object
++ * @acl_name: name of the posix acl
++ *
++ * Returns 0 if access is permitted, an error code otherwise
++ */
++static int smack_inode_remove_acl(struct user_namespace *mnt_userns,
++				  struct dentry *dentry, const char *acl_name)
++{
++	struct smk_audit_info ad;
++	int rc;
++
++	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
++	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
++
++	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_WRITE, &ad);
++	rc = smk_bu_inode(d_backing_inode(dentry), MAY_WRITE, rc);
++	return rc;
++}
++
+ /**
+  * smack_inode_getsecurity - get smack xattrs
+  * @mnt_userns: active user namespace
+@@ -4816,6 +4884,9 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(inode_post_setxattr, smack_inode_post_setxattr),
+ 	LSM_HOOK_INIT(inode_getxattr, smack_inode_getxattr),
+ 	LSM_HOOK_INIT(inode_removexattr, smack_inode_removexattr),
++	LSM_HOOK_INIT(inode_set_acl, smack_inode_set_acl),
++	LSM_HOOK_INIT(inode_get_acl, smack_inode_get_acl),
++	LSM_HOOK_INIT(inode_remove_acl, smack_inode_remove_acl),
+ 	LSM_HOOK_INIT(inode_getsecurity, smack_inode_getsecurity),
+ 	LSM_HOOK_INIT(inode_setsecurity, smack_inode_setsecurity),
+ 	LSM_HOOK_INIT(inode_listsecurity, smack_inode_listsecurity),
 -- 
 2.34.1
 
