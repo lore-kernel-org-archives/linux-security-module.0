@@ -2,200 +2,154 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32851C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 11:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B75CFC43219
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 11:59:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230245AbiJRL7M (ORCPT
+        id S230314AbiJRL7N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 07:59:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56552 "EHLO
+        Tue, 18 Oct 2022 07:59:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229552AbiJRL6a (ORCPT
+        with ESMTP id S230028AbiJRL6b (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Oct 2022 07:58:30 -0400
+        Tue, 18 Oct 2022 07:58:31 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2403BD04B;
-        Tue, 18 Oct 2022 04:57:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B250BD066;
+        Tue, 18 Oct 2022 04:57:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BF4F4614C5;
-        Tue, 18 Oct 2022 11:57:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D356C4347C;
-        Tue, 18 Oct 2022 11:57:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 43EBC6153D;
+        Tue, 18 Oct 2022 11:57:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1132EC433B5;
+        Tue, 18 Oct 2022 11:57:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666094268;
-        bh=hFYo1nWG3IGi3c8YSHVE4TO4Ui1ovDkUd8xlTtAUV2E=;
+        s=k20201202; t=1666094275;
+        bh=sDCoYooQ4sD0AFfta13qFLuUwaIu1lEyBmzZmR0H7D4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XsoP9nNLTaWeBPlkWrhZpiWjQwW1RT0yntiTQd5T0U+OsWLQ55lO4RxTI73R+CZEu
-         9RD7cxgB3JHcXTIOPxxbdH6IqLFyM6WgXsv79BaeDgHU+oiTSAUqVGCi2OSfET8xqL
-         RCCmMfOFFUsejA4T+oB9X7uGpkllPcECNEEVMSHcfqtDf0ZH4/9g0uuADK+7haYC59
-         ddrzqw/zAnSImJu497+A4lOJI2NRtxT2cbyPCcG3OY87FrSKoAlKBcpwpKAI8dJP0v
-         VFn6mfCGP/O57wMf8NWD4v0oMfEaiXBoBSm544Db+3u/PyU7h58nDRfm2TIYL6wBKl
-         CoON9jThtWbQg==
+        b=XvcK/KuFSP4wAtRSlUJ+CbuI5H+cxAg7n6eU2SEOFM+D6Yf++VXozoVkCO5Z4ITg1
+         gDKU6Jx/XGCVScFWfmmCiHusbArwh6iqnzOuOXrb37ju/pAAWoalEKX6qci3QeIPMU
+         a40CH1Q8x81wXjhDpe+hF2lFq00fdphtP1vh//Vb4qUgj7vk9wHrCBMRqOtV6RxTfL
+         ItZbkMviaoz15w5vEw547sX3trJScyIHhp2n41yyLdf2hvAO3YaVDgSlkNEWgjMaTZ
+         BRQMMQoACZkSYHmqzoYzDkdU/34kPwkqF8EXQrl1bhvxSP91wJMMyre2NVMzySJTDU
+         KK9HhAIPQZZJw==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v5 11/30] smack: implement get, set and remove acl hook
-Date:   Tue, 18 Oct 2022 13:56:41 +0200
-Message-Id: <20221018115700.166010-12-brauner@kernel.org>
+Subject: [PATCH v5 14/30] internal: add may_write_xattr()
+Date:   Tue, 18 Oct 2022 13:56:44 +0200
+Message-Id: <20221018115700.166010-15-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221018115700.166010-1-brauner@kernel.org>
 References: <20221018115700.166010-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5544; i=brauner@kernel.org; h=from:subject; bh=hFYo1nWG3IGi3c8YSHVE4TO4Ui1ovDkUd8xlTtAUV2E=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST7TVFj1Otx7X5/4cnWAG/+pzV3v8z4Mk26uJv5s/aiPY+P p4ZWdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkiwMjw8Fjfz+qLsjMWy0q+Ta9pJ SPQUHr5tzavD/Zf+b3uqRMfszwV3TTzZzVR7YHzRGfPC+zaOdeA8M9mR+0v1oeX3RdzIOdhwsA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3136; i=brauner@kernel.org; h=from:subject; bh=sDCoYooQ4sD0AFfta13qFLuUwaIu1lEyBmzZmR0H7D4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST7TVFfl128Q5PdTKVWTkz/wslek5dLvRa63Xq7P7V/G7u9 vEVGRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQ0pjD8M/zKEPGi7/i8W2X7lu26uI e1R2jzRa3C2SmHVhumT8t4b8LIsMx2wQL5D86lFtnP1d0aJl44HVxkeegng7spk46/TaUkDwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The current way of setting and getting posix acls through the generic
-xattr interface is error prone and type unsafe. The vfs needs to
-interpret and fixup posix acls before storing or reporting it to
-userspace. Various hacks exist to make this work. The code is hard to
-understand and difficult to maintain in it's current form. Instead of
-making this work by hacking posix acls through xattr handlers we are
-building a dedicated posix acl api around the get and set inode
-operations. This removes a lot of hackiness and makes the codepaths
-easier to maintain. A lot of background can be found in [1].
+Split out the generic checks whether an inode allows writing xattrs. Since
+security.* and system.* xattrs don't have any restrictions and we're going
+to split out posix acls into a dedicated api we will use this helper to
+check whether we can write posix acls.
 
-So far posix acls were passed as a void blob to the security and
-integrity modules. Some of them like evm then proceed to interpret the
-void pointer and convert it into the kernel internal struct posix acl
-representation to perform their integrity checking magic. This is
-obviously pretty problematic as that requires knowledge that only the
-vfs is guaranteed to have and has lead to various bugs. Add a proper
-security hook for setting posix acls and pass down the posix acls in
-their appropriate vfs format instead of hacking it through a void
-pointer stored in the uapi format.
-
-I spent considerate time in the security module infrastructure and
-audited all codepaths. Smack has no restrictions based on the posix
-acl values passed through it. The capability hook doesn't need to be
-called either because it only has restrictions on security.* xattrs. So
-these all becomes very simple hooks for smack.
-
-Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-Reviewed-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
 
 Notes:
     /* v2 */
-    unchanged
+    patch not present
     
     /* v3 */
-    Paul Moore <paul@paul-moore.com>:
-    - Add get, and remove acl hook
+    patch not present
     
     /* v4 */
-    Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+    Christoph Hellwig <hch@lst.de>:
+    - Split out checks whether an inode can have xattrs written to into a helper.
     
     /* v5 */
-    Acked-by: Paul Moore <paul@paul-moore.com>:
-    
-    Paul Moore <paul@paul-moore.com>:
-    - Add whitespace between set_field and curacc calls for consistency.
+    unchanged
 
- security/smack/smack_lsm.c | 71 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+ fs/internal.h |  1 +
+ fs/xattr.c    | 43 ++++++++++++++++++++++++++++++-------------
+ 2 files changed, 31 insertions(+), 13 deletions(-)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index b6306d71c908..cadef2f6a75e 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1392,6 +1392,74 @@ static int smack_inode_removexattr(struct user_namespace *mnt_userns,
- 	return 0;
+diff --git a/fs/internal.h b/fs/internal.h
+index 6f0386b34fae..de43795ab7cd 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -234,3 +234,4 @@ int do_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		struct xattr_ctx *ctx);
+ 
+ ssize_t __kernel_write_iter(struct file *file, struct iov_iter *from, loff_t *pos);
++int may_write_xattr(struct user_namespace *mnt_userns, struct inode *inode);
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 61107b6bbed2..31b5ac65ca34 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -80,6 +80,31 @@ xattr_resolve_name(struct inode *inode, const char **name)
+ 	return ERR_PTR(-EOPNOTSUPP);
  }
  
 +/**
-+ * smack_inode_set_acl - Smack check for setting posix acls
-+ * @mnt_userns: the userns attached to the mnt this request came from
-+ * @dentry: the object
-+ * @acl_name: name of the posix acl
-+ * @kacl: the posix acls
++ * may_write_xattr - check whether inode allows writing xattr
++ * @mnt_userns:	User namespace of the mount the inode was found from
++ * @inode: the inode on which to set an xattr
 + *
-+ * Returns 0 if access is permitted, an error code otherwise
++ * Check whether the inode allows writing xattrs. Specifically, we can never
++ * set or remove an extended attribute on a read-only filesystem  or on an
++ * immutable / append-only inode.
++ *
++ * We also need to ensure that the inode has a mapping in the mount to
++ * not risk writing back invalid i_{g,u}id values.
++ *
++ * Return: On success zero is returned. On error a negative errno is returned.
 + */
-+static int smack_inode_set_acl(struct user_namespace *mnt_userns,
-+			       struct dentry *dentry, const char *acl_name,
-+			       struct posix_acl *kacl)
++int may_write_xattr(struct user_namespace *mnt_userns, struct inode *inode)
 +{
-+	struct smk_audit_info ad;
-+	int rc;
-+
-+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
-+	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
-+
-+	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_WRITE, &ad);
-+	rc = smk_bu_inode(d_backing_inode(dentry), MAY_WRITE, rc);
-+	return rc;
++	if (IS_IMMUTABLE(inode))
++		return -EPERM;
++	if (IS_APPEND(inode))
++		return -EPERM;
++	if (HAS_UNMAPPED_ID(mnt_userns, inode))
++		return -EPERM;
++	return 0;
 +}
 +
-+/**
-+ * smack_inode_get_acl - Smack check for getting posix acls
-+ * @mnt_userns: the userns attached to the mnt this request came from
-+ * @dentry: the object
-+ * @acl_name: name of the posix acl
-+ *
-+ * Returns 0 if access is permitted, an error code otherwise
-+ */
-+static int smack_inode_get_acl(struct user_namespace *mnt_userns,
-+			       struct dentry *dentry, const char *acl_name)
-+{
-+	struct smk_audit_info ad;
-+	int rc;
+ /*
+  * Check permissions for extended attribute access.  This is a bit complicated
+  * because different namespaces have very different rules.
+@@ -88,20 +113,12 @@ static int
+ xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
+ 		 const char *name, int mask)
+ {
+-	/*
+-	 * We can never set or remove an extended attribute on a read-only
+-	 * filesystem  or on an immutable / append-only inode.
+-	 */
+ 	if (mask & MAY_WRITE) {
+-		if (IS_IMMUTABLE(inode) || IS_APPEND(inode))
+-			return -EPERM;
+-		/*
+-		 * Updating an xattr will likely cause i_uid and i_gid
+-		 * to be writen back improperly if their true value is
+-		 * unknown to the vfs.
+-		 */
+-		if (HAS_UNMAPPED_ID(mnt_userns, inode))
+-			return -EPERM;
++		int ret;
 +
-+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
-+	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
-+
-+	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_READ, &ad);
-+	rc = smk_bu_inode(d_backing_inode(dentry), MAY_READ, rc);
-+	return rc;
-+}
-+
-+/**
-+ * smack_inode_remove_acl - Smack check for getting posix acls
-+ * @mnt_userns: the userns attached to the mnt this request came from
-+ * @dentry: the object
-+ * @acl_name: name of the posix acl
-+ *
-+ * Returns 0 if access is permitted, an error code otherwise
-+ */
-+static int smack_inode_remove_acl(struct user_namespace *mnt_userns,
-+				  struct dentry *dentry, const char *acl_name)
-+{
-+	struct smk_audit_info ad;
-+	int rc;
-+
-+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
-+	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
-+
-+	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_WRITE, &ad);
-+	rc = smk_bu_inode(d_backing_inode(dentry), MAY_WRITE, rc);
-+	return rc;
-+}
-+
- /**
-  * smack_inode_getsecurity - get smack xattrs
-  * @mnt_userns: active user namespace
-@@ -4816,6 +4884,9 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_post_setxattr, smack_inode_post_setxattr),
- 	LSM_HOOK_INIT(inode_getxattr, smack_inode_getxattr),
- 	LSM_HOOK_INIT(inode_removexattr, smack_inode_removexattr),
-+	LSM_HOOK_INIT(inode_set_acl, smack_inode_set_acl),
-+	LSM_HOOK_INIT(inode_get_acl, smack_inode_get_acl),
-+	LSM_HOOK_INIT(inode_remove_acl, smack_inode_remove_acl),
- 	LSM_HOOK_INIT(inode_getsecurity, smack_inode_getsecurity),
- 	LSM_HOOK_INIT(inode_setsecurity, smack_inode_setsecurity),
- 	LSM_HOOK_INIT(inode_listsecurity, smack_inode_listsecurity),
++		ret = may_write_xattr(mnt_userns, inode);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	/*
 -- 
 2.34.1
 
