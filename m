@@ -2,55 +2,55 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 994FCC43219
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 18:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F5DC4321E
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 18:23:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230107AbiJRSXM (ORCPT
+        id S230098AbiJRSXO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 14:23:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42892 "EHLO
+        Tue, 18 Oct 2022 14:23:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229993AbiJRSWx (ORCPT
+        with ESMTP id S230083AbiJRSWx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 18 Oct 2022 14:22:53 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37FCA82D31;
-        Tue, 18 Oct 2022 11:22:37 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id d26so34345645ejc.8;
-        Tue, 18 Oct 2022 11:22:37 -0700 (PDT)
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF0FD82849;
+        Tue, 18 Oct 2022 11:22:38 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id u21so21747208edi.9;
+        Tue, 18 Oct 2022 11:22:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MCmk/tBVjbF+7TqU0s2kMsuRpHDv0d5bCD7ppPQIYwk=;
-        b=GtZbUbYF28+5CArUm/WNPK3vK0N723pKcNBQvf104FiKmQANCy1VTwlAO4Cu+JJZk6
-         w6ftxBK4KU+8jyPT5FMBwROGnjgrZ3ScY3qRH+g0mmK/zwlW/8kxRzfFoUGTkSccP6KJ
-         mSgkXd/QSBkgVPUvR+4JMYIASz0r8G091AyCz8Ptg+m4db3sAigUBsXAL4CTIyIrKNTd
-         bruA3uajcCUEnVOpiN6Z1z8GwT3bS7DZhmAqjHzPsx8LTX5za6ITZurb95OLhVKVEoZ6
-         NyoqzGFn6br+Wvp97Qd3qNV8+70SaA8lgETiKxrCkSSLB69F9Cd7wC1yjx02Sdm/RzSF
-         daGw==
+        bh=ihEjAwkgFK6TMTS0NNrc4Hr909XAXppfc/t74qtEVys=;
+        b=hm5SalgVJtJmHnDHWw7DNtxG5TjZGfWiRzk/SyjKR3zw3yE1D4HSdfixYfRt3/dENO
+         JN+ENtEe1pHIIkJRb+v/19xLRt+s58gvM+PLXPiOGykMke3+kwKHcdIJbfYMjFl2xhHq
+         zcWgNuYHyJV3UOCC/+78HkcHxaO5YW8UsOGyi5tSzdxYN2i20ki/O+oDbOepshAalyVJ
+         rZiNmKN7oIUvOfZ20uDjqET13wggCBxRUP7Zi8tMpoCgSPyNPJgY/O97LNgILXqf9dhi
+         L16apGRjzhKSzCFQaXF7XEuz9t8RecW448eYP/R+/ZRQfB9YnJcYrSw22sW+SsBz4/Ot
+         qNdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MCmk/tBVjbF+7TqU0s2kMsuRpHDv0d5bCD7ppPQIYwk=;
-        b=K2eWt5SahQIhSNjflHNiojcoz8IwQfhO3C0smzWqselig56ekjxFMyd17LUl/3hTHm
-         0H7DFrk5f27fX/+CsLaN6hd09RLZgJ+oGBKz7QSEBu4xLWUJZYRWOYEVkKj8nMTrJ/cv
-         a04ID/9M4Rbioobd75Bynr2cZSVVX8fend8DaHImrDT0KxbNP+qYt8r8fOA1Rzj6aBFg
-         MQ0RYE25nvGB5gvrrCPKtomtFNdnPKjWoqR8v2ZcFwZmiK68uXdOT4M5PPXxzQAYsvL0
-         SPYt6+WlsEVIiblzQ2v4KD073eynNQdh6ByxvAtbM4BQb8N2zs+x9WOUXZZv9Wl67J4p
-         zrYA==
-X-Gm-Message-State: ACrzQf3ASHmgxijZGaRtHr4KEKvLSY1tUs1VFnLeIQhQ5JrBDnifQEi+
-        0Vt9t2v+62Q1ePH84+PnjIVpZiIrXqY=
-X-Google-Smtp-Source: AMsMyM540Q7sIwvy6TqBizL+2L5fg+bkhXI11tykwXL57S02YTyUHCuBgWP590Dm41V1/zPJRO8/gg==
-X-Received: by 2002:a17:907:980e:b0:78d:b6ea:25b3 with SMTP id ji14-20020a170907980e00b0078db6ea25b3mr3584810ejc.98.1666117355599;
-        Tue, 18 Oct 2022 11:22:35 -0700 (PDT)
+        bh=ihEjAwkgFK6TMTS0NNrc4Hr909XAXppfc/t74qtEVys=;
+        b=jTqg+NV0qp4QAvlH/Bo+GaCiWEhEEbzO8mAQgY3ApwUOW++N+oc3AaHAXHWOnUe2o0
+         iBrV4CtqxwaZdsBCu1XFUghlFlr17a7TfL4zFabFJ8F3z2e0uwS6nWE8pvwka0LpQ7bt
+         0LPubL5vYJu2XE23ZSEKQyj83XdNomVI5YSb8AuwBpdJzGW6pubkVTteYURMqbFi3HSm
+         7GWINrzar9XMyyjzVFJy19czJNdP1JZgr/DY9Lrh2JYLi2tgadfrC8DnAuhgwRMnbfgf
+         90Gep9GK6Q0Mg6pnrBO9j3KJwdshy5r/ORjaP7nIvm3CrJSBrcXRN9sN2VszCCz5ILBA
+         WaHg==
+X-Gm-Message-State: ACrzQf0NRiDJIJlf/+su5+hQptA1DwASmuKU2sJpqC/a1FpHfg0HBHMW
+        g3M5sv5IGxqee0HghAKqzMJsnUWzBUg=
+X-Google-Smtp-Source: AMsMyM4HYpmSv8b3sH3Y33hT1hxyRrc9VzF5B8y4LPkHenO3SUFJEdx/TBmJW9+voJE28xkNCTbXOA==
+X-Received: by 2002:a05:6402:42c7:b0:45c:a6f1:c0af with SMTP id i7-20020a05640242c700b0045ca6f1c0afmr3764963edc.75.1666117356946;
+        Tue, 18 Oct 2022 11:22:36 -0700 (PDT)
 Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id i18-20020a0564020f1200b00458a03203b1sm9358395eda.31.2022.10.18.11.22.34
+        by smtp.gmail.com with ESMTPSA id i18-20020a0564020f1200b00458a03203b1sm9358395eda.31.2022.10.18.11.22.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 11:22:35 -0700 (PDT)
+        Tue, 18 Oct 2022 11:22:36 -0700 (PDT)
 From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To:     linux-security-module@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -61,9 +61,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
         Nathan Chancellor <nathan@kernel.org>,
         =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH v10 08/11] selftests/landlock: Test FD passing from restricted to unrestricted processes
-Date:   Tue, 18 Oct 2022 20:22:13 +0200
-Message-Id: <20221018182216.301684-9-gnoack3000@gmail.com>
+Subject: [PATCH v10 10/11] samples/landlock: Extend sample tool to support LANDLOCK_ACCESS_FS_TRUNCATE
+Date:   Tue, 18 Oct 2022 20:22:15 +0200
+Message-Id: <20221018182216.301684-11-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <20221018182216.301684-1-gnoack3000@gmail.com>
 References: <20221018182216.301684-1-gnoack3000@gmail.com>
@@ -73,243 +73,56 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-A file descriptor created in a restricted process carries Landlock
-restrictions with it which will apply even if the same opened file is
-used from an unrestricted process.
-
-This change extracts suitable FD-passing helpers from base_test.c and
-moves them to common.h. We use the fixture variants from the ftruncate
-fixture to exercise the same scenarios as in the open_and_ftruncate
-test, but doing the Landlock restriction and open() in a different
-process than the ftruncate() call.
+Update the sandboxer sample to restrict truncate actions. This is
+automatically enabled by default if the running kernel supports
+LANDLOCK_ACCESS_FS_TRUNCATE, except for the paths listed in the
+LL_FS_RW environment variable.
 
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- tools/testing/selftests/landlock/base_test.c | 36 +----------
- tools/testing/selftests/landlock/common.h    | 67 ++++++++++++++++++++
- tools/testing/selftests/landlock/fs_test.c   | 62 ++++++++++++++++++
- 3 files changed, 132 insertions(+), 33 deletions(-)
+ samples/landlock/sandboxer.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
-index 72cdae277b02..792c3f0a59b4 100644
---- a/tools/testing/selftests/landlock/base_test.c
-+++ b/tools/testing/selftests/landlock/base_test.c
-@@ -263,23 +263,6 @@ TEST(ruleset_fd_transfer)
- 		.allowed_access = LANDLOCK_ACCESS_FS_READ_DIR,
- 	};
- 	int ruleset_fd_tx, dir_fd;
--	union {
--		/* Aligned ancillary data buffer. */
--		char buf[CMSG_SPACE(sizeof(ruleset_fd_tx))];
--		struct cmsghdr _align;
--	} cmsg_tx = {};
--	char data_tx = '.';
--	struct iovec io = {
--		.iov_base = &data_tx,
--		.iov_len = sizeof(data_tx),
--	};
--	struct msghdr msg = {
--		.msg_iov = &io,
--		.msg_iovlen = 1,
--		.msg_control = &cmsg_tx.buf,
--		.msg_controllen = sizeof(cmsg_tx.buf),
--	};
--	struct cmsghdr *cmsg;
- 	int socket_fds[2];
- 	pid_t child;
- 	int status;
-@@ -298,33 +281,20 @@ TEST(ruleset_fd_transfer)
- 				    &path_beneath_attr, 0));
- 	ASSERT_EQ(0, close(path_beneath_attr.parent_fd));
+diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+index f29bb3c72230..fd4237c64fb2 100644
+--- a/samples/landlock/sandboxer.c
++++ b/samples/landlock/sandboxer.c
+@@ -76,7 +76,8 @@ static int parse_path(char *env_path, const char ***const path_list)
+ #define ACCESS_FILE ( \
+ 	LANDLOCK_ACCESS_FS_EXECUTE | \
+ 	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+-	LANDLOCK_ACCESS_FS_READ_FILE)
++	LANDLOCK_ACCESS_FS_READ_FILE | \
++	LANDLOCK_ACCESS_FS_TRUNCATE)
  
--	cmsg = CMSG_FIRSTHDR(&msg);
--	ASSERT_NE(NULL, cmsg);
--	cmsg->cmsg_len = CMSG_LEN(sizeof(ruleset_fd_tx));
--	cmsg->cmsg_level = SOL_SOCKET;
--	cmsg->cmsg_type = SCM_RIGHTS;
--	memcpy(CMSG_DATA(cmsg), &ruleset_fd_tx, sizeof(ruleset_fd_tx));
--
- 	/* Sends the ruleset FD over a socketpair and then close it. */
- 	ASSERT_EQ(0, socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0,
- 				socket_fds));
--	ASSERT_EQ(sizeof(data_tx), sendmsg(socket_fds[0], &msg, 0));
-+	ASSERT_EQ(0, send_fd(socket_fds[0], ruleset_fd_tx));
- 	ASSERT_EQ(0, close(socket_fds[0]));
- 	ASSERT_EQ(0, close(ruleset_fd_tx));
- 
- 	child = fork();
- 	ASSERT_LE(0, child);
- 	if (child == 0) {
--		int ruleset_fd_rx;
-+		const int ruleset_fd_rx = recv_fd(socket_fds[1]);
- 
--		*(char *)msg.msg_iov->iov_base = '\0';
--		ASSERT_EQ(sizeof(data_tx),
--			  recvmsg(socket_fds[1], &msg, MSG_CMSG_CLOEXEC));
--		ASSERT_EQ('.', *(char *)msg.msg_iov->iov_base);
-+		ASSERT_LE(0, ruleset_fd_rx);
- 		ASSERT_EQ(0, close(socket_fds[1]));
--		cmsg = CMSG_FIRSTHDR(&msg);
--		ASSERT_EQ(cmsg->cmsg_len, CMSG_LEN(sizeof(ruleset_fd_tx)));
--		memcpy(&ruleset_fd_rx, CMSG_DATA(cmsg), sizeof(ruleset_fd_tx));
- 
- 		/* Enforces the received ruleset on the child. */
- 		ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
-diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
-index 7d34592471db..d7987ae8d7fc 100644
---- a/tools/testing/selftests/landlock/common.h
-+++ b/tools/testing/selftests/landlock/common.h
-@@ -10,6 +10,7 @@
- #include <errno.h>
- #include <linux/landlock.h>
- #include <sys/capability.h>
-+#include <sys/socket.h>
- #include <sys/syscall.h>
- #include <sys/types.h>
- #include <sys/wait.h>
-@@ -189,3 +190,69 @@ static void __maybe_unused clear_cap(struct __test_metadata *const _metadata,
- {
- 	_effective_cap(_metadata, caps, CAP_CLEAR);
- }
-+
-+/* Receives an FD from a UNIX socket. Returns the received FD, or -errno. */
-+static int __maybe_unused recv_fd(int usock)
-+{
-+	int fd_rx;
-+	union {
-+		/* Aligned ancillary data buffer. */
-+		char buf[CMSG_SPACE(sizeof(fd_rx))];
-+		struct cmsghdr _align;
-+	} cmsg_rx = {};
-+	char data = '\0';
-+	struct iovec io = {
-+		.iov_base = &data,
-+		.iov_len = sizeof(data),
-+	};
-+	struct msghdr msg = {
-+		.msg_iov = &io,
-+		.msg_iovlen = 1,
-+		.msg_control = &cmsg_rx.buf,
-+		.msg_controllen = sizeof(cmsg_rx.buf),
-+	};
-+	struct cmsghdr *cmsg;
-+	int res;
-+
-+	res = recvmsg(usock, &msg, MSG_CMSG_CLOEXEC);
-+	if (res < 0)
-+		return -errno;
-+
-+	cmsg = CMSG_FIRSTHDR(&msg);
-+	if (cmsg->cmsg_len != CMSG_LEN(sizeof(fd_rx)))
-+		return -EIO;
-+
-+	memcpy(&fd_rx, CMSG_DATA(cmsg), sizeof(fd_rx));
-+	return fd_rx;
-+}
-+
-+/* Sends an FD on a UNIX socket. Returns 0 on success or -errno. */
-+static int __maybe_unused send_fd(int usock, int fd_tx)
-+{
-+	union {
-+		/* Aligned ancillary data buffer. */
-+		char buf[CMSG_SPACE(sizeof(fd_tx))];
-+		struct cmsghdr _align;
-+	} cmsg_tx = {};
-+	char data_tx = '.';
-+	struct iovec io = {
-+		.iov_base = &data_tx,
-+		.iov_len = sizeof(data_tx),
-+	};
-+	struct msghdr msg = {
-+		.msg_iov = &io,
-+		.msg_iovlen = 1,
-+		.msg_control = &cmsg_tx.buf,
-+		.msg_controllen = sizeof(cmsg_tx.buf),
-+	};
-+	struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
-+
-+	cmsg->cmsg_len = CMSG_LEN(sizeof(fd_tx));
-+	cmsg->cmsg_level = SOL_SOCKET;
-+	cmsg->cmsg_type = SCM_RIGHTS;
-+	memcpy(CMSG_DATA(cmsg), &fd_tx, sizeof(fd_tx));
-+
-+	if (sendmsg(usock, &msg, 0) < 0)
-+		return -errno;
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 308f6f36e8c0..f8aae01a2409 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -3541,6 +3541,68 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
- 	}
- }
- 
-+TEST_F_FORK(ftruncate, open_and_ftruncate_in_different_processes)
-+{
-+	int child, fd, status;
-+	int socket_fds[2];
-+
-+	ASSERT_EQ(0, socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0,
-+				socket_fds));
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+	if (child == 0) {
-+		/*
-+		 * Enables Landlock in the child process, open a file descriptor
-+		 * where truncation is forbidden and send it to the
-+		 * non-landlocked parent process.
-+		 */
-+		const char *const path = file1_s1d1;
-+		const struct rule rules[] = {
-+			{
-+				.path = path,
-+				.access = variant->permitted,
-+			},
-+			{},
-+		};
-+		int fd, ruleset_fd;
-+
-+		ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
-+		ASSERT_LE(0, ruleset_fd);
-+		enforce_ruleset(_metadata, ruleset_fd);
-+		ASSERT_EQ(0, close(ruleset_fd));
-+
-+		fd = open(path, O_WRONLY);
-+		ASSERT_EQ(variant->expected_open_result, (fd < 0 ? errno : 0));
-+
-+		if (fd >= 0) {
-+			ASSERT_EQ(0, send_fd(socket_fds[0], fd));
-+			ASSERT_EQ(0, close(fd));
-+		}
-+
-+		ASSERT_EQ(0, close(socket_fds[0]));
-+
-+		_exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
-+		return;
-+	}
-+
-+	if (variant->expected_open_result == 0) {
-+		fd = recv_fd(socket_fds[1]);
-+		ASSERT_LE(0, fd);
-+
-+		EXPECT_EQ(variant->expected_ftruncate_result,
-+			  test_ftruncate(fd));
-+		ASSERT_EQ(0, close(fd));
-+	}
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_EQ(1, WIFEXITED(status));
-+	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
-+
-+	ASSERT_EQ(0, close(socket_fds[0]));
-+	ASSERT_EQ(0, close(socket_fds[1]));
-+}
-+
- /* clang-format off */
- FIXTURE(layout1_bind) {};
  /* clang-format on */
+ 
+@@ -160,11 +161,12 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
+ 	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
+ 	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
+ 	LANDLOCK_ACCESS_FS_MAKE_SYM | \
+-	LANDLOCK_ACCESS_FS_REFER)
++	LANDLOCK_ACCESS_FS_REFER | \
++	LANDLOCK_ACCESS_FS_TRUNCATE)
+ 
+ /* clang-format on */
+ 
+-#define LANDLOCK_ABI_LAST 2
++#define LANDLOCK_ABI_LAST 3
+ 
+ int main(const int argc, char *const argv[], char *const *const envp)
+ {
+@@ -234,6 +236,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 	case 1:
+ 		/* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
+ 		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
++		__attribute__((fallthrough));
++	case 2:
++		/* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
++		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
+ 
+ 		fprintf(stderr,
+ 			"Hint: You should update the running kernel "
 -- 
 2.38.0
 
