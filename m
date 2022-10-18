@@ -2,120 +2,228 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103AFC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 05:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A290C43217
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 06:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230118AbiJRFzg (ORCPT
+        id S229926AbiJRGsr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 01:55:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42970 "EHLO
+        Tue, 18 Oct 2022 02:48:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbiJRFzf (ORCPT
+        with ESMTP id S229623AbiJRGsq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Oct 2022 01:55:35 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 673C47AC18
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Oct 2022 22:55:33 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id cl1so12923241pjb.1
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Oct 2022 22:55:33 -0700 (PDT)
+        Tue, 18 Oct 2022 02:48:46 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26536A8CEA
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Oct 2022 23:48:45 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id fw14so13114716pjb.3
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Oct 2022 23:48:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RSQN0hwdZlX1y7u16DsnIwcWO7mjXUN5LAASmU8cjwM=;
-        b=eG3/tYkCfaz1l0HV4b9o4Arup6zLLv2hJBbc8fVEbyDhV0zndJrwVQsMa0LvY+xrsM
-         xcyOH0EuCWQVQvCacTLS94fkfmlKNDat0BQUjJUeZBjPFcdX2iUZKhj2cZradov4pmk6
-         MIpd1Tt7jcFgiwcqP/Vyg0WSO73Ql2zvJ3GBg=
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ToonhdBLDtMeji9lvBWJLo1j2sJZnvI8FZyXgr9kDwc=;
+        b=nRzLEDXMegikXEZwDVYnd3CTiKqZwA/k6ZY7UuZzk1vlYrZHb3sBvfD2uprc2g3sJM
+         9bBBOL6zmL5wgNaxEOcd2b/gtUt15CwfzeqMdL6k0Riz0SmkOxFEQ0t8N1dIVOGoMCVu
+         ZPGfp2fxICo0/jLEuyd86vfU2zjY1L9FuOSbQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RSQN0hwdZlX1y7u16DsnIwcWO7mjXUN5LAASmU8cjwM=;
-        b=z1UMtZ4nO6rDBqkfSbG4hv/kCqeFm+0Tby36mv7ZSqYTLUnH1U5vp+ZOwvYM9FR87N
-         A6UCL83hkbx5iggTfe1c2tuPMdtN0wApHRjV0DiyvLV+vJfM/OhnaDRlel3yj8H4SxNv
-         fey5Var6mjvdWtliFPGwIt11WruR2GQQIIu2aitH8kzznYq8VhNfSdVitbKQXrPAtz6B
-         R9GGckYNOxOxnzT/i1TnD6m6tbkb8rY1728o4ErwNJm7S5CrbKjNMLTW3e9ZDTVZoxfo
-         TPzIrzkv0Hp/SEcaE9VlJnc8J+lC+xWFR2hsk14+HM5hPGi61LRl6WtrcVoXCTRwG3Zd
-         jzaw==
-X-Gm-Message-State: ACrzQf2CI7pe9KLSSOhBRUOW16iF3X2u7rc+BvH4ZNVTHQ9f7ivRMpCZ
-        7/7MxQJwd/vMBumRJW/yqHBqFQ==
-X-Google-Smtp-Source: AMsMyM4tWFDs3k8YT7Kcl2bUy6iKgC8N5CCJCcGphkhNJeVs9KBEYz/AsGbihGkjC5doqWdyfdzUrA==
-X-Received: by 2002:a17:90a:3f86:b0:20a:e7dc:340a with SMTP id m6-20020a17090a3f8600b0020ae7dc340amr1746037pjc.157.1666072532868;
-        Mon, 17 Oct 2022 22:55:32 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ToonhdBLDtMeji9lvBWJLo1j2sJZnvI8FZyXgr9kDwc=;
+        b=SgA2TcUdiDZPOiyIj9QKXzcNYBPm8JagakphX+KGRgAmqc2F6A205QMUBRYOmwO6fi
+         Zn4KneSEaBCfrZr4aveR9vgrL9lsfhxQeMsyLQ8UNOpLs1iSy9xlFkXM/WLq9KvnMsKd
+         AcFv3LAn0JR9QN13fAAafRxRH05T2H1CTeRJ+jaTbUNqspBsz4fasIjsP6hrrVX/f35r
+         tQ6RqdNEkOa5jzvRtPTCh/hFYNHj2aSz2PXwIW/pehfQJETDhzgXr89KpUhd/wLcXFNl
+         qrPhiovrHRDdRncfEQxHp37JqTv19a+GRVAP+Q3/aQMajJD4DAHKZdNz/0E5+L5UcxHe
+         5BBA==
+X-Gm-Message-State: ACrzQf19sX9GkD18HFNn54tOQBVYncx4XHfEMa2xtLgedLi4nrbua3n5
+        h2gksPqHdNjQp3DTb+EQiXnVEQ==
+X-Google-Smtp-Source: AMsMyM7KlgUWb2ylzOoezjJfRpNXv3Yab59Vb7Sc81HwnPpz+tUiH1PV4Br+iAJwwwpUoYtQOYL6Gg==
+X-Received: by 2002:a17:902:d4c3:b0:185:4c1f:7457 with SMTP id o3-20020a170902d4c300b001854c1f7457mr1585462plg.117.1666075724634;
+        Mon, 17 Oct 2022 23:48:44 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q15-20020a170902a3cf00b0017c6959724asm7613471plb.258.2022.10.17.22.55.31
+        by smtp.gmail.com with ESMTPSA id b8-20020a17090a7ac800b00205d70ccfeesm10561637pjl.33.2022.10.17.23.48.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Oct 2022 22:55:31 -0700 (PDT)
-Date:   Mon, 17 Oct 2022 22:55:30 -0700
+        Mon, 17 Oct 2022 23:48:43 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Paul Moore <paul@paul-moore.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Nicolas Iooss <nicolas.iooss@m4x.org>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+Cc:     Kees Cook <keescook@chromium.org>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-kernel@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
-Subject: Re: [PATCH v3 1/1] security: Add CONFIG_LSM_AUTO to handle default
- LSM stack ordering
-Message-ID: <202210172153.C65BF23D5E@keescook>
-References: <20210222150608.808146-1-mic@digikod.net>
- <20210222150608.808146-2-mic@digikod.net>
- <51725b44-bc40-0205-8583-285d3b35b5ca@schaufler-ca.com>
- <ee461f8d-a02d-0782-8f31-691853a57f00@digikod.net>
- <7b67163a-9de1-313f-5b5a-8c720cef9b73@schaufler-ca.com>
- <CAJfZ7=n5FOxHXMLRrDQ3F-kDqbYngNoYKcz6_PWi1rPa0_8WpA@mail.gmail.com>
- <3b97e25b-303c-d732-3e5d-f1b1a446e090@schaufler-ca.com>
- <202210171111.21E3983165@keescook>
- <CAHC9VhTTKpesvjnc_233x+wG1BvXyup9nM4Dv2h1953zXAvU3A@mail.gmail.com>
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: [PATCH] LSM: Better reporting of actual LSMs at boot
+Date:   Mon, 17 Oct 2022 23:48:41 -0700
+Message-Id: <20221018064825.never.323-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTTKpesvjnc_233x+wG1BvXyup9nM4Dv2h1953zXAvU3A@mail.gmail.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5652; h=from:subject:message-id; bh=y6QbTEGfxV+PUTmVZZur9G80o7SxzSNODkhtDQVLdL8=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjTkxJT/Gfi3Xq8j2Rk7pydFAhXJIH0C9vEIFUdvVI Emr/SjaJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCY05MSQAKCRCJcvTf3G3AJustD/ kBxHNzsmBxjlFo2AB7MuaH5En/OQXTRyRz285TBekkDYlxbdxNZEN/ODOIGdZbvvqSorNTIcaIx8GG dbAn33NygacNJMS9CzQ/LSDXKMqCdQYzbMqXji2GN3ncmPYv+IzeoIjgdqUtLyFSLVORL6Gnq9Xby1 pn9GNavUPFH9kmoNrNmPnddsEpHWqehEjbnTPkMh8Vb9TsO4kHuULs8Atal0LjEq/smX59VV9SHXoJ uO75h2Y2n59EGIe1x9M84/LGaD4Bgb7XJ3t2RMEoVqAfw5FVeoOdZ0ZAeCoRsDMa2ULzaQszNlnOZq rQ+CAPegUgK+McXrz7Qk80vcmBA2eZRlxpI26b2wX790pr7WC2kzYX12kb/Db2gaHSlPesQqz6b8E4 /gwcmLCHxVd+QxJ09IM77hqAiIIsv/IWRmSLTm2qpmBsHfBWSmekld20rfmXiM38smmxRf1nHdsEQa vJSZpibxC6KYgtEf0Y7cV3VEzXThI3Xkw8ESb49+ZlNfymDsf5+/N5kohnQgv2z/KxzmiZBWALu6qz dkCibw1QRRsfx6tm0MVKv4vmQ7asuM+ZBUk6PzDrh20ubPbYlo/gUkB5FZ7lE+CTVijtPqH9Y4qLpf 0+VN8PDPbT70wrr//uYMBHRaajTLtKeJh6pYtlvd3sJ6MP/zpj2gmHdgA7wg==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 17, 2022 at 09:45:21PM -0400, Paul Moore wrote:
-> The code sorta cares about ordering, at least to the extent that the
-> LSMs will behave differently depending on the ordering, e.g. a LSM
+Enhance the details reported by "lsm.debug" in several ways:
 
-Right -- this is why I've been so uncomfortable with allowing
-arbitrarily reordering of the LSM list from lsm=. There are orderings we
-know work, and others may have undesirable side-effects. I'd much rather
-the kernel be specific about the order.
+- report contents of "security="
+- report contents of "CONFIG_LSM"
+- report contents of "lsm="
+- report any early LSM details
+- whitespace-align the output of similar phases for easier visual parsing
+- change "disabled" to more accurate "skipped"
+- explain what "skipped" and "ignored" mean in a parenthetical
 
-> I personally would like to preserve the existing concept where "built"
-> does *not* equate to "enabled" by default.
+Upgrade the "security= is ignored" warning from pr_info to pr_warn,
+and include full arguments list to make the cause even more clear.
 
-Yup, understood. I didn't think I was going to win over anyone on that
-one, but figured I'd just point it out again. ;)
+Replace static "Security Framework initializing" pr_info with specific
+list of the resulting order of enabled LSMs.
 
-> > I *still* think there should be a way to leave ordering alone and have
-> > separate enable/disable control.
-> 
-> My current opinion is that enabling a LSM and specifying its place in
-> an ordered list are one in the same.  The way LSM stacking as
-> currently done almost requires the ability to specify an order if an
-> admin is trying to meet an security relevant operation visibility
-> goal.
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ security/security.c | 61 +++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 54 insertions(+), 7 deletions(-)
 
-As in an admin wants to see selinux rejections instead of loadpin
-rejections for a blocked module loading?
-
-Hmmm. Is this a realistic need?
-
-> We can have defaults, like we do know, but I'm in no hurry to remove
-> the ability to allow admins to change the ordering at boot time.
-
-My concern is with new LSMs vs the build system. A system builder will
-be prompted for a new CONFIG_SECURITY_SHINY, but won't be prompted
-about making changes to CONFIG_LSM to include it.
-
-Even booting with "lsm.debug" isn't entirely helpful to helping someone
-construct the "lsm=" option they actually want... I guess I can fix that
-part, at least. :)
-
+diff --git a/security/security.c b/security/security.c
+index 9696dd64095e..6f6079dec270 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -159,7 +159,7 @@ static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
+ 		lsm->enabled = &lsm_enabled_true;
+ 	ordered_lsms[last_lsm++] = lsm;
+ 
+-	init_debug("%s ordering: %s (%sabled)\n", from, lsm->name,
++	init_debug("%s ordered: %s (%sabled)\n", from, lsm->name,
+ 		   is_enabled(lsm) ? "en" : "dis");
+ }
+ 
+@@ -222,7 +222,7 @@ static void __init prepare_lsm(struct lsm_info *lsm)
+ 	if (enabled) {
+ 		if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && !exclusive) {
+ 			exclusive = lsm;
+-			init_debug("exclusive chosen: %s\n", lsm->name);
++			init_debug("exclusive chosen:   %s\n", lsm->name);
+ 		}
+ 
+ 		lsm_set_blob_sizes(lsm->blobs);
+@@ -250,7 +250,7 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ 	/* LSM_ORDER_FIRST is always first. */
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+ 		if (lsm->order == LSM_ORDER_FIRST)
+-			append_ordered_lsm(lsm, "first");
++			append_ordered_lsm(lsm, "  first");
+ 	}
+ 
+ 	/* Process "security=", if given. */
+@@ -289,7 +289,8 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ 		}
+ 
+ 		if (!found)
+-			init_debug("%s ignored: %s\n", origin, name);
++			init_debug("%s ignored: %s (not built into kernel)\n",
++				   origin, name);
+ 	}
+ 
+ 	/* Process "security=", if given. */
+@@ -307,7 +308,8 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ 		if (exists_ordered_lsm(lsm))
+ 			continue;
+ 		set_enabled(lsm, false);
+-		init_debug("%s disabled: %s\n", origin, lsm->name);
++		init_debug("%s skipped: %s (not in requested order)\n",
++			   origin, lsm->name);
+ 	}
+ 
+ 	kfree(sep);
+@@ -318,6 +320,44 @@ static void __init lsm_early_task(struct task_struct *task);
+ 
+ static int lsm_append(const char *new, char **result);
+ 
++static void __init report_lsm_order(void)
++{
++	struct lsm_info **lsm, *early;
++	size_t size = 0;
++	char *effective, *step, *end;
++
++	/* Count the length of each enabled LSM name. */
++	for (early = __start_early_lsm_info; early < __end_early_lsm_info; early++)
++		if (is_enabled(early))
++			size += strlen(early->name) + 1;
++	for (lsm = ordered_lsms; *lsm; lsm++)
++		if (is_enabled(*lsm))
++			size += strlen((*lsm)->name) + 1;
++
++	/* Allocate space with trailing %NUL or give up. */
++	size += 1;
++	effective = kzalloc(size, GFP_KERNEL);
++	if (!effective)
++		return;
++	end = effective + size;
++	step = effective;
++
++	/* Append each enabled LSM name. */
++	for (early = __start_early_lsm_info; early < __end_early_lsm_info; early++)
++		if (is_enabled(early))
++			step += scnprintf(step, end - step, "%s%s",
++					  step == effective ? "" : ",",
++					  early->name);
++	for (lsm = ordered_lsms; *lsm; lsm++)
++		if (is_enabled(*lsm))
++			step += scnprintf(step, end - step, "%s%s",
++					  step == effective ? "" : ",",
++					  (*lsm)->name);
++
++	pr_info("initializing lsm=%s\n", effective);
++	kfree(effective);
++}
++
+ static void __init ordered_lsm_init(void)
+ {
+ 	struct lsm_info **lsm;
+@@ -327,7 +367,8 @@ static void __init ordered_lsm_init(void)
+ 
+ 	if (chosen_lsm_order) {
+ 		if (chosen_major_lsm) {
+-			pr_info("security= is ignored because it is superseded by lsm=\n");
++			pr_warn("security=%s is ignored because it is superseded by lsm=%s\n",
++				chosen_major_lsm, chosen_lsm_order);
+ 			chosen_major_lsm = NULL;
+ 		}
+ 		ordered_lsm_parse(chosen_lsm_order, "cmdline");
+@@ -337,6 +378,8 @@ static void __init ordered_lsm_init(void)
+ 	for (lsm = ordered_lsms; *lsm; lsm++)
+ 		prepare_lsm(*lsm);
+ 
++	report_lsm_order();
++
+ 	init_debug("cred blob size       = %d\n", blob_sizes.lbs_cred);
+ 	init_debug("file blob size       = %d\n", blob_sizes.lbs_file);
+ 	init_debug("inode blob size      = %d\n", blob_sizes.lbs_inode);
+@@ -393,13 +436,17 @@ int __init security_init(void)
+ {
+ 	struct lsm_info *lsm;
+ 
+-	pr_info("Security Framework initializing\n");
++	init_debug("legacy security=%s\n", chosen_major_lsm ?: " *unspecified*");
++	init_debug("  CONFIG_LSM=%s\n", builtin_lsm_order);
++	init_debug("boot arg lsm=%s\n", chosen_lsm_order ?: " *unspecified*");
+ 
+ 	/*
+ 	 * Append the names of the early LSM modules now that kmalloc() is
+ 	 * available
+ 	 */
+ 	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
++		init_debug("  early started: %s (%sabled)\n", lsm->name,
++			   is_enabled(lsm) ? "en" : "dis");
+ 		if (lsm->enabled)
+ 			lsm_append(lsm->name, &lsm_names);
+ 	}
 -- 
-Kees Cook
+2.34.1
+
