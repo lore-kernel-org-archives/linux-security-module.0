@@ -2,117 +2,81 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F880C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 18:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C98EC433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 18:31:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229965AbiJRSaV (ORCPT
+        id S229986AbiJRSbF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 14:30:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60430 "EHLO
+        Tue, 18 Oct 2022 14:31:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230121AbiJRSaP (ORCPT
+        with ESMTP id S229944AbiJRSbE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Oct 2022 14:30:15 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56C647A776;
-        Tue, 18 Oct 2022 11:30:01 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id 13so34325828ejn.3;
-        Tue, 18 Oct 2022 11:30:01 -0700 (PDT)
+        Tue, 18 Oct 2022 14:31:04 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B816A719BC
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 11:31:02 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id l4so14645146plb.8
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 11:31:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=chromium.org; s=google;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=0gjtTt36rDgEeE1qwnrH+mDax42Nw740LJXYKg5XoFA=;
-        b=X09aTYUPS7oa3Nm6zUwHk/bG1ogckKdqBEUfmEklQbmAovKHD9h0DrMuzH2yAAGJCJ
-         Nr+cxiC+HmAq2i0uU4xVYydP0LSshF6k80ge9txh3Trptlp21Q4XTW5fv3S1I76YbwaN
-         bDEyY1L6GHpsV75/GmMDeR58ObCXfQxJ+ZDiw/42ui6zk3KGivFEoBIfVlbPElteneJV
-         jE+Nkylaeewm4fY1ALHLXEf5STGlTufsKh9ca4V07Uocb5XEIqUISBtP9/zESEYx92EC
-         o5aRNKGWDoJV9pPdz8Yxh+aMnneBVGmtG9jI9Mv3abgGsjWjLLxrX9ppv2sKBkvDHgzC
-         kRpg==
+        bh=iy+LFikzHTs1J48QAEAHAm5YGvlj/kbcEpiv2VdTbbk=;
+        b=iBu3LRdcEWjy4sMWECJg5kLUDIVKNFjlERJIDz8f280TVk7Nv6Zz0y+8eiWnZKTeah
+         JrR6L/bfoap5pjeJ0q9SJKt/qhWjklw5U0jpeHEj9DrMgbyu7WCZwDeXHXGKqBg6mF1C
+         JLTJOHwjDJOXfQfTnDbVyIxYspizRanVV0kKY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0gjtTt36rDgEeE1qwnrH+mDax42Nw740LJXYKg5XoFA=;
-        b=ei+alaqg+wUbg6MKhsZBOITC5UOp25sHPMYJz8+PYSEaOh0Cv1Ifkxu3hxQMzzzVJB
-         oGVO5Q5nrbxqmG8YTVxwq4elT/sdwjYaoOnP4m/2O8iD9+sl6iqThULij1HUFug8yRXh
-         ofGLNasSzj91FUZ6HXvF+/Kttp6yv4IqpFEyKHxZd2wtggv/uHVM5sZujM1am4ZiIHrH
-         413VW1As2P9NnkqM98u4DdcI+EToHM+DBYmTxt5owd6QsEG/F8csX6B3i5tryscRh78w
-         wleHeMpjJBM8cSMwvBLybSno425wTY/FfW6WMEsgIElOZBTIBvVuJVpXowf0kMBYAhm0
-         H3Ug==
-X-Gm-Message-State: ACrzQf2auWHFH7gkqeiS5eBgn2wBX8nVhnwjAC4q8qdoooHvs/DxStY9
-        B6b8k8NTVsKABeKVCGESWH/GYCs551s=
-X-Google-Smtp-Source: AMsMyM7CPtYisE8eHY0Rm2IzQvbp+THtEPwXxkLXrddeixQk/L2ke7b2xCUwfVXvX9VGmuBQ9wking==
-X-Received: by 2002:a17:907:7f25:b0:78d:e76a:ef18 with SMTP id qf37-20020a1709077f2500b0078de76aef18mr3524035ejc.378.1666117799785;
-        Tue, 18 Oct 2022 11:29:59 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id o11-20020a170906860b00b0078de26ee46dsm7864586ejx.152.2022.10.18.11.29.59
+        bh=iy+LFikzHTs1J48QAEAHAm5YGvlj/kbcEpiv2VdTbbk=;
+        b=Vdz1YxBDu6R8EN/7upDC5qb+ziYMmOPyOKEPAYC6ei9RwO6VFSMpRBHeSW4dOW/gjp
+         /ZuzanXHXpNbGx+2lNBR2uWXaUzxoF/mj0NeYgcdAY+8LFFhW1rZLiv/VahF/3fYu3ww
+         9jQWOA/spNGRlI76M5pK4YzqTv1Ldz6mbi8vqCM1Y4wjP3eJhfWN6rLapijGrYCPt8gb
+         ntNblTulLmL8+uuLPFNtrbXSMyABaM5UAOV09rj7oVr2+mp69/GJiDyb3CWy4alUSwte
+         +g8/YomFq0lhgBLlGA2fjw1DZ4RoDlXJx5vU3ffvA6Gtw9vkDEPuiUn7lg2G6Oifnwke
+         qF0g==
+X-Gm-Message-State: ACrzQf2SneDnicu5MNABdz2wO3yme8wcTUF3XveHyUC0gBJ13YTByMy/
+        tR8otXodvh5M1Ft0j14BCmAzqA==
+X-Google-Smtp-Source: AMsMyM4dhHmTVNxe1K5q0OPpxbYaxmEGnV634ItJa0zwjrZNESq53ZU9+CnAuOxxfXQIWgCxMXUa4g==
+X-Received: by 2002:a17:903:41cf:b0:183:5a22:c63e with SMTP id u15-20020a17090341cf00b001835a22c63emr4197770ple.61.1666117862254;
+        Tue, 18 Oct 2022 11:31:02 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id o2-20020a170902d4c200b001708c4ebbaesm8763339plg.309.2022.10.18.11.31.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 11:29:59 -0700 (PDT)
-Date:   Tue, 18 Oct 2022 20:29:57 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH v10 04/11] landlock: Support file truncation
-Message-ID: <Y07wpUT5FxaHcqbp@nuc>
-References: <20221018182216.301684-1-gnoack3000@gmail.com>
- <20221018182216.301684-5-gnoack3000@gmail.com>
+        Tue, 18 Oct 2022 11:31:01 -0700 (PDT)
+Date:   Tue, 18 Oct 2022 11:31:00 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH 0/9] integrity: Move hooks into LSM
+Message-ID: <202210181130.AF944615@keescook>
+References: <20221013222702.never.990-kees@kernel.org>
+ <0a8f21a6-02de-36f0-7613-06ed3daf934b@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221018182216.301684-5-gnoack3000@gmail.com>
+In-Reply-To: <0a8f21a6-02de-36f0-7613-06ed3daf934b@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-To simplify the review - let me highlight the part that is new in V10
-and which fixes the bug which Nathan spotted on ARM64.
+On Tue, Oct 18, 2022 at 05:31:59PM +0200, Micka�l Sala�n wrote:
+> There is a complementary patch series that didn't received review:
+> https://lore.kernel.org/all/20210427113732.471066-1-roberto.sassu@huawei.com/
 
-(The other changes in V10 are only changes to documentation pulled
-from Mickaël's -next branch.)
-
-On Tue, Oct 18, 2022 at 08:22:09PM +0200, Günther Noack wrote:
-> Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
-> ...
-> In security/security.c, allocate security blobs at pointer-aligned
-> offsets. This fixes the problem where one LSM's security blob can
-> shift another LSM's security blob to an unaligned address. (Reported
-> by Nathan Chancellor)
-
-The corresponding implementation is:
-
-> diff --git a/security/security.c b/security/security.c
-> index b55596958d0c..e0fe4ba39eb9 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -185,11 +185,12 @@ static void __init lsm_set_blob_size(int *need, int *lbs)
->  {
->  	int offset;
->  
-> -	if (*need > 0) {
-> -		offset = *lbs;
-> -		*lbs += *need;
-> -		*need = offset;
-> -	}
-> +	if (*need <= 0)
-> +		return;
-> +
-> +	offset = ALIGN(*lbs, sizeof(void *));
-> +	*lbs = offset + *need;
-> +	*need = offset;
->  }
-
-(As discussed previously in
-https://lore.kernel.org/all/Y07rP%2FYNYxvQzOei@nuc/)
-
-—Günther
+Yeah, this looks interesting! I hope Mimi or other integrity folks can
+review these.
 
 -- 
+Kees Cook
