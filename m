@@ -2,76 +2,55 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3844C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 07:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E987C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 07:36:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229686AbiJRH01 (ORCPT
+        id S230209AbiJRHg6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 03:26:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52432 "EHLO
+        Tue, 18 Oct 2022 03:36:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbiJRH00 (ORCPT
+        with ESMTP id S230175AbiJRHg5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Oct 2022 03:26:26 -0400
-Received: from mail.nfschina.com (mail.nfschina.com [124.16.136.209])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 12EC01900A;
-        Tue, 18 Oct 2022 00:26:23 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 189201E80D76;
-        Tue, 18 Oct 2022 15:25:42 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id gJH4XJN1_3v4; Tue, 18 Oct 2022 15:25:39 +0800 (CST)
-Received: from localhost.localdomain (unknown [219.141.250.2])
-        (Authenticated sender: zeming@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 4B8E81E80D17;
-        Tue, 18 Oct 2022 15:25:39 +0800 (CST)
-From:   Li zeming <zeming@nfschina.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Li zeming <zeming@nfschina.com>
-Subject: [PATCH] integrity: iint: Optimize integrity_iintcache_init and integrity_inode_free function
-Date:   Tue, 18 Oct 2022 15:26:11 +0800
-Message-Id: <20221018072611.198802-1-zeming@nfschina.com>
-X-Mailer: git-send-email 2.18.2
+        Tue, 18 Oct 2022 03:36:57 -0400
+Received: from mail.ettrick.pl (mail.ettrick.pl [141.94.21.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE4B81182C
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 00:36:55 -0700 (PDT)
+Received: by mail.ettrick.pl (Postfix, from userid 1002)
+        id 6C063A4157; Tue, 18 Oct 2022 07:36:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ettrick.pl; s=mail;
+        t=1666078613; bh=ChRcLNpIfKnVgp03/tSyWuRw1tWSTk/OEiEnuZMWs58=;
+        h=Date:From:To:Subject:From;
+        b=Z5O5dIbP0uFuuLIPtkC5nzd0Qh7lWj03wempu8FpGkYgoGlq1iWNIgMSEX69envU7
+         1ynGnpTSjYboXWWEVsNqqweMlfJJHTmJ7h46cl+C0caX6e+fj3jH5LuACgiJBzOzrT
+         hNU5AdNMQhfFrQp/TGFn06yvGlabgCusBLBC+68lUwLX/mPRISJamMDiDCLT834jNu
+         5Rl50E3VGhElveypWL9NJLSN52yWJcOqXNzTM0KOoWmV5fkoXcbds3gellxNM59em6
+         v1Aw+YewDD/UlCxPUy5K5qwjFYfht2RXDLM5ejuvcnkFsC7bGQ7I5B7AM0b1OrNXXW
+         JfgpXxXv+kW3g==
+Received: by mail.ettrick.pl for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 07:36:24 GMT
+Message-ID: <20221018064500-0.1.6h.1haz1.0.jid4m2n06y@ettrick.pl>
+Date:   Tue, 18 Oct 2022 07:36:24 GMT
+From:   "Norbert Karecki" <norbert.karecki@ettrick.pl>
+To:     <linux-security-module@vger.kernel.org>
+Subject: Wycena paneli fotowoltaicznych
+X-Mailer: mail.ettrick.pl
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-These functions are optimized as follows.
-1. Remove void * variable foo cast type.
-2. iint_cache Added memory allocation check.
+Dzie=C5=84 dobry,
 
-Signed-off-by: Li zeming <zeming@nfschina.com>
----
- security/integrity/iint.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
+irm=C4=85.
 
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 8638976f7990..7c902b92482e 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -160,7 +160,7 @@ void integrity_inode_free(struct inode *inode)
- 
- static void init_once(void *foo)
- {
--	struct integrity_iint_cache *iint = (struct integrity_iint_cache *) foo;
-+	struct integrity_iint_cache *iint = foo;
- 
- 	memset(iint, 0, sizeof(*iint));
- 	iint->ima_file_status = INTEGRITY_UNKNOWN;
-@@ -177,6 +177,9 @@ static int __init integrity_iintcache_init(void)
- 	iint_cache =
- 	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cache),
- 			      0, SLAB_PANIC, init_once);
-+	if (!iint_cache)
-+		return -ENOMEM;
-+
- 	return 0;
- }
- DEFINE_LSM(integrity) = {
--- 
-2.18.2
+=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
+ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
 
+Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
+ropozycji?
+
+
+Pozdrawiam,
+Norbert Karecki
