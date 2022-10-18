@@ -2,571 +2,118 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AADB3C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 12:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F936C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 12:01:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230409AbiJRMAj (ORCPT
+        id S229921AbiJRMBe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 08:00:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58098 "EHLO
+        Tue, 18 Oct 2022 08:01:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230347AbiJRL7p (ORCPT
+        with ESMTP id S230390AbiJRL7x (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Oct 2022 07:59:45 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F12CBBE2F9;
-        Tue, 18 Oct 2022 04:58:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8718AB81EB9;
-        Tue, 18 Oct 2022 11:58:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C66C43470;
-        Tue, 18 Oct 2022 11:58:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666094318;
-        bh=mhSRdhRtzQACeyZ3OrjS99TbMIk9n2C+qOD5Q4totY4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fhJrnjSyW6idAJ1z9QSrAvKUxAamBS0XrxTC5/yx/VpSn3smEmcb+cSBF/nqDT3uZ
-         BcbJxRQZ87/PkKc4EyoQWbjhb4le34u3HNryvPZrKNkg/g1+Wm8fYeCTJdwhWWVR+W
-         AJm/ghonCZrxMMZb4/uMsOdMQgFl5xnFXg6Z7GnIqxaejRuJv1Jz4/H8Od9FArPNUj
-         tOeOHBuT2ZxpF8JUPRjVkWn1LfSdiaBeJJaBZ8J6DumBSOvZfrQfdwyQCGC8jhvFTZ
-         2FfRAFiYBlwNgxYZgmxYBZiriQuM+cHpqnN/H9XO/gEdwtNdzDf0ryK7qDlfAn04dz
-         hhVAPUjQp6JwA==
-From:   Christian Brauner <brauner@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v5 30/30] acl: remove a slew of now unused helpers
-Date:   Tue, 18 Oct 2022 13:57:00 +0200
-Message-Id: <20221018115700.166010-31-brauner@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221018115700.166010-1-brauner@kernel.org>
-References: <20221018115700.166010-1-brauner@kernel.org>
+        Tue, 18 Oct 2022 07:59:53 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 596701C406;
+        Tue, 18 Oct 2022 04:59:33 -0700 (PDT)
+Received: from dggpemm500020.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MsC8D6g8qz9t8y;
+        Tue, 18 Oct 2022 19:59:24 +0800 (CST)
+Received: from dggpemm500016.china.huawei.com (7.185.36.25) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Tue, 18 Oct 2022 19:59:31 +0800
+Received: from huawei.com (10.67.174.33) by dggpemm500016.china.huawei.com
+ (7.185.36.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Tue, 18 Oct
+ 2022 19:59:30 +0800
+From:   "GONG, Ruiqi" <gongruiqi1@huawei.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>
+CC:     Ondrej Mosnacek <omosnace@redhat.com>, <selinux@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Xiu Jianfeng" <xiujianfeng@huawei.com>, <gongruiqi1@huawei.com>
+Subject: [PATCH] selinux: use GFP_ATOMIC in convert_context()
+Date:   Tue, 18 Oct 2022 20:01:11 +0800
+Message-ID: <20221018120111.1474581-1-gongruiqi1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=19759; i=brauner@kernel.org; h=from:subject; bh=mhSRdhRtzQACeyZ3OrjS99TbMIk9n2C+qOD5Q4totY4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST7TdE6f6+U0Unzfum2ysVCJ/ectxG4bqA8+fhDr6kPT8vN 0fjh1FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARH1eG/1knd8kUVzc3Ce019r935K PjYQG3JvYg2cZ7h682Pa8Qa2JkeMgXcb5f95HgG93FR7kE7A87Xg1evKfPzPhYSc6xHJPt7AA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.67.174.33]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500016.china.huawei.com (7.185.36.25)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Now that the posix acl api is active we can remove all the hacky helpers
-we had to keep around for all these years and also remove the set and
-get posix acl xattr handler methods as they aren't needed anymore.
+The following BUG_ON was triggered on a hardware environment:
 
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+  SELinux: Converting 162 SID table entries...
+  BUG: sleeping function called from invalid context at __might_sleep_rtos+0x60/0x74 0x0
+  in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 5943, name: tar
+  CPU: 7 PID: 5943 Comm: tar Tainted: P O 5.10.0 #1
+  Call trace:
+   dump_backtrace+0x0/0x1c8
+   show_stack+0x18/0x28
+   dump_stack+0xe8/0x15c
+   ___might_sleep_rtos+0x168/0x17c
+   __might_sleep_rtos+0x60/0x74
+   __kmalloc_track_caller+0xa0/0x7dc
+   kstrdup+0x54/0xac
+   convert_context+0x48/0x2e4
+   sidtab_context_to_sid+0x1c4/0x36c
+   security_context_to_sid_core+0x168/0x238
+   security_context_to_sid_default+0x14/0x24
+   inode_doinit_use_xattr+0x164/0x1e4
+   inode_doinit_with_dentry+0x1c0/0x488
+   selinux_d_instantiate+0x20/0x34
+   security_d_instantiate+0x70/0xbc
+   d_splice_alias+0x4c/0x3c0
+   ext4_lookup+0x1d8/0x200 [ext4]
+   __lookup_slow+0x12c/0x1e4
+   walk_component+0x100/0x200
+   path_lookupat+0x88/0x118
+   filename_lookup+0x98/0x130
+   user_path_at_empty+0x48/0x60
+   vfs_statx+0x84/0x140
+   vfs_fstatat+0x20/0x30
+   __se_sys_newfstatat+0x30/0x74
+   __arm64_sys_newfstatat+0x1c/0x2c
+   el0_svc_common.constprop.0+0x100/0x184
+   do_el0_svc+0x1c/0x2c
+   el0_svc+0x20/0x34
+   el0_sync_handler+0x80/0x17c
+   el0_sync+0x13c/0x140
+  SELinux: Context system_u:object_r:pssp_rsyslog_log_t:s0:c0 is not valid (left unmapped).
+
+It was found that convert_context() (hooked by convert->func) might
+sleep in a critial section of spin_lock_irqsave in
+sidtab_context_to_sid(). Fix this problem by changing the memory
+allocation in convert_context() from GFP_KERNEL to GFP_ATOMIC.
+
+Reported-by: Tan Ninghao <tanninghao1@huawei.com>
+Fixes: ee1a84fdfeed ("selinux: overhaul sidtab to fix bug and improve performance")
+Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
 ---
+ security/selinux/ss/services.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Notes:
-    /* v2 */
-    unchanged
-    
-    /* v3 */
-    unchanged
-    
-    /* v4 */
-    unchanged
-    
-    /* v5 */
-    unchanged
-
- fs/posix_acl.c                  | 363 ++------------------------------
- fs/xattr.c                      |   5 +-
- include/linux/posix_acl_xattr.h |  20 --
- 3 files changed, 23 insertions(+), 365 deletions(-)
-
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 35e4caaedfd8..b4be7d167882 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -747,118 +747,32 @@ static int posix_acl_fix_xattr_common(const void *value, size_t size)
- 	return count;
- }
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index fe5fcf571c56..523876bb7df3 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -2036,7 +2036,7 @@ static int convert_context(struct context *oldc, struct context *newc, void *p)
+ 	args = p;
  
--void posix_acl_getxattr_idmapped_mnt(struct user_namespace *mnt_userns,
--				     const struct inode *inode,
--				     void *value, size_t size)
--{
--	struct posix_acl_xattr_header *header = value;
--	struct posix_acl_xattr_entry *entry = (void *)(header + 1), *end;
--	struct user_namespace *fs_userns = i_user_ns(inode);
--	int count;
--	vfsuid_t vfsuid;
--	vfsgid_t vfsgid;
--	kuid_t uid;
--	kgid_t gid;
--
--	if (no_idmapping(mnt_userns, i_user_ns(inode)))
--		return;
--
--	count = posix_acl_fix_xattr_common(value, size);
--	if (count <= 0)
--		return;
--
--	for (end = entry + count; entry != end; entry++) {
--		switch (le16_to_cpu(entry->e_tag)) {
--		case ACL_USER:
--			uid = make_kuid(&init_user_ns, le32_to_cpu(entry->e_id));
--			vfsuid = make_vfsuid(mnt_userns, fs_userns, uid);
--			entry->e_id = cpu_to_le32(from_kuid(&init_user_ns,
--						vfsuid_into_kuid(vfsuid)));
--			break;
--		case ACL_GROUP:
--			gid = make_kgid(&init_user_ns, le32_to_cpu(entry->e_id));
--			vfsgid = make_vfsgid(mnt_userns, fs_userns, gid);
--			entry->e_id = cpu_to_le32(from_kgid(&init_user_ns,
--						vfsgid_into_kgid(vfsgid)));
--			break;
--		default:
--			break;
--		}
--	}
--}
--
--static void posix_acl_fix_xattr_userns(
--	struct user_namespace *to, struct user_namespace *from,
--	void *value, size_t size)
--{
--	struct posix_acl_xattr_header *header = value;
--	struct posix_acl_xattr_entry *entry = (void *)(header + 1), *end;
--	int count;
--	kuid_t uid;
--	kgid_t gid;
--
--	count = posix_acl_fix_xattr_common(value, size);
--	if (count <= 0)
--		return;
--
--	for (end = entry + count; entry != end; entry++) {
--		switch(le16_to_cpu(entry->e_tag)) {
--		case ACL_USER:
--			uid = make_kuid(from, le32_to_cpu(entry->e_id));
--			entry->e_id = cpu_to_le32(from_kuid(to, uid));
--			break;
--		case ACL_GROUP:
--			gid = make_kgid(from, le32_to_cpu(entry->e_id));
--			entry->e_id = cpu_to_le32(from_kgid(to, gid));
--			break;
--		default:
--			break;
--		}
--	}
--}
--
--void posix_acl_fix_xattr_from_user(void *value, size_t size)
--{
--	struct user_namespace *user_ns = current_user_ns();
--	if (user_ns == &init_user_ns)
--		return;
--	posix_acl_fix_xattr_userns(&init_user_ns, user_ns, value, size);
--}
--
--void posix_acl_fix_xattr_to_user(void *value, size_t size)
--{
--	struct user_namespace *user_ns = current_user_ns();
--	if (user_ns == &init_user_ns)
--		return;
--	posix_acl_fix_xattr_userns(user_ns, &init_user_ns, value, size);
--}
--
- /**
-- * make_posix_acl - convert POSIX ACLs from uapi to VFS format using the
-- *                  provided callbacks to map ACL_{GROUP,USER} entries into the
-- *                  appropriate format
-- * @mnt_userns: the mount's idmapping
-- * @fs_userns: the filesystem's idmapping
-+ * posix_acl_from_xattr - convert POSIX ACLs from backing store to VFS format
-+ * @userns: the filesystem's idmapping
-  * @value: the uapi representation of POSIX ACLs
-  * @size: the size of @void
-- * @uid_cb: callback to use for mapping the uid stored in ACL_USER entries
-- * @gid_cb: callback to use for mapping the gid stored in ACL_GROUP entries
-  *
-- * The make_posix_acl() helper is an abstraction to translate from uapi format
-- * into the VFS format allowing the caller to specific callbacks to map
-- * ACL_{GROUP,USER} entries into the expected format. This is used in
-- * posix_acl_from_xattr() and vfs_set_acl_prepare() and avoids pointless code
-- * duplication.
-+ * Filesystems that store POSIX ACLs in the unaltered uapi format should use
-+ * posix_acl_from_xattr() when reading them from the backing store and
-+ * converting them into the struct posix_acl VFS format. The helper is
-+ * specifically intended to be called from the acl inode operation.
-+ *
-+ * The posix_acl_from_xattr() function will map the raw {g,u}id values stored
-+ * in ACL_{GROUP,USER} entries into idmapping in @userns.
-+ *
-+ * Note that posix_acl_from_xattr() does not take idmapped mounts into account.
-+ * If it did it calling it from the get acl inode operation would return POSIX
-+ * ACLs mapped according to an idmapped mount which would mean that the value
-+ * couldn't be cached for the filesystem. Idmapped mounts are taken into
-+ * account on the fly during permission checking or right at the VFS -
-+ * userspace boundary before reporting them to the user.
-  *
-  * Return: Allocated struct posix_acl on success, NULL for a valid header but
-  *         without actual POSIX ACL entries, or ERR_PTR() encoded error code.
-  */
--static struct posix_acl *make_posix_acl(struct user_namespace *mnt_userns,
--	struct user_namespace *fs_userns, const void *value, size_t size,
--	kuid_t (*uid_cb)(struct user_namespace *, struct user_namespace *,
--			 const struct posix_acl_xattr_entry *),
--	kgid_t (*gid_cb)(struct user_namespace *, struct user_namespace *,
--			 const struct posix_acl_xattr_entry *))
-+struct posix_acl *posix_acl_from_xattr(struct user_namespace *userns,
-+				       const void *value, size_t size)
- {
- 	const struct posix_acl_xattr_header *header = value;
- 	const struct posix_acl_xattr_entry *entry = (const void *)(header + 1), *end;
-@@ -889,12 +803,14 @@ static struct posix_acl *make_posix_acl(struct user_namespace *mnt_userns,
- 				break;
+ 	if (oldc->str) {
+-		s = kstrdup(oldc->str, GFP_KERNEL);
++		s = kstrdup(oldc->str, GFP_ATOMIC);
+ 		if (!s)
+ 			return -ENOMEM;
  
- 			case ACL_USER:
--				acl_e->e_uid = uid_cb(mnt_userns, fs_userns, entry);
-+				acl_e->e_uid = make_kuid(userns,
-+						le32_to_cpu(entry->e_id));
- 				if (!uid_valid(acl_e->e_uid))
- 					goto fail;
- 				break;
- 			case ACL_GROUP:
--				acl_e->e_gid = gid_cb(mnt_userns, fs_userns, entry);
-+				acl_e->e_gid = make_kgid(userns,
-+						le32_to_cpu(entry->e_id));
- 				if (!gid_valid(acl_e->e_gid))
- 					goto fail;
- 				break;
-@@ -909,182 +825,6 @@ static struct posix_acl *make_posix_acl(struct user_namespace *mnt_userns,
- 	posix_acl_release(acl);
- 	return ERR_PTR(-EINVAL);
- }
--
--/**
-- * vfs_set_acl_prepare_kuid - map ACL_USER uid according to mount- and
-- *                            filesystem idmapping
-- * @mnt_userns: the mount's idmapping
-- * @fs_userns: the filesystem's idmapping
-- * @e: a ACL_USER entry in POSIX ACL uapi format
-- *
-- * The uid stored as ACL_USER entry in @e is a kuid_t stored as a raw {g,u}id
-- * value. The vfs_set_acl_prepare_kuid() will recover the kuid_t through
-- * KUIDT_INIT() and then map it according to the idmapped mount. The resulting
-- * kuid_t is the value which the filesystem can map up into a raw backing store
-- * id in the filesystem's idmapping.
-- *
-- * This is used in vfs_set_acl_prepare() to generate the proper VFS
-- * representation of POSIX ACLs with ACL_USER entries during setxattr().
-- *
-- * Return: A kuid in @fs_userns for the uid stored in @e.
-- */
--static inline kuid_t
--vfs_set_acl_prepare_kuid(struct user_namespace *mnt_userns,
--			 struct user_namespace *fs_userns,
--			 const struct posix_acl_xattr_entry *e)
--{
--	kuid_t kuid = KUIDT_INIT(le32_to_cpu(e->e_id));
--	return from_vfsuid(mnt_userns, fs_userns, VFSUIDT_INIT(kuid));
--}
--
--/**
-- * vfs_set_acl_prepare_kgid - map ACL_GROUP gid according to mount- and
-- *                            filesystem idmapping
-- * @mnt_userns: the mount's idmapping
-- * @fs_userns: the filesystem's idmapping
-- * @e: a ACL_GROUP entry in POSIX ACL uapi format
-- *
-- * The gid stored as ACL_GROUP entry in @e is a kgid_t stored as a raw {g,u}id
-- * value. The vfs_set_acl_prepare_kgid() will recover the kgid_t through
-- * KGIDT_INIT() and then map it according to the idmapped mount. The resulting
-- * kgid_t is the value which the filesystem can map up into a raw backing store
-- * id in the filesystem's idmapping.
-- *
-- * This is used in vfs_set_acl_prepare() to generate the proper VFS
-- * representation of POSIX ACLs with ACL_GROUP entries during setxattr().
-- *
-- * Return: A kgid in @fs_userns for the gid stored in @e.
-- */
--static inline kgid_t
--vfs_set_acl_prepare_kgid(struct user_namespace *mnt_userns,
--			 struct user_namespace *fs_userns,
--			 const struct posix_acl_xattr_entry *e)
--{
--	kgid_t kgid = KGIDT_INIT(le32_to_cpu(e->e_id));
--	return from_vfsgid(mnt_userns, fs_userns, VFSGIDT_INIT(kgid));
--}
--
--/**
-- * vfs_set_acl_prepare - convert POSIX ACLs from uapi to VFS format taking
-- *                       mount and filesystem idmappings into account
-- * @mnt_userns: the mount's idmapping
-- * @fs_userns: the filesystem's idmapping
-- * @value: the uapi representation of POSIX ACLs
-- * @size: the size of @void
-- *
-- * When setting POSIX ACLs with ACL_{GROUP,USER} entries they need to be
-- * mapped according to the relevant mount- and filesystem idmapping. It is
-- * important that the ACL_{GROUP,USER} entries in struct posix_acl will be
-- * mapped into k{g,u}id_t that are supposed to be mapped up in the filesystem
-- * idmapping. This is crucial since the resulting struct posix_acl might be
-- * cached filesystem wide. The vfs_set_acl_prepare() function will take care to
-- * perform all necessary idmappings.
-- *
-- * Note, that since basically forever the {g,u}id values encoded as
-- * ACL_{GROUP,USER} entries in the uapi POSIX ACLs passed via @value contain
-- * values that have been mapped according to the caller's idmapping. In other
-- * words, POSIX ACLs passed in uapi format as @value during setxattr() contain
-- * {g,u}id values in their ACL_{GROUP,USER} entries that should actually have
-- * been stored as k{g,u}id_t.
-- *
-- * This means, vfs_set_acl_prepare() needs to first recover the k{g,u}id_t by
-- * calling K{G,U}IDT_INIT(). Afterwards they can be interpreted as vfs{g,u}id_t
-- * through from_vfs{g,u}id() to account for any idmapped mounts. The
-- * vfs_set_acl_prepare_k{g,u}id() helpers will take care to generate the
-- * correct k{g,u}id_t.
-- *
-- * The filesystem will then receive the POSIX ACLs ready to be cached
-- * filesystem wide and ready to be written to the backing store taking the
-- * filesystem's idmapping into account.
-- *
-- * Return: Allocated struct posix_acl on success, NULL for a valid header but
-- *         without actual POSIX ACL entries, or ERR_PTR() encoded error code.
-- */
--struct posix_acl *vfs_set_acl_prepare(struct user_namespace *mnt_userns,
--				      struct user_namespace *fs_userns,
--				      const void *value, size_t size)
--{
--	return make_posix_acl(mnt_userns, fs_userns, value, size,
--			      vfs_set_acl_prepare_kuid,
--			      vfs_set_acl_prepare_kgid);
--}
--EXPORT_SYMBOL(vfs_set_acl_prepare);
--
--/**
-- * posix_acl_from_xattr_kuid - map ACL_USER uid into filesystem idmapping
-- * @mnt_userns: unused
-- * @fs_userns: the filesystem's idmapping
-- * @e: a ACL_USER entry in POSIX ACL uapi format
-- *
-- * Map the uid stored as ACL_USER entry in @e into the filesystem's idmapping.
-- * This is used in posix_acl_from_xattr() to generate the proper VFS
-- * representation of POSIX ACLs with ACL_USER entries.
-- *
-- * Return: A kuid in @fs_userns for the uid stored in @e.
-- */
--static inline kuid_t
--posix_acl_from_xattr_kuid(struct user_namespace *mnt_userns,
--			  struct user_namespace *fs_userns,
--			  const struct posix_acl_xattr_entry *e)
--{
--	return make_kuid(fs_userns, le32_to_cpu(e->e_id));
--}
--
--/**
-- * posix_acl_from_xattr_kgid - map ACL_GROUP gid into filesystem idmapping
-- * @mnt_userns: unused
-- * @fs_userns: the filesystem's idmapping
-- * @e: a ACL_GROUP entry in POSIX ACL uapi format
-- *
-- * Map the gid stored as ACL_GROUP entry in @e into the filesystem's idmapping.
-- * This is used in posix_acl_from_xattr() to generate the proper VFS
-- * representation of POSIX ACLs with ACL_GROUP entries.
-- *
-- * Return: A kgid in @fs_userns for the gid stored in @e.
-- */
--static inline kgid_t
--posix_acl_from_xattr_kgid(struct user_namespace *mnt_userns,
--			  struct user_namespace *fs_userns,
--			  const struct posix_acl_xattr_entry *e)
--{
--	return make_kgid(fs_userns, le32_to_cpu(e->e_id));
--}
--
--/**
-- * posix_acl_from_xattr - convert POSIX ACLs from backing store to VFS format
-- * @fs_userns: the filesystem's idmapping
-- * @value: the uapi representation of POSIX ACLs
-- * @size: the size of @void
-- *
-- * Filesystems that store POSIX ACLs in the unaltered uapi format should use
-- * posix_acl_from_xattr() when reading them from the backing store and
-- * converting them into the struct posix_acl VFS format. The helper is
-- * specifically intended to be called from the ->get_inode_acl() inode
-- * operation.
-- *
-- * The posix_acl_from_xattr() function will map the raw {g,u}id values stored
-- * in ACL_{GROUP,USER} entries into the filesystem idmapping in @fs_userns. The
-- * posix_acl_from_xattr_k{g,u}id() helpers will take care to generate the
-- * correct k{g,u}id_t. The returned struct posix_acl can be cached.
-- *
-- * Note that posix_acl_from_xattr() does not take idmapped mounts into account.
-- * If it did it calling is from the ->get_inode_acl() inode operation would
-- * return POSIX ACLs mapped according to an idmapped mount which would mean
-- * that the value couldn't be cached for the filesystem. Idmapped mounts are
-- * taken into account on the fly during permission checking or right at the VFS
-- * - userspace boundary before reporting them to the user.
-- *
-- * Return: Allocated struct posix_acl on success, NULL for a valid header but
-- *         without actual POSIX ACL entries, or ERR_PTR() encoded error code.
-- */
--struct posix_acl *
--posix_acl_from_xattr(struct user_namespace *fs_userns,
--		     const void *value, size_t size)
--{
--	return make_posix_acl(&init_user_ns, fs_userns, value, size,
--			      posix_acl_from_xattr_kuid,
--			      posix_acl_from_xattr_kgid);
--}
- EXPORT_SYMBOL (posix_acl_from_xattr);
- 
- /*
-@@ -1190,31 +930,6 @@ ssize_t vfs_posix_acl_to_xattr(struct user_namespace *mnt_userns,
- 	return real_size;
- }
- 
--static int
--posix_acl_xattr_get(const struct xattr_handler *handler,
--		    struct dentry *unused, struct inode *inode,
--		    const char *name, void *value, size_t size)
--{
--	struct posix_acl *acl;
--	int error;
--
--	if (!IS_POSIXACL(inode))
--		return -EOPNOTSUPP;
--	if (S_ISLNK(inode->i_mode))
--		return -EOPNOTSUPP;
--
--	acl = get_inode_acl(inode, handler->flags);
--	if (IS_ERR(acl))
--		return PTR_ERR(acl);
--	if (acl == NULL)
--		return -ENODATA;
--
--	error = posix_acl_to_xattr(&init_user_ns, acl, value, size);
--	posix_acl_release(acl);
--
--	return error;
--}
--
- int
- set_posix_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	      int type, struct posix_acl *acl)
-@@ -1240,36 +955,6 @@ set_posix_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
- }
- EXPORT_SYMBOL(set_posix_acl);
- 
--static int
--posix_acl_xattr_set(const struct xattr_handler *handler,
--			   struct user_namespace *mnt_userns,
--			   struct dentry *dentry, struct inode *inode,
--			   const char *name, const void *value, size_t size,
--			   int flags)
--{
--	struct posix_acl *acl = NULL;
--	int ret;
--
--	if (value) {
--		/*
--		 * By the time we end up here the {g,u}ids stored in
--		 * ACL_{GROUP,USER} have already been mapped according to the
--		 * caller's idmapping. The vfs_set_acl_prepare() helper will
--		 * recover them and take idmapped mounts into account. The
--		 * filesystem will receive the POSIX ACLs in the correct
--		 * format ready to be cached or written to the backing store
--		 * taking the filesystem idmapping into account.
--		 */
--		acl = vfs_set_acl_prepare(mnt_userns, i_user_ns(inode),
--					  value, size);
--		if (IS_ERR(acl))
--			return PTR_ERR(acl);
--	}
--	ret = set_posix_acl(mnt_userns, dentry, handler->flags, acl);
--	posix_acl_release(acl);
--	return ret;
--}
--
- static bool
- posix_acl_xattr_list(struct dentry *dentry)
- {
-@@ -1280,8 +965,6 @@ const struct xattr_handler posix_acl_access_xattr_handler = {
- 	.name = XATTR_NAME_POSIX_ACL_ACCESS,
- 	.flags = ACL_TYPE_ACCESS,
- 	.list = posix_acl_xattr_list,
--	.get = posix_acl_xattr_get,
--	.set = posix_acl_xattr_set,
- };
- EXPORT_SYMBOL_GPL(posix_acl_access_xattr_handler);
- 
-@@ -1289,8 +972,6 @@ const struct xattr_handler posix_acl_default_xattr_handler = {
- 	.name = XATTR_NAME_POSIX_ACL_DEFAULT,
- 	.flags = ACL_TYPE_DEFAULT,
- 	.list = posix_acl_xattr_list,
--	.get = posix_acl_xattr_get,
--	.set = posix_acl_xattr_set,
- };
- EXPORT_SYMBOL_GPL(posix_acl_default_xattr_handler);
- 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 77db5aa26d13..df3af9fa8c77 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -454,10 +454,7 @@ vfs_getxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		return ret;
- 	}
- nolsm:
--	error = __vfs_getxattr(dentry, inode, name, value, size);
--	if (error > 0 && is_posix_acl_xattr(name))
--		posix_acl_getxattr_idmapped_mnt(mnt_userns, inode, value, size);
--	return error;
-+	return __vfs_getxattr(dentry, inode, name, value, size);
- }
- EXPORT_SYMBOL_GPL(vfs_getxattr);
- 
-diff --git a/include/linux/posix_acl_xattr.h b/include/linux/posix_acl_xattr.h
-index c5d5fbc348dc..8daac3c5b583 100644
---- a/include/linux/posix_acl_xattr.h
-+++ b/include/linux/posix_acl_xattr.h
-@@ -35,11 +35,6 @@ posix_acl_xattr_count(size_t size)
- #ifdef CONFIG_FS_POSIX_ACL
- struct posix_acl *posix_acl_from_xattr(struct user_namespace *user_ns,
- 				       const void *value, size_t size);
--void posix_acl_fix_xattr_from_user(void *value, size_t size);
--void posix_acl_fix_xattr_to_user(void *value, size_t size);
--void posix_acl_getxattr_idmapped_mnt(struct user_namespace *mnt_userns,
--				     const struct inode *inode,
--				     void *value, size_t size);
- ssize_t vfs_posix_acl_to_xattr(struct user_namespace *mnt_userns,
- 			       struct inode *inode, const struct posix_acl *acl,
- 			       void *buffer, size_t size);
-@@ -50,18 +45,6 @@ posix_acl_from_xattr(struct user_namespace *user_ns, const void *value,
- {
- 	return ERR_PTR(-EOPNOTSUPP);
- }
--static inline void posix_acl_fix_xattr_from_user(void *value, size_t size)
--{
--}
--static inline void posix_acl_fix_xattr_to_user(void *value, size_t size)
--{
--}
--static inline void
--posix_acl_getxattr_idmapped_mnt(struct user_namespace *mnt_userns,
--				const struct inode *inode, void *value,
--				size_t size)
--{
--}
- static inline ssize_t vfs_posix_acl_to_xattr(struct user_namespace *mnt_userns,
- 					     struct inode *inode,
- 					     const struct posix_acl *acl,
-@@ -73,9 +56,6 @@ static inline ssize_t vfs_posix_acl_to_xattr(struct user_namespace *mnt_userns,
- 
- int posix_acl_to_xattr(struct user_namespace *user_ns,
- 		       const struct posix_acl *acl, void *buffer, size_t size);
--struct posix_acl *vfs_set_acl_prepare(struct user_namespace *mnt_userns,
--				      struct user_namespace *fs_userns,
--				      const void *value, size_t size);
- static inline const char *posix_acl_xattr_name(int type)
- {
- 	switch (type) {
 -- 
-2.34.1
+2.25.1
 
