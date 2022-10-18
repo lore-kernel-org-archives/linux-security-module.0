@@ -2,81 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C98EC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 18:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1DCC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 18:32:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229986AbiJRSbF (ORCPT
+        id S229882AbiJRScc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 14:31:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35826 "EHLO
+        Tue, 18 Oct 2022 14:32:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229944AbiJRSbE (ORCPT
+        with ESMTP id S229775AbiJRScc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Oct 2022 14:31:04 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B816A719BC
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 11:31:02 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id l4so14645146plb.8
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 11:31:02 -0700 (PDT)
+        Tue, 18 Oct 2022 14:32:32 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E4EF88A33
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 11:32:30 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id f205so6876345yba.2
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 11:32:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iy+LFikzHTs1J48QAEAHAm5YGvlj/kbcEpiv2VdTbbk=;
-        b=iBu3LRdcEWjy4sMWECJg5kLUDIVKNFjlERJIDz8f280TVk7Nv6Zz0y+8eiWnZKTeah
-         JrR6L/bfoap5pjeJ0q9SJKt/qhWjklw5U0jpeHEj9DrMgbyu7WCZwDeXHXGKqBg6mF1C
-         JLTJOHwjDJOXfQfTnDbVyIxYspizRanVV0kKY=
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L16nsXH834AKuMsM1DMh0J2GdKedU+LxwtqcL0kTxPI=;
+        b=XO8YUb/HBgZcSFvKYW3v1o26TnjeGANLpJgT83ktEA5S3Wpn8WFZv1ed3CMM3+J+2M
+         BZy26UEEhByJ/XoGJuZMOT70oocT1eWbj1tLh2Y05Y9NNDzK3f5PWHipzgAtlbBsTCd6
+         z1uWBMk+2CzW7mvcTmvhwAFbUpRAHM2d3K+NNH4uyCu+TuNeU/EyxIXMq9RxRoVeaY3R
+         YnRpBEZ+pNJUGKqB6hHn2TOYXx8KD5M398NxDBe1fooI4f1dfNY0GnWJR71p1MLgb3x9
+         FxW4UmbW9u+j2FVcEubUkGusDH8gGJAxJtHMYJNxZrved0o3fbCGFZYNZYhT4fIIRjzo
+         Iq9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iy+LFikzHTs1J48QAEAHAm5YGvlj/kbcEpiv2VdTbbk=;
-        b=Vdz1YxBDu6R8EN/7upDC5qb+ziYMmOPyOKEPAYC6ei9RwO6VFSMpRBHeSW4dOW/gjp
-         /ZuzanXHXpNbGx+2lNBR2uWXaUzxoF/mj0NeYgcdAY+8LFFhW1rZLiv/VahF/3fYu3ww
-         9jQWOA/spNGRlI76M5pK4YzqTv1Ldz6mbi8vqCM1Y4wjP3eJhfWN6rLapijGrYCPt8gb
-         ntNblTulLmL8+uuLPFNtrbXSMyABaM5UAOV09rj7oVr2+mp69/GJiDyb3CWy4alUSwte
-         +g8/YomFq0lhgBLlGA2fjw1DZ4RoDlXJx5vU3ffvA6Gtw9vkDEPuiUn7lg2G6Oifnwke
-         qF0g==
-X-Gm-Message-State: ACrzQf2SneDnicu5MNABdz2wO3yme8wcTUF3XveHyUC0gBJ13YTByMy/
-        tR8otXodvh5M1Ft0j14BCmAzqA==
-X-Google-Smtp-Source: AMsMyM4dhHmTVNxe1K5q0OPpxbYaxmEGnV634ItJa0zwjrZNESq53ZU9+CnAuOxxfXQIWgCxMXUa4g==
-X-Received: by 2002:a17:903:41cf:b0:183:5a22:c63e with SMTP id u15-20020a17090341cf00b001835a22c63emr4197770ple.61.1666117862254;
-        Tue, 18 Oct 2022 11:31:02 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o2-20020a170902d4c200b001708c4ebbaesm8763339plg.309.2022.10.18.11.31.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 11:31:01 -0700 (PDT)
-Date:   Tue, 18 Oct 2022 11:31:00 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH 0/9] integrity: Move hooks into LSM
-Message-ID: <202210181130.AF944615@keescook>
-References: <20221013222702.never.990-kees@kernel.org>
- <0a8f21a6-02de-36f0-7613-06ed3daf934b@digikod.net>
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L16nsXH834AKuMsM1DMh0J2GdKedU+LxwtqcL0kTxPI=;
+        b=6HGObjfXxi/I7HCgpVkIlW6f94krE0baxn2XRVYjkZjBswfifjSBWwK+QJEnqH6Vrr
+         XK2OqAwRN+HVXXC3vMp/OeSccIqR6E8zay+2X4f10UaNl4Iz8lP0gcHeJ7PkW/2AqAQJ
+         B56kGOyTK3ZPQgWlbCVkR9HdtCNqfkXyJP4rQ7/VraGx8Yp05EeeZRlIjZPYJFFHLr2w
+         ijzli7hhuaZl9IXPvZGfe1BGTGTEZupMHeolFRwYKTHVaE40GXjrnmFZZ1o8q590rsAT
+         Cw2KyaXVDUiBMyQnAXJuykHySsmzFqCBQB1x7DqMcmydHJm5X/Eg7IXPN5OMauxGkSMB
+         QwuA==
+X-Gm-Message-State: ACrzQf3SaCbmiBNHK3ss3mLINOIs0jjkiMqevM7BtVAtwP/3BWmI/5wP
+        J30VueuUapuhnW5hgWKBAHi4Kuxy8TQJIEVmIgnj
+X-Google-Smtp-Source: AMsMyM549fr2F8ghdaTmpS/lhPUsehNpD3P88Hit4TOUZZUVZsJ34NGZDgq0dmFRGFU5YGCDaHopXFJifv1b36RZvn0=
+X-Received: by 2002:a05:6902:724:b0:6c0:1784:b6c7 with SMTP id
+ l4-20020a056902072400b006c01784b6c7mr3615835ybt.15.1666117949646; Tue, 18 Oct
+ 2022 11:32:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0a8f21a6-02de-36f0-7613-06ed3daf934b@digikod.net>
+References: <20221008100935.73706-1-gnoack3000@gmail.com> <b8566973-63bc-441f-96b9-f822e9944127@digikod.net>
+ <Y0g+TEgGGhZDm7MX@dev-arch.thelio-3990X> <Y0xJUy3igQXWPAeq@nuc>
+ <Y0xkZqKoE3rRJefh@nuc> <ea8117e5-7f5c-7598-5d6a-868184a6e4ae@digikod.net>
+ <CAHC9VhR8SQo9x_cv6BZQSwt0rrjeGh-t+YV10GrA3PbC+yHrxw@mail.gmail.com> <Y07rP/YNYxvQzOei@nuc>
+In-Reply-To: <Y07rP/YNYxvQzOei@nuc>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 18 Oct 2022 14:32:18 -0400
+Message-ID: <CAHC9VhRamtwyA00A1j+8cd+UtZy7THu6VFch6qe0ESTx+bc+jA@mail.gmail.com>
+Subject: Re: [PATCH v9 00/11] landlock: truncate support
+To:     =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 18, 2022 at 05:31:59PM +0200, Mickaël Salaün wrote:
-> There is a complementary patch series that didn't received review:
-> https://lore.kernel.org/all/20210427113732.471066-1-roberto.sassu@huawei.com/
+On Tue, Oct 18, 2022 at 2:06 PM G=C3=BCnther Noack <gnoack3000@gmail.com> w=
+rote:
+>
+> On Tue, Oct 18, 2022 at 01:12:48PM -0400, Paul Moore wrote:
+> > On Mon, Oct 17, 2022 at 5:16 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
+et> wrote:
+> > > On 16/10/2022 22:07, G=C3=BCnther Noack wrote:
+> >
+> > ...
+> >
+> > > > Proposed fix
+> > > > ------------
+> > > >
+> > > > I think the LSM framework should ensure that security blobs are
+> > > > pointer-aligned.
+> > > >
+> > > > The LSM framework takes the role of a memory allocator here, and
+> > > > memory allocators should normally return aligned addresses, in my
+> > > > understanding. -- It seems reasonable for AppArmor to make that
+> > > > assumption.
+> > > >
+> > > > The proposed one-line fix is: Change lsm_set_blob_size() in
+> > > > security/security.c, where the positions of the individual security
+> > > > blobs are calculated, so that each allocated blob is aligned to a
+> > > > pointer size boundary.
+> > > >
+> > > > if (*need > 0) {
+> > > >    *lbs =3D ALIGN(*lbs, sizeof(void *));   // NEW
+> > > >
+> > > >    offset =3D *lbs;
+> > > >    *lbs +=3D *need;
+> > > >    *need =3D offset;
+> > > > }
+> > >
+> > > This looks good to me. This fix should be part of patch 4/11 since it
+> > > only affects Landlock for now.
+> >
+> > Hi G=C3=BCnther,
+> >
+> > Sorry for not seeing this email sooner; I had thought the landlock
+> > truncate work was largely resolved with just a few small things for
+> > you to sort out with Micka=C3=ABl so I wasn't following this thread ver=
+y
+> > closely anymore.
+> >
+> > Regarding the fix, yes, I think the solution is to fixup the LSM
+> > security blob allocator to properly align the entries.  As you already
+> > mentioned, that's common behavior elsewhere and I see no reason why we
+> > should deviate from that in the LSM allocator.  Honestly, looking at
+> > the rest of the allocator right now I can see a few other things to
+> > improve, but those can wait for a later time so as to not conflict
+> > with this work (/me adds a new entry to my todo list).
+> >
+> > Other than that, I might suggest the lsm_set_blob_size()
+> > implementation below as it seems cleaner to me and should be
+> > functionally equivalent ... at least on quick inspection, if I've done
+> > something dumb with the code below please feel free to ignore me ;)
+> >
+> >   static void __init lsm_set_blob_size(int *need, int *lbs)
+> >   {
+> >     if (*need <=3D 0)
+> >       return;
+> >
+> >     *need =3D ALIGN(*need, sizeof(void *));
+> >     *lbs +=3D *need;
+> >   }
+>
+> Hello Paul,
+>
+> thanks for the reply. Sounds good, I'll go forward with this approach
+> then and send a V10 soon.
+>
+> Implementation-wise for this function, I think this is the closest to
+> your suggestion I can get:
+>
+> static void __init lsm_set_blob_size(int *need, int *lbs)
+> {
+>   int offset;
+>
+>   if (*need <=3D 0)
+>     return;
+>
+>   offset =3D ALIGN(*lbs, sizeof(void *));
+>   *lbs =3D offset + *need;
+>   *need =3D offset;
+> }
+>
+> This differs from your suggestion in that:
+>
+> - *need gets assigned to the offset at the end. (It's a bit unusual:
+>   *need is both used to specify the requested blob size when calling
+>   the function, and for returning the allocated offset from the
+>   function call.)
+>
+> - This implementation aligns the blob's start offset, not the end
+>   offset. (probably makes no real difference in practice)
+>
+> As suggested by Micka=C3=ABl, I'll make this fix part of the "Landlock:
+> Support file truncation" patch, so that people backporting it won't
+> accidentally leave it out.
 
-Yeah, this looks interesting! I hope Mimi or other integrity folks can
-review these.
+That's all fine with me, the important thing is to make sure the
+landlock truncate patches don't break anything.  We'll cleanup the
+allocator later.
 
--- 
-Kees Cook
+--=20
+paul-moore.com
