@@ -2,209 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 319FDC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 18:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD04C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 18:25:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229470AbiJRSXP (ORCPT
+        id S229454AbiJRSZe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 14:23:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42614 "EHLO
+        Tue, 18 Oct 2022 14:25:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229886AbiJRSXH (ORCPT
+        with ESMTP id S230161AbiJRSZV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Oct 2022 14:23:07 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4576D83F04;
-        Tue, 18 Oct 2022 11:22:39 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id ot12so34435706ejb.1;
-        Tue, 18 Oct 2022 11:22:39 -0700 (PDT)
+        Tue, 18 Oct 2022 14:25:21 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70FF45D0C6
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 11:25:05 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id o9-20020a17090a0a0900b0020ad4e758b3so14754785pjo.4
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Oct 2022 11:25:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BCqE9e12XoBqA5RscNmFvGeITIorfGLdOj2bFbTji74=;
-        b=Xh4SLMDAcfIHODE+7dLbrJE99J02JXGbPmWUTXjbs8GMNN+oGlJDBrBRpQJHJYrE04
-         Z49RCEvP0T7snGzhSK9WI1YIeujmUc9eC29I8V7SQp6l+SMXe6CsqlL8xsrH9vS5EC2U
-         TiojafYGD1R/cUD+GakOvDyg5fOwaWDZSRdx0GyFhiLUVVOfWqob4E2CsZaBDdHA3rn5
-         tKB26ndirT9XiJeMs3ZOf30fDdTO2zi5hIvr5kBP04X9j5sl7bARJYbeGJLxOgmwwMu/
-         IjfbfAsgcc/73eZCs2dHsB65R9ofimrIpPubp3XuxU9R0cjqgLx/NM4UKgbOLFiCh9Ej
-         bQ1Q==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XnD0cUVp+TOTlgr52vU4IJ+UQNYJwnMUoL+t7q45VyE=;
+        b=knjecM+JwXsRjmXTN38QTXdo60yLmZbtz3TiWB6dKs1qQ30ZMLuU5uJKsLks+W19SL
+         MhCYYnb+l60NN2dFy1uHPJPAONKJjdBvZIKuQ839w8pnHn6FV3rCq6AXDJoeopNRIXa7
+         NAdJf2F6f8oMnGxEvBxeISjz0+pS8DGQ57Cvc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BCqE9e12XoBqA5RscNmFvGeITIorfGLdOj2bFbTji74=;
-        b=DElvfuR0pC/NOysKHiHERZyeiytHAk8SBCnUq45nj+jK++LC9pTozaGcXPKzHsj8J6
-         xtEsInnZGq5d/hWyxGxh8EWWwK0NHqoySjTHrj50pyr31pHUpxJYZdwSMf7yRHxnjsZX
-         D8B72IsMFKpQt32lwgBMm7RjgSSUksyMGWQYXs+DJgoIetgmOLq/joOWIPIhWtneoN13
-         MXg33PP4MeLDFauO39gsXOr/V3vHm01URPDL9EfMlBbUU4aZ8AP1l2B+HGdSZ4JIGTcK
-         MWl8asskCLVLsdeRbWazlIK9zR9zjsHfA0L05s3vUi9wftPoZrXj7CAlNI3zXsEMXTt3
-         VOqw==
-X-Gm-Message-State: ACrzQf24RsLerjrtpvSlSK7pL0Kd+SjbzjOEczgDcRxNYP0QvUrDWNbE
-        fPSwFkJ21udh3+G3VLX2Ftq4Ac9iAjc=
-X-Google-Smtp-Source: AMsMyM6ngBDuCs9bZkg2u2GgKTojp9eEeHWIMdrCpDs+kXycH9fYKxgTnyNd/cy175OLVRLHlGRJOA==
-X-Received: by 2002:a17:907:1c28:b0:78d:4616:e6b6 with SMTP id nc40-20020a1709071c2800b0078d4616e6b6mr3356096ejc.257.1666117357707;
-        Tue, 18 Oct 2022 11:22:37 -0700 (PDT)
-Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id i18-20020a0564020f1200b00458a03203b1sm9358395eda.31.2022.10.18.11.22.37
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XnD0cUVp+TOTlgr52vU4IJ+UQNYJwnMUoL+t7q45VyE=;
+        b=d61qmcBHngqU/oaeBNHLeB/qHgRKns31JwVlD+pruk3A+klyje0zJ2PALEdUh0V71H
+         tPwb1kFk+SknJAZyxdUJMjKMvi0deySF4ssY+QUm5hp4XCq3gfer/z+EkwvkOU8Qq07Y
+         xGpzCSUKyB+BxW2opVZYyOYyu3VUqtCQOz9tmRo3wnqbBp9hh37QPJbMxDwr5CKQeY0D
+         x+IJ3mSKx0K3F8ZpFM6DcFXNEn39klr0jyzN8tbvNASwtzKmXHKq47T3HrK9scstS45k
+         kI986F+iirOPxzTw5d4gi/ENMJNC3yrX7eQbJZHPb+JuDtke1EPfwWndmqfwDgDsY1pk
+         M4nw==
+X-Gm-Message-State: ACrzQf25LYZkCorchbahKIHXguSCls26M6kz4NMNA8DIK+cg94G3Ei8c
+        2tY9c79heBrRNP6KAc9ecnU6OuDLrM0Xyw==
+X-Google-Smtp-Source: AMsMyM56wYSQF4d6PdxkC9KXMD1lXxNzi/2pnc/ihUXr+HLyRnxmdbs1/lcrj69ovUsn97pESxrYwQ==
+X-Received: by 2002:a17:902:ea85:b0:17f:88c1:7015 with SMTP id x5-20020a170902ea8500b0017f88c17015mr4189852plb.49.1666117504543;
+        Tue, 18 Oct 2022 11:25:04 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id m4-20020a170902f64400b00176b84eb29asm8884968plg.301.2022.10.18.11.25.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 11:22:37 -0700 (PDT)
-From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
+        Tue, 18 Oct 2022 11:25:03 -0700 (PDT)
+Date:   Tue, 18 Oct 2022 11:25:02 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        John Johansen <john.johansen@canonical.com>,
         Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH v10 11/11] landlock: Document Landlock's file truncation support
-Date:   Tue, 18 Oct 2022 20:22:16 +0200
-Message-Id: <20221018182216.301684-12-gnoack3000@gmail.com>
-X-Mailer: git-send-email 2.38.0
-In-Reply-To: <20221018182216.301684-1-gnoack3000@gmail.com>
-References: <20221018182216.301684-1-gnoack3000@gmail.com>
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        KP Singh <kpsingh@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 6/9] fs: Introduce file_to_perms() helper
+Message-ID: <202210181124.73B5B7ECCE@keescook>
+References: <20221013222702.never.990-kees@kernel.org>
+ <20221013223654.659758-6-keescook@chromium.org>
+ <20221018141037.zzpfjzutqbutbpiy@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221018141037.zzpfjzutqbutbpiy@wittgenstein>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
+On Tue, Oct 18, 2022 at 04:10:37PM +0200, Christian Brauner wrote:
+> On Thu, Oct 13, 2022 at 03:36:51PM -0700, Kees Cook wrote:
+> > Extract the logic used by LSM file hooks to be able to reconstruct the
+> > access mode permissions from an open.
+> > 
+> > Cc: John Johansen <john.johansen@canonical.com>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> > Cc: linux-security-module@vger.kernel.org
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
+> >  include/linux/fs.h               | 22 ++++++++++++++++++++++
+> >  security/apparmor/include/file.h | 18 ++++--------------
+> >  2 files changed, 26 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 9eced4cc286e..814f10d4132e 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -993,6 +993,28 @@ static inline struct file *get_file(struct file *f)
+> >  #define get_file_rcu(x) atomic_long_inc_not_zero(&(x)->f_count)
+> >  #define file_count(x)	atomic_long_read(&(x)->f_count)
+> >  
+> > +/* Calculate the basic MAY_* flags needed for a given file. */
+> > +static inline u8 file_to_perms(struct file *file)
+> 
+> As long as there aren't multiple users of this and especially none in
+> the vfs proper please don't move this into fs.h. It's overloaded enough
+> as it is and we have vague plans on splitting it further in the future.
 
-Adapt the backwards compatibility example and discussion to remove the
-truncation flag where needed.
+Sure -- this can live in a security .h file somewhere.
 
-Point out potential surprising behaviour related to truncate.
-
-Signed-off-by: Günther Noack <gnoack3000@gmail.com>
----
- Documentation/userspace-api/landlock.rst | 67 +++++++++++++++++++++---
- 1 file changed, 60 insertions(+), 7 deletions(-)
-
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index cec780c2f497..d8cd8cd9ce25 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -8,7 +8,7 @@ Landlock: unprivileged access control
- =====================================
- 
- :Author: Mickaël Salaün
--:Date: September 2022
-+:Date: October 2022
- 
- The goal of Landlock is to enable to restrict ambient rights (e.g. global
- filesystem access) for a set of processes.  Because Landlock is a stackable
-@@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_MAKE_FIFO |
-             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
--            LANDLOCK_ACCESS_FS_REFER,
-+            LANDLOCK_ACCESS_FS_REFER |
-+            LANDLOCK_ACCESS_FS_TRUNCATE,
-     };
- 
- Because we may not know on which kernel version an application will be
-@@ -69,16 +70,28 @@ should try to protect users as much as possible whatever the kernel they are
- using.  To avoid binary enforcement (i.e. either all security features or
- none), we can leverage a dedicated Landlock command to get the current version
- of the Landlock ABI and adapt the handled accesses.  Let's check if we should
--remove the ``LANDLOCK_ACCESS_FS_REFER`` access right which is only supported
--starting with the second version of the ABI.
-+remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
-+access rights, which are only supported starting with the second and third
-+version of the ABI.
- 
- .. code-block:: c
- 
-     int abi;
- 
-     abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
--    if (abi < 2) {
-+    if (abi < 0) {
-+        /* Degrades gracefully if Landlock is not handled. */
-+        perror("The running kernel does not enable to use Landlock");
-+        return 0;
-+    }
-+    switch (abi) {
-+    case 1:
-+        /* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
-         ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-+        __attribute__((fallthrough));
-+    case 2:
-+        /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-+        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-     }
- 
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -127,8 +140,8 @@ descriptor.
- 
- It may also be required to create rules following the same logic as explained
- for the ruleset creation, by filtering access rights according to the Landlock
--ABI version.  In this example, this is not required because
--``LANDLOCK_ACCESS_FS_REFER`` is not allowed by any rule.
-+ABI version.  In this example, this is not required because all of the requested
-+``allowed_access`` rights are already available in ABI 1.
- 
- We now have a ruleset with one rule allowing read access to ``/usr`` while
- denying all other handled accesses for the filesystem.  The next step is to
-@@ -252,6 +265,37 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
- process, a sandboxed process should have a subset of the target process rules,
- which means the tracee must be in a sub-domain of the tracer.
- 
-+Truncating files
-+----------------
-+
-+The operations covered by ``LANDLOCK_ACCESS_FS_WRITE_FILE`` and
-+``LANDLOCK_ACCESS_FS_TRUNCATE`` both change the contents of a file and sometimes
-+overlap in non-intuitive ways.  It is recommended to always specify both of
-+these together.
-+
-+A particularly surprising example is :manpage:`creat(2)`.  The name suggests
-+that this system call requires the rights to create and write files.  However,
-+it also requires the truncate right if an existing file under the same name is
-+already present.
-+
-+It should also be noted that truncating files does not require the
-+``LANDLOCK_ACCESS_FS_WRITE_FILE`` right.  Apart from the :manpage:`truncate(2)`
-+system call, this can also be done through :manpage:`open(2)` with the flags
-+``O_RDONLY | O_TRUNC``.
-+
-+When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE``
-+right is associated with the newly created file descriptor and will be used for
-+subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavior is
-+similar to opening a file for reading or writing, where permissions are checked
-+during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
-+:manpage:`write(2)` calls.
-+
-+As a consequence, it is possible to have multiple open file descriptors for the
-+same file, where one grants the right to truncate the file and the other does
-+not.  It is also possible to pass such file descriptors between processes,
-+keeping their Landlock properties, even when these processes do not have an
-+enforced Landlock ruleset.
-+
- Compatibility
- =============
- 
-@@ -398,6 +442,15 @@ Starting with the Landlock ABI version 2, it is now possible to securely
- control renaming and linking thanks to the new ``LANDLOCK_ACCESS_FS_REFER``
- access right.
- 
-+File truncation (ABI < 3)
-+-------------------------
-+
-+File truncation could not be denied before the third Landlock ABI, so it is
-+always allowed when using a kernel that only supports the first or second ABI.
-+
-+Starting with the Landlock ABI version 3, it is now possible to securely control
-+truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
-+
- .. _kernel_support:
- 
- Kernel support
 -- 
-2.38.0
-
+Kees Cook
