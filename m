@@ -2,141 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B24C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Oct 2022 14:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3382AC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Oct 2022 14:38:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229746AbiJSO0f (ORCPT
+        id S231767AbiJSOh6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Oct 2022 10:26:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49554 "EHLO
+        Wed, 19 Oct 2022 10:37:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232229AbiJSO0S (ORCPT
+        with ESMTP id S229922AbiJSOhk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Oct 2022 10:26:18 -0400
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9018623E8B
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Oct 2022 07:10:45 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-3608b5e634aso169031567b3.6
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Oct 2022 07:10:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5BfLX5KRl3Okg348FT7/RFBCfyy3DklPfVwwqyxjUnM=;
-        b=RNQDrr8g1rq18i5lSZkSTRzYdRLnEJJsPqhCSziVSNc0KU+8GDtyoDsgYFzQu3mUya
-         bIgFLxIlPRZt+jyDTn4h279FKymGwbBU4ByQ3gREPQCDWwPItrL2c0CUGwhZdq0zYTzr
-         eb98j+wsXRaiXc3+Mk52Zcx9BCLoW/DkxBVr/gNqINUDGZ/iFepY2QkGoAmff4nEUlin
-         HvP9KRAdHJjMquKDNXKcdMrDh/EzEDLxSgVRNhBhfuX1OCZ5siiO+S/6HXhm6hC4BDCQ
-         c02OGVReXVVQY1J0YbhIoxfOKGiS8mvtBgJt9XjJx71kc8te3b5iu3gyDF9MqGpbhkYC
-         te7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5BfLX5KRl3Okg348FT7/RFBCfyy3DklPfVwwqyxjUnM=;
-        b=75j7E15sYWoD3WnENsgjV3cOaJmWOa1QygYzt8Mg/+WLaDhSLis85vpGUbQ2vwdJQ5
-         KZtu3KBcqN4SlRTFjGsk/zdRs7dkrEwxmnQhqZIPLhV4SKU1SNXhnPKELkG/KLakEpk/
-         YPDW99qmShaIu26hynZ+AQA4csJKR1hmcJDD39ry/HHKa+1hkfQyXFYa73Ugut7GMHgZ
-         A576AUoU73oH3kEQR0W7tbDWsAXwU9SRtH7n5YsI+k6V0qjUBQenyToAEVVZjjkHAt99
-         zWsjcNu+dbAMsP8Z5y7kN4F3LSlFpwpejlO5+KJsVF8tRT3bClpeP7NDSR+AXjObmm6H
-         7Gvw==
-X-Gm-Message-State: ACrzQf0O7u1R3p4vyC1fST38hb9uuqrzRBBRc92nD5PhRAct1pfI0BH5
-        GImLrh2p4+K5g4kky+LGOWRe/aF0t/Xz4EfDCvyi
-X-Google-Smtp-Source: AMsMyM4ymv6dFaiJMYVe2rXIjGqTIMrLYaCpng71BEymljx162jO+w+qkW4F27gM1MPCghftnNAQ/gjbyWKV3+FH6sQ=
-X-Received: by 2002:a0d:e64f:0:b0:357:815d:614 with SMTP id
- p76-20020a0de64f000000b00357815d0614mr6939149ywe.276.1666188471096; Wed, 19
- Oct 2022 07:07:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221019025710.2482945-1-gongruiqi1@huawei.com>
-In-Reply-To: <20221019025710.2482945-1-gongruiqi1@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 19 Oct 2022 10:07:40 -0400
-Message-ID: <CAHC9VhQOXBZid_3-Zm48uysTC+ueSFmJy=g=JMYFEfgdtuwB1A@mail.gmail.com>
-Subject: Re: [PATCH v2] selinux: use GFP_ATOMIC in convert_context()
-To:     "GONG, Ruiqi" <gongruiqi1@huawei.com>
-Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiu Jianfeng <xiujianfeng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 19 Oct 2022 10:37:40 -0400
+Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15D641D79BD;
+        Wed, 19 Oct 2022 07:21:44 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id E605D1B3B; Wed, 19 Oct 2022 16:10:31 +0200 (CEST)
+From:   Nikolaus Voss <nv@vosn.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Yael Tzur <yaelt@google.com>,
+        Cyril Hrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>
+Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 19 Oct 2022 16:07:17 +0200
+Subject: [PATCH v5] KEYS: encrypted: fix key instantiation with user-provided
+ data
+Message-Id: <20221019141031.E605D1B3B@mail.steuer-voss.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 18, 2022 at 10:56 PM GONG, Ruiqi <gongruiqi1@huawei.com> wrote:
->
-> The following warning was triggered on a hardware environment:
->
->   SELinux: Converting 162 SID table entries...
->   BUG: sleeping function called from invalid context at __might_sleep+0x60/0x74 0x0
->   in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 5943, name: tar
->   CPU: 7 PID: 5943 Comm: tar Tainted: P O 5.10.0 #1
->   Call trace:
->    dump_backtrace+0x0/0x1c8
->    show_stack+0x18/0x28
->    dump_stack+0xe8/0x15c
->    ___might_sleep+0x168/0x17c
->    __might_sleep+0x60/0x74
->    __kmalloc_track_caller+0xa0/0x7dc
->    kstrdup+0x54/0xac
->    convert_context+0x48/0x2e4
->    sidtab_context_to_sid+0x1c4/0x36c
->    security_context_to_sid_core+0x168/0x238
->    security_context_to_sid_default+0x14/0x24
->    inode_doinit_use_xattr+0x164/0x1e4
->    inode_doinit_with_dentry+0x1c0/0x488
->    selinux_d_instantiate+0x20/0x34
->    security_d_instantiate+0x70/0xbc
->    d_splice_alias+0x4c/0x3c0
->    ext4_lookup+0x1d8/0x200 [ext4]
->    __lookup_slow+0x12c/0x1e4
->    walk_component+0x100/0x200
->    path_lookupat+0x88/0x118
->    filename_lookup+0x98/0x130
->    user_path_at_empty+0x48/0x60
->    vfs_statx+0x84/0x140
->    vfs_fstatat+0x20/0x30
->    __se_sys_newfstatat+0x30/0x74
->    __arm64_sys_newfstatat+0x1c/0x2c
->    el0_svc_common.constprop.0+0x100/0x184
->    do_el0_svc+0x1c/0x2c
->    el0_svc+0x20/0x34
->    el0_sync_handler+0x80/0x17c
->    el0_sync+0x13c/0x140
->   SELinux: Context system_u:object_r:pssp_rsyslog_log_t:s0:c0 is not valid (left unmapped).
->
-> It was found that within a critical section of spin_lock_irqsave in
-> sidtab_context_to_sid(), convert_context() (hooked by
-> sidtab_convert_params.func) might cause the process to sleep via
-> allocating memory with GFP_KERNEL, which is problematic.
->
-> As Ondrej pointed out [1], convert_context()/sidtab_convert_params.func
-> has another caller sidtab_convert_tree(), which is okay with GFP_KERNEL.
-> Therefore, fix this problem by adding a gfp_t argument for
-> convert_context()/sidtab_convert_params.func and pass GFP_KERNEL/_ATOMIC
-> properly in individual callers.
->
-> Link: https://lore.kernel.org/all/20221018120111.1474581-1-gongruiqi1@huawei.com/ [1]
-> Reported-by: Tan Ninghao <tanninghao1@huawei.com>
-> Fixes: ee1a84fdfeed ("selinux: overhaul sidtab to fix bug and improve performance")
-> Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
-> ---
->
-> v2: change as Ondrej suggests & redraft commit message
->
->  security/selinux/ss/services.c | 5 +++--
->  security/selinux/ss/sidtab.c   | 4 ++--
->  security/selinux/ss/sidtab.h   | 2 +-
->  3 files changed, 6 insertions(+), 5 deletions(-)
+Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
+decrypted data") added key instantiation with user provided decrypted data.
+The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
+Fix this to use hex2bin instead.
 
-Merged into selinux/stable-6.1, thank you.  Normally I would send this
-to Linus in a day or two, but due to some personal logistical
-challenges I may be a bit delayed in sending this up.  I would ask for
-your patience and that everyone take this opportunity to do some
-additional testing :)
+Old keys created from user provided decrypted data saved with "keyctl pipe"
+are still valid, however if the key is recreated from decrypted data the
+old key must be converted to the correct format. This can be done with a
+small shell script, e.g.:
 
-Thanks everyone.
+BROKENKEY=abcdefABCDEF1234567890aaaaaaaaaa
+NEWKEY=$(echo -ne $BROKENKEY | xxd -p -c32)
+keyctl add user masterkey "$(cat masterkey.bin)" @u
+keyctl add encrypted testkey "new user:masterkey 32 $NEWKEY" @u
 
+However, NEWKEY is still broken: If for BROKENKEY 32 bytes were specified, a
+brute force attacker knowing the key properties would only need to try at most
+2^(16*8) keys, as if the key was only 16 bytes long.
+
+The security issue is a result of the combination of limiting the input range
+to hex-ascii and using memcpy() instead of hex2bin(). It could have been fixed
+either by allowing binary input or using hex2bin() (and doubling the ascii
+input key length). This patch implements the latter.
+
+The corresponding test for the Linux Test Project ltp has also been
+fixed (see link below).
+
+Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided decrypted data")
+Cc: stable <stable@kernel.org>
+Link: https://lore.kernel.org/ltp/20221006081709.92303897@mail.steuer-voss.de/
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Nikolaus Voss <nikolaus.voss@haag-streit.com>
+---
+Changes
+=======
+v5: - explain security issue in commit message, add Reviewd-by
+v4: - change "Link:" address
+v3: - use generated random key in example, reformat commit message
+v2: - clarify commit message, add example to recover old/broken keys
+    - improve example in Documentation/security/keys/trusted-encrypted.rst
+    - add link to ltp patch
+
+ Documentation/security/keys/trusted-encrypted.rst | 3 ++-
+ security/keys/encrypted-keys/encrypted.c          | 6 +++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+index 0bfb4c339748..9bc9db8ec651 100644
+--- a/Documentation/security/keys/trusted-encrypted.rst
++++ b/Documentation/security/keys/trusted-encrypted.rst
+@@ -350,7 +350,8 @@ Load an encrypted key "evm" from saved blob::
+ 
+ Instantiate an encrypted key "evm" using user-provided decrypted data::
+ 
+-    $ keyctl add encrypted evm "new default user:kmk 32 `cat evm_decrypted_data.blob`" @u
++    $ evmkey=$(dd if=/dev/urandom bs=1 count=32 | xxd -c32 -p)
++    $ keyctl add encrypted evm "new default user:kmk 32 $evmkey" @u
+     794890253
+ 
+     $ keyctl print 794890253
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index e05cfc2e49ae..1e313982af02 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -627,7 +627,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
+ 			pr_err("encrypted key: instantiation of keys using provided decrypted data is disabled since CONFIG_USER_DECRYPTED_DATA is set to false\n");
+ 			return ERR_PTR(-EINVAL);
+ 		}
+-		if (strlen(decrypted_data) != decrypted_datalen) {
++		if (strlen(decrypted_data) != decrypted_datalen * 2) {
+ 			pr_err("encrypted key: decrypted data provided does not match decrypted data length provided\n");
+ 			return ERR_PTR(-EINVAL);
+ 		}
+@@ -791,8 +791,8 @@ static int encrypted_init(struct encrypted_key_payload *epayload,
+ 		ret = encrypted_key_decrypt(epayload, format, hex_encoded_iv);
+ 	} else if (decrypted_data) {
+ 		get_random_bytes(epayload->iv, ivsize);
+-		memcpy(epayload->decrypted_data, decrypted_data,
+-				   epayload->decrypted_datalen);
++		ret = hex2bin(epayload->decrypted_data, decrypted_data,
++			      epayload->decrypted_datalen);
+ 	} else {
+ 		get_random_bytes(epayload->iv, ivsize);
+ 		get_random_bytes(epayload->decrypted_data, epayload->decrypted_datalen);
 -- 
-paul-moore.com
+2.34.1
+
