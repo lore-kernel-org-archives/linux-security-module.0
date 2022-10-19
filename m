@@ -2,58 +2,59 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4636C43217
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Oct 2022 18:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D3FC43217
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Oct 2022 18:33:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229921AbiJSS2y (ORCPT
+        id S229885AbiJSSdt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Oct 2022 14:28:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33006 "EHLO
+        Wed, 19 Oct 2022 14:33:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbiJSS2x (ORCPT
+        with ESMTP id S230159AbiJSSds (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Oct 2022 14:28:53 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FD621C5E17
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Oct 2022 11:28:52 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id y8so17989396pfp.13
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Oct 2022 11:28:52 -0700 (PDT)
+        Wed, 19 Oct 2022 14:33:48 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE771D20C4
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Oct 2022 11:33:41 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id l1so18043848pld.13
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Oct 2022 11:33:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g2hPps6n+imJEzUNlW/VzlKPcj20qPrXntNfgwGKzuY=;
-        b=j+hygSwcxDFsiLQtsX8B8yHklZpdfRny6e8dmyZIbRCaw5sykqsyuUG14hULFoAgqw
-         9VzbgFATA1wcIkrzNv4rDxOIq3AtbvHiBWS+tcVal2ZZ5abyF79gSZ6IxPvNkito6sjd
-         Ts+tURTA+hvKiPKW94XkQWheSW1wRmHyM6jkA=
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+PluJNC/fw1ja+vSikAWciLlJudd2H9uq25K8L6bfLo=;
+        b=JVbVN/M0Fs2iSpMzO8pxTylybZgs1ftEadUEBTex5hgbM9JU/8s8n6n2JYgjHxZ3oJ
+         CyZ+U29uY9g2I1wwPJfmTspcn/u/rqgqHXljyZElyrahCuij5ApCn7rfqXasJyESsA0J
+         PiCQvnJswac6hiC6Qyy3/NHr8MO8pFq3aIMIw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g2hPps6n+imJEzUNlW/VzlKPcj20qPrXntNfgwGKzuY=;
-        b=kuEGxxi8aWCCfyJbJgzH065PdohAKJzbuxc0EudrqpDF+aM4s41VEuseO4TmY8y/I1
-         qXLtCtbCqQsmifLYkKIebvsg8fUZhANEhmWcJnAgvbKoFHDqN6QV6jpKc/Gu3YEs4/DH
-         CCEF3/m1cGcot8xSxKLpSxkvyNhZ+QtkRGRb2bcz+279cUZ94Nigt31AAigF0JxOtUSa
-         VmZkcX/xdE4daf6HrR+3NnBFVuaIvl+mnqWgMoOmPgZV4UVNoS2BkUU1h7/uSEHPfnO5
-         sRavOzzNXJ76CLwulypw7V7UkjUmHwRd5Ic4N4ExUSQ88LmLIceC3KUGat4v/tPByVsc
-         HYvw==
-X-Gm-Message-State: ACrzQf2BSnU4O959JS2xcp210LCwQmEeUr1IENaB8mrAHApgYr6QmDDY
-        0bqNWUn/e91DjUnV/gQmuM0Eqw==
-X-Google-Smtp-Source: AMsMyM5Tsdbs1rfhpPqYMhH++zf6I2sJgAtJQ0mlvySZTLPWLkPK5emZnVoul9O4mTUM7CIDrTKy5w==
-X-Received: by 2002:a63:ce54:0:b0:46a:e2a9:c7f6 with SMTP id r20-20020a63ce54000000b0046ae2a9c7f6mr8152760pgi.264.1666204131734;
-        Wed, 19 Oct 2022 11:28:51 -0700 (PDT)
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+PluJNC/fw1ja+vSikAWciLlJudd2H9uq25K8L6bfLo=;
+        b=urWdBmk09H4guPhhd6o+a3zDBrn+Ve+RQbqRcvDkn3/m7WiOCeczIE7+Xb4OBbcAhS
+         4IgVN1g2tswiNgM7CXNYDy+aWWoclEcYd7YqIvmkghVhdRAqGLE0c856Qr1SRulZm/rz
+         vnoJ8knoPJKfsp4VdXdZgAQ3KZfujbLslaVu31PcnxDSFxzb76JjKz7SEJWmZRFmMNaW
+         oJLwlXVBvwpf9obR6G63d1N9TibEk2c517jqELF8wLLwyLwj/cRXsxjUwvUAbz8/bNgJ
+         3BnRTjZg71goqfBv9dpm6CeTA8MfYB+7gAJwEwne8nMT2opnK5KEjU/Buuxdxs7Vrxpb
+         JeLg==
+X-Gm-Message-State: ACrzQf2YDduZsTsHFAlu6sEvw7Wq8N7zy+YT1KNiofzkf6iR2z0bpNL/
+        b/QcC38Td5rJTE6SW/k7W8B01g==
+X-Google-Smtp-Source: AMsMyM67W2Yn8Am1Y+VGKJgWqTslcaqvPI3VRf0IkD4gH2fvYM9IwcHId/YBYl3dAfMBGHuS9YMnDA==
+X-Received: by 2002:a17:902:e545:b0:184:2f27:b34 with SMTP id n5-20020a170902e54500b001842f270b34mr9543201plf.15.1666204420516;
+        Wed, 19 Oct 2022 11:33:40 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id s6-20020a170902ea0600b0017e232b6724sm566869plg.69.2022.10.19.11.28.50
+        by smtp.gmail.com with ESMTPSA id k33-20020a635621000000b00460a5c6304dsm1967827pgb.67.2022.10.19.11.33.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Oct 2022 11:28:50 -0700 (PDT)
-Date:   Wed, 19 Oct 2022 11:28:49 -0700
+        Wed, 19 Oct 2022 11:33:39 -0700 (PDT)
+Date:   Wed, 19 Oct 2022 11:33:38 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
         linux-security-module@vger.kernel.org,
         linux-integrity@vger.kernel.org, KP Singh <kpsingh@kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
@@ -61,41 +62,51 @@ Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
         linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
 Subject: Re: [PATCH 1/9] integrity: Prepare for having "ima" and "evm"
  available in "integrity" LSM
-Message-ID: <202210191114.C64D8ED68B@keescook>
+Message-ID: <202210191129.BFBF8035@keescook>
 References: <20221013222702.never.990-kees@kernel.org>
  <20221013223654.659758-1-keescook@chromium.org>
- <dd90cbafa0ba59be135a878bc7abcf4d322d43a1.camel@linux.ibm.com>
+ <08a8b202-69b4-e154-28f5-337a898acf61@digikod.net>
+ <202210141050.A8DF7D10@keescook>
+ <0d2b9d34-2eda-8aa6-d596-eb1899645192@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <dd90cbafa0ba59be135a878bc7abcf4d322d43a1.camel@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0d2b9d34-2eda-8aa6-d596-eb1899645192@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 19, 2022 at 10:34:08AM -0400, Mimi Zohar wrote:
-> On Thu, 2022-10-13 at 15:36 -0700, Kees Cook wrote:
-> > Move "integrity" LSM to the end of the Kconfig list and prepare for
-> > having ima and evm LSM initialization called from the top-level
-> > "integrity" LSM.
+On Mon, Oct 17, 2022 at 11:26:44AM +0200, Mickaël Salaün wrote:
 > 
-> The securityfs integrity directory and the "iint_cache" are shared
-> IMA/EVM resources.  Just because the "iint_cache" was on an LSM hook,
-> it should never have been treated as an LSM on its own.  IMA maintains
-> and verifies file data integrity, while EVM maintains and verifies file
-> metadata integrity.  IMA and EVM may both be configured and enabled, or
-> independently of each other.   However, only if either IMA or EVM are
-> configured and enabled, should the iint_cache be created.  There is
-> absolutely no need for an independent "integrity" LSM.
+> On 14/10/2022 19:59, Kees Cook wrote:
+> > On Fri, Oct 14, 2022 at 04:40:01PM +0200, Mickaël Salaün wrote:
+> > > This is not backward compatible
+> > 
+> > Why? Nothing will be running LSM hooks until init finishes, at which
+> > point the integrity inode cache will be allocated. And ima and evm don't
+> > start up until lateinit.
+> > 
+> > > , but can easily be fixed thanks to
+> > > DEFINE_LSM().order
+> > 
+> > That forces the LSM to be enabled, which may not be desired?
+> 
+> This is not backward compatible because currently IMA is enabled
+> independently of the "lsm=" cmdline, which means that for all installed
+> systems using IMA and also with a custom "lsm=" cmdline, updating the kernel
+> with this patch will (silently) disable IMA. Using ".order =
+> LSM_ORDER_FIRST," should keep this behavior.
 
-The purpose of this patch was to tie ima and evm into integrity, since
-the iint_cache is used by both. It's been true since 4.20 that using
-ima and evm requires that the LSM named "integrity" has been initialized.
-Since ima and evm have separate indicators for "am I active?" (much like
-apparmor, etc), it seemed sensible to make ima and evm part of the LSM
-named "integrity". Other solutions are totally fine!
+This isn't true. If "integrity" is removed from the lsm= line today, IMA
+will immediately panic:
 
-I do note, however, this patch needs to be tweaked for the case where
-CONFIG_IMA or CONFIG_EVM are not set.
+process_measurement():
+  integrity_inode_get():
+        if (!iint_cache)
+                panic("%s: lsm=integrity required.\n", __func__);
+
+and before v5.12 (where the panic was added), it would immediately NULL
+deref. (And it took 3 years to even notice.)
 
 -- 
 Kees Cook
