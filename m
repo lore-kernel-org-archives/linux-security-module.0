@@ -2,120 +2,175 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31AA5C43217
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Oct 2022 01:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD91C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Oct 2022 02:56:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbiJSBIz (ORCPT
+        id S229718AbiJSC4K (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 21:08:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51978 "EHLO
+        Tue, 18 Oct 2022 22:56:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229719AbiJSBIj (ORCPT
+        with ESMTP id S229569AbiJSC4J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Oct 2022 21:08:39 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D23BDFC08;
-        Tue, 18 Oct 2022 18:08:36 -0700 (PDT)
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29J0ud4n015004;
-        Wed, 19 Oct 2022 01:08:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=PTXFKiaqw8WDi1XGVH0av05QNVaP7YEtjK+e1UbuFx4=;
- b=UGYlspng/kc9By85lcBcW+vfvU4Iu2DJdZOce4gMsel9NVX97wQSQrJk0EA3Q6GokX4/
- G7dku1aUznvJ5+8f8TeMcIZvSbgjKWtPO+nP3f2X2d39piPXH5EFsnlDOYldoqr1x5CV
- 9Njauod594rriORvUSf5GE93d9pz5cd2WR7QRK8eiks9IU2chjhim7qAo/VxXUMnHnIF
- ZG9lbunPOavISxxp+VQE1sqBDyOM7sECsSejStuBIssSSgM4y420Xfk9v8pv19sriXMR
- d5+Pi6kXUg4nBt+VJgXOLqNNDFMQ7idlzhU21rOFk0061ER4PawgBi/Ky4TGVc/Y0+Hm qw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3ka7510dc1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Oct 2022 01:08:13 +0000
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 29J10BU1029534;
-        Wed, 19 Oct 2022 01:07:57 GMT
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3ka7510cdc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Oct 2022 01:07:57 +0000
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 29J17AkV008974;
-        Wed, 19 Oct 2022 01:07:46 GMT
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-        by ppma01wdc.us.ibm.com with ESMTP id 3k9be2axsw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Oct 2022 01:07:46 +0000
-Received: from smtpav03.dal12v.mail.ibm.com ([9.208.128.129])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 29J17igc24380140
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Oct 2022 01:07:44 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 221D458060;
-        Wed, 19 Oct 2022 01:07:45 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 79D745803F;
-        Wed, 19 Oct 2022 01:07:44 +0000 (GMT)
-Received: from sig-9-65-232-148.ibm.com (unknown [9.65.232.148])
-        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 19 Oct 2022 01:07:44 +0000 (GMT)
-Message-ID: <90f8940cff5eeef7917e2b11a07e41b32b207ffa.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 2/2] ima: Handle -ESTALE returned by
- ima_filter_rule_match()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Guozihua (Scott)" <guozihua@huawei.com>,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Tue, 18 Oct 2022 21:07:44 -0400
-In-Reply-To: <2f032b6c-ecf2-5a41-dc38-e6ab0a2d7885@huawei.com>
-References: <20220921125804.59490-1-guozihua@huawei.com>
-         <20220921125804.59490-3-guozihua@huawei.com>
-         <ce948f9e5639345026679b31a818cc12a247ce60.camel@linux.ibm.com>
-         <77c9c86b-85a6-aa87-e084-59a70bb47167@huawei.com>
-         <f321c638bf5572088a8c5e4d7027c3a797bdd568.camel@linux.ibm.com>
-         <7ac3e330-e77c-95d8-7d3b-29e243b57251@huawei.com>
-         <5e304b17fe709d2b2f30b991d5ffc4711d27a075.camel@linux.ibm.com>
-         <2f032b6c-ecf2-5a41-dc38-e6ab0a2d7885@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: y8BArRBy6mkseiO0clCZ7DUsoiSTqqnj
-X-Proofpoint-ORIG-GUID: lwyednaTJSdh7rQf1GNl4DHVbsSvMc_Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-10-18_10,2022-10-18_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 clxscore=1011
- phishscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2210190004
+        Tue, 18 Oct 2022 22:56:09 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F446E5EF5;
+        Tue, 18 Oct 2022 19:56:08 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Msb2m05xLzHv4d;
+        Wed, 19 Oct 2022 10:56:00 +0800 (CST)
+Received: from dggpemm500016.china.huawei.com (7.185.36.25) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Wed, 19 Oct 2022 10:55:45 +0800
+Received: from huawei.com (10.67.174.33) by dggpemm500016.china.huawei.com
+ (7.185.36.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Wed, 19 Oct
+ 2022 10:55:45 +0800
+From:   "GONG, Ruiqi" <gongruiqi1@huawei.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>
+CC:     Ondrej Mosnacek <omosnace@redhat.com>, <selinux@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Xiu Jianfeng" <xiujianfeng@huawei.com>, <gongruiqi1@huawei.com>
+Subject: [PATCH v2] selinux: use GFP_ATOMIC in convert_context()
+Date:   Wed, 19 Oct 2022 10:57:10 +0800
+Message-ID: <20221019025710.2482945-1-gongruiqi1@huawei.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.67.174.33]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm500016.china.huawei.com (7.185.36.25)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-10-18 at 16:43 +0800, Guozihua (Scott) wrote:
-> On 2022/9/28 22:11, Mimi Zohar wrote:
-> > 
-> > After reviewing this patch set again, the code looks fine.  The commit
-> > message is still a bit off, but I've pushed the patch set out to next-
-> > integrity-testing, waiting for some Reviewed-by/Tested-by tags.
-> > 
-> 
-> Hi Mimi,
-> 
-> How's this patch going? I see Roberto is replying with a Reviewed-by.
+The following warning was triggered on a hardware environment:
 
-I'd really like to see a "Tested-by" tag as well.
+  SELinux: Converting 162 SID table entries...
+  BUG: sleeping function called from invalid context at __might_sleep+0x60/0x74 0x0
+  in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 5943, name: tar
+  CPU: 7 PID: 5943 Comm: tar Tainted: P O 5.10.0 #1
+  Call trace:
+   dump_backtrace+0x0/0x1c8
+   show_stack+0x18/0x28
+   dump_stack+0xe8/0x15c
+   ___might_sleep+0x168/0x17c
+   __might_sleep+0x60/0x74
+   __kmalloc_track_caller+0xa0/0x7dc
+   kstrdup+0x54/0xac
+   convert_context+0x48/0x2e4
+   sidtab_context_to_sid+0x1c4/0x36c
+   security_context_to_sid_core+0x168/0x238
+   security_context_to_sid_default+0x14/0x24
+   inode_doinit_use_xattr+0x164/0x1e4
+   inode_doinit_with_dentry+0x1c0/0x488
+   selinux_d_instantiate+0x20/0x34
+   security_d_instantiate+0x70/0xbc
+   d_splice_alias+0x4c/0x3c0
+   ext4_lookup+0x1d8/0x200 [ext4]
+   __lookup_slow+0x12c/0x1e4
+   walk_component+0x100/0x200
+   path_lookupat+0x88/0x118
+   filename_lookup+0x98/0x130
+   user_path_at_empty+0x48/0x60
+   vfs_statx+0x84/0x140
+   vfs_fstatat+0x20/0x30
+   __se_sys_newfstatat+0x30/0x74
+   __arm64_sys_newfstatat+0x1c/0x2c
+   el0_svc_common.constprop.0+0x100/0x184
+   do_el0_svc+0x1c/0x2c
+   el0_svc+0x20/0x34
+   el0_sync_handler+0x80/0x17c
+   el0_sync+0x13c/0x140
+  SELinux: Context system_u:object_r:pssp_rsyslog_log_t:s0:c0 is not valid (left unmapped).
 
-Are you able to force the scenario?
+It was found that within a critical section of spin_lock_irqsave in
+sidtab_context_to_sid(), convert_context() (hooked by
+sidtab_convert_params.func) might cause the process to sleep via
+allocating memory with GFP_KERNEL, which is problematic.
 
+As Ondrej pointed out [1], convert_context()/sidtab_convert_params.func
+has another caller sidtab_convert_tree(), which is okay with GFP_KERNEL.
+Therefore, fix this problem by adding a gfp_t argument for
+convert_context()/sidtab_convert_params.func and pass GFP_KERNEL/_ATOMIC
+properly in individual callers.
+
+Link: https://lore.kernel.org/all/20221018120111.1474581-1-gongruiqi1@huawei.com/ [1]
+Reported-by: Tan Ninghao <tanninghao1@huawei.com>
+Fixes: ee1a84fdfeed ("selinux: overhaul sidtab to fix bug and improve performance")
+Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
+---
+
+v2: change as Ondrej suggests & redraft commit message
+
+ security/selinux/ss/services.c | 5 +++--
+ security/selinux/ss/sidtab.c   | 4 ++--
+ security/selinux/ss/sidtab.h   | 2 +-
+ 3 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index fe5fcf571c56..64a6a37dc36d 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -2022,7 +2022,8 @@ static inline int convert_context_handle_invalid_context(
+  * in `newc'.  Verify that the context is valid
+  * under the new policy.
+  */
+-static int convert_context(struct context *oldc, struct context *newc, void *p)
++static int convert_context(struct context *oldc, struct context *newc, void *p,
++			   gfp_t gfp_flags)
+ {
+ 	struct convert_context_args *args;
+ 	struct ocontext *oc;
+@@ -2036,7 +2037,7 @@ static int convert_context(struct context *oldc, struct context *newc, void *p)
+ 	args = p;
+ 
+ 	if (oldc->str) {
+-		s = kstrdup(oldc->str, GFP_KERNEL);
++		s = kstrdup(oldc->str, gfp_flags);
+ 		if (!s)
+ 			return -ENOMEM;
+ 
+diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
+index a54b8652bfb5..db5cce385bf8 100644
+--- a/security/selinux/ss/sidtab.c
++++ b/security/selinux/ss/sidtab.c
+@@ -325,7 +325,7 @@ int sidtab_context_to_sid(struct sidtab *s, struct context *context,
+ 		}
+ 
+ 		rc = convert->func(context, &dst_convert->context,
+-				   convert->args);
++				   convert->args, GFP_ATOMIC);
+ 		if (rc) {
+ 			context_destroy(&dst->context);
+ 			goto out_unlock;
+@@ -404,7 +404,7 @@ static int sidtab_convert_tree(union sidtab_entry_inner *edst,
+ 		while (i < SIDTAB_LEAF_ENTRIES && *pos < count) {
+ 			rc = convert->func(&esrc->ptr_leaf->entries[i].context,
+ 					   &edst->ptr_leaf->entries[i].context,
+-					   convert->args);
++					   convert->args, GFP_KERNEL);
+ 			if (rc)
+ 				return rc;
+ 			(*pos)++;
+diff --git a/security/selinux/ss/sidtab.h b/security/selinux/ss/sidtab.h
+index 4eff0e49dcb2..9fce0d553fe2 100644
+--- a/security/selinux/ss/sidtab.h
++++ b/security/selinux/ss/sidtab.h
+@@ -65,7 +65,7 @@ struct sidtab_isid_entry {
+ };
+ 
+ struct sidtab_convert_params {
+-	int (*func)(struct context *oldc, struct context *newc, void *args);
++	int (*func)(struct context *oldc, struct context *newc, void *args, gfp_t gfp_flags);
+ 	void *args;
+ 	struct sidtab *target;
+ };
 -- 
-thanks,
-
-Mimi
+2.25.1
 
