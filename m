@@ -2,347 +2,164 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B9DC4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Oct 2022 22:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D663C43219
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Oct 2022 00:54:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229835AbiJRWdP (ORCPT
+        id S229606AbiJSAyG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Oct 2022 18:33:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58386 "EHLO
+        Tue, 18 Oct 2022 20:54:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbiJRWdP (ORCPT
+        with ESMTP id S229515AbiJSAyF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Oct 2022 18:33:15 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDFE1B4493;
-        Tue, 18 Oct 2022 15:33:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 72297CE1FB0;
-        Tue, 18 Oct 2022 22:33:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC72C433D6;
-        Tue, 18 Oct 2022 22:33:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666132385;
-        bh=zKF4wQFM1oeEQDwwONYaAZMs1HgzAhwy0Gl0XCL2uiw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Kt1dlNCKwsoa2ilzdaM3NALS78mM9mbe9XzN2FKtCtcINggjlybT6pyRR1N/ZFOXi
-         Q10tVcqsMewynV8ujBFoFgDDKi+SNov0Kx8JiNvkXFApjU/2Bw6JH6h6rj0bfPAyYF
-         YphaDDMmxAXhyAIgY6pCrTJwVXS/48cRls8cdvXdhWbcL/LpWC3C1lB0iYG+x+QjMk
-         bnoUlbHmzbEFVaVfOtUGRohe2LYxuNcr8Qq7Z5uaFB9fyXTP6jPrYxSROXnDY0aeUW
-         aY5Jg15Rr4q0j3N42vzVHBlc0nO6NzidfMKTiaHTGOUwCU+Me7khtXXWXT1drl6eJk
-         8Be/p3Bzl3miw==
-Date:   Tue, 18 Oct 2022 15:33:03 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Tue, 18 Oct 2022 20:54:05 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A6D0C787A;
+        Tue, 18 Oct 2022 17:54:04 -0700 (PDT)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29J0g8SH014256;
+        Wed, 19 Oct 2022 00:53:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=M4YM3Zp3y6UhKaOdP0cTdGdvvzaOvoeI6HEani4nNic=;
+ b=IypdOPluw+swsF5XQTVf6T7ppii4m+bM2FxQrAL0/5C3dA0SJ11+ZQWvGV04RhFCiiqu
+ MfK/ONh/5NL7bHpT9dyUXAcxibwEw8jebwohOtLPs7JSjN3vASLo/ATA05iuAFYfEsYB
+ AiaxhXRTgaKIh6nZ6VCMMs2n8LbiiXQlBeVmF7+NGRSD12Y//WFZnnX5J2V8q0VwsBDP
+ 7rBWP1TbHrG/rEgcwI0fAAWtvufEmolVJS41ujReN/BWNr4Ba0wXkD2Hpow542FqknSO
+ uK6h9N7z0p6gxlnPs3iWCOrS6GJILbUlGMOET6W5uNgDmBW/gSEOxThvjtduZmbCWHnr Qw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ka6x5r80s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Oct 2022 00:53:43 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 29J0gwbM017117;
+        Wed, 19 Oct 2022 00:53:43 GMT
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ka6x5r806-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Oct 2022 00:53:42 +0000
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 29J0bwgZ005153;
+        Wed, 19 Oct 2022 00:53:41 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma03wdc.us.ibm.com with ESMTP id 3k7mg9j2w9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Oct 2022 00:53:41 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 29J0rerE5702374
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Oct 2022 00:53:41 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 579D258050;
+        Wed, 19 Oct 2022 00:53:40 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CD03F58058;
+        Wed, 19 Oct 2022 00:53:37 +0000 (GMT)
+Received: from sig-9-65-232-148.ibm.com (unknown [9.65.232.148])
+        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 19 Oct 2022 00:53:37 +0000 (GMT)
+Message-ID: <3e2a42216662adb390831f98ea429a4245a4598a.camel@linux.ibm.com>
+Subject: Re: [PATCH v4] KEYS: encrypted: fix key instantiation with
+ user-provided data
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nikolaus Voss <nv@vosn.de>
+Cc:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
         James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH v10 00/11] landlock: truncate support
-Message-ID: <Y08pn5GcTvd5sgyE@dev-arch.thelio-3990X>
-References: <20221018182216.301684-1-gnoack3000@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        "Serge E. Hallyn" <serge@hallyn.com>, Yael Tzur <yaelt@google.com>,
+        Cyril Hrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 18 Oct 2022 20:53:37 -0400
+In-Reply-To: <1b621acf-a1f1-ec9b-21f6-d081d69ed74@vosn.de>
+References: <20221013064308.857011E25@mail.steuer-voss.de>
+          <924a29d81cc7e0d3e2f62f693a0d8fcef97b9779.camel@linux.ibm.com>
+          <c620d6ed-d97f-b0c3-574-7b3cd63a7799@vosn.de>
+         <16fe5265c49fcecdf613fe9dd660efe4ae8d452e.camel@linux.ibm.com>
+         <1b621acf-a1f1-ec9b-21f6-d081d69ed74@vosn.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221018182216.301684-1-gnoack3000@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: BS7bdyvuKodL2A6r7ZMgsg4VLNfM0MvT
+X-Proofpoint-ORIG-GUID: RRwvLxu41O_L1FDqIztkxmhZnCWXqIaA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-10-18_09,2022-10-18_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 spamscore=0 mlxlogscore=999 phishscore=0 bulkscore=0
+ adultscore=0 clxscore=1015 suspectscore=0 impostorscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2210190000
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Günther,
+On Fri, 2022-10-14 at 13:39 +0200, Nikolaus Voss wrote:
+> On Fri, 14 Oct 2022, Mimi Zohar wrote:
+> > On Fri, 2022-10-14 at 08:40 +0200, Nikolaus Voss wrote:
+> >> On Thu, 13 Oct 2022, Mimi Zohar wrote:
+> >>> On Thu, 2022-10-13 at 08:39 +0200, Nikolaus Voss wrote:
+> >>>> Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
+> >>>> decrypted data") added key instantiation with user provided decrypted data.
+> >>>> The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
+> >>>> Fix this to use hex2bin instead.
+> >>>>
+> >>>> Old keys created from user provided decrypted data saved with "keyctl pipe"
+> >>>> are still valid, however if the key is recreated from decrypted data the
+> >>>> old key must be converted to the correct format. This can be done with a
+> >>>> small shell script, e.g.:
+> >>>>
+> >>>> BROKENKEY=abcdefABCDEF1234567890aaaaaaaaaa
+> >>>> NEWKEY=$(echo -ne $BROKENKEY | xxd -p -c32)
+> >>>> keyctl add user masterkey "$(cat masterkey.bin)" @u
+> >>>> keyctl add encrypted testkey "new user:masterkey 32 $NEWKEY" @u
+> >>>>
+> >>>> It is encouraged to switch to a new key because the effective key size
+> >>>> of the old keys is only half of the specified size.
+> >>>
+> >>> Both the old and new decrypted data size is 32 bytes.  Is the above
+> >>> statement necessary, especially since the Documentation example does
+> >>> the equivalent?
+> >>
+> >> The old key has the same byte size but all bytes must be within the
+> >> hex-ascíi range of characters, otherwise it is refused by the kernel.
+> >> So if you wanted a 32 bytes key you get 16 effective bytes for the key.
+> >> In the above example the string size of the $BROKENKEY is 32, while
+> >> the string size of the $NEWKEY is 64.
+> >>
+> >> If you do
+> >>
+> >> $ echo $NEWKEY
+> >> 6162636465664142434445463132333435363738393061616161616161616161
+> >>
+> >> for the example, the range problem is obvious, so $NEWKEY is still broken.
+> >> That's why it should only be used to recover data which should be
+> >> reencypted with a new key. If you count exactly, the effective key size is
+> >> _slightly_ longer than half of the specified size, but it is still a
+> >> severe security problem.
+> >
+> > So the issue with NEWKEY isn't the "effective key size of the old keys
+> > is only half of the specified size", but that the old key, itself, is
+> > limited to the hex-ascii range of characters.
+> 
+> The latter resulting in the former. If for BROKENKEY 32 bytes were 
+> specified, a brute force attacker knowing the key properties would only 
+> need to try at most 2^(16*8) keys, as if the key was only 16 bytes long. 
+> This is what I mean with "effective size" in contrast to the key's byte 
+> size which is 32 in my example.
+> 
+> The security issue is a result of the combination of limiting the input 
+> range to hex-ascii and using memcpy() instead of hex2bin(). It could have 
+> been fixed either by allowing binary input or using hex2bin() (and 
+> doubling the ascii input key length). I chose the latter.
 
-On Tue, Oct 18, 2022 at 08:22:05PM +0200, Günther Noack wrote:
-> The goal of these patches is to work towards a more complete coverage
-> of file system operations that are restrictable with Landlock.
-> 
-> Motivation
-> ----------
-> 
-> The known set of currently unsupported file system operations in
-> Landlock is described at [1]. Out of the operations listed there,
-> truncate is the only one that modifies file contents, so these patches
-> should make it possible to prevent the direct modification of file
-> contents with Landlock.
-> 
-> Apart from Landlock, file truncation can also be restricted using
-> seccomp-bpf, but it is more difficult to use (requires BPF, requires
-> keeping up-to-date syscall lists) and it is not configurable by file
-> hierarchy, as Landlock is. The simplicity and flexibility of the
-> Landlock approach makes it worthwhile adding.
-> 
-> Implementation overview
-> -----------------------
-> 
-> The patch introduces the truncation restriction feature as an
-> additional bit in the access_mask_t bitmap, in line with the existing
-> supported operations.
-> 
-> The truncation flag covers both the truncate(2) and ftruncate(2)
-> families of syscalls, as well as open(2) with the O_TRUNC flag.
-> This includes usages of creat() in the case where existing regular
-> files are overwritten.
-> 
-> Additionally, this patch set introduces a new Landlock security blob
-> associated with opened files, to track the available Landlock access
-> rights at the time of opening the file. This is in line with Unix's
-> general approach of checking the read and write permissions during
-> open(), and associating this previously checked authorization with the
-> opened file.
-> 
-> In order to treat truncate(2) and ftruncate(2) calls differently in an
-> LSM hook, we split apart the existing security_path_truncate hook into
-> security_path_truncate (for truncation by path) and
-> security_file_truncate (for truncation of previously opened files).
-> 
-> We also implement the file_alloc_security hook, in order to override
-> the access rights in the file security blob, in cases where the file
-> is opened by other means than open(2), but where the opened file still
-> supports ftruncate(2). This is also demonstrated in a selftest, using
-> memfd_create(2).
-> 
-> Relationship between "truncate" and "write" rights
-> --------------------------------------------------
-> 
-> While it's possible to use the "write file" and "truncate" rights
-> independent of each other, it simplifies the mental model for
-> userspace callers to always use them together.
-> 
-> Specifically, the following behaviours might be surprising for users
-> when using these independently:
-> 
->  * The commonly creat() syscall requires the truncate right when
->    overwriting existing files, as it is equivalent to open(2) with
->    O_TRUNC|O_CREAT|O_WRONLY.
->  * The "write file" right is not always required to truncate a file,
->    even through the open(2) syscall (when using O_RDONLY|O_TRUNC).
-> 
-> Nevertheless, keeping the two flags separate is the correct approach
-> to guarantee backwards compatibility for existing Landlock users.
-> 
-> When the "truncate" right is checked for ftruncate(2)
-> -----------------------------------------------------
-> 
-> Notably, for the purpose of ftruncate(2), the Landlock truncation
-> access right is looked up when *opening* the file, not when calling
-> ftruncate(). The availability of the truncate right is associated with
-> the opened file and is later checked to authorize ftruncate(2)
-> operations.
-> 
-> This is similar to how the write mode gets remembered after a
-> open(..., O_WRONLY) to authorize later write() operations.
-> 
-> These opened file descriptors can also be passed between processes and
-> will continue to enforce their truncation properties when these
-> processes attempt an ftruncate().
-> 
-> These patches are based on v6.1-rc1.
-> 
-> Best regards,
-> Günther
-> 
-> [1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
-> 
-> Past discussions:
-> V1: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
-> V2: https://lore.kernel.org/all/20220712211405.14705-1-gnoack3000@gmail.com/
-> V3: https://lore.kernel.org/all/20220804193746.9161-1-gnoack3000@gmail.com/
-> V4: https://lore.kernel.org/all/20220814192603.7387-1-gnoack3000@gmail.com/
-> V5: https://lore.kernel.org/all/20220817203006.21769-1-gnoack3000@gmail.com/
-> V6: https://lore.kernel.org/all/20220908195805.128252-1-gnoack3000@gmail.com/
-> V7: https://lore.kernel.org/all/20220930160144.141504-1-gnoack3000@gmail.com/
-> V8: https://lore.kernel.org/all/20221001154908.49665-1-gnoack3000@gmail.com/
-> V9: https://lore.kernel.org/all/20221008100935.73706-1-gnoack3000@gmail.com/
-> 
-> Changelog:
-> 
-> V10:
-> * Align security blob offsets in security/security.c
->   Bug spotted by Nathan Chancellor. (Thanks!!)
+Agreed the latter is better solution.  Please update/replace the
+sentence "It is encouraged to switch to a new key because ..." based on
+this more complete explanation.
 
-I can confirm v10 works for me on top of next-20221018. Thanks a lot for
-digging into it and getting it resolved quickly!
+thanks,
 
-Cheers,
-Nathan
+Mimi
 
->   As suggested by Mickaël Salaün, the bugfix is part of change 4/11.
-> * Small wording and formatting fixes in comments
->   Merged from Mickaël Salaün's fixes on his -next branch.
-> 
-> V9:
-> * Implement file_alloc_security hook
->   * Needs to grant all Landlock rights by default for use cases where
->     files are opened by other means than open(2), i.e. memfd_create(2)
->   * Discovered and fixed by Mickaël Salaün on his -next branch
->   * Add a selftest for the memfd_create(2) example
-> * file_open_hook: Reorder the logic a bit as discussed in review
-> * selftests: Return -errno from recv_fd() and send_fd()
-> * Rebase to master branch
-> * Reorder __maybe_unused patch before its use
-> * Various small formatting and documentation fixes in code,
->   documentation and commit messages
-> 
-> V8:
-> * landlock: Refactor check_access_path_dual() into
->   is_access_to_paths_allowed(), as suggested by Mickaël Salaün on the
->   v7 review. Added this as a separate commit.
-> * landlock truncate feature: inline get_path_access()
-> * Documentation: update documentation date to October 2022
-> * selftests: locally #define __maybe_unused (checkpatch started
->   complaining about it, but the header where it's defined is not
->   usable from selftests)
-> 
-> V7:
-> * security: Create file_truncate hook
->   * Fix the build on kernels without CONFIG_SECURITY_PATH (fixed by
->     Mickaël Salaün)
->   * lsm_hooks.h: Document file_truncate hook
->   * fs/open.c: undo accidental indentation changes
-> * landlock: Support file truncation
->   * Use the init_layer_masks() result as input for
->     check_access_path_dual()
->   * Naming
->     * Rename the landlock_file_security.allowed_access field
->       (previously called "rights")
->     * Rename get_path_access_rights() to get_path_access()
->     * Rename get_file_access() to get_required_file_open_access() to
->       avoid confusion with get_path_access()
->     * Use "access_request" for access_mask_t variables, access_req for
->       unsigned long
->   * Documentation:
->     * Fixed some comments according to review
->     * Added comments to get_required_file_open_access() and
->       init_layer_masks()
-> * selftests:
->   * remove unused variables
->   * rename fd0,...,fd3 to fd_layer0,...,fd_layer3.
->   * test_ftruncate: define layers on top and inline the helper function
-> * New tests (both added as separate commits)
->   * More exhaustive ftruncate test: Add open_and_ftruncate test that
->     exercises ftruncate more thoroughly with fixture variants
->   * FD-passing test: exercise restricted file descriptors getting
->     passed between processes, also using the same fixture variants
-> * Documentation: integrate review comments by Mickaël Salaün
->   * do not use contraptions (don't)
->   * use double backquotes in all touched lines
->   * add the read/write open() analogy to the truncation docs
->   * in code example, check for abi<0 explicitly and fix indentation
-> 
-> V6:
-> * LSM hooks: create file_truncate hook in addition to path_truncate.
->   Use it in the existing path_truncate call sites where appropriate.
-> * landlock: check LANDLOCK_ACCESS_FS_TRUNCATE right during open(), and
->   associate that right with the opened struct file in a security blob.
->   Introduce get_path_access_rights() helper function.
-> * selftests: test ftruncate in a separate test, to exercise that
->   the rights are associated with the file descriptor.
-> * Documentation: Rework documentation to reflect new ftruncate() semantics.
-> * Applied small fixes by Mickaël Salaün which he added on top of V5, in
->   https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
->   (I hope I found them all.)
-> 
-> V5:
-> * Documentation
->   * Fix wording in userspace-api headers and in landlock.rst.
->   * Move the truncation limitation section one to the bottom.
->   * Move all .rst changes into the documentation commit.
-> * selftests
->   * Remove _metadata argument from helpers where it became unnecessary.
->   * Open writable file descriptors at the top of both tests, before Landlock
->     is enabled, to exercise ftruncate() independently from open().
->   * Simplify test_ftruncate and decouple it from exercising open().
->   * test_creat(): Return errno on close() failure (it does not conflict).
->   * Fix /* comment style */
->   * Reorder blocks of EXPECT_EQ checks to be consistent within a test.
->   * Add missing |O_TRUNC to a check in one test.
->   * Put the truncate_unhandled test before the other.
-> 
-> V4:
->  * Documentation
->    * Clarify wording and syntax as discussed in review.
->    * Use a less confusing error message in the example.
->  * selftests:
->    * Stop using ASSERT_EQ in test helpers, return EBADFD instead.
->      (This is an intentionally uncommon error code, so that the source
->      of the error is clear and the test can distinguish test setup
->      failures from failures in the actual system call under test.)
->  * samples/Documentation:
->    * Use additional clarifying comments in the kernel backwards
->      compatibility logic.
-> 
-> V3:
->  * selftests:
->    * Explicitly test ftruncate with readonly file descriptors
->      (returns EINVAL).
->    * Extract test_ftruncate, test_truncate, test_creat helpers,
->      which simplified the previously mixed usage of EXPECT/ASSERT.
->    * Test creat() behaviour as part of the big truncation test.
->    * Stop testing the truncate64(2) and ftruncate64(2) syscalls.
->      This simplifies the tests a bit. The kernel implementations are the
->      same as for truncate(2) and ftruncate(2), so there is little benefit
->      from testing them exhaustively. (We aren't testing all open(2)
->      variants either.)
->  * samples/landlock/sandboxer.c:
->    * Use switch() to implement best effort mode.
->  * Documentation:
->    * Give more background on surprising truncation behaviour.
->    * Use switch() in the example too, to stay in-line with the sample tool.
->    * Small fixes in header file to address previous comments.
-> * misc:
->   * Fix some typos and const usages.
-> 
-> V2:
->  * Documentation: Mention the truncation flag where needed.
->  * Documentation: Point out connection between truncation and file writing.
->  * samples: Add file truncation to the landlock/sandboxer.c sample tool.
->  * selftests: Exercise open(2) with O_TRUNC and creat(2) exhaustively.
->  * selftests: Exercise truncation syscalls when the truncate right
->    is not handled by Landlock.
-> 
-> Günther Noack (11):
->   security: Create file_truncate hook from path_truncate hook
->   landlock: Refactor check_access_path_dual() into
->     is_access_to_paths_allowed()
->   landlock: Document init_layer_masks() helper
->   landlock: Support file truncation
->   selftests/landlock: Test file truncation support
->   selftests/landlock: Test open() and ftruncate() in multiple scenarios
->   selftests/landlock: Locally define __maybe_unused
->   selftests/landlock: Test FD passing from restricted to unrestricted
->     processes
->   selftests/landlock: Test ftruncate on FDs created by memfd_create(2)
->   samples/landlock: Extend sample tool to support
->     LANDLOCK_ACCESS_FS_TRUNCATE
->   landlock: Document Landlock's file truncation support
-> 
->  Documentation/userspace-api/landlock.rst     |  67 ++-
->  fs/namei.c                                   |   2 +-
->  fs/open.c                                    |   2 +-
->  include/linux/lsm_hook_defs.h                |   1 +
->  include/linux/lsm_hooks.h                    |  10 +-
->  include/linux/security.h                     |   6 +
->  include/uapi/linux/landlock.h                |  21 +-
->  samples/landlock/sandboxer.c                 |  12 +-
->  security/apparmor/lsm.c                      |   6 +
->  security/landlock/fs.c                       | 206 ++++++--
->  security/landlock/fs.h                       |  24 +
->  security/landlock/limits.h                   |   2 +-
->  security/landlock/setup.c                    |   1 +
->  security/landlock/syscalls.c                 |   2 +-
->  security/security.c                          |  16 +-
->  security/tomoyo/tomoyo.c                     |  13 +
->  tools/testing/selftests/landlock/base_test.c |  38 +-
->  tools/testing/selftests/landlock/common.h    |  85 +++-
->  tools/testing/selftests/landlock/fs_test.c   | 468 ++++++++++++++++++-
->  19 files changed, 862 insertions(+), 120 deletions(-)
-> 
-> 
-> base-commit: 9abf2313adc1ca1b6180c508c25f22f9395cc780
-> -- 
-> 2.38.0
-> 
