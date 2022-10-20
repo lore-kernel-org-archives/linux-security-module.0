@@ -2,142 +2,118 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881C3C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Oct 2022 16:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5555C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Oct 2022 16:13:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230448AbiJTQA4 (ORCPT
+        id S230464AbiJTQNk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Oct 2022 12:00:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57842 "EHLO
+        Thu, 20 Oct 2022 12:13:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230441AbiJTQAx (ORCPT
+        with ESMTP id S230462AbiJTQNj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Oct 2022 12:00:53 -0400
+        Thu, 20 Oct 2022 12:13:39 -0400
 Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A508F1A7A1C
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Oct 2022 09:00:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666281651; bh=9QmrNtJTcgxNR1m3Z/rs+lNfaULYqDNjsU1Rc6F3/Yk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=r6EeNDWOT/JUgoR3ydzFdZ1r3ivCQ0z44IUitZrHZMeDLgtCoExzxGp2QZuTP4a1DU/Yww0Pgc9X0jPr0VLSN8LVjJmHUDeMd9Rn8PW7w2L/7+hAj7r3LY0kdzuK/Avh4mK8c2EMuw/QJOrVT1XKpJ6NHiLaBROD60SYKwV0sKwM6le3dGu5cIO9qOd3csK3DhCQ8pA9ywdcj9go9WEKvxA+YYx008L0haKa8liON8+Lb4kH9j4UR6c4rEMjvPI2BByLB/20TZUSY8mW+YweWQOtlOIAlKKfZ+MskbWBzNyvGXtwuxx5HTk1vJZQ8iRAAbP2sfgNiVnC1xaSFPe2Nw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666281651; bh=jK+eIxo+rBow1kYbX1XAINFAeIZEjKNpgpzN8wntyDI=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=iuAAe0LTkZOGp6f7rfxxQfHGcqZY5Hh6sSAZGEHyiUoTlAE6s/KgQDxxuBW1b4KaJniw73W8Z8rpmA/yUNuiTL56dHDBOzqNZusrcd5/Wt75JoT8cvcs+fhVxIi2k79dpQ2Ex64fi53pbBBqZ0oEurde9BRL3dRNBi2HjR7mnadpAI1NhLVqwrqtB+DgSu5t1ssMretTXXZi+vcRm0PpTDsnErEDo22whrX1rJs+hyPhm6utNsNVcJGiMf6DPtuQSfXTe+Tq3jVz5viR9F0Acx9iqvoO7h9KyEnNse1CECfTBSC4eStWKBpnWoGG+NAjyCUsO3CYNDlOU6cowGqlBw==
-X-YMail-OSG: Gacy4u0VM1kIScte7IPolEBjaAASYXyaU7xSNXaf82RpwJojwZmfdhk6Qq7vNa8
- BYqHfP1IxPdD6v3URD8a1JQ61RuGl4Qb.9xzLIfZXZMrzAYAsKp_5R3kR.PQBlpqJnZAUAjLwCy5
- .GJr6V4thZAw1feD_ie3VYkCXvWmLecw5oec47CJi4wKJapY1yx7hMLIDv1jceNMDXmjdp4ZmY4G
- BMPKBKEFQJJwtIi2cvO2hE_zKZq89GLef6NNq3NSuv67Tjr16nHXE9KQYsev00Pk5WdiM8ZIjJtv
- j0sZ05Q_.I7kpi0OMgxIyTCll6EGi_6oOD1MBRfJ4W0yaLk5hM9WLRHDHhdfCupbCP9HoLXvbt_q
- nZWX9yJybbPc7WGXhH_pqYrgasttxsNhP2NfRTcecARqIIZPPYjky5Jq3LTcrnevv.hrcXLoUlVN
- jYxSrCdKOCEhL5Ll36hb1U3yAVfT2La8MZEodAKH2h5lQNmKE6DIRMG.o7tQqMa3j8dZma8O5.ck
- wmn2fgzOjzBDFba5xM3K2H1pCqeXVVmE0TisLzLohwAa1EDO3lJlnd9W6ePOoTZ4zAldzvvRbWo5
- 2m..yKyhmI2OhRs3znhI7MZhzS0XocYSFcW2AuDJPJIdSssejP.wMp3MqilI.jTz6PkLGm8BBqQz
- xEgUcQeRUdWfw3duD_4H.4wLt2chpLULF5dpCL5wGNb1W1FFMoS5M1q8EHKWN1OpzaWz6XA4WPRP
- HdqkGNzHR0svemKTSj9hWS6f7ybOuk0Quet8p8ma8iXXMRHOWsilkz_7md8ZxslXcMH11GGj_r88
- fKUptGPaMQGz_PWiNtZSzgWo3TTOmaimcBIyxt.FQt6XCNoX5N_sZSWMtwdkxwXaSpq_IuMsAsW3
- pUmy4PrNyywfqSQahdmd1I.HZX7Cixld40LSdhMeN9bQsB3VhRbF8lAofkEh_4b7cRCMdAX01bbg
- DODVeLhEgi.T50aHidXrOJWkK.OMgi_fIdrxvN1PygK7hDepH0KDaJSoUkxNTYHfUihr1bocmEzR
- bB4xbjjEP50buS.WfMUBDZLGmBHMCMiTfJVylwoPzpLUiZywIDrsQTd4hqejqAk9Dv8Pji1LFkzj
- rd4RvlEZuUx4d4ghtrv_22EMGGsvOS7o6Y5IChFwI11NEBRerzBs.zDBWpj4kfDSqh8t7flcw6F1
- jjYjhA703x.E9yrivETO1M2MKOr0QF_VvyyR8iz_WiX8cF83EmB0dbwag9wfGonw2mR_iNTBMWDd
- fd2.sqX4larAyGNG27yr3cRI5QbPnNaSKUPfYnlKylNXL0Rr8KT1BPjx0jCEMWxZC57V9pI8GbS4
- jWa.RwwVzqUzlRKankP84SkatruNHIVwvqO9t6LWcZqgbEqj5MQd2LoQE7eq6IAz3B8kSuBX7vht
- 1D_w7NL3q6HkEOwL2gCTCnkAuIApibbrK5hQ3O4vbvFQy22miE_fqobAmvgVAZ8oSzKgo11rzzvJ
- .8UTaJTYAgkWy1V4polpb6PYGN0A4Y_b14vmxe0oRhAf5TtHZfg6J8pcjMu8xTwqUTXgKviXX6DZ
- gWb5esxtZhM6Y9_TqDDUxGk67il12pOh6NHV4VqITqFSkDFw7nIbcnFWcFqPr5Te9sE69z.uU_0m
- 2ejGiK6vskhHhDNSpc_xFwn6zEpabqZVbAoU_Oy8Lugjav7d4j7sHObpgoLl3_P7o8hniirZLxbX
- SG5GGDnUmjFNw4wSd3kXf6TVEyjG28ClmMwRDetQ4h_.PvK1Zbme1zHrQQRJX91LEe94zD4oxtB1
- 5.ji83JG9s6R8zqFH_soV4Thxui8hEHG.uQ1I8eEg4._rY3_GXMrhjS56hjzn__cOhuy.bCUbA2r
- 0C4K9IjWgQMvplCIL6xAj9p4EnH9B4DSwlDq8gELvDLJ2V58nN2NE.qGgMFJJKH9BoVM2fyyXN9R
- FEcpvUD.a8G9RyyrbWW_wuYl.JOdpDsmW7Gn1AA.JUXsAuVTcUYZE2C0FNyTogO9C_USdI_l_9Xe
- ygvkiRnO2cUpAibsK.a5Wg9C7PciC_yXoRA3Xvb8KuBhmpghiGlr2u4VZUiFyLR5ODZYsA3VpKHE
- do55h8lhXXFt3l_rQ4aRpYng74OksFvIhnXsL5uyyJNagaULNjMt8jY4Lh6hLh74LmD7o5l5iVsC
- 5yva6YJT27PFxI7bH9JbvGrd1t.jfg.8jif_hr4UNjJ5hqq2TnhGZFBLs3VmJI6M75WtodkOk8DQ
- gCf9tWjtelIf7MLcJNsDrJnwsCJyxLOW7W6cNjOlTgw.zLwUvTy4sAWvO6KNTvpkWNP2geybiZ1P
- JtqWdV4.4tooWbvaKl0eUkBiQpQs-
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A4C1BC15D
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Oct 2022 09:13:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666282417; bh=ajaWYsokvzfFnXQP5pL1h4wSWcb995Jmi4L6ZZXfF5I=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=tlQ94PBDbVZ464NzFGhGI1Fr4e05sX7cg5BeKWxv3V293MQFShdvR+p9+s3JHy7Rgt7NK+JIR6RtAWY0LaHHdPxU+rMwJZs5QVYOIPtZ/9+uMB29RgVfr6+bj/MXDIN+DfgIW70dnjvpfm0gLIDdjd+VQllEO5GKlt+pLKA6ivCUwgjB3mqOIo/+Ohgm5GjpxlsuvwACpfNvvd4ADVPwLzANPoS7KpQlmQbI31qQWsHcz9IfQvN/WcTaRFXm/uOMc843AoELy+G27/3U9dsWUY2obkYFCOGAe7TnK7sCKQgt+xgMDv8qjTs9Yl5NcwrpjE0KFBkb0Aw+cPGMBffFsg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666282417; bh=rzVfJB5FqIz9yH3i3C4FFN/u38IJFEyk1iv3frnLvou=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=dJjjg2GF0utfe9m3fW4K7szGpT048GZGcr0oGelxlo9hhO9foqk8VCbzqI28kKEZWmbeJlMvt/5JqUIF9QP/sz4iMCxzvh9YYGVx4AmtF5och/XwGYc1WLi2W0iHNdPkdypwwmIjISouWexWOm13pk84dX8ZpD2uiPGMwpoA72SO2XMdL15FZKgMC52sfbBT4JlnBvj36FyELGi/KI/50DV7HyMC6IeaVoH+1l1YMC1mGO/L456ATPgX/A80jp67maYP3mKH05LTrklGX+8BoLVH1fBwHIMfTQI9hOM7DdSxDRQG+SBRxlW8+gTjRTXbbt7iAI8kjg6haOPoKZd0Ww==
+X-YMail-OSG: 9M6vgrsVM1nOwPUtjF8DEhcOv8zHugxZwc4TQIZMJt.oo_bcVpQFI6z6XT13KpS
+ QbAhFYNbGO9Uu3Gl1x8VnyWoFpmtjsYloRDa2mERcmgRo30MKIQvSBcVBrtyjfOv4uolRYRg4p64
+ UY.bkVagQFn898x87V7xK06uTIDZQgk_axhZH38ogLpkcukgZt6DBRXfiiO9wa2pnEkjh1iic5yq
+ n6_LL9kgkdCwYKUpPHL7eW1VnbXwaLob6gZ5NVIdvRVKsJ_8XpDLnQqIXdR2.uS6OLVXeWB5lPtL
+ G1975Q4xdcRtVz1.XqnLrSjebFof1KBOxbvJb8ElXhfDV.v76mfYjKhynHRFOkOt83qfttG6WIbc
+ PsrcYIUxTsrV2eRDu7GC3_woeF6zCyJXHvnXVE5XduPXE9q.qZ1CDvjwtspc6ZuxtKgTaSmDH3On
+ 5YJBv1l3mX.l2hLqTUyblvJt3mShR9A2i0hBP2fuuD_4u_zN.9qa_F30CUgc7qpwnQzez4Wv_rEx
+ 1pPq.qejNSICXsh0RgpvsV1Eqt6q_yTqYYYfpDP41YwDm2nv1FkHimHm88HgYZlkmtP0jaIZ0YmB
+ DfdELE2XQUfU3LFrroEjbxZBMGF7yHCW6ke_iX.7k2tnc81GsKeJpfAjWVpij8s3qHKaYynDsKeC
+ AoDSc8USDIFbGwdQXj8LCKU44vNXVs.PPrQPz6YYGxbQPtBYX42zhXJMC1PVCyZkhAOdS30_t8Wy
+ _ouTxrCC9pxihVgKJr8d45z55NNftMUynZxhGyonwJNsZiLvaqTNy2d1mZq4MflIhLHLmBsRbUq0
+ KQifyiPF.5PZz.Fw5juHhHJx.AArY56BEpvvUItEii0OIyxrsFFUfR6IDsaBVsjG4KQtO7XC.ckw
+ BaPaV6ZCVHPxbLUMjpjUkeXuBbS6UDtwSgeiy2Xj_GLw6Qu33dfTeoisL_JKdJdHIakzeHUZy32L
+ 5X6Haf6oKyMOp.TZxuh7khcybvTRM0zuljocn22x7CXEO2DP1uVd3jdFqkRVOCvewY6VlYejCmcK
+ btSWv4t.8bZjykNQLSaPX5Z1RZUinll1YHJ6xJC8M60qOjh.Nrvs9r3kZlXo7irP3RlHxlu9NS2.
+ 6DUTYyQYXeCY5Xxenk6nlV4ISBIjpjcmZENpjEM8DsyjuDTrUE225S35PNw6QK4z.MsTwM.5g6hd
+ 9IbiGEjbkyXoKrP4gIXCq2b2BBTPjp6_aqA7fv1ZQ2a.jwZ8yukb6_Dy_.J1K951XogT4TWKbvvW
+ IGDw73Tkf8iLSxnsAqNVlFjl4eNrelJ8pcHnYU7VlYdiunbh0zAU4VP0lxuHaVoHvL_0UCjKEReS
+ m2lPMzIOyrZAyed1XdHHPFUHKQII91rnnOXI7hlM8bMlwtZkb3WYBF6_BEisLKeFdmkiXGKwR5Ap
+ LYlG2kydIyrkZqka7MwEJNxUvvwh8_cAaGvmYGSajiYKe3JwAoQ2skm7j1F51mjFVUHZJH1CX2RU
+ KKmaU.HoMdAsfdXxPdgjyiEcLXGXiO33dMVBnTqJzEekKDptkeiuiq87xeOn6ZqQaBVn6tOCwYwt
+ FkLhkDq_rUtdgNRJd14SfP7xifm3YRd59Qu.gS0YgVj1A8ljLQHg.cUeHPYc_AC.t9qLsnxLfmz4
+ hq3R2U0BsNq2acgLrx9VUVc.71H2zt7kfJNdWSo7YDms1V5kCFAf5NTPjenN0nrjeQk3q2kWUV3k
+ s6mzBdd6MpcHpYbdLksjcOjKdbm36zlW1ub8p9Dv2gmXvfwBtK.aQduqzq39sU9AEqMJhepuzEYQ
+ 3DQ8VCvhtF0M1AZpsU7ffDs1Zqmv1s2dKVSVsCoquYynHScoFjSK1PQR6Ueakzig.aAd2Iug8WCg
+ okU0qAkMrL2bNR3QSMqnExCc8YQ7Idgw2Mz4ececyyUm8h5wsg45RayDFzAn_jwJEJe3wLifvzjw
+ .jbVlpWCh1PCPC0XBK.KbROjpHtGD2JXEWt52e5mUM7FJ6hTyObOGJi_LZtR5bmuld0JPdbrxRBN
+ G7HDbBhIXnzxDMyCHTvFHES4K7L1MCHJrBa8Qa.PVrSG2QGiEAs0QzpdBDKNDTiB9G3aF7DRkZ1b
+ mXUa6QbGoN31L4k2YmjReIuGlJb8VWBf3LvciwiwP7Da5yi_Ytxp0RVfXdx60egJQUaxAIOsWPpv
+ d8CINNhwBFF7hGIDShpw07HG5hKTft5mIIVzmBYV5jgdLa..KVCl7XpNgs.gloEg4pDDDqXmrC2G
+ up1VOQb6pxUP2UUcOuoq74MQ5s__6p44mbs5KJhmFaSdjyy.RZ7tkLfIPB7vtiuWDlpJqxqvC9ET
+ aat9MJWSclr45e026
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Oct 2022 16:00:51 +0000
-Received: by hermes--production-gq1-754cb59848-n5qk6 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3b6e906b9ca7a255148941b46f673044;
-          Thu, 20 Oct 2022 16:00:49 +0000 (UTC)
-Message-ID: <41b7c231-1c97-2196-878b-92ad1778f11c@schaufler-ca.com>
-Date:   Thu, 20 Oct 2022 09:00:47 -0700
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Oct 2022 16:13:37 +0000
+Received: by hermes--production-gq1-754cb59848-zdkt4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1f2e01732a1ec2c64f92c880c6263bd8;
+          Thu, 20 Oct 2022 16:13:34 +0000 (UTC)
+Message-ID: <332a5987-8f4e-e26c-cfa5-5121cfa71ba9@schaufler-ca.com>
+Date:   Thu, 20 Oct 2022 09:13:33 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.3
-Subject: Re: [PATCH v3 1/1] security: Add CONFIG_LSM_AUTO to handle default
- LSM stack ordering
+Subject: Re: [PATCH v38 06/39] LSM: lsm_self_attr syscall for LSM self
+ attributes
 Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>
-Cc:     Nicolas Iooss <nicolas.iooss@m4x.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?= =?UTF-8?Q?n?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
-        casey@schaufler-ca.com
-References: <20210222150608.808146-1-mic@digikod.net>
- <20210222150608.808146-2-mic@digikod.net>
- <51725b44-bc40-0205-8583-285d3b35b5ca@schaufler-ca.com>
- <ee461f8d-a02d-0782-8f31-691853a57f00@digikod.net>
- <7b67163a-9de1-313f-5b5a-8c720cef9b73@schaufler-ca.com>
- <CAJfZ7=n5FOxHXMLRrDQ3F-kDqbYngNoYKcz6_PWi1rPa0_8WpA@mail.gmail.com>
- <3b97e25b-303c-d732-3e5d-f1b1a446e090@schaufler-ca.com>
- <202210171111.21E3983165@keescook>
- <CAHC9VhTTKpesvjnc_233x+wG1BvXyup9nM4Dv2h1953zXAvU3A@mail.gmail.com>
- <202210172153.C65BF23D5E@keescook>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        linux-audit@redhat.com, jmorris@namei.org, selinux@vger.kernel.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, casey@schaufler-ca.com
+References: <20220927195421.14713-1-casey@schaufler-ca.com>
+ <20220927195421.14713-7-casey@schaufler-ca.com>
+ <CAHC9VhQbr1zgyvzM9zB97+rzO-Rcy6CUt_3-54ED-SEanVWyRQ@mail.gmail.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <202210172153.C65BF23D5E@keescook>
+In-Reply-To: <CAHC9VhQbr1zgyvzM9zB97+rzO-Rcy6CUt_3-54ED-SEanVWyRQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.20754 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/17/2022 10:55 PM, Kees Cook wrote:
-> On Mon, Oct 17, 2022 at 09:45:21PM -0400, Paul Moore wrote:
->> The code sorta cares about ordering, at least to the extent that the
->> LSMs will behave differently depending on the ordering, e.g. a LSM
-> Right -- this is why I've been so uncomfortable with allowing
-> arbitrarily reordering of the LSM list from lsm=. There are orderings we
-> know work, and others may have undesirable side-effects. I'd much rather
-> the kernel be specific about the order.
+On 10/20/2022 8:44 AM, Paul Moore wrote:
+> On Tue, Sep 27, 2022 at 3:57 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Create a system call lsm_self_attr() to provide the security
+>> module maintained attributes of the current process. Historically
+>> these attributes have been exposed to user space via entries in
+>> procfs under /proc/self/attr.
+> Hi Casey,
 >
->> I personally would like to preserve the existing concept where "built"
->> does *not* equate to "enabled" by default.
-> Yup, understood. I didn't think I was going to win over anyone on that
-> one, but figured I'd just point it out again. ;)
->
->>> I *still* think there should be a way to leave ordering alone and have
->>> separate enable/disable control.
->> My current opinion is that enabling a LSM and specifying its place in
->> an ordered list are one in the same.  The way LSM stacking as
->> currently done almost requires the ability to specify an order if an
->> admin is trying to meet an security relevant operation visibility
->> goal.
-> As in an admin wants to see selinux rejections instead of loadpin
-> rejections for a blocked module loading?
->
-> Hmmm. Is this a realistic need?
+> I had hoped to get to review these patches earlier this week, I know
+> you are very anxious to see something happen here, but unfortunately
+> that didn't work out and I'm now in a position of limited network
+> access and time for a bit.  I will do my best to at least comment on
+> the new syscall related additions, but thankfully you've already
+> started to get some good comments from others so I'm hopeful that will
+> help you keep moving forward.
 
-One of the security modules I hope to write someday will provide controls
-based on multiple successful accesses to particular resources. The old
-school example is a program that scans /tmp constantly. No one access will
-be denied, but the fact that it does stat() on /tmp/foo a thousand times
-a second is suspicious. If my system is running any of SELinux, Smack or
-AppArmor I may get different results depending on whether it is loaded
-before or after the "primary" module. The user may care which result is
-obtained. In truth, the user may use the module both ways as a mechanism
-to measure the effectiveness of the "primary" module.
+Thanks. I just got back to work myself. Hopefully the comments will prove
+useful. I'm just getting to them.
 
-The current set of new security modules is diverging from the MAC model
-that LSM was invented to support. I don't see that restricting its use
-to make the infrastructure easier to deal with (as much as I'd like to
-do that from time to time) would be the Right Thing.
+> One comment I did want to make, and it's important: please separate
+> the LSM syscall patches from the LSM stacking patches.  While the
+> stacking patches will obviously be dependent on the syscall patches,
+> the syscall patches should not be dependent on stacking.  However, the
+> LSM syscall patches must be designed from the start to support
+> multiple, simultaneous LSMs.
 
->
->> We can have defaults, like we do know, but I'm in no hurry to remove
->> the ability to allow admins to change the ordering at boot time.
-> My concern is with new LSMs vs the build system. A system builder will
-> be prompted for a new CONFIG_SECURITY_SHINY, but won't be prompted
-> about making changes to CONFIG_LSM to include it.
->
-> Even booting with "lsm.debug" isn't entirely helpful to helping someone
-> construct the "lsm=" option they actually want... I guess I can fix that
-> part, at least. :)
->
+OK. I will refactor into two patch sets. The first will be the syscalls
+for getting the LSM attributes and the second will be the stacking changes.
+The prctl() I proposed to set the "display" LSM will be in the second, as
+it makes no sense to have without anything to change. I have not to date
+included the SO_PEERCONTEXT that would be required for complete stacking.
+Would you like to see that included in the syscall patches?
+
+
+> Thanks.
+
+Thank you.
+
