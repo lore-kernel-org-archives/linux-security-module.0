@@ -2,122 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF267C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Oct 2022 15:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D94C43217
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Oct 2022 15:10:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229588AbiJTPCV (ORCPT
+        id S230103AbiJTPKU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Oct 2022 11:02:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51700 "EHLO
+        Thu, 20 Oct 2022 11:10:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiJTPCV (ORCPT
+        with ESMTP id S229800AbiJTPKT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Oct 2022 11:02:21 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1A8A18DA8C
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Oct 2022 08:02:19 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id j7so24937077ybb.8
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Oct 2022 08:02:19 -0700 (PDT)
+        Thu, 20 Oct 2022 11:10:19 -0400
+Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAE24D8F54
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Oct 2022 08:10:16 -0700 (PDT)
+Received: by mail-yb1-xb2d.google.com with SMTP id l145so1021ybl.0
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Oct 2022 08:10:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rcTa90JUvI4y1R1ZthoT1dW/zruRGzn7zHD3hFfi0sE=;
-        b=yT3oVQvzp8PnMy6ag8eQKBvl2KmH0clKcs7VbSS2Mv8938UtG+IpN5Mle2//gTp7Jn
-         qgXnvFxXaeMdThibjBKAPwq8dXIuNscyoFUuHAoLOr3HVHXpVu4gsY3nxayn2RKgwP+T
-         HfAmrE+8Z9hnkpo6QyAaDz6fhMhVcOVhB38hUh2tSe0wKzcztxmEmLiuoNQP/qqRG3kN
-         5pZgZ5q/cD8IS0ZWUohRen1iFFTZSgyvsJtPReWEpPY7tMnZdCwOVVka/nkXo7tpumaD
-         eL9tLIlCzPdGjnF6J/Si9kUy63KKktuuV+1DQAgpllpdY5TOSV1mRjN0P6CMrpm1diro
-         m42g==
+        bh=pxP+rdM/oYjqVi5iFPWwICgX+HbH0I69qg9sDr0K1LE=;
+        b=KR6cpyzAxPl+7U3Py5QWHOEQQDLxxgZdiJldjiB0XC93zlWcM9n6YQOVPYPnw9oZ1Z
+         GPPhCqBd+xNwTj3Ts+b8KiI8NuiklKCJcQXp4p0jocUfNLQ4dhAFNaFs940aUmZ3pt/T
+         b3mEq4KGTdfqGAaA1Xa/BFKWKCA8siEtzt5CYoWkcPTEVtwffZr8qUJcRlRuXLlKqbul
+         zd9H9aQg5UdGWrjZkBnnzw83O00AlZltUKaXbZBHJ6uLJlhprofGUMJfyR4UElLsDOcV
+         I77+Nv5agtB+VHeOADIxrjy/vlBjcqbIvpGI2HXL1AOIB8l4//roECtSDFosB9T/I8L8
+         JOKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rcTa90JUvI4y1R1ZthoT1dW/zruRGzn7zHD3hFfi0sE=;
-        b=M1LCo1qaUrd6DxudXmrpbZ5vyvItaab7ZkkXExZ3QORm6ebRxeirAF/3X8uMj3p6kD
-         ZHRksFLMffGpiKlthmUlDxxYstLcCzwBSteKXigVDVzyG8+1sCpKpplJolt6lrnrAOJp
-         6/6TXmryqOACWOqbeOOHvOHncvXd9/mrO58s4YfKNonvjyvdh/bfSej7rjqESkrKdyO0
-         LRcjgdTM4lhwLuTXpiRgEgmfayHdOYwhev3CRswf/XMp0iBndCujkw0nE9yMccpmWhN9
-         yT4E+blMrKZty8ik93e19qjIvAJRaHHgnL4j4VIf4KIK9tmkOmbmLyt/r0aMluxhT9Wp
-         8JNg==
-X-Gm-Message-State: ACrzQf2OyrT0XMdjwTsiAc2FQ1p7VuGxTzL5RoGTZIeWSKrPoyODtD+O
-        Iy4NOCZvF+4AHfoEI7ZNHek7x94DT1VccJpB+I4z
-X-Google-Smtp-Source: AMsMyM4t5COoCp7gwRsg3P0hucIliUrFLd4rMO4OysTa0+j6zK1+RGwX65OV/qpwJoo1U09CyOEQJfD1NiFUd5VuEHw=
+        bh=pxP+rdM/oYjqVi5iFPWwICgX+HbH0I69qg9sDr0K1LE=;
+        b=KDVst2NC5V/K8BApgLStmCZIw6BGH0Vw7WpudqOMa7FcuzpAQj3OuS1wC6mrNybDuZ
+         Vl1LikUUH2+zoaBWNE1Tpd49+AFQ7T9w3Q1uvWj0iqc4mjDM1JX9inMjUpe2NJYUoOJp
+         InDpzeKO8cLKY/K7/O0hM7QN0E7MSQnRwm2ZTZCyxIyQtw+7MvWAIrvR1Sn6Z9vXZ6a/
+         GrCwXbZ5NSrtN4svZgBQgNtEJnQvM4e4Oymfqfp/ggEpsvziqeAg5N4hqdKIlbOxkfRN
+         mfQkV+gQrxpLJuiVtlAWiwssRvejTH5fwgd1F5q/A6LMCSPyqYao3RC/p677j6QR+9Vr
+         9fwg==
+X-Gm-Message-State: ACrzQf0OR8j4+Z9DamB9Ye+7nNwp/itAVRO7TmJ+t5WB1GUd1tjVvSpd
+        5FAk0UkIyPEoa1kRQaLKPmYFNRL26+tjbioGpFyX
+X-Google-Smtp-Source: AMsMyM5Rs4oDq+vd5+gdAF1kNXM80oLU8Nh4dNPrK2chva8EHptH9aoAz5t5/3W+hZ2lZSpSV9E5RhiJ/YAMRGa1Bfk=
 X-Received: by 2002:a05:6902:724:b0:6c0:1784:b6c7 with SMTP id
- l4-20020a056902072400b006c01784b6c7mr11786995ybt.15.1666278138672; Thu, 20
- Oct 2022 08:02:18 -0700 (PDT)
+ l4-20020a056902072400b006c01784b6c7mr11826786ybt.15.1666278615883; Thu, 20
+ Oct 2022 08:10:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <Y1FTSIo+1x+4X0LS@archlinux>
-In-Reply-To: <Y1FTSIo+1x+4X0LS@archlinux>
+References: <166543910984.474337.2779830480340611497.stgit@olly> <68decac7-f8f7-1569-be84-8419a0e78417@schaufler-ca.com>
+In-Reply-To: <68decac7-f8f7-1569-be84-8419a0e78417@schaufler-ca.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 20 Oct 2022 11:02:07 -0400
-Message-ID: <CAHC9VhS-RwQwg3o0+8n-UsqvhpR+WESOsFQ3T_ax1YWY51Eksw@mail.gmail.com>
-Subject: Re: [PATCH] evm: Correct inode_init_security hooks behaviors
-To:     Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
-Cc:     linux-integrity@vger.kernel.org, philippe.trebuchet@ssi.gouv.fr,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, casey@schaufler-ca.com, davem@davemloft.net,
-        lucien.xin@gmail.com, vgoyal@redhat.com, omosnace@redhat.com,
-        mortonm@chromium.org, nicolas.bouchinet@ssi.gouv.fr,
-        mic@digikod.net, cgzones@googlemail.com,
-        linux-security-module@vger.kernel.org, brauner@kernel.org,
-        keescook@chromium.org
+Date:   Thu, 20 Oct 2022 11:10:03 -0400
+Message-ID: <CAHC9VhQr_deuGRCien23zso+gi0VHUHK8ayYK6sBxmK3DyBOjg@mail.gmail.com>
+Subject: Re: [PATCH] lsm: make security_socket_getpeersec_stream() sockptr_t safe
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 20, 2022 at 9:55 AM Nicolas Bouchinet
-<nicolas.bouchinet@clip-os.org> wrote:
+On Thu, Oct 20, 2022 at 9:16 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 10/10/2022 2:58 PM, Paul Moore wrote:
+> > Commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
+> > sockptr_t argument") made it possible to call sk_getsockopt()
+> > with both user and kernel address space buffers through the use of
+> > the sockptr_t type.  Unfortunately at the time of conversion the
+> > security_socket_getpeersec_stream() LSM hook was written to only
+> > accept userspace buffers, and in a desire to avoid having to change
+> > the LSM hook the commit author simply passed the sockptr_t's
+> > userspace buffer pointer.  Since the only sk_getsockopt() callers
+> > at the time of conversion which used kernel sockptr_t buffers did
+> > not allow SO_PEERSEC, and hence the
+> > security_socket_getpeersec_stream() hook, this was acceptable but
+> > also very fragile as future changes presented the possibility of
+> > silently passing kernel space pointers to the LSM hook.
+> >
+> > There are several ways to protect against this, including careful
+> > code review of future commits, but since relying on code review to
+> > catch bugs is a recipe for disaster and the upstream eBPF maintainer
+> > is "strongly against defensive programming", this patch updates the
+> > LSM hook, and all of the implementations to support sockptr_t and
+> > safely handle both user and kernel space buffers.
+> >
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
 >
-> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> Smack part looks ok, I haven't had the opportunity to test it.
+> Will do so as I crunch through the backlog.
 >
-> Fixes a NULL pointer dereference occuring in the
-> `evm_protected_xattr_common` function of the EVM LSM. The bug is
-> triggered if a `inode_init_security` hook returns 0 without initializing
-> the given `struct xattr` fields (which is the case of BPF) and if no
-> other LSM overrides thoses fields after. This also leads to memory
-> leaks.
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-You'll have to forgive me, my connection is poor at the moment and my
-time is limited, but why not simply add some additional checking at
-the top of evm_inode_init_security()? The LSM hook already memset()'s
-the passed lsm_attrs to zero so xattr::{name,value,value_len} should
-all be zero/NULL.  Can you help me understand why that is not
-possible?
+Thanks Casey.
 
-Based on my current understanding, I believe this is something that
-should be addressed at the IMA/EVM level and not necessairly at the
-LSM layer.
+John, how do the AppArmor parts look?
 
-> Adds a `call_int_hook_xattr` macro that fetches and feed the
-> `new_xattrs` array with every called hook xattr values.
->
-> Adds a `evm_init_hmacs` function which init the EVM hmac using every
-> entry of the array contrary to `evm_init_hmac`.
->
-> Fixes the `evm_inode_init_security` function to use `evm_init_hmacs`.
->
-> The `MAX_LSM_EVM_XATTR` value has been raised to 5 which gives room for
-> SMACK, SELinux, Apparmor, BPF and IMA/EVM security attributes.
->
-> Changes the default return value of the `inode_init_security` hook
-> definition to `-EOPNOTSUPP`.
->
-> Changes the hook documentation to match the behavior of the LSMs using
-> it (only xattr->value is initialised with kmalloc and thus is the only
-> one that should be kfreed by the caller).
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> ---
->  include/linux/lsm_hook_defs.h       |  2 +-
->  include/linux/lsm_hooks.h           |  4 ++--
->  security/integrity/evm/evm.h        |  2 ++
->  security/integrity/evm/evm_crypto.c | 23 ++++++++++++++++++++++-
->  security/integrity/evm/evm_main.c   | 11 ++++++-----
->  security/security.c                 | 29 ++++++++++++++++++++++++++---
->  6 files changed, 59 insertions(+), 12 deletions(-)
+> > ---
+> >  include/linux/lsm_hook_defs.h |    2 +-
+> >  include/linux/lsm_hooks.h     |    4 ++--
+> >  include/linux/security.h      |   11 +++++++----
+> >  net/core/sock.c               |    3 ++-
+> >  security/apparmor/lsm.c       |   29 +++++++++++++----------------
+> >  security/security.c           |    6 +++---
+> >  security/selinux/hooks.c      |   13 ++++++-------
+> >  security/smack/smack_lsm.c    |   19 ++++++++++---------
+> >  8 files changed, 44 insertions(+), 43 deletions(-)
 
 -- 
 paul-moore.com
