@@ -2,127 +2,70 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 693D4C4321E
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Oct 2022 23:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A73C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Oct 2022 02:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231629AbiJSXl3 (ORCPT
+        id S231166AbiJTCkN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Oct 2022 19:41:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44318 "EHLO
+        Wed, 19 Oct 2022 22:40:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229769AbiJSXl2 (ORCPT
+        with ESMTP id S230480AbiJTCkM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Oct 2022 19:41:28 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17932147066
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Oct 2022 16:41:27 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id u6so1205492plq.12
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Oct 2022 16:41:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qX77FXyzwayFF9UY0kQ94xcxC8zc5o5xZJ+OHBo+nXw=;
-        b=Y4c78npINNGc2QcgMRzyCsFkTEr0YNwe6nb8+17Ld14itsUfYnuxBiAKLDQWvRkvz/
-         b/Cklkto5pe0144n31+aBie4TyVGLJSsNmotT0xP2VZagNsXi+xTgX54BKi/vG8xRfPf
-         jmuRM36LaNj8pa+15UGWNBJMEdtO5ZnIIYoDc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qX77FXyzwayFF9UY0kQ94xcxC8zc5o5xZJ+OHBo+nXw=;
-        b=FTUom67T3jPfaCPKTfjOEAKEpo+/fetR8GwPS+nL0BgmFopgQqwGNJHqse9hRQuvt4
-         /FMg8LGbWzy28pjBc3nbSN0ziLZPwF7mxJxMQijh5eXLyiX5yYcyIuw08RPMMvbMLAsq
-         TNL4gwuLNzyHQhThllx7NckoMkQ5z9yYiIHtOcqdvAruPGigDxgVZTK/dpAYRjCFwGun
-         dBJRod6SKQxac2bPgiRnOxoZVBXmHQgcNJRfRgEhAgoUzERYNneJcy7jELf9sb0RF6D1
-         zAgr8nXD/n7f5L1ggt0FVcCEkna07DBmXp/V6IpsSxT7d28HvPKuL7fWr+pKbuANpSl8
-         CTKg==
-X-Gm-Message-State: ACrzQf3WLSH7XC5tLc2HlFP7dUyAx6cVjwOVIa6KeMVSG7UnhP31uM4x
-        mMivv6HUjWBUZxLD6WzSwCPp0Q==
-X-Google-Smtp-Source: AMsMyM6kdlVjxdbyAUw47freAA4rwdcnkIgWe1sFX3Mu8/Zo8iPS678Z597JrSKFoCHrDoY70W4ivw==
-X-Received: by 2002:a17:902:db05:b0:185:537a:7440 with SMTP id m5-20020a170902db0500b00185537a7440mr10893824plx.13.1666222886578;
-        Wed, 19 Oct 2022 16:41:26 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id g8-20020a631108000000b00462612c2699sm10497716pgl.86.2022.10.19.16.41.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Oct 2022 16:41:25 -0700 (PDT)
-Date:   Wed, 19 Oct 2022 16:41:24 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Petr Vorel <pvorel@suse.cz>, Borislav Petkov <bp@suse.de>,
-        Takashi Iwai <tiwai@suse.de>,
-        Jonathan McDowell <noodles@fb.com>,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, KP Singh <kpsingh@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 2/9] security: Move trivial IMA hooks into LSM
-Message-ID: <202210191639.58F18F1AA@keescook>
-References: <20221013222702.never.990-kees@kernel.org>
- <20221013223654.659758-2-keescook@chromium.org>
- <16e008b3709f3c85dbad1accb9fce8ddad552205.camel@linux.ibm.com>
- <202210191134.FC646AFC71@keescook>
- <ffa58bb09df15a9debc45aaf0ed51f2b34f5c225.camel@linux.ibm.com>
+        Wed, 19 Oct 2022 22:40:12 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF9DC97C0;
+        Wed, 19 Oct 2022 19:40:09 -0700 (PDT)
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MtBZ84pCbzpVlb;
+        Thu, 20 Oct 2022 10:36:48 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.58) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Thu, 20 Oct 2022 10:39:56 +0800
+From:   Xiu Jianfeng <xiujianfeng@huawei.com>
+To:     <john.johansen@canonical.com>, <paul@paul-moore.com>,
+        <jmorris@namei.org>, <serge@hallyn.com>, <keescook@chromium.org>,
+        <casey@schaufler-ca.com>
+CC:     <apparmor@lists.ubuntu.com>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] apparmor: Use pointer to struct aa_label for lbs_cred
+Date:   Thu, 20 Oct 2022 10:36:21 +0800
+Message-ID: <20221020023621.223121-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ffa58bb09df15a9debc45aaf0ed51f2b34f5c225.camel@linux.ibm.com>
+Content-Type: text/plain
+X-Originating-IP: [10.67.174.58]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 19, 2022 at 04:45:41PM -0400, Mimi Zohar wrote:
-> On Wed, 2022-10-19 at 11:59 -0700, Kees Cook wrote:
-> > On Wed, Oct 19, 2022 at 10:34:48AM -0400, Mimi Zohar wrote:
-> > > On Thu, 2022-10-13 at 15:36 -0700, Kees Cook wrote:
-> > > > This moves the trivial hard-coded stacking of IMA LSM hooks into the
-> > > > existing LSM infrastructure.
-> > > 
-> > > The only thing trivial about making IMA and EVM LSMs is moving them to
-> > > LSM hooks.  Although static files may be signed and the signatures
-> > > distributed with the file data through the normal distribution
-> > > mechanisms (e.g. RPM), other files cannot be signed remotely (e.g.
-> > > configuration files).  For these files, both IMA and EVM may be
-> > > configured to maintain persistent file state stored as security xattrs
-> > > in the form of security.ima file hashes or security.evm HMACs.  The LSM
-> > > flexibility of enabling/disabling IMA or EVM on a per boot basis breaks
-> > > this usage, potentially preventing subsequent boots.
-> > 
-> > I'm not suggesting IMA and EVM don't have specific behaviors that need to
-> > be correctly integrated into the LSM infrastructure. In fact, I spent a
-> > lot of time designing that infrastructure to be flexible enough to deal
-> > with these kinds of things. (e.g. plumbing "enablement", etc.) As I
-> > mentioned, this was more of trying to provide a head-start on the
-> > conversion. I don't intend to drive this -- please take whatever is
-> > useful from this example and use it. :) I'm happy to help construct any
-> > missing infrastructure needed (e.g. LSM_ORDER_LAST, etc).
-> > 
-> > As for preventing subsequent boots, this is already true with other LSMs
-> > that save state that affects system behavior (like SELinux tags, AppArmor
-> > policy). IMA and EVM are not special in that regard conceptually.
-> 
-> > Besides, it also looks like it's already possible to boot with IMA or EVM
-> > disabled ("ima_appraise=off", or "evm=fix"), so there's no regression
-> > conceptually for having "integrity" get dropped from the lsm= list at
-> > boot. And if you want it not to be silent disabling, that's fine --
-> > just panic during initialization if "integrity" is disabled, as is
-> > already happening.
-> 
-> Being able to specify "ima_appraise=" on the boot command line requires
-> IMA_APPRAISE_BOOTPARAM to be configured.  Even when specified, if the
-> system is booted with secure-boot mode enabled, it also cannot be
-> modified.   With the ability of randomly enabling/disabling LSMs, these
-> protections are useless.
+According to the implementations of cred_label and set_cred_label, we
+should use pointer to struct aa_label for lbs_cred instead of struct
+aa_task_ctx, this patch fix it.
 
-Sure, so let's get lsm= added to the lockdown list, etc. My point is for
-us to work through each of these concerns and address them. I am not an
-IMA/EVM expert, but I do understand the LSM infrastructure deeply, so
-I'd like to help you get these changes made.
+Fixes: bbd3662a8348 ("Infrastructure management of the cred security blob")
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+---
+ security/apparmor/lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index f56070270c69..fd2f57972a17 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1197,7 +1197,7 @@ static int apparmor_inet_conn_request(const struct sock *sk, struct sk_buff *skb
+  * The cred blob is a pointer to, not an instance of, an aa_task_ctx.
+  */
+ struct lsm_blob_sizes apparmor_blob_sizes __lsm_ro_after_init = {
+-	.lbs_cred = sizeof(struct aa_task_ctx *),
++	.lbs_cred = sizeof(struct aa_label *),
+ 	.lbs_file = sizeof(struct aa_file_ctx),
+ 	.lbs_task = sizeof(struct aa_task_ctx),
+ };
 -- 
-Kees Cook
+2.17.1
+
