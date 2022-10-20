@@ -2,110 +2,320 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2D2C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Oct 2022 16:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 940DBC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Oct 2022 16:41:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230503AbiJTQTf (ORCPT
+        id S229773AbiJTQlJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Oct 2022 12:19:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43436 "EHLO
+        Thu, 20 Oct 2022 12:41:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230487AbiJTQTe (ORCPT
+        with ESMTP id S229588AbiJTQlI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Oct 2022 12:19:34 -0400
-Received: from sonic301-38.consmr.mail.ne1.yahoo.com (sonic301-38.consmr.mail.ne1.yahoo.com [66.163.184.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4973619295
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Oct 2022 09:19:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666282769; bh=p+GVUKYMePPx6satGPTLb5wyX8HaL22BCYjKoY89P/Q=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=g5tGTJo5OJLvlXZD+MJ1YzTDhkdylimkizWgB+N0VI6wfncopVBQEtmXeTqVW3hqKZKlwcRlA5q2VNF+3DWG+GOfH8Wopq1PYNke9t0IGME225767ah6OCcHtmBa3f5P/XR7ta8s51Q2CN+5OOUxJiIs2Uy33O1c/D4XUunimS0s2jQHl4ogx6G/oLCJpggbcSIlXsYAk66RmxBdLZ8BvRDvDBVQK6ht4nrrXOG09baz6xo+eW1CEfjZQTQpEdcZV7MMl0ZNjwRD/sTm1w+DlGnmFRHHY2hqr2mF56XuP6hRse3gosaLo+Krex6iAuiFH6oPYrisrgb0uqwqMxjeMA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666282769; bh=tQdNYP+VRSnihi0D9f85sTW1dXzvyzuE8tizoGZ5KF0=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=mA77rGswYhsnu8ky8A6ZOkWXpT2OrEK9hz/zOdwNxaUkFs9KGkw3HDpyacLPIi8bdsJeBV8KSR/z/05+pM3zdff21Arx+v1EXIyr53t0tkpEhQXd+c9s46/4rEgjqjAqd6hNmG69wGb1K+BwYe55TKLzOnWpCrG+KKlZIiaANaSfSPUXUKm8sjYSLxI+Y8owbCwJm0FtTJu9xJDOe88BcCgr2oKvhoZnoAHmbpE3TaKx7P14omBEtIYWYcfezL8FWJ13bOdTUp+Exe5E8M/Nr9Om0db4eabGknzckTTGbtOl6vF0LvvGMXdrzn59hr9aakJtQ6Qk46lLbuS6tqGTpQ==
-X-YMail-OSG: C7Bk8vYVM1nAjbWif9Dg1TyLOC9lX2Nr9OW9h0tlvMhtGESvHJzspCUckcyPNzU
- bkYJnPz1UwLsAJfwijYUTnVdYTwuKiNRgUKYieq_i5kWns_X3QQ9v4NljsJ6UzkbXlmh60eTC.2x
- yOC0ZQSIBSwy_0AnJih1cGkM.WB6AOZENe_kzVBbab6JY0WeuLWhZ..4rdoynkVaDofGHZUjcnnn
- v2GrpmZZFCkHGdiSM84a4mkgNffnXarHGTFGpiVxeqAZwbc3TkwDwJ5JQMWyXqSDwE10hPF6IQ57
- sNcD9TvQIwhGlDvuGtixgK1.bWU8qpcZas928ZD8bG3SC4WD.hRe2t668S1rNFruPBZ_N6oEOSGP
- ZGcIF2gm.STHDpQeMfIL8ysN4c6E7hL.YwL5k2EBqIMN6Z7vmXgbKVx4HRfkaNnkHTygNH8EyAho
- 0NWmsA8hICnvACHc_0B4J3hOhVNE0dm1_KS3eGt3zAZCg_HyFX_66Tg9ceaVKtNsDxggsHP0td78
- JygbznFjvo1huiXbQY0HTOP7R3wceaNOTkhK3gDy5euHAmIvv0it9.PYdb6tMJPgu9uuXsLohBQd
- mOdjsDd6DPVdrJ82RCKlxLNMUwBv6EZD14hpA0Efl8gUrqZnpw7kK8z1j_uf9HH0SWx4F3nSDhx1
- UAp7Lgq8chG4HZLlUOaIfLc9MJ8VFA1MMahX4ew._CpnOPVLoEAJq60mBxUZsFR4.zH5.FgEKrdc
- Y9yovF9dXMxIFbXGiZ4C3ODT1OSGv5TLVjghw_8hC.OTevqPlGSbhxmxh.GUaNAezjVZ_yd7g4uE
- EOK1bKywXxKQnanHynOIqXxrjlibKC3I12IwtLGhrn0LtreLV8KYXXMbub_DyAx1heATiY0fVXaX
- 0Xdr5cOm48payQOXPE5sWotTXG2CHibXhTyFVufJUW4qT67O27iRt2tHmZwpFIIMb9ky08_Hi0vk
- 0XyeRLK0rsANz3l6XrIm6OWNQsTNw1r15JqmYsCcXzRKjgh584I9kGy1SCIVAB3fSFAbMFr6zH9h
- j8M0MJLYuaUNEBFVNfQFweuKDioz1OWkZC9bSYtXwN7Lww63EupTSUlLR8qlm.RwXuEsHG1BC9Ay
- RsP17iEJ4BKlsxpMmCg4Bq1kujrtwXLGZWkIlnZndnODqJyC5uYM_joJJeLRiRFNnrc7Ewb9zbEi
- lfA0Q4PLeUQRatuJCXe3PTVMlCA9nkJZCSz1iy3d_YYINhqGcYYP5dDsBjWLKy7DN_CLxi63e_Uj
- fyNwMWYUDOOdgpPkItqiTda7AFhBTDIY2jw3xdYUDsIk1LmPuH99QU0Tth_EmsPtz.mutKiNejKE
- ZeentkR1L_g4nt3jwPrGYMi0JfkGhWiF6_acE4ApGbGvYvvMmapoOoh_.TXioila2NanKuECi922
- N_7wPOXGpG64ahHWXRFkR5HEkesZbmO_4c5B58wKO2FEb_nWo6kdGEib4WQjpV7hxzie1unVRqfG
- JbBdgfuPatmqI2HPBb224GBg7tgiayx1Q6ZJ9dVmOwlqC0ngkjkpPcSSdMzmKJ7UpuLjkUYQhAk5
- m6byEOa8Cg71c4FbfAY2PdVaRx6Yx7I0zRFORKWhz57Cby9y_SDgcCv.fRpQqTq7Cc2ob_tpzSEE
- UavLgeiq_VXh0RuXVOs4bqSweRc1kfFsBd2JqHbb3QjltEFjuiS6AKdYjBm4A25wj1m16KpIwj0R
- i5X7TkL8zbkuRPoO.JY7w5WMLMM56yUN2oPAq2IA.CTiGkj1xl04SR2LmmcRP0cHzlvqFxaw_HnN
- Ld7MerSl3BxsQ0G_VCzWXXONJyf6K5pL0vSWtT_gRLZppVhZWmVuwyRrHThlZSZr0wSHowlI4AAO
- 9QnkNMOSMrPMjwNBZBAzhKzww11W7DUQXMdwoAgFSRsWD_05yj0jYEMeXlhO4P7kii.8xSH5KkpO
- nWCQCbok96bNcINFCyy_dPSNhPgjnrCXf.hC0jta7dGofDJlIot7cszRs1mW0Wxvpc6yaL3eXGW4
- sENGEhh0W8ev7KcpzZzRYQGUu9nPSlopBxr5sSobvfYogOh8kfUo8q_qBO5MLESaZGnHEINNwd3n
- qp204tP.76Vn9iSZOKya1zZHj89m82SwVKJidPeVO.kCyPXQRbq5xJYk55I2Ljg7toSPf0ueSlOk
- ZR1V2ZHCPA4XYBczfgls_ixcNo1eWkQkdH98hsGUs0Hb88Law8K4v_CCtxVkdP79iCwlBHJL5XSa
- THw73lbhsoCQaI4xy1SzGkrxbukVkY5rw0LQctCS5umdGxw--
+        Thu, 20 Oct 2022 12:41:08 -0400
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B880B160EEF
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Oct 2022 09:41:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666284065; bh=9cYu0FllEMi47MnDxm+0Bf/bnz5qJN1+HjNFT8Wx6KQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=DzelAcajZt4SXsVVoxHwZlAA5HUHNv8ZFnq88Dcm/rgP+err1sMbMf+qSCFdZ+NsR7kIXWqAAiteWfNVN0BzR6HkPag/NdamhEB3gVsZInKGP0bNjy8C6p2SZBuasPL4xHco7aOWnBUv9hDGyCv0ULYj5CnQaUEX1YOE6GN//g0AULvkRdfAQcg4+Bok8ouvXJIi5P588UVpGCi1cZ964UiL4/g7ddG1X+FlmTqTuwcIaA52zOFadfy8xU8+YK0hkN1TObSeAbnFW0SuEy1B6K+AxYAkhnWOJEFn9uFcrrZm/8y6jtgOink2o0Y4hG0ttUXcN/CmR3Ie66i9AOAAMQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666284065; bh=EYYzYKMg+WudjYzspAx9Ms3NTbdzUgY7gh2zUZDRSDi=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=OlnnJFmDS/7zG/6QsvesAv8QSH6VenjxT+9yp5PSvG4DWNsj15X2y9yZJ4puPM9ZX/IcpgRdExbX1Oix2dgXFlwvTspqV60EA4TYmXB9l812bpH1drIq+D/R4uRTCXdtvmWDRRpYNJv6zt5hkmCLF0kd7xTLW5d9FEAlu9+ekPHUt/zdnaKjJmvj/sVBGdNr7zhOcEnDaetPnmmpQTXyQphNtyv84id8yty1tw/yh4uabhPAhfwmIFVxN3Kqv0sMIuowpIkdmgddCCQK/QeSigRuekuDldv21asQ5TWSNKbyldqMMEgHR8mFTH8aY8na23frJqwJ+SbbB452KxrXww==
+X-YMail-OSG: OeJMCvcVM1k5XhqFICISauva.VyLjfhcn6PuWpy7F.mlbZ5EqRT0a__X4mQLZXw
+ Cuxu0ZuyNV_F3f.GLFj6kJIbvFcycpyXEzzg_SmVNokJEjIG7p6QsGLxkPKRK_uZ6RIqT1PBuFy7
+ oSOzHRB4OTudaqPCo6FWxPEUgQec3DA2WdzQMvXPpBs5N.isJgNtz0Gl7mneKSpSqOFgMu95goYZ
+ _HGIT9pkWVCMFlLRwycBcgs8mIZuo1xYxCGwHFMAjiuG0w.4rp.wL2pig.Z86h5oQ3Y_3tJ8dFre
+ 0yNeuGqdDw7ALxy17ZQ.rRJtdWKB0fqsTFnqOkdo7V8gnFhbqS37cFuKOJwdmWudhN7198eXoXDn
+ 5EUoV7mkSHBajiLYc7asLXOb8V41oX3ERv_CEis3huUDRKWa47uGXxvaA2.8l7LBwrmBB38fbE6w
+ FS0kwaZyYaGurkFY4yEMX3v1KxDiQ0VJuLFR739a3daqOcZTRv_U1fNDcsofz7FOdAlsiru49mol
+ lAd5VZA71haLCxRxQgwJYq_re8gHDaqWhPbeFuIYGHT93UIFU1iJUf.XRGfdQ04GDe3kB8_XMXMU
+ aj__mSS1CzUqaRkek1X6lm_GA.9glMhG_U0977ob0jjBOeYb52P5rmosgjwEQhbxSKyZoHG9nYsm
+ s7xxZ65YnNqID4sf3CspQay0I6ugoy0qMBUcwyHxseGcX1v2FibTS5okpSRbNdjKQoJmlpF6jxN7
+ dosMrZeD9SB2fq9NUEk7mnEeg85ntjGmuXE99fap2Th3snTg.k2EmElN0_bHMyUhy1ApqNC2iHjD
+ SQLnIeHHKWBSwVJgZ48eoPD1Ax26ZpL_QYhA5RSMoVXyXZz4DIgbSr4hY9B4fIjUO8xrZSbWdX2i
+ F2Z8r0qRVYXLTue9HlIk62.CrSmEuaZ.pibXL8Mkaeav779zqqTgeLMGoOdRPhyMmG0MMZMlp5_t
+ AAcLMiUfNksQ1Vglq6uvj87dkHZwTIJIUOIE36YUe1eGbFkg.IOsDjKKbeWthdcivGQZ6CaVXa4Y
+ 1supfReK6y2Dv5AlNsjTjqY5SWrBjWLy3FJpelnWa4jw8XHtis4rFG6OtpFWYn3nzocID5ScJEKE
+ OWhENbZojfVma5VoeHZVfwg4bymkBza9eNfR65zYhtNBsnBiX6UQdz.DRY8PtTdLhbxntPzd7suU
+ S3UHtM28oVG3.iwWI3S35M7tJWNbo_pAW7_5W1YoI.Tbl84TPnxH0M.PIRTG.IAFr0lSz9Y1A_OP
+ c5RqZPjFA4Y5bukpLfRhH_tGUz5WfVH9iqpjqvLORW6OYzPvIzJzdXmigotoHDYAaDBnZ.pSZW8U
+ ddEHKwaPMuqW98bagxKvDY2Vpbj2ePJxgSrvHbgicMm9VANXUyxEYgm6aObou7YqneN5qgvvA3r6
+ .8lnnXQIhcqeGYhi5cJ3BDasV0n.NkSbwmCRPoPOsrfqBhtJApZrlZqGpMqWk2nJtOVQzArM.5HC
+ .oxRJo0E8TKhnARh9KP6AA0kE.weMGermnfxe183SnJ.LyDJdf.4tmxLuI0HhTW73gqXTHc9e4V7
+ JDwAAhxCrNMFsHeCTPRwl5vAQ7DPNGT.RITfRw6np0FgWKXb9RY5LX_NbKFY4Af.OpJsRYEsBxj6
+ RqhYBXxasJA5t.XPxns7zaYmF24KPGkNv2GLZFn9O3yGa6RyhOxOuhsuOQbFe3rDej67.LfUua6p
+ sXLOxmRcyf_aI0K7qhb..fIeGRatScS8nS2RJYnSvDgIEswhXWKlM0_MF.BWdmEywEuAk1NZyQaW
+ MGB83FG04W.t8T3n4qKyahr9618ADZ5EEVfmXgyA9oaQPUjGzLk015YAxmVX_jvguY1jneERfFcg
+ Kh97TiALL1hISr.ZwaNuz9oYcMpE377CiaFAYpy3bis3hMIwmFgoO2syjU8VI4F0OfJdnNM7E2UP
+ mVUFXT9gurm1TeSahImzSJk4L95zHYqHAtZGAuYAMuk8eaQB4w1_AIdPTJrdGgf9uAiPpWRqCh4S
+ DdsL8i2lycY4HNVVPVfe981TEfigrGWQMVMKrK3_.O_HbkMHx9tF80Rj6OBLoY1tek972CS9QCKQ
+ mgnHmy7WnxCsUV7WCTcsi0DMmPR34p2Iiwrdc17IUbSjjWzxndsl_HAPX4h6NiGUgYgCuvC_Xhkd
+ Y15ckeUSvNZ67WssyostZtLpsBo0kmt7GgHoW2dcwvsPLzu2hypJcaO4LkXAS2gceATW980mDShy
+ aRLK7OopFd8w5qaR.CpY6jxBaskpKwm0pGOZljEcppnoCmzRwkqGR1s4-
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Oct 2022 16:19:29 +0000
-Received: by hermes--production-gq1-754cb59848-xxkcq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 13752a79cf0c8a793a905a301e0cc8b6;
-          Thu, 20 Oct 2022 16:19:23 +0000 (UTC)
-Message-ID: <0775c82b-d890-c4fb-6e3d-0c9a8ff5cfd0@schaufler-ca.com>
-Date:   Thu, 20 Oct 2022 09:19:22 -0700
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Oct 2022 16:41:05 +0000
+Received: by hermes--production-gq1-754cb59848-xxkcq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 50e592082085a6e2a196e826cec70091;
+          Thu, 20 Oct 2022 16:41:03 +0000 (UTC)
+Message-ID: <ca9aaf31-d90e-7bdf-a7c0-551702f097e7@schaufler-ca.com>
+Date:   Thu, 20 Oct 2022 09:41:02 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.3
-Subject: Re: [PATCH] MAINTAINERS: git://github -> https://github.com for
- cschaufler
+Subject: Re: [PATCH] evm: Correct inode_init_security hooks behaviors
 Content-Language: en-US
-To:     Palmer Dabbelt <palmer@rivosinc.com>,
-        linux-security-module@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Conor Dooley <conor.dooley@microchip.com>,
-        casey@schaufler-ca.com
-References: <20221013214637.30807-1-palmer@rivosinc.com>
+To:     Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>,
+        linux-integrity@vger.kernel.org
+Cc:     philippe.trebuchet@ssi.gouv.fr, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, davem@davemloft.net, lucien.xin@gmail.com,
+        vgoyal@redhat.com, omosnace@redhat.com, mortonm@chromium.org,
+        nicolas.bouchinet@ssi.gouv.fr, mic@digikod.net,
+        cgzones@googlemail.com, linux-security-module@vger.kernel.org,
+        brauner@kernel.org, keescook@chromium.org, casey@schaufler-ca.com
+References: <Y1FTSIo+1x+4X0LS@archlinux>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20221013214637.30807-1-palmer@rivosinc.com>
+In-Reply-To: <Y1FTSIo+1x+4X0LS@archlinux>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.20754 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/13/2022 2:46 PM, Palmer Dabbelt wrote:
-> Github deprecated the git:// links about a year ago, so let's move to
-> the https:// URLs instead.
+On 10/20/2022 6:55 AM, Nicolas Bouchinet wrote:
+> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 >
-> Reported-by: Conor Dooley <conor.dooley@microchip.com>
-> Link: https://github.blog/2021-09-01-improving-git-protocol-security-github/
-> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
-
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-
-Do you want to apply this to your tree, or would you like me to
-take it by the Smack tree? I'm fine either way.
-
-> ---
-> I've split these up by github username so folks can take them
-> independently, as some of these repos have been renamed at github and
-> thus need more than just a sed to fix them.
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Fixes a NULL pointer dereference occuring in the
+> `evm_protected_xattr_common` function of the EVM LSM. The bug is
+> triggered if a `inode_init_security` hook returns 0 without initializing
+> the given `struct xattr` fields (which is the case of BPF) and if no
+> other LSM overrides thoses fields after. This also leads to memory
+> leaks.
 >
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index daadd0de77a9..019cdb48e254 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18723,7 +18723,7 @@ M:	Casey Schaufler <casey@schaufler-ca.com>
->  L:	linux-security-module@vger.kernel.org
->  S:	Maintained
->  W:	http://schaufler-ca.com
-> -T:	git git://github.com/cschaufler/smack-next
-> +T:	git https://github.com/cschaufler/smack-next
->  F:	Documentation/admin-guide/LSM/Smack.rst
->  F:	security/smack/
+> Adds a `call_int_hook_xattr` macro that fetches and feed the
+> `new_xattrs` array with every called hook xattr values.
+>
+> Adds a `evm_init_hmacs` function which init the EVM hmac using every
+> entry of the array contrary to `evm_init_hmac`.
+>
+> Fixes the `evm_inode_init_security` function to use `evm_init_hmacs`.
+>
+> The `MAX_LSM_EVM_XATTR` value has been raised to 5 which gives room for
+> SMACK, SELinux, Apparmor, BPF and IMA/EVM security attributes.
+>
+> Changes the default return value of the `inode_init_security` hook
+> definition to `-EOPNOTSUPP`.
+>
+> Changes the hook documentation to match the behavior of the LSMs using
+> it (only xattr->value is initialised with kmalloc and thus is the only
+> one that should be kfreed by the caller).
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> ---
+>  include/linux/lsm_hook_defs.h       |  2 +-
+>  include/linux/lsm_hooks.h           |  4 ++--
+>  security/integrity/evm/evm.h        |  2 ++
+>  security/integrity/evm/evm_crypto.c | 23 ++++++++++++++++++++++-
+>  security/integrity/evm/evm_main.c   | 11 ++++++-----
+>  security/security.c                 | 29 ++++++++++++++++++++++++++---
+>  6 files changed, 59 insertions(+), 12 deletions(-)
+>
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 806448173033..e5dd0c0f6345 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -111,7 +111,7 @@ LSM_HOOK(int, 0, path_notify, const struct path *path, u64 mask,
+>  	 unsigned int obj_type)
+>  LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
+>  LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
+> -LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
+> +LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
+>  	 struct inode *dir, const struct qstr *qstr, const char **name,
+>  	 void **value, size_t *len)
+>  LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 84a0d7e02176..95aff9383de1 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -229,8 +229,8 @@
+>   *	This hook is called by the fs code as part of the inode creation
+>   *	transaction and provides for atomic labeling of the inode, unlike
+>   *	the post_create/mkdir/... hooks called by the VFS.  The hook function
+> - *	is expected to allocate the name and value via kmalloc, with the caller
+> - *	being responsible for calling kfree after using them.
+> + *	is expected to allocate the value via kmalloc, with the caller
+> + *	being responsible for calling kfree after using it.
+>   *	If the security module does not use security attributes or does
+>   *	not wish to put a security attribute on this particular inode,
+>   *	then it should return -EOPNOTSUPP to skip this processing.
+> diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+> index f8b8c5004fc7..a2f9886e924d 100644
+> --- a/security/integrity/evm/evm.h
+> +++ b/security/integrity/evm/evm.h
+> @@ -60,6 +60,8 @@ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+>  		  struct evm_digest *data);
+>  int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
+>  		  char *hmac_val);
+> +int evm_init_hmacs(struct inode *inode, const struct xattr *xattrs,
+> +		  char *hmac_val);
+>  int evm_init_secfs(void);
 >  
+>  #endif
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index 708de9656bbd..e5a34306cab6 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -347,7 +347,6 @@ static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
+>  	return rc;
+>  }
+>  
+> -
+>  /*
+>   * Calculate the hmac and update security.evm xattr
+>   *
+> @@ -385,6 +384,28 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+>  	return rc;
+>  }
+>  
+> +int evm_protected_xattr(const char *req_xattr_name);
+> +
+> +int evm_init_hmacs(struct inode *inode, const struct xattr *lsm_xattrs,
+> +		  char *hmac_val)
+> +{
+> +	struct shash_desc *desc;
+> +
+> +	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
+> +	if (IS_ERR(desc)) {
+> +		pr_info("init_desc failed\n");
+> +		return PTR_ERR(desc);
+> +	}
+> +
+> +	for (int i = 0; lsm_xattrs[i].value != NULL; i++) {
+> +		if (evm_protected_xattr(lsm_xattrs[i].name))
+> +			crypto_shash_update(desc, lsm_xattrs[i].value, lsm_xattrs[i].value_len);
+> +	}
+> +	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
+> +	kfree(desc);
+> +	return 0;
+> +}
+> +
+>  int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+>  		  char *hmac_val)
+>  {
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index 2e6fb6e2ffd2..bb071c55d656 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -284,6 +284,8 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
+>  	int found = 0;
+>  	struct xattr_list *xattr;
+>  
+> +	if (!req_xattr_name)
+> +		return found;
+>  	namelen = strlen(req_xattr_name);
+>  	list_for_each_entry_lockless(xattr, &evm_config_xattrnames, list) {
+>  		if (!all_xattrs && !xattr->enabled)
+> @@ -305,7 +307,7 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
+>  	return found;
+>  }
+>  
+> -static int evm_protected_xattr(const char *req_xattr_name)
+> +int evm_protected_xattr(const char *req_xattr_name)
+>  {
+>  	return evm_protected_xattr_common(req_xattr_name, false);
+>  }
+> @@ -835,14 +837,13 @@ void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
+>   * evm_inode_init_security - initializes security.evm HMAC value
+>   */
+>  int evm_inode_init_security(struct inode *inode,
+> -				 const struct xattr *lsm_xattr,
+> +				 const struct xattr *lsm_xattrs,
+>  				 struct xattr *evm_xattr)
+>  {
+>  	struct evm_xattr *xattr_data;
+>  	int rc;
+>  
+> -	if (!(evm_initialized & EVM_INIT_HMAC) ||
+> -	    !evm_protected_xattr(lsm_xattr->name))
+> +	if (!(evm_initialized & EVM_INIT_HMAC))
+>  		return 0;
+>  
+>  	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
+> @@ -850,7 +851,7 @@ int evm_inode_init_security(struct inode *inode,
+>  		return -ENOMEM;
+>  
+>  	xattr_data->data.type = EVM_XATTR_HMAC;
+> -	rc = evm_init_hmac(inode, lsm_xattr, xattr_data->digest);
+> +	rc = evm_init_hmacs(inode, lsm_xattrs, xattr_data->digest);
+>  	if (rc < 0)
+>  		goto out;
+>  
+> diff --git a/security/security.c b/security/security.c
+> index 14d30fec8a00..47012c118536 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -30,7 +30,7 @@
+>  #include <linux/msg.h>
+>  #include <net/flow.h>
+>  
+> -#define MAX_LSM_EVM_XATTR	2
+> +#define MAX_LSM_EVM_XATTR	5
+
+#define MAX_LSM_EVM_XATTR \
+	2 + /* IMA and EVM */ \
+	(IS_ENABLED(CONFIG_SECURITY_SELINUX) ? 1 : 0) + \
+	(IS_ENABLED(CONFIG_SECURITY_SMACK) ? 1 : 0) + \
+	(IS_ENABLED(CONFIG_SECURITY_APPARMOR) ? 1 : 0) + \
+	(IS_ENABLED(CONFIG_BPF_LSM) ? 1 : 0))
+
+>  
+>  /* How many LSMs were built into the kernel? */
+>  #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
+> @@ -746,6 +746,29 @@ static int lsm_superblock_alloc(struct super_block *sb)
+>  	RC;							\
+>  })
+>  
+> +#define call_int_hook_xattr(XATTRS, FUNC, IRC, ...) ({		\
+> +	int RC = IRC;						\
+> +	int i = 0;						\
+> +	do {							\
+> +		struct security_hook_list *P;			\
+> +								\
+> +		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+> +			RC = P->hook.FUNC(__VA_ARGS__);		\
+> +			if (RC == -EOPNOTSUPP)			\
+> +				continue;			\
+> +			if (RC != 0 && RC != IRC)		\
+> +				break;				\
+> +			if (i >= MAX_LSM_EVM_XATTR) {		\
+> +				RC = -ENOMEM;			\
+> +				break;				\
+> +			}					\
+> +			XATTRS++;				\
+> +			i++;					\
+> +		}						\
+> +	} while (0);						\
+> +	RC;							\
+> +})
+> +
+
+No. Please open code this in the one place it is used.
+
+>  /* Security operations */
+>  
+>  int security_binder_set_context_mgr(const struct cred *mgr)
+> @@ -1103,7 +1126,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+>  				     dir, qstr, NULL, NULL, NULL);
+>  	memset(new_xattrs, 0, sizeof(new_xattrs));
+>  	lsm_xattr = new_xattrs;
+> -	ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
+> +	ret = call_int_hook_xattr(lsm_xattr, inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
+>  						&lsm_xattr->name,
+>  						&lsm_xattr->value,
+>  						&lsm_xattr->value_len);
+> @@ -1111,7 +1134,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+>  		goto out;
+>  
+>  	evm_xattr = lsm_xattr + 1;
+> -	ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
+> +	ret = evm_inode_init_security(inode, new_xattrs, evm_xattr);
+>  	if (ret)
+>  		goto out;
+>  	ret = initxattrs(inode, new_xattrs, fs_data);
