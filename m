@@ -2,350 +2,271 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAECC43217
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Oct 2022 13:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C584DC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Oct 2022 13:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231182AbiJTN1Q (ORCPT
+        id S230026AbiJTNzj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Oct 2022 09:27:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59198 "EHLO
+        Thu, 20 Oct 2022 09:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230364AbiJTN1H (ORCPT
+        with ESMTP id S229981AbiJTNzc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Oct 2022 09:27:07 -0400
-Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C2A51A0464
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Oct 2022 06:27:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666272420; bh=7tWweWCqZEktHPjo0qF/Sd6RWYERru5Z/2TKvYyq9kI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=bdDhAFvfg78uryWeZMoNtJcd7LAKQGlehhN2UjbbUaTAglGppzDDUUjqT45+0eGESamkV0iPqafZDsFDPcaDdkn0axVIXq2LdiGuY5av+u6tDorgycHpxiCndVLRuxxinz+Xy5GIEx6sgPA+x1D3Jy54nSThNM4J7YAIOzAPAeDuc8llSyquhuk4uO/h6Ibjza/Bk26cpSf+W/VkNoaAB2H+zReX9g5kH9Mqmwwt8HZGadF02s1mY7MzLy/XZmhQxtgclvYukXBJ7YZ63IPstOR621WH2k3Z4swjqQ7FzNJRr/mV44r/Fb+n4931sSARIGHI04Y0mPlUxKQWkFdLxA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666272420; bh=y62MOnU9W0Cbhef8geWgjBEnrYmnhi7Z05/1A2xbGWN=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=bawJe2MR7Au7r/gtEiEkFHSxzSHVC70aN9qZ1849/c9vClDuDQjzDOW2M7zkz6j9KVN1P1e/6VUeWeRkHlReJ4I6nQVAOCCicr35kzSdxUhFAvre17n0hek7Yv5uHqHZym0kJKA3vjiYRcLLOwfG/Im+FXh0VFRCqWa3KSWxv1p8LjT7i35TgMnNv6dZl04l0XwBEo41pW5IYmaj5pFni8hYEVvVV/4jn00LOLCaeZzqFO/xqQOxeY84QuXmPeAszIw5cyRSf6cEjUEMVI4fSFi7Z9dMVwSMBFj86za+njcTs1etxSVJzQPgAzVlj2YFyMOoDlP7DtwNySE/ZxOckg==
-X-YMail-OSG: G8rpqZAVM1mkWICFMlraiEZFGCbF7r5UIl09dmAKFoL3Ih_OYCghY6MGF.c8G0S
- p4EXZ9PvfvOD.w_DtBjU_gwICE5lrJespZ81TGoGOhubxuQ39HTZ9A2YmWsjA3BW10lElAyQceHI
- yqfmDKkQo64rzdt3aSOXVqEJVtrdLs3TflUELkjdiWr7k_oUpNPnixQ8uLX0pxu9JLpepLI8DCfq
- FrkW1Q.I8I9DylOJc2ZWe3pWSUSoEKYgYGa1zqYRlPrS1bsxsh.4b1EndRW1FZ9iZJBiTkYLP_uC
- nwhiaXAnV6XhhFW0WeQrV1Op91aZ8B_0flPhY2OrCoTFPT9xoT8MfBGOi1ndbja20GT3j4W6BH2I
- Hfg1TWNMRoiXzx5Pqwk92lXNWhZoGBRHZ5udM3bBTd4x8Tvcsi4m2WjLiiIYygr2H76_Jc8iPX27
- f1JVv1OquRcWreqaDgtyGj1DV5LnDEiX86u8ey1m9Owwcx5Gk34c1.8Q.MzvgsW3Eom5kfgEy3xv
- Cfa5j1UeznCC_1kpnNDThiWnvX0MzjCTayJMpK1Ym9cBndpoNzT7wxzBPBHYWrpeTPSXO4CzbZYD
- GYO8GZLhENK0qC8fwwCQCXNISNm8t9W4wDcZPyiuB06ilmsf5I6HMzY.A_lfwJLK_XlNQau7tGlf
- p7t_w1gCmpb9YMI4wRdpT5Rbe44ztHPk1i5Ly2b_Uhs_AuMr31aDxL8RUkX5eYJFZbKL143VqVYV
- V7ou.KNWjttp.D.KZEW5EAkLKBEwKKzCFmpdDVWpo85COhIGRVnn4lSIHXEYapHUeKlR28XUqaRT
- cttvuWZ5DfgpOkI8CgJx4MbKdgV8t3HVHfDyPwnH58QQTP0IKktvhaeTRuF6ctBQcsBttk5BK1PK
- TB5DQQ6ES8f5DTBz6NdBL0zeaYELr7_.6CQB6vD_T2_mcO7mDa5OPqgTDIp.qBq8b0SuuXT21lyv
- cBeJaCm_1OANRe_wRa6fpWdwhRDVb6zJRPpeItAq_tXT6n9UwlvwUofYKvGPxQcYPG2YDAE1cDRe
- wAiFEofvm_sHGnHqWT0VPTLHCVOxOYMtNZsX2gCCfCHypksdFQeMSsWaEi0nSRSZPaKwghMLZz0t
- 46qL6ZcHnI4W0aaWfl54oEa_8P2.1mMa0nOI3KpH9GUKbfWgmruu1mW9Uu3ffNXffYEH.fjJashC
- A8LV0QlpudhSSF_lXwc4.FGIl7TYJhcNCcyblt71LiXupxf5KbEZUFYPykimYbfBtbB_TvWX1bTB
- zSAxZCkdEvHvN1_ne0CJl0pyQJLp.r2tgi9M4_vgasMhMeYoRc0cBA9GXoO8yEuKODURILI9pYBq
- D7Og6XrOJ8uZ38tEtMgjwFw_WVjbYT.nYfg5H4YhDBWDMd5_356ijfRJ0j7f9q3wb8yhSuZtU9JQ
- iXO_zcJA4lyq.tdiiSgS2AQ1bF0iUGXpyxRYvam6xTFvxNxqH_.cVYWNd1NI7oUfVVoh9l0CigAj
- FpOY1Hn92EvkUfXOKXGMKrITlFvQBatSLXtNK4JmpaRYln6Upi.TdTfm7erLuklLBLdQGqfN8PBk
- OByWhGKUbq3RZCX5m1XV9JbYbTuv1PEMVPwg5cJ89084lIGGwhoklVGVIk54ppvhwLaQT54ZXqva
- V_qKPtuZX5huRaoNzw.HFUAmSGWFzvAPf9PlBp2.iDTdiohjkpGGMFWqOQV8Jlah3G6akW3.VN1t
- HkVslzSZsyfmWzTkvBZKe6i_x33MshjGPU3TCpl7w7wByLIJAR34wO3PQXpo47REPtztwl_6QIhD
- 4ihbk6kgPj0cWFHSyNMLsrXv_6Vr_awQX7X6RytjzthzKTgmCkWdMPlKds7TepvhvBaS3bRf5Jt6
- xKPiyFmHKK5ZzX0V6a4OA7HzHYXGp5RzeATF0dOl5wdLzWarTMkT944eGEMM6GRzMmXKV_8mvS8I
- GX1znL19tXRZ30yCzK1NIo5j0TwGgWEvFmF626BSbjK8vFRgiPCWjddNVs089e7a.R4U005tA3Vc
- Y2R9znIJ_hbJd90E.TKdH7QRyr5HQQnPIoF5WdO3NJocSQMy7KbhBwiEV6zXD9.07QveeejlWxXr
- zKgsQWnnkfnitEaRmiQOiJIpHdbzsgEz4Wq1y3Xs77h3qJaLpM_bPIVu3OFXC6aKcuBY7JboNOdV
- Wk7239jrT5uo.Nts3orsv.BjclIMYsHmBvJnBSjmXUCb.xjHwiqN7pLGFvlL4BxLLjLtl3eL6Tcm
- FOZlEgJ9kZ_L572kJkSk3EmsBnf9x4as8YGTKvBioiUc-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Oct 2022 13:27:00 +0000
-Received: by hermes--production-gq1-754cb59848-zdkt4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f227043d9c28f9e6bf60558ba301e1c0;
-          Thu, 20 Oct 2022 13:16:26 +0000 (UTC)
-Message-ID: <68decac7-f8f7-1569-be84-8419a0e78417@schaufler-ca.com>
-Date:   Thu, 20 Oct 2022 06:16:25 -0700
+        Thu, 20 Oct 2022 09:55:32 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0EAA144E24;
+        Thu, 20 Oct 2022 06:55:29 -0700 (PDT)
+Received: (Authenticated sender: nicolas.bouchinet@clip-os.org)
+        by mail.gandi.net (Postfix) with ESMTPSA id 5F2441BF20C;
+        Thu, 20 Oct 2022 13:55:22 +0000 (UTC)
+Date:   Thu, 20 Oct 2022 15:55:20 +0200
+From:   Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
+To:     linux-integrity@vger.kernel.org
+Cc:     philippe.trebuchet@ssi.gouv.fr, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, casey@schaufler-ca.com, davem@davemloft.net,
+        lucien.xin@gmail.com, vgoyal@redhat.com, omosnace@redhat.com,
+        mortonm@chromium.org, nicolas.bouchinet@ssi.gouv.fr,
+        mic@digikod.net, cgzones@googlemail.com,
+        linux-security-module@vger.kernel.org, brauner@kernel.org,
+        keescook@chromium.org
+Subject: [PATCH] evm: Correct inode_init_security hooks behaviors
+Message-ID: <Y1FTSIo+1x+4X0LS@archlinux>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.3
-Subject: Re: [PATCH] lsm: make security_socket_getpeersec_stream() sockptr_t
- safe
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     netdev@vger.kernel.org,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        casey@schaufler-ca.com
-References: <166543910984.474337.2779830480340611497.stgit@olly>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <166543910984.474337.2779830480340611497.stgit@olly>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20754 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/10/2022 2:58 PM, Paul Moore wrote:
-> Commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
-> sockptr_t argument") made it possible to call sk_getsockopt()
-> with both user and kernel address space buffers through the use of
-> the sockptr_t type.  Unfortunately at the time of conversion the
-> security_socket_getpeersec_stream() LSM hook was written to only
-> accept userspace buffers, and in a desire to avoid having to change
-> the LSM hook the commit author simply passed the sockptr_t's
-> userspace buffer pointer.  Since the only sk_getsockopt() callers
-> at the time of conversion which used kernel sockptr_t buffers did
-> not allow SO_PEERSEC, and hence the
-> security_socket_getpeersec_stream() hook, this was acceptable but
-> also very fragile as future changes presented the possibility of
-> silently passing kernel space pointers to the LSM hook.
->
-> There are several ways to protect against this, including careful
-> code review of future commits, but since relying on code review to
-> catch bugs is a recipe for disaster and the upstream eBPF maintainer
-> is "strongly against defensive programming", this patch updates the
-> LSM hook, and all of the implementations to support sockptr_t and
-> safely handle both user and kernel space buffers.
->
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
-Smack part looks ok, I haven't had the opportunity to test it.
-Will do so as I crunch through the backlog.
+Fixes a NULL pointer dereference occuring in the
+`evm_protected_xattr_common` function of the EVM LSM. The bug is
+triggered if a `inode_init_security` hook returns 0 without initializing
+the given `struct xattr` fields (which is the case of BPF) and if no
+other LSM overrides thoses fields after. This also leads to memory
+leaks.
 
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+Adds a `call_int_hook_xattr` macro that fetches and feed the
+`new_xattrs` array with every called hook xattr values.
 
-> ---
->  include/linux/lsm_hook_defs.h |    2 +-
->  include/linux/lsm_hooks.h     |    4 ++--
->  include/linux/security.h      |   11 +++++++----
->  net/core/sock.c               |    3 ++-
->  security/apparmor/lsm.c       |   29 +++++++++++++----------------
->  security/security.c           |    6 +++---
->  security/selinux/hooks.c      |   13 ++++++-------
->  security/smack/smack_lsm.c    |   19 ++++++++++---------
->  8 files changed, 44 insertions(+), 43 deletions(-)
->
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index ec119da1d89b4..6abde829b6e5e 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -302,7 +302,7 @@ LSM_HOOK(int, 0, socket_setsockopt, struct socket *sock, int level, int optname)
->  LSM_HOOK(int, 0, socket_shutdown, struct socket *sock, int how)
->  LSM_HOOK(int, 0, socket_sock_rcv_skb, struct sock *sk, struct sk_buff *skb)
->  LSM_HOOK(int, 0, socket_getpeersec_stream, struct socket *sock,
-> -	 char __user *optval, int __user *optlen, unsigned len)
-> +	 sockptr_t optval, sockptr_t optlen, unsigned int len)
->  LSM_HOOK(int, 0, socket_getpeersec_dgram, struct socket *sock,
->  	 struct sk_buff *skb, u32 *secid)
->  LSM_HOOK(int, 0, sk_alloc_security, struct sock *sk, int family, gfp_t priority)
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 4ec80b96c22e7..883f0f252f062 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -962,8 +962,8 @@
->   *	SO_GETPEERSEC.  For tcp sockets this can be meaningful if the
->   *	socket is associated with an ipsec SA.
->   *	@sock is the local socket.
-> - *	@optval userspace memory where the security state is to be copied.
-> - *	@optlen userspace int where the module should copy the actual length
-> + *	@optval memory where the security state is to be copied.
-> + *	@optlen memory where the module should copy the actual length
->   *	of the security state.
->   *	@len as input is the maximum length to copy to userspace provided
->   *	by the caller.
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index ca1b7109c0dbb..0e419c595cee5 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -31,6 +31,7 @@
->  #include <linux/err.h>
->  #include <linux/string.h>
->  #include <linux/mm.h>
-> +#include <linux/sockptr.h>
->  
->  struct linux_binprm;
->  struct cred;
-> @@ -1411,8 +1412,8 @@ int security_socket_getsockopt(struct socket *sock, int level, int optname);
->  int security_socket_setsockopt(struct socket *sock, int level, int optname);
->  int security_socket_shutdown(struct socket *sock, int how);
->  int security_sock_rcv_skb(struct sock *sk, struct sk_buff *skb);
-> -int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
-> -				      int __user *optlen, unsigned len);
-> +int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
-> +				      sockptr_t optlen, unsigned int len);
->  int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb, u32 *secid);
->  int security_sk_alloc(struct sock *sk, int family, gfp_t priority);
->  void security_sk_free(struct sock *sk);
-> @@ -1548,8 +1549,10 @@ static inline int security_sock_rcv_skb(struct sock *sk,
->  	return 0;
->  }
->  
-> -static inline int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
-> -						    int __user *optlen, unsigned len)
-> +static inline int security_socket_getpeersec_stream(struct socket *sock,
-> +						    sockptr_t optval,
-> +						    sockptr_t optlen,
-> +						    unsigned int len)
->  {
->  	return -ENOPROTOOPT;
->  }
-> diff --git a/net/core/sock.c b/net/core/sock.c
-> index eeb6cbac6f499..70064415349d6 100644
-> --- a/net/core/sock.c
-> +++ b/net/core/sock.c
-> @@ -1793,7 +1793,8 @@ int sk_getsockopt(struct sock *sk, int level, int optname,
->  		break;
->  
->  	case SO_PEERSEC:
-> -		return security_socket_getpeersec_stream(sock, optval.user, optlen.user, len);
-> +		return security_socket_getpeersec_stream(sock,
-> +							 optval, optlen, len);
->  
->  	case SO_MARK:
->  		v.val = sk->sk_mark;
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index f56070270c69d..89e84ef54e8eb 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1103,11 +1103,10 @@ static struct aa_label *sk_peer_label(struct sock *sk)
->   * Note: for tcp only valid if using ipsec or cipso on lan
->   */
->  static int apparmor_socket_getpeersec_stream(struct socket *sock,
-> -					     char __user *optval,
-> -					     int __user *optlen,
-> +					     sockptr_t optval, sockptr_t optlen,
->  					     unsigned int len)
->  {
-> -	char *name;
-> +	char *name = NULL;
->  	int slen, error = 0;
->  	struct aa_label *label;
->  	struct aa_label *peer;
-> @@ -1124,23 +1123,21 @@ static int apparmor_socket_getpeersec_stream(struct socket *sock,
->  	/* don't include terminating \0 in slen, it breaks some apps */
->  	if (slen < 0) {
->  		error = -ENOMEM;
-> -	} else {
-> -		if (slen > len) {
-> -			error = -ERANGE;
-> -		} else if (copy_to_user(optval, name, slen)) {
-> -			error = -EFAULT;
-> -			goto out;
-> -		}
-> -		if (put_user(slen, optlen))
-> -			error = -EFAULT;
-> -out:
-> -		kfree(name);
-> -
-> +		goto done;
-> +	}
-> +	if (slen > len) {
-> +		error = -ERANGE;
-> +		goto done_len;
->  	}
->  
-> +	if (copy_to_sockptr(optval, name, slen))
-> +		error = -EFAULT;
-> +done_len:
-> +	if (copy_to_sockptr(optlen, &slen, sizeof(slen)))
-> +		error = -EFAULT;
->  done:
->  	end_current_label_crit_section(label);
-> -
-> +	kfree(name);
->  	return error;
->  }
->  
-> diff --git a/security/security.c b/security/security.c
-> index 79d82cb6e4696..f27c885ee98db 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2267,11 +2267,11 @@ int security_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
->  }
->  EXPORT_SYMBOL(security_sock_rcv_skb);
->  
-> -int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
-> -				      int __user *optlen, unsigned len)
-> +int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
-> +				      sockptr_t optlen, unsigned int len)
->  {
->  	return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
-> -				optval, optlen, len);
-> +			     optval, optlen, len);
->  }
->  
->  int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb, u32 *secid)
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index f553c370397ee..0bdddeba90a6c 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -5119,11 +5119,12 @@ static int selinux_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
->  	return err;
->  }
->  
-> -static int selinux_socket_getpeersec_stream(struct socket *sock, char __user *optval,
-> -					    int __user *optlen, unsigned len)
-> +static int selinux_socket_getpeersec_stream(struct socket *sock,
-> +					    sockptr_t optval, sockptr_t optlen,
-> +					    unsigned int len)
->  {
->  	int err = 0;
-> -	char *scontext;
-> +	char *scontext = NULL;
->  	u32 scontext_len;
->  	struct sk_security_struct *sksec = sock->sk->sk_security;
->  	u32 peer_sid = SECSID_NULL;
-> @@ -5139,17 +5140,15 @@ static int selinux_socket_getpeersec_stream(struct socket *sock, char __user *op
->  				      &scontext_len);
->  	if (err)
->  		return err;
-> -
->  	if (scontext_len > len) {
->  		err = -ERANGE;
->  		goto out_len;
->  	}
->  
-> -	if (copy_to_user(optval, scontext, scontext_len))
-> +	if (copy_to_sockptr(optval, scontext, scontext_len))
->  		err = -EFAULT;
-> -
->  out_len:
-> -	if (put_user(scontext_len, optlen))
-> +	if (copy_to_sockptr(optlen, &scontext_len, sizeof(scontext_len)))
->  		err = -EFAULT;
->  	kfree(scontext);
->  	return err;
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index b6306d71c9088..2bd7fadf7fb4c 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -4006,12 +4006,12 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
->   * returns zero on success, an error code otherwise
->   */
->  static int smack_socket_getpeersec_stream(struct socket *sock,
-> -					  char __user *optval,
-> -					  int __user *optlen, unsigned len)
-> +					  sockptr_t optval, sockptr_t optlen,
-> +					  unsigned int len)
->  {
->  	struct socket_smack *ssp;
->  	char *rcp = "";
-> -	int slen = 1;
-> +	u32 slen = 1;
->  	int rc = 0;
->  
->  	ssp = sock->sk->sk_security;
-> @@ -4019,15 +4019,16 @@ static int smack_socket_getpeersec_stream(struct socket *sock,
->  		rcp = ssp->smk_packet->smk_known;
->  		slen = strlen(rcp) + 1;
->  	}
-> -
-> -	if (slen > len)
-> +	if (slen > len) {
->  		rc = -ERANGE;
-> -	else if (copy_to_user(optval, rcp, slen) != 0)
-> -		rc = -EFAULT;
-> +		goto out_len;
-> +	}
->  
-> -	if (put_user(slen, optlen) != 0)
-> +	if (copy_to_sockptr(optval, rcp, slen))
-> +		rc = -EFAULT;
-> +out_len:
-> +	if (copy_to_sockptr(optlen, &slen, sizeof(slen)))
->  		rc = -EFAULT;
-> -
->  	return rc;
->  }
->  
->
+Adds a `evm_init_hmacs` function which init the EVM hmac using every
+entry of the array contrary to `evm_init_hmac`.
+
+Fixes the `evm_inode_init_security` function to use `evm_init_hmacs`.
+
+The `MAX_LSM_EVM_XATTR` value has been raised to 5 which gives room for
+SMACK, SELinux, Apparmor, BPF and IMA/EVM security attributes.
+
+Changes the default return value of the `inode_init_security` hook
+definition to `-EOPNOTSUPP`.
+
+Changes the hook documentation to match the behavior of the LSMs using
+it (only xattr->value is initialised with kmalloc and thus is the only
+one that should be kfreed by the caller).
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+---
+ include/linux/lsm_hook_defs.h       |  2 +-
+ include/linux/lsm_hooks.h           |  4 ++--
+ security/integrity/evm/evm.h        |  2 ++
+ security/integrity/evm/evm_crypto.c | 23 ++++++++++++++++++++++-
+ security/integrity/evm/evm_main.c   | 11 ++++++-----
+ security/security.c                 | 29 ++++++++++++++++++++++++++---
+ 6 files changed, 59 insertions(+), 12 deletions(-)
+
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 806448173033..e5dd0c0f6345 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -111,7 +111,7 @@ LSM_HOOK(int, 0, path_notify, const struct path *path, u64 mask,
+ 	 unsigned int obj_type)
+ LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
+ LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
+-LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
++LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
+ 	 struct inode *dir, const struct qstr *qstr, const char **name,
+ 	 void **value, size_t *len)
+ LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 84a0d7e02176..95aff9383de1 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -229,8 +229,8 @@
+  *	This hook is called by the fs code as part of the inode creation
+  *	transaction and provides for atomic labeling of the inode, unlike
+  *	the post_create/mkdir/... hooks called by the VFS.  The hook function
+- *	is expected to allocate the name and value via kmalloc, with the caller
+- *	being responsible for calling kfree after using them.
++ *	is expected to allocate the value via kmalloc, with the caller
++ *	being responsible for calling kfree after using it.
+  *	If the security module does not use security attributes or does
+  *	not wish to put a security attribute on this particular inode,
+  *	then it should return -EOPNOTSUPP to skip this processing.
+diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+index f8b8c5004fc7..a2f9886e924d 100644
+--- a/security/integrity/evm/evm.h
++++ b/security/integrity/evm/evm.h
+@@ -60,6 +60,8 @@ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+ 		  struct evm_digest *data);
+ int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
+ 		  char *hmac_val);
++int evm_init_hmacs(struct inode *inode, const struct xattr *xattrs,
++		  char *hmac_val);
+ int evm_init_secfs(void);
+ 
+ #endif
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 708de9656bbd..e5a34306cab6 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -347,7 +347,6 @@ static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
+ 	return rc;
+ }
+ 
+-
+ /*
+  * Calculate the hmac and update security.evm xattr
+  *
+@@ -385,6 +384,28 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+ 	return rc;
+ }
+ 
++int evm_protected_xattr(const char *req_xattr_name);
++
++int evm_init_hmacs(struct inode *inode, const struct xattr *lsm_xattrs,
++		  char *hmac_val)
++{
++	struct shash_desc *desc;
++
++	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
++	if (IS_ERR(desc)) {
++		pr_info("init_desc failed\n");
++		return PTR_ERR(desc);
++	}
++
++	for (int i = 0; lsm_xattrs[i].value != NULL; i++) {
++		if (evm_protected_xattr(lsm_xattrs[i].name))
++			crypto_shash_update(desc, lsm_xattrs[i].value, lsm_xattrs[i].value_len);
++	}
++	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
++	kfree(desc);
++	return 0;
++}
++
+ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+ 		  char *hmac_val)
+ {
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 2e6fb6e2ffd2..bb071c55d656 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -284,6 +284,8 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
+ 	int found = 0;
+ 	struct xattr_list *xattr;
+ 
++	if (!req_xattr_name)
++		return found;
+ 	namelen = strlen(req_xattr_name);
+ 	list_for_each_entry_lockless(xattr, &evm_config_xattrnames, list) {
+ 		if (!all_xattrs && !xattr->enabled)
+@@ -305,7 +307,7 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
+ 	return found;
+ }
+ 
+-static int evm_protected_xattr(const char *req_xattr_name)
++int evm_protected_xattr(const char *req_xattr_name)
+ {
+ 	return evm_protected_xattr_common(req_xattr_name, false);
+ }
+@@ -835,14 +837,13 @@ void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
+  * evm_inode_init_security - initializes security.evm HMAC value
+  */
+ int evm_inode_init_security(struct inode *inode,
+-				 const struct xattr *lsm_xattr,
++				 const struct xattr *lsm_xattrs,
+ 				 struct xattr *evm_xattr)
+ {
+ 	struct evm_xattr *xattr_data;
+ 	int rc;
+ 
+-	if (!(evm_initialized & EVM_INIT_HMAC) ||
+-	    !evm_protected_xattr(lsm_xattr->name))
++	if (!(evm_initialized & EVM_INIT_HMAC))
+ 		return 0;
+ 
+ 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
+@@ -850,7 +851,7 @@ int evm_inode_init_security(struct inode *inode,
+ 		return -ENOMEM;
+ 
+ 	xattr_data->data.type = EVM_XATTR_HMAC;
+-	rc = evm_init_hmac(inode, lsm_xattr, xattr_data->digest);
++	rc = evm_init_hmacs(inode, lsm_xattrs, xattr_data->digest);
+ 	if (rc < 0)
+ 		goto out;
+ 
+diff --git a/security/security.c b/security/security.c
+index 14d30fec8a00..47012c118536 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -30,7 +30,7 @@
+ #include <linux/msg.h>
+ #include <net/flow.h>
+ 
+-#define MAX_LSM_EVM_XATTR	2
++#define MAX_LSM_EVM_XATTR	5
+ 
+ /* How many LSMs were built into the kernel? */
+ #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
+@@ -746,6 +746,29 @@ static int lsm_superblock_alloc(struct super_block *sb)
+ 	RC;							\
+ })
+ 
++#define call_int_hook_xattr(XATTRS, FUNC, IRC, ...) ({		\
++	int RC = IRC;						\
++	int i = 0;						\
++	do {							\
++		struct security_hook_list *P;			\
++								\
++		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
++			RC = P->hook.FUNC(__VA_ARGS__);		\
++			if (RC == -EOPNOTSUPP)			\
++				continue;			\
++			if (RC != 0 && RC != IRC)		\
++				break;				\
++			if (i >= MAX_LSM_EVM_XATTR) {		\
++				RC = -ENOMEM;			\
++				break;				\
++			}					\
++			XATTRS++;				\
++			i++;					\
++		}						\
++	} while (0);						\
++	RC;							\
++})
++
+ /* Security operations */
+ 
+ int security_binder_set_context_mgr(const struct cred *mgr)
+@@ -1103,7 +1126,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 				     dir, qstr, NULL, NULL, NULL);
+ 	memset(new_xattrs, 0, sizeof(new_xattrs));
+ 	lsm_xattr = new_xattrs;
+-	ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
++	ret = call_int_hook_xattr(lsm_xattr, inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
+ 						&lsm_xattr->name,
+ 						&lsm_xattr->value,
+ 						&lsm_xattr->value_len);
+@@ -1111,7 +1134,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 		goto out;
+ 
+ 	evm_xattr = lsm_xattr + 1;
+-	ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
++	ret = evm_inode_init_security(inode, new_xattrs, evm_xattr);
+ 	if (ret)
+ 		goto out;
+ 	ret = initxattrs(inode, new_xattrs, fs_data);
+-- 
+2.38.1
+
