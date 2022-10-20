@@ -2,103 +2,350 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 019AFC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Oct 2022 13:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAECC43217
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Oct 2022 13:27:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230295AbiJTNCB (ORCPT
+        id S231182AbiJTN1Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Oct 2022 09:02:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38570 "EHLO
+        Thu, 20 Oct 2022 09:27:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230202AbiJTNB5 (ORCPT
+        with ESMTP id S230364AbiJTN1H (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Oct 2022 09:01:57 -0400
-Received: from sonic301-37.consmr.mail.ne1.yahoo.com (sonic301-37.consmr.mail.ne1.yahoo.com [66.163.184.206])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 108745804F
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Oct 2022 06:01:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666270914; bh=rP286mmtk9KIbfA1DBkXxmhjA87S2nuEH0V1KSBdLHc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=fBBdnSiYKZbAx/eNkoYxsq9Sya7x9bXJtAma05mPHMWeT6jrstlVbPeTM5q6+yGR9cps2hpv0egoUaTS1o8yUsW4BzdhgGT2TvzDtmSQMiz6v8iuuKmWj5kyg6DUMIChJIwoHb5h//zxYZGN2lvZlr1wTXBNvDsKt8uQU3gxjxRDxbFn+n1C2NLy/YNfMFiD2FAEtW9rqguAYmGbVQHZwLYuVjHPayaDZZXeE8tmyqE5UgxSZxYNwj7+Vp6w7Z4DIPTcCveUFAsB+PeZNK0ErxrBK5uszQk1oY5YZpk6VlHXB+YoeP6mqMpowSICU3eCnDlkw9oJ4xp8D+RmCimirA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666270914; bh=RFNSL0oFl5VpMn57bqyG2/geTNY3ZQSki2Qe0IqKdkj=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=HTXvASF22muFMLPVz60rs0py2gCxz6Ky7imSmklo2t4q1xlZvI4w/30oWP2w322iAdfknLDlp5jBOS2e3rtctef+MSiEwth1hUCfMcEZZM+CimC69mj2u65Yb5YZBanwprSfA77mvB8z0OmlYg2bg85LBiLJH+TFWZZ7X/fLG+yh8hkjeGvF3L8FdM/wLK/DUjVmVVBYJ9GgPj0PRMOsx3TJwUDpacDjYbT7gGgjUs1i8qmloAFMbOtctHVZAp1kJvgsdUSWYBGw6XMn47DAMMnfv4geQ1Vt+CeRR1JyaM4OmEQiflw5AGZSaSJm8PF0YxAuSSPO0tc4aJmYVik8gQ==
-X-YMail-OSG: uq0VG2cVM1kEwNPECXe79JUAzh_4wAtstRNCFtQDLEBbYYXl_c.ZZh2oaoFNJ8q
- jud5mWSG5kxyFyBhWKuwZ4Q8FRgg0HFZBKDCdbGbs79KmhljWD9TsPqlHp7l0r3PKlyOl6ap8Pgl
- a4Xq0vaESI_.n9JU.wHeP_q9emEEJRTxGN3e0dc8rfcSwQSRjfmsG2q0jMdOBrJEDSSG.R3DnFNo
- X_lifO.8I54RmldhThvMJBh2rtgdFgRIZxHAH4gl6Fode9ZV3wSguTW9kO9gclLR2E_kXkdEioq5
- cjePubZGzUoooameO7LdXst4naaeg_GSHDFfkxm3Gdsd8nD957wc5x3SK9dsNHZuxH4_B3o0DuCz
- T2xhKauTRVzoh4I.dV8RQszT4tKuPWEvQazj9kZ7QWakcx4wl.6JPFOodmDspY7Utl3ZTVXimft6
- 8qGMtAq0DEwzCew5hhAxz63NEF1hHSvA118IzyMO49CJ5aC0faN3Klsd9HeDVVqg759znz45hePo
- B9qu5WanjSF7pfaVCa2TUNUx.NEFXjAyJcZm3AUFWSDmcuSUfcWlzWNd6PYSOPILJnlKCpWu5jBZ
- YpjyLSiQ2hQuoniT7TwSwEhx9H6Ld5Jxea39rYiWQQCNGrWpmZ050cBKrlYuJSsaKZLKUJn__4ba
- FuERvIzuhXcpo5k6ak6ZeNNFJ1KDr4mdmOcs1lV_ptHa8h2h64y9_5y.0StKudSOG1Tc5UEZRZWL
- ncvX2xtw7.3bxrdclYoutViw_ApPwuU_xfMZpgsQa4PgagdiBK1vlrRtfohe1sKz05LKv1OPIeXA
- bYZD3Qs7aezsAJTVjvJ_17HTREbAto_1xqc01IubFsTvQrIVTRnZXpwEiLyk3H_pDRZi7aLhi1qp
- EZUctLwF7fJB4Otz9iEKHzqRweJ2Hu6byOfEjXfHFtlpS6briX9Nhzchsh5.ouhJoHRZZ6Ea6t1u
- 2YipdX3x1mDicurpb5UGyznRbngm_oCCpZiR336LU8_qQoUA.NreF9dr_l_yX4f.lSbTtQQ2H58A
- CD7Sy1P8UuBNkVEbYU8seDxk7Nb5gmPDAgs13xXyFZBMdCoGRMylBwVauNKXHacKoS3hMn6HaHeI
- _fLryb0c1TKyDMuxm7SvLK82renc_w32PymglM5rRGfN6IIURiMGlGFIVRBM6DSuQg0Wl297BQgW
- d2dEvFRtsbDMXXQSMhXIMN7DfAAL0r4WpqOz4CjKUnAJJPOr.PSkuKUNyTfFrzsE9OsGpQZgeZO5
- _dsfmutRDtYZ79YW20aer_hmTzDKRKP0NmIfOtDYHTE5LTj1EdRHKoZWshv4VSLR6_uzUyCXyHqJ
- GGhAijW8eOOOqaGF0WUOw5v.WSvj.rtnrlnaYvP9Ofjm56XcIIDZ1e9k8kWXsk4lzUIW1ry.6F92
- 7gP.nTIhdBk8_xUyvD04SCmxQeqCshWKhbGnhRVFf0_idKxfj.k8YKXIilOhGCasGRLjIePQz5dR
- 2x4iioAoZZ8fDOhEISCjtBqPSI1KSg._Brd5coehYHv3A_ujurp7tLt7D.8VJDQmIZAuROmxG_iF
- 1Peh9XWaE.vfnUeUJSab_t5cLgkBpgMZjAo90WizAZlPwAKeK4kk1jYbFbDk04Gxwuw6RZOIfW36
- PXGxMLG8JJ6Sloz_qo71YADhlJz7_17iWvKSrlMPDc_1enKdoZFxvOZYkzNGKMhgoWbkwwOaNafb
- P0dudM4TrmUn4Ant_cmFF.QB3Vt43EnNmye0D5XnkAB.jOAbBKglbd6KV41rOHR8l_Nn2UJZISt1
- z9_lwL0WxLa9w1m2O7MIhDdaYZk_i9MtlJgHkMvqkDF5zcLIOHLUGFM9DMNUykF2c9_30OebsGu7
- gm2jmvNHaGkf.yn3eo9q.bMeN0puayp68xEroEjeGedk3PSLKkrtqIpZbLrZALHo09igcWAg_lDL
- 5Ib3Pxr26ANFpWIreg2esdFgA7k1kpj1G_y4YF1pKwg9hAb9Lh7fcRB6EL25RXVlbk84TYDRrTEc
- 2kXUuePGH9EMPGjo4FcQjROCDVfPSr6.Knjq8H7qEfmDoWZ2pX6tVacUmAvUfQT1WznjOXuXZ4hB
- poZSCtImWR53JT6oQ2k0RbZPoo9dR5oRvieuUCRCzipDR.Uw8g78oZMC7Hum8LmsMAyxNlsyTnWD
- dRBc_1xgxLJUZJQs4kycnRAntkhsExa11hzP5S7tbhcGnvqA3o7M5Hq7YlUeSSqg_O6iSf5qSYp1
- 278.z95bbBcEscMOJ_1Ukti04qACo.aMPNggpKQj_oSg51M54nBKBZy7GlszifA1NT0BBzheggJe
- uypOFGzoqaGSO
+        Thu, 20 Oct 2022 09:27:07 -0400
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C2A51A0464
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Oct 2022 06:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666272420; bh=7tWweWCqZEktHPjo0qF/Sd6RWYERru5Z/2TKvYyq9kI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=bdDhAFvfg78uryWeZMoNtJcd7LAKQGlehhN2UjbbUaTAglGppzDDUUjqT45+0eGESamkV0iPqafZDsFDPcaDdkn0axVIXq2LdiGuY5av+u6tDorgycHpxiCndVLRuxxinz+Xy5GIEx6sgPA+x1D3Jy54nSThNM4J7YAIOzAPAeDuc8llSyquhuk4uO/h6Ibjza/Bk26cpSf+W/VkNoaAB2H+zReX9g5kH9Mqmwwt8HZGadF02s1mY7MzLy/XZmhQxtgclvYukXBJ7YZ63IPstOR621WH2k3Z4swjqQ7FzNJRr/mV44r/Fb+n4931sSARIGHI04Y0mPlUxKQWkFdLxA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666272420; bh=y62MOnU9W0Cbhef8geWgjBEnrYmnhi7Z05/1A2xbGWN=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=bawJe2MR7Au7r/gtEiEkFHSxzSHVC70aN9qZ1849/c9vClDuDQjzDOW2M7zkz6j9KVN1P1e/6VUeWeRkHlReJ4I6nQVAOCCicr35kzSdxUhFAvre17n0hek7Yv5uHqHZym0kJKA3vjiYRcLLOwfG/Im+FXh0VFRCqWa3KSWxv1p8LjT7i35TgMnNv6dZl04l0XwBEo41pW5IYmaj5pFni8hYEVvVV/4jn00LOLCaeZzqFO/xqQOxeY84QuXmPeAszIw5cyRSf6cEjUEMVI4fSFi7Z9dMVwSMBFj86za+njcTs1etxSVJzQPgAzVlj2YFyMOoDlP7DtwNySE/ZxOckg==
+X-YMail-OSG: G8rpqZAVM1mkWICFMlraiEZFGCbF7r5UIl09dmAKFoL3Ih_OYCghY6MGF.c8G0S
+ p4EXZ9PvfvOD.w_DtBjU_gwICE5lrJespZ81TGoGOhubxuQ39HTZ9A2YmWsjA3BW10lElAyQceHI
+ yqfmDKkQo64rzdt3aSOXVqEJVtrdLs3TflUELkjdiWr7k_oUpNPnixQ8uLX0pxu9JLpepLI8DCfq
+ FrkW1Q.I8I9DylOJc2ZWe3pWSUSoEKYgYGa1zqYRlPrS1bsxsh.4b1EndRW1FZ9iZJBiTkYLP_uC
+ nwhiaXAnV6XhhFW0WeQrV1Op91aZ8B_0flPhY2OrCoTFPT9xoT8MfBGOi1ndbja20GT3j4W6BH2I
+ Hfg1TWNMRoiXzx5Pqwk92lXNWhZoGBRHZ5udM3bBTd4x8Tvcsi4m2WjLiiIYygr2H76_Jc8iPX27
+ f1JVv1OquRcWreqaDgtyGj1DV5LnDEiX86u8ey1m9Owwcx5Gk34c1.8Q.MzvgsW3Eom5kfgEy3xv
+ Cfa5j1UeznCC_1kpnNDThiWnvX0MzjCTayJMpK1Ym9cBndpoNzT7wxzBPBHYWrpeTPSXO4CzbZYD
+ GYO8GZLhENK0qC8fwwCQCXNISNm8t9W4wDcZPyiuB06ilmsf5I6HMzY.A_lfwJLK_XlNQau7tGlf
+ p7t_w1gCmpb9YMI4wRdpT5Rbe44ztHPk1i5Ly2b_Uhs_AuMr31aDxL8RUkX5eYJFZbKL143VqVYV
+ V7ou.KNWjttp.D.KZEW5EAkLKBEwKKzCFmpdDVWpo85COhIGRVnn4lSIHXEYapHUeKlR28XUqaRT
+ cttvuWZ5DfgpOkI8CgJx4MbKdgV8t3HVHfDyPwnH58QQTP0IKktvhaeTRuF6ctBQcsBttk5BK1PK
+ TB5DQQ6ES8f5DTBz6NdBL0zeaYELr7_.6CQB6vD_T2_mcO7mDa5OPqgTDIp.qBq8b0SuuXT21lyv
+ cBeJaCm_1OANRe_wRa6fpWdwhRDVb6zJRPpeItAq_tXT6n9UwlvwUofYKvGPxQcYPG2YDAE1cDRe
+ wAiFEofvm_sHGnHqWT0VPTLHCVOxOYMtNZsX2gCCfCHypksdFQeMSsWaEi0nSRSZPaKwghMLZz0t
+ 46qL6ZcHnI4W0aaWfl54oEa_8P2.1mMa0nOI3KpH9GUKbfWgmruu1mW9Uu3ffNXffYEH.fjJashC
+ A8LV0QlpudhSSF_lXwc4.FGIl7TYJhcNCcyblt71LiXupxf5KbEZUFYPykimYbfBtbB_TvWX1bTB
+ zSAxZCkdEvHvN1_ne0CJl0pyQJLp.r2tgi9M4_vgasMhMeYoRc0cBA9GXoO8yEuKODURILI9pYBq
+ D7Og6XrOJ8uZ38tEtMgjwFw_WVjbYT.nYfg5H4YhDBWDMd5_356ijfRJ0j7f9q3wb8yhSuZtU9JQ
+ iXO_zcJA4lyq.tdiiSgS2AQ1bF0iUGXpyxRYvam6xTFvxNxqH_.cVYWNd1NI7oUfVVoh9l0CigAj
+ FpOY1Hn92EvkUfXOKXGMKrITlFvQBatSLXtNK4JmpaRYln6Upi.TdTfm7erLuklLBLdQGqfN8PBk
+ OByWhGKUbq3RZCX5m1XV9JbYbTuv1PEMVPwg5cJ89084lIGGwhoklVGVIk54ppvhwLaQT54ZXqva
+ V_qKPtuZX5huRaoNzw.HFUAmSGWFzvAPf9PlBp2.iDTdiohjkpGGMFWqOQV8Jlah3G6akW3.VN1t
+ HkVslzSZsyfmWzTkvBZKe6i_x33MshjGPU3TCpl7w7wByLIJAR34wO3PQXpo47REPtztwl_6QIhD
+ 4ihbk6kgPj0cWFHSyNMLsrXv_6Vr_awQX7X6RytjzthzKTgmCkWdMPlKds7TepvhvBaS3bRf5Jt6
+ xKPiyFmHKK5ZzX0V6a4OA7HzHYXGp5RzeATF0dOl5wdLzWarTMkT944eGEMM6GRzMmXKV_8mvS8I
+ GX1znL19tXRZ30yCzK1NIo5j0TwGgWEvFmF626BSbjK8vFRgiPCWjddNVs089e7a.R4U005tA3Vc
+ Y2R9znIJ_hbJd90E.TKdH7QRyr5HQQnPIoF5WdO3NJocSQMy7KbhBwiEV6zXD9.07QveeejlWxXr
+ zKgsQWnnkfnitEaRmiQOiJIpHdbzsgEz4Wq1y3Xs77h3qJaLpM_bPIVu3OFXC6aKcuBY7JboNOdV
+ Wk7239jrT5uo.Nts3orsv.BjclIMYsHmBvJnBSjmXUCb.xjHwiqN7pLGFvlL4BxLLjLtl3eL6Tcm
+ FOZlEgJ9kZ_L572kJkSk3EmsBnf9x4as8YGTKvBioiUc-
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Oct 2022 13:01:54 +0000
-Received: by hermes--production-gq1-754cb59848-vz6ds (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0de3fc44211939ffe7978027b212fee6;
-          Thu, 20 Oct 2022 13:01:52 +0000 (UTC)
-Message-ID: <35af7779-d28c-27af-1038-b6bb4cf953d2@schaufler-ca.com>
-Date:   Thu, 20 Oct 2022 06:01:51 -0700
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Oct 2022 13:27:00 +0000
+Received: by hermes--production-gq1-754cb59848-zdkt4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f227043d9c28f9e6bf60558ba301e1c0;
+          Thu, 20 Oct 2022 13:16:26 +0000 (UTC)
+Message-ID: <68decac7-f8f7-1569-be84-8419a0e78417@schaufler-ca.com>
+Date:   Thu, 20 Oct 2022 06:16:25 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.3
-Subject: Re: [PATCH] apparmor: Use pointer to struct aa_label for lbs_cred
-To:     Xiu Jianfeng <xiujianfeng@huawei.com>, john.johansen@canonical.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        keescook@chromium.org
-Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, casey@schaufler-ca.com
-References: <20221020023621.223121-1-xiujianfeng@huawei.com>
+Subject: Re: [PATCH] lsm: make security_socket_getpeersec_stream() sockptr_t
+ safe
 Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     netdev@vger.kernel.org,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        casey@schaufler-ca.com
+References: <166543910984.474337.2779830480340611497.stgit@olly>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20221020023621.223121-1-xiujianfeng@huawei.com>
+In-Reply-To: <166543910984.474337.2779830480340611497.stgit@olly>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.20754 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/19/2022 7:36 PM, Xiu Jianfeng wrote:
-> According to the implementations of cred_label and set_cred_label, we
-> should use pointer to struct aa_label for lbs_cred instead of struct
-> aa_task_ctx, this patch fix it.
+On 10/10/2022 2:58 PM, Paul Moore wrote:
+> Commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
+> sockptr_t argument") made it possible to call sk_getsockopt()
+> with both user and kernel address space buffers through the use of
+> the sockptr_t type.  Unfortunately at the time of conversion the
+> security_socket_getpeersec_stream() LSM hook was written to only
+> accept userspace buffers, and in a desire to avoid having to change
+> the LSM hook the commit author simply passed the sockptr_t's
+> userspace buffer pointer.  Since the only sk_getsockopt() callers
+> at the time of conversion which used kernel sockptr_t buffers did
+> not allow SO_PEERSEC, and hence the
+> security_socket_getpeersec_stream() hook, this was acceptable but
+> also very fragile as future changes presented the possibility of
+> silently passing kernel space pointers to the LSM hook.
 >
-> Fixes: bbd3662a8348 ("Infrastructure management of the cred security blob")
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+> There are several ways to protect against this, including careful
+> code review of future commits, but since relying on code review to
+> catch bugs is a recipe for disaster and the upstream eBPF maintainer
+> is "strongly against defensive programming", this patch updates the
+> LSM hook, and all of the implementations to support sockptr_t and
+> safely handle both user and kernel space buffers.
+>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+
+Smack part looks ok, I haven't had the opportunity to test it.
+Will do so as I crunch through the backlog.
+
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+
 > ---
->  security/apparmor/lsm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  include/linux/lsm_hook_defs.h |    2 +-
+>  include/linux/lsm_hooks.h     |    4 ++--
+>  include/linux/security.h      |   11 +++++++----
+>  net/core/sock.c               |    3 ++-
+>  security/apparmor/lsm.c       |   29 +++++++++++++----------------
+>  security/security.c           |    6 +++---
+>  security/selinux/hooks.c      |   13 ++++++-------
+>  security/smack/smack_lsm.c    |   19 ++++++++++---------
+>  8 files changed, 44 insertions(+), 43 deletions(-)
 >
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index ec119da1d89b4..6abde829b6e5e 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -302,7 +302,7 @@ LSM_HOOK(int, 0, socket_setsockopt, struct socket *sock, int level, int optname)
+>  LSM_HOOK(int, 0, socket_shutdown, struct socket *sock, int how)
+>  LSM_HOOK(int, 0, socket_sock_rcv_skb, struct sock *sk, struct sk_buff *skb)
+>  LSM_HOOK(int, 0, socket_getpeersec_stream, struct socket *sock,
+> -	 char __user *optval, int __user *optlen, unsigned len)
+> +	 sockptr_t optval, sockptr_t optlen, unsigned int len)
+>  LSM_HOOK(int, 0, socket_getpeersec_dgram, struct socket *sock,
+>  	 struct sk_buff *skb, u32 *secid)
+>  LSM_HOOK(int, 0, sk_alloc_security, struct sock *sk, int family, gfp_t priority)
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 4ec80b96c22e7..883f0f252f062 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -962,8 +962,8 @@
+>   *	SO_GETPEERSEC.  For tcp sockets this can be meaningful if the
+>   *	socket is associated with an ipsec SA.
+>   *	@sock is the local socket.
+> - *	@optval userspace memory where the security state is to be copied.
+> - *	@optlen userspace int where the module should copy the actual length
+> + *	@optval memory where the security state is to be copied.
+> + *	@optlen memory where the module should copy the actual length
+>   *	of the security state.
+>   *	@len as input is the maximum length to copy to userspace provided
+>   *	by the caller.
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index ca1b7109c0dbb..0e419c595cee5 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -31,6 +31,7 @@
+>  #include <linux/err.h>
+>  #include <linux/string.h>
+>  #include <linux/mm.h>
+> +#include <linux/sockptr.h>
+>  
+>  struct linux_binprm;
+>  struct cred;
+> @@ -1411,8 +1412,8 @@ int security_socket_getsockopt(struct socket *sock, int level, int optname);
+>  int security_socket_setsockopt(struct socket *sock, int level, int optname);
+>  int security_socket_shutdown(struct socket *sock, int how);
+>  int security_sock_rcv_skb(struct sock *sk, struct sk_buff *skb);
+> -int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
+> -				      int __user *optlen, unsigned len);
+> +int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
+> +				      sockptr_t optlen, unsigned int len);
+>  int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb, u32 *secid);
+>  int security_sk_alloc(struct sock *sk, int family, gfp_t priority);
+>  void security_sk_free(struct sock *sk);
+> @@ -1548,8 +1549,10 @@ static inline int security_sock_rcv_skb(struct sock *sk,
+>  	return 0;
+>  }
+>  
+> -static inline int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
+> -						    int __user *optlen, unsigned len)
+> +static inline int security_socket_getpeersec_stream(struct socket *sock,
+> +						    sockptr_t optval,
+> +						    sockptr_t optlen,
+> +						    unsigned int len)
+>  {
+>  	return -ENOPROTOOPT;
+>  }
+> diff --git a/net/core/sock.c b/net/core/sock.c
+> index eeb6cbac6f499..70064415349d6 100644
+> --- a/net/core/sock.c
+> +++ b/net/core/sock.c
+> @@ -1793,7 +1793,8 @@ int sk_getsockopt(struct sock *sk, int level, int optname,
+>  		break;
+>  
+>  	case SO_PEERSEC:
+> -		return security_socket_getpeersec_stream(sock, optval.user, optlen.user, len);
+> +		return security_socket_getpeersec_stream(sock,
+> +							 optval, optlen, len);
+>  
+>  	case SO_MARK:
+>  		v.val = sk->sk_mark;
 > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index f56070270c69..fd2f57972a17 100644
+> index f56070270c69d..89e84ef54e8eb 100644
 > --- a/security/apparmor/lsm.c
 > +++ b/security/apparmor/lsm.c
-> @@ -1197,7 +1197,7 @@ static int apparmor_inet_conn_request(const struct sock *sk, struct sk_buff *skb
->   * The cred blob is a pointer to, not an instance of, an aa_task_ctx.
-
-If your premise is true you'll want to fix this comment as well as the code.
-
+> @@ -1103,11 +1103,10 @@ static struct aa_label *sk_peer_label(struct sock *sk)
+>   * Note: for tcp only valid if using ipsec or cipso on lan
 >   */
->  struct lsm_blob_sizes apparmor_blob_sizes __lsm_ro_after_init = {
-> -	.lbs_cred = sizeof(struct aa_task_ctx *),
-> +	.lbs_cred = sizeof(struct aa_label *),
->  	.lbs_file = sizeof(struct aa_file_ctx),
->  	.lbs_task = sizeof(struct aa_task_ctx),
->  };
+>  static int apparmor_socket_getpeersec_stream(struct socket *sock,
+> -					     char __user *optval,
+> -					     int __user *optlen,
+> +					     sockptr_t optval, sockptr_t optlen,
+>  					     unsigned int len)
+>  {
+> -	char *name;
+> +	char *name = NULL;
+>  	int slen, error = 0;
+>  	struct aa_label *label;
+>  	struct aa_label *peer;
+> @@ -1124,23 +1123,21 @@ static int apparmor_socket_getpeersec_stream(struct socket *sock,
+>  	/* don't include terminating \0 in slen, it breaks some apps */
+>  	if (slen < 0) {
+>  		error = -ENOMEM;
+> -	} else {
+> -		if (slen > len) {
+> -			error = -ERANGE;
+> -		} else if (copy_to_user(optval, name, slen)) {
+> -			error = -EFAULT;
+> -			goto out;
+> -		}
+> -		if (put_user(slen, optlen))
+> -			error = -EFAULT;
+> -out:
+> -		kfree(name);
+> -
+> +		goto done;
+> +	}
+> +	if (slen > len) {
+> +		error = -ERANGE;
+> +		goto done_len;
+>  	}
+>  
+> +	if (copy_to_sockptr(optval, name, slen))
+> +		error = -EFAULT;
+> +done_len:
+> +	if (copy_to_sockptr(optlen, &slen, sizeof(slen)))
+> +		error = -EFAULT;
+>  done:
+>  	end_current_label_crit_section(label);
+> -
+> +	kfree(name);
+>  	return error;
+>  }
+>  
+> diff --git a/security/security.c b/security/security.c
+> index 79d82cb6e4696..f27c885ee98db 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2267,11 +2267,11 @@ int security_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+>  }
+>  EXPORT_SYMBOL(security_sock_rcv_skb);
+>  
+> -int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
+> -				      int __user *optlen, unsigned len)
+> +int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
+> +				      sockptr_t optlen, unsigned int len)
+>  {
+>  	return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
+> -				optval, optlen, len);
+> +			     optval, optlen, len);
+>  }
+>  
+>  int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb, u32 *secid)
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index f553c370397ee..0bdddeba90a6c 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -5119,11 +5119,12 @@ static int selinux_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+>  	return err;
+>  }
+>  
+> -static int selinux_socket_getpeersec_stream(struct socket *sock, char __user *optval,
+> -					    int __user *optlen, unsigned len)
+> +static int selinux_socket_getpeersec_stream(struct socket *sock,
+> +					    sockptr_t optval, sockptr_t optlen,
+> +					    unsigned int len)
+>  {
+>  	int err = 0;
+> -	char *scontext;
+> +	char *scontext = NULL;
+>  	u32 scontext_len;
+>  	struct sk_security_struct *sksec = sock->sk->sk_security;
+>  	u32 peer_sid = SECSID_NULL;
+> @@ -5139,17 +5140,15 @@ static int selinux_socket_getpeersec_stream(struct socket *sock, char __user *op
+>  				      &scontext_len);
+>  	if (err)
+>  		return err;
+> -
+>  	if (scontext_len > len) {
+>  		err = -ERANGE;
+>  		goto out_len;
+>  	}
+>  
+> -	if (copy_to_user(optval, scontext, scontext_len))
+> +	if (copy_to_sockptr(optval, scontext, scontext_len))
+>  		err = -EFAULT;
+> -
+>  out_len:
+> -	if (put_user(scontext_len, optlen))
+> +	if (copy_to_sockptr(optlen, &scontext_len, sizeof(scontext_len)))
+>  		err = -EFAULT;
+>  	kfree(scontext);
+>  	return err;
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index b6306d71c9088..2bd7fadf7fb4c 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -4006,12 +4006,12 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+>   * returns zero on success, an error code otherwise
+>   */
+>  static int smack_socket_getpeersec_stream(struct socket *sock,
+> -					  char __user *optval,
+> -					  int __user *optlen, unsigned len)
+> +					  sockptr_t optval, sockptr_t optlen,
+> +					  unsigned int len)
+>  {
+>  	struct socket_smack *ssp;
+>  	char *rcp = "";
+> -	int slen = 1;
+> +	u32 slen = 1;
+>  	int rc = 0;
+>  
+>  	ssp = sock->sk->sk_security;
+> @@ -4019,15 +4019,16 @@ static int smack_socket_getpeersec_stream(struct socket *sock,
+>  		rcp = ssp->smk_packet->smk_known;
+>  		slen = strlen(rcp) + 1;
+>  	}
+> -
+> -	if (slen > len)
+> +	if (slen > len) {
+>  		rc = -ERANGE;
+> -	else if (copy_to_user(optval, rcp, slen) != 0)
+> -		rc = -EFAULT;
+> +		goto out_len;
+> +	}
+>  
+> -	if (put_user(slen, optlen) != 0)
+> +	if (copy_to_sockptr(optval, rcp, slen))
+> +		rc = -EFAULT;
+> +out_len:
+> +	if (copy_to_sockptr(optlen, &slen, sizeof(slen)))
+>  		rc = -EFAULT;
+> -
+>  	return rc;
+>  }
+>  
+>
