@@ -2,120 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D15F3C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Oct 2022 09:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1198C43217
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Oct 2022 13:12:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229568AbiJUJjm (ORCPT
+        id S230128AbiJUNM3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Oct 2022 05:39:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51728 "EHLO
+        Fri, 21 Oct 2022 09:12:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbiJUJjl (ORCPT
+        with ESMTP id S230057AbiJUNM2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Oct 2022 05:39:41 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D4624362F;
-        Fri, 21 Oct 2022 02:39:36 -0700 (PDT)
-Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.53])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Mtzp02GvDz15Lwd;
-        Fri, 21 Oct 2022 17:34:48 +0800 (CST)
-Received: from ubuntu1804.huawei.com (10.67.174.58) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 21 Oct 2022 17:39:34 +0800
-From:   Xiu Jianfeng <xiujianfeng@huawei.com>
-To:     <john.johansen@canonical.com>, <paul@paul-moore.com>,
-        <serge@hallyn.com>
-CC:     <apparmor@lists.ubuntu.com>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] apparmor: Fix memleak issue in unpack_profile()
-Date:   Fri, 21 Oct 2022 17:36:02 +0800
-Message-ID: <20221021093602.102839-1-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 21 Oct 2022 09:12:28 -0400
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18950371A5;
+        Fri, 21 Oct 2022 06:12:15 -0700 (PDT)
+Received: (Authenticated sender: nicolas.bouchinet@clip-os.org)
+        by mail.gandi.net (Postfix) with ESMTPSA id 3D08A4000F;
+        Fri, 21 Oct 2022 13:12:08 +0000 (UTC)
+Date:   Fri, 21 Oct 2022 15:12:07 +0200
+From:   Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-integrity@vger.kernel.org, philippe.trebuchet@ssi.gouv.fr,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, casey@schaufler-ca.com, davem@davemloft.net,
+        lucien.xin@gmail.com, vgoyal@redhat.com, omosnace@redhat.com,
+        mortonm@chromium.org, nicolas.bouchinet@ssi.gouv.fr,
+        mic@digikod.net, cgzones@googlemail.com,
+        linux-security-module@vger.kernel.org, brauner@kernel.org,
+        keescook@chromium.org
+Subject: Re: [PATCH] evm: Correct inode_init_security hooks behaviors
+Message-ID: <Y1Kapxz65g+wlv8r@archlinux>
+References: <Y1FTSIo+1x+4X0LS@archlinux>
+ <CAHC9VhS-RwQwg3o0+8n-UsqvhpR+WESOsFQ3T_ax1YWY51Eksw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.174.58]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500023.china.huawei.com (7.185.36.114)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhS-RwQwg3o0+8n-UsqvhpR+WESOsFQ3T_ax1YWY51Eksw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Before aa_alloc_profile(), it has allocated string for @*ns_name if @tmpns
-is not NULL, so directly return -ENOMEM if aa_alloc_profile() failed will
-cause a memleak issue, and even if aa_alloc_profile() succeed, in the
-@fail_profile tag of aa_unpack(), it need to free @ns_name as well, this
-patch fixes them.
+Hi, thank for your reply,
 
-Fixes: 736ec752d95e ("AppArmor: policy routines for loading and unpacking policy")
-Fixes: 04dc715e24d0 ("apparmor: audit policy ns specified in policy load")
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
----
- security/apparmor/policy_unpack.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+On Thu, Oct 20, 2022 at 11:02:07AM -0400, Paul Moore wrote:
+> On Thu, Oct 20, 2022 at 9:55 AM Nicolas Bouchinet
+> <nicolas.bouchinet@clip-os.org> wrote:
+> >
+> > From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> >
+> > Fixes a NULL pointer dereference occuring in the
+> > `evm_protected_xattr_common` function of the EVM LSM. The bug is
+> > triggered if a `inode_init_security` hook returns 0 without initializing
+> > the given `struct xattr` fields (which is the case of BPF) and if no
+> > other LSM overrides thoses fields after. This also leads to memory
+> > leaks.
+> 
+> You'll have to forgive me, my connection is poor at the moment and my
+> time is limited, but why not simply add some additional checking at
+> the top of evm_inode_init_security()? The LSM hook already memset()'s
+> the passed lsm_attrs to zero so xattr::{name,value,value_len} should
+> all be zero/NULL.  Can you help me understand why that is not
+> possible?
+> 
+> Based on my current understanding, I believe this is something that
+> should be addressed at the IMA/EVM level and not necessairly at the
+> LSM layer.
 
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index 2e028d540c6b..1bf8cfb8700a 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -858,8 +858,11 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
- 	}
- 
- 	profile = aa_alloc_profile(name, NULL, GFP_KERNEL);
--	if (!profile)
--		return ERR_PTR(-ENOMEM);
-+	if (!profile) {
-+		info = "out of memory";
-+		error = -ENOMEM;
-+		goto fail;
-+	}
- 	rules = list_first_entry(&profile->rules, typeof(*rules), list);
- 
- 	/* profile renaming is optional */
-@@ -1090,6 +1093,10 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
- 	if (error == 0)
- 		/* default error covers most cases */
- 		error = -EPROTO;
-+	if (*ns_name) {
-+		kfree(*ns_name);
-+		*ns_name = NULL;
-+	}
- 	if (profile)
- 		name = NULL;
- 	else if (!name)
-@@ -1392,6 +1399,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
- {
- 	struct aa_load_ent *tmp, *ent;
- 	struct aa_profile *profile = NULL;
-+	char *ns_name = NULL;
- 	int error;
- 	struct aa_ext e = {
- 		.start = udata->data,
-@@ -1401,7 +1409,6 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
- 
- 	*ns = NULL;
- 	while (e.pos < e.end) {
--		char *ns_name = NULL;
- 		void *start;
- 		error = verify_header(&e, e.pos == e.start, ns);
- 		if (error)
-@@ -1432,6 +1439,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
- 
- 		ent->new = profile;
- 		ent->ns_name = ns_name;
-+		ns_name = NULL;
- 		list_add_tail(&ent->list, lh);
- 	}
- 	udata->abi = e.version & K_ABI_MASK;
-@@ -1452,6 +1460,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
- 	return 0;
- 
- fail_profile:
-+	kfree(ns_name);
- 	aa_put_profile(profile);
- 
- fail:
--- 
-2.17.1
+The NULL pointer dereference occurs in the `evm_protected_xattr_common()`
+function which was originaly called in `evm_inode_init_security()`. I
+directly fixed this part at the `evm_inode_init_security()` level.
 
+This patch also addresses other problems which partially occurs at the
+`security_inode_init_security()` hook level.
+More precisely, based on my understanding, the hook is supposed to initialize
+every hooked LSM security xattr and next, if evm is enabled, protect them using 
+a HMAC algorithm. However, in the current behavior the use of the
+`call_int_hook()` macro by `security_inode_init_security()` overwrites the 
+previously initialized xattr for each iteration of the `hlist_for_each_entry()`
+loop. Thus, only the last security attribute is taken into account by
+evm and freed. Checking the NULL pointer at evm level does not solve this
+memory leak.
+
+Based on other replies, I inlined the `call_int_hook()` macro directly into the
+`security_inode_init_security()` hook.
+> 
+> > Adds a `call_int_hook_xattr` macro that fetches and feed the
+> > `new_xattrs` array with every called hook xattr values.
+> >
+> > Adds a `evm_init_hmacs` function which init the EVM hmac using every
+> > entry of the array contrary to `evm_init_hmac`.
+> >
+> > Fixes the `evm_inode_init_security` function to use `evm_init_hmacs`.
+> >
+> > The `MAX_LSM_EVM_XATTR` value has been raised to 5 which gives room for
+> > SMACK, SELinux, Apparmor, BPF and IMA/EVM security attributes.
+> >
+> > Changes the default return value of the `inode_init_security` hook
+> > definition to `-EOPNOTSUPP`.
+> >
+> > Changes the hook documentation to match the behavior of the LSMs using
+> > it (only xattr->value is initialised with kmalloc and thus is the only
+> > one that should be kfreed by the caller).
+> >
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > ---
+> >  include/linux/lsm_hook_defs.h       |  2 +-
+> >  include/linux/lsm_hooks.h           |  4 ++--
+> >  security/integrity/evm/evm.h        |  2 ++
+> >  security/integrity/evm/evm_crypto.c | 23 ++++++++++++++++++++++-
+> >  security/integrity/evm/evm_main.c   | 11 ++++++-----
+> >  security/security.c                 | 29 ++++++++++++++++++++++++++---
+> >  6 files changed, 59 insertions(+), 12 deletions(-)
+> 
+> -- 
+> paul-moore.com
+
+Thank for your time,
+
+Best regards,
+
+Nicolas Bouchinet
