@@ -2,152 +2,97 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A711FA373E
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Oct 2022 16:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3E6C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Oct 2022 21:42:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbiJUQrw (ORCPT
+        id S229793AbiJUVmf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Oct 2022 12:47:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48512 "EHLO
+        Fri, 21 Oct 2022 17:42:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231184AbiJUQr0 (ORCPT
+        with ESMTP id S229587AbiJUVmf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Oct 2022 12:47:26 -0400
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 192302D74E;
-        Fri, 21 Oct 2022 09:47:09 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Mv9FW07TczB045g;
-        Sat, 22 Oct 2022 00:40:47 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwBnXpL0zFJjUPbfAA--.42123S2;
-        Fri, 21 Oct 2022 17:46:50 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nicolas.bouchinet@clip-os.org
-Subject: [RFC][PATCH] bpf: Check xattr name/value pair from bpf_lsm_inode_init_security()
-Date:   Fri, 21 Oct 2022 18:46:26 +0200
-Message-Id: <20221021164626.3729012-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 21 Oct 2022 17:42:35 -0400
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 046EC2A8A4E
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Oct 2022 14:42:33 -0700 (PDT)
+Received: by mail-qk1-x730.google.com with SMTP id 8so2921997qka.1
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Oct 2022 14:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=T2R37JCCGa30iGWXb8Vf5Wr0AmT8I6MQXcpjnTh2wkY=;
+        b=I80BmYwmapXMsaFaO7z6zYbaghq7BAhIzcq3bRl9+ijNCbn+7jyWwY0lu51t1rXyFx
+         mDpjRRP6dUKPk7ucQ12SPEPo/rKwU8pKTkN+duv7lVufggHpQttUQ8vU0+M/J/sE80oJ
+         C1PuDo5G8mzbJFa3TGFzOk66a6+I3X53Vg0Dk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T2R37JCCGa30iGWXb8Vf5Wr0AmT8I6MQXcpjnTh2wkY=;
+        b=l3d6f9oQM7UN6Gz/xEAfBJi8Vz1hLAcktRskeuDvPTSpcv4IaQknsFQAQSro03S0OI
+         lDnhikQIpQNWqbh4Yn5Q362zClXXXMJqjoYKfrHPZo92a8vieUZhuwmPvsc9hp4ywTsq
+         h+yyRlXXD3gutBQFBuOHBN14KPG6VkonJeu1mbT23m0iFA7Yu9aVqNOm/9LzW0yl1fzE
+         cRUmLDNK8jjj6N56gqWJUgpK6iCR1votaaRB7QwXilqgPMLypszwJuYOmSCteUXUgidN
+         n77vfZSQXzYL/t9RaZvOBvttGECbj2jMNqKg89GP7MVtx4TPgpsRbyBlBZ3FSu5Q7xfQ
+         t1Fg==
+X-Gm-Message-State: ACrzQf0vD6zN9PHJ6VClRs5R/03Uir634L02PYbJ/PtEh+bPYdTY5UHW
+        /7QU59CXtjhHuNM/9wuofEyOdfSx7cd3Yw==
+X-Google-Smtp-Source: AMsMyM67qYRFd98b014LHB1k7K4A1UTlOfQT35YKBe7LaMaKzVqMd3T8cM7emFqQkKQbWuXRPUGCDw==
+X-Received: by 2002:a05:620a:298a:b0:6ee:e31f:6247 with SMTP id r10-20020a05620a298a00b006eee31f6247mr14785047qkp.744.1666388552770;
+        Fri, 21 Oct 2022 14:42:32 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id v2-20020a05620a0f0200b006cfc1d827cbsm10801027qkl.9.2022.10.21.14.42.32
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Oct 2022 14:42:32 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id e83so4835346ybh.1
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Oct 2022 14:42:32 -0700 (PDT)
+X-Received: by 2002:a05:6902:124f:b0:66e:e3da:487e with SMTP id
+ t15-20020a056902124f00b0066ee3da487emr19715171ybu.310.1666388551764; Fri, 21
+ Oct 2022 14:42:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwBnXpL0zFJjUPbfAA--.42123S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJFW3Kr13ur13JFW3Gw1UAwb_yoWrJw1xpF
-        ZxG3W3Grn8AFsrWrZ3K3W29a1Sg3yrWr47GrZxJr1UA3Z2vrn7tr40yF1YvFyfJrWDKayF
-        qa1aqr45Ww1UAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-        w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-        6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-        kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
-        67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
-        uYvjxU4NB_UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAMBF1jj4CIhAAAs3
-X-CFilter-Loop: Reflected
+References: <CAHC9VhSXRDUw0CGLqinogP6g5rHWz4rg3N4Dr-VV8RshWt56Jw@mail.gmail.com>
+In-Reply-To: <CAHC9VhSXRDUw0CGLqinogP6g5rHWz4rg3N4Dr-VV8RshWt56Jw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 21 Oct 2022 14:42:15 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgXx=0AKgMA8dGRROi5EarYxkEfHNu_zsezLgjtPrqNow@mail.gmail.com>
+Message-ID: <CAHk-=wgXx=0AKgMA8dGRROi5EarYxkEfHNu_zsezLgjtPrqNow@mail.gmail.com>
+Subject: Re: [GIT PULL] SELinux fixes for v6.1 (#1)
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Thu, Oct 20, 2022 at 8:20 AM Paul Moore <paul@paul-moore.com> wrote:
+>
+>         The patch, while still fairly small, is a bit
+> larger than one might expect from a simple s/GFP_KERNEL/GFP_ATOMIC/
+> conversion because we added support for the function to be called with
+> different gfp flags depending on the context, preserving GFP_KERNEL
+> for those cases that can safely sleep.
 
-BPF LSM allows security modules to directly attach to the security hooks,
-with the potential of not meeting the kernel expectation.
+Hmm.
 
-This is the case for the inode_init_security hook, for which the kernel
-expects that name and value are set if the hook implementation returns
-zero.
+So I've pulled this, but that patch actually makes it obvious that
+there is only one single possible function for "convert->func", namely
+that "convert_context()" function.
 
-Consequently, not meeting the kernel expectation can cause the kernel to
-crash. One example is evm_protected_xattr_common() which expects the
-req_xattr_name parameter to be always not NULL.
+So why is that an indirect function call in the first place? That just
+makes for slower (particularly in this age of indirect call
+speculation costs), and bigger code, and only makes it harder to see
+what is going on.
 
-Introduce a level of indirection in BPF LSM, for the inode_init_security
-hook, to check the validity of the name and value set by security modules.
+In the call-site, it looks like "Oh, this will call some
+conversion-specific callback function".
 
-Encapsulate bpf_lsm_inode_init_security(), the existing attachment point,
-with bpf_inode_init_security(), the new function. After the attachment
-point is called, return -EOPNOTSUPP if the xattr name is not set, -ENOMEM
-if the xattr value is not set.
+In reality, there is no context-specific callback, there is only ever
+convert_context().
 
-As the name still cannot be set, rely on future patches to the eBPF
-verifier or introducing new kfuncs/helpers to ensure its correctness.
+Inefficient and misleading code. Not a great combination.
 
-Finally, as proposed by Nicolas, update the LSM hook documentation for the
-inode_init_security hook, to reflect the current behavior (only the xattr
-value is allocated).
-
-Cc: stable@vger.kernel.org
-Fixes: 520b7aa00d8cd ("bpf: lsm: Initialize the BPF LSM hooks")
-Reported-by: Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- include/linux/lsm_hooks.h |  4 ++--
- security/bpf/hooks.c      | 25 +++++++++++++++++++++++++
- 2 files changed, 27 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 4ec80b96c22e..f44d45f4737f 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -229,8 +229,8 @@
-  *	This hook is called by the fs code as part of the inode creation
-  *	transaction and provides for atomic labeling of the inode, unlike
-  *	the post_create/mkdir/... hooks called by the VFS.  The hook function
-- *	is expected to allocate the name and value via kmalloc, with the caller
-- *	being responsible for calling kfree after using them.
-+ *	is expected to allocate the value via kmalloc, with the caller
-+ *	being responsible for calling kfree after using it.
-  *	If the security module does not use security attributes or does
-  *	not wish to put a security attribute on this particular inode,
-  *	then it should return -EOPNOTSUPP to skip this processing.
-diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
-index e5971fa74fd7..492c07ba6722 100644
---- a/security/bpf/hooks.c
-+++ b/security/bpf/hooks.c
-@@ -6,11 +6,36 @@
- #include <linux/lsm_hooks.h>
- #include <linux/bpf_lsm.h>
- 
-+static int bpf_inode_init_security(struct inode *inode, struct inode *dir,
-+				   const struct qstr *qstr, const char **name,
-+				   void **value, size_t *len)
-+{
-+	int ret;
-+
-+	ret = bpf_lsm_inode_init_security(inode, dir, qstr, name, value, len);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * As the name cannot be set by the eBPF programs directly, eBPF will
-+	 * be responsible for its correctness through the verifier or
-+	 * appropriate kfuncs/helpers.
-+	 */
-+	if (name && !*name)
-+		return -EOPNOTSUPP;
-+
-+	if (value && !*value)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
- static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init = {
- 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
- 	LSM_HOOK_INIT(NAME, bpf_lsm_##NAME),
- 	#include <linux/lsm_hook_defs.h>
- 	#undef LSM_HOOK
-+	LSM_HOOK_INIT(inode_init_security, bpf_inode_init_security),
- 	LSM_HOOK_INIT(inode_free_security, bpf_inode_storage_free),
- 	LSM_HOOK_INIT(task_free, bpf_task_storage_free),
- };
--- 
-2.25.1
-
+              Linus
