@@ -2,266 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B51C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Oct 2022 15:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD3FC4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Oct 2022 15:26:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230333AbiJUPQD (ORCPT
+        id S229531AbiJUP0y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Oct 2022 11:16:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40180 "EHLO
+        Fri, 21 Oct 2022 11:26:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230259AbiJUPPs (ORCPT
+        with ESMTP id S229441AbiJUP0x (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Oct 2022 11:15:48 -0400
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A869F6812;
-        Fri, 21 Oct 2022 08:15:03 -0700 (PDT)
-Received: (Authenticated sender: nicolas.bouchinet@clip-os.org)
-        by mail.gandi.net (Postfix) with ESMTPSA id 067F3240009;
-        Fri, 21 Oct 2022 15:14:54 +0000 (UTC)
-Date:   Fri, 21 Oct 2022 17:14:53 +0200
-From:   Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
-To:     linux-integrity@vger.kernel.org
-Cc:     philippe.trebuchet@ssi.gouv.fr, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, casey@schaufler-ca.com, davem@davemloft.net,
-        lucien.xin@gmail.com, vgoyal@redhat.com, omosnace@redhat.com,
-        mortonm@chromium.org, nicolas.bouchinet@ssi.gouv.fr,
-        mic@digikod.net, cgzones@googlemail.com,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v2] evm: Correct inode_init_security hooks behaviors
-Message-ID: <Y1K3bf+dtNnVe7DG@archlinux>
+        Fri, 21 Oct 2022 11:26:53 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2FDD16EA39;
+        Fri, 21 Oct 2022 08:26:52 -0700 (PDT)
+Received: from frapeml500002.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Mv7Z75xFXz6H74v;
+        Fri, 21 Oct 2022 23:25:03 +0800 (CST)
+Received: from lhrpeml500004.china.huawei.com (7.191.163.9) by
+ frapeml500002.china.huawei.com (7.182.85.205) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Fri, 21 Oct 2022 17:26:51 +0200
+Received: from mscphis00759.huawei.com (10.123.66.134) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Fri, 21 Oct 2022 16:26:50 +0100
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+To:     <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <artem.kuzin@huawei.com>
+Subject: [PATCH v8 00/12] Network support for Landlock
+Date:   Fri, 21 Oct 2022 23:26:32 +0800
+Message-ID: <20221021152644.155136-1-konstantin.meskhidze@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.66.134]
+X-ClientProxiedBy: mscpeml100002.china.huawei.com (7.188.26.75) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+Hi,
+This is a new V8 patch related to Landlock LSM network confinement.
+It is based on the landlock's -next branch on top of v6.1-rc1 kernel version:
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
 
-Fixes a NULL pointer dereference occurring in the
-`evm_protected_xattr_common` function of the EVM LSM. The bug is
-triggered if a `inode_init_security` hook returns 0 without initializing
-the given `struct xattr` fields (which is the case of BPF) and if no
-other LSM overrides thoses fields after. This also leads to memory
-leaks.
+It brings refactoring of previous patch version V7.
+Mostly there are minor fixes of logic and typos.
 
-Adds a `call_int_hook_xattr` macro that fetches and feed the
-`new_xattrs` array with every called hook xattr values.
+All test were run in QEMU evironment and compiled with
+ -static flag.
+ 1. network_test: 18/18 tests passed.
+ 2. base_test: 7/7 tests passed.
+ 3. fs_test: 78/78 tests passed.
+ 4. ptrace_test: 8/8 tests passed.
 
-Adds a `evm_init_hmacs` function which init the EVM hmac using every
-entry of the array contrary to `evm_init_hmac`.
+Previous versions:
+v7: https://lore.kernel.org/linux-security-module/20220829170401.834298-1-konstantin.meskhidze@huawei.com/
+v6: https://lore.kernel.org/linux-security-module/20220621082313.3330667-1-konstantin.meskhidze@huawei.com/
+v5: https://lore.kernel.org/linux-security-module/20220516152038.39594-1-konstantin.meskhidze@huawei.com
+v4: https://lore.kernel.org/linux-security-module/20220309134459.6448-1-konstantin.meskhidze@huawei.com/
+v3: https://lore.kernel.org/linux-security-module/20220124080215.265538-1-konstantin.meskhidze@huawei.com/
+v2: https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
+v1: https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
 
-Fixes the `evm_inode_init_security` function to use `evm_init_hmacs`.
+Konstantin Meskhidze (12):
+  landlock: Make ruleset's access masks more generic
+  landlock: Refactor landlock_find_rule/insert_rule
+  landlock: Refactor merge/inherit_ruleset functions
+  landlock: Move unmask_layers() and init_layer_masks()
+  landlock: Refactor unmask_layers() and init_layer_masks()
+  landlock: Refactor landlock_add_rule() syscall
+  landlock: Add network rules support
+  landlock: Implement TCP network hooks
+  selftests/landlock: Share enforce_ruleset()
+  selftests/landlock: Add 10 new test suites dedicated to network
+  samples/landlock: Add network demo
+  landlock: Document Landlock's network support
 
-The `MAX_LSM_EVM_XATTR` value has been raised to 5 which gives room for
-SMACK, SELinux, Apparmor, BPF and IMA/EVM security attributes.
+ Documentation/userspace-api/landlock.rst     |  72 +-
+ include/uapi/linux/landlock.h                |  49 ++
+ samples/landlock/sandboxer.c                 | 129 ++-
+ security/landlock/Kconfig                    |   1 +
+ security/landlock/Makefile                   |   2 +
+ security/landlock/fs.c                       | 168 +---
+ security/landlock/limits.h                   |   7 +-
+ security/landlock/net.c                      | 164 ++++
+ security/landlock/net.h                      |  26 +
+ security/landlock/ruleset.c                  | 412 ++++++++--
+ security/landlock/ruleset.h                  | 176 +++-
+ security/landlock/setup.c                    |   2 +
+ security/landlock/syscalls.c                 | 163 ++--
+ tools/testing/selftests/landlock/base_test.c |   2 +-
+ tools/testing/selftests/landlock/common.h    |  10 +
+ tools/testing/selftests/landlock/config      |   4 +
+ tools/testing/selftests/landlock/fs_test.c   |  75 +-
+ tools/testing/selftests/landlock/net_test.c  | 823 +++++++++++++++++++
+ 18 files changed, 1972 insertions(+), 313 deletions(-)
+ create mode 100644 security/landlock/net.c
+ create mode 100644 security/landlock/net.h
+ create mode 100644 tools/testing/selftests/landlock/net_test.c
 
-Changes the default return value of the `inode_init_security` hook
-definition to `-EOPNOTSUPP`.
+--
+2.25.1
 
-Changes the hook documentation to match the behavior of the LSMs using
-it (only xattr->value is initialised with kmalloc and thus is the only
-one that should be kfreed by the caller).
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
----
-
-Changes since v1:
-https://lore.kernel.org/linux-integrity/Y1FTSIo+1x+4X0LS@archlinux/
-* The `call_int_hook_xattr` macro has been inlined into the
-  `security_inode_init_security` hook (as suggested by Paul Moor,
-  Mickaël Salaün and Casey Schaufler).
-* The MAX_LSM_EVM_XATTR value is processed based on compiled LSMs (as
-  proposed by Casey Schaufler).
-* Various typos and cosmetic changes has been fixed (as suggested by
-  Mickaël Salaün)
-* A MAX_LSM_EVM_XATTR test has been wrapped in a WAN_ON_ONCE macro (as
-  suggested by Mickaël Salaün).
----
- include/linux/lsm_hook_defs.h       |  2 +-
- include/linux/lsm_hooks.h           |  4 ++--
- security/integrity/evm/evm.h        |  2 ++
- security/integrity/evm/evm_crypto.c | 22 ++++++++++++++++++++++
- security/integrity/evm/evm_main.c   |  9 +++++----
- security/security.c                 | 28 +++++++++++++++++++++-------
- 6 files changed, 53 insertions(+), 14 deletions(-)
-
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 806448173033..e5dd0c0f6345 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -111,7 +111,7 @@ LSM_HOOK(int, 0, path_notify, const struct path *path, u64 mask,
- 	 unsigned int obj_type)
- LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
- LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
--LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
-+LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
- 	 struct inode *dir, const struct qstr *qstr, const char **name,
- 	 void **value, size_t *len)
- LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 84a0d7e02176..95aff9383de1 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -229,8 +229,8 @@
-  *	This hook is called by the fs code as part of the inode creation
-  *	transaction and provides for atomic labeling of the inode, unlike
-  *	the post_create/mkdir/... hooks called by the VFS.  The hook function
-- *	is expected to allocate the name and value via kmalloc, with the caller
-- *	being responsible for calling kfree after using them.
-+ *	is expected to allocate the value via kmalloc, with the caller
-+ *	being responsible for calling kfree after using it.
-  *	If the security module does not use security attributes or does
-  *	not wish to put a security attribute on this particular inode,
-  *	then it should return -EOPNOTSUPP to skip this processing.
-diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
-index f8b8c5004fc7..a2f9886e924d 100644
---- a/security/integrity/evm/evm.h
-+++ b/security/integrity/evm/evm.h
-@@ -60,6 +60,8 @@ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
- 		  struct evm_digest *data);
- int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
- 		  char *hmac_val);
-+int evm_init_hmacs(struct inode *inode, const struct xattr *xattrs,
-+		  char *hmac_val);
- int evm_init_secfs(void);
- 
- #endif
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 708de9656bbd..db6868875e09 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -385,6 +385,28 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
- 	return rc;
- }
- 
-+int evm_protected_xattr(const char *req_xattr_name);
-+
-+int evm_init_hmacs(struct inode *inode, const struct xattr *lsm_xattrs,
-+		  char *hmac_val)
-+{
-+	struct shash_desc *desc;
-+
-+	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
-+	if (IS_ERR(desc)) {
-+		pr_info("init_desc failed\n");
-+		return PTR_ERR(desc);
-+	}
-+
-+	for (int i = 0; lsm_xattrs[i].value != NULL; i++) {
-+		if (evm_protected_xattr(lsm_xattrs[i].name))
-+			crypto_shash_update(desc, lsm_xattrs[i].value, lsm_xattrs[i].value_len);
-+	}
-+	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
-+	kfree(desc);
-+	return 0;
-+}
-+
- int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
- 		  char *hmac_val)
- {
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 2e6fb6e2ffd2..4f89b9eaf028 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -284,6 +284,8 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
- 	int found = 0;
- 	struct xattr_list *xattr;
- 
-+	if (!req_xattr_name)
-+		return found;
- 	namelen = strlen(req_xattr_name);
- 	list_for_each_entry_lockless(xattr, &evm_config_xattrnames, list) {
- 		if (!all_xattrs && !xattr->enabled)
-@@ -305,7 +307,7 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
- 	return found;
- }
- 
--static int evm_protected_xattr(const char *req_xattr_name)
-+int evm_protected_xattr(const char *req_xattr_name)
- {
- 	return evm_protected_xattr_common(req_xattr_name, false);
- }
-@@ -841,8 +843,7 @@ int evm_inode_init_security(struct inode *inode,
- 	struct evm_xattr *xattr_data;
- 	int rc;
- 
--	if (!(evm_initialized & EVM_INIT_HMAC) ||
--	    !evm_protected_xattr(lsm_xattr->name))
-+	if (!(evm_initialized & EVM_INIT_HMAC))
- 		return 0;
- 
- 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
-@@ -850,7 +851,7 @@ int evm_inode_init_security(struct inode *inode,
- 		return -ENOMEM;
- 
- 	xattr_data->data.type = EVM_XATTR_HMAC;
--	rc = evm_init_hmac(inode, lsm_xattr, xattr_data->digest);
-+	rc = evm_init_hmacs(inode, lsm_xattr, xattr_data->digest);
- 	if (rc < 0)
- 		goto out;
- 
-diff --git a/security/security.c b/security/security.c
-index 14d30fec8a00..cf11bd7d6a1b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -30,7 +30,11 @@
- #include <linux/msg.h>
- #include <net/flow.h>
- 
--#define MAX_LSM_EVM_XATTR	2
-+#define MAX_LSM_EVM_XATTR                                \
-+	((IS_ENABLED(CONFIG_EVM) ? 1 : 0) +              \
-+	 (IS_ENABLED(CONFIG_SECURITY_SELINUX) ? 1 : 0) + \
-+	 (IS_ENABLED(CONFIG_SECURITY_SMACK) ? 1 : 0) +   \
-+	 (IS_ENABLED(CONFIG_BPF_LSM) ? 1 : 0))
- 
- /* How many LSMs were built into the kernel? */
- #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
-@@ -1091,9 +1095,11 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 				 const struct qstr *qstr,
- 				 const initxattrs initxattrs, void *fs_data)
- {
-+	int i = 0;
-+	int ret = -EOPNOTSUPP;
- 	struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
- 	struct xattr *lsm_xattr, *evm_xattr, *xattr;
--	int ret;
-+	struct security_hook_list *hook_ptr;
- 
- 	if (unlikely(IS_PRIVATE(inode)))
- 		return 0;
-@@ -1103,15 +1109,23 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 				     dir, qstr, NULL, NULL, NULL);
- 	memset(new_xattrs, 0, sizeof(new_xattrs));
- 	lsm_xattr = new_xattrs;
--	ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
--						&lsm_xattr->name,
--						&lsm_xattr->value,
--						&lsm_xattr->value_len);
-+	hlist_for_each_entry(hook_ptr, &security_hook_heads.inode_init_security, list) {
-+		ret = hook_ptr->hook.inode_init_security(inode, dir, qstr, &lsm_xattr->name,
-+				&lsm_xattr->value, &lsm_xattr->value_len);
-+		if (ret == -EOPNOTSUPP)
-+			continue;
-+		if (WARN_ON_ONCE(i >= MAX_LSM_EVM_XATTR))
-+			ret = -ENOMEM;
-+		if (ret != 0)
-+			break;
-+		lsm_xattr++;
-+		i++;
-+	}
- 	if (ret)
- 		goto out;
- 
- 	evm_xattr = lsm_xattr + 1;
--	ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
-+	ret = evm_inode_init_security(inode, new_xattrs, evm_xattr);
- 	if (ret)
- 		goto out;
- 	ret = initxattrs(inode, new_xattrs, fs_data);
--- 
-2.38.1
