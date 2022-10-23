@@ -2,147 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F38ECAAA1
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 Oct 2022 05:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6622EC433FE
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 Oct 2022 07:27:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229610AbiJWFVN (ORCPT
+        id S229707AbiJWH1u (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 23 Oct 2022 01:21:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53890 "EHLO
+        Sun, 23 Oct 2022 03:27:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbiJWFVN (ORCPT
+        with ESMTP id S230124AbiJWH1q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 23 Oct 2022 01:21:13 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0B846BD6F;
-        Sat, 22 Oct 2022 22:21:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id C70B6CE091A;
-        Sun, 23 Oct 2022 05:21:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60BD8C433D6;
-        Sun, 23 Oct 2022 05:21:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666502467;
-        bh=dasRCl8KgIolT33SnyjsTcXg1Das0YUyzkCMoGYPv9w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T9Z1GP2FtahJXo4R0l9FL6uKFrjBBbYwcfMb8g1qW0XpuEcZR54Wo3/titEgBE2r0
-         xsrniuNLRhS3QNtq2WXBAZ9Hh55Zv7xa/ZdXKZASLWIjZ7+qCqbcPXDSdkj9yzghUd
-         x2kISfwEO27+A0/ZvzsranXbN5TsPeOKAYqzL/VQAS+PRw2oRHjwylu21ILVy0yKe7
-         kYx22a7pyhrvWKxWU5TELbu0pg/2PLow6QxuiQoOB4PmD6Yg0Q5vwJzgXlyPVd1hFy
-         WRX7XmrqOenuTPUDh94fvat+9iWdMhdPCTd2Gt5bqMloZYvllTlrcoNZI6QBDBlP3d
-         pZ7t3O2uJCB6g==
-Date:   Sun, 23 Oct 2022 08:21:00 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Nikolaus Voss <nv@vosn.de>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Yael Tzur <yaelt@google.com>,
-        Cyril Hrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] KEYS: encrypted: fix key instantiation with
- user-provided data
-Message-ID: <Y1TPPOuF4qm4eHTx@kernel.org>
-References: <20221013064308.857011E25@mail.steuer-voss.de>
- <Y1TOv6F8KNXvNx9l@kernel.org>
+        Sun, 23 Oct 2022 03:27:46 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0787260503;
+        Sun, 23 Oct 2022 00:27:39 -0700 (PDT)
+Received: from fsav118.sakura.ne.jp (fsav118.sakura.ne.jp [27.133.134.245])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 29N7RFOQ082330;
+        Sun, 23 Oct 2022 16:27:15 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav118.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp);
+ Sun, 23 Oct 2022 16:27:15 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 29N7RE9v082325
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Sun, 23 Oct 2022 16:27:14 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <a130dc1f-a187-2957-25c1-974fb9c2569f@I-love.SAKURA.ne.jp>
+Date:   Sun, 23 Oct 2022 16:27:13 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y1TOv6F8KNXvNx9l@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Subject: Re: [PATCH v38 04/39] LSM: Maintain a table of LSM attribute data
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc:     linux-audit@redhat.com, jmorris@namei.org, selinux@vger.kernel.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org
+References: <20220927195421.14713-1-casey@schaufler-ca.com>
+ <20220927195421.14713-5-casey@schaufler-ca.com>
+ <9907d724-4668-cd50-7454-1a8ca86542b0@I-love.SAKURA.ne.jp>
+ <f6b8ac05-6900-f57d-0daf-02d5ae53bc47@schaufler-ca.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <f6b8ac05-6900-f57d-0daf-02d5ae53bc47@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Oct 23, 2022 at 08:18:58AM +0300, Jarkko Sakkinen wrote:
-> On Thu, Oct 13, 2022 at 08:39:58AM +0200, Nikolaus Voss wrote:
-> > Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided
-> > decrypted data") added key instantiation with user provided decrypted data.
-> > The user data is hex-ascii-encoded but was just memcpy'ed to the binary buffer.
-> > Fix this to use hex2bin instead.
-> > 
-> > Old keys created from user provided decrypted data saved with "keyctl pipe"
-> > are still valid, however if the key is recreated from decrypted data the
-> > old key must be converted to the correct format. This can be done with a
-> > small shell script, e.g.:
-> > 
-> > BROKENKEY=abcdefABCDEF1234567890aaaaaaaaaa
-> > NEWKEY=$(echo -ne $BROKENKEY | xxd -p -c32)
-> > keyctl add user masterkey "$(cat masterkey.bin)" @u
-> > keyctl add encrypted testkey "new user:masterkey 32 $NEWKEY" @u
-> > 
-> > It is encouraged to switch to a new key because the effective key size
-> > of the old keys is only half of the specified size.
-> > 
-> > The corresponding test for the Linux Test Project ltp has also been
-> > fixed (see link below).
-> > 
-> > Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided decrypted data")
-> > Cc: stable <stable@kernel.org>
-> > Link: https://lore.kernel.org/ltp/20221006081709.92303897@mail.steuer-voss.de/
-> > Signed-off-by: Nikolaus Voss <nikolaus.voss@haag-streit.com>
-> > ---
-> > Changes
-> > =======
-> > v4: - fixed link
-> > v3: - use generated random key in example, reformat commit message
-> > v2: - clarify commit message, add example to recover old/broken keys
-> >     - improve example in Documentation/security/keys/trusted-encrypted.rst
-> >     - add link to ltp patch
-> > 
-> >  Documentation/security/keys/trusted-encrypted.rst | 3 ++-
-> >  security/keys/encrypted-keys/encrypted.c          | 6 +++---
-> >  2 files changed, 5 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-> > index 0bfb4c339748..9bc9db8ec651 100644
-> > --- a/Documentation/security/keys/trusted-encrypted.rst
-> > +++ b/Documentation/security/keys/trusted-encrypted.rst
-> > @@ -350,7 +350,8 @@ Load an encrypted key "evm" from saved blob::
-> >  
-> >  Instantiate an encrypted key "evm" using user-provided decrypted data::
-> >  
-> > -    $ keyctl add encrypted evm "new default user:kmk 32 `cat evm_decrypted_data.blob`" @u
-> > +    $ evmkey=$(dd if=/dev/urandom bs=1 count=32 | xxd -c32 -p)
-> > +    $ keyctl add encrypted evm "new default user:kmk 32 $evmkey" @u
-> >      794890253
-> >  
-> >      $ keyctl print 794890253
-> > diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-> > index e05cfc2e49ae..1e313982af02 100644
-> > --- a/security/keys/encrypted-keys/encrypted.c
-> > +++ b/security/keys/encrypted-keys/encrypted.c
-> > @@ -627,7 +627,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
-> >  			pr_err("encrypted key: instantiation of keys using provided decrypted data is disabled since CONFIG_USER_DECRYPTED_DATA is set to false\n");
-> >  			return ERR_PTR(-EINVAL);
-> >  		}
-> > -		if (strlen(decrypted_data) != decrypted_datalen) {
-> > +		if (strlen(decrypted_data) != decrypted_datalen * 2) {
-> >  			pr_err("encrypted key: decrypted data provided does not match decrypted data length provided\n");
-> >  			return ERR_PTR(-EINVAL);
-> >  		}
-> > @@ -791,8 +791,8 @@ static int encrypted_init(struct encrypted_key_payload *epayload,
-> >  		ret = encrypted_key_decrypt(epayload, format, hex_encoded_iv);
-> >  	} else if (decrypted_data) {
-> >  		get_random_bytes(epayload->iv, ivsize);
-> > -		memcpy(epayload->decrypted_data, decrypted_data,
-> > -				   epayload->decrypted_datalen);
-> > +		ret = hex2bin(epayload->decrypted_data, decrypted_data,
-> > +			      epayload->decrypted_datalen);
-> >  	} else {
-> >  		get_random_bytes(epayload->iv, ivsize);
-> >  		get_random_bytes(epayload->decrypted_data, epayload->decrypted_datalen);
-> > -- 
-> > 2.34.1
-> > 
+On 2022/10/21 8:42, Casey Schaufler wrote:
+> On 10/13/2022 3:04 AM, Tetsuo Handa wrote:
+>> On 2022/09/28 4:53, Casey Schaufler wrote:
+>>> @@ -483,6 +491,16 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+>>>  {
+>>>  	int i;
+>>>  
+>>> +	/*
+>>> +	 * A security module may call security_add_hooks() more
+>>> +	 * than once. Landlock is one such case.
+>>> +	 */
+>>> +	if (lsm_id == 0 || lsm_idlist[lsm_id - 1] != lsmid)
+>>> +		lsm_idlist[lsm_id++] = lsmid;
+>>> +
+>>> +	if (lsm_id > LSMID_ENTRIES)
+>>> +		panic("%s Too many LSMs registered.\n", __func__);
+>> I'm not happy with LSMID_ENTRIES. This is a way towards forever forbidding LKM-based LSMs.
 > 
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> 
-> Unless there is opposing views, I can pick this.
+> I don't see any way given the locking issues that we're ever going to
+> mix built in security modules and loaded security modules on the same
+> hook lists. The SELinux module deletion code is sufficiently scary that
+> it is being removed. That does not mean that I think loadable modules
+> are impossible, I think it means that their management is going to have
+> to be separate, the same way the BPF programs are handled. The only way
+> that I see a unified hook list is for all the LSMs to be implemented as
+> loadable modules, and I can't see that happening in my lifetime.
 
-Actually, taking this back: please fix the checkpatch warnings first.
+I'm not expecting for unloadable LSM modules.
+I'm expecting for loadable LSM modules.
 
-BR, Jarkko
+I'm not expecting to make all LSM modules to be implemented as loadable
+LSM modules, for some want to associate "security label" to everything
+(including processes which might start before the global init process starts)
+but others do not need to associate "security label" to everything.
+
+> 
+> I can see an LSM like BPF, as I mentioned before, that manages loaded
+> modules. Over the years I've seen several designs that might work. I'm
+> encouraged (and not a little bit frightened) by the success of the BPF
+> work.
+
+There can be LSM modules whose lifetime of hooks match the lifetime of
+a process which registered hooks for that process. In that case, being
+automatically unregistered upon process termination would be preferable.
+
+But there are LSM modules whose lifetime of hooks is irrelevant to a process
+which registered a hook for that process. In that case, we need a method for
+allowing registered hooks to remain even after that process terminated.
+
+Please don't think loadable LSM modules as something that require special
+handling. TOMOYO is an LSM module whose lifetime of hooks is irrelevant to
+a process which registered a hook for that process, but does not need to
+associate "security label" to everything. It has to be trivial to convert
+TOMOYO as a loadable LSM module.
+
+> 
+> Converting the array[LSMID_ENTRIES] implementation to a hlist like the
+> hooks have used would not be that big a project and I don't see that
+> making such a change would be a show-stopper for implementing loadable
+> modules. I think that a lot of other issues would be more significant.
+
+Defining constants for each LSM module (i.e. "LSM: Add an LSM identifier
+for external use") is the show-stopper for implementing loadable modules.
+We won't be able to accept whatever LSM modules to upstream, and we won't
+be able to enable whatever LSM modules in distributor kernels.
+
+LSM modules which cannot define a constant due to either "not accepted
+to upstream" or "not enabled by distributor kernels" will be forbidden.
+I expect that we assign a constant upon module registration (instead of
+API visible constants) if we require all LSM modules to have a constant.
+
+> 
+> I will, on the other hand, listen to compelling arguments. It is not the
+> intention of this code to lock out loadable modules. If I thought it would
+> I would not have proposed it.
+
+This code is exactly for locking out loadable modules.
 
