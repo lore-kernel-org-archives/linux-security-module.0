@@ -2,115 +2,150 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4448ECAAA1
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 Oct 2022 17:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70DCFFA373F
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 Oct 2022 20:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbiJWRUh (ORCPT
+        id S229635AbiJWUki (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 23 Oct 2022 13:20:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51986 "EHLO
+        Sun, 23 Oct 2022 16:40:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229587AbiJWRUg (ORCPT
+        with ESMTP id S229587AbiJWUkh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 23 Oct 2022 13:20:36 -0400
-Received: from sonic304-27.consmr.mail.ne1.yahoo.com (sonic304-27.consmr.mail.ne1.yahoo.com [66.163.191.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42153541A9
-        for <linux-security-module@vger.kernel.org>; Sun, 23 Oct 2022 10:20:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666545633; bh=vuXOXFcelBEIncDKX1DYKg9y4Q1ZIH/5CLgUUH0vh9s=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=pxC+icWwZhP6itzMOJPjsuv2U1KFbbUuU0vOsRtixQFl3JrBVaPc9AuqSBq6ao7U2rTOCpkPB2iWJLjLAdDTDQx6l3m3HTpvl/pJJ+z9yKtpNCEBjFnojcqwoGN95i646BQc+Ib0a65a8E53kPRQD8CD1NBTAEoSrtvKRh1K+6rNy8em0+ByIqA232kbFKmC5fw2Tf7scof8isyRByn6dUNtp2lvmnl4dPqV8rZx9YuF5BAFRu+Hno/Ms4PnU1Av//m3kHGLrIjYW3uuXYp/g/E/u3ajVhuyC39IaZYb29qgCf7r3e3iO4QH11os17mZ52imxihGlLseh6lgCpFzmg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666545633; bh=XfR9fBSvtmdmN4SsEMmqaigwB+UJyci1c32PTStZ8uG=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=MVve5IbNTIfzprNULYkfhBgLqTexv3ZE5xgUnRgtxX0rowky5qlwN9hc3uj6S2C/UULbrsfXc5qIBA2Lz3d9WI0OPwmtEpqWMsqFTsVOC1UZaOT9VJGFccWdMBi+OMGk5pnYB05r/MFSwSggXN2QqwCRAIlRWBVgxycl79sh5pB2AwbxfQKtkLWFnp3QqEZtQPq5MdwfanGM7X6zLqII8BC7Hd37KfSnzntUtDWdd43BXivk1RqnLudqylUE6ufW4locwen6okkMlSC7uwsxcU7AamnYTFIVKqcHGQILjJKUbxexo72mMytUFjPVLCkQZMIpTiBpLzDv0EMSe8lw2A==
-X-YMail-OSG: fhSSWf4VM1mVpiouRtBKNmFf0UtfHQO0tCsULB51RPVeEB7pTQBBSBCAHNio3Vb
- yXqiebQIR4g8itBwgZjjw.58K1gTDsKOijXy0PIkSU6SjDQfppShUtHy_5yFQE.TY9DsDTtRwhkW
- 2Nd3TTMUX8CDn.CHCKaV_TWc1pY1RyuxwkCKXhjyTIFOkpB24gE7EonJLQGjULcGct7iR5.FANB7
- NGU4_zAmYp1pVAFt9adeHRVqwTmqZRx1W0HQB_DLod0xi3VSxA8cle1zGKVqX_0buJpoee49doyh
- BhNsiphMFj.r.mntp_bc.2d.St90tuKe4tP8utyh_T0JjK6SjLS6QsI1QK1BGu_yb_5OUZxknga3
- t8J_ad9ozPgGDvPSHI9XhJ_o8JRNeOwU3WeHr9jYdLSaEe3Lpd6nhyy4btbs6tFmBXLkOzQAaXf2
- 4xKXfnwCYegWs0HHK46urYizWB4I2tJE6e2M_1ifGPZiqULuikPffLT.yDdeNpSxz.KeQD55qR9S
- fzafz13okSThR9nk_d9XKVh5POF9nbpT_FFwEdr7sELZCKgFNV1h4WjyIXXn2GzpJGubHLqCjEBc
- ZUYir7NUYlJxalX8y3pveTqfGXotJBoSyAw2CrunDlMX4VPdu5b_3J5FPH06.hyVR5eoFNN0IPhu
- EjZGxvJkcQIV3shssO2J2HDl8dD1MbnFBLEx9yhNaTUAmo9CDPC_wr80cD4MnfJZpur_GzGiK2Im
- q6nTWNIvUl42cYElH5pJmZ8xkLjkzWgyoHDTFE5cc62ZptlNEyiW_EGue46l25oKXaSjKbfgHjsa
- MXsCWk5RVgs2RchCkPbKM7H9HtCeANR2xnXOJm0SGP0SNb3hlaLXVBvwg_kwXHVK78wrJCMNc9bK
- oI_fwjNXgwPcuUgYZarX3Vxmpd7VkPWEltT1I95LX7iq.csH5E9bheA_Qrdb6XP3k63upNc5hn_.
- IvOncug1yQVSWkwKy16Uo25WFVn1dW6OE_fcRWnKkV3_SGx7rR_oHf.zVVf4REkb1F2dm8ZsZEHt
- EsnjbGWoAxGQ2naKoksLOt22ZSNy4jm_2CXkVgkxAWKQy6LzzkCWitIna7JI8NlCmS0VZwTyvTLn
- tcJTjA_lQ1tIJa0.NrMlPB.3gRG_A2kfE02G21nfM8oP1qRWIzxs46mKwtZTbP3r.Igbby5WMTZW
- yGakmx9ePLjQw3aNvBSbpDUIlHCSjLKVdbeufJKNp7t2GktSjwWCyzjHW2PBTaCHlA9OOWJRKPRf
- RUNuXQ8CuJ_KY.v1yFT00t.GoNir.1jSJ08ch9oUXpRXNpRsoOEwWBNeEtlGhTBMnIobsd95dYZU
- lDddVeSiGqJf5i7IPBG_AHyBRdvq.GsWD7YysyVdXc5Su3h7G6kPvXz8E.Xhnyc.5bT7SVrukrsb
- cApNly46jyOvWjt.._YJsVktct3EtpkErBPN5oco8IFn2SQDrEVACQXc_PfGgQhxiQbpfPFT2oXf
- kGbP1Dko8zpY0nKZeX_6uM9MfoNZ7crmoddiySbze05l1PVYi0DEpHntqwqGz0oGwGkvI.MWFMp1
- ilc.PgCNwMkIoA6fLIWT5C7xmIawNruA3tuO4t_75KXbCFNpGMygiCZfLlYpE2FZ_MemJQiL.je4
- yJ3WwESVFaMybrYWl2mtWHNz_ciQU9folX2D48h9LrbT.eoP9GZBaK1oo4zPLOS2zzsGrvN6mpI.
- zVnp5B.WAxM8el7EibvJ918TFn1yfp9mXgdwxrEkkLcLppxU7VmImTSM6DypvqEavvOE0D1kGIqs
- rcODjMOug958Xj27XtxT61TUGzPSR8acM8AiBHcvIpfxS4wOMQLSrSsN30NGRKVWCVYGZc_3F6sS
- OJvmnxDLpUQ846k89NAtlrSXZbS0iT8DfS5H9p0e1pFZg7r3fjYZ2DVtZLZvnq7zVSzV8LA9q3Ec
- 194ylFXWEgBUCe55gGvxcSVTPceVaf_oduc1doVnqnxywiR6LoKbtJ5Qk_CrcCezTztimvyDTP43
- qVsSffphJ3GRoZG3PD0Of6BVAsKq_GuL73V9vyHxEEeTKfifJwbHMe3Go1d7C3g2ePUnbztO43Zn
- H8ocaHsjhOkQujIcj4fvgTJ9eXL_IYzOrwLfwlcgjJPeyeEIPQio41woWQdPE0ed6iomfkpNQXg0
- sAPvI8ohs159nlbryFmRG9yWGphARJ2COiOSkEtK3PoARZSO8ZzaS2O0F5ICg8DWMkhoFt53L3yk
- 2u.u8ATRNpIUuCdYe1tfTr9.REtkY4MXU4Ge53Il.jyyzJc74eju0XH1cb3earK.FsNlj9E1OuhK
- OZIUSFWvUTRmXZ8N29x5PwGOjPQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Sun, 23 Oct 2022 17:20:33 +0000
-Received: by hermes--production-gq1-754cb59848-jk2dx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4212e99988c4a8add2e675927158d4c3;
-          Sun, 23 Oct 2022 17:20:31 +0000 (UTC)
-Message-ID: <1a92299f-2f0d-02d1-75ee-72de80e1a091@schaufler-ca.com>
-Date:   Sun, 23 Oct 2022 10:20:29 -0700
+        Sun, 23 Oct 2022 16:40:37 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6185725A;
+        Sun, 23 Oct 2022 13:40:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id A89F7CE0F28;
+        Sun, 23 Oct 2022 20:40:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1CFAC433D6;
+        Sun, 23 Oct 2022 20:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666557633;
+        bh=Ase1ag2VU+E3ra79YOHGkuWXSUct//S7LLw1x5dUijM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BnHvq8de4KkBrnnTJdp9P2IDrjbDwbEd3xG0OaJ+yOJJyUmQxzjxJjnM6zZg78pne
+         Wl4L9nSgr1YLIGiAlxa2+tvFxHTxhOouHyQg+ATgDD4L6AkIQ3TMRQVmglEaARtEpP
+         xPVBk4VEgE1Hq4AqCj41vda0tmK6g9FlXKpxx7vWMh3LJ7wzvzHWDlFyhAwcXWY0ay
+         8omPGhay4Fnw3cVp69nsW7btriy5i8K1pZMEEJjYI69NAhOR/AKVmvqL+qz6pkRNtg
+         l9nDcFiwnyaIe9zK2u2wBNuFABv83xMOqtIOabZAop0NLc0SWfI044UeFXoh/pNenO
+         l32+MbekzUSBA==
+Date:   Sun, 23 Oct 2022 23:40:25 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Nikolaus Voss <nikolaus.voss@haag-streit.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Yael Tzur <yaelt@google.com>,
+        Cyril Hrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] KEYS: encrypted: fix key instantiation with
+ user-provided data
+Message-ID: <Y1WmuVilSzjtm5i8@kernel.org>
+References: <20221019164526.B70DF1C59@mail.steuer-voss.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH v38 04/39] LSM: Maintain a table of LSM attribute data
-Content-Language: en-US
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        casey.schaufler@intel.com, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     linux-audit@redhat.com, jmorris@namei.org, selinux@vger.kernel.org,
-        keescook@chromium.org, john.johansen@canonical.com,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        casey@schaufler-ca.com
-References: <20220927195421.14713-1-casey@schaufler-ca.com>
- <20220927195421.14713-5-casey@schaufler-ca.com>
- <9907d724-4668-cd50-7454-1a8ca86542b0@I-love.SAKURA.ne.jp>
- <f6b8ac05-6900-f57d-0daf-02d5ae53bc47@schaufler-ca.com>
- <a130dc1f-a187-2957-25c1-974fb9c2569f@I-love.SAKURA.ne.jp>
- <280c313e-c826-3b9c-a074-2ead3cf4107f@I-love.SAKURA.ne.jp>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <280c313e-c826-3b9c-a074-2ead3cf4107f@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20754 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221019164526.B70DF1C59@mail.steuer-voss.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/23/2022 3:10 AM, Tetsuo Handa wrote:
-> On 2022/10/23 16:27, Tetsuo Handa wrote:
->> On 2022/10/21 8:42, Casey Schaufler wrote:
->>> I will, on the other hand, listen to compelling arguments. It is not the
->>> intention of this code to lock out loadable modules. If I thought it would
->>> I would not have proposed it.
->> This code is exactly for locking out loadable modules.
->>
-> Imagine a situation where two individuals independently develop their own
-> web applications using the same identifier, and then their web applications
-> started working together with other web applications using that identifier.
-> When they published their web applications for public and wider use, a problem
-> that both web applications are already using the same identifier arises.
-> It is too late to reassign the identifier.
->
-> The same trouble can happen with loadable LSM modules. Unless the upstream kernel
-> behaves as if a DNS registerer that assigns a unique domainname for whatever web
-> sites (regardless of whether a web site is for public or not), defining a permanent
-> constant for LSM module is a way towards locking out loadable LSM modules. And it
-> is well possible that a loadable LSM module wants to run on older kernels which
-> do not have LSM id defined yet.
->
-> This "define LSM id as userspace visible constant" is more dangerous than just
-> reserving some space for future use. You are trying to control all IP addresses
-> for the sake of only in-tree LSM modules. No, no, no, please don't do that...
+On Wed, Oct 19, 2022 at 06:38:20PM +0200, Nikolaus Voss wrote:
+> Commit cd3bc044af48 ("KEYS: encrypted: Instantiate key with
+> user-provided decrypted data") added key instantiation with user
+> provided decrypted data.  The user data is hex-ascii-encoded but was
+> just memcpy'ed to the binary buffer. Fix this to use hex2bin instead.
+> 
+> Old keys created from user provided decrypted data saved with "keyctl
+> pipe" are still valid, however if the key is recreated from decrypted
+> data the old key must be converted to the correct format. This can be
+> done with a small shell script, e.g.:
+> 
+> BROKENKEY=abcdefABCDEF1234567890aaaaaaaaaa
+> NEWKEY=$(echo -ne $BROKENKEY | xxd -p -c32)
+> keyctl add user masterkey "$(cat masterkey.bin)" @u
+> keyctl add encrypted testkey "new user:masterkey 32 $NEWKEY" @u
+> 
+> However, NEWKEY is still broken: If for BROKENKEY 32 bytes were
+> specified, a brute force attacker knowing the key properties would only
+> need to try at most 2^(16*8) keys, as if the key was only 16 bytes long.
+> 
+> The security issue is a result of the combination of limiting the input
+> range to hex-ascii and using memcpy() instead of hex2bin(). It could
+> have been fixed either by allowing binary input or using hex2bin() (and
+> doubling the ascii input key length). This patch implements the latter.
+> 
+> The corresponding test for the Linux Test Project ltp has also been
+> fixed (see link below).
+> 
+> Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided decrypted data")
+> Cc: stable@kernel.org
+> Link: https://lore.kernel.org/ltp/20221006081709.92303897@mail.steuer-voss.de/
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: Nikolaus Voss <nikolaus.voss@haag-streit.com>
+> ---
+> Changes
+> =======
+> v6: - fix checkpatch warnings
+> v5: - explain security issue in commit message, add Reviewd-by
+> v4: - change "Link:" address
+> v3: - use generated random key in example, reformat commit message
+> v2: - clarify commit message, add example to recover old/broken keys
+>     - improve example in Documentation/security/keys/trusted-encrypted.rst
+>     - add link to ltp patch
+> 
+>  Documentation/security/keys/trusted-encrypted.rst | 3 ++-
+>  security/keys/encrypted-keys/encrypted.c          | 6 +++---
+>  2 files changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+> index 0bfb4c339748..9bc9db8ec651 100644
+> --- a/Documentation/security/keys/trusted-encrypted.rst
+> +++ b/Documentation/security/keys/trusted-encrypted.rst
+> @@ -350,7 +350,8 @@ Load an encrypted key "evm" from saved blob::
+>  
+>  Instantiate an encrypted key "evm" using user-provided decrypted data::
+>  
+> -    $ keyctl add encrypted evm "new default user:kmk 32 `cat evm_decrypted_data.blob`" @u
+> +    $ evmkey=$(dd if=/dev/urandom bs=1 count=32 | xxd -c32 -p)
+> +    $ keyctl add encrypted evm "new default user:kmk 32 $evmkey" @u
+>      794890253
+>  
+>      $ keyctl print 794890253
+> diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+> index e05cfc2e49ae..1e313982af02 100644
+> --- a/security/keys/encrypted-keys/encrypted.c
+> +++ b/security/keys/encrypted-keys/encrypted.c
+> @@ -627,7 +627,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
+>  			pr_err("encrypted key: instantiation of keys using provided decrypted data is disabled since CONFIG_USER_DECRYPTED_DATA is set to false\n");
+>  			return ERR_PTR(-EINVAL);
+>  		}
+> -		if (strlen(decrypted_data) != decrypted_datalen) {
+> +		if (strlen(decrypted_data) != decrypted_datalen * 2) {
+>  			pr_err("encrypted key: decrypted data provided does not match decrypted data length provided\n");
+>  			return ERR_PTR(-EINVAL);
+>  		}
+> @@ -791,8 +791,8 @@ static int encrypted_init(struct encrypted_key_payload *epayload,
+>  		ret = encrypted_key_decrypt(epayload, format, hex_encoded_iv);
+>  	} else if (decrypted_data) {
+>  		get_random_bytes(epayload->iv, ivsize);
+> -		memcpy(epayload->decrypted_data, decrypted_data,
+> -				   epayload->decrypted_datalen);
+> +		ret = hex2bin(epayload->decrypted_data, decrypted_data,
+> +			      epayload->decrypted_datalen);
+>  	} else {
+>  		get_random_bytes(epayload->iv, ivsize);
+>  		get_random_bytes(epayload->decrypted_data, epayload->decrypted_datalen);
+> -- 
+> 2.34.1
+> 
 
-It's really no more dangerous than using the LSM name. What if two developers
-implement modules and both name it "belllapadula"? User space won't be able to
-tell the difference if they base behavior on the module name. That's one thing
-that a loadable module mechanism is going to need to address that a built-in
-mechanism doesn't. 
+Did you check that this passes "checkpatch.pl --strict"?
 
+Your earlier version did not.
+
+BR, Jarkko
