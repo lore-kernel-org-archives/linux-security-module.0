@@ -2,176 +2,174 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE99FA373D
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Oct 2022 22:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2414BFA373F
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 00:44:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230144AbiJXWp5 (ORCPT
+        id S230175AbiJYAoi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Oct 2022 18:45:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45348 "EHLO
+        Mon, 24 Oct 2022 20:44:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231208AbiJXWpO (ORCPT
+        with ESMTP id S231307AbiJYAoM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Oct 2022 18:45:14 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C53D12D73A4;
-        Mon, 24 Oct 2022 14:07:52 -0700 (PDT)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29OFiKHD013992;
-        Mon, 24 Oct 2022 16:35:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=9wlCDw+a92Up+pNrRo8zuQis24dtp7D6jbFeA0gp0gw=;
- b=qdgKqcJSj+bMm3DkLvph+E3vGxZH1axYA8Bt7sFFoV3RwPioi8BLmPkA3S9UY/6opKmW
- hKmwbo1h1LcSbN5M1TaOK5S/vwmJ1eNFrhLAIJd1H4SCmJXUX0uRhTvwmrCg1iCX6P0c
- hjkhsW6RAgzUmuzYcpWQpl3zDg/V0fO2h8aLSTQeFGs343osV1yyvapGLcPtWDLCdHDS
- XcidvftAr9wBhAYHLb/UD2zKFIUIJHK+NCSP0X8TZrSUkgLi5MOKLPgUgYmabC8PRPJb
- zco/tw0UMbyfrZJzXfkq1dPEE1DQ2LZTsaUQw+yn7OkrqrkkjeYToU4YOIA4Fhskx5hX rg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kdwkvssuf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Oct 2022 16:35:58 +0000
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 29OFjWnt029391;
-        Mon, 24 Oct 2022 16:35:57 GMT
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kdwkvsstc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Oct 2022 16:35:57 +0000
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 29OGZGKF028827;
-        Mon, 24 Oct 2022 16:35:56 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma04wdc.us.ibm.com with ESMTP id 3kc859cek6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Oct 2022 16:35:56 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 29OGZtEk42074504
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Oct 2022 16:35:56 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A1D858061;
-        Mon, 24 Oct 2022 16:35:55 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BDC0558052;
-        Mon, 24 Oct 2022 16:35:52 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.81.179])
-        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Oct 2022 16:35:52 +0000 (GMT)
-Message-ID: <8607d166bbd2f32f1e71e5d7ce40b937eaeb410b.camel@linux.ibm.com>
-Subject: Re: [PATCH] evm: Correct inode_init_security hooks behaviors
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
-Cc:     linux-integrity@vger.kernel.org, philippe.trebuchet@ssi.gouv.fr,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, casey@schaufler-ca.com, davem@davemloft.net,
-        lucien.xin@gmail.com, vgoyal@redhat.com, omosnace@redhat.com,
-        mortonm@chromium.org, nicolas.bouchinet@ssi.gouv.fr,
-        mic@digikod.net, cgzones@googlemail.com,
-        linux-security-module@vger.kernel.org, brauner@kernel.org,
-        keescook@chromium.org
-Date:   Mon, 24 Oct 2022 12:35:52 -0400
-In-Reply-To: <Y1Ki8838IAicXzlb@archlinux>
-References: <Y1FTSIo+1x+4X0LS@archlinux>
-         <5edef60c775117758ecc146f1e8b96ef1c48e3da.camel@linux.ibm.com>
-         <Y1Ki8838IAicXzlb@archlinux>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
+        Mon, 24 Oct 2022 20:44:12 -0400
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7D7C3A490;
+        Mon, 24 Oct 2022 16:17:26 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4MwzNV031yz9v7bx;
+        Mon, 24 Oct 2022 23:23:06 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwAH9HAIr1ZjeA0LAA--.2997S2;
+        Mon, 24 Oct 2022 16:28:16 +0100 (CET)
+Message-ID: <bb7a5986f3d25706269d0fec9906ea73c174b808.camel@huaweicloud.com>
+Subject: Re: [RFC][PATCH] bpf: Check xattr name/value pair from
+ bpf_lsm_inode_init_security()
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     KP Singh <kpsingh@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        nicolas.bouchinet@clip-os.org, Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date:   Mon, 24 Oct 2022 17:28:04 +0200
+In-Reply-To: <d7a17e482b7bbf945c92443b45de73f56afea08a.camel@huaweicloud.com>
+References: <20221021164626.3729012-1-roberto.sassu@huaweicloud.com>
+         <CAADnVQJHDboosqTy5LTHJtJaWJCWn9rv09jmd_sMgeV_OVQjGg@mail.gmail.com>
+         <d7a17e482b7bbf945c92443b45de73f56afea08a.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Es21pzRSpsp6z_BCntxy0o-1MK-A8XXE
-X-Proofpoint-GUID: Orq17um0MvG2F1CBFAvPDpUSRrML2Ima
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-10-24_05,2022-10-21_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0 phishscore=0
- clxscore=1015 impostorscore=0 malwarescore=0 spamscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2210240100
+X-CM-TRANSID: LxC2BwAH9HAIr1ZjeA0LAA--.2997S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWw4xury8tFWrXFW3ZF1DKFg_yoWrZw45pF
+        WUGF1jkr4ktFn5Jr12v3WUuw1IywsxCF4UXr1kJr1UA3Z0vr15Ar10y3W7uFyDGrs8X3ZF
+        qw1Yva1rKw1UAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAPBF1jj4SZSwAAst
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Nicolas,
-
-On Fri, 2022-10-21 at 15:47 +0200, Nicolas Bouchinet wrote:
-> Hi Mimi,
+On Mon, 2022-10-24 at 11:25 +0200, Roberto Sassu wrote:
+> On Sun, 2022-10-23 at 16:36 -0700, Alexei Starovoitov wrote:
 > 
-> Thanks for the IMA/EVM project which I enjoy very much.
+> Sorry, forgot to CC Mimi and linux-integrity.
 > 
-> On Thu, Oct 20, 2022 at 03:51:38PM -0400, Mimi Zohar wrote:
-> > On Thu, 2022-10-20 at 15:55 +0200, Nicolas Bouchinet wrote:
-> > > From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > On Fri, Oct 21, 2022 at 9:57 AM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
 > > > 
-> > > Fixes a NULL pointer dereference occuring in the
-> > > `evm_protected_xattr_common` function of the EVM LSM. The bug is
-> > > triggered if a `inode_init_security` hook returns 0 without initializing
-> > > the given `struct xattr` fields (which is the case of BPF) and if no
-> > > other LSM overrides thoses fields after. This also leads to memory
-> > > leaks.
+> > > BPF LSM allows security modules to directly attach to the security
+> > > hooks,
+> > > with the potential of not meeting the kernel expectation.
 > > > 
-> > > Adds a `call_int_hook_xattr` macro that fetches and feed the
-> > > `new_xattrs` array with every called hook xattr values.
+> > > This is the case for the inode_init_security hook, for which the
+> > > kernel
+> > > expects that name and value are set if the hook implementation
+> > > returns
+> > > zero.
 > > > 
-> > > Adds a `evm_init_hmacs` function which init the EVM hmac using every
-> > > entry of the array contrary to `evm_init_hmac`.
-> >   
-> > Only EVM portable digital signatures include all of the protected
-> > xattrs.   Refer to commit 8c7a703ec978 ("evm: Verify portable
-> > signatures against all protected xattrs").
+> > > Consequently, not meeting the kernel expectation can cause the
+> > > kernel to
+> > > crash. One example is evm_protected_xattr_common() which expects
+> > > the
+> > > req_xattr_name parameter to be always not NULL.
 > > 
-> Sorry, maybe I was not clear enough, the proposed patch does not change the
-> set of the protected security xattrs initialized by the LSMs and processed by EVM.
+> > Sounds like a bug in evm_protected_xattr_common.
 > 
-> As I explained to Paul, based on my understanding, the `security_inode_init_security()`
-> hook is supposed to initialize every hooked LSM security xattr and next,
-> if evm is enabled, protect them using a HMAC algorithm.
-> However, in the current implementation, the use of the `call_int_hook()` macro by
-> `security_inode_init_security()` overwrites the previously initialized xattr for
-> each iteration of the `hlist_for_each_entry()` loop.
+> If an LSM implementing the inode_init_security hook returns -EOPNOTSUPP
+> or -ENOMEM, evm_protected_xattr_common() is not going to be executed.
 > 
-> I have noticed that more than one LSM may initialize a security xattr at a time,
-> eg. SELinux + BPF.
-
-Does BPF have a security xattr and, if so, does it need to be
-protected?   It would need to be defined and included in the list of
-evm_config_xattrnames[].  If it doesn't define a security bpf xattr,
-then bpf should not be on the security_inode_init_security() hook.  (I
-assume Roberto's patch is going in this direction.)
-
-Before the EVM hmac is updated, the existing EVM hmac is verified.  I
-would be concerned if bpf defined a protected security xattr.   Could
-the same guarantees, that security.evm isn't updated without first
-being verified, be enforced with bpf?
-
+> This is documented in include/linux/lsm_hooks.h
 > 
-> IMHO my supplementary `evm_init_hmacs()` function name is a bit confusing, I would
-> enjoy if you have a better proposition. Note that `evm_init_hmacs()` have the same
-> behavior as `evm_init_hmac()` if only one security xattr is given as a parameter.
-
-I'm missing something here.  As evm_inode_init_security() is the only
-caller of evm_init_hmac(), why is a new function defined instead of
-updating the existing one?   If there is a valid reason, then one
-function should be a wrapper for the other.
-
-> > > 
-> > > Fixes the `evm_inode_init_security` function to use `evm_init_hmacs`.
+> Why it would be a bug in evm_protected_xattr_common()?
+> 
+> > > Introduce a level of indirection in BPF LSM, for the
+> > > inode_init_security
+> > > hook, to check the validity of the name and value set by security
+> > > modules.
 > > 
-> > Won't this break existing EVM hmac usage?
-> I might be wrong, but as far as I understand it, the only working condition for
-> EVM now is when only one security xattr is involved, otherwise there will have
-> a mismatch between the initialization and the verification.
-> Indeed, the verification takes into account every security xattr written in its
-> refering dentry.
+> > Doesn't make sense.
+> 
+> Look at this example. The LSM infrastructure has a convention on return
+> values for the hooks (maybe there is something similar for other
+> hooks). The code calling the hooks relies on such conventions. If
+> conventions are not followed a panic occurs.
+> 
+> If LSMs go to the kernel, their code is checked for compliance with the
+> conventions. However, this does not happen for security modules
+> attached to the BPF LSM, because BPF LSM directly executes the eBPF
+> programs without further checks.
+> 
+> I was able to trigger the panic with this simple eBPF program:
+> 
+> SEC("lsm/inode_init_security")
+> int BPF_PROG(test_int_hook, struct inode *inode,
+> 	 struct inode *dir, const struct qstr *qstr, const char **name,
+> 	 void **value, size_t *len)
+> {
+> 	return 0;
+> }
+> 
+> In my opinion, the level of indirection is necessary to ensure that
+> kernel expectations are met.
 
-Agreed, independently as to whether BPF defines a security xattr, if
-two LSMs initialize security xattrs, then this change is needed.  Are
-there any other examples?
+I investigated further. Instead of returning zero, I return one. This
+causes a crash even with the most recent kernel (lsm=bpf):
 
-(nit: I understand the line size has generally been relaxed, but for
-IMA/EVM I would prefer it to be remain as 80 chars.)
+[   27.685704] BUG: kernel NULL pointer dereference, address: 00000000000000e1
+[   27.686445] #PF: supervisor read access in kernel mode
+[   27.686964] #PF: error_code(0x0000) - not-present page
+[   27.687465] PGD 0 P4D 0 
+[   27.687724] Oops: 0000 [#1] PREEMPT SMP NOPTI
+[   27.688155] CPU: 9 PID: 897 Comm: in:imjournal Not tainted 6.1.0-rc2 #255
+[   27.688807] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+[   27.689652] RIP: 0010:fsnotify+0x71a/0x780
+[   27.690056] Code: ff 48 85 db 74 54 48 83 bb 68 04 00 00 00 74 4a 41 8b 92 98 06 00 00 4d 85 ed
+0f 85 a6 f9 ff ff e9 ad f9 ff ff 48 8b 44 24 08 <4c> 8b 90 e0 00 00 00 e9 00 fa ff ff 48 c7 c2 b8 12
+78 82 be 81 01
+[   27.691809] RSP: 0018:ffffc90001307ca0 EFLAGS: 00010246
+[   27.692313] RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffff88811d73b4a8
+[   27.692998] RDX: 0000000000000003 RSI: 0000000000000001 RDI: 0000000000000100
+[   27.693682] RBP: ffff888100441c08 R08: 0000000000000059 R09: 0000000000000000
+[   27.694371] R10: 0000000000000000 R11: ffff88846fc72d30 R12: 0000000000000100
+[   27.695073] R13: ffff88811a2a5200 R14: ffffc90001307dc0 R15: 0000000000000001
+[   27.695738] FS:  00007ff791000640(0000) GS:ffff88846fc40000(0000) knlGS:0000000000000000
+[   27.696137] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   27.696430] CR2: 00000000000000e1 CR3: 0000000112aa6000 CR4: 0000000000350ee0
+[   27.696782] Call Trace:
+[   27.696909]  <TASK>
+[   27.697026]  path_openat+0x484/0xa00
+[   27.697218]  ? rcu_read_lock_held_common+0xe/0x50
+[   27.697461]  do_filp_open+0x9f/0xf0
+[   27.697643]  ? rcu_read_lock_sched_held+0x13/0x70
+[   27.697888]  ? lock_release+0x1e1/0x2a0
+[   27.698085]  ? _raw_spin_unlock+0x29/0x50
+[   27.698291]  do_sys_openat2+0x226/0x300
+[   27.698491]  do_sys_open+0x34/0x60
+[   27.698667]  do_syscall_64+0x3b/0x90
+[   27.698861]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-Mimi
+Beeing positive, instead of negative, the return code is converted
+to a legitimate pointer instead of an error pointer, causing a crash
+in fsnotify().
+
+Roberto
 
