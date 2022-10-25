@@ -2,174 +2,154 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2414BFA373F
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 00:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D25DCC67871
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 01:19:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230175AbiJYAoi (ORCPT
+        id S231506AbiJYBTA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Oct 2022 20:44:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35598 "EHLO
+        Mon, 24 Oct 2022 21:19:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231307AbiJYAoM (ORCPT
+        with ESMTP id S231510AbiJYBSi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Oct 2022 20:44:12 -0400
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7D7C3A490;
-        Mon, 24 Oct 2022 16:17:26 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4MwzNV031yz9v7bx;
-        Mon, 24 Oct 2022 23:23:06 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwAH9HAIr1ZjeA0LAA--.2997S2;
-        Mon, 24 Oct 2022 16:28:16 +0100 (CET)
-Message-ID: <bb7a5986f3d25706269d0fec9906ea73c174b808.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH] bpf: Check xattr name/value pair from
- bpf_lsm_inode_init_security()
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     KP Singh <kpsingh@kernel.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        nicolas.bouchinet@clip-os.org, Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date:   Mon, 24 Oct 2022 17:28:04 +0200
-In-Reply-To: <d7a17e482b7bbf945c92443b45de73f56afea08a.camel@huaweicloud.com>
-References: <20221021164626.3729012-1-roberto.sassu@huaweicloud.com>
-         <CAADnVQJHDboosqTy5LTHJtJaWJCWn9rv09jmd_sMgeV_OVQjGg@mail.gmail.com>
-         <d7a17e482b7bbf945c92443b45de73f56afea08a.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Mon, 24 Oct 2022 21:18:38 -0400
+Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E3E4DF25
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Oct 2022 17:40:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666658407; bh=1SQ3hcYQAAv2ik4bpnU9BGeaB846lGX2UcwpSbpx0LI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gLLbxoiPBZYpF5Ss13hqdZaIeFRyuD7soqn1iDcsHQt9cpGRKY2nMOTNexXV6xyGuol+mojNVP5tZnfm8UVUNZEk9GdlLxMoYY5N9Do0FwJHJrYUHSlsMnb6GCnYD33bK7RDg7VmK6BFDTCPsrdyg5rHEDnvfec44kZRrroXtOhASNK8QoFZPi0mvYQSmq3EzNYMDX5AM3H4fvlBujXiH5MdzRx9dhtsSFZ35e3fnugn8HUZ+7AoWvWwErLthWdMDEHQ6+WS3/EqIklECIYIQWSYqzxX4NHZO5ZfqfgRKE8Q5dRywLrh4fXmBgssh+FQ0nSPXrRT405VA1zY99G/WQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666658407; bh=JrU+BnWiZ28uB+unR6ZRW48D5mOckorUyzO5tO11ttA=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Zn45U0FzfedqRmPsmDHUAYsbZgGW8FcN1uhQoQFZ8f3wD8kK7ap2xbNGKd0+PXFxl8UVGQ8Wtu4LCm0p6WRtqkjYojPD7xqVi5lgqjm+kYCsA5k5RLLPPhBhKBNATFm87TvosScxafna7OncYKEnVVPtrsxn7WCi7FFLRe0MQv+1+c7XSASUoqNkR7ut04TdX/NPE7C3EAmtqv/hLmGytU70xQ44dCbCNUte0N4vsrD3yN0WrNeehEfY59QJouqVX7SxUdtioJExFdK7Or8YL8kOuxQAcdohbdTYbWmMU5LUcultL0oeWuLP7RzbHSjXnd8vUb+TQ9c5Rk5OAZoaFQ==
+X-YMail-OSG: Kjjy7r4VM1maFf0iCEa_zYJ6SU8lmQB2ezcC8XHTAu_WFK8ttSwXYa9EHv4Qgtl
+ XySWlaXfog6NzkBNv2N4SP3Zl1bKz9Qfjae4FD8aOwCBlseoc1XI7mKrkU6hXeiyqvrlA5MAfA9M
+ .knDKVONEqASJq63aFvENgk2OzxUoO9rjwbcP7dct3EYjkEu4_adSiAUWTPBEksqcjEujDp9IkKR
+ FJFMUFtICuXCotwL1n3h35f0suV4A.Dnbms_P1pU6rpMRDf7cBDZCLnW4MkarXX306lIjpCxni1l
+ d4tTMMAYiYV1bNm5v5e.qCMW4V_SMsOfFhxdPmu.sFukxmGWnAdEGLQBeMdo4f6WzoSrcUzgzCuR
+ lRdxyvDFdq4fvLAGVHcQfbJ05FQS5x4Ry8tUbzOGKVUC7jTPvXHfBVTrVPblM4RQCG7X12r.PqWH
+ BE.AzFNrIm2X40MgudKSFLRfGEiHAjS8UnpqhlqHY1yenmuZxCMjQNByD97t7guIAWxzypUJ5Cl1
+ Ry2jpLSBDIApELhSsZBSLBS74jxSTyAafT5L_sbDRzWp0VHkVxWVinX8oEucUxCmzR2d5K8FYQlV
+ fMnrZzB1qdAGBFKlNtXe0nsqhVwOAKqA_ZdPMlR7wvQgrVrxJX4APJrIlDyZOgVDAoE2g.loySaW
+ fgKyRKmZXa8PqIcO76acICVziTMSycJ5txugNJAe3957o3GvxJTK3FMU_2fi5sCZCOmENhhdqxKV
+ dEKW9pPvoidIOa1Apm24P6Zp6YQJC4rZRGCWz3hnskJ2TMxtunYDjzc5btN8wwdIEEXOo2fe75UR
+ .puGW2LkFYBQkSLRHFwOtespLRoirUWdOa4cUoYadfGyWl83kBnZFsdhTxo1waWnwqrvfxFlVag0
+ RR.bHuakzWtz8kTqJmbQ8QwL7TcV2fSSNW8LSNgd.jhCQuaatm.O4hNyIX4kZkbdHZECsMggjanz
+ 0EctXJAbGTgzWDjLq3NvY1dzOmCo_4Gm66CP_mGP8UzDlwkLtsX14PnjvLBV11NHg257Rw5vn5wp
+ GXa4BMhnIxwsYZVfP1_4.gR8Sg39U4piUj0I.5IhpVT2E7HP4_qGFWAoX3k43t1Irbh.Bm3lm1Sa
+ Eqcox9dkiLCWeE4vNM6AKwEIDLf8juJBUN4iLrIIZQr.6PSz09r0UxDfzi9wH5HdQnDFxihudOu3
+ fVsiqqx9dBa2Al1ddjMu7bLtI4PuSrTw0zshYmYNnMf_BIRtD6DfSP5ybSKQk_X4MozzZeTEkhFa
+ igRkhjUR0LbRNc1DhOj.0L42EpveW0QtRttgIIKd9fEP19A7R7CnrYr0fRAAkaFegi7zSUjhiHEa
+ R4BM8GEbA8y8GWmaKUIDi7DTTkYYm4y.8HHbDtVBdQpKjAefCsMQEY1xJ_nY8l39nMUQQGjSXfCH
+ jjeZm2byrDsbuHiTCKOO4dHna81h38za0syC.QnJWMf1SFG.JLKgdDh4F8QTTAbzf601UUxdueak
+ AVa0w8mGZbQRZyPBk.NYSmNPNmusBI8emu.g9Gr03k7oMFef8engvQPCDdvXo7X.3OhTBspWhQDF
+ p2xfCxpSHmQ4Nj4F0Lvq6loHVHZ72zEXX3_dAIdkneuePACBLpU.uN1kEEEawEpq0VWbMpdzf1xI
+ LobAaGC7DdWzg0kzJEJc2gNhsQOLfqZCxd_uQQxoFPDLjNnlL1l4E4Q.3nsyd6_TqysZhfrFrMcV
+ w9VRV2STsOeY9UBek7xUTVjGja7zV0u0KX.z9.4W1pjo8Cbd7l48XhSeZy_IXjSTDNsWHV8VexH_
+ N7854WlUgQUpP57eorBwGhyGa_0YlY0T_nfIjxikF6XZf9yns.WcX18PJudw4TY1OuhTe.6dXZk9
+ WPjsBlC3K_M9Wc1Vgd0FGrV._13JDyKasDQVXubY_CIAhriHkpboAgeZcGhmOxe7ttFSmCqYuPXc
+ YQkyd8GERmBV7lJ7CqZV0zSonymyZWcggnWO0nzt3s09ibxQ50rLRedbV7kgy37kPg4LBG61aG0q
+ QDQtPoIdfAHJ5UprWRMf9nOuoQj04OXXAqtrkqIsEd5kHP0X59KkilOc4Z9D4VQqmA07P_R4wBw3
+ h7WByNXjVaQWW9.RPrdhjro3YrPck77y0PqpuJsv2oYdY09At2UEQtd6lqur.d4gS156oUXdLj71
+ LPkBks7p0jrd5mQ7vZxf0FKmQgOk5JcPg4bNqmpW3r98E78t5svIrXZG78epwSqmcsDSXYsCEXkb
+ gF27v3bpYKyO7lSYU_B_nTazev9FByV.1
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 25 Oct 2022 00:40:07 +0000
+Received: by hermes--production-gq1-754cb59848-rl7fd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c725735263443336e82dbdb6410c70fe;
+          Tue, 25 Oct 2022 00:40:01 +0000 (UTC)
+Message-ID: <e52efeda-9adf-4128-1906-3c83f217b99c@schaufler-ca.com>
+Date:   Mon, 24 Oct 2022 17:39:59 -0700
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH v38 39/39] LSM: Create lsm_module_list system call
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>
+Cc:     casey.schaufler@intel.com, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        jmorris@namei.org, selinux@vger.kernel.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        casey@schaufler-ca.com
+References: <20220927195421.14713-1-casey@schaufler-ca.com>
+ <20220927203155.15060-1-casey@schaufler-ca.com>
+ <202210121459.00980C2@keescook>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <202210121459.00980C2@keescook>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwAH9HAIr1ZjeA0LAA--.2997S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw4xury8tFWrXFW3ZF1DKFg_yoWrZw45pF
-        WUGF1jkr4ktFn5Jr12v3WUuw1IywsxCF4UXr1kJr1UA3Z0vr15Ar10y3W7uFyDGrs8X3ZF
-        qw1Yva1rKw1UAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAPBF1jj4SZSwAAst
-X-CFilter-Loop: Reflected
+X-Mailer: WebService/1.1.20754 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2022-10-24 at 11:25 +0200, Roberto Sassu wrote:
-> On Sun, 2022-10-23 at 16:36 -0700, Alexei Starovoitov wrote:
-> 
-> Sorry, forgot to CC Mimi and linux-integrity.
-> 
-> > On Fri, Oct 21, 2022 at 9:57 AM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > 
-> > > BPF LSM allows security modules to directly attach to the security
-> > > hooks,
-> > > with the potential of not meeting the kernel expectation.
-> > > 
-> > > This is the case for the inode_init_security hook, for which the
-> > > kernel
-> > > expects that name and value are set if the hook implementation
-> > > returns
-> > > zero.
-> > > 
-> > > Consequently, not meeting the kernel expectation can cause the
-> > > kernel to
-> > > crash. One example is evm_protected_xattr_common() which expects
-> > > the
-> > > req_xattr_name parameter to be always not NULL.
-> > 
-> > Sounds like a bug in evm_protected_xattr_common.
-> 
-> If an LSM implementing the inode_init_security hook returns -EOPNOTSUPP
-> or -ENOMEM, evm_protected_xattr_common() is not going to be executed.
-> 
-> This is documented in include/linux/lsm_hooks.h
-> 
-> Why it would be a bug in evm_protected_xattr_common()?
-> 
-> > > Introduce a level of indirection in BPF LSM, for the
-> > > inode_init_security
-> > > hook, to check the validity of the name and value set by security
-> > > modules.
-> > 
-> > Doesn't make sense.
-> 
-> Look at this example. The LSM infrastructure has a convention on return
-> values for the hooks (maybe there is something similar for other
-> hooks). The code calling the hooks relies on such conventions. If
-> conventions are not followed a panic occurs.
-> 
-> If LSMs go to the kernel, their code is checked for compliance with the
-> conventions. However, this does not happen for security modules
-> attached to the BPF LSM, because BPF LSM directly executes the eBPF
-> programs without further checks.
-> 
-> I was able to trigger the panic with this simple eBPF program:
-> 
-> SEC("lsm/inode_init_security")
-> int BPF_PROG(test_int_hook, struct inode *inode,
-> 	 struct inode *dir, const struct qstr *qstr, const char **name,
-> 	 void **value, size_t *len)
-> {
-> 	return 0;
-> }
-> 
-> In my opinion, the level of indirection is necessary to ensure that
-> kernel expectations are met.
+On 10/12/2022 3:04 PM, Kees Cook wrote:
+> On Tue, Sep 27, 2022 at 01:31:55PM -0700, Casey Schaufler wrote:
+>> +SYSCALL_DEFINE3(lsm_module_list,
+>> +	       unsigned int __user *, ids,
+>> +	       size_t __user *, size,
+>> +	       int, flags)
+> Please make this unsigned int.
 
-I investigated further. Instead of returning zero, I return one. This
-causes a crash even with the most recent kernel (lsm=bpf):
+Sure.
 
-[   27.685704] BUG: kernel NULL pointer dereference, address: 00000000000000e1
-[   27.686445] #PF: supervisor read access in kernel mode
-[   27.686964] #PF: error_code(0x0000) - not-present page
-[   27.687465] PGD 0 P4D 0 
-[   27.687724] Oops: 0000 [#1] PREEMPT SMP NOPTI
-[   27.688155] CPU: 9 PID: 897 Comm: in:imjournal Not tainted 6.1.0-rc2 #255
-[   27.688807] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.13.0-1ubuntu1.1 04/01/2014
-[   27.689652] RIP: 0010:fsnotify+0x71a/0x780
-[   27.690056] Code: ff 48 85 db 74 54 48 83 bb 68 04 00 00 00 74 4a 41 8b 92 98 06 00 00 4d 85 ed
-0f 85 a6 f9 ff ff e9 ad f9 ff ff 48 8b 44 24 08 <4c> 8b 90 e0 00 00 00 e9 00 fa ff ff 48 c7 c2 b8 12
-78 82 be 81 01
-[   27.691809] RSP: 0018:ffffc90001307ca0 EFLAGS: 00010246
-[   27.692313] RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffff88811d73b4a8
-[   27.692998] RDX: 0000000000000003 RSI: 0000000000000001 RDI: 0000000000000100
-[   27.693682] RBP: ffff888100441c08 R08: 0000000000000059 R09: 0000000000000000
-[   27.694371] R10: 0000000000000000 R11: ffff88846fc72d30 R12: 0000000000000100
-[   27.695073] R13: ffff88811a2a5200 R14: ffffc90001307dc0 R15: 0000000000000001
-[   27.695738] FS:  00007ff791000640(0000) GS:ffff88846fc40000(0000) knlGS:0000000000000000
-[   27.696137] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   27.696430] CR2: 00000000000000e1 CR3: 0000000112aa6000 CR4: 0000000000350ee0
-[   27.696782] Call Trace:
-[   27.696909]  <TASK>
-[   27.697026]  path_openat+0x484/0xa00
-[   27.697218]  ? rcu_read_lock_held_common+0xe/0x50
-[   27.697461]  do_filp_open+0x9f/0xf0
-[   27.697643]  ? rcu_read_lock_sched_held+0x13/0x70
-[   27.697888]  ? lock_release+0x1e1/0x2a0
-[   27.698085]  ? _raw_spin_unlock+0x29/0x50
-[   27.698291]  do_sys_openat2+0x226/0x300
-[   27.698491]  do_sys_open+0x34/0x60
-[   27.698667]  do_syscall_64+0x3b/0x90
-[   27.698861]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-Beeing positive, instead of negative, the return code is converted
-to a legitimate pointer instead of an error pointer, causing a crash
-in fsnotify().
+>> +{
+>> +	unsigned int *interum;
+>> +	size_t total_size = lsm_id * sizeof(*interum);
+>> +	size_t usize;
+>> +	int rc;
+>> +	int i;
+> Please test that flags == 0 so it can be used in the future:
+>
+> 	if (flags)
+> 		return -EINVAL;
 
-Roberto
+Yup.
 
+>> +
+>> +	if (get_user(usize, size))
+>> +		return -EFAULT;
+>> +
+>> +	if (usize < total_size) {
+>> +		if (put_user(total_size, size) != 0)
+>> +			return -EFAULT;
+>> +		return -E2BIG;
+>> +	}
+>> +
+>> +	interum = kzalloc(total_size, GFP_KERNEL);
+>> +	if (interum == NULL)
+>> +		return -ENOMEM;
+>> +
+>> +	for (i = 0; i < lsm_id; i++)
+>> +		interum[i] = lsm_idlist[i]->id;
+>> +
+>> +	if (copy_to_user(ids, interum, total_size) != 0 ||
+>> +	    put_user(total_size, size) != 0)
+>> +		rc = -EFAULT;
+> No need to repeat this, if it is written first.
+>
+>> +	else
+>> +		rc = lsm_id;
+>> +
+>> +	kfree(interum);
+>> +	return rc;
+> No need for the alloc/free. Here's what I would imagine for the whole
+> thing:
+
+A better approach. Thank you.
+
+>
+> 	if (flags)
+> 		return -EINVAL;
+>
+> 	if (get_user(usize, size))
+> 		return -EFAULT;
+>
+> 	if (put_user(total_size, size) != 0)
+> 		return -EFAULT;
+>
+> 	if (usize < total_size)
+> 		return -E2BIG;
+>
+> 	for (i = 0; i < lsm_id; i++)
+> 		if (put_user(lsm_idlist[i]->id, id++))
+> 			return -EFAULT;
+>
+> 	return lsm_id;
+>
