@@ -2,102 +2,116 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A039C38A2D
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 07:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 744AEC04A95
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 09:50:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232066AbiJYHpk (ORCPT
+        id S231449AbiJYJuX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Oct 2022 03:45:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46120 "EHLO
+        Tue, 25 Oct 2022 05:50:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232088AbiJYHp2 (ORCPT
+        with ESMTP id S231514AbiJYJtU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Oct 2022 03:45:28 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D41BB7F7;
-        Tue, 25 Oct 2022 00:45:28 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.54])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4MxP6m5gW0zJnBK;
-        Tue, 25 Oct 2022 15:42:40 +0800 (CST)
-Received: from cgs.huawei.com (10.244.148.83) by
- kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 25 Oct 2022 15:45:25 +0800
-From:   Gaosheng Cui <cuigaosheng1@huawei.com>
-To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-        <akpm@linux-foundation.org>, <cuigaosheng1@huawei.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>
-Subject: [PATCH] ima: fix a possible null pointer dereference
-Date:   Tue, 25 Oct 2022 15:45:25 +0800
-Message-ID: <20221025074525.2226586-1-cuigaosheng1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 25 Oct 2022 05:49:20 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B87F214C530
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Oct 2022 02:48:28 -0700 (PDT)
+Received: from fsav119.sakura.ne.jp (fsav119.sakura.ne.jp [27.133.134.246])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 29P9m5WX029474;
+        Tue, 25 Oct 2022 18:48:05 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav119.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp);
+ Tue, 25 Oct 2022 18:48:05 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 29P9m4Ij029469
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 25 Oct 2022 18:48:05 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <5995f18c-5623-9d97-0aa6-5f13a2a8e895@I-love.SAKURA.ne.jp>
+Date:   Tue, 25 Oct 2022 18:48:01 +0900
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.244.148.83]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemi500012.china.huawei.com (7.221.188.12)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: LSM stacking in next for 6.1?
+Content-Language: en-US
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
+        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
+        SElinux list <selinux@vger.kernel.org>
+References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
+ <CAHC9VhQ+UcJw4G=VHNE8wMa+EBG-UcoZ7ox0vNqLHoSKAd9XZQ@mail.gmail.com>
+ <269014c6-5ce6-3322-5208-004cb1b40792@canonical.com>
+ <CAHC9VhRrOgDMO9fo632tSL7vCMAy1_x3smaAok-nWdMAUFB8xQ@mail.gmail.com>
+ <1958a0d3-c4fb-0661-b516-93f8955cdb95@schaufler-ca.com>
+ <CAHC9VhQPvcunvBDvSnrUChwmGLen0Rcy8KEk_uOjNF1kr4_m9w@mail.gmail.com>
+ <6552af17-e511-a7d8-f462-cafcf41a33bb@schaufler-ca.com>
+ <CAHC9VhQMeyxQJSAUuigu=CCr44WtpJg=LEh1xng_bPfCCjqq6Q@mail.gmail.com>
+ <5ef4a1ae-e92c-ca77-7089-2efe1d4c4e6d@schaufler-ca.com>
+ <CAHC9VhQRpeOMkeEfy=VRPnpuYMUDYgLp56OjQZPYwoXmfHYREQ@mail.gmail.com>
+ <c679cea7-bb90-7a62-2e17-888826857d55@schaufler-ca.com>
+ <e9ce6253-c8a3-19c3-1b71-f3a2e04539bc@I-love.SAKURA.ne.jp>
+ <cc14bbde-529e-376c-7d27-8512ec677db3@schaufler-ca.com>
+ <ff43e254-0f41-3f4f-f04d-63b76bed2ccf@I-love.SAKURA.ne.jp>
+ <1a9f9182-9188-2f64-4a17-ead2fed70348@schaufler-ca.com>
+ <2225aec6-f0f3-d38e-ee3c-6139a7c25a37@I-love.SAKURA.ne.jp>
+In-Reply-To: <2225aec6-f0f3-d38e-ee3c-6139a7c25a37@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In restore_template_fmt(), template_desc->fmt will be NULL if kstrdup
-fails, but the return value of restore_template_fmt() will not be null,
-then in ima_restore_measurement_list(), template_desc->fmt will continue
-to be used in below logic:
-  |-- restore_template_fmt(...);	<-- template_desc->fmt = NULL
-  |-- ret = template_desc_init_fields(template_desc->fmt,
-				      &(template_desc->fields),
-				      &(template_desc->num_fields));
-    |-- template_num_fields = template_fmt_size(template_fmt);
-      |--int template_fmt_len = strlen(template_fmt); <-- null-pre-def
+On 2022/10/25 1:37, Casey Schaufler wrote:
+>>  What I'm insisting is that "warrant the freedom to load
+>> loadable LSM modules without recompiling the whole kernel".
+> 
+> Since security modules are optional and the LSM infrastructure
+> itself is optional you can't ensure that any given kernel would
+> support a loadable security module.
 
-So we need return NULL and free template_desc's memory if kstrdup fails
-to fix it.
+Like I propose adding EXPORT_SYMBOL_GPL(security_hook_heads),
+I'm not taking about distributors who choose CONFIG_SECURITY=n.
 
-Fixes: c7d09367702e ("ima: support restoring multiple template formats")
-Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
----
- security/integrity/ima/ima_template.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+>> Adding EXPORT_SYMBOL_GPL(security_hook_heads) is the only way that can "allow
+>> LSM modules which distributors cannot support to be legally loaded".
+> 
+> I believe that I've identified an alternative. It isn't easy or cheap.
 
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index c25079faa208..dc6e8a5194da 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -331,23 +331,26 @@ static struct ima_template_desc *restore_template_fmt(char *template_name)
- 	if (ret < 0) {
- 		pr_err("attempting to initialize the template \"%s\" failed\n",
- 			template_name);
--		goto out;
-+		goto err;
- 	}
- 
- 	template_desc = kzalloc(sizeof(*template_desc), GFP_KERNEL);
- 	if (!template_desc)
--		goto out;
-+		goto err;
- 
- 	template_desc->name = "";
- 	template_desc->fmt = kstrdup(template_name, GFP_KERNEL);
- 	if (!template_desc->fmt)
--		goto out;
-+		goto err;
- 
- 	spin_lock(&template_list);
- 	list_add_tail_rcu(&template_desc->list, &defined_templates);
- 	spin_unlock(&template_list);
--out:
- 	return template_desc;
-+err:
-+	if (template_desc != NULL)
-+		kfree(template_desc);
-+	return NULL;
- }
- 
- static int ima_restore_template_data(struct ima_template_desc *template_desc,
--- 
-2.25.1
+No. You are just handwaving/postponing the problem using something unknown
+that is not yet shown as a workable code. Anything that can be disabled via
+kernel config option cannot be an alternative.
+
+  Quoting from https://lkml.kernel.org/r/2225aec6-f0f3-d38e-ee3c-6139a7c25a37@I-love.SAKURA.ne.jp
+  > Like Paul Moore said
+  > 
+  >   However, I will caution that it is becoming increasingly difficult for people
+  >   to find time to review potential new LSMs so it may a while to attract sufficient
+  >   comments and feedback.
+  > 
+  > , being unable to legally use loadable LSMs deprives of chances to develop/try
+  > new LSMs, and makes LSM interface more and more unattractive. The consequence
+  > would be "The LSM interface is dead. We will give up implementing as LSMs."
+
+The biggest problem is that quite few developers show interest in loadable LSM modules.
+How many developers responded to this topic? Once the ability to allow loadable LSM
+modules is technically lost, nobody shall be able to revive it. You will be happy with
+ignoring poor people.
+
+You are already and completely trapped into "only in-tree and supported by distributors
+is correct" crap.
+
+> Of course the upstream kernel isn't going to have LSM IDs for out-of-tree
+> security modules. That's one of many reasons loadable modules are going to
+> have to be treated differently from built-in modules, if they're allowed
+> at all.
+
+Then, I have to hate your idea of having fixed sized array.
+
+Nacked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
