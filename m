@@ -2,123 +2,239 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D481ECDFA1
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 14:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C89ECDFA1
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 14:13:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231378AbiJYOM6 (ORCPT
+        id S232499AbiJYONE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Oct 2022 10:12:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45448 "EHLO
+        Tue, 25 Oct 2022 10:13:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232237AbiJYOM4 (ORCPT
+        with ESMTP id S232465AbiJYONA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Oct 2022 10:12:56 -0400
-Received: from sonic301-37.consmr.mail.ne1.yahoo.com (sonic301-37.consmr.mail.ne1.yahoo.com [66.163.184.206])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C7A89B87D
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Oct 2022 07:12:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666707174; bh=2dZ/1rxUrkU/jW1nMSr++n/wr/TZUs+jHT4qeDrH3Lk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gBzlpZNTMu7WXw2v7+5BW/nLnQ0QFw1UEE0EEsVEbYEAjjx2oy1+xOs9E2jyXJ4eOe+HADCtAYIc3krSD5LmRUmKlkW9TSyiPzywzp5aptGGb481eoO0ZU7VYMtCRg606slvqGGE/yZ563yF66ZYA73NFJZPyitCu3D80KTWJUi/15eJGIoMer63iA6qa56tkJxwA56zniuwqyVvnsqdejZHPOVE5qyKcHZJ+R5HcoVjc/tj1JjRx5XNpZsarIgFt2F6ra7j3H2sXr33fuPQmJ/11436CTc1d0qJuhSqjq48oW+e23HxO/wcWfpy6GomVdZ8lkGkoPOSu3xsVHPptw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666707174; bh=ZuLxdnI7dIHrDdaH+AF9R+GcZn7tyg56OTuIhhYIy50=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Som/NBVr1SpvGOqwyweDJpVVi3KJ3TGtyetdkNnBYnmvglCcHRqWdk8hMlTx2FW4QhLV6wn4JQrpUCEtdgipb7vk6T8s4met1QP6jDrAKmVg+NIj1oJkZdjkhGJyPY/kPHv3TFvLuPPz4MQgzc5FxS+LTta/iATWrMQfSMIKo6/H0lKrSS0u2+ZuNNXPSqv4AB4qrwN4SgFipORwkKH/mhY4s7b78olxmkNOShmCkWGQwoP5imGpm+6MJkhNofoJzkpeLLQlqK9xciQSpQCvn/8k9CnROFOgMvpOEjxft94A/Vz4H8zZZEzpXqnpaiittnt1OfRmS6yDwqHnbeGJ/A==
-X-YMail-OSG: 1UGMiccVM1kqGFEohkhtbrsun8bJ5LaoK3jIZzLXyxGn.vUGBfdQZ3cp7lQXgTj
- kVfXB2PguvZkFI64xXG3zARWRLmTsYTq_d43kFauf6E6KPsLl0duUuApW3ZEx3Vmc7lIXKP6C4yW
- rnzru5XzaNqKbL45yG2HuDSgd6FcQSTGTDpBFq1ivxqYuMD6oCCJ.W.I5sG6I_si2_71g_e6GkFj
- 6nknGeuWaxq_O62BRMX_MhSRXHOVto.zu8DGmx_zM9AT9lM1fS4RfvUZmtxpBYDAH7vwwI9jATmf
- OEIsKNhWwzZkiDHVG97noJchLdQPJgYfPKqkccAnSZWROIbpfRPJ5vG8g1E5xpuW0D6k1g3aD6lv
- iOihczkhEYYPXj.HMT6PGwPYbb7W2RVwO1y6hjXAsPgt6EYPeSSHsqtxI2IeHM7VrDW60CEdjSW.
- GJ8UelLck1SAFF4FCfYR8BmFa_5TQA.3yOQIZlOk78jxp19b6OvW8o9NYuGK1wgq.ZesY84bMTX1
- CY2YzTkuGHAAe3zOggwnFbgfuZfCqWoWBqD48w9BT6_V6O8nFkP9twEBiMYu7aQOUW_jn6WHnqWC
- EcP0cSJIv0M.AOGRq3jnFO9unii_4Eu6bT4vP.H7fWUDmu2mGmK4jgHK0fnv12WgovSrsE0WZZ5H
- ayUrY6xeT7am3kFZlqVhGkSmjkIuViQEPA7PdG_kB_iVHyeHN._miQTPqlYIQWR9hSa6Z5kWkxjm
- ZHJUqYIzQdr5AGY5ZrQuS5bWN8ArWfK7FrhFmz5zpJJtEL7Yu7AxvnYd.96ftSvhErFuiZfG4KmB
- .p5I19l7c7mmJxcPBOUiLgqmERAb59Lkla7Znmg9g7XRhebdbmjgzWgCEb9mpRQz5bSvrz.z8_6L
- wRzdQ.Wbv7ERvmBjK8gaR4M.ArveY3L3TYfP98MI1g8d0ZxiGqWAGib5ojEFsWILafzJ8MIQkav8
- eUTFZE6J.fhN.KLj8ExTlKn4ZD1yczbMUjEvml.XbrlwYC5.wtLjFISXrpakyXV_LOoErz8Y5YA8
- 4MTHG21dYiEGx1bxGoyEDKKMPHXuBdghdC9XdvApTJjnaGBhm1DqekfLXjZ5BzksNXVY.IiEZMGS
- oxm1Ap6a6NoYSGDFpUUa_fMRzksRUmeLc7f8SC6Su0X6u_xMhzwHYKH32VtX30de6PFZXvil3rl1
- p6pM6lcigVZ.TIF5ITrfJ9woPTAq.mN4OkUkMUBq375p20rR.RlZ1j64sWwp_X2IDdZTlLG_WORQ
- gCWGiSkZfYzDdpHSG4EfcQ7uG8J1zXrbJr5dS_Px_W364WS_9bPUTa2vsjb5ZIe__EKJmCnlL_9K
- vPWkK.nVgAYFfwUhteTm_4zNCanYbN3a4U7V8jvqUbVZySSblBUgw02nMHKQ1fDwx8QOdZ6bd_v5
- mB3sZ2UCzqzT.J3GKIQVsFMDihbTEtqLQzsVpoDrEQ6Wq5G94tDU1ojwV6ZnsSqktMq9nW3LDFFb
- ICFaiKJnUfapdkAFwUNlKYJGwLFRT2xyKpiiNILPXACmg7BBNB50FrIfEM3LfxD9qBtrtNPorIWY
- hcAicTaAVlLqtvQngLC8BSY6syC0VCKNHqrUYoXpgrNp1.K4yLso2BO3RJF7ZOSCFERV4OkoDfED
- Sw6cVXxQDHdg5DD.VxkOA_bNiswWWyB4uneApJuagj3mZy83ORpNkCH3BHMH6MQJngoEuEbGfQhs
- ovTq.HiEA8Pp2b0vRV_zCbjANi728Yb2pyO04Xehm3RHi9Q1hAwXD0Kq8wRraUdXHah8.YkGaOmK
- TVpYkLqvU_fUJ3_RbNijAd6s0oUFJNJfXzU8_NkBSNCgugIAw7KEovjGi8Y1QdARn53iZ9ZAD3jg
- WRAg5W834ZPHLbg7Ie55tRVeF6f9dF6Y6oqb8hL8.vV2ty4uhPhY1wUVPSfycY7RuIS18UrkPSss
- i4rhRQDUeohl3QOmGKGszszSaMFlZCcg.1uh25JTAWf3dCrnvv.GdWpMrN8k9ieKvoi1oYi5Vx2Z
- y6bqQK0tw80wWylHfHSoOnXcxSoe3v2MuGWdq3g63rqLzww.mJOvkmqwUnkOSply8q_rWjSBqUtX
- _BWQc7rDXfjGpokCCYAHvEYFdKbjOPpT4ZFPcnuQXPSNqTty.1SW3oly8FIOUYwby3xkFu8kvBTB
- QN63mSVyWjtEZhD_fvhZueXgympb9ox0BjLb2Y5FqbglfugHVCuVN8nPSc4GYE5cOTuTciXWdSUI
- xOGCIH1ExpBj0LyML_Es1FfGnE5StRJ4qDBtnfTY-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Tue, 25 Oct 2022 14:12:54 +0000
-Received: by hermes--production-gq1-754cb59848-dxw7w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7385069bd8f4d56b8886cf3153f058bb;
-          Tue, 25 Oct 2022 14:12:50 +0000 (UTC)
-Message-ID: <11564f69-3bba-abf7-eb46-06813ff4a404@schaufler-ca.com>
-Date:   Tue, 25 Oct 2022 07:12:47 -0700
+        Tue, 25 Oct 2022 10:13:00 -0400
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D010981DF;
+        Tue, 25 Oct 2022 07:12:58 -0700 (PDT)
+Received: (Authenticated sender: nicolas.bouchinet@clip-os.org)
+        by mail.gandi.net (Postfix) with ESMTPSA id 68679E000A;
+        Tue, 25 Oct 2022 14:12:51 +0000 (UTC)
+Date:   Tue, 25 Oct 2022 16:12:50 +0200
+From:   Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
+To:     linux-integrity@vger.kernel.org
+Cc:     philippe.trebuchet@ssi.gouv.fr, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, casey@schaufler-ca.com, davem@davemloft.net,
+        lucien.xin@gmail.com, vgoyal@redhat.com, omosnace@redhat.com,
+        mortonm@chromium.org, nicolas.bouchinet@ssi.gouv.fr,
+        mic@digikod.net, cgzones@googlemail.com,
+        linux-security-module@vger.kernel.org, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, bpf@vger.kernel.org,
+        roberto.sassu@huaweicloud.com
+Subject: [PATCH v3] evm: Correct inode_init_security hooks behaviors
+Message-ID: <Y1fu4jofqLHVDprT@archlinux>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: LSM stacking in next for 6.1?
-Content-Language: en-US
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
-        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
-        SElinux list <selinux@vger.kernel.org>, casey@schaufler-ca.com
-References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
- <1958a0d3-c4fb-0661-b516-93f8955cdb95@schaufler-ca.com>
- <CAHC9VhQPvcunvBDvSnrUChwmGLen0Rcy8KEk_uOjNF1kr4_m9w@mail.gmail.com>
- <6552af17-e511-a7d8-f462-cafcf41a33bb@schaufler-ca.com>
- <CAHC9VhQMeyxQJSAUuigu=CCr44WtpJg=LEh1xng_bPfCCjqq6Q@mail.gmail.com>
- <5ef4a1ae-e92c-ca77-7089-2efe1d4c4e6d@schaufler-ca.com>
- <CAHC9VhQRpeOMkeEfy=VRPnpuYMUDYgLp56OjQZPYwoXmfHYREQ@mail.gmail.com>
- <c679cea7-bb90-7a62-2e17-888826857d55@schaufler-ca.com>
- <e9ce6253-c8a3-19c3-1b71-f3a2e04539bc@I-love.SAKURA.ne.jp>
- <cc14bbde-529e-376c-7d27-8512ec677db3@schaufler-ca.com>
- <ff43e254-0f41-3f4f-f04d-63b76bed2ccf@I-love.SAKURA.ne.jp>
- <1a9f9182-9188-2f64-4a17-ead2fed70348@schaufler-ca.com>
- <2225aec6-f0f3-d38e-ee3c-6139a7c25a37@I-love.SAKURA.ne.jp>
- <5995f18c-5623-9d97-0aa6-5f13a2a8e895@I-love.SAKURA.ne.jp>
- <77ec837a-ff64-e6f0-fe14-a54c1646ea0b@canonical.com>
- <0fcc5444-a957-f107-25a1-3540588eab5a@I-love.SAKURA.ne.jp>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <0fcc5444-a957-f107-25a1-3540588eab5a@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20754 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/25/2022 4:20 AM, Tetsuo Handa wrote:
-> On 2022/10/25 19:26, John Johansen wrote:
->> no, Casey is not. He is trying to find a path forward to get LSM
->> stacking upstream sooner than later. He has made proposals that
->> admittedly you have not liked, but he has at least tried to propose
->> ideas that could work within the insane set of constraints.
-> I'm OK with getting LSM stacking upstream. But changes made based on
-> only built-in modules are bad. If LSM id cannot be assigned to loadable
-> LSM modules at runtime because not all loadable LSM modules will be
-> in-tree in order to get an LSM id assigned, loadable LSM modules won't
-> be able to utilize e.g. lsm_module_list system call (or whatever
-> changes made while trying to unshare resources/interfaces currently
-> shared among SELinux/Smack/AppArmor).
->
-> It will be a complete reinvention of Linux security framework which is
-> merely borrowing hooks provided by LSM. That is no different from
-> duplicating existing LSM hooks and managing via completely different
-> set of interfaces (e.g. /proc/$pid/attr2/$lsmname/$filename ,
-> /sys/kernel/security2/$lsmname/$filename ). Such implementation is
-> no longer loadable LSM. It is LSM version 2. And I don't think that
-> such implementation will be accepted unless you agree to kill current
-> LSM (say, LSM version 1).
+From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
-The counter argument to this statement is that BPF has been accepted
-upstream. eBPF programs are different from built-in security modules.
-There is no reason that a well implemented LSM that accepts loadable
-modules *that are different* from built-in modules couldn't be created.
-I seriously doubt that it would get upstream for all the reasons
-usually cited. But there is nothing about the implementation I've proposed
-that would prevent it.
+Fixes a NULL pointer dereference occurring in the
+`evm_protected_xattr_common` function of the EVM LSM. The bug is
+triggered if a `inode_init_security` hook returns 0 without initializing
+the given `struct xattr` fields (which is the case of BPF) and if no
+other LSM overrides thoses fields after. This also leads to memory
+leaks.
+
+The `call_int_hook_xattr` macro has been inlined into the
+`security_inode_init_security` hook in order to check hooks return
+values and skip ones who doesn't init `xattrs`.
+
+Modify `evm_init_hmac` function to init the EVM hmac using every
+entry of the given xattr array.
+
+The `MAX_LSM_EVM_XATTR` value is now based on the security modules
+compiled in, which gives room for SMACK, SELinux, Apparmor, BPF and
+IMA/EVM security attributes.
+
+Changes the default return value of the `inode_init_security` hook
+definition to `-EOPNOTSUPP`.
+
+Changes the hook documentation to match the behavior of the LSMs using
+it (only xattr->value is initialised with kmalloc and thus is the only
+one that should be kfreed by the caller).
+
+Cc: roberto.sassu@huaweicloud.com
+Cc: stable@vger.kernel.org
+Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+---
+Changes since v2:
+https://lore.kernel.org/linux-integrity/Y1K3bf+dtNnVe7DG@archlinux/
+
+* The `evm_init_hmacs` has been merged with `evm_init_hmac`
+  (as suggested by Mimi Zohar).
+* The commit message has been updated to match the patch changes.
+---
+ include/linux/lsm_hook_defs.h       |  2 +-
+ include/linux/lsm_hooks.h           |  4 ++--
+ security/integrity/evm/evm_crypto.c | 11 ++++++++--
+ security/integrity/evm/evm_main.c   |  7 ++++---
+ security/security.c                 | 31 ++++++++++++++++++++++-------
+ 5 files changed, 40 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 806448173033..e5dd0c0f6345 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -111,7 +111,7 @@ LSM_HOOK(int, 0, path_notify, const struct path *path, u64 mask,
+ 	 unsigned int obj_type)
+ LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
+ LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
+-LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
++LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
+ 	 struct inode *dir, const struct qstr *qstr, const char **name,
+ 	 void **value, size_t *len)
+ LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 84a0d7e02176..95aff9383de1 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -229,8 +229,8 @@
+  *	This hook is called by the fs code as part of the inode creation
+  *	transaction and provides for atomic labeling of the inode, unlike
+  *	the post_create/mkdir/... hooks called by the VFS.  The hook function
+- *	is expected to allocate the name and value via kmalloc, with the caller
+- *	being responsible for calling kfree after using them.
++ *	is expected to allocate the value via kmalloc, with the caller
++ *	being responsible for calling kfree after using it.
+  *	If the security module does not use security attributes or does
+  *	not wish to put a security attribute on this particular inode,
+  *	then it should return -EOPNOTSUPP to skip this processing.
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 708de9656bbd..c82f271cfd19 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -385,7 +385,9 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+ 	return rc;
+ }
+ 
+-int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
++int evm_protected_xattr(const char *req_xattr_name);
++
++int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattrs,
+ 		  char *hmac_val)
+ {
+ 	struct shash_desc *desc;
+@@ -396,7 +398,12 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+ 		return PTR_ERR(desc);
+ 	}
+ 
+-	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
++	for (int i = 0; lsm_xattrs[i].value != NULL; i++) {
++		if (evm_protected_xattr(lsm_xattrs[i].name))
++			crypto_shash_update(desc,
++					    lsm_xattrs[i].value,
++					    lsm_xattrs[i].value_len);
++	}
+ 	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
+ 	kfree(desc);
+ 	return 0;
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 2e6fb6e2ffd2..0420453a80e8 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -284,6 +284,8 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
+ 	int found = 0;
+ 	struct xattr_list *xattr;
+ 
++	if (!req_xattr_name)
++		return found;
+ 	namelen = strlen(req_xattr_name);
+ 	list_for_each_entry_lockless(xattr, &evm_config_xattrnames, list) {
+ 		if (!all_xattrs && !xattr->enabled)
+@@ -305,7 +307,7 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
+ 	return found;
+ }
+ 
+-static int evm_protected_xattr(const char *req_xattr_name)
++int evm_protected_xattr(const char *req_xattr_name)
+ {
+ 	return evm_protected_xattr_common(req_xattr_name, false);
+ }
+@@ -841,8 +843,7 @@ int evm_inode_init_security(struct inode *inode,
+ 	struct evm_xattr *xattr_data;
+ 	int rc;
+ 
+-	if (!(evm_initialized & EVM_INIT_HMAC) ||
+-	    !evm_protected_xattr(lsm_xattr->name))
++	if (!(evm_initialized & EVM_INIT_HMAC))
+ 		return 0;
+ 
+ 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
+diff --git a/security/security.c b/security/security.c
+index 14d30fec8a00..79524f8734f1 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -30,7 +30,11 @@
+ #include <linux/msg.h>
+ #include <net/flow.h>
+ 
+-#define MAX_LSM_EVM_XATTR	2
++#define MAX_LSM_EVM_XATTR                                \
++	((IS_ENABLED(CONFIG_EVM) ? 1 : 0) +              \
++	 (IS_ENABLED(CONFIG_SECURITY_SELINUX) ? 1 : 0) + \
++	 (IS_ENABLED(CONFIG_SECURITY_SMACK) ? 1 : 0) +   \
++	 (IS_ENABLED(CONFIG_BPF_LSM) ? 1 : 0))
+ 
+ /* How many LSMs were built into the kernel? */
+ #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
+@@ -1091,9 +1095,11 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 				 const struct qstr *qstr,
+ 				 const initxattrs initxattrs, void *fs_data)
+ {
++	int i = 0;
++	int ret = -EOPNOTSUPP;
+ 	struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
+ 	struct xattr *lsm_xattr, *evm_xattr, *xattr;
+-	int ret;
++	struct security_hook_list *hook_ptr;
+ 
+ 	if (unlikely(IS_PRIVATE(inode)))
+ 		return 0;
+@@ -1103,15 +1109,26 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 				     dir, qstr, NULL, NULL, NULL);
+ 	memset(new_xattrs, 0, sizeof(new_xattrs));
+ 	lsm_xattr = new_xattrs;
+-	ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
+-						&lsm_xattr->name,
+-						&lsm_xattr->value,
+-						&lsm_xattr->value_len);
++	hlist_for_each_entry(hook_ptr, &security_hook_heads.inode_init_security,
++			     list) {
++		ret = hook_ptr->hook.inode_init_security(inode, dir, qstr,
++				&lsm_xattr->name,
++				&lsm_xattr->value,
++				&lsm_xattr->value_len);
++		if (ret == -EOPNOTSUPP)
++			continue;
++		if (WARN_ON_ONCE(i >= MAX_LSM_EVM_XATTR))
++			ret = -ENOMEM;
++		if (ret != 0)
++			break;
++		lsm_xattr++;
++		i++;
++	}
+ 	if (ret)
+ 		goto out;
+ 
+ 	evm_xattr = lsm_xattr + 1;
+-	ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
++	ret = evm_inode_init_security(inode, new_xattrs, evm_xattr);
+ 	if (ret)
+ 		goto out;
+ 	ret = initxattrs(inode, new_xattrs, fs_data);
+-- 
+2.38.1
 
