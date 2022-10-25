@@ -2,80 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8877AC04A95
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 10:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76629C04A95
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 11:02:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231857AbiJYKpu (ORCPT
+        id S231349AbiJYLC3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Oct 2022 06:45:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33274 "EHLO
+        Tue, 25 Oct 2022 07:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232261AbiJYKpt (ORCPT
+        with ESMTP id S230245AbiJYLC2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Oct 2022 06:45:49 -0400
+        Tue, 25 Oct 2022 07:02:28 -0400
 Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0BFE9623A
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Oct 2022 03:45:47 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.53])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4MxT6q4CnyzJn8K;
-        Tue, 25 Oct 2022 18:42:59 +0800 (CST)
-Received: from cgs.huawei.com (10.244.148.83) by
- kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 957F3DFB4B;
+        Tue, 25 Oct 2022 04:02:25 -0700 (PDT)
+Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.54])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4MxTV22n9xzJn7j;
+        Tue, 25 Oct 2022 18:59:38 +0800 (CST)
+Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
+ dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 25 Oct 2022 18:45:44 +0800
-From:   Gaosheng Cui <cuigaosheng1@huawei.com>
-To:     <serge@hallyn.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-        <brauner@kernel.org>, <cuigaosheng1@huawei.com>
-CC:     <linux-security-module@vger.kernel.org>
-Subject: [PATCH] security: commoncap: fix potential memleak on error path from vfs_getxattr_alloc
-Date:   Tue, 25 Oct 2022 18:45:44 +0800
-Message-ID: <20221025104544.2298829-1-cuigaosheng1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+ 15.1.2375.31; Tue, 25 Oct 2022 19:02:23 +0800
+Received: from octopus.huawei.com (10.67.174.191) by
+ dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Tue, 25 Oct 2022 19:02:23 +0800
+From:   Wang Weiyang <wangweiyang2@huawei.com>
+To:     <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+        <serge.hallyn@canonical.com>, <akpm@linux-foundation.org>,
+        <aris@redhat.com>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] device_cgroup: Roll back to original exceptions after copy failure
+Date:   Tue, 25 Oct 2022 19:31:01 +0800
+Message-ID: <20221025113101.41132-1-wangweiyang2@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.244.148.83]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemi500012.china.huawei.com (7.221.188.12)
+Content-Type: text/plain
+X-Originating-IP: [10.67.174.191]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500001.china.huawei.com (7.185.36.107)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In cap_inode_getsecurity(), we will use vfs_getxattr_alloc() to
-complete the memory allocation of tmpbuf, if we have completed
-the memory allocation of tmpbuf, but failed to call handler->get(...),
-there will be a memleak in below logic:
+When add the 'a *:* rwm' entry to devcgroup A's whitelist, at first A's
+exceptions will be cleaned and A's behavior is changed to
+DEVCG_DEFAULT_ALLOW. Then parent's exceptions will be copyed to A's
+whitelist. If copy failure occurs, just return leaving A to grant
+permissions to all devices. And A may grant more permissions than
+parent.
 
-  |-- ret = (int)vfs_getxattr_alloc(mnt_userns, ...)  <-- alloc for tmpbuf
-    |-- value = krealloc(*xattr_value, error + 1, flags)  <-- alloc memory
-    |-- error = handler->get(handler, ...)  <-- if error
-    |-- *xattr_value = value <-- xattr_value is &tmpbuf  <-- memory leak
+Backup A's whitelist and recover original exceptions after copy
+failure.
 
-So we will try to free(tmpbuf) after vfs_getxattr_alloc() fails to fix it.
-
-Fixes: 71bc356f93a1 ("commoncap: handle idmapped mounts")
-Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+Fixes: 4cef7299b478 ("device_cgroup: add proper checking when changing default behavior")
+Signed-off-by: Wang Weiyang <wangweiyang2@huawei.com>
 ---
- security/commoncap.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ security/device_cgroup.c | 33 +++++++++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 4 deletions(-)
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 5fc8986c3c77..bc751fa5adad 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -401,8 +401,10 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
- 				      &tmpbuf, size, GFP_NOFS);
- 	dput(dentry);
+diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+index a9f8c63a96d1..bef2b9285fb3 100644
+--- a/security/device_cgroup.c
++++ b/security/device_cgroup.c
+@@ -82,6 +82,17 @@ static int dev_exceptions_copy(struct list_head *dest, struct list_head *orig)
+ 	return -ENOMEM;
+ }
  
--	if (ret < 0 || !tmpbuf)
--		return ret;
-+	if (ret < 0 || !tmpbuf) {
-+		size = ret;
-+		goto out_free;
++static void dev_exceptions_move(struct list_head *dest, struct list_head *orig)
++{
++	struct dev_exception_item *ex, *tmp;
++
++	lockdep_assert_held(&devcgroup_mutex);
++
++	list_for_each_entry_safe(ex, tmp, orig, list) {
++		list_move_tail(&ex->list, dest);
 +	}
++}
++
+ /*
+  * called under devcgroup_mutex
+  */
+@@ -604,11 +615,13 @@ static int devcgroup_update_access(struct dev_cgroup *devcgroup,
+ 	int count, rc = 0;
+ 	struct dev_exception_item ex;
+ 	struct dev_cgroup *parent = css_to_devcgroup(devcgroup->css.parent);
++	struct dev_cgroup tmp_devcgrp;
  
- 	fs_ns = inode->i_sb->s_user_ns;
- 	cap = (struct vfs_cap_data *) tmpbuf;
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+ 	memset(&ex, 0, sizeof(ex));
++	memset(&tmp_devcgrp, 0, sizeof(tmp_devcgrp));
+ 	b = buffer;
+ 
+ 	switch (*b) {
+@@ -620,15 +633,27 @@ static int devcgroup_update_access(struct dev_cgroup *devcgroup,
+ 
+ 			if (!may_allow_all(parent))
+ 				return -EPERM;
+-			dev_exception_clean(devcgroup);
+-			devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
+-			if (!parent)
++			if (!parent) {
++				devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
++				dev_exception_clean(devcgroup);
+ 				break;
++			}
+ 
++			INIT_LIST_HEAD(&tmp_devcgrp.exceptions);
++			rc = dev_exceptions_copy(&tmp_devcgrp.exceptions,
++						 &devcgroup->exceptions);
++			if (rc)
++				return rc;
++			dev_exception_clean(devcgroup);
+ 			rc = dev_exceptions_copy(&devcgroup->exceptions,
+ 						 &parent->exceptions);
+-			if (rc)
++			if (rc) {
++				dev_exceptions_move(&devcgroup->exceptions,
++						    &tmp_devcgrp.exceptions);
+ 				return rc;
++			}
++			devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
++			dev_exception_clean(&tmp_devcgrp);
+ 			break;
+ 		case DEVCG_DENY:
+ 			if (css_has_online_children(&devcgroup->css))
 -- 
-2.25.1
+2.17.1
 
