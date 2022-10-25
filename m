@@ -2,102 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB42C04A95
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 05:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 737DDC38A2D
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 05:50:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbiJYFqN (ORCPT
+        id S229955AbiJYFuj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Oct 2022 01:46:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47238 "EHLO
+        Tue, 25 Oct 2022 01:50:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230518AbiJYFqM (ORCPT
+        with ESMTP id S230071AbiJYFui (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Oct 2022 01:46:12 -0400
+        Tue, 25 Oct 2022 01:50:38 -0400
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 467628BBAA
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Oct 2022 22:46:11 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A3254363D;
+        Mon, 24 Oct 2022 22:50:35 -0700 (PDT)
 Received: from [192.168.43.182] (unknown [62.168.35.125])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 2B1723F0EB;
-        Tue, 25 Oct 2022 05:46:08 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id BE13B422E9;
+        Tue, 25 Oct 2022 05:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1666676768;
-        bh=QxFnl4TfwxL06Scp4jWtM9/xBq83fFjLDVwdNQtnq7g=;
+        s=20210705; t=1666677033;
+        bh=yox8mjyeuZlCoe/FoMjeIoTMqW4Nu1lv1zq+lpqENys=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=eC/M0dCauIquijmLuvlNw+cQoXCSEcgJwChUMGT0FGwhUNEyhf4U+VRacmV8V68cp
-         c+Mn6G0tfrmWKp39RG/5l4MO7ofi9ZlN1xKpM4r6AX9WdMRyaOiXb+7ozzA9bxy44c
-         aw00EcbXKKKrZ0GbaMcYrqqlAiFJdO7CxXcBim/y76fo+/qDpWgHFGc4dc3Wwzh4hu
-         ALJNadg9/WAXCpb9qXQJ+yzXYkhOVjEfE8gved+yU2hv6bjDn1r/mo2mOQN9xhv7Op
-         GHV8yTlcYpch2yfyOpsaFtA2BrAi1PRpf5jzrl74RmxBkmUS49K1nE2gOJ5D6nAFCk
-         BneTAtZ/KfVrQ==
-Message-ID: <a43b4a3e-887b-9068-5e14-414c1619f2fb@canonical.com>
-Date:   Mon, 24 Oct 2022 22:46:07 -0700
+        b=bOP5ODNofoLpiN90yOa5ZIYdre4m98omJkmb5CqBMof7eru93HNKqcqDx/3bHmaxN
+         LOZjuoDo1LufW1N16Ie0yYhhOuBwh0jAHenT3AwWMMGW0JJxXmNg8DWqDhL5jCGrZn
+         X5V20W99N7art5dqJj/nTxu8vitQNTOHwHxvWtPBfqOjEGEWkSMxMKxIoZJbVH64rY
+         vQqRy8rK/fbDddbsGTYTqM0cm9a+RKowAPoHy1VKt0Bu//v2B5/qzLsZFPeCloAaf1
+         JSbeJHuesjfreZ5asnqe2jj+E3ZlnGtNjkC1Od+hePHLwWFMH6dlTel3ZSEc6GOsRH
+         MnJUbo1Y0kxEg==
+Message-ID: <4ad67bac-bae1-dd3f-bdcb-a2f5bfdfa2b6@canonical.com>
+Date:   Mon, 24 Oct 2022 22:50:33 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.2
-Subject: Re: [PATCH -next] apparmor: fix a memleak in free_ruleset()
+Subject: Re: [PATCH] apparmor: Fix memleak issue in unpack_profile()
 Content-Language: en-US
-To:     Gaosheng Cui <cuigaosheng1@huawei.com>, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com
-Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
-References: <20221025035930.2151976-1-cuigaosheng1@huawei.com>
+To:     Xiu Jianfeng <xiujianfeng@huawei.com>, paul@paul-moore.com,
+        serge@hallyn.com
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20221021093602.102839-1-xiujianfeng@huawei.com>
 From:   John Johansen <john.johansen@canonical.com>
 Organization: Canonical
-In-Reply-To: <20221025035930.2151976-1-cuigaosheng1@huawei.com>
+In-Reply-To: <20221021093602.102839-1-xiujianfeng@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/24/22 20:59, Gaosheng Cui wrote:
-> When the aa_profile is released, we will call free_ruleset to
-> release aa_ruleset, but we don't free the memory of aa_ruleset,
-> so there will be memleak, fix it.
+On 10/21/22 02:36, Xiu Jianfeng wrote:
+> Before aa_alloc_profile(), it has allocated string for @*ns_name if @tmpns
+> is not NULL, so directly return -ENOMEM if aa_alloc_profile() failed will
+> cause a memleak issue, and even if aa_alloc_profile() succeed, in the
+> @fail_profile tag of aa_unpack(), it need to free @ns_name as well, this
+> patch fixes them.
 > 
-> unreferenced object 0xffff8881475df800 (size 1024):
->    comm "apparmor_parser", pid 883, jiffies 4294899650 (age 9114.088s)
->    hex dump (first 32 bytes):
->      00 f8 5d 47 81 88 ff ff 00 f8 5d 47 81 88 ff ff  ..]G......]G....
->      00 00 00 00 00 00 00 00 00 dc 65 47 81 88 ff ff  ..........eG....
->    backtrace:
->      [<00000000370e658e>] __kmem_cache_alloc_node+0x182/0x700
->      [<00000000f2f5a6d2>] kmalloc_trace+0x2c/0x130
->      [<00000000c5c905b3>] aa_alloc_profile+0x1bc/0x5c0
->      [<00000000bc4fa72b>] unpack_profile+0x319/0x30c0
->      [<00000000eab791e9>] aa_unpack+0x307/0x1450
->      [<000000002c3a6ee1>] aa_replace_profiles+0x1b8/0x3790
->      [<00000000d0c3fd54>] policy_update+0x35a/0x890
->      [<00000000d04fed90>] profile_replace+0x1d1/0x260
->      [<00000000cba0c0a7>] vfs_write+0x283/0xd10
->      [<000000006bae64a5>] ksys_write+0x134/0x260
->      [<00000000b2fd8f31>] __x64_sys_write+0x78/0xb0
->      [<00000000f3c8a015>] do_syscall_64+0x5c/0x90
->      [<00000000a242b1db>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> 
-> Fixes: 217af7e2f4de ("apparmor: refactor profile rules and attachments")
-> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+> Fixes: 736ec752d95e ("AppArmor: policy routines for loading and unpacking policy")
+> Fixes: 04dc715e24d0 ("apparmor: audit policy ns specified in policy load")
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+
+yep thanks I have pulled this into my tree
 
 Acked-by: John Johansen <john.johansen@canonical.com>
 
-I have pulled this into apparmor-next
-
 > ---
->   security/apparmor/policy.c | 1 +
->   1 file changed, 1 insertion(+)
+>   security/apparmor/policy_unpack.c | 15 ++++++++++++---
+>   1 file changed, 12 insertions(+), 3 deletions(-)
 > 
-> diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-> index 6f4cc8bfe03d..ebb99a12929b 100644
-> --- a/security/apparmor/policy.c
-> +++ b/security/apparmor/policy.c
-> @@ -215,6 +215,7 @@ static void free_ruleset(struct aa_ruleset *rules)
->   	for (i = 0; i < rules->secmark_count; i++)
->   		kfree_sensitive(rules->secmark[i].label);
->   	kfree_sensitive(rules->secmark);
-> +	kfree_sensitive(rules);
->   }
+> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> index 2e028d540c6b..1bf8cfb8700a 100644
+> --- a/security/apparmor/policy_unpack.c
+> +++ b/security/apparmor/policy_unpack.c
+> @@ -858,8 +858,11 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
+>   	}
 >   
->   struct aa_ruleset *aa_alloc_ruleset(gfp_t gfp)
+>   	profile = aa_alloc_profile(name, NULL, GFP_KERNEL);
+> -	if (!profile)
+> -		return ERR_PTR(-ENOMEM);
+> +	if (!profile) {
+> +		info = "out of memory";
+> +		error = -ENOMEM;
+> +		goto fail;
+> +	}
+>   	rules = list_first_entry(&profile->rules, typeof(*rules), list);
+>   
+>   	/* profile renaming is optional */
+> @@ -1090,6 +1093,10 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
+>   	if (error == 0)
+>   		/* default error covers most cases */
+>   		error = -EPROTO;
+> +	if (*ns_name) {
+> +		kfree(*ns_name);
+> +		*ns_name = NULL;
+> +	}
+>   	if (profile)
+>   		name = NULL;
+>   	else if (!name)
+> @@ -1392,6 +1399,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
+>   {
+>   	struct aa_load_ent *tmp, *ent;
+>   	struct aa_profile *profile = NULL;
+> +	char *ns_name = NULL;
+>   	int error;
+>   	struct aa_ext e = {
+>   		.start = udata->data,
+> @@ -1401,7 +1409,6 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
+>   
+>   	*ns = NULL;
+>   	while (e.pos < e.end) {
+> -		char *ns_name = NULL;
+>   		void *start;
+>   		error = verify_header(&e, e.pos == e.start, ns);
+>   		if (error)
+> @@ -1432,6 +1439,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
+>   
+>   		ent->new = profile;
+>   		ent->ns_name = ns_name;
+> +		ns_name = NULL;
+>   		list_add_tail(&ent->list, lh);
+>   	}
+>   	udata->abi = e.version & K_ABI_MASK;
+> @@ -1452,6 +1460,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
+>   	return 0;
+>   
+>   fail_profile:
+> +	kfree(ns_name);
+>   	aa_put_profile(profile);
+>   
+>   fail:
 
