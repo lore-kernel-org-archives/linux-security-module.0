@@ -2,82 +2,147 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F8E7ECDFA1
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 13:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA5F9ECDFA1
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 13:33:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbiJYNF4 (ORCPT
+        id S230294AbiJYNd6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Oct 2022 09:05:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37136 "EHLO
+        Tue, 25 Oct 2022 09:33:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232507AbiJYNFX (ORCPT
+        with ESMTP id S231511AbiJYNd6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Oct 2022 09:05:23 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF2BC21807
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Oct 2022 06:05:06 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7E2D9B81A9C
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Oct 2022 13:05:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0589C433D6;
-        Tue, 25 Oct 2022 13:05:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666703104;
-        bh=N7uqJ+CGk49Z44tFva+K2sjK+Cgv5kaX4FPfGJVtftM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MhW1nQ9tKDDwb+RTZhX0fmLczWHmhcXYb2vt7ArEsqKxkwW9EJCVC9Wd6NjQplPpp
-         fKnMpLe/BNHWUbQtn31o4Oo+NkL3ZoGLRh6iAQR7ywhOdpkf7A51wIm5mgaDK0dJc6
-         xUnderqYTZ8JWupPBQoQIppZkt7AYv5vOlXc0eAtRa577pteM3P6EIha+FhSXiJfgP
-         LofR6CNHOGBe3jK0eqTaRwSMnJQm/1Z9VSGNo2lN3LLhPZjw7SeaqSW1egrmkZiLNO
-         YJCo8yMjYO35NO+XjVHFAzaA7s8voCJjgaykAbb2XcRQcm5bmLX8YYByuKuWYQdeci
-         fHTK4d93fKMpw==
-Date:   Tue, 25 Oct 2022 15:04:59 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Gaosheng Cui <cuigaosheng1@huawei.com>
-Cc:     serge@hallyn.com, paul@paul-moore.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] security: commoncap: fix potential memleak on error path
- from vfs_getxattr_alloc
-Message-ID: <20221025130459.kk42edsz56vsd3ur@wittgenstein>
-References: <20221025104544.2298829-1-cuigaosheng1@huawei.com>
+        Tue, 25 Oct 2022 09:33:58 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAC5C18B095;
+        Tue, 25 Oct 2022 06:33:55 -0700 (PDT)
+Received: (Authenticated sender: nicolas.bouchinet@clip-os.org)
+        by mail.gandi.net (Postfix) with ESMTPSA id CB59C1BF219;
+        Tue, 25 Oct 2022 13:33:49 +0000 (UTC)
+Date:   Tue, 25 Oct 2022 15:33:48 +0200
+From:   Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, philippe.trebuchet@ssi.gouv.fr,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, casey@schaufler-ca.com, davem@davemloft.net,
+        lucien.xin@gmail.com, vgoyal@redhat.com, omosnace@redhat.com,
+        mortonm@chromium.org, nicolas.bouchinet@ssi.gouv.fr,
+        mic@digikod.net, cgzones@googlemail.com,
+        linux-security-module@vger.kernel.org, brauner@kernel.org,
+        keescook@chromium.org
+Subject: Re: [PATCH] evm: Correct inode_init_security hooks behaviors
+Message-ID: <Y1flvA2hJn2pNSiJ@archlinux>
+References: <Y1FTSIo+1x+4X0LS@archlinux>
+ <5edef60c775117758ecc146f1e8b96ef1c48e3da.camel@linux.ibm.com>
+ <Y1Ki8838IAicXzlb@archlinux>
+ <8607d166bbd2f32f1e71e5d7ce40b937eaeb410b.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221025104544.2298829-1-cuigaosheng1@huawei.com>
+In-Reply-To: <8607d166bbd2f32f1e71e5d7ce40b937eaeb410b.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 25, 2022 at 06:45:44PM +0800, Gaosheng Cui wrote:
-> In cap_inode_getsecurity(), we will use vfs_getxattr_alloc() to
-> complete the memory allocation of tmpbuf, if we have completed
-> the memory allocation of tmpbuf, but failed to call handler->get(...),
-> there will be a memleak in below logic:
+Hi !
+
+On Mon, Oct 24, 2022 at 12:35:52PM -0400, Mimi Zohar wrote:
+> Hi Nicolas,
 > 
->   |-- ret = (int)vfs_getxattr_alloc(mnt_userns, ...)  <-- alloc for tmpbuf
->     |-- value = krealloc(*xattr_value, error + 1, flags)  <-- alloc memory
->     |-- error = handler->get(handler, ...)  <-- if error
->     |-- *xattr_value = value <-- xattr_value is &tmpbuf  <-- memory leak
+> On Fri, 2022-10-21 at 15:47 +0200, Nicolas Bouchinet wrote:
+> > Hi Mimi,
+> > 
+> > Thanks for the IMA/EVM project which I enjoy very much.
+> > 
+> > On Thu, Oct 20, 2022 at 03:51:38PM -0400, Mimi Zohar wrote:
+> > > On Thu, 2022-10-20 at 15:55 +0200, Nicolas Bouchinet wrote:
+> > > > From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > > > 
+> > > > Fixes a NULL pointer dereference occuring in the
+> > > > `evm_protected_xattr_common` function of the EVM LSM. The bug is
+> > > > triggered if a `inode_init_security` hook returns 0 without initializing
+> > > > the given `struct xattr` fields (which is the case of BPF) and if no
+> > > > other LSM overrides thoses fields after. This also leads to memory
+> > > > leaks.
+> > > > 
+> > > > Adds a `call_int_hook_xattr` macro that fetches and feed the
+> > > > `new_xattrs` array with every called hook xattr values.
+> > > > 
+> > > > Adds a `evm_init_hmacs` function which init the EVM hmac using every
+> > > > entry of the array contrary to `evm_init_hmac`.
+> > >   
+> > > Only EVM portable digital signatures include all of the protected
+> > > xattrs.   Refer to commit 8c7a703ec978 ("evm: Verify portable
+> > > signatures against all protected xattrs").
+> > > 
+> > Sorry, maybe I was not clear enough, the proposed patch does not change the
+> > set of the protected security xattrs initialized by the LSMs and processed by EVM.
+> > 
+> > As I explained to Paul, based on my understanding, the `security_inode_init_security()`
+> > hook is supposed to initialize every hooked LSM security xattr and next,
+> > if evm is enabled, protect them using a HMAC algorithm.
+> > However, in the current implementation, the use of the `call_int_hook()` macro by
+> > `security_inode_init_security()` overwrites the previously initialized xattr for
+> > each iteration of the `hlist_for_each_entry()` loop.
+> > 
+> > I have noticed that more than one LSM may initialize a security xattr at a time,
+> > eg. SELinux + BPF.
 > 
-> So we will try to free(tmpbuf) after vfs_getxattr_alloc() fails to fix it.
-
-Hey Gaosheng,
-
+> Does BPF have a security xattr and, if so, does it need to be
+> protected?   It would need to be defined and included in the list of
+> evm_config_xattrnames[].  If it doesn't define a security bpf xattr,
+> then bpf should not be on the security_inode_init_security() hook.  (I
+> assume Roberto's patch is going in this direction.)
 > 
-> Fixes: 71bc356f93a1 ("commoncap: handle idmapped mounts")
+> Before the EVM hmac is updated, the existing EVM hmac is verified.  I
+> would be concerned if bpf defined a protected security xattr.   Could
+> the same guarantees, that security.evm isn't updated without first
+> being verified, be enforced with bpf?
+> 
 
-The Fixes: tag is wrong afaict. The control flow isn't changed in any
-way by the referenced commit.
+I am not that comfortable with BPF programs but based on what Alexei Starovoitov pointed out here
+https://lore.kernel.org/bpf/20221021164626.3729012-1-roberto.sassu@huaweicloud.com
+BPF should not be able to write into the xattrs pointers. And thus shouldn't be included
+in `evm_config_xattrnames[]`.
+> > 
+> > IMHO my supplementary `evm_init_hmacs()` function name is a bit confusing, I would
+> > enjoy if you have a better proposition. Note that `evm_init_hmacs()` have the same
+> > behavior as `evm_init_hmac()` if only one security xattr is given as a parameter.
+> 
+> I'm missing something here.  As evm_inode_init_security() is the only
+> caller of evm_init_hmac(), why is a new function defined instead of
+> updating the existing one?   If there is a valid reason, then one
+> function should be a wrapper for the other.
+> 
 
-The logic changed the last time with
-82e5d8cc768b ("security: commoncap: fix -Wstringop-overread warning")
-but even that commit wouldn't have introduced the bug. It would've been
-introduced by 8db6c34f1dbc ("Introduce v3 namespaced file
-capabilities"). So update the Fixes: tag with that reference, please.
+There is no valid reasons, I was just unsure about replacing existing functions, will update it.
+> > > > 
+> > > > Fixes the `evm_inode_init_security` function to use `evm_init_hmacs`.
+> > > 
+> > > Won't this break existing EVM hmac usage?
+> > I might be wrong, but as far as I understand it, the only working condition for
+> > EVM now is when only one security xattr is involved, otherwise there will have
+> > a mismatch between the initialization and the verification.
+> > Indeed, the verification takes into account every security xattr written in its
+> > refering dentry.
+> 
+> Agreed, independently as to whether BPF defines a security xattr, if
+> two LSMs initialize security xattrs, then this change is needed.  Are
+> there any other examples?
 
-Otherwise I think you in principle have a point. Not sure if we have any
-filesystem that in practice would fail after permission checks have
-already passed with the first call to ->get() but then fail with the
-correct size passed in the second ->get() invocation. Sounds super
-unlikely but not impossible.
+I think that in its current state the kernel cannot load two LSM capable of xattr
+initialization as they are all defined with the `LSM_FLAG_EXCLUSIVE` flag set.
+But I may be unaware of other LSM in development stage.
+> 
+> (nit: I understand the line size has generally been relaxed, but for
+> IMA/EVM I would prefer it to be remain as 80 chars.)
+> 
+
+No problem, will change it !
+> Mimi
+> 
+
+I'll take time to run few tests with BPF and send a patch v3 with new changes.
+
+Regards,
+
+Nicolas Bouchinet
