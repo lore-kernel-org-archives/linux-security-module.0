@@ -2,91 +2,82 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF9AC38A2D
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 11:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F8E7ECDFA1
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Oct 2022 13:05:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229876AbiJYLUv (ORCPT
+        id S229995AbiJYNF4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Oct 2022 07:20:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50064 "EHLO
+        Tue, 25 Oct 2022 09:05:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231286AbiJYLUv (ORCPT
+        with ESMTP id S232507AbiJYNFX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Oct 2022 07:20:51 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 672482FFF4
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Oct 2022 04:20:50 -0700 (PDT)
-Received: from fsav411.sakura.ne.jp (fsav411.sakura.ne.jp [133.242.250.110])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 29PBKRqb050298;
-        Tue, 25 Oct 2022 20:20:28 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav411.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp);
- Tue, 25 Oct 2022 20:20:27 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 29PBKR8D050295
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 25 Oct 2022 20:20:27 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <0fcc5444-a957-f107-25a1-3540588eab5a@I-love.SAKURA.ne.jp>
-Date:   Tue, 25 Oct 2022 20:20:23 +0900
+        Tue, 25 Oct 2022 09:05:23 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF2BC21807
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Oct 2022 06:05:06 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7E2D9B81A9C
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Oct 2022 13:05:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0589C433D6;
+        Tue, 25 Oct 2022 13:05:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666703104;
+        bh=N7uqJ+CGk49Z44tFva+K2sjK+Cgv5kaX4FPfGJVtftM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MhW1nQ9tKDDwb+RTZhX0fmLczWHmhcXYb2vt7ArEsqKxkwW9EJCVC9Wd6NjQplPpp
+         fKnMpLe/BNHWUbQtn31o4Oo+NkL3ZoGLRh6iAQR7ywhOdpkf7A51wIm5mgaDK0dJc6
+         xUnderqYTZ8JWupPBQoQIppZkt7AYv5vOlXc0eAtRa577pteM3P6EIha+FhSXiJfgP
+         LofR6CNHOGBe3jK0eqTaRwSMnJQm/1Z9VSGNo2lN3LLhPZjw7SeaqSW1egrmkZiLNO
+         YJCo8yMjYO35NO+XjVHFAzaA7s8voCJjgaykAbb2XcRQcm5bmLX8YYByuKuWYQdeci
+         fHTK4d93fKMpw==
+Date:   Tue, 25 Oct 2022 15:04:59 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Gaosheng Cui <cuigaosheng1@huawei.com>
+Cc:     serge@hallyn.com, paul@paul-moore.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] security: commoncap: fix potential memleak on error path
+ from vfs_getxattr_alloc
+Message-ID: <20221025130459.kk42edsz56vsd3ur@wittgenstein>
+References: <20221025104544.2298829-1-cuigaosheng1@huawei.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: LSM stacking in next for 6.1?
-Content-Language: en-US
-To:     John Johansen <john.johansen@canonical.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
-        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
-        SElinux list <selinux@vger.kernel.org>
-References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
- <CAHC9VhRrOgDMO9fo632tSL7vCMAy1_x3smaAok-nWdMAUFB8xQ@mail.gmail.com>
- <1958a0d3-c4fb-0661-b516-93f8955cdb95@schaufler-ca.com>
- <CAHC9VhQPvcunvBDvSnrUChwmGLen0Rcy8KEk_uOjNF1kr4_m9w@mail.gmail.com>
- <6552af17-e511-a7d8-f462-cafcf41a33bb@schaufler-ca.com>
- <CAHC9VhQMeyxQJSAUuigu=CCr44WtpJg=LEh1xng_bPfCCjqq6Q@mail.gmail.com>
- <5ef4a1ae-e92c-ca77-7089-2efe1d4c4e6d@schaufler-ca.com>
- <CAHC9VhQRpeOMkeEfy=VRPnpuYMUDYgLp56OjQZPYwoXmfHYREQ@mail.gmail.com>
- <c679cea7-bb90-7a62-2e17-888826857d55@schaufler-ca.com>
- <e9ce6253-c8a3-19c3-1b71-f3a2e04539bc@I-love.SAKURA.ne.jp>
- <cc14bbde-529e-376c-7d27-8512ec677db3@schaufler-ca.com>
- <ff43e254-0f41-3f4f-f04d-63b76bed2ccf@I-love.SAKURA.ne.jp>
- <1a9f9182-9188-2f64-4a17-ead2fed70348@schaufler-ca.com>
- <2225aec6-f0f3-d38e-ee3c-6139a7c25a37@I-love.SAKURA.ne.jp>
- <5995f18c-5623-9d97-0aa6-5f13a2a8e895@I-love.SAKURA.ne.jp>
- <77ec837a-ff64-e6f0-fe14-a54c1646ea0b@canonical.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <77ec837a-ff64-e6f0-fe14-a54c1646ea0b@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20221025104544.2298829-1-cuigaosheng1@huawei.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2022/10/25 19:26, John Johansen wrote:
-> no, Casey is not. He is trying to find a path forward to get LSM
-> stacking upstream sooner than later. He has made proposals that
-> admittedly you have not liked, but he has at least tried to propose
-> ideas that could work within the insane set of constraints.
+On Tue, Oct 25, 2022 at 06:45:44PM +0800, Gaosheng Cui wrote:
+> In cap_inode_getsecurity(), we will use vfs_getxattr_alloc() to
+> complete the memory allocation of tmpbuf, if we have completed
+> the memory allocation of tmpbuf, but failed to call handler->get(...),
+> there will be a memleak in below logic:
+> 
+>   |-- ret = (int)vfs_getxattr_alloc(mnt_userns, ...)  <-- alloc for tmpbuf
+>     |-- value = krealloc(*xattr_value, error + 1, flags)  <-- alloc memory
+>     |-- error = handler->get(handler, ...)  <-- if error
+>     |-- *xattr_value = value <-- xattr_value is &tmpbuf  <-- memory leak
+> 
+> So we will try to free(tmpbuf) after vfs_getxattr_alloc() fails to fix it.
 
-I'm OK with getting LSM stacking upstream. But changes made based on
-only built-in modules are bad. If LSM id cannot be assigned to loadable
-LSM modules at runtime because not all loadable LSM modules will be
-in-tree in order to get an LSM id assigned, loadable LSM modules won't
-be able to utilize e.g. lsm_module_list system call (or whatever
-changes made while trying to unshare resources/interfaces currently
-shared among SELinux/Smack/AppArmor).
+Hey Gaosheng,
 
-It will be a complete reinvention of Linux security framework which is
-merely borrowing hooks provided by LSM. That is no different from
-duplicating existing LSM hooks and managing via completely different
-set of interfaces (e.g. /proc/$pid/attr2/$lsmname/$filename ,
-/sys/kernel/security2/$lsmname/$filename ). Such implementation is
-no longer loadable LSM. It is LSM version 2. And I don't think that
-such implementation will be accepted unless you agree to kill current
-LSM (say, LSM version 1).
+> 
+> Fixes: 71bc356f93a1 ("commoncap: handle idmapped mounts")
 
+The Fixes: tag is wrong afaict. The control flow isn't changed in any
+way by the referenced commit.
+
+The logic changed the last time with
+82e5d8cc768b ("security: commoncap: fix -Wstringop-overread warning")
+but even that commit wouldn't have introduced the bug. It would've been
+introduced by 8db6c34f1dbc ("Introduce v3 namespaced file
+capabilities"). So update the Fixes: tag with that reference, please.
+
+Otherwise I think you in principle have a point. Not sure if we have any
+filesystem that in practice would fail after permission checks have
+already passed with the first call to ->get() but then fail with the
+correct size passed in the second ->get() invocation. Sounds super
+unlikely but not impossible.
