@@ -2,172 +2,171 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84540C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Oct 2022 17:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C43E7C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Oct 2022 19:36:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234177AbiJZRPA (ORCPT
+        id S234641AbiJZTgr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Oct 2022 13:15:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34260 "EHLO
+        Wed, 26 Oct 2022 15:36:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233330AbiJZRO5 (ORCPT
+        with ESMTP id S234489AbiJZTgp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Oct 2022 13:14:57 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36AAF1FF87;
-        Wed, 26 Oct 2022 10:14:56 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id q9so23352202ejd.0;
-        Wed, 26 Oct 2022 10:14:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=O7Uq/pQUrQ8lWGAvdsML2QRJXkhRAJ7jb1k78eXBkjc=;
-        b=XmtB/I9B2JsjTl60PkZS9UQX3NscJXUohsT7wLW2hJT13cQJ8tKpC/rceopBnXyH5Q
-         cPiKSv60DWT5gX7+Eci2ZUs72tYNMyROm09dU45xdP2wKq5srL98E2fCrDoe/ABRFRA+
-         fdmd52uIj+cab9PLFq+sy1EMA96PvqdHWt8mFLNueVKzWo0meo6qkXYzlwEcJaUJzE8j
-         l1kYAc5IEi2Zd1o9O1UCeiELMQvXIuM+G7Kg1YzKqSMePdf8YigsgAetsL16p+4y3xj9
-         pzviHyN0QGoBTzevHkQQcdAXqAtohWJ1uAAXRaXB2SZ+YNKkAoi+Fhk4VAJGUBDPVBgR
-         m+ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O7Uq/pQUrQ8lWGAvdsML2QRJXkhRAJ7jb1k78eXBkjc=;
-        b=n++Ww7fRjVDHOx/we9Act3y6xg1HwRXhEY8bRFhmWMcWh/2wl9r8aGYeEy27H3Akmh
-         3Qd3LmZ1MR5DDkdzG+yMZtrmdbRQ9WTuG471Jpt8vMbUUQwkoL2UL81lylDaOX5eG8BS
-         Z+KHb7mfBr0Cxh5MXiBZMGiQAqQD2w3BEiwC+T2TQRw9MD9VgsaesMmSjVhP1ocMCNPn
-         dr2xyZ1E/aeGQbBI9lQCfn4KBQmWlKg0dVjIkTLzROU43DOEOmRwz+YMBE2ZQGrDaMvX
-         uaWixh/f/B0CD6166dbc4Hkwqc1mP9zjFTU0pRy05wXjV21KJLk1HE8MBFHJR9nQi+AM
-         /zrQ==
-X-Gm-Message-State: ACrzQf0dk6yeHGHEAmKrEmm9zuEa4hN0wQ3OFmbCm/M8ZxUcqPiJ1VJh
-        fz0b8kLrCdfBynQR5ymrYrCJbO8vp+IQNWk4EQs=
-X-Google-Smtp-Source: AMsMyM671db/GWfHZCF4vGkJJMD4q2kSbwii5WSEc54uNdOcI6hmZZ5pu70IMRLXjnYrdo2I3EEIHE3wwIHOMDroRlc=
-X-Received: by 2002:a17:907:6e93:b0:78d:dff1:71e3 with SMTP id
- sh19-20020a1709076e9300b0078ddff171e3mr36873551ejc.94.1666804494588; Wed, 26
- Oct 2022 10:14:54 -0700 (PDT)
+        Wed, 26 Oct 2022 15:36:45 -0400
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 311DE814DB
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Oct 2022 12:36:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666813001; bh=fgyo2ISY3OAsGAQIUHFMsA2y9yvPMn9uSWbL47QxgxA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=uTw2h70iE/0PCD7KKMkxLHTtgAoTGrE5zsq+ZBQoedItywpfJrL6SYgLxfpBnLMw6Thl7JKq/8LntfQ/knJv4LUxgmH5qH/GmusYgjflF0lJzLndr9BvY6oGucrYSbKEUongwy7WDWjcK6kbYn7H+MXyQ6NBSt6+r/+m1wRf8i+h0XI9qHg/VRQCSKqLcDlhWiP3h1jgZZDe9dqDTm35r5COaPClVY5PgL5f6yoYNGe3/u4PhcaVSfd5HP5lfODx3aaxZC2ykOI8jWWaC+zl6enoYKUArFdWbgwxBex/tRotca/Jd+/vdsWfFuFxEDjO+Up0SiwtEbhvxE+DmlZ40g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666813001; bh=XORoNFgByCE8mTnxUG6iFHtoEpoZrKyHEA68/kkIPxD=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=t+zIjAP5vbgQdmLR2xrDnQkEJUj0Kwf0b+TRGgingAkT4bIT3hIlObTYOxHD9XbBAudtOoj8HocP+d8IOIS7wTTMC+sSeUNP47a5fln6hIP4mUDUUKPxLwKoDZQAfjjeyip8amyQsY41fEioz/h/Orrmr6KxPF7JZUsBTYqdrhHhDbdyXvWYmMNvYam0yLZl4bHYMLJxImjtcQqvmRKH+5iyJjeu03GjQ9JxJcfeHi9LW1S7p7ta1vDvgrGz4UKHCxN6L0UjFtAKdUhGP1lxD+iUC2r+f4iAGln0TyX0miEpGNMPaCwbsmD1NvYuIsoKtyWBoJoVcOs/JOigSm4ENw==
+X-YMail-OSG: AcF0dHUVM1lbkt5gX5hDUE0dbPop16EuKUO5obC9.AaQT86FBILl_UN.TYJlbMs
+ Kg4LKXY6YVinaHUb6rNs5uCL5NOgnWTqB5NdbQVNx.dAq0wWQAoavhotUfkGuu4PvI5oys6x2odX
+ jBgBBeq96ApUNFgN.J1radWcIcVhlafkzHOCZ5vypQRUQR9IXxjPLhXiTKoB98uIukk4pwBPM11L
+ wM4FP.G8tTDjB2O3bzlyc4gU.Dy0M0f5rvrRPELdbKDC6H3WAEuxuIiOad3RErKIlcwiqHnl5yPY
+ ze_C5bcx8xvub34zLiNmPfMLIfEdqI1qqjDH0VF9rN4YGeaywh6zczKjF3Q45CsAGHtDZFVWWvK9
+ gZvCMV76q7e4poDnE_32_jmRiuas1SbzmsszNZEBcV_OmV.jWHchwpLWoFuQ8oMhHqL7Ijrt9qeq
+ NtnMo5SoSAi2luDso5Q4GOEft4VWJZPlRDLSqSHz9dHPKXF_iU_9wj.c41lofn5c.S7IpPUs85MF
+ dH52bxflrFcJckAgAqcyi0EPXsqE6Ef6yZh69bvnsfGFvuSlp8Qip731OdZLZTOogZ5xKc0Botbs
+ g622dUa1R1imzIPWc3m5IAysMqqIS5_dis1mD9rcdQEcOECa4T03Sks06Jj367.68_Qv_jREySIZ
+ VvBOxlYQyVwwUiTF2CrShAebQs4MU8XVhlZESCwqi57kgsyD7JUU7cbOmv0.QPyMDmizLlTE1Eq7
+ n4C36xKuNMYcvIQqmGHLB_PIJwQzLrO61DbmdhODARGSomz5DrpZzL7qUzww.ErhwGb64kavx1qh
+ JL4d5kkiWpuL4RRPaumNitlU5Altz9dAUgyD.FRV0A2s5wYZe0wcLfpvJWhyN3hJFXe2sRPUaZDm
+ 1pfAFFtF9jlyj91VJk3V6CwltC4QuKoY5odMPenTIpY3yS4U9ps_8Cw9QeouY11AugCq6BRI1Or1
+ F0jI8zPe63.PC5PQSW_cLPyaGHGCv3O0Ssu3J1FslFFWD5gP.Y82eLV_hoEHVAxIrIomf9iudzWy
+ OGh969pMXfzWubO3m_KCM30PZ.pc64U7GZTu8I8Prht8SSH557zuimExq8n_KR0ScMHy70qKlrqW
+ AbeT9_tvzmraVmwYhKWgvr8oABCNe7blBUaamLigtl1fC2Ke.AoIBWA7H.StNuwDApwQPXoPqYoY
+ 2xTwohVP6ZK9l65GyMboLkt_si2hYk7FvQzZY9ouYhd0B3zASgV6QGsQN6AtSRpnivgZQuyJ.a_R
+ jh79r9znqnoUeURIi2TafsZNraM7AFqNCXFq6OOOn6ROHYaCI09KM.zwz_qmSqQxHeOk4BXf54VK
+ hnNMX0UuaK5UfgKuEusXi6rA_K7muRmgHqBVhdYWkL6QfQZNE6.EKBPOgfjLLkCd7JVS2T9moDQC
+ HPsgbnzwtBatLd2MdvatoUVeY58j0cNTHzCv2llF9KbKHRh1qwOwrJti8sKDqqbqjanbNVxsgvMS
+ .a4jGzBiqEbzifzmtJsmKDvFK14QlEDBaMOLd4VXSm06cxrQIH19OmjAyg7VuzUA3X1AajSIanbv
+ G5MCIOT_ElyD3Q19lW0Z9eontYl4KrbPydKxQ_QRt8jPGdDg3u9.BjJDcV_k_ySDlGtQV1heEezX
+ mlcv1vc0bHQjMtvVtcHANhu_N5XqOCZYuN8jn.NtwD8dzaSEDaHLFAD.VGVJQJ6lgNWYV0W_OC10
+ 4txovE9J7jYYE2QOfeEoO6q9WhwSuqAUNbPt90ljYQg6UAPQ3dsuobuU2Xxu0lIif6BE27sCp3Gz
+ dXQz8FKu.k2kugWEZhQ6NU3J5NpKzeHAlZHdT.qmlF6T25M0elvCZPmOK26MhzJZST.fj2NfSTkF
+ OcDrmYtoR_8P8H8RTGHIQWeLK6rVp3aJFKGlofbnsoGaUhswkhR8M4IWflm43H1oy_mIiwQPi31t
+ sVRB6CUDJXdzQk2nDWZOOeM9OR3zDla_eSPuNIsTk8VCbOt423SlrMpSj5M3hBdYKYjruuFIuDBl
+ tnTBNyHsQuJr5Cz4uz277KY.KQ0M5lczjEGWnmMmfu8gF8CmZjPE9UPfPP2CJX2.UG5glrSsQBvl
+ zSrCqCbzaLiYq.8pjEUb0la6LdTKDDT4_8kWtngRJUmite4xbPh_YRQjitGKgZ0hnKcx.GNgWvCZ
+ TCJ0teB7SLKXxIVv9wc7y8.g9D.L0k9A90F4HIMunjd9_fLAiGk31Gndk_mNPmccmPFxkGtBdUWe
+ gKvlQ2qdRBY_5KRZsW.N0O4n5i23_yNbPkSzsx9cd
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Wed, 26 Oct 2022 19:36:41 +0000
+Received: by hermes--production-bf1-64dccd5d47-k9w9h (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0c5d151e36f47c5c39f843a98a5bcf91;
+          Wed, 26 Oct 2022 19:36:36 +0000 (UTC)
+Message-ID: <5396ab1e-9b93-df33-ca49-58dc59459a76@schaufler-ca.com>
+Date:   Wed, 26 Oct 2022 12:36:34 -0700
 MIME-Version: 1.0
-References: <20221021164626.3729012-1-roberto.sassu@huaweicloud.com>
- <CAADnVQJHDboosqTy5LTHJtJaWJCWn9rv09jmd_sMgeV_OVQjGg@mail.gmail.com>
- <d7a17e482b7bbf945c92443b45de73f56afea08a.camel@huaweicloud.com>
- <bb7a5986f3d25706269d0fec9906ea73c174b808.camel@huaweicloud.com>
- <CAADnVQL1a2pPAJqzj6oUwupxxfaW38KQswzppAZeZPzmTFhjMg@mail.gmail.com>
- <98353f6c82d3dabdb0d434d7ecf0bfc5295015ad.camel@huaweicloud.com>
- <ffbdcfbe-0c63-2ced-62e3-a7248b7a24f0@schaufler-ca.com> <CAADnVQLAXsZRNytPHG0KhYKar3K+=7bq2KPQG77VFOKbnTPHmg@mail.gmail.com>
- <34357c96-fe58-ffe5-e464-4bded8f119d5@huaweicloud.com>
-In-Reply-To: <34357c96-fe58-ffe5-e464-4bded8f119d5@huaweicloud.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Wed, 26 Oct 2022 10:14:43 -0700
-Message-ID: <CAADnVQKD5e9vKsSo1TPeBm5hr6j4GzQeHqRURoBJyB++VOwHCw@mail.gmail.com>
-Subject: Re: [RFC][PATCH] bpf: Check xattr name/value pair from bpf_lsm_inode_init_security()
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        nicolas.bouchinet@clip-os.org, Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH v1 2/8] LSM: Add an LSM identifier for external use
+Content-Language: en-US
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     casey.schaufler@intel.com, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        mic@digikod.net, casey@schaufler-ca.com
+References: <20221025184519.13231-1-casey@schaufler-ca.com>
+ <20221025184519.13231-3-casey@schaufler-ca.com> <Y1jMeWl0oV4/2zyE@kroah.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <Y1jMeWl0oV4/2zyE@kroah.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20783 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 26, 2022 at 1:42 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
+On 10/25/2022 10:58 PM, Greg KH wrote:
+> On Tue, Oct 25, 2022 at 11:45:13AM -0700, Casey Schaufler wrote:
+>> Add an integer member "id" to the struct lsm_id. This value is
+>> a unique identifier associated with each security module. The
+>> values are defined in a new UAPI header file. Each existing LSM
+>> has been updated to include it's LSMID in the lsm_id.
+>>
+>> The LSM ID values are sequential, with the oldest module
+>> LSM_ID_CAPABILITY being the lowest value and the existing
+>> modules numbered in the order they were included in the
+>> main line kernel. The first 32 values (0 - 31) are reserved
+>> for some as yet unknown but important use.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/lsm_hooks.h    |  1 +
+>>  include/uapi/linux/lsm.h     | 32 ++++++++++++++++++++++++++++++++
+>>  security/apparmor/lsm.c      |  2 ++
+>>  security/bpf/hooks.c         |  2 ++
+>>  security/commoncap.c         |  2 ++
+>>  security/landlock/setup.c    |  2 ++
+>>  security/loadpin/loadpin.c   |  2 ++
+>>  security/lockdown/lockdown.c |  2 ++
+>>  security/safesetid/lsm.c     |  2 ++
+>>  security/selinux/hooks.c     |  2 ++
+>>  security/smack/smack_lsm.c   |  2 ++
+>>  security/tomoyo/tomoyo.c     |  2 ++
+>>  security/yama/yama_lsm.c     |  2 ++
+>>  13 files changed, 55 insertions(+)
+>>  create mode 100644 include/uapi/linux/lsm.h
+>>
+>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>> index e383e468f742..dd4b4d95a172 100644
+>> --- a/include/linux/lsm_hooks.h
+>> +++ b/include/linux/lsm_hooks.h
+>> @@ -1607,6 +1607,7 @@ struct security_hook_heads {
+>>   */
+>>  struct lsm_id {
+>>  	const char	*lsm;		/* Name of the LSM */
+>> +	int		id;		/* LSM ID */
+> Again, kerneldoc.
 >
-> On 10/26/2022 8:37 AM, Alexei Starovoitov wrote:
-> > On Tue, Oct 25, 2022 at 7:58 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >>
-> >> On 10/25/2022 12:43 AM, Roberto Sassu wrote:
-> >>> On Mon, 2022-10-24 at 19:13 -0700, Alexei Starovoitov wrote:
-> >>>> I'm looking at security_inode_init_security() and it is indeed messy.
-> >>>> Per file system initxattrs callback that processes kmalloc-ed
-> >>>> strings.
-> >>>> Yikes.
-> >>>>
-> >>>> In the short term we should denylist inode_init_security hook to
-> >>>> disallow attaching bpf-lsm there. set/getxattr should be done
-> >>>> through kfuncs instead of such kmalloc-a-string hack.
-> >>> Inode_init_security is an example. It could be that the other hooks are
-> >>> affected too. What happens if they get arbitrary positive values too?
-> >>
-> >> TL;DR - Things will go cattywampus.
-> >>
-> >> The LSM infrastructure is an interface that has "grown organically",
-> >> and isn't necessarily consistent in what it requires of the security
-> >> module implementations. There are cases where it assumes that the
-> >> security module hooks are well behaved, as you've discovered. I have
-> >> no small amount of fear that someone is going to provide an eBPF
-> >> program for security_secid_to_secctx(). There has been an assumption,
-> >> oft stated, that all security modules are going to be reviewed as
-> >> part of the upstream process. The review process ought to catch hooks
-> >> that return unacceptable values. Alas, we've lost that with BPF.
-> >>
-> >> It would take a(nother) major overhaul of the LSM infrastructure to
-> >> make it safe against hooks that are not well behaved. From what I have
-> >> seen so far it wouldn't be easy/convenient/performant to do it in the
-> >> BPF security module either. I personally think that BPF needs to
-> >> ensure that the eBPF implementations don't return inappropriate values,
-> >> but I understand why that is problematic.
-> >
-> > That's an accurate statement. Thank you.
-> >
-> > Going back to the original question...
-> > We fix bugs when we discover them.
-> > Regardless of the subsystem they belong to.
-> > No finger pointing.
->
-> I'm concerned about the following situation:
->
-> struct <something> *function()
-> {
->
->         ret = security_*();
->         if (ret)
->                 return ERR_PTR(ret);
->
-> }
->
-> int caller()
-> {
->         ptr = function()
->         if (IS_ERR(ptr)
->                 goto out;
->
->         <use of invalid pointer>
-> }
->
-> I quickly found an occurrence of this:
->
-> static int lookup_one_common()
-> {
->
-> [...]
->
->         return inode_permission();
-> }
->
-> struct dentry *try_lookup_one_len()
-> {
->
-> [...]
->
->          err = lookup_one_common(&init_user_ns, name, base, len, &this);
->          if (err)
->                  return ERR_PTR(err);
->
->
-> Unfortunately, attaching to inode_permission causes the kernel
-> to crash immediately (it does not happen with negative return
-> values).
->
-> So, I think the fix should be broader, and not limited to the
-> inode_init_security hook. Will try to see how it can be fixed.
+> And if this crosses the user/kernel boundry, please make it __u64.  Or
+> __s32?  Something explicit please.
 
-I see. Let's restrict bpf-lsm return values to IS_ERR_VALUE.
-Trivial verifier change.
+Will do.
+
+
+>>  };
+>>  
+>>  /*
+>> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+>> new file mode 100644
+>> index 000000000000..d5bcbb9375df
+>> --- /dev/null
+>> +++ b/include/uapi/linux/lsm.h
+>> @@ -0,0 +1,32 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>> +/*
+>> + * Linus Security Modules (LSM) - User space API
+> s/Linus/Linux/.
+
+Whoops.
+
+>
+>
+>> + *
+>> + * Copyright (C) 2022 Casey Schaufler <casey@schaufler-ca.com>
+>> + * Copyright (C) Intel Corporation
+> No date for Intel?
+
+The latest guidance I have received is that Intel does not want a date.
+
+>> + */
+>> +
+>> +#ifndef _UAPI_LINUX_LSM_H
+>> +#define _UAPI_LINUX_LSM_H
+>> +
+>> +/*
+>> + * ID values to identify security modules.
+>> + * A system may use more than one security module.
+>> + *
+>> + * LSM_ID_XXX values 0 - 31 are reserved for future use
+> Reserved for what?  Why?
+
+You're not the first person to ask. I'll remove the reserved values
+for the next version. The invalid value has to change as the id field
+is going to be unsigned.
+
+>
+> thanks,
+>
+> greg k-h
