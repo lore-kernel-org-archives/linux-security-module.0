@@ -2,116 +2,172 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 276A9C38A2D
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Oct 2022 15:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84540C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Oct 2022 17:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234558AbiJZPax (ORCPT
+        id S234177AbiJZRPA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Oct 2022 11:30:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45808 "EHLO
+        Wed, 26 Oct 2022 13:15:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234417AbiJZPaw (ORCPT
+        with ESMTP id S233330AbiJZRO5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Oct 2022 11:30:52 -0400
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 871F35B70C
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Oct 2022 08:30:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666798245; bh=E+jhwzlsmV+uNxNVVuLiLZjBRV935UAPFYNHfc7VzHU=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=KsvERaWk33nDl/tFjVuv7xOqc8MPDUkcywrMtPni7vl3TwOL3CXANVh4zR6CfyVBUUFoc6D8nV/Qvu/CAFtNJgBmcqlXQGsuJWg3WUm0Q7pLSwiUrz2zD6DjEFo+WdEXEYpTMmmMVwhIo1QTmOKEH8j0VtsrnVhlF3+j2l0Fh70kiW5kx1ENUyCNkvNKC1uzZV79a1crGmFlB3hQOJdgkjisJp57pv1f7WmKfUDQmcKCTJsCc3+DZIQsOCPxGYp0gnd1oT9XFd/VN+g1mI7UMldlD8LBJZw/HVm+YoemysW2jWvYmeWhYRCnyl7kWPz3dhmytmhU3mVwwBk1WW/OYg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666798245; bh=OpP7JdQXUdADZ/I4ba5jrpFzQO5k9bHuyp99cdKR65G=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=hcYtK4idvt9iLJnZF6OCKBUB08jXmF8cZ1HRQjqU4H22pim0OUTeTxjnXCRI7xc7WvsR3YFqQNDnrG/O/3pX4RW2r/fI0oQpEmD3zTcrZwfsLl/JHtTT6XGkiUpbXo3Xd2BM1CkMhrE3OaiN3xj/kNzOyWCpz9xmPkEruaknIcaW65UCDONX3PYJVr7oxVe5i2cTF9i7JFDj1JneRIOioashM3XGv9IO0piQk88NG9meCDyBJwSlZqi+aD+ObZCUn+pr4QHn9oRRTOyqkqzj1SUnJxYafMv7huI3wD5/lca60UF2MtBr5mgg/vUZ24BypP/VkliltUIGrqaGS1Mtnw==
-X-YMail-OSG: RCrcKPgVM1mro0xi0j8pXUbwFroA24PmwlyqFaiJqE51cE5_hqaE_5U5zT5Ksot
- 3v09qBALZiAmENmlJQ9yO0v.WtPwiWDMjxiNOI3Lek_xm6XAgiy7Ggk9WB1nV8ocREUwsNMN867M
- QZoCF9yC5xQW8VSCtS3ymRKThdYSMbIHMnlmohjJPzusdfHpBgFfhaZ1glVfqHRGWtSs41ACCRxi
- u8t3PP6317JTjlGkn6KlnEzZ91Y9Qn3rwtuQnzC6BDKBA2fpjuJRo3fOVoIM3Z1QxRzZ5B.0uHoJ
- WNbLZERPF8f5PKwh_6rsTGajlNy1Amfj.eez6NNZ9iERMdf7Z318FnC4AYYzmMmfPPgunO_8zJNG
- sBsiM7mVijad6RCM6rE9wO61vs0IkUQJMkgP7WQRGFkSv0C3PZZWQWTLlMLqkTVTV75Vs_u_dlOh
- aEZveQL.epmgwLrghHr_Z5qJA7aWRczn_mb_2G6GKg9Ben9xP52ymBUP70m2D.DAhyZUSsJJO6mB
- IU6LMYefyV4hQeazHy6ik71xfFHJeuB1In.H6SHJBFQ_JcAqKDDs5kcbAOxwzswHK9stmAa7Rt_r
- lJUvfy0pEI7rJylBsiyx1QZ0.qqFTSPU9OyDX7F5Vo7Ma7WOa7D3Ab1_FiV_sSKqo0mMG5xyOsoU
- GMxiv0mMSBhOtqlgnIEu158hgGQeUGXkztH1PLkCjpC3fd1BBOquJtjQGUIHfk1QpRM9Um088UGB
- XvOT8ovcyFz8FUufS_nNpUi69nUSgDPMSZvOMy7r2s4k4b1xx59VFFqt4CiPkuM89N6qJRZOnnTa
- 7ZtXUmI5HmTK2MuHw4s99DcCJcG065TmpOVGiKjrnMbolULGl1eoMI0QLuQ9ZHmKl7.qCVczmaSd
- PQ0Fg_UtPOd7CYcMT4lFV4Tz2DAGLwtw_nqmZ9GL5t.jELfiu6wkQLvM_I8xc2_hxu10s7DzWOET
- dbUm9GN.Tg26BI4DGOTW8MhX3XTYNuSJl08f0fjnecuJKaJWS42rqQHRn3vE9GMI.o0kGaP.yulX
- dESj4ErlFTunp1LsDMvZC4KZSokObMLsB0v.h6hCFcwisjtfIqrcc8dtALJpT5_Sl481HcpwcvuZ
- milFstH1lZM14XPJfHLv5C4QCvaRBAWG.X.lY8xt9GzXOJz3zNoMyOPMH9tDHQKshr_60lWbEBYF
- pESbUqr7qu58cqBmzIiYHuZpKXqlbFEJI3rGb4dUEjWlaS9cgrUWuM..JTbvx92W111apj8u.YcI
- Lzvb.Z1Hi8gE0k8LzfxmA0RVtEPnzxokZADAf2iKe8u63hSjI_F4A9MqfZ3zR6Ica516OITkTd5v
- 1Sut9ykRAswqzAQQmXMqodQoyWhZNkmcQ23ytMTRvCFBbrUdp2TnEPHPZCHi1vJ9K3d.fY_RqqPR
- iacZCS3bGt89Cwm4v5R6RidS2yJLAaSLkUTO9Psc4nWqV5lYUvsy1jyApRzftSe0wIvN8xPpBAHz
- R7vJVYUz1QJd6kQid4Y.dmpqZmk9Ye49lej1PpCkjsYolxdab_4RshHzciZJEfzuVLWjYnmEK_ow
- .jVtROrUBJ8X5ZUWcm.0vmqqBN8.LlOqMf7iJ5XzOvxhX6lYV.ntcXmiF34OXwwzNfSH68j_A0ON
- hQmHLZEmqLlBUaYsL6dA5ZOVw0MVAniFF_qzSLGtDhKBEPnH_jqkvICMaiRDgOXXRX.ZAMQyjWo_
- qvD082QbJNnU7VPJkiPEFXA72CfMWinAd7lJHLhp2R11cPX3_qKD6AoAmy8OeqRaDUOONnlJEbt4
- 11OdmlYZL6UJSyg2NWD6IZhAl3NoFjhC32ozPFFf0fS8_SswDCOmoBKtWI7aenFlr0AfGLxYCy3z
- fp93WOLNXeUTz_j6uNljpCb17cRWeAam2PlizkouTpfOsXjpkceytIMUcYZZ4G2Z9mN6Al4HSTpa
- ScZe2dahid38lLPUV3lThSFe84Erw8.FIL_a6gN2Kz.UylrIm.7npQVJ_F00Ov_nlR_peLD44qGk
- NYgOiC2CmgL8ITA.bUML1W2Myt82NpbKbrjIWibGuZIE735VlFPGdOiKX6S2U67hTrYAUTXx0zXG
- CLyD7uhJAMUc25d3xoIXn8XH3qjNx11lNOoUwtlQHUB2uG7qt8xeJZoPPq5lZJIGDbVU29aS9Fvw
- zlRsz3KzBkZfPP.VbnLAznuxOdlMnS_4nOuH5kyZKgNa0UFs5BzuetqxqtkDkqdVpgX43Rc7kgo4
- iuKXKlCkR_281zVsJx339IaCCUDAfD.K_IR6fJIHn6vY9zImEYSkXLxMid91frpGnPZcGN8anvzL
- dHUFyAW1YAsgcbDm62HdXnG8-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 26 Oct 2022 15:30:45 +0000
-Received: by hermes--production-bf1-64dccd5d47-79dtx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID cdb134c574ba02950eba7a632f099359;
-          Wed, 26 Oct 2022 15:30:40 +0000 (UTC)
-Message-ID: <7d0feee1-a9e6-ac82-6962-89b17af025eb@schaufler-ca.com>
-Date:   Wed, 26 Oct 2022 08:30:38 -0700
+        Wed, 26 Oct 2022 13:14:57 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36AAF1FF87;
+        Wed, 26 Oct 2022 10:14:56 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id q9so23352202ejd.0;
+        Wed, 26 Oct 2022 10:14:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=O7Uq/pQUrQ8lWGAvdsML2QRJXkhRAJ7jb1k78eXBkjc=;
+        b=XmtB/I9B2JsjTl60PkZS9UQX3NscJXUohsT7wLW2hJT13cQJ8tKpC/rceopBnXyH5Q
+         cPiKSv60DWT5gX7+Eci2ZUs72tYNMyROm09dU45xdP2wKq5srL98E2fCrDoe/ABRFRA+
+         fdmd52uIj+cab9PLFq+sy1EMA96PvqdHWt8mFLNueVKzWo0meo6qkXYzlwEcJaUJzE8j
+         l1kYAc5IEi2Zd1o9O1UCeiELMQvXIuM+G7Kg1YzKqSMePdf8YigsgAetsL16p+4y3xj9
+         pzviHyN0QGoBTzevHkQQcdAXqAtohWJ1uAAXRaXB2SZ+YNKkAoi+Fhk4VAJGUBDPVBgR
+         m+ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O7Uq/pQUrQ8lWGAvdsML2QRJXkhRAJ7jb1k78eXBkjc=;
+        b=n++Ww7fRjVDHOx/we9Act3y6xg1HwRXhEY8bRFhmWMcWh/2wl9r8aGYeEy27H3Akmh
+         3Qd3LmZ1MR5DDkdzG+yMZtrmdbRQ9WTuG471Jpt8vMbUUQwkoL2UL81lylDaOX5eG8BS
+         Z+KHb7mfBr0Cxh5MXiBZMGiQAqQD2w3BEiwC+T2TQRw9MD9VgsaesMmSjVhP1ocMCNPn
+         dr2xyZ1E/aeGQbBI9lQCfn4KBQmWlKg0dVjIkTLzROU43DOEOmRwz+YMBE2ZQGrDaMvX
+         uaWixh/f/B0CD6166dbc4Hkwqc1mP9zjFTU0pRy05wXjV21KJLk1HE8MBFHJR9nQi+AM
+         /zrQ==
+X-Gm-Message-State: ACrzQf0dk6yeHGHEAmKrEmm9zuEa4hN0wQ3OFmbCm/M8ZxUcqPiJ1VJh
+        fz0b8kLrCdfBynQR5ymrYrCJbO8vp+IQNWk4EQs=
+X-Google-Smtp-Source: AMsMyM671db/GWfHZCF4vGkJJMD4q2kSbwii5WSEc54uNdOcI6hmZZ5pu70IMRLXjnYrdo2I3EEIHE3wwIHOMDroRlc=
+X-Received: by 2002:a17:907:6e93:b0:78d:dff1:71e3 with SMTP id
+ sh19-20020a1709076e9300b0078ddff171e3mr36873551ejc.94.1666804494588; Wed, 26
+ Oct 2022 10:14:54 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: LSM stacking in next for 6.1?
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
-        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
-        SElinux list <selinux@vger.kernel.org>, casey@schaufler-ca.com
-References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
- <5ef4a1ae-e92c-ca77-7089-2efe1d4c4e6d@schaufler-ca.com>
- <CAHC9VhQRpeOMkeEfy=VRPnpuYMUDYgLp56OjQZPYwoXmfHYREQ@mail.gmail.com>
- <c679cea7-bb90-7a62-2e17-888826857d55@schaufler-ca.com>
- <e9ce6253-c8a3-19c3-1b71-f3a2e04539bc@I-love.SAKURA.ne.jp>
- <cc14bbde-529e-376c-7d27-8512ec677db3@schaufler-ca.com>
- <ff43e254-0f41-3f4f-f04d-63b76bed2ccf@I-love.SAKURA.ne.jp>
- <1a9f9182-9188-2f64-4a17-ead2fed70348@schaufler-ca.com>
- <2225aec6-f0f3-d38e-ee3c-6139a7c25a37@I-love.SAKURA.ne.jp>
- <5995f18c-5623-9d97-0aa6-5f13a2a8e895@I-love.SAKURA.ne.jp>
- <77ec837a-ff64-e6f0-fe14-a54c1646ea0b@canonical.com>
- <0fcc5444-a957-f107-25a1-3540588eab5a@I-love.SAKURA.ne.jp>
- <11564f69-3bba-abf7-eb46-06813ff4a404@schaufler-ca.com>
- <98ab33d6-6c91-9c0a-8647-22f6bdede885@I-love.SAKURA.ne.jp>
- <aa201ed7-9ca1-9507-08cc-156f280ee5f4@schaufler-ca.com>
- <3266c2c2-cd7e-bc0f-0fc4-478a63d6ee77@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <3266c2c2-cd7e-bc0f-0fc4-478a63d6ee77@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20783 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20221021164626.3729012-1-roberto.sassu@huaweicloud.com>
+ <CAADnVQJHDboosqTy5LTHJtJaWJCWn9rv09jmd_sMgeV_OVQjGg@mail.gmail.com>
+ <d7a17e482b7bbf945c92443b45de73f56afea08a.camel@huaweicloud.com>
+ <bb7a5986f3d25706269d0fec9906ea73c174b808.camel@huaweicloud.com>
+ <CAADnVQL1a2pPAJqzj6oUwupxxfaW38KQswzppAZeZPzmTFhjMg@mail.gmail.com>
+ <98353f6c82d3dabdb0d434d7ecf0bfc5295015ad.camel@huaweicloud.com>
+ <ffbdcfbe-0c63-2ced-62e3-a7248b7a24f0@schaufler-ca.com> <CAADnVQLAXsZRNytPHG0KhYKar3K+=7bq2KPQG77VFOKbnTPHmg@mail.gmail.com>
+ <34357c96-fe58-ffe5-e464-4bded8f119d5@huaweicloud.com>
+In-Reply-To: <34357c96-fe58-ffe5-e464-4bded8f119d5@huaweicloud.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 26 Oct 2022 10:14:43 -0700
+Message-ID: <CAADnVQKD5e9vKsSo1TPeBm5hr6j4GzQeHqRURoBJyB++VOwHCw@mail.gmail.com>
+Subject: Re: [RFC][PATCH] bpf: Check xattr name/value pair from bpf_lsm_inode_init_security()
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        nicolas.bouchinet@clip-os.org, Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/26/2022 3:19 AM, Tetsuo Handa wrote:
-> On 2022/10/26 7:41, Casey Schaufler wrote:
->>             You need a built-in LSM that loads and manages loadable
->> security modules.
-> That is no longer loadable LSM modules. A loadable LSM module must be capable of
-> loading any code and using any interface that is allowed to loadable kernel modules
-> using /sbin/insmod command. That is my understanding of what you have promised (and
-> the reason I am allowing you to continue working on LSM stacking before I make
-> CONFIG_SECURITY_TOMOYO=m).
+On Wed, Oct 26, 2022 at 1:42 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> On 10/26/2022 8:37 AM, Alexei Starovoitov wrote:
+> > On Tue, Oct 25, 2022 at 7:58 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >>
+> >> On 10/25/2022 12:43 AM, Roberto Sassu wrote:
+> >>> On Mon, 2022-10-24 at 19:13 -0700, Alexei Starovoitov wrote:
+> >>>> I'm looking at security_inode_init_security() and it is indeed messy.
+> >>>> Per file system initxattrs callback that processes kmalloc-ed
+> >>>> strings.
+> >>>> Yikes.
+> >>>>
+> >>>> In the short term we should denylist inode_init_security hook to
+> >>>> disallow attaching bpf-lsm there. set/getxattr should be done
+> >>>> through kfuncs instead of such kmalloc-a-string hack.
+> >>> Inode_init_security is an example. It could be that the other hooks are
+> >>> affected too. What happens if they get arbitrary positive values too?
+> >>
+> >> TL;DR - Things will go cattywampus.
+> >>
+> >> The LSM infrastructure is an interface that has "grown organically",
+> >> and isn't necessarily consistent in what it requires of the security
+> >> module implementations. There are cases where it assumes that the
+> >> security module hooks are well behaved, as you've discovered. I have
+> >> no small amount of fear that someone is going to provide an eBPF
+> >> program for security_secid_to_secctx(). There has been an assumption,
+> >> oft stated, that all security modules are going to be reviewed as
+> >> part of the upstream process. The review process ought to catch hooks
+> >> that return unacceptable values. Alas, we've lost that with BPF.
+> >>
+> >> It would take a(nother) major overhaul of the LSM infrastructure to
+> >> make it safe against hooks that are not well behaved. From what I have
+> >> seen so far it wouldn't be easy/convenient/performant to do it in the
+> >> BPF security module either. I personally think that BPF needs to
+> >> ensure that the eBPF implementations don't return inappropriate values,
+> >> but I understand why that is problematic.
+> >
+> > That's an accurate statement. Thank you.
+> >
+> > Going back to the original question...
+> > We fix bugs when we discover them.
+> > Regardless of the subsystem they belong to.
+> > No finger pointing.
+>
+> I'm concerned about the following situation:
+>
+> struct <something> *function()
+> {
+>
+>         ret = security_*();
+>         if (ret)
+>                 return ERR_PTR(ret);
+>
+> }
+>
+> int caller()
+> {
+>         ptr = function()
+>         if (IS_ERR(ptr)
+>                 goto out;
+>
+>         <use of invalid pointer>
+> }
+>
+> I quickly found an occurrence of this:
+>
+> static int lookup_one_common()
+> {
+>
+> [...]
+>
+>         return inode_permission();
+> }
+>
+> struct dentry *try_lookup_one_len()
+> {
+>
+> [...]
+>
+>          err = lookup_one_common(&init_user_ns, name, base, len, &this);
+>          if (err)
+>                  return ERR_PTR(err);
+>
+>
+> Unfortunately, attaching to inode_permission causes the kernel
+> to crash immediately (it does not happen with negative return
+> values).
+>
+> So, I think the fix should be broader, and not limited to the
+> inode_init_security hook. Will try to see how it can be fixed.
 
-Loadable modules, in whatever form they take, will require the stacking
-I'm proposing. They will also require the next phase of stacking, which
-includes the networking bits that will allow universal stacking. Even if
-the current work goes in tomorrow (demented giggles) that's at least a
-year off. Then, and only then, will someone be able to tackle an
-implementation of loadable modules. I will not be available for that job.
-I have done everything I can to ensure that the stacking work won't
-prevent it from being done. I have proposed how it might be done. But
-I don't have 10 more years to spend on it, and it's not me that will
-reject it in the end. I won't beat that dead horse's head against that
-brick wall.
-
-
+I see. Let's restrict bpf-lsm return values to IS_ERR_VALUE.
+Trivial verifier change.
