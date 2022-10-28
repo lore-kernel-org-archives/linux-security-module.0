@@ -2,99 +2,70 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBD7FA3740
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 12:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 109EEECAAA1
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 12:36:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229528AbiJ1Mb2 (ORCPT
+        id S229571AbiJ1Mgr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Oct 2022 08:31:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51662 "EHLO
+        Fri, 28 Oct 2022 08:36:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230018AbiJ1Mb0 (ORCPT
+        with ESMTP id S230128AbiJ1Mgp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Oct 2022 08:31:26 -0400
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54CCC159D75;
-        Fri, 28 Oct 2022 05:31:23 -0700 (PDT)
-Received: from [172.20.1.180] (unknown [62.168.35.11])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 22B75422E8;
-        Fri, 28 Oct 2022 12:31:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1666960282;
-        bh=YfFt0/vCaAixY81u2/InzVHHiQaF1b6HYOm4KO4WUrU=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=dIWf05bK2FoeeaoK/VAsclxnU4rJTgXh18d2NRSN7XpAsrSJtOyQ+QiidGEwzfrKo
-         mXl4ylsOdzObQXPw8BoX6eG+MoJBcUI0txRXSckKevDpBoDb02W6U1Or0El7h6hshw
-         rd3hiTVujN+E2b2veexZv8NSf+EwF+IT+Oj/zAAKmolW/joHq9bIDBTqrcdW1Pul9t
-         /MHxkU9eyUpHPdWu0DYrQE6SCnqjEeJpkrb1iy+WT9B2ZwlTPmXGE+5ZnSPtOGEy5v
-         bqxot4ohRr21U5mYOjbqqVjBTJJ61fZ4zVesOqyG4S4Tn5nA5QKhi+XdASulZyglyJ
-         dcA07EBL4gvlQ==
-Message-ID: <8781116e-1738-5cbf-976c-328ebeafba67@canonical.com>
-Date:   Fri, 28 Oct 2022 05:31:20 -0700
+        Fri, 28 Oct 2022 08:36:45 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C671CCCE2;
+        Fri, 28 Oct 2022 05:36:42 -0700 (PDT)
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.56])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MzMNx0GSwzmV75;
+        Fri, 28 Oct 2022 20:31:45 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.58) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Fri, 28 Oct 2022 20:36:40 +0800
+From:   Xiu Jianfeng <xiujianfeng@huawei.com>
+To:     <john.johansen@canonical.com>, <paul@paul-moore.com>,
+        <serge@hallyn.com>
+CC:     <apparmor@lists.ubuntu.com>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] apparmor: Fix memleak in alloc_ns()
+Date:   Fri, 28 Oct 2022 20:33:20 +0800
+Message-ID: <20221028123320.88132-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH] lsm: make security_socket_getpeersec_stream() sockptr_t
- safe
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     netdev@vger.kernel.org,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-References: <166543910984.474337.2779830480340611497.stgit@olly>
- <CAHC9VhRfEiJunPo7bVzmPPg8UHDoFc0wvOhBaFrsLjfeDCg50g@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <CAHC9VhRfEiJunPo7bVzmPPg8UHDoFc0wvOhBaFrsLjfeDCg50g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.174.58]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/10/22 15:00, Paul Moore wrote:
-> On Mon, Oct 10, 2022 at 5:58 PM Paul Moore <paul@paul-moore.com> wrote:
->>
->> Commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
->> sockptr_t argument") made it possible to call sk_getsockopt()
->> with both user and kernel address space buffers through the use of
->> the sockptr_t type.  Unfortunately at the time of conversion the
->> security_socket_getpeersec_stream() LSM hook was written to only
->> accept userspace buffers, and in a desire to avoid having to change
->> the LSM hook the commit author simply passed the sockptr_t's
->> userspace buffer pointer.  Since the only sk_getsockopt() callers
->> at the time of conversion which used kernel sockptr_t buffers did
->> not allow SO_PEERSEC, and hence the
->> security_socket_getpeersec_stream() hook, this was acceptable but
->> also very fragile as future changes presented the possibility of
->> silently passing kernel space pointers to the LSM hook.
->>
->> There are several ways to protect against this, including careful
->> code review of future commits, but since relying on code review to
->> catch bugs is a recipe for disaster and the upstream eBPF maintainer
->> is "strongly against defensive programming", this patch updates the
->> LSM hook, and all of the implementations to support sockptr_t and
->> safely handle both user and kernel space buffers.
->>
->> Signed-off-by: Paul Moore <paul@paul-moore.com>
->> ---
->>   include/linux/lsm_hook_defs.h |    2 +-
->>   include/linux/lsm_hooks.h     |    4 ++--
->>   include/linux/security.h      |   11 +++++++----
->>   net/core/sock.c               |    3 ++-
->>   security/apparmor/lsm.c       |   29 +++++++++++++----------------
->>   security/security.c           |    6 +++---
->>   security/selinux/hooks.c      |   13 ++++++-------
->>   security/smack/smack_lsm.c    |   19 ++++++++++---------
->>   8 files changed, 44 insertions(+), 43 deletions(-)
-> 
-> Casey and John, could you please look over the Smack and AppArmor bits
-> of this patch when you get a chance?  I did my best on the conversion,
-> but I would appreciate a review by the experts :)
-> 
-yes, I plan to look at it this weekend
+After changes in commit a1bd627b46d1 ("apparmor: share profile name on
+replacement"), the hname member of struct aa_policy is not valid slab
+object, but a subset of that, it can not be freed by kfree_sensitive(),
+use aa_policy_destroy() to fix it.
+
+Fixes: a1bd627b46d1 ("apparmor: share profile name on replacement")
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+---
+ security/apparmor/policy_ns.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/apparmor/policy_ns.c b/security/apparmor/policy_ns.c
+index 5c38563a6dcf..fd5b7afbcb48 100644
+--- a/security/apparmor/policy_ns.c
++++ b/security/apparmor/policy_ns.c
+@@ -132,7 +132,7 @@ static struct aa_ns *alloc_ns(const char *prefix, const char *name)
+ 	return ns;
+ 
+ fail_unconfined:
+-	kfree_sensitive(ns->base.hname);
++	aa_policy_destroy(&ns->base);
+ fail_ns:
+ 	kfree_sensitive(ns);
+ 	return NULL;
+-- 
+2.17.1
 
