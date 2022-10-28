@@ -2,90 +2,163 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477E1C38A02
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 10:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 533A9ECAAA1
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 11:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231194AbiJ1Kze (ORCPT
+        id S229379AbiJ1LUN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Oct 2022 06:55:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57300 "EHLO
+        Fri, 28 Oct 2022 07:20:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231268AbiJ1KzP (ORCPT
+        with ESMTP id S230072AbiJ1LUM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Oct 2022 06:55:15 -0400
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADBDE558C1
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Oct 2022 03:55:09 -0700 (PDT)
-Received: by mail-oi1-x22c.google.com with SMTP id l5so5752476oif.7
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Oct 2022 03:55:09 -0700 (PDT)
+        Fri, 28 Oct 2022 07:20:12 -0400
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41716474D6
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Oct 2022 04:20:11 -0700 (PDT)
+Received: by mail-oi1-x22f.google.com with SMTP id g130so5766666oia.13
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Oct 2022 04:20:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0OSgzvsxOKlDatU1RP0O72rPiUBVZ4dyhmJWhltX+mc=;
-        b=N1Ih8at4pd4Kvbk1hvvQuAUOgmQrahWkYlxdNY5kKYkIgRj69oPNFDjtAxiI2rYfP5
-         CwM+43DXqo39eiO0dDynG9VBW8o/S+ySVWH691Rn13/DR6Y7H2d4WRh8+miUASyTTWP0
-         /JcnwG7wskcWRQooXqwds7OM/TD6Ia5vuOfrkJ93P/a7LWsutAhEvghn2KbbudlAc5dh
-         qhdyemeQtCYXJmuLPaMGV95EpjZHfOWDrdYyFsbfPINOwh00u93u9nRI+RI6r/DLe7d9
-         vkQC5sQsNx1zD2sDy4LxFuihBzfqBNp5FmQ5+onHI3vZphwDq4/Lod3GjbMGG3rVWam5
-         B0kg==
+        bh=YDLELMW9bQB+oUEfSf8eu3TecKtyIw9GNRZbjMP6p+E=;
+        b=pl+N3a9dTvEeFm0Z5WrtpZ8lNEfZgFLa9AkHwkfxim/UYcS6JMdse1fS6ZtRm6t9EM
+         lYSJ6ASXkAqdphtRb6NtqZ5bdIkxCtHsyBH4t38HH63MtdaTm5GARiHT3BebsjMnXCjX
+         ZpEtc4VKBK3NPrJh0Fd6txmZdPuwTleHs/T6EeVP7Ml3Bb60bhsV+nCyF0sYwKhBMaPa
+         Z8jTt6kCMiNoCgpuy2+FJDJM7nAeiRhxBfPfFpQEFcOr/fGrclbo9aPF4Mrny+xuwdwX
+         PBu35xBOFxSa4N438miuaJxrxOU49xMVQQadfZAZmOp9a+pl/frBQgiyNu01bSdamAWA
+         IEqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0OSgzvsxOKlDatU1RP0O72rPiUBVZ4dyhmJWhltX+mc=;
-        b=bF1SAkUz0oj5wKK16EATloHnoOtZsvcw3NZhg3r8WmNxq4ypYfg7rtdCvI+j8cGEq7
-         j+q38bKHMsvAazfAcyzvMcFuzo4mrmAx9NRjBsi4Cv1Z0JFRSY7dM+jqBDn4h6zN9bKb
-         bocOTpPmc17/+/IXtl+4T97UyDnkyasXf4yNRIAXolDI8s9Ta3qz2arlNzePg9ZaNl57
-         uhCj46KAny6EWHrkvSbR9399zqf38R0+v9o5/w1rW0qV7+ZUsSqIcoiCx0V1ltiTasZq
-         qgz8hZ/vXaDLYqfKvFIV7pKETzXiejJR5UmacK1ujhPZzaYpuGTWmuVwmTzJaofSMPYB
-         yc7Q==
-X-Gm-Message-State: ACrzQf3JFO9k9n5d0cviMZbmeeMv+3GPNOuyHP63YNpN1nOj7HtMAhQO
-        /9E7famDbA4BRkrGCc4cxinVa+JWQwqrNcWuCDO9
-X-Google-Smtp-Source: AMsMyM5zsg40nrD6OFXhWyLp7gcu6600+i+XuVTeDsiArmRmEq4Svl9NHt15pm/2/r7qCPCs6oMhYrscECtFEXrIq/M=
+        bh=YDLELMW9bQB+oUEfSf8eu3TecKtyIw9GNRZbjMP6p+E=;
+        b=lIqQftCdkUKDaH3JckzeGPhjnEWBB9tPw9/S7udRZ5Ms3HNZYNXO+q4bCY45RJGYlE
+         i7qV47WmqFGJplfu/xXVQ8tkwHq7rW8heeK6IndLjVpvzlkahL3DYJh34OnbK6HCAMaB
+         jDfpkXVsClCNH1sHMQfQinHkrf7Kqn6XSWiz314f8Gnts98WHVejFYVcj1v/MSsuoiyL
+         iYZn9kfCHzDesWtGPn08MvG5pbFy+OVakO8H8KDCEGQtzMAFU/cNqUyPLXXc860C9Ysi
+         FLOPN6YkPKuesPDUuMPtmpOeK5hDqB6uLVV/+bN/NJPzTOzMPJYfiABnDSLLZLY6b/Yc
+         CGGg==
+X-Gm-Message-State: ACrzQf28p0ubg3He7Ow+mPhZYr1eQ+UPVtP+cRVSZNenlWvIUAqJnRca
+        XM3n5OP4uYB61d9Ib/j26VclPVgJp03UH2zfIpFI
+X-Google-Smtp-Source: AMsMyM5qkynGjH4z/XncLUJo7KmF90DM2QQEFiZAw469Wk3g+DCl14S5t8y2cZG85cvxT26yVuiyltesGWc6PRJKWVw=
 X-Received: by 2002:a05:6808:10d4:b0:359:c147:7afe with SMTP id
- s20-20020a05680810d400b00359c1477afemr4015109ois.172.1666954499323; Fri, 28
- Oct 2022 03:54:59 -0700 (PDT)
+ s20-20020a05680810d400b00359c1477afemr4074675ois.172.1666956010584; Fri, 28
+ Oct 2022 04:20:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221025133357.2404086-1-cuigaosheng1@huawei.com>
-In-Reply-To: <20221025133357.2404086-1-cuigaosheng1@huawei.com>
+References: <20221025113101.41132-1-wangweiyang2@huawei.com>
+In-Reply-To: <20221025113101.41132-1-wangweiyang2@huawei.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 28 Oct 2022 06:54:48 -0400
-Message-ID: <CAHC9VhRL8YwHtY-CziZt+EtQ-9nm+BqayyeUKoM+QXM_69-Fjg@mail.gmail.com>
-Subject: Re: [PATCH v2] security: commoncap: fix potential memleak on error
- path from vfs_getxattr_alloc
-To:     Gaosheng Cui <cuigaosheng1@huawei.com>
-Cc:     serge@hallyn.com, jmorris@namei.org, ebiederm@xmission.com,
-        brauner@kernel.org, linux-security-module@vger.kernel.org
+Date:   Fri, 28 Oct 2022 07:19:59 -0400
+Message-ID: <CAHC9VhQW9g6QTpPMHehTyfT_N5kQjeAGZjdiiUS9od+0CrmbiQ@mail.gmail.com>
+Subject: Re: [PATCH] device_cgroup: Roll back to original exceptions after
+ copy failure
+To:     Wang Weiyang <wangweiyang2@huawei.com>
+Cc:     jmorris@namei.org, serge@hallyn.com, serge.hallyn@canonical.com,
+        akpm@linux-foundation.org, aris@redhat.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 25, 2022 at 9:34 AM Gaosheng Cui <cuigaosheng1@huawei.com> wrote:
+On Tue, Oct 25, 2022 at 7:02 AM Wang Weiyang <wangweiyang2@huawei.com> wrote:
 >
-> In cap_inode_getsecurity(), we will use vfs_getxattr_alloc() to
-> complete the memory allocation of tmpbuf, if we have completed
-> the memory allocation of tmpbuf, but failed to call handler->get(...),
-> there will be a memleak in below logic:
+> When add the 'a *:* rwm' entry to devcgroup A's whitelist, at first A's
+> exceptions will be cleaned and A's behavior is changed to
+> DEVCG_DEFAULT_ALLOW. Then parent's exceptions will be copyed to A's
+> whitelist. If copy failure occurs, just return leaving A to grant
+> permissions to all devices. And A may grant more permissions than
+> parent.
 >
->   |-- ret = (int)vfs_getxattr_alloc(mnt_userns, ...)  <-- alloc for tmpbuf
->     |-- value = krealloc(*xattr_value, error + 1, flags)  <-- alloc memory
->     |-- error = handler->get(handler, ...)  <-- if error
->     |-- *xattr_value = value <-- xattr_value is &tmpbuf  <-- memory leak
+> Backup A's whitelist and recover original exceptions after copy
+> failure.
 >
-> So we will try to free(tmpbuf) after vfs_getxattr_alloc() fails to fix it.
->
-> Fixes: 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
-> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+> Fixes: 4cef7299b478 ("device_cgroup: add proper checking when changing default behavior")
+> Signed-off-by: Wang Weiyang <wangweiyang2@huawei.com>
 > ---
-> v2:
-> - Update the Fixes tag, from 71bc356f93a1 to 8db6c34f1dbc. Thanks!
->  security/commoncap.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  security/device_cgroup.c | 33 +++++++++++++++++++++++++++++----
+>  1 file changed, 29 insertions(+), 4 deletions(-)
 
-Merged into lsm/stable-6.1 and plan on sending it up to Linus early
-next week (network connectivity permitting).  Thanks!
+On quick glance this looks reasonable to me, but I'm working with
+limited time connected to a network so I can't say I've given this a
+full and proper review; if a third party could spend some time to give
+this an additional review before I merge it I would greatly appreciate
+it.
+
+> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+> index a9f8c63a96d1..bef2b9285fb3 100644
+> --- a/security/device_cgroup.c
+> +++ b/security/device_cgroup.c
+> @@ -82,6 +82,17 @@ static int dev_exceptions_copy(struct list_head *dest, struct list_head *orig)
+>         return -ENOMEM;
+>  }
+>
+> +static void dev_exceptions_move(struct list_head *dest, struct list_head *orig)
+> +{
+> +       struct dev_exception_item *ex, *tmp;
+> +
+> +       lockdep_assert_held(&devcgroup_mutex);
+> +
+> +       list_for_each_entry_safe(ex, tmp, orig, list) {
+> +               list_move_tail(&ex->list, dest);
+> +       }
+> +}
+> +
+>  /*
+>   * called under devcgroup_mutex
+>   */
+> @@ -604,11 +615,13 @@ static int devcgroup_update_access(struct dev_cgroup *devcgroup,
+>         int count, rc = 0;
+>         struct dev_exception_item ex;
+>         struct dev_cgroup *parent = css_to_devcgroup(devcgroup->css.parent);
+> +       struct dev_cgroup tmp_devcgrp;
+>
+>         if (!capable(CAP_SYS_ADMIN))
+>                 return -EPERM;
+>
+>         memset(&ex, 0, sizeof(ex));
+> +       memset(&tmp_devcgrp, 0, sizeof(tmp_devcgrp));
+>         b = buffer;
+>
+>         switch (*b) {
+> @@ -620,15 +633,27 @@ static int devcgroup_update_access(struct dev_cgroup *devcgroup,
+>
+>                         if (!may_allow_all(parent))
+>                                 return -EPERM;
+> -                       dev_exception_clean(devcgroup);
+> -                       devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
+> -                       if (!parent)
+> +                       if (!parent) {
+> +                               devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
+> +                               dev_exception_clean(devcgroup);
+>                                 break;
+> +                       }
+>
+> +                       INIT_LIST_HEAD(&tmp_devcgrp.exceptions);
+> +                       rc = dev_exceptions_copy(&tmp_devcgrp.exceptions,
+> +                                                &devcgroup->exceptions);
+> +                       if (rc)
+> +                               return rc;
+> +                       dev_exception_clean(devcgroup);
+>                         rc = dev_exceptions_copy(&devcgroup->exceptions,
+>                                                  &parent->exceptions);
+> -                       if (rc)
+> +                       if (rc) {
+> +                               dev_exceptions_move(&devcgroup->exceptions,
+> +                                                   &tmp_devcgrp.exceptions);
+>                                 return rc;
+> +                       }
+> +                       devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
+> +                       dev_exception_clean(&tmp_devcgrp);
+>                         break;
+>                 case DEVCG_DENY:
+>                         if (css_has_online_children(&devcgroup->css))
+> --
+> 2.17.1
+>
+
 
 -- 
 paul-moore.com
