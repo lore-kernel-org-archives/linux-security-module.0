@@ -2,185 +2,235 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065BBC38A02
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 13:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 878A1ECAAA1
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 15:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbiJ1N67 (ORCPT
+        id S231278AbiJ1PBT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Oct 2022 09:58:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34316 "EHLO
+        Fri, 28 Oct 2022 11:01:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230293AbiJ1N6w (ORCPT
+        with ESMTP id S231270AbiJ1PBS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Oct 2022 09:58:52 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A18D61DC4ED
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Oct 2022 06:58:51 -0700 (PDT)
-Received: from fsav115.sakura.ne.jp (fsav115.sakura.ne.jp [27.133.134.242])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 29SDwT36000996;
-        Fri, 28 Oct 2022 22:58:29 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav115.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav115.sakura.ne.jp);
- Fri, 28 Oct 2022 22:58:29 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav115.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 29SDwSsB000988
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 28 Oct 2022 22:58:29 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <56add81d-0ea7-9d3e-0e30-e0b02e62a8d0@I-love.SAKURA.ne.jp>
-Date:   Fri, 28 Oct 2022 22:58:30 +0900
+        Fri, 28 Oct 2022 11:01:18 -0400
+Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73D15C8975
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Oct 2022 08:01:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666969275; bh=kNyK8LiHAxU0Baoaw2EBjtRpMgg355HG5nEDCzX07uA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=X0zRLVfVjuirsCU/mDJIrtCmmPjdwSwgg+oQCN/mJQdic/ZCJkEtMjMeT8/X6zbjcPXTtWHntaJ/YyztPNQ+FVCyLe7iuC/iC1xkp6Gbf/10cmN2XLdCgBQbpQZ3gsGUBegiIGdijVyGICBNLXkp5Y1OcpFg5ZOVd7KeWKtlSMBQNXoKcRXjm0Ib8OQM7uXJPo1gxjF+/OjjOV99P0MdCPZkfGnVINfgopb76ndt5djk0aRXguQlUGE1jlPZJDCg3Snrru8T/Gq0xcBZHZB731YFhVPhD3DNgLzwDnLVqZKjuA35DrDwiCLu+pXPh0OalUIaP0BZQHpupVxBObapxg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666969275; bh=wSYuNAOgAki7bK5lvCSN9kVE3M3h0vR+g/XcV1Vtm5z=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=krdg8gLXxPZ6QOaJ0rGzq1vJDc6yRmz38b2MC4msKbXj603wboiYYaBo7H0O+qw+nfGa+GBhRXIZPqvP7KBAWcBuUE4udeasYBRiNRXLB/R7n9l7Ca5fLyNy2fTdZtYufkRKbkMTvSEi69wvZL5sdQ/Uj6jzCJC//OvQhIo/x969E8dc9jS3xQehuTBCIfpj7NEdNu8w2U8vhUlihPqL84Dt20K76kWH0WZMXA78CAUHEpANtRxYCWTnUabmvQjaRpPas8Zt7XLL3VEGt+2UWXb04D2BjpbIOiUrQBG4bNy56mx83LVcXSY7cpbGOdPyV4riDnwca2XtoHnOXf9f8A==
+X-YMail-OSG: O.kLg5QVM1nwhdI0XQUEtJZRGiAnTeqOciksCLu6rAW7S_SQiX0tucWp__SKGe0
+ a10ajouyEELyqUOt4eT84_iSnsGN1VZbwhOkHiZ3dMp3QgdKDZCAIGaZrJof0bRl3l0OcdAxVBNa
+ obL7PQ4YxnEQ9tcoYQrFQyboq4qTl8BEyVXFTu3ZcLUNuMrPd2sYVaVNCBez1Q7XrdtCCyWjJvAN
+ Sb3Cl7N0wCdY2MS96wD_.S4AjYRWNLt0vF_slXa8J6KYAHPsiHzmf_ArIey.NCnLP90gmi_lI29g
+ VR7Lod_Latv1DjneKoGda.Auoy45ZE4rw9Jqprj7pQ_PcvCOno9RXPEhDBWForQz3QAYL9RDXf5Z
+ ALdgmEMx74i4Ev.LWQh8RUl9We91NH0e8pn31Zvw61zBMEiktLKEzB8kHu7agB_boPnKwyYZlHpK
+ OBOY7qaM3gjuHxkmwIyYMKNaqZ.DWlIazsFeAdtkdX66eym.UqwK0CGu4GP_TJHU8WcsnHJ9eR1J
+ PZ5gCm9i2ARZDTrXaMvZ8YHR9T2kDdNVjhyVje3mnWQs23EOGdyhuh6Bhk2xJLNp7HM8Wl1XGt_6
+ JU1Q8U1smdobw6FfW4gxIvV3cDcOok1sMq8TfNNP6LCnY0PrpD_sBkW1CstPxejcWyFYpmy6UZKJ
+ Bd8IwLnAHT.x7D0LvIKnn.IGydc9sp.I8uRxaXLXV1VZi0gmqRKlCJbdeYDK1w7RaG9awhSPojgY
+ DvTJ8cVPnMHiBAefM25gseZzDSAvA0MKtwwVPEZ.Owkefnhz8ieJ0oYf5ZZWxhBgVrXiQJXZi8ms
+ 0BSg2IGuQT23zKdBuCfE6hLSAVZYkKSMly4mvIe9hA38Brc7eW7QqKsN3FEbMT7xr2Y8uOLhslxZ
+ cHxYjoDpuZAoqQkVs2cBDiP0r1n3LG9laPGtSVYuk4JE968jf1Sscw2qiiVyaXhfGoFNe_I1thfJ
+ 37xuGRWlZwzTxIb5HMMqrRko0_VYgV3ky1tqOcsDgTYV53M01qXNBnCCmEIvdgNcSqbqLnVAccg6
+ uv9OIsucpNxl19iCAAhwtXImrWDICyKwufP49pozFsXLR.00iRoQkgH9UgHQbdNBLAmFTZipkBgb
+ sKjH4huEaR0YMs3xFsfRK3OV8p5itZR5VISWI5SQ59UKjebCh07lpUvP1Te7SP6GjNNnHI4PXI3l
+ isyN623CkH1ytttSKJtk22ZQUyDxw1Ywn8iDGavAfCt2IwTaOKEvPuqOMy2FjIOxc9VepPTnVUlB
+ PfDnPq4sgqrhPTHw_V3AWa9J.eycEnusFx835ftdQKm0FYHbogHn0SpwLmwWaniRiF687k_sH.xq
+ A4dlgUbYzb8RfLLJO.i4DfbEEAaVsRQFgrUo_DbzMzC03T_jIQK_8tnYpf1ZGD0LoRZzbUefHgBr
+ CBblYNYtHqiCbgkBbO6TlOsiks_cg.DDyxvEnksNA.6LVrNK.Iqp7tYRBBXgpHuTIzFhQ85fRIwF
+ fcAS0BW8m6OwRQP0hDm7rqP1NMUSj9jLb6fXPQ83X7hyOrpxP6N1XF3wY2mQIqQT3Zmcy09GwZCp
+ Z5ekgAaKmWpa8anITEMg.10SMTEr7NMNXqNq78d.H4q7ulZ3L.6_xpHdOslAZiMvb7AzryNk5F8i
+ rm.NZDfyQ..FctKVgQdtN4zNADyiuIn4QrmWARczKi9u7FBdjychWkX9K9wWCYXraQbkEZ6mbi.H
+ u4tD6S.rGIOjl3NDkYXTXFj455CGdm0Cw0j4yuZrtN0Vqmz5TqtiJyjTXz4Tcjvhhz.t.fh2IIA1
+ ZPttAI8zKhMvC3KO5sSwOwKHoTBMSOk3a4wDCM49b3PJeo9NYRX5NdKTSrCDW3JhpwR6c01AkfVv
+ mhW5M2s2Y8HsbM5DTAkXYAzSyDc9YPPT.Tz7q62zxTfQjs2H0ziGGEWFP8Tz4JK8JeAXVDHg3S5j
+ RiDwErke04OQwIWf1gelx7E6MDcF0veiC0bo3S_VT7GuJuQYZg5.d3x827X6U1DtUJg5AaexbFoE
+ LnlHZm8rrIiZOqWioQTKspDXKKJSsJ5V49naIa4aT2CJXK8zmZORSNIy1PMpWcPcjolQDuBJIeUp
+ iUEZN.cb0_xZ28fI2dAieg4P7EpiYAAYJ3H0bNHKa5DKBoxGOkwGqaskkf0M2VATpnvzVeFqM_yf
+ h7CFWPaKhR7_yiPGrjkgsSjUbcGXRtGErC33yqL_uc4jcDQT_Fxqm.y9JzIqJuYQVtf2VB9IbSHP
+ UZ11BSuN2.bpIIDz7RNZs0njzk5A-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Fri, 28 Oct 2022 15:01:15 +0000
+Received: by hermes--production-ne1-c47ffd5f5-fzch8 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 00a6f1cfa7da200883440c6b3d111468;
+          Fri, 28 Oct 2022 15:01:13 +0000 (UTC)
+Message-ID: <3752db45-c89e-dfa7-0bd0-246421daf8cc@schaufler-ca.com>
+Date:   Fri, 28 Oct 2022 08:01:11 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: LSM stacking in next for 6.1?
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [RFC][PATCH] bpf: Check xattr name/value pair from
+ bpf_lsm_inode_init_security()
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
-        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
-        SElinux list <selinux@vger.kernel.org>
-References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
- <CAHC9VhQMeyxQJSAUuigu=CCr44WtpJg=LEh1xng_bPfCCjqq6Q@mail.gmail.com>
- <5ef4a1ae-e92c-ca77-7089-2efe1d4c4e6d@schaufler-ca.com>
- <CAHC9VhQRpeOMkeEfy=VRPnpuYMUDYgLp56OjQZPYwoXmfHYREQ@mail.gmail.com>
- <c679cea7-bb90-7a62-2e17-888826857d55@schaufler-ca.com>
- <e9ce6253-c8a3-19c3-1b71-f3a2e04539bc@I-love.SAKURA.ne.jp>
- <cc14bbde-529e-376c-7d27-8512ec677db3@schaufler-ca.com>
- <ff43e254-0f41-3f4f-f04d-63b76bed2ccf@I-love.SAKURA.ne.jp>
- <1a9f9182-9188-2f64-4a17-ead2fed70348@schaufler-ca.com>
- <2225aec6-f0f3-d38e-ee3c-6139a7c25a37@I-love.SAKURA.ne.jp>
- <5995f18c-5623-9d97-0aa6-5f13a2a8e895@I-love.SAKURA.ne.jp>
- <77ec837a-ff64-e6f0-fe14-a54c1646ea0b@canonical.com>
- <0fcc5444-a957-f107-25a1-3540588eab5a@I-love.SAKURA.ne.jp>
- <CAHC9VhQy91eezWMQ=MoLe3fQSu_Rc+ZUWW2Mm3+78Mr7vS_Z0A@mail.gmail.com>
- <a0567b10-fa83-50f4-7bf6-937e0c677e60@I-love.SAKURA.ne.jp>
- <CAHC9VhT2Azg1F-G3RQ4xL7JgA3OAtHafzS1_nvUyEUFsCJ9+SA@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHC9VhT2Azg1F-G3RQ4xL7JgA3OAtHafzS1_nvUyEUFsCJ9+SA@mail.gmail.com>
+        LKML <linux-kernel@vger.kernel.org>,
+        nicolas.bouchinet@clip-os.org, Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        casey@schaufler-ca.com
+References: <20221021164626.3729012-1-roberto.sassu@huaweicloud.com>
+ <CAADnVQJHDboosqTy5LTHJtJaWJCWn9rv09jmd_sMgeV_OVQjGg@mail.gmail.com>
+ <d7a17e482b7bbf945c92443b45de73f56afea08a.camel@huaweicloud.com>
+ <bb7a5986f3d25706269d0fec9906ea73c174b808.camel@huaweicloud.com>
+ <CAADnVQL1a2pPAJqzj6oUwupxxfaW38KQswzppAZeZPzmTFhjMg@mail.gmail.com>
+ <98353f6c82d3dabdb0d434d7ecf0bfc5295015ad.camel@huaweicloud.com>
+ <ffbdcfbe-0c63-2ced-62e3-a7248b7a24f0@schaufler-ca.com>
+ <CAADnVQLAXsZRNytPHG0KhYKar3K+=7bq2KPQG77VFOKbnTPHmg@mail.gmail.com>
+ <34357c96-fe58-ffe5-e464-4bded8f119d5@huaweicloud.com>
+ <CAADnVQKD5e9vKsSo1TPeBm5hr6j4GzQeHqRURoBJyB++VOwHCw@mail.gmail.com>
+ <CACYkzJ4ak4=qPNQxVckvn3c8CZpXkXSLSyYa_HCU-RJNyuLoZg@mail.gmail.com>
+ <edf0ec89c61fbee68fd537981982e14b1674393d.camel@huaweicloud.com>
+Content-Language: en-US
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <edf0ec89c61fbee68fd537981982e14b1674393d.camel@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20783 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2022/10/28 18:50, Paul Moore wrote:
->> This problem is not limited to out-of-tree and/or
->> loadable LSM modules. This change prevents new LSM modules from getting upstream
->> due to a chicken-and-egg problem.
-> 
-> It does *not* prevent new LSM modules from being merged upstream.
-> 
-> It may make it more difficult for out-of-tree modules to remain
-> out-of-tree, but that is both not a concern of the upstream community
-> nor is it the concern you are currently describing.
+On 10/28/2022 1:48 AM, Roberto Sassu wrote:
+> On Thu, 2022-10-27 at 12:39 +0200, KP Singh wrote:
+>> On Wed, Oct 26, 2022 at 7:14 PM Alexei Starovoitov
+>> <alexei.starovoitov@gmail.com> wrote:
+>>> On Wed, Oct 26, 2022 at 1:42 AM Roberto Sassu
+>>> <roberto.sassu@huaweicloud.com> wrote:
+>>>> On 10/26/2022 8:37 AM, Alexei Starovoitov wrote:
+>>>>> On Tue, Oct 25, 2022 at 7:58 AM Casey Schaufler <
+>>>>> casey@schaufler-ca.com> wrote:
+>>>>>> On 10/25/2022 12:43 AM, Roberto Sassu wrote:
+>>>>>>> On Mon, 2022-10-24 at 19:13 -0700, Alexei Starovoitov
+>>>>>>> wrote:
+>>>>>>>> I'm looking at security_inode_init_security() and it is
+>>>>>>>> indeed messy.
+>>>>>>>> Per file system initxattrs callback that processes
+>>>>>>>> kmalloc-ed
+>>>>>>>> strings.
+>>>>>>>> Yikes.
+>>>>>>>>
+>>>>>>>> In the short term we should denylist inode_init_security
+>>>>>>>> hook to
+>>>>>>>> disallow attaching bpf-lsm there. set/getxattr should be
+>>>>>>>> done
+>>>>>>>> through kfuncs instead of such kmalloc-a-string hack.
+>>>>>>> Inode_init_security is an example. It could be that the
+>>>>>>> other hooks are
+>>>>>>> affected too. What happens if they get arbitrary positive
+>>>>>>> values too?
+>>>>>> TL;DR - Things will go cattywampus.
+>>>>>>
+>>>>>> The LSM infrastructure is an interface that has "grown
+>>>>>> organically",
+>>>>>> and isn't necessarily consistent in what it requires of the
+>>>>>> security
+>>>>>> module implementations. There are cases where it assumes that
+>>>>>> the
+>>>>>> security module hooks are well behaved, as you've discovered.
+>>>>>> I have
+>>>>>> no small amount of fear that someone is going to provide an
+>>>>>> eBPF
+>>>>>> program for security_secid_to_secctx(). There has been an
+>>>>>> assumption,
+>>>>>> oft stated, that all security modules are going to be
+>>>>>> reviewed as
+>>>>>> part of the upstream process. The review process ought to
+>>>>>> catch hooks
+>>>>>> that return unacceptable values. Alas, we've lost that with
+>>>>>> BPF.
+>>>>>>
+>>>>>> It would take a(nother) major overhaul of the LSM
+>>>>>> infrastructure to
+>>>>>> make it safe against hooks that are not well behaved. From
+>>>>>> what I have
+>>>>>> seen so far it wouldn't be easy/convenient/performant to do
+>>>>>> it in the
+>>>>>> BPF security module either. I personally think that BPF needs
+>>>>>> to
+>>>>>> ensure that the eBPF implementations don't return
+>>>>>> inappropriate values,
+>>>>>> but I understand why that is problematic.
+>>>>> That's an accurate statement. Thank you.
+>>>>>
+>>>>> Going back to the original question...
+>>>>> We fix bugs when we discover them.
+>>>>> Regardless of the subsystem they belong to.
+>>>>> No finger pointing.
+>>>> I'm concerned about the following situation:
+>>>>
+>>>> struct <something> *function()
+>>>> {
+>>>>
+>>>>         ret = security_*();
+>>>>         if (ret)
+>>>>                 return ERR_PTR(ret);
+>>>>
+>>>> }
+>>>>
+>>>> int caller()
+>>>> {
+>>>>         ptr = function()
+>>>>         if (IS_ERR(ptr)
+>>>>                 goto out;
+>>>>
+>>>>         <use of invalid pointer>
+>>>> }
+>>>>
+>>>> I quickly found an occurrence of this:
+>>>>
+>>>> static int lookup_one_common()
+>>>> {
+>>>>
+>>>> [...]
+>>>>
+>>>>         return inode_permission();
+>>>> }
+>>>>
+>>>> struct dentry *try_lookup_one_len()
+>>>> {
+>>>>
+>>>> [...]
+>>>>
+>>>>          err = lookup_one_common(&init_user_ns, name, base, len,
+>>>> &this);
+>>>>          if (err)
+>>>>                  return ERR_PTR(err);
+>>>>
+>>>>
+>>>> Unfortunately, attaching to inode_permission causes the kernel
+>>>> to crash immediately (it does not happen with negative return
+>>>> values).
+>>>>
+>>>> So, I think the fix should be broader, and not limited to the
+>>>> inode_init_security hook. Will try to see how it can be fixed.
+>>> I see. Let's restrict bpf-lsm return values to IS_ERR_VALUE.
+>>> Trivial verifier change.
+>> Thanks, yes this indeed is an issue. We need to do a few things:
+>>
+>> 1. Restrict some hooks that we know the BPF LSM will never need.
+>> 2. A verifier function that checks return values of LSM
+>> hooks.
+>> For most LSK hooks IS_ERR_VALUE is fine, however, there are some
+>> hooks
+>> like *xattr hooks that use a return value of 1 to indicate a
+>> capability check is required which might need special handling.
+> I looked at security.c:
+>
+> /*
+>  * SELinux and Smack integrate the cap call,
+>  * so assume that all LSMs supplying this call do so.
+>  */
+>
+> Other than checking the return value, probably we should also wrap
+> bpf_lsm_inode_{set,remove}xattr() to do the capability check, right?
 
-New LSM modules are out-of-tree modules until being merged upstream.
+Long term I hope to fix the way capabilities are dealt with in
+this hook, but for now your suggestion seems reasonable. 
 
-LSM modules is an area which is difficult to get merged upstream for
-unknown reasons. You remember the label versus pathname war, don't you?
-Do you remember that 10 modules were proposed 
-
-    SimpleFlow ( 2016/04/21 https://lwn.net/Articles/684825/ )
-    HardChroot ( 2016/07/29 https://lwn.net/Articles/695984/ )
-    Checmate ( 2016/08/04 https://lwn.net/Articles/696344/ )
-    LandLock ( 2016/08/25 https://lwn.net/Articles/698226/ )
-    PTAGS ( 2016/09/29 https://lwn.net/Articles/702639/ )
-    CaitSith ( 2016/10/21 https://lwn.net/Articles/704262/ )
-    SafeName ( 2016/05/03 https://lwn.net/Articles/686021/ )
-    WhiteEgret ( 2017/05/30 https://lwn.net/Articles/724192/ )
-    shebang ( 2017/06/09 https://lwn.net/Articles/725285/ )
-    S.A.R.A. ( 2017/06/13 https://lwn.net/Articles/725230/ )
-
-and how many of them got merged upstream? It is inevitable that some
-(or rather, many or most) of LSM modules cannot be merged upstream or
-be enabled by distributors.
-
-Even if perfect LSM stacking is implemented, I can imagine a future that
-none of LSM modules available in upstream kernel can satisfy user's needs.
-LSM stacking makes sense only if LSM modules which can satisfy user's needs
-are available. And we know that upstream kernel won't accept whatever LSMs.
-
-I consider /sbin/insmod-able LSM modules as a compromise/remedy for LSM modules
-which could not get merged upstream or supported by distributors, for patching and
-rebuilding the whole kernel in order to use not-yet-upstreamed and/or not-builtin
-LSMs is already a lot of barrier for users. But requiring a permanent integer in
-order to use a LSM module is a denial of even patching and rebuilding the whole
-kernel. That's why I hate this change.
-
-> 
->> Currently anyone can start writing new LSM modules using name as identifier. But
->> you are trying to forbid using name as identifier, and trying to force using integer
->> as identifier, but that integer will not be provided unless new LSM modules get
->> upstream.
-> 
-> That is correct.  In order to have a LSM identifier token the LSM must
-> be upstream.
-
-Then, new LSM modules which are intended to be merged upstream can't write
-userspace interface.
-
-> 
->> Then, how those who want to write new LSM modules can start writing LSM modules and
->> propose userspace changes for new LSM modules? They can't use the identifier unless
->> their LSM module get upstream, which in turn forces them not to propose interface for
->> userspace programs, which in turn makes it difficult to get new LSM modules tested
->> by users, which in turn makes it difficult to get upstream due to "who is using your
->> LSM module" question, which in turn makes it difficult to get the identifier...
-> 
-> First, new LSMs generally do not need extensive userspace
-> modifications; of course there may be some, but when one considers the
-> entirety of a modern Linux distribution the actual percentage should
-> be quite small.
-
-I agree that new LSMs generally do not need extensive userspace modifications.
-But
-
->                  In addition, it is not uncommon for in-development
-> LSMs to have a set of privately, i.e. not upstreamed, patched
-> userspace tools while the new LSM works to get upstream.  These
-> private userspace patches are generally merged after the LSM has been
-> merged into the kernel.
-
-I still think an identifier is needed when developing management programs for each
-new LSM.
-
-Do you mean that management programs which are specific to each LSM module are not
-forced to use the identifier Casey is trying to introduce? If yes, why does "you are
-trying to forbid using name as identifier, and trying to force using integer as
-identifier" need to be correct? Only programs that do not belong to specific LSM
-module but needs to be able to recognize various LSM modules' per task attributes
-need to use the identifier Casey is trying to introduce.
-
-I can't understand why assigning a permanent integer identifier is mandatory.
-TOMOYO (and trivial LSMs) will not need such identifier. This change merely makes
-it more difficult to stack minor/trivial LSMs implemented as /sbin/insmod-able LSMs,
-by introducing fixed sized array.
-
-> 
->> You are trying to force CONFIG_MODULES=n by just "we don't care about out-of-tree code".
-> 
-> That is not the goal at all and I would appreciate it if you could
-> stop slandering the motivations of the LSM syscall effort.
-> 
->> Trying to change identifier from name to integer is a serious bug.
-> 
-> I disagree.  One would have a similar problem - userspace
-> awareness/enablement - regardless of if a name or a token is used.
-
-TOMOYO (and trivial LSMs) will not need userspace awareness/enablement.
-
-> Ultimately the challenge is getting userspace developers to accept a
-> change that is not part of the upstream Linux Kernel and thus not
-> guaranteed under the usual "don't break userspace" kernel API promise.
-
-I'm not against the challenge. But none of "introducing fixed sized array",
-"assigning permanent integer for the fixed sized array", "not assigning permanent
-integer unless merged upstream" is required for achieving the challenge. We can
-achieve the challenge via "using linked list" and "using name or assigning dynamic
-integer upon loading of a LSM module". (Of course, if upstream kernel allows assigning
-permanent integer before getting merged, we can use integer for the userspace...)
-
+>
+> Roberto
+>
