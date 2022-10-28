@@ -2,248 +2,158 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A75BAECAAA1
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 09:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 153E1ECAAA1
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 09:52:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbiJ1JeL (ORCPT
+        id S230231AbiJ1Jwc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Oct 2022 05:34:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58088 "EHLO
+        Fri, 28 Oct 2022 05:52:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230103AbiJ1JeL (ORCPT
+        with ESMTP id S230241AbiJ1Jvt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Oct 2022 05:34:11 -0400
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F281C77E6;
-        Fri, 28 Oct 2022 02:34:09 -0700 (PDT)
-Received: from [192.168.43.182] (unknown [62.168.35.125])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 90583422D7;
-        Fri, 28 Oct 2022 09:34:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1666949647;
-        bh=bQ/1OS6mvFzzu0LHm35vKXK9IjpkGW7uJvvale0LiEA=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=qz+RM5EGaOqTeHePR4rNeD8+yp2Ra/rDO8x9BpOQePi81kSwziLnZEtQTI0eh+se2
-         L3rWzFUnEe2PkXNlcdMC0eVweXYHtZSn0IpMS8PShKCE30p0va/SDyHZY1xsVhqtL8
-         E8uryNzzZBPrjbZoVPZgyasWGxgbmslHCEiQJeX79ZyB5nBJHAblzi69LPq3x5OcOK
-         FYWrU9OyJadAmSD/AmiF4+36f1iqQt13BRUY3TjSE2/arFmVfMeWdHpQ8pUpsy2JaO
-         8N99tthUbFzKIZzZ8Uaw2+vIni0JxsYPT6XyNG2xiaIuOXpDDcY0bykYi/8XWPNtb6
-         97Fn7uhb30iOg==
-Message-ID: <cfd5cc6f-5943-2e06-1dbe-f4b4ad5c1fa1@canonical.com>
-Date:   Fri, 28 Oct 2022 02:34:07 -0700
+        Fri, 28 Oct 2022 05:51:49 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EDEB4CA14
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Oct 2022 02:50:18 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id t10so5626394oib.5
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Oct 2022 02:50:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hJOZ7nL7nUVuoXx6yfQht5u/rUZxqZv4VWUs7Qhk1hE=;
+        b=S+L4GQkz4K2pt5kvTSs7/jsFd+v4roBTopqwYwg+8o6Na4sBXhcTSbz7wEDkGAI+NK
+         lJauWzD8V+54/PrUQtCtpm3oKEI41aOA/MF3NoVLQflahvkfwYZxelcWj2mCFJI8TWCp
+         PQ+oJO3h9bySb85KPZOUhujjDzLLDvmYykIsfrXcQNXZgW4TqlBm12B/+DKoyg66O0BA
+         HICK80lucWEeOYsu7aic6GVjd/3BLaLYKz6g+ymlqPRfLpgu8qUCPhvEk0wz+CA0OlEv
+         tGYMRkRrRk/LqNec81DzkrMYXDbx83aeAXmLB4A3hS8HUMlp2w2HJFIvgy9616d+M+rq
+         VhnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hJOZ7nL7nUVuoXx6yfQht5u/rUZxqZv4VWUs7Qhk1hE=;
+        b=ikVfd1/AuBXscdIqePQRZnwTy7qAvz1xRQlPnI9xTrIk6BQxwwE2ETjGKMoRceyRBX
+         cdUr8+uuSgqpsnd+T92DmOTNQ8dcNam8UgoAOtTUIyR6bYEXKosEOYZxJG+OL+QtNTO4
+         0LfOZgBxGCcsksbLpFCTPSVPl41sVpImLJ29JJg2N7bQXuLUurtzdQWKlACQpDi0v+2M
+         8KOkubLfQBKAXVX4QEUOGBkiITOXaGsm95w8mGfpcssTCmRVaED1tyiz0S+7bmszshqx
+         k3Zx5NYa22s3mbg4Y/HhDmYoOmW3M7G3rvxhCm0DJ6pSV0HHRJqutQzjI/fiGWSi6Q7w
+         siFA==
+X-Gm-Message-State: ACrzQf3ZE1zdEaSSn/H4koX4gnWgYf34Ra0p5EWfik0KdHZdwYeAou22
+        OEHU+6RE7E5bsQRB6Cr3JqK5nq/Tjn1g4+JP/t6W
+X-Google-Smtp-Source: AMsMyM5LT56WrX8xq2cDEwU9MowuTZJprtvIM+mNwCDsAdE4o56WE0f9ds+W9OIiqC1+bVos/ZfrkQ3B85DspeKDevQ=
+X-Received: by 2002:a05:6808:10d4:b0:359:c147:7afe with SMTP id
+ s20-20020a05680810d400b00359c1477afemr3882403ois.172.1666950617668; Fri, 28
+ Oct 2022 02:50:17 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: apparmor: global buffers spin lock may get contended
-Content-Language: en-US
-To:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <YO2S+C7Cw7AS7bsg@google.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <YO2S+C7Cw7AS7bsg@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
+ <CAHC9VhQPvcunvBDvSnrUChwmGLen0Rcy8KEk_uOjNF1kr4_m9w@mail.gmail.com>
+ <6552af17-e511-a7d8-f462-cafcf41a33bb@schaufler-ca.com> <CAHC9VhQMeyxQJSAUuigu=CCr44WtpJg=LEh1xng_bPfCCjqq6Q@mail.gmail.com>
+ <5ef4a1ae-e92c-ca77-7089-2efe1d4c4e6d@schaufler-ca.com> <CAHC9VhQRpeOMkeEfy=VRPnpuYMUDYgLp56OjQZPYwoXmfHYREQ@mail.gmail.com>
+ <c679cea7-bb90-7a62-2e17-888826857d55@schaufler-ca.com> <e9ce6253-c8a3-19c3-1b71-f3a2e04539bc@I-love.SAKURA.ne.jp>
+ <cc14bbde-529e-376c-7d27-8512ec677db3@schaufler-ca.com> <ff43e254-0f41-3f4f-f04d-63b76bed2ccf@I-love.SAKURA.ne.jp>
+ <1a9f9182-9188-2f64-4a17-ead2fed70348@schaufler-ca.com> <2225aec6-f0f3-d38e-ee3c-6139a7c25a37@I-love.SAKURA.ne.jp>
+ <5995f18c-5623-9d97-0aa6-5f13a2a8e895@I-love.SAKURA.ne.jp>
+ <77ec837a-ff64-e6f0-fe14-a54c1646ea0b@canonical.com> <0fcc5444-a957-f107-25a1-3540588eab5a@I-love.SAKURA.ne.jp>
+ <CAHC9VhQy91eezWMQ=MoLe3fQSu_Rc+ZUWW2Mm3+78Mr7vS_Z0A@mail.gmail.com> <a0567b10-fa83-50f4-7bf6-937e0c677e60@I-love.SAKURA.ne.jp>
+In-Reply-To: <a0567b10-fa83-50f4-7bf6-937e0c677e60@I-love.SAKURA.ne.jp>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 28 Oct 2022 05:50:06 -0400
+Message-ID: <CAHC9VhT2Azg1F-G3RQ4xL7JgA3OAtHafzS1_nvUyEUFsCJ9+SA@mail.gmail.com>
+Subject: Re: LSM stacking in next for 6.1?
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
+        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
+        SElinux list <selinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/13/21 06:19, Sergey Senozhatsky wrote:
-> Hi,
-> 
-> We've notices that apparmor has switched from using per-CPU buffer pool
-> and per-CPU spin_lock to a global spin_lock in df323337e507a0009d3db1ea.
-> 
-> This seems to be causing some contention on our build machines (with
-> quite a bit of cores). Because that global spin lock is a part of the
-> stat() sys call (and perhaps some other)
-> 
-> E.g.
-> 
-> -    9.29%     0.00%  clang++          [kernel.vmlinux]
->     - 9.28% entry_SYSCALL_64_after_hwframe
->        - 8.98% do_syscall_64
->           - 7.43% __do_sys_newlstat
->              - 7.43% vfs_statx
->                 - 7.18% security_inode_getattr
->                    - 7.15% apparmor_inode_getattr
->                       - aa_path_perm
->                          - 3.53% aa_get_buffer
->                             - 3.47% _raw_spin_lock
->                                  3.44% native_queued_spin_lock_slowpath
->                          - 3.49% aa_put_buffer.part.0
->                             - 3.45% _raw_spin_lock
->                                  3.43% native_queued_spin_lock_slowpath
-> 
-> Can we fix this contention?
+On Wed, Oct 26, 2022 at 8:02 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2022/10/27 5:11, Paul Moore wrote:
+> > On Tue, Oct 25, 2022 at 7:20 AM Tetsuo Handa
+> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >> On 2022/10/25 19:26, John Johansen wrote:
+> >>> no, Casey is not. He is trying to find a path forward to get LSM
+> >>> stacking upstream sooner than later. He has made proposals that
+> >>> admittedly you have not liked, but he has at least tried to propose
+> >>> ideas that could work within the insane set of constraints.
+> >>
+> >> I'm OK with getting LSM stacking upstream. But changes made based on
+> >> only built-in modules are bad. If LSM id cannot be assigned to loadable
+> >> LSM modules at runtime because not all loadable LSM modules will be
+> >> in-tree in order to get an LSM id assigned, loadable LSM modules won't
+> >> be able to utilize e.g. lsm_module_list system call (or whatever
+> >> changes made while trying to unshare resources/interfaces currently
+> >> shared among SELinux/Smack/AppArmor).
+> >
+> > As a reminder, the LSM layer, just like the rest of the kernel, has no
+> > plans to provide any level of consideration or support for out-of-tree
+> > kernel code.  LSMs which are not part of the upstream Linux kernel are
+> > not our concern here; if they fail to work with the syscall and/or LSM
+> > stacking changes merged, that should not be considered a blocker to
+> > upstream development.
+> >
+>
+> No. You are misunderstanding.
 
-sorry for the delay on this. Below is a proposed patch that I have been testing
-to deal with this issue.
+With all due respect, I understand your point very well, I'm simply
+trying to explain to you the position that the Linux Kernel has
+historically taken with respect to out-of-tree and in-development
+code.
 
+> This problem is not limited to out-of-tree and/or
+> loadable LSM modules. This change prevents new LSM modules from getting upstream
+> due to a chicken-and-egg problem.
 
- From d026988196fdbda7234fb87bc3e4aea22edcbaf9 Mon Sep 17 00:00:00 2001
-From: John Johansen <john.johansen@canonical.com>
-Date: Tue, 25 Oct 2022 01:18:41 -0700
-Subject: [PATCH] apparmor: cache buffers on percpu list if there is lock
-  contention
+It does *not* prevent new LSM modules from being merged upstream.
 
-On a heavily loaded machine there can be lock contention on the
-global buffers lock. Add a percpu list to cache buffers on when
-lock contention is encountered.
+It may make it more difficult for out-of-tree modules to remain
+out-of-tree, but that is both not a concern of the upstream community
+nor is it the concern you are currently describing.
 
-When allocating buffers attempt to use cached buffers first,
-before taking the global buffers lock. When freeing buffers
-try to put them back to the global list but if contention is
-encountered, put the buffer on the percpu list.
+> Currently anyone can start writing new LSM modules using name as identifier. But
+> you are trying to forbid using name as identifier, and trying to force using integer
+> as identifier, but that integer will not be provided unless new LSM modules get
+> upstream.
 
-The length of time a buffer is held on the percpu list is dynamically
-adjusted based on lock contention.  The amount of hold time is rapidly
-increased and slow ramped down.
+That is correct.  In order to have a LSM identifier token the LSM must
+be upstream.
 
-Signed-off-by: John Johansen <john.johansen@canonical.com>
----
-  security/apparmor/lsm.c | 74 ++++++++++++++++++++++++++++++++++++++---
-  1 file changed, 69 insertions(+), 5 deletions(-)
+> Then, how those who want to write new LSM modules can start writing LSM modules and
+> propose userspace changes for new LSM modules? They can't use the identifier unless
+> their LSM module get upstream, which in turn forces them not to propose interface for
+> userspace programs, which in turn makes it difficult to get new LSM modules tested
+> by users, which in turn makes it difficult to get upstream due to "who is using your
+> LSM module" question, which in turn makes it difficult to get the identifier...
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 25114735bc11..0ab70171bdb6 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -49,12 +49,19 @@ union aa_buffer {
-  	char buffer[1];
-  };
-  
-+struct aa_local_cache {
-+	unsigned int contention;
-+	unsigned int hold;
-+	struct list_head head;
-+};
-+
-  #define RESERVE_COUNT 2
-  static int reserve_count = RESERVE_COUNT;
-  static int buffer_count;
-  
-  static LIST_HEAD(aa_global_buffers);
-  static DEFINE_SPINLOCK(aa_buffers_lock);
-+static DEFINE_PER_CPU(struct aa_local_cache, aa_local_buffers);
-  
-  /*
-   * LSM hook functions
-@@ -1622,14 +1629,44 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
-  	return 0;
-  }
-  
-+static void update_contention(struct aa_local_cache *cache)
-+{
-+	cache->contention += 3;
-+	if (cache->contention > 9)
-+		cache->contention = 9;
-+	cache->hold += 1 << cache->contention;		/* 8, 64, 512 */
-+}
-+
-  char *aa_get_buffer(bool in_atomic)
-  {
-  	union aa_buffer *aa_buf;
-+	struct aa_local_cache *cache;
-  	bool try_again = true;
-  	gfp_t flags = (GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_NOWARN);
-  
-+	/* use per cpu cached buffers first */
-+	cache = get_cpu_ptr(&aa_local_buffers);
-+	if (!list_empty(&cache->head)) {
-+		aa_buf = list_first_entry(&cache->head, union aa_buffer, list);
-+		list_del(&aa_buf->list);
-+		cache->hold--;
-+		put_cpu_ptr(&aa_local_buffers);
-+		return &aa_buf->buffer[0];
-+	}
-+	put_cpu_ptr(&aa_local_buffers);
-+
-+	if (!spin_trylock(&aa_buffers_lock)) {
-+		cache = get_cpu_ptr(&aa_local_buffers);
-+		update_contention(cache);
-+		put_cpu_ptr(&aa_local_buffers);
-+		spin_lock(&aa_buffers_lock);
-+	} else {
-+		cache = get_cpu_ptr(&aa_local_buffers);
-+		if (cache->contention)
-+			cache->contention--;
-+		put_cpu_ptr(&aa_local_buffers);
-+	}
-  retry:
--	spin_lock(&aa_buffers_lock);
-  	if (buffer_count > reserve_count ||
-  	    (in_atomic && !list_empty(&aa_global_buffers))) {
-  		aa_buf = list_first_entry(&aa_global_buffers, union aa_buffer,
-@@ -1655,6 +1692,7 @@ char *aa_get_buffer(bool in_atomic)
-  	if (!aa_buf) {
-  		if (try_again) {
-  			try_again = false;
-+			spin_lock(&aa_buffers_lock);
-  			goto retry;
-  		}
-  		pr_warn_once("AppArmor: Failed to allocate a memory buffer.\n");
-@@ -1666,15 +1704,32 @@ char *aa_get_buffer(bool in_atomic)
-  void aa_put_buffer(char *buf)
-  {
-  	union aa_buffer *aa_buf;
-+	struct aa_local_cache *cache;
-  
-  	if (!buf)
-  		return;
-  	aa_buf = container_of(buf, union aa_buffer, buffer[0]);
-  
--	spin_lock(&aa_buffers_lock);
--	list_add(&aa_buf->list, &aa_global_buffers);
--	buffer_count++;
--	spin_unlock(&aa_buffers_lock);
-+	cache = get_cpu_ptr(&aa_local_buffers);
-+	if (!cache->hold) {
-+		put_cpu_ptr(&aa_local_buffers);
-+		if (spin_trylock(&aa_buffers_lock)) {
-+			list_add(&aa_buf->list, &aa_global_buffers);
-+			buffer_count++;
-+			spin_unlock(&aa_buffers_lock);
-+			cache = get_cpu_ptr(&aa_local_buffers);
-+			if (cache->contention)
-+				cache->contention--;
-+			put_cpu_ptr(&aa_local_buffers);
-+			return;
-+		}
-+		cache = get_cpu_ptr(&aa_local_buffers);
-+		update_contention(cache);
-+	}
-+
-+	/* cache in percpu list */
-+	list_add(&aa_buf->list, &cache->head);
-+	put_cpu_ptr(&aa_local_buffers);
-  }
-  
-  /*
-@@ -1716,6 +1771,15 @@ static int __init alloc_buffers(void)
-  	union aa_buffer *aa_buf;
-  	int i, num;
-  
-+	/*
-+	 * per cpu set of cached allocated buffers used to help reduce
-+	 * lock contention
-+	 */
-+	for_each_possible_cpu(i) {
-+		per_cpu(aa_local_buffers, i).contention = 0;
-+		per_cpu(aa_local_buffers, i).hold = 0;
-+		INIT_LIST_HEAD(&per_cpu(aa_local_buffers, i).head);
-+	}
-  	/*
-  	 * A function may require two buffers at once. Usually the buffers are
-  	 * used for a short period of time and are shared. On UP kernel buffers
+First, new LSMs generally do not need extensive userspace
+modifications; of course there may be some, but when one considers the
+entirety of a modern Linux distribution the actual percentage should
+be quite small.  In addition, it is not uncommon for in-development
+LSMs to have a set of privately, i.e. not upstreamed, patched
+userspace tools while the new LSM works to get upstream.  These
+private userspace patches are generally merged after the LSM has been
+merged into the kernel.
+
+> You are trying to force CONFIG_MODULES=n by just "we don't care about out-of-tree code".
+
+That is not the goal at all and I would appreciate it if you could
+stop slandering the motivations of the LSM syscall effort.
+
+> Trying to change identifier from name to integer is a serious bug.
+
+I disagree.  One would have a similar problem - userspace
+awareness/enablement - regardless of if a name or a token is used.
+Ultimately the challenge is getting userspace developers to accept a
+change that is not part of the upstream Linux Kernel and thus not
+guaranteed under the usual "don't break userspace" kernel API promise.
+
 -- 
-2.34.1
-
-
-
+paul-moore.com
