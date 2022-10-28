@@ -2,218 +2,248 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADC9C38A02
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 08:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A75BAECAAA1
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 09:34:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230098AbiJ1IuC (ORCPT
+        id S230138AbiJ1JeL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Oct 2022 04:50:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60946 "EHLO
+        Fri, 28 Oct 2022 05:34:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230055AbiJ1Itx (ORCPT
+        with ESMTP id S230103AbiJ1JeL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Oct 2022 04:49:53 -0400
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26514102F;
-        Fri, 28 Oct 2022 01:49:28 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4MzGK11SwTz9xFfs;
-        Fri, 28 Oct 2022 16:43:01 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwC3o3B8l1tjSAUbAA--.18857S2;
-        Fri, 28 Oct 2022 09:49:08 +0100 (CET)
-Message-ID: <edf0ec89c61fbee68fd537981982e14b1674393d.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH] bpf: Check xattr name/value pair from
- bpf_lsm_inode_init_security()
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     KP Singh <kpsingh@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        nicolas.bouchinet@clip-os.org, Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date:   Fri, 28 Oct 2022 10:48:56 +0200
-In-Reply-To: <CACYkzJ4ak4=qPNQxVckvn3c8CZpXkXSLSyYa_HCU-RJNyuLoZg@mail.gmail.com>
-References: <20221021164626.3729012-1-roberto.sassu@huaweicloud.com>
-         <CAADnVQJHDboosqTy5LTHJtJaWJCWn9rv09jmd_sMgeV_OVQjGg@mail.gmail.com>
-         <d7a17e482b7bbf945c92443b45de73f56afea08a.camel@huaweicloud.com>
-         <bb7a5986f3d25706269d0fec9906ea73c174b808.camel@huaweicloud.com>
-         <CAADnVQL1a2pPAJqzj6oUwupxxfaW38KQswzppAZeZPzmTFhjMg@mail.gmail.com>
-         <98353f6c82d3dabdb0d434d7ecf0bfc5295015ad.camel@huaweicloud.com>
-         <ffbdcfbe-0c63-2ced-62e3-a7248b7a24f0@schaufler-ca.com>
-         <CAADnVQLAXsZRNytPHG0KhYKar3K+=7bq2KPQG77VFOKbnTPHmg@mail.gmail.com>
-         <34357c96-fe58-ffe5-e464-4bded8f119d5@huaweicloud.com>
-         <CAADnVQKD5e9vKsSo1TPeBm5hr6j4GzQeHqRURoBJyB++VOwHCw@mail.gmail.com>
-         <CACYkzJ4ak4=qPNQxVckvn3c8CZpXkXSLSyYa_HCU-RJNyuLoZg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Fri, 28 Oct 2022 05:34:11 -0400
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F281C77E6;
+        Fri, 28 Oct 2022 02:34:09 -0700 (PDT)
+Received: from [192.168.43.182] (unknown [62.168.35.125])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 90583422D7;
+        Fri, 28 Oct 2022 09:34:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1666949647;
+        bh=bQ/1OS6mvFzzu0LHm35vKXK9IjpkGW7uJvvale0LiEA=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=qz+RM5EGaOqTeHePR4rNeD8+yp2Ra/rDO8x9BpOQePi81kSwziLnZEtQTI0eh+se2
+         L3rWzFUnEe2PkXNlcdMC0eVweXYHtZSn0IpMS8PShKCE30p0va/SDyHZY1xsVhqtL8
+         E8uryNzzZBPrjbZoVPZgyasWGxgbmslHCEiQJeX79ZyB5nBJHAblzi69LPq3x5OcOK
+         FYWrU9OyJadAmSD/AmiF4+36f1iqQt13BRUY3TjSE2/arFmVfMeWdHpQ8pUpsy2JaO
+         8N99tthUbFzKIZzZ8Uaw2+vIni0JxsYPT6XyNG2xiaIuOXpDDcY0bykYi/8XWPNtb6
+         97Fn7uhb30iOg==
+Message-ID: <cfd5cc6f-5943-2e06-1dbe-f4b4ad5c1fa1@canonical.com>
+Date:   Fri, 28 Oct 2022 02:34:07 -0700
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: apparmor: global buffers spin lock may get contended
+Content-Language: en-US
+To:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <YO2S+C7Cw7AS7bsg@google.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <YO2S+C7Cw7AS7bsg@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwC3o3B8l1tjSAUbAA--.18857S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCF1kXFWkuF4ruw4rZw45GFg_yoWrCrWDpF
-        W5tF1jkr4DJFy7Cr1Iqa15XrWIyryfKrsrXwn8Jr1UZFyqvr1ayr17Jr4Y9FWUur4UGw1F
-        vr4jvrW3Zw1DA3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQATBF1jj4TG5gAAsD
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2022-10-27 at 12:39 +0200, KP Singh wrote:
-> On Wed, Oct 26, 2022 at 7:14 PM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> > On Wed, Oct 26, 2022 at 1:42 AM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > On 10/26/2022 8:37 AM, Alexei Starovoitov wrote:
-> > > > On Tue, Oct 25, 2022 at 7:58 AM Casey Schaufler <
-> > > > casey@schaufler-ca.com> wrote:
-> > > > > On 10/25/2022 12:43 AM, Roberto Sassu wrote:
-> > > > > > On Mon, 2022-10-24 at 19:13 -0700, Alexei Starovoitov
-> > > > > > wrote:
-> > > > > > > I'm looking at security_inode_init_security() and it is
-> > > > > > > indeed messy.
-> > > > > > > Per file system initxattrs callback that processes
-> > > > > > > kmalloc-ed
-> > > > > > > strings.
-> > > > > > > Yikes.
-> > > > > > > 
-> > > > > > > In the short term we should denylist inode_init_security
-> > > > > > > hook to
-> > > > > > > disallow attaching bpf-lsm there. set/getxattr should be
-> > > > > > > done
-> > > > > > > through kfuncs instead of such kmalloc-a-string hack.
-> > > > > > Inode_init_security is an example. It could be that the
-> > > > > > other hooks are
-> > > > > > affected too. What happens if they get arbitrary positive
-> > > > > > values too?
-> > > > > 
-> > > > > TL;DR - Things will go cattywampus.
-> > > > > 
-> > > > > The LSM infrastructure is an interface that has "grown
-> > > > > organically",
-> > > > > and isn't necessarily consistent in what it requires of the
-> > > > > security
-> > > > > module implementations. There are cases where it assumes that
-> > > > > the
-> > > > > security module hooks are well behaved, as you've discovered.
-> > > > > I have
-> > > > > no small amount of fear that someone is going to provide an
-> > > > > eBPF
-> > > > > program for security_secid_to_secctx(). There has been an
-> > > > > assumption,
-> > > > > oft stated, that all security modules are going to be
-> > > > > reviewed as
-> > > > > part of the upstream process. The review process ought to
-> > > > > catch hooks
-> > > > > that return unacceptable values. Alas, we've lost that with
-> > > > > BPF.
-> > > > > 
-> > > > > It would take a(nother) major overhaul of the LSM
-> > > > > infrastructure to
-> > > > > make it safe against hooks that are not well behaved. From
-> > > > > what I have
-> > > > > seen so far it wouldn't be easy/convenient/performant to do
-> > > > > it in the
-> > > > > BPF security module either. I personally think that BPF needs
-> > > > > to
-> > > > > ensure that the eBPF implementations don't return
-> > > > > inappropriate values,
-> > > > > but I understand why that is problematic.
-> > > > 
-> > > > That's an accurate statement. Thank you.
-> > > > 
-> > > > Going back to the original question...
-> > > > We fix bugs when we discover them.
-> > > > Regardless of the subsystem they belong to.
-> > > > No finger pointing.
-> > > 
-> > > I'm concerned about the following situation:
-> > > 
-> > > struct <something> *function()
-> > > {
-> > > 
-> > >         ret = security_*();
-> > >         if (ret)
-> > >                 return ERR_PTR(ret);
-> > > 
-> > > }
-> > > 
-> > > int caller()
-> > > {
-> > >         ptr = function()
-> > >         if (IS_ERR(ptr)
-> > >                 goto out;
-> > > 
-> > >         <use of invalid pointer>
-> > > }
-> > > 
-> > > I quickly found an occurrence of this:
-> > > 
-> > > static int lookup_one_common()
-> > > {
-> > > 
-> > > [...]
-> > > 
-> > >         return inode_permission();
-> > > }
-> > > 
-> > > struct dentry *try_lookup_one_len()
-> > > {
-> > > 
-> > > [...]
-> > > 
-> > >          err = lookup_one_common(&init_user_ns, name, base, len,
-> > > &this);
-> > >          if (err)
-> > >                  return ERR_PTR(err);
-> > > 
-> > > 
-> > > Unfortunately, attaching to inode_permission causes the kernel
-> > > to crash immediately (it does not happen with negative return
-> > > values).
-> > > 
-> > > So, I think the fix should be broader, and not limited to the
-> > > inode_init_security hook. Will try to see how it can be fixed.
-> > 
-> > I see. Let's restrict bpf-lsm return values to IS_ERR_VALUE.
-> > Trivial verifier change.
+On 7/13/21 06:19, Sergey Senozhatsky wrote:
+> Hi,
 > 
-> Thanks, yes this indeed is an issue. We need to do a few things:
+> We've notices that apparmor has switched from using per-CPU buffer pool
+> and per-CPU spin_lock to a global spin_lock in df323337e507a0009d3db1ea.
 > 
-> 1. Restrict some hooks that we know the BPF LSM will never need.
-> 2. A verifier function that checks return values of LSM
-> hooks.
-> For most LSK hooks IS_ERR_VALUE is fine, however, there are some
-> hooks
-> like *xattr hooks that use a return value of 1 to indicate a
-> capability check is required which might need special handling.
+> This seems to be causing some contention on our build machines (with
+> quite a bit of cores). Because that global spin lock is a part of the
+> stat() sys call (and perhaps some other)
+> 
+> E.g.
+> 
+> -    9.29%     0.00%  clang++          [kernel.vmlinux]
+>     - 9.28% entry_SYSCALL_64_after_hwframe
+>        - 8.98% do_syscall_64
+>           - 7.43% __do_sys_newlstat
+>              - 7.43% vfs_statx
+>                 - 7.18% security_inode_getattr
+>                    - 7.15% apparmor_inode_getattr
+>                       - aa_path_perm
+>                          - 3.53% aa_get_buffer
+>                             - 3.47% _raw_spin_lock
+>                                  3.44% native_queued_spin_lock_slowpath
+>                          - 3.49% aa_put_buffer.part.0
+>                             - 3.45% _raw_spin_lock
+>                                  3.43% native_queued_spin_lock_slowpath
+> 
+> Can we fix this contention?
 
-I looked at security.c:
+sorry for the delay on this. Below is a proposed patch that I have been testing
+to deal with this issue.
 
-/*
- * SELinux and Smack integrate the cap call,
- * so assume that all LSMs supplying this call do so.
- */
 
-Other than checking the return value, probably we should also wrap
-bpf_lsm_inode_{set,remove}xattr() to do the capability check, right?
+ From d026988196fdbda7234fb87bc3e4aea22edcbaf9 Mon Sep 17 00:00:00 2001
+From: John Johansen <john.johansen@canonical.com>
+Date: Tue, 25 Oct 2022 01:18:41 -0700
+Subject: [PATCH] apparmor: cache buffers on percpu list if there is lock
+  contention
 
-Roberto
+On a heavily loaded machine there can be lock contention on the
+global buffers lock. Add a percpu list to cache buffers on when
+lock contention is encountered.
+
+When allocating buffers attempt to use cached buffers first,
+before taking the global buffers lock. When freeing buffers
+try to put them back to the global list but if contention is
+encountered, put the buffer on the percpu list.
+
+The length of time a buffer is held on the percpu list is dynamically
+adjusted based on lock contention.  The amount of hold time is rapidly
+increased and slow ramped down.
+
+Signed-off-by: John Johansen <john.johansen@canonical.com>
+---
+  security/apparmor/lsm.c | 74 ++++++++++++++++++++++++++++++++++++++---
+  1 file changed, 69 insertions(+), 5 deletions(-)
+
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 25114735bc11..0ab70171bdb6 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -49,12 +49,19 @@ union aa_buffer {
+  	char buffer[1];
+  };
+  
++struct aa_local_cache {
++	unsigned int contention;
++	unsigned int hold;
++	struct list_head head;
++};
++
+  #define RESERVE_COUNT 2
+  static int reserve_count = RESERVE_COUNT;
+  static int buffer_count;
+  
+  static LIST_HEAD(aa_global_buffers);
+  static DEFINE_SPINLOCK(aa_buffers_lock);
++static DEFINE_PER_CPU(struct aa_local_cache, aa_local_buffers);
+  
+  /*
+   * LSM hook functions
+@@ -1622,14 +1629,44 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
+  	return 0;
+  }
+  
++static void update_contention(struct aa_local_cache *cache)
++{
++	cache->contention += 3;
++	if (cache->contention > 9)
++		cache->contention = 9;
++	cache->hold += 1 << cache->contention;		/* 8, 64, 512 */
++}
++
+  char *aa_get_buffer(bool in_atomic)
+  {
+  	union aa_buffer *aa_buf;
++	struct aa_local_cache *cache;
+  	bool try_again = true;
+  	gfp_t flags = (GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_NOWARN);
+  
++	/* use per cpu cached buffers first */
++	cache = get_cpu_ptr(&aa_local_buffers);
++	if (!list_empty(&cache->head)) {
++		aa_buf = list_first_entry(&cache->head, union aa_buffer, list);
++		list_del(&aa_buf->list);
++		cache->hold--;
++		put_cpu_ptr(&aa_local_buffers);
++		return &aa_buf->buffer[0];
++	}
++	put_cpu_ptr(&aa_local_buffers);
++
++	if (!spin_trylock(&aa_buffers_lock)) {
++		cache = get_cpu_ptr(&aa_local_buffers);
++		update_contention(cache);
++		put_cpu_ptr(&aa_local_buffers);
++		spin_lock(&aa_buffers_lock);
++	} else {
++		cache = get_cpu_ptr(&aa_local_buffers);
++		if (cache->contention)
++			cache->contention--;
++		put_cpu_ptr(&aa_local_buffers);
++	}
+  retry:
+-	spin_lock(&aa_buffers_lock);
+  	if (buffer_count > reserve_count ||
+  	    (in_atomic && !list_empty(&aa_global_buffers))) {
+  		aa_buf = list_first_entry(&aa_global_buffers, union aa_buffer,
+@@ -1655,6 +1692,7 @@ char *aa_get_buffer(bool in_atomic)
+  	if (!aa_buf) {
+  		if (try_again) {
+  			try_again = false;
++			spin_lock(&aa_buffers_lock);
+  			goto retry;
+  		}
+  		pr_warn_once("AppArmor: Failed to allocate a memory buffer.\n");
+@@ -1666,15 +1704,32 @@ char *aa_get_buffer(bool in_atomic)
+  void aa_put_buffer(char *buf)
+  {
+  	union aa_buffer *aa_buf;
++	struct aa_local_cache *cache;
+  
+  	if (!buf)
+  		return;
+  	aa_buf = container_of(buf, union aa_buffer, buffer[0]);
+  
+-	spin_lock(&aa_buffers_lock);
+-	list_add(&aa_buf->list, &aa_global_buffers);
+-	buffer_count++;
+-	spin_unlock(&aa_buffers_lock);
++	cache = get_cpu_ptr(&aa_local_buffers);
++	if (!cache->hold) {
++		put_cpu_ptr(&aa_local_buffers);
++		if (spin_trylock(&aa_buffers_lock)) {
++			list_add(&aa_buf->list, &aa_global_buffers);
++			buffer_count++;
++			spin_unlock(&aa_buffers_lock);
++			cache = get_cpu_ptr(&aa_local_buffers);
++			if (cache->contention)
++				cache->contention--;
++			put_cpu_ptr(&aa_local_buffers);
++			return;
++		}
++		cache = get_cpu_ptr(&aa_local_buffers);
++		update_contention(cache);
++	}
++
++	/* cache in percpu list */
++	list_add(&aa_buf->list, &cache->head);
++	put_cpu_ptr(&aa_local_buffers);
+  }
+  
+  /*
+@@ -1716,6 +1771,15 @@ static int __init alloc_buffers(void)
+  	union aa_buffer *aa_buf;
+  	int i, num;
+  
++	/*
++	 * per cpu set of cached allocated buffers used to help reduce
++	 * lock contention
++	 */
++	for_each_possible_cpu(i) {
++		per_cpu(aa_local_buffers, i).contention = 0;
++		per_cpu(aa_local_buffers, i).hold = 0;
++		INIT_LIST_HEAD(&per_cpu(aa_local_buffers, i).head);
++	}
+  	/*
+  	 * A function may require two buffers at once. Usually the buffers are
+  	 * used for a short period of time and are shared. On UP kernel buffers
+-- 
+2.34.1
+
+
 
