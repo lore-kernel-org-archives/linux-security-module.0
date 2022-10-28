@@ -2,232 +2,122 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CCDFA3742
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 16:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF74C38A02
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 17:40:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230365AbiJ1Q4g (ORCPT
+        id S229665AbiJ1Rkl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Oct 2022 12:56:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34370 "EHLO
+        Fri, 28 Oct 2022 13:40:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230366AbiJ1Qzq (ORCPT
+        with ESMTP id S229802AbiJ1Rkk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Oct 2022 12:55:46 -0400
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EEB01CCCD1;
-        Fri, 28 Oct 2022 09:55:37 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4MzT5x3dj4z9xFQb;
-        Sat, 29 Oct 2022 00:49:09 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwBX9XFOCVxj63ccAA--.45991S4;
-        Fri, 28 Oct 2022 17:55:14 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
-        revest@chromium.org, jackmanb@chromium.org, shuah@kernel.org,
-        paul@paul-moore.com, casey@schaufler-ca.com, zohar@linux.ibm.com
-Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nicolas.bouchinet@clip-os.org
-Subject: [RESEND][RFC][PATCH 3/3] selftests/bpf: Check if return values of LSM programs are allowed
-Date:   Fri, 28 Oct 2022 18:54:23 +0200
-Message-Id: <20221028165423.386151-3-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221028165423.386151-1-roberto.sassu@huaweicloud.com>
-References: <20221028165423.386151-1-roberto.sassu@huaweicloud.com>
+        Fri, 28 Oct 2022 13:40:40 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0138A17FD42
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Oct 2022 10:40:38 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id g62so5343272pfb.10
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Oct 2022 10:40:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pD8xAs6hz8K/GwlkkWEBIlgMqA6rS7UqF9zh8XCJrDM=;
+        b=lMu/aHyftjQPfPXg/l61M6f9UM3LPnFbqCvJX2fO2zsrz46+GcTb8F3VppNulvG4p7
+         MEEXMMvAc0TpHTAjwW4m2L7QG5Q0xV0573g13vEJ/mHwGKwBdkSTqBZs9LNU59gboJKH
+         UzRU8jX2UQvC1cLNwRFJd80uMuregblbF1mok=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pD8xAs6hz8K/GwlkkWEBIlgMqA6rS7UqF9zh8XCJrDM=;
+        b=Ejc8u0xMgYtijGUObSk0Ayb3JL1oV0PsG0oJ+KLm1dM0pyxMCFHQlrZc83TSiTmhz0
+         f2g0RYjg0pYUKmuf1uacxov0OkRkAXQm/10YwyI9rYemb5lbIacnmqvXxRB3TA3q4jXO
+         9yMAqlR6wTtX5Tk+i9k1qv/8CNCeSsgZKp2vdBd1FWo78FYL5lXDMiIMmmrtT6Xx/Odc
+         DEM8S3pI4to6N/GZJ0y8tgotL/ypSCBKID6rRo10Gy9/Wmyhzks9e5JCeXzUCYBfWJUL
+         dbtwzZ27irgp2ZnrlSLS130+xJFGy6a511UDV9KmmgVgFAelCmT8d/5aaZ0CXkAkRHF4
+         ebcw==
+X-Gm-Message-State: ACrzQf1pi5GLqqanq0VGNaPcQbw8N0xcK7Iqh4OjRQrWvpM0Ds5MpYNg
+        /kq7J6+u3LFqMHMxR7gis8btaA==
+X-Google-Smtp-Source: AMsMyM6DTNw3s9S/F5sJs7fsfz3/GYHCtEIHiJDX19noke49fsc96sZ1X8ywUtxMWK3oLrmdy33pug==
+X-Received: by 2002:a62:b501:0:b0:557:d887:20ee with SMTP id y1-20020a62b501000000b00557d88720eemr394469pfe.8.1666978838423;
+        Fri, 28 Oct 2022 10:40:38 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id m12-20020a170902f20c00b00186e2123506sm3262526plc.300.2022.10.28.10.40.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Oct 2022 10:40:37 -0700 (PDT)
+Date:   Fri, 28 Oct 2022 10:40:36 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        SElinux list <selinux@vger.kernel.org>
+Subject: Re: LSM stacking in next for 6.1?
+Message-ID: <202210280944.AF75E37DC@keescook>
+References: <ff43e254-0f41-3f4f-f04d-63b76bed2ccf@I-love.SAKURA.ne.jp>
+ <1a9f9182-9188-2f64-4a17-ead2fed70348@schaufler-ca.com>
+ <2225aec6-f0f3-d38e-ee3c-6139a7c25a37@I-love.SAKURA.ne.jp>
+ <5995f18c-5623-9d97-0aa6-5f13a2a8e895@I-love.SAKURA.ne.jp>
+ <77ec837a-ff64-e6f0-fe14-a54c1646ea0b@canonical.com>
+ <0fcc5444-a957-f107-25a1-3540588eab5a@I-love.SAKURA.ne.jp>
+ <CAHC9VhQy91eezWMQ=MoLe3fQSu_Rc+ZUWW2Mm3+78Mr7vS_Z0A@mail.gmail.com>
+ <a0567b10-fa83-50f4-7bf6-937e0c677e60@I-love.SAKURA.ne.jp>
+ <CAHC9VhT2Azg1F-G3RQ4xL7JgA3OAtHafzS1_nvUyEUFsCJ9+SA@mail.gmail.com>
+ <56add81d-0ea7-9d3e-0e30-e0b02e62a8d0@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwBX9XFOCVxj63ccAA--.45991S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF1kAr4UAFyxAr48Cr17ZFb_yoWrZw1Dp3
-        WrZw1jkF40vF4avFWrK397uayS9FW7CrW5KwnxZwnrZa97JF4xW3W5tFy5Zr13Gr15Gr9Y
-        qr17Can5u3WUZa7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUPqb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-        A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-        w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-        W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-        6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
-        WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
-        bVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7
-        AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-        F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
-        ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
-        0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x
-        07jTbyZUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBF1jj4DNkwAAs6
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <56add81d-0ea7-9d3e-0e30-e0b02e62a8d0@I-love.SAKURA.ne.jp>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Fri, Oct 28, 2022 at 10:58:30PM +0900, Tetsuo Handa wrote:
+> Do you remember that 10 modules were proposed 
+> 
+>     SimpleFlow ( 2016/04/21 https://lwn.net/Articles/684825/ )
+>     HardChroot ( 2016/07/29 https://lwn.net/Articles/695984/ )
+>     Checmate ( 2016/08/04 https://lwn.net/Articles/696344/ )
+>     LandLock ( 2016/08/25 https://lwn.net/Articles/698226/ )
+>     PTAGS ( 2016/09/29 https://lwn.net/Articles/702639/ )
+>     CaitSith ( 2016/10/21 https://lwn.net/Articles/704262/ )
+>     SafeName ( 2016/05/03 https://lwn.net/Articles/686021/ )
+>     WhiteEgret ( 2017/05/30 https://lwn.net/Articles/724192/ )
+>     shebang ( 2017/06/09 https://lwn.net/Articles/725285/ )
+>     S.A.R.A. ( 2017/06/13 https://lwn.net/Articles/725230/ )
 
-Ensure that the eBPF verifier allows to load only LSM programs that return
-an allowed value depending on the LSM hook they attach to.
+There was also:
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- .../testing/selftests/bpf/verifier/lsm_ret.c  | 148 ++++++++++++++++++
- 1 file changed, 148 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/verifier/lsm_ret.c
+      LoadPin ( 2016/04/20 https://lore.kernel.org/lkml/1461192388-13900-1-git-send-email-keescook@chromium.org/ )
+      SafeSetID ( 2018/10/31 https://lore.kernel.org/linux-security-module/20181031152846.234791-1-mortonm@chromium.org/ )
+      BPF ( 2019/09/10 https://lore.kernel.org/linux-security-module/20190910115527.5235-1-kpsingh@chromium.org/ )
 
-diff --git a/tools/testing/selftests/bpf/verifier/lsm_ret.c b/tools/testing/selftests/bpf/verifier/lsm_ret.c
-new file mode 100644
-index 000000000000..1a11f47fb24a
---- /dev/null
-+++ b/tools/testing/selftests/bpf/verifier/lsm_ret.c
-@@ -0,0 +1,148 @@
-+{
-+	"lsm return value: positive not allowed, return -EPERM",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, -EPERM),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "inode_permission",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.result = ACCEPT,
-+},
-+{
-+	"lsm return value: positive not allowed, return zero",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, 0),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "inode_permission",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.result = ACCEPT,
-+},
-+{
-+	"lsm return value: positive not allowed, return one",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, 1),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "inode_permission",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.errstr = "Invalid R0, cannot return positive value",
-+	.result = REJECT,
-+},
-+{
-+	"lsm return value: zero/positive not allowed, return -EPERM",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, -EPERM),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "inode_init_security",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.result = ACCEPT,
-+},
-+{
-+	"lsm return value: zero/positive not allowed, return zero",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, 0),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "inode_init_security",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.errstr = "Invalid R0, cannot return zero value",
-+	.result = REJECT,
-+},
-+{
-+	"lsm return value: zero/positive not allowed, return one",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, 1),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "inode_init_security",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.errstr = "Invalid R0, cannot return positive value",
-+	.result = REJECT,
-+},
-+{
-+	"lsm return value: positive allowed, return one",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, 1),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "getprocattr",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.result = ACCEPT,
-+},
-+{
-+	"lsm return value: positive allowed, return two",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, 2),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "getprocattr",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.result = ACCEPT,
-+},
-+{
-+	"lsm return value: only one allowed, return one",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, 1),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "audit_rule_match",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.result = ACCEPT,
-+},
-+{
-+	"lsm return value: only one allowed, return two",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, 2),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "audit_rule_match",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.errstr = "Invalid R0, can return only one as positive value",
-+	.result = REJECT,
-+},
-+{
-+	"lsm return value: negative not allowed, return -EPERM",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, -EPERM),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "vm_enough_memory",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.errstr = "Invalid R0, cannot return negative value",
-+	.result = REJECT,
-+},
-+{
-+	"lsm return value: negative not allowed, return zero",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, 0),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "vm_enough_memory",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.result = ACCEPT,
-+},
-+{
-+	"lsm return value: negative not allowed, return one",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_0, 1),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "vm_enough_memory",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.result = ACCEPT,
-+},
+So, 13 LSM proposed, 4 landed: roughly 30%, which is on par[1] with regular
+kernel development.
+
+> I consider /sbin/insmod-able LSM modules as a compromise/remedy for LSM modules
+> which could not get merged upstream or supported by distributors, for patching and
+> rebuilding the whole kernel in order to use not-yet-upstreamed and/or not-builtin
+> LSMs is already a lot of barrier for users. But requiring a permanent integer in
+> order to use a LSM module is a denial of even patching and rebuilding the whole
+> kernel. That's why I hate this change.
+
+But the upstream kernel _does not support APIs for out-of-tree code_. To
+that point, security_add_hooks() is _not exported_, so it is already not
+possible to create a modular LSM without patching the kernel source.
+
+> I can't understand why assigning a permanent integer identifier is mandatory.
+
+Plenty of other APIs use numeric identifiers: syscalls, prctl, etc. This
+doesn't block them from being upstreamed.
+
+-Kees
+
+[1] https://ieeexplore.ieee.org/abstract/document/6624016
+
 -- 
-2.25.1
-
+Kees Cook
