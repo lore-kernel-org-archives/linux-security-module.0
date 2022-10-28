@@ -2,235 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 878A1ECAAA1
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 15:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B006ECAAA1
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Oct 2022 16:50:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231278AbiJ1PBT (ORCPT
+        id S229740AbiJ1Quh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Oct 2022 11:01:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43178 "EHLO
+        Fri, 28 Oct 2022 12:50:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231270AbiJ1PBS (ORCPT
+        with ESMTP id S229520AbiJ1Qug (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Oct 2022 11:01:18 -0400
-Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73D15C8975
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Oct 2022 08:01:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666969275; bh=kNyK8LiHAxU0Baoaw2EBjtRpMgg355HG5nEDCzX07uA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=X0zRLVfVjuirsCU/mDJIrtCmmPjdwSwgg+oQCN/mJQdic/ZCJkEtMjMeT8/X6zbjcPXTtWHntaJ/YyztPNQ+FVCyLe7iuC/iC1xkp6Gbf/10cmN2XLdCgBQbpQZ3gsGUBegiIGdijVyGICBNLXkp5Y1OcpFg5ZOVd7KeWKtlSMBQNXoKcRXjm0Ib8OQM7uXJPo1gxjF+/OjjOV99P0MdCPZkfGnVINfgopb76ndt5djk0aRXguQlUGE1jlPZJDCg3Snrru8T/Gq0xcBZHZB731YFhVPhD3DNgLzwDnLVqZKjuA35DrDwiCLu+pXPh0OalUIaP0BZQHpupVxBObapxg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1666969275; bh=wSYuNAOgAki7bK5lvCSN9kVE3M3h0vR+g/XcV1Vtm5z=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=krdg8gLXxPZ6QOaJ0rGzq1vJDc6yRmz38b2MC4msKbXj603wboiYYaBo7H0O+qw+nfGa+GBhRXIZPqvP7KBAWcBuUE4udeasYBRiNRXLB/R7n9l7Ca5fLyNy2fTdZtYufkRKbkMTvSEi69wvZL5sdQ/Uj6jzCJC//OvQhIo/x969E8dc9jS3xQehuTBCIfpj7NEdNu8w2U8vhUlihPqL84Dt20K76kWH0WZMXA78CAUHEpANtRxYCWTnUabmvQjaRpPas8Zt7XLL3VEGt+2UWXb04D2BjpbIOiUrQBG4bNy56mx83LVcXSY7cpbGOdPyV4riDnwca2XtoHnOXf9f8A==
-X-YMail-OSG: O.kLg5QVM1nwhdI0XQUEtJZRGiAnTeqOciksCLu6rAW7S_SQiX0tucWp__SKGe0
- a10ajouyEELyqUOt4eT84_iSnsGN1VZbwhOkHiZ3dMp3QgdKDZCAIGaZrJof0bRl3l0OcdAxVBNa
- obL7PQ4YxnEQ9tcoYQrFQyboq4qTl8BEyVXFTu3ZcLUNuMrPd2sYVaVNCBez1Q7XrdtCCyWjJvAN
- Sb3Cl7N0wCdY2MS96wD_.S4AjYRWNLt0vF_slXa8J6KYAHPsiHzmf_ArIey.NCnLP90gmi_lI29g
- VR7Lod_Latv1DjneKoGda.Auoy45ZE4rw9Jqprj7pQ_PcvCOno9RXPEhDBWForQz3QAYL9RDXf5Z
- ALdgmEMx74i4Ev.LWQh8RUl9We91NH0e8pn31Zvw61zBMEiktLKEzB8kHu7agB_boPnKwyYZlHpK
- OBOY7qaM3gjuHxkmwIyYMKNaqZ.DWlIazsFeAdtkdX66eym.UqwK0CGu4GP_TJHU8WcsnHJ9eR1J
- PZ5gCm9i2ARZDTrXaMvZ8YHR9T2kDdNVjhyVje3mnWQs23EOGdyhuh6Bhk2xJLNp7HM8Wl1XGt_6
- JU1Q8U1smdobw6FfW4gxIvV3cDcOok1sMq8TfNNP6LCnY0PrpD_sBkW1CstPxejcWyFYpmy6UZKJ
- Bd8IwLnAHT.x7D0LvIKnn.IGydc9sp.I8uRxaXLXV1VZi0gmqRKlCJbdeYDK1w7RaG9awhSPojgY
- DvTJ8cVPnMHiBAefM25gseZzDSAvA0MKtwwVPEZ.Owkefnhz8ieJ0oYf5ZZWxhBgVrXiQJXZi8ms
- 0BSg2IGuQT23zKdBuCfE6hLSAVZYkKSMly4mvIe9hA38Brc7eW7QqKsN3FEbMT7xr2Y8uOLhslxZ
- cHxYjoDpuZAoqQkVs2cBDiP0r1n3LG9laPGtSVYuk4JE968jf1Sscw2qiiVyaXhfGoFNe_I1thfJ
- 37xuGRWlZwzTxIb5HMMqrRko0_VYgV3ky1tqOcsDgTYV53M01qXNBnCCmEIvdgNcSqbqLnVAccg6
- uv9OIsucpNxl19iCAAhwtXImrWDICyKwufP49pozFsXLR.00iRoQkgH9UgHQbdNBLAmFTZipkBgb
- sKjH4huEaR0YMs3xFsfRK3OV8p5itZR5VISWI5SQ59UKjebCh07lpUvP1Te7SP6GjNNnHI4PXI3l
- isyN623CkH1ytttSKJtk22ZQUyDxw1Ywn8iDGavAfCt2IwTaOKEvPuqOMy2FjIOxc9VepPTnVUlB
- PfDnPq4sgqrhPTHw_V3AWa9J.eycEnusFx835ftdQKm0FYHbogHn0SpwLmwWaniRiF687k_sH.xq
- A4dlgUbYzb8RfLLJO.i4DfbEEAaVsRQFgrUo_DbzMzC03T_jIQK_8tnYpf1ZGD0LoRZzbUefHgBr
- CBblYNYtHqiCbgkBbO6TlOsiks_cg.DDyxvEnksNA.6LVrNK.Iqp7tYRBBXgpHuTIzFhQ85fRIwF
- fcAS0BW8m6OwRQP0hDm7rqP1NMUSj9jLb6fXPQ83X7hyOrpxP6N1XF3wY2mQIqQT3Zmcy09GwZCp
- Z5ekgAaKmWpa8anITEMg.10SMTEr7NMNXqNq78d.H4q7ulZ3L.6_xpHdOslAZiMvb7AzryNk5F8i
- rm.NZDfyQ..FctKVgQdtN4zNADyiuIn4QrmWARczKi9u7FBdjychWkX9K9wWCYXraQbkEZ6mbi.H
- u4tD6S.rGIOjl3NDkYXTXFj455CGdm0Cw0j4yuZrtN0Vqmz5TqtiJyjTXz4Tcjvhhz.t.fh2IIA1
- ZPttAI8zKhMvC3KO5sSwOwKHoTBMSOk3a4wDCM49b3PJeo9NYRX5NdKTSrCDW3JhpwR6c01AkfVv
- mhW5M2s2Y8HsbM5DTAkXYAzSyDc9YPPT.Tz7q62zxTfQjs2H0ziGGEWFP8Tz4JK8JeAXVDHg3S5j
- RiDwErke04OQwIWf1gelx7E6MDcF0veiC0bo3S_VT7GuJuQYZg5.d3x827X6U1DtUJg5AaexbFoE
- LnlHZm8rrIiZOqWioQTKspDXKKJSsJ5V49naIa4aT2CJXK8zmZORSNIy1PMpWcPcjolQDuBJIeUp
- iUEZN.cb0_xZ28fI2dAieg4P7EpiYAAYJ3H0bNHKa5DKBoxGOkwGqaskkf0M2VATpnvzVeFqM_yf
- h7CFWPaKhR7_yiPGrjkgsSjUbcGXRtGErC33yqL_uc4jcDQT_Fxqm.y9JzIqJuYQVtf2VB9IbSHP
- UZ11BSuN2.bpIIDz7RNZs0njzk5A-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Fri, 28 Oct 2022 15:01:15 +0000
-Received: by hermes--production-ne1-c47ffd5f5-fzch8 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 00a6f1cfa7da200883440c6b3d111468;
-          Fri, 28 Oct 2022 15:01:13 +0000 (UTC)
-Message-ID: <3752db45-c89e-dfa7-0bd0-246421daf8cc@schaufler-ca.com>
-Date:   Fri, 28 Oct 2022 08:01:11 -0700
+        Fri, 28 Oct 2022 12:50:36 -0400
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8ACE31EE3;
+        Fri, 28 Oct 2022 09:50:30 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4MzT0126w3z9xqxd;
+        Sat, 29 Oct 2022 00:44:01 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwD3LPk3CFxjeW4cAA--.34547S2;
+        Fri, 28 Oct 2022 17:50:11 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+        revest@chromium.org, jackmanb@chromium.org, shuah@kernel.org,
+        paul@paul-moore.com, casey@schaufler-ca.com
+Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC][PATCH 1/3] lsm: Clarify documentation of vm_enough_memory hook
+Date:   Fri, 28 Oct 2022 18:49:46 +0200
+Message-Id: <20221028164948.385783-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [RFC][PATCH] bpf: Check xattr name/value pair from
- bpf_lsm_inode_init_security()
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        nicolas.bouchinet@clip-os.org, Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        casey@schaufler-ca.com
-References: <20221021164626.3729012-1-roberto.sassu@huaweicloud.com>
- <CAADnVQJHDboosqTy5LTHJtJaWJCWn9rv09jmd_sMgeV_OVQjGg@mail.gmail.com>
- <d7a17e482b7bbf945c92443b45de73f56afea08a.camel@huaweicloud.com>
- <bb7a5986f3d25706269d0fec9906ea73c174b808.camel@huaweicloud.com>
- <CAADnVQL1a2pPAJqzj6oUwupxxfaW38KQswzppAZeZPzmTFhjMg@mail.gmail.com>
- <98353f6c82d3dabdb0d434d7ecf0bfc5295015ad.camel@huaweicloud.com>
- <ffbdcfbe-0c63-2ced-62e3-a7248b7a24f0@schaufler-ca.com>
- <CAADnVQLAXsZRNytPHG0KhYKar3K+=7bq2KPQG77VFOKbnTPHmg@mail.gmail.com>
- <34357c96-fe58-ffe5-e464-4bded8f119d5@huaweicloud.com>
- <CAADnVQKD5e9vKsSo1TPeBm5hr6j4GzQeHqRURoBJyB++VOwHCw@mail.gmail.com>
- <CACYkzJ4ak4=qPNQxVckvn3c8CZpXkXSLSyYa_HCU-RJNyuLoZg@mail.gmail.com>
- <edf0ec89c61fbee68fd537981982e14b1674393d.camel@huaweicloud.com>
-Content-Language: en-US
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <edf0ec89c61fbee68fd537981982e14b1674393d.camel@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20783 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwD3LPk3CFxjeW4cAA--.34547S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruFy8GF18ZrWxtw17KrWUCFg_yoWkXFb_u3
+        4fG348Xw4fXF4xKa1Ikr93tryrK3yfXr1qgF1Yq39IqFWDJas5Gw4xWFnxX3WDWwn293s5
+        uFyktrWxAwnIgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbIAYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+        AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+        w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+        6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+        kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
+        67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+        uYvjxUIa0PDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQATBF1jj4TMTQAAsi
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/28/2022 1:48 AM, Roberto Sassu wrote:
-> On Thu, 2022-10-27 at 12:39 +0200, KP Singh wrote:
->> On Wed, Oct 26, 2022 at 7:14 PM Alexei Starovoitov
->> <alexei.starovoitov@gmail.com> wrote:
->>> On Wed, Oct 26, 2022 at 1:42 AM Roberto Sassu
->>> <roberto.sassu@huaweicloud.com> wrote:
->>>> On 10/26/2022 8:37 AM, Alexei Starovoitov wrote:
->>>>> On Tue, Oct 25, 2022 at 7:58 AM Casey Schaufler <
->>>>> casey@schaufler-ca.com> wrote:
->>>>>> On 10/25/2022 12:43 AM, Roberto Sassu wrote:
->>>>>>> On Mon, 2022-10-24 at 19:13 -0700, Alexei Starovoitov
->>>>>>> wrote:
->>>>>>>> I'm looking at security_inode_init_security() and it is
->>>>>>>> indeed messy.
->>>>>>>> Per file system initxattrs callback that processes
->>>>>>>> kmalloc-ed
->>>>>>>> strings.
->>>>>>>> Yikes.
->>>>>>>>
->>>>>>>> In the short term we should denylist inode_init_security
->>>>>>>> hook to
->>>>>>>> disallow attaching bpf-lsm there. set/getxattr should be
->>>>>>>> done
->>>>>>>> through kfuncs instead of such kmalloc-a-string hack.
->>>>>>> Inode_init_security is an example. It could be that the
->>>>>>> other hooks are
->>>>>>> affected too. What happens if they get arbitrary positive
->>>>>>> values too?
->>>>>> TL;DR - Things will go cattywampus.
->>>>>>
->>>>>> The LSM infrastructure is an interface that has "grown
->>>>>> organically",
->>>>>> and isn't necessarily consistent in what it requires of the
->>>>>> security
->>>>>> module implementations. There are cases where it assumes that
->>>>>> the
->>>>>> security module hooks are well behaved, as you've discovered.
->>>>>> I have
->>>>>> no small amount of fear that someone is going to provide an
->>>>>> eBPF
->>>>>> program for security_secid_to_secctx(). There has been an
->>>>>> assumption,
->>>>>> oft stated, that all security modules are going to be
->>>>>> reviewed as
->>>>>> part of the upstream process. The review process ought to
->>>>>> catch hooks
->>>>>> that return unacceptable values. Alas, we've lost that with
->>>>>> BPF.
->>>>>>
->>>>>> It would take a(nother) major overhaul of the LSM
->>>>>> infrastructure to
->>>>>> make it safe against hooks that are not well behaved. From
->>>>>> what I have
->>>>>> seen so far it wouldn't be easy/convenient/performant to do
->>>>>> it in the
->>>>>> BPF security module either. I personally think that BPF needs
->>>>>> to
->>>>>> ensure that the eBPF implementations don't return
->>>>>> inappropriate values,
->>>>>> but I understand why that is problematic.
->>>>> That's an accurate statement. Thank you.
->>>>>
->>>>> Going back to the original question...
->>>>> We fix bugs when we discover them.
->>>>> Regardless of the subsystem they belong to.
->>>>> No finger pointing.
->>>> I'm concerned about the following situation:
->>>>
->>>> struct <something> *function()
->>>> {
->>>>
->>>>         ret = security_*();
->>>>         if (ret)
->>>>                 return ERR_PTR(ret);
->>>>
->>>> }
->>>>
->>>> int caller()
->>>> {
->>>>         ptr = function()
->>>>         if (IS_ERR(ptr)
->>>>                 goto out;
->>>>
->>>>         <use of invalid pointer>
->>>> }
->>>>
->>>> I quickly found an occurrence of this:
->>>>
->>>> static int lookup_one_common()
->>>> {
->>>>
->>>> [...]
->>>>
->>>>         return inode_permission();
->>>> }
->>>>
->>>> struct dentry *try_lookup_one_len()
->>>> {
->>>>
->>>> [...]
->>>>
->>>>          err = lookup_one_common(&init_user_ns, name, base, len,
->>>> &this);
->>>>          if (err)
->>>>                  return ERR_PTR(err);
->>>>
->>>>
->>>> Unfortunately, attaching to inode_permission causes the kernel
->>>> to crash immediately (it does not happen with negative return
->>>> values).
->>>>
->>>> So, I think the fix should be broader, and not limited to the
->>>> inode_init_security hook. Will try to see how it can be fixed.
->>> I see. Let's restrict bpf-lsm return values to IS_ERR_VALUE.
->>> Trivial verifier change.
->> Thanks, yes this indeed is an issue. We need to do a few things:
->>
->> 1. Restrict some hooks that we know the BPF LSM will never need.
->> 2. A verifier function that checks return values of LSM
->> hooks.
->> For most LSK hooks IS_ERR_VALUE is fine, however, there are some
->> hooks
->> like *xattr hooks that use a return value of 1 to indicate a
->> capability check is required which might need special handling.
-> I looked at security.c:
->
-> /*
->  * SELinux and Smack integrate the cap call,
->  * so assume that all LSMs supplying this call do so.
->  */
->
-> Other than checking the return value, probably we should also wrap
-> bpf_lsm_inode_{set,remove}xattr() to do the capability check, right?
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Long term I hope to fix the way capabilities are dealt with in
-this hook, but for now your suggestion seems reasonable. 
+include/linux/lsm_hooks.h reports the result of the LSM infrastructure to
+the callers, not what LSMs should return to the LSM infrastructure.
 
->
-> Roberto
->
+Clarify that and add that returning 1 from the LSMs means calling
+__vm_enough_memory() with cap_sys_admin set, 0 without.
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ include/linux/lsm_hooks.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 4ec80b96c22e..f40b82ca91e7 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1411,7 +1411,9 @@
+  *	Check permissions for allocating a new virtual mapping.
+  *	@mm contains the mm struct it is being added to.
+  *	@pages contains the number of pages.
+- *	Return 0 if permission is granted.
++ *	Return 0 if permission is granted by LSMs to the caller. LSMs should
++ *	return 1 if __vm_enough_memory() should be called with
++ *	cap_sys_admin set, 0 if not.
+  *
+  * @ismaclabel:
+  *	Check if the extended attribute specified by @name
+-- 
+2.25.1
+
