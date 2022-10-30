@@ -2,109 +2,272 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD11CC38A02
-	for <linux-security-module@archiver.kernel.org>; Sun, 30 Oct 2022 06:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC63CC38A02
+	for <linux-security-module@archiver.kernel.org>; Sun, 30 Oct 2022 06:51:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229500AbiJ3GLQ (ORCPT
+        id S229910AbiJ3Gvb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 30 Oct 2022 02:11:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46338 "EHLO
+        Sun, 30 Oct 2022 02:51:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbiJ3GLP (ORCPT
+        with ESMTP id S229738AbiJ3GvQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 30 Oct 2022 02:11:15 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 596CB8E
-        for <linux-security-module@vger.kernel.org>; Sat, 29 Oct 2022 23:11:13 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id n12so22133519eja.11
-        for <linux-security-module@vger.kernel.org>; Sat, 29 Oct 2022 23:11:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yMPeioCk2Uzr+ddpLtxu9paT20dadQsJOcXKRo4DcPw=;
-        b=X6GSvPbdfreZVzs6R0GASPhY5nFyZBPVRlxKnX0NhNSfgz35uuzx74wFnKznkbrdaQ
-         eydKp5aLFtEbcz75GtHfr8K7iOEooQGITFyPpeBYvMdYGpWxpnF12Pyl4fEWts89nD6J
-         L0LTVFc2c7BYN6gvEesFWmTm+a5esU2iKbbiJaNvpFy8EJHg3DHc0wymKYmwV4w/fW4i
-         DJq1OD4qvSO8ceoI6evEI38bgynnUNpe+YwG78pZ8YQtSZD40blQqQovmMQC+DAcy8Mr
-         P/pysEmKa35mdwt2nIyB7nHzvVbgLpC5v+mqERpLFjpCWW5fBPuov5dxhxMojQWGzfNp
-         pOwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yMPeioCk2Uzr+ddpLtxu9paT20dadQsJOcXKRo4DcPw=;
-        b=cZU7fLJs5EJ9Vl1sg00zY1AF8/mK+Q4L0OiMizgwffcz6JViMeDAagEvakTmMBKuQ5
-         Djo8bccInSive84+ygsdkq6UlzX/6kRe8Exvg48Iu/wtoUIw7ameE+qoODXz0yX6NETv
-         o8YkCFr6ooXFaHJtjVgnQ7Q8HN4F9XdZW4/YliZaos+8+7g0yCkmF2xYLm/XtP2/xQm1
-         DtY5sn4MSh0u8s3EWAiKUoY8H2mGJ+owd72u5/YKWo08cis/h5uRu/M6HIvKEBbnFwVs
-         zmNrLEyRIlmRyZAHunfVbGBpEJsECQx0xNekWsIZomIp2cRzpUEViHAIyhenJOt1++XS
-         JKQA==
-X-Gm-Message-State: ACrzQf0OutILEw+jNGx/UQUqHAOfmmGnAUE7vPM5w4IBgkWNFOTGkGs0
-        FraQgJhEh9gxJFzvOjHZgCFngjN05AI=
-X-Google-Smtp-Source: AMsMyM6XQ85ymxBnqVh2Du1oYlMCtSmDKIw7YwC1nAoX26u2VLyagOvV4BP9N2cG0xZAq3m6gZgn8A==
-X-Received: by 2002:a17:907:3f96:b0:7ab:34aa:9094 with SMTP id hr22-20020a1709073f9600b007ab34aa9094mr6881360ejc.85.1667110271761;
-        Sat, 29 Oct 2022 23:11:11 -0700 (PDT)
-Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id v27-20020aa7cd5b000000b00458898fe90asm1708497edw.5.2022.10.29.23.11.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Oct 2022 23:11:11 -0700 (PDT)
-From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH] samples/landlock: Document best-effort approach for LANDLOCK_ACCESS_FS_REFER
-Date:   Sun, 30 Oct 2022 07:11:07 +0100
-Message-Id: <20221030061107.2351-1-gnoack3000@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Sun, 30 Oct 2022 02:51:16 -0400
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E31D6460;
+        Sat, 29 Oct 2022 23:40:40 -0700 (PDT)
+Received: from [192.168.43.182] (unknown [62.168.35.125])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 430FE422D9;
+        Sun, 30 Oct 2022 06:32:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1667111553;
+        bh=xkSnknPxxVweECBoJ9f7wG975t4vI0S18ubt+rSkvkE=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=aPokHxtPE9dQDYINLvcJyOW155igJoYuYTp0A2CpLja10lpAxuMSFfeEdpYYPedPb
+         vTW/53O9f2nU690wO5GqmIHwIKWJJkKSQhPkPE699FxBIQrm9j62YMPdxdUCMyyJ72
+         ADmgzdduI5a1hy938VRxdXjmwh2dEpTKLpeRwsdELEEoUJklDVco/calIRMoNMOdnX
+         cwH5r4BybIxOsF0TzE04EGgMp8AYp2TAMhh65Jfn2J4TlyfQD6eaJZ2c3Pjbrl61/I
+         8WrdhkahqNT7JlThehY2COe0z6vF9W7gs8GcWtYADka0FvY25QHhyq7YFOefyQeQCe
+         DhptmBmXheuQg==
+Message-ID: <3acbdcfc-4763-f720-8897-03a5670452d1@canonical.com>
+Date:   Sat, 29 Oct 2022 23:32:31 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: apparmor: global buffers spin lock may get contended
+Content-Language: en-US
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <YO2S+C7Cw7AS7bsg@google.com>
+ <20221030013028.3557-1-hdanton@sina.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20221030013028.3557-1-hdanton@sina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a comment to clarify how to handle best-effort backwards
-compatibility for LANDLOCK_ACCESS_FS_REFER.
+On 10/29/22 18:30, Hillf Danton wrote:
+> On 28 Oct 2022 02:34:07 -0700 John Johansen <john.johansen@canonical.com>
+>> On 7/13/21 06:19, Sergey Senozhatsky wrote:
+>>> Hi,
+>>>
+>>> We've notices that apparmor has switched from using per-CPU buffer pool
+>>> and per-CPU spin_lock to a global spin_lock in df323337e507a0009d3db1ea.
+>>>
+>>> This seems to be causing some contention on our build machines (with
+>>> quite a bit of cores). Because that global spin lock is a part of the
+>>> stat() sys call (and perhaps some other)
+>>>
+>>> E.g.
+>>>
+>>> -    9.29%     0.00%  clang++          [kernel.vmlinux]
+>>>      - 9.28% entry_SYSCALL_64_after_hwframe
+>>>         - 8.98% do_syscall_64
+>>>            - 7.43% __do_sys_newlstat
+>>>               - 7.43% vfs_statx
+>>>                  - 7.18% security_inode_getattr
+>>>                     - 7.15% apparmor_inode_getattr
+>>>                        - aa_path_perm
+>>>                           - 3.53% aa_get_buffer
+>>>                              - 3.47% _raw_spin_lock
+>>>                                   3.44% native_queued_spin_lock_slowpath
+>>>                           - 3.49% aa_put_buffer.part.0
+>>>                              - 3.45% _raw_spin_lock
+>>>                                   3.43% native_queued_spin_lock_slowpath
+>>>
+>>> Can we fix this contention?
+>>
+>> sorry for the delay on this. Below is a proposed patch that I have been testing
+>> to deal with this issue.
+>>
+>>
+>>   From d026988196fdbda7234fb87bc3e4aea22edcbaf9 Mon Sep 17 00:00:00 2001
+>> From: John Johansen <john.johansen@canonical.com>
+>> Date: Tue, 25 Oct 2022 01:18:41 -0700
+>> Subject: [PATCH] apparmor: cache buffers on percpu list if there is lock contention
+>>
+>> On a heavily loaded machine there can be lock contention on the
+>> global buffers lock. Add a percpu list to cache buffers on when
+>> lock contention is encountered.
+>>
+>> When allocating buffers attempt to use cached buffers first,
+>> before taking the global buffers lock. When freeing buffers
+>> try to put them back to the global list but if contention is
+>> encountered, put the buffer on the percpu list.
+>>
+>> The length of time a buffer is held on the percpu list is dynamically
+>> adjusted based on lock contention.  The amount of hold time is rapidly
+>> increased and slow ramped down.
+>>
+>> Signed-off-by: John Johansen <john.johansen@canonical.com>
+>> ---
+>>    security/apparmor/lsm.c | 74 ++++++++++++++++++++++++++++++++++++++---
+>>    1 file changed, 69 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+>> index 25114735bc11..0ab70171bdb6 100644
+>> --- a/security/apparmor/lsm.c
+>> +++ b/security/apparmor/lsm.c
+>> @@ -49,12 +49,19 @@ union aa_buffer {
+>>    	char buffer[1];
+>>    };
+>>    
+>> +struct aa_local_cache {
+>> +	unsigned int contention;
+>> +	unsigned int hold;
+>> +	struct list_head head;
+>> +};
+>> +
+>>    #define RESERVE_COUNT 2
+>>    static int reserve_count = RESERVE_COUNT;
+>>    static int buffer_count;
+>>    
+>>    static LIST_HEAD(aa_global_buffers);
+>>    static DEFINE_SPINLOCK(aa_buffers_lock);
+>> +static DEFINE_PER_CPU(struct aa_local_cache, aa_local_buffers);
+>>    
+>>    /*
+>>     * LSM hook functions
+>> @@ -1622,14 +1629,44 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
+>>    	return 0;
+>>    }
+>>    
+>> +static void update_contention(struct aa_local_cache *cache)
+>> +{
+>> +	cache->contention += 3;
+>> +	if (cache->contention > 9)
+>> +		cache->contention = 9;
+>> +	cache->hold += 1 << cache->contention;		/* 8, 64, 512 */
+>> +}
+>> +
+>>    char *aa_get_buffer(bool in_atomic)
+>>    {
+>>    	union aa_buffer *aa_buf;
+>> +	struct aa_local_cache *cache;
+>>    	bool try_again = true;
+>>    	gfp_t flags = (GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_NOWARN);
+>>    
+>> +	/* use per cpu cached buffers first */
+>> +	cache = get_cpu_ptr(&aa_local_buffers);
+>> +	if (!list_empty(&cache->head)) {
+>> +		aa_buf = list_first_entry(&cache->head, union aa_buffer, list);
+>> +		list_del(&aa_buf->list);
+>> +		cache->hold--;
+>> +		put_cpu_ptr(&aa_local_buffers);
+>> +		return &aa_buf->buffer[0];
+>> +	}
+>> +	put_cpu_ptr(&aa_local_buffers);
+>> +
+>> +	if (!spin_trylock(&aa_buffers_lock)) {
+>> +		cache = get_cpu_ptr(&aa_local_buffers);
+>> +		update_contention(cache);
+>> +		put_cpu_ptr(&aa_local_buffers);
+>> +		spin_lock(&aa_buffers_lock);
+>> +	} else {
+>> +		cache = get_cpu_ptr(&aa_local_buffers);
+>> +		if (cache->contention)
+>> +			cache->contention--;
+>> +		put_cpu_ptr(&aa_local_buffers);
+>> +	}
+>>    retry:
+>> -	spin_lock(&aa_buffers_lock);
+>>    	if (buffer_count > reserve_count ||
+>>    	    (in_atomic && !list_empty(&aa_global_buffers))) {
+>>    		aa_buf = list_first_entry(&aa_global_buffers, union aa_buffer,
+>> @@ -1655,6 +1692,7 @@ char *aa_get_buffer(bool in_atomic)
+>>    	if (!aa_buf) {
+>>    		if (try_again) {
+>>    			try_again = false;
+>> +			spin_lock(&aa_buffers_lock);
+>>    			goto retry;
+>>    		}
+>>    		pr_warn_once("AppArmor: Failed to allocate a memory buffer.\n");
+>> @@ -1666,15 +1704,32 @@ char *aa_get_buffer(bool in_atomic)
+>>    void aa_put_buffer(char *buf)
+>>    {
+>>    	union aa_buffer *aa_buf;
+>> +	struct aa_local_cache *cache;
+>>    
+>>    	if (!buf)
+>>    		return;
+>>    	aa_buf = container_of(buf, union aa_buffer, buffer[0]);
+>>    
+>> -	spin_lock(&aa_buffers_lock);
+>> -	list_add(&aa_buf->list, &aa_global_buffers);
+>> -	buffer_count++;
+>> -	spin_unlock(&aa_buffers_lock);
+>> +	cache = get_cpu_ptr(&aa_local_buffers);
+>> +	if (!cache->hold) {
+>> +		put_cpu_ptr(&aa_local_buffers);
+>> +		if (spin_trylock(&aa_buffers_lock)) {
+>> +			list_add(&aa_buf->list, &aa_global_buffers);
+>> +			buffer_count++;
+> 
+> Given !hold and trylock, right time to drain the perpcu cache?
+> 
 
-The "refer" access is special because these operations are always
-forbidden in ABI 1, unlike most other operations, which are permitted
-when using Landlock ABI levels where they are not supported yet.
+yes hold is a count of how long (or in this case a count of how many
+times) to allocate from the local from the percpu cache before trying
+to return to the global buffer pool. When the time/count hits zero
+its time to try and return it.
 
-Signed-off-by: Günther Noack <gnoack3000@gmail.com>
----
- samples/landlock/sandboxer.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+If we succeed the try lock then we succeeded taking the global buffer
+pool lock without contention and we can add the buffer back in.
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index fd4237c64fb2..901acb383124 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -234,7 +234,21 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 	/* Best-effort security. */
- 	switch (abi) {
- 	case 1:
--		/* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
-+		/*
-+		 * Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2
-+		 *
-+		 * Note: The "refer" operations (file renaming and linking
-+		 * across different directories) are always forbidden when using
-+		 * Landlock with ABI 1.
-+		 *
-+		 * If only ABI 1 is available, the sample tool knowingly forbids
-+		 * refer operations.
-+		 *
-+		 * If a program *needs* to do refer operations after enabling
-+		 * Landlock, it can not use Landlock at ABI level 1.  To be
-+		 * compatible across different kernels, such programs should
-+		 * fall back to not using Landlock instead.
-+		 */
- 		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
- 		__attribute__((fallthrough));
- 	case 2:
+As for the other cases
 
-base-commit: 4bc90a766ea5af69c12ca1ea00b7fc5fe1d68831
--- 
-2.38.1
+hold == 0 and fail to grab the lock
+- contention is recorded and we add the buffer back to the percpu cache
+
+hold > 0
+- decrease hold and add back to the percpu cache
+
+Since we never try and grab the spinlock if hold > 0, the lock variations
+do not need to be considered.
+
+>> +			spin_unlock(&aa_buffers_lock);
+>> +			cache = get_cpu_ptr(&aa_local_buffers);
+>> +			if (cache->contention)
+>> +				cache->contention--;
+>> +			put_cpu_ptr(&aa_local_buffers);
+>> +			return;
+>> +		}
+>> +		cache = get_cpu_ptr(&aa_local_buffers);
+>> +		update_contention(cache);
+>> +	}
+>> +
+>> +	/* cache in percpu list */
+>> +	list_add(&aa_buf->list, &cache->head);
+>> +	put_cpu_ptr(&aa_local_buffers);
+>>    }
+>>    
+>>    /*
+>> @@ -1716,6 +1771,15 @@ static int __init alloc_buffers(void)
+>>    	union aa_buffer *aa_buf;
+>>    	int i, num;
+>>    
+>> +	/*
+>> +	 * per cpu set of cached allocated buffers used to help reduce
+>> +	 * lock contention
+>> +	 */
+>> +	for_each_possible_cpu(i) {
+>> +		per_cpu(aa_local_buffers, i).contention = 0;
+>> +		per_cpu(aa_local_buffers, i).hold = 0;
+>> +		INIT_LIST_HEAD(&per_cpu(aa_local_buffers, i).head);
+>> +	}
+>>    	/*
+>>    	 * A function may require two buffers at once. Usually the buffers are
+>>    	 * used for a short period of time and are shared. On UP kernel buffers
+>> -- 
+>> 2.34.1
 
