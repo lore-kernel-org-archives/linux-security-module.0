@@ -2,272 +2,270 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC63CC38A02
-	for <linux-security-module@archiver.kernel.org>; Sun, 30 Oct 2022 06:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E55AFA373D
+	for <linux-security-module@archiver.kernel.org>; Sun, 30 Oct 2022 07:23:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229910AbiJ3Gvb (ORCPT
+        id S229692AbiJ3HXL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 30 Oct 2022 02:51:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39632 "EHLO
+        Sun, 30 Oct 2022 03:23:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229738AbiJ3GvQ (ORCPT
+        with ESMTP id S229476AbiJ3HXK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 30 Oct 2022 02:51:16 -0400
+        Sun, 30 Oct 2022 03:23:10 -0400
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E31D6460;
-        Sat, 29 Oct 2022 23:40:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EF9F23B;
+        Sun, 30 Oct 2022 00:23:08 -0700 (PDT)
 Received: from [192.168.43.182] (unknown [62.168.35.125])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 430FE422D9;
-        Sun, 30 Oct 2022 06:32:33 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id A59AF42305;
+        Sun, 30 Oct 2022 07:23:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1667111553;
-        bh=xkSnknPxxVweECBoJ9f7wG975t4vI0S18ubt+rSkvkE=;
+        s=20210705; t=1667114586;
+        bh=fWiynvHW2/C4gBbh4jcwj+16jBNZF3SuLMTYnurby7I=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=aPokHxtPE9dQDYINLvcJyOW155igJoYuYTp0A2CpLja10lpAxuMSFfeEdpYYPedPb
-         vTW/53O9f2nU690wO5GqmIHwIKWJJkKSQhPkPE699FxBIQrm9j62YMPdxdUCMyyJ72
-         ADmgzdduI5a1hy938VRxdXjmwh2dEpTKLpeRwsdELEEoUJklDVco/calIRMoNMOdnX
-         cwH5r4BybIxOsF0TzE04EGgMp8AYp2TAMhh65Jfn2J4TlyfQD6eaJZ2c3Pjbrl61/I
-         8WrdhkahqNT7JlThehY2COe0z6vF9W7gs8GcWtYADka0FvY25QHhyq7YFOefyQeQCe
-         DhptmBmXheuQg==
-Message-ID: <3acbdcfc-4763-f720-8897-03a5670452d1@canonical.com>
-Date:   Sat, 29 Oct 2022 23:32:31 -0700
+        b=ouu4OORScds5NBF7WexjwsTY5nTHDWCoC+5LFXdsjKf8o4MkwqPcMbNMDspiRYNUk
+         bV1aCpWS1+BGGiPRQ2bNhw88nhernZKH6xtOwh0e0i6L8lJbErZvwNR3YYaU0DgJvM
+         lFtZFQu/6o/NONPHZCmWKC/e61Mfm8HDpSHiJhvyyJkR4lLbU9BPibskn5cmNiRsAZ
+         fTBV02KAEE1dMD1DuJPw4xfqJ2JwflgKkocVfjwvXoOZWVAsKOe3H9MP/qYpxmUErG
+         l7LwRXdkiHsIP3epZuvITBzKPpPTkDAj7nHlbEQDxQACmQfARcK4yd9FDY4wYOzjFe
+         XuXDRDS7FSWRQ==
+Message-ID: <aa5424f3-05a6-530b-bf5f-19e5421f8f3f@canonical.com>
+Date:   Sun, 30 Oct 2022 00:23:06 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.2
-Subject: Re: apparmor: global buffers spin lock may get contended
+Subject: Re: LSM stacking in next for 6.1?
 Content-Language: en-US
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <YO2S+C7Cw7AS7bsg@google.com>
- <20221030013028.3557-1-hdanton@sina.com>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
+        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
+        SElinux list <selinux@vger.kernel.org>
+References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
+ <CAHC9VhQRpeOMkeEfy=VRPnpuYMUDYgLp56OjQZPYwoXmfHYREQ@mail.gmail.com>
+ <c679cea7-bb90-7a62-2e17-888826857d55@schaufler-ca.com>
+ <e9ce6253-c8a3-19c3-1b71-f3a2e04539bc@I-love.SAKURA.ne.jp>
+ <cc14bbde-529e-376c-7d27-8512ec677db3@schaufler-ca.com>
+ <ff43e254-0f41-3f4f-f04d-63b76bed2ccf@I-love.SAKURA.ne.jp>
+ <1a9f9182-9188-2f64-4a17-ead2fed70348@schaufler-ca.com>
+ <2225aec6-f0f3-d38e-ee3c-6139a7c25a37@I-love.SAKURA.ne.jp>
+ <5995f18c-5623-9d97-0aa6-5f13a2a8e895@I-love.SAKURA.ne.jp>
+ <77ec837a-ff64-e6f0-fe14-a54c1646ea0b@canonical.com>
+ <0fcc5444-a957-f107-25a1-3540588eab5a@I-love.SAKURA.ne.jp>
+ <11564f69-3bba-abf7-eb46-06813ff4a404@schaufler-ca.com>
+ <98ab33d6-6c91-9c0a-8647-22f6bdede885@I-love.SAKURA.ne.jp>
+ <aa201ed7-9ca1-9507-08cc-156f280ee5f4@schaufler-ca.com>
+ <3266c2c2-cd7e-bc0f-0fc4-478a63d6ee77@I-love.SAKURA.ne.jp>
+ <f7548061-e82d-9a39-ed15-0d32551b4099@canonical.com>
+ <53b07579-82f5-404e-5c2c-de7314fff327@I-love.SAKURA.ne.jp>
 From:   John Johansen <john.johansen@canonical.com>
 Organization: Canonical
-In-Reply-To: <20221030013028.3557-1-hdanton@sina.com>
+In-Reply-To: <53b07579-82f5-404e-5c2c-de7314fff327@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/29/22 18:30, Hillf Danton wrote:
-> On 28 Oct 2022 02:34:07 -0700 John Johansen <john.johansen@canonical.com>
->> On 7/13/21 06:19, Sergey Senozhatsky wrote:
->>> Hi,
+On 10/29/22 21:03, Tetsuo Handa wrote:
+> On 2022/10/28 19:14, John Johansen wrote:
+>> On 10/26/22 03:19, Tetsuo Handa wrote:
+>>> On 2022/10/26 7:41, Casey Schaufler wrote:
+>>>>               You need a built-in LSM that loads and manages loadable
+>>>> security modules.
 >>>
->>> We've notices that apparmor has switched from using per-CPU buffer pool
->>> and per-CPU spin_lock to a global spin_lock in df323337e507a0009d3db1ea.
+>>> That is no longer loadable LSM modules. A loadable LSM module must be capable of
+>>> loading any code and using any interface that is allowed to loadable kernel modules
+>>> using /sbin/insmod command. That is my understanding of what you have promised (and
+>>> the reason I am allowing you to continue working on LSM stacking before I make
+>>> CONFIG_SECURITY_TOMOYO=m).
 >>>
->>> This seems to be causing some contention on our build machines (with
->>> quite a bit of cores). Because that global spin lock is a part of the
->>> stat() sys call (and perhaps some other)
->>>
->>> E.g.
->>>
->>> -    9.29%     0.00%  clang++          [kernel.vmlinux]
->>>      - 9.28% entry_SYSCALL_64_after_hwframe
->>>         - 8.98% do_syscall_64
->>>            - 7.43% __do_sys_newlstat
->>>               - 7.43% vfs_statx
->>>                  - 7.18% security_inode_getattr
->>>                     - 7.15% apparmor_inode_getattr
->>>                        - aa_path_perm
->>>                           - 3.53% aa_get_buffer
->>>                              - 3.47% _raw_spin_lock
->>>                                   3.44% native_queued_spin_lock_slowpath
->>>                           - 3.49% aa_put_buffer.part.0
->>>                              - 3.45% _raw_spin_lock
->>>                                   3.43% native_queued_spin_lock_slowpath
->>>
->>> Can we fix this contention?
 >>
->> sorry for the delay on this. Below is a proposed patch that I have been testing
->> to deal with this issue.
+>> Tetsuo, think of it this way. LSM stacking is going to make it much easier for new
+>> LSM modules because they won't automatically be excluded because one of the other
+>> LSMs is needed.
 >>
+>> The problem of loadable LSM modules is orthogonal, and Casey shouldn't need to
+>> solve it in this patch series. That is further work to be taken up by another,
+>> as Casey has clearly stated its work he is not interested in doing.
 >>
->>   From d026988196fdbda7234fb87bc3e4aea22edcbaf9 Mon Sep 17 00:00:00 2001
->> From: John Johansen <john.johansen@canonical.com>
->> Date: Tue, 25 Oct 2022 01:18:41 -0700
->> Subject: [PATCH] apparmor: cache buffers on percpu list if there is lock contention
+>> However the real problem you are trying to solve won't be solved by loadable LSM
+>> modules, though they may help. Just having loadable LSMs modules won't mean a
+>> distro will build an LSM as a loadable module instead of disabling it, nor does
+>> it mean a distro will allow loading an out of tree LSM module. Even if the
+>> upstream kernel doesn't provide an option to block loading them, distros will.
 >>
->> On a heavily loaded machine there can be lock contention on the
->> global buffers lock. Add a percpu list to cache buffers on when
->> lock contention is encountered.
->>
->> When allocating buffers attempt to use cached buffers first,
->> before taking the global buffers lock. When freeing buffers
->> try to put them back to the global list but if contention is
->> encountered, put the buffer on the percpu list.
->>
->> The length of time a buffer is held on the percpu list is dynamically
->> adjusted based on lock contention.  The amount of hold time is rapidly
->> increased and slow ramped down.
->>
->> Signed-off-by: John Johansen <john.johansen@canonical.com>
->> ---
->>    security/apparmor/lsm.c | 74 ++++++++++++++++++++++++++++++++++++++---
->>    1 file changed, 69 insertions(+), 5 deletions(-)
->>
->> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->> index 25114735bc11..0ab70171bdb6 100644
->> --- a/security/apparmor/lsm.c
->> +++ b/security/apparmor/lsm.c
->> @@ -49,12 +49,19 @@ union aa_buffer {
->>    	char buffer[1];
->>    };
->>    
->> +struct aa_local_cache {
->> +	unsigned int contention;
->> +	unsigned int hold;
->> +	struct list_head head;
->> +};
->> +
->>    #define RESERVE_COUNT 2
->>    static int reserve_count = RESERVE_COUNT;
->>    static int buffer_count;
->>    
->>    static LIST_HEAD(aa_global_buffers);
->>    static DEFINE_SPINLOCK(aa_buffers_lock);
->> +static DEFINE_PER_CPU(struct aa_local_cache, aa_local_buffers);
->>    
->>    /*
->>     * LSM hook functions
->> @@ -1622,14 +1629,44 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
->>    	return 0;
->>    }
->>    
->> +static void update_contention(struct aa_local_cache *cache)
->> +{
->> +	cache->contention += 3;
->> +	if (cache->contention > 9)
->> +		cache->contention = 9;
->> +	cache->hold += 1 << cache->contention;		/* 8, 64, 512 */
->> +}
->> +
->>    char *aa_get_buffer(bool in_atomic)
->>    {
->>    	union aa_buffer *aa_buf;
->> +	struct aa_local_cache *cache;
->>    	bool try_again = true;
->>    	gfp_t flags = (GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_NOWARN);
->>    
->> +	/* use per cpu cached buffers first */
->> +	cache = get_cpu_ptr(&aa_local_buffers);
->> +	if (!list_empty(&cache->head)) {
->> +		aa_buf = list_first_entry(&cache->head, union aa_buffer, list);
->> +		list_del(&aa_buf->list);
->> +		cache->hold--;
->> +		put_cpu_ptr(&aa_local_buffers);
->> +		return &aa_buf->buffer[0];
->> +	}
->> +	put_cpu_ptr(&aa_local_buffers);
->> +
->> +	if (!spin_trylock(&aa_buffers_lock)) {
->> +		cache = get_cpu_ptr(&aa_local_buffers);
->> +		update_contention(cache);
->> +		put_cpu_ptr(&aa_local_buffers);
->> +		spin_lock(&aa_buffers_lock);
->> +	} else {
->> +		cache = get_cpu_ptr(&aa_local_buffers);
->> +		if (cache->contention)
->> +			cache->contention--;
->> +		put_cpu_ptr(&aa_local_buffers);
->> +	}
->>    retry:
->> -	spin_lock(&aa_buffers_lock);
->>    	if (buffer_count > reserve_count ||
->>    	    (in_atomic && !list_empty(&aa_global_buffers))) {
->>    		aa_buf = list_first_entry(&aa_global_buffers, union aa_buffer,
->> @@ -1655,6 +1692,7 @@ char *aa_get_buffer(bool in_atomic)
->>    	if (!aa_buf) {
->>    		if (try_again) {
->>    			try_again = false;
->> +			spin_lock(&aa_buffers_lock);
->>    			goto retry;
->>    		}
->>    		pr_warn_once("AppArmor: Failed to allocate a memory buffer.\n");
->> @@ -1666,15 +1704,32 @@ char *aa_get_buffer(bool in_atomic)
->>    void aa_put_buffer(char *buf)
->>    {
->>    	union aa_buffer *aa_buf;
->> +	struct aa_local_cache *cache;
->>    
->>    	if (!buf)
->>    		return;
->>    	aa_buf = container_of(buf, union aa_buffer, buffer[0]);
->>    
->> -	spin_lock(&aa_buffers_lock);
->> -	list_add(&aa_buf->list, &aa_global_buffers);
->> -	buffer_count++;
->> -	spin_unlock(&aa_buffers_lock);
->> +	cache = get_cpu_ptr(&aa_local_buffers);
->> +	if (!cache->hold) {
->> +		put_cpu_ptr(&aa_local_buffers);
->> +		if (spin_trylock(&aa_buffers_lock)) {
->> +			list_add(&aa_buf->list, &aa_global_buffers);
->> +			buffer_count++;
 > 
-> Given !hold and trylock, right time to drain the perpcu cache?
+> What do you think the background of
+> 
+>    Ultimately the challenge is getting userspace developers to accept a
+>    change that is not part of the upstream Linux Kernel and thus not
+>    guaranteed under the usual "don't break userspace" kernel API promise.
+> 
+> is? I consider that the reason is because
+> 
+>    We do care about userspace programs and users who are using userspace programs.
+> 
+> . If we don't care about userspace and users, we would not mind breaking APIs.
+
+Like it or not kernel developers draw a very distinct line between userspace APIs
+and what is considered kernel code.
+
+> This reasoning is more stronger than "we don't care about out-of-tree code"
+> reasoning.
+> 
+Look many developers really just don't care about out of tree code, and others
+well I won't say they don't care but its impossible task to monitor and think
+about how the broad swath of different out of tree code bits could be affected
+by kernel changes. So the only practical thing to do is make changes based on
+what is in tree and let out of tree projects deal with making the adjustments
+needed to adapt to the changing kernel.
+
+This comes about because the kernel does NOT provide a stable ABI for out of
+tree code. This is not a technical position as other projects do provide
+stable ABIs for out of tree code, with varying degrees of success.
+
+It is a community/political position that is certainly informed by technical
+merits but also other considerations, like GPL, experience on the costs of
+maintaining stable ABIs and a desire to where possible push for code inclusion
+in the kernel.
+
+
+> Distributors have rights to block loading loadable kernel modules which are
+> not included in upstream kernels. But for example Red Hat is not excising
+> the rights to block loading loadable kernel modules (e.g.
+> https://access.redhat.com/solutions/1376133 ). What do you think about the
+> reasons of not blocking loading loadable kernel modules which are not included
+> in upstream kernels? I consider that the reason is because
+> 
+>    Allowing loadable kernel modules which cannot be supported by distributors
+>    to exist and to be loaded into distributor kernels is more beneficial for
+>    users.
 > 
 
-yes hold is a count of how long (or in this case a count of how many
-times) to allocate from the local from the percpu cache before trying
-to return to the global buffer pool. When the time/count hits zero
-its time to try and return it.
+For some users yes. I am not saying a distro will want to block it for everyone
+one every kernel just that they need the option. Ubuntu has taken the position
+to try to be as inclusive as possible on the base distro kernels but even with
+that position we have special kernels that take a very different approach.
 
-If we succeed the try lock then we succeeded taking the global buffer
-pool lock without contention and we can add the buffer back in.
+> That is, we have been allowing out-of-tree kernel code to exist because
+> out-of-tree kernel code can be beneficial for users despite distributors cannot
+> afford supporting out-of-tree kernel code.
+> 
 
-As for the other cases
+yes, no argument
 
-hold == 0 and fail to grab the lock
-- contention is recorded and we add the buffer back to the percpu cache
+> If you really think that we have the rights to lock out out-of-tree kernel code
+> and/or disable loading of out-of-tree kernel code via /sbin/insmod, firstly achieve
+> 
+>    (1) Disallow loading of non-GPL kernel modules. (It is a trivial change.)
+> 
+I have no desire to get involved the that debate :)
 
-hold > 0
-- decrease hold and add back to the percpu cache
+>    (2) Disallow loading of out-of-tree kernel code via /sbin/insmod .
 
-Since we never try and grab the spinlock if hold > 0, the lock variations
-do not need to be considered.
+Depending on the kernel we do it either by disabling the loading of modules or
+via requiring modules to be signed. We have kernels that do this.
 
->> +			spin_unlock(&aa_buffers_lock);
->> +			cache = get_cpu_ptr(&aa_local_buffers);
->> +			if (cache->contention)
->> +				cache->contention--;
->> +			put_cpu_ptr(&aa_local_buffers);
->> +			return;
->> +		}
->> +		cache = get_cpu_ptr(&aa_local_buffers);
->> +		update_contention(cache);
->> +	}
->> +
->> +	/* cache in percpu list */
->> +	list_add(&aa_buf->list, &cache->head);
->> +	put_cpu_ptr(&aa_local_buffers);
->>    }
->>    
->>    /*
->> @@ -1716,6 +1771,15 @@ static int __init alloc_buffers(void)
->>    	union aa_buffer *aa_buf;
->>    	int i, num;
->>    
->> +	/*
->> +	 * per cpu set of cached allocated buffers used to help reduce
->> +	 * lock contention
->> +	 */
->> +	for_each_possible_cpu(i) {
->> +		per_cpu(aa_local_buffers, i).contention = 0;
->> +		per_cpu(aa_local_buffers, i).hold = 0;
->> +		INIT_LIST_HEAD(&per_cpu(aa_local_buffers, i).head);
->> +	}
->>    	/*
->>    	 * A function may require two buffers at once. Usually the buffers are
->>    	 * used for a short period of time and are shared. On UP kernel buffers
->> -- 
->> 2.34.1
+
+>        (I don't know how we can technically enforce such change. Unlike not assigning
+>        LSM id value to LSM modules, we need to somehow be able to check whether an
+>        arbitrary file is in-tree (e.g. forbid "git add some_file") and unmodified
+>        (e.g. forbid "patch -p1 < some_patch").
+> 
+
+Just because LSM ids are currently statically assigned doesn't mean that has to
+be the case for all LSMs. I don't see a technical reason why an interface to
+request and assign dynamic IDs can't be added in the future.
+
+
+> before you enforce requiring an LSM id value in order to register an LSM module.
+> I don't accept "I'm not interested in making such changes". It is your duty to
+> achieve if you use "we don't care about out-of-tree code" as a rationale for
+> requiring an LSM id value in order to register an LSM module.
+> 
+
+As I said before, not a technical problem but a social/political one. I am
+sympathetic. I do care about out of tree code, I do see benefit to it, but I also
+understand the kernel community not wanting to have to try and make decisions
+about kernel code based on it.
+
+The LSM id is far from the only problem out of tree code has to deal with. It has
+to deal with changing structures, functions parameters, hooks, functions going
+away, changes to locking semantics (rt kernel changes). For out of tree code to
+be built against multiple kernels it has to already deal with all of this.
+I don't see the LSM id as that different of a barrier and there are certainly
+potential paths forward like adding the ability to request an id.
+
+> Nowadays, many software is developed using programming languages which can generate code
+> for multiple operating systems. That is, people are getting indifferent with operating
+> systems they run their software. Then, what is an advantage of choosing Linux as operating
+> systems for running their software, if Linux kernel does not provide freedom for
+> customization depending on user's needs?
+> 
+
+Uhhmmm wow. They can customize Linux to their hearts content, the code is available.
+Beyond that Linux has never offered a stable ABI for modules. Only modules built
+with the kernel. Yes you can build modules out of tree, but then the module has
+to adapt to kernel changes. The LSM id is far from the only change out of tree
+code will have to deal with.
+
+> As web application developers increases, developers who can understand C language (and
+> system call) are decreasing. As a result, it is getting more and more difficult to let them
+> understand and manage fine-grained allowlisting-based access controls like SELinux. Then,
+> what is an advantage of choosing Linux as operating systems for running their software, if
+> LSM does not provide freedom for using whatever simpler LSM modules users want?
+> 
+Linux does allow this, its just not as easy as it could be, and it is not what
+you want. And if this is what those application developers need then maybe Linux
+is not the right platform for them.
+
+Like it or not, not exporting the security_hook_heads was not a technical
+decision. I am not opposed to
+
+   EXPORT_SYMBOL_GPL(security_hook_heads)
+
+but others are and I don't know how to change that.
+
+> Windows operating system provides WSL (Windows Subsystem for Linux) which allows running
+> CUI programs and servers which are designed for Linux. Windows users can run CUI programs
+> and servers without requiring real Linux kernels and can run GUI programs via Windows
+> kernels. Neither SELinux nor AppArmor is required for protecting programs/servers, for
+
+Actually WSL2 is now preferred over WSL and it does use the Linux kernel.
+
+> antivirus software for Windows will provide protection. Then, what is an advantage of using
+> real Linux kernels, if we cannot allow Linux kernels to use whatever LSM modules users want?
+> 
+
+Sorry I don't see the argument. With that sad I will say the Window kernel
+doesn't allow running arbitrary out of tree code. Modules must be signed and
+the Kernel is closed source. So if you want something custom Linux is ahead
+of the game there.
+
+Would I like to see more LSM modules, yes. That is part of why I want stacking
+to land. We have been faffing around on its details for 10+ years, and I
+think we likely would have seen more modules by now if it had landed. I
+also think having it landed would allow for people to propose patches to
+extend and improve it instead of arguing about it.
+
+> I believe that it is time to get out of "we don't care about out-of-tree code".
+
+Unless Linux is willing to offer a stable ABIs to out of tree code this is
+impossible. Developers just can't consider all the out of tree code when they
+are making code changes. And I don't see Linux being willing to offer a
+stable ABI to out of tree modules.
+
+> The "we don't care about out-of-tree code" reasoning is a brain freeze that leads to
+> forget about users who still continue using Linux as platform for running their software.
+> 
+
+I get what you are saying. But again this isn't a technical problem and
+I don't have a solution. What we need right now is constructive review
+and preferably code to move patches forward so we can get stacking landed.
 
