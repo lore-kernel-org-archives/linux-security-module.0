@@ -2,68 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BECE5FA3741
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Oct 2022 19:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B66F6FA373D
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Nov 2022 04:30:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230164AbiJaTnz (ORCPT
+        id S229516AbiKAEa2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Oct 2022 15:43:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55088 "EHLO
+        Tue, 1 Nov 2022 00:30:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230160AbiJaTnw (ORCPT
+        with ESMTP id S229487AbiKAEa1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Oct 2022 15:43:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCFF613E3E;
-        Mon, 31 Oct 2022 12:43:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7844961448;
-        Mon, 31 Oct 2022 19:43:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DD0E3C433C1;
-        Mon, 31 Oct 2022 19:43:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667245430;
-        bh=oVyc0ZyVikGM8WwPWa+32t1ZcvpuEt5B1380fp+C948=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=Kl6b7Q27SxODub49QfW2y86Kam4Ra22vWBtZBsXomASBK2YiN8yiM1vxeFKc/l8nW
-         StIO7PhzvM2JXYh2sq06ilW8Gftya3Cbh4otVooMkw3oWC42HrLSNt4fHWoswBt6nE
-         5MLHvF2Iwu8W5TSK3u1x6WL5jazL34r2CLRJkciEzIW6W67Cbc0uMHd3c6MlAjKBlx
-         8hP3ORMBn0q3hyVJkUuey6mMYur3RFr1XtmFfLxXhEv/bLX5Bt5KPpvERkcDdp9VKB
-         I6+DwxUDg69NpzDwQTauEOxozFHQaB6+Yg9nkycHnR8U02C/Ci0+gaAbqYSCrO1IpG
-         1i/7FatYQslOw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CA818E270D6;
-        Mon, 31 Oct 2022 19:43:50 +0000 (UTC)
-Subject: Re: [GIT PULL] LSM fixes for v6.1 (#1)
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAHC9VhSSafrkW4VbTVoAUJmjFQdCwPTGDqTP8yBnLBqc7rW7iQ@mail.gmail.com>
-References: <CAHC9VhSSafrkW4VbTVoAUJmjFQdCwPTGDqTP8yBnLBqc7rW7iQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAHC9VhSSafrkW4VbTVoAUJmjFQdCwPTGDqTP8yBnLBqc7rW7iQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20221031
-X-PR-Tracked-Commit-Id: 8cf0a1bc12870d148ae830a4ba88cfdf0e879cee
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 78a089d033bf71d68d978ac4cc73070f3e71c736
-Message-Id: <166724543082.6677.16142164161166851122.pr-tracker-bot@kernel.org>
-Date:   Mon, 31 Oct 2022 19:43:50 +0000
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+        Tue, 1 Nov 2022 00:30:27 -0400
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85FEC65AE
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Oct 2022 21:30:25 -0700 (PDT)
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 9168B30F; Mon, 31 Oct 2022 23:30:23 -0500 (CDT)
+Date:   Mon, 31 Oct 2022 23:30:23 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     "Andrew G. Morgan" <morgan@kernel.org>
+Cc:     Gaosheng Cui <cuigaosheng1@huawei.com>, serge@hallyn.com,
+        akpm@linux-foundation.org, ezk@cs.sunysb.edu,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] capabilities: fix undefined behavior in bit shift for
+ CAP_TO_MASK
+Message-ID: <20221101043023.GA7631@mail.hallyn.com>
+References: <20221031112536.4177761-1-cuigaosheng1@huawei.com>
+ <CALQRfL4Ws255bv_ptCt1qS3cbxjwUsawxAuTyV1pnLwg+70_NQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALQRfL4Ws255bv_ptCt1qS3cbxjwUsawxAuTyV1pnLwg+70_NQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Mon, 31 Oct 2022 07:07:15 -0400:
+On Mon, Oct 31, 2022 at 07:18:54AM -0700, Andrew G. Morgan wrote:
+> Acked-by: Andrew G. Morgan <morgan@kernel.org>
+> 
+> 
+> On Mon, Oct 31, 2022 at 4:25 AM Gaosheng Cui <cuigaosheng1@huawei.com> wrote:
+> >
+> > Shifting signed 32-bit value by 31 bits is undefined, so changing
+> > significant bit to unsigned. The UBSAN warning calltrace like below:
+> >
+> > UBSAN: shift-out-of-bounds in security/commoncap.c:1252:2
+> > left shift of 1 by 31 places cannot be represented in type 'int'
+> > Call Trace:
+> >  <TASK>
+> >  dump_stack_lvl+0x7d/0xa5
+> >  dump_stack+0x15/0x1b
+> >  ubsan_epilogue+0xe/0x4e
+> >  __ubsan_handle_shift_out_of_bounds+0x1e7/0x20c
+> >  cap_task_prctl+0x561/0x6f0
+> >  security_task_prctl+0x5a/0xb0
+> >  __x64_sys_prctl+0x61/0x8f0
+> >  do_syscall_64+0x58/0x80
+> >  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> >  </TASK>
+> >
+> > Fixes: e338d263a76a ("Add 64-bit capability support to the kernel")
+> > Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20221031
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/78a089d033bf71d68d978ac4cc73070f3e71c736
+Paul, do you mind including this in your lsm tree?
 
-Thank you!
+thanks,
+-serge
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> > ---
+> >  include/uapi/linux/capability.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+> > index 463d1ba2232a..3d61a0ae055d 100644
+> > --- a/include/uapi/linux/capability.h
+> > +++ b/include/uapi/linux/capability.h
+> > @@ -426,7 +426,7 @@ struct vfs_ns_cap_data {
+> >   */
+> >
+> >  #define CAP_TO_INDEX(x)     ((x) >> 5)        /* 1 << 5 == bits in __u32 */
+> > -#define CAP_TO_MASK(x)      (1 << ((x) & 31)) /* mask for indexed __u32 */
+> > +#define CAP_TO_MASK(x)      (1U << ((x) & 31)) /* mask for indexed __u32 */
+> >
+> >
+> >  #endif /* _UAPI_LINUX_CAPABILITY_H */
+> > --
+> > 2.25.1
+> >
