@@ -2,161 +2,232 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 466AEC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Nov 2022 22:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCC1C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Nov 2022 23:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230073AbiKAWQV (ORCPT
+        id S229817AbiKAXiO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Nov 2022 18:16:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55294 "EHLO
+        Tue, 1 Nov 2022 19:38:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229587AbiKAWQU (ORCPT
+        with ESMTP id S229496AbiKAXiN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Nov 2022 18:16:20 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC2C5BCAC;
-        Tue,  1 Nov 2022 15:16:17 -0700 (PDT)
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A1KRAKP008040;
-        Tue, 1 Nov 2022 22:16:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=MVmXSnPEYpXgPb+mU3tzLNqZw2Hu/MrbP45ldgt5gTg=;
- b=gHacYxx8ZB6vvdmf36u3pQ4WRdwwF7iuONBvNmdtLIukmorNMKLEXf6l58EaViBAd52S
- KQFgef/pMuUNbSs0fiiH6MCtpOLVlPdb/h9HcpxwC2vJ/ywi/pR9lbVUYqrByrBEVURA
- T48imqE7O3LQ/aZNYMxN0+8iZ+ZyewiuIap858lLJRAwSR37pHp7N/DMEQFv42J8oDLK
- 7uFxBj6UmxcIxlW4LnsGHPstyJZ2NMS4qExRbD+VKO7BpUvwBtZnWtdFVlJXH6yJB0KN
- e0/jghrIL50kufHnY4+CyhdvUST0DJ4RQT6lA6onQsRzP/oyMopMwuzI0tXJeSS/Ll46 Sg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kjvbhgq5j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Nov 2022 22:16:03 +0000
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A1L4t54009376;
-        Tue, 1 Nov 2022 22:16:03 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kjvbhgq59-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Nov 2022 22:16:02 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A1M4k9w022293;
-        Tue, 1 Nov 2022 22:16:02 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma02dal.us.ibm.com with ESMTP id 3kgutacdu7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Nov 2022 22:16:02 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com ([9.208.128.112])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A1MG0XW40436212
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 1 Nov 2022 22:16:01 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7C9775805C;
-        Tue,  1 Nov 2022 22:16:00 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8EF8D5805F;
-        Tue,  1 Nov 2022 22:15:59 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.106.109])
-        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Tue,  1 Nov 2022 22:15:59 +0000 (GMT)
-Message-ID: <db821df65b7ff7319c657a1de65f5ba903599fc4.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 2/2] ima: Handle -ESTALE returned by
- ima_filter_rule_match()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Guozihua (Scott)" <guozihua@huawei.com>,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
+        Tue, 1 Nov 2022 19:38:13 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BDF11BE9F
+        for <linux-security-module@vger.kernel.org>; Tue,  1 Nov 2022 16:38:12 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id v4-20020a17090a088400b00212cb0ed97eso374536pjc.5
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Nov 2022 16:38:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5D52avhPxbcbZms62P7jg88MPx8Vu63yNQl/KWl+6Cg=;
+        b=eSAPOBiDCmg+ikv7vxQ4ChNLJT7PWqccIWCQFdJmO5nvJcQGpKZZBE5njFOcaYA0F7
+         Qdn3vN1IC1lXz6NZNUBlYc7D7Ezd+khiEyIjIq7X5Ul9lDX5Mgx+yLOUSS9/WcCqOy2P
+         ffHfPTRhjQWAVRguk7Bt8sUmFVG5Je3Q61uKQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5D52avhPxbcbZms62P7jg88MPx8Vu63yNQl/KWl+6Cg=;
+        b=x3KXXP8gt8la5drxb11yYHE2lfH+y+Sb9exblQX4Q4zGzF16oXLizqLtVP+i+f6bed
+         o+ddJInr7Za99HWPdeZvzbbpkujVpTFdUzeEVmi0cLepvDEPIbb13SFQJeiIdQFyCy+K
+         M+mSNxyS31XckTxjzv3zTYejSXb43bxygD57Ycqco6hTirWsPSQZ4rUhiPnIWWYdqR4u
+         zZSS3a5rnVEJIrA6uoaFAUGqKQ2CTXpJYmGHJQI4UU0+v0mUnmxZmTKgdSuyLGlavGfX
+         f/h3C/vqdJWMzJ0Ety7vmF3ZMjMNtHPvOHcGCdwrVU6aioBR9jeCXSJ917iyxVBzVXBr
+         mmpw==
+X-Gm-Message-State: ACrzQf2RJ4Kj1kD5A2H4D/MOcUDFOTdWIr/ShxcJc2nK749BdDdNRx53
+        m1kdd69tLEKvF7nKk5d7+U3Xiw==
+X-Google-Smtp-Source: AMsMyM4E2vAxuWKs3+GwBW0in2lTsFDbozPO3T1dsw/EaJMjkjF+4sT6dmlCesvIEX6Ym/CjUSmMpA==
+X-Received: by 2002:a17:902:7c11:b0:178:a6ca:4850 with SMTP id x17-20020a1709027c1100b00178a6ca4850mr22463473pll.111.1667345891597;
+        Tue, 01 Nov 2022 16:38:11 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 65-20020a621644000000b0056bbcf88b93sm7081158pfw.42.2022.11.01.16.38.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Nov 2022 16:38:11 -0700 (PDT)
+Date:   Tue, 1 Nov 2022 16:38:10 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Tue, 01 Nov 2022 18:15:59 -0400
-In-Reply-To: <11716411-e143-ab1f-3b1e-d5d35f2a590a@huawei.com>
-References: <20220921125804.59490-1-guozihua@huawei.com>
-         <20220921125804.59490-3-guozihua@huawei.com>
-         <ce948f9e5639345026679b31a818cc12a247ce60.camel@linux.ibm.com>
-         <77c9c86b-85a6-aa87-e084-59a70bb47167@huawei.com>
-         <f321c638bf5572088a8c5e4d7027c3a797bdd568.camel@linux.ibm.com>
-         <7ac3e330-e77c-95d8-7d3b-29e243b57251@huawei.com>
-         <5e304b17fe709d2b2f30b991d5ffc4711d27a075.camel@linux.ibm.com>
-         <2f032b6c-ecf2-5a41-dc38-e6ab0a2d7885@huawei.com>
-         <90f8940cff5eeef7917e2b11a07e41b32b207ffa.camel@linux.ibm.com>
-         <38d5fd39-ead2-e954-5901-b35ef6ec96b6@huawei.com>
-         <11716411-e143-ab1f-3b1e-d5d35f2a590a@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: bzq1Fr0DEdBGPOne_7FWBUex5ICe6JzF
-X-Proofpoint-ORIG-GUID: xA-pzWS3mc8caojG-QJpox-tM26QUSkX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-01_10,2022-11-01_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 phishscore=0 priorityscore=1501 impostorscore=0
- bulkscore=0 adultscore=0 mlxscore=0 spamscore=0 malwarescore=0
- mlxlogscore=999 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2210170000 definitions=main-2211010151
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] LSM: Better reporting of actual LSMs at boot
+Message-ID: <202211011636.8C10CB9@keescook>
+References: <20221018064825.never.323-kees@kernel.org>
+ <CAHC9VhTScG513+-_GDN+nzBQjASW31LrE8juU3c03=0fJ_csGw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTScG513+-_GDN+nzBQjASW31LrE8juU3c03=0fJ_csGw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Scott,
-
-On Fri, 2022-10-28 at 16:36 +0800, Guozihua (Scott) wrote:
+On Tue, Oct 18, 2022 at 05:50:09PM -0400, Paul Moore wrote:
+> On Tue, Oct 18, 2022 at 2:48 AM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > Enhance the details reported by "lsm.debug" in several ways:
+> >
+> > - report contents of "security="
+> > - report contents of "CONFIG_LSM"
+> > - report contents of "lsm="
+> > - report any early LSM details
+> > - whitespace-align the output of similar phases for easier visual parsing
+> > - change "disabled" to more accurate "skipped"
+> > - explain what "skipped" and "ignored" mean in a parenthetical
+> >
+> > Upgrade the "security= is ignored" warning from pr_info to pr_warn,
+> > and include full arguments list to make the cause even more clear.
+> >
+> > Replace static "Security Framework initializing" pr_info with specific
+> > list of the resulting order of enabled LSMs.
+> >
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> > Cc: linux-security-module@vger.kernel.org
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
+> >  security/security.c | 61 +++++++++++++++++++++++++++++++++++++++------
+> >  1 file changed, 54 insertions(+), 7 deletions(-)
 > 
-> I managed to re-produce this issue with the help of the following two 
-> scripts:
+> I don't know about you, but when I'm reading commit descriptions about
+> how a patch changes the user visible output of something, e.g. console
+> messages, I always enjoy seeing an example of the new output, both in
+> normal and debug mode (hint, hint) ;)
+
+Fair point. Commit log will be looong. :)
+
 > 
-> read_tmp_measurement.sh:
-> > #!/bin/bash
-> > 
-> > while true
-> > do
-> >         cat /root/tmp.txt > /dev/null
-> >         measurement=`cat /sys/kernel/security/ima/ascii_runtime_measurements | grep "tmp\.txt" | wc -l`
-> >         if [ "${measurement}" == "1" ]; then
-> >                 echo "measurement found"
-> >                 exit 1
-> >         fi
-> > done
+> More comments below ...
 > 
-> test.sh:
-> > #!/bin/bash
-> > 
-> > echo "measure obj_user=system_u obj_role=object_r obj_type=unlabeled_t" > /sys/kernel/security/ima/policy
-> > 
-> > cat /root/tmp2.txt
-> > measurement=`cat /sys/kernel/security/ima/ascii_runtime_measurements | grep "tmp2\.txt" | wc -l`
-> > [ "$measurement" == "1" ] && echo "measurement for tmp2 found"
-> > 
-> > cat /root/tmp.txt
-> > measurement=`cat /sys/kernel/security/ima/ascii_runtime_measurements | grep "tmp\.txt" | wc -l`
-> > [ "$measurement" == "1" ] && echo "measurement for tmp found, preparation failed!" && exit 1
-> > 
-> > ./read_tmp_measurement.sh &
-> > pid=$!
-> > 
-> > cd /usr/share/selinux/default
-> > semodule -i clock.pp.bz2
-> > semodule -r clock
-> > 
-> > kill ${pid}
+> > diff --git a/security/security.c b/security/security.c
+> > index 9696dd64095e..6f6079dec270 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -159,7 +159,7 @@ static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
+> >                 lsm->enabled = &lsm_enabled_true;
+> >         ordered_lsms[last_lsm++] = lsm;
+> >
+> > -       init_debug("%s ordering: %s (%sabled)\n", from, lsm->name,
+> > +       init_debug("%s ordered: %s (%sabled)\n", from, lsm->name,
+> >                    is_enabled(lsm) ? "en" : "dis");
+> 
+> This isn't your fault, but since you're changing this line let's get
+> rid of the "en"/"dis" and do a proper "enabled"/"disabled" string to
+> make it slightly easier to find string while grep'ing through the
+> sources.  Example:
+> 
+>   init_debug("... %s\n", (is_enabled(lsm) ? "enabled" : "disabled"));
 
-Are you loading/unloading any selinux policy or specifically clock? If
-specifically clock, what is special about it?
+Sure, will do.
 
-> I created two files tmp.txt and tmp2.txt, assign them with type 
-> user_home_t and unlabeled_t respectively and then run test.sh.
-> On a multi-core environment, I managed to reproduce this issue pretty 
-> easily and tested that once the solution is merged, the issue stops 
-> happening.
+> 
+> > @@ -307,7 +308,8 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+> >                 if (exists_ordered_lsm(lsm))
+> >                         continue;
+> >                 set_enabled(lsm, false);
+> > -               init_debug("%s disabled: %s\n", origin, lsm->name);
+> > +               init_debug("%s skipped: %s (not in requested order)\n",
+> > +                          origin, lsm->name);
+> 
+> I'm not sure the distinction between "disabled" and "skipped" above is
+> that significant, and in fact I tend to think "disabled" is more
+> appropriate.  There is also some (minor) advantage to keeping the user
+> visible log messages consistent.
+> 
+> However, I do think the parenthetical explanations are a nice addition.
+> 
+> (If we did go the "skipped" route, I think we should also change the
+> "security=%s disabled: %s\n" further up the function for the sake of
+> consistent language.)
 
-As I only see an IMA measurement policy rule being loaded for
-"unlabeled_t" and not "user_home_t", should I assume that an IMA
-measurement rule already exists for "user_home_t"?
+I prefer "skipped", so I'll update the security= report...
 
-thanks,
+> 
+> > @@ -318,6 +320,44 @@ static void __init lsm_early_task(struct task_struct *task);
+> >
+> >  static int lsm_append(const char *new, char **result);
+> >
+> > +static void __init report_lsm_order(void)
+> > +{
+> > +       struct lsm_info **lsm, *early;
+> > +       size_t size = 0;
+> > +       char *effective, *step, *end;
+> > +
+> > +       /* Count the length of each enabled LSM name. */
+> > +       for (early = __start_early_lsm_info; early < __end_early_lsm_info; early++)
+> > +               if (is_enabled(early))
+> > +                       size += strlen(early->name) + 1;
+> > +       for (lsm = ordered_lsms; *lsm; lsm++)
+> > +               if (is_enabled(*lsm))
+> > +                       size += strlen((*lsm)->name) + 1;
+> > +
+> > +       /* Allocate space with trailing %NUL or give up. */
+> > +       size += 1;
+> > +       effective = kzalloc(size, GFP_KERNEL);
+> > +       if (!effective)
+> > +               return;
+> > +       end = effective + size;
+> > +       step = effective;
+> > +
+> > +       /* Append each enabled LSM name. */
+> > +       for (early = __start_early_lsm_info; early < __end_early_lsm_info; early++)
+> > +               if (is_enabled(early))
+> > +                       step += scnprintf(step, end - step, "%s%s",
+> > +                                         step == effective ? "" : ",",
+> > +                                         early->name);
+> > +       for (lsm = ordered_lsms; *lsm; lsm++)
+> > +               if (is_enabled(*lsm))
+> > +                       step += scnprintf(step, end - step, "%s%s",
+> > +                                         step == effective ? "" : ",",
+> > +                                         (*lsm)->name);
+> > +
+> > +       pr_info("initializing lsm=%s\n", effective);
+> 
+> Instead of going through all the trouble of determining the string
+> size and formatting the string via a series of scnprintf() calls, why
+> not cut out the intermediate string buffer and use
+> pr_info()/pr_cont()?  What am I missing?
 
-Mimi
+I just kinda dislike pr_cont(), but yeah, it's a lot shorter. :P
 
+ security/security.c |   32 ++++++--------------------------
+ 1 file changed, 6 insertions(+), 26 deletions(-)
+
+> 
+> > @@ -393,13 +436,17 @@ int __init security_init(void)
+> >  {
+> >         struct lsm_info *lsm;
+> >
+> > -       pr_info("Security Framework initializing\n");
+> > +       init_debug("legacy security=%s\n", chosen_major_lsm ?: " *unspecified*");
+> > +       init_debug("  CONFIG_LSM=%s\n", builtin_lsm_order);
+> > +       init_debug("boot arg lsm=%s\n", chosen_lsm_order ?: " *unspecified*");
+> >
+> >         /*
+> >          * Append the names of the early LSM modules now that kmalloc() is
+> >          * available
+> >          */
+> >         for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
+> > +               init_debug("  early started: %s (%sabled)\n", lsm->name,
+> > +                          is_enabled(lsm) ? "en" : "dis");
+> 
+> See the earlier comment about "en"/"dis" versus "enabled"/"disabled".
+> 
+> However, I wonder how useful the above debug message is when you
+> consider report_lsm_order().  Since report_lsm_order() dumps both the
+> early and normal LSMs, perhaps it makes more sense to annotate the
+> output there to indicate early vs normal LSM loading?
+
+I think of it as "debug" being a "show your work" mode, and the final
+list should always be visible.
+
+I will send a v2.
+
+-Kees
+
+-- 
+Kees Cook
