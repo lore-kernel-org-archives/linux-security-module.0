@@ -2,100 +2,161 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE726C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Nov 2022 21:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 466AEC433FE
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Nov 2022 22:16:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229853AbiKAVNI (ORCPT
+        id S230073AbiKAWQV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Nov 2022 17:13:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59622 "EHLO
+        Tue, 1 Nov 2022 18:16:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229601AbiKAVNH (ORCPT
+        with ESMTP id S229587AbiKAWQU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Nov 2022 17:13:07 -0400
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08A01BE87
-        for <linux-security-module@vger.kernel.org>; Tue,  1 Nov 2022 14:13:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1667337182; bh=y7evtBZqilyLoR6Rin60Y0gr4OxBOwwInD/K7bd7ScQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=lccOpcJ49zCDjnl/56ZW2giq6XTj3ZJrgF7XwM5gJmlHQBXjZF2y8sNxY3L3V3nFW9fmGQqkmZDsAMeqdyfaEo0vBMsusK94bC4gW0ll8cAaEMaPV1skNayhFMUY/QUTs5Qe/aNAwEMF6fVAz1hvwfGcL+PM+yzuvrPXjpkIq+nGyuebynFIviNKXux7JXlV4+RF5lDbkkJQzGVC64/QmmLZQR4jp6b/Bo73eC9cBaE/sANa8CV/+zHsrJ/3mUoBLqU0jZ1u+ILmXTjr9P0NIMtToZC05w1zsNk23RFZkY6RYzs0u5WMka274qWXAQ43rCo2sjyyQw6B9UVZrv1/7A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1667337182; bh=YrcFPzAa2fW+ipk41vAUMpy3Tg8Sza8yCxD3i7oIQOH=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=iU3uYlYAsnE3zRPtW4S+RHVKg2RraZZVm7B0/pwuY8sIRj2NH1CIUpVs8UJHtWWjCn8CGBl+3bmW1lcY2f7QdxWyi1L9vJKfW2bASZgQ+yx4c4G6yIAxL38UX+n1ms408LtgSfJPGwx2umOxTn+31WGFZt3XkhmtO72Pgu2lZjdu6Mm7R1kbUpxkPo0WJr2rTSztsx+ATs4O67FR2AA1nGc/kNJAGOwo1VLgpSI1mrXSYgT4L1V7gDrTVOS59ooQfBWDDd3R2x0q7kiHzb3BgC289V0c6pyulKZJKIepnFbJUbZSpVWSgJfNmvjRfaGyXci7bnfXRMBapMAC4Tt26g==
-X-YMail-OSG: 6zZTxlcVM1mSuS.TYWtqXVMKdep.LJcuqs12kpwGzSRReOEFtOwacjeqx9d4PXE
- YqMv6cxulz2mxDQKwXVlDxF4w0tFdDpCWCsigNXXGsN6Ku.doP0LL0RAMiW9bKIV3PBXMxMF51xF
- CguQIdDsyNTiVuFb.g9IFqiduke8k26lj0JOt2GVHvQS5EF9.Sl3EOQ2ghAbNMObUJRbcI2LaX2z
- GdwMwcMUcJdnmgjUG5weqdEciPQFPPyMxaW5ysztkKJH4Zo2PCZIq8JNkuiIIeSKz_TkNYueo0Z0
- 9GnCwsXH6jNsuQIEh1PcOTQ_vc5vgp_ZPsazqcKE6YERsVulkhdMOlYrh6vsq5iBohn21u4xvZk6
- j0rk6zVwYUyV66YJBicn_wwoWPdEvXFoPkJLPuZu7ndQ_gnIQFbxU6UrzTVU1nuhgNJhe.Vg_X8k
- dUdTBmsk_XZgYOgmagM27oWrZU33dNbuyrZ1abAaW_wM9qNVmeHeZhuszuRrhZEAT1i8cv6OmogV
- 1enf_iIcSeP3AYywFUJcuvYVSV9sZB3aG0CJ.gDWsFBdp4S8rD55EMLrxQPL3F.Jyb7G4rU7d0__
- vJDtSotLU1whKFn0H_65d7uaIdYSodJNY6Uuk.2D4B5kLcBE0unecaGdjQ2S_yGNAiDRHsjAtc03
- D3qGHUObNEQ3OSScgxwVwx5Fx6MZO2zINvnJC9_qq2HFWvS_OcQK8WI.kQ8WxZi5FoV2ZxF1uGEc
- pGU9F9PGzGHzMepfLo42TwjWiqeWL09udUc2xFOheoIgXVKSkl3nTARkZBOWrWGgitC4bNqKROP1
- j7cLIXm4NpAb9I3ZdPtF9OitY8VL8P9K2mFF8dhNWnwFkijloJcdI3QH.pq04PEzR3123GBH.4.i
- 7fYY6R.EGVhngG6GUv8lrEyRwPbkflQbIJSFc9N2AvL0ReiOQCZJGoTpY9LTgoaes7ND2633m_Vu
- GRagfswqBd69UD85MGdeAO6RMtsxiirtXvvg30jWiqStfkCV5LJoE8GWptp6pF3Mu0dpq394veHr
- ewjKqzkrtDQ.KgWUbwRjLG2hX0G.1.xX4LHiYML.i6DVHjnfL6pe4RnrrBFiPn.Zq3BM_Airzy_i
- pa7Wmo65z52piKt6RyjIOEMMFc_NMSnvUrLMV4kJjybJ0JdaKf7pTUxYo2GiuHPDw6jzRpPC5fr9
- h0BcjPP8zLzA.7yej2zTjxec1VCgc06_BH.IDaVbnY1zWy3huWIvLgSTpJcjvFHcackoMG4EMSUe
- JpgyWqoMM0rOF7f7Rlcj2zlyYV3R9olLiemMjMIXCbHdf8nnreGuWryy8l.uYfcuAfw_oCXiEbYH
- F_ojJXSx0yc2beCsnaEoi.mx.5UP_fefgB1hCsKtEJvwvdjHGZXBlDpFujSAi.8XmuxVs1Z2TrIx
- zIyo1QGfM.w9zSfWi1n09bAaSnEG507j9guVuSYqFyPSPPOJV.6pD0qtN7eX347eU52Ba6Rbjcz8
- FLPCXGjFr7GWMTnPgLcH6D36OH4pEx8WUi7Tyk.rATVibPj_IrDAxCJ7ZhADM5aXa3E0Sjq1q35I
- qTJNNTv1CoyfRQUQCVGHfHc0kGNsiTc2qFvPxavTZujRGStSOgI4_Y6LZlB4bi9cjzVDcoGzXELv
- 8MOn5HfZGMr1Ss8Maqf.qe9jreSr5errM5tF6lZQuW4hIuNxKqvsLSkWZ.cKlQsfmWoGCHYNYIPf
- MjPAlgTiVUffPhK5.qDbmuAmV61gydatQvs8WlUU8B8NyLwXI0w7XkvCX3gRZJM.c4o0Cv5oUvtp
- T7vKzCr2pZ5OmFzO4qGFHBN2KMOVfHJLL4nijPoKsPxq3gFaGOyaR7P7eTxPTsIUSjXFz9quloYz
- KsetymQg89eg5rw6NEr64Te.8paoGrZdeNZTtGxXD4iy3Nh72Ei2n7IFz6k9D6.Vp6MjhodD5rOS
- jvsW_5FQG.RH0IeC7GHIw7toz159.uGe.1mqAyk7vMPftamMdA8jUYrE68KqddGOeyiTFRcPVmxS
- Wa4Bcr0PlXPFLXArTkyCtSbFcAx5EFAMrEtlkHd_Ljk1jSIn46fuBQPPDWMUlsCsF4d_haYTwv83
- xCUYjOd4SgGyvrFIHt6fLnhpMr_b9kQF_FlmvYXWoueII_Z8_AmXiLQJNtC2agG.OW0RfgB1qf5y
- CGJ2C4Cg681fT7TVgPuwqSSCkarinDBNKN3dUqgwTSSxAIeI44nuO60_K4xW_OIMuXWerTBmpAw5
- kxDiDD7GxBDjPstb8qcTICgkllZzFIqGXLss-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Tue, 1 Nov 2022 21:13:02 +0000
-Received: by hermes--production-bf1-5878955b5f-d26fx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 02dbd698678bd0a8986b376377bc8d93;
-          Tue, 01 Nov 2022 21:12:58 +0000 (UTC)
-Message-ID: <4929fc7f-eb31-6ee4-0365-1b0f61ad5946@schaufler-ca.com>
-Date:   Tue, 1 Nov 2022 14:12:56 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH 1/1] smack_lsm: remove unnecessary type casting
-Content-Language: en-US
-To:     XU pengfei <xupengfei@nfschina.com>, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, casey@schaufler-ca.com
-References: <20221026082923.3400-1-xupengfei@nfschina.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20221026082923.3400-1-xupengfei@nfschina.com>
-Content-Type: text/plain; charset=UTF-8
+        Tue, 1 Nov 2022 18:16:20 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC2C5BCAC;
+        Tue,  1 Nov 2022 15:16:17 -0700 (PDT)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A1KRAKP008040;
+        Tue, 1 Nov 2022 22:16:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=MVmXSnPEYpXgPb+mU3tzLNqZw2Hu/MrbP45ldgt5gTg=;
+ b=gHacYxx8ZB6vvdmf36u3pQ4WRdwwF7iuONBvNmdtLIukmorNMKLEXf6l58EaViBAd52S
+ KQFgef/pMuUNbSs0fiiH6MCtpOLVlPdb/h9HcpxwC2vJ/ywi/pR9lbVUYqrByrBEVURA
+ T48imqE7O3LQ/aZNYMxN0+8iZ+ZyewiuIap858lLJRAwSR37pHp7N/DMEQFv42J8oDLK
+ 7uFxBj6UmxcIxlW4LnsGHPstyJZ2NMS4qExRbD+VKO7BpUvwBtZnWtdFVlJXH6yJB0KN
+ e0/jghrIL50kufHnY4+CyhdvUST0DJ4RQT6lA6onQsRzP/oyMopMwuzI0tXJeSS/Ll46 Sg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kjvbhgq5j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Nov 2022 22:16:03 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A1L4t54009376;
+        Tue, 1 Nov 2022 22:16:03 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kjvbhgq59-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Nov 2022 22:16:02 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A1M4k9w022293;
+        Tue, 1 Nov 2022 22:16:02 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma02dal.us.ibm.com with ESMTP id 3kgutacdu7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Nov 2022 22:16:02 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com ([9.208.128.112])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A1MG0XW40436212
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 1 Nov 2022 22:16:01 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7C9775805C;
+        Tue,  1 Nov 2022 22:16:00 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8EF8D5805F;
+        Tue,  1 Nov 2022 22:15:59 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.106.109])
+        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Tue,  1 Nov 2022 22:15:59 +0000 (GMT)
+Message-ID: <db821df65b7ff7319c657a1de65f5ba903599fc4.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 2/2] ima: Handle -ESTALE returned by
+ ima_filter_rule_match()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     "Guozihua (Scott)" <guozihua@huawei.com>,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Tue, 01 Nov 2022 18:15:59 -0400
+In-Reply-To: <11716411-e143-ab1f-3b1e-d5d35f2a590a@huawei.com>
+References: <20220921125804.59490-1-guozihua@huawei.com>
+         <20220921125804.59490-3-guozihua@huawei.com>
+         <ce948f9e5639345026679b31a818cc12a247ce60.camel@linux.ibm.com>
+         <77c9c86b-85a6-aa87-e084-59a70bb47167@huawei.com>
+         <f321c638bf5572088a8c5e4d7027c3a797bdd568.camel@linux.ibm.com>
+         <7ac3e330-e77c-95d8-7d3b-29e243b57251@huawei.com>
+         <5e304b17fe709d2b2f30b991d5ffc4711d27a075.camel@linux.ibm.com>
+         <2f032b6c-ecf2-5a41-dc38-e6ab0a2d7885@huawei.com>
+         <90f8940cff5eeef7917e2b11a07e41b32b207ffa.camel@linux.ibm.com>
+         <38d5fd39-ead2-e954-5901-b35ef6ec96b6@huawei.com>
+         <11716411-e143-ab1f-3b1e-d5d35f2a590a@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20783 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: bzq1Fr0DEdBGPOne_7FWBUex5ICe6JzF
+X-Proofpoint-ORIG-GUID: xA-pzWS3mc8caojG-QJpox-tM26QUSkX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-01_10,2022-11-01_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ bulkscore=0 adultscore=0 mlxscore=0 spamscore=0 malwarescore=0
+ mlxlogscore=999 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2210170000 definitions=main-2211010151
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/26/2022 1:29 AM, XU pengfei wrote:
-> Remove unnecessary type casting.
-> The type of inode variable is struct inode *, so no type casting required.
->
-> Signed-off-by: XU pengfei <xupengfei@nfschina.com>
+Hi Scott,
 
-Thank you. Added to smack-next:
-	https://github.com/cschaufler/smack-next.git#next
+On Fri, 2022-10-28 at 16:36 +0800, Guozihua (Scott) wrote:
+> 
+> I managed to re-produce this issue with the help of the following two 
+> scripts:
+> 
+> read_tmp_measurement.sh:
+> > #!/bin/bash
+> > 
+> > while true
+> > do
+> >         cat /root/tmp.txt > /dev/null
+> >         measurement=`cat /sys/kernel/security/ima/ascii_runtime_measurements | grep "tmp\.txt" | wc -l`
+> >         if [ "${measurement}" == "1" ]; then
+> >                 echo "measurement found"
+> >                 exit 1
+> >         fi
+> > done
+> 
+> test.sh:
+> > #!/bin/bash
+> > 
+> > echo "measure obj_user=system_u obj_role=object_r obj_type=unlabeled_t" > /sys/kernel/security/ima/policy
+> > 
+> > cat /root/tmp2.txt
+> > measurement=`cat /sys/kernel/security/ima/ascii_runtime_measurements | grep "tmp2\.txt" | wc -l`
+> > [ "$measurement" == "1" ] && echo "measurement for tmp2 found"
+> > 
+> > cat /root/tmp.txt
+> > measurement=`cat /sys/kernel/security/ima/ascii_runtime_measurements | grep "tmp\.txt" | wc -l`
+> > [ "$measurement" == "1" ] && echo "measurement for tmp found, preparation failed!" && exit 1
+> > 
+> > ./read_tmp_measurement.sh &
+> > pid=$!
+> > 
+> > cd /usr/share/selinux/default
+> > semodule -i clock.pp.bz2
+> > semodule -r clock
+> > 
+> > kill ${pid}
 
-> ---
->  security/smack/smack_lsm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index b6306d71c908..853c6878edc0 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -1409,7 +1409,7 @@ static int smack_inode_getsecurity(struct user_namespace *mnt_userns,
->  	struct socket_smack *ssp;
->  	struct socket *sock;
->  	struct super_block *sbp;
-> -	struct inode *ip = (struct inode *)inode;
-> +	struct inode *ip = inode;
->  	struct smack_known *isp;
->  
->  	if (strcmp(name, XATTR_SMACK_SUFFIX) == 0)
+Are you loading/unloading any selinux policy or specifically clock? If
+specifically clock, what is special about it?
+
+> I created two files tmp.txt and tmp2.txt, assign them with type 
+> user_home_t and unlabeled_t respectively and then run test.sh.
+> On a multi-core environment, I managed to reproduce this issue pretty 
+> easily and tested that once the solution is merged, the issue stops 
+> happening.
+
+As I only see an IMA measurement policy rule being loaded for
+"unlabeled_t" and not "user_home_t", should I assume that an IMA
+measurement rule already exists for "user_home_t"?
+
+thanks,
+
+Mimi
+
