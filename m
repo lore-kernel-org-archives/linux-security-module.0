@@ -2,22 +2,22 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90725C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Nov 2022 17:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F20BC43217
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Nov 2022 17:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229516AbiKBRMS (ORCPT
+        id S229880AbiKBRMT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Nov 2022 13:12:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37554 "EHLO
+        Wed, 2 Nov 2022 13:12:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231618AbiKBRLh (ORCPT
+        with ESMTP id S231624AbiKBRLi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Nov 2022 13:11:37 -0400
+        Wed, 2 Nov 2022 13:11:38 -0400
 Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33A7D1D0C3
-        for <linux-security-module@vger.kernel.org>; Wed,  2 Nov 2022 10:11:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D683C186FE
+        for <linux-security-module@vger.kernel.org>; Wed,  2 Nov 2022 10:11:35 -0700 (PDT)
 Received: from fsav311.sakura.ne.jp (fsav311.sakura.ne.jp [153.120.85.142])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 2A2HAvBv021897;
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 2A2HAvah021893;
         Thu, 3 Nov 2022 02:10:57 +0900 (JST)
         (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
 Received: from www262.sakura.ne.jp (202.181.97.72)
@@ -26,9 +26,9 @@ Received: from www262.sakura.ne.jp (202.181.97.72)
 X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav311.sakura.ne.jp)
 Received: from localhost.localdomain (M106072142033.v4.enabler.ne.jp [106.72.142.33])
         (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 2A2HAnkK021849
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 2A2HAnkJ021849
         (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 3 Nov 2022 02:10:57 +0900 (JST)
+        Thu, 3 Nov 2022 02:10:56 +0900 (JST)
         (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
 From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 To:     linux-security-module@vger.kernel.org,
@@ -37,9 +37,9 @@ To:     linux-security-module@vger.kernel.org,
         John Johansen <john.johansen@canonical.com>,
         Kees Cook <kees@kernel.org>
 Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH 09/10] CaitSith: Add garbage collector functions.
-Date:   Thu,  3 Nov 2022 02:10:24 +0900
-Message-Id: <20221102171025.126961-9-penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH 08/10] CaitSith: Add pathname calculation functions.
+Date:   Thu,  3 Nov 2022 02:10:23 +0900
+Message-Id: <20221102171025.126961-8-penguin-kernel@I-love.SAKURA.ne.jp>
 X-Mailer: git-send-email 2.18.4
 In-Reply-To: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp>
 References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp>
@@ -47,23 +47,23 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 This file implements similar functions provided by
-security/tomoyo/gc.c file.
+security/tomoyo/realpath.c file.
 
 Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 ---
- security/caitsith/gc.c | 573 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 573 insertions(+)
- create mode 100644 security/caitsith/gc.c
+ security/caitsith/realpath.c | 415 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 415 insertions(+)
+ create mode 100644 security/caitsith/realpath.c
 
-diff --git a/security/caitsith/gc.c b/security/caitsith/gc.c
+diff --git a/security/caitsith/realpath.c b/security/caitsith/realpath.c
 new file mode 100644
-index 000000000000..85d75f22fa2c
+index 000000000000..ed6b1407a54d
 --- /dev/null
-+++ b/security/caitsith/gc.c
-@@ -0,0 +1,573 @@
++++ b/security/caitsith/realpath.c
+@@ -0,0 +1,415 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * gc.c
++ * realpath.c
 + *
 + * Copyright (C) 2005-2012  NTT DATA CORPORATION
 + *
@@ -72,567 +72,409 @@ index 000000000000..85d75f22fa2c
 +
 +#include "caitsith.h"
 +
-+/***** SECTION1: Constants definition *****/
++#include <linux/proc_fs.h>
 +
-+/* The list for "struct cs_io_buffer". */
-+static LIST_HEAD(cs_io_buffer_list);
-+/* Lock for protecting cs_io_buffer_list. */
-+static DEFINE_SPINLOCK(cs_io_buffer_list_lock);
++/***** SECTION1: Constants definition *****/
 +
 +/***** SECTION2: Structure definition *****/
 +
 +/***** SECTION3: Prototype definition section *****/
 +
-+static bool cs_domain_used_by_task(struct cs_domain_info *domain);
-+static bool cs_name_used_by_io_buffer(const char *string, const size_t size);
-+static bool cs_struct_used_by_io_buffer(const struct list_head *element);
-+static int cs_gc_thread(void *unused);
-+static void cs_collect_acl(struct list_head *list);
-+static void cs_collect_entry(void);
-+static void cs_collect_member(const enum cs_policy_id id,
-+			      struct list_head *member_list);
-+static void cs_try_to_gc(const enum cs_policy_id type,
-+			 struct list_head *element);
++static char *cs_get_absolute_path(const struct path *path, char * const buffer,
++				  const int buflen);
++static char *cs_get_dentry_path(struct dentry *dentry, char * const buffer,
++				const int buflen);
++static char *cs_get_local_path(struct dentry *dentry, char * const buffer,
++			       const int buflen);
++static int cs_const_part_length(const char *filename);
 +
 +/***** SECTION4: Standalone functions section *****/
 +
-+/***** SECTION5: Variables definition section *****/
-+
-+/*
-+ * Lock for syscall users.
++/**
++ * cs_realpath_lock - Take locks for __d_path().
 + *
-+ * This lock is held for only protecting single SRCU section.
++ * Returns nothing.
 + */
-+struct srcu_struct cs_ss;
++static inline void cs_realpath_lock(void)
++{
++	/* dcache_lock is locked by __d_path(). */
++	/* vfsmount_lock is locked by __d_path(). */
++}
++
++/**
++ * cs_realpath_unlock - Release locks for __d_path().
++ *
++ * Returns nothing.
++ */
++static inline void cs_realpath_unlock(void)
++{
++	/* vfsmount_lock is unlocked by __d_path(). */
++	/* dcache_lock is unlocked by __d_path(). */
++}
++
++/***** SECTION5: Variables definition section *****/
 +
 +/***** SECTION6: Dependent functions section *****/
 +
 +/**
-+ * cs_struct_used_by_io_buffer - Check whether the list element is used by /sys/kernel/security/caitsith/ users or not.
++ * cs_get_absolute_path - Get the path of a dentry but ignores chroot'ed root.
 + *
-+ * @element: Pointer to "struct list_head".
++ * @path:   Pointer to "struct path".
++ * @buffer: Pointer to buffer to return value in.
++ * @buflen: Sizeof @buffer.
 + *
-+ * Returns true if @element is used by /sys/kernel/security/caitsith/ users,
-+ * false otherwise.
++ * Returns the buffer on success, an error code otherwise.
++ *
++ * Caller holds the dcache_lock and vfsmount_lock.
++ * Based on __d_path() in fs/dcache.c
 + */
-+static bool cs_struct_used_by_io_buffer(const struct list_head *element)
++static char *cs_get_absolute_path(const struct path *path, char * const buffer,
++				  const int buflen)
 +{
-+	struct cs_io_buffer *head;
-+	bool in_use = false;
-+
-+	spin_lock(&cs_io_buffer_list_lock);
-+	list_for_each_entry(head, &cs_io_buffer_list, list) {
-+		head->users++;
-+		spin_unlock(&cs_io_buffer_list_lock);
-+		mutex_lock(&head->io_sem);
-+		if (head->r.acl == element || head->r.subacl == element ||
-+		    head->r.group == element || &head->w.acl->list == element)
-+			in_use = true;
-+		mutex_unlock(&head->io_sem);
-+		spin_lock(&cs_io_buffer_list_lock);
-+		head->users--;
-+		if (in_use)
-+			break;
-+	}
-+	spin_unlock(&cs_io_buffer_list_lock);
-+	return in_use;
++	if (buflen < 256)
++		return ERR_PTR(-ENOMEM);
++	return d_absolute_path(path, buffer, buflen - 1);
 +}
 +
 +/**
-+ * cs_name_used_by_io_buffer - Check whether the string is used by /sys/kernel/security/caitsith/ users or not.
++ * cs_get_dentry_path - Get the path of a dentry.
 + *
-+ * @string: String to check.
-+ * @size:   Memory allocated for @string .
++ * @dentry: Pointer to "struct dentry".
++ * @buffer: Pointer to buffer to return value in.
++ * @buflen: Sizeof @buffer.
 + *
-+ * Returns true if @string is used by /sys/kernel/security/caitsith/ users,
-+ * false otherwise.
++ * Returns the buffer on success, an error code otherwise.
++ *
++ * Based on dentry_path() in fs/dcache.c
 + */
-+static bool cs_name_used_by_io_buffer(const char *string, const size_t size)
++static char *cs_get_dentry_path(struct dentry *dentry, char * const buffer,
++				const int buflen)
 +{
-+	struct cs_io_buffer *head;
-+	bool in_use = false;
++	if (buflen < 256)
++		return ERR_PTR(-ENOMEM);
++	/* rename_lock is locked/unlocked by dentry_path_raw(). */
++	return dentry_path_raw(dentry, buffer, buflen - 1);
++}
 +
-+	spin_lock(&cs_io_buffer_list_lock);
-+	list_for_each_entry(head, &cs_io_buffer_list, list) {
-+		int i;
++/**
++ * cs_get_local_path - Get the path of a dentry.
++ *
++ * @dentry: Pointer to "struct dentry".
++ * @buffer: Pointer to buffer to return value in.
++ * @buflen: Sizeof @buffer.
++ *
++ * Returns the buffer on success, an error code otherwise.
++ */
++static char *cs_get_local_path(struct dentry *dentry, char * const buffer,
++			       const int buflen)
++{
++	struct super_block *sb = dentry->d_sb;
++	char *pos = cs_get_dentry_path(dentry, buffer, buflen);
 +
-+		head->users++;
-+		spin_unlock(&cs_io_buffer_list_lock);
-+		mutex_lock(&head->io_sem);
-+		for (i = 0; i < CS_MAX_IO_READ_QUEUE; i++) {
-+			const char *w = head->r.w[i];
++	if (IS_ERR(pos))
++		return pos;
++	/* Convert from $PID to self if $PID is current thread. */
++	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
++		char *ep;
++		const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
 +
-+			if (w < string || w > string + size)
-+				continue;
-+			in_use = true;
-+			break;
++		if (*ep == '/' && pid && pid ==
++		    task_tgid_nr_ns(current, proc_pid_ns(sb))) {
++			pos = ep - 5;
++			if (pos < buffer)
++				goto out;
++			memmove(pos, "/self", 5);
 +		}
-+		mutex_unlock(&head->io_sem);
-+		spin_lock(&cs_io_buffer_list_lock);
-+		head->users--;
-+		if (in_use)
-+			break;
++		goto prepend_filesystem_name;
 +	}
-+	spin_unlock(&cs_io_buffer_list_lock);
-+	return in_use;
-+}
++	/* Use filesystem name for unnamed devices. */
++	if (!MAJOR(sb->s_dev))
++		goto prepend_filesystem_name;
++	{
++		struct inode *inode = d_backing_inode(sb->s_root);
 +
-+/**
-+ * cs_domain_used_by_task - Check whether the given pointer is referenced by a task.
-+ *
-+ * @domain: Pointer to "struct cs_domain_info".
-+ *
-+ * Returns true if @domain is in use, false otherwise.
-+ */
-+static bool cs_domain_used_by_task(struct cs_domain_info *domain)
-+{
-+	bool in_use = false;
-+	/*
-+	 * Don't delete this domain if somebody is doing execve().
-+	 *
-+	 * Since cs_finish_execve() first reverts cs_domain_info and then
-+	 * updates cs_flags, we need smp_rmb() to make sure that GC first
-+	 * checks cs_flags and then checks cs_domain_info.
-+	 */
-+	int idx;
++		/*
++		 * Use filesystem name if filesystems does not support rename()
++		 * operation.
++		 */
++		if (!inode->i_op->rename)
++			goto prepend_filesystem_name;
++	}
++	/* Prepend device name. */
++	{
++		char name[64];
++		int name_len;
++		const dev_t dev = sb->s_dev;
 +
-+	rcu_read_lock();
-+	for (idx = 0; idx < CS_MAX_TASK_SECURITY_HASH; idx++) {
-+		struct cs_security *ptr;
-+		struct list_head *list = &cs_task_security_list[idx];
-+
-+		list_for_each_entry_rcu(ptr, list, list) {
-+			if (!(ptr->cs_flags & CS_TASK_IS_IN_EXECVE)) {
-+				smp_rmb(); /* Avoid out of order execution. */
-+				if (ptr->cs_domain_info != domain)
-+					continue;
-+			}
-+			in_use = true;
++		name[sizeof(name) - 1] = '\0';
++		snprintf(name, sizeof(name) - 1, "dev(%u,%u):", MAJOR(dev),
++			 MINOR(dev));
++		name_len = strlen(name);
++		pos -= name_len;
++		if (pos < buffer)
 +			goto out;
-+		}
++		memmove(pos, name, name_len);
++		return pos;
 +	}
-+	in_use = cs_used_by_cred(domain);
++	/* Prepend filesystem name. */
++prepend_filesystem_name:
++	{
++		const char *name = sb->s_type->name;
++		const int name_len = strlen(name);
++
++		pos -= name_len + 1;
++		if (pos < buffer)
++			goto out;
++		memmove(pos, name, name_len);
++		pos[name_len] = ':';
++	}
++	return pos;
 +out:
-+	rcu_read_unlock();
-+	return in_use;
++	return ERR_PTR(-ENOMEM);
 +}
 +
 +/**
-+ * cs_acl_info_has_sub_acl - Clear "struct cs_acl_info"->acl_info.
++ * cs_realpath - Returns realpath(3) of the given pathname but ignores chroot'ed root.
 + *
-+ * @list: Pointer to "struct list_head".
++ * @path: Pointer to "struct path".
 + *
-+ * Returns true if @list is not empty, false otherwise.
++ * Returns the realpath of the given @path on success, NULL otherwise.
++ *
++ * This function uses kzalloc(), so caller must kfree() if this function
++ * didn't return NULL.
 + */
-+static bool cs_acl_info_has_sub_acl(struct list_head *list)
++char *cs_realpath(const struct path *path)
 +{
-+	struct cs_acl_info *acl;
-+	struct cs_acl_info *tmp;
++	char *buf = NULL;
++	char *name = NULL;
++	unsigned int buf_len = PAGE_SIZE / 2;
++	struct dentry *dentry = path->dentry;
++	struct super_block *sb;
 +
-+	if (list_empty(list))
-+		return false;
-+	mutex_lock(&cs_policy_lock);
-+	list_for_each_entry_safe(acl, tmp, list, list) {
-+		cs_try_to_gc(CS_ID_ACL, &acl->list);
-+	}
-+	mutex_unlock(&cs_policy_lock);
-+	return !list_empty(list);
-+}
++	if (!dentry)
++		return NULL;
++	sb = dentry->d_sb;
++	while (1) {
++		char *pos;
++		struct inode *inode;
 +
-+/**
-+ * cs_del_acl - Delete members in "struct cs_acl_info".
-+ *
-+ * @element: Pointer to "struct list_head".
-+ *
-+ * Returns nothing.
-+ */
-+static inline void cs_del_acl(struct list_head *element)
-+{
-+	struct cs_acl_info *acl = container_of(element, typeof(*acl), list);
-+
-+	cs_put_condition(acl->cond);
-+}
-+
-+/**
-+ * cs_del_domain - Delete members in "struct cs_domain_info".
-+ *
-+ * @element: Pointer to "struct list_head".
-+ *
-+ * Returns nothing.
-+ *
-+ * Caller holds cs_policy_lock mutex.
-+ */
-+static inline void cs_del_domain(struct list_head *element)
-+{
-+	struct cs_domain_info *domain =
-+		container_of(element, typeof(*domain), list);
-+	cs_put_name(domain->domainname);
-+}
-+
-+/**
-+ * cs_del_string_group - Delete members in "struct cs_string_group".
-+ *
-+ * @element: Pointer to "struct list_head".
-+ *
-+ * Returns nothing.
-+ */
-+static inline void cs_del_string_group(struct list_head *element)
-+{
-+	struct cs_string_group *member =
-+		container_of(element, typeof(*member), head.list);
-+	cs_put_name(member->member_name);
-+}
-+
-+/**
-+ * cs_del_group - Delete "struct cs_group".
-+ *
-+ * @element: Pointer to "struct list_head".
-+ *
-+ * Returns nothing.
-+ */
-+static inline void cs_del_group(struct list_head *element)
-+{
-+	struct cs_group *group =
-+		container_of(element, typeof(*group), head.list);
-+	cs_put_name(group->group_name);
-+}
-+
-+/**
-+ * cs_del_condition - Delete members in "struct cs_condition".
-+ *
-+ * @element: Pointer to "struct list_head".
-+ *
-+ * Returns nothing.
-+ */
-+void cs_del_condition(struct list_head *element)
-+{
-+	struct cs_condition *cond = container_of(element, typeof(*cond),
-+						 head.list);
-+	const union cs_condition_element *condp = (typeof(condp)) (cond + 1);
-+
-+	while ((void *) condp < (void *) ((u8 *) cond) + cond->size) {
-+		const enum cs_conditions_index left = condp->left;
-+		const enum cs_conditions_index right = condp->right;
-+
-+		condp++;
-+		if (left == CS_ARGV_ENTRY)
-+			condp++;
-+		else if (left == CS_ENVP_ENTRY) {
-+			cs_put_name(condp->path);
-+			condp++;
++		buf_len <<= 1;
++		kfree(buf);
++		buf = kmalloc(buf_len, GFP_NOFS);
++		if (!buf)
++			break;
++		/* To make sure that pos is '\0' terminated. */
++		buf[buf_len - 1] = '\0';
++		/* For "pipe:[\$]" and "socket:[\$]". */
++		if (dentry->d_op && dentry->d_op->d_dname) {
++			pos = dentry->d_op->d_dname(dentry, buf, buf_len - 1);
++			goto encode;
 +		}
-+		if (right == CS_IMM_GROUP) {
-+			cs_put_group(condp->group);
-+			condp++;
-+		} else if (right == CS_IMM_NAME_ENTRY) {
-+			if (condp->path != &cs_null_name)
-+				cs_put_name(condp->path);
-+			condp++;
-+		} else if (right == CS_IMM_NUMBER_ENTRY1)
-+			condp++;
-+		else if (right == CS_IMM_NUMBER_ENTRY2)
-+			condp += 2;
-+#ifdef CONFIG_SECURITY_CAITSITH_NETWORK
-+		else if (right == CS_IMM_IPV6ADDR_ENTRY1)
-+			condp = (void *)
-+				(((u8 *) condp) + sizeof(struct in6_addr));
-+		else if (right == CS_IMM_IPV6ADDR_ENTRY2)
-+			condp = (void *)
-+				(((u8 *) condp) + sizeof(struct in6_addr) * 2);
-+#endif
-+	}
-+}
-+
-+/**
-+ * cs_try_to_gc - Try to kfree() an entry.
-+ *
-+ * @type:    One of values in "enum cs_policy_id".
-+ * @element: Pointer to "struct list_head".
-+ *
-+ * Returns nothing.
-+ *
-+ * Caller holds cs_policy_lock mutex.
-+ */
-+static void cs_try_to_gc(const enum cs_policy_id type,
-+			 struct list_head *element)
-+{
-+	/*
-+	 * __list_del_entry() guarantees that the list element became no longer
-+	 * reachable from the list which the element was originally on (e.g.
-+	 * cs_domain_list). Also, synchronize_srcu() guarantees that the list
-+	 * element became no longer referenced by syscall users.
-+	 */
-+	__list_del_entry(element);
-+	mutex_unlock(&cs_policy_lock);
-+	synchronize_srcu(&cs_ss);
-+	/*
-+	 * However, there are two users which may still be using the list
-+	 * element. We need to defer until both users forget this element.
-+	 *
-+	 * Don't kfree() until "struct cs_io_buffer"->r.{group,acl,subacl} and
-+	 * "struct cs_io_buffer"->w.acl forget this element.
-+	 */
-+	if (cs_struct_used_by_io_buffer(element))
-+		goto reinject;
-+	switch (type) {
-+	case CS_ID_GROUP:
-+		cs_del_group(element);
-+		break;
-+	case CS_ID_STRING_GROUP:
-+		cs_del_string_group(element);
-+		break;
-+	case CS_ID_CONDITION:
-+		cs_del_condition(element);
-+		break;
-+	case CS_ID_NAME:
++		inode = d_backing_inode(sb->s_root);
 +		/*
-+		 * Don't kfree() until all "struct cs_io_buffer"->r.w[] forget
-+		 * this element.
++		 * Use local name for "filesystems without rename() operation
++		 * and device file" or "path without vfsmount" or "absolute
++		 * name is unavailable" cases.
 +		 */
-+		if (cs_name_used_by_io_buffer
-+		    (container_of(element, typeof(struct cs_name),
-+				  head.list)->entry.name,
-+		     container_of(element, typeof(struct cs_name),
-+				  head.list)->size))
-+			goto reinject;
-+		break;
-+	case CS_ID_ACL:
-+		/*
-+		 * Don't kfree() until "struct cs_acl_info"->acl_info_list
-+		 * becomes empty.
-+		 */
-+		if (cs_acl_info_has_sub_acl
-+		    (&container_of(element, typeof(struct cs_acl_info),
-+				   list)->acl_info_list))
-+			goto reinject;
-+		cs_del_acl(element);
-+		break;
-+	case CS_ID_DOMAIN:
-+		/*
-+		 * Don't kfree() until all "struct task_struct" forget this
-+		 * element.
-+		 */
-+		if (cs_domain_used_by_task
-+		    (container_of(element, typeof(struct cs_domain_info),
-+				  list)))
-+			goto reinject;
-+		cs_del_domain(element);
-+		break;
-+	default:
-+		break;
-+	}
-+	mutex_lock(&cs_policy_lock);
-+	cs_memory_used[CS_MEMORY_POLICY] -= ksize(element);
-+	kfree(element);
-+	return;
-+reinject:
-+	/*
-+	 * We can safely reinject this element here because
-+	 * (1) Appending list elements and removing list elements are protected
-+	 *     by cs_policy_lock mutex.
-+	 * (2) Only this function removes list elements and this function is
-+	 *     exclusively executed by cs_gc_mutex mutex.
-+	 * are true.
-+	 */
-+	mutex_lock(&cs_policy_lock);
-+	list_add_rcu(element, element->prev);
-+}
-+
-+/**
-+ * cs_collect_member - Delete elements with "struct cs_acl_head".
-+ *
-+ * @id:          One of values in "enum cs_policy_id".
-+ * @member_list: Pointer to "struct list_head".
-+ *
-+ * Returns nothing.
-+ *
-+ * Caller holds cs_policy_lock mutex.
-+ */
-+static void cs_collect_member(const enum cs_policy_id id,
-+			      struct list_head *member_list)
-+{
-+	struct cs_acl_head *member;
-+	struct cs_acl_head *tmp;
-+
-+	list_for_each_entry_safe(member, tmp, member_list, list) {
-+		if (!member->is_deleted)
++		if (!path->mnt ||
++		    (!inode->i_op->rename &&
++		     !(sb->s_type->fs_flags & FS_REQUIRES_DEV)))
++			pos = ERR_PTR(-EINVAL);
++		else
++			pos = cs_get_absolute_path(path, buf, buf_len - 1);
++		if (pos == ERR_PTR(-EINVAL))
++			pos = cs_get_local_path(path->dentry, buf,
++						buf_len - 1);
++encode:
++		if (IS_ERR(pos))
 +			continue;
-+		member->is_deleted = CS_GC_IN_PROGRESS;
-+		cs_try_to_gc(id, &member->list);
++		name = cs_encode(pos);
++		break;
 +	}
++	kfree(buf);
++	if (!name)
++		cs_warn_oom(__func__);
++	return name;
 +}
 +
 +/**
-+ * cs_collect_acl - Delete elements in "struct cs_acl_info".
++ * cs_encode2 - Encode binary string to ascii string.
 + *
-+ * @list: Pointer to "struct list_head".
++ * @str:     String in binary format. Maybe NULL.
++ * @str_len: Size of @str in byte.
 + *
-+ * Returns nothing.
++ * Returns pointer to @str in ascii format on success, NULL otherwise.
 + *
-+ * Caller holds cs_policy_lock mutex.
++ * This function uses kzalloc(), so caller must kfree() if this function
++ * didn't return NULL.
 + */
-+static void cs_collect_acl(struct list_head *list)
-+{
-+	struct cs_acl_info *acl;
-+	struct cs_acl_info *tmp;
-+
-+	list_for_each_entry_safe(acl, tmp, list, list) {
-+		if (!acl->is_deleted)
-+			continue;
-+		cs_try_to_gc(CS_ID_ACL, &acl->list);
-+	}
-+}
-+
-+/**
-+ * cs_collect_entry - Try to kfree() deleted elements.
-+ *
-+ * Returns nothing.
-+ */
-+static void cs_collect_entry(void)
++char *cs_encode2(const char *str, int str_len)
 +{
 +	int i;
++	int len;
++	const char *p = str;
++	char *cp;
++	char *cp0;
 +
-+	mutex_lock(&cs_policy_lock);
-+	{
-+		struct cs_domain_info *domain;
-+		struct cs_domain_info *tmp;
++	if (!p)
++		return NULL;
++	len = str_len;
++	for (i = 0; i < str_len; i++) {
++		const unsigned char c = p[i];
 +
-+		list_for_each_entry_safe(domain, tmp, &cs_domain_list, list) {
-+			if (domain == &cs_kernel_domain ||
-+			    cs_domain_used_by_task(domain))
-+				continue;
-+			cs_try_to_gc(CS_ID_DOMAIN, &domain->list);
++		if (!(c > ' ' && c < 127 && c != '\\'))
++			len += 3;
++	}
++	len++;
++	cp = kzalloc(len, GFP_NOFS);
++	if (!cp)
++		return NULL;
++	cp0 = cp;
++	p = str;
++	for (i = 0; i < str_len; i++) {
++		const unsigned char c = p[i];
++
++		if (c > ' ' && c < 127 && c != '\\') {
++			*cp++ = c;
++		} else {
++			*cp++ = '\\';
++			*cp++ = (c >> 6) + '0';
++			*cp++ = ((c >> 3) & 7) + '0';
++			*cp++ = (c & 7) + '0';
 +		}
 +	}
-+	for (i = 0; i < CS_MAX_MAC_INDEX; i++) {
-+		struct cs_acl_info *ptr;
-+		struct cs_acl_info *tmp;
-+		struct list_head * const list = &cs_acl_list[i];
-+
-+		list_for_each_entry_safe(ptr, tmp, list, list) {
-+			cs_collect_acl(&ptr->acl_info_list);
-+			if (!ptr->is_deleted)
-+				continue;
-+			/* ptr->is_deleted = CS_GC_IN_PROGRESS; */
-+			cs_try_to_gc(CS_ID_ACL, &ptr->list);
-+		}
-+	}
-+	{
-+		struct cs_shared_acl_head *ptr;
-+		struct cs_shared_acl_head *tmp;
-+
-+		list_for_each_entry_safe(ptr, tmp, &cs_condition_list, list) {
-+			if (atomic_read(&ptr->users) > 0)
-+				continue;
-+			atomic_set(&ptr->users, CS_GC_IN_PROGRESS);
-+			cs_try_to_gc(CS_ID_CONDITION, &ptr->list);
-+		}
-+	}
-+	for (i = 0; i < CS_MAX_GROUP; i++) {
-+		struct list_head *list = &cs_group_list[i];
-+		struct cs_group *group;
-+		struct cs_group *tmp;
-+		enum cs_policy_id id = CS_ID_STRING_GROUP;
-+
-+		if (i == CS_NUMBER_GROUP)
-+			id = CS_ID_NUMBER_GROUP;
-+#ifdef CONFIG_SECURITY_CAITSITH_NETWORK
-+		else if (i == CS_IP_GROUP)
-+			id = CS_ID_IP_GROUP;
-+#endif
-+		list_for_each_entry_safe(group, tmp, list, head.list) {
-+			cs_collect_member(id, &group->member_list);
-+			if (!list_empty(&group->member_list) ||
-+			    atomic_read(&group->head.users) > 0)
-+				continue;
-+			atomic_set(&group->head.users, CS_GC_IN_PROGRESS);
-+			cs_try_to_gc(CS_ID_GROUP, &group->head.list);
-+		}
-+	}
-+	for (i = 0; i < CS_MAX_HASH; i++) {
-+		struct list_head *list = &cs_name_list[i];
-+		struct cs_shared_acl_head *ptr;
-+		struct cs_shared_acl_head *tmp;
-+
-+		list_for_each_entry_safe(ptr, tmp, list, list) {
-+			if (atomic_read(&ptr->users) > 0)
-+				continue;
-+			atomic_set(&ptr->users, CS_GC_IN_PROGRESS);
-+			cs_try_to_gc(CS_ID_NAME, &ptr->list);
-+		}
-+	}
-+	mutex_unlock(&cs_policy_lock);
++	return cp0;
 +}
 +
 +/**
-+ * cs_gc_thread - Garbage collector thread function.
++ * cs_encode - Encode binary string to ascii string.
 + *
-+ * @unused: Unused.
++ * @str: String in binary format. Maybe NULL.
 + *
-+ * Returns 0.
++ * Returns pointer to @str in ascii format on success, NULL otherwise.
++ *
++ * This function uses kzalloc(), so caller must kfree() if this function
++ * didn't return NULL.
 + */
-+static int cs_gc_thread(void *unused)
++char *cs_encode(const char *str)
 +{
-+	/* Garbage collector thread is exclusive. */
-+	static DEFINE_MUTEX(cs_gc_mutex);
-+
-+	if (!mutex_trylock(&cs_gc_mutex))
-+		goto out;
-+	cs_collect_entry();
-+	{
-+		struct cs_io_buffer *head;
-+		struct cs_io_buffer *tmp;
-+
-+		spin_lock(&cs_io_buffer_list_lock);
-+		list_for_each_entry_safe(head, tmp, &cs_io_buffer_list,
-+					 list) {
-+			if (head->users)
-+				continue;
-+			list_del(&head->list);
-+			kfree(head->read_buf);
-+			kfree(head->write_buf);
-+			kfree(head);
-+		}
-+		spin_unlock(&cs_io_buffer_list_lock);
-+	}
-+	mutex_unlock(&cs_gc_mutex);
-+out:
-+	/* This acts as do_exit(0). */
-+	return 0;
++	return str ? cs_encode2(str, strlen(str)) : NULL;
 +}
 +
 +/**
-+ * cs_notify_gc - Register/unregister /sys/kernel/security/caitsith/ users.
++ * cs_const_part_length - Evaluate the initial length without a pattern in a token.
 + *
-+ * @head:        Pointer to "struct cs_io_buffer".
-+ * @is_register: True if register, false if unregister.
++ * @filename: The string to evaluate. Maybe NULL.
++ *
++ * Returns the initial length without a pattern in @filename.
++ */
++static int cs_const_part_length(const char *filename)
++{
++	char c;
++	int len = 0;
++
++	if (!filename)
++		return 0;
++	while (1) {
++		c = *filename++;
++		if (!c)
++			break;
++		if (c != '\\') {
++			len++;
++			continue;
++		}
++		c = *filename++;
++		switch (c) {
++		case '0':   /* "\ooo" */
++		case '1':
++		case '2':
++		case '3':
++			c = *filename++;
++			if (c < '0' || c > '7')
++				break;
++			c = *filename++;
++			if (c < '0' || c > '7')
++				break;
++			len += 4;
++			continue;
++		}
++		break;
++	}
++	return len;
++}
++
++/**
++ * cs_fill_path_info - Fill in "struct cs_path_info" members.
++ *
++ * @ptr: Pointer to "struct cs_path_info" to fill in.
 + *
 + * Returns nothing.
++ *
++ * The caller sets "struct cs_path_info"->name.
 + */
-+void cs_notify_gc(struct cs_io_buffer *head, const bool is_register)
++void cs_fill_path_info(struct cs_path_info *ptr)
 +{
-+	bool is_write = false;
++	const char *name = ptr->name;
++	const int len = strlen(name);
 +
-+	spin_lock(&cs_io_buffer_list_lock);
-+	if (is_register) {
-+		head->users = 1;
-+		list_add(&head->list, &cs_io_buffer_list);
-+	} else {
-+		is_write = head->write_buf != NULL;
-+		if (!--head->users) {
-+			list_del(&head->list);
-+			kfree(head->read_buf);
-+			kfree(head->write_buf);
-+			kfree(head);
-+		}
++	ptr->total_len = len;
++	ptr->const_len = cs_const_part_length(name);
++	ptr->hash = full_name_hash(NULL, name, len);
++}
++
++/**
++ * cs_get_exe - Get cs_realpath() of current process.
++ *
++ * Returns the cs_realpath() of current process on success, NULL otherwise.
++ *
++ * This function uses kzalloc(), so the caller must kfree()
++ * if this function didn't return NULL.
++ */
++char *cs_get_exe(void)
++{
++	struct mm_struct *mm;
++	struct file *exe_file;
++
++	if (current->flags & PF_KTHREAD)
++		return kstrdup("<kernel>", GFP_NOFS);
++	mm = current->mm;
++	if (!mm)
++		goto task_has_no_mm;
++	/* Not using get_mm_exe_file() as it is not exported. */
++	rcu_read_lock();
++	exe_file = rcu_dereference(mm->exe_file);
++	if (exe_file && !get_file_rcu(exe_file))
++		exe_file = NULL;
++	rcu_read_unlock();
++	if (exe_file) {
++		char *cp = cs_realpath(&exe_file->f_path);
++
++		fput(exe_file);
++		return cp;
 +	}
-+	spin_unlock(&cs_io_buffer_list_lock);
-+	if (is_write) {
-+		struct task_struct *task = kthread_create(cs_gc_thread, NULL,
-+							  "CaitSith's GC");
-+		if (!IS_ERR(task))
-+			wake_up_process(task);
++task_has_no_mm:
++	/* I'don't know. */
++	return kstrdup("<unknown>", GFP_NOFS);
++}
++
++/**
++ * cs_get_exename - Get cs_realpath() of current process.
++ *
++ * @buf: Pointer to "struct cs_path_info".
++ *
++ * Returns true on success, false otherwise.
++ *
++ * This function uses kzalloc(), so the caller must kfree()
++ * if this function returned true.
++ */
++bool cs_get_exename(struct cs_path_info *buf)
++{
++	buf->name = cs_get_exe();
++	if (buf->name) {
++		cs_fill_path_info(buf);
++		return true;
 +	}
++	return false;
 +}
 -- 
 2.18.4
