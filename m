@@ -2,192 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98904C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Nov 2022 19:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2491C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Nov 2022 22:05:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231403AbiKBTF7 (ORCPT
+        id S230254AbiKBWFZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Nov 2022 15:05:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34370 "EHLO
+        Wed, 2 Nov 2022 18:05:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230123AbiKBTF6 (ORCPT
+        with ESMTP id S229681AbiKBWFZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Nov 2022 15:05:58 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCF2F2D4
-        for <linux-security-module@vger.kernel.org>; Wed,  2 Nov 2022 12:05:57 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id y4so17496805plb.2
-        for <linux-security-module@vger.kernel.org>; Wed, 02 Nov 2022 12:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=txFQrEfMZQpea1F930rJNp2m9RjQBLyraMMcBHn2Ql0=;
-        b=E0ecJRjqxI5dV8knkHcpeKQ0FIV6Twn0eWEGzUYVfbClw877LXaWvO2cRRH1yMOiZ0
-         Pwwilo8PKU7g7oZWOiMqwlVL60PaSwQmDXOrZi/ALqclxxZPuAPUhFOPbv2QWVFIs+I+
-         prJUg3F4tcEAh2sYiIkvc9TWQMs4hHGu1sCgE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=txFQrEfMZQpea1F930rJNp2m9RjQBLyraMMcBHn2Ql0=;
-        b=XqoVwcwZlgSxkf+UZ+oogogcGrx9+TUFzfijZyYgIWV6ImxbpPh2QgC9e8y3b6XwSK
-         S9OZQIlioEc7LDWNDp3mmqo7xAUm1sqqO2hbMGJxGp5U+kmyiy+TdeCRTkjAqQwEc975
-         sV+kGLV53G8eUTZHzT+GL3JZmBxfWw2HKjCvBx7CXpcOfS+doUbz8aOAXGfunvIHg8jB
-         ErioHjZYETdTkrK2msXC2fSWGPsUKQ9X82EFWyk9n1O7vrXrAYjoRoAnEpmxArdq79Qq
-         iWtsKzL6ZSc8UONdAFA/zqm/kEncYnII+vFYPsDYGETFXY5VKHDp2QeXQTuLqLNM8tVQ
-         i8rg==
-X-Gm-Message-State: ACrzQf0a+iaxYDYznbefh+DvJD3orpC8HmM41E7li+3Mpf7OK8t4+leE
-        TpwMUo93Gh89OO+V0J5zIXwNiA==
-X-Google-Smtp-Source: AMsMyM6iisC+0P+mRwLQkyVBhLFvD3ap6j2I41TCgqI1umm46PNeyw9QAZiIqsd4RZWN5tV+9mEhIg==
-X-Received: by 2002:a17:902:7c12:b0:186:8111:ade2 with SMTP id x18-20020a1709027c1200b001868111ade2mr26102381pll.111.1667415957197;
-        Wed, 02 Nov 2022 12:05:57 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 144-20020a621796000000b00545f5046372sm8741341pfx.208.2022.11.02.12.05.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Nov 2022 12:05:56 -0700 (PDT)
-Date:   Wed, 2 Nov 2022 12:05:55 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH 05/10] CaitSith: Add LSM interface management file.
-Message-ID: <202211021155.ADD6E05A@keescook>
-References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp>
- <20221102171025.126961-5-penguin-kernel@I-love.SAKURA.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221102171025.126961-5-penguin-kernel@I-love.SAKURA.ne.jp>
+        Wed, 2 Nov 2022 18:05:25 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DB94617B;
+        Wed,  2 Nov 2022 15:05:24 -0700 (PDT)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A2Lcs8L030144;
+        Wed, 2 Nov 2022 22:05:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=7dbezdsWrjkeeMK5twTGOFsoXL1sQg9vzSRIDM1zxyY=;
+ b=Bqf5ObwD15lBCgLE6ZdCXPnYGEKFxHtfFJ6e0kWJi0hulVwLosbCrj7lk+AwWDraU/Aq
+ QhNsCWo1EYpwJ36tm8delRQdJze8CkC6rUy5tgjMEAMYSOETdKgqPrxk5OPgRGUX6vr7
+ Dq7JVP4CfE3f/JQ+D/XMrZ7+jboUH1XkYs5Th55w0MAOvKvKRQSsrApUrU2yneXxGweP
+ l2Pe2Fs1TYI5eujOfO2bcxu6eFPF45OvDnpOkEiQB0TJE3ytINRf501MubMAONAJV6u+
+ Bbr9xwjpOAbcdm3pOgNm5TNze7Zn5qqkHIy4658wMkzvAWWYFWHRDtkGxP6WsMT4mzHC Xg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3km0dk8s58-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Nov 2022 22:04:59 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A2M4mJY032545;
+        Wed, 2 Nov 2022 22:04:59 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3km0dk8s4k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Nov 2022 22:04:59 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A2Los9W018270;
+        Wed, 2 Nov 2022 22:04:58 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma02dal.us.ibm.com with ESMTP id 3kgutampy0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Nov 2022 22:04:58 +0000
+Received: from smtpav04.dal12v.mail.ibm.com ([9.208.128.131])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A2M4wnv524918
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Nov 2022 22:04:59 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1F6E25806D;
+        Wed,  2 Nov 2022 22:04:57 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 49CAD58056;
+        Wed,  2 Nov 2022 22:04:56 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.53.174])
+        by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Wed,  2 Nov 2022 22:04:56 +0000 (GMT)
+Message-ID: <ef7375db277ac6a9398ee31a27e95eed717c4832.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Fix memory leak in __ima_inode_hash()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, isaac.jmatt@gmail.com,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org
+Date:   Wed, 02 Nov 2022 18:04:55 -0400
+In-Reply-To: <20221102163006.1039343-1-roberto.sassu@huaweicloud.com>
+References: <20221102163006.1039343-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: GNyIH1ZTOMz_JqqTwmGGKkMDxZn7WlVK
+X-Proofpoint-GUID: FKRu6htgPJkjapMQl1NhLG56MGNwlI9N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-02_15,2022-11-02_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ adultscore=0 mlxscore=0 mlxlogscore=867 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 clxscore=1015 malwarescore=0 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211020146
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 03, 2022 at 02:10:20AM +0900, Tetsuo Handa wrote:
-> This file is used for registering CaitSith module into the
-> security_hook_heads list. Further patches will not be interesting for
-> reviewers, for further patches are providing similar functions provided
-> by TOMOYO (but too different to share the code).
+Hi Roberto,
+
+On Wed, 2022-11-02 at 17:30 +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+
+Any chance you could fix your mailer?
+
 > 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> [...]
-> +#define cs_debug_trace(pos)						\
-> +	do {								\
-> +		static bool done;					\
-> +		if (!done) {						\
-> +			pr_info("CAITSITH: Debug trace: " pos " of 2\n"); \
-> +			done = true;					\
-> +		}							\
-> +	} while (0)
+> Commit f3cc6b25dcc5 ("ima: always measure and audit files in policy") lets
+> measurement or audit happen even if the file digest cannot be calculated.
+> 
+> As a result, iint->ima_hash could have been allocated despite
+> ima_collect_measurement() returning an error.
+> 
+> Since ima_hash belongs to a temporary inode metadata structure, declared
+> at the beginning of __ima_inode_hash(), just add a kfree() call if
+> ima_collect_measurement() returns an error different from -ENOMEM (in that
+> case, ima_hash should not have been allocated).
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 280fe8367b0d ("ima: Always return a file measurement in ima_file_hash()")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-This can be replaced by pr_info_once().
+Thanks,
 
-> [...]
-> +#if defined(CONFIG_STRICT_KERNEL_RWX) && !defined(CONFIG_SECURITY_WRITABLE_HOOKS)
-> +#include <linux/uaccess.h> /* copy_to_kernel_nofault() */
-> +#define NEED_TO_CHECK_HOOKS_ARE_WRITABLE
-> +
-> +#if defined(CONFIG_X86)
-> +#define MAX_RO_PAGES 1024
-> +static struct page *ro_pages[MAX_RO_PAGES] __initdata;
-> +static unsigned int ro_pages_len __initdata;
-> +
-> +static bool __init lsm_test_page_ro(void *addr)
-> +{
-> +	unsigned int i;
-> +	int unused;
-> +	struct page *page;
-> +
-> +	page = (struct page *) lookup_address((unsigned long) addr, &unused);
-> +	if (!page)
-> +		return false;
-> +	if (test_bit(_PAGE_BIT_RW, &(page->flags)))
-> +		return true;
-> +	for (i = 0; i < ro_pages_len; i++)
-> +		if (page == ro_pages[i])
-> +			return true;
-> +	if (ro_pages_len == MAX_RO_PAGES)
-> +		return false;
-> +	ro_pages[ro_pages_len++] = page;
-> +	return true;
-> +}
-> +
-> +static bool __init check_ro_pages(struct security_hook_heads *hooks)
-> +{
-> +	int i;
-> +	struct hlist_head *list = &hooks->capable;
-> +
-> +	if (!copy_to_kernel_nofault(list, list, sizeof(void *)))
-> +		return true;
-> +	for (i = 0; i < ARRAY_SIZE(caitsith_hooks); i++) {
-> +		struct hlist_head *head = caitsith_hooks[i].head;
-> +		struct security_hook_list *shp;
-> +
-> +		if (!lsm_test_page_ro(&head->first))
-> +			return false;
-> +		hlist_for_each_entry(shp, head, list)
-> +			if (!lsm_test_page_ro(&shp->list.next) ||
-> +			    !lsm_test_page_ro(&shp->list.pprev))
-> +				return false;
-> +	}
-> +	return true;
-> +}
-> +#else
-> +static bool __init check_ro_pages(struct security_hook_heads *hooks)
-> +{
-> +	struct hlist_head *list = &hooks->capable;
-> +
-> +	return !copy_to_kernel_nofault(list, list, sizeof(void *));
-> +}
-> +#endif
-> +#endif
-> +
-> +/**
-> + * cs_init - Initialize this module.
-> + *
-> + * Returns 0 on success, negative value otherwise.
-> + */
-> +static int __init cs_init(void)
-> +{
-> +	int idx;
-> +#if defined(NEED_TO_CHECK_HOOKS_ARE_WRITABLE)
-> +	if (!check_ro_pages(&security_hook_heads)) {
-> +		pr_info("Can't update security_hook_heads due to write protected. Retry with rodata=0 kernel command line option added.\n");
-> +		return -EINVAL;
-> +	}
-> +#endif
-> +	for (idx = 0; idx < CS_MAX_TASK_SECURITY_HASH; idx++)
-> +		INIT_LIST_HEAD(&cs_task_security_list[idx]);
-> +	cs_init_module();
-> +#if defined(NEED_TO_CHECK_HOOKS_ARE_WRITABLE) && defined(CONFIG_X86)
-> +	for (idx = 0; idx < ro_pages_len; idx++)
-> +		set_bit(_PAGE_BIT_RW, &(ro_pages[idx]->flags));
-> +#endif
-> +	swap_hook(&caitsith_hooks[0], &original_task_free);
-> +	swap_hook(&caitsith_hooks[1], &original_cred_prepare);
-> +	swap_hook(&caitsith_hooks[2], &original_task_alloc);
-> +	for (idx = 3; idx < ARRAY_SIZE(caitsith_hooks); idx++)
-> +		add_hook(&caitsith_hooks[idx]);
-> +#if defined(NEED_TO_CHECK_HOOKS_ARE_WRITABLE) && defined(CONFIG_X86)
-> +	for (idx = 0; idx < ro_pages_len; idx++)
-> +		clear_bit(_PAGE_BIT_RW, &(ro_pages[idx]->flags));
-> +#endif
-> +	return 0;
-> +}
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-I'm sorry, but absolutely not. One of the most basic elements of the
-LSM infrastructure is that it is read-only. Even __lsm_ro_after_init is
-a grand-fathered behavior that is supposed to be removed once all the
-old SELinux disable-at-runtime users are gone.
-
-I don't see any _justification_ for why any of this is needed. Yes,
-it is technically possible to make an LSM loadable, but there needs to
-be a convincing rationale for _why_.
-
--Kees
-
--- 
-Kees Cook
