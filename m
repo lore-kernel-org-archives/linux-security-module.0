@@ -2,138 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9328DC4332F
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Nov 2022 01:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C94BEC43219
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Nov 2022 16:35:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229817AbiKBBmP (ORCPT
+        id S231726AbiKBQfJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Nov 2022 21:42:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54030 "EHLO
+        Wed, 2 Nov 2022 12:35:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbiKBBmO (ORCPT
+        with ESMTP id S231753AbiKBQer (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Nov 2022 21:42:14 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B672B1C3;
-        Tue,  1 Nov 2022 18:42:12 -0700 (PDT)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4N28g16J2pzpW5t;
-        Wed,  2 Nov 2022 09:38:37 +0800 (CST)
-Received: from [10.67.110.173] (10.67.110.173) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 2 Nov 2022 09:42:10 +0800
-Message-ID: <b2949b3d-c370-8a41-fe7c-9f175abd4f71@huawei.com>
-Date:   Wed, 2 Nov 2022 09:42:10 +0800
+        Wed, 2 Nov 2022 12:34:47 -0400
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D99FE764B;
+        Wed,  2 Nov 2022 09:30:39 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4N2XKf5stGz9v7Z1;
+        Thu,  3 Nov 2022 00:24:54 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwD3lXIbm2JjrrUxAA--.2055S2;
+        Wed, 02 Nov 2022 17:30:26 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, isaac.jmatt@gmail.com,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] ima: Fix memory leak in __ima_inode_hash()
+Date:   Wed,  2 Nov 2022 17:30:06 +0100
+Message-Id: <20221102163006.1039343-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v5 2/2] ima: Handle -ESTALE returned by
- ima_filter_rule_match()
-To:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-References: <20220921125804.59490-1-guozihua@huawei.com>
- <20220921125804.59490-3-guozihua@huawei.com>
- <ce948f9e5639345026679b31a818cc12a247ce60.camel@linux.ibm.com>
- <77c9c86b-85a6-aa87-e084-59a70bb47167@huawei.com>
- <f321c638bf5572088a8c5e4d7027c3a797bdd568.camel@linux.ibm.com>
- <7ac3e330-e77c-95d8-7d3b-29e243b57251@huawei.com>
- <5e304b17fe709d2b2f30b991d5ffc4711d27a075.camel@linux.ibm.com>
- <2f032b6c-ecf2-5a41-dc38-e6ab0a2d7885@huawei.com>
- <90f8940cff5eeef7917e2b11a07e41b32b207ffa.camel@linux.ibm.com>
- <38d5fd39-ead2-e954-5901-b35ef6ec96b6@huawei.com>
- <11716411-e143-ab1f-3b1e-d5d35f2a590a@huawei.com>
- <db821df65b7ff7319c657a1de65f5ba903599fc4.camel@linux.ibm.com>
-Content-Language: en-US
-From:   "Guozihua (Scott)" <guozihua@huawei.com>
-In-Reply-To: <db821df65b7ff7319c657a1de65f5ba903599fc4.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.173]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemm500024.china.huawei.com (7.185.36.203)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: LxC2BwD3lXIbm2JjrrUxAA--.2055S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZFyrtr4xXw1UAryxJr1UKFg_yoW8XF1xpa
+        4Dua4UCrW8KFWfCr1kGa42vw4Sk3yjgFWUWrZ8twn0yFn3XF1qkr15AF1Y9r95GryFyr1x
+        tw47t345Aa1jyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+        w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+        6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+        kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAF
+        wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+        7IU8imRUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAEBF1jj4D5-QABs2
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mimi,
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-On 2022/11/2 6:15, Mimi Zohar wrote:
-> Hi Scott,
-> 
-> On Fri, 2022-10-28 at 16:36 +0800, Guozihua (Scott) wrote:
->>
->> I managed to re-produce this issue with the help of the following two
->> scripts:
->>
->> read_tmp_measurement.sh:
->>> #!/bin/bash
->>>
->>> while true
->>> do
->>>          cat /root/tmp.txt > /dev/null
->>>          measurement=`cat /sys/kernel/security/ima/ascii_runtime_measurements | grep "tmp\.txt" | wc -l`
->>>          if [ "${measurement}" == "1" ]; then
->>>                  echo "measurement found"
->>>                  exit 1
->>>          fi
->>> done
->>
->> test.sh:
->>> #!/bin/bash
->>>
->>> echo "measure obj_user=system_u obj_role=object_r obj_type=unlabeled_t" > /sys/kernel/security/ima/policy
->>>
->>> cat /root/tmp2.txt
->>> measurement=`cat /sys/kernel/security/ima/ascii_runtime_measurements | grep "tmp2\.txt" | wc -l`
->>> [ "$measurement" == "1" ] && echo "measurement for tmp2 found"
->>>
->>> cat /root/tmp.txt
->>> measurement=`cat /sys/kernel/security/ima/ascii_runtime_measurements | grep "tmp\.txt" | wc -l`
->>> [ "$measurement" == "1" ] && echo "measurement for tmp found, preparation failed!" && exit 1
->>>
->>> ./read_tmp_measurement.sh &
->>> pid=$!
->>>
->>> cd /usr/share/selinux/default
->>> semodule -i clock.pp.bz2
->>> semodule -r clock
->>>
->>> kill ${pid}
-> 
-> Are you loading/unloading any selinux policy or specifically clock? If
-> specifically clock, what is special about it?
+Commit f3cc6b25dcc5 ("ima: always measure and audit files in policy") lets
+measurement or audit happen even if the file digest cannot be calculated.
 
-No there are nothing special about clock. Any selinux policy should do,.
-> 
->> I created two files tmp.txt and tmp2.txt, assign them with type
->> user_home_t and unlabeled_t respectively and then run test.sh.
->> On a multi-core environment, I managed to reproduce this issue pretty
->> easily and tested that once the solution is merged, the issue stops
->> happening.
-> 
-> As I only see an IMA measurement policy rule being loaded for
-> "unlabeled_t" and not "user_home_t", should I assume that an IMA
-> measurement rule already exists for "user_home_t"?
+As a result, iint->ima_hash could have been allocated despite
+ima_collect_measurement() returning an error.
 
-There wasn't a rule for user_home_t. These scripts demonstrate that 
-during a selinux policy reload, IMA would measure files that is not in 
-the range of it's LSM based rules. Which is the issue I am trying to fix.
+Since ima_hash belongs to a temporary inode metadata structure, declared
+at the beginning of __ima_inode_hash(), just add a kfree() call if
+ima_collect_measurement() returns an error different from -ENOMEM (in that
+case, ima_hash should not have been allocated).
 
-In this test, we only have one rule for measuring files of type 
-unlabeled_t. However, during selinux policy reload, file of user_home_t 
-is also measured.
-> 
-> thanks,
-> 
-> Mimi
-> 
+Cc: stable@vger.kernel.org
+Fixes: 280fe8367b0d ("ima: Always return a file measurement in ima_file_hash()")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_main.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 040b03ddc1c7..4a207a3ef7ef 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -542,8 +542,13 @@ static int __ima_inode_hash(struct inode *inode, struct file *file, char *buf,
+ 
+ 		rc = ima_collect_measurement(&tmp_iint, file, NULL, 0,
+ 					     ima_hash_algo, NULL);
+-		if (rc < 0)
++		if (rc < 0) {
++			/* ima_hash could be allocated in case of failure. */
++			if (rc != -ENOMEM)
++				kfree(tmp_iint.ima_hash);
++
+ 			return -EOPNOTSUPP;
++		}
+ 
+ 		iint = &tmp_iint;
+ 		mutex_lock(&iint->mutex);
 -- 
-Best
-GUO Zihua
+2.25.1
 
