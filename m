@@ -2,122 +2,125 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD8FC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Nov 2022 11:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37077C43217
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Nov 2022 13:16:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229985AbiKCL6B (ORCPT
+        id S231355AbiKCNQO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Nov 2022 07:58:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60252 "EHLO
+        Thu, 3 Nov 2022 09:16:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231355AbiKCL57 (ORCPT
+        with ESMTP id S229598AbiKCNQN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Nov 2022 07:57:59 -0400
-Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCAC5120AB
-        for <linux-security-module@vger.kernel.org>; Thu,  3 Nov 2022 04:57:57 -0700 (PDT)
-Received: by mail-oi1-x230.google.com with SMTP id t62so1638832oib.12
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Nov 2022 04:57:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zU7xV7W3lDGvmt7dPVBsWa/kR5kJOrP60v2hWR4Xi8Q=;
-        b=1xNHxLqu/czmwQlGjhWq6I2fNJ9ctA3DFOvFZXmrwwEt0ajBrfgZ26Sg/2omNp27Pn
-         GvLlGMygkfAyTtju6gmtqfbaY/V/KGCOCmFd4IrGXnmOn0LjaImFZvaGMvPtYUdx+evC
-         I/8YhzZTS4ldIuILQACxN/tXy4O2+tnz2S4MkiRYD2UloKLMG+h93Gih6m4+Dwny9UMx
-         QvbXiCx0sAqoRtU5eownIf1+CCWngjpAtUihYwBMIfDsapAiOrpkwoEIXyQdU9/MS5ok
-         hB0jkYCL/487vDSKzmAgxL/6hXf77+hZMzYb6AGOML9TvozqienVcIzbfziWhgvfhtKR
-         SiyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zU7xV7W3lDGvmt7dPVBsWa/kR5kJOrP60v2hWR4Xi8Q=;
-        b=UaDtmOUJOQ0Y8drD6MVKy9iohaH5MlvMzBXcvu/x5SJ3h3qnv6Tz186+Y89tyevOVh
-         DBTabqDCpO8/hCiv2I21IM50zn9Nv9PnXqFOXl9UVIa+wRY1GQl62v6DH8EjJhLE+nJI
-         JX31gJsi/0N4ryLafNT5r07EA4HV9+mMg6TkYa2Xe/yJDT39wWC4OL53uM7opjpk/abc
-         2NRCv57Y/MwV9Kio0N5DKwBF7Fv7JW7QC3Y/3j0aev9n8sThCE+MijPidOG9Zieuxm5V
-         fXdCCfWNdIW6fwfdzEEzJvbWTyiLH0jhHl5uDdw+BWcd9/6uTYPdxjc38TD0ux5snm5r
-         VJfA==
-X-Gm-Message-State: ACrzQf2MUeeEN/kTAd7XAvXArchprNndR0kIPobHD34pMy58d7rNIAf3
-        oKducSrL4j1rx9gb4oy8k9MIp9R7KjYCEGydtDdi8TLDPDlo
-X-Google-Smtp-Source: AMsMyM6S0ge9klYW1+rr06imvdvgCk9qcSGviBGmcXqYN/Mn+/N0/xAQwFD8+iMqikJMh1KtyxawkaUHJ3nXSXeAysE=
-X-Received: by 2002:a05:6808:2017:b0:359:ea7a:5983 with SMTP id
- q23-20020a056808201700b00359ea7a5983mr15273139oiw.51.1667476677051; Thu, 03
- Nov 2022 04:57:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221031112536.4177761-1-cuigaosheng1@huawei.com>
- <CALQRfL4Ws255bv_ptCt1qS3cbxjwUsawxAuTyV1pnLwg+70_NQ@mail.gmail.com> <20221101043023.GA7631@mail.hallyn.com>
-In-Reply-To: <20221101043023.GA7631@mail.hallyn.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 3 Nov 2022 07:57:45 -0400
-Message-ID: <CAHC9VhSMFgifrUdMvogne+DC+gx_B9dW5mGsNZ8vstHpUsupOQ@mail.gmail.com>
-Subject: Re: [PATCH] capabilities: fix undefined behavior in bit shift for CAP_TO_MASK
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     "Andrew G. Morgan" <morgan@kernel.org>,
-        Gaosheng Cui <cuigaosheng1@huawei.com>,
-        akpm@linux-foundation.org, ezk@cs.sunysb.edu,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 3 Nov 2022 09:16:13 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF7F1F1F;
+        Thu,  3 Nov 2022 06:16:12 -0700 (PDT)
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A3CJrOF005056;
+        Thu, 3 Nov 2022 13:15:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=5BiWml0W36/epJ9s/hIXB/eu7R889PKV9mublijindg=;
+ b=Wlx8COzM8y+j8wF7ihwpMJacpA8coK0rNWYz1owg6sWotAsrFVciIMMX4ep3Yx9Htx8a
+ wIlslmQXqhJmkIpKyT9RQtjXn+/62kuhatKagdAe4ZIWe4Cuibe7tJsHFIHt4gXPy6gZ
+ Q3wm8EiHy0UIYn5F5sW1dHW+x1dY76xrINCmnYw5uZDzHUReo5d8VbV7llEmAbBExyxn
+ dbvV4n3F6NK90haWDKFIDpdY0BQ05/FvmA2967QIPmxs/Bjb09Wi3B+idB8A1MfKsTAS
+ YYQfbfOKFhLjmOIrzJTrrHOfa9bZwoe27XvADfKtDec8dXrwcPEIae3+P7WlIsNaRtoc HA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kmcabmk1d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Nov 2022 13:15:48 +0000
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A3BQHhf013740;
+        Thu, 3 Nov 2022 13:15:48 GMT
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kmcabmk0j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Nov 2022 13:15:48 +0000
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A3D6IUd009190;
+        Thu, 3 Nov 2022 13:15:47 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma01wdc.us.ibm.com with ESMTP id 3kguta1g4v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Nov 2022 13:15:47 +0000
+Received: from smtpav06.dal12v.mail.ibm.com ([9.208.128.130])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A3DFoII13566474
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 3 Nov 2022 13:15:50 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E0EEB58059;
+        Thu,  3 Nov 2022 13:15:45 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4FE9258043;
+        Thu,  3 Nov 2022 13:15:45 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.20.100])
+        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Thu,  3 Nov 2022 13:15:45 +0000 (GMT)
+Message-ID: <30ac558a35a0551f50dc49a834755beb1ab2d593.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 2/2] ima: Handle -ESTALE returned by
+ ima_filter_rule_match()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     "Guozihua (Scott)" <guozihua@huawei.com>,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Thu, 03 Nov 2022 09:15:45 -0400
+In-Reply-To: <b2949b3d-c370-8a41-fe7c-9f175abd4f71@huawei.com>
+References: <20220921125804.59490-1-guozihua@huawei.com>
+         <20220921125804.59490-3-guozihua@huawei.com>
+         <ce948f9e5639345026679b31a818cc12a247ce60.camel@linux.ibm.com>
+         <77c9c86b-85a6-aa87-e084-59a70bb47167@huawei.com>
+         <f321c638bf5572088a8c5e4d7027c3a797bdd568.camel@linux.ibm.com>
+         <7ac3e330-e77c-95d8-7d3b-29e243b57251@huawei.com>
+         <5e304b17fe709d2b2f30b991d5ffc4711d27a075.camel@linux.ibm.com>
+         <2f032b6c-ecf2-5a41-dc38-e6ab0a2d7885@huawei.com>
+         <90f8940cff5eeef7917e2b11a07e41b32b207ffa.camel@linux.ibm.com>
+         <38d5fd39-ead2-e954-5901-b35ef6ec96b6@huawei.com>
+         <11716411-e143-ab1f-3b1e-d5d35f2a590a@huawei.com>
+         <db821df65b7ff7319c657a1de65f5ba903599fc4.camel@linux.ibm.com>
+         <b2949b3d-c370-8a41-fe7c-9f175abd4f71@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 9fbYlwbjQ-qZXh0tNVJNSEe2T_d9YxcP
+X-Proofpoint-GUID: qBUTZEitKLwm9gMfCWW755ZDnQb9DiMp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-03_04,2022-11-03_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ phishscore=0 impostorscore=0 adultscore=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211030090
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 1, 2022 at 12:30 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> On Mon, Oct 31, 2022 at 07:18:54AM -0700, Andrew G. Morgan wrote:
-> > Acked-by: Andrew G. Morgan <morgan@kernel.org>
-> >
-> >
-> > On Mon, Oct 31, 2022 at 4:25 AM Gaosheng Cui <cuigaosheng1@huawei.com> wrote:
-> > >
-> > > Shifting signed 32-bit value by 31 bits is undefined, so changing
-> > > significant bit to unsigned. The UBSAN warning calltrace like below:
-> > >
-> > > UBSAN: shift-out-of-bounds in security/commoncap.c:1252:2
-> > > left shift of 1 by 31 places cannot be represented in type 'int'
-> > > Call Trace:
-> > >  <TASK>
-> > >  dump_stack_lvl+0x7d/0xa5
-> > >  dump_stack+0x15/0x1b
-> > >  ubsan_epilogue+0xe/0x4e
-> > >  __ubsan_handle_shift_out_of_bounds+0x1e7/0x20c
-> > >  cap_task_prctl+0x561/0x6f0
-> > >  security_task_prctl+0x5a/0xb0
-> > >  __x64_sys_prctl+0x61/0x8f0
-> > >  do_syscall_64+0x58/0x80
-> > >  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> > >  </TASK>
-> > >
-> > > Fixes: e338d263a76a ("Add 64-bit capability support to the kernel")
-> > > Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
->
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
->
-> Paul, do you mind including this in your lsm tree?
+On Wed, 2022-11-02 at 09:42 +0800, Guozihua (Scott) wrote:
+> > As I only see an IMA measurement policy rule being loaded for
+> > "unlabeled_t" and not "user_home_t", should I assume that an IMA
+> > measurement rule already exists for "user_home_t"?
+> 
+> There wasn't a rule for user_home_t. These scripts demonstrate that 
+> during a selinux policy reload, IMA would measure files that is not in 
+> the range of it's LSM based rules. Which is the issue I am trying to fix.
+> 
+> In this test, we only have one rule for measuring files of type 
+> unlabeled_t. However, during selinux policy reload, file of user_home_t 
+> is also measured.
 
-Sure, although just a warning that it might not happen until next
-week.  Maybe I'll get some time this weekend but I can't be certain.
-
-> > > ---
-> > >  include/uapi/linux/capability.h | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
-> > > index 463d1ba2232a..3d61a0ae055d 100644
-> > > --- a/include/uapi/linux/capability.h
-> > > +++ b/include/uapi/linux/capability.h
-> > > @@ -426,7 +426,7 @@ struct vfs_ns_cap_data {
-> > >   */
-> > >
-> > >  #define CAP_TO_INDEX(x)     ((x) >> 5)        /* 1 << 5 == bits in __u32 */
-> > > -#define CAP_TO_MASK(x)      (1 << ((x) & 31)) /* mask for indexed __u32 */
-> > > +#define CAP_TO_MASK(x)      (1U << ((x) & 31)) /* mask for indexed __u32 */
-> > >
-> > >
-> > >  #endif /* _UAPI_LINUX_CAPABILITY_H */
-> > > --
-> > > 2.25.1
+Thanks, Scott.  After tweaking the scripts for my system, I was able to
+reproduce the bug.  This patch set is now queued in next-integrity.
 
 -- 
-paul-moore.com
+thanks, 
+
+Mimi
+
