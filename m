@@ -2,322 +2,253 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 380CEC43219
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Nov 2022 16:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 747A5C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Nov 2022 18:04:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232296AbiKCQKq (ORCPT
+        id S231197AbiKCSEM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Nov 2022 12:10:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37184 "EHLO
+        Thu, 3 Nov 2022 14:04:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231991AbiKCQK2 (ORCPT
+        with ESMTP id S230337AbiKCSD5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Nov 2022 12:10:28 -0400
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fae])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82E801D677;
-        Thu,  3 Nov 2022 09:09:42 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4N37xc16zjzMpnTN;
-        Thu,  3 Nov 2022 17:09:40 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4N37xb0B4pzMpphG;
-        Thu,  3 Nov 2022 17:09:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1667491780;
-        bh=nAGLkQKdFqX2PHeLP/p0EHiQdszCz61dANsujoabcoE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=N7JAAHTsCzpwdAZCamgd480C38UUIhZj3IfHifZ6XxGhVbPNmHSl2t+xd5RM0pd4N
-         nysRkw+4JwMCVFCimEIVztaYcX+x8aVW6VVR32kJzfgONL7ANm79koMM6v/xpbXARF
-         YUybVOVwr/vVCprWG+Psou276VsbNqzCQODLb/cs=
-Message-ID: <1fe5c84d-6f85-9ee8-76d4-d184a47ebff2@digikod.net>
-Date:   Thu, 3 Nov 2022 17:09:38 +0100
+        Thu, 3 Nov 2022 14:03:57 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B91452314B
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Nov 2022 11:01:36 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id v4-20020a17090a088400b00212cb0ed97eso2526565pjc.5
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Nov 2022 11:01:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=we5sGRgeZfmiFwJlXRzMaUU1kYxW1X5nCMITmEl34Rs=;
+        b=Kq6Bj/FL8nuh60ks1BQiKahd6V4pWny3fxV6iEgxy2pFv78eAfevsv4OJyz5VsL+ht
+         rm3NW/7+kbgnxI4es0cLSJvuSAte0IIlpsjaygXTHiwMOMjBXV3o4DpY7nh/rjv5+9zK
+         hLF3Azra8sUrIvaGsQ0ceLKhAQIYeDsvvKFGo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=we5sGRgeZfmiFwJlXRzMaUU1kYxW1X5nCMITmEl34Rs=;
+        b=kgBDXhyzIW3X8vFsfXYM3FBYuZRWzxR1AB+TAv/4fZOxtQ2o9znITxKQktv5wlVVPQ
+         SqUQ3rW4NjlsRk8DETNloNai8aa8QVO/PrH6D/egMmYSxkdpg5TmeLb1msu1WMYMWk1G
+         OCJ39/iKmLfaiLgBCV8SBJhuWEZPDP36WH017O9OfJj0MkxugMEpkOGrCY2r5ZEkZ5zC
+         4nNMjL081nHrv7hzNbYoi1HOrogUM+bZiN5XATUH0wPnHCz93RMCf4QqL8QmkyyODi8k
+         1w21TS5Jiv0rtpiiI7yNhfIywGSvHvZgb6nCUrTCDL96lrBQQ4vXRtc6SHE3Kt0r+9cl
+         MlKA==
+X-Gm-Message-State: ACrzQf1xnKzYz8TYJMkSnPqLkQkJwNAoPZs+ezUP6U6mo62FYZaaJiz6
+        HJ9cW/zeoiuUcqK9RuqqPvkQ3A==
+X-Google-Smtp-Source: AMsMyM6pJ+WHoxy7JrmybugEwNm3RYa+8+Uvc7wfkCiQEh8cdwxjvdHYYa4Krbf8KHv6hakd6k78Fw==
+X-Received: by 2002:a17:90a:4a0f:b0:213:f398:ed20 with SMTP id e15-20020a17090a4a0f00b00213f398ed20mr20866017pjh.110.1667498496170;
+        Thu, 03 Nov 2022 11:01:36 -0700 (PDT)
+Received: from evgreen-glaptop.lan ([98.45.28.95])
+        by smtp.gmail.com with ESMTPSA id t12-20020a1709027fcc00b00177fb862a87sm1000277plb.20.2022.11.03.11.01.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Nov 2022 11:01:35 -0700 (PDT)
+From:   Evan Green <evgreen@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     corbet@lwn.net, linux-pm@vger.kernel.org, rjw@rjwysocki.net,
+        gwendal@chromium.org, apronin@chromium.org,
+        Pavel Machek <pavel@ucw.cz>, Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mgarrett@aurora.tech>,
+        linux-integrity@vger.kernel.org, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, dlunev@google.com,
+        Eric Biggers <ebiggers@kernel.org>,
+        Ben Boeckel <me@benboeckel.net>, jarkko@kernel.org,
+        Evan Green <evgreen@chromium.org>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Len Brown <len.brown@intel.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
+        keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v4 00/11] Encrypted Hibernation
+Date:   Thu,  3 Nov 2022 11:01:08 -0700
+Message-Id: <20221103180120.752659-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.38.1.431.g37b22c650d-goog
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v2] LSM: Better reporting of actual LSMs at boot
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-hardening@vger.kernel.org
-References: <20221102000525.gonna.409-kees@kernel.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20221102000525.gonna.409-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+We are exploring enabling hibernation in some new scenarios. However,
+our security team has a few requirements, listed below:
+1. The hibernate image must be encrypted with protection derived from
+   both the platform (eg TPM) and user authentication data (eg
+   password).
+2. Hibernation must not be a vector by which a malicious userspace can
+   escalate to the kernel.
 
-On 02/11/2022 01:05, Kees Cook wrote:
-> Enhance the details reported by "lsm.debug" in several ways:
-> 
-> - report contents of "security="
-> - report contents of "CONFIG_LSM"
-> - report contents of "lsm="
-> - report any early LSM details
-> - whitespace-align the output of similar phases for easier visual parsing
-> - change "disabled" to more accurate "skipped"
-> - explain what "skipped" and "ignored" mean in a parenthetical
-> 
-> Upgrade the "security= is ignored" warning from pr_info to pr_warn,
-> and include full arguments list to make the cause even more clear.
-> 
-> Replace static "Security Framework initializing" pr_info with specific
-> list of the resulting order of enabled LSMs.
-> 
-> For example, if the kernel is built with:
-> 
-> CONFIG_SECURITY_SELINUX=y
-> CONFIG_SECURITY_APPARMOR=y
-> CONFIG_SECURITY_LOADPIN=y
-> CONFIG_SECURITY_YAMA=y
-> CONFIG_SECURITY_SAFESETID=y
-> CONFIG_SECURITY_LOCKDOWN_LSM=y
-> CONFIG_SECURITY_LANDLOCK=y
-> CONFIG_INTEGRITY=y
-> CONFIG_BPF_LSM=y
-> CONFIG_DEFAULT_SECURITY_APPARMOR=y
-> CONFIG_LSM="landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
-> 
-> Booting without options will show:
-> 
-> LSM: initializing lsm=lockdown,capability,landlock,yama,loadpin,safesetid,integrity,selinux,bpf
-> landlock: Up and running.
-> Yama: becoming mindful.
-> LoadPin: ready to pin (currently not enforcing)
-> SELinux:  Initializing.
-> LSM support for eBPF active
-> 
-> Boot with "lsm.debug" will show:
-> 
-> LSM: legacy security= *unspecified*
-> LSM: CONFIG_LSM=landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf
-> LSM: boot arg lsm= *unspecified*
-> LSM:   early started: lockdown (enabled)
-> LSM:   first ordered: capability (enabled)
-> LSM: builtin ordered: landlock (enabled)
-> LSM: builtin ignored: lockdown (not built into kernel)
-> LSM: builtin ordered: yama (enabled)
-> LSM: builtin ordered: loadpin (enabled)
-> LSM: builtin ordered: safesetid (enabled)
-> LSM: builtin ordered: integrity (enabled)
-> LSM: builtin ordered: selinux (enabled)
-> LSM: builtin ignored: smack (not built into kernel)
-> LSM: builtin ignored: tomoyo (not built into kernel)
-> LSM: builtin ordered: apparmor (enabled)
-> LSM: builtin ordered: bpf (enabled)
-> LSM: exclusive chosen:   selinux
-> LSM: exclusive disabled: apparmor
-> LSM: initializing lsm=lockdown,capability,landlock,yama,loadpin,safesetid,integrity,selinux,bpf
-> LSM: cred blob size       = 32
-> LSM: file blob size       = 16
-> LSM: inode blob size      = 72
-> LSM: ipc blob size        = 8
-> LSM: msg_msg blob size    = 4
-> LSM: superblock blob size = 80
-> LSM: task blob size       = 8
-> LSM: initializing capability
-> LSM: initializing landlock
-> landlock: Up and running.
-> LSM: initializing yama
-> Yama: becoming mindful.
-> LSM: initializing loadpin
-> LoadPin: ready to pin (currently not enforcing)
-> LSM: initializing safesetid
-> LSM: initializing integrity
-> LSM: initializing selinux
-> SELinux:  Initializing.
-> LSM: initializing bpf
-> LSM support for eBPF active
-> 
-> And some examples of how the lsm.debug ordering report changes...
-> 
-> With "lsm.debug security=selinux":
-> 
-> LSM: legacy security=selinux
-> LSM: CONFIG_LSM=landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf
-> LSM: boot arg lsm= *unspecified*
-> LSM:   early started: lockdown (enabled)
-> LSM:   first ordered: capability (enabled)
-> LSM: security=selinux disabled: apparmor (only one legacy major LSM)
-> LSM: builtin ordered: landlock (enabled)
-> LSM: builtin ignored: lockdown (not built into kernel)
-> LSM: builtin ordered: yama (enabled)
-> LSM: builtin ordered: loadpin (enabled)
-> LSM: builtin ordered: safesetid (enabled)
-> LSM: builtin ordered: integrity (enabled)
-> LSM: builtin ordered: selinux (enabled)
-> LSM: builtin ignored: smack (not built into kernel)
-> LSM: builtin ignored: tomoyo (not built into kernel)
-> LSM: builtin ordered: apparmor (disabled)
-> LSM: builtin ordered: bpf (enabled)
-> LSM: exclusive chosen:   selinux
-> LSM: initializing lsm=lockdown,capability,landlock,yama,loadpin,safesetid,integrity,selinux,bpf
-> 
-> With "lsm.debug lsm=integrity,selinux,loadpin,crabability,bpf,loadpin,loadpin":
-> 
-> LSM: legacy security= *unspecified*
-> LSM: CONFIG_LSM=landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf
-> LSM: boot arg lsm=integrity,selinux,loadpin,capability,bpf,loadpin,loadpin
-> LSM:   early started: lockdown (enabled)
-> LSM:   first ordered: capability (enabled)
-> LSM: cmdline ordered: integrity (enabled)
-> LSM: cmdline ordered: selinux (enabled)
-> LSM: cmdline ordered: loadpin (enabled)
-> LSM: cmdline ignored: crabability (not built into kernel)
-> LSM: cmdline ordered: bpf (enabled)
-> LSM: cmdline skipped: apparmor (not in requested order)
-> LSM: cmdline skipped: yama (not in requested order)
-> LSM: cmdline skipped: safesetid (not in requested order)
-> LSM: cmdline skipped: landlock (not in requested order)
-> LSM: exclusive chosen:   selinux
-> LSM: initializing lsm=lockdown,capability,integrity,selinux,loadpin,bpf
-> 
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: linux-security-module@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+Requirement #1 can be achieved solely with uswsusp, however requirement
+2 necessitates mechanisms in the kernel to guarantee integrity of the
+hibernate image. The kernel needs a way to authenticate that it generated
+the hibernate image being loaded, and that the image has not been tampered
+with. Adding support for in-kernel AEAD encryption with a TPM-sealed key
+allows us to achieve both requirements with a single computation pass.
 
-I think this change would be useful to help users debug their LSM 
-configuration. I'm not sure about the whitespace-aligned output though, 
-I guess it could break some scripts, but it is not part of the ABI and 
-only relevant for debug purpose.
+Matthew Garrett published a series [1] that aligns closely with this
+goal. His series utilized the fact that PCR23 is a resettable PCR that
+can be blocked from access by usermode. The TPM can create a sealed key
+tied to PCR23 in two ways. First, the TPM can attest to the value of
+PCR23 when the key was created, which the kernel can use on resume to
+verify that the kernel must have created the key (since it is the only
+one capable of modifying PCR23). It can also create a policy that enforces
+PCR23 be set to a specific value as a condition of unsealing the key,
+preventing usermode from unsealing the key by talking directly to the
+TPM.
 
-Acked-by: Mickaël Salaün <mic@digikod.net>
+This series adopts that primitive as a foundation, tweaking and building
+on it a bit. Where Matthew's series used the TPM-backed key to encrypt a
+hash of the image, this series uses the key directly as a gcm(aes)
+encryption key, which the kernel uses to encrypt and decrypt the
+hibernate image in chunks of 16 pages. This provides both encryption and
+integrity, which turns out to be a noticeable performance improvement over
+separate passes for encryption and hashing.
 
+The series also introduces the concept of mixing user key material into
+the encryption key. This allows usermode to introduce key material
+based on unspecified external authentication data (in our case derived
+from something like the user password or PIN), without requiring
+usermode to do a separate encryption pass.
 
-> ---
-> v2: en/dis-enabled expanded, example output in commit log, use pr_cont.
-> v1: https://lore.kernel.org/lkml/20221018064825.never.323-kees@kernel.org/
-> ---
->   security/security.c | 45 ++++++++++++++++++++++++++++++++++++---------
->   1 file changed, 36 insertions(+), 9 deletions(-)
-> 
-> diff --git a/security/security.c b/security/security.c
-> index 79d82cb6e469..abceabda103d 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -161,8 +161,8 @@ static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
->   		lsm->enabled = &lsm_enabled_true;
->   	ordered_lsms[last_lsm++] = lsm;
->   
-> -	init_debug("%s ordering: %s (%sabled)\n", from, lsm->name,
-> -		   is_enabled(lsm) ? "en" : "dis");
-> +	init_debug("%s ordered: %s (%s)\n", from, lsm->name,
-> +		   is_enabled(lsm) ? "enabled" : "disabled");
->   }
->   
->   /* Is an LSM allowed to be initialized? */
-> @@ -224,7 +224,7 @@ static void __init prepare_lsm(struct lsm_info *lsm)
->   	if (enabled) {
->   		if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && !exclusive) {
->   			exclusive = lsm;
-> -			init_debug("exclusive chosen: %s\n", lsm->name);
-> +			init_debug("exclusive chosen:   %s\n", lsm->name);
->   		}
->   
->   		lsm_set_blob_sizes(lsm->blobs);
-> @@ -252,7 +252,7 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->   	/* LSM_ORDER_FIRST is always first. */
->   	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
->   		if (lsm->order == LSM_ORDER_FIRST)
-> -			append_ordered_lsm(lsm, "first");
-> +			append_ordered_lsm(lsm, "  first");
->   	}
->   
->   	/* Process "security=", if given. */
-> @@ -270,7 +270,7 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->   			if ((major->flags & LSM_FLAG_LEGACY_MAJOR) &&
->   			    strcmp(major->name, chosen_major_lsm) != 0) {
->   				set_enabled(major, false);
-> -				init_debug("security=%s disabled: %s\n",
-> +				init_debug("security=%s disabled: %s (only one legacy major LSM)\n",
->   					   chosen_major_lsm, major->name);
->   			}
->   		}
-> @@ -291,7 +291,8 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->   		}
->   
->   		if (!found)
-> -			init_debug("%s ignored: %s\n", origin, name);
-> +			init_debug("%s ignored: %s (not built into kernel)\n",
-> +				   origin, name);
->   	}
->   
->   	/* Process "security=", if given. */
-> @@ -309,7 +310,8 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->   		if (exists_ordered_lsm(lsm))
->   			continue;
->   		set_enabled(lsm, false);
-> -		init_debug("%s disabled: %s\n", origin, lsm->name);
-> +		init_debug("%s skipped: %s (not in requested order)\n",
-> +			   origin, lsm->name);
->   	}
->   
->   	kfree(sep);
-> @@ -320,6 +322,24 @@ static void __init lsm_early_task(struct task_struct *task);
->   
->   static int lsm_append(const char *new, char **result);
->   
-> +static void __init report_lsm_order(void)
-> +{
-> +	struct lsm_info **lsm, *early;
-> +	int first = 0;
-> +
-> +	pr_info("initializing lsm=");
-> +
-> +	/* Report each enabled LSM name, comma separated. */
-> +	for (early = __start_early_lsm_info; early < __end_early_lsm_info; early++)
-> +		if (is_enabled(early))
-> +			pr_cont("%s%s", first++ == 0 ? "" : ",", early->name);
-> +	for (lsm = ordered_lsms; *lsm; lsm++)
-> +		if (is_enabled(*lsm))
-> +			pr_cont("%s%s", first++ == 0 ? "" : ",", (*lsm)->name);
-> +
-> +	pr_cont("\n");
-> +}
-> +
->   static void __init ordered_lsm_init(void)
->   {
->   	struct lsm_info **lsm;
-> @@ -329,7 +349,8 @@ static void __init ordered_lsm_init(void)
->   
->   	if (chosen_lsm_order) {
->   		if (chosen_major_lsm) {
-> -			pr_info("security= is ignored because it is superseded by lsm=\n");
-> +			pr_warn("security=%s is ignored because it is superseded by lsm=%s\n",
-> +				chosen_major_lsm, chosen_lsm_order);
->   			chosen_major_lsm = NULL;
->   		}
->   		ordered_lsm_parse(chosen_lsm_order, "cmdline");
-> @@ -339,6 +360,8 @@ static void __init ordered_lsm_init(void)
->   	for (lsm = ordered_lsms; *lsm; lsm++)
->   		prepare_lsm(*lsm);
->   
-> +	report_lsm_order();
-> +
->   	init_debug("cred blob size       = %d\n", blob_sizes.lbs_cred);
->   	init_debug("file blob size       = %d\n", blob_sizes.lbs_file);
->   	init_debug("inode blob size      = %d\n", blob_sizes.lbs_inode);
-> @@ -395,13 +418,17 @@ int __init security_init(void)
->   {
->   	struct lsm_info *lsm;
->   
-> -	pr_info("Security Framework initializing\n");
-> +	init_debug("legacy security=%s\n", chosen_major_lsm ?: " *unspecified*");
-> +	init_debug("  CONFIG_LSM=%s\n", builtin_lsm_order);
-> +	init_debug("boot arg lsm=%s\n", chosen_lsm_order ?: " *unspecified*");
->   
->   	/*
->   	 * Append the names of the early LSM modules now that kmalloc() is
->   	 * available
->   	 */
->   	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
-> +		init_debug("  early started: %s (%s)\n", lsm->name,
-> +			   is_enabled(lsm) ? "enabled" : "disabled");
->   		if (lsm->enabled)
->   			lsm_append(lsm->name, &lsm_names);
->   	}
+Matthew also documented issues his series had [2] related to generating
+fake images by booting alternate kernels without the PCR23 limiting.
+With access to PCR23 on the same machine, usermode can create fake
+hibernate images that are indistinguishable to the new kernel from
+genuine ones. His post outlines a solution that involves adding more
+PCRs into the creation data and policy, with some gyrations to make this
+work well on a standard PC.
+
+Our approach would be similar: on our machines PCR 0 indicates whether
+the system is booted in secure/verified mode or developer mode. By
+adding PCR0 to the policy, we can reject hibernate images made in
+developer mode while in verified mode (or vice versa).
+
+Additionally, mixing in the user authentication data limits both
+data exfiltration attacks (eg a stolen laptop) and forged hibernation
+image attacks to attackers that already know the authentication data (eg
+user's password). This, combined with our relatively sealed userspace
+(dm-verity on the rootfs), and some judicious clearing of the hibernate
+image (such as across an OS update) further reduce the risk of an online
+attack. The remaining attack space of a forgery from someone with
+physical access to the device and knowledge of the authentication data
+is out of scope for us, given that flipping to developer mode or
+reflashing RO firmware trivially achieves the same thing.
+
+A couple of patches still need to be written on top of this series. The
+generalized functionality to OR in additional PCRs via Kconfig (like PCR
+0 or 5) still needs to be added. We'll also need a patch that disallows
+unencrypted forms of resume from hibernation, to fully close the door
+to malicious userspace. However, I wanted to get this series out first
+and get reactions from upstream before continuing to add to it.
+
+[1] https://patchwork.kernel.org/project/linux-pm/cover/20210220013255.1083202-1-matthewgarrett@google.com/
+[2] https://mjg59.dreamwidth.org/58077.html
+
+Changes in v4:
+ - Open code tpm2_pcr_reset implementation in tpm-interface.c (Jarkko)
+ - Rename interface symbol to tpm2_pcr_reset, fix kerneldocs (Jarkko)
+ - Augment the commit message (Jarkko)
+ - Local ordering and whitespace changes (Jarkko)
+ - s/tpm_pcr_reset/tpm2_pcr_reset/ due to change in other patch
+ - Variable ordering and whitespace fixes (Jarkko)
+ - Add NULL check explanation in teardown (Jarkko)
+ - Change strlen+1 to sizeof for static buffer (Jarkko)
+ - Fix nr_allocated_banks loop overflow (found via KASAN)
+ - Local variable reordering (Jarkko)
+ - Local variable ordering (Jarkko)
+
+Changes in v3:
+ - Unify tpm1/2_pcr_reset prototypes (Jarkko)
+ - Wait no, remove the TPM1 stuff altogether (Jarkko)
+ - Remove extra From tag and blank in commit msg (Jarkko).
+ - Split find_and_validate_cc() export to its own patch (Jarkko)
+ - Rename tpm_find_and_validate_cc() to tpm2_find_and_validate_cc().
+ - Fix up commit message (Jarkko)
+ - tpm2_find_and_validate_cc() was split (Jarkko)
+ - Simply fully restrict TPM1 since v2 failed to account for tunnelled
+   transport sessions (Stefan and Jarkko).
+ - Fix SoB and -- note ordering (Kees)
+ - Add comments describing the TPM2 spec type names for the new fields
+   in tpm2key.asn1 (Kees)
+ - Add len buffer checks in tpm2_key_encode() (Kees)
+ - Clarified creationpcrs documentation (Ben)
+ - Changed funky tag to suggested-by (Kees). Matthew, holler if you want
+   something different.
+ - ENCRYPTED_HIBERNATION needs TRUSTED_KEYS builtin for
+   key_type_trusted.
+ - Remove KEYS dependency since it's covered by TRUSTED_KEYS (Kees)
+ - Changed funky tag to Co-developed-by (Kees). Matthew, holler if you
+   want something different.
+ - Changed funky tag to Co-developed-by (Kees)
+
+Changes in v2:
+ - Fixed sparse warnings
+ - Adjust hash len by 2 due to new ASN.1 storage, and add underflow
+   check.
+ - Rework load/create_kernel_key() to eliminate a label (Andrey)
+ - Call put_device() needed from calling tpm_default_chip().
+ - Add missing static on snapshot_encrypted_byte_count()
+ - Fold in only the used kernel key bytes to the user key.
+ - Make the user key length 32 (Eric)
+ - Use CRYPTO_LIB_SHA256 for less boilerplate (Eric)
+ - Fixed some sparse warnings
+ - Use CRYPTO_LIB_SHA256 to get rid of sha256_data() (Eric)
+ - Adjusted offsets due to new ASN.1 format, and added a creation data
+   length check.
+ - Fix sparse warnings
+ - Fix session type comment (Andrey)
+ - Eliminate extra label in get/create_kernel_key() (Andrey)
+ - Call tpm_try_get_ops() before calling tpm2_flush_context().
+
+Evan Green (8):
+  tpm: Export and rename tpm2_find_and_validate_cc()
+  security: keys: trusted: Include TPM2 creation data
+  security: keys: trusted: Verify creation data
+  PM: hibernate: Add kernel-based encryption
+  PM: hibernate: Use TPM-backed keys to encrypt image
+  PM: hibernate: Mix user key in encrypted hibernate
+  PM: hibernate: Verify the digest encryption key
+  PM: hibernate: seal the encryption key with a PCR policy
+
+Matthew Garrett (3):
+  tpm: Add support for in-kernel resetting of PCRs
+  tpm: Allow PCR 23 to be restricted to kernel-only use
+  security: keys: trusted: Allow storage of PCR values in creation data
+
+ Documentation/power/userland-swsusp.rst       |    8 +
+ .../security/keys/trusted-encrypted.rst       |    6 +
+ drivers/char/tpm/Kconfig                      |   12 +
+ drivers/char/tpm/tpm-dev-common.c             |    8 +
+ drivers/char/tpm/tpm-interface.c              |   47 +
+ drivers/char/tpm/tpm.h                        |   22 +
+ drivers/char/tpm/tpm1-cmd.c                   |   13 +
+ drivers/char/tpm/tpm2-cmd.c                   |   29 +-
+ drivers/char/tpm/tpm2-space.c                 |    8 +-
+ include/keys/trusted-type.h                   |    9 +
+ include/linux/tpm.h                           |   19 +
+ include/uapi/linux/suspend_ioctls.h           |   28 +-
+ kernel/power/Kconfig                          |   15 +
+ kernel/power/Makefile                         |    1 +
+ kernel/power/power.h                          |    1 +
+ kernel/power/snapenc.c                        | 1043 +++++++++++++++++
+ kernel/power/snapshot.c                       |    5 +
+ kernel/power/user.c                           |   44 +-
+ kernel/power/user.h                           |  116 ++
+ security/keys/trusted-keys/tpm2key.asn1       |   15 +-
+ security/keys/trusted-keys/trusted_tpm1.c     |    9 +
+ security/keys/trusted-keys/trusted_tpm2.c     |  318 ++++-
+ 22 files changed, 1724 insertions(+), 52 deletions(-)
+ create mode 100644 kernel/power/snapenc.c
+ create mode 100644 kernel/power/user.h
+
+-- 
+2.38.1.431.g37b22c650d-goog
+
