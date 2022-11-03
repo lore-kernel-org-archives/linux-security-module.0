@@ -2,222 +2,122 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55317C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Nov 2022 10:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD8FC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Nov 2022 11:58:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230456AbiKCKxO (ORCPT
+        id S229985AbiKCL6B (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Nov 2022 06:53:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57370 "EHLO
+        Thu, 3 Nov 2022 07:58:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230491AbiKCKxM (ORCPT
+        with ESMTP id S231355AbiKCL57 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Nov 2022 06:53:12 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9103210FEE
-        for <linux-security-module@vger.kernel.org>; Thu,  3 Nov 2022 03:52:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667472730;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kIYRkx7Y9W9jKAKjm+1jgkpGJFLvVwfrjVD1dASHnIM=;
-        b=E4EWZz70wbLCSkEcNhgP2x2zmehYqAALcC4yJvPcSLPzcgKGcezNq1U4GtueXH+ZHAy3oU
-        ZphdQWt1BQTyvyPELd4jklGjf4Pukq+tmP8iLEs9gG6zFnNavyjmFPf8HfjhgqdDO8Wk7p
-        FxXrewoq6CvEVYYTq13pIe1tFLLqgbg=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-639-7t3JYriVMM26f6rGN5XB8Q-1; Thu, 03 Nov 2022 06:52:09 -0400
-X-MC-Unique: 7t3JYriVMM26f6rGN5XB8Q-1
-Received: by mail-pj1-f71.google.com with SMTP id lx3-20020a17090b4b0300b002137705324eso3508306pjb.1
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Nov 2022 03:52:09 -0700 (PDT)
+        Thu, 3 Nov 2022 07:57:59 -0400
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCAC5120AB
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Nov 2022 04:57:57 -0700 (PDT)
+Received: by mail-oi1-x230.google.com with SMTP id t62so1638832oib.12
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Nov 2022 04:57:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zU7xV7W3lDGvmt7dPVBsWa/kR5kJOrP60v2hWR4Xi8Q=;
+        b=1xNHxLqu/czmwQlGjhWq6I2fNJ9ctA3DFOvFZXmrwwEt0ajBrfgZ26Sg/2omNp27Pn
+         GvLlGMygkfAyTtju6gmtqfbaY/V/KGCOCmFd4IrGXnmOn0LjaImFZvaGMvPtYUdx+evC
+         I/8YhzZTS4ldIuILQACxN/tXy4O2+tnz2S4MkiRYD2UloKLMG+h93Gih6m4+Dwny9UMx
+         QvbXiCx0sAqoRtU5eownIf1+CCWngjpAtUihYwBMIfDsapAiOrpkwoEIXyQdU9/MS5ok
+         hB0jkYCL/487vDSKzmAgxL/6hXf77+hZMzYb6AGOML9TvozqienVcIzbfziWhgvfhtKR
+         SiyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kIYRkx7Y9W9jKAKjm+1jgkpGJFLvVwfrjVD1dASHnIM=;
-        b=RsrefZzzO0tEVVcos0soZ2oJxP0IJ5o02uzHChypsK0oaOHS8ytvn9ffjCUAboczua
-         dMtS4aIc351eV95XCK6Qe+7Zxcz8iRK+CMu1YgFTrIXTaENbqBkxkzx/w3eEN8xjFP0h
-         rf53XS+RMCMurk5XTVHOjcKGCy/V3/vMqgKkSJaqGzeQqAE47g6G+RmdXCmPGEQqZHKK
-         h3CtbNj+w0oKvkgiBMt5+B8kc9EIVR+tN/X9qibWqA6I8IovSeuGDepFl+DAIp6tsEAb
-         ZYa5FGj78aSPBjSS88Rn3ngp9t2gre2QtYZWG3bIw0Cnu2pOMI6URpjUCD80Yn2OBwg5
-         qsOg==
-X-Gm-Message-State: ACrzQf24gERLjazYy5fuVh0kqTBr1pTJRRL2kjRCztyTtWasLLNB13+D
-        vczG/a2WS0wV9xuIQMLdWOMu2ouCKDxEVUyMp1CLffL4iVU3ZaEJ08EPUF2059D3ku9Z6HmXc1e
-        ZE7sQJgW3pgOUPz1VM4mA4eKi6zfeY4pHUvYv9OFYZ9QcofYGKGb2
-X-Received: by 2002:a17:902:ab45:b0:186:7b95:f767 with SMTP id ij5-20020a170902ab4500b001867b95f767mr30293342plb.107.1667472728481;
-        Thu, 03 Nov 2022 03:52:08 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM7s7znX4hyAsgjTBM4wVFx4O9ZyTZG5tNktnMvuG2E5V91rnNMU833toUePw5i7OC9qbOH0dlZoLSD+/0g/U08=
-X-Received: by 2002:a17:902:ab45:b0:186:7b95:f767 with SMTP id
- ij5-20020a170902ab4500b001867b95f767mr30293310plb.107.1667472728194; Thu, 03
- Nov 2022 03:52:08 -0700 (PDT)
+        bh=zU7xV7W3lDGvmt7dPVBsWa/kR5kJOrP60v2hWR4Xi8Q=;
+        b=UaDtmOUJOQ0Y8drD6MVKy9iohaH5MlvMzBXcvu/x5SJ3h3qnv6Tz186+Y89tyevOVh
+         DBTabqDCpO8/hCiv2I21IM50zn9Nv9PnXqFOXl9UVIa+wRY1GQl62v6DH8EjJhLE+nJI
+         JX31gJsi/0N4ryLafNT5r07EA4HV9+mMg6TkYa2Xe/yJDT39wWC4OL53uM7opjpk/abc
+         2NRCv57Y/MwV9Kio0N5DKwBF7Fv7JW7QC3Y/3j0aev9n8sThCE+MijPidOG9Zieuxm5V
+         fXdCCfWNdIW6fwfdzEEzJvbWTyiLH0jhHl5uDdw+BWcd9/6uTYPdxjc38TD0ux5snm5r
+         VJfA==
+X-Gm-Message-State: ACrzQf2MUeeEN/kTAd7XAvXArchprNndR0kIPobHD34pMy58d7rNIAf3
+        oKducSrL4j1rx9gb4oy8k9MIp9R7KjYCEGydtDdi8TLDPDlo
+X-Google-Smtp-Source: AMsMyM6S0ge9klYW1+rr06imvdvgCk9qcSGviBGmcXqYN/Mn+/N0/xAQwFD8+iMqikJMh1KtyxawkaUHJ3nXSXeAysE=
+X-Received: by 2002:a05:6808:2017:b0:359:ea7a:5983 with SMTP id
+ q23-20020a056808201700b00359ea7a5983mr15273139oiw.51.1667476677051; Thu, 03
+ Nov 2022 04:57:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220901152632.970018-1-omosnace@redhat.com> <20220905090811.ocnnc53y2bow7m3i@wittgenstein>
- <CAFqZXNu_jf0D8LQLc15+ZrFne5F5F5PFNbkT-EkfqXvNdSKKsQ@mail.gmail.com>
- <20220905153036.zzcovknz7ntgcn5f@wittgenstein> <20221102182451.aoos5udhf6rbb6us@wittgenstein>
- <CAFqZXNuG0gjRjSMpaMJQqmmwtqr5Yx1r6Eg0YpJ4DQ6u9CWqRA@mail.gmail.com> <20221103091227.mm2nzjj35dzv4dex@wittgenstein>
-In-Reply-To: <20221103091227.mm2nzjj35dzv4dex@wittgenstein>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Thu, 3 Nov 2022 11:51:56 +0100
-Message-ID: <CAFqZXNuC7c0Ukx_okYZ7rsKycQY5P1zpMPmmq_T5Qyzbg-x7yQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fs: fix capable() call in simple_xattr_list()
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Vasily Averin <vvs@openvz.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>, rcu@vger.kernel.org,
-        Martin Pitt <mpitt@redhat.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+References: <20221031112536.4177761-1-cuigaosheng1@huawei.com>
+ <CALQRfL4Ws255bv_ptCt1qS3cbxjwUsawxAuTyV1pnLwg+70_NQ@mail.gmail.com> <20221101043023.GA7631@mail.hallyn.com>
+In-Reply-To: <20221101043023.GA7631@mail.hallyn.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 3 Nov 2022 07:57:45 -0400
+Message-ID: <CAHC9VhSMFgifrUdMvogne+DC+gx_B9dW5mGsNZ8vstHpUsupOQ@mail.gmail.com>
+Subject: Re: [PATCH] capabilities: fix undefined behavior in bit shift for CAP_TO_MASK
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     "Andrew G. Morgan" <morgan@kernel.org>,
+        Gaosheng Cui <cuigaosheng1@huawei.com>,
+        akpm@linux-foundation.org, ezk@cs.sunysb.edu,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 3, 2022 at 10:12 AM Christian Brauner <brauner@kernel.org> wrote:
-> On Thu, Nov 03, 2022 at 10:04:25AM +0100, Ondrej Mosnacek wrote:
-> > On Wed, Nov 2, 2022 at 7:25 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > On Mon, Sep 05, 2022 at 05:30:36PM +0200, Christian Brauner wrote:
-> > > > On Mon, Sep 05, 2022 at 12:15:01PM +0200, Ondrej Mosnacek wrote:
-> > > > > On Mon, Sep 5, 2022 at 11:08 AM Christian Brauner <brauner@kernel.org> wrote:
-> > > > > > On Thu, Sep 01, 2022 at 05:26:30PM +0200, Ondrej Mosnacek wrote:
-> > > > > > > The goal of these patches is to avoid calling capable() unconditionally
-> > > > > > > in simple_xattr_list(), which causes issues under SELinux (see
-> > > > > > > explanation in the second patch).
-> > > > > > >
-> > > > > > > The first patch tries to make this change safer by converting
-> > > > > > > simple_xattrs to use the RCU mechanism, so that capable() is not called
-> > > > > > > while the xattrs->lock is held. I didn't find evidence that this is an
-> > > > > > > issue in the current code, but it can't hurt to make that change
-> > > > > > > either way (and it was quite straightforward).
-> > > > > >
-> > > > > > Hey Ondrey,
-> > > > > >
-> > > > > > There's another patchset I'd like to see first which switches from a
-> > > > > > linked list to an rbtree to get rid of performance issues in this code
-> > > > > > that can be used to dos tmpfs in containers:
-> > > > > >
-> > > > > > https://lore.kernel.org/lkml/d73bd478-e373-f759-2acb-2777f6bba06f@openvz.org
-> > > > > >
-> > > > > > I don't think Vasily has time to continue with this so I'll just pick it
-> > > > > > up hopefully this or the week after LPC.
-> > > > >
-> > > > > Hm... does rbtree support lockless traversal? Because if not, that
-> > > >
-> > > > The rfc that Vasily sent didn't allow for that at least.
-> > > >
-> > > > > would make it impossible to fix the issue without calling capable()
-> > > > > inside the critical section (or doing something complicated), AFAICT.
-> > > > > Would rhashtable be a workable alternative to rbtree for this use
-> > > > > case? Skimming <linux/rhashtable.h> it seems to support both lockless
-> > > > > lookup and traversal using RCU. And according to its manpage,
-> > > > > *listxattr(2) doesn't guarantee that the returned names are sorted.
-> > > >
-> > > > I've never used the rhashtable infrastructure in any meaningful way. All
-> > > > I can say from looking at current users that it looks like it could work
-> > > > well for us here:
-> > > >
-> > > > struct simple_xattr {
-> > > >       struct rhlist_head rhlist_head;
-> > > >       char *name;
-> > > >       size_t size;
-> > > >       char value[];
-> > > > };
-> > > >
-> > > > static const struct rhashtable_params simple_xattr_rhashtable = {
-> > > >       .head_offset = offsetof(struct simple_xattr, rhlist_head),
-> > > >       .key_offset = offsetof(struct simple_xattr, name),
-> > > >
-> > > > or sm like this.
+On Tue, Nov 1, 2022 at 12:30 AM Serge E. Hallyn <serge@hallyn.com> wrote:
+> On Mon, Oct 31, 2022 at 07:18:54AM -0700, Andrew G. Morgan wrote:
+> > Acked-by: Andrew G. Morgan <morgan@kernel.org>
+> >
+> >
+> > On Mon, Oct 31, 2022 at 4:25 AM Gaosheng Cui <cuigaosheng1@huawei.com> wrote:
 > > >
-> > > I have a patch in rough shape that converts struct simple_xattr to use
-> > > an rhashtable:
+> > > Shifting signed 32-bit value by 31 bits is undefined, so changing
+> > > significant bit to unsigned. The UBSAN warning calltrace like below:
 > > >
-> > > https://gitlab.com/brauner/linux/-/commits/fs.xattr.simple.rework/
+> > > UBSAN: shift-out-of-bounds in security/commoncap.c:1252:2
+> > > left shift of 1 by 31 places cannot be represented in type 'int'
+> > > Call Trace:
+> > >  <TASK>
+> > >  dump_stack_lvl+0x7d/0xa5
+> > >  dump_stack+0x15/0x1b
+> > >  ubsan_epilogue+0xe/0x4e
+> > >  __ubsan_handle_shift_out_of_bounds+0x1e7/0x20c
+> > >  cap_task_prctl+0x561/0x6f0
+> > >  security_task_prctl+0x5a/0xb0
+> > >  __x64_sys_prctl+0x61/0x8f0
+> > >  do_syscall_64+0x58/0x80
+> > >  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> > >  </TASK>
 > > >
-> > > Light testing, not a lot useful comments and no meaningful commit
-> > > message as of yet but I'll get to that.
-> >
-> > Looks mostly good at first glance. I left comments for some minor
-> > stuff I noticed.
-> >
-> > > Even though your issue is orthogonal to the performance issues I'm
-> > > trying to fix I went back to your patch, Ondrej to apply it on top.
-> > > But I think it has one problem.
-> > >
-> > > Afaict, by moving the capable() call from the top of the function into
-> > > the actual traversal portion an unprivileged user can potentially learn
-> > > whether a file has trusted.* xattrs set. At least if dmesg isn't
-> > > restricted on the kernel. That may very well be the reason why the
-> > > capable() call is on top.
-> >
-> > Technically it would be possible, for example with SELinux if the
-> > audit daemon is dead. Not a likely situation, but I agree it's better
-> > to be safe.
-> >
-> > > (Because the straightforward fix for this would be to just call
-> > > capable() a single time if at least one trusted xattr is encountered and
-> > > store the result. That's pretty easy to do by making turning the trusted
-> > > variable into an int, setting it to -1, and only if it's -1 and a
-> > > trusted xattr has been found call capable() and store the result.)
-> >
-> > That would also run into the conundrum of holding a lock while
-> > (potentially) calling into the LSM subsystem. And would it even fix
-> > the information leak? Unless I'm missing something it would only
-> > prevent a leak of the trusted xattr count, but not the presence of any
-> > trusted xattr.
+> > > Fixes: e338d263a76a ("Add 64-bit capability support to the kernel")
+> > > Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
 >
-> No it wouldn't. I just meant this to illustrate that with your patch we
-> could've made it so that capable() would've only been called once.
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
 >
-> >
-> > > One option to fix all of that is to switch simple_xattr_list() to use
-> > >
-> > >         ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN)
-> > >
-> > > which doesn't generate an audit event.
-> > >
-> > > I think this is even the correct thing to do as listing xattrs isn't a
-> > > targeted operation. IOW, if the the user had used getxattr() to request
-> > > a trusted.* xattr then logging a denial makes sense as the user
-> > > explicitly wanted to retrieve a trusted.* xattr. But if the user just
-> > > requested to list all xattrs then silently skipping trusted without
-> > > logging an explicit denial xattrs makes sense.
-> > >
-> > > Does that sound acceptable?
-> >
-> > Yes, I can't see any reason why that wouldn't be the best solution.
-> > Why haven't I thought of that? :)
-> >
-> > I guess you will want to submit a patch for it along with your
-> > rhashtable patch to avoid a conflict? Or would you like me to submit
-> > it separately?
->
-> I think you can send a patch for this separately as we don't need to
-> massage the data structure for this.
+> Paul, do you mind including this in your lsm tree?
 
-Ok, will do.
+Sure, although just a warning that it might not happen until next
+week.  Maybe I'll get some time this weekend but I can't be certain.
 
-> I think we can reasonably give this a
->
-> Fixes: 38f38657444d ("xattr: extract simple_xattr code from tmpfs") # no backport
->
-> But note the "# no backport" as imho it isn't worth backporting this to
-> older kernels unless that's really desirable.
-
-Actually, it would be valuable to have it backported to linux-stable
-at least, since we have users encountering this on Fedora:
-https://bugzilla.redhat.com/show_bug.cgi?id=2122888
-
-In the end it's up to the backporter to assess each commit, but at
-least I wouldn't want to outright discourage the backport in the
-commit message.
+> > > ---
+> > >  include/uapi/linux/capability.h | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+> > > index 463d1ba2232a..3d61a0ae055d 100644
+> > > --- a/include/uapi/linux/capability.h
+> > > +++ b/include/uapi/linux/capability.h
+> > > @@ -426,7 +426,7 @@ struct vfs_ns_cap_data {
+> > >   */
+> > >
+> > >  #define CAP_TO_INDEX(x)     ((x) >> 5)        /* 1 << 5 == bits in __u32 */
+> > > -#define CAP_TO_MASK(x)      (1 << ((x) & 31)) /* mask for indexed __u32 */
+> > > +#define CAP_TO_MASK(x)      (1U << ((x) & 31)) /* mask for indexed __u32 */
+> > >
+> > >
+> > >  #endif /* _UAPI_LINUX_CAPABILITY_H */
+> > > --
+> > > 2.25.1
 
 -- 
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+paul-moore.com
