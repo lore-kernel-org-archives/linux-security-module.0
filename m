@@ -2,100 +2,295 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B8DC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Nov 2022 14:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9639C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Nov 2022 15:11:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230377AbiKCOVl (ORCPT
+        id S232039AbiKCPLZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Nov 2022 10:21:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43084 "EHLO
+        Thu, 3 Nov 2022 11:11:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231310AbiKCOVi (ORCPT
+        with ESMTP id S232029AbiKCPLF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Nov 2022 10:21:38 -0400
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ae])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6A252AEF
-        for <linux-security-module@vger.kernel.org>; Thu,  3 Nov 2022 07:21:36 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4N35Xt2xcVzMq6JJ;
-        Thu,  3 Nov 2022 15:21:34 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4N35Xt0WdJzxX;
-        Thu,  3 Nov 2022 15:21:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1667485294;
-        bh=v5u5mCyz0QZSIJuFUsjZ3UkchgaRwxVwFQY5u4vnDXs=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=xyGlCAkvypEwwAKHJxA/guDczI0YrCtQENqQbNbz7ZneBOCEMvAIuNVBcc17fFd+e
-         tQ+SBAzxaoB4XJ9bf5iuxHOhkRxIMKFk1puxcBW/srqjdIeNT43C27NHD9536WIIxF
-         mPDuuZpjqA+C+//8Ph7l2pjkEAubVloSR7HTqsL0=
-Message-ID: <cbe72a75-b077-e5d2-52a8-db20432e15bc@digikod.net>
-Date:   Thu, 3 Nov 2022 15:21:32 +0100
+        Thu, 3 Nov 2022 11:11:05 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEB0A1A05C
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Nov 2022 08:10:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7090DB828E1
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Nov 2022 15:10:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1834EC433B5
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Nov 2022 15:10:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667488209;
+        bh=ewhJrs7iVBajHat39GJj2Bvn4oi2wS3pS9klk+VGHKE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ibheqgN2PUis0iS8hX6RUXLX/rNbv0XjT2xC6Q81GciP19l5o9Vd/P/clcbaehxR/
+         giiUUq7jTs6jBMm9GHm9SMRdmQa9FxZ08fWHU96XRZghbA12zKQOabqn+R13r2Ksn6
+         6V0NxcUTwBd5BonyVgDze9NyOYnSEdSPRnlO+vLG/EcXRxdbfVhjxA8KUcv8dAC0tk
+         8Ze4HZbaGbfzIW96Hhcw1lVt3W3K6MVU331OaiZ+jY6czteof5YuQ7Qp/CgJQcKwS4
+         Hw8o3ewJjD13SxwoAeaS+vZhgdsKVeOK7Qm3Tq/j2kr77ZPvX6KReelFq25XnXRvS7
+         Kv2SInX3eox+Q==
+Received: by mail-lf1-f46.google.com with SMTP id o12so3319887lfq.9
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Nov 2022 08:10:08 -0700 (PDT)
+X-Gm-Message-State: ACrzQf2MHDj1LTcNExUNP0f+LOyuUYvAxwFpAZwu4U3Y6pmOpzoMc8qY
+        8CrbgtjFHxV8TbxSUatkCWX3vKTswlDCx8Zy9Ggbqw==
+X-Google-Smtp-Source: AMsMyM4Cg6hX3EpnVpClZ01WmQnXuKDsfT4wK4DfY7RDGiifjvu9l3DsMTn43RgsCL9r9814r/hJWGZIoSbvDrkuMOc=
+X-Received: by 2002:a05:6512:10c2:b0:4a2:ed6:4f4e with SMTP id
+ k2-20020a05651210c200b004a20ed64f4emr12527874lfg.136.1667488207006; Thu, 03
+ Nov 2022 08:10:07 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH] samples/landlock: Document best-effort approach for
- LANDLOCK_ACCESS_FS_REFER
-Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        linux-security-module@vger.kernel.org
-References: <20221030061107.2351-1-gnoack3000@gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20221030061107.2351-1-gnoack3000@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20221028165423.386151-1-roberto.sassu@huaweicloud.com> <20221028165423.386151-2-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20221028165423.386151-2-roberto.sassu@huaweicloud.com>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Thu, 3 Nov 2022 16:09:56 +0100
+X-Gmail-Original-Message-ID: <CACYkzJ5gFu5a-NoKFD6XFNYMDyP+iPon=kHMimJybmNexbhAPg@mail.gmail.com>
+Message-ID: <CACYkzJ5gFu5a-NoKFD6XFNYMDyP+iPon=kHMimJybmNexbhAPg@mail.gmail.com>
+Subject: Re: [RESEND][RFC][PATCH 2/3] bpf-lsm: Limit values that can be
+ returned by security modules
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, sdf@google.com, haoluo@google.com,
+        jolsa@kernel.org, mykolal@fb.com, revest@chromium.org,
+        jackmanb@chromium.org, shuah@kernel.org, paul@paul-moore.com,
+        casey@schaufler-ca.com, zohar@linux.ibm.com, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nicolas.bouchinet@clip-os.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thanks Günther. Here are small changes:
+On Fri, Oct 28, 2022 at 6:55 PM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> BPF LSM defines a bpf_lsm_*() function for each LSM hook, so that
+> security modules can define their own implementation for the desired hooks.
+>
+> Unfortunately, BPF LSM does not restrict which values security modules can
+> return (for non-void LSM hooks). Security modules might follow the
+> conventions stated in include/linux/lsm_hooks.h, or put arbitrary values.
+>
+> This could cause big troubles, as the kernel is not ready to handle
+> possibly malicious return values from LSMs. Until now, it was not the
 
-On 30/10/2022 07:11, Günther Noack wrote:
-> Add a comment to clarify how to handle best-effort backwards
-> compatibility for LANDLOCK_ACCESS_FS_REFER.
-> 
-> The "refer" access is special because these operations are always
-> forbidden in ABI 1, unlike most other operations, which are permitted
-> when using Landlock ABI levels where they are not supported yet.
-> 
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+I am not sure I would call this malicious. This would be incorrect, if
+someone is writing a BPF LSM program they already have the powers
+to willingly do a lot of malicious stuff.
+
+It's about unknowingly returning values that can break the system.
+
+> case, as each LSM is carefully reviewed and it won't be accepted if it
+> does not meet the return value conventions.
+>
+> The biggest problem is when an LSM returns a positive value, instead of a
+> negative value, as it could be converted to a pointer. Since such pointer
+> escapes the IS_ERR() check, its use later in the code can cause
+> unpredictable consequences (e.g. invalid memory access).
+>
+> Another problem is returning zero when an LSM is supposed to have done some
+> operations. For example, the inode_init_security hook expects that their
+> implementations return zero only if they set the name and value of the new
+> xattr to be added to the new inode. Otherwise, other kernel subsystems
+> might encounter unexpected conditions leading to a crash (e.g.
+> evm_protected_xattr_common() getting NULL as argument).
+>
+> Finally, there are LSM hooks which are supposed to return just one as
+> positive value, or non-negative values. Also in these cases, although it
+> seems less critical, it is safer to return to callers of the LSM
+> infrastructure more precisely what they expect.
+>
+> As eBPF allows code outside the kernel to run, it is its responsibility
+> to ensure that only expected values are returned to LSM infrastructure
+> callers.
+>
+> Create four new BTF ID sets, respectively for hooks that can return
+> positive values, only one as positive value, that cannot return zero, and
+> that cannot return negative values. Create also corresponding functions to
+> check if the hook a security module is attached to belongs to one of the
+> defined sets.
+>
+> Finally, check in the eBPF verifier the value returned by security modules
+> for each attached LSM hook, and return -EINVAL (the security module cannot
+> run) if the hook implementation does not satisfy the hook return value
+> policy.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 9d3fdea789c8 ("bpf: lsm: Provide attachment points for BPF LSM programs")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > ---
->   samples/landlock/sandboxer.c | 16 +++++++++++++++-
->   1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index fd4237c64fb2..901acb383124 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -234,7 +234,21 @@ int main(const int argc, char *const argv[], char *const *const envp)
->   	/* Best-effort security. */
->   	switch (abi) {
->   	case 1:
-> -		/* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
-> +		/*
-> +		 * Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2
-> +		 *
-> +		 * Note: The "refer" operations (file renaming and linking
-> +		 * across different directories) are always forbidden when using
-> +		 * Landlock with ABI 1.
-> +		 *
-> +		 * If only ABI 1 is available, the sample tool knowingly forbids
+>  include/linux/bpf_lsm.h | 24 ++++++++++++++++++
+>  kernel/bpf/bpf_lsm.c    | 56 +++++++++++++++++++++++++++++++++++++++++
+>  kernel/bpf/verifier.c   | 35 +++++++++++++++++++++++---
+>  3 files changed, 112 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+> index 4bcf76a9bb06..cd38aca4cfc0 100644
+> --- a/include/linux/bpf_lsm.h
+> +++ b/include/linux/bpf_lsm.h
+> @@ -28,6 +28,10 @@ int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+>                         const struct bpf_prog *prog);
+>
+>  bool bpf_lsm_is_sleepable_hook(u32 btf_id);
+> +bool bpf_lsm_can_ret_pos_value(u32 btf_id);
+> +bool bpf_lsm_can_ret_only_one_as_pos_value(u32 btf_id);
+> +bool bpf_lsm_cannot_ret_zero(u32 btf_id);
+> +bool bpf_lsm_cannot_ret_neg_value(u32 btf_id);
+>
 
-s/the sample tool/this sandboxer/
+This does not need to be exported to the rest of the kernel. Please
+have this logic in bpf_lsm.c and export a single verify function.
 
-> +		 * refer operations.
-> +		 *
-> +		 * If a program *needs* to do refer operations after enabling
-> +		 * Landlock, it can not use Landlock at ABI level 1.  To be
-> +		 * compatible across different kernels, such programs should
-> +		 * fall back to not using Landlock instead.
+Also, these really don't need to be such scattered logic, Could we
+somehow encode this into the LSM_HOOK definition?
 
-To be compatible with different kernel versions, such programs should 
-then fall back to not restrict themselves at all if the running kernel 
-only supports ABI 1.
-
-
-> +		 */
->   		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
->   		__attribute__((fallthrough));
->   	case 2:
-> 
-> base-commit: 4bc90a766ea5af69c12ca1ea00b7fc5fe1d68831
+>  static inline struct bpf_storage_blob *bpf_inode(
+>         const struct inode *inode)
+> @@ -51,6 +55,26 @@ static inline bool bpf_lsm_is_sleepable_hook(u32 btf_id)
+>         return false;
+>  }
+>
+> +static inline bool bpf_lsm_can_ret_pos_value(u32 btf_id)
+> +{
+> +       return false;
+> +}
+> +
+> +static inline bool bpf_lsm_can_ret_only_one_as_pos_value(u32 btf_id)
+> +{
+> +       return false;
+> +}
+> +
+> +static inline bool bpf_lsm_cannot_ret_zero(u32 btf_id)
+> +{
+> +       return false;
+> +}
+> +
+> +static inline bool bpf_lsm_cannot_ret_neg_value(u32 btf_id)
+> +{
+> +       return false;
+> +}
+> +
+>  static inline int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+>                                       const struct bpf_prog *prog)
+>  {
+> diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> index d6c9b3705f24..3dcb70b2f978 100644
+> --- a/kernel/bpf/bpf_lsm.c
+> +++ b/kernel/bpf/bpf_lsm.c
+> @@ -348,6 +348,62 @@ bool bpf_lsm_is_sleepable_hook(u32 btf_id)
+>         return btf_id_set_contains(&sleepable_lsm_hooks, btf_id);
+>  }
+>
+> +/* The set of hooks which are allowed to return a positive value. */
+> +BTF_SET_START(pos_ret_value_lsm_hooks)
+> +BTF_ID(func, bpf_lsm_vm_enough_memory)
+> +BTF_ID(func, bpf_lsm_inode_getsecurity)
+> +BTF_ID(func, bpf_lsm_inode_listsecurity)
+> +BTF_ID(func, bpf_lsm_inode_need_killpriv)
+> +BTF_ID(func, bpf_lsm_inode_copy_up_xattr)
+> +BTF_ID(func, bpf_lsm_getprocattr)
+> +BTF_ID(func, bpf_lsm_setprocattr)
+> +BTF_ID(func, bpf_lsm_xfrm_state_pol_flow_match)
+> +BTF_ID(func, bpf_lsm_key_getsecurity)
+> +BTF_ID(func, bpf_lsm_ismaclabel)
+> +BTF_ID(func, bpf_lsm_audit_rule_known)
+> +BTF_ID(func, bpf_lsm_audit_rule_match)
+> +BTF_SET_END(pos_ret_value_lsm_hooks)
+> +
+> +bool bpf_lsm_can_ret_pos_value(u32 btf_id)
+> +{
+> +       return btf_id_set_contains(&pos_ret_value_lsm_hooks, btf_id);
+> +}
+> +
+> +BTF_SET_START(one_ret_value_lsm_hooks)
+> +BTF_ID(func, bpf_lsm_vm_enough_memory)
+> +BTF_ID(func, bpf_lsm_inode_copy_up_xattr)
+> +BTF_ID(func, bpf_lsm_xfrm_state_pol_flow_match)
+> +BTF_ID(func, bpf_lsm_ismaclabel)
+> +BTF_ID(func, bpf_lsm_audit_rule_known)
+> +BTF_ID(func, bpf_lsm_audit_rule_match)
+> +BTF_SET_END(one_ret_value_lsm_hooks)
+> +
+> +bool bpf_lsm_can_ret_only_one_as_pos_value(u32 btf_id)
+> +{
+> +       return btf_id_set_contains(&one_ret_value_lsm_hooks, btf_id);
+> +}
+> +
+> +/* The set of hooks which are not allowed to return zero. */
+> +BTF_SET_START(not_zero_ret_value_lsm_hooks)
+> +BTF_ID(func, bpf_lsm_inode_init_security)
+> +BTF_SET_END(not_zero_ret_value_lsm_hooks)
+> +
+> +bool bpf_lsm_cannot_ret_zero(u32 btf_id)
+> +{
+> +       return btf_id_set_contains(&not_zero_ret_value_lsm_hooks, btf_id);
+> +}
+> +
+> +/* The set of hooks which are not allowed to return a negative value. */
+> +BTF_SET_START(not_neg_ret_value_lsm_hooks)
+> +BTF_ID(func, bpf_lsm_vm_enough_memory)
+> +BTF_ID(func, bpf_lsm_audit_rule_known)
+> +BTF_SET_END(not_neg_ret_value_lsm_hooks)
+> +
+> +bool bpf_lsm_cannot_ret_neg_value(u32 btf_id)
+> +{
+> +       return btf_id_set_contains(&not_neg_ret_value_lsm_hooks, btf_id);
+> +}
+> +
+>  const struct bpf_prog_ops lsm_prog_ops = {
+>  };
+>
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 7f0a9f6cb889..099c1bf88fed 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -10623,9 +10623,38 @@ static int check_return_code(struct bpf_verifier_env *env)
+>
+>         case BPF_PROG_TYPE_LSM:
+>                 if (env->prog->expected_attach_type != BPF_LSM_CGROUP) {
+> -                       /* Regular BPF_PROG_TYPE_LSM programs can return
+> -                        * any value.
+> -                        */
+> +                       /* < 0 */
+> +                       if (tnum_in(tnum_range((u64)(~0) << 31, (u64)(~0)), reg->var_off)) {
+> +                               if (bpf_lsm_cannot_ret_neg_value(env->prog->aux->attach_btf_id)) {
+> +                                       verbose(env, "Invalid R0, cannot return negative value\n");
+> +                                       return -EINVAL;
+> +                               }
+> +                       /* = 0 */
+> +                       } else if (tnum_equals_const(reg->var_off, 0)) {
+> +                               if (bpf_lsm_cannot_ret_zero(env->prog->aux->attach_btf_id)) {
+> +                                       verbose(env, "Invalid R0, cannot return zero value\n");
+> +                                       return -EINVAL;
+> +                               }
+> +                       /* = 1 */
+> +                       } else if (tnum_equals_const(reg->var_off, 1)) {
+> +                               if (!bpf_lsm_can_ret_pos_value(env->prog->aux->attach_btf_id)) {
+> +                                       verbose(env, "Invalid R0, cannot return positive value\n");
+> +                                       return -EINVAL;
+> +                               }
+> +                       /* > 1 */
+> +                       } else {
+> +                               if (!bpf_lsm_can_ret_pos_value(env->prog->aux->attach_btf_id)) {
+> +                                       verbose(env, "Invalid R0, cannot return positive value\n");
+> +                                       return -EINVAL;
+> +                               }
+> +
+> +                               if (bpf_lsm_can_ret_only_one_as_pos_value(env->prog->aux->attach_btf_id)) {
+> +                                       verbose(env,
+> +                                               "Invalid R0, can return only one as positive value\n");
+> +                                       return -EINVAL;
+> +                               }
+> +                       }
+> +
+>                         return 0;
+>                 }
+>                 if (!env->prog->aux->attach_func_proto->type) {
+> --
+> 2.25.1
+>
