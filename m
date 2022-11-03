@@ -2,119 +2,138 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2491C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Nov 2022 22:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6C0C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Nov 2022 01:59:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230254AbiKBWFZ (ORCPT
+        id S230366AbiKCB7n (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Nov 2022 18:05:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51514 "EHLO
+        Wed, 2 Nov 2022 21:59:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229681AbiKBWFZ (ORCPT
+        with ESMTP id S230193AbiKCB7m (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Nov 2022 18:05:25 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DB94617B;
-        Wed,  2 Nov 2022 15:05:24 -0700 (PDT)
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A2Lcs8L030144;
-        Wed, 2 Nov 2022 22:05:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=7dbezdsWrjkeeMK5twTGOFsoXL1sQg9vzSRIDM1zxyY=;
- b=Bqf5ObwD15lBCgLE6ZdCXPnYGEKFxHtfFJ6e0kWJi0hulVwLosbCrj7lk+AwWDraU/Aq
- QhNsCWo1EYpwJ36tm8delRQdJze8CkC6rUy5tgjMEAMYSOETdKgqPrxk5OPgRGUX6vr7
- Dq7JVP4CfE3f/JQ+D/XMrZ7+jboUH1XkYs5Th55w0MAOvKvKRQSsrApUrU2yneXxGweP
- l2Pe2Fs1TYI5eujOfO2bcxu6eFPF45OvDnpOkEiQB0TJE3ytINRf501MubMAONAJV6u+
- Bbr9xwjpOAbcdm3pOgNm5TNze7Zn5qqkHIy4658wMkzvAWWYFWHRDtkGxP6WsMT4mzHC Xg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3km0dk8s58-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Nov 2022 22:04:59 +0000
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A2M4mJY032545;
-        Wed, 2 Nov 2022 22:04:59 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3km0dk8s4k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Nov 2022 22:04:59 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A2Los9W018270;
-        Wed, 2 Nov 2022 22:04:58 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma02dal.us.ibm.com with ESMTP id 3kgutampy0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Nov 2022 22:04:58 +0000
-Received: from smtpav04.dal12v.mail.ibm.com ([9.208.128.131])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A2M4wnv524918
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 2 Nov 2022 22:04:59 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1F6E25806D;
-        Wed,  2 Nov 2022 22:04:57 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 49CAD58056;
-        Wed,  2 Nov 2022 22:04:56 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.53.174])
-        by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Wed,  2 Nov 2022 22:04:56 +0000 (GMT)
-Message-ID: <ef7375db277ac6a9398ee31a27e95eed717c4832.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Fix memory leak in __ima_inode_hash()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, isaac.jmatt@gmail.com,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org
-Date:   Wed, 02 Nov 2022 18:04:55 -0400
-In-Reply-To: <20221102163006.1039343-1-roberto.sassu@huaweicloud.com>
-References: <20221102163006.1039343-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: GNyIH1ZTOMz_JqqTwmGGKkMDxZn7WlVK
-X-Proofpoint-GUID: FKRu6htgPJkjapMQl1NhLG56MGNwlI9N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-02_15,2022-11-02_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- adultscore=0 mlxscore=0 mlxlogscore=867 bulkscore=0 impostorscore=0
- lowpriorityscore=0 clxscore=1015 malwarescore=0 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211020146
+        Wed, 2 Nov 2022 21:59:42 -0400
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6795D5F69;
+        Wed,  2 Nov 2022 18:59:40 -0700 (PDT)
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id A30B8AB3; Wed,  2 Nov 2022 20:59:38 -0500 (CDT)
+Date:   Wed, 2 Nov 2022 20:59:38 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        Vasily Averin <vvs@openvz.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>, rcu@vger.kernel.org,
+        Martin Pitt <mpitt@redhat.com>
+Subject: Re: [PATCH 0/2] fs: fix capable() call in simple_xattr_list()
+Message-ID: <20221103015938.GA27053@mail.hallyn.com>
+References: <20220901152632.970018-1-omosnace@redhat.com>
+ <20220905090811.ocnnc53y2bow7m3i@wittgenstein>
+ <CAFqZXNu_jf0D8LQLc15+ZrFne5F5F5PFNbkT-EkfqXvNdSKKsQ@mail.gmail.com>
+ <20220905153036.zzcovknz7ntgcn5f@wittgenstein>
+ <20221102182451.aoos5udhf6rbb6us@wittgenstein>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221102182451.aoos5udhf6rbb6us@wittgenstein>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
-
-On Wed, 2022-11-02 at 17:30 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-
-Any chance you could fix your mailer?
-
+On Wed, Nov 02, 2022 at 07:24:51PM +0100, Christian Brauner wrote:
+> On Mon, Sep 05, 2022 at 05:30:36PM +0200, Christian Brauner wrote:
+> > On Mon, Sep 05, 2022 at 12:15:01PM +0200, Ondrej Mosnacek wrote:
+> > > On Mon, Sep 5, 2022 at 11:08 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > > On Thu, Sep 01, 2022 at 05:26:30PM +0200, Ondrej Mosnacek wrote:
+> > > > > The goal of these patches is to avoid calling capable() unconditionally
+> > > > > in simple_xattr_list(), which causes issues under SELinux (see
+> > > > > explanation in the second patch).
+> > > > >
+> > > > > The first patch tries to make this change safer by converting
+> > > > > simple_xattrs to use the RCU mechanism, so that capable() is not called
+> > > > > while the xattrs->lock is held. I didn't find evidence that this is an
+> > > > > issue in the current code, but it can't hurt to make that change
+> > > > > either way (and it was quite straightforward).
+> > > >
+> > > > Hey Ondrey,
+> > > >
+> > > > There's another patchset I'd like to see first which switches from a
+> > > > linked list to an rbtree to get rid of performance issues in this code
+> > > > that can be used to dos tmpfs in containers:
+> > > >
+> > > > https://lore.kernel.org/lkml/d73bd478-e373-f759-2acb-2777f6bba06f@openvz.org
+> > > >
+> > > > I don't think Vasily has time to continue with this so I'll just pick it
+> > > > up hopefully this or the week after LPC.
+> > > 
+> > > Hm... does rbtree support lockless traversal? Because if not, that
+> > 
+> > The rfc that Vasily sent didn't allow for that at least.
+> > 
+> > > would make it impossible to fix the issue without calling capable()
+> > > inside the critical section (or doing something complicated), AFAICT.
+> > > Would rhashtable be a workable alternative to rbtree for this use
+> > > case? Skimming <linux/rhashtable.h> it seems to support both lockless
+> > > lookup and traversal using RCU. And according to its manpage,
+> > > *listxattr(2) doesn't guarantee that the returned names are sorted.
+> > 
+> > I've never used the rhashtable infrastructure in any meaningful way. All
+> > I can say from looking at current users that it looks like it could work
+> > well for us here:
+> > 
+> > struct simple_xattr {
+> > 	struct rhlist_head rhlist_head;
+> > 	char *name;
+> > 	size_t size;
+> > 	char value[];
+> > };
+> > 
+> > static const struct rhashtable_params simple_xattr_rhashtable = {
+> > 	.head_offset = offsetof(struct simple_xattr, rhlist_head),
+> > 	.key_offset = offsetof(struct simple_xattr, name),
+> > 
+> > or sm like this.
 > 
-> Commit f3cc6b25dcc5 ("ima: always measure and audit files in policy") lets
-> measurement or audit happen even if the file digest cannot be calculated.
+> I have a patch in rough shape that converts struct simple_xattr to use
+> an rhashtable:
 > 
-> As a result, iint->ima_hash could have been allocated despite
-> ima_collect_measurement() returning an error.
+> https://gitlab.com/brauner/linux/-/commits/fs.xattr.simple.rework/
 > 
-> Since ima_hash belongs to a temporary inode metadata structure, declared
-> at the beginning of __ima_inode_hash(), just add a kfree() call if
-> ima_collect_measurement() returns an error different from -ENOMEM (in that
-> case, ima_hash should not have been allocated).
+> Light testing, not a lot useful comments and no meaningful commit
+> message as of yet but I'll get to that.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 280fe8367b0d ("ima: Always return a file measurement in ima_file_hash()")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Even though your issue is orthogonal to the performance issues I'm
+> trying to fix I went back to your patch, Ondrej to apply it on top.
+> But I think it has one problem.
+> 
+> Afaict, by moving the capable() call from the top of the function into
+> the actual traversal portion an unprivileged user can potentially learn
+> whether a file has trusted.* xattrs set. At least if dmesg isn't
+> restricted on the kernel. That may very well be the reason why the
+> capable() call is on top.
+> (Because the straightforward fix for this would be to just call
+> capable() a single time if at least one trusted xattr is encountered and
+> store the result. That's pretty easy to do by making turning the trusted
+> variable into an int, setting it to -1, and only if it's -1 and a
+> trusted xattr has been found call capable() and store the result.)
+> 
+> One option to fix all of that is to switch simple_xattr_list() to use
+> 
+>         ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN)
+> 
+> which doesn't generate an audit event.
+> 
+> I think this is even the correct thing to do as listing xattrs isn't a
+> targeted operation. IOW, if the the user had used getxattr() to request
+> a trusted.* xattr then logging a denial makes sense as the user
+> explicitly wanted to retrieve a trusted.* xattr. But if the user just
+> requested to list all xattrs then silently skipping trusted without
+> logging an explicit denial xattrs makes sense.
+> 
+> Does that sound acceptable?
 
-Thanks,
-
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-
+Agreed, auditing that seems like unwanted noise.
