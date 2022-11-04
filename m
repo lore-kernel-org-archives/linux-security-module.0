@@ -2,214 +2,136 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD84FC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Nov 2022 18:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB4CC43217
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Nov 2022 12:20:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231539AbiKCSEz (ORCPT
+        id S231827AbiKDMU4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Nov 2022 14:04:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37104 "EHLO
+        Fri, 4 Nov 2022 08:20:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230011AbiKCSEI (ORCPT
+        with ESMTP id S231831AbiKDMUy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Nov 2022 14:04:08 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A5CB23BD8
-        for <linux-security-module@vger.kernel.org>; Thu,  3 Nov 2022 11:01:49 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id b21so2655552plc.9
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Nov 2022 11:01:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gmRSuvtVdtePdWlhI+qYfa3jkKLy3lL4+DZtMxIoK0I=;
-        b=oCaws+kyFllbssoMBrcVaWuoHdvEerAiSWJdhgX2/4syWfjhj1QKDY3vH01nEt1vCn
-         6+epL9ht0qOEZlWyuffULkcOVrYNaQtUOQrp36inBYo1C6HudOiAwjNrVKMTzQk3Tt92
-         d2ijSkQ/5cW7KlfiSiDR6E4oiBjCKBzhXuCcE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gmRSuvtVdtePdWlhI+qYfa3jkKLy3lL4+DZtMxIoK0I=;
-        b=x0ESwOwKWhsZKgM/QZnEyM27NKaHOSac11Ou0X1XVZYNY6gRzvRx34WRVHGLRoCjQk
-         zh/3+pxmCPboXkHrQzowUTp6M08gwuqHFKb4cZfCRSQL1V353l6JXC/Y+jyBdtKci6Vc
-         GIQbbDqlNcfgYi85NGgFJcadEEwwTwzyRmzqZBfUN1KsiCK9tyXRjCQOKvnS077heByR
-         drZnMO4uo+Q0pCE0Hvy/nP21ce2eaHd3bjC/zw7MKeheFwfkPUUJEdLOhJ8S6+e0DivV
-         cGeI6lsRqYJ/Xm7EiFOiJZdmZGg2iCRBUz+9mIWRl2ufJRwCFtFGnF2cIjyMjheBSPIQ
-         3NTQ==
-X-Gm-Message-State: ACrzQf1/UcGgMEjGdA9A73WrBKe/OINeDOcjXN2Nu+QdhclYMWg/5v4M
-        QFLXBuqCvhSTijbQFupPhxevdg==
-X-Google-Smtp-Source: AMsMyM5Pk1O0MR+psJrfWUlI0d5V4npjm5wYkPwm+68nIz1aVymvhFA0VHcpQUBKzObFd3rMSFoLEw==
-X-Received: by 2002:a17:90b:278b:b0:213:c2f2:6ca1 with SMTP id pw11-20020a17090b278b00b00213c2f26ca1mr27478944pjb.103.1667498509274;
-        Thu, 03 Nov 2022 11:01:49 -0700 (PDT)
-Received: from evgreen-glaptop.lan ([98.45.28.95])
-        by smtp.gmail.com with ESMTPSA id t12-20020a1709027fcc00b00177fb862a87sm1000277plb.20.2022.11.03.11.01.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 11:01:48 -0700 (PDT)
-From:   Evan Green <evgreen@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     corbet@lwn.net, linux-pm@vger.kernel.org, rjw@rjwysocki.net,
-        gwendal@chromium.org, apronin@chromium.org,
-        Pavel Machek <pavel@ucw.cz>, Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mgarrett@aurora.tech>,
-        linux-integrity@vger.kernel.org, jejb@linux.ibm.com,
-        zohar@linux.ibm.com, dlunev@google.com,
-        Eric Biggers <ebiggers@kernel.org>,
-        Ben Boeckel <me@benboeckel.net>, jarkko@kernel.org,
-        Evan Green <evgreen@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v4 06/11] security: keys: trusted: Verify creation data
-Date:   Thu,  3 Nov 2022 11:01:14 -0700
-Message-Id: <20221103105558.v4.6.I6cdb522cb5ea28fcd1e35b4cd92cbd067f99269a@changeid>
-X-Mailer: git-send-email 2.38.1.431.g37b22c650d-goog
-In-Reply-To: <20221103180120.752659-1-evgreen@chromium.org>
-References: <20221103180120.752659-1-evgreen@chromium.org>
+        Fri, 4 Nov 2022 08:20:54 -0400
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 334892D760;
+        Fri,  4 Nov 2022 05:20:52 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4N3fgZ3HXJzB0DDL;
+        Fri,  4 Nov 2022 20:14:18 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwA3I3CQA2Vjh6Q5AA--.49461S2;
+        Fri, 04 Nov 2022 13:20:38 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] ima: Make a copy of sig and digest in asymmetric_verify()
+Date:   Fri,  4 Nov 2022 13:20:23 +0100
+Message-Id: <20221104122023.1750333-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: LxC2BwA3I3CQA2Vjh6Q5AA--.49461S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFy7KF4fKFWkuF4xKFWDXFb_yoW5Jw15pa
+        1kKas8KF4UKr4xCFW3Ca1xW3yrWFWrKr47WayfAwn3uFn8Xw4qywn2y3W7Xr98WryxtFW3
+        trnFqF17Cr1DC3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+        w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+        6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+        kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAF
+        wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+        7IU8imRUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAGBF1jj4URMQAAsX
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-If a loaded key contains creation data, ask the TPM to verify that
-creation data. This allows users like encrypted hibernate to know that
-the loaded and parsed creation data has not been tampered with.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Suggested-by: Matthew Garrett <mjg59@google.com>
-Signed-off-by: Evan Green <evgreen@chromium.org>
+Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
+mapping") requires that both the signature and the digest resides in the
+linear mapping area.
 
+However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
+stack support"), made it possible to move the stack in the vmalloc area,
+which could make the requirement of the first commit not satisfied anymore.
+
+If CONFIG_SG=y and CONFIG_VMAP_STACK=y, the following BUG() is triggered:
+
+[  467.077359] kernel BUG at include/linux/scatterlist.h:163!
+[  467.077939] invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+
+[...]
+
+[  467.095225] Call Trace:
+[  467.096088]  <TASK>
+[  467.096928]  ? rcu_read_lock_held_common+0xe/0x50
+[  467.097569]  ? rcu_read_lock_sched_held+0x13/0x70
+[  467.098123]  ? trace_hardirqs_on+0x2c/0xd0
+[  467.098647]  ? public_key_verify_signature+0x470/0x470
+[  467.099237]  asymmetric_verify+0x14c/0x300
+[  467.099869]  evm_verify_hmac+0x245/0x360
+[  467.100391]  evm_inode_setattr+0x43/0x190
+
+The failure happens only for the digest, as the pointer comes from the
+stack, and not for the signature, which instead was allocated by
+vfs_getxattr_alloc().
+
+Fix this by making a copy of both in asymmetric_verify(), so that the
+linear mapping requirement is always satisfied, regardless of the caller.
+
+Cc: stable@vger.kernel.org # 4.9.x
+Fixes: ba14a194a434 ("fork: Add generic vmalloced stack support")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
-Source material for this change is at:
-https://patchwork.kernel.org/project/linux-pm/patch/20210220013255.1083202-9-matthewgarrett@google.com/
+ security/integrity/digsig_asymmetric.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-(no changes since v3)
-
-Changes in v3:
- - Changed funky tag to suggested-by (Kees). Matthew, holler if you want
-   something different.
-
-Changes in v2:
- - Adjust hash len by 2 due to new ASN.1 storage, and add underflow
-   check.
-
- include/linux/tpm.h                       |  1 +
- security/keys/trusted-keys/trusted_tpm2.c | 77 ++++++++++++++++++++++-
- 2 files changed, 77 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 70134e6551745f..9c2ee3e30ffa5d 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -224,6 +224,7 @@ enum tpm2_command_codes {
- 	TPM2_CC_SELF_TEST	        = 0x0143,
- 	TPM2_CC_STARTUP		        = 0x0144,
- 	TPM2_CC_SHUTDOWN	        = 0x0145,
-+	TPM2_CC_CERTIFYCREATION	        = 0x014A,
- 	TPM2_CC_NV_READ                 = 0x014E,
- 	TPM2_CC_CREATE		        = 0x0153,
- 	TPM2_CC_LOAD		        = 0x0157,
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index a7ad83bc0e5396..c76a1b5a2e8471 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -703,6 +703,74 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 	return rc;
- }
+diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+index 895f4b9ce8c6..635238d5c7fe 100644
+--- a/security/integrity/digsig_asymmetric.c
++++ b/security/integrity/digsig_asymmetric.c
+@@ -122,11 +122,26 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+ 		goto out;
+ 	}
  
-+/**
-+ * tpm2_certify_creation() - execute a TPM2_CertifyCreation command
-+ *
-+ * @chip: TPM chip to use
-+ * @payload: the key data in clear and encrypted form
-+ * @blob_handle: the loaded TPM handle of the key
-+ *
-+ * Return: 0 on success
-+ *         -EINVAL on tpm error status
-+ *         < 0 error from tpm_send or tpm_buf_init
-+ */
-+static int tpm2_certify_creation(struct tpm_chip *chip,
-+				 struct trusted_key_payload *payload,
-+				 u32 blob_handle)
-+{
-+	struct tpm_header *head;
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CERTIFYCREATION);
-+	if (rc)
-+		return rc;
-+
-+	/* Use TPM_RH_NULL for signHandle */
-+	tpm_buf_append_u32(&buf, 0x40000007);
-+
-+	/* Object handle */
-+	tpm_buf_append_u32(&buf, blob_handle);
-+
-+	/* Auth */
-+	tpm_buf_append_u32(&buf, 9);
-+	tpm_buf_append_u32(&buf, TPM2_RS_PW);
-+	tpm_buf_append_u16(&buf, 0);
-+	tpm_buf_append_u8(&buf, 0);
-+	tpm_buf_append_u16(&buf, 0);
-+
-+	/* Qualifying data */
-+	tpm_buf_append_u16(&buf, 0);
-+
-+	/* Creation data hash */
-+	if (payload->creation_hash_len < 2) {
-+		rc = -EINVAL;
+-	pks.digest = (u8 *)data;
++	pks.digest = kmemdup(data, datalen, GFP_KERNEL);
++	if (!pks.digest) {
++		ret = -ENOMEM;
 +		goto out;
 +	}
 +
-+	tpm_buf_append_u16(&buf, payload->creation_hash_len - 2);
-+	tpm_buf_append(&buf, payload->creation_hash + 2,
-+		       payload->creation_hash_len - 2);
+ 	pks.digest_size = datalen;
+-	pks.s = hdr->sig;
 +
-+	/* signature scheme */
-+	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
-+
-+	/* creation ticket */
-+	tpm_buf_append(&buf, payload->tk, payload->tk_len);
-+
-+	rc = tpm_transmit_cmd(chip, &buf, 6, "certifying creation data");
-+	if (rc)
++	pks.s = kmemdup(hdr->sig, siglen, GFP_KERNEL);
++	if (!pks.s) {
++		kfree(pks.digest);
++		ret = -ENOMEM;
 +		goto out;
++	}
 +
-+	head = (struct tpm_header *)buf.data;
+ 	pks.s_size = siglen;
 +
-+	if (be32_to_cpu(head->return_code) != TPM2_RC_SUCCESS)
-+		rc = -EINVAL;
-+out:
-+	tpm_buf_destroy(&buf);
-+	return rc;
-+}
-+
- /**
-  * tpm2_unseal_trusted() - unseal the payload of a trusted key
-  *
-@@ -728,8 +796,15 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
- 		goto out;
- 
- 	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
--	tpm2_flush_context(chip, blob_handle);
-+	if (rc)
-+		goto flush;
-+
-+	if (payload->creation_len)
-+		rc = tpm2_certify_creation(chip, payload, blob_handle);
- 
-+
-+flush:
-+	tpm2_flush_context(chip, blob_handle);
+ 	ret = verify_signature(key, &pks);
++	kfree(pks.digest);
++	kfree(pks.s);
  out:
- 	tpm_put_ops(chip);
- 
+ 	key_put(key);
+ 	pr_debug("%s() = %d\n", __func__, ret);
 -- 
-2.38.1.431.g37b22c650d-goog
+2.25.1
 
