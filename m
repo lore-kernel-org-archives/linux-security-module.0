@@ -2,136 +2,87 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB4CC43217
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Nov 2022 12:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5542C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Nov 2022 13:22:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231827AbiKDMU4 (ORCPT
+        id S231983AbiKDNWC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Nov 2022 08:20:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47084 "EHLO
+        Fri, 4 Nov 2022 09:22:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231831AbiKDMUy (ORCPT
+        with ESMTP id S231975AbiKDNWB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Nov 2022 08:20:54 -0400
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 334892D760;
-        Fri,  4 Nov 2022 05:20:52 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4N3fgZ3HXJzB0DDL;
-        Fri,  4 Nov 2022 20:14:18 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwA3I3CQA2Vjh6Q5AA--.49461S2;
-        Fri, 04 Nov 2022 13:20:38 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] ima: Make a copy of sig and digest in asymmetric_verify()
-Date:   Fri,  4 Nov 2022 13:20:23 +0100
-Message-Id: <20221104122023.1750333-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 4 Nov 2022 09:22:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 706032D1CE
+        for <linux-security-module@vger.kernel.org>; Fri,  4 Nov 2022 06:21:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667568060;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to; bh=4z+uaTyHS1euo8ITS5ujuXPAETlqQ178964oXSUna1g=;
+        b=jUlEdvbzYxc6ueCohRe6/d6XwBHK/ISFTtcB0A5QBFib8LzyWYSHvFfGz1KFR1+C8QLety
+        iARyMnL9qQIv7/YQWQaai3ZmQVA0TyLrAxI1teOOLmISz1qgGvx3spsb99s/QBJS+xAg4s
+        W1rCo5qjzVOVKmWuthOW/xIidT+WS7o=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-157-K57gnwKwMGmIWrPuMUCxHQ-1; Fri, 04 Nov 2022 09:20:57 -0400
+X-MC-Unique: K57gnwKwMGmIWrPuMUCxHQ-1
+Received: by mail-pl1-f199.google.com with SMTP id p5-20020a170902e74500b001884ba979f8so3588501plf.17
+        for <linux-security-module@vger.kernel.org>; Fri, 04 Nov 2022 06:20:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4z+uaTyHS1euo8ITS5ujuXPAETlqQ178964oXSUna1g=;
+        b=UlBBrBUWY8cewA1nYRZYZkl7MunVGMTkFFG4mxp1KABb0Jt/VyaaCkiENN3BhswbOs
+         p4JnYyhp7lvJp8yrW/hznPmGrwITfNc8hRWvy6awQ3HLJ8n1P9r9BDJWOf/cjNOsvmUn
+         iNTDBqZQ4Vxusd6kqoW1UjlQPyuUAuiXO05MELVsW8OYaPZVT/P6qXFQio2LjQouORJH
+         B4mEv3AMAguoCshUVJ60k5pGdGqyHrBLuOTcD0ng5jdvQqKhA5fu7XYJ6s1u44+kmYvo
+         cwLTEvA3dpITSYiSMPXi4NA0bl2Z8OunIwEQyXs4sifrcXrwdPzMTXPLK24MrltC21nM
+         xIKQ==
+X-Gm-Message-State: ACrzQf2VgnPfoq8brcuATB4107FgCDNy777wo4veJITCriZFLjhU+xJq
+        oTFPXKFNzpWXtVUUGImLJ+8zVxzsj6LyJztKcbltuGMj/n3nUs2+2CsSfIVT2ZstBzyhoykUB4j
+        ylZ4/0fb7p4he8LfKd/L1SXsWozuydpCbHDEX
+X-Received: by 2002:a17:902:e8d4:b0:177:e4c7:e8b7 with SMTP id v20-20020a170902e8d400b00177e4c7e8b7mr329602plg.118.1667568056599;
+        Fri, 04 Nov 2022 06:20:56 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM6XbTeqtZliMwzZ7MGO3ejsjE4fdEnYbMsIkDBmckaWvRU+DhCnC80HUipTcPjnE/pSnZOacw==
+X-Received: by 2002:a17:902:e8d4:b0:177:e4c7:e8b7 with SMTP id v20-20020a170902e8d400b00177e4c7e8b7mr329594plg.118.1667568056353;
+        Fri, 04 Nov 2022 06:20:56 -0700 (PDT)
+Received: from localhost ([240e:479:210:84fd:b8ac:1631:3300:5ef])
+        by smtp.gmail.com with ESMTPSA id iw17-20020a170903045100b001780e4e6b65sm2597596plb.114.2022.11.04.06.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Nov 2022 06:20:55 -0700 (PDT)
+Date:   Fri, 4 Nov 2022 21:20:35 +0800
+From:   Coiby Xu <coxu@redhat.com>
+To:     eric.snowberg@oracle.com
+Cc:     davem@davemloft.net, dhowells@redhat.com,
+        dmitry.kasatkin@gmail.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, jarkko@kernel.org, jmorris@namei.org,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nramas@linux.microsoft.com,
+        pvorel@suse.cz, roberto.sassu@huawei.com, serge@hallyn.com,
+        tiwai@suse.de, zohar@linux.ibm.com
+Subject: Re: [PATCH 0/7] Add CA enforcement keyring restrictions
+Message-ID: <20221104132035.rmavewmeo6ceyjou@Rk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwA3I3CQA2Vjh6Q5AA--.49461S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFy7KF4fKFWkuF4xKFWDXFb_yoW5Jw15pa
-        1kKas8KF4UKr4xCFW3Ca1xW3yrWFWrKr47WayfAwn3uFn8Xw4qywn2y3W7Xr98WryxtFW3
-        trnFqF17Cr1DC3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-        w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-        6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-        kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAF
-        wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-        7IU8imRUUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAGBF1jj4URMQAAsX
-X-CFilter-Loop: Reflected
+In-Reply-To: <20220406015337.4000739-1-eric.snowberg@oracle.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+Hi Eric,
 
-Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
-mapping") requires that both the signature and the digest resides in the
-linear mapping area.
+I wonder if there is any update on this work? I would be glad to do
+anything that may be helpful including testing a new version of code.
 
-However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
-stack support"), made it possible to move the stack in the vmalloc area,
-which could make the requirement of the first commit not satisfied anymore.
-
-If CONFIG_SG=y and CONFIG_VMAP_STACK=y, the following BUG() is triggered:
-
-[  467.077359] kernel BUG at include/linux/scatterlist.h:163!
-[  467.077939] invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-
-[...]
-
-[  467.095225] Call Trace:
-[  467.096088]  <TASK>
-[  467.096928]  ? rcu_read_lock_held_common+0xe/0x50
-[  467.097569]  ? rcu_read_lock_sched_held+0x13/0x70
-[  467.098123]  ? trace_hardirqs_on+0x2c/0xd0
-[  467.098647]  ? public_key_verify_signature+0x470/0x470
-[  467.099237]  asymmetric_verify+0x14c/0x300
-[  467.099869]  evm_verify_hmac+0x245/0x360
-[  467.100391]  evm_inode_setattr+0x43/0x190
-
-The failure happens only for the digest, as the pointer comes from the
-stack, and not for the signature, which instead was allocated by
-vfs_getxattr_alloc().
-
-Fix this by making a copy of both in asymmetric_verify(), so that the
-linear mapping requirement is always satisfied, regardless of the caller.
-
-Cc: stable@vger.kernel.org # 4.9.x
-Fixes: ba14a194a434 ("fork: Add generic vmalloced stack support")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/digsig_asymmetric.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
-
-diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
-index 895f4b9ce8c6..635238d5c7fe 100644
---- a/security/integrity/digsig_asymmetric.c
-+++ b/security/integrity/digsig_asymmetric.c
-@@ -122,11 +122,26 @@ int asymmetric_verify(struct key *keyring, const char *sig,
- 		goto out;
- 	}
- 
--	pks.digest = (u8 *)data;
-+	pks.digest = kmemdup(data, datalen, GFP_KERNEL);
-+	if (!pks.digest) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
- 	pks.digest_size = datalen;
--	pks.s = hdr->sig;
-+
-+	pks.s = kmemdup(hdr->sig, siglen, GFP_KERNEL);
-+	if (!pks.s) {
-+		kfree(pks.digest);
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
- 	pks.s_size = siglen;
-+
- 	ret = verify_signature(key, &pks);
-+	kfree(pks.digest);
-+	kfree(pks.s);
- out:
- 	key_put(key);
- 	pr_debug("%s() = %d\n", __func__, ret);
 -- 
-2.25.1
+Best regards,
+Coiby
 
