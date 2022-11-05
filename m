@@ -2,72 +2,86 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5E4C433FE
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 23:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FD0C4332F
+	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 23:51:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229472AbiKEXqW (ORCPT
+        id S229479AbiKEXvO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 5 Nov 2022 19:46:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37450 "EHLO
+        Sat, 5 Nov 2022 19:51:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbiKEXqV (ORCPT
+        with ESMTP id S229477AbiKEXvN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 5 Nov 2022 19:46:21 -0400
+        Sat, 5 Nov 2022 19:51:13 -0400
 Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B797212776
-        for <linux-security-module@vger.kernel.org>; Sat,  5 Nov 2022 16:46:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A80BB12775
+        for <linux-security-module@vger.kernel.org>; Sat,  5 Nov 2022 16:51:12 -0700 (PDT)
 Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id EB99B839; Sat,  5 Nov 2022 18:46:14 -0500 (CDT)
-Date:   Sat, 5 Nov 2022 18:46:14 -0500
+        id 63B57839; Sat,  5 Nov 2022 18:51:11 -0500 (CDT)
+Date:   Sat, 5 Nov 2022 18:51:11 -0500
 From:   "Serge E. Hallyn" <serge@hallyn.com>
 To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+Cc:     linux-security-module@vger.kernel.org,
         Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
         Paul Moore <paul@paul-moore.com>,
         John Johansen <john.johansen@canonical.com>,
         Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH 04/10] CaitSith: Add header file.
-Message-ID: <20221105234614.GA23523@mail.hallyn.com>
+Subject: Re: [PATCH 03/10] fs,kernel: Export
+ d_absolute_path()/find_task_by_pid_ns()/find_task_by_vpid()
+Message-ID: <20221105235111.GA23747@mail.hallyn.com>
 References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp>
- <20221102171025.126961-4-penguin-kernel@I-love.SAKURA.ne.jp>
- <ef5fa206-4e7f-3c23-07d4-8591c4315d20@schaufler-ca.com>
- <20221105024345.GA15957@mail.hallyn.com>
- <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp>
+ <20221102171025.126961-3-penguin-kernel@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp>
+In-Reply-To: <20221102171025.126961-3-penguin-kernel@I-love.SAKURA.ne.jp>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Nov 05, 2022 at 01:05:44PM +0900, Tetsuo Handa wrote:
-> On 2022/11/05 11:43, Serge E. Hallyn wrote:
-> > On Wed, Nov 02, 2022 at 10:57:48AM -0700, Casey Schaufler wrote:
-> >> On 11/2/2022 10:10 AM, Tetsuo Handa wrote:
-> >>> The main point of this submission is to demonstrate how an LSM module
-> >>> which can be loaded using /sbin/insmod can work, and to provide
-> >>> consideration points for making changes for LSM stacking in a way that
-> >>> will not lock out LSM modules which can be loaded using /sbin/insmod .
-> >>
-> >> CaitSith could readily be done as an in-tree LSM. The implementation
-> >> of loadable module infrastructure is unnecessary.
-> > 
-> > Sorry, I'm getting confused.  But in-tree and loadable are not related,
-> > right?
+On Thu, Nov 03, 2022 at 02:10:18AM +0900, Tetsuo Handa wrote:
+> CaitSith module which can be loaded using /sbin/insmod needs to be able to
+> access these functions. TOMOYO module will also access these functions when
+> CONFIG_SECURITY_TOMOYO=m becomes possible.
 > 
-> Very much related. My goal is to get CaitSith in-tree as a loadable LSM module
-> which can be loaded using /sbin/insmod .
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> ---
+>  fs/d_path.c  | 1 +
+>  kernel/pid.c | 2 ++
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/fs/d_path.c b/fs/d_path.c
+> index 56a6ee4c6331..417e74414f19 100644
+> --- a/fs/d_path.c
+> +++ b/fs/d_path.c
+> @@ -234,6 +234,7 @@ char *d_absolute_path(const struct path *path,
+>  		return ERR_PTR(-EINVAL);
+>  	return extract_string(&b);
+>  }
+> +EXPORT_SYMBOL_GPL(d_absolute_path);
+>  
+>  static void get_fs_root_rcu(struct fs_struct *fs, struct path *root)
+>  {
+> diff --git a/kernel/pid.c b/kernel/pid.c
+> index 3fbc5e46b721..9e5224d8769c 100644
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -416,11 +416,13 @@ struct task_struct *find_task_by_pid_ns(pid_t nr, struct pid_namespace *ns)
+>  			 "find_task_by_pid_ns() needs rcu_read_lock() protection");
+>  	return pid_task(find_pid_ns(nr, ns), PIDTYPE_PID);
+>  }
+> +EXPORT_SYMBOL_GPL(find_task_by_pid_ns);
+>  
+>  struct task_struct *find_task_by_vpid(pid_t vnr)
+>  {
+>  	return find_task_by_pid_ns(vnr, task_active_pid_ns(current));
+>  }
+> +EXPORT_SYMBOL_GPL(find_task_by_vpid);
 
-Great.  I support that.  But the sentence
+It would be neat if you could avoid the need for these by instead using
+pidfds.
 
-> >> CaitSith could readily be done as an in-tree LSM. The implementation
-> >> of loadable module infrastructure is unnecessary.
-
-suggests that because CaitSith could be done in-tree, it doesn't need
-to be loadable.  I'm saying that is a non sequitur.  It sounded like
-that setence was meant to say "Because CaitSith could be in-tree, it
-doesn't need to be =m.  Only out of tree modules need to be loadable."
-
--serge
+>  struct task_struct *find_get_task_by_vpid(pid_t nr)
+>  {
+> -- 
+> 2.18.4
