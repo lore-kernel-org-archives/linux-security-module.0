@@ -2,97 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A51BC43217
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 03:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46397C4332F
+	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 04:06:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbiKEDcV (ORCPT
+        id S229469AbiKEEGX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Nov 2022 23:32:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34494 "EHLO
+        Sat, 5 Nov 2022 00:06:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229737AbiKEDcV (ORCPT
+        with ESMTP id S229453AbiKEEGV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Nov 2022 23:32:21 -0400
-Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E73B63F06E
-        for <linux-security-module@vger.kernel.org>; Fri,  4 Nov 2022 20:32:17 -0700 (PDT)
-Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-13b103a3e5dso7518363fac.2
-        for <linux-security-module@vger.kernel.org>; Fri, 04 Nov 2022 20:32:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=d4+BKZsVBq8bd37OinE8qYinDnCTidi21Q348dbcKy4=;
-        b=KJf7VFwcT+YVVBNAPenxOJu/4YS/diN/7i9W/htsQ/5tp1JZP3DozwpEAf8H3vKkji
-         X+4MpscL3xOWpcvrnW84WYjaxxH4M1dlVxGqFNTDB7/8j0psbwj3ED++gWDrVt0kb/vI
-         0/vXovGK8MTifQ9ZNiVd8X3v8hAUMfcG3U2FIpiaStJ/mE8jY7akxk4VP7YlX2dBHkkr
-         3GH7lVz0SGjhCZF0D3xHRcQ91/dv/46JcqJceZfscVYsw6ttR97xpDyeXmOyNmdI6jA9
-         1E0C3IDedFc8hB5ZvCbf9vptfLD2WU8ByXqP3CWwV/IiJN+KuQRxF2mXN+/y+YJWy82S
-         fKcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d4+BKZsVBq8bd37OinE8qYinDnCTidi21Q348dbcKy4=;
-        b=Uar+BvZi4D7FW19tQxDgUcOgRZmpduurB6gSNGJ4cSjbPYa+Sg1EeL9xOSUOeUh30c
-         60r2PhgmlFd84q14KRmlK6uEbVa9oTkOvV5Akdg6OyEj4pCl6jrq5P141kcgXLcaGCsJ
-         bg46IbSuSqrlkzl98QYV301BqE32ecj3cy0jSGPGe9uRz+PRAFbxNjfeIjVlcDJkmf14
-         WXE9u1Zm25VXqt9HbwvtAaBHIzCJH2GF9TXzAsYZ4TO6J9xKs8U0F+QI/rJ91m7QP5Mg
-         9rSBECWaraQTb0nIXx+gn5IzFmgJxg+Ucr56amL9pQfdm4PBIOdS7ssJbOjhEblTghEs
-         EsYQ==
-X-Gm-Message-State: ACrzQf1NK+w6qR1w5KHL9Bu9oxt+c+ynaKPmXLbacI2pgJ0JJAwTu6bz
-        8ey3LQwKbn8E6Z3/bHgTosN5STTQmskyeJuVX2bE
-X-Google-Smtp-Source: AMsMyM4lIjXVS0Uqtg79Zx/856WEPiWU5BfMOAtTf7/NpVC/VL/OBl4Sj6nXaf7IwvrV4SYRLGK5mwnutHnyZ0ovh/M=
-X-Received: by 2002:a05:6870:f299:b0:13b:ad21:934d with SMTP id
- u25-20020a056870f29900b0013bad21934dmr23417023oap.172.1667619137195; Fri, 04
- Nov 2022 20:32:17 -0700 (PDT)
+        Sat, 5 Nov 2022 00:06:21 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53ACA2D1CE
+        for <linux-security-module@vger.kernel.org>; Fri,  4 Nov 2022 21:06:18 -0700 (PDT)
+Received: from fsav118.sakura.ne.jp (fsav118.sakura.ne.jp [27.133.134.245])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 2A545jlT077510;
+        Sat, 5 Nov 2022 13:05:45 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav118.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp);
+ Sat, 05 Nov 2022 13:05:45 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 2A545ipR077506
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 5 Nov 2022 13:05:44 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp>
+Date:   Sat, 5 Nov 2022 13:05:44 +0900
 MIME-Version: 1.0
-References: <166543910984.474337.2779830480340611497.stgit@olly> <c8ce1c62-84ac-f39e-6c4e-5108b55c3515@canonical.com>
-In-Reply-To: <c8ce1c62-84ac-f39e-6c4e-5108b55c3515@canonical.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 4 Nov 2022 23:32:05 -0400
-Message-ID: <CAHC9VhSfc4sta0t9B-N1fV9CYO2tQUo8-cA3np-tz2AeXUSi1g@mail.gmail.com>
-Subject: Re: [PATCH] lsm: make security_socket_getpeersec_stream() sockptr_t safe
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH 04/10] CaitSith: Add header file.
+Content-Language: en-US
+To:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <kees@kernel.org>
+References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20221102171025.126961-4-penguin-kernel@I-love.SAKURA.ne.jp>
+ <ef5fa206-4e7f-3c23-07d4-8591c4315d20@schaufler-ca.com>
+ <20221105024345.GA15957@mail.hallyn.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20221105024345.GA15957@mail.hallyn.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 31, 2022 at 5:59 AM John Johansen
-<john.johansen@canonical.com> wrote:
-> On 10/10/22 14:58, Paul Moore wrote:
-> > Commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
-> > sockptr_t argument") made it possible to call sk_getsockopt()
-> > with both user and kernel address space buffers through the use of
-> > the sockptr_t type.  Unfortunately at the time of conversion the
-> > security_socket_getpeersec_stream() LSM hook was written to only
-> > accept userspace buffers, and in a desire to avoid having to change
-> > the LSM hook the commit author simply passed the sockptr_t's
-> > userspace buffer pointer.  Since the only sk_getsockopt() callers
-> > at the time of conversion which used kernel sockptr_t buffers did
-> > not allow SO_PEERSEC, and hence the
-> > security_socket_getpeersec_stream() hook, this was acceptable but
-> > also very fragile as future changes presented the possibility of
-> > silently passing kernel space pointers to the LSM hook.
-> >
-> > There are several ways to protect against this, including careful
-> > code review of future commits, but since relying on code review to
-> > catch bugs is a recipe for disaster and the upstream eBPF maintainer
-> > is "strongly against defensive programming", this patch updates the
-> > LSM hook, and all of the implementations to support sockptr_t and
-> > safely handle both user and kernel space buffers.
-> >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
->
-> looks good to me
+On 2022/11/05 11:43, Serge E. Hallyn wrote:
+> On Wed, Nov 02, 2022 at 10:57:48AM -0700, Casey Schaufler wrote:
+>> On 11/2/2022 10:10 AM, Tetsuo Handa wrote:
+>>> The main point of this submission is to demonstrate how an LSM module
+>>> which can be loaded using /sbin/insmod can work, and to provide
+>>> consideration points for making changes for LSM stacking in a way that
+>>> will not lock out LSM modules which can be loaded using /sbin/insmod .
+>>
+>> CaitSith could readily be done as an in-tree LSM. The implementation
+>> of loadable module infrastructure is unnecessary.
+> 
+> Sorry, I'm getting confused.  But in-tree and loadable are not related,
+> right?
 
-Thanks.  I just merged this into lsm/next.
+Very much related. My goal is to get CaitSith in-tree as a loadable LSM module
+which can be loaded using /sbin/insmod .
 
-> Acked-by: John Johansen <john.johansen@canonical.com>
+Lessons I learned from TOMOYO are that:
 
--- 
-paul-moore.com
+  Most of Linux users, unlike Linux kernel developers, consider the Linux kernel
+  as something black-box program. While the source code is open, they cannot
+  afford understanding how updating the Linux kernel via "yum update" or
+  "apt dist-upgrade" affects their systems.
+
+  I can't force Linux users to replace their kernel packages in order to
+  allow them to use TOMOYO, for replacing the kernel package makes their
+  replaced kernel packages incompatible (kABI breakage) with other kernel
+  modules (e.g. device drivers provided by hardware vendors) and/or makes
+  their kernel completely unsupported. I can support TOMOYO part but I can't
+  support the rest of the kernel, which makes it impossible for Linux users
+  using supported kernels to try TOMOYO. Being in-tree helps catching up
+  the upstream kernel changes, but being in-tree does not help allowing
+  Linux distribution users to use TOMOYO.
+
+  Linux distributors cannot afford enabling all LSM modules, due to the
+  "enabled" == "supported" spell. There are out-of-tree kernel modules
+  which are built as a loadable kernel module (i.e. not included into
+  the main kernel package which is supported by Linux distributors), but
+  the LSM framework does not legally allow use of LSM modules which are
+  not built into the bzImage file.
+
+If the LSM framework legally allows use of LSM modules which are not built
+into the bzImage file, we can allow users to use whatever LSM modules they
+want (and "support" is provided by the module authors rather than by Linux
+distributors).
+
+This submission is to ask LSM framework "please don't make it impossible to
+allow users to use whatever LSM modules they want". That is more important
+than "complete LSM stacking".
+
+Casey's proposal towards "complete LSM stacking" is making it impossible to
+allow users to use whatever LSM modules they want, due to the requirement of
+having an LSM id integer value and using fixed sized array.
+
