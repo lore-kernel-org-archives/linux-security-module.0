@@ -2,105 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4452FC4332F
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 04:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB92C4332F
+	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 05:22:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229520AbiKEEjL (ORCPT
+        id S229527AbiKEFWS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 5 Nov 2022 00:39:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44616 "EHLO
+        Sat, 5 Nov 2022 01:22:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbiKEEjL (ORCPT
+        with ESMTP id S229471AbiKEFWR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 5 Nov 2022 00:39:11 -0400
-Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77E8A317FA
-        for <linux-security-module@vger.kernel.org>; Fri,  4 Nov 2022 21:39:10 -0700 (PDT)
-Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-13ba86b5ac0so7603217fac.1
-        for <linux-security-module@vger.kernel.org>; Fri, 04 Nov 2022 21:39:10 -0700 (PDT)
+        Sat, 5 Nov 2022 01:22:17 -0400
+Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59FBD2E695
+        for <linux-security-module@vger.kernel.org>; Fri,  4 Nov 2022 22:22:15 -0700 (PDT)
+Received: by mail-oi1-x22b.google.com with SMTP id s206so7225715oie.3
+        for <linux-security-module@vger.kernel.org>; Fri, 04 Nov 2022 22:22:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QVhCjTiXsm0XAmH+YRM1X339ickLF/GL0sKIvePwac0=;
-        b=FCSnsB+Ncbn05GHt62BXuzIBr4rsH97IiQeiye272VEDnNBybqlEYM6y/waq3nV71X
-         KaiiJRqUZTcnkEtCXHhVXzAmNgTVDOFb0BYeit0BPiJhk79dMcjE/vceD3btbG/nkPML
-         Sm3DZk4p55e3hOTDWHNnf21GfDhgAx0bVHpoV0VyYDI1lXMoPQT8hyTC9bHRPciw8JpY
-         eZ3sDpBvLCFakfNbS83WC96gEQjxzBIVJj5pWpvD6FPndHyIGhQPp6LOCChKqMqdnq/j
-         QMd8VSRtjkvDQKWcnjd0BXbzYUlGxA6LG1Sxr6sSwrBkaa0Rl3aJHijXxEDFqV3gIa+K
-         d1Kw==
+        bh=EOF2Cx7IpRN9hnOm1d8qRQgLYEtSJu+jemaFIvyZFv0=;
+        b=ely303De/1B7MiFyoKEFJq6+SLg+YWzEHaAQgwOc1I+50zenn4zxDO/2dWbEBOfIeJ
+         QcpDm8/A4AC11ya2l1FQD5MixWsFF2Qcqyj0SsVvXMeKQFEPD8Xd9uou/WnRsM9WhAbI
+         a6d5K29siu4eNmMPC50IM1MXBkbovEP56bNFKNhvw4G4t6Kg1kR7gNdhj7tKszovtyQX
+         oGqx9goDlfWSWsbVQ8kOst9tWkPoG/UsufAgqQTSU/1Gbj4VQ/ezavbVYXAcjfyTdhwg
+         a+3BYfGlJd/+2IgY5udr2nNYfednesxtXDzqyPS1JAzw3z1pin4q8AlvYcpVgVjwWf02
+         KoDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QVhCjTiXsm0XAmH+YRM1X339ickLF/GL0sKIvePwac0=;
-        b=5bMfNKQoVUA43p5FXkPAeNpao0Nrinon9B2P1PwsNjydRuGx4Glj4IIbIDbM28ILzC
-         ZFpuDWMRMIQpQbpuy3OsYXvMmLdFinqt7InZ9V9WKDyEfs4FwIQAK7175VlcvREqh7dF
-         olnk56U9QAgLcTE6WdCuTeMA7myFJye1uET+Ru+tnUceT6hCCtgo7JpE1B/+jb+ArvqY
-         xZUjj91Wc7Iq72KdTRmxaR7RlvtNmbeSKcErzLxxmjewoVqn+jg/4Zg31s+ICTfgMooW
-         oyTbE6aggZ8Poq3sbytWX0i0l0Xqy3bx4FVdUmGnZonT6xCPgUi9bo+PJCTk1K8tco7X
-         mAcQ==
-X-Gm-Message-State: ACrzQf08pPPQuZqWSNant9uFGHvz2hat0sl+rvVgfmfltwt0yrg4Ldgn
-        zJHHCQwdM17BCjU+uuVExnUS/SG/m5TxlvKwjAek
-X-Google-Smtp-Source: AMsMyM4w7eiFkYBhePubE/PyYhcqGdnaotz0NDTczdH13Aq1WqMXxNy3Sb/YZHqSax4NIV/jSYcVfTpPs875XiKcH8E=
-X-Received: by 2002:a05:6870:f299:b0:13b:ad21:934d with SMTP id
- u25-20020a056870f29900b0013bad21934dmr23511755oap.172.1667623149267; Fri, 04
- Nov 2022 21:39:09 -0700 (PDT)
+        bh=EOF2Cx7IpRN9hnOm1d8qRQgLYEtSJu+jemaFIvyZFv0=;
+        b=Uo0nVYUJTQ+e9CG+Mv+qHcKnUyQck2a7XkuQn8PzFzyMcINtEhfm8fpp5hcnJ7Iy9B
+         9ro1CFWUpwWosUAyOVwcDvZVJwQ5iBzfiRi/lUisZuIxZF8c90hn4Us5J1Sct88/v6OF
+         icreT4rAXRjcqJ0Hp2wMcrjXFM5ft0d9uSYz08ColgH/DFdup5ievYSL7tGdZixQzF6P
+         ZcOMGxU3y5XJao7VtPes4NSE4G1uSY5Ral5bPfDVhtvOms/bjQo/37/zg8EsMYKW4jix
+         alUrhyUMtOHV5Kn+cgFY84GLuXHpkqkD8/1fVQFYz7ev0bU4EJRLmBcGftUtFymJEBcV
+         sDag==
+X-Gm-Message-State: ACrzQf16RKVzLBGisiQd1B3MbA1l37MUKhqwCQWQcXNHgUIrNia4PKSs
+        bpuYKrYXCNZ1zISdVYIWcS4LBD9/BHm02Gk66JJx
+X-Google-Smtp-Source: AMsMyM4HQMM13euSxBSldw7b1HnIWnHCbPOiU15QeMZDkdhzFKutGseY3VrWmscilPSROZwBZZGGsLp17XCcP8tvHxk=
+X-Received: by 2002:a05:6808:1441:b0:35a:4a2d:673b with SMTP id
+ x1-20020a056808144100b0035a4a2d673bmr7623626oiv.172.1667625734380; Fri, 04
+ Nov 2022 22:22:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221103151205.702826-1-omosnace@redhat.com>
-In-Reply-To: <20221103151205.702826-1-omosnace@redhat.com>
+References: <CAHC9VhSSafrkW4VbTVoAUJmjFQdCwPTGDqTP8yBnLBqc7rW7iQ@mail.gmail.com>
+ <CAHk-=wj_6Df1NAMs14S0OOqX1Z=460j-mfwn_qm-7EK1eK76qw@mail.gmail.com>
+In-Reply-To: <CAHk-=wj_6Df1NAMs14S0OOqX1Z=460j-mfwn_qm-7EK1eK76qw@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 5 Nov 2022 00:38:57 -0400
-Message-ID: <CAHC9VhS460B4Jpk8kqmhTBZv_dMuysNb9yH=6hB4-+Oc35UkAQ@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: don't audit the capability check in simple_xattr_list()
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Pitt <mpitt@redhat.com>,
-        Christian Brauner <brauner@kernel.org>
+Date:   Sat, 5 Nov 2022 01:22:02 -0400
+Message-ID: <CAHC9VhRe-oL7tHskQd9eBdpUh=PFujikL48kauZXU=xyZ1Ohag@mail.gmail.com>
+Subject: Re: [GIT PULL] LSM fixes for v6.1 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 3, 2022 at 11:13 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+On Mon, Oct 31, 2022 at 3:22 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, Oct 31, 2022 at 4:07 AM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > A single patch to the capabilities code to fix a potential memory leak
+> > in the xattr allocation error handling.  Please apply for v6.1-rcX.
 >
-> The check being unconditional may lead to unwanted denials reported by
-> LSMs when a process has the capability granted by DAC, but denied by an
-> LSM. In the case of SELinux such denials are a problem, since they can't
-> be effectively filtered out via the policy and when not silenced, they
-> produce noise that may hide a true problem or an attack.
->
-> Checking for the capability only if any trusted xattr is actually
-> present wouldn't really address the issue, since calling listxattr(2) on
-> such node on its own doesn't indicate an explicit attempt to see the
-> trusted xattrs. Additionally, it could potentially leak the presence of
-> trusted xattrs to an unprivileged user if they can check for the denials
-> (e.g. through dmesg).
->
-> Therefore, it's best (and simplest) to keep the check unconditional and
-> instead use ns_capable_noaudit() that will silence any associated LSM
-> denials.
->
-> Fixes: 38f38657444d ("xattr: extract simple_xattr code from tmpfs")
-> Reported-by: Martin Pitt <mpitt@redhat.com>
-> Suggested-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->
-> v1 -> v2: switch to simpler and better solution as suggested by Christian
->
-> v1: https://lore.kernel.org/selinux/CAFqZXNuC7c0Ukx_okYZ7rsKycQY5P1zpMPmmq_T5Qyzbg-x7yQ@mail.gmail.com/T/
->
->  fs/xattr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Pulled.
 
-VFS folks, this should really go through a vfs tree, but if nobody
-wants to pick it up *and* there are no objections to the change, I can
-take this via the LSM tree.
+Sorry for the delay in responding, you saw this in my other response,
+but limited network access, yadda yadda ...
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
+> However, I react to the strange test condition. Sure, it's
+> pre-existing, but does it really make sense?
+
+I wasn't responsible for this code when the conditional was written,
+and I've got enough mail in my backlog at the moment to not want to
+sift through the git log trying to make sense of it, but the current
+conditional does seem a bit "extra" when one considers
+vfs_getxattr_alloc().  The only gotcha that I can see is that
+vfs_getxattr_alloc() callers need to ensure that they always kfree()
+the xattr_value buffer on error as vfs_getxattr_alloc() may leave
+memory allocated on failure.  There was discussion of that when this
+leak fix patch was posted.
+
+I'll put together a cleanup patch to resolve the conditional oddity
+and send it up during the next merge window.
+
+> That whole "cast to int, and then cast back to size_t" also smells of
+> some serious confusion in the return value handling. It looks to me
+> like vfs_getxattr_alloc() fundamentally returns an 'int', not a
+> 'ssize_t', just by looking at the ->get function. But it just all
+> looks weird.
+
+Yes, it's a bit of a mess.  I suspect the problem originated in that
+vfs_getxattr_alloc() returns either a negative number on failure or
+the size of the allocation on success, and with allocation sizes
+typically using a {s}size_t type I'm guessing the original authors
+chose ssize_t, which seems reasonable until one looks at the
+xattr_handler's ->get() function and realizes that it returns an int.
+
+I think the right thing to do here is to update vfs_getxattr_alloc()
+to use an int return type and update all of the callers accordingly
+(currently they all live under security/).  I'll put together a patch
+to clean this up and send it via the next merge window assuming there
+are no objections to the patch.
 
 -- 
 paul-moore.com
