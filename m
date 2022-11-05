@@ -2,88 +2,97 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE117C433FE
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 03:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A51BC43217
+	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 03:32:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229579AbiKEDEL (ORCPT
+        id S229574AbiKEDcV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Nov 2022 23:04:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57696 "EHLO
+        Fri, 4 Nov 2022 23:32:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbiKEDEJ (ORCPT
+        with ESMTP id S229737AbiKEDcV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Nov 2022 23:04:09 -0400
-Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD1F723BCF
-        for <linux-security-module@vger.kernel.org>; Fri,  4 Nov 2022 20:04:08 -0700 (PDT)
-Received: by mail-oi1-x235.google.com with SMTP id n83so7015949oif.11
-        for <linux-security-module@vger.kernel.org>; Fri, 04 Nov 2022 20:04:08 -0700 (PDT)
+        Fri, 4 Nov 2022 23:32:21 -0400
+Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E73B63F06E
+        for <linux-security-module@vger.kernel.org>; Fri,  4 Nov 2022 20:32:17 -0700 (PDT)
+Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-13b103a3e5dso7518363fac.2
+        for <linux-security-module@vger.kernel.org>; Fri, 04 Nov 2022 20:32:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vM8YVr4cq5mteRVZP+VUrF+VqtKB+dPqSsMDeYM+RZs=;
-        b=PDNwUrDzWeTcMpOpy2d+d5fFJ8ZF1Negjze3alwRAQxuZ7+l0k/hSFWuPsO3VJ8NWP
-         uytCuSqsqXJwQzy6lLWNfAQJseWBZIklIw58AWVftUu1D0rFuh4u4mvkHmeZ4jJ50RGk
-         6Ml2r0RxDcPxG8lJutvlGlvSk2/MNOalnBWOTc2JVwsMhZeqCkAzplWrGa/qu21NW3Px
-         tsnvouOmbbTqrAazR1Onof/b2urWU0Nqr0nDTKLQcMspeE62PpuIFplnbwbcQ0Zm+8z2
-         I55Wri87tVXBp310RZpe9y3h+ajxeVTGvILhP7u5NkoZ1p1FQjPnlvSFbOaH9Hr3A6Pf
-         +7gw==
+        bh=d4+BKZsVBq8bd37OinE8qYinDnCTidi21Q348dbcKy4=;
+        b=KJf7VFwcT+YVVBNAPenxOJu/4YS/diN/7i9W/htsQ/5tp1JZP3DozwpEAf8H3vKkji
+         X+4MpscL3xOWpcvrnW84WYjaxxH4M1dlVxGqFNTDB7/8j0psbwj3ED++gWDrVt0kb/vI
+         0/vXovGK8MTifQ9ZNiVd8X3v8hAUMfcG3U2FIpiaStJ/mE8jY7akxk4VP7YlX2dBHkkr
+         3GH7lVz0SGjhCZF0D3xHRcQ91/dv/46JcqJceZfscVYsw6ttR97xpDyeXmOyNmdI6jA9
+         1E0C3IDedFc8hB5ZvCbf9vptfLD2WU8ByXqP3CWwV/IiJN+KuQRxF2mXN+/y+YJWy82S
+         fKcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vM8YVr4cq5mteRVZP+VUrF+VqtKB+dPqSsMDeYM+RZs=;
-        b=1cuv/aGgvdgw7COZkwVL1ktnSzLkHuvDpNo21CvVcmND/yhS6NQuyUQVG+8keVRiBT
-         jwU/WwuSKYma7EdjExqg4cfctCNeG0SxJVfGNLlQkQfwF34akWn8HZg6MisS08RzVXQK
-         GA6YsozCcaJDWU6lOPr0VzqUUR2AOp8hMw0/KIJVhIwOLU0zgUo7k3PkVcV/u4Xfcl+5
-         /qLWXEo9DY2TCgFBhua/EqTp1q31wIP7cGND+iz3NYMRCKF2JGb6LOy/U7+cS06kMG4B
-         2mctC/lEq9/2wHBVjiZ45jouppvFYhtsYaj0F7ZiwJGg42nU2umviYgdoKFGlajK3lex
-         BZuQ==
-X-Gm-Message-State: ACrzQf21cTJNFjDqsLYA7XPXo4fVAYSWHUL13KUddPWIofQuQ2jF7weg
-        4C5V7I24Rqys0BU53UINmjZlJ6hVxxn73B4etrW30mGLwKgd
-X-Google-Smtp-Source: AMsMyM5oxpA9OQ1Js8K8Gnmqd6cJQXcDpytGixhi+qVwAuiti8ogO4ZFgKZrpuntzQrxt0lec0b8SYRgP6G2GJV+LNs=
-X-Received: by 2002:a05:6808:1441:b0:35a:4a2d:673b with SMTP id
- x1-20020a056808144100b0035a4a2d673bmr7413982oiv.172.1667617447964; Fri, 04
- Nov 2022 20:04:07 -0700 (PDT)
+        bh=d4+BKZsVBq8bd37OinE8qYinDnCTidi21Q348dbcKy4=;
+        b=Uar+BvZi4D7FW19tQxDgUcOgRZmpduurB6gSNGJ4cSjbPYa+Sg1EeL9xOSUOeUh30c
+         60r2PhgmlFd84q14KRmlK6uEbVa9oTkOvV5Akdg6OyEj4pCl6jrq5P141kcgXLcaGCsJ
+         bg46IbSuSqrlkzl98QYV301BqE32ecj3cy0jSGPGe9uRz+PRAFbxNjfeIjVlcDJkmf14
+         WXE9u1Zm25VXqt9HbwvtAaBHIzCJH2GF9TXzAsYZ4TO6J9xKs8U0F+QI/rJ91m7QP5Mg
+         9rSBECWaraQTb0nIXx+gn5IzFmgJxg+Ucr56amL9pQfdm4PBIOdS7ssJbOjhEblTghEs
+         EsYQ==
+X-Gm-Message-State: ACrzQf1NK+w6qR1w5KHL9Bu9oxt+c+ynaKPmXLbacI2pgJ0JJAwTu6bz
+        8ey3LQwKbn8E6Z3/bHgTosN5STTQmskyeJuVX2bE
+X-Google-Smtp-Source: AMsMyM4lIjXVS0Uqtg79Zx/856WEPiWU5BfMOAtTf7/NpVC/VL/OBl4Sj6nXaf7IwvrV4SYRLGK5mwnutHnyZ0ovh/M=
+X-Received: by 2002:a05:6870:f299:b0:13b:ad21:934d with SMTP id
+ u25-20020a056870f29900b0013bad21934dmr23417023oap.172.1667619137195; Fri, 04
+ Nov 2022 20:32:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHC9VhSXRDUw0CGLqinogP6g5rHWz4rg3N4Dr-VV8RshWt56Jw@mail.gmail.com>
- <CAHk-=wgXx=0AKgMA8dGRROi5EarYxkEfHNu_zsezLgjtPrqNow@mail.gmail.com>
-In-Reply-To: <CAHk-=wgXx=0AKgMA8dGRROi5EarYxkEfHNu_zsezLgjtPrqNow@mail.gmail.com>
+References: <166543910984.474337.2779830480340611497.stgit@olly> <c8ce1c62-84ac-f39e-6c4e-5108b55c3515@canonical.com>
+In-Reply-To: <c8ce1c62-84ac-f39e-6c4e-5108b55c3515@canonical.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 4 Nov 2022 23:03:56 -0400
-Message-ID: <CAHC9VhTkzkv2Qm2FwsTyhonBtGx0o-qNmVq_WU-WJP9NcsELpA@mail.gmail.com>
-Subject: Re: [GIT PULL] SELinux fixes for v6.1 (#1)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Date:   Fri, 4 Nov 2022 23:32:05 -0400
+Message-ID: <CAHC9VhSfc4sta0t9B-N1fV9CYO2tQUo8-cA3np-tz2AeXUSi1g@mail.gmail.com>
+Subject: Re: [PATCH] lsm: make security_socket_getpeersec_stream() sockptr_t safe
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 21, 2022 at 5:42 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, Oct 20, 2022 at 8:20 AM Paul Moore <paul@paul-moore.com> wrote:
+On Mon, Oct 31, 2022 at 5:59 AM John Johansen
+<john.johansen@canonical.com> wrote:
+> On 10/10/22 14:58, Paul Moore wrote:
+> > Commit 4ff09db1b79b ("bpf: net: Change sk_getsockopt() to take the
+> > sockptr_t argument") made it possible to call sk_getsockopt()
+> > with both user and kernel address space buffers through the use of
+> > the sockptr_t type.  Unfortunately at the time of conversion the
+> > security_socket_getpeersec_stream() LSM hook was written to only
+> > accept userspace buffers, and in a desire to avoid having to change
+> > the LSM hook the commit author simply passed the sockptr_t's
+> > userspace buffer pointer.  Since the only sk_getsockopt() callers
+> > at the time of conversion which used kernel sockptr_t buffers did
+> > not allow SO_PEERSEC, and hence the
+> > security_socket_getpeersec_stream() hook, this was acceptable but
+> > also very fragile as future changes presented the possibility of
+> > silently passing kernel space pointers to the LSM hook.
 > >
-> >         The patch, while still fairly small, is a bit
-> > larger than one might expect from a simple s/GFP_KERNEL/GFP_ATOMIC/
-> > conversion because we added support for the function to be called with
-> > different gfp flags depending on the context, preserving GFP_KERNEL
-> > for those cases that can safely sleep.
+> > There are several ways to protect against this, including careful
+> > code review of future commits, but since relying on code review to
+> > catch bugs is a recipe for disaster and the upstream eBPF maintainer
+> > is "strongly against defensive programming", this patch updates the
+> > LSM hook, and all of the implementations to support sockptr_t and
+> > safely handle both user and kernel space buffers.
+> >
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
 >
-> Hmm.
->
-> So I've pulled this, but that patch actually makes it obvious that
-> there is only one single possible function for "convert->func", namely
-> that "convert_context()" function.
+> looks good to me
 
-Sorry for the delay, network access has been limited the past few
-weeks so I needed to prioritize things like getting fixes out over non
-critical responses.
+Thanks.  I just merged this into lsm/next.
 
-Anyway, yes, you're right, it's something we should look into
-resolving and I plan to do that in the coming week or two.
+> Acked-by: John Johansen <john.johansen@canonical.com>
 
 -- 
 paul-moore.com
