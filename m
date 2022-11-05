@@ -2,111 +2,93 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB92C4332F
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 05:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 694D2C4332F
+	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 05:30:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229527AbiKEFWS (ORCPT
+        id S229477AbiKEFaw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 5 Nov 2022 01:22:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54492 "EHLO
+        Sat, 5 Nov 2022 01:30:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbiKEFWR (ORCPT
+        with ESMTP id S229457AbiKEFav (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 5 Nov 2022 01:22:17 -0400
-Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59FBD2E695
-        for <linux-security-module@vger.kernel.org>; Fri,  4 Nov 2022 22:22:15 -0700 (PDT)
-Received: by mail-oi1-x22b.google.com with SMTP id s206so7225715oie.3
-        for <linux-security-module@vger.kernel.org>; Fri, 04 Nov 2022 22:22:15 -0700 (PDT)
+        Sat, 5 Nov 2022 01:30:51 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 547892528E
+        for <linux-security-module@vger.kernel.org>; Fri,  4 Nov 2022 22:30:50 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id n83so7203099oif.11
+        for <linux-security-module@vger.kernel.org>; Fri, 04 Nov 2022 22:30:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EOF2Cx7IpRN9hnOm1d8qRQgLYEtSJu+jemaFIvyZFv0=;
-        b=ely303De/1B7MiFyoKEFJq6+SLg+YWzEHaAQgwOc1I+50zenn4zxDO/2dWbEBOfIeJ
-         QcpDm8/A4AC11ya2l1FQD5MixWsFF2Qcqyj0SsVvXMeKQFEPD8Xd9uou/WnRsM9WhAbI
-         a6d5K29siu4eNmMPC50IM1MXBkbovEP56bNFKNhvw4G4t6Kg1kR7gNdhj7tKszovtyQX
-         oGqx9goDlfWSWsbVQ8kOst9tWkPoG/UsufAgqQTSU/1Gbj4VQ/ezavbVYXAcjfyTdhwg
-         a+3BYfGlJd/+2IgY5udr2nNYfednesxtXDzqyPS1JAzw3z1pin4q8AlvYcpVgVjwWf02
-         KoDQ==
+        bh=0n6VWHessyNez9S2H30Uhwv/rtD1rXyD3rEi+AbFHx4=;
+        b=LZHzpoe22Ms5tIUqZIQH96wZFoeDHF01qhZuhPVHXfV2nhOEAt7gjw0aKVR1HRks2d
+         LCjheDmrWib7qW85tsA3dNszS+oJMamEOyy48TotAjbFp6BgTAiZVCQUE1ginWFk1diW
+         W+pN4Nvaat5439tvGt7egZjeosZlx4QTsurZo7Kp2beoVkmAywlG0+AjSW34ZTLanwYq
+         /a2HsArXiGoVZ8wBCK0zceDOgLxxmkbofl7Sml6YvIMYqqvA4+wGRraWiyH7f3BCZ+Lu
+         n87unMfV6SV6PzSuw0j3oEfBHbs93GwXEnVxWc/Y7vziElRO1XeRkDe4/N77gAxUFrEb
+         5mkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EOF2Cx7IpRN9hnOm1d8qRQgLYEtSJu+jemaFIvyZFv0=;
-        b=Uo0nVYUJTQ+e9CG+Mv+qHcKnUyQck2a7XkuQn8PzFzyMcINtEhfm8fpp5hcnJ7Iy9B
-         9ro1CFWUpwWosUAyOVwcDvZVJwQ5iBzfiRi/lUisZuIxZF8c90hn4Us5J1Sct88/v6OF
-         icreT4rAXRjcqJ0Hp2wMcrjXFM5ft0d9uSYz08ColgH/DFdup5ievYSL7tGdZixQzF6P
-         ZcOMGxU3y5XJao7VtPes4NSE4G1uSY5Ral5bPfDVhtvOms/bjQo/37/zg8EsMYKW4jix
-         alUrhyUMtOHV5Kn+cgFY84GLuXHpkqkD8/1fVQFYz7ev0bU4EJRLmBcGftUtFymJEBcV
-         sDag==
-X-Gm-Message-State: ACrzQf16RKVzLBGisiQd1B3MbA1l37MUKhqwCQWQcXNHgUIrNia4PKSs
-        bpuYKrYXCNZ1zISdVYIWcS4LBD9/BHm02Gk66JJx
-X-Google-Smtp-Source: AMsMyM4HQMM13euSxBSldw7b1HnIWnHCbPOiU15QeMZDkdhzFKutGseY3VrWmscilPSROZwBZZGGsLp17XCcP8tvHxk=
+        bh=0n6VWHessyNez9S2H30Uhwv/rtD1rXyD3rEi+AbFHx4=;
+        b=VUXCj4ga+Mm4n2d4VlTZEFGtbXmwi98jsp+UaXlF9+mz0QRZSLjeM08rYf9ktZfWlt
+         foSXkd2tIBWFNdYfZoIslap0kiORCP7QWCrd/l+dM4GMkeMxilWC3ieInxiw5am2t1mn
+         1PNIM2VKdWZG8dsb1MBFMh/YpInyuZ7ICryjF2+6mN4tauoT1phkFuF8dCEsJFSrc5gn
+         xl2nPaXHXl6Kyaf78jL+pycdssXgyMLXfMdWHKXA/OST0vPsDSLro1c27HROyrnajfS8
+         T7E6zUVxHeA1g1MDhFAa2pV7/SPEewZLW7RvK1iXq5wQsAYbXCR50ZBYfIVMG4PuNDzN
+         pRtA==
+X-Gm-Message-State: ACrzQf0eYCPxABVnDgge1OuS760Oy+D5CcBvpEx41LmRrKOuuL7fviyT
+        kylbq9QNXf2AbqfXvQtWpM7Yqg8cQK9elLoaA1Dy
+X-Google-Smtp-Source: AMsMyM4NAg/syXDr7MwY5mnwjCRTqScvoL8+5KzOgXIYGsVKeA2ZXX7US081nITxWvWjXjXlfFSlgyCu2KG2vTTohdw=
 X-Received: by 2002:a05:6808:1441:b0:35a:4a2d:673b with SMTP id
- x1-20020a056808144100b0035a4a2d673bmr7623626oiv.172.1667625734380; Fri, 04
- Nov 2022 22:22:14 -0700 (PDT)
+ x1-20020a056808144100b0035a4a2d673bmr7635305oiv.172.1667626249669; Fri, 04
+ Nov 2022 22:30:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHC9VhSSafrkW4VbTVoAUJmjFQdCwPTGDqTP8yBnLBqc7rW7iQ@mail.gmail.com>
- <CAHk-=wj_6Df1NAMs14S0OOqX1Z=460j-mfwn_qm-7EK1eK76qw@mail.gmail.com>
-In-Reply-To: <CAHk-=wj_6Df1NAMs14S0OOqX1Z=460j-mfwn_qm-7EK1eK76qw@mail.gmail.com>
+References: <20221031112536.4177761-1-cuigaosheng1@huawei.com>
+In-Reply-To: <20221031112536.4177761-1-cuigaosheng1@huawei.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 5 Nov 2022 01:22:02 -0400
-Message-ID: <CAHC9VhRe-oL7tHskQd9eBdpUh=PFujikL48kauZXU=xyZ1Ohag@mail.gmail.com>
-Subject: Re: [GIT PULL] LSM fixes for v6.1 (#1)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Sat, 5 Nov 2022 01:30:38 -0400
+Message-ID: <CAHC9VhQSP6vcGbeb77oSLdxFijW7AqMX51VPt-t7tPk4gcU7Tw@mail.gmail.com>
+Subject: Re: [PATCH] capabilities: fix undefined behavior in bit shift for CAP_TO_MASK
+To:     Gaosheng Cui <cuigaosheng1@huawei.com>
+Cc:     serge@hallyn.com, morgan@kernel.org, akpm@linux-foundation.org,
+        ezk@cs.sunysb.edu, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 31, 2022 at 3:22 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Mon, Oct 31, 2022 at 4:07 AM Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > A single patch to the capabilities code to fix a potential memory leak
-> > in the xattr allocation error handling.  Please apply for v6.1-rcX.
+On Mon, Oct 31, 2022 at 7:25 AM Gaosheng Cui <cuigaosheng1@huawei.com> wrote:
 >
-> Pulled.
+> Shifting signed 32-bit value by 31 bits is undefined, so changing
+> significant bit to unsigned. The UBSAN warning calltrace like below:
+>
+> UBSAN: shift-out-of-bounds in security/commoncap.c:1252:2
+> left shift of 1 by 31 places cannot be represented in type 'int'
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x7d/0xa5
+>  dump_stack+0x15/0x1b
+>  ubsan_epilogue+0xe/0x4e
+>  __ubsan_handle_shift_out_of_bounds+0x1e7/0x20c
+>  cap_task_prctl+0x561/0x6f0
+>  security_task_prctl+0x5a/0xb0
+>  __x64_sys_prctl+0x61/0x8f0
+>  do_syscall_64+0x58/0x80
+>  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+>  </TASK>
+>
+> Fixes: e338d263a76a ("Add 64-bit capability support to the kernel")
+> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+> ---
+>  include/uapi/linux/capability.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sorry for the delay in responding, you saw this in my other response,
-but limited network access, yadda yadda ...
-
-> However, I react to the strange test condition. Sure, it's
-> pre-existing, but does it really make sense?
-
-I wasn't responsible for this code when the conditional was written,
-and I've got enough mail in my backlog at the moment to not want to
-sift through the git log trying to make sense of it, but the current
-conditional does seem a bit "extra" when one considers
-vfs_getxattr_alloc().  The only gotcha that I can see is that
-vfs_getxattr_alloc() callers need to ensure that they always kfree()
-the xattr_value buffer on error as vfs_getxattr_alloc() may leave
-memory allocated on failure.  There was discussion of that when this
-leak fix patch was posted.
-
-I'll put together a cleanup patch to resolve the conditional oddity
-and send it up during the next merge window.
-
-> That whole "cast to int, and then cast back to size_t" also smells of
-> some serious confusion in the return value handling. It looks to me
-> like vfs_getxattr_alloc() fundamentally returns an 'int', not a
-> 'ssize_t', just by looking at the ->get function. But it just all
-> looks weird.
-
-Yes, it's a bit of a mess.  I suspect the problem originated in that
-vfs_getxattr_alloc() returns either a negative number on failure or
-the size of the allocation on success, and with allocation sizes
-typically using a {s}size_t type I'm guessing the original authors
-chose ssize_t, which seems reasonable until one looks at the
-xattr_handler's ->get() function and realizes that it returns an int.
-
-I think the right thing to do here is to update vfs_getxattr_alloc()
-to use an int return type and update all of the callers accordingly
-(currently they all live under security/).  I'll put together a patch
-to clean this up and send it via the next merge window assuming there
-are no objections to the patch.
+Merged into lsm/stable-6.1, and I'll plan to send this up to Linus
+next week.  Thanks everyone!
 
 -- 
 paul-moore.com
