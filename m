@@ -2,95 +2,72 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F30C43219
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 11:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5E4C433FE
+	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 23:46:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229528AbiKELeV (ORCPT
+        id S229472AbiKEXqW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 5 Nov 2022 07:34:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57204 "EHLO
+        Sat, 5 Nov 2022 19:46:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiKELeU (ORCPT
+        with ESMTP id S229479AbiKEXqV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 5 Nov 2022 07:34:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DADB71C920;
-        Sat,  5 Nov 2022 04:34:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 605AA6090C;
-        Sat,  5 Nov 2022 11:34:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC2C0C433C1;
-        Sat,  5 Nov 2022 11:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667648058;
-        bh=aPsJ3tPFbBeVu0/xlG/SDWoFVAR10XjI3Pny8nFp4Zg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ge1IBemhCv5y08Wrwf4NxCP6bAOsPR9ni3XQewsRVIwYdWi6elB1rVNo5SeQi+1zB
-         rdEFlB4/2hxMSxuxwKlmfzBEx/b2J6bQY48QIatyALeY/PbEBaHPwWk129YwpoOAng
-         ayv9fDqouoMW/qGUv5yWI+Rl7jh91XAz1XMdovXCPm9l1WGQhclND/dUYU3xfjAO2+
-         jTQuYbEffCX1uewcyGJreNWvKtsdn3mC9d3SKGd6pKtkwxy77vN4KvalV2SDxFq0A3
-         1Z6i7Lzl3vz2AQWE813ydHwy/X0pm6BHbe9FkGftrzlYGqqDlOD1Ialy3xcxSW0Y09
-         63ibkXBdWCbBg==
-Date:   Sat, 5 Nov 2022 12:34:13 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Pitt <mpitt@redhat.com>
-Subject: Re: [PATCH v2] fs: don't audit the capability check in
- simple_xattr_list()
-Message-ID: <20221105113413.lzgwdlcobmliq32b@wittgenstein>
-References: <20221103151205.702826-1-omosnace@redhat.com>
- <CAHC9VhS460B4Jpk8kqmhTBZv_dMuysNb9yH=6hB4-+Oc35UkAQ@mail.gmail.com>
+        Sat, 5 Nov 2022 19:46:21 -0400
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B797212776
+        for <linux-security-module@vger.kernel.org>; Sat,  5 Nov 2022 16:46:16 -0700 (PDT)
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id EB99B839; Sat,  5 Nov 2022 18:46:14 -0500 (CDT)
+Date:   Sat, 5 Nov 2022 18:46:14 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH 04/10] CaitSith: Add header file.
+Message-ID: <20221105234614.GA23523@mail.hallyn.com>
+References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20221102171025.126961-4-penguin-kernel@I-love.SAKURA.ne.jp>
+ <ef5fa206-4e7f-3c23-07d4-8591c4315d20@schaufler-ca.com>
+ <20221105024345.GA15957@mail.hallyn.com>
+ <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhS460B4Jpk8kqmhTBZv_dMuysNb9yH=6hB4-+Oc35UkAQ@mail.gmail.com>
+In-Reply-To: <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Nov 05, 2022 at 12:38:57AM -0400, Paul Moore wrote:
-> On Thu, Nov 3, 2022 at 11:13 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >
-> > The check being unconditional may lead to unwanted denials reported by
-> > LSMs when a process has the capability granted by DAC, but denied by an
-> > LSM. In the case of SELinux such denials are a problem, since they can't
-> > be effectively filtered out via the policy and when not silenced, they
-> > produce noise that may hide a true problem or an attack.
-> >
-> > Checking for the capability only if any trusted xattr is actually
-> > present wouldn't really address the issue, since calling listxattr(2) on
-> > such node on its own doesn't indicate an explicit attempt to see the
-> > trusted xattrs. Additionally, it could potentially leak the presence of
-> > trusted xattrs to an unprivileged user if they can check for the denials
-> > (e.g. through dmesg).
-> >
-> > Therefore, it's best (and simplest) to keep the check unconditional and
-> > instead use ns_capable_noaudit() that will silence any associated LSM
-> > denials.
-> >
-> > Fixes: 38f38657444d ("xattr: extract simple_xattr code from tmpfs")
-> > Reported-by: Martin Pitt <mpitt@redhat.com>
-> > Suggested-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > ---
-> >
-> > v1 -> v2: switch to simpler and better solution as suggested by Christian
-> >
-> > v1: https://lore.kernel.org/selinux/CAFqZXNuC7c0Ukx_okYZ7rsKycQY5P1zpMPmmq_T5Qyzbg-x7yQ@mail.gmail.com/T/
-> >
-> >  fs/xattr.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+On Sat, Nov 05, 2022 at 01:05:44PM +0900, Tetsuo Handa wrote:
+> On 2022/11/05 11:43, Serge E. Hallyn wrote:
+> > On Wed, Nov 02, 2022 at 10:57:48AM -0700, Casey Schaufler wrote:
+> >> On 11/2/2022 10:10 AM, Tetsuo Handa wrote:
+> >>> The main point of this submission is to demonstrate how an LSM module
+> >>> which can be loaded using /sbin/insmod can work, and to provide
+> >>> consideration points for making changes for LSM stacking in a way that
+> >>> will not lock out LSM modules which can be loaded using /sbin/insmod .
+> >>
+> >> CaitSith could readily be done as an in-tree LSM. The implementation
+> >> of loadable module infrastructure is unnecessary.
+> > 
+> > Sorry, I'm getting confused.  But in-tree and loadable are not related,
+> > right?
 > 
-> VFS folks, this should really go through a vfs tree, but if nobody
-> wants to pick it up *and* there are no objections to the change, I can
-> take this via the LSM tree.
+> Very much related. My goal is to get CaitSith in-tree as a loadable LSM module
+> which can be loaded using /sbin/insmod .
 
-I can pick this up as I'm currently massaging the simple xattr
-infrastructure. I think the fix is pretty straightforward otherwise.
+Great.  I support that.  But the sentence
 
-Christian
+> >> CaitSith could readily be done as an in-tree LSM. The implementation
+> >> of loadable module infrastructure is unnecessary.
+
+suggests that because CaitSith could be done in-tree, it doesn't need
+to be loadable.  I'm saying that is a non sequitur.  It sounded like
+that setence was meant to say "Because CaitSith could be in-tree, it
+doesn't need to be =m.  Only out of tree modules need to be loadable."
+
+-serge
