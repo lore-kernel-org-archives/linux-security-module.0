@@ -2,81 +2,191 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6734C433FE
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 05:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF61C433FE
+	for <linux-security-module@archiver.kernel.org>; Sat,  5 Nov 2022 11:07:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbiKEFdS (ORCPT
+        id S229645AbiKELHP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 5 Nov 2022 01:33:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57270 "EHLO
+        Sat, 5 Nov 2022 07:07:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiKEFdR (ORCPT
+        with ESMTP id S229739AbiKELHJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 5 Nov 2022 01:33:17 -0400
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 517FD2528E
-        for <linux-security-module@vger.kernel.org>; Fri,  4 Nov 2022 22:33:17 -0700 (PDT)
-Received: by mail-oi1-x234.google.com with SMTP id v81so7222078oie.5
-        for <linux-security-module@vger.kernel.org>; Fri, 04 Nov 2022 22:33:17 -0700 (PDT)
+        Sat, 5 Nov 2022 07:07:09 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 054DD1144E
+        for <linux-security-module@vger.kernel.org>; Sat,  5 Nov 2022 04:07:09 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id n83so7645738oif.11
+        for <linux-security-module@vger.kernel.org>; Sat, 05 Nov 2022 04:07:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aR8uguTZL9jZw1fc4k9+f4P4lDL3duef3vksGnsGPM8=;
-        b=3QuVcTOViDa7VYaFrEvGhfLp2EeLO+S894goiEFWJ48lFxh7tOqMJCLsBIFt+QCiI2
-         O/Q+HXHxO8gv46E3caRAzqLfr+SsKIupaJIExYN2rH+Qo9q1MkfPu7Hg5PzpjmIH6EYA
-         3v/DyMsAFE0A9tkBEQctrrq1SedpxVFPoGAUTP4VP6AOO+w2WNTPraY+CAwSXjduuQTH
-         Pqq+thYYc2NGFh/6SvvJzr7vdIf9NaEyBUEtltL3hw2mk5xvjVqvFl9eweY8jdp/2gco
-         aXFlAsiXC88o8nyDuOrZ7ZLrJYAlnDTY9qTEPEXa3dF8ByoO89do77XhN2gZX2uf2nNE
-         1BrA==
+        bh=Hwpkk+0T3P7HDP5wdM1o198qFAkFJjUu8As78+dhPDo=;
+        b=VzX5D/AMfYuXk8B1NImOWU76p+n63couNJv2zROK4ioXMf5Umfc82z7Y8WC1IdpfCb
+         K/aQHFcdwupQyQ1gTo3Bxyqtu0iWUAxl+qXFZAYBe15kTU8cSxhCm/sxElB2KwcrRaD2
+         g4laGbGDwGZw4lTGa/zZnZD6ia36IACzVozYagEHHfVpr5iT34NhA4yLhYOj0EIcRIRy
+         1jfusp6zrktbWz8fC/YKeMB4/7rQ5W1KBbCqHhrQA8QkviDmA/XM/kfMWzHJcJJjh4li
+         b6pviADGaFdiFE9IN/ztt28oHYQsKVEp114QtopqYysR3I5P6z39DUe7u9NYdeybFA/I
+         Wg5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aR8uguTZL9jZw1fc4k9+f4P4lDL3duef3vksGnsGPM8=;
-        b=Q0bZtU+dfSpI708P+qVFlsSU+rbtT8J9iii3wBgUy0cmUBLzOpWwHWkTdCG0YvQ9u/
-         79tURUfNuWhMjWR5gCv69b9zxXEIqe8VXkNj/y39KMu7Jc7CpPeIvituDL9ivKwEOpf9
-         xNChFQb4XkWboA1hbm7shZUzSrSPIfi/Pc3CVRgSqqB9586dlWBcWErbJWOkKoZDmha9
-         AyY8m3maYELxSp3nrS6mSSGvmKprEN0TBD47hL5JLSZMAXxwN9F9s8TZrIDzFNboLLEt
-         MkmC2J0+6jAneSR4gVfbzjIDO66A6klBkLgLdUOv0tfsOa/IZUjVhbM5CrUFCPqxRiXc
-         3cQw==
-X-Gm-Message-State: ACrzQf3QIBRuA+X4FbJMFN6JwwCY8snP6Gr4TLhcZiGRSrV/uN0f3KJw
-        wWlklyTvLKXIcscLZWhUlJVvRbzCZniYkjD16Wp2
-X-Google-Smtp-Source: AMsMyM4pgf/ihEzbB99QMBcHqY1U1Cv3agmFLtye9H6hkIreZnl053o6x2eFA5PCbr5dqSlXqv3N0Hl9PfOjzzmhpZE=
-X-Received: by 2002:a05:6808:1525:b0:35a:57ef:83b0 with SMTP id
- u37-20020a056808152500b0035a57ef83b0mr174498oiw.172.1667626396707; Fri, 04
- Nov 2022 22:33:16 -0700 (PDT)
+        bh=Hwpkk+0T3P7HDP5wdM1o198qFAkFJjUu8As78+dhPDo=;
+        b=cKMKoaXaWmDp0utjiUhgS7Wj//+z+N5IWmXjRQ4BpE7O14jb2Oul5BmotVc2ZBUmyX
+         8ONzC4BzfyuQdpJyclJeOo7VtNMlWMG+vtWBJdjZZwZE6JwnyyVBmv5X2nnIssm8/AEC
+         dzr6xPuMbIeRxaP2MBbPg/nWG93brcxHf7umU0MPnKpT2J2oVxnrgUSMpqiIaFres/Xv
+         GtAn5O7oZLWORcG1jUve0v0fI9VFJkDha0LHhVPnMm5fdgQyVyD7jdugtLcAJ6t4uFwp
+         li7tClFbSbssXzeD4C/iVJzrcXJcbtG/o/eqebKDGmvcMpOfFFBVDNKxJMsrM3Bis5ui
+         3SDQ==
+X-Gm-Message-State: ACrzQf11mIPE3ZYozh2X9Uy1SnfJbEmbdi/lgCS6bgFBjrVQw/BR5kfE
+        x4usCrtooAgM1c6MorjDIaVBe2m2OFtxX2lsCt+qoWgk7ke3
+X-Google-Smtp-Source: AMsMyM4h86Z7+DifOdakoXbvzOvFpefVV62Tmw35gZfVtpz/r5d6FTw0gmgJK537ZLi++bwykSq3eG7z6EOBVOXntzw=
+X-Received: by 2002:a05:6808:1441:b0:35a:4a2d:673b with SMTP id
+ x1-20020a056808144100b0035a4a2d673bmr8164462oiv.172.1667646428242; Sat, 05
+ Nov 2022 04:07:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221031112536.4177761-1-cuigaosheng1@huawei.com>
- <CALQRfL4Ws255bv_ptCt1qS3cbxjwUsawxAuTyV1pnLwg+70_NQ@mail.gmail.com>
- <20221101043023.GA7631@mail.hallyn.com> <CAHC9VhSMFgifrUdMvogne+DC+gx_B9dW5mGsNZ8vstHpUsupOQ@mail.gmail.com>
- <20221103132434.GA30946@mail.hallyn.com>
-In-Reply-To: <20221103132434.GA30946@mail.hallyn.com>
+References: <Y1lElHVQGT/1Pa6O@archlinux>
+In-Reply-To: <Y1lElHVQGT/1Pa6O@archlinux>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 5 Nov 2022 01:33:05 -0400
-Message-ID: <CAHC9VhS4-e-OphfCyaSmRDRA0_3t+ZjtdOStNeddJ5xRaD1E7g@mail.gmail.com>
-Subject: Re: [PATCH] capabilities: fix undefined behavior in bit shift for CAP_TO_MASK
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     "Andrew G. Morgan" <morgan@kernel.org>,
-        Gaosheng Cui <cuigaosheng1@huawei.com>,
-        akpm@linux-foundation.org, ezk@cs.sunysb.edu,
-        linux-security-module@vger.kernel.org
+Date:   Sat, 5 Nov 2022 07:06:56 -0400
+Message-ID: <CAHC9VhRoRQQO5v1J1r_dA6kO0AnC1WvpBGONEe-weJ_=vnntJA@mail.gmail.com>
+Subject: Re: [PATCH v4] evm: Correct inode_init_security hooks behaviors
+To:     Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
+Cc:     linux-integrity@vger.kernel.org, philippe.trebuchet@ssi.gouv.fr,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, casey@schaufler-ca.com, davem@davemloft.net,
+        lucien.xin@gmail.com, vgoyal@redhat.com, omosnace@redhat.com,
+        mortonm@chromium.org, nicolas.bouchinet@ssi.gouv.fr,
+        mic@digikod.net, cgzones@googlemail.com,
+        linux-security-module@vger.kernel.org, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, bpf@vger.kernel.org,
+        roberto.sassu@huaweicloud.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 3, 2022 at 9:24 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> Ok, thanks.
+On Wed, Oct 26, 2022 at 10:30 AM Nicolas Bouchinet
+<nicolas.bouchinet@clip-os.org> wrote:
 >
-> I wouldn't mind putting up a capability tree if number of patches were
-> going to start ramping up, but historically that has not been worth it.
+> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>
+> Fixes a NULL pointer dereference occurring in the
+> `evm_protected_xattr_common` function of the EVM LSM. The bug is
+> triggered if a `inode_init_security` hook returns 0 without initializing
+> the given `struct xattr` fields (which is the case of BPF) and if no
+> other LSM overrides thoses fields after. This also leads to memory
+> leaks.
+>
+> The `call_int_hook_xattr` macro has been inlined into the
+> `security_inode_init_security` hook in order to check hooks return
+> values and skip ones who doesn't init `xattrs`.
+>
+> Modify `evm_init_hmac` function to init the EVM hmac using every
+> entry of the given xattr array.
+>
+> The `MAX_LSM_EVM_XATTR` value is now based on the security modules
+> compiled in, which gives room for SMACK, SELinux, Apparmor, BPF and
+> IMA/EVM security attributes.
+>
+> Changes the default return value of the `inode_init_security` hook
+> definition to `-EOPNOTSUPP`.
+>
+> Changes the hook documentation to match the behavior of the LSMs using
+> it (only xattr->value is initialised with kmalloc and thus is the only
+> one that should be kfreed by the caller).
+>
+> Cc: roberto.sassu@huaweicloud.com
+> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> ---
+> Changes since v3:
+> https://lore.kernel.org/linux-integrity/Y1fu4jofqLHVDprT@archlinux/
+>
+> * Fixes compilation error reported by the kernel test robot.
+> ---
+>  include/linux/lsm_hook_defs.h       |  2 +-
+>  include/linux/lsm_hooks.h           |  4 ++--
+>  security/integrity/evm/evm.h        |  1 +
+>  security/integrity/evm/evm_crypto.c |  9 +++++++--
+>  security/integrity/evm/evm_main.c   |  7 ++++---
+>  security/security.c                 | 31 ++++++++++++++++++++++-------
+>  6 files changed, 39 insertions(+), 15 deletions(-)
 
-Don't ever let me stop you from setting up a capability tree, but
-yeah, I understand why it probably wouldn't be very useful.  As long
-as you keep doing the reviews, ACKs, etc. I don't mind carrying the
-capability patches in the LSM tree; merging stuff is usually the easy
-part of the job.
+...
+
+> diff --git a/security/security.c b/security/security.c
+> index 14d30fec8a00..79524f8734f1 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -30,7 +30,11 @@
+>  #include <linux/msg.h>
+>  #include <net/flow.h>
+>
+> -#define MAX_LSM_EVM_XATTR      2
+> +#define MAX_LSM_EVM_XATTR                                \
+> +       ((IS_ENABLED(CONFIG_EVM) ? 1 : 0) +              \
+> +        (IS_ENABLED(CONFIG_SECURITY_SELINUX) ? 1 : 0) + \
+> +        (IS_ENABLED(CONFIG_SECURITY_SMACK) ? 1 : 0) +   \
+> +        (IS_ENABLED(CONFIG_BPF_LSM) ? 1 : 0))
+
+...
+
+> @@ -1091,9 +1095,11 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+>                                  const struct qstr *qstr,
+>                                  const initxattrs initxattrs, void *fs_data)
+>  {
+> +       int i = 0;
+> +       int ret = -EOPNOTSUPP;
+>         struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
+>         struct xattr *lsm_xattr, *evm_xattr, *xattr;
+> -       int ret;
+> +       struct security_hook_list *hook_ptr;
+>
+>         if (unlikely(IS_PRIVATE(inode)))
+>                 return 0;
+> @@ -1103,15 +1109,26 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+>                                      dir, qstr, NULL, NULL, NULL);
+>         memset(new_xattrs, 0, sizeof(new_xattrs));
+>         lsm_xattr = new_xattrs;
+> -       ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
+> -                                               &lsm_xattr->name,
+> -                                               &lsm_xattr->value,
+> -                                               &lsm_xattr->value_len);
+> +       hlist_for_each_entry(hook_ptr, &security_hook_heads.inode_init_security,
+> +                            list) {
+> +               ret = hook_ptr->hook.inode_init_security(inode, dir, qstr,
+> +                               &lsm_xattr->name,
+> +                               &lsm_xattr->value,
+> +                               &lsm_xattr->value_len);
+> +               if (ret == -EOPNOTSUPP)
+> +                       continue;
+> +               if (WARN_ON_ONCE(i >= MAX_LSM_EVM_XATTR))
+> +                       ret = -ENOMEM;
+
+It would really like to see us get rid of the MAX_LSM_EVM_XATTR macro
+and determine the array size similar to what we do with the security
+blob sizes.  The macro definition is a kludgy hack that is bound to
+get out of sync at some point and this extra checking inside the hook
+is something we should work to remove.
+
+> +               if (ret != 0)
+> +                       break;
+> +               lsm_xattr++;
+> +               i++;
+> +       }
+>         if (ret)
+>                 goto out;
+>
+>         evm_xattr = lsm_xattr + 1;
+> -       ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
+> +       ret = evm_inode_init_security(inode, new_xattrs, evm_xattr);
+>         if (ret)
+>                 goto out;
+>         ret = initxattrs(inode, new_xattrs, fs_data);
+> --
+> 2.38.1
 
 -- 
 paul-moore.com
