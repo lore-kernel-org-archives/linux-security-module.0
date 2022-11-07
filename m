@@ -2,110 +2,151 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B0DC4332F
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Nov 2022 18:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33770C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Nov 2022 18:58:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232217AbiKGSS0 (ORCPT
+        id S231349AbiKGS6a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Nov 2022 13:18:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34112 "EHLO
+        Mon, 7 Nov 2022 13:58:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232469AbiKGSSA (ORCPT
+        with ESMTP id S231481AbiKGS6Y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Nov 2022 13:18:00 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8F8B2187
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Nov 2022 10:16:55 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id 13so32476353ejn.3
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Nov 2022 10:16:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z1xgbTIlIfmdkigFlB/REbWW4NQp/nzxo9SU7qAm7Mw=;
-        b=Rr/x/3B+ra3KI3CQhIYOJ1jAShEDt/OM3EfTQdLm39I3w5TC1dh9wqRmhgp6H4S+Wl
-         Xu+qIFxDoaHhBvg8D4FGyYzO3GpG/Wl3+tyoU6QfkgiNvswV75t9WCZFQfsCqz1LfT7X
-         d7EyzteE7GHAttgeHczy2xFT97ZSFMXBq+TjaGCRRgm4KsieSFX+pfE7OtFRXgdT69XW
-         Uvs9BGAAo+wskQHhI9DTttEdITUeWk50ES9rIrbyFb+Cax9NP5cEZE6eHMgE7MayLcv6
-         6yyqSvVBnxeI6msVYnQ6/eod5v7dDSlI2n6cve3gylypurYNQrJspuYJE8Dhn7Q9EP8+
-         nxPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z1xgbTIlIfmdkigFlB/REbWW4NQp/nzxo9SU7qAm7Mw=;
-        b=wmveMxS2RNNSXLb3IiLMocRdUvxqpXD1yGTtshfJsMQKytv8nD3Phnfwk1OeHQqNVl
-         9VtN8fmKUXWq/erQ8wyjZU+sJIwZtKCzIXsHxcXAtR0HiJmXZwr2MkQHMzkHcWn40PUY
-         FHA+celrwM5YX3LwK5WSOn26DXBH+I9NhTNwK+Mgpuct7D1CyG3UXQSCw/uBWNIwwwrL
-         qGMtE04w0lQK7HFGyDbI8uTrjFuI3lpipaXEA8wyWqIwjC6mNnP+zQxHN4g3WblLZHtG
-         wIr6P9i4mmrAsZe5Td5GOMFUo1rGFoGpQAhkDv0vg8aakWKDdsfCiH/P4ldvQvGkX+rz
-         BmYA==
-X-Gm-Message-State: ACrzQf26GYzAzrUXiyeQxg4xpCzFrtcUT8Ptry+fFlhKMaSkEUXYDRqL
-        TaLDSZa4FKHKJPVD/3g47so3cFlNTN0=
-X-Google-Smtp-Source: AMsMyM6qIXm9N4z8l8+gKP1aVcpEsklmtkZdDITQ0zMXB0cWK0wkaCQAmYI2f50qZZY+96682GBeUQ==
-X-Received: by 2002:a17:907:1c8a:b0:782:1a0d:3373 with SMTP id nb10-20020a1709071c8a00b007821a0d3373mr47196489ejc.135.1667845014261;
-        Mon, 07 Nov 2022 10:16:54 -0800 (PST)
-Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id x16-20020a170906135000b007ae32daf4b9sm3692638ejb.106.2022.11.07.10.16.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 10:16:53 -0800 (PST)
-From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH v3] samples/landlock: Document best-effort approach for LANDLOCK_ACCESS_FS_REFER
-Date:   Mon,  7 Nov 2022 19:16:51 +0100
-Message-Id: <20221107181651.4555-1-gnoack3000@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Mon, 7 Nov 2022 13:58:24 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC6272D779
+        for <linux-security-module@vger.kernel.org>; Mon,  7 Nov 2022 10:56:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667847397;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=nZhxxyYTlaIwmmIfK4vWroJcpNA8iZbDPuwQPDMKca0=;
+        b=dX2761zAdlQZiGcusuV4kkT69ZH1oZs7GLy79KBz70XY7XBdf9chQuQOAXzARcgM45CGsT
+        Vl+VCVa225baxIan0a8iifL0oKSQQuBzhyz1NQ+YJLq3TW7B04Ht1vFWcrJaEsbmwDyVKO
+        6pEUtLMR62qlthRcUIdpk4GhNt7+o8c=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-235-hnckvliBPSKUsGqTNWLX7A-1; Mon, 07 Nov 2022 13:56:32 -0500
+X-MC-Unique: hnckvliBPSKUsGqTNWLX7A-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3AA52185A78F;
+        Mon,  7 Nov 2022 18:56:32 +0000 (UTC)
+Received: from napanee.usersys.redhat.com (unknown [10.2.16.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 870E042222;
+        Mon,  7 Nov 2022 18:56:30 +0000 (UTC)
+Received: by napanee.usersys.redhat.com (Postfix, from userid 1000)
+        id 37D9AC0519; Mon,  7 Nov 2022 13:56:30 -0500 (EST)
+Date:   Mon, 7 Nov 2022 13:56:30 -0500
+From:   Aristeu Rozanski <aris@redhat.com>
+To:     Wang Weiyang <wangweiyang2@huawei.com>
+Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        serge.hallyn@canonical.com, akpm@linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] device_cgroup: Roll back to original exceptions after
+ copy failure
+Message-ID: <20221107185630.dwcffktczjrayagn@redhat.com>
+References: <20221025113101.41132-1-wangweiyang2@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221025113101.41132-1-wangweiyang2@huawei.com>
+User-Agent: NeoMutt/20220429
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a comment to clarify how to handle best-effort backwards
-compatibility for LANDLOCK_ACCESS_FS_REFER.
+On Tue, Oct 25, 2022 at 07:31:01PM +0800, Wang Weiyang wrote:
+> When add the 'a *:* rwm' entry to devcgroup A's whitelist, at first A's
+> exceptions will be cleaned and A's behavior is changed to
+> DEVCG_DEFAULT_ALLOW. Then parent's exceptions will be copyed to A's
+> whitelist. If copy failure occurs, just return leaving A to grant
+> permissions to all devices. And A may grant more permissions than
+> parent.
+> 
+> Backup A's whitelist and recover original exceptions after copy
+> failure.
+> 
+> Fixes: 4cef7299b478 ("device_cgroup: add proper checking when changing default behavior")
+> Signed-off-by: Wang Weiyang <wangweiyang2@huawei.com>
+> ---
+>  security/device_cgroup.c | 33 +++++++++++++++++++++++++++++----
+>  1 file changed, 29 insertions(+), 4 deletions(-)
+> 
+> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+> index a9f8c63a96d1..bef2b9285fb3 100644
+> --- a/security/device_cgroup.c
+> +++ b/security/device_cgroup.c
+> @@ -82,6 +82,17 @@ static int dev_exceptions_copy(struct list_head *dest, struct list_head *orig)
+>  	return -ENOMEM;
+>  }
+>  
+> +static void dev_exceptions_move(struct list_head *dest, struct list_head *orig)
+> +{
+> +	struct dev_exception_item *ex, *tmp;
+> +
+> +	lockdep_assert_held(&devcgroup_mutex);
+> +
+> +	list_for_each_entry_safe(ex, tmp, orig, list) {
+> +		list_move_tail(&ex->list, dest);
+> +	}
+> +}
+> +
+>  /*
+>   * called under devcgroup_mutex
+>   */
+> @@ -604,11 +615,13 @@ static int devcgroup_update_access(struct dev_cgroup *devcgroup,
+>  	int count, rc = 0;
+>  	struct dev_exception_item ex;
+>  	struct dev_cgroup *parent = css_to_devcgroup(devcgroup->css.parent);
+> +	struct dev_cgroup tmp_devcgrp;
+>  
+>  	if (!capable(CAP_SYS_ADMIN))
+>  		return -EPERM;
+>  
+>  	memset(&ex, 0, sizeof(ex));
+> +	memset(&tmp_devcgrp, 0, sizeof(tmp_devcgrp));
+>  	b = buffer;
+>  
+>  	switch (*b) {
+> @@ -620,15 +633,27 @@ static int devcgroup_update_access(struct dev_cgroup *devcgroup,
+>  
+>  			if (!may_allow_all(parent))
+>  				return -EPERM;
+> -			dev_exception_clean(devcgroup);
+> -			devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
+> -			if (!parent)
+> +			if (!parent) {
+> +				devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
+> +				dev_exception_clean(devcgroup);
+>  				break;
+> +			}
+>  
+> +			INIT_LIST_HEAD(&tmp_devcgrp.exceptions);
+> +			rc = dev_exceptions_copy(&tmp_devcgrp.exceptions,
+> +						 &devcgroup->exceptions);
+> +			if (rc)
+> +				return rc;
+> +			dev_exception_clean(devcgroup);
+>  			rc = dev_exceptions_copy(&devcgroup->exceptions,
+>  						 &parent->exceptions);
+> -			if (rc)
+> +			if (rc) {
+> +				dev_exceptions_move(&devcgroup->exceptions,
+> +						    &tmp_devcgrp.exceptions);
+>  				return rc;
+> +			}
+> +			devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
+> +			dev_exception_clean(&tmp_devcgrp);
+>  			break;
+>  		case DEVCG_DENY:
+>  			if (css_has_online_children(&devcgroup->css))
 
-The "refer" access is special because these operations are always
-forbidden in ABI 1, unlike most other operations, which are permitted
-when using Landlock ABI levels where they are not supported yet.
+Reviewed-by: Aristeu Rozanski <aris@redhat.com>
 
-Signed-off-by: Günther Noack <gnoack3000@gmail.com>
----
- samples/landlock/sandboxer.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index fd4237c64fb2..e2056c8b902c 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -234,7 +234,22 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 	/* Best-effort security. */
- 	switch (abi) {
- 	case 1:
--		/* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
-+		/*
-+		 * Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2
-+		 *
-+		 * Note: The "refer" operations (file renaming and linking
-+		 * across different directories) are always forbidden when using
-+		 * Landlock with ABI 1.
-+		 *
-+		 * If only ABI 1 is available, this sandboxer knowingly forbids
-+		 * refer operations.
-+		 *
-+		 * If a program *needs* to do refer operations after enabling
-+		 * Landlock, it can not use Landlock at ABI level 1.  To be
-+		 * compatible with different kernel versions, such programs
-+		 * should then fall back to not restrict themselves at all if
-+		 * the running kernel only supports ABI 1.
-+		 */
- 		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
- 		__attribute__((fallthrough));
- 	case 2:
-
-base-commit: 4bc90a766ea5af69c12ca1ea00b7fc5fe1d68831
 -- 
-2.38.1
+Aristeu
 
