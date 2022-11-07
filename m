@@ -2,122 +2,159 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 116DAC4332F
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Nov 2022 19:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F719C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Nov 2022 19:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232315AbiKGThe (ORCPT
+        id S232133AbiKGTkO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Nov 2022 14:37:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33710 "EHLO
+        Mon, 7 Nov 2022 14:40:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230186AbiKGThd (ORCPT
+        with ESMTP id S231589AbiKGTkO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Nov 2022 14:37:33 -0500
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B2031009
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Nov 2022 11:37:30 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4N5hMY1MVJzMqFtG;
-        Mon,  7 Nov 2022 20:37:29 +0100 (CET)
+        Mon, 7 Nov 2022 14:40:14 -0500
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CDFE389B
+        for <linux-security-module@vger.kernel.org>; Mon,  7 Nov 2022 11:40:13 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4N5hQg66hwzMpnwh;
+        Mon,  7 Nov 2022 20:40:11 +0100 (CET)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4N5hMW592gzxH;
-        Mon,  7 Nov 2022 20:37:27 +0100 (CET)
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4N5hQf1g6kzMppr8;
+        Mon,  7 Nov 2022 20:40:10 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1667849849;
-        bh=c/Yud4QeBwTZEgdnMJ1N0ogcYS+hIpS8O9PAWlXeiMs=;
+        s=20191114; t=1667850011;
+        bh=VH93TVKDv81HuBQ2xHBKdoTVjfRzV8BT2O9T7VUP1yU=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Gvp+lHkYPUK9suJtGR1kSrLMdHF2DUHeWd5KQok3UDnXqAjzSQGOlUp6JP1h8ZGou
-         0B+a8krrU5yD7MQ8hbPidZv1Nt4oBoeu777sR2TwX5ntqqUohUX3vQtaWvw27ff2O+
-         qdqd3V3WZ9LPMc7AjXeLq38YZFxF2TVvfgowLsBg=
-Message-ID: <b470bee2-280d-cfa4-1f5c-1381013baa63@digikod.net>
-Date:   Mon, 7 Nov 2022 20:37:27 +0100
+        b=1FSixZE59TqN7/U2wk6U358AgKcPAc215cfWjYqdZd8499FHiwXvxC4hhrjTocp+S
+         GrM+Uau+gfxhk+Ko1o7Y75FwYY4xhbblREVkyllHPImuHcXA27SxxrF2mAXsPwUxEz
+         bmpRUBLo4dihIijNPrr10GQ6EDBCfJ0/57vGOnqE=
+Message-ID: <e2909fe5-7fc4-c73a-b33a-e65fed1d837f@digikod.net>
+Date:   Mon, 7 Nov 2022 20:40:09 +0100
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v3 1/1] security: Add CONFIG_LSM_AUTO to handle default
- LSM stack ordering
+Subject: Re: [PATCH] certs: Prevent spurious errors on repeated blacklisting
 Content-Language: en-US
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Nicolas Iooss <nicolas.iooss@m4x.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20210222150608.808146-1-mic@digikod.net>
- <20210222150608.808146-2-mic@digikod.net>
- <51725b44-bc40-0205-8583-285d3b35b5ca@schaufler-ca.com>
- <ee461f8d-a02d-0782-8f31-691853a57f00@digikod.net>
- <7b67163a-9de1-313f-5b5a-8c720cef9b73@schaufler-ca.com>
- <CAJfZ7=n5FOxHXMLRrDQ3F-kDqbYngNoYKcz6_PWi1rPa0_8WpA@mail.gmail.com>
- <3b97e25b-303c-d732-3e5d-f1b1a446e090@schaufler-ca.com>
- <202210171111.21E3983165@keescook>
- <CAHC9VhTTKpesvjnc_233x+wG1BvXyup9nM4Dv2h1953zXAvU3A@mail.gmail.com>
- <202210172153.C65BF23D5E@keescook>
- <CAHC9VhSMLjzxyu0F82NZoea-q4yMgHeCZ0-TRcvxKks4WeKacQ@mail.gmail.com>
- <c7808c82-621e-c20d-bff3-03a66df5528a@digikod.net>
- <b0e100f9-146c-2709-3946-67bc06282b91@schaufler-ca.com>
- <955d9b89-3ca1-8c70-0c05-759febde4031@digikod.net>
- <47483d3d-380a-36e9-0c7f-9becfc09a656@schaufler-ca.com>
+To:     =?UTF-8?Q?Thomas_Wei=c3=9fschuh?= <linux@weissschuh.net>
+Cc:     David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mark Pearson <markpearson@lenovo.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20221104014704.3469-1-linux@weissschuh.net>
+ <3b997266-067c-975c-911a-da146fe9033a@digikod.net>
+ <db5890d8-3a3d-4ca7-bb58-655c26164587@t-8ch.de>
+ <8692915f-437c-56fd-8984-d6febf533fa9@digikod.net>
+ <706c75af-9569-42fd-ba68-533ed931d55d@t-8ch.de>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <47483d3d-380a-36e9-0c7f-9becfc09a656@schaufler-ca.com>
+In-Reply-To: <706c75af-9569-42fd-ba68-533ed931d55d@t-8ch.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 07/11/2022 18:21, Casey Schaufler wrote:
-> On 11/7/2022 4:35 AM, Mickaël Salaün wrote:
->>
->> On 04/11/2022 18:20, Casey Schaufler wrote:
->>> On 11/4/2022 9:29 AM, Mickaël Salaün wrote:
+On 07/11/2022 17:35, Thomas Weißschuh wrote:
+> On 2022-11-07 17:20+0100, Mickaël Salaün wrote:
+>> On 07/11/2022 16:55, Thomas Weißschuh wrote:
+>>> On 2022-11-07 14:12+0100, Mickaël Salaün wrote:
+>>>> This is a follow-up of
+>>>> https://lore.kernel.org/r/c8c65713-5cda-43ad-8018-20f2e32e4432@t-8ch.de
 >>>>
->>>> On 18/10/2022 21:31, Paul Moore wrote:
->>>>> On Tue, Oct 18, 2022 at 1:55 AM Kees Cook <keescook@chromium.org>
->>>>> wrote:
->>>>>> On Mon, Oct 17, 2022 at 09:45:21PM -0400, Paul Moore wrote:
+>>>> Added Jarkko, Mark Pearson, Eric Snowberg and more ML in Cc.
 >>>>
->>>> [...]
 >>>>
->>>>>>> We can have defaults, like we do know, but I'm in no hurry to remove
->>>>>>> the ability to allow admins to change the ordering at boot time.
->>>>>>
->>>>>> My concern is with new LSMs vs the build system. A system builder
->>>>>> will
->>>>>> be prompted for a new CONFIG_SECURITY_SHINY, but won't be prompted
->>>>>> about making changes to CONFIG_LSM to include it.
+>>>> On 04/11/2022 02:47, Thomas Weißschuh wrote:
+>>>>> When the blacklist keyring was changed to allow updates from the root
+>>>>> user it gained an ->update() function that disallows all updates.
+>>>>> When the a hash is blacklisted multiple times from the builtin or
+>>>>> firmware-provided blacklist this spams prominent logs during boot:
 >>>>>
->>>>> I would argue that if an admin/builder doesn't understand what a shiny
->>>>> new LSM does, they shouldn't be enabling that shiny new LSM.  Adding
->>>>> new, potentially restrictive, controls to your kernel build without a
->>>>> basic understanding of those controls is a recipe for disaster and I
->>>>> try to avoid recommending disaster as a planned course of action :)
+>>>>> [    0.890814] blacklist: Problem blacklisting hash (-13)
+>>>>>
+>>>>> As all these repeated calls to mark_raw_hash_blacklisted() would create
+>>>>> the same keyring entry again anyways these errors can be safely ignored.
 >>>>
->>>> It depends on what this shiny new LSMs do *by default*. In the case of
->>>> Landlock, it do nothing unless a process does specific system calls
->>>> (same as for most new kernel features: sysfs entries, syscall flags…).
->>>> I guess this is the same for most LSMs.
+>>>> These errors can indeed be safely ignored, however they highlight issues
+>>>> with some firmware vendors not checking nor optimizing their blocked hashes.
+>>>> This raises security concerns, and it should be fixed by firmware vendors.
 >>>
->>> "By default" is somewhat ambiguous. Smack will always enforce its
->>> basic policy. If files aren't labeled and the Smack process label
->>> isn't explicitly set there won't be any problems. However, if files
->>> have somehow gotten labels assigned and there are no rules defined
->>> things can go sideways.
+>>> Thanks, I was not aware that these are worth fixing.
+>>>
+>>>>> Fixes: 6364d106e041 ("certs: Allow root user to append signed hashes to the blacklist keyring")
+>>>>> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+>>>>> ---
+>>>>>     certs/blacklist.c | 4 +++-
+>>>>>     1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/certs/blacklist.c b/certs/blacklist.c
+>>>>> index 41f10601cc72..5f7f2882ced7 100644
+>>>>> --- a/certs/blacklist.c
+>>>>> +++ b/certs/blacklist.c
+>>>>> @@ -191,7 +191,9 @@ static int mark_raw_hash_blacklisted(const char *hash)
+>>>>>     				   BLACKLIST_KEY_PERM,
+>>>>>     				   KEY_ALLOC_NOT_IN_QUOTA |
+>>>>>     				   KEY_ALLOC_BUILT_IN);
+>>>>> -	if (IS_ERR(key)) {
+>>>>> +
+>>>>> +	/* Blacklisting the same hash twice fails but would be idempotent */
+>>>>> +	if (IS_ERR(key) && PTR_ERR(key) != -EACCES) {
+>>>>
+>>>> We should not hide EACCES errors. This logs issues, which is correct for
+>>>> duplicate hashes, and can help firmware vendors to fix their database. I'd
+>>>> really like to see a different log message instead: change the duplicate
+>>>> entry error code from EACCES to EEXIST, and call pr_warn for this specific
+>>>> case.
+>>>
+>>> Returning EACCES would require some deeper changes to how the keyring is set up
 >>
->> Right, it should then mean without effect whatever kernel-mediated
->> persistent data (e.g. FS's xattr), but I agree that the limit with an
->> explicit configuration can be blurry. I guess we could explicitly mark
->> LSMs with a property that specify if they consider safe (for the
->> system) to be implicitly enabled without explicit run time configuration.
+>> I guess you meant EEXIST?
 > 
-> In the Smack example, the system would be "safe" from the standpoint
-> of system security policy. It might not "work", because the enforcement
-> could prevent expected access. There is no simple way to identify if an
-> LSM is going to need configuration, and can be counted on having it, at
-> initialization. It's up to the LSM to decide what to do if it isn't
-> properly initialized.
+> Indeed, sorry.
+> 
+>>> or even changes to the keyring core itself to introduce a key_create() (without
+>>> update) function.
+>>>
+>>> Is this something you would take a look at, or should I try to do it?
+>>> (I have no previous knowledge about the keyring subsystem)
+>>
+>> Please take a look. I think it should not be too complex.
+> 
+> Will do.
+> 
+> My plan is to create a new function key_create() that does takes the core logic
+> of key_create_or_update() and fails with EEXIST if needed.
+> 
+>>> In any case it probably would also be good to log the problematic hashes
+>>> themselves, so users can properly report the issue to their firmware vendors.
+>>
+>> Agree
+> 
+> I'll send a patch for that, too.
 
-I agree, I was thinking about "working" (without specific security 
-contract). I was suggesting to create a dedicated field in the 
-DEFINE_LSM struct to identify if the LSM needs a proper initialization 
-(which is not the case for Yama, Landlock, BPF, and probably others).
+Good!
+
+Jarkko, David, any though?
+
+> 
+> As for this patch's Fixes-tag, it could refer to either the commit that
+> introduced the logging in the first place or the one that actively started to
+> trigger it:
+> * 734114f8782f ("KEYS: Add a system blacklist keyring")
+> * 6364d106e041 ("certs: Allow root user to append signed hashes to the blacklist keyring")
+> 
+> Personally I'd tend to use the latter.
+
+Even if commit 6364d106e041 is not directly the cause of the issue, it 
+makes it visible, so I agree that you should keep the current Fixes tag.
+
+
+> 
+>>>>>     		pr_err("Problem blacklisting hash (%ld)\n", PTR_ERR(key));
+>>>>>     		return PTR_ERR(key);
+>>>>>     	}
+>>>>>
+>>>>> base-commit: ee6050c8af96bba2f81e8b0793a1fc2f998fcd20
