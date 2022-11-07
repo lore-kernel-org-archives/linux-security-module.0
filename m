@@ -2,159 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F719C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Nov 2022 19:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D33B7C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Nov 2022 20:12:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232133AbiKGTkO (ORCPT
+        id S232847AbiKGUMi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Nov 2022 14:40:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35026 "EHLO
+        Mon, 7 Nov 2022 15:12:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231589AbiKGTkO (ORCPT
+        with ESMTP id S232824AbiKGUM3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Nov 2022 14:40:14 -0500
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CDFE389B
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Nov 2022 11:40:13 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4N5hQg66hwzMpnwh;
-        Mon,  7 Nov 2022 20:40:11 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4N5hQf1g6kzMppr8;
-        Mon,  7 Nov 2022 20:40:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1667850011;
-        bh=VH93TVKDv81HuBQ2xHBKdoTVjfRzV8BT2O9T7VUP1yU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=1FSixZE59TqN7/U2wk6U358AgKcPAc215cfWjYqdZd8499FHiwXvxC4hhrjTocp+S
-         GrM+Uau+gfxhk+Ko1o7Y75FwYY4xhbblREVkyllHPImuHcXA27SxxrF2mAXsPwUxEz
-         bmpRUBLo4dihIijNPrr10GQ6EDBCfJ0/57vGOnqE=
-Message-ID: <e2909fe5-7fc4-c73a-b33a-e65fed1d837f@digikod.net>
-Date:   Mon, 7 Nov 2022 20:40:09 +0100
+        Mon, 7 Nov 2022 15:12:29 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A13DD2AE21
+        for <linux-security-module@vger.kernel.org>; Mon,  7 Nov 2022 12:12:28 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id q9so33314284ejd.0
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Nov 2022 12:12:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=enMdjmIsSbUUYGb+RiHPQULVTIcs0r1uA7QvgYehDfo=;
+        b=cK5mzUepaprD41nCiRUmaLmzTIgcnNw5msQaClmACmYhAcO7XK6rJUBvOqZtgby6y8
+         52QvjVVQH7ojFFZrM7qfAy0IdolyIX8knrA6IaYyvW21uhXHySccJ3/m2Wleu58EVtDt
+         6MIVe9aRiDrWdsThdVgafQbhigdkLUk4g2knQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=enMdjmIsSbUUYGb+RiHPQULVTIcs0r1uA7QvgYehDfo=;
+        b=2OvvQuGEKPWKLas/bW4Q3h9rRuW2vk970lEaaeDLuWi9zF7HPEY1echrgLey4IkGhG
+         i+lnP7bkZ8GGPKWSB07TYREhrh16DSWD4+skW5axj0pSLCzdDrg/jqdjG9FYuQT0K6Ok
+         d5ULYmNZzra6XmhCgDuQNxbdLAsy6vlpE91Dhyj3p2Rotn9bhZNmOnf5b2yIk6Zt8aSw
+         LJepd2gMMjwZUINAe9KcTughGNw32ANTXUNsw1bD6ljcUTn709lIqU9jMlld6Ve/iFHE
+         UX6WpxMVKgU/21JQXQgPSz7UJKTkTYYEQc1QmGxQtf1UmVHhSzLDkxtuCFpwQKnImrh7
+         Utig==
+X-Gm-Message-State: ACrzQf2uSKQiU4U0wHe0RDdJoWVMONQMdZDXZ3WSf46pznKIwdpj0RqB
+        MzFwFssXBN8FFPxqL49Yx/eQ2ix8WTtNpQ==
+X-Google-Smtp-Source: AMsMyM6UeabDDIAX6CgRixmsOuZyE5h90yWYzMgwOYUAqyrezPEEuaIxQWWzxNendMchL1Zk4S8APQ==
+X-Received: by 2002:a17:906:c44:b0:7ae:749:1659 with SMTP id t4-20020a1709060c4400b007ae07491659mr28135680ejf.759.1667851946802;
+        Mon, 07 Nov 2022 12:12:26 -0800 (PST)
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com. [209.85.221.46])
+        by smtp.gmail.com with ESMTPSA id m15-20020a50ef0f000000b00461bacee867sm4632519eds.25.2022.11.07.12.12.25
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Nov 2022 12:12:26 -0800 (PST)
+Received: by mail-wr1-f46.google.com with SMTP id y16so17835525wrt.12
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Nov 2022 12:12:25 -0800 (PST)
+X-Received: by 2002:a5d:6dc3:0:b0:22a:bcc3:21c6 with SMTP id
+ d3-20020a5d6dc3000000b0022abcc321c6mr34070892wrz.450.1667851934711; Mon, 07
+ Nov 2022 12:12:14 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH] certs: Prevent spurious errors on repeated blacklisting
-Content-Language: en-US
-To:     =?UTF-8?Q?Thomas_Wei=c3=9fschuh?= <linux@weissschuh.net>
-Cc:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mark Pearson <markpearson@lenovo.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        linux-integrity@vger.kernel.org,
+References: <20221103180120.752659-1-evgreen@chromium.org> <20221103105558.v4.4.Ieb1215f598bc9df56b0e29e5977eae4fcca25e15@changeid>
+ <202211041132.E8CB636@keescook>
+In-Reply-To: <202211041132.E8CB636@keescook>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Mon, 7 Nov 2022 12:11:38 -0800
+X-Gmail-Original-Message-ID: <CAE=gft4+KHVd_cNApo6EcTtxSDQDNB-nPXdus-0K8pQdWF+tiw@mail.gmail.com>
+Message-ID: <CAE=gft4+KHVd_cNApo6EcTtxSDQDNB-nPXdus-0K8pQdWF+tiw@mail.gmail.com>
+Subject: Re: [PATCH v4 04/11] security: keys: trusted: Include TPM2 creation data
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-pm@vger.kernel.org, rjw@rjwysocki.net, gwendal@chromium.org,
+        apronin@chromium.org, Pavel Machek <pavel@ucw.cz>,
+        Matthew Garrett <mgarrett@aurora.tech>,
+        linux-integrity@vger.kernel.org, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, dlunev@google.com,
+        Eric Biggers <ebiggers@kernel.org>,
+        Ben Boeckel <me@benboeckel.net>, jarkko@kernel.org,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org
-References: <20221104014704.3469-1-linux@weissschuh.net>
- <3b997266-067c-975c-911a-da146fe9033a@digikod.net>
- <db5890d8-3a3d-4ca7-bb58-655c26164587@t-8ch.de>
- <8692915f-437c-56fd-8984-d6febf533fa9@digikod.net>
- <706c75af-9569-42fd-ba68-533ed931d55d@t-8ch.de>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <706c75af-9569-42fd-ba68-533ed931d55d@t-8ch.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Nov 4, 2022 at 11:33 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Thu, Nov 03, 2022 at 11:01:12AM -0700, Evan Green wrote:
+> > In addition to the private key and public key, the TPM2_Create
+> > command may also return creation data, a creation hash, and a creation
+> > ticket. These fields allow the TPM to attest to the contents of a
+> > specified set of PCRs at the time the trusted key was created. Encrypted
+> > hibernation will use this to ensure that PCRs settable only by the
+> > kernel were set properly at the time of creation, indicating this is an
+> > authentic hibernate key.
+> >
+> > Encode these additional parameters into the ASN.1 created to represent
+> > the key blob. The new fields are made optional so that they don't bloat
+> > key blobs which don't need them, and to ensure interoperability with
+> > old blobs.
+> >
+> > Signed-off-by: Evan Green <evgreen@chromium.org>
+>
+> There's a lot of open-coded math for the bounds checking. I didn't
+> immediately see any problems, but it'd be nice if there was a way to
+> hook a fuzzer up to this, or at least write some KUnit tests to check
+> boundary conditions explicitly.
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-On 07/11/2022 17:35, Thomas Weißschuh wrote:
-> On 2022-11-07 17:20+0100, Mickaël Salaün wrote:
->> On 07/11/2022 16:55, Thomas Weißschuh wrote:
->>> On 2022-11-07 14:12+0100, Mickaël Salaün wrote:
->>>> This is a follow-up of
->>>> https://lore.kernel.org/r/c8c65713-5cda-43ad-8018-20f2e32e4432@t-8ch.de
->>>>
->>>> Added Jarkko, Mark Pearson, Eric Snowberg and more ML in Cc.
->>>>
->>>>
->>>> On 04/11/2022 02:47, Thomas Weißschuh wrote:
->>>>> When the blacklist keyring was changed to allow updates from the root
->>>>> user it gained an ->update() function that disallows all updates.
->>>>> When the a hash is blacklisted multiple times from the builtin or
->>>>> firmware-provided blacklist this spams prominent logs during boot:
->>>>>
->>>>> [    0.890814] blacklist: Problem blacklisting hash (-13)
->>>>>
->>>>> As all these repeated calls to mark_raw_hash_blacklisted() would create
->>>>> the same keyring entry again anyways these errors can be safely ignored.
->>>>
->>>> These errors can indeed be safely ignored, however they highlight issues
->>>> with some firmware vendors not checking nor optimizing their blocked hashes.
->>>> This raises security concerns, and it should be fixed by firmware vendors.
->>>
->>> Thanks, I was not aware that these are worth fixing.
->>>
->>>>> Fixes: 6364d106e041 ("certs: Allow root user to append signed hashes to the blacklist keyring")
->>>>> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
->>>>> ---
->>>>>     certs/blacklist.c | 4 +++-
->>>>>     1 file changed, 3 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/certs/blacklist.c b/certs/blacklist.c
->>>>> index 41f10601cc72..5f7f2882ced7 100644
->>>>> --- a/certs/blacklist.c
->>>>> +++ b/certs/blacklist.c
->>>>> @@ -191,7 +191,9 @@ static int mark_raw_hash_blacklisted(const char *hash)
->>>>>     				   BLACKLIST_KEY_PERM,
->>>>>     				   KEY_ALLOC_NOT_IN_QUOTA |
->>>>>     				   KEY_ALLOC_BUILT_IN);
->>>>> -	if (IS_ERR(key)) {
->>>>> +
->>>>> +	/* Blacklisting the same hash twice fails but would be idempotent */
->>>>> +	if (IS_ERR(key) && PTR_ERR(key) != -EACCES) {
->>>>
->>>> We should not hide EACCES errors. This logs issues, which is correct for
->>>> duplicate hashes, and can help firmware vendors to fix their database. I'd
->>>> really like to see a different log message instead: change the duplicate
->>>> entry error code from EACCES to EEXIST, and call pr_warn for this specific
->>>> case.
->>>
->>> Returning EACCES would require some deeper changes to how the keyring is set up
->>
->> I guess you meant EEXIST?
-> 
-> Indeed, sorry.
-> 
->>> or even changes to the keyring core itself to introduce a key_create() (without
->>> update) function.
->>>
->>> Is this something you would take a look at, or should I try to do it?
->>> (I have no previous knowledge about the keyring subsystem)
->>
->> Please take a look. I think it should not be too complex.
-> 
-> Will do.
-> 
-> My plan is to create a new function key_create() that does takes the core logic
-> of key_create_or_update() and fails with EEXIST if needed.
-> 
->>> In any case it probably would also be good to log the problematic hashes
->>> themselves, so users can properly report the issue to their firmware vendors.
->>
->> Agree
-> 
-> I'll send a patch for that, too.
-
-Good!
-
-Jarkko, David, any though?
-
-> 
-> As for this patch's Fixes-tag, it could refer to either the commit that
-> introduced the logging in the first place or the one that actively started to
-> trigger it:
-> * 734114f8782f ("KEYS: Add a system blacklist keyring")
-> * 6364d106e041 ("certs: Allow root user to append signed hashes to the blacklist keyring")
-> 
-> Personally I'd tend to use the latter.
-
-Even if commit 6364d106e041 is not directly the cause of the issue, it 
-makes it visible, so I agree that you should keep the current Fixes tag.
-
-
-> 
->>>>>     		pr_err("Problem blacklisting hash (%ld)\n", PTR_ERR(key));
->>>>>     		return PTR_ERR(key);
->>>>>     	}
->>>>>
->>>>> base-commit: ee6050c8af96bba2f81e8b0793a1fc2f998fcd20
+Thank you! Yes, agreed about all the bounds checking. I could probably
+pull out the "check for src + 2 > end, then get_unaligned_be16()" into
+a helper function. Let me see if that makes things look better or ends
+up looking the same.
+-Evan
