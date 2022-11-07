@@ -2,91 +2,122 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E2FC433FE
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Nov 2022 19:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 116DAC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Nov 2022 19:37:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231519AbiKGTW1 (ORCPT
+        id S232315AbiKGThe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Nov 2022 14:22:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54432 "EHLO
+        Mon, 7 Nov 2022 14:37:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbiKGTW0 (ORCPT
+        with ESMTP id S230186AbiKGThd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Nov 2022 14:22:26 -0500
-Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C50EE29C9D
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Nov 2022 11:22:23 -0800 (PST)
-Received: by mail-oo1-xc35.google.com with SMTP id j6-20020a4ab1c6000000b004809a59818cso1743923ooo.0
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Nov 2022 11:22:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pYT5BMk0k0x5MAqDpewGmqXvzVoBMDNQmeGbwYo7Jvo=;
-        b=ND8Lsz89fA2IBOex8n2K76SYTmPdOKvzKt3cZ5RqmZAMGhETiHVcQNzbPE1VmxB3I8
-         YOGsCLa++Mtgd3tZWJksNG143x8f9CoNm6PBOBSzYG5173rtT680+Ooi+gkkqaNqRELs
-         AhxlT/ALuJAuu/aD6ci7771j6mmKk6H6axJX35A8umTWZFZ56u4qTTB30rmIpMA+fudw
-         POxBK1JHo+a2E/QABa7I9SPgKmIDsC4zVym1PkT+xY3/XnBqMdhXR4XpidDZwk+VBPJL
-         Cq6DIp3k4D1q6OdBP6kXP/CvMjPEQoaJqjzlHHz3duPXJ8VPwWusmk1qOBhSAPrqpXmX
-         0Rcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pYT5BMk0k0x5MAqDpewGmqXvzVoBMDNQmeGbwYo7Jvo=;
-        b=xRaW95YzSdVo418oyfZ4/BbNtBdg0LVP28gK+JyYhyhAskVzoKr4vTOizqADRkrGnN
-         /MwJcCDsejz1xOEFICA7UgJV8nKD+qqUVNXrS/95MxEcqaqz3HR3bNOzmi1YOwfdDpXo
-         kiZkBlfYqw8krNR7eeOeIqZ/TjlpQjkfKUwpVm6BEFiNUhHr6UF4v/zqIaOb+cv17euw
-         T6EueyHUBY5AtKKl6sjqKm2xLIvDGlBdNXn+4qf162u7QoWPzjb59NRlUjAUFa20lTLv
-         2c6rL/FK0X062+y3/QhTC/ZI9WqJpx+nVJzl9NUO3xFwBzIZRC34I9NvuO2rgGqZpAXb
-         zo7w==
-X-Gm-Message-State: ANoB5pnLDQ1w3rKtMS/GqdpkWKg9+sVorygdLnV83zdeHC902FHMXWWD
-        rTqgFMn2X6A+GMIb9DaX6LUOqAkaZgIXHLQAMmGe
-X-Google-Smtp-Source: AA0mqf6068nsvKfmFGtrvKWILCe2YZ6zEynjVCZOktCT/LB06SG4RopaoTX0eNMkK1xBBkotRuRsdhyIHmrq4zp9b08=
-X-Received: by 2002:a4a:ca8f:0:b0:49e:f01a:feaf with SMTP id
- x15-20020a4aca8f000000b0049ef01afeafmr2825384ooq.81.1667848943030; Mon, 07
- Nov 2022 11:22:23 -0800 (PST)
+        Mon, 7 Nov 2022 14:37:33 -0500
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B2031009
+        for <linux-security-module@vger.kernel.org>; Mon,  7 Nov 2022 11:37:30 -0800 (PST)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4N5hMY1MVJzMqFtG;
+        Mon,  7 Nov 2022 20:37:29 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4N5hMW592gzxH;
+        Mon,  7 Nov 2022 20:37:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1667849849;
+        bh=c/Yud4QeBwTZEgdnMJ1N0ogcYS+hIpS8O9PAWlXeiMs=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Gvp+lHkYPUK9suJtGR1kSrLMdHF2DUHeWd5KQok3UDnXqAjzSQGOlUp6JP1h8ZGou
+         0B+a8krrU5yD7MQ8hbPidZv1Nt4oBoeu777sR2TwX5ntqqUohUX3vQtaWvw27ff2O+
+         qdqd3V3WZ9LPMc7AjXeLq38YZFxF2TVvfgowLsBg=
+Message-ID: <b470bee2-280d-cfa4-1f5c-1381013baa63@digikod.net>
+Date:   Mon, 7 Nov 2022 20:37:27 +0100
 MIME-Version: 1.0
-References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp>
- <20221102171025.126961-4-penguin-kernel@I-love.SAKURA.ne.jp>
- <ef5fa206-4e7f-3c23-07d4-8591c4315d20@schaufler-ca.com> <20221105024345.GA15957@mail.hallyn.com>
- <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp>
-In-Reply-To: <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 7 Nov 2022 14:22:12 -0500
-Message-ID: <CAHC9VhTvC+U8f1eoF8G120uh7OJb5Cu3un5vfjc++EuYOggUeg@mail.gmail.com>
-Subject: Re: [PATCH 04/10] CaitSith: Add header file.
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Subject: Re: [PATCH v3 1/1] security: Add CONFIG_LSM_AUTO to handle default
+ LSM stack ordering
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Nicolas Iooss <nicolas.iooss@m4x.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20210222150608.808146-1-mic@digikod.net>
+ <20210222150608.808146-2-mic@digikod.net>
+ <51725b44-bc40-0205-8583-285d3b35b5ca@schaufler-ca.com>
+ <ee461f8d-a02d-0782-8f31-691853a57f00@digikod.net>
+ <7b67163a-9de1-313f-5b5a-8c720cef9b73@schaufler-ca.com>
+ <CAJfZ7=n5FOxHXMLRrDQ3F-kDqbYngNoYKcz6_PWi1rPa0_8WpA@mail.gmail.com>
+ <3b97e25b-303c-d732-3e5d-f1b1a446e090@schaufler-ca.com>
+ <202210171111.21E3983165@keescook>
+ <CAHC9VhTTKpesvjnc_233x+wG1BvXyup9nM4Dv2h1953zXAvU3A@mail.gmail.com>
+ <202210172153.C65BF23D5E@keescook>
+ <CAHC9VhSMLjzxyu0F82NZoea-q4yMgHeCZ0-TRcvxKks4WeKacQ@mail.gmail.com>
+ <c7808c82-621e-c20d-bff3-03a66df5528a@digikod.net>
+ <b0e100f9-146c-2709-3946-67bc06282b91@schaufler-ca.com>
+ <955d9b89-3ca1-8c70-0c05-759febde4031@digikod.net>
+ <47483d3d-380a-36e9-0c7f-9becfc09a656@schaufler-ca.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <47483d3d-380a-36e9-0c7f-9becfc09a656@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Nov 5, 2022 at 12:06 AM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2022/11/05 11:43, Serge E. Hallyn wrote:
-> > On Wed, Nov 02, 2022 at 10:57:48AM -0700, Casey Schaufler wrote:
-> >> On 11/2/2022 10:10 AM, Tetsuo Handa wrote:
-> >>> The main point of this submission is to demonstrate how an LSM module
-> >>> which can be loaded using /sbin/insmod can work, and to provide
-> >>> consideration points for making changes for LSM stacking in a way that
-> >>> will not lock out LSM modules which can be loaded using /sbin/insmod .
-> >>
-> >> CaitSith could readily be done as an in-tree LSM. The implementation
-> >> of loadable module infrastructure is unnecessary.
-> >
-> > Sorry, I'm getting confused.  But in-tree and loadable are not related,
-> > right?
->
-> Very much related. My goal is to get CaitSith in-tree as a loadable LSM module
-> which can be loaded using /sbin/insmod .
 
-At this point in time I don't want to support dynamically loadable LSM modules.
+On 07/11/2022 18:21, Casey Schaufler wrote:
+> On 11/7/2022 4:35 AM, Mickaël Salaün wrote:
+>>
+>> On 04/11/2022 18:20, Casey Schaufler wrote:
+>>> On 11/4/2022 9:29 AM, Mickaël Salaün wrote:
+>>>>
+>>>> On 18/10/2022 21:31, Paul Moore wrote:
+>>>>> On Tue, Oct 18, 2022 at 1:55 AM Kees Cook <keescook@chromium.org>
+>>>>> wrote:
+>>>>>> On Mon, Oct 17, 2022 at 09:45:21PM -0400, Paul Moore wrote:
+>>>>
+>>>> [...]
+>>>>
+>>>>>>> We can have defaults, like we do know, but I'm in no hurry to remove
+>>>>>>> the ability to allow admins to change the ordering at boot time.
+>>>>>>
+>>>>>> My concern is with new LSMs vs the build system. A system builder
+>>>>>> will
+>>>>>> be prompted for a new CONFIG_SECURITY_SHINY, but won't be prompted
+>>>>>> about making changes to CONFIG_LSM to include it.
+>>>>>
+>>>>> I would argue that if an admin/builder doesn't understand what a shiny
+>>>>> new LSM does, they shouldn't be enabling that shiny new LSM.  Adding
+>>>>> new, potentially restrictive, controls to your kernel build without a
+>>>>> basic understanding of those controls is a recipe for disaster and I
+>>>>> try to avoid recommending disaster as a planned course of action :)
+>>>>
+>>>> It depends on what this shiny new LSMs do *by default*. In the case of
+>>>> Landlock, it do nothing unless a process does specific system calls
+>>>> (same as for most new kernel features: sysfs entries, syscall flags…).
+>>>> I guess this is the same for most LSMs.
+>>>
+>>> "By default" is somewhat ambiguous. Smack will always enforce its
+>>> basic policy. If files aren't labeled and the Smack process label
+>>> isn't explicitly set there won't be any problems. However, if files
+>>> have somehow gotten labels assigned and there are no rules defined
+>>> things can go sideways.
+>>
+>> Right, it should then mean without effect whatever kernel-mediated
+>> persistent data (e.g. FS's xattr), but I agree that the limit with an
+>> explicit configuration can be blurry. I guess we could explicitly mark
+>> LSMs with a property that specify if they consider safe (for the
+>> system) to be implicitly enabled without explicit run time configuration.
+> 
+> In the Smack example, the system would be "safe" from the standpoint
+> of system security policy. It might not "work", because the enforcement
+> could prevent expected access. There is no simple way to identify if an
+> LSM is going to need configuration, and can be counted on having it, at
+> initialization. It's up to the LSM to decide what to do if it isn't
+> properly initialized.
 
--- 
-paul-moore.com
+I agree, I was thinking about "working" (without specific security 
+contract). I was suggesting to create a dedicated field in the 
+DEFINE_LSM struct to identify if the LSM needs a proper initialization 
+(which is not the case for Yama, Landlock, BPF, and probably others).
