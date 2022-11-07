@@ -2,151 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33770C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Nov 2022 18:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FF1C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Nov 2022 19:00:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231349AbiKGS6a (ORCPT
+        id S232308AbiKGS77 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Nov 2022 13:58:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38208 "EHLO
+        Mon, 7 Nov 2022 13:59:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231481AbiKGS6Y (ORCPT
+        with ESMTP id S232372AbiKGS75 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Nov 2022 13:58:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC6272D779
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Nov 2022 10:56:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667847397;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nZhxxyYTlaIwmmIfK4vWroJcpNA8iZbDPuwQPDMKca0=;
-        b=dX2761zAdlQZiGcusuV4kkT69ZH1oZs7GLy79KBz70XY7XBdf9chQuQOAXzARcgM45CGsT
-        Vl+VCVa225baxIan0a8iifL0oKSQQuBzhyz1NQ+YJLq3TW7B04Ht1vFWcrJaEsbmwDyVKO
-        6pEUtLMR62qlthRcUIdpk4GhNt7+o8c=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-235-hnckvliBPSKUsGqTNWLX7A-1; Mon, 07 Nov 2022 13:56:32 -0500
-X-MC-Unique: hnckvliBPSKUsGqTNWLX7A-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3AA52185A78F;
-        Mon,  7 Nov 2022 18:56:32 +0000 (UTC)
-Received: from napanee.usersys.redhat.com (unknown [10.2.16.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 870E042222;
-        Mon,  7 Nov 2022 18:56:30 +0000 (UTC)
-Received: by napanee.usersys.redhat.com (Postfix, from userid 1000)
-        id 37D9AC0519; Mon,  7 Nov 2022 13:56:30 -0500 (EST)
-Date:   Mon, 7 Nov 2022 13:56:30 -0500
-From:   Aristeu Rozanski <aris@redhat.com>
-To:     Wang Weiyang <wangweiyang2@huawei.com>
-Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        serge.hallyn@canonical.com, akpm@linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] device_cgroup: Roll back to original exceptions after
- copy failure
-Message-ID: <20221107185630.dwcffktczjrayagn@redhat.com>
-References: <20221025113101.41132-1-wangweiyang2@huawei.com>
+        Mon, 7 Nov 2022 13:59:57 -0500
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEC6128E37
+        for <linux-security-module@vger.kernel.org>; Mon,  7 Nov 2022 10:59:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1667847591; bh=xkKz+zxj6VEW5xPvuGaiZR4Gf90RBWkomUoVTYhA3Ks=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=sWbNhh686aZCl3Q2koUXfzSret5agiyh/FXVckEcS2QUE+RaIUJgdE/YtUqFMuah0GibDQa3p+DMk9vjd/Al1CXLgQFY9zJTROuxjlqP/A/4V8SpQLvNGNC86tbfcW0B86J5mwnA4C7qVl9T5dYA1yZQ4IXswU5ZPFYEE3EU/C8Ds5zKtfUmIBbLGIiujmPIFxJhdGx+Iwct0lps6B1ZP1Pv0z9oOHF7sOfEAUEc/+v2zpXb5sFZ5ac5m6bSTJT+YfsNmoT0K915rC1DrPVawH8zk3KRU30mfOzy1lGlvJ1oULU+bknUt6QCQWKi3TA4yqnD/pEXYspD3f5x5vvG3w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1667847591; bh=L0tNKQTxAQdIg/3P0ZyGVljnq0GQTUMdtp97+RM36pw=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=fMuJui23gGCyHVSTysG9pI+qNE+ypPHZ02tJ1ZyTOQa7G+q2Nci+94DhfPmuBgQQiA2TYsR8UJhZSgCcnXw4FzfC0668k7UU66n97G4EK4cXprqfrNlmabGnZairbUh5QGiU1tFlxX6V6BT7bIEBTkhYoaR3mhr7U7Eg0IkOITINoayMObd3Jo8KyxJBetu1Y9UYSbAUHNEmUiGWY84cXE2bSrJTBUq/NUTDJAIwVwHfEe3T2h7w5zgzorCM315b95lA9bnSEP+hpmzwBh8UHpmHk3+RY9+cdNPyhfE4OLsKJrGqpuZ5lnHqhTK5QkUKRQnewopTFwc+AK5JUOStLQ==
+X-YMail-OSG: GAYbo7YVM1k1XUVHZGoQ3EpWKV3lBWwMhstc_IfvlXQpnBHXZoYF3YIQwsGcFzv
+ sXgDgUezxBo0c9BDbn.6GKGfBRPJoxSwWoC2HnaKDCJismFFHubiDChKgGZMN7yPyqzKGmafGmsC
+ pmeX._RPTHwyQGWL41MbnanNr7ELaqTZGXZ7nnXf8JhtkskhaQlAirCkMGT8uecpR946weEO4Qkt
+ yANnsI6uZ3U19ow66.w6G7ahPdINx086f_99d0k6ZOTISkYd4WhFY08mrbZOHszjcKCLWYhE4GWe
+ 31wtw1mRZdOH6bLs_Xs4y1Og1wW9J.1BsiO_tJoHaZzEigf5mgHGfARI29nRhB9j7gp1DiYSJBXV
+ rsDZKeGLn24ccib4yIk_BUZ46Lmabgsd6ERtj0W.mICSp.HMHtAeOFPO4dTd3y9j5gEt9NdWJo9p
+ ZK6nbZZjrEgpjzpoNBvG5DCgAsOt46b283e2vrqxNoZk8731a05Cf32ijV8Knznju5BjvQeJX44v
+ D0UtURkj4is4ooowyXjFj09C.BcPpejysiB4ojoa02_M5JVshCJJ9m9ip9IuJoodW7olEtTTrKTN
+ ZHKBh4_A_WrqTfs.ewKrwYk1A3OXxmcGwj7SN8SDMq49ymX6aqFVVlauBhkO4jpGwo1xpXI3CeC0
+ vYpFzaA65VM0Ks5B0nJYvMxdSWXonnuVPehr_xN1apQ53C03vtLnJ6dF.NZIUr2P54XIvzITgcXZ
+ ezByqMM7BvIsbrxqYbgtR8blSXZxumV2gdq.p_GzR9eizuX8mmL5waX2s5.5ttUOFd4C0fw1Fuee
+ DYGnSocE.H1GCIea1.t7BS_1IUvJi.s.ME02oMwh4j46FrCjWSj7Ne8evv7ODApkrn7UIONgRY_Q
+ bYxwnCHA8IHmsGAFbbNOv3YNbaPtW5hO17Uuz8Ami3foa47dvCRb5rs2UL2N4L.g9oDERVuQRQ5d
+ XPMT0rWNULlbud42Nq_SJzgLuT6YarsCzRfQ8095fdRm52OlqV9wDrKWdwPOLYkFQWuicV7WD00Y
+ XxEHjDfVboxGuuSdUaKXSwGCk.PNFqdv9_AwPalZHa6ol1SZ6FdMPDmWnIAZggLab2.6vjInPdgh
+ l7yOjfFd5EjFFhBk3m9wUgr4_4Hw6_gEhaXk7wmZ6OJtvK9ZXybleGiTnbkI1VlvDTdeUhWFbnUi
+ bComAp6CldjHm85F2oTKxd2sKVH7gQyDaa_w7xWUBauLA1DHFwpt0F_RueROXWO_PavspLvKoB1Q
+ nQUZSR.tl7iDhQrW4qacuNUAhrvR7f9iHAoPiwn5YlT0cYDYNZWzkINKkRoe7GfIogjsVsUTLRGn
+ k9QLj8atGfvJjt_6sNLoZSZq92fvPeYqlwjJHYXFqluaarImOW0bk8Mp3sRQG3hzVpCSXP64Q8Wb
+ TbfcMVcyDIPIcYUBypl7.9AJ5JPgBS8g8FieVdUIvbo9b6eijkxZcS7EkFt2ZObSDT9RMYSB2NmI
+ ThBCmZ1BbSyfqFL7E_FyBS0hpRccHon1tpviT6UIzkfRMUUvqyhYCa3PyFKzkJcfievErupEoFZY
+ u3Su37QrNXCTaFgi0F7TyZ97T01tRntI1ffjSf1Qlinflt6emAIMw5GGpdOYBO9KzfUwrBfEA48C
+ fFG_GhBUaqTrYeezX2pfVhZeU.VmaCuN1EkRptRSePobhMs3WSIqpbiH0KGl1Wxy4Xxutl2Sk4on
+ XcyTc85oni.kQOgjm9f9kOhxz7YsN78Q2bUfleJifyzlElsRdZP.cvRDYHIPvt9tAEWQuVgGqKDh
+ LHajUS2MqK.BOdNqk.g7jqIfK_b7YSntytOXVd7G0GJ8XfifU05SQzyU1NcP30_mwNyeQCbnRQwZ
+ 6uf6K.TejRWcEgLztKbinafnaWdNG1Nc8_yGL1RhULmv2kkGpwBmnSSIvXxCl1SmNun4GEmK4JfP
+ YLUDPoHhaC6mI4w9W4Qtr3oWW_T_hHjE0PTRWwxOTk1laodt922PV8ncD5jDi2i6if7symAMWriz
+ FY1v_Giz.0t2_az_NPzztZNu.ZBTbS70r7jdGmAUqwSujZdDRMSG4yZRQWO1FsLkEhinKMhAv2m2
+ _OCVkoT3NEk6bJ00uBMa5k22D7hoSpqZZDf5J0f.9QNUwFxdACeoAy7cFcm9WzJmHGzYcrfqStDW
+ N.jfsiK7lVsJZ1oG4BtwjMVA_U5bbFjHKi9KzpfkouAKIMB2qGo4hZVrvYg7VeYl6K8xbJ7Wq0L9
+ vfMx0JTXpOZ_q0b78S9h2eYGd4eknprkbo0HN_HrxoNdhHgPISJy4BILTb5IP0kM1vZdbDXlHUGS
+ 5jfyx02pqxOw-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 7 Nov 2022 18:59:51 +0000
+Received: by hermes--production-bf1-5878955b5f-xc4c6 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 97baa2576d935fdf4c6833d0291be37d;
+          Mon, 07 Nov 2022 18:59:47 +0000 (UTC)
+Message-ID: <4ead148f-1629-22ec-91f3-44c71f70fce4@schaufler-ca.com>
+Date:   Mon, 7 Nov 2022 10:59:44 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221025113101.41132-1-wangweiyang2@huawei.com>
-User-Agent: NeoMutt/20220429
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH 04/10] CaitSith: Add header file.
+Content-Language: en-US
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <kees@kernel.org>, casey@schaufler-ca.com
+References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20221102171025.126961-4-penguin-kernel@I-love.SAKURA.ne.jp>
+ <ef5fa206-4e7f-3c23-07d4-8591c4315d20@schaufler-ca.com>
+ <20221105024345.GA15957@mail.hallyn.com>
+ <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp>
+ <20221105234614.GA23523@mail.hallyn.com>
+ <52fdbbe4-cad5-6cd0-9574-2e5efb88a478@I-love.SAKURA.ne.jp>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <52fdbbe4-cad5-6cd0-9574-2e5efb88a478@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20826 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 25, 2022 at 07:31:01PM +0800, Wang Weiyang wrote:
-> When add the 'a *:* rwm' entry to devcgroup A's whitelist, at first A's
-> exceptions will be cleaned and A's behavior is changed to
-> DEVCG_DEFAULT_ALLOW. Then parent's exceptions will be copyed to A's
-> whitelist. If copy failure occurs, just return leaving A to grant
-> permissions to all devices. And A may grant more permissions than
-> parent.
-> 
-> Backup A's whitelist and recover original exceptions after copy
-> failure.
-> 
-> Fixes: 4cef7299b478 ("device_cgroup: add proper checking when changing default behavior")
-> Signed-off-by: Wang Weiyang <wangweiyang2@huawei.com>
-> ---
->  security/device_cgroup.c | 33 +++++++++++++++++++++++++++++----
->  1 file changed, 29 insertions(+), 4 deletions(-)
-> 
-> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-> index a9f8c63a96d1..bef2b9285fb3 100644
-> --- a/security/device_cgroup.c
-> +++ b/security/device_cgroup.c
-> @@ -82,6 +82,17 @@ static int dev_exceptions_copy(struct list_head *dest, struct list_head *orig)
->  	return -ENOMEM;
->  }
->  
-> +static void dev_exceptions_move(struct list_head *dest, struct list_head *orig)
-> +{
-> +	struct dev_exception_item *ex, *tmp;
-> +
-> +	lockdep_assert_held(&devcgroup_mutex);
-> +
-> +	list_for_each_entry_safe(ex, tmp, orig, list) {
-> +		list_move_tail(&ex->list, dest);
-> +	}
-> +}
-> +
->  /*
->   * called under devcgroup_mutex
->   */
-> @@ -604,11 +615,13 @@ static int devcgroup_update_access(struct dev_cgroup *devcgroup,
->  	int count, rc = 0;
->  	struct dev_exception_item ex;
->  	struct dev_cgroup *parent = css_to_devcgroup(devcgroup->css.parent);
-> +	struct dev_cgroup tmp_devcgrp;
->  
->  	if (!capable(CAP_SYS_ADMIN))
->  		return -EPERM;
->  
->  	memset(&ex, 0, sizeof(ex));
-> +	memset(&tmp_devcgrp, 0, sizeof(tmp_devcgrp));
->  	b = buffer;
->  
->  	switch (*b) {
-> @@ -620,15 +633,27 @@ static int devcgroup_update_access(struct dev_cgroup *devcgroup,
->  
->  			if (!may_allow_all(parent))
->  				return -EPERM;
-> -			dev_exception_clean(devcgroup);
-> -			devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
-> -			if (!parent)
-> +			if (!parent) {
-> +				devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
-> +				dev_exception_clean(devcgroup);
->  				break;
-> +			}
->  
-> +			INIT_LIST_HEAD(&tmp_devcgrp.exceptions);
-> +			rc = dev_exceptions_copy(&tmp_devcgrp.exceptions,
-> +						 &devcgroup->exceptions);
-> +			if (rc)
-> +				return rc;
-> +			dev_exception_clean(devcgroup);
->  			rc = dev_exceptions_copy(&devcgroup->exceptions,
->  						 &parent->exceptions);
-> -			if (rc)
-> +			if (rc) {
-> +				dev_exceptions_move(&devcgroup->exceptions,
-> +						    &tmp_devcgrp.exceptions);
->  				return rc;
-> +			}
-> +			devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
-> +			dev_exception_clean(&tmp_devcgrp);
->  			break;
->  		case DEVCG_DENY:
->  			if (css_has_online_children(&devcgroup->css))
+On 11/5/2022 5:56 PM, Tetsuo Handa wrote:
+> On 2022/11/06 8:46, Serge E. Hallyn wrote:
+>> On Sat, Nov 05, 2022 at 01:05:44PM +0900, Tetsuo Handa wrote:
+>>> On 2022/11/05 11:43, Serge E. Hallyn wrote:
+>>>> On Wed, Nov 02, 2022 at 10:57:48AM -0700, Casey Schaufler wrote:
+>>>>> On 11/2/2022 10:10 AM, Tetsuo Handa wrote:
+>>>>>> The main point of this submission is to demonstrate how an LSM module
+>>>>>> which can be loaded using /sbin/insmod can work, and to provide
+>>>>>> consideration points for making changes for LSM stacking in a way that
+>>>>>> will not lock out LSM modules which can be loaded using /sbin/insmod .
+>>>>> CaitSith could readily be done as an in-tree LSM. The implementation
+>>>>> of loadable module infrastructure is unnecessary.
+>>>> Sorry, I'm getting confused.  But in-tree and loadable are not related,
+>>>> right?
+>>> Very much related. My goal is to get CaitSith in-tree as a loadable LSM module
+>>> which can be loaded using /sbin/insmod .
+>> Great.  I support that.  But the sentence
+> Thank you.
+>
+>>>>> CaitSith could readily be done as an in-tree LSM. The implementation
+>>>>> of loadable module infrastructure is unnecessary.
+>> suggests that because CaitSith could be done in-tree, it doesn't need
+>> to be loadable.  I'm saying that is a non sequitur.  It sounded like
+>> that setence was meant to say "Because CaitSith could be in-tree, it
+>> doesn't need to be =m.  Only out of tree modules need to be loadable."
+> Unfortunately, I don't think that my intended Linux distributor (namely, Red Hat)
+> will support LSMs other than SELinux.
 
-Reviewed-by: Aristeu Rozanski <aris@redhat.com>
+I also doubt that even if you came up with a 100% perfect implementation
+of loadable module support it would be accepted upstream. If you somehow
+got it upstream I really, really think it would be required to be optional.
+There's no way Redhat would enable loadable module support if were available.
+I am perfectly willing to be corrected if I've made a statement here that
+isn't true, but I'll bet a refreshing beverage on it.
 
--- 
-Aristeu
+>
+>   https://bugzilla.redhat.com/show_bug.cgi?id=542986
+>
+> Therefore, not only out of tree modules but also in-tree modules which cannot be
+> enabled by Linux distributors need to be implemented as loadable kernel modules.
+
+Today you cannot use SELinux and AppArmor together on Redhat. Someday
+"soon ;)" you won't be allowed to run them together on Redhat. If there's
+market demand (I'm not holding my breath) it could happen in the future.
+But that's up to Redhat to decide. I don't see Redhat as the customer for
+LSM improvements. They are happy with what they have.
+
+You have to take a different approach. Find a distribution that does want
+loadable modules. You'll need a viable implementation to convince them to
+help with the effort. Even then, you'll have a tough row to hoe.
+
 
