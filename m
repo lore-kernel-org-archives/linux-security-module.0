@@ -2,191 +2,118 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F00C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Nov 2022 20:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F58C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Nov 2022 20:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230313AbiKIULR (ORCPT
+        id S230007AbiKIUNy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Nov 2022 15:11:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56286 "EHLO
+        Wed, 9 Nov 2022 15:13:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229959AbiKIULQ (ORCPT
+        with ESMTP id S229470AbiKIUNx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Nov 2022 15:11:16 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0713DEBB;
-        Wed,  9 Nov 2022 12:11:14 -0800 (PST)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A9Ivbm8003378;
-        Wed, 9 Nov 2022 20:10:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=GezlASEUNaP1kWWGVWgY0gmLLeKBx9UhABHYYKuFy1A=;
- b=pL2/CKfDa3HcsTHmt9s+YKUqB5q6Egkaj76opKJxQ/iKAdBX0Yr7Q++Yhlp4fgMHhGDK
- sF9eW407rknG2mJyec2ncnyt/HhwwXupCXYHk99iw+S06IMNvhN0g03WnXLxlcPoa2eJ
- Ko9GIFKhRraYxDoPCpqoHkxAS6tvFyj5srUP6BxIpWBdsebwXbTN1A6OHZPqLqZ88q1I
- 4ss+5Ju5c6Q6EdefePKhGxW6Y2G44plK9EUMalYpcyMbsh8cP1a5Y9UngIPPpUt+8VVp
- BLHDtOUaDajgt+isE2YaUNxvoli6oziI/aHsdLxyRXH3xIkIVARVIRmAtuybPnT+YFVW uA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3krfgux4r9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Nov 2022 20:10:43 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A9Jukwr016004;
-        Wed, 9 Nov 2022 20:10:42 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3krfgux4qs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Nov 2022 20:10:42 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A9K55II002688;
-        Wed, 9 Nov 2022 20:10:41 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma03dal.us.ibm.com with ESMTP id 3kngpjftd4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Nov 2022 20:10:41 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com ([9.208.128.114])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A9KAdSd6881830
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 9 Nov 2022 20:10:40 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7DB3E5805E;
-        Wed,  9 Nov 2022 20:10:39 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EFEFF58067;
-        Wed,  9 Nov 2022 20:10:37 +0000 (GMT)
-Received: from [9.211.78.124] (unknown [9.211.78.124])
-        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Nov 2022 20:10:37 +0000 (GMT)
-Message-ID: <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
-Date:   Wed, 9 Nov 2022 15:10:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-Content-Language: en-US
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-References: <20221106210744.603240-1-nayna@linux.ibm.com>
- <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-In-Reply-To: <Y2uvUFQ9S2oaefSY@kroah.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ETJ3mcIjDcmC9bU0wwhiQ_UGoUKvS5YV
-X-Proofpoint-ORIG-GUID: _BJV8Qpgg8H5VffXdwMwQalF4Eu_YbE3
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Wed, 9 Nov 2022 15:13:53 -0500
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1125118B01
+        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 12:13:52 -0800 (PST)
+Received: by mail-oi1-x231.google.com with SMTP id v81so20024157oie.5
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Nov 2022 12:13:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yB6HYvhBN3RVAfByHn6Mj6M7PU8T8ZuDtIlSesRugqE=;
+        b=VtxYfuoGycTMs/QNDj9C6posySpJrMmYbilDidHZq1CwdThPJ/+bdO/MJdPm02wVdU
+         5iEOsZO1oFUxuaFqMobK45DfcdHrKECbAoOali2jJsGPjr6GpXh3T2y5aOfg7+j3qpnF
+         562x3bIoj/U+6gKdODz4stYBWXhNYu1gqL/TC2crukFXRf8ErgkxOGm6eBjsoK49zMVG
+         kRiIy6SaKG9aPrbVhXh8KqW5wuSAd/otKoZwOSAnayoPx+fqPGgCXOxSCelrVw+ezn/p
+         /PRt62ouWHWm2RxCTUkUXjh9HsdrjjLOfTN+kTCDdr6XTL9fZ/+/LAfZ1FRUQ9fELiEt
+         NZsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yB6HYvhBN3RVAfByHn6Mj6M7PU8T8ZuDtIlSesRugqE=;
+        b=LMkK99LzGFHisXqHgtuPbHge/w6U8lyX9I3m85jALKJQ3fVd7epTs95i5Udv7TPIGQ
+         UNly2RtFVqSO75zpbAes+Me8evNaEGpYVhQMB3Z7PTdTODzEj9bjhIdfrO32Hp6Gl9Kp
+         LrYNDFP38PvmUKqENaJkUB3hf9BM22Dlp7BwLtOtMsKOWXfYL1WEuff43saK9qB44yG6
+         ODGINhMIHe2sAN7lsyahriDgeiOUONobmX0s3PsrC/K0e2iIKZU/4cclof7bnnycT7l9
+         C2HbSLbzpmp8z5a0evxAnipmj16Hv1oQ1VORXSmSq81WHZkXAIbwDM+1XLU994re1xm/
+         bNZg==
+X-Gm-Message-State: ACrzQf04mEHCiIni6sYuOMxqtfLCPMmglyGV+DOqaX4qvkf/u51So/ln
+        XFPNzpfYS244a3XRH/1AR2E1Ip10SLrdsJNacaGcTfuHUw==
+X-Google-Smtp-Source: AMsMyM5BiojzHXd3s4SlDdTvp7SrcHcpqQ50w/EPBngyxCmha1b/OAMd3Pgv35j8TsHD4WyA9o3YivK76j3kF8CPULE=
+X-Received: by 2002:a05:6808:1441:b0:35a:4a2d:673b with SMTP id
+ x1-20020a056808144100b0035a4a2d673bmr19974152oiv.172.1668024831341; Wed, 09
+ Nov 2022 12:13:51 -0800 (PST)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-09_06,2022-11-09_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- mlxlogscore=999 clxscore=1011 spamscore=0 phishscore=0 bulkscore=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211090151
+References: <CAHC9VhSSafrkW4VbTVoAUJmjFQdCwPTGDqTP8yBnLBqc7rW7iQ@mail.gmail.com>
+ <CAHk-=wj_6Df1NAMs14S0OOqX1Z=460j-mfwn_qm-7EK1eK76qw@mail.gmail.com> <20221109143834.GB24561@mail.hallyn.com>
+In-Reply-To: <20221109143834.GB24561@mail.hallyn.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 9 Nov 2022 15:13:40 -0500
+Message-ID: <CAHC9VhQgEej_yKXRJFtLHUQkL8hGrBYqRPye5SwBz_SU+2eK2A@mail.gmail.com>
+Subject: Re: [GIT PULL] LSM fixes for v6.1 (#1)
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 11/9/22 08:46, Greg Kroah-Hartman wrote:
-> On Sun, Nov 06, 2022 at 04:07:42PM -0500, Nayna Jain wrote:
->> securityfs is meant for Linux security subsystems to expose policies/logs
->> or any other information. However, there are various firmware security
->> features which expose their variables for user management via the kernel.
->> There is currently no single place to expose these variables. Different
->> platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
->> interface as they find it appropriate. Thus, there is a gap in kernel
->> interfaces to expose variables for security features.
->>
->> Define a firmware security filesystem (fwsecurityfs) to be used by
->> security features enabled by the firmware. These variables are platform
->> specific. This filesystem provides platforms a way to implement their
->>   own underlying semantics by defining own inode and file operations.
->>
->> Similar to securityfs, the firmware security filesystem is recommended
->> to be exposed on a well known mount point /sys/firmware/security.
->> Platforms can define their own directory or file structure under this path.
->>
->> Example:
->>
->> # mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
-> Why not juset use securityfs in /sys/security/firmware/ instead?  Then
-> you don't have to create a new filesystem and convince userspace to
-> mount it in a specific location?
-
- From man 5 sysfs page:
-
-/sys/firmware: This subdirectory contains interfaces for viewing and 
-manipulating firmware-specific objects and attributes.
-
-/sys/kernel: This subdirectory contains various files and subdirectories 
-that provide information about the running kernel.
-
-The security variables which are being exposed via fwsecurityfs are 
-managed by firmware, stored in firmware managed space and also often 
-consumed by firmware for enabling various security features.
-
- From git commit b67dbf9d4c1987c370fd18fdc4cf9d8aaea604c2, the purpose 
-of securityfs(/sys/kernel/security) is to provide a common place for all 
-kernel LSMs. The idea of
-fwsecurityfs(/sys/firmware/security) is to similarly provide a common 
-place for all firmware security objects.
-
-/sys/firmware already exists. The patch now defines a new /security 
-directory in it for firmware security features. Using 
-/sys/kernel/security would mean scattering firmware objects in multiple 
-places and confusing the purpose of /sys/kernel and /sys/firmware.
-
-Even though fwsecurityfs code is based on securityfs, since the two 
-filesystems expose different types of objects and have different 
-requirements, there are distinctions:
-
-1. fwsecurityfs lets users create files in userspace, securityfs only 
-allows kernel subsystems to create files.
-
-2. firmware and kernel objects may have different requirements. For 
-example, consideration of namespacing. As per my understanding, 
-namespacing is applied to kernel resources and not firmware resources. 
-That's why it makes sense to add support for namespacing in securityfs, 
-but we concluded that fwsecurityfs currently doesn't need it. Another 
-but similar example of it is: TPM space, which is exposed from hardware. 
-For containers, the TPM would be made as virtual/software TPM. Similarly 
-for firmware space for containers, it would have to be something 
-virtualized/software version of it.
-
-3. firmware objects are persistent and read at boot time by interaction 
-with firmware, unlike kernel objects which are not persistent.
-
-For a more detailed explanation refer to the LSS-NA 2022 "PowerVM 
-Platform Keystore - Securing Linux Credentials Locally" talk and 
-slides[1]. The link to previously posted RFC version is [2].
-
-[1] 
-https://static.sched.com/hosted_files/lssna2022/25/NaynaJain_PowerVM_PlatformKeyStore_SecuringLinuxCredentialsLocally.pdf
-[2] https://lore.kernel.org/linuxppc-dev/YrQqPhi4+jHZ1WJc@kroah.com/
-
-Thanks & Regards,
-
-      - Nayna
-
+On Wed, Nov 9, 2022 at 9:38 AM Serge E. Hallyn <serge@hallyn.com> wrote:
+> On Mon, Oct 31, 2022 at 12:22:29PM -0700, Linus Torvalds wrote:
+> > On Mon, Oct 31, 2022 at 4:07 AM Paul Moore <paul@paul-moore.com> wrote:
+> > >
+> > > A single patch to the capabilities code to fix a potential memory leak
+> > > in the xattr allocation error handling.  Please apply for v6.1-rcX.
+> >
+> > Pulled.
+> >
+> > However, I react to the strange test condition. Sure, it's
+> > pre-existing, but does it really make sense?
+> >
+> > It does
+> >
+> > +       if (ret < 0 || !tmpbuf) {
+> > +               size = ret;
+> > +               goto out_free;
+> > +       }
+> >
+> > and how the heck can 'tmpbuf' be NULL if vfs_getxattr_alloc() succeeded?
 >
-> thanks,
+> I had to go through the history a bit - the !tmpbuf check was added
 >
-> greg k-h
+> https://www.spinics.net/lists/stable/msg463010.html
+>
+> because of a gcc warning.  Perhaps there's a better way to tell gcc
+> that it can't remain NULL if ret was < 0 ?
+
+Ooof, that's ugly, but thanks for digging it up.  As it turns out I
+happen to be working on a patch for vfs_getxattr_alloc() to fix the
+return value type right now, but it looks like I'll leave that gcc
+hack in place ... although I might leave a comment about it so the
+next person doesn't have to wonder.
+
+> > I think that's not only impossible in the first place, but if it *was*
+> > possible, then that
+> >
+> >                 size = ret;
+> >                goto out_free;
+> >
+> > would be wrong, because this function would return success even if it
+> > wasn't successful.
+> >
+> > That whole "cast to int, and then cast back to size_t" also smells of
+> > some serious confusion in the return value handling. It looks to me
+> > like vfs_getxattr_alloc() fundamentally returns an 'int', not a
+> > 'ssize_t', just by looking at the ->get function. But it just all
+> > looks weird.
+> >
+> > So this code has all kinds of oddities.
+> >
+> >                Linus
+
+-- 
+paul-moore.com
