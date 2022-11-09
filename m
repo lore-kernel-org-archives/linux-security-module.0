@@ -2,133 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 193B6C4321E
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Nov 2022 01:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64499C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Nov 2022 02:20:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229735AbiKIBYS (ORCPT
+        id S229974AbiKICUp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Nov 2022 20:24:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57988 "EHLO
+        Tue, 8 Nov 2022 21:20:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229973AbiKIBYO (ORCPT
+        with ESMTP id S229984AbiKICUn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Nov 2022 20:24:14 -0500
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6B0460376;
-        Tue,  8 Nov 2022 17:24:11 -0800 (PST)
-Received: by mail-qt1-x82a.google.com with SMTP id h21so9696731qtu.2;
-        Tue, 08 Nov 2022 17:24:11 -0800 (PST)
+        Tue, 8 Nov 2022 21:20:43 -0500
+Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 029466A695
+        for <linux-security-module@vger.kernel.org>; Tue,  8 Nov 2022 18:20:38 -0800 (PST)
+Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-13d9a3bb27aso17519492fac.11
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Nov 2022 18:20:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S3bArshq2eyg3hLMepiT1bgGKeZeMxvntrLUq44wF0Y=;
-        b=CTX/cYJBdS03SBZmJa1BZmatkKUgloDzEz81wgxZuFYk7QTdCDZiALT2SFN8kMQZQv
-         NP/ogMs+va3hc67H7wov5KOm1QdOvcSMmyOeWEPZmFs0z1EE/hJE4HSWQzeafjKEtfcz
-         5GLt6Z0vG6YUelx9DZZnIzyS59PTm+WRpLHJrL5EQlikL2Iy1WdRt3AmonyPKoKGYqYI
-         EBmn4cmhZyq1CCNqWTBWnIe/F7l1fDrSegnr68O6OSBG/+BXjT5+Jayz5roUSEKZ3A4z
-         4C7AErUdJ9ZPs38hRw+zygss8LAcyj6Jn2IiXOW2hbtBODsywrSP1jXw0IN2rJPEIMD4
-         Remg==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DuNXn1cOzuY2nKg/nqBcIj8YoCOvo5lp0PuOT3uZQDE=;
+        b=l1ZU7FsXBxISQCjxvBcAsUxUUspvwFJjWNh1TQY0aVAR0o+eI5++Utr25+ZpJ6uYJ0
+         7rFLIFiMRgoOOI3F9h/RfGTH/ymeM9ixYCeP99WuMMW9pOS+ZtmsrsHbhQq/Hy8EsVRg
+         2ratMxktiFg6t7cjcOeUilfemvz0tLrzQvV45LlpqFpbATjgWDpi82wFkli6srx2+Mz4
+         sf731uryUkym1cDky85KhL2qwJK09HpT03PsT34fhoiuTPE7Gg1gb3uVmNjHXD59qBEf
+         RGI4iroxWW1Mb18oetlI/FnhgVMhO20Vo5+KUSXCL2BZ8e5BTS1URe/F3sKNkOdtG63S
+         Ev1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S3bArshq2eyg3hLMepiT1bgGKeZeMxvntrLUq44wF0Y=;
-        b=sSYO7n8vn4omFEktwLaw5OwHsx6uzEIpXxphpyVNf3LNz2I2r2QXuBJYvzpJpfcQc3
-         nw1BBSKo4eO3PugzBOS0GUKI1jhDan6Nv7RbBIzcaV65cteBjx8vKfOTGYfwGsMbrISr
-         fJwKcpWfUNcbBaWTDfgiJFTgkhdRwOvqUAZK/oP3uEsbxdQqKbq1GjZhRr06Yoyacoml
-         ImUm+PUH76QN59MCRxDlz2RuvtuwzMC90nfQjlEIR30DeRm6D8anvEvDWCRkr4NCNe+l
-         X3CN3AQqMHZf8uAxHWgZ5H1XADUCnQZ2d6XeXxYGl7q/MxtknSlMAoNx5jqwDJ0P1N6+
-         MNnQ==
-X-Gm-Message-State: ACrzQf0Oh5k8QuZH7OAAIqa2/JVdcBERlBuNE3lgp5eg8hnxNWbY43P7
-        3HGURvc6WFCIpZz5HCjpsg8=
-X-Google-Smtp-Source: AMsMyM4/pwPWwiLUI5cR0ax3Di1wr+MJtrxOcKP6v6JXvZerf1yzWyN93OY9xiRWwaU/ETpL9UZD3g==
-X-Received: by 2002:ac8:48d0:0:b0:3a5:1ed8:4a46 with SMTP id l16-20020ac848d0000000b003a51ed84a46mr41423317qtr.407.1667957051016;
-        Tue, 08 Nov 2022 17:24:11 -0800 (PST)
-Received: from [192.168.86.38] (c-75-69-97-7.hsd1.nh.comcast.net. [75.69.97.7])
-        by smtp.gmail.com with ESMTPSA id s3-20020a05620a29c300b006fa4ac86bfbsm10377337qkp.55.2022.11.08.17.24.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Nov 2022 17:24:10 -0800 (PST)
-Message-ID: <faa10c58-268f-ddc8-b86c-02c903e29f8a@gmail.com>
-Date:   Tue, 8 Nov 2022 20:24:08 -0500
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DuNXn1cOzuY2nKg/nqBcIj8YoCOvo5lp0PuOT3uZQDE=;
+        b=gGEtKhb3qItPtZDDBGvN1Xc8R1iUHAPEhLNIK1M06igNZjT/CyQrCRGFOCgcUM8J2k
+         k1K8F+mnauk/+l4w1ekzzWxmj+podJBosBI/FG6jAQ7x5BLMw3EigG+sAFhPy9ELl7gs
+         aMgJzjNskCWzMV99bkHRkwzg0yWUVbavY8EEY+F7jQqdrtAzwSS77bdbGYJFZY/COyZZ
+         VCxxnqPcOYGaAgMWk7+nb3VvZzGFMT9QOckQ3ahz+pq/Z43E5KKMQDL8zWusVtbTPZjE
+         wu6bBPr7D7WNId49MP1Vl5Z9buX9QmPgrPPjcWVIJ1DE7TY9z4jtR9FLfgPsvx5047zr
+         mhyw==
+X-Gm-Message-State: ACrzQf3XHk2QOMs7YEGrfNQOvoR8TcSNZXgOo5Jv/Nlqz/oHh5x+CkZw
+        0lmUWrO2eAtsZDxjTnQ+/yPK75lFDGUHgOtk5H8BONtH6w==
+X-Google-Smtp-Source: AMsMyM54DfGyCv8euWxG4rIMDOZWCdv6eGMMMXAVOcm3VbMNBaycONH3bfE0EmY2J1WZoVOwtvwbSXKGPjiJKDKxi8A=
+X-Received: by 2002:a05:6870:f299:b0:13b:ad21:934d with SMTP id
+ u25-20020a056870f29900b0013bad21934dmr34782038oap.172.1667960437296; Tue, 08
+ Nov 2022 18:20:37 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.2.1
-Subject: Re: [PATCH 0/7] Add CA enforcement keyring restrictions
-Content-Language: en-US
-To:     Coiby Xu <coxu@redhat.com>, eric.snowberg@oracle.com
-Cc:     davem@davemloft.net, dhowells@redhat.com,
-        dmitry.kasatkin@gmail.com, dwmw2@infradead.org,
-        herbert@gondor.apana.org.au, jarkko@kernel.org, jmorris@namei.org,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nramas@linux.microsoft.com,
-        pvorel@suse.cz, roberto.sassu@huawei.com, serge@hallyn.com,
-        tiwai@suse.de, zohar@linux.ibm.com, erpalmer@linux.ibm.com
-References: <20221104132035.rmavewmeo6ceyjou@Rk>
-From:   Elaine Palmer <erpalmerny@gmail.com>
-In-Reply-To: <20221104132035.rmavewmeo6ceyjou@Rk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20221102171025.126961-4-penguin-kernel@I-love.SAKURA.ne.jp>
+ <ef5fa206-4e7f-3c23-07d4-8591c4315d20@schaufler-ca.com> <20221105024345.GA15957@mail.hallyn.com>
+ <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp>
+ <20221105234614.GA23523@mail.hallyn.com> <52fdbbe4-cad5-6cd0-9574-2e5efb88a478@I-love.SAKURA.ne.jp>
+ <4ead148f-1629-22ec-91f3-44c71f70fce4@schaufler-ca.com> <133ffb84-551e-866d-5597-e62a5a39bc05@I-love.SAKURA.ne.jp>
+In-Reply-To: <133ffb84-551e-866d-5597-e62a5a39bc05@I-love.SAKURA.ne.jp>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 8 Nov 2022 21:20:26 -0500
+Message-ID: <CAHC9VhS9RQdeCipSpSH3_LZyFfb-BDry=EsSmkt4OLVk=OZnEg@mail.gmail.com>
+Subject: Re: [PATCH 04/10] CaitSith: Add header file.
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <kees@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 2022/11/04 9:20 AM, Coiby Xu wrote:
-> Hi Eric,
+On Tue, Nov 8, 2022 at 5:20 AM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> What I'm asking you are that:
 >
-> I wonder if there is any update on this work? I would be glad to do
-> anything that may be helpful including testing a new version of code.
+>   Please don't lock out out-of-tree LSM modules (by requiring an LSM id integer value
+>   which are assigned to only in-tree LSM modules) because we can't accept whatever LSM
+>   modules as in-tree.
 >
-Hi Coiby,
+>   Please don't lock out loadable LSM modules (by using fixed sized array) because
+>   locking out loadable LSM modules reduces the value of your LSM stacking work.
+>
+> Quite simple.
 
-Yes, this discussion got stuck when we couldn't agree on one of the
-following options:
+Tetsuo, at this point I think we all understand your concern and I
+appreciate and respect the passion you have for your argument.
+However, I think the rest of the developers, including myself, have
+also made our points very clear.  While there may still be revisions
+to the syscall patches, I believe identifying LSMs via a token value
+as opposed to a string value is the better option for the upstream
+Linux Kernel.  This alone should not prevent dynamically loadable LSMs
+in the future, if we decide to pursue that, but I do recognize that it
+will present more of a challenge for the long term maintenance of
+out-of-tree LSMs.  I see no reason to trade off what I believe as a
+better API choice (LSM ID tokens) for something that is explicitly not
+supported by the Linux Kernel as a whole (out-of-tree kernel code).
 
-(A) Filter which keys from MOK (or a management system) are loaded
-    onto the .machine keyring. Specifically, load only keys with
-    CA+keyCertSign attributes.
+Thank you for your comments, but I'm considering this settled.
 
-(B) Load all keys from MOK (or a management system) onto the
-    .machine keyring. Then, subsequently filter those to restrict
-    which ones can be loaded onto the .ima keyring specifically.
-
-The objection to (A) was that distros would have to go through
-two steps instead of one to load keys. The one-step method of
-loading keys was supported by an out-of-tree patch and then by
-the addition of the .machine keyring.
-
-The objection to (B) was that, because the .machine keyring is now
-linked to the .secondary keyring, it expands the scope of what the
-kernel has trusted in the past. The effect is that keys in MOK
-have the same broad scope as keys previously restricted to
-.builtin and .secondary. It doesn't affect just IMA, but the rest
-of the kernel as well.
-
-I would suggest that we can get unstuck by considering:
-
-(C) Defining a systemd (or dracut module) to load keys onto the
-    .secondary keyring
-
-(D) Using a configuration option to specify what types of
-    .machine keys should be allowed to pass through to the
-    .secondary keyring.
-   
-    The distro could choose (A) by allowing only
-    CA+keyCertSign keys.
-
-    The distro could choose (B) by allowing any kind
-    of key.
-
-We all seemed to agree that enforcing key usage should be
-implemented and that a useful future effort is to add policies
-to keys and keyrings, like, "This key can only be used for
-verifying kernel modules."
-
-I hope we can come to an agreement so work can proceed and IMA
-can be re-enabled.
-
--Elaine Palmer
+-- 
+paul-moore.com
