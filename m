@@ -2,126 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE2CC433FE
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Nov 2022 14:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13449C43219
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Nov 2022 14:59:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231464AbiKIOtB (ORCPT
+        id S231659AbiKIO7q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Nov 2022 09:49:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56848 "EHLO
+        Wed, 9 Nov 2022 09:59:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231276AbiKIOs4 (ORCPT
+        with ESMTP id S229678AbiKIO7o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Nov 2022 09:48:56 -0500
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2335C17E23
-        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 06:48:55 -0800 (PST)
-Received: by mail-oi1-x22d.google.com with SMTP id c129so19057660oia.0
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Nov 2022 06:48:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+BNm+dEye/daEA1y5GhiiePddIMsp/krIKxNeEOYhs=;
-        b=7j/bUrWKnToR9773BHiv1P5Ddl4QSRP/4bQaClEkm0S063Gi0Y3+Iv3XAPSCp57B0n
-         kzNd1OhpsrrHZPtM/7WN8OAAAPK+LqQWwRTvwfzBrLbY0RFf3jxQCMhqn79hnKM83lqG
-         N8um6a37Yz4aiAM/Wo9/rsZ5WK4amGL1Ny5s8nmWMLnLMWDsLtCOCNkWtcKhpGOlLr/B
-         V2CDcU+ueeYMSEFIU9LW5u6r4sxweX9pluo0Ul0Nr4EcsNUUIptbtjwnNt+9w0O6tdiE
-         3LpBAnOu4Feij0I/RL77o4mGIZK6pDMG3TR5UMV/9okoTHpzXSnazgqZeuHwEZeyt7kc
-         4XCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d+BNm+dEye/daEA1y5GhiiePddIMsp/krIKxNeEOYhs=;
-        b=RA9s/b9e3nRnVz7rRdpF461kQ2uVrSbHncPIeFHIFFz/FTcHX9GEa9GhHxqJSrBmMK
-         W0AOHO59bm8E55Vro83inyf04k5+VAVlZnzcSHURpVz9mgCD5CsYE1kT8FINP0bvipzO
-         1orRVAB50K+6W1p4Z19ATrrreJOmkJISvqVDcuqRjA1QsgdauhwyIJyqCOxnc5dqbxIu
-         reEeF1J6lzIaA+Oltfi6Zdm89uzdn7FCgM+zT5OkpNv1V+KYXhFAKRkr5PMeFh/nkli8
-         scmmYgciZluF+nQMGktlpcg2LCggXGo6GUGTrKJXGEj9KQQFlZttRZzicXxAqU/fOf5P
-         cu3w==
-X-Gm-Message-State: ACrzQf2T0HKZ5yhOzFkG9KUALQB4RswXXotUp69ShltXIA6bs+pVWP2O
-        r1j9hd6EBM9tuDOOZ5VuBBfyOet7K3LH3R0dWAkQ
-X-Google-Smtp-Source: AMsMyM6xS2BAhr6f54CL7AOx2HkUDI2TpSqkI0jHt0w/lFEMyRqv1Gav0QVR2FngzvO/I5db/YIX+6FOWOtoBwMaLzw=
-X-Received: by 2002:a05:6808:1441:b0:35a:4a2d:673b with SMTP id
- x1-20020a056808144100b0035a4a2d673bmr19246291oiv.172.1668005334394; Wed, 09
- Nov 2022 06:48:54 -0800 (PST)
+        Wed, 9 Nov 2022 09:59:44 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D568D5FF1;
+        Wed,  9 Nov 2022 06:59:43 -0800 (PST)
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A9EdG65031832;
+        Wed, 9 Nov 2022 14:58:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=1OLC8F2gQvPMQ0oOkOuCrcwRrG/Zrm3NPiPzZPsskpU=;
+ b=pOQwHqVk2ml9gosOqwuvB4a6nCdNvEwMk5b+VyA1YNDG19dp0Up0QzCkDR3UrlH1KVeK
+ W+VpmR5hi3EqGQy7JQz/3xvltPvaN21nmHIHOqZF7dp08lDS5IzLiKvspXrzEXgGnudK
+ SDTRem3W21sXUmSteJrNkO6CP/YESK9prMKJzQcScfMmsn0OIzvzC/+nQ5/ms4GaFoWv
+ C6zwlR5dA2jvfIpz9pn4KlMUrtz6Wt9cLUBQeDyb9aWQJ+80mgQKJHyc9NmloS1dX8Ts
+ woFDE0igrytbdMl506NY3NOT/+vfpygQLl/1SqcY21oi+1hNvFRhp3VRYh0Sdq0l3mc5 sA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3krdg7j02d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Nov 2022 14:58:32 +0000
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A9EdJt5032283;
+        Wed, 9 Nov 2022 14:58:32 GMT
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3krdg7j01u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Nov 2022 14:58:31 +0000
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A9Epovd027316;
+        Wed, 9 Nov 2022 14:58:31 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma03wdc.us.ibm.com with ESMTP id 3kngs7eb3k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Nov 2022 14:58:31 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A9EwTPS9175688
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 9 Nov 2022 14:58:30 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 812A458054;
+        Wed,  9 Nov 2022 14:58:29 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ED52F58056;
+        Wed,  9 Nov 2022 14:58:26 +0000 (GMT)
+Received: from [9.211.133.138] (unknown [9.211.133.138])
+        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Nov 2022 14:58:26 +0000 (GMT)
+Message-ID: <eecf9ec4-2415-1e41-014e-e145d6ab44b4@linux.vnet.ibm.com>
+Date:   Wed, 9 Nov 2022 09:58:26 -0500
 MIME-Version: 1.0
-References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp>
- <20221102171025.126961-4-penguin-kernel@I-love.SAKURA.ne.jp>
- <ef5fa206-4e7f-3c23-07d4-8591c4315d20@schaufler-ca.com> <20221105024345.GA15957@mail.hallyn.com>
- <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp>
- <20221105234614.GA23523@mail.hallyn.com> <52fdbbe4-cad5-6cd0-9574-2e5efb88a478@I-love.SAKURA.ne.jp>
- <4ead148f-1629-22ec-91f3-44c71f70fce4@schaufler-ca.com> <133ffb84-551e-866d-5597-e62a5a39bc05@I-love.SAKURA.ne.jp>
- <CAHC9VhS9RQdeCipSpSH3_LZyFfb-BDry=EsSmkt4OLVk=OZnEg@mail.gmail.com> <f52e6e9f-5e95-8843-c2f5-c50bba48e5e4@I-love.SAKURA.ne.jp>
-In-Reply-To: <f52e6e9f-5e95-8843-c2f5-c50bba48e5e4@I-love.SAKURA.ne.jp>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 9 Nov 2022 09:48:43 -0500
-Message-ID: <CAHC9VhS=0Ts8E647JJiJ6dwPmnuLuYTyOS0QEYJO_EmAb3yFcw@mail.gmail.com>
-Subject: Re: [PATCH 04/10] CaitSith: Add header file.
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <kees@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.2.1
+Subject: Re: [PATCH 0/7] Add CA enforcement keyring restrictions
+Content-Language: en-US
+To:     Eric Snowberg <eric.snowberg@oracle.com>,
+        jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Elaine Palmer <erpalmerny@gmail.com>
+Cc:     Coiby Xu <coxu@redhat.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        David Howells <dhowells@redhat.com>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        Konrad Wilk <konrad.wilk@oracle.com>,
+        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "pvorel@suse.cz" <pvorel@suse.cz>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "tiwai@suse.de" <tiwai@suse.de>,
+        "erpalmer@linux.ibm.com" <erpalmer@linux.ibm.com>
+References: <20221104132035.rmavewmeo6ceyjou@Rk>
+ <faa10c58-268f-ddc8-b86c-02c903e29f8a@gmail.com>
+ <82E1339C-629A-48F5-99B0-179251BBC708@oracle.com>
+From:   Elaine Palmer <erpalmer@linux.vnet.ibm.com>
+In-Reply-To: <82E1339C-629A-48F5-99B0-179251BBC708@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: KKEX5YqYSKvKVALi2yVz3hqgWQCErAqS
+X-Proofpoint-GUID: MpVVNcBdG2Dei_OfkNKrrzEJvGpvCdd5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-09_06,2022-11-09_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 mlxscore=0 impostorscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 adultscore=0 phishscore=0 malwarescore=0 clxscore=1011
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211090110
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 9, 2022 at 5:14 AM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2022/11/09 11:20, Paul Moore wrote:
-> > On Tue, Nov 8, 2022 at 5:20 AM Tetsuo Handa
-> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> >> What I'm asking you are that:
-> >>
-> >>   Please don't lock out out-of-tree LSM modules (by requiring an LSM id integer value
-> >>   which are assigned to only in-tree LSM modules) because we can't accept whatever LSM
-> >>   modules as in-tree.
-> >>
-> >>   Please don't lock out loadable LSM modules (by using fixed sized array) because
-> >>   locking out loadable LSM modules reduces the value of your LSM stacking work.
-> >>
-> >> Quite simple.
-> >
-> > Tetsuo, at this point I think we all understand your concern and I
-> > appreciate and respect the passion you have for your argument.
-> > However, I think the rest of the developers, including myself, have
-> > also made our points very clear.  While there may still be revisions
-> > to the syscall patches, I believe identifying LSMs via a token value
-> > as opposed to a string value is the better option for the upstream
-> > Linux Kernel.
+
+
+On 2022/11/09 9:25 AM, Eric Snowberg wrote:
 >
-> I'm not opposing to identifying LSMs via a token value. I'm opposing to who can
-> obtain a token value, for I haven't heard a clear promise that we shall allow
-> whatever LSM modules to obtain a token value.
-
-In that case, let me be very clear on this issue: at this point in
-time I will not merge patches which assign LSM ID tokens in the
-upstream Linux Kernel to out-of-tree LSMs.  If there is a significant
-change, e.g. the overall kernel policy towards out-of-tree code, we
-can reconsider this policy but as of right now only upstream LSMs will
-have LSM ID tokens assigned to them; in-development LSMs are free to
-temporarily assign themselves an ID token (which may change when the
-LSM is merged upstream), and out-of-tree LSMs are free to do whatever
-they like with respect to their code, just as they do now.
-
-> > Thank you for your comments, but I'm considering this settled.
-> >
+>> On Nov 8, 2022, at 6:24 PM, Elaine Palmer <erpalmerny@gmail.com> wrote:
+>>
+>>
+>>
+>> On 2022/11/04 9:20 AM, Coiby Xu wrote:
+>>> Hi Eric,
+>>>
+>>> I wonder if there is any update on this work? I would be glad to do
+>>> anything that may be helpful including testing a new version of code.
+>>>
+>> Hi Coiby,
+>>
+>> Yes, this discussion got stuck when we couldn't agree on one of the
+>> following options:
+>>
+>> (A) Filter which keys from MOK (or a management system) are loaded
+>>     onto the .machine keyring. Specifically, load only keys with
+>>     CA+keyCertSign attributes.
+>>
+>> (B) Load all keys from MOK (or a management system) onto the
+>>     .machine keyring. Then, subsequently filter those to restrict
+>>     which ones can be loaded onto the .ima keyring specifically.
+>>
+>> The objection to (A) was that distros would have to go through
+>> two steps instead of one to load keys. The one-step method of
+>> loading keys was supported by an out-of-tree patch and then by
+>> the addition of the .machine keyring.
+>>
+>> The objection to (B) was that, because the .machine keyring is now
+>> linked to the .secondary keyring, it expands the scope of what the
+>> kernel has trusted in the past. The effect is that keys in MOK
+>> have the same broad scope as keys previously restricted to
+>> .builtin and .secondary. It doesn't affect just IMA, but the rest
+>> of the kernel as well.
+>>
+>> I would suggest that we can get unstuck by considering:
+>>
+>> (C) Defining a systemd (or dracut module) to load keys onto the
+>>     .secondary keyring
+>>
+>> (D) Using a configuration option to specify what types of
+>>     .machine keys should be allowed to pass through to the
+>>     .secondary keyring.
+>>    
+>>     The distro could choose (A) by allowing only
+>>     CA+keyCertSign keys.
+>>
+>>     The distro could choose (B) by allowing any kind
+>>     of key.
+>>
+>> We all seemed to agree that enforcing key usage should be
+>> implemented and that a useful future effort is to add policies
+>> to keys and keyrings, like, "This key can only be used for
+>> verifying kernel modules."
+>>
+>> I hope we can come to an agreement so work can proceed and IMA
+>> can be re-enabled.
+> I would be open to making the changes necessary to support both (A and B) 
+> options.  What type of configuration option would be considered?  Would this 
+> be a compile time Kconfig, a Linux boot command line parameter, or another 
+> MOK variable?
 >
-> Never settled, unless you all promise that we shall assign a token value to whatever
-> LSM modules (regardless of whether that LSM module is already in-tree or not).
-
-As the person who ultimately is responsible for supporting,
-maintaining, and merging LSM related patches into the upstream Linux
-Kernel I am considering this issue settled until there is some other
-significant change that warrants reconsideration of the policy
-mentioned above.  Of course you are welcome to disagree, and you can
-continue to voice your objections if you like, but the issue is
-settled in my mind.
-
--- 
-paul-moore.com
+Thank you, Eric.  A compile time Kconfig would be the most secure, yet
+would still support (B) when allowed.
