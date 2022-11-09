@@ -2,68 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE21C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Nov 2022 20:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193B6C4321E
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Nov 2022 01:24:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229552AbiKHUs7 (ORCPT
+        id S229735AbiKIBYS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Nov 2022 15:48:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56518 "EHLO
+        Tue, 8 Nov 2022 20:24:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbiKHUs6 (ORCPT
+        with ESMTP id S229973AbiKIBYO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Nov 2022 15:48:58 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8508F17A87;
-        Tue,  8 Nov 2022 12:48:57 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3EE05B81C62;
-        Tue,  8 Nov 2022 20:48:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E1639C433D6;
-        Tue,  8 Nov 2022 20:48:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667940534;
-        bh=3ZRq1GS1VAJ0yvS9EZeTnGTtjfCdgqKeb//rR//qb68=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=l1x/MnjfNe6FJwJmvQ3kIsQ71rq/aCAkzhEAEyV+K+tzNR4j+aJHfAjLEciOdbE3a
-         NsGfJxeu2BY7Vu/+mO5wd2vAhI54qWYtxsV5HDXCxTHr/XLF2M1DSXDyCSFIArtNfU
-         M06wHAmkesT1SeSO+9cvGN6WMyRlnbwoO8fOwAip9kfPJvFqTEJasIMn8PaqmEl3et
-         p+WeUDWdPdS/xyhdYDwO54W7W0j1/NhYozR1GPD2QUOFPFgB8Rq3iRt97LLDwG/eQ7
-         VuFq2C+UDz19jYTddoPw4bUAQNXGuIQ1Rz3Jv2A6xDQFc7xIYmSROzeNdQfScjEzZS
-         kNOMMjz7JqxWg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CBEF3C4166D;
-        Tue,  8 Nov 2022 20:48:54 +0000 (UTC)
-Subject: Re: [GIT PULL] LSM fixes for v6.1 (#2)
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAHC9VhSbLE-Uw7X9oYpqewgVWLsqBE0xeRPgwvE=0B4O6Yne_A@mail.gmail.com>
-References: <CAHC9VhSbLE-Uw7X9oYpqewgVWLsqBE0xeRPgwvE=0B4O6Yne_A@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAHC9VhSbLE-Uw7X9oYpqewgVWLsqBE0xeRPgwvE=0B4O6Yne_A@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20221107
-X-PR-Tracked-Commit-Id: 46653972e3ea64f79e7f8ae3aa41a4d3fdb70a13
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f49b2d89fb10ef5fa5fa1993f648ec5daa884bef
-Message-Id: <166794053482.22160.771710189801377197.pr-tracker-bot@kernel.org>
-Date:   Tue, 08 Nov 2022 20:48:54 +0000
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+        Tue, 8 Nov 2022 20:24:14 -0500
+Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6B0460376;
+        Tue,  8 Nov 2022 17:24:11 -0800 (PST)
+Received: by mail-qt1-x82a.google.com with SMTP id h21so9696731qtu.2;
+        Tue, 08 Nov 2022 17:24:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S3bArshq2eyg3hLMepiT1bgGKeZeMxvntrLUq44wF0Y=;
+        b=CTX/cYJBdS03SBZmJa1BZmatkKUgloDzEz81wgxZuFYk7QTdCDZiALT2SFN8kMQZQv
+         NP/ogMs+va3hc67H7wov5KOm1QdOvcSMmyOeWEPZmFs0z1EE/hJE4HSWQzeafjKEtfcz
+         5GLt6Z0vG6YUelx9DZZnIzyS59PTm+WRpLHJrL5EQlikL2Iy1WdRt3AmonyPKoKGYqYI
+         EBmn4cmhZyq1CCNqWTBWnIe/F7l1fDrSegnr68O6OSBG/+BXjT5+Jayz5roUSEKZ3A4z
+         4C7AErUdJ9ZPs38hRw+zygss8LAcyj6Jn2IiXOW2hbtBODsywrSP1jXw0IN2rJPEIMD4
+         Remg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S3bArshq2eyg3hLMepiT1bgGKeZeMxvntrLUq44wF0Y=;
+        b=sSYO7n8vn4omFEktwLaw5OwHsx6uzEIpXxphpyVNf3LNz2I2r2QXuBJYvzpJpfcQc3
+         nw1BBSKo4eO3PugzBOS0GUKI1jhDan6Nv7RbBIzcaV65cteBjx8vKfOTGYfwGsMbrISr
+         fJwKcpWfUNcbBaWTDfgiJFTgkhdRwOvqUAZK/oP3uEsbxdQqKbq1GjZhRr06Yoyacoml
+         ImUm+PUH76QN59MCRxDlz2RuvtuwzMC90nfQjlEIR30DeRm6D8anvEvDWCRkr4NCNe+l
+         X3CN3AQqMHZf8uAxHWgZ5H1XADUCnQZ2d6XeXxYGl7q/MxtknSlMAoNx5jqwDJ0P1N6+
+         MNnQ==
+X-Gm-Message-State: ACrzQf0Oh5k8QuZH7OAAIqa2/JVdcBERlBuNE3lgp5eg8hnxNWbY43P7
+        3HGURvc6WFCIpZz5HCjpsg8=
+X-Google-Smtp-Source: AMsMyM4/pwPWwiLUI5cR0ax3Di1wr+MJtrxOcKP6v6JXvZerf1yzWyN93OY9xiRWwaU/ETpL9UZD3g==
+X-Received: by 2002:ac8:48d0:0:b0:3a5:1ed8:4a46 with SMTP id l16-20020ac848d0000000b003a51ed84a46mr41423317qtr.407.1667957051016;
+        Tue, 08 Nov 2022 17:24:11 -0800 (PST)
+Received: from [192.168.86.38] (c-75-69-97-7.hsd1.nh.comcast.net. [75.69.97.7])
+        by smtp.gmail.com with ESMTPSA id s3-20020a05620a29c300b006fa4ac86bfbsm10377337qkp.55.2022.11.08.17.24.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Nov 2022 17:24:10 -0800 (PST)
+Message-ID: <faa10c58-268f-ddc8-b86c-02c903e29f8a@gmail.com>
+Date:   Tue, 8 Nov 2022 20:24:08 -0500
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.2.1
+Subject: Re: [PATCH 0/7] Add CA enforcement keyring restrictions
+Content-Language: en-US
+To:     Coiby Xu <coxu@redhat.com>, eric.snowberg@oracle.com
+Cc:     davem@davemloft.net, dhowells@redhat.com,
+        dmitry.kasatkin@gmail.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, jarkko@kernel.org, jmorris@namei.org,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nramas@linux.microsoft.com,
+        pvorel@suse.cz, roberto.sassu@huawei.com, serge@hallyn.com,
+        tiwai@suse.de, zohar@linux.ibm.com, erpalmer@linux.ibm.com
+References: <20221104132035.rmavewmeo6ceyjou@Rk>
+From:   Elaine Palmer <erpalmerny@gmail.com>
+In-Reply-To: <20221104132035.rmavewmeo6ceyjou@Rk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Mon, 7 Nov 2022 18:10:13 -0500:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20221107
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f49b2d89fb10ef5fa5fa1993f648ec5daa884bef
+On 2022/11/04 9:20 AM, Coiby Xu wrote:
+> Hi Eric,
+>
+> I wonder if there is any update on this work? I would be glad to do
+> anything that may be helpful including testing a new version of code.
+>
+Hi Coiby,
 
-Thank you!
+Yes, this discussion got stuck when we couldn't agree on one of the
+following options:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+(A) Filter which keys from MOK (or a management system) are loaded
+    onto the .machine keyring. Specifically, load only keys with
+    CA+keyCertSign attributes.
+
+(B) Load all keys from MOK (or a management system) onto the
+    .machine keyring. Then, subsequently filter those to restrict
+    which ones can be loaded onto the .ima keyring specifically.
+
+The objection to (A) was that distros would have to go through
+two steps instead of one to load keys. The one-step method of
+loading keys was supported by an out-of-tree patch and then by
+the addition of the .machine keyring.
+
+The objection to (B) was that, because the .machine keyring is now
+linked to the .secondary keyring, it expands the scope of what the
+kernel has trusted in the past. The effect is that keys in MOK
+have the same broad scope as keys previously restricted to
+.builtin and .secondary. It doesn't affect just IMA, but the rest
+of the kernel as well.
+
+I would suggest that we can get unstuck by considering:
+
+(C) Defining a systemd (or dracut module) to load keys onto the
+    .secondary keyring
+
+(D) Using a configuration option to specify what types of
+    .machine keys should be allowed to pass through to the
+    .secondary keyring.
+   
+    The distro could choose (A) by allowing only
+    CA+keyCertSign keys.
+
+    The distro could choose (B) by allowing any kind
+    of key.
+
+We all seemed to agree that enforcing key usage should be
+implemented and that a useful future effort is to add policies
+to keys and keyrings, like, "This key can only be used for
+verifying kernel modules."
+
+I hope we can come to an agreement so work can proceed and IMA
+can be re-enabled.
+
+-Elaine Palmer
