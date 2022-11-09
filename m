@@ -2,124 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53255C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Nov 2022 23:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39274C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Nov 2022 23:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229900AbiKIXeA (ORCPT
+        id S230519AbiKIXeI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Nov 2022 18:34:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40116 "EHLO
+        Wed, 9 Nov 2022 18:34:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229861AbiKIXd7 (ORCPT
+        with ESMTP id S231244AbiKIXeF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Nov 2022 18:33:59 -0500
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74895F5A1
-        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 15:33:58 -0800 (PST)
-Received: by mail-ot1-x335.google.com with SMTP id cn2-20020a056830658200b0066c74617e3dso271965otb.2
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Nov 2022 15:33:58 -0800 (PST)
+        Wed, 9 Nov 2022 18:34:05 -0500
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB12FCFB
+        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 15:34:04 -0800 (PST)
+Received: by mail-oi1-x232.google.com with SMTP id v81so239747oie.5
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Nov 2022 15:34:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7dLiDnqXQpyBzsozj56gFcsd4WQsntSnrI1Dq8cPcBA=;
-        b=tAoQMDHytMmH7nFKf9VCji2q1tB1MAtwBjWjOsgH0kuasg86nWhbMehYoTZQa2tCIs
-         3JC+5qYx9RPgmzc2WnpNJiFpcJqIHJxtEtyPhFWLp0VJUvAegB88t+cBEBnz9ADvXjKK
-         PPYgPvw6HaCcpGmM6kv8Sq5jCliQ+kPFVbFD7QM/xMpygIa2ROCx1vBxsTsBUUxxsmeB
-         /EZSur0XUfMYlMiF00TyjX3CwUzrXkSZcEibGpL/Ecl3XuLD9eCV7wKhUZtg9LIQ6DC3
-         i2uLpe3eJ1nRdSd3iDzc4j6na8Oqb/7a0xAo7ljjvrBZyHB0onMSEo1kYeK5okdbjSwO
-         ljnA==
+        bh=ha6UuIiw/2/M4Az1bqxlaasvXS4YMf0DfiUopzOD+h4=;
+        b=ummy9s9UbX5bDKUfGVATEJiO9PW9xmpbSZ/VWHpSZRsynFlvTz9Ct5StKSkYs+hXwQ
+         ZwpCeYFWJ4XKUYWW5/9GIh7fYy3SlNogQy49cHAcz2ZYQv5h6kMeBKTR4hwa7H740uAA
+         Sr6RQjWSmyAj2dJRuLOM4LDR3qHJjnfKbWngyYY+NS6GTuzzMaD2nFJK4pqd3hhOSwxO
+         CUQVpKF07kCax7TP9ZnS5AcitYsd7AG0W4mOY6YZZD5J7mKpIhtiTbmOzEFLfZrs9N49
+         5rT/dj4OhHEuPUfWq9+ZEZwsg/UOiH4NwBIwnJfd1DMICH/MaXCb9LFRR/aKFdXNVBHI
+         mPCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7dLiDnqXQpyBzsozj56gFcsd4WQsntSnrI1Dq8cPcBA=;
-        b=wY7PECM7MfLMAUrNM+6JmAbfjP0y804L24lRfhTkycB//yfGVHGefjw8f1aUadnNZx
-         QdM2qJFpUBR3nsAJjkcIEu2OoNjXNhh+/Y4fVAdBiw3aBrFWw//NCb6Lt+o5AghR2oco
-         0PS2xdQqIBbInJagGqJIRDX8bzZOQJ8/WZFsHcKtO7GTAEupBu9BvYaSofocwWwNsyYW
-         xOx+sSjchTLXjfISWrSIDkC4zvXpw72X65z4Iuhpe3cp0KcOxUz7+EJiWpWVkHEkoEC5
-         xj7xXaXcxR6l8IZC/JhLllkL+sZPQkUPNpNIgvzM2UXPHrFMydnc/LJfm2bRaOsSDrhJ
-         n0tA==
-X-Gm-Message-State: ACrzQf27zPRSP6yP/2rwTEib6SLXQL47Ea5jGQTJjs1AamEy9ycfB8/g
-        +O5ppeXAaxelDjOteYxfPEs5fwdwBKuDGsnK5fqepEMQ3w==
-X-Google-Smtp-Source: AMsMyM68dDXBbuqVEKDurPj0t5g4PgiQwtOK4V8TKADlLJagug+5vKGH3zECUny4I28XV/Ze4A8ZpmgXi6asaEJNvMQ=
-X-Received: by 2002:a9d:1aa:0:b0:66c:6922:8640 with SMTP id
- e39-20020a9d01aa000000b0066c69228640mr870217ote.34.1668036837558; Wed, 09 Nov
- 2022 15:33:57 -0800 (PST)
+        bh=ha6UuIiw/2/M4Az1bqxlaasvXS4YMf0DfiUopzOD+h4=;
+        b=JugnzGzww9vgFb1VTmvE6KKXf8V8/CCwseNHgGH1fNsHb9zox62YuyFD9XV/VYjmF9
+         Nlz6eBHzQrHIX7z1dm/vO5XqHq7AzAcxoAN/7aAjm+RuqQ1IXe93n8HpfFz0PBBYFSyh
+         oqPWJdpY2CZWv4+M/vdY+lA8dMa3nsZr0kuJbdJvFf4QtRcispO/Y2YBUHqyYmmAWIe1
+         VkcJ1QeBRjbXoKc1Rh0NE8N/qyOfW2SzgIVytRYDNypa0+otRa91gPudF/qehjtcyC+l
+         kk4zBw9kSfg0S0fLUJQPUSMLvJwVP/N3WWH5q9o+Djp4tPuU+QJxemfiBJJPPtcfZR59
+         GUVQ==
+X-Gm-Message-State: ACrzQf02bus1mghUz6EPMS1aajChw0cZK8lHPkMwHDgAb98yFH0AKFAj
+        sTUP5K4OXLoIQGp1VjEgcBdpqVZea4xPFe+O5ZFS6NKmlw==
+X-Google-Smtp-Source: AMsMyM6v1MTnhlzQ9kgqh6J9bfvXJJ4pADpF7/h2kko1p8VCQHYp+ZiskC/NqRbQr+Lt+CqsnL8okR/5QDSweoOsh84=
+X-Received: by 2002:a05:6808:1441:b0:35a:4a2d:673b with SMTP id
+ x1-20020a056808144100b0035a4a2d673bmr20275889oiv.172.1668036843421; Wed, 09
+ Nov 2022 15:34:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20221025184519.13231-1-casey@schaufler-ca.com> <20221025184519.13231-3-casey@schaufler-ca.com>
-In-Reply-To: <20221025184519.13231-3-casey@schaufler-ca.com>
+References: <20221025184519.13231-1-casey@schaufler-ca.com>
+ <20221025184519.13231-3-casey@schaufler-ca.com> <Y1jMeWl0oV4/2zyE@kroah.com>
+ <5396ab1e-9b93-df33-ca49-58dc59459a76@schaufler-ca.com> <Y1olsHWnaEk6+b1L@kroah.com>
+ <612c169c-2e11-13cf-9742-19714a247152@schaufler-ca.com>
+In-Reply-To: <612c169c-2e11-13cf-9742-19714a247152@schaufler-ca.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 9 Nov 2022 18:33:46 -0500
-Message-ID: <CAHC9VhQONd9zFJswcAsY9-xQcRhoYwXtwyo4zT5XsSPTEtvuRg@mail.gmail.com>
+Date:   Wed, 9 Nov 2022 18:33:52 -0500
+Message-ID: <CAHC9VhR8_aQFxBq4fG=q8FgVUEZAL6F_iSE9kFnO7Mf4tf52AQ@mail.gmail.com>
 Subject: Re: [PATCH v1 2/8] LSM: Add an LSM identifier for external use
 To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
+Cc:     Greg KH <gregkh@linuxfoundation.org>, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        mic@digikod.net
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 25, 2022 at 2:45 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Fri, Oct 28, 2022 at 12:55 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 10/26/2022 11:31 PM, Greg KH wrote:
+> > On Wed, Oct 26, 2022 at 12:36:34PM -0700, Casey Schaufler wrote:
+> >>>> + *
+> >>>> + * Copyright (C) 2022 Casey Schaufler <casey@schaufler-ca.com>
+> >>>> + * Copyright (C) Intel Corporation
+> >>> No date for Intel?
+> >> The latest guidance I have received is that Intel does not want a date.
+> > Ok, then I need to have an Intel lawyer sign off on a patch that does
+> > this in order to have that be their official statement.  Otherwise, it
+> > needs a date.
 >
-> Add an integer member "id" to the struct lsm_id. This value is
-> a unique identifier associated with each security module. The
-> values are defined in a new UAPI header file. Each existing LSM
-> has been updated to include it's LSMID in the lsm_id.
+> Seems I misunderstood something. The date will be there.
 >
-> The LSM ID values are sequential, with the oldest module
-> LSM_ID_CAPABILITY being the lowest value and the existing
-> modules numbered in the order they were included in the
-> main line kernel. The first 32 values (0 - 31) are reserved
-> for some as yet unknown but important use.
+> >>>> + */
+> >>>> +
+> >>>> +#ifndef _UAPI_LINUX_LSM_H
+> >>>> +#define _UAPI_LINUX_LSM_H
+> >>>> +
+> >>>> +/*
+> >>>> + * ID values to identify security modules.
+> >>>> + * A system may use more than one security module.
+> >>>> + *
+> >>>> + * LSM_ID_XXX values 0 - 31 are reserved for future use
+> >>> Reserved for what?  Why?
+> >> You're not the first person to ask.
+> > And the answer is?
 >
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  include/linux/lsm_hooks.h    |  1 +
->  include/uapi/linux/lsm.h     | 32 ++++++++++++++++++++++++++++++++
->  security/apparmor/lsm.c      |  2 ++
->  security/bpf/hooks.c         |  2 ++
->  security/commoncap.c         |  2 ++
->  security/landlock/setup.c    |  2 ++
->  security/loadpin/loadpin.c   |  2 ++
->  security/lockdown/lockdown.c |  2 ++
->  security/safesetid/lsm.c     |  2 ++
->  security/selinux/hooks.c     |  2 ++
->  security/smack/smack_lsm.c   |  2 ++
->  security/tomoyo/tomoyo.c     |  2 ++
->  security/yama/yama_lsm.c     |  2 ++
->  13 files changed, 55 insertions(+)
->  create mode 100644 include/uapi/linux/lsm.h
+> There hasn't been an argument for it beyond "just in case".
+> I can't see a rational reason to reserve specific numbers as
+> I don't see value in LSM ranges.
+>
+> >> I'll remove the reserved values for the next version.
+> > Because we asked it will be removed?
+>
+> Because I don't have a good reason for including it and it
+> has been called into question. If a reviewer has a legitimate
+> case for reserved values they may be back.
 
-Unless you're getting paid by the patch, I'd rather you combine
-patches 1/8 and 2/8 into a single patch.  They are both pretty small,
-very related, and I don't want to see 1/8 merged anywhere without 2/8.
+Sorry for the delay, I was away for a couple of weeks and limiting my
+patch review to bug fixes, critical stuff, etc. but normal service is
+resuming this week ...
 
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index e383e468f742..dd4b4d95a172 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -1607,6 +1607,7 @@ struct security_hook_heads {
->   */
->  struct lsm_id {
->         const char      *lsm;           /* Name of the LSM */
-> +       int             id;             /* LSM ID */
->  };
+I was the one who originally added the note on reserved values in my
+original strawman proposal and I suspect Casey just carried that
+forward into his patches, so feel free to blame me.  My reason for
+doing so is rather simple, we're going to treat the ID as a 32-bit
+value so we have *plenty* of room (just the thought of supporting +4
+billion unique LSMs is comically insane), and I'd like to try and
+leave some space for yet-undetermined "special" things that we might
+need to convey in the LSM syscalls.  For example, this would allow us
+to convey additional information to userspace when an application
+asked for labeling information using one of these reserved LSM IDs;
+applications which did not know (or care) about the special ID would
+continue to function normally but augmented/new applications would be
+able to make sense of the additional information ... and we wouldn't
+have to add a new syscall to do it.
 
-At the very least let's define lsm_id::id as an 'unsigned int' type,
-but since we are going to see the lsm_id::id token used as part of the
-kernel ABI (likely not in this struct) I agree with Greg's comments
-about making the size more explicit.  I would suggest __u32/u32 as
-32-bits should be plenty for this token.
-
-Given the other upstream discussions we may want to do something
-similar with lsm_id::lsm and __u8/u8.  I'm pretty sure I saw a similar
-comment (by Greg?) elsewhere in this patchset when I was quickly
-skimming these on my phone while away ...
+It's basically really cheap futureproofing with little downside (we
+can always reclaim it at a later date if really necessary).  I've done
+similar things on other projects and it has proven to be useful in a
+few, and in none of the cases has it proven to be a problem.
 
 --
 paul-moore.com
