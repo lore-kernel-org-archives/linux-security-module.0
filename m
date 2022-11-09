@@ -2,185 +2,191 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77118C4321E
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Nov 2022 16:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F00C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Nov 2022 20:11:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231341AbiKIQ12 (ORCPT
+        id S230313AbiKIULR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Nov 2022 11:27:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39642 "EHLO
+        Wed, 9 Nov 2022 15:11:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbiKIQ11 (ORCPT
+        with ESMTP id S229959AbiKIULQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Nov 2022 11:27:27 -0500
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C26EC1A3B8;
-        Wed,  9 Nov 2022 08:27:25 -0800 (PST)
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A9GOG1I016981;
-        Wed, 9 Nov 2022 16:27:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2022-7-12;
- bh=qmLUnMr4V3ftaCEsf+DH/Bw5Da7OeFfokx58xQuVUSE=;
- b=G3IvTyIV7c8F4zhuVozmB7bfr12DfgrvNpf23T/viUrW49vup1NAddvgbLTThDOcXI3e
- P9N8zxYXA+0VE0stDV69OLr5Dk8WrsEWEUToEPNzd8iQ4if7JNbQMLzzPPfHFcBIVJVI
- okWwp7mK3sWOZwPwfVszzkMwgSyJQ/b7aw6JWl38WLqFPMWFgsHPCLeuHdBk0BpoE583
- wBa+nN9DyhhWN3kkMzY6LNAn1i6f7dAoxqNAJJPbRtI+2hCR2gBYnlgDIjtFriOFW9ye
- sffBdD73tvEh6Z7B9zHbUAzM7R4euLmxvFiFh/oph1tZbcs2AsCnfrqR6gaUc7aZLL7N GQ== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3krf5mg3e4-8
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 09 Nov 2022 16:27:11 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 2A9ELxg0040088;
-        Wed, 9 Nov 2022 15:50:34 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2172.outbound.protection.outlook.com [104.47.55.172])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3kpcqhnbdx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 09 Nov 2022 15:50:34 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=As8aahVJV+MUY0eb4aID6vfxHjcrScYyof7rpT6JKKdjuDCfU9JOzS2Aa6SZc6rSqUqMDM0LVqLVY9EcwebmRgHmVLzpU5sjcgK6aXrbE9sRsdKYwolyStBhJsBHzUMTCxzoy30fYYQ8I3ThzRQhuL80T8NHxmbSQ4UAlTRa+16TMF/z2D3j94diN6Ce9YxN5Qhq+cPsyGPKNcam3cJnyRS1XQIhvKiLtjCN81+GBXOctp8ykzDa07ta6oaLHTyJ1qUJ6xHyGkD8+XKvmlEd1zUuVP3nVca2JW2vE+vvY8Q1uIBXkz7PhfkpA1m+/IrhJJDau7HXu3r4DfHn0AYcPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qmLUnMr4V3ftaCEsf+DH/Bw5Da7OeFfokx58xQuVUSE=;
- b=ST4Jd1OHVbgQovoMOGtfBtdhVShu435RuNV1Mx0oa2NXi/e2Ao5RVvueHmYCG7g/fvuUrfVDIi/Z3zcnPw2jWfzKt/zetTt6WrozBxbseImf+k/FlaogHkFfJ7sCQtO3l+Y8RlqzFWPUywTq+ie/IsBPVEyy6LsZ9TDkH4SMikU+eaV5ylmuduS+U9xLX+DG+wcj4si1JbtOWWIYlr3+eJsAnUovTY3kokcPXpUFY9EWxeeEcqOBD5q7hPXaglyAntcuKOGR+gbLAX7RhdDJU4ROVNsHgP3BbbcTgL9lbImqMIh7ZHT+S/MLDRSF6FM4QOPrUw13EBCIf5XJr24H4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qmLUnMr4V3ftaCEsf+DH/Bw5Da7OeFfokx58xQuVUSE=;
- b=ayVN1n/1FTPXGLrpMnKJdi0nVtg3frXKLSzOszU8rJwjt3QLwWgSsk7RonjLiTkQZeus1tY2wG2dnpcJ8gOYLRMxZ7rL3yqjemPwJ9UUXnto5eAFMTPrDfnZbNKiEtLZ4eDZvvNqlj+HZ0TDxlMxschbiaLhUhkE53mPtzE2Y8Q=
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by DS0PR10MB6056.namprd10.prod.outlook.com (2603:10b6:8:cb::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5791.25; Wed, 9 Nov 2022 15:50:33 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::f006:f411:9056:63a4]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::f006:f411:9056:63a4%5]) with mapi id 15.20.5813.012; Wed, 9 Nov 2022
- 15:50:33 +0000
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-To:     =?utf-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-CC:     =?utf-8?B?VGhvbWFzIFdlacOfc2NodWg=?= <linux@weissschuh.net>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Pearson <markpearson@lenovo.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] certs: Prevent spurious errors on repeated blacklisting
-Thread-Topic: [PATCH] certs: Prevent spurious errors on repeated blacklisting
-Thread-Index: AQHY8qqUO1KTnXwDZ0K13zlRiLLr1q42wKcA
-Date:   Wed, 9 Nov 2022 15:50:33 +0000
-Message-ID: <0E877F01-1B42-49A0-A3AF-00405F6CADD7@oracle.com>
-References: <20221104014704.3469-1-linux@weissschuh.net>
- <3b997266-067c-975c-911a-da146fe9033a@digikod.net>
-In-Reply-To: <3b997266-067c-975c-911a-da146fe9033a@digikod.net>
-Accept-Language: en-US
+        Wed, 9 Nov 2022 15:11:16 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0713DEBB;
+        Wed,  9 Nov 2022 12:11:14 -0800 (PST)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A9Ivbm8003378;
+        Wed, 9 Nov 2022 20:10:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=GezlASEUNaP1kWWGVWgY0gmLLeKBx9UhABHYYKuFy1A=;
+ b=pL2/CKfDa3HcsTHmt9s+YKUqB5q6Egkaj76opKJxQ/iKAdBX0Yr7Q++Yhlp4fgMHhGDK
+ sF9eW407rknG2mJyec2ncnyt/HhwwXupCXYHk99iw+S06IMNvhN0g03WnXLxlcPoa2eJ
+ Ko9GIFKhRraYxDoPCpqoHkxAS6tvFyj5srUP6BxIpWBdsebwXbTN1A6OHZPqLqZ88q1I
+ 4ss+5Ju5c6Q6EdefePKhGxW6Y2G44plK9EUMalYpcyMbsh8cP1a5Y9UngIPPpUt+8VVp
+ BLHDtOUaDajgt+isE2YaUNxvoli6oziI/aHsdLxyRXH3xIkIVARVIRmAtuybPnT+YFVW uA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3krfgux4r9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Nov 2022 20:10:43 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A9Jukwr016004;
+        Wed, 9 Nov 2022 20:10:42 GMT
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3krfgux4qs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Nov 2022 20:10:42 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A9K55II002688;
+        Wed, 9 Nov 2022 20:10:41 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma03dal.us.ibm.com with ESMTP id 3kngpjftd4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Nov 2022 20:10:41 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com ([9.208.128.114])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A9KAdSd6881830
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 9 Nov 2022 20:10:40 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7DB3E5805E;
+        Wed,  9 Nov 2022 20:10:39 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EFEFF58067;
+        Wed,  9 Nov 2022 20:10:37 +0000 (GMT)
+Received: from [9.211.78.124] (unknown [9.211.78.124])
+        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Nov 2022 20:10:37 +0000 (GMT)
+Message-ID: <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
+Date:   Wed, 9 Nov 2022 15:10:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
+ fwsecurityfs
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3696.120.41.1.1)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH2PR10MB4150:EE_|DS0PR10MB6056:EE_
-x-ms-office365-filtering-correlation-id: 0653afca-7dd0-4772-c725-08dac26a22c9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: prU71yLDJMMGfuDLmHM+Ku6Hcf8OrGiK7esGuaT1HDMv+FTPg8Haj3oapHEaDKYnoND4KQxpX3rHO50QsfG7XnrDS/hyZpz4TP1B5JxZRhrgINTstQONUpFWvuDsU3P1iLqYFPPhjnOvKd6gevJsF7e5jeP/L4f2VQSxLKxdAt4egBLBHfRj7BE1fJ8KJUoelCNzwfyOlBSDmXbEPN+Yz4XxXJpNTlJ+1kxIg7n/9qcgH7tHTmghS1Lj8+4M+4Gv00oAZ5RpNOQa9VeQpfSecnBVCXdWTayW9zI/L0Q+KttwX5DQruHdWblqrNodEVNPa7Es0kR6UNiwTMoIbUYVC/02FUP3OadpAPrth2HDDi7Ais6cTEXRwJYtFVeAywCh6AnXmn9K78KkaYV+Os22e2AY+aVUrI/To7we6fkdF7Trc+KOb4KRWgiwb+7xiYkoficw9Q3OoUdt7I6NHDQIdLgMMJ90l6Ml7yNF+pJgzbjvj1rMLSyOvSBvo4DWmfr1rRRmocBzdZqA53RhU7IK8bEmfO9uVMEqmrOjkIzGlHZAI9sHsYgXeivWB19eWA12SkU72UzvZ2lJCnDptbK+JOtfqLj+snGa61IAUcSUvz3xOGGIQxwa0+qUH+1dWNSsKR9LwKRbuT1GdIa2prukj/5h1masPc+W7qveKBqQJSE9YRTULllGi9kAihGRUkgtWmvAx610CZOSuKH+dfTlE4y9LewaLVsVRGdlMTqofaI+858BZQv96iQWQXuOjc36qumk+MRgdSf3nBr9nolafuCHrfPTJKYS+F/5a8avIGYXHqjWFaHnKyHTyIVuhiQqGoS7WNDTZu1NpQaMGmKIawrC5oil1kxPSW8/gxYPxGWWATX/Uhjg7ci9zRf9c7lV
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(346002)(366004)(136003)(39860400002)(396003)(451199015)(66574015)(45080400002)(2616005)(966005)(38070700005)(6486002)(2906002)(38100700002)(316002)(6506007)(6512007)(54906003)(26005)(478600001)(36756003)(6916009)(122000001)(186003)(71200400001)(86362001)(83380400001)(53546011)(76116006)(66946007)(66556008)(33656002)(66446008)(66476007)(64756008)(4326008)(8676002)(5660300002)(44832011)(41300700001)(8936002)(7416002)(91956017)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RFgxSVZZOTJETDAwbTlCUDdmcDRuYk9IbzZSUjhrWDRrOVJ0R3M4QkNpV3JF?=
- =?utf-8?B?c2txVndidlFhTVJ5ZUhZOVVNZDMweTk4L0Fzd21hNkhBam95c3hlNk1uSkE3?=
- =?utf-8?B?cWhYdWVpK2hFMk94bXl6eHVqTUtGVWpXNXQrTUM4TzQ2SGY1NEZCelF5VWdv?=
- =?utf-8?B?NWlYcXpvVzRGZm9yVWFqVUJrdGR3NnVBZjBtZlgrV1dzN0JCdGFuZGhZaXZk?=
- =?utf-8?B?RjkzNm5EVC9PdmRRczRjY1ZOVzBYb2dmQ0NwbGdVVy9JZkdNVGZqclBsNmxU?=
- =?utf-8?B?N0hSc2JKL2V4V3lBOG93ZFJBWmh1V244clVXWkxtL0ZheEpZNkNyYk9nbjNU?=
- =?utf-8?B?blRobnRzNTIrbDRkUHdySmdkNlFyMm5XOFEvUkhDdGQyWXZLSWs1WXJtTE1k?=
- =?utf-8?B?QVhMRWZmOE8vU01zK1ROMHR6WVpHdGZSWWUxWjc5cllGdkM4TktiUm9rVW5h?=
- =?utf-8?B?bWpjYmRUd0pObURaZ1NSenRHNGFtaTFqbkV2TzVuSi94UlFRanFRYlMxaUcy?=
- =?utf-8?B?U0l4UDRFV01jYWRCY1doUmZJUHI1amgxak5janZPd0JQN3ZqMXBxeEFhdHA4?=
- =?utf-8?B?VzJtVGVBRnU0MUNxRnhja0ltbXdiNGRnc2YzSk0xU0E4UnJFRjRZdWpodXds?=
- =?utf-8?B?emtnVWNpY0s0cE1MOUJ6SUZOVThkZ2ZQbEpFS0lMMVI5VExlSEJvM1c1eHJv?=
- =?utf-8?B?dWg0c1pmek5KTUtTV3U3L0ZrSXh6QVgwNW1MOFlvSjhDQTdWVUh0K1RwVDRy?=
- =?utf-8?B?OWxiV2NuRTdJbzFyUlZsdlBhSlBXWmlTNnB5SzJsS3NMSVFoeGUrd2twK01Q?=
- =?utf-8?B?cmV3UVJjU3FUMXdyaE5QdVFCaUE2RzduUzBOZkp4MFk1OE5jTnEraFFHaE5M?=
- =?utf-8?B?YXRvNEtyVTRhSHRrSW1QK2RYSTVybjhXQVBDWk1rZUh0VDIvTGloTVVLcDA3?=
- =?utf-8?B?QzRGRi8vUE9IUkJETll6OGxkdlE2ekt3VFYzR083Qjd2U2V4ZXRhWkZXcm9J?=
- =?utf-8?B?QVVJdlNvK2NMTitTZjBzSitETElHa0FtOVI2Q0tVUXhzL1JsQy8rcnFabjFT?=
- =?utf-8?B?R3N4YllCRStLc29HUW1NKzRsc1dEUUtuSGY2V1Y2alhZMjdwUU5YRjljWjJR?=
- =?utf-8?B?TmJ0d0NDQ3RIZ2tSOEo4bHNuVmZ5bURIb24yaFY1R0xhQ25hTUFtUkt4ZFFQ?=
- =?utf-8?B?ZFlCemNxT3RIcmNVd2VidUtWdHN1ek5xYlNQSmlSREtxR0REdjBiNWwvc1Vh?=
- =?utf-8?B?VmoxSXVGckorQXY4UEZYVW8xTE5uWGhIUW90cVRNdVA4Ymo3VXVWNkx1WUdK?=
- =?utf-8?B?Y1laL2Y3OWVqQ1UvVFhTVThZSUppOWd6cFBsck9WL3phK2lqWGk1VjZEb0pH?=
- =?utf-8?B?UTRWMFVhTmVJcE42VFFJNmdocUVGekZkdk5ocTUrUlFXeXE2RnR1ZDBaaXJQ?=
- =?utf-8?B?VzVBc252Ynd2WFg1WVk0dkx5RGRzL2luWHE3N1VybWZMQklBdjk1R0JFSVRt?=
- =?utf-8?B?VUZaLzVndFdBWXkxZnc3MFdRTlhRSHRmSGVCVWljcVBiRDAwNno2aGNaTmYx?=
- =?utf-8?B?Rkw0TUdYL0wwNldBZ2w2YTIyOWJTTExlR3RPYnZod0V4V0RXSWlVSlplK3Fn?=
- =?utf-8?B?SFlmSzh1VC84RUExOUd3QkRRVmdlWFFRMDBEd2ZxblM5ODhURFdHN3NQZGpn?=
- =?utf-8?B?RTBaVVZXWHFML0hVSTFwNUtHVng0M3o4U3RMREJZMjdGaXllRmw4RWtpVmEw?=
- =?utf-8?B?SWZYdVBNK05QcVlFWVd0cHhzZEV0RG5aUk5vZUQ4SmRITlBGbjF0SWpZWDZu?=
- =?utf-8?B?cjY0WkRRY1RxcDB1ZlRXeXUxRVFFUG9LR0kxN282RXRBUW85dXBCZitGTk03?=
- =?utf-8?B?MmdLZkZJZUdudEZQa0tHRGIwK2J2bHJ3VVVKSHJpNFY2dGlEdG1YRHZvU3FV?=
- =?utf-8?B?bHo2VWdJQlJSN0YvOEVCc0RvLzFmSWMraEJueXMrekZEUzFFZmxObXl0OG1L?=
- =?utf-8?B?MkIxNkt4ZlU4S3NWNVYxNTZBZ2dzMUR6VXB5dGRQOGpLMmxLVmZweGtqNTFn?=
- =?utf-8?B?VFZHcWxQZUZteVRwUWpkbk1Va3Vqb1loRVZlRndGQ2F6S3VtajZZbDNTclU5?=
- =?utf-8?B?YVMzeGRoYWMxTVVaZkNEc3duc2VXazhWNzBrT3NSWjhzYVhwTlpDQ0lCL3pD?=
- =?utf-8?B?RXc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <81958B5C75673846BD1DBA0823EAD08B@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nayna Jain <nayna@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-efi@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell Currey <ruscur@russell.cc>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+References: <20221106210744.603240-1-nayna@linux.ibm.com>
+ <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+In-Reply-To: <Y2uvUFQ9S2oaefSY@kroah.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ETJ3mcIjDcmC9bU0wwhiQ_UGoUKvS5YV
+X-Proofpoint-ORIG-GUID: _BJV8Qpgg8H5VffXdwMwQalF4Eu_YbE3
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0653afca-7dd0-4772-c725-08dac26a22c9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Nov 2022 15:50:33.2161
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Lf8BEnuByt+NCY0bP5ZoMPOTnwtyx0LAP0pZmdwz4Y3aDjXyXvpzndMN0SoRftEEVviYeseWsrN0NP6pvjJQEi2VP5fv0Avdbi4O0TIeGsw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6056
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-09_06,2022-11-09_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0 mlxscore=0
- suspectscore=0 spamscore=0 malwarescore=0 bulkscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
- definitions=main-2211090120
-X-Proofpoint-GUID: NgkDAsSewYc7nmuLtfW4W3ksu7NPB_dA
-X-Proofpoint-ORIG-GUID: NgkDAsSewYc7nmuLtfW4W3ksu7NPB_dA
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ mlxlogscore=999 clxscore=1011 spamscore=0 phishscore=0 bulkscore=0
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211090151
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-DQoNCj4gT24gTm92IDcsIDIwMjIsIGF0IDY6MTIgQU0sIE1pY2thw6tsIFNhbGHDvG4gPG1pY0Bk
-aWdpa29kLm5ldD4gd3JvdGU6DQo+IA0KPiBUaGlzIGlzIGEgZm9sbG93LXVwIG9mIGh0dHBzOi8v
-bG9yZS5rZXJuZWwub3JnL3IvYzhjNjU3MTMtNWNkYS00M2FkLTgwMTgtMjBmMmUzMmU0NDMyQHQt
-OGNoLmRlDQo+IA0KPiBBZGRlZCBKYXJra28sIE1hcmsgUGVhcnNvbiwgRXJpYyBTbm93YmVyZyBh
-bmQgbW9yZSBNTCBpbiBDYy4NCj4gDQo+IA0KPiBPbiAwNC8xMS8yMDIyIDAyOjQ3LCBUaG9tYXMg
-V2Vpw59zY2h1aCB3cm90ZToNCj4+IFdoZW4gdGhlIGJsYWNrbGlzdCBrZXlyaW5nIHdhcyBjaGFu
-Z2VkIHRvIGFsbG93IHVwZGF0ZXMgZnJvbSB0aGUgcm9vdA0KPj4gdXNlciBpdCBnYWluZWQgYW4g
-LT51cGRhdGUoKSBmdW5jdGlvbiB0aGF0IGRpc2FsbG93cyBhbGwgdXBkYXRlcy4NCj4+IFdoZW4g
-dGhlIGEgaGFzaCBpcyBibGFja2xpc3RlZCBtdWx0aXBsZSB0aW1lcyBmcm9tIHRoZSBidWlsdGlu
-IG9yDQo+PiBmaXJtd2FyZS1wcm92aWRlZCBibGFja2xpc3QgdGhpcyBzcGFtcyBwcm9taW5lbnQg
-bG9ncyBkdXJpbmcgYm9vdDoNCj4+IFsgICAgMC44OTA4MTRdIGJsYWNrbGlzdDogUHJvYmxlbSBi
-bGFja2xpc3RpbmcgaGFzaCAoLTEzKQ0KPj4gQXMgYWxsIHRoZXNlIHJlcGVhdGVkIGNhbGxzIHRv
-IG1hcmtfcmF3X2hhc2hfYmxhY2tsaXN0ZWQoKSB3b3VsZCBjcmVhdGUNCj4+IHRoZSBzYW1lIGtl
-eXJpbmcgZW50cnkgYWdhaW4gYW55d2F5cyB0aGVzZSBlcnJvcnMgY2FuIGJlIHNhZmVseSBpZ25v
-cmVkLg0KPiANCj4gVGhlc2UgZXJyb3JzIGNhbiBpbmRlZWQgYmUgc2FmZWx5IGlnbm9yZWQsIGhv
-d2V2ZXIgdGhleSBoaWdobGlnaHQgaXNzdWVzIHdpdGggc29tZSBmaXJtd2FyZSB2ZW5kb3JzIG5v
-dCBjaGVja2luZyBub3Igb3B0aW1pemluZyB0aGVpciBibG9ja2VkIGhhc2hlcy4gVGhpcyByYWlz
-ZXMgc2VjdXJpdHkgY29uY2VybnMsIGFuZCBpdCBzaG91bGQgYmUgZml4ZWQgYnkgZmlybXdhcmUg
-dmVuZG9ycy4NCg0KSSBoYXZlIHNlZW4gZXJyb3IgcmVwb3J0cyBsaWtlIHRoaXMgaW4gdGhlIHBh
-c3QuICBTb21lIG9mIHRoZSBvbGRlciBVRUZJIFJldm9jYXRpb24gTGlzdCANCmZpbGVzIHVwIG9u
-IHRoZSBVRUZJLm9yZyBzaXRlIFsxXSBjb250YWluIGR1cGxpY2F0ZXMuICBJZiBhIGZpcm13YXJl
-IHZlbmRvciB1c2VzIG9uZSBvZiANCnRoZXNlIG9sZGVyIE1pY3Jvc29mdCBzaWduZWQgZmlsZXMs
-IHRoZXkgYXJlIGdvaW5nIHRvIHNlZSB0aGVzZSBlcnJvciBtZXNzYWdlcy4NCg0KMS4gaHR0cHM6
-Ly91ZWZpLm9yZy9yZXZvY2F0aW9ubGlzdGZpbGUvYXJjaGl2ZQ0KDQo=
+
+On 11/9/22 08:46, Greg Kroah-Hartman wrote:
+> On Sun, Nov 06, 2022 at 04:07:42PM -0500, Nayna Jain wrote:
+>> securityfs is meant for Linux security subsystems to expose policies/logs
+>> or any other information. However, there are various firmware security
+>> features which expose their variables for user management via the kernel.
+>> There is currently no single place to expose these variables. Different
+>> platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
+>> interface as they find it appropriate. Thus, there is a gap in kernel
+>> interfaces to expose variables for security features.
+>>
+>> Define a firmware security filesystem (fwsecurityfs) to be used by
+>> security features enabled by the firmware. These variables are platform
+>> specific. This filesystem provides platforms a way to implement their
+>>   own underlying semantics by defining own inode and file operations.
+>>
+>> Similar to securityfs, the firmware security filesystem is recommended
+>> to be exposed on a well known mount point /sys/firmware/security.
+>> Platforms can define their own directory or file structure under this path.
+>>
+>> Example:
+>>
+>> # mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
+> Why not juset use securityfs in /sys/security/firmware/ instead?  Then
+> you don't have to create a new filesystem and convince userspace to
+> mount it in a specific location?
+
+ From man 5 sysfs page:
+
+/sys/firmware: This subdirectory contains interfaces for viewing and 
+manipulating firmware-specific objects and attributes.
+
+/sys/kernel: This subdirectory contains various files and subdirectories 
+that provide information about the running kernel.
+
+The security variables which are being exposed via fwsecurityfs are 
+managed by firmware, stored in firmware managed space and also often 
+consumed by firmware for enabling various security features.
+
+ From git commit b67dbf9d4c1987c370fd18fdc4cf9d8aaea604c2, the purpose 
+of securityfs(/sys/kernel/security) is to provide a common place for all 
+kernel LSMs. The idea of
+fwsecurityfs(/sys/firmware/security) is to similarly provide a common 
+place for all firmware security objects.
+
+/sys/firmware already exists. The patch now defines a new /security 
+directory in it for firmware security features. Using 
+/sys/kernel/security would mean scattering firmware objects in multiple 
+places and confusing the purpose of /sys/kernel and /sys/firmware.
+
+Even though fwsecurityfs code is based on securityfs, since the two 
+filesystems expose different types of objects and have different 
+requirements, there are distinctions:
+
+1. fwsecurityfs lets users create files in userspace, securityfs only 
+allows kernel subsystems to create files.
+
+2. firmware and kernel objects may have different requirements. For 
+example, consideration of namespacing. As per my understanding, 
+namespacing is applied to kernel resources and not firmware resources. 
+That's why it makes sense to add support for namespacing in securityfs, 
+but we concluded that fwsecurityfs currently doesn't need it. Another 
+but similar example of it is: TPM space, which is exposed from hardware. 
+For containers, the TPM would be made as virtual/software TPM. Similarly 
+for firmware space for containers, it would have to be something 
+virtualized/software version of it.
+
+3. firmware objects are persistent and read at boot time by interaction 
+with firmware, unlike kernel objects which are not persistent.
+
+For a more detailed explanation refer to the LSS-NA 2022 "PowerVM 
+Platform Keystore - Securing Linux Credentials Locally" talk and 
+slides[1]. The link to previously posted RFC version is [2].
+
+[1] 
+https://static.sched.com/hosted_files/lssna2022/25/NaynaJain_PowerVM_PlatformKeyStore_SecuringLinuxCredentialsLocally.pdf
+[2] https://lore.kernel.org/linuxppc-dev/YrQqPhi4+jHZ1WJc@kroah.com/
+
+Thanks & Regards,
+
+      - Nayna
+
+>
+> thanks,
+>
+> greg k-h
