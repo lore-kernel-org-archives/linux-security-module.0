@@ -2,95 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B85C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 04:51:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C366C4321E
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 07:42:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231273AbiKJEvS (ORCPT
+        id S232529AbiKJHm3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Nov 2022 23:51:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42486 "EHLO
+        Thu, 10 Nov 2022 02:42:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230254AbiKJEvQ (ORCPT
+        with ESMTP id S230093AbiKJHm1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Nov 2022 23:51:16 -0500
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FE412AE03
-        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 20:51:15 -0800 (PST)
-Received: by mail-ot1-x335.google.com with SMTP id a13-20020a9d6e8d000000b00668d65fc44fso536981otr.9
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Nov 2022 20:51:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XcT5wYQupLzg19Y6E3tP1wvyvte8y3AvHnzNS4m/36k=;
-        b=EHBPgvKuqA3VaRdnYpGt106ghiBtTas2lcZUJ/pEPRYh8Sa73Z7c2+aa43sgNJzDdG
-         aZ6YStv67RdwKG20JZlWd+bLKdrA9r8aS0xpabt+nwGKWiiEwp8U31O8K5ezuL5u9fyB
-         En2WGN0oZxJLiQr10nIFItho5sbPNNjVNhHdFV1HN7BSX6Um+RJLXxRH1QsEeOm51Exn
-         8O3B6vr0WvecAvtNj79DhTeoORcyaMnG4QoJwNAfgKAF+PgOBy3ou4PqdhpGeVzIIwb1
-         8fy2DtTAdovczvGXrDGoy4krAdGtqkJeQ2AkFsAUpBiV6f5ghendOmfPbUnwyrktUWR3
-         dU2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XcT5wYQupLzg19Y6E3tP1wvyvte8y3AvHnzNS4m/36k=;
-        b=XlrDTbuok8kWebN+R8TLIr5o0CTP5cygSzYSJGDNEaxO39ujzv8xnY6xA9AVEm61F4
-         Ft5Nr6vnJgFg5sajsz7z8fnbujg1I1laU6BDxSy12QgNF7Ai/pErMK8+yo1bkwEUp/Ev
-         28fp9v/VOkJmQdGVqsDN+4JORRr+4earLNkuMJ9paUPutpuyxHgDsHkXsVH7H2c0mDu7
-         ydT9cP2u8ZGENePtWArvP2RjPXu2R8kc1y9aTUTkxBWRcgUoOO8eGj7ttGad+czPXZu3
-         yZaVMrbIvonrayZYnRfJWc16aULY04g+WrXchq4GvYLNE8WSISzr7iptj2wcXXCeEUsB
-         ZMpw==
-X-Gm-Message-State: ACrzQf2iqyZq+RdrIrWPtD2jcIdkz4iBH4bjuJh9wxkLd8NDAtQbeAoG
-        GdbUZuMD3SPJFCi2uPsQ8f2qfye5UZw6C+jbn2DF
-X-Google-Smtp-Source: AMsMyM7fystvIOT5xQlaYpTx0YsqbQK9PnqebQYjDZNsxZUJmgLu8IislPk174wIXybPlJtY6hf+UPrtvpA2p6LdqYQ=
-X-Received: by 2002:a9d:1aa:0:b0:66c:6922:8640 with SMTP id
- e39-20020a9d01aa000000b0066c69228640mr1065616ote.34.1668055874749; Wed, 09
- Nov 2022 20:51:14 -0800 (PST)
+        Thu, 10 Nov 2022 02:42:27 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7CD4229;
+        Wed,  9 Nov 2022 23:42:23 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 48B4D61DA2;
+        Thu, 10 Nov 2022 07:42:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACF43C43147;
+        Thu, 10 Nov 2022 07:42:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668066142;
+        bh=vGnlMB/2HOSpO2YQlw0qSWBFXOh59PeBdgpXlTbb4xg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Wr/cwLZ629WQhtGweevX8mjPjjI9Ms1KRhD7KD6dGOgUE09XcA6SrLmP/uxmiIAwE
+         ilJsfBXIP8hBMD17pIz5/sCnYybiiXXfzXJ8ODxpkfJAn1YAhADHCfP2fzaSqUKzaL
+         iGJ+utbEFY6BMVlY85su+GoOSvlfZtcnZP9MZdmGMusLSPsIsoNZF5DtCVVZIwDA5w
+         DNqMzMPjOTcN9az0wJXuDswi1KOJOOUt6XecXcmdunrdZuPYhgtFEyCk1+1HX4uPaS
+         ZLOFWgPKeNh1v1jtyKdFVRW8u7dxesOip82rb4hB7HG7+WcLslYAvrwm2jvfqfViNH
+         52D49iYcOpT5A==
+Received: by mail-lj1-f172.google.com with SMTP id k19so582776lji.2;
+        Wed, 09 Nov 2022 23:42:22 -0800 (PST)
+X-Gm-Message-State: ACrzQf0m/n9bHRX3RaEx7kxoSXmOVYGuIXRs1rqoE8J9Iv9KGAlmfuMG
+        eN02ZLQDsVTvei4C5xQIUrjto5hCLFjFkxy2a+I=
+X-Google-Smtp-Source: AMsMyM5CTnFUd6qm6+4S2vOZEcs8fjls4hVzitvR3CFeGIaQs/QemaR60+RGraj6GpRs4rBOZZOZ7W/WL+ot9XbUZys=
+X-Received: by 2002:a05:651c:c6:b0:277:96a:5c32 with SMTP id
+ 6-20020a05651c00c600b00277096a5c32mr8067111ljr.415.1668066140429; Wed, 09 Nov
+ 2022 23:42:20 -0800 (PST)
 MIME-Version: 1.0
-References: <20221110043614.802364-1-paul@paul-moore.com>
-In-Reply-To: <20221110043614.802364-1-paul@paul-moore.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 9 Nov 2022 23:51:04 -0500
-Message-ID: <CAHC9VhRtCbOO7ppCpOPAa_oZxK5rBG0gXhrcJQdp8VwhCdksEA@mail.gmail.com>
-Subject: Re: [RFC PATCH] lsm,fs: fix vfs_getxattr_alloc() return type and
- caller error paths
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
+References: <20211124044124.998170-1-eric.snowberg@oracle.com>
+ <20211124044124.998170-17-eric.snowberg@oracle.com> <20221110000129.kl6pjy5mafpuptbk@framework>
+In-Reply-To: <20221110000129.kl6pjy5mafpuptbk@framework>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Thu, 10 Nov 2022 08:42:08 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHcf_QptjHfFJxkUQrv=Lfg5=pkt2UTOZ5F-pffki-=-Q@mail.gmail.com>
+Message-ID: <CAMj1kXHcf_QptjHfFJxkUQrv=Lfg5=pkt2UTOZ5F-pffki-=-Q@mail.gmail.com>
+Subject: Re: [PATCH v8 16/17] integrity: Trust MOK keys if MokListTrustedRT found
+To:     Morten Linderud <morten@linderud.pw>
+Cc:     Eric Snowberg <eric.snowberg@oracle.com>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com,
+        keescook@chromium.org, torvalds@linux-foundation.org,
+        weiyongjun1@huawei.com, nayna@linux.ibm.com, ebiggers@google.com,
+        nramas@linux.microsoft.com, lszubowi@redhat.com, jason@zx2c4.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        James.Bottomley@hansenpartnership.com, pjones@redhat.com,
+        konrad.wilk@oracle.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 9, 2022 at 11:36 PM Paul Moore <paul@paul-moore.com> wrote:
+On Thu, 10 Nov 2022 at 01:01, Morten Linderud <morten@linderud.pw> wrote:
 >
-> The vfs_getxattr_alloc() function currently returns a ssize_t value
-> despite the fact that it only uses int values internally for return
-> values.  Fix this by converting vfs_getxattr_alloc() to return an
-> int type and adjust the callers as necessary.  As part of these
-> caller modifications, some of the callers are fixed to properly free
-> the xattr value buffer on both success and failure to ensure that
-> memory is not leaked in the failure case.
+> On Tue, Nov 23, 2021 at 11:41:23PM -0500, Eric Snowberg wrote:
+> > A new Machine Owner Key (MOK) variable called MokListTrustedRT has been
+> > introduced in shim. When this UEFI variable is set, it indicates the
+> > end-user has made the decision themselves that they wish to trust MOK keys
+> > within the Linux trust boundary.  It is not an error if this variable
+> > does not exist. If it does not exist, the MOK keys should not be trusted
+> > within the kernel.
 >
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  fs/xattr.c                                |  5 +++--
->  include/linux/xattr.h                     |  6 +++---
->  security/apparmor/domain.c                |  3 +--
->  security/commoncap.c                      | 22 ++++++++++------------
->  security/integrity/evm/evm_crypto.c       |  5 +++--
->  security/integrity/evm/evm_main.c         |  7 +++++--
->  security/integrity/ima/ima.h              |  5 +++--
->  security/integrity/ima/ima_appraise.c     |  6 +++---
->  security/integrity/ima/ima_main.c         |  6 ++++--
->  security/integrity/ima/ima_template_lib.c | 11 +++++------
->  10 files changed, 40 insertions(+), 36 deletions(-)
+> Hi Eric,
+>
+> I've been milling around on this patch-set for a while and I have a few issues
+> with the description of the commit and what the code actually does.
+>
+> efi_mokvar_entry_find doesn't simply read an UEFI variable as the commit message
+> suggests, it will look for the MOK variable loaded into the EFI configuration
+> table. This implies we need this table setup in early boot to take usage of this
+> patch set.
+>
+> The only bootloader that does setup this table, is the `shim` as described. But
+> no other bootloader implements support for the MOK EFI configuration table.
+>
 
-Mimi, I'm particularly interested in your thoughts on this patch as
-there are a number of places in the IMA/EVM code that needed some
-additional tweaks to prevent a memory leak like we fixed in the
-capabilities code via 8cf0a1bc1287 ("capabilities: fix potential
-memleak on error path from vfs_getxattr_alloc()").
+Does any other bootloader implement support for the (volatile)
+MokListTrustedRT variable?
 
--- 
-paul-moore.com
+Note that this variable is intentionally volatile, and should be
+rejected by the kernel if it is not. The point of these RT variables
+or the config tables is that they can only be set at boot if a signed
+and therefore trusted agent created them.
+
+Permitting non-volatile variables here defeats the purpose of secure
+boot, which aims to prevent exploits from gaining persistence. It
+would be bad if you could corrupt the trusted boot chain forever by
+setting a variable once.
+
+> This effectively means that there is still no way for Machine Owners to load
+> keys into the keyring, for things like module signing, without the shim present
+> in the bootchain. I find this a bit weird.
+>
+> Is this an intentional design decision, or could other ways be supported as
+> well?
+>
+
+Yes.
+
+If we are looking for a way to use EFI variables to inject additional
+certificates into the keyring without the ability to authenticate
+them, we should I'd strongly recommend that we disable that by default
+and add a big fat warning that it is incompatible with the guarantees
+secure boot aims to provide.
