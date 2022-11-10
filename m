@@ -2,101 +2,160 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93169C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 00:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F23C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 00:58:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229615AbiKJA4m (ORCPT
+        id S230190AbiKJA5s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Nov 2022 19:56:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46126 "EHLO
+        Wed, 9 Nov 2022 19:57:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230080AbiKJA4k (ORCPT
+        with ESMTP id S232106AbiKJA5P (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Nov 2022 19:56:40 -0500
-X-Greylist: delayed 1799 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 09 Nov 2022 16:56:39 PST
-Received: from linderud.pw (linderud.dev [163.172.10.146])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE61620F56;
-        Wed,  9 Nov 2022 16:56:39 -0800 (PST)
-Received: from linderud.pw (localhost [127.0.0.1])
-        by linderud.pw (Postfix) with ESMTP id 0E360C0273;
-        Thu, 10 Nov 2022 01:01:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linderud.pw;
-        s=linderud; t=1668038494;
-        bh=jH0zJFbDnCevPE8tf0c1v6aSJKKT3slV14YINE41imY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=U0dBESQLYHV9bR+lJN7IIwR0s+9MLgjZCaC29vtuBJicKAlUqCJA/8h/XDWPRT+aF
-         5KGr3uiWk0XJtRScrl5QEjn+4vrjGQX6Hms9RmxW4AkcL2KhEOKVdDq0uW6cgGQONK
-         2b4cV4OyG6EX7fiuO9KVbz5Z4vzANcy+Y620PKtCpjpG1K7OO9h5XZTbxi9L0PMK+Q
-         aUS3852wWwcdISxeTKf1y2Ml8l0fUnlcnQV/LArMUSwZMAhyQYLFxrMvag93Kiyk+o
-         rgXzF2R5k8lckO/HVRNen26BJvRNU0SC5YMhd0auAvTQ6dQqce+Sz+TrJdEGUNP5gP
-         uhuBd0M6nP3FPkxnbFRv78o5outAF7pLYBRXxWTRO6i0k9TRWsmacCM6mG6aY36vI1
-         2KniNKKH4W78ldDkHY+gCKUyawFiWTBFaR3XVqCWJVZcQZinjjR9H33JyfBQk0qXIO
-         0N/PymYd9tifdimGEspYZGfkGsfEaGAm3dMD+ZAbK+0eEgGQJvePRoTE/CC2NAH222
-         0UiUBrTyfQVCWSV8PQedyGwLX/QEh9x98BnJnlUCqIPu7J57W2tWzWVuAirp1EdPec
-         EK5Ht57VCNavVXl5d41jZLG7OXYo5osfeImVkvEoryGIuy8lObCOhlYTJNX4Kmi0r2
-         FdQA/J5zBQKLrm8VZGwq9hMs=
-Received: from localhost (host-37-191-241-102.lynet.no [37.191.241.102])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: morten)
-        by linderud.pw (Postfix) with ESMTPSA id BFB40C007F;
-        Thu, 10 Nov 2022 01:01:34 +0100 (CET)
-Date:   Thu, 10 Nov 2022 01:01:29 +0100
-From:   Morten Linderud <morten@linderud.pw>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        zohar@linux.ibm.com, dhowells@redhat.com, dwmw2@infradead.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com,
-        keescook@chromium.org, torvalds@linux-foundation.org,
-        weiyongjun1@huawei.com, nayna@linux.ibm.com, ebiggers@google.com,
-        ardb@kernel.org, nramas@linux.microsoft.com, lszubowi@redhat.com,
-        jason@zx2c4.com, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James.Bottomley@hansenpartnership.com, pjones@redhat.com,
-        konrad.wilk@oracle.com
-Subject: Re: [PATCH v8 16/17] integrity: Trust MOK keys if MokListTrustedRT
- found
-Message-ID: <20221110000129.kl6pjy5mafpuptbk@framework>
-References: <20211124044124.998170-1-eric.snowberg@oracle.com>
- <20211124044124.998170-17-eric.snowberg@oracle.com>
+        Wed, 9 Nov 2022 19:57:15 -0500
+Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A63620F56
+        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 16:57:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1668041833; bh=sgfabkyNR6mX/ERtH/pUts6++dUJ+Ber6tLXSuSl/vQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=fwne6qvwZNv7DJREdRzls3F9Q//Oj8aND0MvsnPNiNPtAEsQBH1eUzWO1pHcQBpQ4GxtQN258kKOEOspPcCmtCj8w/v9tDEyiUO2VAowep/KPtNk13HDyuGlHF4tkyXrGed1uXQRf0dHMF4j4MRNfW6Wy++Sf9YCqXXLHXyHq78HTKSyE9gs0EXP3zLyM7bbGuQmrWPRfer7q2ra2nJXpC0hVyZVSMg0E1qwB+2yB9I40apjst9DLcuC20SjQx9cJt2ctYUZAzzeq83t1emVS/MK52AC5Wq/vYOUzb791At/PvjSRbt2IfIVNyOSCNPSc9UVcWzS/kVKLnR5GBzZfA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1668041833; bh=t/tOBHTPdtISZyeAK1TZ6fFYLM9WdaZRpwDGE9y3tXQ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=PGFHs3j1g2xNcFfnUwHMwvi1wwNEzwGDoBurffthkTyPvx0gR3jNQQQVHIEXXwAZggD6TCCRzCUcCk2+f4K89+hlr7smDl0WyFS96ZSYoW43KLukslrD63GcPIOyezEh+cy0tVcNemnZnfm+ImAqVwbRldhttTQecw5urG3NBne0CDm5j5UCJ6NjxNN3K2d8UPyEjQnk2SQvsFueb+bQ9aZ+mxMZjTpjuyahCWZ35yonYRAVEUvtLTzxKzwVogSY8ekAj2QNvX2BkqtYEB3Jf7T+IjrxcTRfgYaIF73lPvCbdw2k4ykiwO6x+uShk0xrq2JUG1DBcPrr6mCu1mUr2A==
+X-YMail-OSG: UxNJ9RUVM1lGG.pTki5KDNVEHnJzqZr5I0IxRQvTLEIm7k8CldvRs61lORrKeUy
+ gjo2862aZiXIWA7GZfmEypOrPw6x7g1491zuXFyFdMGFNErkoS.21sMFpdN.p8VdGj_.zA8whMbF
+ 7tDab2GNvGP3a5F7oR165KmDAE3t0H4oWH6WcWoFThpJ7jUHvAvmK5yIH4Izb0bpJVVzT86NpbR6
+ jGH3ji9m.HJJF_Qgf2sxq8DDFY0na6H2yhv1q1XsCnxi.xhxjFjqwDRvswQQwWggNh8Eor8zHoDM
+ Cc56f5afrm1NrCj9FkFYh8WFHirKxsdwvxooDF5nBuARZDy__n8s_E21Wb1z5F9JR754pMbU_2WV
+ qNk4l0.cSfMFkfjRFz6XHu5kXdVZm2aF9t.2wjsosxZ5Fxw2seKNBBZeyxuQVzADejzBfv1KsGVz
+ Y54cKFn_yW4tbFl7vIL.1a2FLhU.CnRLasZZorkOGlR.nVPAGwxMSfTyF4F9Z6XJsb_4jjRFXGLJ
+ eQTEzdCgD5iTXgcHDNuwT1Ojkb.nCP9ZXI_GaySs86ps4.f7LriniHvYtCe._z3XtyosKc4DYZrO
+ ZTzwb5PIfZVUOC7SavihAExhm9g.HrkNBponcYQ8jiN2f2hycf6m9rrULVVJxt1v4DBOvriKGecF
+ z2Rii4o4_PpGX0vBzSo3pJkff.EcX3yrkUjfgcQ.RPvvZzePhryxw5gNXVd6tzHFlSJ9ndF0R_gM
+ JXxftgSGpYDwgQjDoOfWJRjzSX.vyQeAtfm76pVzhGI19afLxlY3irmGCA_euXxYEMbWGuLNefW6
+ tTax8WXCt08SECNj5gTjATH1gzF_M3gWZM7ZQygjTiQTwAhRXUvlIxs3JzU2iCAwNbiaPl1pz6Hq
+ ZUg.TLKbJEaBkV4kLWiktDR0nT7FoSCUaNp_kquKnsQH19pOkMxsK1vi.CWefv03e62H8BR9Iv8o
+ 2x5PhZvV.GlgAcILPyxRa7no7.qJueEMs.Yw2Va47tRBhYP22g67SuLmAnlEQcdpJ42t.LCcVy0X
+ RnjRUdsYZBtxW2hVzYvN7nu9NHLdM_XUVXm6BJ7nU0oGn.s519_2BJiksx8FuhIOe2zCAu4O_XC_
+ DrsBZTsIKfEsIAxb1eKzNn.sAJtqoVMnLfI_PP9s7c6d8OQlY3ADhyxIWnY4L4ZVceLbhvS1dxR6
+ OvNJP4_e_esa.k.5_gpdy5wiNpC_47M9nix5m9a5YUq0PocDNXwEZrM_ZkZe4G5MeJV7yLlxOo2m
+ aPbOdZg3xuJu8lfisokTCr_pC9i96s662dyQ7XhSv_.92UgWm0dCb9ft6UswZh6yzY6R83nT5.oX
+ 7xszCDvLgd_uKqvkPRIPLxcmBL_fwBqkXS88wD.7Nl_GYiQMZAIAI6cN4zCRFIbekP21uOIOxNfO
+ b_KNqhOrWYONu3NzcnrtKv.vnq1UjcB_UqQeo0FoDbvg2fsRqFg47Ni4sS167BHfjtRAkEas9a30
+ yq_ufN8VIhFII1wrGNwa54EB7eBG0iZItyx3LotNI7Cqr3Uk3eEt.3dLTzSD1mxq6Woab4ka8QtE
+ GRNE0oqEdiChrDNLbl.zvNZ.ApAK6ckM.x0pMj3LR5_OTGvbuHpAqhlYbBm9EPsZ8LBfsT6d_o7s
+ 4uYmE0iZqLXaKFec0m8OJpB0HMlDOEr8baj1EH4f.Q6JUmpwicvLqiBryJIgBy8fquyMudCqilfr
+ 7KNv_Qtks5D.FymbC7yAftpzNkuLRy7GiSaGsxWy7l3Li3Vz9.dCJzd.7S390o6fczPXkZ71a_.R
+ 5_t5w0waIfpL23V75o7giNcTJzB02K3bmIUdQ8sSdDQFFtTxRxMF67ZSgm4hjsdtFwrBCoLi.su8
+ 7u9vM5qlLVwDq5mEG.j_P3WkJ07LPuntabW5GAM6_EFkuNMxcWt55dUn76pasyAKKHHM650xxVnw
+ 0NNjm1dL_P_vfhV01x0ExauevN.nsqpZMAImnvBMIAV97ATXyXGBH5ntzT6GxvAyptdo1Q4g_MvX
+ TY8qJCtvxE6Xk5L2w9GtzmivA4VLAf3OPt_YemGqch72ysS5iie9E_xePToDTV8ZIP28lZW2kgiR
+ yAR8uWpOpVAgP9ATVYYDk7RbgyWkoUWUYQce9JkaIobGFaj0VtD2907GPO_ejmix_phMBJijoD6.
+ 2yqdT2uM788kp8FjN.u_BAbRadj2J_rjro5yI.C6p_8gEgYzOB1PX2LnXo0.JGifscvtf0YBebL8
+ NSR5Jz6sVAAPCZQLOYpH3WkocF_k-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Thu, 10 Nov 2022 00:57:13 +0000
+Received: by hermes--production-bf1-5878955b5f-686fw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9f6d1717e5e77e52e6a2ebe2a1c83b12;
+          Thu, 10 Nov 2022 00:57:07 +0000 (UTC)
+Message-ID: <20cdb098-400e-25d0-f93e-98efb1095b68@schaufler-ca.com>
+Date:   Wed, 9 Nov 2022 16:57:05 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211124044124.998170-17-eric.snowberg@oracle.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v1 2/8] LSM: Add an LSM identifier for external use
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        mic@digikod.net, casey@schaufler-ca.com
+References: <20221025184519.13231-1-casey@schaufler-ca.com>
+ <20221025184519.13231-3-casey@schaufler-ca.com> <Y1jMeWl0oV4/2zyE@kroah.com>
+ <5396ab1e-9b93-df33-ca49-58dc59459a76@schaufler-ca.com>
+ <Y1olsHWnaEk6+b1L@kroah.com>
+ <612c169c-2e11-13cf-9742-19714a247152@schaufler-ca.com>
+ <CAHC9VhR8_aQFxBq4fG=q8FgVUEZAL6F_iSE9kFnO7Mf4tf52AQ@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhR8_aQFxBq4fG=q8FgVUEZAL6F_iSE9kFnO7Mf4tf52AQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20826 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 23, 2021 at 11:41:23PM -0500, Eric Snowberg wrote:
-> A new Machine Owner Key (MOK) variable called MokListTrustedRT has been
-> introduced in shim. When this UEFI variable is set, it indicates the
-> end-user has made the decision themselves that they wish to trust MOK keys
-> within the Linux trust boundary.  It is not an error if this variable
-> does not exist. If it does not exist, the MOK keys should not be trusted
-> within the kernel.
+On 11/9/2022 3:33 PM, Paul Moore wrote:
+> On Fri, Oct 28, 2022 at 12:55 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 10/26/2022 11:31 PM, Greg KH wrote:
+>>> On Wed, Oct 26, 2022 at 12:36:34PM -0700, Casey Schaufler wrote:
+>>>>>> + *
+>>>>>> + * Copyright (C) 2022 Casey Schaufler <casey@schaufler-ca.com>
+>>>>>> + * Copyright (C) Intel Corporation
+>>>>> No date for Intel?
+>>>> The latest guidance I have received is that Intel does not want a date.
+>>> Ok, then I need to have an Intel lawyer sign off on a patch that does
+>>> this in order to have that be their official statement.  Otherwise, it
+>>> needs a date.
+>> Seems I misunderstood something. The date will be there.
+>>
+>>>>>> + */
+>>>>>> +
+>>>>>> +#ifndef _UAPI_LINUX_LSM_H
+>>>>>> +#define _UAPI_LINUX_LSM_H
+>>>>>> +
+>>>>>> +/*
+>>>>>> + * ID values to identify security modules.
+>>>>>> + * A system may use more than one security module.
+>>>>>> + *
+>>>>>> + * LSM_ID_XXX values 0 - 31 are reserved for future use
+>>>>> Reserved for what?  Why?
+>>>> You're not the first person to ask.
+>>> And the answer is?
+>> There hasn't been an argument for it beyond "just in case".
+>> I can't see a rational reason to reserve specific numbers as
+>> I don't see value in LSM ranges.
+>>
+>>>> I'll remove the reserved values for the next version.
+>>> Because we asked it will be removed?
+>> Because I don't have a good reason for including it and it
+>> has been called into question. If a reviewer has a legitimate
+>> case for reserved values they may be back.
+> Sorry for the delay, I was away for a couple of weeks and limiting my
+> patch review to bug fixes, critical stuff, etc. but normal service is
+> resuming this week ...
+>
+> I was the one who originally added the note on reserved values in my
+> original strawman proposal and I suspect Casey just carried that
+> forward into his patches, so feel free to blame me.
 
-Hi Eric,
+Done!
 
-I've been milling around on this patch-set for a while and I have a few issues
-with the description of the commit and what the code actually does.
+>   My reason for
+> doing so is rather simple, we're going to treat the ID as a 32-bit
+> value so we have *plenty* of room (just the thought of supporting +4
+> billion unique LSMs is comically insane), and I'd like to try and
+> leave some space for yet-undetermined "special" things that we might
+> need to convey in the LSM syscalls.  For example, this would allow us
+> to convey additional information to userspace when an application
+> asked for labeling information using one of these reserved LSM IDs;
+> applications which did not know (or care) about the special ID would
+> continue to function normally but augmented/new applications would be
+> able to make sense of the additional information ... and we wouldn't
+> have to add a new syscall to do it.
 
-efi_mokvar_entry_find doesn't simply read an UEFI variable as the commit message
-suggests, it will look for the MOK variable loaded into the EFI configuration
-table. This implies we need this table setup in early boot to take usage of this
-patch set.
+I don't see how
 
-The only bootloader that does setup this table, is the `shim` as described. But
-no other bootloader implements support for the MOK EFI configuration table.
+	#define LSM_ID_SPECIAL	2
 
-This effectively means that there is still no way for Machine Owners to load
-keys into the keyring, for things like module signing, without the shim present
-in the bootchain. I find this a bit weird.
+is better than
 
-Is this an intentional design decision, or could other ways be supported as
-well?
+	#define LSM_ID_SPECIAL	13
 
--- 
-Morten Linderud
-PGP: 9C02FF419FECBE16
+There's no reason to "group" LSM_ID values, nor have a range of them.
+Really, I don't care one way or the other. I will bend to whatever will
+is stronger.
+
+> It's basically really cheap futureproofing with little downside (we
+> can always reclaim it at a later date if really necessary).  I've done
+> similar things on other projects and it has proven to be useful in a
+> few, and in none of the cases has it proven to be a problem.
+>
+> --
+> paul-moore.com
