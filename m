@@ -2,115 +2,141 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B9AC43219
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 00:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFEBC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 00:47:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231862AbiKJAaT (ORCPT
+        id S231846AbiKJAq7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Nov 2022 19:30:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36560 "EHLO
+        Wed, 9 Nov 2022 19:46:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231830AbiKJAaR (ORCPT
+        with ESMTP id S229959AbiKJAqy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Nov 2022 19:30:17 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C0713D2A
-        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 16:30:16 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id b2so1149388eja.6
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Nov 2022 16:30:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nlqLQiiaOaZsIVqPkpURbCqECGxlhLAGf8/oZgDPEwg=;
-        b=TibEJ/dS9oqIAlyw0U4d9Y17tk1l/5W9NiA/VJLZylVbn2FOy3zk5VI/yoCYNAuGoE
-         Oc/Um2qfEuVCzsSWM/0hQdPyYt1cE7yzSxpdx7nS7ovvnFNjrDg/SO+IHB7dUcl1WCSg
-         iWprIbuqzyqir3yxeR8YrLGkhepBTjIioA0E0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nlqLQiiaOaZsIVqPkpURbCqECGxlhLAGf8/oZgDPEwg=;
-        b=qHyQjKPcSxG/qkgEk8Dv0h5P5e652KbkiOSOtJZWYn62HXEJN9WFxUVw5m0SUak/1L
-         lDqs26bLsqEaoSdUP5btcLaP1Og/wfRYki6ovwD2c7Vk8Wf57mXP3y5jlH7imDlkwozy
-         n8ChqveZX9SqnZxSF2kXQXUXa8JZbkVZIfEZ1aL5+YfOZZ8E3oz4ZtFoXZbHibKJwrdv
-         rECpdfUx6YvsSraapnugPp6zPqnt69jhsf66Rzz1lyfGUv5jUQ099tjp2mKgTmEaLOo8
-         WnjqC7spaDZREfrvBUJmqqh+dcaHE8kQsOHr7a6bHRrw9xi56zl/daLGlhI0IbWluCPt
-         PU3A==
-X-Gm-Message-State: ACrzQf1cVQzGjQ6v0oA+ISTXjJzxMNhATKM4Pe3//UpY7WychOEyi3ha
-        wPEj1iy7PXT20NbHxLpzdXnDMJxA+C+tZQ==
-X-Google-Smtp-Source: AMsMyM53DseQ4wO+iunP+7pFFdyVJjmZP2oScOvDazsKe9fKTvwEyzBRHhYG4d4pO4b8F2iHTKkiOQ==
-X-Received: by 2002:a17:907:70a:b0:741:78ab:dce5 with SMTP id xb10-20020a170907070a00b0074178abdce5mr59424936ejb.527.1668040214882;
-        Wed, 09 Nov 2022 16:30:14 -0800 (PST)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
-        by smtp.gmail.com with ESMTPSA id n21-20020a056402061500b004615f7495e0sm7687504edv.8.2022.11.09.16.30.13
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Nov 2022 16:30:14 -0800 (PST)
-Received: by mail-wr1-f41.google.com with SMTP id k8so162479wrh.1
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Nov 2022 16:30:13 -0800 (PST)
-X-Received: by 2002:adf:e44f:0:b0:236:59a3:c5a8 with SMTP id
- t15-20020adfe44f000000b0023659a3c5a8mr40946801wrm.396.1668040203082; Wed, 09
- Nov 2022 16:30:03 -0800 (PST)
+        Wed, 9 Nov 2022 19:46:54 -0500
+Received: from sonic310-31.consmr.mail.ne1.yahoo.com (sonic310-31.consmr.mail.ne1.yahoo.com [66.163.186.212])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 229691181C
+        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 16:46:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1668041212; bh=NWxJETnwXYjxKfg4fLafZHWiwPHR0jx6GnpdSyGD2Ic=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=BwYwGeSiOQ4dC0HPYGXtriJMBWusJiz6MSezClRE3meWveMOtyBxOfby0cd2etR1rjIaAvnMPggBs/ibmij0hL/7vU+gRtzKmmSTnWKBuequtSpGu7mSY+ciUe1BiYPPXmFYhKryy6d3jcDgUpQ6pjzbTWz55oULtTD1rlzPQrPZp5hNYWRlkpDjC6rIU2zfE5m8FeXR7Oc5irHNqys14JsKe5lwSC69Q9RL0uznaYzruXqfp72pongth60rqv2vRk44DCtwfYJDew3vN97O7DGF45c+rnGZ5xfF5C3e0/k3vYcipibB+JQKoSeXLTabFa553sUX7guivI3whjcXLg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1668041212; bh=03dG7kZZ5H0uOusCmpH63c1g+z/CKS7yXQKFDoJvTTE=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=sSfq4abDkq9HvmACBFXuDUt6RUIxXGmHxTfpXRxgoM64NDSkqJtEDQeij9TT1E3l60TmDmnYt+3xDYYLEqaUdb3X11gK5leQUhmos7l2q4EnrjCPepkHdiKpixz878Px1FVPZq+mETjwTKKyBdQ/LnAayHxFWRFrrchBuFkcQufK4hJsH9XaLmdnLc2VqKNF9PqKNMJeKMejXLoCVRjRgskiNlJ1bXUrZKhTPB96vSVFPqjcDOb1iLMEhbY+Bje05b09MrMBXn7xe0RP+njJpR3IgcH6rRnu5/VN9IbMIUgGX/T825A4Cirin1E+PJicU+hRAb+vkK3sNGaRasKvSQ==
+X-YMail-OSG: yWgdWOMVM1kC6vUVU814MJjOpthQToDLQgPI4iW2iDcii6Ou5PoVG7k0F7VoyZo
+ VlS1QQEht7uY6u_KABXjW_dy4FzlQhK5CY3d0BpYP6vW_sG12Z2GcHy33hbKVJhdMJXJlqvk9vCa
+ XTW7ajzLKyO1HqqwJrT7.r41dW485BhJj6sQALG7m6IJyoaKcnlg4wO4J84LOgGnTjplmo9WTnQa
+ iHYYnmEh5VpKPghkd6r5digtS4doUehpS7zL1qmcS6Nug1pKZrHtnwAnzuSjpFV8jO1HakXq_p0Z
+ XLF26SbzBznQorj_bAJ4CszxIKPnNjwg6XEz7TFBUeZHBTuvib2jC6pQkhUOTNsmkgRioHSWJwbv
+ wzhVgDZhanxk5fWASNb1b4Je5K1SbQb.hgoVCLtB1ltCFAEa59PAfTUm7Ibbh5w4vTKHoGVuPewj
+ Fe.GcpkCNUxVKy_Q5oKTojv9BEDXVARM4yhy.B19LOfe_X.4Tg7bXADqb5DIPG9hcmNNZgxPg5cH
+ 4Acx5u1fGsuH3VBq5ed.mcsswTI2tKMpaYyyrJOT4a6s8.Y23sGcZ5st_GZXmLgJgi7U.ad30Hsf
+ 91GNsAuKtXead0oqKGRgyzI1cp3z97for.V1nnyLZJatlC6r6s8rfPT0OfdmiypI8BIlY6RlRtVH
+ xmNDbHbxJFlOzCcyUijqL66w_f3cYPR486zSrkTECqL1PcRR7Djo_8I4BIlBqtPpc5qB2Pe907oC
+ 7Z4qtzgeVBZ6u_pK2GvCR48J7qfl9GdWTsUFeH9ZJLOIhGQyUjbJScpKBt_T.4zSea8urMQCXo1i
+ HZnw.ZCLV8IredvmNKsiHiu2EdT0.0tNKjFMpvohJlTqX4O8_mI8z.zSKTvRbCN.QP_Qo8fPkRDJ
+ AMryCmzkoF7W1rXsx81pfRUA29sPYtvCBQw3V9o4hURbEliTVgHq8YNPtuXtM1YOLXf3JbI6w41g
+ GO2xcQ7cDwlIdkAZ9IMWYGFgShTRnxFFN53kPWIOwvu9JYwCnPhwLtT.hlS8JlhOuY1sRmySunow
+ Tco5Bw1o3FrYJaq4TqnpmCDKOLGtjDVVkVfCQq6Km9X9NOnTrk6PFBOPXASPoFE9WSM2KdxY6VXs
+ VClpfafCyBjhhMiGtNidFd0GjxWQk10glcFNdBWqxI5LxvaAIX.vU_7d1jGSKGnZcR0.GUS1vna3
+ HmTIyM36IvP5iUre_qiGcw2K6e7llHQB9oRLBSXmqIzqzw0HaOcJec3Bp5z62TrpFYfciCD4J.QV
+ ym4yoNdqbfK93aZ70kTMuLfTZHT25e1Etq2dHwBJiSsdwAPc_Z8Bs73fXflSRcwbDq9_sAeUZwO0
+ SY2vrvU8gjSoMxPpR6T8tou1KKbrnLFmxAifxQMe61mQwQdagHHt.Y.JAB5z7xxbfeIcE4HsBUtg
+ YI_0MHKJRm9sHedwq5isKQRIAOvqAenFFvJxysWkzTO9WEBzps7okAXnPB8fUTvyJ_92JW7BaHgD
+ HriMFgs8vEicKPUZ.I1KiadH40bSsmkIKabU2B_cLOynzwbNeaAKA36cjWuzsLURHufvauAh35Ze
+ 2.PeZhWykvbSv0XZlZ7ZYBHyJexW1RKOeo_dHieHAjyZx8xy9lgmCFwIC9C0nAr189uyDtYSZNDU
+ YSkymaEcbUPqLVUyoo1fgzdsHmeIMWnZIPVcJE73CHv4Ss5xJvOxlTnXWfq7l8MpGL2g_M57Nm.a
+ AW07nw8d3OZ7qXniFNs4_biHfq93cvSJFRFe8uz1yZLxbYC4AuVdijg09_d7TGKW4pBQxVcQKgNr
+ 00p7riqJLYLz6dYMSjMBUgSJZRnXJkMDehe2Fxxkps63zDjbzZ4hHZCnYdYOih.1PfY5Bms6xX4Z
+ 7TEI3OihHb155emgbUV7HvdlfdPG_dKc04YEb6xRy69c9hnJ7xquKj.FhX7a_keyCgvPSpowGGnS
+ qCJYdEm7cmihHkCNTcTiTMuEPDATScR2vE71Olb7tQ6g1r7ehNJZikXrkJKiSJxqZyLE0NDfQ8WV
+ Yu0ioH3Y3tlLInGpdDXgfLvYEe3f3toh1zrU6hx9l4MwfIPuLQhjZfdWrIeNsPfWEHOx2BetGEHH
+ ae0wOEWIdFBDbBeEqNsBP6RPrxvLtBt9q.qjVb0pAsB0NjB0aFIPl8XkWHN_ECYQOFUl.JD1wbS0
+ o81cBnyle9FhTsM.DxHoFGQTzovggQSz8D_JrhtqQ4RS.tHurv.BaNWNj6tLrwt27NKS9YN_jke.
+ mI3K7X11JhHK4GklHBXQS
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Thu, 10 Nov 2022 00:46:52 +0000
+Received: by hermes--production-bf1-5878955b5f-gz9tn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a811e673c5d07df95e71cc480422bcf7;
+          Thu, 10 Nov 2022 00:46:51 +0000 (UTC)
+Message-ID: <b42a6fb2-ee6a-cb8f-aefb-ab671d39585a@schaufler-ca.com>
+Date:   Wed, 9 Nov 2022 16:46:48 -0800
 MIME-Version: 1.0
-References: <20221103180120.752659-1-evgreen@chromium.org> <20221103105558.v4.4.Ieb1215f598bc9df56b0e29e5977eae4fcca25e15@changeid>
- <202211041132.E8CB636@keescook> <CAE=gft4+KHVd_cNApo6EcTtxSDQDNB-nPXdus-0K8pQdWF+tiw@mail.gmail.com>
-In-Reply-To: <CAE=gft4+KHVd_cNApo6EcTtxSDQDNB-nPXdus-0K8pQdWF+tiw@mail.gmail.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 9 Nov 2022 16:29:26 -0800
-X-Gmail-Original-Message-ID: <CAE=gft6O6WFbVL4mQ6trS4UkfkvNEFcUT0eN+6QAsXbf6DLdvQ@mail.gmail.com>
-Message-ID: <CAE=gft6O6WFbVL4mQ6trS4UkfkvNEFcUT0eN+6QAsXbf6DLdvQ@mail.gmail.com>
-Subject: Re: [PATCH v4 04/11] security: keys: trusted: Include TPM2 creation data
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-pm@vger.kernel.org, rjw@rjwysocki.net, gwendal@chromium.org,
-        apronin@chromium.org, Pavel Machek <pavel@ucw.cz>,
-        Matthew Garrett <mgarrett@aurora.tech>,
-        linux-integrity@vger.kernel.org, jejb@linux.ibm.com,
-        zohar@linux.ibm.com, dlunev@google.com,
-        Eric Biggers <ebiggers@kernel.org>,
-        Ben Boeckel <me@benboeckel.net>, jarkko@kernel.org,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v1 2/8] LSM: Add an LSM identifier for external use
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net, casey@schaufler-ca.com
+References: <20221025184519.13231-1-casey@schaufler-ca.com>
+ <20221025184519.13231-3-casey@schaufler-ca.com>
+ <CAHC9VhQONd9zFJswcAsY9-xQcRhoYwXtwyo4zT5XsSPTEtvuRg@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhQONd9zFJswcAsY9-xQcRhoYwXtwyo4zT5XsSPTEtvuRg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20826 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 7, 2022 at 12:11 PM Evan Green <evgreen@chromium.org> wrote:
->
-> On Fri, Nov 4, 2022 at 11:33 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Thu, Nov 03, 2022 at 11:01:12AM -0700, Evan Green wrote:
-> > > In addition to the private key and public key, the TPM2_Create
-> > > command may also return creation data, a creation hash, and a creation
-> > > ticket. These fields allow the TPM to attest to the contents of a
-> > > specified set of PCRs at the time the trusted key was created. Encrypted
-> > > hibernation will use this to ensure that PCRs settable only by the
-> > > kernel were set properly at the time of creation, indicating this is an
-> > > authentic hibernate key.
-> > >
-> > > Encode these additional parameters into the ASN.1 created to represent
-> > > the key blob. The new fields are made optional so that they don't bloat
-> > > key blobs which don't need them, and to ensure interoperability with
-> > > old blobs.
-> > >
-> > > Signed-off-by: Evan Green <evgreen@chromium.org>
-> >
-> > There's a lot of open-coded math for the bounds checking. I didn't
-> > immediately see any problems, but it'd be nice if there was a way to
-> > hook a fuzzer up to this, or at least write some KUnit tests to check
-> > boundary conditions explicitly.
-> >
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
->
-> Thank you! Yes, agreed about all the bounds checking. I could probably
-> pull out the "check for src + 2 > end, then get_unaligned_be16()" into
-> a helper function. Let me see if that makes things look better or ends
-> up looking the same.
+On 11/9/2022 3:33 PM, Paul Moore wrote:
+> On Tue, Oct 25, 2022 at 2:45 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Add an integer member "id" to the struct lsm_id. This value is
+>> a unique identifier associated with each security module. The
+>> values are defined in a new UAPI header file. Each existing LSM
+>> has been updated to include it's LSMID in the lsm_id.
+>>
+>> The LSM ID values are sequential, with the oldest module
+>> LSM_ID_CAPABILITY being the lowest value and the existing
+>> modules numbered in the order they were included in the
+>> main line kernel. The first 32 values (0 - 31) are reserved
+>> for some as yet unknown but important use.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/lsm_hooks.h    |  1 +
+>>  include/uapi/linux/lsm.h     | 32 ++++++++++++++++++++++++++++++++
+>>  security/apparmor/lsm.c      |  2 ++
+>>  security/bpf/hooks.c         |  2 ++
+>>  security/commoncap.c         |  2 ++
+>>  security/landlock/setup.c    |  2 ++
+>>  security/loadpin/loadpin.c   |  2 ++
+>>  security/lockdown/lockdown.c |  2 ++
+>>  security/safesetid/lsm.c     |  2 ++
+>>  security/selinux/hooks.c     |  2 ++
+>>  security/smack/smack_lsm.c   |  2 ++
+>>  security/tomoyo/tomoyo.c     |  2 ++
+>>  security/yama/yama_lsm.c     |  2 ++
+>>  13 files changed, 55 insertions(+)
+>>  create mode 100644 include/uapi/linux/lsm.h
+> Unless you're getting paid by the patch, I'd rather you combine
+> patches 1/8 and 2/8 into a single patch.  They are both pretty small,
+> very related, and I don't want to see 1/8 merged anywhere without 2/8.
 
-A helper function cleaned this up nicely, so I'll send that in the
-next spin but not yet pick up your reviewed tag.
+OK by me. One less compile+test cycle. It's nice to know there's some
+limit on patch granularity.
+
+>
+>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>> index e383e468f742..dd4b4d95a172 100644
+>> --- a/include/linux/lsm_hooks.h
+>> +++ b/include/linux/lsm_hooks.h
+>> @@ -1607,6 +1607,7 @@ struct security_hook_heads {
+>>   */
+>>  struct lsm_id {
+>>         const char      *lsm;           /* Name of the LSM */
+>> +       int             id;             /* LSM ID */
+>>  };
+> At the very least let's define lsm_id::id as an 'unsigned int' type,
+> but since we are going to see the lsm_id::id token used as part of the
+> kernel ABI (likely not in this struct) I agree with Greg's comments
+> about making the size more explicit.  I would suggest __u32/u32 as
+> 32-bits should be plenty for this token.
+>
+> Given the other upstream discussions we may want to do something
+> similar with lsm_id::lsm and __u8/u8.  I'm pretty sure I saw a similar
+> comment (by Greg?) elsewhere in this patchset when I was quickly
+> skimming these on my phone while away ...
+
+Yes. The API friendly typing will be in the next revision.
+
+> --
+> paul-moore.com
