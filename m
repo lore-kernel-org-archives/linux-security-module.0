@@ -2,336 +2,127 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7E8C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 04:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFDBC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 04:45:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231512AbiKJEgT (ORCPT
+        id S229784AbiKJEpQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Nov 2022 23:36:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38916 "EHLO
+        Wed, 9 Nov 2022 23:45:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbiKJEgS (ORCPT
+        with ESMTP id S232177AbiKJEpO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Nov 2022 23:36:18 -0500
-Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C70B317AB3
-        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 20:36:16 -0800 (PST)
-Received: by mail-qt1-x835.google.com with SMTP id c15so394792qtw.8
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Nov 2022 20:36:16 -0800 (PST)
+        Wed, 9 Nov 2022 23:45:14 -0500
+Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 073661275F
+        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 20:45:12 -0800 (PST)
+Received: by mail-oi1-x229.google.com with SMTP id n205so789050oib.1
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Nov 2022 20:45:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m98HKgMqNEUDgcgEoGIIh7GcWwirLfsfmU0ROZKUP54=;
-        b=spuyYn4SNLPdpbsLDW6KucXThJUaXeqfDEChHeavVARmGBey+lyicCELFrIzU74OOw
-         v9qze1YDx1ZlFjSVidtrcGrpTUJZ7e/j7vb2okfXVne1OroO67lCo2tJXuApIjY4SPiw
-         6jzlIeh8IYdsfLTuP2xNOhFaNHcxlwi3WKfmbs7neuo0hvC0PR+7limkphx5D2tbha5Z
-         x3+/kCbro2XT6a3E57Nbv7fYXQnUMo/IQ+wYByebdWq/p9XRK6px4GgIJ5JXJ8ZcJZuq
-         heAaoITovt7F1JY7p68ZiTWo17N/ZXhg8pEuonQHsQUjqM4QSyaEk2bpsCdEpiNbw+5p
-         SlFQ==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+jY0QwUqWcQ3+srGkuX2EUCpq9PRDfxdTT+/RS7Lbvw=;
+        b=R8I9vEcuNoliQ0nKq+0lMG/IdYBuMCV4kl0MLmX7jchcR9EW68x215sLCXVCibGR5e
+         WtDW5WjuaZVtUv/GBP84tRxZmDghjzyifd0pzCZEGXsDTwdRKLOMilYBsc7LSobDiiCE
+         zsIQg6PxRqINbwzPM8FxtV51TCtOh2UMa8r1IbfRltzdcmem0gxfN7LaOE2vCYWFewlJ
+         X+uDjFizTuX8LekAAjp41mup+l9gl+4ZITqrFBMz8RBIW2S1RSTs1zClGesuDG30F5a2
+         e/08FvF9ogkHhwmEnWGcsuQyugPSM6CAS9gIvij7lg3G51N3H8VWgLLy7ycLwTcz9zeQ
+         mMLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m98HKgMqNEUDgcgEoGIIh7GcWwirLfsfmU0ROZKUP54=;
-        b=hF02w+D3HwZ/2hSAPMFb9X3yo2pX+4pVuA3z/D3FjkQnHsbVSp06P01X4lMIHslZek
-         cdsLh8s6ugpKVqu8PsMFZqsOs6NVirw3bNSRESmIahhZOf9r80S+jTpu/VN8r5R5ru8G
-         a19Xd3mIFKazeMS0gGzr/ot4xD523aHS37yn1O3RsicEcCQ4+YiKkJVzV+VaIYkUdY4C
-         65IcSo1FElbXhN3vMaM/eWgSU7Sz0R/+KtF7YZQLSgFNGrIF51rJCQChGNg6VFSmSNRI
-         Gn1z4Z9QIKBc6y6Q03LZz5NpxzwUjiIPlzZtGG9DSEj3E+AMwN5m0FV1OTE3wj1AKMJs
-         0CQg==
-X-Gm-Message-State: ACrzQf1kGsI8suDoQ80970CaVVRtOfzMbyjJXApK7a4xFnqBH+d90IwW
-        CLzrU1a9J1tDY/rr/LnDEo+/V5i9Ke5E
-X-Google-Smtp-Source: AMsMyM4Hmi3akg7BxLqwS6mCeLgmCnsoHmfkFFHkiSCJ5SY4BSLuPSYv4iRWgA0PWOAEdwtoh5KJ/A==
-X-Received: by 2002:ac8:7fc3:0:b0:3a5:7bec:65ed with SMTP id b3-20020ac87fc3000000b003a57bec65edmr18660122qtk.200.1668054975695;
-        Wed, 09 Nov 2022 20:36:15 -0800 (PST)
-Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
-        by smtp.gmail.com with ESMTPSA id w27-20020a05620a0e9b00b006ee949b8051sm11914578qkm.51.2022.11.09.20.36.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Nov 2022 20:36:15 -0800 (PST)
-From:   Paul Moore <paul@paul-moore.com>
-To:     linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH] lsm,fs: fix vfs_getxattr_alloc() return type and caller error paths
-Date:   Wed,  9 Nov 2022 23:36:14 -0500
-Message-Id: <20221110043614.802364-1-paul@paul-moore.com>
-X-Mailer: git-send-email 2.38.1
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+jY0QwUqWcQ3+srGkuX2EUCpq9PRDfxdTT+/RS7Lbvw=;
+        b=5/3TRPUn+JL+Xiqli6v15tCIKwgEJ6lI1Bd9KGl3mxIB/B4okRphElSpFenuQCU06f
+         5eR5cViSCtIdp/f2XLuY1lCk3xCdFNyGVL4dGGgO7p6OkSY0xNROVvaDRmjtUjm64nks
+         55mGRyg1j5lApuGsF5X3CRcnNA3Es47VQ62ZMxCcA3uAyJECQgmc1MXauz7dp0fQhgxO
+         IWllw0tXGaGmklt0zEg/oyDQe9W+dYHVpZHRn070bQFfp5mK5R5QY8h/EGvtiqiUDBZ2
+         0dsUHJujFMM7w7QQoh7l5tma2pzVS42zEfwUfXLeoQ/OvjEEMwh35Rs/5dR0IRGy8O4o
+         TrGw==
+X-Gm-Message-State: ACrzQf2G1TZcdZRnqoV31C7TBzR+L0zEqkPgk37ZEDY6g3uOt4J7/3+b
+        rw6MHb9/C27bPWUCc7lHfVJKgZGgMK35E4q6m1rc
+X-Google-Smtp-Source: AMsMyM5KAhYip4HaMQa3iLLBcCdgRzDyRzRC4xRqUskNBP6jvBjXptcyEBKl+Q5OwnBHWCfkb//aNm6rwmioLuYm/G0=
+X-Received: by 2002:a05:6808:1441:b0:35a:4a2d:673b with SMTP id
+ x1-20020a056808144100b0035a4a2d673bmr20583335oiv.172.1668055512071; Wed, 09
+ Nov 2022 20:45:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20221102171025.126961-4-penguin-kernel@I-love.SAKURA.ne.jp>
+ <ef5fa206-4e7f-3c23-07d4-8591c4315d20@schaufler-ca.com> <20221105024345.GA15957@mail.hallyn.com>
+ <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp>
+ <20221105234614.GA23523@mail.hallyn.com> <52fdbbe4-cad5-6cd0-9574-2e5efb88a478@I-love.SAKURA.ne.jp>
+ <4ead148f-1629-22ec-91f3-44c71f70fce4@schaufler-ca.com> <133ffb84-551e-866d-5597-e62a5a39bc05@I-love.SAKURA.ne.jp>
+ <CAHC9VhS9RQdeCipSpSH3_LZyFfb-BDry=EsSmkt4OLVk=OZnEg@mail.gmail.com>
+ <f52e6e9f-5e95-8843-c2f5-c50bba48e5e4@I-love.SAKURA.ne.jp>
+ <CAHC9VhS=0Ts8E647JJiJ6dwPmnuLuYTyOS0QEYJO_EmAb3yFcw@mail.gmail.com>
+ <82e46552-54da-6df5-c451-485991dcb5c3@I-love.SAKURA.ne.jp>
+ <7CED07F5-A6FC-46AD-8F9D-ECFC28FE23C9@kernel.org> <ef585586-2436-8665-a5e1-475cdd5be5a2@I-love.SAKURA.ne.jp>
+In-Reply-To: <ef585586-2436-8665-a5e1-475cdd5be5a2@I-love.SAKURA.ne.jp>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 9 Nov 2022 23:45:01 -0500
+Message-ID: <CAHC9VhT490c+x8_za-uC=1-VePd=yZtJEd6by1kNWWT+hmUvKA@mail.gmail.com>
+Subject: Re: [PATCH 04/10] CaitSith: Add header file.
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Kees Cook <kees@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The vfs_getxattr_alloc() function currently returns a ssize_t value
-despite the fact that it only uses int values internally for return
-values.  Fix this by converting vfs_getxattr_alloc() to return an
-int type and adjust the callers as necessary.  As part of these
-caller modifications, some of the callers are fixed to properly free
-the xattr value buffer on both success and failure to ensure that
-memory is not leaked in the failure case.
+On Wed, Nov 9, 2022 at 11:12 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2022/11/10 11:22, Kees Cook wrote:
+> > On November 9, 2022 3:57:06 PM PST, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+> >> On 2022/11/09 23:48, Paul Moore wrote:
+> >>>                                             If there is a significant
+> >>> change, e.g. the overall kernel policy towards out-of-tree code, we
+> >>> can reconsider this policy but as of right now only upstream LSMs will
+> >>> have LSM ID tokens assigned to them; in-development LSMs are free to
+> >>> temporarily assign themselves an ID token (which may change when the
+> >>> LSM is merged upstream), and out-of-tree LSMs are free to do whatever
+> >>> they like with respect to their code, just as they do now.
+> >>
+> >> If in-development LSMs and out-of-tree LSMs cannot get a stable ID token,
+> >> developers cannot write and publish userspace tools which make use of ID
+> >> token. If ID collision happens by use of temporarily ID token, this token
+> >> is no longer an identifier. That is a pointless and needless constraint
+> >> for getting LSM modules created / tested / used.
+> >
+> > You have to let this go. You aren't hearing us: this ID reservation process
+> > is not a problem for anyone but you. It is the same for all the syscalls
+> > that get added, and all the prctls, etc etc. This isn't a problem for userspace
+> > tools using those, and there won't be a problem here either.
+> >
+> > We will not support out of tree code, so needing ID stability for out-of-tree
+> > LSMs isn't a valid argument.
+> >
+>
+> This ID reservation process is very much a problem for you all.
+>
+> In https://lkml.kernel.org/r/CAHC9VhQGnEcoYeGpwbbXbMrG1dOvJ=2ohd4zPYoqBJK9p1mSjQ@mail.gmail.com ,
+> Paul said that it is becoming increasingly difficult for people to find time to
+> review potential new LSMs.
 
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- fs/xattr.c                                |  5 +++--
- include/linux/xattr.h                     |  6 +++---
- security/apparmor/domain.c                |  3 +--
- security/commoncap.c                      | 22 ++++++++++------------
- security/integrity/evm/evm_crypto.c       |  5 +++--
- security/integrity/evm/evm_main.c         |  7 +++++--
- security/integrity/ima/ima.h              |  5 +++--
- security/integrity/ima/ima_appraise.c     |  6 +++---
- security/integrity/ima/ima_main.c         |  6 ++++--
- security/integrity/ima/ima_template_lib.c | 11 +++++------
- 10 files changed, 40 insertions(+), 36 deletions(-)
+It is important that you understand that difficult does not mean
+impossible.  As Kees pointed out the rate of LSM acceptance is roughly
+at the same level as the rest of the kernel.  The rate of upstream LSM
+review also has very little, if anything, to do with the LSM ID
+token/string argument.
 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 61107b6bbed29..f38fd969b5fcd 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -354,11 +354,12 @@ xattr_getsecurity(struct user_namespace *mnt_userns, struct inode *inode,
-  * vfs_getxattr_alloc - allocate memory, if necessary, before calling getxattr
-  *
-  * Allocate memory, if not already allocated, or re-allocate correct size,
-- * before retrieving the extended attribute.
-+ * before retrieving the extended attribute.  The xattr value buffer should
-+ * always be freed by the caller, even on error.
-  *
-  * Returns the result of alloc, if failed, or the getxattr operation.
-  */
--ssize_t
-+int
- vfs_getxattr_alloc(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		   const char *name, char **xattr_value, size_t xattr_size,
- 		   gfp_t flags)
-diff --git a/include/linux/xattr.h b/include/linux/xattr.h
-index 4c379d23ec6e7..2218a9645b89d 100644
---- a/include/linux/xattr.h
-+++ b/include/linux/xattr.h
-@@ -68,9 +68,9 @@ int __vfs_removexattr_locked(struct user_namespace *, struct dentry *,
- int vfs_removexattr(struct user_namespace *, struct dentry *, const char *);
- 
- ssize_t generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size);
--ssize_t vfs_getxattr_alloc(struct user_namespace *mnt_userns,
--			   struct dentry *dentry, const char *name,
--			   char **xattr_value, size_t size, gfp_t flags);
-+int vfs_getxattr_alloc(struct user_namespace *mnt_userns,
-+		       struct dentry *dentry, const char *name,
-+		       char **xattr_value, size_t size, gfp_t flags);
- 
- int xattr_supported_namespace(struct inode *inode, const char *prefix);
- 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 91689d34d2811..04a818d516047 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -311,10 +311,9 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
- 			   struct aa_profile *profile, unsigned int state)
- {
- 	int i;
--	ssize_t size;
- 	struct dentry *d;
- 	char *value = NULL;
--	int value_size = 0, ret = profile->xattr_count;
-+	int size, value_size = 0, ret = profile->xattr_count;
- 
- 	if (!bprm || !profile->xattr_count)
- 		return 0;
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 5fc8986c3c77c..d4fc890955134 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -350,14 +350,14 @@ static __u32 sansflags(__u32 m)
- 	return m & ~VFS_CAP_FLAGS_EFFECTIVE;
- }
- 
--static bool is_v2header(size_t size, const struct vfs_cap_data *cap)
-+static bool is_v2header(int size, const struct vfs_cap_data *cap)
- {
- 	if (size != XATTR_CAPS_SZ_2)
- 		return false;
- 	return sansflags(le32_to_cpu(cap->magic_etc)) == VFS_CAP_REVISION_2;
- }
- 
--static bool is_v3header(size_t size, const struct vfs_cap_data *cap)
-+static bool is_v3header(int size, const struct vfs_cap_data *cap)
- {
- 	if (size != XATTR_CAPS_SZ_3)
- 		return false;
-@@ -379,7 +379,7 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
- 			  struct inode *inode, const char *name, void **buffer,
- 			  bool alloc)
- {
--	int size, ret;
-+	int size;
- 	kuid_t kroot;
- 	u32 nsmagic, magic;
- 	uid_t root, mappedroot;
-@@ -395,20 +395,18 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
- 	dentry = d_find_any_alias(inode);
- 	if (!dentry)
- 		return -EINVAL;
--
--	size = sizeof(struct vfs_ns_cap_data);
--	ret = (int)vfs_getxattr_alloc(mnt_userns, dentry, XATTR_NAME_CAPS,
--				      &tmpbuf, size, GFP_NOFS);
-+	size = vfs_getxattr_alloc(mnt_userns, dentry, XATTR_NAME_CAPS, &tmpbuf,
-+				  sizeof(struct vfs_ns_cap_data), GFP_NOFS);
- 	dput(dentry);
--
--	if (ret < 0 || !tmpbuf)
--		return ret;
-+	/* gcc11 complains if we don't check for !tmpbuf */
-+	if (size < 0 || !tmpbuf)
-+		goto out_free;
- 
- 	fs_ns = inode->i_sb->s_user_ns;
- 	cap = (struct vfs_cap_data *) tmpbuf;
--	if (is_v2header((size_t) ret, cap)) {
-+	if (is_v2header(size, cap)) {
- 		root = 0;
--	} else if (is_v3header((size_t) ret, cap)) {
-+	} else if (is_v3header(size, cap)) {
- 		nscap = (struct vfs_ns_cap_data *) tmpbuf;
- 		root = le32_to_cpu(nscap->rootid);
- 	} else {
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 708de9656bbd2..fa5ff13fa8c97 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -335,14 +335,15 @@ static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
- 				(char **)&xattr_data, 0, GFP_NOFS);
- 	if (rc <= 0) {
- 		if (rc == -ENODATA)
--			return 0;
--		return rc;
-+			rc = 0;
-+		goto out;
- 	}
- 	if (xattr_data->type == EVM_XATTR_PORTABLE_DIGSIG)
- 		rc = 1;
- 	else
- 		rc = 0;
- 
-+out:
- 	kfree(xattr_data);
- 	return rc;
- }
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 23d484e05e6f2..bce72e80fd123 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -519,14 +519,17 @@ static int evm_xattr_change(struct user_namespace *mnt_userns,
- 
- 	rc = vfs_getxattr_alloc(&init_user_ns, dentry, xattr_name, &xattr_data,
- 				0, GFP_NOFS);
--	if (rc < 0)
--		return 1;
-+	if (rc < 0) {
-+		rc = 1;
-+		goto out;
-+	}
- 
- 	if (rc == xattr_value_len)
- 		rc = !!memcmp(xattr_value, xattr_data, rc);
- 	else
- 		rc = 1;
- 
-+out:
- 	kfree(xattr_data);
- 	return rc;
- }
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index be965a8715e4e..03b440921e615 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -326,7 +326,7 @@ enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
- enum hash_algo ima_get_hash_algo(const struct evm_ima_xattr_data *xattr_value,
- 				 int xattr_len);
- int ima_read_xattr(struct dentry *dentry,
--		   struct evm_ima_xattr_data **xattr_value);
-+		   struct evm_ima_xattr_data **xattr_value, int xattr_len);
- 
- #else
- static inline int ima_check_blacklist(struct integrity_iint_cache *iint,
-@@ -372,7 +372,8 @@ ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value, int xattr_len)
- }
- 
- static inline int ima_read_xattr(struct dentry *dentry,
--				 struct evm_ima_xattr_data **xattr_value)
-+				 struct evm_ima_xattr_data **xattr_value,
-+				 int xattr_len)
- {
- 	return 0;
- }
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 3e0fbbd995342..88ffb15ca0e2e 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -221,12 +221,12 @@ enum hash_algo ima_get_hash_algo(const struct evm_ima_xattr_data *xattr_value,
- }
- 
- int ima_read_xattr(struct dentry *dentry,
--		   struct evm_ima_xattr_data **xattr_value)
-+		   struct evm_ima_xattr_data **xattr_value, int xattr_len)
- {
--	ssize_t ret;
-+	int ret;
- 
- 	ret = vfs_getxattr_alloc(&init_user_ns, dentry, XATTR_NAME_IMA,
--				 (char **)xattr_value, 0, GFP_NOFS);
-+				 (char **)xattr_value, xattr_len, GFP_NOFS);
- 	if (ret == -EOPNOTSUPP)
- 		ret = 0;
- 	return ret;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 040b03ddc1c77..0226899947d6a 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -293,7 +293,8 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	/* HASH sets the digital signature and update flags, nothing else */
- 	if ((action & IMA_HASH) &&
- 	    !(test_bit(IMA_DIGSIG, &iint->atomic_flags))) {
--		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
-+		xattr_len = ima_read_xattr(file_dentry(file),
-+					   &xattr_value, xattr_len);
- 		if ((xattr_value && xattr_len > 2) &&
- 		    (xattr_value->type == EVM_IMA_XATTR_DIGSIG))
- 			set_bit(IMA_DIGSIG, &iint->atomic_flags);
-@@ -316,7 +317,8 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	if ((action & IMA_APPRAISE_SUBMASK) ||
- 	    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0) {
- 		/* read 'security.ima' */
--		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
-+		xattr_len = ima_read_xattr(file_dentry(file),
-+					   &xattr_value, xattr_len);
- 
- 		/*
- 		 * Read the appended modsig if allowed by the policy, and allow
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 7bf9b15072202..4564faae7d673 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -601,16 +601,15 @@ int ima_eventevmsig_init(struct ima_event_data *event_data,
- 	rc = vfs_getxattr_alloc(&init_user_ns, file_dentry(event_data->file),
- 				XATTR_NAME_EVM, (char **)&xattr_data, 0,
- 				GFP_NOFS);
--	if (rc <= 0)
--		return 0;
--
--	if (xattr_data->type != EVM_XATTR_PORTABLE_DIGSIG) {
--		kfree(xattr_data);
--		return 0;
-+	if (rc <= 0 || xattr_data->type != EVM_XATTR_PORTABLE_DIGSIG) {
-+		rc = 0;
-+		goto out;
- 	}
- 
- 	rc = ima_write_template_field_data((char *)xattr_data, rc, DATA_FMT_HEX,
- 					   field_data);
-+
-+out:
- 	kfree(xattr_data);
- 	return rc;
- }
+Beyond that, I'm trying to be polite, but I completely agree with
+Kees' statement that you need to let this go.  We are going to be
+moving forward with the LSM ID token over the string values.  I'm
+sorry we couldn't come to an agreement that satisfies you, but I'm
+done discussing this at this point in time.  We can revisit this
+decision if something changes, but in the meantime please let this go;
+a decision has been made and I'm no longer considering arguments on
+this topic.
+
 -- 
-2.38.1
-
+paul-moore.com
