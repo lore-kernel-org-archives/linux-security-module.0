@@ -2,158 +2,166 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F2CC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 21:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCFCC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 23:36:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229595AbiKJVFG (ORCPT
+        id S230323AbiKJXgb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Nov 2022 16:05:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57984 "EHLO
+        Thu, 10 Nov 2022 18:36:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231309AbiKJVFC (ORCPT
+        with ESMTP id S229958AbiKJXga (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Nov 2022 16:05:02 -0500
-Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31E5C4E410
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Nov 2022 13:04:58 -0800 (PST)
-Received: by mail-ot1-x330.google.com with SMTP id 46-20020a9d0631000000b00666823da25fso1849904otn.0
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Nov 2022 13:04:58 -0800 (PST)
+        Thu, 10 Nov 2022 18:36:30 -0500
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E11D038B0
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Nov 2022 15:36:28 -0800 (PST)
+Received: by mail-oi1-x233.google.com with SMTP id v81so3485115oie.5
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Nov 2022 15:36:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MIrljlA1dEtBNb/SQwVUbOm8b8PLiK9imBoRLMqAwOM=;
-        b=5FoAs7dr/wOchaUTGl/b0nYwRXinDLnGoOv0h+fep/0JC0/sv1eoPL1n/efnv3SVsM
-         7yQzWdA35UMFnrCREAr5KLtOCGLLQW4fpxty2Vjv0m0ioH8N5d1ZZrTOSUqBkKuVl3Qm
-         FiUDd1g3SBIzV5cuMBl6MrqZ6pYJLnPWzHMlyG4uw4XzG5+AW+8vKGIDcpDvno1l1IaT
-         0nloMmE5CdKCabKhnx3cU0I6exqxxfDw09UgP/wIuag8fa/Dp77+51STHkdLpkI8A3UD
-         E4+pbPkOolbdSczwSEUjP0sTCi0FS/PmKtO53Fd0j9u0nDiYpwgcgPGCF4U6h7QbEJP5
-         sY+w==
+        bh=6Ft0hBbh9NEYU0Q7LYEiUUDxfj2Q8E7rZp1hHrO+RN0=;
+        b=gwTsesygGDK9RHm4ccvvyo7xedqsjAAWJ+PsCK12AavacXlui2OiIxwTtt4JBPq+Bp
+         2W+GbHMwJMdZwGqvobWfbmC5F8rro/S2IhV/oijWt8SKlM8jbieJBoeasva1ghe0Nn5a
+         LBJMLP5NUzzx9TRGgAmfShISCrmRreX4qeb35DfsajyAJppUKRHsFeOtP+lB/X4sUtQm
+         C3BItKKFQ7nMG2Wq23MGTw13aGrlJ7hZkZ06J/5V23gF+BNJiJdV1Sp6LUo64+KfVm2T
+         +AocSuBt6eS5F1mbRlj9ipNb3Ma8qqTILPJKDxeeFdxzOB8qGNZeKLsaIwaJBSCwCWgG
+         OctQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MIrljlA1dEtBNb/SQwVUbOm8b8PLiK9imBoRLMqAwOM=;
-        b=7AjfeORXbTIsCgyDkUJ0GD9ZHr2HQ05Es5K64E5ikdIx8yqp3vfeB9lfoxRc7BHYWQ
-         KPGkD512YPi38B6+7iDxT6vULlwqkT6zeLejBZR8M1MZX8ZfWfemJktJsDDat3jKqQ9G
-         ciG8NwocQgeqY3z4rM2QjjgC+0V2Z9J0NuFYhHwEdbmFl/DS5KP7FJxqhYa6Rfz8P7CS
-         zIqmlO5L8wuACHzb8xRHt7udPkctPYxnSIvAbeIX3ViJMwpRgSYwyPviAZ1os/W09sFI
-         wtsGZPxTEkzfA8emQypF35kIoN4AeJNVA5Iud9MP24I9sk6NWgTgXghefHurzfukfEdY
-         VqwQ==
-X-Gm-Message-State: ACrzQf1CJrvIptjfrOMUEj3qXs2V1gIyhUfaBX+rf5r8oxh3fV1QrnjF
-        ikxhuY5gF0y7H/oBbUm609d50C0QYgEk0Gve3FuU799JCRCN
-X-Google-Smtp-Source: AMsMyM61pxTlWJ/CpIa/bZyF6jsToHWzHHVWCcQYEFS5vW6C2awDGiTfoblGb9FXRye+y2lGs2HToS5+l7V3lfn3fl8=
-X-Received: by 2002:a9d:71cb:0:b0:66c:3703:f04e with SMTP id
- z11-20020a9d71cb000000b0066c3703f04emr2095693otj.287.1668114297404; Thu, 10
- Nov 2022 13:04:57 -0800 (PST)
+        bh=6Ft0hBbh9NEYU0Q7LYEiUUDxfj2Q8E7rZp1hHrO+RN0=;
+        b=kWDQp8tKQuWHVLZx6PHajB2iHjy+D12AduqO7PPFeuHdi3CRL2Y8hkfug+xL2FMRqK
+         0FDfUQEkioUzGdaFOK/piZyp9tqVcbChorR0TvFTGlwJUFLZM1EJEfnb464AGRShDYDd
+         Hn7zK9blWKMjxk2GU1eG70spBZ5nM2Ms3NtyZ4kieIQg2kynIbfOjtmGCWn0ydnRiewA
+         8+pi815aUBbyq2nI2AEEtVcaUuTwvjCe3k61AGJwCNW5zELA1+JIpv3hE/fqI4ZdFJuy
+         TKKZNUjUbJ3rwM6gDV+4rxuTj014rQFr0I8Bl9WnbD9BtNsbF0d1OrKS+cxoLDB2tvg3
+         DRjg==
+X-Gm-Message-State: ACrzQf1GGEu5JbI7zkxQUKwnNL+1uTbOXIxDfUNo4RlJPutyULeutZpP
+        V1i4359MkcGqwVrjVLCUyVJ+j4hRWEmXcIROp+ke
+X-Google-Smtp-Source: AMsMyM4NJn94t8DTDVfilpvElddesuRrU5drh86cqDoFkFEPrwBe+yf9kbLVNK8+HaGnPvpMNAvB54yeHNFwQl/A4RY=
+X-Received: by 2002:aca:6502:0:b0:35a:6535:df with SMTP id m2-20020aca6502000000b0035a653500dfmr2182347oim.51.1668123388137;
+ Thu, 10 Nov 2022 15:36:28 -0800 (PST)
 MIME-Version: 1.0
-References: <20221107205754.2635439-1-cukie@google.com> <CAHC9VhTLBWkw2XzqdFx1LFVKDtaAL2pEfsmm+LEmS0OWM1mZgA@mail.gmail.com>
- <CABXk95ChjusTneWJgj5a58CZceZv0Ay-P-FwBcH2o4rO0g2Ggw@mail.gmail.com>
-In-Reply-To: <CABXk95ChjusTneWJgj5a58CZceZv0Ay-P-FwBcH2o4rO0g2Ggw@mail.gmail.com>
+References: <20221025184519.13231-1-casey@schaufler-ca.com>
+ <20221025184519.13231-7-casey@schaufler-ca.com> <CAHC9VhQ039=X+0edudy64-fpw4C2SwWV_MucbYfXwFKduwnbWA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQ039=X+0edudy64-fpw4C2SwWV_MucbYfXwFKduwnbWA@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 10 Nov 2022 16:04:46 -0500
-Message-ID: <CAHC9VhRTWGuiMpJJiFrUpgsm7nQaNA-n1CYRMPS-24OLvzdA2A@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] Add LSM access controls for io_uring_setup
-To:     Jeffrey Vander Stoep <jeffv@google.com>
-Cc:     Gil Cukierman <cukie@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, kernel-team@android.com,
-        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Date:   Thu, 10 Nov 2022 18:36:17 -0500
+Message-ID: <CAHC9VhSCAM+xdKf_f210-M-ZFY9KBVgpK84nbuCcVF9Z3qs2eA@mail.gmail.com>
+Subject: Re: [PATCH v1 6/8] LSM: lsm_self_attr syscall for LSM self attributes
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 10, 2022 at 12:54 PM Jeffrey Vander Stoep <jeffv@google.com> wrote:
-> On Mon, Nov 7, 2022 at 10:17 PM Paul Moore <paul@paul-moore.com> wrote:
+On Wed, Nov 9, 2022 at 6:34 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Tue, Oct 25, 2022 at 2:48 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
 > >
-> > On Mon, Nov 7, 2022 at 3:58 PM Gil Cukierman <cukie@google.com> wrote:
-> > >
-> > > This patchset provides the changes required for controlling access to
-> > > the io_uring_setup system call by LSMs. It does this by adding a new
-> > > hook to io_uring. It also provides the SELinux implementation for a new
-> > > permission, io_uring { setup }, using the new hook.
-> > >
-> > > This is important because existing io_uring hooks only support limiting
-> > > the sharing of credentials and access to the sensitive uring_cmd file
-> > > op. Users of LSMs may also want the ability to tightly control which
-> > > callers can retrieve an io_uring capable fd from the kernel, which is
-> > > needed for all subsequent io_uring operations.
+> > Create a system call lsm_self_attr() to provide the security
+> > module maintained attributes of the current process. Historically
+> > these attributes have been exposed to user space via entries in
+> > procfs under /proc/self/attr.
 > >
-> > It isn't immediately obvious to me why simply obtaining a io_uring fd
-> > from io_uring_setup() would present a problem, as the security
-> > relevant operations that are possible with that io_uring fd *should*
-> > still be controlled by other LSM hooks.  Can you help me understand
-> > what security issue you are trying to resolve with this control?
+> > Attributes are provided as a collection of lsm_ctx structures
+> > which are placed into a user supplied buffer. Each structure
+> > identifys the security module providing the attribute, which
+> > of the possible attributes is provided, the size of the
+> > attribute, and finally the attribute value. The format of the
+> > attribute value is defined by the security module, but will
+> > always be \0 terminated. The ctx_len value will be larger than
+> > strlen(ctx).
+> >
+> >         ------------------------------
+> >         | unsigned int id            |
+> >         ------------------------------
+> >         | unsigned int flags         |
+> >         ------------------------------
+> >         | __kernel_size_t ctx_len    |
+> >         ------------------------------
+> >         | unsigned char ctx[ctx_len] |
+> >         ------------------------------
+> >         | unsigned int id            |
+> >         ------------------------------
+> >         | unsigned int flags         |
+> >         ------------------------------
+> >         | __kernel_size_t ctx_len    |
+> >         ------------------------------
+> >         | unsigned char ctx[ctx_len] |
+> >         ------------------------------
+> >
+> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > ---
+> >  include/linux/syscalls.h |   2 +
+> >  include/uapi/linux/lsm.h |  21 ++++++
+> >  kernel/sys_ni.c          |   3 +
+> >  security/Makefile        |   1 +
+> >  security/lsm_syscalls.c  | 156 +++++++++++++++++++++++++++++++++++++++
+> >  5 files changed, 183 insertions(+)
+> >  create mode 100644 security/lsm_syscalls.c
+
+...
+
+> > +/**
+> > + * lsm_self_attr - Return current task's security module attributes
+> > + * @ctx: the LSM contexts
+> > + * @size: size of @ctx, updated on return
+> > + * @flags: reserved for future use, must be zero
+> > + *
+> > + * Returns the calling task's LSM contexts. On success this
+> > + * function returns the number of @ctx array elements. This value
+> > + * may be zero if there are no LSM contexts assigned. If @size is
+> > + * insufficient to contain the return data -E2BIG is returned and
+> > + * @size is set to the minimum required size. In all other cases
+> > + * a negative value indicating the error is returned.
+> > + */
+> > +SYSCALL_DEFINE3(lsm_self_attr,
+> > +              struct lsm_ctx __user *, ctx,
+> > +              size_t __user *, size,
+> > +              int, flags)
 >
-> I think there are a few reasons why we want this particular hook.
+> See my comments above about UAPI types, let's change this to something
+> like this:
 >
-> 1.  It aligns well with how other resources are managed by selinux
-> where access to the resource is the first control point (e.g. "create"
-> for files, sockets, or bpf_maps, "prog_load" for bpf programs, and
-> "open" for perf_event) and then additional functionality or
-> capabilities require additional permissions.
+> [NOTE: I'm assuming it is safe to use __XXX types in syscall declarations?]
+>
+>   SYSCALL_DEFINE3(lsm_self_attr,
+>                  struct lsm_ctx __user *, ctx,
+>                  __kernel_size_t __user *, size,
+>                  __u32, flags)
+>
 
-[NOTE: there were two reply sections in your email, and while similar,
-they were not identical; I've trimmed the other for the sake of
-clarity]
+I wanted to clarify how I originally envisioned this syscall/API, as
+it looks like it behaves a bit differently than I originally intended.
+My thought was that this syscall would be used to fetch one LSM
+attribute context at a time, returning an array of lsm_ctx structs,
+with one, and only one, for each LSM that supports that particular
+attribute.  If the LSM does not support that attribute, it must not
+enter an entry to the array.  Requesting more than one attribute
+context per invocation is not allowed.  The idea was to closely
+resemble the familiar open("/proc/self/attr/current")/read()/close()
+result without relying on procfs and supporting multiple LSMs with an
+easy(ish) API.  The new, single syscall should also be faster,
+although none of this should be happening in a performance critical
+section anyway.
 
-The resources you mention are all objects which contain some type of
-information (either user data, configuration, or program
-instructions), with the resulting fd being a handle to those objects.
-In the case of io_uring the fd is a handle to the io_uring
-interface/rings, which by itself does not contain any information
-which is not already controlled by other permissions.
+In addition, the lsm_ctx::flags field is intended to convey
+information specific to the given LSM, i.e. it should not repeat any
+of the flag information specified in the syscall parameters.  I don't
+believe any of the currently in-tree LSMs would require any special
+flags for their contexts, so this should always be zero/clear in this
+initial patchset, but it is something to keep in mind for the future.
 
-I/O operations which transfer data between the io_uring buffers and
-other system objects, e.g. IORING_OP_READV, are still subject to the
-same file access controls as those done by the application using
-syscalls.  Even the IORING_OP_OPENAT command goes through the standard
-VFS code path which means it will trigger the same access control
-checks as an open*() done by the application normally.
-
-The 'interesting' scenarios are those where the io_uring operation
-servicing credentials, aka personalities, differ from the task
-controlling the io_uring.  However in those cases we have the new
-io_uring controls to gate these delegated operations.  Passing an
-io_uring fd is subject to the fd/use permission like any other fd.
-
-Although perhaps the most relevant to your request is the fact that
-the io_uring inode is created using the new(ish) secure anon inode
-interface which ensures that the creating task has permission to
-create an io_uring.  This io_uring inode label also comes into play
-when a task attempts to mmap() the io_uring rings, a critical part of
-the io_uring API.
-
-If I'm missing something you believe to be important, please share the details.
-
-> 2. It aligns well with how resources are managed on Android. We often
-> do not grant direct access to resources (like memory buffers).
-
-Accessing the io_uring buffers requires a task to mmap() the io_uring
-fd which is controlled by the normal SELinux mmap() access controls.
-
-> 3. Attack surface management. One of the primary uses of selinux on
-> Android is to assess and limit attack surface (e.g.
-> https://twitter.com/jeffvanderstoep/status/1422771606309335043) . As
-> io_uring vulnerabilities have made their way through our vulnerability
-> management system, it's become apparent that it's complicated to
-> assess the impact. Is a use-after-free reachable? Creating
-> proof-of-concept exploits takes a lot of time, and often functionality
-> can be reached by multiple paths. How many of the known io_uring
-> vulnerabilities would be gated by the existing checks? How many future
-> ones will be gated by the existing checks? I don't know the answer to
-> either of these questions and it's not obvious. This hook makes that
-> initial assessment simple and effective.
-
-It should be possible to deny access to io_uring via the anonymous
-inode labels, the mmap() controls, and the fd/use permission.  If you
-find a way to do meaningful work with an io_uring fd that can't be
-controlled via an existing permission check please let me know.
+Thoughts?
 
 --
 paul-moore.com
