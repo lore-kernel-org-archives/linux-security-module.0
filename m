@@ -2,115 +2,155 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3E6C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 15:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F87EC43217
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 17:54:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230502AbiKJPcc (ORCPT
+        id S231431AbiKJRyS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Nov 2022 10:32:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44278 "EHLO
+        Thu, 10 Nov 2022 12:54:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231706AbiKJPcO (ORCPT
+        with ESMTP id S231390AbiKJRyQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Nov 2022 10:32:14 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1122D42F50;
-        Thu, 10 Nov 2022 07:30:34 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A1502619B2;
-        Thu, 10 Nov 2022 15:30:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 117F5C4314A;
-        Thu, 10 Nov 2022 15:30:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668094233;
-        bh=LxPoey/Txw9eEAsjMi8I7lrIBlKYQ+GUi78jSLCLmsw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=X/8MmAQ4jzybDO0FM4EnvciY0o909vg7RORFRkthrlYFTQH/hYSUJP5KQ1UHS/aAh
-         5IjLCETD67uMhtSRZPFAWhe6aHAyo5cCjvFNv1P2q0PHs2Q7d6S9iAAdpDrsUdcsqg
-         6GE4uuSR3MxU07c0Oom2uDFZnxIvRDhEWaudlGfodGtTvdoXJC5xtPi+eTiquIgsVz
-         ja9QmMQiB7KHHw+psH3Je1bjKqnjze0b/XA4JsOTYT5U2blBIdMcQuxIS/yPN9K1bM
-         mzlQYs4u7edJlck0qSDrGzy+L18yAqVVPredbYqD0kSvVnSQe+qXksx3hdrExzeDRH
-         xdDUVZCZzAwdw==
-Received: by mail-lf1-f48.google.com with SMTP id c1so3934549lfi.7;
-        Thu, 10 Nov 2022 07:30:32 -0800 (PST)
-X-Gm-Message-State: ACrzQf15eZ9rnkAcSCeYQTGlyG8npzDDZyZJb+lSOYbqBlj5f3NrEpaz
-        wVYETrxgBQ5neAvZ1OmSU69H4IEEtJnQVAyHE8I=
-X-Google-Smtp-Source: AMsMyM4zvAX5sAETC9CI+cDlc2ACByQOg0lFOlzCPS65eEG++tMrkP/vj9NOXHY5hJrb5BSfltNUuM/SQvrZljQqoJc=
-X-Received: by 2002:ac2:4c47:0:b0:4a2:c07b:4b62 with SMTP id
- o7-20020ac24c47000000b004a2c07b4b62mr20875682lfk.426.1668094230829; Thu, 10
- Nov 2022 07:30:30 -0800 (PST)
+        Thu, 10 Nov 2022 12:54:16 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D24049B6C
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Nov 2022 09:54:15 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id t25so6897123ejb.8
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Nov 2022 09:54:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kfHz50Kg7kyBZpgLz1L+duIpLshaF3vQXrti1dXGZLQ=;
+        b=himkAUve95kura1F4xyrjgF2Ao9L01DaBYcsivT7aKJ5J4AF6ajPklOMnZ88snF8S/
+         Sm6FEemOqLF/MrgUC5yLIaXtMop2DLyIxPzRPUoUFaA5aKTYxAFSqWUMJk850gnqShNb
+         wE7XZ4ZD0YABNLuFjY+X3KglYL7nJG8JNkkvLu3QJtRk3djhDQghiY7LCQX3IS7glCq2
+         M3Z3rUTcmamKd9fp2ozIcuSHynhl1Xgi/GnqGciIWHpaSJNBKuTCOn3Ej65qPgsyN7ok
+         8FB28sjmPUx11WchT1uogNEcf84eSNHyyoLzumQXLDUlwM/q3BMdB2xufOMmSmbksCWm
+         YjnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kfHz50Kg7kyBZpgLz1L+duIpLshaF3vQXrti1dXGZLQ=;
+        b=hMdUHoxss1HoLvYhdjvRVf75Kkss/h5oarrgdMBQa0epzwLMEYnEhlcNXsBFQcPTUV
+         hYGR99MY28aj4mKBnGkzI82Hn0UWCjHqVvjQW3MSkTffoKTRhYbAfYaQX2tpXyQxDDDa
+         M7BivYTn+v+5O7KV2mRMxNKZvivdxOhWTvkvbNo1+xOW3gSRiOIz1lhHjAKUJtBK03YL
+         SPuuzjyJXGWCVgjVUY5b4C26aXQKIlHkgKnScScEywyF/KZhltYl79h2j26lkguDbwUg
+         7OLBSuwkYQZ/n+Mg6fgvVZkw5NssD56fQsLstqxeK84LFOpkssN+5n1x6Ndnt/n9FZAK
+         CQmw==
+X-Gm-Message-State: ACrzQf0wOS0WWD9Rdfpu6OxuoIDj2gc69C6NihrJAb/XnT/vholnVZdk
+        Sc6fBs4BTaLZQFjXchfwRAfk80y8RNZunz9A39yNsQ==
+X-Google-Smtp-Source: AMsMyM6vrGhmh/p4SKFqy2anpSAGg2zavB8DiqImU+Pk6mNYMjVBxK6TvhzwwuErIW2caX7ljkBnR/t2VrPytOoRZ6I=
+X-Received: by 2002:a17:906:b34b:b0:7ad:e8dd:837c with SMTP id
+ cd11-20020a170906b34b00b007ade8dd837cmr3571084ejb.264.1668102853085; Thu, 10
+ Nov 2022 09:54:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20211124044124.998170-1-eric.snowberg@oracle.com>
- <20211124044124.998170-17-eric.snowberg@oracle.com> <20221110000129.kl6pjy5mafpuptbk@framework>
- <4A479B96-4B41-4323-9920-5A909423F998@oracle.com> <20221110150607.h4iaymkgc4f7kuue@framework>
- <47ae05f8d3a67ee5e1607ab8e718cc4b3e95cebb.camel@HansenPartnership.com>
-In-Reply-To: <47ae05f8d3a67ee5e1607ab8e718cc4b3e95cebb.camel@HansenPartnership.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Thu, 10 Nov 2022 16:30:19 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEv3raFtwMmA4gYX=Z5YBfJ5f9GP0L0Zo4FBabwTfhn8Q@mail.gmail.com>
-Message-ID: <CAMj1kXEv3raFtwMmA4gYX=Z5YBfJ5f9GP0L0Zo4FBabwTfhn8Q@mail.gmail.com>
-Subject: Re: [PATCH v8 16/17] integrity: Trust MOK keys if MokListTrustedRT found
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Morten Linderud <morten@linderud.pw>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "lszubowi@redhat.com" <lszubowi@redhat.com>,
-        "jason@zx2c4.com" <jason@zx2c4.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "pjones@redhat.com" <pjones@redhat.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>
+References: <20221107205754.2635439-1-cukie@google.com> <CAHC9VhTLBWkw2XzqdFx1LFVKDtaAL2pEfsmm+LEmS0OWM1mZgA@mail.gmail.com>
+In-Reply-To: <CAHC9VhTLBWkw2XzqdFx1LFVKDtaAL2pEfsmm+LEmS0OWM1mZgA@mail.gmail.com>
+From:   Jeffrey Vander Stoep <jeffv@google.com>
+Date:   Thu, 10 Nov 2022 18:54:00 +0100
+Message-ID: <CABXk95ChjusTneWJgj5a58CZceZv0Ay-P-FwBcH2o4rO0g2Ggw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] Add LSM access controls for io_uring_setup
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Gil Cukierman <cukie@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 10 Nov 2022 at 16:27, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
+Hi Paul,
+
+There are a few reasons why we want this particular hook.
+
+1.  It aligns well with how other resources are managed by selinux
+where access to the resource is the first control point (e.g. "create"
+for files, sockets, or bpf_maps, "prog_load" for bpf programs, and
+"open" for perf_event) and then additional functionality or
+capabilities require additional permissions.
+2. It aligns well with how resources are managed on Android. We often
+do not grant direct access to resources (like memory buffers). For
+example, a single domain on Android manages the loading of all bpf
+programs and the creation of all bpf maps. Other domains can be
+granted access to these only once they're created. We can enforce base
+properties with MAC, while allowing the system to manage and grant
+access to resources at run-time via DAC (e.g. using Android's
+permission model). This allows us to do better management and
+accounting of resources.
+3. Attack surface management. One of the primary uses of selinux on
+Android is to assess and limit attack surface (e.g.
+https://twitter.com/jeffvanderstoep/status/1422771606309335043) . As
+io_uring vulnerabilities have made their way through our vulnerability
+management system, it's become apparent that it's complicated to
+assess the impact. Is a use-after-free reachable? Creating
+proof-of-concept exploits takes a lot of time, and often functionality
+can be reached by multiple paths. How many of the known io_uring
+vulnerabilities would be gated by the existing checks? How many future
+ones will be gated by the existing checks? I don't know the answer to
+either of these questions and it's not obvious. I believe some of them
+currently are exploitable without any selinux permissions. But in any
+case, this hook makes that initial assessment simple and effective.
+
+On Mon, Nov 7, 2022 at 10:17 PM Paul Moore <paul@paul-moore.com> wrote:
 >
-> On Thu, 2022-11-10 at 16:06 +0100, Morten Linderud wrote:
-> > I'm not really sure what Peter means with "much more reliable"
-> > though.
+> On Mon, Nov 7, 2022 at 3:58 PM Gil Cukierman <cukie@google.com> wrote:
+> >
+> > This patchset provides the changes required for controlling access to
+> > the io_uring_setup system call by LSMs. It does this by adding a new
+> > hook to io_uring. It also provides the SELinux implementation for a new
+> > permission, io_uring { setup }, using the new hook.
+> >
+> > This is important because existing io_uring hooks only support limiting
+> > the sharing of credentials and access to the sensitive uring_cmd file
+> > op. Users of LSMs may also want the ability to tightly control which
+> > callers can retrieve an io_uring capable fd from the kernel, which is
+> > needed for all subsequent io_uring operations.
 >
-> It's that in-head knowledge you referred to.  You can't see the true
-> MoK variables because they're BootServices, meaning they're not visible
-> in the RunTime, which is why the shadow RT variables exist (this is a
-> security property: BS only variables can only be altered by trusted,
-> signed entities).  However lots of things can create RT variables so
-> you have to run through a sequence of checks on the RT shadows to try
-> to defeat clever attackers (like verifying the variable attributes),
-> because the chain of custody from BS to RT is not guaranteed.  If you
-> use a configuration table instead, that is BS only, the kernel (which
-> is also a trusted entity) has to pick it out before ExitBootServices,
-> so if the kernel has the table, you have a reliable chain of custody
-> for the entries.
+> It isn't immediately obvious to me why simply obtaining a io_uring fd
+> from io_uring_setup() would present a problem, as the security
+> relevant operations that are possible with that io_uring fd *should*
+> still be controlled by other LSM hooks.  Can you help me understand
+> what security issue you are trying to resolve with this control?
+
+
+I think there are a few reasons why we want this particular hook.
+
+1.  It aligns well with how other resources are managed by selinux
+where access to the resource is the first control point (e.g. "create"
+for files, sockets, or bpf_maps, "prog_load" for bpf programs, and
+"open" for perf_event) and then additional functionality or
+capabilities require additional permissions.
+2. It aligns well with how resources are managed on Android. We often
+do not grant direct access to resources (like memory buffers). For
+example, a single domain on Android manages the loading of all bpf
+programs and the creation of all bpf maps. Other domains can be
+granted access to these only once they're created. We can enforce base
+properties with MAC, while allowing the system to manage and grant
+access to resources at run-time via DAC (e.g. using Android's
+permission model). This allows us to do better management and
+accounting of resources.
+3. Attack surface management. One of the primary uses of selinux on
+Android is to assess and limit attack surface (e.g.
+https://twitter.com/jeffvanderstoep/status/1422771606309335043) . As
+io_uring vulnerabilities have made their way through our vulnerability
+management system, it's become apparent that it's complicated to
+assess the impact. Is a use-after-free reachable? Creating
+proof-of-concept exploits takes a lot of time, and often functionality
+can be reached by multiple paths. How many of the known io_uring
+vulnerabilities would be gated by the existing checks? How many future
+ones will be gated by the existing checks? I don't know the answer to
+either of these questions and it's not obvious. This hook makes that
+initial assessment simple and effective.
 >
 
-No config table are always accessible, also at runtime under the OS.
-
-But they are volatile so they can only have been created since the
-last reset of the system, so in that sense they are similar to the
-volatile RT variables aliases.
-
-The reason for preferring config tables is that you can access them
-much earlier, and without mapping the EFI runtime memory regions etc
-etc
+>
+> --
+> paul-moore.com
