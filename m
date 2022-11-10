@@ -2,95 +2,97 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2819C43217
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 11:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 789BDC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 11:15:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230448AbiKJLMI (ORCPT
+        id S230456AbiKJLPH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Nov 2022 06:12:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58198 "EHLO
+        Thu, 10 Nov 2022 06:15:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230430AbiKJLMD (ORCPT
+        with ESMTP id S230407AbiKJLOw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Nov 2022 06:12:03 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A8D56DCF6
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Nov 2022 03:12:02 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id e7-20020a17090a77c700b00216928a3917so4391484pjs.4
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Nov 2022 03:12:02 -0800 (PST)
+        Thu, 10 Nov 2022 06:14:52 -0500
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 833E8701AC
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Nov 2022 03:14:32 -0800 (PST)
+Received: by mail-pg1-x532.google.com with SMTP id s196so1502677pgs.3
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Nov 2022 03:14:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yaq+SFAP5kTf9oPrYPpMvzkjalgNUTHY8MYqzihNGbY=;
-        b=W1ZC/0/jOj62exU1NlwqP2F21YthQH/vEaLHLYXraLCvXwC+bo1E8ztCFTZSqVUMLi
-         teaoHcLCkiHS1We6wJTp7SRCvPogWQwMqUIdF/ea6ipIvDfWSIxPr19PSuVpammjU9D4
-         VKI0tHLgSTEZSP5uWlz3VHI0wyzs3Ax0wz38L0nGoJt/Ar2V2RXtM62VhHepMJ6iHIo1
-         cwPW383kcyvjkZUZrJ6GAd+oihi1xiGQLrL8LrgTxU2nS7Ty80AN5mm1xPbqO+8wZfxD
-         BW9v/m/wl5WwFeL4TAEiSuI9r3B37Sx9TR40gqlzSVIZfdAPdENEHC4IVmHdxPUD/YfM
-         M4qA==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bINLLU9PD1pEzI3atyU2ZEDrwA88CdhG/1pr/Rzw2KY=;
+        b=nsvQUFkPM65XhIKwogsU8yFQC96WEi+N/yF/Dm226uiIActc6A0bN6qqFIDPuQTlGJ
+         vSf3dKVDaWeHQI9uq4/xMdRAeTm9KCEMxaOSTLMPDh61pJ5qzfk3I9Mb0/Yb7rtMNGEs
+         CXJ9v7vfNey2imsN19gPKiwrgxV5UfhaYy6f7lp4iQgVkFkfj4rbRhY/58VL0NzyXjVb
+         OAV925LQimY7UTD1i+RDWzYd84ifVYVHZqfNO1DV05CbmgmLUbuJ0DmK0pAzSSO35/rf
+         1It/xD8LsK/bqdsfqwHPB64W4hjmHerEViFIRsarzGZxkQpv+rtH8wOPI2VwmPgozU8i
+         gFKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Yaq+SFAP5kTf9oPrYPpMvzkjalgNUTHY8MYqzihNGbY=;
-        b=Ul87YNF+kTAUZWT+pHM6cxtcHtiMer3+kWvmQ/B+OhBw2nqi8O3MjmilLweHaJSQzA
-         AnioP26ZvggHo8KJbkeVaSpD6EiefwhWxBEEFynkp6YOJQjE+xqPoGq8EP+in100y5jd
-         YZVBCDZFqu4OVHXWofUi6a3l3T7MSIGynUx33pF9a+vNvYFukJL5Pm2iAdjNcuLkE05K
-         SQp82e8Ej3MhGMFNWhWKfqTRxj7ZlziYYA/poz22SV7N/ia9m6M1a3/bPnMvbKZl7yti
-         FKIumM6jIu/+OvoGT8Ow3Z03x/7ttqDRVbdVS/rAXvVKwIhU9tak9GxL43WNyd1gcsz+
-         5QZw==
-X-Gm-Message-State: ACrzQf2Z50euMr4ephL+zYvzEqDeAri7RR13aKNNlFCs7pYj+765uQ8z
-        zVuNNbj0gRfKpvntdUyDrzfGew==
-X-Google-Smtp-Source: AMsMyM4ofpvuMY+7nXoyvVA9/VE8N84lCP9lqiryxNbGE3ShZFhtkHDbxVs+jGAa+XPX1Osm81MDGQ==
-X-Received: by 2002:a17:90a:1097:b0:213:d7d3:ab8 with SMTP id c23-20020a17090a109700b00213d7d30ab8mr58405678pja.91.1668078722103;
-        Thu, 10 Nov 2022 03:12:02 -0800 (PST)
-Received: from sumit-X1.. ([223.178.212.236])
-        by smtp.gmail.com with ESMTPSA id 68-20020a621647000000b0056bd1bf4243sm9903435pfw.53.2022.11.10.03.11.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Nov 2022 03:12:01 -0800 (PST)
+        bh=bINLLU9PD1pEzI3atyU2ZEDrwA88CdhG/1pr/Rzw2KY=;
+        b=QQOFaKjq0IDQTpBsuxZ4WW07NNHkju59gpSVANjDzjPctY9g9pU89PT7VzcPzFam1t
+         LgRYicc7z8UhpY5Nvjhlhi7E2GLbwGmaSBIOx8bjNXIU9UACcnSrEhu84CKVCch3ySem
+         dgLB6pUYZyapASmcafpj4s/UXo6tYgimGSD05wq1o6UinnWi8Mc+gLkLYU1qWhnNz7P6
+         f9qOEi424Wrv084nz8Uu3Qv6W6sXQiKqeZHMjUSJa/i4EWxfqfVqss5lMFjhtOoF9Vuf
+         cJ7Qd0NoSR461X/d1DNml14wu8lIP0FnUcbX737s/aMEIRVYeEOySaoiOgxutGleoUb7
+         owyw==
+X-Gm-Message-State: ACrzQf3fA3JhQEYKUyugrIFVwlxZGQrlmbs8vNc7LaA6Yiz1i9yKhD51
+        3QlyXsMmYZHFeN0ccRTi5z5AADqiV3hEYFHIfjLLMg==
+X-Google-Smtp-Source: AMsMyM7pNQARAbULI6QCzZi6RINV5taBDWPVxndnKjwvl2BvAbsPjPGxaHD5QBaBNVTFXQNULJkyAtUYpbUEcMd9T/A=
+X-Received: by 2002:a63:db42:0:b0:45c:9c73:d72e with SMTP id
+ x2-20020a63db42000000b0045c9c73d72emr53321246pgi.181.1668078871936; Thu, 10
+ Nov 2022 03:14:31 -0800 (PST)
+MIME-Version: 1.0
+References: <20221110111140.1999538-1-sumit.garg@linaro.org>
+In-Reply-To: <20221110111140.1999538-1-sumit.garg@linaro.org>
 From:   Sumit Garg <sumit.garg@linaro.org>
-To:     keyrings@vger.kernel.org
+Date:   Thu, 10 Nov 2022 16:44:20 +0530
+Message-ID: <CAFA6WYMKSjvgNgbf=cJXiTE3LitS-whtRbqJW1cdkHMJ1TsdUg@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: trusted: tee: Make registered shm dependency explicit
+To:     keyrings@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>
 Cc:     jejb@linux.ibm.com, zohar@linux.ibm.com,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sumit Garg <sumit.garg@linaro.org>,
+        linux-kernel@vger.kernel.org,
         Jerome Forissier <jerome.forissier@linaro.org>
-Subject: [PATCH] KEYS: trusted: tee: Make registered shm dependency explicit
-Date:   Thu, 10 Nov 2022 16:41:40 +0530
-Message-Id: <20221110111140.1999538-1-sumit.garg@linaro.org>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-TEE trusted keys support depends on registered shared memory support
-since the key buffers are needed to be registered with OP-TEE. So make
-that dependency explicit to not register trusted keys support if
-underlying implementation doesn't support registered shared memory.
++ Jarkko (Apologies I accidently missed you while sending the original patch).
 
-Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-Tested-by: Jerome Forissier <jerome.forissier@linaro.org>
----
- security/keys/trusted-keys/trusted_tee.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
-index c8626686ee1b..ac3e270ade69 100644
---- a/security/keys/trusted-keys/trusted_tee.c
-+++ b/security/keys/trusted-keys/trusted_tee.c
-@@ -219,7 +219,8 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
- 
- static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
- {
--	if (ver->impl_id == TEE_IMPL_ID_OPTEE)
-+	if (ver->impl_id == TEE_IMPL_ID_OPTEE &&
-+	    ver->gen_caps & TEE_GEN_CAP_REG_MEM)
- 		return 1;
- 	else
- 		return 0;
--- 
-2.34.1
-
+On Thu, 10 Nov 2022 at 16:42, Sumit Garg <sumit.garg@linaro.org> wrote:
+>
+> TEE trusted keys support depends on registered shared memory support
+> since the key buffers are needed to be registered with OP-TEE. So make
+> that dependency explicit to not register trusted keys support if
+> underlying implementation doesn't support registered shared memory.
+>
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> Tested-by: Jerome Forissier <jerome.forissier@linaro.org>
+> ---
+>  security/keys/trusted-keys/trusted_tee.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
+> index c8626686ee1b..ac3e270ade69 100644
+> --- a/security/keys/trusted-keys/trusted_tee.c
+> +++ b/security/keys/trusted-keys/trusted_tee.c
+> @@ -219,7 +219,8 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
+>
+>  static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+>  {
+> -       if (ver->impl_id == TEE_IMPL_ID_OPTEE)
+> +       if (ver->impl_id == TEE_IMPL_ID_OPTEE &&
+> +           ver->gen_caps & TEE_GEN_CAP_REG_MEM)
+>                 return 1;
+>         else
+>                 return 0;
+> --
+> 2.34.1
+>
