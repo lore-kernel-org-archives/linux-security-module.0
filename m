@@ -2,123 +2,140 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0586DC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 03:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6246EC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 04:14:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232204AbiKJDSH (ORCPT
+        id S229578AbiKJEOT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Nov 2022 22:18:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35308 "EHLO
+        Wed, 9 Nov 2022 23:14:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230243AbiKJDSF (ORCPT
+        with ESMTP id S231512AbiKJENo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Nov 2022 22:18:05 -0500
-Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 906842D1F3
-        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 19:18:04 -0800 (PST)
-Received: by mail-oo1-xc2a.google.com with SMTP id r10-20020a4aa2ca000000b0049dd7ad4128so93366ool.13
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Nov 2022 19:18:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ui4nz+rk4+cy7iX09mK3SZJkU54S/hpyEMWrZ+RjI2M=;
-        b=eC+RoKfhId/DMoP2yqdKWn4KQDV/bHSjRCDt/kWA5xOVi5nb2pPkI4mlgslo1JNknx
-         Tbc3SQ7t4elqvdUA3nUUCKvQbTL7ks+AB1IJ5XhKa2/de9c1Udet2zrq/4jLZG7GTcyo
-         qTJd5hnqSuyrRaevhIkhNKvsdvsYMK4tChfEz0tiplUuDiC5uC04CxKrOxSGi0hN2o+4
-         CO0OjAnj9tnmtB5qAC9vFShPdrrfEgCzNnfwl/zNEBCkbuZ9vTypUAhuhzEGgjMN41/b
-         UI8hKSlDuk0oJLzFvXx2H4VG88DRFWuETaRueen5S0NSNB5HmirGKvFdgsSm1yQjpbQW
-         TSGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ui4nz+rk4+cy7iX09mK3SZJkU54S/hpyEMWrZ+RjI2M=;
-        b=ctD16RRNxUbhkwY74LT5qv6VYXiVrZGuC5P40EewnW+blehI4VwditChxoabdqPC7L
-         UyVTOrrDn/kyu2YkP2u/JvOCmoeM5RNuaYd5UZYerlpesnekJMEzGsY1bmPbKJXHIYtY
-         L0WxR7Yv1caqB1sx403OdhYn/Ss90UhyUIIpH+jFIKhfBkJGgsS5OoKiN4PA/R2iWJYe
-         fs3ka3/XnKOFtJw8WUWg0G03P8n62j2fTq3WCSGpIyN/AQpneJmOt2DpIXxK94LwKKID
-         pcaY9JueSRpav/iYDfIsxVy5ZDFFYz1qS7Q4yJK+RmaGtbr0rBBoozLVOTurjraapYQP
-         jpHw==
-X-Gm-Message-State: ANoB5pmXOv+LUHE9EqDJ8rsd0vCLFHRwuCAK+GSJieg7JI77Ro6x9grG
-        6htn2d65waWNBI/ARLP2C3Cagzh6Ke+mS8l5HXuP
-X-Google-Smtp-Source: AA0mqf4jNyWHNPdiVFcHIrPF0+v2AoEgmnjHvVUr776+Z6yoxo2tMWAfX7sFLgPjynd2YPyaEA2X+YXWw2y/wJe591Q=
-X-Received: by 2002:a4a:ca8f:0:b0:49e:f01a:feaf with SMTP id
- x15-20020a4aca8f000000b0049ef01afeafmr7560680ooq.81.1668050283850; Wed, 09
- Nov 2022 19:18:03 -0800 (PST)
+        Wed, 9 Nov 2022 23:13:44 -0500
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8863529346
+        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 20:12:35 -0800 (PST)
+Received: from fsav112.sakura.ne.jp (fsav112.sakura.ne.jp [27.133.134.239])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 2AA4CEmp054720;
+        Thu, 10 Nov 2022 13:12:14 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav112.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp);
+ Thu, 10 Nov 2022 13:12:14 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 2AA4AxBx054426
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 10 Nov 2022 13:10:59 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <ef585586-2436-8665-a5e1-475cdd5be5a2@I-love.SAKURA.ne.jp>
+Date:   Thu, 10 Nov 2022 13:10:55 +0900
 MIME-Version: 1.0
-References: <20221025184519.13231-1-casey@schaufler-ca.com>
- <20221025184519.13231-8-casey@schaufler-ca.com> <CAHC9VhQ5Jrt3Ns+m7DFZ+_pP81AWqSx588HMZR+7MUuMfSZoig@mail.gmail.com>
- <ea927e49-0099-df0a-d263-400782486b35@schaufler-ca.com>
-In-Reply-To: <ea927e49-0099-df0a-d263-400782486b35@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 9 Nov 2022 22:17:52 -0500
-Message-ID: <CAHC9VhQMfAix=KqpWGNg_2cryBJHyiFTzURQ1YuD_0SY92ZHsA@mail.gmail.com>
-Subject: Re: [PATCH v1 7/8] LSM: Create lsm_module_list system call
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: Re: [PATCH 04/10] CaitSith: Add header file.
+To:     Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20221102171025.126961-4-penguin-kernel@I-love.SAKURA.ne.jp>
+ <ef5fa206-4e7f-3c23-07d4-8591c4315d20@schaufler-ca.com>
+ <20221105024345.GA15957@mail.hallyn.com>
+ <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp>
+ <20221105234614.GA23523@mail.hallyn.com>
+ <52fdbbe4-cad5-6cd0-9574-2e5efb88a478@I-love.SAKURA.ne.jp>
+ <4ead148f-1629-22ec-91f3-44c71f70fce4@schaufler-ca.com>
+ <133ffb84-551e-866d-5597-e62a5a39bc05@I-love.SAKURA.ne.jp>
+ <CAHC9VhS9RQdeCipSpSH3_LZyFfb-BDry=EsSmkt4OLVk=OZnEg@mail.gmail.com>
+ <f52e6e9f-5e95-8843-c2f5-c50bba48e5e4@I-love.SAKURA.ne.jp>
+ <CAHC9VhS=0Ts8E647JJiJ6dwPmnuLuYTyOS0QEYJO_EmAb3yFcw@mail.gmail.com>
+ <82e46552-54da-6df5-c451-485991dcb5c3@I-love.SAKURA.ne.jp>
+ <7CED07F5-A6FC-46AD-8F9D-ECFC28FE23C9@kernel.org>
+Content-Language: en-US
+In-Reply-To: <7CED07F5-A6FC-46AD-8F9D-ECFC28FE23C9@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 9, 2022 at 8:37 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 11/9/2022 3:35 PM, Paul Moore wrote:
-> > On Tue, Oct 25, 2022 at 2:48 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> Create a system call to report the list of Linux Security Modules
-> >> that are active on the system. The list is provided as an array
-> >> of LSM ID numbers.
-> >>
-> >> The calling application can use this list determine what LSM
-> >> specific actions it might take. That might include chosing an
-> >> output format, determining required privilege or bypassing
-> >> security module specific behavior.
-> >>
-> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >> ---
-> >>  include/linux/syscalls.h |  1 +
-> >>  kernel/sys_ni.c          |  1 +
-> >>  security/lsm_syscalls.c  | 38 ++++++++++++++++++++++++++++++++++++++
-> >>  3 files changed, 40 insertions(+)
-> > ..
-> >
-> >> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
-> >> index da0fab7065e2..cd5db370b974 100644
-> >> --- a/security/lsm_syscalls.c
-> >> +++ b/security/lsm_syscalls.c
-> >> @@ -154,3 +154,41 @@ SYSCALL_DEFINE3(lsm_self_attr,
-> >>         kfree(final);
-> >>         return rc;
-> >>  }
-> >> +
-> >> +/**
-> >> + * lsm_module_list - Return a list of the active security modules
-> >> + * @ids: the LSM module ids
-> >> + * @size: size of @ids, updated on return
-> >> + * @flags: reserved for future use, must be zero
-> >> + *
-> >> + * Returns a list of the active LSM ids. On success this function
-> >> + * returns the number of @ids array elements. This value may be zero
-> >> + * if there are no LSMs active. If @size is insufficient to contain
-> >> + * the return data -E2BIG is returned and @size is set to the minimum
-> >> + * required size. In all other cases a negative value indicating the
-> >> + * error is returned.
-> >> + */
-> > Let's make a promise that for this syscall we will order the LSM IDs
-> > in the array in the same order as which they are configured/executed.
->
-> Sure. Order registered, which can vary, as opposed to LSM ID order,
-> which cannot. That could be important to ensure that applications
-> that enforce the same policy as the kernel will hit the checks in
-> the same order as the kernel. That's how it is coded. It needs to
-> be documented.
+On 2022/11/10 11:22, Kees Cook wrote:
+> On November 9, 2022 3:57:06 PM PST, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+>> On 2022/11/09 23:48, Paul Moore wrote:
+>>>                                             If there is a significant
+>>> change, e.g. the overall kernel policy towards out-of-tree code, we
+>>> can reconsider this policy but as of right now only upstream LSMs will
+>>> have LSM ID tokens assigned to them; in-development LSMs are free to
+>>> temporarily assign themselves an ID token (which may change when the
+>>> LSM is merged upstream), and out-of-tree LSMs are free to do whatever
+>>> they like with respect to their code, just as they do now.
+>>
+>> If in-development LSMs and out-of-tree LSMs cannot get a stable ID token,
+>> developers cannot write and publish userspace tools which make use of ID
+>> token. If ID collision happens by use of temporarily ID token, this token
+>> is no longer an identifier. That is a pointless and needless constraint
+>> for getting LSM modules created / tested / used.
+> 
+> You have to let this go. You aren't hearing us: this ID reservation process
+> is not a problem for anyone but you. It is the same for all the syscalls
+> that get added, and all the prctls, etc etc. This isn't a problem for userspace
+> tools using those, and there won't be a problem here either.
+> 
+> We will not support out of tree code, so needing ID stability for out-of-tree
+> LSMs isn't a valid argument.
+> 
 
-Yep.  One of the big reasons for documenting it this way is to ensure
-that we define the order as part of the API.
+This ID reservation process is very much a problem for you all.
 
--- 
-paul-moore.com
+In https://lkml.kernel.org/r/CAHC9VhQGnEcoYeGpwbbXbMrG1dOvJ=2ohd4zPYoqBJK9p1mSjQ@mail.gmail.com ,
+Paul said that it is becoming increasingly difficult for people to find time to
+review potential new LSMs.
+
+  >> Many modules
+  >>
+  >>     SimpleFlow （ 2016/04/21 https://lwn.net/Articles/684825/ ）
+  >>     HardChroot （ 2016/07/29 https://lwn.net/Articles/695984/ ）
+  >>     Checmate （ 2016/08/04 https://lwn.net/Articles/696344/ ）
+  >>     LandLock （ 2016/08/25 https://lwn.net/Articles/698226/ ）
+  >>     PTAGS （ 2016/09/29 https://lwn.net/Articles/702639/ ）
+  >>     CaitSith （ 2016/10/21 https://lwn.net/Articles/704262/ ）
+  >>     SafeName （ 2016/05/03 https://lwn.net/Articles/686021/ ）
+  >>     WhiteEgret （ 2017/05/30 https://lwn.net/Articles/724192/ ）
+  >>     shebang （ 2017/06/09 https://lwn.net/Articles/725285/ ）
+  >>     S.A.R.A. （ 2017/06/13 https://lwn.net/Articles/725230/ ）
+  >>
+  >> are proposed 5 or 6 years ago, but mostly became silent...
+  > 
+  > At least one of those, Landlock, has been merged upstream and is now
+  > available in modern released Linux Kernels.  As far as the other LSMs
+  > are concerned, I don't recall there ever being significant interest
+  > among other developers or users to warrant their inclusion upstream.
+  > If the authors believe that has changed, or is simply not true, they
+  > are always welcome to post their patches again for discussion, review,
+  > and potential upstreaming.  However, I will caution that it is
+  > becoming increasingly difficult for people to find time to review
+  > potential new LSMs so it may a while to attract sufficient comments
+  > and feedback.
+
+Actually, previous CaitSith proposal in 2016 at
+https://lkml.kernel.org/r/1477054150-4772-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
+died because nobody except John Johansen showed interest, and John could not
+find time to review.
+
+We are getting more and more difficult to get new LSM module in-tree.
+An in-development code being remaining out-of-tree shall happen. And you are
+declaring that we ignore LSM modules which cannot get enough interests.
+That's horrible and unacceptable.
+
+What I'm repeating since
+https://lkml.kernel.org/r/2225aec6-f0f3-d38e-ee3c-6139a7c25a37@I-love.SAKURA.ne.jp is that
+
+  You are making LSM interface more and more unattractive. The consequence would be
+  "The LSM interface is dead. We will give up implementing as LSMs."
+
+Quite simple.
