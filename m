@@ -2,105 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC992C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 02:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52AB0C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 02:38:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbiKJCWk (ORCPT
+        id S231666AbiKJCiC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Nov 2022 21:22:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40496 "EHLO
+        Wed, 9 Nov 2022 21:38:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232520AbiKJCWJ (ORCPT
+        with ESMTP id S229516AbiKJCiB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Nov 2022 21:22:09 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D08D23BF9
-        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 18:22:09 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CA480B8205A
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Nov 2022 02:22:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C82C433B5;
-        Thu, 10 Nov 2022 02:22:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668046926;
-        bh=o8xm1CjLcRVR9h1geVorPKMVCHrBiVQJ4TsI0ltjezE=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=OWPobBndVNSeRFQ44bC5ifeHG9Ol040oE0kSbFOpj5ow7ILDiHeAgjARiyVTi7mvo
-         UCD7/HOHTIZupQcqSuiReMI+/5gVhful0GQOFVfqLHoXJ1OYN9JSubtXEDVn3LZ1n1
-         Ccs1f0UDjvQptbsJa0eMgtLOBiD0Dm/+2XsGAezhVN1/nkEoMVh7P4x6vyeBIQkxxG
-         RATDPWU1ddBfSiESavLZSTpZhN6y917p/tpsjEG51SX8z6xm0LOVr03/XSPQ9YtHbG
-         RMlRMsvF+FKferJNnKCK1JAgL2kOOQ9eRTpyvjLlWrJvyTo+gWkDD99/PYvxqiS61c
-         GMpGejxC8VaOA==
-Date:   Wed, 09 Nov 2022 18:22:05 -0800
-From:   Kees Cook <kees@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Paul Moore <paul@paul-moore.com>
-CC:     Casey Schaufler <casey@schaufler-ca.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 04/10] CaitSith: Add header file.
-User-Agent: K-9 Mail for Android
-In-Reply-To: <82e46552-54da-6df5-c451-485991dcb5c3@I-love.SAKURA.ne.jp>
-References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp> <20221102171025.126961-4-penguin-kernel@I-love.SAKURA.ne.jp> <ef5fa206-4e7f-3c23-07d4-8591c4315d20@schaufler-ca.com> <20221105024345.GA15957@mail.hallyn.com> <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp> <20221105234614.GA23523@mail.hallyn.com> <52fdbbe4-cad5-6cd0-9574-2e5efb88a478@I-love.SAKURA.ne.jp> <4ead148f-1629-22ec-91f3-44c71f70fce4@schaufler-ca.com> <133ffb84-551e-866d-5597-e62a5a39bc05@I-love.SAKURA.ne.jp> <CAHC9VhS9RQdeCipSpSH3_LZyFfb-BDry=EsSmkt4OLVk=OZnEg@mail.gmail.com> <f52e6e9f-5e95-8843-c2f5-c50bba48e5e4@I-love.SAKURA.ne.jp> <CAHC9VhS=0Ts8E647JJiJ6dwPmnuLuYTyOS0QEYJO_EmAb3yFcw@mail.gmail.com> <82e46552-54da-6df5-c451-485991dcb5c3@I-love.SAKURA.ne.jp>
-Message-ID: <7CED07F5-A6FC-46AD-8F9D-ECFC28FE23C9@kernel.org>
+        Wed, 9 Nov 2022 21:38:01 -0500
+Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19E122657A
+        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 18:38:01 -0800 (PST)
+Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-367cd2807f2so4061657b3.1
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Nov 2022 18:38:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ibmMgAXbjjaN11VFsHkJQSJq1cPDMl62aGHSM2/7Qz4=;
+        b=TxXbGY6MqrUFhP1+BFe+fijdVfGlWxRoOvFMDVAndTKHK+26MsMdFCXQXMG2yxBXbi
+         dlsSY6HPLQZpFRFSa/89Iport3Ifx1iHPE2Ektcf53rTAbBEodSOBD5MlH8u1GoxUw3P
+         +s1PnQHOIxXg5x1+skjghrBiWJ0U0wPVZpWyENYf/r4hoSrS97IiIGv9xd0zBQYdVGhm
+         D4F23tPM5gPlrlgTQVxR+lIVoTszar6901KoD4/WZfkIQ9neiXc+eYkQQ1Q/ybE4qx0G
+         EsdINsnqfEdAzOwo94Ll3rsVlsxNQZWmMMu7+diqzKV/sRsBUGbf0hv1S27WLj9BIw0T
+         bjUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ibmMgAXbjjaN11VFsHkJQSJq1cPDMl62aGHSM2/7Qz4=;
+        b=RsqvqJlnq3AEhgEzlMa8mrr8BjDJkhPPA4kJzSvmfLlNH0dKYaXmjw0u3nue1falYP
+         KxxSNAnJjo0XGQNakWIehznz6GnXiVF6aZrwG9SELdq9xWKrxr93hy1BR23Pc5NCFofa
+         SvSef3ZBtsG0bVIjIOjUDaQq0VoNgmdczdqY4c96sJqNMtUZ027EXHK0jMaqGh0af82C
+         N7e8I+gWgYTE0iiBRBKwB4IS1vGKgGApdTAywONJ2P+Ml+4lCA/Lst4LC9mlgs6q6ff+
+         9YrYuHZQswU+nqsledRndhmpVzQEclby4dgpJgFGEU/1zaVyJN1l7dwaAkfk6WRGWt6W
+         RhGQ==
+X-Gm-Message-State: ACrzQf0KYOqWJ01SuyJ7LgLQe1snB3VAa7MCqk6EnviEXxvHIjPVqa/K
+        v3rp8DUQt5OMbyw2PCI4kPNheKgZEy2AeQBp98To
+X-Google-Smtp-Source: AMsMyM68Q6DhzhnyZCPFpqsv/6KaI/umTZlXQ5XcOaYlET4DeZmtbpcInSNhrshaezKk91UO0aDy7ipBqiJ19zpHbmk=
+X-Received: by 2002:a81:50d:0:b0:36a:6711:f7dc with SMTP id
+ 13-20020a81050d000000b0036a6711f7dcmr59100471ywf.276.1668047880011; Wed, 09
+ Nov 2022 18:38:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20221025184519.13231-1-casey@schaufler-ca.com>
+ <20221025184519.13231-3-casey@schaufler-ca.com> <Y1jMeWl0oV4/2zyE@kroah.com>
+ <5396ab1e-9b93-df33-ca49-58dc59459a76@schaufler-ca.com> <Y1olsHWnaEk6+b1L@kroah.com>
+ <612c169c-2e11-13cf-9742-19714a247152@schaufler-ca.com> <CAHC9VhR8_aQFxBq4fG=q8FgVUEZAL6F_iSE9kFnO7Mf4tf52AQ@mail.gmail.com>
+ <20cdb098-400e-25d0-f93e-98efb1095b68@schaufler-ca.com>
+In-Reply-To: <20cdb098-400e-25d0-f93e-98efb1095b68@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 9 Nov 2022 21:37:48 -0500
+Message-ID: <CAHC9VhR50=d_pjoxOMX_a8oyKc572BqjJUZD5Mcd8snHHq5WHQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/8] LSM: Add an LSM identifier for external use
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        mic@digikod.net
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On November 9, 2022 3:57:06 PM PST, Tetsuo Handa <penguin-kernel@I-love=2ES=
-AKURA=2Ene=2Ejp> wrote:
->On 2022/11/09 23:48, Paul Moore wrote:
->>                                             If there is a significant
->> change, e=2Eg=2E the overall kernel policy towards out-of-tree code, we
->> can reconsider this policy but as of right now only upstream LSMs will
->> have LSM ID tokens assigned to them; in-development LSMs are free to
->> temporarily assign themselves an ID token (which may change when the
->> LSM is merged upstream), and out-of-tree LSMs are free to do whatever
->> they like with respect to their code, just as they do now=2E
+On Wed, Nov 9, 2022 at 7:57 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 11/9/2022 3:33 PM, Paul Moore wrote:
+
+...
+
+> >   My reason for
+> > doing so is rather simple, we're going to treat the ID as a 32-bit
+> > value so we have *plenty* of room (just the thought of supporting +4
+> > billion unique LSMs is comically insane), and I'd like to try and
+> > leave some space for yet-undetermined "special" things that we might
+> > need to convey in the LSM syscalls.  For example, this would allow us
+> > to convey additional information to userspace when an application
+> > asked for labeling information using one of these reserved LSM IDs;
+> > applications which did not know (or care) about the special ID would
+> > continue to function normally but augmented/new applications would be
+> > able to make sense of the additional information ... and we wouldn't
+> > have to add a new syscall to do it.
 >
->If in-development LSMs and out-of-tree LSMs cannot get a stable ID token,
->developers cannot write and publish userspace tools which make use of ID
->token=2E If ID collision happens by use of temporarily ID token, this tok=
-en
->is no longer an identifier=2E That is a pointless and needless constraint
->for getting LSM modules created / tested / used=2E
+> I don't see how
+>
+>         #define LSM_ID_SPECIAL  2
+>
+> is better than
+>
+>         #define LSM_ID_SPECIAL  13
+>
+> There's no reason to "group" LSM_ID values, nor have a range of them.
+> Really, I don't care one way or the other. I will bend to whatever will
+> is stronger.
 
-You have to let this go=2E You aren't hearing us: this ID reservation proc=
-ess is not a problem for anyone but you=2E It is the same for all the sysca=
-lls that get added, and all the prctls, etc etc=2E This isn't a problem for=
- userspace tools using those, and there won't be a problem here either=2E
+The token values are not intended to be grouped in any sort of range,
+it is just easier to say values 0-32 are reserved that create 33 macro
+defines like LSM_ID_RESERVED1..LSM_ID_RESERVED32.  The actual token
+values shouldn't really mean anything, we could randomly assign them
+if that helps get my point across, I just want a few reserved numbers
+in the token space to leave room for future unknowns.
 
-We will not support out of tree code, so needing ID stability for out-of-t=
-ree LSMs isn't a valid argument=2E
+It's not like I'm suggesting something that has never been done before :)
 
-Additionally, not having an LSM built into a distro kernel is a distro ker=
-nel problem=2E Open a bug with them and get it fixed=2E E=2Eg=2E Ubuntu has=
- no problem with multiple LSMs:
-
-$ grep 'CONFIG_SECURITY_[^_]*[ =3D]' /boot/config-$(
-uname -r)
-=2E=2E=2E
-CONFIG_SECURITY_SELINUX=3Dy
-CONFIG_SECURITY_SMACK=3Dy
-CONFIG_SECURITY_TOMOYO=3Dy
-CONFIG_SECURITY_APPARMOR=3Dy
-# CONFIG_SECURITY_LOADPIN is not set
-CONFIG_SECURITY_YAMA=3Dy
-CONFIG_SECURITY_SAFESETID=3Dy
-CONFIG_SECURITY_LANDLOCK=3Dy
-
-And they just leave the "exclusive"s disabled at runtime:
-CONFIG_LSM=3D"landlock,lockdown,yama,integrity,apparmor"
-
--Kees
-
-
---=20
-Kees Cook
+-- 
+paul-moore.com
