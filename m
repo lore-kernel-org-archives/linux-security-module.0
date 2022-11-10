@@ -2,138 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E7BFC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 01:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC992C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Nov 2022 02:22:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232369AbiKJBhX (ORCPT
+        id S229861AbiKJCWk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Nov 2022 20:37:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37562 "EHLO
+        Wed, 9 Nov 2022 21:22:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231830AbiKJBhV (ORCPT
+        with ESMTP id S232520AbiKJCWJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Nov 2022 20:37:21 -0500
-Received: from sonic317-39.consmr.mail.ne1.yahoo.com (sonic317-39.consmr.mail.ne1.yahoo.com [66.163.184.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1156626AC8
-        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 17:37:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1668044239; bh=LJCSwMNKftyO9ucc9JDF4Pz9lX34xM1yQFYF+i+GufA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ZMDTSwvT4lJSoRjAr7GGFZkRs9cOgYaxTyyf+Dealt0ntTp0UnxrOdN+DKC7xkPFPo/JVhYjv2sNj8lq58vru9ca10y2yxMXYNnjjgtd5ipe/k4YVt6MTlqM/iqSlygRXAHYdcYzW5nxIhEKywO7GIYm9QJ2LmL9lOSUJ95LvkUPe8sUUtiZotsVUwDfeSQStzMQzSlMGZqPHzxv3SP9bJOO9McL/jM/E12aglbHii6cIP7WIGJ8LybrtZQDiiSBJfEvZ/Tv/QnTca2oKSR+gJ3cTl/gMP2t5zXC9PIN2RX9WbSVp73ph/3IAiCwBE+SQ9ropuNBdu9+Zq+x8Y35xA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1668044239; bh=jtC0rMVoqTK7JdeVfkcVHQTivK8kc7vfermot8UbXZZ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=DaOgYP3gSrBcqN+c3MU8WrFGnPurpgRD10eLGkPC/9EU7BgtEVDneNkX4RaS6f+DG3eLxkl42j3Er9UHyqx5cvVKV+46S+yxqtCWMQASxlWW9U6tbkFxgK4I5sOszeHqZ41c4CdWv5AaAUyWkq2OS+STKTQxrPsqc1jLdGXwkJHlHa4dSiS3AgYHlIevRYYUBiUfvI49vKNBC6fqMsxcutoEOrPnlSB8FbY2JRywP5nGAM0xqkwo8FpvUbS7qQJ9bBczsPuXs0nI+e2wz+VlQJjI11tpdNwiWUklrzFUI6ybQP7d6I9qfEtTGmy1IRiVL5fsLcLVyXQEdYwDvOCalw==
-X-YMail-OSG: 1mXZuJUVM1mntvDOji2aqL3aQ.iRL.bKgZ_X3Bb3zMyUWawZsNwhRvoFILDbIqy
- Bp1QuMU6uOJzj5XJ7SBQDv4mGvX6FMyTV1DPFpGOGBH9BvhB7IcAQvY_UTT0DpSH1rbkeUo.Ce9Q
- gxWEv_hjnJ5FSYjUs1g3v7CjQPA7BRKuWExl955HXPQtX6PFq23XTMb1pDpQrDBo6_JuqNtGafVZ
- BphUIRRLWggCMDi1dlZ9OSk3a7LnaFCVxQw9OsXpupQUVbwrLAno9d85NAr4ilNKJmUD4tlqYwcS
- sJ83GJq3N2xvqPDsvn1czhSOimCYG9A.QJM6rGUuhfJmczxkUF_Z7y3inJNNuFQCkFOQls3_qcT6
- GWXSpX11uoEnUP8cLxyz8W_6bDDM5sTk7rFZ4zW2nOnoNcr2F0kT.sP.NziTO_N99PE2NZ.uPl4F
- dtc5OrjKkieGXHZHPCq9eeELeC.EUfMIQ2.vIOzHMxgw62kOvKEO9W32KuSFt8rLhmC7cNXmAy2r
- FZDwB.owM5NueQkp8mYa7tFLBA8goIKKQj_70UV9tf25zWVOUeqWXNwXOIuzHevXrvVH1SGjoQ5k
- UOy_Ys_EIVKxoPWhyiKjbF0WpH7SN.05FbdaOmuPrHkxH5nZT5MQn7Vneu_CNNGU3cTNpvbE8hSK
- HtwEbYy.yhCVYK56y.7QfkdZVP_g30IfPt0wwx_h7VI4yiVzhnB7OGrjOYCyoUFwqZ29YIAAlZ92
- 4uDU4COv1.D.qWCSsjCHfQu7Rx9SuLRirblog.kl1BYdbazzGUUdx0FCzYD1TTV6K5CnBX3K0D.Q
- _L1rnJivMy.eV_DfNRLVqhzkzCKXFspPNdC0L1JjPRC8.kLoV9hw.Skdrm0Awwssuwe0N157JO66
- 6PxxXVog9MwMMVrkXZ0nZTqX8xCVA1fzhQDZGuZK5zrZX9gc.nrjF61OhY_L_6XCdE_s5THiGMua
- d_F1BBW_zZA8.5SwjCWcivDoIEuR5Pvm00saAcbAMecG8Z6lEGbmJVz8belgSLU_eFQml8BFMWNw
- 9SSsfZ9VnNg9Xck8_y1JXV7d6DAFLd.Qe_lkEnSotMsSOEbFKTvjddXlQ6Hlhp6OTnbhOqAiXUV0
- W0AvRIzPWe38fD7GU5ePSO8DhkDLSMtc70cetuq2p8gMdWJi19IkTu1.5mRFXI8hha7H3HKtJWNi
- meupjqkJffkkhMp5iCj4zwcf8hGIqEAo._P3uy5F_XzsfRYY_rCGg1qLwE75WuJtHXZ3AeQo8YLf
- bJ.Zqe11CNfAx_D3H4z9ZUBA.gNK2WTr473Th7mVqBeNlPsxKlPosnKxwgGH_F51ZoFVp9y_Ba.X
- LK7FsRHUrwkapOP4f2SE5MmMXKV8VFUNxUR265t67lg.6iYKj1ZGTH0xZZBIturzqmmvgCgrTIUI
- g9lPCYYMnCxIfpjHDR1wHJJfOGItQUhk9gXbTiAJFZSEqU6tgBO1e8aBtSDP8QzuU8JuTTIx5Bhs
- WCmjkFbx6ENsPQdhhdxG6xZENmgCiqF5ifmLlujyd7UgWU9XYpsyiaa_D_9WiE51.8BVTuD4XkYF
- ipHCOFTJgJbKtI0iDz1hcC_FLe0mqnsmj3.PvA.WBF.hAC9PjTAEDLbHHLb6njPiGZpk4DvuGRCV
- Rhl.P4buWbbXnO4wy_UWnojeBa5kC47DrgV1t2_D6lwmjaVckBxVwsjBTquodpNnA7f7PHKVOKeb
- LmXhK2x2p77RcECyYzNKnTMrav2_iy5pANsG0_BghbFGh.B8GAK4hK7Z7nLnawuleevMqzk2t2WV
- HLUYf8teZ.5HM3HU1RBnp9jukEUwLl0p8x4whvdqM_OmFxJ_1D5_7VfnKBTMimqX8FCnQUWJ77fq
- LNnHk5bZPZB0o8IJ.hnnS1VwjRGn5gDyvruJUN39ZD78YE_lI06QR_mGTiuJl1r23RETU6w.ZzB1
- K79F1370K2WqbBJZh6h3zXOMiW0rnNE5K17SSZXoRM0BVuzJ8fg4fz7XoBevWST9iVFDzkFkytjJ
- .s9lmdewGGHFoUiZ0zbD7QGe1kHKATpQseQkm2.Iq2jRMYXl4l1rctpLSc2BKvMVsWyr2q30Fmu6
- T6ZyrewOsakEC3429dTmNzdAOjNRQwXAl63tKfKQXy31LSy5spxELsa0ni0nDGKw5PnI6gQZpu_L
- ToaNZ2Rt5voQC0bxHYcJ5NUvZ9J_Z7agpbodyK6OW9cYVj_wCqFn7r5o5JDVQK2ptWajLNKgquPn
- bFqE_Jfb603KUhe7afzuxU168upYG
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Thu, 10 Nov 2022 01:37:19 +0000
-Received: by hermes--production-bf1-5878955b5f-tg9fx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 531384ef438ad64b797b020e20564acd;
-          Thu, 10 Nov 2022 01:37:16 +0000 (UTC)
-Message-ID: <ea927e49-0099-df0a-d263-400782486b35@schaufler-ca.com>
-Date:   Wed, 9 Nov 2022 17:37:14 -0800
+        Wed, 9 Nov 2022 21:22:09 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D08D23BF9
+        for <linux-security-module@vger.kernel.org>; Wed,  9 Nov 2022 18:22:09 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CA480B8205A
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Nov 2022 02:22:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C82C433B5;
+        Thu, 10 Nov 2022 02:22:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668046926;
+        bh=o8xm1CjLcRVR9h1geVorPKMVCHrBiVQJ4TsI0ltjezE=;
+        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+        b=OWPobBndVNSeRFQ44bC5ifeHG9Ol040oE0kSbFOpj5ow7ILDiHeAgjARiyVTi7mvo
+         UCD7/HOHTIZupQcqSuiReMI+/5gVhful0GQOFVfqLHoXJ1OYN9JSubtXEDVn3LZ1n1
+         Ccs1f0UDjvQptbsJa0eMgtLOBiD0Dm/+2XsGAezhVN1/nkEoMVh7P4x6vyeBIQkxxG
+         RATDPWU1ddBfSiESavLZSTpZhN6y917p/tpsjEG51SX8z6xm0LOVr03/XSPQ9YtHbG
+         RMlRMsvF+FKferJNnKCK1JAgL2kOOQ9eRTpyvjLlWrJvyTo+gWkDD99/PYvxqiS61c
+         GMpGejxC8VaOA==
+Date:   Wed, 09 Nov 2022 18:22:05 -0800
+From:   Kees Cook <kees@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Paul Moore <paul@paul-moore.com>
+CC:     Casey Schaufler <casey@schaufler-ca.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 04/10] CaitSith: Add header file.
+User-Agent: K-9 Mail for Android
+In-Reply-To: <82e46552-54da-6df5-c451-485991dcb5c3@I-love.SAKURA.ne.jp>
+References: <20221102171025.126961-1-penguin-kernel@I-love.SAKURA.ne.jp> <20221102171025.126961-4-penguin-kernel@I-love.SAKURA.ne.jp> <ef5fa206-4e7f-3c23-07d4-8591c4315d20@schaufler-ca.com> <20221105024345.GA15957@mail.hallyn.com> <5d31873f-f477-ef5a-591f-6f0195f258a8@I-love.SAKURA.ne.jp> <20221105234614.GA23523@mail.hallyn.com> <52fdbbe4-cad5-6cd0-9574-2e5efb88a478@I-love.SAKURA.ne.jp> <4ead148f-1629-22ec-91f3-44c71f70fce4@schaufler-ca.com> <133ffb84-551e-866d-5597-e62a5a39bc05@I-love.SAKURA.ne.jp> <CAHC9VhS9RQdeCipSpSH3_LZyFfb-BDry=EsSmkt4OLVk=OZnEg@mail.gmail.com> <f52e6e9f-5e95-8843-c2f5-c50bba48e5e4@I-love.SAKURA.ne.jp> <CAHC9VhS=0Ts8E647JJiJ6dwPmnuLuYTyOS0QEYJO_EmAb3yFcw@mail.gmail.com> <82e46552-54da-6df5-c451-485991dcb5c3@I-love.SAKURA.ne.jp>
+Message-ID: <7CED07F5-A6FC-46AD-8F9D-ECFC28FE23C9@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v1 7/8] LSM: Create lsm_module_list system call
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net, casey@schaufler-ca.com
-References: <20221025184519.13231-1-casey@schaufler-ca.com>
- <20221025184519.13231-8-casey@schaufler-ca.com>
- <CAHC9VhQ5Jrt3Ns+m7DFZ+_pP81AWqSx588HMZR+7MUuMfSZoig@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhQ5Jrt3Ns+m7DFZ+_pP81AWqSx588HMZR+7MUuMfSZoig@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20826 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/9/2022 3:35 PM, Paul Moore wrote:
-> On Tue, Oct 25, 2022 at 2:48 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Create a system call to report the list of Linux Security Modules
->> that are active on the system. The list is provided as an array
->> of LSM ID numbers.
->>
->> The calling application can use this list determine what LSM
->> specific actions it might take. That might include chosing an
->> output format, determining required privilege or bypassing
->> security module specific behavior.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  include/linux/syscalls.h |  1 +
->>  kernel/sys_ni.c          |  1 +
->>  security/lsm_syscalls.c  | 38 ++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 40 insertions(+)
-> ..
+On November 9, 2022 3:57:06 PM PST, Tetsuo Handa <penguin-kernel@I-love=2ES=
+AKURA=2Ene=2Ejp> wrote:
+>On 2022/11/09 23:48, Paul Moore wrote:
+>>                                             If there is a significant
+>> change, e=2Eg=2E the overall kernel policy towards out-of-tree code, we
+>> can reconsider this policy but as of right now only upstream LSMs will
+>> have LSM ID tokens assigned to them; in-development LSMs are free to
+>> temporarily assign themselves an ID token (which may change when the
+>> LSM is merged upstream), and out-of-tree LSMs are free to do whatever
+>> they like with respect to their code, just as they do now=2E
 >
->> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
->> index da0fab7065e2..cd5db370b974 100644
->> --- a/security/lsm_syscalls.c
->> +++ b/security/lsm_syscalls.c
->> @@ -154,3 +154,41 @@ SYSCALL_DEFINE3(lsm_self_attr,
->>         kfree(final);
->>         return rc;
->>  }
->> +
->> +/**
->> + * lsm_module_list - Return a list of the active security modules
->> + * @ids: the LSM module ids
->> + * @size: size of @ids, updated on return
->> + * @flags: reserved for future use, must be zero
->> + *
->> + * Returns a list of the active LSM ids. On success this function
->> + * returns the number of @ids array elements. This value may be zero
->> + * if there are no LSMs active. If @size is insufficient to contain
->> + * the return data -E2BIG is returned and @size is set to the minimum
->> + * required size. In all other cases a negative value indicating the
->> + * error is returned.
->> + */
-> Let's make a promise that for this syscall we will order the LSM IDs
-> in the array in the same order as which they are configured/executed.
+>If in-development LSMs and out-of-tree LSMs cannot get a stable ID token,
+>developers cannot write and publish userspace tools which make use of ID
+>token=2E If ID collision happens by use of temporarily ID token, this tok=
+en
+>is no longer an identifier=2E That is a pointless and needless constraint
+>for getting LSM modules created / tested / used=2E
 
-Sure. Order registered, which can vary, as opposed to LSM ID order,
-which cannot. That could be important to ensure that applications
-that enforce the same policy as the kernel will hit the checks in
-the same order as the kernel. That's how it is coded. It needs to
-be documented. 
+You have to let this go=2E You aren't hearing us: this ID reservation proc=
+ess is not a problem for anyone but you=2E It is the same for all the sysca=
+lls that get added, and all the prctls, etc etc=2E This isn't a problem for=
+ userspace tools using those, and there won't be a problem here either=2E
 
-> I'm doubtful that only a *very* small number of applications will care
-> about this (if any), but this is something we can do so let's do it
-> now while we can.
->
->> +SYSCALL_DEFINE3(lsm_module_list,
->> +               unsigned int __user *, ids,
->> +               size_t __user *, size,
->> +               unsigned int, flags)
-> --
-> paul-moore.com
+We will not support out of tree code, so needing ID stability for out-of-t=
+ree LSMs isn't a valid argument=2E
+
+Additionally, not having an LSM built into a distro kernel is a distro ker=
+nel problem=2E Open a bug with them and get it fixed=2E E=2Eg=2E Ubuntu has=
+ no problem with multiple LSMs:
+
+$ grep 'CONFIG_SECURITY_[^_]*[ =3D]' /boot/config-$(
+uname -r)
+=2E=2E=2E
+CONFIG_SECURITY_SELINUX=3Dy
+CONFIG_SECURITY_SMACK=3Dy
+CONFIG_SECURITY_TOMOYO=3Dy
+CONFIG_SECURITY_APPARMOR=3Dy
+# CONFIG_SECURITY_LOADPIN is not set
+CONFIG_SECURITY_YAMA=3Dy
+CONFIG_SECURITY_SAFESETID=3Dy
+CONFIG_SECURITY_LANDLOCK=3Dy
+
+And they just leave the "exclusive"s disabled at runtime:
+CONFIG_LSM=3D"landlock,lockdown,yama,integrity,apparmor"
+
+-Kees
+
+
+--=20
+Kees Cook
