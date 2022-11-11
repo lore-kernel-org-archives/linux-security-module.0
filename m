@@ -2,116 +2,84 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D13C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Nov 2022 09:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF23C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Nov 2022 10:17:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233637AbiKKJcq (ORCPT
+        id S233727AbiKKKRV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Nov 2022 04:32:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51036 "EHLO
+        Fri, 11 Nov 2022 05:17:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233350AbiKKJcp (ORCPT
+        with ESMTP id S233728AbiKKKQx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Nov 2022 04:32:45 -0500
+        Fri, 11 Nov 2022 05:16:53 -0500
 Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D59666473;
-        Fri, 11 Nov 2022 01:32:43 -0800 (PST)
-Received: from canpemm500010.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4N7tgb4gD1zbnbs;
-        Fri, 11 Nov 2022 17:28:59 +0800 (CST)
-Received: from localhost.localdomain (10.175.112.70) by
- canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 11 Nov 2022 17:32:41 +0800
-From:   Wang Yufen <wangyufen@huawei.com>
-To:     <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8073671F24;
+        Fri, 11 Nov 2022 02:16:43 -0800 (PST)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4N7vkK5pQjzmVpT;
+        Fri, 11 Nov 2022 18:16:25 +0800 (CST)
+Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
+ (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Fri, 11 Nov
+ 2022 18:16:41 +0800
+From:   GUO Zihua <guozihua@huawei.com>
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>
 CC:     <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-        <martin.lau@kernel.org>, <daniel@iogearbox.net>, <ast@kernel.org>,
-        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
-        Wang Yufen <wangyufen@huawei.com>,
-        Stanislav Fomichev <sdf@google.com>
-Subject: [PATCH] net: fix memory leak in security_sk_alloc()
-Date:   Fri, 11 Nov 2022 17:52:51 +0800
-Message-ID: <1668160371-39153-1-git-send-email-wangyufen@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] integrity: Fix memory leakage in keyring allocation error path
+Date:   Fri, 11 Nov 2022 18:13:17 +0800
+Message-ID: <20221111101317.5468-1-guozihua@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.175.112.70]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- canpemm500010.china.huawei.com (7.192.105.118)
+X-Originating-IP: [10.67.175.31]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-kmemleak reports this issue:
+Key restriction is alloced in integrity_init_keyring(). However, if
+keyring allocation failed, it is not freed, causing memory leaks.
 
-unreferenced object 0xffff88810b7835c0 (size 32):
-  comm "test_progs", pid 270, jiffies 4294969007 (age 1621.315s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    03 00 00 00 03 00 00 00 0f 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<00000000376cdeab>] kmalloc_trace+0x27/0x110
-    [<000000003bcdb3b6>] selinux_sk_alloc_security+0x66/0x110
-    [<000000003959008f>] security_sk_alloc+0x47/0x80
-    [<00000000e7bc6668>] sk_prot_alloc+0xbd/0x1a0
-    [<0000000002d6343a>] sk_alloc+0x3b/0x940
-    [<000000009812a46d>] unix_create1+0x8f/0x3d0
-    [<000000005ed0976b>] unix_create+0xa1/0x150
-    [<0000000086a1d27f>] __sock_create+0x233/0x4a0
-    [<00000000cffe3a73>] __sys_socket_create.part.0+0xaa/0x110
-    [<0000000007c63f20>] __sys_socket+0x49/0xf0
-    [<00000000b08753c8>] __x64_sys_socket+0x42/0x50
-    [<00000000b56e26b3>] do_syscall_64+0x3b/0x90
-    [<000000009b4871b8>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-The issue occurs in the following scenarios:
-
-unix_create1()
-  sk_alloc()
-    sk_prot_alloc()
-      security_sk_alloc()
-        call_int_hook()
-          hlist_for_each_entry()
-            entry1->hook.sk_alloc_security
-            <-- selinux_sk_alloc_security() succeeded,
-            <-- sk->security alloced here.
-            entry2->hook.sk_alloc_security
-            <-- bpf_lsm_sk_alloc_security() failed
-      goto out_free;
-        ...    <-- the sk->security not freed, memleak
-
-To fix, if security_sk_alloc() failed and sk->security not null,
-goto out_free_sec to reclaim resources.
-
-I'm not sure whether this fix makes sense, but if hook lists don't
-support this usage, might need to modify the
-"tools/testing/selftests/bpf/progs/lsm_cgroup.c" test case.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Wang Yufen <wangyufen@huawei.com>
-Cc: Stanislav Fomichev <sdf@google.com>
+Fixes: 2b6aa412ff23 ("KEYS: Use structure to capture key restriction function and data")
+Signed-off-by: GUO Zihua <guozihua@huawei.com>
 ---
- net/core/sock.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/net/core/sock.c b/net/core/sock.c
-index a3ba035..e457a9d 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -2030,8 +2030,11 @@ static struct sock *sk_prot_alloc(struct proto *prot, gfp_t priority,
- 		sk = kmalloc(prot->obj_size, priority);
+v2:
+  Added Fixes tag. Changed subject. V1 patch is here: https://patchwork.kernel.org/project/linux-integrity/patch/20221109094618.64265-1-guozihua@huawei.com/
+
+---
+ security/integrity/digsig.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index 8a82a6c7f48a..f2193c531f4a 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -126,6 +126,7 @@ int __init integrity_init_keyring(const unsigned int id)
+ {
+ 	struct key_restriction *restriction;
+ 	key_perm_t perm;
++	int ret;
  
- 	if (sk != NULL) {
--		if (security_sk_alloc(sk, family, priority))
-+		if (security_sk_alloc(sk, family, priority)) {
-+			if (sk->sk_security)
-+				goto out_free_sec;
- 			goto out_free;
-+		}
+ 	perm = (KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW
+ 		| KEY_USR_READ | KEY_USR_SEARCH;
+@@ -154,7 +155,10 @@ int __init integrity_init_keyring(const unsigned int id)
+ 		perm |= KEY_USR_WRITE;
  
- 		if (!try_module_get(prot->owner))
- 			goto out_free_sec;
+ out:
+-	return __integrity_init_keyring(id, perm, restriction);
++	ret = __integrity_init_keyring(id, perm, restriction);
++	if (ret)
++		kfree(restriction);
++	return ret;
+ }
+ 
+ static int __init integrity_add_key(const unsigned int id, const void *data,
 -- 
-1.8.3.1
+2.17.1
 
