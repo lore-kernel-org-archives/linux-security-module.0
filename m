@@ -2,69 +2,69 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 717E2C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Nov 2022 15:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97374C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Nov 2022 16:29:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234039AbiKKPLL (ORCPT
+        id S233711AbiKKQ3N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Nov 2022 10:11:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35854 "EHLO
+        Fri, 11 Nov 2022 11:29:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234919AbiKKPKf (ORCPT
+        with ESMTP id S234266AbiKKQ3D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Nov 2022 10:10:35 -0500
-Received: from mail-oo1-xc2e.google.com (mail-oo1-xc2e.google.com [IPv6:2607:f8b0:4864:20::c2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C2C46586A
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 07:08:54 -0800 (PST)
-Received: by mail-oo1-xc2e.google.com with SMTP id j6-20020a4ab1c6000000b004809a59818cso698912ooo.0
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 07:08:54 -0800 (PST)
+        Fri, 11 Nov 2022 11:29:03 -0500
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A8FA7342A
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 08:29:02 -0800 (PST)
+Received: by mail-yb1-xb32.google.com with SMTP id 7so6356486ybp.13
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 08:29:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        d=google.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OTbT3PnKCiUHyfv/DLAnEwQTnkKfhzprbkWm2faBINA=;
-        b=0CuK/RQWb+6cesOMC2bHN3caOL8MIHgULsf+RU5GPH++iNgae8xrq9k85A6TMio74A
-         yvHJi+W7M6pMwE/ialWcG4lVtrQjHemuNZe/pw9/lt0bd1hQqW4Fcxam3DZS8jNTpwYw
-         sdbuD0x2zRLPb2JhDbOYdvBZQfvOLBq1//tP7mOJbPP5oY2ruxYfkCxG+l8uHQZPXhfO
-         nJ7nNFpUBZV+maEoLDVy3Uk26oftfoEBN817JMxn8uYDXXdvW71UbVZcTu4XEZ+62ql6
-         Fy4x2wVLfjXeGjGnbi5ADKJwCQCfqV0LWaGlIC5tVvVNLEaKistBZTi1saNa6rKM72fP
-         UeoA==
+        bh=0BFAQmnkuUvPtfFGhzAbsEdzBkK1S4afgbyRM7b2v0A=;
+        b=Ao7rkqlr1IqQ8Co3/EvS+n/pfEYybDyougTAPYEhZGZp2ajnzR+VfCxH3SmlqCaz1W
+         bIHzAw2Rf5XtqgSYaayVeQuag5UH31Ct90DvfKTkiCY/pWbfjgQLm4tF6MO3/MzydX/f
+         2R12od8pwwg6MCKUp8NgIe7t8DiwqEktGCc4uG/7vQIuvlwCgss0LpeLI/YYPV65SKLq
+         gBbosT1kZ/wV6oLMRerCe21r6jEehyNwsENxvXaRKz/Vy8r0U6FZSyDDbbev2Lp/TCyC
+         5LJGGduuWgX0nj0fz8cU5l6K0XJLqtw9YLZiH71YWDZ/jgj787INXA+0d07C2VQvpYD3
+         xIiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OTbT3PnKCiUHyfv/DLAnEwQTnkKfhzprbkWm2faBINA=;
-        b=oOOrisSgg9YDQZ12WWoNwfzkPcG5USV+LJO+oBBlRUj0/MEfWkR4NXOJDLSMKPkxfo
-         1EEZAIm4bBkv0vS+fPMX6jyhXPh8RwFVM7DHtowB3D16WyRaXBZBG+NhxektMxJruiEK
-         7R0cacQ1Q4hQqhp8bJRhs+sxtz3/4wkG8GzSKF0q6wPLu/pqlJ/LucTANMcc42eBC6WR
-         N/BVYhGxegGCxsN7ZIoWnwajm/Cqq1PKHZ5RZeCju9H7ye5ryxEKkxfp3rOASKAiPeZp
-         W2RJ7qwNILqv0Sk/qpNEkQCejda4unKItMdPKmtR910rKR9MCsfNMjP5rCw+SvsuFYEu
-         wNmw==
-X-Gm-Message-State: ANoB5plqtxhtbdr6gyk74tiVVtjUVgscORCzdcIF3U+3JoPHZRjb6UVB
-        wmb6IsbjRFwGqPiI/v0hujH+ZEP0w966KTgsWmAI
-X-Google-Smtp-Source: AA0mqf6usvNxkFdKnLz1F3rhVx/l4KFR/MdRYkmqCc+FBzoTMnlbkTF92jaLMMPS9V5d0rnwQIPI1VDo2/G9YkiW+RM=
-X-Received: by 2002:a4a:e2c3:0:b0:480:7fd1:1875 with SMTP id
- l3-20020a4ae2c3000000b004807fd11875mr1044707oot.24.1668179333851; Fri, 11 Nov
- 2022 07:08:53 -0800 (PST)
+        bh=0BFAQmnkuUvPtfFGhzAbsEdzBkK1S4afgbyRM7b2v0A=;
+        b=KDOnClrJcSZ+yLK9IZ/3UkSguULYE81VCF90lacjUvLXDHVVGDkuDyCiCBP0a7CPuJ
+         EsccI6lyVamaitjXcSxmmgdVYvKq4pFoXUa3yXCj/evkJhHhRI+7AhNYEsTJq58xJi5L
+         JW1KJAVUA3sJqWiuKeq5Gr1UDFjE2Fi+AtUg0rNvGDnXv7/gBGkmwgfWEi6UEYtulLEV
+         zWIMses6FUQQ7u4x19BtFs9tFqcAyp3pwRf6qS90CE82kLRCHJte8VoKs+44xoNcRHd8
+         MveUCKtfHxbeH9ylEhep3Gn4516QTQ0ZBY9mDkUhmogSi3/1Mp1YefHG65+XtSMSfcqT
+         CPpw==
+X-Gm-Message-State: ANoB5pledkttaeTowAC1r8i9EhNRZ7b35rOwZiZumuFVH1zVDz+JOypV
+        PHBhlSRPBhdxq/5/LHjCNlqx4E4X0cgF6p0bKC1gDv4ckRjUgg==
+X-Google-Smtp-Source: AA0mqf4DUZuramY0kcNIRn3tW+ZtztdQq8I2YOCSKpV1GfrHD9H+TeKfaPUUqKudC1PkAvBt8M+gZnHtuCPV9OCCtq0=
+X-Received: by 2002:a5b:886:0:b0:6cb:7ce0:9e8e with SMTP id
+ e6-20020a5b0886000000b006cb7ce09e8emr2496635ybq.55.1668184141005; Fri, 11 Nov
+ 2022 08:29:01 -0800 (PST)
 MIME-Version: 1.0
 References: <1668160371-39153-1-git-send-email-wangyufen@huawei.com>
 In-Reply-To: <1668160371-39153-1-git-send-email-wangyufen@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 11 Nov 2022 10:08:42 -0500
-Message-ID: <CAHC9VhQL0rV608+kJCAcRGHnfo1QLa5g2faws1_Mitipi1wjNQ@mail.gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Fri, 11 Nov 2022 08:28:50 -0800
+Message-ID: <CANn89iKVBkbd=vmg0edybmStkDo+zM6N3BP2=71mNZmCG=T6HQ@mail.gmail.com>
 Subject: Re: [PATCH] net: fix memory leak in security_sk_alloc()
 To:     Wang Yufen <wangyufen@huawei.com>
 Cc:     linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, martin.lau@kernel.org,
-        daniel@iogearbox.net, ast@kernel.org, pabeni@redhat.com,
-        kuba@kernel.org, edumazet@google.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        martin.lau@kernel.org, daniel@iogearbox.net, ast@kernel.org,
+        pabeni@redhat.com, kuba@kernel.org,
         Stanislav Fomichev <sdf@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 11, 2022 at 4:32 AM Wang Yufen <wangyufen@huawei.com> wrote:
+On Fri, Nov 11, 2022 at 1:32 AM Wang Yufen <wangyufen@huawei.com> wrote:
 >
 > kmemleak reports this issue:
 >
@@ -110,20 +110,42 @@ On Fri, Nov 11, 2022 at 4:32 AM Wang Yufen <wangyufen@huawei.com> wrote:
 > I'm not sure whether this fix makes sense, but if hook lists don't
 > support this usage, might need to modify the
 > "tools/testing/selftests/bpf/progs/lsm_cgroup.c" test case.
+>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 
-The core problem is that the LSM is not yet fully stacked (work is
-actively going on in this space) which means that some LSM hooks do
-not support multiple LSMs at the same time; unfortunately the
-networking hooks fall into this category.
+Really the bug has not been added in linux-2.6.12, but this year with
+bpf lsm ...
 
-While there can only be one LSM which manages the sock::sk_security
-field by defining a sk_alloc_security hook, it *should* be possible
-for other LSMs to to leverage the socket hooks, e.g.
-security_socket_bind(), as long as they don't manipulate any of the
-sock::sk_security state.
+> Signed-off-by: Wang Yufen <wangyufen@huawei.com>
+> Cc: Stanislav Fomichev <sdf@google.com>
+> ---
+>  net/core/sock.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/net/core/sock.c b/net/core/sock.c
+> index a3ba035..e457a9d 100644
+> --- a/net/core/sock.c
+> +++ b/net/core/sock.c
+> @@ -2030,8 +2030,11 @@ static struct sock *sk_prot_alloc(struct proto *prot, gfp_t priority,
+>                 sk = kmalloc(prot->obj_size, priority);
+>
+>         if (sk != NULL) {
+> -               if (security_sk_alloc(sk, family, priority))
+> +               if (security_sk_alloc(sk, family, priority)) {
 
-I would suggest modifying the ".../bpf/progs/lsm_cgroup.c" test until
-the LSM supports stacking the networking hooks.
+This does not make sense.
 
--- 
-paul-moore.com
+A proper fix should be in security_sk_alloc(), not in callers.
+
+(Even if there is one caller today,)
+
+> +                       if (sk->sk_security)
+> +                               goto out_free_sec;
+>                         goto out_free;
+> +               }
+>
+>                 if (!try_module_get(prot->owner))
+>                         goto out_free_sec;
+> --
+> 1.8.3.1
+>
