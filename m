@@ -2,212 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C127DC4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Nov 2022 17:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F06F3C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Nov 2022 18:53:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233271AbiKKRnl (ORCPT
+        id S233320AbiKKSxH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Nov 2022 12:43:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42302 "EHLO
+        Fri, 11 Nov 2022 13:53:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231625AbiKKRni (ORCPT
+        with ESMTP id S232983AbiKKSxG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Nov 2022 12:43:38 -0500
-Received: from mail-oa1-x33.google.com (mail-oa1-x33.google.com [IPv6:2001:4860:4864:20::33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F02E82BF1
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 09:43:36 -0800 (PST)
-Received: by mail-oa1-x33.google.com with SMTP id 586e51a60fabf-13b23e29e36so6116843fac.8
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 09:43:36 -0800 (PST)
+        Fri, 11 Nov 2022 13:53:06 -0500
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9372631DD0
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 10:53:05 -0800 (PST)
+Received: by mail-io1-xd2d.google.com with SMTP id z3so4187889iof.3
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 10:53:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        d=google.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=maqLOf7YpMFEzynaRDsHxbX3MuJ4bRYzP6aDRTy1ABg=;
-        b=IYIhJKsZSVoD/GLDOrZMeaMiBIfAvMJw/A7ugWdKzVyQDZ41dYRVizXFELCwN1kcsR
-         6euyqu/nZDWhNYYZNXDhwQjeWTWxU0BZNayZ5hgzz0MGAqsWWZ8P9HO7c93CTBVEYn+K
-         Dl4JgJcQswYbgb5RtgAqlsFns9c5zs/My3/LqBnVn0uV1k1ln/MPIWwsI4Z5VofbMtDv
-         +DSfngg3rAnowI+ttvaHGe+oPgPkpOWx+r++j+IkWmFl6UHjvFiI8aYBX5v06nCSIshA
-         VKHSo8AFoBHSFKEZiJmky//E1SdfcoGp6dVzIn9Odmk3XgnE/nusEu7n4eFAEMLWQZdO
-         5b/w==
+        bh=1ouP/s1i13pW/WnLRCKmXreOXzmmuMMjrVEnF5fjihQ=;
+        b=Us0/MlsKJ4OW33U5IH0afDolq/vVUV1Qx0kQsEtfxHKsMBjx9b865n9dpmYV3EkF3j
+         th8iKrez0qBK50uc5q65e83d2lcvvyFFKnFsDLkZg1vUZsqJ8CZlmXLetQhdyKvyQGjO
+         RCkrvpPaGNsHrZ/ocCvsFeMr1+/QcOspJFRse7bmCxss3I9Y1RleV4YKdxBMRuJhqifh
+         Kk4IzYnPVbwwncc/e0i/d4fJR0BoBRckqu3CN10XPDU6gi0EoTs+4zEmDJWdZ+sPoOmx
+         uOfrGAt+/DH1y9B1a0Z3Ko6+imZT+mvSoqnpASihn8mh3ba6tmJ1yMkrHqXPAJyHDAYH
+         ugRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=maqLOf7YpMFEzynaRDsHxbX3MuJ4bRYzP6aDRTy1ABg=;
-        b=VhZzcRIiV1tk0i0T+691u5TNJQz20o9HxleiS4b84HwZ2qVeci7DW2T7LOrgG/yzm3
-         ZIEbevCaHZJSMXVFycDNmHi8Ek2ADhOGeNnsbmysPQQMo4js0dKF0VYbhzOjH4zuKGmV
-         4tAKlOve0nN/8h9lLO9thBcru3ogNQW5s3AY/NCxe/LbfBUaeNwGW7mwT+t+9FeGpqwo
-         SJJ00Z2qlS0Vx3t230fvmVbZJ6+gpZZFJK7IJSh4ilfn1HboQg8xMr2FXObXXyB0yaBc
-         shKB7Hy5YhVYQ4y64fvnN99hYpd2WUYS4E45RGYvtrJwhgQCHkVVxamYiosSMGTIRcqc
-         4rHA==
-X-Gm-Message-State: ANoB5pmhAysQ3OrSVaBH9toO0d3ufVh/Z1RBDmSCj94BJSWZ8hVHFd3V
-        NpH/UQATJcIiwdbxRV7m1doHCEil6FQ1Lp7kpWOb
-X-Google-Smtp-Source: AA0mqf5EWcLBYgk2h8vefAXExBzKCxOMg+hmScmmQZLxWBThNR1qc98TWGhzZP+A1fM5ucA3GYKXfLrQgdx1L+p0bxE=
-X-Received: by 2002:a05:6870:4304:b0:13b:d015:f1b5 with SMTP id
- w4-20020a056870430400b0013bd015f1b5mr1596997oah.51.1668188615875; Fri, 11 Nov
- 2022 09:43:35 -0800 (PST)
+        bh=1ouP/s1i13pW/WnLRCKmXreOXzmmuMMjrVEnF5fjihQ=;
+        b=a6qjHxmV79eZiOtJ+ZlXSSyeN1K37nlTeR5O4g+b9bvQT8mtxG1Zj2Ou5pMSBagt3t
+         Cv2XDMUcZLIDx9ddJT9lsUJ430PjQ9os1eQYm8NJu1z0i4iJ0W8TVQYw1NithHX6h7Bn
+         NDP+BLKvYwdR67D1u8JmP/Qz93vpPHQJV5OjIcJvnYRrTSD5uw1e/7yTcqbO4CLtLuv4
+         iNKICJpsOR31MCOvLQXAfmQnOrI4qGYn66IbXrdS6oFsDfhukUyC6KJKuVobRx8PaDIp
+         H/X7hyrU6CAfFwNi8UbYz2F+XpTJJdafnNGVB5xZsocult5xLX7zpjWIweSB6g1uoBt2
+         3TQA==
+X-Gm-Message-State: ANoB5pkyvTK3k8dIyjIpxtUSErVyUZoPuzLaLUOqqRcd54XqfdxnpcdA
+        Fm/gVdDkGr2uwrTJ8bE1QKW/rBtVHkqFGQY/pewZweq/Xtc3m3M+
+X-Google-Smtp-Source: AA0mqf5/RZzUbjpyAgwaCSIdwMocYINV3kyLiRKC6sqkaRn6UM7WpSdSYkmRmhYnLHVsukAfZmLNWOhytcuPW8rfZFA=
+X-Received: by 2002:a6b:3bcb:0:b0:6c0:db74:7be1 with SMTP id
+ i194-20020a6b3bcb000000b006c0db747be1mr1558174ioa.92.1668192784809; Fri, 11
+ Nov 2022 10:53:04 -0800 (PST)
 MIME-Version: 1.0
-References: <166807856758.2972602.14175912201162072721.stgit@warthog.procyon.org.uk>
- <CAHC9VhTJh2tFbvOMzpGw7VSnHHb=boNhL5c7a1Ed+iHNFwWwqg@mail.gmail.com>
-In-Reply-To: <CAHC9VhTJh2tFbvOMzpGw7VSnHHb=boNhL5c7a1Ed+iHNFwWwqg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 11 Nov 2022 12:43:25 -0500
-Message-ID: <CAHC9VhQE08HOKKbfU6sh2u0i5Ab=Ah9_0H+EU72wuMSLELi+ww@mail.gmail.com>
-Subject: Re: [PATCH v5] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, Jeff Layton <jlayton@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Scott Mayhew <smayhew@redhat.com>, linux-nfs@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1668160371-39153-1-git-send-email-wangyufen@huawei.com> <CAHC9VhQL0rV608+kJCAcRGHnfo1QLa5g2faws1_Mitipi1wjNQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhQL0rV608+kJCAcRGHnfo1QLa5g2faws1_Mitipi1wjNQ@mail.gmail.com>
+From:   Stanislav Fomichev <sdf@google.com>
+Date:   Fri, 11 Nov 2022 10:52:54 -0800
+Message-ID: <CAKH8qBvKSV0Y5PuxiBwuOmyFFXMSZmOOQHSQ0LgvBXJDA+6xNw@mail.gmail.com>
+Subject: Re: [PATCH] net: fix memory leak in security_sk_alloc()
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Wang Yufen <wangyufen@huawei.com>,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, martin.lau@kernel.org,
+        daniel@iogearbox.net, ast@kernel.org, pabeni@redhat.com,
+        kuba@kernel.org, edumazet@google.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 11, 2022 at 12:40 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Thu, Nov 10, 2022 at 6:09 AM David Howells <dhowells@redhat.com> wrote:
-> >
-> > When NFS superblocks are created by automounting, their LSM parameters
-> > aren't set in the fs_context struct prior to sget_fc() being called,
-> > leading to failure to match existing superblocks.
-> >
-> > Fix this by adding a new LSM hook to load fc->security for submount
-> > creation when alloc_fs_context() is creating the fs_context for it.
-> >
-> > However, this uncovers a further bug: nfs_get_root() initialises the
-> > superblock security manually by calling security_sb_set_mnt_opts() or
-> > security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
-> > security_sb_set_mnt_opts(), which can lead to SELinux, at least,
-> > complaining.
-> >
-> > Fix that by adding a flag to the fs_context that suppresses the
-> > security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NFS
-> > when it sets the LSM context on the new superblock.
-> >
-> > The first bug leads to messages like the following appearing in dmesg:
-> >
-> >         NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
-> >
-> > Changes
-> > =======
-> > ver #5)
-> >  - Removed unused variable.
-> >  - Only allocate smack_mnt_opts if we're dealing with a submount.
-> >
-> > ver #4)
-> >  - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux or
-> >    Smack.
-> >
-> > ver #3)
-> >  - Made LSM parameter extraction dependent on fc->purpose ==
-> >    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
-> >
-> > ver #2)
-> >  - Added Smack support
-> >  - Made LSM parameter extraction dependent on reference != NULL.
-> >
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
-> > Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
-> > Tested-by: Jeff Layton <jlayton@kernel.org>
-> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> > Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> > cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-> > cc: Anna Schumaker <anna@kernel.org>
-> > cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > cc: Scott Mayhew <smayhew@redhat.com>
-> > cc: Jeff Layton <jlayton@kernel.org>
-> > cc: Paul Moore <paul@paul-moore.com>
-> > cc: linux-nfs@vger.kernel.org
-> > cc: selinux@vger.kernel.org
-> > cc: linux-security-module@vger.kernel.org
-> > cc: linux-fsdevel@vger.kernel.org
-> > Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
-> > Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
-> > Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
-> > Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
-> > Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.uk/ # v5
-> > ---
-> >
-> >  fs/fs_context.c               |    4 +++
-> >  fs/nfs/getroot.c              |    1 +
-> >  fs/super.c                    |   10 +++++---
-> >  include/linux/fs_context.h    |    1 +
-> >  include/linux/lsm_hook_defs.h |    1 +
-> >  include/linux/lsm_hooks.h     |    6 ++++-
-> >  include/linux/security.h      |    6 +++++
-> >  security/security.c           |    5 ++++
-> >  security/selinux/hooks.c      |   25 +++++++++++++++++++
-> >  security/smack/smack_lsm.c    |   54 +++++++++++++++++++++++++++++++++++++++++
-> >  10 files changed, 108 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/fs/fs_context.c b/fs/fs_context.c
-> > index 24ce12f0db32..22248b8a88a8 100644
-> > --- a/fs/fs_context.c
-> > +++ b/fs/fs_context.c
-> > @@ -282,6 +282,10 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
-> >                 break;
-> >         }
-> >
-> > +       ret = security_fs_context_init(fc, reference);
-> > +       if (ret < 0)
-> > +               goto err_fc;
-> > +
-> >         /* TODO: Make all filesystems support this unconditionally */
-> >         init_fs_context = fc->fs_type->init_fs_context;
-> >         if (!init_fs_context)
-> > diff --git a/fs/nfs/getroot.c b/fs/nfs/getroot.c
-> > index 11ff2b2e060f..651bffb0067e 100644
-> > --- a/fs/nfs/getroot.c
-> > +++ b/fs/nfs/getroot.c
-> > @@ -144,6 +144,7 @@ int nfs_get_root(struct super_block *s, struct fs_context *fc)
-> >         }
-> >         if (error)
-> >                 goto error_splat_root;
-> > +       fc->lsm_set = true;
-> >         if (server->caps & NFS_CAP_SECURITY_LABEL &&
-> >                 !(kflags_out & SECURITY_LSM_NATIVE_LABELS))
-> >                 server->caps &= ~NFS_CAP_SECURITY_LABEL;
-> > diff --git a/fs/super.c b/fs/super.c
-> > index 8d39e4f11cfa..f200ae0549ca 100644
-> > --- a/fs/super.c
-> > +++ b/fs/super.c
-> > @@ -1553,10 +1553,12 @@ int vfs_get_tree(struct fs_context *fc)
-> >         smp_wmb();
-> >         sb->s_flags |= SB_BORN;
-> >
-> > -       error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-> > -       if (unlikely(error)) {
-> > -               fc_drop_locked(fc);
-> > -               return error;
-> > +       if (!(fc->lsm_set)) {
-> > +               error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-> > +               if (unlikely(error)) {
-> > +                       fc_drop_locked(fc);
-> > +                       return error;
-> > +               }
-> >         }
+On Fri, Nov 11, 2022 at 7:08 AM Paul Moore <paul@paul-moore.com> wrote:
 >
-> Thinking about all the different things that an LSM could do, would it
-> ever be possible that a LSM would want the security_sb_set_mnt_opts()
-> call to happen here?  I'm wondering if we are better off leaving it up
-> to the LSM by passing the fs_context in the security_sb_set_mnt_opts()
-> hook; those that want to effectively skip this call due to a submount
-> setup already done in security_fs_context_init() can check the
-> fs_context::purpose value in the security_sb_set_mnt_opts() hook.
+> On Fri, Nov 11, 2022 at 4:32 AM Wang Yufen <wangyufen@huawei.com> wrote:
+> >
+> > kmemleak reports this issue:
+> >
+> > unreferenced object 0xffff88810b7835c0 (size 32):
+> >   comm "test_progs", pid 270, jiffies 4294969007 (age 1621.315s)
+> >   hex dump (first 32 bytes):
+> >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> >     03 00 00 00 03 00 00 00 0f 00 00 00 00 00 00 00  ................
+> >   backtrace:
+> >     [<00000000376cdeab>] kmalloc_trace+0x27/0x110
+> >     [<000000003bcdb3b6>] selinux_sk_alloc_security+0x66/0x110
+> >     [<000000003959008f>] security_sk_alloc+0x47/0x80
+> >     [<00000000e7bc6668>] sk_prot_alloc+0xbd/0x1a0
+> >     [<0000000002d6343a>] sk_alloc+0x3b/0x940
+> >     [<000000009812a46d>] unix_create1+0x8f/0x3d0
+> >     [<000000005ed0976b>] unix_create+0xa1/0x150
+> >     [<0000000086a1d27f>] __sock_create+0x233/0x4a0
+> >     [<00000000cffe3a73>] __sys_socket_create.part.0+0xaa/0x110
+> >     [<0000000007c63f20>] __sys_socket+0x49/0xf0
+> >     [<00000000b08753c8>] __x64_sys_socket+0x42/0x50
+> >     [<00000000b56e26b3>] do_syscall_64+0x3b/0x90
+> >     [<000000009b4871b8>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> >
+> > The issue occurs in the following scenarios:
+> >
+> > unix_create1()
+> >   sk_alloc()
+> >     sk_prot_alloc()
+> >       security_sk_alloc()
+> >         call_int_hook()
+> >           hlist_for_each_entry()
+> >             entry1->hook.sk_alloc_security
+> >             <-- selinux_sk_alloc_security() succeeded,
+> >             <-- sk->security alloced here.
+> >             entry2->hook.sk_alloc_security
+> >             <-- bpf_lsm_sk_alloc_security() failed
+> >       goto out_free;
+> >         ...    <-- the sk->security not freed, memleak
+> >
+> > To fix, if security_sk_alloc() failed and sk->security not null,
+> > goto out_free_sec to reclaim resources.
+> >
+> > I'm not sure whether this fix makes sense, but if hook lists don't
+> > support this usage, might need to modify the
+> > "tools/testing/selftests/bpf/progs/lsm_cgroup.c" test case.
+>
+> The core problem is that the LSM is not yet fully stacked (work is
+> actively going on in this space) which means that some LSM hooks do
+> not support multiple LSMs at the same time; unfortunately the
+> networking hooks fall into this category.
+>
+> While there can only be one LSM which manages the sock::sk_security
+> field by defining a sk_alloc_security hook, it *should* be possible
+> for other LSMs to to leverage the socket hooks, e.g.
+> security_socket_bind(), as long as they don't manipulate any of the
+> sock::sk_security state.
+>
+> I would suggest modifying the ".../bpf/progs/lsm_cgroup.c" test until
+> the LSM supports stacking the networking hooks.
 
-Actually, we could probably also create a LSM specific flag in
-fs_context::security to indicate that the setup has already been done.
-That's probably a little safer than relying on fs_context::purpose in
-the security_sb_set_mnt_opts() hook.
+Agreed. Let's add some code to skip the test when it runs in the
+environments that already have non-bpf lsms installed?
 
-> Thoughts?
-
--- 
-paul-moore.com
+> --
+> paul-moore.com
