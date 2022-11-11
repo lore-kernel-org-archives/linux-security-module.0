@@ -2,150 +2,205 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97374C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Nov 2022 16:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065C1C43219
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Nov 2022 17:41:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233711AbiKKQ3N (ORCPT
+        id S234206AbiKKRlT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Nov 2022 11:29:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55456 "EHLO
+        Fri, 11 Nov 2022 12:41:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234266AbiKKQ3D (ORCPT
+        with ESMTP id S233752AbiKKRlK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Nov 2022 11:29:03 -0500
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A8FA7342A
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 08:29:02 -0800 (PST)
-Received: by mail-yb1-xb32.google.com with SMTP id 7so6356486ybp.13
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 08:29:02 -0800 (PST)
+        Fri, 11 Nov 2022 12:41:10 -0500
+Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E122A63CE8
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 09:41:07 -0800 (PST)
+Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-13b103a3e5dso6139848fac.2
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 09:41:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0BFAQmnkuUvPtfFGhzAbsEdzBkK1S4afgbyRM7b2v0A=;
-        b=Ao7rkqlr1IqQ8Co3/EvS+n/pfEYybDyougTAPYEhZGZp2ajnzR+VfCxH3SmlqCaz1W
-         bIHzAw2Rf5XtqgSYaayVeQuag5UH31Ct90DvfKTkiCY/pWbfjgQLm4tF6MO3/MzydX/f
-         2R12od8pwwg6MCKUp8NgIe7t8DiwqEktGCc4uG/7vQIuvlwCgss0LpeLI/YYPV65SKLq
-         gBbosT1kZ/wV6oLMRerCe21r6jEehyNwsENxvXaRKz/Vy8r0U6FZSyDDbbev2Lp/TCyC
-         5LJGGduuWgX0nj0fz8cU5l6K0XJLqtw9YLZiH71YWDZ/jgj787INXA+0d07C2VQvpYD3
-         xIiw==
+        bh=4FMbovKeaf0ACEXQ0YanGO9/PhL7FDv4zcGvp9Jqeb8=;
+        b=VC2441h1K58QJkK+WGDca1W1zE89fQLTCiI2j9YZF8c7kZutY8qZa37OsZfchHaWPS
+         rhMk5/lHhhn0VVnapdeeJdbRT73kCMs+fjJf2MKXFrEUUsifRb5msz4ssklMNJBwC7eh
+         Chg1S4lbsZ4dVFWnrIXNGPFFAx0LNq8OQ9MXm+IBeMhVnfnt6VtiEwgM8nb0msLSnp58
+         pb2LkeEZ2gFqjfjK6C7Sx0bex21qNoK1D05X39ls8QGfZpothPC5BYnsb9IAdN1Lxyps
+         Lisi72JrvKVaXERa9xDqo4MVML53UfqJmtjTDFPiT07Yk9rhBBSBf+xxCAGylshMQU5N
+         DFuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0BFAQmnkuUvPtfFGhzAbsEdzBkK1S4afgbyRM7b2v0A=;
-        b=KDOnClrJcSZ+yLK9IZ/3UkSguULYE81VCF90lacjUvLXDHVVGDkuDyCiCBP0a7CPuJ
-         EsccI6lyVamaitjXcSxmmgdVYvKq4pFoXUa3yXCj/evkJhHhRI+7AhNYEsTJq58xJi5L
-         JW1KJAVUA3sJqWiuKeq5Gr1UDFjE2Fi+AtUg0rNvGDnXv7/gBGkmwgfWEi6UEYtulLEV
-         zWIMses6FUQQ7u4x19BtFs9tFqcAyp3pwRf6qS90CE82kLRCHJte8VoKs+44xoNcRHd8
-         MveUCKtfHxbeH9ylEhep3Gn4516QTQ0ZBY9mDkUhmogSi3/1Mp1YefHG65+XtSMSfcqT
-         CPpw==
-X-Gm-Message-State: ANoB5pledkttaeTowAC1r8i9EhNRZ7b35rOwZiZumuFVH1zVDz+JOypV
-        PHBhlSRPBhdxq/5/LHjCNlqx4E4X0cgF6p0bKC1gDv4ckRjUgg==
-X-Google-Smtp-Source: AA0mqf4DUZuramY0kcNIRn3tW+ZtztdQq8I2YOCSKpV1GfrHD9H+TeKfaPUUqKudC1PkAvBt8M+gZnHtuCPV9OCCtq0=
-X-Received: by 2002:a5b:886:0:b0:6cb:7ce0:9e8e with SMTP id
- e6-20020a5b0886000000b006cb7ce09e8emr2496635ybq.55.1668184141005; Fri, 11 Nov
- 2022 08:29:01 -0800 (PST)
+        bh=4FMbovKeaf0ACEXQ0YanGO9/PhL7FDv4zcGvp9Jqeb8=;
+        b=gkkNjrIO5L+FucyxXP3gblbeGsLqHUq5P217Y3N3JdGVF4q6nO9OSUIGv6BAVDBP60
+         w1xR3ct/vJ8Um+UBllR5JdmEgxflimPbxG5rvS/BIVfEYOXXFo8J6OQxNI+qtzBbQXH3
+         PghNXjHweAjdkJ+30vs4GN0CdCFNwFLMkg5RzHqwp/gorSxdzP51kZ2Mdr9mQvUcK7xQ
+         v3/gwfVRGniiWGqrT/14I9Lvotk9KPGyeD5I4WpgfJG+qmCNFg8KvgQmBcOSPuw2o1nc
+         Zi+m7HyDDl7lLEOtDnjraBD9Jdcq61HBP+90LZaiQeTv+EGV/VPBx7z93cw+M92Ym4wG
+         /8KQ==
+X-Gm-Message-State: ANoB5pnZGY3RyPqGWxJNn3HGtY+xvaOD2H5XmiXDIiWxrg8WrNnj0Hgr
+        00vc+nuBQjse837fHjn2/PUJogG5HFFM/LiqiqxR
+X-Google-Smtp-Source: AA0mqf655iw4JsNFSaXUguP05uOdtX8Svtt265PQFwzqFM6wcQ7IAUleTmgJzrbkAjGYudkUtWM48pVP5eznaOTF3uA=
+X-Received: by 2002:a05:6870:4304:b0:13b:d015:f1b5 with SMTP id
+ w4-20020a056870430400b0013bd015f1b5mr1591387oah.51.1668188467074; Fri, 11 Nov
+ 2022 09:41:07 -0800 (PST)
 MIME-Version: 1.0
-References: <1668160371-39153-1-git-send-email-wangyufen@huawei.com>
-In-Reply-To: <1668160371-39153-1-git-send-email-wangyufen@huawei.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Fri, 11 Nov 2022 08:28:50 -0800
-Message-ID: <CANn89iKVBkbd=vmg0edybmStkDo+zM6N3BP2=71mNZmCG=T6HQ@mail.gmail.com>
-Subject: Re: [PATCH] net: fix memory leak in security_sk_alloc()
-To:     Wang Yufen <wangyufen@huawei.com>
-Cc:     linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        martin.lau@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        pabeni@redhat.com, kuba@kernel.org,
-        Stanislav Fomichev <sdf@google.com>
+References: <166807856758.2972602.14175912201162072721.stgit@warthog.procyon.org.uk>
+In-Reply-To: <166807856758.2972602.14175912201162072721.stgit@warthog.procyon.org.uk>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 11 Nov 2022 12:40:56 -0500
+Message-ID: <CAHC9VhTJh2tFbvOMzpGw7VSnHHb=boNhL5c7a1Ed+iHNFwWwqg@mail.gmail.com>
+Subject: Re: [PATCH v5] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, Jeff Layton <jlayton@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Scott Mayhew <smayhew@redhat.com>, linux-nfs@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 11, 2022 at 1:32 AM Wang Yufen <wangyufen@huawei.com> wrote:
+On Thu, Nov 10, 2022 at 6:09 AM David Howells <dhowells@redhat.com> wrote:
 >
-> kmemleak reports this issue:
+> When NFS superblocks are created by automounting, their LSM parameters
+> aren't set in the fs_context struct prior to sget_fc() being called,
+> leading to failure to match existing superblocks.
 >
-> unreferenced object 0xffff88810b7835c0 (size 32):
->   comm "test_progs", pid 270, jiffies 4294969007 (age 1621.315s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     03 00 00 00 03 00 00 00 0f 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<00000000376cdeab>] kmalloc_trace+0x27/0x110
->     [<000000003bcdb3b6>] selinux_sk_alloc_security+0x66/0x110
->     [<000000003959008f>] security_sk_alloc+0x47/0x80
->     [<00000000e7bc6668>] sk_prot_alloc+0xbd/0x1a0
->     [<0000000002d6343a>] sk_alloc+0x3b/0x940
->     [<000000009812a46d>] unix_create1+0x8f/0x3d0
->     [<000000005ed0976b>] unix_create+0xa1/0x150
->     [<0000000086a1d27f>] __sock_create+0x233/0x4a0
->     [<00000000cffe3a73>] __sys_socket_create.part.0+0xaa/0x110
->     [<0000000007c63f20>] __sys_socket+0x49/0xf0
->     [<00000000b08753c8>] __x64_sys_socket+0x42/0x50
->     [<00000000b56e26b3>] do_syscall_64+0x3b/0x90
->     [<000000009b4871b8>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> Fix this by adding a new LSM hook to load fc->security for submount
+> creation when alloc_fs_context() is creating the fs_context for it.
 >
-> The issue occurs in the following scenarios:
+> However, this uncovers a further bug: nfs_get_root() initialises the
+> superblock security manually by calling security_sb_set_mnt_opts() or
+> security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
+> security_sb_set_mnt_opts(), which can lead to SELinux, at least,
+> complaining.
 >
-> unix_create1()
->   sk_alloc()
->     sk_prot_alloc()
->       security_sk_alloc()
->         call_int_hook()
->           hlist_for_each_entry()
->             entry1->hook.sk_alloc_security
->             <-- selinux_sk_alloc_security() succeeded,
->             <-- sk->security alloced here.
->             entry2->hook.sk_alloc_security
->             <-- bpf_lsm_sk_alloc_security() failed
->       goto out_free;
->         ...    <-- the sk->security not freed, memleak
+> Fix that by adding a flag to the fs_context that suppresses the
+> security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NFS
+> when it sets the LSM context on the new superblock.
 >
-> To fix, if security_sk_alloc() failed and sk->security not null,
-> goto out_free_sec to reclaim resources.
+> The first bug leads to messages like the following appearing in dmesg:
 >
-> I'm not sure whether this fix makes sense, but if hook lists don't
-> support this usage, might need to modify the
-> "tools/testing/selftests/bpf/progs/lsm_cgroup.c" test case.
+>         NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
 >
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-
-Really the bug has not been added in linux-2.6.12, but this year with
-bpf lsm ...
-
-> Signed-off-by: Wang Yufen <wangyufen@huawei.com>
-> Cc: Stanislav Fomichev <sdf@google.com>
+> Changes
+> =======
+> ver #5)
+>  - Removed unused variable.
+>  - Only allocate smack_mnt_opts if we're dealing with a submount.
+>
+> ver #4)
+>  - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux or
+>    Smack.
+>
+> ver #3)
+>  - Made LSM parameter extraction dependent on fc->purpose ==
+>    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
+>
+> ver #2)
+>  - Added Smack support
+>  - Made LSM parameter extraction dependent on reference != NULL.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
+> Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
+> Tested-by: Jeff Layton <jlayton@kernel.org>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+> cc: Anna Schumaker <anna@kernel.org>
+> cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> cc: Scott Mayhew <smayhew@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Paul Moore <paul@paul-moore.com>
+> cc: linux-nfs@vger.kernel.org
+> cc: selinux@vger.kernel.org
+> cc: linux-security-module@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
+> Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
+> Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
+> Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
+> Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.uk/ # v5
 > ---
->  net/core/sock.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
 >
-> diff --git a/net/core/sock.c b/net/core/sock.c
-> index a3ba035..e457a9d 100644
-> --- a/net/core/sock.c
-> +++ b/net/core/sock.c
-> @@ -2030,8 +2030,11 @@ static struct sock *sk_prot_alloc(struct proto *prot, gfp_t priority,
->                 sk = kmalloc(prot->obj_size, priority);
+>  fs/fs_context.c               |    4 +++
+>  fs/nfs/getroot.c              |    1 +
+>  fs/super.c                    |   10 +++++---
+>  include/linux/fs_context.h    |    1 +
+>  include/linux/lsm_hook_defs.h |    1 +
+>  include/linux/lsm_hooks.h     |    6 ++++-
+>  include/linux/security.h      |    6 +++++
+>  security/security.c           |    5 ++++
+>  security/selinux/hooks.c      |   25 +++++++++++++++++++
+>  security/smack/smack_lsm.c    |   54 +++++++++++++++++++++++++++++++++++++++++
+>  10 files changed, 108 insertions(+), 5 deletions(-)
 >
->         if (sk != NULL) {
-> -               if (security_sk_alloc(sk, family, priority))
-> +               if (security_sk_alloc(sk, family, priority)) {
-
-This does not make sense.
-
-A proper fix should be in security_sk_alloc(), not in callers.
-
-(Even if there is one caller today,)
-
-> +                       if (sk->sk_security)
-> +                               goto out_free_sec;
->                         goto out_free;
+> diff --git a/fs/fs_context.c b/fs/fs_context.c
+> index 24ce12f0db32..22248b8a88a8 100644
+> --- a/fs/fs_context.c
+> +++ b/fs/fs_context.c
+> @@ -282,6 +282,10 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
+>                 break;
+>         }
+>
+> +       ret = security_fs_context_init(fc, reference);
+> +       if (ret < 0)
+> +               goto err_fc;
+> +
+>         /* TODO: Make all filesystems support this unconditionally */
+>         init_fs_context = fc->fs_type->init_fs_context;
+>         if (!init_fs_context)
+> diff --git a/fs/nfs/getroot.c b/fs/nfs/getroot.c
+> index 11ff2b2e060f..651bffb0067e 100644
+> --- a/fs/nfs/getroot.c
+> +++ b/fs/nfs/getroot.c
+> @@ -144,6 +144,7 @@ int nfs_get_root(struct super_block *s, struct fs_context *fc)
+>         }
+>         if (error)
+>                 goto error_splat_root;
+> +       fc->lsm_set = true;
+>         if (server->caps & NFS_CAP_SECURITY_LABEL &&
+>                 !(kflags_out & SECURITY_LSM_NATIVE_LABELS))
+>                 server->caps &= ~NFS_CAP_SECURITY_LABEL;
+> diff --git a/fs/super.c b/fs/super.c
+> index 8d39e4f11cfa..f200ae0549ca 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1553,10 +1553,12 @@ int vfs_get_tree(struct fs_context *fc)
+>         smp_wmb();
+>         sb->s_flags |= SB_BORN;
+>
+> -       error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
+> -       if (unlikely(error)) {
+> -               fc_drop_locked(fc);
+> -               return error;
+> +       if (!(fc->lsm_set)) {
+> +               error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
+> +               if (unlikely(error)) {
+> +                       fc_drop_locked(fc);
+> +                       return error;
 > +               }
->
->                 if (!try_module_get(prot->owner))
->                         goto out_free_sec;
-> --
-> 1.8.3.1
->
+>         }
+
+Thinking about all the different things that an LSM could do, would it
+ever be possible that a LSM would want the security_sb_set_mnt_opts()
+call to happen here?  I'm wondering if we are better off leaving it up
+to the LSM by passing the fs_context in the security_sb_set_mnt_opts()
+hook; those that want to effectively skip this call due to a submount
+setup already done in security_fs_context_init() can check the
+fs_context::purpose value in the security_sb_set_mnt_opts() hook.
+
+Thoughts?
+
+-- 
+paul-moore.com
