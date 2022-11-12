@@ -2,214 +2,78 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6D0C4321E
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Nov 2022 23:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA2FAC4332F
+	for <linux-security-module@archiver.kernel.org>; Sat, 12 Nov 2022 09:31:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234545AbiKKXUU (ORCPT
+        id S233989AbiKLJbZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Nov 2022 18:20:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47108 "EHLO
+        Sat, 12 Nov 2022 04:31:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234485AbiKKXUM (ORCPT
+        with ESMTP id S234562AbiKLJbW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Nov 2022 18:20:12 -0500
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AECD83389
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 15:19:51 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id d20so5358655plr.10
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Nov 2022 15:19:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lT6eX+hZD0ZTySUyAECYTCle2DEgzv1f+QjqPC3Dddk=;
-        b=U2W25pAvqdkdkWLcokZmO7l4t8Bw+tkvFOixYVuwcikCJOh84eIQEtmWeKRV3H67Cl
-         kkxJiMOaisdceUpyytoKvTfzcHeG1zNMnbI8yauLRuL0bHiOYiKgs6QRKMPhmj7br+cC
-         RfbQaXDPPOrgB0ad6d6z+NtpYbMorkvaHf22o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lT6eX+hZD0ZTySUyAECYTCle2DEgzv1f+QjqPC3Dddk=;
-        b=WNFjcZm7BxmoQG+ucWR7NgpOFlw2+FKkOTP9VzPMTrSCjxoHogIOZqaN33nkag9X56
-         quekhtxicjlTcYFrhFlaA5FM/8Z35dBuKDSFUHl0jOi298FHSlMDQVZnnelwY/ZmP2Vc
-         5JNdRsVg5tTpBP3Mc7/xIDBdFWNMh0X3sfnerSm3ZLxaZxQ2fyxQbm67D+FFsYzJR4a8
-         a0ODLM/oHF+IiF9P72kkLhqOAI/4LPq9jZOfd/+5cWwTjsLpRryp8nUxhUvsOmq2AJnF
-         wWsoZHwTRBY9UmzF5mrXu0wMRk9fDy+RtIBqg4JIWLF5rQvs71DFKHOB8TS2v0RbqooZ
-         wkHQ==
-X-Gm-Message-State: ANoB5pkSBhczYXhiixOYUzqkUxWMhFwb/+QNHILAIf3CWD20z5fb+F3/
-        J9TEfMFmDDGdTthuCC3R1dCX6A==
-X-Google-Smtp-Source: AA0mqf4p+IlUyIKh3j0vUMhqyQotcP0Ad7fK3S6VQzoCBIJimaKlPbs9tjtuMVYQHk1nqchFwy1AhQ==
-X-Received: by 2002:a17:902:9b97:b0:186:5f71:7939 with SMTP id y23-20020a1709029b9700b001865f717939mr4244136plp.162.1668208791108;
-        Fri, 11 Nov 2022 15:19:51 -0800 (PST)
-Received: from evgreen-glaptop.lan ([98.45.28.95])
-        by smtp.gmail.com with ESMTPSA id x128-20020a623186000000b0056da2ad6503sm2106900pfx.39.2022.11.11.15.19.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Nov 2022 15:19:50 -0800 (PST)
-From:   Evan Green <evgreen@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     corbet@lwn.net, linux-integrity@vger.kernel.org,
-        Eric Biggers <ebiggers@kernel.org>, gwendal@chromium.org,
-        dianders@chromium.org, apronin@chromium.org,
-        Pavel Machek <pavel@ucw.cz>, Ben Boeckel <me@benboeckel.net>,
-        rjw@rjwysocki.net, jejb@linux.ibm.com,
-        Kees Cook <keescook@chromium.org>, dlunev@google.com,
-        zohar@linux.ibm.com, Matthew Garrett <mgarrett@aurora.tech>,
-        jarkko@kernel.org, linux-pm@vger.kernel.org,
-        Evan Green <evgreen@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v5 06/11] security: keys: trusted: Verify creation data
-Date:   Fri, 11 Nov 2022 15:16:31 -0800
-Message-Id: <20221111151451.v5.6.I6cdb522cb5ea28fcd1e35b4cd92cbd067f99269a@changeid>
-X-Mailer: git-send-email 2.38.1.431.g37b22c650d-goog
-In-Reply-To: <20221111231636.3748636-1-evgreen@chromium.org>
-References: <20221111231636.3748636-1-evgreen@chromium.org>
+        Sat, 12 Nov 2022 04:31:22 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E69D51DF3B;
+        Sat, 12 Nov 2022 01:31:21 -0800 (PST)
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4N8VbX4YmNzbnb0;
+        Sat, 12 Nov 2022 17:27:36 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.58) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Sat, 12 Nov 2022 17:31:20 +0800
+From:   Xiu Jianfeng <xiujianfeng@huawei.com>
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+        <roberto.sassu@polito.it>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <roberto.sassu@huawei.com>
+Subject: [PATCH] ima: Fix misuse of dereference of pointer in template_desc_init_fields()
+Date:   Sat, 12 Nov 2022 17:27:19 +0800
+Message-ID: <20221112092719.224888-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.174.58]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-If a loaded key contains creation data, ask the TPM to verify that
-creation data. This allows users like encrypted hibernate to know that
-the loaded and parsed creation data has not been tampered with.
+The input parameter @fields is type of struct ima_template_field ***, so
+when allocates array memory for @fields, the size of element should be
+sizeof(**field) instead of sizeof(*field).
 
-Suggested-by: Matthew Garrett <mjg59@google.com>
-Signed-off-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Actually the original code would not cause any runtime error, but it's
+better to make it logically right.
 
+Fixes: adf53a778a0a ("ima: new templates management mechanism")
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 ---
-Source material for this change is at:
-https://patchwork.kernel.org/project/linux-pm/patch/20210220013255.1083202-9-matthewgarrett@google.com/
+ security/integrity/ima/ima_template.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-(no changes since v3)
-
-Changes in v3:
- - Changed funky tag to suggested-by (Kees). Matthew, holler if you want
-   something different.
-
-Changes in v2:
- - Adjust hash len by 2 due to new ASN.1 storage, and add underflow
-   check.
-
- include/linux/tpm.h                       |  1 +
- security/keys/trusted-keys/trusted_tpm2.c | 77 ++++++++++++++++++++++-
- 2 files changed, 77 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 70134e6551745f..9c2ee3e30ffa5d 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -224,6 +224,7 @@ enum tpm2_command_codes {
- 	TPM2_CC_SELF_TEST	        = 0x0143,
- 	TPM2_CC_STARTUP		        = 0x0144,
- 	TPM2_CC_SHUTDOWN	        = 0x0145,
-+	TPM2_CC_CERTIFYCREATION	        = 0x014A,
- 	TPM2_CC_NV_READ                 = 0x014E,
- 	TPM2_CC_CREATE		        = 0x0153,
- 	TPM2_CC_LOAD		        = 0x0157,
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 3d84c3d41bdee1..402933f8c99ede 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -730,6 +730,74 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 	return rc;
- }
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index 49f0626928a1..04c49f05cb74 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -245,11 +245,11 @@ int template_desc_init_fields(const char *template_fmt,
+ 	}
  
-+/**
-+ * tpm2_certify_creation() - execute a TPM2_CertifyCreation command
-+ *
-+ * @chip: TPM chip to use
-+ * @payload: the key data in clear and encrypted form
-+ * @blob_handle: the loaded TPM handle of the key
-+ *
-+ * Return: 0 on success
-+ *         -EINVAL on tpm error status
-+ *         < 0 error from tpm_send or tpm_buf_init
-+ */
-+static int tpm2_certify_creation(struct tpm_chip *chip,
-+				 struct trusted_key_payload *payload,
-+				 u32 blob_handle)
-+{
-+	struct tpm_header *head;
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CERTIFYCREATION);
-+	if (rc)
-+		return rc;
-+
-+	/* Use TPM_RH_NULL for signHandle */
-+	tpm_buf_append_u32(&buf, 0x40000007);
-+
-+	/* Object handle */
-+	tpm_buf_append_u32(&buf, blob_handle);
-+
-+	/* Auth */
-+	tpm_buf_append_u32(&buf, 9);
-+	tpm_buf_append_u32(&buf, TPM2_RS_PW);
-+	tpm_buf_append_u16(&buf, 0);
-+	tpm_buf_append_u8(&buf, 0);
-+	tpm_buf_append_u16(&buf, 0);
-+
-+	/* Qualifying data */
-+	tpm_buf_append_u16(&buf, 0);
-+
-+	/* Creation data hash */
-+	if (payload->creation_hash_len < 2) {
-+		rc = -EINVAL;
-+		goto out;
-+	}
-+
-+	tpm_buf_append_u16(&buf, payload->creation_hash_len - 2);
-+	tpm_buf_append(&buf, payload->creation_hash + 2,
-+		       payload->creation_hash_len - 2);
-+
-+	/* signature scheme */
-+	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
-+
-+	/* creation ticket */
-+	tpm_buf_append(&buf, payload->tk, payload->tk_len);
-+
-+	rc = tpm_transmit_cmd(chip, &buf, 6, "certifying creation data");
-+	if (rc)
-+		goto out;
-+
-+	head = (struct tpm_header *)buf.data;
-+
-+	if (be32_to_cpu(head->return_code) != TPM2_RC_SUCCESS)
-+		rc = -EINVAL;
-+out:
-+	tpm_buf_destroy(&buf);
-+	return rc;
-+}
-+
- /**
-  * tpm2_unseal_trusted() - unseal the payload of a trusted key
-  *
-@@ -755,8 +823,15 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
- 		goto out;
+ 	if (fields && num_fields) {
+-		*fields = kmalloc_array(i, sizeof(*fields), GFP_KERNEL);
++		*fields = kmalloc_array(i, sizeof(**fields), GFP_KERNEL);
+ 		if (*fields == NULL)
+ 			return -ENOMEM;
  
- 	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
--	tpm2_flush_context(chip, blob_handle);
-+	if (rc)
-+		goto flush;
-+
-+	if (payload->creation_len)
-+		rc = tpm2_certify_creation(chip, payload, blob_handle);
- 
-+
-+flush:
-+	tpm2_flush_context(chip, blob_handle);
- out:
- 	tpm_put_ops(chip);
+-		memcpy(*fields, found_fields, i * sizeof(*fields));
++		memcpy(*fields, found_fields, i * sizeof(**fields));
+ 		*num_fields = i;
+ 	}
  
 -- 
-2.38.1.431.g37b22c650d-goog
+2.17.1
 
