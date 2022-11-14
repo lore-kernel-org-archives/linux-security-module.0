@@ -2,212 +2,188 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 682D8C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 17:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 387C9C43219
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 17:53:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237617AbiKNRqH (ORCPT
+        id S237091AbiKNRwg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Nov 2022 12:46:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45646 "EHLO
+        Mon, 14 Nov 2022 12:52:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237599AbiKNRqG (ORCPT
+        with ESMTP id S237712AbiKNRwQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Nov 2022 12:46:06 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31D2720365
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 09:46:01 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id h14so10977935pjv.4
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 09:46:01 -0800 (PST)
+        Mon, 14 Nov 2022 12:52:16 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F6AB26547
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 09:52:14 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id f5so30241149ejc.5
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 09:52:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GQVTl44oIH8oiV5K+Sv7U8T5hFlw2/VkCt8UIAvJo8k=;
-        b=V1n/QmQ3AuN9+EmhyutLATvVqBnCmhroS/UAPXghdJmV0HU19jBjKXe8xXfkDii3uh
-         NbqQrvC/rIPyGUCNyfGy1CLDRxYC6OHpDDCIHCoreQBo6O43xJmvGtuz6/9H7Vi9jUqD
-         XauwRtxnkP/SX8dYOyE67HzHi8XH7ivB0fiyHazCPB1o5D8BR+/IEvz71nNZ73FZygr9
-         Ixm16SE66NbwJ8g5krU2+4ZOzLZJ0u2CK9HUpXZQ9F4r4zDVHshhQ/fKQ0+/uNJkjoJY
-         l3SUcHNoLOYCYhyvJUlY09N3xdjfCcdJAmAk5LAs9znBiX0C4BZTg0Stl3/l4cZ2B2We
-         +gkw==
+        bh=dFbOq8KvPfyqv8Tvmztn6miVwXV7s2YCAIN0rDZgKn8=;
+        b=kZAUj86IXe75dnl5U1/0XlxZ6WiVvz4JF/MFnWu5WfrqUcHIfpIwloMIqexqEiyr6V
+         K/9kWKkJfuHr15e10x1+ONoUzzBsMmZYVXI/2yoTq+2rhQtzN9nD2QPPLoO00VQgpHyF
+         NTtevwQQPEukJ10Av1iiOWVTKuNvLTl68r8Ks=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GQVTl44oIH8oiV5K+Sv7U8T5hFlw2/VkCt8UIAvJo8k=;
-        b=l5s6+lM/q/vAPLFstw/dHuYFQds6CWEfIo2s1KcxXx3BWq36YdSatO+n9HABS7mLak
-         X9S4lpFCPJKhRFkT+PAbBca/66Q4+wWyVOl3IueLvTLGfcLNg0fwtZIiIB4SknE0d+ZR
-         uLAe573y8lbfVlGzz2wXOztLlUK3dz9/2/Y4lD1aGwwesiCY27YVddb04HUdrxBeeHeA
-         YIzcMwiqJaTYcTux5nZA5vPKdn4eDqqdCF2NBd162qNkCxOYOXRzeA0NhzHbPuP+Fnlc
-         qno7M+Tql4thDVfJM/MBr28hRhwlhg6M30Ci8sOlMbVrSR4LucAVm4HC1QsQ961qz5NW
-         +d0g==
-X-Gm-Message-State: ANoB5plDY+WuExrR+Iqmfz9OEU7/PhnGyTMa3YY/Jm8FaM636yw8hTSz
-        lxyenZp1/IPqZFMWTpPrXVl57nc3ghrmXqa8Jten
-X-Google-Smtp-Source: AA0mqf4ETxqkXKYu+RpDh1ikHko1QWsZc6mC5UAwT9xXuQfI1egKxQiAZWWgvKVnWMoGCW1s91/EqBlGHFO3dDz7mK8=
-X-Received: by 2002:a17:90b:3682:b0:1fd:5b5d:f09d with SMTP id
- mj2-20020a17090b368200b001fd5b5df09dmr14979218pjb.69.1668447960577; Mon, 14
- Nov 2022 09:46:00 -0800 (PST)
+        bh=dFbOq8KvPfyqv8Tvmztn6miVwXV7s2YCAIN0rDZgKn8=;
+        b=ZfzuFD2gnG7ixGbd9Sl5atVYtoMb5aWO4hNGVVHj7NSiLziCuTvjD91khn5CScOnCZ
+         ogmIP+3rCpmof/JRRXr7sO0S+q+trA+AeHlhjbv3cUXjDxa/JvupTXHYJul2q/CXmg44
+         GjkBHFQbEzb6iim9GWpT2SbuTyBYSyeVFTh+QP1IMygZELGBU+35D/me2+6PzPpxBBgG
+         zdizGz9/B2dhn+03KN0brEf96xeP3AzpxccKUCtpALQysMKQHRh1ykbB8/NJalrfqXDD
+         hSvw0I0/TIfDD60L2xuqYATDVAqoG1aFAqS86pHnzZUUJuKLCk81yF66nDGRtms4Yr2C
+         I6oA==
+X-Gm-Message-State: ANoB5plP91vqoPId2muWrR6bZxZdCpP5QKW2zDMMP2eYRx6XD8QCOWO2
+        mm6kXc1mvQ7Qa2h9V+P9RUty8svEMumNFw==
+X-Google-Smtp-Source: AA0mqf4GWwBxyknZVOUWdNg3WxXuv4XdJ9IBU/rs1N2B8MqXFq1/FeyrAQUSAEnFYriyA01DaBPvXg==
+X-Received: by 2002:a17:906:bc85:b0:781:e01e:951f with SMTP id lv5-20020a170906bc8500b00781e01e951fmr11583097ejb.283.1668448332869;
+        Mon, 14 Nov 2022 09:52:12 -0800 (PST)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
+        by smtp.gmail.com with ESMTPSA id cf6-20020a170906b2c600b007ad94fd48dfsm4422582ejb.139.2022.11.14.09.52.12
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Nov 2022 09:52:12 -0800 (PST)
+Received: by mail-wr1-f49.google.com with SMTP id l14so19672019wrw.2
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 09:52:12 -0800 (PST)
+X-Received: by 2002:adf:f10a:0:b0:236:863c:22d with SMTP id
+ r10-20020adff10a000000b00236863c022dmr8382325wro.590.1668447818962; Mon, 14
+ Nov 2022 09:43:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20221114111844.3461403-1-konstantin.meskhidze@huawei.com>
-In-Reply-To: <20221114111844.3461403-1-konstantin.meskhidze@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 14 Nov 2022 12:45:49 -0500
-Message-ID: <CAHC9VhQZ0i1GF2a9P9v05awKCb_j2X0Tv_xVfhQm4NnMJFs5Lw@mail.gmail.com>
-Subject: Re: [PATCH] [RFC] SELINUX: Remove obsolete deferred inode security
- init list.
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     linux-security-module@vger.kernel.org,
-        jamorris@linux.microsoft.com, selinux@vger.kernel.org,
-        stephen.smalley.work@gmail.com, artem.kuzin@huawei.com,
-        hw.likun@huawei.com, alexander.kozhevnikov@huawei-partners.com,
-        xiujianfeng@huawei.com, yusongping@huawei.com, hukeping@huawei.com
+References: <20221111231636.3748636-1-evgreen@chromium.org>
+ <20221111151451.v5.4.Ieb1215f598bc9df56b0e29e5977eae4fcca25e15@changeid>
+ <Y3FfhrgvBNey6T7V@sol.localdomain> <ff23b4e24222037959c2a784496c7ee91024e6c5.camel@linux.ibm.com>
+ <CAE=gft63-jdKqKmepB+LXPm6WUWSnz+CMWcWWnyN1y-EnS4kVg@mail.gmail.com> <c31d1a3af53515f2a9d3f53eb27ce698e796f9b9.camel@linux.ibm.com>
+In-Reply-To: <c31d1a3af53515f2a9d3f53eb27ce698e796f9b9.camel@linux.ibm.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Mon, 14 Nov 2022 09:43:02 -0800
+X-Gmail-Original-Message-ID: <CAE=gft6L6bMtzbqUfH_NAsFz2r0Nw7kkbCPXcr2nYj5n31FYQg@mail.gmail.com>
+Message-ID: <CAE=gft6L6bMtzbqUfH_NAsFz2r0Nw7kkbCPXcr2nYj5n31FYQg@mail.gmail.com>
+Subject: Re: [PATCH v5 04/11] security: keys: trusted: Include TPM2 creation data
+To:     jejb@linux.ibm.com
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, linux-integrity@vger.kernel.org,
+        gwendal@chromium.org, dianders@chromium.org, apronin@chromium.org,
+        Pavel Machek <pavel@ucw.cz>, Ben Boeckel <me@benboeckel.net>,
+        rjw@rjwysocki.net, Kees Cook <keescook@chromium.org>,
+        dlunev@google.com, zohar@linux.ibm.com,
+        Matthew Garrett <mgarrett@aurora.tech>, jarkko@kernel.org,
+        linux-pm@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 14, 2022 at 6:19 AM Konstantin Meskhidze
-<konstantin.meskhidze@huawei.com> wrote:
-> From: Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
+On Mon, Nov 14, 2022 at 8:56 AM James Bottomley <jejb@linux.ibm.com> wrote:
 >
-> This patch is a proposed code optimization for SELinux:
+> On Mon, 2022-11-14 at 08:32 -0800, Evan Green wrote:
+> > On Sun, Nov 13, 2022 at 7:32 PM James Bottomley <jejb@linux.ibm.com>
+> > wrote:
+> > >
+> > > On Sun, 2022-11-13 at 13:20 -0800, Eric Biggers wrote:
+> > > > On Fri, Nov 11, 2022 at 03:16:29PM -0800, Evan Green wrote:
+> > > > > diff --git a/security/keys/trusted-keys/tpm2key.asn1
+> > > > > b/security/keys/trusted-keys/tpm2key.asn1
+> > > > > index f57f869ad60068..608f8d9ca95fa8 100644
+> > > > > --- a/security/keys/trusted-keys/tpm2key.asn1
+> > > > > +++ b/security/keys/trusted-keys/tpm2key.asn1
+> > > > > @@ -7,5 +7,18 @@ TPMKey ::= SEQUENCE {
+> > > > >         emptyAuth       [0] EXPLICIT BOOLEAN OPTIONAL,
+> > > > >         parent          INTEGER ({tpm2_key_parent}),
+> > > > >         pubkey          OCTET STRING ({tpm2_key_pub}),
+> > > > > -       privkey         OCTET STRING ({tpm2_key_priv})
+> > > > > +       privkey         OCTET STRING ({tpm2_key_priv}),
+> > > > > +       ---
+> > > > > +       --- A TPM2B_CREATION_DATA struct as returned from the
+> > > > > TPM2_Create command.
+> > > > > +       ---
+> > > > > +       creationData    [1] EXPLICIT OCTET STRING OPTIONAL
+> > > > > ({tpm2_key_creation_data}),
+> > > > > +       ---
+> > > > > +       --- A TPM2B_DIGEST of the creationHash as returned from
+> > > > > the
+> > > > > TPM2_Create
+> > > > > +       --- command.
+> > > > > +       ---
+> > > > > +       creationHash    [2] EXPLICIT OCTET STRING OPTIONAL
+> > > > > ({tpm2_key_creation_hash}),
+> > > > > +       ---
+> > > > > +       --- A TPMT_TK_CREATION ticket as returned from the
+> > > > > TPM2_Create command.
+> > > > > +       ---
+> > > > > +       creationTk      [3] EXPLICIT OCTET STRING OPTIONAL
+> > > > > ({tpm2_key_creation_tk})
+> > > > >         }
+> > > >
+> > > > The commit that added this file claimed:
+> > > >
+> > > >         "The benefit of the ASN.1 format is that it's a standard
+> > > > and thus the
+> > > >         exported key can be used by userspace tools
+> > > > (openssl_tpm2_engine,
+> > > >         openconnect and tpm2-tss-engine"
+> > > >
+> > > > Are these new fields in compliance with whatever standard that
+> > > > was referring to?
+> > >
+> > > Not really, no.  The current use case (and draft standard) is
+> > > already using [1] for policies and [2] for importable keys:
+> > >
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/jejb/openssl_tpm2_engine.git/tree/doc/draft-bottomley-tpm2-keys.xml
+> > >
+> > > I'm actually planning to use [3] for signed policies.  There's no
+> > > reason why you can't use [4] though.  Since the creation data, hash
+> > > and ticket are likely used as a job lot, it strikes me they should
+> > > be a single numbered optional sequence instead of individually
+> > > numbered, since you're unlikely to have one without the others.
+> >
+> > Thanks, I was hoping James might pipe up and tell me what to do.
+> > Grouping them as a single numbered optional sequence sounds
+> > reasonable to me. Is your draft too far along to squeeze this in?
 >
-> 1) Each inode has SELinux security structure attached
->    to it, this one need to be initialized at some point.
-> 2) This initialization is done by the function
->    inode_doinit_with_dentry ( ).
-> 3) In the kernel releases started from some point in the past
->    this function (2) is always called normally from function
->    __inode_security_revalidate ( ).
-> 4) Which in turn is always called  from inode_security ( ), which
->    is a base point for any selinux calls and always called on
->    any access to any inode except a few special cases when
->    _inode_security_novalidate ( ) is used.
-> 5) Inode security structure initialization can be done only after
->    SELinux is fully initialized and policy is loaded.
-> 6) So, for this purpose there was a special defeferred inode security
->    initialization list protected by a spinlock implemented, which was
->    populated instead of isec initialization in function
->    inode_doinit_with_dentry ( ), if it was called before SELinux full
->    initialization, and processed at the time when SELinux policy load
->    occurred by calling again inode_doinit_with_dentry ( ) on each inode
->    in this list.
-> 7) This list was a part of a default initialization logic before (3) was
->    implemented, but now, taking into account new mechanism implemented
->    with current approach of inode security revalidation on each access
->    (4)-(3)-(2), it looks obsolete and not needed anymore.
-> 8) So deferred initialization, this list and code associated with it can
->    be safely removed now, as anyway, if inode isec was not initialized
->    before it will be processed on any next inode access.
-> 9) There are two possible positive consequences from this removal:
->      a. More clean and simple code, less memory consumption;
->      b. This deferred initialization in some cases (for example SELinux
->         was switched on manually after system was up quite a long time)
->         could take some significant time to process, i.e. system looks
->         hung for some notable time. And now this is avoided.
+> Not at all.  The draft only becomes frozen once I submit it to the IETF
+> which, so far thanks to lack of any reviewers I haven't done (That's
+> why I was also thinking of adding signed policies).
 >
-> Signed-off-by: Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> ---
->  security/selinux/hooks.c          | 70 ++++---------------------------
->  security/selinux/include/objsec.h |  3 --
->  2 files changed, 7 insertions(+), 66 deletions(-)
-
-Hi Konstantin, Alexander,
-
-A few comments below, but can you share what testing you've done with
-this?  Specifically what you've done to ensure that inodes allocated
-before the policy is loaded are properly initialized/validated after
-the policy is loaded?
-
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index f553c370397e..c93b5621d735 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -316,27 +316,7 @@ static struct inode_security_struct *backing_inode_security(struct dentry *dentr
+> >  If it is and I'm on my own to draft up and submit this, I would
+> > definitely appreciate any pointers on getting started you might have.
+> >
+> > I notice the draft and the code seem to be out of alignment.
 >
->  static void inode_free_security(struct inode *inode)
->  {
-> -       struct inode_security_struct *isec = selinux_inode(inode);
-> -       struct superblock_security_struct *sbsec;
-> -
-> -       if (!isec)
-> -               return;
-> -       sbsec = selinux_superblock(inode->i_sb);
-> -       /*
-> -        * As not all inode security structures are in a list, we check for
-> -        * empty list outside of the lock to make sure that we won't waste
-> -        * time taking a lock doing nothing.
-> -        *
-> -        * The list_del_init() function can be safely called more than once.
-> -        * It should not be possible for this function to be called with
-> -        * concurrent list_add(), but for better safety against future changes
-> -        * in the code, we use list_empty_careful() here.
-> -        */
-> -       if (!list_empty_careful(&isec->list)) {
-> -               spin_lock(&sbsec->isec_lock);
-> -               list_del_init(&isec->list);
-> -               spin_unlock(&sbsec->isec_lock);
-> -       }
-> +/* NOTHING TO DO AFTER DEFERRED LIST REMOVAL */
->  }
-
-We should just remove inode_free_security(), as well as
-selinux_inode_free_security(), there is no reason to leave them as
-empty functions and/or hooks.
-
-> @@ -551,27 +531,6 @@ static int sb_finish_set_opts(struct super_block *sb)
->         /* Initialize the root inode. */
->         rc = inode_doinit_with_dentry(root_inode, root);
+> The kernel code is out of alignment just because development moves a
+> bit slowly.  Policy based keys were submitted a long time ago as part
+> of the original move to interoperable sealed keys based on ASN.1:
 >
-> -       /* Initialize any other inodes associated with the superblock, e.g.
-> -          inodes created prior to initial policy load or inodes created
-> -          during get_sb by a pseudo filesystem that directly
-> -          populates itself. */
-> -       spin_lock(&sbsec->isec_lock);
-> -       while (!list_empty(&sbsec->isec_head)) {
-> -               struct inode_security_struct *isec =
-> -                               list_first_entry(&sbsec->isec_head,
-> -                                          struct inode_security_struct, list);
-> -               struct inode *inode = isec->inode;
-> -               list_del_init(&isec->list);
-> -               spin_unlock(&sbsec->isec_lock);
-> -               inode = igrab(inode);
-> -               if (inode) {
-> -                       if (!IS_PRIVATE(inode))
-> -                               inode_doinit_with_dentry(inode, NULL);
-> -                       iput(inode);
-> -               }
-> -               spin_lock(&sbsec->isec_lock);
-> -       }
-> -       spin_unlock(&sbsec->isec_lock);
->         return rc;
->  }
+> https://lore.kernel.org/all/20200616160229.8018-7-James.Bottomley@HansenPartnership.com/
+>
+> But eventually the policy part was split out and forgotten about.  I
+> think the only complete implementation of the draft standard is the
+> openssl_tpm2_engine.
+>
+> >  I'm unfamiliar with this process, is the idea to get through all the
+> > iterations and land the standard, then fix up the code? What happens
+> > to existing data handed out in the old format?
+>
+> No, it doesn't matter at all.  That's the whole point of using ASN.1
+> explicit optionals: the ASN.1 is always backwards compatible.  If I
+> ever submit the draft, there'll have to be a new RFC to add new
+> explicit optionals, but keys conforming to the old RFC will still be
+> valid under the new one.
 
-I would suggest ending sb_finish_set_opts() by returning from the
-inode_doinit_with_dentry() call, e.g.:
+Ah I see, with the optionals in mind things do line up again.
 
-    /* ... */
-    return inode_doinit_with_dentry(root_inode, root);
-  }
+>
+> Of course, since openssl_tpm2_engine is the complete reference
+> implementation that means I'll have to add the creation PCRs
+> implementation to it ... unless you'd like to do it?
 
-> @@ -1430,9 +1381,7 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
->                 if (!dentry) {
->                         /*
->                          * this is can be hit on boot when a file is accessed
-> -                        * before the policy is loaded.  When we load policy we
-> -                        * may find inodes that have no dentry on the
-> -                        * sbsec->isec_head list.  No reason to complain as these
-> +                        * before the policy is loaded. No reason to complain as these
->                          * will get fixed up the next time we go through
->                          * inode_doinit with a dentry, before these inodes could
->                          * be used again by userspace.
-
-There are some typos at the start of this comment that are worth
-fixing here since you are updating the comment block, e.g.:
-
-  /*
-   * This can be hit on boot when a file is accessed
-   * before the policy is loaded ...
-
--- 
-paul-moore.com
+I am willing to help as I'm the one making the mess. How does it
+sequence along with your draft submission (before, after,
+simultaneous)?
