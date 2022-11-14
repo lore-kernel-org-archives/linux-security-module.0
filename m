@@ -2,131 +2,97 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F95BC433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 18:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D36A5C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 19:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238114AbiKNSK1 (ORCPT
+        id S235941AbiKNTUP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Nov 2022 13:10:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39624 "EHLO
+        Mon, 14 Nov 2022 14:20:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238172AbiKNSKF (ORCPT
+        with ESMTP id S237013AbiKNTUL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Nov 2022 13:10:05 -0500
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9DB12BB20
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 10:10:00 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id l2so10743166pld.13
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 10:10:00 -0800 (PST)
+        Mon, 14 Nov 2022 14:20:11 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F252275CF;
+        Mon, 14 Nov 2022 11:20:10 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id d13-20020a17090a3b0d00b00213519dfe4aso11676302pjc.2;
+        Mon, 14 Nov 2022 11:20:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8+yZhAhr7NAUT9GmiB1IKSJ9jNEMF8zBynfUT8bHs+o=;
-        b=6+sjHhvznvTcyKSrY+5KA+08PFuG7RhKbw1tbRBc0icUFEejCsXOXqq6qMTXoD8eP5
-         MiMTjs7k2oUhdFOOTZHpG/VqELPNts7hbAIuY7CdHwkEsiGnghy0wAXgq8w9P1drNxV7
-         +dLxA7hTHUqpKTnhvEWX+tGzszFIihwC9nJhpOmSNjEgRqclH0fFHyt898Y/Ky/n9d06
-         fpcFvHB6ciAAciYQlECvKrKr/7t15yyFwBKgy/9kFoMqtuxNgTdN7izpeyKfMFDn2spi
-         81uLJNSer3vDtEMJmkItc29iTA9DiqkVVDMBnCcEh+dPg85FxFXiNJiRW6K63UGJeAZh
-         WKww==
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZPWs3D/76vIKz8bAxu2rCoaZvjSSlJwTVNgfHpAhTT4=;
+        b=qNnu4W+xb31rg0kUgUPs9GlsQPVNjh2HtjMw9yggvLLnSr6FxqNKZvpLfpvpuM0JXI
+         43eBvgICAeTv7WNPk0Wag/ew2ILscm+nQUrJ8UKyZ/vSEyKtIQ2R6ypNqlEkU/n49gtj
+         I+hD7O3frVCdf3c/tHxxgf9nn3F9b5lYBLVQ3emJrtueXvLGoeOynbtCoX8eMcFp0cia
+         PIgKb9kuSbG6CJasI8nvz4czIkPDwSmf7Dh8vql96REUjWAJ1fdDJiJ04hmoDUf2Lmt8
+         b1e98z2Fc7Wj1VXAFKjlMf7Vgx2cnoZS0EtNMgEJjbor7ue5YugyzHGgtz3SC3v3/tTI
+         1XGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8+yZhAhr7NAUT9GmiB1IKSJ9jNEMF8zBynfUT8bHs+o=;
-        b=tiIBv39k724RMpohhfQHVVBwDql4rBYb0kSxiZ6PSnHSnzLfstXvlb+5x/vrONAiZV
-         HI5bCQbhlRofhtEvglgnkJMagxtseCwZ3PPVBke0Phn9ToWLsQ6qhtiF2J275BSM7tLE
-         7ZxbbYjg5RO6do9OlgnFad9vkbGK44MsQLKvMz6IG9FGsooK6rrYMYWi5gJepCThtpzV
-         1PzAEl7NrF2cLKkRgPl8XV1s/IYbB7RjLFAKtn7xmo+F7MVWWkRHulSOqCFX3O6dKJpy
-         Lu8jj4oXwbBM3E18e/jDksCt5EQwQKApvuzAKbJ/X+/e/lNIgFTe4vjQRk6iq7dZQBdQ
-         G7LA==
-X-Gm-Message-State: ANoB5pkU4/qFF3qSUKUE/RCPU4k160C+T7/RN7SLWaroiTV8xA2AocHm
-        x5wsLesQLV9TEpz3jpafR3P4OWnB1jCCB9STy47A
-X-Google-Smtp-Source: AA0mqf7NbJaOooC6NtTT1GTTCEn+rquNSNpp1Tz9skdx9H8RN2w18W3PdKfzzaDh4o9CiRYOG//yNB9WUnxdOx1/2Pc=
-X-Received: by 2002:a17:90a:6a85:b0:20d:4173:faf9 with SMTP id
- u5-20020a17090a6a8500b0020d4173faf9mr14670365pjj.147.1668449400273; Mon, 14
- Nov 2022 10:10:00 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZPWs3D/76vIKz8bAxu2rCoaZvjSSlJwTVNgfHpAhTT4=;
+        b=KWy4ur3bLAhz4663eQKUAyh3e6soJ3d+DzeqwkVFScwErQwzGj64uZfA7rL3PxBi/m
+         Pp5MTHqdAqa90NP70nCdCoB+YY1z/CS/n8uWZanR2lcGI2VX7MhTCFvsKPudMA+5bz2l
+         CKz64C6JTzNsCROD4pWoPPUCOXian36xw4iiGFWsswTyDSdugEsGqNoATbwk19lnCBVV
+         BEPE2qD12o0GvgCgDuWUgMfUexLE6j5eRUn7rfyd4jzTrbFR9LBXqx0+KYAYMvHjzpmM
+         t0hpwhcSqRq2pWFMk+SicFBRIGELN7Js1mkR6mfKtYX1kaozaApDT6kOG9Vucu5j+8Nn
+         +QIw==
+X-Gm-Message-State: ANoB5pmla0PMaxXIwaj6wmc7C4NzzI23s/BO9qbzCmAySAb+/FgnpsvI
+        3k2uKfQtW73NxvnuLYWHWVj9etonhPA=
+X-Google-Smtp-Source: AA0mqf6SoFAMfweIoqSjN/T+2+Hr9p4QgyHXW57Yz+BaE1TqT1yme/iss5Fkp69nxaA7qUzAbslJxg==
+X-Received: by 2002:a17:903:264c:b0:188:a51c:b581 with SMTP id je12-20020a170903264c00b00188a51cb581mr672495plb.55.1668453609453;
+        Mon, 14 Nov 2022 11:20:09 -0800 (PST)
+Received: from hoboy.vegasvil.org ([2601:640:8200:33:e2d5:5eff:fea5:802f])
+        by smtp.gmail.com with ESMTPSA id y15-20020a17090322cf00b0018658badef3sm8006881plg.232.2022.11.14.11.20.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Nov 2022 11:20:08 -0800 (PST)
+Date:   Mon, 14 Nov 2022 11:20:06 -0800
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     syzbot <syzbot+0f89bd13eaceccc0e126@syzkaller.appspotmail.com>
+Cc:     casey@schaufler-ca.com, jmorris@namei.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        paul@paul-moore.com, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] BUG: unable to handle kernel NULL pointer dereference
+ in smack_inode_permission
+Message-ID: <Y3KU5kwa2XGS9gyy@hoboy.vegasvil.org>
+References: <00000000000061fe2205ed6300fa@google.com>
 MIME-Version: 1.0
-References: <20221114111844.3461403-1-konstantin.meskhidze@huawei.com> <CAHC9VhQZ0i1GF2a9P9v05awKCb_j2X0Tv_xVfhQm4NnMJFs5Lw@mail.gmail.com>
-In-Reply-To: <CAHC9VhQZ0i1GF2a9P9v05awKCb_j2X0Tv_xVfhQm4NnMJFs5Lw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 14 Nov 2022 13:09:49 -0500
-Message-ID: <CAHC9VhSrbZeP2Lmd-dVXyUqM2=b7z-HMWh1ZPQ30eWchwrQJvA@mail.gmail.com>
-Subject: Re: [PATCH] [RFC] SELINUX: Remove obsolete deferred inode security
- init list.
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     linux-security-module@vger.kernel.org,
-        jamorris@linux.microsoft.com, selinux@vger.kernel.org,
-        stephen.smalley.work@gmail.com, artem.kuzin@huawei.com,
-        hw.likun@huawei.com, alexander.kozhevnikov@huawei-partners.com,
-        xiujianfeng@huawei.com, yusongping@huawei.com, hukeping@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000061fe2205ed6300fa@google.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 14, 2022 at 12:45 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Mon, Nov 14, 2022 at 6:19 AM Konstantin Meskhidze
-> <konstantin.meskhidze@huawei.com> wrote:
-> > From: Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
-> >
-> > This patch is a proposed code optimization for SELinux:
-> >
-> > 1) Each inode has SELinux security structure attached
-> >    to it, this one need to be initialized at some point.
-> > 2) This initialization is done by the function
-> >    inode_doinit_with_dentry ( ).
-> > 3) In the kernel releases started from some point in the past
-> >    this function (2) is always called normally from function
-> >    __inode_security_revalidate ( ).
-> > 4) Which in turn is always called  from inode_security ( ), which
-> >    is a base point for any selinux calls and always called on
-> >    any access to any inode except a few special cases when
-> >    _inode_security_novalidate ( ) is used.
-> > 5) Inode security structure initialization can be done only after
-> >    SELinux is fully initialized and policy is loaded.
-> > 6) So, for this purpose there was a special defeferred inode security
-> >    initialization list protected by a spinlock implemented, which was
-> >    populated instead of isec initialization in function
-> >    inode_doinit_with_dentry ( ), if it was called before SELinux full
-> >    initialization, and processed at the time when SELinux policy load
-> >    occurred by calling again inode_doinit_with_dentry ( ) on each inode
-> >    in this list.
-> > 7) This list was a part of a default initialization logic before (3) was
-> >    implemented, but now, taking into account new mechanism implemented
-> >    with current approach of inode security revalidation on each access
-> >    (4)-(3)-(2), it looks obsolete and not needed anymore.
-> > 8) So deferred initialization, this list and code associated with it can
-> >    be safely removed now, as anyway, if inode isec was not initialized
-> >    before it will be processed on any next inode access.
-> > 9) There are two possible positive consequences from this removal:
-> >      a. More clean and simple code, less memory consumption;
-> >      b. This deferred initialization in some cases (for example SELinux
-> >         was switched on manually after system was up quite a long time)
-> >         could take some significant time to process, i.e. system looks
-> >         hung for some notable time. And now this is avoided.
-> >
-> > Signed-off-by: Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
-> > Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> > ---
-> >  security/selinux/hooks.c          | 70 ++++---------------------------
-> >  security/selinux/include/objsec.h |  3 --
-> >  2 files changed, 7 insertions(+), 66 deletions(-)
->
-> Hi Konstantin, Alexander,
->
-> A few comments below, but can you share what testing you've done with
-> this?  Specifically what you've done to ensure that inodes allocated
-> before the policy is loaded are properly initialized/validated after
-> the policy is loaded?
+On Sun, Nov 13, 2022 at 04:05:47PM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    56751c56c2a2 Merge branch 'for-next/fixes' into for-kernelci
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11fc8b0e880000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=606e57fd25c5c6cc
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0f89bd13eaceccc0e126
+> compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a691fa880000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1733c5b9880000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/cf4668c75dea/disk-56751c56.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/e1ef82e91ef7/vmlinux-56751c56.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/3dabe076170f/Image-56751c56.gz.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+0f89bd13eaceccc0e126@syzkaller.appspotmail.com
 
-To be more specific, I'm curious about the cases where
-__inode_security_revalidate() is called without the ability to sleep;
-in those cases it is not possible to call inode_doinit_with_dentry()
-to revalidate the inode's label.  With the current solution that is
-not so much of an issue as sb_finish_set_opts() can block, but in your
-proposed solution I worry this may be an issue.
+Why was this email addressed to me?
 
---
-paul-moore.com
+Thanks,
+Richard
