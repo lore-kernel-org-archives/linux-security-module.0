@@ -2,161 +2,166 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BF1C43217
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 03:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F15AC433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 04:38:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235625AbiKNDcf (ORCPT
+        id S235679AbiKNEit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 13 Nov 2022 22:32:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56468 "EHLO
+        Sun, 13 Nov 2022 23:38:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235468AbiKNDce (ORCPT
+        with ESMTP id S234264AbiKNEis (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 13 Nov 2022 22:32:34 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 869B515827;
-        Sun, 13 Nov 2022 19:32:33 -0800 (PST)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.5) with ESMTP id 2AE3NxXv006085;
-        Mon, 14 Nov 2022 03:32:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : reply-to : to : cc : date : in-reply-to : references : content-type
- : content-transfer-encoding : mime-version; s=pp1;
- bh=KNYKtfhY2k43JD+ZIBssS/J+6Fx6ZqiG51NxfYROhzo=;
- b=IK0ACtLop+d0ZJvSD9iF9pKOM/7UvZVNPFjIKEjRA5sQ85dlvaWH5akxP0r+Dv83WZq6
- j6godVft4sBmqQE30TIUUyuMs1Em62NQTXwSX4vgDPdo+TFYwToxwyuwIII6d494OH22
- mG+i5uBtFo1R3LyJqnYzVEy5xhe9Rod4ylw6Qhg69BHa34coYIIxZ1UHQhk3dSbFih/1
- 79BBZOEELbTa1VkB93d/QCUe3v82tluTh8TseMVMARYRJvcbmNFCwKRwJt4NuJmFnEnc
- TsmLtFELlS7pgDbPkhlN6PtUnvJYchuWet5xmzYi6vGjGfs2hHaDwOs7eGRNkoN9q7vQ uw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kudr204c7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Nov 2022 03:32:09 +0000
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AE3W8Up000995;
-        Mon, 14 Nov 2022 03:32:08 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kudr204bv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Nov 2022 03:32:08 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AE3LIIm024529;
-        Mon, 14 Nov 2022 03:32:07 GMT
-Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
-        by ppma04dal.us.ibm.com with ESMTP id 3kt349e1d2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Nov 2022 03:32:07 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AE3W65f34734616
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Nov 2022 03:32:06 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A1AB47805E;
-        Mon, 14 Nov 2022 04:29:10 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 43A8C7805C;
-        Mon, 14 Nov 2022 04:29:06 +0000 (GMT)
-Received: from lingrow.int.hansenpartnership.com (unknown [9.211.83.197])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 14 Nov 2022 04:29:05 +0000 (GMT)
-Message-ID: <ff23b4e24222037959c2a784496c7ee91024e6c5.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 04/11] security: keys: trusted: Include TPM2 creation
- data
-From:   James Bottomley <jejb@linux.ibm.com>
-Reply-To: jejb@linux.ibm.com
-To:     Eric Biggers <ebiggers@kernel.org>,
-        Evan Green <evgreen@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-integrity@vger.kernel.org, gwendal@chromium.org,
-        dianders@chromium.org, apronin@chromium.org,
-        Pavel Machek <pavel@ucw.cz>, Ben Boeckel <me@benboeckel.net>,
-        rjw@rjwysocki.net, Kees Cook <keescook@chromium.org>,
-        dlunev@google.com, zohar@linux.ibm.com,
-        Matthew Garrett <mgarrett@aurora.tech>, jarkko@kernel.org,
-        linux-pm@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Sun, 13 Nov 2022 22:32:00 -0500
-In-Reply-To: <Y3FfhrgvBNey6T7V@sol.localdomain>
-References: <20221111231636.3748636-1-evgreen@chromium.org>
-         <20221111151451.v5.4.Ieb1215f598bc9df56b0e29e5977eae4fcca25e15@changeid>
-         <Y3FfhrgvBNey6T7V@sol.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 9zY-iV916FvnaPEWaeBOeG_pA_xYejKd
-X-Proofpoint-GUID: G_SgRPlbC6_1fY8Mz3XvyT83D3yESpJv
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Sun, 13 Nov 2022 23:38:48 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5A6B55A6;
+        Sun, 13 Nov 2022 20:38:45 -0800 (PST)
+Received: from canpemm500010.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N9c4z3W5CzRpHV;
+        Mon, 14 Nov 2022 12:38:27 +0800 (CST)
+Received: from localhost.localdomain (10.175.112.70) by
+ canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 14 Nov 2022 12:38:43 +0800
+From:   Wang Yufen <wangyufen@huawei.com>
+To:     <linux-security-module@vger.kernel.org>, <bpf@vger.kernel.org>
+CC:     <martin.lau@linux.dev>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <andrii@kernel.org>, <paul@paul-moore.com>,
+        Wang Yufen <wangyufen@huawei.com>,
+        Stanislav Fomichev <sdf@google.com>
+Subject: [PATCH bpf] selftests/bpf: fix memory leak of lsm_cgroup
+Date:   Mon, 14 Nov 2022 12:59:02 +0800
+Message-ID: <1668401942-6309-1-git-send-email-wangyufen@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-14_02,2022-11-11_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- phishscore=0 lowpriorityscore=0 clxscore=1011 mlxlogscore=999
- priorityscore=1501 bulkscore=0 suspectscore=0 malwarescore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211140019
+Content-Type: text/plain
+X-Originating-IP: [10.175.112.70]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ canpemm500010.china.huawei.com (7.192.105.118)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 2022-11-13 at 13:20 -0800, Eric Biggers wrote:
-> On Fri, Nov 11, 2022 at 03:16:29PM -0800, Evan Green wrote:
-> > diff --git a/security/keys/trusted-keys/tpm2key.asn1
-> > b/security/keys/trusted-keys/tpm2key.asn1
-> > index f57f869ad60068..608f8d9ca95fa8 100644
-> > --- a/security/keys/trusted-keys/tpm2key.asn1
-> > +++ b/security/keys/trusted-keys/tpm2key.asn1
-> > @@ -7,5 +7,18 @@ TPMKey ::= SEQUENCE {
-> >         emptyAuth       [0] EXPLICIT BOOLEAN OPTIONAL,
-> >         parent          INTEGER ({tpm2_key_parent}),
-> >         pubkey          OCTET STRING ({tpm2_key_pub}),
-> > -       privkey         OCTET STRING ({tpm2_key_priv})
-> > +       privkey         OCTET STRING ({tpm2_key_priv}),
-> > +       ---
-> > +       --- A TPM2B_CREATION_DATA struct as returned from the
-> > TPM2_Create command.
-> > +       ---
-> > +       creationData    [1] EXPLICIT OCTET STRING OPTIONAL
-> > ({tpm2_key_creation_data}),
-> > +       ---
-> > +       --- A TPM2B_DIGEST of the creationHash as returned from the
-> > TPM2_Create
-> > +       --- command.
-> > +       ---
-> > +       creationHash    [2] EXPLICIT OCTET STRING OPTIONAL
-> > ({tpm2_key_creation_hash}),
-> > +       ---
-> > +       --- A TPMT_TK_CREATION ticket as returned from the
-> > TPM2_Create command.
-> > +       ---
-> > +       creationTk      [3] EXPLICIT OCTET STRING OPTIONAL
-> > ({tpm2_key_creation_tk})
-> >         }
-> 
-> The commit that added this file claimed:
-> 
->         "The benefit of the ASN.1 format is that it's a standard and
-> thus the
->         exported key can be used by userspace tools
-> (openssl_tpm2_engine,
->         openconnect and tpm2-tss-engine"
-> 
-> Are these new fields in compliance with whatever standard that was
-> referring to?
+kmemleak reports this issue:
 
-Not really, no.  The current use case (and draft standard) is already
-using [1] for policies and [2] for importable keys:
+unreferenced object 0xffff88810b7835c0 (size 32):
+  comm "test_progs", pid 270, jiffies 4294969007 (age 1621.315s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    03 00 00 00 03 00 00 00 0f 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000376cdeab>] kmalloc_trace+0x27/0x110
+    [<000000003bcdb3b6>] selinux_sk_alloc_security+0x66/0x110
+    [<000000003959008f>] security_sk_alloc+0x47/0x80
+    [<00000000e7bc6668>] sk_prot_alloc+0xbd/0x1a0
+    [<0000000002d6343a>] sk_alloc+0x3b/0x940
+    [<000000009812a46d>] unix_create1+0x8f/0x3d0
+    [<000000005ed0976b>] unix_create+0xa1/0x150
+    [<0000000086a1d27f>] __sock_create+0x233/0x4a0
+    [<00000000cffe3a73>] __sys_socket_create.part.0+0xaa/0x110
+    [<0000000007c63f20>] __sys_socket+0x49/0xf0
+    [<00000000b08753c8>] __x64_sys_socket+0x42/0x50
+    [<00000000b56e26b3>] do_syscall_64+0x3b/0x90
+    [<000000009b4871b8>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jejb/openssl_tpm2_engine.git/tree/doc/draft-bottomley-tpm2-keys.xml
+The issue occurs in the following scenarios:
 
-I'm actually planning to use [3] for signed policies.  There's no
-reason why you can't use [4] though.  Since the creation data, hash and
-ticket are likely used as a job lot, it strikes me they should be a
-single numbered optional sequence instead of individually numbered,
-since you're unlikely to have one without the others.
+unix_create1()
+  sk_alloc()
+    sk_prot_alloc()
+      security_sk_alloc()
+        call_int_hook()
+          hlist_for_each_entry()
+            entry1->hook.sk_alloc_security
+            <-- selinux_sk_alloc_security() succeeded,
+            <-- sk->security alloced here.
+            entry2->hook.sk_alloc_security
+            <-- bpf_lsm_sk_alloc_security() failed
+      goto out_free;
+        ...    <-- the sk->security not freed, memleak
 
-James
+The core problem is that the LSM is not yet fully stacked (work is
+actively going on in this space) which means that some LSM hooks do
+not support multiple LSMs at the same time. To fix, skip the
+"EPERM" test when it runs in the environments that already have
+non-bpf lsms installed
+
+Fixes: dca85aac8895 ("selftests/bpf: lsm_cgroup functional test")
+Signed-off-by: Wang Yufen <wangyufen@huawei.com>
+Cc: Stanislav Fomichev <sdf@google.com>
+---
+ tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c | 19 +++++++++++++++----
+ tools/testing/selftests/bpf/progs/lsm_cgroup.c      |  8 ++++++++
+ 2 files changed, 23 insertions(+), 4 deletions(-)
+
+diff --git a/tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c b/tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c
+index 1102e4f..a927ade 100644
+--- a/tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c
++++ b/tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c
+@@ -173,10 +173,14 @@ static void test_lsm_cgroup_functional(void)
+ 	ASSERT_EQ(query_prog_cnt(cgroup_fd, NULL), 4, "total prog count");
+ 	ASSERT_EQ(query_prog_cnt(cgroup_fd2, NULL), 1, "total prog count");
+ 
+-	/* AF_UNIX is prohibited. */
+-
+ 	fd = socket(AF_UNIX, SOCK_STREAM, 0);
+-	ASSERT_LT(fd, 0, "socket(AF_UNIX)");
++	if (skel->kconfig->CONFIG_SECURITY_APPARMOR
++	    || skel->kconfig->CONFIG_SECURITY_SELINUX
++	    || skel->kconfig->CONFIG_SECURITY_SMACK)
++		ASSERT_GE(fd, 0, "socket(AF_UNIX)");
++	else
++		/* AF_UNIX is prohibited. */
++		ASSERT_LT(fd, 0, "socket(AF_UNIX)");
+ 	close(fd);
+ 
+ 	/* AF_INET6 gets default policy (sk_priority). */
+@@ -233,11 +237,18 @@ static void test_lsm_cgroup_functional(void)
+ 
+ 	/* AF_INET6+SOCK_STREAM
+ 	 * AF_PACKET+SOCK_RAW
++	 * AF_UNIX+SOCK_RAW if already have non-bpf lsms installed
+ 	 * listen_fd
+ 	 * client_fd
+ 	 * accepted_fd
+ 	 */
+-	ASSERT_EQ(skel->bss->called_socket_post_create2, 5, "called_create2");
++	if (skel->kconfig->CONFIG_SECURITY_APPARMOR
++	    || skel->kconfig->CONFIG_SECURITY_SELINUX
++	    || skel->kconfig->CONFIG_SECURITY_SMACK)
++		/* AF_UNIX+SOCK_RAW if already have non-bpf lsms installed */
++		ASSERT_EQ(skel->bss->called_socket_post_create2, 6, "called_create2");
++	else
++		ASSERT_EQ(skel->bss->called_socket_post_create2, 5, "called_create2");
+ 
+ 	/* start_server
+ 	 * bind(ETH_P_ALL)
+diff --git a/tools/testing/selftests/bpf/progs/lsm_cgroup.c b/tools/testing/selftests/bpf/progs/lsm_cgroup.c
+index 4f2d60b..02c11d1 100644
+--- a/tools/testing/selftests/bpf/progs/lsm_cgroup.c
++++ b/tools/testing/selftests/bpf/progs/lsm_cgroup.c
+@@ -7,6 +7,10 @@
+ 
+ char _license[] SEC("license") = "GPL";
+ 
++extern bool CONFIG_SECURITY_SELINUX __kconfig __weak;
++extern bool CONFIG_SECURITY_SMACK __kconfig __weak;
++extern bool CONFIG_SECURITY_APPARMOR __kconfig __weak;
++
+ #ifndef AF_PACKET
+ #define AF_PACKET 17
+ #endif
+@@ -140,6 +144,10 @@ int BPF_PROG(socket_bind2, struct socket *sock, struct sockaddr *address,
+ int BPF_PROG(socket_alloc, struct sock *sk, int family, gfp_t priority)
+ {
+ 	called_socket_alloc++;
++	/* if already have non-bpf lsms installed, EPERM will cause memory leak of non-bpf lsms */
++	if (CONFIG_SECURITY_SELINUX || CONFIG_SECURITY_SMACK || CONFIG_SECURITY_APPARMOR)
++		return 1;
++
+ 	if (family == AF_UNIX)
+ 		return 0; /* EPERM */
+ 
+-- 
+1.8.3.1
 
