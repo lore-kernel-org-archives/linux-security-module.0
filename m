@@ -2,152 +2,88 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE3FC4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 00:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85AA3C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 03:31:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235560AbiKNAFu (ORCPT
+        id S229689AbiKNDbM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 13 Nov 2022 19:05:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54338 "EHLO
+        Sun, 13 Nov 2022 22:31:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235400AbiKNAFt (ORCPT
+        with ESMTP id S235644AbiKNDbK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 13 Nov 2022 19:05:49 -0500
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39F7DE009
-        for <linux-security-module@vger.kernel.org>; Sun, 13 Nov 2022 16:05:48 -0800 (PST)
-Received: by mail-il1-f200.google.com with SMTP id c4-20020a056e020bc400b0030098df879dso8215633ilu.6
-        for <linux-security-module@vger.kernel.org>; Sun, 13 Nov 2022 16:05:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hr7wS+pJ69I44GVyM4s7OZmeFSZLRy9SbGypxd6p3yc=;
-        b=VQ8MIJgJl1Mp4ycQV66pBFyZmQuREiV5nDI77ivK8pAvjDEsIaIo0a55bSIC9S2arg
-         SZWanZsrSZQO4peAOXpTayUNgzG9RhhzCYjaBp0WOD1RhshmsR3VsTdDfCk+96amzNqF
-         d58Wddcve3dKt9HUJrfIr7LY6Y85evoOI/e17iIW0U1z8Ub93YQAvjXWFeq0SAtfUZqC
-         B4fN7H7NswKzM4S/sV+x+lL8qjJ8LZkAe7JhKZwEGewNj/el/smO6DJvP9zVly7zO37w
-         UeKUpgC1FDBS4vP19vE+VuruSJsKrfWK5MKgkXPLIgcuy5Nv+dSgnN9DSf/DMb663C4T
-         GWTQ==
-X-Gm-Message-State: ANoB5plZIExrV+yPvFNYumpRcwgLZgMtUkvEcijTCMzJvnJicJ8PwEcX
-        DtJJTtvEHUF0ZUOV7XJ8NEt6zQFpuDDTIzwwzHCZSB0cEBFF
-X-Google-Smtp-Source: AA0mqf5VC9l3lM2/b6X13YxJm5HhrgqaLlkjHm6c7EWMi10KVjfiDZqlulrDwDoJf5kuOjvvN0x/YgAw31Bw5FzcNveKsOPP6o1v
+        Sun, 13 Nov 2022 22:31:10 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CA411583A;
+        Sun, 13 Nov 2022 19:31:09 -0800 (PST)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.56])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N9ZZk6fBszHvrS;
+        Mon, 14 Nov 2022 11:30:38 +0800 (CST)
+Received: from [10.67.110.173] (10.67.110.173) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 14 Nov 2022 11:31:07 +0800
+Message-ID: <0d38023a-1f7f-b090-bd55-4695afcf564f@huawei.com>
+Date:   Mon, 14 Nov 2022 11:31:07 +0800
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b4d2:0:b0:6dd:f70e:dda5 with SMTP id
- d201-20020a6bb4d2000000b006ddf70edda5mr2102788iof.100.1668384347517; Sun, 13
- Nov 2022 16:05:47 -0800 (PST)
-Date:   Sun, 13 Nov 2022 16:05:47 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000061fe2205ed6300fa@google.com>
-Subject: [syzbot] BUG: unable to handle kernel NULL pointer dereference in smack_inode_permission
-From:   syzbot <syzbot+0f89bd13eaceccc0e126@syzkaller.appspotmail.com>
-To:     casey@schaufler-ca.com, jmorris@namei.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        paul@paul-moore.com, richardcochran@gmail.com, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v5 2/2] ima: Handle -ESTALE returned by
+ ima_filter_rule_match()
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20220921125804.59490-1-guozihua@huawei.com>
+ <20220921125804.59490-3-guozihua@huawei.com>
+ <ce948f9e5639345026679b31a818cc12a247ce60.camel@linux.ibm.com>
+ <77c9c86b-85a6-aa87-e084-59a70bb47167@huawei.com>
+ <f321c638bf5572088a8c5e4d7027c3a797bdd568.camel@linux.ibm.com>
+ <7ac3e330-e77c-95d8-7d3b-29e243b57251@huawei.com>
+ <5e304b17fe709d2b2f30b991d5ffc4711d27a075.camel@linux.ibm.com>
+ <2f032b6c-ecf2-5a41-dc38-e6ab0a2d7885@huawei.com>
+ <90f8940cff5eeef7917e2b11a07e41b32b207ffa.camel@linux.ibm.com>
+ <38d5fd39-ead2-e954-5901-b35ef6ec96b6@huawei.com>
+ <11716411-e143-ab1f-3b1e-d5d35f2a590a@huawei.com>
+ <db821df65b7ff7319c657a1de65f5ba903599fc4.camel@linux.ibm.com>
+ <b2949b3d-c370-8a41-fe7c-9f175abd4f71@huawei.com>
+ <30ac558a35a0551f50dc49a834755beb1ab2d593.camel@linux.ibm.com>
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+In-Reply-To: <30ac558a35a0551f50dc49a834755beb1ab2d593.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On 2022/11/3 21:15, Mimi Zohar wrote:
+> On Wed, 2022-11-02 at 09:42 +0800, Guozihua (Scott) wrote:
+>>> As I only see an IMA measurement policy rule being loaded for
+>>> "unlabeled_t" and not "user_home_t", should I assume that an IMA
+>>> measurement rule already exists for "user_home_t"?
+>>
+>> There wasn't a rule for user_home_t. These scripts demonstrate that
+>> during a selinux policy reload, IMA would measure files that is not in
+>> the range of it's LSM based rules. Which is the issue I am trying to fix.
+>>
+>> In this test, we only have one rule for measuring files of type
+>> unlabeled_t. However, during selinux policy reload, file of user_home_t
+>> is also measured.
+> 
+> Thanks, Scott.  After tweaking the scripts for my system, I was able to
+> reproduce the bug.  This patch set is now queued in next-integrity.
+> 
 
-syzbot found the following issue on:
+Hi Mimi,
 
-HEAD commit:    56751c56c2a2 Merge branch 'for-next/fixes' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=11fc8b0e880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=606e57fd25c5c6cc
-dashboard link: https://syzkaller.appspot.com/bug?extid=0f89bd13eaceccc0e126
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a691fa880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1733c5b9880000
+Any chance these patches would be in 6.1?
+-- 
+Best
+GUO Zihua
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/cf4668c75dea/disk-56751c56.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e1ef82e91ef7/vmlinux-56751c56.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3dabe076170f/Image-56751c56.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0f89bd13eaceccc0e126@syzkaller.appspotmail.com
-
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000028
-Mem abort info:
-  ESR = 0x0000000096000004
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x04: level 0 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000004
-  CM = 0, WnR = 0
-user pgtable: 4k pages, 48-bit VAs, pgdp=0000000109d98000
-[0000000000000028] pgd=0000000000000000, p4d=0000000000000000
-Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 2557 Comm: udevd Not tainted 6.1.0-rc4-syzkaller-31859-g56751c56c2a2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : smack_inode_permission+0x70/0x164 security/smack/smack_lsm.c:1149
-lr : smack_inode_permission+0x68/0x164 security/smack/smack_lsm.c:1146
-sp : ffff800016a53a30
-x29: ffff800016a53a80 x28: fefefefefefefeff
- x27: ffff0000ca5c0025
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: ffff0000ca5c0025
-x23: 0000000000000000 x22: 0000000000000008 x21: 0000000000000001
-x20: 0000000000000001 x19: ffff0000c70cf2d8
- x18: 0000000000000000
-
-x17: 0000000000000000
- x16: ffff80000db1a158
- x15: ffff0000c4f39a40
-x14: 0000000000000090 x13: 00000000ffffffff x12: ffff0000c4f39a40
-x11: ff8080000944189c x10: 0000000000000000 x9 : ffff0000c4f39a40
-x8 : ffff80000944189c x7 : ffff8000086feb70 x6 : 0000000000000000
-x5 : ffff0000c4f39a40 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000001 x1 : 0000000000000001 x0 : 0000000000000000
-Call trace:
- smack_inode_permission+0x70/0x164
- security_inode_permission+0x50/0xa4 security/security.c:1326
- inode_permission+0xa0/0x244 fs/namei.c:533
- may_lookup fs/namei.c:1715 [inline]
- link_path_walk+0x138/0x628 fs/namei.c:2262
- path_lookupat+0x54/0x208 fs/namei.c:2473
- filename_lookup+0xf8/0x264 fs/namei.c:2503
- user_path_at_empty+0x5c/0x114 fs/namei.c:2876
- do_readlinkat+0x84/0x1c8 fs/stat.c:468
- __do_sys_readlinkat fs/stat.c:495 [inline]
- __se_sys_readlinkat fs/stat.c:492 [inline]
- __arm64_sys_readlinkat+0x28/0x3c fs/stat.c:492
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
- el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
- el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:637
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:584
-Code: f90003ff 97b9817f 34000134 8b1602f6 (b94022d7) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	f90003ff 	str	xzr, [sp]
-   4:	97b9817f 	bl	0xfffffffffee60600
-   8:	34000134 	cbz	w20, 0x2c
-   c:	8b1602f6 	add	x22, x23, x22
-* 10:	b94022d7 	ldr	w23, [x22, #32] <-- trapping instruction
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
