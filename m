@@ -2,105 +2,104 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76534C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 08:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C93C43219
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 09:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236564AbiKNIiC convert rfc822-to-8bit (ORCPT
+        id S236672AbiKNJAb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Nov 2022 03:38:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55804 "EHLO
+        Mon, 14 Nov 2022 04:00:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235750AbiKNIiC (ORCPT
+        with ESMTP id S236632AbiKNJA1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Nov 2022 03:38:02 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 743401C10E;
-        Mon, 14 Nov 2022 00:38:01 -0800 (PST)
-Received: from dggpeml500024.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N9jNp58WtzHvwM;
-        Mon, 14 Nov 2022 16:37:30 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (7.182.85.13) by
- dggpeml500024.china.huawei.com (7.185.36.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 14 Nov 2022 16:37:58 +0800
-Received: from frapeml500005.china.huawei.com ([7.182.85.13]) by
- frapeml500005.china.huawei.com ([7.182.85.13]) with mapi id 15.01.2375.031;
- Mon, 14 Nov 2022 09:37:57 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Xiujianfeng <xiujianfeng@huawei.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "roberto.sassu@polito.it" <roberto.sassu@polito.it>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ima: Fix misuse of dereference of pointer in
- template_desc_init_fields()
-Thread-Topic: [PATCH] ima: Fix misuse of dereference of pointer in
- template_desc_init_fields()
-Thread-Index: AQHY9nmHvrnDarYK/E2x2ibr+a0VfK4+GPqQ
-Date:   Mon, 14 Nov 2022 08:37:57 +0000
-Message-ID: <55100c2e550b4649b5a751ca4596fe7c@huawei.com>
-References: <20221112092719.224888-1-xiujianfeng@huawei.com>
-In-Reply-To: <20221112092719.224888-1-xiujianfeng@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.221.98.153]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 14 Nov 2022 04:00:27 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D564F1CFEA
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 01:00:26 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id k5so9735552pjo.5
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 01:00:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OHVvZDZbyEogVtk3XYqfqyWzOeOsXZdmYG4Vsfr4Pzs=;
+        b=IGlH+a/boVb7i6zolSK0zEvoMEddtxxH2nmc93lCCFV08bOZCNlgJxgFDpF0/JPDHu
+         ckYIGRfz/EA6eMc0VzdGQD4o1oB48QASsZlQIPKQ4BQlDOc3hHV4plz+jza1GFZ/VVjc
+         nTf+60GJLFAy4UVqpFpMpYwATK9woaMgfDBav2fX9dc2oUUVytTfnDZm2POJF9JsXFEU
+         RuMh+Tb5gNg6/ehHkMlHXQhE2ZGSs+MeqRjBBsUWLunO9jpHkixaOind7phxwkQxktl5
+         5SwJCZ9A4LQ2zUWuwMDqrLaHDIfzIDda+5BUT9byEbOAV899p/9dGl5MLl6kQ7TOJQR4
+         CAsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OHVvZDZbyEogVtk3XYqfqyWzOeOsXZdmYG4Vsfr4Pzs=;
+        b=7b8IUIC0HppldZNCxCt9xrFEHeHhURJhXpaeZXGmO4dlFNaRt1G2Mo8YyoaEfRjgA2
+         8msIuv32612hIKEhCZqT5lD1YuLJ11JbqQJ43IZbp586Ml1OVkKaxnGPELfue2GQGhX7
+         2pukfSJ8MHL1RKBPWAFu7DwF48/eyrNavivm2joBFoo7xPTyNLtIJAEl4q3QntNaAlcL
+         CzODUJJWkUSKe4zzXQTzQaeXHljAo640gmGNiRrb3iP3GQ6FsciNKqTSuGfvtgYey3CF
+         UR+2EpBB8OO0E5kRizEscsfM/4fi717RZ2N6FsaiHczFLdNwJSz63W2RTRjKDfYbj30J
+         cE8Q==
+X-Gm-Message-State: ANoB5pm9fxd7sm3rgjqpNSA2Enylr3HlGMC8rDhwoDb/9Z2ZfZWP9kg6
+        cvCDz/aeOGTsa3aij2f2qi+T/A==
+X-Google-Smtp-Source: AA0mqf5cZNQj8u+ZxbCaroI0Pmri5Pe5JqwutWZDxOXw61J8pMLqk/LVBKLC6XaybdNpMOnMuMHJrg==
+X-Received: by 2002:a17:903:1009:b0:17f:72a4:30a1 with SMTP id a9-20020a170903100900b0017f72a430a1mr12980922plb.124.1668416426378;
+        Mon, 14 Nov 2022 01:00:26 -0800 (PST)
+Received: from [10.94.58.189] ([139.177.225.254])
+        by smtp.gmail.com with ESMTPSA id q13-20020aa7960d000000b0056a7486da77sm6371684pfg.13.2022.11.14.01.00.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Nov 2022 01:00:26 -0800 (PST)
+Message-ID: <e57733cd-364d-84e0-cfe0-fd41de14f434@bytedance.com>
+Date:   Mon, 14 Nov 2022 17:00:18 +0800
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.4.2
+Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
+To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
+Cc:     Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>,
+        Karel Zak <kzak@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+Content-Language: en-US
+From:   Abel Wu <wuyun.abel@bytedance.com>
+In-Reply-To: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: Xiujianfeng
-> Sent: Saturday, November 12, 2022 10:27 AM
-> The input parameter @fields is type of struct ima_template_field ***, so
-> when allocates array memory for @fields, the size of element should be
-> sizeof(**field) instead of sizeof(*field).
-> 
-> Actually the original code would not cause any runtime error, but it's
-> better to make it logically right.
-> 
-> Fixes: adf53a778a0a ("ima: new templates management mechanism")
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+Hi Miklos and anyone interested in this proposal, is there any update on
+this? Sorry that I didn't find any..
 
-Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+Thanks & Best regards,
+	Abel
 
-Thanks
-
-Roberto
-
-> ---
->  security/integrity/ima/ima_template.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On 5/3/22 8:23 PM, Miklos Szeredi wrote:
+> This is a simplification of the getvalues(2) prototype and moving it to the
+> getxattr(2) interface, as suggested by Dave.
 > 
-> diff --git a/security/integrity/ima/ima_template.c
-> b/security/integrity/ima/ima_template.c
-> index 49f0626928a1..04c49f05cb74 100644
-> --- a/security/integrity/ima/ima_template.c
-> +++ b/security/integrity/ima/ima_template.c
-> @@ -245,11 +245,11 @@ int template_desc_init_fields(const char
-> *template_fmt,
->  	}
+> The patch itself just adds the possibility to retrieve a single line of
+> /proc/$$/mountinfo (which was the basic requirement from which the fsinfo
+> patchset grew out of).
 > 
->  	if (fields && num_fields) {
-> -		*fields = kmalloc_array(i, sizeof(*fields), GFP_KERNEL);
-> +		*fields = kmalloc_array(i, sizeof(**fields), GFP_KERNEL);
->  		if (*fields == NULL)
->  			return -ENOMEM;
+> But this should be able to serve Amir's per-sb iostats, as well as a host of
+> other cases where some statistic needs to be retrieved from some object.  Note:
+> a filesystem object often represents other kinds of objects (such as processes
+> in /proc) so this is not limited to fs attributes.
 > 
-> -		memcpy(*fields, found_fields, i * sizeof(*fields));
-> +		memcpy(*fields, found_fields, i * sizeof(**fields));
->  		*num_fields = i;
->  	}
+> This also opens up the interface to setting attributes via setxattr(2).
 > 
-> --
-> 2.17.1
-
