@@ -2,106 +2,259 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7C0C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 20:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDCDC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 23:07:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236559AbiKNUQH (ORCPT
+        id S237851AbiKNXHI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Nov 2022 15:16:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40946 "EHLO
+        Mon, 14 Nov 2022 18:07:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236124AbiKNUQG (ORCPT
+        with ESMTP id S238180AbiKNXGr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Nov 2022 15:16:06 -0500
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42CCAD80
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 12:16:04 -0800 (PST)
-Received: by mail-oi1-x233.google.com with SMTP id v81so12631181oie.5
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 12:16:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZZ4DceovIvniI/E7qgKtkp+mPXifQZS21MtlnZ7xnPs=;
-        b=KI63xJmFi3GEaRs6lSZAeHLr3CTF5DF8CLWsAwCOawP3h7eLV/aX5rkfqg7SAI7yrz
-         Ytj/i10DoFbe1O9NHtwb8fhHuQ8Rl5lBNhb/5YkETrkzowz2e7tPzbnlvmC8S4Rihiqc
-         0l2/lBQqKE+xGmfodZxaZss5DIaG2oPE9kNDWYb3kO0MEGrVX0FYy+m5R29ZMb/JsHCE
-         sd4t5RJI0LFRECpwAguxhiHpjLHIN0VeTZV1CYEQkvhxdN2oHMdav8JAVpdFl4Ap8wN/
-         /BKrHDBDbwZSObmHC5OuMKyn29KXmX0SsZxl/eU+XaTdPL5H6Ts5HGQKgJ3i0WK8Na26
-         V68A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZZ4DceovIvniI/E7qgKtkp+mPXifQZS21MtlnZ7xnPs=;
-        b=IGgp/gyJaFprSAYoSV23qpZ48BLGDhqWRjBdVa9i52dR9sU0hIL5c4D5X64X/7tOVC
-         NY9YYxS1N9/e+j0oBBnR4RaBpUf7eD3AhIEXUFe2t9H/GXeIVeLVWpFY0AFqhEl4m/um
-         ysD896BWf/jj3GnWJLnmjrefdoLGnt12agvGmAcXcpzWZnJ612w4+TljHgXhT+JzDyc/
-         hWCpayaveSnEo93EBRdamATiRKVx+Boor6eURzr0SRwWNwQsjXRgkECM1hMsZzfJ1aVF
-         5+132QnRmwCBigqRMaOdcvyw4ukT7vweH3gxbjoYs4TM0+w+x/8fwwYdYpwiAYQ+Ndo4
-         F6bQ==
-X-Gm-Message-State: ANoB5pku/rSZwE597smjZznZ2RuHuydFXTfvYvp+wmzq+zOt+lGsd3qd
-        ZaoIF3svZDGYvU/I7nmYulskR2P7uMaf0/b7mgKnng==
-X-Google-Smtp-Source: AA0mqf6NXAYFJNCUyD3mZ+1ZXmQUxVXXOwtemxrUobtj0DML/MLAUW5C9IeaYdL6bdRlxky7GuvlEVrQHrNwjleHB3k=
-X-Received: by 2002:a05:6808:3011:b0:35a:7e1d:3d72 with SMTP id
- ay17-20020a056808301100b0035a7e1d3d72mr6809975oib.233.1668456963311; Mon, 14
- Nov 2022 12:16:03 -0800 (PST)
-MIME-Version: 1.0
-References: <00000000000061fe2205ed6300fa@google.com> <Y3KU5kwa2XGS9gyy@hoboy.vegasvil.org>
-In-Reply-To: <Y3KU5kwa2XGS9gyy@hoboy.vegasvil.org>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 14 Nov 2022 21:15:51 +0100
-Message-ID: <CACT4Y+ZqTQ1gy7Vu8Hsy8tmXa+EC43jYaNxG40biNy3d-rmMmg@mail.gmail.com>
-Subject: Re: [syzbot] BUG: unable to handle kernel NULL pointer dereference in smack_inode_permission
-To:     Richard Cochran <richardcochran@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>
-Cc:     syzbot <syzbot+0f89bd13eaceccc0e126@syzkaller.appspotmail.com>,
-        casey@schaufler-ca.com, jmorris@namei.org,
+        Mon, 14 Nov 2022 18:06:47 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3E2520F66;
+        Mon, 14 Nov 2022 15:04:35 -0800 (PST)
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AEMhhSi027321;
+        Mon, 14 Nov 2022 23:03:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=r2fzDqWsStLA1xUQ8hFm6TfQBbcyzJkCztYXsu/2swA=;
+ b=Sm/Lp2TX1gppX2Z5a9Mns5MPvNGLBnKFMG0y1Olw/g8Em+og+eRJLS9LWumlXbmUovqU
+ dkrtXwZGaaMchdsWqRkNnVvxkIAXUhbfhAMwzrxPN/0oBwNpRw06WPn+IcofHjWhUF5P
+ /2AgtoudXJDAEu0XaHjQz295RoCJPAy6t46Hn5ze6mFsb2gIkqA9t+6KSx7lbCqQEg0h
+ 7KArhQC/f9HjMxnoCnGtjPM58zSMDutYS530qmb+KPD3kfuC9ATqjoEHWB6m5VRD0gXJ
+ gTyUpWZXwbF0MgWKkEqxzVKadK6hTK+VTyJQ2L8uV2s9Iw9jsm+jzxQlxzP8zV0f9jL/ VQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kuxqnrbk2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 14 Nov 2022 23:03:48 +0000
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AEN07xD012744;
+        Mon, 14 Nov 2022 23:03:48 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kuxqnrbjd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 14 Nov 2022 23:03:48 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AEMpLxM017257;
+        Mon, 14 Nov 2022 23:03:47 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma04dal.us.ibm.com with ESMTP id 3kt349ms1c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 14 Nov 2022 23:03:47 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AEN3jIF1835724
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Nov 2022 23:03:45 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3582D5807D;
+        Mon, 14 Nov 2022 23:03:45 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 753D35808C;
+        Mon, 14 Nov 2022 23:03:43 +0000 (GMT)
+Received: from [9.163.46.135] (unknown [9.163.46.135])
+        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Mon, 14 Nov 2022 23:03:43 +0000 (GMT)
+Message-ID: <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
+Date:   Mon, 14 Nov 2022 18:03:43 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
+ fwsecurityfs
+Content-Language: en-US
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
         linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        paul@paul-moore.com, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell Currey <ruscur@russell.cc>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+References: <20221106210744.603240-1-nayna@linux.ibm.com>
+ <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
+ <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
+ <Y2zLRw/TzV/sWgqO@kroah.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+In-Reply-To: <Y2zLRw/TzV/sWgqO@kroah.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: cMTICiR-Ic39zShUHbdlZAJATSRcqSOJ
+X-Proofpoint-ORIG-GUID: Ruez-Aie2yvxjHXtRL2XCcyi2xuMRRAi
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-14_15,2022-11-11_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 phishscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 mlxscore=0 spamscore=0 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211140162
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 14 Nov 2022 at 20:20, Richard Cochran <richardcochran@gmail.com> wrote:
+
+On 11/10/22 04:58, Greg Kroah-Hartman wrote:
+> On Wed, Nov 09, 2022 at 03:10:37PM -0500, Nayna wrote:
+>> On 11/9/22 08:46, Greg Kroah-Hartman wrote:
+>>> On Sun, Nov 06, 2022 at 04:07:42PM -0500, Nayna Jain wrote:
+>>>> securityfs is meant for Linux security subsystems to expose policies/logs
+>>>> or any other information. However, there are various firmware security
+>>>> features which expose their variables for user management via the kernel.
+>>>> There is currently no single place to expose these variables. Different
+>>>> platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
+>>>> interface as they find it appropriate. Thus, there is a gap in kernel
+>>>> interfaces to expose variables for security features.
+>>>>
+>>>> Define a firmware security filesystem (fwsecurityfs) to be used by
+>>>> security features enabled by the firmware. These variables are platform
+>>>> specific. This filesystem provides platforms a way to implement their
+>>>>    own underlying semantics by defining own inode and file operations.
+>>>>
+>>>> Similar to securityfs, the firmware security filesystem is recommended
+>>>> to be exposed on a well known mount point /sys/firmware/security.
+>>>> Platforms can define their own directory or file structure under this path.
+>>>>
+>>>> Example:
+>>>>
+>>>> # mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
+>>> Why not juset use securityfs in /sys/security/firmware/ instead?  Then
+>>> you don't have to create a new filesystem and convince userspace to
+>>> mount it in a specific location?
+>>  From man 5 sysfs page:
+>>
+>> /sys/firmware: This subdirectory contains interfaces for viewing and
+>> manipulating firmware-specific objects and attributes.
+>>
+>> /sys/kernel: This subdirectory contains various files and subdirectories
+>> that provide information about the running kernel.
+>>
+>> The security variables which are being exposed via fwsecurityfs are managed
+>> by firmware, stored in firmware managed space and also often consumed by
+>> firmware for enabling various security features.
+> Ok, then just use the normal sysfs interface for /sys/firmware, why do
+> you need a whole new filesystem type?
 >
-> On Sun, Nov 13, 2022 at 04:05:47PM -0800, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    56751c56c2a2 Merge branch 'for-next/fixes' into for-kernelci
-> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=11fc8b0e880000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=606e57fd25c5c6cc
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=0f89bd13eaceccc0e126
-> > compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-> > userspace arch: arm64
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a691fa880000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1733c5b9880000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/cf4668c75dea/disk-56751c56.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/e1ef82e91ef7/vmlinux-56751c56.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/3dabe076170f/Image-56751c56.gz.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+0f89bd13eaceccc0e126@syzkaller.appspotmail.com
+>>  From git commit b67dbf9d4c1987c370fd18fdc4cf9d8aaea604c2, the purpose of
+>> securityfs(/sys/kernel/security) is to provide a common place for all kernel
+>> LSMs. The idea of
+>> fwsecurityfs(/sys/firmware/security) is to similarly provide a common place
+>> for all firmware security objects.
+>>
+>> /sys/firmware already exists. The patch now defines a new /security
+>> directory in it for firmware security features. Using /sys/kernel/security
+>> would mean scattering firmware objects in multiple places and confusing the
+>> purpose of /sys/kernel and /sys/firmware.
+> sysfs is confusing already, no problem with making it more confusing :)
 >
-> Why was this email addressed to me?
+> Just document where you add things and all should be fine.
+>
+>> Even though fwsecurityfs code is based on securityfs, since the two
+>> filesystems expose different types of objects and have different
+>> requirements, there are distinctions:
+>>
+>> 1. fwsecurityfs lets users create files in userspace, securityfs only allows
+>> kernel subsystems to create files.
+> Wait, why would a user ever create a file in this filesystem?  If you
+> need that, why not use configfs?  That's what that is for, right?
 
-Hi Richard,
+The purpose of fwsecurityfs is not to expose configuration items but 
+rather security objects used for firmware security features. I think 
+these are more comparable to EFI variables, which are exposed via an 
+EFI-specific filesystem, efivarfs, rather than configfs.
 
-You are listed as maintainer for the file this crash was attributed to:
+>
+>> 2. firmware and kernel objects may have different requirements. For example,
+>> consideration of namespacing. As per my understanding, namespacing is
+>> applied to kernel resources and not firmware resources. That's why it makes
+>> sense to add support for namespacing in securityfs, but we concluded that
+>> fwsecurityfs currently doesn't need it. Another but similar example of it
+>> is: TPM space, which is exposed from hardware. For containers, the TPM would
+>> be made as virtual/software TPM. Similarly for firmware space for
+>> containers, it would have to be something virtualized/software version of
+>> it.
+> I do not understand, sorry.  What does namespaces have to do with this?
+> sysfs can already handle namespaces just fine, why not use that?
 
-$ ./scripts/get_maintainer.pl -f security/smack/smack_lsm.c
-...
-Richard Cochran <richardcochran@gmail.com> (maintainer:PTP HARDWARE
-CLOCK SUPPORT)
-...
+Firmware objects are not namespaced. I mentioned it here as an example 
+of the difference between firmware and kernel objects. It is also in 
+response to the feedback from James Bottomley in RFC v2 
+[https://lore.kernel.org/linuxppc-dev/41ca51e8db9907d9060cc38adb59a66dcae4c59b.camel@HansenPartnership.com/].
 
-Also see:
-https://lore.kernel.org/all/Y279BqPNYAr+5OxC@sol.localdomain/
+>
+>> 3. firmware objects are persistent and read at boot time by interaction with
+>> firmware, unlike kernel objects which are not persistent.
+> That doesn't matter, sysfs exports what the hardware provides, and that
+> might persist over boot.
+>
+> So I don't see why a new filesystem is needed.
+>
+> You didn't explain why sysfs, or securitfs (except for the location in
+> the tree) does not work at all for your needs.  The location really
+> doesn't matter all that much as you are creating a brand new location
+> anyway so we can just declare "this is where this stuff goes" and be ok.
+
+For rest of the questions, here is the summarized response.
+
+Based on mailing list previous discussions [1][2][3] and considering 
+various firmware security use cases, our fwsecurityfs proposal seemed to 
+be a reasonable and acceptable approach based on the feedback [4].
+
+[1] https://lore.kernel.org/linuxppc-dev/YeuyUVVdFADCuDr4@kroah.com/#t
+[2] https://lore.kernel.org/linuxppc-dev/Yfk6gucNmJuR%2Fegi@kroah.com/
+[3] 
+https://lore.kernel.org/all/Yfo%2F5gYgb9Sv24YB@kroah.com/t/#m40250fdb3fddaafe502ab06e329e63381b00582d
+[4] https://lore.kernel.org/linuxppc-dev/YrQqPhi4+jHZ1WJc@kroah.com/
+
+RFC v1 was using sysfs. After considering feedback[1][2][3], the 
+following are design considerations for unification via fwsecurityfs:
+
+1. Unify the location: Defining a security directory under /sys/firmware 
+facilitates exposing objects related to firmware security features in a 
+single place. Different platforms can create their respective directory 
+structures within /sys/firmware/security.
+
+2. Unify the code:  To support unification, having the fwsecurityfs 
+filesystem API allows different platforms to define the inode and file 
+operations they need. fwsecurityfs provides a common API that can be 
+used by each platform-specific implementation to support its particular 
+requirements and interaction with firmware. Initializing 
+platform-specific functions is the purpose of the 
+fwsecurityfs_arch_init() function that is called on mount. Patch 3/4 
+implements fwsecurityfs_arch_init() for powerpc.
+
+Similar to the common place securityfs provides for LSMs to interact 
+with kernel security objects, fwsecurityfs would provide a common place 
+for all firmware security objects, which interact with the firmware 
+rather than the kernel. Although at the API level, the two filesystem 
+look similar, the requirements for firmware and kernel objects are 
+different. Therefore, reusing securityfs wasn't a good fit for the 
+firmware use case and we are proposing a similar but different 
+filesystem -  fwsecurityfs - focused for firmware security.
+
+>
+> And again, how are you going to get all Linux distros to now mount your
+> new filesystem?
+
+It would be analogous to the way securityfs is mounted.
+
+Thanks & Regards,
+
+     - Nayna
+
+>
+> thanks,
+>
+> greg k-h
