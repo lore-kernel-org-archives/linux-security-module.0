@@ -2,204 +2,212 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03147C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 17:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 682D8C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 17:46:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236375AbiKNRe2 (ORCPT
+        id S237617AbiKNRqH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Nov 2022 12:34:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37702 "EHLO
+        Mon, 14 Nov 2022 12:46:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237582AbiKNRe0 (ORCPT
+        with ESMTP id S237599AbiKNRqG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Nov 2022 12:34:26 -0500
-Received: from mail-pf1-x44a.google.com (mail-pf1-x44a.google.com [IPv6:2607:f8b0:4864:20::44a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 008B01571B
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 09:34:24 -0800 (PST)
-Received: by mail-pf1-x44a.google.com with SMTP id s11-20020a056a00178b00b0056cb4545c3fso6372841pfg.5
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 09:34:24 -0800 (PST)
+        Mon, 14 Nov 2022 12:46:06 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31D2720365
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 09:46:01 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id h14so10977935pjv.4
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 09:46:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=msz3ozvlPLroWfT8x2NNZs//GvUccXdOW5UK6ZYn4c0=;
-        b=BIqlyBz0MDGXETR7a6p1Ndp0XeFZ6GGFRhqNB/OHBLLLurkUXexaaVCWU2W0zoExCG
-         hJDRgc9RH9+rdVs8DbClI1j/9ySqOZ1+hJCz/fWIWlg4bnyTmOrbSOiLsXQ2fc9UiSo/
-         fhC88erSxjutvBDvF3mcu7xOFyb/UTlWpeOc+GDQOjAoZz7MPzLqmqr8VaydCnWoFJG0
-         iFSMqZHw600P8s6hksBteTHJPdRP6hkETdfVtZhRCYsrksBGrYTHL0YsQI2a9/zoXAnD
-         ouj6y4Z3c0RmqRxNc1oUsa852ZsLbLpFS8bVnGbFvlqoY8CfR7U6YUvdGndmoaAJ6bbu
-         1NmQ==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GQVTl44oIH8oiV5K+Sv7U8T5hFlw2/VkCt8UIAvJo8k=;
+        b=V1n/QmQ3AuN9+EmhyutLATvVqBnCmhroS/UAPXghdJmV0HU19jBjKXe8xXfkDii3uh
+         NbqQrvC/rIPyGUCNyfGy1CLDRxYC6OHpDDCIHCoreQBo6O43xJmvGtuz6/9H7Vi9jUqD
+         XauwRtxnkP/SX8dYOyE67HzHi8XH7ivB0fiyHazCPB1o5D8BR+/IEvz71nNZ73FZygr9
+         Ixm16SE66NbwJ8g5krU2+4ZOzLZJ0u2CK9HUpXZQ9F4r4zDVHshhQ/fKQ0+/uNJkjoJY
+         l3SUcHNoLOYCYhyvJUlY09N3xdjfCcdJAmAk5LAs9znBiX0C4BZTg0Stl3/l4cZ2B2We
+         +gkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=msz3ozvlPLroWfT8x2NNZs//GvUccXdOW5UK6ZYn4c0=;
-        b=SSXxTT056ubvozHg4bpbqEPN1teapuh4MxgGwNW7x3is/lin4cCnMPA3EaX/2QWz0O
-         clr7+fsXwgfd97jp7ahvkdhImF2uJnm8k2qcZ4u6fSad2+eJzO06MOAqMPquS7QgDKzK
-         1wTkar0H8OwUo5/Ws3dIoe5X6d4a+FfV5JSIgdM+n45Zc49bpUEMgdHXpl8GK+3zwKpb
-         VgnhZWiRmcs2BA1lsn/hpAOZzSZqtpqcCIs5aSmZHNhnzvTMNyLHT68RgUfLXrqe90cs
-         vfeUKnHjuTpAAWznCO7YrAlk6LUorqQYpKd+3ICCNM0HmuB9BEWAme8HNPfndXbSTUhy
-         aSww==
-X-Gm-Message-State: ANoB5pn3THWopLhr/51a4ZYI4nTYpJFxGr5Im6xC0Kb40v9LYlRZCD23
-        eFKDIMlW01dNS9XhR5PF29+0Bj0=
-X-Google-Smtp-Source: AA0mqf6oV5jBgwVrMG+lgn68FDlvRNY25mg6ElHE/ciQImgwloJgW/4/A2kf7qgGHApYKmXPRJumPnY=
-X-Received: from sdf.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5935])
- (user=sdf job=sendgmr) by 2002:a17:902:a586:b0:188:5681:4dc7 with SMTP id
- az6-20020a170902a58600b0018856814dc7mr291394plb.97.1668447264478; Mon, 14 Nov
- 2022 09:34:24 -0800 (PST)
-Date:   Mon, 14 Nov 2022 09:34:23 -0800
-In-Reply-To: <1668401942-6309-1-git-send-email-wangyufen@huawei.com>
-Mime-Version: 1.0
-References: <1668401942-6309-1-git-send-email-wangyufen@huawei.com>
-Message-ID: <Y3J8HyIfhm7rgpvI@google.com>
-Subject: Re: [PATCH bpf] selftests/bpf: fix memory leak of lsm_cgroup
-From:   sdf@google.com
-To:     Wang Yufen <wangyufen@huawei.com>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
-        andrii@kernel.org, paul@paul-moore.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GQVTl44oIH8oiV5K+Sv7U8T5hFlw2/VkCt8UIAvJo8k=;
+        b=l5s6+lM/q/vAPLFstw/dHuYFQds6CWEfIo2s1KcxXx3BWq36YdSatO+n9HABS7mLak
+         X9S4lpFCPJKhRFkT+PAbBca/66Q4+wWyVOl3IueLvTLGfcLNg0fwtZIiIB4SknE0d+ZR
+         uLAe573y8lbfVlGzz2wXOztLlUK3dz9/2/Y4lD1aGwwesiCY27YVddb04HUdrxBeeHeA
+         YIzcMwiqJaTYcTux5nZA5vPKdn4eDqqdCF2NBd162qNkCxOYOXRzeA0NhzHbPuP+Fnlc
+         qno7M+Tql4thDVfJM/MBr28hRhwlhg6M30Ci8sOlMbVrSR4LucAVm4HC1QsQ961qz5NW
+         +d0g==
+X-Gm-Message-State: ANoB5plDY+WuExrR+Iqmfz9OEU7/PhnGyTMa3YY/Jm8FaM636yw8hTSz
+        lxyenZp1/IPqZFMWTpPrXVl57nc3ghrmXqa8Jten
+X-Google-Smtp-Source: AA0mqf4ETxqkXKYu+RpDh1ikHko1QWsZc6mC5UAwT9xXuQfI1egKxQiAZWWgvKVnWMoGCW1s91/EqBlGHFO3dDz7mK8=
+X-Received: by 2002:a17:90b:3682:b0:1fd:5b5d:f09d with SMTP id
+ mj2-20020a17090b368200b001fd5b5df09dmr14979218pjb.69.1668447960577; Mon, 14
+ Nov 2022 09:46:00 -0800 (PST)
+MIME-Version: 1.0
+References: <20221114111844.3461403-1-konstantin.meskhidze@huawei.com>
+In-Reply-To: <20221114111844.3461403-1-konstantin.meskhidze@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 14 Nov 2022 12:45:49 -0500
+Message-ID: <CAHC9VhQZ0i1GF2a9P9v05awKCb_j2X0Tv_xVfhQm4NnMJFs5Lw@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] SELINUX: Remove obsolete deferred inode security
+ init list.
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     linux-security-module@vger.kernel.org,
+        jamorris@linux.microsoft.com, selinux@vger.kernel.org,
+        stephen.smalley.work@gmail.com, artem.kuzin@huawei.com,
+        hw.likun@huawei.com, alexander.kozhevnikov@huawei-partners.com,
+        xiujianfeng@huawei.com, yusongping@huawei.com, hukeping@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/14, Wang Yufen wrote:
-> kmemleak reports this issue:
-
-> unreferenced object 0xffff88810b7835c0 (size 32):
->    comm "test_progs", pid 270, jiffies 4294969007 (age 1621.315s)
->    hex dump (first 32 bytes):
->      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->      03 00 00 00 03 00 00 00 0f 00 00 00 00 00 00 00  ................
->    backtrace:
->      [<00000000376cdeab>] kmalloc_trace+0x27/0x110
->      [<000000003bcdb3b6>] selinux_sk_alloc_security+0x66/0x110
->      [<000000003959008f>] security_sk_alloc+0x47/0x80
->      [<00000000e7bc6668>] sk_prot_alloc+0xbd/0x1a0
->      [<0000000002d6343a>] sk_alloc+0x3b/0x940
->      [<000000009812a46d>] unix_create1+0x8f/0x3d0
->      [<000000005ed0976b>] unix_create+0xa1/0x150
->      [<0000000086a1d27f>] __sock_create+0x233/0x4a0
->      [<00000000cffe3a73>] __sys_socket_create.part.0+0xaa/0x110
->      [<0000000007c63f20>] __sys_socket+0x49/0xf0
->      [<00000000b08753c8>] __x64_sys_socket+0x42/0x50
->      [<00000000b56e26b3>] do_syscall_64+0x3b/0x90
->      [<000000009b4871b8>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-> The issue occurs in the following scenarios:
-
-> unix_create1()
->    sk_alloc()
->      sk_prot_alloc()
->        security_sk_alloc()
->          call_int_hook()
->            hlist_for_each_entry()
->              entry1->hook.sk_alloc_security
->              <-- selinux_sk_alloc_security() succeeded,
->              <-- sk->security alloced here.
->              entry2->hook.sk_alloc_security
->              <-- bpf_lsm_sk_alloc_security() failed
->        goto out_free;
->          ...    <-- the sk->security not freed, memleak
-
-> The core problem is that the LSM is not yet fully stacked (work is
-> actively going on in this space) which means that some LSM hooks do
-> not support multiple LSMs at the same time. To fix, skip the
-> "EPERM" test when it runs in the environments that already have
-> non-bpf lsms installed
-
-> Fixes: dca85aac8895 ("selftests/bpf: lsm_cgroup functional test")
-> Signed-off-by: Wang Yufen <wangyufen@huawei.com>
-> Cc: Stanislav Fomichev <sdf@google.com>
+On Mon, Nov 14, 2022 at 6:19 AM Konstantin Meskhidze
+<konstantin.meskhidze@huawei.com> wrote:
+> From: Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
+>
+> This patch is a proposed code optimization for SELinux:
+>
+> 1) Each inode has SELinux security structure attached
+>    to it, this one need to be initialized at some point.
+> 2) This initialization is done by the function
+>    inode_doinit_with_dentry ( ).
+> 3) In the kernel releases started from some point in the past
+>    this function (2) is always called normally from function
+>    __inode_security_revalidate ( ).
+> 4) Which in turn is always called  from inode_security ( ), which
+>    is a base point for any selinux calls and always called on
+>    any access to any inode except a few special cases when
+>    _inode_security_novalidate ( ) is used.
+> 5) Inode security structure initialization can be done only after
+>    SELinux is fully initialized and policy is loaded.
+> 6) So, for this purpose there was a special defeferred inode security
+>    initialization list protected by a spinlock implemented, which was
+>    populated instead of isec initialization in function
+>    inode_doinit_with_dentry ( ), if it was called before SELinux full
+>    initialization, and processed at the time when SELinux policy load
+>    occurred by calling again inode_doinit_with_dentry ( ) on each inode
+>    in this list.
+> 7) This list was a part of a default initialization logic before (3) was
+>    implemented, but now, taking into account new mechanism implemented
+>    with current approach of inode security revalidation on each access
+>    (4)-(3)-(2), it looks obsolete and not needed anymore.
+> 8) So deferred initialization, this list and code associated with it can
+>    be safely removed now, as anyway, if inode isec was not initialized
+>    before it will be processed on any next inode access.
+> 9) There are two possible positive consequences from this removal:
+>      a. More clean and simple code, less memory consumption;
+>      b. This deferred initialization in some cases (for example SELinux
+>         was switched on manually after system was up quite a long time)
+>         could take some significant time to process, i.e. system looks
+>         hung for some notable time. And now this is avoided.
+>
+> Signed-off-by: Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 > ---
->   tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c | 19  
-> +++++++++++++++----
->   tools/testing/selftests/bpf/progs/lsm_cgroup.c      |  8 ++++++++
->   2 files changed, 23 insertions(+), 4 deletions(-)
+>  security/selinux/hooks.c          | 70 ++++---------------------------
+>  security/selinux/include/objsec.h |  3 --
+>  2 files changed, 7 insertions(+), 66 deletions(-)
 
-> diff --git a/tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c  
-> b/tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c
-> index 1102e4f..a927ade 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c
-> @@ -173,10 +173,14 @@ static void test_lsm_cgroup_functional(void)
->   	ASSERT_EQ(query_prog_cnt(cgroup_fd, NULL), 4, "total prog count");
->   	ASSERT_EQ(query_prog_cnt(cgroup_fd2, NULL), 1, "total prog count");
+Hi Konstantin, Alexander,
 
-> -	/* AF_UNIX is prohibited. */
+A few comments below, but can you share what testing you've done with
+this?  Specifically what you've done to ensure that inodes allocated
+before the policy is loaded are properly initialized/validated after
+the policy is loaded?
+
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index f553c370397e..c93b5621d735 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -316,27 +316,7 @@ static struct inode_security_struct *backing_inode_security(struct dentry *dentr
+>
+>  static void inode_free_security(struct inode *inode)
+>  {
+> -       struct inode_security_struct *isec = selinux_inode(inode);
+> -       struct superblock_security_struct *sbsec;
 > -
->   	fd = socket(AF_UNIX, SOCK_STREAM, 0);
-> -	ASSERT_LT(fd, 0, "socket(AF_UNIX)");
-> +	if (skel->kconfig->CONFIG_SECURITY_APPARMOR
-> +	    || skel->kconfig->CONFIG_SECURITY_SELINUX
-> +	    || skel->kconfig->CONFIG_SECURITY_SMACK)
+> -       if (!isec)
+> -               return;
+> -       sbsec = selinux_superblock(inode->i_sb);
+> -       /*
+> -        * As not all inode security structures are in a list, we check for
+> -        * empty list outside of the lock to make sure that we won't waste
+> -        * time taking a lock doing nothing.
+> -        *
+> -        * The list_del_init() function can be safely called more than once.
+> -        * It should not be possible for this function to be called with
+> -        * concurrent list_add(), but for better safety against future changes
+> -        * in the code, we use list_empty_careful() here.
+> -        */
+> -       if (!list_empty_careful(&isec->list)) {
+> -               spin_lock(&sbsec->isec_lock);
+> -               list_del_init(&isec->list);
+> -               spin_unlock(&sbsec->isec_lock);
+> -       }
+> +/* NOTHING TO DO AFTER DEFERRED LIST REMOVAL */
+>  }
 
-[..]
+We should just remove inode_free_security(), as well as
+selinux_inode_free_security(), there is no reason to leave them as
+empty functions and/or hooks.
 
-> +		ASSERT_GE(fd, 0, "socket(AF_UNIX)");
+> @@ -551,27 +531,6 @@ static int sb_finish_set_opts(struct super_block *sb)
+>         /* Initialize the root inode. */
+>         rc = inode_doinit_with_dentry(root_inode, root);
+>
+> -       /* Initialize any other inodes associated with the superblock, e.g.
+> -          inodes created prior to initial policy load or inodes created
+> -          during get_sb by a pseudo filesystem that directly
+> -          populates itself. */
+> -       spin_lock(&sbsec->isec_lock);
+> -       while (!list_empty(&sbsec->isec_head)) {
+> -               struct inode_security_struct *isec =
+> -                               list_first_entry(&sbsec->isec_head,
+> -                                          struct inode_security_struct, list);
+> -               struct inode *inode = isec->inode;
+> -               list_del_init(&isec->list);
+> -               spin_unlock(&sbsec->isec_lock);
+> -               inode = igrab(inode);
+> -               if (inode) {
+> -                       if (!IS_PRIVATE(inode))
+> -                               inode_doinit_with_dentry(inode, NULL);
+> -                       iput(inode);
+> -               }
+> -               spin_lock(&sbsec->isec_lock);
+> -       }
+> -       spin_unlock(&sbsec->isec_lock);
+>         return rc;
+>  }
 
-nit: maybe skip this completely instead of having ASSERT_GE+close?
+I would suggest ending sb_finish_set_opts() by returning from the
+inode_doinit_with_dentry() call, e.g.:
 
-	if (!(skel->kconfig->CONFIG_SECURITY_APPARMOR || _SELINUX || _SMACK)
-		/* AF_UNIX is prohibited. */
-		ASSERT_LT(fd, 0, "socket(AF_UNIX)");
+    /* ... */
+    return inode_doinit_with_dentry(root_inode, root);
+  }
 
+> @@ -1430,9 +1381,7 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
+>                 if (!dentry) {
+>                         /*
+>                          * this is can be hit on boot when a file is accessed
+> -                        * before the policy is loaded.  When we load policy we
+> -                        * may find inodes that have no dentry on the
+> -                        * sbsec->isec_head list.  No reason to complain as these
+> +                        * before the policy is loaded. No reason to complain as these
+>                          * will get fixed up the next time we go through
+>                          * inode_doinit with a dentry, before these inodes could
+>                          * be used again by userspace.
 
-> +	else
-> +		/* AF_UNIX is prohibited. */
-> +		ASSERT_LT(fd, 0, "socket(AF_UNIX)");
->   	close(fd);
+There are some typos at the start of this comment that are worth
+fixing here since you are updating the comment block, e.g.:
 
->   	/* AF_INET6 gets default policy (sk_priority). */
-> @@ -233,11 +237,18 @@ static void test_lsm_cgroup_functional(void)
+  /*
+   * This can be hit on boot when a file is accessed
+   * before the policy is loaded ...
 
->   	/* AF_INET6+SOCK_STREAM
->   	 * AF_PACKET+SOCK_RAW
-> +	 * AF_UNIX+SOCK_RAW if already have non-bpf lsms installed
->   	 * listen_fd
->   	 * client_fd
->   	 * accepted_fd
->   	 */
-> -	ASSERT_EQ(skel->bss->called_socket_post_create2, 5, "called_create2");
-> +	if (skel->kconfig->CONFIG_SECURITY_APPARMOR
-> +	    || skel->kconfig->CONFIG_SECURITY_SELINUX
-> +	    || skel->kconfig->CONFIG_SECURITY_SMACK)
-> +		/* AF_UNIX+SOCK_RAW if already have non-bpf lsms installed */
-> +		ASSERT_EQ(skel->bss->called_socket_post_create2, 6, "called_create2");
-> +	else
-> +		ASSERT_EQ(skel->bss->called_socket_post_create2, 5, "called_create2");
-
->   	/* start_server
->   	 * bind(ETH_P_ALL)
-> diff --git a/tools/testing/selftests/bpf/progs/lsm_cgroup.c  
-> b/tools/testing/selftests/bpf/progs/lsm_cgroup.c
-> index 4f2d60b..02c11d1 100644
-> --- a/tools/testing/selftests/bpf/progs/lsm_cgroup.c
-> +++ b/tools/testing/selftests/bpf/progs/lsm_cgroup.c
-> @@ -7,6 +7,10 @@
-
->   char _license[] SEC("license") = "GPL";
-
-> +extern bool CONFIG_SECURITY_SELINUX __kconfig __weak;
-> +extern bool CONFIG_SECURITY_SMACK __kconfig __weak;
-> +extern bool CONFIG_SECURITY_APPARMOR __kconfig __weak;
-> +
->   #ifndef AF_PACKET
->   #define AF_PACKET 17
->   #endif
-> @@ -140,6 +144,10 @@ int BPF_PROG(socket_bind2, struct socket *sock,  
-> struct sockaddr *address,
->   int BPF_PROG(socket_alloc, struct sock *sk, int family, gfp_t priority)
->   {
->   	called_socket_alloc++;
-> +	/* if already have non-bpf lsms installed, EPERM will cause memory leak  
-> of non-bpf lsms */
-> +	if (CONFIG_SECURITY_SELINUX || CONFIG_SECURITY_SMACK ||  
-> CONFIG_SECURITY_APPARMOR)
-> +		return 1;
-> +
->   	if (family == AF_UNIX)
->   		return 0; /* EPERM */
-
-> --
-> 1.8.3.1
-
+-- 
+paul-moore.com
