@@ -2,157 +2,170 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB9EC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Nov 2022 03:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2B8C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Nov 2022 05:39:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232708AbiKODy6 (ORCPT
+        id S230023AbiKOFjn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Nov 2022 22:54:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42538 "EHLO
+        Tue, 15 Nov 2022 00:39:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232040AbiKODy5 (ORCPT
+        with ESMTP id S229455AbiKOFjm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Nov 2022 22:54:57 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E52B17A9E;
-        Mon, 14 Nov 2022 19:54:56 -0800 (PST)
-Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NBC3s4gblzmVtp;
-        Tue, 15 Nov 2022 11:54:33 +0800 (CST)
-Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
- dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 15 Nov 2022 11:54:54 +0800
-Received: from [10.67.108.193] (10.67.108.193) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 15 Nov 2022 11:54:53 +0800
-Subject: Re: [PATCH] device_cgroup: Roll back to original exceptions after
- copy failure
-To:     Paul Moore <paul@paul-moore.com>
-CC:     <jmorris@namei.org>, <serge@hallyn.com>,
-        <serge.hallyn@canonical.com>, <akpm@linux-foundation.org>,
-        <aris@redhat.com>, <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        wangweiyang <wangweiyang2@huawei.com>
-References: <20221025113101.41132-1-wangweiyang2@huawei.com>
- <CAHC9VhQW9g6QTpPMHehTyfT_N5kQjeAGZjdiiUS9od+0CrmbiQ@mail.gmail.com>
-From:   wangweiyang <wangweiyang2@huawei.com>
-Message-ID: <7da459bc-ffb7-1b0b-dcac-5e967d836434@huawei.com>
-Date:   Tue, 15 Nov 2022 11:54:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Tue, 15 Nov 2022 00:39:42 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B267B6463
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 21:39:40 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id y14so33468481ejd.9
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 21:39:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9K3V25osQLREMG6ZUk7AC0ZkFnZLHBbL3WZnP0tsfH4=;
+        b=lP1c+QctBSuAkoA0Voq5SO1rZHAodr96QmUnxvNWlD5+dWN0+a+G2GJSKPjIWX/FP2
+         yEf+NE2GSx/2I5MZekALkcGZ8fWAnnGpaxXL47vF1dPwqA/e4AVM2x9VT96NMomw6PIM
+         NFiXrtCZPAgVWLg3AbpT7mEzwkJKD1dRuwghDCmDown3PemV71JAfKEJAK18qY+R1drY
+         yTGHzc6xOjYGTZJL1+eK79Pf9py2dwz8vvc49geY7D98Q+v/bHXRmmcO7rWyP1SxOSp3
+         wLBijaAXnhZPHyAAk0yHwAwelCZATdN4NJbqmolDb7AvnOEHfNz/ut64iBqOyb6ykDlT
+         f76g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9K3V25osQLREMG6ZUk7AC0ZkFnZLHBbL3WZnP0tsfH4=;
+        b=AyH0M0qmT9f/QyaBAVLwxmIttScsbDKEjovalZetuGwXJbOVfbjlatgePQa7uKLgjq
+         aTq2ycwJwptSk0EJ2h+0RfaE4p/Ei+yrClXTu00c1hs1XaZQBvYFMGB/cXKUaU4AusN2
+         vhxOdiW6pTHoPssCQaRRyHdX7LRCooRGerbHPHTaFxRUXvazcDTDqtyfIUraZ5v4paFE
+         1HW8m9e2XXPpEcpwBu2S0PutXZMAzI5DWkoYgnfakyYNOyT98u+7CqihLMeGBLaWU2j6
+         JTU/zNJsgpgbBELBWBSQ4PbEQC3az+tzXwA+qiQ8NxvwCbq4pIjlBdwD1OEt3dgOHks0
+         YUqQ==
+X-Gm-Message-State: ANoB5pmWEC+zJSDR/97MicuQrkO03s9UksSgIfiRsQqttgiL7qB//oTY
+        Xe92HVIelXw5bUaA24+weLG5HNB1NzS5udgMQtkVpg==
+X-Google-Smtp-Source: AA0mqf493ZLOHNguaLcfeGRl3oJcG1IBsHoRBk8cyDf4TKkHQT186EwcYZmwKDfunLnNwgS4fJ8HQ1Oe3Tv40FbbsyU=
+X-Received: by 2002:a17:906:71b:b0:7ad:9892:91e8 with SMTP id
+ y27-20020a170906071b00b007ad989291e8mr12896729ejb.620.1668490779010; Mon, 14
+ Nov 2022 21:39:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhQW9g6QTpPMHehTyfT_N5kQjeAGZjdiiUS9od+0CrmbiQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.108.193]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
+References: <20221107205754.2635439-1-cukie@google.com> <CAHC9VhTLBWkw2XzqdFx1LFVKDtaAL2pEfsmm+LEmS0OWM1mZgA@mail.gmail.com>
+ <CABXk95ChjusTneWJgj5a58CZceZv0Ay-P-FwBcH2o4rO0g2Ggw@mail.gmail.com>
+ <CGME20221114143147eucas1p1902d9b4afc377fdda25910a5d083e3dc@eucas1p1.samsung.com>
+ <CAHC9VhRTWGuiMpJJiFrUpgsm7nQaNA-n1CYRMPS-24OLvzdA2A@mail.gmail.com> <20221114143145.ha22rdxphhpgd53u@localhost>
+In-Reply-To: <20221114143145.ha22rdxphhpgd53u@localhost>
+From:   Jeffrey Vander Stoep <jeffv@google.com>
+Date:   Tue, 15 Nov 2022 06:39:26 +0100
+Message-ID: <CABXk95BxnZWPEg397cAW0uXi2NxZpODVYPByyQOxP2LO08Gjug@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] Add LSM access controls for io_uring_setup
+To:     Joel Granados <j.granados@samsung.com>
+Cc:     Paul Moore <paul@paul-moore.com>, Gil Cukierman <cukie@google.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi, Paul
-Can this patch be applied or something to improve?
+Super helpful, thanks Paul! We'll look into this and get back to you
+if it doesn't fit our needs.
 
-Thanks
-
-on 2022/10/28 19:19, Paul Moore wrote:
-> On Tue, Oct 25, 2022 at 7:02 AM Wang Weiyang <wangweiyang2@huawei.com> wrote:
->>
->> When add the 'a *:* rwm' entry to devcgroup A's whitelist, at first A's
->> exceptions will be cleaned and A's behavior is changed to
->> DEVCG_DEFAULT_ALLOW. Then parent's exceptions will be copyed to A's
->> whitelist. If copy failure occurs, just return leaving A to grant
->> permissions to all devices. And A may grant more permissions than
->> parent.
->>
->> Backup A's whitelist and recover original exceptions after copy
->> failure.
->>
->> Fixes: 4cef7299b478 ("device_cgroup: add proper checking when changing default behavior")
->> Signed-off-by: Wang Weiyang <wangweiyang2@huawei.com>
->> ---
->>  security/device_cgroup.c | 33 +++++++++++++++++++++++++++++----
->>  1 file changed, 29 insertions(+), 4 deletions(-)
-> 
-> On quick glance this looks reasonable to me, but I'm working with
-> limited time connected to a network so I can't say I've given this a
-> full and proper review; if a third party could spend some time to give
-> this an additional review before I merge it I would greatly appreciate
-> it.
-> 
->> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
->> index a9f8c63a96d1..bef2b9285fb3 100644
->> --- a/security/device_cgroup.c
->> +++ b/security/device_cgroup.c
->> @@ -82,6 +82,17 @@ static int dev_exceptions_copy(struct list_head *dest, struct list_head *orig)
->>         return -ENOMEM;
->>  }
->>
->> +static void dev_exceptions_move(struct list_head *dest, struct list_head *orig)
->> +{
->> +       struct dev_exception_item *ex, *tmp;
->> +
->> +       lockdep_assert_held(&devcgroup_mutex);
->> +
->> +       list_for_each_entry_safe(ex, tmp, orig, list) {
->> +               list_move_tail(&ex->list, dest);
->> +       }
->> +}
->> +
->>  /*
->>   * called under devcgroup_mutex
->>   */
->> @@ -604,11 +615,13 @@ static int devcgroup_update_access(struct dev_cgroup *devcgroup,
->>         int count, rc = 0;
->>         struct dev_exception_item ex;
->>         struct dev_cgroup *parent = css_to_devcgroup(devcgroup->css.parent);
->> +       struct dev_cgroup tmp_devcgrp;
->>
->>         if (!capable(CAP_SYS_ADMIN))
->>                 return -EPERM;
->>
->>         memset(&ex, 0, sizeof(ex));
->> +       memset(&tmp_devcgrp, 0, sizeof(tmp_devcgrp));
->>         b = buffer;
->>
->>         switch (*b) {
->> @@ -620,15 +633,27 @@ static int devcgroup_update_access(struct dev_cgroup *devcgroup,
->>
->>                         if (!may_allow_all(parent))
->>                                 return -EPERM;
->> -                       dev_exception_clean(devcgroup);
->> -                       devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
->> -                       if (!parent)
->> +                       if (!parent) {
->> +                               devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
->> +                               dev_exception_clean(devcgroup);
->>                                 break;
->> +                       }
->>
->> +                       INIT_LIST_HEAD(&tmp_devcgrp.exceptions);
->> +                       rc = dev_exceptions_copy(&tmp_devcgrp.exceptions,
->> +                                                &devcgroup->exceptions);
->> +                       if (rc)
->> +                               return rc;
->> +                       dev_exception_clean(devcgroup);
->>                         rc = dev_exceptions_copy(&devcgroup->exceptions,
->>                                                  &parent->exceptions);
->> -                       if (rc)
->> +                       if (rc) {
->> +                               dev_exceptions_move(&devcgroup->exceptions,
->> +                                                   &tmp_devcgrp.exceptions);
->>                                 return rc;
->> +                       }
->> +                       devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
->> +                       dev_exception_clean(&tmp_devcgrp);
->>                         break;
->>                 case DEVCG_DENY:
->>                         if (css_has_online_children(&devcgroup->css))
->> --
->> 2.17.1
->>
-> 
-> 
+On Mon, Nov 14, 2022 at 3:31 PM Joel Granados <j.granados@samsung.com> wrote:
+>
+> On Thu, Nov 10, 2022 at 04:04:46PM -0500, Paul Moore wrote:
+> > On Thu, Nov 10, 2022 at 12:54 PM Jeffrey Vander Stoep <jeffv@google.com> wrote:
+> > > On Mon, Nov 7, 2022 at 10:17 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > >
+> > > > On Mon, Nov 7, 2022 at 3:58 PM Gil Cukierman <cukie@google.com> wrote:
+> > > > >
+> > > > > This patchset provides the changes required for controlling access to
+> > > > > the io_uring_setup system call by LSMs. It does this by adding a new
+> > > > > hook to io_uring. It also provides the SELinux implementation for a new
+> > > > > permission, io_uring { setup }, using the new hook.
+> > > > >
+> > > > > This is important because existing io_uring hooks only support limiting
+> > > > > the sharing of credentials and access to the sensitive uring_cmd file
+> > > > > op. Users of LSMs may also want the ability to tightly control which
+> > > > > callers can retrieve an io_uring capable fd from the kernel, which is
+> > > > > needed for all subsequent io_uring operations.
+> > > >
+> > > > It isn't immediately obvious to me why simply obtaining a io_uring fd
+> > > > from io_uring_setup() would present a problem, as the security
+> > > > relevant operations that are possible with that io_uring fd *should*
+> > > > still be controlled by other LSM hooks.  Can you help me understand
+> > > > what security issue you are trying to resolve with this control?
+> > >
+> > > I think there are a few reasons why we want this particular hook.
+> > >
+> > > 1.  It aligns well with how other resources are managed by selinux
+> > > where access to the resource is the first control point (e.g. "create"
+> > > for files, sockets, or bpf_maps, "prog_load" for bpf programs, and
+> > > "open" for perf_event) and then additional functionality or
+> > > capabilities require additional permissions.
+> >
+> > [NOTE: there were two reply sections in your email, and while similar,
+> > they were not identical; I've trimmed the other for the sake of
+> > clarity]
+> >
+> > The resources you mention are all objects which contain some type of
+> > information (either user data, configuration, or program
+> > instructions), with the resulting fd being a handle to those objects.
+> > In the case of io_uring the fd is a handle to the io_uring
+> > interface/rings, which by itself does not contain any information
+> > which is not already controlled by other permissions.
+> >
+> > I/O operations which transfer data between the io_uring buffers and
+> > other system objects, e.g. IORING_OP_READV, are still subject to the
+> > same file access controls as those done by the application using
+> > syscalls.  Even the IORING_OP_OPENAT command goes through the standard
+> > VFS code path which means it will trigger the same access control
+> > checks as an open*() done by the application normally.
+> >
+> > The 'interesting' scenarios are those where the io_uring operation
+> > servicing credentials, aka personalities, differ from the task
+> > controlling the io_uring.  However in those cases we have the new
+> > io_uring controls to gate these delegated operations.  Passing an
+> > io_uring fd is subject to the fd/use permission like any other fd.
+> >
+> > Although perhaps the most relevant to your request is the fact that
+> > the io_uring inode is created using the new(ish) secure anon inode
+> > interface which ensures that the creating task has permission to
+> > create an io_uring.  This io_uring inode label also comes into play
+> > when a task attempts to mmap() the io_uring rings, a critical part of
+> > the io_uring API.
+> >
+> > If I'm missing something you believe to be important, please share the details.
+> >
+> > > 2. It aligns well with how resources are managed on Android. We often
+> > > do not grant direct access to resources (like memory buffers).
+> >
+> > Accessing the io_uring buffers requires a task to mmap() the io_uring
+> > fd which is controlled by the normal SELinux mmap() access controls.
+> >
+> > > 3. Attack surface management. One of the primary uses of selinux on
+> > > Android is to assess and limit attack surface (e.g.
+> > > https://twitter.com/jeffvanderstoep/status/1422771606309335043) . As
+> > > io_uring vulnerabilities have made their way through our vulnerability
+> > > management system, it's become apparent that it's complicated to
+> > > assess the impact. Is a use-after-free reachable? Creating
+> > > proof-of-concept exploits takes a lot of time, and often functionality
+> > > can be reached by multiple paths. How many of the known io_uring
+> > > vulnerabilities would be gated by the existing checks? How many future
+> > > ones will be gated by the existing checks? I don't know the answer to
+> > > either of these questions and it's not obvious. This hook makes that
+> > > initial assessment simple and effective.
+> >
+> > It should be possible to deny access to io_uring via the anonymous
+> > inode labels, the mmap() controls, and the fd/use permission.  If you
+> > find a way to do meaningful work with an io_uring fd that can't be
+> > controlled via an existing permission check please let me know.
+>
+> Also interested in a more specific case. Sending reply so I get added to
+> the group response.
+> >
+> > --
+> > paul-moore.com
