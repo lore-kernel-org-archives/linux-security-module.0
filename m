@@ -2,170 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2B8C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Nov 2022 05:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E11C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Nov 2022 17:57:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230023AbiKOFjn (ORCPT
+        id S230150AbiKOR5e (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Nov 2022 00:39:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36986 "EHLO
+        Tue, 15 Nov 2022 12:57:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbiKOFjm (ORCPT
+        with ESMTP id S229877AbiKOR5d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Nov 2022 00:39:42 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B267B6463
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 21:39:40 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id y14so33468481ejd.9
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 21:39:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9K3V25osQLREMG6ZUk7AC0ZkFnZLHBbL3WZnP0tsfH4=;
-        b=lP1c+QctBSuAkoA0Voq5SO1rZHAodr96QmUnxvNWlD5+dWN0+a+G2GJSKPjIWX/FP2
-         yEf+NE2GSx/2I5MZekALkcGZ8fWAnnGpaxXL47vF1dPwqA/e4AVM2x9VT96NMomw6PIM
-         NFiXrtCZPAgVWLg3AbpT7mEzwkJKD1dRuwghDCmDown3PemV71JAfKEJAK18qY+R1drY
-         yTGHzc6xOjYGTZJL1+eK79Pf9py2dwz8vvc49geY7D98Q+v/bHXRmmcO7rWyP1SxOSp3
-         wLBijaAXnhZPHyAAk0yHwAwelCZATdN4NJbqmolDb7AvnOEHfNz/ut64iBqOyb6ykDlT
-         f76g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9K3V25osQLREMG6ZUk7AC0ZkFnZLHBbL3WZnP0tsfH4=;
-        b=AyH0M0qmT9f/QyaBAVLwxmIttScsbDKEjovalZetuGwXJbOVfbjlatgePQa7uKLgjq
-         aTq2ycwJwptSk0EJ2h+0RfaE4p/Ei+yrClXTu00c1hs1XaZQBvYFMGB/cXKUaU4AusN2
-         vhxOdiW6pTHoPssCQaRRyHdX7LRCooRGerbHPHTaFxRUXvazcDTDqtyfIUraZ5v4paFE
-         1HW8m9e2XXPpEcpwBu2S0PutXZMAzI5DWkoYgnfakyYNOyT98u+7CqihLMeGBLaWU2j6
-         JTU/zNJsgpgbBELBWBSQ4PbEQC3az+tzXwA+qiQ8NxvwCbq4pIjlBdwD1OEt3dgOHks0
-         YUqQ==
-X-Gm-Message-State: ANoB5pmWEC+zJSDR/97MicuQrkO03s9UksSgIfiRsQqttgiL7qB//oTY
-        Xe92HVIelXw5bUaA24+weLG5HNB1NzS5udgMQtkVpg==
-X-Google-Smtp-Source: AA0mqf493ZLOHNguaLcfeGRl3oJcG1IBsHoRBk8cyDf4TKkHQT186EwcYZmwKDfunLnNwgS4fJ8HQ1Oe3Tv40FbbsyU=
-X-Received: by 2002:a17:906:71b:b0:7ad:9892:91e8 with SMTP id
- y27-20020a170906071b00b007ad989291e8mr12896729ejb.620.1668490779010; Mon, 14
- Nov 2022 21:39:39 -0800 (PST)
+        Tue, 15 Nov 2022 12:57:33 -0500
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F38C82F387;
+        Tue, 15 Nov 2022 09:57:30 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4NBYcj3pJpz9xs6N;
+        Wed, 16 Nov 2022 01:50:45 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwCHcW7o0nNj73dpAA--.16599S2;
+        Tue, 15 Nov 2022 18:57:07 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, revest@chromium.org,
+        jackmanb@chromium.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 0/4] security: Ensure LSMs return expected values
+Date:   Tue, 15 Nov 2022 18:56:48 +0100
+Message-Id: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20221107205754.2635439-1-cukie@google.com> <CAHC9VhTLBWkw2XzqdFx1LFVKDtaAL2pEfsmm+LEmS0OWM1mZgA@mail.gmail.com>
- <CABXk95ChjusTneWJgj5a58CZceZv0Ay-P-FwBcH2o4rO0g2Ggw@mail.gmail.com>
- <CGME20221114143147eucas1p1902d9b4afc377fdda25910a5d083e3dc@eucas1p1.samsung.com>
- <CAHC9VhRTWGuiMpJJiFrUpgsm7nQaNA-n1CYRMPS-24OLvzdA2A@mail.gmail.com> <20221114143145.ha22rdxphhpgd53u@localhost>
-In-Reply-To: <20221114143145.ha22rdxphhpgd53u@localhost>
-From:   Jeffrey Vander Stoep <jeffv@google.com>
-Date:   Tue, 15 Nov 2022 06:39:26 +0100
-Message-ID: <CABXk95BxnZWPEg397cAW0uXi2NxZpODVYPByyQOxP2LO08Gjug@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] Add LSM access controls for io_uring_setup
-To:     Joel Granados <j.granados@samsung.com>
-Cc:     Paul Moore <paul@paul-moore.com>, Gil Cukierman <cukie@google.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, kernel-team@android.com,
-        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: LxC2BwCHcW7o0nNj73dpAA--.16599S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWrW5WrW3JFWxWw18Jr45Awb_yoW5Ary3pF
+        sayFyYyr4qka47urs3Aan7ZayrC395GrWjkF98Jw1vv3Z5Cr1Yyr45Kw1YqFyxCrW0kr1r
+        tr1av398u34DZrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvmb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x
+        0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02
+        F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4I
+        kC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7Cj
+        xVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2
+        IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v2
+        6r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2
+        IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E
+        87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnU
+        UI43ZEXa7IU0bAw3UUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQARBF1jj4V5ZAABs8
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Super helpful, thanks Paul! We'll look into this and get back to you
-if it doesn't fit our needs.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-On Mon, Nov 14, 2022 at 3:31 PM Joel Granados <j.granados@samsung.com> wrote:
->
-> On Thu, Nov 10, 2022 at 04:04:46PM -0500, Paul Moore wrote:
-> > On Thu, Nov 10, 2022 at 12:54 PM Jeffrey Vander Stoep <jeffv@google.com> wrote:
-> > > On Mon, Nov 7, 2022 at 10:17 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > >
-> > > > On Mon, Nov 7, 2022 at 3:58 PM Gil Cukierman <cukie@google.com> wrote:
-> > > > >
-> > > > > This patchset provides the changes required for controlling access to
-> > > > > the io_uring_setup system call by LSMs. It does this by adding a new
-> > > > > hook to io_uring. It also provides the SELinux implementation for a new
-> > > > > permission, io_uring { setup }, using the new hook.
-> > > > >
-> > > > > This is important because existing io_uring hooks only support limiting
-> > > > > the sharing of credentials and access to the sensitive uring_cmd file
-> > > > > op. Users of LSMs may also want the ability to tightly control which
-> > > > > callers can retrieve an io_uring capable fd from the kernel, which is
-> > > > > needed for all subsequent io_uring operations.
-> > > >
-> > > > It isn't immediately obvious to me why simply obtaining a io_uring fd
-> > > > from io_uring_setup() would present a problem, as the security
-> > > > relevant operations that are possible with that io_uring fd *should*
-> > > > still be controlled by other LSM hooks.  Can you help me understand
-> > > > what security issue you are trying to resolve with this control?
-> > >
-> > > I think there are a few reasons why we want this particular hook.
-> > >
-> > > 1.  It aligns well with how other resources are managed by selinux
-> > > where access to the resource is the first control point (e.g. "create"
-> > > for files, sockets, or bpf_maps, "prog_load" for bpf programs, and
-> > > "open" for perf_event) and then additional functionality or
-> > > capabilities require additional permissions.
-> >
-> > [NOTE: there were two reply sections in your email, and while similar,
-> > they were not identical; I've trimmed the other for the sake of
-> > clarity]
-> >
-> > The resources you mention are all objects which contain some type of
-> > information (either user data, configuration, or program
-> > instructions), with the resulting fd being a handle to those objects.
-> > In the case of io_uring the fd is a handle to the io_uring
-> > interface/rings, which by itself does not contain any information
-> > which is not already controlled by other permissions.
-> >
-> > I/O operations which transfer data between the io_uring buffers and
-> > other system objects, e.g. IORING_OP_READV, are still subject to the
-> > same file access controls as those done by the application using
-> > syscalls.  Even the IORING_OP_OPENAT command goes through the standard
-> > VFS code path which means it will trigger the same access control
-> > checks as an open*() done by the application normally.
-> >
-> > The 'interesting' scenarios are those where the io_uring operation
-> > servicing credentials, aka personalities, differ from the task
-> > controlling the io_uring.  However in those cases we have the new
-> > io_uring controls to gate these delegated operations.  Passing an
-> > io_uring fd is subject to the fd/use permission like any other fd.
-> >
-> > Although perhaps the most relevant to your request is the fact that
-> > the io_uring inode is created using the new(ish) secure anon inode
-> > interface which ensures that the creating task has permission to
-> > create an io_uring.  This io_uring inode label also comes into play
-> > when a task attempts to mmap() the io_uring rings, a critical part of
-> > the io_uring API.
-> >
-> > If I'm missing something you believe to be important, please share the details.
-> >
-> > > 2. It aligns well with how resources are managed on Android. We often
-> > > do not grant direct access to resources (like memory buffers).
-> >
-> > Accessing the io_uring buffers requires a task to mmap() the io_uring
-> > fd which is controlled by the normal SELinux mmap() access controls.
-> >
-> > > 3. Attack surface management. One of the primary uses of selinux on
-> > > Android is to assess and limit attack surface (e.g.
-> > > https://twitter.com/jeffvanderstoep/status/1422771606309335043) . As
-> > > io_uring vulnerabilities have made their way through our vulnerability
-> > > management system, it's become apparent that it's complicated to
-> > > assess the impact. Is a use-after-free reachable? Creating
-> > > proof-of-concept exploits takes a lot of time, and often functionality
-> > > can be reached by multiple paths. How many of the known io_uring
-> > > vulnerabilities would be gated by the existing checks? How many future
-> > > ones will be gated by the existing checks? I don't know the answer to
-> > > either of these questions and it's not obvious. This hook makes that
-> > > initial assessment simple and effective.
-> >
-> > It should be possible to deny access to io_uring via the anonymous
-> > inode labels, the mmap() controls, and the fd/use permission.  If you
-> > find a way to do meaningful work with an io_uring fd that can't be
-> > controlled via an existing permission check please let me know.
->
-> Also interested in a more specific case. Sending reply so I get added to
-> the group response.
-> >
-> > --
-> > paul-moore.com
+LSMs should follow the conventions stated in include/linux/lsm_hooks.h for
+return values, as these conventions are followed by callers of the LSM
+infrastructure for error handling.
+
+The ability of an LSM to return arbitrary values could cause big troubles.
+For LSMs aiming at being upstreamed, this event is unlikely, as each LSM is
+carefully reviewed and it won't be accepted if it does not meet the return
+value conventions. However, the recent introduction of BPF LSM allows
+security modules (not part of the kernel) to inject arbitrary values,
+without BPF LSM verifying them.
+
+The initial idea was to fix BPF LSM itself. However, due to technical
+difficulties to determine the precise interval of return values from a
+static code analysis of eBPF programs, the new approach was to put the
+fix in the LSM infrastructure, so that all LSMs can benefit from this work
+as well.
+
+The biggest problem of allowing arbitrary return values is when an LSM
+returns a positive value, instead of a negative value, as it could be
+converted to a pointer. Since such pointer escapes the IS_ERR() check, its
+use later in the code can cause unpredictable consequences (e.g. invalid
+memory access).
+
+Another problem is returning zero when an LSM is supposed to have done some
+operations. For example, the inode_init_security hook expects that their
+implementations return zero only if they set the fields of the new xattr to
+be added to the new inode. Otherwise, other kernel subsystems might
+encounter unexpected conditions leading to a crash (e.g.
+evm_protected_xattr_common() getting NULL as argument). This problem is
+addressed separately in another patch set.
+
+Finally, there are LSM hooks which are supposed to return just 1 as
+positive value, or non-negative values. Also in these cases, although it
+seems less critical, it is safer to return to callers of the LSM
+infrastructure more precisely what they expect.
+
+Patches 1 and 2 ensure that the documentation of LSM return values is
+complete and accurate. Then, patch 3 introduces four flags (LSM_RET_NEG,
+LSM_RET_ZERO, LSM_RET_ONE, LSM_RET_GT_ONE), one for each interval of
+interest (< 0, = 0, = 1, > 1), and sets the correct flags for each LSM
+hook. Finally, patch 4 verifies for each return value from LSMs that it is
+an expected one.
+
+Roberto Sassu (4):
+  lsm: Clarify documentation of vm_enough_memory hook
+  lsm: Add missing return values doc in lsm_hooks.h and fix formatting
+  lsm: Redefine LSM_HOOK() macro to add return value flags as argument
+  security: Enforce limitations on return values from LSMs
+
+ include/linux/bpf_lsm.h       |   2 +-
+ include/linux/lsm_hook_defs.h | 779 ++++++++++++++++++++--------------
+ include/linux/lsm_hooks.h     | 136 ++++--
+ kernel/bpf/bpf_lsm.c          |   5 +-
+ security/bpf/hooks.c          |   2 +-
+ security/security.c           |  38 +-
+ 6 files changed, 589 insertions(+), 373 deletions(-)
+
+-- 
+2.25.1
+
