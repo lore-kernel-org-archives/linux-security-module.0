@@ -2,259 +2,199 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDCDC4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Nov 2022 23:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECEAC43217
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Nov 2022 03:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237851AbiKNXHI (ORCPT
+        id S232454AbiKODHv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Nov 2022 18:07:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51858 "EHLO
+        Mon, 14 Nov 2022 22:07:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238180AbiKNXGr (ORCPT
+        with ESMTP id S232503AbiKODHL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Nov 2022 18:06:47 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3E2520F66;
-        Mon, 14 Nov 2022 15:04:35 -0800 (PST)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AEMhhSi027321;
-        Mon, 14 Nov 2022 23:03:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=r2fzDqWsStLA1xUQ8hFm6TfQBbcyzJkCztYXsu/2swA=;
- b=Sm/Lp2TX1gppX2Z5a9Mns5MPvNGLBnKFMG0y1Olw/g8Em+og+eRJLS9LWumlXbmUovqU
- dkrtXwZGaaMchdsWqRkNnVvxkIAXUhbfhAMwzrxPN/0oBwNpRw06WPn+IcofHjWhUF5P
- /2AgtoudXJDAEu0XaHjQz295RoCJPAy6t46Hn5ze6mFsb2gIkqA9t+6KSx7lbCqQEg0h
- 7KArhQC/f9HjMxnoCnGtjPM58zSMDutYS530qmb+KPD3kfuC9ATqjoEHWB6m5VRD0gXJ
- gTyUpWZXwbF0MgWKkEqxzVKadK6hTK+VTyJQ2L8uV2s9Iw9jsm+jzxQlxzP8zV0f9jL/ VQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kuxqnrbk2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Nov 2022 23:03:48 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AEN07xD012744;
-        Mon, 14 Nov 2022 23:03:48 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kuxqnrbjd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Nov 2022 23:03:48 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AEMpLxM017257;
-        Mon, 14 Nov 2022 23:03:47 GMT
-Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
-        by ppma04dal.us.ibm.com with ESMTP id 3kt349ms1c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Nov 2022 23:03:47 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AEN3jIF1835724
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Nov 2022 23:03:45 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3582D5807D;
-        Mon, 14 Nov 2022 23:03:45 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 753D35808C;
-        Mon, 14 Nov 2022 23:03:43 +0000 (GMT)
-Received: from [9.163.46.135] (unknown [9.163.46.135])
-        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 14 Nov 2022 23:03:43 +0000 (GMT)
-Message-ID: <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
-Date:   Mon, 14 Nov 2022 18:03:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-Content-Language: en-US
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-References: <20221106210744.603240-1-nayna@linux.ibm.com>
- <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
- <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
- <Y2zLRw/TzV/sWgqO@kroah.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-In-Reply-To: <Y2zLRw/TzV/sWgqO@kroah.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: cMTICiR-Ic39zShUHbdlZAJATSRcqSOJ
-X-Proofpoint-ORIG-GUID: Ruez-Aie2yvxjHXtRL2XCcyi2xuMRRAi
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Mon, 14 Nov 2022 22:07:11 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DE70D72;
+        Mon, 14 Nov 2022 19:07:06 -0800 (PST)
+Received: from canpemm500010.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NB9wj5v66zqSHH;
+        Tue, 15 Nov 2022 11:03:17 +0800 (CST)
+Received: from [10.174.179.191] (10.174.179.191) by
+ canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Tue, 15 Nov 2022 11:07:03 +0800
+Message-ID: <c6c98d38-17bc-c0d1-a83b-be666bb24f74@huawei.com>
+Date:   Tue, 15 Nov 2022 11:07:03 +0800
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-14_15,2022-11-11_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 phishscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 mlxscore=0 spamscore=0 clxscore=1015
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211140162
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH bpf] selftests/bpf: fix memory leak of lsm_cgroup
+To:     <sdf@google.com>
+CC:     <linux-security-module@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <martin.lau@linux.dev>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <andrii@kernel.org>, <paul@paul-moore.com>
+References: <1668401942-6309-1-git-send-email-wangyufen@huawei.com>
+ <Y3J8HyIfhm7rgpvI@google.com>
+From:   wangyufen <wangyufen@huawei.com>
+In-Reply-To: <Y3J8HyIfhm7rgpvI@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.179.191]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ canpemm500010.china.huawei.com (7.192.105.118)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 11/10/22 04:58, Greg Kroah-Hartman wrote:
-> On Wed, Nov 09, 2022 at 03:10:37PM -0500, Nayna wrote:
->> On 11/9/22 08:46, Greg Kroah-Hartman wrote:
->>> On Sun, Nov 06, 2022 at 04:07:42PM -0500, Nayna Jain wrote:
->>>> securityfs is meant for Linux security subsystems to expose policies/logs
->>>> or any other information. However, there are various firmware security
->>>> features which expose their variables for user management via the kernel.
->>>> There is currently no single place to expose these variables. Different
->>>> platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
->>>> interface as they find it appropriate. Thus, there is a gap in kernel
->>>> interfaces to expose variables for security features.
->>>>
->>>> Define a firmware security filesystem (fwsecurityfs) to be used by
->>>> security features enabled by the firmware. These variables are platform
->>>> specific. This filesystem provides platforms a way to implement their
->>>>    own underlying semantics by defining own inode and file operations.
->>>>
->>>> Similar to securityfs, the firmware security filesystem is recommended
->>>> to be exposed on a well known mount point /sys/firmware/security.
->>>> Platforms can define their own directory or file structure under this path.
->>>>
->>>> Example:
->>>>
->>>> # mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
->>> Why not juset use securityfs in /sys/security/firmware/ instead?  Then
->>> you don't have to create a new filesystem and convince userspace to
->>> mount it in a specific location?
->>  From man 5 sysfs page:
->>
->> /sys/firmware: This subdirectory contains interfaces for viewing and
->> manipulating firmware-specific objects and attributes.
->>
->> /sys/kernel: This subdirectory contains various files and subdirectories
->> that provide information about the running kernel.
->>
->> The security variables which are being exposed via fwsecurityfs are managed
->> by firmware, stored in firmware managed space and also often consumed by
->> firmware for enabling various security features.
-> Ok, then just use the normal sysfs interface for /sys/firmware, why do
-> you need a whole new filesystem type?
+在 2022/11/15 1:34, sdf@google.com 写道:
+> On 11/14, Wang Yufen wrote:
+>> kmemleak reports this issue:
 >
->>  From git commit b67dbf9d4c1987c370fd18fdc4cf9d8aaea604c2, the purpose of
->> securityfs(/sys/kernel/security) is to provide a common place for all kernel
->> LSMs. The idea of
->> fwsecurityfs(/sys/firmware/security) is to similarly provide a common place
->> for all firmware security objects.
->>
->> /sys/firmware already exists. The patch now defines a new /security
->> directory in it for firmware security features. Using /sys/kernel/security
->> would mean scattering firmware objects in multiple places and confusing the
->> purpose of /sys/kernel and /sys/firmware.
-> sysfs is confusing already, no problem with making it more confusing :)
+>> unreferenced object 0xffff88810b7835c0 (size 32):
+>>    comm "test_progs", pid 270, jiffies 4294969007 (age 1621.315s)
+>>    hex dump (first 32 bytes):
+>>      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+>>      03 00 00 00 03 00 00 00 0f 00 00 00 00 00 00 00 ................
+>>    backtrace:
+>>      [<00000000376cdeab>] kmalloc_trace+0x27/0x110
+>>      [<000000003bcdb3b6>] selinux_sk_alloc_security+0x66/0x110
+>>      [<000000003959008f>] security_sk_alloc+0x47/0x80
+>>      [<00000000e7bc6668>] sk_prot_alloc+0xbd/0x1a0
+>>      [<0000000002d6343a>] sk_alloc+0x3b/0x940
+>>      [<000000009812a46d>] unix_create1+0x8f/0x3d0
+>>      [<000000005ed0976b>] unix_create+0xa1/0x150
+>>      [<0000000086a1d27f>] __sock_create+0x233/0x4a0
+>>      [<00000000cffe3a73>] __sys_socket_create.part.0+0xaa/0x110
+>>      [<0000000007c63f20>] __sys_socket+0x49/0xf0
+>>      [<00000000b08753c8>] __x64_sys_socket+0x42/0x50
+>>      [<00000000b56e26b3>] do_syscall_64+0x3b/0x90
+>>      [<000000009b4871b8>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
 >
-> Just document where you add things and all should be fine.
+>> The issue occurs in the following scenarios:
 >
->> Even though fwsecurityfs code is based on securityfs, since the two
->> filesystems expose different types of objects and have different
->> requirements, there are distinctions:
->>
->> 1. fwsecurityfs lets users create files in userspace, securityfs only allows
->> kernel subsystems to create files.
-> Wait, why would a user ever create a file in this filesystem?  If you
-> need that, why not use configfs?  That's what that is for, right?
-
-The purpose of fwsecurityfs is not to expose configuration items but 
-rather security objects used for firmware security features. I think 
-these are more comparable to EFI variables, which are exposed via an 
-EFI-specific filesystem, efivarfs, rather than configfs.
-
+>> unix_create1()
+>>    sk_alloc()
+>>      sk_prot_alloc()
+>>        security_sk_alloc()
+>>          call_int_hook()
+>>            hlist_for_each_entry()
+>>              entry1->hook.sk_alloc_security
+>>              <-- selinux_sk_alloc_security() succeeded,
+>>              <-- sk->security alloced here.
+>>              entry2->hook.sk_alloc_security
+>>              <-- bpf_lsm_sk_alloc_security() failed
+>>        goto out_free;
+>>          ...    <-- the sk->security not freed, memleak
 >
->> 2. firmware and kernel objects may have different requirements. For example,
->> consideration of namespacing. As per my understanding, namespacing is
->> applied to kernel resources and not firmware resources. That's why it makes
->> sense to add support for namespacing in securityfs, but we concluded that
->> fwsecurityfs currently doesn't need it. Another but similar example of it
->> is: TPM space, which is exposed from hardware. For containers, the TPM would
->> be made as virtual/software TPM. Similarly for firmware space for
->> containers, it would have to be something virtualized/software version of
->> it.
-> I do not understand, sorry.  What does namespaces have to do with this?
-> sysfs can already handle namespaces just fine, why not use that?
-
-Firmware objects are not namespaced. I mentioned it here as an example 
-of the difference between firmware and kernel objects. It is also in 
-response to the feedback from James Bottomley in RFC v2 
-[https://lore.kernel.org/linuxppc-dev/41ca51e8db9907d9060cc38adb59a66dcae4c59b.camel@HansenPartnership.com/].
-
+>> The core problem is that the LSM is not yet fully stacked (work is
+>> actively going on in this space) which means that some LSM hooks do
+>> not support multiple LSMs at the same time. To fix, skip the
+>> "EPERM" test when it runs in the environments that already have
+>> non-bpf lsms installed
 >
->> 3. firmware objects are persistent and read at boot time by interaction with
->> firmware, unlike kernel objects which are not persistent.
-> That doesn't matter, sysfs exports what the hardware provides, and that
-> might persist over boot.
+>> Fixes: dca85aac8895 ("selftests/bpf: lsm_cgroup functional test")
+>> Signed-off-by: Wang Yufen <wangyufen@huawei.com>
+>> Cc: Stanislav Fomichev <sdf@google.com>
+>> ---
+>>   tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c | 19 
+>> +++++++++++++++----
+>>   tools/testing/selftests/bpf/progs/lsm_cgroup.c      |  8 ++++++++
+>>   2 files changed, 23 insertions(+), 4 deletions(-)
 >
-> So I don't see why a new filesystem is needed.
+>> diff --git a/tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c 
+>> b/tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c
+>> index 1102e4f..a927ade 100644
+>> --- a/tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c
+>> +++ b/tools/testing/selftests/bpf/prog_tests/lsm_cgroup.c
+>> @@ -173,10 +173,14 @@ static void test_lsm_cgroup_functional(void)
+>>       ASSERT_EQ(query_prog_cnt(cgroup_fd, NULL), 4, "total prog count");
+>>       ASSERT_EQ(query_prog_cnt(cgroup_fd2, NULL), 1, "total prog 
+>> count");
 >
-> You didn't explain why sysfs, or securitfs (except for the location in
-> the tree) does not work at all for your needs.  The location really
-> doesn't matter all that much as you are creating a brand new location
-> anyway so we can just declare "this is where this stuff goes" and be ok.
+>> -    /* AF_UNIX is prohibited. */
+>> -
+>>       fd = socket(AF_UNIX, SOCK_STREAM, 0);
+>> -    ASSERT_LT(fd, 0, "socket(AF_UNIX)");
+>> +    if (skel->kconfig->CONFIG_SECURITY_APPARMOR
+>> +        || skel->kconfig->CONFIG_SECURITY_SELINUX
+>> +        || skel->kconfig->CONFIG_SECURITY_SMACK)
+>
+> [..]
+>
+>> +        ASSERT_GE(fd, 0, "socket(AF_UNIX)");
+>
+> nit: maybe skip this completely instead of having ASSERT_GE+close?
+>
+>     if (!(skel->kconfig->CONFIG_SECURITY_APPARMOR || _SELINUX || _SMACK)
+>         /* AF_UNIX is prohibited. */
+>         ASSERT_LT(fd, 0, "socket(AF_UNIX)");
 
-For rest of the questions, here is the summarized response.
 
-Based on mailing list previous discussions [1][2][3] and considering 
-various firmware security use cases, our fwsecurityfs proposal seemed to 
-be a reasonable and acceptable approach based on the feedback [4].
-
-[1] https://lore.kernel.org/linuxppc-dev/YeuyUVVdFADCuDr4@kroah.com/#t
-[2] https://lore.kernel.org/linuxppc-dev/Yfk6gucNmJuR%2Fegi@kroah.com/
-[3] 
-https://lore.kernel.org/all/Yfo%2F5gYgb9Sv24YB@kroah.com/t/#m40250fdb3fddaafe502ab06e329e63381b00582d
-[4] https://lore.kernel.org/linuxppc-dev/YrQqPhi4+jHZ1WJc@kroah.com/
-
-RFC v1 was using sysfs. After considering feedback[1][2][3], the 
-following are design considerations for unification via fwsecurityfs:
-
-1. Unify the location: Defining a security directory under /sys/firmware 
-facilitates exposing objects related to firmware security features in a 
-single place. Different platforms can create their respective directory 
-structures within /sys/firmware/security.
-
-2. Unify the code:  To support unification, having the fwsecurityfs 
-filesystem API allows different platforms to define the inode and file 
-operations they need. fwsecurityfs provides a common API that can be 
-used by each platform-specific implementation to support its particular 
-requirements and interaction with firmware. Initializing 
-platform-specific functions is the purpose of the 
-fwsecurityfs_arch_init() function that is called on mount. Patch 3/4 
-implements fwsecurityfs_arch_init() for powerpc.
-
-Similar to the common place securityfs provides for LSMs to interact 
-with kernel security objects, fwsecurityfs would provide a common place 
-for all firmware security objects, which interact with the firmware 
-rather than the kernel. Although at the API level, the two filesystem 
-look similar, the requirements for firmware and kernel objects are 
-different. Therefore, reusing securityfs wasn't a good fit for the 
-firmware use case and we are proposing a similar but different 
-filesystem -  fwsecurityfs - focused for firmware security.
+OK, thanks! Will change in v2
 
 >
-> And again, how are you going to get all Linux distros to now mount your
-> new filesystem?
-
-It would be analogous to the way securityfs is mounted.
-
-Thanks & Regards,
-
-     - Nayna
-
 >
-> thanks,
+>> +    else
+>> +        /* AF_UNIX is prohibited. */
+>> +        ASSERT_LT(fd, 0, "socket(AF_UNIX)");
+>>       close(fd);
 >
-> greg k-h
+>>       /* AF_INET6 gets default policy (sk_priority). */
+>> @@ -233,11 +237,18 @@ static void test_lsm_cgroup_functional(void)
+>
+>>       /* AF_INET6+SOCK_STREAM
+>>        * AF_PACKET+SOCK_RAW
+>> +     * AF_UNIX+SOCK_RAW if already have non-bpf lsms installed
+>>        * listen_fd
+>>        * client_fd
+>>        * accepted_fd
+>>        */
+>> -    ASSERT_EQ(skel->bss->called_socket_post_create2, 5, 
+>> "called_create2");
+>> +    if (skel->kconfig->CONFIG_SECURITY_APPARMOR
+>> +        || skel->kconfig->CONFIG_SECURITY_SELINUX
+>> +        || skel->kconfig->CONFIG_SECURITY_SMACK)
+>> +        /* AF_UNIX+SOCK_RAW if already have non-bpf lsms installed */
+>> +        ASSERT_EQ(skel->bss->called_socket_post_create2, 6, 
+>> "called_create2");
+>> +    else
+>> +        ASSERT_EQ(skel->bss->called_socket_post_create2, 5, 
+>> "called_create2");
+>
+>>       /* start_server
+>>        * bind(ETH_P_ALL)
+>> diff --git a/tools/testing/selftests/bpf/progs/lsm_cgroup.c 
+>> b/tools/testing/selftests/bpf/progs/lsm_cgroup.c
+>> index 4f2d60b..02c11d1 100644
+>> --- a/tools/testing/selftests/bpf/progs/lsm_cgroup.c
+>> +++ b/tools/testing/selftests/bpf/progs/lsm_cgroup.c
+>> @@ -7,6 +7,10 @@
+>
+>>   char _license[] SEC("license") = "GPL";
+>
+>> +extern bool CONFIG_SECURITY_SELINUX __kconfig __weak;
+>> +extern bool CONFIG_SECURITY_SMACK __kconfig __weak;
+>> +extern bool CONFIG_SECURITY_APPARMOR __kconfig __weak;
+>> +
+>>   #ifndef AF_PACKET
+>>   #define AF_PACKET 17
+>>   #endif
+>> @@ -140,6 +144,10 @@ int BPF_PROG(socket_bind2, struct socket *sock, 
+>> struct sockaddr *address,
+>>   int BPF_PROG(socket_alloc, struct sock *sk, int family, gfp_t 
+>> priority)
+>>   {
+>>       called_socket_alloc++;
+>> +    /* if already have non-bpf lsms installed, EPERM will cause 
+>> memory leak of non-bpf lsms */
+>> +    if (CONFIG_SECURITY_SELINUX || CONFIG_SECURITY_SMACK || 
+>> CONFIG_SECURITY_APPARMOR)
+>> +        return 1;
+>> +
+>>       if (family == AF_UNIX)
+>>           return 0; /* EPERM */
+>
+>> -- 
+>> 1.8.3.1
+>
