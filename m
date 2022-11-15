@@ -2,139 +2,158 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E27EC43219
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Nov 2022 17:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5D9C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Nov 2022 18:41:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232763AbiKOR7E (ORCPT
+        id S230216AbiKOSlo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Nov 2022 12:59:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50512 "EHLO
+        Tue, 15 Nov 2022 13:41:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231596AbiKOR6L (ORCPT
+        with ESMTP id S229593AbiKOSln (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Nov 2022 12:58:11 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E2692F3BE;
-        Tue, 15 Nov 2022 09:58:10 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4NBYdS3q2Dz9xs6c;
-        Wed, 16 Nov 2022 01:51:24 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwCHcW7o0nNj73dpAA--.16599S6;
-        Tue, 15 Nov 2022 18:57:46 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-        haoluo@google.com, jolsa@kernel.org, revest@chromium.org,
-        jackmanb@chromium.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
+        Tue, 15 Nov 2022 13:41:43 -0500
+Received: from sonic307-15.consmr.mail.ne1.yahoo.com (sonic307-15.consmr.mail.ne1.yahoo.com [66.163.190.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 973012CCB9
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Nov 2022 10:41:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1668537701; bh=egkqihs2sr0oF22jXEFl2ODKUB6NoHIRqyFESnR22Po=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=KG3/FWNcT9TEoxHxWqSuubdZnALbuRRJE8rvpivuFRBId2c6fbf/qUeQvlNEFjzAYEYlylGf/XKCt7xiimD25ehwZj/V316+gmlSd3WYzRuyJz2AuiZOywivX4TQ6mtHdw/lWjA/7qZeagc2cKWu9ZJwRQhuNPu3vsvebwV7oZtMsk4Vuawkd4Q8dhgpKdreThXHCrbqxZrjfAMd3RIevqYMmVWZL21ZcnRQgp7Nk2EhxElqKrqEWTREXMqdY5mPxeJsaec9ODMVo9OUePtHHtrrslDgLo5Ni2hACgx4//WTIR4r7Slyt982IFC45xhGqq5MAmqrCN+pfCnBKYbuZQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1668537701; bh=GV9vfvzuRmUmikfPnShy3dm10p8aECsF1GFLC6wwqhe=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Du8Tf4jDq9yuYpK3nYt4Xj3SWH+iFJPyDh58JhVpRJhaT2F20Lhg8i4zQfr9nlfS8M5YoweJXvgZl6RWJMhsVA2UeD/5QtZyS4ik7z/NfbqeXtOYMd9iJYkksEgDf83GPYg0KTzyGvt7obDO23MilXEQpAhtjK5ceXbmm292WWzg5fMOBKsE5ltFQH35TfRUQ6RBqMsQDXgoTxrs38BbIf2QFLQCbcvSxFszAWPGYLPo3H5yEeouS7qwINDoOyNeg6gkhV1WB/5DHQYCJOLxaYEW3PToBcC/+AosJW/PQmRocY6lZ+l6XxTgNQrkFhll0887wAUZcML4oB2lzxbaUQ==
+X-YMail-OSG: PtPiVa4VM1kxOR.C3vYFXqjEWnIpTEK631Q8btYdK1sYE5yfvkGXYsC0vEMkrUm
+ kJW4jGwC159u2920gdaWhS0p8PNVPsdt74GOlu83X8S8D1A_bPRmAMAX48GkUKTUdh8PMGQ7b.Uu
+ c.f4VYCJQlqwqEXCL9unXRy02V_eZToqPjoaJdzTUgr8ko_lCKGAJ3QkqJxwfIwP4_XONgK0YkvI
+ Vn5uts8XpZQRUkSZ8aOFQB1rS8_WCmCaal56eFOYb6ybrKqHsxynIerKOavQEndxkVKAEu5rFxEp
+ IkKZLYpEno_jyDFzzVorrtEuwlbsStiIsRqFkmuH1Ne.8899WgoOO8_aL.Nw7l00zCjAyF6JQAr8
+ 3J3s7fx.mifnlR15EN9lsU3YcllKAn3fh6Qeh_UHPmhVzXksvKU8yNo4lQnVeT4kS_..H457gU5h
+ HEZOITwd6upvPAUZJHmywbpamK0LOZQes3eeGjgWAfgztSu3Y0USoN2egZbVYhsmZ_hsazQUhEY1
+ nFFha3ZcFooqxLC5QnF2huWq.nOj6g9ycidz1cSgmEXbYO256J5L64ktcaieDahoLuQwCIqSeZFW
+ x5Nkl0oTqpqFdmm.lfr0YTfp8LLsgcwM_RuPFw8V3dlo7eXhsaH2OMLcYsl0uQglvSgOg6xmTpZu
+ MSlzbAm26UFuJMXdbn8_NeCWo.IgnQ_CyyyuEekBS4FzdD22a4Em.V8ADwpRMd7OfkkVxvYBn0lc
+ ZQ8g0fismZN3YMJgKkh219Jg1roRl07uf3MCFAp7kz9kQWRuCcp2RDBLO1BiTj1L.N8f79JzkMuH
+ B9Tq4LQjgtk9sFYe3U6TTIeaj3KVcfGh2lAQAbgETr.P45NFvKbz11nxW.wSfEWUxj6tQr7ms289
+ sXmtKxpjkuujxzPZqRA8iUd9BfzLUrGdMJr6rcPZ1yNA.mQMeto0VcX8q_o_wFay1R_Ey_ZEtjln
+ fH3o0Cx_Giuy_irQyMUCJtHd9mv5E0WhchtTRpTxESWCd9qRWNjy_GBXdYdEICGh2ALQ2_pN2WPi
+ hTyU1zzYGif8GoM6plwUhEeYGyx4caQfAJe9hUPZxW_o4owuJ1CHMfeBsgVXv7WM4ZHYQqIByXqc
+ NLrxfjD3Lz92_5PTYonJ49RuiGfphYTrZeUBJfd5R7KCL1OhCwAIUyqBT9YVXl4PIbjAIN9xuOGb
+ Ua91Dfr5evNZRfoz3oP2UvCiFbIRunVRg97KpZ5LWcNCV_Uae2SyUENa3d0iWH.5RRzsK6XSCqS7
+ yTwuGCcvcZahAviN_6_d6Ug6HmMirEpCmbxpo4nJLPvnTAftn2boeScuXx6Xwt5NjAg93H0e9qFw
+ sHUsWFYnSz3T1ZgcA344zPIKlc2jcNr3mna4GQru8gRpWAromOL4d1au9vNwMuKzM4Qa7KuXk4aZ
+ 6ms0LgCfHlL3bwqwf4HjWCVyUdBuW38p1H_vwuDtOIGz_1jlFmpv6CY6pCyk15QJ4hvkpHTTq6cv
+ Hx6P7wxG5Wg2CSMgm3FnBUUCHhvhbo0F0XJ1QntTaOcZ5qOr0_9L_uJO3KaqwXCs6aZooB9tfkGU
+ cHKFAsepsxB7qrsZq0HtP81C40eEvTOV1VEekuqPerFXfHnA6gFvwyxaNf4TY_8wHubAODrpYsHJ
+ pNcEfuU361UaV_iJ6cTwFCqMCS7YJzs9o7dRyE1zMv3XEl0o7yLUZpOkWASgleorpAlDoYxACP48
+ 4l.2NGkIf9EazNxLOB4bi.siahSt6Rp2iRtkWUN_CEfzFRJ5Ip.lOqeithRfu27owY_BrXeP1FL6
+ plIV88z9ZNQO.ed6Iqs9kpW4fi22sgRaBjCB89qoi17U6oQrYLjLN4BkJ3CoAIwxwvAAMNAzgL0G
+ CzaXNePl3z5EDmJ.FPT.wPT_N96HfK3559Zr54YkDlew2vASabkyTfnMQto02j4.6kd65wTtEH._
+ _hLpsUivZXlmcHb_wS9aITM.J50allH8gfWazZN1jI6XXvuPd5QPreY8uxzh3KTFSKIZ594X9.nb
+ VjrzfM51Ptn5jg7VHO.EB4bRa6qiUL4HnSDLR5rQPyD2F4JhHiYqHgPpznODC46eo0CfYNoILPK6
+ IPBGfhiedOsh.8h3e8f6c.XBgIdzv39.AVly_l21c5WangkaeVUszucVidc0ESRxFtsRohFconJU
+ vo9C0fi50wpg9wXxqa9sxZuQWNawvze5gsUYGkOrVDuuTwWRm7G6PQUSrgjlSTFdy1oMdE.f_arz
+ cO96EqJpUdCp_Vo9D3w8ZoPXewAdwYTmeEQ--
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Tue, 15 Nov 2022 18:41:41 +0000
+Received: by hermes--production-bf1-5878955b5f-kkjj4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c17cf4ef8fd2f159571973f2179af8ed;
+          Tue, 15 Nov 2022 18:41:38 +0000 (UTC)
+Message-ID: <8a52c1ca-c7cb-62a9-711c-532c33b5d40c@schaufler-ca.com>
+Date:   Tue, 15 Nov 2022 10:41:34 -0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [RFC][PATCH 0/4] security: Ensure LSMs return expected values
+Content-Language: en-US
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+        song@kernel.org, yhs@fb.com, john.fastabend@gmail.com,
+        kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
+        jolsa@kernel.org, revest@chromium.org, jackmanb@chromium.org,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
 Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 4/4] security: Enforce limitations on return values from LSMs
-Date:   Tue, 15 Nov 2022 18:56:52 +0100
-Message-Id: <20221115175652.3836811-5-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        casey@schaufler-ca.com
 References: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwCHcW7o0nNj73dpAA--.16599S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxZFykWF4kJF4UJF1xGw47XFb_yoW5Jw47pw
-        4akFy5KF4j9Fy7XFZ3tanxua1Sv3yrKr4DCrZxXw15Za98Jwn8J3W8tF15tF1rCry8t34Y
-        gF4Ut3y5Cw4DG37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-        AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
-        14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
-        C2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
-        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262
-        kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s02
-        6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GF
-        v_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvE
-        c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-        AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
-        pf9x07j7GYLUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgARBF1jj4F5bgAAsw
-X-CFilter-Loop: Reflected
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20863 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On 11/15/2022 9:56 AM, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> LSMs should follow the conventions stated in include/linux/lsm_hooks.h for
+> return values, as these conventions are followed by callers of the LSM
+> infrastructure for error handling.
+>
+> The ability of an LSM to return arbitrary values could cause big troubles.
+> For LSMs aiming at being upstreamed, this event is unlikely, as each LSM is
+> carefully reviewed and it won't be accepted if it does not meet the return
+> value conventions. However, the recent introduction of BPF LSM allows
+> security modules (not part of the kernel) to inject arbitrary values,
+> without BPF LSM verifying them.
+>
+> The initial idea was to fix BPF LSM itself. However, due to technical
+> difficulties to determine the precise interval of return values from a
+> static code analysis of eBPF programs, the new approach was to put the
+> fix in the LSM infrastructure, so that all LSMs can benefit from this work
+> as well.
 
-LSMs should not be able to return arbitrary return values, as the callers
-of the LSM infrastructure might not be ready to handle unexpected values
-(e.g. positive values that are first converted to a pointer with ERR_PTR,
-and then evaluated with IS_ERR()).
+The LSM infrastructure is a hodgepodge of inconsistently defined functions.
+That makes them difficult to deal with in any sort of consistent way.
+Your attempt to make them more rational is laudable, but falls short of
+being useful, while slowing all security processing to no end.
 
-Modify call_int_hook() to call is_ret_value_allowed(), so that the return
-value from each LSM for a given hook is checked. If for the interval the
-return value falls into the corresponding flag is not set, change the
-return value to the default value, just for the current LSM.
+I don't consider this a "fix", and I don't see how it benefits any LSM
+other than BPF. Adding return code checks into the infrastructure code is
+insufficient. If someone adds a bpf_secid_to_secctx() eBPF program you're
+going to have a whole new set of problems that this clutter isn't going to
+help with at all. Return values are an important part of the problem, but
+nowhere near the whole of it.
 
-A misbehaving LSM would not have impact on the decision of other LSMs, as
-the loop terminates whenever the return value is not zero.
+Please take this back into the BPF security module, where it belongs.
+BPF isn't playing by the admittedly complex, inconsistent and arbitrary
+rules of the LSM infrastructure. Your proposal doesn't change that, nor
+does it sufficiently change the infrastructure to make BPF safe.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/security.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/security/security.c b/security/security.c
-index 4041d24e3283..cd417a8a0e65 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -716,6 +716,35 @@ static int lsm_superblock_alloc(struct super_block *sb)
- #include <linux/lsm_hook_defs.h>
- #undef LSM_HOOK
- 
-+/*
-+ * The return value flags of the LSM hook are defined in linux/lsm_hook_defs.h
-+ * and can be accessed with:
-+ *
-+ *	LSM_RET_FLAGS(<hook_name>)
-+ *
-+ * The macros below define static constants for the return value flags of each
-+ * LSM hook.
-+ */
-+#define LSM_RET_FLAGS(NAME) (NAME##_ret_flags)
-+#define DECLARE_LSM_RET_FLAGS(RET_FLAGS, NAME) \
-+	static const u32 __maybe_unused LSM_RET_FLAGS(NAME) = (RET_FLAGS);
-+#define LSM_HOOK(RET, DEFAULT, RET_FLAGS, NAME, ...) \
-+	DECLARE_LSM_RET_FLAGS(RET_FLAGS, NAME)
-+
-+#include <linux/lsm_hook_defs.h>
-+#undef LSM_HOOK
-+
-+static bool is_ret_value_allowed(int ret, u32 ret_flags)
-+{
-+	if ((ret < 0 && !(ret_flags & LSM_RET_NEG)) ||
-+	    (ret == 0 && !(ret_flags & LSM_RET_ZERO)) ||
-+	    (ret == 1 && !(ret_flags & LSM_RET_ONE)) ||
-+	    (ret > 1 && !(ret_flags & LSM_RET_GT_ONE)))
-+		return false;
-+
-+	return true;
-+}
-+
- /*
-  * Hook list operation macros.
-  *
-@@ -741,6 +770,11 @@ static int lsm_superblock_alloc(struct super_block *sb)
- 								\
- 		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
- 			RC = P->hook.FUNC(__VA_ARGS__);		\
-+			if (!is_ret_value_allowed(RC, LSM_RET_FLAGS(FUNC))) { \
-+				WARN_ONCE(1, "Illegal ret %d for " #FUNC " from %s, forcing %d\n", \
-+					  RC, P->lsm, LSM_RET_DEFAULT(FUNC)); \
-+				RC = LSM_RET_DEFAULT(FUNC);	\
-+			}					\
- 			if (RC != 0)				\
- 				break;				\
- 		}						\
--- 
-2.25.1
-
+>
+> The biggest problem of allowing arbitrary return values is when an LSM
+> returns a positive value, instead of a negative value, as it could be
+> converted to a pointer. Since such pointer escapes the IS_ERR() check, its
+> use later in the code can cause unpredictable consequences (e.g. invalid
+> memory access).
+>
+> Another problem is returning zero when an LSM is supposed to have done some
+> operations. For example, the inode_init_security hook expects that their
+> implementations return zero only if they set the fields of the new xattr to
+> be added to the new inode. Otherwise, other kernel subsystems might
+> encounter unexpected conditions leading to a crash (e.g.
+> evm_protected_xattr_common() getting NULL as argument). This problem is
+> addressed separately in another patch set.
+>
+> Finally, there are LSM hooks which are supposed to return just 1 as
+> positive value, or non-negative values. Also in these cases, although it
+> seems less critical, it is safer to return to callers of the LSM
+> infrastructure more precisely what they expect.
+>
+> Patches 1 and 2 ensure that the documentation of LSM return values is
+> complete and accurate. Then, patch 3 introduces four flags (LSM_RET_NEG,
+> LSM_RET_ZERO, LSM_RET_ONE, LSM_RET_GT_ONE), one for each interval of
+> interest (< 0, = 0, = 1, > 1), and sets the correct flags for each LSM
+> hook. Finally, patch 4 verifies for each return value from LSMs that it is
+> an expected one.
+>
+> Roberto Sassu (4):
+>   lsm: Clarify documentation of vm_enough_memory hook
+>   lsm: Add missing return values doc in lsm_hooks.h and fix formatting
+>   lsm: Redefine LSM_HOOK() macro to add return value flags as argument
+>   security: Enforce limitations on return values from LSMs
+>
+>  include/linux/bpf_lsm.h       |   2 +-
+>  include/linux/lsm_hook_defs.h | 779 ++++++++++++++++++++--------------
+>  include/linux/lsm_hooks.h     | 136 ++++--
+>  kernel/bpf/bpf_lsm.c          |   5 +-
+>  security/bpf/hooks.c          |   2 +-
+>  security/security.c           |  38 +-
+>  6 files changed, 589 insertions(+), 373 deletions(-)
+>
