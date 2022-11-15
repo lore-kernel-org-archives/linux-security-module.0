@@ -2,131 +2,157 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12AFEC4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Nov 2022 03:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB9EC433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Nov 2022 03:54:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231808AbiKODkH (ORCPT
+        id S232708AbiKODy6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Nov 2022 22:40:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37028 "EHLO
+        Mon, 14 Nov 2022 22:54:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232314AbiKODkG (ORCPT
+        with ESMTP id S232040AbiKODy5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Nov 2022 22:40:06 -0500
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02095BF4E
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 19:40:05 -0800 (PST)
-Received: by mail-pg1-x52a.google.com with SMTP id o13so12101579pgu.7
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Nov 2022 19:40:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IzdlQonh9ksiWRR0k5Cq1A47+kjhq4OFBIwy1qdcCmg=;
-        b=ZLDkTjJFwaTtzx3Ef09Onguq8cMTLUu9IEYjbLoRUGzk6ulTDfFw+ni0uy1n1Utjjj
-         HJHHJjd4XNpN6yIrAbr8fMM5mGQ3ERZuduvwoNToYgXUJ2F7mhGkSD7hHYG95gvFtaRj
-         Ih510ouJY4TlIBwaj4F63HFxqAFxe92iA/vGZVp/00tgZd56F9LOzQXyeQBXyWrqvqD5
-         +tJjfQsDPmI3BgrCZQk1RIArWN9leJGs4MsqSi5cWwsFimv+oMiMsBgpB/+PsX90xuAk
-         jrLGuydsKvTIVXVNpOkKN2TRoeLGpP+WzLG1DhDTmHV9R3Wu/FefvswkfajppVg6jenm
-         eOjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IzdlQonh9ksiWRR0k5Cq1A47+kjhq4OFBIwy1qdcCmg=;
-        b=pg0AsnqePiZgv/ZE3nf5IXOVeh6I/4bkbHAMDuNnn37zAE/mbIvX3y2D5+gPt17lgl
-         JzdagQCxxlHLuVxEv0YsSOn3v/1ZXj5OsvLuhABSbFXqViLcErPPS3/D2ruF4TkJdgaI
-         wL33ZxvlWY9xJOeED7Tfwgpz2nThvodK+/ci9IhOfj/2nNvW4nT9MmzScC6IFSgZUHIa
-         o8KO9WluTv63Sm8seA95LdisgE/nPIj6YGnYBLIyjdt44bK0F/AiYvIPyIt81lFwyG22
-         jsCTWcZ0e6ULBxvwi0+FdI1kbuDKuUW5kc+g1Qr+5MmUPLxvdh4Gndt67+jBfm4kvbM2
-         /tWg==
-X-Gm-Message-State: ANoB5plANSXOj/bxCBIoRL/YdnL9qgQXejhrud+fafBo00sE856W4dte
-        6oYh/KKc6IsCNIcOaLakzZtjpw==
-X-Google-Smtp-Source: AA0mqf6btc+EJX1sgkPBLfYXPRpcR1cqU2L9+Cbc/TvjhYzVhQRiZmUsPGAYH2NmA3RNvpVLWxaQYg==
-X-Received: by 2002:aa7:8396:0:b0:56b:f3b2:5543 with SMTP id u22-20020aa78396000000b0056bf3b25543mr16810448pfm.65.1668483604557;
-        Mon, 14 Nov 2022 19:40:04 -0800 (PST)
-Received: from [10.255.4.35] ([139.177.225.229])
-        by smtp.gmail.com with ESMTPSA id x13-20020a63f70d000000b0046f469a2661sm6586284pgh.27.2022.11.14.19.39.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Nov 2022 19:40:04 -0800 (PST)
-Message-ID: <ba8aa36a-d0d7-b716-a9c7-02c6d5a60712@bytedance.com>
-Date:   Tue, 15 Nov 2022 11:39:55 +0800
+        Mon, 14 Nov 2022 22:54:57 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E52B17A9E;
+        Mon, 14 Nov 2022 19:54:56 -0800 (PST)
+Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NBC3s4gblzmVtp;
+        Tue, 15 Nov 2022 11:54:33 +0800 (CST)
+Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
+ dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Tue, 15 Nov 2022 11:54:54 +0800
+Received: from [10.67.108.193] (10.67.108.193) by
+ dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Tue, 15 Nov 2022 11:54:53 +0800
+Subject: Re: [PATCH] device_cgroup: Roll back to original exceptions after
+ copy failure
+To:     Paul Moore <paul@paul-moore.com>
+CC:     <jmorris@namei.org>, <serge@hallyn.com>,
+        <serge.hallyn@canonical.com>, <akpm@linux-foundation.org>,
+        <aris@redhat.com>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        wangweiyang <wangweiyang2@huawei.com>
+References: <20221025113101.41132-1-wangweiyang2@huawei.com>
+ <CAHC9VhQW9g6QTpPMHehTyfT_N5kQjeAGZjdiiUS9od+0CrmbiQ@mail.gmail.com>
+From:   wangweiyang <wangweiyang2@huawei.com>
+Message-ID: <7da459bc-ffb7-1b0b-dcac-5e967d836434@huawei.com>
+Date:   Tue, 15 Nov 2022 11:54:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.4.2
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        chenying.kernel@bytedance.com
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
- <e57733cd-364d-84e0-cfe0-fd41de14f434@bytedance.com>
- <CAJfpegsVsnjUy2N+qO-j4ToScwev01AjwUA0Enp_DxroPQS30A@mail.gmail.com>
-Content-Language: en-US
-From:   Abel Wu <wuyun.abel@bytedance.com>
-In-Reply-To: <CAJfpegsVsnjUy2N+qO-j4ToScwev01AjwUA0Enp_DxroPQS30A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <CAHC9VhQW9g6QTpPMHehTyfT_N5kQjeAGZjdiiUS9od+0CrmbiQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.108.193]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500001.china.huawei.com (7.185.36.107)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/14/22 8:35 PM, Miklos Szeredi wrote:
-> On Mon, 14 Nov 2022 at 10:00, Abel Wu <wuyun.abel@bytedance.com> wrote:
+Hi, Paul
+Can this patch be applied or something to improve?
+
+Thanks
+
+on 2022/10/28 19:19, Paul Moore wrote:
+> On Tue, Oct 25, 2022 at 7:02 AM Wang Weiyang <wangweiyang2@huawei.com> wrote:
 >>
->> Hi Miklos and anyone interested in this proposal, is there any update on
->> this? Sorry that I didn't find any..
+>> When add the 'a *:* rwm' entry to devcgroup A's whitelist, at first A's
+>> exceptions will be cleaned and A's behavior is changed to
+>> DEVCG_DEFAULT_ALLOW. Then parent's exceptions will be copyed to A's
+>> whitelist. If copy failure occurs, just return leaving A to grant
+>> permissions to all devices. And A may grant more permissions than
+>> parent.
+>>
+>> Backup A's whitelist and recover original exceptions after copy
+>> failure.
+>>
+>> Fixes: 4cef7299b478 ("device_cgroup: add proper checking when changing default behavior")
+>> Signed-off-by: Wang Weiyang <wangweiyang2@huawei.com>
+>> ---
+>>  security/device_cgroup.c | 33 +++++++++++++++++++++++++++++----
+>>  1 file changed, 29 insertions(+), 4 deletions(-)
 > 
-> No update.
+> On quick glance this looks reasonable to me, but I'm working with
+> limited time connected to a network so I can't say I've given this a
+> full and proper review; if a third party could spend some time to give
+> this an additional review before I merge it I would greatly appreciate
+> it.
 > 
-> Which part are you interested in?
-
-We noticed that atop(1) can introduce a burst cpu usage once number of
-processes becoming large. It is mostly due to the overhead of massive
-syscalls. There are similar cases like monitor agents recording system
-status and consuming resources in modern data centers. So it would be
-nice to get a bunch of info in one syscall.
-
+>> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+>> index a9f8c63a96d1..bef2b9285fb3 100644
+>> --- a/security/device_cgroup.c
+>> +++ b/security/device_cgroup.c
+>> @@ -82,6 +82,17 @@ static int dev_exceptions_copy(struct list_head *dest, struct list_head *orig)
+>>         return -ENOMEM;
+>>  }
+>>
+>> +static void dev_exceptions_move(struct list_head *dest, struct list_head *orig)
+>> +{
+>> +       struct dev_exception_item *ex, *tmp;
+>> +
+>> +       lockdep_assert_held(&devcgroup_mutex);
+>> +
+>> +       list_for_each_entry_safe(ex, tmp, orig, list) {
+>> +               list_move_tail(&ex->list, dest);
+>> +       }
+>> +}
+>> +
+>>  /*
+>>   * called under devcgroup_mutex
+>>   */
+>> @@ -604,11 +615,13 @@ static int devcgroup_update_access(struct dev_cgroup *devcgroup,
+>>         int count, rc = 0;
+>>         struct dev_exception_item ex;
+>>         struct dev_cgroup *parent = css_to_devcgroup(devcgroup->css.parent);
+>> +       struct dev_cgroup tmp_devcgrp;
+>>
+>>         if (!capable(CAP_SYS_ADMIN))
+>>                 return -EPERM;
+>>
+>>         memset(&ex, 0, sizeof(ex));
+>> +       memset(&tmp_devcgrp, 0, sizeof(tmp_devcgrp));
+>>         b = buffer;
+>>
+>>         switch (*b) {
+>> @@ -620,15 +633,27 @@ static int devcgroup_update_access(struct dev_cgroup *devcgroup,
+>>
+>>                         if (!may_allow_all(parent))
+>>                                 return -EPERM;
+>> -                       dev_exception_clean(devcgroup);
+>> -                       devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
+>> -                       if (!parent)
+>> +                       if (!parent) {
+>> +                               devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
+>> +                               dev_exception_clean(devcgroup);
+>>                                 break;
+>> +                       }
+>>
+>> +                       INIT_LIST_HEAD(&tmp_devcgrp.exceptions);
+>> +                       rc = dev_exceptions_copy(&tmp_devcgrp.exceptions,
+>> +                                                &devcgroup->exceptions);
+>> +                       if (rc)
+>> +                               return rc;
+>> +                       dev_exception_clean(devcgroup);
+>>                         rc = dev_exceptions_copy(&devcgroup->exceptions,
+>>                                                  &parent->exceptions);
+>> -                       if (rc)
+>> +                       if (rc) {
+>> +                               dev_exceptions_move(&devcgroup->exceptions,
+>> +                                                   &tmp_devcgrp.exceptions);
+>>                                 return rc;
+>> +                       }
+>> +                       devcgroup->behavior = DEVCG_DEFAULT_ALLOW;
+>> +                       dev_exception_clean(&tmp_devcgrp);
+>>                         break;
+>>                 case DEVCG_DENY:
+>>                         if (css_has_online_children(&devcgroup->css))
+>> --
+>> 2.17.1
+>>
 > 
-> Getting mount attributes?  Or a generic key-value retrieval and
-> storage interface?
-
-The latter.
-
 > 
-> For the first one there are multiple proposals, one of them is adding
-> a new system call using binary structs.  The fsinfo(2) syscall was
-> deemed overdesigned and rejected.  Something simpler would probably be
-> fairly uncontroversial.
-> 
-> As for the other proposal it seems like some people would prefer a set
-> of new syscalls, while some others would like to reuse the xattr
-> syscalls.  No agreement seems to have been reached.
-
-So the divergence comes from 'how' rather than 'why', right?
-
-Thanks & Best,
-	Abel
-
-> 
-> Also I think a notification system for mount related events is also a
-> much needed component.   I've tried to explore using the fsnotify
-> framework for this, but the code is pretty convoluted and I couldn't
-> get prototype working.
-> 
-> Thanks,
-> Miklos
