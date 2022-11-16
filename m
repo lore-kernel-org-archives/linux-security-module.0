@@ -2,60 +2,31 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7EA7C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 02:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20765C43217
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 08:06:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231266AbiKPCf6 (ORCPT
+        id S233072AbiKPIGs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Nov 2022 21:35:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49304 "EHLO
+        Wed, 16 Nov 2022 03:06:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229812AbiKPCf5 (ORCPT
+        with ESMTP id S233051AbiKPIGp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Nov 2022 21:35:57 -0500
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CDE627935
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Nov 2022 18:35:56 -0800 (PST)
-Received: by mail-pf1-x432.google.com with SMTP id y203so16182008pfb.4
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Nov 2022 18:35:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LsUkQ9mUTtmbZUYtAJD3DaSoBhry/tgp9n6xBguz4lI=;
-        b=BCeqLLVGH2R8cvfyP4TzIQJp8FsuwwIaDb5fGlWXYWyEVoWZ4CecVwo/6hlZ0wvZMN
-         8lB+4IedPpag9pnDwUu3fp+CJiiyRKyRfgLgWZBq6lj5OYXr/GMQ/6PmrLoOHQfF5F2F
-         8JPKsCFZ2mp6UveVHoxNpH1BZrdNrYCH5iHsdmqHFkvPqarKWe3Q7LLEuojD5USAVfMj
-         yyBjNbC6D65G4sTN7czLTqdLrM4Ikx6MbVH8WtwwBi+3ICbpjQWQG9mmMD2Ji468yFPK
-         DL8QrJaSyUJEgplPEa2/dcuu4sVbqCCLEbNJDN0nLWJD+h+eIvwqsVlKbCuZAL7FP47K
-         IxCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LsUkQ9mUTtmbZUYtAJD3DaSoBhry/tgp9n6xBguz4lI=;
-        b=GotLMcXrprMEmOnVux8hwABnkRndHxU6YWaz1V/X9tyay49tHpKCePpGJ/Ud1xtbF3
-         S/YAv278/DTlKokfadzJ2J4P8GmwIZZHS8SBmMX9y5jSdXVeG3AGhS64ywJefWaFq6da
-         IQRAbhQgQmjbSXBYJxwP8HQzaz5FIO06O+8HgKeVVIh9452imGWVAriFX2/0VmcGREGp
-         ZqN4tXqhPWW3T+y86d8GBb4lPoqRYcoCRYg9Nw74fa8Q7WRGHBojL/5iuqP3Q0D/wLOI
-         XqpZjBmnQXL4e8x8IBeDmkvPD2OUnbx6+rOUjTmnUpVspJLO4yOYKwPlE2IF5PcMtJyt
-         DxVw==
-X-Gm-Message-State: ANoB5plZ5vs/VVK+VyJuZVdIXs8AYQ/W2d+ooQhdMO74hVdzumJIZvir
-        wgguamiTIPW+iBqFal/hEbgyA1iKEuNKfe3na70M
-X-Google-Smtp-Source: AA0mqf5CJnhn5qnkSOJep/sQV/5oppCSnD92JqMIf6aCUDEsrMG3l9LTpaW0nNXIgzolcSBlOiuoKMQ31Wut3i9jIHY=
-X-Received: by 2002:a63:4087:0:b0:44e:46f9:7eeb with SMTP id
- n129-20020a634087000000b0044e46f97eebmr18693190pga.3.1668566155982; Tue, 15
- Nov 2022 18:35:55 -0800 (PST)
-MIME-Version: 1.0
-References: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com> <20221115175652.3836811-5-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20221115175652.3836811-5-roberto.sassu@huaweicloud.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 15 Nov 2022 21:35:44 -0500
-Message-ID: <CAHC9VhQ+fUZfJwJ=oJ9ieszKeicnS7Z-QcJuJVL9HF5F0tcA7Q@mail.gmail.com>
-Subject: Re: [RFC][PATCH 4/4] security: Enforce limitations on return values
- from LSMs
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+        Wed, 16 Nov 2022 03:06:45 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84C485F52;
+        Wed, 16 Nov 2022 00:06:42 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NBwST5Gp5z9xFQ5;
+        Wed, 16 Nov 2022 15:59:53 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwAXTPjumXRjdiBrAA--.15845S2;
+        Wed, 16 Nov 2022 09:06:18 +0100 (CET)
+Message-ID: <18e375adfe53f8ce5fb38a6a146ad06eaec71a5e.camel@huaweicloud.com>
+Subject: Re: [RFC][PATCH 1/4] lsm: Clarify documentation of vm_enough_memory
+ hook
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>
 Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
         martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
         john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
@@ -64,45 +35,71 @@ Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
         bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 16 Nov 2022 09:06:02 +0100
+In-Reply-To: <CAHC9VhQjnwbFgAoFgTaLQP7YnNDNyP1i0i8H++HZWj930pW=-A@mail.gmail.com>
+References: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
+         <20221115175652.3836811-2-roberto.sassu@huaweicloud.com>
+         <CAHC9VhQjnwbFgAoFgTaLQP7YnNDNyP1i0i8H++HZWj930pW=-A@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: GxC2BwAXTPjumXRjdiBrAA--.15845S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4DWF4fAw18Ar4kZF4DXFb_yoW8XF43pF
+        WkGa15Gr1v9ry8CFs2k3Wa9345Gws5Gr1UJry7X3s8Zry7KrnIgr48Cr43Wr1Dtr4vka1Y
+        qFW3Ww1rCw1qvaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBF1jj4V8RQABsb
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 15, 2022 at 12:58 PM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> LSMs should not be able to return arbitrary return values, as the callers
-> of the LSM infrastructure might not be ready to handle unexpected values
-> (e.g. positive values that are first converted to a pointer with ERR_PTR,
-> and then evaluated with IS_ERR()).
->
-> Modify call_int_hook() to call is_ret_value_allowed(), so that the return
-> value from each LSM for a given hook is checked. If for the interval the
-> return value falls into the corresponding flag is not set, change the
-> return value to the default value, just for the current LSM.
->
-> A misbehaving LSM would not have impact on the decision of other LSMs, as
-> the loop terminates whenever the return value is not zero.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/security.c | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
+On Tue, 2022-11-15 at 21:11 -0500, Paul Moore wrote:
+> On Tue, Nov 15, 2022 at 12:57 PM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > include/linux/lsm_hooks.h reports the result of the LSM infrastructure to
+> > the callers, not what LSMs should return to the LSM infrastructure.
+> > 
+> > Clarify that and add that returning 1 from the LSMs means calling
+> > __vm_enough_memory() with cap_sys_admin set, 0 without.
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Reviewed-by: KP Singh <kpsingh@kernel.org>
+> > ---
+> >  include/linux/lsm_hooks.h | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > index 4ec80b96c22e..f40b82ca91e7 100644
+> > --- a/include/linux/lsm_hooks.h
+> > +++ b/include/linux/lsm_hooks.h
+> > @@ -1411,7 +1411,9 @@
+> >   *     Check permissions for allocating a new virtual mapping.
+> >   *     @mm contains the mm struct it is being added to.
+> >   *     @pages contains the number of pages.
+> > - *     Return 0 if permission is granted.
+> > + *     Return 0 if permission is granted by LSMs to the caller. LSMs should
+> > + *     return 1 if __vm_enough_memory() should be called with
+> > + *     cap_sys_admin set, 0 if not.
+> 
+> I think this is a nice addition, but according to the code, any value
+> greater than zero will trigger the caller-should-have-CAP_SYS_ADMIN
+> behavior, not just 1.  I suggest updating the comment.
 
-Casey touched on some of this in his reply to patch 0/4, but basically
-I see this as a BPF LSM specific problem and not a generalized LSM
-issue that should be addressed at the LSM layer.  Especially if the
-solution involves incurring additional processing for every LSM hook
-instantiation, regardless if a BPF LSM is present.  Reading your
-overall patchset description I believe that you understand this too.
+Ok, yes. Thanks.
 
-If you want to somehow instrument the LSM hook definitions (what I
-believe to be the motivation behind patch 3/4) to indicate valid
-return values for use by the BPF verifier, I think we could entertain
-that, or at least discuss it further, but I'm not inclined to support
-any runtime overhead at the LSM layer for a specific LSM.
+Roberto
 
--- 
-paul-moore.com
