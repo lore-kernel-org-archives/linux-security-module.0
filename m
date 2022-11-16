@@ -2,151 +2,222 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A08C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 22:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA063C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 23:04:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234020AbiKPWkm (ORCPT
+        id S238401AbiKPXEa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Nov 2022 17:40:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57886 "EHLO
+        Wed, 16 Nov 2022 18:04:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234170AbiKPWkf (ORCPT
+        with ESMTP id S233188AbiKPXE2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Nov 2022 17:40:35 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64B1859878
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 14:40:34 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id q1-20020a17090a750100b002139ec1e999so237949pjk.1
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 14:40:34 -0800 (PST)
+        Wed, 16 Nov 2022 18:04:28 -0500
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42E8B31EF5
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 15:04:27 -0800 (PST)
+Received: by mail-pg1-x531.google.com with SMTP id 6so340161pgm.6
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 15:04:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UzcXa7T4go8BCZ2+JcH7BfafhKjaxvqL4Y0Iif9VmBU=;
-        b=fqkVtQz/gr3HS43QqL9DzpRw5KfIi1/n2Lt2GXcxU27sq0kQ6olvv43ugUEA5x+air
-         LNsipoZd+hKi0BZKehUp/QQED6nzJaO3k2zJtR/lQJdhcVPD1dYJfBSmK+SNjYU6vfK1
-         Do7XnqngElmkoMJO2TD4a85yFfZIF4/1xv5JzrWoSmfYf1yl2HEoei9ulpTTlwyxdKEs
-         IdzPwK9gjPXNG/DuTsjiJDnYv1dQfLRIcwjlVTNrS0AavS8zvzwp4Cf3Mulmor/47Sey
-         9FNTo1SfeEs04H6Mdcr/3otLrP2fYxFhJIu1AsBM8yBemmsyJkb3QRHxb1uGepCQ8e21
-         jG9A==
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3XP941acguvK1ZAkrhvPDttgcSVa1z7xUK43PRl+uio=;
+        b=56syu10yY4F1zazjA7qQqh2STRuHElk9eY+YEZ2JcKVraIu6zSy+d7hqJ6YBhnyKnk
+         1+LuOwiNiju5AdvI9xdh5g/G80aKnuJ11AaNiNKaHFRuda9VJx8tJcobAEuesbGIYHgS
+         tMzqZ7quPD44w/BpPwpIxIYOAHQ0Eu6vcZcGfDNkWyxWllI9JW5MvHxeDqabzek7mvJF
+         lRPHcIEV4pjuGc5AmAsFH4Jf4S3BLYvw3FN1EFQw3CaTcsnQ/rxPpU5CayDHenZMNu9J
+         ZglvH/USVkAoU8iRANLUdGJML73p0sP2EWzu5aiesLr10lbTtOu9kbvOSISR4gHJF93H
+         u1/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UzcXa7T4go8BCZ2+JcH7BfafhKjaxvqL4Y0Iif9VmBU=;
-        b=N6h7AI+tzmSC1nxpislPHc/HCrWSnTAPhnPv3vRWzKgDnY9wlXyq9tDS8IE0ooP7eZ
-         4PwVrUmAVW7X6p2teETAdLiCOIVCkZH06VWtvH6j3eEU56rQPsRaNYpaAN1BIUI3XNsS
-         zXbZVo193VUqmZoCqQ27R3X5VvWMEjGrsSinigJpI5MMXDVVET+5/D/TJBvGZO6QwUui
-         DDxBis+lXVR4xGEfkxjUel1L2/8wLKe+e0R5K7k5CwBKBP0Ne3a9ZPshd4dmm+jLwGWK
-         2HhKtSjgqn5rKXAcTaij+ugOz99ELkp4zNVDnlfrWUSv7GLlSEo1h4UiFdUyL6jF46NC
-         q7hA==
-X-Gm-Message-State: ANoB5pkjvFvZbNI6DYM5/t8dUW0R51E5Mt20ruVE80QwDXINcAH4iFdi
-        s6oTb85pX3z+mJZ+xxnfibrTNdTf6vXxqbpBsGS8
-X-Google-Smtp-Source: AA0mqf54wnqdQbNLvtiVr7mBPZk009rq2BqN/X27wqSBJvGIvNiD6Qj6t52LWfa4miZTRM9kwnygUPM7bbvaFuw+alM=
-X-Received: by 2002:a17:902:bf4a:b0:186:e568:3442 with SMTP id
- u10-20020a170902bf4a00b00186e5683442mr10969908pls.56.1668638433849; Wed, 16
- Nov 2022 14:40:33 -0800 (PST)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3XP941acguvK1ZAkrhvPDttgcSVa1z7xUK43PRl+uio=;
+        b=uAdZjzH+BwZOB7pi1NsQUTEVRcIGDCV15mYfXqGXlJKHD2SaCizJARGJhk2/VX11qe
+         jlVgfm5FZHdqnm44vMzN9RoqqkAOrD+3q7t5vIPDBFAX/KhLvW9rbof0pzPHsMFI7rBr
+         x6ncFJTDGOE0kaogv/RgoU2Eh8rahU/3HGLA6fB2xtf9IGtHruORuZ0LplO8i6uijcYw
+         6gc73sa8E5hCPNxupPPieRnlOMjZcJhAkQsVcP9RKt4NnGrR1aUNaKQjxIIEHqiXaGmx
+         i0s8CIWFfRVJbQBXehWEkNkgHYT9bSI1mxhfxbFueWY/MlGnji66jGyTEqHVOBnXTPXL
+         n26g==
+X-Gm-Message-State: ANoB5pmD3pdZcXtTLBn7gSG6/1ZlQYuIoiKgJhdw71/UvF/baayu/o8A
+        p6BQnOZ4mpChY8FA7edStafTs/hKpYvw5gJxou5j
+X-Google-Smtp-Source: AA0mqf4KnTW/Rs1/rqT5ydHUWbdtFyquLEB9AfGl4n344VRBZodroHoiuUE+EPtZ149p+/6c710BcebRhYhln41jNs4=
+X-Received: by 2002:aa7:9518:0:b0:56c:8c13:24fd with SMTP id
+ b24-20020aa79518000000b0056c8c1324fdmr319516pfp.2.1668639866677; Wed, 16 Nov
+ 2022 15:04:26 -0800 (PST)
 MIME-Version: 1.0
-References: <700dffccdfeeb3d19c5385550e4c84f08c705e19.camel@huaweicloud.com>
- <20221116154712.4115929-1-roberto.sassu@huaweicloud.com> <CAADnVQLQswvu3oGyeevLrKMT200yD4hzCbkBUAs=1bKSDVaOQg@mail.gmail.com>
- <05bf553f795ac93ea3032cfc1b56ca35fd6a920a.camel@huaweicloud.com>
- <CAADnVQJu7isDCi4+f8s4LfiwcYJbN4kXkvgJ8+ZnsS+QGDVnMw@mail.gmail.com> <CACYkzJ6-zLNZhRmpaax+_ZywWLa5R2HwcxRke8hCHu_FgYceeA@mail.gmail.com>
-In-Reply-To: <CACYkzJ6-zLNZhRmpaax+_ZywWLa5R2HwcxRke8hCHu_FgYceeA@mail.gmail.com>
+References: <20221102000525.gonna.409-kees@kernel.org>
+In-Reply-To: <20221102000525.gonna.409-kees@kernel.org>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 16 Nov 2022 17:40:22 -0500
-Message-ID: <CAHC9VhTWZAcTyhvX+dZGnoaymzhR0qE8gBZkeeqdjkNfyOa42w@mail.gmail.com>
-Subject: Re: [PoC][PATCH] bpf: Call return value check function in the JITed code
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 16 Nov 2022 18:04:15 -0500
+Message-ID: <CAHC9VhRh2VSEHSOdiTg-1K0zbpa_oj9iKJHi6ZLYj3Ubt4tGRQ@mail.gmail.com>
+Subject: Re: [PATCH v2] LSM: Better reporting of actual LSMs at boot
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 16, 2022 at 2:04 PM KP Singh <kpsingh@kernel.org> wrote:
-> On Wed, Nov 16, 2022 at 6:55 PM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Wed, Nov 16, 2022 at 8:41 AM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > >
-> > > On Wed, 2022-11-16 at 08:16 -0800, Alexei Starovoitov wrote:
-> > > > On Wed, Nov 16, 2022 at 7:48 AM Roberto Sassu
-> > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > +static bool is_ret_value_allowed(int ret, u32 ret_flags)
-> > > > > +{
-> > > > > +       if ((ret < 0 && !(ret_flags & LSM_RET_NEG)) ||
-> > > > > +           (ret == 0 && !(ret_flags & LSM_RET_ZERO)) ||
-> > > > > +           (ret == 1 && !(ret_flags & LSM_RET_ONE)) ||
-> > > > > +           (ret > 1 && !(ret_flags & LSM_RET_GT_ONE)))
-> > > > > +               return false;
-> > > > > +
-> > > > > +       return true;
-> > > > > +}
-> > > > > +
-> > > > >  /* For every LSM hook that allows attachment of BPF programs, declare a nop
-> > > > >   * function where a BPF program can be attached.
-> > > > >   */
-> > > > > @@ -30,6 +41,15 @@ noinline RET bpf_lsm_##NAME(__VA_ARGS__)     \
-> > > > >  #include <linux/lsm_hook_defs.h>
-> > > > >  #undef LSM_HOOK
-> > > > >
-> > > > > +#define LSM_HOOK(RET, DEFAULT, RET_FLAGS, NAME, ...)   \
-> > > > > +noinline RET bpf_lsm_##NAME##_ret(int ret)     \
-> > > > > +{                                              \
-> > > > > +       return is_ret_value_allowed(ret, RET_FLAGS) ? ret : DEFAULT; \
-> > > > > +}
-> > > > > +
-> > > > > +#include <linux/lsm_hook_defs.h>
-> > > > > +#undef LSM_HOOK
-> > > > > +
-> > > >
-> > > > because lsm hooks is mess of undocumented return values your
-> > > > "solution" is to add hundreds of noninline functions
-> > > > and hack the call into them in JITs ?!
-> > >
-> > > I revisited the documentation and checked each LSM hook one by one.
-> > > Hopefully, I completed it correctly, but I would review again (others
-> > > are also welcome to do it).
-> > >
-> > > Not sure if there is a more efficient way. Do you have any idea?
-> > > Maybe we find a way to use only one check function (by reusing the
-> > > address of the attachment point?).
-> > >
-> > > Regarding the JIT approach, I didn't find a reliable solution for using
-> > > just the verifier. As I wrote to you, there could be the case where the
-> > > range can include positive values, despite the possible return values
-> > > are zero and -EACCES.
-> >
-> > Didn't you find that there are only 12 or so odd return cases.
-> > Maybe refactor some of them to something that the verifier can enforce
-> > and denylist the rest ?
+On Tue, Nov 1, 2022 at 8:05 PM Kees Cook <keescook@chromium.org> wrote:
 >
-> +1
+> Enhance the details reported by "lsm.debug" in several ways:
+>
+> - report contents of "security=3D"
+> - report contents of "CONFIG_LSM"
+> - report contents of "lsm=3D"
+> - report any early LSM details
+> - whitespace-align the output of similar phases for easier visual parsing
+> - change "disabled" to more accurate "skipped"
+> - explain what "skipped" and "ignored" mean in a parenthetical
+>
+> Upgrade the "security=3D is ignored" warning from pr_info to pr_warn,
+> and include full arguments list to make the cause even more clear.
+>
+> Replace static "Security Framework initializing" pr_info with specific
+> list of the resulting order of enabled LSMs.
+>
+> For example, if the kernel is built with:
+>
+> CONFIG_SECURITY_SELINUX=3Dy
+> CONFIG_SECURITY_APPARMOR=3Dy
+> CONFIG_SECURITY_LOADPIN=3Dy
+> CONFIG_SECURITY_YAMA=3Dy
+> CONFIG_SECURITY_SAFESETID=3Dy
+> CONFIG_SECURITY_LOCKDOWN_LSM=3Dy
+> CONFIG_SECURITY_LANDLOCK=3Dy
+> CONFIG_INTEGRITY=3Dy
+> CONFIG_BPF_LSM=3Dy
+> CONFIG_DEFAULT_SECURITY_APPARMOR=3Dy
+> CONFIG_LSM=3D"landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,=
+smack,tomoyo,apparmor,bpf"
+>
+> Booting without options will show:
+>
+> LSM: initializing lsm=3Dlockdown,capability,landlock,yama,loadpin,safeset=
+id,integrity,selinux,bpf
+> landlock: Up and running.
+> Yama: becoming mindful.
+> LoadPin: ready to pin (currently not enforcing)
+> SELinux:  Initializing.
+> LSM support for eBPF active
+>
+> Boot with "lsm.debug" will show:
+>
+> LSM: legacy security=3D *unspecified*
+> LSM: CONFIG_LSM=3Dlandlock,lockdown,yama,loadpin,safesetid,integrity,seli=
+nux,smack,tomoyo,apparmor,bpf
+> LSM: boot arg lsm=3D *unspecified*
+> LSM:   early started: lockdown (enabled)
+> LSM:   first ordered: capability (enabled)
+> LSM: builtin ordered: landlock (enabled)
+> LSM: builtin ignored: lockdown (not built into kernel)
+> LSM: builtin ordered: yama (enabled)
+> LSM: builtin ordered: loadpin (enabled)
+> LSM: builtin ordered: safesetid (enabled)
+> LSM: builtin ordered: integrity (enabled)
+> LSM: builtin ordered: selinux (enabled)
+> LSM: builtin ignored: smack (not built into kernel)
+> LSM: builtin ignored: tomoyo (not built into kernel)
+> LSM: builtin ordered: apparmor (enabled)
+> LSM: builtin ordered: bpf (enabled)
+> LSM: exclusive chosen:   selinux
+> LSM: exclusive disabled: apparmor
+> LSM: initializing lsm=3Dlockdown,capability,landlock,yama,loadpin,safeset=
+id,integrity,selinux,bpf
+> LSM: cred blob size       =3D 32
+> LSM: file blob size       =3D 16
+> LSM: inode blob size      =3D 72
+> LSM: ipc blob size        =3D 8
+> LSM: msg_msg blob size    =3D 4
+> LSM: superblock blob size =3D 80
+> LSM: task blob size       =3D 8
+> LSM: initializing capability
+> LSM: initializing landlock
+> landlock: Up and running.
+> LSM: initializing yama
+> Yama: becoming mindful.
+> LSM: initializing loadpin
+> LoadPin: ready to pin (currently not enforcing)
+> LSM: initializing safesetid
+> LSM: initializing integrity
+> LSM: initializing selinux
+> SELinux:  Initializing.
+> LSM: initializing bpf
+> LSM support for eBPF active
+>
+> And some examples of how the lsm.debug ordering report changes...
+>
+> With "lsm.debug security=3Dselinux":
+>
+> LSM: legacy security=3Dselinux
+> LSM: CONFIG_LSM=3Dlandlock,lockdown,yama,loadpin,safesetid,integrity,seli=
+nux,smack,tomoyo,apparmor,bpf
+> LSM: boot arg lsm=3D *unspecified*
+> LSM:   early started: lockdown (enabled)
+> LSM:   first ordered: capability (enabled)
+> LSM: security=3Dselinux disabled: apparmor (only one legacy major LSM)
+> LSM: builtin ordered: landlock (enabled)
+> LSM: builtin ignored: lockdown (not built into kernel)
+> LSM: builtin ordered: yama (enabled)
+> LSM: builtin ordered: loadpin (enabled)
+> LSM: builtin ordered: safesetid (enabled)
+> LSM: builtin ordered: integrity (enabled)
+> LSM: builtin ordered: selinux (enabled)
+> LSM: builtin ignored: smack (not built into kernel)
+> LSM: builtin ignored: tomoyo (not built into kernel)
+> LSM: builtin ordered: apparmor (disabled)
+> LSM: builtin ordered: bpf (enabled)
+> LSM: exclusive chosen:   selinux
+> LSM: initializing lsm=3Dlockdown,capability,landlock,yama,loadpin,safeset=
+id,integrity,selinux,bpf
+>
+> With "lsm.debug lsm=3Dintegrity,selinux,loadpin,crabability,bpf,loadpin,l=
+oadpin":
+>
+> LSM: legacy security=3D *unspecified*
+> LSM: CONFIG_LSM=3Dlandlock,lockdown,yama,loadpin,safesetid,integrity,seli=
+nux,smack,tomoyo,apparmor,bpf
+> LSM: boot arg lsm=3Dintegrity,selinux,loadpin,capability,bpf,loadpin,load=
+pin
+> LSM:   early started: lockdown (enabled)
+> LSM:   first ordered: capability (enabled)
+> LSM: cmdline ordered: integrity (enabled)
+> LSM: cmdline ordered: selinux (enabled)
+> LSM: cmdline ordered: loadpin (enabled)
+> LSM: cmdline ignored: crabability (not built into kernel)
+> LSM: cmdline ordered: bpf (enabled)
+> LSM: cmdline skipped: apparmor (not in requested order)
+> LSM: cmdline skipped: yama (not in requested order)
+> LSM: cmdline skipped: safesetid (not in requested order)
+> LSM: cmdline skipped: landlock (not in requested order)
+> LSM: exclusive chosen:   selinux
+> LSM: initializing lsm=3Dlockdown,capability,integrity,selinux,loadpin,bpf
+>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: linux-security-module@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> v2: en/dis-enabled expanded, example output in commit log, use pr_cont.
+> v1: https://lore.kernel.org/lkml/20221018064825.never.323-kees@kernel.org=
+/
+> ---
+>  security/security.c | 45 ++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 36 insertions(+), 9 deletions(-)
 
-I'm not sure we want to refactor the LSM hooks right now, we've got
-too much stuff in-progress which I consider higher value/priority.
-While I'm generally in favor of improving the sanity of interfaces,
-I'd much rather we resolve the IMA/EVM special cases and land the
-stacking changes before we start playing with refactoring the hooks.
-I know this is a bummer for the BPF folks, but the IMA/EVM and
-stacking patches affect everybody.
+I tend to agree with Micka=C3=ABl regarding the aligned output, but that's
+not worth worrying too much about for debug stuff.  Merged into
+lsm/next, thanks Kees.
 
--- 
+--=20
 paul-moore.com
