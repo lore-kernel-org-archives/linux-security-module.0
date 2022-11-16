@@ -2,112 +2,178 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02511C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 19:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDAFC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 19:21:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233163AbiKPTSL (ORCPT
+        id S231406AbiKPTV2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Nov 2022 14:18:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38932 "EHLO
+        Wed, 16 Nov 2022 14:21:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbiKPTSL (ORCPT
+        with ESMTP id S229536AbiKPTV2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Nov 2022 14:18:11 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7176153EF6
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 11:18:10 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0DD8D61F69
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 19:18:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0B9C43150
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 19:18:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668626289;
-        bh=FWxV5cOhm3yOOlmNt1Kx1v7jIiHG6J6Wyzkt+Su/K0U=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=XZLkMROXqq0DqoUmuUMyorNGjz09RV32m3SFoYg1FViWvtgupf36lHbLUL06Lm2Ba
-         fOJxWwPBzsOPScKghVN4eXkyIUm3L5EmBY9jGZht+Fp/WL82UX8ysvdmibGPVIBNPw
-         nw4V/h3mDzsChRJQA8qm3tuKeMqCEvE/Xj25rLWl1NVlZq4TaenuLgaBZJncMfe1HQ
-         ZmXBT5BjtDuvJ+FR7Pp4+jt5GLuzgEtOO5KNcf7EC+eBqo9BbyJmtqE/iVRFCmnUbG
-         /mchCv4a0rvtsVMk7+g3wgiwJ9HdSUQqLsuKP9KntoSKFgCr66nMErMl5xqOGFYR/5
-         s0qGWPgY2cwew==
-Received: by mail-lj1-f169.google.com with SMTP id k19so23119763lji.2
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 11:18:09 -0800 (PST)
-X-Gm-Message-State: ANoB5pmVih6YX83Cah/5rlkhdbK/+cdDPN2Wpc9kT5AnZxtBdZQsWYzP
-        KNHwDYl98n7fSADCwSUj/UXHDhQieVo4Q3nLDkGQ+A==
-X-Google-Smtp-Source: AA0mqf7PG0dBZO8iorKSEIMF0hXEjFNMGwElj5QH9Zt3D/JxRv5uBgb2JAvG2OWvxypTy7vE24n3ktmivq0WZ65txLI=
-X-Received: by 2002:a2e:3606:0:b0:277:b84:81b6 with SMTP id
- d6-20020a2e3606000000b002770b8481b6mr7831300lja.425.1668626287137; Wed, 16
- Nov 2022 11:18:07 -0800 (PST)
+        Wed, 16 Nov 2022 14:21:28 -0500
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A145CB25
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 11:21:26 -0800 (PST)
+Received: by mail-pf1-x433.google.com with SMTP id y13so18413796pfp.7
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 11:21:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x/Frdrr9T3/J7dJauoN0piz8mbD0jAQ7KYIaSj0qbnU=;
+        b=65Zvp5sOXxTtqlS2CUVrfYKhwPZyw2R1ohm7i0QLrac6dByjzi6NSgKhhtNnoX2Xh5
+         Df3ncrtFh2ah4L/nlkHAouYm76xl9FpIxMtv+XWGokgr7ytIJL4/lwx2ZVEM7hrqclyG
+         J7Qf+UDHc2GT4au3SvwQ4z+I0FsWJa9EC2WXuCB5Ap5l76nPuwU6miDgBdlQP3Fxqkj4
+         jfwytxTeA+uiLyXM1rRQ3TioVHpLt0jW142gvFUVUHYGMwGPpwOiYLAHO/OI5ficDTcF
+         5XX8cfzzKC88DRsN183EjKDMqkkM/pIJcBpjz6IET8l/yRJezWjA9BOwh4Xr9Tjbmxsk
+         QV7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x/Frdrr9T3/J7dJauoN0piz8mbD0jAQ7KYIaSj0qbnU=;
+        b=qtR7zkPA4me9S7eGd8FjKchoSUoevnxxnx36I8hpjx6S79k4a+G5xVZfw4z/j05t3/
+         UyIlP7Ua6ThRhYccGNThwb4w12QAkoDqbBGMTAmD5JVAgK+q/4fEnnyKXNma97zWU5qR
+         5SyWi+FMhO5dZBmG2IBfQYtNuLEgSaqPJ3pIpqLj2VN/XQafT9Fmm8ksiMRuDiEifG30
+         NBPlAuGGpxa1/F0nA21lnIhiisH/Sv3BVgj5eKaf3FZOBJnkkIXzcazhQDMT9VjcmxR+
+         bhx3sNtOI4PnTo+C+nzQTle6lVZeej4liebaLDlnIqW8lpO94SjBC09DfOMJ+vGuTLMK
+         ej2Q==
+X-Gm-Message-State: ANoB5pmCVlcFbES0axol1epdmER4TvJBj7SyRnnvTfAAyAQx8Ufy4ON/
+        8U9fXcP/szYQ5RODQ67JJV/aQ6522iwWag+xANUUqcNMt7hS
+X-Google-Smtp-Source: AA0mqf6OvVVxiocrrbL9Zw6kBNZGmmkI6GGLhCbzzkwJkLHHAxIjxfEwFzaWeRTAJMG7x4CYp1uEwT7ftQdsWzZdavw=
+X-Received: by 2002:a63:5d50:0:b0:460:ec46:3645 with SMTP id
+ o16-20020a635d50000000b00460ec463645mr22237856pgm.92.1668626485991; Wed, 16
+ Nov 2022 11:21:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
- <20221115175652.3836811-2-roberto.sassu@huaweicloud.com> <CAHC9VhQjnwbFgAoFgTaLQP7YnNDNyP1i0i8H++HZWj930pW=-A@mail.gmail.com>
- <18e375adfe53f8ce5fb38a6a146ad06eaec71a5e.camel@huaweicloud.com>
-In-Reply-To: <18e375adfe53f8ce5fb38a6a146ad06eaec71a5e.camel@huaweicloud.com>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Wed, 16 Nov 2022 20:17:56 +0100
-X-Gmail-Original-Message-ID: <CACYkzJ43UZARCkWp6wOQuuEDpOnf33JwAJ=CeZVuW0hffQrmeQ@mail.gmail.com>
-Message-ID: <CACYkzJ43UZARCkWp6wOQuuEDpOnf33JwAJ=CeZVuW0hffQrmeQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH 1/4] lsm: Clarify documentation of vm_enough_memory hook
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Paul Moore <paul@paul-moore.com>, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
-        song@kernel.org, yhs@fb.com, john.fastabend@gmail.com,
-        sdf@google.com, haoluo@google.com, jolsa@kernel.org,
-        revest@chromium.org, jackmanb@chromium.org, jmorris@namei.org,
-        serge@hallyn.com, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20221116125051.3338926-1-j.granados@samsung.com>
+ <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
+ <20221116125051.3338926-2-j.granados@samsung.com> <20221116173821.GC5094@test-zns>
+In-Reply-To: <20221116173821.GC5094@test-zns>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 16 Nov 2022 14:21:14 -0500
+Message-ID: <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com>
+Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
+ implement the ioctl op convention
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     Joel Granados <j.granados@samsung.com>, ddiss@suse.de,
+        mcgrof@kernel.org, linux-security-module@vger.kernel.org,
+        io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 16, 2022 at 9:06 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> On Tue, 2022-11-15 at 21:11 -0500, Paul Moore wrote:
-> > On Tue, Nov 15, 2022 at 12:57 PM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > >
-> > > include/linux/lsm_hooks.h reports the result of the LSM infrastructure to
-> > > the callers, not what LSMs should return to the LSM infrastructure.
-> > >
-> > > Clarify that and add that returning 1 from the LSMs means calling
-> > > __vm_enough_memory() with cap_sys_admin set, 0 without.
-> > >
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > Reviewed-by: KP Singh <kpsingh@kernel.org>
-> > > ---
-> > >  include/linux/lsm_hooks.h | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > > index 4ec80b96c22e..f40b82ca91e7 100644
-> > > --- a/include/linux/lsm_hooks.h
-> > > +++ b/include/linux/lsm_hooks.h
-> > > @@ -1411,7 +1411,9 @@
-> > >   *     Check permissions for allocating a new virtual mapping.
-> > >   *     @mm contains the mm struct it is being added to.
-> > >   *     @pages contains the number of pages.
-> > > - *     Return 0 if permission is granted.
-> > > + *     Return 0 if permission is granted by LSMs to the caller. LSMs should
-> > > + *     return 1 if __vm_enough_memory() should be called with
-> > > + *     cap_sys_admin set, 0 if not.
+On Wed, Nov 16, 2022 at 12:49 PM Kanchan Joshi <joshi.k@samsung.com> wrote:
+> On Wed, Nov 16, 2022 at 01:50:51PM +0100, Joel Granados wrote:
+> >Signed-off-by: Joel Granados <j.granados@samsung.com>
+> >---
+> > security/selinux/hooks.c | 15 +++++++++++++--
+> > 1 file changed, 13 insertions(+), 2 deletions(-)
 > >
-> > I think this is a nice addition, but according to the code, any value
-> > greater than zero will trigger the caller-should-have-CAP_SYS_ADMIN
-> > behavior, not just 1.  I suggest updating the comment.
+> >diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> >index f553c370397e..a3f37ae5a980 100644
+> >--- a/security/selinux/hooks.c
+> >+++ b/security/selinux/hooks.c
+> >@@ -21,6 +21,7 @@
+> >  *  Copyright (C) 2016 Mellanox Technologies
+> >  */
+> >
+> >+#include "linux/nvme_ioctl.h"
+> > #include <linux/init.h>
+> > #include <linux/kd.h>
+> > #include <linux/kernel.h>
+> >@@ -7005,12 +7006,22 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
+> >       struct inode *inode = file_inode(file);
+> >       struct inode_security_struct *isec = selinux_inode(inode);
+> >       struct common_audit_data ad;
+> >+      const struct cred *cred = current_cred();
+> >
+> >       ad.type = LSM_AUDIT_DATA_FILE;
+> >       ad.u.file = file;
+> >
+> >-      return avc_has_perm(&selinux_state, current_sid(), isec->sid,
+> >-                          SECCLASS_IO_URING, IO_URING__CMD, &ad);
+> >+      switch (ioucmd->cmd_op) {
+> >+      case NVME_URING_CMD_IO:
+> >+      case NVME_URING_CMD_IO_VEC:
+> >+      case NVME_URING_CMD_ADMIN:
+> >+      case NVME_URING_CMD_ADMIN_VEC:
 >
-> Ok, yes. Thanks.
+> We do not have to spell out these opcodes here.
+> How about this instead:
+>
+> +       /*
+> +        * nvme uring-cmd continue to follow the ioctl format, so reuse what
+> +        * we do for ioctl.
+> +        */
+> +       if(_IOC_TYPE(ioucmd->cmd_op) == 'N')
+> +               return ioctl_has_perm(cred, file, FILE__IOCTL, (u16) ioucmd->cmd_op);
+> +       else
+> +               return avc_has_perm(&selinux_state, current_sid(), isec->sid,
+> +                                   SECCLASS_IO_URING, IO_URING__CMD, &ad);
+> +       }
+> +
+>
+> Now, if we write the above fragment this way -
+>
+> if (__IOC_TYPE(ioucmd->cmd_op) != 0)
+>         reuse_what_is_done_for_ioctl;
+> else
+>         current_check;
+>
+> That will be bit more generic and can support more opcodes than nvme.
+> ublk will continue to fall into else case, but something else (of
+> future) may go into the if-part and be as fine-granular as ioctl hook
+> has been.
+> Although we defined new nvme opcodes to be used with uring-cmd, it is
+> also possible that some other provider decides to work with existing
+> ioctl-opcode packaged inside uring-cmd and turns it async. It's just
+> another implmentation choice.
+>
+> Not so nice with the above could be that driver-type being 0 seems
+> under conflict already. The table in this page:
+> https://www.kernel.org/doc/html/latest/userspace-api/ioctl/ioctl-number.html
+> But that is first four out of many others. So those four will fall into
+> else-part (if ever we get there) and everything else will go into the
+> if-part.
+>
+> Let's see whether Paul considers all this an improvement from what is
+> present now.
 
-Also, this is an unrelated patch and you can probably send it
-independently, especially
-since the other changes will now land mostly via BPF.
+There are a two things that need consideration:
 
->
-> Roberto
->
+* The current access control enforces the SELinux io_uring/cmd
+permission on all io_uring command passthrough operations, that would
+need to be preserved using something we call "policy capabilities".
+The quick summary is that policy capabilities are a way for the
+SELinux policy to signal to the kernel that it is aware of a breaking
+change and the policy is written to take this change into account;
+when the kernel loads this newly capable policy it sets a flag which
+triggers a different behavior in the kernel.  A simple example can be
+found in selinux_file_ioctl(FIONCLEX)/selinux_policycap_ioctl_skip_cloexec(),
+but we can talk more about this later if/when we resolve the other
+issue.
+
+* As we discussed previously, the real problem is the fact that we are
+missing the necessary context in the LSM hook to separate the
+different types of command targets.  With traditional ioctls we can
+look at the ioctl number and determine both the type of
+device/subsystem/etc. as well as the operation being requested; there
+is no such information available with the io_uring command
+passthrough.  In this sense, the io_uring command passthrough is
+actually worse than traditional ioctls from an access control
+perspective.  Until we have an easy(ish)[1] way to determine the
+io_uring command target type, changes like the one suggested here are
+going to be doomed as each target type is free to define their own
+io_uring commands.
+
+[1] Yes, one could theoretically make some determination of the target
+type by inspecting io_uring_cmd::file::f_op (or similar), but checking
+file_operations' function pointers is both a pretty awful layering
+violation and downright ugly; I don't want to have to maintain that
+long-term in a LSM.
+
+--
+paul-moore.com
