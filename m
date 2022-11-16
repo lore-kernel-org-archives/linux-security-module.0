@@ -2,95 +2,104 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA38AC43217
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 00:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A774C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 02:12:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229797AbiKPAjz (ORCPT
+        id S231184AbiKPCMF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Nov 2022 19:39:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33328 "EHLO
+        Tue, 15 Nov 2022 21:12:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231184AbiKPAjy (ORCPT
+        with ESMTP id S230157AbiKPCL4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Nov 2022 19:39:54 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14739633C;
-        Tue, 15 Nov 2022 16:39:54 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BABA7B81BA2;
-        Wed, 16 Nov 2022 00:39:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15E5EC433D7;
-        Wed, 16 Nov 2022 00:39:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668559191;
-        bh=1s7px/nO60i1VmDsd4dRpmRql6FYfuQZsJ0QA09gMPs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TlHN63iVnK8twn+tWlJj0hsD4dr9tBjDS3R1hMMmQoS7FA24/fDQDt8zJLfgEgfkG
-         DrjrFzmXIKNLuAetlsKNDqNoZmr99v6cZVjVOlctyHw9UWX0yQG6eNBD6OX0EneV9Q
-         SFZMCD2x0t2AQfVKYQXjRQGGkR0Boo/QHmXf7RgMb22cg/dW38UgL7gZU9jObStTbi
-         2n2Furdl2G5PAZBn4lBHkUhjPRu7QODdFc2GETp/OiyFQ7XVFNIwS3h84ug7rU1QAQ
-         52bodGV7l4VlYEr+dq4nM3o2RWDx2tDuHLdoC20fE0HqU8fmW0VJcA4oWflYT67/bj
-         SUg7DkRnZO/vQ==
-Date:   Wed, 16 Nov 2022 02:39:48 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     keyrings@vger.kernel.org, jejb@linux.ibm.com, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jerome Forissier <jerome.forissier@linaro.org>
-Subject: Re: [PATCH] KEYS: trusted: tee: Make registered shm dependency
- explicit
-Message-ID: <Y3QxVI2LIHZblYPq@kernel.org>
-References: <20221110111140.1999538-1-sumit.garg@linaro.org>
- <CAFA6WYMKSjvgNgbf=cJXiTE3LitS-whtRbqJW1cdkHMJ1TsdUg@mail.gmail.com>
- <Y3Qv0hehr/yKNvy4@kernel.org>
+        Tue, 15 Nov 2022 21:11:56 -0500
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6580317FF
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Nov 2022 18:11:54 -0800 (PST)
+Received: by mail-pl1-x62d.google.com with SMTP id c2so15096063plz.11
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Nov 2022 18:11:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KlG4izqruLI+eVPwVb56QneDoxM3cuNDHZ53g4ubPvM=;
+        b=Ak9MCLAvA2GBPRXf0QBz6QKrrowDoM9d1dTD+sXsUAWbcp+kpQheB6n2mD1QlNNrfF
+         FNfgRgVZY6B5+u0zmvXEYLoKORqQZh0IpXnG8CayJQ7ElwlsJOw5J+fGhTJHt9lO5B6G
+         X9skKmfj5EQhfW2pDH63UN37Ub+EphKq4h+3t2sK0+PyIJKn9ICzFwKFwMd0gmdeYehb
+         0WulDrrj+hUyycJkydMEdIpc+y/CkeKcRsCHlOoo96aak/WwMhB/Tn542xGRMx00reEI
+         sJFjrxgOtZS1lemrcrZkR69bdc65tFvLq8CBRUcwXAt8QOEoehFQ9ovUQUcdnnrzIN+O
+         rkpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KlG4izqruLI+eVPwVb56QneDoxM3cuNDHZ53g4ubPvM=;
+        b=sofidHEENpKDik1B9tGUwuLBYIgA+WRifnfskmkMRdzjvDkJCypODOee9aYZl6N/eZ
+         syL6IqS3HXRvxg5k0sov5QaloJkqYWE1rrCk9kWJWBrLycLQZOlVyGMAhMHMlCSpX6AH
+         tavX/sKi0Ruzwj1sFrnbX8vwua5OZy+wh3tE4FIQZtydd7zbn1EcsLmcjtjGh12PT0vL
+         7HCS4Hgll14vvoFCf6siSpjDChoWkZ0ieOQ/jZHS9TfAYelVq2D7MlM++N2JfqhC0StP
+         sDigFPLQDq5x8VTQWT+3ztO1dfa7TlDO2ZmkPxhZ5FoUHpZes3HKVYl9pbihLZsOnqbV
+         PJUQ==
+X-Gm-Message-State: ANoB5pnqlxtUkKiT5gROBvLJQSJoNoZOU1Zk5988x/9gwox64nmPesWY
+        M/uKkjT5o5KNaUulBP5oHepaY2uSW3KqsjIymaLW
+X-Google-Smtp-Source: AA0mqf7co3DQZqD8OdQJKEOz+zPQP8Krnul8up1/TRUoFzIhYtr4pGe1QxnzuRC2rDaXkKuBQ9Hkzm6/dN0BeRSPgdo=
+X-Received: by 2002:a17:902:74c1:b0:186:c3b2:56d1 with SMTP id
+ f1-20020a17090274c100b00186c3b256d1mr6809971plt.15.1668564714386; Tue, 15 Nov
+ 2022 18:11:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y3Qv0hehr/yKNvy4@kernel.org>
+References: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com> <20221115175652.3836811-2-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20221115175652.3836811-2-roberto.sassu@huaweicloud.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 15 Nov 2022 21:11:43 -0500
+Message-ID: <CAHC9VhQjnwbFgAoFgTaLQP7YnNDNyP1i0i8H++HZWj930pW=-A@mail.gmail.com>
+Subject: Re: [RFC][PATCH 1/4] lsm: Clarify documentation of vm_enough_memory hook
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, revest@chromium.org,
+        jackmanb@chromium.org, jmorris@namei.org, serge@hallyn.com,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 16, 2022 at 02:33:24AM +0200, Jarkko Sakkinen wrote:
-> On Thu, Nov 10, 2022 at 04:44:20PM +0530, Sumit Garg wrote:
-> > + Jarkko (Apologies I accidently missed you while sending the original patch).
-> > 
-> > On Thu, 10 Nov 2022 at 16:42, Sumit Garg <sumit.garg@linaro.org> wrote:
-> > >
-> > > TEE trusted keys support depends on registered shared memory support
-> > > since the key buffers are needed to be registered with OP-TEE. So make
-> > > that dependency explicit to not register trusted keys support if
-> > > underlying implementation doesn't support registered shared memory.
-> > >
-> > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-> > > Tested-by: Jerome Forissier <jerome.forissier@linaro.org>
-> > > ---
-> > >  security/keys/trusted-keys/trusted_tee.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
-> > > index c8626686ee1b..ac3e270ade69 100644
-> > > --- a/security/keys/trusted-keys/trusted_tee.c
-> > > +++ b/security/keys/trusted-keys/trusted_tee.c
-> > > @@ -219,7 +219,8 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
-> > >
-> > >  static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
-> > >  {
-> > > -       if (ver->impl_id == TEE_IMPL_ID_OPTEE)
-> > > +       if (ver->impl_id == TEE_IMPL_ID_OPTEE &&
-> > > +           ver->gen_caps & TEE_GEN_CAP_REG_MEM)
-> > >                 return 1;
-> > >         else
-> > >                 return 0;
-> > > --
-> > > 2.34.1
-> > >
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Tue, Nov 15, 2022 at 12:57 PM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> include/linux/lsm_hooks.h reports the result of the LSM infrastructure to
+> the callers, not what LSMs should return to the LSM infrastructure.
+>
+> Clarify that and add that returning 1 from the LSMs means calling
+> __vm_enough_memory() with cap_sys_admin set, 0 without.
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: KP Singh <kpsingh@kernel.org>
+> ---
+>  include/linux/lsm_hooks.h | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 4ec80b96c22e..f40b82ca91e7 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1411,7 +1411,9 @@
+>   *     Check permissions for allocating a new virtual mapping.
+>   *     @mm contains the mm struct it is being added to.
+>   *     @pages contains the number of pages.
+> - *     Return 0 if permission is granted.
+> + *     Return 0 if permission is granted by LSMs to the caller. LSMs should
+> + *     return 1 if __vm_enough_memory() should be called with
+> + *     cap_sys_admin set, 0 if not.
 
-Applied.
+I think this is a nice addition, but according to the code, any value
+greater than zero will trigger the caller-should-have-CAP_SYS_ADMIN
+behavior, not just 1.  I suggest updating the comment.
 
-BR, Jarkko
+-- 
+paul-moore.com
