@@ -2,43 +2,43 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B52DC433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 10:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01793C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 10:39:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232045AbiKPKi6 (ORCPT
+        id S233606AbiKPKjT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Nov 2022 05:38:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45370 "EHLO
+        Wed, 16 Nov 2022 05:39:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230031AbiKPKgW (ORCPT
+        with ESMTP id S232195AbiKPKiF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Nov 2022 05:36:22 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15C0A1571C
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 02:28:53 -0800 (PST)
+        Wed, 16 Nov 2022 05:38:05 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20E2D252A5
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 02:29:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668594532;
+        s=mimecast20190719; t=1668594545;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=AXY/UyjjpCuDyNIViwtXXXaWlWVq5fOjr9nC+t8u+wk=;
-        b=bpmJTPzf1VnkDmm2BM3gxvRChC4ZpYwv2cFDFVRGRvkYFXR3WQw3fxu0Yq/fVZui9JENsC
-        t2OhDgm+ZBKH6qLVfDyXeeyPbgrXj/l39+P6AfvoKFqMKVQWWUj52nHcjTwKKMcN7g7Tzd
-        vR8gNy2CoNW034zt/oc7XKdDRz03asM=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=PtZFIm00BoukAq0r3vxYea1/oUxWby/yeQnBgXcmZG8=;
+        b=aGyocTGgbaxkv52lA2ApOCBn4zlBzj2O88XfmOEA1Vwm+UakqnhjABvo3YbZ3nql9zJ27I
+        WbmzpPKDsRQJownL58bgRa7nz57eZaW/hp/jH8gF4DaPFDrpKz1fp1eo0NwEJK6PPBlhzn
+        YvDdfVUe0zeTpyqeSGuSrykODmOw7BU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-325-nf3OqAa0Mp2NEpiQ4Fl_4w-1; Wed, 16 Nov 2022 05:28:47 -0500
-X-MC-Unique: nf3OqAa0Mp2NEpiQ4Fl_4w-1
+ us-mta-618-uLqpp3ByOjmb0y4uEYa0gA-1; Wed, 16 Nov 2022 05:29:02 -0500
+X-MC-Unique: uLqpp3ByOjmb0y4uEYa0gA-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 43CBC1C0A10F;
-        Wed, 16 Nov 2022 10:28:45 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 95160811E7A;
+        Wed, 16 Nov 2022 10:29:00 +0000 (UTC)
 Received: from t480s.fritz.box (unknown [10.39.193.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C3F5B2028E8F;
-        Wed, 16 Nov 2022 10:28:37 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4EDB82028E8F;
+        Wed, 16 Nov 2022 10:28:53 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
@@ -71,12 +71,10 @@ Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Alex Williamson <alex.williamson@redhat.com>,
         David Hildenbrand <david@redhat.com>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Leon Romanovsky <leon@kernel.org>
-Subject: [PATCH mm-unstable v1 11/20] RDMA/usnic: remove FOLL_FORCE usage
-Date:   Wed, 16 Nov 2022 11:26:50 +0100
-Message-Id: <20221116102659.70287-12-david@redhat.com>
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH mm-unstable v1 13/20] media: videobuf-dma-sg: remove FOLL_FORCE usage
+Date:   Wed, 16 Nov 2022 11:26:52 +0100
+Message-Id: <20221116102659.70287-14-david@redhat.com>
 In-Reply-To: <20221116102659.70287-1-david@redhat.com>
 References: <20221116102659.70287-1-david@redhat.com>
 MIME-Version: 1.0
@@ -95,56 +93,54 @@ Consequently, FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM is no longer required
 for reliable R/O long-term pinning: FOLL_LONGTERM is sufficient. So stop
 using FOLL_FORCE, which is really only for ptrace access.
 
-Cc: Christian Benvenuti <benve@cisco.com>
-Cc: Nelson Escobar <neescoba@cisco.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Leon Romanovsky <leon@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/infiniband/hw/usnic/usnic_uiom.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/media/v4l2-core/videobuf-dma-sg.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/infiniband/hw/usnic/usnic_uiom.c b/drivers/infiniband/hw/usnic/usnic_uiom.c
-index 67923ced6e2d..c301b3be9f30 100644
---- a/drivers/infiniband/hw/usnic/usnic_uiom.c
-+++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
-@@ -85,6 +85,7 @@ static int usnic_uiom_get_pages(unsigned long addr, size_t size, int writable,
- 				int dmasync, struct usnic_uiom_reg *uiomr)
+diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
+index f75e5eedeee0..234e9f647c96 100644
+--- a/drivers/media/v4l2-core/videobuf-dma-sg.c
++++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
+@@ -151,17 +151,16 @@ static void videobuf_dma_init(struct videobuf_dmabuf *dma)
+ static int videobuf_dma_init_user_locked(struct videobuf_dmabuf *dma,
+ 			int direction, unsigned long data, unsigned long size)
  {
- 	struct list_head *chunk_list = &uiomr->chunk_list;
 +	unsigned int gup_flags = FOLL_LONGTERM;
- 	struct page **page_list;
- 	struct scatterlist *sg;
- 	struct usnic_uiom_chunk *chunk;
-@@ -96,7 +97,6 @@ static int usnic_uiom_get_pages(unsigned long addr, size_t size, int writable,
- 	int off;
- 	int i;
- 	dma_addr_t pa;
--	unsigned int gup_flags;
- 	struct mm_struct *mm;
+ 	unsigned long first, last;
+-	int err, rw = 0;
+-	unsigned int flags = FOLL_FORCE;
++	int err;
  
- 	/*
-@@ -131,8 +131,8 @@ static int usnic_uiom_get_pages(unsigned long addr, size_t size, int writable,
- 		goto out;
- 	}
- 
--	gup_flags = FOLL_WRITE;
--	gup_flags |= (writable) ? 0 : FOLL_FORCE;
-+	if (writable)
+ 	dma->direction = direction;
+ 	switch (dma->direction) {
+ 	case DMA_FROM_DEVICE:
+-		rw = READ;
 +		gup_flags |= FOLL_WRITE;
- 	cur_base = addr & PAGE_MASK;
- 	ret = 0;
+ 		break;
+ 	case DMA_TO_DEVICE:
+-		rw = WRITE;
+ 		break;
+ 	default:
+ 		BUG();
+@@ -177,14 +176,11 @@ static int videobuf_dma_init_user_locked(struct videobuf_dmabuf *dma,
+ 	if (NULL == dma->pages)
+ 		return -ENOMEM;
  
-@@ -140,8 +140,7 @@ static int usnic_uiom_get_pages(unsigned long addr, size_t size, int writable,
- 		ret = pin_user_pages(cur_base,
- 				     min_t(unsigned long, npages,
- 				     PAGE_SIZE / sizeof(struct page *)),
--				     gup_flags | FOLL_LONGTERM,
--				     page_list, NULL);
-+				     gup_flags, page_list, NULL);
+-	if (rw == READ)
+-		flags |= FOLL_WRITE;
+-
+ 	dprintk(1, "init user [0x%lx+0x%lx => %lu pages]\n",
+ 		data, size, dma->nr_pages);
  
- 		if (ret < 0)
- 			goto out;
+-	err = pin_user_pages(data & PAGE_MASK, dma->nr_pages,
+-			     flags | FOLL_LONGTERM, dma->pages, NULL);
++	err = pin_user_pages(data & PAGE_MASK, dma->nr_pages, gup_flags,
++			     dma->pages, NULL);
+ 
+ 	if (err != dma->nr_pages) {
+ 		dma->nr_pages = (err >= 0) ? err : 0;
 -- 
 2.38.1
 
