@@ -2,147 +2,336 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A59C43219
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 12:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4839C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 14:26:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231177AbiKPMyh (ORCPT
+        id S229892AbiKPO0F (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Nov 2022 07:54:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45368 "EHLO
+        Wed, 16 Nov 2022 09:26:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231292AbiKPMyg (ORCPT
+        with ESMTP id S229666AbiKPO0D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Nov 2022 07:54:36 -0500
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A340B199
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 04:54:33 -0800 (PST)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20221116125430euoutp0205ee63f9a5f045af51e57edc1c3ac15e~oEdWFRAAB0238002380euoutp021
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 12:54:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20221116125430euoutp0205ee63f9a5f045af51e57edc1c3ac15e~oEdWFRAAB0238002380euoutp021
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1668603270;
-        bh=HjZKvWsi7Asp/BfxfeYKpMu6OvENuo1t6Dui6oN5Mjw=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=S8iSPZi4TOHxf+GCBZWbx7e3kQJ9gmTnfthZH9YLWC/sPBdqa1kMkNCy9rcksSy9P
-         gme/Y5SnkAAdIy9NMsXVAc5Ib15AtOMZikNdoKQX9UX3u6NGHmdE0RWM2MxtvdT30L
-         8SskefPNeINPvg2ghQL4aWCGSFeg7cLIFJD4Tdpc=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20221116125430eucas1p2257c00a068d414c20a449ad53b7affcc~oEdV778030530405304eucas1p2c;
-        Wed, 16 Nov 2022 12:54:30 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id D9.25.10112.68DD4736; Wed, 16
-        Nov 2022 12:54:30 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20221116125430eucas1p2f2969a4a795614ce3b8c06f9ea3be36f~oEdVsS7xz0496204962eucas1p2k;
-        Wed, 16 Nov 2022 12:54:30 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221116125430eusmtrp2c24866dfc6e4991f7cf7048d69d9a82b~oEdVrrP430810808108eusmtrp2B;
-        Wed, 16 Nov 2022 12:54:30 +0000 (GMT)
-X-AuditID: cbfec7f4-cf3ff70000002780-f0-6374dd862b0f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2B.A5.08916.68DD4736; Wed, 16
-        Nov 2022 12:54:30 +0000 (GMT)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20221116125430eusmtip202f3a4d2d7e99dd8c208bd95d31c7be3~oEdVjhjjh3185831858eusmtip2I;
-        Wed, 16 Nov 2022 12:54:30 +0000 (GMT)
-Received: from localhost (106.110.32.33) by CAMSVWEXC01.scsc.local
-        (2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Wed, 16 Nov 2022 12:54:29 +0000
-From:   Joel Granados <j.granados@samsung.com>
-To:     <joshi.k@samsung.com>, <ddiss@suse.de>, <mcgrof@kernel.org>,
-        <paul@paul-moore.com>
-CC:     <linux-security-module@vger.kernel.org>,
-        <io-uring@vger.kernel.org>,
-        "Joel Granados" <j.granados@samsung.com>
-Subject: [RFC 0/1] RFC on how to include LSM hooks for io_uring commands
-Date:   Wed, 16 Nov 2022 13:50:50 +0100
-Message-ID: <20221116125051.3338926-1-j.granados@samsung.com>
-X-Mailer: git-send-email 2.30.2
-Content-Type: text/plain; charset="utf-8"
+        Wed, 16 Nov 2022 09:26:03 -0500
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A27111C08
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 06:26:00 -0800 (PST)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NC51y3DX0zMpr4P;
+        Wed, 16 Nov 2022 15:25:58 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4NC51x4tq8zMppFH;
+        Wed, 16 Nov 2022 15:25:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1668608758;
+        bh=cA2XiSre0ie8e9W9T/c7lFA0jun+XpBOtWP00kYEAZg=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=0csO3MmWnDppJ9r4WkZUi2gE/iXSp8G66IrNyhjT+9nvC9NUzRrH6HDzMJpK6Dm8p
+         mUGkVsFSdzitgLFomO2dwXcMVhYv/06IRYm46P3jhLi0ncH842OpYY6B3lK/AtC6ts
+         tZIHQ+hlbDBT8csDa802Twd+oPLw6d8Mn491qQjc=
+Message-ID: <2ff97355-18ef-e539-b4c1-720cd83daf1d@digikod.net>
+Date:   Wed, 16 Nov 2022 15:25:57 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [106.110.32.33]
-X-ClientProxiedBy: CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) To
-        CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgleLIzCtJLcpLzFFi42LZduznOd22uyXJBs+OyVp8/T+dxeJd6zkW
-        iw89j9gsbkx4ymhxe9J0FgdWj02rOtk81u59weix+XS1x+dNcgEsUVw2Kak5mWWpRfp2CVwZ
-        /W/aWAuauSu+frnA1sD4lqOLkZNDQsBE4u3RHrYuRi4OIYEVjBJ/F81khHC+MEq8PDmVHcL5
-        zCix9UUnE0zLvW97oaqWM0qsOz6FCa7qzpJWqGGbGSVavk1hAWlhE9CROP/mDjOILSIQITF/
-        +n9GEJtZoFhi2/55QDs4OIQFPCS6r5qAhFkEVCVWbv0MVsIrYCvxbPU6FojN8hJt16czgpQz
-        C2hKrN+lD1EiKHFy5hMWiInyEs1bZzNDlCtKbJnznRXCrpV48KaHGeQ0CYEDHBLrJjRBzXSR
-        uL50PyOELSzx6vgWdghbRuL/zvlQH2dL7JyyC2pogcSsk1PZQG6QELCW6DuTAxF2lDj65joT
-        RJhP4sZbQYhz+CQmbZvODBHmlehoE4KoVpPY0bSVcQKj8iyEX2Yh+WUWkl8WMDKvYhRPLS3O
-        TU8tNspLLdcrTswtLs1L10vOz93ECEwkp/8d/7KDcfmrj3qHGJk4GA8xSnAwK4nw5k8uSRbi
-        TUmsrEotyo8vKs1JLT7EKM3BoiTOyzZDK1lIID2xJDU7NbUgtQgmy8TBKdXA1MqxQlGtwCd2
-        3r19S5VdfjHssJ94OV7uKcerepF1u5W5nsmf/NXmfTX6tsjh9rkTX3yJ6hFeqDHP+XLxJmcH
-        N8/MyiUdcmZlkjfY3n+fss+mMfLlR60D93jXhDR97+DWZp6rv/HzPO1+rqK6e5et5Wu+JBjO
-        59Q8vi75a7jrmfQpUywe56/68ceD4RFzYEX9K+N1Ci8+KhpaHT+exTN9wie/hOfOSpfXTtie
-        c1JfVK5jhtO7/XqH8x7cWPnGys1XcNfK77/qL/qHPfk9/3uDxTXvhof7ZS7zJjxYvcb4Yt2t
-        lpqvafqqxwRCu+WuzjEr+tjWtbYo+JvpXKb26fLT7jxX1+K1lf3wI3DJ5Hu3A5VYijMSDbWY
-        i4oTAZH/3ImTAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsVy+t/xe7ptd0uSDWZt4bP4+n86i8W71nMs
-        Fh96HrFZ3JjwlNHi9qTpLA6sHptWdbJ5rN37gtFj8+lqj8+b5AJYovRsivJLS1IVMvKLS2yV
-        og0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQy+t+0sRY0c1d8/XKBrYHxLUcX
-        IyeHhICJxL1vexm7GLk4hASWMkq8aT/HCJGQkfh05SM7hC0s8edaFxtE0UdGiQM7z7NDOJsZ
-        JR6e3sYKUsUmoCNx/s0dZhBbRCBCYv70/2CTmAWKJdZO6Abq5uAQFvCQ6L5qAhJmEVCVWLn1
-        M1gJr4CtxLPV61gglslLtF2fzghSziygKbF+lz5EiaDEyZlPWCAmyks0b53NDFGuKLFlzndW
-        CLtWYtPr9UwTGIVmIXTPQtI9C0n3AkbmVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIGRs+3Y
-        z807GOe9+qh3iJGJg/EQowQHs5IIb/7kkmQh3pTEyqrUovz4otKc1OJDjKZA30xklhJNzgfG
-        bl5JvKGZgamhiZmlgamlmbGSOK9nQUeikEB6YklqdmpqQWoRTB8TB6dUAxO7z4ZvfCFf1zDf
-        Ea3J1vTftOXYtWVcInM2zUzpXXw9+oPRwcuh9gKKu/e7LGj+quVjv1ZLfoJR49mlWh43LAxU
-        WfIvyAhu2ynJyXqC53PKctdXpx5+K8z/u/5lm9P2T9u3mgf89RLLsw2I+HM1vvJq2P0WqW8b
-        rZJNJaV0cmozPKbtZD6k7q9k9izkf1bX++6enO+tH10e/lh87sUfo0XeVjPWHEv093lelxre
-        ae96fmWBp+DGkqqrO88LKG5dNnE5Y8bF9rsPfSewHdKap3hcVM/JQL3jd+mb5EIWCeVrXxgP
-        PUtP/XrI//HeKtkINeF7nRNeCSV+rAgucnov3+sSvefSnLOTt5dk5s16nKzEUpyRaKjFXFSc
-        CADs/4IVJQMAAA==
-X-CMS-MailID: 20221116125430eucas1p2f2969a4a795614ce3b8c06f9ea3be36f
-X-Msg-Generator: CA
-X-RootMTR: 20221116125430eucas1p2f2969a4a795614ce3b8c06f9ea3be36f
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20221116125430eucas1p2f2969a4a795614ce3b8c06f9ea3be36f
-References: <CGME20221116125430eucas1p2f2969a4a795614ce3b8c06f9ea3be36f@eucas1p2.samsung.com>
+User-Agent: 
+Subject: Re: [PATCH v8 11/12] samples/landlock: Add network demo
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, artem.kuzin@huawei.com
+References: <20221021152644.155136-1-konstantin.meskhidze@huawei.com>
+ <20221021152644.155136-12-konstantin.meskhidze@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20221021152644.155136-12-konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The motivation for this patch is to continue the discussion around how to
-include LSM callback hooks in the io_uring infrastructure. To begin I take
-the nvme io_uring passthrough and try to include it in the already existing
-LSM infrastructure that is there for ioctl. This is far from a general
-io_uring approach, but its a start :)
 
-You are very welcome to comment on the patch, but I have specific questions
-in mind:
+On 21/10/2022 17:26, Konstantin Meskhidze wrote:
+> This commit adds network demo. It's possible to allow a sandboxer to
+> bind/connect to a list of particular ports restricting network
+> actions to the rest of ports.
+> 
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
+> 
+> Changes since v7:
+> * Removes network support if ABI < 4.
+> * Removes network support if not set by a user.
+> 
+> Changes since v6:
+> * Removes network support if ABI < 3.
+> 
+> Changes since v5:
+> * Makes network ports sandboxing optional.
+> * Fixes some logic errors.
+> * Formats code with clang-format-14.
+> 
+> Changes since v4:
+> * Adds ENV_TCP_BIND_NAME "LL_TCP_BIND" and
+> ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT" variables
+> to insert TCP ports.
+> * Renames populate_ruleset() to populate_ruleset_fs().
+> * Adds populate_ruleset_net() and parse_port_num() helpers.
+> * Refactors main() to support network sandboxing.
+> 
+> ---
+>   samples/landlock/sandboxer.c | 129 +++++++++++++++++++++++++++++++----
+>   1 file changed, 116 insertions(+), 13 deletions(-)
+> 
+> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> index fd4237c64fb2..68582b0d7c85 100644
+> --- a/samples/landlock/sandboxer.c
+> +++ b/samples/landlock/sandboxer.c
+> @@ -51,6 +51,8 @@ static inline int landlock_restrict_self(const int ruleset_fd,
+> 
+>   #define ENV_FS_RO_NAME "LL_FS_RO"
+>   #define ENV_FS_RW_NAME "LL_FS_RW"
+> +#define ENV_TCP_BIND_NAME "LL_TCP_BIND"
+> +#define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
+>   #define ENV_PATH_TOKEN ":"
+> 
+>   static int parse_path(char *env_path, const char ***const path_list)
+> @@ -71,6 +73,20 @@ static int parse_path(char *env_path, const char ***const path_list)
+>   	return num_paths;
+>   }
+> 
+> +static int parse_port_num(char *env_port)
+> +{
+> +	int i, num_ports = 0;
+> +
+> +	if (env_port) {
+> +		num_ports++;
+> +		for (i = 0; env_port[i]; i++) {
+> +			if (env_port[i] == ENV_PATH_TOKEN[0])
+> +				num_ports++;
+> +		}
+> +	}
+> +	return num_ports;
+> +}
+> +
+>   /* clang-format off */
+> 
+>   #define ACCESS_FILE ( \
+> @@ -81,8 +97,8 @@ static int parse_path(char *env_path, const char ***const path_list)
+> 
+>   /* clang-format on */
+> 
+> -static int populate_ruleset(const char *const env_var, const int ruleset_fd,
+> -			    const __u64 allowed_access)
+> +static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
+> +			       const __u64 allowed_access)
+>   {
+>   	int num_paths, i, ret = 1;
+>   	char *env_path_name;
+> @@ -143,6 +159,48 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
+>   	return ret;
+>   }
+> 
+> +static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+> +				const __u64 allowed_access)
+> +{
+> +	int num_ports, i, ret = 1;
+> +	char *env_port_name;
+> +	struct landlock_net_service_attr net_service = {
+> +		.allowed_access = 0,
+> +		.port = 0,
+> +	};
+> +
+> +	env_port_name = getenv(env_var);
+> +	if (!env_port_name) {
+> +		ret = 0;
+> +		goto out_free_name;
 
-1. The nvme io_uring are governed by ioctl numbers. In this patch I have
-passed this number directly to the ioctl_has_perm function in selinux. For
-the io_uring commands that follow such a pattern, is it enough to forward
-the call? or do we need to plumb something else? @Paul: really interested
-in hearing your thoughts.
+This is a bug because env_port_name is not allocated. This should simply 
+return 0.
 
-2. Could we use something similar for commands that are not structured as
-an ioctl? Does ublk structure its commands after ioctl, or does it use
-another system? @David would like to hear your thoughts on
-this.
 
-3. Finally, Is there anything preventing us from gathering all these
-io_uring commands under a common LSM infrastructure like the one that
-already exists for ioctl?
+> +	}
+> +	env_port_name = strdup(env_port_name);
+> +	unsetenv(env_var);
+> +	num_ports = parse_port_num(env_port_name);
+> +
+> +	if (num_ports == 1 && (strtok(env_port_name, ENV_PATH_TOKEN) == NULL)) {
+> +		ret = 0;
+> +		goto out_free_name;
+> +	}
+> +
+> +	for (i = 0; i < num_ports; i++) {
+> +		net_service.allowed_access = allowed_access;
+> +		net_service.port = atoi(strsep(&env_port_name, ENV_PATH_TOKEN));
+> +		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+> +				      &net_service, 0)) {
+> +			fprintf(stderr,
+> +				"Failed to update the ruleset with port \"%d\": %s\n",
+> +				net_service.port, strerror(errno));
+> +			goto out_free_name;
+> +		}
+> +	}
+> +	ret = 0;
+> +
+> +out_free_name:
+> +	free(env_port_name);
+> +	return ret;
+> +}
+> +
+>   /* clang-format off */
+> 
+>   #define ACCESS_FS_ROUGHLY_READ ( \
+> @@ -164,41 +222,63 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
+>   	LANDLOCK_ACCESS_FS_REFER | \
+>   	LANDLOCK_ACCESS_FS_TRUNCATE)
+> 
+> +#define ACCESS_NET_BIND_CONNECT ( \
+> +	LANDLOCK_ACCESS_NET_BIND_TCP | \
+> +	LANDLOCK_ACCESS_NET_CONNECT_TCP)
 
-Comments are greatly appreciated
+You can remove ACCESS_NET_BIND_CONNECT and make the underlying access 
+rights explicit.
 
-Joel Granados (1):
-  Use ioctl selinux callback io_uring commands that implement the ioctl
-    op convention
 
- security/selinux/hooks.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+> +
+>   /* clang-format on */
+> 
+> -#define LANDLOCK_ABI_LAST 3
+> +#define LANDLOCK_ABI_LAST 4
+> 
+>   int main(const int argc, char *const argv[], char *const *const envp)
+>   {
+>   	const char *cmd_path;
+>   	char *const *cmd_argv;
+>   	int ruleset_fd, abi;
+> +	char *env_port_name;
+>   	__u64 access_fs_ro = ACCESS_FS_ROUGHLY_READ,
+> -	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE;
+> +	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE,
+> +	      access_net_tcp = ACCESS_NET_BIND_CONNECT;
+>   	struct landlock_ruleset_attr ruleset_attr = {
+>   		.handled_access_fs = access_fs_rw,
+> +		.handled_access_net = access_net_tcp,
+>   	};
+> 
+>   	if (argc < 2) {
+>   		fprintf(stderr,
+> -			"usage: %s=\"...\" %s=\"...\" %s <cmd> [args]...\n\n",
+> -			ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv[0]);
+> +			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
+> +			"<cmd> [args]...\n\n",
+> +			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> +			ENV_TCP_CONNECT_NAME, argv[0]);
+>   		fprintf(stderr,
+>   			"Launch a command in a restricted environment.\n\n");
+> -		fprintf(stderr, "Environment variables containing paths, "
+> -				"each separated by a colon:\n");
+> +		fprintf(stderr,
+> +			"Environment variables containing paths and ports "
+> +			"each separated by a colon:\n");
+>   		fprintf(stderr,
+>   			"* %s: list of paths allowed to be used in a read-only way.\n",
+>   			ENV_FS_RO_NAME);
+>   		fprintf(stderr,
+> -			"* %s: list of paths allowed to be used in a read-write way.\n",
+> +			"* %s: list of paths allowed to be used in a read-write way.\n\n",
+>   			ENV_FS_RW_NAME);
+> +		fprintf(stderr,
+> +			"Environment variables containing ports are optional "
+> +			"and could be skipped.\n");
+> +		fprintf(stderr,
+> +			"* %s: list of ports allowed to bind (server).\n",
+> +			ENV_TCP_BIND_NAME);
+> +		fprintf(stderr,
+> +			"* %s: list of ports allowed to connect (client).\n",
+> +			ENV_TCP_CONNECT_NAME);
+>   		fprintf(stderr,
+>   			"\nexample:\n"
+>   			"%s=\"/bin:/lib:/usr:/proc:/etc:/dev/urandom\" "
+>   			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+> +			"%s=\"9418\" "
+> +			"%s=\"80:443\" "
+>   			"%s bash -i\n\n",
+> -			ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv[0]);
+> +			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> +			ENV_TCP_CONNECT_NAME, argv[0]);
+>   		fprintf(stderr,
+>   			"This sandboxer can use Landlock features "
+>   			"up to ABI version %d.\n",
+> @@ -240,7 +320,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>   	case 2:
+>   		/* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
+>   		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
+> -
+> +		__attribute__((fallthrough));
+> +	case 3:
+> +		/* Removes network support for ABI < 4 */
+> +		ruleset_attr.handled_access_net &= ~ACCESS_NET_BIND_CONNECT;
 
--- 
-2.30.2
+You can check the TCP environment variables here and error out if one is 
+set.
 
+Please keep the newline here.
+
+
+>   		fprintf(stderr,
+>   			"Hint: You should update the running kernel "
+>   			"to leverage Landlock features "
+> @@ -259,16 +342,36 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>   	access_fs_ro &= ruleset_attr.handled_access_fs;
+>   	access_fs_rw &= ruleset_attr.handled_access_fs;
+> 
+> +	/* Removes bind access attribute if not supported by a user. */
+> +	env_port_name = getenv(ENV_TCP_BIND_NAME);
+> +	if (!env_port_name) {
+
+You can move this logic at the populate_ruleset_net() call site and 
+update this helper to not call getenv() twice for the same variable.
+
+
+> +		access_net_tcp &= ~LANDLOCK_ACCESS_NET_BIND_TCP;
+> +	}
+> +	/* Removes connect access attribute if not supported by a user. */
+> +	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
+> +	if (!env_port_name) {
+> +		access_net_tcp &= ~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+> +	}
+> +	ruleset_attr.handled_access_net &= access_net_tcp;
+
+There is no need for access_net_tcp.
+
+> +
+>   	ruleset_fd =
+>   		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>   	if (ruleset_fd < 0) {
+>   		perror("Failed to create a ruleset");
+>   		return 1;
+>   	}
+
+newline
+
+> -	if (populate_ruleset(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro)) {
+> +	if (populate_ruleset_fs(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro)) {
+> +		goto err_close_ruleset;
+> +	}
+> +	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
+> +		goto err_close_ruleset;
+> +	}
+
+newline
+
+> +	if (populate_ruleset_net(ENV_TCP_BIND_NAME, ruleset_fd,
+> +				 LANDLOCK_ACCESS_NET_BIND_TCP)) {
+>   		goto err_close_ruleset;
+>   	}
+> -	if (populate_ruleset(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
+> +	if (populate_ruleset_net(ENV_TCP_CONNECT_NAME, ruleset_fd,
+> +				 LANDLOCK_ACCESS_NET_CONNECT_TCP)) {
+>   		goto err_close_ruleset;
+>   	}
+
+newline
+
+>   	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
+> --
+> 2.25.1
+> 
