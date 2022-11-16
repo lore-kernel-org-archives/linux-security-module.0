@@ -2,196 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE477C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 17:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A676C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 17:55:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229724AbiKPRuF (ORCPT
+        id S238985AbiKPRzz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Nov 2022 12:50:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33394 "EHLO
+        Wed, 16 Nov 2022 12:55:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238905AbiKPRtt (ORCPT
+        with ESMTP id S233555AbiKPRzy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Nov 2022 12:49:49 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A30566034B
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 09:49:45 -0800 (PST)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20221116174942epoutp033c59c767051ca546464ea6cf22beb7d6~oIfF7nbj91307613076epoutp03K
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 17:49:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20221116174942epoutp033c59c767051ca546464ea6cf22beb7d6~oIfF7nbj91307613076epoutp03K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1668620983;
-        bh=lUhU524QX+KijjCrcU2r+s1yFfBszGGFNdvnU0M5zN4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=U4pPiQCdm2aXh2W12fohetwzDBTPVmNoiCdK+KWkjDWGiAntOaeeW9jdHhdY4bjxq
-         Lu5BJ9eWuFjRhQLDyZarCJaggAaXESAR/d4DfmVSZkHS5dXlSe/PuMRMom0CUZbTIZ
-         TuWQrZCLz/FBui+3mptAbLTtSmh6Rig6j4AJ1oAA=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20221116174942epcas5p36edbd2f5dbfde6e2304b8d26b35912a1~oIfFXitld0099700997epcas5p3D;
-        Wed, 16 Nov 2022 17:49:42 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.176]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4NC9Y11rJnz4x9Pp; Wed, 16 Nov
-        2022 17:49:41 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DE.C3.39477.5B225736; Thu, 17 Nov 2022 02:49:41 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20221116174940epcas5p45cb1039a9e79412c060ce232fe9a35ac~oIfEBDjbW1045410454epcas5p4I;
-        Wed, 16 Nov 2022 17:49:40 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20221116174940epsmtrp1c0591a8f1b2210f64a6bf2e07b9f2580~oIfEAaIkf2157521575epsmtrp1C;
-        Wed, 16 Nov 2022 17:49:40 +0000 (GMT)
-X-AuditID: b6c32a4a-259fb70000019a35-58-637522b59091
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        69.8E.18644.4B225736; Thu, 17 Nov 2022 02:49:40 +0900 (KST)
-Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20221116174939epsmtip2c99bd0e146f3873ccf9df05a5acb65a2~oIfC6_rrq1625516255epsmtip2w;
-        Wed, 16 Nov 2022 17:49:39 +0000 (GMT)
-Date:   Wed, 16 Nov 2022 23:08:21 +0530
-From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     Joel Granados <j.granados@samsung.com>
-Cc:     ddiss@suse.de, mcgrof@kernel.org, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
- implement the ioctl op convention
-Message-ID: <20221116173821.GC5094@test-zns>
+        Wed, 16 Nov 2022 12:55:54 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3750660EBD;
+        Wed, 16 Nov 2022 09:55:53 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id gv23so13278494ejb.3;
+        Wed, 16 Nov 2022 09:55:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=65ksdtcKynE1zhhoUikCdWdh4bSAwSW8JPUcRDfF/As=;
+        b=jU4mgg/doGrH3jjl9Q5bnWetaR90nJuTY5kFi5JvvD4WtC/ucUNy2NnMz3T1jGAgc0
+         T4GiLKhhID4sbK6sGwz2QHcU4rmciwch0lpTI+vj/Mpa3GlHHhDatThPRmV3BfSGM4NR
+         9dNJEKX8HaoXTkiVFd2+RBNr2SSAlofmiNUw2/5nDepQoY/009pQrnfkkYJlED2VLZ5z
+         VbHVq8HZC6RuAG2/sPnTJ1gABXrru7iL1nCZrbkrkXIFaHnOuIh4WEgZGcJy8GH8fpSJ
+         nCZKncigpVdN/GuKCBnrFkWxpQRAeDtpIlXZYVWX26mGzDTkEDcvHWZbmt2t4sZbYR2T
+         Fhfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=65ksdtcKynE1zhhoUikCdWdh4bSAwSW8JPUcRDfF/As=;
+        b=Wi7BR4V6WPy3pqwpvdopMryyInSqJyUdTFk1mJ/Wkj8g4OZ0cGBn7NQnd8E9UVFado
+         MVrghVJ+VZkFW4KBVnY1m6/Yxp5BlBR+zdVugDZxgQMjutNcxGKzln3XoE69djtEwag7
+         +Vba1kUrNJ1xIDlszO07Jl3rKm100Jmi/8oMmUWccU8HY15lMUhWiFxf7VDNLSxgWXQd
+         S3udhMys7tJL5HXWZk81ydHmV0HJTrW1V1DTpB/BVPuLwlpahxLY+VSNGlaAp7NRvwcA
+         bfDw7H9wpWr7YvEQt+/5zf2Jf8Mdk2Zc5ysbZL2oCI4Ve9xhg34Z8dNpSIlL2nJI0P8v
+         bQbw==
+X-Gm-Message-State: ANoB5plyPEHxGTgvTdhGowAOWmwjZEnSDdUHFAhvw/t2iF0D8F1asdLh
+        JHupFO4N04FBOE4e827e1/Bk5DLrF/9tVggoofY=
+X-Google-Smtp-Source: AA0mqf4+TwxxmQ2zlWxdT8/WmEyJUv2nrxwPqS6GdTTzuGmZe3wYv55MDIG23ubBgWdeiXJbwSX2IP6mZjWJVXNxNeI=
+X-Received: by 2002:a17:906:9c93:b0:7ae:dc58:ffe7 with SMTP id
+ fj19-20020a1709069c9300b007aedc58ffe7mr14935642ejc.58.1668621351668; Wed, 16
+ Nov 2022 09:55:51 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20221116125051.3338926-2-j.granados@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjk+LIzCtJLcpLzFFi42LZdlhTXXerUmmywZdlXBZf/09nsXjXeo7F
-        Yun+h4wWH3oesVncmPCU0eL2pOksDmwem1Z1snms3fuC0aNvyypGj82nqz0+b5ILYI3KtslI
-        TUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOkBJoSwxpxQo
-        FJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BSoFecmFtcmpeul5daYmVoYGBkClSYkJ1xv2Up
-        e8EyiYreyTfYGhjvCncxcnBICJhIHJ0j3cXIxSEksJtRoqF3PksXIyeQ84lRYvtHP4jEZ0aJ
-        q73X2EESIA1vjk9hg0jsYpToenecHcJ5xihxaf5DsCoWAVWJ3ev72EFWsAloSlyYXAoSFhHQ
-        kmj4dRKshFmgRmLtjxNg24QFciSubnvDBmLzCuhIvPixA8oWlDg58wlYDaeAncSMC7fAbFEB
-        ZYkD244zQRz0kV3i+WNVCNtF4sCTxVCHCku8Or4FypaSeNnfBmUnS1yaeQ6qt0Ti8Z6DULa9
-        ROupfmaI2zIkFj6exwRh80n0/n7CBAktXomONiGIckWJe5OeskLY4hIPZyyBsj0k1m9cBA2S
-        o4wSU64dZZ3AKDcLyTuzkKyAsK0kOj80sc4CWsEsIC2x/B8HhKkpsX6X/gJG1lWMkqkFxbnp
-        qcWmBUZ5qeXwGE7Oz93ECE6QWl47GB8++KB3iJGJg/EQowQHs5IIb/7kkmQh3pTEyqrUovz4
-        otKc1OJDjKbA2JnILCWanA9M0Xkl8YYmlgYmZmZmJpbGZoZK4ryLZ2glCwmkJ5akZqemFqQW
-        wfQxcXBKNTBNvtgv4dO48NKldxsyEsInT+czzvzz2ETWjS/fhtHbWCopeUHG+V/acv5hnOdS
-        /ksbJmeXnlsQd7FLe+/S+EMfN7w8dF+J79WvBZfeS1c+u3Za6Nx5xsVLjooa5d3b+nKLpFjA
-        Fr15UtNX1R/iiJ448aRk1oeJQg6Kx+wEVz4xYJo3bYtlHE/hrgNRKwwn7maykmPfpm63NTmq
-        ccrS63+mzUidn3FBIMNY7eFrobl+LLPMen/evRruEm3ec03yvsPpHUzaU0W3rj3w/FOfgsnX
-        0u5Dh3NPONheerRZvfvtv1TXJex9xSLbPn6fyJ9WzZGYX2j8Tiib4fmElgmWH1quMgkrrIk4
-        tttkxscPpl8dlViKMxINtZiLihMBrz96ARkEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOLMWRmVeSWpSXmKPExsWy7bCSvO4WpdJkg4OnDSy+/p/OYvGu9RyL
-        xdL9DxktPvQ8YrO4MeEpo8XtSdNZHNg8Nq3qZPNYu/cFo0ffllWMHptPV3t83iQXwBrFZZOS
-        mpNZllqkb5fAlXHl73LmghuiFf8ev2RuYFwp2MXIySEhYCLx5vgUti5GLg4hgR2MEvc7D7BC
-        JMQlmq/9YIewhSVW/nvODlH0hFFiwc0DYAkWAVWJ3ev7gGwODjYBTYkLk0tBwiICWhINv06C
-        lTAL1Eis/XGCBcQWFsiRuLrtDRuIzSugI/Hixw6oxUcZJb6/m8cMkRCUODnzCQtEs5nEvM0P
-        mUHmMwtISyz/xwES5hSwk5hx4RZYiaiAssSBbceZJjAKzkLSPQtJ9yyE7gWMzKsYJVMLinPT
-        c4sNC4zyUsv1ihNzi0vz0vWS83M3MYLDXktrB+OeVR/0DjEycTAeYpTgYFYS4c2fXJIsxJuS
-        WFmVWpQfX1Sak1p8iFGag0VJnPdC18l4IYH0xJLU7NTUgtQimCwTB6dUA9N55TbLuvbHsp8S
-        NPIPfNwiF+ljq9FYprUz+kSYwvvX+6O4MxIC7XxSfWL4nXSVhIxXbFz5/3Ht7rrQHTOkV9Su
-        Srhq9Ur00bwJjRYZn45tmRDDuFlXl8lX7MXRldUXr6jtuTv1/r05LJsmP485Iin3f5eGtP52
-        g/xz+xZzdK5dWno5a8Py2FNCW564abFnz63dkRfOM1VYODZ4nW1pWm7e7s1+13WbLf+uKLZ1
-        tzXfdeXXF9+I3ZpS9+a8dciZWMV+Mml12IeAPaFbPm12irPYE3JnCa/Nu5vPz2V4VBw/kXM2
-        RVA5vbFj2gQr9cVm9qps1nlM69+dabf5vyYvVkC5SSzfu7ZHdVrqddeIAiWW4oxEQy3mouJE
-        AAjboRvqAgAA
-X-CMS-MailID: 20221116174940epcas5p45cb1039a9e79412c060ce232fe9a35ac
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----GsYAgckb8ZPIB7TqR4NYyp-jgnPv5c.LE-kW9H5hDU_d1TDU=_4b3ee_"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221116125431eucas1p1dfd03b80863fce674a7c662660c94092
-References: <20221116125051.3338926-1-j.granados@samsung.com>
-        <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
-        <20221116125051.3338926-2-j.granados@samsung.com>
+References: <700dffccdfeeb3d19c5385550e4c84f08c705e19.camel@huaweicloud.com>
+ <20221116154712.4115929-1-roberto.sassu@huaweicloud.com> <CAADnVQLQswvu3oGyeevLrKMT200yD4hzCbkBUAs=1bKSDVaOQg@mail.gmail.com>
+ <05bf553f795ac93ea3032cfc1b56ca35fd6a920a.camel@huaweicloud.com>
+In-Reply-To: <05bf553f795ac93ea3032cfc1b56ca35fd6a920a.camel@huaweicloud.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 16 Nov 2022 09:55:40 -0800
+Message-ID: <CAADnVQJu7isDCi4+f8s4LfiwcYJbN4kXkvgJ8+ZnsS+QGDVnMw@mail.gmail.com>
+Subject: Re: [PoC][PATCH] bpf: Call return value check function in the JITed code
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-------GsYAgckb8ZPIB7TqR4NYyp-jgnPv5c.LE-kW9H5hDU_d1TDU=_4b3ee_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-
-On Wed, Nov 16, 2022 at 01:50:51PM +0100, Joel Granados wrote:
->Signed-off-by: Joel Granados <j.granados@samsung.com>
->---
-> security/selinux/hooks.c | 15 +++++++++++++--
-> 1 file changed, 13 insertions(+), 2 deletions(-)
+On Wed, Nov 16, 2022 at 8:41 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
 >
->diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->index f553c370397e..a3f37ae5a980 100644
->--- a/security/selinux/hooks.c
->+++ b/security/selinux/hooks.c
->@@ -21,6 +21,7 @@
->  *  Copyright (C) 2016 Mellanox Technologies
->  */
+> On Wed, 2022-11-16 at 08:16 -0800, Alexei Starovoitov wrote:
+> > On Wed, Nov 16, 2022 at 7:48 AM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > +static bool is_ret_value_allowed(int ret, u32 ret_flags)
+> > > +{
+> > > +       if ((ret < 0 && !(ret_flags & LSM_RET_NEG)) ||
+> > > +           (ret == 0 && !(ret_flags & LSM_RET_ZERO)) ||
+> > > +           (ret == 1 && !(ret_flags & LSM_RET_ONE)) ||
+> > > +           (ret > 1 && !(ret_flags & LSM_RET_GT_ONE)))
+> > > +               return false;
+> > > +
+> > > +       return true;
+> > > +}
+> > > +
+> > >  /* For every LSM hook that allows attachment of BPF programs, declare a nop
+> > >   * function where a BPF program can be attached.
+> > >   */
+> > > @@ -30,6 +41,15 @@ noinline RET bpf_lsm_##NAME(__VA_ARGS__)     \
+> > >  #include <linux/lsm_hook_defs.h>
+> > >  #undef LSM_HOOK
+> > >
+> > > +#define LSM_HOOK(RET, DEFAULT, RET_FLAGS, NAME, ...)   \
+> > > +noinline RET bpf_lsm_##NAME##_ret(int ret)     \
+> > > +{                                              \
+> > > +       return is_ret_value_allowed(ret, RET_FLAGS) ? ret : DEFAULT; \
+> > > +}
+> > > +
+> > > +#include <linux/lsm_hook_defs.h>
+> > > +#undef LSM_HOOK
+> > > +
+> >
+> > because lsm hooks is mess of undocumented return values your
+> > "solution" is to add hundreds of noninline functions
+> > and hack the call into them in JITs ?!
 >
->+#include "linux/nvme_ioctl.h"
-> #include <linux/init.h>
-> #include <linux/kd.h>
-> #include <linux/kernel.h>
->@@ -7005,12 +7006,22 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
-> 	struct inode *inode = file_inode(file);
-> 	struct inode_security_struct *isec = selinux_inode(inode);
-> 	struct common_audit_data ad;
->+	const struct cred *cred = current_cred();
+> I revisited the documentation and checked each LSM hook one by one.
+> Hopefully, I completed it correctly, but I would review again (others
+> are also welcome to do it).
 >
-> 	ad.type = LSM_AUDIT_DATA_FILE;
-> 	ad.u.file = file;
+> Not sure if there is a more efficient way. Do you have any idea?
+> Maybe we find a way to use only one check function (by reusing the
+> address of the attachment point?).
 >
->-	return avc_has_perm(&selinux_state, current_sid(), isec->sid,
->-			    SECCLASS_IO_URING, IO_URING__CMD, &ad);
->+	switch (ioucmd->cmd_op) {
->+	case NVME_URING_CMD_IO:
->+	case NVME_URING_CMD_IO_VEC:
->+	case NVME_URING_CMD_ADMIN:
->+	case NVME_URING_CMD_ADMIN_VEC:
+> Regarding the JIT approach, I didn't find a reliable solution for using
+> just the verifier. As I wrote to you, there could be the case where the
+> range can include positive values, despite the possible return values
+> are zero and -EACCES.
 
-We do not have to spell out these opcodes here.
-How about this instead:
+Didn't you find that there are only 12 or so odd return cases.
+Maybe refactor some of them to something that the verifier can enforce
+and denylist the rest ?
 
-+       /*
-+        * nvme uring-cmd continue to follow the ioctl format, so reuse what
-+        * we do for ioctl.
-+        */
-+       if(_IOC_TYPE(ioucmd->cmd_op) == 'N')
-+               return ioctl_has_perm(cred, file, FILE__IOCTL, (u16) ioucmd->cmd_op);
-+       else
-+               return avc_has_perm(&selinux_state, current_sid(), isec->sid,
-+                                   SECCLASS_IO_URING, IO_URING__CMD, &ad);
-+       }
-+
-
-Now, if we write the above fragment this way -
-
-if (__IOC_TYPE(ioucmd->cmd_op) != 0)
-	reuse_what_is_done_for_ioctl;
-else
-	current_check;
-
-That will be bit more generic and can support more opcodes than nvme.
-ublk will continue to fall into else case, but something else (of
-future) may go into the if-part and be as fine-granular as ioctl hook
-has been.
-Although we defined new nvme opcodes to be used with uring-cmd, it is
-also possible that some other provider decides to work with existing
-ioctl-opcode packaged inside uring-cmd and turns it async. It's just
-another implmentation choice.
-
-Not so nice with the above could be that driver-type being 0 seems
-under conflict already. The table in this page:
-https://www.kernel.org/doc/html/latest/userspace-api/ioctl/ioctl-number.html
-But that is first four out of many others. So those four will fall into
-else-part (if ever we get there) and everything else will go into the
-if-part.
-
-Let's see whether Paul considers all this an improvement from what is
-present now.
-
-------GsYAgckb8ZPIB7TqR4NYyp-jgnPv5c.LE-kW9H5hDU_d1TDU=_4b3ee_
-Content-Type: text/plain; charset="utf-8"
-
-
-------GsYAgckb8ZPIB7TqR4NYyp-jgnPv5c.LE-kW9H5hDU_d1TDU=_4b3ee_--
+Also denylist those that Casey mentioned like security_secid_to_secctx ?
