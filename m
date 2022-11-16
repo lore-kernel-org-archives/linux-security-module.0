@@ -2,29 +2,29 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CD1C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 08:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 682FBC43217
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 08:14:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233286AbiKPIHo (ORCPT
+        id S238647AbiKPIOK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Nov 2022 03:07:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41242 "EHLO
+        Wed, 16 Nov 2022 03:14:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233139AbiKPIHl (ORCPT
+        with ESMTP id S233167AbiKPINr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Nov 2022 03:07:41 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3303EBCA1;
-        Wed, 16 Nov 2022 00:07:32 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NBwTT16L0z9xFQ5;
-        Wed, 16 Nov 2022 16:00:45 +0800 (CST)
+        Wed, 16 Nov 2022 03:13:47 -0500
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E08D1054D;
+        Wed, 16 Nov 2022 00:11:54 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4NBwbF2qvFz9v7Yf;
+        Wed, 16 Nov 2022 16:05:45 +0800 (CST)
 Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwAH828jmnRj9PRrAA--.63973S2;
-        Wed, 16 Nov 2022 09:07:09 +0100 (CET)
-Message-ID: <dd9215b603d9ff511c5c23998b4597b0eb55f0a7.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH 2/4] lsm: Add missing return values doc in
- lsm_hooks.h and fix formatting
+        by APP1 (Coremail) with SMTP id LxC2BwBnUm8mm3RjHPlrAA--.18293S2;
+        Wed, 16 Nov 2022 09:11:29 +0100 (CET)
+Message-ID: <83cbff40f16a46e733a877d499b904cdf06949b6.camel@huaweicloud.com>
+Subject: Re: [RFC][PATCH 3/4] lsm: Redefine LSM_HOOK() macro to add return
+ value flags as argument
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
 To:     Paul Moore <paul@paul-moore.com>
 Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
@@ -34,87 +34,74 @@ Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
         jackmanb@chromium.org, jmorris@namei.org, serge@hallyn.com,
         bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 16 Nov 2022 09:06:55 +0100
-In-Reply-To: <CAHC9VhQjtU0DFoVGav-nBh-09QXh+X=Cf8RgJz6nAjvcyNQ-5A@mail.gmail.com>
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org
+Date:   Wed, 16 Nov 2022 09:11:15 +0100
+In-Reply-To: <CAHC9VhTA7SgFnTFGNxOGW38WSkWu7GSizBmNz=TuazUR4R_jUg@mail.gmail.com>
 References: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
-         <20221115175652.3836811-3-roberto.sassu@huaweicloud.com>
-         <CAHC9VhQjtU0DFoVGav-nBh-09QXh+X=Cf8RgJz6nAjvcyNQ-5A@mail.gmail.com>
+         <20221115175652.3836811-4-roberto.sassu@huaweicloud.com>
+         <CAHC9VhTA7SgFnTFGNxOGW38WSkWu7GSizBmNz=TuazUR4R_jUg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwAH828jmnRj9PRrAA--.63973S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4Dtw17AF47uF1xCF48WFg_yoW8tw1fpF
-        Z5Ga1fGF4kCr97ua13G3WxJw4fuan5Cr1UJF9rWw1qv3savrnFg3y2kF1fuF9rCryIkw1j
-        qF4rKFn8Cr9rCaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+X-CM-TRANSID: LxC2BwBnUm8mm3RjHPlrAA--.18293S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFWDWryxKr4fJrWxCr15Jwb_yoW8WryrpF
+        43ta4YkFnYvr47C3ZxWF1fC34rJ393Wr15trnrXw1Fva42yrnxK34kua1S9Fy09rWIkr1Y
+        krWagry5Kw1DArDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
         6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
         vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-        7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUo0eHDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBF1jj4V8XAABsC
+        xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
+        0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcV
+        CF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+        6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrWlkDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgASBF1jj4F8dQABss
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-11-15 at 21:23 -0500, Paul Moore wrote:
-> On Tue, Nov 15, 2022 at 12:57 PM Roberto Sassu
+On Tue, 2022-11-15 at 21:27 -0500, Paul Moore wrote:
+> On Tue, Nov 15, 2022 at 12:58 PM Roberto Sassu
 > <roberto.sassu@huaweicloud.com> wrote:
 > > From: Roberto Sassu <roberto.sassu@huawei.com>
 > > 
-> > Ensure that for non-void LSM hooks there is a description of the return
-> > values. Also replace spaces with tab for indentation, remove empty lines
-> > between the hook description and the list of parameters and add the period
-> > at the end of the parameter description.
+> > Define four return value flags (LSM_RET_NEG, LSM_RET_ZERO, LSM_RET_ONE,
+> > LSM_RET_GT_ONE), one for each interval of interest (< 0, = 0, = 1, > 1).
 > > 
-> > Finally, replace the description of the sb_parse_opts_str hook, which was
-> > removed with commit 757cbe597fe8 ("LSM: new method: ->sb_add_mnt_opt()"),
-> > with one for the new hook sb_add_mnt_opt.
+> > Redefine the LSM_HOOK() macro to add return value flags as argument, and
+> > set the correct flags for each LSM hook.
 > > 
+> > Implementors of new LSM hooks should do the same as well.
+> > 
+> > Cc: stable@vger.kernel.org # 5.7.x
+> > Fixes: 9d3fdea789c8 ("bpf: lsm: Provide attachment points for BPF LSM programs")
 > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > > ---
-> >  include/linux/lsm_hooks.h | 123 ++++++++++++++++++++++++++------------
-> >  1 file changed, 86 insertions(+), 37 deletions(-)
+> >  include/linux/bpf_lsm.h       |   2 +-
+> >  include/linux/lsm_hook_defs.h | 779 ++++++++++++++++++++--------------
+> >  include/linux/lsm_hooks.h     |   9 +-
+> >  kernel/bpf/bpf_lsm.c          |   5 +-
+> >  security/bpf/hooks.c          |   2 +-
+> >  security/security.c           |   4 +-
+> >  6 files changed, 466 insertions(+), 335 deletions(-)
 > 
-> ...
-> 
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index f40b82ca91e7..c0c570b7eabd 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -176,18 +183,22 @@
-> >   *     Set the security relevant mount options used for a superblock
-> >   *     @sb the superblock to set security mount options for
-> >   *     @opts binary data structure containing all lsm mount data
-> > + *     Return 0 on success, error on failure.
-> >   * @sb_clone_mnt_opts:
-> >   *     Copy all security options from a given superblock to another
-> >   *     @oldsb old superblock which contain information to clone
-> >   *     @newsb new superblock which needs filled in
-> > - * @sb_parse_opts_str:
-> > - *     Parse a string of security data filling in the opts structure
-> > - *     @options string containing all mount options known by the LSM
-> > - *     @opts binary data structure usable by the LSM
-> > + *     Return 0 on success, error on failure.
-> > + * @add_mnt_opt:
-> > + *     Add a new mount option @option with value @val and length @len to the
-> > + *     existing mount options @mnt_opts.
-> > + *     Return 0 if the option was successfully added, a negative value
-> > + *     otherwise.
-> 
-> I really appreciate the effort to improve the LSM hook comments/docs,
-> but the "sb_add_mnt_opt" hook was removed in 52f982f00b22
-> ("security,selinux: remove security_add_mnt_opt()").
+> Just a quick note here that even if we wanted to do something like
+> this, it is absolutely not -stable kernel material.  No way.
 
-Right, sorry, didn't notice.
+I was unsure about that. We need a proper fix for this issue that needs
+to be backported to some kernels. I saw this more like a dependency.
+But I agree with you that it would be unlikely that this patch is
+applied to stable kernels.
+
+For stable kernels, what it would be the proper way? We still need to
+maintain an allow list of functions that allow a positive return value,
+at least. Should it be in the eBPF code only?
 
 Thanks
 
