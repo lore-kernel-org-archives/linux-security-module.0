@@ -2,178 +2,131 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDAFC4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 19:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D27A1C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 19:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231406AbiKPTV2 (ORCPT
+        id S232126AbiKPT0m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Nov 2022 14:21:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40504 "EHLO
+        Wed, 16 Nov 2022 14:26:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbiKPTV2 (ORCPT
+        with ESMTP id S234150AbiKPT0l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Nov 2022 14:21:28 -0500
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A145CB25
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 11:21:26 -0800 (PST)
-Received: by mail-pf1-x433.google.com with SMTP id y13so18413796pfp.7
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 11:21:26 -0800 (PST)
+        Wed, 16 Nov 2022 14:26:41 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9101954B1B
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 11:26:40 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id d20so17338039plr.10
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 11:26:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=x/Frdrr9T3/J7dJauoN0piz8mbD0jAQ7KYIaSj0qbnU=;
-        b=65Zvp5sOXxTtqlS2CUVrfYKhwPZyw2R1ohm7i0QLrac6dByjzi6NSgKhhtNnoX2Xh5
-         Df3ncrtFh2ah4L/nlkHAouYm76xl9FpIxMtv+XWGokgr7ytIJL4/lwx2ZVEM7hrqclyG
-         J7Qf+UDHc2GT4au3SvwQ4z+I0FsWJa9EC2WXuCB5Ap5l76nPuwU6miDgBdlQP3Fxqkj4
-         jfwytxTeA+uiLyXM1rRQ3TioVHpLt0jW142gvFUVUHYGMwGPpwOiYLAHO/OI5ficDTcF
-         5XX8cfzzKC88DRsN183EjKDMqkkM/pIJcBpjz6IET8l/yRJezWjA9BOwh4Xr9Tjbmxsk
-         QV7Q==
+        bh=RijC22/SdwWwg/bVfJzaGWhRZ22gyvsY9MCYb3HpSxY=;
+        b=WQddw7AQUG58WBNwtzFfChA6jc5qW8cC0yityyraiaiSt71wJQ8GsDoEZOoBRmp3MZ
+         Tr4YLCLhGsNc5wqaWjb5aC2QDWh87piwicrRRhdh1w7X76luhS02KBieKcG7DA9wLjYV
+         RJCn/iGsRHkslnIFGtBC6En/Ibg/VOzx/fJk8opvWY7TBSTEnvszEcMzsu8nvprRIeKx
+         ANOb9Uf3699OL/Jhrf06cezPYP4/YfF9EcyBAeZOslsDiRRD4uiBgoJsMiYohqNIMf8m
+         qCP1Cg2XQFTecvrA/bqnWnWg3oaHrlc1aVM+wA76XwYw9gAxiL5+uswFoVbxZQzp42JR
+         XWfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=x/Frdrr9T3/J7dJauoN0piz8mbD0jAQ7KYIaSj0qbnU=;
-        b=qtR7zkPA4me9S7eGd8FjKchoSUoevnxxnx36I8hpjx6S79k4a+G5xVZfw4z/j05t3/
-         UyIlP7Ua6ThRhYccGNThwb4w12QAkoDqbBGMTAmD5JVAgK+q/4fEnnyKXNma97zWU5qR
-         5SyWi+FMhO5dZBmG2IBfQYtNuLEgSaqPJ3pIpqLj2VN/XQafT9Fmm8ksiMRuDiEifG30
-         NBPlAuGGpxa1/F0nA21lnIhiisH/Sv3BVgj5eKaf3FZOBJnkkIXzcazhQDMT9VjcmxR+
-         bhx3sNtOI4PnTo+C+nzQTle6lVZeej4liebaLDlnIqW8lpO94SjBC09DfOMJ+vGuTLMK
-         ej2Q==
-X-Gm-Message-State: ANoB5pmCVlcFbES0axol1epdmER4TvJBj7SyRnnvTfAAyAQx8Ufy4ON/
-        8U9fXcP/szYQ5RODQ67JJV/aQ6522iwWag+xANUUqcNMt7hS
-X-Google-Smtp-Source: AA0mqf6OvVVxiocrrbL9Zw6kBNZGmmkI6GGLhCbzzkwJkLHHAxIjxfEwFzaWeRTAJMG7x4CYp1uEwT7ftQdsWzZdavw=
-X-Received: by 2002:a63:5d50:0:b0:460:ec46:3645 with SMTP id
- o16-20020a635d50000000b00460ec463645mr22237856pgm.92.1668626485991; Wed, 16
- Nov 2022 11:21:25 -0800 (PST)
+        bh=RijC22/SdwWwg/bVfJzaGWhRZ22gyvsY9MCYb3HpSxY=;
+        b=74GPG0lJuqZT+jy5C0XXFA9N/u04jUA1YQdWAjdZq8qxdqc3aDtJqHOrqFcYSNxpkc
+         GcWR08mp9lXgKz2/jSdFKbz48PSmxEPm/8dDytoxCo45Q72uYIiY2LRmmFd/IVOMIDnY
+         asB/vdd+YMB3/aj2uBq2mmbacPhJLlhPBiqmigBTzv6OixXLPWEpJ1LK+j8FwjxBUkVP
+         yzwog6tX7buebLTQVsO8a28xQnQHk1Cvudso4YDMXAqUtc+l84a4DpsYMikOm+Wtzl6B
+         JjkdJKXdnr8ccIMfjlpY0spqXO8Q47hSebESTT9hrvNSs5qwPZ2zSnHLOZHR72DeXLxB
+         G82Q==
+X-Gm-Message-State: ANoB5pmu94veCMt0cyIw21u7mK3LGNctXMX6Y4cgsyP/nuUDMmgmpnGx
+        ETRUFZjSOjq3FwkuqrXloSVafSlJJJKreAz0hG/M
+X-Google-Smtp-Source: AA0mqf7am7h9iKe0yzgEn70nyDj/uDKD9TXuJUVccZD5sBXsE9AtUSPcexgIiBTALKY70i6fsFyrnq2E3b+srOvIGsE=
+X-Received: by 2002:a17:902:be04:b0:17b:4ace:b67f with SMTP id
+ r4-20020a170902be0400b0017b4aceb67fmr10827665pls.12.1668626800083; Wed, 16
+ Nov 2022 11:26:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20221116125051.3338926-1-j.granados@samsung.com>
- <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
- <20221116125051.3338926-2-j.granados@samsung.com> <20221116173821.GC5094@test-zns>
-In-Reply-To: <20221116173821.GC5094@test-zns>
+References: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
+ <20221115175652.3836811-3-roberto.sassu@huaweicloud.com> <CAHC9VhQjtU0DFoVGav-nBh-09QXh+X=Cf8RgJz6nAjvcyNQ-5A@mail.gmail.com>
+ <dd9215b603d9ff511c5c23998b4597b0eb55f0a7.camel@huaweicloud.com>
+In-Reply-To: <dd9215b603d9ff511c5c23998b4597b0eb55f0a7.camel@huaweicloud.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 16 Nov 2022 14:21:14 -0500
-Message-ID: <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com>
-Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
- implement the ioctl op convention
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     Joel Granados <j.granados@samsung.com>, ddiss@suse.de,
-        mcgrof@kernel.org, linux-security-module@vger.kernel.org,
-        io-uring@vger.kernel.org
+Date:   Wed, 16 Nov 2022 14:26:29 -0500
+Message-ID: <CAHC9VhQU+L1djE2xEGx2frPBqx5OPcbxWDSEpeoFTH01+rj76g@mail.gmail.com>
+Subject: Re: [RFC][PATCH 2/4] lsm: Add missing return values doc in
+ lsm_hooks.h and fix formatting
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, revest@chromium.org,
+        jackmanb@chromium.org, jmorris@namei.org, serge@hallyn.com,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 16, 2022 at 12:49 PM Kanchan Joshi <joshi.k@samsung.com> wrote:
-> On Wed, Nov 16, 2022 at 01:50:51PM +0100, Joel Granados wrote:
-> >Signed-off-by: Joel Granados <j.granados@samsung.com>
-> >---
-> > security/selinux/hooks.c | 15 +++++++++++++--
-> > 1 file changed, 13 insertions(+), 2 deletions(-)
+On Wed, Nov 16, 2022 at 3:07 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> On Tue, 2022-11-15 at 21:23 -0500, Paul Moore wrote:
+> > On Tue, Nov 15, 2022 at 12:57 PM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > >
+> > > Ensure that for non-void LSM hooks there is a description of the return
+> > > values. Also replace spaces with tab for indentation, remove empty lines
+> > > between the hook description and the list of parameters and add the period
+> > > at the end of the parameter description.
+> > >
+> > > Finally, replace the description of the sb_parse_opts_str hook, which was
+> > > removed with commit 757cbe597fe8 ("LSM: new method: ->sb_add_mnt_opt()"),
+> > > with one for the new hook sb_add_mnt_opt.
+> > >
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >  include/linux/lsm_hooks.h | 123 ++++++++++++++++++++++++++------------
+> > >  1 file changed, 86 insertions(+), 37 deletions(-)
 > >
-> >diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> >index f553c370397e..a3f37ae5a980 100644
-> >--- a/security/selinux/hooks.c
-> >+++ b/security/selinux/hooks.c
-> >@@ -21,6 +21,7 @@
-> >  *  Copyright (C) 2016 Mellanox Technologies
-> >  */
+> > ...
 > >
-> >+#include "linux/nvme_ioctl.h"
-> > #include <linux/init.h>
-> > #include <linux/kd.h>
-> > #include <linux/kernel.h>
-> >@@ -7005,12 +7006,22 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
-> >       struct inode *inode = file_inode(file);
-> >       struct inode_security_struct *isec = selinux_inode(inode);
-> >       struct common_audit_data ad;
-> >+      const struct cred *cred = current_cred();
+> > > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > > index f40b82ca91e7..c0c570b7eabd 100644
+> > > --- a/include/linux/lsm_hooks.h
+> > > +++ b/include/linux/lsm_hooks.h
+> > > @@ -176,18 +183,22 @@
+> > >   *     Set the security relevant mount options used for a superblock
+> > >   *     @sb the superblock to set security mount options for
+> > >   *     @opts binary data structure containing all lsm mount data
+> > > + *     Return 0 on success, error on failure.
+> > >   * @sb_clone_mnt_opts:
+> > >   *     Copy all security options from a given superblock to another
+> > >   *     @oldsb old superblock which contain information to clone
+> > >   *     @newsb new superblock which needs filled in
+> > > - * @sb_parse_opts_str:
+> > > - *     Parse a string of security data filling in the opts structure
+> > > - *     @options string containing all mount options known by the LSM
+> > > - *     @opts binary data structure usable by the LSM
+> > > + *     Return 0 on success, error on failure.
+> > > + * @add_mnt_opt:
+> > > + *     Add a new mount option @option with value @val and length @len to the
+> > > + *     existing mount options @mnt_opts.
+> > > + *     Return 0 if the option was successfully added, a negative value
+> > > + *     otherwise.
 > >
-> >       ad.type = LSM_AUDIT_DATA_FILE;
-> >       ad.u.file = file;
-> >
-> >-      return avc_has_perm(&selinux_state, current_sid(), isec->sid,
-> >-                          SECCLASS_IO_URING, IO_URING__CMD, &ad);
-> >+      switch (ioucmd->cmd_op) {
-> >+      case NVME_URING_CMD_IO:
-> >+      case NVME_URING_CMD_IO_VEC:
-> >+      case NVME_URING_CMD_ADMIN:
-> >+      case NVME_URING_CMD_ADMIN_VEC:
+> > I really appreciate the effort to improve the LSM hook comments/docs,
+> > but the "sb_add_mnt_opt" hook was removed in 52f982f00b22
+> > ("security,selinux: remove security_add_mnt_opt()").
 >
-> We do not have to spell out these opcodes here.
-> How about this instead:
->
-> +       /*
-> +        * nvme uring-cmd continue to follow the ioctl format, so reuse what
-> +        * we do for ioctl.
-> +        */
-> +       if(_IOC_TYPE(ioucmd->cmd_op) == 'N')
-> +               return ioctl_has_perm(cred, file, FILE__IOCTL, (u16) ioucmd->cmd_op);
-> +       else
-> +               return avc_has_perm(&selinux_state, current_sid(), isec->sid,
-> +                                   SECCLASS_IO_URING, IO_URING__CMD, &ad);
-> +       }
-> +
->
-> Now, if we write the above fragment this way -
->
-> if (__IOC_TYPE(ioucmd->cmd_op) != 0)
->         reuse_what_is_done_for_ioctl;
-> else
->         current_check;
->
-> That will be bit more generic and can support more opcodes than nvme.
-> ublk will continue to fall into else case, but something else (of
-> future) may go into the if-part and be as fine-granular as ioctl hook
-> has been.
-> Although we defined new nvme opcodes to be used with uring-cmd, it is
-> also possible that some other provider decides to work with existing
-> ioctl-opcode packaged inside uring-cmd and turns it async. It's just
-> another implmentation choice.
->
-> Not so nice with the above could be that driver-type being 0 seems
-> under conflict already. The table in this page:
-> https://www.kernel.org/doc/html/latest/userspace-api/ioctl/ioctl-number.html
-> But that is first four out of many others. So those four will fall into
-> else-part (if ever we get there) and everything else will go into the
-> if-part.
->
-> Let's see whether Paul considers all this an improvement from what is
-> present now.
+> Right, sorry, didn't notice.
 
-There are a two things that need consideration:
+No problem.  I just wanted to make it clear that I really like this
+patch, and if you can fix the above and double-check the others I'll
+gladly merge this.  As a general rule I *love* doc improvements :)
 
-* The current access control enforces the SELinux io_uring/cmd
-permission on all io_uring command passthrough operations, that would
-need to be preserved using something we call "policy capabilities".
-The quick summary is that policy capabilities are a way for the
-SELinux policy to signal to the kernel that it is aware of a breaking
-change and the policy is written to take this change into account;
-when the kernel loads this newly capable policy it sets a flag which
-triggers a different behavior in the kernel.  A simple example can be
-found in selinux_file_ioctl(FIONCLEX)/selinux_policycap_ioctl_skip_cloexec(),
-but we can talk more about this later if/when we resolve the other
-issue.
-
-* As we discussed previously, the real problem is the fact that we are
-missing the necessary context in the LSM hook to separate the
-different types of command targets.  With traditional ioctls we can
-look at the ioctl number and determine both the type of
-device/subsystem/etc. as well as the operation being requested; there
-is no such information available with the io_uring command
-passthrough.  In this sense, the io_uring command passthrough is
-actually worse than traditional ioctls from an access control
-perspective.  Until we have an easy(ish)[1] way to determine the
-io_uring command target type, changes like the one suggested here are
-going to be doomed as each target type is free to define their own
-io_uring commands.
-
-[1] Yes, one could theoretically make some determination of the target
-type by inspecting io_uring_cmd::file::f_op (or similar), but checking
-file_operations' function pointers is both a pretty awful layering
-violation and downright ugly; I don't want to have to maintain that
-long-term in a LSM.
-
---
+-- 
 paul-moore.com
