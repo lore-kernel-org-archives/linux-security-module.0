@@ -2,123 +2,122 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2741C43217
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 21:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D5CC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 22:04:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239141AbiKPVGA (ORCPT
+        id S233805AbiKPWEV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Nov 2022 16:06:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47342 "EHLO
+        Wed, 16 Nov 2022 17:04:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239142AbiKPVFb (ORCPT
+        with ESMTP id S232904AbiKPWES (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Nov 2022 16:05:31 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3139B45A02;
-        Wed, 16 Nov 2022 13:04:35 -0800 (PST)
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AGKLQi0037116;
-        Wed, 16 Nov 2022 21:03:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=Hm6PNSbhq9LhjwmrseFl2/g4hvgBcTxn6rmb+SYDL5c=;
- b=bNf/hxDYWOMp2O92YGnU7xVy3OwLgzGKpoVrHxy71bXWxTVCuL3T4OjnGMiRmoNWY5jc
- 4neXymNU7N3SWSRlsGuvGqlLNTBzshBiwOpW/ti3Yeao0Y5IqkCjTqkJXa41qNSOpBs0
- rFMtoeJgl7zqed+Ygvs9Z+93uf39ebgpUeCkvgGVQQg35HV7qvK2yRg8JHyOrk2joV2c
- iPliU5nmIm9OCIWNTJpJOAu/vR436Y4qwsCFhDhGcoPRXohNoRqje2nfof3tHjpvWPPD
- BTFQK24dmOHGygvTHBtfoETW2mlXR3yu9EBiJKpZR7UygS4xSvq9nGhybFtp0XqV6elX WA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kw6u08xt3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Nov 2022 21:03:51 +0000
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AGKT2Xv025076;
-        Wed, 16 Nov 2022 21:03:50 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kw6u08xsn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Nov 2022 21:03:50 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AGKpQCr014409;
-        Wed, 16 Nov 2022 21:03:49 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma02dal.us.ibm.com with ESMTP id 3kt34a43pj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Nov 2022 21:03:49 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com ([9.208.128.114])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AGL3mdB7143996
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Nov 2022 21:03:48 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 327935805E;
-        Wed, 16 Nov 2022 21:03:48 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 182395805D;
-        Wed, 16 Nov 2022 21:03:46 +0000 (GMT)
-Received: from sig-9-77-134-48.ibm.com (unknown [9.77.134.48])
-        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 16 Nov 2022 21:03:45 +0000 (GMT)
-Message-ID: <e46fb092970bd12a8461a513f1cf8b63e4f54714.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 1/5] reiserfs: Add missing calls to
- reiserfs_security_free()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, nicolas.bouchinet@clip-os.org,
+        Wed, 16 Nov 2022 17:04:18 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 134E8657C0
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 14:04:17 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id y4so17723612plb.2
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 14:04:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VC1O7rMTvmBYyn1/bWjYQvHGFZmpsPJOUhWzFJ+UDKE=;
+        b=cU1BpRMccZjJWvhPtm4flkwG+K3w6bc1YRQscCaPiee03eI4FDk3Fo3AgHmFQyDtT4
+         ec26P+NTHvD1Ip1nMyiSiaj/XicJI5pgds9PrvbUr+tLRLNZwpp0ozW+CYxq3xz7qVCQ
+         lejMBtbs0AWGr3ApmLrjOFhxxTWjWvnfDPZCUyRyODysJNjbu/9zCAQR5bquDHfbnKHh
+         m+Ht5F9u7ozOEuN012dNaZ+CxCMRNQ3a8IAHI7QQ+KXUKLdbfDNb3/08okbxXRe1uDz2
+         IjS2PqgibVExxo7c2jeXgdgkHsI/vMNQ3z95d524hFGRBaTWye8XUkFoyy6GDQimGEdV
+         qbqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VC1O7rMTvmBYyn1/bWjYQvHGFZmpsPJOUhWzFJ+UDKE=;
+        b=dPKNWVSdsJ2oZSsyk6YFESIlVQwJRAkhTEkzvtPXnINSVAwXNnDtAYFwsGm5MYIEiK
+         vTR4hpcx8/DuiusPM1EimlJIyHFSqsul97keh58F6aK4G1K1MbVbUPidi2CCuFcJzuZ8
+         1VogCk1qsj4GdVakV3T4wkF504/IVVsGwva7+/l/R9zbol7D7Ck5SVG2X8UbWx1XgagM
+         Ymqis0sya6CNr/eUh19uUJYmlk3cdyu8LeqI1G6LNy2i4B+kO84yT17kqln8PGWfjfYK
+         aGMYGH3Ipa/TL2c8Q5lh3yLcfMJs/nyEaLicbAkQCbbjHHVEP92Q/E1jVx6L0ep8+iIY
+         2rPA==
+X-Gm-Message-State: ANoB5pkdf3BvnFRVMwtrx2SnbuI69fzwzFv/4bVzYHZ1X/M0W07eGXEs
+        psRDrWw5ZjTJ6cIrrOXa6+zuXl7fWGqFIkH/Qb1b
+X-Google-Smtp-Source: AA0mqf5oXxU0ECvnjTunMRmFWA1TxmhY0Ow0+3ziM4fHMNKpMBbH7TE9PAAThMh3ftz2zdNo1g0IW0mEOYT4tG7RXWc=
+X-Received: by 2002:a17:90a:4596:b0:1fd:5b5d:f09d with SMTP id
+ v22-20020a17090a459600b001fd5b5df09dmr5820235pjg.69.1668636256527; Wed, 16
+ Nov 2022 14:04:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
+ <20221115175652.3836811-4-roberto.sassu@huaweicloud.com> <CAHC9VhTA7SgFnTFGNxOGW38WSkWu7GSizBmNz=TuazUR4R_jUg@mail.gmail.com>
+ <83cbff40f16a46e733a877d499b904cdf06949b6.camel@huaweicloud.com>
+In-Reply-To: <83cbff40f16a46e733a877d499b904cdf06949b6.camel@huaweicloud.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 16 Nov 2022 17:04:05 -0500
+Message-ID: <CAHC9VhRX0J8Z61_fH9T5O1ZpRQWSppQekxP8unJqStHuTwQkLQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH 3/4] lsm: Redefine LSM_HOOK() macro to add return
+ value flags as argument
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, revest@chromium.org,
+        jackmanb@chromium.org, jmorris@namei.org, serge@hallyn.com,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date:   Wed, 16 Nov 2022 16:03:45 -0500
-In-Reply-To: <20221110094639.3086409-2-roberto.sassu@huaweicloud.com>
-References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
-         <20221110094639.3086409-2-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 4WI5dW9j1NtENgHLvVqyis6bif4IMoub
-X-Proofpoint-ORIG-GUID: oHtKRpgB1VOFGdykFp3diWuPuAl-uBcg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-16_03,2022-11-16_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- bulkscore=0 malwarescore=0 spamscore=0 priorityscore=1501 mlxlogscore=316
- suspectscore=0 clxscore=1011 impostorscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211160144
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2022-11-10 at 10:46 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Commit 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes
-> during inode creation") defined reiserfs_security_free() to free the name
-> and value of a security xattr allocated by the active LSM through
-> security_old_inode_init_security(). However, this function is not called
-> in the reiserfs code.
-> 
-> Thus, add a call to reiserfs_security_free() whenever
-> reiserfs_security_init() is called, and initialize value to NULL, to avoid
-> to call kfree() on an uninitialized pointer.
-> 
-> Finally, remove the kfree() for the xattr name, as it is not allocated
-> anymore.
-> 
-> Fixes: 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes during inode creation")
-> Cc: stable@vger.kernel.org
-> Cc: Jeff Mahoney <jeffm@suse.com>
-> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Reported-by: Mimi Zohar <zohar@linux.ibm.com>
-> Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+On Wed, Nov 16, 2022 at 3:11 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Tue, 2022-11-15 at 21:27 -0500, Paul Moore wrote:
+> > On Tue, Nov 15, 2022 at 12:58 PM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > >
+> > > Define four return value flags (LSM_RET_NEG, LSM_RET_ZERO, LSM_RET_ONE,
+> > > LSM_RET_GT_ONE), one for each interval of interest (< 0, = 0, = 1, > 1).
+> > >
+> > > Redefine the LSM_HOOK() macro to add return value flags as argument, and
+> > > set the correct flags for each LSM hook.
+> > >
+> > > Implementors of new LSM hooks should do the same as well.
+> > >
+> > > Cc: stable@vger.kernel.org # 5.7.x
+> > > Fixes: 9d3fdea789c8 ("bpf: lsm: Provide attachment points for BPF LSM programs")
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >  include/linux/bpf_lsm.h       |   2 +-
+> > >  include/linux/lsm_hook_defs.h | 779 ++++++++++++++++++++--------------
+> > >  include/linux/lsm_hooks.h     |   9 +-
+> > >  kernel/bpf/bpf_lsm.c          |   5 +-
+> > >  security/bpf/hooks.c          |   2 +-
+> > >  security/security.c           |   4 +-
+> > >  6 files changed, 466 insertions(+), 335 deletions(-)
+> >
+> > Just a quick note here that even if we wanted to do something like
+> > this, it is absolutely not -stable kernel material.  No way.
+>
+> I was unsure about that. We need a proper fix for this issue that needs
+> to be backported to some kernels. I saw this more like a dependency.
+> But I agree with you that it would be unlikely that this patch is
+> applied to stable kernels.
+>
+> For stable kernels, what it would be the proper way? We still need to
+> maintain an allow list of functions that allow a positive return value,
+> at least. Should it be in the eBPF code only?
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Ideally the fix for -stable is the same as what is done for Linus'
+kernel (ignoring backport fuzzing), so I would wait and see how that
+ends up first.  However, if the patchset for Linus' tree is
+particularly large and touches a lot of code, you may need to work on
+something a bit more targeted to the specific problem.  I tend to be
+more conservative than most kernel devs when it comes to -stable
+patches, but if you can't backport the main upstream patchset, smaller
+(both in terms of impact and lines changed) is almost always better.
 
+-- 
+paul-moore.com
