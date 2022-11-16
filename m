@@ -2,108 +2,254 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 682FBC43217
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 08:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E06AC433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 10:31:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238647AbiKPIOK (ORCPT
+        id S231437AbiKPKbn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Nov 2022 03:14:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43668 "EHLO
+        Wed, 16 Nov 2022 05:31:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233167AbiKPINr (ORCPT
+        with ESMTP id S229910AbiKPKbd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Nov 2022 03:13:47 -0500
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E08D1054D;
-        Wed, 16 Nov 2022 00:11:54 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4NBwbF2qvFz9v7Yf;
-        Wed, 16 Nov 2022 16:05:45 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwBnUm8mm3RjHPlrAA--.18293S2;
-        Wed, 16 Nov 2022 09:11:29 +0100 (CET)
-Message-ID: <83cbff40f16a46e733a877d499b904cdf06949b6.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH 3/4] lsm: Redefine LSM_HOOK() macro to add return
- value flags as argument
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-        haoluo@google.com, jolsa@kernel.org, revest@chromium.org,
-        jackmanb@chromium.org, jmorris@namei.org, serge@hallyn.com,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org
-Date:   Wed, 16 Nov 2022 09:11:15 +0100
-In-Reply-To: <CAHC9VhTA7SgFnTFGNxOGW38WSkWu7GSizBmNz=TuazUR4R_jUg@mail.gmail.com>
-References: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
-         <20221115175652.3836811-4-roberto.sassu@huaweicloud.com>
-         <CAHC9VhTA7SgFnTFGNxOGW38WSkWu7GSizBmNz=TuazUR4R_jUg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Wed, 16 Nov 2022 05:31:33 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FD9B31FB5
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 02:27:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668594448;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=/1/81f1bc3wgoHEbP5M1Zz0wSDu9jba91U8WGSjmQ70=;
+        b=WvA7dMHIHgvf3V9r9QbfYGKetZV6oQ36O3P6NSjEDBg0cr91EFzUv0HZat7WOvXw4WLEi5
+        L56/YXHJyoXgQR0Xn5PSg3xEu8oLezhdzwvR4BxB6KilhFVN5r5XIaT/VPLqEgR74915Lr
+        +ildcLPGdp2Yusfw2xviqsyMd/Vzce8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-634-ZOxGenHbOYKZhsRLkhfmqA-1; Wed, 16 Nov 2022 05:27:25 -0500
+X-MC-Unique: ZOxGenHbOYKZhsRLkhfmqA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 71CBB833AED;
+        Wed, 16 Nov 2022 10:27:23 +0000 (UTC)
+Received: from t480s.fritz.box (unknown [10.39.193.216])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6687D2024CCA;
+        Wed, 16 Nov 2022 10:27:02 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Walls <awalls@md.metrocast.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Benvenuti <benve@cisco.com>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kees Cook <keescook@chromium.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Leon Romanovsky <leonro@nvidia.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tomasz Figa <tfiga@chromium.org>, Will Deacon <will@kernel.org>
+Subject: [PATCH mm-unstable v1 00/20] mm/gup: remove FOLL_FORCE usage from drivers (reliable R/O long-term pinning)
+Date:   Wed, 16 Nov 2022 11:26:39 +0100
+Message-Id: <20221116102659.70287-1-david@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwBnUm8mm3RjHPlrAA--.18293S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFWDWryxKr4fJrWxCr15Jwb_yoW8WryrpF
-        43ta4YkFnYvr47C3ZxWF1fC34rJ393Wr15trnrXw1Fva42yrnxK34kua1S9Fy09rWIkr1Y
-        krWagry5Kw1DArDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcV
-        CF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrWlkDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgASBF1jj4F8dQABss
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-11-15 at 21:27 -0500, Paul Moore wrote:
-> On Tue, Nov 15, 2022 at 12:58 PM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Define four return value flags (LSM_RET_NEG, LSM_RET_ZERO, LSM_RET_ONE,
-> > LSM_RET_GT_ONE), one for each interval of interest (< 0, = 0, = 1, > 1).
-> > 
-> > Redefine the LSM_HOOK() macro to add return value flags as argument, and
-> > set the correct flags for each LSM hook.
-> > 
-> > Implementors of new LSM hooks should do the same as well.
-> > 
-> > Cc: stable@vger.kernel.org # 5.7.x
-> > Fixes: 9d3fdea789c8 ("bpf: lsm: Provide attachment points for BPF LSM programs")
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  include/linux/bpf_lsm.h       |   2 +-
-> >  include/linux/lsm_hook_defs.h | 779 ++++++++++++++++++++--------------
-> >  include/linux/lsm_hooks.h     |   9 +-
-> >  kernel/bpf/bpf_lsm.c          |   5 +-
-> >  security/bpf/hooks.c          |   2 +-
-> >  security/security.c           |   4 +-
-> >  6 files changed, 466 insertions(+), 335 deletions(-)
-> 
-> Just a quick note here that even if we wanted to do something like
-> this, it is absolutely not -stable kernel material.  No way.
+For now, we did not support reliable R/O long-term pinning in COW mappings.
+That means, if we would trigger R/O long-term pinning in MAP_PRIVATE
+mapping, we could end up pinning the (R/O-mapped) shared zeropage or a
+pagecache page.
 
-I was unsure about that. We need a proper fix for this issue that needs
-to be backported to some kernels. I saw this more like a dependency.
-But I agree with you that it would be unlikely that this patch is
-applied to stable kernels.
+The next write access would trigger a write fault and replace the pinned
+page by an exclusive anonymous page in the process page table; whatever the
+process would write to that private page copy would not be visible by the
+owner of the previous page pin: for example, RDMA could read stale data.
+The end result is essentially an unexpected and hard-to-debug memory
+corruption.
 
-For stable kernels, what it would be the proper way? We still need to
-maintain an allow list of functions that allow a positive return value,
-at least. Should it be in the eBPF code only?
+Some drivers tried working around that limitation by using
+"FOLL_FORCE|FOLL_WRITE|FOLL_LONGTERM" for R/O long-term pinning for now.
+FOLL_WRITE would trigger a write fault, if required, and break COW before
+pinning the page. FOLL_FORCE is required because the VMA might lack write
+permissions, and drivers wanted to make that working as well, just like
+one would expect (no write access, but still triggering a write access to
+break COW).
 
-Thanks
+However, that is not a practical solution, because
+(1) Drivers that don't stick to that undocumented and debatable pattern
+    would still run into that issue. For example, VFIO only uses
+    FOLL_LONGTERM for R/O long-term pinning.
+(2) Using FOLL_WRITE just to work around a COW mapping + page pinning
+    limitation is unintuitive. FOLL_WRITE would, for example, mark the
+    page softdirty or trigger uffd-wp, even though, there actually isn't
+    going to be any write access.
+(3) The purpose of FOLL_FORCE is debug access, not access without lack of
+    VMA permissions by arbitrarty drivers.
 
-Roberto
+So instead, make R/O long-term pinning work as expected, by breaking COW
+in a COW mapping early, such that we can remove any FOLL_FORCE usage from
+drivers and make FOLL_FORCE ptrace-specific (renaming it to FOLL_PTRACE).
+More details in patch #8.
+
+Patches #1--#3 add COW tests for non-anonymous pages.
+Patches #4--#7 prepare core MM for extended FAULT_FLAG_UNSHARE support in
+COW mappings.
+Patch #8 implements reliable R/O long-term pinning in COW mappings
+Patches #9--#19 remove any FOLL_FORCE usage from drivers.
+Patch #20 renames FOLL_FORCE to FOLL_PTRACE.
+
+I'm refraining from CCing all driver/arch maintainers on the whole patch
+set, but only CC them on the cover letter and the applicable patch
+(I know, I know, someone is always unhappy ... sorry).
+
+RFC -> v1:
+* Use term "ptrace" instead of "debuggers" in patch descriptions
+* Added ACK/Tested-by
+* "mm/frame-vector: remove FOLL_FORCE usage"
+ -> Adjust description
+* "mm: rename FOLL_FORCE to FOLL_PTRACE"
+ -> Added
+
+David Hildenbrand (20):
+  selftests/vm: anon_cow: prepare for non-anonymous COW tests
+  selftests/vm: cow: basic COW tests for non-anonymous pages
+  selftests/vm: cow: R/O long-term pinning reliability tests for
+    non-anon pages
+  mm: add early FAULT_FLAG_UNSHARE consistency checks
+  mm: add early FAULT_FLAG_WRITE consistency checks
+  mm: rework handling in do_wp_page() based on private vs. shared
+    mappings
+  mm: don't call vm_ops->huge_fault() in wp_huge_pmd()/wp_huge_pud() for
+    private mappings
+  mm: extend FAULT_FLAG_UNSHARE support to anything in a COW mapping
+  mm/gup: reliable R/O long-term pinning in COW mappings
+  RDMA/umem: remove FOLL_FORCE usage
+  RDMA/usnic: remove FOLL_FORCE usage
+  RDMA/siw: remove FOLL_FORCE usage
+  media: videobuf-dma-sg: remove FOLL_FORCE usage
+  drm/etnaviv: remove FOLL_FORCE usage
+  media: pci/ivtv: remove FOLL_FORCE usage
+  mm/frame-vector: remove FOLL_FORCE usage
+  drm/exynos: remove FOLL_FORCE usage
+  RDMA/hw/qib/qib_user_pages: remove FOLL_FORCE usage
+  habanalabs: remove FOLL_FORCE usage
+  mm: rename FOLL_FORCE to FOLL_PTRACE
+
+ arch/alpha/kernel/ptrace.c                    |   6 +-
+ arch/arm64/kernel/mte.c                       |   2 +-
+ arch/ia64/kernel/ptrace.c                     |  10 +-
+ arch/mips/kernel/ptrace32.c                   |   4 +-
+ arch/mips/math-emu/dsemul.c                   |   2 +-
+ arch/powerpc/kernel/ptrace/ptrace32.c         |   4 +-
+ arch/sparc/kernel/ptrace_32.c                 |   4 +-
+ arch/sparc/kernel/ptrace_64.c                 |   8 +-
+ arch/x86/kernel/step.c                        |   2 +-
+ arch/x86/um/ptrace_32.c                       |   2 +-
+ arch/x86/um/ptrace_64.c                       |   2 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c         |   8 +-
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c       |   2 +-
+ drivers/infiniband/core/umem.c                |   8 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c    |   2 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c      |   9 +-
+ drivers/infiniband/sw/siw/siw_mem.c           |   9 +-
+ drivers/media/common/videobuf2/frame_vector.c |   2 +-
+ drivers/media/pci/ivtv/ivtv-udma.c            |   2 +-
+ drivers/media/pci/ivtv/ivtv-yuv.c             |   5 +-
+ drivers/media/v4l2-core/videobuf-dma-sg.c     |  14 +-
+ drivers/misc/habanalabs/common/memory.c       |   3 +-
+ fs/exec.c                                     |   2 +-
+ fs/proc/base.c                                |   2 +-
+ include/linux/mm.h                            |  35 +-
+ include/linux/mm_types.h                      |   8 +-
+ kernel/events/uprobes.c                       |   4 +-
+ kernel/ptrace.c                               |  12 +-
+ mm/gup.c                                      |  38 +-
+ mm/huge_memory.c                              |  13 +-
+ mm/hugetlb.c                                  |  14 +-
+ mm/memory.c                                   |  97 +++--
+ mm/util.c                                     |   4 +-
+ security/tomoyo/domain.c                      |   2 +-
+ tools/testing/selftests/vm/.gitignore         |   2 +-
+ tools/testing/selftests/vm/Makefile           |  10 +-
+ tools/testing/selftests/vm/check_config.sh    |   4 +-
+ .../selftests/vm/{anon_cow.c => cow.c}        | 387 +++++++++++++++++-
+ tools/testing/selftests/vm/run_vmtests.sh     |   8 +-
+ 39 files changed, 575 insertions(+), 177 deletions(-)
+ rename tools/testing/selftests/vm/{anon_cow.c => cow.c} (75%)
+
+-- 
+2.38.1
 
