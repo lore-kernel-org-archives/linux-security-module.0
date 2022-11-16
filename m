@@ -2,149 +2,100 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D136AC4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 16:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 263D7C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 16:55:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239089AbiKPQqY (ORCPT
+        id S233956AbiKPQzh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Nov 2022 11:46:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32782 "EHLO
+        Wed, 16 Nov 2022 11:55:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239141AbiKPQqG (ORCPT
+        with ESMTP id S234881AbiKPQzR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Nov 2022 11:46:06 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D64BA25C58;
-        Wed, 16 Nov 2022 08:41:41 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NC7tg2nwfz9v7Hb;
-        Thu, 17 Nov 2022 00:34:51 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwCnRXKgEnVjK3ptAA--.39850S2;
-        Wed, 16 Nov 2022 17:41:16 +0100 (CET)
-Message-ID: <05bf553f795ac93ea3032cfc1b56ca35fd6a920a.camel@huaweicloud.com>
-Subject: Re: [PoC][PATCH] bpf: Call return value check function in the JITed
- code
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 16 Nov 2022 17:41:00 +0100
-In-Reply-To: <CAADnVQLQswvu3oGyeevLrKMT200yD4hzCbkBUAs=1bKSDVaOQg@mail.gmail.com>
-References: <700dffccdfeeb3d19c5385550e4c84f08c705e19.camel@huaweicloud.com>
-         <20221116154712.4115929-1-roberto.sassu@huaweicloud.com>
-         <CAADnVQLQswvu3oGyeevLrKMT200yD4hzCbkBUAs=1bKSDVaOQg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
-MIME-Version: 1.0
+        Wed, 16 Nov 2022 11:55:17 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD6574C275;
+        Wed, 16 Nov 2022 08:54:29 -0800 (PST)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AGGfGtg010470;
+        Wed, 16 Nov 2022 16:54:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=aqZW4skJIW0nfSiVSoLe7Vw4B/k5hMwSdTc7CX1lIx4=;
+ b=WvYphjuJzgjqxvZmmJyexhMUD6m9YnZUScjSyxB/poWro2tDYvpvCCJfgXT3sH7OVqkv
+ 9+w+tENqabf4OjK3CiGtuU+aMx2d1EBh1Y5K5jcVAaD8VpVLYqfKHBu3b1T29JnhMCK+
+ /CN6cn6JhHs0xQ9GTDo1GU3Gma+rFTjp++TWjm50t7mEdTfc0FW6/86Di930qWxR9VOM
+ is77L63aigE4mGrwF63jaw5vttEDIzczenaQhXnnWZjB6zuixta6dP41g97RV6PMDfD9
+ AoWl9CHuP0b5928Dl+axY/h7DHtWtTl98wfQEf0u6hn+6UfrMKO9GJnDt7FyOSzLISiA DA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3kw3ktgbdx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Nov 2022 16:54:10 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AGGgbu7018969;
+        Wed, 16 Nov 2022 16:54:09 GMT
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3kw3ktgbdc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Nov 2022 16:54:09 +0000
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AGGokPB007689;
+        Wed, 16 Nov 2022 16:54:09 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma03wdc.us.ibm.com with ESMTP id 3kt34abppg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Nov 2022 16:54:09 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com ([9.208.128.113])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AGGs7M458982778
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Nov 2022 16:54:08 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C44625804B;
+        Wed, 16 Nov 2022 16:54:07 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BF1D858065;
+        Wed, 16 Nov 2022 16:54:06 +0000 (GMT)
+Received: from sig-9-77-134-48.ibm.com (unknown [9.77.134.48])
+        by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 16 Nov 2022 16:54:06 +0000 (GMT)
+Message-ID: <a50ddd918933b1a5b181aeb6b30301f78eefa192.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] integrity: Fix memory leakage in keyring allocation
+ error path
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     GUO Zihua <guozihua@huawei.com>, dmitry.kasatkin@gmail.com
+Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 16 Nov 2022 11:53:56 -0500
+In-Reply-To: <20221111101317.5468-1-guozihua@huawei.com>
+References: <20221111101317.5468-1-guozihua@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwCnRXKgEnVjK3ptAA--.39850S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWF18GF1UuFWUuFy5GFyUZFb_yoW5Xw1kpr
-        WrGFWYkF4DZ3yxGrWqyw45Cw4rX34fJr48G345K348Aayayw1xtw1UKF1Y9F4UCr4vg34F
-        9FZrZ34fCwnrZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-        AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
-        aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBF1jj4WFggACsm
-X-CFilter-Loop: Reflected
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: GMLEYYsFpfuBDeyNhtve6gYEKzz-Ktp4
+X-Proofpoint-ORIG-GUID: FHy31tJ5l9TrBVxrpO2_F_ep6KoAdHKv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-16_03,2022-11-16_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 adultscore=0 mlxlogscore=849 lowpriorityscore=0
+ spamscore=0 phishscore=0 suspectscore=0 clxscore=1015 bulkscore=0
+ mlxscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2210170000 definitions=main-2211160115
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-11-16 at 08:16 -0800, Alexei Starovoitov wrote:
-> On Wed, Nov 16, 2022 at 7:48 AM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > +static bool is_ret_value_allowed(int ret, u32 ret_flags)
-> > +{
-> > +       if ((ret < 0 && !(ret_flags & LSM_RET_NEG)) ||
-> > +           (ret == 0 && !(ret_flags & LSM_RET_ZERO)) ||
-> > +           (ret == 1 && !(ret_flags & LSM_RET_ONE)) ||
-> > +           (ret > 1 && !(ret_flags & LSM_RET_GT_ONE)))
-> > +               return false;
-> > +
-> > +       return true;
-> > +}
-> > +
-> >  /* For every LSM hook that allows attachment of BPF programs, declare a nop
-> >   * function where a BPF program can be attached.
-> >   */
-> > @@ -30,6 +41,15 @@ noinline RET bpf_lsm_##NAME(__VA_ARGS__)     \
-> >  #include <linux/lsm_hook_defs.h>
-> >  #undef LSM_HOOK
-> > 
-> > +#define LSM_HOOK(RET, DEFAULT, RET_FLAGS, NAME, ...)   \
-> > +noinline RET bpf_lsm_##NAME##_ret(int ret)     \
-> > +{                                              \
-> > +       return is_ret_value_allowed(ret, RET_FLAGS) ? ret : DEFAULT; \
-> > +}
-> > +
-> > +#include <linux/lsm_hook_defs.h>
-> > +#undef LSM_HOOK
-> > +
+On Fri, 2022-11-11 at 18:13 +0800, GUO Zihua wrote:
+> Key restriction is alloced in integrity_init_keyring(). However, if
+> keyring allocation failed, it is not freed, causing memory leaks.
 > 
-> because lsm hooks is mess of undocumented return values your
-> "solution" is to add hundreds of noninline functions
-> and hack the call into them in JITs ?!
+> Fixes: 2b6aa412ff23 ("KEYS: Use structure to capture key restriction function and data")
+> Signed-off-by: GUO Zihua <guozihua@huawei.com>
 
-I revisited the documentation and checked each LSM hook one by one.
-Hopefully, I completed it correctly, but I would review again (others
-are also welcome to do it).
+Thanks, applied.
 
-Not sure if there is a more efficient way. Do you have any idea?
-Maybe we find a way to use only one check function (by reusing the
-address of the attachment point?).
-
-Regarding the JIT approach, I didn't find a reliable solution for using
-just the verifier. As I wrote to you, there could be the case where the
-range can include positive values, despite the possible return values
-are zero and -EACCES.
-
-# ./test_progs-no_alu32 -t libbpf_get_fd
-
-*reg = {type = SCALAR_VALUE, off = 0, {range = 0, {map_ptr = 0x0
-<fixed_percpu_data>, map_uid = 0}, {btf = 0x0 <fixed_percpu_data>,
-btf_id = 0}, mem_size = 0, dynptr = {type = BPF_DYNPTR_TYPE_INVALID,
-first_slot = false}, raw = {raw1 = 0, raw2 = 0}, subprogno = 0}, id =
-0, 
-  ref_obj_id = 0, var_off = {value = 0, mask = 18446744073709551603},
-smin_value = -9223372036854775808, smax_value = 9223372036854775795,
-umin_value = 0, umax_value = 18446744073709551603, s32_min_value =
--2147483648, s32_max_value = 2147483635, u32_min_value = 0, 
-  u32_max_value = 4294967283, parent = 0x0 <fixed_percpu_data>, frameno
-= 0, subreg_def = 0, live = REG_LIVE_WRITTEN, precise = false}
-
-The JIT approach instead is 100% reliable, as you check the real value
-to be returned to BPF LSM.
-
-But of course, the performance will be worse this way. If you are able
-to determine at verification time that an eBPF program is not going to
-return illegal values, that would be better. I'm not sure it is
-feasible.
-
-Thanks
-
-Roberto
+Mimi
 
