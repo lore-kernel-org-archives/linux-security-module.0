@@ -2,336 +2,122 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4839C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 14:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A18DC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 14:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229892AbiKPO0F (ORCPT
+        id S233087AbiKPOhp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Nov 2022 09:26:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52374 "EHLO
+        Wed, 16 Nov 2022 09:37:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229666AbiKPO0D (ORCPT
+        with ESMTP id S233452AbiKPOhh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Nov 2022 09:26:03 -0500
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A27111C08
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 06:26:00 -0800 (PST)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NC51y3DX0zMpr4P;
-        Wed, 16 Nov 2022 15:25:58 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4NC51x4tq8zMppFH;
-        Wed, 16 Nov 2022 15:25:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1668608758;
-        bh=cA2XiSre0ie8e9W9T/c7lFA0jun+XpBOtWP00kYEAZg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=0csO3MmWnDppJ9r4WkZUi2gE/iXSp8G66IrNyhjT+9nvC9NUzRrH6HDzMJpK6Dm8p
-         mUGkVsFSdzitgLFomO2dwXcMVhYv/06IRYm46P3jhLi0ncH842OpYY6B3lK/AtC6ts
-         tZIHQ+hlbDBT8csDa802Twd+oPLw6d8Mn491qQjc=
-Message-ID: <2ff97355-18ef-e539-b4c1-720cd83daf1d@digikod.net>
-Date:   Wed, 16 Nov 2022 15:25:57 +0100
+        Wed, 16 Nov 2022 09:37:37 -0500
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F6942871C;
+        Wed, 16 Nov 2022 06:37:27 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4NC57M42dnz9xFg4;
+        Wed, 16 Nov 2022 22:30:39 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwCXgm+C9XRjFB1tAA--.18710S2;
+        Wed, 16 Nov 2022 15:37:02 +0100 (CET)
+Message-ID: <700dffccdfeeb3d19c5385550e4c84f08c705e19.camel@huaweicloud.com>
+Subject: Re: [RFC][PATCH 4/4] security: Enforce limitations on return values
+ from LSMs
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, revest@chromium.org,
+        jackmanb@chromium.org, jmorris@namei.org, serge@hallyn.com,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 16 Nov 2022 15:36:46 +0100
+In-Reply-To: <CAHC9VhQ+fUZfJwJ=oJ9ieszKeicnS7Z-QcJuJVL9HF5F0tcA7Q@mail.gmail.com>
+References: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
+         <20221115175652.3836811-5-roberto.sassu@huaweicloud.com>
+         <CAHC9VhQ+fUZfJwJ=oJ9ieszKeicnS7Z-QcJuJVL9HF5F0tcA7Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v8 11/12] samples/landlock: Add network demo
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, artem.kuzin@huawei.com
-References: <20221021152644.155136-1-konstantin.meskhidze@huawei.com>
- <20221021152644.155136-12-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20221021152644.155136-12-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwCXgm+C9XRjFB1tAA--.18710S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxurW8uFyUGw48XryUJw4rAFb_yoW5Gr4rpa
+        y5JFy5GF4v9r47AwnIyw43Zw1Fy393Gr4UJr9Iy347Zw15trZxKr40k3WY9FyUCr4S9w1j
+        yr4YqF93Ca4DA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgASBF1jj4GDggAAsl
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 21/10/2022 17:26, Konstantin Meskhidze wrote:
-> This commit adds network demo. It's possible to allow a sandboxer to
-> bind/connect to a list of particular ports restricting network
-> actions to the rest of ports.
+On Tue, 2022-11-15 at 21:35 -0500, Paul Moore wrote:
+> On Tue, Nov 15, 2022 at 12:58 PM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > LSMs should not be able to return arbitrary return values, as the callers
+> > of the LSM infrastructure might not be ready to handle unexpected values
+> > (e.g. positive values that are first converted to a pointer with ERR_PTR,
+> > and then evaluated with IS_ERR()).
+> > 
+> > Modify call_int_hook() to call is_ret_value_allowed(), so that the return
+> > value from each LSM for a given hook is checked. If for the interval the
+> > return value falls into the corresponding flag is not set, change the
+> > return value to the default value, just for the current LSM.
+> > 
+> > A misbehaving LSM would not have impact on the decision of other LSMs, as
+> > the loop terminates whenever the return value is not zero.
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  security/security.c | 34 ++++++++++++++++++++++++++++++++++
+> >  1 file changed, 34 insertions(+)
 > 
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> ---
-> 
-> Changes since v7:
-> * Removes network support if ABI < 4.
-> * Removes network support if not set by a user.
-> 
-> Changes since v6:
-> * Removes network support if ABI < 3.
-> 
-> Changes since v5:
-> * Makes network ports sandboxing optional.
-> * Fixes some logic errors.
-> * Formats code with clang-format-14.
-> 
-> Changes since v4:
-> * Adds ENV_TCP_BIND_NAME "LL_TCP_BIND" and
-> ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT" variables
-> to insert TCP ports.
-> * Renames populate_ruleset() to populate_ruleset_fs().
-> * Adds populate_ruleset_net() and parse_port_num() helpers.
-> * Refactors main() to support network sandboxing.
-> 
-> ---
->   samples/landlock/sandboxer.c | 129 +++++++++++++++++++++++++++++++----
->   1 file changed, 116 insertions(+), 13 deletions(-)
-> 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index fd4237c64fb2..68582b0d7c85 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -51,6 +51,8 @@ static inline int landlock_restrict_self(const int ruleset_fd,
-> 
->   #define ENV_FS_RO_NAME "LL_FS_RO"
->   #define ENV_FS_RW_NAME "LL_FS_RW"
-> +#define ENV_TCP_BIND_NAME "LL_TCP_BIND"
-> +#define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
->   #define ENV_PATH_TOKEN ":"
-> 
->   static int parse_path(char *env_path, const char ***const path_list)
-> @@ -71,6 +73,20 @@ static int parse_path(char *env_path, const char ***const path_list)
->   	return num_paths;
->   }
-> 
-> +static int parse_port_num(char *env_port)
-> +{
-> +	int i, num_ports = 0;
-> +
-> +	if (env_port) {
-> +		num_ports++;
-> +		for (i = 0; env_port[i]; i++) {
-> +			if (env_port[i] == ENV_PATH_TOKEN[0])
-> +				num_ports++;
-> +		}
-> +	}
-> +	return num_ports;
-> +}
-> +
->   /* clang-format off */
-> 
->   #define ACCESS_FILE ( \
-> @@ -81,8 +97,8 @@ static int parse_path(char *env_path, const char ***const path_list)
-> 
->   /* clang-format on */
-> 
-> -static int populate_ruleset(const char *const env_var, const int ruleset_fd,
-> -			    const __u64 allowed_access)
-> +static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
-> +			       const __u64 allowed_access)
->   {
->   	int num_paths, i, ret = 1;
->   	char *env_path_name;
-> @@ -143,6 +159,48 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
->   	return ret;
->   }
-> 
-> +static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
-> +				const __u64 allowed_access)
-> +{
-> +	int num_ports, i, ret = 1;
-> +	char *env_port_name;
-> +	struct landlock_net_service_attr net_service = {
-> +		.allowed_access = 0,
-> +		.port = 0,
-> +	};
-> +
-> +	env_port_name = getenv(env_var);
-> +	if (!env_port_name) {
-> +		ret = 0;
-> +		goto out_free_name;
+> Casey touched on some of this in his reply to patch 0/4, but basically
+> I see this as a BPF LSM specific problem and not a generalized LSM
+> issue that should be addressed at the LSM layer.  Especially if the
+> solution involves incurring additional processing for every LSM hook
+> instantiation, regardless if a BPF LSM is present.  Reading your
+> overall patchset description I believe that you understand this too.
 
-This is a bug because env_port_name is not allocated. This should simply 
-return 0.
+Yes, I had this concern too. Thanks Paul and Casey for taking the time
+to reply.
 
+I liked the fact that the fix is extremely simple, but nevertheless it
+should not impact the performance, if there are alternative ways. I
+thought maybe we look at non-zero values, since the check is already
+there. But it could be that there is an impact for it too (maybe for
+audit_rule_match?).
 
-> +	}
-> +	env_port_name = strdup(env_port_name);
-> +	unsetenv(env_var);
-> +	num_ports = parse_port_num(env_port_name);
-> +
-> +	if (num_ports == 1 && (strtok(env_port_name, ENV_PATH_TOKEN) == NULL)) {
-> +		ret = 0;
-> +		goto out_free_name;
-> +	}
-> +
-> +	for (i = 0; i < num_ports; i++) {
-> +		net_service.allowed_access = allowed_access;
-> +		net_service.port = atoi(strsep(&env_port_name, ENV_PATH_TOKEN));
-> +		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-> +				      &net_service, 0)) {
-> +			fprintf(stderr,
-> +				"Failed to update the ruleset with port \"%d\": %s\n",
-> +				net_service.port, strerror(errno));
-> +			goto out_free_name;
-> +		}
-> +	}
-> +	ret = 0;
-> +
-> +out_free_name:
-> +	free(env_port_name);
-> +	return ret;
-> +}
-> +
->   /* clang-format off */
-> 
->   #define ACCESS_FS_ROUGHLY_READ ( \
-> @@ -164,41 +222,63 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
->   	LANDLOCK_ACCESS_FS_REFER | \
->   	LANDLOCK_ACCESS_FS_TRUNCATE)
-> 
-> +#define ACCESS_NET_BIND_CONNECT ( \
-> +	LANDLOCK_ACCESS_NET_BIND_TCP | \
-> +	LANDLOCK_ACCESS_NET_CONNECT_TCP)
+> If you want to somehow instrument the LSM hook definitions (what I
+> believe to be the motivation behind patch 3/4) to indicate valid
+> return values for use by the BPF verifier, I think we could entertain
+> that, or at least discuss it further, but I'm not inclined to support
+> any runtime overhead at the LSM layer for a specific LSM.
 
-You can remove ACCESS_NET_BIND_CONNECT and make the underlying access 
-rights explicit.
+Ok, yes. Patches 1-3 would help to keep in sync the LSM infrastructure
+and eBPF, but it is not strictly needed. I could propose an eBPF-only
+alternative to declare sets of functions per interval.
 
+More or less, I developed an eBPF-based alternative also for patch 4.
+It is just a proof of concept. Will propose it, to validate the idea.
 
-> +
->   /* clang-format on */
-> 
-> -#define LANDLOCK_ABI_LAST 3
-> +#define LANDLOCK_ABI_LAST 4
-> 
->   int main(const int argc, char *const argv[], char *const *const envp)
->   {
->   	const char *cmd_path;
->   	char *const *cmd_argv;
->   	int ruleset_fd, abi;
-> +	char *env_port_name;
->   	__u64 access_fs_ro = ACCESS_FS_ROUGHLY_READ,
-> -	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE;
-> +	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE,
-> +	      access_net_tcp = ACCESS_NET_BIND_CONNECT;
->   	struct landlock_ruleset_attr ruleset_attr = {
->   		.handled_access_fs = access_fs_rw,
-> +		.handled_access_net = access_net_tcp,
->   	};
-> 
->   	if (argc < 2) {
->   		fprintf(stderr,
-> -			"usage: %s=\"...\" %s=\"...\" %s <cmd> [args]...\n\n",
-> -			ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv[0]);
-> +			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
-> +			"<cmd> [args]...\n\n",
-> +			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> +			ENV_TCP_CONNECT_NAME, argv[0]);
->   		fprintf(stderr,
->   			"Launch a command in a restricted environment.\n\n");
-> -		fprintf(stderr, "Environment variables containing paths, "
-> -				"each separated by a colon:\n");
-> +		fprintf(stderr,
-> +			"Environment variables containing paths and ports "
-> +			"each separated by a colon:\n");
->   		fprintf(stderr,
->   			"* %s: list of paths allowed to be used in a read-only way.\n",
->   			ENV_FS_RO_NAME);
->   		fprintf(stderr,
-> -			"* %s: list of paths allowed to be used in a read-write way.\n",
-> +			"* %s: list of paths allowed to be used in a read-write way.\n\n",
->   			ENV_FS_RW_NAME);
-> +		fprintf(stderr,
-> +			"Environment variables containing ports are optional "
-> +			"and could be skipped.\n");
-> +		fprintf(stderr,
-> +			"* %s: list of ports allowed to bind (server).\n",
-> +			ENV_TCP_BIND_NAME);
-> +		fprintf(stderr,
-> +			"* %s: list of ports allowed to connect (client).\n",
-> +			ENV_TCP_CONNECT_NAME);
->   		fprintf(stderr,
->   			"\nexample:\n"
->   			"%s=\"/bin:/lib:/usr:/proc:/etc:/dev/urandom\" "
->   			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
-> +			"%s=\"9418\" "
-> +			"%s=\"80:443\" "
->   			"%s bash -i\n\n",
-> -			ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv[0]);
-> +			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> +			ENV_TCP_CONNECT_NAME, argv[0]);
->   		fprintf(stderr,
->   			"This sandboxer can use Landlock features "
->   			"up to ABI version %d.\n",
-> @@ -240,7 +320,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
->   	case 2:
->   		/* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
->   		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-> -
-> +		__attribute__((fallthrough));
-> +	case 3:
-> +		/* Removes network support for ABI < 4 */
-> +		ruleset_attr.handled_access_net &= ~ACCESS_NET_BIND_CONNECT;
+Thanks
 
-You can check the TCP environment variables here and error out if one is 
-set.
+Roberto
 
-Please keep the newline here.
-
-
->   		fprintf(stderr,
->   			"Hint: You should update the running kernel "
->   			"to leverage Landlock features "
-> @@ -259,16 +342,36 @@ int main(const int argc, char *const argv[], char *const *const envp)
->   	access_fs_ro &= ruleset_attr.handled_access_fs;
->   	access_fs_rw &= ruleset_attr.handled_access_fs;
-> 
-> +	/* Removes bind access attribute if not supported by a user. */
-> +	env_port_name = getenv(ENV_TCP_BIND_NAME);
-> +	if (!env_port_name) {
-
-You can move this logic at the populate_ruleset_net() call site and 
-update this helper to not call getenv() twice for the same variable.
-
-
-> +		access_net_tcp &= ~LANDLOCK_ACCESS_NET_BIND_TCP;
-> +	}
-> +	/* Removes connect access attribute if not supported by a user. */
-> +	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
-> +	if (!env_port_name) {
-> +		access_net_tcp &= ~LANDLOCK_ACCESS_NET_CONNECT_TCP;
-> +	}
-> +	ruleset_attr.handled_access_net &= access_net_tcp;
-
-There is no need for access_net_tcp.
-
-> +
->   	ruleset_fd =
->   		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
->   	if (ruleset_fd < 0) {
->   		perror("Failed to create a ruleset");
->   		return 1;
->   	}
-
-newline
-
-> -	if (populate_ruleset(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro)) {
-> +	if (populate_ruleset_fs(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro)) {
-> +		goto err_close_ruleset;
-> +	}
-> +	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
-> +		goto err_close_ruleset;
-> +	}
-
-newline
-
-> +	if (populate_ruleset_net(ENV_TCP_BIND_NAME, ruleset_fd,
-> +				 LANDLOCK_ACCESS_NET_BIND_TCP)) {
->   		goto err_close_ruleset;
->   	}
-> -	if (populate_ruleset(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
-> +	if (populate_ruleset_net(ENV_TCP_CONNECT_NAME, ruleset_fd,
-> +				 LANDLOCK_ACCESS_NET_CONNECT_TCP)) {
->   		goto err_close_ruleset;
->   	}
-
-newline
-
->   	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-> --
-> 2.25.1
-> 
