@@ -2,141 +2,319 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50177C4321E
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 18:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E88CDC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 18:41:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240272AbiKQSIE (ORCPT
+        id S240577AbiKQSld (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Nov 2022 13:08:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47136 "EHLO
+        Thu, 17 Nov 2022 13:41:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239785AbiKQSID (ORCPT
+        with ESMTP id S240677AbiKQSlR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Nov 2022 13:08:03 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD90C6D48C;
-        Thu, 17 Nov 2022 10:08:02 -0800 (PST)
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AHGQna1028348;
-        Thu, 17 Nov 2022 18:07:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=DJWVbLBThfA4r5Xc8cljs2uNQs/ONt++ArGyQv7sJFw=;
- b=hgJNePoo0ERFfc7qezYZNPQsZGdxi/W430q6D8xfUhpQyKmRN00HwsfVOY3jq06eTysT
- Vyu3wXV8i7MdI1ba1BkH4o7BhEG59/HCB/jUhT03rCacX7Hm+xQlmz0oYFLA5O9CHUjs
- Muw3JYbdeKkgD8mjZ62Eb9/IXXsX69XBCVD2I+ZSFtfiIQ/VFg+EgRC9kTBic5jWBIfH
- wF2xrldJuoV056nfe4FAs49nU8+VI4vC5NYCNPOiygmf5ISq+MpxwH9rJJIS0TrLAhUM
- a+jwmFXrS7Lx4RTjoTRFyyCx1bdyp7ZcVsD4Ctj8Let14D6NdMSkbfXMh8QK+a5hqEmt 1w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3kwrg1jk0k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Nov 2022 18:07:42 +0000
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AHHgIk8020406;
-        Thu, 17 Nov 2022 18:07:42 GMT
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3kwrg1jk00-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Nov 2022 18:07:42 +0000
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AHI4s3I016666;
-        Thu, 17 Nov 2022 18:07:40 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma03wdc.us.ibm.com with ESMTP id 3kt34ajnqr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Nov 2022 18:07:40 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AHI7drE2687488
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Nov 2022 18:07:40 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B8C9858056;
-        Thu, 17 Nov 2022 18:07:39 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3A20A58045;
-        Thu, 17 Nov 2022 18:07:38 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.98.240])
-        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Thu, 17 Nov 2022 18:07:38 +0000 (GMT)
-Message-ID: <5ef79a7ab559f46313f767d90b50662e003d62be.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 3/5] security: Allow all LSMs to provide xattrs for
- inode_init_security hook
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Thu, 17 Nov 2022 13:07:37 -0500
-In-Reply-To: <66df8ebe-1ed2-c839-8a5f-cc0a26bad6c3@schaufler-ca.com>
-References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
-         <20221110094639.3086409-4-roberto.sassu@huaweicloud.com>
-         <4c1349f670dc3c23214a5a5036e43ddaa0a7bc89.camel@linux.ibm.com>
-         <026075fa-0b58-9041-0727-b75e19499356@schaufler-ca.com>
-         <6b4d47765a4ddcfdf07158f3ad0737fa3aa5823e.camel@linux.ibm.com>
-         <66df8ebe-1ed2-c839-8a5f-cc0a26bad6c3@schaufler-ca.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
+        Thu, 17 Nov 2022 13:41:17 -0500
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [IPv6:2001:1600:4:17::1908])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 066A686A4E
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Nov 2022 10:41:04 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NCpdn59QZzMqMpv;
+        Thu, 17 Nov 2022 19:41:01 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4NCpdm6ym8zMppYx;
+        Thu, 17 Nov 2022 19:41:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1668710461;
+        bh=vVRpFKzQtqfkyjaOnej22IcnUL9qZNir+4epNtYIy1s=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=oYMvzfLhEb3zhXGq4LwXet6GehJYbWRnXc4rwsmyl6NqqGF06G9kEEVjnDq7N5Gk5
+         5fu9pPPGoblhVtpU0gec8jb1Cu5esyMErYDdC9EnTmajOctltwamEQnJ521/pzrnaM
+         lb+NuyVdWy0lP4Tz3JPau1iqICFtpeOiNE6KCa4k=
+Message-ID: <94ed4212-c093-9c5c-089f-e9e4097e5bd6@digikod.net>
+Date:   Thu, 17 Nov 2022 19:41:00 +0100
+MIME-Version: 1.0
+User-Agent: 
+Subject: Re: [PATCH v8 01/12] landlock: Make ruleset's access masks more
+ generic
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, artem.kuzin@huawei.com
+References: <20221021152644.155136-1-konstantin.meskhidze@huawei.com>
+ <20221021152644.155136-2-konstantin.meskhidze@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20221021152644.155136-2-konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: LuQseI_Vizjm-5HuCgvISdTcmcc66MfQ
-X-Proofpoint-GUID: TkHqQek4ect9eW5Fm4q3OEbG9UVsM1BT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-17_06,2022-11-17_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- phishscore=0 spamscore=0 bulkscore=0 clxscore=1015 adultscore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 suspectscore=0
- mlxlogscore=935 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211170131
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2022-11-17 at 09:40 -0800, Casey Schaufler wrote:
-> On 11/17/2022 9:24 AM, Mimi Zohar wrote:
-> > On Thu, 2022-11-17 at 09:18 -0800, Casey Schaufler wrote:
-> >> On 11/17/2022 8:05 AM, Mimi Zohar wrote:
-> >>> hOn Thu, 2022-11-10 at 10:46 +0100, Roberto Sassu wrote:
-> >>>> From: Roberto Sassu <roberto.sassu@huawei.com>
-> >>>>
-> >>>> Currently, security_inode_init_security() supports only one LSM providing
-> >>>> an xattr and EVM calculating the HMAC on that xattr, plus other inode
-> >>>> metadata.
-> >>>>
-> >>>> Allow all LSMs to provide one or multiple xattrs, by extending the security
-> >>>> blob reservation mechanism. Introduce the new lbs_xattr field of the
-> >>>> lsm_blob_sizes structure, so that each LSM can specify how many xattrs it
-> >>>> needs, and the LSM infrastructure knows how many xattr slots it should
-> >>>> allocate.
-> >>> Perhaps supporting per LSM multiple xattrs is a nice idea, but EVM
-> >>> doesn't currently support it.  The LSM xattrs are hard coded in
-> >>> evm_config_default_xattrnames[],  based on whether the LSM is
-> >>> configured.  Additional security xattrs may be included in the
-> >>> security.evm calculation, by extending the list via
-> >>> security/integrity/evm/evm_xattrs.
-> >> Smack uses multiple xattrs. All file system objects have a SMACK64
-> >> attribute, which is used for access control. A program file may have
-> >> a SMACK64EXEC attribute, which is the label the program will run with.
-> >> A library may have a SMACK64MMAP attribute to restrict loading. A
-> >> directory may have a SMACK64TRANSMUTE attribute, which modifies the
-> >> new object creation behavior.
-> >>
-> >> The point being that it may be more than a "nice idea" to support
-> >> multiple xattrs. It's not a hypothetical situation.
-> > And each of these addiitonal Smack xattrs are already defined in 
-> > evm_config_default_xattrnames[].
+
+On 21/10/2022 17:26, Konstantin Meskhidze wrote:
+> To support network type rules, this modification renames ruleset's
+> access masks and modifies it's type to access_masks_t. This patch
+> adds filesystem helper functions to add and get filesystem mask.
 > 
-> Then I'm confused by the statement that "EVM doesn't currently support it".
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
+> 
+> Changes since v7:
+> * Refactors commit message.
+> 
+> Changes since v6:
+> * Adds a new access_masks_t for struct ruleset.
+> * Renames landlock_set_fs_access_mask() to landlock_add_fs_access_mask()
+>    because it OR values.
+> * Makes landlock_add_fs_access_mask() more resilient incorrect values.
+> * Refactors landlock_get_fs_access_mask().
+> 
+> Changes since v6:
+> * Adds a new access_masks_t for struct ruleset.
+> * Renames landlock_set_fs_access_mask() to landlock_add_fs_access_mask()
+>    because it OR values.
+> * Makes landlock_add_fs_access_mask() more resilient incorrect values.
+> * Refactors landlock_get_fs_access_mask().
+> 
+> Changes since v5:
+> * Changes access_mask_t to u32.
+> * Formats code with clang-format-14.
+> 
+> Changes since v4:
+> * Deletes struct landlock_access_mask.
+> 
+> Changes since v3:
+> * Splits commit.
+> * Adds get_mask, set_mask helpers for filesystem.
+> * Adds new struct landlock_access_mask.
+> 
+> ---
+>   security/landlock/fs.c       | 10 +++++-----
+>   security/landlock/limits.h   |  1 +
+>   security/landlock/ruleset.c  | 17 +++++++++--------
+>   security/landlock/ruleset.h  | 35 +++++++++++++++++++++++++++++++----
+>   security/landlock/syscalls.c |  7 ++++---
+>   5 files changed, 50 insertions(+), 20 deletions(-)
+> 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index adcea0fe7e68..0d57c6479d29 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -178,9 +178,9 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+>   		return -EINVAL;
+> 
+>   	/* Transforms relative access rights to absolute ones. */
+> -	access_rights |=
+> -		LANDLOCK_MASK_ACCESS_FS &
+> -		~(ruleset->fs_access_masks[0] | ACCESS_INITIALLY_DENIED);
+> +	access_rights |= LANDLOCK_MASK_ACCESS_FS &
+> +			 ~(landlock_get_fs_access_mask(ruleset, 0) |
+> +			   ACCESS_INITIALLY_DENIED);
+>   	object = get_inode_object(d_backing_inode(path->dentry));
+>   	if (IS_ERR(object))
+>   		return PTR_ERR(object);
+> @@ -294,7 +294,7 @@ get_handled_accesses(const struct landlock_ruleset *const domain)
+>   	size_t layer_level;
+> 
+>   	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
+> -		access_dom |= domain->fs_access_masks[layer_level];
+> +		access_dom |= landlock_get_fs_access_mask(domain, layer_level);
+>   	return access_dom & LANDLOCK_MASK_ACCESS_FS;
 
-My mistake.  As you pointed out, Smack is defining multiple security
-xattrs.
+You can remove `& LANDLOCK_MASK_ACCESS_FS` here because it is now part 
+of landlock_get_fs_access_mask().
 
-Mimi
 
+>   }
+> 
+> @@ -336,7 +336,7 @@ init_layer_masks(const struct landlock_ruleset *const domain,
+>   			 * access rights.
+>   			 */
+>   			if (BIT_ULL(access_bit) &
+> -			    (domain->fs_access_masks[layer_level] |
+> +			    (landlock_get_fs_access_mask(domain, layer_level) |
+>   			     ACCESS_INITIALLY_DENIED)) {
+>   				(*layer_masks)[access_bit] |=
+>   					BIT_ULL(layer_level);
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index 82288f0e9e5e..bafb3b8dc677 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -21,6 +21,7 @@
+>   #define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_TRUNCATE
+>   #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+>   #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+> +#define LANDLOCK_SHIFT_ACCESS_FS	0
+> 
+>   /* clang-format on */
+> 
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index 996484f98bfd..1f3188b4e313 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -29,7 +29,7 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+>   	struct landlock_ruleset *new_ruleset;
+> 
+>   	new_ruleset =
+> -		kzalloc(struct_size(new_ruleset, fs_access_masks, num_layers),
+> +		kzalloc(struct_size(new_ruleset, access_masks, num_layers),
+>   			GFP_KERNEL_ACCOUNT);
+>   	if (!new_ruleset)
+>   		return ERR_PTR(-ENOMEM);
+> @@ -40,7 +40,7 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+>   	/*
+>   	 * hierarchy = NULL
+>   	 * num_rules = 0
+> -	 * fs_access_masks[] = 0
+> +	 * access_masks[] = 0
+>   	 */
+>   	return new_ruleset;
+>   }
+> @@ -55,7 +55,7 @@ landlock_create_ruleset(const access_mask_t fs_access_mask)
+>   		return ERR_PTR(-ENOMSG);
+>   	new_ruleset = create_ruleset(1);
+>   	if (!IS_ERR(new_ruleset))
+> -		new_ruleset->fs_access_masks[0] = fs_access_mask;
+> +		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
+>   	return new_ruleset;
+>   }
+> 
+> @@ -117,11 +117,12 @@ static void build_check_ruleset(void)
+>   		.num_rules = ~0,
+>   		.num_layers = ~0,
+>   	};
+> -	typeof(ruleset.fs_access_masks[0]) fs_access_mask = ~0;
+> +	typeof(ruleset.access_masks[0]) access_masks = ~0;
+> 
+>   	BUILD_BUG_ON(ruleset.num_rules < LANDLOCK_MAX_NUM_RULES);
+>   	BUILD_BUG_ON(ruleset.num_layers < LANDLOCK_MAX_NUM_LAYERS);
+> -	BUILD_BUG_ON(fs_access_mask < LANDLOCK_MASK_ACCESS_FS);
+> +	BUILD_BUG_ON(access_masks <
+> +		     (LANDLOCK_MASK_ACCESS_FS << LANDLOCK_SHIFT_ACCESS_FS));
+>   }
+> 
+>   /**
+> @@ -281,7 +282,7 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
+>   		err = -EINVAL;
+>   		goto out_unlock;
+>   	}
+> -	dst->fs_access_masks[dst->num_layers - 1] = src->fs_access_masks[0];
+> +	dst->access_masks[dst->num_layers - 1] = src->access_masks[0];
+> 
+>   	/* Merges the @src tree. */
+>   	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule, &src->root,
+> @@ -340,8 +341,8 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
+>   		goto out_unlock;
+>   	}
+>   	/* Copies the parent layer stack and leaves a space for the new layer. */
+> -	memcpy(child->fs_access_masks, parent->fs_access_masks,
+> -	       flex_array_size(parent, fs_access_masks, parent->num_layers));
+> +	memcpy(child->access_masks, parent->access_masks,
+> +	       flex_array_size(parent, access_masks, parent->num_layers));
+> 
+>   	if (WARN_ON_ONCE(!parent->hierarchy)) {
+>   		err = -EINVAL;
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index d43231b783e4..f2ad932d396c 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -25,6 +25,11 @@ static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+>   /* Makes sure for_each_set_bit() and for_each_clear_bit() calls are OK. */
+>   static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
+> 
+> +/* Ruleset access masks. */
+> +typedef u16 access_masks_t;
+> +/* Makes sure all ruleset access rights can be stored. */
+> +static_assert(BITS_PER_TYPE(access_masks_t) >= LANDLOCK_NUM_ACCESS_FS);
+> +
+>   typedef u16 layer_mask_t;
+>   /* Makes sure all layers can be checked. */
+>   static_assert(BITS_PER_TYPE(layer_mask_t) >= LANDLOCK_MAX_NUM_LAYERS);
+> @@ -110,7 +115,7 @@ struct landlock_ruleset {
+>   		 * section.  This is only used by
+>   		 * landlock_put_ruleset_deferred() when @usage reaches zero.
+>   		 * The fields @lock, @usage, @num_rules, @num_layers and
+> -		 * @fs_access_masks are then unused.
+> +		 * @access_masks are then unused.
+>   		 */
+>   		struct work_struct work_free;
+>   		struct {
+> @@ -137,7 +142,7 @@ struct landlock_ruleset {
+>   			 */
+>   			u32 num_layers;
+>   			/**
+> -			 * @fs_access_masks: Contains the subset of filesystem
+> +			 * @access_masks: Contains the subset of filesystem
+>   			 * actions that are restricted by a ruleset.  A domain
+>   			 * saves all layers of merged rulesets in a stack
+>   			 * (FAM), starting from the first layer to the last
+> @@ -148,13 +153,13 @@ struct landlock_ruleset {
+>   			 * layers are set once and never changed for the
+>   			 * lifetime of the ruleset.
+>   			 */
+> -			access_mask_t fs_access_masks[];
+> +			access_masks_t access_masks[];
+>   		};
+>   	};
+>   };
+> 
+>   struct landlock_ruleset *
+> -landlock_create_ruleset(const access_mask_t fs_access_mask);
+> +landlock_create_ruleset(const access_mask_t access_mask);
+> 
+>   void landlock_put_ruleset(struct landlock_ruleset *const ruleset);
+>   void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset);
+> @@ -177,4 +182,26 @@ static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
+>   		refcount_inc(&ruleset->usage);
+>   }
+> 
+> +static inline void
+> +landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
+> +			    const access_mask_t fs_access_mask,
+> +			    const u16 layer_level)
+> +{
+> +	access_mask_t fs_mask = fs_access_mask & LANDLOCK_MASK_ACCESS_FS;
+> +
+> +	/* Should already be checked in sys_landlock_create_ruleset(). */
+> +	WARN_ON_ONCE(fs_access_mask != fs_mask);
+> +	// TODO: Add tests to check "|=" and not "="
+
+This todo should be done and removed. No more todos must remain.
+
+
+> +	ruleset->access_masks[layer_level] |=
+> +		(fs_mask << LANDLOCK_SHIFT_ACCESS_FS);
+> +}
+> +
+> +static inline access_mask_t
+> +landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
+> +			    const u16 layer_level)
+> +{
+> +	return (ruleset->access_masks[layer_level] >>
+> +		LANDLOCK_SHIFT_ACCESS_FS) &
+> +	       LANDLOCK_MASK_ACCESS_FS;
+> +}
+>   #endif /* _SECURITY_LANDLOCK_RULESET_H */
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index 245cc650a4dc..71aca7f990bc 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -346,10 +346,11 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+>   	}
+>   	/*
+>   	 * Checks that allowed_access matches the @ruleset constraints
+> -	 * (ruleset->fs_access_masks[0] is automatically upgraded to 64-bits).
+> +	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
+>   	 */
+> -	if ((path_beneath_attr.allowed_access | ruleset->fs_access_masks[0]) !=
+> -	    ruleset->fs_access_masks[0]) {
+> +	if ((path_beneath_attr.allowed_access |
+> +	     landlock_get_fs_access_mask(ruleset, 0)) !=
+> +	    landlock_get_fs_access_mask(ruleset, 0)) {
+>   		err = -EINVAL;
+>   		goto out_put_ruleset;
+>   	}
+> --
+> 2.25.1
+> 
+
+I'll send a patch to be applied after this one.
