@@ -2,79 +2,93 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 985F3C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 07:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BF8C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 07:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239321AbiKQH2T (ORCPT
+        id S239349AbiKQHaV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Nov 2022 02:28:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32780 "EHLO
+        Thu, 17 Nov 2022 02:30:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234615AbiKQH2Q (ORCPT
+        with ESMTP id S239354AbiKQHaU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Nov 2022 02:28:16 -0500
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4774942F46;
-        Wed, 16 Nov 2022 23:28:14 -0800 (PST)
-Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.53])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4NCWdp6DkkzJnlm;
-        Thu, 17 Nov 2022 15:25:02 +0800 (CST)
-Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
- dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Thu, 17 Nov 2022 15:27:41 +0800
-Received: from [10.67.108.193] (10.67.108.193) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Thu, 17 Nov 2022 15:27:40 +0800
-Subject: Re: [PATCH] device_cgroup: Roll back to original exceptions after
- copy failure
-To:     Paul Moore <paul@paul-moore.com>
-CC:     <jmorris@namei.org>, <serge@hallyn.com>,
-        <serge.hallyn@canonical.com>, <akpm@linux-foundation.org>,
-        <aris@redhat.com>, <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        wangweiyang <wangweiyang2@huawei.com>
-References: <20221025113101.41132-1-wangweiyang2@huawei.com>
- <CAHC9VhRa16htUXSN0AXrbUwadRa-qQv+UX8ZO_8W_z2eL=6trw@mail.gmail.com>
-From:   wangweiyang <wangweiyang2@huawei.com>
-Message-ID: <2a52eca2-a064-38da-9f6f-6f4736753067@huawei.com>
-Date:   Thu, 17 Nov 2022 15:27:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
-MIME-Version: 1.0
-In-Reply-To: <CAHC9VhRa16htUXSN0AXrbUwadRa-qQv+UX8ZO_8W_z2eL=6trw@mail.gmail.com>
+        Thu, 17 Nov 2022 02:30:20 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED61167F7B;
+        Wed, 16 Nov 2022 23:30:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 20609B81FA8;
+        Thu, 17 Nov 2022 07:30:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B7A31C433D7;
+        Thu, 17 Nov 2022 07:30:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668670215;
+        bh=kHLyUlmjUgfbmzrTdZWyuXrkxfkse5KTcsnWkmG9JoY=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Db5a74ZLfgfMrgVePBuuqq90Ut0UCzIeQU97Ss6yUvw+zwn8oiODxJe5qDhyreUKo
+         6YZZRNtiq1fikNJRV9kWZw3j0kHEQJ86pu3xaIFBkaXFqs757zWEuj9gXCKI2E7+w4
+         +4WFN1o2etFuKFd42duD9RMOh9WfzqNSazhsWYsPPGEstZjoW10X33iiE0Ff4Ar3pK
+         E2Sra4Pk1jEk8xj8ymxv8xLPl/+l3cZJDuLaGMQWY5ynJtylPRL8aSQLRq8CKcQQjP
+         cXvpiUcP3hsuasKatsN0nTpYT8tljr06F2QX5OEIefaK/q3vLNgPqtMHc3DsgKONED
+         AIp0EevzBv5TA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 98C89E21EFB;
+        Thu, 17 Nov 2022 07:30:15 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.108.193]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf v2] selftests/bpf: fix memory leak of lsm_cgroup
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166867021561.10591.11436633049725137545.git-patchwork-notify@kernel.org>
+Date:   Thu, 17 Nov 2022 07:30:15 +0000
+References: <1668482980-16163-1-git-send-email-wangyufen@huawei.com>
+In-Reply-To: <1668482980-16163-1-git-send-email-wangyufen@huawei.com>
+To:     Wang Yufen <wangyufen@huawei.com>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, paul@paul-moore.com, sdf@google.com
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2022/11/17 7:33, Paul Moore wrote:
-> On Tue, Oct 25, 2022 at 7:02 AM Wang Weiyang <wangweiyang2@huawei.com> wrote:
->>
->> When add the 'a *:* rwm' entry to devcgroup A's whitelist, at first A's
->> exceptions will be cleaned and A's behavior is changed to
->> DEVCG_DEFAULT_ALLOW. Then parent's exceptions will be copyed to A's
->> whitelist. If copy failure occurs, just return leaving A to grant
->> permissions to all devices. And A may grant more permissions than
->> parent.
->>
->> Backup A's whitelist and recover original exceptions after copy
->> failure.
->>
->> Fixes: 4cef7299b478 ("device_cgroup: add proper checking when changing default behavior")
->> Signed-off-by: Wang Weiyang <wangweiyang2@huawei.com>
->> ---
->>  security/device_cgroup.c | 33 +++++++++++++++++++++++++++++----
->>  1 file changed, 29 insertions(+), 4 deletions(-)
-> 
-> Merged into lsm/next, but with a stable@vger tag.  Normally I would
-> merge something like this into lsm/stable-X.Y and send it up to Linus
-> after a few days, but I'd really like this to spend some time in
-> linux-next before going up to Linus.
+Hello:
 
-Thanks Paul. This sounds fine.
+This patch was applied to bpf/bpf-next.git (master)
+by Martin KaFai Lau <martin.lau@kernel.org>:
+
+On Tue, 15 Nov 2022 11:29:40 +0800 you wrote:
+> kmemleak reports this issue:
+> 
+> unreferenced object 0xffff88810b7835c0 (size 32):
+>   comm "test_progs", pid 270, jiffies 4294969007 (age 1621.315s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     03 00 00 00 03 00 00 00 0f 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<00000000376cdeab>] kmalloc_trace+0x27/0x110
+>     [<000000003bcdb3b6>] selinux_sk_alloc_security+0x66/0x110
+>     [<000000003959008f>] security_sk_alloc+0x47/0x80
+>     [<00000000e7bc6668>] sk_prot_alloc+0xbd/0x1a0
+>     [<0000000002d6343a>] sk_alloc+0x3b/0x940
+>     [<000000009812a46d>] unix_create1+0x8f/0x3d0
+>     [<000000005ed0976b>] unix_create+0xa1/0x150
+>     [<0000000086a1d27f>] __sock_create+0x233/0x4a0
+>     [<00000000cffe3a73>] __sys_socket_create.part.0+0xaa/0x110
+>     [<0000000007c63f20>] __sys_socket+0x49/0xf0
+>     [<00000000b08753c8>] __x64_sys_socket+0x42/0x50
+>     [<00000000b56e26b3>] do_syscall_64+0x3b/0x90
+>     [<000000009b4871b8>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf,v2] selftests/bpf: fix memory leak of lsm_cgroup
+    https://git.kernel.org/bpf/bpf-next/c/c453e64cbc95
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
