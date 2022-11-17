@@ -2,104 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 878ECC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 22:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84838C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 22:58:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234418AbiKQWK5 (ORCPT
+        id S235089AbiKQW6Z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Nov 2022 17:10:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47848 "EHLO
+        Thu, 17 Nov 2022 17:58:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240359AbiKQWKn (ORCPT
+        with ESMTP id S235129AbiKQW6X (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Nov 2022 17:10:43 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E665686B3
-        for <linux-security-module@vger.kernel.org>; Thu, 17 Nov 2022 14:10:19 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id jn7so1049237plb.13
-        for <linux-security-module@vger.kernel.org>; Thu, 17 Nov 2022 14:10:19 -0800 (PST)
+        Thu, 17 Nov 2022 17:58:23 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B422813E28
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Nov 2022 14:58:21 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id k2-20020a17090a4c8200b002187cce2f92so1515885pjh.2
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Nov 2022 14:58:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/4ID+KGqIpF7f9TNHDnM6KtMWXO/tfa6FGXAfCVxIwI=;
-        b=LvMwcx1KQczxaWg9/bbbSWwIqx/kxafm8W9ecNm3Ux4i3SrQ8+hFXoZtzYqMBYUNV6
-         iYElfm1vnVPlEBY8K33r4+S0vUpf+l10yOqLrgA40UYXLUFwi4QcSETHzi/jUL8wEC4T
-         OnJUYpO//NEiMuAuO1EHANwiTTT3Xn2JkIbTf6OiU9vLhBltP190dGl6lLnYfS49odBy
-         NSZ18yyyDumt7kUP9zFrPo5Rqt3dtvpf0ZtNmyfEpf+fUR8tFQtDQHhqPwo7i7C78Ey2
-         TehU6XMMxfS9p3VFlHugdyOAe5uQZDXpuUnsOvlewv4TEB2LBA7IzWUmJipQKzo6abG9
-         VN2Q==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gB4fu8WxG++brcac1xEx09Jo8IsSv6jaRuNq5hahL+I=;
+        b=Fy4BdUGW9a1WNEtqYFLG188KBaVxCW7dlYHJCJYByhqbYzWtrREex26XefPtc0cld6
+         YCRtECSkUML5k6sMmax4MrQy/8YHDQGVY6nBvl6IgyA0kq1FCwf8z9yqhcxsos46Zhwv
+         H1rDgpoCNHoreRPMRNhXYMHZ9u7/T1h/SC+nQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/4ID+KGqIpF7f9TNHDnM6KtMWXO/tfa6FGXAfCVxIwI=;
-        b=QjzQ460vuE+Uq0h2M2dCdy7AXFmJG2+G8mAStljsteRHPNa+6HKTKP0fiOHok0iTOv
-         FhrXr17n/vad+vrLmdecniGOt3BMFjOTzy+cU7TV3x8ynZOTU5JUMCRywyL2Z+qm9jhQ
-         oBBnHkszp3O4A5P0Jpk5mhAcheELNQfHKGB8aHQSdfkgFBWjWmQO9xqWA4RI/Mklf3YL
-         NCB+HIEmCT6bMvLwGb1xUlQDG40OUphYh85fYZhxTQMCCr37r9fcPc1Xvknwpvr+saTt
-         LJx/gw2ZW5iAKmO54cKFSDKluERc4qGIxj5pnf2s9p90YMSHbeH4kSnUPTFq6RI4EUES
-         4yZg==
-X-Gm-Message-State: ANoB5plok+aWas3DpgL6bXFbdpjX26oW5VRP7qOhnWJnroPPhQo0EcLp
-        DRY+DRxUClKVH2SunRzjNme5Ds4JhGQrJaJNJ6Mr
-X-Google-Smtp-Source: AA0mqf6n+LAt2AwQRla1Lj5qZPoGeOE7479aiIYy8ezwA6Z6pfLIMdYFmsUC0gygdu7M4FQz543/y1sB3TRrpkf+hKs=
-X-Received: by 2002:a17:902:edcd:b0:186:c3b2:56d1 with SMTP id
- q13-20020a170902edcd00b00186c3b256d1mr4681556plk.15.1668723019096; Thu, 17
- Nov 2022 14:10:19 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gB4fu8WxG++brcac1xEx09Jo8IsSv6jaRuNq5hahL+I=;
+        b=qN1QqIVNsk+9iHvFav0/T23GSNhdUmARcrFs8r2QkBO+TXNAjjnlNd1o2GB//ORzd3
+         urZP0i0N0UKsZnqenttEIb/TKCkpzsT/ZKaaOitggxQdo1gFh6H2rjhaLAUtPPuYx746
+         IAwDQHayYbK1ZoJDX4hbDQGuKBAb0+yhrdzk7lqd06TYw1T3ZVBDNXpvwDLwKm+r7wIg
+         juQeQ/xYRqa22g6RqjD1McQWBmfYCNyNrU4SO1/4RmVLc8SNZ5VzpgfN7PInYloU1I6M
+         6Hi1H7WFviSGqcM2cktyqyh57ic6WY3jwXbvCanV4hgAM5ZF7SFTTlc6rs7H4PjeKKCT
+         +CWQ==
+X-Gm-Message-State: ANoB5plBX5mJVD/IEqYz7gzWA514LdTNuNjpcJXgRraWWSnKQzRYwXYS
+        PVDxgpJOOOMhb6xVh5pZLrvFEw==
+X-Google-Smtp-Source: AA0mqf5a5ur58uPnDpwIjYXEwn4PnQ44wkjJwk4UbGX/PChCoGId0YIreHCZd3TM/oH8mIHpTiFUgA==
+X-Received: by 2002:a17:90a:2b46:b0:213:aa5f:a026 with SMTP id y6-20020a17090a2b4600b00213aa5fa026mr4652677pjc.243.1668725901245;
+        Thu, 17 Nov 2022 14:58:21 -0800 (PST)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id a11-20020a170902710b00b00186bc66d2cbsm1970473pll.73.2022.11.17.14.58.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Nov 2022 14:58:20 -0800 (PST)
+Date:   Thu, 17 Nov 2022 14:58:19 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH mm-unstable v1 20/20] mm: rename FOLL_FORCE to FOLL_PTRACE
+Message-ID: <202211171439.CDE720EAD@keescook>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-21-david@redhat.com>
+ <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
 MIME-Version: 1.0
-References: <20221116125051.3338926-1-j.granados@samsung.com>
- <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
- <20221116125051.3338926-2-j.granados@samsung.com> <20221116173821.GC5094@test-zns>
- <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com> <20221117094004.b5l64ipicitphkun@localhost>
-In-Reply-To: <20221117094004.b5l64ipicitphkun@localhost>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 17 Nov 2022 17:10:07 -0500
-Message-ID: <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
-Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
- implement the ioctl op convention
-To:     Joel Granados <j.granados@samsung.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, ddiss@suse.de,
-        mcgrof@kernel.org, linux-security-module@vger.kernel.org,
-        io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 17, 2022 at 4:40 AM Joel Granados <j.granados@samsung.com> wrote:
-> On Wed, Nov 16, 2022 at 02:21:14PM -0500, Paul Moore wrote:
+On Wed, Nov 16, 2022 at 10:16:34AM -0800, Linus Torvalds wrote:
+> There _are_ also small random cases too, like get_cmdline(). Maybe
+> that counts as ptrace, but the execve() case most definitely does not.
 
-...
+Oh, er, why does get_arg_page() even need FOLL_FORCE? This is writing the
+new stack contents to the nascent brpm->vma, which was newly allocated
+with VM_STACK_FLAGS, which an arch can override, but they all appear to include
+VM_WRITE | VM_MAYWRITE.
 
-> > * As we discussed previously, the real problem is the fact that we are
-> > missing the necessary context in the LSM hook to separate the
-> > different types of command targets.  With traditional ioctls we can
-> > look at the ioctl number and determine both the type of
-> > device/subsystem/etc. as well as the operation being requested; there
-> > is no such information available with the io_uring command
-> > passthrough.  In this sense, the io_uring command passthrough is
-> > actually worse than traditional ioctls from an access control
-> > perspective.  Until we have an easy(ish)[1] way to determine the
-> > io_uring command target type, changes like the one suggested here are
-> > going to be doomed as each target type is free to define their own
-> > io_uring commands.
->
-> The only thing that comes immediately to mind is that we can have
-> io_uring users define a function that is then passed to the LSM
-> infrastructure. This function will have all the logic to give relative
-> context to LSM. It would be general enough to fit all the possible commands
-> and the logic would be implemented in the "drivers" side so there is no
-> need for LSM folks to know all io_uring users.
-
-Passing a function pointer to the LSM to fetch, what will likely be
-just a constant value, seems kinda ugly, but I guess we only have ugly
-options at this point.  I imagine we could cache the result in the
-inode's security blob, assuming the device type remained constant (I
-can't think of why it would change); still ugly but at least it
-doesn't require multiple indirect calls.
-
-It's probably worth throwing together a quick patch so we can discuss
-this further.
-
---
-paul-moore.com
+-- 
+Kees Cook
