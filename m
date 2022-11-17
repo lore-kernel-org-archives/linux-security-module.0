@@ -2,332 +2,243 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6F6C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 18:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A04C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 21:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234724AbiKQSz0 (ORCPT
+        id S240076AbiKQVao (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Nov 2022 13:55:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51608 "EHLO
+        Thu, 17 Nov 2022 16:30:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233679AbiKQSzZ (ORCPT
+        with ESMTP id S234875AbiKQVan (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Nov 2022 13:55:25 -0500
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 731DC82226
-        for <linux-security-module@vger.kernel.org>; Thu, 17 Nov 2022 10:55:24 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NCpyL5K5RzMqVDY;
-        Thu, 17 Nov 2022 19:55:22 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4NCpyL2jfLzxP;
-        Thu, 17 Nov 2022 19:55:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1668711322;
-        bh=ToT1dq1Nv1AUWS2cMB5iTi7bBBJ/YRVAaf3iJqzBgvQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AExfCpZ47CioMzy1mkX0C3vkKkTISg45n+FFM7UoI2h5vgxrm2/Ao4XPnmDHASGN7
-         3xOicbr3A8IyM66LyaX2C0WCTuPah5v7D8WrmstB9idjHMABehgjaZcGCr7cKa/6wR
-         xeIuvooMd4cTtE5rn5xMe5HHcRY2bWS8mctN/BuU=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        artem.kuzin@huawei.com, gnoack3000@gmail.com,
-        willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org
-Subject: [PATCH] landlock: Allow filesystem layout changes for domains without such rule type
-Date:   Thu, 17 Nov 2022 19:55:09 +0100
-Message-Id: <20221117185509.702361-1-mic@digikod.net>
-In-Reply-To: <5c6c99f7-4218-1f79-477e-5d943c9809fd@digikod.net>
-References: <5c6c99f7-4218-1f79-477e-5d943c9809fd@digikod.net>
+        Thu, 17 Nov 2022 16:30:43 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A7AD101C0;
+        Thu, 17 Nov 2022 13:30:41 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F3BB0B82205;
+        Thu, 17 Nov 2022 21:30:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B627BC433D6;
+        Thu, 17 Nov 2022 21:30:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1668720638;
+        bh=qYl67bsPlVudFRZ07LmNN+KoGZ8Y9700f1Y7TQQuaAA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1Mu1bjcodR2h6/tluJfRwYugN7e71YcxSv/MAWYAeYyM6pP9nh/LtchZM00hlfJP4
+         YWY93YeMF0SBDgjiQEooKErINoLVwD6Uwl9Dpy7RJ58WHYo5sTt49s8jC9H+WkQajW
+         WNmOX/r/l0+uTB1XIF6NEKv5O5FZFnmVojfttBik=
+Date:   Thu, 17 Nov 2022 22:27:30 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nayna <nayna@linux.vnet.ibm.com>
+Cc:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell Currey <ruscur@russell.cc>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
+ fwsecurityfs
+Message-ID: <Y3anQukokMcQr+iE@kroah.com>
+References: <20221106210744.603240-1-nayna@linux.ibm.com>
+ <20221106210744.603240-3-nayna@linux.ibm.com>
+ <Y2uvUFQ9S2oaefSY@kroah.com>
+ <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
+ <Y2zLRw/TzV/sWgqO@kroah.com>
+ <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Allow mount point and root directory changes when there is no filesystem
-rule tied to the current Landlock domain.  This doesn't change anything
-for now because a domain must have at least a (filesystem) rule, but
-this will change when other rule types will come.  For instance, a
-domain only restricting the network should have no impact on filesystem
-restrictions.
+On Mon, Nov 14, 2022 at 06:03:43PM -0500, Nayna wrote:
+> 
+> On 11/10/22 04:58, Greg Kroah-Hartman wrote:
+> > On Wed, Nov 09, 2022 at 03:10:37PM -0500, Nayna wrote:
+> > > On 11/9/22 08:46, Greg Kroah-Hartman wrote:
+> > > > On Sun, Nov 06, 2022 at 04:07:42PM -0500, Nayna Jain wrote:
+> > > > > securityfs is meant for Linux security subsystems to expose policies/logs
+> > > > > or any other information. However, there are various firmware security
+> > > > > features which expose their variables for user management via the kernel.
+> > > > > There is currently no single place to expose these variables. Different
+> > > > > platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
+> > > > > interface as they find it appropriate. Thus, there is a gap in kernel
+> > > > > interfaces to expose variables for security features.
+> > > > > 
+> > > > > Define a firmware security filesystem (fwsecurityfs) to be used by
+> > > > > security features enabled by the firmware. These variables are platform
+> > > > > specific. This filesystem provides platforms a way to implement their
+> > > > >    own underlying semantics by defining own inode and file operations.
+> > > > > 
+> > > > > Similar to securityfs, the firmware security filesystem is recommended
+> > > > > to be exposed on a well known mount point /sys/firmware/security.
+> > > > > Platforms can define their own directory or file structure under this path.
+> > > > > 
+> > > > > Example:
+> > > > > 
+> > > > > # mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
+> > > > Why not juset use securityfs in /sys/security/firmware/ instead?  Then
+> > > > you don't have to create a new filesystem and convince userspace to
+> > > > mount it in a specific location?
+> > >  From man 5 sysfs page:
+> > > 
+> > > /sys/firmware: This subdirectory contains interfaces for viewing and
+> > > manipulating firmware-specific objects and attributes.
+> > > 
+> > > /sys/kernel: This subdirectory contains various files and subdirectories
+> > > that provide information about the running kernel.
+> > > 
+> > > The security variables which are being exposed via fwsecurityfs are managed
+> > > by firmware, stored in firmware managed space and also often consumed by
+> > > firmware for enabling various security features.
+> > Ok, then just use the normal sysfs interface for /sys/firmware, why do
+> > you need a whole new filesystem type?
+> > 
+> > >  From git commit b67dbf9d4c1987c370fd18fdc4cf9d8aaea604c2, the purpose of
+> > > securityfs(/sys/kernel/security) is to provide a common place for all kernel
+> > > LSMs. The idea of
+> > > fwsecurityfs(/sys/firmware/security) is to similarly provide a common place
+> > > for all firmware security objects.
+> > > 
+> > > /sys/firmware already exists. The patch now defines a new /security
+> > > directory in it for firmware security features. Using /sys/kernel/security
+> > > would mean scattering firmware objects in multiple places and confusing the
+> > > purpose of /sys/kernel and /sys/firmware.
+> > sysfs is confusing already, no problem with making it more confusing :)
+> > 
+> > Just document where you add things and all should be fine.
+> > 
+> > > Even though fwsecurityfs code is based on securityfs, since the two
+> > > filesystems expose different types of objects and have different
+> > > requirements, there are distinctions:
+> > > 
+> > > 1. fwsecurityfs lets users create files in userspace, securityfs only allows
+> > > kernel subsystems to create files.
+> > Wait, why would a user ever create a file in this filesystem?  If you
+> > need that, why not use configfs?  That's what that is for, right?
+> 
+> The purpose of fwsecurityfs is not to expose configuration items but rather
+> security objects used for firmware security features. I think these are more
+> comparable to EFI variables, which are exposed via an EFI-specific
+> filesystem, efivarfs, rather than configfs.
+> 
+> > 
+> > > 2. firmware and kernel objects may have different requirements. For example,
+> > > consideration of namespacing. As per my understanding, namespacing is
+> > > applied to kernel resources and not firmware resources. That's why it makes
+> > > sense to add support for namespacing in securityfs, but we concluded that
+> > > fwsecurityfs currently doesn't need it. Another but similar example of it
+> > > is: TPM space, which is exposed from hardware. For containers, the TPM would
+> > > be made as virtual/software TPM. Similarly for firmware space for
+> > > containers, it would have to be something virtualized/software version of
+> > > it.
+> > I do not understand, sorry.  What does namespaces have to do with this?
+> > sysfs can already handle namespaces just fine, why not use that?
+> 
+> Firmware objects are not namespaced. I mentioned it here as an example of
+> the difference between firmware and kernel objects. It is also in response
+> to the feedback from James Bottomley in RFC v2 [https://lore.kernel.org/linuxppc-dev/41ca51e8db9907d9060cc38adb59a66dcae4c59b.camel@HansenPartnership.com/].
 
-Add a new get_current_fs_domain() helper to quickly check filesystem
-rule existence for all filesystem LSM hooks.
+I do not understand, sorry.  Do you want to use a namespace for these or
+not?  The code does not seem to be using namespaces.  You can use sysfs
+with, or without, a namespace so I don't understand the issue here.
 
-Remove unnecessary inlining.
+With your code, there is no namespace.
 
-Signed-off-by: MickaÃ«l SalaÃ¼n <mic@digikod.net>
----
- security/landlock/fs.c       | 73 ++++++++++++++++++------------------
- security/landlock/ruleset.h  | 25 +++++++++++-
- security/landlock/syscalls.c |  6 +--
- 3 files changed, 62 insertions(+), 42 deletions(-)
+> > > 3. firmware objects are persistent and read at boot time by interaction with
+> > > firmware, unlike kernel objects which are not persistent.
+> > That doesn't matter, sysfs exports what the hardware provides, and that
+> > might persist over boot.
+> > 
+> > So I don't see why a new filesystem is needed.
+> > 
+> > You didn't explain why sysfs, or securitfs (except for the location in
+> > the tree) does not work at all for your needs.  The location really
+> > doesn't matter all that much as you are creating a brand new location
+> > anyway so we can just declare "this is where this stuff goes" and be ok.
+> 
+> For rest of the questions, here is the summarized response.
+> 
+> Based on mailing list previous discussions [1][2][3] and considering various
+> firmware security use cases, our fwsecurityfs proposal seemed to be a
+> reasonable and acceptable approach based on the feedback [4].
+> 
+> [1] https://lore.kernel.org/linuxppc-dev/YeuyUVVdFADCuDr4@kroah.com/#t
+> [2] https://lore.kernel.org/linuxppc-dev/Yfk6gucNmJuR%2Fegi@kroah.com/
+> [3] https://lore.kernel.org/all/Yfo%2F5gYgb9Sv24YB@kroah.com/t/#m40250fdb3fddaafe502ab06e329e63381b00582d
+> [4] https://lore.kernel.org/linuxppc-dev/YrQqPhi4+jHZ1WJc@kroah.com/
+> 
+> RFC v1 was using sysfs. After considering feedback[1][2][3], the following
+> are design considerations for unification via fwsecurityfs:
+> 
+> 1. Unify the location: Defining a security directory under /sys/firmware
+> facilitates exposing objects related to firmware security features in a
+> single place. Different platforms can create their respective directory
+> structures within /sys/firmware/security.
 
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 0d57c6479d29..0ae54a639e16 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -150,16 +150,6 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
- 	LANDLOCK_ACCESS_FS_TRUNCATE)
- /* clang-format on */
- 
--/*
-- * All access rights that are denied by default whether they are handled or not
-- * by a ruleset/layer.  This must be ORed with all ruleset->fs_access_masks[]
-- * entries when we need to get the absolute handled access masks.
-- */
--/* clang-format off */
--#define ACCESS_INITIALLY_DENIED ( \
--	LANDLOCK_ACCESS_FS_REFER)
--/* clang-format on */
--
- /*
-  * @path: Should have been checked by get_path_from_fd().
-  */
-@@ -179,8 +169,7 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
- 
- 	/* Transforms relative access rights to absolute ones. */
- 	access_rights |= LANDLOCK_MASK_ACCESS_FS &
--			 ~(landlock_get_fs_access_mask(ruleset, 0) |
--			   ACCESS_INITIALLY_DENIED);
-+			 ~landlock_get_fs_access_mask(ruleset, 0);
- 	object = get_inode_object(d_backing_inode(path->dentry));
- 	if (IS_ERR(object))
- 		return PTR_ERR(object);
-@@ -287,14 +276,15 @@ static inline bool is_nouser_or_private(const struct dentry *dentry)
- 		unlikely(IS_PRIVATE(d_backing_inode(dentry))));
- }
- 
--static inline access_mask_t
--get_handled_accesses(const struct landlock_ruleset *const domain)
-+static access_mask_t
-+get_raw_handled_fs_accesses(const struct landlock_ruleset *const domain)
- {
--	access_mask_t access_dom = ACCESS_INITIALLY_DENIED;
-+	access_mask_t access_dom = 0;
- 	size_t layer_level;
- 
- 	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
--		access_dom |= landlock_get_fs_access_mask(domain, layer_level);
-+		access_dom |=
-+			landlock_get_raw_fs_access_mask(domain, layer_level);
- 	return access_dom & LANDLOCK_MASK_ACCESS_FS;
- }
- 
-@@ -331,13 +321,8 @@ init_layer_masks(const struct landlock_ruleset *const domain,
- 
- 		for_each_set_bit(access_bit, &access_req,
- 				 ARRAY_SIZE(*layer_masks)) {
--			/*
--			 * Artificially handles all initially denied by default
--			 * access rights.
--			 */
- 			if (BIT_ULL(access_bit) &
--			    (landlock_get_fs_access_mask(domain, layer_level) |
--			     ACCESS_INITIALLY_DENIED)) {
-+			    landlock_get_fs_access_mask(domain, layer_level)) {
- 				(*layer_masks)[access_bit] |=
- 					BIT_ULL(layer_level);
- 				handled_accesses |= BIT_ULL(access_bit);
-@@ -347,6 +332,24 @@ init_layer_masks(const struct landlock_ruleset *const domain,
- 	return handled_accesses;
- }
- 
-+static access_mask_t
-+get_handled_fs_accesses(const struct landlock_ruleset *const domain)
-+{
-+	/* Handles all initially denied by default access rights. */
-+	return get_raw_handled_fs_accesses(domain) | ACCESS_FS_INITIALLY_DENIED;
-+}
-+
-+static const struct landlock_ruleset *get_current_fs_domain(void)
-+{
-+	const struct landlock_ruleset *const dom =
-+		landlock_get_current_domain();
-+
-+	if (!dom || !get_raw_handled_fs_accesses(dom))
-+		return NULL;
-+
-+	return dom;
-+}
-+
- /*
-  * Check that a destination file hierarchy has more restrictions than a source
-  * file hierarchy.  This is only used for link and rename actions.
-@@ -519,7 +522,7 @@ static bool is_access_to_paths_allowed(
- 		 * a superset of the meaningful requested accesses).
- 		 */
- 		access_masked_parent1 = access_masked_parent2 =
--			get_handled_accesses(domain);
-+			get_handled_fs_accesses(domain);
- 		is_dom_check = true;
- 	} else {
- 		if (WARN_ON_ONCE(dentry_child1 || dentry_child2))
-@@ -648,11 +651,10 @@ static inline int check_access_path(const struct landlock_ruleset *const domain,
- 	return -EACCES;
- }
- 
--static inline int current_check_access_path(const struct path *const path,
-+static int current_check_access_path(const struct path *const path,
- 					    const access_mask_t access_request)
- {
--	const struct landlock_ruleset *const dom =
--		landlock_get_current_domain();
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
- 
- 	if (!dom)
- 		return 0;
-@@ -815,8 +817,7 @@ static int current_check_refer_path(struct dentry *const old_dentry,
- 				    struct dentry *const new_dentry,
- 				    const bool removable, const bool exchange)
- {
--	const struct landlock_ruleset *const dom =
--		landlock_get_current_domain();
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
- 	bool allow_parent1, allow_parent2;
- 	access_mask_t access_request_parent1, access_request_parent2;
- 	struct path mnt_dir;
-@@ -1050,7 +1051,7 @@ static int hook_sb_mount(const char *const dev_name,
- 			 const struct path *const path, const char *const type,
- 			 const unsigned long flags, void *const data)
- {
--	if (!landlock_get_current_domain())
-+	if (!get_current_fs_domain())
- 		return 0;
- 	return -EPERM;
- }
-@@ -1058,7 +1059,7 @@ static int hook_sb_mount(const char *const dev_name,
- static int hook_move_mount(const struct path *const from_path,
- 			   const struct path *const to_path)
- {
--	if (!landlock_get_current_domain())
-+	if (!get_current_fs_domain())
- 		return 0;
- 	return -EPERM;
- }
-@@ -1069,14 +1070,14 @@ static int hook_move_mount(const struct path *const from_path,
-  */
- static int hook_sb_umount(struct vfsmount *const mnt, const int flags)
- {
--	if (!landlock_get_current_domain())
-+	if (!get_current_fs_domain())
- 		return 0;
- 	return -EPERM;
- }
- 
- static int hook_sb_remount(struct super_block *const sb, void *const mnt_opts)
- {
--	if (!landlock_get_current_domain())
-+	if (!get_current_fs_domain())
- 		return 0;
- 	return -EPERM;
- }
-@@ -1092,7 +1093,7 @@ static int hook_sb_remount(struct super_block *const sb, void *const mnt_opts)
- static int hook_sb_pivotroot(const struct path *const old_path,
- 			     const struct path *const new_path)
- {
--	if (!landlock_get_current_domain())
-+	if (!get_current_fs_domain())
- 		return 0;
- 	return -EPERM;
- }
-@@ -1128,8 +1129,7 @@ static int hook_path_mknod(const struct path *const dir,
- 			   struct dentry *const dentry, const umode_t mode,
- 			   const unsigned int dev)
- {
--	const struct landlock_ruleset *const dom =
--		landlock_get_current_domain();
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
- 
- 	if (!dom)
- 		return 0;
-@@ -1208,8 +1208,7 @@ static int hook_file_open(struct file *const file)
- 	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
- 	access_mask_t open_access_request, full_access_request, allowed_access;
- 	const access_mask_t optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
--	const struct landlock_ruleset *const dom =
--		landlock_get_current_domain();
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
- 
- 	if (!dom)
- 		return 0;
-diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-index f2ad932d396c..ca46393ef3bb 100644
---- a/security/landlock/ruleset.h
-+++ b/security/landlock/ruleset.h
-@@ -15,10 +15,21 @@
- #include <linux/rbtree.h>
- #include <linux/refcount.h>
- #include <linux/workqueue.h>
-+#include <uapi/linux/landlock.h>
- 
- #include "limits.h"
- #include "object.h"
- 
-+/*
-+ * All access rights that are denied by default whether they are handled or not
-+ * by a ruleset/layer.  This must be ORed with all ruleset->access_masks[]
-+ * entries when we need to get the absolute handled access masks.
-+ */
-+/* clang-format off */
-+#define ACCESS_FS_INITIALLY_DENIED ( \
-+	LANDLOCK_ACCESS_FS_REFER)
-+/* clang-format on */
-+
- typedef u16 access_mask_t;
- /* Makes sure all filesystem access rights can be stored. */
- static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
-@@ -197,11 +208,21 @@ landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
- }
- 
- static inline access_mask_t
--landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
--			    const u16 layer_level)
-+landlock_get_raw_fs_access_mask(const struct landlock_ruleset *const ruleset,
-+				const u16 layer_level)
- {
- 	return (ruleset->access_masks[layer_level] >>
- 		LANDLOCK_SHIFT_ACCESS_FS) &
- 	       LANDLOCK_MASK_ACCESS_FS;
- }
-+
-+static inline access_mask_t
-+landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
-+			    const u16 layer_level)
-+{
-+	/* Handles all initially denied by default access rights. */
-+	return landlock_get_raw_fs_access_mask(ruleset, layer_level) |
-+	       ACCESS_FS_INITIALLY_DENIED;
-+}
-+
- #endif /* _SECURITY_LANDLOCK_RULESET_H */
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index 71aca7f990bc..d35cd5d304db 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -310,6 +310,7 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
- 	struct path path;
- 	struct landlock_ruleset *ruleset;
- 	int res, err;
-+	access_mask_t mask;
- 
- 	if (!landlock_initialized)
- 		return -EOPNOTSUPP;
-@@ -348,9 +349,8 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
- 	 * Checks that allowed_access matches the @ruleset constraints
- 	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
- 	 */
--	if ((path_beneath_attr.allowed_access |
--	     landlock_get_fs_access_mask(ruleset, 0)) !=
--	    landlock_get_fs_access_mask(ruleset, 0)) {
-+	mask = landlock_get_raw_fs_access_mask(ruleset, 0);
-+	if ((path_beneath_attr.allowed_access | mask) != mask) {
- 		err = -EINVAL;
- 		goto out_put_ruleset;
- 	}
--- 
-2.38.1
+So just pick one place in sysfs for this to always go into.
 
+Your patch series does not document anything here, there are no
+Documentation/ABI/ entries that define the files being created, so that
+it's really hard to be able to review the code to determine if it is
+doing what you are wanting it to do.
+
+You can't document apis with just a changelog text alone, sorry.
+
+> 2. Unify the code:  To support unification, having the fwsecurityfs
+> filesystem API allows different platforms to define the inode and file
+> operations they need. fwsecurityfs provides a common API that can be used by
+> each platform-specific implementation to support its particular requirements
+> and interaction with firmware. Initializing platform-specific functions is
+> the purpose of the fwsecurityfs_arch_init() function that is called on
+> mount. Patch 3/4 implements fwsecurityfs_arch_init() for powerpc.
+
+But you only are doing this for one platform, that's not any
+unification.  APIs don't really work unless they can handle 3 users, as
+then you really understand if they work or not.
+
+Right now you wrote this code and it only has one user, that's a
+platform-specific-filesystem-only so far.
+
+> Similar to the common place securityfs provides for LSMs to interact with
+> kernel security objects, fwsecurityfs would provide a common place for all
+> firmware security objects, which interact with the firmware rather than the
+> kernel. Although at the API level, the two filesystem look similar, the
+> requirements for firmware and kernel objects are different. Therefore,
+> reusing securityfs wasn't a good fit for the firmware use case and we are
+> proposing a similar but different filesystem -  fwsecurityfs - focused for
+> firmware security.
+
+What other platforms will use this?  Who is going to move their code
+over to it?
+
+> > And again, how are you going to get all Linux distros to now mount your
+> > new filesystem?
+> 
+> It would be analogous to the way securityfs is mounted.
+
+That did not answer the question.  The question is how are you going to
+get the distros to mount your new filesystem specifically?  How will
+they know that they need to modify their init scripts to do this?  Who
+is going to do that?  For what distro?  On what timeline?
+
+Oh, and it looks like this series doesn't pass the kernel testing bot at
+all, so I'll not review the code until that's all fixed up at the very
+least.
+
+thanks,
+
+greg k-h
