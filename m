@@ -2,146 +2,138 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EF9C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 13:04:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B240AC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 15:32:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234786AbiKQNEX (ORCPT
+        id S234811AbiKQPcB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Nov 2022 08:04:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56544 "EHLO
+        Thu, 17 Nov 2022 10:32:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231634AbiKQNEW (ORCPT
+        with ESMTP id S234551AbiKQPb5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Nov 2022 08:04:22 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1C972B197;
-        Thu, 17 Nov 2022 05:04:21 -0800 (PST)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AHCibq1021045;
-        Thu, 17 Nov 2022 13:03:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=cjadO755ktE+yKQ9dqvEyND9KuoTueb/HI0lzO/4C98=;
- b=YvHMKRCrogST5xyWZfYmlYwkwLW6HQs/viZTSN08nBx2m82E2YquWuJwq9pgWx+/4R6u
- TBjMNPTSafdvsijI0SG41foyzEzF5cw0qoEpR/7XU76HJ+AGGbEIhQeBlqI89yBFniEx
- sgRQxyPA7ipIonISh6ZbmR8LgcIMPHanioK+NnLkbFUmOkJd9kTl58Pd1V+thq7d6RZ0
- T2q7vwXZgaImkqCpt3yAWUrh47sYev/YXFfvDnhKyURB6tYnPeYbzw3MeRa2GiWP4Tew
- z+HwHnVVGonTYxXhKYqV9sC+CTmxBnTs4vonUfENrUGXTCJX3o3vdiGBZcPT/ESSrDis bA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kwn7vgg9s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Nov 2022 13:03:40 +0000
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AHCrlkl027571;
-        Thu, 17 Nov 2022 13:03:39 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kwn7vgg94-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Nov 2022 13:03:39 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AHCpPYx002703;
-        Thu, 17 Nov 2022 13:03:38 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma04dal.us.ibm.com with ESMTP id 3kt34a9hb9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Nov 2022 13:03:38 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com ([9.208.128.114])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AHD3b37721436
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Nov 2022 13:03:38 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C6235805B;
-        Thu, 17 Nov 2022 13:03:37 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6EF1058059;
-        Thu, 17 Nov 2022 13:03:35 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.98.240])
-        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Thu, 17 Nov 2022 13:03:35 +0000 (GMT)
-Message-ID: <3dc4f389ead98972cb7d09ef285a0065decb0ad0.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 2/5] security: Rewrite
- security_old_inode_init_security()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, nicolas.bouchinet@clip-os.org,
+        Thu, 17 Nov 2022 10:31:57 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2900F012
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Nov 2022 07:31:55 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id w4-20020a17090ac98400b002186f5d7a4cso2187757pjt.0
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Nov 2022 07:31:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YYbyGvr7R4QJ31YRKXqxJVIlaxGSfN/nVPLH9/segYo=;
+        b=bhV42qvhSh6JlAr5LOzLdUDf3KEvgkBFoxSgGMdYhoPh4wNmiNmakO5pya7uYnFNX3
+         9vKnTRjuljBe+GvnX2CkYyrlclqY1/0MWPRPksqKeLO4NhA2lGk5oFt9yTwq7qAyaDQy
+         16zGofSttVBr7KsWP7JC5kJoDoJSMlh/tUIaMbm1gFflZT41h1lXXpfZvGjWMUnexXSC
+         XFbOfhqZ8rRfdbenEkZQfMLMWRZ+KDxBAeflZifNmraa/XKSUNql8j51PuZNSs1hVJDw
+         GmMGb3ZTI2FOYZ7Yes6t/xn8JvLFzyDsxqCyMmVIi3WtCSCO1fEfFREmA+vUGKciNLHl
+         MI8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YYbyGvr7R4QJ31YRKXqxJVIlaxGSfN/nVPLH9/segYo=;
+        b=K/klYpw35jJUvF6PeQwKorc2LqU5W7A3bqlubncElaAKcVXFcVy6wNJPxjwt1rgIqa
+         L388vMvnL/4K4JV5h79ieDAPLn7XsH2m4VQyh6fAw8Yy/R9rfBbISZewaCygu/xLi70h
+         TD86DGpGvZqY6GyqWnHtIabDOfxZUakGKBTsFBTHOjJGhBZiMfZMe5hwBvCh0Vuhnaw6
+         19qyq8gVY/+wiS3xl71dcKM8ypAGinrep2Ek43iG0UTtfN/0zKFAHVk9txMUc/1Ace3W
+         LH7gfLjyDergOOJlDmuwVDfaZdPDHfinI7oy13n1cIY/3sxpZtI+L25khPmIc7J/cext
+         piuA==
+X-Gm-Message-State: ANoB5plM+VoDAvHUUVVeMv13HjqunLH2Ak8Bepcg2ChkkNOv7E9KHoN1
+        l1jXchzESvb9D++sNE7fxOZCO/i32eB5UZz6pQfA
+X-Google-Smtp-Source: AA0mqf7PTUB1E6jT7w2n1cqUSGbsHd4TwbTJSD3G3paAWrXk8kz5NT/xoC/cgmw9kA0xw6mqSK8TjJ9No6As8SS+Zq4=
+X-Received: by 2002:a17:902:b097:b0:17b:4ace:b67f with SMTP id
+ p23-20020a170902b09700b0017b4aceb67fmr3442926plr.12.1668699115322; Thu, 17
+ Nov 2022 07:31:55 -0800 (PST)
+MIME-Version: 1.0
+References: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
+ <20221115175652.3836811-4-roberto.sassu@huaweicloud.com> <CAHC9VhTA7SgFnTFGNxOGW38WSkWu7GSizBmNz=TuazUR4R_jUg@mail.gmail.com>
+ <83cbff40f16a46e733a877d499b904cdf06949b6.camel@huaweicloud.com>
+ <CAHC9VhRX0J8Z61_fH9T5O1ZpRQWSppQekxP8unJqStHuTwQkLQ@mail.gmail.com> <Y3XLgrYbIEpdW0vy@kroah.com>
+In-Reply-To: <Y3XLgrYbIEpdW0vy@kroah.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 17 Nov 2022 10:31:44 -0500
+Message-ID: <CAHC9VhTXegLqVH18AXTYrFPBn1WF0Wu8hbybc1Y5LTr-StFrOw@mail.gmail.com>
+Subject: Re: [RFC][PATCH 3/4] lsm: Redefine LSM_HOOK() macro to add return
+ value flags as argument
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Roberto Sassu <roberto.sassu@huaweicloud.com>, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+        song@kernel.org, yhs@fb.com, john.fastabend@gmail.com,
+        kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
+        jolsa@kernel.org, revest@chromium.org, jackmanb@chromium.org,
+        jmorris@namei.org, serge@hallyn.com, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Roberto Sassu <roberto.sassu@huawei.com>,
-        ocfs2-devel@oss.oracle.com
-Date:   Thu, 17 Nov 2022 08:03:23 -0500
-In-Reply-To: <20221110094639.3086409-3-roberto.sassu@huaweicloud.com>
-References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
-         <20221110094639.3086409-3-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: WMqKO59AnhuMpzL2Nr3S2KehvV3tLQpl
-X-Proofpoint-ORIG-GUID: pHWVY-EOF1k4f1Oiw57AU2E65yMhP3d_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-17_06,2022-11-17_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=776 impostorscore=0 bulkscore=0 spamscore=0 priorityscore=1501
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211170099
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
+On Thu, Nov 17, 2022 at 12:50 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Wed, Nov 16, 2022 at 05:04:05PM -0500, Paul Moore wrote:
+> > On Wed, Nov 16, 2022 at 3:11 AM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > On Tue, 2022-11-15 at 21:27 -0500, Paul Moore wrote:
+> > > > On Tue, Nov 15, 2022 at 12:58 PM Roberto Sassu
+> > > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > >
+> > > > > Define four return value flags (LSM_RET_NEG, LSM_RET_ZERO, LSM_RET_ONE,
+> > > > > LSM_RET_GT_ONE), one for each interval of interest (< 0, = 0, = 1, > 1).
+> > > > >
+> > > > > Redefine the LSM_HOOK() macro to add return value flags as argument, and
+> > > > > set the correct flags for each LSM hook.
+> > > > >
+> > > > > Implementors of new LSM hooks should do the same as well.
+> > > > >
+> > > > > Cc: stable@vger.kernel.org # 5.7.x
+> > > > > Fixes: 9d3fdea789c8 ("bpf: lsm: Provide attachment points for BPF LSM programs")
+> > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > > ---
+> > > > >  include/linux/bpf_lsm.h       |   2 +-
+> > > > >  include/linux/lsm_hook_defs.h | 779 ++++++++++++++++++++--------------
+> > > > >  include/linux/lsm_hooks.h     |   9 +-
+> > > > >  kernel/bpf/bpf_lsm.c          |   5 +-
+> > > > >  security/bpf/hooks.c          |   2 +-
+> > > > >  security/security.c           |   4 +-
+> > > > >  6 files changed, 466 insertions(+), 335 deletions(-)
+> > > >
+> > > > Just a quick note here that even if we wanted to do something like
+> > > > this, it is absolutely not -stable kernel material.  No way.
+> > >
+> > > I was unsure about that. We need a proper fix for this issue that needs
+> > > to be backported to some kernels. I saw this more like a dependency.
+> > > But I agree with you that it would be unlikely that this patch is
+> > > applied to stable kernels.
+> > >
+> > > For stable kernels, what it would be the proper way? We still need to
+> > > maintain an allow list of functions that allow a positive return value,
+> > > at least. Should it be in the eBPF code only?
+> >
+> > Ideally the fix for -stable is the same as what is done for Linus'
+> > kernel (ignoring backport fuzzing), so I would wait and see how that
+> > ends up first.  However, if the patchset for Linus' tree is
+> > particularly large and touches a lot of code, you may need to work on
+> > something a bit more targeted to the specific problem.  I tend to be
+> > more conservative than most kernel devs when it comes to -stable
+> > patches, but if you can't backport the main upstream patchset, smaller
+> > (both in terms of impact and lines changed) is almost always better.
+>
+> No, the mainline patch (what is in Linus's tree), is almost always
+> better and preferred for stable backports.  When you diverge, bugs
+> happen, almost every time, and it makes later fixes harder to backport
+> as well.
+>
+> But first work on solving the problem in Linus's tree.  Don't worry
+> about stable trees until after the correct solution is merged.
 
-On Thu, 2022-11-10 at 10:46 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Rewrite security_old_inode_init_security() to call
-> security_inode_init_security() before making changes to support multiple
-> LSMs providing xattrs. Do it so that the required changes are done only in
-> one place.
+Perhaps you missed my very first sentence where I mentioned exactly
+the same things: solve it in Linus' tree first, backports of patches
+in Linus' tree is ideal.
 
-Only security_inode_init_security() has support for EVM.   Making
-security_old_inode_init_security() a wrapper for
-security_inode_init_security() could result in security.evm extended
-attributes being created that previously weren't created.
-
-In fact ocfs2 defines ocfs2_init_security_get() as a wrapper for both
-the old and new inode_init_security calls based on the caller's
-preference.   Only mknod and symlink seem to use the old function. 
-Wondering why do they differentiate between callers?  (Cc'ing the ocfs2
-mailing list as they're affected by this change.)
-
-"[PATCH v4 1/5] reiserfs: Add missing calls to
-reiserfs_security_free()"  fixed a memory leak.  I couldn't tell if
-there was a similar memory leak in ocfs2, the only other user of
-security_old_inode_init_security().
-
-As ocfs2 already defines initxattrs, that leaves only reiserfs missing
-initxattrs().  A better, cleaner solution would be to define one.
-
-thanks,
-
-Mimi
-
-> 
-> Define the security_initxattrs() callback and pass it to
-> security_inode_init_security() as argument, to obtain the first xattr
-> provided by LSMs.
-> 
-> This behavior is a bit different from the current one. Before this patch
-> calling call_int_hook() could cause multiple LSMs to provide an xattr,
-> since call_int_hook() does not stop when an LSM returns zero. The caller of
-> security_old_inode_init_security() receives the last xattr set. The pointer
-> of the xattr value of previous LSMs is lost, causing memory leaks.
-> 
-> However, in practice, this scenario does not happen as the only in-tree
-> LSMs providing an xattr at inode creation time are SELinux and Smack, which
-> are mutually exclusive.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>b
-
+-- 
+paul-moore.com
