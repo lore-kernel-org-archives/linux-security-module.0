@@ -2,119 +2,79 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477B9C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 05:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 985F3C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 07:28:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239082AbiKQFuf (ORCPT
+        id S239321AbiKQH2T (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Nov 2022 00:50:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44836 "EHLO
+        Thu, 17 Nov 2022 02:28:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239298AbiKQFuK (ORCPT
+        with ESMTP id S234615AbiKQH2Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Nov 2022 00:50:10 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A91A11813;
-        Wed, 16 Nov 2022 21:49:59 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C19F462085;
-        Thu, 17 Nov 2022 05:49:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC1FEC433D6;
-        Thu, 17 Nov 2022 05:49:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1668664198;
-        bh=qGKZERLnu8H566XOnqj6FLlWt0eOikd2hAvc/xFshHU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D9NNrD2fNtF7I72M6hrNhHhwkE2rhBXmwCdDK8zyAqTTmwRIFYD8KFuG7BWWnwbHO
-         oWYhw9cBKohhzm1BSqMZa60ABglKr+cHH8E6/Kks2Pl8YyevoNX4FPKY196qp0r3a4
-         cv8MWhjq/phiXboDHlQQVjm0Ujb5crZk7pYpUmNg=
-Date:   Thu, 17 Nov 2022 06:49:54 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
+        Thu, 17 Nov 2022 02:28:16 -0500
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4774942F46;
+        Wed, 16 Nov 2022 23:28:14 -0800 (PST)
+Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.53])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4NCWdp6DkkzJnlm;
+        Thu, 17 Nov 2022 15:25:02 +0800 (CST)
+Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
+ dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Thu, 17 Nov 2022 15:27:41 +0800
+Received: from [10.67.108.193] (10.67.108.193) by
+ dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Thu, 17 Nov 2022 15:27:40 +0800
+Subject: Re: [PATCH] device_cgroup: Roll back to original exceptions after
+ copy failure
 To:     Paul Moore <paul@paul-moore.com>
-Cc:     Roberto Sassu <roberto.sassu@huaweicloud.com>, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
-        song@kernel.org, yhs@fb.com, john.fastabend@gmail.com,
-        kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
-        jolsa@kernel.org, revest@chromium.org, jackmanb@chromium.org,
-        jmorris@namei.org, serge@hallyn.com, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org
-Subject: Re: [RFC][PATCH 3/4] lsm: Redefine LSM_HOOK() macro to add return
- value flags as argument
-Message-ID: <Y3XLgrYbIEpdW0vy@kroah.com>
-References: <20221115175652.3836811-1-roberto.sassu@huaweicloud.com>
- <20221115175652.3836811-4-roberto.sassu@huaweicloud.com>
- <CAHC9VhTA7SgFnTFGNxOGW38WSkWu7GSizBmNz=TuazUR4R_jUg@mail.gmail.com>
- <83cbff40f16a46e733a877d499b904cdf06949b6.camel@huaweicloud.com>
- <CAHC9VhRX0J8Z61_fH9T5O1ZpRQWSppQekxP8unJqStHuTwQkLQ@mail.gmail.com>
+CC:     <jmorris@namei.org>, <serge@hallyn.com>,
+        <serge.hallyn@canonical.com>, <akpm@linux-foundation.org>,
+        <aris@redhat.com>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        wangweiyang <wangweiyang2@huawei.com>
+References: <20221025113101.41132-1-wangweiyang2@huawei.com>
+ <CAHC9VhRa16htUXSN0AXrbUwadRa-qQv+UX8ZO_8W_z2eL=6trw@mail.gmail.com>
+From:   wangweiyang <wangweiyang2@huawei.com>
+Message-ID: <2a52eca2-a064-38da-9f6f-6f4736753067@huawei.com>
+Date:   Thu, 17 Nov 2022 15:27:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRX0J8Z61_fH9T5O1ZpRQWSppQekxP8unJqStHuTwQkLQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRa16htUXSN0AXrbUwadRa-qQv+UX8ZO_8W_z2eL=6trw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.108.193]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500001.china.huawei.com (7.185.36.107)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 16, 2022 at 05:04:05PM -0500, Paul Moore wrote:
-> On Wed, Nov 16, 2022 at 3:11 AM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > On Tue, 2022-11-15 at 21:27 -0500, Paul Moore wrote:
-> > > On Tue, Nov 15, 2022 at 12:58 PM Roberto Sassu
-> > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > >
-> > > > Define four return value flags (LSM_RET_NEG, LSM_RET_ZERO, LSM_RET_ONE,
-> > > > LSM_RET_GT_ONE), one for each interval of interest (< 0, = 0, = 1, > 1).
-> > > >
-> > > > Redefine the LSM_HOOK() macro to add return value flags as argument, and
-> > > > set the correct flags for each LSM hook.
-> > > >
-> > > > Implementors of new LSM hooks should do the same as well.
-> > > >
-> > > > Cc: stable@vger.kernel.org # 5.7.x
-> > > > Fixes: 9d3fdea789c8 ("bpf: lsm: Provide attachment points for BPF LSM programs")
-> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > ---
-> > > >  include/linux/bpf_lsm.h       |   2 +-
-> > > >  include/linux/lsm_hook_defs.h | 779 ++++++++++++++++++++--------------
-> > > >  include/linux/lsm_hooks.h     |   9 +-
-> > > >  kernel/bpf/bpf_lsm.c          |   5 +-
-> > > >  security/bpf/hooks.c          |   2 +-
-> > > >  security/security.c           |   4 +-
-> > > >  6 files changed, 466 insertions(+), 335 deletions(-)
-> > >
-> > > Just a quick note here that even if we wanted to do something like
-> > > this, it is absolutely not -stable kernel material.  No way.
-> >
-> > I was unsure about that. We need a proper fix for this issue that needs
-> > to be backported to some kernels. I saw this more like a dependency.
-> > But I agree with you that it would be unlikely that this patch is
-> > applied to stable kernels.
-> >
-> > For stable kernels, what it would be the proper way? We still need to
-> > maintain an allow list of functions that allow a positive return value,
-> > at least. Should it be in the eBPF code only?
+On 2022/11/17 7:33, Paul Moore wrote:
+> On Tue, Oct 25, 2022 at 7:02 AM Wang Weiyang <wangweiyang2@huawei.com> wrote:
+>>
+>> When add the 'a *:* rwm' entry to devcgroup A's whitelist, at first A's
+>> exceptions will be cleaned and A's behavior is changed to
+>> DEVCG_DEFAULT_ALLOW. Then parent's exceptions will be copyed to A's
+>> whitelist. If copy failure occurs, just return leaving A to grant
+>> permissions to all devices. And A may grant more permissions than
+>> parent.
+>>
+>> Backup A's whitelist and recover original exceptions after copy
+>> failure.
+>>
+>> Fixes: 4cef7299b478 ("device_cgroup: add proper checking when changing default behavior")
+>> Signed-off-by: Wang Weiyang <wangweiyang2@huawei.com>
+>> ---
+>>  security/device_cgroup.c | 33 +++++++++++++++++++++++++++++----
+>>  1 file changed, 29 insertions(+), 4 deletions(-)
 > 
-> Ideally the fix for -stable is the same as what is done for Linus'
-> kernel (ignoring backport fuzzing), so I would wait and see how that
-> ends up first.  However, if the patchset for Linus' tree is
-> particularly large and touches a lot of code, you may need to work on
-> something a bit more targeted to the specific problem.  I tend to be
-> more conservative than most kernel devs when it comes to -stable
-> patches, but if you can't backport the main upstream patchset, smaller
-> (both in terms of impact and lines changed) is almost always better.
+> Merged into lsm/next, but with a stable@vger tag.  Normally I would
+> merge something like this into lsm/stable-X.Y and send it up to Linus
+> after a few days, but I'd really like this to spend some time in
+> linux-next before going up to Linus.
 
-No, the mainline patch (what is in Linus's tree), is almost always
-better and preferred for stable backports.  When you diverge, bugs
-happen, almost every time, and it makes later fixes harder to backport
-as well.
-
-But first work on solving the problem in Linus's tree.  Don't worry
-about stable trees until after the correct solution is merged.
-
-thanks,
-
-greg k-h
+Thanks Paul. This sounds fine.
