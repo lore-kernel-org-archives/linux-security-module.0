@@ -2,89 +2,122 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B929C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Nov 2022 23:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB5CC4321E
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Nov 2022 00:46:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234568AbiKPXeU (ORCPT
+        id S234669AbiKQAq4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Nov 2022 18:34:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57438 "EHLO
+        Wed, 16 Nov 2022 19:46:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234301AbiKPXeK (ORCPT
+        with ESMTP id S234039AbiKQAqY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Nov 2022 18:34:10 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FE1669DD5
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 15:34:05 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id d59-20020a17090a6f4100b00213202d77e1so3844207pjk.2
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 15:34:05 -0800 (PST)
+        Wed, 16 Nov 2022 19:46:24 -0500
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FBF66EB7D
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 16:45:24 -0800 (PST)
+Received: by mail-qk1-x72e.google.com with SMTP id k4so225042qkj.8
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Nov 2022 16:45:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ud1y37qUMgCM/gxdvQMw6rjpiQr0rPzHkykb2T1TOw=;
-        b=jrbRsTzGFBtzJXH4NdouZxUiYyPKQAwY/xmJBh4NVbrtqvniX5UYfXIvowNG376O3f
-         eLwtZTd6ba3W1ujHY9KXiw+svILo/W9OFO1m0UalP4EKpmsMfepiy/i6aa86EHCqWKyv
-         qWDDUfVotm87pdBDO0Xfgi/+YAkeaCgX+rdo+EuhlYGYDIRpsDvKWmFauliHak4wVNLI
-         DckVU+/rox+Oi5exTkkDEUKV2Mxw/H1pKQZSwIgdYuS8DxVPCnV8ODquNjjbEQLd89Cy
-         sawoAYJG40gaeXZUtqg1vF9XmIjooLLPk2rc3kHLfhCY5MUl7GxaHbuv8P1UN8euweGp
-         hkOg==
+        d=ziepe.ca; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HEOs2OljVpzFekHebtNmxJNTS1biZDzbDC+7E+gbGXE=;
+        b=NKUDG6/HRBHYArrki2ErKlKAFAloDP3syGXEvUqNJ9D2fVrZim0dI4zYfgnJWEKy+2
+         eIgPOs+mttvXhYUIJL/UppN4gHtQqcQpWlrONSgHhATtfRfLqa70r2Y5AFUtDhoXumLz
+         QwAO0SpqErl+SpXb2isD+wqK260zhrI3m0OcjGKZmRIuadG54e+ieDR5HURAecTq4gww
+         +4XuPNBvBD2G5dec/bz8Eh9V9EDh1RbiHGn8GIrcO4V8END9r1k5y0xfRAbT/lxmG9Cm
+         d4SXiY9+ZupOQT/Gb+ZePnA6lwtOPkxvxI9tRVsC2WHBPZX7s+xnX8nZsTymxhqmYSZB
+         7vEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9ud1y37qUMgCM/gxdvQMw6rjpiQr0rPzHkykb2T1TOw=;
-        b=6OpVROr/QoNayJ554bsZLj6CLnJAynG79vLFcwQxXnxMiH4jmY9KTHjZINqyrd6BTn
-         BNaZGYJuDjAl2UQ74aZjGq5XOTcIKit2AYC0fSHCLcuhDj6Re8vj0hrQBSTMsPhKPfLz
-         oUsb+5UxjXKf8dDWIEKkrfmZaK3P0tIoRXlkTSdGP6Gi9o4h76zLSzHuZtXULbA5hr/Z
-         gCxnTWyt2fuzexv5EMwtB6bOoQqD62p9jXa/4wxYpQOtSDpMM3cfMKjoDeTDZoqNQ/TT
-         Nlhdp6DEDeSqmesgPSD7VNH1ZKCxc8sEDRQ/t4quHq2jaf24lQ7GKlKZtZr+8ga5h2pR
-         k1sA==
-X-Gm-Message-State: ANoB5pmJBmBpvbm7Krp2QxGa1LN/wfLfORC3UZyq6YdiukUoiZuzyKus
-        P6i6dEzrgYPoi5bKFP33ZgiYLFWn2uE1FPaBcQTK
-X-Google-Smtp-Source: AA0mqf6autHIA7b+foED8yvIyyGbA11Im+/0A/6tknTVjps8BtDl7zzp+NqROZqk5yDoHG6fU2SESmQwmeAn21G2aCE=
-X-Received: by 2002:a17:90b:2743:b0:20d:4173:faf9 with SMTP id
- qi3-20020a17090b274300b0020d4173faf9mr5961252pjb.147.1668641645195; Wed, 16
- Nov 2022 15:34:05 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HEOs2OljVpzFekHebtNmxJNTS1biZDzbDC+7E+gbGXE=;
+        b=4CBr6aPCTNXCW8snifiQVRMouTfz6ZrR+PjMXNYZdLW/VbMQWb29NMhk6oRNomIhAi
+         WiTpUC7nkIn0TQ6WT/Fv3DycN8E5JSnz+eWv0w4bOzpgZtfiKkDuWWU7kUHYadrXnKhG
+         aOVJXati1Jfm/XP2O67Qsa7Il17lS9Q/O1qz4XMc2d5ofkzPQEAFIDUZ/HJx42DH6Q09
+         J8OsZScG1iiga3lF3jJaleOHQ9g2srk4PEKMHLU3x9vd+l9dSfKLhdzhzgA6V5HqrEom
+         zAg5PTYzHZCpKpfkW0kiQgFb93KZAXaf047cbOqu9EVQbLF3OlUmE/lQsnPh/nkZePGz
+         rVYA==
+X-Gm-Message-State: ANoB5pnytNWA+uBYLM03mN5DAGrd+NQlffYaGUkX3zFuqsE01j8RFmpq
+        /pcWNiXCg/IiHtP6XUY7PWuxjg==
+X-Google-Smtp-Source: AA0mqf7xjJLeTnaPhhrans4JhE0iVba1LlwPzkyl9vYE07B6pyjsI7ODbIFQEN1WHHyVUFKfNxMUWg==
+X-Received: by 2002:a05:620a:1455:b0:6ee:80b5:32d3 with SMTP id i21-20020a05620a145500b006ee80b532d3mr22079595qkl.237.1668645923644;
+        Wed, 16 Nov 2022 16:45:23 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-47-55-122-23.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.122.23])
+        by smtp.gmail.com with ESMTPSA id n7-20020ac86747000000b00399ad646794sm9480378qtp.41.2022.11.16.16.45.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Nov 2022 16:45:22 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.95)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1ovT1t-0066TN-E8;
+        Wed, 16 Nov 2022 20:45:21 -0400
+Date:   Wed, 16 Nov 2022 20:45:21 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leonro@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>
+Subject: Re: [PATCH mm-unstable v1 10/20] RDMA/umem: remove FOLL_FORCE usage
+Message-ID: <Y3WEIVROhUPTtaeQ@ziepe.ca>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-11-david@redhat.com>
 MIME-Version: 1.0
-References: <20221025113101.41132-1-wangweiyang2@huawei.com>
-In-Reply-To: <20221025113101.41132-1-wangweiyang2@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 16 Nov 2022 18:33:53 -0500
-Message-ID: <CAHC9VhRa16htUXSN0AXrbUwadRa-qQv+UX8ZO_8W_z2eL=6trw@mail.gmail.com>
-Subject: Re: [PATCH] device_cgroup: Roll back to original exceptions after
- copy failure
-To:     Wang Weiyang <wangweiyang2@huawei.com>
-Cc:     jmorris@namei.org, serge@hallyn.com, serge.hallyn@canonical.com,
-        akpm@linux-foundation.org, aris@redhat.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221116102659.70287-11-david@redhat.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 25, 2022 at 7:02 AM Wang Weiyang <wangweiyang2@huawei.com> wrote:
->
-> When add the 'a *:* rwm' entry to devcgroup A's whitelist, at first A's
-> exceptions will be cleaned and A's behavior is changed to
-> DEVCG_DEFAULT_ALLOW. Then parent's exceptions will be copyed to A's
-> whitelist. If copy failure occurs, just return leaving A to grant
-> permissions to all devices. And A may grant more permissions than
-> parent.
->
-> Backup A's whitelist and recover original exceptions after copy
-> failure.
->
-> Fixes: 4cef7299b478 ("device_cgroup: add proper checking when changing default behavior")
-> Signed-off-by: Wang Weiyang <wangweiyang2@huawei.com>
+On Wed, Nov 16, 2022 at 11:26:49AM +0100, David Hildenbrand wrote:
+> GUP now supports reliable R/O long-term pinning in COW mappings, such
+> that we break COW early. MAP_SHARED VMAs only use the shared zeropage so
+> far in one corner case (DAXFS file with holes), which can be ignored
+> because GUP does not support long-term pinning in fsdax (see
+> check_vma_flags()).
+> 
+> Consequently, FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM is no longer required
+> for reliable R/O long-term pinning: FOLL_LONGTERM is sufficient. So stop
+> using FOLL_FORCE, which is really only for ptrace access.
+> 
+> Tested-by: Leon Romanovsky <leonro@nvidia.com> # Over mlx4 and mlx5.
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Leon Romanovsky <leon@kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 > ---
->  security/device_cgroup.c | 33 +++++++++++++++++++++++++++++----
->  1 file changed, 29 insertions(+), 4 deletions(-)
+>  drivers/infiniband/core/umem.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-Merged into lsm/next, but with a stable@vger tag.  Normally I would
-merge something like this into lsm/stable-X.Y and send it up to Linus
-after a few days, but I'd really like this to spend some time in
-linux-next before going up to Linus.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
--- 
-paul-moore.com
+Jason
