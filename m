@@ -2,188 +2,93 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC4FC433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Nov 2022 12:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCEFC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Nov 2022 13:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241473AbiKRMdY (ORCPT
+        id S240766AbiKRNof (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Nov 2022 07:33:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44302 "EHLO
+        Fri, 18 Nov 2022 08:44:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235199AbiKRMdD (ORCPT
+        with ESMTP id S234455AbiKRNoe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Nov 2022 07:33:03 -0500
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [IPv6:2001:1600:4:17::190c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E68331C
-        for <linux-security-module@vger.kernel.org>; Fri, 18 Nov 2022 04:33:02 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NDGQh4vjczMpnpq;
-        Fri, 18 Nov 2022 13:33:00 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4NDGQg6Qvkzxl;
-        Fri, 18 Nov 2022 13:32:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1668774780;
-        bh=CFYmjkAvWi62WPgxaIl/0kh2OI+R++JZUJxQqondiZM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=rXqeWXOGKm7I9JDpXZ6rl5ExIhj8/05bb4IpegsuJvtqla9oNc0uZB0sXmvQe8i0R
-         tAmVTU7rVelsRDIYEmkU6f3pA79xJ+L4ppM6CDlApiBLIuMjhXJXaMe2GIuazVVVUe
-         FZyyKkzXGyIBudYnKLlI6Hqhlxjtr3lwQJs74fjQ=
-Message-ID: <7dc782cb-88f8-8519-cd8a-9f89847a3134@digikod.net>
-Date:   Fri, 18 Nov 2022 13:32:59 +0100
+        Fri, 18 Nov 2022 08:44:34 -0500
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 151FBFCD9
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Nov 2022 05:44:33 -0800 (PST)
+Received: by mail-pg1-x52f.google.com with SMTP id 136so5061039pga.1
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Nov 2022 05:44:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4/kW/LvsRCoudJw36ESMmqSNR0Az8yW0/a/nizc4ptw=;
+        b=JDT7hG7hCSGOXGQfHzp0tVmWhUqRqIrDsZ1/D/HWJyOelXHgcjjm8AQXsUwO4RMQvj
+         l7AVYmwK0gDC33+491Z3LzS6MouXoTY5WMX47bzzv3/CYrpF1zyQDpr57XeIM5E7VL3O
+         0bR3CEkCBzg4AFajY4dnahnEQ8wxwS5ibjOV9HLJ8zk9p74cEc/Xxt6ESOCJyom8V9R1
+         bkWfKPpDMv9vt8efVYAy0Rgx6iIw743XKAzLkdoss+m4c6eSKTBow1DkcQ/Irf5SBBhb
+         Ue+4Anj3Qh6cpv7pQHSvEBQARPlhdZjmL6D5xkLFSzknZb8cSxXes/B90Y3So6l0k7I0
+         fC8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4/kW/LvsRCoudJw36ESMmqSNR0Az8yW0/a/nizc4ptw=;
+        b=NCX7r3nT0icsrx9CyN9W2Lllbmb0cikl+Vt5mo4ofcZAcaU8aWu3MDPDSUY6es74e2
+         XKcGdjEducpDW6hRffWMXW6vbew9We1HGvwUxDec+k8fmZ85ZngkL5ZTlbrNnV+U0qSO
+         zG977qgNULXjwpPt81J0l2a6khSxqnasLlzS4cTIU+IDhH+M7hpJYJefX3cFE90OdkuJ
+         ppQqtuD0+YJtiIpW1QgV3/1d2/OZ1Nh8KrIB95nl6D5rWBwTHwxLYk/C1d6QY830isG/
+         8f2FVspAZRDwuduA9B2ojb1YhNlUPOXQpapvU0om0hLcOaC0vDWcE08kACNMq4lwFTSr
+         qQWA==
+X-Gm-Message-State: ANoB5pnTNflJDsbmzR5GL4KxgokU41uliF69Us+w9RKrQxDCsxqidi2+
+        SJXOPU36kv7IdqFoyp7t4CVgezQ88Om+w2NER2LhXRlsDg==
+X-Google-Smtp-Source: AA0mqf4N+tHMLkErc2xL6guhYyiJeJOUM8ZL6UfvJzUAiqq6Ex3AcjtStFVaYD2ZfCzxcvQokZDNo7R83rkgjTu4jeY=
+X-Received: by 2002:a63:1f63:0:b0:460:ec46:3645 with SMTP id
+ q35-20020a631f63000000b00460ec463645mr6857164pgm.92.1668779072496; Fri, 18
+ Nov 2022 05:44:32 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v5 02/30] fs: pass dentry to set acl method
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        xiujianfeng <xiujianfeng@huawei.com>,
-        Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org
-References: <20221018115700.166010-1-brauner@kernel.org>
- <20221018115700.166010-3-brauner@kernel.org>
- <42f5923d-5e47-68d5-20a6-4b5342a9bd19@digikod.net>
- <20221118103346.xvnf5tejbahogfe4@wittgenstein>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20221118103346.xvnf5tejbahogfe4@wittgenstein>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20221110043614.802364-1-paul@paul-moore.com> <20221118015414.GA19423@mail.hallyn.com>
+In-Reply-To: <20221118015414.GA19423@mail.hallyn.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 18 Nov 2022 08:44:21 -0500
+Message-ID: <CAHC9VhSNGSpdYWf_6if+Q+8BZvR-zYYxBMmoYhRNH9rWpn7=AA@mail.gmail.com>
+Subject: Re: [RFC PATCH] lsm,fs: fix vfs_getxattr_alloc() return type and
+ caller error paths
+To:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Nov 17, 2022 at 8:54 PM Serge E. Hallyn <serge@hallyn.com> wrote:
+> On Wed, Nov 09, 2022 at 11:36:14PM -0500, Paul Moore wrote:
+> > The vfs_getxattr_alloc() function currently returns a ssize_t value
+> > despite the fact that it only uses int values internally for return
+> > values.  Fix this by converting vfs_getxattr_alloc() to return an
+> > int type and adjust the callers as necessary.  As part of these
+> > caller modifications, some of the callers are fixed to properly free
+> > the xattr value buffer on both success and failure to ensure that
+> > memory is not leaked in the failure case.
+> >
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+>
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+>
+> Do I understand right that the change to process_measurement()
+> will avoid an unnecessary call to krealloc() if the xattr has
+> not changed size between the two calls to ima_read_xattr()?
+> If something more than that is going on there, it might be
+> worth pointing out in the commit message.
 
-On 18/11/2022 11:33, Christian Brauner wrote:
-> On Fri, Nov 18, 2022 at 11:09:20AM +0100, Mickaël Salaün wrote:
->> Hi Christian,
->>
->> We are working on updating the security_inode_*attr LSM hooks to use path
->> instead of inode [1]. Indeed, this is required for path-based LSMs such as
->> Landlock, AppArmor and Tomoyo to make sense of attr/xattr accesses. Could
->> you please update this new ACL API to use struct path instead of struct
->> dentry?
-> 
-> Hey Michael,
-> 
-> These patches have been sitting in -next since -rc1 and we are at -rc6
-> this weekend so this request is too late for the coming merge window. We
-> can't do a fundamental change this late. I would ask you to please do
-> these changes in a separate series next cycle. And this will need a
-> separate discussion among the LSM people and VFS reviews anyway.
+Yes, that was the intent, trying to avoid extra calls to krealloc().
 
-Of course, I didn't realize this series was in -next. Please take a look 
-at my proposal in the other thread. Thanks.
+Mimi, have you had a chance to look at this patch yet?  In addition to
+cleaning up the vfs_getxattr_alloc() function it resolves some issues
+with IMA (memory leaks), but as you're the IMA expert I really need
+your review on this ...
 
-> 
-> Thanks!
-> Christian
-> 
->>
->> [1]
->> https://lore.kernel.org/all/1373bbe5-16b1-bf0e-5f92-14c31cb94897@huawei.com/
->>
->>
->> On 18/10/2022 13:56, Christian Brauner wrote:
->>> The current way of setting and getting posix acls through the generic
->>> xattr interface is error prone and type unsafe. The vfs needs to
->>> interpret and fixup posix acls before storing or reporting it to
->>> userspace. Various hacks exist to make this work. The code is hard to
->>> understand and difficult to maintain in it's current form. Instead of
->>> making this work by hacking posix acls through xattr handlers we are
->>> building a dedicated posix acl api around the get and set inode
->>> operations. This removes a lot of hackiness and makes the codepaths
->>> easier to maintain. A lot of background can be found in [1].
->>>
->>> Since some filesystem rely on the dentry being available to them when
->>> setting posix acls (e.g., 9p and cifs) they cannot rely on set acl inode
->>> operation. But since ->set_acl() is required in order to use the generic
->>> posix acl xattr handlers filesystems that do not implement this inode
->>> operation cannot use the handler and need to implement their own
->>> dedicated posix acl handlers.
->>>
->>> Update the ->set_acl() inode method to take a dentry argument. This
->>> allows all filesystems to rely on ->set_acl().
->>>
->>> As far as I can tell all codepaths can be switched to rely on the dentry
->>> instead of just the inode. Note that the original motivation for passing
->>> the dentry separate from the inode instead of just the dentry in the
->>> xattr handlers was because of security modules that call
->>> security_d_instantiate(). This hook is called during
->>> d_instantiate_new(), d_add(), __d_instantiate_anon(), and
->>> d_splice_alias() to initialize the inode's security context and possibly
->>> to set security.* xattrs. Since this only affects security.* xattrs this
->>> is completely irrelevant for posix acls.
->>>
->>> Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
->>> Reviewed-by: Christoph Hellwig <hch@lst.de>
->>> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
->>> ---
->>>
->>> Notes:
->>>       /* v2 */
->>>       Christoph Hellwig <hch@lst.de>:
->>>       - Split orangefs into a preparatory patch.
->>>       /* v3 */
->>>       unchanged
->>>       /* v4 */
->>>       unchanged
->>>       /* v5 */
->>>       unchanged
->>>
->>>    Documentation/filesystems/vfs.rst |  2 +-
->>>    fs/bad_inode.c                    |  2 +-
->>>    fs/btrfs/acl.c                    |  3 ++-
->>>    fs/btrfs/ctree.h                  |  2 +-
->>>    fs/btrfs/inode.c                  |  2 +-
->>>    fs/ceph/acl.c                     |  3 ++-
->>>    fs/ceph/inode.c                   |  2 +-
->>>    fs/ceph/super.h                   |  2 +-
->>>    fs/ext2/acl.c                     |  3 ++-
->>>    fs/ext2/acl.h                     |  2 +-
->>>    fs/ext2/inode.c                   |  2 +-
->>>    fs/ext4/acl.c                     |  3 ++-
->>>    fs/ext4/acl.h                     |  2 +-
->>>    fs/ext4/inode.c                   |  2 +-
->>>    fs/f2fs/acl.c                     |  4 +++-
->>>    fs/f2fs/acl.h                     |  2 +-
->>>    fs/f2fs/file.c                    |  2 +-
->>>    fs/fuse/acl.c                     |  3 ++-
->>>    fs/fuse/fuse_i.h                  |  2 +-
->>>    fs/gfs2/acl.c                     |  3 ++-
->>>    fs/gfs2/acl.h                     |  2 +-
->>>    fs/gfs2/inode.c                   |  2 +-
->>>    fs/jffs2/acl.c                    |  3 ++-
->>>    fs/jffs2/acl.h                    |  2 +-
->>>    fs/jffs2/fs.c                     |  2 +-
->>>    fs/jfs/acl.c                      |  3 ++-
->>>    fs/jfs/file.c                     |  2 +-
->>>    fs/jfs/jfs_acl.h                  |  2 +-
->>>    fs/ksmbd/smb2pdu.c                |  4 ++--
->>>    fs/ksmbd/smbacl.c                 |  4 ++--
->>>    fs/ksmbd/vfs.c                    | 15 ++++++++-------
->>>    fs/ksmbd/vfs.h                    |  4 ++--
->>>    fs/nfs/nfs3_fs.h                  |  2 +-
->>>    fs/nfs/nfs3acl.c                  |  3 ++-
->>>    fs/nfsd/nfs2acl.c                 |  4 ++--
->>>    fs/nfsd/nfs3acl.c                 |  4 ++--
->>>    fs/nfsd/vfs.c                     |  4 ++--
->>>    fs/ntfs3/file.c                   |  2 +-
->>>    fs/ntfs3/ntfs_fs.h                |  4 ++--
->>>    fs/ntfs3/xattr.c                  |  9 +++++----
->>>    fs/ocfs2/acl.c                    |  3 ++-
->>>    fs/ocfs2/acl.h                    |  2 +-
->>>    fs/orangefs/acl.c                 |  5 +++--
->>>    fs/orangefs/inode.c               |  7 ++++---
->>>    fs/orangefs/orangefs-kernel.h     |  4 ++--
->>>    fs/posix_acl.c                    | 18 +++++++++++-------
->>>    fs/reiserfs/acl.h                 |  6 +++---
->>>    fs/reiserfs/inode.c               |  2 +-
->>>    fs/reiserfs/xattr_acl.c           |  9 ++++++---
->>>    fs/xfs/xfs_acl.c                  |  3 ++-
->>>    fs/xfs/xfs_acl.h                  |  2 +-
->>>    fs/xfs/xfs_iops.c                 | 10 ++++++----
->>>    include/linux/fs.h                |  2 +-
->>>    include/linux/posix_acl.h         | 12 ++++++------
->>>    mm/shmem.c                        |  2 +-
->>>    55 files changed, 119 insertions(+), 93 deletions(-)
+-- 
+paul-moore.com
