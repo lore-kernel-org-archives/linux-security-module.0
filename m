@@ -2,291 +2,340 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F16C43217
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Nov 2022 09:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F05DC43217
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Nov 2022 09:16:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241834AbiKRJPK (ORCPT
+        id S241823AbiKRJQp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Nov 2022 04:15:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32982 "EHLO
+        Fri, 18 Nov 2022 04:16:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241857AbiKRJO5 (ORCPT
+        with ESMTP id S241853AbiKRJQ1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Nov 2022 04:14:57 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA7DF82BD4;
-        Fri, 18 Nov 2022 01:14:53 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4ND9tC0d7nz9v7Hk;
-        Fri, 18 Nov 2022 17:08:03 +0800 (CST)
-Received: from [10.206.134.65] (unknown [10.206.134.65])
-        by APP2 (Coremail) with SMTP id GxC2BwAXS_fsTHdj5+RzAA--.21752S2;
-        Fri, 18 Nov 2022 10:14:29 +0100 (CET)
-Message-ID: <fe16a03a-102e-b3e1-cc3f-5bad3c28fad7@huaweicloud.com>
-Date:   Fri, 18 Nov 2022 10:14:18 +0100
+        Fri, 18 Nov 2022 04:16:27 -0500
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B69048B13B
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Nov 2022 01:16:24 -0800 (PST)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NDB3q1R4yzMq9pl;
+        Fri, 18 Nov 2022 10:16:23 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4NDB3p4Gr5zMppFG;
+        Fri, 18 Nov 2022 10:16:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1668762983;
+        bh=WmJqtFGITHPNH6hvWB7131Vucaosx6JH+KXGbIiVYqA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=gqdfNSoZDyPuRAE6h1t81Ua6sjsWVWGYoewzjtWyJbmH0k0mcJQGvGHw/Yb+cgaU3
+         OfkW9dOHZkSG5nztgac0CtGxj6/2lxYJUKBH2yA5qjAUK9hy05Hq7JwpgZXMoU97ci
+         8JTUocetwgGRQqT1psWiARphh47FyMTv/Zm08bsY=
+Message-ID: <fb9a288a-aa86-9192-e6d7-d6678d740297@digikod.net>
+Date:   Fri, 18 Nov 2022 10:16:21 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v4 3/5] security: Allow all LSMs to provide xattrs for
- inode_init_security hook
+User-Agent: 
+Subject: Re: [PATCH] landlock: Allow filesystem layout changes for domains
+ without such rule type
 Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
- <20221110094639.3086409-4-roberto.sassu@huaweicloud.com>
- <4c1349f670dc3c23214a5a5036e43ddaa0a7bc89.camel@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <4c1349f670dc3c23214a5a5036e43ddaa0a7bc89.camel@linux.ibm.com>
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     artem.kuzin@huawei.com, gnoack3000@gmail.com,
+        willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+References: <5c6c99f7-4218-1f79-477e-5d943c9809fd@digikod.net>
+ <20221117185509.702361-1-mic@digikod.net>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20221117185509.702361-1-mic@digikod.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwAXS_fsTHdj5+RzAA--.21752S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3GFyrAw4UtFWrGw1xJw4UCFg_yoW3Zr13pr
-        WUKa1j9rn5JFy8WrySyr48u3WagrWrKF47GrsxGFyjya1qvrn7tryF9rW5CFykXrZ5Jr4v
-        va1qyrsxWwn8AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-        07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
-        WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
-        14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-        9x07UdxhLUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABF1jj4GVqAABsK
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/17/2022 5:05 PM, Mimi Zohar wrote:
-> hOn Thu, 2022-11-10 at 10:46 +0100, Roberto Sassu wrote:
->> From: Roberto Sassu <roberto.sassu@huawei.com>
->>
->> Currently, security_inode_init_security() supports only one LSM providing
->> an xattr and EVM calculating the HMAC on that xattr, plus other inode
->> metadata.
->>
->> Allow all LSMs to provide one or multiple xattrs, by extending the security
->> blob reservation mechanism. Introduce the new lbs_xattr field of the
->> lsm_blob_sizes structure, so that each LSM can specify how many xattrs it
->> needs, and the LSM infrastructure knows how many xattr slots it should
->> allocate.
+Konstantin, this patch should apply cleanly just after "01/12 landlock: 
+Make ruleset's access masks more generic". You can easily get this patch 
+with https://git.kernel.org/pub/scm/utils/b4/b4.git/
+Some adjustments are needed for the following patches. Feel free to 
+review this patch.
+
+
+On 17/11/2022 19:55, Mickaël Salaün wrote:
+> Allow mount point and root directory changes when there is no filesystem
+> rule tied to the current Landlock domain.  This doesn't change anything
+> for now because a domain must have at least a (filesystem) rule, but
+> this will change when other rule types will come.  For instance, a
+> domain only restricting the network should have no impact on filesystem
+> restrictions.
 > 
-> Perhaps supporting per LSM multiple xattrs is a nice idea, but EVM
-> doesn't currently support it.  The LSM xattrs are hard coded in
-> evm_config_default_xattrnames[],  based on whether the LSM is
-> configured.  Additional security xattrs may be included in the
-> security.evm calculation, by extending the list via
-> security/integrity/evm/evm_xattrs.
-
-EVM wouldn't notice whether it is the same LSM that provide multiple 
-xattrs or multiple LSMs provided one xattr. As long as the xattr array 
-contains consecutive xattrs, that would be fine. In the IMA/EVM test I 
-included a test case where an LSM provides two xattrs (seems to work fine).
-
->> Dynamically allocate the xattrs array to be populated by LSMs with the
->> inode_init_security hook, and pass it to the latter instead of the
->> name/value/len triple.
->>
->> Since the LSM infrastructure, at initialization time, updates the number of
->> the requested xattrs provided by each LSM with a corresponding offset in
->> the security blob (in this case the xattr array), it makes straightforward
->> for an LSM to access the right position in the xattr array.
->>
->> There is still the issue that an LSM might not fill the xattr, even if it
->> requests it (legitimate case, for example it might have been loaded but not
->> initialized with a policy). Since users of the xattr array (e.g. the
->> initxattrs() callbacks) detect the end of the xattr array by checking if
->> the xattr name is NULL, not filling an xattr would cause those users to
->> stop scanning xattrs prematurely.
->>
->> Solve that issue by introducing security_check_compact_xattrs(), which does
->> a basic check of the xattr array (if the xattr name is filled, the xattr
->> value should be too, and viceversa), and compacts the xattr array by
->> removing the holes.
->>
->> An alternative solution would be to let users of the xattr array know the
->> number of elements of the xattr array, so that they don't have to check the
->> termination. However, this seems more invasive, compared to a simple move
->> of few array elements.
->>
->> Finally, adapt both SELinux and Smack to use the new definition of the
->> inode_init_security hook, and to correctly fill the designated slots in the
->> xattr array.
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> ---
+> Add a new get_current_fs_domain() helper to quickly check filesystem
+> rule existence for all filesystem LSM hooks.
 > 
->> diff --git a/security/security.c b/security/security.c
->> index a0e9b4ce2341..b62f192de6da 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -30,8 +30,6 @@
->>   #include <linux/msg.h>
->>   #include <net/flow.h>
->>   
->> -#define MAX_LSM_EVM_XATTR	2
->> -
->>   /* How many LSMs were built into the kernel? */
->>   #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
->>   
->> @@ -210,6 +208,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
->>   	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
->>   	lsm_set_blob_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
->>   	lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
->> +	lsm_set_blob_size(&needed->lbs_xattr, &blob_sizes.lbs_xattr);
->>   }
->>   
->>   /* Prepare LSM for initialization. */
->> @@ -346,6 +345,7 @@ static void __init ordered_lsm_init(void)
->>   	init_debug("msg_msg blob size    = %d\n", blob_sizes.lbs_msg_msg);
->>   	init_debug("superblock blob size = %d\n", blob_sizes.lbs_superblock);
->>   	init_debug("task blob size       = %d\n", blob_sizes.lbs_task);
->> +	init_debug("xattr slots          = %d\n", blob_sizes.lbs_xattr);
->>   
->>   	/*
->>   	 * Create any kmem_caches needed for blobs
->> @@ -1100,34 +1100,78 @@ static int security_initxattrs(struct inode *inode, const struct xattr *xattrs,
->>   	return 0;
->>   }
+> Remove unnecessary inlining.
 > 
->> +static int security_check_compact_xattrs(struct xattr *xattrs,
->> +					 int num_xattrs, int *checked_xattrs)
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+>   security/landlock/fs.c       | 73 ++++++++++++++++++------------------
+>   security/landlock/ruleset.h  | 25 +++++++++++-
+>   security/landlock/syscalls.c |  6 +--
+>   3 files changed, 62 insertions(+), 42 deletions(-)
 > 
-> Perhaps the variable naming is off, making it difficult to read.   So
-> although this is a static function, which normally doesn't require a
-> comment, it's definitely needs one.
-
-Ok, will improve it.
-
->> +{
->> +	int i;
->> +
->> +	for (i = *checked_xattrs; i < num_xattrs; i++) {
-> 
-> If the number of "checked" xattrs was kept up to date, removing the
-> empty xattr gaps wouldn't require a loop.  Is the purpose of this loop
-> to support multiple per LSM xattrs?
-
-An LSM might reserve one or more xattrs, but not set it/them (for 
-example because it is not initialized). In this case, removing the gaps 
-is needed for all subsequent LSMs.
-
->> +		if ((!xattrs[i].name && xattrs[i].value) ||
->> +		    (xattrs[i].name && !xattrs[i].value))
->> +			return -EINVAL;
->> +
->> +		if (!xattrs[i].name)
->> +			continue;
->> +
->> +		if (i == *checked_xattrs) {
->> +			(*checked_xattrs)++;
->> +			continue;
->> +		}
->> +
->> +		memcpy(xattrs + (*checked_xattrs)++, xattrs + i,
->> +		       sizeof(*xattrs));
->> +		memset(xattrs + i, 0, sizeof(*xattrs));
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>   int security_inode_init_security(struct inode *inode, struct inode *dir,
->>   				 const struct qstr *qstr,
->>   				 const initxattrs initxattrs, void *fs_data)
->>   {
->> -	struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
->> -	struct xattr *lsm_xattr, *evm_xattr, *xattr;
->> -	int ret = -EOPNOTSUPP;
->> +	struct security_hook_list *P;
->> +	struct xattr *new_xattrs;
->> +	struct xattr *xattr;
->> +	int ret = -EOPNOTSUPP, cur_xattrs = 0;
->>   
->>   	if (unlikely(IS_PRIVATE(inode)))
->>   		goto out_exit;
->>   
->> +	if (!blob_sizes.lbs_xattr)
->> +		goto out_exit;
->> +
->>   	if (!initxattrs ||
->>   	    (initxattrs == &security_initxattrs && !fs_data)) {
->>   		ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
->> -				    dir, qstr, NULL, NULL, NULL);
->> +				    dir, qstr, NULL);
->>   		goto out_exit;
->>   	}
->> -	memset(new_xattrs, 0, sizeof(new_xattrs));
->> -	lsm_xattr = new_xattrs;
->> -	ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
->> -						&lsm_xattr->name,
->> -						&lsm_xattr->value,
->> -						&lsm_xattr->value_len);
->> -	if (ret)
->> -		goto out;
->> +	/* Allocate +1 for EVM and +1 as terminator. */
->> +	new_xattrs = kcalloc(blob_sizes.lbs_xattr + 2, sizeof(*new_xattrs),
->> +			     GFP_NOFS);
->> +	if (!new_xattrs) {
->> +		ret = -ENOMEM;
->> +		goto out_exit;
->> +	}
->> +	hlist_for_each_entry(P, &security_hook_heads.inode_init_security,
->> +			     list) {
->> +		ret = P->hook.inode_init_security(inode, dir, qstr, new_xattrs);
->> +		if (ret && ret != -EOPNOTSUPP)
->> +			goto out;
->> +		if (ret == -EOPNOTSUPP)
->> +			continue;
->> +		ret = security_check_compact_xattrs(new_xattrs,
->> +						    blob_sizes.lbs_xattr,
->> +						    &cur_xattrs);
-> 
-> Defining a variable named "cur_xattrs" to indicate the number of xattrs
-> compressed is off.  Perhaps use cur_num_xattrs?   Similarly,
-> "checked_xattrs" should be num_checked_xattrs.  Or change the existing
-> num_xattrs to max_num_xattrs and rename checked_xattrs to num_xattrs.
-
-Ok.
-
-Thanks
-
-Roberto
-
-> thanks,
-> 
-> Mimi
-> 
->> +		if (ret < 0) {
->> +			ret = -ENOMEM;
->> +			goto out;
->> +		}
->> +	}
->>   
->> -	evm_xattr = lsm_xattr + 1;
->> -	ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
->> +	ret = evm_inode_init_security(inode, new_xattrs,
->> +				      new_xattrs + cur_xattrs);
->>   	if (ret)
->>   		goto out;
->>   	ret = initxattrs(inode, new_xattrs, fs_data);
->> @@ -1142,6 +1186,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
->>   			continue;
->>   		kfree(xattr->value);
->>   	}
->> +	kfree(new_xattrs);
->>   out_exit:
->>   	if (initxattrs == &security_initxattrs)
->>   		return ret;
-
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 0d57c6479d29..0ae54a639e16 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -150,16 +150,6 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+>   	LANDLOCK_ACCESS_FS_TRUNCATE)
+>   /* clang-format on */
+>   
+> -/*
+> - * All access rights that are denied by default whether they are handled or not
+> - * by a ruleset/layer.  This must be ORed with all ruleset->fs_access_masks[]
+> - * entries when we need to get the absolute handled access masks.
+> - */
+> -/* clang-format off */
+> -#define ACCESS_INITIALLY_DENIED ( \
+> -	LANDLOCK_ACCESS_FS_REFER)
+> -/* clang-format on */
+> -
+>   /*
+>    * @path: Should have been checked by get_path_from_fd().
+>    */
+> @@ -179,8 +169,7 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+>   
+>   	/* Transforms relative access rights to absolute ones. */
+>   	access_rights |= LANDLOCK_MASK_ACCESS_FS &
+> -			 ~(landlock_get_fs_access_mask(ruleset, 0) |
+> -			   ACCESS_INITIALLY_DENIED);
+> +			 ~landlock_get_fs_access_mask(ruleset, 0);
+>   	object = get_inode_object(d_backing_inode(path->dentry));
+>   	if (IS_ERR(object))
+>   		return PTR_ERR(object);
+> @@ -287,14 +276,15 @@ static inline bool is_nouser_or_private(const struct dentry *dentry)
+>   		unlikely(IS_PRIVATE(d_backing_inode(dentry))));
+>   }
+>   
+> -static inline access_mask_t
+> -get_handled_accesses(const struct landlock_ruleset *const domain)
+> +static access_mask_t
+> +get_raw_handled_fs_accesses(const struct landlock_ruleset *const domain)
+>   {
+> -	access_mask_t access_dom = ACCESS_INITIALLY_DENIED;
+> +	access_mask_t access_dom = 0;
+>   	size_t layer_level;
+>   
+>   	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
+> -		access_dom |= landlock_get_fs_access_mask(domain, layer_level);
+> +		access_dom |=
+> +			landlock_get_raw_fs_access_mask(domain, layer_level);
+>   	return access_dom & LANDLOCK_MASK_ACCESS_FS;
+>   }
+>   
+> @@ -331,13 +321,8 @@ init_layer_masks(const struct landlock_ruleset *const domain,
+>   
+>   		for_each_set_bit(access_bit, &access_req,
+>   				 ARRAY_SIZE(*layer_masks)) {
+> -			/*
+> -			 * Artificially handles all initially denied by default
+> -			 * access rights.
+> -			 */
+>   			if (BIT_ULL(access_bit) &
+> -			    (landlock_get_fs_access_mask(domain, layer_level) |
+> -			     ACCESS_INITIALLY_DENIED)) {
+> +			    landlock_get_fs_access_mask(domain, layer_level)) {
+>   				(*layer_masks)[access_bit] |=
+>   					BIT_ULL(layer_level);
+>   				handled_accesses |= BIT_ULL(access_bit);
+> @@ -347,6 +332,24 @@ init_layer_masks(const struct landlock_ruleset *const domain,
+>   	return handled_accesses;
+>   }
+>   
+> +static access_mask_t
+> +get_handled_fs_accesses(const struct landlock_ruleset *const domain)
+> +{
+> +	/* Handles all initially denied by default access rights. */
+> +	return get_raw_handled_fs_accesses(domain) | ACCESS_FS_INITIALLY_DENIED;
+> +}
+> +
+> +static const struct landlock_ruleset *get_current_fs_domain(void)
+> +{
+> +	const struct landlock_ruleset *const dom =
+> +		landlock_get_current_domain();
+> +
+> +	if (!dom || !get_raw_handled_fs_accesses(dom))
+> +		return NULL;
+> +
+> +	return dom;
+> +}
+> +
+>   /*
+>    * Check that a destination file hierarchy has more restrictions than a source
+>    * file hierarchy.  This is only used for link and rename actions.
+> @@ -519,7 +522,7 @@ static bool is_access_to_paths_allowed(
+>   		 * a superset of the meaningful requested accesses).
+>   		 */
+>   		access_masked_parent1 = access_masked_parent2 =
+> -			get_handled_accesses(domain);
+> +			get_handled_fs_accesses(domain);
+>   		is_dom_check = true;
+>   	} else {
+>   		if (WARN_ON_ONCE(dentry_child1 || dentry_child2))
+> @@ -648,11 +651,10 @@ static inline int check_access_path(const struct landlock_ruleset *const domain,
+>   	return -EACCES;
+>   }
+>   
+> -static inline int current_check_access_path(const struct path *const path,
+> +static int current_check_access_path(const struct path *const path,
+>   					    const access_mask_t access_request)
+>   {
+> -	const struct landlock_ruleset *const dom =
+> -		landlock_get_current_domain();
+> +	const struct landlock_ruleset *const dom = get_current_fs_domain();
+>   
+>   	if (!dom)
+>   		return 0;
+> @@ -815,8 +817,7 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+>   				    struct dentry *const new_dentry,
+>   				    const bool removable, const bool exchange)
+>   {
+> -	const struct landlock_ruleset *const dom =
+> -		landlock_get_current_domain();
+> +	const struct landlock_ruleset *const dom = get_current_fs_domain();
+>   	bool allow_parent1, allow_parent2;
+>   	access_mask_t access_request_parent1, access_request_parent2;
+>   	struct path mnt_dir;
+> @@ -1050,7 +1051,7 @@ static int hook_sb_mount(const char *const dev_name,
+>   			 const struct path *const path, const char *const type,
+>   			 const unsigned long flags, void *const data)
+>   {
+> -	if (!landlock_get_current_domain())
+> +	if (!get_current_fs_domain())
+>   		return 0;
+>   	return -EPERM;
+>   }
+> @@ -1058,7 +1059,7 @@ static int hook_sb_mount(const char *const dev_name,
+>   static int hook_move_mount(const struct path *const from_path,
+>   			   const struct path *const to_path)
+>   {
+> -	if (!landlock_get_current_domain())
+> +	if (!get_current_fs_domain())
+>   		return 0;
+>   	return -EPERM;
+>   }
+> @@ -1069,14 +1070,14 @@ static int hook_move_mount(const struct path *const from_path,
+>    */
+>   static int hook_sb_umount(struct vfsmount *const mnt, const int flags)
+>   {
+> -	if (!landlock_get_current_domain())
+> +	if (!get_current_fs_domain())
+>   		return 0;
+>   	return -EPERM;
+>   }
+>   
+>   static int hook_sb_remount(struct super_block *const sb, void *const mnt_opts)
+>   {
+> -	if (!landlock_get_current_domain())
+> +	if (!get_current_fs_domain())
+>   		return 0;
+>   	return -EPERM;
+>   }
+> @@ -1092,7 +1093,7 @@ static int hook_sb_remount(struct super_block *const sb, void *const mnt_opts)
+>   static int hook_sb_pivotroot(const struct path *const old_path,
+>   			     const struct path *const new_path)
+>   {
+> -	if (!landlock_get_current_domain())
+> +	if (!get_current_fs_domain())
+>   		return 0;
+>   	return -EPERM;
+>   }
+> @@ -1128,8 +1129,7 @@ static int hook_path_mknod(const struct path *const dir,
+>   			   struct dentry *const dentry, const umode_t mode,
+>   			   const unsigned int dev)
+>   {
+> -	const struct landlock_ruleset *const dom =
+> -		landlock_get_current_domain();
+> +	const struct landlock_ruleset *const dom = get_current_fs_domain();
+>   
+>   	if (!dom)
+>   		return 0;
+> @@ -1208,8 +1208,7 @@ static int hook_file_open(struct file *const file)
+>   	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+>   	access_mask_t open_access_request, full_access_request, allowed_access;
+>   	const access_mask_t optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
+> -	const struct landlock_ruleset *const dom =
+> -		landlock_get_current_domain();
+> +	const struct landlock_ruleset *const dom = get_current_fs_domain();
+>   
+>   	if (!dom)
+>   		return 0;
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index f2ad932d396c..ca46393ef3bb 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -15,10 +15,21 @@
+>   #include <linux/rbtree.h>
+>   #include <linux/refcount.h>
+>   #include <linux/workqueue.h>
+> +#include <uapi/linux/landlock.h>
+>   
+>   #include "limits.h"
+>   #include "object.h"
+>   
+> +/*
+> + * All access rights that are denied by default whether they are handled or not
+> + * by a ruleset/layer.  This must be ORed with all ruleset->access_masks[]
+> + * entries when we need to get the absolute handled access masks.
+> + */
+> +/* clang-format off */
+> +#define ACCESS_FS_INITIALLY_DENIED ( \
+> +	LANDLOCK_ACCESS_FS_REFER)
+> +/* clang-format on */
+> +
+>   typedef u16 access_mask_t;
+>   /* Makes sure all filesystem access rights can be stored. */
+>   static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+> @@ -197,11 +208,21 @@ landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
+>   }
+>   
+>   static inline access_mask_t
+> -landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
+> -			    const u16 layer_level)
+> +landlock_get_raw_fs_access_mask(const struct landlock_ruleset *const ruleset,
+> +				const u16 layer_level)
+>   {
+>   	return (ruleset->access_masks[layer_level] >>
+>   		LANDLOCK_SHIFT_ACCESS_FS) &
+>   	       LANDLOCK_MASK_ACCESS_FS;
+>   }
+> +
+> +static inline access_mask_t
+> +landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
+> +			    const u16 layer_level)
+> +{
+> +	/* Handles all initially denied by default access rights. */
+> +	return landlock_get_raw_fs_access_mask(ruleset, layer_level) |
+> +	       ACCESS_FS_INITIALLY_DENIED;
+> +}
+> +
+>   #endif /* _SECURITY_LANDLOCK_RULESET_H */
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index 71aca7f990bc..d35cd5d304db 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -310,6 +310,7 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+>   	struct path path;
+>   	struct landlock_ruleset *ruleset;
+>   	int res, err;
+> +	access_mask_t mask;
+>   
+>   	if (!landlock_initialized)
+>   		return -EOPNOTSUPP;
+> @@ -348,9 +349,8 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+>   	 * Checks that allowed_access matches the @ruleset constraints
+>   	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
+>   	 */
+> -	if ((path_beneath_attr.allowed_access |
+> -	     landlock_get_fs_access_mask(ruleset, 0)) !=
+> -	    landlock_get_fs_access_mask(ruleset, 0)) {
+> +	mask = landlock_get_raw_fs_access_mask(ruleset, 0);
+> +	if ((path_beneath_attr.allowed_access | mask) != mask) {
+>   		err = -EINVAL;
+>   		goto out_put_ruleset;
+>   	}
