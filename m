@@ -2,396 +2,324 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC67C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Nov 2022 08:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E07C43217
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Nov 2022 09:03:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241530AbiKRIqM (ORCPT
+        id S241608AbiKRJDd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Nov 2022 03:46:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36860 "EHLO
+        Fri, 18 Nov 2022 04:03:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241610AbiKRIpZ (ORCPT
+        with ESMTP id S241530AbiKRJDd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Nov 2022 03:45:25 -0500
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 332BB942DE;
-        Fri, 18 Nov 2022 00:45:14 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4ND9Dk3PPcz9xGYf;
-        Fri, 18 Nov 2022 16:39:02 +0800 (CST)
-Received: from [10.206.134.65] (unknown [10.206.134.65])
-        by APP2 (Coremail) with SMTP id GxC2BwCXy_f1RXdjrM1zAA--.22317S2;
-        Fri, 18 Nov 2022 09:44:50 +0100 (CET)
-Message-ID: <ac7ed3d7-774c-dffe-7940-198cf32592b4@huaweicloud.com>
-Date:   Fri, 18 Nov 2022 09:44:29 +0100
+        Fri, 18 Nov 2022 04:03:33 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7EC265CE;
+        Fri, 18 Nov 2022 01:03:30 -0800 (PST)
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ND9mS1jQ9zmW4N;
+        Fri, 18 Nov 2022 17:03:04 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Fri, 18 Nov 2022 17:03:28 +0800
+Subject: Re: [PATCH -next v2 3/6] landlock: add chmod and chown support
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+CC:     <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+        <shuah@kernel.org>, <corbet@lwn.net>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+References: <20220827111215.131442-1-xiujianfeng@huawei.com>
+ <20220827111215.131442-4-xiujianfeng@huawei.com> <Ywpw66EYRDTQIyTx@nuc>
+ <de8834b6-0ff2-1a81-f2d3-af33103e9942@huawei.com>
+ <de4620d2-3268-b3cc-71dd-acbbd204435e@digikod.net>
+ <2f286496-f4f8-76f7-2fb6-cc3dd5ffdeaa@huawei.com>
+ <4b69a4ac-28ab-16aa-14b1-04a6f64d5490@digikod.net>
+ <9caccd0a-319e-bbc9-084a-65c62d0b1145@huawei.com>
+ <abc960a1-e66e-792e-6869-cfd201c29dbe@digikod.net>
+From:   xiujianfeng <xiujianfeng@huawei.com>
+Message-ID: <1373bbe5-16b1-bf0e-5f92-14c31cb94897@huawei.com>
+Date:   Fri, 18 Nov 2022 17:03:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PoC][PATCH] bpf: Call return value check function in the JITed
- code
-To:     Casey Schaufler <casey@schaufler-ca.com>, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
-        song@kernel.org, yhs@fb.com, john.fastabend@gmail.com,
-        kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
-        jolsa@kernel.org, revest@chromium.org, jackmanb@chromium.org,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-References: <700dffccdfeeb3d19c5385550e4c84f08c705e19.camel@huaweicloud.com>
- <20221116154712.4115929-1-roberto.sassu@huaweicloud.com>
- <41c6eac1-4e02-3499-5d83-468dd1ca434a@schaufler-ca.com>
-Content-Language: en-US
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <41c6eac1-4e02-3499-5d83-468dd1ca434a@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwCXy_f1RXdjrM1zAA--.22317S2
-X-Coremail-Antispam: 1UD129KBjvAXoW3Zw1ruFW7tFWDtFW5Jw1kZrb_yoW8JF15Co
-        WxGr1xXF4xG34xAry2k3s7KFyxuasYgryrAF4fAw43Wanava4Ykry7Xr4UZa4rXa18XayD
-        Ga4xXa4YqanrJr9xn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-        AaLaJ3UjIYCTnIWjp_UUUYx7kC6x804xWl14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK
-        8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
-        AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF
-        7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-        e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
-        6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-        kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-        14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-        9x07UZ18PUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABF1jj4WVBQABsg
+In-Reply-To: <abc960a1-e66e-792e-6869-cfd201c29dbe@digikod.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.110.112]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/16/2022 6:12 PM, Casey Schaufler wrote:
-> On 11/16/2022 7:47 AM, Roberto Sassu wrote:
->> From: Roberto Sassu <roberto.sassu@huawei.com>
->>
->> eBPF allows certain types of eBPF programs to modify the return value of
->> the functions they attach to. This is used for example by BPF LSM to let
->> security modules make their decision on LSM hooks.
->>
->> The JITed code looks like the following:
->>
->>      ret = bpf_lsm_inode_permission_impl1(); // from a security module
->>      if (ret)
->>          goto out;
->>
->> ..
->>
->>      ret = bpf_lsm_inode_permission_implN(); // from a security module
->>      if (ret)
->>          goto out;
->>
->>      ret = bpf_lsm_inode_permission(); // in the kernel, returns DEFAULT
->> out:
->>
->> If ret is not zero, the attachment points of BPF LSM are not executed. For
->> this reason, the return value check cannot be done there.
->>
->> Instead, the idea is to use the LSM_HOOK() macro to define a per-hook check
->> function.
->>
->> Whenever an eBPF program attaches to an LSM hook, the eBPF verifier
->> resolves the address of the check function (whose name is
->> bpf_lsm_<hook name>_ret()) and adds a call to that function just after the
->> out label. If the return value is illegal, the check function changes it
->> back to the default value defined by the LSM infrastructure:
->>
->> ..
->>
->> out:
->>      ret = bpf_lsm_inode_permission_ret(ret);
+
+
+在 2022/11/14 22:12, Mickaël Salaün 写道:
 > 
-> As I've mentioned elsewhere, the return value is a small part of
-> the problem you have with eBPF programs and the BPF LSM. Because
-> the LSM infrastructure is inconsistent with regard to return codes,
-> values returned in pointers and use of secids there is no uniform
-> mechanism that I can see to address the "legitimate return" problem.
+> On 29/10/2022 10:33, xiujianfeng wrote:
+>> Hi,
+>>
+>> 在 2022/9/2 1:34, Mickaël Salaün 写道:
+>>> CCing linux-fsdevel@vger.kernel.org
+>>>
+>>>
+>>> On 01/09/2022 15:06, xiujianfeng wrote:
+>>>> Hi,
+>>>>
+>>>> 在 2022/8/30 0:01, Mickaël Salaün 写道:
+>>>>>
+>>>>> On 29/08/2022 03:17, xiujianfeng wrote:
+>>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> 在 2022/8/28 3:30, Günther Noack 写道:
+>>>>>>> Hello!
+>>>>>>>
+>>>>>>> the mapping between Landlock rights to LSM hooks is now as 
+>>>>>>> follows in
+>>>>>>> your patch set:
+>>>>>>>
+>>>>>>> * LANDLOCK_ACCESS_FS_CHMOD controls hook_path_chmod
+>>>>>>> * LANDLOCK_ACCESS_FS_CHGRP controls hook_path_chown
+>>>>>>>       (this hook can restrict both the chown(2) and chgrp(2) 
+>>>>>>> syscalls)
+>>>>>>>
+>>>>>>> Is this the desired mapping?
+>>>>>>>
+>>>>>>> The previous discussion I found on the topic was in
+>>>>>>>
+>>>>>>> [1]
+>>>>>>> https://lore.kernel.org/all/5873455f-fff9-618c-25b1-8b6a4ec94368@digikod.net/ 
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> [2]
+>>>>>>> https://lore.kernel.org/all/b1d69dfa-6d93-2034-7854-e2bc4017d20e@schaufler-ca.com/ 
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> [3]
+>>>>>>> https://lore.kernel.org/all/c369c45d-5aa8-3e39-c7d6-b08b165495fd@digikod.net/ 
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> In my understanding the main arguments were the ones in [2] and [3].
+>>>>>>>
+>>>>>>> There were no further responses to [3], so I was under the 
+>>>>>>> impression
+>>>>>>> that we were gravitating towards an approach where the
+>>>>>>> file-metadata-modification operations were grouped more coarsely?
+>>>>>>>
+>>>>>>> For example with the approach suggested in [3], which would be to
+>>>>>>> group the operations coarsely into (a) one Landlock right for
+>>>>>>> modifying file metadata that is used in security contexts, and 
+>>>>>>> (b) one
+>>>>>>> Landlock right for modifying metadata that was used in non-security
+>>>>>>> contexts. That would mean that there would be:
+>>>>>>>
+>>>>>>> (a) LANDLOCK_ACCESS_FS_MODIFY_SECURITY_ATTRIBUTES to control the
+>>>>>>> following operations:
+>>>>>>>       * chmod(2)-variants through hook_path_chmod,
+>>>>>>>       * chown(2)-variants and chgrp(2)-variants through
+>>>>>>> hook_path_chown,
+>>>>>>>       * setxattr(2)-variants and removexattr(2)-variants for 
+>>>>>>> extended
+>>>>>>>         attributes that are not "user extended attributes" as
+>>>>>>> described in
+>>>>>>>         xattr(7) through hook_inode_setxattr and 
+>>>>>>> hook_inode_removexattr
+>>>>>>>
+>>>>>>> (b) LANDLOCK_ACCESS_FS_MODIFY_NON_SECURITY_ATTRIBUTES to control the
+>>>>>>> following operations:
+>>>>>>>       * utimes(2) and other operations for setting other 
+>>>>>>> non-security
+>>>>>>>         sensitive attributes, probably through hook_inode_setattr(?)
+>>>>>>>       * xattr modifications like above, but for the "user extended
+>>>>>>>         attributes", though hook_inode_setxattr and
+>>>>>>> hook_inode_removexattr
+>>>>>>>
+>>>>>>> In my mind, this would be a sensible grouping, and it would also 
+>>>>>>> help
+>>>>>>> to decouple the userspace-exposed API from the underlying
+>>>>>>> implementation, as Casey suggested to do in [2].
+>>>>>>>
+>>>>>>> Specifically for this patch set, if you want to use this 
+>>>>>>> grouping, you
+>>>>>>> would only need to add one new Landlock right
+>>>>>>> (LANDLOCK_ACCESS_FS_MODIFY_SECURITY_ATTRIBUTES) as described above
+>>>>>>> under (a) (and maybe we can find a shorter name for it... :))?
+>>>>>>>
+>>>>>>> Did I miss any operations here that would be necessary to restrict?
+>>>>>>>
+>>>>>>> Would that make sense to you? Xiu, what is your opinion on how this
+>>>>>>> should be grouped? Do you have use cases in mind where a more
+>>>>>>> fine-grained grouping would be required?
+>>>>>>
+>>>>>> I apologize I may missed that discussion when I prepared v2:(
+>>>>>>
+>>>>>> Yes, agreed, this grouping is more sensible and resonnable. so in 
+>>>>>> this
+>>>>>> patchset only one right will be added, and I suppose the first commit
+>>>>>> which expand access_mask_t to u32 can be droped.
+>>>>>>
+>>>>>>>
+>>>>>>> —Günther
+>>>>>>>
+>>>>>>> P.S.: Regarding utimes: The hook_inode_setattr hook *also* gets 
+>>>>>>> called
+>>>>>>> on a variety on attribute changes including file ownership, file 
+>>>>>>> size
+>>>>>>> and file mode, so it might potentially interact with a bunch of 
+>>>>>>> other
+>>>>>>> existing Landlock rights. Maybe that is not the right approach. 
+>>>>>>> In any
+>>>>>>> case, it seems like it might require more thinking and it might be
+>>>>>>> sensible to do that in a separate patch set IMHO.
+>>>>>>
+>>>>>> Thanks for you reminder, that seems it's more complicated to support
+>>>>>> utimes, so I think we'd better not support it in this patchset.
+>>>>>
+>>>>> The issue with this approach is that it makes it impossible to 
+>>>>> properly
+>>>>> group such access rights. Indeed, to avoid inconsistencies and much 
+>>>>> more
+>>>>> complexity, we cannot extend a Landlock access right once it is 
+>>>>> defined.
+>>>>>
+>>>>> We also need to consider that file ownership and permissions have a
+>>>>> default (e.g. umask), which is also a way to set them. How to
+>>>>> consistently manage that? What if the application wants to protect its
+>>>>> files with chmod 0400?
+>>>>
+>>>> what do you mean by this? do you mean that we should have a set of
+>>>> default permissions for files created by applications within the
+>>>> sandbox, so that it can update metadata of its own file.
+>>>
+>>> I mean that we need a consistent access control system, and for this we
+>>> need to consider all the ways an extended attribute can be set.
+>>>
+>>> We can either extend the meaning of current access rights (controlled
+>>> with a ruleset flag for compatibility reasons), or create new access
+>>> rights. I think it would be better to add new dedicated rights to make
+>>> it more explicit and flexible.
+>>>
+>>> I'm not sure about the right approach to properly control file
+>>> permission. We need to think about it. Do you have some ideas?
+>>>
+>>> BTW, utimes can be controlled with the inode_setattr() LSM hook. Being
+>>> able to control arbitrary file time modification could be part of the
+>>> FS_WRITE_SAFE_METADATA, but modification and access time should always
+>>> be updated according to the file operation.
+>>>
+>>>
+>>>>
+>>>>>
+>>>>> About the naming, I think we can start with:
+>>>>> - LANDLOCK_ACCESS_FS_READ_METADATA (read any file/dir metadata);
+>>>>> - LANDLOCK_ACCESS_FS_WRITE_SAFE_METADATA: change file times, user 
+>>>>> xattr;
+>>>>
+>>>> do you mean we should have permission controls on metadata level or
+>>>> operation level? e.g. should we allow update on user xattr but deny
+>>>> update on security xattr? or should we disallow update on any xattr?
+>>>>
+>>>>> - LANDLOCK_ACCESS_FS_WRITE_UNSAFE_METADATA: interpreted by the kernel
+>>>>> (could change non-Landlock DAC or MAC, which could be considered as a
+>>>>> policy bypass; or other various xattr that might be interpreted by
+>>>>> filesystems), this should be denied most of the time.
+>>>>
+>>>> do you mean FS_WRITE_UNSAFE_METADATA is security-related? and
+>>>> FS_WRITE_SAFE_METADATA is non-security-related?
+>>>
+>>> Yes, FS_WRITE_UNSAFE_METADATA would be for security related
+>>> xattr/chmod/chown, and FS_WRITE_SAFE_METADATA for non-security xattr.
+>>> Both are mutually exclusive. This would involve the inode_setattr and
+>>> inode_setxattr LSM hooks. Looking at the calling sites, it seems
+>>> possible to replace all inode arguments with paths.
 > 
-> Lets look at one of the ickyest interfaces we have, security_getprocattr().
-> It returns the size of a string that it has allocated. It puts the
-> pointer to the allocated buffer into a char **value that was passed to it.
-> If bpf_getprocattr() returns a positive number and sets value to NULL Bad
-> Things can happen. If the return value is greater than the size allocated
-> ditto. If it returns an error but allocates a string you get a memory leak.
+> I though about differentiating user xattr, atime/mtime, DAC 
+> (chown/chmod, posix ACLs), and other xattr, but it would be too complex 
+> to get a consistent approach because of indirect consequences (e.g. 
+> controlling umask, setegid, settimeofday…). Let's make it simple for now.
+> 
+> Here is an update on my previous proposal:
+> 
+> LANDLOCK_ACCESS_FS_READ_METADATA to read any file/dir metadata (i.e. 
+> inode attr and xattr). In practice, for most use cases, this access 
+> right should be granted whenever LANDLOCK_ACCESS_READ_DIR is allowed.
+> 
+> LANDLOCK_ACCESS_FS_WRITE_METADATA to *explicitly* write any inode attr 
+> or xattr (i.e. chmod, chown, utime, and all xattr). It should be noted 
+> that file modification time and access time should always be updated 
+> according to the file operation (e.g. write, truncate) even when this 
+> access is not explicitly allowed (according to vfs_utimes(), 
+> ATTR_TIMES_SET and ATTR_TOUCH should enable to differentiate from 
+> implicit time changes).
+> 
+Thanks, I analyzed the relevant functions and the use of lsm hooks.
+so I think what to do will be as follows:
 
-I hope I understood how it works correctly, but you cannot modify 
-directly data accessible from a pointer provided as parameter by the LSM 
-hook you attach to. The pointer is treated as scalar value and the eBPF 
-verifier detects any attempt to dereference as an illegal access. The 
-only way to modify such data is through helpers that need to be properly 
-declared to be usable by eBPF programs.
+LANDLOCK_ACCESS_FS_WRITE_METADATA controls the following hooks:
+1.security_path_chmod
+2.security_path_chown
+3.security_inode_setattr
+4.security_inode_setxattr
+5.security_inode_removexattr
+6.security_inode_set_acl
 
-Also, if I'm not mistaken we have the limitation of five parameters per 
-functions. Not sure what happens for hooks that have more than this.
+LANDLOCK_ACCESS_FS_READ_METADATA controls the following hooks:
+1.security_inode_getattr
+2.security_inode_get_acl
+3.security_inode_getxattr
 
-> security_secid_to_secctx() has to work in concert with security_release_secctx()
-> to do memory lifecycle management. If secid_to_secctx() allocates memory
-> release_secctx() has to free it, while if secid_to_secctx() doesn't allocate
-> memory it better not. (SELinux allocates memory, Smack does not. It's a real
-> distinction) Your return checker would need to understand a lot more about
-> the behavior of your eBPF programs than what value they return.
+and the following 7 hooks are using struct dentry * as parameter, should 
+be changed to struct path *, and also their callers.
 
-I see. Within an eBPF program we are able to pair allocation and free 
-together. I guess something similar could be done for pairs of LSM hooks.
+security_inode_setattr
+security_inode_setxattr
+security_inode_removexattr
+security_inode_set_acl
+security_inode_getattr
+security_inode_get_acl
+security_inode_getxattr
 
-Roberto
+Looks like it's a big change.
 
->> In this way, an eBPF program cannot cause illegal return values to be sent
->> to BPF LSM, and to the callers of the LSM infrastructure.
+> 
 >>
->> This is just a PoC, to validate the idea and get an early feedback.
+>> Sorry for the late reply, I have problems with this work, for example,
+>> before:
+>> security_inode_setattr(struct user_namespace *mnt_userns,
+>>                                            struct dentry *dentry,
+>>                                            struct iattr *attr)
+>> after:
+>> security_inode_setattr(struct user_namespace *mnt_userns,
+>>                                            struct path *path,
+>>                                            struct iattr *attr)
+>> then I change the second argument in notify_change() from struct *dentry
+>> to struct path *, that makes this kind of changes in fs/overlayfs/
+>> spread to lots of places because overlayfs basicly uses dentry instead
+>> of path, the worst case may be here:
 >>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> ---
->>   arch/arm64/net/bpf_jit_comp.c |  7 ++++---
->>   arch/x86/net/bpf_jit_comp.c   | 17 ++++++++++++++++-
->>   include/linux/bpf.h           |  4 +++-
->>   kernel/bpf/bpf_lsm.c          | 20 ++++++++++++++++++++
->>   kernel/bpf/bpf_struct_ops.c   |  2 +-
->>   kernel/bpf/trampoline.c       |  6 ++++--
->>   kernel/bpf/verifier.c         | 28 ++++++++++++++++++++++++++--
->>   7 files changed, 74 insertions(+), 10 deletions(-)
+>> ovl_special_inode_operations.set_acl hook calls:
+>> -->
+>> ovl_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+>> struct posix_acl *acl, int type)
+>> -->
+>> ovl_setattr(struct user_namespace *mnt_userns, struct dentry
+>> *dentry,struct iattr *attr)
+>> -->
+>> ovl_do_notify_change(struct ovl_fs *ofs, struct dentry *upperdentry,
+>> struct iattr *attr)
 >>
->> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
->> index 62f805f427b7..5412230c6935 100644
->> --- a/arch/arm64/net/bpf_jit_comp.c
->> +++ b/arch/arm64/net/bpf_jit_comp.c
->> @@ -1764,7 +1764,7 @@ static void restore_args(struct jit_ctx *ctx, int args_off, int nargs)
->>    */
->>   static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
->>   			      struct bpf_tramp_links *tlinks, void *orig_call,
->> -			      int nargs, u32 flags)
->> +			      void *ret_check_call, int nargs, u32 flags)
->>   {
->>   	int i;
->>   	int stack_size;
->> @@ -1963,7 +1963,7 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
->>   int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *image,
->>   				void *image_end, const struct btf_func_model *m,
->>   				u32 flags, struct bpf_tramp_links *tlinks,
->> -				void *orig_call)
->> +				void *orig_call, void *ret_check_call)
->>   {
->>   	int i, ret;
->>   	int nargs = m->nr_args;
->> @@ -1983,7 +1983,8 @@ int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *image,
->>   			return -ENOTSUPP;
->>   	}
->>   
->> -	ret = prepare_trampoline(&ctx, im, tlinks, orig_call, nargs, flags);
->> +	ret = prepare_trampoline(&ctx, im, tlinks, orig_call, ret_check_call,
->> +				 nargs, flags);
->>   	if (ret < 0)
->>   		return ret;
->>   
->> diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
->> index cec5195602bc..6cd727b4af0a 100644
->> --- a/arch/x86/net/bpf_jit_comp.c
->> +++ b/arch/x86/net/bpf_jit_comp.c
->> @@ -2123,7 +2123,7 @@ static int invoke_bpf_mod_ret(const struct btf_func_model *m, u8 **pprog,
->>   int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *image, void *image_end,
->>   				const struct btf_func_model *m, u32 flags,
->>   				struct bpf_tramp_links *tlinks,
->> -				void *func_addr)
->> +				void *func_addr, void *func_ret_check_addr)
->>   {
->>   	int ret, i, nr_args = m->nr_args, extra_nregs = 0;
->>   	int regs_off, ip_off, args_off, stack_size = nr_args * 8, run_ctx_off;
->> @@ -2280,6 +2280,21 @@ int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *image, void *i
->>   		for (i = 0; i < fmod_ret->nr_links; i++)
->>   			emit_cond_near_jump(&branches[i], prog, branches[i],
->>   					    X86_JNE);
->> +
->> +		if (func_ret_check_addr) {
->> +			emit_ldx(&prog, BPF_DW, BPF_REG_1, BPF_REG_FP, -8);
->> +
->> +			/* call ret check function */
->> +			if (emit_call(&prog, func_ret_check_addr, prog)) {
->> +				ret = -EINVAL;
->> +				goto cleanup;
->> +			}
->> +
->> +			/* remember return value in a stack for bpf prog to access */
->> +			emit_stx(&prog, BPF_DW, BPF_REG_FP, BPF_REG_0, -8);
->> +			memcpy(prog, x86_nops[5], X86_PATCH_SIZE);
->> +			prog += X86_PATCH_SIZE;
->> +		}
->>   	}
->>   
->>   	if (fexit->nr_links)
->> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
->> index 49f9d2bec401..f3551f7bdc28 100644
->> --- a/include/linux/bpf.h
->> +++ b/include/linux/bpf.h
->> @@ -919,7 +919,7 @@ struct bpf_tramp_image;
->>   int arch_prepare_bpf_trampoline(struct bpf_tramp_image *tr, void *image, void *image_end,
->>   				const struct btf_func_model *m, u32 flags,
->>   				struct bpf_tramp_links *tlinks,
->> -				void *orig_call);
->> +				void *orig_call, void *ret_call);
->>   u64 notrace __bpf_prog_enter_sleepable_recur(struct bpf_prog *prog,
->>   					     struct bpf_tramp_run_ctx *run_ctx);
->>   void notrace __bpf_prog_exit_sleepable_recur(struct bpf_prog *prog, u64 start,
->> @@ -974,6 +974,7 @@ struct bpf_trampoline {
->>   	struct {
->>   		struct btf_func_model model;
->>   		void *addr;
->> +		void *ret_check_addr;
->>   		bool ftrace_managed;
->>   	} func;
->>   	/* if !NULL this is BPF_PROG_TYPE_EXT program that extends another BPF
->> @@ -994,6 +995,7 @@ struct bpf_trampoline {
->>   struct bpf_attach_target_info {
->>   	struct btf_func_model fmodel;
->>   	long tgt_addr;
->> +	long tgt_ret_check_addr;
->>   	const char *tgt_name;
->>   	const struct btf_type *tgt_type;
->>   };
->> diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
->> index 37bcedf5a44e..f7f25d0064dd 100644
->> --- a/kernel/bpf/bpf_lsm.c
->> +++ b/kernel/bpf/bpf_lsm.c
->> @@ -18,6 +18,17 @@
->>   #include <linux/ima.h>
->>   #include <linux/bpf-cgroup.h>
->>   
->> +static bool is_ret_value_allowed(int ret, u32 ret_flags)
->> +{
->> +	if ((ret < 0 && !(ret_flags & LSM_RET_NEG)) ||
->> +	    (ret == 0 && !(ret_flags & LSM_RET_ZERO)) ||
->> +	    (ret == 1 && !(ret_flags & LSM_RET_ONE)) ||
->> +	    (ret > 1 && !(ret_flags & LSM_RET_GT_ONE)))
->> +		return false;
->> +
->> +	return true;
->> +}
->> +
->>   /* For every LSM hook that allows attachment of BPF programs, declare a nop
->>    * function where a BPF program can be attached.
->>    */
->> @@ -30,6 +41,15 @@ noinline RET bpf_lsm_##NAME(__VA_ARGS__)	\
->>   #include <linux/lsm_hook_defs.h>
->>   #undef LSM_HOOK
->>   
->> +#define LSM_HOOK(RET, DEFAULT, RET_FLAGS, NAME, ...)	\
->> +noinline RET bpf_lsm_##NAME##_ret(int ret)	\
->> +{						\
->> +	return is_ret_value_allowed(ret, RET_FLAGS) ? ret : DEFAULT; \
->> +}
->> +
->> +#include <linux/lsm_hook_defs.h>
->> +#undef LSM_HOOK
->> +
->>   #define LSM_HOOK(RET, DEFAULT, RET_FLAGS, NAME, ...) \
->>   	BTF_ID(func, bpf_lsm_##NAME)
->>   BTF_SET_START(bpf_lsm_hooks)
->> diff --git a/kernel/bpf/bpf_struct_ops.c b/kernel/bpf/bpf_struct_ops.c
->> index 84b2d9dba79a..22485f0df534 100644
->> --- a/kernel/bpf/bpf_struct_ops.c
->> +++ b/kernel/bpf/bpf_struct_ops.c
->> @@ -346,7 +346,7 @@ int bpf_struct_ops_prepare_trampoline(struct bpf_tramp_links *tlinks,
->>   	 */
->>   	flags = model->ret_size > 0 ? BPF_TRAMP_F_RET_FENTRY_RET : 0;
->>   	return arch_prepare_bpf_trampoline(NULL, image, image_end,
->> -					   model, flags, tlinks, NULL);
->> +					   model, flags, tlinks, NULL, NULL);
->>   }
->>   
->>   static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
->> diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
->> index d6395215b849..3c6821b3c08c 100644
->> --- a/kernel/bpf/trampoline.c
->> +++ b/kernel/bpf/trampoline.c
->> @@ -464,7 +464,8 @@ static int bpf_trampoline_update(struct bpf_trampoline *tr, bool lock_direct_mut
->>   
->>   	err = arch_prepare_bpf_trampoline(im, im->image, im->image + PAGE_SIZE,
->>   					  &tr->func.model, tr->flags, tlinks,
->> -					  tr->func.addr);
->> +					  tr->func.addr,
->> +					  tr->func.ret_check_addr);
->>   	if (err < 0)
->>   		goto out;
->>   
->> @@ -802,6 +803,7 @@ struct bpf_trampoline *bpf_trampoline_get(u64 key,
->>   
->>   	memcpy(&tr->func.model, &tgt_info->fmodel, sizeof(tgt_info->fmodel));
->>   	tr->func.addr = (void *)tgt_info->tgt_addr;
->> +	tr->func.ret_check_addr = (void *)tgt_info->tgt_ret_check_addr;
->>   out:
->>   	mutex_unlock(&tr->mutex);
->>   	return tr;
->> @@ -1055,7 +1057,7 @@ int __weak
->>   arch_prepare_bpf_trampoline(struct bpf_tramp_image *tr, void *image, void *image_end,
->>   			    const struct btf_func_model *m, u32 flags,
->>   			    struct bpf_tramp_links *tlinks,
->> -			    void *orig_call)
->> +			    void *orig_call, void *ret_check_call)
->>   {
->>   	return -ENOTSUPP;
->>   }
->> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
->> index 5e74f460dfd0..1ad0fe5cefe9 100644
->> --- a/kernel/bpf/verifier.c
->> +++ b/kernel/bpf/verifier.c
->> @@ -14988,12 +14988,13 @@ int bpf_check_attach_target(struct bpf_verifier_log *log,
->>   {
->>   	bool prog_extension = prog->type == BPF_PROG_TYPE_EXT;
->>   	const char prefix[] = "btf_trace_";
->> -	int ret = 0, subprog = -1, i;
->> +	int ret = 0, subprog = -1, i, tname_len;
->>   	const struct btf_type *t;
->>   	bool conservative = true;
->>   	const char *tname;
->> +	char *tname_ret;
->>   	struct btf *btf;
->> -	long addr = 0;
->> +	long addr = 0, ret_check_addr = 0;
->>   
->>   	if (!btf_id) {
->>   		bpf_log(log, "Tracing programs must provide btf_id\n");
->> @@ -15168,6 +15169,28 @@ int bpf_check_attach_target(struct bpf_verifier_log *log,
->>   					tname);
->>   				return -ENOENT;
->>   			}
->> +
->> +			if (prog->expected_attach_type == BPF_LSM_MAC) {
->> +				tname_len = strlen(tname);
->> +				tname_ret = kmalloc(tname_len + 5, GFP_KERNEL);
->> +				if (!tname_ret) {
->> +					bpf_log(log,
->> +						"Cannot allocate memory for %s_ret string\n",
->> +						tname);
->> +					return -ENOMEM;
->> +				}
->> +
->> +				snprintf(tname_ret, tname_len + 5, "%s_ret", tname);
->> +				ret_check_addr = kallsyms_lookup_name(tname_ret);
->> +				kfree(tname_ret);
->> +
->> +				if (!ret_check_addr) {
->> +					bpf_log(log,
->> +						"Kernel symbol %s_ret not found\n",
->> +						tname);
->> +					return -ENOENT;
->> +				}
->> +			}
->>   		}
->>   
->>   		if (prog->aux->sleepable) {
->> @@ -15210,6 +15233,7 @@ int bpf_check_attach_target(struct bpf_verifier_log *log,
->>   		break;
->>   	}
->>   	tgt_info->tgt_addr = addr;
->> +	tgt_info->tgt_ret_check_addr = ret_check_addr;
->>   	tgt_info->tgt_name = tname;
->>   	tgt_info->tgt_type = t;
->>   	return 0;
-
+>> from the top of this callchain, I can not find a path to replace dentry,
+>> did I miss something? or do you have better idea?
+> 
+> I think this can be solved thanks to the ovl_path_real() helper.
+> .
