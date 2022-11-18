@@ -2,184 +2,127 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F76C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Nov 2022 10:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCEE3C41535
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Nov 2022 11:09:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235255AbiKRKeG (ORCPT
+        id S241858AbiKRLJc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Nov 2022 05:34:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56416 "EHLO
+        Fri, 18 Nov 2022 06:09:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235278AbiKRKdx (ORCPT
+        with ESMTP id S241694AbiKRLJP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Nov 2022 05:33:53 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80198450B6;
-        Fri, 18 Nov 2022 02:33:52 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1EA7C62420;
-        Fri, 18 Nov 2022 10:33:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 863D4C433C1;
-        Fri, 18 Nov 2022 10:33:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668767631;
-        bh=SqmJeQHOTrY1HEfIPpqpnWl8TDalf6jKjxJimIhwFyk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dCqgfSL+p4k0s4JBoJWHA9or1XiyfOnJO9rBue42ogfFBdCPm4Sx+4qnPk+EpVJcX
-         kYp0Q9LZvYw1sMcqwR2U6CZwDo9VJ3TCba+HkXBZosgcsdq7uLvUoZJjLqO8vZD+hL
-         YGuRBPSeeZsIj75D7ZW/KnI+YPDYuYlg9/AHt+93jNeP9fYsMWkLwrf8KeA941dgKS
-         1zn3+MNkXhnCCQHIEKgL/XMr8v6bqGWGEFXx0xTNZnjgxV3XsAC8FvaPjL9aoP+s7y
-         Mv7/nt1sHeLQxNjFxInZsOlI1LliyxChy+f3q/oIMS1pvpz1HzpFdmCl9Mg9Ar0oDa
-         ENdQg6NRYuU7w==
-Date:   Fri, 18 Nov 2022 11:33:46 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc:     linux-fsdevel@vger.kernel.org,
-        xiujianfeng <xiujianfeng@huawei.com>,
-        Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v5 02/30] fs: pass dentry to set acl method
-Message-ID: <20221118103346.xvnf5tejbahogfe4@wittgenstein>
-References: <20221018115700.166010-1-brauner@kernel.org>
- <20221018115700.166010-3-brauner@kernel.org>
- <42f5923d-5e47-68d5-20a6-4b5342a9bd19@digikod.net>
+        Fri, 18 Nov 2022 06:09:15 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27B2E3B1;
+        Fri, 18 Nov 2022 03:09:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=EfRO0ptxO3+ypU2KxCKexp96MUHxMRW8bunXh9MGsDQ=; b=LDGBrfajYbkT9xph6b6097Xb/c
+        syw/S6y4TG1cS360/nd6d+c79/tEze+2e0txBMIoIcDriZE8lsPhASFA+NSJ8eg8EVkJO2kPb4qlI
+        t0uGnwKkqKm3kAMzV9dozjGsuBQAveUb/UOZDYoK75AExM4rxBzbgukAnzxUTKevVJRGZPyPEIYWw
+        gSP3hqrNt8ek+/8tR8KcdqQYYDbVJVIGKeEUat+AOQu3Lb7Rqyh8OcjxgSig6/MAUk9wvWAe8ysnQ
+        uQjyqr2Z5/P12vcorm9ew0TUB/Z1OlxqyFa9I2mva2wnFCskZFBF8h9xXwfF4ZV+daEJb09cWUoJB
+        0tx5p2IQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ovzF8-002Dxl-JB; Fri, 18 Nov 2022 11:09:10 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A8C81300422;
+        Fri, 18 Nov 2022 12:09:02 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7C5AF205A9605; Fri, 18 Nov 2022 12:09:02 +0100 (CET)
+Date:   Fri, 18 Nov 2022 12:09:02 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH mm-unstable v1 20/20] mm: rename FOLL_FORCE to FOLL_PTRACE
+Message-ID: <Y3dnzgwJpjTQXI9y@hirez.programming.kicks-ass.net>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-21-david@redhat.com>
+ <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <42f5923d-5e47-68d5-20a6-4b5342a9bd19@digikod.net>
+In-Reply-To: <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 18, 2022 at 11:09:20AM +0100, Mickaël Salaün wrote:
-> Hi Christian,
-> 
-> We are working on updating the security_inode_*attr LSM hooks to use path
-> instead of inode [1]. Indeed, this is required for path-based LSMs such as
-> Landlock, AppArmor and Tomoyo to make sense of attr/xattr accesses. Could
-> you please update this new ACL API to use struct path instead of struct
-> dentry?
+On Wed, Nov 16, 2022 at 10:16:34AM -0800, Linus Torvalds wrote:
+> Following the history of it is a big of a mess, because there's a
+> number of renamings and re-organizations, but it seems to go back to
+> 2007 and commit b6a2fea39318 ("mm: variable length argument support").
 
-Hey Michael,
+I went back and read parts of the discussions with Ollie, and the
+.force=1 thing just magically appeared one day when we were sending
+work-in-progress patches back and forth without mention of where it came
+from :-/
 
-These patches have been sitting in -next since -rc1 and we are at -rc6
-this weekend so this request is too late for the coming merge window. We
-can't do a fundamental change this late. I would ask you to please do
-these changes in a separate series next cycle. And this will need a
-separate discussion among the LSM people and VFS reviews anyway.
+And I certainly can't remember now..
 
-Thanks!
-Christian
-
-> 
-> [1]
-> https://lore.kernel.org/all/1373bbe5-16b1-bf0e-5f92-14c31cb94897@huawei.com/
-> 
-> 
-> On 18/10/2022 13:56, Christian Brauner wrote:
-> > The current way of setting and getting posix acls through the generic
-> > xattr interface is error prone and type unsafe. The vfs needs to
-> > interpret and fixup posix acls before storing or reporting it to
-> > userspace. Various hacks exist to make this work. The code is hard to
-> > understand and difficult to maintain in it's current form. Instead of
-> > making this work by hacking posix acls through xattr handlers we are
-> > building a dedicated posix acl api around the get and set inode
-> > operations. This removes a lot of hackiness and makes the codepaths
-> > easier to maintain. A lot of background can be found in [1].
-> > 
-> > Since some filesystem rely on the dentry being available to them when
-> > setting posix acls (e.g., 9p and cifs) they cannot rely on set acl inode
-> > operation. But since ->set_acl() is required in order to use the generic
-> > posix acl xattr handlers filesystems that do not implement this inode
-> > operation cannot use the handler and need to implement their own
-> > dedicated posix acl handlers.
-> > 
-> > Update the ->set_acl() inode method to take a dentry argument. This
-> > allows all filesystems to rely on ->set_acl().
-> > 
-> > As far as I can tell all codepaths can be switched to rely on the dentry
-> > instead of just the inode. Note that the original motivation for passing
-> > the dentry separate from the inode instead of just the dentry in the
-> > xattr handlers was because of security modules that call
-> > security_d_instantiate(). This hook is called during
-> > d_instantiate_new(), d_add(), __d_instantiate_anon(), and
-> > d_splice_alias() to initialize the inode's security context and possibly
-> > to set security.* xattrs. Since this only affects security.* xattrs this
-> > is completely irrelevant for posix acls.
-> > 
-> > Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> > ---
-> > 
-> > Notes:
-> >      /* v2 */
-> >      Christoph Hellwig <hch@lst.de>:
-> >      - Split orangefs into a preparatory patch.
-> >      /* v3 */
-> >      unchanged
-> >      /* v4 */
-> >      unchanged
-> >      /* v5 */
-> >      unchanged
-> > 
-> >   Documentation/filesystems/vfs.rst |  2 +-
-> >   fs/bad_inode.c                    |  2 +-
-> >   fs/btrfs/acl.c                    |  3 ++-
-> >   fs/btrfs/ctree.h                  |  2 +-
-> >   fs/btrfs/inode.c                  |  2 +-
-> >   fs/ceph/acl.c                     |  3 ++-
-> >   fs/ceph/inode.c                   |  2 +-
-> >   fs/ceph/super.h                   |  2 +-
-> >   fs/ext2/acl.c                     |  3 ++-
-> >   fs/ext2/acl.h                     |  2 +-
-> >   fs/ext2/inode.c                   |  2 +-
-> >   fs/ext4/acl.c                     |  3 ++-
-> >   fs/ext4/acl.h                     |  2 +-
-> >   fs/ext4/inode.c                   |  2 +-
-> >   fs/f2fs/acl.c                     |  4 +++-
-> >   fs/f2fs/acl.h                     |  2 +-
-> >   fs/f2fs/file.c                    |  2 +-
-> >   fs/fuse/acl.c                     |  3 ++-
-> >   fs/fuse/fuse_i.h                  |  2 +-
-> >   fs/gfs2/acl.c                     |  3 ++-
-> >   fs/gfs2/acl.h                     |  2 +-
-> >   fs/gfs2/inode.c                   |  2 +-
-> >   fs/jffs2/acl.c                    |  3 ++-
-> >   fs/jffs2/acl.h                    |  2 +-
-> >   fs/jffs2/fs.c                     |  2 +-
-> >   fs/jfs/acl.c                      |  3 ++-
-> >   fs/jfs/file.c                     |  2 +-
-> >   fs/jfs/jfs_acl.h                  |  2 +-
-> >   fs/ksmbd/smb2pdu.c                |  4 ++--
-> >   fs/ksmbd/smbacl.c                 |  4 ++--
-> >   fs/ksmbd/vfs.c                    | 15 ++++++++-------
-> >   fs/ksmbd/vfs.h                    |  4 ++--
-> >   fs/nfs/nfs3_fs.h                  |  2 +-
-> >   fs/nfs/nfs3acl.c                  |  3 ++-
-> >   fs/nfsd/nfs2acl.c                 |  4 ++--
-> >   fs/nfsd/nfs3acl.c                 |  4 ++--
-> >   fs/nfsd/vfs.c                     |  4 ++--
-> >   fs/ntfs3/file.c                   |  2 +-
-> >   fs/ntfs3/ntfs_fs.h                |  4 ++--
-> >   fs/ntfs3/xattr.c                  |  9 +++++----
-> >   fs/ocfs2/acl.c                    |  3 ++-
-> >   fs/ocfs2/acl.h                    |  2 +-
-> >   fs/orangefs/acl.c                 |  5 +++--
-> >   fs/orangefs/inode.c               |  7 ++++---
-> >   fs/orangefs/orangefs-kernel.h     |  4 ++--
-> >   fs/posix_acl.c                    | 18 +++++++++++-------
-> >   fs/reiserfs/acl.h                 |  6 +++---
-> >   fs/reiserfs/inode.c               |  2 +-
-> >   fs/reiserfs/xattr_acl.c           |  9 ++++++---
-> >   fs/xfs/xfs_acl.c                  |  3 ++-
-> >   fs/xfs/xfs_acl.h                  |  2 +-
-> >   fs/xfs/xfs_iops.c                 | 10 ++++++----
-> >   include/linux/fs.h                |  2 +-
-> >   include/linux/posix_acl.h         | 12 ++++++------
-> >   mm/shmem.c                        |  2 +-
-> >   55 files changed, 119 insertions(+), 93 deletions(-)
+Looking at it now, I have the same reaction as both you and Kees had, it
+seems entirely superflous. So I'm all for trying to remove it.
