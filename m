@@ -2,93 +2,298 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCEFC433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Nov 2022 13:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EA2C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Nov 2022 14:18:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240766AbiKRNof (ORCPT
+        id S242321AbiKROSS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Nov 2022 08:44:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35934 "EHLO
+        Fri, 18 Nov 2022 09:18:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234455AbiKRNoe (ORCPT
+        with ESMTP id S242382AbiKRORt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Nov 2022 08:44:34 -0500
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 151FBFCD9
-        for <linux-security-module@vger.kernel.org>; Fri, 18 Nov 2022 05:44:33 -0800 (PST)
-Received: by mail-pg1-x52f.google.com with SMTP id 136so5061039pga.1
-        for <linux-security-module@vger.kernel.org>; Fri, 18 Nov 2022 05:44:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4/kW/LvsRCoudJw36ESMmqSNR0Az8yW0/a/nizc4ptw=;
-        b=JDT7hG7hCSGOXGQfHzp0tVmWhUqRqIrDsZ1/D/HWJyOelXHgcjjm8AQXsUwO4RMQvj
-         l7AVYmwK0gDC33+491Z3LzS6MouXoTY5WMX47bzzv3/CYrpF1zyQDpr57XeIM5E7VL3O
-         0bR3CEkCBzg4AFajY4dnahnEQ8wxwS5ibjOV9HLJ8zk9p74cEc/Xxt6ESOCJyom8V9R1
-         bkWfKPpDMv9vt8efVYAy0Rgx6iIw743XKAzLkdoss+m4c6eSKTBow1DkcQ/Irf5SBBhb
-         Ue+4Anj3Qh6cpv7pQHSvEBQARPlhdZjmL6D5xkLFSzknZb8cSxXes/B90Y3So6l0k7I0
-         fC8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4/kW/LvsRCoudJw36ESMmqSNR0Az8yW0/a/nizc4ptw=;
-        b=NCX7r3nT0icsrx9CyN9W2Lllbmb0cikl+Vt5mo4ofcZAcaU8aWu3MDPDSUY6es74e2
-         XKcGdjEducpDW6hRffWMXW6vbew9We1HGvwUxDec+k8fmZ85ZngkL5ZTlbrNnV+U0qSO
-         zG977qgNULXjwpPt81J0l2a6khSxqnasLlzS4cTIU+IDhH+M7hpJYJefX3cFE90OdkuJ
-         ppQqtuD0+YJtiIpW1QgV3/1d2/OZ1Nh8KrIB95nl6D5rWBwTHwxLYk/C1d6QY830isG/
-         8f2FVspAZRDwuduA9B2ojb1YhNlUPOXQpapvU0om0hLcOaC0vDWcE08kACNMq4lwFTSr
-         qQWA==
-X-Gm-Message-State: ANoB5pnTNflJDsbmzR5GL4KxgokU41uliF69Us+w9RKrQxDCsxqidi2+
-        SJXOPU36kv7IdqFoyp7t4CVgezQ88Om+w2NER2LhXRlsDg==
-X-Google-Smtp-Source: AA0mqf4N+tHMLkErc2xL6guhYyiJeJOUM8ZL6UfvJzUAiqq6Ex3AcjtStFVaYD2ZfCzxcvQokZDNo7R83rkgjTu4jeY=
-X-Received: by 2002:a63:1f63:0:b0:460:ec46:3645 with SMTP id
- q35-20020a631f63000000b00460ec463645mr6857164pgm.92.1668779072496; Fri, 18
- Nov 2022 05:44:32 -0800 (PST)
+        Fri, 18 Nov 2022 09:17:49 -0500
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 843528CFF1;
+        Fri, 18 Nov 2022 06:17:28 -0800 (PST)
+Received: (Authenticated sender: nicolas.bouchinet@clip-os.org)
+        by mail.gandi.net (Postfix) with ESMTPSA id C109CFF813;
+        Fri, 18 Nov 2022 14:17:19 +0000 (UTC)
+Date:   Fri, 18 Nov 2022 15:17:18 +0100
+From:   Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     linux-integrity@vger.kernel.org, philippe.trebuchet@ssi.gouv.fr,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        casey@schaufler-ca.com, davem@davemloft.net, lucien.xin@gmail.com,
+        vgoyal@redhat.com, omosnace@redhat.com, mortonm@chromium.org,
+        nicolas.bouchinet@ssi.gouv.fr, mic@digikod.net,
+        cgzones@googlemail.com, linux-security-module@vger.kernel.org,
+        kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
+        bpf@vger.kernel.org
+Subject: Re: [PATCH v4] evm: Correct inode_init_security hooks behaviors
+Message-ID: <Y3eT7lEoQytCh4m/@archlinux>
+References: <Y1lElHVQGT/1Pa6O@archlinux>
+ <2b10941d35ab833dbb0e5858489fefc33d11c010.camel@huaweicloud.com>
 MIME-Version: 1.0
-References: <20221110043614.802364-1-paul@paul-moore.com> <20221118015414.GA19423@mail.hallyn.com>
-In-Reply-To: <20221118015414.GA19423@mail.hallyn.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 18 Nov 2022 08:44:21 -0500
-Message-ID: <CAHC9VhSNGSpdYWf_6if+Q+8BZvR-zYYxBMmoYhRNH9rWpn7=AA@mail.gmail.com>
-Subject: Re: [RFC PATCH] lsm,fs: fix vfs_getxattr_alloc() return type and
- caller error paths
-To:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b10941d35ab833dbb0e5858489fefc33d11c010.camel@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 17, 2022 at 8:54 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> On Wed, Nov 09, 2022 at 11:36:14PM -0500, Paul Moore wrote:
-> > The vfs_getxattr_alloc() function currently returns a ssize_t value
-> > despite the fact that it only uses int values internally for return
-> > values.  Fix this by converting vfs_getxattr_alloc() to return an
-> > int type and adjust the callers as necessary.  As part of these
-> > caller modifications, some of the callers are fixed to properly free
-> > the xattr value buffer on both success and failure to ensure that
-> > memory is not leaked in the failure case.
-> >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
->
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
->
-> Do I understand right that the change to process_measurement()
-> will avoid an unnecessary call to krealloc() if the xattr has
-> not changed size between the two calls to ima_read_xattr()?
-> If something more than that is going on there, it might be
-> worth pointing out in the commit message.
+Hi Roberto, sorry for the late reply.
 
-Yes, that was the intent, trying to avoid extra calls to krealloc().
+On Thu, Nov 03, 2022 at 04:27:51PM +0100, Roberto Sassu wrote:
+> On Wed, 2022-10-26 at 16:30 +0200, Nicolas Bouchinet wrote:
+> > From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > 
+> > Fixes a NULL pointer dereference occurring in the
+> > `evm_protected_xattr_common` function of the EVM LSM. The bug is
+> > triggered if a `inode_init_security` hook returns 0 without initializing
+> > the given `struct xattr` fields (which is the case of BPF) and if no
+> > other LSM overrides thoses fields after. This also leads to memory
+> > leaks.
+> > 
+> > The `call_int_hook_xattr` macro has been inlined into the
+> > `security_inode_init_security` hook in order to check hooks return
+> > values and skip ones who doesn't init `xattrs`.
+> > 
+> > Modify `evm_init_hmac` function to init the EVM hmac using every
+> > entry of the given xattr array.
+> > 
+> > The `MAX_LSM_EVM_XATTR` value is now based on the security modules
+> > compiled in, which gives room for SMACK, SELinux, Apparmor, BPF and
+> > IMA/EVM security attributes.
+> > 
+> > Changes the default return value of the `inode_init_security` hook
+> > definition to `-EOPNOTSUPP`.
+> > 
+> > Changes the hook documentation to match the behavior of the LSMs using
+> > it (only xattr->value is initialised with kmalloc and thus is the only
+> > one that should be kfreed by the caller).
+> > 
+> > Cc: roberto.sassu@huaweicloud.com
+> > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > ---
+> > Changes since v3:
+> > https://lore.kernel.org/linux-integrity/Y1fu4jofqLHVDprT@archlinux/
+> > 
+> > * Fixes compilation error reported by the kernel test robot.
+> > ---
+> >  include/linux/lsm_hook_defs.h       |  2 +-
+> >  include/linux/lsm_hooks.h           |  4 ++--
+> >  security/integrity/evm/evm.h        |  1 +
+> >  security/integrity/evm/evm_crypto.c |  9 +++++++--
+> >  security/integrity/evm/evm_main.c   |  7 ++++---
+> >  security/security.c                 | 31 ++++++++++++++++++++++-------
+> >  6 files changed, 39 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> > index 806448173033..e5dd0c0f6345 100644
+> > --- a/include/linux/lsm_hook_defs.h
+> > +++ b/include/linux/lsm_hook_defs.h
+> > @@ -111,7 +111,7 @@ LSM_HOOK(int, 0, path_notify, const struct path *path, u64 mask,
+> >  	 unsigned int obj_type)
+> >  LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
+> >  LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
+> > -LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
+> > +LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
+> >  	 struct inode *dir, const struct qstr *qstr, const char **name,
+> >  	 void **value, size_t *len)
+> >  LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
+> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > index 84a0d7e02176..95aff9383de1 100644
+> > --- a/include/linux/lsm_hooks.h
+> > +++ b/include/linux/lsm_hooks.h
+> > @@ -229,8 +229,8 @@
+> >   *	This hook is called by the fs code as part of the inode creation
+> >   *	transaction and provides for atomic labeling of the inode, unlike
+> >   *	the post_create/mkdir/... hooks called by the VFS.  The hook function
+> > - *	is expected to allocate the name and value via kmalloc, with the caller
+> > - *	being responsible for calling kfree after using them.
+> > + *	is expected to allocate the value via kmalloc, with the caller
+> > + *	being responsible for calling kfree after using it.
+> 
+> Please also update the description of @name as well (remove allocated).
+ACK, will do it.
+> 
+> >   *	If the security module does not use security attributes or does
+> >   *	not wish to put a security attribute on this particular inode,
+> >   *	then it should return -EOPNOTSUPP to skip this processing.
+> > diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+> > index f8b8c5004fc7..6d9628ca7c24 100644
+> > --- a/security/integrity/evm/evm.h
+> > +++ b/security/integrity/evm/evm.h
+> > @@ -61,5 +61,6 @@ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+> >  int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
+> >  		  char *hmac_val);
+> >  int evm_init_secfs(void);
+> > +int evm_protected_xattr(const char *req_xattr_name);
+> >  
+> >  #endif
+> > diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> > index 708de9656bbd..06639f3cfb38 100644
+> > --- a/security/integrity/evm/evm_crypto.c
+> > +++ b/security/integrity/evm/evm_crypto.c
+> > @@ -385,7 +385,7 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+> >  	return rc;
+> >  }
+> >  
+> > -int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+> > +int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattrs,
+> >  		  char *hmac_val)
+> >  {
+> >  	struct shash_desc *desc;
+> > @@ -396,7 +396,12 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+> >  		return PTR_ERR(desc);
+> >  	}
+> >  
+> > -	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
+> > +	for (int i = 0; lsm_xattrs[i].value != NULL; i++) {
+> > +		if (evm_protected_xattr(lsm_xattrs[i].name))
+> > +			crypto_shash_update(desc,
+> > +					    lsm_xattrs[i].value,
+> > +					    lsm_xattrs[i].value_len);
+> > +	}
+> >  	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
+> >  	kfree(desc);
+> >  	return 0;
+> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> > index 2e6fb6e2ffd2..0420453a80e8 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -284,6 +284,8 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
+> >  	int found = 0;
+> >  	struct xattr_list *xattr;
+> >  
+> > +	if (!req_xattr_name)
+> > +		return found;
+> 
+> Remove, and use the check below.
+If I understood it well, this patchset will not be backported. Wouldn't it be necessary to make this check here
+for backports ?
+> 
+> >  	namelen = strlen(req_xattr_name);
+> >  	list_for_each_entry_lockless(xattr, &evm_config_xattrnames, list) {
+> >  		if (!all_xattrs && !xattr->enabled)
+> > @@ -305,7 +307,7 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
+> >  	return found;
+> >  }
+> >  
+> > -static int evm_protected_xattr(const char *req_xattr_name)
+> > +int evm_protected_xattr(const char *req_xattr_name)
+> >  {
+> >  	return evm_protected_xattr_common(req_xattr_name, false);
+> >  }
+> > @@ -841,8 +843,7 @@ int evm_inode_init_security(struct inode *inode,
+> >  	struct evm_xattr *xattr_data;
+> >  	int rc;
+> >  
+> > -	if (!(evm_initialized & EVM_INIT_HMAC) ||
+> > -	    !evm_protected_xattr(lsm_xattr->name))
+> > +	if (!(evm_initialized & EVM_INIT_HMAC))
+> >  		return 0;
+> >  
+> >  	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
+> > diff --git a/security/security.c b/security/security.c
+> > index 14d30fec8a00..79524f8734f1 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -30,7 +30,11 @@
+> >  #include <linux/msg.h>
+> >  #include <net/flow.h>
+> >  
+> > -#define MAX_LSM_EVM_XATTR	2
+> > +#define MAX_LSM_EVM_XATTR                                \
+> > +	((IS_ENABLED(CONFIG_EVM) ? 1 : 0) +              \
+> > +	 (IS_ENABLED(CONFIG_SECURITY_SELINUX) ? 1 : 0) + \
+> > +	 (IS_ENABLED(CONFIG_SECURITY_SMACK) ? 1 : 0) +   \
+> > +	 (IS_ENABLED(CONFIG_BPF_LSM) ? 1 : 0))
+> >  
+> >  /* How many LSMs were built into the kernel? */
+> >  #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
+> > @@ -1091,9 +1095,11 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+> >  				 const struct qstr *qstr,
+> >  				 const initxattrs initxattrs, void *fs_data)
+> >  {
+> > +	int i = 0;
+> > +	int ret = -EOPNOTSUPP;
+> >  	struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
+> >  	struct xattr *lsm_xattr, *evm_xattr, *xattr;
+> > -	int ret;
+> > +	struct security_hook_list *hook_ptr;
+> >  
+> >  	if (unlikely(IS_PRIVATE(inode)))
+> >  		return 0;
+> > @@ -1103,15 +1109,26 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+> >  				     dir, qstr, NULL, NULL, NULL);
+> >  	memset(new_xattrs, 0, sizeof(new_xattrs));
+> >  	lsm_xattr = new_xattrs;
+> > -	ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
+> > -						&lsm_xattr->name,
+> > -						&lsm_xattr->value,
+> > -						&lsm_xattr->value_len);
+> > +	hlist_for_each_entry(hook_ptr, &security_hook_heads.inode_init_security,
+> > +			     list) {
+> > +		ret = hook_ptr->hook.inode_init_security(inode, dir, qstr,
+> > +				&lsm_xattr->name,
+> > +				&lsm_xattr->value,
+> > +				&lsm_xattr->value_len);
+> > +		if (ret == -EOPNOTSUPP)
+> > +			continue;
+> 
+> This does not work properly. Suppose that you have an LSM with xattr
+> and another without. The final ret will be -EOPNOTSUPP. Instead declare
+> new_xattrs_set boolean, and set to true if ret = 0. After the loop,
+> check the boolean instead of ret. If ret != 0 goto out.
+> 
+Your right, will change it.
 
-Mimi, have you had a chance to look at this patch yet?  In addition to
-cleaning up the vfs_getxattr_alloc() function it resolves some issues
-with IMA (memory leaks), but as you're the IMA expert I really need
-your review on this ...
+> > +		if (WARN_ON_ONCE(i >= MAX_LSM_EVM_XATTR))
+> > +			ret = -ENOMEM;
+> > +		if (ret != 0)
+> > +			break;
+> 
+> We can check here if the LSM behaved properly, i.e. it set the xattr
+> name and value:
+> 
+> if (WARN_ON_ONCE(!lsm_xattr->name || !lsm_xattr->value)) {
+> 	ret = -ENOMEM;
+> 	goto out;
+I'm OK with this, thanks, will change it !
 
--- 
-paul-moore.com
+> }
+> 
+> > +		lsm_xattr++;
+> > +		i++;
+> > +	}
+> >  	if (ret)
+> >  		goto out;
+> >  
+> >  	evm_xattr = lsm_xattr + 1;
+> 
+> It should be:
+> 
+> 	evm_xattr = lsm_xattr;
+> 
+> You incremented lsm_xattr already, after the LSMs set their xattr.
+
+`lsm_xattr` is indeed already incremented, will patch this.
+
+> 
+> Once you complete the changes, I will send a patch set including your
+> patch with some more patches.
+> 
+> Roberto
+> 
+> > -	ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
+> > +	ret = evm_inode_init_security(inode, new_xattrs, evm_xattr);
+> >  	if (ret)
+> >  		goto out;
+> >  	ret = initxattrs(inode, new_xattrs, fs_data);
+> 
+
+Thank's a lot for your review,
+
+Nicolas Bouchinet
