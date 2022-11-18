@@ -2,108 +2,168 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC8DC433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Nov 2022 09:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA10C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Nov 2022 10:10:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235196AbiKRJcy (ORCPT
+        id S241115AbiKRKJl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Nov 2022 04:32:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45840 "EHLO
+        Fri, 18 Nov 2022 05:09:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233863AbiKRJcw (ORCPT
+        with ESMTP id S241034AbiKRKJ3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Nov 2022 04:32:52 -0500
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF5617A9D;
-        Fri, 18 Nov 2022 01:32:51 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4NDBHg1NzNz9v7Nl;
-        Fri, 18 Nov 2022 17:26:39 +0800 (CST)
-Received: from [10.206.134.65] (unknown [10.206.134.65])
-        by APP2 (Coremail) with SMTP id GxC2BwCHu_chUXdj9_NzAA--.22300S2;
-        Fri, 18 Nov 2022 10:32:27 +0100 (CET)
-Message-ID: <2e493258-b267-b8ad-0812-53f4e9c849ae@huaweicloud.com>
-Date:   Fri, 18 Nov 2022 10:32:15 +0100
+        Fri, 18 Nov 2022 05:09:29 -0500
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 414DEFCD1
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Nov 2022 02:09:25 -0800 (PST)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NDCDz57ShzMpvgL;
+        Fri, 18 Nov 2022 11:09:23 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4NDCDx3YlZzMppFH;
+        Fri, 18 Nov 2022 11:09:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1668766163;
+        bh=LuwiYNzAruu7wtGWb9RDS2lQo7BZE729+uX1o4+kCBY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=AOVi71Og7GijO5GBdtvVHVT0UqUW5unZYXf7R2wSO3wE4w3vICxpRXL6gYOPDjODl
+         QzTQ4Nd8BUEoC8kYGm5XFBRF/1Mg1jQuF8SY+ELrQvAl7TZe3TYW+YGpc7N1Te7KCh
+         IqHKYI79fY/JW/AcyPkNb4M78P7elhKH0fpbv2PQ=
+Message-ID: <42f5923d-5e47-68d5-20a6-4b5342a9bd19@digikod.net>
+Date:   Fri, 18 Nov 2022 11:09:20 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v4 3/5] security: Allow all LSMs to provide xattrs for
- inode_init_security hook
+User-Agent: 
+Subject: Re: [PATCH v5 02/30] fs: pass dentry to set acl method
 Content-Language: en-US
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
- <20221110094639.3086409-4-roberto.sassu@huaweicloud.com>
- <4c1349f670dc3c23214a5a5036e43ddaa0a7bc89.camel@linux.ibm.com>
- <026075fa-0b58-9041-0727-b75e19499356@schaufler-ca.com>
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <026075fa-0b58-9041-0727-b75e19499356@schaufler-ca.com>
+To:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, xiujianfeng <xiujianfeng@huawei.com>
+Cc:     Seth Forshee <sforshee@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-security-module@vger.kernel.org
+References: <20221018115700.166010-1-brauner@kernel.org>
+ <20221018115700.166010-3-brauner@kernel.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20221018115700.166010-3-brauner@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwCHu_chUXdj9_NzAA--.22300S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFyUJF45CrWDXF1rJF48Crg_yoW8Ww45pF
-        Wrta4UCrsYqF1UCFZxta18Wa43KrZ5GF4UJas5JryUAF4DXF1SqryFkF15ua48KrZ3J34q
-        qrWqg343Z3s8Aa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-        07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
-        WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AK
-        xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-        xUo0eHDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABF1jj4GV8QAAsS
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/17/2022 6:18 PM, Casey Schaufler wrote:
-> On 11/17/2022 8:05 AM, Mimi Zohar wrote:
->> hOn Thu, 2022-11-10 at 10:46 +0100, Roberto Sassu wrote:
->>> From: Roberto Sassu <roberto.sassu@huawei.com>
->>>
->>> Currently, security_inode_init_security() supports only one LSM providing
->>> an xattr and EVM calculating the HMAC on that xattr, plus other inode
->>> metadata.
->>>
->>> Allow all LSMs to provide one or multiple xattrs, by extending the security
->>> blob reservation mechanism. Introduce the new lbs_xattr field of the
->>> lsm_blob_sizes structure, so that each LSM can specify how many xattrs it
->>> needs, and the LSM infrastructure knows how many xattr slots it should
->>> allocate.
->> Perhaps supporting per LSM multiple xattrs is a nice idea, but EVM
->> doesn't currently support it.  The LSM xattrs are hard coded in
->> evm_config_default_xattrnames[],  based on whether the LSM is
->> configured.  Additional security xattrs may be included in the
->> security.evm calculation, by extending the list via
->> security/integrity/evm/evm_xattrs.
+Hi Christian,
+
+We are working on updating the security_inode_*attr LSM hooks to use 
+path instead of inode [1]. Indeed, this is required for path-based LSMs 
+such as Landlock, AppArmor and Tomoyo to make sense of attr/xattr 
+accesses. Could you please update this new ACL API to use struct path 
+instead of struct dentry?
+
+[1] 
+https://lore.kernel.org/all/1373bbe5-16b1-bf0e-5f92-14c31cb94897@huawei.com/
+
+
+On 18/10/2022 13:56, Christian Brauner wrote:
+> The current way of setting and getting posix acls through the generic
+> xattr interface is error prone and type unsafe. The vfs needs to
+> interpret and fixup posix acls before storing or reporting it to
+> userspace. Various hacks exist to make this work. The code is hard to
+> understand and difficult to maintain in it's current form. Instead of
+> making this work by hacking posix acls through xattr handlers we are
+> building a dedicated posix acl api around the get and set inode
+> operations. This removes a lot of hackiness and makes the codepaths
+> easier to maintain. A lot of background can be found in [1].
 > 
-> Smack uses multiple xattrs. All file system objects have a SMACK64
-> attribute, which is used for access control. A program file may have
-> a SMACK64EXEC attribute, which is the label the program will run with.
-> A library may have a SMACK64MMAP attribute to restrict loading. A
-> directory may have a SMACK64TRANSMUTE attribute, which modifies the
-> new object creation behavior.
+> Since some filesystem rely on the dentry being available to them when
+> setting posix acls (e.g., 9p and cifs) they cannot rely on set acl inode
+> operation. But since ->set_acl() is required in order to use the generic
+> posix acl xattr handlers filesystems that do not implement this inode
+> operation cannot use the handler and need to implement their own
+> dedicated posix acl handlers.
 > 
-> The point being that it may be more than a "nice idea" to support
-> multiple xattrs. It's not a hypothetical situation.
-
-Ok, that means that I have to change the number of xattrs reserved by 
-Smack in patch 3.
-
-Thanks
-
-Roberto
-
+> Update the ->set_acl() inode method to take a dentry argument. This
+> allows all filesystems to rely on ->set_acl().
+> 
+> As far as I can tell all codepaths can be switched to rely on the dentry
+> instead of just the inode. Note that the original motivation for passing
+> the dentry separate from the inode instead of just the dentry in the
+> xattr handlers was because of security modules that call
+> security_d_instantiate(). This hook is called during
+> d_instantiate_new(), d_add(), __d_instantiate_anon(), and
+> d_splice_alias() to initialize the inode's security context and possibly
+> to set security.* xattrs. Since this only affects security.* xattrs this
+> is completely irrelevant for posix acls.
+> 
+> Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> ---
+> 
+> Notes:
+>      /* v2 */
+>      Christoph Hellwig <hch@lst.de>:
+>      - Split orangefs into a preparatory patch.
+>      
+>      /* v3 */
+>      unchanged
+>      
+>      /* v4 */
+>      unchanged
+>      
+>      /* v5 */
+>      unchanged
+> 
+>   Documentation/filesystems/vfs.rst |  2 +-
+>   fs/bad_inode.c                    |  2 +-
+>   fs/btrfs/acl.c                    |  3 ++-
+>   fs/btrfs/ctree.h                  |  2 +-
+>   fs/btrfs/inode.c                  |  2 +-
+>   fs/ceph/acl.c                     |  3 ++-
+>   fs/ceph/inode.c                   |  2 +-
+>   fs/ceph/super.h                   |  2 +-
+>   fs/ext2/acl.c                     |  3 ++-
+>   fs/ext2/acl.h                     |  2 +-
+>   fs/ext2/inode.c                   |  2 +-
+>   fs/ext4/acl.c                     |  3 ++-
+>   fs/ext4/acl.h                     |  2 +-
+>   fs/ext4/inode.c                   |  2 +-
+>   fs/f2fs/acl.c                     |  4 +++-
+>   fs/f2fs/acl.h                     |  2 +-
+>   fs/f2fs/file.c                    |  2 +-
+>   fs/fuse/acl.c                     |  3 ++-
+>   fs/fuse/fuse_i.h                  |  2 +-
+>   fs/gfs2/acl.c                     |  3 ++-
+>   fs/gfs2/acl.h                     |  2 +-
+>   fs/gfs2/inode.c                   |  2 +-
+>   fs/jffs2/acl.c                    |  3 ++-
+>   fs/jffs2/acl.h                    |  2 +-
+>   fs/jffs2/fs.c                     |  2 +-
+>   fs/jfs/acl.c                      |  3 ++-
+>   fs/jfs/file.c                     |  2 +-
+>   fs/jfs/jfs_acl.h                  |  2 +-
+>   fs/ksmbd/smb2pdu.c                |  4 ++--
+>   fs/ksmbd/smbacl.c                 |  4 ++--
+>   fs/ksmbd/vfs.c                    | 15 ++++++++-------
+>   fs/ksmbd/vfs.h                    |  4 ++--
+>   fs/nfs/nfs3_fs.h                  |  2 +-
+>   fs/nfs/nfs3acl.c                  |  3 ++-
+>   fs/nfsd/nfs2acl.c                 |  4 ++--
+>   fs/nfsd/nfs3acl.c                 |  4 ++--
+>   fs/nfsd/vfs.c                     |  4 ++--
+>   fs/ntfs3/file.c                   |  2 +-
+>   fs/ntfs3/ntfs_fs.h                |  4 ++--
+>   fs/ntfs3/xattr.c                  |  9 +++++----
+>   fs/ocfs2/acl.c                    |  3 ++-
+>   fs/ocfs2/acl.h                    |  2 +-
+>   fs/orangefs/acl.c                 |  5 +++--
+>   fs/orangefs/inode.c               |  7 ++++---
+>   fs/orangefs/orangefs-kernel.h     |  4 ++--
+>   fs/posix_acl.c                    | 18 +++++++++++-------
+>   fs/reiserfs/acl.h                 |  6 +++---
+>   fs/reiserfs/inode.c               |  2 +-
+>   fs/reiserfs/xattr_acl.c           |  9 ++++++---
+>   fs/xfs/xfs_acl.c                  |  3 ++-
+>   fs/xfs/xfs_acl.h                  |  2 +-
+>   fs/xfs/xfs_iops.c                 | 10 ++++++----
+>   include/linux/fs.h                |  2 +-
+>   include/linux/posix_acl.h         | 12 ++++++------
+>   mm/shmem.c                        |  2 +-
+>   55 files changed, 119 insertions(+), 93 deletions(-)
