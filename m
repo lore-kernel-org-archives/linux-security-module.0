@@ -2,61 +2,39 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28949C4321E
-	for <linux-security-module@archiver.kernel.org>; Sat, 19 Nov 2022 11:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 887B2C4332F
+	for <linux-security-module@archiver.kernel.org>; Sun, 20 Nov 2022 16:23:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230471AbiKSLsc (ORCPT
+        id S229648AbiKTQXu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 19 Nov 2022 06:48:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38614 "EHLO
+        Sun, 20 Nov 2022 11:23:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230073AbiKSLsa (ORCPT
+        with ESMTP id S229454AbiKTQXu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 19 Nov 2022 06:48:30 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 172715F9D;
-        Sat, 19 Nov 2022 03:48:26 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id a22-20020a17090a6d9600b0021896eb5554so1571619pjk.1;
-        Sat, 19 Nov 2022 03:48:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o9rax4FYMHEb547bH//upiZ4fWNtX6HGAiatJ0B5KnU=;
-        b=Li+Cd9f2NbxvaipGdSKNRKGOXCqcC0A9ty2Hid1W6VAz5eMylxnedWgcyV9qekkn7T
-         JCiXkaDo8STa9G2DerltgmgDi0R48Q4xoJqyosNg9x/pSZV62ooybmkJP8h4dwjvbdhW
-         rt/rAvRDZMiXjpPJEqhgXI40zz+deFiGPpkWjmh/CfoUFilC6qTuK67RZ1PpKltYw3Ut
-         JPUx5jt8A0nF99ma96ojCxfit1aWia6eD4BfwkPcHhBNHPb9CQhtU/d8gTMDHpzMwSSL
-         qaqq1VfvyieFuthOaLvA9ONC09GJDIk7YOUI6h2i9l+N+I5q7AP6MlUzEC4wYpvXpOMu
-         lOXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o9rax4FYMHEb547bH//upiZ4fWNtX6HGAiatJ0B5KnU=;
-        b=VZlHloVWzvu5Z1d/u4hiPH0kzK634o0whPXuf1cjOlXkOUHN9wAEvCcOJIVOvTItw8
-         o1YPSaeBy4R/j9SOaOY34Y7z//qZODk3HWZ9TsUhedQp1VdSBXv+bgSXkOjz1+0fwGKn
-         BF9n7/BtEKAkhzRhap9PGztM5ZxDmCQL2NX8G0Mlj0dflWFm0h30Vd4z6MubddbgXnHl
-         1HuuxFXhTjCGhgSIeiWRqRd8foNmovntuBqZaI83l8C7jCyXGZHRrbZAOhYTQ05VkgMl
-         YKEISLJh+PlEkPsZwF0uee/udf8XF2m/cDqeDUXn3beGCiiBV4WDh8Ejv9N6fpHnbD+A
-         9vbg==
-X-Gm-Message-State: ANoB5pkhKiv2iSyb59Ekcqk9lG4m/sjZ6aAt0fXyxxm0rujDVzS0yk+k
-        VG++w3SQ8SpPkLBnU+/x+M4=
-X-Google-Smtp-Source: AA0mqf7P6jcJsjQXvLal1h/ppkR43bLZK00uIGIYM+K8pwUk5a2M3yzRQjUExDLjUVbGY/+dyYdhpg==
-X-Received: by 2002:a17:90b:394e:b0:20a:6106:a283 with SMTP id oe14-20020a17090b394e00b0020a6106a283mr2037841pjb.107.1668858505491;
-        Sat, 19 Nov 2022 03:48:25 -0800 (PST)
-Received: from localhost ([2406:7400:63:f20b:f6ca:e236:f59f:8c18])
-        by smtp.gmail.com with ESMTPSA id 189-20020a6218c6000000b0056299fd2ba2sm4885404pfy.162.2022.11.19.03.48.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Nov 2022 03:48:24 -0800 (PST)
-Date:   Sat, 19 Nov 2022 17:18:20 +0530
-From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+        Sun, 20 Nov 2022 11:23:50 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEF752DDB;
+        Sun, 20 Nov 2022 08:23:48 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 73C9160C83;
+        Sun, 20 Nov 2022 16:23:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90CF3C433D6;
+        Sun, 20 Nov 2022 16:23:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1668961427;
+        bh=VEJFrHA3qn6Rwg4Teu5pGnSV2TQDYMG+LACbP7i1H4U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aIVe/EjLxTjJRpEYUbRy4/jlY4n20uQ/Ks7yVzv7byfrCKj1SxALQR5AviL9TGWNM
+         Qs7NhTH5XJ2DOcNN2yPVnkMXYA8Cem1IjKH1LO9B0FogH8mclb99sNBwl9YMjAiikX
+         ZIjmCDCv4H78R91ZVIeWE4TauaBx9CA+FR0cv9jg=
+Date:   Sun, 20 Nov 2022 17:13:11 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Nayna <nayna@linux.vnet.ibm.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-efi@vger.kernel.org,
+Cc:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
         linux-security-module <linux-security-module@vger.kernel.org>,
         linux-kernel@vger.kernel.org,
         Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
@@ -68,180 +46,125 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Paul Mackerras <paulus@samba.org>,
         Russell Currey <ruscur@russell.cc>,
         Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
+        Stefan Berger <stefanb@linux.ibm.com>
 Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
  fwsecurityfs
-Message-ID: <20221119114234.nnfxsqx4zxiku2h6@riteshh-domain>
+Message-ID: <Y3pSF2MRIXd6aH14@kroah.com>
 References: <20221106210744.603240-1-nayna@linux.ibm.com>
  <20221106210744.603240-3-nayna@linux.ibm.com>
  <Y2uvUFQ9S2oaefSY@kroah.com>
  <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
+ <Y2zLRw/TzV/sWgqO@kroah.com>
+ <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
+ <Y3anQukokMcQr+iE@kroah.com>
+ <d615180d-6fe5-d977-da6a-e88fd8bf5345@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
+In-Reply-To: <d615180d-6fe5-d977-da6a-e88fd8bf5345@linux.vnet.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Nayna, 
-
-On 22/11/09 03:10PM, Nayna wrote:
+On Sat, Nov 19, 2022 at 01:20:09AM -0500, Nayna wrote:
 > 
-> On 11/9/22 08:46, Greg Kroah-Hartman wrote:
-> > On Sun, Nov 06, 2022 at 04:07:42PM -0500, Nayna Jain wrote:
-> > > securityfs is meant for Linux security subsystems to expose policies/logs
-> > > or any other information. However, there are various firmware security
-> > > features which expose their variables for user management via the kernel.
-> > > There is currently no single place to expose these variables. Different
-> > > platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
-> > > interface as they find it appropriate. Thus, there is a gap in kernel
-> > > interfaces to expose variables for security features.
+> On 11/17/22 16:27, Greg Kroah-Hartman wrote:
+> > On Mon, Nov 14, 2022 at 06:03:43PM -0500, Nayna wrote:
+> > > On 11/10/22 04:58, Greg Kroah-Hartman wrote:
+> > > > On Wed, Nov 09, 2022 at 03:10:37PM -0500, Nayna wrote:
+> > > > > On 11/9/22 08:46, Greg Kroah-Hartman wrote:
+> > > > > > On Sun, Nov 06, 2022 at 04:07:42PM -0500, Nayna Jain wrote:
+> > > > > > > securityfs is meant for Linux security subsystems to expose policies/logs
+> > > > > > > or any other information. However, there are various firmware security
+> > > > > > > features which expose their variables for user management via the kernel.
+> > > > > > > There is currently no single place to expose these variables. Different
+> > > > > > > platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
+> > > > > > > interface as they find it appropriate. Thus, there is a gap in kernel
+> > > > > > > interfaces to expose variables for security features.
+> > > > > > > 
+> > > > > > > Define a firmware security filesystem (fwsecurityfs) to be used by
+> > > > > > > security features enabled by the firmware. These variables are platform
+> > > > > > > specific. This filesystem provides platforms a way to implement their
+> > > > > > >     own underlying semantics by defining own inode and file operations.
+> > > > > > > 
+> > > > > > > Similar to securityfs, the firmware security filesystem is recommended
+> > > > > > > to be exposed on a well known mount point /sys/firmware/security.
+> > > > > > > Platforms can define their own directory or file structure under this path.
+> > > > > > > 
+> > > > > > > Example:
+> > > > > > > 
+> > > > > > > # mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
+> > > > > > Why not juset use securityfs in /sys/security/firmware/ instead?  Then
+> > > > > > you don't have to create a new filesystem and convince userspace to
+> > > > > > mount it in a specific location?
+> > > > >   From man 5 sysfs page:
+> > > > > 
+> > > > > /sys/firmware: This subdirectory contains interfaces for viewing and
+> > > > > manipulating firmware-specific objects and attributes.
+> > > > > 
+> > > > > /sys/kernel: This subdirectory contains various files and subdirectories
+> > > > > that provide information about the running kernel.
+> > > > > 
+> > > > > The security variables which are being exposed via fwsecurityfs are managed
+> > > > > by firmware, stored in firmware managed space and also often consumed by
+> > > > > firmware for enabling various security features.
+> > > > Ok, then just use the normal sysfs interface for /sys/firmware, why do
+> > > > you need a whole new filesystem type?
+> > > > 
+> > > > >   From git commit b67dbf9d4c1987c370fd18fdc4cf9d8aaea604c2, the purpose of
+> > > > > securityfs(/sys/kernel/security) is to provide a common place for all kernel
+> > > > > LSMs. The idea of
+> > > > > fwsecurityfs(/sys/firmware/security) is to similarly provide a common place
+> > > > > for all firmware security objects.
+> > > > > 
+> > > > > /sys/firmware already exists. The patch now defines a new /security
+> > > > > directory in it for firmware security features. Using /sys/kernel/security
+> > > > > would mean scattering firmware objects in multiple places and confusing the
+> > > > > purpose of /sys/kernel and /sys/firmware.
+> > > > sysfs is confusing already, no problem with making it more confusing :)
+> > > > 
+> > > > Just document where you add things and all should be fine.
+> > > > 
+> > > > > Even though fwsecurityfs code is based on securityfs, since the two
+> > > > > filesystems expose different types of objects and have different
+> > > > > requirements, there are distinctions:
+> > > > > 
+> > > > > 1. fwsecurityfs lets users create files in userspace, securityfs only allows
+> > > > > kernel subsystems to create files.
+> > > > Wait, why would a user ever create a file in this filesystem?  If you
+> > > > need that, why not use configfs?  That's what that is for, right?
+> > > The purpose of fwsecurityfs is not to expose configuration items but rather
+> > > security objects used for firmware security features. I think these are more
+> > > comparable to EFI variables, which are exposed via an EFI-specific
+> > > filesystem, efivarfs, rather than configfs.
 > > > 
-> > > Define a firmware security filesystem (fwsecurityfs) to be used by
-> > > security features enabled by the firmware. These variables are platform
-> > > specific. This filesystem provides platforms a way to implement their
-> > >   own underlying semantics by defining own inode and file operations.
-> > > 
-> > > Similar to securityfs, the firmware security filesystem is recommended
-> > > to be exposed on a well known mount point /sys/firmware/security.
-> > > Platforms can define their own directory or file structure under this path.
-> > > 
-> > > Example:
-> > > 
-> > > # mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
-> > Why not juset use securityfs in /sys/security/firmware/ instead?  Then
-> > you don't have to create a new filesystem and convince userspace to
-> > mount it in a specific location?
-
-I am also curious to know on why not use securityfs, given the similarity
-between the two. :)
-More specifics on that below...
-
+> > > > > 2. firmware and kernel objects may have different requirements. For example,
+> > > > > consideration of namespacing. As per my understanding, namespacing is
+> > > > > applied to kernel resources and not firmware resources. That's why it makes
+> > > > > sense to add support for namespacing in securityfs, but we concluded that
+> > > > > fwsecurityfs currently doesn't need it. Another but similar example of it
+> > > > > is: TPM space, which is exposed from hardware. For containers, the TPM would
+> > > > > be made as virtual/software TPM. Similarly for firmware space for
+> > > > > containers, it would have to be something virtualized/software version of
+> > > > > it.
+> > > > I do not understand, sorry.  What does namespaces have to do with this?
+> > > > sysfs can already handle namespaces just fine, why not use that?
+> > > Firmware objects are not namespaced. I mentioned it here as an example of
+> > > the difference between firmware and kernel objects. It is also in response
+> > > to the feedback from James Bottomley in RFC v2 [https://lore.kernel.org/linuxppc-dev/41ca51e8db9907d9060cc38adb59a66dcae4c59b.camel@HansenPartnership.com/].
+> > I do not understand, sorry.  Do you want to use a namespace for these or
+> > not?  The code does not seem to be using namespaces.  You can use sysfs
+> > with, or without, a namespace so I don't understand the issue here.
+> > 
+> > With your code, there is no namespace.
 > 
-> From man 5 sysfs page:
-> 
-> /sys/firmware: This subdirectory contains interfaces for viewing and
-> manipulating firmware-specific objects and attributes.
-> 
-> /sys/kernel: This subdirectory contains various files and subdirectories
-> that provide information about the running kernel.
-> 
-> The security variables which are being exposed via fwsecurityfs are managed
-> by firmware, stored in firmware managed space and also often consumed by
-> firmware for enabling various security features.
+> You are correct. There's no namespace for these.
 
-That's ok. As I see it users of securityfs can define their own fileops
-(like how you are doing in fwsecurityfs).
-See securityfs_create_file() & securityfs_create_symlink(), can accept the fops
-& iops. Except maybe securityfs_create_dir(), that could be since there might
-not be a usecase for it. But do you also need it in your case is the question to
-ask.
+So again, I do not understand.  Do you want to use filesystem
+namespaces, or do you not?
 
-> 
-> From git commit b67dbf9d4c1987c370fd18fdc4cf9d8aaea604c2, the purpose of
-> securityfs(/sys/kernel/security) is to provide a common place for all kernel
-> LSMs. The idea of
+How again can you not use sysfs or securityfs due to namespaces?  What
+is missing?
 
-Which was then seperated out by commit,
-da31894ed7b654e2 ("securityfs: do not depend on CONFIG_SECURITY").
+confused,
 
-securityfs now has a seperate CONFIG_SECURITYFS config option. In fact I was even
-thinking of why shouldn't we move security/inode.c into fs/securityfs/inode.c .
-fs/* is a common place for all filesystems. Users of securityfs can call it's 
-exported kernel APIs to create files/dirs/symlinks.
-
-If we move security/inode.c to fs/security/inode.c, then...
-...below call within securityfs_init() should be moved into some lsm sepecific 
-file.
-
-#ifdef CONFIG_SECURITY
-static struct dentry *lsm_dentry;
-static ssize_t lsm_read(struct file *filp, char __user *buf, size_t count,
-			loff_t *ppos)
-{
-	return simple_read_from_buffer(buf, count, ppos, lsm_names,
-		strlen(lsm_names));
-}
-
-static const struct file_operations lsm_ops = {
-	.read = lsm_read,
-	.llseek = generic_file_llseek,
-};
-#endif
-
-securityfs_init()
-
-#ifdef CONFIG_SECURITY
-	lsm_dentry = securityfs_create_file("lsm", 0444, NULL, NULL,
-						&lsm_ops);
-#endif
-
-So why not move it? Maybe others, can comment more on whether it's a good idea 
-to move security/inode.c into fs/security/inode.c? 
-This should then help others identify securityfs filesystem in fs/security/ 
-for everyone to notice and utilize for their use?
-
-> fwsecurityfs(/sys/firmware/security) is to similarly provide a common place
-> for all firmware security objects.
-> 
-> /sys/firmware already exists. The patch now defines a new /security
-> directory in it for firmware security features. Using /sys/kernel/security
-> would mean scattering firmware objects in multiple places and confusing the
-> purpose of /sys/kernel and /sys/firmware.
-
-We can also think of it this way that, all security related exports should 
-happen via /sys/kernel/security/. Then /sys/kernel/security/firmware/ becomes 
-the security related firmware exports.
-
-If you see find /sys -iname firmware, I am sure you will find other firmware
-specifics directories related to other specific subsystems
-(e.g. 
-root@qemu:/home/qemu# find /sys -iname firmware
-/sys/devices/ndbus0/nmem0/firmware
-/sys/devices/ndbus0/firmware
-/sys/firmware
-)
-
-But it could be, I am not an expert here, although I was thinking a good 
-Documentation might solve this problem.
-
-> 
-> Even though fwsecurityfs code is based on securityfs, since the two
-> filesystems expose different types of objects and have different
-> requirements, there are distinctions:
-> 
-> 1. fwsecurityfs lets users create files in userspace, securityfs only allows
-> kernel subsystems to create files.
-
-Sorry could you please elaborate how? both securityfs & fwsecurityfs
-calls simple_fill_super() which uses the same inode (i_op) and inode file 
-operations (i_fop) from fs/libfs.c for their root inode. So how it is enabling
-user (as in userspace) to create a file in this filesystem?
-
-So am I missing anything?
-
-> 
-> 2. firmware and kernel objects may have different requirements. For example,
-> consideration of namespacing. As per my understanding, namespacing is
-> applied to kernel resources and not firmware resources. That's why it makes
-> sense to add support for namespacing in securityfs, but we concluded that
-> fwsecurityfs currently doesn't need it. Another but similar example of it
-
-It "currently" doesn't need it. But can it in future? Then why not go with
-securityfs which has an additional namespacing feature available?
-That's actually also the point of utilizing an existing FS which can get 
-features like this in future. As long as it doesn't affect the functionality 
-of your use case, we simply need not reject securityfs, no?
-
-> is: TPM space, which is exposed from hardware. For containers, the TPM would
-> be made as virtual/software TPM. Similarly for firmware space for
-> containers, it would have to be something virtualized/software version of
-> it.
-> 
-> 3. firmware objects are persistent and read at boot time by interaction with
-> firmware, unlike kernel objects which are not persistent.
-
-I think this got addressed in a seperate thread.
-
--ritesh
+greg k-h
