@@ -2,149 +2,125 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7DBC4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 09:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 505C8C43217
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 11:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230360AbiKUJqH (ORCPT
+        id S229531AbiKULFt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Nov 2022 04:46:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54168 "EHLO
+        Mon, 21 Nov 2022 06:05:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230008AbiKUJqF (ORCPT
+        with ESMTP id S229508AbiKULFs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Nov 2022 04:46:05 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9492E13E08;
-        Mon, 21 Nov 2022 01:46:03 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4NG2Ql5CVtz9xGKf;
-        Mon, 21 Nov 2022 17:39:11 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwCHcW65SHtjOoSBAA--.28097S2;
-        Mon, 21 Nov 2022 10:45:39 +0100 (CET)
-Message-ID: <aa5fa8c5f231115c58012352124df57d16a01e41.camel@huaweicloud.com>
-Subject: Re: [PATCH v4 2/5] security: Rewrite
- security_old_inode_init_security()
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        ocfs2-devel@oss.oracle.com
-Date:   Mon, 21 Nov 2022 10:45:19 +0100
-In-Reply-To: <3dc4f389ead98972cb7d09ef285a0065decb0ad0.camel@linux.ibm.com>
-References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
-         <20221110094639.3086409-3-roberto.sassu@huaweicloud.com>
-         <3dc4f389ead98972cb7d09ef285a0065decb0ad0.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Mon, 21 Nov 2022 06:05:48 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D93663D4;
+        Mon, 21 Nov 2022 03:05:47 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0A11B60FF9;
+        Mon, 21 Nov 2022 11:05:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B26DAC433D6;
+        Mon, 21 Nov 2022 11:05:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1669028746;
+        bh=u4K6l+tDjSuwIb4zoR5rarX0XnI/SZIfH7BiykUNNBA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GGvnPAh3esdRVAOOsFDTE1jSnAzFQCHFJAQzfyn1Khy7X4wEDDNf7cZ38Ch6J8dV9
+         SBciLLndL26XAZGX25M5wH+1JbWWuHxFAsvnOb5aYvjzMJula3DGPyHMvWwef86SUK
+         kz5QYSyV8G3fj7sLyA3v7Ugrqvetj3eJ1iuxZG6Q=
+Date:   Mon, 21 Nov 2022 12:05:42 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Nayna <nayna@linux.vnet.ibm.com>, Nayna Jain <nayna@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-efi@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell Currey <ruscur@russell.cc>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
+ fwsecurityfs
+Message-ID: <Y3tbhmL4oG1YTyT/@kroah.com>
+References: <20221106210744.603240-1-nayna@linux.ibm.com>
+ <20221106210744.603240-3-nayna@linux.ibm.com>
+ <Y2uvUFQ9S2oaefSY@kroah.com>
+ <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
+ <Y2zLRw/TzV/sWgqO@kroah.com>
+ <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
+ <Y3anQukokMcQr+iE@kroah.com>
+ <d615180d-6fe5-d977-da6a-e88fd8bf5345@linux.vnet.ibm.com>
+ <Y3pSF2MRIXd6aH14@kroah.com>
+ <88111914afc6204b2a3fb82ded5d9bfb6420bca6.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwCHcW65SHtjOoSBAA--.28097S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCry7Xw1UCFyUJr1ruFWDCFg_yoW5Kr1Dpr
-        W3KF1UKrn8JF97CrWxJFnxWF4I93yfGFZrXrs5AryDAF1DCF1xtr10yry5u343JrWkJ34F
-        qw4xZ3sxZrn8Z3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgADBF1jj4GngwACsT
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <88111914afc6204b2a3fb82ded5d9bfb6420bca6.camel@HansenPartnership.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2022-11-17 at 08:03 -0500, Mimi Zohar wrote:
-> Hi Roberto,
-> 
-> On Thu, 2022-11-10 at 10:46 +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
+On Sun, Nov 20, 2022 at 10:14:26PM -0500, James Bottomley wrote:
+> On Sun, 2022-11-20 at 17:13 +0100, Greg Kroah-Hartman wrote:
+> > On Sat, Nov 19, 2022 at 01:20:09AM -0500, Nayna wrote:
+> > > 
+> > > On 11/17/22 16:27, Greg Kroah-Hartman wrote:
+> > > > On Mon, Nov 14, 2022 at 06:03:43PM -0500, Nayna wrote:
+> > > > > On 11/10/22 04:58, Greg Kroah-Hartman wrote:
+> [...]
+> > > > > > I do not understand, sorry.  What does namespaces have to do
+> > > > > > with this?
+> > > > > > sysfs can already handle namespaces just fine, why not use
+> > > > > > that?
+> > > > > Firmware objects are not namespaced. I mentioned it here as an
+> > > > > example of the difference between firmware and kernel objects.
+> > > > > It is also in response to the feedback from James Bottomley in
+> > > > > RFC v2 [
+> > > > > https://lore.kernel.org/linuxppc-dev/41ca51e8db9907d9060cc38ad
+> > > > > b59a66dcae4c59b.camel@HansenPartnership.com/].
+> > > > I do not understand, sorry.  Do you want to use a namespace for
+> > > > these or not?  The code does not seem to be using namespaces. 
+> > > > You can use sysfs with, or without, a namespace so I don't
+> > > > understand the issue here.
+> > > > 
+> > > > With your code, there is no namespace.
+> > > 
+> > > You are correct. There's no namespace for these.
 > > 
-> > Rewrite security_old_inode_init_security() to call
-> > security_inode_init_security() before making changes to support multiple
-> > LSMs providing xattrs. Do it so that the required changes are done only in
-> > one place.
+> > So again, I do not understand.  Do you want to use filesystem
+> > namespaces, or do you not?
 > 
-> Only security_inode_init_security() has support for EVM.   Making
-> security_old_inode_init_security() a wrapper for
-> security_inode_init_security() could result in security.evm extended
-> attributes being created that previously weren't created.
+> Since this seems to go back to my email quoted again, let me repeat:
+> the question isn't if this patch is namespaced; I think you've agreed
+> several times it isn't.  The question is if the exposed properties
+> would ever need to be namespaced.  This is a subtle and complex
+> question which isn't at all explored by the above interchange.
 > 
-> In fact ocfs2 defines ocfs2_init_security_get() as a wrapper for both
-> the old and new inode_init_security calls based on the caller's
-> preference.   Only mknod and symlink seem to use the old function. 
-> Wondering why do they differentiate between callers?  (Cc'ing the ocfs2
-> mailing list as they're affected by this change.)
+> > How again can you not use sysfs or securityfs due to namespaces? 
+> > What is missing?
 > 
-> "[PATCH v4 1/5] reiserfs: Add missing calls to
-> reiserfs_security_free()"  fixed a memory leak.  I couldn't tell if
-> there was a similar memory leak in ocfs2, the only other user of
-> security_old_inode_init_security().
+> I already explained in the email that sysfs contains APIs like
+> simple_pin_... which are completely inimical to namespacing.
 
-From what I see, there is no memory leak there.
+Then how does the networking code handle the namespace stuff in sysfs?
+That seems to work today, or am I missing something?
 
-> As ocfs2 already defines initxattrs, that leaves only reiserfs missing
-> initxattrs().  A better, cleaner solution would be to define one.
+If the namespace support needs to be fixed up in sysfs (or in
+securityfs), then great, let's do that, and not write a whole new
+filesystem just because that's not done.
 
-If I understood why security_old_inode_init_security() is called
-instead of security_inode_init_security(), the reason seems that the
-filesystem code uses the length of the obtained xattr to make some
-calculations (e.g. reserve space). The xattr is written at a later
-time.
+Also this patch series also doesn't handle namespaces, so again, I am
+totally confused as to why this is even being discussed...
 
-Since for reiserfs there is a plan to deprecate it, it probably
-wouldn't be worth to support the creation of multiple xattrs. I would
-define a callback to take the first xattr and make a copy, so that
-calling security_inode_init_security() + reiserfs_initxattrs() is
-equivalent to calling security_old_inode_init_security().
+thanks,
 
-But then, this is what anyway I was doing with the
-security_initxattrs() callback, for all callers of security_old_inode_i
-nit_security().
-
-Also, security_old_inode_init_security() is exported to kernel modules.
-Maybe, it is used somewhere. So, unless we plan to remove it
-completely, it should be probably be fixed to avoid multiple LSMs
-successfully setting an xattr, and losing the memory of all except the
-last (which this patch fixes by calling security_inode_init_security())
-.
-
-If there is still the preference, I will implement the reiserfs
-callback and make a fix for security_old_inode_init_security().
-
-Thanks
-
-Roberto
-
-> thanks,
-> 
-> Mimi
-> 
-> > Define the security_initxattrs() callback and pass it to
-> > security_inode_init_security() as argument, to obtain the first xattr
-> > provided by LSMs.
-> > 
-> > This behavior is a bit different from the current one. Before this patch
-> > calling call_int_hook() could cause multiple LSMs to provide an xattr,
-> > since call_int_hook() does not stop when an LSM returns zero. The caller of
-> > security_old_inode_init_security() receives the last xattr set. The pointer
-> > of the xattr value of previous LSMs is lost, causing memory leaks.
-> > 
-> > However, in practice, this scenario does not happen as the only in-tree
-> > LSMs providing an xattr at inode creation time are SELinux and Smack, which
-> > are mutually exclusive.
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>b
-
+greg k-h
