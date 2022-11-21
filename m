@@ -2,93 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68559C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 19:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D289CC43217
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 20:55:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231807AbiKUTyW (ORCPT
+        id S229784AbiKUUzA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Nov 2022 14:54:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45020 "EHLO
+        Mon, 21 Nov 2022 15:55:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231821AbiKUTx1 (ORCPT
+        with ESMTP id S229658AbiKUUy7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Nov 2022 14:53:27 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EA57C72C7;
-        Mon, 21 Nov 2022 11:53:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=PWapQM2+2A3fsvM5vU867mCtB6N1Jd/oW1Tp2ds4SpQ=; b=hrHLYysjL1XIOj8C1g+7hKi6aJ
-        agwPJmePC/RD8zF83QJ9ElMQmWok8ZkuSu5eQZ/zDeMRY/ECtOL9lcayTYUmOzzp0otyqgJKiG/yb
-        JlZ73+d5jcluh9K+slFj25mVz6IrH+2p/uVa2CU/8XvRL6Zs9NTuvPm1BuqyEUHaXnRD6udh3bHbg
-        DO3fqmTcVr8UBPfjjFY9cKUlM3vLr6AGZnqsqtRyoJ8CqlKahMo0ncNRjrq/kA7EL6sLqNum0NmaD
-        txSnE1JvzA7NxAzfCF9vAn0f8Ahnubn/rkfYwaXnp4y5tXKE/Fd9r1ErJ5t/ShoQkinSPp/O7xqba
-        MdZ3g3Eg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oxCqz-00HLjH-Gq; Mon, 21 Nov 2022 19:53:17 +0000
-Date:   Mon, 21 Nov 2022 11:53:17 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Joel Granados <j.granados@samsung.com>,
-        Kanchan Joshi <joshi.k@samsung.com>, ddiss@suse.de,
-        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
- implement the ioctl op convention
-Message-ID: <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
-References: <20221116125051.3338926-1-j.granados@samsung.com>
- <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
- <20221116125051.3338926-2-j.granados@samsung.com>
- <20221116173821.GC5094@test-zns>
- <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com>
- <20221117094004.b5l64ipicitphkun@localhost>
- <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+        Mon, 21 Nov 2022 15:54:59 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDFA5C6566;
+        Mon, 21 Nov 2022 12:54:58 -0800 (PST)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2ALKJGV7029147;
+        Mon, 21 Nov 2022 20:54:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=7zCKX/4UjpQvenyrT8VZruRvalqRXYR6+icK2FwSEa4=;
+ b=fjtgG3U2n53yDeBNWAZuAm3PDp2cFZ4R3+ps1ia+cUwJML1awN2FqbGANmzxLw3UJMYq
+ Uu8+aG2GzpO8uIT0Z23sckf4UdI5xjyiqqRNgUTHRoe87JtPlu98IBi8JYfApYlSn2xi
+ HpU8qBbTjKzIKFPZ9BY0rcnuAJloMtpYNnMm26B2pcgaQhMmzPvjty9uW+2L5BrRfvLQ
+ gn5DTw7tKzTELyz8KJVaqGj1LZvCyv26ozGzuZmwB/tOniflRgcwcpYILFgyNjQ5uLc4
+ 0Et/aqTPAImeHW36i2Dut7UhGX0ppme5Vy7GGLwBjyKmYa5IvciD2rLbP14Hbfjvmg1y UA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m0cfxxdpq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 21 Nov 2022 20:54:23 +0000
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2ALKpo1c018194;
+        Mon, 21 Nov 2022 20:54:22 GMT
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m0cfxxdph-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 21 Nov 2022 20:54:22 +0000
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2ALKp26j014761;
+        Mon, 21 Nov 2022 20:54:22 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma05wdc.us.ibm.com with ESMTP id 3kxps9ysq9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 21 Nov 2022 20:54:22 +0000
+Received: from smtpav06.dal12v.mail.ibm.com ([9.208.128.130])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2ALKsHGE38994334
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 21 Nov 2022 20:54:18 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DBA2C5805E;
+        Mon, 21 Nov 2022 20:54:20 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D2F1058043;
+        Mon, 21 Nov 2022 20:54:19 +0000 (GMT)
+Received: from sig-9-65-226-3.ibm.com (unknown [9.65.226.3])
+        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Mon, 21 Nov 2022 20:54:19 +0000 (GMT)
+Message-ID: <7812899531b2bd936b25fde8fc2f1c2a6080b2bd.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 2/5] security: Rewrite
+ security_old_inode_init_security()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        ocfs2-devel@oss.oracle.com
+Date:   Mon, 21 Nov 2022 15:54:19 -0500
+In-Reply-To: <aa5fa8c5f231115c58012352124df57d16a01e41.camel@huaweicloud.com>
+References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
+         <20221110094639.3086409-3-roberto.sassu@huaweicloud.com>
+         <3dc4f389ead98972cb7d09ef285a0065decb0ad0.camel@linux.ibm.com>
+         <aa5fa8c5f231115c58012352124df57d16a01e41.camel@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9ZpZWbYIju7_BhM44HScl-ON7UDQcqJB
+X-Proofpoint-ORIG-GUID: HqentMrLUCV08LVMJ-qs-M3h27pvCp3p
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-21_16,2022-11-18_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ clxscore=1015 malwarescore=0 impostorscore=0 suspectscore=0
+ mlxlogscore=999 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211210155
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 17, 2022 at 05:10:07PM -0500, Paul Moore wrote:
-> On Thu, Nov 17, 2022 at 4:40 AM Joel Granados <j.granados@samsung.com> wrote:
-> > On Wed, Nov 16, 2022 at 02:21:14PM -0500, Paul Moore wrote:
+On Mon, 2022-11-21 at 10:45 +0100, Roberto Sassu wrote:
+> > As ocfs2 already defines initxattrs, that leaves only reiserfs missing
+> > initxattrs().  A better, cleaner solution would be to define one.
 > 
-> ...
+> If I understood why security_old_inode_init_security() is called
+> instead of security_inode_init_security(), the reason seems that the
+> filesystem code uses the length of the obtained xattr to make some
+> calculations (e.g. reserve space). The xattr is written at a later
+> time.
 > 
-> > > * As we discussed previously, the real problem is the fact that we are
-> > > missing the necessary context in the LSM hook to separate the
-> > > different types of command targets.  With traditional ioctls we can
-> > > look at the ioctl number and determine both the type of
-> > > device/subsystem/etc. as well as the operation being requested; there
-> > > is no such information available with the io_uring command
-> > > passthrough.  In this sense, the io_uring command passthrough is
-> > > actually worse than traditional ioctls from an access control
-> > > perspective.  Until we have an easy(ish)[1] way to determine the
-> > > io_uring command target type, changes like the one suggested here are
-> > > going to be doomed as each target type is free to define their own
-> > > io_uring commands.
-> >
-> > The only thing that comes immediately to mind is that we can have
-> > io_uring users define a function that is then passed to the LSM
-> > infrastructure. This function will have all the logic to give relative
-> > context to LSM. It would be general enough to fit all the possible commands
-> > and the logic would be implemented in the "drivers" side so there is no
-> > need for LSM folks to know all io_uring users.
+> Since for reiserfs there is a plan to deprecate it, it probably
+> wouldn't be worth to support the creation of multiple xattrs. I would
+> define a callback to take the first xattr and make a copy, so that
+> calling security_inode_init_security() + reiserfs_initxattrs() is
+> equivalent to calling security_old_inode_init_security().
 > 
-> Passing a function pointer to the LSM to fetch, what will likely be
-> just a constant value, seems kinda ugly, but I guess we only have ugly
-> options at this point.
+> But then, this is what anyway I was doing with the
+> security_initxattrs() callback, for all callers of security_old_inode_i
+> nit_security().
+> 
+> Also, security_old_inode_init_security() is exported to kernel modules.
+> Maybe, it is used somewhere. So, unless we plan to remove it
+> completely, it should be probably be fixed to avoid multiple LSMs
+> successfully setting an xattr, and losing the memory of all except the
+> last (which this patch fixes by calling security_inode_init_security())
+> .
+> 
+> If there is still the preference, I will implement the reiserfs
+> callback and make a fix for security_old_inode_init_security().
 
-I am not sure if this helps yet, but queued on modules-next we now have
-an improvement in speed of about 1500x for kallsyms_lookup_name(), and
-so symbol lookups are now fast. Makes me wonder if a type of special
-export could be drawn up for specific calls which follow a structure
-and so the respective lsm could be inferred by a prefix instead of
-placing the calls in-place. Then it would not mattter where a call is
-used, so long as it would follow a specific pattern / structure with
-all the crap you need on it.
+There's no sense in doing both, as the purpose of defining a reiserfs
+initxattrs function was to clean up this code making it more readable.
 
-  Luis
+Mimi
+
+
