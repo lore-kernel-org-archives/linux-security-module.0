@@ -2,155 +2,93 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB91C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 19:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68559C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 19:54:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbiKUTfQ (ORCPT
+        id S231807AbiKUTyW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Nov 2022 14:35:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59106 "EHLO
+        Mon, 21 Nov 2022 14:54:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231361AbiKUTfO (ORCPT
+        with ESMTP id S231821AbiKUTx1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Nov 2022 14:35:14 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9E06CB9F7;
-        Mon, 21 Nov 2022 11:35:11 -0800 (PST)
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2ALJ0A1I011420;
-        Mon, 21 Nov 2022 19:34:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=XMHX4r6tWaG5HyFsSipFN4RQm3o8bUhS5ONbNFz1Ozw=;
- b=IGIVHLPbMkPs/3cWttBg0CqOuwscPUTK973cpDih5m6gAcuTg/Z8p52E13Sg0PJQjBAv
- OLo9mh99wtquF7xr9fdxHv5Kat1PTuTmNI43P8zeZO0NMG2m2EgtLyllRSgfPTAezCVW
- 7TvKI8+/MaHcytFy7SeE1Y1AUn+h8HvbQJ3FOtfS0owj6UPgiRWme2riextJ4AJOMW8A
- FB7/TeDVWr+7ENjxjez4iclu5uh+PDEP0MDW3Qy93ofGhZoID0dIhxEe9GZ5IMIve+u4
- C2kK7NYadT48Y7JSPABP6YpYQDPgX+HYhKYNpwf7oAE4NX7kbvJ46IxumNoC46RdkQCf Rg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m0d3g3r04-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 21 Nov 2022 19:34:49 +0000
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2ALJOXHE016414;
-        Mon, 21 Nov 2022 19:34:49 GMT
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m0d3g3qyu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 21 Nov 2022 19:34:49 +0000
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2ALJLD0K019431;
-        Mon, 21 Nov 2022 19:34:47 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma01wdc.us.ibm.com with ESMTP id 3kxps97c3g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 21 Nov 2022 19:34:47 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com ([9.208.128.115])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2ALJYkh67602782
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 21 Nov 2022 19:34:47 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 535EA58054;
-        Mon, 21 Nov 2022 19:34:46 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C6E0458056;
-        Mon, 21 Nov 2022 19:34:44 +0000 (GMT)
-Received: from [9.163.61.172] (unknown [9.163.61.172])
-        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 21 Nov 2022 19:34:44 +0000 (GMT)
-Message-ID: <84ddfea2-c2b7-6e84-718d-739ff00e957e@linux.vnet.ibm.com>
-Date:   Mon, 21 Nov 2022 14:34:44 -0500
+        Mon, 21 Nov 2022 14:53:27 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EA57C72C7;
+        Mon, 21 Nov 2022 11:53:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PWapQM2+2A3fsvM5vU867mCtB6N1Jd/oW1Tp2ds4SpQ=; b=hrHLYysjL1XIOj8C1g+7hKi6aJ
+        agwPJmePC/RD8zF83QJ9ElMQmWok8ZkuSu5eQZ/zDeMRY/ECtOL9lcayTYUmOzzp0otyqgJKiG/yb
+        JlZ73+d5jcluh9K+slFj25mVz6IrH+2p/uVa2CU/8XvRL6Zs9NTuvPm1BuqyEUHaXnRD6udh3bHbg
+        DO3fqmTcVr8UBPfjjFY9cKUlM3vLr6AGZnqsqtRyoJ8CqlKahMo0ncNRjrq/kA7EL6sLqNum0NmaD
+        txSnE1JvzA7NxAzfCF9vAn0f8Ahnubn/rkfYwaXnp4y5tXKE/Fd9r1ErJ5t/ShoQkinSPp/O7xqba
+        MdZ3g3Eg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oxCqz-00HLjH-Gq; Mon, 21 Nov 2022 19:53:17 +0000
+Date:   Mon, 21 Nov 2022 11:53:17 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Joel Granados <j.granados@samsung.com>,
+        Kanchan Joshi <joshi.k@samsung.com>, ddiss@suse.de,
+        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
+ implement the ioctl op convention
+Message-ID: <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
+References: <20221116125051.3338926-1-j.granados@samsung.com>
+ <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
+ <20221116125051.3338926-2-j.granados@samsung.com>
+ <20221116173821.GC5094@test-zns>
+ <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com>
+ <20221117094004.b5l64ipicitphkun@localhost>
+ <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-Content-Language: en-US
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Matthew Garrett <mjg59@srcf.ucam.org>, linux-efi@vger.kernel.org,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        npiggin@gmail.com, Dov Murik <dovmurik@linux.ibm.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linux-fsdevel@vger.kernel.org,
-        George Wilson <gcwilson@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-References: <20221106210744.603240-1-nayna@linux.ibm.com>
- <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
- <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
- <Y2zLRw/TzV/sWgqO@kroah.com>
- <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
- <Y3anQukokMcQr+iE@kroah.com>
- <d615180d-6fe5-d977-da6a-e88fd8bf5345@linux.vnet.ibm.com>
- <Y3pSF2MRIXd6aH14@kroah.com>
- <88111914afc6204b2a3fb82ded5d9bfb6420bca6.camel@HansenPartnership.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-In-Reply-To: <88111914afc6204b2a3fb82ded5d9bfb6420bca6.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 5qwyL1VGEDwEbovNCVAiJnFzbjnzziHD
-X-Proofpoint-GUID: wyCxSb4iOI18wGF1voQk7RF8fnGsXigr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-21_16,2022-11-18_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 phishscore=0 mlxlogscore=743 clxscore=1011
- malwarescore=0 suspectscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2210170000
- definitions=main-2211210147
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Nov 17, 2022 at 05:10:07PM -0500, Paul Moore wrote:
+> On Thu, Nov 17, 2022 at 4:40 AM Joel Granados <j.granados@samsung.com> wrote:
+> > On Wed, Nov 16, 2022 at 02:21:14PM -0500, Paul Moore wrote:
+> 
+> ...
+> 
+> > > * As we discussed previously, the real problem is the fact that we are
+> > > missing the necessary context in the LSM hook to separate the
+> > > different types of command targets.  With traditional ioctls we can
+> > > look at the ioctl number and determine both the type of
+> > > device/subsystem/etc. as well as the operation being requested; there
+> > > is no such information available with the io_uring command
+> > > passthrough.  In this sense, the io_uring command passthrough is
+> > > actually worse than traditional ioctls from an access control
+> > > perspective.  Until we have an easy(ish)[1] way to determine the
+> > > io_uring command target type, changes like the one suggested here are
+> > > going to be doomed as each target type is free to define their own
+> > > io_uring commands.
+> >
+> > The only thing that comes immediately to mind is that we can have
+> > io_uring users define a function that is then passed to the LSM
+> > infrastructure. This function will have all the logic to give relative
+> > context to LSM. It would be general enough to fit all the possible commands
+> > and the logic would be implemented in the "drivers" side so there is no
+> > need for LSM folks to know all io_uring users.
+> 
+> Passing a function pointer to the LSM to fetch, what will likely be
+> just a constant value, seems kinda ugly, but I guess we only have ugly
+> options at this point.
 
-On 11/20/22 22:14, James Bottomley wrote:
-> On Sun, 2022-11-20 at 17:13 +0100, Greg Kroah-Hartman wrote:
->> On Sat, Nov 19, 2022 at 01:20:09AM -0500, Nayna wrote:
->>> On 11/17/22 16:27, Greg Kroah-Hartman wrote:
->>>> On Mon, Nov 14, 2022 at 06:03:43PM -0500, Nayna wrote:
->>>>> On 11/10/22 04:58, Greg Kroah-Hartman wrote:
-> [...]
->>>
-[...]
->>> You are correct. There's no namespace for these.
->> So again, I do not understand.  Do you want to use filesystem
->> namespaces, or do you not?
-> Since this seems to go back to my email quoted again, let me repeat:
-> the question isn't if this patch is namespaced; I think you've agreed
-> several times it isn't.  The question is if the exposed properties
-> would ever need to be namespaced.  This is a subtle and complex
-> question which isn't at all explored by the above interchange.
->
->> How again can you not use sysfs or securityfs due to namespaces?
->> What is missing?
-> I already explained in the email that sysfs contains APIs like
-> simple_pin_... which are completely inimical to namespacing.  Currently
-> securityfs contains them as well, so in that regard they're both no
-> better than each other.  The point I was making is that securityfs is
-> getting namespaced by the IMA namespace rework (which is pretty complex
-> due to having to replace the simple_pin_... APIs), so when (perhaps if)
-> the IMA namespace is accepted, securityfs will make a good home for
-> quantities that need namespacing.  That's not to say you can't
-> namespace things in sysfs, you can, in the same way that you can get a
-> round peg into a square hole if you bang hard enough.
->
-> So perhaps we could get back to the original question of whether these
-> quantities would ever be namespaced ... or, conversely, whether they
-> would never need namespacing.
+I am not sure if this helps yet, but queued on modules-next we now have
+an improvement in speed of about 1500x for kallsyms_lookup_name(), and
+so symbol lookups are now fast. Makes me wonder if a type of special
+export could be drawn up for specific calls which follow a structure
+and so the respective lsm could be inferred by a prefix instead of
+placing the calls in-place. Then it would not mattter where a call is
+used, so long as it would follow a specific pattern / structure with
+all the crap you need on it.
 
-To clarify, I brought up in the discussion about namespacing 
-considerations because I was asked about them. However, I determined 
-there were none because firmware object interactions are invariant 
-across namespaces.  I don't see this changing in the future given that 
-the firmware objects have no notion of namespacing.
-
-Thanks & Regards,
-
-     - Nayna
-
+  Luis
