@@ -2,137 +2,194 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E69A8C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 03:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84284C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 08:21:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229842AbiKUDOd (ORCPT
+        id S229879AbiKUIVV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 20 Nov 2022 22:14:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58514 "EHLO
+        Mon, 21 Nov 2022 03:21:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbiKUDOc (ORCPT
+        with ESMTP id S229558AbiKUIVO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 20 Nov 2022 22:14:32 -0500
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73E2D317DC;
-        Sun, 20 Nov 2022 19:14:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1669000470;
-        bh=lpZgnMAIPQYWEsczCTUzFV69l9Fd2DYhbsoIEDC3ECs=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=P2IcUTk9hKaJ2w074QgS5zNElUbLshmqP8b1qYqP+whvHuvLbN/tyIBjZwlXo5EMN
-         x2K3CWSGdtIyl1khT8nrcIsznm5wBDQFyGoAv2BPV/xCQuNYSMH6zAQUx+7ZnhKL5h
-         DFJxIh79TqxJxcVnMeBxXAPb7EkRxow6sg6OD0l8=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id C51E31285D2A;
-        Sun, 20 Nov 2022 22:14:30 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id FrVsRsd6AIFW; Sun, 20 Nov 2022 22:14:30 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1669000470;
-        bh=lpZgnMAIPQYWEsczCTUzFV69l9Fd2DYhbsoIEDC3ECs=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=P2IcUTk9hKaJ2w074QgS5zNElUbLshmqP8b1qYqP+whvHuvLbN/tyIBjZwlXo5EMN
-         x2K3CWSGdtIyl1khT8nrcIsznm5wBDQFyGoAv2BPV/xCQuNYSMH6zAQUx+7ZnhKL5h
-         DFJxIh79TqxJxcVnMeBxXAPb7EkRxow6sg6OD0l8=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id E7AF21285CE5;
-        Sun, 20 Nov 2022 22:14:28 -0500 (EST)
-Message-ID: <88111914afc6204b2a3fb82ded5d9bfb6420bca6.camel@HansenPartnership.com>
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nayna <nayna@linux.vnet.ibm.com>
-Cc:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Date:   Sun, 20 Nov 2022 22:14:26 -0500
-In-Reply-To: <Y3pSF2MRIXd6aH14@kroah.com>
-References: <20221106210744.603240-1-nayna@linux.ibm.com>
-         <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
-         <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
-         <Y2zLRw/TzV/sWgqO@kroah.com>
-         <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
-         <Y3anQukokMcQr+iE@kroah.com>
-         <d615180d-6fe5-d977-da6a-e88fd8bf5345@linux.vnet.ibm.com>
-         <Y3pSF2MRIXd6aH14@kroah.com>
+        Mon, 21 Nov 2022 03:21:14 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A683A6DFF2;
+        Mon, 21 Nov 2022 00:21:12 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NG0Xn30dmz9xqcM;
+        Mon, 21 Nov 2022 16:14:17 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwB3YG3KNHtjPkCBAA--.28046S2;
+        Mon, 21 Nov 2022 09:20:40 +0100 (CET)
+Message-ID: <36ec31d29127496531eb08234c4234568cdbdc3b.camel@huaweicloud.com>
+Subject: Re: [PATCH v4] evm: Correct inode_init_security hooks behaviors
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
+Cc:     linux-integrity@vger.kernel.org, philippe.trebuchet@ssi.gouv.fr,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        casey@schaufler-ca.com, davem@davemloft.net, lucien.xin@gmail.com,
+        vgoyal@redhat.com, omosnace@redhat.com, mortonm@chromium.org,
+        nicolas.bouchinet@ssi.gouv.fr, mic@digikod.net,
+        cgzones@googlemail.com, linux-security-module@vger.kernel.org,
+        kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
+        bpf@vger.kernel.org
+Date:   Mon, 21 Nov 2022 09:20:16 +0100
+In-Reply-To: <Y3eUvBadW87f9PaL@archlinux>
+References: <Y1lElHVQGT/1Pa6O@archlinux>
+         <2b10941d35ab833dbb0e5858489fefc33d11c010.camel@huaweicloud.com>
+         <f292d4f68e540f394504cbc8a4b98132cca09209.camel@huaweicloud.com>
+         <Y3eUvBadW87f9PaL@archlinux>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwB3YG3KNHtjPkCBAA--.28046S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Xw4fGrW3Ww18KF4DuFW3Wrg_yoW7CFW8pF
+        WUK3Wakr4kJFy8CrZ2y3W7Za1fK3yrGrWUWryakr1YvF90vFn2qr40kr15uF95CrW8GFy2
+        qF17ZrZxuw1DA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj4WldwAAsg
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 2022-11-20 at 17:13 +0100, Greg Kroah-Hartman wrote:
-> On Sat, Nov 19, 2022 at 01:20:09AM -0500, Nayna wrote:
-> > 
-> > On 11/17/22 16:27, Greg Kroah-Hartman wrote:
-> > > On Mon, Nov 14, 2022 at 06:03:43PM -0500, Nayna wrote:
-> > > > On 11/10/22 04:58, Greg Kroah-Hartman wrote:
-[...]
-> > > > > I do not understand, sorry.  What does namespaces have to do
-> > > > > with this?
-> > > > > sysfs can already handle namespaces just fine, why not use
-> > > > > that?
-> > > > Firmware objects are not namespaced. I mentioned it here as an
-> > > > example of the difference between firmware and kernel objects.
-> > > > It is also in response to the feedback from James Bottomley in
-> > > > RFC v2 [
-> > > > https://lore.kernel.org/linuxppc-dev/41ca51e8db9907d9060cc38ad
-> > > > b59a66dcae4c59b.camel@HansenPartnership.com/].
-> > > I do not understand, sorry.  Do you want to use a namespace for
-> > > these or not?  The code does not seem to be using namespaces. 
-> > > You can use sysfs with, or without, a namespace so I don't
-> > > understand the issue here.
+On Fri, 2022-11-18 at 15:20 +0100, Nicolas Bouchinet wrote:
+> On Fri, Nov 04, 2022 at 02:43:25PM +0100, Roberto Sassu wrote:
+> > On Thu, 2022-11-03 at 16:27 +0100, Roberto Sassu wrote:
+> > > On Wed, 2022-10-26 at 16:30 +0200, Nicolas Bouchinet wrote:
+> > > > From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > > > 
+> > > > Fixes a NULL pointer dereference occurring in the
+> > > > `evm_protected_xattr_common` function of the EVM LSM. The bug is
+> > > > triggered if a `inode_init_security` hook returns 0 without initializing
+> > > > the given `struct xattr` fields (which is the case of BPF) and if no
+> > > > other LSM overrides thoses fields after. This also leads to memory
+> > > > leaks.
+> > > > 
+> > > > The `call_int_hook_xattr` macro has been inlined into the
+> > > > `security_inode_init_security` hook in order to check hooks return
+> > > > values and skip ones who doesn't init `xattrs`.
+> > > > 
+> > > > Modify `evm_init_hmac` function to init the EVM hmac using every
+> > > > entry of the given xattr array.
+> > > > 
+> > > > The `MAX_LSM_EVM_XATTR` value is now based on the security modules
+> > > > compiled in, which gives room for SMACK, SELinux, Apparmor, BPF and
+> > > > IMA/EVM security attributes.
+> > > > 
+> > > > Changes the default return value of the `inode_init_security` hook
+> > > > definition to `-EOPNOTSUPP`.
+> > > > 
+> > > > Changes the hook documentation to match the behavior of the LSMs using
+> > > > it (only xattr->value is initialised with kmalloc and thus is the only
+> > > > one that should be kfreed by the caller).
+> > > > 
+> > > > Cc: roberto.sassu@huaweicloud.com
+> > > > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > > > ---
+> > > > Changes since v3:
+> > > > https://lore.kernel.org/linux-integrity/Y1fu4jofqLHVDprT@archlinux/
+> > > > 
+> > > > * Fixes compilation error reported by the kernel test robot.
+> > > > ---
+> > > >  include/linux/lsm_hook_defs.h       |  2 +-
+> > > >  include/linux/lsm_hooks.h           |  4 ++--
+> > > >  security/integrity/evm/evm.h        |  1 +
+> > > >  security/integrity/evm/evm_crypto.c |  9 +++++++--
+> > > >  security/integrity/evm/evm_main.c   |  7 ++++---
+> > > >  security/security.c                 | 31 ++++++++++++++++++++++-------
+> > > >  6 files changed, 39 insertions(+), 15 deletions(-)
+> > > > 
+> > > > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> > > > index 806448173033..e5dd0c0f6345 100644
+> > > > --- a/include/linux/lsm_hook_defs.h
+> > > > +++ b/include/linux/lsm_hook_defs.h
+> > > > @@ -111,7 +111,7 @@ LSM_HOOK(int, 0, path_notify, const struct path *path, u64 mask,
+> > > >  	 unsigned int obj_type)
+> > > >  LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
+> > > >  LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
+> > > > -LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
+> > > > +LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
+> > > >  	 struct inode *dir, const struct qstr *qstr, const char **name,
+> > > >  	 void **value, size_t *len)
+> > > >  LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
+> > > > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > > > index 84a0d7e02176..95aff9383de1 100644
+> > > > --- a/include/linux/lsm_hooks.h
+> > > > +++ b/include/linux/lsm_hooks.h
+> > > > @@ -229,8 +229,8 @@
+> > > >   *	This hook is called by the fs code as part of the inode creation
+> > > >   *	transaction and provides for atomic labeling of the inode, unlike
+> > > >   *	the post_create/mkdir/... hooks called by the VFS.  The hook function
+> > > > - *	is expected to allocate the name and value via kmalloc, with the caller
+> > > > - *	being responsible for calling kfree after using them.
+> > > > + *	is expected to allocate the value via kmalloc, with the caller
+> > > > + *	being responsible for calling kfree after using it.
 > > > 
-> > > With your code, there is no namespace.
+> > > Please also update the description of @name as well (remove allocated).
 > > 
-> > You are correct. There's no namespace for these.
+> > While you update the patch, I worked on the other patches: reiserfs
+> > fixes, if we want still to apply them; expand the call_int_hook() loop
+> > also for security_old_inode_init_security() to have consistent behavior
+> > across all filesystems.
 > 
-> So again, I do not understand.  Do you want to use filesystem
-> namespaces, or do you not?
+> Thank's I didn't had time to read the patch, will do it.
 
-Since this seems to go back to my email quoted again, let me repeat:
-the question isn't if this patch is namespaced; I think you've agreed
-several times it isn't.  The question is if the exposed properties
-would ever need to be namespaced.  This is a subtle and complex
-question which isn't at all explored by the above interchange.
+Hi Nicolas
 
-> How again can you not use sysfs or securityfs due to namespaces? 
-> What is missing?
+in the meantime we went further. As Paul commented that he would prefer
+to use the reservation mechanism for xattrs, instead of a static
+allocation, I resumed my old patch set, which would include also your
+changes.
 
-I already explained in the email that sysfs contains APIs like
-simple_pin_... which are completely inimical to namespacing.  Currently
-securityfs contains them as well, so in that regard they're both no
-better than each other.  The point I was making is that securityfs is
-getting namespaced by the IMA namespace rework (which is pretty complex
-due to having to replace the simple_pin_... APIs), so when (perhaps if)
-the IMA namespace is accepted, securityfs will make a good home for
-quantities that need namespacing.  That's not to say you can't
-namespace things in sysfs, you can, in the same way that you can get a
-round peg into a square hole if you bang hard enough.
+Will send a new version shortly. Will appreciate your feedback!
 
-So perhaps we could get back to the original question of whether these
-quantities would ever be namespaced ... or, conversely, whether they
-would never need namespacing.
+Thanks
 
-James
+Roberto
 
-
+> > The patches are available here:
+> > 
+> > https://github.com/robertosassu/linux/tree/evm-multiple-lsms-nicolas-v1-devel-v6
+> > 
+> > Other than Github Actions related patches, there is also TestLSM, which
+> > I developed to ensure that xattrs are correctly created.
+> > 
+> > I also adapted the IMA/EVM tests, which are available here:
+> > 
+> > https://github.com/robertosassu/ima-evm-utils/tree/evm-multiple-lsms-nicolas-v1-devel-v6
+> > 
+> > Nicolas, if you want to test the new patch locally, build the UML
+> > kernel with:
+> Will surely do ! Thanks.
+> > make ARCH=um -j$(nproc)
+> > 
+> > Build ima-evm-utils, and copy linux and certs/signing_key.pem from the
+> > kernel source directory to the ima-evm-utils directory. Then, run:
+> > 
+> > tests/evm_multiple_lsms.test
+> > 
+> > It basically runs the UML kernel with different combinations of LSMs
+> > (some providing an xattr, some not) and compares the HMAC calculated by
+> > EVM in the kernel with the HMAC calculated by evmctl in user space.
+> > 
+> > Roberto
+> > 
+> 
+> Best regards,
+> 
+> Nicolas Bouchinet
 
