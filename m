@@ -2,152 +2,131 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF82DC433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 20:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9002EC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 21:05:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230338AbiKUU6a (ORCPT
+        id S231139AbiKUVFv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Nov 2022 15:58:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58008 "EHLO
+        Mon, 21 Nov 2022 16:05:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbiKUU62 (ORCPT
+        with ESMTP id S230449AbiKUVFu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Nov 2022 15:58:28 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B58B4CEBAD;
-        Mon, 21 Nov 2022 12:58:27 -0800 (PST)
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2ALK3lao029070;
-        Mon, 21 Nov 2022 20:58:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=yYc1UjR/X0mjO1Si4MpoQ9ZWzXiCM44IGVCFBM9HksM=;
- b=fHjSzlbvKCNmzvyWRhEFoCgf2kFmVcWJXPbWqTecv0fMIK82bWxcZ9T60FGJ4Kge14LT
- uNry1lRdag0s7wKlV2WF8JJ5HfaS6Tu7xpFOUUp9cip3XNY8DxOw9oURAPFQrXK5lSo/
- AubsE6A5VF9XJHCbKC8vcmx3Ij0aAaqbNYx58HGVpy8NcLGrNeq3s3m5rFp7ldkSO1In
- 0kg4FW+6KBVcM0nfU2wi56MUsGg7jb/sDSBadvye/M5FUEgQM67EK7RJ7jjOMyh8vdP9
- iq58VqneeuRBHSqO6BAdBZwMAM3FEqTV41b7nF3zBAEzSLk4ukHsjyBRoONYc49L0yv5 3A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m0cfxxfr1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 21 Nov 2022 20:58:09 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2ALKqsWC022894;
-        Mon, 21 Nov 2022 20:58:08 GMT
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m0cfxxfqd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 21 Nov 2022 20:58:08 +0000
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2ALKp4Pi014694;
-        Mon, 21 Nov 2022 20:58:07 GMT
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-        by ppma03wdc.us.ibm.com with ESMTP id 3kxps9fsdk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 21 Nov 2022 20:58:07 +0000
-Received: from smtpav03.dal12v.mail.ibm.com ([9.208.128.129])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2ALKw5FL34210120
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 21 Nov 2022 20:58:05 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8C7D958060;
-        Mon, 21 Nov 2022 20:58:06 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 96CF55803F;
-        Mon, 21 Nov 2022 20:58:05 +0000 (GMT)
-Received: from sig-9-65-226-3.ibm.com (unknown [9.65.226.3])
-        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 21 Nov 2022 20:58:05 +0000 (GMT)
-Message-ID: <5e88d4bfae90d642fcf84a0c0937a9e4359ef4b2.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 3/5] security: Allow all LSMs to provide xattrs for
- inode_init_security hook
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Mon, 21 Nov 2022 15:58:05 -0500
-In-Reply-To: <ad7bfa59a3a89ccad52574e2f9fb8965dbaa1620.camel@huaweicloud.com>
-References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
-         <20221110094639.3086409-4-roberto.sassu@huaweicloud.com>
-         <4c1349f670dc3c23214a5a5036e43ddaa0a7bc89.camel@linux.ibm.com>
-         <fe16a03a-102e-b3e1-cc3f-5bad3c28fad7@huaweicloud.com>
-         <3ffb9bb4ab203b5e0459c3892ded4ae0cd80458b.camel@linux.ibm.com>
-         <fb3f423a-a56e-b6ed-d1e7-476605d607f8@schaufler-ca.com>
-         <ad7bfa59a3a89ccad52574e2f9fb8965dbaa1620.camel@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: cw1OJWh_QF1SxB1kA5f_Qwm275_N0FeP
-X-Proofpoint-ORIG-GUID: o0KtNVBV0hgf2nWi3TrF-p_qik3UvULx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-21_16,2022-11-18_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- clxscore=1015 malwarescore=0 impostorscore=0 suspectscore=0
- mlxlogscore=999 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211210155
+        Mon, 21 Nov 2022 16:05:50 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B215FDB849
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Nov 2022 13:05:49 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id b21so11699157plc.9
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Nov 2022 13:05:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=R045ZF72NR23G1ZVkzr/C9+6Gj8dK4yaud4FFWB06A8=;
+        b=6hHoQ5SI00tWEj/5CciSWhgxmyxPJEPavjeSlkZNktCb1TAU2XWeQJnIzx+tcdQCsA
+         kGOg/T2nPxDXmEddcqW6PFa5JP7WgOPCkosyW0tk5A6oEC3JJNFomMtL2NE1cRlno/ey
+         hm+zAHuz0FpCiPtrCaaej0udDxiQ4yTBVMNOfzXD2MKfUlrJs71P+RITDEzBbYJFNffl
+         6AkTkOaFXu0n3W+eBGRik1iUGC+Qhyk1gbeloVpzAcVKalh+7fst4JD0LvNPOgwEPHiW
+         y/UZs1/1qoXpeWPcl8b2rxJIkNw/QUSn0v5Ws/VbL0WbguXnJ7U8hCx+7fO2eJyffFRp
+         B98g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R045ZF72NR23G1ZVkzr/C9+6Gj8dK4yaud4FFWB06A8=;
+        b=NxBlLq4voLS3+vndNUd4BM0fE5ZE90EjxHv5t6ZdFOwZ6r5/SCEr/jnH3X5jfqq6Dp
+         5Pe76o00ujycYgOjbnYjdQCrRzuiSVcxgnX/m8aTCE2ewaWOlMYiAmus9WSyDwhd46hX
+         hqh6of4DqcumxfXq3EbYl1MgDV/GeZiFOoHUSSqwMB7nGN4BPGwRkS3zbyvYbIrKcjMO
+         GkN7LKe7N6MQQfIoj+3iXyTj8nMDUb+KbyLEHRnfh6/ZcEilDMO0S2q5aQiBk0oZAvUx
+         s2Pmkuz4eGYzuIFcWIYw9Shkgf6cDf5imARqubrZnvGbTCNfFHdGkjSafEApXBycZks/
+         6K5Q==
+X-Gm-Message-State: ANoB5plk5hnPZ5djC7IpFmn9/YbWgKNCWZZ6sTLhcwjcsPmrq4cjR5D0
+        UBbAPJ+vS2CoB9tkj+a4Kw+tgkSXM6Nuw/EYm9Fk
+X-Google-Smtp-Source: AA0mqf6Nq00AjeM4Q5AsrjkZOzvkvQDZmdltkcREvU9Z7I0fFwvWETBtmo1aujho8qq2qp7HrObB9C5zedBzI6roC6w=
+X-Received: by 2002:a17:902:f7cc:b0:17b:4ace:b67f with SMTP id
+ h12-20020a170902f7cc00b0017b4aceb67fmr14179105plw.12.1669064749107; Mon, 21
+ Nov 2022 13:05:49 -0800 (PST)
+MIME-Version: 1.0
+References: <20221116125051.3338926-1-j.granados@samsung.com>
+ <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
+ <20221116125051.3338926-2-j.granados@samsung.com> <20221116173821.GC5094@test-zns>
+ <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com>
+ <20221117094004.b5l64ipicitphkun@localhost> <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
+ <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
+In-Reply-To: <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 21 Nov 2022 16:05:37 -0500
+Message-ID: <CAHC9VhR+RFqJ7c6mFhnMFdDXPcCBg-pnAzEuyOc-TX5hmsubwg@mail.gmail.com>
+Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
+ implement the ioctl op convention
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Joel Granados <j.granados@samsung.com>,
+        Kanchan Joshi <joshi.k@samsung.com>, ddiss@suse.de,
+        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2022-11-21 at 14:29 +0100, Roberto Sassu wrote:
-> On Fri, 2022-11-18 at 09:31 -0800, Casey Schaufler wrote:
-> > On 11/18/2022 7:10 AM, Mimi Zohar wrote:
-> > > On Fri, 2022-11-18 at 10:14 +0100, Roberto Sassu wrote:
-> > > > > > +static int security_check_compact_xattrs(struct xattr *xattrs,
-> > > > > > +                                     int num_xattrs, int *checked_xattrs)
-> > > > > Perhaps the variable naming is off, making it difficult to read.   So
-> > > > > although this is a static function, which normally doesn't require a
-> > > > > comment, it's definitely needs one.
-> > > > Ok, will improve it.
-> > > > 
-> > > > > > +{
-> > > > > > +    int i;
-> > > > > > +
-> > > > > > +    for (i = *checked_xattrs; i < num_xattrs; i++) {
-> > > > > If the number of "checked" xattrs was kept up to date, removing the
-> > > > > empty xattr gaps wouldn't require a loop.  Is the purpose of this loop
-> > > > > to support multiple per LSM xattrs?
-> > > > An LSM might reserve one or more xattrs, but not set it/them (for 
-> > > > example because it is not initialized). In this case, removing the gaps 
-> > > > is needed for all subsequent LSMs.
-> > > Including this sort of info in the function description or as a comment
-> > > in the code would definitely simplify review.
-> > > 
-> > > security_check_compact_xattrs() is called in the loop after getting
-> > > each LSM's xattr(s).  Only the current LSMs xattrs need to be
-> > > compressed, yet the loop goes to the maximum number of xattrs each
-> > > time. Just wondering if there is a way of improving it.
-> > 
-> > At security module registration each module could identify how
-> > many xattrs it uses. That number could be used to limit the range
-> > of the loop. I have to do similar things for the forthcoming LSM
-> > syscalls and module stacking beyond that.
-> 
-> Yes, blob_sizes.lbs_xattr contains the total number of xattrs requested
-> by LSMs. To stop the loop earlier, at the offset of the next LSM, we
-> would need to search the LSM's lsm_info, using the LSM name in
-> the security_hook_list structure. Although it is not optimal, not doing
-> it makes the code simpler. I could do that, if preferred.
+On Mon, Nov 21, 2022 at 2:53 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> On Thu, Nov 17, 2022 at 05:10:07PM -0500, Paul Moore wrote:
+> > On Thu, Nov 17, 2022 at 4:40 AM Joel Granados <j.granados@samsung.com> wrote:
+> > > On Wed, Nov 16, 2022 at 02:21:14PM -0500, Paul Moore wrote:
+> >
+> > ...
+> >
+> > > > * As we discussed previously, the real problem is the fact that we are
+> > > > missing the necessary context in the LSM hook to separate the
+> > > > different types of command targets.  With traditional ioctls we can
+> > > > look at the ioctl number and determine both the type of
+> > > > device/subsystem/etc. as well as the operation being requested; there
+> > > > is no such information available with the io_uring command
+> > > > passthrough.  In this sense, the io_uring command passthrough is
+> > > > actually worse than traditional ioctls from an access control
+> > > > perspective.  Until we have an easy(ish)[1] way to determine the
+> > > > io_uring command target type, changes like the one suggested here are
+> > > > going to be doomed as each target type is free to define their own
+> > > > io_uring commands.
+> > >
+> > > The only thing that comes immediately to mind is that we can have
+> > > io_uring users define a function that is then passed to the LSM
+> > > infrastructure. This function will have all the logic to give relative
+> > > context to LSM. It would be general enough to fit all the possible commands
+> > > and the logic would be implemented in the "drivers" side so there is no
+> > > need for LSM folks to know all io_uring users.
+> >
+> > Passing a function pointer to the LSM to fetch, what will likely be
+> > just a constant value, seems kinda ugly, but I guess we only have ugly
+> > options at this point.
+>
+> I am not sure if this helps yet, but queued on modules-next we now have
+> an improvement in speed of about 1500x for kallsyms_lookup_name(), and
+> so symbol lookups are now fast. Makes me wonder if a type of special
+> export could be drawn up for specific calls which follow a structure
+> and so the respective lsm could be inferred by a prefix instead of
+> placing the calls in-place. Then it would not mattter where a call is
+> used, so long as it would follow a specific pattern / structure with
+> all the crap you need on it.
 
-Either way is fine, as long as the code is readable.  At minimum add a
-comment.
+I suspect we may be talking about different things here, I don't think
+the issue is which LSM(s) may be enabled, as the call is to
+security_uring_cmd() regardless.  I believe the issue is more of how
+do the LSMs determine the target of the io_uring command, e.g. nvme or
+ublk.
 
--- 
-thanks,
+My understanding is that Joel was suggesting a change to the LSM hook
+to add a function specific pointer (presumably defined as part of the
+file_operations struct) that could be called by the LSM to determine
+the target.
 
-Mimi
+Although now that I'm looking again at the file_operations struct, I
+wonder if we would be better off having the LSMs inspect the
+file_operations::owner field, potentially checking the module::name
+field.  It's a little painful in the sense that it is potentially
+multiple strcmp() calls for each security_uring_cmd() call, but I'm
+not sure the passed function approach would be much better.  Do we
+have a consistent per-module scalar value we can use instead of a
+character string?
 
-
-
-
+--
+paul-moore.com
