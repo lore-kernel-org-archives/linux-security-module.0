@@ -2,101 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 197DAC43217
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 13:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBAEC43217
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 13:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229664AbiKUNOa (ORCPT
+        id S230295AbiKUNaU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Nov 2022 08:14:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55344 "EHLO
+        Mon, 21 Nov 2022 08:30:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbiKUNO3 (ORCPT
+        with ESMTP id S229730AbiKUNaJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Nov 2022 08:14:29 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 825111E3DB
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Nov 2022 05:14:25 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id l24so3602065edj.8
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Nov 2022 05:14:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hL5iYCNYJT5CdfaY+BylUC9g4Yj0+Fyiqmr6KtQn1vE=;
-        b=SJ0n9BGCNHZN7ZTRm2uV3ZVxyT/FY2VQf/AjpGsdiHsBc1oAiTyl6OaxV+My2+DAMl
-         Y7pz8wTjyHMwhFAyT6Pf+pMdVNseoOss8yTUgvbNMds9QwHBSSJaUWzXDAatEXnPplVS
-         2/9ZwW+Vg5p+SPMmqOmXOhDkih2DJYCXJx8Ag=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hL5iYCNYJT5CdfaY+BylUC9g4Yj0+Fyiqmr6KtQn1vE=;
-        b=mhJ0isi+bH54xkAkD1IenVG3Eq4I1IuJ9JpqyYym3e3cAQRhOiesV5Xh4JvsB7+y2L
-         Qwjk8GdQecWVve63HqfpIYhL4RRDEkMMIpZbyRmiMGXlRESnOWQwZvs9ipu8eSAheFO7
-         SRXhHZ9IcYbrjD/5b8o5/fJZVKBQvHVUhzGyGwIsas2vbZ+NExlHdEYRWVSvHct2ZT1w
-         2maoU9tiPxTcoZ43DuDPQtCOVeYm57bg49vAljxWY9tvrr0n7BwnY0zsjNWpLYxpwti4
-         LZpHLoDj5/PA4TARVjFp/4gBi/pyZPCHBWpGE7gJsdR9MOGYowDsGvsAHJ4JewSLi1Pn
-         Dw3g==
-X-Gm-Message-State: ANoB5pkDJoNHBmTOm2q3Mtffk47azyjkqpYtOaBKIapXfY8HMBWE8ab/
-        rFokzyy2OMjPgM6DDhy36ghe6Gg1YBy0h/VcjVy0d4VfDZkvtA==
-X-Google-Smtp-Source: AA0mqf6CkCLlvlbPBG7lbXZwKejw1tqr1gAqg5GXZcO1FPZlNWmSntkUVVVE7G9p9sIApKxgSEl9NVZ78UPr6zIsx+o=
-X-Received: by 2002:a50:bb08:0:b0:469:1684:217d with SMTP id
- y8-20020a50bb08000000b004691684217dmr6579098ede.270.1669036464083; Mon, 21
- Nov 2022 05:14:24 -0800 (PST)
-MIME-Version: 1.0
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 21 Nov 2022 14:14:13 +0100
-Message-ID: <CAJfpegsVAUUg5p6DbL1nA_oRF4Bui+saqbFjjYn=VYtd-N2Xew@mail.gmail.com>
-Subject: sgid clearing rules?
-To:     linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>
-Cc:     fstests <fstests@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>
+        Mon, 21 Nov 2022 08:30:09 -0500
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B7A6BEAF6;
+        Mon, 21 Nov 2022 05:30:04 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4NG7PD32hrz9v7Yb;
+        Mon, 21 Nov 2022 21:23:12 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwC36fU6fXtjYTSBAA--.27697S2;
+        Mon, 21 Nov 2022 14:29:40 +0100 (CET)
+Message-ID: <ad7bfa59a3a89ccad52574e2f9fb8965dbaa1620.camel@huaweicloud.com>
+Subject: Re: [PATCH v4 3/5] security: Allow all LSMs to provide xattrs for
+ inode_init_security hook
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Mon, 21 Nov 2022 14:29:20 +0100
+In-Reply-To: <fb3f423a-a56e-b6ed-d1e7-476605d607f8@schaufler-ca.com>
+References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
+         <20221110094639.3086409-4-roberto.sassu@huaweicloud.com>
+         <4c1349f670dc3c23214a5a5036e43ddaa0a7bc89.camel@linux.ibm.com>
+         <fe16a03a-102e-b3e1-cc3f-5bad3c28fad7@huaweicloud.com>
+         <3ffb9bb4ab203b5e0459c3892ded4ae0cd80458b.camel@linux.ibm.com>
+         <fb3f423a-a56e-b6ed-d1e7-476605d607f8@schaufler-ca.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: GxC2BwC36fU6fXtjYTSBAA--.27697S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AryrtF43Ww48ZF1UArWfuFg_yoW8Cw4fpF
+        WUA3Wj9F4kJr47A34Iqr4ruw4a9rWrGayDXFn8Gr1jyFs0qrn3ZrWSvFy5uFy7W395t3yv
+        qa1jva43Ar98AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgADBF1jj4GrBQACsZ
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I'm looking at sgid clearing in case of file modification.  Seems like
-the intent was:
+On Fri, 2022-11-18 at 09:31 -0800, Casey Schaufler wrote:
+> On 11/18/2022 7:10 AM, Mimi Zohar wrote:
+> > On Fri, 2022-11-18 at 10:14 +0100, Roberto Sassu wrote:
+> > > > > +static int security_check_compact_xattrs(struct xattr *xattrs,
+> > > > > +                                     int num_xattrs, int *checked_xattrs)
+> > > > Perhaps the variable naming is off, making it difficult to read.   So
+> > > > although this is a static function, which normally doesn't require a
+> > > > comment, it's definitely needs one.
+> > > Ok, will improve it.
+> > > 
+> > > > > +{
+> > > > > +    int i;
+> > > > > +
+> > > > > +    for (i = *checked_xattrs; i < num_xattrs; i++) {
+> > > > If the number of "checked" xattrs was kept up to date, removing the
+> > > > empty xattr gaps wouldn't require a loop.  Is the purpose of this loop
+> > > > to support multiple per LSM xattrs?
+> > > An LSM might reserve one or more xattrs, but not set it/them (for 
+> > > example because it is not initialized). In this case, removing the gaps 
+> > > is needed for all subsequent LSMs.
+> > Including this sort of info in the function description or as a comment
+> > in the code would definitely simplify review.
+> > 
+> > security_check_compact_xattrs() is called in the loop after getting
+> > each LSM's xattr(s).  Only the current LSMs xattrs need to be
+> > compressed, yet the loop goes to the maximum number of xattrs each
+> > time. Just wondering if there is a way of improving it.
+> 
+> At security module registration each module could identify how
+> many xattrs it uses. That number could be used to limit the range
+> of the loop. I have to do similar things for the forthcoming LSM
+> syscalls and module stacking beyond that.
 
- - if not a regular file, then don't clear
- - else if task has CAP_FSETID in init_user_ns, then don't clear
- - else if group exec is set, then clear
- - else if gid is in task's group list, then don't clear
- - else if gid and uid are mapped in current namespace and task has
-CAP_FSETID in current namespace, then don't clear
- - else clear
+Yes, blob_sizes.lbs_xattr contains the total number of xattrs requested
+by LSMs. To stop the loop earlier, at the offset of the next LSM, we
+would need to search the LSM's lsm_info, using the LSM name in
+the security_hook_list structure. Although it is not optimal, not doing
+it makes the code simpler. I could do that, if preferred.
 
-However behavior seems to deviate from that if group exec is clear and
-*suid* bit is not set.  The reason is that inode_has_no_xattr() will
-set S_NOSEC and __file_remove_privs() will bail out before even
-starting to interpret the rules.
+Roberto
 
-This behavior is also codified in xfstests.  E.g. generic/683.out:
-
-Test 1 - qa_user, non-exec file falloc
-6666 -rwSrwSrw- TEST_DIR/683/a
-666 -rw-rw-rw- TEST_DIR/683/a
-
-vs
-
-Test 9 - qa_user, non-exec file falloc, only sgid
-2666 -rw-rwSrw- TEST_DIR/683/a
-2666 -rw-rwSrw- TEST_DIR/683/a
-
-and
-
-Test 3 - qa_user, user-exec file falloc
-6766 -rwsrwSrw- TEST_DIR/683/a
-766 -rwxrw-rw- TEST_DIR/683/a
-
-vs
-
-_user, user-exec file falloc, only sgid
-2766 -rwxrwSrw- TEST_DIR/683/a
-2766 -rwxrwSrw- TEST_DIR/683/a
-
-Should the S_IXGRP test be purged from is_sxid() to make this consistent?
-
-Thanks,
-Miklos
