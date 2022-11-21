@@ -2,131 +2,167 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9002EC4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 21:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 709DCC433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Nov 2022 23:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231139AbiKUVFv (ORCPT
+        id S231322AbiKUXmm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Nov 2022 16:05:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34560 "EHLO
+        Mon, 21 Nov 2022 18:42:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230449AbiKUVFu (ORCPT
+        with ESMTP id S231913AbiKUXmO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Nov 2022 16:05:50 -0500
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B215FDB849
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Nov 2022 13:05:49 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id b21so11699157plc.9
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Nov 2022 13:05:49 -0800 (PST)
+        Mon, 21 Nov 2022 18:42:14 -0500
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615B2DC33C
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Nov 2022 15:41:31 -0800 (PST)
+Received: by mail-pf1-x42d.google.com with SMTP id q9so12769392pfg.5
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Nov 2022 15:41:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=R045ZF72NR23G1ZVkzr/C9+6Gj8dK4yaud4FFWB06A8=;
-        b=6hHoQ5SI00tWEj/5CciSWhgxmyxPJEPavjeSlkZNktCb1TAU2XWeQJnIzx+tcdQCsA
-         kGOg/T2nPxDXmEddcqW6PFa5JP7WgOPCkosyW0tk5A6oEC3JJNFomMtL2NE1cRlno/ey
-         hm+zAHuz0FpCiPtrCaaej0udDxiQ4yTBVMNOfzXD2MKfUlrJs71P+RITDEzBbYJFNffl
-         6AkTkOaFXu0n3W+eBGRik1iUGC+Qhyk1gbeloVpzAcVKalh+7fst4JD0LvNPOgwEPHiW
-         y/UZs1/1qoXpeWPcl8b2rxJIkNw/QUSn0v5Ws/VbL0WbguXnJ7U8hCx+7fO2eJyffFRp
-         B98g==
+        bh=zZc5xOP0xJFdkWXLW4Eh/g4pOZDZTjhdnyoqBFnt7HE=;
+        b=jNx+HyVlbe/WRUrPdLAtxuIfOIMsgVI4ZaDCOO44XHmIolfTb+INLlJKz8tdLq+nqS
+         J3IbGMH3IFSwq4Dfs85xCc21Gz7CgRkDgfNjLpcRUm8YIKFId9K0951jzYNemy+bY0vU
+         mfTMwsOnG1epdDm84gswuKxBCblcJcAf0GlElKhqMJExgupt3aFgNAur5R2ocPLXScin
+         mcNPmdUUpm2ikx4BJjBRMAfD1LOiJz7utyg5AmNvJnnXDpBcrfp40W23Nq5rR4IlofYo
+         AfUEPweAnBMqsGrsakOiWUSPQ+ZL1mUlmsG+WX0OXoi8VI30SMj10JY2V8Fm4SAlmI/1
+         uvDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=R045ZF72NR23G1ZVkzr/C9+6Gj8dK4yaud4FFWB06A8=;
-        b=NxBlLq4voLS3+vndNUd4BM0fE5ZE90EjxHv5t6ZdFOwZ6r5/SCEr/jnH3X5jfqq6Dp
-         5Pe76o00ujycYgOjbnYjdQCrRzuiSVcxgnX/m8aTCE2ewaWOlMYiAmus9WSyDwhd46hX
-         hqh6of4DqcumxfXq3EbYl1MgDV/GeZiFOoHUSSqwMB7nGN4BPGwRkS3zbyvYbIrKcjMO
-         GkN7LKe7N6MQQfIoj+3iXyTj8nMDUb+KbyLEHRnfh6/ZcEilDMO0S2q5aQiBk0oZAvUx
-         s2Pmkuz4eGYzuIFcWIYw9Shkgf6cDf5imARqubrZnvGbTCNfFHdGkjSafEApXBycZks/
-         6K5Q==
-X-Gm-Message-State: ANoB5plk5hnPZ5djC7IpFmn9/YbWgKNCWZZ6sTLhcwjcsPmrq4cjR5D0
-        UBbAPJ+vS2CoB9tkj+a4Kw+tgkSXM6Nuw/EYm9Fk
-X-Google-Smtp-Source: AA0mqf6Nq00AjeM4Q5AsrjkZOzvkvQDZmdltkcREvU9Z7I0fFwvWETBtmo1aujho8qq2qp7HrObB9C5zedBzI6roC6w=
-X-Received: by 2002:a17:902:f7cc:b0:17b:4ace:b67f with SMTP id
- h12-20020a170902f7cc00b0017b4aceb67fmr14179105plw.12.1669064749107; Mon, 21
- Nov 2022 13:05:49 -0800 (PST)
+        bh=zZc5xOP0xJFdkWXLW4Eh/g4pOZDZTjhdnyoqBFnt7HE=;
+        b=SLgtGJcWC3D5ilYv+FZOhdpN1cp+4o/egHk2J6uJLvZqBqg3W9plje6MxIvUxjRKCF
+         qTdNwJ6aTfwozTz/RVu4SKa6at9/N25vFehKMw0UgTIjucJf3Jm9fKg/awnczargvf7s
+         8QcC4viioUq5yuxrXoCIly5iwaKEtU17VaoUUfYlJfP3bP07oXYGMUAfe/6uf2K5KGke
+         q3/nNCJ9so9S/sN2V8ZkU1Fset5LyJixIGm+GaA8jnvR+aC9OXWKcIiqMkSS4uYzdGeT
+         scH/3+r0M4V8hBmkXlVZrvto0auK5MzCxNwUCtxO6mHmQzfqy79AoTSfh+NBghfD1bhK
+         mWQw==
+X-Gm-Message-State: ANoB5pk4niy8QNdjiXPNbqVbsjHBbBLKEijpvBaJ7yAxLNrTzBHXDPYw
+        zYIzPx/TZ2sLwrLtauzFRQmC9lMRFLXRX3Slew0l
+X-Google-Smtp-Source: AA0mqf5sBQNs28sOBqrnhm1swUcszLklYtHexIa7tffAXM23323DKBFj1U6ylewxwYn+kM0hFFlZjc7knH3ByZlnilU=
+X-Received: by 2002:a63:1f63:0:b0:460:ec46:3645 with SMTP id
+ q35-20020a631f63000000b00460ec463645mr20336089pgm.92.1669074088835; Mon, 21
+ Nov 2022 15:41:28 -0800 (PST)
 MIME-Version: 1.0
-References: <20221116125051.3338926-1-j.granados@samsung.com>
- <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
- <20221116125051.3338926-2-j.granados@samsung.com> <20221116173821.GC5094@test-zns>
- <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com>
- <20221117094004.b5l64ipicitphkun@localhost> <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
- <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
-In-Reply-To: <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
+References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com> <20221110094639.3086409-2-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20221110094639.3086409-2-roberto.sassu@huaweicloud.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 21 Nov 2022 16:05:37 -0500
-Message-ID: <CAHC9VhR+RFqJ7c6mFhnMFdDXPcCBg-pnAzEuyOc-TX5hmsubwg@mail.gmail.com>
-Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
- implement the ioctl op convention
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Joel Granados <j.granados@samsung.com>,
-        Kanchan Joshi <joshi.k@samsung.com>, ddiss@suse.de,
-        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org
+Date:   Mon, 21 Nov 2022 18:41:17 -0500
+Message-ID: <CAHC9VhQ9WftDrF1R--ZYJXOv-YbVU-Pr1Ob_deDwEWm8OcQ-TA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/5] reiserfs: Add missing calls to reiserfs_security_free()
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 21, 2022 at 2:53 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> On Thu, Nov 17, 2022 at 05:10:07PM -0500, Paul Moore wrote:
-> > On Thu, Nov 17, 2022 at 4:40 AM Joel Granados <j.granados@samsung.com> wrote:
-> > > On Wed, Nov 16, 2022 at 02:21:14PM -0500, Paul Moore wrote:
-> >
-> > ...
-> >
-> > > > * As we discussed previously, the real problem is the fact that we are
-> > > > missing the necessary context in the LSM hook to separate the
-> > > > different types of command targets.  With traditional ioctls we can
-> > > > look at the ioctl number and determine both the type of
-> > > > device/subsystem/etc. as well as the operation being requested; there
-> > > > is no such information available with the io_uring command
-> > > > passthrough.  In this sense, the io_uring command passthrough is
-> > > > actually worse than traditional ioctls from an access control
-> > > > perspective.  Until we have an easy(ish)[1] way to determine the
-> > > > io_uring command target type, changes like the one suggested here are
-> > > > going to be doomed as each target type is free to define their own
-> > > > io_uring commands.
-> > >
-> > > The only thing that comes immediately to mind is that we can have
-> > > io_uring users define a function that is then passed to the LSM
-> > > infrastructure. This function will have all the logic to give relative
-> > > context to LSM. It would be general enough to fit all the possible commands
-> > > and the logic would be implemented in the "drivers" side so there is no
-> > > need for LSM folks to know all io_uring users.
-> >
-> > Passing a function pointer to the LSM to fetch, what will likely be
-> > just a constant value, seems kinda ugly, but I guess we only have ugly
-> > options at this point.
+On Thu, Nov 10, 2022 at 4:47 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
 >
-> I am not sure if this helps yet, but queued on modules-next we now have
-> an improvement in speed of about 1500x for kallsyms_lookup_name(), and
-> so symbol lookups are now fast. Makes me wonder if a type of special
-> export could be drawn up for specific calls which follow a structure
-> and so the respective lsm could be inferred by a prefix instead of
-> placing the calls in-place. Then it would not mattter where a call is
-> used, so long as it would follow a specific pattern / structure with
-> all the crap you need on it.
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> Commit 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes
+> during inode creation") defined reiserfs_security_free() to free the name
+> and value of a security xattr allocated by the active LSM through
+> security_old_inode_init_security(). However, this function is not called
+> in the reiserfs code.
+>
+> Thus, add a call to reiserfs_security_free() whenever
+> reiserfs_security_init() is called, and initialize value to NULL, to avoid
+> to call kfree() on an uninitialized pointer.
+>
+> Finally, remove the kfree() for the xattr name, as it is not allocated
+> anymore.
+>
+> Fixes: 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes during inode creation")
+> Cc: stable@vger.kernel.org
+> Cc: Jeff Mahoney <jeffm@suse.com>
+> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Reported-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  fs/reiserfs/namei.c          | 4 ++++
+>  fs/reiserfs/xattr_security.c | 2 +-
+>  2 files changed, 5 insertions(+), 1 deletion(-)
 
-I suspect we may be talking about different things here, I don't think
-the issue is which LSM(s) may be enabled, as the call is to
-security_uring_cmd() regardless.  I believe the issue is more of how
-do the LSMs determine the target of the io_uring command, e.g. nvme or
-ublk.
+If I'm understanding this patch correctly, this is a standalone
+bugfix, right?  Any reason this shouldn't be merged now, independent
+of the rest of patches in this patchset?
 
-My understanding is that Joel was suggesting a change to the LSM hook
-to add a function specific pointer (presumably defined as part of the
-file_operations struct) that could be called by the LSM to determine
-the target.
+> diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
+> index 3d7a35d6a18b..b916859992ec 100644
+> --- a/fs/reiserfs/namei.c
+> +++ b/fs/reiserfs/namei.c
+> @@ -696,6 +696,7 @@ static int reiserfs_create(struct user_namespace *mnt_userns, struct inode *dir,
+>
+>  out_failed:
+>         reiserfs_write_unlock(dir->i_sb);
+> +       reiserfs_security_free(&security);
+>         return retval;
+>  }
+>
+> @@ -779,6 +780,7 @@ static int reiserfs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+>
+>  out_failed:
+>         reiserfs_write_unlock(dir->i_sb);
+> +       reiserfs_security_free(&security);
+>         return retval;
+>  }
+>
+> @@ -878,6 +880,7 @@ static int reiserfs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+>         retval = journal_end(&th);
+>  out_failed:
+>         reiserfs_write_unlock(dir->i_sb);
+> +       reiserfs_security_free(&security);
+>         return retval;
+>  }
+>
+> @@ -1194,6 +1197,7 @@ static int reiserfs_symlink(struct user_namespace *mnt_userns,
+>         retval = journal_end(&th);
+>  out_failed:
+>         reiserfs_write_unlock(parent_dir->i_sb);
+> +       reiserfs_security_free(&security);
+>         return retval;
+>  }
+>
+> diff --git a/fs/reiserfs/xattr_security.c b/fs/reiserfs/xattr_security.c
+> index 8965c8e5e172..857a65b05726 100644
+> --- a/fs/reiserfs/xattr_security.c
+> +++ b/fs/reiserfs/xattr_security.c
+> @@ -50,6 +50,7 @@ int reiserfs_security_init(struct inode *dir, struct inode *inode,
+>         int error;
+>
+>         sec->name = NULL;
+> +       sec->value = NULL;
+>
+>         /* Don't add selinux attributes on xattrs - they'll never get used */
+>         if (IS_PRIVATE(dir))
+> @@ -95,7 +96,6 @@ int reiserfs_security_write(struct reiserfs_transaction_handle *th,
+>
+>  void reiserfs_security_free(struct reiserfs_security_handle *sec)
+>  {
+> -       kfree(sec->name);
+>         kfree(sec->value);
+>         sec->name = NULL;
+>         sec->value = NULL;
+> --
+> 2.25.1
+>
 
-Although now that I'm looking again at the file_operations struct, I
-wonder if we would be better off having the LSMs inspect the
-file_operations::owner field, potentially checking the module::name
-field.  It's a little painful in the sense that it is potentially
-multiple strcmp() calls for each security_uring_cmd() call, but I'm
-not sure the passed function approach would be much better.  Do we
-have a consistent per-module scalar value we can use instead of a
-character string?
 
---
+-- 
 paul-moore.com
