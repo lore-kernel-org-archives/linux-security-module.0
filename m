@@ -2,138 +2,156 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2098FC4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Nov 2022 14:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B818C43217
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Nov 2022 14:20:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234065AbiKVOGX (ORCPT
+        id S233919AbiKVOUU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Nov 2022 09:06:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56352 "EHLO
+        Tue, 22 Nov 2022 09:20:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234081AbiKVOF5 (ORCPT
+        with ESMTP id S233743AbiKVOUR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Nov 2022 09:05:57 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA8C667F57
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Nov 2022 06:04:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669125859;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fNxu/C/JN8LiF9RXqMVhFG/8p1moQ0Wo3Ndszkw34Og=;
-        b=TSDW/u9V1r21XNeEuqKIdX94Y47NiVDN/QMFfQuyODxfPeyvwrl14/+E/Ga6QaVcB5JQvK
-        UWeustLM0NrUrOCWJGl2OIpNgjLlEfUII+eJqVHb65wVOcSq5+voSU7KLw2Qc7IAXRxn/3
-        JbkIdMrbjc/4o7s8vEB1cOnk8Mx7UEM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-610-a6IkOR07PsmZwpwzjD7j7Q-1; Tue, 22 Nov 2022 09:04:14 -0500
-X-MC-Unique: a6IkOR07PsmZwpwzjD7j7Q-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 22 Nov 2022 09:20:17 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9556C67F67;
+        Tue, 22 Nov 2022 06:20:16 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C7A35934F04;
-        Tue, 22 Nov 2022 14:04:13 +0000 (UTC)
-Received: from T590 (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9326F2027062;
-        Tue, 22 Nov 2022 14:04:08 +0000 (UTC)
-Date:   Tue, 22 Nov 2022 22:04:03 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Joel Granados <j.granados@samsung.com>,
-        Kanchan Joshi <joshi.k@samsung.com>, ddiss@suse.de,
-        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
-        ming.lei@redhat.com
-Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
- implement the ioctl op convention
-Message-ID: <Y3zW02nH1LQhb/qz@T590>
-References: <20221116125051.3338926-1-j.granados@samsung.com>
- <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
- <20221116125051.3338926-2-j.granados@samsung.com>
- <20221116173821.GC5094@test-zns>
- <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com>
- <20221117094004.b5l64ipicitphkun@localhost>
- <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
- <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
- <CAHC9VhR+RFqJ7c6mFhnMFdDXPcCBg-pnAzEuyOc-TX5hmsubwg@mail.gmail.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2669961728;
+        Tue, 22 Nov 2022 14:20:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54C8DC433D6;
+        Tue, 22 Nov 2022 14:20:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669126815;
+        bh=3b4JAkbPbOHvStFDBMyZzjgbzZs+yLv59iyVIqZjO+U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gIBUOLbdZoaT7XQq7YVPp/D8shsDqMnW3Oe+0+4NFXgIqN1pYimrfFbbmZ8rSi7PV
+         kaPR0pWoscmWAUusOQAEkHJACQHT2vvUEiN1FNm3a5IEJnU1AT7CWUmQs+/EZ/y0O1
+         zsM/0UnVw7bNVjY8Rh5xb3xVG3f6fMiwlBKZdbRdSV1NFK58DzUHtXRm6s8NLlYGGz
+         sVDKqBHVnCfsYE3luVuoK2pxv3ABRpy8BbCx2Pa5l0q4SBukL6/IVHqvGz3zjIoKx9
+         m0wd7ERHl2bYVOfEA/wIoWR7IwjdQrRPlxqIVdYgiFF1UqS66ciKnAVqa83DZd8sc8
+         ME1Hm8OuYIETQ==
+Date:   Tue, 22 Nov 2022 15:20:10 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, fstests <fstests@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>
+Subject: Re: sgid clearing rules?
+Message-ID: <20221122142010.zchf2jz2oymx55qi@wittgenstein>
+References: <CAJfpegsVAUUg5p6DbL1nA_oRF4Bui+saqbFjjYn=VYtd-N2Xew@mail.gmail.com>
+ <20221122105731.parciulns5mg4jwr@wittgenstein>
+ <CAJfpegvtgFBesiuGO93HRidWw22gQgi8VN8xNGqK86qEm3sfng@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhR+RFqJ7c6mFhnMFdDXPcCBg-pnAzEuyOc-TX5hmsubwg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+In-Reply-To: <CAJfpegvtgFBesiuGO93HRidWw22gQgi8VN8xNGqK86qEm3sfng@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 21, 2022 at 04:05:37PM -0500, Paul Moore wrote:
-> On Mon, Nov 21, 2022 at 2:53 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > On Thu, Nov 17, 2022 at 05:10:07PM -0500, Paul Moore wrote:
-> > > On Thu, Nov 17, 2022 at 4:40 AM Joel Granados <j.granados@samsung.com> wrote:
-> > > > On Wed, Nov 16, 2022 at 02:21:14PM -0500, Paul Moore wrote:
-> > >
-> > > ...
-> > >
-> > > > > * As we discussed previously, the real problem is the fact that we are
-> > > > > missing the necessary context in the LSM hook to separate the
-> > > > > different types of command targets.  With traditional ioctls we can
-> > > > > look at the ioctl number and determine both the type of
-> > > > > device/subsystem/etc. as well as the operation being requested; there
-> > > > > is no such information available with the io_uring command
-> > > > > passthrough.  In this sense, the io_uring command passthrough is
-> > > > > actually worse than traditional ioctls from an access control
-> > > > > perspective.  Until we have an easy(ish)[1] way to determine the
-> > > > > io_uring command target type, changes like the one suggested here are
-> > > > > going to be doomed as each target type is free to define their own
-> > > > > io_uring commands.
-> > > >
-> > > > The only thing that comes immediately to mind is that we can have
-> > > > io_uring users define a function that is then passed to the LSM
-> > > > infrastructure. This function will have all the logic to give relative
-> > > > context to LSM. It would be general enough to fit all the possible commands
-> > > > and the logic would be implemented in the "drivers" side so there is no
-> > > > need for LSM folks to know all io_uring users.
-> > >
-> > > Passing a function pointer to the LSM to fetch, what will likely be
-> > > just a constant value, seems kinda ugly, but I guess we only have ugly
-> > > options at this point.
+On Tue, Nov 22, 2022 at 02:21:59PM +0100, Miklos Szeredi wrote:
+> On Tue, 22 Nov 2022 at 11:57, Christian Brauner <brauner@kernel.org> wrote:
 > >
-> > I am not sure if this helps yet, but queued on modules-next we now have
-> > an improvement in speed of about 1500x for kallsyms_lookup_name(), and
-> > so symbol lookups are now fast. Makes me wonder if a type of special
-> > export could be drawn up for specific calls which follow a structure
-> > and so the respective lsm could be inferred by a prefix instead of
-> > placing the calls in-place. Then it would not mattter where a call is
-> > used, so long as it would follow a specific pattern / structure with
-> > all the crap you need on it.
+> > On Mon, Nov 21, 2022 at 02:14:13PM +0100, Miklos Szeredi wrote:
+> > > I'm looking at sgid clearing in case of file modification.  Seems like
+> > > the intent was:
+> > >
+> > >  - if not a regular file, then don't clear
+> > >  - else if task has CAP_FSETID in init_user_ns, then don't clear
+> >
+> > This one is a remnant of the past. The code was simply not updated to
+> > reflect the new penultimate rule you mention below. This is fixed in
+> > -next based on the VFS work we did (It also includes Amirs patches we
+> > reviewed a few weeks ago for file_remove_privs() in ovl.).
+> >
+> > >  - else if group exec is set, then clear
+> > >  - else if gid is in task's group list, then don't clear
+> > >  - else if gid and uid are mapped in current namespace and task has
+> > > CAP_FSETID in current namespace, then don't clear
+> > >  - else clear
+> > >
+> >
+> > The setgid stripping series in -next implements these rules.
+> >
+> > > However behavior seems to deviate from that if group exec is clear and
+> > > *suid* bit is not set.  The reason is that inode_has_no_xattr() will
+> > > set S_NOSEC and __file_remove_privs() will bail out before even
+> > > starting to interpret the rules.
+> >
+> > Great observation. The dentry_needs_remove_privs() now calls the new
+> > setattr_should_drop_sgid() helper which drops the setgid bit according
+> > to the rules above. And yes, we should drop the S_IXGRP check from
+> > is_sxid() for consistency.
+> > The scenario where things get wonky with the S_IXGRP check present must
+> > be when setattr_should_drop_sgid() retains the setgid bit.
 > 
-> I suspect we may be talking about different things here, I don't think
-> the issue is which LSM(s) may be enabled, as the call is to
-> security_uring_cmd() regardless.  I believe the issue is more of how
-> do the LSMs determine the target of the io_uring command, e.g. nvme or
-> ublk.
+> Which is exactly what seems to happen in Test 9 and Test 11 in the
+> generic/68[3-7].
 > 
-> My understanding is that Joel was suggesting a change to the LSM hook
-> to add a function specific pointer (presumably defined as part of the
-> file_operations struct) that could be called by the LSM to determine
-> the target.
+> > In that case
+> > is_sxid() will mark the inode as not being security relevant even though
+> > the setgid bit is still set on it. This dates back to mandatory locking
+> > when the setgid bit was used for that. But mandatory locks are out of
+> > the door for a while now and this is no longer true and also wasn't
+> > enforced consistently for countless years even when they were still
+> > there. So we should make this helper consistent with the rest.
+> >
+> > I will run the patch below through xfstests with
+> >
+> > -g acl,attr,cap,idmapped,io_uring,perms,unlink
+> >
+> > which should cover all setgid tests (We've added plenty of new tests to
+> > the "perms" group.). Could you please review whether this make sense to you?
+> >
+> > From cbe6cec88c6cfc66e0fb61f602bb2810c3c48578 Mon Sep 17 00:00:00 2001
+> > From: Christian Brauner <brauner@kernel.org>
+> > Date: Tue, 22 Nov 2022 11:40:32 +0100
+> > Subject: [PATCH] fs: use consistent setgid checks in is_sxid()
+> >
+> > Now that we made the VFS setgid checking consistent an inode can't be
+> > marked security irrelevant even if the setgid bit is still set. Make
+> > this function consistent with the other helpers.
+> >
+> > Reported-by: Miklos Szeredi <miklos@szeredi.hu>
+> > Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> > ---
+> >  include/linux/fs.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index b39c5efca180..d07cadac547e 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -3527,7 +3527,7 @@ int __init list_bdev_fs_names(char *buf, size_t size);
+> >
+> >  static inline bool is_sxid(umode_t mode)
+> >  {
+> > -       return (mode & S_ISUID) || ((mode & S_ISGID) && (mode & S_IXGRP));
+> > +       return (mode & S_ISUID) || ((mode & S_ISGID));
 > 
-> Although now that I'm looking again at the file_operations struct, I
-> wonder if we would be better off having the LSMs inspect the
-> file_operations::owner field, potentially checking the module::name
-> field.  It's a little painful in the sense that it is potentially
-> multiple strcmp() calls for each security_uring_cmd() call, but I'm
-> not sure the passed function approach would be much better.  Do we
-> have a consistent per-module scalar value we can use instead of a
-> character string?
+> Yes, this is what I meant.  This can be simplified to:
+> 
+>        return mode & (S_ISUID | S_ISGID);
 
-In future there may be more uring_cmd kernel users, maybe we need to
-consider to use one reserved field in io_uring_sqe for describing the
-target type if it is one must for security subsystem, and this way
-will be similar with traditional ioctl which encodes this kind of
-info in command type.
+Thanks, will update accordingly.
 
+Fwiw, enforcing the rules consistently across write operations and
+chmod/chown will lead to losing the setgid bit in cases were it might've
+been retained before.
 
-Thanks,
-Ming
+I've mentioned this a few times but it's worth repeating. For the sake
+of maintainability, consistency, and security this is a risk worth
+taking. I've mentioned this already in the last pull request that fixed
+issues in this area so Linus is aware that this is a user visible
+change we're risking on purpose. I'll mention this again in detail this
+time as well.
 
+If this leads to regressions the fix is easy and we simply need to have
+special setgid handling in the write path again with different semantics
+from chmod/chown. We'll see. I'll update the tests if this second setgid
+cleanup gets merged. Before that just be aware that there might be
+failures for tests where unprivileged users modify a setgid file.
+
+Thanks!
+Christian
