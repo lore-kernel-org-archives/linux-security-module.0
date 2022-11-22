@@ -2,144 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E8B7C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Nov 2022 19:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBD4C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Nov 2022 22:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233443AbiKVTjk (ORCPT
+        id S234552AbiKVWrv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Nov 2022 14:39:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59912 "EHLO
+        Tue, 22 Nov 2022 17:47:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233356AbiKVTjj (ORCPT
+        with ESMTP id S235159AbiKVWro (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Nov 2022 14:39:39 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE2A56F361;
-        Tue, 22 Nov 2022 11:39:33 -0800 (PST)
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AMJK7WV017593;
-        Tue, 22 Nov 2022 19:39:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=fqhpTDfxPyVsir4ev5LuPPWGRFEF13TzcH6YSeaIS1w=;
- b=G8jWBqLWFXqTpQG4r8K6SdMRQ4noTGA6bfNY+J6/goD0528M16WU1j6TlPKJkKmyT92n
- /6c56pqCLyVysAoIQRp/H4T700K2I+ku8ugUPdm2uKyKwTWN8fdGAYQuzt205sX+cec6
- vZp+XSAI9rU+z+ikPrdt92pyAeVBud/+FCVkhPH/jRISrFlFxLiG5/NGnv9UnkfwKicw
- 4qA9X5ljUADUqDk+Bt4zpJbNsHZz4H+PgUQ0AjdlAPko0NisSaELQ5rVW2fq3pVDscGU
- OhGoxB4w0l7yvWJWl2pQrp70mAbRAT2PRxzgX8kb984NeEPpZx0sAlGwOFED9mI2HkfG PA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3m0xw7jkej-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Nov 2022 19:39:17 +0000
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AMIKP8C015701;
-        Tue, 22 Nov 2022 19:39:17 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3m0xw7jkeb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Nov 2022 19:39:17 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AMJZgYa022314;
-        Tue, 22 Nov 2022 19:39:16 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma02dal.us.ibm.com with ESMTP id 3kxpsabj2p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Nov 2022 19:39:16 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com ([9.208.128.112])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AMJdF4q5702386
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Nov 2022 19:39:15 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E121058068;
-        Tue, 22 Nov 2022 19:39:14 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B36E5805C;
-        Tue, 22 Nov 2022 19:39:13 +0000 (GMT)
-Received: from sig-9-65-239-173.ibm.com (unknown [9.65.239.173])
-        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 22 Nov 2022 19:39:13 +0000 (GMT)
-Message-ID: <9ef25f1b8621dab8b3cd4373bf6ce1633daae70e.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Make a copy of sig and digest in
- asymmetric_verify()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        Tue, 22 Nov 2022 17:47:44 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A451B1CB0A
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Nov 2022 14:47:43 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id 71-20020a17090a09cd00b00218adeb3549so256773pjo.1
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Nov 2022 14:47:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OhM08xoktc6ZKNdEIG+FP/1L4abUAxOrd/YTmOzlE3I=;
+        b=6HmnQaIAantqrLzDIs1GjTCygWym7grq9246f18l84sVPSkZfEkVFN+W2jIZ+PKiwV
+         7NV62WeikSpliju9ikhNf0Y5nTCZcwZpG8MvcDxyOKPDWTzYp1I4MmYPc4TKasYJLHMW
+         YHYfcAC63t/ADeojSlZVxmdz4TcX8+FQkvveHe7GRoSHHjcyzqpfcAq45xwfgMQekOGM
+         6DNHDmEFfWIZi6oNNMsf4+ixjZLItHxN38ifIKwu6xGsLZ9plHyTZ6PLhqE2wLii7DhR
+         z3dDzLgBzGz4Yh9tb7q7IAv9AbRsVruHZlo+vrMROW2GZz5qgB1cDCMzhpZd2lIEItoQ
+         L9Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OhM08xoktc6ZKNdEIG+FP/1L4abUAxOrd/YTmOzlE3I=;
+        b=i02uh2DxUy9g3o01hogv8v7cZNgeCqwyG6xodMEeW+6vcU09QCCiY/C0t+Ix7RCHcT
+         XVp/9gQVHw5YL+tXXwYUoTvrtBLxt9E95HpVjR2QyJrbXB1SlzyJcVXlVMARcU79qhD2
+         /5gabNLOJK63B6+1Z+OFq41k4kNsRf64c/zw8+YBpMVDzhdGtNTJsv1vykhhNu43tYzX
+         NqBWCD2ZfdiExAnY1ivudx1Kq9SPLpW0RC2I6jw3pqlXJLGdywZxTGYnfjPWhuCcaQRV
+         hbWfW2a87sTntwxfMgmuQZDMg7q1lyta8FuNLmWuR30vXYcRAXUnm9T3flG6u5oxD9+b
+         krqA==
+X-Gm-Message-State: ANoB5pm+VwUviUkV9kyA0M5Laz6CNwCqDZNQhnH7Y1Ny7rFKO+QevUm7
+        ZR6WErMpONaPyy5wVeFTOommP0OCuj7zWajvJhAr
+X-Google-Smtp-Source: AA0mqf6QAA5jVBAQu3mvzw/vN4N59NNFL17QIHTfT23DcEiL+LSxGEIB4K/rIFCPXNdrfzZaZ0xZgOvxMOdrlkrEjJw=
+X-Received: by 2002:a17:902:6505:b0:186:e568:3442 with SMTP id
+ b5-20020a170902650500b00186e5683442mr18896465plk.56.1669157263144; Tue, 22
+ Nov 2022 14:47:43 -0800 (PST)
+MIME-Version: 1.0
+References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
+ <20221110094639.3086409-2-roberto.sassu@huaweicloud.com> <CAHC9VhQ9WftDrF1R--ZYJXOv-YbVU-Pr1Ob_deDwEWm8OcQ-TA@mail.gmail.com>
+ <aa51b845dca6021282b5b2ae260020a3a5cfb5c6.camel@huaweicloud.com>
+In-Reply-To: <aa51b845dca6021282b5b2ae260020a3a5cfb5c6.camel@huaweicloud.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 22 Nov 2022 17:47:31 -0500
+Message-ID: <CAHC9VhRBc_XeeCki3zqP40tpO-z2xja=yyMadr9_yLhGcgU3Vg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/5] reiserfs: Add missing calls to reiserfs_security_free()
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, nicolas.bouchinet@clip-os.org,
         Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org
-Date:   Tue, 22 Nov 2022 14:39:12 -0500
-In-Reply-To: <20221104122023.1750333-1-roberto.sassu@huaweicloud.com>
-References: <20221104122023.1750333-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: MbnRLYy7-EevjB-8VMKuWNDJgxCXgM9n
-X-Proofpoint-ORIG-GUID: If9WOnpDCGHW3lfXstBPeOmVhSCG9zlM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-22_11,2022-11-18_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- adultscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 impostorscore=0
- priorityscore=1501 mlxscore=0 suspectscore=0 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211220152
+        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
+On Tue, Nov 22, 2022 at 3:12 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Mon, 2022-11-21 at 18:41 -0500, Paul Moore wrote:
+> > On Thu, Nov 10, 2022 at 4:47 AM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > >
+> > > Commit 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes
+> > > during inode creation") defined reiserfs_security_free() to free the name
+> > > and value of a security xattr allocated by the active LSM through
+> > > security_old_inode_init_security(). However, this function is not called
+> > > in the reiserfs code.
+> > >
+> > > Thus, add a call to reiserfs_security_free() whenever
+> > > reiserfs_security_init() is called, and initialize value to NULL, to avoid
+> > > to call kfree() on an uninitialized pointer.
+> > >
+> > > Finally, remove the kfree() for the xattr name, as it is not allocated
+> > > anymore.
+> > >
+> > > Fixes: 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes during inode creation")
+> > > Cc: stable@vger.kernel.org
+> > > Cc: Jeff Mahoney <jeffm@suse.com>
+> > > Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > > Reported-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >  fs/reiserfs/namei.c          | 4 ++++
+> > >  fs/reiserfs/xattr_security.c | 2 +-
+> > >  2 files changed, 5 insertions(+), 1 deletion(-)
+> >
+> > If I'm understanding this patch correctly, this is a standalone
+> > bugfix, right?  Any reason this shouldn't be merged now, independent
+> > of the rest of patches in this patchset?
+>
+> Yes. It would be fine for me to pick this sooner.
 
-On Fri, 2022-11-04 at 13:20 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
-> mapping") requires that both the signature and the digest resides in the
-> linear mapping area.
-> 
-> However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
-> stack support"), made it possible to move the stack in the vmalloc area,
-> which could make the requirement of the first commit not satisfied anymore.
-> 
-> If CONFIG_SG=y and CONFIG_VMAP_STACK=y, the following BUG() is triggered:
+Okay, as it's been almost two weeks with no comments from the reiserfs
+folks and this looks okay to me I'm going to go ahead and pull this
+into the lsm/next branch as it's at least "LSM adjacent" :)  As it is
+lsm/next and not lsm/stable-6.1, this should give the reiserfs folks
+another couple of weeks to object if they find this to be problematic.
 
-^CONFIG_DEBUG_SG
-
-> 
-> [  467.077359] kernel BUG at include/linux/scatterlist.h:163!
-> [  467.077939] invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-> 
-> [...]
-> 
-> [  467.095225] Call Trace:
-> [  467.096088]  <TASK>
-> [  467.096928]  ? rcu_read_lock_held_common+0xe/0x50
-> [  467.097569]  ? rcu_read_lock_sched_held+0x13/0x70
-> [  467.098123]  ? trace_hardirqs_on+0x2c/0xd0
-> [  467.098647]  ? public_key_verify_signature+0x470/0x470
-> [  467.099237]  asymmetric_verify+0x14c/0x300
-> [  467.099869]  evm_verify_hmac+0x245/0x360
-> [  467.100391]  evm_inode_setattr+0x43/0x190
-> 
-> The failure happens only for the digest, as the pointer comes from the
-> stack, and not for the signature, which instead was allocated by
-> vfs_getxattr_alloc().
-
-Only after enabling CONFIG_DEBUG_SG does EVM fail.
-
-> 
-> Fix this by making a copy of both in asymmetric_verify(), so that the
-> linear mapping requirement is always satisfied, regardless of the caller.
-
-As only EVM is affected, it would make more sense to limit the change
-to EVM.
+Thanks all.
 
 -- 
-thanks,
-
-Mimi
-
+paul-moore.com
