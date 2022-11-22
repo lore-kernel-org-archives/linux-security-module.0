@@ -2,316 +2,128 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAFFBC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Nov 2022 10:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF7DC433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Nov 2022 10:57:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231838AbiKVKls (ORCPT
+        id S232585AbiKVK5o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Nov 2022 05:41:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37980 "EHLO
+        Tue, 22 Nov 2022 05:57:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232853AbiKVKky (ORCPT
+        with ESMTP id S232635AbiKVK5l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Nov 2022 05:40:54 -0500
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAEF2DFCF
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Nov 2022 02:35:39 -0800 (PST)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20221122103537euoutp017fd7ae693cf83018b3e145976b1934e7~p4byjaySu1715617156euoutp01i
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Nov 2022 10:35:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20221122103537euoutp017fd7ae693cf83018b3e145976b1934e7~p4byjaySu1715617156euoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1669113337;
-        bh=475DnqK0zyMSgEqbuWUeMLIDBvQBj+5UKcxxWGfkf8s=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=KIPhMK2I42BGejx+k4PWp5of4vM0R1zpiRa64fkBXy3UZ5Itx28fv87WHW9TmpU5z
-         ctO9DXD+iCwfOZnAAN32UxW4XbqFSPEIkhV9P4E0UA2toIEwyh3bFsW8RAHlCyo6ZY
-         DLMie0OCCqo1okwd1nVrdW1FnvV/0C4Sylv9b+gQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20221122103537eucas1p28ba66d2d8642a29f274b6aadf9dcffd5~p4byYp61T2716227162eucas1p2D;
-        Tue, 22 Nov 2022 10:35:37 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id AE.5B.10112.8F5AC736; Tue, 22
-        Nov 2022 10:35:36 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20221122103536eucas1p28f1c88f2300e49942c789721fe70c428~p4byCMpQM0354803548eucas1p23;
-        Tue, 22 Nov 2022 10:35:36 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221122103536eusmtrp210425cd0a51fc94248d5d37c82f1a41f~p4byBovo01079310793eusmtrp2U;
-        Tue, 22 Nov 2022 10:35:36 +0000 (GMT)
-X-AuditID: cbfec7f4-d09ff70000002780-7b-637ca5f82e11
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 56.0D.08916.8F5AC736; Tue, 22
-        Nov 2022 10:35:36 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20221122103536eusmtip2c0e3d5aef6310acdd8e7d1e73a21a007~p4bx1TXdU2765327653eusmtip2N;
-        Tue, 22 Nov 2022 10:35:36 +0000 (GMT)
-Received: from localhost (106.110.32.33) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Tue, 22 Nov 2022 10:35:29 +0000
-From:   Joel Granados <j.granados@samsung.com>
-To:     <mcgrof@kernel.org>, <ddiss@suse.de>, <joshi.k@samsung.com>,
-        <paul@paul-moore.com>
-CC:     <ming.lei@redhat.com>, <linux-security-module@vger.kernel.org>,
-        <axboe@kernel.dk>, <io-uring@vger.kernel.org>,
-        Joel Granados <j.granados@samsung.com>
-Subject: [RFC v2 1/1] Use a fs callback to set security specific data
-Date:   Tue, 22 Nov 2022 11:31:44 +0100
-Message-ID: <20221122103144.960752-2-j.granados@samsung.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20221122103144.960752-1-j.granados@samsung.com>
+        Tue, 22 Nov 2022 05:57:41 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBB5625CF;
+        Tue, 22 Nov 2022 02:57:38 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A771AB819F6;
+        Tue, 22 Nov 2022 10:57:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 473ADC433C1;
+        Tue, 22 Nov 2022 10:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669114656;
+        bh=dSudoXz7KlBoU1Klan/84sEPqQWrkeKs1jTdna8n9qQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=c1xEeK3mb7by2grAU0c8mMy5GZw8KlM0ofIELtw+q41xshTfx9/g7gxW4tEjtOFCo
+         3Bvt7JMQLr2GQKI4uTXbaZY7QUqXVJWoWg7VRTtD1/58QDYhBMk2WEg7havS9AMpXD
+         Q7J6iNc+QKkK9YpC+4Ts/sBlMQhxme1f0LxdNhRNvqErKL1a6wOJLnmGkk6Qt/Qyh7
+         MXM/4pAy5fXik9SgsBAvmqFnzgjb7AnN0Mi9mBUUNf/cvk5LIQmmhm/htq989C4TXu
+         BUbMaeK2TH6I+4H/LywBDCMxZvroMDRTU9y/wP1RBkjibnhaDyMq0g/rZbkck7lIa1
+         mHUa9bA+xw13Q==
+Date:   Tue, 22 Nov 2022 11:57:31 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, fstests <fstests@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>
+Subject: Re: sgid clearing rules?
+Message-ID: <20221122105731.parciulns5mg4jwr@wittgenstein>
+References: <CAJfpegsVAUUg5p6DbL1nA_oRF4Bui+saqbFjjYn=VYtd-N2Xew@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [106.110.32.33]
-X-ClientProxiedBy: CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKKsWRmVeSWpSXmKPExsWy7djP87o/ltYkGyxYYm2x+m4/m8XX/9NZ
-        LN61nmOx+NDziM3ixoSnjBaHJjczWdyeNJ3Fgd3j8tlSj02rOtk81u59wejxft9VNo/Np6s9
-        Pm+SC2CL4rJJSc3JLEst0rdL4MponnqApeC7acWT3/vYGxjX6XYxcnJICJhIdOz6xQZiCwms
-        YJR4eSS2i5ELyP7CKPFt5QRWCOczo0Tb9ResMB03tl5kgkgsZ5TY/vAfO1zVjM5eFghnM6PE
-        nN2PmUBa2AR0JM6/ucMMYosIREhsevMLrINZYC6jxN0Pt8ASwgKuEi9uXASzWQRUJU73XwW7
-        ilfARuLQh7tMELvlge6YztjFyMHBKWArse1QNkSJoMTJmU9YQGxmoJLmrbOZIWwJiYMvXjBD
-        tCpKbJnzHeqFWom9zQfAbpAQ+MIhsfPPSaiEi8Tlvu/sELawxKvjW6BsGYn/O+dD3ZAtsXPK
-        LqihBRKzTk5lA7lHQsBaou9MDkTYUeLuzgNMEGE+iRtvBSHO4ZOYtG06M0SYV6KjTWgCo8os
-        JA/MQvLALCQPLGBkXsUonlpanJueWmyUl1quV5yYW1yal66XnJ+7iRGYck7/O/5lB+PyVx/1
-        DjEycTAeYpTgYFYS4a33rEkW4k1JrKxKLcqPLyrNSS0+xCjNwaIkzss2QytZSCA9sSQ1OzW1
-        ILUIJsvEwSnVwBS5zvT63+5E8ZUnvzTfvz4lVDe8+ts8s7ftGfK8nG9k//j1OOrMnPSxar+d
-        YUaO1MrjHj7nZgSEzlluuOmYyRZtS08D94Xf7kxMr5ub4rTc9VLjQnuldNfO7KC6Oy6xoprb
-        OBdmBF4/9FxO/MD7mxwOQXvuMswtfNMg8SGqxXieQomO4tUZKZyefNnfu58edRVujoypUWyd
-        llBwe9W/wsXzfb6H8+nN+PfZu+9daqdFoghnv+q7KK0vnV05XrI35x362RxqHLR4k+9iT5NG
-        /r/XZ7svmx+kxff9wo7/Ado/LgSYMmzs+LX58rfukoZV26UrNjHcTVzct0u74N6j1x18u87m
-        ntJVmnT9t9RpViWW4oxEQy3mouJEADv/S2SoAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsVy+t/xe7o/ltYkG3x7rWSx+m4/m8XX/9NZ
-        LN61nmOx+NDziM3ixoSnjBaHJjczWdyeNJ3Fgd3j8tlSj02rOtk81u59wejxft9VNo/Np6s9
-        Pm+SC2CL0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL
-        0MtonnqApeC7acWT3/vYGxjX6XYxcnJICJhI3Nh6kamLkYtDSGApo8TN1XsZIRIyEp+ufGSH
-        sIUl/lzrYoMo+sgosXz/GTaQhJDAZkaJfQclQWw2AR2J82/uMIPYIgIREpve/GIHaWAWmMso
-        cffDLbCEsICrxIsbF8FsFgFVidP9V8EG8QrYSBz6cJcJYpu8RNv16UBXcHBwCthKbDuUDWIK
-        AZUs7PKGqBaUODnzCQuIzQxU3bx1NjOELSFx8MULZogpihJb5nxnhbBrJTpfnWabwCgyC0n7
-        LCTts5C0L2BkXsUoklpanJueW2yoV5yYW1yal66XnJ+7iREYkduO/dy8g3Heq496hxiZOBgP
-        MUpwMCuJ8NZ71iQL8aYkVlalFuXHF5XmpBYfYjQF+nIis5Rocj4wJeSVxBuaGZgamphZGpha
-        mhkrifN6FnQkCgmkJ5akZqemFqQWwfQxcXBKNTAZrq4z01jBq9swy9yO9fP3dVdka7NMVn14
-        y9+0qXau3q/tNcebNlednnXwbPaujg6OwruyOibHzs28qXH3tXbn2oDuk3XdtY2WWc4fGGf9
-        W77l0mvb2YJx22vFjX7JLb269d1B00XzDsvo/+Ji9mVaNnWnceXrV3PbrN68/rn+Vut+1mxd
-        bvmieWuPewt7lzjyJS3as2SN0Rqri/ZaX3Md3Z4mhywotJPt28FxTeTxrj/nHx4WPL1R/Ni1
-        nwpT43ym21bXRj3+/WWTPaeekop1SuOb8xIv5lknaWY+/372yF7Vazt17qYy7a6fx8bwSdvw
-        Y/eXwrWOfK80jQ/rCnNOU9D4saui7ZfJ0ut969+YKbEUZyQaajEXFScCABdfTG1RAwAA
-X-CMS-MailID: 20221122103536eucas1p28f1c88f2300e49942c789721fe70c428
-X-Msg-Generator: CA
-X-RootMTR: 20221122103536eucas1p28f1c88f2300e49942c789721fe70c428
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20221122103536eucas1p28f1c88f2300e49942c789721fe70c428
-References: <20221122103144.960752-1-j.granados@samsung.com>
-        <CGME20221122103536eucas1p28f1c88f2300e49942c789721fe70c428@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJfpegsVAUUg5p6DbL1nA_oRF4Bui+saqbFjjYn=VYtd-N2Xew@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Signed-off-by: Joel Granados <j.granados@samsung.com>
----
- drivers/nvme/host/core.c      | 10 ++++++++++
- include/linux/fs.h            |  2 ++
- include/linux/lsm_hook_defs.h |  3 ++-
- include/linux/security.h      | 16 ++++++++++++++--
- io_uring/uring_cmd.c          |  3 ++-
- security/security.c           |  5 +++--
- security/selinux/hooks.c      | 16 +++++++++++++++-
- 7 files changed, 48 insertions(+), 7 deletions(-)
+On Mon, Nov 21, 2022 at 02:14:13PM +0100, Miklos Szeredi wrote:
+> I'm looking at sgid clearing in case of file modification.  Seems like
+> the intent was:
+> 
+>  - if not a regular file, then don't clear
+>  - else if task has CAP_FSETID in init_user_ns, then don't clear
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index f94b05c585cb..275826fe3c9e 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -4,6 +4,7 @@
-  * Copyright (c) 2011-2014, Intel Corporation.
-  */
- 
-+#include "linux/security.h"
- #include <linux/blkdev.h>
- #include <linux/blk-mq.h>
- #include <linux/blk-integrity.h>
-@@ -3308,6 +3309,13 @@ static int nvme_dev_release(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
-+int nvme_uring_cmd_sec(struct io_uring_cmd *ioucmd,  struct security_uring_cmd *sec)
-+{
-+	sec->flags = 0;
-+	sec->flags = SECURITY_URING_CMD_TYPE_IOCTL;
-+	return 0;
-+}
-+
- static const struct file_operations nvme_dev_fops = {
- 	.owner		= THIS_MODULE,
- 	.open		= nvme_dev_open,
-@@ -3315,6 +3323,7 @@ static const struct file_operations nvme_dev_fops = {
- 	.unlocked_ioctl	= nvme_dev_ioctl,
- 	.compat_ioctl	= compat_ptr_ioctl,
- 	.uring_cmd	= nvme_dev_uring_cmd,
-+	.uring_cmd_sec	= nvme_uring_cmd_sec,
- };
- 
- static ssize_t nvme_sysfs_reset(struct device *dev,
-@@ -3982,6 +3991,7 @@ static const struct file_operations nvme_ns_chr_fops = {
- 	.compat_ioctl	= compat_ptr_ioctl,
- 	.uring_cmd	= nvme_ns_chr_uring_cmd,
- 	.uring_cmd_iopoll = nvme_ns_chr_uring_cmd_iopoll,
-+	.uring_cmd_sec	= nvme_uring_cmd_sec,
- };
- 
- static int nvme_add_ns_cdev(struct nvme_ns *ns)
+This one is a remnant of the past. The code was simply not updated to
+reflect the new penultimate rule you mention below. This is fixed in
+-next based on the VFS work we did (It also includes Amirs patches we
+reviewed a few weeks ago for file_remove_privs() in ovl.).
+
+>  - else if group exec is set, then clear
+>  - else if gid is in task's group list, then don't clear
+>  - else if gid and uid are mapped in current namespace and task has
+> CAP_FSETID in current namespace, then don't clear
+>  - else clear
+> 
+
+The setgid stripping series in -next implements these rules.
+
+> However behavior seems to deviate from that if group exec is clear and
+> *suid* bit is not set.  The reason is that inode_has_no_xattr() will
+> set S_NOSEC and __file_remove_privs() will bail out before even
+> starting to interpret the rules.
+
+Great observation. The dentry_needs_remove_privs() now calls the new
+setattr_should_drop_sgid() helper which drops the setgid bit according
+to the rules above. And yes, we should drop the S_IXGRP check from
+is_sxid() for consistency.
+The scenario where things get wonky with the S_IXGRP check present must
+be when setattr_should_drop_sgid() retains the setgid bit. In that case
+is_sxid() will mark the inode as not being security relevant even though
+the setgid bit is still set on it. This dates back to mandatory locking
+when the setgid bit was used for that. But mandatory locks are out of
+the door for a while now and this is no longer true and also wasn't
+enforced consistently for countless years even when they were still
+there. So we should make this helper consistent with the rest.
+
+I will run the patch below through xfstests with
+
+-g acl,attr,cap,idmapped,io_uring,perms,unlink
+
+which should cover all setgid tests (We've added plenty of new tests to
+the "perms" group.). Could you please review whether this make sense to you?
+
+From cbe6cec88c6cfc66e0fb61f602bb2810c3c48578 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Tue, 22 Nov 2022 11:40:32 +0100
+Subject: [PATCH] fs: use consistent setgid checks in is_sxid()
+
+Now that we made the VFS setgid checking consistent an inode can't be
+marked security irrelevant even if the setgid bit is still set. Make
+this function consistent with the other helpers.
+
+Reported-by: Miklos Szeredi <miklos@szeredi.hu>
+Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+---
+ include/linux/fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e654435f1651..af743a2dd562 100644
+index b39c5efca180..d07cadac547e 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -2091,6 +2091,7 @@ struct dir_context {
+@@ -3527,7 +3527,7 @@ int __init list_bdev_fs_names(char *buf, size_t size);
  
- struct iov_iter;
- struct io_uring_cmd;
-+struct security_uring_cmd;
- 
- struct file_operations {
- 	struct module *owner;
-@@ -2136,6 +2137,7 @@ struct file_operations {
- 	int (*uring_cmd)(struct io_uring_cmd *ioucmd, unsigned int issue_flags);
- 	int (*uring_cmd_iopoll)(struct io_uring_cmd *, struct io_comp_batch *,
- 				unsigned int poll_flags);
-+	int (*uring_cmd_sec)(struct io_uring_cmd *ioucmd, struct security_uring_cmd*);
- } __randomize_layout;
- 
- struct inode_operations {
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index ec119da1d89b..6cef29bce373 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -408,5 +408,6 @@ LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
- #ifdef CONFIG_IO_URING
- LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
- LSM_HOOK(int, 0, uring_sqpoll, void)
--LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
-+LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd,
-+	int (*uring_cmd_sec)(struct io_uring_cmd *ioucmd, struct security_uring_cmd*))
- #endif /* CONFIG_IO_URING */
-diff --git a/include/linux/security.h b/include/linux/security.h
-index ca1b7109c0db..146b1bbdc2e0 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -2065,10 +2065,20 @@ static inline int security_perf_event_write(struct perf_event *event)
- #endif /* CONFIG_PERF_EVENTS */
- 
- #ifdef CONFIG_IO_URING
-+enum security_uring_cmd_type
-+{
-+	SECURITY_URING_CMD_TYPE_IOCTL,
-+};
-+
-+struct security_uring_cmd {
-+	u64 flags;
-+};
- #ifdef CONFIG_SECURITY
- extern int security_uring_override_creds(const struct cred *new);
- extern int security_uring_sqpoll(void);
--extern int security_uring_cmd(struct io_uring_cmd *ioucmd);
-+extern int security_uring_cmd(struct io_uring_cmd *ioucmd,
-+		int (*uring_cmd_sec)(struct io_uring_cmd *,
-+			struct security_uring_cmd*));
- #else
- static inline int security_uring_override_creds(const struct cred *new)
+ static inline bool is_sxid(umode_t mode)
  {
-@@ -2078,7 +2088,9 @@ static inline int security_uring_sqpoll(void)
- {
- 	return 0;
+-	return (mode & S_ISUID) || ((mode & S_ISGID) && (mode & S_IXGRP));
++	return (mode & S_ISUID) || ((mode & S_ISGID));
  }
--static inline int security_uring_cmd(struct io_uring_cmd *ioucmd)
-+static inline int security_uring_cmd(struct io_uring_cmd *ioucmd,
-+		int (*uring_cmd_sec)(struct io_uring_cmd *,
-+			struct security_uring_cmd*))
- {
- 	return 0;
- }
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index e50de0b6b9f8..2f650b346756 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -108,10 +108,11 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
- 	struct file *file = req->file;
- 	int ret;
  
-+	//req->file->f_op->owner->ei_funcs
- 	if (!req->file->f_op->uring_cmd)
- 		return -EOPNOTSUPP;
- 
--	ret = security_uring_cmd(ioucmd);
-+	ret = security_uring_cmd(ioucmd, req->file->f_op->uring_cmd_sec);
- 	if (ret)
- 		return ret;
- 
-diff --git a/security/security.c b/security/security.c
-index 79d82cb6e469..d3360a32f971 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2667,8 +2667,9 @@ int security_uring_sqpoll(void)
- {
- 	return call_int_hook(uring_sqpoll, 0);
- }
--int security_uring_cmd(struct io_uring_cmd *ioucmd)
-+int security_uring_cmd(struct io_uring_cmd *ioucmd,
-+	int (*uring_cmd_sec)(struct io_uring_cmd *ioucmd, struct security_uring_cmd*))
- {
--	return call_int_hook(uring_cmd, 0, ioucmd);
-+	return call_int_hook(uring_cmd, 0, ioucmd, uring_cmd_sec);
- }
- #endif /* CONFIG_IO_URING */
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index f553c370397e..9fe3a230c671 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -21,6 +21,8 @@
-  *  Copyright (C) 2016 Mellanox Technologies
-  */
- 
-+#include "linux/nvme_ioctl.h"
-+#include "linux/security.h"
- #include <linux/init.h>
- #include <linux/kd.h>
- #include <linux/kernel.h>
-@@ -6999,18 +7001,30 @@ static int selinux_uring_sqpoll(void)
-  * IORING_OP_URING_CMD against the device/file specified in @ioucmd.
-  *
-  */
--static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
-+static int selinux_uring_cmd(struct io_uring_cmd *ioucmd,
-+	int (*uring_cmd_sec)(struct io_uring_cmd *ioucmd, struct security_uring_cmd*))
- {
- 	struct file *file = ioucmd->file;
- 	struct inode *inode = file_inode(file);
- 	struct inode_security_struct *isec = selinux_inode(inode);
- 	struct common_audit_data ad;
-+	const struct cred *cred = current_cred();
-+	struct security_uring_cmd sec_uring = {0};
-+	int ret;
- 
- 	ad.type = LSM_AUDIT_DATA_FILE;
- 	ad.u.file = file;
- 
-+	ret = uring_cmd_sec(ioucmd, &sec_uring);
-+	if (ret)
-+		return ret;
-+
-+	if (sec_uring.flags & SECURITY_URING_CMD_TYPE_IOCTL)
-+		return ioctl_has_perm(cred, file, FILE__IOCTL, (u16) ioucmd->cmd_op);
-+
- 	return avc_has_perm(&selinux_state, current_sid(), isec->sid,
- 			    SECCLASS_IO_URING, IO_URING__CMD, &ad);
-+
- }
- #endif /* CONFIG_IO_URING */
- 
+ static inline int check_sticky(struct user_namespace *mnt_userns,
+
+base-commit: f380367f1811222c3853d942676a451a2353b762
 -- 
-2.30.2
+2.34.1
 
