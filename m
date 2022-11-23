@@ -2,112 +2,122 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8B9C3A59F
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Nov 2022 15:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66524C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Nov 2022 16:23:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237943AbiKWP6k (ORCPT
+        id S239044AbiKWQXj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Nov 2022 10:58:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46230 "EHLO
+        Wed, 23 Nov 2022 11:23:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238254AbiKWP6Y (ORCPT
+        with ESMTP id S239045AbiKWQXh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Nov 2022 10:58:24 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08481A812;
-        Wed, 23 Nov 2022 07:57:46 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 04B76CE2322;
-        Wed, 23 Nov 2022 15:57:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E49C433C1;
-        Wed, 23 Nov 2022 15:57:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1669219063;
-        bh=Q0SEQR3uc6eCtl05I/8Xe29JQKDtlOnHtgnxpmvfeK0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mhiplsOioxUX4b7OWO/JF0jiV4e9OaOyeXb1vLr7BIXe2hSqp14HiG3LS60tfKiXR
-         XYHklTI6LnIYJ+JdVdOx89JEMI34ZRFLWpqBlzMQsRqI8TmEAFjO9/8CnTgju7xKis
-         AnxSbQ0zYNV4rEJno4YOqL/ulKqGxpwcGux1giIg=
-Date:   Wed, 23 Nov 2022 16:57:40 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nayna <nayna@linux.vnet.ibm.com>
-Cc:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-Message-ID: <Y35C9O27J29bUDjA@kroah.com>
-References: <20221106210744.603240-1-nayna@linux.ibm.com>
- <20221106210744.603240-3-nayna@linux.ibm.com>
- <Y2uvUFQ9S2oaefSY@kroah.com>
- <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
- <20221119114234.nnfxsqx4zxiku2h6@riteshh-domain>
- <d3e8df29-d9b0-5e8e-4a53-d191762fe7f2@linux.vnet.ibm.com>
- <a2752fdf-c89f-6f57-956e-ad035d32aec6@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a2752fdf-c89f-6f57-956e-ad035d32aec6@linux.vnet.ibm.com>
+        Wed, 23 Nov 2022 11:23:37 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B214788FA1;
+        Wed, 23 Nov 2022 08:23:35 -0800 (PST)
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2ANEf8LX026039;
+        Wed, 23 Nov 2022 16:23:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=DGIE0IcQ/4Ob6lIB9Xu6gY2wRn88lzgW3JmHywvHzKA=;
+ b=hKMi4em2yrex+9WFg6mkd4/u+MFEF25CWOax2DqMDNRabnG05st9JP2dlFR3UQPWS0iJ
+ cReqe+AjYto7WBrqkhmsnD/iZOZTbxt3VRmWY574QVbpn0LInmZRjnfpfjZGInoUWQ/2
+ uUmqcCwJI+y922b2xrmjR+cngRdBbqO6HLHFQdkF9h/WK93zqUaKst0LmWJrelPgAna3
+ mH7jZzjJ5VUrPR4g9yKvD6VmrkBeX/vAMlKV96nA1AaPAds/elFZePuoX/RhqIlqzt41
+ BbV9+w0pmwlxHepYFue1BcrWcFEN4vFxnH0LGlsk7kVI5VZ2Oo7+HM2dC3mReTa/A870 bQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m10bmjku9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Nov 2022 16:23:04 +0000
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2ANFg69c013438;
+        Wed, 23 Nov 2022 16:23:04 GMT
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m10bmjktb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Nov 2022 16:23:04 +0000
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2ANGLBuu004741;
+        Wed, 23 Nov 2022 16:23:02 GMT
+Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
+        by ppma01wdc.us.ibm.com with ESMTP id 3kxps9ktwn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Nov 2022 16:23:02 +0000
+Received: from smtpav05.dal12v.mail.ibm.com ([9.208.128.132])
+        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2ANGN1YO8651402
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Nov 2022 16:23:01 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 730A95805D;
+        Wed, 23 Nov 2022 16:23:01 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0C0565804C;
+        Wed, 23 Nov 2022 16:23:00 +0000 (GMT)
+Received: from sig-9-77-136-225.ibm.com (unknown [9.77.136.225])
+        by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 23 Nov 2022 16:22:59 +0000 (GMT)
+Message-ID: <33329a29d779096e043f53c681f26ef32b093e5c.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 0/6] evm: Do HMAC of multiple per LSM xattrs for new
+ inodes
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, mark@fasheh.com,
+        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com
+Cc:     ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 23 Nov 2022 11:22:59 -0500
+In-Reply-To: <20221123154712.752074-1-roberto.sassu@huaweicloud.com>
+References: <20221123154712.752074-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: gGxC9VOl9iTb8JqDCP4RJSooTQ4VCFwN
+X-Proofpoint-GUID: rH_XQgNnZzUltVo6EvwgnVCTjKT_8wZj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-23_09,2022-11-23_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 phishscore=0 spamscore=0 mlxscore=0
+ adultscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2210170000 definitions=main-2211230119
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 23, 2022 at 10:05:49AM -0500, Nayna wrote:
-> 
-> On 11/22/22 18:21, Nayna wrote:
-> > 
-> > From the perspective of our use case, we need to expose firmware
-> > security objects to userspace for management. Not all of the objects
-> > pre-exist and we would like to allow root to create them from userspace.
-> > 
-> > From a unification perspective, I have considered a common location at
-> > /sys/firmware/security for managing any platform's security objects. And
-> > I've proposed a generic filesystem, which could be used by any platform
-> > to represent firmware security objects via /sys/firmware/security.
-> > 
-> > Here are some alternatives to generic filesystem in discussion:
-> > 
-> > 1. Start with a platform-specific filesystem. If more platforms would
-> > like to use the approach, it can be made generic. We would still have a
-> > common location of /sys/firmware/security and new code would live in
-> > arch. This is my preference and would be the best fit for our use case.
-> > 
-> > 2. Use securityfs.  This would mean modifying it to satisfy other use
-> > cases, including supporting userspace file creation. I don't know if the
-> > securityfs maintainer would find that acceptable. I would also still
-> > want some way to expose variables at /sys/firmware/security.
-> > 
-> > 3. Use a sysfs-based approach. This would be a platform-specific
-> > implementation. However, sysfs has a similar issue to securityfs for
-> > file creation. When I tried it in RFC v1[1], I had to implement a
-> > workaround to achieve that.
-> > 
-> > [1] https://lore.kernel.org/linuxppc-dev/20220122005637.28199-3-nayna@linux.ibm.com/
-> > 
-> Hi Greg,
-> 
-> Based on the discussions so far, is Option 1, described above, an acceptable
-> next step?
+Hi Roberto,
 
-No, as I said almost a year ago, I do not want to see platform-only
-filesystems going and implementing stuff that should be shared by all
-platforms.
+On Wed, 2022-11-23 at 16:47 +0100, Roberto Sassu wrote:
+> The second problem this patch set addresses is the limitation of the
+> call_int_hook() of stopping the loop when the return value from a hook
+> implementation is not zero. Unfortunately, for the inode_init_security hook
+> it is a legitimate case to return -EOPNOTSUPP, but this would not
+> necessarily mean that there is an error to report to the LSM infrastructure
+> but just that an LSM does not will to set an xattr. Other LSMs should be
+> still consulted as well.
 
+This is just a heads up.  In reviewing the ocfs2 v5 patch, I realized
+the meaning of -EOPNOTSUPP is being overloaded to mean multiple things.
+Originally, -EOPNOTSUPP meant that the file system didn't implement
+xattr support.  Now, it is being used to also mean no LSM xattr.  In
+the former case, none of the LSM xattrs would be written.  In the
+latter case, some of them will be written.
+
+I'm not convinced that overloading the -EOPNOTSUPP is a good idea.  
+Still reviewing the patch set...
+
+-- 
 thanks,
 
-greg k-h
+Mimi
+
