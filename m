@@ -2,164 +2,112 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 970CAC3A59F
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Nov 2022 15:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8B9C3A59F
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Nov 2022 15:58:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238934AbiKWPtv (ORCPT
+        id S237943AbiKWP6k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Nov 2022 10:49:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39136 "EHLO
+        Wed, 23 Nov 2022 10:58:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238741AbiKWPtK (ORCPT
+        with ESMTP id S238254AbiKWP6Y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Nov 2022 10:49:10 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF1EC657C;
-        Wed, 23 Nov 2022 07:49:03 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4NHQNf2GDYz9xGKC;
-        Wed, 23 Nov 2022 23:42:10 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwD34W6OQH5jUE+LAA--.33660S8;
-        Wed, 23 Nov 2022 16:48:35 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v6 6/6] evm: Support multiple LSMs providing an xattr
-Date:   Wed, 23 Nov 2022 16:47:12 +0100
-Message-Id: <20221123154712.752074-7-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221123154712.752074-1-roberto.sassu@huaweicloud.com>
-References: <20221123154712.752074-1-roberto.sassu@huaweicloud.com>
+        Wed, 23 Nov 2022 10:58:24 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08481A812;
+        Wed, 23 Nov 2022 07:57:46 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 04B76CE2322;
+        Wed, 23 Nov 2022 15:57:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E49C433C1;
+        Wed, 23 Nov 2022 15:57:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1669219063;
+        bh=Q0SEQR3uc6eCtl05I/8Xe29JQKDtlOnHtgnxpmvfeK0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mhiplsOioxUX4b7OWO/JF0jiV4e9OaOyeXb1vLr7BIXe2hSqp14HiG3LS60tfKiXR
+         XYHklTI6LnIYJ+JdVdOx89JEMI34ZRFLWpqBlzMQsRqI8TmEAFjO9/8CnTgju7xKis
+         AnxSbQ0zYNV4rEJno4YOqL/ulKqGxpwcGux1giIg=
+Date:   Wed, 23 Nov 2022 16:57:40 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nayna <nayna@linux.vnet.ibm.com>
+Cc:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell Currey <ruscur@russell.cc>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
+ fwsecurityfs
+Message-ID: <Y35C9O27J29bUDjA@kroah.com>
+References: <20221106210744.603240-1-nayna@linux.ibm.com>
+ <20221106210744.603240-3-nayna@linux.ibm.com>
+ <Y2uvUFQ9S2oaefSY@kroah.com>
+ <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
+ <20221119114234.nnfxsqx4zxiku2h6@riteshh-domain>
+ <d3e8df29-d9b0-5e8e-4a53-d191762fe7f2@linux.vnet.ibm.com>
+ <a2752fdf-c89f-6f57-956e-ad035d32aec6@linux.vnet.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwD34W6OQH5jUE+LAA--.33660S8
-X-Coremail-Antispam: 1UD129KBjvJXoWxGryktFy8Jr45JrykAF15CFg_yoW5try5pa
-        n8ta9rCrn5AFyUWr9IyF18ua4SgrWrGw4UKwsxCryjyFnrWrn2qryxtr15ur98Wr95Jrna
-        yw40vw15Aw15t3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUBvb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-        AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
-        14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
-        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
-        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20x
-        vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
-        3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIx
-        AIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI
-        42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z2
-        80aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZo7tUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj4XL2wAAsk
-X-CFilter-Loop: Reflected
+In-Reply-To: <a2752fdf-c89f-6f57-956e-ad035d32aec6@linux.vnet.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Wed, Nov 23, 2022 at 10:05:49AM -0500, Nayna wrote:
+> 
+> On 11/22/22 18:21, Nayna wrote:
+> > 
+> > From the perspective of our use case, we need to expose firmware
+> > security objects to userspace for management. Not all of the objects
+> > pre-exist and we would like to allow root to create them from userspace.
+> > 
+> > From a unification perspective, I have considered a common location at
+> > /sys/firmware/security for managing any platform's security objects. And
+> > I've proposed a generic filesystem, which could be used by any platform
+> > to represent firmware security objects via /sys/firmware/security.
+> > 
+> > Here are some alternatives to generic filesystem in discussion:
+> > 
+> > 1. Start with a platform-specific filesystem. If more platforms would
+> > like to use the approach, it can be made generic. We would still have a
+> > common location of /sys/firmware/security and new code would live in
+> > arch. This is my preference and would be the best fit for our use case.
+> > 
+> > 2. Use securityfs.  This would mean modifying it to satisfy other use
+> > cases, including supporting userspace file creation. I don't know if the
+> > securityfs maintainer would find that acceptable. I would also still
+> > want some way to expose variables at /sys/firmware/security.
+> > 
+> > 3. Use a sysfs-based approach. This would be a platform-specific
+> > implementation. However, sysfs has a similar issue to securityfs for
+> > file creation. When I tried it in RFC v1[1], I had to implement a
+> > workaround to achieve that.
+> > 
+> > [1] https://lore.kernel.org/linuxppc-dev/20220122005637.28199-3-nayna@linux.ibm.com/
+> > 
+> Hi Greg,
+> 
+> Based on the discussions so far, is Option 1, described above, an acceptable
+> next step?
 
-Currently, evm_inode_init_security() processes a single LSM xattr from
-the array passed by security_inode_init_security(), and calculates the
-HMAC on it and other inode metadata.
+No, as I said almost a year ago, I do not want to see platform-only
+filesystems going and implementing stuff that should be shared by all
+platforms.
 
-Given that initxattrs() callbacks, called by
-security_inode_init_security(), expect that this array is terminated when
-the xattr name is set to NULL, reuse the same assumption to scan all xattrs
-and to calculate the HMAC on all of them.
+thanks,
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/evm/evm.h        |  2 ++
- security/integrity/evm/evm_crypto.c |  9 ++++++++-
- security/integrity/evm/evm_main.c   | 16 +++++++++++-----
- 3 files changed, 21 insertions(+), 6 deletions(-)
-
-diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
-index f8b8c5004fc7..f799d72a59fa 100644
---- a/security/integrity/evm/evm.h
-+++ b/security/integrity/evm/evm.h
-@@ -46,6 +46,8 @@ struct evm_digest {
- 	char digest[IMA_MAX_DIGEST_SIZE];
- } __packed;
- 
-+int evm_protected_xattr(const char *req_xattr_name);
-+
- int evm_init_key(void);
- int evm_update_evmxattr(struct dentry *dentry,
- 			const char *req_xattr_name,
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 708de9656bbd..68f99faac316 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -389,6 +389,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
- 		  char *hmac_val)
- {
- 	struct shash_desc *desc;
-+	const struct xattr *xattr;
- 
- 	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
- 	if (IS_ERR(desc)) {
-@@ -396,7 +397,13 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
- 		return PTR_ERR(desc);
- 	}
- 
--	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
-+	for (xattr = lsm_xattr; xattr->name != NULL; xattr++) {
-+		if (!evm_protected_xattr(xattr->name))
-+			continue;
-+
-+		crypto_shash_update(desc, xattr->value, xattr->value_len);
-+	}
-+
- 	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
- 	kfree(desc);
- 	return 0;
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 0a312cafb7de..1cf6871a0019 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -305,7 +305,7 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
- 	return found;
- }
- 
--static int evm_protected_xattr(const char *req_xattr_name)
-+int evm_protected_xattr(const char *req_xattr_name)
- {
- 	return evm_protected_xattr_common(req_xattr_name, false);
- }
-@@ -851,14 +851,20 @@ int evm_inode_init_security(struct inode *inode, struct inode *dir,
- {
- 	struct evm_xattr *xattr_data;
- 	struct xattr *xattr, *evm_xattr;
-+	bool evm_protected_xattrs = false;
- 	int rc;
- 
--	if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs ||
--	    !evm_protected_xattr(xattrs->name))
-+	if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs)
- 		return -EOPNOTSUPP;
- 
--	for (xattr = xattrs; xattr->value != NULL; xattr++)
--		;
-+	for (xattr = xattrs; xattr->value != NULL; xattr++) {
-+		if (evm_protected_xattr(xattr->name))
-+			evm_protected_xattrs = true;
-+	}
-+
-+	/* EVM xattr not needed. */
-+	if (!evm_protected_xattrs)
-+		return -EOPNOTSUPP;
- 
- 	evm_xattr = xattr;
- 
--- 
-2.25.1
-
+greg k-h
