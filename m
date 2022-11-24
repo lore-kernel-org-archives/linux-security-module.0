@@ -2,157 +2,185 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5309C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Nov 2022 21:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8702C3A59F
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Nov 2022 01:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236497AbiKWVCT (ORCPT
+        id S229677AbiKXBOg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Nov 2022 16:02:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54128 "EHLO
+        Wed, 23 Nov 2022 20:14:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229728AbiKWVCQ (ORCPT
+        with ESMTP id S229673AbiKXBOf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Nov 2022 16:02:16 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95A4D27B3E
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Nov 2022 13:02:14 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id e7-20020a17090a77c700b00216928a3917so3235539pjs.4
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Nov 2022 13:02:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DXNu/5sdUu54/3xRezmFfaQGf0ULUrlzhHPjZKuz8hc=;
-        b=LqP9vDAGHjunvnBSFzK6eHm6pcBhE2DIK3H0IJR5r3jwfC2cCMe4ioodlRfla6K8ar
-         S75OMcY0z0zUOw5jbgCBHNTf+0YQYjAmUB6BZHuQQmfHLsURmNfPM7CizRBIQ+ZmzYIe
-         PF++GGxmPkHkyTWxbA7tqvN+nOGQtTyaGoFeeqSmvsF07UIdO8ccXA2YA6v7bhzdy/Fk
-         IfcxcTpKt/nyNqj+V8QCOUuBGZXyQCON3ReZ0t3YlqsubrXHGS+X6EgBAWCNrIft0uPw
-         ydfB8IpzcHMVvm6Ht/VgUetjk1h5YZmcI2rXIr8zckY05ytS3XRUzFt9/JHXfpJ2/U9+
-         Efpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DXNu/5sdUu54/3xRezmFfaQGf0ULUrlzhHPjZKuz8hc=;
-        b=ETKWpr+VvbbvwiT5cpEr34N8Wj/PbQYrGALAldCYTnSteTwKtzsUEcF68JLqkumVKa
-         r7wOWLLySumWknS4/J5skbopECF8ulO8ZYYI49FeKn5FvS6wGp/1XTlc4O6qHomvuCJs
-         y1lcVJPgwv0R85HQtKXVYGO1lAY0Ja94hDNPUEwHcExQEZ0ixXDXrnHKNrn1Qxfderux
-         YX19WZlnzLJk8eeoy6x2C8CvR0xrtvvjWwXAoQRo6zkw67HcaNUB7EYozWlVpdWI7qYL
-         ToNQJ4hjO9N9HvsBD1nWOp3+GlC5wZy/bMDyBjgVYnwW6LhVue5+tWyDcYhObEYj/Bjw
-         /RRw==
-X-Gm-Message-State: ANoB5pnH+zwkic69LzKsIVCGrt1qWhIOaAbmX7PRN8/9aE8W1XwoftZ8
-        oYn6t5V6Lm3DnOg+XIJS/8rtJuIgrRvf+y7b79mtGMnsvnHX
-X-Google-Smtp-Source: AA0mqf7yEFdm4U7MIuJ1kv2Y49g9b4lHCnYve95PMyFP13hr//coM5n8qZYIl69e2iSOsVg9xJNzbNLzvA6ZrEsPIQY=
-X-Received: by 2002:a17:902:6505:b0:186:e568:3442 with SMTP id
- b5-20020a170902650500b00186e5683442mr23431706plk.56.1669237333841; Wed, 23
- Nov 2022 13:02:13 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20221122103536eucas1p28f1c88f2300e49942c789721fe70c428@eucas1p2.samsung.com>
- <20221122103144.960752-1-j.granados@samsung.com> <20221122103144.960752-2-j.granados@samsung.com>
-In-Reply-To: <20221122103144.960752-2-j.granados@samsung.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 23 Nov 2022 16:02:02 -0500
-Message-ID: <CAHC9VhTs26x+6TSbPyQg7y0j=gLCc=_GPgmiUgA34wfxmakvZQ@mail.gmail.com>
-Subject: Re: [RFC v2 1/1] Use a fs callback to set security specific data
-To:     Joel Granados <j.granados@samsung.com>
-Cc:     mcgrof@kernel.org, ddiss@suse.de, joshi.k@samsung.com,
-        ming.lei@redhat.com, linux-security-module@vger.kernel.org,
-        axboe@kernel.dk, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 23 Nov 2022 20:14:35 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C69DFDD9A;
+        Wed, 23 Nov 2022 17:14:34 -0800 (PST)
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2ANM15kF030673;
+        Thu, 24 Nov 2022 01:14:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=KNq219/5AVdZrleS+HirjEBdvGLdqbdgtgWzIWGXyCk=;
+ b=Uj3CEeSyH9PbA/ailDEEdrVjqprldCjGRbSvnLejn7XsSbLCT1pWWu2LHwuUqLq0lfiy
+ 7xzqseFXrouvygarEDI2CVuckpDJ+Y+ISFXAWIjMrAM0FQWCfzcwouzrfBirQsNjC0Mh
+ 6Dw6n+XoSf0iyai1DEb5kbTj2HAtjqtltRG9HG0Ar1+/6e5TG04N+T4f2cOkKjpJiCpC
+ +0Zwsl55eFpfoOUlIhHGdSCkUGiGwYkNPrpY/pFzuSWProxIme9MAAB14Rxng/EPUMS2
+ 5Wzl7ydcPK47hh5WqtlH/RGemLRIwN5/gb5MKXzK3N2KblIdoGc+SHjV8Rvq2o5X6Eys Ag== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m0x81ace5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 24 Nov 2022 01:14:06 +0000
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AO1BoYe004560;
+        Thu, 24 Nov 2022 01:14:05 GMT
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m0x81acds-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 24 Nov 2022 01:14:05 +0000
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AO1536D022755;
+        Thu, 24 Nov 2022 01:14:04 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma01dal.us.ibm.com with ESMTP id 3kxpsafkt0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 24 Nov 2022 01:14:04 +0000
+Received: from smtpav03.dal12v.mail.ibm.com ([9.208.128.129])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AO1E8YB46072168
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 24 Nov 2022 01:14:08 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D62C058063;
+        Thu, 24 Nov 2022 01:14:02 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 699AE5803F;
+        Thu, 24 Nov 2022 01:14:01 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.101.232])
+        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Thu, 24 Nov 2022 01:14:01 +0000 (GMT)
+Message-ID: <13350b79f708cb089e2ff2ee5cead52bafb10982.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 4/6] security: Allow all LSMs to provide xattrs for
+ inode_init_security hook
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, mark@fasheh.com,
+        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com
+Cc:     ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 23 Nov 2022 20:14:01 -0500
+In-Reply-To: <20221123154712.752074-5-roberto.sassu@huaweicloud.com>
+References: <20221123154712.752074-1-roberto.sassu@huaweicloud.com>
+         <20221123154712.752074-5-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: fUsiWD_L9co63XKlkMcookDkMS_RvTrX
+X-Proofpoint-ORIG-GUID: slNL7hiw8nwoTRLrZnEqIE5i5-tx6EkG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-23_13,2022-11-23_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ malwarescore=0 mlxscore=0 mlxlogscore=999 spamscore=0 phishscore=0
+ bulkscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211240006
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 22, 2022 at 5:35 AM Joel Granados <j.granados@samsung.com> wrote:
->
-> Signed-off-by: Joel Granados <j.granados@samsung.com>
-> ---
->  drivers/nvme/host/core.c      | 10 ++++++++++
->  include/linux/fs.h            |  2 ++
->  include/linux/lsm_hook_defs.h |  3 ++-
->  include/linux/security.h      | 16 ++++++++++++++--
->  io_uring/uring_cmd.c          |  3 ++-
->  security/security.c           |  5 +++--
->  security/selinux/hooks.c      | 16 +++++++++++++++-
->  7 files changed, 48 insertions(+), 7 deletions(-)
+Hi Roberto,
 
-...
-
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index f553c370397e..9fe3a230c671 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -21,6 +21,8 @@
->   *  Copyright (C) 2016 Mellanox Technologies
->   */
->
-> +#include "linux/nvme_ioctl.h"
-> +#include "linux/security.h"
->  #include <linux/init.h>
->  #include <linux/kd.h>
->  #include <linux/kernel.h>
-> @@ -6999,18 +7001,30 @@ static int selinux_uring_sqpoll(void)
->   * IORING_OP_URING_CMD against the device/file specified in @ioucmd.
->   *
->   */
-> -static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
-> +static int selinux_uring_cmd(struct io_uring_cmd *ioucmd,
-> +       int (*uring_cmd_sec)(struct io_uring_cmd *ioucmd, struct security_uring_cmd*))
+On Wed, 2022-11-23 at 16:47 +0100, Roberto Sassu wrote:
+>  int security_inode_init_security(struct inode *inode, struct inode *dir,
+>                                  const struct qstr *qstr,
+>                                  const initxattrs initxattrs, void *fs_data)
 >  {
-
-As we discussed in the previous thread, and Casey mentioned already,
-passing a function pointer for the LSM to call isn't a great practice.
-When it was proposed we hadn't really thought of any alternatives, but
-if we can't find a good scalar value to compare somewhere, I think
-inspecting the file_operations::owner::name string to determine the
-target is preferable to the function pointer approach described here.
-
-Although I really would like to see us find, or create, some sort of
-scalar token ID we could use instead.  I fear that doing a lot of
-strcmp()'s to identify the uring command target is going to be a
-problem (one strcmp() for each possible target, multiplied by the
-number of LSMs which implement a io_uring command hook).
-
->         struct file *file = ioucmd->file;
->         struct inode *inode = file_inode(file);
->         struct inode_security_struct *isec = selinux_inode(inode);
->         struct common_audit_data ad;
-> +       const struct cred *cred = current_cred();
-> +       struct security_uring_cmd sec_uring = {0};
-> +       int ret;
->
->         ad.type = LSM_AUDIT_DATA_FILE;
->         ad.u.file = file;
->
-> +       ret = uring_cmd_sec(ioucmd, &sec_uring);
-> +       if (ret)
-> +               return ret;
+> -       struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
+> -       struct xattr *lsm_xattr, *evm_xattr, *xattr;
+> -       int ret;
+> +       struct security_hook_list *P;
+> +       struct xattr *new_xattrs;
+> +       struct xattr *xattr;
+> +       int ret = -EOPNOTSUPP, num_filled_xattrs = 0;
+>  
+>         if (unlikely(IS_PRIVATE(inode)))
+>                 return 0;
+>  
+> +       if (!blob_sizes.lbs_xattr)
+> +               return 0;
 > +
-> +       if (sec_uring.flags & SECURITY_URING_CMD_TYPE_IOCTL)
-> +               return ioctl_has_perm(cred, file, FILE__IOCTL, (u16) ioucmd->cmd_op);
-
-As mentioned previously, we'll need a SELinux policy capability here
-to preserve the SECCLASS_IO_URING/IO_URING__CMD access check for
-existing users/policies.  I expect the logic would look something like
-this (of course the details are dependent on how we identify the
-target module/device/etc.):
-
-  if (polcap_foo && uring_tgt) {
-    switch (uring_tgt) {
-    case NVME:
-      return avc_has_perm(...);
-    default:
-      WARN();
-      return avc_has_perm(SECCLASS_IO_URING, IO_URING__CMD);
-    }
-  } else
-    return avc_has_perm(SECCLASS_IO_URING, IO_URING__CMD);
-
->         return avc_has_perm(&selinux_state, current_sid(), isec->sid,
->                             SECCLASS_IO_URING, IO_URING__CMD, &ad);
+>         if (!initxattrs)
+>                 return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
+> -                                    dir, qstr, NULL, NULL, NULL);
+> -       memset(new_xattrs, 0, sizeof(new_xattrs));
+> -       lsm_xattr = new_xattrs;
+> -       ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
+> -                                               &lsm_xattr->name,
+> -                                               &lsm_xattr->value,
+> -                                               &lsm_xattr->value_len);
+> -       if (ret)
+> +                                   dir, qstr, NULL);
+> +       /* Allocate +1 for EVM and +1 as terminator. */
+> +       new_xattrs = kcalloc(blob_sizes.lbs_xattr + 2, sizeof(*new_xattrs),
+> +                            GFP_NOFS);
+> +       if (!new_xattrs)
+> +               return -ENOMEM;
 > +
+> +       hlist_for_each_entry(P, &security_hook_heads.inode_init_security,
+> +                            list) {
+> +               ret = P->hook.inode_init_security(inode, dir, qstr, new_xattrs);
+> +               if (ret && ret != -EOPNOTSUPP)
+> +                       goto out;
+> +               if (ret == -EOPNOTSUPP)
+> +                       continue;
+
+In this context, -EOPNOTSUPP originally signified that the filesystem
+does not support writing xattrs.  Writing any xattr would fail. 
+Returning -ENODATA for no LSM xattr(s) data would seem to be more
+appropriate than -EOPNOTSUPP.
+
+thanks,
+
+Mimi
+
+> +               /*
+> +                * As the number of xattrs reserved by LSMs is not directly
+> +                * available, directly use the total number blob_sizes.lbs_xattr
+> +                * to keep the code simple, while being not the most efficient
+> +                * way.
+> +                */
+> +               ret = security_check_compact_filled_xattrs(new_xattrs,
+> +                                                          blob_sizes.lbs_xattr,
+> +                                                          &num_filled_xattrs);
+> +               if (ret < 0) {
+> +                       ret = -ENOMEM;
+> +                       goto out;
+> +               }
+> +       }
+> +
+> +       if (!num_filled_xattrs)
+>                 goto out;
+>  
+> -       evm_xattr = lsm_xattr + 1;
+> -       ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
+> +       ret = evm_inode_init_security(inode, new_xattrs,
+> +                                     new_xattrs + num_filled_xattrs);
+>         if (ret)
+>                 goto out;
+>         ret = initxattrs(inode, new_xattrs, fs_data);
+>  out:
+>         for (xattr = new_xattrs; xattr->value != NULL; xattr++)
+>                 kfree(xattr->value);
+> +       kfree(new_xattrs);
+>         return (ret == -EOPNOTSUPP) ? 0 : ret;
 >  }
->  #endif /* CONFIG_IO_URING */
+b
 
--- 
-paul-moore.com
