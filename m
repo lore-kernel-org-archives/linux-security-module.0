@@ -2,272 +2,218 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56FCC4321E
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Nov 2022 18:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D74F8C46467
+	for <linux-security-module@archiver.kernel.org>; Sun, 27 Nov 2022 10:36:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbiKYS1O (ORCPT
+        id S229581AbiK0KgK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Nov 2022 13:27:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43350 "EHLO
+        Sun, 27 Nov 2022 05:36:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbiKYS1M (ORCPT
+        with ESMTP id S229495AbiK0KgJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Nov 2022 13:27:12 -0500
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C84A52528D
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Nov 2022 10:27:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669400826; bh=/NUNrlZGnZR4OqxJFp+PWjokf/uZSsS2KyVxQlEK3tM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Q9OwkSnEMRvKD/lxN+9hw77bE3Z8v19owUiTFHVNNtzkGJvrcbFl0p4LcL0epiqCnSyc51r1W9/hsP92n0lgye8+cF8sqLyVW91zSNNJ0loI/Crd0A4Zq4dV165d0g9K0oyBk5nXBmcGAD8orqhvoOAI8+1ZQJ8WgM9PoTTTOoQOjbATMq6k0pXtXytakqPr3VtMWp90JQlwF0okg+ACLATssMzM2dNSE4A+MGuhkfJmW2i2plDRNZsLhialRjhuKESpTe1WPK9miMCdslE92WFtGeWUYucRXL0i/Xflshl7eQdoX1yVn8jJp54x0ovmvm71W1pJWsSgm8Am9w1e5w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669400826; bh=azES7AsXg3ID91BhuRdwp+fxapC9mJn9FGYf+OlIV7j=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jiyOOsm9LLa9e5OpeiayRNZDrcWgVLMBjmEk0hjMkAA54poc+sKJtHBlwvWJU8++wmVrPebZ43qgpbHzzzepVY4YxEU1pJYAQjlM/XuG/MT9Rxm36PeGyUKURnuP6iv29Tl2jChZaeS3BjBYAdoo9l9qGR/VruMKEZojYRJQOZjZ1gqdjRJSAjSxsT6X/5Sc6/VDJS4JIKwk3J+gMO+1DmwcgHsTeQUuim227Kk1fLNEKKEXww4kRqw/YcuRXL8Xtt8NDAN+Vwl74N13mCCtFamFhLhIL9GH8ARM44weTyPfdmz3x7ScJIuXPrFFFs6gyYNrdzZfzsSWlKx9x58Iog==
-X-YMail-OSG: 6XnPz10VM1kZTsP92foonxN3asjLlibf.B1D87Ypl3N0MmPAZ0G1alIttFz0eXX
- .13s51op3l6P3xs5C86_JGryPV5l18kA0w8YTHiTSkDbNUE8AY0qxDNZ6OwwqYsktjVdfGW8vZv9
- lL6JQuDgc5NXPQG.bOymNi3KWBlqXWB1AjzDWX7EVKFUO_YWB5aqYoN6UEna0MVhOSXAg.Vk2Q.d
- .Vje_xPgwhScfKEYBKz5xuVqnDuDK40jOHmDtNvT4Cuexpm.Sqi8VLvZroCkHSr2Q.xi0rkSt6vl
- bTl3DDnI9WadErqn7SxqTweq5m9gx9nsEPlr83djoQg5uTaG8kwuugoW_HHzyonT55vRL0YUbYEb
- bINoaOYAHblcvoGk_lIOs9Hk4VC3sz6.NeR0GfQsUqRkimwkBGxfDnZrAFvrlj987qHRvNG5S7o5
- 1u7l3VDcmCd9j0lEg8_hKZMQnoG4LApJRDMn6CT_5jAGcy59B1iOe0UR4J1ibIo0cRLJhTOaAowP
- YPi5RtDIi53hoKtvJ5do4kO6f1TbOXyEv.gemkUGhK_sEvia.3g6hyH2hGODYtjoCWaOXezTw4PS
- clkHHO9mZvnCeKihFKOniPd8iaKvGdGH9D1nsHlMuL9a0lkCJOdTPX15VB66MUnSNpLH0F8LlAgt
- ucPdAauY7ihD6J5UDbaH2a.OQypQGgkqXPCXGjJNtBYmFe3.0k1mIG5h9yg5oUn_H_EMF9wiJtja
- WFrJ_yQhsOitiPo3QO3__Na1Cf_fwXpYb6jsd8JsJsKm7N.XwWXxhevgOvL9PXe4ntnvVD8bnX_c
- q7J9uHs06YQdX2GeBRJ91LG9sSSGGAOcvaKbAqPUUkxaq15C5097Ij0tuCKXKPBEBju5iZJxvjO1
- HcJx46e0cgvYGQYypXnH8VG8e1FWeQPY1zyXsCPMQRK8ZnShmWkcs4NrkBc8VcZAE5F1O.fMqx_v
- UPOqzS.iS1dUY_vQMMkKh4YiRdt5NcvESBGHSu60q2WFRPiVCQ_cWy8ITjzJPkR4vSAiIsOXantA
- Lv0IAXfi5Knz4kHj7HH2ucnZqZ9K8d8qlk89zgm6HdjKXpmpyjgAAbDMV9JzRTjdkqXdLR4t9pto
- l6z_XVEgLAHhQSh0QjLvItE2SwE4FP1EmQeru9cl4dCWSByUq36_VZLVztWh32iJwzWw1GqYdBw2
- _79JR9__UF0T3el.lxykX9lwVYDNDhjqKS4XbCUj2JSoT6rydaEBHFE.7ys2oGW9W4rdxPLlF.15
- kcNKExFCYCKcVL52dWNJ10dJOw1O0JRFH27oNvwYxYo6Kr3FAy95HpQ6HrcTdgp77X_dTIPQHxEP
- ty64wgMEW1Ewf86gOt3yyRYHmAIUklGmlzNEjHTWStL.TZRPRB6AXpzSPzF_YpUrlYY73_WvrXXM
- 6SS5V6_7Y3.TtUpBgUEPPlkYxpQDtQ0UIqrDnsnjBZy3oY1KQQ2MalQGgE0CmlPr90gc0XvXiAbw
- oTf_H5uLr_qQNfavxFC0CTBwZBB2pMmh_jSH.jO1J0iAaksklcNNuwxOJh.riIi_E7KlJVAaEqj_
- 1.hsU6BRcDvbYYOsRHvH6Q2YMIo_aIc660h_8VzhyQiZBSju0r3dfqTKZma1LrdffPErx4ujmzqB
- hF4WPLMpXBk7EjzH_1ZHPlVn2uxG6I._cGHcoRYu4VmPe5JQfdrrn4Udb.nwg1bfC0WWiqF5x3UL
- zrEHYvpsh7zdHM5BgmuEH0Q1NCXNCZRHBQcSrxeMC.u2KzO7Bfr.RlbhKWVfCokftoTAyqY29Ubc
- .uEWm4BspOlN5ghZ5VuUYP9wsWgwkyxsDY1UGa5EgbB3CpLZlgl3VeRYv1k71YC8Zfh7nSNnfYdv
- JjqKvyquG3hk612hOITDKVrF4krRHyvLn7a1biVUd9yowmRAD2AF9ER9QUHqpKNALh.ELdiS00wc
- dWU0UbM5PywsEAVexdv4QrU4V4rfZ08i2jtc_IPjvBoIC_bR_huGR6Oo.AYcO289ZuNUXl0IZUjZ
- eiUZT4AjQvlmUmGxLR0PZ0MSlReodZIEjS.ADciokogQWmY_.hNvf8vUgXiNQYNoY5Usb148Yzi8
- 37xUZzAtXvNc4TpuQEMjTNkBuzhDTEuaQj.IKRU0asJtLIhlKCoe0FculVt9zefp4jHTSqcsxGGj
- g4MzHxp6SZQ4DaYtGYYKZ3FXH9ZY5AN6KzLphR_zTntfNchMV0juGKCUt1IRT.5zLmUjC03c.bT6
- FwDxsZNbLxCbFq94SE0ZdpNGc
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 25 Nov 2022 18:27:06 +0000
-Received: by hermes--production-gq1-579bc4bddd-lqm2b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8d8dc2da86bb2b4cc8e4755f9cf9f779;
-          Fri, 25 Nov 2022 18:27:04 +0000 (UTC)
-Message-ID: <e75185e6-9b16-82a8-5d9b-cdfdc60962bf@schaufler-ca.com>
-Date:   Fri, 25 Nov 2022 10:27:02 -0800
+        Sun, 27 Nov 2022 05:36:09 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2857ADFAC
+        for <linux-security-module@vger.kernel.org>; Sun, 27 Nov 2022 02:35:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669545314;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=a/FKhEJUKr4Au5jEDV0nA39boCfv1uOAmeL78/XZzlw=;
+        b=O27xJtPpaXX+WGWtRHYJetfQf0LitOuWyYASTvh9BOIc76OBbAvqAJoksVcyj8ihyyybuL
+        K0BzXUXxU998BrnvTHmhdCmjqJ56s5MlltXbtXEOh8pcP8m9+etTCwEOVSMLMxVzLD+KhE
+        02JICc1N+vm9jg/GhumwHtE2HYBwStg=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-594-slZxFDzWN_O-N22Rv6q3dw-1; Sun, 27 Nov 2022 05:35:13 -0500
+X-MC-Unique: slZxFDzWN_O-N22Rv6q3dw-1
+Received: by mail-wm1-f71.google.com with SMTP id ay19-20020a05600c1e1300b003cf758f1617so6988132wmb.5
+        for <linux-security-module@vger.kernel.org>; Sun, 27 Nov 2022 02:35:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:subject:organization:from
+         :content-language:references:cc:to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a/FKhEJUKr4Au5jEDV0nA39boCfv1uOAmeL78/XZzlw=;
+        b=N9vNAKmMl61uS5w92w3kplfdcgaH4bjGMQ4oDzYtRvvwk95ogp1fGMMyXRCffVceAf
+         PLXj3FA+FjRFynGGcxahm64jTshdp+e60N9i+UgWkn5v1s0w1o7CpdkmYkI4XtgLC5ZJ
+         1slh6vHW/CNDfM3qruoCOAHGNCKwIY++XV47lRIrybIGkysmItySQjPZ5wgy8hWYOm/d
+         jHZT4c/o1dvTg6qZp6mVOoVj3Q0JWNz1C24nkA/A4YBG6mVO51OLw8hFdSYXG30tISt7
+         twMuiDArCGniVOQ1tpMP4ZaQisGPdrj4Vn+ilXP4lDdFCv1YbuIioipZnnIpJgiVPu1A
+         66GA==
+X-Gm-Message-State: ANoB5pmnq9r+9hmHTLIX0218U/Wok2wSk/dVoNHr0nHOFOa6eZyuxQ4y
+        M6CxGzXKBBg5clg4v7j6NTGo3YEVmwoS1/XnlkTvraScuEFj2NCx+raGxXA11+rk3V9J+E1vDkf
+        h2S74La8Z4EutC/CC75tycpkZnaEK7mmd1LBZ
+X-Received: by 2002:a05:600c:4e88:b0:3b5:477:1e80 with SMTP id f8-20020a05600c4e8800b003b504771e80mr34594852wmq.200.1669545311988;
+        Sun, 27 Nov 2022 02:35:11 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf44zTk6J1KBaqs1seffTqR2+v9TqwwPSmjBWI2JrtJKUPaYELfhGu32bDJHUXiVwBKDfUuj3g==
+X-Received: by 2002:a05:600c:4e88:b0:3b5:477:1e80 with SMTP id f8-20020a05600c4e8800b003b504771e80mr34594816wmq.200.1669545311706;
+        Sun, 27 Nov 2022 02:35:11 -0800 (PST)
+Received: from ?IPV6:2003:cb:c724:dc00:5ea8:da59:8609:7da? (p200300cbc724dc005ea8da59860907da.dip0.t-ipconnect.de. [2003:cb:c724:dc00:5ea8:da59:8609:7da])
+        by smtp.gmail.com with ESMTPSA id u10-20020a05600c19ca00b003c5571c27a1sm14797024wmq.32.2022.11.27.02.35.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Nov 2022 02:35:11 -0800 (PST)
+Message-ID: <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com>
+Date:   Sun, 27 Nov 2022 11:35:09 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v3 2/9] LSM: Identify the process attributes for each
- module
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+To:     linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-17-david@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE
+ usage
+In-Reply-To: <20221116102659.70287-17-david@redhat.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        casey.schaufler@intel.com, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, casey@schaufler-ca.com
-References: <20221123201552.7865-1-casey@schaufler-ca.com>
- <20221123201552.7865-3-casey@schaufler-ca.com>
- <a94f2bf6-1429-af6d-64a2-3403f60c8ba3@digikod.net>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <a94f2bf6-1429-af6d-64a2-3403f60c8ba3@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.20863 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/25/2022 8:41 AM, Mickaël Salaün wrote:
->
-> On 23/11/2022 21:15, Casey Schaufler wrote:
->> Add an integer member "attrs_used" to the struct lsm_id which
->> identifies the API related data associated with each security
->> module. The initial set of features maps to information that
->> has traditionaly been available in /proc/self/attr. They are
->> documented in a new userspace-api file.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>   Documentation/userspace-api/index.rst |  1 +
->>   Documentation/userspace-api/lsm.rst   | 55 +++++++++++++++++++++++++++
->>   include/linux/lsm_hooks.h             |  2 +
->>   include/uapi/linux/lsm.h              | 12 ++++++
->>   security/apparmor/lsm.c               |  1 +
->>   security/selinux/hooks.c              |  2 +
->>   security/smack/smack_lsm.c            |  1 +
->>   7 files changed, 74 insertions(+)
->>   create mode 100644 Documentation/userspace-api/lsm.rst
->>
->> diff --git a/Documentation/userspace-api/index.rst
->> b/Documentation/userspace-api/index.rst
->> index c78da9ce0ec4..6feff0fcd88f 100644
->> --- a/Documentation/userspace-api/index.rst
->> +++ b/Documentation/userspace-api/index.rst
->> @@ -30,6 +30,7 @@ place where this information is gathered.
->>      sysfs-platform_profile
->>      vduse
->>      futex2
->> +   lsm
->>     .. only::  subproject and html
->>   diff --git a/Documentation/userspace-api/lsm.rst
->> b/Documentation/userspace-api/lsm.rst
->> new file mode 100644
->> index 000000000000..6ddf5506110b
->> --- /dev/null
->> +++ b/Documentation/userspace-api/lsm.rst
->> @@ -0,0 +1,55 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +.. Copyright (C) 2022 Casey Schaufler <casey@schaufler-ca.com>
->> +.. Copyright (C) 2022 Intel Corporation
->> +
->> +=====================================
->> +Linux Security Modules
->> +=====================================
->> +
->> +:Author: Casey Schaufler
->> +:Date: November 2022
->> +
->> +Linux security modules (LSM) provide a mechanism to implement
->> +additional access controls to the Linux security policies.
->> +
->> +The various security modules may support any of these attributes:
->> +
->> +``LSM_ATTR_CURRENT`` is the current, active security context of the
->> +process.
->> +The proc filesystem provides this value in ``/proc/self/attr/current``.
->> +This is supported by the SELinux, Smack and AppArmor security modules.
->> +Smack also provides this value in ``/proc/self/attr/smack/current``.
->> +AppArmor also provides this value in
->> ``/proc/self/attr/apparmor/current``.
->> +
->> +``LSM_ATTR_EXEC`` is the security context of the process at the time
->> the
->> +current image was executed.
->> +The proc filesystem provides this value in ``/proc/self/attr/exec``.
->> +This is supported by the SELinux and AppArmor security modules.
->> +AppArmor also provides this value in ``/proc/self/attr/apparmor/exec``.
->> +
->> +``LSM_ATTR_FSCREATE`` is the security context of the process used when
->> +creating file system objects.
->> +The proc filesystem provides this value in
->> ``/proc/self/attr/fscreate``.
->> +This is supported by the SELinux security module.
->> +
->> +``LSM_ATTR_KEYCREATE`` is the security context of the process used when
->> +creating key objects.
->> +The proc filesystem provides this value in
->> ``/proc/self/attr/keycreate``.
->> +This is supported by the SELinux security module.
->> +
->> +``LSM_ATTR_PREV`` is the security context of the process at the time
->> the
->> +current security context was set.
->> +The proc filesystem provides this value in ``/proc/self/attr/prev``.
->> +This is supported by the SELinux and AppArmor security modules.
->> +AppArmor also provides this value in ``/proc/self/attr/apparmor/prev``.
->> +
->> +``LSM_ATTR_SOCKCREATE`` is the security context of the process used
->> when
->> +creating socket objects.
->> +The proc filesystem provides this value in
->> ``/proc/self/attr/sockcreate``.
->> +This is supported by the SELinux security module.
->> +
->> +Additional documentation
->> +========================
->> +
->> +* Documentation/security/lsm.rst
->> +* Documentation/security/lsm-development.rst
->> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->> index d306db1044d1..7e88acc37a29 100644
->> --- a/include/linux/lsm_hooks.h
->> +++ b/include/linux/lsm_hooks.h
->> @@ -1606,12 +1606,14 @@ struct security_hook_heads {
->>    * struct lsm_id - identify a Linux Security Module.
->>    * @lsm: Name of the LSM. Must be approved by the LSM maintainers.
->>    * @id: LSM ID number from uapi/linux/lsm.h
->> + * @attrs_used: Which attributes this LSM supports.
->>    *
->>    * Contains the information that identifies the LSM.
->>    */
->>   struct lsm_id {
->>       const u8    *lsm;
->>       u32        id;
->> +    u64        attrs_used;
->
-> I'd prefer this field to be part of the previous patch. This doesn't
-> change much but it is to highlight that the struct lsm_id size should
-> not change unless properly handled by userspace.
+On 16.11.22 11:26, David Hildenbrand wrote:
+> FOLL_FORCE is really only for ptrace access. According to commit
+> 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are always
+> writable"), get_vaddr_frames() currently pins all pages writable as a
+> workaround for issues with read-only buffers.
+> 
+> FOLL_FORCE, however, seems to be a legacy leftover as it predates
+> commit 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are
+> always writable"). Let's just remove it.
+> 
+> Once the read-only buffer issue has been resolved, FOLL_WRITE could
+> again be set depending on the DMA direction.
+> 
+> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Tomasz Figa <tfiga@chromium.org>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>   drivers/media/common/videobuf2/frame_vector.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
+> index 542dde9d2609..062e98148c53 100644
+> --- a/drivers/media/common/videobuf2/frame_vector.c
+> +++ b/drivers/media/common/videobuf2/frame_vector.c
+> @@ -50,7 +50,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+>   	start = untagged_addr(start);
+>   
+>   	ret = pin_user_pages_fast(start, nr_frames,
+> -				  FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
+> +				  FOLL_WRITE | FOLL_LONGTERM,
+>   				  (struct page **)(vec->ptrs));
+>   	if (ret > 0) {
+>   		vec->got_ref = true;
 
-Sigh. Given my druthers there would be a lot fewer, but somewhat larger, patches
-in this set. I will happily make this change, but fear reprisal from those who
-want a bizzilion tiny patches. (You know who you are) Also note that this is not
-an externally visible structure, and that the lsm_ctx structure that is user
-visible hasn't been introduced yet.
 
->
->
->>   };
->>     /*
->> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
->> index 47791c330cbf..8e9124bf622c 100644
->> --- a/include/uapi/linux/lsm.h
->> +++ b/include/uapi/linux/lsm.h
->> @@ -29,4 +29,16 @@
->>   #define LSM_ID_BPF        110
->>   #define LSM_ID_LANDLOCK        111
->>   +/*
->> + * LSM_ATTR_XXX values identify the /proc/.../attr entry that the
->> + * context represents. Not all security modules provide all of these
->> + * values. Some security modules provide none of them.
->> + */
->> +#define LSM_ATTR_CURRENT    0x0001
->> +#define LSM_ATTR_EXEC        0x0002
->> +#define LSM_ATTR_FSCREATE    0x0004
->> +#define LSM_ATTR_KEYCREATE    0x0008
->> +#define LSM_ATTR_PREV        0x0010
->> +#define LSM_ATTR_SOCKCREATE    0x0020
->> +
->>   #endif /* _UAPI_LINUX_LSM_H */
->> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->> index b859b1af6c75..3a6bf4f95d84 100644
->> --- a/security/apparmor/lsm.c
->> +++ b/security/apparmor/lsm.c
->> @@ -1206,6 +1206,7 @@ struct lsm_blob_sizes apparmor_blob_sizes
->> __lsm_ro_after_init = {
->>   static struct lsm_id apparmor_lsmid __lsm_ro_after_init = {
->>       .lsm = "apparmor",
->>       .id = LSM_ID_APPARMOR,
->> +    .attrs_used = LSM_ATTR_CURRENT | LSM_ATTR_PREV | LSM_ATTR_EXEC,
->>   };
->>     static struct security_hook_list apparmor_hooks[]
->> __lsm_ro_after_init = {
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index 5fcce36267bd..e831d9c38c54 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -7018,6 +7018,8 @@ static int selinux_uring_cmd(struct
->> io_uring_cmd *ioucmd)
->>   static struct lsm_id selinux_lsmid __lsm_ro_after_init = {
->>       .lsm = "selinux",
->>       .id = LSM_ID_SELINUX,
->> +    .attrs_used = LSM_ATTR_CURRENT | LSM_ATTR_EXEC |
->> LSM_ATTR_FSCREATE |
->> +              LSM_ATTR_KEYCREATE | LSM_ATTR_PREV | LSM_ATTR_SOCKCREATE,
->>   };
->>     /*
->> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
->> index c7ba80e20b8d..c2a05217bde4 100644
->> --- a/security/smack/smack_lsm.c
->> +++ b/security/smack/smack_lsm.c
->> @@ -4791,6 +4791,7 @@ struct lsm_blob_sizes smack_blob_sizes
->> __lsm_ro_after_init = {
->>   static struct lsm_id smack_lsmid __lsm_ro_after_init = {
->>       .lsm = "smack",
->>       .id = LSM_ID_SMACK,
->> +    .attrs_used = LSM_ATTR_CURRENT,
->>   };
->>     static struct security_hook_list smack_hooks[]
->> __lsm_ro_after_init = {
+Hi Andrew,
+
+see the discussion at [1] regarding a conflict and how to proceed with
+upstreaming. The conflict would be easy to resolve, however, also
+the patch description doesn't make sense anymore with [1].
+
+
+On top of mm-unstable, reverting this patch and applying [1] gives me
+an updated patch:
+
+
+ From 1e66c25f1467c1f1e5f275312f2c6df29308d4df Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Wed, 16 Nov 2022 11:26:55 +0100
+Subject: [PATCH] mm/frame-vector: remove FOLL_FORCE usage
+
+GUP now supports reliable R/O long-term pinning in COW mappings, such
+that we break COW early. MAP_SHARED VMAs only use the shared zeropage so
+far in one corner case (DAXFS file with holes), which can be ignored
+because GUP does not support long-term pinning in fsdax (see
+check_vma_flags()).
+
+Consequently, FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM is no longer required
+for reliable R/O long-term pinning: FOLL_LONGTERM is sufficient. So stop
+using FOLL_FORCE, which is really only for ptrace access.
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tomasz Figa <tfiga@chromium.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+  drivers/media/common/videobuf2/frame_vector.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
+index aad72640f055..8606fdacf5b8 100644
+--- a/drivers/media/common/videobuf2/frame_vector.c
++++ b/drivers/media/common/videobuf2/frame_vector.c
+@@ -41,7 +41,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames, bool write,
+  	int ret_pin_user_pages_fast = 0;
+  	int ret = 0;
+  	int err;
+-	unsigned int gup_flags = FOLL_FORCE | FOLL_LONGTERM;
++	unsigned int gup_flags = FOLL_LONGTERM;
+  
+  	if (nr_frames == 0)
+  		return 0;
+-- 
+2.38.1
+
+
+
+Please let me know how you want to proceed. Ideally, you'd pick up
+[1] and apply this updated patch. Also, please tell me if I should
+send this updated patch in a separate mail (e.g., as reply to this mail).
+
+
+[1] https://lkml.kernel.org/r/71bdd3cf-b044-3f12-df58-7c16d5749587@xs4all.nl
+
+-- 
+Thanks,
+
+David / dhildenb
+
