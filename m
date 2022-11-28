@@ -2,107 +2,151 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7121AC43217
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Nov 2022 10:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCEBC4167D
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Nov 2022 11:00:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230332AbiK1KiY (ORCPT
+        id S230470AbiK1LAY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Nov 2022 05:38:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35680 "EHLO
+        Mon, 28 Nov 2022 06:00:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230479AbiK1KiD (ORCPT
+        with ESMTP id S230214AbiK1LAR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Nov 2022 05:38:03 -0500
-Received: from sender-of-o50.zoho.in (sender-of-o50.zoho.in [103.117.158.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B017313FA8;
-        Mon, 28 Nov 2022 02:37:28 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1669631807; cv=none; 
-        d=zohomail.in; s=zohoarc; 
-        b=f7Vkrq9jkn0HdgdrF+Wh4ncq+GGSsebcyRYBNsqcYTHRclUJfK6GZePbRmQDC0pmLvF4cIbYkjB0tjmOqAjT9DuNtyXkv/v0BL2whbqlr60zcCG6YUti8RD9JBSyPwKA7OrvVudPVnUUzC1+RRdVg3I7NG9b2jZll5jPewQ9nn4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1669631807; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=tnLz2qpKPI3vYwMGy9lOfRIw4je11ytpVT+lhHW/+Qg=; 
-        b=MVkIZcWesgBR1eRTLS74wg54CR+GOa4tXB5fkrfalio75ubmQPbOPgSq0R7/dtlLXFGMmkSamKwP/onRlzpthjsZsufD7VSDUI7lqlM70QQjLmw7DWXAHrQUJrF+QtKnyB0IHAKnVn3OS7RwWXRZ3VJb9dmEkVWyTb/SqdRdS+k=
-ARC-Authentication-Results: i=1; mx.zohomail.in;
-        dkim=pass  header.i=siddh.me;
-        spf=pass  smtp.mailfrom=code@siddh.me;
-        dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1669631807;
-        s=zmail; d=siddh.me; i=code@siddh.me;
-        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:From:From:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=tnLz2qpKPI3vYwMGy9lOfRIw4je11ytpVT+lhHW/+Qg=;
-        b=tfokIDKX5BgrbyGBN6WgA9XNMY5994pwLNdGxOGtdG6KNNb8kRC1PN5mtsFbg+ep
-        nybrNGyYVe+LUU3ElQbK8TKlTx6LgXYMgz2E0ljqcqyTt/RPpizIfmXlWhJUseqV8Ng
-        eXUHnFJeGQ+6Jgmmla5h2oyEhsqCgTWrfczIBaTw=
-Received: from [192.168.1.9] (106.201.114.188 [106.201.114.188]) by mx.zoho.in
-        with SMTPS id 1669631805587181.18913226273196; Mon, 28 Nov 2022 16:06:45 +0530 (IST)
-Message-ID: <6a22e287-9d90-85a9-f5e6-49e600bf0d80@siddh.me>
-Date:   Mon, 28 Nov 2022 16:06:44 +0530
+        Mon, 28 Nov 2022 06:00:17 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F32A19B
+        for <linux-security-module@vger.kernel.org>; Mon, 28 Nov 2022 02:59:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669633156;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=peJt9P7iZNSaiwA/6aObimwPef1VvCVnc1Ve9gvBOC8=;
+        b=BLroK5vUWzY++k7DnvQyAHG8BvtAmGCJL/btX31FkW/XyUR8PyCaN8NEBvy2MudD+J0RS5
+        lkkUnvyXYvph3VGvg+W5NGvnv3AvGh6+Q1IGhhXoeQAtiSFR99malK0sZPcMkxLK+PkiKD
+        6BXAya0nGon3NoAnciDaET50EcH+tFE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-347-0pe5WdpIPcOmbJGqYwPiCw-1; Mon, 28 Nov 2022 05:59:13 -0500
+X-MC-Unique: 0pe5WdpIPcOmbJGqYwPiCw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D15B1811E75;
+        Mon, 28 Nov 2022 10:59:12 +0000 (UTC)
+Received: from T590 (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B8D1E40C6EC2;
+        Mon, 28 Nov 2022 10:59:07 +0000 (UTC)
+Date:   Mon, 28 Nov 2022 18:59:02 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Joel Granados <j.granados@samsung.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kanchan Joshi <joshi.k@samsung.com>, ddiss@suse.de,
+        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
+ implement the ioctl op convention
+Message-ID: <Y4SUdt5HqTUPJwcT@T590>
+References: <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
+ <20221116125051.3338926-2-j.granados@samsung.com>
+ <20221116173821.GC5094@test-zns>
+ <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com>
+ <20221117094004.b5l64ipicitphkun@localhost>
+ <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
+ <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
+ <CAHC9VhR+RFqJ7c6mFhnMFdDXPcCBg-pnAzEuyOc-TX5hmsubwg@mail.gmail.com>
+ <Y3zW02nH1LQhb/qz@T590>
+ <20221128101329.lcn3bimihmtwsqqm@localhost>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [RESEND PATCH v2 0/2] watch_queue: Clean up some code
-From:   Siddh Raman Pant <code@siddh.me>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        keyrings <keyrings@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-References: <cover.1668248462.git.code@siddh.me>
-Content-Language: en-US, en-GB, hi-IN
-In-Reply-To: <cover.1668248462.git.code@siddh.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221128101329.lcn3bimihmtwsqqm@localhost>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 12 Nov 2022 16:00:39 +0530, Siddh Raman Pant wrote:
-> There is a dangling reference to pipe in a watch_queue after clearing it.
-> Thus, NULL that pointer while clearing.
+On Mon, Nov 28, 2022 at 11:13:29AM +0100, Joel Granados wrote:
+> On Tue, Nov 22, 2022 at 10:04:03PM +0800, Ming Lei wrote:
+> > On Mon, Nov 21, 2022 at 04:05:37PM -0500, Paul Moore wrote:
+> > > On Mon, Nov 21, 2022 at 2:53 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> > > > On Thu, Nov 17, 2022 at 05:10:07PM -0500, Paul Moore wrote:
+> > > > > On Thu, Nov 17, 2022 at 4:40 AM Joel Granados <j.granados@samsung.com> wrote:
+> > > > > > On Wed, Nov 16, 2022 at 02:21:14PM -0500, Paul Moore wrote:
+> > > > >
+> > > > > ...
+> > > > >
+> > > > > > > * As we discussed previously, the real problem is the fact that we are
+> > > > > > > missing the necessary context in the LSM hook to separate the
+> > > > > > > different types of command targets.  With traditional ioctls we can
+> > > > > > > look at the ioctl number and determine both the type of
+> > > > > > > device/subsystem/etc. as well as the operation being requested; there
+> > > > > > > is no such information available with the io_uring command
+> > > > > > > passthrough.  In this sense, the io_uring command passthrough is
+> > > > > > > actually worse than traditional ioctls from an access control
+> > > > > > > perspective.  Until we have an easy(ish)[1] way to determine the
+> > > > > > > io_uring command target type, changes like the one suggested here are
+> > > > > > > going to be doomed as each target type is free to define their own
+> > > > > > > io_uring commands.
+> > > > > >
+> > > > > > The only thing that comes immediately to mind is that we can have
+> > > > > > io_uring users define a function that is then passed to the LSM
+> > > > > > infrastructure. This function will have all the logic to give relative
+> > > > > > context to LSM. It would be general enough to fit all the possible commands
+> > > > > > and the logic would be implemented in the "drivers" side so there is no
+> > > > > > need for LSM folks to know all io_uring users.
+> > > > >
+> > > > > Passing a function pointer to the LSM to fetch, what will likely be
+> > > > > just a constant value, seems kinda ugly, but I guess we only have ugly
+> > > > > options at this point.
+> > > >
+> > > > I am not sure if this helps yet, but queued on modules-next we now have
+> > > > an improvement in speed of about 1500x for kallsyms_lookup_name(), and
+> > > > so symbol lookups are now fast. Makes me wonder if a type of special
+> > > > export could be drawn up for specific calls which follow a structure
+> > > > and so the respective lsm could be inferred by a prefix instead of
+> > > > placing the calls in-place. Then it would not mattter where a call is
+> > > > used, so long as it would follow a specific pattern / structure with
+> > > > all the crap you need on it.
+> > > 
+> > > I suspect we may be talking about different things here, I don't think
+> > > the issue is which LSM(s) may be enabled, as the call is to
+> > > security_uring_cmd() regardless.  I believe the issue is more of how
+> > > do the LSMs determine the target of the io_uring command, e.g. nvme or
+> > > ublk.
+> > > 
+> > > My understanding is that Joel was suggesting a change to the LSM hook
+> > > to add a function specific pointer (presumably defined as part of the
+> > > file_operations struct) that could be called by the LSM to determine
+> > > the target.
+> > > 
+> > > Although now that I'm looking again at the file_operations struct, I
+> > > wonder if we would be better off having the LSMs inspect the
+> > > file_operations::owner field, potentially checking the module::name
+> > > field.  It's a little painful in the sense that it is potentially
+> > > multiple strcmp() calls for each security_uring_cmd() call, but I'm
+> > > not sure the passed function approach would be much better.  Do we
+> > > have a consistent per-module scalar value we can use instead of a
+> > > character string?
+> > 
+> > In future there may be more uring_cmd kernel users, maybe we need to
+> > consider to use one reserved field in io_uring_sqe for describing the
+> > target type if it is one must for security subsystem, and this way
+> > will be similar with traditional ioctl which encodes this kind of
+> > info in command type.
+> This is of course another option. I was a bit reluctant to start the
+> discussion with this implementation, but now that you have brought it up
+> I can come up with an initial RFC and we can add it to the mix of
+> possibilities.
 > 
-> This change renders wqueue->defunct superfluous, as the latter is only used
-> to check if watch_queue is cleared. With this change, the pipe is NULLed
-> while clearing, so we can just check if the pipe is NULL.
-> 
-> Extending comment for watch_queue->pipe in the definition of watch_queue
-> made the comment conventionally too long (it was already past 80 chars),
-> so I have changed the struct annotations to be kerneldoc-styled, so that
-> I can extend the comment mentioning that the pipe is NULL when watch_queue
-> is cleared. In the process, I have also hopefully improved documentation
-> by documenting things which weren't documented before.
-> 
-> Changes in v2:
-> - Merged the NULLing and removing defunct patches.
-> - Removed READ_ONCE barrier in lock_wqueue().
-> - Improved and fixed errors in struct docs.
-> - Better commit messages.
-> 
-> Original date of posting patch: 6 Aug 2022
-> 
-> Siddh Raman Pant (2):
->   include/linux/watch_queue: Improve documentation
->   kernel/watch_queue: NULL the dangling *pipe, and use it for clear
->     check
-> 
->  include/linux/watch_queue.h | 100 ++++++++++++++++++++++++++----------
->  kernel/watch_queue.c        |  12 ++---
->  2 files changed, 79 insertions(+), 33 deletions(-)
-> 
+> Would you just add it to the end of the struct? or what reserved field
+> are you referring to?
 
-Hi,
+io_uring_sqe is uapi, so you can't add any field to sqe, and '__pad1'
+could be best field for carrying this info, given it is close to 'cmd_op',
+and 'u8' should be enough for storing target type info.
 
-Please review the quoted patches, which can be found on:
-https://lore.kernel.org/all/cover.1668248462.git.code@siddh.me/
 
-Please let me know if any changes are required.
+thanks,
+Ming
 
-Thanks,
-Siddh
