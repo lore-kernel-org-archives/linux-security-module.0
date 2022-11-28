@@ -2,125 +2,83 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F31E3C46467
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Nov 2022 01:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E569C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Nov 2022 02:04:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229688AbiK1B7b (ORCPT
+        id S229555AbiK1CET (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 27 Nov 2022 20:59:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
+        Sun, 27 Nov 2022 21:04:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbiK1B7a (ORCPT
+        with ESMTP id S229504AbiK1CES (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 27 Nov 2022 20:59:30 -0500
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625E6DFFF;
-        Sun, 27 Nov 2022 17:59:29 -0800 (PST)
-Date:   Mon, 28 Nov 2022 02:59:20 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=weissschuh.net;
-        s=mail; t=1669600767;
-        bh=6bLjo6zSUiel5ocq0aZAs181VjD/dTQcfURr0PI89DI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oEgFqC5bZJylcOj3OUuUE57So9eNi4aGm4JR+yTVOjMtCr1+EimA4Lm4X5bGV3hkg
-         Bqf/KYPqlrYvrwi3JOOk3LBckYrlVnbn+gNrNrAbJoDIbwf0DAM3Jnc45a38n9yDKo
-         jOgUz3mxYrj41XnBxeAwr7su/LlFa2baKlQbmJtM=
-From:   Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Pearson <markpearson@lenovo.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] certs: log hash value on blacklist error
-Message-ID: <8b9e9bf8-ae44-485a-9b30-85a71a236f06@t-8ch.de>
-References: <20221118040343.2958-1-linux@weissschuh.net>
- <20221118040343.2958-2-linux@weissschuh.net>
- <Y4QK2cmptp4vpRj/@kernel.org>
+        Sun, 27 Nov 2022 21:04:18 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6FBAD2F9;
+        Sun, 27 Nov 2022 18:04:17 -0800 (PST)
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4NL7zv0ShszRpQL;
+        Mon, 28 Nov 2022 10:03:39 +0800 (CST)
+Received: from kwepemm600001.china.huawei.com (7.193.23.3) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 28 Nov 2022 10:04:15 +0800
+Received: from localhost.localdomain (10.90.53.65) by
+ kwepemm600001.china.huawei.com (7.193.23.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 28 Nov 2022 10:04:15 +0800
+From:   limin <limin100@huawei.com>
+To:     <shuah@kernel.org>, <mic@digikod.net>,
+        <linux-kselftest@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <hannes@cmpxchg.org>, <mhocko@kernel.org>,
+        <roman.gushchin@linux.dev>, <shakeelb@google.com>,
+        <songmuchun@bytedance.com>, <tj@kernel.org>,
+        <lizefan.x@bytedance.com>
+Subject: [PATCH -next] selftests/landlock: Fix selftest ptrace_test run fail
+Date:   Mon, 28 Nov 2022 10:04:09 +0800
+Message-ID: <20221128020409.1545717-1-limin100@huawei.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Y4QK2cmptp4vpRj/@kernel.org>
-Jabber-ID: thomas@t-8ch.de
-X-Accept: text/plain, text/html;q=0.2, text/*;q=0.1
-X-Accept-Language: en-us, en;q=0.8, de-de;q=0.7, de;q=0.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.90.53.65]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600001.china.huawei.com (7.193.23.3)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2022-11-28 03:11+0200, Jarkko Sakkinen wrote:
-> "Make blacklisted hash available in klog"
-> 
-> On Fri, Nov 18, 2022 at 05:03:41AM +0100, Thomas Weißschuh wrote:
-> > Without this information these logs are not actionable.
-> 
-> Without blacklisted hash?
-> 
-> > For example on duplicate blacklisted hashes reported by the system
-> > firmware users should be able to report the erroneous hashes to their
-> > system vendors.
-> > 
-> > While we are at it use the dedicated format string for ERR_PTR.
-> 
-> Lacks the beef so saying "while we are at it" makes no sense.
+Tests PTRACE_ATTACH and PTRACE_MODE_READ on the parent,
+trace parent return -1 when child== 0
+How to reproduce warning:
+$ make -C tools/testing/selftests TARGETS=landlock run_tests
 
-What about this:
+Signed-off-by: limin <limin100@huawei.com>
+---
+ tools/testing/selftests/landlock/ptrace_test.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-  [PATCH] certs: make blacklisted hash available in klog
+diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
+index c28ef98ff3ac..88c4dc63eea0 100644
+--- a/tools/testing/selftests/landlock/ptrace_test.c
++++ b/tools/testing/selftests/landlock/ptrace_test.c
+@@ -267,12 +267,11 @@ TEST_F(hierarchy, trace)
+ 		/* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the parent. */
+ 		err_proc_read = test_ptrace_read(parent);
+ 		ret = ptrace(PTRACE_ATTACH, parent, NULL, 0);
++		EXPECT_EQ(-1, ret);
++		EXPECT_EQ(EPERM, errno);
+ 		if (variant->domain_child) {
+-			EXPECT_EQ(-1, ret);
+-			EXPECT_EQ(EPERM, errno);
+ 			EXPECT_EQ(EACCES, err_proc_read);
+ 		} else {
+-			EXPECT_EQ(0, ret);
+ 			EXPECT_EQ(0, err_proc_read);
+ 		}
+ 		if (ret == 0) {
+-- 
+2.33.0
 
-  One common situation triggering this log statement are duplicate hashes
-  reported by the system firmware.
-
-  These duplicates should be removed from the firmware.
-
-  Without logging the blacklisted hash triggering the issue however the users
-  can not report it properly to the firmware vendors and the firmware vendors
-  can not easily see which specific hash is duplicated.
-
-  While changing the log message also use the dedicated ERR_PTR format
-  placeholder for the returned error value.
-
-> > Fixes: 6364d106e041 ("certs: Allow root user to append signed hashes to the blacklist keyring")
-> 
-> Why does this count as a bug?
-
-These error logs are confusing to users, prompting them to waste time
-investigating them and even mess with their firmware settings.
-(As indicated in the threads linked from the cover letter)
-
-The most correct fix would be patches 2 and 3 from this series.
-
-I was not sure if patch 2 would be acceptable for stable as it introduces new
-infrastructure code.
-So patch 1 enables users to report the issue to their firmware vendors and get
-the spurious logs resolved that way.
-
-If these assumptions are incorrect I can fold patch 1 into patch 3.
-
-But are patch 2 and 3 material for stable?
-
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> >  certs/blacklist.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/certs/blacklist.c b/certs/blacklist.c
-> > index 41f10601cc72..6e260c4b6a19 100644
-> > --- a/certs/blacklist.c
-> > +++ b/certs/blacklist.c
-> > @@ -192,7 +192,7 @@ static int mark_raw_hash_blacklisted(const char *hash)
-> >  				   KEY_ALLOC_NOT_IN_QUOTA |
-> >  				   KEY_ALLOC_BUILT_IN);
-> >  	if (IS_ERR(key)) {
-> > -		pr_err("Problem blacklisting hash (%ld)\n", PTR_ERR(key));
-> > +		pr_err("Problem blacklisting hash %s: %pe\n", hash, key);
-> >  		return PTR_ERR(key);
-> >  	}
-> >  	return 0;
-> > -- 
-> > 2.38.1
-> > 
-> 
-> BR, Jarkko
