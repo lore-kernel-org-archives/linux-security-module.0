@@ -2,151 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCEBC4167D
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Nov 2022 11:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 921B8C43217
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Nov 2022 12:49:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230470AbiK1LAY (ORCPT
+        id S230362AbiK1MtS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Nov 2022 06:00:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51064 "EHLO
+        Mon, 28 Nov 2022 07:49:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230214AbiK1LAR (ORCPT
+        with ESMTP id S230040AbiK1MtQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Nov 2022 06:00:17 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F32A19B
-        for <linux-security-module@vger.kernel.org>; Mon, 28 Nov 2022 02:59:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669633156;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=peJt9P7iZNSaiwA/6aObimwPef1VvCVnc1Ve9gvBOC8=;
-        b=BLroK5vUWzY++k7DnvQyAHG8BvtAmGCJL/btX31FkW/XyUR8PyCaN8NEBvy2MudD+J0RS5
-        lkkUnvyXYvph3VGvg+W5NGvnv3AvGh6+Q1IGhhXoeQAtiSFR99malK0sZPcMkxLK+PkiKD
-        6BXAya0nGon3NoAnciDaET50EcH+tFE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-347-0pe5WdpIPcOmbJGqYwPiCw-1; Mon, 28 Nov 2022 05:59:13 -0500
-X-MC-Unique: 0pe5WdpIPcOmbJGqYwPiCw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D15B1811E75;
-        Mon, 28 Nov 2022 10:59:12 +0000 (UTC)
-Received: from T590 (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B8D1E40C6EC2;
-        Mon, 28 Nov 2022 10:59:07 +0000 (UTC)
-Date:   Mon, 28 Nov 2022 18:59:02 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Joel Granados <j.granados@samsung.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kanchan Joshi <joshi.k@samsung.com>, ddiss@suse.de,
-        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
- implement the ioctl op convention
-Message-ID: <Y4SUdt5HqTUPJwcT@T590>
-References: <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
- <20221116125051.3338926-2-j.granados@samsung.com>
- <20221116173821.GC5094@test-zns>
- <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com>
- <20221117094004.b5l64ipicitphkun@localhost>
- <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
- <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
- <CAHC9VhR+RFqJ7c6mFhnMFdDXPcCBg-pnAzEuyOc-TX5hmsubwg@mail.gmail.com>
- <Y3zW02nH1LQhb/qz@T590>
- <20221128101329.lcn3bimihmtwsqqm@localhost>
+        Mon, 28 Nov 2022 07:49:16 -0500
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABBCAE41
+        for <linux-security-module@vger.kernel.org>; Mon, 28 Nov 2022 04:49:12 -0800 (PST)
+Received: by mail-qk1-x72b.google.com with SMTP id c2so7066944qko.1
+        for <linux-security-module@vger.kernel.org>; Mon, 28 Nov 2022 04:49:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TGVmMJIaDzF+HZ9gyq+88LkwK1s7TvZ3LoSpvYVKuJs=;
+        b=Yc4mY6AvvR8J0FvilEHOp4YJztk5dej6+6PHrqtJwOKPe36IVOw6KUbOFPvxqaIUVL
+         EKFpogzvGm5EXh9TW/siBoniymJvMkxoq2s2dEzDKzySHox0B0xSAyWktDHmUzO51+5r
+         xBS2R51caFTcaZHv7tE2Is3GOhS4XFGMGdcni1OmAj9u7AIsdo2OBC6Zs3HQUO6jBJLv
+         WeR77C4rP7xgp7c/aFdK2MLoUKskkP98Mt6qMdHjTw7hhwDdYJ7y6jlJ5bHRt/CQ7ysK
+         65OhWflnpl2owcwtMU/s6jA0FNYtvL78Qc9INGOyriQqV3yzcPyXQWZS92FrOCZ0e3aP
+         rMug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TGVmMJIaDzF+HZ9gyq+88LkwK1s7TvZ3LoSpvYVKuJs=;
+        b=FCgWqbauo3m3KlhuF09pbl1sSqOLHvZKjXvlBk1XuqvDnTA8cfUELnr9MDh0JJRz8X
+         cXqU98IBhn8E6mxk5plvvzfFnnC/j8RLcUekx19D05KEC9pjx/sX0gW8P5pLGiapW5oN
+         f9/S/GFVNHtbW8XnITE1EU6wbecIIyDBrPXO4Gu/OePv8iRY6MHv0OCdHwIXbd3M1Y9g
+         rENazqxd09evtL/5UuWoJ/0N5pV3xVxc3vaEBdTHkhB8das8Cfv6IzYB2v5iKx9f9SST
+         YAVN9EPsRwId6jUlkKbwj7D3ZxZ19mqvQ1WEFWp0q70S3ijhVRHlwCHtRbel6H6KUEXk
+         rppA==
+X-Gm-Message-State: ANoB5pkRs2I95G6C/GyXE3zddx6jwsZ00NsdWNQz5xb1+V/8sGOgCsln
+        0Lt/MIay3NyIdR5mzzzBEgBh
+X-Google-Smtp-Source: AA0mqf4Ds2RG2gMvCRQqsJgfksVgiZ7yR5a4UThP2iPQ0CQqTIvFBEEQxZnN45hFk2rmk57REIkPQg==
+X-Received: by 2002:a37:9ad2:0:b0:6fc:3ccb:f0ea with SMTP id c201-20020a379ad2000000b006fc3ccbf0eamr19410302qke.669.1669639751623;
+        Mon, 28 Nov 2022 04:49:11 -0800 (PST)
+Received: from [192.168.68.74] (096-033-065-247.res.spectrum.com. [96.33.65.247])
+        by smtp.gmail.com with ESMTPSA id v2-20020ac873c2000000b003a57f822157sm6805786qtp.90.2022.11.28.04.49.10
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Nov 2022 04:49:10 -0800 (PST)
+From:   Paul Moore <paul@paul-moore.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        <casey.schaufler@intel.com>,
+        <linux-security-module@vger.kernel.org>, <jmorris@namei.org>,
+        <keescook@chromium.org>, <john.johansen@canonical.com>,
+        <penguin-kernel@i-love.sakura.ne.jp>,
+        <stephen.smalley.work@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <linux-api@vger.kernel.org>
+Date:   Mon, 28 Nov 2022 07:49:11 -0500
+Message-ID: <184be48c558.28e3.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+In-Reply-To: <Y4Rok2iAOekw/tSJ@kroah.com>
+References: <20221123201552.7865-1-casey@schaufler-ca.com>
+ <20221123201552.7865-2-casey@schaufler-ca.com>
+ <Y38D1s3uQ6zNORei@kroah.com>
+ <463cb747-5bac-9e8e-b78e-1ff6a1b29142@digikod.net>
+ <CAHC9VhR9h1GF6VGovp1+UB-vt+QNofjmecPwLqE3OviKQHRMcg@mail.gmail.com>
+ <Y4Rok2iAOekw/tSJ@kroah.com>
+User-Agent: AquaMail/1.40.1 (build: 104001224)
+Subject: Re: [PATCH v3 1/9] LSM: Identify modules by more than name
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221128101329.lcn3bimihmtwsqqm@localhost>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 28, 2022 at 11:13:29AM +0100, Joel Granados wrote:
-> On Tue, Nov 22, 2022 at 10:04:03PM +0800, Ming Lei wrote:
-> > On Mon, Nov 21, 2022 at 04:05:37PM -0500, Paul Moore wrote:
-> > > On Mon, Nov 21, 2022 at 2:53 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > > > On Thu, Nov 17, 2022 at 05:10:07PM -0500, Paul Moore wrote:
-> > > > > On Thu, Nov 17, 2022 at 4:40 AM Joel Granados <j.granados@samsung.com> wrote:
-> > > > > > On Wed, Nov 16, 2022 at 02:21:14PM -0500, Paul Moore wrote:
-> > > > >
-> > > > > ...
-> > > > >
-> > > > > > > * As we discussed previously, the real problem is the fact that we are
-> > > > > > > missing the necessary context in the LSM hook to separate the
-> > > > > > > different types of command targets.  With traditional ioctls we can
-> > > > > > > look at the ioctl number and determine both the type of
-> > > > > > > device/subsystem/etc. as well as the operation being requested; there
-> > > > > > > is no such information available with the io_uring command
-> > > > > > > passthrough.  In this sense, the io_uring command passthrough is
-> > > > > > > actually worse than traditional ioctls from an access control
-> > > > > > > perspective.  Until we have an easy(ish)[1] way to determine the
-> > > > > > > io_uring command target type, changes like the one suggested here are
-> > > > > > > going to be doomed as each target type is free to define their own
-> > > > > > > io_uring commands.
-> > > > > >
-> > > > > > The only thing that comes immediately to mind is that we can have
-> > > > > > io_uring users define a function that is then passed to the LSM
-> > > > > > infrastructure. This function will have all the logic to give relative
-> > > > > > context to LSM. It would be general enough to fit all the possible commands
-> > > > > > and the logic would be implemented in the "drivers" side so there is no
-> > > > > > need for LSM folks to know all io_uring users.
-> > > > >
-> > > > > Passing a function pointer to the LSM to fetch, what will likely be
-> > > > > just a constant value, seems kinda ugly, but I guess we only have ugly
-> > > > > options at this point.
-> > > >
-> > > > I am not sure if this helps yet, but queued on modules-next we now have
-> > > > an improvement in speed of about 1500x for kallsyms_lookup_name(), and
-> > > > so symbol lookups are now fast. Makes me wonder if a type of special
-> > > > export could be drawn up for specific calls which follow a structure
-> > > > and so the respective lsm could be inferred by a prefix instead of
-> > > > placing the calls in-place. Then it would not mattter where a call is
-> > > > used, so long as it would follow a specific pattern / structure with
-> > > > all the crap you need on it.
-> > > 
-> > > I suspect we may be talking about different things here, I don't think
-> > > the issue is which LSM(s) may be enabled, as the call is to
-> > > security_uring_cmd() regardless.  I believe the issue is more of how
-> > > do the LSMs determine the target of the io_uring command, e.g. nvme or
-> > > ublk.
-> > > 
-> > > My understanding is that Joel was suggesting a change to the LSM hook
-> > > to add a function specific pointer (presumably defined as part of the
-> > > file_operations struct) that could be called by the LSM to determine
-> > > the target.
-> > > 
-> > > Although now that I'm looking again at the file_operations struct, I
-> > > wonder if we would be better off having the LSMs inspect the
-> > > file_operations::owner field, potentially checking the module::name
-> > > field.  It's a little painful in the sense that it is potentially
-> > > multiple strcmp() calls for each security_uring_cmd() call, but I'm
-> > > not sure the passed function approach would be much better.  Do we
-> > > have a consistent per-module scalar value we can use instead of a
-> > > character string?
-> > 
-> > In future there may be more uring_cmd kernel users, maybe we need to
-> > consider to use one reserved field in io_uring_sqe for describing the
-> > target type if it is one must for security subsystem, and this way
-> > will be similar with traditional ioctl which encodes this kind of
-> > info in command type.
-> This is of course another option. I was a bit reluctant to start the
-> discussion with this implementation, but now that you have brought it up
-> I can come up with an initial RFC and we can add it to the mix of
-> possibilities.
-> 
-> Would you just add it to the end of the struct? or what reserved field
-> are you referring to?
+On November 28, 2022 2:51:55 AM Greg KH <gregkh@linuxfoundation.org> wrote:
 
-io_uring_sqe is uapi, so you can't add any field to sqe, and '__pad1'
-could be best field for carrying this info, given it is close to 'cmd_op',
-and 'u8' should be enough for storing target type info.
+> On Sun, Nov 27, 2022 at 10:48:53PM -0500, Paul Moore wrote:
+>> On Fri, Nov 25, 2022 at 11:19 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
+et> wrote:
+>>> On 24/11/2022 06:40, Greg KH wrote:
+>>>> On Wed, Nov 23, 2022 at 12:15:44PM -0800, Casey Schaufler wrote:
+>>>>> Create a struct lsm_id to contain identifying information
+>>>>> about Linux Security Modules (LSMs). At inception this contains
+>>>>> the name of the module and an identifier associated with the
+>>>>> security module. Change the security_add_hooks() interface to
+>>>>> use this structure. Change the individual modules to maintain
+>>>>> their own struct lsm_id and pass it to security_add_hooks().
+>>>>>
+>>>>> The values are for LSM identifiers are defined in a new UAPI
+>>>>> header file linux/lsm.h. Each existing LSM has been updated to
+>>>>> include it's LSMID in the lsm_id.
+>>>>>
+>>>>> The LSM ID values are sequential, with the oldest module
+>>>>> LSM_ID_CAPABILITY being the lowest value and the existing modules
+>>>>> numbered in the order they were included in the main line kernel.
+>>>>> This is an arbitrary convention for assigning the values, but
+>>>>> none better presents itself. The value 0 is defined as being invalid.
+>>>>> The values 1-99 are reserved for any special case uses which may
+>>>>> arise in the future.
+>>>>
+>>>> What would be a "special case" that deserves a lower number?
+>>>
+>>> I don't see any meaningful use case for these reserved numbers either.
+>>> If there are some, let's put them now, otherwise we should start with 1=
+.
+>>> Is it inspired by an existing UAPI?
+>>> Reserving 0 as invalid is good though.
+>>
+>> I haven't finished reviewing this latest patchset, but I wanted to
+>> comment on this quickly while I had a moment in front of a keyboard
+>> ... I did explain my desire and reasoning for this in a previous
+>> revision of this patchset and I still believe the
+>> reserved-for-potential-future-use to be a valid reason so I'm going to
+>> ask for this to remain.
+>
+> Then that reasoning and explaination needs to be here in the changelog
+> so that we understand and have a chance to agree/disagree with that.
+> Otherwise we, and everyone else, are left to just be confused.
+>
+> thanks,
+>
+> greg k-h
 
+The patch author should have done that considering I made my comments on th=
+e last revision.
 
-thanks,
-Ming
+--
+paul-moore.com
+
 
