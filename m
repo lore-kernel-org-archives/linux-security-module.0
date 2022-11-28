@@ -2,208 +2,148 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE0DC4167D
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Nov 2022 18:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21950C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Nov 2022 19:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232492AbiK1Sbj (ORCPT
+        id S232858AbiK1THP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Nov 2022 13:31:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41024 "EHLO
+        Mon, 28 Nov 2022 14:07:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232583AbiK1SbW (ORCPT
+        with ESMTP id S231710AbiK1THO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Nov 2022 13:31:22 -0500
-Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B536A1094;
-        Mon, 28 Nov 2022 10:27:05 -0800 (PST)
-Received: from in01.mta.xmission.com ([166.70.13.51]:35544)
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oziGY-00778D-Ki; Mon, 28 Nov 2022 10:50:02 -0700
-Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:58100 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oziGW-006oqs-Bm; Mon, 28 Nov 2022 10:50:02 -0700
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Andy Lutomirski' <luto@kernel.org>, Jann Horn <jannh@google.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jorge Merlino <jorge.merlino@canonical.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "John Johansen" <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Todd Kjos <tkjos@google.com>,
-        "Ondrej Mosnacek" <omosnace@redhat.com>,
-        Prashanth Prahlad <pprahlad@redhat.com>,
-        Micah Morton <mortonm@chromium.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
-References: <20221006082735.1321612-1-keescook@chromium.org>
-        <20221006082735.1321612-2-keescook@chromium.org>
-        <20221006090506.paqjf537cox7lqrq@wittgenstein>
-        <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
-        <2032f766-1704-486b-8f24-a670c0b3cb32@app.fastmail.com>
-        <d2a6ccdd8a734d36ae88866a4c16019b@AcuMS.aculab.com>
-Date:   Mon, 28 Nov 2022 11:49:07 -0600
-In-Reply-To: <d2a6ccdd8a734d36ae88866a4c16019b@AcuMS.aculab.com> (David
-        Laight's message of "Fri, 14 Oct 2022 22:03:18 +0000")
-Message-ID: <87sfi3rmuk.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Mon, 28 Nov 2022 14:07:14 -0500
+Received: from sonic317-38.consmr.mail.ne1.yahoo.com (sonic317-38.consmr.mail.ne1.yahoo.com [66.163.184.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFF7C286F4
+        for <linux-security-module@vger.kernel.org>; Mon, 28 Nov 2022 11:07:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669662432; bh=zqgUB3mZAQOQjit7U5aXZlIVGvUZND/Pw43ftnqmLuA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=SNM9gBqNkNG1nDtVAgflObmJMdss4PDY20ViqVjYN1GfnhBf7YBchKRPjSRMX8PKWC4ozM2xtpBTvOf8GkuojqhdQ7syatL5pwSIV99fTe/FrnKIITdGMVCR+HLK3/su3KJX1G596YUakNKZ+TlFyDUOEkc7a7EYgG+EnGq6yLVzaqEQBjbmpzx2BL+A3GNmEAjdTJM9LRvtziAst+4Ayr7+zxjqW5c5gLx/MCqdYLwysmk3TX3ictVsU8E4yt7riULXFvkHZ5EA7WgHm1+YpBrjD8mcLg5VbzFXfJF10KMnj1NihghBKB8HslBZ60pb6JTB7mWhsTTnBnesk7y9Ag==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669662432; bh=3Sbhmw85eT2LFt99J/2HFTZ8d/OK8X6klBRu9ezhCLF=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=RHW66VzP3x0f5qZgDhtg/xov4UH8BiK746Sb/j8hZOeA1YNjEEblZ9PWjZmodRPx/xdHXCY7QTCgf4pNCOjLkbZoip1JVY/4SCVxkeM27PJSASdbZAUiRsW901DLpMlppstlbLKQJkoY2TFJmG/pzOS0wPA9fVduoIHN2DG+ZcpqzCxeo5X4z6BHRFDrKIB2rsDdzOWdwgyGxDHwp5axOmX0V+Gwdm861EQMAAGJj54gFBqi/0RFaWlSC0JcbN74X7kJG3sYeHf3xn5G/7AwUtn68WLyYfg0WPpDPcLXB7A97Jvm4s/MvMGFaP4FDaNEIBPISbdNFWdpNPeKUl8sdg==
+X-YMail-OSG: j33bM2IVM1kghuU1Km3z59HpgqUAliR2VUom8Cf3yBXlOZGPbjP4.RcYrrCsz9q
+ 9YxWY4lNCcvIM432hrS96_O09fpauweyXYIQLt0d7u6rjvkMMoL_e895EnkUSlPtdajt_sh9PqKn
+ w_aSXehe5.Tw03JwQ72Qz3PpXNP8Dr9y4nPAFTO_oTKI4zhJhAYjWobzEjw0Oafd7QBEvD27jdep
+ kcWape2zCTMFwUTdsmuPVxmGyk2sf54orHfxBZRspxwF8UDhjYvSbpfnCIES6zuV0OsctHtIIDgh
+ ZSSQ1cx5DhDb9QarpPxLesqKwg_xQrxctAIAfMfk2nUMwpcHZgpPeOo9PsssjR9J7G1mQk1f_21C
+ eFP54mSNO.xzpMVKYw93bJrakA5vKRuHqMTi90Uz1BeSCvKZwQmYQDjtEZqs8KAGjwyMIT0.l0ve
+ XkV2GlQdMosGp_Df4t4UkilgoaMpFilSCtUnhnwTkflV_eAQiNTFCMxskEWxkQ.L7akLhXWznKQ8
+ _ZerEjJTs9ueAI86nh_941Q08nDlGd8YyMbjTbuvpe19.E4Ogqd7b8SeS_zbQZ733ReQ8J7pXjHj
+ 9vbY4uYrq7LT48uBktWtyqeLQX_0VGE5..MAoMh3CQtRoGq41PyR0KPz5LjaLZ4DtelGOqH4Gm0H
+ 4kjyvk0XdnF0k7vL30wLbQYS_Hh8Be.9grpKilcwnQqCodo9IvALXgVsAzcDmKw.z9a7e_yiFRMz
+ 1SFQTqAU3JxHG0QyfEuJou8OCWQ5WRDfPy8j0EuyfgGlK6wklS5sFQObmwu28rLTjczEoamPUrlT
+ uIBmBRRfzyNqPxBUgNmFFAAjEZeF2QhK51B_PwCt4m496V_YT9Pj5MXF7J1.As8ADprqBpjQgXY.
+ 0m37FSCfbpCQLgqZe8Xu1QwU7tW4qNwloxWWUQW6hJ3cCxNkZ1D838cZN6KarBzLKfwUQ5unlyHs
+ KcntON0eoFIYVyfLzeARgbVWiMx0oiJIyJiC7KTBkCpCF.3a5z.C0pzObJ5dilxn.obAIJEYgJf6
+ mpPXy6BC7_EdZQp5yaw9hCbvIZj3B3U5h3N_GLgpYF8xjqVpPhq1DSw3ZfpXfkBGCzw76.wABV.a
+ n0MkZF0X7rM8vofKwMgu6u2IdgCkh9aVDBtCMcQHl4s5EwhFgsuLsePQxD4kXu1l69rBmxETVb.i
+ .eSgn4ShED69bFP6PUGcmfO2YnQAnn8wJpoRotTgc4BIjT7ESp8bIht22iAC6tfcS3fjxFvVLsx2
+ Y10t90p2WwMyVYiZ9AvKkJXJjUGdQ_Y9622KObJhgf4aomnZxe3nKzXIwtsd4XM2lNtL49CPVkCJ
+ aDmg5d7RCJYOayAJS88IUtTDLhRiYCV_sV_oqVlE.a7pcqHqa4rN9gO9mlO5Wxz2lRxfbPiUQq5i
+ KAMZPmCubJ3AeW.48YZTx1_WpjgKcJlbeJvTCysxu5JSh3AE32UzAGmwKBl_NiC6_esfHFxbPMaE
+ 619e5cTZSzDmq.o.c2nlkc5FtXu5mLnnGaaHeW5H1lUOFjWN1PqJyNOuV879LyZuOaItJyx.Gmyh
+ Fe6HTmjGqRH5a.TmRkJoJFDX9ZH63KtDTJ85m5mTnqoryXh3yjyHjafmHNlkGQCXbrhUxaFRrSIy
+ d5bQ_Ev9CKq6VPBP2R7IjLZkyPdBS8G1Cc3qR5RnHKmpjLeOSRUZ7mW4AhS71ypLJjt6u8Hq56dI
+ FgG__63SCt3HCbuYtjBcMVJW3OpGyUknXNBe1uNQxg9yOvKs1.TfyruWOgAzjtr5zgpGLZ4MR6eJ
+ uM5G9yuVp2_hEtQM3Rpkoe3TRuSxvNdyUMMUMJeuypiBQAkOqa8nBEbB817Mf.HZVkfZy0Ld4jwy
+ XjjV111zmEZywXgyhxRdqhJIqWFO5wCBFCLQZuvxUY39Iri9Ka.1_uu1fMN9tyMjdJq8vakvCAxp
+ 198lRoW3TGt7xFIkdGDyE8VmWprPp7h62RmCpu1CWOipV4u69W.PhXQcxyaVMZVFvyYMUuZxryUb
+ olkXPjth.ruK4QpzR3aVekiqczrP39dvCCB5z8qfiF.1PkFc5ntoX1tj2glXKW6fLdP3eyTcuBDl
+ MuW2b3uwb5fRyCKgqrWxa.FMW.g3pUDTZOywf.lAzYWGd9MLip2wnk4yx9Mo6_O8Qo4.5UAatxIM
+ xAwGM0eZh_peviot_IsCiSrnvwj7fb7p7fdN58dCAnVCck_.Ntmwn0Ra1TcR0tX878TV_rzJXOiD
+ .oPVTzyYkOy1j5OwrPMCePacjeoPtweWdvm3EGI7GPy3T8Mo7bzWhnVGM2JwUoSrWJrL.5HeQsqI
+ yOFqAAiv5kSk-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Mon, 28 Nov 2022 19:07:12 +0000
+Received: by hermes--production-gq1-579bc4bddd-wsmzh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 94f00fc74ecff500035d8dc589be8046;
+          Mon, 28 Nov 2022 19:07:05 +0000 (UTC)
+Message-ID: <dd27f643-38e8-b312-72ce-77d1dc962a68@schaufler-ca.com>
+Date:   Mon, 28 Nov 2022 11:07:03 -0800
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1oziGW-006oqs-Bm;;;mid=<87sfi3rmuk.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX18hSeGIl+yv8nxANHdnXAlOdUtCNX9Vl/s=
-X-SA-Exim-Connect-IP: 68.110.29.46
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v3 1/9] LSM: Identify modules by more than name
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, casey@schaufler-ca.com
+References: <20221123201552.7865-1-casey@schaufler-ca.com>
+ <20221123201552.7865-2-casey@schaufler-ca.com> <Y38D1s3uQ6zNORei@kroah.com>
+ <463cb747-5bac-9e8e-b78e-1ff6a1b29142@digikod.net>
+ <CAHC9VhR9h1GF6VGovp1+UB-vt+QNofjmecPwLqE3OviKQHRMcg@mail.gmail.com>
+ <Y4Rok2iAOekw/tSJ@kroah.com>
+ <184be48c558.28e3.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <184be48c558.28e3.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.20863 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-David Laight <David.Laight@ACULAB.COM> writes:
-
-> From: Andy Lutomirski
->> Sent: 14 October 2022 04:18
-> ...
->> But seriously, this makes no sense at all.  It should not be possible to exec a program and then,
->> without ptrace, change its cwd out from under it.  Do we really need to preserve this behavior?
+On 11/28/2022 4:49 AM, Paul Moore wrote:
+> On November 28, 2022 2:51:55 AM Greg KH <gregkh@linuxfoundation.org> wrote:
 >
-> it maybe ok if the exec'ed program also 'bought-in' to the
-> fact that its cwd and open files might get changed.
-> But imagine someone doing it to a login shell!
+>> On Sun, Nov 27, 2022 at 10:48:53PM -0500, Paul Moore wrote:
+>>> On Fri, Nov 25, 2022 at 11:19 AM Mickaël Salaün <mic@digikod.net> wrote:
+>>>> On 24/11/2022 06:40, Greg KH wrote:
+>>>>> On Wed, Nov 23, 2022 at 12:15:44PM -0800, Casey Schaufler wrote:
+>>>>>> Create a struct lsm_id to contain identifying information
+>>>>>> about Linux Security Modules (LSMs). At inception this contains
+>>>>>> the name of the module and an identifier associated with the
+>>>>>> security module. Change the security_add_hooks() interface to
+>>>>>> use this structure. Change the individual modules to maintain
+>>>>>> their own struct lsm_id and pass it to security_add_hooks().
+>>>>>>
+>>>>>> The values are for LSM identifiers are defined in a new UAPI
+>>>>>> header file linux/lsm.h. Each existing LSM has been updated to
+>>>>>> include it's LSMID in the lsm_id.
+>>>>>>
+>>>>>> The LSM ID values are sequential, with the oldest module
+>>>>>> LSM_ID_CAPABILITY being the lowest value and the existing modules
+>>>>>> numbered in the order they were included in the main line kernel.
+>>>>>> This is an arbitrary convention for assigning the values, but
+>>>>>> none better presents itself. The value 0 is defined as being invalid.
+>>>>>> The values 1-99 are reserved for any special case uses which may
+>>>>>> arise in the future.
+>>>>> What would be a "special case" that deserves a lower number?
 
+The interface is designed to extend to attributes beyond those which
+are active today. Currently all the attributes are specific to the
+individual modules. The LSM infrastructure itself has no variable state,
+but that may change. One proposal would allow loadable modules, in which
+case an attribute such as LSM_IS_LOADABLE might identify the dynamic
+modules. Another potential attribute could be which security module is
+responsible for network labeling via netlabel. That could be LSM_NETLABEL.
+Another possible attribute could be related to stacking behavior in a
+namespaced environment.
 
-I am slowly catching up on my email and I saw this conversation.
+While it would be possible to intermingle the LSM infrastructure attribute
+values with the security module provided values, separating them makes for
+a clearer distinction.
 
-When I initially saw this thread I was confused and thought this
-might run into an issue with fs/locks.c.  I was close but wrong.
-fs/locks.c uses current->files as a sort of process identifier
-and so is very sensitive to when it is unshared.  Making
-unsharing current->files unconditionally a bug.  Not relevant to
-this conversation.
-
-
-There are several clone options that were only relevant for the old
-LinuxThreads implementation including CLONE_FS and CLONE_SIGHAND.
-The LinuxThreads implementation has not been needed since
-the introduction of CLONE_THREAD in linux-2.6.0 in 17 Dec 2003.
-Almost 20 years ago.
-
-I suggest we introduce CONFIG_CLONE_FS and CONFIG_SIGHAND to allow
-disabling support of these clone options.  No known user space will
-care.  The are both getting in the way of kernel maintenance so there
-is a reason to start pushing them out.
-
-Further simply not worrying about UNSHARE_FS during exec fixes the
-race so it essentially a bug fix by code removal.
-
-I believe something like the patch below should get the job done.
-
-diff --git a/fs/exec.c b/fs/exec.c
-index a0b1f0337a62..7ff13c77ad04 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1186,7 +1186,8 @@ static int unshare_sighand(struct task_struct *me)
- {
- 	struct sighand_struct *oldsighand = me->sighand;
- 
--	if (refcount_read(&oldsighand->count) != 1) {
-+	if (IS_ENABLED(CONFIG_CLONE_SIGHAND) &&
-+	    refcount_read(&oldsighand->count) != 1) {
- 		struct sighand_struct *newsighand;
- 		/*
- 		 * This ->sighand is shared with the CLONE_SIGHAND
-@@ -1568,6 +1569,9 @@ static void check_unsafe_exec(struct linux_binprm *bprm)
- 	if (task_no_new_privs(current))
- 		bprm->unsafe |= LSM_UNSAFE_NO_NEW_PRIVS;
- 
-+	if (!IS_ENABLED(CONFIG_CLONE_FS))
-+		return;
-+
- 	t = p;
- 	n_fs = 1;
- 	spin_lock(&p->fs->lock);
-diff --git a/init/Kconfig b/init/Kconfig
-index 94125d3b6893..8660a6bcc1cf 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1764,6 +1764,23 @@ config KALLSYMS_BASE_RELATIVE
- 	  time constants, and no relocation pass is required at runtime to fix
- 	  up the entries based on the runtime load address of the kernel.
- 
-+config CLONE_FS
-+	bool
-+	default y
-+	help
-+	  Support CLONE_FS being passed to clone.  The only known user
-+	  is the old LinuxThreads package so it should be safe to disable
-+	  this option.
-+
-+config CLONE_SIGHAND
-+	bool
-+	default y
-+	help
-+	  Support CLONE_SIGHAND being passed to clone.  The only known user
-+	  is the old LinuxThreads package so it should be safe to disable
-+	  this option.
-+
-+
- # end of the "standard kernel features (expert users)" menu
- 
- # syscall, maps, verifier
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 08969f5aa38d..da9017b51da4 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2023,6 +2023,16 @@ static __latent_entropy struct task_struct *copy_process(
- 	if ((clone_flags & CLONE_SIGHAND) && !(clone_flags & CLONE_VM))
- 		return ERR_PTR(-EINVAL);
- 
-+	/* Don't allow CLONE_FS if not enabled */
-+	if (!IS_ENABLED(CONFIG_CLONE_FS) &&
-+	    ((clone_flags & (CLONE_THREAD | CLONE_FS)) == CLONE_FS))
-+		return ERR_PTR(-EINVAL);
-+
-+	/* Don't allow CLONE_SIGHAND if not enabled */
-+	if (!IS_ENABLED(CONFIG_CLONE_SIGHAND) &&
-+	    ((clone_flags & (CLONE_THREAD | CLONE_SIGHAND)) == CLONE_SIGHAND))
-+		return ERR_PTR(-EINVAL);
-+
- 	/*
- 	 * Siblings of global init remain as zombies on exit since they are
- 	 * not reaped by their parent (swapper). To solve this and to avoid
-@@ -3101,6 +3111,9 @@ static int unshare_fs(unsigned long unshare_flags, struct fs_struct **new_fsp)
- 	if (fs->users == 1)
- 		return 0;
- 
-+	if (!IS_ENABLED(CONFIG_CLONE_FS))
-+		return -EINVAL;
-+
- 	*new_fsp = copy_fs_struct(fs);
- 	if (!*new_fsp)
- 		return -ENOMEM;
-
-Eric
+>>>> I don't see any meaningful use case for these reserved numbers either.
+>>>> If there are some, let's put them now, otherwise we should start with 1.
+>>>> Is it inspired by an existing UAPI?
+>>>> Reserving 0 as invalid is good though.
+>>> I haven't finished reviewing this latest patchset, but I wanted to
+>>> comment on this quickly while I had a moment in front of a keyboard
+>>> ... I did explain my desire and reasoning for this in a previous
+>>> revision of this patchset and I still believe the
+>>> reserved-for-potential-future-use to be a valid reason so I'm going to
+>>> ask for this to remain.
+>> Then that reasoning and explaination needs to be here in the changelog
+>> so that we understand and have a chance to agree/disagree with that.
+>> Otherwise we, and everyone else, are left to just be confused.
+>>
+>> thanks,
+>>
+>> greg k-h
+> The patch author should have done that considering I made my comments on the last revision.
+>
+> --
+> paul-moore.com
+>
+>
