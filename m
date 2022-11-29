@@ -2,76 +2,140 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE20C46467
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Nov 2022 14:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B7BEC47088
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Nov 2022 14:32:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232883AbiK2OYK (ORCPT
+        id S233479AbiK2OcG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Nov 2022 09:24:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34618 "EHLO
+        Tue, 29 Nov 2022 09:32:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232773AbiK2OYJ (ORCPT
+        with ESMTP id S235498AbiK2Ob7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Nov 2022 09:24:09 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0158A10B;
-        Tue, 29 Nov 2022 06:24:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=fz04soVIIxstbn3F7s2xAQwLGgrsxhbGusIGRw7EDcA=; b=LqNhmDidQYzCiTE/JGo6cVudGr
-        WD0WqUJW1Z9OeMnJbRX7eOLh/fTIj+6UNLwQTR/aeR71RFbjyHbL0tCgfBWtVXvLOySXK5bcOq+eA
-        skkE2K8c+mn19piPsFYQO0Mq6rWRlKs3ThRNn+6cu/Uvi+ypHb5AN95Q2lbHnu+DvYbasGouc5M4B
-        itDUEVtWV6WT4xyA94ClTlK3BdyB2YeS64Gclx4BOA3i82ffAeKUx4sM47Iegjk0kYPjwR5JhmtV8
-        VAWflCgcd4sYeZgTRnHoIOypcj+5hw1UqMoo5qGK0+RfHs/dvD3aDcYEI2VNUb05m45OxcOVJRJu2
-        F7VfRX3w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1p01Wi-009DFv-MU; Tue, 29 Nov 2022 14:24:00 +0000
-Date:   Tue, 29 Nov 2022 06:24:00 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Joel Granados <j.granados@samsung.com>
-Cc:     mcgrof@kernel.org, ddiss@suse.de, joshi.k@samsung.com,
-        paul@paul-moore.com, ming.lei@redhat.com,
-        linux-security-module@vger.kernel.org, axboe@kernel.dk,
-        io-uring@vger.kernel.org
-Subject: Re: [RFC v2 1/1] Use a fs callback to set security specific data
-Message-ID: <Y4YWACJqlhQ80Xby@infradead.org>
-References: <20221122103144.960752-1-j.granados@samsung.com>
- <CGME20221122103536eucas1p28f1c88f2300e49942c789721fe70c428@eucas1p2.samsung.com>
- <20221122103144.960752-2-j.granados@samsung.com>
+        Tue, 29 Nov 2022 09:31:59 -0500
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A77156572;
+        Tue, 29 Nov 2022 06:31:57 -0800 (PST)
+Received: (Authenticated sender: nicolas.bouchinet@clip-os.org)
+        by mail.gandi.net (Postfix) with ESMTPSA id 280C720015;
+        Tue, 29 Nov 2022 14:31:48 +0000 (UTC)
+Date:   Tue, 29 Nov 2022 15:31:47 +0100
+From:   Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        philippe.trebuchet@ssi.gouv.fr, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        casey@schaufler-ca.com, davem@davemloft.net, lucien.xin@gmail.com,
+        vgoyal@redhat.com, omosnace@redhat.com, mortonm@chromium.org,
+        nicolas.bouchinet@ssi.gouv.fr, mic@digikod.net,
+        cgzones@googlemail.com, linux-security-module@vger.kernel.org,
+        kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
+        bpf@vger.kernel.org
+Subject: Re: [PATCH v5] evm: Correct inode_init_security hooks behaviors
+Message-ID: <Y4YX0+Bn3uyBO2S+@archlinux>
+References: <Y4Dl2yjVRkJvBflq@archlinux>
+ <086b6d26895b84ad4086ac9f191ede6f705f9b6b.camel@linux.ibm.com>
+ <Y4YCElqX9jp5r8sO@archlinux>
+ <b01474bc5f19e98ff30ddc16a5d783c84ed1a486.camel@huaweicloud.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221122103144.960752-2-j.granados@samsung.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <b01474bc5f19e98ff30ddc16a5d783c84ed1a486.camel@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This seems to be missing any kind of changelog.  Also the
-subject should say file_operations.  Most of the instances here are
-not in a file system, and they most certainly aren't callbacks.
+Hi Roberto,
 
-I think you've also missed a whole lot of maintainers.
-
-> +#include "linux/security.h"
-
-That's now how we include kernel-wide headers.
-
->  #include <linux/blkdev.h>
->  #include <linux/blk-mq.h>
->  #include <linux/blk-integrity.h>
-> @@ -3308,6 +3309,13 @@ static int nvme_dev_release(struct inode *inode, struct file *file)
->  	return 0;
->  }
+On Tue, Nov 29, 2022 at 02:10:06PM +0100, Roberto Sassu wrote:
+> On Tue, 2022-11-29 at 13:58 +0100, Nicolas Bouchinet wrote:
+> > Hi Mimi,
+> > 
+> > On Tue, Nov 29, 2022 at 06:28:09AM -0500, Mimi Zohar wrote:
+> > > On Fri, 2022-11-25 at 16:57 +0100, Nicolas Bouchinet wrote:
+> > > > From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > > > 
+> > > > Fixes a NULL pointer dereference occurring in the
+> > > > `evm_protected_xattr_common` function of the EVM LSM. The bug is
+> > > > triggered if a `inode_init_security` hook returns 0 without initializing
+> > > > the given `struct xattr` fields (which is the case of BPF) and if no
+> > > > other LSM overrides thoses fields after. This also leads to memory
+> > > > leaks.
+> > > > 
+> > > > The `call_int_hook_xattr` macro has been inlined into the
+> > > > `security_inode_init_security` hook in order to check hooks return
+> > > > values and skip ones who doesn't init `xattrs`.
+> > > > 
+> > > > Modify `evm_init_hmac` function to init the EVM hmac using every
+> > > > entry of the given xattr array.
+> > > > 
+> > > > The `MAX_LSM_EVM_XATTR` value is now based on the security modules
+> > > > compiled in, which gives room for SMACK, SELinux, Apparmor, BPF and
+> > > > IMA/EVM security attributes.
+> > > > 
+> > > > Changes the default return value of the `inode_init_security` hook
+> > > > definition to `-EOPNOTSUPP`.
+> > > > 
+> > > > Changes the hook documentation to match the behavior of the LSMs using
+> > > > it (only xattr->value is initialised with kmalloc and thus is the only
+> > > > one that should be kfreed by the caller).
+> > > > 
+> > > > Cc: roberto.sassu@huaweicloud.com
+> > > > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > > 
+> > > What  is the relationship between this patch and Roberto's patch set? 
+> > > Roberto, if there is an overlap, then at minimum there should be a
+> > > Reported-by tag indicating that your patch set addresses a bug reported
+> > > by Nicolas.
+> > 
+> > This patch fixes the EVM NULL pointer dereference I have reported, and additionally
+> > improves the stackability of this LSM hook. This latter improvement was originally
+> > addressed by Roberto's patchset, and thus I see no problem for my fix to be merged
+> > within his patchset.
+> 
+> +       if (!num_filled_xattrs)
+>                 goto out;
 >  
-> +int nvme_uring_cmd_sec(struct io_uring_cmd *ioucmd,  struct security_uring_cmd *sec)
+> -       evm_xattr = lsm_xattr + 1;
+> -       ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
+> +       ret = evm_inode_init_security(inode, new_xattrs,
+> +                                     new_xattrs + num_filled_xattrs);
+> 
+> This part of patch 4 should be enough to fix the issue, until EVM is
+> outside the LSM infrastructure.
+> 
+> It prevents EVM from being called if there are no xattrs filled (the
+> panic occurred due to xattr->name being NULL).
+> 
+> Then, this part of patch 6:
+> 
+> +       for (xattr = xattrs; xattr->value != NULL; xattr++) {
+> +               if (evm_protected_xattr(xattr->name))
+> +                       evm_protected_xattrs = true;
+> +       }
+> +
+> +       /* EVM xattr not needed. */
+> +       if (!evm_protected_xattrs)
+> +               return -EOPNOTSUPP;
+> 
+> should be sufficient for when EVM is managed by the LSM infrastructure.
+> 
+> security_check_compact_filled_xattrs() ensures that if xattr->value is
+> not NULL, xattr->name is not NULL too.
+> 
+I think a Reported-by tag should enougth then !
+> Roberto
+> 
+> > > -- 
+> > > thanks,
+> > > 
+> > > Mimi
+> > > 
+> > 
+> > Thanks for your time,
+> > 
+> > Nicolas Bouchinet
+> 
 
-Douple white space and overly long line.
-
-> +{
-> +	sec->flags = 0;
-> +	sec->flags = SECURITY_URING_CMD_TYPE_IOCTL;
-
-Double initialization of ->flags.  But how is this supposed to work
-to start with?
+Thanks !
+Nicolas Bouchinet
