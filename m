@@ -2,190 +2,118 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 581DCC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Nov 2022 15:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B85FC4167B
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Nov 2022 16:54:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233374AbiK2Pj4 (ORCPT
+        id S236449AbiK2QyX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Nov 2022 10:39:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38554 "EHLO
+        Tue, 29 Nov 2022 11:54:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235939AbiK2Pjv (ORCPT
+        with ESMTP id S236414AbiK2QyF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Nov 2022 10:39:51 -0500
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24C9C537F8
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Nov 2022 07:39:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669736389; bh=aS4qJAF4z8K3/s5yGPKxlY1D2luVFB8NMnvEFjOx3S8=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=UCIRYfwJp5dnGKfLWNOCIDvxQZp4JMl8Ebh7ryzXxAMfE1mc5NF4igvFnWL6+NkGFVF3rxe4/oa5TDAMPqAqpuw5CGUu0Rusos4DjUc1BbQXt8gMGQiJ49V8gCaeC3NFpQQZHol8bfrjtLBujY01g3wDrHrstNbOckEkj+r4//CafwKbpv3a+A5hfZ1IsiiG+tZvOETbXPheXY/binn4bWW08BxM7QLHh0Vie9Y2zED9iW+BCbijyfyf2eTDPG66WcsIPzf3FxcSrzp1coaPJqnCx0GzeNLbMJzvNvHXyl3ubcDaBC3m/jEuOzEH093wMqhStd+C5zyJpux9iYozCw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669736389; bh=Pr27aGc/OX9Ho8hBH0yo+8Vyjejsegj+/K462uaAuUa=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=LIATda0hhwQXu1NV91UXQY66oJTyl/wadPbJXbVy0VXCEJsxLkN831GEUp0yLWIVNnUEtvobODyJ4oRxEPEZxXBRBIPHxdzq/ND2WezoUeFPyb9P1Hqtrmi8sMl3CTHU5ybwKgNl8Jn/AJGHn39Eo7ZbwtTBnwgqW5LhjJxsKk9pVcBK0m57mxhZwp1zn3Cdhkdr1p5ipawBa4UMgB7g3IIX/aZayOze5fJwDQDO+S6c71QDmdSL4q4WvqhT5HfYMDqu+andkLLDKZ8oTXGahdXk9Jo8Xq2/MYZaz3daokStqto+Cooa1r7y6fE0hALEAGmk8SBsTKGU460yiLKwrQ==
-X-YMail-OSG: SvXqCeQVM1lKZRCOPXx5n5UGD0rNol1csgmAMB3JhTJYUYVP1CWh7AKAlDOAde_
- r2JTFCqaTcNyhA_eaiHo2Vv1U08qvAeiCyJIdzrTjaOTNWyqqvjvVtON44pfghw_pHkx7CHsfE0W
- HbmfFm00RSGbmncdum3QVGwNs1YMIOBN54srxlMbKuedU2oBwercb_Y0DN379oDOWyI0pE4WLszm
- Y_tarBM4yRNxgwibBI8CK7zemR0Lx127uR5vVWjUitlxU1brd_ZICbhBX4qe.vFz1J5kOPHZOaqy
- PTtGRuFUwbXFEjebsR3VC0Ylnj1hCO7a2EOED4XvJUTlAyRyTacY03quyuEFhSKwCDceXdMkhPfC
- hj5RNfxXHBtyXgWe5IXBtkLCJvTtfONs1Q2Na4eVX4g39wsIwMzW5UKW5wWdFchxFozqlYq8M7t2
- bKjadVi0To45ldTvuuu6MokUT1.JOzV5ZPYoGS9b83fls6wHep5JJLDjxKL4y3ZTYtJHATFkF9zl
- t5th5TS1_lzPClcwAQ24p6tC91LeXeAi8mG52siLu702RGL5c0M.MUB80KH5798_ullbdP9XNRf8
- k7VukVP_sqRg1NTzNLzF32GT_Acg9zdkfM1knYpfzl5dZ1i2Cp44dT5DrqowaMZ49qlQzF.KVIYn
- W2XOhZ8IgmM6vvumbuWMnqiH_jgyK47N2B5VvqteRJ6kLtp0D97wlsScMyV5zB.X0sYsEe5PUOVy
- E6iKp_eOqyjzt4YeJ_sktkfUBTrb5Ccy.1JCH7PWn2y.NEWONd6y9F7hBrfcMXOibj.cI.DqmmP0
- Jkl1L.GgONO1Eg3ITnzCA0Y9LiX47GS7QbAr_2MecRIQb3xPohT9hQcTm7D7t8vJxUoURUaCLi_5
- Krux69V2f3Br4pVzFLU2x7_H2tgse98PxtY7cUnl.5Ik0a3tPs4EkySHuYfOHwfEpTuAdtxOhb66
- qXuI8nrsCfJD_KFUNXcHKLDDiBtGtZXWAWoOjs1gv4lStLo2rAUi7Y3LQYxgjYejHxJldBAl595Z
- CvK.Vmz4B0wEIWNz0YB8uLv79XIi4a5GmA1rLwi4.g_0D0dSyabMwg_MYq6ZspLoiCEuF5HdFFWy
- sjUwbTRudadFZHU0itgRLqLF__FXDAqqrYcd3sdRgVYbeYIL9Q8hFAfHYg8uqY1RboMH9e6Je1tH
- rzBMDOqcBss3hnP09T1GsPjdW2JPOfagJRt3mTisEx356gVMDdBnPCIF3iWojZzJTrmKXwP.oEg5
- kHxM7GzuCZuKko7TkiBZAfNkKk5FAkP0z5qGFyEoza4_EGXBvAQubV6QIzNsz8UHx1XXmwnBhjWX
- 22WNF2RUG41OTLrNngNTjz7Xi3QNPme.BDp0EytvQl9OzwTDIQxA_rXsJpHCL6GI5hYWwYIs1sYD
- bcJnMscRnQfecDV_w0SMxjuYHB3NSF3nRlzeMITtSQ5PnUh78cKfRUbRSvNf6FsgS5L5f9xhCQVu
- 0cRhzpvnxY5lqMNiBcIzoNeBsOQh7ZM4boM.XyojVIuRGeaMFsEoA7zfhvMwUzxZl5pDCO4FBS6u
- j4MtS7Z6thd3YF3Qc4Zpbs0RwhYjt5kte2WrU3ezYFWxJ80kpEkDkSI1wMnaK3nemGCn4ooXivXm
- uX4UrRDqQ0.thfRxZjaPXAucAyLPq5bmxgGZXiX94CvzB.xOsKzbs0v4QZnG46yiQ.LsL_PoXE46
- 9QVkF5DB5.0Jr1LYKDNE16zUUwBKD7gun1Lr4BC0Pw_WAA3KNFROgD06_NeOGUtBSfcnlAIx4ijs
- sjaV6dr_gEmfipAD_d3Fnq1TwDGpIeHeAsW5YSnbfMR98K0kUv04ScWALau6bSxzGMyqjOWgAcb8
- .KFMsmfPJHj_qU0wvfJlVlrEw7RuU_kBz4jcIzPqG7NSuMKmAmSmayt0D4Whaet9t5HNa.h8rwa2
- 6fprqK1Ln_v1kLCPt.lQ3XdLN5huZoRCoeLJM6LwWIaam_TU81U5THfuKiKmEpQUYXsX.wd9Xh5c
- JJ04g3ybpRUTQ76udcxryGGKYKdwN73NPdNWap43.jm_GZbgXgSjVFwalh2O_jfw5uibeWTKeAS_
- zc.ORh_q6nLRoDRtSVFrFqCqc1QalRMSlmVfNdANB4vL4xv8bQbEjNiWNzLlIfJDWOgjebvJdoNw
- NLSuTyNVl2QuGphxweBvisGFtOCT65KC3IebdLhK18BONru3hoBmayvL61Wk4SoWlGxu6tKKUkE8
- dMbMj7xuXDBd2Hxb3iETfxaruqgjz8fIYCdQ-
+        Tue, 29 Nov 2022 11:54:05 -0500
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4489974CD9
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Nov 2022 08:49:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669740528; bh=7iroGIbVR4OxPkC3NVITmuStzr81hSzdnaar4vrIWpc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=KdK9VL/sn5zU4QaYIXfpR7UxQnplHe5/RKi9H0FUFe0rAvTf0BB7AlQJerg4jW76Naef7gJNuHP3xt1KgQe8vaYvHZzD96imS///GUdJ/mOZkMvnGkSV2uvJ2vo1BfclraGkicTadhhWX/RL0OkjSwhTsV1ln0yon5875totoRnQlBAYW/fQ4m8j5JHnNHNi0LT5LKFDeOpea736pXxwaGMaCOdrvATOz4PMT4dEVkDYr3aFIB0PZAB6os8mkqqyLsn1rUbMjs05nx71k9sMw1/7yCyPs1hH5XTO9x0/p8ZVjhMBUWfYAqGsLP37NiRFoMgOB+nWk1Add4zuxg2h+w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669740528; bh=b0GYSFRRVgMyE9YFyW1kLUYJi74Un9Gg0vhPSck2E+U=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=SAdJhePZaxQW2h5MWtjV2V2KwS2tegYUidt2uMlzaYLLG2VoLJ/V7DRiRbnp+90l+H0vWywzXmyXivo1kPvPRFu7gd8a8PUZL3YUsszGRR1Si4osCIyJWuoI2tb7zduDghtSNwHGefhxi8VxhKXJaYldKkjrl3EeE7Le+q7oGIzY3yaF7mjOp0cNBYzMLV6wyXDhwqLEB6QK8txhSm6zrh/KWGmjVRkFyyX384QxycOnsmnwg9UJhz4C7W1TY0cxYcwj3ULazPvSPGBGV9ujKJlNrBDciWbSd5ojJbcp46G6C4l01/hCYFL1nDqx3A3MYW6XqxtCH4LJh7xKLxOkGw==
+X-YMail-OSG: xIbadvUVM1nqYjUp9hp8aDEZtFVw1aMpJth4JPE1mEGrzHxiXWMEjP8On9cmjmq
+ GeWyNnqV2gko7klQPSESVM9V2CdEesZA2MPWStzlAW0ocDPhaB9lTQyNJL339tcmXbuytw5v7o3b
+ NEHaOboD3bPt1GWt_4sLh9N4JLGpSZQWGmX4XwKlsgluWrPCfSY_9aN7Z7qrWfwGJj9jBMuug9V3
+ SjQV7vb8c3pEgEUeruVfabydtbl0qWu0j1FizK.y1p4z4SeysiHe3r_4iMAVTu1djJq9G7pPoX4B
+ HggJWuLnI4TX13ny8cspoi7eG6GvNwz58gjquFi4JzO84QPqkiLeNrsF7d_LnZOW1S6q5FFEV7XP
+ 6PX578DCdvyhLvCWU0m3LlocCed0SoTM9oWsEjYbjmIxqGXj0PORaFBy6O5KvP6t3ovzMm_1P4Rf
+ fwmny1JWseN7Wzrolpsx.Qy1.NvaVA226DYv3v0KjBS1pd9x_SeUrKdQDTlDXxnTpBeXLGwJcxBb
+ t9khRJglEl6oA2WzsRxA1.j_hmYd5xsESoJS7RK1fPwBkt6Cv8fDdlGOOk7qAmb1_hQ.VEkUSeak
+ OxTYRpEKut3EdDfDGlpQQEjJ8nLbfkre8nBKETLQG5X0J9pjzDvrmCk_I45m.SP4D46tSaLmPmsB
+ owmMreBqcpaazgBVJ_LTzoMfzPf5KU.nkdKi5YSWrLc6QM.oQR_MwDutKoLIN4q43HQDEZNhx7bY
+ k5_RJzDHWNlkA1nchPGQL.NSNLLKX2gqzdO2yzWV1sQ1cBN5VcoxpWTQE.84Is_qcXNybGPGkbDn
+ L33zCQAHkJmB1Q4eziFF22FaQ7nfU3K_OTkK5DaVEOZH0aznpb2xYFuOjh6ru30ctof4vAlu5Xfa
+ ZoemmEEHXet9sdb5H_jGcgyCMQDSUF1B1yvlA08hKvEX0pKgYkBgiGcy63.8hyp1hAKpJy2Y2z48
+ czn1AIrg5vqCLfg1MT_wVwvz6CQXSrNTijuQygVWJWXCSow6LLCwO9A9OS1Hm0pVgMB.TC9bTSg2
+ IcPi.ZWWIfBmXOSWAOi0sl8Sp1Wc0_oSjtvheo5B5RPmsRwsHSxT5Xoz91.Y0UeJ7VWLrazca5Cg
+ BFPsUWO4Trhev4sKWvLDAHAAQ_DDYaBgKZJMdf_xM7O5LchNaC_xlqDTYhpDzut5s8PojR0fypNT
+ IdQPUjyYzLIdxMySdX0OXkyy29E.7pWkY5PXA9jFEGyK0IR6wZ9S_qjXgUoBMZknVkaKo3.zyN1A
+ cUNcwUJn1XzGPxEiUDOGZB8d6l.u4kFXNNS66HhjkiiStP6BOkYFLJ_9BWCkoQ9gAkC5I9OaQAkA
+ 6iq6Upw.lgtfOZnds.0SbBtYD7_VZMq.CbTey3sg33H.SXXAZyvpuU1PUdvdQLPl7TxGW2ozzQHE
+ xYmGcFagq8FrujA60YD_Ric07R.XyF_DdO3Ltzz1wDBIgqX.eTwAReWPyqspuUdFovqrJoEDYdOA
+ 5wnsCIqRfekxM1W7BtO1MFZSc7Ppa3p6omYRQDmlCpfUrXsSB.vCnEivVFQCmNAfQNevxOnSuhIy
+ QwUBfiKLS7k1SAQDT0oa17YSTv6JyVS.ncoat7m_QXlrGbQl8_s_nLt37xWx_Hp0ORjwBoP_27xY
+ L7a8b8AvcrH0ufxZHaJvqyxgZ6hAmgI_WRtdmDfGrYlMKZxo4.u0O65rSCLBxU5M9IfwzoXkaZEr
+ WIZ8jLEcnOjqYOYq3ele5imbI9qTPYWPjDFN20wLuz9NUrgM6jWLEXNdtA4lH0z3A5upt7trcwWb
+ K1.PuJp7w71EaV3vzPygnDgOCKd9Qh7XNjFCRSGgk6fsNlxOjDOxwnsK1GlMapv0I75Nt_O9qzLs
+ PTfE.rvjO4nYOkrZnGiha0yz1hbE_4xi0fOrNcPSTefAZVO6Gledv_r3LBfTwFPunhFDlM4iGgNs
+ _Ah8lzRkyknqWhrmi.OXWwqeMIXbxzwLh0eZzF5EqlIcsWUg_liFlRQFuFSw1KK6zEDLmptSc0OP
+ FNoKuByT7bOOuksqAsWVtIXx75qXoYO5cqI32qCXV08k9mJ6pHHyNOW2IKo5bnLzmHYvIkXmK2A_
+ n6PEvbIQagdFfyv_raWrVT0eNOqlwP37TCL3ddMU7GPSaDWCEuTkXqoxBQ5whC7Sbwgic.RYChVH
+ sr_251CgOBi.P9fLSNfAmxvkyl1x_2noZoRwHkxdHVg0iam6BQCld0qwPrE59_F6QvACG5mL.kns
+ PMDIslWh.r7w.HuoVOL7TNn3KiV7qG.8h2LHtDR0PrYV9oHa6dqYVr4u87GFODl7JhC_lATNqFbh
+ zeBy6l5alZTJUDDM-
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Tue, 29 Nov 2022 15:39:49 +0000
-Received: by hermes--production-gq1-579bc4bddd-hwj6j (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 53dcf3609291d16c651c1285730a1577;
-          Tue, 29 Nov 2022 15:39:45 +0000 (UTC)
-Message-ID: <50232f2b-d5ce-1e5a-3f5b-8d3eb53fe1ec@schaufler-ca.com>
-Date:   Tue, 29 Nov 2022 07:39:42 -0800
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 29 Nov 2022 16:48:48 +0000
+Received: by hermes--production-gq1-579bc4bddd-hbm49 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 065068aa4a352c836ee8e25097808977;
+          Tue, 29 Nov 2022 16:48:47 +0000 (UTC)
+Message-ID: <3765301a-0c55-6e6b-c964-888677842248@schaufler-ca.com>
+Date:   Tue, 29 Nov 2022 08:48:45 -0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.0
-Subject: Re: [PATCH v6 4/6] security: Allow all LSMs to provide xattrs for
- inode_init_security hook
+Subject: Re: [PATCH v2 0/2] lsm: Improve LSM hooks documentation
 Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huaweicloud.com>, mark@fasheh.com,
-        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org
-Cc:     ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, paul@paul-moore.com,
+        omosnace@redhat.com, john.johansen@canonical.com,
+        kpsingh@kernel.org
+Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Roberto Sassu <roberto.sassu@huawei.com>,
         casey@schaufler-ca.com
-References: <20221123154712.752074-1-roberto.sassu@huaweicloud.com>
- <20221123154712.752074-5-roberto.sassu@huaweicloud.com>
- <13350b79f708cb089e2ff2ee5cead52bafb10982.camel@linux.ibm.com>
- <bb63eba9a9f24558f4a1acd9bf012b59b5c6e98e.camel@huaweicloud.com>
- <9859294adb0a9b9587ea7fb70a836a312aaf3c69.camel@linux.ibm.com>
+References: <20221128144240.210110-1-roberto.sassu@huaweicloud.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <9859294adb0a9b9587ea7fb70a836a312aaf3c69.camel@linux.ibm.com>
+In-Reply-To: <20221128144240.210110-1-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.20863 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/29/2022 3:23 AM, Mimi Zohar wrote:
-> On Thu, 2022-11-24 at 09:17 +0100, Roberto Sassu wrote:
->> On Wed, 2022-11-23 at 20:14 -0500, Mimi Zohar wrote:
->>> Hi Roberto,
->>>
->>> On Wed, 2022-11-23 at 16:47 +0100, Roberto Sassu wrote:
->>>>  int security_inode_init_security(struct inode *inode, struct inode *dir,
->>>>                                  const struct qstr *qstr,
->>>>                                  const initxattrs initxattrs, void *fs_data)
->>>>  {
->>>> -       struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
->>>> -       struct xattr *lsm_xattr, *evm_xattr, *xattr;
->>>> -       int ret;
->>>> +       struct security_hook_list *P;
->>>> +       struct xattr *new_xattrs;
->>>> +       struct xattr *xattr;
->>>> +       int ret = -EOPNOTSUPP, num_filled_xattrs = 0;
->>>>  
->>>>         if (unlikely(IS_PRIVATE(inode)))
->>>>                 return 0;
->>>>  
->>>> +       if (!blob_sizes.lbs_xattr)
->>>> +               return 0;
->>>> +
->>>>         if (!initxattrs)
->>>>                 return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
->>>> -                                    dir, qstr, NULL, NULL, NULL);
->>>> -       memset(new_xattrs, 0, sizeof(new_xattrs));
->>>> -       lsm_xattr = new_xattrs;
->>>> -       ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
->>>> -                                               &lsm_xattr->name,
->>>> -                                               &lsm_xattr->value,
->>>> -                                               &lsm_xattr->value_len);
->>>> -       if (ret)
->>>> +                                   dir, qstr, NULL);
->>>> +       /* Allocate +1 for EVM and +1 as terminator. */
->>>> +       new_xattrs = kcalloc(blob_sizes.lbs_xattr + 2, sizeof(*new_xattrs),
->>>> +                            GFP_NOFS);
->>>> +       if (!new_xattrs)
->>>> +               return -ENOMEM;
->>>> +
->>>> +       hlist_for_each_entry(P, &security_hook_heads.inode_init_security,
->>>> +                            list) {
->>>> +               ret = P->hook.inode_init_security(inode, dir, qstr, new_xattrs);
->>>> +               if (ret && ret != -EOPNOTSUPP)
->>>> +                       goto out;
->>>> +               if (ret == -EOPNOTSUPP)
->>>> +                       continue;
->>> In this context, -EOPNOTSUPP originally signified that the filesystem
->>> does not support writing xattrs.  Writing any xattr would fail. 
->>> Returning -ENODATA for no LSM xattr(s) data would seem to be more
->>> appropriate than -EOPNOTSUPP.
->> Hi Mimi
->>
->> I thought about adding new return values. Currently only -EOPNOTSUPP
->> and -ENOMEM are expected as errors.
->>
->> However, changing the conventions would mean revisiting the LSMs code
->> and ensuring that they follow the new conventions.
->>
->> I would be more in favor of not touching it.
-> Casey, Paul, any comment?
+On 11/28/2022 6:42 AM, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 
-I don't see value in adding -ENODATA as a value special to
-the infrastructure. What would the infrastructure do differently?
-The use of -EOPNOTSUPP isn't consistent throughout, and the amount
-of "correctness" you get by returning -ENODATA is really small.
+For the series:
+
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 
 >
->>>> +               /*
->>>> +                * As the number of xattrs reserved by LSMs is not directly
->>>> +                * available, directly use the total number blob_sizes.lbs_xattr
->>>> +                * to keep the code simple, while being not the most efficient
->>>> +                * way.
->>>> +                */
->>>> +               ret = security_check_compact_filled_xattrs(new_xattrs,
->>>> +                                                          blob_sizes.lbs_xattr,
->>>> +                                                          &num_filled_xattrs);
->>>> +               if (ret < 0) {
->>>> +                       ret = -ENOMEM;
->>>> +                       goto out;
->>>> +               }
->>>> +       }
->>>> +
->>>> +       if (!num_filled_xattrs)
->>>>                 goto out;
->>>>  
->>>> -       evm_xattr = lsm_xattr + 1;
->>>> -       ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
->>>> +       ret = evm_inode_init_security(inode, new_xattrs,
->>>> +                                     new_xattrs + num_filled_xattrs);
->>>>         if (ret)
->>>>                 goto out;
->>>>         ret = initxattrs(inode, new_xattrs, fs_data);
->>>>  out:
->>>>         for (xattr = new_xattrs; xattr->value != NULL; xattr++)
->>>>                 kfree(xattr->value);
->>>> +       kfree(new_xattrs);
->>>>         return (ret == -EOPNOTSUPP) ? 0 : ret;
->>>>  }
->>> b
+> The recent discussion about return values from LSM hooks, available here:
+>
+> https://lore.kernel.org/bpf/20221115175652.3836811-1-roberto.sassu@huaweicloud.com/
+>
+> motivated revisiting the documentation in include/linux/lsm_hooks.h, to
+> ensure that it is complete and accurate. It was also a good occasion to fix
+> discovered formatting issues.
+>
+> Changelog:
+>
+> v1 (security: Ensure LSMs return expected values):
+> - A positive value, not only 1 can cause cap_set_admin to be set when
+>   calling __vm_enough_memory() (reported by Paul)
+> - Improve description of the vm_enough_memory hook
+> - Remove documentation of the sb_add_mnt_opt hook, as it was removed
+>   (reported by Paul)
+> - Add more periods in the parameters description
+> - Adjust mmap_addr and mmap_file semicolon
+> - Move description of gfp parameter of xfrm_policy_alloc_security together
+>   with the others
+> - Add missing return value description for binder_transaction,
+>   binder_transfer_binder, binder_transfer_file, quotactl and quota_on
+> - Improve return value description for sb_eat_lsm_opts, sb_show_options,
+>   dentry_init_security, dentry_create_files_as and sctp_assoc_established
+>
+> Roberto Sassu (2):
+>   lsm: Clarify documentation of vm_enough_memory hook
+>   lsm: Add/fix return values in lsm_hooks.h and fix formatting
+>
+>  include/linux/lsm_hooks.h | 227 ++++++++++++++++++++++++--------------
+>  1 file changed, 143 insertions(+), 84 deletions(-)
 >
