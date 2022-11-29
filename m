@@ -2,123 +2,112 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E566C47089
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Nov 2022 12:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B22C4167B
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Nov 2022 12:22:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233282AbiK2MCU (ORCPT
+        id S234009AbiK2MWt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Nov 2022 07:02:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33170 "EHLO
+        Tue, 29 Nov 2022 07:22:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233446AbiK2MAz (ORCPT
+        with ESMTP id S229445AbiK2MWs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Nov 2022 07:00:55 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF8B15CD0E;
-        Tue, 29 Nov 2022 04:00:42 -0800 (PST)
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4NM19Z17gzzRpV5;
-        Tue, 29 Nov 2022 20:00:02 +0800 (CST)
-Received: from kwepemm600001.china.huawei.com (7.193.23.3) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 29 Nov 2022 20:00:41 +0800
-Received: from [10.67.111.113] (10.67.111.113) by
- kwepemm600001.china.huawei.com (7.193.23.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 29 Nov 2022 20:00:40 +0800
-Message-ID: <efb0eb17-b856-e437-8abb-d16213165420@huawei.com>
-Date:   Tue, 29 Nov 2022 20:00:28 +0800
+        Tue, 29 Nov 2022 07:22:48 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BF2AB1EB;
+        Tue, 29 Nov 2022 04:22:45 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NM1Wf1Zmnz9xGZ0;
+        Tue, 29 Nov 2022 20:15:42 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwDn0W5q+YVjqsimAA--.45795S2;
+        Tue, 29 Nov 2022 13:22:15 +0100 (CET)
+Message-ID: <dca37353573cbf4c9eb3f870c5a9d825e431a680.camel@huaweicloud.com>
+Subject: Re: [PATCH v5] evm: Correct inode_init_security hooks behaviors
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>,
+        linux-integrity@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     philippe.trebuchet@ssi.gouv.fr, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        casey@schaufler-ca.com, davem@davemloft.net, lucien.xin@gmail.com,
+        vgoyal@redhat.com, omosnace@redhat.com, mortonm@chromium.org,
+        nicolas.bouchinet@ssi.gouv.fr, mic@digikod.net,
+        cgzones@googlemail.com, linux-security-module@vger.kernel.org,
+        kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
+        bpf@vger.kernel.org
+Date:   Tue, 29 Nov 2022 13:21:59 +0100
+In-Reply-To: <086b6d26895b84ad4086ac9f191ede6f705f9b6b.camel@linux.ibm.com>
+References: <Y4Dl2yjVRkJvBflq@archlinux>
+         <086b6d26895b84ad4086ac9f191ede6f705f9b6b.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH -next] selftests/landlock: Fix selftest ptrace_test run
- fail
-Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        <shuah@kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <hannes@cmpxchg.org>, <mhocko@kernel.org>,
-        <roman.gushchin@linux.dev>, <shakeelb@google.com>,
-        <songmuchun@bytedance.com>, <tj@kernel.org>,
-        <lizefan.x@bytedance.com>
-References: <20221128020409.1545717-1-limin100@huawei.com>
- <1232e4f3-e4b8-ff23-61e8-5465c8406f6e@digikod.net>
- <7379a5fd-5593-c6ce-40fd-c543dcf70d2b@huawei.com>
- <e62a539b-614c-c008-873a-f9c57c7ecb33@digikod.net>
-From:   limin <limin100@huawei.com>
-In-Reply-To: <e62a539b-614c-c008-873a-f9c57c7ecb33@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.111.113]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm600001.china.huawei.com (7.193.23.3)
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwDn0W5q+YVjqsimAA--.45795S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF18JryUCF4xAFWDur17ZFb_yoW8Cw1kpF
+        W5Ga4qkr1Dtr18ZrWIyr4xXw4IkrWFgFWDGFnayw1Yva98Gr10qr1xKr4Y9rWfCr4SkFyv
+        vF47Za13Z3Z0y3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBF1jj4IHGQAEsk
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-cat /proc/cmdline
+On Tue, 2022-11-29 at 06:28 -0500, Mimi Zohar wrote:
+> On Fri, 2022-11-25 at 16:57 +0100, Nicolas Bouchinet wrote:
+> > From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > 
+> > Fixes a NULL pointer dereference occurring in the
+> > `evm_protected_xattr_common` function of the EVM LSM. The bug is
+> > triggered if a `inode_init_security` hook returns 0 without initializing
+> > the given `struct xattr` fields (which is the case of BPF) and if no
+> > other LSM overrides thoses fields after. This also leads to memory
+> > leaks.
+> > 
+> > The `call_int_hook_xattr` macro has been inlined into the
+> > `security_inode_init_security` hook in order to check hooks return
+> > values and skip ones who doesn't init `xattrs`.
+> > 
+> > Modify `evm_init_hmac` function to init the EVM hmac using every
+> > entry of the given xattr array.
+> > 
+> > The `MAX_LSM_EVM_XATTR` value is now based on the security modules
+> > compiled in, which gives room for SMACK, SELinux, Apparmor, BPF and
+> > IMA/EVM security attributes.
+> > 
+> > Changes the default return value of the `inode_init_security` hook
+> > definition to `-EOPNOTSUPP`.
+> > 
+> > Changes the hook documentation to match the behavior of the LSMs using
+> > it (only xattr->value is initialised with kmalloc and thus is the only
+> > one that should be kfreed by the caller).
+> > 
+> > Cc: roberto.sassu@huaweicloud.com
+> > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> 
+> What  is the relationship between this patch and Roberto's patch set? 
+> Roberto, if there is an overlap, then at minimum there should be a
+> Reported-by tag indicating that your patch set addresses a bug reported
+> by Nicolas.
 
-BOOT_IMAGE=/vmlinuz-6.1.0-next-20221116 
-root=UUID=a65b3a79-dc02-4728-8a0c-5cf24f4ae08b ro 
-systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all
+Agreed, I will add a Reported-by for the bug reported by Nicolas.
 
+For the rest, my patch set introduces a similar functionality, with the
+difference that it uses the reservation mechanism instead of static
+allocation for xattrs, as suggested by Paul.
 
-On 2022/11/29 19:03, Mickaël Salaün wrote:
-> I tested with next-20221116 and all tests are OK. Could you share your 
-> kernel configuration with a link? What is the content of /proc/cmdline?
->
-> On 29/11/2022 02:42, limin wrote:
->> I run test on Linux ubuntu2204 6.1.0-next-20221116
->>
->> I did't use yama.
->>
->> you can reproduce by this step:
->>
->> cd kernel_src
->>
->> cd tools/testing/selftests/landlock/
->> make
->> ./ptrace_test
->>
->>
->>
->>
->> On 2022/11/29 3:44, Mickaël Salaün wrote:
->>> This patch changes the test semantic and then cannot work on my test
->>> environment. On which kernel did you run test? Do you use Yama or
->>> something similar?
->>>
->>> On 28/11/2022 03:04, limin wrote:
->>>> Tests PTRACE_ATTACH and PTRACE_MODE_READ on the parent,
->>>> trace parent return -1 when child== 0
->>>> How to reproduce warning:
->>>> $ make -C tools/testing/selftests TARGETS=landlock run_tests
->>>>
->>>> Signed-off-by: limin <limin100@huawei.com>
->>>> ---
->>>>    tools/testing/selftests/landlock/ptrace_test.c | 5 ++---
->>>>    1 file changed, 2 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/tools/testing/selftests/landlock/ptrace_test.c
->>>> b/tools/testing/selftests/landlock/ptrace_test.c
->>>> index c28ef98ff3ac..88c4dc63eea0 100644
->>>> --- a/tools/testing/selftests/landlock/ptrace_test.c
->>>> +++ b/tools/testing/selftests/landlock/ptrace_test.c
->>>> @@ -267,12 +267,11 @@ TEST_F(hierarchy, trace)
->>>>            /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the 
->>>> parent. */
->>>>            err_proc_read = test_ptrace_read(parent);
->>>>            ret = ptrace(PTRACE_ATTACH, parent, NULL, 0);
->>>> +        EXPECT_EQ(-1, ret);
->>>> +        EXPECT_EQ(EPERM, errno);
->>>>            if (variant->domain_child) {
->>>> -            EXPECT_EQ(-1, ret);
->>>> -            EXPECT_EQ(EPERM, errno);
->>>>                EXPECT_EQ(EACCES, err_proc_read);
->>>>            } else {
->>>> -            EXPECT_EQ(0, ret);
->>>>                EXPECT_EQ(0, err_proc_read);
->>>>            }
->>>>            if (ret == 0) {
+Roberto
+
