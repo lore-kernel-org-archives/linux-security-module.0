@@ -2,136 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D090C4167B
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Nov 2022 11:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E566C47089
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Nov 2022 12:02:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229900AbiK2L3F (ORCPT
+        id S233282AbiK2MCU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Nov 2022 06:29:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36542 "EHLO
+        Tue, 29 Nov 2022 07:02:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbiK2L3E (ORCPT
+        with ESMTP id S233446AbiK2MAz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Nov 2022 06:29:04 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C1ECFC;
-        Tue, 29 Nov 2022 03:29:03 -0800 (PST)
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2ATAXLRp019538;
-        Tue, 29 Nov 2022 11:28:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=MnZtI3qCPeSsGGVwj0/V6nXajPH3SFgaJQGfW01j3ic=;
- b=rQncSD1VH5hdQRwDMfFA2TfHGiev9ml+8XaKhW5deeAmiGaciRs7IWuJ7MkPacvGG/wn
- IMYFgPo6qLFk+0SkEexNITvFfB04hxh4iYc7bis8LzEiX6enawm3KV1qC7jskpFKSP/Z
- PNkzw5lBhlgozN+6Jml4h1gdMLK3W+ul6pEIrqrxHf8cebP1MvFyFXAY76islpxG8u1G
- q+XrOBaB+z87Wdtvr98arTiVXo1l7kNlNjoVfYkYm2zUUAYLEFaSWpy9Xmimvr+Ab8qi
- ktkUM4UNCPokjsJoof7g/5ZNBO8/QFRzAl/kG2vsEg7O4JGPSGjvh1HV6ifRQUQz11TL gQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3m5cmufbgy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Nov 2022 11:28:14 +0000
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2ATAFrxm010355;
-        Tue, 29 Nov 2022 11:28:14 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3m5cmufbgm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Nov 2022 11:28:13 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2ATBJt8M027068;
-        Tue, 29 Nov 2022 11:28:13 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma03dal.us.ibm.com with ESMTP id 3m3ae9h3vt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Nov 2022 11:28:12 +0000
-Received: from smtpav02.dal12v.mail.ibm.com ([9.208.128.128])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2ATBSB5c34341182
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Nov 2022 11:28:12 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8D8485805C;
-        Tue, 29 Nov 2022 11:28:11 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 366ED58051;
-        Tue, 29 Nov 2022 11:28:10 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.96.78])
-        by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 29 Nov 2022 11:28:10 +0000 (GMT)
-Message-ID: <086b6d26895b84ad4086ac9f191ede6f705f9b6b.camel@linux.ibm.com>
-Subject: Re: [PATCH v5] evm: Correct inode_init_security hooks behaviors
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>,
-        linux-integrity@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     philippe.trebuchet@ssi.gouv.fr, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        casey@schaufler-ca.com, davem@davemloft.net, lucien.xin@gmail.com,
-        vgoyal@redhat.com, omosnace@redhat.com, mortonm@chromium.org,
-        nicolas.bouchinet@ssi.gouv.fr, mic@digikod.net,
-        cgzones@googlemail.com, linux-security-module@vger.kernel.org,
-        kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
-        bpf@vger.kernel.org, roberto.sassu@huaweicloud.com
-Date:   Tue, 29 Nov 2022 06:28:09 -0500
-In-Reply-To: <Y4Dl2yjVRkJvBflq@archlinux>
-References: <Y4Dl2yjVRkJvBflq@archlinux>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qKe5DMS6fIb7nqAWZgY70vaTK1HEVkyA
-X-Proofpoint-GUID: TReY5TCtwN9OpWyPftIKY2s3ESh8OahH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-29_07,2022-11-29_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- spamscore=0 lowpriorityscore=0 clxscore=1011 impostorscore=0
- mlxlogscore=999 bulkscore=0 priorityscore=1501 mlxscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211290067
+        Tue, 29 Nov 2022 07:00:55 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF8B15CD0E;
+        Tue, 29 Nov 2022 04:00:42 -0800 (PST)
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4NM19Z17gzzRpV5;
+        Tue, 29 Nov 2022 20:00:02 +0800 (CST)
+Received: from kwepemm600001.china.huawei.com (7.193.23.3) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Tue, 29 Nov 2022 20:00:41 +0800
+Received: from [10.67.111.113] (10.67.111.113) by
+ kwepemm600001.china.huawei.com (7.193.23.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Tue, 29 Nov 2022 20:00:40 +0800
+Message-ID: <efb0eb17-b856-e437-8abb-d16213165420@huawei.com>
+Date:   Tue, 29 Nov 2022 20:00:28 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH -next] selftests/landlock: Fix selftest ptrace_test run
+ fail
+Content-Language: en-US
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        <shuah@kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <hannes@cmpxchg.org>, <mhocko@kernel.org>,
+        <roman.gushchin@linux.dev>, <shakeelb@google.com>,
+        <songmuchun@bytedance.com>, <tj@kernel.org>,
+        <lizefan.x@bytedance.com>
+References: <20221128020409.1545717-1-limin100@huawei.com>
+ <1232e4f3-e4b8-ff23-61e8-5465c8406f6e@digikod.net>
+ <7379a5fd-5593-c6ce-40fd-c543dcf70d2b@huawei.com>
+ <e62a539b-614c-c008-873a-f9c57c7ecb33@digikod.net>
+From:   limin <limin100@huawei.com>
+In-Reply-To: <e62a539b-614c-c008-873a-f9c57c7ecb33@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.111.113]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemm600001.china.huawei.com (7.193.23.3)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2022-11-25 at 16:57 +0100, Nicolas Bouchinet wrote:
-> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> 
-> Fixes a NULL pointer dereference occurring in the
-> `evm_protected_xattr_common` function of the EVM LSM. The bug is
-> triggered if a `inode_init_security` hook returns 0 without initializing
-> the given `struct xattr` fields (which is the case of BPF) and if no
-> other LSM overrides thoses fields after. This also leads to memory
-> leaks.
-> 
-> The `call_int_hook_xattr` macro has been inlined into the
-> `security_inode_init_security` hook in order to check hooks return
-> values and skip ones who doesn't init `xattrs`.
-> 
-> Modify `evm_init_hmac` function to init the EVM hmac using every
-> entry of the given xattr array.
-> 
-> The `MAX_LSM_EVM_XATTR` value is now based on the security modules
-> compiled in, which gives room for SMACK, SELinux, Apparmor, BPF and
-> IMA/EVM security attributes.
-> 
-> Changes the default return value of the `inode_init_security` hook
-> definition to `-EOPNOTSUPP`.
-> 
-> Changes the hook documentation to match the behavior of the LSMs using
-> it (only xattr->value is initialised with kmalloc and thus is the only
-> one that should be kfreed by the caller).
-> 
-> Cc: roberto.sassu@huaweicloud.com
-> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+cat /proc/cmdline
 
-What  is the relationship between this patch and Roberto's patch set? 
-Roberto, if there is an overlap, then at minimum there should be a
-Reported-by tag indicating that your patch set addresses a bug reported
-by Nicolas.
+BOOT_IMAGE=/vmlinuz-6.1.0-next-20221116 
+root=UUID=a65b3a79-dc02-4728-8a0c-5cf24f4ae08b ro 
+systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all
 
--- 
-thanks,
 
-Mimi
-
+On 2022/11/29 19:03, Mickaël Salaün wrote:
+> I tested with next-20221116 and all tests are OK. Could you share your 
+> kernel configuration with a link? What is the content of /proc/cmdline?
+>
+> On 29/11/2022 02:42, limin wrote:
+>> I run test on Linux ubuntu2204 6.1.0-next-20221116
+>>
+>> I did't use yama.
+>>
+>> you can reproduce by this step:
+>>
+>> cd kernel_src
+>>
+>> cd tools/testing/selftests/landlock/
+>> make
+>> ./ptrace_test
+>>
+>>
+>>
+>>
+>> On 2022/11/29 3:44, Mickaël Salaün wrote:
+>>> This patch changes the test semantic and then cannot work on my test
+>>> environment. On which kernel did you run test? Do you use Yama or
+>>> something similar?
+>>>
+>>> On 28/11/2022 03:04, limin wrote:
+>>>> Tests PTRACE_ATTACH and PTRACE_MODE_READ on the parent,
+>>>> trace parent return -1 when child== 0
+>>>> How to reproduce warning:
+>>>> $ make -C tools/testing/selftests TARGETS=landlock run_tests
+>>>>
+>>>> Signed-off-by: limin <limin100@huawei.com>
+>>>> ---
+>>>>    tools/testing/selftests/landlock/ptrace_test.c | 5 ++---
+>>>>    1 file changed, 2 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/tools/testing/selftests/landlock/ptrace_test.c
+>>>> b/tools/testing/selftests/landlock/ptrace_test.c
+>>>> index c28ef98ff3ac..88c4dc63eea0 100644
+>>>> --- a/tools/testing/selftests/landlock/ptrace_test.c
+>>>> +++ b/tools/testing/selftests/landlock/ptrace_test.c
+>>>> @@ -267,12 +267,11 @@ TEST_F(hierarchy, trace)
+>>>>            /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the 
+>>>> parent. */
+>>>>            err_proc_read = test_ptrace_read(parent);
+>>>>            ret = ptrace(PTRACE_ATTACH, parent, NULL, 0);
+>>>> +        EXPECT_EQ(-1, ret);
+>>>> +        EXPECT_EQ(EPERM, errno);
+>>>>            if (variant->domain_child) {
+>>>> -            EXPECT_EQ(-1, ret);
+>>>> -            EXPECT_EQ(EPERM, errno);
+>>>>                EXPECT_EQ(EACCES, err_proc_read);
+>>>>            } else {
+>>>> -            EXPECT_EQ(0, ret);
+>>>>                EXPECT_EQ(0, err_proc_read);
+>>>>            }
+>>>>            if (ret == 0) {
