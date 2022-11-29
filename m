@@ -2,161 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE41C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Nov 2022 09:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F11E7C4321E
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Nov 2022 11:06:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229924AbiK2JQY (ORCPT
+        id S232871AbiK2LGw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Nov 2022 04:16:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51646 "EHLO
+        Tue, 29 Nov 2022 06:06:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbiK2JQW (ORCPT
+        with ESMTP id S232759AbiK2LGW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Nov 2022 04:16:22 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A473E085
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Nov 2022 01:15:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669713326;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kLZwFc2T16+VzxzvdeqP7dZ+DZAGfAAiD+u0EUrSQ8s=;
-        b=OvXTU6p0Ct0GG3VEsw6AOZSjwusuY/Ng6cuNku1asLSrx9F6Mc66uLvd7qxMRAZbOAL+J5
-        Q8DdnyjmltiPLfDTqjLE3SaozLtbjrW5pWS5w+X7WF2iZ/48KkE540YFRqNv9Zfo0kmyyh
-        pze47cOZYmn8QXjChvz5wyc79I3BaI4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-584-rz7L7igcNUa07GB2MJFJ_w-1; Tue, 29 Nov 2022 04:15:24 -0500
-X-MC-Unique: rz7L7igcNUa07GB2MJFJ_w-1
-Received: by mail-wm1-f71.google.com with SMTP id bg25-20020a05600c3c9900b003cf3ed7e27bso7503375wmb.4
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Nov 2022 01:15:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kLZwFc2T16+VzxzvdeqP7dZ+DZAGfAAiD+u0EUrSQ8s=;
-        b=NiEMYhEdBmjdnDGTXDUFVaRPO7xefHPO0qW2t2cXMJtNkNYtzr5m8xyD3OBzWaToz9
-         Zgigg7skILc7tUnZuHtXLl1fnV5m+r1ipEBPr/CLxdPIIWAY7hLcINMN/KBiLTOz1oUZ
-         tGKjy78j+mBK6nvWXECmHZ+kaJIw3y/iaR+b3NRSMFE6vI4C3uJaFCAXpuE+LB1X7cnw
-         y3kFBElTAvrM4p+GShgEwZ+IEnAEgVQ6KATVIqHd9GrpI+KXIE6pHT8iO7B2ArgYRkIx
-         CjfWL94n2q2xNhFwJapfBUcAyXyD7wZDcEE7AlcfvXla8yGtzxCR41Onaj1Y8n8tj8la
-         vK0g==
-X-Gm-Message-State: ANoB5pmOvBCCrjMKZzz/hxZ5LpqRoP7sf9FwHDkVd+6Qyw1MaGfSESS0
-        nlbvKgoKH3Wq7+Ovinhp08lnlUXlaq0qP8Jcp+UOfOAJgMp6t/KSjS1YLx0SnMPaA7+P7sZlwGK
-        TwWfXacMsZPXFtUXKqX4/ocg7us4W+gj49frU
-X-Received: by 2002:a05:600c:430c:b0:3cf:8ed7:7124 with SMTP id p12-20020a05600c430c00b003cf8ed77124mr42243443wme.140.1669713323668;
-        Tue, 29 Nov 2022 01:15:23 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf5aMoFyhfTZRz6WGw0GcgDkcONZAiRyZAh+e0PFHXmVnEtFtgvwKaxuOXbIxhdoVgI1OB8H+Q==
-X-Received: by 2002:a05:600c:430c:b0:3cf:8ed7:7124 with SMTP id p12-20020a05600c430c00b003cf8ed77124mr42243382wme.140.1669713323266;
-        Tue, 29 Nov 2022 01:15:23 -0800 (PST)
-Received: from ?IPV6:2003:cb:c705:ca00:3fb8:c253:3bf7:b60e? (p200300cbc705ca003fb8c2533bf7b60e.dip0.t-ipconnect.de. [2003:cb:c705:ca00:3fb8:c253:3bf7:b60e])
-        by smtp.gmail.com with ESMTPSA id n26-20020a05600c3b9a00b003c6b70a4d69sm1498998wms.42.2022.11.29.01.15.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Nov 2022 01:15:22 -0800 (PST)
-Message-ID: <abcba252-13a0-50aa-79ec-28b649c892cd@redhat.com>
-Date:   Tue, 29 Nov 2022 10:15:20 +0100
+        Tue, 29 Nov 2022 06:06:22 -0500
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AB0662041
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Nov 2022 03:03:29 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NLzwH54j7zMpnsN;
+        Tue, 29 Nov 2022 12:03:27 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4NLzwG46yQzMppBm;
+        Tue, 29 Nov 2022 12:03:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1669719807;
+        bh=TLB1uJhOAIdI/EElBwqY+knrjdOQVyTAQPueqObbA9U=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=YJe3KcaBhpyR2dws3y80DgSUVZlwx7uKAL8ICdepm5y/JD/cXo3UmTENPWpcoWjdX
+         iGaj99GSJui7kLNVwPx15f58zrG9FynRunm/RKwKzAhDZD9LMb+K24HWd8yBvw5Dsf
+         +FVn3WoG66jczn2bHYe5O1IrpBBzEjGq4PnjBsFA=
+Message-ID: <e62a539b-614c-c008-873a-f9c57c7ecb33@digikod.net>
+Date:   Tue, 29 Nov 2022 12:03:25 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE
- usage
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-References: <20221116102659.70287-1-david@redhat.com>
- <20221116102659.70287-17-david@redhat.com>
- <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com>
- <08b65ac6-6786-1080-18f8-d2be109c85fc@xs4all.nl>
- <9d0bf98a-3d6a-1082-e992-1338e1525935@redhat.com>
- <20221128145927.df895bf1966cfa125cae9668@linux-foundation.org>
- <22b1107b-0acc-5772-a883-8f3c4682eb1b@redhat.com>
- <c2681582-1e24-7ed9-e4fb-e2dd17a93aed@xs4all.nl>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <c2681582-1e24-7ed9-e4fb-e2dd17a93aed@xs4all.nl>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+User-Agent: 
+Subject: Re: [PATCH -next] selftests/landlock: Fix selftest ptrace_test run
+ fail
 Content-Language: en-US
+To:     limin <limin100@huawei.com>, shuah@kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
+        shakeelb@google.com, songmuchun@bytedance.com, tj@kernel.org,
+        lizefan.x@bytedance.com
+References: <20221128020409.1545717-1-limin100@huawei.com>
+ <1232e4f3-e4b8-ff23-61e8-5465c8406f6e@digikod.net>
+ <7379a5fd-5593-c6ce-40fd-c543dcf70d2b@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <7379a5fd-5593-c6ce-40fd-c543dcf70d2b@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 29.11.22 10:08, Hans Verkuil wrote:
-> On 29/11/2022 09:48, David Hildenbrand wrote:
->> On 28.11.22 23:59, Andrew Morton wrote:
->>> On Mon, 28 Nov 2022 09:18:47 +0100 David Hildenbrand <david@redhat.com> wrote:
->>>
->>>>> Less chances of things going wrong that way.
->>>>>
->>>>> Just mention in the v2 cover letter that the first patch was added to
->>>>> make it easy to backport that fix without being hampered by merge
->>>>> conflicts if it was added after your frame_vector.c patch.
->>>>
->>>> Yes, that's the way I would naturally do, it, however, Andrew prefers
->>>> delta updates for minor changes.
->>>>
->>>> @Andrew, whatever you prefer!
->>>
->>> I'm inclined to let things sit as they are.  Cross-tree conflicts
->>> happen, and Linus handles them.  I'll flag this (very simple) conflict
->>> in the pull request, if MM merges second.  If v4l merges second then
->>> hopefully they will do the same.  But this one is so simple that Linus
->>> hardly needs our help.
+I tested with next-20221116 and all tests are OK. Could you share your 
+kernel configuration with a link? What is the content of /proc/cmdline?
+
+On 29/11/2022 02:42, limin wrote:
+> I run test on Linux ubuntu2204 6.1.0-next-20221116
 > 
-> It's not about cross-tree conflicts, it's about the fact that my patch is
-> a fix that needs to be backported to older kernels. It should apply cleanly
-> to those older kernels if my patch goes in first, but if it is the other way
-> around I would have to make a new patch for the stable kernels.
-
-IIUC, the conflict will be resolved at merge time and the merge 
-resolution will be part of the merge commit. It doesn't matter in which 
-order the patches go upstream, the merge commit resolves the problematic 
-overlap.
-
-So your patch will be upstream as intended, where it can be cleanly 
-backported.
-
-Hope I am not twisting reality ;)
-
--- 
-Thanks,
-
-David / dhildenb
-
+> I did't use yama.
+> 
+> you can reproduce by this step:
+> 
+> cd kernel_src
+> 
+> cd tools/testing/selftests/landlock/
+> make
+> ./ptrace_test
+> 
+> 
+> 
+> 
+> On 2022/11/29 3:44, Mickaël Salaün wrote:
+>> This patch changes the test semantic and then cannot work on my test
+>> environment. On which kernel did you run test? Do you use Yama or
+>> something similar?
+>>
+>> On 28/11/2022 03:04, limin wrote:
+>>> Tests PTRACE_ATTACH and PTRACE_MODE_READ on the parent,
+>>> trace parent return -1 when child== 0
+>>> How to reproduce warning:
+>>> $ make -C tools/testing/selftests TARGETS=landlock run_tests
+>>>
+>>> Signed-off-by: limin <limin100@huawei.com>
+>>> ---
+>>>    tools/testing/selftests/landlock/ptrace_test.c | 5 ++---
+>>>    1 file changed, 2 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/tools/testing/selftests/landlock/ptrace_test.c
+>>> b/tools/testing/selftests/landlock/ptrace_test.c
+>>> index c28ef98ff3ac..88c4dc63eea0 100644
+>>> --- a/tools/testing/selftests/landlock/ptrace_test.c
+>>> +++ b/tools/testing/selftests/landlock/ptrace_test.c
+>>> @@ -267,12 +267,11 @@ TEST_F(hierarchy, trace)
+>>>            /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the parent. */
+>>>            err_proc_read = test_ptrace_read(parent);
+>>>            ret = ptrace(PTRACE_ATTACH, parent, NULL, 0);
+>>> +        EXPECT_EQ(-1, ret);
+>>> +        EXPECT_EQ(EPERM, errno);
+>>>            if (variant->domain_child) {
+>>> -            EXPECT_EQ(-1, ret);
+>>> -            EXPECT_EQ(EPERM, errno);
+>>>                EXPECT_EQ(EACCES, err_proc_read);
+>>>            } else {
+>>> -            EXPECT_EQ(0, ret);
+>>>                EXPECT_EQ(0, err_proc_read);
+>>>            }
+>>>            if (ret == 0) {
