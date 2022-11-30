@@ -2,118 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B85FC4167B
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Nov 2022 16:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C75C46467
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Nov 2022 03:40:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236449AbiK2QyX (ORCPT
+        id S232726AbiK3Dkt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Nov 2022 11:54:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55084 "EHLO
+        Tue, 29 Nov 2022 22:40:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236414AbiK2QyF (ORCPT
+        with ESMTP id S232568AbiK3Dkr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Nov 2022 11:54:05 -0500
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4489974CD9
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Nov 2022 08:49:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669740528; bh=7iroGIbVR4OxPkC3NVITmuStzr81hSzdnaar4vrIWpc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=KdK9VL/sn5zU4QaYIXfpR7UxQnplHe5/RKi9H0FUFe0rAvTf0BB7AlQJerg4jW76Naef7gJNuHP3xt1KgQe8vaYvHZzD96imS///GUdJ/mOZkMvnGkSV2uvJ2vo1BfclraGkicTadhhWX/RL0OkjSwhTsV1ln0yon5875totoRnQlBAYW/fQ4m8j5JHnNHNi0LT5LKFDeOpea736pXxwaGMaCOdrvATOz4PMT4dEVkDYr3aFIB0PZAB6os8mkqqyLsn1rUbMjs05nx71k9sMw1/7yCyPs1hH5XTO9x0/p8ZVjhMBUWfYAqGsLP37NiRFoMgOB+nWk1Add4zuxg2h+w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669740528; bh=b0GYSFRRVgMyE9YFyW1kLUYJi74Un9Gg0vhPSck2E+U=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=SAdJhePZaxQW2h5MWtjV2V2KwS2tegYUidt2uMlzaYLLG2VoLJ/V7DRiRbnp+90l+H0vWywzXmyXivo1kPvPRFu7gd8a8PUZL3YUsszGRR1Si4osCIyJWuoI2tb7zduDghtSNwHGefhxi8VxhKXJaYldKkjrl3EeE7Le+q7oGIzY3yaF7mjOp0cNBYzMLV6wyXDhwqLEB6QK8txhSm6zrh/KWGmjVRkFyyX384QxycOnsmnwg9UJhz4C7W1TY0cxYcwj3ULazPvSPGBGV9ujKJlNrBDciWbSd5ojJbcp46G6C4l01/hCYFL1nDqx3A3MYW6XqxtCH4LJh7xKLxOkGw==
-X-YMail-OSG: xIbadvUVM1nqYjUp9hp8aDEZtFVw1aMpJth4JPE1mEGrzHxiXWMEjP8On9cmjmq
- GeWyNnqV2gko7klQPSESVM9V2CdEesZA2MPWStzlAW0ocDPhaB9lTQyNJL339tcmXbuytw5v7o3b
- NEHaOboD3bPt1GWt_4sLh9N4JLGpSZQWGmX4XwKlsgluWrPCfSY_9aN7Z7qrWfwGJj9jBMuug9V3
- SjQV7vb8c3pEgEUeruVfabydtbl0qWu0j1FizK.y1p4z4SeysiHe3r_4iMAVTu1djJq9G7pPoX4B
- HggJWuLnI4TX13ny8cspoi7eG6GvNwz58gjquFi4JzO84QPqkiLeNrsF7d_LnZOW1S6q5FFEV7XP
- 6PX578DCdvyhLvCWU0m3LlocCed0SoTM9oWsEjYbjmIxqGXj0PORaFBy6O5KvP6t3ovzMm_1P4Rf
- fwmny1JWseN7Wzrolpsx.Qy1.NvaVA226DYv3v0KjBS1pd9x_SeUrKdQDTlDXxnTpBeXLGwJcxBb
- t9khRJglEl6oA2WzsRxA1.j_hmYd5xsESoJS7RK1fPwBkt6Cv8fDdlGOOk7qAmb1_hQ.VEkUSeak
- OxTYRpEKut3EdDfDGlpQQEjJ8nLbfkre8nBKETLQG5X0J9pjzDvrmCk_I45m.SP4D46tSaLmPmsB
- owmMreBqcpaazgBVJ_LTzoMfzPf5KU.nkdKi5YSWrLc6QM.oQR_MwDutKoLIN4q43HQDEZNhx7bY
- k5_RJzDHWNlkA1nchPGQL.NSNLLKX2gqzdO2yzWV1sQ1cBN5VcoxpWTQE.84Is_qcXNybGPGkbDn
- L33zCQAHkJmB1Q4eziFF22FaQ7nfU3K_OTkK5DaVEOZH0aznpb2xYFuOjh6ru30ctof4vAlu5Xfa
- ZoemmEEHXet9sdb5H_jGcgyCMQDSUF1B1yvlA08hKvEX0pKgYkBgiGcy63.8hyp1hAKpJy2Y2z48
- czn1AIrg5vqCLfg1MT_wVwvz6CQXSrNTijuQygVWJWXCSow6LLCwO9A9OS1Hm0pVgMB.TC9bTSg2
- IcPi.ZWWIfBmXOSWAOi0sl8Sp1Wc0_oSjtvheo5B5RPmsRwsHSxT5Xoz91.Y0UeJ7VWLrazca5Cg
- BFPsUWO4Trhev4sKWvLDAHAAQ_DDYaBgKZJMdf_xM7O5LchNaC_xlqDTYhpDzut5s8PojR0fypNT
- IdQPUjyYzLIdxMySdX0OXkyy29E.7pWkY5PXA9jFEGyK0IR6wZ9S_qjXgUoBMZknVkaKo3.zyN1A
- cUNcwUJn1XzGPxEiUDOGZB8d6l.u4kFXNNS66HhjkiiStP6BOkYFLJ_9BWCkoQ9gAkC5I9OaQAkA
- 6iq6Upw.lgtfOZnds.0SbBtYD7_VZMq.CbTey3sg33H.SXXAZyvpuU1PUdvdQLPl7TxGW2ozzQHE
- xYmGcFagq8FrujA60YD_Ric07R.XyF_DdO3Ltzz1wDBIgqX.eTwAReWPyqspuUdFovqrJoEDYdOA
- 5wnsCIqRfekxM1W7BtO1MFZSc7Ppa3p6omYRQDmlCpfUrXsSB.vCnEivVFQCmNAfQNevxOnSuhIy
- QwUBfiKLS7k1SAQDT0oa17YSTv6JyVS.ncoat7m_QXlrGbQl8_s_nLt37xWx_Hp0ORjwBoP_27xY
- L7a8b8AvcrH0ufxZHaJvqyxgZ6hAmgI_WRtdmDfGrYlMKZxo4.u0O65rSCLBxU5M9IfwzoXkaZEr
- WIZ8jLEcnOjqYOYq3ele5imbI9qTPYWPjDFN20wLuz9NUrgM6jWLEXNdtA4lH0z3A5upt7trcwWb
- K1.PuJp7w71EaV3vzPygnDgOCKd9Qh7XNjFCRSGgk6fsNlxOjDOxwnsK1GlMapv0I75Nt_O9qzLs
- PTfE.rvjO4nYOkrZnGiha0yz1hbE_4xi0fOrNcPSTefAZVO6Gledv_r3LBfTwFPunhFDlM4iGgNs
- _Ah8lzRkyknqWhrmi.OXWwqeMIXbxzwLh0eZzF5EqlIcsWUg_liFlRQFuFSw1KK6zEDLmptSc0OP
- FNoKuByT7bOOuksqAsWVtIXx75qXoYO5cqI32qCXV08k9mJ6pHHyNOW2IKo5bnLzmHYvIkXmK2A_
- n6PEvbIQagdFfyv_raWrVT0eNOqlwP37TCL3ddMU7GPSaDWCEuTkXqoxBQ5whC7Sbwgic.RYChVH
- sr_251CgOBi.P9fLSNfAmxvkyl1x_2noZoRwHkxdHVg0iam6BQCld0qwPrE59_F6QvACG5mL.kns
- PMDIslWh.r7w.HuoVOL7TNn3KiV7qG.8h2LHtDR0PrYV9oHa6dqYVr4u87GFODl7JhC_lATNqFbh
- zeBy6l5alZTJUDDM-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 29 Nov 2022 16:48:48 +0000
-Received: by hermes--production-gq1-579bc4bddd-hbm49 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 065068aa4a352c836ee8e25097808977;
-          Tue, 29 Nov 2022 16:48:47 +0000 (UTC)
-Message-ID: <3765301a-0c55-6e6b-c964-888677842248@schaufler-ca.com>
-Date:   Tue, 29 Nov 2022 08:48:45 -0800
+        Tue, 29 Nov 2022 22:40:47 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8ACF663CE;
+        Tue, 29 Nov 2022 19:40:46 -0800 (PST)
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4NMQ2F1p1XzRpgW;
+        Wed, 30 Nov 2022 11:40:05 +0800 (CST)
+Received: from kwepemm600001.china.huawei.com (7.193.23.3) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Wed, 30 Nov 2022 11:40:45 +0800
+Received: from [10.67.111.113] (10.67.111.113) by
+ kwepemm600001.china.huawei.com (7.193.23.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Wed, 30 Nov 2022 11:40:44 +0800
+Message-ID: <cae40a4b-ae99-f33d-d7f9-5a2d4dfa986b@huawei.com>
+Date:   Wed, 30 Nov 2022 11:40:43 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v2 0/2] lsm: Improve LSM hooks documentation
+ Thunderbird/102.4.2
+Subject: Re: [PATCH -next] selftests/landlock: Fix selftest ptrace_test run
+ fail
 Content-Language: en-US
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, paul@paul-moore.com,
-        omosnace@redhat.com, john.johansen@canonical.com,
-        kpsingh@kernel.org
-Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        casey@schaufler-ca.com
-References: <20221128144240.210110-1-roberto.sassu@huaweicloud.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20221128144240.210110-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20863 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        <shuah@kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <hannes@cmpxchg.org>, <mhocko@kernel.org>,
+        <roman.gushchin@linux.dev>, <shakeelb@google.com>,
+        <songmuchun@bytedance.com>, <tj@kernel.org>,
+        <lizefan.x@bytedance.com>
+References: <20221128020409.1545717-1-limin100@huawei.com>
+ <1232e4f3-e4b8-ff23-61e8-5465c8406f6e@digikod.net>
+ <7379a5fd-5593-c6ce-40fd-c543dcf70d2b@huawei.com>
+ <e62a539b-614c-c008-873a-f9c57c7ecb33@digikod.net>
+From:   limin <limin100@huawei.com>
+In-Reply-To: <e62a539b-614c-c008-873a-f9c57c7ecb33@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.111.113]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600001.china.huawei.com (7.193.23.3)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/28/2022 6:42 AM, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+configuration 
+https://gitee.com/openeuler/kernel/blob/openEuler-22.09/arch/x86/configs/openeuler_defconfig
 
-For the series:
 
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-
+On 2022/11/29 19:03, Mickaël Salaün wrote:
+> I tested with next-20221116 and all tests are OK. Could you share your 
+> kernel configuration with a link? What is the content of /proc/cmdline?
 >
-> The recent discussion about return values from LSM hooks, available here:
->
-> https://lore.kernel.org/bpf/20221115175652.3836811-1-roberto.sassu@huaweicloud.com/
->
-> motivated revisiting the documentation in include/linux/lsm_hooks.h, to
-> ensure that it is complete and accurate. It was also a good occasion to fix
-> discovered formatting issues.
->
-> Changelog:
->
-> v1 (security: Ensure LSMs return expected values):
-> - A positive value, not only 1 can cause cap_set_admin to be set when
->   calling __vm_enough_memory() (reported by Paul)
-> - Improve description of the vm_enough_memory hook
-> - Remove documentation of the sb_add_mnt_opt hook, as it was removed
->   (reported by Paul)
-> - Add more periods in the parameters description
-> - Adjust mmap_addr and mmap_file semicolon
-> - Move description of gfp parameter of xfrm_policy_alloc_security together
->   with the others
-> - Add missing return value description for binder_transaction,
->   binder_transfer_binder, binder_transfer_file, quotactl and quota_on
-> - Improve return value description for sb_eat_lsm_opts, sb_show_options,
->   dentry_init_security, dentry_create_files_as and sctp_assoc_established
->
-> Roberto Sassu (2):
->   lsm: Clarify documentation of vm_enough_memory hook
->   lsm: Add/fix return values in lsm_hooks.h and fix formatting
->
->  include/linux/lsm_hooks.h | 227 ++++++++++++++++++++++++--------------
->  1 file changed, 143 insertions(+), 84 deletions(-)
->
+> On 29/11/2022 02:42, limin wrote:
+>> I run test on Linux ubuntu2204 6.1.0-next-20221116
+>>
+>> I did't use yama.
+>>
+>> you can reproduce by this step:
+>>
+>> cd kernel_src
+>>
+>> cd tools/testing/selftests/landlock/
+>> make
+>> ./ptrace_test
+>>
+>>
+>>
+>>
+>> On 2022/11/29 3:44, Mickaël Salaün wrote:
+>>> This patch changes the test semantic and then cannot work on my test
+>>> environment. On which kernel did you run test? Do you use Yama or
+>>> something similar?
+>>>
+>>> On 28/11/2022 03:04, limin wrote:
+>>>> Tests PTRACE_ATTACH and PTRACE_MODE_READ on the parent,
+>>>> trace parent return -1 when child== 0
+>>>> How to reproduce warning:
+>>>> $ make -C tools/testing/selftests TARGETS=landlock run_tests
+>>>>
+>>>> Signed-off-by: limin <limin100@huawei.com>
+>>>> ---
+>>>>    tools/testing/selftests/landlock/ptrace_test.c | 5 ++---
+>>>>    1 file changed, 2 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/tools/testing/selftests/landlock/ptrace_test.c
+>>>> b/tools/testing/selftests/landlock/ptrace_test.c
+>>>> index c28ef98ff3ac..88c4dc63eea0 100644
+>>>> --- a/tools/testing/selftests/landlock/ptrace_test.c
+>>>> +++ b/tools/testing/selftests/landlock/ptrace_test.c
+>>>> @@ -267,12 +267,11 @@ TEST_F(hierarchy, trace)
+>>>>            /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the 
+>>>> parent. */
+>>>>            err_proc_read = test_ptrace_read(parent);
+>>>>            ret = ptrace(PTRACE_ATTACH, parent, NULL, 0);
+>>>> +        EXPECT_EQ(-1, ret);
+>>>> +        EXPECT_EQ(EPERM, errno);
+>>>>            if (variant->domain_child) {
+>>>> -            EXPECT_EQ(-1, ret);
+>>>> -            EXPECT_EQ(EPERM, errno);
+>>>>                EXPECT_EQ(EACCES, err_proc_read);
+>>>>            } else {
+>>>> -            EXPECT_EQ(0, ret);
+>>>>                EXPECT_EQ(0, err_proc_read);
+>>>>            }
+>>>>            if (ret == 0) {
