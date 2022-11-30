@@ -2,179 +2,196 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDF0C47089
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Nov 2022 21:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07621C47089
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Nov 2022 21:29:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229514AbiK3VYc (ORCPT
+        id S229503AbiK3V3s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Nov 2022 16:24:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54408 "EHLO
+        Wed, 30 Nov 2022 16:29:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbiK3VYb (ORCPT
+        with ESMTP id S229497AbiK3V3r (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Nov 2022 16:24:31 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 453358D67F;
-        Wed, 30 Nov 2022 13:24:30 -0800 (PST)
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AULDSbv004773;
-        Wed, 30 Nov 2022 21:23:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=yifZRjcnME4KdiCrx4XAH30YdBt6VKv7hfRn0v4FRuc=;
- b=l1XUiN1rW6f+ee6TrpN9jk5ssoNSaDOiPcxMdZauO8mKygmAxvaRnHoG31vayk9PgxHr
- bnrusCji3tMF8gNxXVxyKptv/w6DBipSxA+jUHZPaKQlnX1VA6veuNfnO4T0U9hHUmjT
- Y8LtbWrLuqkjh12fLywGfGt8FtkeENfaXiLvCKlhTB3SHROi0j4psDHZlDj/cvAHjVuj
- NL1hijVMJJh4dHNqKg7eBrzLejruYTDP006FlqAY4ckD2FnyWxCDyzWIQDFmuEpogPXV
- 5szbiEKjhNrPIFvt8pvIUWohtN6IFLNqUliTFjBXXkHzaJ4/+uucgc8gQi22pUqMQ2ZO ag== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m6ewd86mb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Nov 2022 21:23:48 +0000
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AULHKau018482;
-        Wed, 30 Nov 2022 21:23:47 GMT
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m6ewd86kt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Nov 2022 21:23:47 +0000
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AULKxnj005739;
-        Wed, 30 Nov 2022 21:23:45 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([9.208.130.100])
-        by ppma02wdc.us.ibm.com with ESMTP id 3m3aea6hkq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Nov 2022 21:23:45 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-        by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AULNj8B37618096
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Nov 2022 21:23:45 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EEA2E5803F;
-        Wed, 30 Nov 2022 21:23:44 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C5AA458056;
-        Wed, 30 Nov 2022 21:23:43 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.97.169])
-        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 30 Nov 2022 21:23:43 +0000 (GMT)
-Message-ID: <b929e0c597161fd5be79c18163a11649dd7f237f.camel@linux.ibm.com>
-Subject: Re: [PATCH v6 4/6] security: Allow all LSMs to provide xattrs for
- inode_init_security hook
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Roberto Sassu <roberto.sassu@huaweicloud.com>, mark@fasheh.com,
-        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org
-Cc:     ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 30 Nov 2022 16:23:43 -0500
-In-Reply-To: <50232f2b-d5ce-1e5a-3f5b-8d3eb53fe1ec@schaufler-ca.com>
-References: <20221123154712.752074-1-roberto.sassu@huaweicloud.com>
-         <20221123154712.752074-5-roberto.sassu@huaweicloud.com>
-         <13350b79f708cb089e2ff2ee5cead52bafb10982.camel@linux.ibm.com>
-         <bb63eba9a9f24558f4a1acd9bf012b59b5c6e98e.camel@huaweicloud.com>
-         <9859294adb0a9b9587ea7fb70a836a312aaf3c69.camel@linux.ibm.com>
-         <50232f2b-d5ce-1e5a-3f5b-8d3eb53fe1ec@schaufler-ca.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: RFYdom96nPEAcgZBzGdM3xm3tZ0uHlwx
-X-Proofpoint-GUID: gNLYuWXFEUBW_-uMEoVK_Brk6AGGQYmE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-30_04,2022-11-30_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 priorityscore=1501
- bulkscore=0 mlxscore=0 impostorscore=0 phishscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211300148
+        Wed, 30 Nov 2022 16:29:47 -0500
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6868C900EC;
+        Wed, 30 Nov 2022 13:29:44 -0800 (PST)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20221130212940euoutp02da7b387da9d9fa99483e135383d20801~sehJJCNX91850718507euoutp02u;
+        Wed, 30 Nov 2022 21:29:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20221130212940euoutp02da7b387da9d9fa99483e135383d20801~sehJJCNX91850718507euoutp02u
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1669843780;
+        bh=akhEx41DurukCwscScXy2W8jrCRFMeG68fqPj6Hd0zI=;
+        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+        b=FLyeA/XL85JtILsWSe87RtP5osqmGeZXNWjhHppwpfE2R+ovKVapArWx+ITi/GxI7
+         rYJeMlfP7Z/Nu3oaQXXiulvxoY5igAzrXLSJErVm96mtyhF0bO8k2UsWC1+6pXqxhD
+         qx4TLkFS2A1eSUT1CHHDfMxLCgvuhUT0UMvafSHc=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20221130212940eucas1p14cbfc0e4c09787d3ed00f9e9c0739e8e~sehIvAaq52135721357eucas1p1t;
+        Wed, 30 Nov 2022 21:29:40 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 45.AD.10112.44BC7836; Wed, 30
+        Nov 2022 21:29:40 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20221130212939eucas1p235600ec236c15b05af0c2df5b24580e4~sehIMd1Gc2791627916eucas1p2c;
+        Wed, 30 Nov 2022 21:29:39 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221130212939eusmtrp2aaf52747977ae564c6b6aac0fa5bc23a~sehIL3szs3092830928eusmtrp25;
+        Wed, 30 Nov 2022 21:29:39 +0000 (GMT)
+X-AuditID: cbfec7f4-cf3ff70000002780-96-6387cb4424d6
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id EE.B8.09026.34BC7836; Wed, 30
+        Nov 2022 21:29:39 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20221130212939eusmtip166dc89a3acdcd91c8b05c3b1fd424984~sehH96xu61256612566eusmtip11;
+        Wed, 30 Nov 2022 21:29:39 +0000 (GMT)
+Received: from localhost (106.210.248.49) by CAMSVWEXC02.scsc.local
+        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Wed, 30 Nov 2022 21:29:38 +0000
+Date:   Wed, 30 Nov 2022 22:29:36 +0100
+From:   Joel Granados <j.granados@samsung.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     <mcgrof@kernel.org>, <ddiss@suse.de>, <joshi.k@samsung.com>,
+        <paul@paul-moore.com>, <ming.lei@redhat.com>,
+        <linux-security-module@vger.kernel.org>, <axboe@kernel.dk>,
+        <io-uring@vger.kernel.org>
+Subject: Re: [RFC v2 1/1] Use a fs callback to set security specific data
+Message-ID: <20221130212936.drfqjdiq6vic3cdc@localhost>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="iiqsdd6eqsgh7rd5"
+Content-Disposition: inline
+In-Reply-To: <Y4YWACJqlhQ80Xby@infradead.org>
+X-Originating-IP: [106.210.248.49]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBKsWRmVeSWpSXmKPExsWy7djP87oup9uTDc79E7RYfbefzeLr/+ks
+        FqcnLGKyeNd6jsXiQ88jNosbE54yWhya3MxkcXvSdBYHDo/NK7Q8Lp8t9di0qpPNY+3eF4we
+        7/ddZfPYfLra4/MmuQD2KC6blNSczLLUIn27BK6MR2v3shfMEa/49vEhewPjPuEuRk4OCQET
+        ia/b3rJ1MXJxCAmsYJR4dWIdE4TzhVFizp4pTCBVQgKfGSX+TdKB6Xi45wJUx3JGiec/TzFC
+        OEBF6/sfM0M4Wxglbr76wQrSwiKgKnHn/30WEJtNQEfi/Js7zCC2iICmxK3l7WANzAKnGSU2
+        vHwKlhAW8JR40DILrIFXwFzixdkmVghbUOLkzCdgcWaBConpF7cC2RxAtrTE8n8cIGFOAV2J
+        xqsfmSFOVZJYc2MfG4RdK3Fqyy2w3yQElnNKnLzWwQqRcJHYf/UpVIOwxKvjW9ghbBmJ/zvn
+        M0HY2RI7p+yCqimQmHVyKhvIXgkBa4m+MzkQYUeJuzsPMEGE+SRuvBWEuJJPYtK26cwQYV6J
+        jjYhiGo1iR1NWxknMCrPQvLXLCR/zUL4CyKsI7Fg9yc2DGFtiWULXzND2LYS69a9Z1nAyL6K
+        UTy1tDg3PbXYKC+1XK84Mbe4NC9dLzk/dxMjMMGd/nf8yw7G5a8+6h1iZOJgPMSoAtT8aMPq
+        C4xSLHn5ealKIrwdn9uShXhTEiurUovy44tKc1KLDzFKc7AoifOyzdBKFhJITyxJzU5NLUgt
+        gskycXBKNTBlWG/RCj1qfu/Fkvbwb695eOdkHWq9Ivzsxoe97pFdF30WNuf9F69RDFrWd1L+
+        adsDo9DU+6qZn7q450wxC7he2yveaTfn1f/jq5qnM96SkHym+5CL0Vny1AJWobh7CmdYvn5+
+        eC9e0vnXjn7zm/eeS4WwWlxiLk9u55Dgcj3xZ7PXjmbHS8vO29X/WMnOnip+Rvj2pr3lD1r2
+        9Jw7cI9PQHR3Xyi324HVeg/2ffV3VL1hVfXS/7fvipamPclLw+w77PwMqz64ly5zDWSLina3
+        zvx1WuOk6Z4Pz4017r+aPGnr9b8vsgKOyzwVfD7pfMENs13PJxkFMt/kPLdX7u6842sCHza4
+        Ztw81T3x/fprSizFGYmGWsxFxYkAb4oweOsDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKIsWRmVeSWpSXmKPExsVy+t/xu7rOp9uTDXYtVrdYfbefzeLr/+ks
+        FqcnLGKyeNd6jsXiQ88jNosbE54yWhya3MxkcXvSdBYHDo/NK7Q8Lp8t9di0qpPNY+3eF4we
+        7/ddZfPYfLra4/MmuQD2KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTub
+        lNSczLLUIn27BL2Mg927WQtmiVfM3mPRwLhHuIuRk0NCwETi4Z4LbF2MXBxCAksZJdYv/8oM
+        kZCR+HTlIzuELSzx51oXVNFHRon+s7/ZIZwtjBKz9rwHq2IRUJW48/8+C4jNJqAjcf7NHbBJ
+        IgKaEreWtzODNDALnGaU2PDyKVhCWMBT4kHLLLAGXgFziRdnm1ghpj5jlGhafY0RIiEocXLm
+        E6AiDqDuMonHN+whTGmJ5f84QCo4BXQlGq9+hLpaSWLNjX1sEHatxOe/zxgnMArPQjJoFsKg
+        WQiDQCqYBbQkbvx7yYQhrC2xbOFrZgjbVmLduvcsCxjZVzGKpJYW56bnFhvpFSfmFpfmpesl
+        5+duYgTG+bZjP7fsYFz56qPeIUYmDsZDjCpAnY82rL7AKMWSl5+XqiTC2/G5LVmINyWxsiq1
+        KD++qDQntfgQoykwECcyS4km5wMTUF5JvKGZgamhiZmlgamlmbGSOK9nQUeikEB6Yklqdmpq
+        QWoRTB8TB6dUA9OO90ZSLb3enmySRSFx1ptPnt7m0/HhY1HkiztPSv0Xlgrt7j0ZH7gtXXVH
+        jZD9eR8xwxNincd4glaq7VBP5shMuflymeB0ncnzZa27ZyleORHXGrU9Jub1JAvZno3Kz9vX
+        X7buy+H5+OnTL/uENVOO2VQq2P3QN/97MuHivcwj8+W4OjqE9JlubzCvn3xD/nrwq17/mk1W
+        lgoiX/dsUp6jcXZLU5Ejv97ju/JLM/m89y969cF3ll+GM/vV79K6yf9/r2/2vOvirMTRw3GA
+        J8d1y52lwW77s7Tmlrxd9vyPreicurYfsRMi9E5PnDxx9TTe+ZM5hWPyXrdezPq0MGy1xot5
+        9RoBIvujrY91PlBiKc5INNRiLipOBADj+7+FiAMAAA==
+X-CMS-MailID: 20221130212939eucas1p235600ec236c15b05af0c2df5b24580e4
+X-Msg-Generator: CA
+X-RootMTR: 20221122103536eucas1p28f1c88f2300e49942c789721fe70c428
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20221122103536eucas1p28f1c88f2300e49942c789721fe70c428
+References: <20221122103144.960752-1-j.granados@samsung.com>
+        <CGME20221122103536eucas1p28f1c88f2300e49942c789721fe70c428@eucas1p2.samsung.com>
+        <20221122103144.960752-2-j.granados@samsung.com>
+        <Y4YWACJqlhQ80Xby@infradead.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-11-29 at 07:39 -0800, Casey Schaufler wrote:
-> On 11/29/2022 3:23 AM, Mimi Zohar wrote:
-> > On Thu, 2022-11-24 at 09:17 +0100, Roberto Sassu wrote:
-> >> On Wed, 2022-11-23 at 20:14 -0500, Mimi Zohar wrote:
-> >>> Hi Roberto,
-> >>>
-> >>> On Wed, 2022-11-23 at 16:47 +0100, Roberto Sassu wrote:
-> >>>>  int security_inode_init_security(struct inode *inode, struct inode *dir,
-> >>>>                                  const struct qstr *qstr,
-> >>>>                                  const initxattrs initxattrs, void *fs_data)
-> >>>>  {
-> >>>> -       struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
-> >>>> -       struct xattr *lsm_xattr, *evm_xattr, *xattr;
-> >>>> -       int ret;
-> >>>> +       struct security_hook_list *P;
-> >>>> +       struct xattr *new_xattrs;
-> >>>> +       struct xattr *xattr;
-> >>>> +       int ret = -EOPNOTSUPP, num_filled_xattrs = 0;
-> >>>>  
-> >>>>         if (unlikely(IS_PRIVATE(inode)))
-> >>>>                 return 0;
-> >>>>  
-> >>>> +       if (!blob_sizes.lbs_xattr)
-> >>>> +               return 0;
-> >>>> +
-> >>>>         if (!initxattrs)
-> >>>>                 return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
-> >>>> -                                    dir, qstr, NULL, NULL, NULL);
-> >>>> -       memset(new_xattrs, 0, sizeof(new_xattrs));
-> >>>> -       lsm_xattr = new_xattrs;
-> >>>> -       ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
-> >>>> -                                               &lsm_xattr->name,
-> >>>> -                                               &lsm_xattr->value,
-> >>>> -                                               &lsm_xattr->value_len);
-> >>>> -       if (ret)
-> >>>> +                                   dir, qstr, NULL);
-> >>>> +       /* Allocate +1 for EVM and +1 as terminator. */
-> >>>> +       new_xattrs = kcalloc(blob_sizes.lbs_xattr + 2, sizeof(*new_xattrs),
-> >>>> +                            GFP_NOFS);
-> >>>> +       if (!new_xattrs)
-> >>>> +               return -ENOMEM;
-> >>>> +
-> >>>> +       hlist_for_each_entry(P, &security_hook_heads.inode_init_security,
-> >>>> +                            list) {
-> >>>> +               ret = P->hook.inode_init_security(inode, dir, qstr, new_xattrs);
-> >>>> +               if (ret && ret != -EOPNOTSUPP)
-> >>>> +                       goto out;
-> >>>> +               if (ret == -EOPNOTSUPP)
-> >>>> +                       continue;
-> >>> In this context, -EOPNOTSUPP originally signified that the filesystem
-> >>> does not support writing xattrs.  Writing any xattr would fail. 
-> >>> Returning -ENODATA for no LSM xattr(s) data would seem to be more
-> >>> appropriate than -EOPNOTSUPP.
-> >> Hi Mimi
-> >>
-> >> I thought about adding new return values. Currently only -EOPNOTSUPP
-> >> and -ENOMEM are expected as errors.
-> >>
-> >> However, changing the conventions would mean revisiting the LSMs code
-> >> and ensuring that they follow the new conventions.
-> >>
-> >> I would be more in favor of not touching it.
-> > Casey, Paul, any comment?
-> 
-> I don't see value in adding -ENODATA as a value special to
-> the infrastructure. What would the infrastructure do differently?
-> The use of -EOPNOTSUPP isn't consistent throughout, and the amount
-> of "correctness" you get by returning -ENODATA is really small.
+--iiqsdd6eqsgh7rd5
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Agreed, it isn't worthwhile for this case.  Roberto, to ease code
-review, could you document the overloading of the -EOPNOTSUPP meaning,
-which results in the loop continuing?
+On Tue, Nov 29, 2022 at 06:24:00AM -0800, Christoph Hellwig wrote:
+> This seems to be missing any kind of changelog.  Also the
+> subject should say file_operations.  Most of the instances here are
+> not in a file system, and they most certainly aren't callbacks.
+>=20
+> I think you've also missed a whole lot of maintainers.
+>=20
+> > +#include "linux/security.h"
+>=20
+> That's now how we include kernel-wide headers.
+>=20
+> >  #include <linux/blkdev.h>
+> >  #include <linux/blk-mq.h>
+> >  #include <linux/blk-integrity.h>
+> > @@ -3308,6 +3309,13 @@ static int nvme_dev_release(struct inode *inode,=
+ struct file *file)
+> >  	return 0;
+> >  }
+> > =20
+> > +int nvme_uring_cmd_sec(struct io_uring_cmd *ioucmd,  struct security_u=
+ring_cmd *sec)
+>=20
+> Douple white space and overly long line.
+>=20
+> > +{
+> > +	sec->flags =3D 0;
+> > +	sec->flags =3D SECURITY_URING_CMD_TYPE_IOCTL;
+>=20
+> Double initialization of ->flags.  But how is this supposed to work
+> to start with?
 
-thanks,
+This RFC is meant to see how different solutions may play out. I'm not
+trying to push anything through yet. Just testing the waters to see what
+sticks and what people think about certain approaches. Should have
+mentioned that in my cover letter.
 
-Mimi
+My idea was to bring all relevant maintainers into the conversation once
+I had a more clear idea on what needed to be done and how I would do it.
 
+Since the patch is just a discussion piece, it is riddled with errors
+like the ones you pointed out.
+
+The idea with this second version is to add a security uring callback to
+the already existing ones in the file_operations structure. This new
+callback will fill in a security struct that will contain all the data
+needed for the LSMs to do their thing. This callback can be protected by
+an 'ifdef' for performance purposes.
+
+There is a third proposal by Ming Lei that uses the io_uring_sqe struct
+to embed io_uring type information. In my todo list I have a task to
+implement this and present it as a third option.
+
+best
+Joel
+
+--iiqsdd6eqsgh7rd5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmOHyzsACgkQupfNUreW
+QU9HTAwAhi+yQJEz+u7CGpkk2uLjgDtZddOFhGwN52ATQkrM+Yyp6Psb0FW89Yx1
+zyXDHFuGoAMcxMb7E+x90LZyRsXJEtQkEZz2Z/d9L7ruSCp6SWYb3KrR87s2CNoR
+eQbE0gUsAQ6ybAiY0mYcZKxd7uYikZUXlBPh8IBK6ixqpazjofFAODhekPiUzfw7
+yDHio1S8dPyym8918Y9kmIUqL4xQNQHIGfHqA3EYwj8Jhvp7keGSPmcuU4hVG9tO
+Dl5rCAWvBqABpWH/qNOqXzuOPGtPQxHN+bH2NPvoBdMnxeroo8KbOU0vYjt1KrXW
+QhPRap+LqPh5KpeDXRDdu36XczhkwPudxiptGy5tmargelq4OUtktMnUlwNWF13e
+RuEsuexCIPhMx+L/XNHrdKla8+TlAkDtsigqP2KtZ4thnYMHYX3seYZeAozTjQK0
+Nkib62T3XzPPSR9Rj2A6UQ7s0+rltSXcO92vYuzw7nWT750Bk50ROdGGbOeHowuL
+jXMwyF8R
+=NpAV
+-----END PGP SIGNATURE-----
+
+--iiqsdd6eqsgh7rd5--
