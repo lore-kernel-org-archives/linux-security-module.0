@@ -2,170 +2,179 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34079C4708C
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Nov 2022 19:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDF0C47089
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Nov 2022 21:24:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229579AbiK3Tr7 (ORCPT
+        id S229514AbiK3VYc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Nov 2022 14:47:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58320 "EHLO
+        Wed, 30 Nov 2022 16:24:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229678AbiK3Tr5 (ORCPT
+        with ESMTP id S229468AbiK3VYb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Nov 2022 14:47:57 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 447235436D
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Nov 2022 11:47:56 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id y4so17737276plb.2
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Nov 2022 11:47:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ihh5oofyez3CtNOQIHwFTADZecAohqCOwiubz5fncqA=;
-        b=mgji7ObiNmN8eVbpaz2mjgRdwSAUpuTFhzRs1nBB0wl7tOLWdgahWX5R8pzXzsKC1V
-         Qtn1fkqFBjJjcQDgKlDh57l5mnYK+Ecoh1a2vOJcc2t63/bIEFUCiKEps0W/XWxLwcjS
-         uEipbR9RmK8lHa3HKHs3GtiVqO61aYeRnQQBYU17wQNjkUKUZrQGXXWfYl9Buyk/5/mA
-         FrKfxv15/oPRfpGjiNA5iuwI5hpZXV2Gr4+XrjCWbXfELTHOed6nOoV7sUsNVRnSsyxm
-         lXB/RiZWL7eAwrTDd/bgWKDUr1Z4Q4M8R1g2bsjva2QnWftYdStcgeEeDNzrZS1jB//i
-         HeLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ihh5oofyez3CtNOQIHwFTADZecAohqCOwiubz5fncqA=;
-        b=DIwO6wC/b6Ee/Ex8iyFJgWWX2rfuGkJJT3S57k+QZZ/Qdqrh5GfKfAllkWI36QWiVS
-         L960rJktuWWAPOHBkLiHHSQLc7XdhBUCtkXPY4y550TtwQay3SqscDouD1syxLph5MKz
-         Uf4C/QYqkmH8ccuxRmboXT5E2H4+9AM+x8WlW6goHMOr9QHOG8AKNB5gVYahJ0qwpz7b
-         USf3H/Z8bgAxM5BNAwCgh6vEPr5roU8R32h2rujxzjDAQI64ZK+kuLpcdIewzjDNoSoZ
-         XoiPteltnWRUbiSAMVcUIS5K9UWKK4p662BBeS4VGc3YJaA0Gs95djJs8V8/pRHTN6zg
-         cYBA==
-X-Gm-Message-State: ANoB5pmCZrUohoqgiwzNYLXL4lplmaSPYm/RG8RaDp7Q5Sv1741VDzDh
-        w6vkNach8pZoqCQGSfDN6HwNIeELdSEJwwotDLLyPdXoypjtRA==
-X-Google-Smtp-Source: AA0mqf7qPQwpY05hjWXylLqQi7yyJwO1Q1xUae2EZKtA8JJJtC3bef3O0Mr18W2iV3UxDeupUhFwyQrATnCV4d5QlPo=
-X-Received: by 2002:a17:90a:5317:b0:213:34f7:fb14 with SMTP id
- x23-20020a17090a531700b0021334f7fb14mr70448861pjh.25.1669837675431; Wed, 30
- Nov 2022 11:47:55 -0800 (PST)
-MIME-Version: 1.0
-References: <20221128020409.1545717-1-limin100@huawei.com> <1232e4f3-e4b8-ff23-61e8-5465c8406f6e@digikod.net>
- <7379a5fd-5593-c6ce-40fd-c543dcf70d2b@huawei.com> <e62a539b-614c-c008-873a-f9c57c7ecb33@digikod.net>
- <2bc18685-f975-497f-9c20-da99dbc296c0@huawei.com> <ed1f6874-0f24-8145-63d4-efe28545381b@digikod.net>
-In-Reply-To: <ed1f6874-0f24-8145-63d4-efe28545381b@digikod.net>
-From:   Jeff Xu <jeffxu@google.com>
-Date:   Wed, 30 Nov 2022 11:47:18 -0800
-Message-ID: <CALmYWFs0GG8o3WQw7PEGvT=qgHHGiTC_mE1kQ0oRVjNUJa36gA@mail.gmail.com>
-Subject: Re: [PATCH -next] selftests/landlock: Fix selftest ptrace_test run fail
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     limin <limin100@huawei.com>, hannes@cmpxchg.org, mhocko@kernel.org,
-        roman.gushchin@linux.dev, shakeelb@google.com,
-        songmuchun@bytedance.com, tj@kernel.org, lizefan.x@bytedance.com,
-        shuah@kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 30 Nov 2022 16:24:31 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 453358D67F;
+        Wed, 30 Nov 2022 13:24:30 -0800 (PST)
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AULDSbv004773;
+        Wed, 30 Nov 2022 21:23:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=yifZRjcnME4KdiCrx4XAH30YdBt6VKv7hfRn0v4FRuc=;
+ b=l1XUiN1rW6f+ee6TrpN9jk5ssoNSaDOiPcxMdZauO8mKygmAxvaRnHoG31vayk9PgxHr
+ bnrusCji3tMF8gNxXVxyKptv/w6DBipSxA+jUHZPaKQlnX1VA6veuNfnO4T0U9hHUmjT
+ Y8LtbWrLuqkjh12fLywGfGt8FtkeENfaXiLvCKlhTB3SHROi0j4psDHZlDj/cvAHjVuj
+ NL1hijVMJJh4dHNqKg7eBrzLejruYTDP006FlqAY4ckD2FnyWxCDyzWIQDFmuEpogPXV
+ 5szbiEKjhNrPIFvt8pvIUWohtN6IFLNqUliTFjBXXkHzaJ4/+uucgc8gQi22pUqMQ2ZO ag== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m6ewd86mb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Nov 2022 21:23:48 +0000
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AULHKau018482;
+        Wed, 30 Nov 2022 21:23:47 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m6ewd86kt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Nov 2022 21:23:47 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AULKxnj005739;
+        Wed, 30 Nov 2022 21:23:45 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([9.208.130.100])
+        by ppma02wdc.us.ibm.com with ESMTP id 3m3aea6hkq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Nov 2022 21:23:45 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+        by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AULNj8B37618096
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Nov 2022 21:23:45 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EEA2E5803F;
+        Wed, 30 Nov 2022 21:23:44 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C5AA458056;
+        Wed, 30 Nov 2022 21:23:43 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.97.169])
+        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 30 Nov 2022 21:23:43 +0000 (GMT)
+Message-ID: <b929e0c597161fd5be79c18163a11649dd7f237f.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 4/6] security: Allow all LSMs to provide xattrs for
+ inode_init_security hook
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Roberto Sassu <roberto.sassu@huaweicloud.com>, mark@fasheh.com,
+        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org
+Cc:     ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 30 Nov 2022 16:23:43 -0500
+In-Reply-To: <50232f2b-d5ce-1e5a-3f5b-8d3eb53fe1ec@schaufler-ca.com>
+References: <20221123154712.752074-1-roberto.sassu@huaweicloud.com>
+         <20221123154712.752074-5-roberto.sassu@huaweicloud.com>
+         <13350b79f708cb089e2ff2ee5cead52bafb10982.camel@linux.ibm.com>
+         <bb63eba9a9f24558f4a1acd9bf012b59b5c6e98e.camel@huaweicloud.com>
+         <9859294adb0a9b9587ea7fb70a836a312aaf3c69.camel@linux.ibm.com>
+         <50232f2b-d5ce-1e5a-3f5b-8d3eb53fe1ec@schaufler-ca.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: RFYdom96nPEAcgZBzGdM3xm3tZ0uHlwx
+X-Proofpoint-GUID: gNLYuWXFEUBW_-uMEoVK_Brk6AGGQYmE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-30_04,2022-11-30_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 impostorscore=0 phishscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211300148
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 30, 2022 at 11:32 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
- wrote:
->
-> I checked and the Landlock ptrace test failed because Yama is enabled,
-> which is expected. You can check that with
-> /proc/sys/kernel/yama/ptrace_scope
->
-> Jeff Xu sent a patch to fix this case but it is not ready yet:
-> https://lore.kernel.org/r/20220628222941.2642917-1-jeffxu@google.com
->
-> Could you please send a new patch Jeff, and add Limin in Cc?
->
-Yes. This work is planned for Dec. I will start working on it soon.
-Jeff
-
->
-> On 29/11/2022 12:26, limin wrote:
-> > cat /proc/cmdline
-> > BOOT_IMAGE=3D/vmlinuz-6.1.0-next-20221116
-> > root=3DUUID=3Da65b3a79-dc02-4728-8a0c-5cf24f4ae08b ro
-> > systemd.unified_cgroup_hierarchy=3D1 cgroup_no_v1=3Dall
-> >
-> >
-> > config
-> >
-> > #
-> > # Automatically generated file; DO NOT EDIT.
-> > # Linux/x86 6.1.0-rc6 Kernel Configuration
-> > #
->
-> [...]
->
-> > CONFIG_SECURITY_YAMA=3Dy
->
-> [...]
->
-> > CONFIG_LSM=3D"landlock,lockdown,yama,integrity,apparmor"
-> [...]
-> >
-> > On 2022/11/29 19:03, Micka=C3=ABl Sala=C3=BCn wrote:
-> >> I tested with next-20221116 and all tests are OK. Could you share your
-> >> kernel configuration with a link? What is the content of /proc/cmdline=
-?
+On Tue, 2022-11-29 at 07:39 -0800, Casey Schaufler wrote:
+> On 11/29/2022 3:23 AM, Mimi Zohar wrote:
+> > On Thu, 2022-11-24 at 09:17 +0100, Roberto Sassu wrote:
+> >> On Wed, 2022-11-23 at 20:14 -0500, Mimi Zohar wrote:
+> >>> Hi Roberto,
+> >>>
+> >>> On Wed, 2022-11-23 at 16:47 +0100, Roberto Sassu wrote:
+> >>>>  int security_inode_init_security(struct inode *inode, struct inode *dir,
+> >>>>                                  const struct qstr *qstr,
+> >>>>                                  const initxattrs initxattrs, void *fs_data)
+> >>>>  {
+> >>>> -       struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
+> >>>> -       struct xattr *lsm_xattr, *evm_xattr, *xattr;
+> >>>> -       int ret;
+> >>>> +       struct security_hook_list *P;
+> >>>> +       struct xattr *new_xattrs;
+> >>>> +       struct xattr *xattr;
+> >>>> +       int ret = -EOPNOTSUPP, num_filled_xattrs = 0;
+> >>>>  
+> >>>>         if (unlikely(IS_PRIVATE(inode)))
+> >>>>                 return 0;
+> >>>>  
+> >>>> +       if (!blob_sizes.lbs_xattr)
+> >>>> +               return 0;
+> >>>> +
+> >>>>         if (!initxattrs)
+> >>>>                 return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
+> >>>> -                                    dir, qstr, NULL, NULL, NULL);
+> >>>> -       memset(new_xattrs, 0, sizeof(new_xattrs));
+> >>>> -       lsm_xattr = new_xattrs;
+> >>>> -       ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
+> >>>> -                                               &lsm_xattr->name,
+> >>>> -                                               &lsm_xattr->value,
+> >>>> -                                               &lsm_xattr->value_len);
+> >>>> -       if (ret)
+> >>>> +                                   dir, qstr, NULL);
+> >>>> +       /* Allocate +1 for EVM and +1 as terminator. */
+> >>>> +       new_xattrs = kcalloc(blob_sizes.lbs_xattr + 2, sizeof(*new_xattrs),
+> >>>> +                            GFP_NOFS);
+> >>>> +       if (!new_xattrs)
+> >>>> +               return -ENOMEM;
+> >>>> +
+> >>>> +       hlist_for_each_entry(P, &security_hook_heads.inode_init_security,
+> >>>> +                            list) {
+> >>>> +               ret = P->hook.inode_init_security(inode, dir, qstr, new_xattrs);
+> >>>> +               if (ret && ret != -EOPNOTSUPP)
+> >>>> +                       goto out;
+> >>>> +               if (ret == -EOPNOTSUPP)
+> >>>> +                       continue;
+> >>> In this context, -EOPNOTSUPP originally signified that the filesystem
+> >>> does not support writing xattrs.  Writing any xattr would fail. 
+> >>> Returning -ENODATA for no LSM xattr(s) data would seem to be more
+> >>> appropriate than -EOPNOTSUPP.
+> >> Hi Mimi
 > >>
-> >> On 29/11/2022 02:42, limin wrote:
-> >>> I run test on Linux ubuntu2204 6.1.0-next-20221116
-> >>>
-> >>> I did't use yama.
-> >>>
-> >>> you can reproduce by this step:
-> >>>
-> >>> cd kernel_src
-> >>>
-> >>> cd tools/testing/selftests/landlock/
-> >>> make
-> >>> ./ptrace_test
-> >>>
-> >>>
-> >>>
-> >>>
-> >>> On 2022/11/29 3:44, Micka=C3=ABl Sala=C3=BCn wrote:
-> >>>> This patch changes the test semantic and then cannot work on my test
-> >>>> environment. On which kernel did you run test? Do you use Yama or
-> >>>> something similar?
-> >>>>
-> >>>> On 28/11/2022 03:04, limin wrote:
-> >>>>> Tests PTRACE_ATTACH and PTRACE_MODE_READ on the parent,
-> >>>>> trace parent return -1 when child=3D=3D 0
-> >>>>> How to reproduce warning:
-> >>>>> $ make -C tools/testing/selftests TARGETS=3Dlandlock run_tests
-> >>>>>
-> >>>>> Signed-off-by: limin <limin100@huawei.com>
-> >>>>> ---
-> >>>>>     tools/testing/selftests/landlock/ptrace_test.c | 5 ++---
-> >>>>>     1 file changed, 2 insertions(+), 3 deletions(-)
-> >>>>>
-> >>>>> diff --git a/tools/testing/selftests/landlock/ptrace_test.c
-> >>>>> b/tools/testing/selftests/landlock/ptrace_test.c
-> >>>>> index c28ef98ff3ac..88c4dc63eea0 100644
-> >>>>> --- a/tools/testing/selftests/landlock/ptrace_test.c
-> >>>>> +++ b/tools/testing/selftests/landlock/ptrace_test.c
-> >>>>> @@ -267,12 +267,11 @@ TEST_F(hierarchy, trace)
-> >>>>>             /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the
-> >>>>> parent. */
-> >>>>>             err_proc_read =3D test_ptrace_read(parent);
-> >>>>>             ret =3D ptrace(PTRACE_ATTACH, parent, NULL, 0);
-> >>>>> +        EXPECT_EQ(-1, ret);
-> >>>>> +        EXPECT_EQ(EPERM, errno);
-> >>>>>             if (variant->domain_child) {
-> >>>>> -            EXPECT_EQ(-1, ret);
-> >>>>> -            EXPECT_EQ(EPERM, errno);
-> >>>>>                 EXPECT_EQ(EACCES, err_proc_read);
-> >>>>>             } else {
-> >>>>> -            EXPECT_EQ(0, ret);
-> >>>>>                 EXPECT_EQ(0, err_proc_read);
-> >>>>>             }
-> >>>>>             if (ret =3D=3D 0) {
+> >> I thought about adding new return values. Currently only -EOPNOTSUPP
+> >> and -ENOMEM are expected as errors.
+> >>
+> >> However, changing the conventions would mean revisiting the LSMs code
+> >> and ensuring that they follow the new conventions.
+> >>
+> >> I would be more in favor of not touching it.
+> > Casey, Paul, any comment?
+> 
+> I don't see value in adding -ENODATA as a value special to
+> the infrastructure. What would the infrastructure do differently?
+> The use of -EOPNOTSUPP isn't consistent throughout, and the amount
+> of "correctness" you get by returning -ENODATA is really small.
+
+Agreed, it isn't worthwhile for this case.  Roberto, to ease code
+review, could you document the overloading of the -EOPNOTSUPP meaning,
+which results in the loop continuing?
+
+thanks,
+
+Mimi
+
