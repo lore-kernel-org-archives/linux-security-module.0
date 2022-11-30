@@ -2,171 +2,150 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 516FAC433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Nov 2022 16:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59050C47089
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Nov 2022 19:32:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230164AbiK3QZ2 (ORCPT
+        id S229690AbiK3Tcu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Nov 2022 11:25:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45866 "EHLO
+        Wed, 30 Nov 2022 14:32:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229652AbiK3QZ1 (ORCPT
+        with ESMTP id S229541AbiK3Tct (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Nov 2022 11:25:27 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 590CE4EC28;
-        Wed, 30 Nov 2022 08:25:22 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4NMks86yx3z9v7RF;
-        Thu,  1 Dec 2022 00:18:20 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwAHpXHVg4djmfirAA--.3567S2;
-        Wed, 30 Nov 2022 17:25:02 +0100 (CET)
-Message-ID: <e678d661515a191cb1bbfc41d9378e7cb538ef53.camel@huaweicloud.com>
-Subject: Re: [PATCH] ima: Make a copy of sig and digest in
- asymmetric_verify()
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        rusty@rustcorp.com.au, axboe@kernel.dk
-Cc:     linux-integrity@vger.kernel.org,
+        Wed, 30 Nov 2022 14:32:49 -0500
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6984F1EEED
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Nov 2022 11:32:46 -0800 (PST)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NMq9S1yfrzMqM90;
+        Wed, 30 Nov 2022 20:32:44 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4NMq9Q3pMbzxf;
+        Wed, 30 Nov 2022 20:32:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1669836764;
+        bh=cubmng6cm1zv4ZAZR8kkO4CZXUOrwBMha88pqHrbkDw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=dNqxO5+V4oCjH4Adng9IcbS6WnrqsgiXA6YYyvIjnMbc99EDzNWH2qPTPaA927r6g
+         28B7s94c6rVD39WGJz8aF3va22V6f1/RyKDV87A5BKgydJOikcBVTlrCG6o4dpXBGP
+         uGKtwaciwx6iOTKfy3ndDdk3Md6EAsEQuwxlRDTQ=
+Message-ID: <ed1f6874-0f24-8145-63d4-efe28545381b@digikod.net>
+Date:   Wed, 30 Nov 2022 20:32:41 +0100
+MIME-Version: 1.0
+User-Agent: 
+Subject: Re: [PATCH -next] selftests/landlock: Fix selftest ptrace_test run
+ fail
+Content-Language: en-US
+To:     limin <limin100@huawei.com>, Jeff Xu <jeffxu@google.com>
+Cc:     hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
+        shakeelb@google.com, songmuchun@bytedance.com, tj@kernel.org,
+        lizefan.x@bytedance.com, shuah@kernel.org,
+        linux-kselftest@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org
-Date:   Wed, 30 Nov 2022 17:24:51 +0100
-In-Reply-To: <1658d421c391d0609680b89ca0573fab1ca5e091.camel@linux.ibm.com>
-References: <20221104122023.1750333-1-roberto.sassu@huaweicloud.com>
-         <9ef25f1b8621dab8b3cd4373bf6ce1633daae70e.camel@linux.ibm.com>
-         <a676b387d23f9ca630418ece20a6761a9437ce76.camel@huaweicloud.com>
-         <c6c448c2acc07caf840046067322f3e1110cedff.camel@linux.ibm.com>
-         <f8f95d37211bac6ce4322a715740d2b2ae20db84.camel@huaweicloud.com>
-         <859f70a2801cffa3cb42ae0d43f5753bb01a7eac.camel@huaweicloud.com>
-         <1658d421c391d0609680b89ca0573fab1ca5e091.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwAHpXHVg4djmfirAA--.3567S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuF45GrW5Kw15KFW8KFyxAFb_yoWrCF1fpF
-        48K3WUKr4DJr1IkF4Iywn8C345Kr4rKrWUX34kJw18Zryqqr1xAr48JF1UWFyDWr1xAF1U
-        tFWftFy7Zrn8A3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAMBF1jj4IemAABs+
-X-CFilter-Loop: Reflected
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+References: <20221128020409.1545717-1-limin100@huawei.com>
+ <1232e4f3-e4b8-ff23-61e8-5465c8406f6e@digikod.net>
+ <7379a5fd-5593-c6ce-40fd-c543dcf70d2b@huawei.com>
+ <e62a539b-614c-c008-873a-f9c57c7ecb33@digikod.net>
+ <2bc18685-f975-497f-9c20-da99dbc296c0@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <2bc18685-f975-497f-9c20-da99dbc296c0@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-11-30 at 11:22 -0500, Mimi Zohar wrote:
-> On Wed, 2022-11-30 at 15:41 +0100, Roberto Sassu wrote:
-> > On Wed, 2022-11-23 at 14:49 +0100, Roberto Sassu wrote:
-> > > On Wed, 2022-11-23 at 08:40 -0500, Mimi Zohar wrote:
-> > > > On Wed, 2022-11-23 at 13:56 +0100, Roberto Sassu wrote:
-> > > > > On Tue, 2022-11-22 at 14:39 -0500, Mimi Zohar wrote:
-> > > > > > Hi Roberto,
-> > > > > > 
-> > > > > > On Fri, 2022-11-04 at 13:20 +0100, Roberto Sassu wrote:
-> > > > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > > 
-> > > > > > > Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
-> > > > > > > mapping") requires that both the signature and the digest resides in the
-> > > > > > > linear mapping area.
-> > > > > > > 
-> > > > > > > However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
-> > > > > > > stack support"), made it possible to move the stack in the vmalloc area,
-> > > > > > > which could make the requirement of the first commit not satisfied anymore.
-> > > > > > > 
-> > > > > > > If CONFIG_SG=y and CONFIG_VMAP_STACK=y, the following BUG() is triggered:
-> > > > > > 
-> > > > > > ^CONFIG_DEBUG_SG
-> > > > > > 
-> > > > > > > [  467.077359] kernel BUG at include/linux/scatterlist.h:163!
-> > > > > > > [  467.077939] invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-> > > > > > > 
-> > > > > > > [...]
-> > > > > > > 
-> > > > > > > [  467.095225] Call Trace:
-> > > > > > > [  467.096088]  <TASK>
-> > > > > > > [  467.096928]  ? rcu_read_lock_held_common+0xe/0x50
-> > > > > > > [  467.097569]  ? rcu_read_lock_sched_held+0x13/0x70
-> > > > > > > [  467.098123]  ? trace_hardirqs_on+0x2c/0xd0
-> > > > > > > [  467.098647]  ? public_key_verify_signature+0x470/0x470
-> > > > > > > [  467.099237]  asymmetric_verify+0x14c/0x300
-> > > > > > > [  467.099869]  evm_verify_hmac+0x245/0x360
-> > > > > > > [  467.100391]  evm_inode_setattr+0x43/0x190
-> > > > > > > 
-> > > > > > > The failure happens only for the digest, as the pointer comes from the
-> > > > > > > stack, and not for the signature, which instead was allocated by
-> > > > > > > vfs_getxattr_alloc().
-> > > > > > 
-> > > > > > Only after enabling CONFIG_DEBUG_SG does EVM fail.
-> > > > > > 
-> > > > > > > Fix this by making a copy of both in asymmetric_verify(), so that the
-> > > > > > > linear mapping requirement is always satisfied, regardless of the caller.
-> > > > > > 
-> > > > > > As only EVM is affected, it would make more sense to limit the change
-> > > > > > to EVM.
-> > > > > 
-> > > > > I found another occurrence:
-> > > > > 
-> > > > > static int xattr_verify(enum ima_hooks func, struct integrity_iint_cache *iint,
-> > > > > 			struct evm_ima_xattr_data *xattr_value, int xattr_len,
-> > > > > 			enum integrity_status *status, const char **cause)
-> > > > > {
-> > > > > 
-> > > > > [...]
-> > > > > 
-> > > > > 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
-> > > > > 					     (const char *)xattr_value,
-> > > > > 					     xattr_len, hash.digest,
-> > > > > 					     hash.hdr.length);
-> > > > > 
-> > > > > Should I do two patches?
-> > > > 
-> > > > I'm just not getting it.  Why did you enable CONFIG_DEBUG_SIG?  Were
-> > > > you testing random kernel configs?  Are you actually seeing signature
-> > > > verifications errors without it enabled?  Or is it causing other
-> > > > problems?  Is the "BUG_ON" still needed?
-> > > 
-> > > When I test patches, I tend to enable more debugging options.
-> > > 
-> > > To be honest, I didn't check if there is any issue without enabling
-> > > CONFIG_DEBUG_SG. I thought that if there is a linear mapping
-> > > requirement, that should be satisfied regardless of whether the
-> > > debugging option is enabled or not.
-> > > 
-> > > + Rusty, Jens for explanations.
-> > 
-> > Trying to answer the question, with the help of an old discussion:
-> > 
-> > https://groups.google.com/g/linux.kernel/c/dpIoiY_qSGc
-> > 
-> > sg_set_buf() calls virt_to_page() to get the page to start from. But if
-> > the buffer spans in two pages, that would not work in the vmalloc area,
-> > since there is no guarantee that the next page is adjiacent.
-> > 
-> > For small areas, much smaller than the page size, it is unlikely that
-> > the situation above would happen. So, integrity_digsig_verify() will
-> > likely succeeed. Although it is possible that it fails if there are
-> > data in the next page.
+I checked and the Landlock ptrace test failed because Yama is enabled, 
+which is expected. You can check that with 
+/proc/sys/kernel/yama/ptrace_scope
+
+Jeff Xu sent a patch to fix this case but it is not ready yet: 
+https://lore.kernel.org/r/20220628222941.2642917-1-jeffxu@google.com
+
+Could you please send a new patch Jeff, and add Limin in Cc?
+
+
+On 29/11/2022 12:26, limin wrote:
+> cat /proc/cmdline
+> BOOT_IMAGE=/vmlinuz-6.1.0-next-20221116
+> root=UUID=a65b3a79-dc02-4728-8a0c-5cf24f4ae08b ro
+> systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all
 > 
-> Thanks, Roberto.  Confirmed that as the patch description indicates,
-> without CONFIG_VMAP_STACK configured and with CONFIG_DEBUG_SG enabled
-> there isn't a bug.  Does it make sense to limit this change to just
-> CONFIG_VMAP_STACK?
+> 
+> config
+> 
+> #
+> # Automatically generated file; DO NOT EDIT.
+> # Linux/x86 6.1.0-rc6 Kernel Configuration
+> #
 
-Yes, I agree.
+[...]
 
-Roberto
+> CONFIG_SECURITY_YAMA=y
 
+[...]
+
+> CONFIG_LSM="landlock,lockdown,yama,integrity,apparmor"
+[...]
+> 
+> On 2022/11/29 19:03, Mickaël Salaün wrote:
+>> I tested with next-20221116 and all tests are OK. Could you share your
+>> kernel configuration with a link? What is the content of /proc/cmdline?
+>>
+>> On 29/11/2022 02:42, limin wrote:
+>>> I run test on Linux ubuntu2204 6.1.0-next-20221116
+>>>
+>>> I did't use yama.
+>>>
+>>> you can reproduce by this step:
+>>>
+>>> cd kernel_src
+>>>
+>>> cd tools/testing/selftests/landlock/
+>>> make
+>>> ./ptrace_test
+>>>
+>>>
+>>>
+>>>
+>>> On 2022/11/29 3:44, Mickaël Salaün wrote:
+>>>> This patch changes the test semantic and then cannot work on my test
+>>>> environment. On which kernel did you run test? Do you use Yama or
+>>>> something similar?
+>>>>
+>>>> On 28/11/2022 03:04, limin wrote:
+>>>>> Tests PTRACE_ATTACH and PTRACE_MODE_READ on the parent,
+>>>>> trace parent return -1 when child== 0
+>>>>> How to reproduce warning:
+>>>>> $ make -C tools/testing/selftests TARGETS=landlock run_tests
+>>>>>
+>>>>> Signed-off-by: limin <limin100@huawei.com>
+>>>>> ---
+>>>>>     tools/testing/selftests/landlock/ptrace_test.c | 5 ++---
+>>>>>     1 file changed, 2 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/tools/testing/selftests/landlock/ptrace_test.c
+>>>>> b/tools/testing/selftests/landlock/ptrace_test.c
+>>>>> index c28ef98ff3ac..88c4dc63eea0 100644
+>>>>> --- a/tools/testing/selftests/landlock/ptrace_test.c
+>>>>> +++ b/tools/testing/selftests/landlock/ptrace_test.c
+>>>>> @@ -267,12 +267,11 @@ TEST_F(hierarchy, trace)
+>>>>>             /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the
+>>>>> parent. */
+>>>>>             err_proc_read = test_ptrace_read(parent);
+>>>>>             ret = ptrace(PTRACE_ATTACH, parent, NULL, 0);
+>>>>> +        EXPECT_EQ(-1, ret);
+>>>>> +        EXPECT_EQ(EPERM, errno);
+>>>>>             if (variant->domain_child) {
+>>>>> -            EXPECT_EQ(-1, ret);
+>>>>> -            EXPECT_EQ(EPERM, errno);
+>>>>>                 EXPECT_EQ(EACCES, err_proc_read);
+>>>>>             } else {
+>>>>> -            EXPECT_EQ(0, ret);
+>>>>>                 EXPECT_EQ(0, err_proc_read);
+>>>>>             }
+>>>>>             if (ret == 0) {
