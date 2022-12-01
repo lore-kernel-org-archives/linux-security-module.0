@@ -2,119 +2,131 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9B9C47088
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Dec 2022 10:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E3DC4708C
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Dec 2022 10:07:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230115AbiLAKHF (ORCPT
+        id S230361AbiLAKHd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Dec 2022 05:07:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40620 "EHLO
+        Thu, 1 Dec 2022 05:07:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230078AbiLAKHB (ORCPT
+        with ESMTP id S230316AbiLAKHY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Dec 2022 05:07:01 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 045412F67F;
-        Thu,  1 Dec 2022 02:06:58 -0800 (PST)
+        Thu, 1 Dec 2022 05:07:24 -0500
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFE178D677;
+        Thu,  1 Dec 2022 02:07:09 -0800 (PST)
 Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NNBQ11lDXz9xFVM;
-        Thu,  1 Dec 2022 17:59:53 +0800 (CST)
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4NNBQp5yk1z9xFY9;
+        Thu,  1 Dec 2022 18:00:34 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwCnkm+tfIhjWgGvAA--.50191S2;
-        Thu, 01 Dec 2022 11:06:44 +0100 (CET)
+        by APP1 (Coremail) with SMTP id LxC2BwCnkm+tfIhjWgGvAA--.50191S4;
+        Thu, 01 Dec 2022 11:06:54 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
 To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
         paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
 Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 0/2] ima/evm: Ensure digest to verify is in linear mapping area
-Date:   Thu,  1 Dec 2022 11:06:23 +0100
-Message-Id: <20221201100625.916781-1-roberto.sassu@huaweicloud.com>
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v2 2/2] ima: Alloc ima_max_digest_data in xattr_verify() if CONFIG_VMAP_STACK=y
+Date:   Thu,  1 Dec 2022 11:06:25 +0100
+Message-Id: <20221201100625.916781-3-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221201100625.916781-1-roberto.sassu@huaweicloud.com>
+References: <20221201100625.916781-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwCnkm+tfIhjWgGvAA--.50191S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1DGrW3CF15CFyUJw4fXwb_yoW8tw4DpF
-        4vgas09F1ktryIkw43Cr47u3yYqw4rKF47Ww17tw1UZFn8Xr4vy340ya1fXrW5K34xJFWf
-        tF97Kr13Wr1UA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCj
-        c4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-        CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
-        MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6r
-        WUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
-        CTnIWIevJa73UjIFyTuYvjxUOyCJDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANBF1jj4IjIgACs7
+X-CM-TRANSID: LxC2BwCnkm+tfIhjWgGvAA--.50191S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr1xXF1UKrWrZF47Jr1UZFb_yoW8Kryxpa
+        1kKF1DGr1FqFs2kFW7AFs0kw4Ykry0vry8WF4DAw1SyF93Xw1j9FykAFyxuFy5Cry8tF1x
+        Kr4Sgr15ua10y3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
+        A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+        w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+        WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+        Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
+        Ij6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
+        Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI
+        0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
+        67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
+        IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E
+        14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+        0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0WU
+        DJUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANBF1jj4IjMwAAso
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-As sg_set_buf() requires the buffer for a crypto operation to be in the
-linear mapping area, so that it is always in adjacent pages, ensure that
-this requirement is met for IMA/EVM.
+Similarly to evm_verify_hmac(), which allocates an evm_digest structure to
+satisfy the linear mapping requirement if CONFIG_VMAP_STACK is enabled, do
+the same in xattr_verify(). Allocate an ima_max_digest_data structure and
+use that instead of the in-stack counterpart.
 
-Currently, evm_verify_hmac() and xattr_verify() put the evm_digest and
-ima_max_digest_data structures in the stack. As normally the stack is in
-the linear mapping area, passing them to sg_set_buf() would not be a
-problem.
-
-However, if CONFIG_VMAP_STACK is enabled, these structures will reside in
-the vmalloc area instead. If CONFIG_DEBUG_SG is enabled, the kernel will
-panic:
-
-[  467.077359] kernel BUG at include/linux/scatterlist.h:163!
-[  467.077939] invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-
-[...]
-
-[  467.095225] Call Trace:
-[  467.096088]  <TASK>
-[  467.096928]  ? rcu_read_lock_held_common+0xe/0x50
-[  467.097569]  ? rcu_read_lock_sched_held+0x13/0x70
-[  467.098123]  ? trace_hardirqs_on+0x2c/0xd0
-[  467.098647]  ? public_key_verify_signature+0x470/0x470
-[  467.099237]  asymmetric_verify+0x14c/0x300
-[  467.099869]  evm_verify_hmac+0x245/0x360
-[  467.100391]  evm_inode_setattr+0x43/0x190
-
-To overcome this problem, dynamically allocate the structures with
-kmalloc() if CONFIG_VMAP_STACK is enabled, so that they are placed in the
-linear mapping area, and use them instead of the in-stack counterparts.
-
-A test report is available here:
-
-https://github.com/robertosassu/ima-evm-utils/actions/runs/3590837109/jobs/6045608579
-
-which contains the following test (include tests for EVM portable
-signatures and IMA verity signatures):
-
-https://github.com/robertosassu/ima-evm-utils/commit/41cf11d299e9fc2d13a60dce4b275c2675d9cc23
-
-Changelog:
-
-v1:
-- Dynamically allocate the data structures in IMA and EVM, when necessary,
-  instead of always making a copy in asymmetric_verify() (suggested by
-  Mimi)
-
-Roberto Sassu (2):
-  evm: Alloc evm_digest in evm_verify_hmac() if CONFIG_VMAP_STACK=y
-  ima: Alloc ima_max_digest_data in xattr_verify() if
-    CONFIG_VMAP_STACK=y
-
- security/integrity/evm/evm_main.c     | 26 +++++++++++++++++++++-----
+Cc: stable@vger.kernel.org # 4.9.x
+Fixes: ba14a194a434 ("fork: Add generic vmalloced stack support")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
  security/integrity/ima/ima_appraise.c | 19 ++++++++++++++++---
- 2 files changed, 37 insertions(+), 8 deletions(-)
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 3e0fbbd99534..ed8f05340fe8 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -278,6 +278,7 @@ static int xattr_verify(enum ima_hooks func, struct integrity_iint_cache *iint,
+ 			enum integrity_status *status, const char **cause)
+ {
+ 	struct ima_max_digest_data hash;
++	struct ima_max_digest_data *hash_ptr = &hash;
+ 	struct signature_v2_hdr *sig;
+ 	int rc = -EINVAL, hash_start = 0;
+ 	int mask;
+@@ -376,8 +377,17 @@ static int xattr_verify(enum ima_hooks func, struct integrity_iint_cache *iint,
+ 			break;
+ 		}
+ 
++		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
++			hash_ptr = kmalloc(sizeof(*hash_ptr), GFP_KERNEL);
++			if (!hash_ptr) {
++				*cause = "out-of-memory";
++				*status = INTEGRITY_FAIL;
++				break;
++			}
++		}
++
+ 		rc = calc_file_id_hash(IMA_VERITY_DIGSIG, iint->ima_hash->algo,
+-				       iint->ima_hash->digest, &hash.hdr);
++				       iint->ima_hash->digest, &hash_ptr->hdr);
+ 		if (rc) {
+ 			*cause = "sigv3-hashing-error";
+ 			*status = INTEGRITY_FAIL;
+@@ -386,8 +396,8 @@ static int xattr_verify(enum ima_hooks func, struct integrity_iint_cache *iint,
+ 
+ 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
+ 					     (const char *)xattr_value,
+-					     xattr_len, hash.digest,
+-					     hash.hdr.length);
++					     xattr_len, hash_ptr->digest,
++					     hash_ptr->hdr.length);
+ 		if (rc) {
+ 			*cause = "invalid-verity-signature";
+ 			*status = INTEGRITY_FAIL;
+@@ -402,6 +412,9 @@ static int xattr_verify(enum ima_hooks func, struct integrity_iint_cache *iint,
+ 		break;
+ 	}
+ 
++	if (hash_ptr && hash_ptr != &hash)
++		kfree(hash_ptr);
++
+ 	return rc;
+ }
+ 
 -- 
 2.25.1
 
