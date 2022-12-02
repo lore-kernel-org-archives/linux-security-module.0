@@ -2,193 +2,152 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE364C47088
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Dec 2022 20:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64646C4321E
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Dec 2022 21:03:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234329AbiLBURB (ORCPT
+        id S229500AbiLBVDt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Dec 2022 15:17:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51000 "EHLO
+        Fri, 2 Dec 2022 16:03:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234927AbiLBUQ1 (ORCPT
+        with ESMTP id S234190AbiLBVDs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Dec 2022 15:16:27 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141EDF4672
-        for <linux-security-module@vger.kernel.org>; Fri,  2 Dec 2022 12:16:25 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id p24so5628897plw.1
-        for <linux-security-module@vger.kernel.org>; Fri, 02 Dec 2022 12:16:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPJD0sgtEYoPAaGZw8YAHzHcUatreyrgUWldBEzj/Y4=;
-        b=a13XHiJg8zjQXrzXRtOsM7afHxgmDa9rPv1jh4x/40F8rgUeu2zzhY8BkOZp/X/aLs
-         YWGsn119XQYu7RPalEl6Shhin603eVtqCaN20IXHAfVXT5KEcmyhMoTSmUox1ApbOzb2
-         p0aOAxomUf+lTdxSOn7a9Y0Jeoux/5uND4ghKFRTxzlkKspovFQ36n0DSvetD+7k6Bf8
-         vqU6MQfi/7jzI9513dUwMUosyeMuSmtnToiSDcGJpxbHHr4QIETxuCQKp0Ec+g2Mw1L1
-         tVbih/GsRN37Bd7eO2Z+INyypdr9OU535d11QA1kZkhJrDkplU6yhzTxv1C+IexyFh05
-         2ubQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cPJD0sgtEYoPAaGZw8YAHzHcUatreyrgUWldBEzj/Y4=;
-        b=UgculW2ay6HJZfCpd5xyCQuMfS/iI8bYrWcNF66hqc/q3qhVgwSkREDtlTAAF19sZw
-         qlm9edM0NPJzrzwSFLyTzm/XGRo1fK4kgCiIwYmlj6Lk0Kk1ocXopvbd0Shwlpv27Aup
-         H2U4Jm8985DNjV+CknHQUl2ikBjbe3wp6qCfBvOLVhIdWTUjhmPIXoJ4JJVXkNMsffyX
-         ALrP9mOohj7dkfbrkTsHivjPQ5LWNAgfjqGjJfo7YHrmTQ0yErjgt1Hc5/DHzz/s8s+E
-         ZJWpRao3rBw4omq7V+CepoKkrKUpTfVFFOxKAefA+Isf6K2bc4zae9etxeNzyzQ1D6P8
-         OLig==
-X-Gm-Message-State: ANoB5pk5PgK/if7zNqplQeErgQyoNAk0Mof+zUQ1wWB2wzEDdsRWdQPO
-        Htl+8QXgp198MULxQpBq/KYMIYQM3cyGupgrg5Bw
-X-Google-Smtp-Source: AA0mqf6bJ56BRnGwCC7Uw5nPs72fy+2T61J/mGH0Oe2db1nEfwJuCiBMjm9O+zfbH6nkSNlkkRImvfRozfMnBelVUWo=
-X-Received: by 2002:a17:903:28f:b0:189:8a36:1b70 with SMTP id
- j15-20020a170903028f00b001898a361b70mr28304689plr.12.1670012185016; Fri, 02
- Dec 2022 12:16:25 -0800 (PST)
-MIME-Version: 1.0
-References: <CAFqZXNs2LF-OoQBUiiSEyranJUXkPLcCfBkMkwFeM6qEwMKCTw@mail.gmail.com>
- <108a1c80eed41516f85ebb264d0f46f95e86f754.camel@redhat.com>
- <CAHC9VhSSKN5kh9Kqgj=aCeA92bX1mJm1v4_PnRgua86OHUwE3w@mail.gmail.com> <48dd1e9b21597c46e4767290e5892c01850a45ff.camel@redhat.com>
-In-Reply-To: <48dd1e9b21597c46e4767290e5892c01850a45ff.camel@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 2 Dec 2022 15:16:13 -0500
-Message-ID: <CAHC9VhT0rRhr7Ty_p3Ld5O+Ltf8a8XSXcyik7tFpDRMrTfsF+A@mail.gmail.com>
-Subject: Re: Broken SELinux/LSM labeling with MPTCP and accept(2)
-To:     Paolo Abeni <pabeni@redhat.com>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>, mptcp@lists.linux.dev,
-        network dev <netdev@vger.kernel.org>,
-        Mat Martineau <mathew.j.martineau@linux.intel.com>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>
+        Fri, 2 Dec 2022 16:03:48 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B519D80C7;
+        Fri,  2 Dec 2022 13:03:46 -0800 (PST)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2B2IWQgL019814;
+        Fri, 2 Dec 2022 21:03:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : reply-to : to : cc : date : in-reply-to : references : content-type
+ : content-transfer-encoding : mime-version; s=pp1;
+ bh=l3YF7d7Osha4HUveR4HvX/7HD6zwUOSpMIQU9u+UtZc=;
+ b=mKsYTYr37ehS3zXP91idG9z9wLRV2TKwsxw+gihdb1OPxKe+XPlnNw7v5XAfYEhooHRe
+ GmhgyRbM/DI7FJ5hYIHntmf/w8yiQzYcDUu7HzmWjcc2raGT9TzSAWBakrXa8lEU6RVx
+ rYah4wRfh5P3FDQMoflcMWA3djz0EtK5qg4SIdlr8i/yi6Iu1bFGQ0N5/ZUYM+bQ0uLE
+ XEQ+UCVLwXkY99bsY2UeuX8Ei6VLHQrZfFmF84zs1t/u+5RSHYLKaK1Dkuy7+tFoNTlS
+ ySF35F8ot6BOPyLY2dRHod/zByDtiOo6MNL1hpTD/PUqzy3l5PPAJD7Egs5wUxhSFsrW iw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3m7pqwtuam-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 02 Dec 2022 21:03:17 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2B2Krx5O004621;
+        Fri, 2 Dec 2022 21:03:16 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3m7pqwtua6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 02 Dec 2022 21:03:16 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2B2Kp5MW009983;
+        Fri, 2 Dec 2022 21:03:15 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([9.208.129.119])
+        by ppma02wdc.us.ibm.com with ESMTP id 3m3aeam324-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 02 Dec 2022 21:03:15 +0000
+Received: from b03ledav004.gho.boulder.ibm.com ([9.17.130.235])
+        by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2B2L3EuJ34931234
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 2 Dec 2022 21:03:14 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D5B67805E;
+        Fri,  2 Dec 2022 22:13:21 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 42E997805C;
+        Fri,  2 Dec 2022 22:13:18 +0000 (GMT)
+Received: from lingrow.int.hansenpartnership.com (unknown [9.211.83.181])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri,  2 Dec 2022 22:13:17 +0000 (GMT)
+Message-ID: <6f66f174af92a9b23bddd72945e94e888b0c9420.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 04/11] security: keys: trusted: Include TPM2 creation
+ data
+From:   James Bottomley <jejb@linux.ibm.com>
+Reply-To: jejb@linux.ibm.com
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, linux-integrity@vger.kernel.org,
+        gwendal@chromium.org, dianders@chromium.org, apronin@chromium.org,
+        Pavel Machek <pavel@ucw.cz>, Ben Boeckel <me@benboeckel.net>,
+        rjw@rjwysocki.net, Kees Cook <keescook@chromium.org>,
+        dlunev@google.com, zohar@linux.ibm.com,
+        Matthew Garrett <mgarrett@aurora.tech>, jarkko@kernel.org,
+        linux-pm@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Fri, 02 Dec 2022 16:03:09 -0500
+In-Reply-To: <95ffac38780bf0ec6084cb354bfcb3b7bee686b9.camel@linux.ibm.com>
+References: <20221111231636.3748636-1-evgreen@chromium.org>
+         <20221111151451.v5.4.Ieb1215f598bc9df56b0e29e5977eae4fcca25e15@changeid>
+         <Y3FfhrgvBNey6T7V@sol.localdomain>
+         <ff23b4e24222037959c2a784496c7ee91024e6c5.camel@linux.ibm.com>
+         <CAE=gft63-jdKqKmepB+LXPm6WUWSnz+CMWcWWnyN1y-EnS4kVg@mail.gmail.com>
+         <c31d1a3af53515f2a9d3f53eb27ce698e796f9b9.camel@linux.ibm.com>
+         <CAE=gft6L6bMtzbqUfH_NAsFz2r0Nw7kkbCPXcr2nYj5n31FYQg@mail.gmail.com>
+         <95ffac38780bf0ec6084cb354bfcb3b7bee686b9.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: zHzyh_mb8TepzfPQ11qtRN52QY2r-J1v
+X-Proofpoint-ORIG-GUID: sPQup2CTJfvDp6URQ1pmFgRxtBqWs-WP
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-02_12,2022-12-01_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ mlxlogscore=371 spamscore=0 phishscore=0 clxscore=1011 lowpriorityscore=0
+ suspectscore=0 mlxscore=0 malwarescore=0 impostorscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2212020169
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 2, 2022 at 7:07 AM Paolo Abeni <pabeni@redhat.com> wrote:
-> On Thu, 2022-12-01 at 21:06 -0500, Paul Moore wrote:
+On Mon, 2022-11-14 at 13:00 -0500, James Bottomley wrote:
+> On Mon, 2022-11-14 at 09:43 -0800, Evan Green wrote:
+> > On Mon, Nov 14, 2022 at 8:56 AM James Bottomley
+> > <jejb@linux.ibm.com>
+> > wrote:
+> [...]
+> > > Of course, since openssl_tpm2_engine is the complete reference
+> > > implementation that means I'll have to add the creation PCRs
+> > > implementation to it ... unless you'd like to do it?
+> > 
+> > I am willing to help as I'm the one making the mess. How does it
+> > sequence along with your draft submission (before, after,
+> > simultaneous)?
+> 
+> At the moment, just send patches.  The openssl_tpm2_engine is
+> developed on a groups.io mailing list:
+> 
+> https://groups.io/g/openssl-tpm2-engine/
+> 
+> You need an IETF specific tool (xml2rfc) to build the rfc from the
+> xml, but it's available in most distros as python3-xml2rfc.  If you
+> don't want to learn the IETF XML I can help you code up the patch to
+> add that to the draft spec.
 
-...
+Just as a heads up, the patch series implementing signed policy (and
+thus taking option [3]) is on the mailing list for review:
 
-> > However, I think this simplest solution might be what I mentioned
-> > above as #2a, simply labeling the subflow socket properly from the
-> > beginning.  In the case of SELinux I think we could do that by simply
-> > clearing the @kern flag in the case of IPPROTO_MPTCP; completely
-> > untested (and likely whitespace mangled) hack shown below:
-> >
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index f553c370397e..de6aa80b2319 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -4562,6 +4562,7 @@ static int selinux_socket_create(int family, int type,
-> >        u16 secclass;
-> >        int rc;
-> >
-> > +       kern = (protocol == IPPROTO_MPTCP ? 0 : kern);
-> >        if (kern)
-> >                return 0;
-> >
-> > @@ -4584,6 +4585,7 @@ static int selinux_socket_post_create(struct
-> > socket *sock, int family,
-> >        u32 sid = SECINITSID_KERNEL;
-> >        int err = 0;
-> >
-> > +       kern = (protocol == IPPROTO_MPTCP ? 0 : kern);
-> >        if (!kern) {
-> >                err = socket_sockcreate_sid(tsec, sclass, &sid);
-> >                if (err)
-> >
-> > ... of course the downside is that this is not a general cross-LSM
-> > solution, but those are very hard, if not impossible, to create as the
-> > individual LSMs can vary tremendously.  There is also the downside of
-> > having to have a protocol specific hack in the LSM socket creation
-> > hooks, which is a bit of a bummer, but then again we already have to
-> > do so much worse elsewhere in the LSM networking hooks that this is
-> > far from the worst thing we've had to do.
->
-> There is a problem with the above: the relevant/affected socket is an
-> MPTCP subflow, which is actually a TCP socket (protocol ==
-> IPPROTO_TCP). Yep, MPTCP is quite a mes... complex.
->
-> I think we can't follow this later path.
+https://groups.io/g/openssl-tpm2-engine/message/296
 
-Bummer.  I was afraid I was missing something, that was too easy of a "fix" ;)
+With apologies for the awful lack of threading in the groups.io
+interface.
 
-As I continue to look at the MPTCP code, I'm also now growing a little
-concerned that we may have another issue regarding the number of
-subflows attached to a sock; more on this below.
+So you don't have to build the RFC yourself, I published the proposed
+update on my website:
 
-> Side note: I'm confused by the selinux_sock_graft() implementation:
->
-> https://elixir.bootlin.com/linux/v6.1-rc7/source/security/selinux/hooks.c#L5243
->
-> it looks like the 'sid' is copied from the 'child' socket into the
-> 'parent', while the sclass from the 'parent' into the 'child'. Am I
-> misreading it? is that intended? I would have expeted both 'sid' and
-> 'sclass' being copied from the parent into the child. Other LSM's
-> sock_graft() initilize the child and leave alone the parent.
+https://www.hansenpartnership.com/draft-bottomley-tpm2-keys.html
+https://www.hansenpartnership.com/draft-bottomley-tpm2-keys.txt
 
-MPTCP isn't the only thing that is ... complex ;)
+If you want to use option [4] for the creation data, it's available.
 
-Believe it or not, selinux_sock_graft() is correct.  The reasoning is
-that the new connection sock has been labeled based on the incoming
-connection, which can be influenced by a variety of sources including
-the security attributes of the remote endpoint; however, the
-associated child socket is always labeled based on the security
-context of the task calling accept(2).  Transfering the sock's label
-(sid) to the child socket during the accept(2) operation ensures that
-the newly created socket is labeled based on the inbound connection
-labeling rules, and not simply the security context of the calling
-process.
+Regards,
 
-Transferring the object class (sclass) from the socket/inode to the
-newly grafted sock just ensures that the sock's object class is set
-correctly.
+James
 
-> ---
-> diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
-> index 99f5e51d5ca4..b8095b8df71d 100644
-> --- a/net/mptcp/protocol.c
-> +++ b/net/mptcp/protocol.c
-> @@ -3085,7 +3085,10 @@ struct sock *mptcp_sk_clone(const struct sock *sk,
->         /* will be fully established after successful MPC subflow creation */
->         inet_sk_state_store(nsk, TCP_SYN_RECV);
->
-> -       security_inet_csk_clone(nsk, req);
-> +       /* let's the new socket inherit the security label from the msk
-> +        * listener, as the TCP reqest socket carries a kernel context
-> +        */
-> +       security_sock_graft(nsk, sk->sk_socket);
->         bh_unlock_sock(nsk);
 
-As a quick aside, I'm working under the assumption that a MPTCP
-request_sock goes through the same sort of logic/processing as TCP, if
-that is wrong we likely have additional issues.
-
-I think one potential problem with the code above is that if the
-subflow socket, @sk above, has multiple inbound connections (is that
-legal with MPTCP?) it is going to be relabeled multiple times which is
-not good (label's shouldn't change once set, unless there is an
-explicit relabel event).  I think we need to focus on ensuring that
-the subflow socket is labeled properly at creation time, and that has
-me looking more at mptcp_subflow_create_socket() ...
-
-What if we added a new LSM call in mptcp_subflow_create_socket(), just
-after the sock_create_kern() call?  Inside
-mptcp_subflow_create_socket() we have a pointer to the top level MPTCP
-sock that we should serve as the source of the subflow's label, so for
-SELinux it's just a matter of copying the label information and doing
-basically the same setup we do in selinux_socket_post_create().  The
-only wrinkle that I can see is that this new LSM/SELinux hook would be
-called *after* security_socket_post_create() so we would need to add a
-special comment about that and write the code accordingly.  That said,
-it *shouldn't* be an issue for the SELinux code right now, but if this
-approach looks reasonable to you we should probably double check that
-(the NetLabel/CIPSO and NetLabel/CALIPSO code would be my main concern
-here).
-
--- 
-paul-moore.com
