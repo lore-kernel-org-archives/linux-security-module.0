@@ -2,212 +2,157 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCE6C4167B
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Dec 2022 13:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B9BC4708D
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Dec 2022 18:49:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233628AbiLBNBg (ORCPT
+        id S234145AbiLBStR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Dec 2022 08:01:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60918 "EHLO
+        Fri, 2 Dec 2022 13:49:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233614AbiLBNBU (ORCPT
+        with ESMTP id S233073AbiLBStQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Dec 2022 08:01:20 -0500
-Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [IPv6:2001:1600:3:17::42ad])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92208C1BDB;
-        Fri,  2 Dec 2022 05:01:17 -0800 (PST)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NNtNp6mP5zMqKlk;
-        Fri,  2 Dec 2022 14:01:14 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4NNtNp0xYYzMpqYv;
-        Fri,  2 Dec 2022 14:01:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1669986074;
-        bh=hGxmQcc2FUyTeeaD1Emw8ba7zKkRKPyLT6Wl3NGYjTE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=sncHdMoZXQ4vjCnfUT8iKSnA5hAIfME0wl4+7FhzBzpNwvZY48SLikBw3Du2hj9Bw
-         eE7L6kqnz5Eme79r3S8gYRski8WrtgM9ZlliWMl4P0Lfsx7C3XgNG0mYZH5+tbpCMG
-         B1nvkCJxKcZTvZEpW6DgWqT8fkPX4DEtETSGKDmI=
-Message-ID: <200bd6ce-de44-7335-63d9-04c17b1b1cf9@digikod.net>
-Date:   Fri, 2 Dec 2022 14:01:13 +0100
+        Fri, 2 Dec 2022 13:49:16 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB29AE02F6;
+        Fri,  2 Dec 2022 10:49:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9BB26B82237;
+        Fri,  2 Dec 2022 18:49:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E162FC433D6;
+        Fri,  2 Dec 2022 18:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670006953;
+        bh=D2D6Tjlx7oFG/USSfc9cdqvnPs4TmWMa9hoCFFB7rCk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AxoQ4G/HkKoHIHFMoEK8UP5I/7i8em5CgYQ5B9cTiSt+wWri5g4h3G/GFFwWcUdSz
+         NHVqmDnsJg00+O4z/3257nSKPFZZ4S05Snbd2zn5KWZYoKkPMm+59JCOjSn6TAgKrk
+         q2yhYAViLBfLtK9s+lQXGC2//WBvihoQ2D04hgKFqyFnVRqyjkmGEM4rNi9FUJh/pi
+         cNNexYEM3Y06nfuXFZU+JTMU7pLXdGgqar/bNEX4r24tUzt3XZsCrhy7vc+DP59Wuv
+         chYRMkXrPcYp+p0nPGjWpjc5lB7rB7xv5wCM11qJYhnpjQsKNMQU5UrjrtCfuYCiA7
+         v+k8SSmh6Luuw==
+Date:   Fri, 2 Dec 2022 10:49:11 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] evm: Alloc evm_digest in evm_verify_hmac() if
+ CONFIG_VMAP_STACK=y
+Message-ID: <Y4pIpxbjBdajymBJ@sol.localdomain>
+References: <20221201100625.916781-1-roberto.sassu@huaweicloud.com>
+ <20221201100625.916781-2-roberto.sassu@huaweicloud.com>
+ <Y4j4MJzizgEHf4nv@sol.localdomain>
+ <c8ef0ab69635b99d5175eaf4c96bb3a8957c6210.camel@huaweicloud.com>
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v8 08/12] landlock: Implement TCP network hooks
-Content-Language: en-US
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
-        willemdebruijn.kernel@gmail.com
-Cc:     gnoack3000@gmail.com, linux-security-module@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        artem.kuzin@huawei.com, linux-api@vger.kernel.org,
-        "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-References: <20221021152644.155136-1-konstantin.meskhidze@huawei.com>
- <20221021152644.155136-9-konstantin.meskhidze@huawei.com>
- <3452964b-04d3-b297-92a1-1220e087323e@digikod.net>
- <335a5372-e444-5deb-c04d-664cbc7cdc2e@huawei.com>
- <6071d053-a4b4-61f0-06f6-f94e6ce1e6d6@digikod.net>
- <56f9af17-f824-ff5d-7fee-8de0ae520cc2@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <56f9af17-f824-ff5d-7fee-8de0ae520cc2@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c8ef0ab69635b99d5175eaf4c96bb3a8957c6210.camel@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Dec 02, 2022 at 08:58:21AM +0100, Roberto Sassu wrote:
+> On Thu, 2022-12-01 at 10:53 -0800, Eric Biggers wrote:
+> > On Thu, Dec 01, 2022 at 11:06:24AM +0100, Roberto Sassu wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > 
+> > > Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
+> > > mapping") checks that both the signature and the digest reside in the
+> > > linear mapping area.
+> > > 
+> > > However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
+> > > stack support"), made it possible to move the stack in the vmalloc area,
+> > > which is not contiguous, and thus not suitable for sg_set_buf() which needs
+> > > adjacent pages.
+> > > 
+> > > Fix this by checking if CONFIG_VMAP_STACK is enabled. If yes, allocate an
+> > > evm_digest structure, and use that instead of the in-stack counterpart.
+> > > 
+> > > Cc: stable@vger.kernel.org # 4.9.x
+> > > Fixes: ba14a194a434 ("fork: Add generic vmalloced stack support")
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >  security/integrity/evm/evm_main.c | 26 +++++++++++++++++++++-----
+> > >  1 file changed, 21 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> > > index 23d484e05e6f..7f76d6103f2e 100644
+> > > --- a/security/integrity/evm/evm_main.c
+> > > +++ b/security/integrity/evm/evm_main.c
+> > > @@ -174,6 +174,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+> > >  	struct signature_v2_hdr *hdr;
+> > >  	enum integrity_status evm_status = INTEGRITY_PASS;
+> > >  	struct evm_digest digest;
+> > > +	struct evm_digest *digest_ptr = &digest;
+> > >  	struct inode *inode;
+> > >  	int rc, xattr_len, evm_immutable = 0;
+> > >  
+> > > @@ -231,14 +232,26 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+> > >  		}
+> > >  
+> > >  		hdr = (struct signature_v2_hdr *)xattr_data;
+> > > -		digest.hdr.algo = hdr->hash_algo;
+> > > +
+> > > +		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
+> > > +			digest_ptr = kmalloc(sizeof(*digest_ptr), GFP_NOFS);
+> > > +			if (!digest_ptr) {
+> > > +				rc = -ENOMEM;
+> > > +				break;
+> > > +			}
+> > > +		}
+> > > +
+> > > +		digest_ptr->hdr.algo = hdr->hash_algo;
+> > > +
+> > >  		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
+> > > -				   xattr_value_len, xattr_data->type, &digest);
+> > > +				   xattr_value_len, xattr_data->type,
+> > > +				   digest_ptr);
+> > >  		if (rc)
+> > >  			break;
+> > >  		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
+> > >  					(const char *)xattr_data, xattr_len,
+> > > -					digest.digest, digest.hdr.length);
+> > > +					digest_ptr->digest,
+> > > +					digest_ptr->hdr.length);
+> > >  		if (!rc) {
+> > >  			inode = d_backing_inode(dentry);
+> > >  
+> > > @@ -268,8 +281,11 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+> > >  		else
+> > >  			evm_status = INTEGRITY_FAIL;
+> > >  	}
+> > > -	pr_debug("digest: (%d) [%*phN]\n", digest.hdr.length, digest.hdr.length,
+> > > -		  digest.digest);
+> > > +	pr_debug("digest: (%d) [%*phN]\n", digest_ptr->hdr.length,
+> > > +		 digest_ptr->hdr.length, digest_ptr->digest);
+> > > +
+> > > +	if (digest_ptr && digest_ptr != &digest)
+> > > +		kfree(digest_ptr);
+> > 
+> > What is the actual problem here?  Where is a scatterlist being created from this
+> > buffer?  AFAICS it never happens.
+> 
+> Hi Eric
+> 
+> it is in public_key_verify_signature(), called by asymmetric_verify()
+> and integrity_digsig_verify().
+> 
 
-On 02/12/2022 04:13, Konstantin Meskhidze (A) wrote:
-> 
-> 
-> 11/29/2022 12:00 AM, Mickaël Salaün пишет:
->> The previous commit provides an interface to theoretically restrict
->> network access (i.e. ruleset handled network accesses), but in fact this
->> is not enforced until this commit. I like this split but to avoid any
->> inconsistency, please squash this commit into the previous one: "7/12
->> landlock: Add network rules support"
->> You should keep all the commit messages but maybe tweak them a bit.
->>
->     Ok. Will be squashed.
->>
->> On 28/11/2022 09:21, Konstantin Meskhidze (A) wrote:
->>>
->>>
->>> 11/17/2022 9:43 PM, Mickaël Salaün пишет:
->>>>
->>>> On 21/10/2022 17:26, Konstantin Meskhidze wrote:
->>>>> This patch adds support of socket_bind() and socket_connect() hooks.
->>>>> It's possible to restrict binding and connecting of TCP sockets to
->>>>> particular ports.
->>>>
->>>> Implement socket_bind() and socket_connect LSM hooks, which enable to
->>>> restrict TCP socket binding and connection to specific ports.
->>>>
->>>      Ok. Thanks.
->>>>
->>>>>
->>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>>>> ---
->>
->> [...]
->>
->>>>> +static int hook_socket_connect(struct socket *sock, struct sockaddr *address,
->>>>> +			       int addrlen)
->>>>> +{
->>>>> +	const struct landlock_ruleset *const dom =
->>>>> +		landlock_get_current_domain();
->>>>> +
->>>>> +	if (!dom)
->>>>> +		return 0;
->>>>> +
->>>>> +	/* Check if it's a TCP socket. */
->>>>> +	if (sock->type != SOCK_STREAM)
->>>>> +		return 0;
->>>>> +
->>>>> +	/* Check if the hook is AF_INET* socket's action. */
->>>>> +	switch (address->sa_family) {
->>>>> +	case AF_INET:
->>>>> +#if IS_ENABLED(CONFIG_IPV6)
->>>>> +	case AF_INET6:
->>>>> +#endif
->>>>> +		return check_socket_access(dom, get_port(address),
->>>>> +					   LANDLOCK_ACCESS_NET_CONNECT_TCP);
->>>>> +	case AF_UNSPEC: {
->>>>> +		u16 i;
->>>>
->>>> You can move "i" after the "dom" declaration to remove the extra braces.
->>>>
->>>      Ok. Thanks.
->>>>
->>>>> +
->>>>> +		/*
->>>>> +		 * If just in a layer a mask supports connect access,
->>>>> +		 * the socket_connect() hook with AF_UNSPEC family flag
->>>>> +		 * must be banned. This prevents from disconnecting already
->>>>> +		 * connected sockets.
->>>>> +		 */
->>>>> +		for (i = 0; i < dom->num_layers; i++) {
->>>>> +			if (landlock_get_net_access_mask(dom, i) &
->>>>> +			    LANDLOCK_ACCESS_NET_CONNECT_TCP)
->>>>> +				return -EACCES;
->>>>
->>>> I'm wondering if this is the right error code for this case. EPERM may
->>>> be more appropriate.
->>>
->>>      Ok. Will be refactored.
->>>>
->>>> Thinking more about this case, I don't understand what is the rationale
->>>> to deny such action. What would be the consequence to always allow
->>>> connection with AF_UNSPEC (i.e. to disconnect a socket)?
->>>>
->>>      I thought we have come to a conclusion about connect(...AF_UNSPEC..)
->>>     behaviour in the patchset V3:
->>> https://lore.kernel.org/linux-security-module/19ad3a01-d76e-0e73-7833-99acd4afd97e@huawei.com/
->>
->> The conclusion was that AF_UNSPEC disconnects a socket, but I'm asking
->> if this is a security issue. I don't think it is more dangerous than a
->> new (unconnected) socket. Am I missing something? Which kind of rule
->> could be bypassed? What are we protecting against by restricting AF_UNSPEC?
-> 
-> I just follow Willem de Bruijn concerns about this issue:
-> 
-> quote: "It is valid to pass an address with AF_UNSPEC to a PF_INET(6)
-> socket. And there are legitimate reasons to want to deny this. Such as
-> passing a connection to a unprivileged process and disallow it from
-> disconnect and opening a different new connection."
-> 
-> https://lore.kernel.org/linux-security-module/CA+FuTSf4EjgjBCCOiu-PHJcTMia41UkTh8QJ0+qdxL_J8445EA@mail.gmail.com/
+Hmm, that's several steps down the stack then.  And not something I had
+expected.
 
-I agree with the fact that we want to deny this, but in this example the 
-new connection should still be restricted by the Landlock domain. Using 
-AF_UNSPEC on a connected socket should not make this socket allowed to 
-create any connection if the process is restricted with TCP_CONNECT. 
-Being allowed to close a connection should not be an issue, and any new 
-connection must be vetted by Landlock.
+Perhaps this should be fixed in public_key_verify_signature() instead?  It
+already does a kmalloc(), so that allocation size just could be made a bit
+larger to get space for a temporary copy of 's' and 'digest'.
 
-> 
-> 
-> quote: "The intended use-case is for a privileged process to open a
-> connection (i.e., bound and connected socket) and pass that to a
-> restricted process. The intent is for that process to only be allowed to
-> communicate over this pre-established channel.
-> 
-> In practice, it is able to disconnect (while staying bound) and
-> elevate its privileges to that of a listening server: ..."
-> 
-> https://lore.kernel.org/linux-security-module/CA+FuTScaoby-=xRKf_Dz3koSYHqrMN0cauCg4jMmy_nDxwPADA@mail.gmail.com/
-> 
-> Looks like it's a security issue here.
+Or at the very least, struct public_key_signature should have a *very* clear
+comment saying that the 's' and 'digest' fields must be located in physically
+contiguous memory...
 
-It the provided example, if child_process() is restricted with 
-TCP_CONNECT and TCP_BIND, any call to connect() or bind() will return an 
-access error. listen() and accept() would work if the socket is bound, 
-which is the case here, and then implicitly allowed by the parent 
-process. I don' see any security issue. Am I missing something?
-
-In fact, connect with AF_UNSPEC should always be allowed to be 
-consistent with close(2), which is a way to drop privileges.
-
-
-What Willem said:
-> It would be good to also
-> ensure that a now-bound socket cannot call listen.
-
-This is not relevant for Landlock because the security model is to check 
-process's requests to get new accesses (e.g. create a new file 
-descriptor), but not to check passed accesses (e.g. inherited from a 
-parent process, or pass through a unix socket) which are delegated to 
-the sender/parent. The goal of a sandbox is to limit the set of new 
-access requested (to the kernel) from within this sandbox. All already 
-opened file descriptors were previously vetted by Landlock (and other 
-access control systems).
-
-> 
->>
->> We could then reduce the hook codes to just:
->> return current_check_access_socket(sock, address, LANDLOCK_ACCESS_NET_*);
->> .
-
-As for SELinux, the connect hook should first do this check (with an 
-appropriate comment):
-if (address->sa_family == AF_UNSPEC)
-	return 0;
+- Eric
