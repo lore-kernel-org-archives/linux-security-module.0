@@ -2,185 +2,152 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FA0C3A5A7
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Dec 2022 03:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A87C4708D
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Dec 2022 07:58:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231533AbiLBDOs (ORCPT
+        id S232375AbiLBH6x (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Dec 2022 22:14:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55936 "EHLO
+        Fri, 2 Dec 2022 02:58:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231379AbiLBDOr (ORCPT
+        with ESMTP id S231989AbiLBH6x (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Dec 2022 22:14:47 -0500
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07E8BA47C4;
-        Thu,  1 Dec 2022 19:14:47 -0800 (PST)
-Received: from fraeml703-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4NNdJT1KK5z6HJLs;
-        Fri,  2 Dec 2022 11:11:37 +0800 (CST)
-Received: from lhrpeml500004.china.huawei.com (7.191.163.9) by
- fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.31; Fri, 2 Dec 2022 04:14:45 +0100
-Received: from [10.122.132.241] (10.122.132.241) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.34; Fri, 2 Dec 2022 03:14:44 +0000
-Message-ID: <8f3f8c93-3669-0240-0d0a-f067dea9d72c@huawei.com>
-Date:   Fri, 2 Dec 2022 06:14:43 +0300
+        Fri, 2 Dec 2022 02:58:53 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD6E950FA;
+        Thu,  1 Dec 2022 23:58:50 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NNlWj3P8nz9xFQc;
+        Fri,  2 Dec 2022 15:51:45 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwDHsm8gsIlj1LiyAA--.51906S2;
+        Fri, 02 Dec 2022 08:58:32 +0100 (CET)
+Message-ID: <c8ef0ab69635b99d5175eaf4c96bb3a8957c6210.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 1/2] evm: Alloc evm_digest in evm_verify_hmac() if
+ CONFIG_VMAP_STACK=y
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org
+Date:   Fri, 02 Dec 2022 08:58:21 +0100
+In-Reply-To: <Y4j4MJzizgEHf4nv@sol.localdomain>
+References: <20221201100625.916781-1-roberto.sassu@huaweicloud.com>
+         <20221201100625.916781-2-roberto.sassu@huaweicloud.com>
+         <Y4j4MJzizgEHf4nv@sol.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v8 12/12] landlock: Document Landlock's network support
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <artem.kuzin@huawei.com>,
-        <linux-doc@vger.kernel.org>
-References: <20221021152644.155136-1-konstantin.meskhidze@huawei.com>
- <20221021152644.155136-13-konstantin.meskhidze@huawei.com>
- <8a8ba39f-c7c2-eca6-93b1-f36d982726ca@digikod.net>
- <73a8a2f2-0d59-970d-eaba-c0da38a1c38b@huawei.com>
- <2bce0b5a-a679-93f2-995c-cb0e80c82bf2@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <2bce0b5a-a679-93f2-995c-cb0e80c82bf2@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwDHsm8gsIlj1LiyAA--.51906S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWw4DKry8Wr4Uur4DtryfCrg_yoW5Zw1Upa
+        1kKa10qr4rJr1SkF1aya1Yya1rKrW0qry2gws8Aw1YyF9xZrnYy34xAFy7WryFkry8WF1x
+        tFWSqrn8C3WqyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAOBF1jj4ItyAABsf
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, 2022-12-01 at 10:53 -0800, Eric Biggers wrote:
+> On Thu, Dec 01, 2022 at 11:06:24AM +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
+> > mapping") checks that both the signature and the digest reside in the
+> > linear mapping area.
+> > 
+> > However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
+> > stack support"), made it possible to move the stack in the vmalloc area,
+> > which is not contiguous, and thus not suitable for sg_set_buf() which needs
+> > adjacent pages.
+> > 
+> > Fix this by checking if CONFIG_VMAP_STACK is enabled. If yes, allocate an
+> > evm_digest structure, and use that instead of the in-stack counterpart.
+> > 
+> > Cc: stable@vger.kernel.org # 4.9.x
+> > Fixes: ba14a194a434 ("fork: Add generic vmalloced stack support")
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  security/integrity/evm/evm_main.c | 26 +++++++++++++++++++++-----
+> >  1 file changed, 21 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> > index 23d484e05e6f..7f76d6103f2e 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -174,6 +174,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+> >  	struct signature_v2_hdr *hdr;
+> >  	enum integrity_status evm_status = INTEGRITY_PASS;
+> >  	struct evm_digest digest;
+> > +	struct evm_digest *digest_ptr = &digest;
+> >  	struct inode *inode;
+> >  	int rc, xattr_len, evm_immutable = 0;
+> >  
+> > @@ -231,14 +232,26 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+> >  		}
+> >  
+> >  		hdr = (struct signature_v2_hdr *)xattr_data;
+> > -		digest.hdr.algo = hdr->hash_algo;
+> > +
+> > +		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
+> > +			digest_ptr = kmalloc(sizeof(*digest_ptr), GFP_NOFS);
+> > +			if (!digest_ptr) {
+> > +				rc = -ENOMEM;
+> > +				break;
+> > +			}
+> > +		}
+> > +
+> > +		digest_ptr->hdr.algo = hdr->hash_algo;
+> > +
+> >  		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
+> > -				   xattr_value_len, xattr_data->type, &digest);
+> > +				   xattr_value_len, xattr_data->type,
+> > +				   digest_ptr);
+> >  		if (rc)
+> >  			break;
+> >  		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
+> >  					(const char *)xattr_data, xattr_len,
+> > -					digest.digest, digest.hdr.length);
+> > +					digest_ptr->digest,
+> > +					digest_ptr->hdr.length);
+> >  		if (!rc) {
+> >  			inode = d_backing_inode(dentry);
+> >  
+> > @@ -268,8 +281,11 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+> >  		else
+> >  			evm_status = INTEGRITY_FAIL;
+> >  	}
+> > -	pr_debug("digest: (%d) [%*phN]\n", digest.hdr.length, digest.hdr.length,
+> > -		  digest.digest);
+> > +	pr_debug("digest: (%d) [%*phN]\n", digest_ptr->hdr.length,
+> > +		 digest_ptr->hdr.length, digest_ptr->digest);
+> > +
+> > +	if (digest_ptr && digest_ptr != &digest)
+> > +		kfree(digest_ptr);
+> 
+> What is the actual problem here?  Where is a scatterlist being created from this
+> buffer?  AFAICS it never happens.
 
+Hi Eric
 
-11/28/2022 11:26 PM, Mickaël Salaün пишет:
-> 
-> On 28/11/2022 07:44, Konstantin Meskhidze (A) wrote:
->> 
->> 
->> 11/17/2022 9:44 PM, Mickaël Salaün пишет:
->>>
->>> On 21/10/2022 17:26, Konstantin Meskhidze wrote:
->>>> Describes network access rules for TCP sockets. Adds network access
->>>> example in the tutorial. Points out AF_UNSPEC socket family behaviour.
->>>> Adds kernel configuration support for network.
->>>>
->>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>>> ---
->>>>
->>>> Changes since v7:
->>>> * Fixes documentaion logic errors and typos as Mickaёl suggested:
->>>> https://lore.kernel.org/netdev/9f354862-2bc3-39ea-92fd-53803d9bbc21@digikod.net/
->>>>
->>>> Changes since v6:
->>>> * Adds network support documentaion.
->>>>
->>>> ---
->>>>    Documentation/userspace-api/landlock.rst | 72 +++++++++++++++++++-----
->>>>    1 file changed, 59 insertions(+), 13 deletions(-)
->>>>
->>>> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
->>>> index d8cd8cd9ce25..d0610ec9ce05 100644
->>>> --- a/Documentation/userspace-api/landlock.rst
->>>> +++ b/Documentation/userspace-api/landlock.rst
->>>> @@ -11,10 +11,10 @@ Landlock: unprivileged access control
->>>>    :Date: October 2022
->>>>
->>>>    The goal of Landlock is to enable to restrict ambient rights (e.g. global
->>>> -filesystem access) for a set of processes.  Because Landlock is a stackable
->>>> -LSM, it makes possible to create safe security sandboxes as new security layers
->>>> -in addition to the existing system-wide access-controls. This kind of sandbox
->>>> -is expected to help mitigate the security impact of bugs or
->>>> +filesystem or network access) for a set of processes.  Because Landlock
->>>> +is a stackable LSM, it makes possible to create safe security sandboxes as new
->>>> +security layers in addition to the existing system-wide access-controls. This
->>>> +kind of sandbox is expected to help mitigate the security impact of bugs or
->>>>    unexpected/malicious behaviors in user space applications.  Landlock empowers
->>>>    any process, including unprivileged ones, to securely restrict themselves.
->>>>
->>>> @@ -30,18 +30,20 @@ Landlock rules
->>>>
->>>>    A Landlock rule describes an action on an object.  An object is currently a
->>>>    file hierarchy, and the related filesystem actions are defined with `access
->>>> -rights`_.  A set of rules is aggregated in a ruleset, which can then restrict
->>>> -the thread enforcing it, and its future children.
->>>> +rights`_.  Since ABI version 4 a port data appears with related network actions
->>>> +for TCP socket families.  A set of rules is aggregated in a ruleset, which
->>>> +can then restrict the thread enforcing it, and its future children.
->>>>
->>>>    Defining and enforcing a security policy
->>>>    ----------------------------------------
->>>>
->>>>    We first need to define the ruleset that will contain our rules.  For this
->>>>    example, the ruleset will contain rules that only allow read actions, but write
->>>> -actions will be denied.  The ruleset then needs to handle both of these kind of
->>>> +actions will be denied. The ruleset then needs to handle both of these kind of
->>>>    actions.  This is required for backward and forward compatibility (i.e. the
->>>>    kernel and user space may not know each other's supported restrictions), hence
->>>> -the need to be explicit about the denied-by-default access rights.
->>>> +the need to be explicit about the denied-by-default access rights.  Also ruleset
->>>> +will have network rules for specific ports, so it should handle network actions.
->>>>
->>>>    .. code-block:: c
->>>>
->>>> @@ -62,6 +64,9 @@ the need to be explicit about the denied-by-default access rights.
->>>>                LANDLOCK_ACCESS_FS_MAKE_SYM |
->>>>                LANDLOCK_ACCESS_FS_REFER |
->>>>                LANDLOCK_ACCESS_FS_TRUNCATE,
->>>> +        .handled_access_net =
->>>> +            LANDLOCK_ACCESS_NET_BIND_TCP |
->>>> +            LANDLOCK_ACCESS_NET_CONNECT_TCP,
->>>>        };
->>>>
->>>>    Because we may not know on which kernel version an application will be
->>>> @@ -70,14 +75,18 @@ should try to protect users as much as possible whatever the kernel they are
->>>>    using.  To avoid binary enforcement (i.e. either all security features or
->>>>    none), we can leverage a dedicated Landlock command to get the current version
->>>>    of the Landlock ABI and adapt the handled accesses.  Let's check if we should
->>>> -remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
->>>> -access rights, which are only supported starting with the second and third
->>>> -version of the ABI.
->>>> +remove the `LANDLOCK_ACCESS_FS_REFER` or `LANDLOCK_ACCESS_FS_TRUNCATE` or
->>>> +network access rights, which are only supported starting with the second,
->>>
->>> This is a bad rebase.
->> 
->>     Sorry. Did not get it.
-> 
-> This hunk (and maybe others) changes unrelated things (e.g. back quotes).
+it is in public_key_verify_signature(), called by asymmetric_verify()
+and integrity_digsig_verify().
 
-   Ok. Got it. Thanks.
-> 
-> 
->>>
->>>
->>>> +third and fourth version of the ABI.
->>>>
->>>>    .. code-block:: c
->>>>
->>>>        int abi;
->>>>
->>>> +    #define ACCESS_NET_BIND_CONNECT ( \
->>>> +    LANDLOCK_ACCESS_NET_BIND_TCP | \
->>>> +    LANDLOCK_ACCESS_NET_CONNECT_TCP)
->>>
->>> Please add a 4-spaces prefix for these two lines.
->> 
->>     Like this??
->> 	#define ACCESS_NET_BIND_CONNECT ( \
->>               LANDLOCK_ACCESS_NET_BIND_TCP | \
->>               LANDLOCK_ACCESS_NET_CONNECT_TCP)
-> 
-> Like for other indentations in the documentation (e.g. ruleset_attr
-> definition):
-> 
-> #define ACCESS_NET_BIND_CONNECT ( \
->       LANDLOCK_ACCESS_NET_BIND_TCP | \
->       LANDLOCK_ACCESS_NET_CONNECT_TCP)
+Roberto
 
-  Ok. Will be fixed.
-> .
