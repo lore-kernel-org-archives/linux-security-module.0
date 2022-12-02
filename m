@@ -2,149 +2,206 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0992C47088
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Dec 2022 19:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F727C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Dec 2022 02:06:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbiLATMK (ORCPT
+        id S231358AbiLBCG5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Dec 2022 14:12:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35632 "EHLO
+        Thu, 1 Dec 2022 21:06:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229962AbiLATMJ (ORCPT
+        with ESMTP id S231777AbiLBCGy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Dec 2022 14:12:09 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07353C5E3B;
-        Thu,  1 Dec 2022 11:12:07 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A6DBEB82008;
-        Thu,  1 Dec 2022 19:12:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19036C433C1;
-        Thu,  1 Dec 2022 19:12:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669921925;
-        bh=faLfLn20VwD7SpEhsVcCsFu680sV7lPRVza931ELf/M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iaivx7/3l5XEFtOnUIq2Fku+PTgJ4+Bl0/M6Yl1yn2H1O6nCNg5lIDyS5to5uYwD3
-         gULuQyMpYSX2fjkltzqqwx6gHtOFvudGqpjARhsnPp5ulcLjdYrJFAqgxVhHdMwy9E
-         VPS1MvWRYR8Bi/Y+exOe/txwEUw0v6+GogzWk9f7+WYc1n3aglzk0nwt3mKrZl8qje
-         s2IJUngHzxQtY4RaGoBfVIZQsHg4w/FMaetzG9l3tfgoyyRn8OE511rzE2OCnsiFH4
-         xdP/O6x1Q+C3+Ep4NyV115CokVQ9Llm03OMO2FamRueAZqX9AAu5tlB+LafRhfWbE4
-         ijOV75CF9mJGw==
-Date:   Thu, 1 Dec 2022 11:12:03 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] evm: Alloc evm_digest in evm_verify_hmac() if
- CONFIG_VMAP_STACK=y
-Message-ID: <Y4j8g/V4HGgamyLI@sol.localdomain>
-References: <20221201100625.916781-1-roberto.sassu@huaweicloud.com>
- <20221201100625.916781-2-roberto.sassu@huaweicloud.com>
- <Y4j4MJzizgEHf4nv@sol.localdomain>
- <66d9f3dbfddc5d73e73fa0c6152d70ff1739427a.camel@linux.ibm.com>
+        Thu, 1 Dec 2022 21:06:54 -0500
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89413D4271
+        for <linux-security-module@vger.kernel.org>; Thu,  1 Dec 2022 18:06:53 -0800 (PST)
+Received: by mail-pg1-x52c.google.com with SMTP id 62so3210337pgb.13
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Dec 2022 18:06:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cTJujriYT83KF2w8nG2Y3B03ObzaiIMx8AI30H0MJjg=;
+        b=dIupAfdS3jaYJJP0+BMXuI8vC8tEEAuNiG2a6uy+/XO3z91Z7WkB8vWstYYBuLwSy9
+         H5N6iqfe35JmYArRLubxMXuKsI8s6/d3h9Mci7FO/wFzG1JU6lUest600csQ+p9lOj8t
+         VIGxs8QLZxGtbv0FUsh05zYPzNb+xgzR9d7xC01M/EWoJFkl7YMB30WEnDtpiVYc1K7A
+         /YdCo3DRvvDajFsbBOV9l+5ZSBLKSdD7BAgJ3ot5+nQv307yD7fBqpGNTxjKuPL/p4Va
+         CIKaqVj0ggzwst4R6+xBrYkLD2oqgZkP8bw32D+N6SQ/+I6BUDtSObOjque3lpGyQvea
+         BR+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cTJujriYT83KF2w8nG2Y3B03ObzaiIMx8AI30H0MJjg=;
+        b=UpOahICYWsvx227mTDCOfQ/tcCuU4DNDzd7yhFCqjORUGAZNyhUwxr1rQNx/o84ipo
+         RjLE+HTTPLTAor/R6w+h/Yuyi8F/z17QJchWAVVjldY8tcX+k+8B266X8LiJOcupmRbq
+         lBZy8i5vjPmTuZQjcKiQG54+daq34eGhgQJ3NJnY5aC9SljteUGZXTMFtkGXd1HqdnUg
+         ExzZTFNYc1AS5DeeYMqAXSoBxZt9Is/1Lul7y+tE1IfmNb6MIWg9e7yMnMS0xqmzhDiJ
+         ZDY649kzMME9tODpynpUulOsveB40uMlXu0gGQe0sIjOW7VsEKZK2gHsG97mIwR27Q8B
+         WdOg==
+X-Gm-Message-State: ANoB5pnon3QWBHDFIvZft/MivG0oX9lcgVOavsLBiTfF2SwcMDebBhr+
+        mxV/DoXmmT4sP8AX7ts4S8zbR1h8QJXqqogRSqxEuheb3Mnk
+X-Google-Smtp-Source: AA0mqf6Gdx+iVOTbm/SVPdBUYDHiVRjyPIyenOppLaCF3+FPR/55N1Wcr/Dmplutl3YfOwgmIdNSkm4SHYq1v/jpv5A=
+X-Received: by 2002:a62:1d54:0:b0:576:27e4:3b2d with SMTP id
+ d81-20020a621d54000000b0057627e43b2dmr4697451pfd.23.1669946812839; Thu, 01
+ Dec 2022 18:06:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66d9f3dbfddc5d73e73fa0c6152d70ff1739427a.camel@linux.ibm.com>
+References: <CAFqZXNs2LF-OoQBUiiSEyranJUXkPLcCfBkMkwFeM6qEwMKCTw@mail.gmail.com>
+ <108a1c80eed41516f85ebb264d0f46f95e86f754.camel@redhat.com>
+In-Reply-To: <108a1c80eed41516f85ebb264d0f46f95e86f754.camel@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 1 Dec 2022 21:06:41 -0500
+Message-ID: <CAHC9VhSSKN5kh9Kqgj=aCeA92bX1mJm1v4_PnRgua86OHUwE3w@mail.gmail.com>
+Subject: Re: Broken SELinux/LSM labeling with MPTCP and accept(2)
+To:     Paolo Abeni <pabeni@redhat.com>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>, mptcp@lists.linux.dev,
+        network dev <netdev@vger.kernel.org>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Dec 01, 2022 at 02:08:58PM -0500, Mimi Zohar wrote:
-> On Thu, 2022-12-01 at 10:53 -0800, Eric Biggers wrote:
-> > On Thu, Dec 01, 2022 at 11:06:24AM +0100, Roberto Sassu wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > 
-> > > Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
-> > > mapping") checks that both the signature and the digest reside in the
-> > > linear mapping area.
-> > > 
-> > > However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
-> > > stack support"), made it possible to move the stack in the vmalloc area,
-> > > which is not contiguous, and thus not suitable for sg_set_buf() which needs
-> > > adjacent pages.
-> > > 
-> > > Fix this by checking if CONFIG_VMAP_STACK is enabled. If yes, allocate an
-> > > evm_digest structure, and use that instead of the in-stack cbounterpart.
-> > > 
-> > > Cc: stable@vger.kernel.org # 4.9.x
-> > > Fixes: ba14a194a434 ("fork: Add generic vmalloced stack support")
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >  security/integrity/evm/evm_main.c | 26 +++++++++++++++++++++-----
-> > >  1 file changed, 21 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> > > index 23d484e05e6f..7f76d6103f2e 100644
-> > > --- a/security/integrity/evm/evm_main.c
-> > > +++ b/security/integrity/evm/evm_main.c
-> > > @@ -174,6 +174,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
-> > >  	struct signature_v2_hdr *hdr;
-> > >  	enum integrity_status evm_status = INTEGRITY_PASS;
-> > >  	struct evm_digest digest;
-> > > +	struct evm_digest *digest_ptr = &digest;
-> > >  	struct inode *inode;
-> > >  	int rc, xattr_len, evm_immutable = 0;
-> > >  
-> > > @@ -231,14 +232,26 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
-> > >  		}
-> > >  
-> > >  		hdr = (struct signature_v2_hdr *)xattr_data;
-> > > -		digest.hdr.algo = hdr->hash_algo;
-> > > +
-> > > +		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
-> > > +			digest_ptr = kmalloc(sizeof(*digest_ptr), GFP_NOFS);
-> > > +			if (!digest_ptr) {
-> > > +				rc = -ENOMEM;
-> > > +				break;
-> > > +			}
-> > > +		}
-> > > +
-> > > +		digest_ptr->hdr.algo = hdr->hash_algo;
-> > > +
-> > >  		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
-> > > -				   xattr_value_len, xattr_data->type, &digest);
-> > > +				   xattr_value_len, xattr_data->type,
-> > > +				   digest_ptr);
-> > >  		if (rc)
-> > >  			break;
-> > >  		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
-> > >  					(const char *)xattr_data, xattr_len,
-> > > -					digest.digest, digest.hdr.length);
-> > > +					digest_ptr->digest,
-> > > +					digest_ptr->hdr.length);
-> > >  		if (!rc) {
-> > >  			inode = d_backing_inode(dentry);
-> > >  
-> > > @@ -268,8 +281,11 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
-> > >  		else
-> > >  			evm_status = INTEGRITY_FAIL;
-> > >  	}
-> > > -	pr_debug("digest: (%d) [%*phN]\n", digest.hdr.length, digest.hdr.length,
-> > > -		  digest.digest);
-> > > +	pr_debug("digest: (%d) [%*phN]\n", digest_ptr->hdr.length,
-> > > +		 digest_ptr->hdr.length, digest_ptr->digest);
-> > > +
-> > > +	if (digest_ptr && digest_ptr != &digest)
-> > > +		kfree(digest_ptr);
-> > 
-> > What is the actual problem here?  Where is a scatterlist being created from this
-> > buffer?  AFAICS it never happens.
-> 
-> Enabling CONFIG_VMAP_STACK is the culprit, which triggers the BUG_ON
-> only when CONFIG_DEBUG_SG is enabled as well.
-> 
-> Refer to commit ba14a194a434 ("fork: Add generic vmalloced stack
-> support").
+On Thu, Dec 1, 2022 at 1:26 PM Paolo Abeni <pabeni@redhat.com> wrote:
+> Hello,
 
-I'm asking about where the actual bug is.  Where is a scatterlist being created
-to represent an on-disk buffer...
+Hello all.
 
-- Eric
+> On Thu, 2022-12-01 at 14:42 +0100, Ondrej Mosnacek wrote:
+> > As discovered by our QE, there is a problem with how the
+> > (userspace-facing) sockets returned by accept(2) are labeled when
+> > using MPTCP. Currently they always end up with the label representing
+> > the kernel (typically system_u:system_r:kernel_t:s0), white they
+> > should inherit the context from the parent socket (the one that is
+> > passed to accept(2)) ...
+
+Ooof, that's unfortunate :/  Thanks for reporting it though ...
+
+> > So now the big question is: How to fix this? I can think of several
+> > possible solutions, but neither of them seems to be the obvious
+> > correct one:
+> > 1. Wrap the socket cloned from the subflow socket in another socket
+> > (similar to how the main socket + subflow(s) are handled), which would
+> > be cloned from the non-kern outer socket that has the right label.
+> > This could have the disadvantage of adding unnecessary overhead, but
+> > would probably be simpler to do.
+>
+> I would avoid that option: we already have a suboptimal amount of
+> indirection.
+
+Agreed, I'm not sure I want to push for this as a fix.
+
+> > 2. Somehow ensure that the cloned socket gets the label from the main
+> > socket instead of the subflow socket. This would probably require
+> > adding a new LSM hook and I'm not sure at all what would be the best
+> > way to implement this.
+
+2a. (?)  Another option would simply be ensuring that the subflow
+socket has the proper LSM/SELinux label from the start.  This is
+arguably The Right Thing To Do regardless, and in cases where explicit
+packet labeling is used, e.g. CALIPSO, it may be necessary to do this
+to ensure the traffic is labeled correctly from the start (I would
+need to spend more time looking at the MPTCP code to say for certain
+here).
+
+> > 3. Somehow communicate the subflow socket <-> main socket relationship
+> > to the LSM layer so that it can switch to use the label of the main
+> > socket when handling an operation on a subflow socket (thus copying
+> > the label correctly on accept(2)). Not a great solution, as it
+> > requires each LSM that labels sockets to duplicate the indirection
+> > logic.
+> > 4. Do not create the subflow sockets as "kern". (Not sure if that
+> > would be desirable.)
+>
+> No, we need subflow being kernel sockets. Lockdep will bail otherwise,
+> and the would be the tip of the iceberg.
+>
+> > 5. Stop labeling kern sockets with the kernel's label on the SELinux
+> > side and just label them based on the current task as usual. (This
+> > would probably cause other issues, but maybe not...)
+
+I'm not sure we want to open that can of worms right now.
+
+> > Any ideas, suggestions, or patches welcome!
+>
+> I think something alike the following could work - not even tested,
+> with comments on bold assumptions.
+>
+> I'll try to do some testing later.
+>
+> ---
+> diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
+> index 99f5e51d5ca4..6cad50c6fd24 100644
+> --- a/net/mptcp/protocol.c
+> +++ b/net/mptcp/protocol.c
+> @@ -102,6 +102,20 @@ static int __mptcp_socket_create(struct mptcp_sock *msk)
+>         if (err)
+>                 return err;
+>
+> +       /* The first subflow can later be indirectly exposed to security
+> +        * relevant syscall alike accept() and bind(), and at this point
+> +        * carries a 'kern' related security context.
+> +        * Reset the security context to the relevant user-space one.
+> +        * Note that the following assumes security_socket_post_create()
+> +        * being idempotent
+> +        */
+> +       err = security_socket_post_create(ssock, sk->sk_family, SOCK_STREAM,
+> +                                         IPPROTO_TCP, 0);
+> +       if (err) {
+> +               sock_release(ssock);
+> +               return err;
+> +       }
+
+I'm not sure we want to start calling security_socket_post_create()
+twice on a given socket, *maybe* it works okay now but that seems like
+an awkward constraint to put on future LSMs (or changes to existing
+ones).  If we decide that the best approach is to add a LSM hook call
+here, we should create a new hook instead of reusing an existing one;
+I think this falls under Ondrej's possible solution #2.
+
+However, I think this simplest solution might be what I mentioned
+above as #2a, simply labeling the subflow socket properly from the
+beginning.  In the case of SELinux I think we could do that by simply
+clearing the @kern flag in the case of IPPROTO_MPTCP; completely
+untested (and likely whitespace mangled) hack shown below:
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index f553c370397e..de6aa80b2319 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4562,6 +4562,7 @@ static int selinux_socket_create(int family, int type,
+       u16 secclass;
+       int rc;
+
++       kern = (protocol == IPPROTO_MPTCP ? 0 : kern);
+       if (kern)
+               return 0;
+
+@@ -4584,6 +4585,7 @@ static int selinux_socket_post_create(struct
+socket *sock, int family,
+       u32 sid = SECINITSID_KERNEL;
+       int err = 0;
+
++       kern = (protocol == IPPROTO_MPTCP ? 0 : kern);
+       if (!kern) {
+               err = socket_sockcreate_sid(tsec, sclass, &sid);
+               if (err)
+
+... of course the downside is that this is not a general cross-LSM
+solution, but those are very hard, if not impossible, to create as the
+individual LSMs can vary tremendously.  There is also the downside of
+having to have a protocol specific hack in the LSM socket creation
+hooks, which is a bit of a bummer, but then again we already have to
+do so much worse elsewhere in the LSM networking hooks that this is
+far from the worst thing we've had to do.
+
+All this of course assumes that the quick little hack even works, I
+may be missing something very obvious ... ;)
+
+-- 
+paul-moore.com
