@@ -2,129 +2,319 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A3EC4321E
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Dec 2022 18:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2EEC47090
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Dec 2022 20:59:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231426AbiLESoB (ORCPT
+        id S233523AbiLEU75 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Dec 2022 13:44:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36202 "EHLO
+        Mon, 5 Dec 2022 15:59:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232240AbiLESny (ORCPT
+        with ESMTP id S233529AbiLEU7w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Dec 2022 13:43:54 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1521412AEA
-        for <linux-security-module@vger.kernel.org>; Mon,  5 Dec 2022 10:43:53 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id s5so17022199edc.12
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Dec 2022 10:43:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wAi9wb/ccr1V0J6asFIl7Azn5bhshYuD4nE6CW5xW+g=;
-        b=OPVtqaGQfZNdZ4DF7z8NeObdT3sHluUFseqPw49KCbN+wqTHkRGDlCNAdrUqnU5qq6
-         M/dZcdpbg6LMDtINPMHagxvEiD/e+KnOjJz+nt7H4s3lp1pprnp3qe4GMLa/QhYvpUQp
-         yZVn5ofbBDCap0LFHONiDAaGYHExRbkxKOdis=
+        Mon, 5 Dec 2022 15:59:52 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC39924BD5
+        for <linux-security-module@vger.kernel.org>; Mon,  5 Dec 2022 12:58:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1670273929;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pZxLt4/GF+wys/GuWAIbGAH9lD65j6IwW6mM3UiAHcI=;
+        b=J6g7/Wk1qRPNpV24JFB1F3c9SXCTLoTylgLViAGX3lBsZ38xBchjulL/QBivq7Tdx72GZJ
+        9xT9qJ25fZ1K6WHqAKZXM86NNb4YCvhcMNze1lL1cqCCWkHnbrh8U8r3B2OjUJUKoHkhBo
+        gS0UlRISL6POdSTkv37yHoRnpADZTuE=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-642-cIKPcQoFPRmQ5hilLQu1Iw-1; Mon, 05 Dec 2022 15:58:46 -0500
+X-MC-Unique: cIKPcQoFPRmQ5hilLQu1Iw-1
+Received: by mail-qk1-f199.google.com with SMTP id x2-20020a05620a448200b006fa7dad5c1cso18451914qkp.10
+        for <linux-security-module@vger.kernel.org>; Mon, 05 Dec 2022 12:58:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wAi9wb/ccr1V0J6asFIl7Azn5bhshYuD4nE6CW5xW+g=;
-        b=aD66sxMvSgXfmvAUoucZ71pn6SjDh8smZXshkl9HBKTrd4doL8WLKC+V0OeXNeQgQo
-         MRQUDTFNlk14cBboTcnnjw38uasWxffAJSuvv1DoBhkHiViwQfpNB0LUClZI6HJXSwRD
-         tRCOhjBMwMQTPLo8euCR+W/qz/8viAB4k15Xxcjx9wt7UpCwtFd+M8QY9rX4YGYNRdiI
-         MpZPFv/VH6QnrWSZJi5th9h9dRUpgWh85DUypwkXn6VCHY39ValzJyLdpsQ38mMRXIz9
-         +pA7ofhL51dHCx+L/TYmBIMxf6WLULGAgpZDATOcI+D24cLYgp9KnYvKfpCXOzFhwkMX
-         8pAQ==
-X-Gm-Message-State: ANoB5pni168OlPqncEdHG9oiUG6xFJ8Z2FxbhfkOp28VDM8JEpyY2LNQ
-        oRNu3FbT8sZg5d5tCwgkm6KN3zEMk2FobKog
-X-Google-Smtp-Source: AA0mqf7bV/gdH//OqXfOT8B2ALwb0gsh4nKi210rTbV99yz2ThAqWU8k222qbLTiknaZNQQhlDphqg==
-X-Received: by 2002:aa7:c415:0:b0:46c:4b56:8c06 with SMTP id j21-20020aa7c415000000b0046c4b568c06mr11282988edq.230.1670265831950;
-        Mon, 05 Dec 2022 10:43:51 -0800 (PST)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com. [209.85.128.54])
-        by smtp.gmail.com with ESMTPSA id k5-20020a1709063e0500b007ae32daf4b9sm5310733eji.106.2022.12.05.10.43.51
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Dec 2022 10:43:51 -0800 (PST)
-Received: by mail-wm1-f54.google.com with SMTP id ay27-20020a05600c1e1b00b003d070f4060bso10820978wmb.2
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Dec 2022 10:43:51 -0800 (PST)
-X-Received: by 2002:a05:600c:4e4c:b0:3cf:87c6:890b with SMTP id
- e12-20020a05600c4e4c00b003cf87c6890bmr62524251wmq.194.1670265821267; Mon, 05
- Dec 2022 10:43:41 -0800 (PST)
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pZxLt4/GF+wys/GuWAIbGAH9lD65j6IwW6mM3UiAHcI=;
+        b=3PbNE2X2/0YfL5S5mQA4x/vx6Cg8nUXG2hxcZAJDsesjZr3XygUg3Y1ly+vwED/8yH
+         RH/9z9r0SWojxjlZJIyML3yTV7jwQ5mbb/yyf8X1C6bPhP+fe01l5bJsH4oxsmqdIXT4
+         9aMHRDTGGHDu4YA7126uVcq/uvZf1fY+ukg95P7GRZRccyK0pib4x3NukAbP+Qf3YTd9
+         IacdaZ3cClstuNElC3puoeJLz2FFzXMFXSVFb9AHQ9E2XI8qqJ4UPuxElpKKWbqtM4ua
+         PikDYQTY9+qmXKzA+2Cx3CYC5+3PE9Foxs98fo5ECsuMl56ZfosY6KHSczN4xREpH3pw
+         qgBQ==
+X-Gm-Message-State: ANoB5pnlxv1tffB6HtIM1QPfxakm8IvZii7Vr+qLZONxhSDnG5FNlsrq
+        ArnG00rjOcgKr4Q67/4gquDU5kkfriKw92EUkOLrnJum3YnqOqOHSRJjTH6DvcGVJ3pRxp01qZE
+        tE6gTi+Tfl17qeKbRst1LSzeEZZRjAVT4NH8E
+X-Received: by 2002:a0c:fa51:0:b0:4c7:2a8f:7e70 with SMTP id k17-20020a0cfa51000000b004c72a8f7e70mr19336166qvo.28.1670273925380;
+        Mon, 05 Dec 2022 12:58:45 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf7AaySR5zBpy3s6Xs7h2gonCvwpPKR8N9evdPLgjXaTKZj2xt6CHalnwdxAsXlJh8ORvqRACA==
+X-Received: by 2002:a0c:fa51:0:b0:4c7:2a8f:7e70 with SMTP id k17-20020a0cfa51000000b004c72a8f7e70mr19336149qvo.28.1670273925063;
+        Mon, 05 Dec 2022 12:58:45 -0800 (PST)
+Received: from gerbillo.redhat.com (146-241-106-100.dyn.eolo.it. [146.241.106.100])
+        by smtp.gmail.com with ESMTPSA id c19-20020ac81113000000b003a57eb7f212sm10212375qtj.10.2022.12.05.12.58.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Dec 2022 12:58:44 -0800 (PST)
+Message-ID: <50e7ea22119c3afcb4be5a4b6ad9747465693d10.camel@redhat.com>
+Subject: Re: Broken SELinux/LSM labeling with MPTCP and accept(2)
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>, mptcp@lists.linux.dev,
+        network dev <netdev@vger.kernel.org>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>
+Date:   Mon, 05 Dec 2022 21:58:41 +0100
+In-Reply-To: <CAHC9VhT0rRhr7Ty_p3Ld5O+Ltf8a8XSXcyik7tFpDRMrTfsF+A@mail.gmail.com>
+References: <CAFqZXNs2LF-OoQBUiiSEyranJUXkPLcCfBkMkwFeM6qEwMKCTw@mail.gmail.com>
+         <108a1c80eed41516f85ebb264d0f46f95e86f754.camel@redhat.com>
+         <CAHC9VhSSKN5kh9Kqgj=aCeA92bX1mJm1v4_PnRgua86OHUwE3w@mail.gmail.com>
+         <48dd1e9b21597c46e4767290e5892c01850a45ff.camel@redhat.com>
+         <CAHC9VhT0rRhr7Ty_p3Ld5O+Ltf8a8XSXcyik7tFpDRMrTfsF+A@mail.gmail.com>
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35)
 MIME-Version: 1.0
-References: <20221111231636.3748636-1-evgreen@chromium.org>
- <20221111151451.v5.4.Ieb1215f598bc9df56b0e29e5977eae4fcca25e15@changeid>
- <Y3FfhrgvBNey6T7V@sol.localdomain> <ff23b4e24222037959c2a784496c7ee91024e6c5.camel@linux.ibm.com>
- <CAE=gft63-jdKqKmepB+LXPm6WUWSnz+CMWcWWnyN1y-EnS4kVg@mail.gmail.com>
- <c31d1a3af53515f2a9d3f53eb27ce698e796f9b9.camel@linux.ibm.com>
- <CAE=gft6L6bMtzbqUfH_NAsFz2r0Nw7kkbCPXcr2nYj5n31FYQg@mail.gmail.com>
- <95ffac38780bf0ec6084cb354bfcb3b7bee686b9.camel@linux.ibm.com> <6f66f174af92a9b23bddd72945e94e888b0c9420.camel@linux.ibm.com>
-In-Reply-To: <6f66f174af92a9b23bddd72945e94e888b0c9420.camel@linux.ibm.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Mon, 5 Dec 2022 10:43:05 -0800
-X-Gmail-Original-Message-ID: <CAE=gft4wvxOZ4CS2hJzYANRNbCtYUznmsEE-3n4=EDx-+L_f9Q@mail.gmail.com>
-Message-ID: <CAE=gft4wvxOZ4CS2hJzYANRNbCtYUznmsEE-3n4=EDx-+L_f9Q@mail.gmail.com>
-Subject: Re: [PATCH v5 04/11] security: keys: trusted: Include TPM2 creation data
-To:     jejb@linux.ibm.com
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org,
-        corbet@lwn.net, linux-integrity@vger.kernel.org,
-        gwendal@chromium.org, dianders@chromium.org, apronin@chromium.org,
-        Pavel Machek <pavel@ucw.cz>, Ben Boeckel <me@benboeckel.net>,
-        rjw@rjwysocki.net, Kees Cook <keescook@chromium.org>,
-        dlunev@google.com, zohar@linux.ibm.com,
-        Matthew Garrett <mgarrett@aurora.tech>, jarkko@kernel.org,
-        linux-pm@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 2, 2022 at 1:03 PM James Bottomley <jejb@linux.ibm.com> wrote:
->
-> On Mon, 2022-11-14 at 13:00 -0500, James Bottomley wrote:
-> > On Mon, 2022-11-14 at 09:43 -0800, Evan Green wrote:
-> > > On Mon, Nov 14, 2022 at 8:56 AM James Bottomley
-> > > <jejb@linux.ibm.com>
-> > > wrote:
-> > [...]
-> > > > Of course, since openssl_tpm2_engine is the complete reference
-> > > > implementation that means I'll have to add the creation PCRs
-> > > > implementation to it ... unless you'd like to do it?
-> > >
-> > > I am willing to help as I'm the one making the mess. How does it
-> > > sequence along with your draft submission (before, after,
-> > > simultaneous)?
-> >
-> > At the moment, just send patches.  The openssl_tpm2_engine is
-> > developed on a groups.io mailing list:
-> >
-> > https://groups.io/g/openssl-tpm2-engine/
-> >
-> > You need an IETF specific tool (xml2rfc) to build the rfc from the
-> > xml, but it's available in most distros as python3-xml2rfc.  If you
-> > don't want to learn the IETF XML I can help you code up the patch to
-> > add that to the draft spec.
->
-> Just as a heads up, the patch series implementing signed policy (and
-> thus taking option [3]) is on the mailing list for review:
->
-> https://groups.io/g/openssl-tpm2-engine/message/296
->
-> With apologies for the awful lack of threading in the groups.io
-> interface.
->
-> So you don't have to build the RFC yourself, I published the proposed
-> update on my website:
->
-> https://www.hansenpartnership.com/draft-bottomley-tpm2-keys.html
-> https://www.hansenpartnership.com/draft-bottomley-tpm2-keys.txt
->
-> If you want to use option [4] for the creation data, it's available.
+On Fri, 2022-12-02 at 15:16 -0500, Paul Moore wrote:
+> On Fri, Dec 2, 2022 at 7:07 AM Paolo Abeni <pabeni@redhat.com> wrote:
+> 
+> > Side note: I'm confused by the selinux_sock_graft() implementation:
+> > 
+> > https://elixir.bootlin.com/linux/v6.1-rc7/source/security/selinux/hooks.c#L5243
+> > 
+> > it looks like the 'sid' is copied from the 'child' socket into the
+> > 'parent', while the sclass from the 'parent' into the 'child'. Am I
+> > misreading it? is that intended? I would have expeted both 'sid' and
+> > 'sclass' being copied from the parent into the child. Other LSM's
+> > sock_graft() initilize the child and leave alone the parent.
+> 
+> MPTCP isn't the only thing that is ... complex ;)
+> 
+> Believe it or not, selinux_sock_graft() is correct.  The reasoning is
+> that the new connection sock has been labeled based on the incoming
+> connection, which can be influenced by a variety of sources including
+> the security attributes of the remote endpoint; however, the
+> associated child socket is always labeled based on the security
+> context of the task calling accept(2).  Transfering the sock's label
+> (sid) to the child socket during the accept(2) operation ensures that
+> the newly created socket is labeled based on the inbound connection
+> labeling rules, and not simply the security context of the calling
+> process.
+> 
+> Transferring the object class (sclass) from the socket/inode to the
+> newly grafted sock just ensures that the sock's object class is set
+> correctly.
 
-Perfect, thanks James!
--Evan
+Thank you for the explaination. Hopefully I'm less confused now;)
+
+> > ---
+> > diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
+> > index 99f5e51d5ca4..b8095b8df71d 100644
+> > --- a/net/mptcp/protocol.c
+> > +++ b/net/mptcp/protocol.c
+> > @@ -3085,7 +3085,10 @@ struct sock *mptcp_sk_clone(const struct
+> > sock *sk,
+> >         /* will be fully established after successful MPC subflow
+> > creation */
+> >         inet_sk_state_store(nsk, TCP_SYN_RECV);
+> > 
+> > - security_inet_csk_clone(nsk, req);
+> > + /* let's the new socket inherit the security label from the msk
+> > + * listener, as the TCP reqest socket carries a kernel context
+> > + */
+> > + security_sock_graft(nsk, sk->sk_socket);
+> >         bh_unlock_sock(nsk);
+> 
+> As a quick aside, I'm working under the assumption that a MPTCP
+> request_sock goes through the same sort of logic/processing as TCP, 
+
+The above assumption is correct.
+
+> if that is wrong we likely have additional issues.
+> 
+> I think one potential problem with the code above is that if the
+> subflow socket, @sk above, has multiple inbound connections (is that
+> legal with MPTCP?) 
+
+Here there are few things that need some clarifications. In the above
+chunk of code, 'sk' is the main mptcp socket, not a subflow. Insite the
+mptcp code, subflow sockets variable name is usually 'ssk' (== subflow
+sk).
+
+An mptcp socket allows multiple inbound connections (each of them is a
+subflow).
+
+> it is going to be relabeled multiple times which is
+> not good (label's shouldn't change once set, unless there is an
+> explicit relabel event).  
+
+I now see that even my 2nd proposal is wrong, thanks for pointing that
+out!
+
+> I think we need to focus on ensuring that
+> the subflow socket is labeled properly at creation time, and that has
+> me looking more at mptcp_subflow_create_socket() ...
+
+Agreed.
+
+> What if we added a new LSM call in mptcp_subflow_create_socket(), just
+> after the sock_create_kern() call?  
+
+That should work, I think. I would like to propose a (last) attempt
+that will not need an additional selinux hook - to try to minimize the
+required changes and avoid unnecessary addional work for current and
+future LSM mainteniance and creation.
+
+I tested the following patch and passes the reproducer (and mptcp self-
+tests). Basically it introduces and uses a sock_create_nosec variant,
+to allow mptcp_subflow_create_socket() calling
+security_socket_post_create() with the corrct arguments. WDYT?
+
+---
+ include/linux/net.h |  2 ++
+ net/mptcp/subflow.c | 18 ++++++++++++--
+ net/socket.c        | 60 ++++++++++++++++++++++++++++++---------------
+ 3 files changed, 58 insertions(+), 22 deletions(-)
+
+diff --git a/include/linux/net.h b/include/linux/net.h
+index b73ad8e3c212..91713012504d 100644
+--- a/include/linux/net.h
++++ b/include/linux/net.h
+@@ -251,6 +251,8 @@ int sock_wake_async(struct socket_wq *sk_wq, int how, int band);
+ int sock_register(const struct net_proto_family *fam);
+ void sock_unregister(int family);
+ bool sock_is_registered(int family);
++int __sock_create_nosec(struct net *net, int family, int type, int proto,
++			struct socket **res, int kern);
+ int __sock_create(struct net *net, int family, int type, int proto,
+ 		  struct socket **res, int kern);
+ int sock_create(int family, int type, int proto, struct socket **res);
+diff --git a/net/mptcp/subflow.c b/net/mptcp/subflow.c
+index 29904303f5c2..9341f9313154 100644
+--- a/net/mptcp/subflow.c
++++ b/net/mptcp/subflow.c
+@@ -1646,11 +1646,25 @@ int mptcp_subflow_create_socket(struct sock *sk, struct socket **new_sock)
+ 	if (unlikely(!sk->sk_socket))
+ 		return -EINVAL;
+ 
+-	err = sock_create_kern(net, sk->sk_family, SOCK_STREAM, IPPROTO_TCP,
+-			       &sf);
++	/* the subflow is created by the kernel, and we need kernel annotation
++	 * for lockdep's sake...
++	 */
++	err = __sock_create_nosec(net, sk->sk_family, SOCK_STREAM, IPPROTO_TCP,
++				  &sf, 1);
+ 	if (err)
+ 		return err;
+ 
++	/* ... but the first subflow will be indirectly exposed to the
++	 * user-space via accept(). Let's attach the current user security
++	 * label
++	 */
++	err = security_socket_post_create(sf, sk->sk_family, SOCK_STREAM,
++					  IPPROTO_TCP, 0);
++	if (err) {
++		sock_release(sf);
++		return err;
++	}
++
+ 	lock_sock(sf->sk);
+ 
+ 	/* the newly created socket has to be in the same cgroup as its parent */
+diff --git a/net/socket.c b/net/socket.c
+index 55c5d536e5f6..d5d51e4e26ae 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -1426,23 +1426,11 @@ int sock_wake_async(struct socket_wq *wq, int how, int band)
+ }
+ EXPORT_SYMBOL(sock_wake_async);
+ 
+-/**
+- *	__sock_create - creates a socket
+- *	@net: net namespace
+- *	@family: protocol family (AF_INET, ...)
+- *	@type: communication type (SOCK_STREAM, ...)
+- *	@protocol: protocol (0, ...)
+- *	@res: new socket
+- *	@kern: boolean for kernel space sockets
+- *
+- *	Creates a new socket and assigns it to @res, passing through LSM.
+- *	Returns 0 or an error. On failure @res is set to %NULL. @kern must
+- *	be set to true if the socket resides in kernel space.
+- *	This function internally uses GFP_KERNEL.
+- */
+ 
+-int __sock_create(struct net *net, int family, int type, int protocol,
+-			 struct socket **res, int kern)
++
++/* Creates a socket leaving LSM post-creation checks to the caller */
++int __sock_create_nosec(struct net *net, int family, int type, int protocol,
++			struct socket **res, int kern)
+ {
+ 	int err;
+ 	struct socket *sock;
+@@ -1528,11 +1516,8 @@ int __sock_create(struct net *net, int family, int type, int protocol,
+ 	 * module can have its refcnt decremented
+ 	 */
+ 	module_put(pf->owner);
+-	err = security_socket_post_create(sock, family, type, protocol, kern);
+-	if (err)
+-		goto out_sock_release;
+-	*res = sock;
+ 
++	*res = sock;
+ 	return 0;
+ 
+ out_module_busy:
+@@ -1548,6 +1533,41 @@ int __sock_create(struct net *net, int family, int type, int protocol,
+ 	rcu_read_unlock();
+ 	goto out_sock_release;
+ }
++
++/**
++ *	__sock_create - creates a socket
++ *	@net: net namespace
++ *	@family: protocol family (AF_INET, ...)
++ *	@type: communication type (SOCK_STREAM, ...)
++ *	@protocol: protocol (0, ...)
++ *	@res: new socket
++ *	@kern: boolean for kernel space sockets
++ *
++ *	Creates a new socket and assigns it to @res, passing through LSM.
++ *	Returns 0 or an error. On failure @res is set to %NULL. @kern must
++ *	be set to true if the socket resides in kernel space.
++ *	This function internally uses GFP_KERNEL.
++ */
++
++int __sock_create(struct net *net, int family, int type, int protocol,
++		  struct socket **res, int kern)
++{
++	struct socket *sock;
++	int err;
++
++	err = __sock_create_nosec(net, family, type, protocol, &sock, kern);
++	if (err)
++		return err;
++
++	err = security_socket_post_create(sock, family, type, protocol, kern);
++	if (err) {
++		sock_release(sock);
++		return err;
++	}
++
++	*res = sock;
++	return 0;
++}
+ EXPORT_SYMBOL(__sock_create);
+ 
+ /**
+
