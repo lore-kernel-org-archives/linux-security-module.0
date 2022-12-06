@@ -2,143 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C72BC352A1
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Dec 2022 16:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E10CC3A5A7
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Dec 2022 22:51:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235544AbiLFQxG (ORCPT
+        id S229452AbiLFWvp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Dec 2022 11:53:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36280 "EHLO
+        Tue, 6 Dec 2022 17:51:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235462AbiLFQxF (ORCPT
+        with ESMTP id S229609AbiLFWvn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Dec 2022 11:53:05 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1887BB46
-        for <linux-security-module@vger.kernel.org>; Tue,  6 Dec 2022 08:52:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670345522;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XIpckjVarsXSQqROHjIV5YMQ3njKr27YAdfHQ1eBWXM=;
-        b=JpPeZRVuDnCD/TTN1sDBE150dHBM7ryYDl3QVQzsuwPyRrmrouP9Z8HvCosY85/EN8DYrI
-        udnKWwgrMxnVK3fTIqxTrgz/5jBdsxc84HQaANTmc5R3EAq9aVCaYJyKTSKqj9zI3WCDPW
-        xN6kFzV7dts8BT7kGnx9VLCh8lLXoLU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-460-v-EVIzt0OeCXAa6qYVRIPA-1; Tue, 06 Dec 2022 11:52:00 -0500
-X-MC-Unique: v-EVIzt0OeCXAa6qYVRIPA-1
-Received: by mail-wm1-f70.google.com with SMTP id z15-20020a1c4c0f000000b003cf6f80007cso5869114wmf.3
-        for <linux-security-module@vger.kernel.org>; Tue, 06 Dec 2022 08:52:00 -0800 (PST)
+        Tue, 6 Dec 2022 17:51:43 -0500
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A0C14A06A
+        for <linux-security-module@vger.kernel.org>; Tue,  6 Dec 2022 14:51:39 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id d82so7156367pfd.11
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Dec 2022 14:51:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tUncIJZdU3nK+S56v04n1fL0wk5o09HIUop9m+sJlw0=;
+        b=KCE2zO6WNGzf3yEIA1kux+zo1nW27TLp92iRh/dPKdvOZQ5vjFtjBb5EueG2bhihV+
+         zh5QunEVtbIOtbScWf/RNta3+l4QrtzP/vM6YwjqwDjYy6jqw1x7LRzhyoH3WHnE+YjF
+         MiQwtpMrw74Ydp+9+9VdILT+Wh+ToPbNiT7RR2M711doeBOyBTfBwk7Fd2dsve+InNmN
+         clnJ74mLhrgnlF4s8QPHoTtibjRhHXX7TXwobGjYUgWp6fPTHnh5FJRVZ2kzNVq0N9OU
+         5AeoUS8k6I2vRTqlLBlUB/vVm8zJblwAOMrslWf//wR1UO9uVaupfApokSCi7g8zle0/
+         K/MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XIpckjVarsXSQqROHjIV5YMQ3njKr27YAdfHQ1eBWXM=;
-        b=rjCj8Jtd9SIuhLshGt/l6mFrrjipH6s/is+EFtMmyJ280gGLZvrXw19DRgQnlakxjY
-         WMgTM5v9e5JgNJHwvJggkGltQh8stGWFyn1po23ry5U25pWk1aeR9gM0eCFkZaX5lDgK
-         ZX21ktxh23HE53pX1eaGWw2jeY7bz+OilC4NBvCljuMA96/xDis4uOQmYITpUU33gENj
-         j9rKF6SXPbkXwL2rX1zBgxUlltOyzLpM3nDeCEF8XXlo41kjPtgxaHBpMfty2SJ80eoL
-         3BJ52f0JxFdr1sMArhMXTAN3ihgviSCt6i+BxgzE4Ui5CFYjyC1zum/JrjdzPo/HC58G
-         SUUA==
-X-Gm-Message-State: ANoB5pn0Wg3jcNTm44bJgqydY7BGWfjTUakFBGTHAkui95NOj/NVZCUc
-        YzRCYR+eExNusFF5etCE+KAMQ7Ufwwpsz2IekoX79VC87t/FprZEGbiV9AeotDgcSQG9CO+SWHr
-        PNUUmf0O4hd4kRtDWrEjCMH6H4slD7V4tMxV+
-X-Received: by 2002:adf:ebc6:0:b0:241:c6d8:be83 with SMTP id v6-20020adfebc6000000b00241c6d8be83mr46196222wrn.454.1670345519816;
-        Tue, 06 Dec 2022 08:51:59 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf60dqg/J7gSlr8BiWptFPCbF1mq7Dzc0r47+I6tQYq+KjcdkixAhM+jx7p9yL/Kn4RX5L/gMA==
-X-Received: by 2002:adf:ebc6:0:b0:241:c6d8:be83 with SMTP id v6-20020adfebc6000000b00241c6d8be83mr46196208wrn.454.1670345519570;
-        Tue, 06 Dec 2022 08:51:59 -0800 (PST)
-Received: from gerbillo.redhat.com (146-241-106-100.dyn.eolo.it. [146.241.106.100])
-        by smtp.gmail.com with ESMTPSA id f6-20020a0560001b0600b002415dd45320sm16896783wrz.112.2022.12.06.08.51.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 08:51:59 -0800 (PST)
-Message-ID: <99550009c78de401d55356721aac56873319b5cc.camel@redhat.com>
-Subject: Re: Broken SELinux/LSM labeling with MPTCP and accept(2)
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>, mptcp@lists.linux.dev,
-        network dev <netdev@vger.kernel.org>,
-        Mat Martineau <mathew.j.martineau@linux.intel.com>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>
-Date:   Tue, 06 Dec 2022 17:51:57 +0100
-In-Reply-To: <CAFqZXNtOku4vr5RrQU4vcvCVz5iK79CimeUVHu0S=QoN-QVEjg@mail.gmail.com>
-References: <CAFqZXNs2LF-OoQBUiiSEyranJUXkPLcCfBkMkwFeM6qEwMKCTw@mail.gmail.com>
-         <108a1c80eed41516f85ebb264d0f46f95e86f754.camel@redhat.com>
-         <CAHC9VhSSKN5kh9Kqgj=aCeA92bX1mJm1v4_PnRgua86OHUwE3w@mail.gmail.com>
-         <48dd1e9b21597c46e4767290e5892c01850a45ff.camel@redhat.com>
-         <CAHC9VhT0rRhr7Ty_p3Ld5O+Ltf8a8XSXcyik7tFpDRMrTfsF+A@mail.gmail.com>
-         <50e7ea22119c3afcb4be5a4b6ad9747465693d10.camel@redhat.com>
-         <CAFqZXNtOku4vr5RrQU4vcvCVz5iK79CimeUVHu0S=QoN-QVEjg@mail.gmail.com>
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35)
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tUncIJZdU3nK+S56v04n1fL0wk5o09HIUop9m+sJlw0=;
+        b=3MIbF+lD/WiTY+T+8FDaylceqGBe6S700cN2A4n4JRKlmPvh67VPhmvWhrUPu97lgY
+         jofSRfAtDEDIwxxQ4nV5m0XvCKF1bBHcE4Ma4HujPkogvhtRcyNd6vzpCDke5moHIDys
+         KNc3gbbit8ATvN87QfZpFyHYH9f4jFI6PTcHsk6rZqN7cJfFOyzzdac4N0EvEItpFKDa
+         ICyYfzk2c/A8ckUByZhwHI0rHLdZlua9IabXxQF7xWwa/Hzr9P7koWPmhBRBdSfqJomg
+         iyOish/FNP9BE9t5NSRKjuJ6JKtEmjJ2dQNMGQbqfMMpsMdX+JYiucEXyT8yaB8daWGS
+         N9SQ==
+X-Gm-Message-State: ANoB5pkSRbVJed8FYEITMFeQTwhoe1aHKW0/FUHGuMlvPypt6di2POlB
+        WFjlgZYO2+2poJT9P6LgeMiT8cXfM6b41As0EUAb
+X-Google-Smtp-Source: AA0mqf6adAzEF0ChixzTkY0x4g0CgQ1STvfi2SsvCkZO8jfjhkcWv0MJGFg1ZegGwq434nKkRrAWwbyAt2VvhoilfBM=
+X-Received: by 2002:a62:1616:0:b0:576:af2d:4c5f with SMTP id
+ 22-20020a621616000000b00576af2d4c5fmr15934390pfw.23.1670367098777; Tue, 06
+ Dec 2022 14:51:38 -0800 (PST)
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+References: <20221128144240.210110-1-roberto.sassu@huaweicloud.com> <20221128144240.210110-2-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20221128144240.210110-2-roberto.sassu@huaweicloud.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 6 Dec 2022 17:51:27 -0500
+Message-ID: <CAHC9VhTuEH83tcA-Je7NMkxF8a1W=Bg+oLhLYeASKp70VqAy4w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] lsm: Clarify documentation of vm_enough_memory hook
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     casey@schaufler-ca.com, omosnace@redhat.com,
+        john.johansen@canonical.com, kpsingh@kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-12-06 at 15:43 +0100, Ondrej Mosnacek wrote:
-> On Mon, Dec 5, 2022 at 9:58 PM Paolo Abeni <pabeni@redhat.com> wrote:
-> > 
-> > On Fri, 2022-12-02 at 15:16 -0500, Paul Moore wrote:
-> [...]
-> > > What if we added a new LSM call in mptcp_subflow_create_socket(), just
-> > > after the sock_create_kern() call?
-> > 
-> > That should work, I think. I would like to propose a (last) attempt
-> > that will not need an additional selinux hook - to try to minimize the
-> > required changes and avoid unnecessary addional work for current and
-> > future LSM mainteniance and creation.
-> > 
-> > I tested the following patch and passes the reproducer (and mptcp self-
-> > tests). Basically it introduces and uses a sock_create_nosec variant,
-> > to allow mptcp_subflow_create_socket() calling
-> > security_socket_post_create() with the corrct arguments. WDYT?
-> 
-> This seems like a step in the right direction, but I wonder if we
-> shouldn't solve the current overloading of the "kern" flag more
-> explicitly - i.e. split it into two flags: one to indicate that the
-> socket will only be used internally by the kernel ("internal") and
-> another one to indicate if it should be labeled according to the
-> current task or as a kernel-created socket ("kern"?). Technically,
-> each combination could have a valid use case:
-> - !internal && !kern -> a regular userspace-created socket,
-> - !internal && kern -> a socket that is exposed to userspace, but
-> created by the kernel outside of a syscall (e.g. some global socket
-> created during initcall phase and later returned to userspace via an
-> ioctl or something),
-> - internal && !kern -> our MPTCP case, where the socket itself is
-> internal, but the label is still important so it can be passed onto
-> its accept-offspring (which may no longer be internal),
-> - internal && kern -> a completely kernel-internal socket.
+On Mon, Nov 28, 2022 at 9:43 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> include/linux/lsm_hooks.h reports the result of the LSM infrastructure to
+> the callers, not what LSMs should return to the LSM infrastructure.
+>
+> Clarify that and add that if all LSMs return a positive value
+> __vm_enough_memory() will be called with cap_sys_admin set. If at least one
+> LSM returns 0 or negative, it will be called with cap_sys_admin cleared.
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  include/linux/lsm_hooks.h | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 
-I would say perfect is the enemy of good ;) it would be nice to have a
-fix sometime soon, and we can improve as needed.
+Thanks Roberto.  Normally I don't like merging patches this close to
+the merge window, but as this is a comment-only fix that makes an
+important clarification I'm going to make an exception here and merge
+it into lsm/next.
 
-> Another concern I have about this approach is whether it is possible
-> (in some more advanced scenario) for mptcp_subflow_create_socket() to
-> be called in the context of a different task than the one
-> creating/handling the main socket. Because then a potential socket
-> accepted from the new subflow socket would end up with an unexpected
-> (and probably semantically wrong) label. Glancing over the call tree,
-> it seems it can be called via some netlink commands - presumably
-> intended to be used by mptcpd?
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 2831efebde69..c35e260efd8c 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1398,7 +1398,11 @@
+>   *     Check permissions for allocating a new virtual mapping.
+>   *     @mm contains the mm struct it is being added to.
+>   *     @pages contains the number of pages.
+> - *     Return 0 if permission is granted.
+> + *     Return 0 if permission is granted by the LSM infrastructure to the
+> + *     caller. If all LSMs return a positive value, __vm_enough_memory() will
+> + *     be called with cap_sys_admin set. If at least one LSM returns 0 or
+> + *     negative, __vm_enough_memory() will be called with cap_sys_admin
+> + *     cleared.
+>   *
+>   * @ismaclabel:
+>   *     Check if the extended attribute specified by @name
+> --
+> 2.25.1
 
-Yes, the above can happen, but I think it does not have LSM-related
-implications, as subflows created in the above scenario can be MP_JOIN
-only - that is, will never be even indirectly exposed to user-space.
-
-
-Cheers,
-
-Paolo
-
+-- 
+paul-moore.com
