@@ -2,319 +2,269 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2EEC47090
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Dec 2022 20:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABEEEC352A1
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Dec 2022 14:44:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233523AbiLEU75 (ORCPT
+        id S234763AbiLFOo5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Dec 2022 15:59:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58552 "EHLO
+        Tue, 6 Dec 2022 09:44:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233529AbiLEU7w (ORCPT
+        with ESMTP id S233563AbiLFOov (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Dec 2022 15:59:52 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC39924BD5
-        for <linux-security-module@vger.kernel.org>; Mon,  5 Dec 2022 12:58:49 -0800 (PST)
+        Tue, 6 Dec 2022 09:44:51 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B86A81AD90
+        for <linux-security-module@vger.kernel.org>; Tue,  6 Dec 2022 06:43:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670273929;
+        s=mimecast20190719; t=1670337831;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=pZxLt4/GF+wys/GuWAIbGAH9lD65j6IwW6mM3UiAHcI=;
-        b=J6g7/Wk1qRPNpV24JFB1F3c9SXCTLoTylgLViAGX3lBsZ38xBchjulL/QBivq7Tdx72GZJ
-        9xT9qJ25fZ1K6WHqAKZXM86NNb4YCvhcMNze1lL1cqCCWkHnbrh8U8r3B2OjUJUKoHkhBo
-        gS0UlRISL6POdSTkv37yHoRnpADZTuE=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=31gz8VlP5hmM3HlytL65fbv1NxYANtMAS5gDcklIaXo=;
+        b=cfGi4GAxiz5ybdyhiuVRIkVuVM54iMmrjzXqhpT0Eip1iGaWjTABNQwNCzdqbjopwIPJa2
+        oVeCtHrFsfyH40Vuy0s8FUZmebagcIFzZVTbU2BtwLN5vs1TTF7fRbkCuLBoDSeKAnw0vp
+        tAPdczkKfvbZUxyawjMwBi+/BUXi+o8=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-642-cIKPcQoFPRmQ5hilLQu1Iw-1; Mon, 05 Dec 2022 15:58:46 -0500
-X-MC-Unique: cIKPcQoFPRmQ5hilLQu1Iw-1
-Received: by mail-qk1-f199.google.com with SMTP id x2-20020a05620a448200b006fa7dad5c1cso18451914qkp.10
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Dec 2022 12:58:45 -0800 (PST)
+ us-mta-121-tgH-dmKzPt6cc_F-Gk0UvQ-1; Tue, 06 Dec 2022 09:43:50 -0500
+X-MC-Unique: tgH-dmKzPt6cc_F-Gk0UvQ-1
+Received: by mail-pl1-f200.google.com with SMTP id n5-20020a170902d2c500b00189e5b86fe2so3247644plc.16
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Dec 2022 06:43:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pZxLt4/GF+wys/GuWAIbGAH9lD65j6IwW6mM3UiAHcI=;
-        b=3PbNE2X2/0YfL5S5mQA4x/vx6Cg8nUXG2hxcZAJDsesjZr3XygUg3Y1ly+vwED/8yH
-         RH/9z9r0SWojxjlZJIyML3yTV7jwQ5mbb/yyf8X1C6bPhP+fe01l5bJsH4oxsmqdIXT4
-         9aMHRDTGGHDu4YA7126uVcq/uvZf1fY+ukg95P7GRZRccyK0pib4x3NukAbP+Qf3YTd9
-         IacdaZ3cClstuNElC3puoeJLz2FFzXMFXSVFb9AHQ9E2XI8qqJ4UPuxElpKKWbqtM4ua
-         PikDYQTY9+qmXKzA+2Cx3CYC5+3PE9Foxs98fo5ECsuMl56ZfosY6KHSczN4xREpH3pw
-         qgBQ==
-X-Gm-Message-State: ANoB5pnlxv1tffB6HtIM1QPfxakm8IvZii7Vr+qLZONxhSDnG5FNlsrq
-        ArnG00rjOcgKr4Q67/4gquDU5kkfriKw92EUkOLrnJum3YnqOqOHSRJjTH6DvcGVJ3pRxp01qZE
-        tE6gTi+Tfl17qeKbRst1LSzeEZZRjAVT4NH8E
-X-Received: by 2002:a0c:fa51:0:b0:4c7:2a8f:7e70 with SMTP id k17-20020a0cfa51000000b004c72a8f7e70mr19336166qvo.28.1670273925380;
-        Mon, 05 Dec 2022 12:58:45 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf7AaySR5zBpy3s6Xs7h2gonCvwpPKR8N9evdPLgjXaTKZj2xt6CHalnwdxAsXlJh8ORvqRACA==
-X-Received: by 2002:a0c:fa51:0:b0:4c7:2a8f:7e70 with SMTP id k17-20020a0cfa51000000b004c72a8f7e70mr19336149qvo.28.1670273925063;
-        Mon, 05 Dec 2022 12:58:45 -0800 (PST)
-Received: from gerbillo.redhat.com (146-241-106-100.dyn.eolo.it. [146.241.106.100])
-        by smtp.gmail.com with ESMTPSA id c19-20020ac81113000000b003a57eb7f212sm10212375qtj.10.2022.12.05.12.58.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 12:58:44 -0800 (PST)
-Message-ID: <50e7ea22119c3afcb4be5a4b6ad9747465693d10.camel@redhat.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=31gz8VlP5hmM3HlytL65fbv1NxYANtMAS5gDcklIaXo=;
+        b=pi6ZMadNrgq3oynDdIcfoTdZ0U2xQx+rlXr7bd8qZE8AFRB3nBp/uVpvQodNKxe19A
+         3TWyNqC8Jr3KlugxL8oi5QCsnhrFG+5cJePtrYn3LST17PmjgkLBiQ0+K3TQab/3tYhQ
+         a+V1fxQV+GFy0tsLtrHyBKaZ2INZrqpzfXWALE9UB/dEjWSv2QJQLooKIlOuyBrZYsRd
+         vovxdrPOEhchOd0AExgr46kY6EMXkHs7U7LgZUJB5z5PUFQcCQxGFMntdSnu5n/vyii/
+         TQJc4F7NQV9XfQP6jAyXPnc3gYYXDJcs6rjmgfziueVegMEhq0yoYCqsjvJHtSwIHamZ
+         NyKQ==
+X-Gm-Message-State: ANoB5pl8tzaaGlkv3OiFxFBbC5FF6lwSk6WpSMOTf0P+vnYpRalkcL+Y
+        AVvaE7mP4E8K6wQRTr+vH7ALTgfWRZ8Nv0LlvFSYHxLDnBC5XEaoQeLNyQabLNZZnRFddNgBCtj
+        Tua9f5EexJIeTTwJ+NA5kvew3R0cEyAjsB5C4uDnoZiD9d/hLphMR
+X-Received: by 2002:a63:d256:0:b0:478:46b4:4f91 with SMTP id t22-20020a63d256000000b0047846b44f91mr30902423pgi.211.1670337829864;
+        Tue, 06 Dec 2022 06:43:49 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf7HOJoY0VTa7e6D4mqXziXi14VAvKEN40mNj8IREQjjOgfHHjFbQPvgz592RFQsTb/2+j6E9KuycuNl+7it7AQ=
+X-Received: by 2002:a63:d256:0:b0:478:46b4:4f91 with SMTP id
+ t22-20020a63d256000000b0047846b44f91mr30902367pgi.211.1670337829452; Tue, 06
+ Dec 2022 06:43:49 -0800 (PST)
+MIME-Version: 1.0
+References: <CAFqZXNs2LF-OoQBUiiSEyranJUXkPLcCfBkMkwFeM6qEwMKCTw@mail.gmail.com>
+ <108a1c80eed41516f85ebb264d0f46f95e86f754.camel@redhat.com>
+ <CAHC9VhSSKN5kh9Kqgj=aCeA92bX1mJm1v4_PnRgua86OHUwE3w@mail.gmail.com>
+ <48dd1e9b21597c46e4767290e5892c01850a45ff.camel@redhat.com>
+ <CAHC9VhT0rRhr7Ty_p3Ld5O+Ltf8a8XSXcyik7tFpDRMrTfsF+A@mail.gmail.com> <50e7ea22119c3afcb4be5a4b6ad9747465693d10.camel@redhat.com>
+In-Reply-To: <50e7ea22119c3afcb4be5a4b6ad9747465693d10.camel@redhat.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 6 Dec 2022 15:43:38 +0100
+Message-ID: <CAFqZXNtOku4vr5RrQU4vcvCVz5iK79CimeUVHu0S=QoN-QVEjg@mail.gmail.com>
 Subject: Re: Broken SELinux/LSM labeling with MPTCP and accept(2)
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+To:     Paolo Abeni <pabeni@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
         SElinux list <selinux@vger.kernel.org>,
         Linux Security Module list 
         <linux-security-module@vger.kernel.org>, mptcp@lists.linux.dev,
         network dev <netdev@vger.kernel.org>,
         Mat Martineau <mathew.j.martineau@linux.intel.com>,
         Matthieu Baerts <matthieu.baerts@tessares.net>
-Date:   Mon, 05 Dec 2022 21:58:41 +0100
-In-Reply-To: <CAHC9VhT0rRhr7Ty_p3Ld5O+Ltf8a8XSXcyik7tFpDRMrTfsF+A@mail.gmail.com>
-References: <CAFqZXNs2LF-OoQBUiiSEyranJUXkPLcCfBkMkwFeM6qEwMKCTw@mail.gmail.com>
-         <108a1c80eed41516f85ebb264d0f46f95e86f754.camel@redhat.com>
-         <CAHC9VhSSKN5kh9Kqgj=aCeA92bX1mJm1v4_PnRgua86OHUwE3w@mail.gmail.com>
-         <48dd1e9b21597c46e4767290e5892c01850a45ff.camel@redhat.com>
-         <CAHC9VhT0rRhr7Ty_p3Ld5O+Ltf8a8XSXcyik7tFpDRMrTfsF+A@mail.gmail.com>
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35)
-MIME-Version: 1.0
 X-Mimecast-Spam-Score: 0
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2022-12-02 at 15:16 -0500, Paul Moore wrote:
-> On Fri, Dec 2, 2022 at 7:07 AM Paolo Abeni <pabeni@redhat.com> wrote:
-> 
-> > Side note: I'm confused by the selinux_sock_graft() implementation:
-> > 
-> > https://elixir.bootlin.com/linux/v6.1-rc7/source/security/selinux/hooks.c#L5243
-> > 
-> > it looks like the 'sid' is copied from the 'child' socket into the
-> > 'parent', while the sclass from the 'parent' into the 'child'. Am I
-> > misreading it? is that intended? I would have expeted both 'sid' and
-> > 'sclass' being copied from the parent into the child. Other LSM's
-> > sock_graft() initilize the child and leave alone the parent.
-> 
-> MPTCP isn't the only thing that is ... complex ;)
-> 
-> Believe it or not, selinux_sock_graft() is correct.  The reasoning is
-> that the new connection sock has been labeled based on the incoming
-> connection, which can be influenced by a variety of sources including
-> the security attributes of the remote endpoint; however, the
-> associated child socket is always labeled based on the security
-> context of the task calling accept(2).  Transfering the sock's label
-> (sid) to the child socket during the accept(2) operation ensures that
-> the newly created socket is labeled based on the inbound connection
-> labeling rules, and not simply the security context of the calling
-> process.
-> 
-> Transferring the object class (sclass) from the socket/inode to the
-> newly grafted sock just ensures that the sock's object class is set
-> correctly.
+On Mon, Dec 5, 2022 at 9:58 PM Paolo Abeni <pabeni@redhat.com> wrote:
+>
+> On Fri, 2022-12-02 at 15:16 -0500, Paul Moore wrote:
+[...]
+> > What if we added a new LSM call in mptcp_subflow_create_socket(), just
+> > after the sock_create_kern() call?
+>
+> That should work, I think. I would like to propose a (last) attempt
+> that will not need an additional selinux hook - to try to minimize the
+> required changes and avoid unnecessary addional work for current and
+> future LSM mainteniance and creation.
+>
+> I tested the following patch and passes the reproducer (and mptcp self-
+> tests). Basically it introduces and uses a sock_create_nosec variant,
+> to allow mptcp_subflow_create_socket() calling
+> security_socket_post_create() with the corrct arguments. WDYT?
 
-Thank you for the explaination. Hopefully I'm less confused now;)
+This seems like a step in the right direction, but I wonder if we
+shouldn't solve the current overloading of the "kern" flag more
+explicitly - i.e. split it into two flags: one to indicate that the
+socket will only be used internally by the kernel ("internal") and
+another one to indicate if it should be labeled according to the
+current task or as a kernel-created socket ("kern"?). Technically,
+each combination could have a valid use case:
+- !internal && !kern -> a regular userspace-created socket,
+- !internal && kern -> a socket that is exposed to userspace, but
+created by the kernel outside of a syscall (e.g. some global socket
+created during initcall phase and later returned to userspace via an
+ioctl or something),
+- internal && !kern -> our MPTCP case, where the socket itself is
+internal, but the label is still important so it can be passed onto
+its accept-offspring (which may no longer be internal),
+- internal && kern -> a completely kernel-internal socket.
 
-> > ---
-> > diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
-> > index 99f5e51d5ca4..b8095b8df71d 100644
-> > --- a/net/mptcp/protocol.c
-> > +++ b/net/mptcp/protocol.c
-> > @@ -3085,7 +3085,10 @@ struct sock *mptcp_sk_clone(const struct
-> > sock *sk,
-> >         /* will be fully established after successful MPC subflow
-> > creation */
-> >         inet_sk_state_store(nsk, TCP_SYN_RECV);
-> > 
-> > - security_inet_csk_clone(nsk, req);
-> > + /* let's the new socket inherit the security label from the msk
-> > + * listener, as the TCP reqest socket carries a kernel context
-> > + */
-> > + security_sock_graft(nsk, sk->sk_socket);
-> >         bh_unlock_sock(nsk);
-> 
-> As a quick aside, I'm working under the assumption that a MPTCP
-> request_sock goes through the same sort of logic/processing as TCP, 
+Another concern I have about this approach is whether it is possible
+(in some more advanced scenario) for mptcp_subflow_create_socket() to
+be called in the context of a different task than the one
+creating/handling the main socket. Because then a potential socket
+accepted from the new subflow socket would end up with an unexpected
+(and probably semantically wrong) label. Glancing over the call tree,
+it seems it can be called via some netlink commands - presumably
+intended to be used by mptcpd?
 
-The above assumption is correct.
 
-> if that is wrong we likely have additional issues.
-> 
-> I think one potential problem with the code above is that if the
-> subflow socket, @sk above, has multiple inbound connections (is that
-> legal with MPTCP?) 
+>
+> ---
+>  include/linux/net.h |  2 ++
+>  net/mptcp/subflow.c | 18 ++++++++++++--
+>  net/socket.c        | 60 ++++++++++++++++++++++++++++++---------------
+>  3 files changed, 58 insertions(+), 22 deletions(-)
+>
+> diff --git a/include/linux/net.h b/include/linux/net.h
+> index b73ad8e3c212..91713012504d 100644
+> --- a/include/linux/net.h
+> +++ b/include/linux/net.h
+> @@ -251,6 +251,8 @@ int sock_wake_async(struct socket_wq *sk_wq, int how, int band);
+>  int sock_register(const struct net_proto_family *fam);
+>  void sock_unregister(int family);
+>  bool sock_is_registered(int family);
+> +int __sock_create_nosec(struct net *net, int family, int type, int proto,
+> +                       struct socket **res, int kern);
+>  int __sock_create(struct net *net, int family, int type, int proto,
+>                   struct socket **res, int kern);
+>  int sock_create(int family, int type, int proto, struct socket **res);
+> diff --git a/net/mptcp/subflow.c b/net/mptcp/subflow.c
+> index 29904303f5c2..9341f9313154 100644
+> --- a/net/mptcp/subflow.c
+> +++ b/net/mptcp/subflow.c
+> @@ -1646,11 +1646,25 @@ int mptcp_subflow_create_socket(struct sock *sk, struct socket **new_sock)
+>         if (unlikely(!sk->sk_socket))
+>                 return -EINVAL;
+>
+> -       err = sock_create_kern(net, sk->sk_family, SOCK_STREAM, IPPROTO_TCP,
+> -                              &sf);
+> +       /* the subflow is created by the kernel, and we need kernel annotation
+> +        * for lockdep's sake...
+> +        */
+> +       err = __sock_create_nosec(net, sk->sk_family, SOCK_STREAM, IPPROTO_TCP,
+> +                                 &sf, 1);
+>         if (err)
+>                 return err;
+>
+> +       /* ... but the first subflow will be indirectly exposed to the
+> +        * user-space via accept(). Let's attach the current user security
+> +        * label
+> +        */
+> +       err = security_socket_post_create(sf, sk->sk_family, SOCK_STREAM,
+> +                                         IPPROTO_TCP, 0);
+> +       if (err) {
+> +               sock_release(sf);
+> +               return err;
+> +       }
+> +
+>         lock_sock(sf->sk);
+>
+>         /* the newly created socket has to be in the same cgroup as its parent */
+> diff --git a/net/socket.c b/net/socket.c
+> index 55c5d536e5f6..d5d51e4e26ae 100644
+> --- a/net/socket.c
+> +++ b/net/socket.c
+> @@ -1426,23 +1426,11 @@ int sock_wake_async(struct socket_wq *wq, int how, int band)
+>  }
+>  EXPORT_SYMBOL(sock_wake_async);
+>
+> -/**
+> - *     __sock_create - creates a socket
+> - *     @net: net namespace
+> - *     @family: protocol family (AF_INET, ...)
+> - *     @type: communication type (SOCK_STREAM, ...)
+> - *     @protocol: protocol (0, ...)
+> - *     @res: new socket
+> - *     @kern: boolean for kernel space sockets
+> - *
+> - *     Creates a new socket and assigns it to @res, passing through LSM.
+> - *     Returns 0 or an error. On failure @res is set to %NULL. @kern must
+> - *     be set to true if the socket resides in kernel space.
+> - *     This function internally uses GFP_KERNEL.
+> - */
+>
+> -int __sock_create(struct net *net, int family, int type, int protocol,
+> -                        struct socket **res, int kern)
+> +
+> +/* Creates a socket leaving LSM post-creation checks to the caller */
+> +int __sock_create_nosec(struct net *net, int family, int type, int protocol,
+> +                       struct socket **res, int kern)
+>  {
+>         int err;
+>         struct socket *sock;
+> @@ -1528,11 +1516,8 @@ int __sock_create(struct net *net, int family, int type, int protocol,
+>          * module can have its refcnt decremented
+>          */
+>         module_put(pf->owner);
+> -       err = security_socket_post_create(sock, family, type, protocol, kern);
+> -       if (err)
+> -               goto out_sock_release;
+> -       *res = sock;
+>
+> +       *res = sock;
+>         return 0;
+>
+>  out_module_busy:
+> @@ -1548,6 +1533,41 @@ int __sock_create(struct net *net, int family, int type, int protocol,
+>         rcu_read_unlock();
+>         goto out_sock_release;
+>  }
+> +
+> +/**
+> + *     __sock_create - creates a socket
+> + *     @net: net namespace
+> + *     @family: protocol family (AF_INET, ...)
+> + *     @type: communication type (SOCK_STREAM, ...)
+> + *     @protocol: protocol (0, ...)
+> + *     @res: new socket
+> + *     @kern: boolean for kernel space sockets
+> + *
+> + *     Creates a new socket and assigns it to @res, passing through LSM.
+> + *     Returns 0 or an error. On failure @res is set to %NULL. @kern must
+> + *     be set to true if the socket resides in kernel space.
+> + *     This function internally uses GFP_KERNEL.
+> + */
+> +
+> +int __sock_create(struct net *net, int family, int type, int protocol,
+> +                 struct socket **res, int kern)
+> +{
+> +       struct socket *sock;
+> +       int err;
+> +
+> +       err = __sock_create_nosec(net, family, type, protocol, &sock, kern);
+> +       if (err)
+> +               return err;
+> +
+> +       err = security_socket_post_create(sock, family, type, protocol, kern);
+> +       if (err) {
+> +               sock_release(sock);
+> +               return err;
+> +       }
+> +
+> +       *res = sock;
+> +       return 0;
+> +}
+>  EXPORT_SYMBOL(__sock_create);
+>
+>  /**
+>
 
-Here there are few things that need some clarifications. In the above
-chunk of code, 'sk' is the main mptcp socket, not a subflow. Insite the
-mptcp code, subflow sockets variable name is usually 'ssk' (== subflow
-sk).
-
-An mptcp socket allows multiple inbound connections (each of them is a
-subflow).
-
-> it is going to be relabeled multiple times which is
-> not good (label's shouldn't change once set, unless there is an
-> explicit relabel event).  
-
-I now see that even my 2nd proposal is wrong, thanks for pointing that
-out!
-
-> I think we need to focus on ensuring that
-> the subflow socket is labeled properly at creation time, and that has
-> me looking more at mptcp_subflow_create_socket() ...
-
-Agreed.
-
-> What if we added a new LSM call in mptcp_subflow_create_socket(), just
-> after the sock_create_kern() call?  
-
-That should work, I think. I would like to propose a (last) attempt
-that will not need an additional selinux hook - to try to minimize the
-required changes and avoid unnecessary addional work for current and
-future LSM mainteniance and creation.
-
-I tested the following patch and passes the reproducer (and mptcp self-
-tests). Basically it introduces and uses a sock_create_nosec variant,
-to allow mptcp_subflow_create_socket() calling
-security_socket_post_create() with the corrct arguments. WDYT?
-
----
- include/linux/net.h |  2 ++
- net/mptcp/subflow.c | 18 ++++++++++++--
- net/socket.c        | 60 ++++++++++++++++++++++++++++++---------------
- 3 files changed, 58 insertions(+), 22 deletions(-)
-
-diff --git a/include/linux/net.h b/include/linux/net.h
-index b73ad8e3c212..91713012504d 100644
---- a/include/linux/net.h
-+++ b/include/linux/net.h
-@@ -251,6 +251,8 @@ int sock_wake_async(struct socket_wq *sk_wq, int how, int band);
- int sock_register(const struct net_proto_family *fam);
- void sock_unregister(int family);
- bool sock_is_registered(int family);
-+int __sock_create_nosec(struct net *net, int family, int type, int proto,
-+			struct socket **res, int kern);
- int __sock_create(struct net *net, int family, int type, int proto,
- 		  struct socket **res, int kern);
- int sock_create(int family, int type, int proto, struct socket **res);
-diff --git a/net/mptcp/subflow.c b/net/mptcp/subflow.c
-index 29904303f5c2..9341f9313154 100644
---- a/net/mptcp/subflow.c
-+++ b/net/mptcp/subflow.c
-@@ -1646,11 +1646,25 @@ int mptcp_subflow_create_socket(struct sock *sk, struct socket **new_sock)
- 	if (unlikely(!sk->sk_socket))
- 		return -EINVAL;
- 
--	err = sock_create_kern(net, sk->sk_family, SOCK_STREAM, IPPROTO_TCP,
--			       &sf);
-+	/* the subflow is created by the kernel, and we need kernel annotation
-+	 * for lockdep's sake...
-+	 */
-+	err = __sock_create_nosec(net, sk->sk_family, SOCK_STREAM, IPPROTO_TCP,
-+				  &sf, 1);
- 	if (err)
- 		return err;
- 
-+	/* ... but the first subflow will be indirectly exposed to the
-+	 * user-space via accept(). Let's attach the current user security
-+	 * label
-+	 */
-+	err = security_socket_post_create(sf, sk->sk_family, SOCK_STREAM,
-+					  IPPROTO_TCP, 0);
-+	if (err) {
-+		sock_release(sf);
-+		return err;
-+	}
-+
- 	lock_sock(sf->sk);
- 
- 	/* the newly created socket has to be in the same cgroup as its parent */
-diff --git a/net/socket.c b/net/socket.c
-index 55c5d536e5f6..d5d51e4e26ae 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -1426,23 +1426,11 @@ int sock_wake_async(struct socket_wq *wq, int how, int band)
- }
- EXPORT_SYMBOL(sock_wake_async);
- 
--/**
-- *	__sock_create - creates a socket
-- *	@net: net namespace
-- *	@family: protocol family (AF_INET, ...)
-- *	@type: communication type (SOCK_STREAM, ...)
-- *	@protocol: protocol (0, ...)
-- *	@res: new socket
-- *	@kern: boolean for kernel space sockets
-- *
-- *	Creates a new socket and assigns it to @res, passing through LSM.
-- *	Returns 0 or an error. On failure @res is set to %NULL. @kern must
-- *	be set to true if the socket resides in kernel space.
-- *	This function internally uses GFP_KERNEL.
-- */
- 
--int __sock_create(struct net *net, int family, int type, int protocol,
--			 struct socket **res, int kern)
-+
-+/* Creates a socket leaving LSM post-creation checks to the caller */
-+int __sock_create_nosec(struct net *net, int family, int type, int protocol,
-+			struct socket **res, int kern)
- {
- 	int err;
- 	struct socket *sock;
-@@ -1528,11 +1516,8 @@ int __sock_create(struct net *net, int family, int type, int protocol,
- 	 * module can have its refcnt decremented
- 	 */
- 	module_put(pf->owner);
--	err = security_socket_post_create(sock, family, type, protocol, kern);
--	if (err)
--		goto out_sock_release;
--	*res = sock;
- 
-+	*res = sock;
- 	return 0;
- 
- out_module_busy:
-@@ -1548,6 +1533,41 @@ int __sock_create(struct net *net, int family, int type, int protocol,
- 	rcu_read_unlock();
- 	goto out_sock_release;
- }
-+
-+/**
-+ *	__sock_create - creates a socket
-+ *	@net: net namespace
-+ *	@family: protocol family (AF_INET, ...)
-+ *	@type: communication type (SOCK_STREAM, ...)
-+ *	@protocol: protocol (0, ...)
-+ *	@res: new socket
-+ *	@kern: boolean for kernel space sockets
-+ *
-+ *	Creates a new socket and assigns it to @res, passing through LSM.
-+ *	Returns 0 or an error. On failure @res is set to %NULL. @kern must
-+ *	be set to true if the socket resides in kernel space.
-+ *	This function internally uses GFP_KERNEL.
-+ */
-+
-+int __sock_create(struct net *net, int family, int type, int protocol,
-+		  struct socket **res, int kern)
-+{
-+	struct socket *sock;
-+	int err;
-+
-+	err = __sock_create_nosec(net, family, type, protocol, &sock, kern);
-+	if (err)
-+		return err;
-+
-+	err = security_socket_post_create(sock, family, type, protocol, kern);
-+	if (err) {
-+		sock_release(sock);
-+		return err;
-+	}
-+
-+	*res = sock;
-+	return 0;
-+}
- EXPORT_SYMBOL(__sock_create);
- 
- /**
+--
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
