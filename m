@@ -2,132 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F56AC352A1
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Dec 2022 09:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 341F9C4708E
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Dec 2022 10:55:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbiLGJSk (ORCPT
+        id S229602AbiLGKz2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Dec 2022 04:18:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35700 "EHLO
+        Wed, 7 Dec 2022 05:55:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbiLGJSW (ORCPT
+        with ESMTP id S229437AbiLGKz1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Dec 2022 04:18:22 -0500
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58B05C00;
-        Wed,  7 Dec 2022 01:18:20 -0800 (PST)
+        Wed, 7 Dec 2022 05:55:27 -0500
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6223611C21;
+        Wed,  7 Dec 2022 02:55:19 -0800 (PST)
 Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4NRs3X4pZqz9v7H4;
-        Wed,  7 Dec 2022 17:11:36 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwDH+fVBWpBjTaXHAA--.61258S2;
-        Wed, 07 Dec 2022 10:18:01 +0100 (CET)
-Message-ID: <0682348d9601ca3847ce9ba035e4ab1b586cf712.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 2/2] lsm: Add/fix return values in lsm_hooks.h and
- fix formatting
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4NRvBy3lkhz9yF8q;
+        Wed,  7 Dec 2022 18:48:10 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwAnDvrycJBjWe_HAA--.20736S2;
+        Wed, 07 Dec 2022 11:54:53 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     casey@schaufler-ca.com, omosnace@redhat.com,
-        john.johansen@canonical.com, kpsingh@kernel.org,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+To:     dhowells@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net
+Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        ebiggers@kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 07 Dec 2022 10:17:49 +0100
-In-Reply-To: <7225e76c09c7ff68937e37ee041fefdd6ccac1c8.camel@huaweicloud.com>
-References: <20221128144240.210110-1-roberto.sassu@huaweicloud.com>
-         <20221128144240.210110-3-roberto.sassu@huaweicloud.com>
-         <CAHC9VhRx=pCcAHMAX+51rpFT+efW7HH=X37YOwUG1tTLxyg=SA@mail.gmail.com>
-         <7225e76c09c7ff68937e37ee041fefdd6ccac1c8.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+Subject: [PATCH] public_key: Add a comment to public_key_signature struct definition
+Date:   Wed,  7 Dec 2022 11:54:30 +0100
+Message-Id: <20221207105430.248613-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwDH+fVBWpBjTaXHAA--.61258S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZrWrZw1UJr47tF4Utw45trb_yoW5Jw4kpF
-        Z5G3WYyF1kZryIkr43A3W7Jw4Sy395KF13XryxWw18Zw1YyrWxKryakF4Y9FWDGrWkCFyj
-        vFWaq3sruFy7AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwAnDvrycJBjWe_HAA--.20736S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw4xJw4DCw4rKr4rXF13urg_yoW8GF4UpF
+        s3Gr1rKryjgrn3AFs7C3WfC34rGa1UCr17Ww4DZ3y3uanxXw1kCw4Ika13W3Z5XrWkXay7
+        ArZFgw1Yvw15Z3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUk2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
         6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
         vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
         AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQATBF1jj4ZgCAAAsJ
+        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IY
+        c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
+        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF
+        0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0x
+        vE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E
+        87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOyCJDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBF1jj4Jj+AACs-
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-12-07 at 08:58 +0100, Roberto Sassu wrote:
-> On Tue, 2022-12-06 at 19:21 -0500, Paul Moore wrote:
-> > On Mon, Nov 28, 2022 at 9:43 AM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > 
-> > > Ensure that for non-void LSM hooks there is a description of the return
-> > > values.
-> > > 
-> > > Also, replace spaces with tab for indentation, remove empty lines between
-> > > the hook description and the list of parameters, adjust semicolons and add
-> > > the period at the end of the parameter description.
-> > > 
-> > > Finally, move the description of gfp parameter of the
-> > > xfrm_policy_alloc_security hook together with the others.
-> > > 
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >  include/linux/lsm_hooks.h | 221 ++++++++++++++++++++++++--------------
-> > >  1 file changed, 138 insertions(+), 83 deletions(-)
-> > 
-> > Thanks Roberto, I've merged this into lsm/next with one small tweak (below).
-> > 
-> > > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > > index c35e260efd8c..6502a1bea93a 100644
-> > > --- a/include/linux/lsm_hooks.h
-> > > +++ b/include/linux/lsm_hooks.h
-> > > @@ -677,7 +695,7 @@
-> > >   *     indicates which of the set*uid system calls invoked this hook.  If
-> > >   *     @new is the set of credentials that will be installed.  Modifications
-> > >   *     should be made to this rather than to @current->cred.
-> > > - *     @old is the set of credentials that are being replaces
-> > > + *     @old is the set of credentials that are being replaces.
-> > 
-> > Might as well change "replaces" to "replaced".  I'll go ahead and fix
-> > that up during the merge.
-> 
-> Thanks a lot!
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Ops, I found an issue for fs_context_parse_param. It seems that the
-kernel doc and lsm_hooks.h provide different conventions for it.
+public_key_verify_signature() calls sg_set_buf() to set the signature and
+digest for the signature verification.
 
-+ David
+As sg_set_buf() requires the buffer to be in physically contiguous memory,
+see commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in
+linear mapping"), mention that in a comment for the signature and digest
+fields of the public_key_signature structure.
 
-Kernel doc:
+Link: https://lore.kernel.org/linux-integrity/Y4pIpxbjBdajymBJ@sol.localdomain/
+Suggested-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ include/crypto/public_key.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It should return 0 to indicate that the parameter should be passed on
-to the filesystem, 1 to indicate that the parameter should be discarded
-or an error to indicate that the parameter should be rejected.
-
-lsm_hooks.h:
-
-The LSM may reject it with an error and may use it for itself, in which
-case it should return 0; otherwise it should return -ENOPARAM to pass
-it on to the filesystem.
-
-Looking at the code, the latter seems the right one. I would send
-another patch to fix the kernel doc.
-
-For this patch, I saw it is already in lsm/next. Paul, should I do an
-incremental patch or change the one in the repo and you force push it?
-I would just remove the three lines after the parameters description.
-
-Thanks
-
-Roberto
+diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
+index 68f7aa2a7e55..6d623e063034 100644
+--- a/include/crypto/public_key.h
++++ b/include/crypto/public_key.h
+@@ -37,8 +37,8 @@ extern void public_key_free(struct public_key *key);
+  */
+ struct public_key_signature {
+ 	struct asymmetric_key_id *auth_ids[3];
+-	u8 *s;			/* Signature */
+-	u8 *digest;
++	u8 *s;			/* Signature (in physically contiguous mem) */
++	u8 *digest;		/* Digest (in physically contiguous mem) */
+ 	u32 s_size;		/* Number of bytes in signature */
+ 	u32 digest_size;	/* Number of bytes in digest */
+ 	const char *pkey_algo;
+-- 
+2.25.1
 
