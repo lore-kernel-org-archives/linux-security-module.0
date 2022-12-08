@@ -2,130 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 654BBC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Dec 2022 22:46:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CCBC4167B
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Dec 2022 23:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229634AbiLHWqQ (ORCPT
+        id S229628AbiLHXSF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Dec 2022 17:46:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39058 "EHLO
+        Thu, 8 Dec 2022 18:18:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230240AbiLHWqK (ORCPT
+        with ESMTP id S229656AbiLHXSE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Dec 2022 17:46:10 -0500
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D97F7A1A7
-        for <linux-security-module@vger.kernel.org>; Thu,  8 Dec 2022 14:46:01 -0800 (PST)
-Received: by mail-pg1-x530.google.com with SMTP id v3so2340756pgh.4
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Dec 2022 14:46:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GXy3yVe6q44PfcggGGGUoLM0qgF3oqADIjhfyUy/5w8=;
-        b=m0U0ZyFNHfG7+MToeaYyNjB7X1PggzXeEpqu2rb1ZJ7cTBviwA7gIG9Tyg572P8M1b
-         aKoxD95GRuURnVVDMmNXtach1deUW3CYeOF5HiN+hYwwM+xShJ0zYF+iP0iEFmn/cHM2
-         lEauTXA0ZpM1jcwn45Hth/b30ZBTjfcRMzgHJkIvt3Pl08Id5JbUY7+Vupwn4p0vOjJE
-         1E6B+2w13xlykPVmmMf+fKKASvtjbBEG8Tui51K4xAhWtHIyua0fwLbOPhtad3sc6YB0
-         wnq14MofX2PUUUiAPae/85s/LGMAQZtc8xd1yTvA1WF4lH5xFjw8y2ZZoxfgpGRWjQOd
-         6QNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GXy3yVe6q44PfcggGGGUoLM0qgF3oqADIjhfyUy/5w8=;
-        b=qhrbX4KVE6e4V8i58iZgUPN/XwtT4cv9GtvKU0koINenTubK9Jt+OWbSgDCpgsY8hS
-         NNHprWPcAFbsXMxp2wIEcEwrgGLVvkwDwEeth5Wuj7cVC9mfZMKKc6st7HwC1m1nUz5u
-         4nhLfkDd6bUOvqbpS/PcsaLE3ZAcv7v298yWv5pFA5cFwaBk3qFQ0FnLKjdu2HJkOmyy
-         AmeF/gkKvuZeYeO3jUFfVBsrwb2pDtOmc5k+ACvBezjdYY28kRZa/R7dHpWBhIrh4+Ub
-         Mt233Xz57VQwfHDc7DreFjwa5bU5g+HHJAoo2rDnOReL24wRQkkkCc5zcpptvLDfWvIF
-         69AQ==
-X-Gm-Message-State: ANoB5pmKke+WPZjUuGFAVhSu82tkJUsI87zPb6sZzLQY39MbaU7u2Wbv
-        kwMBg77wvZvnkHo2qufcLwGGhFhogZ84jU0Q0K5u
-X-Google-Smtp-Source: AA0mqf6bVEu+zdRUSkuWOcp4cIkScjpUe3duREc67t/ScI57nnNA5ajNFIWKMsygOUVvxfoMtTAQsEEbtmvq9CmQ8oU=
-X-Received: by 2002:a63:e74a:0:b0:478:42f:5a3d with SMTP id
- j10-20020a63e74a000000b00478042f5a3dmr48968019pgk.3.1670539560762; Thu, 08
- Dec 2022 14:46:00 -0800 (PST)
+        Thu, 8 Dec 2022 18:18:04 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9D6579C93;
+        Thu,  8 Dec 2022 15:18:01 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9CD65620B3;
+        Thu,  8 Dec 2022 23:18:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 875B3C433EF;
+        Thu,  8 Dec 2022 23:17:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670541480;
+        bh=rd79PBsqcgAsOpiLcHMxEP/sk2UK4Dh/a8VVAA6SQ/k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Vp1HXQUb5QfqqnrUWIs78XUnzr8cBvRwQ5ycZ50tmQqCKltrtum4u7Oqrc6zGSbYq
+         SPD4//EXmEFrt0mEuLUNh4mjFoEiSnuqReSIfjUsJ0u5h0nQi2L9/yohC2SCcHN2zF
+         D9gP16Km5VXBDyI8NnNlzFIqWxRvvQPJlO0+Z6xgyt/aPZeC6Xw3Kmq1xHe1lomjn8
+         mTdx5szDs2CccXckuLKnsbO1Mj6RJo7xvAi3Qx92Kb1LCUqGmCkEwyGorBGQstq0Xo
+         qegdmvVWVEfMFpbkeDPco4FZph5m2hahdb69Cbpy5vAzpvfnFoVGfTjitjOjGFu9jd
+         lW/Ltxb8gp0fA==
+Date:   Thu, 8 Dec 2022 15:17:57 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     dhowells@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] KEYS: asymmetric: Make a copy of sig and digest in
+ vmalloced stack
+Message-ID: <Y5JwpdGF50oFKw0z@sol.localdomain>
+References: <20221208164610.867747-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
-References: <CAFqZXNs2LF-OoQBUiiSEyranJUXkPLcCfBkMkwFeM6qEwMKCTw@mail.gmail.com>
- <108a1c80eed41516f85ebb264d0f46f95e86f754.camel@redhat.com>
- <CAHC9VhSSKN5kh9Kqgj=aCeA92bX1mJm1v4_PnRgua86OHUwE3w@mail.gmail.com>
- <48dd1e9b21597c46e4767290e5892c01850a45ff.camel@redhat.com>
- <CAHC9VhT0rRhr7Ty_p3Ld5O+Ltf8a8XSXcyik7tFpDRMrTfsF+A@mail.gmail.com>
- <50e7ea22119c3afcb4be5a4b6ad9747465693d10.camel@redhat.com> <CAFqZXNtOku4vr5RrQU4vcvCVz5iK79CimeUVHu0S=QoN-QVEjg@mail.gmail.com>
-In-Reply-To: <CAFqZXNtOku4vr5RrQU4vcvCVz5iK79CimeUVHu0S=QoN-QVEjg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 8 Dec 2022 17:45:49 -0500
-Message-ID: <CAHC9VhSQnhH3UL4gqzu+YiA1Q3YyLLCv88gLJOvw-0+uw5Lvkw@mail.gmail.com>
-Subject: Re: Broken SELinux/LSM labeling with MPTCP and accept(2)
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Paolo Abeni <pabeni@redhat.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>, mptcp@lists.linux.dev,
-        network dev <netdev@vger.kernel.org>,
-        Mat Martineau <mathew.j.martineau@linux.intel.com>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221208164610.867747-1-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Dec 6, 2022 at 9:43 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> On Mon, Dec 5, 2022 at 9:58 PM Paolo Abeni <pabeni@redhat.com> wrote:
-> >
-> > On Fri, 2022-12-02 at 15:16 -0500, Paul Moore wrote:
-> [...]
-> > > What if we added a new LSM call in mptcp_subflow_create_socket(), just
-> > > after the sock_create_kern() call?
-> >
-> > That should work, I think. I would like to propose a (last) attempt
-> > that will not need an additional selinux hook - to try to minimize the
-> > required changes and avoid unnecessary addional work for current and
-> > future LSM mainteniance and creation.
-> >
-> > I tested the following patch and passes the reproducer (and mptcp self-
-> > tests). Basically it introduces and uses a sock_create_nosec variant,
-> > to allow mptcp_subflow_create_socket() calling
-> > security_socket_post_create() with the corrct arguments. WDYT?
+On Thu, Dec 08, 2022 at 05:46:10PM +0100, Roberto Sassu wrote:
+> diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+> index 2f8352e88860..307799ffbc3e 100644
+> --- a/crypto/asymmetric_keys/public_key.c
+> +++ b/crypto/asymmetric_keys/public_key.c
+> @@ -363,7 +363,8 @@ int public_key_verify_signature(const struct public_key *pkey,
+>  	struct scatterlist src_sg[2];
+>  	char alg_name[CRYPTO_MAX_ALG_NAME];
+>  	char *key, *ptr;
+> -	int ret;
+> +	char *sig_s, *digest;
+> +	int ret, verif_bundle_len;
+>  
+>  	pr_devel("==>%s()\n", __func__);
+>  
+> @@ -400,8 +401,21 @@ int public_key_verify_signature(const struct public_key *pkey,
+>  	if (!req)
+>  		goto error_free_tfm;
+>  
+> -	key = kmalloc(pkey->keylen + sizeof(u32) * 2 + pkey->paramlen,
+> -		      GFP_KERNEL);
+> +	verif_bundle_len = pkey->keylen + sizeof(u32) * 2 + pkey->paramlen;
+> +
+> +	sig_s = sig->s;
+> +	digest = sig->digest;
+> +
+> +	if (IS_ENABLED(CONFIG_VMAP_STACK)) {
+> +		if (!virt_addr_valid(sig_s))
+> +			verif_bundle_len += sig->s_size;
+> +
+> +		if (!virt_addr_valid(digest))
+> +			verif_bundle_len += sig->digest_size;
+> +	}
+> +
+> +	/* key points to a buffer which could contain the sig and digest too. */
+> +	key = kmalloc(verif_bundle_len, GFP_KERNEL);
+>  	if (!key)
+>  		goto error_free_req;
+>  
+> @@ -424,9 +438,24 @@ int public_key_verify_signature(const struct public_key *pkey,
+>  			goto error_free_key;
+>  	}
+>  
+> +	if (IS_ENABLED(CONFIG_VMAP_STACK)) {
+> +		ptr += pkey->paramlen;
+> +
+> +		if (!virt_addr_valid(sig_s)) {
+> +			sig_s = ptr;
+> +			memcpy(sig_s, sig->s, sig->s_size);
+> +			ptr += sig->s_size;
+> +		}
+> +
+> +		if (!virt_addr_valid(digest)) {
+> +			digest = ptr;
+> +			memcpy(digest, sig->digest, sig->digest_size);
+> +		}
+> +	}
+> +
+>  	sg_init_table(src_sg, 2);
+> -	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
+> -	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
+> +	sg_set_buf(&src_sg[0], sig_s, sig->s_size);
+> +	sg_set_buf(&src_sg[1], digest, sig->digest_size);
+>  	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
+>  				   sig->digest_size);
+>  	crypto_init_wait(&cwait);
 
-I'm still working my way through the recent patch posted by Paolo
-(sorry, I lost some time due to build failures and other discussions),
-but I wanted to comment on a few things in Ondrej's email ...
+We should try to avoid adding error-prone special cases.  How about just doing
+the copy of the signature and digest unconditionally?  That would be much
+simpler.  It would even mean that the scatterlist would only need one element.
 
-> This seems like a step in the right direction, but I wonder if we
-> shouldn't solve the current overloading of the "kern" flag more
-> explicitly - i.e. split it into two flags: one to indicate that the
-> socket will only be used internally by the kernel ("internal") and
-> another one to indicate if it should be labeled according to the
-> current task or as a kernel-created socket ("kern"?).
+Also, the size of buffer needed is only
 
-The problem here is that labeling behavior isn't always going to be
-the same across LSMs, or rather I don't want to force a specific
-labeling behavior at the LSM layer.  We pass the @kern flag to
-indicate a kernel socket that is not visible to userspace, but we
-leave it up to the individual LSMs to handle that as they see fit
-(including if they should label sockets based on @current, an
-associated socket, or something else).
+	max(pkey->keylen + sizeof(u32) * 2 + pkey->paramlen,
+	    sig->s_size + sig->digest_size)
 
-> Another concern I have about this approach is whether it is possible
-> (in some more advanced scenario) for mptcp_subflow_create_socket() to
-> be called in the context of a different task than the one
-> creating/handling the main socket. Because then a potential socket
-> accepted from the new subflow socket would end up with an unexpected
-> (and probably semantically wrong) label. Glancing over the call tree,
-> it seems it can be called via some netlink commands - presumably
-> intended to be used by mptcpd?
+... since the signature and digest aren't needed until the key was already used.
 
-Yes, this is something we need to be careful about, if we want to
-treat all of these subflows just as we would treat the main socket,
-the subflows need to be labeled the same as the main socket,
-regardless of the process which creates them.
-
-As a FYI to the non-SELinux folks, a socket's label can be important
-even when it is not visible to userspace as the label is used both to
-set the on-the-wire label (CIPSO, CALIPSO, labeled IPsec) and in the
-per-packet access controls (see security_sock_rcv_skb()).
-
--- 
-paul-moore.com
+- Eric
