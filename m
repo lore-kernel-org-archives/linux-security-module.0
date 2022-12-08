@@ -2,216 +2,239 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6341CC4708D
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Dec 2022 01:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 036F0C63703
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Dec 2022 02:19:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229807AbiLHB04 (ORCPT
+        id S229621AbiLHCTG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Dec 2022 20:26:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49254 "EHLO
+        Wed, 7 Dec 2022 21:19:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229755AbiLHB0s (ORCPT
+        with ESMTP id S229480AbiLHCTF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Dec 2022 20:26:48 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C5168E5BD;
-        Wed,  7 Dec 2022 17:26:48 -0800 (PST)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2B7NuCAB007810;
-        Thu, 8 Dec 2022 01:26:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=0U7NkuOQGqCf+AbL4x1M/DsyzZ0QRdnP/o7uPmqlkzo=;
- b=YI/uuStUjg7pDRI/JxMxTP/PUa0M4JlR5qYxuLk3KlvJJwyImiUP2l+oWnxaOp4YGljd
- 3WnTs/MbscctGA/JRulbS6puf5/I6e8aH2gvbkzG87Fn1q7ThdZvuCt+mBUK9kaWQd0K
- UqJqZeZ004WUCXPuy9dbE1FA3W4kxZCs3hXXO2+DhvUhiXeelnYWxZw2+KSKNZb/HGBG
- La/b0XVr3grDEXPa6Zj1XVJAQhSt/cjzJiwDxHRE0TAJ8sKck9JGpw04Sfq6nZo2l/Hj
- ybi2MjVvXCLcKWlgwzZJyUpBVwRBhG+DZcPP6Ouq+ITm1/iBRyrRnu8MjFJEPO5WjvyM 0w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mb4xjsw33-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 08 Dec 2022 01:26:30 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2B818H7q031768;
-        Thu, 8 Dec 2022 01:26:30 GMT
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mb4xjsw24-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 08 Dec 2022 01:26:30 +0000
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.17.1.19/8.16.1.2) with ESMTP id 2B80HMlV019024;
-        Thu, 8 Dec 2022 01:26:28 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([9.208.129.120])
-        by ppma02wdc.us.ibm.com (PPS) with ESMTPS id 3m9nq8f15r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 08 Dec 2022 01:26:28 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-        by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2B81QRbg8979076
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 8 Dec 2022 01:26:27 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 25C435805E;
-        Thu,  8 Dec 2022 01:26:27 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6A7A458043;
-        Thu,  8 Dec 2022 01:26:26 +0000 (GMT)
-Received: from sig-9-65-245-72.ibm.com (unknown [9.65.245.72])
-        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Dec 2022 01:26:26 +0000 (GMT)
-Message-ID: <b3d0cfa7f5391968ce332977eb602305cd57e891.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 1/2] evm: Alloc evm_digest in evm_verify_hmac() if
- CONFIG_VMAP_STACK=y
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org
-Date:   Wed, 07 Dec 2022 20:26:26 -0500
-In-Reply-To: <5813b77edf8f8c6c68da8343b7898f2a5c831077.camel@huaweicloud.com>
-References: <20221201100625.916781-1-roberto.sassu@huaweicloud.com>
-         <20221201100625.916781-2-roberto.sassu@huaweicloud.com>
-         <Y4j4MJzizgEHf4nv@sol.localdomain>
-         <c8ef0ab69635b99d5175eaf4c96bb3a8957c6210.camel@huaweicloud.com>
-         <Y4pIpxbjBdajymBJ@sol.localdomain>
-         <5813b77edf8f8c6c68da8343b7898f2a5c831077.camel@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: fK-L_tPf8ohPEfNIebm3DP5FRfmeWGUV
-X-Proofpoint-ORIG-GUID: E1Mk3SrlRiQhZqnRopE6DLUmU1RfGO4m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-07_11,2022-12-07_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- bulkscore=0 priorityscore=1501 impostorscore=0 mlxlogscore=999
- clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2212080006
+        Wed, 7 Dec 2022 21:19:05 -0500
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7474860E8C;
+        Wed,  7 Dec 2022 18:19:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1670465944; x=1702001944;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Jt7NLbv+WMLBtqgdb3SxO2ErbAI1LICf45IEtoCF5VE=;
+  b=XHWNUWbEyHwiHjUCxoU2tnhQfGZ3NP+1nRe94gS8sZhSlTx2LxZNewKS
+   iqyLSATisl5+BcFgxgkJ+/hDIPVsO6zuP1RGLlo0C+A3+93eFbVLOCY7c
+   5h13JpnOf+waK7KRDlzZ6XVjOEWVYlEhfwqZQhayTECOaWRdRtU5KEBW2
+   znM69Bc5SarNPe5ZUzm74N+PhIyg5u34s2rSL0fJR3bgRvAx0cEfJld+d
+   X5GkWYJCQw5egNXPaARasLs0alVw0Ay3vM1SyO3QLIA7xY1KXrhftm+P1
+   M5AmI6JT3q0C78kfhlptBvFShpm3edIkVcJQgDIzIR5U3xKLhjWhcbHHf
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10554"; a="318191580"
+X-IronPort-AV: E=Sophos;i="5.96,226,1665471600"; 
+   d="scan'208";a="318191580"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2022 18:19:03 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10554"; a="735618903"
+X-IronPort-AV: E=Sophos;i="5.96,226,1665471600"; 
+   d="scan'208";a="735618903"
+Received: from rtalla-mobl.amr.corp.intel.com ([10.209.87.225])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2022 18:19:01 -0800
+Date:   Wed, 7 Dec 2022 18:19:01 -0800 (PST)
+From:   Mat Martineau <mathew.j.martineau@linux.intel.com>
+To:     Paolo Abeni <pabeni@redhat.com>
+cc:     mptcp@lists.linux.dev, Paul Moore <paul@paul-moore.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH mptcp-net] mptcp: fix LSM labeling for passive msk
+In-Reply-To: <ffee337de5d6e447185b87ade65cc27f0b3576db.1670434580.git.pabeni@redhat.com>
+Message-ID: <a3c81322-36b5-a289-c07b-15d2be75b02d@linux.intel.com>
+References: <ffee337de5d6e447185b87ade65cc27f0b3576db.1670434580.git.pabeni@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2022-12-05 at 09:22 +0100, Roberto Sassu wrote:
-> On Fri, 2022-12-02 at 10:49 -0800, Eric Biggers wrote:
-> > On Fri, Dec 02, 2022 at 08:58:21AM +0100, Roberto Sassu wrote:
-> > > On Thu, 2022-12-01 at 10:53 -0800, Eric Biggers wrote:
-> > > > On Thu, Dec 01, 2022 at 11:06:24AM +0100, Roberto Sassu wrote:
-> > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > 
-> > > > > Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
-> > > > > mapping") checks that both the signature and the digest reside in the
-> > > > > linear mapping area.
-> > > > > 
-> > > > > However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
-> > > > > stack support"), made it possible to move the stack in the vmalloc area,
-> > > > > which is not contiguous, and thus not suitable for sg_set_buf() which needs
-> > > > > adjacent pages.
-> > > > > 
-> > > > > Fix this by checking if CONFIG_VMAP_STACK is enabled. If yes, allocate an
-> > > > > evm_digest structure, and use that instead of the in-stack counterpart.
-> > > > > 
-> > > > > Cc: stable@vger.kernel.org # 4.9.x
-> > > > > Fixes: ba14a194a434 ("fork: Add generic vmalloced stack support")
-> > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > ---
-> > > > >  security/integrity/evm/evm_main.c | 26 +++++++++++++++++++++-----
-> > > > >  1 file changed, 21 insertions(+), 5 deletions(-)
-> > > > > 
-> > > > > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> > > > > index 23d484e05e6f..7f76d6103f2e 100644
-> > > > > --- a/security/integrity/evm/evm_main.c
-> > > > > +++ b/security/integrity/evm/evm_main.c
-> > > > > @@ -174,6 +174,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
-> > > > >  	struct signature_v2_hdr *hdr;
-> > > > >  	enum integrity_status evm_status = INTEGRITY_PASS;
-> > > > >  	struct evm_digest digest;
-> > > > > +	struct evm_digest *digest_ptr = &digest;
-> > > > >  	struct inode *inode;
-> > > > >  	int rc, xattr_len, evm_immutable = 0;
-> > > > >  
-> > > > > @@ -231,14 +232,26 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
-> > > > >  		}
-> > > > >  
-> > > > >  		hdr = (struct signature_v2_hdr *)xattr_data;
-> > > > > -		digest.hdr.algo = hdr->hash_algo;
-> > > > > +
-> > > > > +		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
-> > > > > +			digest_ptr = kmalloc(sizeof(*digest_ptr), GFP_NOFS);
-> > > > > +			if (!digest_ptr) {
-> > > > > +				rc = -ENOMEM;
-> > > > > +				break;
-> > > > > +			}
-> > > > > +		}
-> > > > > +
-> > > > > +		digest_ptr->hdr.algo = hdr->hash_algo;
-> > > > > +
-> > > > >  		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
-> > > > > -				   xattr_value_len, xattr_data->type, &digest);
-> > > > > +				   xattr_value_len, xattr_data->type,
-> > > > > +				   digest_ptr);
-> > > > >  		if (rc)
-> > > > >  			break;
-> > > > >  		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
-> > > > >  					(const char *)xattr_data, xattr_len,
-> > > > > -					digest.digest, digest.hdr.length);
-> > > > > +					digest_ptr->digest,
-> > > > > +					digest_ptr->hdr.length);
-> > > > >  		if (!rc) {
-> > > > >  			inode = d_backing_inode(dentry);
-> > > > >  
-> > > > > @@ -268,8 +281,11 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
-> > > > >  		else
-> > > > >  			evm_status = INTEGRITY_FAIL;
-> > > > >  	}
-> > > > > -	pr_debug("digest: (%d) [%*phN]\n", digest.hdr.length, digest.hdr.length,
-> > > > > -		  digest.digest);
-> > > > > +	pr_debug("digest: (%d) [%*phN]\n", digest_ptr->hdr.length,
-> > > > > +		 digest_ptr->hdr.length, digest_ptr->digest);
-> > > > > +
-> > > > > +	if (digest_ptr && digest_ptr != &digest)
-> > > > > +		kfree(digest_ptr);
-> > > > 
-> > > > What is the actual problem here?  Where is a scatterlist being created from this
-> > > > buffer?  AFAICS it never happens.
-> > > 
-> > > Hi Eric
-> > > 
-> > > it is in public_key_verify_signature(), called by asymmetric_verify()
-> > > and integrity_digsig_verify().
-> > > 
-> > 
-> > Hmm, that's several steps down the stack then.  And not something I had
-> > expected.
-> > 
-> > Perhaps this should be fixed in public_key_verify_signature() instead?  It
-> > already does a kmalloc(), so that allocation size just could be made a bit
-> > larger to get space for a temporary copy of 's' and 'digest'.
-> 
-> Mimi asked to fix it in both IMA and EVM.
+On Wed, 7 Dec 2022, Paolo Abeni wrote:
 
-At the time I thought the problem was limited to
-integrity_digsig_verify() and just to the digest.
+> MPTCP sockets created via accept() inherit their LSM label
+> from the initial request socket, which in turn get it from the
+> listener socket's first subflow. The latter is a kernel socket,
+> and get the relevant labeling at creation time.
+>
+> Due to all the above even the accepted MPTCP socket get a kernel
+> label, causing unexpected behaviour and failure on later LSM tests.
+>
+> Address the issue factoring out a socket creation helper that does
+> not include the post-creation LSM checks. Use such helper to create
+> mptcp subflow as in-kernel sockets and doing explicitly LSM validation:
+> vs the current user for the first subflow, as a kernel socket otherwise.
+>
+> Fixes: 0c14846032f2 ("mptcp: fix security context on server socket")
+> Reported-by: Ondrej Mosnacek <omosnace@redhat.com>
+> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 
-I'll leave it up to you and Eric to decide what is the preferable
-solution.
+The MPTCP content looks good to me:
 
-> 
-> > Or at the very least, struct public_key_signature should have a *very* clear
-> > comment saying that the 's' and 'digest' fields must be located in physically
-> > contiguous memory...
-> 
-> That I could add as an additional patch.
+Acked-by: Mat Martineau <mathew.j.martineau@linux.intel.com>
 
-Thanks, the new patch containing the comment looks fine.
 
--- 
-thanks,
+I didn't see issues with the socket.c changes but I'd like to get some 
+security community feedback before upstreaming - Paul or other security 
+reviewers, what do you think?
 
-Mimi
 
+Thanks,
+
+Mat
+
+
+> ---
+> include/linux/net.h |  2 ++
+> net/mptcp/subflow.c | 19 ++++++++++++--
+> net/socket.c        | 60 ++++++++++++++++++++++++++++++---------------
+> 3 files changed, 59 insertions(+), 22 deletions(-)
+>
+> diff --git a/include/linux/net.h b/include/linux/net.h
+> index b73ad8e3c212..91713012504d 100644
+> --- a/include/linux/net.h
+> +++ b/include/linux/net.h
+> @@ -251,6 +251,8 @@ int sock_wake_async(struct socket_wq *sk_wq, int how, int band);
+> int sock_register(const struct net_proto_family *fam);
+> void sock_unregister(int family);
+> bool sock_is_registered(int family);
+> +int __sock_create_nosec(struct net *net, int family, int type, int proto,
+> +			struct socket **res, int kern);
+> int __sock_create(struct net *net, int family, int type, int proto,
+> 		  struct socket **res, int kern);
+> int sock_create(int family, int type, int proto, struct socket **res);
+> diff --git a/net/mptcp/subflow.c b/net/mptcp/subflow.c
+> index d5ff502c88d7..e7e6f17df7ef 100644
+> --- a/net/mptcp/subflow.c
+> +++ b/net/mptcp/subflow.c
+> @@ -1646,11 +1646,26 @@ int mptcp_subflow_create_socket(struct sock *sk, struct socket **new_sock)
+> 	if (unlikely(!sk->sk_socket))
+> 		return -EINVAL;
+>
+> -	err = sock_create_kern(net, sk->sk_family, SOCK_STREAM, IPPROTO_TCP,
+> -			       &sf);
+> +	/* the subflow is created by the kernel, and we need kernel annotation
+> +	 * for lockdep's sake...
+> +	 */
+> +	err = __sock_create_nosec(net, sk->sk_family, SOCK_STREAM, IPPROTO_TCP,
+> +				  &sf, 1);
+> 	if (err)
+> 		return err;
+>
+> +	/* ... but the MPC subflow will be indirectly exposed to the
+> +	 * user-space via accept(). Let's attach the current user security
+> +	 * label to the first subflow, that is when msk->first is not yet
+> +	 * initialized.
+> +	 */
+> +	err = security_socket_post_create(sf, sk->sk_family, SOCK_STREAM,
+> +					  IPPROTO_TCP, !!mptcp_sk(sk)->first);
+> +	if (err) {
+> +		sock_release(sf);
+> +		return err;
+> +	}
+> +
+> 	lock_sock(sf->sk);
+>
+> 	/* the newly created socket has to be in the same cgroup as its parent */
+> diff --git a/net/socket.c b/net/socket.c
+> index 55c5d536e5f6..d5d51e4e26ae 100644
+> --- a/net/socket.c
+> +++ b/net/socket.c
+> @@ -1426,23 +1426,11 @@ int sock_wake_async(struct socket_wq *wq, int how, int band)
+> }
+> EXPORT_SYMBOL(sock_wake_async);
+>
+> -/**
+> - *	__sock_create - creates a socket
+> - *	@net: net namespace
+> - *	@family: protocol family (AF_INET, ...)
+> - *	@type: communication type (SOCK_STREAM, ...)
+> - *	@protocol: protocol (0, ...)
+> - *	@res: new socket
+> - *	@kern: boolean for kernel space sockets
+> - *
+> - *	Creates a new socket and assigns it to @res, passing through LSM.
+> - *	Returns 0 or an error. On failure @res is set to %NULL. @kern must
+> - *	be set to true if the socket resides in kernel space.
+> - *	This function internally uses GFP_KERNEL.
+> - */
+>
+> -int __sock_create(struct net *net, int family, int type, int protocol,
+> -			 struct socket **res, int kern)
+> +
+> +/*creates a socket leaving LSM post-creation checks to the caller */
+> +int __sock_create_nosec(struct net *net, int family, int type, int protocol,
+> +			struct socket **res, int kern)
+> {
+> 	int err;
+> 	struct socket *sock;
+> @@ -1528,11 +1516,8 @@ int __sock_create(struct net *net, int family, int type, int protocol,
+> 	 * module can have its refcnt decremented
+> 	 */
+> 	module_put(pf->owner);
+> -	err = security_socket_post_create(sock, family, type, protocol, kern);
+> -	if (err)
+> -		goto out_sock_release;
+> -	*res = sock;
+>
+> +	*res = sock;
+> 	return 0;
+>
+> out_module_busy:
+> @@ -1548,6 +1533,41 @@ int __sock_create(struct net *net, int family, int type, int protocol,
+> 	rcu_read_unlock();
+> 	goto out_sock_release;
+> }
+> +
+> +/**
+> + *	__sock_create - creates a socket
+> + *	@net: net namespace
+> + *	@family: protocol family (AF_INET, ...)
+> + *	@type: communication type (SOCK_STREAM, ...)
+> + *	@protocol: protocol (0, ...)
+> + *	@res: new socket
+> + *	@kern: boolean for kernel space sockets
+> + *
+> + *	Creates a new socket and assigns it to @res, passing through LSM.
+> + *	Returns 0 or an error. On failure @res is set to %NULL. @kern must
+> + *	be set to true if the socket resides in kernel space.
+> + *	This function internally uses GFP_KERNEL.
+> + */
+> +
+> +int __sock_create(struct net *net, int family, int type, int protocol,
+> +		  struct socket **res, int kern)
+> +{
+> +	struct socket *sock;
+> +	int err;
+> +
+> +	err = __sock_create_nosec(net, family, type, protocol, &sock, kern);
+> +	if (err)
+> +		return err;
+> +
+> +	err = security_socket_post_create(sock, family, type, protocol, kern);
+> +	if (err) {
+> +		sock_release(sock);
+> +		return err;
+> +	}
+> +
+> +	*res = sock;
+> +	return 0;
+> +}
+> EXPORT_SYMBOL(__sock_create);
+>
+> /**
+> -- 
+> 2.38.1
+>
+>
+>
+
+--
+Mat Martineau
+Intel
