@@ -2,104 +2,282 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DCCC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Dec 2022 09:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA9DC63703
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Dec 2022 15:35:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230102AbiLHJ3z (ORCPT
+        id S230162AbiLHPfd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Dec 2022 04:29:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59170 "EHLO
+        Thu, 8 Dec 2022 10:35:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229786AbiLHJ3v (ORCPT
+        with ESMTP id S229818AbiLHPfK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Dec 2022 04:29:51 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCE3D1D306;
-        Thu,  8 Dec 2022 01:29:49 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NSTFp12fyz9xFPw;
-        Thu,  8 Dec 2022 17:22:38 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwCXfflzrpFj0QvMAA--.21566S2;
-        Thu, 08 Dec 2022 10:29:31 +0100 (CET)
-Message-ID: <b989b278a16c48e104b32ba7243e4298491a6056.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 2/2] lsm: Add/fix return values in lsm_hooks.h and
- fix formatting
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     David Howells <dhowells@redhat.com>, casey@schaufler-ca.com,
-        omosnace@redhat.com, john.johansen@canonical.com,
-        kpsingh@kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Thu, 08 Dec 2022 10:29:20 +0100
-In-Reply-To: <CAHC9VhQZ3VKWsNarUGPcHZuoRLgb8owKgbdLymwR759qVyQ+2Q@mail.gmail.com>
-References: <20221128144240.210110-1-roberto.sassu@huaweicloud.com>
-         <20221128144240.210110-3-roberto.sassu@huaweicloud.com>
-         <CAHC9VhRx=pCcAHMAX+51rpFT+efW7HH=X37YOwUG1tTLxyg=SA@mail.gmail.com>
-         <7225e76c09c7ff68937e37ee041fefdd6ccac1c8.camel@huaweicloud.com>
-         <0682348d9601ca3847ce9ba035e4ab1b586cf712.camel@huaweicloud.com>
-         <CAHC9VhQZ3VKWsNarUGPcHZuoRLgb8owKgbdLymwR759qVyQ+2Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Thu, 8 Dec 2022 10:35:10 -0500
+Received: from sonic303-27.consmr.mail.ne1.yahoo.com (sonic303-27.consmr.mail.ne1.yahoo.com [66.163.188.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39BEAA56EC
+        for <linux-security-module@vger.kernel.org>; Thu,  8 Dec 2022 07:33:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1670513586; bh=bAXj1zQgUqxwL+NfnAA1mkuO8NrpRS0bZrRSsA8Ai7Y=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=U14M7xTTSXpURi3inbYBNTdhtj223knANIrG/B2KBhnUkwomX8mydA/+fx12kpNIevxfRsr0Ik1/LOdg5Ukjn6+eB0uY65GoehNun4CRY+YKv/0hER0Njlz62Lh3nJgm4sZaEiKoS46qyp+7BmwKprodsb17NLKUF1SRhuxvzTsR22hWiemnLuE4WS9kH9/YRi+uJ3I1hrlphjiXy+FHrWpM3VgjfmhgH0R8hH/x6v1nJdEy6JWqYbYrbv0yBPg1e8vmfseruvTscvkMJTeXxp2QA6oJZDLpcAqFYJfn8k9gVAqEmrl8Oc0SSGSdBO+ePYykL5tCc73dQhQNOn7hug==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1670513586; bh=+j3fx/y3x/+OH2L2dtdrscsnx1t3lpp1vtanp8nTyjh=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=DWzDvXcugVCgIEMyqPpJ5zJWN97QSQlAwF4FAfyY/kfwO+VLxR5JEg1eIHofwzoqotHdz9d0XvHbte0hGEMQdM+9LFaR+GiAPH+11qhNmSOYf4gBwMnkD2atES4f93SzeUa9jMgH2dQ2i37wTSc5wX3AwDqx/JbAjKlvdU4B6JYGjtGROsa6Y7FfXEoQQmKHQP1sC6xmC2BjAgrlIqQX3BzxvOPMwD/qD99E3orRNIXjsLgRzFRb0byp6ptmurvbx8o4fnMouE/Gv1dXpJLgYOupe4D8zWqJZxkoeturQ5d+I5MYAYV0yp9Fxy39VVljRgCq8Pb1SorHD6Jf5Ae7NQ==
+X-YMail-OSG: C28rwg8VM1n6hHhnKM4z1AJ_F0w_AVTXer8C.OcgniARUCy0D8hRGlcagCSHTr0
+ X6pyHz7vBNIMtvBOupJ6mQPRdbHv4e1rQfvRTvBS5vEZCkyTDUmMb.3XfgPK9aPAARM..kvKN9j2
+ eZKrN7v46ocVwBKbz6N0KtocsTIBbfh7v0r6HATsDhWlpO9lRHpOLdXA5hj7gpABEuR8xvqMbP7u
+ lbjFJEKypu_PS6XuUxYcymXA4NRBn7_UHvmdE1MTkiDj3tP.Npl2g0eGsX1otX7LEEdDNj.gNbcj
+ 9PNmNzgMT9MYGeyl3DhGc5rW1_ZTR0OfU.ZaUDcE6C5HX0LgAsuIIcY8QsglUd8NGo70Ku5C__d3
+ BGPhPfug8f7MS5oIq1oiCHpLdxIU3grNhn.sY2WExwdsvm2KT43PttjXxYe2LtImGK2HGysjGO7s
+ obylB8R.uDiJFmjllvocMuswyT3O2qM5OKH0xJHCOrpIv.7Qs0UhC.a9lCa_q3OTYYR20Hly7N2k
+ ArhIfPNWNzNLt__pGNY5gOFTXUAjbFfL5ljWG9IkkTo7iWK9O6TQ0VAiDbMCqaaYzClNnvnoOSZM
+ T5elUJOm6Rq2Pk3khW2t2HXKuL3xEty0tAbwEtBKHDuP1kavkYL.EkZVvxHuDS6ypykYEDqnuHUS
+ NnCVoi8pLZku1UxRnjdFbkbJODudFuSfmakikilw8941GIeXOyFRqG0sGT02vU_xbQ27y3txTike
+ OKpyngC7gWGqbRvcZydhfWF.6rDO4wZe7Ub4RrX8W9JlbLgl0Zj7_2WbgMDmOXBjRKJERWL6yVqx
+ _.PL_IgbUlPZfl_i2NkAio8nCzQ8brfX2orTt01xkEJIBJ2nqpwIhU_QwXZmmP.ayDCg5evb3VUT
+ nO6hL.TLaS6godP2LgQCoYR1jN7e564QcMGQf7AagGgfB.5RrN0AMLIhuQlM7SjJvqxMH6s4VKqx
+ 0T.Seq9xeRU6WuIywOBM2A9.NnSgym3sjdNt2Uvt.91lidl_Fd6CFCpwBDGqH91NnVZSIl8KDmXC
+ sFFFRPlHGwNF_c.JXxEbmjP0inKzCyInjDunq1gHjV7PoDyolG5h7CpBrjkB85e5LKIobMXt0Eu.
+ ZDvaR7vJJadbgFHYlOlhnY4T_JiXMLMnWae3PD9dLdI.66AmILCWZ.8TQWHX5.ZMGrwcOhaAkPrP
+ pJWvENoNg.s02ucRFAnCs7.4senoRwBTfcEd1mGlad4qh24eKhayGjo21MMWLYUvKJ4TUlk4Gs4n
+ GOF4Z..EZmrBSPG.6A0wqnO8Av79mcXixS2yAjf5ZpJdh6BU5qJHfPAjYziB5VNqTeBOX9RF3tl2
+ ZkCeqJpqgCyjKX09J1SlI0vs5ERPEjLDMWimHj8uR3GnaVSHfMEr8YOMuJhOdbTa.VDIDnM9Gugu
+ w0GUmPjG2jgLQ25lCy6h4uds29uHC.g5qtJPBDeX0o6bhuaE4_FYJrjUPTOyKFZSaeNDBowV04ZJ
+ _Y9qlFxsA8NKfZ0JjrDvEqLOE.rrqHWj__TYhgf.tsGJYS2I8XULgqxJotTAXuBvOMeRipneATCw
+ nGNz4LCUMgY.u3jD11lEp8lGhZcWIGnDzuxSobACeJS3iw2PIJSeJbHpVg_Qy3Z9zOLNI_YkQLnO
+ ZHx0D5iNkmyhUwTltOBnG8qpG_o3w4ymwCaBQknS3p0muN6Fyw2zgJBV95jQ71u0OdHLkfbIjyfU
+ CWpI9ZPHDevONIcG4zj08EYfm6TIztY1lkwAGKQuS0fnbKr_gUYP8yYyY41xNcQ8ecEc5KqdAGTk
+ qONAgggW084qDEcQA7JKHtCeIk4F44YoFalvtXNG6RY1WcH9YydWllU_oPTOtvZpva_TTKTlvA0M
+ 8Yuau0lXOApmaTOSZs2sdKu6sqYjYrzmlXOpFkwNa4vJv6o7xT1ucKjYjCl7gGjwajmWRZVRq6no
+ 1mUoMelmmQE7.rLC3y8V3MZji44P6RiwYvtyb_6I8pKSbqNWmCDIVt9JWoX3ucBQSJpNx_OSQUVO
+ 7ubCPwzteRYEpmCPF42IWGa5Vm6H8jubAZ2LXnwuXdfBWEK0eITXwsjXs_V6iesV7qOH3YFFNgfc
+ qNDftQNAkCVvhFRfi9u9nNxhJQR33uHnyiKfrUTN1qwRiPlzcv8dRAOdBIElZVNqHDkpu4pZ1JKD
+ MhLtivA10DZ6pa5Mh9N_R.H3bXC9o2bSYocC7psXBycMC9q9Va8z0HFdUUh_5FUQieOTXVEvEF6j
+ elZEMMo0Pl.GBnynGGTdv9YktXCcXscw-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Thu, 8 Dec 2022 15:33:06 +0000
+Received: by hermes--production-gq1-d898c4779-lkhfb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e73aadf127eff01f7a55e8a7a7a39458;
+          Thu, 08 Dec 2022 15:33:02 +0000 (UTC)
+Message-ID: <fc052c3c-7545-4d84-05d8-adb5659348a1@schaufler-ca.com>
+Date:   Thu, 8 Dec 2022 07:33:01 -0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwCXfflzrpFj0QvMAA--.21566S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZFW8Jr45tryxJFW7XF4fKrg_yoWkuwbEkr
-        Z8Ar48Jw45Crn7Cw12ka1F9r92g3srZw1rZ3WDXr1UWa48GrW5JF40kr93Xrs3CrW8Jrnr
-        WFyDAFZ2kasIvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-        67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-        AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-        j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-        kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0E
-        wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-        80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
-        I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
-        k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABF1jj4ZsWgACsG
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH mptcp-net] mptcp: fix LSM labeling for passive msk
+Content-Language: en-US
+To:     Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     mptcp@lists.linux.dev, Paul Moore <paul@paul-moore.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>, casey@schaufler-ca.com
+References: <ffee337de5d6e447185b87ade65cc27f0b3576db.1670434580.git.pabeni@redhat.com>
+ <a3c81322-36b5-a289-c07b-15d2be75b02d@linux.intel.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <a3c81322-36b5-a289-c07b-15d2be75b02d@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.20926 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-12-07 at 14:34 -0500, Paul Moore wrote:
-> On Wed, Dec 7, 2022 at 4:18 AM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > For this patch, I saw it is already in lsm/next. Paul, should I do an
-> > incremental patch or change the one in the repo and you force push it?
-> > I would just remove the three lines after the parameters description.
-> 
-> Just send a patch against the current lsm/next branch to remove those
-> lines, and please do it ASAP as the merge window opens this
-> weekend/Monday.
+On 12/7/2022 6:19 PM, Mat Martineau wrote:
+> On Wed, 7 Dec 2022, Paolo Abeni wrote:
+>
+>> MPTCP sockets created via accept() inherit their LSM label
+>> from the initial request socket, which in turn get it from the
+>> listener socket's first subflow. The latter is a kernel socket,
+>> and get the relevant labeling at creation time.
+>>
+>> Due to all the above even the accepted MPTCP socket get a kernel
+>> label, causing unexpected behaviour and failure on later LSM tests.
+>>
+>> Address the issue factoring out a socket creation helper that does
+>> not include the post-creation LSM checks. Use such helper to create
+>> mptcp subflow as in-kernel sockets and doing explicitly LSM validation:
+>> vs the current user for the first subflow, as a kernel socket otherwise.
+>>
+>> Fixes: 0c14846032f2 ("mptcp: fix security context on server socket")
+>> Reported-by: Ondrej Mosnacek <omosnace@redhat.com>
+>> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+>
+> The MPTCP content looks good to me:
+>
+> Acked-by: Mat Martineau <mathew.j.martineau@linux.intel.com>
+>
+>
+> I didn't see issues with the socket.c changes but I'd like to get some
+> security community feedback before upstreaming - Paul or other
+> security reviewers, what do you think?
 
-Ok, was about to send but I would need a clarification first.
+I haven't had the opportunity to work out what impact, if any, this will
+have on Smack. I haven't seen a reproducer for the problem, is one available?
+Sorry to chime in late.
 
-In mount_api.rst, there is for security_fs_context_parse_param():
-
-     The value pointed to by param may be modified (if a string) or stolen
-     (provided the value pointer is NULL'd out).  If it is stolen, 0 must be
-     returned to prevent it being passed to the filesystem.
-
-Looking at security.c:
-
-	hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
-			     list) {
-		trc = hp->hook.fs_context_parse_param(fc, param);
-		if (trc == 0)
-			rc = 0;
-		else if (trc != -ENOPARAM)
-			return trc;
-	}
-
-If, as mount_api.rst says, the value is modified by an LSM or stolen,
-should it be passed to other LSMs too?
-
-Thanks
-
-Roberto
-
+>
+>
+> Thanks,
+>
+> Mat
+>
+>
+>> ---
+>> include/linux/net.h |  2 ++
+>> net/mptcp/subflow.c | 19 ++++++++++++--
+>> net/socket.c        | 60 ++++++++++++++++++++++++++++++---------------
+>> 3 files changed, 59 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/include/linux/net.h b/include/linux/net.h
+>> index b73ad8e3c212..91713012504d 100644
+>> --- a/include/linux/net.h
+>> +++ b/include/linux/net.h
+>> @@ -251,6 +251,8 @@ int sock_wake_async(struct socket_wq *sk_wq, int
+>> how, int band);
+>> int sock_register(const struct net_proto_family *fam);
+>> void sock_unregister(int family);
+>> bool sock_is_registered(int family);
+>> +int __sock_create_nosec(struct net *net, int family, int type, int
+>> proto,
+>> +            struct socket **res, int kern);
+>> int __sock_create(struct net *net, int family, int type, int proto,
+>>           struct socket **res, int kern);
+>> int sock_create(int family, int type, int proto, struct socket **res);
+>> diff --git a/net/mptcp/subflow.c b/net/mptcp/subflow.c
+>> index d5ff502c88d7..e7e6f17df7ef 100644
+>> --- a/net/mptcp/subflow.c
+>> +++ b/net/mptcp/subflow.c
+>> @@ -1646,11 +1646,26 @@ int mptcp_subflow_create_socket(struct sock
+>> *sk, struct socket **new_sock)
+>>     if (unlikely(!sk->sk_socket))
+>>         return -EINVAL;
+>>
+>> -    err = sock_create_kern(net, sk->sk_family, SOCK_STREAM,
+>> IPPROTO_TCP,
+>> -                   &sf);
+>> +    /* the subflow is created by the kernel, and we need kernel
+>> annotation
+>> +     * for lockdep's sake...
+>> +     */
+>> +    err = __sock_create_nosec(net, sk->sk_family, SOCK_STREAM,
+>> IPPROTO_TCP,
+>> +                  &sf, 1);
+>>     if (err)
+>>         return err;
+>>
+>> +    /* ... but the MPC subflow will be indirectly exposed to the
+>> +     * user-space via accept(). Let's attach the current user security
+>> +     * label to the first subflow, that is when msk->first is not yet
+>> +     * initialized.
+>> +     */
+>> +    err = security_socket_post_create(sf, sk->sk_family, SOCK_STREAM,
+>> +                      IPPROTO_TCP, !!mptcp_sk(sk)->first);
+>> +    if (err) {
+>> +        sock_release(sf);
+>> +        return err;
+>> +    }
+>> +
+>>     lock_sock(sf->sk);
+>>
+>>     /* the newly created socket has to be in the same cgroup as its
+>> parent */
+>> diff --git a/net/socket.c b/net/socket.c
+>> index 55c5d536e5f6..d5d51e4e26ae 100644
+>> --- a/net/socket.c
+>> +++ b/net/socket.c
+>> @@ -1426,23 +1426,11 @@ int sock_wake_async(struct socket_wq *wq, int
+>> how, int band)
+>> }
+>> EXPORT_SYMBOL(sock_wake_async);
+>>
+>> -/**
+>> - *    __sock_create - creates a socket
+>> - *    @net: net namespace
+>> - *    @family: protocol family (AF_INET, ...)
+>> - *    @type: communication type (SOCK_STREAM, ...)
+>> - *    @protocol: protocol (0, ...)
+>> - *    @res: new socket
+>> - *    @kern: boolean for kernel space sockets
+>> - *
+>> - *    Creates a new socket and assigns it to @res, passing through LSM.
+>> - *    Returns 0 or an error. On failure @res is set to %NULL. @kern
+>> must
+>> - *    be set to true if the socket resides in kernel space.
+>> - *    This function internally uses GFP_KERNEL.
+>> - */
+>>
+>> -int __sock_create(struct net *net, int family, int type, int protocol,
+>> -             struct socket **res, int kern)
+>> +
+>> +/*creates a socket leaving LSM post-creation checks to the caller */
+>> +int __sock_create_nosec(struct net *net, int family, int type, int
+>> protocol,
+>> +            struct socket **res, int kern)
+>> {
+>>     int err;
+>>     struct socket *sock;
+>> @@ -1528,11 +1516,8 @@ int __sock_create(struct net *net, int family,
+>> int type, int protocol,
+>>      * module can have its refcnt decremented
+>>      */
+>>     module_put(pf->owner);
+>> -    err = security_socket_post_create(sock, family, type, protocol,
+>> kern);
+>> -    if (err)
+>> -        goto out_sock_release;
+>> -    *res = sock;
+>>
+>> +    *res = sock;
+>>     return 0;
+>>
+>> out_module_busy:
+>> @@ -1548,6 +1533,41 @@ int __sock_create(struct net *net, int family,
+>> int type, int protocol,
+>>     rcu_read_unlock();
+>>     goto out_sock_release;
+>> }
+>> +
+>> +/**
+>> + *    __sock_create - creates a socket
+>> + *    @net: net namespace
+>> + *    @family: protocol family (AF_INET, ...)
+>> + *    @type: communication type (SOCK_STREAM, ...)
+>> + *    @protocol: protocol (0, ...)
+>> + *    @res: new socket
+>> + *    @kern: boolean for kernel space sockets
+>> + *
+>> + *    Creates a new socket and assigns it to @res, passing through LSM.
+>> + *    Returns 0 or an error. On failure @res is set to %NULL. @kern
+>> must
+>> + *    be set to true if the socket resides in kernel space.
+>> + *    This function internally uses GFP_KERNEL.
+>> + */
+>> +
+>> +int __sock_create(struct net *net, int family, int type, int protocol,
+>> +          struct socket **res, int kern)
+>> +{
+>> +    struct socket *sock;
+>> +    int err;
+>> +
+>> +    err = __sock_create_nosec(net, family, type, protocol, &sock,
+>> kern);
+>> +    if (err)
+>> +        return err;
+>> +
+>> +    err = security_socket_post_create(sock, family, type, protocol,
+>> kern);
+>> +    if (err) {
+>> +        sock_release(sock);
+>> +        return err;
+>> +    }
+>> +
+>> +    *res = sock;
+>> +    return 0;
+>> +}
+>> EXPORT_SYMBOL(__sock_create);
+>>
+>> /**
+>> -- 
+>> 2.38.1
+>>
+>>
+>>
+>
+> -- 
+> Mat Martineau
+> Intel
