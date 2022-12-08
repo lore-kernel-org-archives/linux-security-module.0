@@ -2,141 +2,130 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C23C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Dec 2022 22:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 654BBC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Dec 2022 22:46:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230092AbiLHWSO (ORCPT
+        id S229634AbiLHWqQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Dec 2022 17:18:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51948 "EHLO
+        Thu, 8 Dec 2022 17:46:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229907AbiLHWSM (ORCPT
+        with ESMTP id S230240AbiLHWqK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Dec 2022 17:18:12 -0500
-Received: from sonic307-16.consmr.mail.ne1.yahoo.com (sonic307-16.consmr.mail.ne1.yahoo.com [66.163.190.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2FCD5F6F3
-        for <linux-security-module@vger.kernel.org>; Thu,  8 Dec 2022 14:18:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1670537891; bh=2dAILjLP69OS9FOb9YU5vIxnb/ja4jQMKeNfFXNX264=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PRG2/oNnpGADGD83EeZtPq/kQrBymL9eocf9L0cafJvVP1JXHAZ43YtO0WAU79SFi+c5jCMCbtnjjqyQ4C3elOn/GLvcPzbp+cOkPhFClj0GlKIX15BRHFg96OP6IvRKlMLGkEmT5KnZxKDQ/ST8AjfIIDxnQGA1jFxI8HBdZEyxcXuhJ1mxbCC+RvxlyEoLToW3a6yE1n1eUgFKplpZMTCFla217dTohtfo+VkZJ2RbusnLV6zOeSFHWEXsF9915vzDH3An/ZvFWJ2m7mhp1saagrYiUHysW3IYn6RZatCW2gPARY/RrKF7ZVntHlKtSURn4uNB8ICaDF/3uP5DtQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1670537891; bh=5lRHWOPF5z14iBE75M6AOstxXbLwGCgN+49brGsVQ7j=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=tEfHCtNTBi1uMFSLdThHmzrkDfWfL/7qqnWQysCRr32DQy3BHYfZPYXsFXTUd0+y2pQQ+ARoqDJIV2/jCJYcRkiHt59uNdUz683mJl/3hWCpGu/clzSTCfpRNG+lfda4Lpk8l/ifFra9sVQlCbIs8q/smpP06Ffr1wSOaxM/cwYWFVUtb9MGmj8Rr4R7bDcl6PQW452GHRTy/DdT7+4nWq/qkAsApfp6JiKWm5Jv870Zzpjvaegw1uc6rKSo86P594ExgPXwVdxHxl4sRAraXMm95yMbKQkhOQghvbskHwtCmFeZePrdfTcG5oC3GaR02CZ3mqZZwfpyFxfNUh0M1Q==
-X-YMail-OSG: O2RLWIEVM1kX0tTMjEkN_jNRv0FV8dAQtxZr6H8HYUI60J6CjCv37XMKD2CQwWN
- Ddfed.mH_vcnWG2nUNEqsnOreN7jUQTZS8PGx_1jTM9guhW2iIWje_2y7go.FqRYRsFY3ALFMukh
- a9fZgv_7UgWlKoxViHs2jAfPxFD4qOY_CFmX.RipjeQbbCv_PJumVHQZDLPhDqQK..FEBlgK83Dv
- AbCLZswRq46xiuYJgNLgSus6GY_nbYVlvPAVHnLV4yl5N_amkbYyGQBFPjABwfKDag9jJrKsStdS
- h3QkWoehd0UyuvjeEI5DcOo6LmgXjgMH5Bd8m6hQsaRyLeQ4j1pgOy.eTcwgN5oYkR.wDujEcRXB
- qUI9H5XrplDcZQI_jKkWNF131TepZFlvhW__88GDFZsRaaqkzbQWOzQ6SMdB8QyPEwYuRxWPWXHX
- xOR1Df3G4e9g9GE.7hXxnikp3oEImNX.woH4PRXUppDnSS2jmmG9sTxUIDV.yYG0Xmidc7JJGNvD
- IbxlJMkNAywH.GXUVlqxWBdt4nvki3HO8TX3egWbQqOY3i8Iag2V0c66UeQPuGaRQt4sMiCiGNLb
- o0nmGKZVeFKdM4Wl9UGBUFo63OO.dmAgpxFXgfjVWbIDIn_UK2PhjKzkMA1VyVpP6AgUVI0WVFhJ
- 6BHe354D50k2fHcrJd90t7hILF1Ipy3Xii5yAYbsMF8viZNx.SgnJ2MHYU2CkB6xNlWQF1gJi.bj
- Vt6Uungp4S3T4ocKujUlhH4uFqT.SLxvTib5q6X5a.l9Jv5R.3teQh27uOTs34fd4kosf7cWUBVx
- 82Eye6jsvatVpodREn9DIP1NqqaMWRkVmI7RLr67acpm3uLKrDPYrfIat6hFDyugpbTyEvnyVcLn
- OKCRKTXHavjiVVIkltCons.VnituJj6tSa6MECu..JCDZVvaMytU3JkRnTFs6dlefFTjb8ATp0Rz
- CYqYBGonBNLn3nnMLl2ZDI1l8Xd0WaFvh6JyuPl982QByrPHXFt6dUzR2sQeyhWQEglxIRElDKvU
- N8Ybe.ctuIfMcymEWpGWK0AAZWcWJqLXGsLeam02_C3sIPufZJByE2cUhpHs9CZropstg98r0jrm
- o93Zn910CuVR7CrxKvX5LvZswqEjil_23rBgc6IvzBNALYMhMCvRKPskZ4LGWo3HVpq7Q.S9e768
- zqIjFOiV5YBlII2OJ5_khv32rhg0jIsuM16asnWksK_75TtAFLMF.nzGMYtcl.7dhuGOxJXEErp1
- XXG5ucvON7T5lO9PZ7s0YqCOFxlAnYjy9_01G5Geo9OgeBbEuL0kCS8B4.F65I4I0RgboxYghWFa
- YtpkPIqkykPBGMhHFC3cgb8VZGFJrlosCfufPwnb2J.SCLZ6Va4xyWl4BKsBHvoULYLYAdJ_YGOk
- e1XUc1oVudyPcd_8vA9ngXAc.8gmvVHFybXZEFuEbhSOtyr21kry8Fv4wvmlhLKU704duD4TjAQP
- roYswyak9xhl7kHoaUHGZTPrGT21gMerg732sAspOtWXCIPyc6M6kXh4PmbgEmgn6Vo1XK9u.OBm
- Rujl2YaBeJU1KN1tpPDD9470OclWeuo66lc6ru.Q2hmjrVCLTv.fwjFBsdyZzAc26I4dxMC5F.eo
- qUakh_GR0UTa0r9p8WkVOPqEtlsgJWVV38V1KsdkeFBtJb.dNDLzCiNsl4glbFe.qwV2F2pdSsiD
- pBN08wNBpk7xAm5uW2nzHybDO8AxWwrf20K8PPbGZ3QrQNn25J4fcCOhSuTQGzlC8puv42yMH8Ia
- b8Z9ZZNU91ovq.g77l4kgCVKg2LCSlnhaONutWcF_m9qcGsbbGsSbrNSvRQFlbwu1_HSpy70rue7
- xnUtScSindofW98pEsvan.3HSln27hhuAauxvzwpI6rj.2kx_oQFrLg7a4WctSXA4ZIrLc97D61H
- GBw6IJWDaXASSSyskHvT52sJ_EM.V14upipGr2OVGxCpJiDBC89ViRgX5XFAnxXY2R2d8.exVEdm
- 5N35uUNjYgt1Rzx24TlKnngNBC6TKJiHaG2o.HDobZKbprGhafgYqt.LoNa_fBQ9bZsBpBFYmXNN
- fVCDRYe6jAXUzuzvKnGRjVhOY902iVmsF5mvRJ4SErdLUNMNzPmvMFpAh0aJiCvanm1eg5T7CrOJ
- TpPIEt1zu2st9oeVZF_R9Yzv0Vwj2KuRJ_FDgDTWSEszmZUG9kqTeJVz6kkE4ABX9GohLtoC0Ck6
- YyrpH9x8kRTzlp4R1v9BTfOiJa50F1TIKlEGNWu7RiQ8cEatc2aLxGeccs6yIn3pItrV3ep.Q0op
- DpcXlYSw9SbSmNn0-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Thu, 8 Dec 2022 22:18:11 +0000
-Received: by hermes--production-gq1-d898c4779-66ldg (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e4990e6f66164b6f2d176bcbbed58160;
-          Thu, 08 Dec 2022 22:18:07 +0000 (UTC)
-Message-ID: <8d14fcbe-baab-4678-beb1-4f8ff6171eec@schaufler-ca.com>
-Date:   Thu, 8 Dec 2022 14:18:06 -0800
+        Thu, 8 Dec 2022 17:46:10 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D97F7A1A7
+        for <linux-security-module@vger.kernel.org>; Thu,  8 Dec 2022 14:46:01 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id v3so2340756pgh.4
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Dec 2022 14:46:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GXy3yVe6q44PfcggGGGUoLM0qgF3oqADIjhfyUy/5w8=;
+        b=m0U0ZyFNHfG7+MToeaYyNjB7X1PggzXeEpqu2rb1ZJ7cTBviwA7gIG9Tyg572P8M1b
+         aKoxD95GRuURnVVDMmNXtach1deUW3CYeOF5HiN+hYwwM+xShJ0zYF+iP0iEFmn/cHM2
+         lEauTXA0ZpM1jcwn45Hth/b30ZBTjfcRMzgHJkIvt3Pl08Id5JbUY7+Vupwn4p0vOjJE
+         1E6B+2w13xlykPVmmMf+fKKASvtjbBEG8Tui51K4xAhWtHIyua0fwLbOPhtad3sc6YB0
+         wnq14MofX2PUUUiAPae/85s/LGMAQZtc8xd1yTvA1WF4lH5xFjw8y2ZZoxfgpGRWjQOd
+         6QNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GXy3yVe6q44PfcggGGGUoLM0qgF3oqADIjhfyUy/5w8=;
+        b=qhrbX4KVE6e4V8i58iZgUPN/XwtT4cv9GtvKU0koINenTubK9Jt+OWbSgDCpgsY8hS
+         NNHprWPcAFbsXMxp2wIEcEwrgGLVvkwDwEeth5Wuj7cVC9mfZMKKc6st7HwC1m1nUz5u
+         4nhLfkDd6bUOvqbpS/PcsaLE3ZAcv7v298yWv5pFA5cFwaBk3qFQ0FnLKjdu2HJkOmyy
+         AmeF/gkKvuZeYeO3jUFfVBsrwb2pDtOmc5k+ACvBezjdYY28kRZa/R7dHpWBhIrh4+Ub
+         Mt233Xz57VQwfHDc7DreFjwa5bU5g+HHJAoo2rDnOReL24wRQkkkCc5zcpptvLDfWvIF
+         69AQ==
+X-Gm-Message-State: ANoB5pmKke+WPZjUuGFAVhSu82tkJUsI87zPb6sZzLQY39MbaU7u2Wbv
+        kwMBg77wvZvnkHo2qufcLwGGhFhogZ84jU0Q0K5u
+X-Google-Smtp-Source: AA0mqf6bVEu+zdRUSkuWOcp4cIkScjpUe3duREc67t/ScI57nnNA5ajNFIWKMsygOUVvxfoMtTAQsEEbtmvq9CmQ8oU=
+X-Received: by 2002:a63:e74a:0:b0:478:42f:5a3d with SMTP id
+ j10-20020a63e74a000000b00478042f5a3dmr48968019pgk.3.1670539560762; Thu, 08
+ Dec 2022 14:46:00 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v2 2/2] lsm: Add/fix return values in lsm_hooks.h and fix
- formatting
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>,
-        Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     David Howells <dhowells@redhat.com>, omosnace@redhat.com,
-        john.johansen@canonical.com, kpsingh@kernel.org,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        casey@schaufler-ca.com
-References: <20221128144240.210110-1-roberto.sassu@huaweicloud.com>
- <20221128144240.210110-3-roberto.sassu@huaweicloud.com>
- <CAHC9VhRx=pCcAHMAX+51rpFT+efW7HH=X37YOwUG1tTLxyg=SA@mail.gmail.com>
- <7225e76c09c7ff68937e37ee041fefdd6ccac1c8.camel@huaweicloud.com>
- <0682348d9601ca3847ce9ba035e4ab1b586cf712.camel@huaweicloud.com>
- <CAHC9VhQZ3VKWsNarUGPcHZuoRLgb8owKgbdLymwR759qVyQ+2Q@mail.gmail.com>
- <b989b278a16c48e104b32ba7243e4298491a6056.camel@huaweicloud.com>
- <CAHC9VhSdcyOd01VYtqhJGrgKyG3oZmE_1d0RQymxKv1=ErhduQ@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhSdcyOd01VYtqhJGrgKyG3oZmE_1d0RQymxKv1=ErhduQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20926 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <CAFqZXNs2LF-OoQBUiiSEyranJUXkPLcCfBkMkwFeM6qEwMKCTw@mail.gmail.com>
+ <108a1c80eed41516f85ebb264d0f46f95e86f754.camel@redhat.com>
+ <CAHC9VhSSKN5kh9Kqgj=aCeA92bX1mJm1v4_PnRgua86OHUwE3w@mail.gmail.com>
+ <48dd1e9b21597c46e4767290e5892c01850a45ff.camel@redhat.com>
+ <CAHC9VhT0rRhr7Ty_p3Ld5O+Ltf8a8XSXcyik7tFpDRMrTfsF+A@mail.gmail.com>
+ <50e7ea22119c3afcb4be5a4b6ad9747465693d10.camel@redhat.com> <CAFqZXNtOku4vr5RrQU4vcvCVz5iK79CimeUVHu0S=QoN-QVEjg@mail.gmail.com>
+In-Reply-To: <CAFqZXNtOku4vr5RrQU4vcvCVz5iK79CimeUVHu0S=QoN-QVEjg@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 8 Dec 2022 17:45:49 -0500
+Message-ID: <CAHC9VhSQnhH3UL4gqzu+YiA1Q3YyLLCv88gLJOvw-0+uw5Lvkw@mail.gmail.com>
+Subject: Re: Broken SELinux/LSM labeling with MPTCP and accept(2)
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Paolo Abeni <pabeni@redhat.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>, mptcp@lists.linux.dev,
+        network dev <netdev@vger.kernel.org>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/8/2022 1:59 PM, Paul Moore wrote:
-> On Thu, Dec 8, 2022 at 4:29 AM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
->> On Wed, 2022-12-07 at 14:34 -0500, Paul Moore wrote:
->>> On Wed, Dec 7, 2022 at 4:18 AM Roberto Sassu
->>> <roberto.sassu@huaweicloud.com> wrote:
->>>> For this patch, I saw it is already in lsm/next. Paul, should I do an
->>>> incremental patch or change the one in the repo and you force push it?
->>>> I would just remove the three lines after the parameters description.
->>> Just send a patch against the current lsm/next branch to remove those
->>> lines, and please do it ASAP as the merge window opens this
->>> weekend/Monday.
->> Ok, was about to send but I would need a clarification first.
->>
->> In mount_api.rst, there is for security_fs_context_parse_param():
->>
->>      The value pointed to by param may be modified (if a string) or stolen
->>      (provided the value pointer is NULL'd out).  If it is stolen, 0 must be
->>      returned to prevent it being passed to the filesystem.
->>
->> Looking at security.c:
->>
->>         hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
->>                              list) {
->>                 trc = hp->hook.fs_context_parse_param(fc, param);
->>                 if (trc == 0)
->>                         rc = 0;
->>                 else if (trc != -ENOPARAM)
->>                         return trc;
->>         }
->>
->> If, as mount_api.rst says, the value is modified by an LSM or stolen,
->> should it be passed to other LSMs too?
-> All of the LSMs should be using fs_parse() in their
-> fs_context_parse_param() hook to identify the mount options that they
-> own, skipping those they do not (fs_parse() would return -ENOPARAM in
-> those cases).  I don't believe we currently have any mount options
-> that are shared across the different LSMs, so I believe this is a
-> non-issue.
+On Tue, Dec 6, 2022 at 9:43 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> On Mon, Dec 5, 2022 at 9:58 PM Paolo Abeni <pabeni@redhat.com> wrote:
+> >
+> > On Fri, 2022-12-02 at 15:16 -0500, Paul Moore wrote:
+> [...]
+> > > What if we added a new LSM call in mptcp_subflow_create_socket(), just
+> > > after the sock_create_kern() call?
+> >
+> > That should work, I think. I would like to propose a (last) attempt
+> > that will not need an additional selinux hook - to try to minimize the
+> > required changes and avoid unnecessary addional work for current and
+> > future LSM mainteniance and creation.
+> >
+> > I tested the following patch and passes the reproducer (and mptcp self-
+> > tests). Basically it introduces and uses a sock_create_nosec variant,
+> > to allow mptcp_subflow_create_socket() calling
+> > security_socket_post_create() with the corrct arguments. WDYT?
 
-There aren't any today. SELinux and Smack are the only LSMs with
-mount options. Smack mount options all begin with "smack", so it's
-unlikely there is going to be a future overlap. I'd hate to do the
-/proc/self/attr/current battle over again, so I recommend that any
-new LSM that uses mount options be required to use an identifying
-prefix. I don't see any way that using the same option name for
-mounts, even if the use is the same, won't end in tears.
+I'm still working my way through the recent patch posted by Paolo
+(sorry, I lost some time due to build failures and other discussions),
+but I wanted to comment on a few things in Ondrej's email ...
 
->
-> In the future if we ever find the need to share mount options across
-> different LSMs we will need some additional work to ensure it is
-> handled properly, but I don't think we need to worry too much about
-> that now.
->
+> This seems like a step in the right direction, but I wonder if we
+> shouldn't solve the current overloading of the "kern" flag more
+> explicitly - i.e. split it into two flags: one to indicate that the
+> socket will only be used internally by the kernel ("internal") and
+> another one to indicate if it should be labeled according to the
+> current task or as a kernel-created socket ("kern"?).
+
+The problem here is that labeling behavior isn't always going to be
+the same across LSMs, or rather I don't want to force a specific
+labeling behavior at the LSM layer.  We pass the @kern flag to
+indicate a kernel socket that is not visible to userspace, but we
+leave it up to the individual LSMs to handle that as they see fit
+(including if they should label sockets based on @current, an
+associated socket, or something else).
+
+> Another concern I have about this approach is whether it is possible
+> (in some more advanced scenario) for mptcp_subflow_create_socket() to
+> be called in the context of a different task than the one
+> creating/handling the main socket. Because then a potential socket
+> accepted from the new subflow socket would end up with an unexpected
+> (and probably semantically wrong) label. Glancing over the call tree,
+> it seems it can be called via some netlink commands - presumably
+> intended to be used by mptcpd?
+
+Yes, this is something we need to be careful about, if we want to
+treat all of these subflows just as we would treat the main socket,
+the subflows need to be labeled the same as the main socket,
+regardless of the process which creates them.
+
+As a FYI to the non-SELinux folks, a socket's label can be important
+even when it is not visible to userspace as the label is used both to
+set the on-the-wire label (CIPSO, CALIPSO, labeled IPsec) and in the
+per-packet access controls (see security_sock_rcv_skb()).
+
+-- 
+paul-moore.com
