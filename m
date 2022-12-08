@@ -2,158 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D926C10F1E
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Dec 2022 16:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9942C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Dec 2022 22:00:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229993AbiLHQqu (ORCPT
+        id S230162AbiLHWAA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Dec 2022 11:46:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52442 "EHLO
+        Thu, 8 Dec 2022 17:00:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbiLHQqu (ORCPT
+        with ESMTP id S230146AbiLHV7c (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Dec 2022 11:46:50 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4005AD9B9;
-        Thu,  8 Dec 2022 08:46:47 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4NSfy10j7pz9xG9q;
-        Fri,  9 Dec 2022 00:39:37 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwDHs3DWFJJjUyvOAA--.59467S2;
-        Thu, 08 Dec 2022 17:46:23 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     dhowells@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] KEYS: asymmetric: Make a copy of sig and digest in vmalloced stack
-Date:   Thu,  8 Dec 2022 17:46:10 +0100
-Message-Id: <20221208164610.867747-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 8 Dec 2022 16:59:32 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B954A65B3
+        for <linux-security-module@vger.kernel.org>; Thu,  8 Dec 2022 13:59:20 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id a14so2361601pfa.1
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Dec 2022 13:59:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g16i19egww1EdjGD+zRuacsquJsxBwloaiWcEoNVR9E=;
+        b=WxKa1V6jeJxxo14AlfMldjz0WsyEw+FaBx/HybeIBV0TJkD0adijMV0A/4JxP8WNh6
+         wHL3+5H/cR6dMO4/U9Bj3kTySQO2hGaOxN84MY1dnDEtJeVVTLEN/+Ghq1f81y/Y8VQ8
+         +jpGyBj0+H2zglyjpVNDov9dNqUix8S8TplAu0AWIuiG2IDr2AppxGmc8rRKnOyKk/t9
+         9O8I7AGruiBpdU4TohuFxxMEAqqqELsBBENYFcXgWxxAiKqj55M7Z/h3/R8Aor/2poW8
+         hXR1KKEOQh1uXoRGRkxLyUJpy2O5tXGGzOE9gmf/vYvRXTe+/shARE+/Fhum5MsqgQPF
+         bjVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g16i19egww1EdjGD+zRuacsquJsxBwloaiWcEoNVR9E=;
+        b=wO7qjO/15RQnnEQebYLTm0+w7CVVEFAh10ghNVonr09HPoNkjj4o7AvQLGJNGeBsZb
+         4XK6NWpXsFcOnktTP6E2NAcNcssP6I9jVnhcBM/l6Jod5x0wWW/zrnkN7Rw9p2/wjJzd
+         cO/zJEAKuC+h+IQhlb9JbKZXdJI5grigt3bxgH9oEkCVjG1MVSuJHyv3bS2Wvcp0wgj9
+         aYFURgqeOtSwRtU/p2YyYTzx/MmrBgHehrHMTfLVcv76AXsAe8cAWa7mL1jcGxmPv3oU
+         xQR19x6IiaGOD+gPq5PckKWdpoeChMTxUCfwYmwdQ4oxiV83UuslDQRUswyQ3O1OusYt
+         DiZw==
+X-Gm-Message-State: ANoB5pnZLiWGrLl8D1yzyHDlFfr1LoJ78fXnNwbtYRADYWCj/W3RsWQp
+        r1Jo8EUSNLG8lEJeoBToxWsUl4Q85IueFC4L45CL
+X-Google-Smtp-Source: AA0mqf7suwg0r3ZmbbOjxSTcWJhzHqQ3v2uKPwyphLovzYmK2k21JaK9XAWCHM3WCrDS5+FcFG7JaZTAt+3m6BG89iw=
+X-Received: by 2002:a63:1f63:0:b0:460:ec46:3645 with SMTP id
+ q35-20020a631f63000000b00460ec463645mr88685381pgm.92.1670536759965; Thu, 08
+ Dec 2022 13:59:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwDHs3DWFJJjUyvOAA--.59467S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF4xCry8tF4DCr43Kr4fuFg_yoW5uFWkpa
-        95Wr15tryUGr1Ik3y3C3WxK345Aw4vkr17Ww4fZw45CFsxXrW8C3yIva13WFyfJrykXFWx
-        trWvqws8uF1UXaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-        w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
-        6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-        kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv67AK
-        xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-        xUxo7KDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABF1jj4JxzwAAsL
-X-CFilter-Loop: Reflected
+References: <20221128144240.210110-1-roberto.sassu@huaweicloud.com>
+ <20221128144240.210110-3-roberto.sassu@huaweicloud.com> <CAHC9VhRx=pCcAHMAX+51rpFT+efW7HH=X37YOwUG1tTLxyg=SA@mail.gmail.com>
+ <7225e76c09c7ff68937e37ee041fefdd6ccac1c8.camel@huaweicloud.com>
+ <0682348d9601ca3847ce9ba035e4ab1b586cf712.camel@huaweicloud.com>
+ <CAHC9VhQZ3VKWsNarUGPcHZuoRLgb8owKgbdLymwR759qVyQ+2Q@mail.gmail.com> <b989b278a16c48e104b32ba7243e4298491a6056.camel@huaweicloud.com>
+In-Reply-To: <b989b278a16c48e104b32ba7243e4298491a6056.camel@huaweicloud.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 8 Dec 2022 16:59:08 -0500
+Message-ID: <CAHC9VhSdcyOd01VYtqhJGrgKyG3oZmE_1d0RQymxKv1=ErhduQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] lsm: Add/fix return values in lsm_hooks.h and fix formatting
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     David Howells <dhowells@redhat.com>, casey@schaufler-ca.com,
+        omosnace@redhat.com, john.johansen@canonical.com,
+        kpsingh@kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Thu, Dec 8, 2022 at 4:29 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Wed, 2022-12-07 at 14:34 -0500, Paul Moore wrote:
+> > On Wed, Dec 7, 2022 at 4:18 AM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > For this patch, I saw it is already in lsm/next. Paul, should I do an
+> > > incremental patch or change the one in the repo and you force push it?
+> > > I would just remove the three lines after the parameters description.
+> >
+> > Just send a patch against the current lsm/next branch to remove those
+> > lines, and please do it ASAP as the merge window opens this
+> > weekend/Monday.
+>
+> Ok, was about to send but I would need a clarification first.
+>
+> In mount_api.rst, there is for security_fs_context_parse_param():
+>
+>      The value pointed to by param may be modified (if a string) or stolen
+>      (provided the value pointer is NULL'd out).  If it is stolen, 0 must be
+>      returned to prevent it being passed to the filesystem.
+>
+> Looking at security.c:
+>
+>         hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
+>                              list) {
+>                 trc = hp->hook.fs_context_parse_param(fc, param);
+>                 if (trc == 0)
+>                         rc = 0;
+>                 else if (trc != -ENOPARAM)
+>                         return trc;
+>         }
+>
+> If, as mount_api.rst says, the value is modified by an LSM or stolen,
+> should it be passed to other LSMs too?
 
-Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
-mapping") checks that both the signature and the digest reside in the
-linear mapping area.
+All of the LSMs should be using fs_parse() in their
+fs_context_parse_param() hook to identify the mount options that they
+own, skipping those they do not (fs_parse() would return -ENOPARAM in
+those cases).  I don't believe we currently have any mount options
+that are shared across the different LSMs, so I believe this is a
+non-issue.
 
-However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
-stack support"), made it possible to move the stack in the vmalloc area,
-which is not contiguous, and thus not suitable for sg_set_buf() which needs
-adjacent pages.
+In the future if we ever find the need to share mount options across
+different LSMs we will need some additional work to ensure it is
+handled properly, but I don't think we need to worry too much about
+that now.
 
-Check if the signature and digest passed to public_key_verify_signature()
-are in the linear mapping area and, for those which are not, make a copy in
-the linear mapping area with kmalloc() and adjust the pointer passed to
-sg_set_buf(). Reuse the existing kmalloc() and increase the allocation size
-as needed.
-
-Minimize the number of copies with the compile-time check of
-CONFIG_VMAP_STACK and with the run-time check virt_addr_valid().
-
-Cc: stable@vger.kernel.org # 4.9.x
-Fixes: ba14a194a434 ("fork: Add generic vmalloced stack support")
-Link: https://lore.kernel.org/linux-integrity/Y4pIpxbjBdajymBJ@sol.localdomain/
-Suggested-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- crypto/asymmetric_keys/public_key.c | 39 +++++++++++++++++++++++++----
- 1 file changed, 34 insertions(+), 5 deletions(-)
-
-diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
-index 2f8352e88860..307799ffbc3e 100644
---- a/crypto/asymmetric_keys/public_key.c
-+++ b/crypto/asymmetric_keys/public_key.c
-@@ -363,7 +363,8 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	struct scatterlist src_sg[2];
- 	char alg_name[CRYPTO_MAX_ALG_NAME];
- 	char *key, *ptr;
--	int ret;
-+	char *sig_s, *digest;
-+	int ret, verif_bundle_len;
- 
- 	pr_devel("==>%s()\n", __func__);
- 
-@@ -400,8 +401,21 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	if (!req)
- 		goto error_free_tfm;
- 
--	key = kmalloc(pkey->keylen + sizeof(u32) * 2 + pkey->paramlen,
--		      GFP_KERNEL);
-+	verif_bundle_len = pkey->keylen + sizeof(u32) * 2 + pkey->paramlen;
-+
-+	sig_s = sig->s;
-+	digest = sig->digest;
-+
-+	if (IS_ENABLED(CONFIG_VMAP_STACK)) {
-+		if (!virt_addr_valid(sig_s))
-+			verif_bundle_len += sig->s_size;
-+
-+		if (!virt_addr_valid(digest))
-+			verif_bundle_len += sig->digest_size;
-+	}
-+
-+	/* key points to a buffer which could contain the sig and digest too. */
-+	key = kmalloc(verif_bundle_len, GFP_KERNEL);
- 	if (!key)
- 		goto error_free_req;
- 
-@@ -424,9 +438,24 @@ int public_key_verify_signature(const struct public_key *pkey,
- 			goto error_free_key;
- 	}
- 
-+	if (IS_ENABLED(CONFIG_VMAP_STACK)) {
-+		ptr += pkey->paramlen;
-+
-+		if (!virt_addr_valid(sig_s)) {
-+			sig_s = ptr;
-+			memcpy(sig_s, sig->s, sig->s_size);
-+			ptr += sig->s_size;
-+		}
-+
-+		if (!virt_addr_valid(digest)) {
-+			digest = ptr;
-+			memcpy(digest, sig->digest, sig->digest_size);
-+		}
-+	}
-+
- 	sg_init_table(src_sg, 2);
--	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
--	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
-+	sg_set_buf(&src_sg[0], sig_s, sig->s_size);
-+	sg_set_buf(&src_sg[1], digest, sig->digest_size);
- 	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
- 				   sig->digest_size);
- 	crypto_init_wait(&cwait);
 -- 
-2.25.1
-
+paul-moore.com
