@@ -2,83 +2,104 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95944C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Dec 2022 08:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DCCC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Dec 2022 09:29:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbiLHItS (ORCPT
+        id S230102AbiLHJ3z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Dec 2022 03:49:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48880 "EHLO
+        Thu, 8 Dec 2022 04:29:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229948AbiLHItE (ORCPT
+        with ESMTP id S229786AbiLHJ3v (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Dec 2022 03:49:04 -0500
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898F1686B0
-        for <linux-security-module@vger.kernel.org>; Thu,  8 Dec 2022 00:48:34 -0800 (PST)
-Received: by mail-il1-f198.google.com with SMTP id a14-20020a921a0e000000b00302a8ffa8e5so678906ila.2
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Dec 2022 00:48:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/VqWjUYvuQWzVVThhoLexOpyvD8JYD0kumxHxmjGt2g=;
-        b=NiCRcJ3yiqbN38a2Zg7ryQrLXb2WzjTZJ+6w2/PnMkWdzlcCm3O8SC9OvkRdLuUFY4
-         JWgL/NN3iOx+geAzvhycYLgfKbH0V15tlKrqEXQf+5DVNHd5vatYa8Y7xunaMtjV87Hh
-         2fmtKlmXwHAVu2uoD2DEEOgh77EOJUGlt28RpaGXuI9VV29aw2IzoVgwzjb8QkUlEbKW
-         6Ow1WDp5a3tYVFC5a+vxlPxRuK4Lsh3pBrwblxVec6Q7PFAaij20Ilf8lWZxvvvE1K0R
-         FEXJ6gLQVX5EaYHIjvTb/2mtKgfMig1nfKvF8C9C6KSFGWgbAJp8TQTIWrKaaw3IVSGG
-         fBeQ==
-X-Gm-Message-State: ANoB5plFJQ2kxZhxDi91taS4ckhXxXv29UOeHDMbDZ8fn+ugqETw7dSm
-        menwXSMhzcQBSQ+wFYN95b7Iec4wByYB5QnZr+H0hW7NF2vs
-X-Google-Smtp-Source: AA0mqf7J8Po0jhjVcm8aCQTLmycs2e4R5vkgSAXCxFOqvvhtjFItvSs7WEGS0OdjpuIhvRw2gEFOIhjlmh/2oOAzyftS2OKgKISi
-MIME-Version: 1.0
-X-Received: by 2002:a92:c887:0:b0:302:fd5c:e0a3 with SMTP id
- w7-20020a92c887000000b00302fd5ce0a3mr28917754ilo.116.1670489313757; Thu, 08
- Dec 2022 00:48:33 -0800 (PST)
-Date:   Thu, 08 Dec 2022 00:48:33 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000025d41005ef4d1a72@google.com>
-Subject: [syzbot] linux-next build error (14)
-From:   syzbot <syzbot+5301015e05ed3b325b0d@syzkaller.appspotmail.com>
-To:     apparmor@lists.ubuntu.com, jmorris@namei.org,
-        john.johansen@canonical.com, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
-        paul@paul-moore.com, serge@hallyn.com, sfr@canb.auug.org.au,
-        syzkaller-bugs@googlegroups.com, terrelln@fb.com
+        Thu, 8 Dec 2022 04:29:51 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCE3D1D306;
+        Thu,  8 Dec 2022 01:29:49 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NSTFp12fyz9xFPw;
+        Thu,  8 Dec 2022 17:22:38 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwCXfflzrpFj0QvMAA--.21566S2;
+        Thu, 08 Dec 2022 10:29:31 +0100 (CET)
+Message-ID: <b989b278a16c48e104b32ba7243e4298491a6056.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 2/2] lsm: Add/fix return values in lsm_hooks.h and
+ fix formatting
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     David Howells <dhowells@redhat.com>, casey@schaufler-ca.com,
+        omosnace@redhat.com, john.johansen@canonical.com,
+        kpsingh@kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Thu, 08 Dec 2022 10:29:20 +0100
+In-Reply-To: <CAHC9VhQZ3VKWsNarUGPcHZuoRLgb8owKgbdLymwR759qVyQ+2Q@mail.gmail.com>
+References: <20221128144240.210110-1-roberto.sassu@huaweicloud.com>
+         <20221128144240.210110-3-roberto.sassu@huaweicloud.com>
+         <CAHC9VhRx=pCcAHMAX+51rpFT+efW7HH=X37YOwUG1tTLxyg=SA@mail.gmail.com>
+         <7225e76c09c7ff68937e37ee041fefdd6ccac1c8.camel@huaweicloud.com>
+         <0682348d9601ca3847ce9ba035e4ab1b586cf712.camel@huaweicloud.com>
+         <CAHC9VhQZ3VKWsNarUGPcHZuoRLgb8owKgbdLymwR759qVyQ+2Q@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: GxC2BwCXfflzrpFj0QvMAA--.21566S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZFW8Jr45tryxJFW7XF4fKrg_yoWkuwbEkr
+        Z8Ar48Jw45Crn7Cw12ka1F9r92g3srZw1rZ3WDXr1UWa48GrW5JF40kr93Xrs3CrW8Jrnr
+        WFyDAFZ2kasIvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+        AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+        j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+        kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0E
+        wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+        80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
+        I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
+        k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABF1jj4ZsWgACsG
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On Wed, 2022-12-07 at 14:34 -0500, Paul Moore wrote:
+> On Wed, Dec 7, 2022 at 4:18 AM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > For this patch, I saw it is already in lsm/next. Paul, should I do an
+> > incremental patch or change the one in the repo and you force push it?
+> > I would just remove the three lines after the parameters description.
+> 
+> Just send a patch against the current lsm/next branch to remove those
+> lines, and please do it ASAP as the merge window opens this
+> weekend/Monday.
 
-syzbot found the following issue on:
+Ok, was about to send but I would need a clarification first.
 
-HEAD commit:    f925116b24c0 Add linux-next specific files for 20221208
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15dfabd3880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8b2d3e63e054c24f
-dashboard link: https://syzkaller.appspot.com/bug?extid=5301015e05ed3b325b0d
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+In mount_api.rst, there is for security_fs_context_parse_param():
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5301015e05ed3b325b0d@syzkaller.appspotmail.com
+     The value pointed to by param may be modified (if a string) or stolen
+     (provided the value pointer is NULL'd out).  If it is stolen, 0 must be
+     returned to prevent it being passed to the filesystem.
 
-security/apparmor/policy_unpack.c:316:18: error: unknown type name 'tri'
-security/apparmor/policy_unpack.c:325:10: error: 'TRI_TRUE' undeclared (first use in this function)
-security/apparmor/policy_unpack.c:328:9: error: 'TRI_NONE' undeclared (first use in this function); did you mean 'IRQ_NONE'?
-security/apparmor/policy_unpack.c:331:9: error: 'TRI_FALSE' undeclared (first use in this function)
-security/apparmor/policy_unpack.c:455:42: error: 'TRI_TRUE' undeclared (first use in this function)
-security/apparmor/policy_unpack.c:529:42: error: 'TRI_TRUE' undeclared (first use in this function)
-security/apparmor/policy_unpack.c:559:42: error: 'TRI_TRUE' undeclared (first use in this function)
-security/apparmor/policy_unpack.c:611:42: error: 'TRI_TRUE' undeclared (first use in this function)
-security/apparmor/policy_unpack.c:674:42: error: 'TRI_TRUE' undeclared (first use in this function)
+Looking at security.c:
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+	hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
+			     list) {
+		trc = hp->hook.fs_context_parse_param(fc, param);
+		if (trc == 0)
+			rc = 0;
+		else if (trc != -ENOPARAM)
+			return trc;
+	}
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+If, as mount_api.rst says, the value is modified by an LSM or stolen,
+should it be passed to other LSMs too?
+
+Thanks
+
+Roberto
+
