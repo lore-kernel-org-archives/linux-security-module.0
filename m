@@ -2,174 +2,183 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C02EEC3DA6D
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Dec 2022 16:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4F8C04FDE
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Dec 2022 17:03:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229468AbiLIQFd (ORCPT
+        id S229977AbiLIRD5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Dec 2022 11:05:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49744 "EHLO
+        Fri, 9 Dec 2022 12:03:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230149AbiLIQFY (ORCPT
+        with ESMTP id S229913AbiLIRDL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Dec 2022 11:05:24 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CD7B7D08C
-        for <linux-security-module@vger.kernel.org>; Fri,  9 Dec 2022 08:05:05 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id h33so3806922pgm.9
-        for <linux-security-module@vger.kernel.org>; Fri, 09 Dec 2022 08:05:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dO2vEZu0Db7wP8hwByIkT/4WBK5RsSRu/0g8CrsVk0Q=;
-        b=Nz9hhcL5VUT1DNeWW7Mvl2m+8tMK4KUW9ZM63sJBU7BZC5BXcP0QrGhhfixxQYFJr6
-         jaW0mxnuLY9YKm9/eIJoGL3j7a2Nnz/LO5wqZBulnXeLBCJR0YvayQPJuPVgnkWRqUzs
-         VIPCWg63G260HdzCt34cupUwQj6+eayz1j76w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dO2vEZu0Db7wP8hwByIkT/4WBK5RsSRu/0g8CrsVk0Q=;
-        b=C25TGqj5Ei3uVWRYQuOo29zo5cyz2HLhAOOXAsub1i+2xbb2XUkptZjUsrj2KA/wYg
-         IBnsoAt1TnpxSHKxg9qhmsf3BnmVGhT64KKr2kZbyBXXN/6pxe0Hvahwg+MW9+8eMIQt
-         2Zq11dvARjd/LS12LX8Dy//Us8bZxo6EIA/MgeiahQUR5+ebyghTRDTBseC3CV8aWYFD
-         Qgvwk+sRHrYSH6ROGyY7OBszWCOQ/GwZ8mlK1bXYSlVyTwir+hzofJKq5TnUSgCWR44i
-         Ow8XX/WfFHE4mX8z/S+QH0cQPWnqCe+Ab97z1mM2kPRf/oGY27Ci12RG8GsOZ13HBnb4
-         DOBQ==
-X-Gm-Message-State: ANoB5png4PTA1fJ2Oj1nuc7gXZVf2quVVwi+F1eRKEgpMhcNUg4z1i65
-        PRu2WZUY7zPyUsjFAftL7c1rMQ==
-X-Google-Smtp-Source: AA0mqf4lfbpdBsIBddA74mG397/PLLPHeHkEdS4bVrJWMAdItf41izLMuA+5lLn6aq2S10oXpsQr3A==
-X-Received: by 2002:aa7:858a:0:b0:575:de28:b1f4 with SMTP id w10-20020aa7858a000000b00575de28b1f4mr5165976pfn.16.1670601905655;
-        Fri, 09 Dec 2022 08:05:05 -0800 (PST)
-Received: from jeffxud.c.googlers.com.com (30.202.168.34.bc.googleusercontent.com. [34.168.202.30])
-        by smtp.gmail.com with ESMTPSA id a15-20020aa795af000000b00576670cc170sm1460504pfk.93.2022.12.09.08.05.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Dec 2022 08:05:05 -0800 (PST)
-From:   jeffxu@chromium.org
-To:     skhan@linuxfoundation.org, keescook@chromium.org
-Cc:     akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
-        dverkamp@chromium.org, hughd@google.com, jeffxu@google.com,
-        jorgelo@chromium.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        jannh@google.com, linux-hardening@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH v7 6/6] mm/memfd: security hook for memfd_create
-Date:   Fri,  9 Dec 2022 16:04:53 +0000
-Message-Id: <20221209160453.3246150-7-jeffxu@google.com>
-X-Mailer: git-send-email 2.39.0.rc1.256.g54fd8350bd-goog
-In-Reply-To: <20221209160453.3246150-1-jeffxu@google.com>
-References: <20221209160453.3246150-1-jeffxu@google.com>
+        Fri, 9 Dec 2022 12:03:11 -0500
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4615510F5
+        for <linux-security-module@vger.kernel.org>; Fri,  9 Dec 2022 09:02:36 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NTHQ16TPNzMrMx7;
+        Fri,  9 Dec 2022 18:02:33 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4NTHPz666szMppKS;
+        Fri,  9 Dec 2022 18:02:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1670605353;
+        bh=ER/O16Wvvmh5jXZOOsJ2vrMr2wxFrTtNVAuRf3h5MeI=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=wvS/y5OTqtIOTp3zIO2oDvhyqZp8Nk2/XnJf8C/4l224jQgY1eC326gYO1vKQwoSG
+         0RNPxkYLzENF5fmxTNk3DcQ5PPIdPlar9bCcv18CpxPCCO2qhvLTv83ddIMK7KNDmE
+         RU9uIcUb/dbPpWaS7ZMbBSRP/RLKcHnObUdQpsVc=
+Message-ID: <02de3b43-da36-5bc7-f393-a026d9c6ea0a@digikod.net>
+Date:   Fri, 9 Dec 2022 18:02:31 +0100
 MIME-Version: 1.0
+User-Agent: 
+Subject: Re: [PATCH v1] landlock: Explain file descriptor access rights
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     Alejandro Colomar <alx.manpages@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20221205112621.3530557-1-mic@digikod.net> <Y5DSFwHoYZwYEn0T@nuc>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <Y5DSFwHoYZwYEn0T@nuc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Jeff Xu <jeffxu@google.com>
+Thanks Günther, I'll send a v2.
 
-The new security_memfd_create allows lsm to check flags of
-memfd_create.
-
-The security by default system (such as chromeos) can use this
-to implement system wide lsm to allow only non-executable memfd
-being created.
-
-Signed-off-by: Jeff Xu <jeffxu@google.com>
-Reported-by: kernel test robot <lkp@intel.com>
----
- include/linux/lsm_hook_defs.h | 1 +
- include/linux/lsm_hooks.h     | 4 ++++
- include/linux/security.h      | 6 ++++++
- mm/memfd.c                    | 5 +++++
- security/security.c           | 5 +++++
- 5 files changed, 21 insertions(+)
-
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index ec119da1d89b..fd40840927c8 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -164,6 +164,7 @@ LSM_HOOK(int, 0, file_alloc_security, struct file *file)
- LSM_HOOK(void, LSM_RET_VOID, file_free_security, struct file *file)
- LSM_HOOK(int, 0, file_ioctl, struct file *file, unsigned int cmd,
- 	 unsigned long arg)
-+LSM_HOOK(int, 0, memfd_create, char *name, unsigned int flags)
- LSM_HOOK(int, 0, mmap_addr, unsigned long addr)
- LSM_HOOK(int, 0, mmap_file, struct file *file, unsigned long reqprot,
- 	 unsigned long prot, unsigned long flags)
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 4ec80b96c22e..5a18a6552278 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -543,6 +543,10 @@
-  *	simple integer value.  When @arg represents a user space pointer, it
-  *	should never be used by the security module.
-  *	Return 0 if permission is granted.
-+ * @memfd_create:
-+ *	@name is the name of memfd file.
-+ *	@flags is the flags used in memfd_create.
-+ *	Return 0 if permission is granted.
-  * @mmap_addr :
-  *	Check permissions for a mmap operation at @addr.
-  *	@addr contains virtual address that will be used for the operation.
-diff --git a/include/linux/security.h b/include/linux/security.h
-index ca1b7109c0db..5b87a780822a 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -384,6 +384,7 @@ int security_file_permission(struct file *file, int mask);
- int security_file_alloc(struct file *file);
- void security_file_free(struct file *file);
- int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-+int security_memfd_create(char *name, unsigned int flags);
- int security_mmap_file(struct file *file, unsigned long prot,
- 			unsigned long flags);
- int security_mmap_addr(unsigned long addr);
-@@ -963,6 +964,11 @@ static inline int security_file_ioctl(struct file *file, unsigned int cmd,
- 	return 0;
- }
- 
-+static inline int security_memfd_create(char *name, unsigned int flags)
-+{
-+	return 0;
-+}
-+
- static inline int security_mmap_file(struct file *file, unsigned long prot,
- 				     unsigned long flags)
- {
-diff --git a/mm/memfd.c b/mm/memfd.c
-index 92f0a5765f7c..f04ed5f0474f 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -356,6 +356,11 @@ SYSCALL_DEFINE2(memfd_create,
- 		goto err_name;
- 	}
- 
-+	/* security hook for memfd_create */
-+	error = security_memfd_create(name, flags);
-+	if (error)
-+		return error;
-+
- 	if (flags & MFD_HUGETLB) {
- 		file = hugetlb_file_setup(name, 0, VM_NORESERVE,
- 					HUGETLB_ANONHUGE_INODE,
-diff --git a/security/security.c b/security/security.c
-index 79d82cb6e469..57788cf94075 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1010,6 +1010,11 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
- }
- EXPORT_SYMBOL(security_sb_clone_mnt_opts);
- 
-+int security_memfd_create(char *name, unsigned int flags)
-+{
-+	return call_int_hook(memfd_create, 0, name, flags);
-+}
-+
- int security_move_mount(const struct path *from_path, const struct path *to_path)
- {
- 	return call_int_hook(move_mount, 0, from_path, to_path);
--- 
-2.39.0.rc1.256.g54fd8350bd-goog
-
+On 07/12/2022 18:49, Günther Noack wrote:
+> Hi!
+> 
+> Thanks for sending this patch! I have overlooked to update this in the
+> original patch set.
+> 
+> On Mon, Dec 05, 2022 at 12:26:21PM +0100, Mickaël Salaün wrote:
+>> Starting with LANDLOCK_ACCESS_FS_TRUNCATE, it is worth explaining why we
+>> choose to restrict access checks at open time.  This new "File
+>> descriptor access rights" section is complementary to the existing
+>> "Inode access rights" section.
+>>
+>> Cc: Günther Noack <gnoack3000@gmail.com>
+>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>> Link: https://lore.kernel.org/r/20221205112621.3530557-1-mic@digikod.net
+>> ---
+>>   Documentation/security/landlock.rst | 25 ++++++++++++++++++++++---
+>>   1 file changed, 22 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
+>> index c0029d5d02eb..bd0af6031ebb 100644
+>> --- a/Documentation/security/landlock.rst
+>> +++ b/Documentation/security/landlock.rst
+>> @@ -7,7 +7,7 @@ Landlock LSM: kernel documentation
+>>   ==================================
+>>   
+>>   :Author: Mickaël Salaün
+>> -:Date: September 2022
+>> +:Date: November 2022
+>>   
+>>   Landlock's goal is to create scoped access-control (i.e. sandboxing).  To
+>>   harden a whole system, this feature should be available to any process,
+>> @@ -45,8 +45,8 @@ Guiding principles for safe access controls
+>>   Design choices
+>>   ==============
+>>   
+>> -Filesystem access rights
+>> -------------------------
+>> +Inode access rights
+>> +-------------------
+>>   
+>>   All access rights are tied to an inode and what can be accessed through it.
+>>   Reading the content of a directory does not imply to be allowed to read the
+>> @@ -57,6 +57,25 @@ directory, not the unlinked inode.  This is the reason why
+>>   ``LANDLOCK_ACCESS_FS_REMOVE_FILE`` or ``LANDLOCK_ACCESS_FS_REFER`` are not
+>>   allowed to be tied to files but only to directories.
+>>   
+>> +File descriptor access rights
+>> +-----------------------------
+>> +
+>> +Access rights are checked and tied to file descriptors at open time.  As a
+>> +consequence, it may be allowed to create a file without being allowed to
+>> +truncate it if the file hierarchy doesn't grant such access right.  The
+>> +rationale is that this approach is simple and consistent with all access
+>> +rights, however file requests are based on path or based on file descriptor
+>> +(obtained with the same path, by a thread restricted with the same Landlock
+>> +domain).  For instance, updating an application from using :manpage:`mknod` and
+>> +:manpage:`truncate` to initialize a file (i.e. path-based), to using
+>> +:manpage:`open` and :manpage:`ftruncate` to initialize the same file (i.e. file
+>> +descriptor-based) should work the same way with the same Landlock restrictions.
+> 
+> Nit: The paragraph seems a bit long and is mixing more general
+> considerations with examples. Maybe they could be split into separate
+> paragraphs?
+> 
+> Regarding the "As a consequence..." example: I would word it as "...it
+> may be allowed to open a file for writing without being allowed to
+> ftruncate the resulting file descriptor...".
+> 
+> The example you are giving with creating files is also accurate, but
+> it is potentially confusing, because creat() and open(..., O_TRUNC)
+> are also implicitly truncating files when opening the file.
+> 
+> Regarding "The rationale is that this approach is simple and
+> consistent...": The word "simple" is often a sign that we could be
+> more concrete, and there is also a risk that a reader might not
+> perceive it as simple ;)  How about this:
+> 
+> ```
+> 
+> The rationale is that equivalent sequences of operations should lead
+> to the same results, when they are executed under the same Landlock
+> domain.
+> 
+> For example, for the LANDLOCK_ACCESS_FS_TRUNCATE right, the following
+> sequences of operations are roughly equivalent and should have the
+> same result:
+> 
+> * truncate(path)
+> * fd = open(path, O_WRONLY); ftruncate(fd); close(fd)
+> 
+> ```
+> 
+> (I think it's a bit more readable with bullet points, and the
+> truncate/ftruncate example might be a bit more familiar than the
+> somewhat unusual mknod?)
+> 
+>> +
+>> +Processes not sandboxed by Landlock may still be restricted for operations on
+>> +file descriptors coming from a sandboxed process.  Indeed, this is required to
+>> +keep a consistent access control over the whole system, and avoid unattended
+>> +bypasses through file descriptor passing (i.e. confused deputy attack).
+> 
+> "May still be restricted" is leaving the reader a bit in the dark
+> about the exact circumstances where this might happen? I think we
+> could be more bold and give a guarantee here, like:
+> 
+> ```
+> 
+> Access rights attached to file descriptors are retained even if the
+> file descriptor is passed between Unix processes (e.g. through a Unix
+> Domain Socket). The access rights will be enforced even if the
+> receiving process is not sandboxed by Landlock.
+> 
+> ```
+> 
+> --Günther
+> 
+>> +
+>>   Tests
+>>   =====
+>>   
+>>
+>> base-commit: 0b4ab8cd635e8b21e42c14b9e4810ca701babd11
+>> -- 
+>> 2.38.1
+>>
+> 
