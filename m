@@ -2,97 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3410BC4167B
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Dec 2022 17:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 252E9C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Dec 2022 18:15:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230142AbiLIRlv (ORCPT
+        id S229722AbiLISPQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Dec 2022 12:41:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54540 "EHLO
+        Fri, 9 Dec 2022 13:15:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbiLIRls (ORCPT
+        with ESMTP id S229517AbiLISPP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Dec 2022 12:41:48 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EDB18C6AE
-        for <linux-security-module@vger.kernel.org>; Fri,  9 Dec 2022 09:41:44 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id v13-20020a17090a6b0d00b00219c3be9830so5670583pjj.4
-        for <linux-security-module@vger.kernel.org>; Fri, 09 Dec 2022 09:41:44 -0800 (PST)
+        Fri, 9 Dec 2022 13:15:15 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1A65A4334
+        for <linux-security-module@vger.kernel.org>; Fri,  9 Dec 2022 10:15:14 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id o12so5589362pjo.4
+        for <linux-security-module@vger.kernel.org>; Fri, 09 Dec 2022 10:15:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZFm1mHWqGIzhe+rb1eJUuw0XvgXopgBYaEtqlXPVfz0=;
-        b=hKQY4J/pRm6CWAMtVWIamF1UR1S5ytG4Q0dHLvMKrbYlyUycxPoWBv9Nvh4aE85080
-         MWzlNOjWwFO925vt2GUNcS/9BsF/orNKSvNrMiJHpxpXZP/fsRzj2P95wFaUt+bI8jC4
-         HKRo33TkZwcuRzKPFMZ/Et6g/CaKhLpD6XEakiYyIPyXFiTK9hpXRej8x43ZakzvAdnu
-         cc2uWLlT8LDekFoJ0DodzV9KIG5fEqwrWeJJE5FFSWTew4hhwEfHkkmQuMbzZJ1BkUaR
-         /AoTD8PntICNQW80RuAfzK6ZOG6OUwhJeXxnL+Z8dW9hRID7YD/0yMk+1SSU/RwDz4Iv
-         IAeg==
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UGtkhaHKIrr5OpNYU4T9L+BnCs/0pP1qyXvWMaI760s=;
+        b=6iTO86Yg/c+D/tyDbB1/u7VSMypyassCrDFcKnXQLmk+pJtNANCaCBZuPVolwpgZPD
+         5nhxxtWuGJ2hOBupmq8Zp03kmnFxZTPpg4ncChc9D84/DYQEhZ6L78LuSbF4rg7/5ML+
+         PHzcnP+a9LvHU+6LbXtQRNYCgdeZZP4Rsn2bGT97VZ3TYa9w4c5m1P0JrOjGxKzzkyQx
+         zYy0WDCkxyrXBY2SRUWDt5YZ5/rAOeHt7q/EmCpBIX4Qc8ulYIKshX6FTvXnyGFniucB
+         qdAnrLLt90D1lPP44uJhr8AnfFHJDV6Hf/XTPtyy0NYDd3GXcJn9j1Z0KMbiKPaXD8y9
+         y9XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZFm1mHWqGIzhe+rb1eJUuw0XvgXopgBYaEtqlXPVfz0=;
-        b=TIBZz8BPt6Scj4o0plhACqEgG7maz5DZE4k6nR1Av2yazUbjSBzpZVmjxb+pBpO9CG
-         qlmz7r+LehV+CWuOCS2b8SldnTKi7xiyGnMnqmJYWI/8WogleqdmWsNA0qk4URF6buO9
-         /JQ/TP/oJp7ae4YQyIUBG81vJaAVJWGEAaJee/z/e3TH3l9S4pJGCTjtnpx/lWNUvL80
-         TrPlENXPg/qmEdL/IyKRiKsXKj+Yxaiwe8LUOZ2Ts/Xp0GCGiCSdFrwlnoXeMiBl/WAZ
-         EPo/hQVXFQLS1iL0FvhGoEBzm90KRq+D4c/E/JGDGB8tjBS8DSTuTj+2HbVMlHk3zW0g
-         7BFQ==
-X-Gm-Message-State: ANoB5pnuAiJPeRYtkDoIHnQnufoYcVfw7FlCiLKi35yqCwr5fJthaTHv
-        15fBOCPfdn26pLhERlRTdJ5O9yK70DuwRu9rAVR7
-X-Google-Smtp-Source: AA0mqf42Th/ALMFAQak9uQXYbmo+LSPCJ2qrOZQ93/pWBADQWGsh/kyFsqjnomlO+PB/OJ41SRslxU9sOKyJx0wF70I=
-X-Received: by 2002:a17:90b:2743:b0:20d:4173:faf9 with SMTP id
- qi3-20020a17090b274300b0020d4173faf9mr108635116pjb.147.1670607703640; Fri, 09
- Dec 2022 09:41:43 -0800 (PST)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UGtkhaHKIrr5OpNYU4T9L+BnCs/0pP1qyXvWMaI760s=;
+        b=jqEf/6L2JgtMa225RcgDPLI6Kn1hAs++asgMv8FfEcEZoiLGJZ0y6pi3orpS4+qUk3
+         WdYjYwdOJu0+ZHehyOWMq/FPQxILXEAwtnVBoBOSic+QpxY437oC+1DztG44/96Gf323
+         /cMyhyPacyfJX4f9zuioLx262lDDpINehQkhgDgz17ni8ghK1u4EE23tPwo/W3QZFZoi
+         P1fhHWDflkbI7EZZ7xjq3nteqSV0C4Ia+UH+B8//rjBomENG7Fu7H54EWTH/3t5PW+Nl
+         OytptQRnqmv0m2qCsGjYx05x34tv9UdVKHERinQtKeu+TThJXHluL5EHoOGbof8YwTM7
+         U/SA==
+X-Gm-Message-State: ANoB5plkx4cnQPrBZHjXAUp8ZIOaWk7S3HuK3T7ZVQQWIZL3z7AtHPwq
+        BfS4pI4nS0Da42JiI+r39xy5My6kRCdZyjkdpkKF
+X-Google-Smtp-Source: AA0mqf4XkzUN61EgDM5th316VM+D1Q3XG+pvsxXjlS+qJMhlXby8XRLO4K+xY63ljp1PmYb4MaI6gOJ3nG0Lf1RB7sE=
+X-Received: by 2002:a17:90a:2f22:b0:219:8ee5:8dc0 with SMTP id
+ s31-20020a17090a2f2200b002198ee58dc0mr31097837pjd.72.1670609714373; Fri, 09
+ Dec 2022 10:15:14 -0800 (PST)
 MIME-Version: 1.0
-References: <20221209082936.892416-1-roberto.sassu@huaweicloud.com> <20221209082936.892416-2-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20221209082936.892416-2-roberto.sassu@huaweicloud.com>
+References: <20221209160453.3246150-1-jeffxu@google.com>
+In-Reply-To: <20221209160453.3246150-1-jeffxu@google.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 9 Dec 2022 12:41:32 -0500
-Message-ID: <CAHC9VhSz6b9AcpKzAn2Lz_9SW0yNqiQ0Ub8fXytFy7sSBmXipQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] doc: Fix fs_context_parse_param description in mount_api.rst
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     corbet@lwn.net, casey@schaufler-ca.com, omosnace@redhat.com,
-        john.johansen@canonical.com, kpsingh@kernel.org,
-        bpf@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Fri, 9 Dec 2022 13:15:03 -0500
+Message-ID: <CAHC9VhQ2P0rif2hiVGMGafWXQyZqPQc-yGQDEzjEehH1gzWgSA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/6] mm/memfd: introduce MFD_NOEXEC_SEAL and MFD_EXEC
+To:     jeffxu@chromium.org
+Cc:     skhan@linuxfoundation.org, keescook@chromium.org,
+        akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
+        dverkamp@chromium.org, hughd@google.com, jeffxu@google.com,
+        jorgelo@chromium.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        jannh@google.com, linux-hardening@vger.kernel.org,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 9, 2022 at 3:30 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
+On Fri, Dec 9, 2022 at 11:05 AM <jeffxu@chromium.org> wrote:
+> From: Jeff Xu <jeffxu@google.com>
 >
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+> Since Linux introduced the memfd feature, memfd have always had their
+> execute bit set, and the memfd_create() syscall doesn't allow setting
+> it differently.
 >
-> Align with the description of fs_context_parse_param in lsm_hooks.h, which
-> seems the right one according to the code.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  Documentation/filesystems/mount_api.rst | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+> However, in a secure by default system, such as ChromeOS, (where all
+> executables should come from the rootfs, which is protected by Verified
+> boot), this executable nature of memfd opens a door for NoExec bypass
+> and enables =E2=80=9Cconfused deputy attack=E2=80=9D.  E.g, in VRP bug [1=
+]: cros_vm
+> process created a memfd to share the content with an external process,
+> however the memfd is overwritten and used for executing arbitrary code
+> and root escalation. [2] lists more VRP in this kind.
 
-I'm going to leave this patch as a "hold" for right now.  The existing
-text is arguably not great, but I'm not really in love with the
-replacement text taken from the LSM hook comments; given the merge
-window opens in a couple of days, we don't have much time to fiddle
-with the wording so let's just hold this for a little bit.
+...
 
-These comment corrections (which are very welcome!) have also reminded
-me that we really should move the hook comment blocks out of the
-header file and into security.c like every other kernel function.
-This should help increase their discoverability while also making it
-easier to maintain the comments over time.  I'm going to post a first
-pass at this as soon as the merge window closes, and once that is done
-we can do further work to cleanup the descriptions and add more detail
-(including notes both for the other kernel subsystems that call the
-hooks and the LSM devs who provide implementations).
+> [1] https://crbug.com/1305411
 
--- 
+Can you make this accessible so those of us on the public lists can
+view this bug?  If not, please remove it from future postings and
+adjust your description accordingly.
+
+--=20
 paul-moore.com
