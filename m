@@ -2,109 +2,98 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF63C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Dec 2022 00:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 564D5C04FDE
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Dec 2022 08:45:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229752AbiLIAHi (ORCPT
+        id S229717AbiLIIpT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Dec 2022 19:07:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43432 "EHLO
+        Fri, 9 Dec 2022 03:45:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiLIAHg (ORCPT
+        with ESMTP id S229478AbiLIIpS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Dec 2022 19:07:36 -0500
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0862F60;
-        Thu,  8 Dec 2022 16:07:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1670544454; x=1702080454;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=qCofqFGCS5j7U2NTaP/Znc47BVXA3zQXJphBmGHDggQ=;
-  b=bhb5q6IMAURpGWrPFykqfNtsdnPu3AiceMDjydxHnsvTVrVVs+WpSNTc
-   1az0DawG7NkfYE8LZ1sobxJFRTAnHv39TzRMV75lRGJ//3HPf/hZpDqRY
-   gME1yXGx5gddD0nTlMfHSuxpqYlE7rRin0DhLExIoLIuGK3bPyOqByAYR
-   RRBV7sRzfoz4X3ipp8xMQYqcZ3lQxJ6c/p+ql/HAMI/vaXzW8uQbzVHXR
-   C9QwqFM04kjC7sQG/HkN+bQNAqKMJ6jlsCPCBF2O7kfOhnycSNRG4Q56N
-   3FX1CrVxBv8OJFs7/vCjshA//A8TBugBNxQwuxBNRfHYqLtkvxLGE6Kx6
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10555"; a="297691200"
-X-IronPort-AV: E=Sophos;i="5.96,228,1665471600"; 
-   d="scan'208";a="297691200"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2022 16:07:17 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10555"; a="789527897"
-X-IronPort-AV: E=Sophos;i="5.96,228,1665471600"; 
-   d="scan'208";a="789527897"
-Received: from cgbowman-mobl.amr.corp.intel.com ([10.212.198.234])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2022 16:07:16 -0800
-Date:   Thu, 8 Dec 2022 16:07:16 -0800 (PST)
-From:   Mat Martineau <mathew.j.martineau@linux.intel.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-cc:     Paolo Abeni <pabeni@redhat.com>, mptcp@lists.linux.dev,
-        Paul Moore <paul@paul-moore.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH mptcp-net] mptcp: fix LSM labeling for passive msk
-In-Reply-To: <fc052c3c-7545-4d84-05d8-adb5659348a1@schaufler-ca.com>
-Message-ID: <f84f2394-ae01-d55f-a990-9adca8f314a0@linux.intel.com>
-References: <ffee337de5d6e447185b87ade65cc27f0b3576db.1670434580.git.pabeni@redhat.com> <a3c81322-36b5-a289-c07b-15d2be75b02d@linux.intel.com> <fc052c3c-7545-4d84-05d8-adb5659348a1@schaufler-ca.com>
+        Fri, 9 Dec 2022 03:45:18 -0500
+X-Greylist: delayed 907 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 09 Dec 2022 00:45:17 PST
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4F494FF83;
+        Fri,  9 Dec 2022 00:45:16 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4NT3v26L37z9v7bc;
+        Fri,  9 Dec 2022 16:23:26 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwBnUG318ZJjXxnRAA--.238S3;
+        Fri, 09 Dec 2022 09:29:55 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     corbet@lwn.net, paul@paul-moore.com, casey@schaufler-ca.com,
+        omosnace@redhat.com, john.johansen@canonical.com,
+        kpsingh@kernel.org
+Cc:     bpf@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH 2/2] doc: Fix fs_context_parse_param description in mount_api.rst
+Date:   Fri,  9 Dec 2022 09:29:36 +0100
+Message-Id: <20221209082936.892416-2-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221209082936.892416-1-roberto.sassu@huaweicloud.com>
+References: <20221209082936.892416-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: LxC2BwBnUG318ZJjXxnRAA--.238S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF4ruw48Xw1xGw4kCrW3ZFb_yoW8XFW5pa
+        yF9r18K3s7Jr10kr98Ca1rXFWfCrs2yF4jgFWvvw18ZwsIqr1F9rnxKF1Y9r18Ga48uFWY
+        qr4S9Fyj9F9rA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
+        A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+        w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+        WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+        Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
+        Ij6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
+        Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI
+        0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
+        67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
+        IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
+        14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+        0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0An
+        Y5UUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgABBF1jj4J1LgABsu
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 8 Dec 2022, Casey Schaufler wrote:
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-> On 12/7/2022 6:19 PM, Mat Martineau wrote:
->> On Wed, 7 Dec 2022, Paolo Abeni wrote:
->>
->>> MPTCP sockets created via accept() inherit their LSM label
->>> from the initial request socket, which in turn get it from the
->>> listener socket's first subflow. The latter is a kernel socket,
->>> and get the relevant labeling at creation time.
->>>
->>> Due to all the above even the accepted MPTCP socket get a kernel
->>> label, causing unexpected behaviour and failure on later LSM tests.
->>>
->>> Address the issue factoring out a socket creation helper that does
->>> not include the post-creation LSM checks. Use such helper to create
->>> mptcp subflow as in-kernel sockets and doing explicitly LSM validation:
->>> vs the current user for the first subflow, as a kernel socket otherwise.
->>>
->>> Fixes: 0c14846032f2 ("mptcp: fix security context on server socket")
->>> Reported-by: Ondrej Mosnacek <omosnace@redhat.com>
->>> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
->>
->> The MPTCP content looks good to me:
->>
->> Acked-by: Mat Martineau <mathew.j.martineau@linux.intel.com>
->>
->>
->> I didn't see issues with the socket.c changes but I'd like to get some
->> security community feedback before upstreaming - Paul or other
->> security reviewers, what do you think?
->
-> I haven't had the opportunity to work out what impact, if any, this will
-> have on Smack. I haven't seen a reproducer for the problem, is one available?
-> Sorry to chime in late.
->
+Align with the description of fs_context_parse_param in lsm_hooks.h, which
+seems the right one according to the code.
 
-Hi Casey -
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ Documentation/filesystems/mount_api.rst | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-There's more context in the original thread started by Ondrej, including 
-reproducer information:
+diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
+index eb358a00be27..fc3b12cb39d1 100644
+--- a/Documentation/filesystems/mount_api.rst
++++ b/Documentation/filesystems/mount_api.rst
+@@ -349,13 +349,12 @@ number of operations used by the new mount code for this purpose:
+ 					    struct fs_parameter *param);
+ 
+      Called for each mount parameter, including the source.  The arguments are
+-     as for the ->parse_param() method.  It should return 0 to indicate that
+-     the parameter should be passed on to the filesystem, 1 to indicate that
+-     the parameter should be discarded or an error to indicate that the
+-     parameter should be rejected.
++     as for the ->parse_param() method.  It might reject the mount parameter
++     with an error and might return 0, if the mount parameter is used by an LSM;
++     otherwise returns -ENOPARAM to pass it on to the filesystem.
+ 
+      The value pointed to by param may be modified (if a string) or stolen
+-     (provided the value pointer is NULL'd out).  If it is stolen, 1 must be
++     (provided the value pointer is NULL'd out).  If it is stolen, 0 must be
+      returned to prevent it being passed to the filesystem.
+ 
+    * ::
+-- 
+2.25.1
 
-https://lore.kernel.org/all/CAFqZXNs2LF-OoQBUiiSEyranJUXkPLcCfBkMkwFeM6qEwMKCTw@mail.gmail.com/
-
-For impact on Smack, also check Paul's recent reply to this specific patch 
-(proposing a new LSM hook):
-
-https://lore.kernel.org/all/CAHC9VhQzJAhNtpMnU7STEfq6QpaJo-xiie8HoHH2w3io3aXBHw@mail.gmail.com/
-
---
-Mat Martineau
-Intel
