@@ -2,100 +2,77 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC26C10F1E
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Dec 2022 18:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519CAC04FDE
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Dec 2022 19:04:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229963AbiLIS3W (ORCPT
+        id S229808AbiLITE1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Dec 2022 13:29:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54138 "EHLO
+        Fri, 9 Dec 2022 14:04:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229813AbiLIS3V (ORCPT
+        with ESMTP id S229556AbiLITE0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Dec 2022 13:29:21 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDC3B47308
-        for <linux-security-module@vger.kernel.org>; Fri,  9 Dec 2022 10:29:20 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id y17so5756815plp.3
-        for <linux-security-module@vger.kernel.org>; Fri, 09 Dec 2022 10:29:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r2PSJMZNi7Lx3K9QcpxGsYdFe40hPnGOZyUy1ujyzNA=;
-        b=tfI4xAi74SE707QKT/mlAJrn1WsRQMKi7foG6V+hJ3/ZeeH4mn18qk1TNdC36Ofusg
-         ux9dVwjH+WeN8+ll50wN/ZVU3fRCV4j51jzLF1QBiKy3L9UcnDNWfvJFpdXUVutD6LSX
-         B+nJJ/Z+4pMPkiKT5aQXAVSXC5gZy5nkHgjxcvcgJaZh4I2OJC7oMP//CIrni2xl0jSV
-         Mmw/ny6WvzljNwb3mAlZHa2O41ZhCD7YCeG0EvMDL4eX3mZ4scebmz0Nk9VnZxQOhYOB
-         3LvxaClg/ESU/pP7naEJRn8Pv2TZh2Wrj3eyhM2yqtbeuzCfNRyNSicIITnV7GFt+P1e
-         tuXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r2PSJMZNi7Lx3K9QcpxGsYdFe40hPnGOZyUy1ujyzNA=;
-        b=G15y0SE47gBEX5QcPQfBIXCP4fSnjCc7DWm7tzZVqpXTGmSPWsGST3ibVUvqvjC9+o
-         8ojaHCp6q5CWnbNlyh0QmJUpHV5+CM+zapcxnRG3px4XFVWUrkGu+klFg5Vzrrvfsxkv
-         8oJgEt4U/d3sSQXE6BWZun9JRvYf0olyXE/4x8fT9E0GXWBxkHDEpwgu92z4nJhkjUw0
-         Prqxv7ufX1Y9cY2sSAZqOcBwy/SWDeRQ94MgI79vsZrFvLbotfaB8Uzq5tI/jGGqal6t
-         OovRJPWFM4X59wAMLCiB7tCWB7YTaOpwDx6uDOuUcH7eQP+kdEb4/+NwQ3mHmiSOsM1F
-         ziIQ==
-X-Gm-Message-State: ANoB5pk7chgUXST/RN3Sl/8PwXmNRl2cJkdXqL5/mzRLtspGnzawO5Jj
-        XR5KCP/A+5QA1lfhKykGAUN2PAhICv8qi9bR6mTp
-X-Google-Smtp-Source: AA0mqf4pAFPz9IcBXP3Ikc3/BIQ2Fh9HTUyem6n1RTDDoggYxub8h7ftdTIbBK+SxRWviGCqD0xcosbYz5JA2HpPsTg=
-X-Received: by 2002:a17:90b:2743:b0:20d:4173:faf9 with SMTP id
- qi3-20020a17090b274300b0020d4173faf9mr108649177pjb.147.1670610559976; Fri, 09
- Dec 2022 10:29:19 -0800 (PST)
+        Fri, 9 Dec 2022 14:04:26 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE373DF83;
+        Fri,  9 Dec 2022 11:04:25 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3AA926230A;
+        Fri,  9 Dec 2022 19:04:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B0F6C433EF;
+        Fri,  9 Dec 2022 19:04:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670612664;
+        bh=yUWQOgEIaDmtTjkbKrKQhx+5Ioj4N+tSig1q86SSvhw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tLMnJl1PGg+JaRv9e0cov1W2dQSwupzZoGE56bhg8Hwg4PA3WcR5BIYhw7mVCEttj
+         iGHhEdfj7hyfUZz2uSLQ2iEXhc12d6p8wLdj2j//mBJ92/voNdjVjFS19amXkWVj5N
+         pwtXFLpr2NIckxsu3ultA4YzewH8cWptBr78vn10xjt0vEsNQPo3+LW9G4GVoufS6I
+         vrYW9c3eqMxE16+glX6oDbEE+Cq3QoLOFT5WB4a552VhRNK/nbES24rE8MK8ZRZZyI
+         O2v1QfkwgNdjfj9R1IMi10JM9xKAljGWriKvqkNPillS6YZ5ZQo6P6X+K3YcZRJzJS
+         yo5mmZFHUhc8Q==
+Date:   Fri, 9 Dec 2022 11:04:15 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     dhowells@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2] KEYS: asymmetric: Copy sig and digest in
+ public_key_verify_signature()
+Message-ID: <Y5OGr59A9wo86rYY@sol.localdomain>
+References: <20221209150633.1033556-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
-References: <20221209160453.3246150-1-jeffxu@google.com> <20221209160453.3246150-7-jeffxu@google.com>
-In-Reply-To: <20221209160453.3246150-7-jeffxu@google.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 9 Dec 2022 13:29:08 -0500
-Message-ID: <CAHC9VhRBMTQvnBdSwMbkOsk9eemYfvCmj9TRgxtMeuex4KLCPA@mail.gmail.com>
-Subject: Re: [PATCH v7 6/6] mm/memfd: security hook for memfd_create
-To:     jeffxu@chromium.org
-Cc:     skhan@linuxfoundation.org, keescook@chromium.org,
-        akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
-        dverkamp@chromium.org, hughd@google.com, jeffxu@google.com,
-        jorgelo@chromium.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        jannh@google.com, linux-hardening@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221209150633.1033556-1-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 9, 2022 at 11:05 AM <jeffxu@chromium.org> wrote:
->
-> From: Jeff Xu <jeffxu@google.com>
->
-> The new security_memfd_create allows lsm to check flags of
-> memfd_create.
->
-> The security by default system (such as chromeos) can use this
-> to implement system wide lsm to allow only non-executable memfd
-> being created.
->
-> Signed-off-by: Jeff Xu <jeffxu@google.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> ---
->  include/linux/lsm_hook_defs.h | 1 +
->  include/linux/lsm_hooks.h     | 4 ++++
->  include/linux/security.h      | 6 ++++++
->  mm/memfd.c                    | 5 +++++
->  security/security.c           | 5 +++++
->  5 files changed, 21 insertions(+)
+On Fri, Dec 09, 2022 at 04:06:33PM +0100, Roberto Sassu wrote:
+> +	/* key is used to store the sig and digest too. */
+> +	key = kmalloc(key_max_len, GFP_KERNEL);
+>  	if (!key)
+>  		goto error_free_req;
 
-We typically require at least one in-tree LSM implementation to
-accompany a new LSM hook.  Beyond simply providing proof that the hook
-has value, it helps provide a functional example both for reviewers as
-well as future LSM implementations.  Also, while the BPF LSM is
-definitely "in-tree", its nature is such that the actual
-implementation lives out-of-tree; something like SELinux, AppArmor,
-Smack, etc. are much more desirable from an in-tree example
-perspective.
+Maybe just call this 'buf', as the key is just one of the purposes the buffer is
+used for now.
 
--- 
-paul-moore.com
+> +	/* Cannot use one scatterlist. The first needs to be s->s_size long. */
+> +	sg_set_buf(&src_sg[0], key, sig->s_size);
+> +	sg_set_buf(&src_sg[1], key + sig->s_size, sig->digest_size);
+>  	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
+>  				   sig->digest_size);
+
+AFAIK, none of the crypto APIs that operate on 'scatterlist' are supposed to
+care how the data is divided up into scatterlist elements.  So it sounds like
+there is another bug that needs to be fixed.  It should be fixed, not worked
+around.
+
+- Eric
