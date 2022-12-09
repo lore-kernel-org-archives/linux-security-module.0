@@ -2,137 +2,140 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E64E8C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Dec 2022 19:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D18AC4332F
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Dec 2022 19:55:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229468AbiLITir (ORCPT
+        id S229843AbiLITzF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Dec 2022 14:38:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34028 "EHLO
+        Fri, 9 Dec 2022 14:55:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229554AbiLITip (ORCPT
+        with ESMTP id S229573AbiLITzE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Dec 2022 14:38:45 -0500
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D7757E415
-        for <linux-security-module@vger.kernel.org>; Fri,  9 Dec 2022 11:38:40 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NTLt63cVmzMpnsK;
-        Fri,  9 Dec 2022 20:38:38 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4NTLt46h1RzMppKQ;
-        Fri,  9 Dec 2022 20:38:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1670614718;
-        bh=pXPAtHXHqBncbIfMVnhcyz8L2tQrjjvVbLn9r0UM1Yo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RESVifONnt9wYqh/YMW3PuZNgZ16tg7cxpPbGf9b43w1Hs/KIwkn2WfeSBjNv9x1I
-         AgsIxT74yI9B2ymXQz44N8UIJ8gedurrt47iPaLdNF9qqpiFEFbQvZm8/DRRflIUpb
-         GaqJhIE5GjAMdJ/yHdx59AY2lCw08/xJ31gaDYGE=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Alejandro Colomar <alx.manpages@gmail.com>,
+        Fri, 9 Dec 2022 14:55:04 -0500
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D95A6B9B4
+        for <linux-security-module@vger.kernel.org>; Fri,  9 Dec 2022 11:55:03 -0800 (PST)
+Received: by mail-pl1-x636.google.com with SMTP id d7so5959133pll.9
+        for <linux-security-module@vger.kernel.org>; Fri, 09 Dec 2022 11:55:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FL5Mxmv7ODIlEDZq/8j08cewsGW36kitXNchLqx6+8U=;
+        b=WZNOVqrirVQquuq60VScBrJ9NWVTKDlyjoEaTbQrtRksRVT1MUBEQ3OTRZilvuQ4go
+         fvxyqsqAScKUNpdHI3KgQpr/RHi1kYBi3gDU6VKh3OWBr85C1hPSXGNrN7j3ZRf8JgbU
+         nKuQCyz6cdeN33osi+dFwf9HbblL85TZ0NHJ8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FL5Mxmv7ODIlEDZq/8j08cewsGW36kitXNchLqx6+8U=;
+        b=NO1VWAWAxiiSZa+50ISLvbUhMt23lybq//XrjV57UgongrTkEQJvLTnTdLgFSrz9DS
+         5oSeNa/pL9v/8BLA8S+xSvXz1L9mhTEsO98476syHwynKlgkpNqqtqq8Tj6Zy3/nt0MF
+         1RXfcPc77fHVi0qLgxMU0qeO7h54/OmpnZ+KcoSAnfZPcwDpaZe9Yz+JpkYOxU6LVAub
+         8a4fdyaTzPRy5YLHICbjqtrkpGzU7TrxoIOslgkKR+iZ1DYGa3xPf1N2FdvxWTH+XFM/
+         MmVs8uP5uKASlrqGBPB5I0kMKpFcfeFv2cfMhyYqH+NTXm1zAiffQRvLeVGJXwe1Qlv3
+         YrhA==
+X-Gm-Message-State: ANoB5pnq42jTtgJt9fzm1V7A1bhPjXfbqhJ/xbSCiuLOrj9adhJhb5IQ
+        HogRX51XqsoA1dxS2triHSlcx5a2VMhB6reQ
+X-Google-Smtp-Source: AA0mqf5asVjHxvpOsLGmbpn+1ehHUFGL8UqVz3KSDp9PpxJTP+NzFakLHud+RnA5SPJotq2DRBXvGA==
+X-Received: by 2002:a17:902:c755:b0:189:47a8:e9d0 with SMTP id q21-20020a170902c75500b0018947a8e9d0mr6031152plq.51.1670615702700;
+        Fri, 09 Dec 2022 11:55:02 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id q3-20020a17090311c300b00189b2b8dbedsm1700025plh.228.2022.12.09.11.55.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Dec 2022 11:55:02 -0800 (PST)
+From:   Kees Cook <keescook@chromium.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Kees Cook <keescook@chromium.org>,
         James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v2] landlock: Explain file descriptor access rights
-Date:   Fri,  9 Dec 2022 20:38:13 +0100
-Message-Id: <20221209193813.972012-1-mic@digikod.net>
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: [PATCH] LoadPin: Ignore the "contents" argument of the LSM hooks
+Date:   Fri,  9 Dec 2022 11:54:57 -0800
+Message-Id: <20221209195453.never.494-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2557; h=from:subject:message-id; bh=NyOSzyqOU/AeDA19RQqsUCPh2wuwt80QQlxHAZKpzlQ=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjk5KRVmj58M+uOtoVMJjwqOPNQu3ZJm3uKzSmoSaE 9ojdx/iJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCY5OSkQAKCRCJcvTf3G3AJsOJD/ 9HuKsTrjjMu5QnYHndlcOvspNVUNRW2WhEBINIAVk3mT7hVZNFliJNdlq8RpE9DJ1/KpuXF5qbLxcx spB1nyAReOpOOPUUssIfanBqxdY0mkSihWYz/2krtoM7jy/AmfiAgI/9FIDnJ9W9nUUZRmOkPKqPmL udvZVmZ4Nkseq73j1ZZYf4NDEVkgroW6eUJrHsDJDD55+FtBqQghQPWT5U3JMF0LZnzIlZ40ePAk/y 5rLEHt89Ap/D5zoG91dzkoIhv5oxb5q9FY/HM7veRosMUm8X7uARyxCMFRSoze3e0j4vC1O4oSO31J 9B54Er/8NFp9FmZg0Zxnta/acigU1ggJ3Lz721rqzKg3bTZppChpQDb8q7fdq45Yk/Q9LrWjSof1fA pSoRTuQnuI1J/QVRT2x8wymE1J5r3p52aFQdD0YwyStKNttnoiX3kztUmFA+pLY4H6zKcjixOhmp+B bphi6ox/XT4tL9FvlU/gGmoBuLE8wsq9Fdiy+CzjEzYY1SNWLoRFFd72S66sMMNwUNtxnYh/8CAXk3 4ky8CgrRnCHlKEiWhB5xPbE4aFr3I5X+FrUji0qcT5yegWw/YLxRWa6sMCs3pnAw04AcuBY9OgqnKR iI21OozT62OGA/o+xR0Vk3RTNSIt903EbfkD+NYtVf8D+No3mWUdoqAOrxVg==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Starting with LANDLOCK_ACCESS_FS_TRUNCATE, it is worth explaining why we
-choose to restrict access checks at open time.  This new "File
-descriptor access rights" section is complementary to the existing
-"Inode access rights" section.  Add a new guiding principle related to
-this section.
+LoadPin only enforces the read-only origin of kernel file reads. Whether
+or not it was a partial read isn't important. Remove the overly
+conservative checks so that things like partial firmware reads will
+succeed (i.e. reading a firmware header).
 
-Cc: Günther Noack <gnoack3000@gmail.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20221209193813.972012-1-mic@digikod.net
+Fixes: 2039bda1fa8d ("LSM: Add "contents" flag to kernel_read_file hook")
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
+ security/loadpin/loadpin.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-Changes since v1:
-https://lore.kernel.org/r/20221205112621.3530557-1-mic@digikod.net
-* Reworded the new section based on Günther suggestions.
-* Added a new guiding principle.
-* Update date.
----
- Documentation/security/landlock.rst | 33 ++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
-index c0029d5d02eb..95a0e4726dc5 100644
---- a/Documentation/security/landlock.rst
-+++ b/Documentation/security/landlock.rst
-@@ -7,7 +7,7 @@ Landlock LSM: kernel documentation
- ==================================
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index de41621f4998..110a5ab2b46b 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -122,21 +122,11 @@ static void loadpin_sb_free_security(struct super_block *mnt_sb)
+ 	}
+ }
  
- :Author: Mickaël Salaün
--:Date: September 2022
-+:Date: December 2022
+-static int loadpin_read_file(struct file *file, enum kernel_read_file_id id,
+-			     bool contents)
++static int loadpin_check(struct file *file, enum kernel_read_file_id id)
+ {
+ 	struct super_block *load_root;
+ 	const char *origin = kernel_read_file_id_str(id);
  
- Landlock's goal is to create scoped access-control (i.e. sandboxing).  To
- harden a whole system, this feature should be available to any process,
-@@ -41,12 +41,15 @@ Guiding principles for safe access controls
-   processes.
- * Computation related to Landlock operations (e.g. enforcing a ruleset) shall
-   only impact the processes requesting them.
-+* Resources (e.g. file descriptors) directly obtained from the kernel by a
-+  sandboxed process shall retain their scoped accesses whatever process use
-+  them.  Cf. `File descriptor access rights`_.
+-	/*
+-	 * If we will not know that we'll be seeing the full contents
+-	 * then we cannot trust a load will be complete and unchanged
+-	 * off disk. Treat all contents=false hooks as if there were
+-	 * no associated file struct.
+-	 */
+-	if (!contents)
+-		file = NULL;
+-
+ 	/* If the file id is excluded, ignore the pinning. */
+ 	if ((unsigned int)id < ARRAY_SIZE(ignore_read_file_id) &&
+ 	    ignore_read_file_id[id]) {
+@@ -192,9 +182,25 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id,
+ 	return 0;
+ }
  
- Design choices
- ==============
- 
--Filesystem access rights
--------------------------
-+Inode access rights
-+-------------------
- 
- All access rights are tied to an inode and what can be accessed through it.
- Reading the content of a directory does not imply to be allowed to read the
-@@ -57,6 +60,30 @@ directory, not the unlinked inode.  This is the reason why
- ``LANDLOCK_ACCESS_FS_REMOVE_FILE`` or ``LANDLOCK_ACCESS_FS_REFER`` are not
- allowed to be tied to files but only to directories.
- 
-+File descriptor access rights
-+-----------------------------
++static int loadpin_read_file(struct file *file, enum kernel_read_file_id id,
++			     bool contents)
++{
++	/*
++	 * LoadPin only cares about the _origin_ of a file, not its
++	 * contents, so we can ignore the "are full contents available"
++	 * argument here.
++	 */
++	return loadpin_check(file, id);
++}
 +
-+Access rights are checked and tied to file descriptors at open time.  The
-+underlying principle is that equivalent sequences of operations should lead to
-+the same results, when they are executed under the same Landlock domain.
-+
-+Taking the ``LANDLOCK_ACCESS_FS_TRUNCATE`` right as an example, it may be
-+allowed to open a file for writing without being allowed to
-+:manpage:`ftruncate` the resulting file descriptor if the related file
-+hierarchy doesn't grant such access right.  The following sequences of
-+operations have the same semantic and should then have the same result:
-+
-+* ``truncate(path);``
-+* ``int fd = open(path, O_WRONLY); ftruncate(fd); close(fd);``
-+
-+Similarly to file access modes (e.g. ``O_RDWR``), Landlock access rights
-+attached to file descriptors are retained even if they are passed between
-+processes (e.g. through a Unix domain socket).  Such access rights will then be
-+enforced even if the receiving process is not sandboxed by Landlock.  Indeed,
-+this is required to keep a consistent access control over the whole system, and
-+avoid unattended bypasses through file descriptor passing (i.e. confused deputy
-+attack).
-+
- Tests
- =====
+ static int loadpin_load_data(enum kernel_load_data_id id, bool contents)
+ {
+-	return loadpin_read_file(NULL, (enum kernel_read_file_id) id, contents);
++	/*
++	 * LoadPin only cares about the _origin_ of a file, not its
++	 * contents, so a NULL file is passed, and we can ignore the
++	 * state of "contents".
++	 */
++	return loadpin_check(NULL, (enum kernel_read_file_id) id);
+ }
  
-
-base-commit: 0b4ab8cd635e8b21e42c14b9e4810ca701babd11
+ static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
 -- 
-2.38.1
+2.34.1
 
