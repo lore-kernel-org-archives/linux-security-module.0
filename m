@@ -2,139 +2,136 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DDDC10F1D
-	for <linux-security-module@archiver.kernel.org>; Sun, 11 Dec 2022 02:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBF0C10F1E
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Dec 2022 01:00:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbiLKC2c (ORCPT
+        id S230418AbiLLBAZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 10 Dec 2022 21:28:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37094 "EHLO
+        Sun, 11 Dec 2022 20:00:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbiLKC2c (ORCPT
+        with ESMTP id S229475AbiLLBAY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 10 Dec 2022 21:28:32 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01DD010546;
-        Sat, 10 Dec 2022 18:28:31 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id m18so20049459eji.5;
-        Sat, 10 Dec 2022 18:28:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kz8UCTQ9WHAf5JhkPjYAXVzTT4HzgSv8RTOSjH8wUj4=;
-        b=K9G0WDjvIfRxiA8xrSmt44yBpBQVe0AdlIRTD1yh8vaEmcgFncS9IkxTNR3Rg1kLve
-         o3Walf+HtOmGONYALr1A1TDnL9VcsNLakuRdAqwnUPIMm7rdUxXJBYSe9+LPQ/1OIw/G
-         Tw1NWUs/8qnCRX6/wuE9OXTvHpJfLruu7uXaSZwtOBuCebyAbO9E4TgvHLH2RMOSo+qX
-         P/Ir6AZZO6T5RAn+uAHuoHkV934xUAX0oBXZr5xyZFuYAiQruvWoQcGX1BXLZl+AllN+
-         pfsDXS7nEF1stgJAhKktNlzJgmI/3E9CsMbBRywaMqsiN2qiz29Hy/6OwR+xUVw1KUrX
-         qWuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kz8UCTQ9WHAf5JhkPjYAXVzTT4HzgSv8RTOSjH8wUj4=;
-        b=tv126fXhMCNPl4ZZCIRbG79S4m+jHw8CZ5TSS62pI3gberKnkA+1CUOHQwmI0PtM9B
-         cFgjS28ZNvzZvdWKC8jJjKpjTZh3P2YLuGTzRMKcZ3EBSEIVzfp2ijGmKGiLIgSX8gc/
-         CvD/3zUesWfo9+J9U8TL03PAIRQuOCQwbTVc/ySSHwrSm8lRPlOMHYIBurhyCLIqZm2B
-         2Y23Owur+nhvnjzukSOArL+8pbluuU8WZmfw4jU5pei4w2FBEO8s2kvKcOmsZ9Jqgdof
-         BPr68duhxfphGw44GsNWDdMwnoXWItjvbgmIFHHIScPrDmDkJEomTxHPpHUG/hUfP4qt
-         a8ZQ==
-X-Gm-Message-State: ANoB5pk8RqNNn9L8PykGcI1a4lBf0TG4cSIYeqcW54epXXOIrIHt0PNq
-        bTjy0X4oCv3suMCxeDNqCfVqADbI6N5q9r2Iczc=
-X-Google-Smtp-Source: AA0mqf5prpvAqhvSogkAQlNu7wWUWpyU4sAQFN1xjbIalUKERm86mEBlmrSum2+sDjBmVH64S0nFkDoFm4KaRT2hoQA=
-X-Received: by 2002:a17:906:4351:b0:78d:513d:f447 with SMTP id
- z17-20020a170906435100b0078d513df447mr70015362ejm.708.1670725709381; Sat, 10
- Dec 2022 18:28:29 -0800 (PST)
-MIME-Version: 1.0
-References: <20221207172434.435893-1-roberto.sassu@huaweicloud.com> <20221207172434.435893-3-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20221207172434.435893-3-roberto.sassu@huaweicloud.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Sat, 10 Dec 2022 18:28:18 -0800
-Message-ID: <CAADnVQKhWEtqAkMnWR8Twpc6uPo_MWnAf68R-xeM=YVqxkLOyQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH v2 2/7] bpf: Mark ALU32 operations in bpf_reg_state structure
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Mykola Lysenko <mykolal@fb.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
+        Sun, 11 Dec 2022 20:00:24 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E67BC33;
+        Sun, 11 Dec 2022 17:00:23 -0800 (PST)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BBK2Bh3006548;
+        Mon, 12 Dec 2022 00:59:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=xJR2nbIWi2OvOl6AvyZ2UM0XQ9Daq6jNfoBWR6S6JaQ=;
+ b=ErzKdh9KAZwx7wejt8gD2q0Ma4S2ZRoQBmgb26KOhVqpRSuONMhzKAkAFCCLRdogV40w
+ oXLnXX8kHz3hFgSCN7QYsW3qLKAIGwwOF/XfiiqEslESABxusAmKxJ2LwBvJ0iP+K/9+
+ iI2ZEsQA01kNATXx7TEY6wcpHl3FpAaO51hboAyJLKpXtxfAYygmBS7UOXy23TVkl/eH
+ Nvsa/TESnyY0ldHZVDM9ohuf1CsEAjo+RcrTXPGmkooO6GTHJVC9T5+S1EWMwiEkuqaT
+ GKoY/bw8HnGh4/CWTphtRt1SYd75Gb9x2A6HrWmX+nt7MocYmId7iQ2YmECszPpkNJVh iA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3md421301h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Dec 2022 00:59:05 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2BC0wW3u002588;
+        Mon, 12 Dec 2022 00:59:04 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3md4213015-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Dec 2022 00:59:04 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 2BBNDcFA028390;
+        Mon, 12 Dec 2022 00:59:02 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3mchr61w7j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Dec 2022 00:59:02 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+        by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2BC0x0ZH41026032
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Dec 2022 00:59:00 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7879C20043;
+        Mon, 12 Dec 2022 00:59:00 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EE30C20040;
+        Mon, 12 Dec 2022 00:58:59 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Mon, 12 Dec 2022 00:58:59 +0000 (GMT)
+Received: from [9.192.255.228] (unknown [9.192.255.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id E900B602EF;
+        Mon, 12 Dec 2022 11:58:56 +1100 (AEDT)
+Message-ID: <deda857ccc949f920ae3b7eca753d41b76acceda.camel@linux.ibm.com>
+Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
+ fwsecurityfs
+From:   Andrew Donnellan <ajd@linux.ibm.com>
+To:     Nayna <nayna@linux.vnet.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell Currey <ruscur@russell.cc>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Date:   Mon, 12 Dec 2022 11:58:56 +1100
+In-Reply-To: <6f2a4a5f-ab5b-8c1b-47d5-d4e6dca5fc3a@linux.vnet.ibm.com>
+References: <20221106210744.603240-1-nayna@linux.ibm.com>
+         <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
+         <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
+         <20221119114234.nnfxsqx4zxiku2h6@riteshh-domain>
+         <d3e8df29-d9b0-5e8e-4a53-d191762fe7f2@linux.vnet.ibm.com>
+         <a2752fdf-c89f-6f57-956e-ad035d32aec6@linux.vnet.ibm.com>
+         <Y35C9O27J29bUDjA@kroah.com>
+         <6f2a4a5f-ab5b-8c1b-47d5-d4e6dca5fc3a@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.1 (3.46.1-1.fc37) 
+MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: HNXLB6tPj93LDuXtj2ObhDK_-4Cie0yq
+X-Proofpoint-GUID: Fp2TTvT7JoTQaaqS3UEUpIvBegOspgGa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-10_10,2022-12-08_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ spamscore=0 clxscore=1011 bulkscore=0 mlxlogscore=732 impostorscore=0
+ phishscore=0 priorityscore=1501 adultscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2212120003
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 7, 2022 at 9:25 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> BPF LSM needs a reliable source of information to determine if the return
-> value given by eBPF programs is acceptable or not. At the moment, choosing
-> either the 64 bit or the 32 bit one does not seem to be an option
-> (selftests fail).
->
-> If we choose the 64 bit one, the following happens.
->
->       14:       61 10 00 00 00 00 00 00 r0 = *(u32 *)(r1 + 0)
->       15:       74 00 00 00 15 00 00 00 w0 >>= 21
->       16:       54 00 00 00 01 00 00 00 w0 &= 1
->       17:       04 00 00 00 ff ff ff ff w0 += -1
->
-> This is the last part of test_deny_namespace. After #16, the register
-> values are:
->
-> smin_value = 0x0, smax_value = 0x1,
-> s32_min_value = 0x0, s32_max_value = 0x1,
->
-> After #17, they become:
->
-> smin_value = 0x0, smax_value = 0xffffffff,
-> s32_min_value = 0xffffffff, s32_max_value = 0x0
->
-> where only the 32 bit values are correct.
->
-> If we choose the 32 bit ones, the following happens.
->
-> 0000000000000000 <check_access>:
->        0:       79 12 00 00 00 00 00 00 r2 = *(u64 *)(r1 + 0)
->        1:       79 10 08 00 00 00 00 00 r0 = *(u64 *)(r1 + 8)
->        2:       67 00 00 00 3e 00 00 00 r0 <<= 62
->        3:       c7 00 00 00 3f 00 00 00 r0 s>>= 63
->
-> This is part of test_libbpf_get_fd_by_id_opts (no_alu32 version). In this
-> case, 64 bit register values should be used (for the 32 bit ones, there is
-> no precise information from the verifier).
->
-> As the examples above suggest that which register values to use depends on
-> the specific case, mark ALU32 operations in bpf_reg_state structure, so
-> that BPF LSM can choose the proper ones.
+On Wed, 2022-11-23 at 13:57 -0500, Nayna wrote:
+>=20
+> Given there are no other exploiters for fwsecurityfs and there should
+> be=20
+> no platform-specific fs, would modifying sysfs now to let userspace=20
+> create files cleanly be the way forward? Or, if we should strongly=20
+> consider securityfs, which would result in updating securityfs to
+> allow=20
+> userspace creation of files and then expose variables via a more=20
+> platform-specific directory /sys/kernel/security/pks? We want to pick
+> the best available option and would find some hints on direction
+> helpful=20
+> before we develop the next patch.
 
-I have a hard time understanding what is the problem you're
-trying to solve and what is the proposed fix.
+Ping - it would be helpful for us to know your thoughts on this.
 
-The patch is trying to remember the bitness of the last
-operation, but what for?
-The registers are 64-bit. There are 32-bit operations,
-but they always update the upper 32-bits of the register.
-reg_bounds_sync() updates 32 and 64 bit bounds regardless
-whether the previous operation was on 32 or 64 bit.
-It seems you're trying to hack around something that breaks
-patch 3 which also looks fishy.
-Please explain the problem first with a concrete example.
+
+Andrew
+
+--=20
+Andrew Donnellan    OzLabs, ADL Canberra
+ajd@linux.ibm.com   IBM Australia Limited
