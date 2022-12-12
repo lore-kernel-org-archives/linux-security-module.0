@@ -2,69 +2,144 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB9BC4708D
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Dec 2022 09:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37017C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Dec 2022 12:19:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231443AbiLLJQa (ORCPT
+        id S231854AbiLLMTo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Dec 2022 04:16:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45502 "EHLO
+        Mon, 12 Dec 2022 07:19:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231858AbiLLJQC (ORCPT
+        with ESMTP id S231362AbiLLMTn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Dec 2022 04:16:02 -0500
-Received: from formenos.hmeau.com (helcar.hmeau.com [216.24.177.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 584C2E0D1;
-        Mon, 12 Dec 2022 01:15:55 -0800 (PST)
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1p4eu7-006PYn-Dc; Mon, 12 Dec 2022 17:15:20 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 12 Dec 2022 17:15:19 +0800
-Date:   Mon, 12 Dec 2022 17:15:19 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>, dhowells@redhat.com,
-        davem@davemloft.net, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2] KEYS: asymmetric: Copy sig and digest in
- public_key_verify_signature()
-Message-ID: <Y5bxJ5UZNPzxwtoy@gondor.apana.org.au>
-References: <20221209150633.1033556-1-roberto.sassu@huaweicloud.com>
- <Y5OGr59A9wo86rYY@sol.localdomain>
- <fa8a307541735ec9258353d8ccb75c20bb22aafe.camel@huaweicloud.com>
+        Mon, 12 Dec 2022 07:19:43 -0500
+Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AF57111D
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Dec 2022 04:19:40 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NW10947WVzMpvRQ;
+        Mon, 12 Dec 2022 13:19:37 +0100 (CET)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4NW1090nXrzMptmf;
+        Mon, 12 Dec 2022 13:19:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1670847577;
+        bh=+8HUJm/3k6xDNGEdfLjboNwcxufcrgs95IkLGAAQ9tk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XK3Fjhx7apuP7njgW4dejqn1MfR71/tIm+/tTpwCvjpcmeUQ0hzY+Cv4gXJdSStQ7
+         sKwPm80lhTBqduWFRlkQ3X6JVJFBwQ1vhxMvpM4aceeMeCSdzYquWjsZNYJJlCQsCN
+         ph3NHtvWlIz911FOlumYSZf6L3Do/eh12AZyKurs=
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [GIT PULL] Landlock updates for v6.2
+Date:   Mon, 12 Dec 2022 13:19:18 +0100
+Message-Id: <20221212121918.1315195-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa8a307541735ec9258353d8ccb75c20bb22aafe.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 12, 2022 at 10:07:38AM +0100, Roberto Sassu wrote:
->
-> The problem is a misalignment between req->src_len (set to sig->s_size
-> by akcipher_request_set_crypt()) and the length of the scatterlist (if
-> we set the latter to sig->s_size + sig->digest_size).
-> 
-> When rsa_enc() calls mpi_read_raw_from_sgl(), it passes req->src_len as
-> argument, and the latter allocates the MPI according to that. However,
-> it does parsing depending on the length of the scatterlist.
-> 
-> If there are two scatterlists, it is not a problem, there is no
-> misalignment. mpi_read_raw_from_sgl() picks the first. If there is just
-> one, mpi_read_raw_from_sgl() parses all data there.
+Hi Linus,
 
-Thanks for the explanation.  That's definitely a bug which should
-be fixed either in the RSA code or in MPI.
+This PR adds file truncation support to Landlock, contributed by
+Günther Noack:
+https://lore.kernel.org/r/20221018182216.301684-1-gnoack3000@gmail.com
+Please pull this Landlock changes for v6.2-rc1 .  These 12 commits
+merged cleanly with your tree, and have been successfully tested in the
+latest linux-next releases for more than a month.
 
-I'll look into it.
+As described by Günther, the goal of these patches is to work towards a
+more complete coverage of file system operations that are restrictable
+with Landlock.  The known set of currently unsupported file system
+operations in Landlock is described here:
+https://www.kernel.org/doc/html/v6.1/userspace-api/landlock.html#filesystem-flags
+Out of the operations listed there, truncate is the only one that
+modifies file contents, so these patches should make it possible to
+prevent the direct modification of file contents with Landlock.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+The new LANDLOCK_ACCESS_FS_TRUNCATE access right covers both the
+truncate(2) and ftruncate(2) families of syscalls, as well as open(2)
+with the O_TRUNC flag.  This includes usages of creat() in the case
+where existing regular files are overwritten.
+
+Additionally, this patch set introduces a new Landlock security blob
+associated with opened files, to track the available Landlock access
+rights at the time of opening the file. This is in line with Unix's
+general approach of checking the read and write permissions during
+open(), and associating this previously checked authorization with the
+opened file.  An ongoing patch documents this use case:
+https://lore.kernel.org/r/20221209193813.972012-1-mic@digikod.net
+
+In order to treat truncate(2) and ftruncate(2) calls differently in an
+LSM hook, we split apart the existing security_path_truncate hook into
+security_path_truncate (for truncation by path) and
+security_file_truncate (for truncation of previously opened files).
+
+Test coverage for security/landlock is 94.7% of 835 lines according to
+gcc/gcov-12, and it was 94.6% of 809 lines before this series.
+
+syzkaller has been updated accordingly:
+https://github.com/google/syzkaller/pull/3423
+Such patched instance (tailored to Landlock) has been running for
+months, covering all the new truncate-related code.
+
+Regards,
+ Mickaël
+
+--
+The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
+
+  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.2-rc1
+
+for you to fetch changes up to f6e53fb2d7bd70547ba53232415976cb70ad6d97:
+
+  samples/landlock: Document best-effort approach for LANDLOCK_ACCESS_FS_REFER (2022-11-07 20:49:50 +0100)
+
+----------------------------------------------------------------
+Landlock updates for v6.2-rc1
+
+----------------------------------------------------------------
+Günther Noack (12):
+      security: Create file_truncate hook from path_truncate hook
+      landlock: Refactor check_access_path_dual() into is_access_to_paths_allowed()
+      landlock: Document init_layer_masks() helper
+      landlock: Support file truncation
+      selftests/landlock: Test file truncation support
+      selftests/landlock: Test open() and ftruncate() in multiple scenarios
+      selftests/landlock: Locally define __maybe_unused
+      selftests/landlock: Test FD passing from restricted to unrestricted processes
+      selftests/landlock: Test ftruncate on FDs created by memfd_create(2)
+      samples/landlock: Extend sample tool to support LANDLOCK_ACCESS_FS_TRUNCATE
+      landlock: Document Landlock's file truncation support
+      samples/landlock: Document best-effort approach for LANDLOCK_ACCESS_FS_REFER
+
+ Documentation/userspace-api/landlock.rst     |  67 +++-
+ fs/namei.c                                   |   2 +-
+ fs/open.c                                    |   2 +-
+ include/linux/lsm_hook_defs.h                |   1 +
+ include/linux/lsm_hooks.h                    |  10 +-
+ include/linux/security.h                     |   6 +
+ include/uapi/linux/landlock.h                |  21 +-
+ samples/landlock/sandboxer.c                 |  29 +-
+ security/apparmor/lsm.c                      |   6 +
+ security/landlock/fs.c                       | 206 +++++++++---
+ security/landlock/fs.h                       |  24 ++
+ security/landlock/limits.h                   |   2 +-
+ security/landlock/setup.c                    |   1 +
+ security/landlock/syscalls.c                 |   2 +-
+ security/security.c                          |  16 +-
+ security/tomoyo/tomoyo.c                     |  13 +
+ tools/testing/selftests/landlock/base_test.c |  38 +--
+ tools/testing/selftests/landlock/common.h    |  85 ++++-
+ tools/testing/selftests/landlock/fs_test.c   | 468 ++++++++++++++++++++++++++-
+ 19 files changed, 878 insertions(+), 121 deletions(-)
