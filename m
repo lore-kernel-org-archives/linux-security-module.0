@@ -2,188 +2,149 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7880C04FDE
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Dec 2022 12:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA0EC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Dec 2022 15:37:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232180AbiLLMpT (ORCPT
+        id S232529AbiLLPh5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Dec 2022 07:45:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53226 "EHLO
+        Mon, 12 Dec 2022 10:37:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231453AbiLLMpS (ORCPT
+        with ESMTP id S232412AbiLLPht (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Dec 2022 07:45:18 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39ECB11A2D;
-        Mon, 12 Dec 2022 04:45:16 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4NW1PQ2Vgcz9xrp3;
-        Mon, 12 Dec 2022 20:38:02 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwC3jGM3IpdjQccIAA--.724S2;
-        Mon, 12 Dec 2022 13:44:52 +0100 (CET)
-Message-ID: <17749b60bcffdc05ce0343199c14ef3cf2d54010.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH v2 2/7] bpf: Mark ALU32 operations in bpf_reg_state
- structure
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Mykola Lysenko <mykolal@fb.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Mon, 12 Dec 2022 13:44:35 +0100
-In-Reply-To: <CAADnVQKhWEtqAkMnWR8Twpc6uPo_MWnAf68R-xeM=YVqxkLOyQ@mail.gmail.com>
-References: <20221207172434.435893-1-roberto.sassu@huaweicloud.com>
-         <20221207172434.435893-3-roberto.sassu@huaweicloud.com>
-         <CAADnVQKhWEtqAkMnWR8Twpc6uPo_MWnAf68R-xeM=YVqxkLOyQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Mon, 12 Dec 2022 10:37:49 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83C1B9FEA
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Dec 2022 07:36:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1670859415;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PccKKszWkRWP5I2XDQgnn1TfMCygRci1+qIyYeNPyTU=;
+        b=CCZYWE3UanN2vzPc/A1tK4I345JRzWQuUGcfmFVv6LQ3t6TzQ+985uaBwUP2b4mP4xcuxP
+        CX9+xklTN8Kejx6Za/oRLBmaFwsYkar6wx15oZifMzcnmsfZWGls/A/2Uf7UZc+txPPHm1
+        yCpaYC4OiXYCRaXzHfRpaNo1D0OcBs4=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-377-hA58MuB4OcyhFnwxPLKu6Q-1; Mon, 12 Dec 2022 10:36:52 -0500
+X-MC-Unique: hA58MuB4OcyhFnwxPLKu6Q-1
+Received: by mail-yb1-f199.google.com with SMTP id i10-20020a25f20a000000b006ea4f43c0ddso13386396ybe.21
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Dec 2022 07:36:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PccKKszWkRWP5I2XDQgnn1TfMCygRci1+qIyYeNPyTU=;
+        b=oN8MuATZKQGbB7+qmeuNQmiEGO0QuCO4TL8BFxgwuR6S5EQ1nx7D5PkfgBb22pIWM7
+         FiPfr9MzOHoCvsz38NJ2T/v22iS3xC9daPhPRtQPblogJNxjQc0lwWP8YByNt+IfTmBY
+         B6ENs33FGH/kNXW/vQPyo7cLQUO/kxQhLvLA8VikNGaQ0Bo7qFdHu3LZ8coFlxR5yfO+
+         eK36ugmNyw1fMG+pSGzJjN8YG4L3dnA/ao2l5CeuEyEna6PZHoODLEjVF3hKWnDYhQ0q
+         uR23Z8ZzMb2VF4HAzm54+XgBA5w8Xx6/WLAqzx80fsjmgr8Z8oAkIC4xhGXD6ZBZgcon
+         ETww==
+X-Gm-Message-State: ANoB5pn7TciYMq7dAF5rC3MIz/Al+L5E8BC8E7fpomRru/Z0sM6/Bjqt
+        cVLQ2v0sTKOWf0B6u353QLPx3NlLjWF8z/brxOFoUFJd0t/N1xj0yG+De89yXuswP1BCSw9eWLJ
+        /9i/4hOhhx9nSZsrq1Xa2B2Y42fF1BFLuhYA4
+X-Received: by 2002:a05:690c:c0f:b0:3e3:b823:db3c with SMTP id cl15-20020a05690c0c0f00b003e3b823db3cmr15425531ywb.46.1670859411950;
+        Mon, 12 Dec 2022 07:36:51 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf7YEE+nBMdkf+sl+1Cqvao/1eIaETZGMRa8d1Z+htlQZ3qfbcab5EPNjWmo0Y4+I0MTV0Wthg==
+X-Received: by 2002:a05:690c:c0f:b0:3e3:b823:db3c with SMTP id cl15-20020a05690c0c0f00b003e3b823db3cmr15425505ywb.46.1670859411656;
+        Mon, 12 Dec 2022 07:36:51 -0800 (PST)
+Received: from gerbillo.redhat.com (146-241-97-87.dyn.eolo.it. [146.241.97.87])
+        by smtp.gmail.com with ESMTPSA id de36-20020a05620a372400b006e99290e83fsm5928683qkb.107.2022.12.12.07.36.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Dec 2022 07:36:51 -0800 (PST)
+Message-ID: <75d48710be78d59e990cbb3930133a4f42c95a30.camel@redhat.com>
+Subject: Re: [PATCH mptcp-net] mptcp: fix LSM labeling for passive msk
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>
+Cc:     mptcp@lists.linux.dev, Ondrej Mosnacek <omosnace@redhat.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Date:   Mon, 12 Dec 2022 16:36:47 +0100
+In-Reply-To: <CAHC9VhQzJAhNtpMnU7STEfq6QpaJo-xiie8HoHH2w3io3aXBHw@mail.gmail.com>
+References: <ffee337de5d6e447185b87ade65cc27f0b3576db.1670434580.git.pabeni@redhat.com>
+         <a3c81322-36b5-a289-c07b-15d2be75b02d@linux.intel.com>
+         <CAHC9VhQzJAhNtpMnU7STEfq6QpaJo-xiie8HoHH2w3io3aXBHw@mail.gmail.com>
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35)
 MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwC3jGM3IpdjQccIAA--.724S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXrW7GFWUZF18XF4xWr43Awb_yoW5Kw48pr
-        W5W3WUKr4kWr1xuasrtw45JF9YkF1jy3WUXFWDJry2vw15Wryjyr48GFWj9asrAr10yr1f
-        tr9FqrsFyw4DZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAEBF1jj4KK1gAAst
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 2022-12-10 at 18:28 -0800, Alexei Starovoitov wrote:
-> On Wed, Dec 7, 2022 at 9:25 AM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
+Hello,
+
+On Thu, 2022-12-08 at 18:40 -0500, Paul Moore wrote:
+> On Wed, Dec 7, 2022 at 9:19 PM Mat Martineau
+> <mathew.j.martineau@linux.intel.com> wrote:
+> > On Wed, 7 Dec 2022, Paolo Abeni wrote:
 > > 
-> > BPF LSM needs a reliable source of information to determine if the return
-> > value given by eBPF programs is acceptable or not. At the moment, choosing
-> > either the 64 bit or the 32 bit one does not seem to be an option
-> > (selftests fail).
+> > > MPTCP sockets created via accept() inherit their LSM label
+> > > from the initial request socket, which in turn get it from the
+> > > listener socket's first subflow. The latter is a kernel socket,
+> > > and get the relevant labeling at creation time.
+> > > 
+> > > Due to all the above even the accepted MPTCP socket get a kernel
+> > > label, causing unexpected behaviour and failure on later LSM tests.
+> > > 
+> > > Address the issue factoring out a socket creation helper that does
+> > > not include the post-creation LSM checks. Use such helper to create
+> > > mptcp subflow as in-kernel sockets and doing explicitly LSM validation:
+> > > vs the current user for the first subflow, as a kernel socket otherwise.
+> > > 
+> > > Fixes: 0c14846032f2 ("mptcp: fix security context on server socket")
+> > > Reported-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > > Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 > > 
-> > If we choose the 64 bit one, the following happens.
+> > The MPTCP content looks good to me:
 > > 
-> >       14:       61 10 00 00 00 00 00 00 r0 = *(u32 *)(r1 + 0)
-> >       15:       74 00 00 00 15 00 00 00 w0 >>= 21
-> >       16:       54 00 00 00 01 00 00 00 w0 &= 1
-> >       17:       04 00 00 00 ff ff ff ff w0 += -1
+> > Acked-by: Mat Martineau <mathew.j.martineau@linux.intel.com>
 > > 
-> > This is the last part of test_deny_namespace. After #16, the register
-> > values are:
-> > 
-> > smin_value = 0x0, smax_value = 0x1,
-> > s32_min_value = 0x0, s32_max_value = 0x1,
-> > 
-> > After #17, they become:
-> > 
-> > smin_value = 0x0, smax_value = 0xffffffff,
-> > s32_min_value = 0xffffffff, s32_max_value = 0x0
-> > 
-> > where only the 32 bit values are correct.
-> > 
-> > If we choose the 32 bit ones, the following happens.
-> > 
-> > 0000000000000000 <check_access>:
-> >        0:       79 12 00 00 00 00 00 00 r2 = *(u64 *)(r1 + 0)
-> >        1:       79 10 08 00 00 00 00 00 r0 = *(u64 *)(r1 + 8)
-> >        2:       67 00 00 00 3e 00 00 00 r0 <<= 62
-> >        3:       c7 00 00 00 3f 00 00 00 r0 s>>= 63
-> > 
-> > This is part of test_libbpf_get_fd_by_id_opts (no_alu32 version). In this
-> > case, 64 bit register values should be used (for the 32 bit ones, there is
-> > no precise information from the verifier).
-> > 
-> > As the examples above suggest that which register values to use depends on
-> > the specific case, mark ALU32 operations in bpf_reg_state structure, so
-> > that BPF LSM can choose the proper ones.
+> > I didn't see issues with the socket.c changes but I'd like to get some
+> > security community feedback before upstreaming - Paul or other security
+> > reviewers, what do you think?
 > 
-> I have a hard time understanding what is the problem you're
-> trying to solve and what is the proposed fix.
+> Sorry, I was distracted by other things the past few days ...
+> 
+> One thing that jumps out is the potential for misuse of
+> __sock_create_nosec(); I can see people accidentally using this
+> function by accident in other areas of the stack and causing a new set
+> of problems.
+> 
+> We discussed this in the other thread, but there is an issue with
+> subflows being labeled based on the mptcp_subflow_create_socket()
+> caller and not the main MPTCP socket.
+> 
+> I know there is a desire to get a small (in size) patch to fix this,
+> but I think creating a new LSM hook may be the only way to solve this
+> in a sane manner.  My original thought was a new LSM hook call inside
+> mptcp_subflow_create_socket() right after the sock_create_kern() call.
+> The only gotcha is that it would occur after
+> security_socket_post_create(), but that should be easy enough to
+> handle inside the LSMs.
 
-The problem is allowing BPF LSM programs to return positive values when
-LSM hooks expect zero or negative values. Those values could be
-converted to a pointer, and escape the IS_ERR() check.
+If the preferrede solution is via a new LSM hook I have no objections
+at all. I'm sorry to put another hook mainteinance on you.
 
-The challenge is to ensure that the verifier prediction of R0 is
-accurate, so that the eBPF program is not unnecessarily rejected.
+How do you propose to preceed? After quickly digging into the relevant
+LSM code, the only module I think I could handle in a reasonable
+timeframe is selinux. Hopefully the new hook implementation should be
+quite straight-forward for the relevant SME.
 
-> The patch is trying to remember the bitness of the last
-> operation, but what for?
-> The registers are 64-bit. There are 32-bit operations,
-> but they always update the upper 32-bits of the register.
-> reg_bounds_sync() updates 32 and 64 bit bounds regardless
-> whether the previous operation was on 32 or 64 bit.
+I guess the patch[es] should target the LSM tree, as the change in the
+mptcp code should be a one-liner. On the flip side, that would likely
+lead to some merge conflict, as the mptcp protocol impl. is quite a
+moving target.
 
-Ok, yes. I also thought that using the 64 bit register should be ok,
-but selftests fail.
+Cheers,
 
-Regarding your comment, I have not seen reg_bounds_sync() for the case
-R = imm.
-
-> It seems you're trying to hack around something that breaks
-> patch 3 which also looks fishy.
-
-I thought it was a good idea that changes in the LSM infrastructure are
-automatically reflected in the boundaries that BPF LSM should enforce.
-
-If not, I'm open to new ideas. If we should use BTF ID sets, I'm fine
-with it.
-
-> Please explain the problem first with a concrete example.
-
-Ok, I have a simple one:
-
-$ llvm-objdump -d test_bpf_cookie.bpf.o
-
-0000000000000000 <test_int_hook>:
-
-[...]
-
-       8:	85 00 00 00 0e 00 00 00	call 14
-       9:	b4 06 00 00 ff ff ff ff	w6 = -1
-      10:	5e 08 07 00 00 00 00 00	if w8 != w0 goto +7 <LBB11_3>
-      11:	bf 71 00 00 00 00 00 00	r1 = r7
-      12:	85 00 00 00 ae 00 00 00	call 174
-      13:	18 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00	r1 = 0 ll
-      15:	79 12 00 00 00 00 00 00	r2 = *(u64 *)(r1 + 0)
-      16:	4f 02 00 00 00 00 00 00	r2 |= r0
-      17:	7b 21 00 00 00 00 00 00	*(u64 *)(r1 + 0) = r2
-
-smin_value = 0xffffffff, smax_value = 0xffffffff,
-s32_min_value = 0xffffffff, s32_max_value = 0xffffffff,
-
-This is what I see at the time the BPF LSM check should be done.
-
-How this should be properly handled?
-
-Thanks
-
-Roberto
+Paolo
 
