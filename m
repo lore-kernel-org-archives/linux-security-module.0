@@ -2,149 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA0EC4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Dec 2022 15:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E268BC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Dec 2022 16:11:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232529AbiLLPh5 (ORCPT
+        id S232611AbiLLQLP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Dec 2022 10:37:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44628 "EHLO
+        Mon, 12 Dec 2022 11:11:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232412AbiLLPht (ORCPT
+        with ESMTP id S232433AbiLLQLP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Dec 2022 10:37:49 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83C1B9FEA
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Dec 2022 07:36:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670859415;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PccKKszWkRWP5I2XDQgnn1TfMCygRci1+qIyYeNPyTU=;
-        b=CCZYWE3UanN2vzPc/A1tK4I345JRzWQuUGcfmFVv6LQ3t6TzQ+985uaBwUP2b4mP4xcuxP
-        CX9+xklTN8Kejx6Za/oRLBmaFwsYkar6wx15oZifMzcnmsfZWGls/A/2Uf7UZc+txPPHm1
-        yCpaYC4OiXYCRaXzHfRpaNo1D0OcBs4=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-377-hA58MuB4OcyhFnwxPLKu6Q-1; Mon, 12 Dec 2022 10:36:52 -0500
-X-MC-Unique: hA58MuB4OcyhFnwxPLKu6Q-1
-Received: by mail-yb1-f199.google.com with SMTP id i10-20020a25f20a000000b006ea4f43c0ddso13386396ybe.21
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Dec 2022 07:36:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PccKKszWkRWP5I2XDQgnn1TfMCygRci1+qIyYeNPyTU=;
-        b=oN8MuATZKQGbB7+qmeuNQmiEGO0QuCO4TL8BFxgwuR6S5EQ1nx7D5PkfgBb22pIWM7
-         FiPfr9MzOHoCvsz38NJ2T/v22iS3xC9daPhPRtQPblogJNxjQc0lwWP8YByNt+IfTmBY
-         B6ENs33FGH/kNXW/vQPyo7cLQUO/kxQhLvLA8VikNGaQ0Bo7qFdHu3LZ8coFlxR5yfO+
-         eK36ugmNyw1fMG+pSGzJjN8YG4L3dnA/ao2l5CeuEyEna6PZHoODLEjVF3hKWnDYhQ0q
-         uR23Z8ZzMb2VF4HAzm54+XgBA5w8Xx6/WLAqzx80fsjmgr8Z8oAkIC4xhGXD6ZBZgcon
-         ETww==
-X-Gm-Message-State: ANoB5pn7TciYMq7dAF5rC3MIz/Al+L5E8BC8E7fpomRru/Z0sM6/Bjqt
-        cVLQ2v0sTKOWf0B6u353QLPx3NlLjWF8z/brxOFoUFJd0t/N1xj0yG+De89yXuswP1BCSw9eWLJ
-        /9i/4hOhhx9nSZsrq1Xa2B2Y42fF1BFLuhYA4
-X-Received: by 2002:a05:690c:c0f:b0:3e3:b823:db3c with SMTP id cl15-20020a05690c0c0f00b003e3b823db3cmr15425531ywb.46.1670859411950;
-        Mon, 12 Dec 2022 07:36:51 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf7YEE+nBMdkf+sl+1Cqvao/1eIaETZGMRa8d1Z+htlQZ3qfbcab5EPNjWmo0Y4+I0MTV0Wthg==
-X-Received: by 2002:a05:690c:c0f:b0:3e3:b823:db3c with SMTP id cl15-20020a05690c0c0f00b003e3b823db3cmr15425505ywb.46.1670859411656;
-        Mon, 12 Dec 2022 07:36:51 -0800 (PST)
-Received: from gerbillo.redhat.com (146-241-97-87.dyn.eolo.it. [146.241.97.87])
-        by smtp.gmail.com with ESMTPSA id de36-20020a05620a372400b006e99290e83fsm5928683qkb.107.2022.12.12.07.36.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Dec 2022 07:36:51 -0800 (PST)
-Message-ID: <75d48710be78d59e990cbb3930133a4f42c95a30.camel@redhat.com>
-Subject: Re: [PATCH mptcp-net] mptcp: fix LSM labeling for passive msk
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        Mat Martineau <mathew.j.martineau@linux.intel.com>
-Cc:     mptcp@lists.linux.dev, Ondrej Mosnacek <omosnace@redhat.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Date:   Mon, 12 Dec 2022 16:36:47 +0100
-In-Reply-To: <CAHC9VhQzJAhNtpMnU7STEfq6QpaJo-xiie8HoHH2w3io3aXBHw@mail.gmail.com>
-References: <ffee337de5d6e447185b87ade65cc27f0b3576db.1670434580.git.pabeni@redhat.com>
-         <a3c81322-36b5-a289-c07b-15d2be75b02d@linux.intel.com>
-         <CAHC9VhQzJAhNtpMnU7STEfq6QpaJo-xiie8HoHH2w3io3aXBHw@mail.gmail.com>
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35)
-MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+        Mon, 12 Dec 2022 11:11:15 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A431F2660;
+        Mon, 12 Dec 2022 08:11:12 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NW5z02dmNz9xrch;
+        Tue, 13 Dec 2022 00:03:56 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwCXHWSBUpdj5mgJAA--.15328S2;
+        Mon, 12 Dec 2022 17:10:52 +0100 (CET)
+Message-ID: <20f55084c341093d18d2bc462e49123c7f03cc8e.camel@huaweicloud.com>
+Subject: Re: Closing the BPF map permission loophole
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>, bpf@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Date:   Mon, 12 Dec 2022 17:10:37 +0100
+In-Reply-To: <5abb0b0090fd0bce77dca0a6b9036de121b65cf5.camel@huaweicloud.com>
+References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
+         <21be7356-8710-408a-94e3-1a0d3f5f842e@www.fastmail.com>
+         <CAEf4BzawXPiXY3mNabi0ggyTS9wtg6mh8x97=fYGhuGj4=2hnw@mail.gmail.com>
+         <a9367491-5ac3-385b-d0d6-820772ebd395@huaweicloud.com>
+         <CAEf4BzZJDRNyafMEjy-1RX9cUmpcvZzYd9YBf9Q3uv_vVsiLCw@mail.gmail.com>
+         <5abb0b0090fd0bce77dca0a6b9036de121b65cf5.camel@huaweicloud.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: GxC2BwCXHWSBUpdj5mgJAA--.15328S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJF45Kw4kAr1rGF45ZFyDGFg_yoW5Ar1DpF
+        s8G3W3Kr1ktr4vk34xt3y5Ja4agw4rJF1jgr1Yy3ykZa909r1akF4IgF4YgasFkr4xGr1Y
+        9rZ2v34DG3W7AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAEBF1jj4aMxQAAs-
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On Mon, 2022-11-07 at 13:11 +0100, Roberto Sassu wrote:
 
-On Thu, 2022-12-08 at 18:40 -0500, Paul Moore wrote:
-> On Wed, Dec 7, 2022 at 9:19 PM Mat Martineau
-> <mathew.j.martineau@linux.intel.com> wrote:
-> > On Wed, 7 Dec 2022, Paolo Abeni wrote:
-> > 
-> > > MPTCP sockets created via accept() inherit their LSM label
-> > > from the initial request socket, which in turn get it from the
-> > > listener socket's first subflow. The latter is a kernel socket,
-> > > and get the relevant labeling at creation time.
+[...]
+
+> > > > P.S. We can extend this to BPF-side BPF_F_RDONLY_PROG |
+> > > > BPF_F_WRONLY_PROG as well, it's just that we'll need to define how
+> > > > user will control that. E.g., FS read-only permission, does it
+> > > > restrict both user-space and BPF-view, or just user-space view? We can
+> > > > certainly extend file_flags to allow users to get BPF-side read-only
+> > > > and user-space-side read-write BPF map FD, for example. Obviously, BPF
+> > > > verifier would need to know about struct bpf_map_view when accepting
+> > > > BPF map FD in ldimm64 and such.
 > > > 
-> > > Due to all the above even the accepted MPTCP socket get a kernel
-> > > label, causing unexpected behaviour and failure on later LSM tests.
+> > > I guess, this patch could be used:
 > > > 
-> > > Address the issue factoring out a socket creation helper that does
-> > > not include the post-creation LSM checks. Use such helper to create
-> > > mptcp subflow as in-kernel sockets and doing explicitly LSM validation:
-> > > vs the current user for the first subflow, as a kernel socket otherwise.
+> > > https://lore.kernel.org/bpf/20220926154430.1552800-3-roberto.sassu@huaweicloud.com/
 > > > 
-> > > Fixes: 0c14846032f2 ("mptcp: fix security context on server socket")
-> > > Reported-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+> > > When passing a fd to an eBPF program, the permissions of the user space
+> > > side cannot exceed those defined from eBPF program side.
 > > 
-> > The MPTCP content looks good to me:
-> > 
-> > Acked-by: Mat Martineau <mathew.j.martineau@linux.intel.com>
-> > 
-> > I didn't see issues with the socket.c changes but I'd like to get some
-> > security community feedback before upstreaming - Paul or other security
-> > reviewers, what do you think?
+> > Don't know, maybe. But I can see how BPF-side can be declared r/w for
+> > BPF programs, while user-space should be restricted to read-only. I'm
+> > a bit hesitant to artificially couple both together.
 > 
-> Sorry, I was distracted by other things the past few days ...
-> 
-> One thing that jumps out is the potential for misuse of
-> __sock_create_nosec(); I can see people accidentally using this
-> function by accident in other areas of the stack and causing a new set
-> of problems.
-> 
-> We discussed this in the other thread, but there is an issue with
-> subflows being labeled based on the mptcp_subflow_create_socket()
-> caller and not the main MPTCP socket.
-> 
-> I know there is a desire to get a small (in size) patch to fix this,
-> but I think creating a new LSM hook may be the only way to solve this
-> in a sane manner.  My original thought was a new LSM hook call inside
-> mptcp_subflow_create_socket() right after the sock_create_kern() call.
-> The only gotcha is that it would occur after
-> security_socket_post_create(), but that should be easy enough to
-> handle inside the LSMs.
+> Ok. At least what I would do is to forbid write, if you provide a read-
+> only fd.
 
-If the preferrede solution is via a new LSM hook I have no objections
-at all. I'm sorry to put another hook mainteinance on you.
+Ok, we didn't do too much progress for a while. I would like to resume
+the discussion.
 
-How do you propose to preceed? After quickly digging into the relevant
-LSM code, the only module I think I could handle in a reasonable
-timeframe is selinux. Hopefully the new hook implementation should be
-quite straight-forward for the relevant SME.
+Can we start from the first point Lorenz mentioned? Given a read-only
+map fd, it is not possible to write to the map. Can we make sure that
+this properly work?
 
-I guess the patch[es] should target the LSM tree, as the change in the
-mptcp code should be a one-liner. On the flip side, that would likely
-lead to some merge conflict, as the mptcp protocol impl. is quite a
-moving target.
+In my opinion, to achieve this particular goal, the map view
+abstraction Andrii suggested, should not be necessary. For pinning too,
+I think incremental changes on top of the ones suggested below would be
+sufficient, so I would rather discuss them separately.
+ 
+As far as I know, there are two open issues that prevent Lorenz's
+assertion on read-only map fds from being true. They are:
 
-Cheers,
+- map iterator
+- map fd injected to eBPF programs
 
-Paolo
+In both cases, a read-only map fd is sufficient to cause a map update.
+
+I have proposed two patches to address the issues above:
+
+https://lore.kernel.org/bpf/20220906170301.256206-2-roberto.sassu@huaweicloud.com/
+
+If an iterator allows the key or value to be modified by an eBPF
+program, ensure that the map fd passed to it is read-write. Otherwise,
+read-only is sufficient if both cannot be modified.
+
+
+https://lore.kernel.org/bpf/20220926154430.1552800-3-roberto.sassu@huaweicloud.com/
+
+Let the verifier allow the minimum operations granted by eBPF-side
+permissions and by fd modes. The intersection needs to be applied
+because the map can be modified by the eBPF program through map
+helpers, so it is eBPF-side, but at the same time whoever granted the
+requestor a map fd expects that the permissions included in that fd are
+enforced by any function using it.
+
+I believe that with these patches Lorenz's assertion of a read-only map
+fd would be true. I'm not aware of other ways which would make the
+assertion false.
+
+Thanks
+
+Roberto
 
