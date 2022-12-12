@@ -2,116 +2,76 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D3BC4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Dec 2022 17:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 683DEC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Dec 2022 17:34:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231566AbiLLRHm (ORCPT
+        id S233035AbiLLReB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Dec 2022 12:07:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60232 "EHLO
+        Mon, 12 Dec 2022 12:34:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232280AbiLLRHj (ORCPT
+        with ESMTP id S233010AbiLLRdh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Dec 2022 12:07:39 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF1C5BA9;
-        Mon, 12 Dec 2022 09:07:38 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id m19so13804798edj.8;
-        Mon, 12 Dec 2022 09:07:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=psD3YLyCZjcYOQSRda/Wzy3cfaWkoGXg3yfR5HnyZlU=;
-        b=GG0ecsu3NkSEPBlpXL3y/2dvE8SxGBIMsMDwxMRotRyXQ0mGD2Eyk1hoyI2BuYVaS8
-         9RZeFf3Nt/RySOlPku2E9MbEzMruDbfosFbilPnOxDMQSw7x5UG0W2Run4wJRdpmyofM
-         5JJYOoeezBRE0KESUjS7ExwA97MDofhlc+GQCeLzMjpe6En8R5EN7EEsUseUM5B3/5kO
-         w+yRrtruGfpSbADomAqp8zlTLEuUlfGhrg8fPul1TRaT3cqREzF2KFHQpv06hMPDK9df
-         dWbaRgrKUPSQsZfwGgrvhLC1ERYYRkO82IR7bTSVDdCTDKOtb81CuvFjZrV9tBajrV/v
-         EdSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=psD3YLyCZjcYOQSRda/Wzy3cfaWkoGXg3yfR5HnyZlU=;
-        b=vz0Vdti1KLflN26o5kAAyfXub3zPmOtMRWKEZmbmaNXu9XVyod5NwHjW+SZBdMey9U
-         /PqI8jmuDgpiGwma3TAoF45gzOd0s/Ykyn6uoDVK+RNDL9hQszsGDwpBftJxbUOwSlJe
-         JX5lX52h1FIC+jwkmaGvWIMGpZ9kP8scUZBPHxPhKIxChSzYSJrlYuEekF4BNah5ie1K
-         eG+EJes2wtNlAT9/DVwnB31H1zrK0HLdjqaVd0Cxj09vpKz/le1kTJa04VrBylcVt5Yd
-         gFlYVsKg2rX/mbfDUcINswJpn9Y4mtYZ+bdGBYWfdg4Phh2BvJGSLmcp15mbYpNyZC4u
-         hXQQ==
-X-Gm-Message-State: ANoB5pnhvJemClcKvgS6vQ1mWCdoMF8oL5I7Tr6qXO253lfFFCsDugla
-        mpw5fkI4K2U6HpLFxAn02dB0MHtOyky/SB4YXuld39vI
-X-Google-Smtp-Source: AA0mqf6Xaid5ZmvTcskXpzYGc+gIRzp7/WRUmWe2TbFfxyi+v3Q+kNCF2GiPsJsKC7Xgyy6USfDUPqScGV8BZrIoCro=
-X-Received: by 2002:a05:6402:e9f:b0:46f:efbb:91d9 with SMTP id
- h31-20020a0564020e9f00b0046fefbb91d9mr374811eda.94.1670864857266; Mon, 12 Dec
- 2022 09:07:37 -0800 (PST)
-MIME-Version: 1.0
-References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
- <21be7356-8710-408a-94e3-1a0d3f5f842e@www.fastmail.com> <CAEf4BzawXPiXY3mNabi0ggyTS9wtg6mh8x97=fYGhuGj4=2hnw@mail.gmail.com>
- <a9367491-5ac3-385b-d0d6-820772ebd395@huaweicloud.com> <CAEf4BzZJDRNyafMEjy-1RX9cUmpcvZzYd9YBf9Q3uv_vVsiLCw@mail.gmail.com>
- <5abb0b0090fd0bce77dca0a6b9036de121b65cf5.camel@huaweicloud.com> <20f55084c341093d18d2bc462e49123c7f03cc8e.camel@huaweicloud.com>
-In-Reply-To: <20f55084c341093d18d2bc462e49123c7f03cc8e.camel@huaweicloud.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Mon, 12 Dec 2022 09:07:26 -0800
-Message-ID: <CAADnVQLU+c+gsZ=V6myG0-GhU3EzZgqjzTPvqvYmCDBjqMoF+Q@mail.gmail.com>
-Subject: Re: Closing the BPF map permission loophole
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        Mon, 12 Dec 2022 12:33:37 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35B20E0F;
+        Mon, 12 Dec 2022 09:33:23 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E11A7B80DDA;
+        Mon, 12 Dec 2022 17:33:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 86641C433F0;
+        Mon, 12 Dec 2022 17:33:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670866400;
+        bh=ft4aDjFJHeZuNGSmxeQr0943w5/fqhCuyQHjByWHOeY=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=mcV1CJ48A6qUKm13wDzy3neNjcc3CJlC594X2mcb1nemzSHil7ZYyW9q+DSCBnY7N
+         7WUuuY1QMob7h/1joDj6wYNq0TyDMCnTJ1cdpDYGQ4JAbXehwj1ksUhfeWR1tjYKvU
+         pb7Ot97Zxf9ZUc0fzMJelxc/+9ufvG+FYpbs4PLTueYzuC0t2fN7DU4ys4Sdp/LC/Y
+         je/L9qUj/+qDWwNCVwjRQslouF91iCh/EeKGV51h9qkDwgm5joz0VvnrsteelEb3Xm
+         rf0KnXu2ifudEoYw3GNhInmjmF83Cb2I3mEs65bHkDdgS81AV3AmGCPgy6bIDxZ2s0
+         vPVwBNEEANbJA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 73656C00448;
+        Mon, 12 Dec 2022 17:33:20 +0000 (UTC)
+Subject: Re: [GIT PULL] tpmdd updates for tpmdd-next-v6.2-rc1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20221208163308.9989-1-jarkko@kernel.org>
+References: <20221208163308.9989-1-jarkko@kernel.org>
+X-PR-Tracked-List-Id: <keyrings.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20221208163308.9989-1-jarkko@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/ tags/tpmdd-next-v6.2-rc1
+X-PR-Tracked-Commit-Id: eaabc245b02a0e0063068178624d2fc12ba91d69
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 43686598b55785bfc1f961b3731b2302fe08f393
+Message-Id: <167086640046.22610.8680028343589584461.pr-tracker-bot@kernel.org>
+Date:   Mon, 12 Dec 2022 17:33:20 +0000
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        David Howells <dhowells@redhat.com>,
         Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 12, 2022 at 8:11 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> On Mon, 2022-11-07 at 13:11 +0100, Roberto Sassu wrote:
->
-> [...]
->
-> > > > > P.S. We can extend this to BPF-side BPF_F_RDONLY_PROG |
-> > > > > BPF_F_WRONLY_PROG as well, it's just that we'll need to define how
-> > > > > user will control that. E.g., FS read-only permission, does it
-> > > > > restrict both user-space and BPF-view, or just user-space view? We can
-> > > > > certainly extend file_flags to allow users to get BPF-side read-only
-> > > > > and user-space-side read-write BPF map FD, for example. Obviously, BPF
-> > > > > verifier would need to know about struct bpf_map_view when accepting
-> > > > > BPF map FD in ldimm64 and such.
-> > > >
-> > > > I guess, this patch could be used:
-> > > >
-> > > > https://lore.kernel.org/bpf/20220926154430.1552800-3-roberto.sassu@huaweicloud.com/
-> > > >
-> > > > When passing a fd to an eBPF program, the permissions of the user space
-> > > > side cannot exceed those defined from eBPF program side.
-> > >
-> > > Don't know, maybe. But I can see how BPF-side can be declared r/w for
-> > > BPF programs, while user-space should be restricted to read-only. I'm
-> > > a bit hesitant to artificially couple both together.
-> >
-> > Ok. At least what I would do is to forbid write, if you provide a read-
-> > only fd.
->
-> Ok, we didn't do too much progress for a while. I would like to resume
-> the discussion.
->
-> Can we start from the first point Lorenz mentioned? Given a read-only
-> map fd, it is not possible to write to the map. Can we make sure that
-> this properly work?
->
-> In my opinion, to achieve this particular goal, the map view
-> abstraction Andrii suggested, should not be necessary.
+The pull request you sent on Thu,  8 Dec 2022 16:33:08 +0000:
 
-What do you 'not necessary' ?
-afair the map view abstraction is only one that actually addresses
-all the issues.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/ tags/tpmdd-next-v6.2-rc1
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/43686598b55785bfc1f961b3731b2302fe08f393
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
