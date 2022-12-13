@@ -2,130 +2,113 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D053AC10F1D
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Dec 2022 15:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5148CC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Dec 2022 17:44:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236234AbiLMPho (ORCPT
+        id S236337AbiLMRoz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Dec 2022 10:37:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37334 "EHLO
+        Tue, 13 Dec 2022 12:44:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236074AbiLMPhl (ORCPT
+        with ESMTP id S236317AbiLMRom (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Dec 2022 10:37:41 -0500
-Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0399B2E0
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Dec 2022 07:37:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1670945857; bh=sOXTvqDHnS4t0uRzxe63xLlgmapSCpal4VxqiUQzZfY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ktBwd0juCNCyftgkH/v6HItWujJzkDbV6II6HgFPm/HK7iYA8Abcn2y09r8uJYL1o3ks24RAao8lscyQrxjUwW5EveBq6t4xSVXYQ+13fHPUGtuH2poZ/z+Ki6ihszCy3cY3K5QV1/uVu8E3OmbS/2LJXm/Kvbx6IoMFYBxGP80OdV/axUoRCHnqrAb3zHEhOhV7qrNoDduuXji62ysK/oXhjwfoXcCTYfdhoBv4niMrcqQNsa4dP8jAlJvwyQtQuzboldXiaaUwsYcAo+30eGXqlmcOd5cC/SHeXGRTFn8Q9PVZ2JJqt8TYU3GAC7gAV2K1U0IH3Nz/tynmVFCeVw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1670945857; bh=YE8ZkhyNRLmPKVNTfcmDsM+qMFWCw6ikwyDaV6WZlvm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=oHkq+rd0Q9v5YWGTefru/kLOj333xla7iY0veZn376G59o7JM5NtYiAQLbVOl3kxPtXeyIH4Jhyu8FLMGnoD3lxOvNDy4jF3zxFMubBb/A8U1nYTeIwY3EfayjIXdSN6fXceAzicsDGvpptuwj9BxszzZf6yiCXkH310cItGDf2HAx/xrHAVwC0+O0E2eW507Z5+2Za/HOKCLzXvLtlQv8UGmN3dukeJiruuanOqJM2HlMs/VMShO2Azj1/z2Cr1m/Os8kZe5KOrxhJrZH5CIjnr0s2bBWnATMdK5Y1RBL7cUtGHgiLa3DDRQwFP3b2yE2fMzQGtciEqbbTaION4Rw==
-X-YMail-OSG: 8_.lebkVM1mnfFj1NWh627alP1i_ua7hWW8AtL6Ad1BcugYWlVF5nGf7bzaZ7Xt
- Z9sGg.t5dloDbIlO1IxKcE3XzLritBcM0xZGtoxVpIkMfPVWMDibeuKzPE8Cue44njKArVsI.dsz
- TZwQbNdvJsrcJZgH47cpgVFAVI6hwiApZGdHBQQm_x.slZ_w1X_qIlUCmVhk8IjZM7JsQ_McgPjI
- oieXOL0F5YfknpdVDQOPi77G8At1DgxEHsB9XL0Id0hVZxiHauHjJf_CFfkuVxtZYFg8dClLshUD
- Pi5j5VSyJWgRq5ptD1WWgq0iZG2YkEiplUw0hrOm8DGInhNLr6yjQrKGBNKbplAq9isC31qbiXXk
- emZe_2ThPXRr48_8BiZuTr_j66NACensRf1sQpepg4vIwmRQx1003l1HEH8tUSZjoSIulESNwa81
- 8BxixZvR6ysiZeJRPdFeNpkhHiI9I3PssAEzMvTB6OGmxB91jNj7UoC0vyxxgdFz3xAt.MV3hHlk
- qZ1Jc9gYTcGG77yAiNBi3HvyJokPqKetjO7gNA_xOhY2ulIr43d1beSKSP7JHmDHeQHZE7JpeAYC
- LjIFyUj4OeNqWZsJ54LZx28BGlqi60Yz48bLo4ZqFvhMAMO5plbeMCKsalLRP9W.YuNYVzDUjwhF
- W5qeQA2w48Gzw8H9N_yDlZuz9bgP12L6igri5HPTUhU_DLfRtUuCcehGvkmsAt4SwKdEopROBdKb
- P1hwQ2zqdMWkTnNhPpbDSXxFEW_ragx8Polq9W3IFUzf2DSNytuPEtl90tJKe1bzYPYtywSx7YGG
- QjNJleCYlKVUubn6C3oQj_HRcQC_ebsTjsHaL4cFAjpwl2LNr6Gz4wLLV1_rBl3MldaeFAT69yQp
- GZziZ6s8RcXrGLbr2vL55OpprCxRz0dJJFvLTquR9auMmnQkvWPi9eo9BRdIjvGIIB0clfToHmeM
- muOlzSrGZkh5dQIfERIT8hGBpTEJaEXsolM_fdHiZS_T33vVZmckopEUAkaJ0UDCBxSj4psewgb9
- _n5HlPbqiH0zPiQEBSzjCsROIosXYmKTtLq0w0xdRedbKJNaSQ6yKRZwONOOc9_oFA3gT5VN_8Yq
- cjiJLr8UlR5dMC5Wiyii5ZinFeqRX6HB.AGsjVDJYpB9RbzPErcZa9OEIWrV6W_gjHh8jiZV8pm2
- XSSDeO1v5qI6J.8FWgWqtoJd5RHit8mO_alhGbjSQfWGXj2JNyyBT3ZwsOgXps9eNV9hj_ZvzwFL
- WALmFSbSuEhO9u6E2C7Hz6r3843yPXPwMGWdNHPIjG_Ph2h4YiPVfrbLlRUqCvVe6p3HxNKEK20r
- HSxq5jEX2wMyd6_OUZxNkNOO0Ha9mHjKG7o83i14_VKp2DNrYRqr1mLyOX1lsIxPyFCTCU9OHoqb
- IGdji6WzjmXUZDcKLQF__uTbfGD.4Iv.mg.v9upmtfvzt0465RDaVOjHAgp3a6VdJgQsnTsqefAY
- W45GAYNihOV_al7snAGSTeYqJSLrsAgvQp8Pp.jQprnknSIvz.E2azjb._w_yOnfXdwuxSKz.10x
- ykjNa7JgiG_R.pEeASJpOWjnwJF_ebPAzeyvko.lauxbPmxrJrCfHDTzY.dTUQ.__.VpcianUcVO
- P150eAEZFMUv9217f.EW9Gf2tfoGI1QLdjmhPRiHFY4Umv7fQMzXY.iX5GeKknRV19pDe3sdRV12
- X2vtqd6QDnELp.U92QxP1E88lJtX5GScjS8zyxEWsux_XCztZJcJx.InbOnszZ4jmCzJMMEkbLgz
- S1tiLQgCkJHuZfa2hxKWv2zryrXZSbMxdO5ViiOAk5DretADJ6_WO3ukpY5S4wAKeiq40_2unDEX
- V2zGb7vJxFtijNW2O24KSDMkTnULTQ8HTWIV6bpSB8JslMXcExA1tM84xTtErUwEMxi2ZjvKZLsP
- B9aCQiE4Tb2mo8NockvD7NZfyJ4H1WtEB1Ve23WA6MB_3Dqec0OU.WmC6TnaH1TkrkjI4RaIhZhO
- 3t0CV21A0hITeRavgo.vg3Cj9O_CxBHkAwmJM7fLJ7AxmUJoqimVvwy6S3Dg6o_YWbiabUiGmu.w
- V9NdprlfabrJx1B5j308ixFLtJgpIHMEc0yog1aAndtLDjAUeKr8Q9iqzR0r1.8.n11sp7C5bFDo
- C.RVslQu1syGK8U_ym4gaiAicJIGWBzSSDVnjl6T8K3IXndJeB.MfBt2p2sNCnuyi11WaL.oPX48
- 2IoTRrUN3PB5t3NOw5sIZInI76X_TJaoVlFN5GQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Tue, 13 Dec 2022 15:37:37 +0000
-Received: by hermes--production-gq1-d898c4779-9jfqr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 88e0117bf245ea795b169282af69f581;
-          Tue, 13 Dec 2022 15:37:34 +0000 (UTC)
-Message-ID: <3e971295-fb0b-3426-6054-e3fa5307943a@schaufler-ca.com>
-Date:   Tue, 13 Dec 2022 07:37:32 -0800
+        Tue, 13 Dec 2022 12:44:42 -0500
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98604220C2
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Dec 2022 09:44:38 -0800 (PST)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-3b56782b3f6so202519917b3.13
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Dec 2022 09:44:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wOv+J0r/3B6i4POUYOzSGaAf/iSJPPOP/x/UlxsbTvQ=;
+        b=WZ1mKRQBVKmDwustjDGt5j+lf+imbCmjpXPsg1BBATOLjJOwG70Wy78s8BR04q3Gdq
+         6x0b8plbylv5t6lB95U7p/M74lW+sMEBPSmdvx4l+L+ANQFN/U8Uyh0ytjcXcuSBjnPC
+         jFj5+j3oUZw+Z1DQEPds2syc7iY/qe6YjRUlk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wOv+J0r/3B6i4POUYOzSGaAf/iSJPPOP/x/UlxsbTvQ=;
+        b=c9DNMCZmEiSh+IDQvxT7566aEc2n7jDm44fI7Y9xMcOUwBXd6AaeFGq7FQc2f0AD19
+         BEGGcbDLy2bGZwyJVPWe4QC9+USCJedI641EwmJKAa4BfP8hn++2wjkS+sJMojYwfwff
+         FHxiv0BvjbxAah8XkavFECGC0POsxhe8kKVNB/VuqqLpR6j31Tve0e8KJHNQYKzS5xip
+         CIOYsoCqpB1CWmzS7JnpK8dRP5dDIZNPLlBvYpJZzu0ApUeiiRqfykDa3Mnmht9vCYEe
+         qZYx4VpiZaekIzlPQEIcfJKfdjSVUj6ETXuP+bNp19ez2sEB4CcBWIZo4OalVrVdS64E
+         3eVg==
+X-Gm-Message-State: ANoB5pl37pUzlBwXYTtmiL4I1XExVJR2VwiZdWOk96jo83ENNbjSTSqN
+        fxtLYYLe5YiA3aZW//c5RMTdIOTTuf6xVIGi
+X-Google-Smtp-Source: AA0mqf5WKZUObo8cU5UeaBGLrzBbHi4g/3a7hjr8o5pZ7/lTGq0qRC/t6uv2wlYbMBQmc362I6Fzxw==
+X-Received: by 2002:a05:690c:884:b0:3ed:aa4:2a72 with SMTP id cd4-20020a05690c088400b003ed0aa42a72mr17426658ywb.39.1670953477389;
+        Tue, 13 Dec 2022 09:44:37 -0800 (PST)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com. [209.85.222.172])
+        by smtp.gmail.com with ESMTPSA id d22-20020a05620a241600b006fcb2d3f284sm8402890qkn.67.2022.12.13.09.44.36
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Dec 2022 09:44:36 -0800 (PST)
+Received: by mail-qk1-f172.google.com with SMTP id x24so225226qkf.5
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Dec 2022 09:44:36 -0800 (PST)
+X-Received: by 2002:ae9:ef48:0:b0:6fe:d4a6:dcef with SMTP id
+ d69-20020ae9ef48000000b006fed4a6dcefmr10744372qkg.594.1670953476176; Tue, 13
+ Dec 2022 09:44:36 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v7 6/6] mm/memfd: security hook for memfd_create
-Content-Language: en-US
-To:     Jeff Xu <jeffxu@google.com>, Paul Moore <paul@paul-moore.com>
-Cc:     jeffxu@chromium.org, skhan@linuxfoundation.org,
-        keescook@chromium.org, akpm@linux-foundation.org,
-        dmitry.torokhov@gmail.com, dverkamp@chromium.org, hughd@google.com,
-        jorgelo@chromium.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        jannh@google.com, linux-hardening@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel test robot <lkp@intel.com>, casey@schaufler-ca.com
-References: <20221209160453.3246150-1-jeffxu@google.com>
- <20221209160453.3246150-7-jeffxu@google.com>
- <CAHC9VhRBMTQvnBdSwMbkOsk9eemYfvCmj9TRgxtMeuex4KLCPA@mail.gmail.com>
- <CALmYWFvrasXnshO01YGWRyC7qKk4o0G88yAgkgjO1YBumF5zeA@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CALmYWFvrasXnshO01YGWRyC7qKk4o0G88yAgkgjO1YBumF5zeA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20926 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <CAHC9VhSmJHDRroUJifUuDNF+KvVPVtW17CuMzb_RrUKBBkTabA@mail.gmail.com>
+In-Reply-To: <CAHC9VhSmJHDRroUJifUuDNF+KvVPVtW17CuMzb_RrUKBBkTabA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 13 Dec 2022 09:44:20 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whH53GKhcT0+cKGwCVOHXD0_Gh82w2SVojjgoN7XZ-71g@mail.gmail.com>
+Message-ID: <CAHk-=whH53GKhcT0+cKGwCVOHXD0_Gh82w2SVojjgoN7XZ-71g@mail.gmail.com>
+Subject: Re: [GIT PULL] SELinux patches for v6.2
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/13/2022 7:00 AM, Jeff Xu wrote:
-> On Fri, Dec 9, 2022 at 10:29 AM Paul Moore <paul@paul-moore.com> wrote:
->> On Fri, Dec 9, 2022 at 11:05 AM <jeffxu@chromium.org> wrote:
->>> From: Jeff Xu <jeffxu@google.com>
->>>
->>> The new security_memfd_create allows lsm to check flags of
->>> memfd_create.
->>>
->>> The security by default system (such as chromeos) can use this
->>> to implement system wide lsm to allow only non-executable memfd
->>> being created.
->>>
->>> Signed-off-by: Jeff Xu <jeffxu@google.com>
->>> Reported-by: kernel test robot <lkp@intel.com>
->>> ---
->>>  include/linux/lsm_hook_defs.h | 1 +
->>>  include/linux/lsm_hooks.h     | 4 ++++
->>>  include/linux/security.h      | 6 ++++++
->>>  mm/memfd.c                    | 5 +++++
->>>  security/security.c           | 5 +++++
->>>  5 files changed, 21 insertions(+)
->> We typically require at least one in-tree LSM implementation to
->> accompany a new LSM hook.  Beyond simply providing proof that the hook
->> has value, it helps provide a functional example both for reviewers as
->> well as future LSM implementations.  Also, while the BPF LSM is
->> definitely "in-tree", its nature is such that the actual
->> implementation lives out-of-tree; something like SELinux, AppArmor,
->> Smack, etc. are much more desirable from an in-tree example
->> perspective.
->>
-> Thanks for the comments.
-> Would that be OK if I add a new LSM in the kernel  to block executable
-> memfd creation ?
-> Alternatively,  it might be possible to add this into SELinux or
-> landlock, it will be a larger change.
+On Mon, Dec 12, 2022 at 7:05 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+>   Unfortunately, this pull request does
+> conflict with fixes that were merged during the v6.1-rcX cycle so you
+> will either need to do some manual fixup or you can pull the tag below
+> which has the necessary fixes and has been sanity tested today.
 
-I expect you'll get other opinions, but I'd be happy with a small LSM
-that does sophisticated memory fd controls. I also expect that the
-SELinux crew would like to see a hook included there.
+I did the merge manually, but compared to your version. They were
+identical except that you hadn't added the documentation entry for the
+gfp_flags parameter.
 
->
-> Thanks
->
-> Jeff
->
->
->> --
->> paul-moore.com
+That said, I'm not super-happy with that merge - it was the trivial
+straightforward one, but when I looked at the code it struck me that
+the only thing that actually seems to *use* that gfp_flags argument is
+that
+
+        if (oldc->str) {
+                s = kstrdup(oldc->str, gfp_flags);
+                if (!s)
+                        return -ENOMEM;
+
+sequence. And it strikes me that this is not the only place where
+selinux ends up doing that whole
+
+                str = kstrdup(ctx->str, GFP_xyz);
+
+dance.
+
+It feels to me like that thing shouldn't be an allocation at all, but
+that selinux should use ref-counted strings instead (and just increase
+the refcount). It's in other places like context_cpy(), but having it
+be a refcounted string would also potentially help with
+"context_cmp()" in that the string compare could be a "is it the same
+ref-counted pointer" and maybe hit that case most of the time before
+it even needs to do an actual strcmp.
+
+Hmm?
+
+Anyway, that was just my reaction to resolving that conflict, and
+obviously *not* for this merge window. I'm just saying that if you
+agree, maybe that could be a future improvement, making the whole
+allocation - and the whole need for that gfp_flag - go away?
+
+               Linus
