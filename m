@@ -2,129 +2,88 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CCBC4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Dec 2022 19:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26058C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Dec 2022 19:25:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236742AbiLMTWk (ORCPT
+        id S236325AbiLMTZo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Dec 2022 14:22:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36174 "EHLO
+        Tue, 13 Dec 2022 14:25:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235844AbiLMTWi (ORCPT
+        with ESMTP id S235717AbiLMTZn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Dec 2022 14:22:38 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 362B61AA0A
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Dec 2022 11:22:31 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id b13-20020a17090a5a0d00b0021906102d05so4584621pjd.5
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Dec 2022 11:22:31 -0800 (PST)
+        Tue, 13 Dec 2022 14:25:43 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1C4E24943
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Dec 2022 11:25:42 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id d82so2892570pfd.11
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Dec 2022 11:25:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GooOz5xzwABA0aXeznw8tJUM/w4xxzmJuyWu/svzARU=;
-        b=JQhIG2Dnt+kBdWNk3DVyFOdSdA0ib8mpr1HWSpWifG0Wgsu5cuwDKCXsQh8tWSrgyH
-         42GLmuR2Ph/Wci79VjQVy/C/W1o9PE46hYWAfq6TzhzJhdV7/d7OqkZ2F8n88iknOoVz
-         hkMKqFCyV52bkH93aadGRLMw2f38wQCcx+hq0MfiIE/9xCfCA6vzvyy2StriIrmjZt/s
-         Kp5RjTqR9zVNNWyBrneZ8Evqug9QLnxruisFOoy4/pOTlPwghDIaLH80mrTgUuFaN8dY
-         CdLmgmoqvfnRiL7VkF08qMmXGb9EEGcjpzdpOejtRPF6oCABT9Y6c47t+Zw54yxDiRnh
-         91fw==
+        bh=9kbOYAAjnKyXvg23pjUMzGuz9DSgOAIhX9TM1FNy+0Q=;
+        b=YQ8ZSNFzPrq2HNtcykvnHhbINRe8kgBNKOS/PDvQ0iunDkAHLiPBwJ6kju5zXBtI9q
+         0zeXx6hqc6oO0/pLFG/8TRpUHW/c2kLm7aIVq2JGPzUmim6kLRmMnezJ2G7i+M1dIOFM
+         EcrT222rB5pje2tUP9DxsQuohumAy5kfzjRt2w23C+ZPASM6arGfIYdP/xP4YeEKxRkW
+         gGV74nhJJDmG5vV8WC7ICjn72Bl+l+KbujJsmQAy49Aq6a5rL2F8MNQJ3+F8+Ke/EkWL
+         EaD7boOE6no4Xbf0RLHkdBjd3kFJuRt4UOLQ481H+ltMmqf52GHyE4Kuy+zhN1elABPY
+         omqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GooOz5xzwABA0aXeznw8tJUM/w4xxzmJuyWu/svzARU=;
-        b=lXJfLUQrYDFxws6Gh2JyXU9p+o60BvpeNidcWeW+/OlrTSx6AcMEx5qMTnh7cdRFzj
-         NbEvWc+S9v3VcWRYLSThHJUddvEKBqf20ulGFq5Fk5WHa9JgV17a+AOh8/cBi+KhHL13
-         xLku9VbelsQuiRRs5J1R0+qHIlHQMT8V0NmOR3M0ttGNtPayuq/67ikBWKqlAKtfy6Ul
-         FylnoTCKtuQ2YfbxuTAHdwU9A9Xu6TLC2z4iK06L7QYfzWX7kjVPpcjbOXO9JL7BTMIM
-         69qTTruw4hkFzhV6eh7fDIoE/uQKiEHuYKixjs6qY64KOvVXsqYb7AHX6fs3UHOFMUbL
-         UVZA==
-X-Gm-Message-State: ANoB5pnc+uEjSkVanaDIzCCILBDgj9JGeaZwuOK0lx4m/AOEIlFOQIB6
-        k6YbihflEQuBb+fuhfbqjraPOIayjTrN3klsRzXJ
-X-Google-Smtp-Source: AA0mqf7aGuvEMwZQ2myz4q21F/vwAjdbZ8+nOsSBmZZRAt8LcZga6xnXTekj7k2zRVU4K/i46QHyS2HTCWcbSGlnof8=
-X-Received: by 2002:a17:902:a70b:b0:189:b0a3:cf4f with SMTP id
- w11-20020a170902a70b00b00189b0a3cf4fmr37496320plq.56.1670959350637; Tue, 13
- Dec 2022 11:22:30 -0800 (PST)
+        bh=9kbOYAAjnKyXvg23pjUMzGuz9DSgOAIhX9TM1FNy+0Q=;
+        b=hZHztFvsewTOU5x0s9M3rBo/J6Boih/6sdJ6mp1eQcC0Fd4BZR0k9vjZffzUg5OufY
+         rdorLl4n+ljqDDvJsrnKyu7DeP7XqXFXdTeq9VHxr4z+FWG9umNdQa5je5OjJBm6h3ia
+         54cIDDzjoS3qZQ2M4qLUpa+swSgwuHpE2fDNFLzdFcqjlz7xrZfCF2r3OzkSahlsKJsK
+         r5Uuza1kYnT7BVUQNt4yXZqF0o/z7luCNL4kRSgC0DslAu24jQzaKIxUM7Sjs+iE/yob
+         Zqu0Fz4WsPPGcIrSDovFL90C/I4usq/yu7I8IxeTjW9hWuamd2rSNclGiRJzczC3SvWq
+         8sfw==
+X-Gm-Message-State: ANoB5pnozSToxCvLaWmW9x9kKwF8IOFYsk1bZOa18hgsTGR2oKlyWgvV
+        nxgeziTqSFQV19P9w42v0MRBAKpU43INxcBYZUCPMP8BLm1N
+X-Google-Smtp-Source: AA0mqf57kSqmNwGBjDyzVN0hyalSVuFVRwFQQjhF9S/cz0ORzHKxAexfG5G7j/186DQnoY80k93z3j9qhUTRlV3Jv/I=
+X-Received: by 2002:a63:4424:0:b0:477:96e2:9065 with SMTP id
+ r36-20020a634424000000b0047796e29065mr70173881pga.533.1670959542176; Tue, 13
+ Dec 2022 11:25:42 -0800 (PST)
 MIME-Version: 1.0
-References: <20221209160453.3246150-1-jeffxu@google.com> <20221209160453.3246150-7-jeffxu@google.com>
- <CAHC9VhRBMTQvnBdSwMbkOsk9eemYfvCmj9TRgxtMeuex4KLCPA@mail.gmail.com> <CALmYWFvrasXnshO01YGWRyC7qKk4o0G88yAgkgjO1YBumF5zeA@mail.gmail.com>
-In-Reply-To: <CALmYWFvrasXnshO01YGWRyC7qKk4o0G88yAgkgjO1YBumF5zeA@mail.gmail.com>
+References: <CAHC9VhSmJHDRroUJifUuDNF+KvVPVtW17CuMzb_RrUKBBkTabA@mail.gmail.com>
+ <CAHk-=whH53GKhcT0+cKGwCVOHXD0_Gh82w2SVojjgoN7XZ-71g@mail.gmail.com>
+In-Reply-To: <CAHk-=whH53GKhcT0+cKGwCVOHXD0_Gh82w2SVojjgoN7XZ-71g@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 13 Dec 2022 14:22:19 -0500
-Message-ID: <CAHC9VhQKsjiGv3Af0iqg_TLNzCvdTaLnhw+BRTF9OEtJg1hX7g@mail.gmail.com>
-Subject: Re: [PATCH v7 6/6] mm/memfd: security hook for memfd_create
-To:     Jeff Xu <jeffxu@google.com>
-Cc:     jeffxu@chromium.org, skhan@linuxfoundation.org,
-        keescook@chromium.org, akpm@linux-foundation.org,
-        dmitry.torokhov@gmail.com, dverkamp@chromium.org, hughd@google.com,
-        jorgelo@chromium.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        jannh@google.com, linux-hardening@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
+Date:   Tue, 13 Dec 2022 14:25:31 -0500
+Message-ID: <CAHC9VhThEUiyVL2E5sAiQhiKhqV8nJbRE7TGOAq0QOJ2qzGjPw@mail.gmail.com>
+Subject: Re: [GIT PULL] SELinux patches for v6.2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Dec 13, 2022 at 10:00 AM Jeff Xu <jeffxu@google.com> wrote:
-> On Fri, Dec 9, 2022 at 10:29 AM Paul Moore <paul@paul-moore.com> wrote:
-> > On Fri, Dec 9, 2022 at 11:05 AM <jeffxu@chromium.org> wrote:
-> > >
-> > > From: Jeff Xu <jeffxu@google.com>
-> > >
-> > > The new security_memfd_create allows lsm to check flags of
-> > > memfd_create.
-> > >
-> > > The security by default system (such as chromeos) can use this
-> > > to implement system wide lsm to allow only non-executable memfd
-> > > being created.
-> > >
-> > > Signed-off-by: Jeff Xu <jeffxu@google.com>
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > ---
-> > >  include/linux/lsm_hook_defs.h | 1 +
-> > >  include/linux/lsm_hooks.h     | 4 ++++
-> > >  include/linux/security.h      | 6 ++++++
-> > >  mm/memfd.c                    | 5 +++++
-> > >  security/security.c           | 5 +++++
-> > >  5 files changed, 21 insertions(+)
+On Tue, Dec 13, 2022 at 12:44 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, Dec 12, 2022 at 7:05 PM Paul Moore <paul@paul-moore.com> wrote:
 > >
-> > We typically require at least one in-tree LSM implementation to
-> > accompany a new LSM hook.  Beyond simply providing proof that the hook
-> > has value, it helps provide a functional example both for reviewers as
-> > well as future LSM implementations.  Also, while the BPF LSM is
-> > definitely "in-tree", its nature is such that the actual
-> > implementation lives out-of-tree; something like SELinux, AppArmor,
-> > Smack, etc. are much more desirable from an in-tree example
-> > perspective.
+> >   Unfortunately, this pull request does
+> > conflict with fixes that were merged during the v6.1-rcX cycle so you
+> > will either need to do some manual fixup or you can pull the tag below
+> > which has the necessary fixes and has been sanity tested today.
 >
-> Thanks for the comments.
-> Would that be OK if I add a new LSM in the kernel  to block executable
-> memfd creation ?
+> I did the merge manually, but compared to your version. They were
+> identical except that you hadn't added the documentation entry for the
+> gfp_flags parameter.
 
-If you would be proposing the LSM only to meet the requirement of
-providing an in-tree LSM example, no that would definitely *not* be
-okay.
+Ah, thanks for catching that.
 
-Proposing a new LSM involves documenting a meaningful security model,
-implementing it, developing tests, going through a (likely multi-step)
-review process, and finally accepting the long term maintenance
-responsibilities of this new LSM.  If you are proposing a new LSM
-because you feel the current LSMs do not provide a security model
-which meets your needs, then yes, proposing a new LSM might be a good
-idea.  However, if you are proposing a new LSM because you don't want
-to learn how to add a new hook to an existing LSM, then I suspect you
-are misguided/misinformed with the amount of work involved in
-submitting a new LSM.
+> That said, I'm not super-happy with that merge ... It feels to me like
+> that thing shouldn't be an allocation at all, but that selinux should
+> use ref-counted strings instead (and just increase the refcount).
 
-> Alternatively,  it might be possible to add this into SELinux or
-> landlock, it will be a larger change.
-
-It will be a much smaller change than submitting a new LSM, and it
-would have infinitely more value to the community than a throw-away
-LSM where the only use-case is getting your code merged upstream.
+It is something worth looking into for the future.  I'm in the middle
+of reworking the audit code, and one of the changes is heavy use of
+string refcounts to reduce the copies needed.
 
 -- 
 paul-moore.com
