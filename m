@@ -2,71 +2,84 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C80C4167B
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Dec 2022 18:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 975B3C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Dec 2022 18:58:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235962AbiLMSNs (ORCPT
+        id S236591AbiLMS62 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Dec 2022 13:13:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47350 "EHLO
+        Tue, 13 Dec 2022 13:58:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235932AbiLMSNn (ORCPT
+        with ESMTP id S236556AbiLMS6Z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Dec 2022 13:13:43 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAF2F21E16;
-        Tue, 13 Dec 2022 10:13:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A8095B815B4;
-        Tue, 13 Dec 2022 18:13:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 670C1C433EF;
-        Tue, 13 Dec 2022 18:13:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670955218;
-        bh=uOGGovyRo10ItJsqJlbXaYB3/VhGvdeoz1mxh4zRRHM=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=OgNjM1wk2xJQbyBDjJdnvKljZAZ4YA0LVy7qciaiikd7K8QmhNBBm4njmCV3ONRGH
-         l8zlKsyWTCSEbZZypWkgEvGWWj/WPV+JOPa1p6yINh7BtwKkGpJt8+gfCNZQiWWQn0
-         Rc8BLJOBxwXaGnR2d5RbtPyV+3TgF1WIlBOQLe2sopBGr51sCtY3xkKKubUZrw3Hs+
-         qJUscV+yYSTyL5FumojQQ/riDCIQsTOSk9+/LBw6w//jho08ldIgAYNr9EQerrvV5Y
-         on8MlEl3WLph0ixV3wRv38wPWpNAZwA+ZdZAIsqZvT3Ajuck/9nOYMjkr3Sap2hOpP
-         pbg6Ud5XprYXw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 55CFEC00445;
-        Tue, 13 Dec 2022 18:13:38 +0000 (UTC)
-Subject: Re: [GIT PULL] Landlock updates for v6.2
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20221212121918.1315195-1-mic@digikod.net>
-References: <20221212121918.1315195-1-mic@digikod.net>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20221212121918.1315195-1-mic@digikod.net>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.2-rc1
-X-PR-Tracked-Commit-Id: f6e53fb2d7bd70547ba53232415976cb70ad6d97
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 299e2b1967578b1442128ba8b3e86ed3427d3651
-Message-Id: <167095521834.23919.6522052360251251026.pr-tracker-bot@kernel.org>
-Date:   Tue, 13 Dec 2022 18:13:38 +0000
-To:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Alejandro Colomar <alx.manpages@gmail.com>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+        Tue, 13 Dec 2022 13:58:25 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E7011BE9F
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Dec 2022 10:58:25 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id p24so822116plw.1
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Dec 2022 10:58:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZKl1wcPWQc3lV7wabM4Kjj2ksPRKT8Mh/REGb3spmwo=;
+        b=kisO4BnNgk20qy6vPkSBK0Qzlr4fjOV5ID3Ja1+U8wZm9CuduaBDrXzMgn7x9IvPWW
+         zNHIavdeQiAUxV46HCYK7mptwp4tjt3DG4JcCAIZKC8q69tsOR8gvgEMV/2N6PW4yh2B
+         wEmxYwsx5J1DzK5hhP91xQLrNZCT+n+rDPrT0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZKl1wcPWQc3lV7wabM4Kjj2ksPRKT8Mh/REGb3spmwo=;
+        b=DmsrOKt+uPb76ol/04acNEJZSBu/huPs7mpu7cBgu9hi0Fg9sP/9e5vYjd3HmY7pzZ
+         GjdcRE3IS/bFQuYqQx2vew4LhC7J8YuMn/pBRv5TLxmq5XWzNIPnaBUK0xOR3p2RmZbZ
+         7vhpiV5dlNG1G45MYwcz2jLp6UEIEFDrnS8li63rhutROeluFR9LXnWz5mnk0xN+Vvho
+         +QG+puD766JdOzA/z9CCbGHr3S7SISeB5LB+tHA3fXKCZMv5g6GqbsevsJDAXqTU/Q1H
+         NcDGpZ1GWXK213isYsu+wuJXYlkWy6C/18C5R3njdJItlam+xN8vEIgE4CJa/0MkkpOU
+         0Khg==
+X-Gm-Message-State: ANoB5pl89qmkqB4fZTL6YN/vrjTpRcMiL76jkllXiObg3xFcFjtqCkD6
+        T90os5h6eVa4reoG7jPQLNkasyWuHb2vuVYf
+X-Google-Smtp-Source: AA0mqf5H+f0ZVagL6c3TVSaf9bQExR+ENfObeUt9VJVDuC0eNpHgVHtrIpsgo3JAyyPVK1i7OM5Fnw==
+X-Received: by 2002:a17:902:e011:b0:189:8062:d8e with SMTP id o17-20020a170902e01100b0018980620d8emr19884080plo.7.1670957904490;
+        Tue, 13 Dec 2022 10:58:24 -0800 (PST)
+Received: from jeffxud.c.googlers.com.com (30.202.168.34.bc.googleusercontent.com. [34.168.202.30])
+        by smtp.gmail.com with ESMTPSA id n8-20020a170902e54800b001869ba04c83sm199970plf.245.2022.12.13.10.58.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Dec 2022 10:58:23 -0800 (PST)
+From:   jeffxu@chromium.org
+To:     mic@digikod.net
+Cc:     jorgelo@chromium.org, keescook@chromium.org,
+        linux-security-module@vger.kernel.org, groeck@chromium.org,
+        Jeff Xu <jeffxu@google.com>
+Subject: [PATCH v2 0/1] selftests/landlock: Fix selftest ptrace_test run fail
+Date:   Tue, 13 Dec 2022 18:58:15 +0000
+Message-Id: <20221213185816.3942853-1-jeffxu@chromium.org>
+X-Mailer: git-send-email 2.39.0.rc1.256.g54fd8350bd-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Mon, 12 Dec 2022 13:19:18 +0100:
+From: Jeff Xu <jeffxu@google.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.2-rc1
+Landlock ptrace failed because YAMA is enabled. 
+This patch check YAMA value and skip related tests.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/299e2b1967578b1442128ba8b3e86ed3427d3651
+V1:
+- skip specific testcase according to YAMA value
 
-Thank you!
+V0: https://lore.kernel.org/r/20220628222941.2642917-1-jeffxu@google.com
+- skip entire ptrace when YAMA is not 0.
 
+Jeff Xu (1):
+  selftests/landlock: skip ptrace_test according to YAMA
+
+ .../testing/selftests/landlock/ptrace_test.c  | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+
+base-commit: 963a70bee5880640d0fd83ed29dc1e7ec0d2bd4a
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.39.0.rc1.256.g54fd8350bd-goog
+
