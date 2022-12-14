@@ -2,67 +2,67 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A9FC10F1E
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Dec 2022 00:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 930F3C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Dec 2022 00:34:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237742AbiLNAeo (ORCPT
+        id S237744AbiLNAeq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Dec 2022 19:34:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53390 "EHLO
+        Tue, 13 Dec 2022 19:34:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237744AbiLNAec (ORCPT
+        with ESMTP id S237766AbiLNAef (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Dec 2022 19:34:32 -0500
+        Tue, 13 Dec 2022 19:34:35 -0500
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C3EB1DA79;
-        Tue, 13 Dec 2022 16:34:31 -0800 (PST)
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BDLOCPo017259;
-        Wed, 14 Dec 2022 00:34:03 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671D41D66C;
+        Tue, 13 Dec 2022 16:34:34 -0800 (PST)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BDLO7dr016062;
+        Wed, 14 Dec 2022 00:34:16 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : content-transfer-encoding : content-type :
- mime-version; s=corp-2022-7-12;
- bh=ns4doCMIogENs7dEUwwt3w44xeLE3Bdj20dPZT718Vk=;
- b=EjkKYQFozoCyw2NjraJ1wZMFwxB7/1PXo0O2wY44mPbLQOi3LmGgId0oh5EpsrpkI07w
- Qqrt4r0/R20KFBsACEXGaJfdMkQbUaa4rVxNGQn9g2chAb7tFGIK84KIn89z5NJgo+yA
- CH3mJsFhYa6oBJ5PQ2cZwpTGanstjm9JKpLHSIkV1myJ2d70nhmmfyvOPB9q5vGm/pAq
- WMtzFJM8SL5qqH0dD1eiabCjyTLk/3HzxPT5i+ItG9Yf1xQb9jw02ICo3Xd7/v6KY3oT
- BnEV5QtWPCfdcuYoYpfwgDqLlVKAUWHgSY6y17XSnpHQUWIiWr5lkfZAugdB/vBQGwiR /g== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3meyex0p16-1
+ subject : date : message-id : in-reply-to : references :
+ content-transfer-encoding : content-type : mime-version; s=corp-2022-7-12;
+ bh=9T70b9iy5omFjdxa6HUf4W+h/52V84VeDdJ/ZDQXe3U=;
+ b=1DezFdD/LaHfgbOgLuNlGJx1QT26KX8gUISMbVChFcuABo7vj8MW8iMT03TMDOg0IavI
+ S0qElciIA6Blcd/YsAlZMCkp2zB69pH3Qhohm1g47/wAkJtEquTi94CZx7NIf0DMiX7Q
+ bZvw7SdupMWF9UfcyF8RAzRSK/qSffjK4XiwRm/JjJXmJE+q/GYBIM/5QOg6Tf2aOeIl
+ RCIRyK6LTVtTGawhsyRPa5wtNpbOy4heQcjOJf6nzO9BnS3D7CqdVsfO9ZLoAkprb7Dq
+ ruPsOML7K346dEf8Lyph0KzvBEtuDBbN7t/w5jyOp5IaNcCJkPGp97NwbT0idqViL/Jl Fg== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3meyewrnth-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Dec 2022 00:34:03 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 2BE00YSR012219;
-        Wed, 14 Dec 2022 00:34:01 GMT
+        Wed, 14 Dec 2022 00:34:15 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 2BDNUIaO037224;
+        Wed, 14 Dec 2022 00:34:15 GMT
 Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2168.outbound.protection.outlook.com [104.47.58.168])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3meyev4sed-1
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3meyekcq6d-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Dec 2022 00:34:01 +0000
+        Wed, 14 Dec 2022 00:34:15 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eCJvsqhOG8oBAavESYlYCHGvsGbTvRunPbZFqgFcQPjbQ9pdnA81bLPipDlxOR/H7pQ5Xn+N6Gqd0AqE3ELMPpAS0oLUOch0EDquDTs3PGjMObJogoATKatLyQLCt+BzPgIoo/6HP65Dwz0oa7h9DD7+dxx9rSrIQP90iu7f4bh9Z4npa9qB+0cDT0vhCwz2t3USKWckbxqVTlgCxrnIBHUKNPr4W5SJ143qqdQxTQSQaz3Rg7eeKm4+4fdBxfADbx6mqMIrn0f9t0TpwGx7acsYsLAVNmva5EPAUTzjL2EB2GmsVs3VBrkeX7v6f0ongAd2l4JIBFgV2fqdVrqZ3w==
+ b=HMgnWFQCN1KMslKg64Pi+Xb3Z71Tk0Yk8QO704ZN57JPkWxDNWFL4tmkcMXh0FsUT+NhFuCbxdEzmfaEjxxKzB2cfbgLX3p4aAeHxJDVxwB3rTastWR+x2MmO9/30RjqxhTUmqgvgqLV2/znhzILGhtGK8q2SW4C6/wtz4r9MEtwHPwfQ7jsm/Bk0OVCABVhM5Y90ljc/nuzeaG2SZVDO1CgZDzAyK+7580pjbl+ljieOirNHHGAoogW8Hkyh7Y+3PYVP7dVLlNIGerKsrXGIATUa+Gnq+Xry9wbsj16LlF3i60TLpjtEMwvPUcZWXwlJDBgDqxtnOkBaZoR3FKMaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ns4doCMIogENs7dEUwwt3w44xeLE3Bdj20dPZT718Vk=;
- b=gtbl9Z1v7aBHwVaDAiWxT9QlZ9KOmIgAOCNhWW9lBHx4pNzn+h2YR6dHPf8CG0GN9mtHl+U+c0g2laFVhtVI4FzOA2+G1NBFO0mUCH+FBzGJGN/fNbDFuMgmDEvMk/8DMQXcVO1EUnxzENHBueQrlwOFO2xjvMszV+jEoKFXcGmRLIZ/lproYd9y1heRXO96V0D3VLCXvGnnQNW9wa6am/ZBJkkHI/q8X2JGofRNV7apKlA+9Vm7syNJ38eizF6davzeRAFExWHnsIR1MToFurpaeAOlbel0wfwI0w0lU45dbnOJPETSaS0/inPV7esMCTAHLdGq0jBJabIXMdvAhg==
+ bh=9T70b9iy5omFjdxa6HUf4W+h/52V84VeDdJ/ZDQXe3U=;
+ b=ZzpJizFY1ioWpYpgD/ednEkzxoztMQtXrwCKQYG7xSEqZtFTRLGO7MjLWfhdyAs+buZZflaX4sE/MBsSc+kxe6QYRBYPOTYE9jKb1fOLxO1BEuxPzQsnl9QkpW2SERy+a42+ZiQeisICtv/dygfkpUjTKMlYo//8cgR8PGP0+IsOVZ+sMBBLvM3wYWkou6KLVjNUWNnVMqfebg4b7CcuOsOmbGLEun0BpGhuPx9dnR0b9r5Eo4mOcUlgumdez5uG6SYrDKxzr6ARx0kciR8OFUkoN1CowbHHmB3E4UQvlfQhmurVL9bmcWFfjqwdeYqao3AeUXPVgN6+mVQSnZXjdA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ns4doCMIogENs7dEUwwt3w44xeLE3Bdj20dPZT718Vk=;
- b=GbtvxOZJ15rEsiHe2vjixQoMWybHsHfxziCNl35IHO61Hpkmmije2x1RbaFgWg9VkbzjkA1wbpKWoD+rN5L2O2RwU03PUXpmTClbWQDxD170h7U2uqwlmZhx3yTEYpAvGDI2zGMHKlH3eXHwjYY5EqDplRBtYwH2nUSMe3j3jRk=
+ bh=9T70b9iy5omFjdxa6HUf4W+h/52V84VeDdJ/ZDQXe3U=;
+ b=EjY16i8J7wpSGAvU6QLehmKe0BGnegSxKne1dJ1Zapj2jF9zySCLnVd5hX5/H0olAMY0uqnCCHANCL5j8wsDQNU4ngyq8mTqVTlCx+Jm2L6pZL2vC+1bBMe4MYXu/+zA893B6aF+4JxSVDE2CCSBfZNS9Rufir6IX/3EigMsMHs=
 Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
  by BN0PR10MB5223.namprd10.prod.outlook.com (2603:10b6:408:12a::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.19; Wed, 14 Dec
- 2022 00:33:59 +0000
+ 2022 00:34:12 +0000
 Received: from CH2PR10MB4150.namprd10.prod.outlook.com
  ([fe80::f006:f411:9056:63a4]) by CH2PR10MB4150.namprd10.prod.outlook.com
  ([fe80::f006:f411:9056:63a4%4]) with mapi id 15.20.5880.019; Wed, 14 Dec 2022
- 00:33:59 +0000
+ 00:34:12 +0000
 From:   Eric Snowberg <eric.snowberg@oracle.com>
 To:     jarkko@kernel.org, zohar@linux.ibm.com
 Cc:     dhowells@redhat.com, dwmw2@infradead.org,
@@ -75,200 +75,174 @@ Cc:     dhowells@redhat.com, dwmw2@infradead.org,
         linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v3 00/10] Add CA enforcement keyring restrictions
-Date:   Tue, 13 Dec 2022 19:33:51 -0500
-Message-Id: <20221214003401.4086781-1-eric.snowberg@oracle.com>
+Subject: [PATCH v3 07/10] KEYS: X.509: Flag Intermediate CA certs as endorsed
+Date:   Tue, 13 Dec 2022 19:33:58 -0500
+Message-Id: <20221214003401.4086781-8-eric.snowberg@oracle.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20221214003401.4086781-1-eric.snowberg@oracle.com>
+References: <20221214003401.4086781-1-eric.snowberg@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: DM6PR03CA0013.namprd03.prod.outlook.com
- (2603:10b6:5:40::26) To CH2PR10MB4150.namprd10.prod.outlook.com
+X-ClientProxiedBy: DM5PR07CA0080.namprd07.prod.outlook.com
+ (2603:10b6:4:ad::45) To CH2PR10MB4150.namprd10.prod.outlook.com
  (2603:10b6:610:ac::13)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: CH2PR10MB4150:EE_|BN0PR10MB5223:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5a628d2b-e67a-4536-cd6a-08dadd6ae463
+X-MS-Office365-Filtering-Correlation-Id: 6288827e-127a-491f-62eb-08dadd6aec15
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Vqh7/05/KlV8lJvBK7P6eVyFUw1GYpnbTVT0jWTOFAdHDVyt3kSYtKBk77DR5MRtgDL3MEJ8O31M+14/TwIyzppSUTY/Tp1FI0aRZSvjmN6PrJ5fSZMEeJ+/8bFqmykC0vCJ+Aq9E9UyjrjHXXvTqHzvxqpzeF7K+e0A5G2AWUrldJJQIrEDLdW+/ftC8tQwURkabaPVNiQehdtKI6wIMCSJrWQNvVyShKHH6eHw4OtkHl3imnoyfiYYMfKm3WhPJsbV7L5KfZrRsbNjF2ncDsYq3y+PPTmGajdyOQDHNwfEtJLumsmhkEoVhKxytoK3NgqOsUCesMIFhc1g1DwDLn8TT7Y40dRmF+m3dGoYL5Xmwd1iaHY8v2bwCs2ddvnPk9ZRjxPvs12K//a5okaUZCdSmI0tRXJGlRkOoYwLK/3RKbdz9FtAKpzK7xDQGfd6a9Gy13rMqrlzz36503fCnwFZO4upuF7sIjX1yKwOdr1KyNVIXBBsshgxhYtIkWhCXbrQi5TiwtwcHB+rBMBHnwbcMlDneDbhDr6LIHOfjF5VZd7Sjv91ibDdiuT0uxFupyHP1GlhunENOdcuEB75x2kgmGJI6mO6aBiCO13H2eTSIK52NWK19eX/raUA0XEn9Bu92WKkXiYQFNPQb4jLDg==
+X-Microsoft-Antispam-Message-Info: SmA4pAGxsvgJx6YI0KEcy7elaSsZ5LgxGgKOEDS3GO3bZCHNNeTI2Pe+CxQNg6kNpqiZtDsE23X9f45P2BoDBZmr9Eo/nz/085FFkKd9DGxZ3Ay/OvCCfYax/cHrOTKHVttVh0UAW4qrB2IWaxKMmMaRDB6AX6Ubik3WflQFrVUrq3La5s6THER0t0GlY91wqBNZDz20GCDDyAi2fuQZt9eYSOeDr7cO7abCzFp8GxOgSI8kb8A4NPWufJbpwln0AXfBuy8tu/RfRpNBIrBPN0HlZgGQl6dCfMWwa9lxlhW/fdUL/z6FrrkNFCcLYPEG8IuQZcK1YKv1TyMhJNysF+Ae5F2oMZUIgvn6FAgmkOHckI5/LnRNqN+c6VhioIS/MKvW1VaKA+eqkJI096gLMwl/TVjjxxCo1CthILuCkasvvrjTZcJAxxerBJVaUGQB7qUqdyh2G2j3pYh71pSoEN6V/t0DtRjypSGXQK9LTLkJpuozSnx+kxVPQncrvWBhXnA/IcUjkIwxL36Arf4tAM9/13fiHT/D0Gr+M0xBaPIYsgyTn5FKe0dTRfXmmJSQIsu4w9Fgj2Bl/zVlx2c+M0iMYdpADqK9quKRxfONfHA/O6+3BVM2ZGlmUMyzHiyIiFvsxf3I09ehRGJ0ZZtNlQ==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(396003)(39860400002)(346002)(376002)(366004)(136003)(451199015)(41300700001)(38100700002)(86362001)(6486002)(8936002)(478600001)(6666004)(4326008)(66946007)(8676002)(316002)(66556008)(186003)(2906002)(83380400001)(6512007)(66476007)(6506007)(7416002)(1076003)(44832011)(2616005)(5660300002)(36756003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?iRpxKAgVKpdoAAsCUIPZeMYifC2WKfhS4YlmiUtZHGi+Morp1qMZHuOzGQyq?=
- =?us-ascii?Q?vmjqKyPGNBju4o5sFuMBB6POQCNBTmgD9BGyMWNvX+a57lh83UgcyxwJEPkp?=
- =?us-ascii?Q?ykzbOTloxd5HWT9WREfxLxuGlN+dj5HC7FuOeFJrTC6th40EGSs37LMHGLmL?=
- =?us-ascii?Q?e3fzfYqxpV5AeMfL0MJ2vCqX4gPZJMf5YS0s2N/dMVB4rouaXvp0ltd9env+?=
- =?us-ascii?Q?DQJ3NXDqL6S4O0absQtkKEMcpSJU3PN8pKJ+fZrJpvbravWf3XQzTjQt+TNQ?=
- =?us-ascii?Q?03EJYDMCmnHGLsTxL5/r3NMAE3NkT/Q+/CHFsAYwq/PGwjqi5UxHPCLgSmC3?=
- =?us-ascii?Q?M2xzegaVps/6jgDtvrn3at43qcuBnMwxEGHGWLizff746nE3exykoT3h1w9S?=
- =?us-ascii?Q?+5GTaSUG1ogTdRb+h4CFrSctBHG1+YSkxj4XzIZZhd2yy9jW8ZQzf51kiTH6?=
- =?us-ascii?Q?EqG7BiFmFnoyOzAb/Q0DrteqYwWNgP7HUJFQ73cgSUiuM08jqqeJZytGXN/k?=
- =?us-ascii?Q?4zy9wrWU8a1BIoKDoQvVgfSpYxLHEUhcS6oajNI85ka0B9TW6bx6lCSZT4SZ?=
- =?us-ascii?Q?eqX1dQsTtFaCE2DlPTvwvO9ZyY5G87Gl4P/72oAvH/h9W9woAAZzTAHr8ejz?=
- =?us-ascii?Q?7vYGPqJCa6DRM7sR/gIuxWEJpdHmjTm4s/7SPVqAc+vl39OddPKyEGmH9M1m?=
- =?us-ascii?Q?BSFfFtRQRPUjgfwF6qIIytz40z1Rplt+6fR87SzEgYE34rJ+1lHCpJlPt2Bq?=
- =?us-ascii?Q?c1dg8lZGgcMLj5s0YQedog21/HR/EyRQ9QAnF5uHFms4/mHMMOHD7xFsAhpb?=
- =?us-ascii?Q?jLy/JZJGiNgCgbJVfuNdjyj4EikKeXgQOuqyVixz3bWAE9WmcLzQi/MJ8C89?=
- =?us-ascii?Q?CQYDh69/M54b6x2bBMgXoGMO4VYlZz+5NPRAGwzS1G4xmg33FYleMbxz4tpE?=
- =?us-ascii?Q?YsRZ2/qqVEk59tiA1clIPXiUAVWoZkAwd/t3dM2kTizllfl3sCJGea90Zzbi?=
- =?us-ascii?Q?O6BzjQnFi6xq37j6kq4NyypIoWIZogj2/0zy/9G16wcBl3Gjh8iZfzJ4tBZM?=
- =?us-ascii?Q?pSb3eV3CT+PGPqlFeapi7P+uEUYD7N4jwbYob3fCx5iWPVMpUw/UW8AAzBAj?=
- =?us-ascii?Q?ifGzpbZq2M6rVCIXSps/MTc1BRR52JyUKmyal0H7cr2YHVzBGkHQD+8Appm2?=
- =?us-ascii?Q?XfK2kFNdb/DjsVfCl0ZkmQ6b4woD+9xEpHi0Z0puyph/rsH+W72yCCgfgDD+?=
- =?us-ascii?Q?XSMVkHPQu0ePuuhuGdMY+azUxxXX9hZmax0sQmidBD3rNyR7Xm5I3qxJHH+g?=
- =?us-ascii?Q?ulWk2s5AA1ibl4R8u3VbKjsrbTTivoYqsWtkesInCZHXZcyYZ0U/F22es+l4?=
- =?us-ascii?Q?+TbYAg13FQTfNwqQnLr2Jz6IiEl6LgBq3CW0NQxv7DaUbxva5PmsKSdaOycH?=
- =?us-ascii?Q?MJ1nn7mydIkvCPMRB92r3ES+9Ihp5MeVHC+l93Ir/Xx+HA+TlLMyHKB0na0l?=
- =?us-ascii?Q?jBaDA0ZBJdc229cTQR0XU9PzwVO/bR9J4zlr4rSw7U3yI4w7vejGI8iO3Cqh?=
- =?us-ascii?Q?ZEXG8IblNwPb5w8xqiWhfiWYdJtPgR+M62wTr/jKUua4IgWvcLf+2AXUroQS?=
- =?us-ascii?Q?bzBTJugFO6ITNtXF9ChWkXg=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+n9qvO7wn/BPv+B/m6Ly7P5YM+0HCvXYA2Qd0iG3GYWZ8Q08hhY8cH1cKzmo?=
+ =?us-ascii?Q?S4GGhnRIKYBCUXyzDA6m3JBxH4rjthgWyf2G7zh/JYfZGg572pjw+go0toM8?=
+ =?us-ascii?Q?zxLmmH+5mquiF/CuQ2CxCyy4I96XeaOH+2xakcUUiV5gOI7a+OwIgtcDWvXq?=
+ =?us-ascii?Q?e7q0r2fEpWH9khraiCpscPCDmnApQEC12NYHjiVDANnxbxBBls4Cbbb9ELnH?=
+ =?us-ascii?Q?EC9kKWRPpVr4l8ff06Hap0RV4MDxhYeSvGgiP2dHbsP9+ua5X4BHRc+Bc2Qt?=
+ =?us-ascii?Q?Z/SLr4wHso+sDUb3BXQV3KcoVtTOxl+2jXg67iCzogxfMsLou7lORM3ed2Wy?=
+ =?us-ascii?Q?SL2xAaiaWMNSC2UUUj3FNuDqd4s6P+z05Abf+X9fjyOfFAM1Kh9lxCotG6Sn?=
+ =?us-ascii?Q?41FKni/2oQcG+oHvKxKfE7rDwNW8KA37GG4BKLTx//JiwNM7GzlBkHhhzflI?=
+ =?us-ascii?Q?Jixr5YXC5DQXV/uUlRgKs/pHyb6BPIlso0wNHTjORAoQOornWUBCevt8gE7f?=
+ =?us-ascii?Q?ga1u1Re2iOIxdYRTMddYPn/H62WYteLFIpfPOphVMqMshZ9TSfkb90urFcuM?=
+ =?us-ascii?Q?Xo3yJ2X65E7d7z50ks36DrQT8/I0a9poeRtnUsnJm3uhbfrsfdVGXezlCHnC?=
+ =?us-ascii?Q?p2JWxwC/xYGPbkW9Fq0tvRAYG5YJQ12uTtveNI2ns3DljJ5XkQZ5InHXfdbi?=
+ =?us-ascii?Q?GPS/8F7lB+3LdBDb79dxONO3s8eadrnjj2PX41IUQ1kH2I6tFt9MMn1dmazI?=
+ =?us-ascii?Q?7IiExtRmDkxPEwtuksZs0g/+LOUbMvXmp7HYA83bQOWpJ5GFOQ6j+Nkz1ILF?=
+ =?us-ascii?Q?Tu784QuRl3MRKDxxP2fWBVWWMUpB1sLgHAHNW9DGV9027G+JW6oOreYCCarA?=
+ =?us-ascii?Q?8Um1UqEKGPQFtMdor9CJdh1lQPWTfQhhLOD9dTbkOwXfg3b2ojqP3AGIyk+C?=
+ =?us-ascii?Q?ZQKs5nyHem0kMqUyJx4egDxXdlqUvvfIrxinXGm0xiO/LxBQOIrXgObVnbz9?=
+ =?us-ascii?Q?lZ7vZVYdtYat3c3m/q/Ywdm2WlikRyPWKIOR+KBFids0iYygAzA8KerWJp7+?=
+ =?us-ascii?Q?G3IICSYtceApP2KtD48W1nPGUQRKPeLWQP2E2SPx0nR7pi2h7EqyAOtT1FKV?=
+ =?us-ascii?Q?Oq+tNhyCU9UaBVyS11ZON/CzOMsRc/z1qgGIf9mhFrZO4vTA+GiL22Vviz6V?=
+ =?us-ascii?Q?79/tYMNbO8B+rcV8AoB+ra0AvZf52gzrbepoa9kVhzPr/2Pk6CwhsdaE6gtA?=
+ =?us-ascii?Q?tUDtmKCN+F8GAi4Ci9gkMaeeUeQnFrluMpsrkqWm2J9KVFwUwt+9bmJYX8SC?=
+ =?us-ascii?Q?FC7bkExHE6uJ7jvW3gbXY152mOsqOPkIQgXH1h34h6uRBZoIQmb40bmTw1VI?=
+ =?us-ascii?Q?/CHshUj7ufDBhN44h5JOrMzH456C0G7EQ1jy0Nxc2Pueh+yrlWk5euG/TPyt?=
+ =?us-ascii?Q?bIDkGgDYMObMcpmOpd870CADEaVIpB9gl+D2LskBzfXCmhY+iRe9g5Vs6xTL?=
+ =?us-ascii?Q?1qxoa54y0U5VfRzRPNLeICFTO0qxtF2Yec51m4XuZL2wFZ91q1+U83L/QGf+?=
+ =?us-ascii?Q?kLe/uW7NqC6HND9C5sMbLEblKe3eXz0Xb4lF7INiuD1ZEJyB1DrP1PI+rb8W?=
+ =?us-ascii?Q?rQ3sPsV9zUT1DFxG61Fusik=3D?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a628d2b-e67a-4536-cd6a-08dadd6ae463
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6288827e-127a-491f-62eb-08dadd6aec15
 X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Dec 2022 00:33:59.6238
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Dec 2022 00:34:12.8598
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9VPKc+QhG2SO+OKuALfjS0E840QQ7mjGOKcv//GwGvDXlzdia/GPVVaemDcAed+hrRodLCYqdazU9xRpjgQkBMisMNbr40rDwT61sHZMQhw=
+X-MS-Exchange-CrossTenant-UserPrincipalName: MJb0eBPZLJMZFTzc48LgPdY9du/5m8rDC0pJc3GqlFHqYx2sI1w++277rQquy/aE3Ecl2UTM9cp1pRTwx6MQ4Btg6WY/0MpmATeOTgfIG/Y=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB5223
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-12-13_03,2022-12-13_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 bulkscore=0
- spamscore=0 mlxscore=0 mlxlogscore=999 adultscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 phishscore=0
+ mlxlogscore=999 suspectscore=0 spamscore=0 adultscore=0 bulkscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
  definitions=main-2212140002
-X-Proofpoint-GUID: xohwN_5B8emlLZaMXl0SMBwlX6UjqXIE
-X-Proofpoint-ORIG-GUID: xohwN_5B8emlLZaMXl0SMBwlX6UjqXIE
+X-Proofpoint-ORIG-GUID: -Qa9JTphCEIUQcJ91AbkgnOjgDa-PvCs
+X-Proofpoint-GUID: -Qa9JTphCEIUQcJ91AbkgnOjgDa-PvCs
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Prior to the introduction of the machine keyring, most distros simply 
-allowed all keys contained within the platform keyring to be used
-for both kernel and module verification.  This was done by an out of
-tree patch.  Some distros took it even further and loaded all these keys
-into the secondary trusted keyring.  This also allowed the system owner 
-to add their own key for IMA usage.
+Currently X.509 intermediate certs with the CA flag set to false do not
+have the endorsed CA (KEY_FLAG_ECA) set. Allow these intermediate certs to
+be added.  Requirements for an intermediate include: Usage extension
+defined as keyCertSign, Basic Constrains for CA is false, and the
+intermediate cert is signed by a current endorsed CA.
 
-Each distro contains similar documentation on how to sign kernel modules
-and enroll the key into the MOK.  The process is fairly straightforward.
-With the introduction of the machine keyring, the process remains
-basically the same, without the need for any out of tree patches.
+Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+---
+ crypto/asymmetric_keys/x509_public_key.c | 14 ++++++++++++--
+ include/linux/ima.h                      | 11 +++++++++++
+ include/linux/key-type.h                 |  1 +
+ security/keys/key.c                      |  5 +++++
+ 4 files changed, 29 insertions(+), 2 deletions(-)
 
-The machine keyring allowed distros to eliminate the out of tree patches
-for kernel module signing.  However, it falls short in allowing the end 
-user to add their own keys for IMA. Currently the machine keyring can not 
-be used as another trust anchor for adding keys to the ima keyring, since 
-CA enforcement does not currently exist.  This would expand the current 
-integrity gap. The IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY 
-Kconfig states that keys may be added to the ima keyrings if the key is 
-validly signed by a CA cert in the system built-in or secondary trusted 
-keyring.  Currently there is not code that enforces the contents of a
-CA cert. Any key in the builtin or secondary keyring can be used. 
-
-To allow IMA to be enabled with the machine keyring, this series introduces
-enforcement of key usage in the certificate. This series also applies
-this enforcement across all kernel keyrings.
-
-The machine keyring shares  similarities with both the builtin and
-secondary keyrings.  Similar to the builtin, no keys may be added to the
-machine keyring following boot. The secondary keyring allows user
-provided keys to be added following boot; however, a previously enrolled
-kernel key must vouch for the key before it may be included. The system
-owner may include their own keys into the machine keyring prior to boot.
-If the end-user is not the system owner, they may not add their own keys
-to the machine keyring.  
-
-The machine keyring is only populated when Secure Boot is enabled.  A
-system owner has the ability to control the entire Secure Boot keychain
-(PK, KEK, DB, and DBX).  The system owner can also turn Secure Boot off.
-With this control, they may use insert-sys-cert to include their own key 
-and re-sign their kernel and have it boot.  The system owner also has 
-control to include or exclude MOK keys. This series does not try to 
-interpret how a system owner has configured their machine.  If the system 
-owner has taken the steps to add their own MOK keys, they will be 
-included in the machine keyring and used for verification, exactly 
-the same way as keys contained in the builtin and secondary keyrings.
-Since the system owner has the ability to add keys before booting to
-either the machine or builtin keyrings, it is viewed as inconsequential 
-if the key originated from one or the other.
-
-This series introduces two different ways to configure the machine keyring.
-By default, nothing changes and all MOK keys are loaded into it.  Whenever
-a CA cert is found within the machine, builtin, or secondary, a flag 
-indicating this is stored in the public key struct.  The other option is 
-if the new Kconfig INTEGRITY_CA_MACHINE_KEYRING is enabled, only CA certs 
-will be loaded into the machine keyring. All remaining MOK keys will be 
-loaded into the platform keyring.
-
-A CA cert shall be defined as any X509 certificate that contains the 
-keyCertSign key usage and has the CA bit set to true.
-
-With this series applied, CA enforcement is in place whenever 
-IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY is enabled.  Meaning, 
-before any key can be included into the ima keyring, it must be
-vouched for by a CA key contained within the builtin, secondary, or 
-machine keyrings.
-
-IMA allows userspace applications to be signed. The enduser may sign
-their own application, however they may also want to use an application
-provided by a 3rd party.  The entity building the kernel, may not be the
-same entity building the userspace program.  The system owner may also
-be a third entity.  If the system owner trusts the entity building the
-userspace program, they will include their public key within the MOK.
-This key would be used to sign the key added to the ima keyring. Not all
-3rd party userspace providers have the capability to properly manage a
-root CA.  Some may outsource to a different code signing provider.  Many
-code signing providers use Intermediate CA certificates. Therefore, this
-series also includes support for Intermediate CA certificates.
-
-This series could be broken up into 3 different parts.  The first two
-patches could be taken now.  They solve current issues that will be
-triggered by the build robots.  Patches 3-8 add CA enforcement for the
-ima keyring.  Patches 9-10 restrict the machine keyring to only load CA
-certs into it.  Patches 9-10 require all the previous patches. 
-
-Changelog:
-
-v3:
-- Allow Intermediate CA certs to be enrolled through the MOK. The
-  Intermediate CA cert must contain keyCertSign key usage and have the 
-  CA bit set to true. This was done by removing the self signed
-  requirement.
-
-
-Eric Snowberg (10):
-  KEYS: Create static version of public_key_verify_signature
-  KEYS: Add missing function documentation
-  KEYS: X.509: Parse Basic Constraints for CA
-  KEYS: X.509: Parse Key Usage
-  KEYS: Introduce a CA endorsed flag
-  KEYS: Introduce keyring restriction that validates ca trust
-  KEYS: X.509: Flag Intermediate CA certs as endorsed
-  integrity: Use root of trust signature restriction
-  KEYS: CA link restriction
-  integrity: restrict INTEGRITY_KEYRING_MACHINE to restrict_link_by_ca
-
- certs/system_keyring.c                    | 32 +++++++++-
- crypto/asymmetric_keys/restrict.c         | 76 +++++++++++++++++++++++
- crypto/asymmetric_keys/x509_cert_parser.c | 31 +++++++++
- crypto/asymmetric_keys/x509_parser.h      |  2 +
- crypto/asymmetric_keys/x509_public_key.c  | 16 +++++
- include/crypto/public_key.h               | 30 +++++++++
- include/keys/system_keyring.h             | 12 +++-
- include/linux/ima.h                       | 11 ++++
- include/linux/key-type.h                  |  3 +
- include/linux/key.h                       |  2 +
- security/integrity/Kconfig                | 11 +++-
- security/integrity/digsig.c               | 12 ++--
- security/integrity/ima/Kconfig            |  6 +-
- security/keys/key.c                       | 13 ++++
- 14 files changed, 245 insertions(+), 12 deletions(-)
-
-
-base-commit: 830b3c68c1fb1e9176028d02ef86f3cf76aa2476
+diff --git a/crypto/asymmetric_keys/x509_public_key.c b/crypto/asymmetric_keys/x509_public_key.c
+index fd1d7d6e68e7..75699987a6b1 100644
+--- a/crypto/asymmetric_keys/x509_public_key.c
++++ b/crypto/asymmetric_keys/x509_public_key.c
+@@ -208,8 +208,18 @@ static int x509_key_preparse(struct key_preparsed_payload *prep)
+ 		goto error_free_kids;
+ 	}
+ 
+-	if (cert->kcs_set && cert->root_ca)
+-		prep->payload_flags |= KEY_ALLOC_PECA;
++	if (cert->kcs_set) {
++		if (cert->root_ca)
++			prep->payload_flags |= KEY_ALLOC_PECA;
++		/*
++		 * In this case it could be an Intermediate CA.  Set
++		 * KEY_MAYBE_PECA for now.  If the restriction check
++		 * passes later, the key will be allocated with the
++		 * correct CA flag
++		 */
++		else
++			prep->payload_flags |= KEY_MAYBE_PECA;
++	}
+ 
+ 	/* We're pinning the module by being linked against it */
+ 	__module_get(public_key_subtype.owner);
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 81708ca0ebc7..6597081b6b1a 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -12,6 +12,7 @@
+ #include <linux/security.h>
+ #include <linux/kexec.h>
+ #include <crypto/hash_info.h>
++#include <keys/system_keyring.h>
+ struct linux_binprm;
+ 
+ #ifdef CONFIG_IMA
+@@ -181,6 +182,16 @@ static inline void ima_post_key_create_or_update(struct key *keyring,
+ 						 bool create) {}
+ #endif  /* CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS */
+ 
++#ifdef CONFIG_ASYMMETRIC_KEY_TYPE
++#ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
++#define ima_validate_builtin_ca restrict_link_by_ca_builtin_and_secondary_trusted
++#else
++#define ima_validate_builtin_ca restrict_link_by_ca_builtin_trusted
++#endif
++#else
++#define ima_validate_builtin_ca restrict_link_reject
++#endif
++
+ #ifdef CONFIG_IMA_APPRAISE
+ extern bool is_ima_appraise_enabled(void);
+ extern void ima_inode_post_setattr(struct user_namespace *mnt_userns,
+diff --git a/include/linux/key-type.h b/include/linux/key-type.h
+index 0b500578441c..0d2f95f6b8a1 100644
+--- a/include/linux/key-type.h
++++ b/include/linux/key-type.h
+@@ -38,6 +38,7 @@ struct key_preparsed_payload {
+ 	time64_t	expiry;		/* Expiry time of key */
+ 	unsigned int	payload_flags;  /* Proposed payload flags */
+ #define KEY_ALLOC_PECA	0x0001		/* Proposed Endorsed CA (ECA) key */
++#define KEY_MAYBE_PECA	0x0002		/* Proposed possible ECA key */
+ } __randomize_layout;
+ 
+ typedef int (*request_key_actor_t)(struct key *auth_key, void *aux);
+diff --git a/security/keys/key.c b/security/keys/key.c
+index e6b4946aca70..69d5f143683f 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -900,6 +900,11 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
+ 		}
+ 	}
+ 
++	/* Previous restriction check passed therefore try to validate endorsed ca */
++	if ((prep.payload_flags & KEY_MAYBE_PECA) &&
++	   !(ima_validate_builtin_ca(keyring, index_key.type, &prep.payload, NULL)))
++		prep.payload_flags |= KEY_ALLOC_PECA;
++
+ 	/* if we're going to allocate a new key, we're going to have
+ 	 * to modify the keyring */
+ 	ret = key_permission(keyring_ref, KEY_NEED_WRITE);
 -- 
 2.27.0
 
