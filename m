@@ -2,170 +2,122 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3945AC4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Dec 2022 22:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B0CC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Dec 2022 23:34:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbiLNWqM (ORCPT
+        id S229477AbiLNXeH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Dec 2022 17:46:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36488 "EHLO
+        Wed, 14 Dec 2022 18:34:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbiLNWp7 (ORCPT
+        with ESMTP id S229881AbiLNXdk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Dec 2022 17:45:59 -0500
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 840692F667;
-        Wed, 14 Dec 2022 14:45:54 -0800 (PST)
-Received: from [192.168.192.83] (unknown [50.47.134.245])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 2447343598;
-        Wed, 14 Dec 2022 22:45:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1671057950;
-        bh=jNfxgcjTNSBTXONPgkpyCwV4HUQZqAd+KNcHlXwVZ6Q=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=onvzqVCHIPy+LRzF9Oe4wXUGtti/4LVSxpezkHHt1UmLIImZvny6iQR5/Wy8KPbRs
-         ZrkfS5XnQpWBEiCYCHofH1/Er37gqDCWrJnQ3N9BP/mrcIs3qUxG1CMYnhQgQFc8Za
-         BmEmgjQRYHxvR1yUr80ezHYrPGLmhtUxX1e0Uj3frCBrNWE7FrMLldP6L7dNbguzjr
-         qSKJ7aCNtPbFE/kWDIvgLH2c/eHLxckDMdJdG5C3BVwn7otPDTzelmGYDJjvbhEPZg
-         EGGUsQ86NSbgjC/MNTUbf97l3/MxdhCn9zdr1ptmYmlZ87VPxQ1i1HA5q0sMePlsEK
-         vf/xn9bP+sIww==
-Message-ID: <466869a2-b583-2c7a-5b23-d0ce9797a6bd@canonical.com>
-Date:   Wed, 14 Dec 2022 14:45:46 -0800
+        Wed, 14 Dec 2022 18:33:40 -0500
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0E5C21A0
+        for <linux-security-module@vger.kernel.org>; Wed, 14 Dec 2022 15:32:54 -0800 (PST)
+Received: by mail-pf1-x42f.google.com with SMTP id c13so5571919pfp.5
+        for <linux-security-module@vger.kernel.org>; Wed, 14 Dec 2022 15:32:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EX38wRipK6YZXjwZPd7Su4K9Er1H54jvjyAx9rqRw1Q=;
+        b=PDEg3nH3xgHnheIK+JiFoLehsOV0gTUq21j4kLrRR1ZLvl25FbD7m8LX1fSIYwz/87
+         PIxzI5e9Pfn8V6aq1oOKcTbffZGDbFjXTXJhyLPaPkgFnINJjvhacuxaIOC1x6UwmVsZ
+         d3iVOkBRfgId+oB/p//Pexfh3cuN+6pDvx6QMWBzGeykcVt02UbhvWYbj5G/9VF1Mrgi
+         SOuvClJPMP6WbasvMUuLP1kVi84M3frkmNzV0VYdxvfWNm8RJXyMUXR2L9ZznH7S//1F
+         vMvSYMesxZ8hHbbrwxzlnOR/mS/6Ywx+ti6WoVXe+D/TlHqjypG2vGA+5YOFEjXALgM4
+         JWEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EX38wRipK6YZXjwZPd7Su4K9Er1H54jvjyAx9rqRw1Q=;
+        b=0/IttmqxWfctvKzh+hpua1kLK3YZp0cbtPOIFvQ8NYzlBpqfg9lcroWd6hZ4KEJASt
+         Mgabc5qpVxALKBZL2vimR5/sJXJ1Qa7txlyvkeo4DJgf0HDVah6bHcOamKKoIexZZAbJ
+         7icG/+BIzBn5H4o7gGyUThqk1wtStSV1D8Fc8p5KosLkH7eVvyfPFUysebtGvh8VlGJz
+         SJd/vRwBSQfyOlgjPtActcOurAqcVL1gVfVvmicy58vavS+b2VMfZ7X6FqCJb1B7KIyT
+         ojuB0Qor2Ed96ThW6BtKt0Lfce+lndHLtlyeo/kEmCn5zTm2RFTAYh8ndUULtxVX7RSf
+         GtFg==
+X-Gm-Message-State: ANoB5plCXC2+JEhLl0qCxahAbEPIwqSVoO7FyvubqgrHlkFBPvw+Tjev
+        KEFe4mQuARbCSFp1e6zUHf5TWj3ADKvJ8rH+lIwqIQ==
+X-Google-Smtp-Source: AA0mqf6FrLS1D7V7SRNCy3k8CyVO9nDpptYhTX527VVCoLeeGz/DIxUaHIqaRhNRIJVDOOmwzpQTEeBAzUWYmJerZnw=
+X-Received: by 2002:a63:f04d:0:b0:470:5d17:a62e with SMTP id
+ s13-20020a63f04d000000b004705d17a62emr68719053pgj.620.1671060773915; Wed, 14
+ Dec 2022 15:32:53 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [GIT PULL] apparmor changes for v6.2
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKLM <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-References: <218cac2c-47ae-435d-d7d0-48e4937a7f99@canonical.com>
- <CAHk-=wiBjnEtm8cFBp=6YNFe51z6Mdb-BbEJyfka9w1fkWfPvg@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <CAHk-=wiBjnEtm8cFBp=6YNFe51z6Mdb-BbEJyfka9w1fkWfPvg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20221209160453.3246150-1-jeffxu@google.com> <202212141053.7F5D1F6@keescook>
+In-Reply-To: <202212141053.7F5D1F6@keescook>
+From:   Jeff Xu <jeffxu@google.com>
+Date:   Wed, 14 Dec 2022 15:32:16 -0800
+Message-ID: <CALmYWFss4hGOgJaeah8p7q86xmE7AOwOazxggGCuY=A+ZUVWhQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/6] mm/memfd: introduce MFD_NOEXEC_SEAL and MFD_EXEC
+To:     Kees Cook <keescook@chromium.org>
+Cc:     jeffxu@chromium.org, skhan@linuxfoundation.org,
+        akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
+        dverkamp@chromium.org, hughd@google.com, jorgelo@chromium.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mm@kvack.org, jannh@google.com,
+        linux-hardening@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/14/22 13:54, Linus Torvalds wrote:
-> On Wed, Dec 14, 2022 at 10:36 AM John Johansen
-> <john.johansen@canonical.com> wrote:
->>
->> John Johansen (45):
->>         apparmor: make unpack_array return a trianary value
-> 
-> John, this is unacceptable.
-> 
+On Wed, Dec 14, 2022 at 10:54 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Fri, Dec 09, 2022 at 04:04:47PM +0000, jeffxu@chromium.org wrote:
+> > From: Jeff Xu <jeffxu@google.com>
+> >
+> > Since Linux introduced the memfd feature, memfd have always had their
+> > execute bit set, and the memfd_create() syscall doesn't allow setting
+> > it differently.
+> >
+> > However, in a secure by default system, such as ChromeOS, (where all
+> > executables should come from the rootfs, which is protected by Verified
+> > boot), this executable nature of memfd opens a door for NoExec bypass
+> > and enables =E2=80=9Cconfused deputy attack=E2=80=9D.  E.g, in VRP bug =
+[1]: cros_vm
+> > process created a memfd to share the content with an external process,
+> > however the memfd is overwritten and used for executing arbitrary code
+> > and root escalation. [2] lists more VRP in this kind.
+> >
+> > On the other hand, executable memfd has its legit use, runc uses memfd=
+=E2=80=99s
+> > seal and executable feature to copy the contents of the binary then
+> > execute them, for such system, we need a solution to differentiate runc=
+'s
+> > use of  executable memfds and an attacker's [3].
+> >
+> > To address those above, this set of patches add following:
+> > 1> Let memfd_create() set X bit at creation time.
+> > 2> Let memfd to be sealed for modifying X bit.
+> > 3> A new pid namespace sysctl: vm.memfd_noexec to control the behavior =
+of
+> >    X bit.For example, if a container has vm.memfd_noexec=3D2, then
+> >    memfd_create() without MFD_NOEXEC_SEAL will be rejected.
+> > 4> A new security hook in memfd_create(). This make it possible to a ne=
+w
+> > LSM, which rejects or allows executable memfd based on its security pol=
+icy.
+>
+> I think patch 1-5 look good to land. The LSM hook seems separable, and
+> could continue on its own. Thoughts?
+>
+Agreed.
 
-ack, sorry.
+> (Which tree should memfd change go through?)
+>
+I'm not sure, is there a recommendation ?
 
-> I noticed it due to the conflict, but this really is garbage.
-> 
-> First off, the word is "ternary" (or possibly "tristate").
-> 
-> Secondly, we don't do types like this
-> 
->      #define tri int
-> 
+Thanks.
+Jeff
 
-ack
-
-> and even if we did, that's a *horrible* name not just for a type, but
-> for a #define.
-> 
-> Finally, what the heck is "TRI_TRUE/TRI_NONE/TRI_FALSE"? WTF?
-> 
-> It looks like it is used in one single place - the return value for
-> "unpack_array()" (now renamed "aa_unpack_array()"), and the TRI_FALSE
-> case is basically an error case for an invalid case.
-> 
-> And TRI_NONE is just a *different* failure case ("name does not exist"
-> vs "data is invalid").
-> 
-> And then, to make matters worse, ABSOLUTELY NOBODY CARES ABOUT THE
-> DIFFERENCE. All real users just want to see TRI_TRUE (for "success"),
-> and anything else is an error anyway.
-> 
-right, the end goal being not two invalid cases but a case of this
-is optional but if not present some default data needs to be tied
-in. This can be represented different ways, and using the int as
-you suggest below seems like the right way to go.
-
-It also looks like I kicked out the following patch that used this
-mess, for further revision and sadly didn't drop this one as well.
-
-> Yes, yes, there's that one KUNIT test, which wants to actually see
-> that TRI_FALSE because it's testing that array-out-of-bounds case. It
-> also - for some unfathomable reason - seems to then want to see some
-> particular pointer values in that invalid data after the failure,
-> which seems bogus, but whatever.
-> 
-> In other words, that type is badly done and mis-named to start with,
-> but then the different ternary values themselves are confusingly
-> mis-named too in ways that make no sense.
-> 
-> And to cap it all off, NOBODY CARES about those horrid things anyway.
-> 
-> Anyway, I started out doing the mindless conflict resolution, but then
-> I just couldn't deal with that 'tri' type. There were just too many
-> things wrong with it for me to accept it, and I felt dirty for just
-> editing it.
-> 
-> Then I tried out just making it a
-> 
->       typedef enum { TRI_TRUE/TRI_NONE/TRI_FALSE } ternary_t;
-> 
-> which fixes some of the syntactic issues.
-> 
-> But the whole naming confusion of the values and how NONE-vs-FALSE
-> wasn't actually a useful distinction anyway made me just axe it
-> completely.
-> 
-
-okay
-
-> I'm honestly baffled by why you didn't just make it return the size or
-> a negative error code, like is the norm. The size is limited to 16
-> bits anyway, so returning an 'int' with a negative error would have
-> been very natural.
-
-indeed, tbh I have no clue why. As you say the int type fits right
-in with existing kernel code, and doesn't have any range problems.
-
-> 
-> But just to keep the pattern with some of the other users, and
-> minimize my surgery, I made it just return 'bool'.
-> 
-okay
-
-> I'm sorry to do all that surgery on it, but I just couldn't stomach
-> doing anything else.
-> 
-
-understandable
-
-> The resulting merge diff is fairly messy, and to make matters worse I
-> can't actually *test* any of this. But the code looks more palatable
-
-I will make sure it gets run through all the testing
-
-> to me, and I did try to be careful about my surgery.
-> 
-as always, I have no worries about that
-
-> Apologies if I broke something,
-> 
-
-none, needed. You did what you needed to do. If needed I will follow-up
-with a patch.
-
-
+> -Kees
+>
+> --
+> Kees Cook
