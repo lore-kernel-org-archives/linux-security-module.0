@@ -2,72 +2,170 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C138FC4167B
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Dec 2022 22:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3945AC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Dec 2022 22:46:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229652AbiLNWZb (ORCPT
+        id S229591AbiLNWqM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Dec 2022 17:25:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56724 "EHLO
+        Wed, 14 Dec 2022 17:46:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229771AbiLNWZW (ORCPT
+        with ESMTP id S229638AbiLNWp7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Dec 2022 17:25:22 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5D6E27FCE;
-        Wed, 14 Dec 2022 14:25:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 14 Dec 2022 17:45:59 -0500
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 840692F667;
+        Wed, 14 Dec 2022 14:45:54 -0800 (PST)
+Received: from [192.168.192.83] (unknown [50.47.134.245])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6230761BB3;
-        Wed, 14 Dec 2022 22:25:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C8C3FC433F0;
-        Wed, 14 Dec 2022 22:25:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671056719;
-        bh=otwWOlEzZxyN99rUEf7ZVvKy/Z75+TX93SgbAyeRPio=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=WKJKOmVJEyUVPiJM7mAolCKwiVz58ZU9zwousAxA8FGIFw88SN7hO90UzZa/ZrxYb
-         eqLk/I3b3Zu/ZxTOdjRczdA/Aydodc8YvcKg2l2kkBMUR3qk0ZhgBB/uHGc0SoivaC
-         FkL2cCCeCdDoIQqbK14gTXfsAqIy3osM4uREzB3ISPNbOJoQWoQrm8FAzTuhVZpz0L
-         YNtl1/IbFQSh5oN6zvwrS++WaHfGI6YfQT6TbdtYAvrFInIJ13MmcMXhaMaVLpPDRK
-         6GW81q+wdhDWLiDodNiLb3ak1zq0azEEewzk9qNr9dwzd2snVOK74BBgzlDEDwCujU
-         2/W10sMQYWhDw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B750EC395EA;
-        Wed, 14 Dec 2022 22:25:19 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 2447343598;
+        Wed, 14 Dec 2022 22:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1671057950;
+        bh=jNfxgcjTNSBTXONPgkpyCwV4HUQZqAd+KNcHlXwVZ6Q=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=onvzqVCHIPy+LRzF9Oe4wXUGtti/4LVSxpezkHHt1UmLIImZvny6iQR5/Wy8KPbRs
+         ZrkfS5XnQpWBEiCYCHofH1/Er37gqDCWrJnQ3N9BP/mrcIs3qUxG1CMYnhQgQFc8Za
+         BmEmgjQRYHxvR1yUr80ezHYrPGLmhtUxX1e0Uj3frCBrNWE7FrMLldP6L7dNbguzjr
+         qSKJ7aCNtPbFE/kWDIvgLH2c/eHLxckDMdJdG5C3BVwn7otPDTzelmGYDJjvbhEPZg
+         EGGUsQ86NSbgjC/MNTUbf97l3/MxdhCn9zdr1ptmYmlZ87VPxQ1i1HA5q0sMePlsEK
+         vf/xn9bP+sIww==
+Message-ID: <466869a2-b583-2c7a-5b23-d0ce9797a6bd@canonical.com>
+Date:   Wed, 14 Dec 2022 14:45:46 -0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
 Subject: Re: [GIT PULL] apparmor changes for v6.2
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <218cac2c-47ae-435d-d7d0-48e4937a7f99@canonical.com>
-References: <218cac2c-47ae-435d-d7d0-48e4937a7f99@canonical.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <218cac2c-47ae-435d-d7d0-48e4937a7f99@canonical.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2022-12-14-merge-breakout
-X-PR-Tracked-Commit-Id: 4295c60bbe9e63e35d330546eeaa1d2b62dae303
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 93761c93e9da28d8a020777cee2a84133082b477
-Message-Id: <167105671974.22509.5991919513100894698.pr-tracker-bot@kernel.org>
-Date:   Wed, 14 Dec 2022 22:25:19 +0000
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKLM <linux-kernel@vger.kernel.org>,
         "open list:SECURITY SUBSYSTEM" 
         <linux-security-module@vger.kernel.org>,
         Shuah Khan <skhan@linuxfoundation.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>
+References: <218cac2c-47ae-435d-d7d0-48e4937a7f99@canonical.com>
+ <CAHk-=wiBjnEtm8cFBp=6YNFe51z6Mdb-BbEJyfka9w1fkWfPvg@mail.gmail.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <CAHk-=wiBjnEtm8cFBp=6YNFe51z6Mdb-BbEJyfka9w1fkWfPvg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Wed, 14 Dec 2022 10:35:57 -0800:
+On 12/14/22 13:54, Linus Torvalds wrote:
+> On Wed, Dec 14, 2022 at 10:36 AM John Johansen
+> <john.johansen@canonical.com> wrote:
+>>
+>> John Johansen (45):
+>>         apparmor: make unpack_array return a trianary value
+> 
+> John, this is unacceptable.
+> 
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2022-12-14-merge-breakout
+ack, sorry.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/93761c93e9da28d8a020777cee2a84133082b477
+> I noticed it due to the conflict, but this really is garbage.
+> 
+> First off, the word is "ternary" (or possibly "tristate").
+> 
+> Secondly, we don't do types like this
+> 
+>      #define tri int
+> 
 
-Thank you!
+ack
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> and even if we did, that's a *horrible* name not just for a type, but
+> for a #define.
+> 
+> Finally, what the heck is "TRI_TRUE/TRI_NONE/TRI_FALSE"? WTF?
+> 
+> It looks like it is used in one single place - the return value for
+> "unpack_array()" (now renamed "aa_unpack_array()"), and the TRI_FALSE
+> case is basically an error case for an invalid case.
+> 
+> And TRI_NONE is just a *different* failure case ("name does not exist"
+> vs "data is invalid").
+> 
+> And then, to make matters worse, ABSOLUTELY NOBODY CARES ABOUT THE
+> DIFFERENCE. All real users just want to see TRI_TRUE (for "success"),
+> and anything else is an error anyway.
+> 
+right, the end goal being not two invalid cases but a case of this
+is optional but if not present some default data needs to be tied
+in. This can be represented different ways, and using the int as
+you suggest below seems like the right way to go.
+
+It also looks like I kicked out the following patch that used this
+mess, for further revision and sadly didn't drop this one as well.
+
+> Yes, yes, there's that one KUNIT test, which wants to actually see
+> that TRI_FALSE because it's testing that array-out-of-bounds case. It
+> also - for some unfathomable reason - seems to then want to see some
+> particular pointer values in that invalid data after the failure,
+> which seems bogus, but whatever.
+> 
+> In other words, that type is badly done and mis-named to start with,
+> but then the different ternary values themselves are confusingly
+> mis-named too in ways that make no sense.
+> 
+> And to cap it all off, NOBODY CARES about those horrid things anyway.
+> 
+> Anyway, I started out doing the mindless conflict resolution, but then
+> I just couldn't deal with that 'tri' type. There were just too many
+> things wrong with it for me to accept it, and I felt dirty for just
+> editing it.
+> 
+> Then I tried out just making it a
+> 
+>       typedef enum { TRI_TRUE/TRI_NONE/TRI_FALSE } ternary_t;
+> 
+> which fixes some of the syntactic issues.
+> 
+> But the whole naming confusion of the values and how NONE-vs-FALSE
+> wasn't actually a useful distinction anyway made me just axe it
+> completely.
+> 
+
+okay
+
+> I'm honestly baffled by why you didn't just make it return the size or
+> a negative error code, like is the norm. The size is limited to 16
+> bits anyway, so returning an 'int' with a negative error would have
+> been very natural.
+
+indeed, tbh I have no clue why. As you say the int type fits right
+in with existing kernel code, and doesn't have any range problems.
+
+> 
+> But just to keep the pattern with some of the other users, and
+> minimize my surgery, I made it just return 'bool'.
+> 
+okay
+
+> I'm sorry to do all that surgery on it, but I just couldn't stomach
+> doing anything else.
+> 
+
+understandable
+
+> The resulting merge diff is fairly messy, and to make matters worse I
+> can't actually *test* any of this. But the code looks more palatable
+
+I will make sure it gets run through all the testing
+
+> to me, and I did try to be careful about my surgery.
+> 
+as always, I have no worries about that
+
+> Apologies if I broke something,
+> 
+
+none, needed. You did what you needed to do. If needed I will follow-up
+with a patch.
+
+
