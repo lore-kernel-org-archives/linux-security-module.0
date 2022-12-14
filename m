@@ -2,97 +2,302 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876CFC001B2
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Dec 2022 04:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 083F7C001B2
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Dec 2022 18:36:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237425AbiLNEHi (ORCPT
+        id S238598AbiLNSgH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Dec 2022 23:07:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50450 "EHLO
+        Wed, 14 Dec 2022 13:36:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237676AbiLNEG6 (ORCPT
+        with ESMTP id S229795AbiLNSgG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Dec 2022 23:06:58 -0500
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45EDF27B05
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Dec 2022 20:06:57 -0800 (PST)
-Received: by mail-pg1-x52e.google.com with SMTP id v3so1210877pgh.4
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Dec 2022 20:06:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8rKEV9W9fSxR0xRR3DSmLMtebWk2YTiMQPBl9c/07mg=;
-        b=JUiHhh9U/ve+vlJsWZf7ZOpMUM4syjPZb4nbKg2MzXiIWlXZiUPAaNjul/0MQBPViO
-         rLPF5uUfmLfksFpudg2ZTn1bZ7RsrJl4+UuZpbCHeENZTxOP0kohNFFJQClyqwxAjIME
-         RNOqlmy8zOow1j9BiCDP81jWWATVny8BRH9O8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8rKEV9W9fSxR0xRR3DSmLMtebWk2YTiMQPBl9c/07mg=;
-        b=DR8k3/ZXWkSwLjaDoOr+I+/stgbaUEwfZ7M7mADDw3bVzlXTL3shgPoCypr/std8QA
-         biFn0huh1EQwM/H89DJ8ZyjPqdyZeGyz1CExSC9X/JQ1REPO48xojJO/ss53KHjNEEMu
-         Nf6h8EYNZ8wiMzZxZ6wO2LhJGRR+LWKg5dXIXRsjxaD0lgqkfrGoaYnTYObf3sgawygf
-         0bJRXinL4s3KA2obkiYfgBbHHjh64iCzrrQS7on+RQSLMqT9imGpe1EWQUyFpUCj0fpI
-         kdGdd4FyMxpjP/P5H0xDIzn8gPBwzMXvA2xCf13DREW5VMcFzeW8wzPf7RuMh7uxMJxY
-         hrGA==
-X-Gm-Message-State: ANoB5pkrf43ehaEcVErcsxVBmcodxDUShsI+LDGXge/W4d+saueZxUd/
-        ks3oTkCUq5bEbdFbAhTog99fHg==
-X-Google-Smtp-Source: AA0mqf5ory1OhG7Na5zVVXjcLYy36xrTIivlxVIKKQi8e4DGPo71Kz5Rawog/uBIvlTrVtV6PN9Yag==
-X-Received: by 2002:aa7:9243:0:b0:56b:fa67:1f7f with SMTP id 3-20020aa79243000000b0056bfa671f7fmr22439011pfp.19.1670990816786;
-        Tue, 13 Dec 2022 20:06:56 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id l6-20020a622506000000b00576e75e753asm8378718pfl.27.2022.12.13.20.06.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Dec 2022 20:06:56 -0800 (PST)
-Date:   Tue, 13 Dec 2022 20:06:55 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] LoadPin: Ignore the "contents" argument of the LSM hooks
-Message-ID: <202212132006.F29BB81A@keescook>
-References: <20221209195453.never.494-kees@kernel.org>
- <20221212211319.GA15511@mail.hallyn.com>
+        Wed, 14 Dec 2022 13:36:06 -0500
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17E7CFD05;
+        Wed, 14 Dec 2022 10:36:03 -0800 (PST)
+Received: from [192.168.192.83] (unknown [50.47.134.245])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id C11B7435AA;
+        Wed, 14 Dec 2022 18:36:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1671042961;
+        bh=bDbADm2ytnQgP6masRJTsLpTidVZv8Elr+s7Ew1V3uc=;
+        h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type;
+        b=nf4Uc2gYA5CIxl5iCTGx9sFqLKF5aoO2Qi4vKoLIMCkijohZwE5MXoBflgBvwWU+p
+         L3pUSZfvJUcRYF2UYJiU7xKyK57M9TKk9xYALgNpPqbTmwBmMr8HEcbvJOvcE08Jj+
+         1navNMci8996puj6OEVcUU8RgqxFHK5xsCCEubQUQ9W+zs1jgVKxhsYxr1BcgZI/0V
+         YsygVIS78ghK63IbWL5HdYAJU29yZl+JPbvhBfw46+NNkWa/ajyTy0Ih6dr1jiiv05
+         v7h01K1x9c3UbPEgbuf+VnQYkNhD7y4Bpnjod/NWJbkrqcjqWgVzGLNNcDyrxwPXw/
+         SD0QW4W2FMxug==
+Message-ID: <218cac2c-47ae-435d-d7d0-48e4937a7f99@canonical.com>
+Date:   Wed, 14 Dec 2022 10:35:57 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221212211319.GA15511@mail.hallyn.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+From:   John Johansen <john.johansen@canonical.com>
+Subject: [GIT PULL] apparmor changes for v6.2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKLM <linux-kernel@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Language: en-US
+Organization: Canonical
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 12, 2022 at 03:13:19PM -0600, Serge E. Hallyn wrote:
-> On Fri, Dec 09, 2022 at 11:54:57AM -0800, Kees Cook wrote:
-> > LoadPin only enforces the read-only origin of kernel file reads. Whether
-> > or not it was a partial read isn't important. Remove the overly
-> > conservative checks so that things like partial firmware reads will
-> > succeed (i.e. reading a firmware header).
-> > 
-> > Fixes: 2039bda1fa8d ("LSM: Add "contents" flag to kernel_read_file hook")
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Cc: James Morris <jmorris@namei.org>
-> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> 
-> Acked-by: Serge Hallyn <serge@hallyn.com>
-> 
-> Seems reasonable.
+Hi Linus,
 
-Thanks!
+Please pull the following apparmor update for Linux 6.2-rc1
 
-> So the patch which introduced this was
-> 2039bda1f: LSM: Add "contents" flag to kernel_read_file hook
-> It sounds like the usage of @contents which it added to ima still
-> makes sense.  But what about the selinux_kernel_read_file() one?
+This apparmor update for 6.2 is primarily bug fixes and code
+cleanup/refactoring.
 
-I think those continue to make sense since those LSM may be sensitive to
-the _content_ (rather than the _origin_) of the file.
++ Features
+   - switch to zstd compression for profile raw data
 
--Kees
++ Cleanups
+   - Simplify obtain the newest label on a cred
+   - remove useless static inline functions
+   - compute permission conversion on policy unpack
+   - refactor code to share common permissins
+   - refactor unpack to group policy backwards compatiblity code
+   - add __init annotation to aa_{setup/teardown}_dfa_engine()
 
--- 
-Kees Cook
++ Bug Fixes
+   - fix a memleak in
+     - multi_transaction_new()
+     - free_ruleset()
+     - unpack_profile()
+     - alloc_ns()
+   - fix lockdep warning when removing a namespace
+   - fix regression in stacking due to label flags
+   - fix loading of child before parent
+   - fix kernel-doc comments that differ from fns
+   - fix spelling errors in comments
+   - store return value of unpack_perms_table() to signed variable
+
+
+The bulk of the code is in a set of changes is a cleanup that moves
+some permission computations from run time to policy is load. This
+provides a small performance improvement but is also a step toward
+us being able to merge and reduce the different permission lookup
+code at runtime.
+
+
+Please note this patch series has conflicts with the KUnit and LSM trees,
+and has been coordinated to follow those merges as all the conflicts are
+in apparmor
+
+- The LSM tree conflict is a simple conflict in
+     security/apparmor/domain.c
+   between the apparmor permission cleanups and
+     f6fbd8cbf3ed lsm,fs: fix vfs_getxattr_alloc() return type and caller error paths
+
+- The KUnit tree conflict is large but fairly straight forward. It is
+   large due to the code refactoring in the permissions cleanup, so it
+   covers some code that does not get marked as having conflicts.
+   The gist of the conflicting Kunit change is that to be able to make
+   the apparmor KUnit tests as module several apparmor symbols that
+   were previously static need to be exported. To do this the symbols
+   are prefixed with the aa_ namespace and conditionally exported with
+   VISIBLE_IF_KUNIT
+
+   conflicts in
+     security/apparmor/policy_unpack.c
+     security/apparmor/policy_unpack_test.c
+
+   with additional changes beyond the conflicts needed in
+     security/apparmor/policy_unpack.c
+     security/apparmor/include/policy_unpack.h
+
+I have prepared two branches covering the merge conflict.
+
+
+The first
+   git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2022-12-14-merge-breakout
+
+branch breaks the changes into 3 patches.
+- the merge and any changes that had associated conflicts
+- a patch where Stephen Rothwell beat me to fixing a build failure
+   in linux-next due to the merge needing changes beyond those with
+   associated conflicts
+- a patch covering the rest of changes that are required but did not
+   have conflicts and are not covered by Stephen's patch.
+
+
+The second
+   git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2022-12-14-merge
+
+is all the changes from the first as a single merge commit
+
+
+the above merge conflict resolution has been built and tested
+with Kunit as built-in, module and disabled.
+
+thanks
+- john
+
+
+The following changes since commit 3cc40a443a04d52b0c95255dce264068b01e9bfe:
+
+   Merge tag 'nios2_fixes_v6.0' of git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux (2022-08-16 11:42:11 -0700)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2022-12-14
+
+for you to fetch changes up to 4295c60bbe9e63e35d330546eeaa1d2b62dae303:
+
+   apparmor: Fix uninitialized symbol 'array_size' in policy_unpack_test.c (2022-11-01 21:23:05 -0700)
+
+----------------------------------------------------------------
++ Features
+   - switch to zstd compression for profile raw data
+
++ Cleanups
+   - Simplify obtain the newest label on a cred
+   - remove useless static inline functions
+   - compute permission conversion on policy unpack
+   - refactor code to share common permissins
+   - refactor unpack to group policy backwards compatiblity code
+   - add __init annotation to aa_{setup/teardown}_dfa_engine()
+
++ Bug Fixes
+   - fix a memleak in
+     - multi_transaction_new()
+     - free_ruleset()
+     - unpack_profile()
+     - alloc_ns()
+   - fix lockdep warning when removing a namespace
+   - fix regression in stacking due to label flags
+   - fix loading of child before parent
+   - fix kernel-doc comments that differ from fns
+   - fix spelling errors in comments
+   - store return value of unpack_perms_table() to signed variable
+
+----------------------------------------------------------------
+Gaosheng Cui (5):
+       apparmor: fix a memleak in multi_transaction_new()
+       apparmor: Simplify obtain the newest label on a cred
+       apparmor: remove useless static inline functions
+       apparmor: fix obsoleted comments for aa_getprocattr() and audit_resource()
+       apparmor: fix a memleak in free_ruleset()
+
+Jiapeng Chong (3):
+       AppArmor: Fix kernel-doc
+       LSM: Fix kernel-doc
+       AppArmor: Fix kernel-doc
+
+John Johansen (45):
+       apparmor: fix lockdep warning when removing a namespace
+       apparmor: reserve mediation classes
+       apparmor: move fperm computation into policy_unpack
+       apparmor: rework and cleanup fperm computation
+       apparmor: convert xmatch to use aa_perms structure
+       apparmor: compute policydb permission on profile load
+       apparmor: combine file_rules and aa_policydb into a single shared struct
+       apparmor: convert xmatch to using the new shared policydb struct
+       apparmor: convert fperm lookup to use accept as an index
+       apparmor: convert xmatch lookup to use accept as an index
+       apparmor: cleanup shared permission struct
+       apparmor: convert policy lookup to use accept as an index
+       apparmor: preparse for state being more than just an integer
+       apparmor: Fix abi check to include v8 abi
+       apparmor: fix apparmor mediating locking non-fs unix sockets
+       apparmor: extend policydb permission set by making use of the xbits
+       apparmor: move dfa perm macros into policy_unpack
+       apparmor: extend xindex size
+       apparmor: isolate policy backwards compatibility to its own file
+       apparmor: extend permissions to support a label and tag string
+       apparmor: add mediation class information to auditing
+       apparmor: add user mode flag
+       apparmor: make transition table unpack generic so it can be reused
+       apparmor: group dfa policydb unpacking
+       apparmor: make unpack_array return a trianary value
+       apparmor: add the ability for policy to specify a permission table
+       apparmor: verify permission table indexes
+       apparmor: make sure perm indexes are accumulated
+       apparmor: cleanup: move perm accumulation into perms.h
+       apparmor: verify loaded permission bits masks don't overlap
+       apparmor: refactor profile rules and attachments
+       apparmor: rework profile->rules to be a list
+       apparmor: fix aa_class_names[] to match reserved classes
+       apparmor: Fix regression in stacking due to label flags
+       apparmor: Fix doc comment for compute_fperms
+       apparmor: Remove unnecessary size check when unpacking trans_table
+       apparmor: make sure the decompression ctx is promperly initialized
+       apparmor: Fix undefined references to zstd_ symbols
+       apparmor: Fix decompression of rawdata for read back to userspace
+       apparmor: Fix kunit test for out of bounds array
+       apparmor: fix uninitialize table variable in error in unpack_trans_table
+       apparmor: Fix unpack_profile() warn: passing zero to 'ERR_PTR'
+       apparmor: refactor code that alloc null profiles
+       apparmor: Fix loading of child before parent
+       apparmor: Fix uninitialized symbol 'array_size' in policy_unpack_test.c
+
+Jon Tourville (2):
+       apparmor: use zstd compression for profile data
+       apparmor: expose compression level limits in sysfs
+
+Mike Salvatore (2):
+       apparmor: compute file permissions on profile load
+       apparmor: compute xmatch permissions on profile load
+
+Muhammad Usama Anjum (1):
+       apparmor: store return value of unpack_perms_table() to signed variable
+
+Xiu Jianfeng (5):
+       apparmor: make __aa_path_perm() static
+       apparmor: Use pointer to struct aa_label for lbs_cred
+       apparmor: Fix memleak issue in unpack_profile()
+       apparmor: Fix memleak in alloc_ns()
+       apparmor: Add __init annotation to aa_{setup/teardown}_dfa_engine()
+
+Yang Li (1):
+       apparmor: Fix spelling of function name in comment block
+
+  security/apparmor/Kconfig                 |   4 +-
+  security/apparmor/Makefile                |   3 +-
+  security/apparmor/apparmorfs.c            | 115 +++---
+  security/apparmor/audit.c                 |  45 ++-
+  security/apparmor/capability.c            |  16 +-
+  security/apparmor/domain.c                | 149 ++++----
+  security/apparmor/file.c                  | 125 ++-----
+  security/apparmor/include/apparmor.h      |  23 +-
+  security/apparmor/include/audit.h         |   8 +-
+  security/apparmor/include/cred.h          |  13 -
+  security/apparmor/include/domain.h        |   6 -
+  security/apparmor/include/file.h          | 108 +-----
+  security/apparmor/include/label.h         |  13 +-
+  security/apparmor/include/lib.h           |  10 +-
+  security/apparmor/include/match.h         |  28 +-
+  security/apparmor/include/net.h           |   1 +
+  security/apparmor/include/perms.h         |  91 ++++-
+  security/apparmor/include/policy.h        | 141 +++++--
+  security/apparmor/include/policy_compat.h |  33 ++
+  security/apparmor/include/policy_unpack.h |   2 +
+  security/apparmor/ipc.c                   |  16 +-
+  security/apparmor/label.c                 |  75 ++--
+  security/apparmor/lib.c                   | 125 ++-----
+  security/apparmor/lsm.c                   |  25 +-
+  security/apparmor/match.c                 |  62 ++--
+  security/apparmor/mount.c                 |  93 +++--
+  security/apparmor/net.c                   |  28 +-
+  security/apparmor/policy.c                | 204 ++++++++--
+  security/apparmor/policy_compat.c         | 319 ++++++++++++++++
+  security/apparmor/policy_ns.c             |   6 +-
+  security/apparmor/policy_unpack.c         | 598 ++++++++++++++++++++----------
+  security/apparmor/policy_unpack_test.c    |  17 +-
+  security/apparmor/procattr.c              |  11 +-
+  security/apparmor/resource.c              |  29 +-
+  security/apparmor/task.c                  |  14 +-
+  35 files changed, 1644 insertions(+), 912 deletions(-)
+  create mode 100644 security/apparmor/include/policy_compat.h
+  create mode 100644 security/apparmor/policy_compat.c
