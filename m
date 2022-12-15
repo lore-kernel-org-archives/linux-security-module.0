@@ -2,119 +2,256 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D9B1C4167B
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Dec 2022 00:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A340C4708D
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Dec 2022 00:14:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230119AbiLOANM (ORCPT
+        id S230175AbiLOAOV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Dec 2022 19:13:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33868 "EHLO
+        Wed, 14 Dec 2022 19:14:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbiLOAMm (ORCPT
+        with ESMTP id S229983AbiLOANm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Dec 2022 19:12:42 -0500
+        Wed, 14 Dec 2022 19:13:42 -0500
 Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C5E1AD81
-        for <linux-security-module@vger.kernel.org>; Wed, 14 Dec 2022 16:08:29 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id w23so5094043ply.12
-        for <linux-security-module@vger.kernel.org>; Wed, 14 Dec 2022 16:08:29 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 423CE46659
+        for <linux-security-module@vger.kernel.org>; Wed, 14 Dec 2022 16:12:16 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id a9so5126608pld.7
+        for <linux-security-module@vger.kernel.org>; Wed, 14 Dec 2022 16:12:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4/QZI1b9BuX09J6n+wRULrAcCHBLRMc57Wa6cWYocm8=;
-        b=Wzg4FSPkMKRRRymHOhnFtx/uU+954Ka/2q+TGUz8LCNuqKtyxXNza/SUzgyRSht8Yu
-         pYECEzcWeYbJFvm5+Mskz4amT5qYPptMoWlmBw6QHeEPYgXGSUOcC4B5nmigD5eI/bLr
-         hH8153HNw5wyiNl3Xoe4FZOUUFmeU83Q+zrLE=
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BfROb3ZkcZ7Ac7CKaQoVSCHLc1zwDwCheELrvNAzva4=;
+        b=EEBsbANJ5rVxA3zNQWjC0OwYANmCqoR2KQqQ6RbXOFYUIhlWxdJeMRwj9ifXy3gRpA
+         bV3fXAoCNZ0OVZV99aDQcbltEdQYi4nYBWh5mT8wpvJr5QdHxBaF4+Od8j4v1tCYrKBB
+         xIK3hSfSZ7PNnJc9ZYeZQ6xIHca1IYtzMhWgQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4/QZI1b9BuX09J6n+wRULrAcCHBLRMc57Wa6cWYocm8=;
-        b=OTMFd1T0ISba9FyVCg+8DPxSWhfOHgFYEnmlkhYWjGmashm/H+XH3v+iisZtzctBTG
-         TIDHCrET6/uTOBgfa7050wQqgmwwzUfrqGyAvpr3yAznNGjlQEYQQ/1k3N/tgR+a7BDU
-         Pq3BYPFqncjtqz7Wsjt6EFbMiLBzaA/98LT8JOZqv6cDyh7aQjqEYIPzpklQ19B2uoOr
-         i75I7FIl/H+EIXlpu04BBFPnwJ6YHPyJxtxex1JQnNf24ashg7tdNHiD+cwtRNpLU5XH
-         8VVbSsa2Kuo6X/bNp5NMQ9oi93SQhwQsgI7NTItKZtnqrQw9R/O4jmiROXEKVen34HMa
-         Jp1A==
-X-Gm-Message-State: ANoB5pmlZxdHjwnyqBUjJ0VMY9h9zzNSfEbq/PEjAdqd1hrrJU8xd1bE
-        20KYvnVEQGanv2LGgEeoRylFZw==
-X-Google-Smtp-Source: AA0mqf5mW27dLgxQNaTm44+KabAsGNHUSGUXlQnLRIn9jXbgYMKGtUuoV8/lZ1AmsVgq54rAF6sJEA==
-X-Received: by 2002:a17:90a:788f:b0:218:7744:72f9 with SMTP id x15-20020a17090a788f00b00218774472f9mr27145347pjk.26.1671062908706;
-        Wed, 14 Dec 2022 16:08:28 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id oa9-20020a17090b1bc900b0020a81cf4a9asm1921231pjb.14.2022.12.14.16.08.28
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BfROb3ZkcZ7Ac7CKaQoVSCHLc1zwDwCheELrvNAzva4=;
+        b=i+gHTsFnZFuakCwvqO6FS31r2IEmWcrAFcc+XTnei9zbTp0fQhmj1XrsUUDkwFfnp1
+         oU1F+KfaKZGeZObwQ+Rne7G5JhJ28K1B3tkwvzsbkCZZh1FbczBzkt3cexlUuofnuo8Y
+         G0Sjh8a8KwZqLNIEDlJAa6rtwKennM6PG/nhk8LWXfy9dYtRBiL+fj4p1uCsdWZ2gXOh
+         jbMDLNjIvZNtgFopYQXsVwdLhX4JYkv5dbUM+uTrHPzg/WKw4U4JHXlCDJe5QPrxD5EH
+         WmyDdpp6QPAUUPuucwl3IMN/1PbSOLSEshfdKMvIBVii898X8FRvz/PQx/3iWCRkmz51
+         IaCg==
+X-Gm-Message-State: ANoB5pkUS6DpBo7RCuu1ngibR7jCw+/7WXn4UuiSREZdG4dkamugSDjn
+        LgRbgoIAIYho6fOyLrIQLOPYGA==
+X-Google-Smtp-Source: AA0mqf5FkGT3aKj+Iri+fkdEapJVxPOjm37Mu3bRXj+pTnXCNATSsFbSxU7zW7UjlccSkGKowjUlRg==
+X-Received: by 2002:a17:90a:9704:b0:21d:4b50:23b1 with SMTP id x4-20020a17090a970400b0021d4b5023b1mr29685502pjo.5.1671063135792;
+        Wed, 14 Dec 2022 16:12:15 -0800 (PST)
+Received: from jeffxud.c.googlers.com.com (30.202.168.34.bc.googleusercontent.com. [34.168.202.30])
+        by smtp.gmail.com with ESMTPSA id 3-20020a17090a08c300b0021937b2118bsm1845738pjn.54.2022.12.14.16.12.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Dec 2022 16:08:28 -0800 (PST)
-Date:   Wed, 14 Dec 2022 16:08:27 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Jeff Xu <jeffxu@google.com>, akpm@linux-foundation.org
-Cc:     jeffxu@chromium.org, skhan@linuxfoundation.org,
-        dmitry.torokhov@gmail.com, dverkamp@chromium.org, hughd@google.com,
+        Wed, 14 Dec 2022 16:12:15 -0800 (PST)
+From:   jeffxu@chromium.org
+To:     skhan@linuxfoundation.org, keescook@chromium.org
+Cc:     akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
+        dverkamp@chromium.org, hughd@google.com, jeffxu@google.com,
         jorgelo@chromium.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
         jannh@google.com, linux-hardening@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v7 0/6] mm/memfd: introduce MFD_NOEXEC_SEAL and MFD_EXEC
-Message-ID: <202212141607.D2D986C076@keescook>
-References: <20221209160453.3246150-1-jeffxu@google.com>
- <202212141053.7F5D1F6@keescook>
- <CALmYWFss4hGOgJaeah8p7q86xmE7AOwOazxggGCuY=A+ZUVWhQ@mail.gmail.com>
+Subject: [PATCH v8 2/5] selftests/memfd: add tests for F_SEAL_EXEC
+Date:   Thu, 15 Dec 2022 00:12:02 +0000
+Message-Id: <20221215001205.51969-3-jeffxu@google.com>
+X-Mailer: git-send-email 2.39.0.rc1.256.g54fd8350bd-goog
+In-Reply-To: <20221215001205.51969-1-jeffxu@google.com>
+References: <20221215001205.51969-1-jeffxu@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFss4hGOgJaeah8p7q86xmE7AOwOazxggGCuY=A+ZUVWhQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 14, 2022 at 03:32:16PM -0800, Jeff Xu wrote:
-> On Wed, Dec 14, 2022 at 10:54 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Fri, Dec 09, 2022 at 04:04:47PM +0000, jeffxu@chromium.org wrote:
-> > > From: Jeff Xu <jeffxu@google.com>
-> > >
-> > > Since Linux introduced the memfd feature, memfd have always had their
-> > > execute bit set, and the memfd_create() syscall doesn't allow setting
-> > > it differently.
-> > >
-> > > However, in a secure by default system, such as ChromeOS, (where all
-> > > executables should come from the rootfs, which is protected by Verified
-> > > boot), this executable nature of memfd opens a door for NoExec bypass
-> > > and enables “confused deputy attack”.  E.g, in VRP bug [1]: cros_vm
-> > > process created a memfd to share the content with an external process,
-> > > however the memfd is overwritten and used for executing arbitrary code
-> > > and root escalation. [2] lists more VRP in this kind.
-> > >
-> > > On the other hand, executable memfd has its legit use, runc uses memfd’s
-> > > seal and executable feature to copy the contents of the binary then
-> > > execute them, for such system, we need a solution to differentiate runc's
-> > > use of  executable memfds and an attacker's [3].
-> > >
-> > > To address those above, this set of patches add following:
-> > > 1> Let memfd_create() set X bit at creation time.
-> > > 2> Let memfd to be sealed for modifying X bit.
-> > > 3> A new pid namespace sysctl: vm.memfd_noexec to control the behavior of
-> > >    X bit.For example, if a container has vm.memfd_noexec=2, then
-> > >    memfd_create() without MFD_NOEXEC_SEAL will be rejected.
-> > > 4> A new security hook in memfd_create(). This make it possible to a new
-> > > LSM, which rejects or allows executable memfd based on its security policy.
-> >
-> > I think patch 1-5 look good to land. The LSM hook seems separable, and
-> > could continue on its own. Thoughts?
-> >
-> Agreed.
-> 
-> > (Which tree should memfd change go through?)
-> >
-> I'm not sure, is there a recommendation ?
+From: Daniel Verkamp <dverkamp@chromium.org>
 
-It looks like it's traditionally through akpm's tree. Andrew, will you
-carry patches 1-5?
+Basic tests to ensure that user/group/other execute bits cannot be
+changed after applying F_SEAL_EXEC to a memfd.
 
-Thanks!
+Signed-off-by: Daniel Verkamp <dverkamp@chromium.org>
+Co-developed-by: Jeff Xu <jeffxu@google.com>
+Signed-off-by: Jeff Xu <jeffxu@google.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+---
+ tools/testing/selftests/memfd/memfd_test.c | 123 ++++++++++++++++++++-
+ 1 file changed, 122 insertions(+), 1 deletion(-)
 
+diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
+index 94df2692e6e4..f18a15a1f275 100644
+--- a/tools/testing/selftests/memfd/memfd_test.c
++++ b/tools/testing/selftests/memfd/memfd_test.c
+@@ -28,12 +28,38 @@
+ #define MFD_DEF_SIZE 8192
+ #define STACK_SIZE 65536
+ 
++#define F_SEAL_EXEC	0x0020
++
+ /*
+  * Default is not to test hugetlbfs
+  */
+ static size_t mfd_def_size = MFD_DEF_SIZE;
+ static const char *memfd_str = MEMFD_STR;
+ 
++static ssize_t fd2name(int fd, char *buf, size_t bufsize)
++{
++	char buf1[PATH_MAX];
++	int size;
++	ssize_t nbytes;
++
++	size = snprintf(buf1, PATH_MAX, "/proc/self/fd/%d", fd);
++	if (size < 0) {
++		printf("snprintf(%d) failed on %m\n", fd);
++		abort();
++	}
++
++	/*
++	 * reserver one byte for string termination.
++	 */
++	nbytes = readlink(buf1, buf, bufsize-1);
++	if (nbytes == -1) {
++		printf("readlink(%s) failed %m\n", buf1);
++		abort();
++	}
++	buf[nbytes] = '\0';
++	return nbytes;
++}
++
+ static int mfd_assert_new(const char *name, loff_t sz, unsigned int flags)
+ {
+ 	int r, fd;
+@@ -98,11 +124,14 @@ static unsigned int mfd_assert_get_seals(int fd)
+ 
+ static void mfd_assert_has_seals(int fd, unsigned int seals)
+ {
++	char buf[PATH_MAX];
++	int nbytes;
+ 	unsigned int s;
++	fd2name(fd, buf, PATH_MAX);
+ 
+ 	s = mfd_assert_get_seals(fd);
+ 	if (s != seals) {
+-		printf("%u != %u = GET_SEALS(%d)\n", seals, s, fd);
++		printf("%u != %u = GET_SEALS(%s)\n", seals, s, buf);
+ 		abort();
+ 	}
+ }
+@@ -594,6 +623,64 @@ static void mfd_fail_grow_write(int fd)
+ 	}
+ }
+ 
++static void mfd_assert_mode(int fd, int mode)
++{
++	struct stat st;
++	char buf[PATH_MAX];
++	int nbytes;
++
++	fd2name(fd, buf, PATH_MAX);
++
++	if (fstat(fd, &st) < 0) {
++		printf("fstat(%s) failed: %m\n", buf);
++		abort();
++	}
++
++	if ((st.st_mode & 07777) != mode) {
++		printf("fstat(%s) wrong file mode 0%04o, but expected 0%04o\n",
++		       buf, (int)st.st_mode & 07777, mode);
++		abort();
++	}
++}
++
++static void mfd_assert_chmod(int fd, int mode)
++{
++	char buf[PATH_MAX];
++	int nbytes;
++
++	fd2name(fd, buf, PATH_MAX);
++
++	if (fchmod(fd, mode) < 0) {
++		printf("fchmod(%s, 0%04o) failed: %m\n", buf, mode);
++		abort();
++	}
++
++	mfd_assert_mode(fd, mode);
++}
++
++static void mfd_fail_chmod(int fd, int mode)
++{
++	struct stat st;
++	char buf[PATH_MAX];
++	int nbytes;
++
++	fd2name(fd, buf, PATH_MAX);
++
++	if (fstat(fd, &st) < 0) {
++		printf("fstat(%s) failed: %m\n", buf);
++		abort();
++	}
++
++	if (fchmod(fd, mode) == 0) {
++		printf("fchmod(%s, 0%04o) didn't fail as expected\n",
++		       buf, mode);
++		abort();
++	}
++
++	/* verify that file mode bits did not change */
++	mfd_assert_mode(fd, st.st_mode & 07777);
++}
++
+ static int idle_thread_fn(void *arg)
+ {
+ 	sigset_t set;
+@@ -880,6 +967,39 @@ static void test_seal_resize(void)
+ 	close(fd);
+ }
+ 
++/*
++ * Test SEAL_EXEC
++ * Test that chmod() cannot change x bits after sealing
++ */
++static void test_seal_exec(void)
++{
++	int fd;
++
++	printf("%s SEAL-EXEC\n", memfd_str);
++
++	fd = mfd_assert_new("kern_memfd_seal_exec",
++			    mfd_def_size,
++			    MFD_CLOEXEC | MFD_ALLOW_SEALING);
++
++	mfd_assert_mode(fd, 0777);
++
++	mfd_assert_chmod(fd, 0644);
++
++	mfd_assert_has_seals(fd, 0);
++	mfd_assert_add_seals(fd, F_SEAL_EXEC);
++	mfd_assert_has_seals(fd, F_SEAL_EXEC);
++
++	mfd_assert_chmod(fd, 0600);
++	mfd_fail_chmod(fd, 0777);
++	mfd_fail_chmod(fd, 0670);
++	mfd_fail_chmod(fd, 0605);
++	mfd_fail_chmod(fd, 0700);
++	mfd_fail_chmod(fd, 0100);
++	mfd_assert_chmod(fd, 0666);
++
++	close(fd);
++}
++
+ /*
+  * Test sharing via dup()
+  * Test that seals are shared between dupped FDs and they're all equal.
+@@ -1059,6 +1179,7 @@ int main(int argc, char **argv)
+ 	test_seal_shrink();
+ 	test_seal_grow();
+ 	test_seal_resize();
++	test_seal_exec();
+ 
+ 	test_share_dup("SHARE-DUP", "");
+ 	test_share_mmap("SHARE-MMAP", "");
 -- 
-Kees Cook
+2.39.0.rc1.256.g54fd8350bd-goog
+
