@@ -2,215 +2,195 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B407EC3DA71
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Dec 2022 18:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 785E0C46467
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Dec 2022 19:59:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230108AbiLOShM (ORCPT
+        id S230153AbiLOT7Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Dec 2022 13:37:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32940 "EHLO
+        Thu, 15 Dec 2022 14:59:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230113AbiLOSgn (ORCPT
+        with ESMTP id S230154AbiLOT7O (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Dec 2022 13:36:43 -0500
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [IPv6:2001:1600:4:17::1908])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42ECC22B1B
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Dec 2022 10:34:50 -0800 (PST)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NY19h38GNzMpnRZ;
-        Thu, 15 Dec 2022 19:34:48 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4NY19g5vGczMptnJ;
-        Thu, 15 Dec 2022 19:34:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1671129288;
-        bh=k5QH6se0vLsINiRxRFKBTNr8NZdu2UwyIgle4Dc48zc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=L/Lm3G1Si+7oM1gj+WwRjTtzAUzG2Dc9Lso7D1udEKd2T5Eve8B7LIW91NGhvtm77
-         fL+qfALTPpX5rUgr0eSG26hqQbhsKQlqXEw4CIR2EzVJbqkPe/ZtDMnolt4h51DbRT
-         aKjpTcYMWvwzUM/HMRQjAS2o+2PKMKBTQmeTrgwE=
-Message-ID: <43c925e3-ce72-3ba1-15cf-6fbb34c485f1@digikod.net>
-Date:   Thu, 15 Dec 2022 19:34:47 +0100
-MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v2 1/1] selftests/landlock: skip ptrace_test according to
- YAMA
-Content-Language: en-US
-To:     jeffxu@chromium.org
-Cc:     jorgelo@chromium.org, keescook@chromium.org,
-        linux-security-module@vger.kernel.org, groeck@chromium.org,
-        Jeff Xu <jeffxu@google.com>
-References: <20221213185816.3942853-1-jeffxu@chromium.org>
- <20221213185816.3942853-2-jeffxu@chromium.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20221213185816.3942853-2-jeffxu@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Thu, 15 Dec 2022 14:59:14 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10D5B537D4;
+        Thu, 15 Dec 2022 11:59:12 -0800 (PST)
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BFJme90011349;
+        Thu, 15 Dec 2022 19:58:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=EdESrXaU0ECbNnOkHVR0YT/iFgICApvZ54u5zXnNNlQ=;
+ b=se1yqwcnl9T2XsrUIb2lAlKVRxqaroH59mzcLOBiBXUW6i6f7QspK8iMubPbMYP4P6XK
+ HtxmzW0IdKc1pDCtDyjPoVqY2r72yQ4fS1Z++2E1At3qMsrNifSgWMq/CvUiyqtBQ87n
+ Ynaqk0W/tqN1ccObDDNgHz2jrCa8mNIDpQxyhq7Wzba7mma9fvUvA54Nou/8qzhM4iKg
+ lMNkDpzmf4D3AOA7Vv17orvxJ2aeFyiepUrrwH6SNNnz3a2jRxe+Qihr0gKbR4kNXRIy
+ 3Bl7TQr1XI0q/P0tq07UIv5bd0RLvkQFXY114WUxm5k6v2OeXRoS0My0kLob4vc0fh1d YQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mga2n864d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Dec 2022 19:58:42 +0000
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2BFJnYRR013263;
+        Thu, 15 Dec 2022 19:58:41 GMT
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mga2n863s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Dec 2022 19:58:41 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 2BFJvxMt006102;
+        Thu, 15 Dec 2022 19:58:40 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([9.208.129.114])
+        by ppma03dal.us.ibm.com (PPS) with ESMTPS id 3meyfe0s06-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Dec 2022 19:58:40 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+        by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2BFJwc5G25952780
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Dec 2022 19:58:38 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3A75F58056;
+        Thu, 15 Dec 2022 19:58:38 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EC0225803F;
+        Thu, 15 Dec 2022 19:58:36 +0000 (GMT)
+Received: from sig-9-65-242-118.ibm.com (unknown [9.65.242.118])
+        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Thu, 15 Dec 2022 19:58:36 +0000 (GMT)
+Message-ID: <1c51910a35a1d113256494827fd66ccc7473632e.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 00/10] Add CA enforcement keyring restrictions
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "pvorel@suse.cz" <pvorel@suse.cz>,
+        "noodles@fb.com" <noodles@fb.com>, "tiwai@suse.de" <tiwai@suse.de>,
+        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>,
+        Elaine Palmer <erpalmer@linux.vnet.ibm.com>,
+        Coiby Xu <coxu@redhat.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Date:   Thu, 15 Dec 2022 14:58:36 -0500
+In-Reply-To: <4CE6F17D-9D87-4024-9E1A-FDFE7C29D5FC@oracle.com>
+References: <20221214003401.4086781-1-eric.snowberg@oracle.com>
+         <b8e54d077da633132eb6da03ea536face095a425.camel@linux.ibm.com>
+         <4CE6F17D-9D87-4024-9E1A-FDFE7C29D5FC@oracle.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Infomaniak-Routing: alpha
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: KyyGrrQum1ld-4P0H3neHLwIl3229K-2
+X-Proofpoint-GUID: hxqPeCPseFoOqWAP9f0vmVRYTffNbSol
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-15_11,2022-12-15_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 spamscore=0 malwarescore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2212150164
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This is much better! We can tailor a bit more the tests though.
-
-On 13/12/2022 19:58, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@google.com>
+On Thu, 2022-12-15 at 16:26 +0000, Eric Snowberg wrote:
 > 
-> Add check for yama setting for ptrace_test.
+> > On Dec 15, 2022, at 3:21 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > 
+> > On Tue, 2022-12-13 at 19:33 -0500, Eric Snowberg wrote:
+> >> Prior to the introduction of the machine keyring, most distros simply 
+> >> allowed all keys contained within the platform keyring to be used
+> >> for both kernel and module verification.  This was done by an out of
+> >> tree patch.  Some distros took it even further and loaded all these keys
+> >> into the secondary trusted keyring.  This also allowed the system owner 
+> >> to add their own key for IMA usage.
+> >> 
+> >> Each distro contains similar documentation on how to sign kernel modules
+> >> and enroll the key into the MOK.  The process is fairly straightforward.
+> >> With the introduction of the machine keyring, the process remains
+> >> basically the same, without the need for any out of tree patches.
+> >> 
+> >> The machine keyring allowed distros to eliminate the out of tree patches
+> >> for kernel module signing.  However, it falls short in allowing the end 
+> >> user to add their own keys for IMA. Currently the machine keyring can not 
+> >> be used as another trust anchor for adding keys to the ima keyring, since 
+> >> CA enforcement does not currently exist.  This would expand the current 
+> >> integrity gap. The IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY 
+> >> Kconfig states that keys may be added to the ima keyrings if the key is 
+> >> validly signed by a CA cert in the system built-in or secondary trusted 
+> >> keyring.  Currently there is not code that enforces the contents of a
+> >> CA cert. Any key in the builtin or secondary keyring can be used. 
+> >> 
+> >> To allow IMA to be enabled with the machine keyring, this series introduces
+> >> enforcement of key usage in the certificate. This series also applies
+> >> this enforcement across all kernel keyrings.
+> >> 
+> >> The machine keyring shares  similarities with both the builtin and
+> >> secondary keyrings.  Similar to the builtin, no keys may be added to the
+> >> machine keyring following boot. The secondary keyring allows user
+> >> provided keys to be added following boot; however, a previously enrolled
+> >> kernel key must vouch for the key before it may be included. The system
+> >> owner may include their own keys into the machine keyring prior to boot.
+> >> If the end-user is not the system owner, they may not add their own keys
+> >> to the machine keyring.  
+> >> 
+> >> The machine keyring is only populated when Secure Boot is enabled.  A
+> >> system owner has the ability to control the entire Secure Boot keychain
+> >> (PK, KEK, DB, and DBX).  The system owner can also turn Secure Boot off.
+> >> With this control, they may use insert-sys-cert to include their own key 
+> >> and re-sign their kernel and have it boot.  The system owner also has 
+> >> control to include or exclude MOK keys. This series does not try to 
+> >> interpret how a system owner has configured their machine.  If the system 
+> >> owner has taken the steps to add their own MOK keys, they will be 
+> >> included in the machine keyring and used for verification, exactly 
+> >> the same way as keys contained in the builtin and secondary keyrings.
+> >> Since the system owner has the ability to add keys before booting to
+> >> either the machine or builtin keyrings, it is viewed as inconsequential 
+> >> if the key originated from one or the other.
+> >> 
+> >> This series introduces two different ways to configure the machine keyring.
+> >> By default, nothing changes and all MOK keys are loaded into it.  Whenever
+> >> a CA cert is found within the machine, builtin, or secondary, a flag 
+> >> indicating this is stored in the public key struct.  The other option is 
+> >> if the new Kconfig INTEGRITY_CA_MACHINE_KEYRING is enabled, only CA certs 
+> >> will be loaded into the machine keyring. All remaining MOK keys will be 
+> >> loaded into the platform keyring.
+> >> 
+> >> A CA cert shall be defined as any X509 certificate that contains the 
+> >> keyCertSign key usage and has the CA bit set to true.
+> > 
+> > Hi Eric,
+> > 
+> > Allowing CA certificates with the digitalSignature key usage flag
+> > enabled defeats the purpose of the new Kconfig.  Please update the
+> > above definition to exclude the digitalSignature key usage flag and
+> > modify the code accordingly.
 > 
-> Signed-off-by: Jeff Xu <jeffxu@google.com>
-> ---
->   .../testing/selftests/landlock/ptrace_test.c  | 34 +++++++++++++++++++
->   1 file changed, 34 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
-> index c28ef98ff3ac..8565a25a9587 100644
-> --- a/tools/testing/selftests/landlock/ptrace_test.c
-> +++ b/tools/testing/selftests/landlock/ptrace_test.c
-> @@ -60,6 +60,24 @@ static int test_ptrace_read(const pid_t pid)
->   	return 0;
->   }
->   
-> +static int get_ptrace_scope(void)
+> Within v2, the request was made to allow Intermediate CA certificates to be 
+> loaded directly.  The Intermediate CA referenced was the one used by kernel.org.  
+> This Intermediate CA contains both digitalSignature and keyCertSign.  If the code 
+> is changed to exclude this certificate, now the root CA has to be loaded again.  Is that 
+> the intent?
 
-Please rename to get_yama_ptrace_scope().
+That definitely was not the intent.  Nor would it address the issue of
+a particular intermediate CA certificate having both keyCertSign and
+digitalSignature.
 
-> +{
-> +	int ret = -1;
-> +	char buf[2];
-> +	int fd = open("/proc/sys/kernel/yama/ptrace_scope", O_RDONLY);
-> +
-> +	if (fd < 0)
-> +		return 0;
-> +
-> +	if (read(fd, &buf, 1) < 0)
-> +		return -1;
-> +
-> +	buf[1] = '\0';
+thanks,
 
-You can replace that with `char buf[2] = {};`
+Mimi
 
-
-> +	ret = atoi(buf);
-> +	close(fd);
-> +	return ret;
-> +}
-> +
->   /* clang-format off */
->   FIXTURE(hierarchy) {};
->   /* clang-format on */
-> @@ -69,6 +87,7 @@ FIXTURE_VARIANT(hierarchy)
->   	const bool domain_both;
->   	const bool domain_parent;
->   	const bool domain_child;
-> +	const int  yama_value;
-
-Please rename to yama_ptrace_scope_max and remove the extra space.
-
->   };
->   
->   /*
-> @@ -93,6 +112,7 @@ FIXTURE_VARIANT_ADD(hierarchy, allow_without_domain) {
->   	.domain_both = false,
->   	.domain_parent = false,
->   	.domain_child = false,
-> +	.yama_value = 0,
->   };
->   
->   /*
-> @@ -110,6 +130,7 @@ FIXTURE_VARIANT_ADD(hierarchy, allow_with_one_domain) {
->   	.domain_both = false,
->   	.domain_parent = false,
->   	.domain_child = true,
-> +	.yama_value = 1,
->   };
->   
->   /*
-> @@ -126,6 +147,7 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_parent_domain) {
->   	.domain_both = false,
->   	.domain_parent = true,
->   	.domain_child = false,
-> +	.yama_value = 0,
->   };
->   
->   /*
-> @@ -143,6 +165,7 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_sibling_domain) {
->   	.domain_both = false,
->   	.domain_parent = true,
->   	.domain_child = true,
-> +	.yama_value = 2,
->   };
->   
->   /*
-> @@ -160,6 +183,7 @@ FIXTURE_VARIANT_ADD(hierarchy, allow_sibling_domain) {
->   	.domain_both = true,
->   	.domain_parent = false,
->   	.domain_child = false,
-> +	.yama_value = 0,
->   };
->   
->   /*
-> @@ -178,6 +202,7 @@ FIXTURE_VARIANT_ADD(hierarchy, allow_with_nested_domain) {
->   	.domain_both = true,
->   	.domain_parent = false,
->   	.domain_child = true,
-> +	.yama_value = 1,
->   };
->   
->   /*
-> @@ -196,6 +221,7 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_nested_and_parent_domain) {
->   	.domain_both = true,
->   	.domain_parent = true,
->   	.domain_child = false,
-> +	.yama_value = 0,
->   };
->   
->   /*
-> @@ -216,6 +242,7 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_forked_domain) {
->   	.domain_both = true,
->   	.domain_parent = true,
->   	.domain_child = true,
-> +	.yama_value = 2,
->   };
->   
->   FIXTURE_SETUP(hierarchy)
-> @@ -232,9 +259,16 @@ TEST_F(hierarchy, trace)
->   	pid_t child, parent;
->   	int status, err_proc_read;
->   	int pipe_child[2], pipe_parent[2];
-> +	int yama;
-
-Please rename to yama_ptrace_scope.
-
-
->   	char buf_parent;
->   	long ret;
->   
-> +	yama = get_ptrace_scope();
-> +	ASSERT_LE(0, yama);
-> +
-> +	if (variant->yama_value < yama)
-
-if (yama_ptrace_scope >= 3)
-
-> +		SKIP(return, "unsupported yama value %d", yama);
-
-"Yama forbids any ptrace use (scope 3)"
-
-
-This check skips the whole test, whereas the issues with Yama are about:
-- a child process tracing its parent;
-- the PTRACE_TRACEME case.
-
-I think the main remaining parts to change is the `if 
-(variant->domain_*` checks to extend with the yama_ptrace_scope_max check.
-
-However, it is useful to highlight that a test didn't fully covered 
-Landlock checks. I think the best approach is to call SKIP() at the end 
-of TEST_F(hierarchy, trace) if yama_ptrace_scope >= 1 . This way, we 
-test as much as possible (Landlock and Yama) and we mark the "tampered" 
-tests as skipped.
-
-
-> +
->   	/*
->   	 * Removes all effective and permitted capabilities to not interfere
->   	 * with cap_ptrace_access_check() in case of PTRACE_MODE_FSCREDS.
