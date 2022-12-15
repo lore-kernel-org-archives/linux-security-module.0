@@ -2,141 +2,215 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E09FC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Dec 2022 16:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B407EC3DA71
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Dec 2022 18:37:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230337AbiLOQ4O (ORCPT
+        id S230108AbiLOShM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Dec 2022 11:56:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48298 "EHLO
+        Thu, 15 Dec 2022 13:37:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230327AbiLOQ4J (ORCPT
+        with ESMTP id S230113AbiLOSgn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Dec 2022 11:56:09 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 545DAF580
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Dec 2022 08:56:04 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id b13-20020a17090a5a0d00b0021906102d05so3251638pjd.5
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Dec 2022 08:56:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DOs+4sldiwGC1XG54dp5mVgT4uLPOQwpbZy8XgG5P7U=;
-        b=BwAd8aLPF5gd7FIHoISnAe0Zyh/n9acpz7ASV5bArM8hi+12M+FokUGMCFBYex8YYT
-         nxAxlAOtheavS0XJFp986uZEh6iP0Ge1ESokWEFBokuizRQABamacozxfHoHFFmuc1ig
-         og9sJEbM9bDah05cislLrAkqozwsfBmeI2c0IATzpQQH3Shewyh+bhXQoOzGvx/VhhF4
-         q0IchDuQ9ETeLCwyhWh4KMyKbH1/EIDfepr0bi0OHiqJSTjhJ7A3Nxt8kXYoynQWbMgP
-         NFZaNJrEnOv3E7GDTrJU47AoUmR++UPFYGrV0RFmWai23NVv2rwcyUqZetoHP0TjnvhP
-         tb3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DOs+4sldiwGC1XG54dp5mVgT4uLPOQwpbZy8XgG5P7U=;
-        b=Ir4ZOb/KxRda1zuHZHyb5/b6RaU3oWzQqnNMymFZ8K25Ng7hKZjS5EIUy7He0rcnPD
-         EFP84j1yealmxdvgEW0MMheiqxt17xQV35G2divwx8wHvJRJYBQnCjEHmxWv+jo/bKM7
-         hfbNR7ElAlHoNPE7mCEg9llBgAFpp/t2ahgtxL6J1sMrHQV0cOve3xg4TTeGwsYP59SY
-         Ls4z75SZDDOwjM3HwlNqkOtVrxX9+7gFVh0wC1zApsy/EYdVj8K6JjP1sWDCpHcGlbaM
-         DRbTYwkMc5RDd6NRaSHDYCistsF4TkOXrBShG7w1XvPKTzPh0/YpNZpgnCvJyn8USH6D
-         wfyQ==
-X-Gm-Message-State: AFqh2koYNZqvQIBAI5cSrG6aR+RjSQJ3PEK0lOxv6Ydp1U4Wsv5403XL
-        94W5rQ+acSldcmmIYjKz8AkIPTY0bssseyc06npeGw==
-X-Google-Smtp-Source: AMrXdXtENt/mhPma/+EbgzmxkFLEmcOUooUWEz4dux8uEyqEYR9PwvfNgIzmFBek41FGvcb4TrN/AF2YjFTKl7rw3wI=
-X-Received: by 2002:a17:90a:4612:b0:219:a43b:1006 with SMTP id
- w18-20020a17090a461200b00219a43b1006mr786360pjg.195.1671123363557; Thu, 15
- Dec 2022 08:56:03 -0800 (PST)
+        Thu, 15 Dec 2022 13:36:43 -0500
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [IPv6:2001:1600:4:17::1908])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42ECC22B1B
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Dec 2022 10:34:50 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NY19h38GNzMpnRZ;
+        Thu, 15 Dec 2022 19:34:48 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4NY19g5vGczMptnJ;
+        Thu, 15 Dec 2022 19:34:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1671129288;
+        bh=k5QH6se0vLsINiRxRFKBTNr8NZdu2UwyIgle4Dc48zc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=L/Lm3G1Si+7oM1gj+WwRjTtzAUzG2Dc9Lso7D1udEKd2T5Eve8B7LIW91NGhvtm77
+         fL+qfALTPpX5rUgr0eSG26hqQbhsKQlqXEw4CIR2EzVJbqkPe/ZtDMnolt4h51DbRT
+         aKjpTcYMWvwzUM/HMRQjAS2o+2PKMKBTQmeTrgwE=
+Message-ID: <43c925e3-ce72-3ba1-15cf-6fbb34c485f1@digikod.net>
+Date:   Thu, 15 Dec 2022 19:34:47 +0100
 MIME-Version: 1.0
-References: <20221209160453.3246150-1-jeffxu@google.com> <202212141053.7F5D1F6@keescook>
- <CALmYWFss4hGOgJaeah8p7q86xmE7AOwOazxggGCuY=A+ZUVWhQ@mail.gmail.com> <202212141607.D2D986C076@keescook>
-In-Reply-To: <202212141607.D2D986C076@keescook>
-From:   Jeff Xu <jeffxu@google.com>
-Date:   Thu, 15 Dec 2022 08:55:26 -0800
-Message-ID: <CALmYWFvJv_4yLxnv=8Bpx0mE_WLi0yGVxR-ybN8VAatEwmM+iQ@mail.gmail.com>
-Subject: Re: [PATCH v7 0/6] mm/memfd: introduce MFD_NOEXEC_SEAL and MFD_EXEC
-To:     Kees Cook <keescook@chromium.org>
-Cc:     akpm@linux-foundation.org, jeffxu@chromium.org,
-        skhan@linuxfoundation.org, dmitry.torokhov@gmail.com,
-        dverkamp@chromium.org, hughd@google.com, jorgelo@chromium.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-mm@kvack.org, jannh@google.com,
-        linux-hardening@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: 
+Subject: Re: [PATCH v2 1/1] selftests/landlock: skip ptrace_test according to
+ YAMA
+Content-Language: en-US
+To:     jeffxu@chromium.org
+Cc:     jorgelo@chromium.org, keescook@chromium.org,
+        linux-security-module@vger.kernel.org, groeck@chromium.org,
+        Jeff Xu <jeffxu@google.com>
+References: <20221213185816.3942853-1-jeffxu@chromium.org>
+ <20221213185816.3942853-2-jeffxu@chromium.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20221213185816.3942853-2-jeffxu@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 14, 2022 at 4:08 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Wed, Dec 14, 2022 at 03:32:16PM -0800, Jeff Xu wrote:
-> > On Wed, Dec 14, 2022 at 10:54 AM Kees Cook <keescook@chromium.org> wrot=
-e:
-> > >
-> > > On Fri, Dec 09, 2022 at 04:04:47PM +0000, jeffxu@chromium.org wrote:
-> > > > From: Jeff Xu <jeffxu@google.com>
-> > > >
-> > > > Since Linux introduced the memfd feature, memfd have always had the=
-ir
-> > > > execute bit set, and the memfd_create() syscall doesn't allow setti=
-ng
-> > > > it differently.
-> > > >
-> > > > However, in a secure by default system, such as ChromeOS, (where al=
-l
-> > > > executables should come from the rootfs, which is protected by Veri=
-fied
-> > > > boot), this executable nature of memfd opens a door for NoExec bypa=
-ss
-> > > > and enables =E2=80=9Cconfused deputy attack=E2=80=9D.  E.g, in VRP =
-bug [1]: cros_vm
-> > > > process created a memfd to share the content with an external proce=
-ss,
-> > > > however the memfd is overwritten and used for executing arbitrary c=
-ode
-> > > > and root escalation. [2] lists more VRP in this kind.
-> > > >
-> > > > On the other hand, executable memfd has its legit use, runc uses me=
-mfd=E2=80=99s
-> > > > seal and executable feature to copy the contents of the binary then
-> > > > execute them, for such system, we need a solution to differentiate =
-runc's
-> > > > use of  executable memfds and an attacker's [3].
-> > > >
-> > > > To address those above, this set of patches add following:
-> > > > 1> Let memfd_create() set X bit at creation time.
-> > > > 2> Let memfd to be sealed for modifying X bit.
-> > > > 3> A new pid namespace sysctl: vm.memfd_noexec to control the behav=
-ior of
-> > > >    X bit.For example, if a container has vm.memfd_noexec=3D2, then
-> > > >    memfd_create() without MFD_NOEXEC_SEAL will be rejected.
-> > > > 4> A new security hook in memfd_create(). This make it possible to =
-a new
-> > > > LSM, which rejects or allows executable memfd based on its security=
- policy.
-> > >
-> > > I think patch 1-5 look good to land. The LSM hook seems separable, an=
-d
-> > > could continue on its own. Thoughts?
-> > >
-> > Agreed.
-> >
-> > > (Which tree should memfd change go through?)
-> > >
-> > I'm not sure, is there a recommendation ?
->
-> It looks like it's traditionally through akpm's tree. Andrew, will you
-> carry patches 1-5?
->
-Hi Andrew, if you are taking this, V8 is the latest that contains patch 1-5=
-.
+This is much better! We can tailor a bit more the tests though.
 
-Thanks
-Jeff
+On 13/12/2022 19:58, jeffxu@chromium.org wrote:
+> From: Jeff Xu <jeffxu@google.com>
+> 
+> Add check for yama setting for ptrace_test.
+> 
+> Signed-off-by: Jeff Xu <jeffxu@google.com>
+> ---
+>   .../testing/selftests/landlock/ptrace_test.c  | 34 +++++++++++++++++++
+>   1 file changed, 34 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
+> index c28ef98ff3ac..8565a25a9587 100644
+> --- a/tools/testing/selftests/landlock/ptrace_test.c
+> +++ b/tools/testing/selftests/landlock/ptrace_test.c
+> @@ -60,6 +60,24 @@ static int test_ptrace_read(const pid_t pid)
+>   	return 0;
+>   }
+>   
+> +static int get_ptrace_scope(void)
 
-> Thanks!
->
-> --
-> Kees Cook
+Please rename to get_yama_ptrace_scope().
+
+> +{
+> +	int ret = -1;
+> +	char buf[2];
+> +	int fd = open("/proc/sys/kernel/yama/ptrace_scope", O_RDONLY);
+> +
+> +	if (fd < 0)
+> +		return 0;
+> +
+> +	if (read(fd, &buf, 1) < 0)
+> +		return -1;
+> +
+> +	buf[1] = '\0';
+
+You can replace that with `char buf[2] = {};`
+
+
+> +	ret = atoi(buf);
+> +	close(fd);
+> +	return ret;
+> +}
+> +
+>   /* clang-format off */
+>   FIXTURE(hierarchy) {};
+>   /* clang-format on */
+> @@ -69,6 +87,7 @@ FIXTURE_VARIANT(hierarchy)
+>   	const bool domain_both;
+>   	const bool domain_parent;
+>   	const bool domain_child;
+> +	const int  yama_value;
+
+Please rename to yama_ptrace_scope_max and remove the extra space.
+
+>   };
+>   
+>   /*
+> @@ -93,6 +112,7 @@ FIXTURE_VARIANT_ADD(hierarchy, allow_without_domain) {
+>   	.domain_both = false,
+>   	.domain_parent = false,
+>   	.domain_child = false,
+> +	.yama_value = 0,
+>   };
+>   
+>   /*
+> @@ -110,6 +130,7 @@ FIXTURE_VARIANT_ADD(hierarchy, allow_with_one_domain) {
+>   	.domain_both = false,
+>   	.domain_parent = false,
+>   	.domain_child = true,
+> +	.yama_value = 1,
+>   };
+>   
+>   /*
+> @@ -126,6 +147,7 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_parent_domain) {
+>   	.domain_both = false,
+>   	.domain_parent = true,
+>   	.domain_child = false,
+> +	.yama_value = 0,
+>   };
+>   
+>   /*
+> @@ -143,6 +165,7 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_sibling_domain) {
+>   	.domain_both = false,
+>   	.domain_parent = true,
+>   	.domain_child = true,
+> +	.yama_value = 2,
+>   };
+>   
+>   /*
+> @@ -160,6 +183,7 @@ FIXTURE_VARIANT_ADD(hierarchy, allow_sibling_domain) {
+>   	.domain_both = true,
+>   	.domain_parent = false,
+>   	.domain_child = false,
+> +	.yama_value = 0,
+>   };
+>   
+>   /*
+> @@ -178,6 +202,7 @@ FIXTURE_VARIANT_ADD(hierarchy, allow_with_nested_domain) {
+>   	.domain_both = true,
+>   	.domain_parent = false,
+>   	.domain_child = true,
+> +	.yama_value = 1,
+>   };
+>   
+>   /*
+> @@ -196,6 +221,7 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_nested_and_parent_domain) {
+>   	.domain_both = true,
+>   	.domain_parent = true,
+>   	.domain_child = false,
+> +	.yama_value = 0,
+>   };
+>   
+>   /*
+> @@ -216,6 +242,7 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_forked_domain) {
+>   	.domain_both = true,
+>   	.domain_parent = true,
+>   	.domain_child = true,
+> +	.yama_value = 2,
+>   };
+>   
+>   FIXTURE_SETUP(hierarchy)
+> @@ -232,9 +259,16 @@ TEST_F(hierarchy, trace)
+>   	pid_t child, parent;
+>   	int status, err_proc_read;
+>   	int pipe_child[2], pipe_parent[2];
+> +	int yama;
+
+Please rename to yama_ptrace_scope.
+
+
+>   	char buf_parent;
+>   	long ret;
+>   
+> +	yama = get_ptrace_scope();
+> +	ASSERT_LE(0, yama);
+> +
+> +	if (variant->yama_value < yama)
+
+if (yama_ptrace_scope >= 3)
+
+> +		SKIP(return, "unsupported yama value %d", yama);
+
+"Yama forbids any ptrace use (scope 3)"
+
+
+This check skips the whole test, whereas the issues with Yama are about:
+- a child process tracing its parent;
+- the PTRACE_TRACEME case.
+
+I think the main remaining parts to change is the `if 
+(variant->domain_*` checks to extend with the yama_ptrace_scope_max check.
+
+However, it is useful to highlight that a test didn't fully covered 
+Landlock checks. I think the best approach is to call SKIP() at the end 
+of TEST_F(hierarchy, trace) if yama_ptrace_scope >= 1 . This way, we 
+test as much as possible (Landlock and Yama) and we mark the "tampered" 
+tests as skipped.
+
+
+> +
+>   	/*
+>   	 * Removes all effective and permitted capabilities to not interfere
+>   	 * with cap_ptrace_access_check() in case of PTRACE_MODE_FSCREDS.
