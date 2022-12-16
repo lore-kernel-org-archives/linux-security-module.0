@@ -2,202 +2,396 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70624C001B2
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Dec 2022 14:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDEDC4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Dec 2022 15:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230503AbiLPOKU (ORCPT
+        id S229901AbiLPPTZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Dec 2022 09:10:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44120 "EHLO
+        Fri, 16 Dec 2022 10:19:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230345AbiLPOKJ (ORCPT
+        with ESMTP id S229886AbiLPPTX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Dec 2022 09:10:09 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E96B396D0
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Dec 2022 06:09:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671199760;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RA/Yc5ZHRE6FrNcZRlkstCVubCNeOdRMPGJUgVDRano=;
-        b=hY0ASQ2TpG82YsOyj/5MXbEZ0FmeqgveetPLTPAtS1Rswx6KcL+wfxqmtwo66q6bMmnrv7
-        KJcVTbncArfPWIbxl00Z8Q+oTJmNpCJ06FRyCFQy96WaAbUpYY3m/Fxkqo5PHUJvWPMxA5
-        UtNqbhhPhhbdaLm1H9p6iwQHRja5vbA=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-326-HbfEpsU0PneoCVe_23jHAQ-1; Fri, 16 Dec 2022 09:09:17 -0500
-X-MC-Unique: HbfEpsU0PneoCVe_23jHAQ-1
-Received: by mail-pl1-f197.google.com with SMTP id o5-20020a170903210500b0018f9edbba6eso1767301ple.11
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Dec 2022 06:09:17 -0800 (PST)
+        Fri, 16 Dec 2022 10:19:23 -0500
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0622E2B248
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Dec 2022 07:19:21 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id l10so2610166plb.8
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Dec 2022 07:19:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6FD+CYH5O+Fi6d8N2pMh/BghET6L6n2t7fk/CJNPmRE=;
+        b=B/R16SmKzy9AGkFvCiICSsnlxiJnRrC3UG5jElLTWF6JdhKxnN7t2wCu5Zi8fc0NRj
+         eR4hQYgXJtU+37DmM7RT4zqua0Wo5cIf4v46R/xNc0cn5PdfOVEtSedlujMmhExa9u0s
+         m9BD35iaC/VPc4gQEY+ylrEveiuR3N4ylRL1l+2n9GYQsMVmesRAZsENdiKTrktdC68u
+         SOeZAzwhJ42goxHQaUCRVdkWKKllyBvmxUQGJsqr4HzC+FsZIz3JW3qMeJqKxulFrn4Z
+         RTZVw7LxTYoe+Ezfd9lFunwgsuGgxsxKOC8YTYq5nj8YYqqEGKYqPaqJwABSm+faojeI
+         R39A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RA/Yc5ZHRE6FrNcZRlkstCVubCNeOdRMPGJUgVDRano=;
-        b=7PbcRBda/GrTTiNNQ1EoR4bysIOHRGKdo/Y05ukgyEWD+t85lPxjHwA1+odlH7LA4N
-         08kUmxYGEPiD1miq4gg72J1eHURJRD7Ope4n3XgyKfP5jz4MkeO93G48mNYKfbUGeYZa
-         GYUJbEnIifa1xbJbLOhmUB6kwO9Bi9vXDBK9yZX2jNh6F8dpZLj0whgPwJwjONDeupsp
-         zM1vLcXtqGDy7d8snwHeEBXj4Q3KQMj8lkntGhBHYQE4z1n41/qNxe9RT1gcOwHQD/qT
-         H3sBvN4gBMwk7d5aIja9hpAEXrdJ2n6MN4ufP1rHwlmUayh9+bj56Xfu7ixDwUG2dHp7
-         AoVQ==
-X-Gm-Message-State: ANoB5plq44RWLqISxyXEH9g1IF59BrfMUHjTiQ8C8heR5BD8ImEEdBS/
-        y7vkjxlAEFYdfpri9kApq2RCldZXxwttX7VUPZBgg+8DWinwsxU/x3K1nQ5eK3VzoKYPDORklib
-        lJg9xDE6ZLcZi/SRegOU+v7DZIqvQcE8ZlmsH
-X-Received: by 2002:a05:6a21:999d:b0:9d:efd3:66f2 with SMTP id ve29-20020a056a21999d00b0009defd366f2mr49385984pzb.57.1671199756410;
-        Fri, 16 Dec 2022 06:09:16 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf4QvH51tl1mP7UPtNO+GFRJLHBLli6PFxppfCqFl8Wt05sNUw4tDC0RTAnYyFUqUPkWRn6nSA==
-X-Received: by 2002:a05:6a21:999d:b0:9d:efd3:66f2 with SMTP id ve29-20020a056a21999d00b0009defd366f2mr49385943pzb.57.1671199755949;
-        Fri, 16 Dec 2022 06:09:15 -0800 (PST)
-Received: from localhost ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id l10-20020a63f30a000000b00470275c8d6dsm1515027pgh.10.2022.12.16.06.09.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Dec 2022 06:09:15 -0800 (PST)
-Date:   Fri, 16 Dec 2022 22:06:48 +0800
-From:   Coiby Xu <coxu@redhat.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "pvorel@suse.cz" <pvorel@suse.cz>,
-        "noodles@fb.com" <noodles@fb.com>, "tiwai@suse.de" <tiwai@suse.de>,
-        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>,
-        Elaine Palmer <erpalmer@linux.vnet.ibm.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v3 00/10] Add CA enforcement keyring restrictions
-Message-ID: <20221216140648.h32gn5qf3igorpzi@Rk>
-References: <20221214003401.4086781-1-eric.snowberg@oracle.com>
- <b8e54d077da633132eb6da03ea536face095a425.camel@linux.ibm.com>
- <4CE6F17D-9D87-4024-9E1A-FDFE7C29D5FC@oracle.com>
- <1c51910a35a1d113256494827fd66ccc7473632e.camel@linux.ibm.com>
- <17855993-519C-4DAC-B62F-9DB473CF249B@oracle.com>
- <7df94da37c100c160436892a6996ba30e3fd6dc8.camel@linux.ibm.com>
- <21E52C3E-0778-4908-AF44-F65D57BEC4E0@oracle.com>
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6FD+CYH5O+Fi6d8N2pMh/BghET6L6n2t7fk/CJNPmRE=;
+        b=XRn8/3t453AROiJk0mCNZmoIPs5ocz8+fedP7owaL9mhc6Hd0S95tFEFj8gZ3XQiyf
+         TKGWEeWC2FGJHdPYWvvRltFJUTstSBxLp1kEw/bL49i7I1dRdL3L0aC/WzJSf0p480km
+         5L5iIv3p51CJGzV7+UO9IpvS66BEWNZvnbs5A5b1IuOL8hBr2K+Id6YyPz9gM0On2eoB
+         6XtHEcVw6GTqzaDjBzFOBa8YjGoDh/eyytx0WB9lKj38oMtHI5/DOPxSnTZQfNLJdqu3
+         3crTEXq18QrKUntwbRstMSmus6QJC0gVzJ6k72ZDvwkFBFUlPQQLUhQ0QUsOXlJGMouR
+         rCPw==
+X-Gm-Message-State: ANoB5pnJngY7jxLOgfLjgft0mXx0r7QSzNS/K2iD+yOcrtNc4XjbSqrN
+        JDNm5/Fo4vmHE4vqfvErFzeyiykVdhZS5vxnTW9D4Q==
+X-Google-Smtp-Source: AA0mqf60O9yjhMzt5jpOfhR1KKFxE071t58lenyn62AiPJiGJ+wXynIQown51MbpdR0t1W11k0m0Q0qd+PDyjS8E4ds=
+X-Received: by 2002:a17:902:ec04:b0:189:894c:6b58 with SMTP id
+ l4-20020a170902ec0400b00189894c6b58mr54728647pld.172.1671203960110; Fri, 16
+ Dec 2022 07:19:20 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <21E52C3E-0778-4908-AF44-F65D57BEC4E0@oracle.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+References: <20221213185816.3942853-1-jeffxu@chromium.org> <20221213185816.3942853-2-jeffxu@chromium.org>
+ <43c925e3-ce72-3ba1-15cf-6fbb34c485f1@digikod.net> <CALmYWFurtUhVqibcPyBXF=pcWRDtDfe3HxMJRGKe29dEAOtVLg@mail.gmail.com>
+ <48358983-6224-a1fd-07fa-8ddd81392201@digikod.net>
+In-Reply-To: <48358983-6224-a1fd-07fa-8ddd81392201@digikod.net>
+From:   Jeff Xu <jeffxu@google.com>
+Date:   Fri, 16 Dec 2022 07:18:43 -0800
+Message-ID: <CALmYWFtvkXSo0N44=Q2NYpq+w5r=mOD86A+gECnmXDDB8tKOmw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] selftests/landlock: skip ptrace_test according to YAMA
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     jeffxu@chromium.org, jorgelo@chromium.org, keescook@chromium.org,
+        linux-security-module@vger.kernel.org, groeck@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Eric and Mimi,
-
-On Thu, Dec 15, 2022 at 09:45:37PM +0000, Eric Snowberg wrote:
+On Fri, Dec 16, 2022 at 2:15 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
 >
 >
->>>>>>> A CA cert shall be defined as any X509 certificate that contains the
->>>>>>> keyCertSign key usage and has the CA bit set to true.
->>>>>>
->>>>>> Hi Eric,
->>>>>>
->>>>>> Allowing CA certificates with the digitalSignature key usage flag
->>>>>> enabled defeats the purpose of the new Kconfig.  Please update the
->>>>>> above definition to exclude the digitalSignature key usage flag and
->>>>>> modify the code accordingly.
->>>>>
->>>>> Within v2, the request was made to allow Intermediate CA certificates to be
->>>>> loaded directly.  The Intermediate CA referenced was the one used by kernel.org.
->>>>> This Intermediate CA contains both digitalSignature and keyCertSign.  If the code
->>>>> is changed to exclude this certificate, now the root CA has to be loaded again.  Is that
->>>>> the intent?
->>>>
->>>> That definitely was not the intent.  Nor would it address the issue of
->>>> a particular intermediate CA certificate having both keyCertSign and
->>>> digitalSignature.
->>>
->>> Sorry, I’m not following.  Why is it an issue that an intermediate CA certificate contains
->>> both keyCertSign and digitalSignature? Why would we want to exclude an Intermediate
->>> CA cert like the one used on kernel.org?
->>
->> I must be missing something.  Isn't the purpose of "keyUsage" to
->> minimize how a certificate may be used?   Why would we want the same
->> certificate to be used for both certificate signing and code signing?
+> On 15/12/2022 21:34, Jeff Xu wrote:
+> > Hi Micka=C3=ABl
+> > Thanks for reviewing.
+> >
+> > On Thu, Dec 15, 2022 at 10:34 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.=
+net> wrote:
+> >>
+> >> This is much better! We can tailor a bit more the tests though.
+> >>
+> >> On 13/12/2022 19:58, jeffxu@chromium.org wrote:
+> >>> From: Jeff Xu <jeffxu@google.com>
+> >>>
+> >>> Add check for yama setting for ptrace_test.
+> >>>
+> >>> Signed-off-by: Jeff Xu <jeffxu@google.com>
+> >>> ---
+> >>>    .../testing/selftests/landlock/ptrace_test.c  | 34 +++++++++++++++=
+++++
+> >>>    1 file changed, 34 insertions(+)
+> >>>
+> >>> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/t=
+esting/selftests/landlock/ptrace_test.c
+> >>> index c28ef98ff3ac..8565a25a9587 100644
+> >>> --- a/tools/testing/selftests/landlock/ptrace_test.c
+> >>> +++ b/tools/testing/selftests/landlock/ptrace_test.c
+> >>> @@ -60,6 +60,24 @@ static int test_ptrace_read(const pid_t pid)
+> >>>        return 0;
+> >>>    }
+> >>>
+> >>> +static int get_ptrace_scope(void)
+> >>
+> >> Please rename to get_yama_ptrace_scope().
+> >>
+> > Done.
+> >
+> >>> +{
+> >>> +     int ret =3D -1;
+> >>> +     char buf[2];
+> >>> +     int fd =3D open("/proc/sys/kernel/yama/ptrace_scope", O_RDONLY)=
+;
+> >>> +
+> >>> +     if (fd < 0)
+> >>> +             return 0;
+> >>> +
+> >>> +     if (read(fd, &buf, 1) < 0)
+> >>> +             return -1;
+> >>> +
+> >>> +     buf[1] =3D '\0';
+> >>
+> >> You can replace that with `char buf[2] =3D {};`
+> >>
+> > Done.
+> > The Compiler seems to be getting a lot smarter :) Thanks.
+> >
+> >>
+> >>> +     ret =3D atoi(buf);
+> >>> +     close(fd);
+> >>> +     return ret;
+> >>> +}
+> >>> +
+> >>>    /* clang-format off */
+> >>>    FIXTURE(hierarchy) {};
+> >>>    /* clang-format on */
+> >>> @@ -69,6 +87,7 @@ FIXTURE_VARIANT(hierarchy)
+> >>>        const bool domain_both;
+> >>>        const bool domain_parent;
+> >>>        const bool domain_child;
+> >>> +     const int  yama_value;
+> >>
+> >> Please rename to yama_ptrace_scope_max and remove the extra space.
+> >>
+> > why _max ?  yama_ptrace_scope_current is more proporate ?
+> > FYI: This is the current sysctl setting.
 >
->Every 3rd party intermediate CA I have looked at so far contains both set. Most have CRLSign set.
->Typically the root CA contains keyCertSign and CRLSign, but some also have digitalSignature
->set.  Finding a 3rd party Intermediate CA without digitalSignature set is probably going to be
->challenging and will severely limit usage.
+> In response to your other email, yama_ptrace_scope_max_supported looks
+> good too.
+>
+> >
+> >>>    };
+> >>>
+> >>>    /*
+> >>> @@ -93,6 +112,7 @@ FIXTURE_VARIANT_ADD(hierarchy, allow_without_domai=
+n) {
+> >>>        .domain_both =3D false,
+> >>>        .domain_parent =3D false,
+> >>>        .domain_child =3D false,
+> >>> +     .yama_value =3D 0,
+> >>>    };
+> >>>
+> >>>    /*
+> >>> @@ -110,6 +130,7 @@ FIXTURE_VARIANT_ADD(hierarchy, allow_with_one_dom=
+ain) {
+> >>>        .domain_both =3D false,
+> >>>        .domain_parent =3D false,
+> >>>        .domain_child =3D true,
+> >>> +     .yama_value =3D 1,
+> >>>    };
+> >>>
+> >>>    /*
+> >>> @@ -126,6 +147,7 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_parent_d=
+omain) {
+> >>>        .domain_both =3D false,
+> >>>        .domain_parent =3D true,
+> >>>        .domain_child =3D false,
+> >>> +     .yama_value =3D 0,
+> >>>    };
+> >>>
+> >>>    /*
+> >>> @@ -143,6 +165,7 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_sibling_=
+domain) {
+> >>>        .domain_both =3D false,
+> >>>        .domain_parent =3D true,
+> >>>        .domain_child =3D true,
+> >>> +     .yama_value =3D 2,
+> >>>    };
+> >>>
+> >>>    /*
+> >>> @@ -160,6 +183,7 @@ FIXTURE_VARIANT_ADD(hierarchy, allow_sibling_doma=
+in) {
+> >>>        .domain_both =3D true,
+> >>>        .domain_parent =3D false,
+> >>>        .domain_child =3D false,
+> >>> +     .yama_value =3D 0,
+> >>>    };
+> >>>
+> >>>    /*
+> >>> @@ -178,6 +202,7 @@ FIXTURE_VARIANT_ADD(hierarchy, allow_with_nested_=
+domain) {
+> >>>        .domain_both =3D true,
+> >>>        .domain_parent =3D false,
+> >>>        .domain_child =3D true,
+> >>> +     .yama_value =3D 1,
+> >>>    };
+> >>>
+> >>>    /*
+> >>> @@ -196,6 +221,7 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_nested_a=
+nd_parent_domain) {
+> >>>        .domain_both =3D true,
+> >>>        .domain_parent =3D true,
+> >>>        .domain_child =3D false,
+> >>> +     .yama_value =3D 0,
+> >>>    };
+> >>>
+> >>>    /*
+> >>> @@ -216,6 +242,7 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_forked_d=
+omain) {
+> >>>        .domain_both =3D true,
+> >>>        .domain_parent =3D true,
+> >>>        .domain_child =3D true,
+> >>> +     .yama_value =3D 2,
+> >>>    };
+> >>>
+> >>>    FIXTURE_SETUP(hierarchy)
+> >>> @@ -232,9 +259,16 @@ TEST_F(hierarchy, trace)
+> >>>        pid_t child, parent;
+> >>>        int status, err_proc_read;
+> >>>        int pipe_child[2], pipe_parent[2];
+> >>> +     int yama;
+> >>
+> >> Please rename to yama_ptrace_scope.
+> >>
+> > Done.
+> >
+> >
+> >>
+> >>>        char buf_parent;
+> >>>        long ret;
+> >>>
+> >>> +     yama =3D get_ptrace_scope();
+> >>> +     ASSERT_LE(0, yama);
+> >>> +
+> >>> +     if (variant->yama_value < yama)
+> >>
+> >> if (yama_ptrace_scope >=3D 3)
+> >>
+> >>> +             SKIP(return, "unsupported yama value %d", yama);
+> >>
+> >> "Yama forbids any ptrace use (scope 3)"
+> >>
+> >>
+> > why comparing with  3?  the test will  skip particular hierarchy,
+> > according to current
+> > sysctl yama_ptrace setting.
+>
+> The idea is to run the tests as much as possible, but in the case of a
+> scope of 3, any ptrace is denied. However, it would indeed be better to
+> integrate this third value in the following `if (variant->domain_*`
+> checks, like for the other scopes.
+>
+>
+> >
+> > For example: when kernel.yama.ptrace_scope =3D 1 the result will be lik=
+e:
+> > localhost /usr/local/bin # ./ptrace_test
+> > TAP version 13
+> > 1..8
+> > # Starting 8 tests from 9 test cases.
+> > #  RUN           hierarchy.allow_without_domain.trace ...
+> > #      SKIP      unsupported yama value 1
+> > #            OK  hierarchy.allow_without_domain.trace
+> > ok 1 # SKIP unsupported yama value 1
+> > #  RUN           hierarchy.allow_with_one_domain.trace ...
+> > #            OK  hierarchy.allow_with_one_domain.trace
+> > ok 2 hierarchy.allow_with_one_domain.trace
+> > #  RUN           hierarchy.deny_with_parent_domain.trace ...
+> > #      SKIP      unsupported yama value 1
+> > #            OK  hierarchy.deny_with_parent_domain.trace
+> > ok 3 # SKIP unsupported yama value 1
+> > #  RUN           hierarchy.deny_with_sibling_domain.trace ...
+> > #            OK  hierarchy.deny_with_sibling_domain.trace
+> > ok 4 hierarchy.deny_with_sibling_domain.trace
+> > #  RUN           hierarchy.allow_sibling_domain.trace ...
+> > #      SKIP      unsupported yama value 1
+> > #            OK  hierarchy.allow_sibling_domain.trace
+> > ok 5 # SKIP unsupported yama value 1
+> > #  RUN           hierarchy.allow_with_nested_domain.trace ...
+> > #            OK  hierarchy.allow_with_nested_domain.trace
+> > ok 6 hierarchy.allow_with_nested_domain.trace
+> > #  RUN           hierarchy.deny_with_nested_and_parent_domain.trace ...
+> > #      SKIP      unsupported yama value 1
+> > #            OK  hierarchy.deny_with_nested_and_parent_domain.trace
+> > ok 7 # SKIP unsupported yama value 1
+> > #  RUN           hierarchy.deny_with_forked_domain.trace ...
+> > #            OK  hierarchy.deny_with_forked_domain.trace
+> > ok 8 hierarchy.deny_with_forked_domain.trace
+> > # PASSED: 8 / 8 tests passed.
+> > # Totals: pass:4 fail:0 xfail:0 xpass:0 skip:4 error:0
+> >
+> > when yama.ptrace_scope is 2:
+> > localhost /usr/local/bin # sysctl kernel.yama.ptrace_scope=3D2
+> > kernel.yama.ptrace_scope =3D 2
+> > localhost /usr/local/bin # ./ptrace_test
+> > TAP version 13
+> > 1..8
+> > # Starting 8 tests from 9 test cases.
+> > #  RUN           hierarchy.allow_without_domain.trace ...
+> > #      SKIP      unsupported yama value 2
+> > #            OK  hierarchy.allow_without_domain.trace
+> > ok 1 # SKIP unsupported yama value 2
+> > #  RUN           hierarchy.allow_with_one_domain.trace ...
+> > #      SKIP      unsupported yama value 2
+> > #            OK  hierarchy.allow_with_one_domain.trace
+> > ok 2 # SKIP unsupported yama value 2
+> > #  RUN           hierarchy.deny_with_parent_domain.trace ...
+> > #      SKIP      unsupported yama value 2
+> > #            OK  hierarchy.deny_with_parent_domain.trace
+> > ok 3 # SKIP unsupported yama value 2
+> > #  RUN           hierarchy.deny_with_sibling_domain.trace ...
+> > #            OK  hierarchy.deny_with_sibling_domain.trace
+> > ok 4 hierarchy.deny_with_sibling_domain.trace
+> > #  RUN           hierarchy.allow_sibling_domain.trace ...
+> > #      SKIP      unsupported yama value 2
+> > #            OK  hierarchy.allow_sibling_domain.trace
+> > ok 5 # SKIP unsupported yama value 2
+> > #  RUN           hierarchy.allow_with_nested_domain.trace ...
+> > #      SKIP      unsupported yama value 2
+> > #            OK  hierarchy.allow_with_nested_domain.trace
+> > ok 6 # SKIP unsupported yama value 2
+> > #  RUN           hierarchy.deny_with_nested_and_parent_domain.trace ...
+> > #      SKIP      unsupported yama value 2
+> > #            OK  hierarchy.deny_with_nested_and_parent_domain.trace
+> > ok 7 # SKIP unsupported yama value 2
+> > #  RUN           hierarchy.deny_with_forked_domain.trace ...
+> > #            OK  hierarchy.deny_with_forked_domain.trace
+> > ok 8 hierarchy.deny_with_forked_domain.trace
+> > # PASSED: 8 / 8 tests passed.
+> > # Totals: pass:2 fail:0 xfail:0 xpass:0 skip:6 error:0
+> >
+> >> This check skips the whole test, whereas the issues with Yama are abou=
+t:
+> >> - a child process tracing its parent;
+> >> - the PTRACE_TRACEME case.
+> >>
+> >> I think the main remaining parts to change is the `if
+> >> (variant->domain_*` checks to extend with the yama_ptrace_scope_max ch=
+eck.
+> >>
+> >> However, it is useful to highlight that a test didn't fully cover
+> >> Landlock checks. I think the best approach is to call SKIP() at the en=
+d
+> >> of TEST_F(hierarchy, trace) if yama_ptrace_scope >=3D 1 . This way, we
+> >> test as much as possible (Landlock and Yama) and we mark the "tampered=
+"
+> >> tests as skipped.
+> >>
+> > I believe the test case should not have a lot of branches and logic
+> > (if/else), which makes
+> > the test case more complex and harder to read.  By that reason, SKIP()
+> > is better at beginning
+> > of the testcase.
+>
+> I agree in a general case, but here all the branches already exist to
+> test all possible Landlock combinations. Adding Yama's ptrace scope will
+> only update the existing branch conditions.
+>
+>
+> >
+> > Another reason is resource cleanup.  When SKIP() is not at the
+> > beginning of tests,
+> > the cleanup logic can get much more complicated because there are more
+> > combinations of resource cleanup to
+> > to be dealt with, after SKIP().
+>
+> All the logic for resource cleanup is already in place.
+>
+> >
+> > Therefore I do not believe in "tests as much as possible" in a single
+> > test, I would rather have a
+> > dedicated test for the situation.
+>
+> The current test code already covers all possible combinations, so it is
+> just a matter of extending the branch conditions. You can update these
+> checks using dedicated booleans:
+> - can_trace_child =3D !variant->domain_parent && (yama_ptrace_scope < 2);
+> - can_trace_parent =3D !variant->domain_child && (yama_ptrace_scope < 1);
+>
+> =E2=80=A6and at the end of all the hierarchy.trace tests add:
+> if (yama_ptrace_scope > 0)
+>         SKIP(return, "Incomplete tests due to Yama restrictions (ptrace_s=
+cope:
+> %d)", yama_ptrace_scope);
 
-How about allowing both keyCertSign and digitalSignature asserted but
-issuing a warning for this case?
+OKey, I will update and send a new one.
 
-Here's my rationale for this proposal.
-
-I assume we should conform to some X.509 specifications. So I checked
-"RFC 5280: Internet X.509 Public Key Infrastructure Certificate and
-Certificate Revocation List (CRL) Profile" [1] and ITU-T X.509 (2012-10)
-[2].
-
-[1] states in 4.2.1.3. Key Usage,
-    "If the keyUsage extension is present, then the subject public key
-    MUST NOT be used to verify signatures on certificates or CRLs unless
-    the corresponding keyCertSign or cRLSign bit is set.  If the subject
-    public key is only to be used for verifying signatures on
-    certificates and/or CRLs, then the digitalSignature and
-    nonRepudiation bits SHOULD NOT be set.  However, the digitalSignature
-    and/or nonRepudiation bits MAY be set in addition to the keyCertSign
-    and/or cRLSign bits if the subject public key is to be used to verify
-    signatures on certificates and/or CRLs as well as other objects."
-
-and [2] states in 8.2.2.3 Key usage extension that,
-   "More than one bit may be set in an instance of the keyUsage extension.
-   The setting of multiple bits shall not change the meaning of each
-   individual bit but shall indicate that the certificate may be used for
-   all of the purposes indicated by the set bits. There may be risks
-   incurred when setting multiple bits. A review of those risks is
-   documented in Annex I."
-
-I interpret the above texts as we should allow both keyCertSign and
-digitalSignature. However [2] warns about the risks of setting multiple
-bits. Quoting Annex I,
-
-   "Combining the contentCommitment bit in the keyUsage certificate
-   extension with other keyUsage bits may have security implications
-   depending on the security environment in which the certificate is to be
-   used. If the subject's environment can be fully controlled and trusted,
-   then there are no specific security implications. For example, in cases
-   where the subject is fully confident about exactly which data is signed
-   or cases where the subject is fully confident about the security
-   characteristics of the authentication protocol being used. If the
-   subject's environment is not fully controlled or not fully trusted, then
-   unintentional signing of commitments is possible. Examples include the
-   use of badly formed authentication exchanges and the use of a rogue
-   software component. If untrusted environments are used by a subject,
-   these security implications can be limited through use of the following
-   measures:   
-    – to not combine the contentCommitment key usage setting in
-      certificates with any other key usage setting and to use the
-      corresponding private key only with this certificate;   
-      
-    – to limit the use of private keys associated with certificates that
-      have the contentCommitment key usage bit set, to environments which
-      are considered adequately controlled and trustworthy"
-
-So maybe it's useful to add a warning if both keyCertSign and
-digitalSignature are asserted.
-
-
--- 
-Best regards,
-Coiby
-
+Thanks
+Jeff
