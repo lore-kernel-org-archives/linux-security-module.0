@@ -2,185 +2,202 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 217C2C001B2
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Dec 2022 10:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70624C001B2
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Dec 2022 14:10:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230301AbiLPKZS (ORCPT
+        id S230503AbiLPOKU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Dec 2022 05:25:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53260 "EHLO
+        Fri, 16 Dec 2022 09:10:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230365AbiLPKYr (ORCPT
+        with ESMTP id S230345AbiLPOKJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Dec 2022 05:24:47 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22A0E50D70;
-        Fri, 16 Dec 2022 02:24:32 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NYQ533lWZz9xqpX;
-        Fri, 16 Dec 2022 18:17:11 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwA3DGNAR5xjWcYZAA--.14542S2;
-        Fri, 16 Dec 2022 11:24:10 +0100 (CET)
-Message-ID: <c0f7120e433c80b7c4e0af788eda58de8d1ecdad.camel@huaweicloud.com>
-Subject: Re: Closing the BPF map permission loophole
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Date:   Fri, 16 Dec 2022 11:23:56 +0100
-In-Reply-To: <3fa1fdafc4335c43f84259261dcd1f7d588985a6.camel@huaweicloud.com>
-References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
-         <21be7356-8710-408a-94e3-1a0d3f5f842e@www.fastmail.com>
-         <CAEf4BzawXPiXY3mNabi0ggyTS9wtg6mh8x97=fYGhuGj4=2hnw@mail.gmail.com>
-         <a9367491-5ac3-385b-d0d6-820772ebd395@huaweicloud.com>
-         <CAEf4BzZJDRNyafMEjy-1RX9cUmpcvZzYd9YBf9Q3uv_vVsiLCw@mail.gmail.com>
-         <5abb0b0090fd0bce77dca0a6b9036de121b65cf5.camel@huaweicloud.com>
-         <20f55084c341093d18d2bc462e49123c7f03cc8e.camel@huaweicloud.com>
-         <CAADnVQLU+c+gsZ=V6myG0-GhU3EzZgqjzTPvqvYmCDBjqMoF+Q@mail.gmail.com>
-         <3fa1fdafc4335c43f84259261dcd1f7d588985a6.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Fri, 16 Dec 2022 09:10:09 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E96B396D0
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Dec 2022 06:09:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1671199760;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RA/Yc5ZHRE6FrNcZRlkstCVubCNeOdRMPGJUgVDRano=;
+        b=hY0ASQ2TpG82YsOyj/5MXbEZ0FmeqgveetPLTPAtS1Rswx6KcL+wfxqmtwo66q6bMmnrv7
+        KJcVTbncArfPWIbxl00Z8Q+oTJmNpCJ06FRyCFQy96WaAbUpYY3m/Fxkqo5PHUJvWPMxA5
+        UtNqbhhPhhbdaLm1H9p6iwQHRja5vbA=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-326-HbfEpsU0PneoCVe_23jHAQ-1; Fri, 16 Dec 2022 09:09:17 -0500
+X-MC-Unique: HbfEpsU0PneoCVe_23jHAQ-1
+Received: by mail-pl1-f197.google.com with SMTP id o5-20020a170903210500b0018f9edbba6eso1767301ple.11
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Dec 2022 06:09:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RA/Yc5ZHRE6FrNcZRlkstCVubCNeOdRMPGJUgVDRano=;
+        b=7PbcRBda/GrTTiNNQ1EoR4bysIOHRGKdo/Y05ukgyEWD+t85lPxjHwA1+odlH7LA4N
+         08kUmxYGEPiD1miq4gg72J1eHURJRD7Ope4n3XgyKfP5jz4MkeO93G48mNYKfbUGeYZa
+         GYUJbEnIifa1xbJbLOhmUB6kwO9Bi9vXDBK9yZX2jNh6F8dpZLj0whgPwJwjONDeupsp
+         zM1vLcXtqGDy7d8snwHeEBXj4Q3KQMj8lkntGhBHYQE4z1n41/qNxe9RT1gcOwHQD/qT
+         H3sBvN4gBMwk7d5aIja9hpAEXrdJ2n6MN4ufP1rHwlmUayh9+bj56Xfu7ixDwUG2dHp7
+         AoVQ==
+X-Gm-Message-State: ANoB5plq44RWLqISxyXEH9g1IF59BrfMUHjTiQ8C8heR5BD8ImEEdBS/
+        y7vkjxlAEFYdfpri9kApq2RCldZXxwttX7VUPZBgg+8DWinwsxU/x3K1nQ5eK3VzoKYPDORklib
+        lJg9xDE6ZLcZi/SRegOU+v7DZIqvQcE8ZlmsH
+X-Received: by 2002:a05:6a21:999d:b0:9d:efd3:66f2 with SMTP id ve29-20020a056a21999d00b0009defd366f2mr49385984pzb.57.1671199756410;
+        Fri, 16 Dec 2022 06:09:16 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf4QvH51tl1mP7UPtNO+GFRJLHBLli6PFxppfCqFl8Wt05sNUw4tDC0RTAnYyFUqUPkWRn6nSA==
+X-Received: by 2002:a05:6a21:999d:b0:9d:efd3:66f2 with SMTP id ve29-20020a056a21999d00b0009defd366f2mr49385943pzb.57.1671199755949;
+        Fri, 16 Dec 2022 06:09:15 -0800 (PST)
+Received: from localhost ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id l10-20020a63f30a000000b00470275c8d6dsm1515027pgh.10.2022.12.16.06.09.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Dec 2022 06:09:15 -0800 (PST)
+Date:   Fri, 16 Dec 2022 22:06:48 +0800
+From:   Coiby Xu <coxu@redhat.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "pvorel@suse.cz" <pvorel@suse.cz>,
+        "noodles@fb.com" <noodles@fb.com>, "tiwai@suse.de" <tiwai@suse.de>,
+        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>,
+        Elaine Palmer <erpalmer@linux.vnet.ibm.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v3 00/10] Add CA enforcement keyring restrictions
+Message-ID: <20221216140648.h32gn5qf3igorpzi@Rk>
+References: <20221214003401.4086781-1-eric.snowberg@oracle.com>
+ <b8e54d077da633132eb6da03ea536face095a425.camel@linux.ibm.com>
+ <4CE6F17D-9D87-4024-9E1A-FDFE7C29D5FC@oracle.com>
+ <1c51910a35a1d113256494827fd66ccc7473632e.camel@linux.ibm.com>
+ <17855993-519C-4DAC-B62F-9DB473CF249B@oracle.com>
+ <7df94da37c100c160436892a6996ba30e3fd6dc8.camel@linux.ibm.com>
+ <21E52C3E-0778-4908-AF44-F65D57BEC4E0@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwA3DGNAR5xjWcYZAA--.14542S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3GFykKryDtrWkCryDGryUWrg_yoW7XF4xpF
-        W3K3W7Kr1DJ3y7Can3KFyDJ3WFya1rJr45Z3s8t3y8Z3s09r1FkF4xKF4Y9F9rCrn7Jw1Y
-        qrZFvF9xGF1DAFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIBF1jj4a4HwABsc
-X-CFilter-Loop: Reflected
+In-Reply-To: <21E52C3E-0778-4908-AF44-F65D57BEC4E0@oracle.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2022-12-12 at 19:19 +0100, Roberto Sassu wrote:
-> On Mon, 2022-12-12 at 09:07 -0800, Alexei Starovoitov wrote:
-> > On Mon, Dec 12, 2022 at 8:11 AM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > On Mon, 2022-11-07 at 13:11 +0100, Roberto Sassu wrote:
-> > > 
-> > > [...]
-> > > 
-> > > > > > > P.S. We can extend this to BPF-side BPF_F_RDONLY_PROG |
-> > > > > > > BPF_F_WRONLY_PROG as well, it's just that we'll need to define how
-> > > > > > > user will control that. E.g., FS read-only permission, does it
-> > > > > > > restrict both user-space and BPF-view, or just user-space view? We can
-> > > > > > > certainly extend file_flags to allow users to get BPF-side read-only
-> > > > > > > and user-space-side read-write BPF map FD, for example. Obviously, BPF
-> > > > > > > verifier would need to know about struct bpf_map_view when accepting
-> > > > > > > BPF map FD in ldimm64 and such.
-> > > > > > 
-> > > > > > I guess, this patch could be used:
-> > > > > > 
-> > > > > > https://lore.kernel.org/bpf/20220926154430.1552800-3-roberto.sassu@huaweicloud.com/
-> > > > > > 
-> > > > > > When passing a fd to an eBPF program, the permissions of the user space
-> > > > > > side cannot exceed those defined from eBPF program side.
-> > > > > 
-> > > > > Don't know, maybe. But I can see how BPF-side can be declared r/w for
-> > > > > BPF programs, while user-space should be restricted to read-only. I'm
-> > > > > a bit hesitant to artificially couple both together.
-> > > > 
-> > > > Ok. At least what I would do is to forbid write, if you provide a read-
-> > > > only fd.
-> > > 
-> > > Ok, we didn't do too much progress for a while. I would like to resume
-> > > the discussion.
-> > > 
-> > > Can we start from the first point Lorenz mentioned? Given a read-only
-> > > map fd, it is not possible to write to the map. Can we make sure that
-> > > this properly work?
-> > > 
-> > > In my opinion, to achieve this particular goal, the map view
-> > > abstraction Andrii suggested, should not be necessary.
-> > 
-> > What do you 'not necessary' ?
-> > afair the map view abstraction is only one that actually addresses
-> > all the issues.
-> 
-> For the first issue, map iterators, you need to ensure that the fd is
-> read-write if the key/value can be modified.
-> 
-> For the second issue, fd modes ignored by the verifier, you need to
-> restrict operations on the map, to meet the expectactions of whoever
-> granted the fd to the requestor (as Lorenz said, if you have a read-
-> only fd, you should not be able to write to the map).
-> 
-> Maybe I missed something, I didn't get how the map view abstraction
-> could help better in these cases.
+Hi Eric and Mimi,
 
-Ok, let me try to complete the solution for the issues Lorenz pointed
-out. Here I discuss only the system call side of access.
+On Thu, Dec 15, 2022 at 09:45:37PM +0000, Eric Snowberg wrote:
+>
+>
+>>>>>>> A CA cert shall be defined as any X509 certificate that contains the
+>>>>>>> keyCertSign key usage and has the CA bit set to true.
+>>>>>>
+>>>>>> Hi Eric,
+>>>>>>
+>>>>>> Allowing CA certificates with the digitalSignature key usage flag
+>>>>>> enabled defeats the purpose of the new Kconfig.  Please update the
+>>>>>> above definition to exclude the digitalSignature key usage flag and
+>>>>>> modify the code accordingly.
+>>>>>
+>>>>> Within v2, the request was made to allow Intermediate CA certificates to be
+>>>>> loaded directly.  The Intermediate CA referenced was the one used by kernel.org.
+>>>>> This Intermediate CA contains both digitalSignature and keyCertSign.  If the code
+>>>>> is changed to exclude this certificate, now the root CA has to be loaded again.  Is that
+>>>>> the intent?
+>>>>
+>>>> That definitely was not the intent.  Nor would it address the issue of
+>>>> a particular intermediate CA certificate having both keyCertSign and
+>>>> digitalSignature.
+>>>
+>>> Sorry, I’m not following.  Why is it an issue that an intermediate CA certificate contains
+>>> both keyCertSign and digitalSignature? Why would we want to exclude an Intermediate
+>>> CA cert like the one used on kernel.org?
+>>
+>> I must be missing something.  Isn't the purpose of "keyUsage" to
+>> minimize how a certificate may be used?   Why would we want the same
+>> certificate to be used for both certificate signing and code signing?
+>
+>Every 3rd party intermediate CA I have looked at so far contains both set. Most have CRLSign set.
+>Typically the root CA contains keyCertSign and CRLSign, but some also have digitalSignature
+>set.  Finding a 3rd party Intermediate CA without digitalSignature set is probably going to be
+>challenging and will severely limit usage.
 
-I was thinking on the meaning of the permissions on the inode of a
-pinned eBPF object. Given that the object exists without pinning, this
-double check of permissions first on the inode and then on the object
-to me looks very confusing.
+How about allowing both keyCertSign and digitalSignature asserted but
+issuing a warning for this case?
 
-So, here is a proposal: what if read and write in the context of
-pinning don't refer to accessing the eBPF object itself but to the
-ability to read the association between inode and eBPF object or to
-write/replace the association with a different eBPF object (I guess not
-supported now).
+Here's my rationale for this proposal.
 
-We continue to do access control only at the time a requestor asks for
-a fd. Currently there is only MAC, but we can add DAC and POSIX ACL too
-(Andrii wanted to give read permission to a specific group). The owner
-is who created the eBPF object and who can decide (for DAC and ACL) who
-can access that object.
+I assume we should conform to some X.509 specifications. So I checked
+"RFC 5280: Internet X.509 Public Key Infrastructure Certificate and
+Certificate Revocation List (CRL) Profile" [1] and ITU-T X.509 (2012-10)
+[2].
 
-The requestor obtains a fd with modes depending on what was granted. Fd
-modes (current behavior) give the requestor the ability to do certain
-operations. It is responsibility of the function performing the
-operation on an eBPF object to check the fd modes first.
+[1] states in 4.2.1.3. Key Usage,
+    "If the keyUsage extension is present, then the subject public key
+    MUST NOT be used to verify signatures on certificates or CRLs unless
+    the corresponding keyCertSign or cRLSign bit is set.  If the subject
+    public key is only to be used for verifying signatures on
+    certificates and/or CRLs, then the digitalSignature and
+    nonRepudiation bits SHOULD NOT be set.  However, the digitalSignature
+    and/or nonRepudiation bits MAY be set in addition to the keyCertSign
+    and/or cRLSign bits if the subject public key is to be used to verify
+    signatures on certificates and/or CRLs as well as other objects."
 
-It does not matter if the eBPF object is accessed through ID or inode,
-access control is solely based on who is accessing the object, who
-created it and the object permissions. *_GET_FD_BY_ID and OBJ_GET
-operations will have the same access control.
+and [2] states in 8.2.2.3 Key usage extension that,
+   "More than one bit may be set in an instance of the keyUsage extension.
+   The setting of multiple bits shall not change the meaning of each
+   individual bit but shall indicate that the certificate may be used for
+   all of the purposes indicated by the set bits. There may be risks
+   incurred when setting multiple bits. A review of those risks is
+   documented in Annex I."
 
-With my new proposal, once an eBPF object is pinned the owner or
-whoever can access the inode could do chown/chmod. But this does not
-have effect on the permissions of the object. It changes only who can
-retrieve the association with the eBPF object itself.
+I interpret the above texts as we should allow both keyCertSign and
+digitalSignature. However [2] warns about the risks of setting multiple
+bits. Quoting Annex I,
 
-Permissions on the eBPF object could be changed with the bpf() syscall
-and with new operations (such as OBJ_CHOWN, OBJ_CHMOD). These
-operations are of course subject to access control too.
+   "Combining the contentCommitment bit in the keyUsage certificate
+   extension with other keyUsage bits may have security implications
+   depending on the security environment in which the certificate is to be
+   used. If the subject's environment can be fully controlled and trusted,
+   then there are no specific security implications. For example, in cases
+   where the subject is fully confident about exactly which data is signed
+   or cases where the subject is fully confident about the security
+   characteristics of the authentication protocol being used. If the
+   subject's environment is not fully controlled or not fully trusted, then
+   unintentional signing of commitments is possible. Examples include the
+   use of badly formed authentication exchanges and the use of a rogue
+   software component. If untrusted environments are used by a subject,
+   these security implications can be limited through use of the following
+   measures:   
+    – to not combine the contentCommitment key usage setting in
+      certificates with any other key usage setting and to use the
+      corresponding private key only with this certificate;   
+      
+    – to limit the use of private keys associated with certificates that
+      have the contentCommitment key usage bit set, to environments which
+      are considered adequately controlled and trustworthy"
 
-The last part is who can do pinning. Again, an eBPF object can be
-pinned several times by different users. It won't affect who can access
-the object, but only who can access the association between inode and
-eBPF object.
+So maybe it's useful to add a warning if both keyCertSign and
+digitalSignature are asserted.
 
-We can make things very simple: whoever is able to read the association
-is granted with the privilege to pin the eBPF object again.
 
-One could ask what happens if a user has only read permission on an
-inode created by someone else, but has also write permission on a new
-inode the user creates by pinning the eBPF object again (I assume that
-changing the association makes sense). Well, that user is the owner of
-the inode. If the user wants other users accessing it to see a
-different eBPF object, it is the user's decision.
-
-Roberto
+-- 
+Best regards,
+Coiby
 
