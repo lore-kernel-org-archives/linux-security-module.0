@@ -2,90 +2,90 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FA7C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Dec 2022 22:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F3DC4167B
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Dec 2022 07:25:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbiLSWYn (ORCPT
+        id S233544AbiLTHZj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Dec 2022 17:24:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43870 "EHLO
+        Tue, 20 Dec 2022 02:25:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232607AbiLSWYm (ORCPT
+        with ESMTP id S233557AbiLTHZT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Dec 2022 17:24:42 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79B92B7CB
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Dec 2022 14:24:41 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id n65-20020a17090a2cc700b0021bc5ef7a14so10322562pjd.0
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Dec 2022 14:24:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VAT/DeU4WF68oq7nSs81RA7o2EbEGc7CyHhB3lQLXe4=;
-        b=GgGIluoprh00zY/KQJOuCpGQ8xQZ+yMoUwdFW/1pMXkUmgm+gflowLVZAy6RIzO0h8
-         sdW3yR0kfA0HA0gH9xYdYKBELdmACUSLvGeRs8O5opcvC5lCkn4uGPhE9zwmT8UkBfte
-         jnTuvUdkwAECXCbaqvJ1sdLfa2smauLfvuGywfGkUGHRULbeEv5VdZ3dygx3sMadXR4o
-         J6vmHaEVLLVYfBbAMt82VwXzDVKlBbSgOf6U0ko6NTeAUANd8V7SWOqKdvbAx1XaglmY
-         Pra0GwFtC5SUmK2iZywxYzYlyOLuPLnyZbYRHB4Jli5FdZecXdRz49X0qX5T1DkwJR94
-         C+pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VAT/DeU4WF68oq7nSs81RA7o2EbEGc7CyHhB3lQLXe4=;
-        b=gOHmEJBErYW+7nthlyuXxrD3TMZYxTeWe6xxUt9R6eWki34pti+i++gX1qT3nz/Pcx
-         q7KBRgc3qa5KWjguNg2QXQFe2rZUp5g7nhCcK29cl+dciJjYEwXupELnXd1hSTCe+FSx
-         8SO8S+XkMaPvAHqkHLGJ0tJDDX/YRQDsx//59fizdcrOMkBrNrzXQGsdeCsDv++O/PoL
-         NHAv2ztgR0f5GfEendu4Kmw2VdLWm9oq4Hj25IlQMOZkSzSO+IXEvseynM7Xv+IBJFQ0
-         mJ+2sJ5WhEiLJ2FFu7CvVUAiKZT9ecKVw5NamEaUM7tMV+zb7Un0P+tUEQZxCpbqFIvz
-         xUzw==
-X-Gm-Message-State: AFqh2krkNE1V20O0aFxE6btHNpTFaBBbxxC3zjN9fj3qTvD150arIYQ9
-        a27Zh+7ROT7AQzS2v3kO0rwTQm02BjoAmEBTsOsn
-X-Google-Smtp-Source: AMrXdXsgvCSuQsV5A3IA7e2nywnPvULN+JePYCpJFFzRUH/F9wNdmrLucNJ4UzmtEMrD+9wKjOAcEMhqw357dWJmEM0=
-X-Received: by 2002:a17:90a:6481:b0:221:5597:5de7 with SMTP id
- h1-20020a17090a648100b0022155975de7mr1623054pjj.147.1671488680853; Mon, 19
- Dec 2022 14:24:40 -0800 (PST)
+        Tue, 20 Dec 2022 02:25:19 -0500
+Received: from formenos.hmeau.com (helcar.hmeau.com [216.24.177.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0755315F04;
+        Mon, 19 Dec 2022 23:25:12 -0800 (PST)
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1p7WzY-008mhE-TF; Tue, 20 Dec 2022 15:24:49 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 20 Dec 2022 15:24:48 +0800
+Date:   Tue, 20 Dec 2022 15:24:48 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>, dhowells@redhat.com,
+        davem@davemloft.net, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>
+Subject: [PATCH] lib/mpi: Fix buffer overrun when SG is too long
+Message-ID: <Y6FjQPZiJYTEG1zI@gondor.apana.org.au>
+References: <20221209150633.1033556-1-roberto.sassu@huaweicloud.com>
+ <Y5OGr59A9wo86rYY@sol.localdomain>
+ <fa8a307541735ec9258353d8ccb75c20bb22aafe.camel@huaweicloud.com>
+ <Y5bxJ5UZNPzxwtoy@gondor.apana.org.au>
+ <0f80852578436dbba7a0fce03d86c3fa2d38c571.camel@huaweicloud.com>
 MIME-Version: 1.0
-References: <20221219175449.1657640-1-omosnace@redhat.com> <20221219175449.1657640-2-omosnace@redhat.com>
- <fae32a51-d422-d3ea-0bee-6223ca2cf902@schaufler-ca.com>
-In-Reply-To: <fae32a51-d422-d3ea-0bee-6223ca2cf902@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 19 Dec 2022 17:24:29 -0500
-Message-ID: <CAHC9VhT8TiEFPBFeRXzE6qCyyXjL4rtQc7=iJ+AqeBkkfgw-mA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] audit: introduce a struct to represent an audit timestamp
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>,
-        selinux@vger.kernel.org,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        Zdenek Pytela <zpytela@redhat.com>,
-        Michal Sekletar <msekleta@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0f80852578436dbba7a0fce03d86c3fa2d38c571.camel@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 19, 2022 at 1:47 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 12/19/2022 9:54 AM, Ondrej Mosnacek wrote:
-> > Join the two fields that comprise an audit timestamp into a common
-> > structure. This will be used further in later commits.
+On Mon, Dec 19, 2022 at 09:49:29AM +0100, Roberto Sassu wrote:
 >
-> Patch 30/39 of my LSM stacking patchset[1] is almost identical to this.
-> The only significant difference is the structure name. You use audit_timestamp
-> whereas I use audit_stamp. I believe that audit_stamp is more correct and
-> more consistent with the code that uses it.
->
-> [1] https://lore.kernel.org/lkml/f6b8ac05-6900-f57d-0daf-02d5ae53bc47@schaufler-ca.com/T/#m3205b98b2a6b21a296fb831ed35892f01ead191f
+> do you have any news on this bug?
 
-For the record, if "audit_stamp" and "audit_timestamp" are my only two
-options I prefer "audit_stamp" simply because it is shorter :)
+Thanks for the reminder.  Could you please try this patch?
 
-That said, see my comments on patch 2/2.  While an audit timestamp
-struct improvement such as is proposed here and in the LSM stacking
-patchset is fine, I'm not in favor of exposing the audit timestamp
-outside the audit subsystem.
+---8<---
+The helper mpi_read_raw_from_sgl ignores the second parameter
+nbytes when reading the SG list and may overrun its own buffer
+because it only allocates enough memory according to nbytes.
 
+Fixes: 2d4d1eea540b ("lib/mpi: Add mpi sgl helpers")
+Reported-by: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
+diff --git a/lib/mpi/mpicoder.c b/lib/mpi/mpicoder.c
+index 39c4c6731094..6bffc68c1a5a 100644
+--- a/lib/mpi/mpicoder.c
++++ b/lib/mpi/mpicoder.c
+@@ -494,17 +494,15 @@ MPI mpi_read_raw_from_sgl(struct scatterlist *sgl, unsigned int nbytes)
+ 	val->sign = 0;
+ 	val->nlimbs = nlimbs;
+ 
+-	if (nbytes == 0)
+-		return val;
+-
+ 	j = nlimbs - 1;
+ 	a = 0;
+ 	z = BYTES_PER_MPI_LIMB - nbytes % BYTES_PER_MPI_LIMB;
+ 	z %= BYTES_PER_MPI_LIMB;
+ 
+-	while (sg_miter_next(&miter)) {
++	while (nbytes && sg_miter_next(&miter)) {
+ 		buff = miter.addr;
+-		len = miter.length;
++		len = min_t(unsigned, miter.length, nbytes);
++		nbytes -= len;
+ 
+ 		for (x = 0; x < len; x++) {
+ 			a <<= 8;
 -- 
-paul-moore.com
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
