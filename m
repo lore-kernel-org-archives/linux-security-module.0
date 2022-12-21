@@ -2,97 +2,174 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 018E1C41535
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Dec 2022 14:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B63C4167B
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Dec 2022 14:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229547AbiLUOKg (ORCPT
+        id S229554AbiLUOnE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Dec 2022 09:10:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53940 "EHLO
+        Wed, 21 Dec 2022 09:43:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229791AbiLUOKf (ORCPT
+        with ESMTP id S229491AbiLUOnC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Dec 2022 09:10:35 -0500
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCD423BEC;
-        Wed, 21 Dec 2022 06:10:31 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4NcZsm2fxLz9xFrp;
-        Wed, 21 Dec 2022 22:03:24 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwAH2F7DE6NjUuUvAA--.8166S2;
-        Wed, 21 Dec 2022 15:10:18 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        zohar@linux.ibm.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v2] security: Restore passing final prot to ima_file_mmap()
-Date:   Wed, 21 Dec 2022 15:10:07 +0100
-Message-Id: <20221221141007.2579770-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 21 Dec 2022 09:43:02 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E47C164B6;
+        Wed, 21 Dec 2022 06:43:02 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id o31-20020a17090a0a2200b00223fedffb30so2277940pjo.3;
+        Wed, 21 Dec 2022 06:43:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OAWHPEdicK+v8KQVffUr5ACCC/uEXMMTXL2oNSyLzUc=;
+        b=XbLS+IZkSNq7JWTLfBD9UTEy7+kwsNWG455cVEHdUP3dn/1dnXuDFxULQn5ltYd4ez
+         shHrqfo0FLZD4BfJg68vGJyX1OQFVupMkRrWarBfZaq4lEX/6sbzznz7etyxWlaK1jQF
+         trcwtf31NDh/v9il4zLaaTIkcOjxVitgnUztzGfQ62wIe63T4Qa8mdYUCCygsbY9MVQV
+         LMEvmNw1WQzMSEU1dUJKKWYKaNd8oflwSmu+faxjqGcDDw5F5+nWJCHOkG4XXVmIBoSc
+         ggoHmHQ+JOw5LilqEfrEOlY2lkaTaucOhLkj/A7brQU9EL44YYhm7Pbqoo8HENkgjU5Q
+         DBMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OAWHPEdicK+v8KQVffUr5ACCC/uEXMMTXL2oNSyLzUc=;
+        b=3psLegNO7g3HI2ilewXQt0BOkH1bgCLMiW8/03hBptPM8yeViTl5S1+yUHB2XChJzu
+         eWd5UKkp521lPjTsuLt10mCdhaj3shdPqlLtvBURBVr9uETV3HneUEUPlOKBLQdHaFhm
+         l5TprWaLITzOSDLONmYcN5cni7HvpSmO9s/L9HQN8Y/Cpzz/CvJC5WebqFJ29Q+u6UMe
+         9atXhXg3wF+c0paSX2neE8Sb/3/SlDG0EE6emGFEfG6HTyl026EtL4vjsmwbwuhsEsVC
+         xY59I2wPTU/ZoJztgtfuooDMlLVuOhVkVlsC7GRm1vZe+2Amkvf4PM6T15S/gaK+ctCP
+         v7Fw==
+X-Gm-Message-State: AFqh2kqdYsfiIGM0XRqqO2JBd+2H1edXveGz/TI+LreTTdYHALnGue+J
+        8maR0tY/WStzApUbjCt0cA==
+X-Google-Smtp-Source: AMrXdXvE8eN0aMXdaEyMjhnsS1KjZ+gJcn2MLJnMveyzLx0Vb6wY12Ex2AciixoMn9ZZ4TMRSBaoVg==
+X-Received: by 2002:a05:6a20:8341:b0:ad:a5fd:b659 with SMTP id z1-20020a056a20834100b000ada5fdb659mr2353428pzc.7.1671633781342;
+        Wed, 21 Dec 2022 06:43:01 -0800 (PST)
+Received: from localhost.localdomain (n119236129232.netvigator.com. [119.236.129.232])
+        by smtp.gmail.com with ESMTPSA id ij24-20020a170902ab5800b00177efb56475sm11550994plb.85.2022.12.21.06.42.59
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 21 Dec 2022 06:43:00 -0800 (PST)
+From:   Hao Sun <sunhao.th@gmail.com>
+To:     linux-mm@kvack.org, akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, daniel@iogearbox.net,
+        terrelln@fb.com, linux-security-module@vger.kernel.org,
+        Hao Sun <sunhao.th@gmail.com>
+Subject: [PATCH v2] mm: new primitive kvmemdup()
+Date:   Wed, 21 Dec 2022 22:42:45 +0800
+Message-Id: <20221221144245.27164-1-sunhao.th@gmail.com>
+X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwAH2F7DE6NjUuUvAA--.8166S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AFW7AF45ArW3Gw1kGF1rJFb_yoW8Xr1fpa
-        y5t3WUKrs5JFyFqFn7WFW7CF1Sk39xKFWUWan2gryj93Z8XFnYkr15AFWj9ry8Xrn5JFyF
-        qw12k3y3A3Wqy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUk2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28I
-        cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
-        IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI
-        42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42
-        IY6xAIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
-        jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUOyCJDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANBF1jj4LnoQAAs+
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+Similar to kmemdup(), but support large amount of bytes with kvmalloc()
+and does *not* guarantee that the result will be physically contiguous.
+Use only in cases where kvmalloc() is needed and free it with kvfree().
+Also adapt policy_unpack.c in case someone bisect into this.
 
-Commit 98de59bfe4b2f ("take calculation of final prot in
-security_mmap_file() into a helper") moved the code to update prot with the
-actual protection flags to be granted to the requestor by the kernel to a
-helper called mmap_prot(). However, the patch didn't update the argument
-passed to ima_file_mmap(), making it receive the requested prot instead of
-the final computed prot.
-
-A possible consequence is that files mmapped as executable might not be
-measured/appraised if PROT_EXEC is not requested but subsequently added in
-the final prot.
-
-Replace prot with mmap_prot(file, prot) as the second argument of
-ima_file_mmap() to restore the original behavior.
-
-Cc: stable@vger.kernel.org
-Fixes: 98de59bfe4b2 ("take calculation of final prot in security_mmap_file() into a helper")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Hao Sun <sunhao.th@gmail.com>
 ---
- security/security.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This pattern has been used in several places and we're also going to
+do this[1], seems reasonable to add this so that bpf and in future
+others could make use of it.
 
-diff --git a/security/security.c b/security/security.c
-index d1571900a8c7..0d2359d588a1 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1666,7 +1666,7 @@ int security_mmap_file(struct file *file, unsigned long prot,
- 					mmap_prot(file, prot), flags);
- 	if (ret)
- 		return ret;
--	return ima_file_mmap(file, prot);
-+	return ima_file_mmap(file, mmap_prot(file, prot));
- }
+v1 -> v2 adapt policy_unpack.c to fix compile error
+
+[1] https://lore.kernel.org/bpf/7d274284-0fcc-061c-582e-3dfb629c6a44@iogearbox.net/T/#t
+---
+ include/linux/string.h            |  1 +
+ mm/util.c                         | 24 +++++++++++++++++++++++-
+ security/apparmor/policy_unpack.c | 11 +----------
+ 3 files changed, 25 insertions(+), 11 deletions(-)
+
+diff --git a/include/linux/string.h b/include/linux/string.h
+index db28802ab0a6..c062c581a98b 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -177,6 +177,7 @@ extern char *kstrdup(const char *s, gfp_t gfp) __malloc;
+ extern const char *kstrdup_const(const char *s, gfp_t gfp);
+ extern char *kstrndup(const char *s, size_t len, gfp_t gfp);
+ extern void *kmemdup(const void *src, size_t len, gfp_t gfp) __realloc_size(2);
++extern void *kvmemdup(const void *src, size_t len, gfp_t gfp) __realloc_size(2);
+ extern char *kmemdup_nul(const char *s, size_t len, gfp_t gfp);
  
- int security_mmap_addr(unsigned long addr)
+ extern char **argv_split(gfp_t gfp, const char *str, int *argcp);
+diff --git a/mm/util.c b/mm/util.c
+index b56c92fb910f..cec9327b27b4 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -120,7 +120,8 @@ EXPORT_SYMBOL(kstrndup);
+  * @len: memory region length
+  * @gfp: GFP mask to use
+  *
+- * Return: newly allocated copy of @src or %NULL in case of error
++ * Return: newly allocated copy of @src or %NULL in case of error,
++ * result is physically contiguous. Use kfree() to free.
+  */
+ void *kmemdup(const void *src, size_t len, gfp_t gfp)
+ {
+@@ -133,6 +134,27 @@ void *kmemdup(const void *src, size_t len, gfp_t gfp)
+ }
+ EXPORT_SYMBOL(kmemdup);
+ 
++/**
++ * kvmemdup - duplicate region of memory
++ *
++ * @src: memory region to duplicate
++ * @len: memory region length
++ * @gfp: GFP mask to use
++ *
++ * Return: newly allocated copy of @src or %NULL in case of error,
++ * result may be not physically contiguous. Use kvfree() to free.
++ */
++void *kvmemdup(const void *src, size_t len, gfp_t gfp)
++{
++	void *p;
++
++	p = kvmalloc(len, gfp);
++	if (p)
++		memcpy(p, src, len);
++	return p;
++}
++EXPORT_SYMBOL(kvmemdup);
++
+ /**
+  * kmemdup_nul - Create a NUL-terminated string from unterminated data
+  * @s: The data to stringify
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index 66915653108c..5e9949832af6 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -161,15 +161,6 @@ VISIBLE_IF_KUNIT bool aa_inbounds(struct aa_ext *e, size_t size)
+ }
+ EXPORT_SYMBOL_IF_KUNIT(aa_inbounds);
+ 
+-static void *kvmemdup(const void *src, size_t len)
+-{
+-	void *p = kvmalloc(len, GFP_KERNEL);
+-
+-	if (p)
+-		memcpy(p, src, len);
+-	return p;
+-}
+-
+ /**
+  * aa_unpack_u16_chunk - test and do bounds checking for a u16 size based chunk
+  * @e: serialized data read head (NOT NULL)
+@@ -1027,7 +1018,7 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
+ 
+ 			data->key = key;
+ 			data->size = aa_unpack_blob(e, &data->data, NULL);
+-			data->data = kvmemdup(data->data, data->size);
++			data->data = kvmemdup(data->data, data->size, GFP_KERNEL);
+ 			if (data->size && !data->data) {
+ 				kfree_sensitive(data->key);
+ 				kfree_sensitive(data);
+
+base-commit: b6bb9676f2165d518b35ba3bea5f1fcfc0d969bf
 -- 
-2.25.1
+2.39.0
 
