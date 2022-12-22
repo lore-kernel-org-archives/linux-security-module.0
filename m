@@ -1,120 +1,158 @@
-Return-Path: <linux-security-module-owner@kernel.org>
+Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A6B9C4167B
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Dec 2022 20:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEC0C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Dec 2022 00:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230072AbiLUUxf (ORCPT
+        id S234861AbiLVAzs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Dec 2022 15:53:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41356 "EHLO
+        Wed, 21 Dec 2022 19:55:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229620AbiLUUxe (ORCPT
+        with ESMTP id S234829AbiLVAzr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Dec 2022 15:53:34 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2839421E11;
-        Wed, 21 Dec 2022 12:53:33 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B683D60FB5;
-        Wed, 21 Dec 2022 20:53:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A486BC433F0;
-        Wed, 21 Dec 2022 20:53:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671656012;
-        bh=Ei1yd0A82cwikByLCenh3iB6L944+LMrF6j1GxO8bf8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G5jGAqypOPugBDeBfljlBfqGpIg1CtpmK5YPSiF3ulCeyCVKT1o8fHPY0+KDTUTrd
-         0QpiL09R+a8OR24QIM+xsNYE1vgL0WE7xahHbhzi6/zZ0UwFGrDJwBH/ZPhsAl/DK9
-         alY1H80WlcMsYrYAtKd/xvKFJbzX0PLJxuhEn0WOqSr1QLiEAEz27gG3VVNsFckcbf
-         3m8DDNmvZN1rnsXfTvWmRRG9P3MT4Ac/TTasR6IdGk7A0MgKpDXit2P+LGLbaQ0zXz
-         xvIOraqshLgWFRbBtE0R/ZpfG31ag6KxxAHln38RnLxQyUP6LmQhPjPp21H/i8APsX
-         ycpfem4iJSDug==
-Date:   Wed, 21 Dec 2022 12:53:29 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Roberto Sassu <roberto.sassu@huaweicloud.com>, dhowells@redhat.com,
-        davem@davemloft.net, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>
-Subject: Re: [v2 PATCH] lib/mpi: Fix buffer overrun when SG is too long
-Message-ID: <Y6NySck5p/DXhSUJ@sol.localdomain>
-References: <20221209150633.1033556-1-roberto.sassu@huaweicloud.com>
- <Y5OGr59A9wo86rYY@sol.localdomain>
- <fa8a307541735ec9258353d8ccb75c20bb22aafe.camel@huaweicloud.com>
- <Y5bxJ5UZNPzxwtoy@gondor.apana.org.au>
- <0f80852578436dbba7a0fce03d86c3fa2d38c571.camel@huaweicloud.com>
- <Y6FjQPZiJYTEG1zI@gondor.apana.org.au>
- <a04e6458-6814-97fc-f03a-617809e2e6ce@huaweicloud.com>
- <Y6IbWA5aZeBnn4n2@gmail.com>
- <Y6Kthn+rIUnCEJWz@gondor.apana.org.au>
+        Wed, 21 Dec 2022 19:55:47 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90CA163B2
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Dec 2022 16:55:45 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id gv5-20020a17090b11c500b00223f01c73c3so4342971pjb.0
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Dec 2022 16:55:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gFNetXaRlVDvCqhQ0rysSFbh6onFGxVaOPCNsmu49Ws=;
+        b=dTpDCEko7F1uV9ySI49/PGF87sfjLnGMpGIARCulw49iil7t7GrLERZCBMWKI9hTwM
+         f2AwqwKyHqQ33x27uY8pdxNWA62fZkRSiV4iDVdcXfNXoXX/Yohu4W0Ybv4P9mu65C28
+         E6GWIs7zMU8Os5mD9w8P3CTsqaQMy42AJ4eWZUHGJ68hZ2wAEMFxuyGX1rfI7kNk9puk
+         ySiQt0tQgLE+c6DjCQAupf88AjjGfq2bbbQti//SFL8Sr8q0ntx5kyEbNkqU0T7KpcwT
+         jJ9eslg3EG6vjJ1a2d4smrCq4dGEDyV6aWuT7xrrrbtHt1j7Rr94yW+AauKuezOe/zS/
+         LUtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gFNetXaRlVDvCqhQ0rysSFbh6onFGxVaOPCNsmu49Ws=;
+        b=360bXRMCqfK3Giw7zmWVt/sFmp7lLsue/LYnXxVYj2juvs1DHFB8NTHb87W7fPAfn4
+         XOTtXCELSK8GTF7/hMKnWlLoxYJS/VwemDkgw0woFMOvQaulPmQQR1rcKLsGpxotJvce
+         C6nWaXJOarlklnb7PzEJAozqg91D0HZBbDN3othlvxRb5zCFG6It4R4o1TVcU1QqHWLw
+         aBeCktZECMb1/OLvEvC27jckqNRRdV6f4MkGt+a3ZPYThGKTGHWkr+rdkJZnpHMHZ4R7
+         jJoqcCZy7100Xr748/3T22Zuv3YBFW0cuaJwn59RCaml1cN7XiLXcPKf2wk5/qnMmlHg
+         z7CA==
+X-Gm-Message-State: AFqh2kr8vbvlKKeJTCtVonMZ9mbG7yPgyxZSJP2oNIXOldIugFW4Inx4
+        bAG1SADbZULdxprQnnD8m3e6AJlOxEBVqHjL95py
+X-Google-Smtp-Source: AMrXdXuBq7WoL3pjZlW0Sm6fCr/jRGPU8wG+z1QgKR0VEXzdR8F89j5Kjjz4WAZQmgctE0QWeLtMjg/nigBnCIFC7/Q=
+X-Received: by 2002:a17:90a:3944:b0:218:8398:5846 with SMTP id
+ n4-20020a17090a394400b0021883985846mr380780pjf.241.1671670544636; Wed, 21 Dec
+ 2022 16:55:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y6Kthn+rIUnCEJWz@gondor.apana.org.au>
+References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
+ <21be7356-8710-408a-94e3-1a0d3f5f842e@www.fastmail.com> <CAEf4BzawXPiXY3mNabi0ggyTS9wtg6mh8x97=fYGhuGj4=2hnw@mail.gmail.com>
+ <a9367491-5ac3-385b-d0d6-820772ebd395@huaweicloud.com> <CAEf4BzZJDRNyafMEjy-1RX9cUmpcvZzYd9YBf9Q3uv_vVsiLCw@mail.gmail.com>
+ <5abb0b0090fd0bce77dca0a6b9036de121b65cf5.camel@huaweicloud.com>
+ <20f55084c341093d18d2bc462e49123c7f03cc8e.camel@huaweicloud.com>
+ <CAADnVQLU+c+gsZ=V6myG0-GhU3EzZgqjzTPvqvYmCDBjqMoF+Q@mail.gmail.com>
+ <3fa1fdafc4335c43f84259261dcd1f7d588985a6.camel@huaweicloud.com>
+ <c0f7120e433c80b7c4e0af788eda58de8d1ecdad.camel@huaweicloud.com>
+ <CAHC9VhQKa36C4xh1OiCdC1baNSeNL7OMLY9zg4O0UWahX-mzow@mail.gmail.com> <4175e56b-8522-5086-bdf1-b534122c841b@huaweicloud.com>
+In-Reply-To: <4175e56b-8522-5086-bdf1-b534122c841b@huaweicloud.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 21 Dec 2022 19:55:33 -0500
+Message-ID: <CAHC9VhSRs0cUowuedQ1Sth4U7P5vcJMqe-qTLMBvCpYbeZ5OxA@mail.gmail.com>
+Subject: Re: Closing the BPF map permission loophole
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>, bpf <bpf@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 21, 2022 at 02:53:58PM +0800, Herbert Xu wrote:
-> On Tue, Dec 20, 2022 at 08:30:16PM +0000, Eric Biggers wrote:
+On Wed, Dec 21, 2022 at 4:54 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On 12/20/2022 9:44 PM, Paul Moore wrote:
+> > On Fri, Dec 16, 2022 at 5:24 AM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> >> Ok, let me try to complete the solution for the issues Lorenz pointed
+> >> out. Here I discuss only the system call side of access.
+> >>
+> >> I was thinking on the meaning of the permissions on the inode of a
+> >> pinned eBPF object. Given that the object exists without pinning, this
+> >> double check of permissions first on the inode and then on the object
+> >> to me looks very confusing.
+> >>
+> >> So, here is a proposal: what if read and write in the context of
+> >> pinning don't refer to accessing the eBPF object itself but to the
+> >> ability to read the association between inode and eBPF object or to
+> >> write/replace the association with a different eBPF object (I guess not
+> >> supported now).
+> >>
+> >> We continue to do access control only at the time a requestor asks for
+> >> a fd. Currently there is only MAC, but we can add DAC and POSIX ACL too
+> >> (Andrii wanted to give read permission to a specific group). The owner
+> >> is who created the eBPF object and who can decide (for DAC and ACL) who
+> >> can access that object.
+> >>
+> >> The requestor obtains a fd with modes depending on what was granted. Fd
+> >> modes (current behavior) give the requestor the ability to do certain
+> >> operations. It is responsibility of the function performing the
+> >> operation on an eBPF object to check the fd modes first.
+> >>
+> >> It does not matter if the eBPF object is accessed through ID or inode,
+> >> access control is solely based on who is accessing the object, who
+> >> created it and the object permissions. *_GET_FD_BY_ID and OBJ_GET
+> >> operations will have the same access control.
+> >>
+> >> With my new proposal, once an eBPF object is pinned the owner or
+> >> whoever can access the inode could do chown/chmod. But this does not
+> >> have effect on the permissions of the object. It changes only who can
+> >> retrieve the association with the eBPF object itself.
 > >
-> > > Tried, could not boot the UML kernel.
-> > > 
-> > > After looking, it seems we have to call sg_miter_stop(). Or alternatively,
-> > > we could let sg_miter_next() be called but not writing anything inside the
-> > > loop.
-> > > 
-> > > With either of those fixes, the tests pass (using one scatterlist).
-> 
-> Thanks for the quick feedback Roberto!
-> 
-> > I think it should look like:
-> > 
-> > 	while (nbytes) {
-> > 		sg_miter_next(&miter);
-> > 		...
-> > 	}
-> > 	sg_miter_stop(&miter);
-> 
-> You're right Eric.  However, we could also do it by simply not
-> checking nbytes since we already set nents according to nbytes
-> at the top of the function.
-> 
-> ---8<---
-> The helper mpi_read_raw_from_sgl sets the number of entries in
-> the SG list according to nbytes.  However, if the last entry
-> in the SG list contains more data than nbytes, then it may overrun
-> the buffer because it only allocates enough memory for nbytes.
-> 
-> Fixes: 2d4d1eea540b ("lib/mpi: Add mpi sgl helpers")
-> Reported-by: Roberto Sassu <roberto.sassu@huaweicloud.com>
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-> 
-> diff --git a/lib/mpi/mpicoder.c b/lib/mpi/mpicoder.c
-> index 39c4c6731094..157ef532a6a2 100644
-> --- a/lib/mpi/mpicoder.c
-> +++ b/lib/mpi/mpicoder.c
-> @@ -504,7 +501,8 @@ MPI mpi_read_raw_from_sgl(struct scatterlist *sgl, unsigned int nbytes)
->  
->  	while (sg_miter_next(&miter)) {
->  		buff = miter.addr;
-> -		len = miter.length;
-> +		len = min_t(unsigned, miter.length, nbytes);
-> +		nbytes -= len;
->  
->  		for (x = 0; x < len; x++) {
->  			a <<= 8;
+> > Just to make sure I understand you correctly, you're suggesting that
+> > the access modes assigned to a pinned map's fd are simply what is
+> > requested by the caller, and don't necessarily represent the access
+> > control modes of the underlying map, is that correct?  That seems a
+>
+> The fd modes don't necessarily represent the access control modes of the
+> inode the map is pinned to. But they surely represent the access control
+> modes of the map object itself.
+>
+> The access control modes of the inode tell if the requestor is able to
+> retrieve the map from it, before accessing the map is attempted. But,
+> even if the request is granted (i.e. the inode has read permission), the
+> requestor has still to pass access control on the map object, which is
+> separate.
 
-That's fine, I guess.  One quirk of the above approach is that if the last
-needed element of the scatterlist has a lot of extra pages, this will iterate
-through all those extra pages, processing 0 bytes from each.  It could just stop
-when done.  I suppose it's not worth worrying about that case, though.
+Okay, good.  That should work.
 
-- Eric
+> Fd modes are bound to the map access modes, but not necessarily bound to
+> the inode access modes (fd with write mode, on an inode with only read
+> permission). Fd modes are later enforced by map operations by checking
+> the compatibility of the operation (e.g. read-like operation requires fd
+> read mode).
+>
+> The last point is what it means getting a fd on the inode itself. It is
+> possible, because inodes could have seq_file operations. Thus, one could
+> dump the map content by just reading from the inode.
+
+Gotcha, yes, that would be bad.
+
+> Here, I suggest that we still do two separate checks. One is for the
+> open(), done by the VFS, and the other to access the map object. Not
+> having read permission on the inode means that the map content cannot be
+> dumped. But, having read permission on the inode does not imply the
+> ability to do it (still the map object check has to be passed).
+
+That makes sense to me.
+
+-- 
+paul-moore.com
