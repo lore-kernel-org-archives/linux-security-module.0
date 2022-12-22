@@ -2,157 +2,183 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEC0C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Dec 2022 00:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A8CC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Dec 2022 01:22:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234861AbiLVAzs (ORCPT
+        id S234919AbiLVBWG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Dec 2022 19:55:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54456 "EHLO
+        Wed, 21 Dec 2022 20:22:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234829AbiLVAzr (ORCPT
+        with ESMTP id S234911AbiLVBWB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Dec 2022 19:55:47 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90CA163B2
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Dec 2022 16:55:45 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id gv5-20020a17090b11c500b00223f01c73c3so4342971pjb.0
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Dec 2022 16:55:45 -0800 (PST)
+        Wed, 21 Dec 2022 20:22:01 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30D2F25C69
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Dec 2022 17:21:53 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id u5so355371pjy.5
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Dec 2022 17:21:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gFNetXaRlVDvCqhQ0rysSFbh6onFGxVaOPCNsmu49Ws=;
-        b=dTpDCEko7F1uV9ySI49/PGF87sfjLnGMpGIARCulw49iil7t7GrLERZCBMWKI9hTwM
-         f2AwqwKyHqQ33x27uY8pdxNWA62fZkRSiV4iDVdcXfNXoXX/Yohu4W0Ybv4P9mu65C28
-         E6GWIs7zMU8Os5mD9w8P3CTsqaQMy42AJ4eWZUHGJ68hZ2wAEMFxuyGX1rfI7kNk9puk
-         ySiQt0tQgLE+c6DjCQAupf88AjjGfq2bbbQti//SFL8Sr8q0ntx5kyEbNkqU0T7KpcwT
-         jJ9eslg3EG6vjJ1a2d4smrCq4dGEDyV6aWuT7xrrrbtHt1j7Rr94yW+AauKuezOe/zS/
-         LUtg==
+        bh=BsGteZHXfk/hlEOFVKOGXrUJJ1NMn/MU3BMrE2tpg98=;
+        b=Jy7UxPV0MrOaAPJrOcljGWHWSi/zxdurx+cJSaKxaC/dl/CMIGx3mFjuUt5oKwKkUB
+         qPIYyWhm1yRJGbngOJTwRTXT4BDqL/ater5fbeE700ZNxb7aQv5ueN5Lr2W9KJfXX1vD
+         l81Isux/DOqLncZsZ0LjO0rB2MRrW3x+TJOchFaDbFOWbi+dbWpXGfJ3QmYmzyoeZnBT
+         es7xaN6+5xwJS/9rMR83Iiy+W+XMKffeWw29cWhdcNH8u9TOOvvifLl+d0EFyP2ioKUy
+         roJTMB19ON6AfhLIrYETIRjmSgAVL6SMa1ARn+AqC8TJf91Zcl0P+kuv1hvYfePsypij
+         drkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gFNetXaRlVDvCqhQ0rysSFbh6onFGxVaOPCNsmu49Ws=;
-        b=360bXRMCqfK3Giw7zmWVt/sFmp7lLsue/LYnXxVYj2juvs1DHFB8NTHb87W7fPAfn4
-         XOTtXCELSK8GTF7/hMKnWlLoxYJS/VwemDkgw0woFMOvQaulPmQQR1rcKLsGpxotJvce
-         C6nWaXJOarlklnb7PzEJAozqg91D0HZBbDN3othlvxRb5zCFG6It4R4o1TVcU1QqHWLw
-         aBeCktZECMb1/OLvEvC27jckqNRRdV6f4MkGt+a3ZPYThGKTGHWkr+rdkJZnpHMHZ4R7
-         jJoqcCZy7100Xr748/3T22Zuv3YBFW0cuaJwn59RCaml1cN7XiLXcPKf2wk5/qnMmlHg
-         z7CA==
-X-Gm-Message-State: AFqh2kr8vbvlKKeJTCtVonMZ9mbG7yPgyxZSJP2oNIXOldIugFW4Inx4
-        bAG1SADbZULdxprQnnD8m3e6AJlOxEBVqHjL95py
-X-Google-Smtp-Source: AMrXdXuBq7WoL3pjZlW0Sm6fCr/jRGPU8wG+z1QgKR0VEXzdR8F89j5Kjjz4WAZQmgctE0QWeLtMjg/nigBnCIFC7/Q=
-X-Received: by 2002:a17:90a:3944:b0:218:8398:5846 with SMTP id
- n4-20020a17090a394400b0021883985846mr380780pjf.241.1671670544636; Wed, 21 Dec
- 2022 16:55:44 -0800 (PST)
+        bh=BsGteZHXfk/hlEOFVKOGXrUJJ1NMn/MU3BMrE2tpg98=;
+        b=xlwKr2Gh3/Pzb800qC/Axn25ka24fxwbObz/UZJN5xnoOKdkba23uvi3V33HSRWyTE
+         Xl9jTCxZWXCyd6p1adh/wTMMEsvh9HKtae5h+lMalF2W4dhqw2YSvet+O+I6zG1ZHDhz
+         ql+itJVWsUrxZkafYXImXnCZHCd6bSvmH3PmAdYPv7MJDwnSDWIFuoQoDy5AtwubVorn
+         ViEpoTEI3uXOmN54aNoLaBN4z1qXHxNvCblFavtRlfbagnnnWI/vfYHogw+Z5PI1vMGV
+         0EzfWtkFUfenSutVCKXCViJmfcVx1xERU6W6BsbsOsAOLPTgyXjeUb4WQNoY4JlRKfgY
+         VunA==
+X-Gm-Message-State: AFqh2kpJ9K62LNWt1dmnC7zhG8ERTXcK9P/U/fxkSlV3QYZ7Ezx5reyu
+        gEhEsDqlCsrEOO7svqHZraWHLV/QimmjEFFJIxiV
+X-Google-Smtp-Source: AMrXdXsXLNE5OwDnszGWJOUAwwbbdXlYhbtEfIpbTEfNdeC3G5kYgjtn/s2awg9R3cNFNZ0QfPoCp4S+Z4SGNpc6WdM=
+X-Received: by 2002:a17:90b:87:b0:219:8ee5:8dc0 with SMTP id
+ bb7-20020a17090b008700b002198ee58dc0mr339933pjb.72.1671672112623; Wed, 21 Dec
+ 2022 17:21:52 -0800 (PST)
 MIME-Version: 1.0
-References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
- <21be7356-8710-408a-94e3-1a0d3f5f842e@www.fastmail.com> <CAEf4BzawXPiXY3mNabi0ggyTS9wtg6mh8x97=fYGhuGj4=2hnw@mail.gmail.com>
- <a9367491-5ac3-385b-d0d6-820772ebd395@huaweicloud.com> <CAEf4BzZJDRNyafMEjy-1RX9cUmpcvZzYd9YBf9Q3uv_vVsiLCw@mail.gmail.com>
- <5abb0b0090fd0bce77dca0a6b9036de121b65cf5.camel@huaweicloud.com>
- <20f55084c341093d18d2bc462e49123c7f03cc8e.camel@huaweicloud.com>
- <CAADnVQLU+c+gsZ=V6myG0-GhU3EzZgqjzTPvqvYmCDBjqMoF+Q@mail.gmail.com>
- <3fa1fdafc4335c43f84259261dcd1f7d588985a6.camel@huaweicloud.com>
- <c0f7120e433c80b7c4e0af788eda58de8d1ecdad.camel@huaweicloud.com>
- <CAHC9VhQKa36C4xh1OiCdC1baNSeNL7OMLY9zg4O0UWahX-mzow@mail.gmail.com> <4175e56b-8522-5086-bdf1-b534122c841b@huaweicloud.com>
-In-Reply-To: <4175e56b-8522-5086-bdf1-b534122c841b@huaweicloud.com>
+References: <cover.1671469167.git.pabeni@redhat.com> <3074022fdca04676443a9c74f57328eb729f150e.1671469167.git.pabeni@redhat.com>
+ <CAHC9VhRYr9=qKUeF0EuY46koCnkeZ5d-=umV5TxbiUZ7qNXJ6w@mail.gmail.com> <944c4ab043713f75ad3bb512fc146e48de7b3e25.camel@redhat.com>
+In-Reply-To: <944c4ab043713f75ad3bb512fc146e48de7b3e25.camel@redhat.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 21 Dec 2022 19:55:33 -0500
-Message-ID: <CAHC9VhSRs0cUowuedQ1Sth4U7P5vcJMqe-qTLMBvCpYbeZ5OxA@mail.gmail.com>
-Subject: Re: Closing the BPF map permission loophole
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
+Date:   Wed, 21 Dec 2022 20:21:41 -0500
+Message-ID: <CAHC9VhTZ-boJeMs3ir-6=rCxyfY3ROjZ4qeXyuoo5DRPBw6gew@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] selinux: Implement mptcp_add_subflow hook
+To:     Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        mptcp@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 21, 2022 at 4:54 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On 12/20/2022 9:44 PM, Paul Moore wrote:
-> > On Fri, Dec 16, 2022 at 5:24 AM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> >> Ok, let me try to complete the solution for the issues Lorenz pointed
-> >> out. Here I discuss only the system call side of access.
-> >>
-> >> I was thinking on the meaning of the permissions on the inode of a
-> >> pinned eBPF object. Given that the object exists without pinning, this
-> >> double check of permissions first on the inode and then on the object
-> >> to me looks very confusing.
-> >>
-> >> So, here is a proposal: what if read and write in the context of
-> >> pinning don't refer to accessing the eBPF object itself but to the
-> >> ability to read the association between inode and eBPF object or to
-> >> write/replace the association with a different eBPF object (I guess not
-> >> supported now).
-> >>
-> >> We continue to do access control only at the time a requestor asks for
-> >> a fd. Currently there is only MAC, but we can add DAC and POSIX ACL too
-> >> (Andrii wanted to give read permission to a specific group). The owner
-> >> is who created the eBPF object and who can decide (for DAC and ACL) who
-> >> can access that object.
-> >>
-> >> The requestor obtains a fd with modes depending on what was granted. Fd
-> >> modes (current behavior) give the requestor the ability to do certain
-> >> operations. It is responsibility of the function performing the
-> >> operation on an eBPF object to check the fd modes first.
-> >>
-> >> It does not matter if the eBPF object is accessed through ID or inode,
-> >> access control is solely based on who is accessing the object, who
-> >> created it and the object permissions. *_GET_FD_BY_ID and OBJ_GET
-> >> operations will have the same access control.
-> >>
-> >> With my new proposal, once an eBPF object is pinned the owner or
-> >> whoever can access the inode could do chown/chmod. But this does not
-> >> have effect on the permissions of the object. It changes only who can
-> >> retrieve the association with the eBPF object itself.
+On Wed, Dec 21, 2022 at 2:24 PM Paolo Abeni <pabeni@redhat.com> wrote:
+> On Tue, 2022-12-20 at 17:07 -0500, Paul Moore wrote:
+> > On Mon, Dec 19, 2022 at 12:34 PM Paolo Abeni <pabeni@redhat.com> wrote:
+> > >
+> > > Newly added subflows should inherit the associated label
+> > > from the current process context, regarless of the sk_kern_sock
+> > > flag value.
+> > >
+> > > This patch implements the above resetting the subflow sid, deleting
+> > > the existing subflow label, if any, and then re-creating a new one.
+> > >
+> > > The new helper reuses the selinux_netlbl_sk_security_free() function,
+> > > and it can end-up being called multiple times with the same argument;
+> > > we additionally need to make it idempotent.
+> > >
+> > > Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+> > > ---
+> > > v1 -> v2:
+> > >  - fix build issue with !CONFIG_NETLABEL
+> > > ---
+> > >  security/selinux/hooks.c    | 27 +++++++++++++++++++++++++++
+> > >  security/selinux/netlabel.c |  4 +++-
+> > >  2 files changed, 30 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > > index 3c5be76a9199..f785600b666a 100644
+> > > --- a/security/selinux/hooks.c
+> > > +++ b/security/selinux/hooks.c
+> > > @@ -5476,6 +5476,32 @@ static void selinux_sctp_sk_clone(struct sctp_association *asoc, struct sock *sk
+> > >         selinux_netlbl_sctp_sk_clone(sk, newsk);
+> > >  }
+> > >
+> > > +static int selinux_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
+> > > +{
+> > > +       const struct task_security_struct *tsec = selinux_cred(current_cred());
+> > > +       struct sk_security_struct *ssksec = ssk->sk_security;
+> > > +       u16 sclass;
+> > > +       u32 sid;
+> > > +       int err;
+> > > +
+> > > +       /* create the sid using the current cred, regardless of the ssk kern
+> > > +        * flag
+> > > +        */
+> > > +       sclass = socket_type_to_security_class(ssk->sk_family, ssk->sk_type,
+> > > +                                              ssk->sk_protocol);
+> > > +       err = socket_sockcreate_sid(tsec, sclass, &sid);
+> > > +       if (err)
+> > > +               return err;
+> > > +
+> > > +       ssksec->sid = sid;
+> > > +
+> > > +       /* replace the existing subflow label deleting the existing one
+> > > +        * and re-recrating a new label using the current context
+> > > +        */
+> > > +       selinux_netlbl_sk_security_free(ssksec);
+> > > +       return selinux_netlbl_socket_post_create(ssk, ssk->sk_family);
+> > > +}
 > >
-> > Just to make sure I understand you correctly, you're suggesting that
-> > the access modes assigned to a pinned map's fd are simply what is
-> > requested by the caller, and don't necessarily represent the access
-> > control modes of the underlying map, is that correct?  That seems a
+> > I thought the idea was to ensure that new subflows of an existing
+> > MPTCP connection would be created with the same label as the main
+> > MPTCP connection socket?  The code above labels the new subflow based
+> > on the current process, not the main MPTCP connection; it matches the
+> > commit description, but not what we had previously discussed - or I am
+> > horribly mis-remembering something? :)
 >
-> The fd modes don't necessarily represent the access control modes of the
-> inode the map is pinned to. But they surely represent the access control
-> modes of the map object itself.
+> You are right, I picked a wrong turn.
 >
-> The access control modes of the inode tell if the requestor is able to
-> retrieve the map from it, before accessing the map is attempted. But,
-> even if the request is granted (i.e. the inode has read permission), the
-> requestor has still to pass access control on the map object, which is
-> separate.
+> I just tested the other option and there is another problem :(
 
-Okay, good.  That should work.
+It's never easy, is it? ;)
 
-> Fd modes are bound to the map access modes, but not necessarily bound to
-> the inode access modes (fd with write mode, on an inode with only read
-> permission). Fd modes are later enforced by map operations by checking
-> the compatibility of the operation (e.g. read-like operation requires fd
-> read mode).
->
-> The last point is what it means getting a fd on the inode itself. It is
-> possible, because inodes could have seq_file operations. Thus, one could
-> dump the map content by just reading from the inode.
+> The first subflow creations happens inside af_inet->create, via the sk-
+> >sk_prot->init() hook. The security_socket_post_create() call on the
+> owning MPTCP sockets happens after that point. So we copy data from a
+> not yet initialized security context (and the test fail badly).
 
-Gotcha, yes, that would be bad.
+Hmmm.  Let's come back to this later on down this email.
 
-> Here, I suggest that we still do two separate checks. One is for the
-> open(), done by the VFS, and the other to access the map object. Not
-> having read permission on the inode means that the map content cannot be
-> dumped. But, having read permission on the inode does not imply the
-> ability to do it (still the map object check has to be passed).
+> There are a few options to cope with that:
+> - [ugly hack] call  security_socket_post_create() on the mptcp code
+> before creating the subflow. I experimented this just to double the
+> problem and a possible solution.
 
-That makes sense to me.
+I'm guessing "[ugly hack]" is probably a bit of an understatement.
+Let's see if we can do better before we explore this option too much
+further.
 
--- 
+> - refactor the mptcp code to create the first subflow on later
+> syscalls, as needed. This will require quite a bit of refactoring in
+> the MPTCP protocol as we will need also to update the
+> shutdown/disconnect accordingly (currently we keep the first subflow
+> around, instead we will need to close it).
+
+Let's see if we can avoid having to do this too.
+
+> - use the code proposed in these patches as-is ;)
+
+That's a non-starter from a SELinux perspective as the label is
+incorrect.  It would be similar to saying that for each fork() call
+the resulting child process would always run as root since we couldn't
+figure out how to assign the credentials properly :)
+
+> WDYT?
+
+Let's go back to the the inet_create() case for a little bit.  I'm
+thinking we might be able to do something by leveraging the
+sk_alloc()->sk_prot_alloc()->security_sk_alloc() code path.  As
+inet_create() is going to be called from task context here, it seems
+like we could do the sock's sid/sclass determination here, cached in
+separate fields in the sk_security_struct if necessary, and use those
+in a new MPTCP subflow hook.  We could also update
+selinux_socket_post_create() to take advantage of this as well.  We
+could also possibly pass the proto struct into security_sk_alloc() if
+we needed to identify IPPROTO_MPTCP there as well.
+
+I'll admit to not chasing down all the details, but I suspect this may
+be the cleanest option - thoughts?
+
+--
 paul-moore.com
