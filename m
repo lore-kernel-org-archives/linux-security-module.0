@@ -2,293 +2,191 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65513C46467
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Dec 2022 16:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A26C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Dec 2022 17:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231331AbiLWQfW (ORCPT
+        id S231696AbiLWRLz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Dec 2022 11:35:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48676 "EHLO
+        Fri, 23 Dec 2022 12:11:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230446AbiLWQfV (ORCPT
+        with ESMTP id S231331AbiLWRLy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Dec 2022 11:35:21 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 903997665;
-        Fri, 23 Dec 2022 08:35:19 -0800 (PST)
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BNGBmpR032063;
-        Fri, 23 Dec 2022 16:34:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=PfQSkw6LKfTK+fTmuS94j+ceGqqKRN0iidwhRw+9kDc=;
- b=LOufLniM6nrAZWmnU8TttAKGrg/VqYTv2cNxoT7/GGDwiMumQFsoEBYxsf3u26kj+qk4
- LW2r9C6CFV/brVlPEFKJgJZIFpWs21kgZuzcUDDmapN4/nzIez6EtEB7IDLwBqiOjsTo
- XI/B93tl9rj4mOOpZcRCzBEyS683BaXGpFYyQqCsYpvfCx8nI868iMfmN+R6ZAkpdnX2
- kR0Eto92fEUwDfW4uzypzxjY0lf0eT7FKs3vPPLNkZ3jKNjGteUPSM09kcfrtssFubAI
- poKo84RPK/g3pIB3x8h77dXFobUiDPv3ziKEq3FBuGKXpU5fj+SyriUOTtcNP6Wb1XDu yw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mnfmu0h9x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Dec 2022 16:34:41 +0000
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2BNGCGJ8002512;
-        Fri, 23 Dec 2022 16:34:40 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mnfmu0h5m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Dec 2022 16:34:40 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 2BNFKYmA026646;
-        Fri, 23 Dec 2022 16:34:37 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([9.208.130.102])
-        by ppma04dal.us.ibm.com (PPS) with ESMTPS id 3mh6ywjgpx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Dec 2022 16:34:36 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-        by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2BNGYZsD59834854
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Dec 2022 16:34:36 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C4ABB58052;
-        Fri, 23 Dec 2022 16:34:35 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 82D275804E;
-        Fri, 23 Dec 2022 16:34:34 +0000 (GMT)
-Received: from sig-9-65-251-3.ibm.com (unknown [9.65.251.3])
-        by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 23 Dec 2022 16:34:34 +0000 (GMT)
-Message-ID: <c2b4054c32a24e83186a953ef6e1e3e85aec603b.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 00/10] Add CA enforcement keyring restrictions
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, Coiby Xu <coxu@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "pvorel@suse.cz" <pvorel@suse.cz>,
-        "noodles@fb.com" <noodles@fb.com>, "tiwai@suse.de" <tiwai@suse.de>,
-        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>,
-        Elaine Palmer <erpalmer@linux.vnet.ibm.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Date:   Fri, 23 Dec 2022 11:34:34 -0500
-In-Reply-To: <D1BF8D7B-F9E4-4C87-9288-534F3AE38ECF@oracle.com>
-References: <20221214003401.4086781-1-eric.snowberg@oracle.com>
-         <b8e54d077da633132eb6da03ea536face095a425.camel@linux.ibm.com>
-         <4CE6F17D-9D87-4024-9E1A-FDFE7C29D5FC@oracle.com>
-         <1c51910a35a1d113256494827fd66ccc7473632e.camel@linux.ibm.com>
-         <17855993-519C-4DAC-B62F-9DB473CF249B@oracle.com>
-         <7df94da37c100c160436892a6996ba30e3fd6dc8.camel@linux.ibm.com>
-         <21E52C3E-0778-4908-AF44-F65D57BEC4E0@oracle.com>
-         <20221216140648.h32gn5qf3igorpzi@Rk>
-         <2d75dfd105f8558ecd1074d64e4252ddd63b698b.camel@linux.ibm.com>
-         <0DAFCFC7-29EB-4481-8FF7-616336383378@oracle.com>
-         <0fb737ab42ef093f7031a80c8a73f582b1d5c1ae.camel@linux.ibm.com>
-         <6AAEC343-E581-4355-ABD8-FE32A1BD16D8@oracle.com>
-         <4ac6b5bd1b57bfc0c548e5711e46b341fd5cfe39.camel@linux.ibm.com>
-         <D1BF8D7B-F9E4-4C87-9288-534F3AE38ECF@oracle.com>
+        Fri, 23 Dec 2022 12:11:54 -0500
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D564EE02
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Dec 2022 09:11:53 -0800 (PST)
+Received: by mail-pf1-x431.google.com with SMTP id g1so3704626pfk.2
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Dec 2022 09:11:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vkee7RrYc2U/oJNyyVQMHhwa70/pKZltx8G4phukYAg=;
+        b=F9HK21FJgpueXWxYyaXW6otcPqsYmX70jjKroW/3L13tKaSBM0GAPYFvv5qMk8+ZQw
+         ExJ8zj0FumAcoviULNN59OHzYyrq0GUdLptYCrYLSrmvPXlR7Z9w4iLH9X3w9Yc6GBWy
+         76eHES/BxNdPb3HySB1nua+D1+QAELcc0UUpbZkaDJ+zJY6uH6iDOrvAFwQxO1jlibmp
+         lesxL2e0aDAM8wD2SgT7jdAVxnGZtWsp2OlYV2g3hcNZ6663m7xiY8VfQg/EJWMSPs2e
+         tfm/oGnyyhIQ9yzhbj64ZioK0TTxbkAB+gXtnGIyW2Yc4cn93FXDwE1IlFrPOiq8eRSL
+         8TiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vkee7RrYc2U/oJNyyVQMHhwa70/pKZltx8G4phukYAg=;
+        b=s0cEG5Vioql7OgaU/dkVoU6GDk5ayudOw2XT0mw18+GkXcXX9kUOe9Qjq93h3MJFpE
+         nupvcjo744bHTbc/N3n2N41sGyGySfPAMW5t5z46xzFqlIUggFt+SROomLIR9WB3iUdn
+         m1IjdzH8xGEXuktMHj8zIVO9qdCgBjRhRI7jx9ZObW5DzlrK1iEhel0hOgqLR+7oDv6D
+         2We1XLNLZFOHWg7ptfZnQlDHBFsUztaPFCROtSZCeKw3mGDuZpiH/UXFFuci3i7kTycD
+         /fwA7v+CG1OBa+/eouvywt9z0hSsgmd5t4xNptfTUEwd+YyBa7K/e+aNIQD9KlovNCD0
+         v4ug==
+X-Gm-Message-State: AFqh2kqZ2gHQYMXcn4U90tb1Qg0NGInKJ3H0ucvm/DW+1QXYyKSbh2Ig
+        Fg/WF+H9pjzSkAjNvJ/VuErhJFuDaiq1RF0yRg6SKjfvcq9pm7k=
+X-Google-Smtp-Source: AMrXdXsToPAmuMaeE3tIMxt6zsFbwbjkvgpaVqdsYK/dGFrAIrqQ8guM+Z7tZmVPs+0YTPoUBU3SQu7dW/bTZ++mAkg=
+X-Received: by 2002:a63:4e5d:0:b0:478:42f:5a3d with SMTP id
+ o29-20020a634e5d000000b00478042f5a3dmr597740pgl.3.1671815512483; Fri, 23 Dec
+ 2022 09:11:52 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1671469167.git.pabeni@redhat.com> <3074022fdca04676443a9c74f57328eb729f150e.1671469167.git.pabeni@redhat.com>
+ <CAHC9VhRYr9=qKUeF0EuY46koCnkeZ5d-=umV5TxbiUZ7qNXJ6w@mail.gmail.com>
+ <944c4ab043713f75ad3bb512fc146e48de7b3e25.camel@redhat.com>
+ <CAHC9VhTZ-boJeMs3ir-6=rCxyfY3ROjZ4qeXyuoo5DRPBw6gew@mail.gmail.com> <fd3ca85bbaceea0ef629c35a0a63129cb6090811.camel@redhat.com>
+In-Reply-To: <fd3ca85bbaceea0ef629c35a0a63129cb6090811.camel@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 23 Dec 2022 12:11:41 -0500
+Message-ID: <CAHC9VhSBYMyjciZbX38OY_5NU-d6fszPj3xX4F3FhQYLCAWe2Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] selinux: Implement mptcp_add_subflow hook
+To:     Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        mptcp@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: mIL0NngRIhnhHafVEhsuG5Qoq8oSvlc6
-X-Proofpoint-ORIG-GUID: cKH-IdIeF_f79rREGCcp2cbA7X51oQpX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-23_06,2022-12-23_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 priorityscore=1501 suspectscore=0 spamscore=0
- mlxscore=0 adultscore=0 clxscore=1015 mlxlogscore=999 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2212230138
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2022-12-23 at 16:13 +0000, Eric Snowberg wrote:
-> 
-> > On Dec 22, 2022, at 8:41 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > 
-> > On Thu, 2022-12-22 at 15:15 +0000, Eric Snowberg wrote:
-> >> 
-> >>> On Dec 21, 2022, at 12:01 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >>> 
-> >>> On Wed, 2022-12-21 at 18:27 +0000, Eric Snowberg wrote:
-> >>>> 
-> >>>>> On Dec 18, 2022, at 5:21 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >>>>> 
-> >>>>> On Fri, 2022-12-16 at 22:06 +0800, Coiby Xu wrote:
-> >>>>>> Hi Eric and Mimi,
-> >>>>>> 
-> >>>>>> On Thu, Dec 15, 2022 at 09:45:37PM +0000, Eric Snowberg wrote:
-> >>>>>>> 
-> >>>>>>> 
-> >>>>>>>>>>>>> A CA cert shall be defined as any X509 certificate that contains the
-> >>>>>>>>>>>>> keyCertSign key usage and has the CA bit set to true.
-> >>>>>>>>>>>> 
-> >>>>>>>>>>>> Hi Eric,
-> >>>>>>>>>>>> 
-> >>>>>>>>>>>> Allowing CA certificates with the digitalSignature key usage flag
-> >>>>>>>>>>>> enabled defeats the purpose of the new Kconfig.  Please update the
-> >>>>>>>>>>>> above definition to exclude the digitalSignature key usage flag and
-> >>>>>>>>>>>> modify the code accordingly.
-> >>>>>>>>>>> 
-> >>>>>>>>>>> Within v2, the request was made to allow Intermediate CA certificates to be
-> >>>>>>>>>>> loaded directly.  The Intermediate CA referenced was the one used by kernel.org.
-> >>>>>>>>>>> This Intermediate CA contains both digitalSignature and keyCertSign.  If the code
-> >>>>>>>>>>> is changed to exclude this certificate, now the root CA has to be loaded again.  Is that
-> >>>>>>>>>>> the intent?
-> >>>>>>>>>> 
-> >>>>>>>>>> That definitely was not the intent.  Nor would it address the issue of
-> >>>>>>>>>> a particular intermediate CA certificate having both keyCertSign and
-> >>>>>>>>>> digitalSignature.
-> >>>>>>>>> 
-> >>>>>>>>> Sorry, I’m not following.  Why is it an issue that an intermediate CA certificate contains
-> >>>>>>>>> both keyCertSign and digitalSignature? Why would we want to exclude an Intermediate
-> >>>>>>>>> CA cert like the one used on kernel.org?
-> >>>>>>>> 
-> >>>>>>>> I must be missing something.  Isn't the purpose of "keyUsage" to
-> >>>>>>>> minimize how a certificate may be used?   Why would we want the same
-> >>>>>>>> certificate to be used for both certificate signing and code signing?
-> >>>>>>> 
-> >>>>>>> Every 3rd party intermediate CA I have looked at so far contains both set. Most have CRLSign set.
-> >>>>>>> Typically the root CA contains keyCertSign and CRLSign, but some also have digitalSignature
-> >>>>>>> set.  Finding a 3rd party Intermediate CA without digitalSignature set is probably going to be
-> >>>>>>> challenging and will severely limit usage.
-> >>>>>> 
-> >>>>>> How about allowing both keyCertSign and digitalSignature asserted but
-> >>>>>> issuing a warning for this case?
-> >>>>>> 
-> >>>>>> Here's my rationale for this proposal.
-> >>>>>> 
-> >>>>>> I assume we should conform to some X.509 specifications. So I checked
-> >>>>>> "RFC 5280: Internet X.509 Public Key Infrastructure Certificate and
-> >>>>>> Certificate Revocation List (CRL) Profile" [1] and ITU-T X.509 (2012-10)
-> >>>>>> [2].
-> >>>>>> 
-> >>>>>> [1] states in 4.2.1.3. Key Usage,
-> >>>>>>  "If the keyUsage extension is present, then the subject public key
-> >>>>>>  MUST NOT be used to verify signatures on certificates or CRLs unless
-> >>>>>>  the corresponding keyCertSign or cRLSign bit is set.  If the subject
-> >>>>>>  public key is only to be used for verifying signatures on
-> >>>>>>  certificates and/or CRLs, then the digitalSignature and
-> >>>>>>  nonRepudiation bits SHOULD NOT be set.  However, the digitalSignature
-> >>>>>>  and/or nonRepudiation bits MAY be set in addition to the keyCertSign
-> >>>>>>  and/or cRLSign bits if the subject public key is to be used to verify
-> >>>>>>  signatures on certificates and/or CRLs as well as other objects."
-> >>>>>> 
-> >>>>>> and [2] states in 8.2.2.3 Key usage extension that,
-> >>>>>> "More than one bit may be set in an instance of the keyUsage extension.
-> >>>>>> The setting of multiple bits shall not change the meaning of each
-> >>>>>> individual bit but shall indicate that the certificate may be used for
-> >>>>>> all of the purposes indicated by the set bits. There may be risks
-> >>>>>> incurred when setting multiple bits. A review of those risks is
-> >>>>>> documented in Annex I."
-> >>>>>> 
-> >>>>>> I interpret the above texts as we should allow both keyCertSign and
-> >>>>>> digitalSignature. However [2] warns about the risks of setting multiple
-> >>>>>> bits. Quoting Annex I,
-> >>>>>> 
-> >>>>>> "Combining the contentCommitment bit in the keyUsage certificate
-> >>>>>> extension with other keyUsage bits may have security implications
-> >>>>>> depending on the security environment in which the certificate is to be
-> >>>>>> used. If the subject's environment can be fully controlled and trusted,
-> >>>>>> then there are no specific security implications. For example, in cases
-> >>>>>> where the subject is fully confident about exactly which data is signed
-> >>>>>> or cases where the subject is fully confident about the security
-> >>>>>> characteristics of the authentication protocol being used. If the
-> >>>>>> subject's environment is not fully controlled or not fully trusted, then
-> >>>>>> unintentional signing of commitments is possible. Examples include the
-> >>>>>> use of badly formed authentication exchanges and the use of a rogue
-> >>>>>> software component. If untrusted environments are used by a subject,
-> >>>>>> these security implications can be limited through use of the following
-> >>>>>> measures:   
-> >>>>>>  – to not combine the contentCommitment key usage setting in
-> >>>>>>    certificates with any other key usage setting and to use the
-> >>>>>>    corresponding private key only with this certificate;   
-> >>>>>> 
-> >>>>>>  – to limit the use of private keys associated with certificates that
-> >>>>>>    have the contentCommitment key usage bit set, to environments which
-> >>>>>>    are considered adequately controlled and trustworthy"
-> >>>>>> 
-> >>>>>> So maybe it's useful to add a warning if both keyCertSign and
-> >>>>>> digitalSignature are asserted.
-> >>>>> 
-> >>>>> Coiby, thank you for adding these details.  I was hoping others would
-> >>>>> chime in as well.  I agree at minimum there should be a warning.
-> >>>> 
-> >>>> A warning could be added.
-> >>>> 
-> >>>>> Perhaps instead of making INTEGRITY_CA_MACHINE_KEYRING dependent on
-> >>>>> INTEGRITY_MACHINE_KEYRING, make them a Kconfig "choice" to support the
-> >>>>> more restrictive certificate use case requirements:  all certificates,
-> >>>>> CA certificate signing and digital signature, only CA certificate
-> >>>>> signing.
-> >>>> 
-> >>>> As could support for additional restrictions.
-> >>>> 
-> >>>> Would these additions be required within this series? What is missing from this 
-> >>>> discussion is why would these additions be necessary?  Why should the kernel 
-> >>>> enforce a restriction that is beyond the scope of the X.509 spec?  If a warning was 
-> >>>> to be added, what would be the justification for adding this additional code?  From 
-> >>>> my research every single 3rd party code signing intermediate CA would be flagged 
-> >>>> with the warning.  Isn’t this just going to cause confusion?  Or is there a benefit that 
-> >>>> I am missing that needs to be stated?
-> >>> 
-> >>> You're focusing on third party kernel modules and forgetting about the
-> >>> simple use case of allowing an end user (or business) to sign their own
-> >>> code.  True they could use the less restrictive CA certificates, but it
-> >>> is unnecessary.
-> >> 
-> >> My focus is on signing user-space applications, as outlined in the cover letter.  This 
-> >> series has nothing to do with kernel modules.  Most end-users and businesses rely on 
-> >> a third party to deal with code signing.  All third party code signing services I have 
-> >> found use an intermediate CA containing more than just the keyCertSign usage set.  
-> >> It seems to be an industry accepted practice that does not violate the spec. Before writing
-> >> new code to either warn or exclude a third party intermediate CA,  I would like to understand 
-> >> the motivation behind this request.
-> > 
-> > In older discussions there are comments like, "Any CA certificate, no
-> > matter if it's a root or an intermediate, must have the keyCertSign
-> > extension. If you want to sign a revocation list (CRL) with the CA
-> > certificate as well (you usually do want that), than you have to add
-> > cRLSign as well. Any other keyUsages can and should be avoided for CA
-> > certificates."
-> > 
-> > The question as to "why" this changed to include "digitalSignature" was
-> > posed here [2] with the response being for "OCSP".   It also includes a
-> > link to Entrusts root and intermediate CAs with just keyCertSign and
-> > cRLSign keyUsages.
-> > 
-> > The matchine keyring is a means of establishing a new root of trust. 
-> > The motivation for further restricting CA certificates to just
-> > keyCertSign and cRLSign keyUsages is to limit how the CA certificates
-> > may be used.  They should not be used for code signing.
-> 
-> Fair enough.  If this will be viewed as justification for adding the additional 
-> code, I can work on adding it.  Above you mentioned a warning would be needed 
-> at a minimum and a restriction could be placed behind a Kconfig.  How about for 
-> the default case I add the warning and when compiling with 
-> INTEGRITY_CA_MACHINE_KEYRING the restriction will be enforced.
+On Thu, Dec 22, 2022 at 10:57 AM Paolo Abeni <pabeni@redhat.com> wrote:
+>
+> On Wed, 2022-12-21 at 20:21 -0500, Paul Moore wrote:
+> > On Wed, Dec 21, 2022 at 2:24 PM Paolo Abeni <pabeni@redhat.com> wrote:
+> > > I just tested the other option and there is another problem :(
+> >
+> > It's never easy, is it? ;)
+> >
+> > > The first subflow creations happens inside af_inet->create, via the sk-
+> > > > sk_prot->init() hook. The security_socket_post_create() call on the
+> > > owning MPTCP sockets happens after that point. So we copy data from a
+> > > not yet initialized security context (and the test fail badly).
+> >
+> > Hmmm.  Let's come back to this later on down this email.
+> >
+> > > There are a few options to cope with that:
+> > > - [ugly hack] call  security_socket_post_create() on the mptcp code
+> > > before creating the subflow. I experimented this just to double the
+> > > problem and a possible solution.
+> >
+> > I'm guessing "[ugly hack]" is probably a bit of an understatement.
+> > Let's see if we can do better before we explore this option too much
+> > further.
+>
+> Yup, I compiled the list in "brainstom-mode", trying to include
+> whatever would be possible even if clearly not suitable.
+>
+> [...]
+>
+> > > WDYT?
+> >
+> > Let's go back to the the inet_create() case for a little bit.  I'm
+> > thinking we might be able to do something by leveraging the
+> > sk_alloc()->sk_prot_alloc()->security_sk_alloc() code path.  As
+> > inet_create() is going to be called from task context here, it seems
+> > like we could do the sock's sid/sclass determination here, cached in
+> > separate fields in the sk_security_struct if necessary, and use those
+> > in a new MPTCP subflow hook.  We could also update
+> > selinux_socket_post_create() to take advantage of this as well.  We
+> > could also possibly pass the proto struct into security_sk_alloc() if
+> > we needed to identify IPPROTO_MPTCP there as well.
+> >
+> > I'll admit to not chasing down all the details, but I suspect this may
+> > be the cleanest option - thoughts?
+>
+> Thanks, I did not consider such possibility!
+>
+> I think we should be careful to avoid increasing sk_security_struct
+> size. Currently it is 16 bytes, nicely matching a kmalloc slab, any
+> increase will move it on kmalloc-32 bytes slab possibly causing
+> performance and memory regressions).
 
-Sounds good to me.  To avoid misunderstandings, will there be a Kconfig
-menu with 3 options?   There were a couple of other comments having to
-do with variable names.  Will you address them as well?
+FWIW, it is likely that this will end up growing in the future to
+support stacking LSMs.  It's unfortunate, messy, and generally ugly,
+but inevitable.
+
+See the selinux_inode() function as a similar example using
+inode/inode_security_struct.
+
+> More importantly, I think there is a problem with the
+> sk_clone_lock() -> sk_prot_alloc() -> security_sk_alloc()
+> code path.
+>
+> sk_clone_lock() happens in BH context, if security_transition_sid()
+> needs process context that would be a problem - quickly skimming the
+> code it does not look so, I need to double check.
+
+The problem is that in both selinux_socket_create() and
+selinux_socket_post_create() the credentials from @current are needed
+to determine the sock/sk_security_stuct label.  In
+selinux_socket_create() @current's credentials are also used to
+determine if the socket can be created.
+
+It's looking like doing labeling determinations in the
+security_sk_alloc() struct is not going to work.  While
+sk_clone_lock() will end up calling into
+security_sk_clone()/selinux_sk_clone_security() via sock_copy(), if I
+understand you correctly that won't help as the main MPTCP socket is
+not yet setup (e.g. selinux_socket_post_create() has not yet been run
+on the main socket).
+
+> Perhaps the cleanest option could be the one involving the mptcp
+> refactoring, moving subflow creation at a later stage. It could have
+> some minor side benefit for MPTCP, too - solving:
+>
+> https://github.com/multipath-tcp/mptcp_net-next/issues/290
+>
+> but I'm not fond of that option because it will require quite a bit of
+> time: we need first to have the mptcp refactor in place and then cook
+> the lsm patches. I guess such process will require at least 2 release
+> cycles, due to the needed mptcp(netdev)/lsm trees synchronization.
+
+I generally take the long term view when it comes to Linux Kernel
+development; given the nature of the kernel, and all the constraints
+that come with it, I would much rather pursue solutions that we
+believe have the longest staying power.
+
+I'm also happy to work on, and/or review, LSM patches in conjunction
+with a MPTCP refactor.  If the only reason to split the work over two
+kernel releases is to soften the blow during the merge window, I think
+we can work that out in a single release ... at least I say that now
+:)
+
+Basically when it comes down to it, I want to make sure that any fix
+we come up with *works*.  In my mind that means doing the LSM fix in
+conjunction with the rework; I would hate to see all of the rework
+happen only to find out later that it still didn't solve the LSM
+problem.
+
+Does that make sense?
+
+> If that would prove to be the most reasonable option, could we consider
+> to transiently merge first something alike:
+>
+> https://lore.kernel.org/mptcp/CAHC9VhSQnhH3UL4gqzu+YiA1Q3YyLLCv88gLJOvw-0+uw5Lvkw@mail.gmail.com/T/#m06c612f84f6b6fe759e670573b2c8092df71607b
+>
+> to have a workable short-term solution, and later revert it when the
+> final solution would be in place?
+
+I would need to go back through that to make sure that it makes sense,
+and ensure that the hook is idempotent for SELinux, AppArmor, and
+Smack (current hook implementations), *aaaand* if we promise that this
+is just a *temporary* hack I think I would be okay with that.
 
 -- 
-thanks,
-
-Mimi
-
+paul-moore.com
