@@ -2,121 +2,88 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D79B9C46467
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Dec 2022 10:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8AFC46467
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Dec 2022 21:24:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbiLZK1H (ORCPT
+        id S232315AbiLZVYw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Dec 2022 05:27:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45086 "EHLO
+        Mon, 26 Dec 2022 16:24:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbiLZK1G (ORCPT
+        with ESMTP id S232227AbiLZVYv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Dec 2022 05:27:06 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C1F51113;
-        Mon, 26 Dec 2022 02:27:04 -0800 (PST)
-Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NgYpM6xNvzmWlQ;
-        Mon, 26 Dec 2022 18:25:47 +0800 (CST)
-Received: from ubuntu1804.huawei.com (10.67.174.58) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.34; Mon, 26 Dec 2022 18:27:02 +0800
-From:   Xiu Jianfeng <xiujianfeng@huawei.com>
-To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] evm: Support small xattr in dump_security_xattr()
-Date:   Mon, 26 Dec 2022 18:24:19 +0800
-Message-ID: <20221226102419.16189-1-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 26 Dec 2022 16:24:51 -0500
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [IPv6:2001:1600:3:17::190b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D484113D
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Dec 2022 13:24:48 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NgrQj4ZknzMqNY5;
+        Mon, 26 Dec 2022 22:24:45 +0100 (CET)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4NgrQh6DhwzMppL7;
+        Mon, 26 Dec 2022 22:24:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1672089885;
+        bh=CQRg1XvyqHQkoGMl7AC7PUYFJxNFyGTAtH2hnB5ZPU4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=n62tLGjZkMXhYCThuFRidZvkEhv9kyYTj6iXt5mBqDCjHYGzXxsQRdLPfHzhH0vnp
+         e1Nre+wNnlZe9JDnC9csOoFCJoTPW2kpZIM/sx471tSRmtpoXOQ8tdDKxgcg3tut+D
+         fmw6YEmgUklMWm80bOpsNnUHeCfrdJGYRBDyVP1s=
+Message-ID: <6a1c9471-6fb3-792d-1e9b-d78884162ef5@digikod.net>
+Date:   Mon, 26 Dec 2022 22:24:43 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.174.58]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500023.china.huawei.com (7.185.36.114)
-X-CFilter-Loop: Reflected
+User-Agent: 
+Subject: Re: [PATCH] landlock: Allow filesystem layout changes for domains
+ without such rule type
+Content-Language: en-US
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+Cc:     artem.kuzin@huawei.com, gnoack3000@gmail.com,
+        willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+References: <5c6c99f7-4218-1f79-477e-5d943c9809fd@digikod.net>
+ <20221117185509.702361-1-mic@digikod.net>
+ <fb9a288a-aa86-9192-e6d7-d6678d740297@digikod.net>
+ <4b23de18-2ae9-e7e3-52a3-53151e8802f9@huawei.com>
+ <fd4c0396-af56-732b-808b-887c150e5e6b@digikod.net>
+ <dc0de995-00dc-9dd7-a783-f57b2c274cb2@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <dc0de995-00dc-9dd7-a783-f57b2c274cb2@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Currently the debug function of dumping xattr is splited into two parts,
-when the length of xattr is less than 64 bytes, it uses pr_debug()
-directly. Merge it into dump_security_xattr() to simplify the code, no
-functional changes here.
 
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
----
- security/integrity/evm/evm_crypto.c | 33 ++++++++++++++---------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index fa5ff13fa8c9..748de90492fb 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -183,8 +183,8 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
-  * Dump large security xattr values as a continuous ascii hexademical string.
-  * (pr_debug is limited to 64 bytes.)
-  */
--static void dump_security_xattr(const char *prefix, const void *src,
--				size_t count)
-+static void dump_security_xattr_l(const char *prefix, const void *src,
-+				  size_t count)
- {
- #if defined(DEBUG) || defined(CONFIG_DYNAMIC_DEBUG)
- 	char *asciihex, *p;
-@@ -200,6 +200,16 @@ static void dump_security_xattr(const char *prefix, const void *src,
- #endif
- }
- 
-+static void dump_security_xattr(const char *name, const char *value,
-+				size_t value_len)
-+{
-+	if (value_len < 64)
-+		pr_debug("%s: (%zu) [%*phN]\n", name, value_len,
-+					(int)value_len, value);
-+	else
-+		dump_security_xattr_l(name, value, value_len);
-+}
-+
- /*
-  * Calculate the HMAC value across the set of protected security xattrs.
-  *
-@@ -254,15 +264,9 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
- 			if (is_ima)
- 				ima_present = true;
- 
--			if (req_xattr_value_len < 64)
--				pr_debug("%s: (%zu) [%*phN]\n", req_xattr_name,
--					 req_xattr_value_len,
--					 (int)req_xattr_value_len,
--					 req_xattr_value);
--			else
--				dump_security_xattr(req_xattr_name,
--						    req_xattr_value,
--						    req_xattr_value_len);
-+			dump_security_xattr(req_xattr_name,
-+					    req_xattr_value,
-+					    req_xattr_value_len);
- 			continue;
- 		}
- 		size = vfs_getxattr_alloc(&init_user_ns, dentry, xattr->name,
-@@ -286,12 +290,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
- 		if (is_ima)
- 			ima_present = true;
- 
--		if (xattr_size < 64)
--			pr_debug("%s: (%zu) [%*phN]", xattr->name, xattr_size,
--				 (int)xattr_size, xattr_value);
--		else
--			dump_security_xattr(xattr->name, xattr_value,
--					    xattr_size);
-+		dump_security_xattr(xattr->name, xattr_value, xattr_size);
- 	}
- 	hmac_add_misc(desc, inode, type, data->digest);
- 
--- 
-2.17.1
+On 24/12/2022 04:10, Konstantin Meskhidze (A) wrote:
+> 
+> 
+> 11/28/2022 11:23 PM, Mickaël Salaün пишет:
+>>
+>> On 28/11/2022 04:04, Konstantin Meskhidze (A) wrote:
+>>>
+>>>
+>>> 11/18/2022 12:16 PM, Mickaël Salaün пишет:
+>>>> Konstantin, this patch should apply cleanly just after "01/12 landlock:
+>>>> Make ruleset's access masks more generic". You can easily get this patch
+>>>> with https://git.kernel.org/pub/scm/utils/b4/b4.git/
+>>>> Some adjustments are needed for the following patches. Feel free to
+>>>> review this patch.
+>>        Do you have this patch online? Can I fetch it from your repo?
+>>
+>> You can cherry-pick from here: https://git.kernel.org/mic/c/439ea2d31e662
+> 
+> Hi Mickaёl.
+> 
+> Sorry for the delay. I was a bit busy with another task. Now I'm
+> preparing a new patch.
+> 
+> I tried to apply your one but I got an error opening this the link : Bad
+> object id: 439ea2d31e662.
+> 
+> Could please check it?
 
+Try this link: 
+https://git.kernel.org/mic/c/439ea2d31e662e586db659a9f01b7dd55848c035
+I pushed it to the landlock-net-v8.1 branch.
