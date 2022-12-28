@@ -2,34 +2,34 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C0AC46467
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Dec 2022 16:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FE3C46467
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Dec 2022 17:01:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229745AbiL1Qxx (ORCPT
+        id S233281AbiL1RBX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Dec 2022 11:53:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43220 "EHLO
+        Wed, 28 Dec 2022 12:01:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235238AbiL1QxG (ORCPT
+        with ESMTP id S235335AbiL1RAp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Dec 2022 11:53:06 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5115017E0A;
-        Wed, 28 Dec 2022 08:48:22 -0800 (PST)
+        Wed, 28 Dec 2022 12:00:45 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89FA110B76;
+        Wed, 28 Dec 2022 08:55:52 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 8E988CE1377;
-        Wed, 28 Dec 2022 16:48:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69D95C433D2;
-        Wed, 28 Dec 2022 16:48:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 21B8661572;
+        Wed, 28 Dec 2022 16:55:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F4DC433EF;
+        Wed, 28 Dec 2022 16:55:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1672246098;
-        bh=T2xzC8VcMURXvVDF6sbFKUXF9JoG/z82gplZpt5oZRI=;
+        s=korg; t=1672246551;
+        bh=kCD7HIioD2lG850CCyOVW4T7rE7c2036hA/ylMNGFi0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ec6hB7VsVfYbDTgFc6K6xoFYpZfMcEADpy6NSZ62HxLX1B3IAG8QvkrNVWvkY+OrY
-         a9CkmW+QGNEnuTBA9VQvEcUPllAF1r0Z5iZP08qWym5oeBUdTF2xedPRPtfKJrplP4
-         PHgNk8UrN1t+LxcjBb0qXb73PtfFK7GzckQ3wvp0=
+        b=It8zd2XtqFOxq9/PV3CKjSfZtNi8BSHav1AcXrfYkS801fEVdKuNG18FI4mtLN+zp
+         oAKcA8bX/K/vk9njUewpuQmboOykFG9IXj/OrjxykptGu0nr0k+NY7ijd1QAhH8Egy
+         eEcNtA1tgFtGW6IEg+9AAbFkbRJp3jefAK0obips=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -40,12 +40,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kees Cook <keescook@chromium.org>,
         Ping-Ke Shih <pkshih@realtek.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.0 1012/1073] LoadPin: Ignore the "contents" argument of the LSM hooks
-Date:   Wed, 28 Dec 2022 15:43:20 +0100
-Message-Id: <20221228144355.655176782@linuxfoundation.org>
+Subject: [PATCH 6.1 1079/1146] LoadPin: Ignore the "contents" argument of the LSM hooks
+Date:   Wed, 28 Dec 2022 15:43:38 +0100
+Message-Id: <20221228144359.524935039@linuxfoundation.org>
 X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20221228144328.162723588@linuxfoundation.org>
-References: <20221228144328.162723588@linuxfoundation.org>
+In-Reply-To: <20221228144330.180012208@linuxfoundation.org>
+References: <20221228144330.180012208@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -77,10 +77,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 18 insertions(+), 12 deletions(-)
 
 diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index 44521582dcba..d6767fddbd5a 100644
+index de41621f4998..110a5ab2b46b 100644
 --- a/security/loadpin/loadpin.c
 +++ b/security/loadpin/loadpin.c
-@@ -120,21 +120,11 @@ static void loadpin_sb_free_security(struct super_block *mnt_sb)
+@@ -122,21 +122,11 @@ static void loadpin_sb_free_security(struct super_block *mnt_sb)
  	}
  }
  
@@ -103,7 +103,7 @@ index 44521582dcba..d6767fddbd5a 100644
  	/* If the file id is excluded, ignore the pinning. */
  	if ((unsigned int)id < ARRAY_SIZE(ignore_read_file_id) &&
  	    ignore_read_file_id[id]) {
-@@ -190,9 +180,25 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id,
+@@ -192,9 +182,25 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id,
  	return 0;
  }
  
