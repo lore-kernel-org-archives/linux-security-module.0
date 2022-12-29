@@ -2,136 +2,93 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FE3C46467
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Dec 2022 17:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 464C8C3DA7A
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Dec 2022 20:12:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233281AbiL1RBX (ORCPT
+        id S233913AbiL2UM0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Dec 2022 12:01:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55680 "EHLO
+        Thu, 29 Dec 2022 15:12:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235335AbiL1RAp (ORCPT
+        with ESMTP id S229598AbiL2UMY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Dec 2022 12:00:45 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89FA110B76;
-        Wed, 28 Dec 2022 08:55:52 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 21B8661572;
-        Wed, 28 Dec 2022 16:55:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F4DC433EF;
-        Wed, 28 Dec 2022 16:55:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1672246551;
-        bh=kCD7HIioD2lG850CCyOVW4T7rE7c2036hA/ylMNGFi0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=It8zd2XtqFOxq9/PV3CKjSfZtNi8BSHav1AcXrfYkS801fEVdKuNG18FI4mtLN+zp
-         oAKcA8bX/K/vk9njUewpuQmboOykFG9IXj/OrjxykptGu0nr0k+NY7ijd1QAhH8Egy
-         eEcNtA1tgFtGW6IEg+9AAbFkbRJp3jefAK0obips=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev, Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.1 1079/1146] LoadPin: Ignore the "contents" argument of the LSM hooks
-Date:   Wed, 28 Dec 2022 15:43:38 +0100
-Message-Id: <20221228144359.524935039@linuxfoundation.org>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20221228144330.180012208@linuxfoundation.org>
-References: <20221228144330.180012208@linuxfoundation.org>
-User-Agent: quilt/0.67
+        Thu, 29 Dec 2022 15:12:24 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E48613D74
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Dec 2022 12:12:24 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id ge16so16624208pjb.5
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Dec 2022 12:12:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hmsLucPbd8/eQ46655SBo6Wp+rkES8C03g+N69McUKA=;
+        b=GwKSVGq0dRGCUgdO/pTUtvKoCrzCDlR5Eb8naEPgs9oPZsZBcneDNPKlYGBQGjUkr2
+         H2b6N0bK2/5Nb2mf7kqX+3H5uCD9rYGVR5P3uenUycm0EWfOru7MJp51AD5nvLZwXpC0
+         pFXaE4H6OqKCQa5Z4YU/8Rf+bQxoELRnIUEyA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hmsLucPbd8/eQ46655SBo6Wp+rkES8C03g+N69McUKA=;
+        b=70YigTd/NEz24JjOnbo6s+79LoTY7pRWnKBSNnwtEAm99AhZCT8opG1SpRwR9Lp3I7
+         as7bZ6UTJglb/KILuNmb4qAl9M4Dy1lMWOivWOYT8oNvjp/C6qTRDyWmiFhclsXsJB69
+         KGv46qBZZYheqsW2WS2OA57m8SjpVruIg0fE7cbuWneqnZbmUwJ1dC71At8yleDCoMye
+         kc2G4aSHQ+B19sNehkCNci+v/Rbxy0F/Sfm5yw6uAw0puB7Vk0lQFp1sBQZ6uRkWIJVv
+         FcH+GhVDTl6axZCkjiGm/WJMcY69+uvJn6emtt+rc04kFh+IlPSlv+fWGjegp+s4hM18
+         sbgA==
+X-Gm-Message-State: AFqh2kqxX5avQ7kPa62vRIyXlZmtM6ON9vBYV57xT+pD151Qgl19LUvJ
+        DoewHns1FZ+TXF7uRkDe/dWzqw==
+X-Google-Smtp-Source: AMrXdXsuPMp2DSDA3ExwSSKslJSz3z+7tXL086u4uEosfF1lvRv8blJWWU6FjbU3DgKJLgfZ1JIP8A==
+X-Received: by 2002:a17:903:234b:b0:192:9f2d:d6b9 with SMTP id c11-20020a170903234b00b001929f2dd6b9mr6059009plh.9.1672344743768;
+        Thu, 29 Dec 2022 12:12:23 -0800 (PST)
+Received: from jeffxud.c.googlers.com.com (190.40.105.34.bc.googleusercontent.com. [34.105.40.190])
+        by smtp.gmail.com with ESMTPSA id ik29-20020a170902ab1d00b00177fb862a87sm13395570plb.20.2022.12.29.12.12.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Dec 2022 12:12:23 -0800 (PST)
+From:   jeffxu@chromium.org
+To:     mic@digikod.net
+Cc:     jorgelo@chromium.org, keescook@chromium.org,
+        linux-security-module@vger.kernel.org, groeck@chromium.org,
+        gnoack@google.com, Jeff Xu <jeffxu@google.com>
+Subject: [PATCH v6 0/1] selftests/landlock: fix test when overlayfs is
+Date:   Thu, 29 Dec 2022 20:12:14 +0000
+Message-Id: <20221229201215.3006512-1-jeffxu@google.com>
+X-Mailer: git-send-email 2.39.0.314.g84b9a713c41-goog
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Kees Cook <keescook@chromium.org>
+From: Jeff Xu <jeffxu@google.com>
 
-[ Upstream commit 1a17e5b513ceebf21100027745b8731b4728edf7 ]
+Overlayfs can be disabled in kernel config, causing related tests to
+fail. Adding a check for overlayfs’s supportability at runtime,
+so we can call SKIP() when needed.
 
-LoadPin only enforces the read-only origin of kernel file reads. Whether
-or not it was a partial read isn't important. Remove the overly
-conservative checks so that things like partial firmware reads will
-succeed (i.e. reading a firmware header).
+v6: In v4, the SKIP() was applied at FIXTURE_SETUP() after mount() fail,
+however, FIXTURE_TEARDOWN() will fail. It might be complicated 
+for test infra or testcase itself to have cleanup code handing the
+success/failure of steps in SETUP().
 
-Fixes: 2039bda1fa8d ("LSM: Add "contents" flag to kernel_read_file hook")
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Acked-by: Serge Hallyn <serge@hallyn.com>
-Tested-by: Ping-Ke Shih <pkshih@realtek.com>
-Link: https://lore.kernel.org/r/20221209195453.never.494-kees@kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/loadpin/loadpin.c | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+This patch changes the approach, it calls supports_overlay() and SKIP()
+at the beginning of FIXTURE_SETUP(), FIX_TEARDOWN(), TEST_F_FORK().
+Because no modification of system is done by the test, cleanup is not 
+needed.
 
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index de41621f4998..110a5ab2b46b 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -122,21 +122,11 @@ static void loadpin_sb_free_security(struct super_block *mnt_sb)
- 	}
- }
- 
--static int loadpin_read_file(struct file *file, enum kernel_read_file_id id,
--			     bool contents)
-+static int loadpin_check(struct file *file, enum kernel_read_file_id id)
- {
- 	struct super_block *load_root;
- 	const char *origin = kernel_read_file_id_str(id);
- 
--	/*
--	 * If we will not know that we'll be seeing the full contents
--	 * then we cannot trust a load will be complete and unchanged
--	 * off disk. Treat all contents=false hooks as if there were
--	 * no associated file struct.
--	 */
--	if (!contents)
--		file = NULL;
--
- 	/* If the file id is excluded, ignore the pinning. */
- 	if ((unsigned int)id < ARRAY_SIZE(ignore_read_file_id) &&
- 	    ignore_read_file_id[id]) {
-@@ -192,9 +182,25 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id,
- 	return 0;
- }
- 
-+static int loadpin_read_file(struct file *file, enum kernel_read_file_id id,
-+			     bool contents)
-+{
-+	/*
-+	 * LoadPin only cares about the _origin_ of a file, not its
-+	 * contents, so we can ignore the "are full contents available"
-+	 * argument here.
-+	 */
-+	return loadpin_check(file, id);
-+}
-+
- static int loadpin_load_data(enum kernel_load_data_id id, bool contents)
- {
--	return loadpin_read_file(NULL, (enum kernel_read_file_id) id, contents);
-+	/*
-+	 * LoadPin only cares about the _origin_ of a file, not its
-+	 * contents, so a NULL file is passed, and we can ignore the
-+	 * state of "contents".
-+	 */
-+	return loadpin_check(NULL, (enum kernel_read_file_id) id);
- }
- 
- static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
+v4:
+https://lore.kernel.org/all/20220823010216.2653012-1-jeffxu@google.com/
+
+Jeff Xu (1):
+  selftests/landlock: skip overlayfs test when kernel not support it
+
+ tools/testing/selftests/landlock/fs_test.c | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+
+
+base-commit: 963a70bee5880640d0fd83ed29dc1e7ec0d2bd4a
 -- 
-2.35.1
-
-
+2.39.0.314.g84b9a713c41-goog
 
