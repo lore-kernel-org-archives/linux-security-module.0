@@ -2,98 +2,131 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCE2C3DA7A
-	for <linux-security-module@archiver.kernel.org>; Sat, 31 Dec 2022 13:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19CC2C46467
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Jan 2023 20:45:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231994AbiLaNXY convert rfc822-to-8bit (ORCPT
+        id S229964AbjABUpW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 31 Dec 2022 08:23:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50368 "EHLO
+        Mon, 2 Jan 2023 15:45:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbiLaNXX (ORCPT
+        with ESMTP id S232770AbjABUpV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 31 Dec 2022 08:23:23 -0500
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB18AB4A3
-        for <linux-security-module@vger.kernel.org>; Sat, 31 Dec 2022 05:23:21 -0800 (PST)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-54-12njZMflPrOHOWWm3UOPXQ-1; Sat, 31 Dec 2022 13:23:15 +0000
-X-MC-Unique: 12njZMflPrOHOWWm3UOPXQ-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 31 Dec
- 2022 13:23:14 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.044; Sat, 31 Dec 2022 13:23:14 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Herbert Xu' <herbert@gondor.apana.org.au>
-CC:     'Roberto Sassu' <roberto.sassu@huaweicloud.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "ebiggers@kernel.org" <ebiggers@kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v5 1/2] lib/mpi: Fix buffer overrun when SG is too long
-Thread-Topic: [PATCH v5 1/2] lib/mpi: Fix buffer overrun when SG is too long
-Thread-Index: AQHZGf+Li10Ctze9/ky4tLizwqJmjK6Gb6hQgAAmKQCAAWpJUA==
-Date:   Sat, 31 Dec 2022 13:23:14 +0000
-Message-ID: <0d5fda5b25b8467c860d625116dac1d2@AcuMS.aculab.com>
-References: <20221227142740.2807136-1-roberto.sassu@huaweicloud.com>
- <20221227142740.2807136-2-roberto.sassu@huaweicloud.com>
- <6949ced7c1014488b2d00ff26eba6b6b@AcuMS.aculab.com>
- <Y68GMsGKROsgDbcs@gondor.apana.org.au>
-In-Reply-To: <Y68GMsGKROsgDbcs@gondor.apana.org.au>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 2 Jan 2023 15:45:21 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF4C46258
+        for <linux-security-module@vger.kernel.org>; Mon,  2 Jan 2023 12:45:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=b5HTI95Gc+VNnu4QEJkhkMwPSqYWh1+QLzaknMGGtBo=; b=XKtvj6bn32U4Th9WoUgjgtQQiV
+        YwTBhv2VW6eq6CLdI4rEDku94nl+9glBe8JF+KvV7iZJkklamZ8lKK5VFkVeVv4j1by1IVNxcKMhY
+        yOcSqMICbI/mcrVGwnn5xVj+TvrK+0pJibgFPnvpvlN18iC63o0vc85KviEXrILAIK1Hq7v83zqaH
+        jytUnH0SlM6+C4+ncagbz2TrnsInOOiEtW+UFozYFXh04XEG2tEy8wxczYkibRp/fr1Ow+ONldpGu
+        qcV0oMvZlneurdqUI36vfLAtBietnymn0u4QzK5fcHldRwtbpcXJBkUB5QHnWO0vhwpXCexv8+Aej
+        XJ1UPpRw==;
+Received: from [2601:1c2:d80:3110::a2e7] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pCRgI-00EFXN-D7; Mon, 02 Jan 2023 20:45:14 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-security-module@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        John Johansen <john.johansen@canonical.com>,
+        John Johansen <john@apparmor.net>, apparmor@lists.ubuntu.com,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: [PATCH] apparmor: fix kernel-doc complaints
+Date:   Mon,  2 Jan 2023 12:45:12 -0800
+Message-Id: <20230102204512.3972-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Herbert Xu
-> Sent: 30 December 2022 15:40
-> 
-> On Fri, Dec 30, 2022 at 01:35:07PM +0000, David Laight wrote:
-> >
-> > miter.length is size_t (unsigned long on 64bit) and nbytes unsigned int.
-> 
-> miter.length is bounded by sg->length which is unsigned int.
+Correct kernel-doc notation to placate kernel-doc W=1 warnings:
 
-I did say 'technically' :-)
+security/apparmor/policy.c:439: warning: duplicate section name 'Return'
+security/apparmor/secid.c:57: warning: Cannot understand  *
+security/apparmor/file.c:174: warning: cannot understand function prototype: 'struct aa_perms default_perms = '
 
-Should there be a sg_miter_stop() before the return at the bottom?
-Care seems to have been taken to add one before an earlier error return.
-(The logic in that function is very strange...)
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: John Johansen <john.johansen@canonical.com>
+Cc: John Johansen <john@apparmor.net>
+Cc: apparmor@lists.ubuntu.com
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+---
+ security/apparmor/file.c   |    2 +-
+ security/apparmor/policy.c |    7 ++-----
+ security/apparmor/secid.c  |    3 +--
+ 3 files changed, 4 insertions(+), 8 deletions(-)
 
-Indeed other parts of the file are equally strange.
-The big multi-line if-else in twocompl() is just:
-	p[i] = (p[1] ^ 0xff) + 1;
-or even:
-	p[i] = -p[i];
-That function could also return the 'zero status' to correct
-for -0 (rather than the extra check earlier in the caller).
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+diff -- a/security/apparmor/policy.c b/security/apparmor/policy.c
+--- a/security/apparmor/policy.c
++++ b/security/apparmor/policy.c
+@@ -430,11 +430,9 @@ static struct aa_policy *__lookup_parent
+  * @hname: hierarchical profile name to find parent of (NOT NULL)
+  * @gfp: type of allocation.
+  *
+- * Returns: NULL on error, parent profile on success
+- *
+  * Requires: ns mutex lock held
+  *
+- * Returns: unrefcounted parent policy or NULL if error creating
++ * Return: unrefcounted parent policy on success or %NULL if error creating
+  *          place holder profiles.
+  */
+ static struct aa_policy *__create_missing_ancestors(struct aa_ns *ns,
+@@ -828,7 +826,7 @@ bool aa_current_policy_admin_capable(str
+ /**
+  * aa_may_manage_policy - can the current task manage policy
+  * @label: label to check if it can manage policy
+- * @op: the policy manipulation operation being done
++ * @mask: contains the policy manipulation operation being done
+  *
+  * Returns: 0 if the task is allowed to manipulate policy else error
+  */
+@@ -883,7 +881,6 @@ static struct aa_profile *__list_lookup_
+  * __replace_profile - replace @old with @new on a list
+  * @old: profile to be replaced  (NOT NULL)
+  * @new: profile to replace @old with  (NOT NULL)
+- * @share_proxy: transfer @old->proxy to @new
+  *
+  * Will duplicate and refcount elements that @new inherits from @old
+  * and will inherit @old children.
+diff -- a/security/apparmor/secid.c b/security/apparmor/secid.c
+--- a/security/apparmor/secid.c
++++ b/security/apparmor/secid.c
+@@ -53,8 +53,7 @@ void aa_secid_update(u32 secid, struct a
+ 	xa_unlock_irqrestore(&aa_secids, flags);
+ }
+ 
+-/**
+- *
++/*
+  * see label for inverse aa_label_to_secid
+  */
+ struct aa_label *aa_secid_to_label(u32 secid)
+diff -- a/security/apparmor/file.c b/security/apparmor/file.c
+--- a/security/apparmor/file.c
++++ b/security/apparmor/file.c
+@@ -161,6 +161,7 @@ static int path_name(const char *op, str
+ 	return 0;
+ }
+ 
++struct aa_perms default_perms = {};
+ /**
+  * aa_lookup_fperms - convert dfa compressed perms to internal perms
+  * @dfa: dfa to lookup perms for   (NOT NULL)
+@@ -171,7 +172,6 @@ static int path_name(const char *op, str
+  *
+  * Returns: a pointer to a file permission set
+  */
+-struct aa_perms default_perms = {};
+ struct aa_perms *aa_lookup_fperms(struct aa_policydb *file_rules,
+ 				 aa_state_t state, struct path_cond *cond)
+ {
