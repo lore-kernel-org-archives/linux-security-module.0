@@ -2,144 +2,344 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1385AC53210
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Jan 2023 22:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4551C3DA7D
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Jan 2023 03:49:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240611AbjADWis (ORCPT
+        id S231222AbjAEDtM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Jan 2023 17:38:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52418 "EHLO
+        Wed, 4 Jan 2023 22:49:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235536AbjADWiq (ORCPT
+        with ESMTP id S231667AbjAEDs4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Jan 2023 17:38:46 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA3FC1EC79;
-        Wed,  4 Jan 2023 14:38:45 -0800 (PST)
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 304ME1CI018620;
-        Wed, 4 Jan 2023 22:38:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=dnzle0EcHMmwGRtnVfx0mWs2UVkVr780qRGnF49Zxbw=;
- b=PqUzd7tArfL9HGT34lPsW6zlrVMMIK535/wJOQoVQZ0gW1WTH0F34zg8wHIkJ0T+78zI
- 9SyDP/o+2ZSjXkXAwWoQm4LWk8v8NBwrycMasue3XpHOqx9HtkSfcE9Qv2iEj09hOeK5
- ZIG+dkVdQSWcxT0MMKKcPZ/lD4VaGFMdEskERUchWy1oyuzogVTUrXMvvyKx+0sLfvK5
- Lyozi++13HBffdqTXnsN4UG1Az1KEBfTh+bBtkC1a+5gwyTw/TK8Stih7oG/fuFEq5r/
- LZZsu2j9NXhehyg7bXZRWmK7dT2D7I3TZuQwtkvszafXOvb6uyHsp8HXBpLCWIz4ENGV Zw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mwj2hgkfd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Jan 2023 22:38:16 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 304MZFBa004552;
-        Wed, 4 Jan 2023 22:38:15 GMT
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mwj2hgker-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Jan 2023 22:38:15 +0000
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 304MW0JQ019440;
-        Wed, 4 Jan 2023 22:38:15 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([9.208.130.100])
-        by ppma02wdc.us.ibm.com (PPS) with ESMTPS id 3mtcq7tgas-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Jan 2023 22:38:15 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-        by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 304McERA2622200
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 4 Jan 2023 22:38:14 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5B3A58066;
-        Wed,  4 Jan 2023 22:38:13 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B763A58062;
-        Wed,  4 Jan 2023 22:38:11 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.185.16])
-        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed,  4 Jan 2023 22:38:11 +0000 (GMT)
-Message-ID: <1738bcddc690825f634bfe41ca1df778a1a50b0a.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 03/10] KEYS: X.509: Parse Basic Constraints for CA
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "pvorel@suse.cz" <pvorel@suse.cz>,
-        "noodles@fb.com" <noodles@fb.com>, "tiwai@suse.de" <tiwai@suse.de>,
-        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>,
-        Elaine Palmer <erpalmer@linux.vnet.ibm.com>,
-        Coiby Xu <coxu@redhat.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Date:   Wed, 04 Jan 2023 17:38:07 -0500
-In-Reply-To: <5F14DD59-7139-427E-A263-D5DED6EB57F8@oracle.com>
-References: <20221214003401.4086781-1-eric.snowberg@oracle.com>
-         <20221214003401.4086781-4-eric.snowberg@oracle.com>
-         <b0f29738b919e2705d770017f2f1eb0542c2fad4.camel@linux.ibm.com>
-         <Y7VxDloaHyF8cX5j@kernel.org>
-         <5F14DD59-7139-427E-A263-D5DED6EB57F8@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qxLcN76R_0JpWidhJf1J_gZEXtL92O2g
-X-Proofpoint-GUID: shNbEMAaO2O3rlpd5WibO3G1L5cR6plP
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Wed, 4 Jan 2023 22:48:56 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 699AA574D2;
+        Wed,  4 Jan 2023 19:46:28 -0800 (PST)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4NnXQL4Rf0z6J6cN;
+        Thu,  5 Jan 2023 11:44:10 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.34; Thu, 5 Jan 2023 03:46:25 +0000
+Message-ID: <94a8ef89-b59e-d218-77a1-bf2f9d4096c7@huawei.com>
+Date:   Thu, 5 Jan 2023 06:46:24 +0300
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2023-01-04_07,2023-01-04_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- mlxlogscore=999 mlxscore=0 clxscore=1015 malwarescore=0 phishscore=0
- suspectscore=0 adultscore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301040183
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v8 11/12] samples/landlock: Add network demo
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <artem.kuzin@huawei.com>
+References: <20221021152644.155136-1-konstantin.meskhidze@huawei.com>
+ <20221021152644.155136-12-konstantin.meskhidze@huawei.com>
+ <2ff97355-18ef-e539-b4c1-720cd83daf1d@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <2ff97355-18ef-e539-b4c1-720cd83daf1d@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.123.126]
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2023-01-04 at 20:14 +0000, Eric Snowberg wrote:
+
+
+11/16/2022 5:25 PM, Mickaël Salaün пишет:
 > 
-> > On Jan 4, 2023, at 5:29 AM, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > 
-> > On Thu, Dec 15, 2022 at 06:10:04AM -0500, Mimi Zohar wrote:
-> >>> diff --git a/crypto/asymmetric_keys/x509_parser.h b/crypto/asymmetric_keys/x509_parser.h
-> >>> index a299c9c56f40..7c5c0ad1c22e 100644
-> >>> --- a/crypto/asymmetric_keys/x509_parser.h
-> >>> +++ b/crypto/asymmetric_keys/x509_parser.h
-> >>> @@ -38,6 +38,7 @@ struct x509_certificate {
-> >>> 	bool		self_signed;		/* T if self-signed (check unsupported_sig too) */
-> >>> 	bool		unsupported_sig;	/* T if signature uses unsupported crypto */
-> >>> 	bool		blacklisted;
-> >>> +	bool		root_ca;		/* T if basic constraints CA is set */
-> >>> }; 
-> >> 
-> >> The variable "root_ca" should probably be renamed to just "ca", right?
-> > 
-> > Perhaps is_ca?
+> On 21/10/2022 17:26, Konstantin Meskhidze wrote:
+>> This commit adds network demo. It's possible to allow a sandboxer to
+>> bind/connect to a list of particular ports restricting network
+>> actions to the rest of ports.
+>> 
+>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>> ---
+>> 
+>> Changes since v7:
+>> * Removes network support if ABI < 4.
+>> * Removes network support if not set by a user.
+>> 
+>> Changes since v6:
+>> * Removes network support if ABI < 3.
+>> 
+>> Changes since v5:
+>> * Makes network ports sandboxing optional.
+>> * Fixes some logic errors.
+>> * Formats code with clang-format-14.
+>> 
+>> Changes since v4:
+>> * Adds ENV_TCP_BIND_NAME "LL_TCP_BIND" and
+>> ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT" variables
+>> to insert TCP ports.
+>> * Renames populate_ruleset() to populate_ruleset_fs().
+>> * Adds populate_ruleset_net() and parse_port_num() helpers.
+>> * Refactors main() to support network sandboxing.
+>> 
+>> ---
+>>   samples/landlock/sandboxer.c | 129 +++++++++++++++++++++++++++++++----
+>>   1 file changed, 116 insertions(+), 13 deletions(-)
+>> 
+>> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+>> index fd4237c64fb2..68582b0d7c85 100644
+>> --- a/samples/landlock/sandboxer.c
+>> +++ b/samples/landlock/sandboxer.c
+>> @@ -51,6 +51,8 @@ static inline int landlock_restrict_self(const int ruleset_fd,
+>> 
+>>   #define ENV_FS_RO_NAME "LL_FS_RO"
+>>   #define ENV_FS_RW_NAME "LL_FS_RW"
+>> +#define ENV_TCP_BIND_NAME "LL_TCP_BIND"
+>> +#define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
+>>   #define ENV_PATH_TOKEN ":"
+>> 
+>>   static int parse_path(char *env_path, const char ***const path_list)
+>> @@ -71,6 +73,20 @@ static int parse_path(char *env_path, const char ***const path_list)
+>>   	return num_paths;
+>>   }
+>> 
+>> +static int parse_port_num(char *env_port)
+>> +{
+>> +	int i, num_ports = 0;
+>> +
+>> +	if (env_port) {
+>> +		num_ports++;
+>> +		for (i = 0; env_port[i]; i++) {
+>> +			if (env_port[i] == ENV_PATH_TOKEN[0])
+>> +				num_ports++;
+>> +		}
+>> +	}
+>> +	return num_ports;
+>> +}
+>> +
+>>   /* clang-format off */
+>> 
+>>   #define ACCESS_FILE ( \
+>> @@ -81,8 +97,8 @@ static int parse_path(char *env_path, const char ***const path_list)
+>> 
+>>   /* clang-format on */
+>> 
+>> -static int populate_ruleset(const char *const env_var, const int ruleset_fd,
+>> -			    const __u64 allowed_access)
+>> +static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
+>> +			       const __u64 allowed_access)
+>>   {
+>>   	int num_paths, i, ret = 1;
+>>   	char *env_path_name;
+>> @@ -143,6 +159,48 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
+>>   	return ret;
+>>   }
+>> 
+>> +static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+>> +				const __u64 allowed_access)
+>> +{
+>> +	int num_ports, i, ret = 1;
+>> +	char *env_port_name;
+>> +	struct landlock_net_service_attr net_service = {
+>> +		.allowed_access = 0,
+>> +		.port = 0,
+>> +	};
+>> +
+>> +	env_port_name = getenv(env_var);
+>> +	if (!env_port_name) {
+>> +		ret = 0;
+>> +		goto out_free_name;
 > 
-> I am open to renaming this, but need an agreement on whether the “is_” should be used or not:
+> This is a bug because env_port_name is not allocated. This should simply
+> return 0.
 > 
-> https://lore.kernel.org/lkml/b28ea211d88e968a5487b20477236e9b507755f4.camel@linux.ibm.com/
+> 
+>> +	}
+>> +	env_port_name = strdup(env_port_name);
+>> +	unsetenv(env_var);
+>> +	num_ports = parse_port_num(env_port_name);
+>> +
+>> +	if (num_ports == 1 && (strtok(env_port_name, ENV_PATH_TOKEN) == NULL)) {
+>> +		ret = 0;
+>> +		goto out_free_name;
+>> +	}
+>> +
+>> +	for (i = 0; i < num_ports; i++) {
+>> +		net_service.allowed_access = allowed_access;
+>> +		net_service.port = atoi(strsep(&env_port_name, ENV_PATH_TOKEN));
+>> +		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>> +				      &net_service, 0)) {
+>> +			fprintf(stderr,
+>> +				"Failed to update the ruleset with port \"%d\": %s\n",
+>> +				net_service.port, strerror(errno));
+>> +			goto out_free_name;
+>> +		}
+>> +	}
+>> +	ret = 0;
+>> +
+>> +out_free_name:
+>> +	free(env_port_name);
+>> +	return ret;
+>> +}
+>> +
+>>   /* clang-format off */
+>> 
+>>   #define ACCESS_FS_ROUGHLY_READ ( \
+>> @@ -164,41 +222,63 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
+>>   	LANDLOCK_ACCESS_FS_REFER | \
+>>   	LANDLOCK_ACCESS_FS_TRUNCATE)
+>> 
+>> +#define ACCESS_NET_BIND_CONNECT ( \
+>> +	LANDLOCK_ACCESS_NET_BIND_TCP | \
+>> +	LANDLOCK_ACCESS_NET_CONNECT_TCP)
+> 
+> You can remove ACCESS_NET_BIND_CONNECT and make the underlying access
+> rights explicit.
+> 
+> 
+>> +
+>>   /* clang-format on */
+>> 
+>> -#define LANDLOCK_ABI_LAST 3
+>> +#define LANDLOCK_ABI_LAST 4
+>> 
+>>   int main(const int argc, char *const argv[], char *const *const envp)
+>>   {
+>>   	const char *cmd_path;
+>>   	char *const *cmd_argv;
+>>   	int ruleset_fd, abi;
+>> +	char *env_port_name;
+>>   	__u64 access_fs_ro = ACCESS_FS_ROUGHLY_READ,
+>> -	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE;
+>> +	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE,
+>> +	      access_net_tcp = ACCESS_NET_BIND_CONNECT;
+>>   	struct landlock_ruleset_attr ruleset_attr = {
+>>   		.handled_access_fs = access_fs_rw,
+>> +		.handled_access_net = access_net_tcp,
+>>   	};
+>> 
+>>   	if (argc < 2) {
+>>   		fprintf(stderr,
+>> -			"usage: %s=\"...\" %s=\"...\" %s <cmd> [args]...\n\n",
+>> -			ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv[0]);
+>> +			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
+>> +			"<cmd> [args]...\n\n",
+>> +			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+>> +			ENV_TCP_CONNECT_NAME, argv[0]);
+>>   		fprintf(stderr,
+>>   			"Launch a command in a restricted environment.\n\n");
+>> -		fprintf(stderr, "Environment variables containing paths, "
+>> -				"each separated by a colon:\n");
+>> +		fprintf(stderr,
+>> +			"Environment variables containing paths and ports "
+>> +			"each separated by a colon:\n");
+>>   		fprintf(stderr,
+>>   			"* %s: list of paths allowed to be used in a read-only way.\n",
+>>   			ENV_FS_RO_NAME);
+>>   		fprintf(stderr,
+>> -			"* %s: list of paths allowed to be used in a read-write way.\n",
+>> +			"* %s: list of paths allowed to be used in a read-write way.\n\n",
+>>   			ENV_FS_RW_NAME);
+>> +		fprintf(stderr,
+>> +			"Environment variables containing ports are optional "
+>> +			"and could be skipped.\n");
+>> +		fprintf(stderr,
+>> +			"* %s: list of ports allowed to bind (server).\n",
+>> +			ENV_TCP_BIND_NAME);
+>> +		fprintf(stderr,
+>> +			"* %s: list of ports allowed to connect (client).\n",
+>> +			ENV_TCP_CONNECT_NAME);
+>>   		fprintf(stderr,
+>>   			"\nexample:\n"
+>>   			"%s=\"/bin:/lib:/usr:/proc:/etc:/dev/urandom\" "
+>>   			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+>> +			"%s=\"9418\" "
+>> +			"%s=\"80:443\" "
+>>   			"%s bash -i\n\n",
+>> -			ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv[0]);
+>> +			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+>> +			ENV_TCP_CONNECT_NAME, argv[0]);
+>>   		fprintf(stderr,
+>>   			"This sandboxer can use Landlock features "
+>>   			"up to ABI version %d.\n",
+>> @@ -240,7 +320,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>>   	case 2:
+>>   		/* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
+>>   		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
+>> -
+>> +		__attribute__((fallthrough));
+>> +	case 3:
+>> +		/* Removes network support for ABI < 4 */
+>> +		ruleset_attr.handled_access_net &= ~ACCESS_NET_BIND_CONNECT;
+> 
+> You can check the TCP environment variables here and error out if one is
+> set.
+> 
+> Please keep the newline here.
+> 
+> 
+>>   		fprintf(stderr,
+>>   			"Hint: You should update the running kernel "
+>>   			"to leverage Landlock features "
+>> @@ -259,16 +342,36 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>>   	access_fs_ro &= ruleset_attr.handled_access_fs;
+>>   	access_fs_rw &= ruleset_attr.handled_access_fs;
+>> 
+>> +	/* Removes bind access attribute if not supported by a user. */
+>> +	env_port_name = getenv(ENV_TCP_BIND_NAME);
+>> +	if (!env_port_name) {
+> 
+> You can move this logic at the populate_ruleset_net() call site and
+> update this helper to not call getenv() twice for the same variable.
 
-Examples of both functions and variables exist that are prefixed with
-"is_".   One is a question; the other a statement.   Naming the
-variable "is_ca" and using it like "if (cert->is_ca)" does make sense.
-
--- 
-thanks,
-
-Mimi
-
+   But here I exclude ruleset attributes, not rule itself. It will break
+   the logic: creating a ruleset then applying rules.
+   I suggest to leave here as its.
+> 
+> 
+>> +		access_net_tcp &= ~LANDLOCK_ACCESS_NET_BIND_TCP;
+>> +	}
+>> +	/* Removes connect access attribute if not supported by a user. */
+>> +	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
+>> +	if (!env_port_name) {
+>> +		access_net_tcp &= ~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+>> +	}
+>> +	ruleset_attr.handled_access_net &= access_net_tcp;
+> 
+> There is no need for access_net_tcp.
+> 
+>> +
+>>   	ruleset_fd =
+>>   		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>>   	if (ruleset_fd < 0) {
+>>   		perror("Failed to create a ruleset");
+>>   		return 1;
+>>   	}
+> 
+> newline
+> 
+>> -	if (populate_ruleset(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro)) {
+>> +	if (populate_ruleset_fs(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro)) {
+>> +		goto err_close_ruleset;
+>> +	}
+>> +	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
+>> +		goto err_close_ruleset;
+>> +	}
+> 
+> newline
+> 
+>> +	if (populate_ruleset_net(ENV_TCP_BIND_NAME, ruleset_fd,
+>> +				 LANDLOCK_ACCESS_NET_BIND_TCP)) {
+>>   		goto err_close_ruleset;
+>>   	}
+>> -	if (populate_ruleset(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
+>> +	if (populate_ruleset_net(ENV_TCP_CONNECT_NAME, ruleset_fd,
+>> +				 LANDLOCK_ACCESS_NET_CONNECT_TCP)) {
+>>   		goto err_close_ruleset;
+>>   	}
+> 
+> newline
+> 
+>>   	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
+>> --
+>> 2.25.1
+>> 
+> .
