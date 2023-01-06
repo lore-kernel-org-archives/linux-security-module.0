@@ -2,135 +2,104 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08AB7C54EBD
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Jan 2023 21:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAE5C54EBD
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Jan 2023 21:22:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbjAFVPA (ORCPT
+        id S236314AbjAFVVt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Jan 2023 16:15:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53010 "EHLO
+        Fri, 6 Jan 2023 16:21:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229552AbjAFVO7 (ORCPT
+        with ESMTP id S236886AbjAFVVC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Jan 2023 16:14:59 -0500
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D19681C28
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Jan 2023 13:14:59 -0800 (PST)
-Received: by mail-pf1-x42c.google.com with SMTP id x26so1974291pfq.10
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Jan 2023 13:14:59 -0800 (PST)
+        Fri, 6 Jan 2023 16:21:02 -0500
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDFF5872AD
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Jan 2023 13:20:27 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id g20so2004328pfb.3
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Jan 2023 13:20:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CwOLnK2ifzFuyr165LNzqz5GnvMFyliD+SS3u04GcaQ=;
-        b=fQ3uOApcxQR/IsZivYDkfhBOj3GhwFU3tAsLTFuEVAPRPR10Inv7wS4kVorYVsJLlG
-         8n0xE/1sTmVOH0hu+adBfEjI8JaSxtmQsvOScWoHbuCb/zC7iXJRmVjUi/zMHRyp1Woj
-         aIkxixCOv2op1sVjyL0pqY0STzhYHHIKifcn+SV2YQ7lkhVjAP0pQ0BDvW7rWSaf9BcM
-         FbrWjT1sIdJKfH5SiffG/z0ZWEfSoZqDaCViQqjeNsv5lVZHXzUN/xFq4XiDMSOWk69M
-         Dl+f8JPEzAA1dBCgkT8/ssw8M92FVA43pnEzRE7ZHzoxOquhEfiJ7M967D5W8gGtWKtV
-         vDKw==
+        bh=D735tsLCLRgwW3YDOAiPa/WNPif3+zSkF8bjSdhwvpU=;
+        b=LCpXDGuAzkW6sAhl68OaEbDsXqglF6dU/jW/kfKBzhHs+z1qhbx2IEp58dm/R1oBrX
+         UiQjvIqDD6EnIF3WQXUqc/MAlDD5VHHdo65X6GQVp1xZbjUy1WN5QYHpPpnhDYV+R2ss
+         0pBmHYifxggc1sm7qYLxBvPfqyHnMLdTV0MtUM6hbXcYyFfk35bDyoZ/97bYaK+NsyZO
+         Zh1JFd/wSIlDzliZkD/7fmJPLjCiPe9m5rd12pkBjc5eQkmy/+LEtOQSG6eLYU0gl/m7
+         G5DrMTOLLTuGVHXBOz8r9FKjLE1tHHQlQvs9nkuxpXNMUYtGpkpQ3UPdApPYcJcqMrOW
+         XCow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CwOLnK2ifzFuyr165LNzqz5GnvMFyliD+SS3u04GcaQ=;
-        b=IcGSlNvVVfTs9k67ALnDye7UkduWUBXMKCRtK+3n5drGTxJmdywJrOqhmg0mJgGBl8
-         AIjsP1XEU4ktwDYdlDRiJlIkkv8Cb37U6FAdK9jNsMZHZmL3JbEOGhRATswNM3TxVY/2
-         DxmunKZ7RhDiPSjQF6TNOwMHnD3c4knjWPm2vvOuoCUcw+MLdyXQIFZ5009Vt1tqf/9c
-         5y4H5mU9tTiaoLQkR5DINWmAXrRq6vzRP5haJviaoRT00tA8LFf8VAeXgJFL+kVIWhi2
-         +yw7Zz+qd0WByYehEjxJcm88ooq0SG9rQRd5zjm/U3HEklRP75L3xIg0SO1247UMoHQ+
-         0fdQ==
-X-Gm-Message-State: AFqh2kotya129PSHso0v0C7is4/53J1ZOyKJY+w62o853qI2xGuv01Ow
-        Sl/UXurVtmVDZMNdvi5qRHIFrI8Lf4olEbLKgB+S
-X-Google-Smtp-Source: AMrXdXunbq8svWmpL5uzJpDIG9dH1bnChWXrVS5uoNEeJGgqDMuv7i47INaTjXl1feUFwaMf91aGmisI+GELaFzB0V8=
-X-Received: by 2002:a05:6a00:1345:b0:582:5f1a:97c2 with SMTP id
- k5-20020a056a00134500b005825f1a97c2mr1477126pfu.3.1673039698452; Fri, 06 Jan
- 2023 13:14:58 -0800 (PST)
+        bh=D735tsLCLRgwW3YDOAiPa/WNPif3+zSkF8bjSdhwvpU=;
+        b=QjNzvTGuqWwn/hAh2/VMJQDiAZxkVo5Zt1uRSdZlCZJ6+H40nNdC0bSsULm3FUiRms
+         BmHOUG9VsDlwAgl8FzJmGoB8ttpWBRAK22GHBW36zhWH/whr+P/mHXqfQziAnflYzVWn
+         NaKrAgGwwOauhkMlk1X73m7TxrTFhtzm/VG5DK1eBABMdg9ff8Xp5u5NJS3VW7Oc3yRL
+         cU3ISslijSnjmlWPa/qJ13IZ8ndu9yUAbR+TJ6kkZWoNqCYtJQ3FnDRl6DWKiJCt/HOr
+         YW/FLTBZWbQsqCEcGWZDPApg6MleRj76c2j7bp/cOHd6tkzE2UZs2tV4oJm2juz7M9aY
+         g7CQ==
+X-Gm-Message-State: AFqh2krowYAL6AFsnlyhw/UqTBOL2sbMSm+lFaps6QniS/j9ka1dSo1o
+        qhBz+1gxcKbLEUyrQRbg1DC+Nxau52rh0As6Jl5NhZvCltB1
+X-Google-Smtp-Source: AMrXdXtBMlS9ssXipRSFnItDt9FgTwfSPmT0zlLXAUJLFwl6FtCHAqOxyXkHSoqChwk5HYucgzsgf7dZo879AqIAl3g=
+X-Received: by 2002:a63:4e5d:0:b0:478:42f:5a3d with SMTP id
+ o29-20020a634e5d000000b00478042f5a3dmr3486392pgl.3.1673040027275; Fri, 06 Jan
+ 2023 13:20:27 -0800 (PST)
 MIME-Version: 1.0
-References: <20221221141007.2579770-1-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20221221141007.2579770-1-roberto.sassu@huaweicloud.com>
+References: <20230102204537.4842-1-rdunlap@infradead.org>
+In-Reply-To: <20230102204537.4842-1-rdunlap@infradead.org>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 6 Jan 2023 16:14:47 -0500
-Message-ID: <CAHC9VhQUAuF-Fan72j7BOqOdLE=B=mJpJ_GpR5p5cUmXruYT=Q@mail.gmail.com>
-Subject: Re: [PATCH v2] security: Restore passing final prot to ima_file_mmap()
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, zohar@linux.ibm.com
-Cc:     jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org
+Date:   Fri, 6 Jan 2023 16:20:16 -0500
+Message-ID: <CAHC9VhTCm36EO0TH1bHO92WSChmWaCzW_uvDaLLg04=UDv5Rqw@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: trusted: tpm2: use correct function name in kernel-doc
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 21, 2022 at 9:10 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
+On Mon, Jan 2, 2023 at 3:45 PM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+> Correct the function name in the kernel-doc notation to prevent
+> a kernel-doc warning:
 >
-> Commit 98de59bfe4b2f ("take calculation of final prot in
-> security_mmap_file() into a helper") moved the code to update prot with the
-> actual protection flags to be granted to the requestor by the kernel to a
-> helper called mmap_prot(). However, the patch didn't update the argument
-> passed to ima_file_mmap(), making it receive the requested prot instead of
-> the final computed prot.
+> security/keys/trusted-keys/trusted_tpm2.c:203: warning: expecting prototype for tpm_buf_append_auth(). Prototype was for tpm2_buf_append_auth() instead
 >
-> A possible consequence is that files mmapped as executable might not be
-> measured/appraised if PROT_EXEC is not requested but subsequently added in
-> the final prot.
->
-> Replace prot with mmap_prot(file, prot) as the second argument of
-> ima_file_mmap() to restore the original behavior.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 98de59bfe4b2 ("take calculation of final prot in security_mmap_file() into a helper")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: James Bottomley <jejb@linux.ibm.com>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: Mimi Zohar <zohar@linux.ibm.com>
+> Cc: linux-integrity@vger.kernel.org
+> Cc: keyrings@vger.kernel.org
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
 > ---
->  security/security.c | 2 +-
+>  security/keys/trusted-keys/trusted_tpm2.c |    2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/security/security.c b/security/security.c
-> index d1571900a8c7..0d2359d588a1 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1666,7 +1666,7 @@ int security_mmap_file(struct file *file, unsigned long prot,
->                                         mmap_prot(file, prot), flags);
->         if (ret)
->                 return ret;
-> -       return ima_file_mmap(file, prot);
-> +       return ima_file_mmap(file, mmap_prot(file, prot));
+
+Reviewed-by: Paul Moore <paul@paul-moore.com>
+
+> diff -- a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> --- a/security/keys/trusted-keys/trusted_tpm2.c
+> +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> @@ -186,7 +186,7 @@ int tpm2_key_priv(void *context, size_t
 >  }
+>
+>  /**
+> - * tpm_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
+> + * tpm2_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
+>   *
+>   * @buf: an allocated tpm_buf instance
+>   * @session_handle: session handle
 
-This seems like a reasonable fix, although as the original commit is
-~10 years old at this point I am a little concerned about the impact
-this might have on IMA.  Mimi, what do you think?
-
-Beyond that, my only other comment would be to only call mmap_prot()
-once and cache the results in a local variable.  You could also fix up
-some of the ugly indentation crimes in security_mmap_file() while you
-are at it, e.g. something like this:
-
-diff --git a/security/security.c b/security/security.c
-index d1571900a8c7..2f9cad9ecac8 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1662,11 +1662,12 @@ int security_mmap_file(struct file *file, unsigned long
-prot,
-                       unsigned long flags)
-{
-       int ret;
--       ret = call_int_hook(mmap_file, 0, file, prot,
--                                       mmap_prot(file, prot), flags);
-+       unsigned long prot_adj = mmap_prot(file, prot);
-+
-+       ret = call_int_hook(mmap_file, 0, file, prot, prot_adj, flags);
-       if (ret)
-               return ret;
--       return ima_file_mmap(file, prot);
-+       return ima_file_mmap(file, prot_adj);
-}
-
---
+-- 
 paul-moore.com
