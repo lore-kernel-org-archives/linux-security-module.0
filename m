@@ -2,122 +2,135 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1C9C61DB3
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Jan 2023 20:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08AB7C54EBD
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Jan 2023 21:15:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230511AbjAFUa6 (ORCPT
+        id S230085AbjAFVPA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Jan 2023 15:30:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38328 "EHLO
+        Fri, 6 Jan 2023 16:15:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbjAFUa5 (ORCPT
+        with ESMTP id S229552AbjAFVO7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Jan 2023 15:30:57 -0500
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02F923C724
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Jan 2023 12:30:56 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id p24so2821388plw.11
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Jan 2023 12:30:55 -0800 (PST)
+        Fri, 6 Jan 2023 16:14:59 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D19681C28
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Jan 2023 13:14:59 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id x26so1974291pfq.10
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Jan 2023 13:14:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IExa2o8Boa9pjE5Orm4ScbWwYDm4momCaLQlE8pNxzg=;
-        b=fmQL/ZDCbRSR6Yf3pC3jbj4vR1v7x3506n44zHHZyqq56aULBpt0dqEDdzn4JJz4AN
-         7u83tfulXb3XFYt+dPS8T9LG73DJNZmRNG6BaJgLHOfLa1JVY2EKpqP1Yr4w9XRTJcT4
-         siWuiwXCCG3GlIjeP5nCQ4S6oB+Q74h0KxRzD042YfnOk/IZjY9whcpEZa1vLp0N3IhP
-         pUp00BsnDLtF6i8ltUgB+DLmF6Bdk8CU8374zTSHPOl5DITi0HiBx78cJ315stbXnR6c
-         opteBNScRTe6nFF3sIj7FTKn7uUQ10uGU6ISzCEbyZLN3Us2zF7jT6MDmP0XLIn2vrod
-         qZfg==
+        bh=CwOLnK2ifzFuyr165LNzqz5GnvMFyliD+SS3u04GcaQ=;
+        b=fQ3uOApcxQR/IsZivYDkfhBOj3GhwFU3tAsLTFuEVAPRPR10Inv7wS4kVorYVsJLlG
+         8n0xE/1sTmVOH0hu+adBfEjI8JaSxtmQsvOScWoHbuCb/zC7iXJRmVjUi/zMHRyp1Woj
+         aIkxixCOv2op1sVjyL0pqY0STzhYHHIKifcn+SV2YQ7lkhVjAP0pQ0BDvW7rWSaf9BcM
+         FbrWjT1sIdJKfH5SiffG/z0ZWEfSoZqDaCViQqjeNsv5lVZHXzUN/xFq4XiDMSOWk69M
+         Dl+f8JPEzAA1dBCgkT8/ssw8M92FVA43pnEzRE7ZHzoxOquhEfiJ7M967D5W8gGtWKtV
+         vDKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IExa2o8Boa9pjE5Orm4ScbWwYDm4momCaLQlE8pNxzg=;
-        b=uWIW0UEOvic0H3739Prm6sND8ZKTJP25immXPEREcdi4qlalRhRFv0fpIfRBTLuz8U
-         93IDYZtV1eGtM09zatPtpll7U33F2T2wJaOU2DIUz3QpAgKd+siyVJvZuaOcJqCjhp/K
-         4q2Tg8ajFkV46FEdNusW2XCXr+/DhTSJT9kHV1CC7Kq8nHcIDYJ5PT0cxN4uTVo4f21Y
-         5dnUOs82AZ36bKgrj/nt8V2fJj7yN2hUkoRXSdXpSzXFqa50D8UZ9+ouQrW4/BEqxgrq
-         vSpD7Ga1Y9KnXbNLu5Wah9+Gj+eLav+EiMUauNJE3w/fYb+iMcRu3L3cTXDMUWYiCYvW
-         Hxlw==
-X-Gm-Message-State: AFqh2krTTbEwPQ8ENrXcpi5l/J8lJ2nKJKemPwawLzvwoq6SAboiWvBs
-        NBIyTEYiWPgho3WFh2LvOMfNwEhVurgFYZZqEbzs
-X-Google-Smtp-Source: AMrXdXsqcUbWqkh7g8y2KuCTUSGRtxuwfWoG9onPrk0zc3IKjZWGbyEU34N95hNt2F3AGw0AN97qk7oLhiRy26DMos0=
-X-Received: by 2002:a17:902:cec8:b0:192:6675:8636 with SMTP id
- d8-20020a170902cec800b0019266758636mr2899362plg.15.1673037055482; Fri, 06 Jan
- 2023 12:30:55 -0800 (PST)
+        bh=CwOLnK2ifzFuyr165LNzqz5GnvMFyliD+SS3u04GcaQ=;
+        b=IcGSlNvVVfTs9k67ALnDye7UkduWUBXMKCRtK+3n5drGTxJmdywJrOqhmg0mJgGBl8
+         AIjsP1XEU4ktwDYdlDRiJlIkkv8Cb37U6FAdK9jNsMZHZmL3JbEOGhRATswNM3TxVY/2
+         DxmunKZ7RhDiPSjQF6TNOwMHnD3c4knjWPm2vvOuoCUcw+MLdyXQIFZ5009Vt1tqf/9c
+         5y4H5mU9tTiaoLQkR5DINWmAXrRq6vzRP5haJviaoRT00tA8LFf8VAeXgJFL+kVIWhi2
+         +yw7Zz+qd0WByYehEjxJcm88ooq0SG9rQRd5zjm/U3HEklRP75L3xIg0SO1247UMoHQ+
+         0fdQ==
+X-Gm-Message-State: AFqh2kotya129PSHso0v0C7is4/53J1ZOyKJY+w62o853qI2xGuv01Ow
+        Sl/UXurVtmVDZMNdvi5qRHIFrI8Lf4olEbLKgB+S
+X-Google-Smtp-Source: AMrXdXunbq8svWmpL5uzJpDIG9dH1bnChWXrVS5uoNEeJGgqDMuv7i47INaTjXl1feUFwaMf91aGmisI+GELaFzB0V8=
+X-Received: by 2002:a05:6a00:1345:b0:582:5f1a:97c2 with SMTP id
+ k5-20020a056a00134500b005825f1a97c2mr1477126pfu.3.1673039698452; Fri, 06 Jan
+ 2023 13:14:58 -0800 (PST)
 MIME-Version: 1.0
-References: <20221213033948.73512-1-alexander.kozhevnikov@huawei-partners.com> <20221213033948.73512-2-alexander.kozhevnikov@huawei-partners.com>
-In-Reply-To: <20221213033948.73512-2-alexander.kozhevnikov@huawei-partners.com>
+References: <20221221141007.2579770-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20221221141007.2579770-1-roberto.sassu@huaweicloud.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 6 Jan 2023 15:30:43 -0500
-Message-ID: <CAHC9VhRHK19tn4wepQsSk2sJKqeoO3Wv7niMePjzk0BFkpra=A@mail.gmail.com>
-Subject: Re: [PATCH 1/1] [RFC] SELINUX: Remove obsolete deferred inode
- security init list.
-To:     Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
-Cc:     linux-security-module@vger.kernel.org,
-        jamorris@linux.microsoft.com, selinux@vger.kernel.org,
-        stephen.smalley.work@gmail.com, artem.kuzin@huawei.com,
-        hw.likun@huawei.com, xiujianfeng@huawei.com, yusongping@huawei.com,
-        hukeping@huawei.com, konstantin.meskhidze@huawei.com
+Date:   Fri, 6 Jan 2023 16:14:47 -0500
+Message-ID: <CAHC9VhQUAuF-Fan72j7BOqOdLE=B=mJpJ_GpR5p5cUmXruYT=Q@mail.gmail.com>
+Subject: Re: [PATCH v2] security: Restore passing final prot to ima_file_mmap()
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, zohar@linux.ibm.com
+Cc:     jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 12, 2022 at 10:40 PM Alexander Kozhevnikov
-<alexander.kozhevnikov@huawei-partners.com> wrote:
+On Wed, Dec 21, 2022 at 9:10 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
 >
-> This patch is a proposed code optimization for SELinux:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 >
-> 1) Each inode has SELinux security structure attached
->    to it, this one need to be initialized at some point.
-> 2) This initialization is done by the function
->    inode_doinit_with_dentry ( ).
-> 3) In the kernel releases started from some point in the past
->    this function (2) is always called normally from function
->    __inode_security_revalidate ( ).
-> 4) Which in turn is always called  from inode_security ( ), which
->    is a base point for any selinux calls and always called on
->    any access to any inode except a few special cases when
->    _inode_security_novalidate ( ) is used.
-> 5) Inode security structure initialization can be done only after
->    SELinux is fully initialized and policy is loaded.
-> 6) So, for this purpose there was a special defeferred inode security
->    initialization list protected by a spinlock implemented, which was
->    populated instead of isec initialization in function
->    inode_doinit_with_dentry ( ), if it was called before SELinux full
->    initialization, and processed at the time when SELinux policy load
->    occurred by calling again inode_doinit_with_dentry ( ) on each inode
->    in this list.
-> 7) This list was a part of a default initialization logic before (3) was
->    implemented, but now, taking into account new mechanism implemented
->    with current approach of inode security revalidation on each access
->    (4)-(3)-(2), it looks obsolete and not needed anymore.
-> 8) So deferred initialization, this list and code associated with it can
->    be safely removed now, as anyway, if inode isec was not initialized
->    before it will be processed on any next inode access.
-> 9) Another case for calling inode_doinit_with_dentry( ) is when a new
->    dentry is created. This is done by call from d_instantiate( ). When
->    the deferred initialization list is removed it would be useful to
->    also check for SELinux initialization status here before calling
->    inode_doinit_with_dentry( ) like it is done in
->    __inode_security_revalidate( ).
-> 10) There are two possible positive consequences from this removal:
->      a. More clean and simple code, less memory consumption;
->      b. This deferred initialization in some cases (for example SELinux
->         was switched on manually after system was up quite a long time)
->         could take some significant time to process, i.e. system looks
->         hung for some notable time. And now this is avoided.
+> Commit 98de59bfe4b2f ("take calculation of final prot in
+> security_mmap_file() into a helper") moved the code to update prot with the
+> actual protection flags to be granted to the requestor by the kernel to a
+> helper called mmap_prot(). However, the patch didn't update the argument
+> passed to ima_file_mmap(), making it receive the requested prot instead of
+> the final computed prot.
 >
-> Signed-off-by: Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
+> A possible consequence is that files mmapped as executable might not be
+> measured/appraised if PROT_EXEC is not requested but subsequently added in
+> the final prot.
+>
+> Replace prot with mmap_prot(file, prot) as the second argument of
+> ima_file_mmap() to restore the original behavior.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 98de59bfe4b2 ("take calculation of final prot in security_mmap_file() into a helper")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > ---
->  security/selinux/hooks.c          | 91 ++++---------------------------
->  security/selinux/include/objsec.h |  3 -
->  2 files changed, 11 insertions(+), 83 deletions(-)
+>  security/security.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/security/security.c b/security/security.c
+> index d1571900a8c7..0d2359d588a1 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1666,7 +1666,7 @@ int security_mmap_file(struct file *file, unsigned long prot,
+>                                         mmap_prot(file, prot), flags);
+>         if (ret)
+>                 return ret;
+> -       return ima_file_mmap(file, prot);
+> +       return ima_file_mmap(file, mmap_prot(file, prot));
+>  }
 
-Merged into selinux/next with some minor style and grammar fixes,
-thanks Alexander!
+This seems like a reasonable fix, although as the original commit is
+~10 years old at this point I am a little concerned about the impact
+this might have on IMA.  Mimi, what do you think?
 
--- 
+Beyond that, my only other comment would be to only call mmap_prot()
+once and cache the results in a local variable.  You could also fix up
+some of the ugly indentation crimes in security_mmap_file() while you
+are at it, e.g. something like this:
+
+diff --git a/security/security.c b/security/security.c
+index d1571900a8c7..2f9cad9ecac8 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1662,11 +1662,12 @@ int security_mmap_file(struct file *file, unsigned long
+prot,
+                       unsigned long flags)
+{
+       int ret;
+-       ret = call_int_hook(mmap_file, 0, file, prot,
+-                                       mmap_prot(file, prot), flags);
++       unsigned long prot_adj = mmap_prot(file, prot);
++
++       ret = call_int_hook(mmap_file, 0, file, prot, prot_adj, flags);
+       if (ret)
+               return ret;
+-       return ima_file_mmap(file, prot);
++       return ima_file_mmap(file, prot_adj);
+}
+
+--
 paul-moore.com
