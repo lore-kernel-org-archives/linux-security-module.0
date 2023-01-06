@@ -2,101 +2,132 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7EAC63797
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Jan 2023 21:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67468C61DB3
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Jan 2023 22:33:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236319AbjAFVWV (ORCPT
+        id S234216AbjAFWdU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Jan 2023 16:22:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58118 "EHLO
+        Fri, 6 Jan 2023 17:33:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236680AbjAFVVp (ORCPT
+        with ESMTP id S232530AbjAFWdT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Jan 2023 16:21:45 -0500
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3665840BF
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Jan 2023 13:21:37 -0800 (PST)
-Received: by mail-pg1-x530.google.com with SMTP id g68so908684pgc.11
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Jan 2023 13:21:37 -0800 (PST)
+        Fri, 6 Jan 2023 17:33:19 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E4C887287
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Jan 2023 14:33:17 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id fz16-20020a17090b025000b002269d6c2d83so6751344pjb.0
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Jan 2023 14:33:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nscYWIrRbImg5p/QoRk2LSGrqlyTf2VI1IplInec8Wc=;
-        b=OFMqJwDh4LPlA8Zz0KkW+6L0lbDp5CBZT442htKuEMpSYVMwigNk/wZNJ/o4hBuaFh
-         ajmV8QQVjaoo5threYy36tdtqt1EhF9E/zt71sO8JeN61VKNPFhixgkgl/eltSBtaFkD
-         mjk3bqGc5Nnb4VCF32DJ5EmUwQsprMpdIsTJAq/GAIcvAHfhhxqBaVHcLN4YHWNHJc87
-         PIIbKEX/IeSAMbdHXkLSrbhTALuSspTTs/2+rG7mOYc1S/yOB4NR2FKJyMTm/L1S5sMG
-         rgT4LlTO+ZI8onf3a0CGKwe9b5KovL+jO7iWAPBiZaG82cAt3hksehXJrTae7Gp6bFnj
-         HioA==
+        bh=RD6ZDoUM0I8vJAaSTRhVYR9EsavHz+CRbGdgjyWSZ0s=;
+        b=ecqXT4fVUQPppYh+nOFOJQuOhbP5ZWXP36MzDt+QbBjTxdlC9EY48EPcr4auVEacLA
+         CtOvbBF86sbDxOorauKX3Z4TpbYPV+ZmY9di3o1bMbU5GbPT9iSGlDl4TVvCxBK6lz4k
+         7YuKhUP5Fq9LkSZY5asRbFyB2LPxv2tH/vcafmRhIa2KGndwGFjqMsQpX2Y0mq84RpfW
+         z1Cp6eF9xWunRbukEPppBk1i21zejOC3Zr1IMo1wei5HgLXlkdsYS9k5hgHvrMW4l4eK
+         2viyPcet80xamjCB1f1+84vnQnpNbBhzvaFlT8V1g04CmEq9bAo1uOIMQD6YH1/V3jg1
+         Q/JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nscYWIrRbImg5p/QoRk2LSGrqlyTf2VI1IplInec8Wc=;
-        b=zDxpcKiuNHDKwwclduS5qXxezjOv19MBx1mgb3wCrCDuavZD2Uxwl+mE4YG9Atuinr
-         CkCxTeExY36LK3RbbrRPuDpE0crcb3PDGA1LI43feUXePRBb8Nu5hp5yoeebWCjMCvfm
-         H1myQqh7tc32/E3JRTsN2IV1kLu2AtkorPfEOTOsQ9Cx1eTNtMEaYJjSwvXWgWio5PZz
-         XF6IZtCqaUjkW4AFZA1Ya+oZJslmNTmHA7Y/an4A9r2sblROSWki1G3sxV6661pKIOok
-         J0aAVR3qiqfDrbGZf5lFW9W8Pfk/v20DZUtIhrG1GMs/fHF3arbmbRMCP+c+0UTaGMVK
-         YGMA==
-X-Gm-Message-State: AFqh2kpTqgj0aeu2GxA8rz7jRD3UShTEu7V/Udy1FR5HmxVo9OoEgL0K
-        aKfoEGJjssaXufAoT0QBd5cqPHq4TO0g/FWpbx4c
-X-Google-Smtp-Source: AMrXdXvkkuKmNAQAxLd52KKekhGg5ivFAYkK2Xs/NEmo0uPlOMRrJOs8uvswb1oxToVMHYh+Nap64bsEhlypn23a1Vw=
-X-Received: by 2002:a63:db51:0:b0:477:96e2:9065 with SMTP id
- x17-20020a63db51000000b0047796e29065mr3301051pgi.533.1673040096986; Fri, 06
- Jan 2023 13:21:36 -0800 (PST)
+        bh=RD6ZDoUM0I8vJAaSTRhVYR9EsavHz+CRbGdgjyWSZ0s=;
+        b=dhTY9PLhrlHtZb+NyDUmIyoxgj2uX7p9uluh9kOft5OZZjPEcF/7W64DJQ9h7IV3go
+         pcfhgXhBgLiCRWJAeTaLYD5EfgVY23QKcn6Ojlg+2WRq7QUR89l45lwgFG2EWwiGe3ZA
+         PfiC7NXM2Qz/D8L53gRtRnNIO5Oe7R/elpqXJj7JCkku3bCeSW82ODBCgBY55v6nqjc7
+         2uJwcWdgA6fQTx1e+xnk1M2cNGCCDMOVEndz1ikW8ohy+wgtM6/Uc1mnFLrf1kXi7uhT
+         Nr9nYY9GTgDR/Id405tljT0qYvh75pkhbZlQSL2KRobAlnmpkam6MgUeMVEgdbFghyAw
+         vMjQ==
+X-Gm-Message-State: AFqh2kq5ynZ3CY23bJYd5a+0dhWHpoXfPQwaj/7zLJj+ad05H932qW6i
+        448VpTFWooGgp2TGuVDGrr5oT9QXNjxtwLrlBXhH
+X-Google-Smtp-Source: AMrXdXu4Xi5uqudWmYRvgmf5UcuvRHwD1XbPIyssTf++MrkiVh6KgdHqvgjiCH1bKr1bHoq7nL7pT4FKrbqLDhTCO08=
+X-Received: by 2002:a17:902:cec8:b0:192:6675:8636 with SMTP id
+ d8-20020a170902cec800b0019266758636mr2921296plg.15.1673044396858; Fri, 06 Jan
+ 2023 14:33:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20230102204525.4399-1-rdunlap@infradead.org>
-In-Reply-To: <20230102204525.4399-1-rdunlap@infradead.org>
+References: <20221213033948.73512-1-alexander.kozhevnikov@huawei-partners.com>
+ <20221213033948.73512-2-alexander.kozhevnikov@huawei-partners.com> <CAHC9VhRHK19tn4wepQsSk2sJKqeoO3Wv7niMePjzk0BFkpra=A@mail.gmail.com>
+In-Reply-To: <CAHC9VhRHK19tn4wepQsSk2sJKqeoO3Wv7niMePjzk0BFkpra=A@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 6 Jan 2023 16:21:25 -0500
-Message-ID: <CAHC9VhSGTKKbQkhjQcpfYxsh=9z-TzrWaiiGmNWqt8jAgD8xKg@mail.gmail.com>
-Subject: Re: [PATCH] ima: fix ima_delete_rules() kernel-doc warning
-To:     Randy Dunlap <rdunlap@infradead.org>
+Date:   Fri, 6 Jan 2023 17:33:05 -0500
+Message-ID: <CAHC9VhRTdkqv2CGbUX0BM4A3Mxda7i2tSVfPBMq=JKxmz79ohg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] [RFC] SELINUX: Remove obsolete deferred inode
+ security init list.
+To:     Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
 Cc:     linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
+        jamorris@linux.microsoft.com, selinux@vger.kernel.org,
+        stephen.smalley.work@gmail.com, artem.kuzin@huawei.com,
+        hw.likun@huawei.com, xiujianfeng@huawei.com, yusongping@huawei.com,
+        hukeping@huawei.com, konstantin.meskhidze@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 2, 2023 at 3:45 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+On Fri, Jan 6, 2023 at 3:30 PM Paul Moore <paul@paul-moore.com> wrote:
 >
-> Use correct kernel-doc syntax in the function description to
-> prevent a kernel-doc warning:
+> On Mon, Dec 12, 2022 at 10:40 PM Alexander Kozhevnikov
+> <alexander.kozhevnikov@huawei-partners.com> wrote:
+> >
+> > This patch is a proposed code optimization for SELinux:
+> >
+> > 1) Each inode has SELinux security structure attached
+> >    to it, this one need to be initialized at some point.
+> > 2) This initialization is done by the function
+> >    inode_doinit_with_dentry ( ).
+> > 3) In the kernel releases started from some point in the past
+> >    this function (2) is always called normally from function
+> >    __inode_security_revalidate ( ).
+> > 4) Which in turn is always called  from inode_security ( ), which
+> >    is a base point for any selinux calls and always called on
+> >    any access to any inode except a few special cases when
+> >    _inode_security_novalidate ( ) is used.
+> > 5) Inode security structure initialization can be done only after
+> >    SELinux is fully initialized and policy is loaded.
+> > 6) So, for this purpose there was a special defeferred inode security
+> >    initialization list protected by a spinlock implemented, which was
+> >    populated instead of isec initialization in function
+> >    inode_doinit_with_dentry ( ), if it was called before SELinux full
+> >    initialization, and processed at the time when SELinux policy load
+> >    occurred by calling again inode_doinit_with_dentry ( ) on each inode
+> >    in this list.
+> > 7) This list was a part of a default initialization logic before (3) was
+> >    implemented, but now, taking into account new mechanism implemented
+> >    with current approach of inode security revalidation on each access
+> >    (4)-(3)-(2), it looks obsolete and not needed anymore.
+> > 8) So deferred initialization, this list and code associated with it can
+> >    be safely removed now, as anyway, if inode isec was not initialized
+> >    before it will be processed on any next inode access.
+> > 9) Another case for calling inode_doinit_with_dentry( ) is when a new
+> >    dentry is created. This is done by call from d_instantiate( ). When
+> >    the deferred initialization list is removed it would be useful to
+> >    also check for SELinux initialization status here before calling
+> >    inode_doinit_with_dentry( ) like it is done in
+> >    __inode_security_revalidate( ).
+> > 10) There are two possible positive consequences from this removal:
+> >      a. More clean and simple code, less memory consumption;
+> >      b. This deferred initialization in some cases (for example SELinux
+> >         was switched on manually after system was up quite a long time)
+> >         could take some significant time to process, i.e. system looks
+> >         hung for some notable time. And now this is avoided.
+> >
+> > Signed-off-by: Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
+> > ---
+> >  security/selinux/hooks.c          | 91 ++++---------------------------
+> >  security/selinux/include/objsec.h |  3 -
+> >  2 files changed, 11 insertions(+), 83 deletions(-)
 >
-> security/integrity/ima/ima_policy.c:1964: warning: expecting prototype for ima_delete_rules() called to cleanup invalid in(). Prototype was for ima_delete_rules() instead
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Mimi Zohar <zohar@linux.ibm.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: linux-integrity@vger.kernel.org
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> ---
->  security/integrity/ima/ima_policy.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Merged into selinux/next with some minor style and grammar fixes,
+> thanks Alexander!
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
+Unfortunately I just had to back this commit out of selinux/next as
+the automated testing using the selinux-testsuite failed on my Fedora
+Rawhide test system failed.
 
-> diff -- a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -1955,7 +1955,8 @@ ssize_t ima_parse_add_rule(char *rule)
->  }
->
->  /**
-> - * ima_delete_rules() called to cleanup invalid in-flight policy.
-> + * ima_delete_rules() - called to cleanup invalid in-flight policy.
-> + *
->   * We don't need locking as we operate on the temp list, which is
->   * different from the active one.  There is also only one user of
->   * ima_delete_rules() at a time.
+Please verify that this patch passes the selinux-testsuite on a modern
+Fedora Rawhide install using Linux v6.2-rc2 as a base.
 
 -- 
 paul-moore.com
