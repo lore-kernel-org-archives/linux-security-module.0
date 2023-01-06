@@ -2,91 +2,122 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97848C54EBD
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Jan 2023 19:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1C9C61DB3
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Jan 2023 20:31:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235699AbjAFTed (ORCPT
+        id S230511AbjAFUa6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Jan 2023 14:34:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32944 "EHLO
+        Fri, 6 Jan 2023 15:30:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235695AbjAFTec (ORCPT
+        with ESMTP id S229670AbjAFUa5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Jan 2023 14:34:32 -0500
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D58F73E26
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Jan 2023 11:34:30 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NpYSN6SSpzMqSLD;
-        Fri,  6 Jan 2023 20:34:28 +0100 (CET)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4NpYSN1rhczMppLZ;
-        Fri,  6 Jan 2023 20:34:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1673033668;
-        bh=JzxSVtHxsNf7DCh3RJGY5yozWQzU5+fJT9j9a+NBEA0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=OPh/vQMVD0ju/pm9Vf/ndqe7dNWVZULAo760kZ1iiqSzGI/IbBdNKyNDoeDNAZK1k
-         nLNDtsEUn2k/xuMEnZszNdqkmUvR3JAMR3gxmJZpUC4ySO3Zj0mG1dDFGfmSfBwHw5
-         zVftRP9OEkeeBrD12OnjD9jWyqiSnBVS0YPpXuVA=
-Message-ID: <5c941be9-ac6a-d259-997e-13fdff09aeb4@digikod.net>
-Date:   Fri, 6 Jan 2023 20:34:27 +0100
+        Fri, 6 Jan 2023 15:30:57 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02F923C724
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Jan 2023 12:30:56 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id p24so2821388plw.11
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Jan 2023 12:30:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IExa2o8Boa9pjE5Orm4ScbWwYDm4momCaLQlE8pNxzg=;
+        b=fmQL/ZDCbRSR6Yf3pC3jbj4vR1v7x3506n44zHHZyqq56aULBpt0dqEDdzn4JJz4AN
+         7u83tfulXb3XFYt+dPS8T9LG73DJNZmRNG6BaJgLHOfLa1JVY2EKpqP1Yr4w9XRTJcT4
+         siWuiwXCCG3GlIjeP5nCQ4S6oB+Q74h0KxRzD042YfnOk/IZjY9whcpEZa1vLp0N3IhP
+         pUp00BsnDLtF6i8ltUgB+DLmF6Bdk8CU8374zTSHPOl5DITi0HiBx78cJ315stbXnR6c
+         opteBNScRTe6nFF3sIj7FTKn7uUQ10uGU6ISzCEbyZLN3Us2zF7jT6MDmP0XLIn2vrod
+         qZfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IExa2o8Boa9pjE5Orm4ScbWwYDm4momCaLQlE8pNxzg=;
+        b=uWIW0UEOvic0H3739Prm6sND8ZKTJP25immXPEREcdi4qlalRhRFv0fpIfRBTLuz8U
+         93IDYZtV1eGtM09zatPtpll7U33F2T2wJaOU2DIUz3QpAgKd+siyVJvZuaOcJqCjhp/K
+         4q2Tg8ajFkV46FEdNusW2XCXr+/DhTSJT9kHV1CC7Kq8nHcIDYJ5PT0cxN4uTVo4f21Y
+         5dnUOs82AZ36bKgrj/nt8V2fJj7yN2hUkoRXSdXpSzXFqa50D8UZ9+ouQrW4/BEqxgrq
+         vSpD7Ga1Y9KnXbNLu5Wah9+Gj+eLav+EiMUauNJE3w/fYb+iMcRu3L3cTXDMUWYiCYvW
+         Hxlw==
+X-Gm-Message-State: AFqh2krTTbEwPQ8ENrXcpi5l/J8lJ2nKJKemPwawLzvwoq6SAboiWvBs
+        NBIyTEYiWPgho3WFh2LvOMfNwEhVurgFYZZqEbzs
+X-Google-Smtp-Source: AMrXdXsqcUbWqkh7g8y2KuCTUSGRtxuwfWoG9onPrk0zc3IKjZWGbyEU34N95hNt2F3AGw0AN97qk7oLhiRy26DMos0=
+X-Received: by 2002:a17:902:cec8:b0:192:6675:8636 with SMTP id
+ d8-20020a170902cec800b0019266758636mr2899362plg.15.1673037055482; Fri, 06 Jan
+ 2023 12:30:55 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v8 11/12] samples/landlock: Add network demo
-Content-Language: en-US
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, artem.kuzin@huawei.com
-References: <20221021152644.155136-1-konstantin.meskhidze@huawei.com>
- <20221021152644.155136-12-konstantin.meskhidze@huawei.com>
- <2ff97355-18ef-e539-b4c1-720cd83daf1d@digikod.net>
- <94a8ef89-b59e-d218-77a1-bf2f9d4096c7@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <94a8ef89-b59e-d218-77a1-bf2f9d4096c7@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20221213033948.73512-1-alexander.kozhevnikov@huawei-partners.com> <20221213033948.73512-2-alexander.kozhevnikov@huawei-partners.com>
+In-Reply-To: <20221213033948.73512-2-alexander.kozhevnikov@huawei-partners.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 6 Jan 2023 15:30:43 -0500
+Message-ID: <CAHC9VhRHK19tn4wepQsSk2sJKqeoO3Wv7niMePjzk0BFkpra=A@mail.gmail.com>
+Subject: Re: [PATCH 1/1] [RFC] SELINUX: Remove obsolete deferred inode
+ security init list.
+To:     Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
+Cc:     linux-security-module@vger.kernel.org,
+        jamorris@linux.microsoft.com, selinux@vger.kernel.org,
+        stephen.smalley.work@gmail.com, artem.kuzin@huawei.com,
+        hw.likun@huawei.com, xiujianfeng@huawei.com, yusongping@huawei.com,
+        hukeping@huawei.com, konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Dec 12, 2022 at 10:40 PM Alexander Kozhevnikov
+<alexander.kozhevnikov@huawei-partners.com> wrote:
+>
+> This patch is a proposed code optimization for SELinux:
+>
+> 1) Each inode has SELinux security structure attached
+>    to it, this one need to be initialized at some point.
+> 2) This initialization is done by the function
+>    inode_doinit_with_dentry ( ).
+> 3) In the kernel releases started from some point in the past
+>    this function (2) is always called normally from function
+>    __inode_security_revalidate ( ).
+> 4) Which in turn is always called  from inode_security ( ), which
+>    is a base point for any selinux calls and always called on
+>    any access to any inode except a few special cases when
+>    _inode_security_novalidate ( ) is used.
+> 5) Inode security structure initialization can be done only after
+>    SELinux is fully initialized and policy is loaded.
+> 6) So, for this purpose there was a special defeferred inode security
+>    initialization list protected by a spinlock implemented, which was
+>    populated instead of isec initialization in function
+>    inode_doinit_with_dentry ( ), if it was called before SELinux full
+>    initialization, and processed at the time when SELinux policy load
+>    occurred by calling again inode_doinit_with_dentry ( ) on each inode
+>    in this list.
+> 7) This list was a part of a default initialization logic before (3) was
+>    implemented, but now, taking into account new mechanism implemented
+>    with current approach of inode security revalidation on each access
+>    (4)-(3)-(2), it looks obsolete and not needed anymore.
+> 8) So deferred initialization, this list and code associated with it can
+>    be safely removed now, as anyway, if inode isec was not initialized
+>    before it will be processed on any next inode access.
+> 9) Another case for calling inode_doinit_with_dentry( ) is when a new
+>    dentry is created. This is done by call from d_instantiate( ). When
+>    the deferred initialization list is removed it would be useful to
+>    also check for SELinux initialization status here before calling
+>    inode_doinit_with_dentry( ) like it is done in
+>    __inode_security_revalidate( ).
+> 10) There are two possible positive consequences from this removal:
+>      a. More clean and simple code, less memory consumption;
+>      b. This deferred initialization in some cases (for example SELinux
+>         was switched on manually after system was up quite a long time)
+>         could take some significant time to process, i.e. system looks
+>         hung for some notable time. And now this is avoided.
+>
+> Signed-off-by: Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
+> ---
+>  security/selinux/hooks.c          | 91 ++++---------------------------
+>  security/selinux/include/objsec.h |  3 -
+>  2 files changed, 11 insertions(+), 83 deletions(-)
 
-On 05/01/2023 04:46, Konstantin Meskhidze (A) wrote:
-> 
-> 
-> 11/16/2022 5:25 PM, Mickaël Salaün пишет:
+Merged into selinux/next with some minor style and grammar fixes,
+thanks Alexander!
 
-[...]
-
->>
->>>    		fprintf(stderr,
->>>    			"Hint: You should update the running kernel "
->>>    			"to leverage Landlock features "
->>> @@ -259,16 +342,36 @@ int main(const int argc, char *const argv[], char *const *const envp)
->>>    	access_fs_ro &= ruleset_attr.handled_access_fs;
->>>    	access_fs_rw &= ruleset_attr.handled_access_fs;
->>>
->>> +	/* Removes bind access attribute if not supported by a user. */
->>> +	env_port_name = getenv(ENV_TCP_BIND_NAME);
->>> +	if (!env_port_name) {
->>
->> You can move this logic at the populate_ruleset_net() call site and
->> update this helper to not call getenv() twice for the same variable.
-> 
->     But here I exclude ruleset attributes, not rule itself. It will break
->     the logic: creating a ruleset then applying rules.
->     I suggest to leave here as its.
-
-Right, but you can still avoid the duplicate getenv() calls.
-
-
->>
->>
->>> +		access_net_tcp &= ~LANDLOCK_ACCESS_NET_BIND_TCP;
->>> +	}
->>> +	/* Removes connect access attribute if not supported by a user. */
->>> +	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
->>> +	if (!env_port_name) {
->>> +		access_net_tcp &= ~LANDLOCK_ACCESS_NET_CONNECT_TCP;
->>> +	}
->>> +	ruleset_attr.handled_access_net &= access_net_tcp;
+-- 
+paul-moore.com
