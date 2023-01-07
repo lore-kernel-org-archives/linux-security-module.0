@@ -2,132 +2,105 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67468C61DB3
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Jan 2023 22:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 868E1C54EBE
+	for <linux-security-module@archiver.kernel.org>; Sat,  7 Jan 2023 07:48:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234216AbjAFWdU (ORCPT
+        id S229639AbjAGHr6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Jan 2023 17:33:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55778 "EHLO
+        Sat, 7 Jan 2023 02:47:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232530AbjAFWdT (ORCPT
+        with ESMTP id S229468AbjAGHr5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Jan 2023 17:33:19 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E4C887287
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Jan 2023 14:33:17 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id fz16-20020a17090b025000b002269d6c2d83so6751344pjb.0
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Jan 2023 14:33:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RD6ZDoUM0I8vJAaSTRhVYR9EsavHz+CRbGdgjyWSZ0s=;
-        b=ecqXT4fVUQPppYh+nOFOJQuOhbP5ZWXP36MzDt+QbBjTxdlC9EY48EPcr4auVEacLA
-         CtOvbBF86sbDxOorauKX3Z4TpbYPV+ZmY9di3o1bMbU5GbPT9iSGlDl4TVvCxBK6lz4k
-         7YuKhUP5Fq9LkSZY5asRbFyB2LPxv2tH/vcafmRhIa2KGndwGFjqMsQpX2Y0mq84RpfW
-         z1Cp6eF9xWunRbukEPppBk1i21zejOC3Zr1IMo1wei5HgLXlkdsYS9k5hgHvrMW4l4eK
-         2viyPcet80xamjCB1f1+84vnQnpNbBhzvaFlT8V1g04CmEq9bAo1uOIMQD6YH1/V3jg1
-         Q/JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RD6ZDoUM0I8vJAaSTRhVYR9EsavHz+CRbGdgjyWSZ0s=;
-        b=dhTY9PLhrlHtZb+NyDUmIyoxgj2uX7p9uluh9kOft5OZZjPEcF/7W64DJQ9h7IV3go
-         pcfhgXhBgLiCRWJAeTaLYD5EfgVY23QKcn6Ojlg+2WRq7QUR89l45lwgFG2EWwiGe3ZA
-         PfiC7NXM2Qz/D8L53gRtRnNIO5Oe7R/elpqXJj7JCkku3bCeSW82ODBCgBY55v6nqjc7
-         2uJwcWdgA6fQTx1e+xnk1M2cNGCCDMOVEndz1ikW8ohy+wgtM6/Uc1mnFLrf1kXi7uhT
-         Nr9nYY9GTgDR/Id405tljT0qYvh75pkhbZlQSL2KRobAlnmpkam6MgUeMVEgdbFghyAw
-         vMjQ==
-X-Gm-Message-State: AFqh2kq5ynZ3CY23bJYd5a+0dhWHpoXfPQwaj/7zLJj+ad05H932qW6i
-        448VpTFWooGgp2TGuVDGrr5oT9QXNjxtwLrlBXhH
-X-Google-Smtp-Source: AMrXdXu4Xi5uqudWmYRvgmf5UcuvRHwD1XbPIyssTf++MrkiVh6KgdHqvgjiCH1bKr1bHoq7nL7pT4FKrbqLDhTCO08=
-X-Received: by 2002:a17:902:cec8:b0:192:6675:8636 with SMTP id
- d8-20020a170902cec800b0019266758636mr2921296plg.15.1673044396858; Fri, 06 Jan
- 2023 14:33:16 -0800 (PST)
+        Sat, 7 Jan 2023 02:47:57 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1352848CD;
+        Fri,  6 Jan 2023 23:47:56 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3DD3B608C3;
+        Sat,  7 Jan 2023 07:47:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F5AAC433D2;
+        Sat,  7 Jan 2023 07:47:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673077675;
+        bh=ePoHU4GENwIfAdeBcPaqU+CazliNAW/mfkD74kveQSE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EARISaexCJgsuI1qYC7HkNS6XgtOzyD2kMMUX93hH15nIeJuIURFAkLiPjsDmfJlU
+         JXVymnYlboNjuQb+asz7oHo5XxbVnkaR8KovfE7B7ctrMMxm077UQ9dgzc4JoJCaWA
+         QUYnburKZuINVt5PNTg4Ur4YYvH5WDX3X6tuh+FYUk/tlUCNQLVY4teitmnvLEUDDb
+         ILBFLtQ5zZ6QEpunjc+HNRaVlDHykUL0Q2AX53F+vjb5jmrRz388DQbC/s/dIAH4kb
+         nm9060g5Lzkd5THkKaXfY3/jOmsj5cfS+XYsvCYFht+N2uUTGO73qq1RiPe3RtGgLU
+         ryiLS1qHG60Sw==
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     linux-kbuild@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Michal Marek <mmarek@suse.cz>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 1/3] tomoyo: fix broken dependency on *.conf.default
+Date:   Sat,  7 Jan 2023 16:47:41 +0900
+Message-Id: <20230107074743.3352242-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20221213033948.73512-1-alexander.kozhevnikov@huawei-partners.com>
- <20221213033948.73512-2-alexander.kozhevnikov@huawei-partners.com> <CAHC9VhRHK19tn4wepQsSk2sJKqeoO3Wv7niMePjzk0BFkpra=A@mail.gmail.com>
-In-Reply-To: <CAHC9VhRHK19tn4wepQsSk2sJKqeoO3Wv7niMePjzk0BFkpra=A@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 6 Jan 2023 17:33:05 -0500
-Message-ID: <CAHC9VhRTdkqv2CGbUX0BM4A3Mxda7i2tSVfPBMq=JKxmz79ohg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] [RFC] SELINUX: Remove obsolete deferred inode
- security init list.
-To:     Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
-Cc:     linux-security-module@vger.kernel.org,
-        jamorris@linux.microsoft.com, selinux@vger.kernel.org,
-        stephen.smalley.work@gmail.com, artem.kuzin@huawei.com,
-        hw.likun@huawei.com, xiujianfeng@huawei.com, yusongping@huawei.com,
-        hukeping@huawei.com, konstantin.meskhidze@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 6, 2023 at 3:30 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Mon, Dec 12, 2022 at 10:40 PM Alexander Kozhevnikov
-> <alexander.kozhevnikov@huawei-partners.com> wrote:
-> >
-> > This patch is a proposed code optimization for SELinux:
-> >
-> > 1) Each inode has SELinux security structure attached
-> >    to it, this one need to be initialized at some point.
-> > 2) This initialization is done by the function
-> >    inode_doinit_with_dentry ( ).
-> > 3) In the kernel releases started from some point in the past
-> >    this function (2) is always called normally from function
-> >    __inode_security_revalidate ( ).
-> > 4) Which in turn is always called  from inode_security ( ), which
-> >    is a base point for any selinux calls and always called on
-> >    any access to any inode except a few special cases when
-> >    _inode_security_novalidate ( ) is used.
-> > 5) Inode security structure initialization can be done only after
-> >    SELinux is fully initialized and policy is loaded.
-> > 6) So, for this purpose there was a special defeferred inode security
-> >    initialization list protected by a spinlock implemented, which was
-> >    populated instead of isec initialization in function
-> >    inode_doinit_with_dentry ( ), if it was called before SELinux full
-> >    initialization, and processed at the time when SELinux policy load
-> >    occurred by calling again inode_doinit_with_dentry ( ) on each inode
-> >    in this list.
-> > 7) This list was a part of a default initialization logic before (3) was
-> >    implemented, but now, taking into account new mechanism implemented
-> >    with current approach of inode security revalidation on each access
-> >    (4)-(3)-(2), it looks obsolete and not needed anymore.
-> > 8) So deferred initialization, this list and code associated with it can
-> >    be safely removed now, as anyway, if inode isec was not initialized
-> >    before it will be processed on any next inode access.
-> > 9) Another case for calling inode_doinit_with_dentry( ) is when a new
-> >    dentry is created. This is done by call from d_instantiate( ). When
-> >    the deferred initialization list is removed it would be useful to
-> >    also check for SELinux initialization status here before calling
-> >    inode_doinit_with_dentry( ) like it is done in
-> >    __inode_security_revalidate( ).
-> > 10) There are two possible positive consequences from this removal:
-> >      a. More clean and simple code, less memory consumption;
-> >      b. This deferred initialization in some cases (for example SELinux
-> >         was switched on manually after system was up quite a long time)
-> >         could take some significant time to process, i.e. system looks
-> >         hung for some notable time. And now this is avoided.
-> >
-> > Signed-off-by: Alexander Kozhevnikov <alexander.kozhevnikov@huawei-partners.com>
-> > ---
-> >  security/selinux/hooks.c          | 91 ++++---------------------------
-> >  security/selinux/include/objsec.h |  3 -
-> >  2 files changed, 11 insertions(+), 83 deletions(-)
->
-> Merged into selinux/next with some minor style and grammar fixes,
-> thanks Alexander!
+If *.conf.default is updated, builtin-policy.h should be rebuilt,
+but this does not work when compiled with O= option.
 
-Unfortunately I just had to back this commit out of selinux/next as
-the automated testing using the selinux-testsuite failed on my Fedora
-Rawhide test system failed.
+[Without this commit]
 
-Please verify that this patch passes the selinux-testsuite on a modern
-Fedora Rawhide install using Linux v6.2-rc2 as a base.
+  $ touch security/tomoyo/policy/exception_policy.conf.default
+  $ make O=/tmp security/tomoyo/
+  make[1]: Entering directory '/tmp'
+    GEN     Makefile
+    CALL    /home/masahiro/ref/linux/scripts/checksyscalls.sh
+    DESCEND objtool
+  make[1]: Leaving directory '/tmp'
 
+[With this commit]
+
+  $ touch security/tomoyo/policy/exception_policy.conf.default
+  $ make O=/tmp security/tomoyo/
+  make[1]: Entering directory '/tmp'
+    GEN     Makefile
+    CALL    /home/masahiro/ref/linux/scripts/checksyscalls.sh
+    DESCEND objtool
+    POLICY  security/tomoyo/builtin-policy.h
+    CC      security/tomoyo/common.o
+    AR      security/tomoyo/built-in.a
+  make[1]: Leaving directory '/tmp'
+
+$(srctree)/ is essential because $(wildcard ) does not follow VPATH.
+
+Fixes: f02dee2d148b ("tomoyo: Do not generate empty policy files")
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ security/tomoyo/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/tomoyo/Makefile b/security/tomoyo/Makefile
+index cca5a3012fee..221eaadffb09 100644
+--- a/security/tomoyo/Makefile
++++ b/security/tomoyo/Makefile
+@@ -10,7 +10,7 @@ endef
+ quiet_cmd_policy  = POLICY  $@
+       cmd_policy  = ($(call do_policy,profile); $(call do_policy,exception_policy); $(call do_policy,domain_policy); $(call do_policy,manager); $(call do_policy,stat)) >$@
+ 
+-$(obj)/builtin-policy.h: $(wildcard $(obj)/policy/*.conf $(src)/policy/*.conf.default) FORCE
++$(obj)/builtin-policy.h: $(wildcard $(obj)/policy/*.conf $(srctree)/$(src)/policy/*.conf.default) FORCE
+ 	$(call if_changed,policy)
+ 
+ $(obj)/common.o: $(obj)/builtin-policy.h
 -- 
-paul-moore.com
+2.34.1
+
