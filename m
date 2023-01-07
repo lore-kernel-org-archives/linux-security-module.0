@@ -2,123 +2,57 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9ED0C61DB3
-	for <linux-security-module@archiver.kernel.org>; Sat,  7 Jan 2023 07:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6079BC46467
+	for <linux-security-module@archiver.kernel.org>; Sat,  7 Jan 2023 12:57:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230454AbjAGHsM (ORCPT
+        id S229941AbjAGM5l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 7 Jan 2023 02:48:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47538 "EHLO
+        Sat, 7 Jan 2023 07:57:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231819AbjAGHsI (ORCPT
+        with ESMTP id S229640AbjAGM5l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 7 Jan 2023 02:48:08 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5240848D7;
-        Fri,  6 Jan 2023 23:48:06 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1760FB81EBD;
-        Sat,  7 Jan 2023 07:48:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C07CC433A0;
-        Sat,  7 Jan 2023 07:47:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673077683;
-        bh=RTLKdjUECYDxN3vnqCPtfGzhyPkDlqfYSeIu5deVu7c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=juaCeWzoPppUgCgLAK5poNkr4NGkQHZChSrHnc6v0NXJUrh/bjqfPkLLJPfoKrS/S
-         Kx2/niq7Ryk1XIu6Vgc7/0AuEl3+yDECZmIlzNMlN0zeSfbGPQngtfly6fFfUy/nmT
-         hVJymkx4kloc6n/XAgK171QkYSC/K0V7H5JzTeuaf1mchFVqjlN6S2lTmr25uAQmym
-         iShi9MiZPF7mrU0/57SbX/qydgO1NYZNsY2Q5z9NAhTWPhb7OnPewDMX3OIlMwJoVf
-         D14jYp1rTpsU65bAx2rjXncUys3JFYCTVcdBINy4xyS5x6YU0gVS5xOBU8e66lT1kV
-         4fSPQ/T5rKP0A==
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     linux-kbuild@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        James Morris <jmorris@namei.org>,
+        Sat, 7 Jan 2023 07:57:41 -0500
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A6C7CDF
+        for <linux-security-module@vger.kernel.org>; Sat,  7 Jan 2023 04:57:40 -0800 (PST)
+Received: from fsav118.sakura.ne.jp (fsav118.sakura.ne.jp [27.133.134.245])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 307Cv83H083864;
+        Sat, 7 Jan 2023 21:57:08 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav118.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp);
+ Sat, 07 Jan 2023 21:57:08 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp)
+Received: from [192.168.1.20] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 307Cv8Jn083861
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 7 Jan 2023 21:57:08 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <bb3be570-610b-24f1-5fa1-0f7d3955b834@I-love.SAKURA.ne.jp>
+Date:   Sat, 7 Jan 2023 21:57:09 +0900
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH 1/3] tomoyo: fix broken dependency on *.conf.default
+Content-Language: en-US
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     linux-kbuild@vger.kernel.org, James Morris <jmorris@namei.org>,
+        Michal Marek <mmarek@suse.cz>,
         Paul Moore <paul@paul-moore.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH 3/3] tomoyo: Omit use of bin2c
-Date:   Sat,  7 Jan 2023 16:47:43 +0900
-Message-Id: <20230107074743.3352242-3-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230107074743.3352242-1-masahiroy@kernel.org>
+        linux-security-module@vger.kernel.org,
+        Kentaro Takeda <takedakn@nttdata.co.jp>
 References: <20230107074743.3352242-1-masahiroy@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20230107074743.3352242-1-masahiroy@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-bin2c was, as its name implies, introduced to convert a binary file to
-C code.
+All patches applied to https://osdn.net/projects/tomoyo/scm/git/tomoyo-test1/ .
 
-However, I did not see any good reason ever for using this tool because
-using the .incbin directive is much faster, and often results in simpler
-code.
-
-Most of the uses of bin2c have been killed, for example:
-
-  - 13610aa908dc ("kernel/configs: use .incbin directive to embed config_data.gz")
-  - 4c0f032d4963 ("s390/purgatory: Omit use of bin2c")
-
-security/tomoyo/Makefile has even less reason for using bin2c because
-the policy files are text data. So, sed is enough for converting them
-to C string literals, and what is nicer, generates human-readable
-builtin-policy.h.
-
-This is the last user of bin2c. After this commit lands, bin2c will be
-removed.
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- security/tomoyo/Kconfig  |  1 -
- security/tomoyo/Makefile | 15 ++++++++-------
- 2 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/security/tomoyo/Kconfig b/security/tomoyo/Kconfig
-index b9f867100a9f..772d2ab58fd1 100644
---- a/security/tomoyo/Kconfig
-+++ b/security/tomoyo/Kconfig
-@@ -7,7 +7,6 @@ config SECURITY_TOMOYO
- 	select SECURITY_PATH
- 	select SECURITY_NETWORK
- 	select SRCU
--	select BUILD_BIN2C
- 	default n
- 	help
- 	  This selects TOMOYO Linux, pathname-based access control.
-diff --git a/security/tomoyo/Makefile b/security/tomoyo/Makefile
-index 1b18a02ccd2e..77358b7655fa 100644
---- a/security/tomoyo/Makefile
-+++ b/security/tomoyo/Makefile
-@@ -2,13 +2,14 @@
- obj-y = audit.o common.o condition.o domain.o environ.o file.o gc.o group.o load_policy.o memory.o mount.o network.o realpath.o securityfs_if.o tomoyo.o util.o
- 
- targets += builtin-policy.h
--define do_policy
--echo "static char tomoyo_builtin_$(1)[] __initdata ="; \
--$(objtree)/scripts/bin2c <$(firstword $(wildcard $(obj)/policy/$(1).conf $(srctree)/$(src)/policy/$(1).conf.default) /dev/null); \
--echo ";"
--endef
--quiet_cmd_policy  = POLICY  $@
--      cmd_policy  = ($(call do_policy,profile); $(call do_policy,exception_policy); $(call do_policy,domain_policy); $(call do_policy,manager); $(call do_policy,stat)) >$@
-+
-+quiet_cmd_policy = POLICY  $@
-+      cmd_policy = { \
-+	$(foreach x, profile exception_policy domain_policy manager stat, \
-+	printf 'static char tomoyo_builtin_$x[] __initdata =\n'; \
-+	sed 's/\(.*\)/\t"\1\\n"/' $(firstword $(filter %/$x.conf %/$x.conf.default, $^) /dev/null);  \
-+	printf '\t"";\n';) \
-+	} > $@
- 
- $(obj)/builtin-policy.h: $(wildcard $(obj)/policy/*.conf $(srctree)/$(src)/policy/*.conf.default) FORCE
- 	$(call if_changed,policy)
--- 
-2.34.1
+Thank you.
 
