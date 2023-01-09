@@ -2,78 +2,62 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D13C5479D
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Jan 2023 09:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66624C54EBE
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Jan 2023 10:02:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233736AbjAIJcV (ORCPT
+        id S230005AbjAIKCQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Jan 2023 04:32:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57960 "EHLO
+        Mon, 9 Jan 2023 05:02:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233318AbjAIJcQ (ORCPT
+        with ESMTP id S234120AbjAIKCJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Jan 2023 04:32:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C65AC63AF
-        for <linux-security-module@vger.kernel.org>; Mon,  9 Jan 2023 01:31:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673256678;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BJS8ger7BTpdH0Zhir+ATtsgZEkWNY0AkL185k+a0FI=;
-        b=DJAZC3iJGc+j1I4WcLXIk0dw6OH+M9YeqMJ1uoOCw1wQiyAdtl6l6z0TRA1RmPmmq+YEds
-        7KZYN/V59Wt/+ozGMtm7ANYCrg6/66qfZIfIlBTHEDv3Wmu67fcMy1H0X7ExWBnS8qBJmf
-        vJKEGJTCgNpT+XVrfTKW2sCk8kvk5Fk=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-625-RiSvjASXMw-KMNZD3ZDwmA-1; Mon, 09 Jan 2023 04:31:15 -0500
-X-MC-Unique: RiSvjASXMw-KMNZD3ZDwmA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3B338101A52E;
-        Mon,  9 Jan 2023 09:31:14 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0753BC16026;
-        Mon,  9 Jan 2023 09:31:09 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20230108171241.GA20314@lst.de>
-References: <20230108171241.GA20314@lst.de> <20230105190741.2405013-1-kbusch@meta.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dhowells@redhat.com, Keith Busch <kbusch@meta.com>,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, davem@davemloft.net,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Paul Moore <paul@paul-moore.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        netdev@vger.kernel.org, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv2 00/12] iov_iter: replace import_single_range with ubuf
+        Mon, 9 Jan 2023 05:02:09 -0500
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 488A4F00D;
+        Mon,  9 Jan 2023 02:02:07 -0800 (PST)
+Received: from fsav118.sakura.ne.jp (fsav118.sakura.ne.jp [27.133.134.245])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 309A1XVK031444;
+        Mon, 9 Jan 2023 19:01:33 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav118.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp);
+ Mon, 09 Jan 2023 19:01:33 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp)
+Received: from [192.168.1.20] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 309A1X7A031439
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 9 Jan 2023 19:01:33 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <d1542ad3-9c9d-90e7-f18c-531cb1547b78@I-love.SAKURA.ne.jp>
+Date:   Mon, 9 Jan 2023 19:01:32 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1880280.1673256668.1@warthog.procyon.org.uk>
-Date:   Mon, 09 Jan 2023 09:31:08 +0000
-Message-ID: <1880281.1673256668@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH] tomoyo: remove a temporary output file
+Content-Language: en-US
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Kentaro Takeda <takedakn@nttdata.co.jp>
+References: <20230109091919.3160916-1-masahiroy@kernel.org>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20230109091919.3160916-1-masahiroy@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-lore.kernel.org doesn't seem to have the patches.
+On 2023/01/09 18:19, Masahiro Yamada wrote:
+> Since this is a general problem, you can leave it to Kbuild instead
+> of introducing unneeded complexity.
 
-https://lore.kernel.org/lkml/20230105190741.2405013-1-kbusch@meta.com/
+> If it is not too late, please squash this.
 
-David
+It is not too late to apply. But how do you handle a case where
+the process who is responsible for deleting incomplete file was
+killed by e.g. OOM-killer?
 
