@@ -2,86 +2,93 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EECCCC54EBD
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Jan 2023 09:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59128C54EBD
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Jan 2023 09:21:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236950AbjAIJGq (ORCPT
+        id S236629AbjAIJVz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Jan 2023 04:06:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42062 "EHLO
+        Mon, 9 Jan 2023 04:21:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231219AbjAIJGW (ORCPT
+        with ESMTP id S236719AbjAIJV0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Jan 2023 04:06:22 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3821B1403C;
-        Mon,  9 Jan 2023 00:58:53 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id ay40so5735726wmb.2;
-        Mon, 09 Jan 2023 00:58:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X8k43ejWCwSThPb14PyffH1MScgx/Rj8NmhWD2SvdR8=;
-        b=qYdZpujy0uVAYU5aoX/jiSqNOwL8KUnFkssUr33i8+mTMUEldErpeyp3EA4eZmQpwH
-         J6+l5f+4aetzGce3oT8RXX2QvORNZXnLMrI0GKsy6oJ1LIhn5s2/H4WETzHb+9i3hJW3
-         qWoaMUSBspPV91UI6GfJd23WNSF12pd28RlJ/2sOYd4TFDkSbPxpXMpxXVjm/zZHb0LA
-         34Nqxkm0Stl8zXFcMHyNExwKxhyaEhL30yncVL0uzBlXd1F5qdVUwd6447TjAuSaDPeU
-         Ito66XcGc5q0Filrno99M/0XZcZVfqBYVZ0+qYgM9D8inhjN9xaeB0F+P6soCrI79WAN
-         B3yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X8k43ejWCwSThPb14PyffH1MScgx/Rj8NmhWD2SvdR8=;
-        b=rCOWaSs73lizjAIWjpqN6sIxXl6C8noBqGndysz6lFMZO4be3nMzMrXr9ZHkR7mda7
-         iILdcJ0ioWWn2f6yv98rO8MY4MJPuHjZkuo1aGtyEpqQFRdiaa37qD7bFkyzKyuXC+2U
-         DYnOv6+/zr9/gcWT68/9gKWD2iAlo9ME2IjSrNAVGSSsElaJhCtbB0GiQOSHw0TD8Liq
-         q5S3ezhU0N+tT5BTFFZ0Itrw3YDqV1QxF3IcxxuM1G9QThb4HTLtR0vWJ4mpS5U3TSMg
-         MV3U6tLStK0gdP2nCaLThAsNpcE+kslHc3QHC9xPXLkfazt4n3IISZ0n93SJ6WV25Rew
-         Y2TQ==
-X-Gm-Message-State: AFqh2kq6rjbEb0I6Y6JnYq45D/JN/RE+MVRLCUptPxDVg7SzSZ5xDx9e
-        e4pLUrbUXct92rKw/JWAxgI=
-X-Google-Smtp-Source: AMrXdXvJ/4X9WqA/3/op5IY4we4OL8jRADxlfOD2HPLUY30gMVw3fnauVEfNMHdhnNUKytb34Ch7PQ==
-X-Received: by 2002:a05:600c:35cc:b0:3d3:3c93:af34 with SMTP id r12-20020a05600c35cc00b003d33c93af34mr55836411wmq.2.1673254731784;
-        Mon, 09 Jan 2023 00:58:51 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id e10-20020adfe38a000000b002bc7fcf08ddsm611698wrm.103.2023.01.09.00.58.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jan 2023 00:58:51 -0800 (PST)
-Date:   Mon, 9 Jan 2023 11:58:48 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-sparse@vger.kernel.org, willemdebruijn.kernel@gmail.com,
-        gnoack3000@gmail.com, linux-security-module@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        artem.kuzin@huawei.com, Linux API <linux-api@vger.kernel.org>,
-        "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-Subject: Re: [PATCH v8 07/12] landlock: Add network rules support
-Message-ID: <Y7vXSAGHf08p2Zbm@kadam>
-References: <20221021152644.155136-1-konstantin.meskhidze@huawei.com>
- <20221021152644.155136-8-konstantin.meskhidze@huawei.com>
- <49391484-7401-e7c7-d909-3bd6bd024731@digikod.net>
- <9a6ea6ac-525d-e058-5867-0794a99b19a3@huawei.com>
- <47fedda8-a13c-b62f-251f-b62508964bb0@digikod.net>
- <4aa29433-e7f9-f225-5bdf-c80638c936e8@huawei.com>
+        Mon, 9 Jan 2023 04:21:26 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3410E9B;
+        Mon,  9 Jan 2023 01:19:33 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 7CF04CE0B56;
+        Mon,  9 Jan 2023 09:19:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE62C433D2;
+        Mon,  9 Jan 2023 09:19:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673255969;
+        bh=uKoGDZevx+gVbLfmMYY5TwRvq3hzb+5W3E7t3luGh1A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cu0bjgAitfPvflSUJnHrp6QmYi0GE/Ivp/cLcHFBiYYCZKJzzmqa30YoiR8gOknta
+         jrmVw1Ts/hSx96TAliBUqVSE1XnU5rYiYhfXDeUlK56Qt/0utykZPeB/gXztTW1fPt
+         6Z/NzC6gGjKYvl0WnZ3M8sK/PcENnLcYRmHhz2nI4+Ta/xxybuob9quCnkbi+05I45
+         br3CJQkTOPj7oVTTD2c3vdS8EaLKA04i3X+SQdJyNd9HizbYP+lFR5j6S/GFxNgkzv
+         RRY2rJXNc3TgNWGPjrjbEelogtX5u/XFGOBvIFLrWibkYgZe46j23F6kP51feUQfg6
+         w22Gm8VsjsuKQ==
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     linux-kernel@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH] tomoyo: remove a temporary output file
+Date:   Mon,  9 Jan 2023 18:19:18 +0900
+Message-Id: <20230109091919.3160916-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4aa29433-e7f9-f225-5bdf-c80638c936e8@huawei.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-These warnings seem like something I have seen before.  Maybe it was an
-issue with _Generic() support?
+Commit 8ab5bc40aad4 ("tomoyo: Omit use of bin2c") was locally modified
+on top of the patch I submitted.
 
-Are you really sure you're running the latest git version of Sparse?
+I recommend writing to the target directly.
 
-I tested this patch with the latest version of Sparse on my system and
-it worked fine.
+If the recipe command fails, Kbuild will automatically delete the target
+because scripts/Kbuild.include defines .DELETE_ON_ERROR.
 
-regards,
-dan carpenter
+If the recipe command is interrupted, GNU Make will automatically
+delete the target if it has been partially updated. There was a corner
+case where the target was not cleaned up, but it was fixed by Commit
+a7f3257da8a8 ("kbuild: remove the target in signal traps when
+interrupted").
+
+Since this is a general problem, you can leave it to Kbuild instead
+of introducing unneeded complexity.
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+If it is not too late, please squash this.
+
+ security/tomoyo/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/tomoyo/Makefile b/security/tomoyo/Makefile
+index 458cf5e2fa25..884ff155edc3 100644
+--- a/security/tomoyo/Makefile
++++ b/security/tomoyo/Makefile
+@@ -9,7 +9,7 @@ quiet_cmd_policy = POLICY  $@
+ 	printf 'static char tomoyo_builtin_$x[] __initdata =\n'; \
+ 	sed -e 's/\\/\\\\/g' -e 's/\"/\\"/g' -e 's/\(.*\)/\t"\1\\n"/' -- $(firstword $(filter %/$x.conf %/$x.conf.default, $^) /dev/null);  \
+ 	printf '\t"";\n';) \
+-	} > $@.tmp && mv $@.tmp $@
++	} > $@
+ 
+ $(obj)/builtin-policy.h: $(wildcard $(obj)/policy/*.conf $(srctree)/$(src)/policy/*.conf.default) FORCE
+ 	$(call if_changed,policy)
+-- 
+2.34.1
 
