@@ -2,107 +2,97 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9252C61DB3
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Jan 2023 03:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C82F8C5479D
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Jan 2023 07:57:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236657AbjAIDxu (ORCPT
+        id S236374AbjAIH5o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 8 Jan 2023 22:53:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46494 "EHLO
+        Mon, 9 Jan 2023 02:57:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236712AbjAIDxA (ORCPT
+        with ESMTP id S236526AbjAIH5R (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 8 Jan 2023 22:53:00 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A947611821
-        for <linux-security-module@vger.kernel.org>; Sun,  8 Jan 2023 19:51:54 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id n12so7480640pjp.1
-        for <linux-security-module@vger.kernel.org>; Sun, 08 Jan 2023 19:51:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aPLGdbD4w3KTNSXThRBpSsjS7f9R9UPFXQ4iA1FrtvI=;
-        b=nPPmYnBXei1dfYlS1rdCM2vB2N1VwVs01sjf7uRRBjye8S+HOHefmxparAACWmM1WD
-         aMAqF3SCZOzl/6oJTTay0ycDo1Ce165iGmwv5opji1Y6bgcUmowgU1bWuGmeTs7+0fC7
-         dVIm84RuDd6Qv5ScegEDxJb3PaVDGCdI8kvbcg9J86poaHNp0BG+RUkTuiSUV5bJV9CA
-         OyMoDvJL2A9BS40+lDXlmJ50fkeRkDrnadxJj6Ao0uevnhSxWcUA17SJXJUIZxeL+ATh
-         2pixxWYOSXnYEoRO56vtmDsE3RuMTL6f7SWYn/44iQ6FfkTjVHT0g9Cb1nSnJjYtS6Q6
-         ftiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aPLGdbD4w3KTNSXThRBpSsjS7f9R9UPFXQ4iA1FrtvI=;
-        b=2Nxf+APK/t4W/EyKgl4x7QzeByGGHpXKPa/QtgivUhSJPgwd5nsaiuW0nO32d9JZiX
-         UaffG9Ae6aWSBDpXpfzdMxIfnNneirtYwpp0qqVERL7RIoUC74L/L6TO/HanpgHhhYl6
-         X6wIW9r7IAA4/O+5Oc36m2tcPhwiE8uFKEIK18bRWEixREZWrpLYVeS6Owyu58t6WcQu
-         vAjsBUPlPvdSUrBfaQXsmR4FULbEKKvpggPpK8FoYlaGtn5FMqNBV9EtJ8KUMk7crlWV
-         pBcFoY12EHkiLesH6MKURWLqrOJGw/E9YDoGgzsoDwIwUzN3CiwRZ1QQh9Hx0vwAs7Cj
-         9j+A==
-X-Gm-Message-State: AFqh2kqRZT+bPlKqB6tAPfgXZqai9lAWrpGeWxDzwCLJfgcgcsSmrgBP
-        JQZOUByCdC7LxX8bSePxMGtwdQ==
-X-Google-Smtp-Source: AMrXdXsHyCuK/5tTYQ2YiGIo2OlMLfna9+NQYVqCDBdoVnrK+eAv9N2c36+OrrMuRoh4EdIDp1Zslw==
-X-Received: by 2002:a17:902:a512:b0:192:5c3e:8952 with SMTP id s18-20020a170902a51200b001925c3e8952mr14756022plq.2.1673236305856;
-        Sun, 08 Jan 2023 19:51:45 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id z3-20020a6552c3000000b0049b7b1205a0sm4278560pgp.54.2023.01.08.19.51.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Jan 2023 19:51:45 -0800 (PST)
-Message-ID: <f9ca2051-741b-e4bb-74c5-178778c788df@kernel.dk>
-Date:   Sun, 8 Jan 2023 20:51:43 -0700
+        Mon, 9 Jan 2023 02:57:17 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB80913DDF;
+        Sun,  8 Jan 2023 23:57:10 -0800 (PST)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Nr5nW543bz67bpd;
+        Mon,  9 Jan 2023 15:54:39 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.34; Mon, 9 Jan 2023 07:57:07 +0000
+Message-ID: <885a23b1-78d2-1e62-8d07-91ff33863cbf@huawei.com>
+Date:   Mon, 9 Jan 2023 10:57:06 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCHv2 00/12] iov_iter: replace import_single_range with ubuf
-Content-Language: en-US
-To:     Keith Busch <kbusch@meta.com>, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, hch@lst.de,
-        io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, davem@davemloft.net,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Paul Moore <paul@paul-moore.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        netdev@vger.kernel.org, Keith Busch <kbusch@kernel.org>
-References: <20230105190741.2405013-1-kbusch@meta.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230105190741.2405013-1-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v8 11/12] samples/landlock: Add network demo
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <artem.kuzin@huawei.com>
+References: <20221021152644.155136-1-konstantin.meskhidze@huawei.com>
+ <20221021152644.155136-12-konstantin.meskhidze@huawei.com>
+ <2ff97355-18ef-e539-b4c1-720cd83daf1d@digikod.net>
+ <94a8ef89-b59e-d218-77a1-bf2f9d4096c7@huawei.com>
+ <5c941be9-ac6a-d259-997e-13fdff09aeb4@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <5c941be9-ac6a-d259-997e-13fdff09aeb4@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.123.126]
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/5/23 12:07 PM, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
+
+
+1/6/2023 10:34 PM, Mickaël Salaün пишет:
 > 
-> ITER_UBUF is a more efficient representation when using single vector
-> buffers, providing small optimizations over ITER_IOVEC. This series
-> introduces a helper to set these up, and replaces all applicable users
-> of import_single_range with the new helper. And since there are no
-> single range users left after this change, the helper is no longer
-> needed.
+> On 05/01/2023 04:46, Konstantin Meskhidze (A) wrote:
+>> 
+>> 
+>> 11/16/2022 5:25 PM, Mickaël Salaün пишет:
 > 
-> As noted in v1(*), there are some fundamental differences to how io_uring
-> compares to read/write/readv/writev. There are only the two affected
-> file_operations, and they already do not work with io_uring due to their
-> diverging semantics for vectored vs non-vectored read/write. Therefore,
-> this series having io_uring prefer ubuf iov_iter isn't introducing new
-> breakage.
+> [...]
+> 
+>>>
+>>>>    		fprintf(stderr,
+>>>>    			"Hint: You should update the running kernel "
+>>>>    			"to leverage Landlock features "
+>>>> @@ -259,16 +342,36 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>>>>    	access_fs_ro &= ruleset_attr.handled_access_fs;
+>>>>    	access_fs_rw &= ruleset_attr.handled_access_fs;
+>>>>
+>>>> +	/* Removes bind access attribute if not supported by a user. */
+>>>> +	env_port_name = getenv(ENV_TCP_BIND_NAME);
+>>>> +	if (!env_port_name) {
+>>>
+>>> You can move this logic at the populate_ruleset_net() call site and
+>>> update this helper to not call getenv() twice for the same variable.
+>> 
+>>     But here I exclude ruleset attributes, not rule itself. It will break
+>>     the logic: creating a ruleset then applying rules.
+>>     I suggest to leave here as its.
+> 
+> Right, but you can still avoid the duplicate getenv() calls.
 
-Pondering how to stage this, both for later upstream but also for
-testing. Would probably make the best sense to stage 1-5 separately,
-and then just punt the remaining ones to the appropriate subsystems.
-And then 12/12 can go in when they have all been applied.
-
--- 
-Jens Axboe
-
-
+   OK. Will fix it.
+> 
+> 
+>>>
+>>>
+>>>> +		access_net_tcp &= ~LANDLOCK_ACCESS_NET_BIND_TCP;
+>>>> +	}
+>>>> +	/* Removes connect access attribute if not supported by a user. */
+>>>> +	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
+>>>> +	if (!env_port_name) {
+>>>> +		access_net_tcp &= ~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+>>>> +	}
+>>>> +	ruleset_attr.handled_access_net &= access_net_tcp;
+> .
