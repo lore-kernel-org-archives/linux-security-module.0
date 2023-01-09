@@ -2,89 +2,85 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 545F7C5479D
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Jan 2023 11:37:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 459E7C54EBD
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Jan 2023 11:40:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237051AbjAILhW (ORCPT
+        id S236390AbjAILj7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Jan 2023 06:37:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52746 "EHLO
+        Mon, 9 Jan 2023 06:39:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237067AbjAILhE (ORCPT
+        with ESMTP id S236907AbjAILjn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Jan 2023 06:37:04 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 804002184;
-        Mon,  9 Jan 2023 03:36:30 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E6C8261027;
-        Mon,  9 Jan 2023 11:36:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 531F4C433F2;
-        Mon,  9 Jan 2023 11:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673264189;
-        bh=i0v+anZ7vkVotqToqOgCFMGxxvNaXgxm7b7hKcojS10=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ik88N9tqrBnQvboY0xzrY3vKIOPg+e7xsQ67ug2niCd/iruTS8EJ3GXThaPAkujz+
-         dVImrU4kvlgdVwYDabVVHhpBWrqx9ikXElKjGYsn7zM8n9nB9sxdGd3fzHfV04+KV6
-         lQz2xGqchNKQRteItjkDijBBc6VGgWi8z5ku+M4Z6Y2K1nPyynGExZRaSIRgtjRYYy
-         7IPVXh14mNBA++rvIc6bYfmH9NZ+M9ELAOIYe+vLPWsj46d9RE3141HjJVPN4rGjb8
-         uTJuWbS+udwWNR+fdhjKDvK577Qyxxmgqh10IhdzKS7O0vMqcnvKgaZF53qnJhYg5/
-         17Xd1vk9oV4oA==
-Received: by mail-ot1-f48.google.com with SMTP id j16-20020a056830271000b0067202045ee9so4985396otu.7;
-        Mon, 09 Jan 2023 03:36:29 -0800 (PST)
-X-Gm-Message-State: AFqh2krifOEtBx0LTuwqccPJX9KDkUVL8evqgEDk+ZfpMFKdFMFzuuuT
-        brAvvoIn3avSq87mGQerACiD5R0pFUEfA/sDNjY=
-X-Google-Smtp-Source: AMrXdXs8G4uDs+qNKxX45n9Gvr0ytXxTJTvXRzMaOEbNjXsg2ROzjnw4CJz8dqqvDVyNMjDu0UEIRuxLZH3/ko1r6pQ=
-X-Received: by 2002:a9d:7e99:0:b0:670:64b2:ae66 with SMTP id
- m25-20020a9d7e99000000b0067064b2ae66mr4052819otp.225.1673264188539; Mon, 09
- Jan 2023 03:36:28 -0800 (PST)
+        Mon, 9 Jan 2023 06:39:43 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45B9B38A9;
+        Mon,  9 Jan 2023 03:39:41 -0800 (PST)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4NrBgP5gzTz67lcR;
+        Mon,  9 Jan 2023 19:34:41 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.34; Mon, 9 Jan 2023 11:39:37 +0000
+Message-ID: <0dab9d74-6a41-9cf3-58fb-9fbb265efdd0@huawei.com>
+Date:   Mon, 9 Jan 2023 14:39:36 +0300
 MIME-Version: 1.0
-References: <20230109091919.3160916-1-masahiroy@kernel.org> <d1542ad3-9c9d-90e7-f18c-531cb1547b78@I-love.SAKURA.ne.jp>
-In-Reply-To: <d1542ad3-9c9d-90e7-f18c-531cb1547b78@I-love.SAKURA.ne.jp>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Mon, 9 Jan 2023 20:35:52 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS-NQL_Fgqh+oi0sRiUKJ5hm6v7fRe-S4xgd6SJbxUFmw@mail.gmail.com>
-Message-ID: <CAK7LNAS-NQL_Fgqh+oi0sRiUKJ5hm6v7fRe-S4xgd6SJbxUFmw@mail.gmail.com>
-Subject: Re: [PATCH] tomoyo: remove a temporary output file
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        Kentaro Takeda <takedakn@nttdata.co.jp>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v8 07/12] landlock: Add network rules support
+Content-Language: ru
+To:     Dan Carpenter <error27@gmail.com>
+CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        <linux-sparse@vger.kernel.org>, <willemdebruijn.kernel@gmail.com>,
+        <gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+        <artem.kuzin@huawei.com>, Linux API <linux-api@vger.kernel.org>,
+        "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+References: <20221021152644.155136-1-konstantin.meskhidze@huawei.com>
+ <20221021152644.155136-8-konstantin.meskhidze@huawei.com>
+ <49391484-7401-e7c7-d909-3bd6bd024731@digikod.net>
+ <9a6ea6ac-525d-e058-5867-0794a99b19a3@huawei.com>
+ <47fedda8-a13c-b62f-251f-b62508964bb0@digikod.net>
+ <4aa29433-e7f9-f225-5bdf-c80638c936e8@huawei.com> <Y7vXSAGHf08p2Zbm@kadam>
+ <af0d7337-3a92-5eca-7d7c-cc09d5713589@huawei.com> <Y7vqdgvxQVNvu6AY@kadam>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <Y7vqdgvxQVNvu6AY@kadam>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.123.126]
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 9, 2023 at 7:01 PM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2023/01/09 18:19, Masahiro Yamada wrote:
-> > Since this is a general problem, you can leave it to Kbuild instead
-> > of introducing unneeded complexity.
->
-> > If it is not too late, please squash this.
->
-> It is not too late to apply. But how do you handle a case where
-> the process who is responsible for deleting incomplete file was
-> killed by e.g. OOM-killer?
->
 
 
-Good point.
-That is a rare case that Kbuild cannot handle.
+1/9/2023 1:20 PM, Dan Carpenter пишет:
+> On Mon, Jan 09, 2023 at 12:26:52PM +0300, Konstantin Meskhidze (A) wrote:
+>> 
+>> 
+>> 1/9/2023 11:58 AM, Dan Carpenter пишет:
+>> > These warnings seem like something I have seen before.  Maybe it was an
+>> > issue with _Generic() support?
+>> > 
+>> > Are you really sure you're running the latest git version of Sparse?
+>> > 
+>> > I tested this patch with the latest version of Sparse on my system and
+>> > it worked fine.
+>> 
+>>  Hi Dan,
+>> 
+>>  git is on the master branch now - hash ce1a6720 (dated 27 June 2022)
+>> 
+>>  Is this correct version?
+> 
+> Yes, that's correct.  What is your .config?
 
-One idea is to make if_changed to write the command to *.cmd.tmp
-and rename it to *.cmd after everything succeeds.
-So, it is a similar approach, but the difference is that
-it is done in the Kbuild core scripts instead of every command.
-I will consider it.
-
-
---
-Best Regards
-
-Masahiro Yamada
+   What parameters do I need to check in .config?
+> 
+> regards,
+> dan carpenter
+> 
+> .
