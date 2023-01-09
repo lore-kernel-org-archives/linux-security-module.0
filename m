@@ -2,260 +2,233 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33619C54EBD
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Jan 2023 21:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E369AC54EBD
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Jan 2023 22:28:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235514AbjAIV7s (ORCPT
+        id S229499AbjAIW2w (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Jan 2023 16:59:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36650 "EHLO
+        Mon, 9 Jan 2023 17:28:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231290AbjAIV7r (ORCPT
+        with ESMTP id S237596AbjAIW2u (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Jan 2023 16:59:47 -0500
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3173F5582
-        for <linux-security-module@vger.kernel.org>; Mon,  9 Jan 2023 13:59:46 -0800 (PST)
-Received: by mail-pj1-x102b.google.com with SMTP id z4-20020a17090a170400b00226d331390cso11258700pjd.5
-        for <linux-security-module@vger.kernel.org>; Mon, 09 Jan 2023 13:59:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hd0PFjL8XFUfesEu5tEd8cW7h1KcK5xrkXdN0lYHKHs=;
-        b=nFeyhV194N5exf4bm/4FvKvnlQtA+qFS2lhMDYvUvPSaG+L/9F+/iF6OETEWXFoNpz
-         7ujeXnWZrOR/YCDRozta88ruD3KVxxC9VnJLwYJ8NZCN8jt4FUL3tK0+oi7MtvDnz1ur
-         AaaaqXCUDe8dFpAc7Z2FpnKqK0Nu/8rlogXShPWccXdZqx0N6uLTbwUM1OhRYl1glc0V
-         nfxbI1A1iPBhE2Qgc3OhuB7U3Z7Vd1SL9OCrbXtSQPiNy8EaDRpVHoDkhc5+zHlVUle5
-         Llpl24xGjO4niSRYPTIelISLMrpE1GRaKGYrdglYWyygXhlyuGcax5zUyE/ScmEfhXFK
-         IevQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hd0PFjL8XFUfesEu5tEd8cW7h1KcK5xrkXdN0lYHKHs=;
-        b=JbtOf6WSBh2td1oDFuXq+4sm8JG6Rah+YblR4OM3cz3r+oe8LyKyULv7gm3q6rUqtv
-         hDpXyz9IKHqr7F5F5thVZOQAg+qIKCf9cdHr1XE2183OJBqWYAKmRkJKs4t+aEX0ju5o
-         RGwHj6cJWY9fEH1SA28RCoUmI03Zyfi55cbO4HLoiwKCwtYUt7pDgDJeWcjW3zD78+bJ
-         BIiqNDjhm/+wqUpoIhVaKVyR/oZ4f+ud30bvX0GT5LbaINCfLeJ7gk3+ySK6HxHQmDWb
-         T2Am/8KhcInP04fdZ7EFfMUAz3rGtpAtiwN8iVOMdfsxfWggF0G/vzWDXCKzHoF/KQa3
-         P4Dw==
-X-Gm-Message-State: AFqh2kqRBuo9+/rB0NQl57tWM5d+D0ojbiAqCP5HQljfrz6TH3aqyvuG
-        IMc5prVP/R4k75OarpPzTiafronX+IPLMyVgvNzaKQ==
-X-Google-Smtp-Source: AMrXdXsoS5BTsIYDsLj0Bow0yq7mTNCPI9YMAiD1eMBgtaZkCu81N0tKAqyjgOjE+iF110NqTpq1LW7nu/I8IluH+hA=
-X-Received: by 2002:a17:902:f2ca:b0:189:894c:6b58 with SMTP id
- h10-20020a170902f2ca00b00189894c6b58mr3650189plc.172.1673301585404; Mon, 09
- Jan 2023 13:59:45 -0800 (PST)
+        Mon, 9 Jan 2023 17:28:50 -0500
+Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C87A9FF9
+        for <linux-security-module@vger.kernel.org>; Mon,  9 Jan 2023 14:28:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1673303327; bh=cwdWPJ+So2kLbU0cn5xgePzdjYgpj13UodhXvaaBwZ4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=CkLsiS37ZSkJCnbr8aQPSpyhvYQTwAvuKOhZUc7uKKhEyBLwOVnj2Wmn+FunNiQABuMhWnyKDiHlH9mS34s3rcChjbjqlyZhzriMeMXPSw3XOgPsv/72jd7fcnQs0MhKcgSrKDR1x/JtLeanHJWvAxSEQLZa+AEWCiYUNINO3ZA/ZfGQY8Apg8OkCLbpx2ry5ETJp8JshwdugdJgl2i7QKuhr8H4LCu4ZL08g3JoCFQm0xTVlmm5G+CwBGgUYXafXWOTiGk78Cavlg1WC+LAEHYW38m7D706X+SdDK+/FtOS7N+WuB7U8Nk2Bj9xAUN8bkJY5G2YifjoWxZ54DFIKQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1673303327; bh=wH6Nu+8bHDXsWlujPawaIA/wFeaq4z5ko+eHMiNqiUU=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=g413Sm7hVn0O/0jklOQ3Hk2bR8pafjHef2jI6LvVliE2s5NQBC29aGBd5zfd0lmAF+aetBJeYCgwgx3JhUCg35GhsrLXXUw2lbP8XOckPr5GUZO18jtMa2459ngLe7yTZdoXK9KFlq+04TnrDFd+my+TXZnfG4ST0+64BCPEUvEL5IF99s1tE6R+++fQm7laWgqMbCXe0u/abfnDvIzm4ifwT2kHeWojRp5HQKGpSr05SXHuCCwL/37eAJR9VkfZrBySXZah0jgkSXWjDoynjWU3Pn4D9SSrl0P/WLmMySiGX1byIoqNZmhOkwnUSR7bnq2UKnsbScuiizTTxFQH9w==
+X-YMail-OSG: bvGHh8UVM1nSJGS2PG2BrhS36YIUUHYTWCQZBoM1hVbk702ZHnssJzOct90uFlv
+ rjHsBUivm3a.PpIbZENndu3GX5iBUoAo91c8qmVn7.qhepIvnYKiP1nCklU8HjcK.pZie1f5O7mb
+ .uwlYkm.2gCN.AG.sau23yDqX8eObuQgYRKdIX9K.6ojfF.hU6CHKU8a7sbN0FgEQh5PgC.SBQvA
+ VEqtZ1pNDGcAomss.XNb1jKJWh7wBFzpxpNVHvFgIcqwd1bQZ0CbwcrRTqypmDFWPwc9XJSwtqFz
+ 2jeAynEtyY2BQF1_cvOcDyJYbxgxMhJlQOzCR9QZcxJt6.ckURFCDL_2_2wnbqgmZb8iCxRRTTdx
+ RoceTjLeJGSug.er_VMhHfHPc8xHVW8fTkFI9Nj9PTF2ikeunWPQ2gqJlr.qgEd105PTc4LsKEob
+ gxYf_yl9JZCf0riF_9GVw4UvcOnBperF4jn2wjhX8Ae7ZOG36HA_qSj58QxdLN9KLrTIgwSL.og2
+ d7wbt_ZKmE00whDQos6C_OLxuxhptotZl18uGvYkCNC8Vj7igYJWVlb1VnjXpoZzQh9aM8LT87Xp
+ aI7.e36jE7C9C0wTq1Qkg4Me5Vm514dqEYykMCFNXsX8lAMhqLQPVLEjKen_WIDxpWNKBkWrBfWy
+ bIippg5a2ILe1JiOXGm1y4j6BrS6tDnpFOkmOHwcSQ9f4YmZKxyiAChO7zRPdC5U3W_BvtqFg4md
+ WlCBDKuq0Vd4.kMKUB7AZG4sCARn_CrZgoGzDHm5KYgfLqIAxpmETe.QK8B3ZGZkz0fZ_nNUViUZ
+ 1AfSxd8ZCzQ6AdxFDshs.FgA2qjqOQx97.AkuqDli8AEAtUZXYVO69nZ6ocvqCQaRoDq0dl7i9ss
+ ZdCBwfq0AMjeZ0lnGSQ04G6Y0EW8bZj2EjIKEW_W8ePnwMhs1ut._dBw1A9RE2fJofdqBV_BqHrS
+ 7UWsO.kJTUsyRpqXMru8abBurhwZJAcjf80lE5abPcvXtG9U8yWDTZsFy8KpOs1pbbyHU2jfbium
+ aHbDEmy86D.UNlyYY_0EsImuOUuaxLwWr7655MTotJV_D9nGawUGCiDLLTvw3NadFPRwA76P14k7
+ Ne.ea0CwreCe5xPL8UAWVlULP9Yh3lPlxs5vVjMvU3nGrRW.4GMofqEsl5HgLkKT40rjG7XIADYO
+ H3fnWqbS7ar_BNOcBc2ooinXjuKIiPCDPUNbFgGLKv8RaHwQCulSEhzRgFa4dr0I_T4PEA6eqmEH
+ kGmAV.668Gq7mRrXTUsya2CJJCaqYzLkyvK3lWhsnf2hU04zmGS8Tb8uPQuOQBa2f24aQCxjEcNy
+ Jmfwp_1zs.atbWibTvU8Ux5.j_rcyvxRtGSP6YuqHQs5fj7M50H4Fl.wZhaltpZIzv8eUHGnUzSc
+ DL15S0oNiPd7Jb.P9xkTEhLM..d.g9HUoPbst1nGLNf.kSp2I6pBEAMHRvfecuyguL7byfYdcwV_
+ YMk4hfGqUxTw0KfTVsEjkpg5PhaaZpYgk5G5SwigT_.m3cmeNjIY2hof2J3rMXu_zBukH6LRSeaT
+ q0YCWIK9SjM9kl6cJoCpzZRfvSzwXlt772MkcmnXEjOLYp4ve9ZFDtHvZlJYPmXp82KWS1Og9pO_
+ Z4iakjHQUs_xYzyVOhN5S6ewcB2aOsoYFkXzlO0eSo.yxZdg6WT26Do9HdAyHB05P5FghJep61ho
+ ehIbEbY2acV5_aFi4ZhM9zQ9PnZF7jmecjPI0BrOeU0vYTnpqNE_.optWICaQ4yuPytXr7YFDUi6
+ 82zRe.yo.ATjJyp_yoJwf2Gfi1FudHMPpNxUCOpIrwg.sApVg7_Z7Qq2lPVB2Y3Ig8UbwHdagaRm
+ Tm8b4XwiB.OdZVi2KtQxI4__6iZ1fco9ZoST8YFRvqrrtCL2owpjN1YF0ZApSlpP0J4K2bCE2AJh
+ 9LUVJ7vdBqYqAc2f_JbWbEw_pQE_Pta_h63aFYP42rqODDXgTuVnnc2uK0LAxgvdjQBSBJgOeoUO
+ Lq1kBgoWnOBjolaW3uWqXS7vHj4RmloU_FrURRE.csdh3vDb8neCYuqcYjH21.1yvqUQZplgiqET
+ C7xX_HqKM8_r8UhfqL6JqkVDsRdxEfdKC2gkSksiYGgq6pNIbu3.rTlbaGjQtY7.ntLh6Q.9aBkk
+ nL5.D_s5f7uklLsDfCbCcWa2D.93xPjanyp_y6UFx6MmTq4iOAQvH08KcB4TKZFRJ2vJp5MKDWcT
+ Uh5dyNa61Xa5RPUAjUbPMJaWV0npRM6jbZjU87vJkmQh6B_jUeR5oJxAvl_9NMRvgt2kiP49ZPoj
+ K
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Mon, 9 Jan 2023 22:28:47 +0000
+Received: by hermes--production-bf1-5458f64d4-jvnkh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 214a75e596c68404ad838ad70f5d24dd;
+          Mon, 09 Jan 2023 22:28:46 +0000 (UTC)
+Message-ID: <7e1610e7-c131-e162-be47-8983be7d9aec@schaufler-ca.com>
+Date:   Mon, 9 Jan 2023 14:28:42 -0800
 MIME-Version: 1.0
-References: <20221229210236.3151723-1-jeffxu@google.com> <20221229210236.3151723-2-jeffxu@google.com>
- <CABXOdTc3QsT9+bfvk0SSzC-xkKB5UT90e3125guarYoaU231og@mail.gmail.com> <242994a4-c209-f877-f77f-7a2adf14dd74@digikod.net>
-In-Reply-To: <242994a4-c209-f877-f77f-7a2adf14dd74@digikod.net>
-From:   Jeff Xu <jeffxu@google.com>
-Date:   Mon, 9 Jan 2023 13:59:07 -0800
-Message-ID: <CALmYWFuWjsP2PxgqH006QB5hrN_fDoGS1zOefiToWNOz_Mmd4g@mail.gmail.com>
-Subject: Re: [PATCH v7 1/1] selftests/landlock: skip overlayfs test when
- kernel not support it
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     Guenter Roeck <groeck@google.com>, jeffxu@chromium.org,
-        Shuah Khan <shuah@kernel.org>, jorgelo@chromium.org,
-        keescook@chromium.org, linux-security-module@vger.kernel.org,
-        groeck@chromium.org, gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH 4/4] security: binder: Add transfer_charge SElinux hook
+Content-Language: en-US
+To:     "T.J. Mercier" <tjmercier@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Carlos Llamas <cmllamas@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>
+Cc:     hannes@cmpxchg.org, daniel.vetter@ffwll.ch, android-mm@google.com,
+        jstultz@google.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        casey@schaufler-ca.com
+References: <20230109213809.418135-1-tjmercier@google.com>
+ <20230109213809.418135-5-tjmercier@google.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20230109213809.418135-5-tjmercier@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20982 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Micka=C3=ABl
-Please see inline.
+On 1/9/2023 1:38 PM, T.J. Mercier wrote:
+> Any process can cause a memory charge transfer to occur to any other
+> process when transmitting a file descriptor through binder. This should
+> only be possible for central allocator processes,
 
-On Mon, Jan 9, 2023 at 8:05 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
-rote:
->
-> Please refresh with clang-format-14.
->
-My installation has clang-format version 15, but changes are quite big
-if I use it,
-do you still want me to use it ?
+How is a "central allocator process" identified? If I have a LSM that
+is not SELinux (e.g. AppArmor, Smack) or no LSM at all, how can/should this
+be enforced? Why isn't binder enforcing this restriction itself?
 
-> You might want to update the subject to:
-> selftests/landlock: Skip overlayfs tests when not supported
->
-OK.
+>  so a new SELinux
+> permission is added to restrict which processes are allowed to initiate
+> these charge transfers.
+
+Which is all perfectly reasonable if you have SELinux.
 
 >
-> On 29/12/2022 22:41, Guenter Roeck wrote:
-> > On Thu, Dec 29, 2022 at 1:02 PM <jeffxu@chromium.org> wrote:
-> >>
-> >> From: Jeff Xu <jeffxu@google.com>
-> >>
-> >> Overlayfs can be disabled in kernel config, causing related tests to
-> >> fail. Add check for overlayfs=E2=80=99s supportability at runtime,
-> >> so we can call SKIP() when needed.
-> >>
-> >> Signed-off-by: Jeff Xu <jeffxu@google.com>
-> >
-> > Reviewed-by: Guenter Roeck <groeck@chromium.org>
-> >
-> >> ---
-> >>   tools/testing/selftests/landlock/fs_test.c | 51 ++++++++++++++++++++=
-++
-> >>   1 file changed, 51 insertions(+)
-> >>
-> >> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testin=
-g/selftests/landlock/fs_test.c
-> >> index 21a2ce8fa739..34095fe2419b 100644
-> >> --- a/tools/testing/selftests/landlock/fs_test.c
-> >> +++ b/tools/testing/selftests/landlock/fs_test.c
-> >> @@ -11,6 +11,7 @@
-> >>   #include <fcntl.h>
-> >>   #include <linux/landlock.h>
-> >>   #include <sched.h>
-> >> +#include <stdio.h>
-> >>   #include <string.h>
-> >>   #include <sys/capability.h>
-> >>   #include <sys/mount.h>
-> >> @@ -62,6 +63,7 @@ static const char dir_s3d1[] =3D TMP_DIR "/s3d1";
-> >>   static const char dir_s3d2[] =3D TMP_DIR "/s3d1/s3d2";
-> >>   static const char dir_s3d3[] =3D TMP_DIR "/s3d1/s3d2/s3d3";
-> >>
-> >> +static const char proc_filesystems[] =3D "/proc/filesystems";
+> Signed-off-by: T.J. Mercier <tjmercier@google.com>
+> ---
+>  drivers/android/binder.c            | 5 +++++
+>  include/linux/lsm_hook_defs.h       | 2 ++
+>  include/linux/lsm_hooks.h           | 6 ++++++
+>  include/linux/security.h            | 2 ++
+>  security/security.c                 | 6 ++++++
+>  security/selinux/hooks.c            | 9 +++++++++
+>  security/selinux/include/classmap.h | 2 +-
+>  7 files changed, 31 insertions(+), 1 deletion(-)
 >
-> You can inline this string in the fopen() call for now.
->
-Done.
-
->
-> >>   /*
-> >>    * layout1 hierarchy:
-> >>    *
-> >> @@ -169,6 +171,43 @@ static int remove_path(const char *const path)
-> >>          return err;
-> >>   }
-> >>
-> >> +static bool fgrep(FILE *inf, const char *str)
-> >> +{
-> >> +       char line[32];
-> >> +       int slen =3D strlen(str);
-> >> +
-> >> +       while (!feof(inf)) {
-> >> +               if (!fgets(line, sizeof(line), inf))
-> >> +                       break;
-> >> +               if (strncmp(line, str, slen))
-> >> +                       continue;
-> >> +
-> >> +               return true;
-> >> +       }
-> >> +
-> >> +       return false;
-> >> +}
-> >> +
-> >> +static bool supports_overlayfs(void)
->
-> You can move this two functions just before mkdir_parents().
->
-Done.
-
->
-> >> +{
-> >> +       bool res;
-> >> +       FILE *inf =3D fopen(proc_filesystems, "r");
-> >> +
-> >> +       /*
-> >> +        * If fopen failed, return supported.
-> >> +        * This help detect missing file (shall not
-> >> +        * happen).
->
-> You can make this comment fit in two lines, with 80 columns.
->
-Done.
-
-> >> +        */
-> >> +       if (!inf)
-> >> +               return true;
-> >> +
-> >> +       res =3D fgrep(inf, "nodev\toverlay\n");
-> >> +       fclose(inf);
-> >> +
-> >> +       return res;
-> >> +}
-> >> +
-> >> +
-> >>   static void prepare_layout(struct __test_metadata *const _metadata)
-> >>   {
-> >>          disable_caps(_metadata);
-> >> @@ -3404,6 +3443,9 @@ FIXTURE(layout2_overlay) {};
-> >>
-> >>   FIXTURE_SETUP(layout2_overlay)
-> >>   {
-> >> +       if (!supports_overlayfs())
-> >> +               SKIP(return, "overlayfs is not supported");
-> >> +
-> >>          prepare_layout(_metadata);
-> >>
-> >>          create_directory(_metadata, LOWER_BASE);
-> >> @@ -3440,6 +3482,9 @@ FIXTURE_SETUP(layout2_overlay)
-> >>
-> >>   FIXTURE_TEARDOWN(layout2_overlay)
-> >>   {
-> >> +       if (!supports_overlayfs())
-> >> +               SKIP(return, "overlayfs is not supported");
->
-> This looks good to me except the multiple supports_overlayfs() calls.
-> Only the FIXTURE_SETUP() should be required. I guess some modifications
-> of kselftest_harness.h are need to support that. I'd like to avoid
-> touching TEST_F_FORK() which should be part of kselftest_harness.h
->
->
-In kselftest_harness.h,  SKIP() only applies within the function scope (
-FIXTURE_SETUP(), TEST_F_FORK(), FIXTURE_TEARDOWN())
-
-If we want to apply the skip logic to all remaining steps of the testcase,
-I think we should do it with a dedicated environment check hook
-(FIXTURE_ENV_CHECK),
-called before FIXTURE_SETUP(), if the environment check fails, all of
-the remaining
-test steps will be skipped. In this way, once the env check pass,
-the remaining test case should also be passing, or if env check fails,
-there is no need to
-delete the resource since no setup is called.
-
-However,  this requires change to the kselftest_harness.h, I do think it ne=
-eds
-to be a separate feature and commit (we can adopt fs_test to be the
-first user)
-
-Best regards,
-Jeff
-
-> >> +
-> >>          EXPECT_EQ(0, remove_path(lower_do1_fl3));
-> >>          EXPECT_EQ(0, remove_path(lower_dl1_fl2));
-> >>          EXPECT_EQ(0, remove_path(lower_fl1));
-> >> @@ -3471,6 +3516,9 @@ FIXTURE_TEARDOWN(layout2_overlay)
-> >>
-> >>   TEST_F_FORK(layout2_overlay, no_restriction)
-> >>   {
-> >> +       if (!supports_overlayfs())
-> >> +               SKIP(return, "overlayfs is not supported");
-> >> +
-> >>          ASSERT_EQ(0, test_open(lower_fl1, O_RDONLY));
-> >>          ASSERT_EQ(0, test_open(lower_dl1, O_RDONLY));
-> >>          ASSERT_EQ(0, test_open(lower_dl1_fl2, O_RDONLY));
-> >> @@ -3634,6 +3682,9 @@ TEST_F_FORK(layout2_overlay, same_content_differ=
-ent_file)
-> >>          size_t i;
-> >>          const char *path_entry;
-> >>
-> >> +       if (!supports_overlayfs())
-> >> +               SKIP(return, "overlayfs is not supported");
-> >> +
-> >>          /* Sets rules on base directories (i.e. outside overlay scope=
-). */
-> >>          ruleset_fd =3D create_ruleset(_metadata, ACCESS_RW, layer1_ba=
-se);
-> >>          ASSERT_LE(0, ruleset_fd);
-> >> --
-> >> 2.39.0.314.g84b9a713c41-goog
-> >>
+> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> index 9830848c8d25..9063db04826d 100644
+> --- a/drivers/android/binder.c
+> +++ b/drivers/android/binder.c
+> @@ -2279,6 +2279,11 @@ static int binder_translate_fd(u32 fd, binder_size_t fd_offset, __u32 flags,
+>  	if (IS_ENABLED(CONFIG_MEMCG) && (flags & BINDER_FD_FLAG_XFER_CHARGE)) {
+>  		struct dma_buf *dmabuf;
+>  
+> +		if (security_binder_transfer_charge(proc->cred, target_proc->cred)) {
+> +			ret = -EPERM;
+> +			goto err_security;
+> +		}
+> +
+>  		if (unlikely(!is_dma_buf_file(file))) {
+>  			binder_user_error(
+>  				"%d:%d got transaction with XFER_CHARGE for non-dmabuf fd, %d\n",
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index ed6cb2ac55fa..8db2a958557e 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -33,6 +33,8 @@ LSM_HOOK(int, 0, binder_transfer_binder, const struct cred *from,
+>  	 const struct cred *to)
+>  LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
+>  	 const struct cred *to, struct file *file)
+> +LSM_HOOK(int, 0, binder_transfer_charge, const struct cred *from,
+> +	 const struct cred *to)
+>  LSM_HOOK(int, 0, ptrace_access_check, struct task_struct *child,
+>  	 unsigned int mode)
+>  LSM_HOOK(int, 0, ptrace_traceme, struct task_struct *parent)
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 0a5ba81f7367..39c40c7bf519 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1385,6 +1385,12 @@
+>   *	@file contains the struct file being transferred.
+>   *	@to contains the struct cred for the receiving process.
+>   *	Return 0 if permission is granted.
+> + * @binder_transfer_charge:
+> + *	Check whether @from is allowed to transfer the memory charge for a
+> + *	buffer out of its cgroup to @to.
+> + *	@from contains the struct cred for the sending process.
+> + *	@to contains the struct cred for the receiving process.
+> + *	Return 0 if permission is granted.
+>   *
+>   * @ptrace_access_check:
+>   *	Check permission before allowing the current process to trace the
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 5b67f208f7de..3b7472308430 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -270,6 +270,8 @@ int security_binder_transfer_binder(const struct cred *from,
+>  				    const struct cred *to);
+>  int security_binder_transfer_file(const struct cred *from,
+>  				  const struct cred *to, struct file *file);
+> +int security_binder_transfer_charge(const struct cred *from,
+> +				    const struct cred *to);
+>  int security_ptrace_access_check(struct task_struct *child, unsigned int mode);
+>  int security_ptrace_traceme(struct task_struct *parent);
+>  int security_capget(struct task_struct *target,
+> diff --git a/security/security.c b/security/security.c
+> index d1571900a8c7..97e1e74d1ff2 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -801,6 +801,12 @@ int security_binder_transfer_file(const struct cred *from,
+>  	return call_int_hook(binder_transfer_file, 0, from, to, file);
+>  }
+>  
+> +int security_binder_transfer_charge(const struct cred *from,
+> +				    const struct cred *to)
+> +{
+> +	return call_int_hook(binder_transfer_charge, 0, from, to);
+> +}
+> +
+>  int security_ptrace_access_check(struct task_struct *child, unsigned int mode)
+>  {
+>  	return call_int_hook(ptrace_access_check, 0, child, mode);
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 3c5be76a9199..823ef14924bd 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2066,6 +2066,14 @@ static int selinux_binder_transfer_file(const struct cred *from,
+>  			    &ad);
+>  }
+>  
+> +static int selinux_binder_transfer_charge(const struct cred *from, const struct cred *to)
+> +{
+> +	return avc_has_perm(&selinux_state,
+> +			    cred_sid(from), cred_sid(to),
+> +			    SECCLASS_BINDER, BINDER__TRANSFER_CHARGE,
+> +			    NULL);
+> +}
+> +
+>  static int selinux_ptrace_access_check(struct task_struct *child,
+>  				       unsigned int mode)
+>  {
+> @@ -7052,6 +7060,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+>  	LSM_HOOK_INIT(binder_transaction, selinux_binder_transaction),
+>  	LSM_HOOK_INIT(binder_transfer_binder, selinux_binder_transfer_binder),
+>  	LSM_HOOK_INIT(binder_transfer_file, selinux_binder_transfer_file),
+> +	LSM_HOOK_INIT(binder_transfer_charge, selinux_binder_transfer_charge),
+>  
+>  	LSM_HOOK_INIT(ptrace_access_check, selinux_ptrace_access_check),
+>  	LSM_HOOK_INIT(ptrace_traceme, selinux_ptrace_traceme),
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+> index a3c380775d41..2eef180d10d7 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -172,7 +172,7 @@ const struct security_class_mapping secclass_map[] = {
+>  	{ "tun_socket",
+>  	  { COMMON_SOCK_PERMS, "attach_queue", NULL } },
+>  	{ "binder", { "impersonate", "call", "set_context_mgr", "transfer",
+> -		      NULL } },
+> +		      "transfer_charge", NULL } },
+>  	{ "cap_userns",
+>  	  { COMMON_CAP_PERMS, NULL } },
+>  	{ "cap2_userns",
