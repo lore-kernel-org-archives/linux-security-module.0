@@ -2,148 +2,252 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAE6C677F1
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Jan 2023 18:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C570C54EBC
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Jan 2023 18:56:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231843AbjAJSKk (ORCPT
+        id S239541AbjAJS4x (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Jan 2023 13:10:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52848 "EHLO
+        Tue, 10 Jan 2023 13:56:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239034AbjAJSKA (ORCPT
+        with ESMTP id S239806AbjAJSzs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Jan 2023 13:10:00 -0500
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E914B18B1B
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Jan 2023 10:07:32 -0800 (PST)
-Received: from [192.168.192.83] (unknown [50.47.134.245])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 91DC442190;
-        Tue, 10 Jan 2023 18:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1673374050;
-        bh=WMRH/FSvzOZHUkAuyNF72f/8M1j1+v9Z34mjrzDHwZo=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=bp88v4ALTmCYKh5+hHkn0jdFbS1oZ/fPyfFwiPUeoPGrCMsb5IMSQukRCpVtRYiJn
-         XdKvlx2WZ9EC7nTpxnyCLXn/OzVLOWDi0O+V3tDzI+t1AX04ZfRkMiPELmRmcHuTWD
-         SPpW7zds8SDIsJ5Fsnb9OmVK2yi4bdoIuyUbu2FZYALxXLK2ryScE0Yxgtxms7hLEi
-         TcyEK5AUnDIq+nXqIJdJspVj23oXzvqqITaGRshgZToESu7dt85qpWjsHGzP+jh+8r
-         OJG9llmDQon65UL3J7UZflrZT+vvOy8LN/waTsyn+f9HIuB1m2TKstutaDng9GOKRf
-         rZhrSGZgja+0Q==
-Message-ID: <7ad7d8b0-5b27-f8fd-6efb-d0540f07c1af@canonical.com>
-Date:   Tue, 10 Jan 2023 10:07:26 -0800
+        Tue, 10 Jan 2023 13:55:48 -0500
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74160532A7
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Jan 2023 10:54:14 -0800 (PST)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Ns0N43qMGzMpy2g;
+        Tue, 10 Jan 2023 19:54:12 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Ns0N33FsZz56k;
+        Tue, 10 Jan 2023 19:54:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1673376852;
+        bh=NSYhMRkp6uBa44nx5N8tWFuFGoTHwSDIy512s1+mYeU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=SuyQ/gqPIYM7WyFLrJwH/K9Cha1pfMmgp5KTDFy6DOCERzxCEsYgGHBUiL/pnCyYc
+         XlfFinjrdqDAjKvNkePlUGqktwnJx+nOotpNf2wy1ejXTk0SX49HYbWvvscEb62rKa
+         oxOUx78oE2tsRbKqAMMhTr6bfwVh9NJQKBinPmK4=
+Message-ID: <3b2f9db2-9937-4f46-9aed-e1d3821d5832@digikod.net>
+Date:   Tue, 10 Jan 2023 19:54:10 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] apparmor: fix kernel-doc complaints
+User-Agent: 
+Subject: Re: [PATCH v7 1/1] selftests/landlock: skip overlayfs test when
+ kernel not support it
 Content-Language: en-US
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        linux-security-module@vger.kernel.org
-Cc:     John Johansen <john@apparmor.net>, apparmor@lists.ubuntu.com,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <20230102204512.3972-1-rdunlap@infradead.org>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20230102204512.3972-1-rdunlap@infradead.org>
+To:     Jeff Xu <jeffxu@google.com>, Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Guenter Roeck <groeck@google.com>, jeffxu@chromium.org,
+        Shuah Khan <shuah@kernel.org>, jorgelo@chromium.org,
+        keescook@chromium.org, linux-security-module@vger.kernel.org,
+        groeck@chromium.org, gnoack@google.com
+References: <20221229210236.3151723-1-jeffxu@google.com>
+ <20221229210236.3151723-2-jeffxu@google.com>
+ <CABXOdTc3QsT9+bfvk0SSzC-xkKB5UT90e3125guarYoaU231og@mail.gmail.com>
+ <242994a4-c209-f877-f77f-7a2adf14dd74@digikod.net>
+ <CALmYWFuWjsP2PxgqH006QB5hrN_fDoGS1zOefiToWNOz_Mmd4g@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <CALmYWFuWjsP2PxgqH006QB5hrN_fDoGS1zOefiToWNOz_Mmd4g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/2/23 12:45, Randy Dunlap wrote:
-> Correct kernel-doc notation to placate kernel-doc W=1 warnings:
+
+On 09/01/2023 22:59, Jeff Xu wrote:
+> Hi Mickaël
+> Please see inline.
 > 
-> security/apparmor/policy.c:439: warning: duplicate section name 'Return'
-> security/apparmor/secid.c:57: warning: Cannot understand  *
-> security/apparmor/file.c:174: warning: cannot understand function prototype: 'struct aa_perms default_perms = '
+> On Mon, Jan 9, 2023 at 8:05 AM Mickaël Salaün <mic@digikod.net> wrote:
+>>
+>> Please refresh with clang-format-14.
+>>
+> My installation has clang-format version 15, but changes are quite big
+> if I use it,
+> do you still want me to use it ?
+
+That's fine, this patch is almost good, I'll run clang-format-14 on the 
+final one.
+
 > 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: John Johansen <john.johansen@canonical.com>
-> Cc: John Johansen <john@apparmor.net>
-> Cc: apparmor@lists.ubuntu.com
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-I have pulled this into apparmor-next
-
-
-> ---
->   security/apparmor/file.c   |    2 +-
->   security/apparmor/policy.c |    7 ++-----
->   security/apparmor/secid.c  |    3 +--
->   3 files changed, 4 insertions(+), 8 deletions(-)
+>> You might want to update the subject to:
+>> selftests/landlock: Skip overlayfs tests when not supported
+>>
+> OK.
 > 
-> diff -- a/security/apparmor/policy.c b/security/apparmor/policy.c
-> --- a/security/apparmor/policy.c
-> +++ b/security/apparmor/policy.c
-> @@ -430,11 +430,9 @@ static struct aa_policy *__lookup_parent
->    * @hname: hierarchical profile name to find parent of (NOT NULL)
->    * @gfp: type of allocation.
->    *
-> - * Returns: NULL on error, parent profile on success
-> - *
->    * Requires: ns mutex lock held
->    *
-> - * Returns: unrefcounted parent policy or NULL if error creating
-> + * Return: unrefcounted parent policy on success or %NULL if error creating
->    *          place holder profiles.
->    */
->   static struct aa_policy *__create_missing_ancestors(struct aa_ns *ns,
-> @@ -828,7 +826,7 @@ bool aa_current_policy_admin_capable(str
->   /**
->    * aa_may_manage_policy - can the current task manage policy
->    * @label: label to check if it can manage policy
-> - * @op: the policy manipulation operation being done
-> + * @mask: contains the policy manipulation operation being done
->    *
->    * Returns: 0 if the task is allowed to manipulate policy else error
->    */
-> @@ -883,7 +881,6 @@ static struct aa_profile *__list_lookup_
->    * __replace_profile - replace @old with @new on a list
->    * @old: profile to be replaced  (NOT NULL)
->    * @new: profile to replace @old with  (NOT NULL)
-> - * @share_proxy: transfer @old->proxy to @new
->    *
->    * Will duplicate and refcount elements that @new inherits from @old
->    * and will inherit @old children.
-> diff -- a/security/apparmor/secid.c b/security/apparmor/secid.c
-> --- a/security/apparmor/secid.c
-> +++ b/security/apparmor/secid.c
-> @@ -53,8 +53,7 @@ void aa_secid_update(u32 secid, struct a
->   	xa_unlock_irqrestore(&aa_secids, flags);
->   }
->   
-> -/**
-> - *
-> +/*
->    * see label for inverse aa_label_to_secid
->    */
->   struct aa_label *aa_secid_to_label(u32 secid)
-> diff -- a/security/apparmor/file.c b/security/apparmor/file.c
-> --- a/security/apparmor/file.c
-> +++ b/security/apparmor/file.c
-> @@ -161,6 +161,7 @@ static int path_name(const char *op, str
->   	return 0;
->   }
->   
-> +struct aa_perms default_perms = {};
->   /**
->    * aa_lookup_fperms - convert dfa compressed perms to internal perms
->    * @dfa: dfa to lookup perms for   (NOT NULL)
-> @@ -171,7 +172,6 @@ static int path_name(const char *op, str
->    *
->    * Returns: a pointer to a file permission set
->    */
-> -struct aa_perms default_perms = {};
->   struct aa_perms *aa_lookup_fperms(struct aa_policydb *file_rules,
->   				 aa_state_t state, struct path_cond *cond)
->   {
+>>
+>> On 29/12/2022 22:41, Guenter Roeck wrote:
+>>> On Thu, Dec 29, 2022 at 1:02 PM <jeffxu@chromium.org> wrote:
+>>>>
+>>>> From: Jeff Xu <jeffxu@google.com>
+>>>>
+>>>> Overlayfs can be disabled in kernel config, causing related tests to
+>>>> fail. Add check for overlayfs’s supportability at runtime,
+>>>> so we can call SKIP() when needed.
+>>>>
+>>>> Signed-off-by: Jeff Xu <jeffxu@google.com>
+>>>
+>>> Reviewed-by: Guenter Roeck <groeck@chromium.org>
+>>>
+>>>> ---
+>>>>    tools/testing/selftests/landlock/fs_test.c | 51 ++++++++++++++++++++++
+>>>>    1 file changed, 51 insertions(+)
+>>>>
+>>>> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+>>>> index 21a2ce8fa739..34095fe2419b 100644
+>>>> --- a/tools/testing/selftests/landlock/fs_test.c
+>>>> +++ b/tools/testing/selftests/landlock/fs_test.c
+>>>> @@ -11,6 +11,7 @@
+>>>>    #include <fcntl.h>
+>>>>    #include <linux/landlock.h>
+>>>>    #include <sched.h>
+>>>> +#include <stdio.h>
+>>>>    #include <string.h>
+>>>>    #include <sys/capability.h>
+>>>>    #include <sys/mount.h>
+>>>> @@ -62,6 +63,7 @@ static const char dir_s3d1[] = TMP_DIR "/s3d1";
+>>>>    static const char dir_s3d2[] = TMP_DIR "/s3d1/s3d2";
+>>>>    static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
+>>>>
+>>>> +static const char proc_filesystems[] = "/proc/filesystems";
+>>
+>> You can inline this string in the fopen() call for now.
+>>
+> Done.
+> 
+>>
+>>>>    /*
+>>>>     * layout1 hierarchy:
+>>>>     *
+>>>> @@ -169,6 +171,43 @@ static int remove_path(const char *const path)
+>>>>           return err;
+>>>>    }
+>>>>
+>>>> +static bool fgrep(FILE *inf, const char *str)
+>>>> +{
+>>>> +       char line[32];
+>>>> +       int slen = strlen(str);
+>>>> +
+>>>> +       while (!feof(inf)) {
+>>>> +               if (!fgets(line, sizeof(line), inf))
+>>>> +                       break;
+>>>> +               if (strncmp(line, str, slen))
+>>>> +                       continue;
+>>>> +
+>>>> +               return true;
+>>>> +       }
+>>>> +
+>>>> +       return false;
+>>>> +}
+>>>> +
+>>>> +static bool supports_overlayfs(void)
+>>
+>> You can move this two functions just before mkdir_parents().
+>>
+> Done.
+> 
+>>
+>>>> +{
+>>>> +       bool res;
+>>>> +       FILE *inf = fopen(proc_filesystems, "r");
+>>>> +
+>>>> +       /*
+>>>> +        * If fopen failed, return supported.
+>>>> +        * This help detect missing file (shall not
+>>>> +        * happen).
+>>
+>> You can make this comment fit in two lines, with 80 columns.
+>>
+> Done.
+> 
+>>>> +        */
+>>>> +       if (!inf)
+>>>> +               return true;
+>>>> +
+>>>> +       res = fgrep(inf, "nodev\toverlay\n");
+>>>> +       fclose(inf);
+>>>> +
+>>>> +       return res;
+>>>> +}
+>>>> +
+>>>> +
+>>>>    static void prepare_layout(struct __test_metadata *const _metadata)
+>>>>    {
+>>>>           disable_caps(_metadata);
+>>>> @@ -3404,6 +3443,9 @@ FIXTURE(layout2_overlay) {};
+>>>>
+>>>>    FIXTURE_SETUP(layout2_overlay)
+>>>>    {
+>>>> +       if (!supports_overlayfs())
+>>>> +               SKIP(return, "overlayfs is not supported");
+>>>> +
+>>>>           prepare_layout(_metadata);
+>>>>
+>>>>           create_directory(_metadata, LOWER_BASE);
+>>>> @@ -3440,6 +3482,9 @@ FIXTURE_SETUP(layout2_overlay)
+>>>>
+>>>>    FIXTURE_TEARDOWN(layout2_overlay)
+>>>>    {
+>>>> +       if (!supports_overlayfs())
+>>>> +               SKIP(return, "overlayfs is not supported");
+>>
+>> This looks good to me except the multiple supports_overlayfs() calls.
+>> Only the FIXTURE_SETUP() should be required. I guess some modifications
+>> of kselftest_harness.h are need to support that. I'd like to avoid
+>> touching TEST_F_FORK() which should be part of kselftest_harness.h
+>>
+>>
+> In kselftest_harness.h,  SKIP() only applies within the function scope (
+> FIXTURE_SETUP(), TEST_F_FORK(), FIXTURE_TEARDOWN())
+> 
+> If we want to apply the skip logic to all remaining steps of the testcase,
+> I think we should do it with a dedicated environment check hook
+> (FIXTURE_ENV_CHECK),
+> called before FIXTURE_SETUP(), if the environment check fails, all of
+> the remaining
+> test steps will be skipped. In this way, once the env check pass,
+> the remaining test case should also be passing, or if env check fails,
+> there is no need to
+> delete the resource since no setup is called.
+> 
+> However,  this requires change to the kselftest_harness.h, I do think it needs
+> to be a separate feature and commit (we can adopt fs_test to be the
+> first user)
 
+Looks good to me, implementing this FIXTURE_ENV_CHECK (or something 
+similar) will be cleaner.
+
+Shuah, what do you think about that?
+
+
+> 
+> Best regards,
+> Jeff
+> 
+>>>> +
+>>>>           EXPECT_EQ(0, remove_path(lower_do1_fl3));
+>>>>           EXPECT_EQ(0, remove_path(lower_dl1_fl2));
+>>>>           EXPECT_EQ(0, remove_path(lower_fl1));
+>>>> @@ -3471,6 +3516,9 @@ FIXTURE_TEARDOWN(layout2_overlay)
+>>>>
+>>>>    TEST_F_FORK(layout2_overlay, no_restriction)
+>>>>    {
+>>>> +       if (!supports_overlayfs())
+>>>> +               SKIP(return, "overlayfs is not supported");
+>>>> +
+>>>>           ASSERT_EQ(0, test_open(lower_fl1, O_RDONLY));
+>>>>           ASSERT_EQ(0, test_open(lower_dl1, O_RDONLY));
+>>>>           ASSERT_EQ(0, test_open(lower_dl1_fl2, O_RDONLY));
+>>>> @@ -3634,6 +3682,9 @@ TEST_F_FORK(layout2_overlay, same_content_different_file)
+>>>>           size_t i;
+>>>>           const char *path_entry;
+>>>>
+>>>> +       if (!supports_overlayfs())
+>>>> +               SKIP(return, "overlayfs is not supported");
+>>>> +
+>>>>           /* Sets rules on base directories (i.e. outside overlay scope). */
+>>>>           ruleset_fd = create_ruleset(_metadata, ACCESS_RW, layer1_base);
+>>>>           ASSERT_LE(0, ruleset_fd);
+>>>> --
+>>>> 2.39.0.314.g84b9a713c41-goog
+>>>>
