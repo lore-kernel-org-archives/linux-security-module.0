@@ -2,272 +2,385 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2A4C61DB3
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Jan 2023 19:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DD0C46467
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Jan 2023 20:42:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232043AbjAJTja (ORCPT
+        id S229563AbjAJUmk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Jan 2023 14:39:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44856 "EHLO
+        Tue, 10 Jan 2023 15:42:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232798AbjAJTj0 (ORCPT
+        with ESMTP id S231409AbjAJUmd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Jan 2023 14:39:26 -0500
-Received: from sonic317-38.consmr.mail.ne1.yahoo.com (sonic317-38.consmr.mail.ne1.yahoo.com [66.163.184.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16CC25D6BE
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Jan 2023 11:39:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1673379563; bh=lGtMh9M4Dz/lYQ7NkDqxhoK7EZkneU9R6gELbtiYrQE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=GHV8rWHor/5RPY5zJNGNgisWuOI6Upy8MaCcUIgvtOngqW0tkVjgD/+W+AG8bZ67xzYMFHm9wMRyv8ih+nlwQIYOmJRURbvOkxRT2N/uIe4MM3O1lENR4jZtVlUTpaM4p8KSYEGc+CDdpqKjU4qFQyWNvEraKGVPRxUh0/53GNpMfLW5IT/Av3LHWTpMvnLpd2haDBskxKv3az3IT7NajVqevcppWxb6yOnywe7A4kpCQFCJ4Q13Flx5nbJdlPwAK1RHgpK9qXEmbOIIgfXWDhnL4aYxkiGEJqs35A7lLbFw/WQvzax/aK2mKU8qo1bpyr6ZjQhqVXu8sA14UFSI/A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1673379563; bh=iAoH4FnqY/aXHQBPu0/NKkVi1XMOmGPqkmlJuNir+n8=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=S0XcJq+fvP/nrPYs+jAgyT3S5KvANO+fMpEnd2haWgxN8Vo7wX+EcuXGr5W5nhN2N8UTOCNhrPss7JN+OX1OU/+VGyIUQlrwNNuEv6WTgWvdGYGg6xvBqriZHiBInM88FDqUz4ZdgB9dEi/vyYWunLdeGGThcvAk3L8jPmOSZfzVCQ/cBLnd0PrtquX17uaO/txLCbBW6Dj6BO/0eRPfwHHsYwyCZFLk9pbR/AD3kO1iI0WdwRzrId6Q9Xp2vt00ZQwJKf76/xQws6NW/fRSeEKnJkZQoJ6a0KzWvcl2lQUQdAN1WeGbKc6vgl7r29TWMswe1Kksxo90bEBEr0497w==
-X-YMail-OSG: L5lYMZwVM1mFLoM41zsxdYeCSYQ7PUqUrg85Se_RgU_vMnqY_qCy4rTjIAzjS.W
- oCjAk94GxmIiGLgpXIPmCVaDwXs0SbB5yQsTqm2MH.sU_3pUfWHoOIj9oJnZhvAGdI_U.SV.ssfd
- UFEGTHYtePl6j4dNCaBAQpuifRbe47dO4PWCuGBT_fsNcNV.lvyTzbVKBoGF5dDQGkZnPVDLc0uz
- QQmMEO_s.DQKVJvxH9KXH93YQr5LsSTu.3HEvTDh.gJJMPPmASYpjecIFAlEY_4IsWZPb2wEs1HJ
- wXqkfuZNlbN8_rzVF7zyxvrjWDu0adq.tT7xrijNFbJrp4v60wge3cukMdf7jvnp5mHZh0w8WbQM
- M.iYOAEGd7inQYEKQe68R9YnJCGImjeVbh8fg4pOiHu8kuMR2mBGMaB94JhHyGgGuI9MARfckZL6
- hflQlJSq198Y7ZuVOof7v8AoTwtYqZ3xSF9axJ3QRK5suTXJpU48nGbuhye.Bhm2otqMiMEobnAC
- rlmrwF7ei_Cci.0EApLdp24N6W.lyLZMKYySglo.m__XQO2h_2TQNLyEz_QXB8tvIRlnck_k6wZh
- Eo6NhCzF_nW2rY9xLPx7MSlJHsSSNhMw_bl2XrOOxk_pX_xZ_iprqScAuosuzjsqRXRIPBIdnwrG
- 9vBrcFWNuX29caWI4nmgxBpF97JX.AKnvABPPsX_BW0odSHjgQk9ETsaMy9KT0ayzx8qhJUZySyb
- QAJkZfTdI1j08UIFT2mnNjc2yFV3e4gAz5snCtkkC71d3BeCIhBO0dpLD3rZeTxXorZlDjsKaKdx
- USZaLToJFbT4aA2neJwj.bjbYTU6Ot3lTsjS_9Wen_XjRZXMBnqnv2JTfpw9ycYOpnkQlMXbXO4f
- ULqoPD2i0bZaMfp05uony5QlKYpbh3iTVbIf.sO.QpR.Aa_1TVJjadHvJ4VtFhOPJslZwSINW7Td
- xROAkC..R_h5SywYHh0Z98M2foR44t5heJ_Wrl7v0_PqBueqIf7.zfv7xN8SqY5hu.g3FxzKCpUh
- 88eEOY9xlDN8LqjSFH2XHEGQNmzZTshBTEw5w2I5p34vykgm2W0VDLlQUIt0F0BNbGPL5TC5PUmm
- 4KDgRf505sVK9QdlYwX6P02DlOWCNpqgSLh.jOHJGwO5QNj7MGwQh0LCJpb0.zS2wKV2yW0SKrIr
- yLSEOzF6Aanhn86rDBdgioX8QVPHNY3Ck1KDZZ7xGQgKlQs7GsJuosRM0RFXyPoTXketXT7t4LY8
- XBzVFRsUveAIksYH2SySocsHEMQ64i1c7I1zVi6ZRWeSgPEiTh6zYAS4uezMstmlaibKYKI3UHKQ
- LTGAe.ZkH8S1HNFsFW3ryY56H7fJlMvyk58OCIa_VdeT0NnYYADftdQ1UAT1vD1lWVDj8duwG2mQ
- mRO2IzB3eqZ_zj8p6PDch1CZOTCWmWg_X2oUVk11E13eu8NGWoF7Y27zNJ0PbluPAoEmgZrM7_q8
- 0Vz18aPC8QAJhzrIuXZXDw.WeMSTRnG1UhJboCeGG1KOAMYGl7jHEViVkbgw0a_GfEoXH6By5y.3
- GMc0oi6.rWjIEjPQSnw8q6y.DH10vBEJ_vRw9zs3rUzJJrpvYiUzq8jscp2Q7gOsA9O7LFVU7ujr
- v93WNoPV3sv5yx5ZGHRp81qUrazovVr8qCzbOAHAoHSV9GHPTI.xSM3xvU3NThgD2wLsCfqTOHJF
- QUXGH7zy1vTTtajTZAuh_1Xyf53MmLGxT8pDTJOyaOHMTdD0QPf4PMS7N_lO4_Xjlo7cGuPg3hQo
- c_BQJn9BlV2XxWnGyscfaVLC2IhmBMHtErw0z1JevILOuoMNS012sVn_pd_jlucOKIAL62OKhYHE
- _uEvg.fJkU9SHdJ6E8NzgvQljrBOxl_D2tM_NuEUbKfy8dMUlC4MucsKd_xihC15lRoul0SLmNcE
- Txqf7LmJEH_XcPvf5sqGl8kRbQ4HcCAKGX4FVG._lbXfJFgAp9G9exufda65tmyudI4_zMczC8UC
- 0.TYm8610RprQ2sVXB_LfgBhrjKxTBdkc9ruy8MvINGRR4NONDAVzWkwA5UWgeO1kuovHiIq9xdz
- saxai6fo8O4dF26yqOjroObJFACuLnXZPy7f1lPxMCCAfJD.J4nGakm3b21VsWslW4NpnBQ7wGfe
- t9RJYHe5.1D3klNvMnlkEfKA52zPuSoW2Nk0.JQR6yr28j59u618kamBHYZwturvfsnHzJAc83j_
- rNiUd4c9_qEpgDkzdhaL8nG_itm770pzDdHUcYUaAD.o96.r0tkPFU6NmkFO0U.9C
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Tue, 10 Jan 2023 19:39:23 +0000
-Received: by hermes--production-ne1-7b69748c4d-rglm6 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f9fd3d24e27012a014b6cece016d21c9;
-          Tue, 10 Jan 2023 19:39:18 +0000 (UTC)
-Message-ID: <1c86783a-995f-21aa-91ab-1b58d50f149b@schaufler-ca.com>
-Date:   Tue, 10 Jan 2023 11:39:16 -0800
+        Tue, 10 Jan 2023 15:42:33 -0500
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FFF44C726
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Jan 2023 12:42:31 -0800 (PST)
+Received: by mail-pg1-x531.google.com with SMTP id h192so9076800pgc.7
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Jan 2023 12:42:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EnsSgJFnxKaVJ1pf8crOpL9EJrck0WZjbRc/IhRKIVo=;
+        b=DHNeVs1pigFQI3i/w1D35bcHB/y7JWyW/VSn97f5YPvrWFaZJgs8kWB3ygU6z1U1Sr
+         ZSHuxWfZWZ+83kd5hkvnM6e5XrkD9XRutD98QSHtB8Lb+gsPf1HThuNzkhbojkX3A41p
+         SHi8xQKRn/7W+mMNp3X4F1T+huAh7aop59N1TMz1gIvV2HTboXeeCTJd16ITyUup3k32
+         kDOOcvSCuzN83yMjKGwA8tP/GTJf7T8Yq1kgH9PJAf9Vspoh6FuCBIet+tFfuXjlWSJw
+         m7Jw1ztrQLmdN6xASMhebUn+wIwuYuhOPKHYZbFDvtLj1WG5kKH8Qlbw/rq4z49VzGC8
+         L39A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EnsSgJFnxKaVJ1pf8crOpL9EJrck0WZjbRc/IhRKIVo=;
+        b=sQYkY1P5yZPb8tuI/TJLvNwTkwhMkPIS5jV5/1SEiWElIt51SWwi95EMfTskIf7NXE
+         uJW7HfqX+uB83yVsLyfZpMb0OBMKWY755dyTYfLhyL3go3XeqVScs8+TliD8NM0df3D6
+         5g+8gJbZm/6lX/1WJ5o8RQC8fw/31FB4yMba18LS03/SZcEzSl7kCuRVMbXrkn68PIgO
+         Y83SESF9pX8xCi++KUFm+DE+uAiM22TIYNv9+P7Sx7j4zluAna1b9zDhqXQYUmbVBTOt
+         p6nwifut6b1QzVKBFqo5xsmaGFa2tIZGdjVqc64k6lvLxQ6JdSTqA8Z1S6A9FriDs2UD
+         bKdQ==
+X-Gm-Message-State: AFqh2kreiCFHgMzllkIyqgSFvVbWgGga/vULv/fMyL3m4g5z0PKKrlJs
+        RKXpwmen9GTAQEWWHUcmosa9Poj8pbaua+Kz8udVVg==
+X-Google-Smtp-Source: AMrXdXvvSERUEUIlKkQsM2cvPMRkImDPBMAO2rgtwjlgw2G2TMDNZgXcl/MB0wpwP++VP5QEhhy5X4hGg0hWVXTIQyo=
+X-Received: by 2002:a63:fe4b:0:b0:479:1b56:9065 with SMTP id
+ x11-20020a63fe4b000000b004791b569065mr6258086pgj.249.1673383350651; Tue, 10
+ Jan 2023 12:42:30 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH 4/4] security: binder: Add transfer_charge SElinux hook
-Content-Language: en-US
-To:     "T.J. Mercier" <tjmercier@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Carlos Llamas <cmllamas@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, hannes@cmpxchg.org,
-        daniel.vetter@ffwll.ch, android-mm@google.com, jstultz@google.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        casey@schaufler-ca.com
-References: <20230109213809.418135-1-tjmercier@google.com>
- <20230109213809.418135-5-tjmercier@google.com>
- <7e1610e7-c131-e162-be47-8983be7d9aec@schaufler-ca.com>
- <CABdmKX3BhNxdgF2dAuwPCPASe1raYYx6UUWRv0L5p3FxoU5MUw@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CABdmKX3BhNxdgF2dAuwPCPASe1raYYx6UUWRv0L5p3FxoU5MUw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20982 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20230103190314.3882177-1-jeffxu@google.com> <20230103190314.3882177-2-jeffxu@google.com>
+ <CABXOdTdf=0C3G4C4CTwAvx3wUQ1RZ_tFuO40LUQMDHCZr7wZmQ@mail.gmail.com>
+ <CALmYWFv2H95EuEzCHrs76L3nT39A_UbdHNqUBrQ3PdnLtXfOvw@mail.gmail.com>
+ <CABXOdTfzyAx1Nzg_D+EQzn9EV9jyrmAFhU0HEcw5A5a8iV49Zg@mail.gmail.com>
+ <9ff9997d-f2f2-bb72-9993-132d3c45ae32@digikod.net> <CALmYWFuGGwSXkahtZ3OFwUzbJ4n00gvLtPyNVOPiK6iHsoP93g@mail.gmail.com>
+ <62128847-8063-f658-7c8e-dd15cb2314c1@digikod.net>
+In-Reply-To: <62128847-8063-f658-7c8e-dd15cb2314c1@digikod.net>
+From:   Jeff Xu <jeffxu@google.com>
+Date:   Tue, 10 Jan 2023 12:41:53 -0800
+Message-ID: <CALmYWFt-r_hJyPgnXVtTXo_j73ci2g4D=USP1WWi_70JNNx4tw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/1] selftests/landlock: skip ptrace_test according to YAMA
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     Guenter Roeck <groeck@google.com>, jeffxu@chromium.org,
+        jorgelo@chromium.org, keescook@chromium.org,
+        linux-security-module@vger.kernel.org, groeck@chromium.org,
+        gnoack@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/9/2023 4:30 PM, T.J. Mercier wrote:
-> On Mon, Jan 9, 2023 at 2:28 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 1/9/2023 1:38 PM, T.J. Mercier wrote:
->>> Any process can cause a memory charge transfer to occur to any other
->>> process when transmitting a file descriptor through binder. This should
->>> only be possible for central allocator processes,
->> How is a "central allocator process" identified?
-> Any process with the transfer_charge permission. On Android this is
-> the graphics allocator HAL which would have this added to its policy.
+On Tue, Jan 10, 2023 at 11:04 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
+ wrote:
+>
+>
+> On 09/01/2023 23:50, Jeff Xu wrote:
+> > On Mon, Jan 9, 2023 at 7:29 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.ne=
+t> wrote:
+> >>
+> >> Looks good and agree with Guenter's suggestions
+> >>
+> >> On 04/01/2023 04:40, Guenter Roeck wrote:
+> >>> On Tue, Jan 3, 2023 at 3:50 PM Jeff Xu <jeffxu@google.com> wrote:
+> >>>>
+> >>>> Thanks for the comments.
+> >>>> I agree with most comments, but need Michael to chime in/confirm on =
+below:
+> >>>>
+> >>>> On Tue, Jan 3, 2023 at 12:12 PM Guenter Roeck <groeck@google.com> wr=
+ote:
+> >>>>>
+> >>>>> On Tue, Jan 3, 2023 at 11:03 AM <jeffxu@chromium.org> wrote:
+> >>>>>>
+> >>>>>> From: Jeff Xu <jeffxu@google.com>
+> >>>>>>
+> >>>>>> Add check for yama setting for ptrace_test.
+> >>>>>>
+> >>>>>> Signed-off-by: Jeff Xu <jeffxu@google.com>
+> >>>>>> ---
+> >>>>>>    .../testing/selftests/landlock/ptrace_test.c  | 48 ++++++++++++=
+++++---
+> >>>>>>    1 file changed, 42 insertions(+), 6 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tool=
+s/testing/selftests/landlock/ptrace_test.c
+> >>>>>> index c28ef98ff3ac..379f5ddf6c3f 100644
+> >>>>>> --- a/tools/testing/selftests/landlock/ptrace_test.c
+> >>>>>> +++ b/tools/testing/selftests/landlock/ptrace_test.c
+> >>>>>> @@ -60,6 +60,23 @@ static int test_ptrace_read(const pid_t pid)
+> >>>>>>           return 0;
+> >>>>>>    }
+> >>>>>>
+> >>>>>> +static int get_yama_ptrace_scope(void)
+> >>>>>> +{
+> >>>>>> +       int ret =3D -1;
+> >>>>>
+> >>>>> Unnecessary initialization
+> >>>>>
+> >>>>>> +       char buf[2] =3D {};
+> >>>>>
+> >>>>> Unnecessary initialization
+> >>>>>
+> >>>> buf was used later by atoi(), and atoi needs a string, because the
+> >>>> function only reads one byte in read(),
+> >>>> so it needs to add buf[1] =3D '\0'. In V2, there was a comment  to
+> >>>> change the buf[1] =3D '\0' to char buf[2] =3D {},
+> >>>> my understanding is that the compiler is smart enough and will
+> >>>> optimize the initialization to write 0 on the
+> >>>> memory  (since this is char and length is 2, and less then the size =
+of int)
+> >>>>
+> >>>
+> >>> Good point.
+> >>>
+> >>> Guenter
+> >>
+> >> Looks good to me with the other suggestions applied.
+> >>
+> >>
+> >>>
+> >>>>>> +       int fd =3D open("/proc/sys/kernel/yama/ptrace_scope", O_RD=
+ONLY);
+> >>>>>> +
+> >>>>>> +       if (fd < 0)
+> >>>>>> +               return 0;
+> >>>>>> +
+> >>>>>> +       if (read(fd, &buf, 1) < 0)
+> >>>>>
+> >>>>> buf is an array, & is thus unnecessary. Also, if the file is empty,
+> >>>>> the return value would be 0.
+> >>>>>
+> >>>>>> +               return -1;
+> >>>>>
+> >>>>> leaking file descriptor
+> >>>>>
+> >>>>>> +
+> >>>>>> +       ret =3D atoi(buf);
+> >>>>>> +       close(fd);
+> >>>>>> +       return ret;
+> >>>>>> +}
+> >>>>>> +
+> >>>>>>    /* clang-format off */
+> >>>>>>    FIXTURE(hierarchy) {};
+> >>>>>>    /* clang-format on */
+> >>>>>> @@ -232,8 +249,20 @@ TEST_F(hierarchy, trace)
+> >>>>>>           pid_t child, parent;
+> >>>>>>           int status, err_proc_read;
+> >>>>>>           int pipe_child[2], pipe_parent[2];
+> >>>>>> +       int yama_ptrace_scope;
+> >>>>>>           char buf_parent;
+> >>>>>>           long ret;
+> >>>>>> +       bool can_trace_child, can_trace_parent;
+> >>>>>> +
+> >>>>>> +       yama_ptrace_scope =3D get_yama_ptrace_scope();
+> >>>>>> +       ASSERT_LE(0, yama_ptrace_scope);
+> >>>>>> +
+> >>>>>> +       if (yama_ptrace_scope >=3D 3)
+> >>>>>> +               SKIP(return, "Yama forbids any ptrace use (scope %=
+d)",
+> >>>>>> +                          yama_ptrace_scope);
+> >>>>>> +
+> >>>>>> +       can_trace_child =3D !variant->domain_parent && (yama_ptrac=
+e_scope < 2);
+> >>>>>> +       can_trace_parent =3D !variant->domain_child && (yama_ptrac=
+e_scope < 1);
+> >>>>>>
+> >>>>>
+> >>>>> Unnecessary ( ).
+> >>>>>
+> >>>>> It is difficult to understand the context. yama_ptrace_scope =3D=3D=
+ 2 is
+> >>>>> YAMA_SCOPE_CAPABILITY, and yama_ptrace_scope =3D=3D 1 is
+> >>>>> YAMA_SCOPE_RELATIONAL. I for my part have no idea how that relates =
+to
+> >>>>> child/parent permissions. Also, I have no idea why the negation
+> >>>>> (can_trace_child =3D !variant->domain_parent) is necessary, and wha=
+t its
+> >>>>> functional impact might be. Someone else will have to chime in here=
+.
+> >>>>>
+> >>>> I will copy the definition of the constant definition from yama_lsm.=
+c
+>
+> Good point.
+>
+> >>>> But I agree this code is difficult to understand, I'm now lost on wh=
+y
+> >>>> we need the negation too.
+> >>>>
+> > Hi Micka=C3=ABl
+> >
+> > Can you check the above comment please ?
+> > I also find it difficult to understand how can_trace_child is set.
+> >
+> > On this line:
+> > can_trace_child =3D !variant->domain_parent &&
+> >    yama_ptrace_scope < 2;
+> >
+> > it translates to
+> > can_trace_child is true when 1> && 2>
+> > 1> when parent process don't have landlock policy
+>
+> This is because a landlocked process can only trace a process in the
+> same domain or one beneath it. So if a parent process is in its own
+> domain (whereas the child is not, see the diagrams close to the
+> FIXTURE_VARIANT definitions), it should not be able to trace the child.
+>
+> This check is not new.
+>
+>
+> > 2> yama_ptrace_scope =3D 0 or 1.
+>
+> A parent can only trace one of its children up to YAMA_SCOPE_RELATIONAL.
+>
+> >
+> > My question is:
+> > When the parent process has a landlock policy, and 2 is true,
+> > the parent can also trace the child process, right ?
+> > So 1> is not necessary in theory ?
+>
+> When a parent process *shares* a domain with a child, yes it can trace
+> it. However when a parent process is in a domain not shared with the
+> child, it cannot trace it. This is why there is domain_both,
+> domain_parent and domain_child variants.
+>
+Thanks for clarification.
+I'm adding below comments to help readers:
 
-OK. You're putting SELinux policy directly into the name of the LSM hook.
+can_trace_child: if a parent process can trace its child process.
+There are two conditions concerning landlock:
+1> the parent and child processes are in the same landlock domain or
+        one beneath it (case: domain_both =3D true).
+2> yama allows tracing children (up to YAMA_SCOPE_RELATIONAL).
+Both 1 and 2 need to be met for can_trace_child to be true.
+If a parent process has its own domain not shared with the child
+process (case:domain_parent =3D true), then the parent can't trace the
+child.
+
+can_trace_parent: if a child process can trace its parent process.
+There are two conditions concerning landlock:
+1> the parent and child process are in the same landlock domain or
+        one beneath it.(case: domain_both =3D true).
+2> yama is disabled (YAMA_SCOPE_DISABLED).
+Both 1 and 2 need to be met for can_trace_parent to be true.
+If a child process has its own domain not shared with the parent
+process (case:domain_child =3D true, then the child can't trace the
+parent.
 
 >
->> If I have a LSM that
->> is not SELinux (e.g. AppArmor, Smack) or no LSM at all, how can/should this
->> be enforced?
-> Sorry, why would you be expecting enforcement with no LSM?
-
-Because the LSM is supposed to be a set of *additional* restrictions.
-If there are no restrictions when there's no LSM, you can't add to
-existing restrictions. If binder works correctly without any restrictions
-that's fine. It seems odd that you'd add SELinux restrictions if there
-are no basic restrictions. If, on the other hand, binder doesn't have
-native restrictions because it always assumes SELinux, it ought to have
-a CONFIG dependency on SELinux.
-
-None of which is really important.
-
->  Are you
-> suggesting that this check should be different than the ones that
-> already exist for Binder here?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/lsm_hook_defs.h#n29
-
-This one seems just a little bit more like an implementation of
-SELinux policy in the hook than some of the others. If there is no way
-to identify the special process without SELinux policy it's going to
-be really difficult for a different LSM to utilize the hook.
-
->
->> Why isn't binder enforcing this restriction itself?
-> Binder has no direct knowledge of which process has been designated as
-> an allocator / charge transferrer. That is defined externally by
-> whoever configures the system.
-
-So the attribute isn't a binder attribute, it's an SELinux attribute?
-That isn't appropriate in the LSM interface, at least not explicitly.
-
->
->>>  so a new SELinux
->>> permission is added to restrict which processes are allowed to initiate
->>> these charge transfers.
->> Which is all perfectly reasonable if you have SELinux.
->>
->>> Signed-off-by: T.J. Mercier <tjmercier@google.com>
->>> ---
->>>  drivers/android/binder.c            | 5 +++++
->>>  include/linux/lsm_hook_defs.h       | 2 ++
->>>  include/linux/lsm_hooks.h           | 6 ++++++
->>>  include/linux/security.h            | 2 ++
->>>  security/security.c                 | 6 ++++++
->>>  security/selinux/hooks.c            | 9 +++++++++
->>>  security/selinux/include/classmap.h | 2 +-
->>>  7 files changed, 31 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
->>> index 9830848c8d25..9063db04826d 100644
->>> --- a/drivers/android/binder.c
->>> +++ b/drivers/android/binder.c
->>> @@ -2279,6 +2279,11 @@ static int binder_translate_fd(u32 fd, binder_size_t fd_offset, __u32 flags,
->>>       if (IS_ENABLED(CONFIG_MEMCG) && (flags & BINDER_FD_FLAG_XFER_CHARGE)) {
->>>               struct dma_buf *dmabuf;
->>>
->>> +             if (security_binder_transfer_charge(proc->cred, target_proc->cred)) {
->>> +                     ret = -EPERM;
->>> +                     goto err_security;
->>> +             }
->>> +
->>>               if (unlikely(!is_dma_buf_file(file))) {
->>>                       binder_user_error(
->>>                               "%d:%d got transaction with XFER_CHARGE for non-dmabuf fd, %d\n",
->>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
->>> index ed6cb2ac55fa..8db2a958557e 100644
->>> --- a/include/linux/lsm_hook_defs.h
->>> +++ b/include/linux/lsm_hook_defs.h
->>> @@ -33,6 +33,8 @@ LSM_HOOK(int, 0, binder_transfer_binder, const struct cred *from,
->>>        const struct cred *to)
->>>  LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
->>>        const struct cred *to, struct file *file)
->>> +LSM_HOOK(int, 0, binder_transfer_charge, const struct cred *from,
->>> +      const struct cred *to)
->>>  LSM_HOOK(int, 0, ptrace_access_check, struct task_struct *child,
->>>        unsigned int mode)
->>>  LSM_HOOK(int, 0, ptrace_traceme, struct task_struct *parent)
->>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->>> index 0a5ba81f7367..39c40c7bf519 100644
->>> --- a/include/linux/lsm_hooks.h
->>> +++ b/include/linux/lsm_hooks.h
->>> @@ -1385,6 +1385,12 @@
->>>   *   @file contains the struct file being transferred.
->>>   *   @to contains the struct cred for the receiving process.
->>>   *   Return 0 if permission is granted.
->>> + * @binder_transfer_charge:
->>> + *   Check whether @from is allowed to transfer the memory charge for a
->>> + *   buffer out of its cgroup to @to.
->>> + *   @from contains the struct cred for the sending process.
->>> + *   @to contains the struct cred for the receiving process.
->>> + *   Return 0 if permission is granted.
->>>   *
->>>   * @ptrace_access_check:
->>>   *   Check permission before allowing the current process to trace the
->>> diff --git a/include/linux/security.h b/include/linux/security.h
->>> index 5b67f208f7de..3b7472308430 100644
->>> --- a/include/linux/security.h
->>> +++ b/include/linux/security.h
->>> @@ -270,6 +270,8 @@ int security_binder_transfer_binder(const struct cred *from,
->>>                                   const struct cred *to);
->>>  int security_binder_transfer_file(const struct cred *from,
->>>                                 const struct cred *to, struct file *file);
->>> +int security_binder_transfer_charge(const struct cred *from,
->>> +                                 const struct cred *to);
->>>  int security_ptrace_access_check(struct task_struct *child, unsigned int mode);
->>>  int security_ptrace_traceme(struct task_struct *parent);
->>>  int security_capget(struct task_struct *target,
->>> diff --git a/security/security.c b/security/security.c
->>> index d1571900a8c7..97e1e74d1ff2 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -801,6 +801,12 @@ int security_binder_transfer_file(const struct cred *from,
->>>       return call_int_hook(binder_transfer_file, 0, from, to, file);
->>>  }
->>>
->>> +int security_binder_transfer_charge(const struct cred *from,
->>> +                                 const struct cred *to)
->>> +{
->>> +     return call_int_hook(binder_transfer_charge, 0, from, to);
->>> +}
->>> +
->>>  int security_ptrace_access_check(struct task_struct *child, unsigned int mode)
->>>  {
->>>       return call_int_hook(ptrace_access_check, 0, child, mode);
->>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->>> index 3c5be76a9199..823ef14924bd 100644
->>> --- a/security/selinux/hooks.c
->>> +++ b/security/selinux/hooks.c
->>> @@ -2066,6 +2066,14 @@ static int selinux_binder_transfer_file(const struct cred *from,
->>>                           &ad);
->>>  }
->>>
->>> +static int selinux_binder_transfer_charge(const struct cred *from, const struct cred *to)
->>> +{
->>> +     return avc_has_perm(&selinux_state,
->>> +                         cred_sid(from), cred_sid(to),
->>> +                         SECCLASS_BINDER, BINDER__TRANSFER_CHARGE,
->>> +                         NULL);
->>> +}
->>> +
->>>  static int selinux_ptrace_access_check(struct task_struct *child,
->>>                                      unsigned int mode)
->>>  {
->>> @@ -7052,6 +7060,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
->>>       LSM_HOOK_INIT(binder_transaction, selinux_binder_transaction),
->>>       LSM_HOOK_INIT(binder_transfer_binder, selinux_binder_transfer_binder),
->>>       LSM_HOOK_INIT(binder_transfer_file, selinux_binder_transfer_file),
->>> +     LSM_HOOK_INIT(binder_transfer_charge, selinux_binder_transfer_charge),
->>>
->>>       LSM_HOOK_INIT(ptrace_access_check, selinux_ptrace_access_check),
->>>       LSM_HOOK_INIT(ptrace_traceme, selinux_ptrace_traceme),
->>> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
->>> index a3c380775d41..2eef180d10d7 100644
->>> --- a/security/selinux/include/classmap.h
->>> +++ b/security/selinux/include/classmap.h
->>> @@ -172,7 +172,7 @@ const struct security_class_mapping secclass_map[] = {
->>>       { "tun_socket",
->>>         { COMMON_SOCK_PERMS, "attach_queue", NULL } },
->>>       { "binder", { "impersonate", "call", "set_context_mgr", "transfer",
->>> -                   NULL } },
->>> +                   "transfer_charge", NULL } },
->>>       { "cap_userns",
->>>         { COMMON_CAP_PERMS, NULL } },
->>>       { "cap2_userns",
+> >
+> > As reference:  the latest code (after updating the rest of comments in =
+V7)
+> > can be found at patchset 8 of
+> > https://chromium-review.googlesource.com/c/chromiumos/third_party/kerne=
+l/+/4084253
+> >
+> > Thanks
+> > Jeff
+> >
+> >>>>>>           /*
+> >>>>>>            * Removes all effective and permitted capabilities to n=
+ot interfere
+> >>>>>> @@ -258,6 +287,7 @@ TEST_F(hierarchy, trace)
+> >>>>>>
+> >>>>>>                   ASSERT_EQ(0, close(pipe_parent[1]));
+> >>>>>>                   ASSERT_EQ(0, close(pipe_child[0]));
+> >>>>>> +
+> >>>>>
+> >>>>> Unnecessary whitespace change
+> >>>>>
+> >>>>>>                   if (variant->domain_child)
+> >>>>>
+> >>>>> Why not change this code ?
+> >>>>>
+> >>>>>>                           create_domain(_metadata);
+> >>>>>>
+> >>>> create_domain actually applies the landlocked policy to the
+> >>>> (child/parent) process.
+> >>>> This is part of the setup of the testcase, so it is needed.
+> >>>>
+> >>>>
+> >>>>>> @@ -267,7 +297,7 @@ TEST_F(hierarchy, trace)
+> >>>>>>                   /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on t=
+he parent. */
+> >>>>>>                   err_proc_read =3D test_ptrace_read(parent);
+> >>>>>>                   ret =3D ptrace(PTRACE_ATTACH, parent, NULL, 0);
+> >>>>>> -               if (variant->domain_child) {
+> >>>>>> +               if (!can_trace_parent) {
+> >>>>>>                           EXPECT_EQ(-1, ret);
+> >>>>>>                           EXPECT_EQ(EPERM, errno);
+> >>>>>>                           EXPECT_EQ(EACCES, err_proc_read);
+> >>>>>> @@ -283,7 +313,7 @@ TEST_F(hierarchy, trace)
+> >>>>>>
+> >>>>>>                   /* Tests child PTRACE_TRACEME. */
+> >>>>>>                   ret =3D ptrace(PTRACE_TRACEME);
+> >>>>>> -               if (variant->domain_parent) {
+> >>>>>> +               if (!can_trace_child) {
+> >>>>>>                           EXPECT_EQ(-1, ret);
+> >>>>>>                           EXPECT_EQ(EPERM, errno);
+> >>>>>>                   } else {
+> >>>>>> @@ -296,12 +326,12 @@ TEST_F(hierarchy, trace)
+> >>>>>>                    */
+> >>>>>>                   ASSERT_EQ(1, write(pipe_child[1], ".", 1));
+> >>>>>>
+> >>>>>> -               if (!variant->domain_parent) {
+> >>>>>> +               if (can_trace_child)
+> >>>>>>                           ASSERT_EQ(0, raise(SIGSTOP));
+> >>>>>> -               }
+> >>>>>>
+> >>>>>>                   /* Waits for the parent PTRACE_ATTACH test. */
+> >>>>>>                   ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1)=
+);
+> >>>>>> +
+> >>>>>
+> >>>>> Unnecessary whitespace change
+> >>>>>
+> >>>>>>                   _exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FA=
+ILURE);
+> >>>>>>                   return;
+> >>>>>>           }
+> >>>>>> @@ -321,7 +351,7 @@ TEST_F(hierarchy, trace)
+> >>>>>>           ASSERT_EQ(1, read(pipe_child[0], &buf_parent, 1));
+> >>>>>>
+> >>>>>>           /* Tests child PTRACE_TRACEME. */
+> >>>>>> -       if (!variant->domain_parent) {
+> >>>>>> +       if (can_trace_child) {
+> >>>>>>                   ASSERT_EQ(child, waitpid(child, &status, 0));
+> >>>>>>                   ASSERT_EQ(1, WIFSTOPPED(status));
+> >>>>>>                   ASSERT_EQ(0, ptrace(PTRACE_DETACH, child, NULL, =
+0));
+> >>>>>> @@ -334,7 +364,7 @@ TEST_F(hierarchy, trace)
+> >>>>>>           /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the child=
+. */
+> >>>>>>           err_proc_read =3D test_ptrace_read(child);
+> >>>>>>           ret =3D ptrace(PTRACE_ATTACH, child, NULL, 0);
+> >>>>>> -       if (variant->domain_parent) {
+> >>>>>> +       if (!can_trace_child) {
+> >>>>>>                   EXPECT_EQ(-1, ret);
+> >>>>>>                   EXPECT_EQ(EPERM, errno);
+> >>>>>>                   EXPECT_EQ(EACCES, err_proc_read);
+> >>>>>> @@ -350,10 +380,16 @@ TEST_F(hierarchy, trace)
+> >>>>>>
+> >>>>>>           /* Signals that the parent PTRACE_ATTACH test is done. *=
+/
+> >>>>>>           ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
+> >>>>>> +
+> >>>>>
+> >>>>> Unnecessary whitespace change
+> >>>>>
+> >>>>>>           ASSERT_EQ(child, waitpid(child, &status, 0));
+> >>>>>>           if (WIFSIGNALED(status) || !WIFEXITED(status) ||
+> >>>>>>               WEXITSTATUS(status) !=3D EXIT_SUCCESS)
+> >>>>>>                   _metadata->passed =3D 0;
+> >>>>>> +
+> >>>>>> +       if (yama_ptrace_scope > 0)
+> >>>>>> +               SKIP(return,
+> >>>>>> +                          "Incomplete tests due to Yama restricti=
+ons (scope %d)",
+> >>>>>> +                          yama_ptrace_scope);
+> >>>>>>    }
+> >>>>>>
+> >>>>>>    TEST_HARNESS_MAIN
+> >>>>>> --
+> >>>>>> 2.39.0.314.g84b9a713c41-goog
+> >>>>>>
