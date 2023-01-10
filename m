@@ -2,51 +2,53 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C570C54EBC
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Jan 2023 18:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E25C54EBC
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Jan 2023 19:05:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239541AbjAJS4x (ORCPT
+        id S239694AbjAJTEq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Jan 2023 13:56:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38642 "EHLO
+        Tue, 10 Jan 2023 14:04:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239806AbjAJSzs (ORCPT
+        with ESMTP id S239678AbjAJTEl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Jan 2023 13:55:48 -0500
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74160532A7
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Jan 2023 10:54:14 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Ns0N43qMGzMpy2g;
-        Tue, 10 Jan 2023 19:54:12 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Ns0N33FsZz56k;
-        Tue, 10 Jan 2023 19:54:11 +0100 (CET)
+        Tue, 10 Jan 2023 14:04:41 -0500
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fad])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4164748CF3
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Jan 2023 11:04:40 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Ns0c63QKTzMpr2C;
+        Tue, 10 Jan 2023 20:04:38 +0100 (CET)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Ns0c552vrzMppfW;
+        Tue, 10 Jan 2023 20:04:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1673376852;
-        bh=NSYhMRkp6uBa44nx5N8tWFuFGoTHwSDIy512s1+mYeU=;
+        s=20191114; t=1673377478;
+        bh=8MDTlbYjTFU4nO6nmJs4kGk/ZU75vtXepGPaN52epkg=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=SuyQ/gqPIYM7WyFLrJwH/K9Cha1pfMmgp5KTDFy6DOCERzxCEsYgGHBUiL/pnCyYc
-         XlfFinjrdqDAjKvNkePlUGqktwnJx+nOotpNf2wy1ejXTk0SX49HYbWvvscEb62rKa
-         oxOUx78oE2tsRbKqAMMhTr6bfwVh9NJQKBinPmK4=
-Message-ID: <3b2f9db2-9937-4f46-9aed-e1d3821d5832@digikod.net>
-Date:   Tue, 10 Jan 2023 19:54:10 +0100
+        b=mjdVGozyJta12X4cIvG9a698wIxAKG0hNtBVk+3/vjJ+xutQ2U7xPFbrLG55/AEPE
+         Iid3pNGYv+SvgI2fNtG3H9/O38mE7i1h52kwsbnVdGgNlyBJj3jPjYR2aakbhnBKhZ
+         4BW4v9/f32d5ggMfhAwutTkD3I5awMOxssYscyS8=
+Message-ID: <62128847-8063-f658-7c8e-dd15cb2314c1@digikod.net>
+Date:   Tue, 10 Jan 2023 20:04:37 +0100
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v7 1/1] selftests/landlock: skip overlayfs test when
- kernel not support it
+Subject: Re: [PATCH v4 1/1] selftests/landlock: skip ptrace_test according to
+ YAMA
 Content-Language: en-US
-To:     Jeff Xu <jeffxu@google.com>, Shuah Khan <skhan@linuxfoundation.org>
+To:     Jeff Xu <jeffxu@google.com>
 Cc:     Guenter Roeck <groeck@google.com>, jeffxu@chromium.org,
-        Shuah Khan <shuah@kernel.org>, jorgelo@chromium.org,
-        keescook@chromium.org, linux-security-module@vger.kernel.org,
-        groeck@chromium.org, gnoack@google.com
-References: <20221229210236.3151723-1-jeffxu@google.com>
- <20221229210236.3151723-2-jeffxu@google.com>
- <CABXOdTc3QsT9+bfvk0SSzC-xkKB5UT90e3125guarYoaU231og@mail.gmail.com>
- <242994a4-c209-f877-f77f-7a2adf14dd74@digikod.net>
- <CALmYWFuWjsP2PxgqH006QB5hrN_fDoGS1zOefiToWNOz_Mmd4g@mail.gmail.com>
+        jorgelo@chromium.org, keescook@chromium.org,
+        linux-security-module@vger.kernel.org, groeck@chromium.org,
+        gnoack@google.com
+References: <20230103190314.3882177-1-jeffxu@google.com>
+ <20230103190314.3882177-2-jeffxu@google.com>
+ <CABXOdTdf=0C3G4C4CTwAvx3wUQ1RZ_tFuO40LUQMDHCZr7wZmQ@mail.gmail.com>
+ <CALmYWFv2H95EuEzCHrs76L3nT39A_UbdHNqUBrQ3PdnLtXfOvw@mail.gmail.com>
+ <CABXOdTfzyAx1Nzg_D+EQzn9EV9jyrmAFhU0HEcw5A5a8iV49Zg@mail.gmail.com>
+ <9ff9997d-f2f2-bb72-9993-132d3c45ae32@digikod.net>
+ <CALmYWFuGGwSXkahtZ3OFwUzbJ4n00gvLtPyNVOPiK6iHsoP93g@mail.gmail.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <CALmYWFuWjsP2PxgqH006QB5hrN_fDoGS1zOefiToWNOz_Mmd4g@mail.gmail.com>
+In-Reply-To: <CALmYWFuGGwSXkahtZ3OFwUzbJ4n00gvLtPyNVOPiK6iHsoP93g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
@@ -54,200 +56,264 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 09/01/2023 22:59, Jeff Xu wrote:
+On 09/01/2023 23:50, Jeff Xu wrote:
+> On Mon, Jan 9, 2023 at 7:29 AM Mickaël Salaün <mic@digikod.net> wrote:
+>>
+>> Looks good and agree with Guenter's suggestions
+>>
+>> On 04/01/2023 04:40, Guenter Roeck wrote:
+>>> On Tue, Jan 3, 2023 at 3:50 PM Jeff Xu <jeffxu@google.com> wrote:
+>>>>
+>>>> Thanks for the comments.
+>>>> I agree with most comments, but need Michael to chime in/confirm on below:
+>>>>
+>>>> On Tue, Jan 3, 2023 at 12:12 PM Guenter Roeck <groeck@google.com> wrote:
+>>>>>
+>>>>> On Tue, Jan 3, 2023 at 11:03 AM <jeffxu@chromium.org> wrote:
+>>>>>>
+>>>>>> From: Jeff Xu <jeffxu@google.com>
+>>>>>>
+>>>>>> Add check for yama setting for ptrace_test.
+>>>>>>
+>>>>>> Signed-off-by: Jeff Xu <jeffxu@google.com>
+>>>>>> ---
+>>>>>>    .../testing/selftests/landlock/ptrace_test.c  | 48 ++++++++++++++++---
+>>>>>>    1 file changed, 42 insertions(+), 6 deletions(-)
+>>>>>>
+>>>>>> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
+>>>>>> index c28ef98ff3ac..379f5ddf6c3f 100644
+>>>>>> --- a/tools/testing/selftests/landlock/ptrace_test.c
+>>>>>> +++ b/tools/testing/selftests/landlock/ptrace_test.c
+>>>>>> @@ -60,6 +60,23 @@ static int test_ptrace_read(const pid_t pid)
+>>>>>>           return 0;
+>>>>>>    }
+>>>>>>
+>>>>>> +static int get_yama_ptrace_scope(void)
+>>>>>> +{
+>>>>>> +       int ret = -1;
+>>>>>
+>>>>> Unnecessary initialization
+>>>>>
+>>>>>> +       char buf[2] = {};
+>>>>>
+>>>>> Unnecessary initialization
+>>>>>
+>>>> buf was used later by atoi(), and atoi needs a string, because the
+>>>> function only reads one byte in read(),
+>>>> so it needs to add buf[1] = '\0'. In V2, there was a comment  to
+>>>> change the buf[1] = '\0' to char buf[2] = {},
+>>>> my understanding is that the compiler is smart enough and will
+>>>> optimize the initialization to write 0 on the
+>>>> memory  (since this is char and length is 2, and less then the size of int)
+>>>>
+>>>
+>>> Good point.
+>>>
+>>> Guenter
+>>
+>> Looks good to me with the other suggestions applied.
+>>
+>>
+>>>
+>>>>>> +       int fd = open("/proc/sys/kernel/yama/ptrace_scope", O_RDONLY);
+>>>>>> +
+>>>>>> +       if (fd < 0)
+>>>>>> +               return 0;
+>>>>>> +
+>>>>>> +       if (read(fd, &buf, 1) < 0)
+>>>>>
+>>>>> buf is an array, & is thus unnecessary. Also, if the file is empty,
+>>>>> the return value would be 0.
+>>>>>
+>>>>>> +               return -1;
+>>>>>
+>>>>> leaking file descriptor
+>>>>>
+>>>>>> +
+>>>>>> +       ret = atoi(buf);
+>>>>>> +       close(fd);
+>>>>>> +       return ret;
+>>>>>> +}
+>>>>>> +
+>>>>>>    /* clang-format off */
+>>>>>>    FIXTURE(hierarchy) {};
+>>>>>>    /* clang-format on */
+>>>>>> @@ -232,8 +249,20 @@ TEST_F(hierarchy, trace)
+>>>>>>           pid_t child, parent;
+>>>>>>           int status, err_proc_read;
+>>>>>>           int pipe_child[2], pipe_parent[2];
+>>>>>> +       int yama_ptrace_scope;
+>>>>>>           char buf_parent;
+>>>>>>           long ret;
+>>>>>> +       bool can_trace_child, can_trace_parent;
+>>>>>> +
+>>>>>> +       yama_ptrace_scope = get_yama_ptrace_scope();
+>>>>>> +       ASSERT_LE(0, yama_ptrace_scope);
+>>>>>> +
+>>>>>> +       if (yama_ptrace_scope >= 3)
+>>>>>> +               SKIP(return, "Yama forbids any ptrace use (scope %d)",
+>>>>>> +                          yama_ptrace_scope);
+>>>>>> +
+>>>>>> +       can_trace_child = !variant->domain_parent && (yama_ptrace_scope < 2);
+>>>>>> +       can_trace_parent = !variant->domain_child && (yama_ptrace_scope < 1);
+>>>>>>
+>>>>>
+>>>>> Unnecessary ( ).
+>>>>>
+>>>>> It is difficult to understand the context. yama_ptrace_scope == 2 is
+>>>>> YAMA_SCOPE_CAPABILITY, and yama_ptrace_scope == 1 is
+>>>>> YAMA_SCOPE_RELATIONAL. I for my part have no idea how that relates to
+>>>>> child/parent permissions. Also, I have no idea why the negation
+>>>>> (can_trace_child = !variant->domain_parent) is necessary, and what its
+>>>>> functional impact might be. Someone else will have to chime in here.
+>>>>>
+>>>> I will copy the definition of the constant definition from yama_lsm.c
+
+Good point.
+
+>>>> But I agree this code is difficult to understand, I'm now lost on why
+>>>> we need the negation too.
+>>>>
 > Hi Mickaël
-> Please see inline.
 > 
-> On Mon, Jan 9, 2023 at 8:05 AM Mickaël Salaün <mic@digikod.net> wrote:
->>
->> Please refresh with clang-format-14.
->>
-> My installation has clang-format version 15, but changes are quite big
-> if I use it,
-> do you still want me to use it ?
+> Can you check the above comment please ?
+> I also find it difficult to understand how can_trace_child is set.
+> 
+> On this line:
+> can_trace_child = !variant->domain_parent &&
+>    yama_ptrace_scope < 2;
+> 
+> it translates to
+> can_trace_child is true when 1> && 2>
+> 1> when parent process don't have landlock policy
 
-That's fine, this patch is almost good, I'll run clang-format-14 on the 
-final one.
+This is because a landlocked process can only trace a process in the 
+same domain or one beneath it. So if a parent process is in its own 
+domain (whereas the child is not, see the diagrams close to the 
+FIXTURE_VARIANT definitions), it should not be able to trace the child.
+
+This check is not new.
+
+
+> 2> yama_ptrace_scope = 0 or 1.
+
+A parent can only trace one of its children up to YAMA_SCOPE_RELATIONAL.
 
 > 
->> You might want to update the subject to:
->> selftests/landlock: Skip overlayfs tests when not supported
->>
-> OK.
-> 
->>
->> On 29/12/2022 22:41, Guenter Roeck wrote:
->>> On Thu, Dec 29, 2022 at 1:02 PM <jeffxu@chromium.org> wrote:
->>>>
->>>> From: Jeff Xu <jeffxu@google.com>
->>>>
->>>> Overlayfs can be disabled in kernel config, causing related tests to
->>>> fail. Add check for overlayfs’s supportability at runtime,
->>>> so we can call SKIP() when needed.
->>>>
->>>> Signed-off-by: Jeff Xu <jeffxu@google.com>
->>>
->>> Reviewed-by: Guenter Roeck <groeck@chromium.org>
->>>
->>>> ---
->>>>    tools/testing/selftests/landlock/fs_test.c | 51 ++++++++++++++++++++++
->>>>    1 file changed, 51 insertions(+)
->>>>
->>>> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
->>>> index 21a2ce8fa739..34095fe2419b 100644
->>>> --- a/tools/testing/selftests/landlock/fs_test.c
->>>> +++ b/tools/testing/selftests/landlock/fs_test.c
->>>> @@ -11,6 +11,7 @@
->>>>    #include <fcntl.h>
->>>>    #include <linux/landlock.h>
->>>>    #include <sched.h>
->>>> +#include <stdio.h>
->>>>    #include <string.h>
->>>>    #include <sys/capability.h>
->>>>    #include <sys/mount.h>
->>>> @@ -62,6 +63,7 @@ static const char dir_s3d1[] = TMP_DIR "/s3d1";
->>>>    static const char dir_s3d2[] = TMP_DIR "/s3d1/s3d2";
->>>>    static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
->>>>
->>>> +static const char proc_filesystems[] = "/proc/filesystems";
->>
->> You can inline this string in the fopen() call for now.
->>
-> Done.
-> 
->>
->>>>    /*
->>>>     * layout1 hierarchy:
->>>>     *
->>>> @@ -169,6 +171,43 @@ static int remove_path(const char *const path)
->>>>           return err;
->>>>    }
->>>>
->>>> +static bool fgrep(FILE *inf, const char *str)
->>>> +{
->>>> +       char line[32];
->>>> +       int slen = strlen(str);
->>>> +
->>>> +       while (!feof(inf)) {
->>>> +               if (!fgets(line, sizeof(line), inf))
->>>> +                       break;
->>>> +               if (strncmp(line, str, slen))
->>>> +                       continue;
->>>> +
->>>> +               return true;
->>>> +       }
->>>> +
->>>> +       return false;
->>>> +}
->>>> +
->>>> +static bool supports_overlayfs(void)
->>
->> You can move this two functions just before mkdir_parents().
->>
-> Done.
-> 
->>
->>>> +{
->>>> +       bool res;
->>>> +       FILE *inf = fopen(proc_filesystems, "r");
->>>> +
->>>> +       /*
->>>> +        * If fopen failed, return supported.
->>>> +        * This help detect missing file (shall not
->>>> +        * happen).
->>
->> You can make this comment fit in two lines, with 80 columns.
->>
-> Done.
-> 
->>>> +        */
->>>> +       if (!inf)
->>>> +               return true;
->>>> +
->>>> +       res = fgrep(inf, "nodev\toverlay\n");
->>>> +       fclose(inf);
->>>> +
->>>> +       return res;
->>>> +}
->>>> +
->>>> +
->>>>    static void prepare_layout(struct __test_metadata *const _metadata)
->>>>    {
->>>>           disable_caps(_metadata);
->>>> @@ -3404,6 +3443,9 @@ FIXTURE(layout2_overlay) {};
->>>>
->>>>    FIXTURE_SETUP(layout2_overlay)
->>>>    {
->>>> +       if (!supports_overlayfs())
->>>> +               SKIP(return, "overlayfs is not supported");
->>>> +
->>>>           prepare_layout(_metadata);
->>>>
->>>>           create_directory(_metadata, LOWER_BASE);
->>>> @@ -3440,6 +3482,9 @@ FIXTURE_SETUP(layout2_overlay)
->>>>
->>>>    FIXTURE_TEARDOWN(layout2_overlay)
->>>>    {
->>>> +       if (!supports_overlayfs())
->>>> +               SKIP(return, "overlayfs is not supported");
->>
->> This looks good to me except the multiple supports_overlayfs() calls.
->> Only the FIXTURE_SETUP() should be required. I guess some modifications
->> of kselftest_harness.h are need to support that. I'd like to avoid
->> touching TEST_F_FORK() which should be part of kselftest_harness.h
->>
->>
-> In kselftest_harness.h,  SKIP() only applies within the function scope (
-> FIXTURE_SETUP(), TEST_F_FORK(), FIXTURE_TEARDOWN())
-> 
-> If we want to apply the skip logic to all remaining steps of the testcase,
-> I think we should do it with a dedicated environment check hook
-> (FIXTURE_ENV_CHECK),
-> called before FIXTURE_SETUP(), if the environment check fails, all of
-> the remaining
-> test steps will be skipped. In this way, once the env check pass,
-> the remaining test case should also be passing, or if env check fails,
-> there is no need to
-> delete the resource since no setup is called.
-> 
-> However,  this requires change to the kselftest_harness.h, I do think it needs
-> to be a separate feature and commit (we can adopt fs_test to be the
-> first user)
+> My question is:
+> When the parent process has a landlock policy, and 2 is true,
+> the parent can also trace the child process, right ?
+> So 1> is not necessary in theory ?
 
-Looks good to me, implementing this FIXTURE_ENV_CHECK (or something 
-similar) will be cleaner.
-
-Shuah, what do you think about that?
+When a parent process *shares* a domain with a child, yes it can trace 
+it. However when a parent process is in a domain not shared with the 
+child, it cannot trace it. This is why there is domain_both, 
+domain_parent and domain_child variants.
 
 
 > 
-> Best regards,
+> As reference:  the latest code (after updating the rest of comments in V7)
+> can be found at patchset 8 of
+> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/4084253
+> 
+> Thanks
 > Jeff
 > 
->>>> +
->>>>           EXPECT_EQ(0, remove_path(lower_do1_fl3));
->>>>           EXPECT_EQ(0, remove_path(lower_dl1_fl2));
->>>>           EXPECT_EQ(0, remove_path(lower_fl1));
->>>> @@ -3471,6 +3516,9 @@ FIXTURE_TEARDOWN(layout2_overlay)
+>>>>>>           /*
+>>>>>>            * Removes all effective and permitted capabilities to not interfere
+>>>>>> @@ -258,6 +287,7 @@ TEST_F(hierarchy, trace)
+>>>>>>
+>>>>>>                   ASSERT_EQ(0, close(pipe_parent[1]));
+>>>>>>                   ASSERT_EQ(0, close(pipe_child[0]));
+>>>>>> +
+>>>>>
+>>>>> Unnecessary whitespace change
+>>>>>
+>>>>>>                   if (variant->domain_child)
+>>>>>
+>>>>> Why not change this code ?
+>>>>>
+>>>>>>                           create_domain(_metadata);
+>>>>>>
+>>>> create_domain actually applies the landlocked policy to the
+>>>> (child/parent) process.
+>>>> This is part of the setup of the testcase, so it is needed.
 >>>>
->>>>    TEST_F_FORK(layout2_overlay, no_restriction)
->>>>    {
->>>> +       if (!supports_overlayfs())
->>>> +               SKIP(return, "overlayfs is not supported");
->>>> +
->>>>           ASSERT_EQ(0, test_open(lower_fl1, O_RDONLY));
->>>>           ASSERT_EQ(0, test_open(lower_dl1, O_RDONLY));
->>>>           ASSERT_EQ(0, test_open(lower_dl1_fl2, O_RDONLY));
->>>> @@ -3634,6 +3682,9 @@ TEST_F_FORK(layout2_overlay, same_content_different_file)
->>>>           size_t i;
->>>>           const char *path_entry;
 >>>>
->>>> +       if (!supports_overlayfs())
->>>> +               SKIP(return, "overlayfs is not supported");
->>>> +
->>>>           /* Sets rules on base directories (i.e. outside overlay scope). */
->>>>           ruleset_fd = create_ruleset(_metadata, ACCESS_RW, layer1_base);
->>>>           ASSERT_LE(0, ruleset_fd);
->>>> --
->>>> 2.39.0.314.g84b9a713c41-goog
->>>>
+>>>>>> @@ -267,7 +297,7 @@ TEST_F(hierarchy, trace)
+>>>>>>                   /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the parent. */
+>>>>>>                   err_proc_read = test_ptrace_read(parent);
+>>>>>>                   ret = ptrace(PTRACE_ATTACH, parent, NULL, 0);
+>>>>>> -               if (variant->domain_child) {
+>>>>>> +               if (!can_trace_parent) {
+>>>>>>                           EXPECT_EQ(-1, ret);
+>>>>>>                           EXPECT_EQ(EPERM, errno);
+>>>>>>                           EXPECT_EQ(EACCES, err_proc_read);
+>>>>>> @@ -283,7 +313,7 @@ TEST_F(hierarchy, trace)
+>>>>>>
+>>>>>>                   /* Tests child PTRACE_TRACEME. */
+>>>>>>                   ret = ptrace(PTRACE_TRACEME);
+>>>>>> -               if (variant->domain_parent) {
+>>>>>> +               if (!can_trace_child) {
+>>>>>>                           EXPECT_EQ(-1, ret);
+>>>>>>                           EXPECT_EQ(EPERM, errno);
+>>>>>>                   } else {
+>>>>>> @@ -296,12 +326,12 @@ TEST_F(hierarchy, trace)
+>>>>>>                    */
+>>>>>>                   ASSERT_EQ(1, write(pipe_child[1], ".", 1));
+>>>>>>
+>>>>>> -               if (!variant->domain_parent) {
+>>>>>> +               if (can_trace_child)
+>>>>>>                           ASSERT_EQ(0, raise(SIGSTOP));
+>>>>>> -               }
+>>>>>>
+>>>>>>                   /* Waits for the parent PTRACE_ATTACH test. */
+>>>>>>                   ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
+>>>>>> +
+>>>>>
+>>>>> Unnecessary whitespace change
+>>>>>
+>>>>>>                   _exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
+>>>>>>                   return;
+>>>>>>           }
+>>>>>> @@ -321,7 +351,7 @@ TEST_F(hierarchy, trace)
+>>>>>>           ASSERT_EQ(1, read(pipe_child[0], &buf_parent, 1));
+>>>>>>
+>>>>>>           /* Tests child PTRACE_TRACEME. */
+>>>>>> -       if (!variant->domain_parent) {
+>>>>>> +       if (can_trace_child) {
+>>>>>>                   ASSERT_EQ(child, waitpid(child, &status, 0));
+>>>>>>                   ASSERT_EQ(1, WIFSTOPPED(status));
+>>>>>>                   ASSERT_EQ(0, ptrace(PTRACE_DETACH, child, NULL, 0));
+>>>>>> @@ -334,7 +364,7 @@ TEST_F(hierarchy, trace)
+>>>>>>           /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the child. */
+>>>>>>           err_proc_read = test_ptrace_read(child);
+>>>>>>           ret = ptrace(PTRACE_ATTACH, child, NULL, 0);
+>>>>>> -       if (variant->domain_parent) {
+>>>>>> +       if (!can_trace_child) {
+>>>>>>                   EXPECT_EQ(-1, ret);
+>>>>>>                   EXPECT_EQ(EPERM, errno);
+>>>>>>                   EXPECT_EQ(EACCES, err_proc_read);
+>>>>>> @@ -350,10 +380,16 @@ TEST_F(hierarchy, trace)
+>>>>>>
+>>>>>>           /* Signals that the parent PTRACE_ATTACH test is done. */
+>>>>>>           ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
+>>>>>> +
+>>>>>
+>>>>> Unnecessary whitespace change
+>>>>>
+>>>>>>           ASSERT_EQ(child, waitpid(child, &status, 0));
+>>>>>>           if (WIFSIGNALED(status) || !WIFEXITED(status) ||
+>>>>>>               WEXITSTATUS(status) != EXIT_SUCCESS)
+>>>>>>                   _metadata->passed = 0;
+>>>>>> +
+>>>>>> +       if (yama_ptrace_scope > 0)
+>>>>>> +               SKIP(return,
+>>>>>> +                          "Incomplete tests due to Yama restrictions (scope %d)",
+>>>>>> +                          yama_ptrace_scope);
+>>>>>>    }
+>>>>>>
+>>>>>>    TEST_HARNESS_MAIN
+>>>>>> --
+>>>>>> 2.39.0.314.g84b9a713c41-goog
+>>>>>>
