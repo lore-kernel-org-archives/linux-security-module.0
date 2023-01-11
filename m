@@ -2,57 +2,144 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C91BC5479D
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Jan 2023 08:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AACC46467
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Jan 2023 09:34:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232053AbjAKIoi (ORCPT
+        id S234357AbjAKJeO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Jan 2023 03:44:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52948 "EHLO
+        Wed, 11 Jan 2023 04:34:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235849AbjAKIoB (ORCPT
+        with ESMTP id S238635AbjAKJdl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Jan 2023 03:44:01 -0500
-Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCEA713D64
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jan 2023 00:43:10 -0800 (PST)
-Received: by mail.lokoho.com (Postfix, from userid 1001)
-        id 616EC839F5; Wed, 11 Jan 2023 08:41:26 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
-        t=1673426589; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
-        h=Date:From:To:Subject:From;
-        b=JqYnO/QP4GhKPW5NvA7fXGeJx0mROHq/n9/9SgYxh1GEPgo+O9BKdzroZZ9g4GjMM
-         IGCKTW5I5CbJRulGBdA9kkT/VVC5V/Et5Qm6dZrTRKEZ215KxdUW1ZPxTRlsBmZ7yS
-         kbFhcO9weHZPbzNRapRWUeRYAccctzesaldxJC1RwQ0X7HVnPs9l8GB5EGIV9+m/4I
-         gbVogISKRaTGKRxe+NkN8eXSm64Sw3Zx9FwW0nRn4WmZXqtRd2w2Ah6s9t97FNjkVJ
-         4UeH+1IoalHpZQ41yGvmseGBnbQ99IYmNxbUnCAKRdS7diuEvoWECLEJlRVpY2CG8G
-         TkX+L1GG5hw7Q==
-Received: by mail.lokoho.com for <linux-security-module@vger.kernel.org>; Wed, 11 Jan 2023 08:40:15 GMT
-Message-ID: <20230111074501-0.1.3c.m7ua.0.jw5lbfg4os@lokoho.com>
-Date:   Wed, 11 Jan 2023 08:40:15 GMT
-From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
-To:     <linux-security-module@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.lokoho.com
-MIME-Version: 1.0
+        Wed, 11 Jan 2023 04:33:41 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BACCA2180;
+        Wed, 11 Jan 2023 01:31:48 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NsMgh2pz9z9v7Nd;
+        Wed, 11 Jan 2023 17:24:00 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwB3AAzugb5jAlOJAA--.2952S2;
+        Wed, 11 Jan 2023 10:31:34 +0100 (CET)
+Message-ID: <4b8688ee3d533d989196004d5f9f2c7eb4093f8b.camel@huaweicloud.com>
+Subject: Re: [PATCH v2] security: Restore passing final prot to
+ ima_file_mmap()
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>, zohar@linux.ibm.com
+Cc:     jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable@vger.kernel.org
+Date:   Wed, 11 Jan 2023 10:30:59 +0100
+In-Reply-To: <CAHC9VhQUAuF-Fan72j7BOqOdLE=B=mJpJ_GpR5p5cUmXruYT=Q@mail.gmail.com>
+References: <20221221141007.2579770-1-roberto.sassu@huaweicloud.com>
+         <CAHC9VhQUAuF-Fan72j7BOqOdLE=B=mJpJ_GpR5p5cUmXruYT=Q@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwB3AAzugb5jAlOJAA--.2952S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF18JrWUZFWxWw43uryUZFb_yoW5AFy8pF
+        s8t3WUKrs5JFySyrn7XF17CFySk3y3KFyDWa1vgryqy3Z8WF1xKr1akFW29F18ZrWkuFy0
+        qa17urZxC3WqyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBF1jj4dyAQAAsO
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dzie=C5=84 dobry,
+On Fri, 2023-01-06 at 16:14 -0500, Paul Moore wrote:
+> On Wed, Dec 21, 2022 at 9:10 AM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > Commit 98de59bfe4b2f ("take calculation of final prot in
+> > security_mmap_file() into a helper") moved the code to update prot with the
+> > actual protection flags to be granted to the requestor by the kernel to a
+> > helper called mmap_prot(). However, the patch didn't update the argument
+> > passed to ima_file_mmap(), making it receive the requested prot instead of
+> > the final computed prot.
+> > 
+> > A possible consequence is that files mmapped as executable might not be
+> > measured/appraised if PROT_EXEC is not requested but subsequently added in
+> > the final prot.
+> > 
+> > Replace prot with mmap_prot(file, prot) as the second argument of
+> > ima_file_mmap() to restore the original behavior.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Fixes: 98de59bfe4b2 ("take calculation of final prot in security_mmap_file() into a helper")
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  security/security.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/security/security.c b/security/security.c
+> > index d1571900a8c7..0d2359d588a1 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -1666,7 +1666,7 @@ int security_mmap_file(struct file *file, unsigned long prot,
+> >                                         mmap_prot(file, prot), flags);
+> >         if (ret)
+> >                 return ret;
+> > -       return ima_file_mmap(file, prot);
+> > +       return ima_file_mmap(file, mmap_prot(file, prot));
+> >  }
+> 
+> This seems like a reasonable fix, although as the original commit is
+> ~10 years old at this point I am a little concerned about the impact
+> this might have on IMA.  Mimi, what do you think?
+> 
+> Beyond that, my only other comment would be to only call mmap_prot()
+> once and cache the results in a local variable.  You could also fix up
+> some of the ugly indentation crimes in security_mmap_file() while you
+> are at it, e.g. something like this:
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+Hi Paul
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+thanks for the comments. With the patch set to move IMA and EVM to the
+LSM infrastructure we will be back to calling mmap_prot() only once,
+but I guess we could do anyway, as the patch (if accepted) would be
+likely backported to stable kernels.
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
+Thanks
 
+Roberto
 
-Pozdrawiam
-Adam Charachuta
+> diff --git a/security/security.c b/security/security.c
+> index d1571900a8c7..2f9cad9ecac8 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1662,11 +1662,12 @@ int security_mmap_file(struct file *file, unsigned long
+> prot,
+>                        unsigned long flags)
+> {
+>        int ret;
+> -       ret = call_int_hook(mmap_file, 0, file, prot,
+> -                                       mmap_prot(file, prot), flags);
+> +       unsigned long prot_adj = mmap_prot(file, prot);
+> +
+> +       ret = call_int_hook(mmap_file, 0, file, prot, prot_adj, flags);
+>        if (ret)
+>                return ret;
+> -       return ima_file_mmap(file, prot);
+> +       return ima_file_mmap(file, prot_adj);
+> }
+> 
+> --
+> paul-moore.com
+
