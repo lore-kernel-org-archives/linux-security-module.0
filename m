@@ -2,385 +2,547 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DD0C46467
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Jan 2023 20:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 269D3C54EBC
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Jan 2023 01:52:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229563AbjAJUmk (ORCPT
+        id S233501AbjAKBwa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Jan 2023 15:42:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48306 "EHLO
+        Tue, 10 Jan 2023 20:52:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231409AbjAJUmd (ORCPT
+        with ESMTP id S231233AbjAKBw3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Jan 2023 15:42:33 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FFF44C726
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Jan 2023 12:42:31 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id h192so9076800pgc.7
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Jan 2023 12:42:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EnsSgJFnxKaVJ1pf8crOpL9EJrck0WZjbRc/IhRKIVo=;
-        b=DHNeVs1pigFQI3i/w1D35bcHB/y7JWyW/VSn97f5YPvrWFaZJgs8kWB3ygU6z1U1Sr
-         ZSHuxWfZWZ+83kd5hkvnM6e5XrkD9XRutD98QSHtB8Lb+gsPf1HThuNzkhbojkX3A41p
-         SHi8xQKRn/7W+mMNp3X4F1T+huAh7aop59N1TMz1gIvV2HTboXeeCTJd16ITyUup3k32
-         kDOOcvSCuzN83yMjKGwA8tP/GTJf7T8Yq1kgH9PJAf9Vspoh6FuCBIet+tFfuXjlWSJw
-         m7Jw1ztrQLmdN6xASMhebUn+wIwuYuhOPKHYZbFDvtLj1WG5kKH8Qlbw/rq4z49VzGC8
-         L39A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EnsSgJFnxKaVJ1pf8crOpL9EJrck0WZjbRc/IhRKIVo=;
-        b=sQYkY1P5yZPb8tuI/TJLvNwTkwhMkPIS5jV5/1SEiWElIt51SWwi95EMfTskIf7NXE
-         uJW7HfqX+uB83yVsLyfZpMb0OBMKWY755dyTYfLhyL3go3XeqVScs8+TliD8NM0df3D6
-         5g+8gJbZm/6lX/1WJ5o8RQC8fw/31FB4yMba18LS03/SZcEzSl7kCuRVMbXrkn68PIgO
-         Y83SESF9pX8xCi++KUFm+DE+uAiM22TIYNv9+P7Sx7j4zluAna1b9zDhqXQYUmbVBTOt
-         p6nwifut6b1QzVKBFqo5xsmaGFa2tIZGdjVqc64k6lvLxQ6JdSTqA8Z1S6A9FriDs2UD
-         bKdQ==
-X-Gm-Message-State: AFqh2kreiCFHgMzllkIyqgSFvVbWgGga/vULv/fMyL3m4g5z0PKKrlJs
-        RKXpwmen9GTAQEWWHUcmosa9Poj8pbaua+Kz8udVVg==
-X-Google-Smtp-Source: AMrXdXvvSERUEUIlKkQsM2cvPMRkImDPBMAO2rgtwjlgw2G2TMDNZgXcl/MB0wpwP++VP5QEhhy5X4hGg0hWVXTIQyo=
-X-Received: by 2002:a63:fe4b:0:b0:479:1b56:9065 with SMTP id
- x11-20020a63fe4b000000b004791b569065mr6258086pgj.249.1673383350651; Tue, 10
- Jan 2023 12:42:30 -0800 (PST)
+        Tue, 10 Jan 2023 20:52:29 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A16EC2F5;
+        Tue, 10 Jan 2023 17:52:27 -0800 (PST)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Ns9fZ5Tqzz6JB0v;
+        Wed, 11 Jan 2023 09:52:22 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.34; Wed, 11 Jan 2023 01:52:24 +0000
+Message-ID: <92a1025c-c471-0504-43dd-36d2da8a4704@huawei.com>
+Date:   Wed, 11 Jan 2023 04:52:23 +0300
 MIME-Version: 1.0
-References: <20230103190314.3882177-1-jeffxu@google.com> <20230103190314.3882177-2-jeffxu@google.com>
- <CABXOdTdf=0C3G4C4CTwAvx3wUQ1RZ_tFuO40LUQMDHCZr7wZmQ@mail.gmail.com>
- <CALmYWFv2H95EuEzCHrs76L3nT39A_UbdHNqUBrQ3PdnLtXfOvw@mail.gmail.com>
- <CABXOdTfzyAx1Nzg_D+EQzn9EV9jyrmAFhU0HEcw5A5a8iV49Zg@mail.gmail.com>
- <9ff9997d-f2f2-bb72-9993-132d3c45ae32@digikod.net> <CALmYWFuGGwSXkahtZ3OFwUzbJ4n00gvLtPyNVOPiK6iHsoP93g@mail.gmail.com>
- <62128847-8063-f658-7c8e-dd15cb2314c1@digikod.net>
-In-Reply-To: <62128847-8063-f658-7c8e-dd15cb2314c1@digikod.net>
-From:   Jeff Xu <jeffxu@google.com>
-Date:   Tue, 10 Jan 2023 12:41:53 -0800
-Message-ID: <CALmYWFt-r_hJyPgnXVtTXo_j73ci2g4D=USP1WWi_70JNNx4tw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] selftests/landlock: skip ptrace_test according to YAMA
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     Guenter Roeck <groeck@google.com>, jeffxu@chromium.org,
-        jorgelo@chromium.org, keescook@chromium.org,
-        linux-security-module@vger.kernel.org, groeck@chromium.org,
-        gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v8 10/12] selftests/landlock: Add 10 new test suites
+ dedicated to network
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <artem.kuzin@huawei.com>
+References: <20221021152644.155136-1-konstantin.meskhidze@huawei.com>
+ <20221021152644.155136-11-konstantin.meskhidze@huawei.com>
+ <5f8ed609-17bc-f8fc-4316-ceec9ad0f3b2@digikod.net>
+ <1038177a-4f59-6018-0ded-650e032b4b9e@huawei.com>
+ <9ccc9ab7-a78d-f910-5c73-a53a637431fe@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <9ccc9ab7-a78d-f910-5c73-a53a637431fe@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.123.126]
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 10, 2023 at 11:04 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
- wrote:
->
->
-> On 09/01/2023 23:50, Jeff Xu wrote:
-> > On Mon, Jan 9, 2023 at 7:29 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.ne=
-t> wrote:
-> >>
-> >> Looks good and agree with Guenter's suggestions
-> >>
-> >> On 04/01/2023 04:40, Guenter Roeck wrote:
-> >>> On Tue, Jan 3, 2023 at 3:50 PM Jeff Xu <jeffxu@google.com> wrote:
-> >>>>
-> >>>> Thanks for the comments.
-> >>>> I agree with most comments, but need Michael to chime in/confirm on =
-below:
-> >>>>
-> >>>> On Tue, Jan 3, 2023 at 12:12 PM Guenter Roeck <groeck@google.com> wr=
-ote:
-> >>>>>
-> >>>>> On Tue, Jan 3, 2023 at 11:03 AM <jeffxu@chromium.org> wrote:
-> >>>>>>
-> >>>>>> From: Jeff Xu <jeffxu@google.com>
-> >>>>>>
-> >>>>>> Add check for yama setting for ptrace_test.
-> >>>>>>
-> >>>>>> Signed-off-by: Jeff Xu <jeffxu@google.com>
-> >>>>>> ---
-> >>>>>>    .../testing/selftests/landlock/ptrace_test.c  | 48 ++++++++++++=
-++++---
-> >>>>>>    1 file changed, 42 insertions(+), 6 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tool=
-s/testing/selftests/landlock/ptrace_test.c
-> >>>>>> index c28ef98ff3ac..379f5ddf6c3f 100644
-> >>>>>> --- a/tools/testing/selftests/landlock/ptrace_test.c
-> >>>>>> +++ b/tools/testing/selftests/landlock/ptrace_test.c
-> >>>>>> @@ -60,6 +60,23 @@ static int test_ptrace_read(const pid_t pid)
-> >>>>>>           return 0;
-> >>>>>>    }
-> >>>>>>
-> >>>>>> +static int get_yama_ptrace_scope(void)
-> >>>>>> +{
-> >>>>>> +       int ret =3D -1;
-> >>>>>
-> >>>>> Unnecessary initialization
-> >>>>>
-> >>>>>> +       char buf[2] =3D {};
-> >>>>>
-> >>>>> Unnecessary initialization
-> >>>>>
-> >>>> buf was used later by atoi(), and atoi needs a string, because the
-> >>>> function only reads one byte in read(),
-> >>>> so it needs to add buf[1] =3D '\0'. In V2, there was a comment  to
-> >>>> change the buf[1] =3D '\0' to char buf[2] =3D {},
-> >>>> my understanding is that the compiler is smart enough and will
-> >>>> optimize the initialization to write 0 on the
-> >>>> memory  (since this is char and length is 2, and less then the size =
-of int)
-> >>>>
-> >>>
-> >>> Good point.
-> >>>
-> >>> Guenter
-> >>
-> >> Looks good to me with the other suggestions applied.
-> >>
-> >>
-> >>>
-> >>>>>> +       int fd =3D open("/proc/sys/kernel/yama/ptrace_scope", O_RD=
-ONLY);
-> >>>>>> +
-> >>>>>> +       if (fd < 0)
-> >>>>>> +               return 0;
-> >>>>>> +
-> >>>>>> +       if (read(fd, &buf, 1) < 0)
-> >>>>>
-> >>>>> buf is an array, & is thus unnecessary. Also, if the file is empty,
-> >>>>> the return value would be 0.
-> >>>>>
-> >>>>>> +               return -1;
-> >>>>>
-> >>>>> leaking file descriptor
-> >>>>>
-> >>>>>> +
-> >>>>>> +       ret =3D atoi(buf);
-> >>>>>> +       close(fd);
-> >>>>>> +       return ret;
-> >>>>>> +}
-> >>>>>> +
-> >>>>>>    /* clang-format off */
-> >>>>>>    FIXTURE(hierarchy) {};
-> >>>>>>    /* clang-format on */
-> >>>>>> @@ -232,8 +249,20 @@ TEST_F(hierarchy, trace)
-> >>>>>>           pid_t child, parent;
-> >>>>>>           int status, err_proc_read;
-> >>>>>>           int pipe_child[2], pipe_parent[2];
-> >>>>>> +       int yama_ptrace_scope;
-> >>>>>>           char buf_parent;
-> >>>>>>           long ret;
-> >>>>>> +       bool can_trace_child, can_trace_parent;
-> >>>>>> +
-> >>>>>> +       yama_ptrace_scope =3D get_yama_ptrace_scope();
-> >>>>>> +       ASSERT_LE(0, yama_ptrace_scope);
-> >>>>>> +
-> >>>>>> +       if (yama_ptrace_scope >=3D 3)
-> >>>>>> +               SKIP(return, "Yama forbids any ptrace use (scope %=
-d)",
-> >>>>>> +                          yama_ptrace_scope);
-> >>>>>> +
-> >>>>>> +       can_trace_child =3D !variant->domain_parent && (yama_ptrac=
-e_scope < 2);
-> >>>>>> +       can_trace_parent =3D !variant->domain_child && (yama_ptrac=
-e_scope < 1);
-> >>>>>>
-> >>>>>
-> >>>>> Unnecessary ( ).
-> >>>>>
-> >>>>> It is difficult to understand the context. yama_ptrace_scope =3D=3D=
- 2 is
-> >>>>> YAMA_SCOPE_CAPABILITY, and yama_ptrace_scope =3D=3D 1 is
-> >>>>> YAMA_SCOPE_RELATIONAL. I for my part have no idea how that relates =
-to
-> >>>>> child/parent permissions. Also, I have no idea why the negation
-> >>>>> (can_trace_child =3D !variant->domain_parent) is necessary, and wha=
-t its
-> >>>>> functional impact might be. Someone else will have to chime in here=
-.
-> >>>>>
-> >>>> I will copy the definition of the constant definition from yama_lsm.=
-c
->
-> Good point.
->
-> >>>> But I agree this code is difficult to understand, I'm now lost on wh=
-y
-> >>>> we need the negation too.
-> >>>>
-> > Hi Micka=C3=ABl
-> >
-> > Can you check the above comment please ?
-> > I also find it difficult to understand how can_trace_child is set.
-> >
-> > On this line:
-> > can_trace_child =3D !variant->domain_parent &&
-> >    yama_ptrace_scope < 2;
-> >
-> > it translates to
-> > can_trace_child is true when 1> && 2>
-> > 1> when parent process don't have landlock policy
->
-> This is because a landlocked process can only trace a process in the
-> same domain or one beneath it. So if a parent process is in its own
-> domain (whereas the child is not, see the diagrams close to the
-> FIXTURE_VARIANT definitions), it should not be able to trace the child.
->
-> This check is not new.
->
->
-> > 2> yama_ptrace_scope =3D 0 or 1.
->
-> A parent can only trace one of its children up to YAMA_SCOPE_RELATIONAL.
->
-> >
-> > My question is:
-> > When the parent process has a landlock policy, and 2 is true,
-> > the parent can also trace the child process, right ?
-> > So 1> is not necessary in theory ?
->
-> When a parent process *shares* a domain with a child, yes it can trace
-> it. However when a parent process is in a domain not shared with the
-> child, it cannot trace it. This is why there is domain_both,
-> domain_parent and domain_child variants.
->
-Thanks for clarification.
-I'm adding below comments to help readers:
 
-can_trace_child: if a parent process can trace its child process.
-There are two conditions concerning landlock:
-1> the parent and child processes are in the same landlock domain or
-        one beneath it (case: domain_both =3D true).
-2> yama allows tracing children (up to YAMA_SCOPE_RELATIONAL).
-Both 1 and 2 need to be met for can_trace_child to be true.
-If a parent process has its own domain not shared with the child
-process (case:domain_parent =3D true), then the parent can't trace the
-child.
 
-can_trace_parent: if a child process can trace its parent process.
-There are two conditions concerning landlock:
-1> the parent and child process are in the same landlock domain or
-        one beneath it.(case: domain_both =3D true).
-2> yama is disabled (YAMA_SCOPE_DISABLED).
-Both 1 and 2 need to be met for can_trace_parent to be true.
-If a child process has its own domain not shared with the parent
-process (case:domain_child =3D true, then the child can't trace the
-parent.
+1/10/2023 8:40 PM, Mickaël Salaün пишет:
+> 
+> On 10/01/2023 06:03, Konstantin Meskhidze (A) wrote:
+>> 
+>> 
+>> 1/9/2023 3:46 PM, Mickaël Salaün пишет:
+>>>
+>>> On 21/10/2022 17:26, Konstantin Meskhidze wrote:
+>>>> These test suites try to check edge cases for TCP sockets
+>>>> bind() and connect() actions.
+>>>>
+>>>> socket:
+>>>> * bind_no_restrictions: Tests with non-landlocked ipv4 and ipv6 sockets.
+>>>> * bind_with_restrictions: Tests with mixed landlock rules for ipv4 and
+>>>> ipv6 sockets.
+>>>> * connect_no_restrictions: Tests with non-landlocked ipv4 and ipv6 sockets.
+>>>> * connect_with_restrictions: Tests with mixed landlock rules for ipv4 and
+>>>> ipv6 sockets.
+>>>> * connect_afunspec_no_restrictions: Tests with no landlock restrictions
+>>>> allowing to disconnect already connected socket with AF_UNSPEC socket
+>>>> family.
+>>>> * connect_afunspec_with_restrictions: Tests with landlocked process
+>>>> refusing to disconnect already connected socket.
+>>>> * ruleset_overlap: Tests with overlapping rules for one port.
+>>>> * ruleset_expanding: Tests with expanding rulesets in which rules are
+>>>> gradually added one by one, restricting sockets' connections.
+>>>> * inval: Tests with invalid user space supplied data:
+>>>>       - out of range ruleset attribute;
+>>>>       - unhandled allowed access;
+>>>>       - zero port value;
+>>>>       - zero access value;
+>>>>       - legitimate access values;
+>>>>
+>>>> layout1:
+>>>> * with_net: Tests with network bind() socket action within
+>>>> filesystem directory access test.
+>>>>
+>>>> Test coverage for security/landlock is 94.3% of 920 lines according
+>>>> to gcc/gcov-11.
+>>>>
+>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>>>> ---
+>>>>
+>>>> Changes since v7:
+>>>> * Squashes all selftest commits.
+>>>> * Adds fs test with network bind() socket action.
+>>>> * Minor fixes.
+>>>>
+>>>> ---
+>>>>    security/landlock/ruleset.h                 |   2 -
+>>>>    tools/testing/selftests/landlock/config     |   4 +
+>>>>    tools/testing/selftests/landlock/fs_test.c  |  65 ++
+>>>>    tools/testing/selftests/landlock/net_test.c | 823 ++++++++++++++++++++
+>>>>    4 files changed, 892 insertions(+), 2 deletions(-)
+>>>>    create mode 100644 tools/testing/selftests/landlock/net_test.c
+>>>>
+>>>> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+>>>> index f272d2cd518c..ee1a02a404ce 100644
+>>>> --- a/security/landlock/ruleset.h
+>>>> +++ b/security/landlock/ruleset.h
+>>>> @@ -264,7 +264,6 @@ landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
+>>>>
+>>>>    	/* Should already be checked in sys_landlock_create_ruleset(). */
+>>>>    	WARN_ON_ONCE(fs_access_mask != fs_mask);
+>>>> -	// TODO: Add tests to check "|=" and not "="
+>>>>    	ruleset->access_masks[layer_level] |=
+>>>>    		(fs_mask << LANDLOCK_SHIFT_ACCESS_FS);
+>>>>    }
+>>>> @@ -278,7 +277,6 @@ landlock_add_net_access_mask(struct landlock_ruleset *const ruleset,
+>>>>
+>>>>    	/* Should already be checked in sys_landlock_create_ruleset(). */
+>>>>    	WARN_ON_ONCE(net_access_mask != net_mask);
+>>>> -	// TODO: Add tests to check "|=" and not "="
+>>>>    	ruleset->access_masks[layer_level] |=
+>>>>    		(net_mask << LANDLOCK_SHIFT_ACCESS_NET);
+>>>>    }
+>>>> diff --git a/tools/testing/selftests/landlock/config b/tools/testing/selftests/landlock/config
+>>>> index 0f0a65287bac..71f7e9a8a64c 100644
+>>>> --- a/tools/testing/selftests/landlock/config
+>>>> +++ b/tools/testing/selftests/landlock/config
+>>>> @@ -1,3 +1,7 @@
+>>>> +CONFIG_INET=y
+>>>> +CONFIG_IPV6=y
+>>>> +CONFIG_NET=y
+>>>> +CONFIG_NET_NS=y
+>>>>    CONFIG_OVERLAY_FS=y
+>>>>    CONFIG_SECURITY_LANDLOCK=y
+>>>>    CONFIG_SECURITY_PATH=y
+>>>> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+>>>> index 20c1ac8485f1..5c52da1a5a69 100644
+>>>> --- a/tools/testing/selftests/landlock/fs_test.c
+>>>> +++ b/tools/testing/selftests/landlock/fs_test.c
+>>>> @@ -8,14 +8,17 @@
+>>>>     */
+>>>>
+>>>>    #define _GNU_SOURCE
+>>>> +#include <arpa/inet.h>
+>>>>    #include <fcntl.h>
+>>>>    #include <linux/landlock.h>
+>>>> +#include <netinet/in.h>
+>>>>    #include <sched.h>
+>>>>    #include <string.h>
+>>>>    #include <sys/capability.h>
+>>>>    #include <sys/mount.h>
+>>>>    #include <sys/prctl.h>
+>>>>    #include <sys/sendfile.h>
+>>>> +#include <sys/socket.h>
+>>>>    #include <sys/stat.h>
+>>>>    #include <sys/sysmacros.h>
+>>>>    #include <unistd.h>
+>>>> @@ -4366,4 +4369,66 @@ TEST_F_FORK(layout2_overlay, same_content_different_file)
+>>>>    	}
+>>>>    }
+>>>>
+>>>> +#define IP_ADDRESS "127.0.0.1"
+>>>> +
+>>>> +TEST_F_FORK(layout1, with_net)
+>>>> +{
+>>>> +	int sockfd;
+>>>> +	int sock_port = 15000;
+>>>> +	struct sockaddr_in addr4;
+>>>> +
+>>>> +	addr4.sin_family = AF_INET;
+>>>> +	addr4.sin_port = htons(sock_port);
+>>>> +	addr4.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+>>>> +	memset(&addr4.sin_zero, '\0', 8);
+>>>> +
+>>>> +	const struct rule rules[] = {
+>>>> +		{
+>>>> +			.path = dir_s1d2,
+>>>> +			.access = ACCESS_RO,
+>>>> +		},
+>>>> +		{},
+>>>> +	};
+>>>> +
+>>>> +	struct landlock_ruleset_attr ruleset_attr_net = {
+>>>> +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>>>> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>>>> +	};
+>>>> +	struct landlock_net_service_attr net_service = {
+>>>> +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
+>>>> +
+>>>> +		.port = sock_port,
+>>>> +	};
+>>>> +
+>>>> +	/* Creates ruleset for network access. */
+>>>> +	const int ruleset_fd_net = landlock_create_ruleset(
+>>>> +		&ruleset_attr_net, sizeof(ruleset_attr_net), 0);
+>>>> +	ASSERT_LE(0, ruleset_fd_net);
+>>>> +
+>>>> +	/* Adds a network rule. */
+>>>> +	ASSERT_EQ(0,
+>>>> +		  landlock_add_rule(ruleset_fd_net, LANDLOCK_RULE_NET_SERVICE,
+>>>> +				    &net_service, 0));
+>>>> +
+>>>> +	enforce_ruleset(_metadata, ruleset_fd_net);
+>>>> +	ASSERT_EQ(0, close(ruleset_fd_net));
+>>>> +
+>>>> +	const int ruleset_fd = create_ruleset(_metadata, ACCESS_RW, rules);
+>>>> +	ASSERT_LE(0, ruleset_fd);
+>>>> +	enforce_ruleset(_metadata, ruleset_fd);
+>>>> +	ASSERT_EQ(0, close(ruleset_fd));
+>>>> +
+>>>> +	/* Tests on a directory with the network rule loaded. */
+>>>> +	ASSERT_EQ(0, test_open(dir_s1d2, O_RDONLY));
+>>>> +	ASSERT_EQ(0, test_open(file1_s1d2, O_RDONLY));
+>>>> +
+>>>> +	sockfd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
+>>>> +	ASSERT_LE(0, sockfd);
+>>>> +	/* Binds a socket to port 15000. */
+>>>> +	ASSERT_EQ(0, bind(sockfd, &addr4, sizeof(addr4)));
+>>>> +
+>>>> +	/* Closes bounded socket. */
+>>>> +	ASSERT_EQ(0, close(sockfd));
+>>>> +}
+>>>> +
+>>>>    TEST_HARNESS_MAIN
+>>>> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+>>>> new file mode 100644
+>>>> index 000000000000..d1548bd7ab60
+>>>> --- /dev/null
+>>>> +++ b/tools/testing/selftests/landlock/net_test.c
+>>>> @@ -0,0 +1,823 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>>> +/*
+>>>> + * Landlock tests - Network
+>>>> + *
+>>>> + * Copyright (C) 2022 Huawei Tech. Co., Ltd.
+>>>> + */
+>>>> +
+>>>> +#define _GNU_SOURCE
+>>>> +#include <arpa/inet.h>
+>>>> +#include <errno.h>
+>>>> +#include <fcntl.h>
+>>>> +#include <linux/landlock.h>
+>>>> +#include <netinet/in.h>
+>>>> +#include <sched.h>
+>>>> +#include <string.h>
+>>>> +#include <sys/prctl.h>
+>>>> +#include <sys/socket.h>
+>>>> +#include <sys/types.h>
+>>>> +
+>>>> +#include "common.h"
+>>>> +
+>>>> +#define MAX_SOCKET_NUM 10
+>>>> +
+>>>> +#define SOCK_PORT_START 3470
+>>>> +#define SOCK_PORT_ADD 10
+>>>> +
+>>>> +#define IP_ADDRESS "127.0.0.1"
+>>>> +
+>>>> +/* Number pending connections queue to be hold. */
+>>>> +#define BACKLOG 10
+>>>> +
+>>>> +const struct sockaddr addr_unspec = { .sa_family = AF_UNSPEC };
+>>>> +
+>>>> +/* Invalid attribute, out of landlock network access range. */
+>>>> +#define LANDLOCK_INVAL_ATTR 7
+>>>> +
+>>>> +FIXTURE(socket)
+>>>> +{
+>>>> +	uint port[MAX_SOCKET_NUM];
+>>>> +	struct sockaddr_in addr4[MAX_SOCKET_NUM];
+>>>> +	struct sockaddr_in6 addr6[MAX_SOCKET_NUM];
+>>>> +};
+>>>> +
+>>>> +/* struct _fixture_variant_socket */
+>>>> +FIXTURE_VARIANT(socket)
+>>>> +{
+>>>> +	const bool is_ipv4;
+>>>> +};
+>>>> +
+>>>> +/* clang-format off */
+>>>> +FIXTURE_VARIANT_ADD(socket, ipv4) {
+>>>> +	/* clang-format on */
+>>>> +	.is_ipv4 = true,
+>>>> +};
+>>>> +
+>>>> +/* clang-format off */
+>>>> +FIXTURE_VARIANT_ADD(socket, ipv6) {
+>>>> +	/* clang-format on */
+>>>> +	.is_ipv4 = false,
+>>>> +};
+>>>> +
+>>>> +static int
+>>>> +create_socket_variant(const struct _fixture_variant_socket *const variant,
+>>>> +		      const int type)
+>>>> +{
+>>>> +	if (variant->is_ipv4)
+>>>> +		return socket(AF_INET, type | SOCK_CLOEXEC, 0);
+>>>> +	else
+>>>> +		return socket(AF_INET6, type | SOCK_CLOEXEC, 0);
+>>>> +}
+>>>> +
+>>>> +static int bind_variant(const struct _fixture_variant_socket *const variant,
+>>>> +			const int sockfd,
+>>>> +			const struct _test_data_socket *const self,
+>>>> +			const size_t index)
+>>>> +{
+>>>> +	if (variant->is_ipv4)
+>>>> +		return bind(sockfd, &self->addr4[index],
+>>>> +			    sizeof(self->addr4[index]));
+>>>> +	else
+>>>> +		return bind(sockfd, &self->addr6[index],
+>>>> +			    sizeof(self->addr6[index]));
+>>>> +}
+>>>> +
+>>>> +static int connect_variant(const struct _fixture_variant_socket *const variant,
+>>>> +			   const int sockfd,
+>>>> +			   const struct _test_data_socket *const self,
+>>>> +			   const size_t index)
+>>>> +{
+>>>> +	if (variant->is_ipv4)
+>>>> +		return connect(sockfd, &self->addr4[index],
+>>>> +			       sizeof(self->addr4[index]));
+>>>> +	else
+>>>> +		return connect(sockfd, &self->addr6[index],
+>>>> +			       sizeof(self->addr6[index]));
+>>>> +}
+>>>> +
+>>>> +FIXTURE_SETUP(socket)
+>>>> +{
+>>>> +	int i;
+>>>> +
+>>>> +	/* Creates IPv4 socket addresses. */
+>>>> +	for (i = 0; i < MAX_SOCKET_NUM; i++) {
+>>>> +		self->port[i] = SOCK_PORT_START + SOCK_PORT_ADD * i;
+>>>> +		self->addr4[i].sin_family = AF_INET;
+>>>> +		self->addr4[i].sin_port = htons(self->port[i]);
+>>>> +		self->addr4[i].sin_addr.s_addr = inet_addr(IP_ADDRESS);
+>>>> +		memset(&(self->addr4[i].sin_zero), '\0', 8);
+>>>> +	}
+>>>> +
+>>>> +	/* Creates IPv6 socket addresses. */
+>>>> +	for (i = 0; i < MAX_SOCKET_NUM; i++) {
+>>>> +		self->port[i] = SOCK_PORT_START + SOCK_PORT_ADD * i;
+>>>> +		self->addr6[i].sin6_family = AF_INET6;
+>>>> +		self->addr6[i].sin6_port = htons(self->port[i]);
+>>>> +		inet_pton(AF_INET6, IP_ADDRESS, &(self->addr6[i].sin6_addr));
+>>>> +	}
+>>>> +
+>>>> +	set_cap(_metadata, CAP_SYS_ADMIN);
+>>>> +	ASSERT_EQ(0, unshare(CLONE_NEWNET));
+>>>> +	ASSERT_EQ(0, system("ip link set dev lo up"));
+>>>> +	clear_cap(_metadata, CAP_SYS_ADMIN);
+>>>> +}
+>>>> +
+>>>> +FIXTURE_TEARDOWN(socket)
+>>>> +{
+>>>> +}
+>>>> +
+>>>> +TEST_F_FORK(socket, bind_no_restrictions)
+>>>> +{
+>>>> +	int sockfd;
+>>>> +
+>>>> +	sockfd = create_socket_variant(variant, SOCK_STREAM);
+>>>> +	ASSERT_LE(0, sockfd);
+>>>> +
+>>>> +	/* Binds a socket to port[0]. */
+>>>> +	ASSERT_EQ(0, bind_variant(variant, sockfd, self, 0));
+>>>> +
+>>>> +	ASSERT_EQ(0, close(sockfd));
+>>>> +}
+>>>> +
+>>>> +TEST_F_FORK(socket, bind_with_restrictions)
+>>>> +{
+>>>> +	int sockfd;
+>>>> +
+>>>> +	struct landlock_ruleset_attr ruleset_attr = {
+>>>> +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>>>> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>>>> +	};
+>>>> +	struct landlock_net_service_attr net_service_1 = {
+>>>> +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+>>>> +				  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>>>> +		.port = self->port[0],
+>>>> +	};
+>>>> +	struct landlock_net_service_attr net_service_2 = {
+>>>> +		.allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>>>> +		.port = self->port[1],
+>>>> +	};
+>>>> +	struct landlock_net_service_attr net_service_3 = {
+>>>> +		.allowed_access = 0,
+>>>> +		.port = self->port[2],
+>>>> +	};
+>>>> +
+>>>> +	const int ruleset_fd =
+>>>> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>>>> +	ASSERT_LE(0, ruleset_fd);
+>>>> +
+>>>> +	/* Allows connect and bind operations to the port[0] socket. */
+>>>> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>>>> +				       &net_service_1, 0));
+>>>> +	/* Allows connect and deny bind operations to the port[1] socket. */
+>>>> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>>>> +				       &net_service_2, 0));
+>>>> +	/*
+>>>> +	 * Empty allowed_access (i.e. deny rules) are ignored in network actions
+>>>> +	 * for port[2] socket.
+>>>> +	 */
+>>>> +	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>>>> +					&net_service_3, 0));
+>>>> +	ASSERT_EQ(ENOMSG, errno);
+>>>> +
+>>>> +	/* Enforces the ruleset. */
+>>>> +	enforce_ruleset(_metadata, ruleset_fd);
+>>>> +
+>>>> +	sockfd = create_socket_variant(variant, SOCK_STREAM);
+>>>> +	ASSERT_LE(0, sockfd);
+>>>> +	/* Binds a socket to port[0]. */
+>>>> +	ASSERT_EQ(0, bind_variant(variant, sockfd, self, 0));
+>>>> +
+>>>> +	/* Closes bounded socket. */
+>>>> +	ASSERT_EQ(0, close(sockfd));
+>>>> +
+>>>> +	sockfd = create_socket_variant(variant, SOCK_STREAM);
+>>>> +	ASSERT_LE(0, sockfd);
+>>>> +	/* Binds a socket to port[1]. */
+>>>> +	ASSERT_EQ(-1, bind_variant(variant, sockfd, self, 1));
+>>>> +	ASSERT_EQ(EACCES, errno);
+>>>> +
+>>>> +	sockfd = create_socket_variant(variant, SOCK_STREAM);
+>>>> +	ASSERT_LE(0, sockfd);
+>>>> +	/* Binds a socket to port[2]. */
+>>>> +	ASSERT_EQ(-1, bind_variant(variant, sockfd, self, 2));
+>>>> +	ASSERT_EQ(EACCES, errno);
+>>>
+>>> This is inconsistent with the bind_no_restrictions test. If you
+>>> deduplicate the tests with and without restrictions (i.e. only one
+>>> "bind" test, and another "connect"…), you can extend
+>>> FIXTURE_VARIANT(socket) with a new const bool enforce_landlock, and
+>>> check that in all tests to either do Landlock syscalls or not. You can
+>>> still initialize most variable whatever Landlock should be enforced or
+>>> not (e.g. ruleset_attr, net_service_1…) to make it easiear to read.
+>>>
+>> 
+>>     I think it's not a deduplication. Tests enforeced with landlock are
+>> more various regarding port and net_service attributes used. The number
+>> of landlock atributes vary from test ot test. I'dont see how to unify it
+>> with FIXTURE_VARIANT and enforce_landlock const will it make harder
+>> merging tests.
+>> Please your opinion and suggestions?
+> 
+> What about that?
 
->
-> >
-> > As reference:  the latest code (after updating the rest of comments in =
-V7)
-> > can be found at patchset 8 of
-> > https://chromium-review.googlesource.com/c/chromiumos/third_party/kerne=
-l/+/4084253
-> >
-> > Thanks
-> > Jeff
-> >
-> >>>>>>           /*
-> >>>>>>            * Removes all effective and permitted capabilities to n=
-ot interfere
-> >>>>>> @@ -258,6 +287,7 @@ TEST_F(hierarchy, trace)
-> >>>>>>
-> >>>>>>                   ASSERT_EQ(0, close(pipe_parent[1]));
-> >>>>>>                   ASSERT_EQ(0, close(pipe_child[0]));
-> >>>>>> +
-> >>>>>
-> >>>>> Unnecessary whitespace change
-> >>>>>
-> >>>>>>                   if (variant->domain_child)
-> >>>>>
-> >>>>> Why not change this code ?
-> >>>>>
-> >>>>>>                           create_domain(_metadata);
-> >>>>>>
-> >>>> create_domain actually applies the landlocked policy to the
-> >>>> (child/parent) process.
-> >>>> This is part of the setup of the testcase, so it is needed.
-> >>>>
-> >>>>
-> >>>>>> @@ -267,7 +297,7 @@ TEST_F(hierarchy, trace)
-> >>>>>>                   /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on t=
-he parent. */
-> >>>>>>                   err_proc_read =3D test_ptrace_read(parent);
-> >>>>>>                   ret =3D ptrace(PTRACE_ATTACH, parent, NULL, 0);
-> >>>>>> -               if (variant->domain_child) {
-> >>>>>> +               if (!can_trace_parent) {
-> >>>>>>                           EXPECT_EQ(-1, ret);
-> >>>>>>                           EXPECT_EQ(EPERM, errno);
-> >>>>>>                           EXPECT_EQ(EACCES, err_proc_read);
-> >>>>>> @@ -283,7 +313,7 @@ TEST_F(hierarchy, trace)
-> >>>>>>
-> >>>>>>                   /* Tests child PTRACE_TRACEME. */
-> >>>>>>                   ret =3D ptrace(PTRACE_TRACEME);
-> >>>>>> -               if (variant->domain_parent) {
-> >>>>>> +               if (!can_trace_child) {
-> >>>>>>                           EXPECT_EQ(-1, ret);
-> >>>>>>                           EXPECT_EQ(EPERM, errno);
-> >>>>>>                   } else {
-> >>>>>> @@ -296,12 +326,12 @@ TEST_F(hierarchy, trace)
-> >>>>>>                    */
-> >>>>>>                   ASSERT_EQ(1, write(pipe_child[1], ".", 1));
-> >>>>>>
-> >>>>>> -               if (!variant->domain_parent) {
-> >>>>>> +               if (can_trace_child)
-> >>>>>>                           ASSERT_EQ(0, raise(SIGSTOP));
-> >>>>>> -               }
-> >>>>>>
-> >>>>>>                   /* Waits for the parent PTRACE_ATTACH test. */
-> >>>>>>                   ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1)=
-);
-> >>>>>> +
-> >>>>>
-> >>>>> Unnecessary whitespace change
-> >>>>>
-> >>>>>>                   _exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FA=
-ILURE);
-> >>>>>>                   return;
-> >>>>>>           }
-> >>>>>> @@ -321,7 +351,7 @@ TEST_F(hierarchy, trace)
-> >>>>>>           ASSERT_EQ(1, read(pipe_child[0], &buf_parent, 1));
-> >>>>>>
-> >>>>>>           /* Tests child PTRACE_TRACEME. */
-> >>>>>> -       if (!variant->domain_parent) {
-> >>>>>> +       if (can_trace_child) {
-> >>>>>>                   ASSERT_EQ(child, waitpid(child, &status, 0));
-> >>>>>>                   ASSERT_EQ(1, WIFSTOPPED(status));
-> >>>>>>                   ASSERT_EQ(0, ptrace(PTRACE_DETACH, child, NULL, =
-0));
-> >>>>>> @@ -334,7 +364,7 @@ TEST_F(hierarchy, trace)
-> >>>>>>           /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the child=
-. */
-> >>>>>>           err_proc_read =3D test_ptrace_read(child);
-> >>>>>>           ret =3D ptrace(PTRACE_ATTACH, child, NULL, 0);
-> >>>>>> -       if (variant->domain_parent) {
-> >>>>>> +       if (!can_trace_child) {
-> >>>>>>                   EXPECT_EQ(-1, ret);
-> >>>>>>                   EXPECT_EQ(EPERM, errno);
-> >>>>>>                   EXPECT_EQ(EACCES, err_proc_read);
-> >>>>>> @@ -350,10 +380,16 @@ TEST_F(hierarchy, trace)
-> >>>>>>
-> >>>>>>           /* Signals that the parent PTRACE_ATTACH test is done. *=
-/
-> >>>>>>           ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-> >>>>>> +
-> >>>>>
-> >>>>> Unnecessary whitespace change
-> >>>>>
-> >>>>>>           ASSERT_EQ(child, waitpid(child, &status, 0));
-> >>>>>>           if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-> >>>>>>               WEXITSTATUS(status) !=3D EXIT_SUCCESS)
-> >>>>>>                   _metadata->passed =3D 0;
-> >>>>>> +
-> >>>>>> +       if (yama_ptrace_scope > 0)
-> >>>>>> +               SKIP(return,
-> >>>>>> +                          "Incomplete tests due to Yama restricti=
-ons (scope %d)",
-> >>>>>> +                          yama_ptrace_scope);
-> >>>>>>    }
-> >>>>>>
-> >>>>>>    TEST_HARNESS_MAIN
-> >>>>>> --
-> >>>>>> 2.39.0.314.g84b9a713c41-goog
-> >>>>>>
+
+> 
+> TEST_F_FORK(socket, bind)
+> {
+> 	int sockfd;
+> 
+> 	struct landlock_ruleset_attr ruleset_attr = {
+> 		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+> 				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> 	};
+> 	struct landlock_net_service_attr net_service_1 = {
+> 		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+> 				  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> 		.port = self->port[0],
+> 	};
+> 	struct landlock_net_service_attr net_service_2 = {
+> 		.allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> 		.port = self->port[1],
+> 	};
+> 	struct landlock_net_service_attr net_service_3 = {
+> 		.allowed_access = 0,
+> 		.port = self->port[2],
+> 	};
+> 	int ruleset_fd, ret;
+> 
+> 	if (variant->is_sandboxed) {
+> 		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+> 						     sizeof(ruleset_attr), 0);
+> 		ASSERT_LE(0, ruleset_fd);
+> 
+> 		/* Allows connect and bind operations to the port[0] socket. */
+> 		ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
+> 					       LANDLOCK_RULE_NET_SERVICE,
+> 					       &net_service_1, 0));
+> 
+> 		/* Allows connect and deny bind operations to the port[1] socket. */
+> 		ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
+> 					       LANDLOCK_RULE_NET_SERVICE,
+> 					       &net_service_2, 0));
+> 
+> 		/*
+> 		 * Empty allowed_access (i.e. deny rules) are ignored in network actions
+> 		 * for port[2] socket.
+> 		 */
+> 		ASSERT_EQ(-1, landlock_add_rule(ruleset_fd,
+> 						LANDLOCK_RULE_NET_SERVICE,
+> 						&net_service_3, 0));
+> 		ASSERT_EQ(ENOMSG, errno);
+> 
+> 		enforce_ruleset(_metadata, ruleset_fd);
+> 		ASSERT_EQ(0, close(ruleset_fd));
+> 	}
+> 
+> 	sockfd = create_socket_variant(variant, SOCK_STREAM);
+> 	ASSERT_LE(0, sockfd);
+> 	/* Binds a socket to port[0]. */
+> 	ASSERT_EQ(0, bind_variant(variant, sockfd, self, 0));
+> 
+> 	/* Closes bounded socket. */
+> 	ASSERT_EQ(0, close(sockfd));
+> 
+> 	sockfd = create_socket_variant(variant, SOCK_STREAM);
+> 	ASSERT_LE(0, sockfd);
+> 	/* Binds a socket to port[1]. */
+> 	ret = bind_variant(variant, sockfd, self, 1);
+> 	if (variant->is_sandboxed) {
+> 		ASSERT_EQ(-1, ret);
+> 		ASSERT_EQ(EACCES, errno);
+> 	} else {
+> 		ASSERT_EQ(0, ret);
+> 	}
+> 
+> 	sockfd = create_socket_variant(variant, SOCK_STREAM);
+> 	ASSERT_LE(0, sockfd);
+> 	/* Binds a socket to port[2]. */
+> 	ret = bind_variant(variant, sockfd, self, 2);
+> 	if (variant->is_sandboxed) {
+> 		ASSERT_EQ(-1, ret);
+> 		ASSERT_EQ(EACCES, errno);
+> 	} else {
+> 		ASSERT_EQ(0, ret);
+> 	}
+> }
+
+   oh...This way.
+   Sorry. There was a misunderstadting from me.
+   Got your point now. Thanks for the tip.
+> .
