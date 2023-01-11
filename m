@@ -2,145 +2,198 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3933AC46467
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Jan 2023 21:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98E3C678D5
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Jan 2023 22:57:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbjAKVJL (ORCPT
+        id S235452AbjAKW5A (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Jan 2023 16:09:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32882 "EHLO
+        Wed, 11 Jan 2023 17:57:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234899AbjAKVIY (ORCPT
+        with ESMTP id S235290AbjAKW46 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Jan 2023 16:08:24 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 968983FCB5
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jan 2023 13:07:56 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id r18so11401125pgr.12
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jan 2023 13:07:56 -0800 (PST)
+        Wed, 11 Jan 2023 17:56:58 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69C9C6304
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Jan 2023 14:56:50 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id v30so24529293edb.9
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Jan 2023 14:56:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NKA7LHbWkU/8uEBxGN30Hlf6bRn1CeHLZXrUPmworgc=;
-        b=YTWKn86KW4x9YIu2uafO07bEbTWPUAYLZAXyoGtZy/TGSDvE6wAicpswdP1o+auAIh
-         HJ+f9FuLbRQVqNSUfTmG5N3/DxZ5vrYN06dgVhn2/b62GbC4KwJDCjx38SGaR/+9oBfR
-         m048K7zPe8w+9smfql2kO/QZeQbFS29Xex8ODOAld1orFR/3AejLnqzThDR3ejV/dFFl
-         cffqrO0rkpjvdAb8sFIiudEXvXE/Cs8B9WOe98SylAZyTJMQDPLdP002IgtwMsbmbXFx
-         srf2Jjid2Anwe3++xKzQ5MM0nvxaNeWLmVXoibMb9zq3LpbaL5SDGoUhu1PeZgFx4cn7
-         Qh2Q==
+        d=ffwll.ch; s=google;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fYVYmrm8qRKhdfjNxir61IMwTDz9ljMKT2wwPAIP+WQ=;
+        b=Xhqr3JG2Kex0yJQiWOcc0PM+7tyhQNxjCcJ7T8wz62d+5YQPT9Rtd4nC10zyoXLoMT
+         4/vmihyklfSrZDCiyctpeidBCrvuTcUZqgtWDQJyCNaXgm6+tkBSAvDANuhYpWOmJyom
+         dC+q84M7rFuFBjEUHK9o1KYkMoO2Zcisjc0WI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NKA7LHbWkU/8uEBxGN30Hlf6bRn1CeHLZXrUPmworgc=;
-        b=TNEeDHNB3BN5HR7taUF6X1MsxffE8xWD/PD3vn6TPrYx2631PFXglV8HhP5DaBcHbG
-         Qw3iC2N9oSE4i5AAVZtY6/lj1J/EFMpurI/taPE/CBR182rhf2KgbK393+0QfsVIU8vP
-         g0pjUiQmlRIKEnywIrUuOS0cHWdratV8eXlJVJYbp9axmaqhqmkr0neDPOn15j5iaO3f
-         zKQgU5fgYDYXSpHVBcm2CkFZstw2lyIbIwABoL0dYxFnTW2QyM8p9oOKKG1emGiBw9vg
-         LyQ9MORmeGn2d6zOzB294/94CdPbgEMS6HaxMzDXuFbKPSAJAdmjR636ICzoJ8aZofze
-         mMpg==
-X-Gm-Message-State: AFqh2kq5fBWkEh9ISfN4M0K2/vqKQKHmQ4RAEwVAIwkcwlqQ8OWcMi6U
-        f5U5cL0zjDRWpFas7X43+V0KFpGZLHG9lc0nElpx
-X-Google-Smtp-Source: AMrXdXt0bj4jdytGJ4plzWTsJ+IVWBeKmA0w9dDcNsRRMHju9Xsvs60/JpLNKiY2Xi07XKEV7BCWlHI/+wxxDKTxrE0=
-X-Received: by 2002:a63:e20b:0:b0:479:2109:506 with SMTP id
- q11-20020a63e20b000000b0047921090506mr4153612pgh.92.1673471276090; Wed, 11
- Jan 2023 13:07:56 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fYVYmrm8qRKhdfjNxir61IMwTDz9ljMKT2wwPAIP+WQ=;
+        b=THA1aVlGv45IvO+G9h6T4ZDHzpEEBoyVhlQel6w0zVkZkwYQLFmT/BcK2p6YTpuCXc
+         5f0EEeF/FOKKj4S0Q82U3ogPVy50v7458Er/aNSFuo3qU0eW+AK8QDeoNzS+ofllPxnm
+         mcq8alW3JhSzbXSJaBfFQjFMsvxA8jjYfAuB+ZyL45AFyXrs/1BDw/WjVknbSI7T/x/7
+         4IWb2QIVw9U+LOOS+bJd5O9AEqRPHbpbii1Pl37deQQmWxEWcy3cqRb5UeMCZsbBXe3F
+         KM+XsWWscXIVwLeqa/BgkDN4yeqmH0GfxMFV7nqna/F0nB04wBxIPrlaqmhYlDTSivXB
+         AeCw==
+X-Gm-Message-State: AFqh2kpjfQgXF5VTeashz84UN+WlXgL+4cRdCrWErfY8gA+m2SbJsge8
+        /OoF0ZoxzV8CmBsCooSEY5Ismg==
+X-Google-Smtp-Source: AMrXdXvtJyhkyJcdGojea7328ZHYfQqEgGWt5WiLp900ZLPEIaZSTCU8Uhtlcr1KkDcOMzby5I7CqA==
+X-Received: by 2002:a05:6402:48c:b0:483:d49f:e26c with SMTP id k12-20020a056402048c00b00483d49fe26cmr54924068edv.15.1673477808940;
+        Wed, 11 Jan 2023 14:56:48 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id a3-20020aa7cf03000000b0049019b48373sm6549362edy.85.2023.01.11.14.56.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jan 2023 14:56:48 -0800 (PST)
+Date:   Wed, 11 Jan 2023 23:56:45 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     "T.J. Mercier" <tjmercier@google.com>, Tejun Heo <tj@kernel.org>,
+        Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Carlos Llamas <cmllamas@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Muchun Song <muchun.song@linux.dev>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, daniel.vetter@ffwll.ch,
+        android-mm@google.com, jstultz@google.com, cgroups@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH 0/4] Track exported dma-buffers with memcg
+Message-ID: <Y78+rfzXPq5XGs9O@phenom.ffwll.local>
+Mail-Followup-To: Shakeel Butt <shakeelb@google.com>,
+        "T.J. Mercier" <tjmercier@google.com>, Tejun Heo <tj@kernel.org>,
+        Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Carlos Llamas <cmllamas@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Muchun Song <muchun.song@linux.dev>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, android-mm@google.com,
+        jstultz@google.com, cgroups@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+References: <20230109213809.418135-1-tjmercier@google.com>
+ <CALvZod4ru7F38tAO-gM9ZFKaEhS0w3KqFbPwhwcTvgJs4xMUow@mail.gmail.com>
 MIME-Version: 1.0
-References: <20230109180717.58855-1-casey@schaufler-ca.com> <20230109180717.58855-6-casey@schaufler-ca.com>
-In-Reply-To: <20230109180717.58855-6-casey@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 11 Jan 2023 16:07:45 -0500
-Message-ID: <CAHC9VhTFRXdRZnnORw-fU4Wo84HMUMw8+JTTJvc4+pv8YELBHw@mail.gmail.com>
-Subject: Re: [PATCH v5 5/8] LSM: Create lsm_module_list system call
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALvZod4ru7F38tAO-gM9ZFKaEhS0w3KqFbPwhwcTvgJs4xMUow@mail.gmail.com>
+X-Operating-System: Linux phenom 5.19.0-2-amd64 
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 9, 2023 at 1:09 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> Create a system call to report the list of Linux Security Modules
-> that are active on the system. The list is provided as an array
-> of LSM ID numbers.
->
-> The calling application can use this list determine what LSM
-> specific actions it might take. That might include chosing an
-> output format, determining required privilege or bypassing
-> security module specific behavior.
->
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  Documentation/userspace-api/lsm.rst |  3 +++
->  include/linux/syscalls.h            |  1 +
->  kernel/sys_ni.c                     |  1 +
->  security/lsm_syscalls.c             | 41 +++++++++++++++++++++++++++++
->  4 files changed, 46 insertions(+)
+On Mon, Jan 09, 2023 at 04:18:12PM -0800, Shakeel Butt wrote:
+> Hi T.J.,
+> 
+> On Mon, Jan 9, 2023 at 1:38 PM T.J. Mercier <tjmercier@google.com> wrote:
+> >
+> > Based on discussions at LPC, this series adds a memory.stat counter for
+> > exported dmabufs. This counter allows us to continue tracking
+> > system-wide total exported buffer sizes which there is no longer any
+> > way to get without DMABUF_SYSFS_STATS, and adds a new capability to
+> > track per-cgroup exported buffer sizes. The total (root counter) is
+> > helpful for accounting in-kernel dmabuf use (by comparing with the sum
+> > of child nodes or with the sum of sizes of mapped buffers or FD
+> > references in procfs) in addition to helping identify driver memory
+> > leaks when in-kernel use continually increases over time. With
+> > per-application cgroups, the per-cgroup counter allows us to quickly
+> > see how much dma-buf memory an application has caused to be allocated.
+> > This avoids the need to read through all of procfs which can be a
+> > lengthy process, and causes the charge to "stick" to the allocating
+> > process/cgroup as long as the buffer is alive, regardless of how the
+> > buffer is shared (unless the charge is transferred).
+> >
+> > The first patch adds the counter to memcg. The next two patches allow
+> > the charge for a buffer to be transferred across cgroups which is
+> > necessary because of the way most dmabufs are allocated from a central
+> > process on Android. The fourth patch adds a SELinux hook to binder in
+> > order to control who is allowed to transfer buffer charges.
+> >
+> > [1] https://lore.kernel.org/all/20220617085702.4298-1-christian.koenig@amd.com/
+> >
+> 
+> I am a bit confused by the term "charge" used in this patch series.
+> From the patches, it seems like only a memcg stat is added and nothing
+> is charged to the memcg.
+> 
+> This leads me to the question: Why add this stat in memcg if the
+> underlying memory is not charged to the memcg and if we don't really
+> want to limit the usage?
+> 
+> I see two ways forward:
+> 
+> 1. Instead of memcg, use bpf-rstat [1] infra to implement the
+> per-cgroup stat for dmabuf. (You may need an additional hook for the
+> stat transfer).
+> 
+> 2. Charge the actual memory to the memcg. Since the size of dmabuf is
+> immutable across its lifetime, you will not need to do accounting at
+> page level and instead use something similar to the network memory
+> accounting interface/mechanism (or even more simple). However you
+> would need to handle the reclaim, OOM and charge context and failure
+> cases. However if you are not looking to limit the usage of dmabuf
+> then this option is an overkill.
 
-...
+I think eventually, at least for other "account gpu stuff in cgroups" use
+case we do want to actually charge the memory.
 
-> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
-> index 55e8bf61ac8a..92af1fcaa654 100644
-> --- a/security/lsm_syscalls.c
-> +++ b/security/lsm_syscalls.c
-> @@ -180,3 +180,44 @@ SYSCALL_DEFINE3(lsm_get_self_attr,
->         kfree(final);
->         return rc;
->  }
-> +
-> +/**
-> + * sys_lsm_module_list - Return a list of the active security modules
-> + * @ids: the LSM module ids
-> + * @size: size of @ids, updated on return
-> + * @flags: reserved for future use, must be zero
-> + *
-> + * Returns a list of the active LSM ids. On success this function
-> + * returns the number of @ids array elements. This value may be zero
-> + * if there are no LSMs active. If @size is insufficient to contain
-> + * the return data -E2BIG is returned and @size is set to the minimum
-> + * required size. In all other cases a negative value indicating the
-> + * error is returned.
-> + */
-> +SYSCALL_DEFINE3(lsm_module_list,
-> +               u32 __user *, ids,
-> +               size_t __user *, size,
-> +               u64, flags)
-> +{
-> +       size_t total_size = lsm_active_cnt * sizeof(*ids);
-> +       size_t usize;
-> +       int i;
-> +
-> +       if (flags)
-> +               return -EINVAL;
-> +
-> +       if (get_user(usize, size))
-> +               return -EFAULT;
-> +
-> +       if (put_user(total_size, size) != 0)
-> +               return -EFAULT;
-> +
-> +       if (usize < total_size)
-> +               return -E2BIG;
-> +
-> +       for (i = 0; i < lsm_active_cnt; i++)
-> +               if (put_user(lsm_idlist[i]->id, ids++))
-> +                       return -EFAULT;
-> +
-> +       return lsm_active_cnt;
-> +}
+The problem is a bit that with gpu allocations reclaim is essentially "we
+pass the error to userspace and they get to sort the mess out". There are
+some exceptions (some gpu drivers to have shrinkers) would we need to make
+sure these shrinkers are tied into the cgroup stuff before we could enable
+charging for them?
 
-Similar to my comments in 4/8, I would probably create a new LSM hook
-for this syscall so that the lsm_ctx is passed through the LSM layer
-directly to the target LSM:
+Also note that at least from the gpu driver side this is all a huge
+endeavour, so if we can split up the steps as much as possible (and get
+something interim useable that doesn't break stuff ofc), that is
+practically need to make headway here. TJ has been trying out various
+approaches for quite some time now already :-/
+-Daniel
 
-  int security_sys_setselfattr(u64 attr, struct lsm_ctx __user *ctx,
-size_t len);
+> Please let me know if I misunderstood something.
+> 
+> [1] https://lore.kernel.org/all/20220824233117.1312810-1-haoluo@google.com/
+> 
+> thanks,
+> Shakeel
 
---
-paul-moore.com
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
