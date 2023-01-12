@@ -2,298 +2,209 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5DEC61DB3
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Jan 2023 20:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A1FC61DB3
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Jan 2023 21:02:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238392AbjALUyl (ORCPT
+        id S232627AbjALVCj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Jan 2023 15:54:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55528 "EHLO
+        Thu, 12 Jan 2023 16:02:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240457AbjALUx2 (ORCPT
+        with ESMTP id S240256AbjALVAG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Jan 2023 15:53:28 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5D1D6592
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Jan 2023 12:31:00 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id n12so20314017pjp.1
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Jan 2023 12:31:00 -0800 (PST)
+        Thu, 12 Jan 2023 16:00:06 -0500
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDAC27652
+        for <linux-security-module@vger.kernel.org>; Thu, 12 Jan 2023 12:45:11 -0800 (PST)
+Received: by mail-pf1-x429.google.com with SMTP id a30so14683486pfr.6
+        for <linux-security-module@vger.kernel.org>; Thu, 12 Jan 2023 12:45:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2YTDoDsegFqtuQTKoI1UjHvpJeHBoiuLlKgINYZ3ka0=;
-        b=BpAgJKlkFao+13loja9wpafaFbWoPGq+YNg9O7AMpMY59UwOx3RWRiBNLXeeqV71/x
-         w30ccBEUq7F4ALQQBCp+C4rM2ZH1be4ic0gH21drmMVUu1TYT5qQrOOq/NXh6UmkK3dw
-         ZnNfJyUnwMrldypq0FolmdZwE9v08jMcmORvKILMoF2A0YyAf3RxqvCamT6amaewvWE1
-         izp0NqXVgl/XDFgLCxZLaYuB584uk2bnhvzrokeTgPxAM8AAvbNe+Nkw6a6j8W+/OqT4
-         70cVH6MrK2Ke5iJZNEYnVkJKmJOkumaPA/t3R+oQGaa3EbE0HUKZa4JPXCL0JhfvA5yA
-         hKJQ==
+        bh=YCu5Y/GTVOBPVVyupzvBVkyh0EoOaLJvwwF2Oks4mXY=;
+        b=S0BCMwT5P7ybDn6r2T8wPtB6PkHGixbFQlQ3OynLx5lY5TiaRq/UFmSGjmKwPFs4Yf
+         m5Ktnwuj8h2mNQ9ZjWZp4mq2WC6XMEb6+37eeIgBuC1SmjVx3z8M3XlYcRNEpMM2Ywfw
+         iFyeKEaqAOMWqxgCqRIhDLeYomw+uEAXn8Yx9VI0+U7HOvubDPEveUH8SPim/VVDr7Rj
+         LXhOb1ggvw7KICNNrAQQWM62NakUKDGS8rddDvXMBoTeUicXOol79nijSs3H9FRSioTe
+         nGpDH6Kn0Zeq8jqBVZOUJp5JIbezJjKAuftIPIVy7P9m6A4jgi/ONOQhRtkNY97YLuu1
+         s08A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2YTDoDsegFqtuQTKoI1UjHvpJeHBoiuLlKgINYZ3ka0=;
-        b=2yeXMtTkSfThOZ0qQn7Qm25f16tb9Pkvqk8ZkDoFG+1kjsbq6rxkesgeW+M+VSWHiq
-         J5xKINi7yhg5eEv6zfvVYaD34sUNjYca37zYfGpsn5iNzNcZXwVbuGgRkY2Y3EzWDWk/
-         HkmwMJ33Dl4FKi1OWfH+bKQePXvj9WgP8vkNM1og/UggSbDFqr125OwArM0QK+T6Nj3z
-         ssIhA/EyQfzSpc7yLXVgXKf+uQIUzMBkffcJS6LO2NFNdKLC0Ape4+8BwwoEQPdWcx9y
-         lMgXKAONjU0nzylxVnfo9hlj+hJmUA9PpRoy0zFQzzDONNWXtHX028EUg0LVbblUggb0
-         cbaA==
-X-Gm-Message-State: AFqh2krhZwHsXXqQ19HYlOP5h8pePmXY2R2p0z2omEboAevJq6hP6evX
-        cQfzOJ/YkTmszmW8/NzLd/zTFVROSh5PZTskyiMd
-X-Google-Smtp-Source: AMrXdXubuqqFdbO5DYhYnl0DtmODqD1E5bnnMIoOwP8j1HUj4d/IQSOKDbKTh0p/sBHq3ZEBKr31OVaa4mTXf/8q09Q=
-X-Received: by 2002:a17:90a:5a82:b0:228:d54b:46a9 with SMTP id
- n2-20020a17090a5a8200b00228d54b46a9mr1246198pji.69.1673555460253; Thu, 12 Jan
- 2023 12:31:00 -0800 (PST)
+        bh=YCu5Y/GTVOBPVVyupzvBVkyh0EoOaLJvwwF2Oks4mXY=;
+        b=4ZXklJE7BOdI5/3bMosLE4Gfx1XHpgf2hOfCTKcSzcVTjRVzgwCkuf+a3BMSP3P9tP
+         CvtrDqTLx7VSf0JT9LNEbdJAc9IBlPDakeVqbQWnriBqo6L/QZTmyLZ/NzSaoQK/Gl1+
+         2GWdKYr6wDfHnxbQvEv/0GUe+Qq0EVE/BNNOBIVxuzpRMUZ71MYWLs+d/7qqjUH82sI9
+         rsSlbrglgwSnfoeCgN1dTnizSi8TTESvPP+0NG2fWOzM7EUbU/SFkPP+OEZANO67xvIE
+         za8G4BsL4+ScWLjeLcOzGKtF2SkxpuKy4GjIpBD1k0H7Ssbl0pczfYMJl7hs0qTFp2l8
+         uQvw==
+X-Gm-Message-State: AFqh2kov6XIsuT1Lbg/mI4pLuy/8QxXbCJurniC1x2HfNKB+AkE5ZkOP
+        wEAgWWioEFxBTnCuug2pg5K30bfYS0Pgpdpeh0v6
+X-Google-Smtp-Source: AMrXdXuOzdAbU1/e2acq3AG1MSJhhVFNYjuhfHGLnIMfpKkJb521hoN60CFQ2GnVyyZhe/ITfIg7ExX781ObRXb1CY8=
+X-Received: by 2002:a63:e20b:0:b0:479:2109:506 with SMTP id
+ q11-20020a63e20b000000b0047921090506mr4401043pgh.92.1673556311330; Thu, 12
+ Jan 2023 12:45:11 -0800 (PST)
 MIME-Version: 1.0
-References: <20230109180717.58855-1-casey@schaufler-ca.com>
- <20230109180717.58855-2-casey@schaufler-ca.com> <CAHC9VhRs6BxukV97BaDuj6GDJwhiy+-vCmDfRUyojJiBUV2z1g@mail.gmail.com>
- <53adfcac-15c4-83e6-876f-bc9a880bafa2@schaufler-ca.com>
-In-Reply-To: <53adfcac-15c4-83e6-876f-bc9a880bafa2@schaufler-ca.com>
+References: <20230109213809.418135-1-tjmercier@google.com> <20230109213809.418135-5-tjmercier@google.com>
+ <CAHC9VhT+5oE4DZzxqCGFDoHjkP+5GcKU1R2BBW29uUu8BcgiAg@mail.gmail.com> <CABdmKX2FPf+Ox47g8nMeYw1OBNUOZrnKD5qVBtaVY01FbQq4ig@mail.gmail.com>
+In-Reply-To: <CABdmKX2FPf+Ox47g8nMeYw1OBNUOZrnKD5qVBtaVY01FbQq4ig@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 12 Jan 2023 15:30:48 -0500
-Message-ID: <CAHC9VhT1NhhfJ0=xgovZLf35Fy1aMXuk6SHPcWndBAeRYAKJ5Q@mail.gmail.com>
-Subject: Re: [PATCH v5 1/8] LSM: Identify modules by more than name
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
+Date:   Thu, 12 Jan 2023 15:45:00 -0500
+Message-ID: <CAHC9VhTK701norsBFz8XsDS+2m6=UR9TE-XSX1WjSt3-pd3g-A@mail.gmail.com>
+Subject: Re: [PATCH 4/4] security: binder: Add transfer_charge SElinux hook
+To:     "T.J. Mercier" <tjmercier@google.com>
+Cc:     Jeffrey Vander Stoep <jeffv@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Carlos Llamas <cmllamas@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, hannes@cmpxchg.org,
+        daniel.vetter@ffwll.ch, android-mm@google.com, jstultz@google.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 11, 2023 at 7:05 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 1/11/2023 1:00 PM, Paul Moore wrote:
-> > On Mon, Jan 9, 2023 at 1:07 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> Create a struct lsm_id to contain identifying information
-> >> about Linux Security Modules (LSMs). At inception this contains
-> >> the name of the module, an identifier associated with the security
-> >> module and an integer member "attrs_used" which identifies the API
-> >> related data associated with each security module. The initial set
-> >> of features maps to information that has traditionaly been available
-> >> in /proc/self/attr. They are documented in a new userspace-api file.
-> >> Change the security_add_hooks() interface to use this structure.
-> >> Change the individual modules to maintain their own struct lsm_id
-> >> and pass it to security_add_hooks().
-> >>
-> >> The values are for LSM identifiers are defined in a new UAPI
-> >> header file linux/lsm.h. Each existing LSM has been updated to
-> >> include it's LSMID in the lsm_id.
-> >>
-> >> The LSM ID values are sequential, with the oldest module
-> >> LSM_ID_CAPABILITY being the lowest value and the existing modules
-> >> numbered in the order they were included in the main line kernel.
-> >> This is an arbitrary convention for assigning the values, but
-> >> none better presents itself. The value 0 is defined as being invalid.
-> >> The values 1-99 are reserved for any special case uses which may
-> >> arise in the future. This may include attributes of the LSM
-> >> infrastructure itself, possibly related to namespacing or network
-> >> attribute management. A special range is identified for such attributes
-> >> to help reduce confusion for developers unfamiliar with LSMs.
-> >>
-> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >> ---
-> >>  Documentation/userspace-api/index.rst |  1 +
-> >>  Documentation/userspace-api/lsm.rst   | 55 +++++++++++++++++++++++++++
-> >>  include/linux/lsm_hooks.h             | 18 ++++++++-
-> >>  include/uapi/linux/lsm.h              | 55 +++++++++++++++++++++++++++
-> >>  security/apparmor/lsm.c               |  9 ++++-
-> >>  security/bpf/hooks.c                  | 13 ++++++-
-> >>  security/commoncap.c                  |  8 +++-
-> >>  security/landlock/cred.c              |  2 +-
-> >>  security/landlock/fs.c                |  2 +-
-> >>  security/landlock/ptrace.c            |  2 +-
-> >>  security/landlock/setup.c             |  6 +++
-> >>  security/landlock/setup.h             |  1 +
-> >>  security/loadpin/loadpin.c            |  9 ++++-
-> >>  security/lockdown/lockdown.c          |  8 +++-
-> >>  security/safesetid/lsm.c              |  9 ++++-
-> >>  security/security.c                   | 12 +++---
-> >>  security/selinux/hooks.c              | 11 +++++-
-> >>  security/smack/smack_lsm.c            |  9 ++++-
-> >>  security/tomoyo/tomoyo.c              |  9 ++++-
-> >>  security/yama/yama_lsm.c              |  8 +++-
-> >>  20 files changed, 226 insertions(+), 21 deletions(-)
-> >>  create mode 100644 Documentation/userspace-api/lsm.rst
-> >>  create mode 100644 include/uapi/linux/lsm.h
-
-...
-
-> >> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> >> index 0a5ba81f7367..6f2cabb79ec4 100644
-> >> --- a/include/linux/lsm_hooks.h
-> >> +++ b/include/linux/lsm_hooks.h
-> >> @@ -1708,7 +1722,7 @@ extern struct security_hook_heads security_hook_heads;
-> >>  extern char *lsm_names;
-> >>
-> >>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
-> >> -                               const char *lsm);
-> >> +                              struct lsm_id *lsmid);
-> > We should be able to mark @lsmid as a const, right?
+On Wed, Jan 11, 2023 at 7:21 PM T.J. Mercier <tjmercier@google.com> wrote:
 >
-> At this point, yes, but the const would have to come off when
-> the "slot" field is added to lsm_id in the upcoming stacking patches.
-> I can mark it const for now if it is important.
-
-Ah, right.  Okay, just leave it as-is then.
-
-> >> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-> >> new file mode 100644
-> >> index 000000000000..61a91b7d946f
-> >> --- /dev/null
-> >> +++ b/include/uapi/linux/lsm.h
-> >> @@ -0,0 +1,55 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> >> +/*
-> >> + * Linux Security Modules (LSM) - User space API
-> >> + *
-> >> + * Copyright (C) 2022 Casey Schaufler <casey@schaufler-ca.com>
-> >> + * Copyright (C) 2022 Intel Corporation
-> >> + */
-> > This file should be added to the SECURITY SUBSYSTEM section in MAINTAINERS:
+> On Wed, Jan 11, 2023 at 3:00 PM Paul Moore <paul@paul-moore.com> wrote:
 > >
-> >   F: include/uapi/linux/lsm.h
->
-> S'truth.
->
-> >> +#ifndef _UAPI_LINUX_LSM_H
-> >> +#define _UAPI_LINUX_LSM_H
-> >> +
-> >> +/*
-> >> + * ID values to identify security modules.
-> >> + * A system may use more than one security module.
-> >> + *
-> >> + * A value of 0 is considered invalid.
-> >> + * Values 1-99 are reserved for future use.
-> >> + * The interface is designed to extend to attributes beyond those which
-> >> + * are active today. Currently all the attributes are specific to the
-> >> + * individual modules. The LSM infrastructure itself has no variable state,
-> >> + * but that may change. One proposal would allow loadable modules, in which
-> >> + * case an attribute such as LSM_IS_LOADABLE might identify the dynamic
-> >> + * modules. Another potential attribute could be which security modules is
-> >> + * associated withnetwork labeling using netlabel. Another possible attribute
-> >> + * could be related to stacking behavior in a namespaced environment.
-> >> + * While it would be possible to intermingle the LSM infrastructure attribute
-> >> + * values with the security module provided values, keeping them separate
-> >> + * provides a clearer distinction.
-> >> + */
-> > As this is in a UAPI file, let's avoid speculation and stick to just
-> > the current facts.  Anything we write here with respect to the future
-> > is likely to be wrong so let's not tempt fate.
->
-> Sure. I'll leave the rationale to the take message.
->
-> > Once I reached patch 3/8 I also realized that we may want to have more
-> > than just 0/invalid as a sentinel value, or at the very least we need
-> > to redefine 0 as something slightly different if for no other reason
-> > than we in fs/proc/base.c.  I know it seems a little trivial, but
-> > since we're talking about values that will be used in the UAPI I think
-> > we need to give it some thought and discussion.  The only think I can
-> > think of right now is to redefine 0 as "undefined", which isn't that
-> > far removed from "invalid" and will not look too terrible in patch 3/8
-> > - thoughts?
->
-> I originally had LSM_ID_INVALID for 0, but there was an objection.
-> It's not really invalid or undefined, it is reserved as not being an LSM id.
-> How about LSM_ID_NALSMID or LSM_ID_NOTALSMID for 0? sort of like NAN for
-> Not A Number.
->
-> > With all that in mind, I would suggest something like this:
+> > On Mon, Jan 9, 2023 at 4:38 PM T.J. Mercier <tjmercier@google.com> wrote:
+> > >
+> > > Any process can cause a memory charge transfer to occur to any other
+> > > process when transmitting a file descriptor through binder. This should
+> > > only be possible for central allocator processes, so a new SELinux
+> > > permission is added to restrict which processes are allowed to initiate
+> > > these charge transfers.
+> > >
+> > > Signed-off-by: T.J. Mercier <tjmercier@google.com>
+> > > ---
+> > >  drivers/android/binder.c            | 5 +++++
+> > >  include/linux/lsm_hook_defs.h       | 2 ++
+> > >  include/linux/lsm_hooks.h           | 6 ++++++
+> > >  include/linux/security.h            | 2 ++
+> > >  security/security.c                 | 6 ++++++
+> > >  security/selinux/hooks.c            | 9 +++++++++
+> > >  security/selinux/include/classmap.h | 2 +-
+> > >  7 files changed, 31 insertions(+), 1 deletion(-)
 > >
-> >   /*
-> >    * ID tokens to identify Linux Security Modules (LSMs)
-> >    *
-> >    * These token values are used to uniquely identify specific LSMs
-> >    * in the kernel as well in the kernel's LSM userspace API.
-> >    *
-> >    * A value of zero/0 is considered undefined and should not be used
-> >    * outside of the kernel, values 1-99 are reserved for potential
-> >    * future use.
-> >       */
-> >   #define LSM_ID_UNDEF 0
->
-> Fine, although I'd go with LSM_ID_NALSMID
-
-Hmm, I had to think a little on that to figure out the NALSMID bit.
-Of the two I would prefer LSM_ID_UNDEF as UNDEF tends to be a bit more
-common in the kernel and would be more likely to get people thinking
-in the right direction.
-
-> >> +#define LSM_ID_CAPABILITY      100
-> >> +#define LSM_ID_SELINUX         101
-> >> +#define LSM_ID_SMACK           102
-> >> +#define LSM_ID_TOMOYO          103
-> >> +#define LSM_ID_IMA             104
-> >> +#define LSM_ID_APPARMOR                105
-> >> +#define LSM_ID_YAMA            106
-> >> +#define LSM_ID_LOADPIN         107
-> >> +#define LSM_ID_SAFESETID       108
-> >> +#define LSM_ID_LOCKDOWN                109
-> >> +#define LSM_ID_BPF             110
-> >> +#define LSM_ID_LANDLOCK                111
-> >> +
-> >> +/*
-> >> + * LSM_ATTR_XXX values identify the /proc/.../attr entry that the
-> >> + * context represents. Not all security modules provide all of these
-> >> + * values. Some security modules provide none of them.
-> >> + */
-> > I'd rather see text closer to this:
+> > Hi T.J.,
 > >
-> >   /*
-> >    * LSM attributes
-> >    *
-> >    * The LSM_ATTR_XXX definitions identify different LSM
-> >    * attributes which are used in the kernel's LSM userspace API.
-> >    * Support for these attributes vary across the different LSMs,
-> >    * none are required.
-> >    */
+> > A few things come to mind when looking at this patchset, but let me
+> > start with the big one first: you only sent 0/4 and 4/4 to the LSM and
+> > SELinux lists, so that's all I'm seeing in my inbox to review, and
+> > it's hard to make sense of what you want to do with just these
+> > snippets.  This makes me cranky, and less inclined to spend the time
+> > to give this a proper review, because there are plenty of other things
+> > which need attention and don't require me having to hunt down missing
+> > pieces.  Yes, I'm aware of b4/lei, and while they are great tools, my
+> > workflow was pretty well established before they came into existence
+> > and I still do things the good ol' fashioned way with mailing lists,
+> > etc.
+> >
+> > Make the patch reviewer's life easy whenever you can, it will rarely
+> > (ever?) backfire, I promise.
 >
-> If you like that better I'm completely willing to adopt it.
-
-Please.
-
-> >> +#define LSM_ATTR_CURRENT       0x0001
-> >> +#define LSM_ATTR_EXEC          0x0002
-> >> +#define LSM_ATTR_FSCREATE      0x0004
-> >> +#define LSM_ATTR_KEYCREATE     0x0008
-> >> +#define LSM_ATTR_PREV          0x0010
-> >> +#define LSM_ATTR_SOCKCREATE    0x0020
-> >> +
-> >> +#endif /* _UAPI_LINUX_LSM_H */
-> >> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> >> index c6728a629437..63ea2a995987 100644
-> >> --- a/security/apparmor/lsm.c
-> >> +++ b/security/apparmor/lsm.c
-> >> @@ -24,6 +24,7 @@
-> >>  #include <linux/zstd.h>
-> >>  #include <net/sock.h>
-> >>  #include <uapi/linux/mount.h>
-> >> +#include <uapi/linux/lsm.h>
-> >>
-> >>  #include "include/apparmor.h"
-> >>  #include "include/apparmorfs.h"
-> >> @@ -1217,6 +1218,12 @@ struct lsm_blob_sizes apparmor_blob_sizes __lsm_ro_after_init = {
-> >>         .lbs_task = sizeof(struct aa_task_ctx),
-> >>  };
-> >>
-> >> +static struct lsm_id apparmor_lsmid __lsm_ro_after_init = {
-> >> +       .lsm = "apparmor",
-> >> +       .id = LSM_ID_APPARMOR,
-> >> +       .attrs_used = LSM_ATTR_CURRENT | LSM_ATTR_PREV | LSM_ATTR_EXEC,
-> >> +};
-> > Perhaps mark this as const in addition to ro_after_init?  This applies
-> > to all the other @lsm_id defs in this patch too.
+> Hi Paul, sorry about that. I have git send-email calling
+> get_maintainer.pl to automatically figure out the recipients, and I
+> think that's why it only sent particular patches to a subset of lists.
+> Looks like the list of recipients for each patch should be a union of
+> all patches. Thank you for taking a look anyway! Here's a lore link:
+> https://lore.kernel.org/lkml/20230109213809.418135-1-tjmercier@google.com/
 >
-> As I mentioned above, the lsm_id will eventually get changed during the
-> registration process. I can add the const for now, knowing full well that
-> it will be removed before long.
+> > > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> > > index 9830848c8d25..9063db04826d 100644
+> > > --- a/drivers/android/binder.c
+> > > +++ b/drivers/android/binder.c
+> > > @@ -2279,6 +2279,11 @@ static int binder_translate_fd(u32 fd, binder_size_t fd_offset, __u32 flags,
+> > >         if (IS_ENABLED(CONFIG_MEMCG) && (flags & BINDER_FD_FLAG_XFER_CHARGE)) {
+> > >                 struct dma_buf *dmabuf;
+> > >
+> > > +               if (security_binder_transfer_charge(proc->cred, target_proc->cred)) {
+> > > +                       ret = -EPERM;
+> > > +                       goto err_security;
+> > > +               }
+> >
+> > This is where I believe I'm missing the proper context, as this
+> > version of binder_translate_fd() differs from what I see in Linus'
+> > tree.  However, the version in Linus' tree does have a LSM hook,
+> > security_binder_transfer_file(), which is passed both the credentials
+> > you are using above and based solely on the level of indentation shown
+> > in the chunk of code above, it seems like the existing hook might be
+> > suitable?
+>
+> Yes, patch 3 plumbs through flags to this function:
+> https://lore.kernel.org/lkml/20230109213809.418135-4-tjmercier@google.com/
+>
+> I don't think the existing hook is suitable, which I've tried to explain below.
 
-No, that's okay.  When I was reviewing this I forgot that changes
-would be required here for stacking.
+In this particular case the issue of what permission checks are done
+for a given LSM, SELinux in this case, appears to be independent of if
+we need a new, different, or second LSM hook.  Unless I missed
+something the only real difference with this new hook is that is sits
+behind a conditional checking if memory control groups are enabled and
+if a transfer charge was specified; it seems like passing the @flags
+parameter into the existing LSM hook would allow you to use the
+existing hook (it is called before the new hook, right?)?
+
+> > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > > index 3c5be76a9199..823ef14924bd 100644
+> > > --- a/security/selinux/hooks.c
+> > > +++ b/security/selinux/hooks.c
+> > > @@ -2066,6 +2066,14 @@ static int selinux_binder_transfer_file(const struct cred *from,
+> > >                             &ad);
+> > >  }
+> > >
+> > > +static int selinux_binder_transfer_charge(const struct cred *from, const struct cred *to)
+> > > +{
+> > > +       return avc_has_perm(&selinux_state,
+> > > +                           cred_sid(from), cred_sid(to),
+> > > +                           SECCLASS_BINDER, BINDER__TRANSFER_CHARGE,
+> > > +                           NULL);
+> > > +}
+> >
+> > Generally speaking SELinux doesn't really worry about resource
+> > accounting controls so this seems a bit out of place, but perhaps the
+> > larger question is do you see this being sufficiently distinct from
+> > the existing binder:transfer permission?  In other words, would you
+> > ever want to grant a domain the ability to transfer a file *without*
+> > also granting it the ability to transfer the memory charge?  You need
+> > to help me explain why we need an additional permission for this,
+> > because I don't currently see the need.
+> >
+> Yes, and that's actually more often the case than not. A file here
+> means a file descriptor that points at any type of resource: file on
+> disk, memfd, dmabuf, etc. Currently there exists policy that restricts
+> which processes are allowed to interact with FDs over binder using the
+> security_binder_transfer_file hook you reference. [1] However this new
+> transfer_charge permission is meant to restrict the ability of a FD
+> sender to transfer the memory charge associated with that FD (if one
+> exists) to a recipient (who may or may not want to accept the memory
+> charge). So the memory charge is independent of (potentially one-time,
+> read-only) access to the FD.
+
+Without a more comprehensive set of LSM/SELinux access controls around
+resource management (which would need discussion beyond just this
+thread/patch) I'm not sure we want to start patching in one-off
+controls like this.
+
+I haven't looked, but are there any traditional/DAC access controls
+around transfering memory changes from one task to another?  It seems
+like there *should* be, and if so, it seems like that would be the
+right approach at the moment ... if you're not already doing that in
+the other patches in the patchset.
 
 -- 
 paul-moore.com
