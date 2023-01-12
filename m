@@ -2,352 +2,267 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47373C5479D
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Jan 2023 00:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55135C46467
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Jan 2023 00:21:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234982AbjALAFb (ORCPT
+        id S229539AbjALAVU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Jan 2023 19:05:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45784 "EHLO
+        Wed, 11 Jan 2023 19:21:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230442AbjALAF1 (ORCPT
+        with ESMTP id S233616AbjALAVS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Jan 2023 19:05:27 -0500
-Received: from sonic310-31.consmr.mail.ne1.yahoo.com (sonic310-31.consmr.mail.ne1.yahoo.com [66.163.186.212])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E8F263B9
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jan 2023 16:05:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1673481925; bh=n+/JUZo4jFbmvojc0+KM/0r4qCuZjLnCZWgaCM6RCdE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=USbC/bv92j6SiByS8yRM98ujJXa90YDwbknzoQR6b6fBs2XjkKBRyH/zpzg8wiP5HwPGnUpRg+DYCkzIR2lHYpEBbnlMhkYVZK1y8PZ1DzbNiy6vT0WQMU9VNZYfXewSvu8vHnBFY45XE8V7LWV8Is22G6z5rUTJB99Jayw8AF/UQiOtJlS4NA/IehO2aPQt2t9pPlZAq/TzvuaQ7rLRThh9Hnidzq8wqnPu8H7yNgIZ2lmhEEYk1U5ocv6JrmzX4pvymtQwOv4WXkq6KwVPll10EXlihu1Deoux7Tdww/lbOtuOdcVma44bh4uFaii8faf09jkViHx9YWJ39VeA3w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1673481925; bh=ns7DwsFY6YzOWeFLnNv065cjFZfhL7JPSMvv2Ev5uLW=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZVfjkQxEACNuofX1fjbPkE3Ysf/zoQl3xDSB1wW2uwCmSzCmYGwKPw6i/TNXATVeRk/mJYhd61Ofd4kzMKvZGgqZN1EBQ0NjePN7RW1kfPWYJDlaLIDVw3sdBoFSu0PjUr+bWJVK2vaoyqDT1KoyxgQCXUO6JZwSzpVJ5X9m3G+VBUcBzyYZF+nL8Ycj0ldHwrexsm051SNpxwrAKro9kFLUCrmpNVQshOXX03UUXQdBDllzRedfFeI4dMWSrS6aZt0waQpJsMOCX+ZVmEZPIl9/WN+PuuVqtIooGP+sow/tBYH6WAXkMFt3XxNEvCKw9VOXZFlg7Pb1wX3yDDCJhA==
-X-YMail-OSG: h._urr0VM1l_qv4J14hEqm63MKlZtTuq3NxjGC7fHPcqXpN44jNBgSF90cfpo3y
- D5YLV_T.EEljA3J_7n.AVuxYi4YfHlOZhqpB6vr5_QkexoN7f.OmpxBJKAQqlxR7DLiNJ6tQMjDm
- uHH8YRXrDoi2i74WGPcrnrgmkjYFK2SneTHrGbs.Uy7M5nW89sN2ikYSzH5zINb5SJ44MvUpEVbc
- cmvs22S0tIQ_JTuOSmTgM2ETWclhpYK1zE0X_4hI0SMiJEWKmKdnRFHfurrPau6g0swXzlWZsUXz
- Yad8GLeHLOGkK4f2Xi.AWh8y8U1tW09_cLyJ9HX24AWixHGKCSCXHTJ_K0qw4fxK3XIBzoIWasyN
- 4Blf3MZrOGi0GmSNkvUq_Da.LUj3HrWLkqqPz21XZgb4z4O4ivuP9cUuVldfYm8Z99T2lHWM8Ai3
- 650KVpL7QGJI8J.2wRGicCXJc5ebnI_g.hPGG2FBWwBbZcRiJYCpIGAe4TuIx1dIj1KtpmNneQsW
- UB9we3.BkRZfvYcC4ovEWtjj96thETUDY2uOHV4sb7HtsPrkmLJmcjNi3DwPDvspTnskBNDm.ZWK
- uS1EP65Ov31JU5PdYjEnoF04xm8mFJi4NsSo1nsfIheQhIAMxmn7SVDlhKwXtM8ziGmgsv3GwO_5
- 5z3Rgb.tgJptf8ocPWXXjTtq.QOvfhNyOfzlVX3pvmwBI4AhQyjnKfFzDENQ92gxKc5JvR7Un35b
- aN3br_CZcSBEnap_nHaD5BybHP66HV5Xv7ERXRgsTeymBL7O3VHu_fSPQGHG1zK_URH_uCuUIlyr
- 9lrX9uZnQHL6NJMXjVqDSk7HMiRcOkiwej1sbzdcCgHJWI_HkPnD3.sXwQT48oQmWx95F9mCXlUp
- w2LLWc.V9NE8oeouRJJU3t1kng3Y84UQklqjxpdkNHl6_e8302.y97L74U_o_FZE90JOCZx00own
- KddI_BpIOBTsLBXtuMXgn4jTUUvREy7NAVcX7nXzcITbHualeCCe8CM0hu3P6dXTPMpaqCsWZJEc
- ZQ3rxXvQ_0jlhOqEznMFiEx92mVmug5d_v1ezREtd95Wr6MIOxL1YwxwDtzzo0iXD6MNNQwQiijT
- tQep7_NvCMmAdwffTZZZBExKiMvDnLa4kWIR1ALsX6BRR98HQPIGKoYJBgIxB41VzjD3y1e7pr8H
- 2NbEO_fFjI1bkuYkhi.6CrykU.CyaYIYGXgXCfKRpfoMJsj5EJf_rRNX7GY5uvmmTrokDO5AdJLw
- am8RgggRYn5DiTNIcaP4LI1b_KxWDcpng9FiqJ.dbHSGj1cpWcffshvson_BXaJFuWKuFT7YJ9S7
- SEsbbxdkdZgC4HSlVhsZhc9gQ12Q.V15Red5tQryo5Uaz339Ok7f6rKdEEs7sEIAffrvaGrTI2Kj
- cDyHHhRLYhv9KMCiUIwZXQvbnE82qmFPWlGquXXJMFvxSPSZeiOvIj75sD7xYik28RtVqCTU6bJq
- LoYrr4StqoYYgBo_OSxO1pUm2oC8U_7SSgv8k1ynib4ipISKEhFxyMYuU3uvZyfLvs.UUuq1D1on
- AcWkAPioibLmGxFf95VyePGgwzjxPyM9_7fgPAUxpH.1LieovyGLN3s_nYfSzr8ttz1qeza1IW4.
- c4cJ2uePgjjnV0RZqIpwaJ7JuossMa.50DZ554SCDrt_XzfdWzRkHHoAC3pMBlf1YzjaPKl5sNPE
- Fgl_AGEqfonD5Zk.vzAOyXA1SAh05Uq9_sOUNqzfHs4zkBSkZI5vT9gHWRKAwIFt6fPD6hXqT78D
- s0Cx8Iq3tlaHuns.g4w02prMeOTQ_iYTgSgIUMEUtvpV_OqQE0iZJS0oJ..d.hw.1_X01fty9y15
- QnGA0pzouqLdhwkh1RVafOCNQBvzAkosbea3ZKzJgj1k9HpZc.z3UBcuNjruhikT0n.UZnOU6Gt9
- n9L2cqTjiMIKsjO8rYYZYJ9GX9Hs_y5FzZ6nWGkYzDn7CJvthHieMhzjP3kiFuFPy5x_wLUWKjIt
- ONn4RkPBL2mwsiOR0oFCTB1RSz1.5MDhgBz4Ss7Gn1uv6UqGd56GMSNZcKFps4S.RyhzaYlDzMHL
- rN7pWDfQ4cHskmY9ex3ioe2PKhCSExnV8iDhOURTY1pYkUdiAeUj0k_J2bEpnZEvuCpK4fnZ3V9j
- FA0EP_OVllDIURckj.gH2ZNHyMhpAG21Nf5.sb3oz4Xy7praHrBRVYqpoLV_02Ck.INkSz304Rmv
- DuS3OtnXCTQI2hAh4M.QF8C8OwsD2s01tAhODqIx5fcjulz9no0hFkKEI0ciofy7QjmTciRW55B8
- RWiwQlWNt
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Thu, 12 Jan 2023 00:05:25 +0000
-Received: by hermes--production-gq1-5d97db6675-7lt2c (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e5006e31fb65e3edc42b6ef150a56d19;
-          Thu, 12 Jan 2023 00:05:20 +0000 (UTC)
-Message-ID: <53adfcac-15c4-83e6-876f-bc9a880bafa2@schaufler-ca.com>
-Date:   Wed, 11 Jan 2023 16:05:18 -0800
+        Wed, 11 Jan 2023 19:21:18 -0500
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF1183055A
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Jan 2023 16:21:14 -0800 (PST)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-4c131bede4bso217854647b3.5
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Jan 2023 16:21:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9ShJIwp2/v+xL5E9YKvvilHGJayJjFpTXtq1q9BHiSs=;
+        b=RXhyRWleOCEmk9gsELr8hci+1ioIbgPWSOU7kSAf/pDDz6d9MssOO76YoAKFfxPLL2
+         USwPYlQxtZNlhvsLy3tsM6M2ZBR98IqT+/u5gHlUGc9XH04jGfF653lKRPJMp3Kj0yQj
+         5XN/qmWxbsrvVCptesawuPJrGUR4JoHDYrzuLyGqyBn/Q7R+NyvW2VE2NhfhivE2GXLq
+         +kYtlflEbkg3fPIwHmy+ev7V8UBU8efGeK/3iMtLVcH+cS3WYhJOStGRLYXY4Bt/ap5D
+         TspusEoKAarzyc5CJ1xhbUcqHkTg6KH0TbMNYraR/DjzuMQJ0yGs+mrJeqJs3X4E36Tl
+         cj+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9ShJIwp2/v+xL5E9YKvvilHGJayJjFpTXtq1q9BHiSs=;
+        b=7XE707TJeIpvSbMx3GdZ8OMj44inlDu1oF0dK7bhrylJPRxkPEAldHovFA5eNT9aaG
+         fViTQVji8gL8cHWWy1cMeYs/5vjVzVYRSmdF5Y3ZDT7DMGJTBonQMvMG2dN9hKbp7koD
+         DI4+fmNVhZmHpyQAJMXFnbKHdMVU6fyJmfNrs8xtcuGHHcAbBUECeCIa0LG9qDFffti6
+         uxrj9gmnd4W5/Zbd0/K9nMdmA8mDrmspXlhIXc+1cxY8bWz7TICNOJ5mXZFgccUh0Q4J
+         UzKrn4J+Cqk+4nprdfGkmm5Vrz7oPC4YGHxkja36fAXdWQV8o7GOIOsqk8IOLKs0GUCg
+         S1og==
+X-Gm-Message-State: AFqh2krH+rnXNBfXXLyTFJqYtwAep8uOZ8zbX6dRVK/vUiUZpmFvA8mh
+        SWhlVV8XzcvHo/CJO6FU0f4Z6YFKb3JC7FmsCbXjLg==
+X-Google-Smtp-Source: AMrXdXtWRjPqAQ9sOUT6ygFSgQTMCBtrg1UQUSEq+AKGkD1NL3hmSyqksSrLLYMi2V0x+b4asbob7pAc26Wgj4IJa/M=
+X-Received: by 2002:a81:6d16:0:b0:4d8:c602:eefe with SMTP id
+ i22-20020a816d16000000b004d8c602eefemr189684ywc.317.1673482873725; Wed, 11
+ Jan 2023 16:21:13 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v5 1/8] LSM: Identify modules by more than name
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net, casey@schaufler-ca.com
-References: <20230109180717.58855-1-casey@schaufler-ca.com>
- <20230109180717.58855-2-casey@schaufler-ca.com>
- <CAHC9VhRs6BxukV97BaDuj6GDJwhiy+-vCmDfRUyojJiBUV2z1g@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhRs6BxukV97BaDuj6GDJwhiy+-vCmDfRUyojJiBUV2z1g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21062 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20230109213809.418135-1-tjmercier@google.com> <20230109213809.418135-5-tjmercier@google.com>
+ <7e1610e7-c131-e162-be47-8983be7d9aec@schaufler-ca.com> <CABdmKX3BhNxdgF2dAuwPCPASe1raYYx6UUWRv0L5p3FxoU5MUw@mail.gmail.com>
+ <1c86783a-995f-21aa-91ab-1b58d50f149b@schaufler-ca.com>
+In-Reply-To: <1c86783a-995f-21aa-91ab-1b58d50f149b@schaufler-ca.com>
+From:   "T.J. Mercier" <tjmercier@google.com>
+Date:   Wed, 11 Jan 2023 16:21:02 -0800
+Message-ID: <CABdmKX3HN8MFM3LRe-Og+umTMAfrNximN9GmBtQCKGLxFsfogA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] security: binder: Add transfer_charge SElinux hook
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Carlos Llamas <cmllamas@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, hannes@cmpxchg.org,
+        daniel.vetter@ffwll.ch, android-mm@google.com, jstultz@google.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Jeffrey Vander Stoep <jeffv@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/11/2023 1:00 PM, Paul Moore wrote:
-> On Mon, Jan 9, 2023 at 1:07 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Create a struct lsm_id to contain identifying information
->> about Linux Security Modules (LSMs). At inception this contains
->> the name of the module, an identifier associated with the security
->> module and an integer member "attrs_used" which identifies the API
->> related data associated with each security module. The initial set
->> of features maps to information that has traditionaly been available
->> in /proc/self/attr. They are documented in a new userspace-api file.
->> Change the security_add_hooks() interface to use this structure.
->> Change the individual modules to maintain their own struct lsm_id
->> and pass it to security_add_hooks().
->>
->> The values are for LSM identifiers are defined in a new UAPI
->> header file linux/lsm.h. Each existing LSM has been updated to
->> include it's LSMID in the lsm_id.
->>
->> The LSM ID values are sequential, with the oldest module
->> LSM_ID_CAPABILITY being the lowest value and the existing modules
->> numbered in the order they were included in the main line kernel.
->> This is an arbitrary convention for assigning the values, but
->> none better presents itself. The value 0 is defined as being invalid.
->> The values 1-99 are reserved for any special case uses which may
->> arise in the future. This may include attributes of the LSM
->> infrastructure itself, possibly related to namespacing or network
->> attribute management. A special range is identified for such attributes
->> to help reduce confusion for developers unfamiliar with LSMs.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  Documentation/userspace-api/index.rst |  1 +
->>  Documentation/userspace-api/lsm.rst   | 55 +++++++++++++++++++++++++++
->>  include/linux/lsm_hooks.h             | 18 ++++++++-
->>  include/uapi/linux/lsm.h              | 55 +++++++++++++++++++++++++++
->>  security/apparmor/lsm.c               |  9 ++++-
->>  security/bpf/hooks.c                  | 13 ++++++-
->>  security/commoncap.c                  |  8 +++-
->>  security/landlock/cred.c              |  2 +-
->>  security/landlock/fs.c                |  2 +-
->>  security/landlock/ptrace.c            |  2 +-
->>  security/landlock/setup.c             |  6 +++
->>  security/landlock/setup.h             |  1 +
->>  security/loadpin/loadpin.c            |  9 ++++-
->>  security/lockdown/lockdown.c          |  8 +++-
->>  security/safesetid/lsm.c              |  9 ++++-
->>  security/security.c                   | 12 +++---
->>  security/selinux/hooks.c              | 11 +++++-
->>  security/smack/smack_lsm.c            |  9 ++++-
->>  security/tomoyo/tomoyo.c              |  9 ++++-
->>  security/yama/yama_lsm.c              |  8 +++-
->>  20 files changed, 226 insertions(+), 21 deletions(-)
->>  create mode 100644 Documentation/userspace-api/lsm.rst
->>  create mode 100644 include/uapi/linux/lsm.h
-> Mostly just nitpicky stuff below ...
-
-Nitpicky is fine.
-
->> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->> index 0a5ba81f7367..6f2cabb79ec4 100644
->> --- a/include/linux/lsm_hooks.h
->> +++ b/include/linux/lsm_hooks.h
->> @@ -1665,6 +1665,20 @@ struct security_hook_heads {
->>         #undef LSM_HOOK
->>  } __randomize_layout;
->>
->> +/**
->> + * struct lsm_id - identify a Linux Security Module.
-> According to the kernel-doc documentation it looks like "identify"
-> should be capitalized.
+On Tue, Jan 10, 2023 at 11:39 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> * https://docs.kernel.org/doc-guide/kernel-doc.html
-
-I'll fix this, and the next as well. Thanks for pointing it out.
-
->> + * @lsm: Name of the LSM. Must be approved by the LSM maintainers.
->> + * @id: LSM ID number from uapi/linux/lsm.h
->> + * @attrs_used: Which attributes this LSM supports.
-> In a bit of a reversal to the above comment, it appears that the
-> parameter descriptions should not start with a capital and should not
-> end with punctuation:
+> On 1/9/2023 4:30 PM, T.J. Mercier wrote:
+> > On Mon, Jan 9, 2023 at 2:28 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> On 1/9/2023 1:38 PM, T.J. Mercier wrote:
+> >>> Any process can cause a memory charge transfer to occur to any other
+> >>> process when transmitting a file descriptor through binder. This should
+> >>> only be possible for central allocator processes,
+> >> How is a "central allocator process" identified?
+> > Any process with the transfer_charge permission. On Android this is
+> > the graphics allocator HAL which would have this added to its policy.
 >
->   * @lsm: name of the LSM, must be approved by the LSM maintainers
+> OK. You're putting SELinux policy directly into the name of the LSM hook.
 >
->> + * Contains the information that identifies the LSM.
->> + */
->> +struct lsm_id {
->> +       const u8        *lsm;
->> +       u32             id;
->> +       u64             attrs_used;
->> +};
->> @@ -1708,7 +1722,7 @@ extern struct security_hook_heads security_hook_heads;
->>  extern char *lsm_names;
->>
->>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
->> -                               const char *lsm);
->> +                              struct lsm_id *lsmid);
-> We should be able to mark @lsmid as a const, right?
-
-At this point, yes, but the const would have to come off when
-the "slot" field is added to lsm_id in the upcoming stacking patches.
-I can mark it const for now if it is important.
-
->> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
->> new file mode 100644
->> index 000000000000..61a91b7d946f
->> --- /dev/null
->> +++ b/include/uapi/linux/lsm.h
->> @@ -0,0 +1,55 @@
->> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->> +/*
->> + * Linux Security Modules (LSM) - User space API
->> + *
->> + * Copyright (C) 2022 Casey Schaufler <casey@schaufler-ca.com>
->> + * Copyright (C) 2022 Intel Corporation
->> + */
-> This file should be added to the SECURITY SUBSYSTEM section in MAINTAINERS:
+> >
+> >> If I have a LSM that
+> >> is not SELinux (e.g. AppArmor, Smack) or no LSM at all, how can/should this
+> >> be enforced?
+> > Sorry, why would you be expecting enforcement with no LSM?
 >
->   F: include/uapi/linux/lsm.h
-
-S'truth.
-
->> +#ifndef _UAPI_LINUX_LSM_H
->> +#define _UAPI_LINUX_LSM_H
->> +
->> +/*
->> + * ID values to identify security modules.
->> + * A system may use more than one security module.
->> + *
->> + * A value of 0 is considered invalid.
->> + * Values 1-99 are reserved for future use.
->> + * The interface is designed to extend to attributes beyond those which
->> + * are active today. Currently all the attributes are specific to the
->> + * individual modules. The LSM infrastructure itself has no variable state,
->> + * but that may change. One proposal would allow loadable modules, in which
->> + * case an attribute such as LSM_IS_LOADABLE might identify the dynamic
->> + * modules. Another potential attribute could be which security modules is
->> + * associated withnetwork labeling using netlabel. Another possible attribute
->> + * could be related to stacking behavior in a namespaced environment.
->> + * While it would be possible to intermingle the LSM infrastructure attribute
->> + * values with the security module provided values, keeping them separate
->> + * provides a clearer distinction.
->> + */
-> As this is in a UAPI file, let's avoid speculation and stick to just
-> the current facts.  Anything we write here with respect to the future
-> is likely to be wrong so let's not tempt fate.
-
-Sure. I'll leave the rationale to the take message.
-
-> Once I reached patch 3/8 I also realized that we may want to have more
-> than just 0/invalid as a sentinel value, or at the very least we need
-> to redefine 0 as something slightly different if for no other reason
-> than we in fs/proc/base.c.  I know it seems a little trivial, but
-> since we're talking about values that will be used in the UAPI I think
-> we need to give it some thought and discussion.  The only think I can
-> think of right now is to redefine 0 as "undefined", which isn't that
-> far removed from "invalid" and will not look too terrible in patch 3/8
-> - thoughts?
-
-I originally had LSM_ID_INVALID for 0, but there was an objection.
-It's not really invalid or undefined, it is reserved as not being an LSM id.
-How about LSM_ID_NALSMID or LSM_ID_NOTALSMID for 0? sort of like NAN for
-Not A Number.
-
-> With all that in mind, I would suggest something like this:
+> Because the LSM is supposed to be a set of *additional* restrictions.
+> If there are no restrictions when there's no LSM, you can't add to
+> existing restrictions. If binder works correctly without any restrictions
+> that's fine. It seems odd that you'd add SELinux restrictions if there
+> are no basic restrictions. If, on the other hand, binder doesn't have
+> native restrictions because it always assumes SELinux, it ought to have
+> a CONFIG dependency on SELinux.
 >
->   /*
->    * ID tokens to identify Linux Security Modules (LSMs)
->    *
->    * These token values are used to uniquely identify specific LSMs
->    * in the kernel as well in the kernel's LSM userspace API.
->    *
->    * A value of zero/0 is considered undefined and should not be used
->    * outside of the kernel, values 1-99 are reserved for potential
->    * future use.
->       */
->   #define LSM_ID_UNDEF 0
-
-Fine, although I'd go with LSM_ID_NALSMID
-
->> +#define LSM_ID_CAPABILITY      100
->> +#define LSM_ID_SELINUX         101
->> +#define LSM_ID_SMACK           102
->> +#define LSM_ID_TOMOYO          103
->> +#define LSM_ID_IMA             104
->> +#define LSM_ID_APPARMOR                105
->> +#define LSM_ID_YAMA            106
->> +#define LSM_ID_LOADPIN         107
->> +#define LSM_ID_SAFESETID       108
->> +#define LSM_ID_LOCKDOWN                109
->> +#define LSM_ID_BPF             110
->> +#define LSM_ID_LANDLOCK                111
->> +
->> +/*
->> + * LSM_ATTR_XXX values identify the /proc/.../attr entry that the
->> + * context represents. Not all security modules provide all of these
->> + * values. Some security modules provide none of them.
->> + */
-> I'd rather see text closer to this:
+> None of which is really important.
 >
->   /*
->    * LSM attributes
->    *
->    * The LSM_ATTR_XXX definitions identify different LSM
->    * attributes which are used in the kernel's LSM userspace API.
->    * Support for these attributes vary across the different LSMs,
->    * none are required.
->    */
-
-If you like that better I'm completely willing to adopt it.
-
->> +#define LSM_ATTR_CURRENT       0x0001
->> +#define LSM_ATTR_EXEC          0x0002
->> +#define LSM_ATTR_FSCREATE      0x0004
->> +#define LSM_ATTR_KEYCREATE     0x0008
->> +#define LSM_ATTR_PREV          0x0010
->> +#define LSM_ATTR_SOCKCREATE    0x0020
->> +
->> +#endif /* _UAPI_LINUX_LSM_H */
->> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->> index c6728a629437..63ea2a995987 100644
->> --- a/security/apparmor/lsm.c
->> +++ b/security/apparmor/lsm.c
->> @@ -24,6 +24,7 @@
->>  #include <linux/zstd.h>
->>  #include <net/sock.h>
->>  #include <uapi/linux/mount.h>
->> +#include <uapi/linux/lsm.h>
->>
->>  #include "include/apparmor.h"
->>  #include "include/apparmorfs.h"
->> @@ -1217,6 +1218,12 @@ struct lsm_blob_sizes apparmor_blob_sizes __lsm_ro_after_init = {
->>         .lbs_task = sizeof(struct aa_task_ctx),
->>  };
->>
->> +static struct lsm_id apparmor_lsmid __lsm_ro_after_init = {
->> +       .lsm = "apparmor",
->> +       .id = LSM_ID_APPARMOR,
->> +       .attrs_used = LSM_ATTR_CURRENT | LSM_ATTR_PREV | LSM_ATTR_EXEC,
->> +};
-> Perhaps mark this as const in addition to ro_after_init?  This applies
-> to all the other @lsm_id defs in this patch too.
-
-As I mentioned above, the lsm_id will eventually get changed during the
-registration process. I can add the const for now, knowing full well that
-it will be removed before long.
-
->> diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
->> index e5971fa74fd7..20983ae8d31f 100644
->> --- a/security/bpf/hooks.c
->> +++ b/security/bpf/hooks.c
->> @@ -5,6 +5,7 @@
->>   */
->>  #include <linux/lsm_hooks.h>
->>  #include <linux/bpf_lsm.h>
->> +#include <uapi/linux/lsm.h>
->>
->>  static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init = {
->>         #define LSM_HOOK(RET, DEFAULT, NAME, ...) \
->> @@ -15,9 +16,19 @@ static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init = {
->>         LSM_HOOK_INIT(task_free, bpf_task_storage_free),
->>  };
->>
->> +/*
->> + * slot has to be LSMBLOB_NEEDED because some of the hooks
->> + * supplied by this module require a slot.
->> + */
-> I don't think we need the above comment here, right?
-
-Whoops. I thought I'd gotten that one.
-
+> >  Are you
+> > suggesting that this check should be different than the ones that
+> > already exist for Binder here?
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/lsm_hook_defs.h#n29
 >
-> --
-> paul-moore.com
+> This one seems just a little bit more like an implementation of
+> SELinux policy in the hook than some of the others. If there is no way
+> to identify the special process without SELinux policy it's going to
+> be really difficult for a different LSM to utilize the hook.
+>
+I think I see what you're saying... there is potentially no way to
+have an equivalent attribute with other LSMs?
+
+> >
+> >> Why isn't binder enforcing this restriction itself?
+> > Binder has no direct knowledge of which process has been designated as
+> > an allocator / charge transferrer. That is defined externally by
+> > whoever configures the system.
+>
+> So the attribute isn't a binder attribute, it's an SELinux attribute?
+> That isn't appropriate in the LSM interface, at least not explicitly.
+>
+The transfer feature is something offered by binder, but mapped to a
+process only in the SELinux policy.
+
+> >
+> >>>  so a new SELinux
+> >>> permission is added to restrict which processes are allowed to initiate
+> >>> these charge transfers.
+> >> Which is all perfectly reasonable if you have SELinux.
+> >>
+> >>> Signed-off-by: T.J. Mercier <tjmercier@google.com>
+> >>> ---
+> >>>  drivers/android/binder.c            | 5 +++++
+> >>>  include/linux/lsm_hook_defs.h       | 2 ++
+> >>>  include/linux/lsm_hooks.h           | 6 ++++++
+> >>>  include/linux/security.h            | 2 ++
+> >>>  security/security.c                 | 6 ++++++
+> >>>  security/selinux/hooks.c            | 9 +++++++++
+> >>>  security/selinux/include/classmap.h | 2 +-
+> >>>  7 files changed, 31 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> >>> index 9830848c8d25..9063db04826d 100644
+> >>> --- a/drivers/android/binder.c
+> >>> +++ b/drivers/android/binder.c
+> >>> @@ -2279,6 +2279,11 @@ static int binder_translate_fd(u32 fd, binder_size_t fd_offset, __u32 flags,
+> >>>       if (IS_ENABLED(CONFIG_MEMCG) && (flags & BINDER_FD_FLAG_XFER_CHARGE)) {
+> >>>               struct dma_buf *dmabuf;
+> >>>
+> >>> +             if (security_binder_transfer_charge(proc->cred, target_proc->cred)) {
+> >>> +                     ret = -EPERM;
+> >>> +                     goto err_security;
+> >>> +             }
+> >>> +
+> >>>               if (unlikely(!is_dma_buf_file(file))) {
+> >>>                       binder_user_error(
+> >>>                               "%d:%d got transaction with XFER_CHARGE for non-dmabuf fd, %d\n",
+> >>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> >>> index ed6cb2ac55fa..8db2a958557e 100644
+> >>> --- a/include/linux/lsm_hook_defs.h
+> >>> +++ b/include/linux/lsm_hook_defs.h
+> >>> @@ -33,6 +33,8 @@ LSM_HOOK(int, 0, binder_transfer_binder, const struct cred *from,
+> >>>        const struct cred *to)
+> >>>  LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
+> >>>        const struct cred *to, struct file *file)
+> >>> +LSM_HOOK(int, 0, binder_transfer_charge, const struct cred *from,
+> >>> +      const struct cred *to)
+> >>>  LSM_HOOK(int, 0, ptrace_access_check, struct task_struct *child,
+> >>>        unsigned int mode)
+> >>>  LSM_HOOK(int, 0, ptrace_traceme, struct task_struct *parent)
+> >>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> >>> index 0a5ba81f7367..39c40c7bf519 100644
+> >>> --- a/include/linux/lsm_hooks.h
+> >>> +++ b/include/linux/lsm_hooks.h
+> >>> @@ -1385,6 +1385,12 @@
+> >>>   *   @file contains the struct file being transferred.
+> >>>   *   @to contains the struct cred for the receiving process.
+> >>>   *   Return 0 if permission is granted.
+> >>> + * @binder_transfer_charge:
+> >>> + *   Check whether @from is allowed to transfer the memory charge for a
+> >>> + *   buffer out of its cgroup to @to.
+> >>> + *   @from contains the struct cred for the sending process.
+> >>> + *   @to contains the struct cred for the receiving process.
+> >>> + *   Return 0 if permission is granted.
+> >>>   *
+> >>>   * @ptrace_access_check:
+> >>>   *   Check permission before allowing the current process to trace the
+> >>> diff --git a/include/linux/security.h b/include/linux/security.h
+> >>> index 5b67f208f7de..3b7472308430 100644
+> >>> --- a/include/linux/security.h
+> >>> +++ b/include/linux/security.h
+> >>> @@ -270,6 +270,8 @@ int security_binder_transfer_binder(const struct cred *from,
+> >>>                                   const struct cred *to);
+> >>>  int security_binder_transfer_file(const struct cred *from,
+> >>>                                 const struct cred *to, struct file *file);
+> >>> +int security_binder_transfer_charge(const struct cred *from,
+> >>> +                                 const struct cred *to);
+> >>>  int security_ptrace_access_check(struct task_struct *child, unsigned int mode);
+> >>>  int security_ptrace_traceme(struct task_struct *parent);
+> >>>  int security_capget(struct task_struct *target,
+> >>> diff --git a/security/security.c b/security/security.c
+> >>> index d1571900a8c7..97e1e74d1ff2 100644
+> >>> --- a/security/security.c
+> >>> +++ b/security/security.c
+> >>> @@ -801,6 +801,12 @@ int security_binder_transfer_file(const struct cred *from,
+> >>>       return call_int_hook(binder_transfer_file, 0, from, to, file);
+> >>>  }
+> >>>
+> >>> +int security_binder_transfer_charge(const struct cred *from,
+> >>> +                                 const struct cred *to)
+> >>> +{
+> >>> +     return call_int_hook(binder_transfer_charge, 0, from, to);
+> >>> +}
+> >>> +
+> >>>  int security_ptrace_access_check(struct task_struct *child, unsigned int mode)
+> >>>  {
+> >>>       return call_int_hook(ptrace_access_check, 0, child, mode);
+> >>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> >>> index 3c5be76a9199..823ef14924bd 100644
+> >>> --- a/security/selinux/hooks.c
+> >>> +++ b/security/selinux/hooks.c
+> >>> @@ -2066,6 +2066,14 @@ static int selinux_binder_transfer_file(const struct cred *from,
+> >>>                           &ad);
+> >>>  }
+> >>>
+> >>> +static int selinux_binder_transfer_charge(const struct cred *from, const struct cred *to)
+> >>> +{
+> >>> +     return avc_has_perm(&selinux_state,
+> >>> +                         cred_sid(from), cred_sid(to),
+> >>> +                         SECCLASS_BINDER, BINDER__TRANSFER_CHARGE,
+> >>> +                         NULL);
+> >>> +}
+> >>> +
+> >>>  static int selinux_ptrace_access_check(struct task_struct *child,
+> >>>                                      unsigned int mode)
+> >>>  {
+> >>> @@ -7052,6 +7060,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+> >>>       LSM_HOOK_INIT(binder_transaction, selinux_binder_transaction),
+> >>>       LSM_HOOK_INIT(binder_transfer_binder, selinux_binder_transfer_binder),
+> >>>       LSM_HOOK_INIT(binder_transfer_file, selinux_binder_transfer_file),
+> >>> +     LSM_HOOK_INIT(binder_transfer_charge, selinux_binder_transfer_charge),
+> >>>
+> >>>       LSM_HOOK_INIT(ptrace_access_check, selinux_ptrace_access_check),
+> >>>       LSM_HOOK_INIT(ptrace_traceme, selinux_ptrace_traceme),
+> >>> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+> >>> index a3c380775d41..2eef180d10d7 100644
+> >>> --- a/security/selinux/include/classmap.h
+> >>> +++ b/security/selinux/include/classmap.h
+> >>> @@ -172,7 +172,7 @@ const struct security_class_mapping secclass_map[] = {
+> >>>       { "tun_socket",
+> >>>         { COMMON_SOCK_PERMS, "attach_queue", NULL } },
+> >>>       { "binder", { "impersonate", "call", "set_context_mgr", "transfer",
+> >>> -                   NULL } },
+> >>> +                   "transfer_charge", NULL } },
+> >>>       { "cap_userns",
+> >>>         { COMMON_CAP_PERMS, NULL } },
+> >>>       { "cap2_userns",
