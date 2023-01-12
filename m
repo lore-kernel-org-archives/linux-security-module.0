@@ -2,228 +2,198 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0867C54EBC
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Jan 2023 00:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FA4C5479D
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Jan 2023 00:36:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231375AbjALAVV (ORCPT
+        id S230308AbjALAgj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Jan 2023 19:21:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51816 "EHLO
+        Wed, 11 Jan 2023 19:36:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231690AbjALAVU (ORCPT
+        with ESMTP id S232509AbjALAga (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Jan 2023 19:21:20 -0500
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D47EA2F799
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jan 2023 16:21:17 -0800 (PST)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-4c24993965eso211506847b3.12
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jan 2023 16:21:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JOFWK7S0QU8xmUK+yBgEsb+MAKsxUcDHs25Z2aSj5ws=;
-        b=SlIcXlORe2ImkMbeZxwV/aVUF7SWQQ0CD62R7d+UbBCWaeoB/dGQxWLNEAqzwI9XH0
-         scVUPGtxWcCvUe7c95hRRt950s3FVB/rN144AGcc6g13CwK/zaIbuGr3gaTYmfjBILFT
-         OBua/HWISHD8CMvaY6GeVjGijG/Bc54ACRugaQJwXwetL5c4VwqArxqGs5ERzXSTmiXx
-         i5GUiqmCm7Re/ruBv9hRSzAKlKJwW895OoRU3xE06OWZgYJwE1tnfdNOmwEYKG5Zx5Tc
-         w3s+KudIbAxzqVO1ewABScWpVVIC9UZ3BBNPtsoLKX2yHKfoIzPqBHGVcaAM/cel3FK8
-         cQgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JOFWK7S0QU8xmUK+yBgEsb+MAKsxUcDHs25Z2aSj5ws=;
-        b=R2Imp8FSnY/n4WXVYT67PxyGXSjeiu0maQv3zQTuJeOqCrN1W2TyLB3qyUWmgpVNla
-         moi00ptzVrd8oKY6LYC+zYDVT4qxc7oxU0th11rLMrvPXknd3OqsHqzsOG15ACJYck8o
-         QyYEVTc6Lz+l1rDnRTeFCPQRVlNnliE5M67QzPQnpTCUOZZBPLtrlUfSc1v/ST4Efbkj
-         EKn+wrR566HdS6L8zWc1E8rqNegwStgaN/ZXHUM3uLQXwRDIl5sxeYwjqWKukucJpnjP
-         UZo07k47AvJEz7N5eft+Nha71tvagUn+bP3hw6tH9bGQf9hJ1snCTu9QOy5iXOjd1FGc
-         cEpQ==
-X-Gm-Message-State: AFqh2kqNdbuL0BsClOv5teeCqZ+mpf175hKxwIi+6N17qnq0M3CDQCDu
-        lpBU1U6mQ/UbW4ErzhgAurJX/9np0ejwxf4jbFCF5g==
-X-Google-Smtp-Source: AMrXdXv//B7Z9uVRrJ72r0SJYHXvm5gTjOdwGOeS8hW6kDzyLtEmUV3ElVz4ZAjR1QWaSRgYV0hAqURbPS38yvtNrDo=
-X-Received: by 2002:a05:690c:688:b0:4ab:cd28:a5e2 with SMTP id
- bp8-20020a05690c068800b004abcd28a5e2mr4453982ywb.234.1673482876837; Wed, 11
- Jan 2023 16:21:16 -0800 (PST)
+        Wed, 11 Jan 2023 19:36:30 -0500
+Received: from sonic310-31.consmr.mail.ne1.yahoo.com (sonic310-31.consmr.mail.ne1.yahoo.com [66.163.186.212])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D20D62EC
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Jan 2023 16:36:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1673483788; bh=IYqk7n0Bx44uelg/P+E2Zokv3wcrxDSNI9bxrGGXX3E=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Kjk49rTgIRjnpGTHsQG4pHCNwQQKkKQhQ5WNnTeNlsRef2nvYG48DiqnPBBLQtehuEZvzMMOKSefKaJjH5J19tjOD5Lg4BBSlOSQfpTTUXYMHg6JIwipDF4AsMEEGMrGb565Wc57JzVw89/uzhv1jN1+E+1Jrf+LV+1up33NTwSsZPlL43he8flwNBjigEg+nqZEjLsYn2FeHNrJq9GLBSVu8GXWZD+qBYADRemUhZJcLqu3afYMlxWfmCLpBQAsINXeWwpIxy5srOqfKYZYXFgaGEFQmXVtbOWkXu+CwIcn50LokRi9ryHRnWLareCL5P7VZS8TUVZB7XAVVCFaHQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1673483788; bh=PDv6mZ6roEUIDnPXeZkOp0Qo+YVxWllJBvEoqs4jJNU=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=NJDpmN7DfAhYdtgc+exCAJMmKsOk+layMIr9RONzFfA5cU8+7cYidcp93cIMGs37N+lpia6XCaIOaPHYAVr1CfAGNC2nCKJe6FWkfMjwCFVx4m/7ISq1o4Jgts091VQf/SwRI6kuL7GjR9IsQ0wfj1rTy9yMrMaVyRnNWI6HEWHoiyJFujFcQBJ5xs/Lu9BbrCwFxhuXV+fWPDBZkCoGgxfEvSTBudY8bOQMJSGHJjUV7of1TR3C/VMeZTroi0JrcxY7lySlecT5LpOvJHaA7VtSw8P3ZH/fdOBKF7lOxYxvrthWfDnkipAT1H1REZBKgoLxjC3JKYuXgSHPouiqIg==
+X-YMail-OSG: O0Eg3SoVM1ki4CTMhSGN3pIgIGKw310BnCEmS48qW8LXPktHQXlRnZN_P194Jkx
+ WQb1Evf2Wk7RwtWJVrA3XlGXFOi1Pvq7l2kxUSjTExBORDEfBUlujQMt_qsVPX_SwO67Kq3Wztdz
+ NWpxCU3omMKKeygKPs_rp.vT8btCpR3rB8jhybL3lg5RkTCyrMpVGUI3cpXpakQLNeAPF4K9J0Bv
+ 8mfS_Ltf699nVUyfe3keV2UruOzVPU1tOTME_a45hkR0XrBVvLJ.9Y1WuPU6.OhIshXiagiitzki
+ i_YkRaKcmcQ4lb1vTDMrGiINqqLo32fx1HrhM853Y6nmPNPC_Gtdjo9vPc4omgM.FlBIe1ppDgBh
+ 6o5kgOOfVSqm8UgWEtACmnjgVu.hZKdR6n2zR7B5wdQ4bmbGvDxQFe5s7XbO6M0emIkTkTxjTsSZ
+ s.qKzUDTybNQo2tx8H3EdVWz4o1fihY3RSU6Qfs0l7U61tpwdevsvclyFJviXdk2iG6aae7HIQ_G
+ dB6vuvWo.bCkBp7lJXdZXtj58wqtGM_IbaWOqRhUhGqeozE9sV34MfhnksCBnDM16pujkNm0ZeqA
+ OBLEH9X7FiUagLAbi9G82UIsjdy4EOIqBPrahIY.Jb9TNkBf33rOrXiw.cyqsgxYP7WBcLLSSHJl
+ zdiQiF2ME4Q_N8ZJ.n0ko1wvauU08p4_qL2sNNUR9V_jRaW.WePk._QkVhK.32lsGUKqpNoRNNKF
+ UQCIjlNKhy12DntI4w2sxtgskTey1jaz2MTYBw_gGUtlckTyH5G6imGZ6fKK9oUCGWNmzX3yUOHe
+ Pgt7UnMvAvcZTkI8PUVQ1XCo7LzxFuV5EL6yDlEl.oHJMJjr7SPKZzjUjfHZ5lpCk_SoKl0U2y1R
+ hm9xBR.dSGE1UvMUj7rgQymyzKhh8_JOIps1._SD5Yv2s2EQMRdQtBE5EHGtMU1j5Q77dy_BIJwr
+ t58kcuD3Pw4EaU8vJtA3JWmPQSZZU4cDtIAo6DiLBGa56UAAz67nuVS4tKObhA_9f7UN4_HbQybS
+ 6C17sRsvb4XTS6e7MN53ozbf_EYhdY9jdo6fkZjTPKymgBYJGPitTbWnMYkOjZrjSqf0zYJsHLte
+ 4NNE0kzUPACy.Cft3zp2nV8ZenNc13jyBayV3dx9vv0LUNucKx7NBm84fhFrAbjaQO2ARDD1D32g
+ Y0b8kN91Ly37uruJRqBd.09UP5WHlD0b8I.b5lx_AG72sMnw8j0v8JNh.rULOBKa1e8JQ3zy8LLk
+ hqVdt6sV1BuxUjaon9tFDVB73NsV4oSuwp97pa23CloHgYrPSeZYCzw32dLNmfGkMgBg.D6_4Bbf
+ LuwfVsWEK5b0219R.7k4uljI7aB2IiKwnGTJvpc7E77cRsFWpLrAg0MQQpHAW7iT4A1pz32hgHuQ
+ unJq.UaqJuEfX0t5MTGXUl_xUvpgXRmXa0tiNDeOrddbFTTESGefNy389Dbn39z1CAJK2vdMgkyx
+ 2gA2iHUBgEcwlW2uv49gS81_z.u6UflHEv5fJt30xwk1aly9OqYQ2ZW9R1.MizH_xhz4ViQ1ekd8
+ 0AnfNpPCWmhGWNqcQhRJDjO62pbYJCluZXlbbHQX2vykuzJIM0hc0pIEz.p70bbwEb0p0.pafh7h
+ 0rYxUFBqpqKjtj5Z1dap1VE_U5PcYD7bsEb9AZA8qkOUa2cr6nSPLmepBbqxvUc31B_Kqg59aPnB
+ PMkUQHpD2_chuBpVkvjjIJmMLkccFzEmvM62p19gQCooB2TIDLQ7V3V4ZtYKDjallh4UDfhBMnUJ
+ z5zWV.keIn8xJc2MHyEBSAyGzTjeKirflyK9no.FI.T6XoUdNVGibq03nQ2baenxIeX26QaM1icz
+ dRsGs9A.t52CCSQxArDCxbyl8T9n5P_ypayiYdLKr2DPGkL4LTDggeP.S.CUfJHcqPAtMNbd5HxW
+ RrqBys6Jo6kn2H1ZAWy1yVcDcAOzxc_mr.YTSdojdkTo3kMvBMG93dcRvGAbJXEZtrebKoE46gAj
+ Oez_P2SnvflE5XvnSaI42g.QkYJrc7AAhZQd2_fE5ch_bpmT2EiCxkSYV3ky.A1YkEjZZU5QkT42
+ NdS0pCHuOuQ09x3frWH2B9MbOe6Yt9xryyblNSrDPsnnEAGD1flylsHamW.CYU8QEvO8GHgElKLh
+ aPfK4prfKr18aG99w28crlodt00zWn0sgFoX8PJsmG2iClRU_gB7fN4C2qEu2rLpIe2_VMNJsXrI
+ qW4f9h_MQ461V8c1BIfsTn1oysFv9YsFs0FCMdGUmG6kxvU39O2UPbO2odMEAOv26p5XX6OQ7Nh_
+ rJ0GOseo-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Thu, 12 Jan 2023 00:36:28 +0000
+Received: by hermes--production-gq1-5d97db6675-rm7qv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e40f0c23d0b9c07bd9df291f93dd4855;
+          Thu, 12 Jan 2023 00:36:23 +0000 (UTC)
+Message-ID: <c1acc2ed-d188-6560-4554-e6e37d47d06d@schaufler-ca.com>
+Date:   Wed, 11 Jan 2023 16:36:22 -0800
 MIME-Version: 1.0
-References: <20230109213809.418135-1-tjmercier@google.com> <20230109213809.418135-5-tjmercier@google.com>
- <CAHC9VhT+5oE4DZzxqCGFDoHjkP+5GcKU1R2BBW29uUu8BcgiAg@mail.gmail.com>
-In-Reply-To: <CAHC9VhT+5oE4DZzxqCGFDoHjkP+5GcKU1R2BBW29uUu8BcgiAg@mail.gmail.com>
-From:   "T.J. Mercier" <tjmercier@google.com>
-Date:   Wed, 11 Jan 2023 16:21:05 -0800
-Message-ID: <CABdmKX2FPf+Ox47g8nMeYw1OBNUOZrnKD5qVBtaVY01FbQq4ig@mail.gmail.com>
-Subject: Re: [PATCH 4/4] security: binder: Add transfer_charge SElinux hook
-To:     Paul Moore <paul@paul-moore.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Carlos Llamas <cmllamas@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, hannes@cmpxchg.org,
-        daniel.vetter@ffwll.ch, android-mm@google.com, jstultz@google.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v5 2/8] LSM: Maintain a table of LSM attribute data
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net
+References: <20230109180717.58855-1-casey@schaufler-ca.com>
+ <20230109180717.58855-3-casey@schaufler-ca.com>
+ <CAHC9VhTaySsuvkj0U9Jbp405+WoRfhtq+ib5ynO-a9BeM+a5Ew@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhTaySsuvkj0U9Jbp405+WoRfhtq+ib5ynO-a9BeM+a5Ew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21062 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 11, 2023 at 3:00 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Mon, Jan 9, 2023 at 4:38 PM T.J. Mercier <tjmercier@google.com> wrote:
-> >
-> > Any process can cause a memory charge transfer to occur to any other
-> > process when transmitting a file descriptor through binder. This should
-> > only be possible for central allocator processes, so a new SELinux
-> > permission is added to restrict which processes are allowed to initiate
-> > these charge transfers.
-> >
-> > Signed-off-by: T.J. Mercier <tjmercier@google.com>
-> > ---
-> >  drivers/android/binder.c            | 5 +++++
-> >  include/linux/lsm_hook_defs.h       | 2 ++
-> >  include/linux/lsm_hooks.h           | 6 ++++++
-> >  include/linux/security.h            | 2 ++
-> >  security/security.c                 | 6 ++++++
-> >  security/selinux/hooks.c            | 9 +++++++++
-> >  security/selinux/include/classmap.h | 2 +-
-> >  7 files changed, 31 insertions(+), 1 deletion(-)
->
-> Hi T.J.,
->
-> A few things come to mind when looking at this patchset, but let me
-> start with the big one first: you only sent 0/4 and 4/4 to the LSM and
-> SELinux lists, so that's all I'm seeing in my inbox to review, and
-> it's hard to make sense of what you want to do with just these
-> snippets.  This makes me cranky, and less inclined to spend the time
-> to give this a proper review, because there are plenty of other things
-> which need attention and don't require me having to hunt down missing
-> pieces.  Yes, I'm aware of b4/lei, and while they are great tools, my
-> workflow was pretty well established before they came into existence
-> and I still do things the good ol' fashioned way with mailing lists,
-> etc.
->
-> Make the patch reviewer's life easy whenever you can, it will rarely
-> (ever?) backfire, I promise.
->
-Hi Paul, sorry about that. I have git send-email calling
-get_maintainer.pl to automatically figure out the recipients, and I
-think that's why it only sent particular patches to a subset of lists.
-Looks like the list of recipients for each patch should be a union of
-all patches. Thank you for taking a look anyway! Here's a lore link:
-https://lore.kernel.org/lkml/20230109213809.418135-1-tjmercier@google.com/
+On 1/11/2023 1:01 PM, Paul Moore wrote:
+> On Mon, Jan 9, 2023 at 1:07 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> As LSMs are registered add their lsm_id pointers to a table.
+>> This will be used later for attribute reporting.
+>>
+>> Determine the number of possible security modules based on
+>> their respective CONFIG options. This allows the number to be
+>> known at build time. This allows data structures and tables
+>> to use the constant.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/security.h |  2 ++
+>>  security/security.c      | 44 +++++++++++++++++++++++++++++++++-------
+>>  2 files changed, 39 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/include/linux/security.h b/include/linux/security.h
+>> index 5b67f208f7de..33ed1860b96f 100644
+>> --- a/include/linux/security.h
+>> +++ b/include/linux/security.h
+>> @@ -138,6 +138,8 @@ enum lockdown_reason {
+>>  };
+>>
+>>  extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1];
+>> +extern u32 lsm_active_cnt;
+>> +extern struct lsm_id *lsm_idlist[];
+>>
+>>  /* These functions are in security/commoncap.c */
+>>  extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
+>> diff --git a/security/security.c b/security/security.c
+>> index 07a8fe7f92bf..a590fa98ddd6 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -28,12 +28,29 @@
+>>  #include <linux/backing-dev.h>
+>>  #include <linux/string.h>
+>>  #include <linux/msg.h>
+>> +#include <uapi/linux/lsm.h>
+>>  #include <net/flow.h>
+>>
+>>  #define MAX_LSM_EVM_XATTR      2
+>>
+>> -/* How many LSMs were built into the kernel? */
+>> -#define LSM_COUNT (__end_lsm_info - __start_lsm_info)
+>> +/*
+>> + * How many LSMs are built into the kernel as determined at
+>> + * build time. Used to determine fixed array sizes.
+>> + * The capability module is accounted for by CONFIG_SECURITY
+>> + */
+>> +#define LSM_COUNT ( \
+>> +       (IS_ENABLED(CONFIG_SECURITY) ? 1 : 0) + \
+>> +       (IS_ENABLED(CONFIG_SECURITY_SELINUX) ? 1 : 0) + \
+>> +       (IS_ENABLED(CONFIG_SECURITY_SMACK) ? 1 : 0) + \
+>> +       (IS_ENABLED(CONFIG_SECURITY_TOMOYO) ? 1 : 0) + \
+>> +       (IS_ENABLED(CONFIG_SECURITY_IMA) ? 1 : 0) + \
+>> +       (IS_ENABLED(CONFIG_SECURITY_APPARMOR) ? 1 : 0) + \
+>> +       (IS_ENABLED(CONFIG_SECURITY_YAMA) ? 1 : 0) + \
+>> +       (IS_ENABLED(CONFIG_SECURITY_LOADPIN) ? 1 : 0) + \
+>> +       (IS_ENABLED(CONFIG_SECURITY_SAFESETID) ? 1 : 0) + \
+>> +       (IS_ENABLED(CONFIG_SECURITY_LOCKDOWN_LSM) ? 1 : 0) + \
+>> +       (IS_ENABLED(CONFIG_BPF_LSM) ? 1 : 0) + \
+>> +       (IS_ENABLED(CONFIG_SECURITY_LANDLOCK) ? 1 : 0))
+>>
+>>  /*
+>>   * These are descriptions of the reasons that can be passed to the
+>> @@ -90,7 +107,7 @@ static __initdata const char *chosen_major_lsm;
+>>  static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
+>>
+>>  /* Ordered list of LSMs to initialize. */
+>> -static __initdata struct lsm_info **ordered_lsms;
+>> +static __initdata struct lsm_info *ordered_lsms[LSM_COUNT + 1];
+> I'm guessing this 'LSM_COUNT + 1' logic is basically just copied from
+> ordered_lsm_init() - which is okay - but can you remind me why it is
+> 'LSM_COUNT + 1' and not just 'LSM_COUNT'?  Based on the LSM_COUNT
+> macro above it seems like LSM_COUNT should be enough, no?
 
-> > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> > index 9830848c8d25..9063db04826d 100644
-> > --- a/drivers/android/binder.c
-> > +++ b/drivers/android/binder.c
-> > @@ -2279,6 +2279,11 @@ static int binder_translate_fd(u32 fd, binder_size_t fd_offset, __u32 flags,
-> >         if (IS_ENABLED(CONFIG_MEMCG) && (flags & BINDER_FD_FLAG_XFER_CHARGE)) {
-> >                 struct dma_buf *dmabuf;
-> >
-> > +               if (security_binder_transfer_charge(proc->cred, target_proc->cred)) {
-> > +                       ret = -EPERM;
-> > +                       goto err_security;
-> > +               }
->
-> This is where I believe I'm missing the proper context, as this
-> version of binder_translate_fd() differs from what I see in Linus'
-> tree.  However, the version in Linus' tree does have a LSM hook,
-> security_binder_transfer_file(), which is passed both the credentials
-> you are using above and based solely on the level of indentation shown
-> in the chunk of code above, it seems like the existing hook might be
-> suitable?
->
-Yes, patch 3 plumbs through flags to this function:
-https://lore.kernel.org/lkml/20230109213809.418135-4-tjmercier@google.com/
+Yup. I didn't spend a lot of time investigating why the + 1.
+I'll look more deeply and correct if appropriate.
 
-I don't think the existing hook is suitable, which I've tried to explain below.
+>>  static __initdata struct lsm_info *exclusive;
+>>
+>>  static __initdata bool debug;
+>> @@ -341,13 +358,16 @@ static void __init report_lsm_order(void)
+>>         pr_cont("\n");
+>>  }
+>>
+>> +/*
+>> + * Current index to use while initializing the lsm id list.
+>> + */
+>> +u32 lsm_active_cnt __lsm_ro_after_init;
+>> +struct lsm_id *lsm_idlist[LSM_COUNT] __lsm_ro_after_init;
+>> +
+>>  static void __init ordered_lsm_init(void)
+>>  {
+>>         struct lsm_info **lsm;
+>>
+>> -       ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
+>> -                               GFP_KERNEL);
+>> -
+>>         if (chosen_lsm_order) {
+>>                 if (chosen_major_lsm) {
+>>                         pr_warn("security=%s is ignored because it is superseded by lsm=%s\n",
+>> @@ -388,7 +408,7 @@ static void __init ordered_lsm_init(void)
+>>         for (lsm = ordered_lsms; *lsm; lsm++)
+>>                 initialize_lsm(*lsm);
+>>
+>> -       kfree(ordered_lsms);
+>> +       init_debug("lsm count            = %d\n", lsm_active_cnt);
+>>  }
+> Given 86ef3c735ec8 ("LSM: Better reporting of actual LSMs at boot"),
+> is this needed?
 
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 3c5be76a9199..823ef14924bd 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -2066,6 +2066,14 @@ static int selinux_binder_transfer_file(const struct cred *from,
-> >                             &ad);
-> >  }
-> >
-> > +static int selinux_binder_transfer_charge(const struct cred *from, const struct cred *to)
-> > +{
-> > +       return avc_has_perm(&selinux_state,
-> > +                           cred_sid(from), cred_sid(to),
-> > +                           SECCLASS_BINDER, BINDER__TRANSFER_CHARGE,
-> > +                           NULL);
-> > +}
->
-> Generally speaking SELinux doesn't really worry about resource
-> accounting controls so this seems a bit out of place, but perhaps the
-> larger question is do you see this being sufficiently distinct from
-> the existing binder:transfer permission?  In other words, would you
-> ever want to grant a domain the ability to transfer a file *without*
-> also granting it the ability to transfer the memory charge?  You need
-> to help me explain why we need an additional permission for this,
-> because I don't currently see the need.
->
-Yes, and that's actually more often the case than not. A file here
-means a file descriptor that points at any type of resource: file on
-disk, memfd, dmabuf, etc. Currently there exists policy that restricts
-which processes are allowed to interact with FDs over binder using the
-security_binder_transfer_file hook you reference. [1] However this new
-transfer_charge permission is meant to restrict the ability of a FD
-sender to transfer the memory charge associated with that FD (if one
-exists) to a recipient (who may or may not want to accept the memory
-charge). So the memory charge is independent of (potentially one-time,
-read-only) access to the FD. I thought this would be a good idea for
-two reasons:
-1) The recipient has no control over whether to accept the memory
-charge or not. If the recipient shouldn't have the memory charge
-associated with a shared/loaned resource attributed to it, the
-recipient doesn't have a way to prevent that. When the charge is
-transferred, it could initiate memory reclaim on the recipient, or
-make it a bigger target for a future process kill than it should be.
-2) Only certain senders should be doing this. Without this control,
-any sender could circumvent process memory limits by transferring
-memory charges that should be attributed to them onto others.
+None of what comes out from lsm.debug is strictly necessary, and
+human or script can parse "initializing lsm=", but sometimes the
+number of LSMs is interesting.
 
-[1] https://cs.android.com/search?q=%22fd%20use%22&ss=android%2Fplatform%2Fsuperproject:system%2Fsepolicy%2F
-
-
-
-> >  static int selinux_ptrace_access_check(struct task_struct *child,
-> >                                        unsigned int mode)
-> >  {
-> > @@ -7052,6 +7060,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
-> >         LSM_HOOK_INIT(binder_transaction, selinux_binder_transaction),
-> >         LSM_HOOK_INIT(binder_transfer_binder, selinux_binder_transfer_binder),
-> >         LSM_HOOK_INIT(binder_transfer_file, selinux_binder_transfer_file),
-> > +       LSM_HOOK_INIT(binder_transfer_charge, selinux_binder_transfer_charge),
-> >
-> >         LSM_HOOK_INIT(ptrace_access_check, selinux_ptrace_access_check),
-> >         LSM_HOOK_INIT(ptrace_traceme, selinux_ptrace_traceme),
-> > diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-> > index a3c380775d41..2eef180d10d7 100644
-> > --- a/security/selinux/include/classmap.h
-> > +++ b/security/selinux/include/classmap.h
-> > @@ -172,7 +172,7 @@ const struct security_class_mapping secclass_map[] = {
-> >         { "tun_socket",
-> >           { COMMON_SOCK_PERMS, "attach_queue", NULL } },
-> >         { "binder", { "impersonate", "call", "set_context_mgr", "transfer",
-> > -                     NULL } },
-> > +                     "transfer_charge", NULL } },
-> >         { "cap_userns",
-> >           { COMMON_CAP_PERMS, NULL } },
-> >         { "cap2_userns",
-> > --
-> > 2.39.0.314.g84b9a713c41-goog
 >
 > --
 > paul-moore.com
