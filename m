@@ -2,63 +2,118 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCD4C54EBC
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Jan 2023 08:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F14E3C61DB3
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Jan 2023 10:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235405AbjALIwR (ORCPT
+        id S231566AbjALK3M (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Jan 2023 03:52:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46148 "EHLO
+        Thu, 12 Jan 2023 05:29:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239472AbjALIvk (ORCPT
+        with ESMTP id S237514AbjALK2C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Jan 2023 03:51:40 -0500
-Received: from mail.glencoeaur.com (mail.glencoeaur.com [217.61.97.113])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01A3B1DF0C
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Jan 2023 00:50:00 -0800 (PST)
-Received: by mail.glencoeaur.com (Postfix, from userid 1001)
-        id 3E52881D94; Thu, 12 Jan 2023 08:31:01 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=glencoeaur.com;
-        s=mail; t=1673512262;
-        bh=2S0GQFScndXkBEK4sqdoOhOYLqsB2sEH8Q5XQfVvKpo=;
-        h=Date:From:To:Subject:From;
-        b=W/BtwekCLK2p/rvASYA7pBQf4znQGEK0oEKGYO0nSKgZ3DyAv1YLWFZj4S3yYIVDg
-         D8KzlQRzuz6CbYQMJ1AXwdg8pbtfIpLZis7SfBleDoKVchRSPAbRjlPeXaqjnPIZSe
-         7AQSfJQNlq+z5YdxC3AmXZEBHQ3t+T3TAKaQho7BD0Os4S2OrWxWYhz5cKUVHNVuJt
-         p2ewOqVQtKzlOrlCWbk2yxPflHWaz7YtZn8ufuvThH2OyQcga2dg6wuWC2OxzaSHfm
-         UntoAclpSRecToYRqdSpCW1X3eYAyN7rSi5ASZ6fm/hvJb9Vmn7BWmM6tcA7NPwPY6
-         zFyCJQqMqPwqQ==
-Received: by mail.glencoeaur.com for <linux-security-module@vger.kernel.org>; Thu, 12 Jan 2023 08:31:00 GMT
-Message-ID: <20230112074500-0.1.z.3ex6.0.yihd7gf420@glencoeaur.com>
-Date:   Thu, 12 Jan 2023 08:31:00 GMT
-From:   "Zbynek Spacek" <zbynek.spacek@glencoeaur.com>
-To:     <linux-security-module@vger.kernel.org>
-Subject: Silikonmischungen
-X-Mailer: mail.glencoeaur.com
+        Thu, 12 Jan 2023 05:28:02 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42FFEF2D;
+        Thu, 12 Jan 2023 02:25:42 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 900FC3FB4E;
+        Thu, 12 Jan 2023 10:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1673519138; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=RFRkZ+Fj3t8T5BZaiHz5NCYqROwzY9AM/nVOyatEKtk=;
+        b=kXlRU9udXbFgZotDjntGowEBuvchX+T2tPOQt4l2B/QItP41pyuGf09UekzD58fu0LIxRc
+        w76yu+pkH0Ua7YBS6uJ2rwWDxCoFeyaVSAeCGGeNdqLbR3tAQh+xq9uDiO7GTSj2Wj7bNn
+        HineNr8vyQXh2nAR99gNAKtfqxMYBuI=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6650E13585;
+        Thu, 12 Jan 2023 10:25:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 9ozhGCLgv2PZJgAAMHmgww
+        (envelope-from <mhocko@suse.com>); Thu, 12 Jan 2023 10:25:38 +0000
+Date:   Thu, 12 Jan 2023 11:25:37 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     "T.J. Mercier" <tjmercier@google.com>, Tejun Heo <tj@kernel.org>,
+        Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Carlos Llamas <cmllamas@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Muchun Song <muchun.song@linux.dev>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, android-mm@google.com,
+        jstultz@google.com, cgroups@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH 0/4] Track exported dma-buffers with memcg
+Message-ID: <Y7/gIRv9aJfPK7/f@dhcp22.suse.cz>
+References: <20230109213809.418135-1-tjmercier@google.com>
+ <CALvZod4ru7F38tAO-gM9ZFKaEhS0w3KqFbPwhwcTvgJs4xMUow@mail.gmail.com>
+ <Y78+rfzXPq5XGs9O@phenom.ffwll.local>
+ <20230112075631.wc6fd54ci55drhkp@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230112075631.wc6fd54ci55drhkp@google.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Good morning,
+On Thu 12-01-23 07:56:31, Shakeel Butt wrote:
+> On Wed, Jan 11, 2023 at 11:56:45PM +0100, Daniel Vetter wrote:
+> > 
+> [...]
+> > I think eventually, at least for other "account gpu stuff in cgroups" use
+> > case we do want to actually charge the memory.
+> > 
+> > The problem is a bit that with gpu allocations reclaim is essentially "we
+> > pass the error to userspace and they get to sort the mess out". There are
+> > some exceptions (some gpu drivers to have shrinkers) would we need to make
+> > sure these shrinkers are tied into the cgroup stuff before we could enable
+> > charging for them?
+> > 
+> 
+> No, there is no requirement to have shrinkers or making such memory
+> reclaimable before charging it. Though existing shrinkers and the
+> possible future shrinkers would need to be converted into memcg aware
+> shrinkers.
+> 
+> Though there will be a need to update user expectations that if they 
+> use memcgs with hard limits, they may start seeing memcg OOMs after the
+> charging of dmabuf.
 
-do you need intermediates for processing, plastics (e.g. rubber) or silic=
-one mixtures?
+Agreed. This wouldn't be the first in kernel memory charged memory that
+is not directly reclaimable. With a dedicated counter an excessive
+dmabuf usage would be visible in the oom report because we do print
+memcg stats.
 
-We provide a wide range of silicone rubbers with various properties, sili=
-cone mixtures from renowned manufacturers such as Wacker, Elastosil LR an=
-d dyes, stabilizers, primers and anti-adhesive additives.
-
-We also produce technical silicone compounds with increased resistance to=
- oils, resistant to high temperatures and water vapor, conductive and man=
-y more.
-
-We provide fast order fulfillment, timely deliveries and cost optimizatio=
-n.
-
-Can I introduce what we can offer you?
-
-
-Best regards
-Zbynek Spacek
+It is definitely preferable to have a shrinker mechanism but if that is
+to be done in a follow up step then this is acceptable. But leaving out
+charging from early on sounds like a bad choice to me.
+-- 
+Michal Hocko
+SUSE Labs
