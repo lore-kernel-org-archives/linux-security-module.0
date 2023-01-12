@@ -2,101 +2,153 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52535C54EBE
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Jan 2023 21:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D738DC61DB3
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Jan 2023 21:51:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232019AbjALVrI (ORCPT
+        id S233096AbjALVvE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Jan 2023 16:47:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40732 "EHLO
+        Thu, 12 Jan 2023 16:51:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236952AbjALVqm (ORCPT
+        with ESMTP id S235985AbjALVtV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Jan 2023 16:46:42 -0500
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E090A6C7F2
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Jan 2023 13:39:22 -0800 (PST)
-Received: by mail-pg1-x532.google.com with SMTP id q9so13698951pgq.5
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Jan 2023 13:39:22 -0800 (PST)
+        Thu, 12 Jan 2023 16:49:21 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABA8438A1
+        for <linux-security-module@vger.kernel.org>; Thu, 12 Jan 2023 13:43:33 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id c85so11511386pfc.8
+        for <linux-security-module@vger.kernel.org>; Thu, 12 Jan 2023 13:43:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2G1ZoEYxGQpgfk9wwUZHFbGRL7cXxq7vSTyyjT2OdrE=;
-        b=RL/4iEJmfTC51uP/4p2GTfep3Y9t1w6elQSazYFdY6QRYSjvTppjQIpOtNDtKDpcU4
-         RUnDv+CeLUjRJGhYrULLlWDGf5ASBUqttj5zeSF8e0GYaUhurhvZvjzRMwanhoso4Zt5
-         xY9GvqZnkHeaPkspRHFqz/HyeFIEeGEK/5j2FjzK5+cDXS2ZVC9kwN8Fzq1mDhHn1VIc
-         RIpbrvIno2AM2/KDwlxl33qz/rqJXf54CWA9Ev4bYIk8V20fX7Ecc7F6B6dkSgROnArh
-         TU6zSQZXyKKu1ev3rpwvAwCwMnDwLIY0jVQBFpLHsw5zvVFLjR7AP86rlaTN0sddoeoo
-         IPeA==
+        bh=y7Ge98iYbW9+59PEfzNDi44Q4iiB25ayX+9FCzJG+KU=;
+        b=Q/xxU0FH2OQWU8NojejcIMTAZqTBGgnHKZ3vy49w9Wjey5NCdcq4R5vsd3oIzrZKIs
+         4oEKE1TfnoEQmnnZxQaNN7YuXnG/XysEgaFLicZP6O85YnQtOEMumDb+zVK8DVls1Zan
+         5WtVdrhJFM+tYohljO2p2WvBUVq1LWppCowMh++wekm7I0oLVMDVE2R2TawboCRLqLV/
+         zOffdpmVq37ARuXMeSk0c+EiD7NId+BPACpvI2AXHkWuKLezPYzhCpTTKlPTZlWrTmcO
+         8bkZTZC83urnoYPmvHvPBk1GCuKCsIEbg+f8vilZEVydMa4Ond8OeBUF2OpDX37MLKwj
+         13Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2G1ZoEYxGQpgfk9wwUZHFbGRL7cXxq7vSTyyjT2OdrE=;
-        b=6EN282WIWEF0LZnLRV86LZ5C4i7AqcImKEMQlDx1tVyX03Ti1uFsLQ7PnL6XhP5Usj
-         2m4p0tAGFm8D1WZTnxc4lGjF5FfqBH+vHPdW34VgjqvQ1f6K7ccWSPou0nH2Rc8L+cfe
-         anb1Cm6OdldhD/ITvNiG1Er/6p9OSPbQ2VxMRqLTbp0IJqs3TqXoqxb0bCkpnxTWVX1G
-         mUDuziaB8NULDAQ7KhcUU+k/BCastkcdVaHM0duYVkZCd9PpH7qi20dn/u5SFNESSA/6
-         8dsx0ofGgu6nKQy31keLZ+ctH10Ir0/ZBMjJIB7iql0kd5mgBMUTL39fUkotOxxRLeML
-         li2Q==
-X-Gm-Message-State: AFqh2kp0XOASallOFktbCoZKxW7p4zoS0znc4CUEBVLvxpJFJXRR0miY
-        Vf6KFASsj3QZZRRjjfV7OGb1cilw+5AEFivfqHQa
-X-Google-Smtp-Source: AMrXdXvBOTxwky5Htp9NUFLASZ+yHQHATlj3a7gvPm0oPR4fxSDvOYBoiF6PzmjXfwgALYXvizdMhkJbqqi76Nf1MKg=
+        bh=y7Ge98iYbW9+59PEfzNDi44Q4iiB25ayX+9FCzJG+KU=;
+        b=3l54CxhNpshVgHtK5T7TAv3HCFbTPJqT+lpKy9CFfcjQhFsytLEy4mkygLyiycu1SI
+         IsrIe10rVLoHKQdfaSxbw3C2oIdUr4HNwp7f6l0rQeWcZqKwyraVt0d/f7dQH74loKma
+         cJPo1a8Oi18B7Rf5ZO2L6r4INQVlMp6I3NQIkSF+67yvROyCaj16hVwsueJM+1aLOVSD
+         Mx3xffuMbNpIYOg8hfjdmKprns1jzL5HRE0eczyYyrKAnbokGvFeYe8m9mrJEnVostAV
+         FRDYgaMqLEA7l3hMiQ1VEjp1Nc95mtasJnb+OhQ8chTard46/qZsz2rQUFkLtYpCJaj5
+         kpXg==
+X-Gm-Message-State: AFqh2kqAkmQG+gJqHO+bMMJXVFyvPMn2xpXlf9xmI+ErB1e4F9gvh9DT
+        sRmA9gqEY8Fs951hNht7Won24LxgmVmykiG2Ql2x
+X-Google-Smtp-Source: AMrXdXsTWCOAsf593kAuk5vXk8SWPCprApE2bQ7G/HYv2nPn+uRJkEj48Tbck/WjVnesf8n2/A8D05yOLKYpIvoEQ80=
 X-Received: by 2002:a62:158f:0:b0:588:e66e:4f05 with SMTP id
- 137-20020a62158f000000b00588e66e4f05mr1366618pfv.23.1673559562029; Thu, 12
- Jan 2023 13:39:22 -0800 (PST)
+ 137-20020a62158f000000b00588e66e4f05mr1367513pfv.23.1673559813139; Thu, 12
+ Jan 2023 13:43:33 -0800 (PST)
 MIME-Version: 1.0
 References: <20230109180717.58855-1-casey@schaufler-ca.com>
- <20230109180717.58855-5-casey@schaufler-ca.com> <f8dca9d2-6e5e-4584-88b3-f71f62988dab@app.fastmail.com>
-In-Reply-To: <f8dca9d2-6e5e-4584-88b3-f71f62988dab@app.fastmail.com>
+ <20230109180717.58855-6-casey@schaufler-ca.com> <CAHC9VhTFRXdRZnnORw-fU4Wo84HMUMw8+JTTJvc4+pv8YELBHw@mail.gmail.com>
+ <8b345948-5b9d-37f9-16df-6d632af41477@schaufler-ca.com>
+In-Reply-To: <8b345948-5b9d-37f9-16df-6d632af41477@schaufler-ca.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 12 Jan 2023 16:39:10 -0500
-Message-ID: <CAHC9VhRRRo9V-q8jT7AbSh1eTPGN7OmxP9hrPz=GTPQa80RjCg@mail.gmail.com>
-Subject: Re: [PATCH v5 4/8] LSM: lsm_get_self_attr syscall for LSM self attributes
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, Kees Cook <keescook@chromium.org>,
-        john.johansen@canonical.com,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+Date:   Thu, 12 Jan 2023 16:43:22 -0500
+Message-ID: <CAHC9VhQn0QxYW7wZ4H14AYNMik0AnojB6qmTCn2Swkep956WMg@mail.gmail.com>
+Subject: Re: [PATCH v5 5/8] LSM: Create lsm_module_list system call
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
         stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
         linux-api@vger.kernel.org, mic@digikod.net
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 12, 2023 at 9:40 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> On Mon, Jan 9, 2023, at 19:07, Casey Schaufler wrote:
-> > +/**
-> > + * struct lsm_ctx - LSM context
-> > + * @id: the LSM id number, see LSM_ID_XXX
-> > + * @flags: context specifier and LSM specific flags
-> > + * @ctx_len: the size of @ctx
-> > + * @ctx: the LSM context, a nul terminated string
-> > + *
-> > + * @ctx in a nul terminated string.
-> > + *   (strlen(@ctx) < @ctx_len) is always true.
-> > + *   (strlen(@ctx) == @ctx_len + 1) is not guaranteed.
-> > + */
-> > +struct lsm_ctx {
-> > +     __u32           id;
-> > +     __u64           flags;
-> > +     __kernel_size_t ctx_len;
-> > +     __u8            ctx[];
-> > +};
+On Wed, Jan 11, 2023 at 8:39 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 1/11/2023 1:07 PM, Paul Moore wrote:
+> > On Mon, Jan 9, 2023 at 1:09 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> Create a system call to report the list of Linux Security Modules
+> >> that are active on the system. The list is provided as an array
+> >> of LSM ID numbers.
+> >>
+> >> The calling application can use this list determine what LSM
+> >> specific actions it might take. That might include chosing an
+> >> output format, determining required privilege or bypassing
+> >> security module specific behavior.
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >>  Documentation/userspace-api/lsm.rst |  3 +++
+> >>  include/linux/syscalls.h            |  1 +
+> >>  kernel/sys_ni.c                     |  1 +
+> >>  security/lsm_syscalls.c             | 41 +++++++++++++++++++++++++++++
+> >>  4 files changed, 46 insertions(+)
+> > ..
+> >
+> >> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
+> >> index 55e8bf61ac8a..92af1fcaa654 100644
+> >> --- a/security/lsm_syscalls.c
+> >> +++ b/security/lsm_syscalls.c
+> >> @@ -180,3 +180,44 @@ SYSCALL_DEFINE3(lsm_get_self_attr,
+> >>         kfree(final);
+> >>         return rc;
+> >>  }
+> >> +
+> >> +/**
+> >> + * sys_lsm_module_list - Return a list of the active security modules
+> >> + * @ids: the LSM module ids
+> >> + * @size: size of @ids, updated on return
+> >> + * @flags: reserved for future use, must be zero
+> >> + *
+> >> + * Returns a list of the active LSM ids. On success this function
+> >> + * returns the number of @ids array elements. This value may be zero
+> >> + * if there are no LSMs active. If @size is insufficient to contain
+> >> + * the return data -E2BIG is returned and @size is set to the minimum
+> >> + * required size. In all other cases a negative value indicating the
+> >> + * error is returned.
+> >> + */
+> >> +SYSCALL_DEFINE3(lsm_module_list,
+> >> +               u32 __user *, ids,
+> >> +               size_t __user *, size,
+> >> +               u64, flags)
+> >> +{
+> >> +       size_t total_size = lsm_active_cnt * sizeof(*ids);
+> >> +       size_t usize;
+> >> +       int i;
+> >> +
+> >> +       if (flags)
+> >> +               return -EINVAL;
+> >> +
+> >> +       if (get_user(usize, size))
+> >> +               return -EFAULT;
+> >> +
+> >> +       if (put_user(total_size, size) != 0)
+> >> +               return -EFAULT;
+> >> +
+> >> +       if (usize < total_size)
+> >> +               return -E2BIG;
+> >> +
+> >> +       for (i = 0; i < lsm_active_cnt; i++)
+> >> +               if (put_user(lsm_idlist[i]->id, ids++))
+> >> +                       return -EFAULT;
+> >> +
+> >> +       return lsm_active_cnt;
+> >> +}
+> > Similar to my comments in 4/8, I would probably create a new LSM hook
+> > for this syscall so that the lsm_ctx is passed through the LSM layer
+> > directly to the target LSM:
+> >
+> >   int security_sys_setselfattr(u64 attr, struct lsm_ctx __user *ctx,
+> > size_t len);
 >
-> I think this should be changed to be the same layout on
-> all architectures regardless of __u64 alignment and
-> sizeof(__kernel_size_t) differences, to avoid the need
-> for compat syscalls and explicit clearing of the
-> internal padding.
->
-> Maybe just use __u64 fields for all three integers?
+> That seems like a whole lot of work when you can just look it up
+> in an existing table.
 
-I have no problem with that ... the ctx[] field is variable length
-anyway so keeping it as a __u8 should be fine.
+D'oh!  Sorry, this comment was intended for patch 6/8, the
+lsm_set_self_attr() syscall patch.  I agree, it would be very silly to
+have a dedicated hook for lsm_module_list() :)
 
 -- 
 paul-moore.com
