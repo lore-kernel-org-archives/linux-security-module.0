@@ -2,105 +2,184 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 114F3C3DA78
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Jan 2023 19:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB17C678D7
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Jan 2023 23:44:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230526AbjAMT6Y (ORCPT
+        id S231143AbjAMXoU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Jan 2023 14:58:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40352 "EHLO
+        Fri, 13 Jan 2023 18:44:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231144AbjAMT6L (ORCPT
+        with ESMTP id S230016AbjAMXoS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Jan 2023 14:58:11 -0500
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc09])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7EB687F1B
-        for <linux-security-module@vger.kernel.org>; Fri, 13 Jan 2023 11:58:09 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NtsfQ2klhzMqxJX;
-        Fri, 13 Jan 2023 20:58:06 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4NtsfP5DhjzFXg;
-        Fri, 13 Jan 2023 20:58:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1673639886;
-        bh=GgZ5gPtDuZKrb/8BIHNeEuXFCuTSzpZM2LSjcosFW3E=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=O27MnDt4ky9Y22RmWu2myDpgqWatchR71k8RUA84j/aR+1m3oGVrB6YwbizaXNg9l
-         4NzoxZRJuLKPk2k4wDpJda3fn0mBHuDlP0aPbYEWHTM1KUwXitXQ2ceNHB8afMgOlb
-         kEx3HeUXrtjyLgIVFdq3AiWdnfw3+t4ecFibamqw=
-Message-ID: <ab279390-84e1-0bcc-29ca-eea673fdd14c@digikod.net>
-Date:   Fri, 13 Jan 2023 20:58:05 +0100
+        Fri, 13 Jan 2023 18:44:18 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DD9E7A397;
+        Fri, 13 Jan 2023 15:44:17 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id m21so33288936edc.3;
+        Fri, 13 Jan 2023 15:44:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WiD4XuljWboqUYIS4LRAcIps0II1sfWftKD+kMm06Go=;
+        b=C/s/9LuL/WYBqFD4EB5pxlKXWidNEPzGOv0vv1psvI3HB4A/OoUL4OYdPB9OVNHnSf
+         /zhA+pFWUCxOnaVoyzAL//ACBTXJR0oJhpYrBQ8/acEbAJ5dZ/s8gb0MDYGmFL+wRfv6
+         JN3v1W5I/8Jc3a0RRGgIna8GqMgyOPG43htzzVc508tueV1HT2I1PaerVBkKf1YD/KZ5
+         sMSS7IQzxl4yX+uKb9UpXWYZQHoSh2rVBjNhyHdKoZFuexeoDkouLOVOiySzNHtRuxkK
+         mVsgx8369gaO0PuGcl+dpF/xfVv3dt+tJTjzypzFWD6u7DNjdaJx7nBvmeyCfLS/vwiO
+         UnaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WiD4XuljWboqUYIS4LRAcIps0II1sfWftKD+kMm06Go=;
+        b=gGDLtEtQF6F1PrOZkYYiLohQ7KjI6JaqboJ1LLK0xoaPbHaBHOQGgFw7ZuPihheoaE
+         0eWvLjH5y4sLOY1eOeSGRQyrEZOpdg4omttJ/HmiltX2ZthQ8C7Ui0mTifw2pJ+VV9Gb
+         7xJGgU+YPKsjbYRXEbHg0fhlHXMd5rYHQ2rTeTgi9LB2rKjV/Lmu0SymgMnuJrp7NcpD
+         jp8b1KTcaYlzxWPVB6ndGTPLE9oaDZXybsajA4YSoyyfGB3sR0mGUDwp4n71MBKhsru+
+         wzkFKNb/ZViD1KwCFnMRQbEyUGgNrgqQbgAckAhg/p2I7okRIUVjdKyKj8l3XlIBob7T
+         ajUQ==
+X-Gm-Message-State: AFqh2kpIC8f02vdHkbdz5e/9i76CI77VbXnFNrIQS9XnuoVmOEgjXkYI
+        7VoNGBJFsbStgh1Skp7Id0nI0n/nO0uFgNxJnZ8=
+X-Google-Smtp-Source: AMrXdXugIxxCOTLCsJL5l1WzdJMhO1+av+OVIqu/rQiE4QSd8ANPBGJ7IOEjFzWCdrxmDHXl3I9pzXYhip9mmMxDPoc=
+X-Received: by 2002:a05:6402:6d9:b0:499:7efc:1d78 with SMTP id
+ n25-20020a05640206d900b004997efc1d78mr1921636edy.81.1673653455917; Fri, 13
+ Jan 2023 15:44:15 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v8 0/1] selftests/landlock: fix fs_tests when overlayfs
-Content-Language: en-US
-To:     jeffxu@chromium.org
-Cc:     jorgelo@chromium.org, keescook@chromium.org,
-        linux-security-module@vger.kernel.org, groeck@chromium.org,
-        gnoack@google.com, Jeff Xu <jeffxu@google.com>
-References: <20230113053229.1281774-1-jeffxu@google.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230113053229.1281774-1-jeffxu@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <a6c0bb85-6eeb-407e-a515-06f67e70db57@www.fastmail.com>
+ <21be7356-8710-408a-94e3-1a0d3f5f842e@www.fastmail.com> <CAEf4BzawXPiXY3mNabi0ggyTS9wtg6mh8x97=fYGhuGj4=2hnw@mail.gmail.com>
+ <a9367491-5ac3-385b-d0d6-820772ebd395@huaweicloud.com> <CAEf4BzZJDRNyafMEjy-1RX9cUmpcvZzYd9YBf9Q3uv_vVsiLCw@mail.gmail.com>
+ <5abb0b0090fd0bce77dca0a6b9036de121b65cf5.camel@huaweicloud.com>
+ <20f55084c341093d18d2bc462e49123c7f03cc8e.camel@huaweicloud.com>
+ <CAADnVQLU+c+gsZ=V6myG0-GhU3EzZgqjzTPvqvYmCDBjqMoF+Q@mail.gmail.com>
+ <3fa1fdafc4335c43f84259261dcd1f7d588985a6.camel@huaweicloud.com>
+ <c0f7120e433c80b7c4e0af788eda58de8d1ecdad.camel@huaweicloud.com>
+ <CAHC9VhQKa36C4xh1OiCdC1baNSeNL7OMLY9zg4O0UWahX-mzow@mail.gmail.com>
+ <4175e56b-8522-5086-bdf1-b534122c841b@huaweicloud.com> <CAHC9VhSRs0cUowuedQ1Sth4U7P5vcJMqe-qTLMBvCpYbeZ5OxA@mail.gmail.com>
+ <981170d7e587ff2c7e4673b1acc2886200e22392.camel@huaweicloud.com>
+In-Reply-To: <981170d7e587ff2c7e4673b1acc2886200e22392.camel@huaweicloud.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Fri, 13 Jan 2023 15:44:04 -0800
+Message-ID: <CAEf4BzYRx5gdwsEGTFY=C9-C72pus2Z3QV6THMLR4wACGMDrrQ@mail.gmail.com>
+Subject: Re: Closing the BPF map permission loophole
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Lorenz Bauer <oss@lmb.io>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>, bpf <bpf@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thanks Jeff! I pushed this patch in -next: 
-https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
+On Tue, Jan 10, 2023 at 1:12 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> On Wed, 2022-12-21 at 19:55 -0500, Paul Moore wrote:
+> > On Wed, Dec 21, 2022 at 4:54 AM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > On 12/20/2022 9:44 PM, Paul Moore wrote:
+> > > > On Fri, Dec 16, 2022 at 5:24 AM Roberto Sassu
+> > > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > > Ok, let me try to complete the solution for the issues Lorenz pointed
+> > > > > out. Here I discuss only the system call side of access.
+> > > > >
+> > > > > I was thinking on the meaning of the permissions on the inode of a
+> > > > > pinned eBPF object. Given that the object exists without pinning, this
+> > > > > double check of permissions first on the inode and then on the object
+> > > > > to me looks very confusing.
+> > > > >
+> > > > > So, here is a proposal: what if read and write in the context of
+> > > > > pinning don't refer to accessing the eBPF object itself but to the
+> > > > > ability to read the association between inode and eBPF object or to
+> > > > > write/replace the association with a different eBPF object (I guess not
+> > > > > supported now).
+> > > > >
+> > > > > We continue to do access control only at the time a requestor asks for
+> > > > > a fd. Currently there is only MAC, but we can add DAC and POSIX ACL too
+> > > > > (Andrii wanted to give read permission to a specific group). The owner
+> > > > > is who created the eBPF object and who can decide (for DAC and ACL) who
+> > > > > can access that object.
+> > > > >
+> > > > > The requestor obtains a fd with modes depending on what was granted. Fd
+> > > > > modes (current behavior) give the requestor the ability to do certain
+> > > > > operations. It is responsibility of the function performing the
+> > > > > operation on an eBPF object to check the fd modes first.
+> > > > >
+> > > > > It does not matter if the eBPF object is accessed through ID or inode,
+> > > > > access control is solely based on who is accessing the object, who
+> > > > > created it and the object permissions. *_GET_FD_BY_ID and OBJ_GET
+> > > > > operations will have the same access control.
+> > > > >
+> > > > > With my new proposal, once an eBPF object is pinned the owner or
+> > > > > whoever can access the inode could do chown/chmod. But this does not
+> > > > > have effect on the permissions of the object. It changes only who can
+> > > > > retrieve the association with the eBPF object itself.
+> > > >
+> > > > Just to make sure I understand you correctly, you're suggesting that
+> > > > the access modes assigned to a pinned map's fd are simply what is
+> > > > requested by the caller, and don't necessarily represent the access
+> > > > control modes of the underlying map, is that correct?  That seems a
+> > >
+> > > The fd modes don't necessarily represent the access control modes of the
+> > > inode the map is pinned to. But they surely represent the access control
+> > > modes of the map object itself.
+> > >
+> > > The access control modes of the inode tell if the requestor is able to
+> > > retrieve the map from it, before accessing the map is attempted. But,
+> > > even if the request is granted (i.e. the inode has read permission), the
+> > > requestor has still to pass access control on the map object, which is
+> > > separate.
+> >
+> > Okay, good.  That should work.
+> >
+> > > Fd modes are bound to the map access modes, but not necessarily bound to
+> > > the inode access modes (fd with write mode, on an inode with only read
+> > > permission). Fd modes are later enforced by map operations by checking
+> > > the compatibility of the operation (e.g. read-like operation requires fd
+> > > read mode).
+> > >
+> > > The last point is what it means getting a fd on the inode itself. It is
+> > > possible, because inodes could have seq_file operations. Thus, one could
+> > > dump the map content by just reading from the inode.
+> >
+> > Gotcha, yes, that would be bad.
+> >
+> > > Here, I suggest that we still do two separate checks. One is for the
+> > > open(), done by the VFS, and the other to access the map object. Not
+> > > having read permission on the inode means that the map content cannot be
+> > > dumped. But, having read permission on the inode does not imply the
+> > > ability to do it (still the map object check has to be passed).
+> >
+> > That makes sense to me.
+>
+> Andrii, Lorenz, what do you think about the new interpretation of the
+> permissions of the inode of a pinned map?
 
+Hi Roberto,
 
-On 13/01/2023 06:32, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@google.com>
-> 
-> Overlayfs can be disabled in kernel config, causing related tests to
-> fail. Adding a check for overlayfs’s supportability at runtime,
-> so we can call SKIP() when needed.
-> 
-> Note:
-> Below comments are raised during V7 discussion:
-> 
-> Currently SKIP() is applied to FIXTURE_SETUP, FIXTURE_TEARDOWN,
-> TEST_F_FORK, this is because SKIP() apply within the function
-> scope, not the testcase.
-> 
-> We would like test infra to have a dedicated environment
-> check hook (FIXTURE_ENV_CHECK) in test infra, called before
-> FIXTURE_SETUP(). If the environment check fails, the remaining
-> of the test will be skipped. The benefit of these are two:
-> 1> if env check pass, in theory, the test should pass.
-> 2> if env check fail, no need to call setup, so no need to cleanup
-> resource.
-> 
-> v8:
-> style change, no logic change.
-> 
-> v7:
-> https://lore.kernel.org/all/20221229211446.3154454-1-jeffxu@google.com/
-> Fix bug in supports_overlayfs().
-> Manual test with kernel with and without overlayfs.
-> 
-> v6: https://lore.kernel.org/all/20221229201215.3006512-1-jeffxu@google.com/
-> In v4, the SKIP() was applied at FIXTURE_SETUP() after mount() fail,
-> however, FIXTURE_TEARDOWN() will fail. It might be complicated
-> for test infra or testcase itself to have cleanup code handing the
-> success/failure of steps in SETUP().
-> 
-> This patch changes the approach, it calls supports_overlay() and SKIP()
-> at the beginning of FIXTURE_SETUP(), FIX_TEARDOWN(), TEST_F_FORK().
-> Because no modification of system is done by the test, cleanup is not
-> needed.
-> 
-> v4:
-> https://lore.kernel.org/all/20220823010216.2653012-1-jeffxu@google.com/
-> 
-> 
-> Jeff Xu (1):
->    selftests/landlock: skip overlayfs test when not support
-> 
->   tools/testing/selftests/landlock/fs_test.c | 48 ++++++++++++++++++++++
->   1 file changed, 48 insertions(+)
-> 
-> 
-> base-commit: 963a70bee5880640d0fd83ed29dc1e7ec0d2bd4a
+Sorry, I've lost track of all these intricacies a while ago. I'd like
+to hear from Lorenz as well. My role here was to expand on what I
+meant by "BPF map view" back then at BPF office hours and why I think
+it solves all the problems mentioned earlier.
+
+You seem to be proposing some alternative, but I'm not clear why we
+need an alternative, given BPF map view seems to be the right
+abstraction here? Either way, I think Lorenz was passionate about
+solving this problem, so would certainly help to get his input as
+well.
+
+Thanks.
+
+>
+> Thanks
+>
+> Roberto
+>
