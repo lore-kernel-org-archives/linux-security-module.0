@@ -2,85 +2,115 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 165C9C54EBD
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Jan 2023 09:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28125C61DB3
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Jan 2023 10:38:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241220AbjAMJnI (ORCPT
+        id S241262AbjAMKi2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Jan 2023 04:43:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36344 "EHLO
+        Fri, 13 Jan 2023 05:38:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239679AbjAMJmZ (ORCPT
+        with ESMTP id S241306AbjAMKhs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Jan 2023 04:42:25 -0500
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 359947FEFC;
-        Fri, 13 Jan 2023 01:31:34 -0800 (PST)
-Received: by mail-qt1-f180.google.com with SMTP id a25so11478761qto.10;
-        Fri, 13 Jan 2023 01:31:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SC0846x6bM2/0xxkG/f8yzedsbqUJvfQyAhjPvVKhSI=;
-        b=MESp9vB2/tfZXwaVMs+yM6uQSBcX+RKWOLsuyVhY1egeoWRcMtO3bq4+4T/+gXfUyP
-         YOve+2uwHU1A0JjEfRuF7F6qM9MV5raLrKlOpzYRVf2L4LOsZvQGJ63BAzVXb5tEIc0b
-         7AZn3k70rKqf8/BPdDEIXzFI3L+Juv2t0vIIYutQ+fPufXV07eFuDXKzfV3Z2kTQrYfI
-         RLzY6Wiih4Hu9ThFgl8xo/+GGFHjFIP85QAsYhT7402U3VRKiRMwEDVEHynKgVIUwAhA
-         xmR8340vQ4upkLhU6Sz9syErh8VeZUuXPJuoJt1XApx2T4JCqD4WGzI3zlJi6dRf+fHv
-         fwow==
-X-Gm-Message-State: AFqh2kr4gv0cAWsfnHFuAnxtdlM5CXrpa0AQZW4eViyaaXx5OU8Qx875
-        r4yC3fyriY0SeX06vWPp4r8szXLAxr5Vxg==
-X-Google-Smtp-Source: AMrXdXu5c59y9fd9PsUGioebA3EcIwihUMxf/UHOT+NmIekO6cPPaQlU61s9pi+LC/xlW8GaYMOZtg==
-X-Received: by 2002:ac8:4552:0:b0:3a8:a1f:6999 with SMTP id z18-20020ac84552000000b003a80a1f6999mr109872208qtn.52.1673602293681;
-        Fri, 13 Jan 2023 01:31:33 -0800 (PST)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
-        by smtp.gmail.com with ESMTPSA id i17-20020a05620a405100b006cfc01b4461sm12545750qko.118.2023.01.13.01.31.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jan 2023 01:31:33 -0800 (PST)
-Received: by mail-yb1-f179.google.com with SMTP id 9so4258801ybn.6;
-        Fri, 13 Jan 2023 01:31:32 -0800 (PST)
-X-Received: by 2002:a25:3143:0:b0:77a:b5f3:d0ac with SMTP id
- x64-20020a253143000000b0077ab5f3d0acmr5751463ybx.202.1673602292739; Fri, 13
- Jan 2023 01:31:32 -0800 (PST)
-MIME-Version: 1.0
-References: <20230109180717.58855-1-casey@schaufler-ca.com> <20230109180717.58855-8-casey@schaufler-ca.com>
-In-Reply-To: <20230109180717.58855-8-casey@schaufler-ca.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 13 Jan 2023 10:31:21 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXiXr6+wi53RAa4GZgHmem52oNWiw3PnH3w=qwRjhcGOw@mail.gmail.com>
-Message-ID: <CAMuHMdXiXr6+wi53RAa4GZgHmem52oNWiw3PnH3w=qwRjhcGOw@mail.gmail.com>
-Subject: Re: [PATCH v5 7/8] LSM: wireup Linux Security Module syscalls
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        mic@digikod.net
+        Fri, 13 Jan 2023 05:37:48 -0500
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C0B01AA0B;
+        Fri, 13 Jan 2023 02:35:58 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4Ntd0p03Kqz9xGZ1;
+        Fri, 13 Jan 2023 18:28:10 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwC3PAjkM8Fj60SSAA--.55533S2;
+        Fri, 13 Jan 2023 11:35:28 +0100 (CET)
+Message-ID: <7e8af24bc175b425777c1e689c26562dc743bfd5.camel@huaweicloud.com>
+Subject: Re: [PATCH v7 0/6] evm: Do HMAC of multiple per LSM xattrs for new
+ inodes
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com,
+        ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Fri, 13 Jan 2023 11:35:13 +0100
+In-Reply-To: <CAHC9VhS0SnEb46-FBpn2JpC2dJ7OnkeJ2EtLBvVvkOLdfFmcbg@mail.gmail.com>
+References: <20221201104125.919483-1-roberto.sassu@huaweicloud.com>
+         <CAHC9VhS0SnEb46-FBpn2JpC2dJ7OnkeJ2EtLBvVvkOLdfFmcbg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwC3PAjkM8Fj60SSAA--.55533S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFW8WF18ZFW5ury8Ar1UWrg_yoW8CFWUpa
+        9xt3Wagr4kWFyUKr43A3yjk3yUGr4fGF13X34fK34jyrnxuFn2gF1xGayrua4DJrn3u3sY
+        vFW3W3sru3Z5u3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAQBF1jj4eOnQAAsw
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 9, 2023 at 7:15 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> Wireup lsm_get_self_attr, lsm_set_self_attr and lsm_module_list
-> system calls.
->
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: linux-api@vger.kernel.org
+On Thu, 2023-01-12 at 12:15 -0500, Paul Moore wrote:
+> On Thu, Dec 1, 2022 at 5:42 AM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > One of the major goals of LSM stacking is to run multiple LSMs side by side
+> > without interfering with each other. The ultimate decision will depend on
+> > individual LSM decision.
+> > 
+> > Several changes need to be made to the LSM infrastructure to be able to
+> > support that. This patch set tackles one of them: gives to each LSM the
+> > ability to specify one or multiple xattrs to be set at inode creation
+> > time and, at the same time, gives to EVM the ability to access all those
+> > xattrs and calculate the HMAC on them.
+> 
+> ...
+> 
+> > The patch set has been tested with both the SElinux and Smack test suites.
+> > Below, there is the summary of the test results:
+> > 
+> > SELinux Test Suite result (without patches):
+> > Files=73, Tests=1346, 225 wallclock secs ( 0.43 usr  0.23 sys +  6.11 cusr 58.70 csys = 65.47 CPU)
+> > Result: FAIL
+> > Failed 4/73 test programs. 13/1346 subtests failed.
+> > 
+> > SELinux Test Suite result (with patches):
+> > Files=73, Tests=1346, 225 wallclock secs ( 0.44 usr  0.22 sys +  6.15 cusr 59.94 csys = 66.75 CPU)
+> > Result: FAIL
+> > Failed 4/73 test programs. 13/1346 subtests failed.
+> 
+> Can you provide some more information on which of the
+> selinux-testsuite tests failed?  That shouldn't be happening and I'm a
+> little concerned that these test failures, even if unrelated to your
+> work here, could be masking failures which are related.
 
->  arch/m68k/kernel/syscalls/syscall.tbl               |  3 +++
+Uhm, my virtual machine has been used for many tests and was not clean.
+This time, I installed a fresh Fedora 37 and compiled the kernel with
+the same configuration as the shipped kernel.
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> [m68k]
+Everything works now:
 
-Gr{oetje,eeting}s,
+All tests successful.
+Files=74, Tests=1363, 210 wallclock secs ( 0.42 usr  0.11 sys +  6.66
+cusr 22.33 csys = 29.52 CPU)
+Result: PASS
 
-                        Geert
+Roberto
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
