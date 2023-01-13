@@ -2,253 +2,105 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5491EC3DA78
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Jan 2023 18:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114F3C3DA78
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Jan 2023 19:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230496AbjAMSTh (ORCPT
+        id S230526AbjAMT6Y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Jan 2023 13:19:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33104 "EHLO
+        Fri, 13 Jan 2023 14:58:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230515AbjAMSTE (ORCPT
+        with ESMTP id S231144AbjAMT6L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Jan 2023 13:19:04 -0500
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B5D96ADA2
-        for <linux-security-module@vger.kernel.org>; Fri, 13 Jan 2023 10:12:12 -0800 (PST)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NtqJC0BNtzMr2j4;
-        Fri, 13 Jan 2023 19:12:11 +0100 (CET)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4NtqJB1mfjzMq1Vh;
-        Fri, 13 Jan 2023 19:12:10 +0100 (CET)
+        Fri, 13 Jan 2023 14:58:11 -0500
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc09])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7EB687F1B
+        for <linux-security-module@vger.kernel.org>; Fri, 13 Jan 2023 11:58:09 -0800 (PST)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NtsfQ2klhzMqxJX;
+        Fri, 13 Jan 2023 20:58:06 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4NtsfP5DhjzFXg;
+        Fri, 13 Jan 2023 20:58:05 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1673633530;
-        bh=78h8J/XWCqm4EH36UJggpjKH/WjLswvynrY/lrlSxBw=;
+        s=20191114; t=1673639886;
+        bh=GgZ5gPtDuZKrb/8BIHNeEuXFCuTSzpZM2LSjcosFW3E=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=j4PFZJaeRm5mab6izHvuQLqf404G+Da82YltwHaiPAJ/S7l2bEVDUfzVga080rPgk
-         lDMwEh/ZLxCVizJgrjtxfqcQ9nhseiR4hAKJ2L1AswQDMPzWwIAS/e3kdN3IjWKjNA
-         Wchm8JuTgzgUkg9SnkWaWuH02b7Onxpx3ikT3uKM=
-Message-ID: <2985dea2-e9ac-2416-3065-0713723f6280@digikod.net>
-Date:   Fri, 13 Jan 2023 19:12:09 +0100
+        b=O27MnDt4ky9Y22RmWu2myDpgqWatchR71k8RUA84j/aR+1m3oGVrB6YwbizaXNg9l
+         4NzoxZRJuLKPk2k4wDpJda3fn0mBHuDlP0aPbYEWHTM1KUwXitXQ2ceNHB8afMgOlb
+         kEx3HeUXrtjyLgIVFdq3AiWdnfw3+t4ecFibamqw=
+Message-ID: <ab279390-84e1-0bcc-29ca-eea673fdd14c@digikod.net>
+Date:   Fri, 13 Jan 2023 20:58:05 +0100
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH] selftests/landlock: Improve ptrace_test with Yama
+Subject: Re: [PATCH v8 0/1] selftests/landlock: fix fs_tests when overlayfs
 Content-Language: en-US
-To:     Jeff Xu <jeffxu@google.com>
-Cc:     gnoack@google.com, groeck@chromium.org, jorgelo@chromium.org,
-        keescook@chromium.org, linux-security-module@vger.kernel.org
-References: <20230113050755.1277736-2-jeffxu@google.com>
- <20230113175308.50900-1-mic@digikod.net>
+To:     jeffxu@chromium.org
+Cc:     jorgelo@chromium.org, keescook@chromium.org,
+        linux-security-module@vger.kernel.org, groeck@chromium.org,
+        gnoack@google.com, Jeff Xu <jeffxu@google.com>
+References: <20230113053229.1281774-1-jeffxu@google.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230113175308.50900-1-mic@digikod.net>
+In-Reply-To: <20230113053229.1281774-1-jeffxu@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Thanks Jeff! I pushed this patch in -next: 
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
 
-On 13/01/2023 18:53, Mickaël Salaün wrote:
-> I found some issues running this new ptrace_test. Indeed, Yama doesn't
-> restrict PTRACE_MODE_READ whereas Landlock does. I also changed some
-> comments and socpe conditions. In fact, the final SKIP() wasn't a good
-> idea because it masks such potential errors; let's only use a log
-> message instead. I also removed the first SKIP() because we want
-> everything to be tested, and the MODE_READ does still matter anyway.
+
+On 13/01/2023 06:32, jeffxu@chromium.org wrote:
+> From: Jeff Xu <jeffxu@google.com>
 > 
-> Please review this patch and squash it in yours.
+> Overlayfs can be disabled in kernel config, causing related tests to
+> fail. Adding a check for overlayfs’s supportability at runtime,
+> so we can call SKIP() when needed.
 > 
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20230113175308.50900-1-mic@digikod.net
-> ---
->   .../testing/selftests/landlock/ptrace_test.c  | 106 ++++++++++--------
->   1 file changed, 57 insertions(+), 49 deletions(-)
+> Note:
+> Below comments are raised during V7 discussion:
 > 
-> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
-> index c9d9f3001d0f..3c3ba37bf8ec 100644
-> --- a/tools/testing/selftests/landlock/ptrace_test.c
-> +++ b/tools/testing/selftests/landlock/ptrace_test.c
-> @@ -19,7 +19,7 @@
->   
->   #include "common.h"
->   
-> -/* copy from yama_lsm.c */
-> +/* Copied from security/yama/yama_lsm.c */
->   #define YAMA_SCOPE_DISABLED 0
->   #define YAMA_SCOPE_RELATIONAL 1
->   #define YAMA_SCOPE_CAPABILITY 2
-> @@ -70,7 +70,7 @@ static int get_yama_ptrace_scope(void)
->   {
->   	int ret;
->   	char buf[2] = {};
-> -	int fd = open("/proc/sys/kernel/yama/ptrace_scope", O_RDONLY);
-> +	const int fd = open("/proc/sys/kernel/yama/ptrace_scope", O_RDONLY);
->   
->   	if (fd < 0)
->   		return 0;
-> @@ -260,46 +260,48 @@ TEST_F(hierarchy, trace)
->   	int yama_ptrace_scope;
->   	char buf_parent;
->   	long ret;
-> -	bool can_trace_child, can_trace_parent;
-> +	bool can_read_child, can_trace_child, can_read_parent, can_trace_parent;
->   
->   	yama_ptrace_scope = get_yama_ptrace_scope();
->   	ASSERT_LE(0, yama_ptrace_scope);
->   
-> -	if (yama_ptrace_scope >= YAMA_SCOPE_NO_ATTACH)
-> -		SKIP(return, "Yama forbids any ptrace use (scope %d)",
-> -			   yama_ptrace_scope);
-> +	if (yama_ptrace_scope > YAMA_SCOPE_DISABLED)
-> +		TH_LOG("Incomplete tests due to Yama restrictions (scope %d)",
-> +		       yama_ptrace_scope);
->   
->   	/*
-> -	 * can_trace_child: if a parent process can trace its child process.
-> -	 *
-> -	 * There are two conditions concerning landlock:
-> -	 * 1> the parent and child processes are in the same landlock domain or
-> -	 *	one beneath it (case: domain_both = true).
-> -	 * 2> yama allows tracing children (up to YAMA_SCOPE_RELATIONAL).
-> -	 * Both 1 and 2 need to be met for can_trace_child to be true.
-> -	 *
-> -	 * If a parent process has its own domain not shared with the child
-> -	 * process (case:domain_parent = true), then the parent can't trace the
-> -	 * child.
-> +	 * can_read_child is true if a parent process can read its child
-> +	 * process, which is only the case when the parent process is not
-> +	 * isolated from the child with a dedicated Landlock domain.
->   	 */
-> -	can_trace_child = !variant->domain_parent &&
-> -			  yama_ptrace_scope < YAMA_SCOPE_CAPABILITY;
-> +	can_read_child = !variant->domain_parent;
->   
->   	/*
-> -	 * can_trace_parent: if a child process can trace its parent process.
-> -	 *
-> -	 * There are two conditions concerning landlock:
-> -	 * 1> the parent and child process are in the same landlock domain or
-> -	 *	one beneath it.(case: domain_both = true).
-> -	 * 2> yama is disabled (YAMA_SCOPE_DISABLED).
-> -	 * Both 1 and 2 need to be met for can_trace_parent to be true.
-> -	 *
-> -	 * If a child process has its own domain not shared with the parent
-> -	 * process (case:domain_child = true, then the child can't trace the
-> -	 * parent.
-> +	 * can_trace_child is true if a parent process can trace its child
-> +	 * process.  This depends on two conditions:
-> +	 * - The parent process is not isolated from the child with a dedicated
-> +	 *   Landlock domain.
-> +	 * - Yama allows tracing children (up to YAMA_SCOPE_RELATIONAL).
->   	 */
-> -	can_trace_parent = !variant->domain_child &&
-> -			   yama_ptrace_scope < YAMA_SCOPE_RELATIONAL;
-> +	can_trace_child = can_read_child &&
-> +			  yama_ptrace_scope <= YAMA_SCOPE_RELATIONAL;
-> +
-> +	/*
-> +	 * can_read_parent is true if a child process can read its parent
-> +	 * process, which is only the case when the child process is not
-> +	 * isolated from the parent with a dedicated Landlock domain.
-> +	 */
-> +	can_read_parent = !variant->domain_child;
-> +
-> +	/*
-> +	 * can_trace_parent is true if a child process can trace its parent
-> +	 * process.  This depends on two conditions:
-> +	 * - The child process is not isolated from the parent with a dedicated
-> +	 *   Landlock domain.
-> +	 * - Yama is disabled (YAMA_SCOPE_DISABLED).
-> +	 */
-> +	can_trace_parent = can_read_parent &&
-> +			   yama_ptrace_scope <= YAMA_SCOPE_DISABLED;
->   
->   	/*
->   	 * Removes all effective and permitted capabilities to not interfere
-> @@ -330,16 +332,21 @@ TEST_F(hierarchy, trace)
->   		/* Waits for the parent to be in a domain, if any. */
->   		ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
->   
-> -		/* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the parent. */
-> +		/* Tests PTRACE_MODE_READ on the parent. */
->   		err_proc_read = test_ptrace_read(parent);
-> +		if (can_read_parent) {
-> +			EXPECT_EQ(0, err_proc_read);
-> +		} else {
-> +			EXPECT_EQ(EACCES, err_proc_read);
-> +		}
-> +
-> +		/* Tests PTRACE_ATTACH on the parent. */
->   		ret = ptrace(PTRACE_ATTACH, parent, NULL, 0);
-> -		if (!can_trace_parent) {
-> +		if (can_trace_parent) {
-> +			EXPECT_EQ(0, ret);
-> +		} else {
->   			EXPECT_EQ(-1, ret);
->   			EXPECT_EQ(EPERM, errno);
-> -			EXPECT_EQ(EACCES, err_proc_read);
-> -		} else {
-> -			EXPECT_EQ(0, ret);
-> -			EXPECT_EQ(0, err_proc_read);
->   		}
->   		if (ret == 0) {
->   			ASSERT_EQ(parent, waitpid(parent, &status, 0));
-> @@ -349,11 +356,11 @@ TEST_F(hierarchy, trace)
->   
->   		/* Tests child PTRACE_TRACEME. */
->   		ret = ptrace(PTRACE_TRACEME);
-> -		if (!can_trace_child) {
-> +		if (can_trace_child) {
-> +			EXPECT_EQ(0, ret);
-> +		} else {
->   			EXPECT_EQ(-1, ret);
->   			EXPECT_EQ(EPERM, errno);
-> -		} else {
-> -			EXPECT_EQ(0, ret);
->   		}
->   
->   		/*
-> @@ -396,17 +403,23 @@ TEST_F(hierarchy, trace)
->   		EXPECT_EQ(ESRCH, errno);
->   	}
->   
-> -	/* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the child. */
-> +	/* Tests PTRACE_MODE_READ on the child. */
->   	err_proc_read = test_ptrace_read(child);
-> +	if (can_read_child) {
-> +		EXPECT_EQ(0, err_proc_read);
-> +	} else {
-> +		EXPECT_EQ(EACCES, err_proc_read);
-> +	}
-> +
-> +	/* Tests PTRACE_ATTACH on the child. */
->   	ret = ptrace(PTRACE_ATTACH, child, NULL, 0);
->   	if (!can_trace_child) {
-
-I forgot to inverse the !can_trace_child condition to make it more 
-consistent with the rest. Please update it for your next patch.
-
-
->   		EXPECT_EQ(-1, ret);
->   		EXPECT_EQ(EPERM, errno);
-> -		EXPECT_EQ(EACCES, err_proc_read);
->   	} else {
->   		EXPECT_EQ(0, ret);
-> -		EXPECT_EQ(0, err_proc_read);
->   	}
-> +
->   	if (ret == 0) {
->   		ASSERT_EQ(child, waitpid(child, &status, 0));
->   		ASSERT_EQ(1, WIFSTOPPED(status));
-> @@ -419,11 +432,6 @@ TEST_F(hierarchy, trace)
->   	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
->   	    WEXITSTATUS(status) != EXIT_SUCCESS)
->   		_metadata->passed = 0;
-> -
-> -	if (yama_ptrace_scope > 0)
-> -		SKIP(return,
-> -			   "Incomplete tests due to Yama restrictions (scope %d)",
-> -			   yama_ptrace_scope);
->   }
->   
->   TEST_HARNESS_MAIN
+> Currently SKIP() is applied to FIXTURE_SETUP, FIXTURE_TEARDOWN,
+> TEST_F_FORK, this is because SKIP() apply within the function
+> scope, not the testcase.
+> 
+> We would like test infra to have a dedicated environment
+> check hook (FIXTURE_ENV_CHECK) in test infra, called before
+> FIXTURE_SETUP(). If the environment check fails, the remaining
+> of the test will be skipped. The benefit of these are two:
+> 1> if env check pass, in theory, the test should pass.
+> 2> if env check fail, no need to call setup, so no need to cleanup
+> resource.
+> 
+> v8:
+> style change, no logic change.
+> 
+> v7:
+> https://lore.kernel.org/all/20221229211446.3154454-1-jeffxu@google.com/
+> Fix bug in supports_overlayfs().
+> Manual test with kernel with and without overlayfs.
+> 
+> v6: https://lore.kernel.org/all/20221229201215.3006512-1-jeffxu@google.com/
+> In v4, the SKIP() was applied at FIXTURE_SETUP() after mount() fail,
+> however, FIXTURE_TEARDOWN() will fail. It might be complicated
+> for test infra or testcase itself to have cleanup code handing the
+> success/failure of steps in SETUP().
+> 
+> This patch changes the approach, it calls supports_overlay() and SKIP()
+> at the beginning of FIXTURE_SETUP(), FIX_TEARDOWN(), TEST_F_FORK().
+> Because no modification of system is done by the test, cleanup is not
+> needed.
+> 
+> v4:
+> https://lore.kernel.org/all/20220823010216.2653012-1-jeffxu@google.com/
+> 
+> 
+> Jeff Xu (1):
+>    selftests/landlock: skip overlayfs test when not support
+> 
+>   tools/testing/selftests/landlock/fs_test.c | 48 ++++++++++++++++++++++
+>   1 file changed, 48 insertions(+)
+> 
+> 
+> base-commit: 963a70bee5880640d0fd83ed29dc1e7ec0d2bd4a
