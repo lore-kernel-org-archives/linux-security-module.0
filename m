@@ -2,175 +2,85 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E918C67871
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Jan 2023 05:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 165C9C54EBD
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Jan 2023 09:43:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230201AbjAMFdn (ORCPT
+        id S241220AbjAMJnI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Jan 2023 00:33:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36620 "EHLO
+        Fri, 13 Jan 2023 04:43:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234761AbjAMFcs (ORCPT
+        with ESMTP id S239679AbjAMJmZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Jan 2023 00:32:48 -0500
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F04BE6130D
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Jan 2023 21:32:37 -0800 (PST)
-Received: by mail-pj1-x102b.google.com with SMTP id z4-20020a17090a170400b00226d331390cso23326610pjd.5
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Jan 2023 21:32:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/DqhRtyB6skGEU45HUUKK5pgAZIImcgb5A+bxcz2gbg=;
-        b=OmvxjXZ2MEBdoDpJ1qRvgXp0B0Ybu4CbqM4YPpMQeORhHi2ruDUFDw81KYM1l/AtIm
-         b25uTAATlybaRj7H9+gSzy6guUEJ0XKrYCgR2gOVS75ht8ccNv2Fn/tNl93W3lPJGbP5
-         qV32Pj3cLJoP2k6eGgA8nvigTGDW+o2DgJ4Yk=
+        Fri, 13 Jan 2023 04:42:25 -0500
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 359947FEFC;
+        Fri, 13 Jan 2023 01:31:34 -0800 (PST)
+Received: by mail-qt1-f180.google.com with SMTP id a25so11478761qto.10;
+        Fri, 13 Jan 2023 01:31:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/DqhRtyB6skGEU45HUUKK5pgAZIImcgb5A+bxcz2gbg=;
-        b=SY+b4KIhOkW52AiwnsETUlgTSihCe3Kr9uKLFE7tFTWyPPg3SWOxq3z9rihrdov1i7
-         hkEvz/bo6R2nsoV5uJFvw4ZvcM8qzKF3Z1KP0pnZZqkxZMM2OdbEw5x1pJsyOOl2OO7N
-         kfssPfQR/Pib26pTwyrGAx7K54WZp8Gm2JOZ122CgSWZVlG9c9TZYtAEdl8tGTs1JeEh
-         V/JHsJG3bnPtJdeEoLIacjKjPwAMQMxmQJ5kMLz75IgVFuToaMjyvIoONJtjDc9UXr8j
-         JUAE44Se/ShuZNHZ3ijYktgkfvGF4XoIT35c+DFxcgW1jgvoq+pN3ycpEDw+Oh8y6di8
-         veWg==
-X-Gm-Message-State: AFqh2koyyKPVJeaMpTcZApyQGNTrhxOBOK2GvwWyb253lAw3JlxCMr1y
-        ZzyHo+ma/HHq2a9Mj/hFdf83SQ==
-X-Google-Smtp-Source: AMrXdXsMgbHo1FKyuoFcVkL6wZHMdcoEJVglsU+sbzrhPg99oWEpOI/3ZgfcAw4s39pvikkxvi8Pqw==
-X-Received: by 2002:a17:903:555:b0:194:6110:9fe1 with SMTP id jo21-20020a170903055500b0019461109fe1mr3988432plb.4.1673587957528;
-        Thu, 12 Jan 2023 21:32:37 -0800 (PST)
-Received: from jeffxud.c.googlers.com.com (190.40.105.34.bc.googleusercontent.com. [34.105.40.190])
-        by smtp.gmail.com with ESMTPSA id p5-20020a170902e74500b001945339354asm3450097plf.197.2023.01.12.21.32.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jan 2023 21:32:36 -0800 (PST)
-From:   jeffxu@chromium.org
-To:     mic@digikod.net
-Cc:     jorgelo@chromium.org, keescook@chromium.org,
-        linux-security-module@vger.kernel.org, groeck@chromium.org,
-        gnoack@google.com, Jeff Xu <jeffxu@google.com>
-Subject: [PATCH v8 1/1] selftests/landlock: skip overlayfs test when not support
-Date:   Fri, 13 Jan 2023 05:32:29 +0000
-Message-Id: <20230113053229.1281774-2-jeffxu@google.com>
-X-Mailer: git-send-email 2.39.0.314.g84b9a713c41-goog
-In-Reply-To: <20230113053229.1281774-1-jeffxu@google.com>
-References: <20230113053229.1281774-1-jeffxu@google.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SC0846x6bM2/0xxkG/f8yzedsbqUJvfQyAhjPvVKhSI=;
+        b=MESp9vB2/tfZXwaVMs+yM6uQSBcX+RKWOLsuyVhY1egeoWRcMtO3bq4+4T/+gXfUyP
+         YOve+2uwHU1A0JjEfRuF7F6qM9MV5raLrKlOpzYRVf2L4LOsZvQGJ63BAzVXb5tEIc0b
+         7AZn3k70rKqf8/BPdDEIXzFI3L+Juv2t0vIIYutQ+fPufXV07eFuDXKzfV3Z2kTQrYfI
+         RLzY6Wiih4Hu9ThFgl8xo/+GGFHjFIP85QAsYhT7402U3VRKiRMwEDVEHynKgVIUwAhA
+         xmR8340vQ4upkLhU6Sz9syErh8VeZUuXPJuoJt1XApx2T4JCqD4WGzI3zlJi6dRf+fHv
+         fwow==
+X-Gm-Message-State: AFqh2kr4gv0cAWsfnHFuAnxtdlM5CXrpa0AQZW4eViyaaXx5OU8Qx875
+        r4yC3fyriY0SeX06vWPp4r8szXLAxr5Vxg==
+X-Google-Smtp-Source: AMrXdXu5c59y9fd9PsUGioebA3EcIwihUMxf/UHOT+NmIekO6cPPaQlU61s9pi+LC/xlW8GaYMOZtg==
+X-Received: by 2002:ac8:4552:0:b0:3a8:a1f:6999 with SMTP id z18-20020ac84552000000b003a80a1f6999mr109872208qtn.52.1673602293681;
+        Fri, 13 Jan 2023 01:31:33 -0800 (PST)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id i17-20020a05620a405100b006cfc01b4461sm12545750qko.118.2023.01.13.01.31.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jan 2023 01:31:33 -0800 (PST)
+Received: by mail-yb1-f179.google.com with SMTP id 9so4258801ybn.6;
+        Fri, 13 Jan 2023 01:31:32 -0800 (PST)
+X-Received: by 2002:a25:3143:0:b0:77a:b5f3:d0ac with SMTP id
+ x64-20020a253143000000b0077ab5f3d0acmr5751463ybx.202.1673602292739; Fri, 13
+ Jan 2023 01:31:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20230109180717.58855-1-casey@schaufler-ca.com> <20230109180717.58855-8-casey@schaufler-ca.com>
+In-Reply-To: <20230109180717.58855-8-casey@schaufler-ca.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 13 Jan 2023 10:31:21 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXiXr6+wi53RAa4GZgHmem52oNWiw3PnH3w=qwRjhcGOw@mail.gmail.com>
+Message-ID: <CAMuHMdXiXr6+wi53RAa4GZgHmem52oNWiw3PnH3w=qwRjhcGOw@mail.gmail.com>
+Subject: Re: [PATCH v5 7/8] LSM: wireup Linux Security Module syscalls
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        mic@digikod.net
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Jeff Xu <jeffxu@google.com>
+On Mon, Jan 9, 2023 at 7:15 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> Wireup lsm_get_self_attr, lsm_set_self_attr and lsm_module_list
+> system calls.
+>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: linux-api@vger.kernel.org
 
-Overlayfs can be disabled in kernel config, causing related tests to
-fail. Add check for overlayfs’s supportability at runtime,
-so we can call SKIP() when needed.
+>  arch/m68k/kernel/syscalls/syscall.tbl               |  3 +++
 
-Signed-off-by: Jeff Xu <jeffxu@google.com>
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
----
- tools/testing/selftests/landlock/fs_test.c | 48 ++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> [m68k]
 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 21a2ce8fa739..b5bd5134c486 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -11,6 +11,7 @@
- #include <fcntl.h>
- #include <linux/landlock.h>
- #include <sched.h>
-+#include <stdio.h>
- #include <string.h>
- #include <sys/capability.h>
- #include <sys/mount.h>
-@@ -87,6 +88,41 @@ static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
-  *         └── s3d3
-  */
- 
-+static bool fgrep(FILE *inf, const char *str)
-+{
-+	char line[32];
-+	int slen = strlen(str);
-+
-+	while (!feof(inf)) {
-+		if (!fgets(line, sizeof(line), inf))
-+			break;
-+		if (strncmp(line, str, slen))
-+			continue;
-+
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+static bool supports_overlayfs(void)
-+{
-+	bool res;
-+	FILE *inf = fopen("/proc/filesystems", "r");
-+
-+	/*
-+	 * If fopen failed, return supported.
-+	 * This help detect missing file (shall not happen).
-+	 */
-+	if (!inf)
-+		return true;
-+
-+	res = fgrep(inf, "nodev\toverlay\n");
-+	fclose(inf);
-+
-+	return res;
-+}
-+
- static void mkdir_parents(struct __test_metadata *const _metadata,
- 			  const char *const path)
- {
-@@ -3404,6 +3440,9 @@ FIXTURE(layout2_overlay) {};
- 
- FIXTURE_SETUP(layout2_overlay)
- {
-+	if (!supports_overlayfs())
-+		SKIP(return, "overlayfs is not supported");
-+
- 	prepare_layout(_metadata);
- 
- 	create_directory(_metadata, LOWER_BASE);
-@@ -3440,6 +3479,9 @@ FIXTURE_SETUP(layout2_overlay)
- 
- FIXTURE_TEARDOWN(layout2_overlay)
- {
-+	if (!supports_overlayfs())
-+		SKIP(return, "overlayfs is not supported");
-+
- 	EXPECT_EQ(0, remove_path(lower_do1_fl3));
- 	EXPECT_EQ(0, remove_path(lower_dl1_fl2));
- 	EXPECT_EQ(0, remove_path(lower_fl1));
-@@ -3471,6 +3513,9 @@ FIXTURE_TEARDOWN(layout2_overlay)
- 
- TEST_F_FORK(layout2_overlay, no_restriction)
- {
-+	if (!supports_overlayfs())
-+		SKIP(return, "overlayfs is not supported");
-+
- 	ASSERT_EQ(0, test_open(lower_fl1, O_RDONLY));
- 	ASSERT_EQ(0, test_open(lower_dl1, O_RDONLY));
- 	ASSERT_EQ(0, test_open(lower_dl1_fl2, O_RDONLY));
-@@ -3634,6 +3679,9 @@ TEST_F_FORK(layout2_overlay, same_content_different_file)
- 	size_t i;
- 	const char *path_entry;
- 
-+	if (!supports_overlayfs())
-+		SKIP(return, "overlayfs is not supported");
-+
- 	/* Sets rules on base directories (i.e. outside overlay scope). */
- 	ruleset_fd = create_ruleset(_metadata, ACCESS_RW, layer1_base);
- 	ASSERT_LE(0, ruleset_fd);
--- 
-2.39.0.314.g84b9a713c41-goog
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
