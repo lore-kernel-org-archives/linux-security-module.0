@@ -2,122 +2,128 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE707C3DA78
-	for <linux-security-module@archiver.kernel.org>; Sat, 14 Jan 2023 15:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8618C46467
+	for <linux-security-module@archiver.kernel.org>; Sat, 14 Jan 2023 16:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbjANPjN (ORCPT
+        id S229943AbjANQu5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 14 Jan 2023 10:39:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44570 "EHLO
+        Sat, 14 Jan 2023 11:50:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229879AbjANPjM (ORCPT
+        with ESMTP id S229918AbjANQu4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 14 Jan 2023 10:39:12 -0500
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F62F65BD
-        for <linux-security-module@vger.kernel.org>; Sat, 14 Jan 2023 07:39:11 -0800 (PST)
-Received: by mail-pg1-x52a.google.com with SMTP id b12so16844112pgj.6
-        for <linux-security-module@vger.kernel.org>; Sat, 14 Jan 2023 07:39:11 -0800 (PST)
+        Sat, 14 Jan 2023 11:50:56 -0500
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85F2C3A9A;
+        Sat, 14 Jan 2023 08:50:55 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id a184so18204887pfa.9;
+        Sat, 14 Jan 2023 08:50:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ksDCogpM44p1MYL9LvFyCbpk9oMtoefLtPsNaDS+1Uw=;
-        b=IThA4Qp/47WBuI8os4H/m5l293jq3yndtbTSIqr6XNO4cHloGhTf4aQC+MrbVp/iCg
-         uQUFidWlLHRRd+h6RcmveluRwt5NZoo2An/ZrpKUusSIBQtWwpEke2+cvnxAvRBHtHLn
-         RgYxP8kmNXGdxXI3I/NGNv1AVMLLxyQB+nIQVYY65yK5WtqyLqwXo/aIyA2PTaUbJf3x
-         7gB93AeEoKRWKe6ebRVReiDQucBx/ON1ULR2srNsmWevrdVVSgPuAe1wvJR5eBHrGpwe
-         f0wYNYh56HFn2p+lw/2LgcxemNgqos5uyxPZZJwz8Y6x5DkpKBMS/7pS536sxtq8Yj34
-         5wrA==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NZly66Ps0eB33co09HnOQatKjFfOi6yr5GhUn1KYlDU=;
+        b=FAVOLUS9ICwO++64A7PSe0pjIcOEtzpXz7bJSZz52hfSZu8dKGxDGhSlPrNU6nk1st
+         d4R3uYjvi3rbrmtp1V30CBEmVb7GkJ6qWve9hkODkRZGqvOkXgFZ0Vw5xBiptuKCN9l2
+         +ig2eyzSPyE7Zz/fP2SKRm3OeDbNJHKWqivDHyYF+6l9ZJBxYX7Tls8Ut2lX8q64O4oT
+         dHTp0AFaYlNj1u++KJMzQ9OfwOxv+alPk3JkE7mDSnk0waNWX2m+a3inh4ZuIw1JG0bV
+         Q9r9AW37T1fkyzbohT2gVArYL+rxyjIXgXZxDKReyS65PyRz8xLpkBu75/bFtxVHMuXp
+         IQBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ksDCogpM44p1MYL9LvFyCbpk9oMtoefLtPsNaDS+1Uw=;
-        b=ZOHfJ0mfRBS7/sMrQr6vGM6le9t8qDNMVGK+PTcRV6uBbg9fmF3zW/geSB3jEKB6b3
-         vyI4KqMHPJhraVbVwXdfTLr5ebfct+w9HQ9uLYRIXtL1NT98pif25eLRHiNH9yASus5/
-         IvYJT/fARAu0XJAN87BP2IoG/sJu3l/icXyty0FfHvGAfHHJziUpaVwKy7Wq2Oi5Sg71
-         5tcOdDcu/7TgMdUOdnHJz6ex2B5k9mPP8A7wkRuPggtA0NsbG0TjXhIC36UxdnrbckKK
-         34im9hLLltOhbAYDF8Dab8pnO4lDrTbQZNH1Dvg8ZuNQSny8wFoTqF5iLQk3ZneKwr0M
-         /4Vw==
-X-Gm-Message-State: AFqh2krTNHoQvYYut7y5RF/vb8znXGhzP16B/aXcs3YqaHdcD4jaQ5P/
-        obRoTDL/mZFAqHiVVC+3Tkx+cYZCGkCcy+TXrX5B
-X-Google-Smtp-Source: AMrXdXv4BoDUHdpVNEYbOge+hC2COffpE8YpFO3Rq+AKRcoghZ8QDj5/8j6P++J0htEwejt6n9QXCwzM9ZhEw+/GTlc=
-X-Received: by 2002:a63:ea10:0:b0:4c7:ac8f:9e9c with SMTP id
- c16-20020a63ea10000000b004c7ac8f9e9cmr99166pgi.92.1673710750546; Sat, 14 Jan
- 2023 07:39:10 -0800 (PST)
+        bh=NZly66Ps0eB33co09HnOQatKjFfOi6yr5GhUn1KYlDU=;
+        b=EYxu/H/t7nego9o9Bp9tqElGW1QDnqze5Lg1EuPfVk2jeAR78wRaPIAQ7ztWSRWo2n
+         VlWc0AX4xAvjr100JNPE4CNZNfgl10FlCtaZCuZ0ORt1vzQKzhaFtg53xanM0hHRQQ+G
+         Ljg4TBYTs+NCV4uIQKokxyW8c0dose8We5KWNBIPuMIZD4xkM89dqvYN0e9qBpSE/tYK
+         6QbzLUsx4+tgjc1UrpoypyeJ7pLsMcm12Os3gsksqHmNyKpe3LHJQ+K6rKdEJtRQj39r
+         r5XNa0FRhquOCUJg/Rb1fYayA6JevFEld8le0QphUTgjLuCvSZmQuST+PhoaVFIseyjA
+         0zmQ==
+X-Gm-Message-State: AFqh2ko34nAO7IQWTkQ5ARUmM0Kow8LV1h64gzF+ivBTY4k8nc4LExY8
+        5bZ3L6b/6yHbR420xPuL1fE4lj6P2HE=
+X-Google-Smtp-Source: AMrXdXskaADfyXZPiXQBnsq5Xv+wHt17uljPJQdoFsQXvusgV10GH8au07ItipctqmEOkab2bIkuHA==
+X-Received: by 2002:a05:6a00:1da3:b0:589:d831:ad2a with SMTP id z35-20020a056a001da300b00589d831ad2amr18625228pfw.6.1673715054981;
+        Sat, 14 Jan 2023 08:50:54 -0800 (PST)
+Received: from localhost.localdomain ([43.132.141.3])
+        by smtp.gmail.com with ESMTPSA id 186-20020a6216c3000000b0057fec210d33sm14148888pfw.152.2023.01.14.08.50.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Jan 2023 08:50:54 -0800 (PST)
+From:   Quanfa Fu <quanfafu@gmail.com>
+To:     john.johansen@canonical.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Quanfa Fu <quanfafu@gmail.com>
+Subject: [PATCH] apparmor: make aa_set_current_onexec return void
+Date:   Sun, 15 Jan 2023 00:49:52 +0800
+Message-Id: <20230114164952.232653-1-quanfafu@gmail.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-References: <cover.1673666803.git.lucien.xin@gmail.com> <d19e0bd55ea5477d94567c00735b78d8da6a38cb.1673666803.git.lucien.xin@gmail.com>
-In-Reply-To: <d19e0bd55ea5477d94567c00735b78d8da6a38cb.1673666803.git.lucien.xin@gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 14 Jan 2023 10:38:59 -0500
-Message-ID: <CAHC9VhRXd+RkHSRLUt=0HFm42xPKGsSdSkxA6EHwipDukZH_mA@mail.gmail.com>
-Subject: Re: [PATCH net-next 06/10] cipso_ipv4: use iph_set_totlen in skbuff_setattr
-To:     Xin Long <lucien.xin@gmail.com>
-Cc:     network dev <netdev@vger.kernel.org>, davem@davemloft.net,
-        kuba@kernel.org, Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        David Ahern <dsahern@gmail.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Pravin B Shelar <pshelar@ovn.org>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Ilya Maximets <i.maximets@ovn.org>,
-        Aaron Conole <aconole@redhat.com>,
-        Roopa Prabhu <roopa@nvidia.com>,
-        Nikolay Aleksandrov <razor@blackwall.org>,
-        Mahesh Bandewar <maheshb@google.com>,
-        Guillaume Nault <gnault@redhat.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 13, 2023 at 10:31 PM Xin Long <lucien.xin@gmail.com> wrote:
->
-> It may process IPv4 TCP GSO packets in cipso_v4_skbuff_setattr(), so
-> the iph->tot_len update should use iph_set_totlen().
->
-> Note that for these non GSO packets, the new iph tot_len with extra
-> iph option len added may become greater than 65535, the old process
-> will cast it and set iph->tot_len to it, which is a bug. In theory,
-> iph options shouldn't be added for these big packets in here, a fix
-> may be needed here in the future. For now this patch is only to set
-> iph->tot_len to 0 when it happens.
+Change the return type to void since it always return 0, and no need
+to do the checking in aa_set_current_onexec.
 
-I'm not entirely clear on the paragraph above, but we do need to be
-able to set/modify the IP options in cipso_v4_skbuff_setattr() in
-order to support CIPSO labeling.  I'm open to better and/or
-alternative solutions compared to what we are doing now, but I can't
-support a change that is a bug waiting to bite us.  My apologies if
-I'm interpreting your comments incorrectly and that isn't the case
-here.
+Signed-off-by: Quanfa Fu <quanfafu@gmail.com>
+---
+ security/apparmor/domain.c       | 2 +-
+ security/apparmor/include/task.h | 2 +-
+ security/apparmor/task.c         | 5 +----
+ 3 files changed, 3 insertions(+), 6 deletions(-)
 
-> Signed-off-by: Xin Long <lucien.xin@gmail.com>
-> ---
->  net/ipv4/cipso_ipv4.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-> index 6cd3b6c559f0..79ae7204e8ed 100644
-> --- a/net/ipv4/cipso_ipv4.c
-> +++ b/net/ipv4/cipso_ipv4.c
-> @@ -2222,7 +2222,7 @@ int cipso_v4_skbuff_setattr(struct sk_buff *skb,
->                 memset((char *)(iph + 1) + buf_len, 0, opt_len - buf_len);
->         if (len_delta != 0) {
->                 iph->ihl = 5 + (opt_len >> 2);
-> -               iph->tot_len = htons(skb->len);
-> +               iph_set_totlen(iph, skb->len);
->         }
->         ip_send_check(iph);
->
-> --
-> 2.31.1
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 6dd3cc5309bf..bbc9c8a87b8e 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -1446,7 +1446,7 @@ int aa_change_profile(const char *fqname, int flags)
+ 		}
+ 
+ 		/* full transition will be built in exec path */
+-		error = aa_set_current_onexec(target, stack);
++		aa_set_current_onexec(target, stack);
+ 	}
+ 
+ audit:
+diff --git a/security/apparmor/include/task.h b/security/apparmor/include/task.h
+index 13437d62c70f..01717fe432c3 100644
+--- a/security/apparmor/include/task.h
++++ b/security/apparmor/include/task.h
+@@ -30,7 +30,7 @@ struct aa_task_ctx {
+ };
+ 
+ int aa_replace_current_label(struct aa_label *label);
+-int aa_set_current_onexec(struct aa_label *label, bool stack);
++void aa_set_current_onexec(struct aa_label *label, bool stack);
+ int aa_set_current_hat(struct aa_label *label, u64 token);
+ int aa_restore_previous_label(u64 cookie);
+ struct aa_label *aa_get_task_label(struct task_struct *task);
+diff --git a/security/apparmor/task.c b/security/apparmor/task.c
+index 84d16a29bfcb..5671a716fcd2 100644
+--- a/security/apparmor/task.c
++++ b/security/apparmor/task.c
+@@ -93,9 +93,8 @@ int aa_replace_current_label(struct aa_label *label)
+  * aa_set_current_onexec - set the tasks change_profile to happen onexec
+  * @label: system label to set at exec  (MAYBE NULL to clear value)
+  * @stack: whether stacking should be done
+- * Returns: 0 or error on failure
+  */
+-int aa_set_current_onexec(struct aa_label *label, bool stack)
++void aa_set_current_onexec(struct aa_label *label, bool stack)
+ {
+ 	struct aa_task_ctx *ctx = task_ctx(current);
+ 
+@@ -103,8 +102,6 @@ int aa_set_current_onexec(struct aa_label *label, bool stack)
+ 	aa_put_label(ctx->onexec);
+ 	ctx->onexec = label;
+ 	ctx->token = stack;
+-
+-	return 0;
+ }
+ 
+ /**
+-- 
+2.31.1
 
---
-paul-moore.com
