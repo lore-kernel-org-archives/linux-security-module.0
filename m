@@ -2,130 +2,122 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 172F5C54EBE
-	for <linux-security-module@archiver.kernel.org>; Sat, 14 Jan 2023 02:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE707C3DA78
+	for <linux-security-module@archiver.kernel.org>; Sat, 14 Jan 2023 15:39:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229854AbjANCSR (ORCPT
+        id S229971AbjANPjN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Jan 2023 21:18:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45592 "EHLO
+        Sat, 14 Jan 2023 10:39:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231418AbjANCSQ (ORCPT
+        with ESMTP id S229879AbjANPjM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Jan 2023 21:18:16 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B56EA8BF06
-        for <linux-security-module@vger.kernel.org>; Fri, 13 Jan 2023 18:18:15 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id s13-20020a17090a6e4d00b0022900843652so7183101pjm.1
-        for <linux-security-module@vger.kernel.org>; Fri, 13 Jan 2023 18:18:15 -0800 (PST)
+        Sat, 14 Jan 2023 10:39:12 -0500
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F62F65BD
+        for <linux-security-module@vger.kernel.org>; Sat, 14 Jan 2023 07:39:11 -0800 (PST)
+Received: by mail-pg1-x52a.google.com with SMTP id b12so16844112pgj.6
+        for <linux-security-module@vger.kernel.org>; Sat, 14 Jan 2023 07:39:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KeiLZqgLSY+2KPa1rEcKLNimd1+rgPDV+eujRY9aygs=;
-        b=cAmpWO6fH4wLwWdSVCx2AkVCZ5IfK/WU4lZYTJs4DzSCX9nVaIrMoiWgb6p5ovcCFw
-         Ea6LA7hGeS++B7qoaKFyUjddDMO1J8afiJ6vx0cA7j5rn7SjO0JPhdUAclc+y8JNggzE
-         7eVyDMuThwPu3DdtEcCxzLJM2AilsnzLlT2A37AUkIpfP069gOEgjLrhDIsNtrkihs+F
-         PJk4bJJCvTe0vegoXmlXcfIMFEeU+jVIy3JuctDQ6tw2O6evjgeZ3j4xYktMzX/KoqlI
-         rSIGTAib7DNGNFOWns2FrYrvVCKhwfWLsnqch8TEygDYScOqFA+IOl0n5OnKzmS7NPwn
-         TZ5A==
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ksDCogpM44p1MYL9LvFyCbpk9oMtoefLtPsNaDS+1Uw=;
+        b=IThA4Qp/47WBuI8os4H/m5l293jq3yndtbTSIqr6XNO4cHloGhTf4aQC+MrbVp/iCg
+         uQUFidWlLHRRd+h6RcmveluRwt5NZoo2An/ZrpKUusSIBQtWwpEke2+cvnxAvRBHtHLn
+         RgYxP8kmNXGdxXI3I/NGNv1AVMLLxyQB+nIQVYY65yK5WtqyLqwXo/aIyA2PTaUbJf3x
+         7gB93AeEoKRWKe6ebRVReiDQucBx/ON1ULR2srNsmWevrdVVSgPuAe1wvJR5eBHrGpwe
+         f0wYNYh56HFn2p+lw/2LgcxemNgqos5uyxPZZJwz8Y6x5DkpKBMS/7pS536sxtq8Yj34
+         5wrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KeiLZqgLSY+2KPa1rEcKLNimd1+rgPDV+eujRY9aygs=;
-        b=YLUASnwzNYKIgUaXFn7O6+20CUAZLGODu5YHIp41dDXBkg3eNYPN3LO5olP8XNoXJz
-         Pwy2Ba3DcZWDll4ZuJkb7t4kqQNu1yUVvruB+6EgmmBEfz+K/5L5s4GKioUhoP5C75ip
-         +C0uJfDx41ZT1lEM1vQy3PcOinH+ueD5w95Z6y4GbFNNb6irTwjfleM/j8bWV8D6Jpje
-         A0PwMrTuHo12pG9M8YOZhUv79zkIUPEbL44GrFxUg819JypnhM5qAIBYKuh6rB4T5GSq
-         VbIaoTkDwM2d3pCdQgz5BEOojnegajb9fxkWrRlL8Ddtud7HWnmSA2CMoojWyNo4sPq9
-         D9Jg==
-X-Gm-Message-State: AFqh2koKgVcbZz9Cw0Cqf6vShNxN2uSaklNk61HqTu/SCrBRE6iaW3Bb
-        0j7KkTjUBCZeTYGqG8g2iAEPri0CyxG+aQojruYZYg==
-X-Google-Smtp-Source: AMrXdXsyAv+d+ngl+5CL9YTC4DOX5hZaPw1iLS3p4y91pHSEyElZvVtrNLM52E+WBBut6rEnYjZjSoQSDIvooG9LHQM=
-X-Received: by 2002:a17:903:1014:b0:193:1d01:4909 with SMTP id
- a20-20020a170903101400b001931d014909mr173712plb.108.1673662694860; Fri, 13
- Jan 2023 18:18:14 -0800 (PST)
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ksDCogpM44p1MYL9LvFyCbpk9oMtoefLtPsNaDS+1Uw=;
+        b=ZOHfJ0mfRBS7/sMrQr6vGM6le9t8qDNMVGK+PTcRV6uBbg9fmF3zW/geSB3jEKB6b3
+         vyI4KqMHPJhraVbVwXdfTLr5ebfct+w9HQ9uLYRIXtL1NT98pif25eLRHiNH9yASus5/
+         IvYJT/fARAu0XJAN87BP2IoG/sJu3l/icXyty0FfHvGAfHHJziUpaVwKy7Wq2Oi5Sg71
+         5tcOdDcu/7TgMdUOdnHJz6ex2B5k9mPP8A7wkRuPggtA0NsbG0TjXhIC36UxdnrbckKK
+         34im9hLLltOhbAYDF8Dab8pnO4lDrTbQZNH1Dvg8ZuNQSny8wFoTqF5iLQk3ZneKwr0M
+         /4Vw==
+X-Gm-Message-State: AFqh2krTNHoQvYYut7y5RF/vb8znXGhzP16B/aXcs3YqaHdcD4jaQ5P/
+        obRoTDL/mZFAqHiVVC+3Tkx+cYZCGkCcy+TXrX5B
+X-Google-Smtp-Source: AMrXdXv4BoDUHdpVNEYbOge+hC2COffpE8YpFO3Rq+AKRcoghZ8QDj5/8j6P++J0htEwejt6n9QXCwzM9ZhEw+/GTlc=
+X-Received: by 2002:a63:ea10:0:b0:4c7:ac8f:9e9c with SMTP id
+ c16-20020a63ea10000000b004c7ac8f9e9cmr99166pgi.92.1673710750546; Sat, 14 Jan
+ 2023 07:39:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20230113053229.1281774-1-jeffxu@google.com> <ab279390-84e1-0bcc-29ca-eea673fdd14c@digikod.net>
-In-Reply-To: <ab279390-84e1-0bcc-29ca-eea673fdd14c@digikod.net>
-From:   Jeff Xu <jeffxu@google.com>
-Date:   Fri, 13 Jan 2023 18:17:37 -0800
-Message-ID: <CALmYWFsmKn9-OJ5a+OYjXcWn_XoULhL3efgTEfOFRXXZOf5UFQ@mail.gmail.com>
-Subject: Re: [PATCH v8 0/1] selftests/landlock: fix fs_tests when overlayfs
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     jeffxu@chromium.org, jorgelo@chromium.org, keescook@chromium.org,
-        linux-security-module@vger.kernel.org, groeck@chromium.org,
-        gnoack@google.com
+References: <cover.1673666803.git.lucien.xin@gmail.com> <d19e0bd55ea5477d94567c00735b78d8da6a38cb.1673666803.git.lucien.xin@gmail.com>
+In-Reply-To: <d19e0bd55ea5477d94567c00735b78d8da6a38cb.1673666803.git.lucien.xin@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sat, 14 Jan 2023 10:38:59 -0500
+Message-ID: <CAHC9VhRXd+RkHSRLUt=0HFm42xPKGsSdSkxA6EHwipDukZH_mA@mail.gmail.com>
+Subject: Re: [PATCH net-next 06/10] cipso_ipv4: use iph_set_totlen in skbuff_setattr
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     network dev <netdev@vger.kernel.org>, davem@davemloft.net,
+        kuba@kernel.org, Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        David Ahern <dsahern@gmail.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Pravin B Shelar <pshelar@ovn.org>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Ilya Maximets <i.maximets@ovn.org>,
+        Aaron Conole <aconole@redhat.com>,
+        Roopa Prabhu <roopa@nvidia.com>,
+        Nikolay Aleksandrov <razor@blackwall.org>,
+        Mahesh Bandewar <maheshb@google.com>,
+        Guillaume Nault <gnault@redhat.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Awesome, thanks!
+On Fri, Jan 13, 2023 at 10:31 PM Xin Long <lucien.xin@gmail.com> wrote:
+>
+> It may process IPv4 TCP GSO packets in cipso_v4_skbuff_setattr(), so
+> the iph->tot_len update should use iph_set_totlen().
+>
+> Note that for these non GSO packets, the new iph tot_len with extra
+> iph option len added may become greater than 65535, the old process
+> will cast it and set iph->tot_len to it, which is a bug. In theory,
+> iph options shouldn't be added for these big packets in here, a fix
+> may be needed here in the future. For now this patch is only to set
+> iph->tot_len to 0 when it happens.
 
-On Fri, Jan 13, 2023 at 11:58 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
- wrote:
+I'm not entirely clear on the paragraph above, but we do need to be
+able to set/modify the IP options in cipso_v4_skbuff_setattr() in
+order to support CIPSO labeling.  I'm open to better and/or
+alternative solutions compared to what we are doing now, but I can't
+support a change that is a bug waiting to bite us.  My apologies if
+I'm interpreting your comments incorrectly and that isn't the case
+here.
+
+> Signed-off-by: Xin Long <lucien.xin@gmail.com>
+> ---
+>  net/ipv4/cipso_ipv4.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Thanks Jeff! I pushed this patch in -next:
-> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=3Dne=
-xt
+> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+> index 6cd3b6c559f0..79ae7204e8ed 100644
+> --- a/net/ipv4/cipso_ipv4.c
+> +++ b/net/ipv4/cipso_ipv4.c
+> @@ -2222,7 +2222,7 @@ int cipso_v4_skbuff_setattr(struct sk_buff *skb,
+>                 memset((char *)(iph + 1) + buf_len, 0, opt_len - buf_len);
+>         if (len_delta != 0) {
+>                 iph->ihl = 5 + (opt_len >> 2);
+> -               iph->tot_len = htons(skb->len);
+> +               iph_set_totlen(iph, skb->len);
+>         }
+>         ip_send_check(iph);
 >
->
-> On 13/01/2023 06:32, jeffxu@chromium.org wrote:
-> > From: Jeff Xu <jeffxu@google.com>
-> >
-> > Overlayfs can be disabled in kernel config, causing related tests to
-> > fail. Adding a check for overlayfs=E2=80=99s supportability at runtime,
-> > so we can call SKIP() when needed.
-> >
-> > Note:
-> > Below comments are raised during V7 discussion:
-> >
-> > Currently SKIP() is applied to FIXTURE_SETUP, FIXTURE_TEARDOWN,
-> > TEST_F_FORK, this is because SKIP() apply within the function
-> > scope, not the testcase.
-> >
-> > We would like test infra to have a dedicated environment
-> > check hook (FIXTURE_ENV_CHECK) in test infra, called before
-> > FIXTURE_SETUP(). If the environment check fails, the remaining
-> > of the test will be skipped. The benefit of these are two:
-> > 1> if env check pass, in theory, the test should pass.
-> > 2> if env check fail, no need to call setup, so no need to cleanup
-> > resource.
-> >
-> > v8:
-> > style change, no logic change.
-> >
-> > v7:
-> > https://lore.kernel.org/all/20221229211446.3154454-1-jeffxu@google.com/
-> > Fix bug in supports_overlayfs().
-> > Manual test with kernel with and without overlayfs.
-> >
-> > v6: https://lore.kernel.org/all/20221229201215.3006512-1-jeffxu@google.=
-com/
-> > In v4, the SKIP() was applied at FIXTURE_SETUP() after mount() fail,
-> > however, FIXTURE_TEARDOWN() will fail. It might be complicated
-> > for test infra or testcase itself to have cleanup code handing the
-> > success/failure of steps in SETUP().
-> >
-> > This patch changes the approach, it calls supports_overlay() and SKIP()
-> > at the beginning of FIXTURE_SETUP(), FIX_TEARDOWN(), TEST_F_FORK().
-> > Because no modification of system is done by the test, cleanup is not
-> > needed.
-> >
-> > v4:
-> > https://lore.kernel.org/all/20220823010216.2653012-1-jeffxu@google.com/
-> >
-> >
-> > Jeff Xu (1):
-> >    selftests/landlock: skip overlayfs test when not support
-> >
-> >   tools/testing/selftests/landlock/fs_test.c | 48 +++++++++++++++++++++=
-+
-> >   1 file changed, 48 insertions(+)
-> >
-> >
-> > base-commit: 963a70bee5880640d0fd83ed29dc1e7ec0d2bd4a
+> --
+> 2.31.1
+
+--
+paul-moore.com
