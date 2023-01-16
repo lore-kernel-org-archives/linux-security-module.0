@@ -2,338 +2,90 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 514ECC678D7
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 Jan 2023 09:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9230CC678DB
+	for <linux-security-module@archiver.kernel.org>; Mon, 16 Jan 2023 09:00:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232424AbjAPJAD (ORCPT
+        id S232468AbjAPJAG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 16 Jan 2023 04:00:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60210 "EHLO
+        Mon, 16 Jan 2023 04:00:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232493AbjAPI7k (ORCPT
+        with ESMTP id S232504AbjAPI7k (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Mon, 16 Jan 2023 03:59:40 -0500
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11BE916328;
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9342516317;
         Mon, 16 Jan 2023 00:58:32 -0800 (PST)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4NwQsc5ZVHz6J9cV;
-        Mon, 16 Jan 2023 16:58:12 +0800 (CST)
-Received: from mscphis00759.huawei.com (10.123.66.134) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.34; Mon, 16 Jan 2023 08:58:29 +0000
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-To:     <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-Subject: [PATCH v9 02/12] landlock: Allow filesystem layout changes for domains without such rule type
-Date:   Mon, 16 Jan 2023 16:58:08 +0800
-Message-ID: <20230116085818.165539-3-konstantin.meskhidze@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
-References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
-MIME-Version: 1.0
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4NwQhx3qpCz9xFH6;
+        Mon, 16 Jan 2023 16:50:41 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwAH112cEcVjDaOdAA--.61875S2;
+        Mon, 16 Jan 2023 09:58:13 +0100 (CET)
+Message-ID: <755e1dc9c777fa657ccd948f65f5f33240226c43.camel@huaweicloud.com>
+Subject: Re: [PATCH v5 1/2] lib/mpi: Fix buffer overrun when SG is too long
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     dhowells@redhat.com, davem@davemloft.net, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, ebiggers@kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Date:   Mon, 16 Jan 2023 09:57:57 +0100
+In-Reply-To: <Y7g7sp6UJJrYKihK@gondor.apana.org.au>
+References: <20221227142740.2807136-1-roberto.sassu@huaweicloud.com>
+         <20221227142740.2807136-2-roberto.sassu@huaweicloud.com>
+         <Y7g7sp6UJJrYKihK@gondor.apana.org.au>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.66.134]
-X-ClientProxiedBy: mscpeml100002.china.huawei.com (7.188.26.75) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: GxC2BwAH112cEcVjDaOdAA--.61875S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZry8ZFWDtr15KF1kAw1DZFb_yoW3Zwc_uF
+        yqyr1fu39YqF42ya4vkFyvv3429343Wwn8CF4kJr17Za1rXFn3Zr48Ka4Fqwn7Ww4rtF9F
+        gF95Zay3Jw1I9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb78YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+        AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+        j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+        kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0E
+        wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+        80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
+        I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04
+        k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+        1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBF1jj4OhjAAAsK
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@digikod.net>
+On Fri, 2023-01-06 at 23:18 +0800, Herbert Xu wrote:
+> On Tue, Dec 27, 2022 at 03:27:39PM +0100, Roberto Sassu wrote:
+> > From: Herbert Xu <herbert@gondor.apana.org.au>
+> > 
+> > The helper mpi_read_raw_from_sgl sets the number of entries in
+> > the SG list according to nbytes.  However, if the last entry
+> > in the SG list contains more data than nbytes, then it may overrun
+> > the buffer because it only allocates enough memory for nbytes.
+> > 
+> > Fixes: 2d4d1eea540b ("lib/mpi: Add mpi sgl helpers")
+> > Reported-by: Roberto Sassu <roberto.sassu@huaweicloud.com>
+> > Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> > ---
+> >  lib/mpi/mpicoder.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> Patch applied.  Thanks.
 
-Allow mount point and root directory changes when there is no filesystem
-rule tied to the current Landlock domain.  This doesn't change anything
-for now because a domain must have at least a (filesystem) rule, but
-this will change when other rule types will come.  For instance, a
-domain only restricting the network should have no impact on filesystem
-restrictions.
+Hi Herbert
 
-Add a new get_current_fs_domain() helper to quickly check filesystem
-rule existence for all filesystem LSM hooks.
+will you take also the second patch?
 
-Remove unnecessary inlining.
+Thanks
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
----
-
-Changes since v8:
-* Refactors get_handled_fs_accesses().
-* Adds landlock_get_raw_fs_access_mask() helper.
-
----
- security/landlock/fs.c       | 73 ++++++++++++++++++------------------
- security/landlock/ruleset.h  | 25 +++++++++++-
- security/landlock/syscalls.c |  6 +--
- 3 files changed, 62 insertions(+), 42 deletions(-)
-
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 0d57c6479d29..0ae54a639e16 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -150,16 +150,6 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
- 	LANDLOCK_ACCESS_FS_TRUNCATE)
- /* clang-format on */
- 
--/*
-- * All access rights that are denied by default whether they are handled or not
-- * by a ruleset/layer.  This must be ORed with all ruleset->fs_access_masks[]
-- * entries when we need to get the absolute handled access masks.
-- */
--/* clang-format off */
--#define ACCESS_INITIALLY_DENIED ( \
--	LANDLOCK_ACCESS_FS_REFER)
--/* clang-format on */
--
- /*
-  * @path: Should have been checked by get_path_from_fd().
-  */
-@@ -179,8 +169,7 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
- 
- 	/* Transforms relative access rights to absolute ones. */
- 	access_rights |= LANDLOCK_MASK_ACCESS_FS &
--			 ~(landlock_get_fs_access_mask(ruleset, 0) |
--			   ACCESS_INITIALLY_DENIED);
-+			 ~landlock_get_fs_access_mask(ruleset, 0);
- 	object = get_inode_object(d_backing_inode(path->dentry));
- 	if (IS_ERR(object))
- 		return PTR_ERR(object);
-@@ -287,14 +276,15 @@ static inline bool is_nouser_or_private(const struct dentry *dentry)
- 		unlikely(IS_PRIVATE(d_backing_inode(dentry))));
- }
- 
--static inline access_mask_t
--get_handled_accesses(const struct landlock_ruleset *const domain)
-+static access_mask_t
-+get_raw_handled_fs_accesses(const struct landlock_ruleset *const domain)
- {
--	access_mask_t access_dom = ACCESS_INITIALLY_DENIED;
-+	access_mask_t access_dom = 0;
- 	size_t layer_level;
- 
- 	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
--		access_dom |= landlock_get_fs_access_mask(domain, layer_level);
-+		access_dom |=
-+			landlock_get_raw_fs_access_mask(domain, layer_level);
- 	return access_dom & LANDLOCK_MASK_ACCESS_FS;
- }
- 
-@@ -331,13 +321,8 @@ init_layer_masks(const struct landlock_ruleset *const domain,
- 
- 		for_each_set_bit(access_bit, &access_req,
- 				 ARRAY_SIZE(*layer_masks)) {
--			/*
--			 * Artificially handles all initially denied by default
--			 * access rights.
--			 */
- 			if (BIT_ULL(access_bit) &
--			    (landlock_get_fs_access_mask(domain, layer_level) |
--			     ACCESS_INITIALLY_DENIED)) {
-+			    landlock_get_fs_access_mask(domain, layer_level)) {
- 				(*layer_masks)[access_bit] |=
- 					BIT_ULL(layer_level);
- 				handled_accesses |= BIT_ULL(access_bit);
-@@ -347,6 +332,24 @@ init_layer_masks(const struct landlock_ruleset *const domain,
- 	return handled_accesses;
- }
- 
-+static access_mask_t
-+get_handled_fs_accesses(const struct landlock_ruleset *const domain)
-+{
-+	/* Handles all initially denied by default access rights. */
-+	return get_raw_handled_fs_accesses(domain) | ACCESS_FS_INITIALLY_DENIED;
-+}
-+
-+static const struct landlock_ruleset *get_current_fs_domain(void)
-+{
-+	const struct landlock_ruleset *const dom =
-+		landlock_get_current_domain();
-+
-+	if (!dom || !get_raw_handled_fs_accesses(dom))
-+		return NULL;
-+
-+	return dom;
-+}
-+
- /*
-  * Check that a destination file hierarchy has more restrictions than a source
-  * file hierarchy.  This is only used for link and rename actions.
-@@ -519,7 +522,7 @@ static bool is_access_to_paths_allowed(
- 		 * a superset of the meaningful requested accesses).
- 		 */
- 		access_masked_parent1 = access_masked_parent2 =
--			get_handled_accesses(domain);
-+			get_handled_fs_accesses(domain);
- 		is_dom_check = true;
- 	} else {
- 		if (WARN_ON_ONCE(dentry_child1 || dentry_child2))
-@@ -648,11 +651,10 @@ static inline int check_access_path(const struct landlock_ruleset *const domain,
- 	return -EACCES;
- }
- 
--static inline int current_check_access_path(const struct path *const path,
-+static int current_check_access_path(const struct path *const path,
- 					    const access_mask_t access_request)
- {
--	const struct landlock_ruleset *const dom =
--		landlock_get_current_domain();
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
- 
- 	if (!dom)
- 		return 0;
-@@ -815,8 +817,7 @@ static int current_check_refer_path(struct dentry *const old_dentry,
- 				    struct dentry *const new_dentry,
- 				    const bool removable, const bool exchange)
- {
--	const struct landlock_ruleset *const dom =
--		landlock_get_current_domain();
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
- 	bool allow_parent1, allow_parent2;
- 	access_mask_t access_request_parent1, access_request_parent2;
- 	struct path mnt_dir;
-@@ -1050,7 +1051,7 @@ static int hook_sb_mount(const char *const dev_name,
- 			 const struct path *const path, const char *const type,
- 			 const unsigned long flags, void *const data)
- {
--	if (!landlock_get_current_domain())
-+	if (!get_current_fs_domain())
- 		return 0;
- 	return -EPERM;
- }
-@@ -1058,7 +1059,7 @@ static int hook_sb_mount(const char *const dev_name,
- static int hook_move_mount(const struct path *const from_path,
- 			   const struct path *const to_path)
- {
--	if (!landlock_get_current_domain())
-+	if (!get_current_fs_domain())
- 		return 0;
- 	return -EPERM;
- }
-@@ -1069,14 +1070,14 @@ static int hook_move_mount(const struct path *const from_path,
-  */
- static int hook_sb_umount(struct vfsmount *const mnt, const int flags)
- {
--	if (!landlock_get_current_domain())
-+	if (!get_current_fs_domain())
- 		return 0;
- 	return -EPERM;
- }
- 
- static int hook_sb_remount(struct super_block *const sb, void *const mnt_opts)
- {
--	if (!landlock_get_current_domain())
-+	if (!get_current_fs_domain())
- 		return 0;
- 	return -EPERM;
- }
-@@ -1092,7 +1093,7 @@ static int hook_sb_remount(struct super_block *const sb, void *const mnt_opts)
- static int hook_sb_pivotroot(const struct path *const old_path,
- 			     const struct path *const new_path)
- {
--	if (!landlock_get_current_domain())
-+	if (!get_current_fs_domain())
- 		return 0;
- 	return -EPERM;
- }
-@@ -1128,8 +1129,7 @@ static int hook_path_mknod(const struct path *const dir,
- 			   struct dentry *const dentry, const umode_t mode,
- 			   const unsigned int dev)
- {
--	const struct landlock_ruleset *const dom =
--		landlock_get_current_domain();
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
- 
- 	if (!dom)
- 		return 0;
-@@ -1208,8 +1208,7 @@ static int hook_file_open(struct file *const file)
- 	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
- 	access_mask_t open_access_request, full_access_request, allowed_access;
- 	const access_mask_t optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
--	const struct landlock_ruleset *const dom =
--		landlock_get_current_domain();
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
- 
- 	if (!dom)
- 		return 0;
-diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-index e900b84d915f..c6db528817c5 100644
---- a/security/landlock/ruleset.h
-+++ b/security/landlock/ruleset.h
-@@ -15,10 +15,21 @@
- #include <linux/rbtree.h>
- #include <linux/refcount.h>
- #include <linux/workqueue.h>
-+#include <uapi/linux/landlock.h>
- 
- #include "limits.h"
- #include "object.h"
- 
-+/*
-+ * All access rights that are denied by default whether they are handled or not
-+ * by a ruleset/layer.  This must be ORed with all ruleset->access_masks[]
-+ * entries when we need to get the absolute handled access masks.
-+ */
-+/* clang-format off */
-+#define ACCESS_FS_INITIALLY_DENIED ( \
-+	LANDLOCK_ACCESS_FS_REFER)
-+/* clang-format on */
-+
- typedef u16 access_mask_t;
- /* Makes sure all filesystem access rights can be stored. */
- static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
-@@ -196,11 +207,21 @@ landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
- }
- 
- static inline access_mask_t
--landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
--			    const u16 layer_level)
-+landlock_get_raw_fs_access_mask(const struct landlock_ruleset *const ruleset,
-+				const u16 layer_level)
- {
- 	return (ruleset->access_masks[layer_level] >>
- 		LANDLOCK_SHIFT_ACCESS_FS) &
- 	       LANDLOCK_MASK_ACCESS_FS;
- }
-+
-+static inline access_mask_t
-+landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
-+			    const u16 layer_level)
-+{
-+	/* Handles all initially denied by default access rights. */
-+	return landlock_get_raw_fs_access_mask(ruleset, layer_level) |
-+	       ACCESS_FS_INITIALLY_DENIED;
-+}
-+
- #endif /* _SECURITY_LANDLOCK_RULESET_H */
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index 71aca7f990bc..d35cd5d304db 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -310,6 +310,7 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
- 	struct path path;
- 	struct landlock_ruleset *ruleset;
- 	int res, err;
-+	access_mask_t mask;
- 
- 	if (!landlock_initialized)
- 		return -EOPNOTSUPP;
-@@ -348,9 +349,8 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
- 	 * Checks that allowed_access matches the @ruleset constraints
- 	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
- 	 */
--	if ((path_beneath_attr.allowed_access |
--	     landlock_get_fs_access_mask(ruleset, 0)) !=
--	    landlock_get_fs_access_mask(ruleset, 0)) {
-+	mask = landlock_get_raw_fs_access_mask(ruleset, 0);
-+	if ((path_beneath_attr.allowed_access | mask) != mask) {
- 		err = -EINVAL;
- 		goto out_put_ruleset;
- 	}
--- 
-2.25.1
+Roberto
 
