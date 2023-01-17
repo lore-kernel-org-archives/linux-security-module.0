@@ -2,160 +2,116 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54530C67871
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 Jan 2023 21:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E157C63797
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Jan 2023 04:54:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234264AbjAPVVW (ORCPT
+        id S235351AbjAQEyf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 16 Jan 2023 16:21:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33030 "EHLO
+        Mon, 16 Jan 2023 23:54:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234171AbjAPVVU (ORCPT
+        with ESMTP id S235230AbjAQEyd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 16 Jan 2023 16:21:20 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D337723C42;
-        Mon, 16 Jan 2023 13:21:18 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id qx13so12520078ejb.13;
-        Mon, 16 Jan 2023 13:21:18 -0800 (PST)
+        Mon, 16 Jan 2023 23:54:33 -0500
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E83C2366B;
+        Mon, 16 Jan 2023 20:54:32 -0800 (PST)
+Received: by mail-io1-xd30.google.com with SMTP id p66so14459754iof.1;
+        Mon, 16 Jan 2023 20:54:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CCEk4uyfLQ6ixPIMnmhnLIi8+lwOJlnHpr806bX8wOs=;
-        b=dKk3o918oQTVmJd2rJ4ABOiqX1kqDqrlSHZtmQLo6RYGqNuOLgtT5JEMpWL5PN6PJP
-         BWhNz+cb5ml7oDjTeksuAsATTZBOFDhw1kOuxYp86+NP0YJfZOXkDyfaJvYezuwiCxP1
-         O57S6AgkwHZXQeZAvsZbhRBLJC7Q7Mew1C4Ob/6RPHSWrHme2kGi05F4wnpaus3s4mJk
-         303ds1cmYyy7acXtYUoW7UsqzJcw5FRt5bxaGMfRQLjN2hQgHnKcTkZD+mR0Jf1hUogh
-         vA5Vranx4BtvnLIyqxlDSc5AmOArrF4kOUliPw7vmghQlnus2HE77ZI7ARub2w4esy32
-         n2xA==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gkSg/q1Z7ZmYwbTdwhXsusGtpsp5n/kWlb9K8M32Z80=;
+        b=NS6CNkn2N7Ruposkuk5FIQMhZOkRZhrKW2xAoM8cgV8P0+W2Bf42fs7WTrSTV7cyT8
+         +SScqCDlIdGQgdxihqfkFE15c9CXyTiIXh6pyP6EXMPWph9d4wFDrlrHNjM2FdUwWpCv
+         3A6E1M/Q6Q96Q9VdM9ViWwVWvsIZnS/TIxuQxfi8zJX7kexDS5uXPoeEehGWKa5wOHrR
+         3zaKuFOm4wsac6fgXQVFailYK4rrlidxOvQGOMYjw5qtF2juwrIoS2RRqNH5SuoLbCKf
+         D3oh6KYUND4c9OUmEIfmmq5r8RLovgACpfKPex4xExPaBGUDKVYLB2sOuJb1OXWQXhU/
+         YDMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CCEk4uyfLQ6ixPIMnmhnLIi8+lwOJlnHpr806bX8wOs=;
-        b=PBX6qb/fxu25JuKMNai0bUHJt9XLd6CqFmbnTlj1ktZYk0NhZG+31+tSsLZYUN7Onv
-         Keu1xwhBqjlPajWzusay5yGElpWlOH72uEE30jk84LF58zj0HDcDTULzrnyjRhm6/UFG
-         yiXBx0wseKKwX/Ru7eRAMhd0MXhCdQWnJ+nd4j0uEV0Pv/+CU/OntQTv+jAljZjyGkW7
-         NZSQUo7bjpQgmSw+wItACF3bOmBYxzR7e6YHUwB5Luwu8oiSwZ7nNSRozJAFjTr2fjVa
-         /LIAGuof7tcERDaf2+8GKvFBliWiabVbrnLhpLb2PobiCei6GYIG/2P6I4FbmvqhxnmP
-         Ok1g==
-X-Gm-Message-State: AFqh2kqCoEQdPLyo9qlury7fm5WwijTHU/r+6tL9bEgMVDEYN2FSc/EX
-        l+VL1ovQcVGcq+FshUwpVHo=
-X-Google-Smtp-Source: AMrXdXswPLbR6iTVBBUPWgxTXTyg3hXGgZ2EFt/pXXQ0M8ZnXCAkfqpzJpML16C/cHPpv97GZYIRlg==
-X-Received: by 2002:a17:906:eb8e:b0:871:6b9d:dbc with SMTP id mh14-20020a170906eb8e00b008716b9d0dbcmr470750ejb.21.1673904077291;
-        Mon, 16 Jan 2023 13:21:17 -0800 (PST)
-Received: from f.. (cst-prg-72-175.cust.vodafone.cz. [46.135.72.175])
-        by smtp.gmail.com with ESMTPSA id q18-20020a17090676d200b00857c2c29553sm7961721ejn.197.2023.01.16.13.21.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jan 2023 13:21:16 -0800 (PST)
-From:   Mateusz Guzik <mjguzik@gmail.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     serge@hallyn.com, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
-Date:   Mon, 16 Jan 2023 22:21:05 +0100
-Message-Id: <20230116212105.1840362-2-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230116212105.1840362-1-mjguzik@gmail.com>
-References: <20230116212105.1840362-1-mjguzik@gmail.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gkSg/q1Z7ZmYwbTdwhXsusGtpsp5n/kWlb9K8M32Z80=;
+        b=c+0BPRYVX3FZHcebA7D3KsmBkv7Ole7wTRQAawqHS4FDPZqjRKnEcqhWTT+9BoOWwl
+         UkNmN/KLOCi5WMmU1hLYC8XATVQdu/MxoFO9jpggi+CeTF83Lbn10/0AAM/OLBUz7wJE
+         4snPYKTA08HIqOZVzwdKw89fid7rxa0U+ocG6oikWC4m0LaEUaE65x3C58H9fKBl8NK0
+         xgl0yj49QAtHKKDEPptw5dFcZGvBV7c7wh+3dgONTMh2LIf70ZYGMU8lgQD+eBeM3EfS
+         Wzw0nNh64t8vgjZF62ulbBH7OrWlsZuM69pFkULOlAEGTLRibNnJcj+7Tx02sIriGw3y
+         WsMg==
+X-Gm-Message-State: AFqh2kpdKQm0gS6+eLYVDg6p+8NTtfL08PBisLs4rfhlpjYcFYVMsN3/
+        UMgbB6edhn8s6x5qEzh+V+cxPDltNPE=
+X-Google-Smtp-Source: AMrXdXvbEAZH4poFtVLAzFxzQGp/vXVTL6ajaZJjCsF3vaz+d2zHS2GcmDPWaiWnWdImey5dMyK1bQ==
+X-Received: by 2002:a5e:df05:0:b0:6f3:dec1:5474 with SMTP id f5-20020a5edf05000000b006f3dec15474mr1230720ioq.5.1673931272068;
+        Mon, 16 Jan 2023 20:54:32 -0800 (PST)
+Received: from ?IPV6:2601:282:800:7ed0:3dc4:7b4f:e5b1:e4d8? ([2601:282:800:7ed0:3dc4:7b4f:e5b1:e4d8])
+        by smtp.googlemail.com with ESMTPSA id h7-20020a05660208c700b00704a77b7b28sm2604728ioz.54.2023.01.16.20.54.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Jan 2023 20:54:31 -0800 (PST)
+Message-ID: <becf01ac-e9cb-d2f9-5805-d1839c3f9656@gmail.com>
+Date:   Mon, 16 Jan 2023 21:54:29 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.6.1
+Subject: Re: [PATCH net-next 06/10] cipso_ipv4: use iph_set_totlen in
+ skbuff_setattr
+Content-Language: en-US
+To:     Xin Long <lucien.xin@gmail.com>, Paul Moore <paul@paul-moore.com>
+Cc:     network dev <netdev@vger.kernel.org>, davem@davemloft.net,
+        kuba@kernel.org, Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Pravin B Shelar <pshelar@ovn.org>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Ilya Maximets <i.maximets@ovn.org>,
+        Aaron Conole <aconole@redhat.com>,
+        Roopa Prabhu <roopa@nvidia.com>,
+        Nikolay Aleksandrov <razor@blackwall.org>,
+        Mahesh Bandewar <maheshb@google.com>,
+        Guillaume Nault <gnault@redhat.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+References: <cover.1673666803.git.lucien.xin@gmail.com>
+ <d19e0bd55ea5477d94567c00735b78d8da6a38cb.1673666803.git.lucien.xin@gmail.com>
+ <CAHC9VhRXd+RkHSRLUt=0HFm42xPKGsSdSkxA6EHwipDukZH_mA@mail.gmail.com>
+ <CADvbK_e_V_scDpHiGw+Qqmarw8huYYES2j8Z36KYkgT2opED3w@mail.gmail.com>
+ <CAHC9VhQeaOeX-5SENhpScKN9kF1rAKoZX23KOUqQ5=uz6v92iA@mail.gmail.com>
+ <CADvbK_cR5paEunENmWd62XfXtMSf+MHhhc-S1z_gLWp_dUx=8w@mail.gmail.com>
+ <CAHC9VhSk8pYtOJHCZ1uNvv1SJiazWkJVd1BCfyiLCXPMPKe_Pg@mail.gmail.com>
+ <CADvbK_ds4ixHgPGA4iKb1kkFc=SF8SXPM-ZL-kb-ZA0B-70Xqg@mail.gmail.com>
+From:   David Ahern <dsahern@gmail.com>
+In-Reply-To: <CADvbK_ds4ixHgPGA4iKb1kkFc=SF8SXPM-ZL-kb-ZA0B-70Xqg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-access(2) remains commonly used, for example on exec:
-access("/etc/ld.so.preload", R_OK)
+On 1/16/23 12:33 PM, Xin Long wrote:
+>> We really should have a solution that allows CIPSO for both normal and
+>> BIG TCP, if we don't we force distros and admins to choose between the
+>> two and that isn't good.  We should do better.  If skb->len > 64k in
+>> the case of BIG TCP, how is the packet eventually divided/fragmented
+>> in such a way that the total length field in the IPv4 header doesn't
+>> overflow?  Or is that simply handled at the driver/device layer and we
+>> simply set skb->len to whatever the size is, regardless of the 16-bit
+> Yes, for BIG TCP, 16-bit length is set to 0, and it just uses skb->len
+> as the IP packet length.
+> 
+>> length limit?  If that is the case, does the driver/device layer
+>> handle copying the IPv4 options and setting the header/total-length
+>> fields in each packet?  Or is it something else completely?
+> Yes, I think the driver/device layer will handle copying the IPv4 options
+> and setting the header/total-length, and that's how it works.
 
-or when running gcc: strace -c gcc empty.c
-% time     seconds  usecs/call     calls    errors syscall
------- ----------- ----------- --------- --------- ----------------
-  0.00    0.000000           0        42        26 access
-
-It falls down to do_faccessat without the AT_EACCESS flag, which in turn
-results in allocation of new creds in order to modify fsuid/fsgid and
-caps. This is a very expensive process single-threaded and most notably
-multi-threaded, with numerous structures getting refed and unrefed on
-imminent new cred destruction.
-
-Turns out for typical consumers the resulting creds would be identical
-and this can be checked upfront, avoiding the hard work.
-
-An access benchmark plugged into will-it-scale running on Cascade Lake
-shows:
-test	proc	before	after
-access1	1	1310582	2908735	 (+121%)  # distinct files
-access1	24	4716491	63822173 (+1353%) # distinct files
-access2	24	2378041	5370335	 (+125%)  # same file
-
-The above benchmarks are not integrated into will-it-scale, but can be
-found in a pull request:
-https://github.com/antonblanchard/will-it-scale/pull/36/files
-
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-
-v2:
-- fix current->cred usage warn reported by the kernel test robot
-Link: https://lore.kernel.org/all/202301150709.9EC6UKBT-lkp@intel.com/
----
- fs/open.c | 32 +++++++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
-
-diff --git a/fs/open.c b/fs/open.c
-index 82c1a28b3308..3c068a38044c 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -367,7 +367,37 @@ COMPAT_SYSCALL_DEFINE6(fallocate, int, fd, int, mode, compat_arg_u64_dual(offset
-  * access() needs to use the real uid/gid, not the effective uid/gid.
-  * We do this by temporarily clearing all FS-related capabilities and
-  * switching the fsuid/fsgid around to the real ones.
-+ *
-+ * Creating new credentials is expensive, so we try to skip doing it,
-+ * which we can if the result would match what we already got.
-  */
-+static bool access_need_override_creds(int flags)
-+{
-+	const struct cred *cred;
-+
-+	if (flags & AT_EACCESS)
-+		return false;
-+
-+	cred = current_cred();
-+	if (!uid_eq(cred->fsuid, cred->uid) ||
-+	    !gid_eq(cred->fsgid, cred->gid))
-+		return true;
-+
-+	if (!issecure(SECURE_NO_SETUID_FIXUP)) {
-+		kuid_t root_uid = make_kuid(cred->user_ns, 0);
-+		if (!uid_eq(cred->uid, root_uid)) {
-+			if (!cap_isclear(cred->cap_effective))
-+				return true;
-+		} else {
-+			if (!cap_isidentical(cred->cap_effective,
-+			    cred->cap_permitted))
-+				return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+
- static const struct cred *access_override_creds(void)
- {
- 	const struct cred *old_cred;
-@@ -436,7 +466,7 @@ static long do_faccessat(int dfd, const char __user *filename, int mode, int fla
- 	if (flags & AT_EMPTY_PATH)
- 		lookup_flags |= LOOKUP_EMPTY;
- 
--	if (!(flags & AT_EACCESS)) {
-+	if (access_need_override_creds(flags)) {
- 		old_cred = access_override_creds();
- 		if (!old_cred)
- 			return -ENOMEM;
--- 
-2.34.1
+IPv4 options, like TCP options, should be part of the header that gets
+replicate across GSO sliced packets by the hardware. ie., both should be
+transparent to well designed hardware (and for h/w that made poor
+choices standard 64kB GSO is the limit for its users).
 
