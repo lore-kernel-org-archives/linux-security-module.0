@@ -2,149 +2,110 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8433DC38159
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Jan 2023 19:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0290C38147
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Jan 2023 20:24:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230057AbjARTTX (ORCPT
+        id S229960AbjARUYH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Jan 2023 14:19:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51308 "EHLO
+        Wed, 18 Jan 2023 15:24:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230145AbjARTTI (ORCPT
+        with ESMTP id S229865AbjARUYF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Jan 2023 14:19:08 -0500
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B60253E4C
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Jan 2023 11:19:02 -0800 (PST)
-Received: by mail-pf1-x42f.google.com with SMTP id 20so21591765pfu.13
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Jan 2023 11:19:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qv2KYqSSFZ+ANyK5ssSSVDV3Rhttf1BtBfGakcH582s=;
-        b=QSyEntPCn5MCdn3Pfa3YWFT6lOT8BIIgzIeGBVuRH3Me4/ClZKxvacrJhXCjZ9k5jQ
-         6Q5P40G4b2fKFncjRFWE7HoPGl4EQpzbNtO7zE/GBlCMS7c0YPihrsY4EjvnL3qlO6Zg
-         ri9i+364/88xcmd0p6OdrUsO8AkizSiPc6QNsD6NM76DhlNvObKxnmAw7GQHhaTYIWLA
-         mVdUGxMSXL2Um7Jy1v8I29kYC8Fl2tF8wLZnlHV2JgOmuZzZBahGUi3Qk563LL+bde5M
-         HZfCvHvinZFH5IwT3KMYsCy3lAo+XhPXxb4RFSeQsghZi88Xlm1kXhVK5/OYl0/YWH8/
-         oRQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qv2KYqSSFZ+ANyK5ssSSVDV3Rhttf1BtBfGakcH582s=;
-        b=BglvtUapBJZ2joNRQMq6OefgHUOSGX0ZUvXKcBxmHU6d/++W0Z4tYJBm8aTwdCdgYq
-         5gnZrsFYFCrMV30gYf+r6Ue4YifHW/R6hVvusFpt9c0iukwiYYlr/TpeGuJFJ1EkIBQR
-         QPAf+TZx/2Lgarlf0pZ76bIo92FrHMvyCmU7B4xoBp2Nz5XSvyAPoF/CIeIKKH3GXJQr
-         7YHNPMIwQpLWC5yWSXaO5sSuGCv/xzkfjxe1zEWhoF46/zEfazVUfxFIv6MY0UyCBikx
-         sAMITuWV113O0WraISh0Xby34wF0IquNmcqHGHBaX13dJbbMBYfAW3E3EY817tLKnfne
-         ZI9w==
-X-Gm-Message-State: AFqh2koIx0KcMslVFg/tXj0aJOxg5RsM3bRFjOd5cHE3On9icwEST5pQ
-        JUvijDBQZkaUUBJmpIAL7vRTDq8oMFUc3rhrgf2u
-X-Google-Smtp-Source: AMrXdXs/Hm+1DNAFh9mYNRbzdhESmUWR3RD84Ypn9yd5f6cYBonBHwWuXIqbCRo/E9LAzkcUU6oWAflrO2dp7LDGXkk=
-X-Received: by 2002:a62:e814:0:b0:588:e66e:4f05 with SMTP id
- c20-20020a62e814000000b00588e66e4f05mr719841pfi.23.1674069541107; Wed, 18 Jan
- 2023 11:19:01 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1673666803.git.lucien.xin@gmail.com> <d19e0bd55ea5477d94567c00735b78d8da6a38cb.1673666803.git.lucien.xin@gmail.com>
- <CAHC9VhRXd+RkHSRLUt=0HFm42xPKGsSdSkxA6EHwipDukZH_mA@mail.gmail.com>
- <CADvbK_e_V_scDpHiGw+Qqmarw8huYYES2j8Z36KYkgT2opED3w@mail.gmail.com>
- <CAHC9VhQeaOeX-5SENhpScKN9kF1rAKoZX23KOUqQ5=uz6v92iA@mail.gmail.com>
- <CADvbK_cR5paEunENmWd62XfXtMSf+MHhhc-S1z_gLWp_dUx=8w@mail.gmail.com>
- <CAHC9VhSk8pYtOJHCZ1uNvv1SJiazWkJVd1BCfyiLCXPMPKe_Pg@mail.gmail.com>
- <CADvbK_ds4ixHgPGA4iKb1kkFc=SF8SXPM-ZL-kb-ZA0B-70Xqg@mail.gmail.com>
- <CAHC9VhR4_ae=QzrUUM=1MZTWJ9MQom0fEAME3b+z+uBrA8PpcQ@mail.gmail.com>
- <CAHC9VhSRgQuyPgio7d9ZNbs53oCvpq3KQJ9gG5rKX67Wn+P6kw@mail.gmail.com> <54d89f4a-c7ca-2226-64dd-adc81ebbc314@gmail.com>
-In-Reply-To: <54d89f4a-c7ca-2226-64dd-adc81ebbc314@gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 18 Jan 2023 14:18:50 -0500
-Message-ID: <CAHC9VhQb66rKaz+1DNqhiu6Oo5QbXHZHgFp0stGJYbN9K85CFA@mail.gmail.com>
-Subject: Re: [PATCH net-next 06/10] cipso_ipv4: use iph_set_totlen in skbuff_setattr
-To:     David Ahern <dsahern@gmail.com>
-Cc:     Xin Long <lucien.xin@gmail.com>,
-        network dev <netdev@vger.kernel.org>, davem@davemloft.net,
-        kuba@kernel.org, Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Pravin B Shelar <pshelar@ovn.org>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Ilya Maximets <i.maximets@ovn.org>,
-        Aaron Conole <aconole@redhat.com>,
-        Roopa Prabhu <roopa@nvidia.com>,
-        Nikolay Aleksandrov <razor@blackwall.org>,
-        Mahesh Bandewar <maheshb@google.com>,
-        Guillaume Nault <gnault@redhat.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 18 Jan 2023 15:24:05 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D4F85356B;
+        Wed, 18 Jan 2023 12:24:03 -0800 (PST)
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30IIOelA030659;
+        Wed, 18 Jan 2023 20:23:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=XrsPjAfjNYVpI0CBxJ+6XW0c7xBfNRTLwjUs9hVrdos=;
+ b=taIFUGfF2t91/32Qj0yX7hJn+6ygpO6CzL+ER/cOYw4I/Bmn4TJHo9vXM2Y9SpOsQ8bY
+ ta/r9RZDJrrxfta+u/OfXhwkTjQMneE/S7GyKODZsLbLc0L5wZQdQNpKDMyTUbXfmSvR
+ SW0IBAozg44KMLE11Wm31TdCp242OW9x4o0Ql/Fgf+bQWhYqd+XQmS7AnmyCLZaXwydE
+ g/wmA2jRRVvLmOLKJY3Unh0Ae6ZJkwEJBMG0vI1EPpbm2A1/dIxyxeGjhNTn8gohNjUV
+ /PLNvnnlko3azrZBT39qDFU1gqvyv0PBDIGN3Tr+YmtQMtDwEZfCw8+fLT1LNNU7SK4r uw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n6hem2faq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 18 Jan 2023 20:23:48 +0000
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30IKHf9K011612;
+        Wed, 18 Jan 2023 20:23:47 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n6hem2fad-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 18 Jan 2023 20:23:47 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30IK7SiA005708;
+        Wed, 18 Jan 2023 20:23:46 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([9.208.129.118])
+        by ppma02dal.us.ibm.com (PPS) with ESMTPS id 3n3m17qq7u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 18 Jan 2023 20:23:46 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30IKNjS8262694
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Jan 2023 20:23:45 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 11E345805C;
+        Wed, 18 Jan 2023 20:23:45 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D92FB5805A;
+        Wed, 18 Jan 2023 20:23:43 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.7.111])
+        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 18 Jan 2023 20:23:43 +0000 (GMT)
+Message-ID: <ba437ae5bd782ec2a6a8351f4c667aa16014af97.camel@linux.ibm.com>
+Subject: Re: [PATCH -next] evm: Support small xattr in dump_security_xattr()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Xiu Jianfeng <xiujianfeng@huawei.com>, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 18 Jan 2023 15:23:43 -0500
+In-Reply-To: <20221226102419.16189-1-xiujianfeng@huawei.com>
+References: <20221226102419.16189-1-xiujianfeng@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: QVl3p5LspGjUqoPehqRSDQLvJBQLcXyr
+X-Proofpoint-GUID: HoT13UCoBDTOHLH5VTXd3u0LFDCHQgK9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-18_05,2023-01-18_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 malwarescore=0 bulkscore=0
+ mlxlogscore=763 impostorscore=0 clxscore=1011 phishscore=0
+ lowpriorityscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2212070000 definitions=main-2301180169
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 17, 2023 at 9:47 PM David Ahern <dsahern@gmail.com> wrote:
-> On 1/17/23 3:46 PM, Paul Moore wrote:
-> >>
-> >> In the BIG TCP case, when is the IPv4 header zero'd out?  Currently
-> >> cipso_v4_skbuff_setattr() is called in the NF_INET_LOCAL_OUT and
-> >> NF_INET_FORWARD chains, is there an easy way to distinguish between a
-> >> traditional segmentation offload mechanism, e.g. GSO, and BIG TCP?  If
-> >> BIG TCP allows for arbitrarily large packets we can just grow the
-> >> skb->len value as needed and leave the total length field in the IPv4
-> >> header untouched/zero, but we would need to be able to distinguish
-> >> between a segmentation offload and BIG TCP.
-> >
-> > Keeping the above questions as they still apply, rather I could still
-> > use some help understanding what a BIG TCP packet would look like
-> > during LOCAL_OUT and FORWARD.
->
-> skb->len > 64kb. you don't typically look at the IP / IPv6 header and
-> its total length field and I thought the first patch in the series added
-> a handler for doing that.
+Hi Xiu,
 
-Thanks, I was just curious if there was some other mechanism but that works.
+Thank you for cleaning up the code.  The purpose of this patch is to
+remove code duplication.   Perhaps rename the patch to "evm: call
+dump_security_xattr() in all cases to remove code duplication".
 
-As of this moment, the patchset I'm working on is still independent of
-the BIG TCP patches, and I want to make sure I'm not doing anything
-that will make the BIG TCP patches any more challenging.
+On Mon, 2022-12-26 at 18:24 +0800, Xiu Jianfeng wrote:
+> Currently the debug function of dumping xattr is splited into two parts,
+> when the length of xattr is less than 64 bytes, it uses pr_debug()
+> directly. Merge it into dump_security_xattr() to simplify the code, no
+> functional changes here.
+> 
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-> >>>> In the GRO case, is it safe to grow the packet such that skb->len is
-> >>>> greater than 64k?  I presume that the device/driver is going to split
-> >>>> the packet anyway and populate the IPv4 total length fields in the
-> >>>> header anyway, right?  If we can't grow the packet beyond 64k, is
-> >>>> there some way to signal to the driver/device at runtime that the
-> >>>> largest packet we can process is 64k minus 40 bytes (for the IPv4
-> >>>> options)?
-> >>>
-> >>> at runtime, not as far as I know.
-> >>> It's a field of the network device that can be modified by:
-> >>> # ip link set dev eth0 gro_max_size $MAX_SIZE gso_max_size $MAX_SIZE
-> >>
-> >> I need to look at the OVS case above, but one possibility would be to
-> >> have the kernel adjust the GSO size down by 40 bytes when
-> >> CONFIG_NETLABEL is enabled, but that isn't a great option, and not
-> >> something I consider a first (or second) choice.
-> >
-> > Looking more at the GSO related code, this isn't likely to work.
->
-> icsk_ext_hdr_len is adjusted by cipso for its options. Does that not
-> cover what is needed?
+Please reword the patch description in terms of removing code
+duplication.
 
-Adjusting the icsk_ext_hdr_len only applies to CIPSO labels that are
-attached via the associated local sock, traffic that is labeled by
-cipso_v4_skbuff_setattr() in the LOCAL_OUT or FORWARD netfilter hooks
-does not have the icsk_ext_hdr_len adjustment.
+-- 
+thanks,
 
-Although as I mentioned earlier, I am adding a patch which would pad
-out the IPv4 option header in the LOCAL_OUT labeling scenario so
-icsk_ext_hdr_len will be adjusted for all locally generated
-TCP/connected/is_icsk traffic.  Forwarded traffic still remains an
-issue; but I think the only thing we can do is drop it and send an
-icmp message back to the sender with an adjusted MTU value.
+Mimi
 
---
-paul-moore.com
