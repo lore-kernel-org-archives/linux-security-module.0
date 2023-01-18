@@ -2,112 +2,149 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51EFDC46467
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Jan 2023 15:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8433DC38159
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Jan 2023 19:19:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229779AbjARPgs (ORCPT
+        id S230057AbjARTTX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Jan 2023 10:36:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42530 "EHLO
+        Wed, 18 Jan 2023 14:19:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231530AbjARPgg (ORCPT
+        with ESMTP id S230145AbjARTTI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Jan 2023 10:36:36 -0500
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EA5435B9;
-        Wed, 18 Jan 2023 07:36:34 -0800 (PST)
-Received: by mail-vs1-xe35.google.com with SMTP id t10so25521324vsr.3;
-        Wed, 18 Jan 2023 07:36:34 -0800 (PST)
+        Wed, 18 Jan 2023 14:19:08 -0500
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B60253E4C
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Jan 2023 11:19:02 -0800 (PST)
+Received: by mail-pf1-x42f.google.com with SMTP id 20so21591765pfu.13
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Jan 2023 11:19:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4k1MyFwiLDNIcgELLI1pyHSb8UiFg9DjutwEkM/zD8k=;
-        b=SA9i4YhM/XnAJb3VGSeE7hQXEDCMMTn1QNNAeUvN3HhBsJkcWCwTFv0WPJ1mNJvmz8
-         XiB/HIo9OOnIsfqtrd4uZmabT7nKKZ3+LzRXdeW2uag0Pye2Ist2SglHa+HXXZHf4IVK
-         q65U0W+22MqWPSD1THSo2pOAQ5SCOlMnCczYtZK0PDXN5GM6kDgu2C28zVgl3lsOBuKJ
-         vux8kN/UOyY1hxxvFLUPHvLQFK27xwzXwmzHDMbouvboMii1usp1jZWYssAOPse/jaBe
-         7KxFN5YxvF5He+TGLCu5KnJcevTaYKPPUR9DeQFO5SdPa+iJ6n2FPBxEwvVr9sR+FM3W
-         v4uA==
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qv2KYqSSFZ+ANyK5ssSSVDV3Rhttf1BtBfGakcH582s=;
+        b=QSyEntPCn5MCdn3Pfa3YWFT6lOT8BIIgzIeGBVuRH3Me4/ClZKxvacrJhXCjZ9k5jQ
+         6Q5P40G4b2fKFncjRFWE7HoPGl4EQpzbNtO7zE/GBlCMS7c0YPihrsY4EjvnL3qlO6Zg
+         ri9i+364/88xcmd0p6OdrUsO8AkizSiPc6QNsD6NM76DhlNvObKxnmAw7GQHhaTYIWLA
+         mVdUGxMSXL2Um7Jy1v8I29kYC8Fl2tF8wLZnlHV2JgOmuZzZBahGUi3Qk563LL+bde5M
+         HZfCvHvinZFH5IwT3KMYsCy3lAo+XhPXxb4RFSeQsghZi88Xlm1kXhVK5/OYl0/YWH8/
+         oRQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4k1MyFwiLDNIcgELLI1pyHSb8UiFg9DjutwEkM/zD8k=;
-        b=xnMi8qYy/72sOV6wU8jYZbZO7rkeuE/9AvPiJ4UNi1VQONW+cQyjCX/xKuYJ/eys3d
-         Rlx175j6leeAMBOQNTYZ2rtuZy7YwNgGVNRokoVSJuEgZ9oZ+atlx+DmkYhHng8/GnPF
-         4FTgdAf93c3OS/tzrlmX/ELjklyGZlFhPSM4GvVfz+PipUZGpV7/WmqfwjlsYmu88z3N
-         NOYoCHBgn53mgICqkiGSFrE8s3rlfP37OcjbAgeVq2CLRbHXFWqLBoO42gfMLI940ELy
-         83+sU+canJ0s9guKTMb2vtbaHC6u/vAr4iALfS7TDfApqPu+sEH6/ZsE8lJIMUpjWl5X
-         SxtA==
-X-Gm-Message-State: AFqh2koxKOBbeR1JWnjamCR7kAVg8xgBvs+rm+mmqkw5qblDEOkVuR7l
-        hKMCUzID4G4SDisH8m4/GKDlIdb6S6qfRNf6QXE=
-X-Google-Smtp-Source: AMrXdXuIttqD3ycI2753x+4UmQ94cs+FZCJ9kfvdrJsGv3ZSprB6yLjIZJOM2pId1lEpXm1IWrCFljVfux9kskm8FAU=
-X-Received: by 2002:a67:bb02:0:b0:3d4:53d:9320 with SMTP id
- m2-20020a67bb02000000b003d4053d9320mr801095vsn.21.1674056193355; Wed, 18 Jan
- 2023 07:36:33 -0800 (PST)
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qv2KYqSSFZ+ANyK5ssSSVDV3Rhttf1BtBfGakcH582s=;
+        b=BglvtUapBJZ2joNRQMq6OefgHUOSGX0ZUvXKcBxmHU6d/++W0Z4tYJBm8aTwdCdgYq
+         5gnZrsFYFCrMV30gYf+r6Ue4YifHW/R6hVvusFpt9c0iukwiYYlr/TpeGuJFJ1EkIBQR
+         QPAf+TZx/2Lgarlf0pZ76bIo92FrHMvyCmU7B4xoBp2Nz5XSvyAPoF/CIeIKKH3GXJQr
+         7YHNPMIwQpLWC5yWSXaO5sSuGCv/xzkfjxe1zEWhoF46/zEfazVUfxFIv6MY0UyCBikx
+         sAMITuWV113O0WraISh0Xby34wF0IquNmcqHGHBaX13dJbbMBYfAW3E3EY817tLKnfne
+         ZI9w==
+X-Gm-Message-State: AFqh2koIx0KcMslVFg/tXj0aJOxg5RsM3bRFjOd5cHE3On9icwEST5pQ
+        JUvijDBQZkaUUBJmpIAL7vRTDq8oMFUc3rhrgf2u
+X-Google-Smtp-Source: AMrXdXs/Hm+1DNAFh9mYNRbzdhESmUWR3RD84Ypn9yd5f6cYBonBHwWuXIqbCRo/E9LAzkcUU6oWAflrO2dp7LDGXkk=
+X-Received: by 2002:a62:e814:0:b0:588:e66e:4f05 with SMTP id
+ c20-20020a62e814000000b00588e66e4f05mr719841pfi.23.1674069541107; Wed, 18 Jan
+ 2023 11:19:01 -0800 (PST)
 MIME-Version: 1.0
-References: <ef9b8445-b02b-3f6a-a566-587695f322b7@iogearbox.net> <20230118111854.744810-1-clangllvm@126.com>
-In-Reply-To: <20230118111854.744810-1-clangllvm@126.com>
-From:   Djalal Harouni <tixxdz@gmail.com>
-Date:   Wed, 18 Jan 2023 16:36:06 +0100
-Message-ID: <CAEiveUd_N8qHy54AS0q90FuUSQ=7mePm8FL88Aw-sY7fT7NqFQ@mail.gmail.com>
-Subject: Re: [PATCH V2] bpf: security enhancement by limiting the offensive
- eBPF helpers
-To:     Yi He <clangllvm@126.com>
-Cc:     daniel@iogearbox.net, andrii@kernel.org, ast@kernel.org,
-        bpf@vger.kernel.org, haoluo@google.com, john.fastabend@gmail.com,
-        jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, martin.lau@linux.dev,
-        mhiramat@kernel.org, rostedt@goodmis.org, sdf@google.com,
-        song@kernel.org, yhs@fb.com, yhs@meta.com,
-        linux-security-module@vger.kernel.org
+References: <cover.1673666803.git.lucien.xin@gmail.com> <d19e0bd55ea5477d94567c00735b78d8da6a38cb.1673666803.git.lucien.xin@gmail.com>
+ <CAHC9VhRXd+RkHSRLUt=0HFm42xPKGsSdSkxA6EHwipDukZH_mA@mail.gmail.com>
+ <CADvbK_e_V_scDpHiGw+Qqmarw8huYYES2j8Z36KYkgT2opED3w@mail.gmail.com>
+ <CAHC9VhQeaOeX-5SENhpScKN9kF1rAKoZX23KOUqQ5=uz6v92iA@mail.gmail.com>
+ <CADvbK_cR5paEunENmWd62XfXtMSf+MHhhc-S1z_gLWp_dUx=8w@mail.gmail.com>
+ <CAHC9VhSk8pYtOJHCZ1uNvv1SJiazWkJVd1BCfyiLCXPMPKe_Pg@mail.gmail.com>
+ <CADvbK_ds4ixHgPGA4iKb1kkFc=SF8SXPM-ZL-kb-ZA0B-70Xqg@mail.gmail.com>
+ <CAHC9VhR4_ae=QzrUUM=1MZTWJ9MQom0fEAME3b+z+uBrA8PpcQ@mail.gmail.com>
+ <CAHC9VhSRgQuyPgio7d9ZNbs53oCvpq3KQJ9gG5rKX67Wn+P6kw@mail.gmail.com> <54d89f4a-c7ca-2226-64dd-adc81ebbc314@gmail.com>
+In-Reply-To: <54d89f4a-c7ca-2226-64dd-adc81ebbc314@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 18 Jan 2023 14:18:50 -0500
+Message-ID: <CAHC9VhQb66rKaz+1DNqhiu6Oo5QbXHZHgFp0stGJYbN9K85CFA@mail.gmail.com>
+Subject: Re: [PATCH net-next 06/10] cipso_ipv4: use iph_set_totlen in skbuff_setattr
+To:     David Ahern <dsahern@gmail.com>
+Cc:     Xin Long <lucien.xin@gmail.com>,
+        network dev <netdev@vger.kernel.org>, davem@davemloft.net,
+        kuba@kernel.org, Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Pravin B Shelar <pshelar@ovn.org>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Ilya Maximets <i.maximets@ovn.org>,
+        Aaron Conole <aconole@redhat.com>,
+        Roopa Prabhu <roopa@nvidia.com>,
+        Nikolay Aleksandrov <razor@blackwall.org>,
+        Mahesh Bandewar <maheshb@google.com>,
+        Guillaume Nault <gnault@redhat.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 18, 2023 at 1:38 PM Yi He <clangllvm@126.com> wrote:
-[...]
-> Thanks for your feedback.
+On Tue, Jan 17, 2023 at 9:47 PM David Ahern <dsahern@gmail.com> wrote:
+> On 1/17/23 3:46 PM, Paul Moore wrote:
+> >>
+> >> In the BIG TCP case, when is the IPv4 header zero'd out?  Currently
+> >> cipso_v4_skbuff_setattr() is called in the NF_INET_LOCAL_OUT and
+> >> NF_INET_FORWARD chains, is there an easy way to distinguish between a
+> >> traditional segmentation offload mechanism, e.g. GSO, and BIG TCP?  If
+> >> BIG TCP allows for arbitrarily large packets we can just grow the
+> >> skb->len value as needed and leave the total length field in the IPv4
+> >> header untouched/zero, but we would need to be able to distinguish
+> >> between a segmentation offload and BIG TCP.
+> >
+> > Keeping the above questions as they still apply, rather I could still
+> > use some help understanding what a BIG TCP packet would look like
+> > during LOCAL_OUT and FORWARD.
 >
-> This patch aims to mitigate the offensive eBPF problem which has been dic=
-ussed since 2019 [1]. Recently, we find that enable eBPF in container envir=
-onemnt can lead to container escape or cross-nodes attacks (which may compr=
-omise mutiple VMs) in the Kubernetes [2]. Since lots of eBPF based tools ar=
-e used in containers, mutiple containers have the CAP_SYS_ADMIN needed by e=
-BPF which may be abused by untrusted eBPF code.
+> skb->len > 64kb. you don't typically look at the IP / IPv6 header and
+> its total length field and I thought the first patch in the series added
+> a handler for doing that.
 
-Then solution should be toward restricting eBPF in container, there is alre=
-ady
-sysctl, per process seccomp, LSM + bpf LSM for that.
+Thanks, I was just curious if there was some other mechanism but that works.
 
-...
-> > I'm not applying this.. i) this means by default you effectively remove=
- these
-> > helpers from existing users in the wild given integrity mode is default=
- for
-> > secure boot, but also ii) should we lock-down and remove the ability fo=
-r other
-> > privileged entities like processes to send signals, seccomp to ret_kill=
-, ptrace,
-> > etc given they all "can affect userspace processes"
+As of this moment, the patchset I'm working on is still independent of
+the BIG TCP patches, and I want to make sure I'm not doing anything
+that will make the BIG TCP patches any more challenging.
+
+> >>>> In the GRO case, is it safe to grow the packet such that skb->len is
+> >>>> greater than 64k?  I presume that the device/driver is going to split
+> >>>> the packet anyway and populate the IPv4 total length fields in the
+> >>>> header anyway, right?  If we can't grow the packet beyond 64k, is
+> >>>> there some way to signal to the driver/device at runtime that the
+> >>>> largest packet we can process is 64k minus 40 bytes (for the IPv4
+> >>>> options)?
+> >>>
+> >>> at runtime, not as far as I know.
+> >>> It's a field of the network device that can be modified by:
+> >>> # ip link set dev eth0 gro_max_size $MAX_SIZE gso_max_size $MAX_SIZE
+> >>
+> >> I need to look at the OVS case above, but one possibility would be to
+> >> have the kernel adjust the GSO size down by 40 bytes when
+> >> CONFIG_NETLABEL is enabled, but that isn't a great option, and not
+> >> something I consider a first (or second) choice.
+> >
+> > Looking more at the GSO related code, this isn't likely to work.
 >
-> It does not affect other privielge processes (e.g., ptrace) to kill proce=
-ss. Seccomp is classic bpf does not use this eBPF helper [4].
+> icsk_ext_hdr_len is adjusted by cipso for its options. Does that not
+> cover what is needed?
 
-Those are more or less same as bpf sending signal. Supervisors are using
-seccomp to ret kill process and/or sending signals. Where will you draw the
-line? should we go restrict those too? IMHO this does not relate to lockdow=
-n.
+Adjusting the icsk_ext_hdr_len only applies to CIPSO labels that are
+attached via the associated local sock, traffic that is labeled by
+cipso_v4_skbuff_setattr() in the LOCAL_OUT or FORWARD netfilter hooks
+does not have the icsk_ext_hdr_len adjustment.
 
-This reasoning will kill any effort to improve sandbox mechanisms that are
-moving some functionality from seccomp ret kill to a more flexible and
-transparent bpf-LSM model where privileged installs the sandbox. Actually,
-we are already doing this and beside eBPF flexibility and transparency
-(change policy at runtime without restart) from a _user perspective_
-I don't see that much difference between a seccomp kill and ebpf signal.
+Although as I mentioned earlier, I am adding a patch which would pad
+out the IPv4 option header in the LOCAL_OUT labeling scenario so
+icsk_ext_hdr_len will be adjusted for all locally generated
+TCP/connected/is_icsk traffic.  Forwarded traffic still remains an
+issue; but I think the only thing we can do is drop it and send an
+icmp message back to the sender with an adjusted MTU value.
 
-Thanks!
+--
+paul-moore.com
