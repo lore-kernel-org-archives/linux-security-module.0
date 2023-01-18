@@ -2,136 +2,139 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C81D5C004D4
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Jan 2023 07:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28152C38147
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Jan 2023 12:33:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229463AbjARH3p (ORCPT
+        id S230080AbjARMdA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Jan 2023 02:29:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36416 "EHLO
+        Wed, 18 Jan 2023 07:33:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230056AbjARH2h (ORCPT
+        with ESMTP id S230096AbjARMcm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Jan 2023 02:28:37 -0500
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12DEC5CFF1;
-        Tue, 17 Jan 2023 22:45:40 -0800 (PST)
-Received: from [192.168.192.83] (unknown [50.47.134.245])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 3D00E3F17F;
-        Wed, 18 Jan 2023 06:45:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1674024336;
-        bh=/AcMcv4vx8YNgercunSG8hfzVgdRUNSeg3Q9WLCPgG4=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=Fe12ekiB/Oft0bu2fGNp2C3wmmWjyOy3D6BtqfqxawXtbtH6Ou9CbhaBO+EjV0/NQ
-         ROL7kxLC6o3/BbxGJYOaa5/f7QkU5q+7EGQJfTOhNw/ub2LAOKM38btMpA3FiuYAuV
-         jXUa5+0f7kizvicRwqmIFzCgxx5IjoM1V6InFUWrmzx7rwburCGHTOPZrNu4+18XMV
-         utxVtdOO+gEw+++8Y0kzoNaKEzO8FIsaeZzgDtDLOgG0o90i9UwDlql2myHZ60RTkz
-         v1c6F4RaGS6Sh4IfV8ES85tkCcABCSeGIEwJrhLESv/wNAuzxhvKN+rZmBwyBZl/wV
-         ajRh+LMBHozzQ==
-Message-ID: <81053742-0abf-1814-1077-b8c974623797@canonical.com>
-Date:   Tue, 17 Jan 2023 22:45:32 -0800
+        Wed, 18 Jan 2023 07:32:42 -0500
+X-Greylist: delayed 1805 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 18 Jan 2023 03:49:53 PST
+Received: from m126.mail.126.com (m126.mail.126.com [123.126.96.242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 644295A375;
+        Wed, 18 Jan 2023 03:49:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=z3knI
+        4o7Y51dXHG8FRsTjca3hUpw5Zs0AgfUz081W6I=; b=PjLcNMP6y9SVUHnX1xO8F
+        ivhmX/D8wAQQRyo3GB7iuuQmH56wATfTaFvy59q4G+msk6gTrFmounEzQ0dcvdMx
+        QEPFKB5spDTAd6erpjLVg4ln0ud4ynhGVkhagDVq7WHK/XIk0fR/kxUxXa0OJBqS
+        sEYmuAGDsqZEiMZJDqswJM=
+Received: from localhost.localdomain (unknown [202.112.238.191])
+        by smtp12 (Coremail) with SMTP id fORpCgA3FHSf1cdj8fmvAA--.15435S4;
+        Wed, 18 Jan 2023 19:18:56 +0800 (CST)
+From:   Yi He <clangllvm@126.com>
+To:     daniel@iogearbox.net
+Cc:     andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+        clangllvm@126.com, haoluo@google.com, john.fastabend@gmail.com,
+        jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, martin.lau@linux.dev,
+        mhiramat@kernel.org, rostedt@goodmis.org, sdf@google.com,
+        song@kernel.org, yhs@fb.com, yhs@meta.com,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH V2] bpf: security enhancement by limiting the offensive eBPF helpers
+Date:   Wed, 18 Jan 2023 19:18:54 +0800
+Message-Id: <20230118111854.744810-1-clangllvm@126.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <ef9b8445-b02b-3f6a-a566-587695f322b7@iogearbox.net>
+References: <ef9b8445-b02b-3f6a-a566-587695f322b7@iogearbox.net>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [apparmor] [PATCH] apparmor: make aa_set_current_onexec return
- void
-Content-Language: en-US
-To:     Tyler Hicks <code@tyhicks.com>, Quanfa Fu <quanfafu@gmail.com>
-Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
-        linux-kernel@vger.kernel.org
-References: <20230114164952.232653-1-quanfafu@gmail.com>
- <Y8dyfZIAhFfIvVBn@sequoia>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <Y8dyfZIAhFfIvVBn@sequoia>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: fORpCgA3FHSf1cdj8fmvAA--.15435S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXFy3tw13XF48uF4xZr18Krg_yoWrZw45pF
+        WDGF93CrZ7JF4IgrsrJ34xGFWrA3y5WrW7GFWDKw18Za9Fqr4Yqr47tF4a93Z5ZrZxW3y2
+        qa12vFZ0yF1qga7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRb_-PUUUUU=
+X-Originating-IP: [202.112.238.191]
+X-CM-SenderInfo: xfod0wpooyzqqrswhudrp/1tbiqB36y1pD-eYBBwABsB
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/17/23 20:15, Tyler Hicks wrote:
-> On 2023-01-15 00:49:52, Quanfa Fu wrote:
->> Change the return type to void since it always return 0, and no need
->> to do the checking in aa_set_current_onexec.
->>
->> Signed-off-by: Quanfa Fu <quanfafu@gmail.com>
-> 
-> This looks like a safe change to me. There's nothing to error check
-> within aa_set_current_onexec() so returning void is fine.
-> 
->    Reviewed-by: "Tyler Hicks (Microsoft)" <code@tyhicks.com>
-> 
+The bpf_send_singal, bpf_send_singal_thread and bpf_override_return
+is similar to bpf_write_user and can affect userspace processes.
+Thus, these three helpers should also be restricted by security lockdown.
 
-Looks good, I have pulled this into my tree
+Signed-off-by: Yi He <clangllvm@126.com>
+---
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+Thanks for your feedback.
 
-> Tyler
-> 
->> ---
->>   security/apparmor/domain.c       | 2 +-
->>   security/apparmor/include/task.h | 2 +-
->>   security/apparmor/task.c         | 5 +----
->>   3 files changed, 3 insertions(+), 6 deletions(-)
->>
->> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
->> index 6dd3cc5309bf..bbc9c8a87b8e 100644
->> --- a/security/apparmor/domain.c
->> +++ b/security/apparmor/domain.c
->> @@ -1446,7 +1446,7 @@ int aa_change_profile(const char *fqname, int flags)
->>   		}
->>   
->>   		/* full transition will be built in exec path */
->> -		error = aa_set_current_onexec(target, stack);
->> +		aa_set_current_onexec(target, stack);
->>   	}
->>   
->>   audit:
->> diff --git a/security/apparmor/include/task.h b/security/apparmor/include/task.h
->> index 13437d62c70f..01717fe432c3 100644
->> --- a/security/apparmor/include/task.h
->> +++ b/security/apparmor/include/task.h
->> @@ -30,7 +30,7 @@ struct aa_task_ctx {
->>   };
->>   
->>   int aa_replace_current_label(struct aa_label *label);
->> -int aa_set_current_onexec(struct aa_label *label, bool stack);
->> +void aa_set_current_onexec(struct aa_label *label, bool stack);
->>   int aa_set_current_hat(struct aa_label *label, u64 token);
->>   int aa_restore_previous_label(u64 cookie);
->>   struct aa_label *aa_get_task_label(struct task_struct *task);
->> diff --git a/security/apparmor/task.c b/security/apparmor/task.c
->> index 84d16a29bfcb..5671a716fcd2 100644
->> --- a/security/apparmor/task.c
->> +++ b/security/apparmor/task.c
->> @@ -93,9 +93,8 @@ int aa_replace_current_label(struct aa_label *label)
->>    * aa_set_current_onexec - set the tasks change_profile to happen onexec
->>    * @label: system label to set at exec  (MAYBE NULL to clear value)
->>    * @stack: whether stacking should be done
->> - * Returns: 0 or error on failure
->>    */
->> -int aa_set_current_onexec(struct aa_label *label, bool stack)
->> +void aa_set_current_onexec(struct aa_label *label, bool stack)
->>   {
->>   	struct aa_task_ctx *ctx = task_ctx(current);
->>   
->> @@ -103,8 +102,6 @@ int aa_set_current_onexec(struct aa_label *label, bool stack)
->>   	aa_put_label(ctx->onexec);
->>   	ctx->onexec = label;
->>   	ctx->token = stack;
->> -
->> -	return 0;
->>   }
->>   
->>   /**
->> -- 
->> 2.31.1
->>
->>
+This patch aims to mitigate the offensive eBPF problem which has been dicussed since 2019 [1]. Recently, we find that enable eBPF in container environemnt can lead to container escape or cross-nodes attacks (which may compromise mutiple VMs) in the Kubernetes [2]. Since lots of eBPF based tools are used in containers, mutiple containers have the CAP_SYS_ADMIN needed by eBPF which may be abused by untrusted eBPF code. 
+
+We are still working for a better fine-grained eBPF permission model which add capability fitler bits to control the permissions of different eBPF program types and helper functions of a processes [3].
+
+Security lockdown seems to be a simple way to mitigate this problem. It only restrict all the offensive features and enable other eBPF features needed by benign eBPF program such as Cillium (which do not use these offensive features but only need bpf_read_user).
+
+> I'm not applying this.. i) this means by default you effectively remove these
+> helpers from existing users in the wild given integrity mode is default for
+> secure boot, but also ii) should we lock-down and remove the ability for other
+> privileged entities like processes to send signals, seccomp to ret_kill, ptrace,
+> etc given they all "can affect userspace processes"
+
+It does not affect other privielge processes (e.g., ptrace) to kill process. Seccomp is classic bpf does not use this eBPF helper [4].
+
+>  check out already existing FUNCTION_ERROR_INJECTION kernel config.
+We do not think the FUNCTION_ERROR_INJECTION  config can solve this problem as this option is default enable in many linux distributions such as debian/ubuntu. All the syscall are in allowlist of error injection and can be attacked by evil eBPF via eBPF override return.
+
+We hop you can rethink this problem. 
+
+[1]. J. Dileo. Evil eBPF: Practical Abuses of an In-Kernel Bytecode Runtime. DEFCON 27
+[2]. https://rolandorange.zone/report.html
+[3]. https://lore.kernel.org/bpf/CAADnVQK4ucv=LugqZ3He9ubwdxDu6ohaBKr2E=TX0UT65+7WpQ@mail.gmail.com/T/ 
+[4]. https://elixir.bootlin.com/linux/v6.2-rc4/source/kernel/seccomp.c#L1304
+
+
+ V1 -> V2: add security lockdown to bpf_send_singal_thread and remove 
+	the unused LOCKDOWN_OFFENSIVE_BPF_MAX.
+
+ include/linux/security.h | 2 ++
+ kernel/trace/bpf_trace.c | 9 ++++++---
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5b67f208f..42420e620 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -123,6 +123,8 @@ enum lockdown_reason {
+ 	LOCKDOWN_DEBUGFS,
+ 	LOCKDOWN_XMON_WR,
+ 	LOCKDOWN_BPF_WRITE_USER,
++	LOCKDOWN_BPF_SEND_SIGNAL,
++	LOCKDOWN_BPF_OVERRIDE_RETURN,
+ 	LOCKDOWN_DBG_WRITE_KERNEL,
+ 	LOCKDOWN_RTAS_ERROR_INJECTION,
+ 	LOCKDOWN_INTEGRITY_MAX,
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 3bbd3f0c8..fdb94868d 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1463,9 +1463,11 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 		return &bpf_cgrp_storage_delete_proto;
+ #endif
+ 	case BPF_FUNC_send_signal:
+-		return &bpf_send_signal_proto;
++		return security_locked_down(LOCKDOWN_BPF_SEND_SIGNAL) < 0 ?
++		       NULL : &bpf_send_signal_proto;
+ 	case BPF_FUNC_send_signal_thread:
+-		return &bpf_send_signal_thread_proto;
++		return security_locked_down(LOCKDOWN_BPF_SEND_SIGNAL) < 0 ?
++		       NULL : &bpf_send_signal_thread_proto;
+ 	case BPF_FUNC_perf_event_read_value:
+ 		return &bpf_perf_event_read_value_proto;
+ 	case BPF_FUNC_get_ns_current_pid_tgid:
+@@ -1531,7 +1533,8 @@ kprobe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 		return &bpf_get_stack_proto;
+ #ifdef CONFIG_BPF_KPROBE_OVERRIDE
+ 	case BPF_FUNC_override_return:
+-		return &bpf_override_return_proto;
++		return security_locked_down(LOCKDOWN_BPF_OVERRIDE_RETURN) < 0 ?
++		       NULL : &bpf_override_return_proto;
+ #endif
+ 	case BPF_FUNC_get_func_ip:
+ 		return prog->expected_attach_type == BPF_TRACE_KPROBE_MULTI ?
+-- 
+2.25.1
 
