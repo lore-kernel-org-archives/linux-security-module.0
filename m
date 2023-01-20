@@ -2,132 +2,97 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A38C677F1
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 05:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D10C05027
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 07:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229634AbjATFaG (ORCPT
+        id S230176AbjATHeF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Jan 2023 00:30:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35616 "EHLO
+        Fri, 20 Jan 2023 02:34:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229701AbjATF2y (ORCPT
+        with ESMTP id S229720AbjATHeA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Jan 2023 00:28:54 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AE4B518E4;
-        Thu, 19 Jan 2023 21:23:55 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6C355B82755;
-        Fri, 20 Jan 2023 00:08:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBEE6C433EF;
-        Fri, 20 Jan 2023 00:08:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674173314;
-        bh=ZII5T8PW4jDZyBdwaPUuY/oi4AIqimsLvi34L121owk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=scIOOCNvAlFJ7E4oCy5BjKgZMLnyP5bW9W44JGBCm6YvN1mi+nYinjtBQ6OKD+Jby
-         iZ+9vE67EEKgthF8zxt9v4Ez9cuxcPINVQF9oRW+WvontASuzuij7ZDg8ROt+y6PVF
-         VGgfjG5g5SrA3hJTB7cFD4Az4GMqRZlQpV7aZLClUEf5Gdu2SWMA6jMskj+o7Vn8aN
-         Qk/WVtp7neWKUZnQ8qGJl3jscdLCG4t3LNlKMhmLykrnB6c2BOADiR1JTBVm6mt2ii
-         suJEqfg8JXcKL4Uu70mvLIwksRjJsUrH/SUsQd+IfU+nZWF+vCqwLwjFqCLZfnHrCf
-         3ViAqMn+otruw==
-From:   KP Singh <kpsingh@kernel.org>
-To:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Cc:     ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
-        renauld@google.com, paul@paul-moore.com, casey@schaufler-ca.com,
-        song@kernel.org, revest@chromium.org, keescook@chromium.org,
+        Fri, 20 Jan 2023 02:34:00 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6397798C4;
+        Thu, 19 Jan 2023 23:33:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674200036; x=1705736036;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kyp1q4NF+AQWsmdJvGVKlDdz6pk0bNQYLVT4YSlYHhM=;
+  b=fH97re6BFIIoWj7t22iBINds/MAPWMHRJmpaQbioJUGfX10bHqCNrfCT
+   ipR7hVOGVbB2FcO5aKbFRs6k17IyILjYE8hXOFyH8LQF+0Lf8Ve/+1LLI
+   s5t2/80b4I8uIZad3dgxcG9TCVhRceDMdBpdCyYJdTkiVII/0DzLDxjTB
+   +R03cTESwgq2v4fAxJSwG4+6qVadLQA3gr/iPS/b4NynaCBnKVWq9sChu
+   Uw8J+/Fj/dmc7itfcHdYm3UbwqRQsSzSEt6sBIfkLMPKiiYn3dIudXDS2
+   dFQq1STFdbVVl/sQphPJxfJX9rczKJmlA0bJylDlrO1gAh6hBWd0He8Zm
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10595"; a="327616484"
+X-IronPort-AV: E=Sophos;i="5.97,231,1669104000"; 
+   d="scan'208";a="327616484"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2023 23:33:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10595"; a="989319597"
+X-IronPort-AV: E=Sophos;i="5.97,231,1669104000"; 
+   d="scan'208";a="989319597"
+Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
+  by fmsmga005.fm.intel.com with ESMTP; 19 Jan 2023 23:33:52 -0800
+Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pIluE-0002KY-38;
+        Fri, 20 Jan 2023 07:33:46 +0000
+Date:   Fri, 20 Jan 2023 15:33:43 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     KP Singh <kpsingh@kernel.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, ast@kernel.org,
+        daniel@iogearbox.net, jackmanb@google.com, renauld@google.com,
+        paul@paul-moore.com, casey@schaufler-ca.com, song@kernel.org,
+        revest@chromium.org, keescook@chromium.org,
         KP Singh <kpsingh@kernel.org>
-Subject: [PATCH RESEND bpf-next 1/4] kernel: Add helper macros for loop unrolling
-Date:   Fri, 20 Jan 2023 01:08:15 +0100
-Message-Id: <20230120000818.1324170-2-kpsingh@kernel.org>
-X-Mailer: git-send-email 2.39.0.246.g2a6d74b583-goog
-In-Reply-To: <20230120000818.1324170-1-kpsingh@kernel.org>
-References: <20230120000818.1324170-1-kpsingh@kernel.org>
+Subject: Re: [PATCH RESEND bpf-next 2/4] security: Generate a header with the
+ count of enabled LSMs
+Message-ID: <202301201525.vZDnlpJ2-lkp@intel.com>
+References: <20230120000818.1324170-3-kpsingh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230120000818.1324170-3-kpsingh@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This helps in easily initializing blocks of code (e.g. static calls and
-keys).
+Hi KP,
 
-UNROLL(N, MACRO, __VA_ARGS__) calls MACRO N times with the first
-argument as the index of the iteration. This allows string pasting to
-create unique tokens for variable names, function calls etc.
+I love your patch! Yet something to improve:
 
-As an example:
+[auto build test ERROR on bpf-next/master]
 
-	#include <linux/unroll.h>
+url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/kernel-Add-helper-macros-for-loop-unrolling/20230120-133309
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20230120000818.1324170-3-kpsingh%40kernel.org
+patch subject: [PATCH RESEND bpf-next 2/4] security: Generate a header with the count of enabled LSMs
+config: i386-tinyconfig (https://download.01.org/0day-ci/archive/20230120/202301201525.vZDnlpJ2-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-8) 11.3.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/831b06220bb29c6db171467b13903dac0ef2faa5
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review KP-Singh/kernel-Add-helper-macros-for-loop-unrolling/20230120-133309
+        git checkout 831b06220bb29c6db171467b13903dac0ef2faa5
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 O=build_dir ARCH=i386 olddefconfig
+        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
 
-	#define MACRO(N, a, b)            \
-		int add_##N(int a, int b) \
-		{                         \
-			return a + b + N; \
-		}
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
 
-	UNROLL(2, MACRO, x, y)
+All errors (new ones prefixed by >>):
 
-expands to:
+>> /bin/bash: line 1: scripts/security/gen_lsm_count: No such file or directory
 
-	int add_0(int x, int y)
-	{
-		return x + y + 0;
-	}
-
-	int add_1(int x, int y)
-	{
-		return x + y + 1;
-	}
-
-Signed-off-by: KP Singh <kpsingh@kernel.org>
----
- include/linux/unroll.h | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 include/linux/unroll.h
-
-diff --git a/include/linux/unroll.h b/include/linux/unroll.h
-new file mode 100644
-index 000000000000..e19aef95b94b
---- /dev/null
-+++ b/include/linux/unroll.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/*
-+ * Copyright (C) 2020 Google LLC.
-+ */
-+
-+#ifndef __UNROLL_H
-+#define __UNROLL_H
-+
-+#define __UNROLL_CONCAT(a, b) a ## _ ## b
-+#define UNROLL(N, MACRO, args...) __UNROLL_CONCAT(__UNROLL, N)(MACRO, args)
-+
-+#define __UNROLL_0(MACRO, args...)
-+#define __UNROLL_1(MACRO, args...)  __UNROLL_0(MACRO, args)  MACRO(0, args)
-+#define __UNROLL_2(MACRO, args...)  __UNROLL_1(MACRO, args)  MACRO(1, args)
-+#define __UNROLL_3(MACRO, args...)  __UNROLL_2(MACRO, args)  MACRO(2, args)
-+#define __UNROLL_4(MACRO, args...)  __UNROLL_3(MACRO, args)  MACRO(3, args)
-+#define __UNROLL_5(MACRO, args...)  __UNROLL_4(MACRO, args)  MACRO(4, args)
-+#define __UNROLL_6(MACRO, args...)  __UNROLL_5(MACRO, args)  MACRO(5, args)
-+#define __UNROLL_7(MACRO, args...)  __UNROLL_6(MACRO, args)  MACRO(6, args)
-+#define __UNROLL_8(MACRO, args...)  __UNROLL_7(MACRO, args)  MACRO(7, args)
-+#define __UNROLL_9(MACRO, args...)  __UNROLL_8(MACRO, args)  MACRO(8, args)
-+#define __UNROLL_10(MACRO, args...) __UNROLL_9(MACRO, args)  MACRO(9, args)
-+#define __UNROLL_11(MACRO, args...) __UNROLL_10(MACRO, args) MACRO(10, args)
-+#define __UNROLL_12(MACRO, args...) __UNROLL_11(MACRO, args) MACRO(11, args)
-+#define __UNROLL_13(MACRO, args...) __UNROLL_12(MACRO, args) MACRO(12, args)
-+#define __UNROLL_14(MACRO, args...) __UNROLL_13(MACRO, args) MACRO(13, args)
-+#define __UNROLL_15(MACRO, args...) __UNROLL_14(MACRO, args) MACRO(14, args)
-+#define __UNROLL_16(MACRO, args...) __UNROLL_15(MACRO, args) MACRO(15, args)
-+#define __UNROLL_17(MACRO, args...) __UNROLL_16(MACRO, args) MACRO(16, args)
-+#define __UNROLL_18(MACRO, args...) __UNROLL_17(MACRO, args) MACRO(17, args)
-+#define __UNROLL_19(MACRO, args...) __UNROLL_18(MACRO, args) MACRO(18, args)
-+#define __UNROLL_20(MACRO, args...) __UNROLL_19(MACRO, args) MACRO(19, args)
-+
-+#endif /* __UNROLL_H */
 -- 
-2.39.0.246.g2a6d74b583-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
