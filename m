@@ -2,127 +2,156 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F032C05027
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 21:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F46DC27C76
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 21:10:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229456AbjATVEv (ORCPT
+        id S229812AbjATVK5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Jan 2023 16:04:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58922 "EHLO
+        Fri, 20 Jan 2023 16:10:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229552AbjATVEu (ORCPT
+        with ESMTP id S229710AbjATVK4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Jan 2023 16:04:50 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ACDB8A63
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Jan 2023 13:04:48 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id d9so6380378pll.9
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Jan 2023 13:04:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y172KwacIm4200KA0aG6WBm3XKs0N6jHhBKXK9WD9mI=;
-        b=dPladbV/U1GCgz/wNJzUOoElEIPdmUvwE4kDWOjJjbDQQZMOKjXNsnc7gnxqSbhYKZ
-         /Lhpq+lffC3UGqVkVkfj+B1dLPCpkLBaNmZokuMG1AV1R6hMBi9v1KrSp2Lmp9GdjMjS
-         ouWjx4YdvjCeOhemuBcaEx4hDL8qhARp9pZ8/3YvsFAS+lEK96CBKjZYLevo2iy4P4BJ
-         Wcl96HKNDP7F61wZJ+z1gkNRbgjija1ouMrRQhonT0mf6RUaDeuyluFubcfg17ljxzpf
-         w4g2X1wMCGeoL8ZCybtmTgpxZGTiiE/mSH4Z7a5ogW0uYbpRbU2e11bJhaIHJ/vf2LUG
-         jpCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y172KwacIm4200KA0aG6WBm3XKs0N6jHhBKXK9WD9mI=;
-        b=C4+za6+ng1UIRxvISClfyMTFRQwD9G3+W/EPRfmSITZwpLI9PkF/ki6gG9DYo4VfYq
-         vuPDA1bylcvEMsOLa4TMrjmkgHh/8zPQV4Y6HNpSQ4bts3liMtez+ERif6km5bIvAgWe
-         Xop0ThVUfNXDKHvt3N1VEMppfPgsrN2dYG/EQTKKqX4eYxoHlFQIP0lYCLRkeMixa/SA
-         XHbolPSH4Mt98xH4N94s8vIMcyTTmDJMinD41NGTznJZQm7SCYpiMCtKOEFRUKF6+Rdh
-         wikPDiFQ6U1S56zKdE5aBL5I9mUK9sFzCik11mbX28DrM/pO1FYsxsxBsEQ0+k7fH2+L
-         TEGA==
-X-Gm-Message-State: AFqh2kqKML9pcxgWqaEx5zzW3bxvkYi3HAQ7ByxWnR8GOOKEWp114gfB
-        Uqxi0Vad4k8uU1SHCMkd2KiAH8uoiRqLtlctixW0
-X-Google-Smtp-Source: AMrXdXs8Faave2YJu+g6n6M+4QYmBNMXF46Qu59oZgfKnPdvJ6mTQUJOkGwrJVa4sN47D3aEIVz8WuCvphKHlFQ05+A=
-X-Received: by 2002:a17:902:bd97:b0:191:2b33:606f with SMTP id
- q23-20020a170902bd9700b001912b33606fmr1493982pls.32.1674248687946; Fri, 20
- Jan 2023 13:04:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20221221141007.2579770-1-roberto.sassu@huaweicloud.com>
- <CAHC9VhQUAuF-Fan72j7BOqOdLE=B=mJpJ_GpR5p5cUmXruYT=Q@mail.gmail.com>
- <4b8688ee3d533d989196004d5f9f2c7eb4093f8b.camel@huaweicloud.com>
- <CAHC9VhSamRVpgrDrSuc2dsbbw3-pvjDi9BsFWoWssHkAD2W5vA@mail.gmail.com>
- <a764acb285d0616c8608eaab8671ceb9c22cb390.camel@huaweicloud.com>
- <058f1bdf4ba75c3a00918cefbf1be32477b51639.camel@linux.ibm.com> <e1a1fe029aea21ba533cb6196e64f29c7b052c57.camel@huaweicloud.com>
-In-Reply-To: <e1a1fe029aea21ba533cb6196e64f29c7b052c57.camel@huaweicloud.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 20 Jan 2023 16:04:36 -0500
-Message-ID: <CAHC9VhT--Q8QkFmKTpD3zjryDL19V9myfr3PuzSRo_bDzDRyqQ@mail.gmail.com>
-Subject: Re: [PATCH v2] security: Restore passing final prot to ima_file_mmap()
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
+        Fri, 20 Jan 2023 16:10:56 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2DB7CD23C;
+        Fri, 20 Jan 2023 13:10:39 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C89E8B82A64;
+        Fri, 20 Jan 2023 21:10:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227C8C433EF;
+        Fri, 20 Jan 2023 21:10:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674249036;
+        bh=wLkgPsR5vSZDOWEBXjVKqodCnOqgDMrn3SAnrDftXDY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uzq8gWdxYIpw3LE8DvysdyT0nQHUZZz7A2QpcyfzYVN0U3eV38JMo36fwQAb2Bg8F
+         JpOenqCQLJN/WQBm8EdPELmm5mdqigxH1ZtTVNgKpcwtTxFUm6C8PfFBNJUypMFRcK
+         Mxs14MQHT2tUGfmbXY6eHUJPm6HJlzz8AG2kwala+P0dXa0fpAycAYFmXJ2zUPWoxx
+         1AkF5ee0PtTVPct3l68ZyAlx2pWN2RjZ/ks3ftG6vptvjjmya1TGVv79C0PVpLURul
+         tr6kC70Pfozg/adVLK4ryPSoXAGSZ2rRLsR6WEb8a3fvxpiJXMV++31vjYgFCdJove
+         o6KWRFUwnzOEA==
+Date:   Fri, 20 Jan 2023 21:10:33 +0000
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc:     David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Mark Pearson <markpearson@lenovo.com>
+Subject: Re: [PATCH RESEND v6 0/3] certs: Prevent spurious errors on repeated
+ blacklisting
+Message-ID: <Y8sDSSbCcxydFDYx@kernel.org>
+References: <20221212-keys-blacklist-v6-0-933267a80582@weissschuh.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221212-keys-blacklist-v6-0-933267a80582@weissschuh.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 13, 2023 at 5:53 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Thu, 2023-01-12 at 12:45 -0500, Mimi Zohar wrote:
-> > On Thu, 2023-01-12 at 13:36 +0100, Roberto Sassu wrote:
-> > > On Wed, 2023-01-11 at 09:25 -0500, Paul Moore wrote:
-> > > > On Wed, Jan 11, 2023 at 4:31 AM Roberto Sassu
-> > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > On Fri, 2023-01-06 at 16:14 -0500, Paul Moore wrote:
-> > > > > > On Wed, Dec 21, 2022 at 9:10 AM Roberto Sassu
-> > > > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > >
-> > > > > > > Commit 98de59bfe4b2f ("take calculation of final prot in
-> > > > > > > security_mmap_file() into a helper") moved the code to update prot with the
-> > > > > > > actual protection flags to be granted to the requestor by the kernel to a
-> > > > > > > helper called mmap_prot(). However, the patch didn't update the argument
-> > > > > > > passed to ima_file_mmap(), making it receive the requested prot instead of
-> > > > > > > the final computed prot.
-> > > > > > >
-> > > > > > > A possible consequence is that files mmapped as executable might not be
-> > > > > > > measured/appraised if PROT_EXEC is not requested but subsequently added in
-> > > > > > > the final prot.
-> > > > > > >
-> > > > > > > Replace prot with mmap_prot(file, prot) as the second argument of
-> > > > > > > ima_file_mmap() to restore the original behavior.
-> > > > > > >
-> > > > > > > Cc: stable@vger.kernel.org
-> > > > > > > Fixes: 98de59bfe4b2 ("take calculation of final prot in security_mmap_file() into a helper")
-> > > > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > > ---
-> > > > > > >  security/security.c | 2 +-
-> > > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > > >
-> > > > > > > diff --git a/security/security.c b/security/security.c
-> > > > > > > index d1571900a8c7..0d2359d588a1 100644
-> > > > > > > --- a/security/security.c
-> > > > > > > +++ b/security/security.c
-> > > > > > > @@ -1666,7 +1666,7 @@ int security_mmap_file(struct file *file, unsigned long prot,
-> > > > > > >                                         mmap_prot(file, prot), flags);
-> > > > > > >         if (ret)
-> > > > > > >                 return ret;
-> > > > > > > -       return ima_file_mmap(file, prot);
-> > > > > > > +       return ima_file_mmap(file, mmap_prot(file, prot));
-> > > > > > >  }
-> > > > > >
-> > > > > > This seems like a reasonable fix, although as the original commit is
-> > > > > > ~10 years old at this point I am a little concerned about the impact
-> > > > > > this might have on IMA.  Mimi, what do you think?
+On Mon, Jan 09, 2023 at 11:59:41PM +0000, Thomas Weißschuh wrote:
+> When the blacklist keyring was changed to allow updates from the root
+> user it gained an ->update() function that disallows all updates.
+> When the a hash is blacklisted multiple times from the builtin or
+> firmware-provided blacklist this spams prominent logs during boot:
+> 
+> [    0.890814] blacklist: Problem blacklisting hash (-13)
+> 
+> This affects the firmware of various vendors. Reported have been at least:
+> * Samsung: https://askubuntu.com/questions/1436856/
+> * Acer: https://ubuntuforums.org/showthread.php?t=2478840
+> * MSI: https://forum.archlabslinux.com/t/blacklist-problem-blacklisting-hash-13-errors-on-boot/6674/7
+> * Micro-Star: https://bbs.archlinux.org/viewtopic.php?id=278860
+> * Lenovo: https://lore.kernel.org/lkml/c8c65713-5cda-43ad-8018-20f2e32e4432@t-8ch.de/
+> 
+> Note: In the meantime I lost access to the machine exhibiting the
+> problematic behavior. If larger changes are required to this series
+> somebody else would have to validate them or take over the series.
+> 
+> Changelog:
+> 
+> v1: https://lore.kernel.org/all/20221104014704.3469-1-linux@weissschuh.net/
+> v1 -> v2:
+>  * Improve logging message to include the failed hash
+>  * Add key_create() function without update semantics
+>  * Use key_create() from mark_raw_hash_blacklisted() and log specific message
+>    on -EEXIST
+> 
+> v2: https://lore.kernel.org/lkml/20221109025019.1855-1-linux@weissschuh.net/
+> v2 -> v3:
+>  * Clarify commit titles and messages
+>  * Drop the change to BLACKLIST_KEY_PERM from patch 3, as it was an artifact
+>    of some obsolete version of the patch and not needed
+> 
+> v3: https://lore.kernel.org/lkml/20221118040343.2958-1-linux@weissschuh.net/
+> v3 -> v4:
+>  * Drop Fixes-tag from first patch
+>  * Flesh out commit descriptions and messages
+> 
+> v4: https://lore.kernel.org/r/20221212-keys-blacklist-v4-0-00afeb3137fb@weissschuh.net
+> v4 -> v5:
+>  * Reduce lines needed by function calls in key.c
+>  * Add Reviewed-by from Jarkko
+> 
+> v5: https://lore.kernel.org/r/20221212-keys-blacklist-v5-0-52e9eb5a8827@weissschuh.net
+> v5 -> v6:
+>  * Correct Jarkkos email in Reviewed-by tags
+>  * Resend to hopefully reach @kernel.org recipients
+> 
+> Thomas Weißschuh (3):
+>   certs: log hash value on blacklist error
+>   KEYS: Add key_create()
+>   certs: don't try to update blacklist keys
+> 
+>  certs/blacklist.c   |  21 ++++---
+>  include/linux/key.h |   8 +++
+>  security/keys/key.c | 149 +++++++++++++++++++++++++++++++++-----------
+>  3 files changed, 132 insertions(+), 46 deletions(-)
+> 
+> --
+> 2.38.1
+> 
+> To: David Howells <dhowells@redhat.com>
+> To: David Woodhouse <dwmw2@infradead.org>
+> To: Jarkko Sakkinen <jarkko@kernel.org>
+> To: Paul Moore <paul@paul-moore.com>
+> To: James Morris <jmorris@namei.org>
+> To: "Serge E. Hallyn" <serge@hallyn.com>
+> To: "Mickaël Salaün" <mic@digikod.net>
+> Cc: keyrings@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> Cc: Paul Menzel <pmenzel@molgen.mpg.de>
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> Cc: Mark Pearson <markpearson@lenovo.com>
+> 
+> ---
+> Thomas Weißschuh (3):
+>       certs: make blacklisted hash available in klog
+>       KEYS: Add new function key_create()
+>       certs: don't try to update blacklist keys
+> 
+>  certs/blacklist.c   |  21 ++++----
+>  include/linux/key.h |   8 +++
+>  security/keys/key.c | 137 ++++++++++++++++++++++++++++++++++++++--------------
+>  3 files changed, 120 insertions(+), 46 deletions(-)
+> ---
+> base-commit: 512dee0c00ad9e9c7ae9f11fc6743702ea40caff
+> change-id: 20221212-keys-blacklist-2c79a64667c9
+> 
+> Best regards,
+> -- 
+> Thomas Weißschuh <linux@weissschuh.net>
 
-So ... where do we stand on this patch, Mimi, Roberto?  I stand by my
-original comment, but I would want to see an ACK from Mimi at the very
-least before merging this upstream.  If this isn't ACK-able, do we
-have a plan to resolve this soon?
+Hi, I'e applied and pushed this now. Thank you.
 
--- 
-paul-moore.com
+BR, Jarkko
