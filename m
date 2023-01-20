@@ -2,259 +2,421 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F242CC38159
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 04:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B4FC677F1
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 04:41:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbjATEEh (ORCPT
+        id S229539AbjATElk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 Jan 2023 23:04:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55280 "EHLO
+        Thu, 19 Jan 2023 23:41:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbjATEEg (ORCPT
+        with ESMTP id S229487AbjATElH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 Jan 2023 23:04:36 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44708951AE
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Jan 2023 20:04:35 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id z4-20020a17090a170400b00226d331390cso3733161pjd.5
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Jan 2023 20:04:35 -0800 (PST)
+        Thu, 19 Jan 2023 23:41:07 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01F0C9268
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Jan 2023 20:36:57 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id b10so4521515pjo.1
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Jan 2023 20:36:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iBj1hTB88buCIb9g5Ec7nk6XG77UOnZJW2fpQRKVYn8=;
-        b=mLeAK+zhv86Mqcsf+sv/+6Ga3S1MHdVSrxI6wTDV4ToLSXw5slkW55flQ4rNHC7qT0
-         NZ8FqCgBqG5OImBmxgpv5eAQK3MNbjmcyUU+9svGtRi0a2wsJhJ3H66AjvDaEr7gBOCL
-         NntqoA/Ywm3T7AGpMLpfaujAq8Cbz/s8znjKM=
+        bh=FHATFx2SmYMjo2w8+zUa+b09Xd/3s9Ck86DqU4qbf7Y=;
+        b=ZWB65/RGz/nNeBSJCiCApP5V5REMw3cpIsZEhbWxvBo4yszJzPGsH2HaYurNtY2XXf
+         b3rULwLToe8B6T1/xkGc8uMTgm4kSEfWgExUlgsEUdO5rLMBDrdChjSVQ9UxRBiujCLy
+         F8fO5yFBNChit0I4EQDL/BrMvBQ5CRfOwotwQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iBj1hTB88buCIb9g5Ec7nk6XG77UOnZJW2fpQRKVYn8=;
-        b=1SYjqsR9inOaL9+yDM9Xu3QTSyrOAGHpKEG5BSStgpqzU5jsHP6JzeTJOZheh01yY8
-         DFPV81/wn76mxThXxMa3pHi/60XCr7CZyFeBdPdzXa7or4459gGsuq/lEYjOzLhKUCAh
-         gI/pzyFuAsf0bYj/ATamW57/AyTEQMouJ6ldy4RLdJxEwrY5pomN2gy18BcLs/2XLRhD
-         S9Oa5R4Ys47vHTB+kpSIMix6PigfRwnkVZePydGvkJiawHmglsg1WZ2G3HCK/Cl4L5Pl
-         q0QfWj3brs+mQOQT8pEg7QDQBPYAXGmPQ7igHIMaQ7PBteSVdYp2I4MwaUR0f8FLs0nN
-         ZeJw==
-X-Gm-Message-State: AFqh2kp9yY0xfU8aCM1eNSdG/OPHBcp3/aTqkZAEhD24ZTQoTFbhOnmj
-        9z2GJHAzJsPjAecUbzMUJVNtlQ==
-X-Google-Smtp-Source: AMrXdXvB4TDeS7vazfYH6l7pQg6xOJYb5ED82aw1Lj0RpiNfwrJmHPEdCsBDCsCGjiFW1zTCH30vfg==
-X-Received: by 2002:a17:90a:51e4:b0:219:818f:9da3 with SMTP id u91-20020a17090a51e400b00219818f9da3mr14669259pjh.17.1674187474730;
-        Thu, 19 Jan 2023 20:04:34 -0800 (PST)
+        bh=FHATFx2SmYMjo2w8+zUa+b09Xd/3s9Ck86DqU4qbf7Y=;
+        b=hGxtpBjePvIEoi/SUc6MLPgmS9H7wCaSL5H7KvNasa85w24mbjta1Lh+nkKhTZcfVT
+         5FcIgEHTXqZ6wGRdsibww9WFZni/vcnGWvf2Y1YzwOT+fc13rpoM8Aef5lROaJ4fQaSu
+         0iz3iMdGsjwwQ/TzdC3aBKcI9/1XjN257Io4oHOl1l3RD2I8gi4lfQOIPszMhPEln6rE
+         30RLmuVb3a5TTHt2xA1OKCNTnEjaq2GRoCFQ98PTg4OaDF5BT/pPKoJPKJifJ5xpaNEx
+         UDH13YKNsYFkoAWeHbYJsWolVcEPY2cm88Pqou0RSZ4HUW10P5q3cKLvGHbHN+y5ToLS
+         adyQ==
+X-Gm-Message-State: AFqh2kquDS4GJ9a2RcDjydW6As9Dt3Vu6DKTpccRzJXtfxDHBHDaYqye
+        KXWyJOqLI+ldXvxaQ3Lwb4IvkA==
+X-Google-Smtp-Source: AMrXdXubhLnhfMfWKcnr4V2wBFqQn9VMbpfomT2NAPnWld1SfeQQlwVJkvSg+E6VWjtGrMowl5v78Q==
+X-Received: by 2002:a17:90b:1992:b0:229:989e:71d5 with SMTP id mv18-20020a17090b199200b00229989e71d5mr13352423pjb.6.1674189405183;
+        Thu, 19 Jan 2023 20:36:45 -0800 (PST)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id az23-20020a17090b029700b00228e0a8478csm421462pjb.41.2023.01.19.20.04.33
+        by smtp.gmail.com with ESMTPSA id mm17-20020a17090b359100b002298adf6edcsm481373pjb.13.2023.01.19.20.36.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jan 2023 20:04:34 -0800 (PST)
-Date:   Thu, 19 Jan 2023 20:04:33 -0800
+        Thu, 19 Jan 2023 20:36:44 -0800 (PST)
+Date:   Thu, 19 Jan 2023 20:36:43 -0800
 From:   Kees Cook <keescook@chromium.org>
 To:     KP Singh <kpsingh@kernel.org>
 Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
         ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
         renauld@google.com, paul@paul-moore.com, casey@schaufler-ca.com,
         song@kernel.org, revest@chromium.org
-Subject: Re: [PATCH RESEND bpf-next 2/4] security: Generate a header with the
- count of enabled LSMs
-Message-ID: <202301191949.A4E2DCDA97@keescook>
+Subject: Re: [PATCH RESEND bpf-next 3/4] security: Replace indirect LSM hook
+ calls with static calls
+Message-ID: <202301192004.777AEFFE@keescook>
 References: <20230120000818.1324170-1-kpsingh@kernel.org>
- <20230120000818.1324170-3-kpsingh@kernel.org>
+ <20230120000818.1324170-4-kpsingh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230120000818.1324170-3-kpsingh@kernel.org>
+In-Reply-To: <20230120000818.1324170-4-kpsingh@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 20, 2023 at 01:08:16AM +0100, KP Singh wrote:
-> The header defines a MAX_LSM_COUNT constant which is used in a
-> subsequent patch to generate the static calls for each LSM hook which
-> are named using preprocessor token pasting. Since token pasting does not
-> work with arithmetic expressions, generate a simple lsm_count.h header
-> which represents the subset of LSMs that can be enabled on a given
-> kernel based on the config.
+On Fri, Jan 20, 2023 at 01:08:17AM +0100, KP Singh wrote:
+> The indirect calls are not really needed as one knows the addresses of
+> enabled LSM callbacks at boot time and only the order can possibly
+> change at boot time with the lsm= kernel command line parameter.
 > 
-> While one can generate static calls for all the possible LSMs that the
-> kernel has, this is actually wasteful as most kernels only enable a
-> handful of LSMs.
+> An array of static calls is defined per LSM hook and the static calls
+> are updated at boot time once the order has been determined.
+> 
+> A static key guards whether an LSM static call is enabled or not,
+> without this static key, for LSM hooks that return an int, the presence
+> of the hook that returns a default value can create side-effects which
+> has resulted in bugs [1].
 
-This is a frustrating bit of complexity to deal with it, but it seems
-worse to leave each security_... callsite with a huge swath of NOPs.
+I think this patch has too many logic changes in it. There are basically
+two things going on here:
 
+- replace list with unrolled calls
+- replace calls with static calls
+
+I see why it was merged, since some of the logic that would be added for
+step 1 would be immediate replaced, but I think it might make things a
+bit more clear.
+
+There is likely a few intermediate steps here too, to rename things,
+etc.
+
+> There are some hooks that don't use the call_int_hook and
+> call_void_hook. These hooks are updated to use a new macro called
+> security_for_each_hook where the lsm_callback is directly invoked as an
+> indirect call. Currently, there are no performance sensitive hooks that
+> use the security_for_each_hook macro. However, if, some performance
+> sensitive hooks are discovered, these can be updated to use
+> static calls with loop unrolling as well using a custom macro.
+> 
+> [1] https://lore.kernel.org/linux-security-module/20220609234601.2026362-1-kpsingh@kernel.org/
 > 
 > Signed-off-by: KP Singh <kpsingh@kernel.org>
 > ---
->  scripts/Makefile                 |  1 +
->  scripts/security/.gitignore      |  1 +
->  scripts/security/Makefile        |  4 +++
->  scripts/security/gen_lsm_count.c | 57 ++++++++++++++++++++++++++++++++
->  security/Makefile                | 11 ++++++
->  5 files changed, 74 insertions(+)
->  create mode 100644 scripts/security/.gitignore
->  create mode 100644 scripts/security/Makefile
->  create mode 100644 scripts/security/gen_lsm_count.c
+>  include/linux/lsm_hooks.h |  83 +++++++++++++--
+>  security/security.c       | 216 ++++++++++++++++++++++++--------------
+>  2 files changed, 211 insertions(+), 88 deletions(-)
 > 
-> diff --git a/scripts/Makefile b/scripts/Makefile
-> index 1575af84d557..9712249c0fb3 100644
-> --- a/scripts/Makefile
-> +++ b/scripts/Makefile
-> @@ -41,6 +41,7 @@ targets += module.lds
->  subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
->  subdir-$(CONFIG_MODVERSIONS) += genksyms
->  subdir-$(CONFIG_SECURITY_SELINUX) += selinux
-> +subdir-$(CONFIG_SECURITY) += security
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 0a5ba81f7367..c82d15a4ef50 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -28,6 +28,26 @@
+>  #include <linux/security.h>
+>  #include <linux/init.h>
+>  #include <linux/rculist.h>
+> +#include <linux/static_call.h>
+> +#include <linux/unroll.h>
+> +#include <linux/jump_label.h>
+> +
+> +/* Include the generated MAX_LSM_COUNT */
+> +#include <generated/lsm_count.h>
+> +
+> +#define SECURITY_HOOK_ENABLED_KEY(HOOK, IDX) security_enabled_key_##HOOK##_##IDX
+> +
+> +/*
+> + * Identifier for the LSM static calls.
+> + * HOOK is an LSM hook as defined in linux/lsm_hookdefs.h
+> + * IDX is the index of the static call. 0 <= NUM < MAX_LSM_COUNT
+> + */
+> +#define LSM_STATIC_CALL(HOOK, IDX) lsm_static_call_##HOOK##_##IDX
+> +
+> +/*
+> + * Call the macro M for each LSM hook MAX_LSM_COUNT times.
+> + */
+> +#define LSM_UNROLL(M, ...) UNROLL(MAX_LSM_COUNT, M, __VA_ARGS__)
+
+I think this should be:
+
+#define LSM_UNROLL(M, ...)	do {			\
+		UNROLL(MAX_LSM_COUNT, M, __VA_ARGS__);	\
+	} while (0)
+
+or maybe UNROLL needs the do/while.
+
 >  
->  # Let clean descend into subdirs
->  subdir-	+= basic dtc gdb kconfig mod
-> diff --git a/scripts/security/.gitignore b/scripts/security/.gitignore
-> new file mode 100644
-> index 000000000000..684af16735f1
-> --- /dev/null
-> +++ b/scripts/security/.gitignore
-> @@ -0,0 +1 @@
-> +gen_lsm_count
-> diff --git a/scripts/security/Makefile b/scripts/security/Makefile
-> new file mode 100644
-> index 000000000000..05f7e4109052
-> --- /dev/null
-> +++ b/scripts/security/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +hostprogs-always-y += gen_lsm_count
-> +HOST_EXTRACFLAGS += \
-> +	-I$(srctree)/include/uapi -I$(srctree)/include
-> diff --git a/scripts/security/gen_lsm_count.c b/scripts/security/gen_lsm_count.c
-> new file mode 100644
-> index 000000000000..a9a227724d84
-> --- /dev/null
-> +++ b/scripts/security/gen_lsm_count.c
-> @@ -0,0 +1,57 @@
-> +// SPDX-License-Identifier: GPL-2.0
+>  /**
+>   * union security_list_options - Linux Security Module hook function list
+> @@ -1657,21 +1677,48 @@ union security_list_options {
+>  	#define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS__);
+>  	#include "lsm_hook_defs.h"
+>  	#undef LSM_HOOK
+> +	void *lsm_callback;
+>  };
+>  
+> -struct security_hook_heads {
+> -	#define LSM_HOOK(RET, DEFAULT, NAME, ...) struct hlist_head NAME;
+> -	#include "lsm_hook_defs.h"
+> +/*
+> + * @key: static call key as defined by STATIC_CALL_KEY
+> + * @trampoline: static call trampoline as defined by STATIC_CALL_TRAMP
+> + * @hl: The security_hook_list as initialized by the owning LSM.
+> + * @enabled_key: Enabled when the static call has an LSM hook associated.
+> + */
+> +struct lsm_static_call {
+> +	struct static_call_key *key;
+> +	void *trampoline;
+> +	struct security_hook_list *hl;
+> +	struct static_key *enabled_key;
+> +};
 > +
-> +/* NOTE: we really do want to use the kernel headers here */
-> +#define __EXPORTED_HEADERS__
-> +
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <unistd.h>
-> +#include <string.h>
-> +#include <errno.h>
-> +#include <ctype.h>
-> +
-> +#include <linux/kconfig.h>
-> +
-> +#define GEN_MAX_LSM_COUNT (				\
-> +	/* Capabilities */				\
-> +	IS_ENABLED(CONFIG_SECURITY) +			\
-> +	IS_ENABLED(CONFIG_SECURITY_SELINUX) +		\
-> +	IS_ENABLED(CONFIG_SECURITY_SMACK) +		\
-> +	IS_ENABLED(CONFIG_SECURITY_TOMOYO) +		\
-> +	IS_ENABLED(CONFIG_SECURITY_APPARMOR) +		\
-> +	IS_ENABLED(CONFIG_SECURITY_YAMA) +		\
-> +	IS_ENABLED(CONFIG_SECURITY_LOADPIN) +		\
-> +	IS_ENABLED(CONFIG_SECURITY_SAFESETID) +		\
-> +	IS_ENABLED(CONFIG_SECURITY_LOCKDOWN_LSM) + 	\
-> +	IS_ENABLED(CONFIG_BPF_LSM) + \
-> +	IS_ENABLED(CONFIG_SECURITY_LANDLOCK))
-
-I'm bothered that we have another place to collect a list of "all" the
-LSMs. The stacking design went out of its way to create DEFINE_LSM() so
-there didn't need to be this kind of centralized list.
-
-I don't have a better suggestion, though. Casey has a centralized list
-too, so it might make sense (as he mentioned) to use something like
-that. It can be arranged to provide a MAX_... macro (that could be
-BUILD_BUG_ON checked against a similarly named enum). I'm thinking:
-
-enum lsm_list {
-	LSM_SELINUX,
-	LSM_SMACK,
-	...
-	__LSM_MAX,
-};
-
-/*
- * We can't use __LSM_MAX directly because we need it for macro
- * concatenation, so just check it against __LSM_MAX at build time.
- */
-#define LSM_MAX 15
-
-...
-	BUILD_BUG_ON(LSM_MAX != __LSM_MAX);
-
-> +
-> +const char *progname;
-> +
-> +static void usage(void)
-> +{
-> +	printf("usage: %s lsm_count.h\n", progname);
-> +	exit(1);
-> +}
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +	FILE *fout;
-> +
-> +	progname = argv[0];
-> +
-> +	if (argc < 2)
-> +		usage();
-> +
-> +	fout = fopen(argv[1], "w");
-> +	if (!fout) {
-> +		fprintf(stderr, "Could not open %s for writing:  %s\n",
-> +			argv[1], strerror(errno));
-> +		exit(2);
+> +/*
+> + * Table of the static calls for each LSM hook.
+> + * Once the LSMs are initialized, their callbacks will be copied to these
+> + * tables such that the calls are filled backwards (from last to first).
+> + * This way, we can jump directly to the first used static call, and execute
+> + * all of them after. This essentially makes the entry point
+> + * dynamic to adapt the number of static calls to the number of callbacks.
+> + */
+> +struct lsm_static_calls_table {
+> +	#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
+> +		struct lsm_static_call NAME[MAX_LSM_COUNT];
+> +	#include <linux/lsm_hook_defs.h>
+>  	#undef LSM_HOOK
+>  } __randomize_layout;
+>  
+>  /*
+>   * Security module hook list structure.
+>   * For use with generic list macros for common operations.
+> + *
+> + * struct security_hook_list - Contents of a cacheable, mappable object.
+> + * @scalls: The beginning of the array of static calls assigned to this hook.
+> + * @hook: The callback for the hook.
+> + * @lsm: The name of the lsm that owns this hook.
+>   */
+>  struct security_hook_list {
+> -	struct hlist_node		list;
+> -	struct hlist_head		*head;
+> +	struct lsm_static_call	*scalls;
+>  	union security_list_options	hook;
+>  	const char			*lsm;
+>  } __randomize_layout;
+> @@ -1701,10 +1748,12 @@ struct lsm_blob_sizes {
+>   * care of the common case and reduces the amount of
+>   * text involved.
+>   */
+> -#define LSM_HOOK_INIT(HEAD, HOOK) \
+> -	{ .head = &security_hook_heads.HEAD, .hook = { .HEAD = HOOK } }
+> +#define LSM_HOOK_INIT(NAME, CALLBACK)			\
+> +	{						\
+> +		.scalls = static_calls_table.NAME,	\
+> +		.hook = { .NAME = CALLBACK }		\
 > +	}
-> +
-> +	fprintf(fout, "#ifndef _LSM_COUNT_H_\n#define _LSM_COUNT_H_\n\n");
-> +	fprintf(fout, "\n#define MAX_LSM_COUNT %d\n", GEN_MAX_LSM_COUNT);
-> +	fprintf(fout, "#endif /* _LSM_COUNT_H_ */\n");
-> +	exit(0);
-> +}
-> diff --git a/security/Makefile b/security/Makefile
-> index 18121f8f85cd..7a47174831f4 100644
-> --- a/security/Makefile
-> +++ b/security/Makefile
-> @@ -3,6 +3,7 @@
->  # Makefile for the kernel security code
->  #
 >  
-> +gen := include/generated
->  obj-$(CONFIG_KEYS)			+= keys/
+> -extern struct security_hook_heads security_hook_heads;
+>  extern char *lsm_names;
 >  
->  # always enable default capabilities
-> @@ -27,3 +28,13 @@ obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
+>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
+> @@ -1756,10 +1805,21 @@ extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
+>  static inline void security_delete_hooks(struct security_hook_list *hooks,
+>  						int count)
+
+Hey Paul, can we get rid of CONFIG_SECURITY_SELINUX_DISABLE yet? It's
+been deprecated for years....
+
+>  {
+> -	int i;
+> +	struct lsm_static_call *scalls;
+> +	int i, j;
+> +
+> +	for (i = 0; i < count; i++) {
+> +		scalls = hooks[i].scalls;
+> +		for (j = 0; j < MAX_LSM_COUNT; j++) {
+> +			if (scalls[j].hl != &hooks[i])
+> +				continue;
 >  
->  # Object integrity file lists
->  obj-$(CONFIG_INTEGRITY)			+= integrity/
+> -	for (i = 0; i < count; i++)
+> -		hlist_del_rcu(&hooks[i].list);
+> +			static_key_disable(scalls[j].enabled_key);
+> +			__static_call_update(scalls[j].key,
+> +					     scalls[j].trampoline, NULL);
+> +			scalls[j].hl = NULL;
+> +		}
+> +	}
+>  }
+>  #endif /* CONFIG_SECURITY_SELINUX_DISABLE */
+>  
+> @@ -1771,5 +1831,6 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+>  #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
+>  
+>  extern int lsm_inode_alloc(struct inode *inode);
+> +extern struct lsm_static_calls_table static_calls_table __ro_after_init;
+>  
+>  #endif /* ! __LINUX_LSM_HOOKS_H */
+> diff --git a/security/security.c b/security/security.c
+> index d1571900a8c7..e54d5ba187d1 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -29,6 +29,8 @@
+>  #include <linux/string.h>
+>  #include <linux/msg.h>
+>  #include <net/flow.h>
+> +#include <linux/static_call.h>
+> +#include <linux/jump_label.h>
+>  
+>  #define MAX_LSM_EVM_XATTR	2
+>  
+> @@ -74,7 +76,6 @@ const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+>  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+>  };
+>  
+> -struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+>  static BLOCKING_NOTIFIER_HEAD(blocking_lsm_notifier_chain);
+>  
+>  static struct kmem_cache *lsm_file_cache;
+> @@ -93,6 +94,43 @@ static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
+>  static __initdata struct lsm_info **ordered_lsms;
+>  static __initdata struct lsm_info *exclusive;
+>  
+> +/*
+> + * Define static calls and static keys for each LSM hook.
+> + */
+> +
+> +#define DEFINE_LSM_STATIC_CALL(NUM, NAME, RET, ...)			\
+> +	DEFINE_STATIC_CALL_NULL(LSM_STATIC_CALL(NAME, NUM),		\
+> +				*((RET(*)(__VA_ARGS__))NULL));		\
+> +	DEFINE_STATIC_KEY_FALSE(SECURITY_HOOK_ENABLED_KEY(NAME, NUM));
 
-Or, if the enum/#define doesn't work, it might be possible to just do
-this in the Makefile more directly?
+Hm, another place where we would benefit from having separated logic for
+"is it built?" and "is it enabled by default?" and we could use
+DEFINE_STATIC_KEY_MAYBE(). But, since we don't, I think we need to use
+DEFINE_STATIC_KEY_TRUE() here or else won't all the calls be
+out-of-line? (i.e. the default compiled state will be NOPs?) If we're
+trying to optimize for having LSMs, I think we should default to inline
+calls. (The machine code in the commit log seems to indicate that they
+are out of line -- it uses jumps.)
 
-${gen}/lsm_count.h: FORCE
-	(echo "#ifndef _LSM_COUNT_H_"; \
-	 echo "#define _LSM_COUNT_H_"; \
-	 echo -n "#define MAX_LSM_COUNT "; \
-	 echo	$(CONFIG_SECURITY_SELINUX) \
-		$(CONFIG_SECURITY_SMACK) \
-		...
-		| wc -w; \
-	 echo "#endif /* _LSM_COUNT_H_") >$@
+> [...]
+> +#define __CALL_STATIC_VOID(NUM, HOOK, ...)                                   \
+> +	if (static_branch_unlikely(&SECURITY_HOOK_ENABLED_KEY(HOOK, NUM))) { \
+> +		static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);        \
+> +	}
+
+Same here -- I would expect this to be static_branch_likely() or we'll
+get out-of-line branches. Also, IMO, this should be:
+
+	do {
+		if (...)
+			static_call(...);
+	} while (0)
+
+
+> +#define call_void_hook(FUNC, ...)                                 \
+> +	do {                                                      \
+> +		LSM_UNROLL(__CALL_STATIC_VOID, FUNC, __VA_ARGS__) \
+>  	} while (0)
+
+With the do/while in LSM_UNROLL, this is more readable.
+
+>  
+> -#define call_int_hook(FUNC, IRC, ...) ({			\
+> -	int RC = IRC;						\
+> -	do {							\
+> -		struct security_hook_list *P;			\
+> -								\
+> -		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+> -			RC = P->hook.FUNC(__VA_ARGS__);		\
+> -			if (RC != 0)				\
+> -				break;				\
+> -		}						\
+> -	} while (0);						\
+> -	RC;							\
+> -})
+> +#define __CALL_STATIC_INT(NUM, R, HOOK, ...)                                 \
+> +	if (static_branch_unlikely(&SECURITY_HOOK_ENABLED_KEY(HOOK, NUM))) { \
+> +		R = static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);    \
+> +		if (R != 0)                                                  \
+> +			goto out;                                            \
+> +	}
+
+I would expect the label to be a passed argument, but maybe since it
+never changes, it's fine as-is?
+
+And again, I'd expect a do/while wrapper, and for it to be s_b_likely.
 
 > +
-> +$(addprefix $(obj)/,$(obj-y)): $(gen)/lsm_count.h
-> +
-> +quiet_cmd_lsm_count = GEN     ${gen}/lsm_count.h
-> +      cmd_lsm_count = scripts/security/gen_lsm_count ${gen}/lsm_count.h
-> +
-> +targets += lsm_count.h
-> +
-> +${gen}/lsm_count.h: FORCE
-> +	$(call if_changed,lsm_count)
-> -- 
-> 2.39.0.246.g2a6d74b583-goog
-> 
+> +#define call_int_hook(FUNC, IRC, ...)                                        \
+> +	({                                                                   \
+> +		__label__ out;                                               \
+> +		int RC = IRC;                                                \
+> +		do {                                                         \
+> +			LSM_UNROLL(__CALL_STATIC_INT, RC, FUNC, __VA_ARGS__) \
+> +									     \
+> +		} while (0);                                                 \
+
+Then this becomes:
+
+({
+	int RC = IRC;
+	LSM_UNROLL(__CALL_STATIC_INT, RC, FUNC, __VA_ARGS__);
+out:
+	RC;
+})
+
+> +#define security_for_each_hook(scall, NAME, expression)                  \
+> +	for (scall = static_calls_table.NAME;                            \
+> +	     scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++) { \
+> +		if (!static_key_enabled(scall->enabled_key))             \
+> +			continue;                                        \
+> +		(expression);                                            \
+> +	}
+
+Why isn't this using static_branch_enabled()? I would expect this to be:
+
+#define security_for_each_hook(scall, NAME)				\
+	for (scall = static_calls_table.NAME;                           \
+	     scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++)	\
+		if (static_branch_likely(scall->enabled_key))
+
+>  
+>  /* Security operations */
+>  
+> @@ -859,7 +924,7 @@ int security_settime64(const struct timespec64 *ts, const struct timezone *tz)
+>  
+>  int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
+>  {
+> -	struct security_hook_list *hp;
+> +	struct lsm_static_call *scall;
+>  	int cap_sys_admin = 1;
+>  	int rc;
+>  
+> @@ -870,13 +935,13 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
+>  	 * agree that it should be set it will. If any module
+>  	 * thinks it should not be set it won't.
+>  	 */
+> -	hlist_for_each_entry(hp, &security_hook_heads.vm_enough_memory, list) {
+> -		rc = hp->hook.vm_enough_memory(mm, pages);
+> +	security_for_each_hook(scall, vm_enough_memory, ({
+> +		rc = scall->hl->hook.vm_enough_memory(mm, pages);
+>  		if (rc <= 0) {
+>  			cap_sys_admin = 0;
+>  			break;
+>  		}
+> -	}
+> +	}));
+
+Then these replacements don't look weird. This would just be:
+
+	security_for_each_hook(scall, vm_enough_memory) {
+		rc = scall->hl->hook.vm_enough_memory(mm, pages);
+  		if (rc <= 0) {
+  			cap_sys_admin = 0;
+  			break;
+  		}
+	}
+
+I'm excited to have this. The speed improvements are pretty nice.
 
 -- 
 Kees Cook
