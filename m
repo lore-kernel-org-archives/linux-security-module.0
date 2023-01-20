@@ -2,112 +2,85 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2433DC25B4E
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 10:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 487F4C25B50
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 10:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229501AbjATKLH (ORCPT
+        id S229752AbjATKYQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Jan 2023 05:11:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56524 "EHLO
+        Fri, 20 Jan 2023 05:24:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbjATKLG (ORCPT
+        with ESMTP id S229612AbjATKYP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Jan 2023 05:11:06 -0500
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE218B326;
-        Fri, 20 Jan 2023 02:11:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674209464; x=1705745464;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Zke/P6VKYbLURYoSo0MzL+Ho/FFPmy06GgD48i/evLY=;
-  b=QrRGUg6JBykPkWbxCMupA+DYViqCmTW7L+mbUnvFfknkDRc0g40RgZnD
-   FFj/QJ0ux5yU0C611ETB20iqi632KTB3eNUfRBLr1vg0q09TvoRuTyaaA
-   K/ejNQ0aTW7je6kFCHkbEWBJ38hpQTvA9OrYuoG86h5S5GzDnFVPSuwff
-   d4GOCsHd9j++A42YbcLIm6ffno+f24l47kOHkG9Hkfhfem5x5wHXuYatT
-   4cM9Cv4B/CbMUHYqkPjns3r7TGPx6Fw7BCkS6OPxfEUMdgsUbiUcRU3Hb
-   Axy0wVGiwlgCKOlLiZUO/1javFANEum8jvgtLJsQDm5v+awgNxAlLm7MR
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10595"; a="327641537"
-X-IronPort-AV: E=Sophos;i="5.97,231,1669104000"; 
-   d="scan'208";a="327641537"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2023 02:11:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10595"; a="989358665"
-X-IronPort-AV: E=Sophos;i="5.97,231,1669104000"; 
-   d="scan'208";a="989358665"
-Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 20 Jan 2023 02:11:00 -0800
-Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pIoMJ-0002T1-0L;
-        Fri, 20 Jan 2023 10:10:55 +0000
-Date:   Fri, 20 Jan 2023 18:10:52 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     KP Singh <kpsingh@kernel.org>,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, ast@kernel.org,
-        daniel@iogearbox.net, jackmanb@google.com, renauld@google.com,
-        paul@paul-moore.com, casey@schaufler-ca.com, song@kernel.org,
-        revest@chromium.org, keescook@chromium.org,
-        KP Singh <kpsingh@kernel.org>
-Subject: Re: [PATCH RESEND bpf-next 3/4] security: Replace indirect LSM hook
- calls with static calls
-Message-ID: <202301201833.YM7Hr62n-lkp@intel.com>
-References: <20230120000818.1324170-4-kpsingh@kernel.org>
+        Fri, 20 Jan 2023 05:24:15 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E60DD8C91E;
+        Fri, 20 Jan 2023 02:24:13 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NywPq1Kl2z9v7gS;
+        Fri, 20 Jan 2023 18:16:15 +0800 (CST)
+Received: from [10.206.134.65] (unknown [10.206.134.65])
+        by APP1 (Coremail) with SMTP id LxC2BwBn7gmva8pjQduwAA--.5258S2;
+        Fri, 20 Jan 2023 11:23:54 +0100 (CET)
+Message-ID: <5c65358c-4e77-901b-01bb-5df0d4c50949@huaweicloud.com>
+Date:   Fri, 20 Jan 2023 11:23:40 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230120000818.1324170-4-kpsingh@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v5 1/2] lib/mpi: Fix buffer overrun when SG is too long
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     dhowells@redhat.com, davem@davemloft.net, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, ebiggers@kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20221227142740.2807136-1-roberto.sassu@huaweicloud.com>
+ <20221227142740.2807136-2-roberto.sassu@huaweicloud.com>
+ <Y7g7sp6UJJrYKihK@gondor.apana.org.au>
+ <755e1dc9c777fa657ccd948f65f5f33240226c43.camel@huaweicloud.com>
+ <Y8UTghm0Y8U4ndmH@gondor.apana.org.au>
+Content-Language: en-US
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+In-Reply-To: <Y8UTghm0Y8U4ndmH@gondor.apana.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwBn7gmva8pjQduwAA--.5258S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYx7kC6x804xWl14x267AKxVW8JVW5JwAF
+        c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+        0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
+        wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjc
+        xK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+        FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+        0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY
+        04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+        v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+        1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+        AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0D
+        MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+        VFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj4fWbQACsJ
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi KP,
+On 1/16/2023 10:06 AM, Herbert Xu wrote:
+> On Mon, Jan 16, 2023 at 09:57:57AM +0100, Roberto Sassu wrote:
+>>
+>> Hi Herbert
+>>
+>> will you take also the second patch?
+> 
+> That's part of David Howells' tree so hopefully he will pick
+> it up soon.
 
-I love your patch! Yet something to improve:
+Hi David
 
-[auto build test ERROR on bpf-next/master]
+could you please take the second patch?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/kernel-Add-helper-macros-for-loop-unrolling/20230120-133309
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20230120000818.1324170-4-kpsingh%40kernel.org
-patch subject: [PATCH RESEND bpf-next 3/4] security: Replace indirect LSM hook calls with static calls
-config: arc-randconfig-r043-20230119 (https://download.01.org/0day-ci/archive/20230120/202301201833.YM7Hr62n-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/1dfb90849b42d8af6e854cd6ae8cd96d1ebfc50a
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review KP-Singh/kernel-Add-helper-macros-for-loop-unrolling/20230120-133309
-        git checkout 1dfb90849b42d8af6e854cd6ae8cd96d1ebfc50a
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arc olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arc SHELL=/bin/bash kernel/
+Thanks
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
+Roberto
 
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/bpf_lsm.h:12,
-                    from kernel/bpf/syscall.c:31:
->> include/linux/lsm_hooks.h:36:10: fatal error: generated/lsm_count.h: No such file or directory
-      36 | #include <generated/lsm_count.h>
-         |          ^~~~~~~~~~~~~~~~~~~~~~~
-   compilation terminated.
-
-
-vim +36 include/linux/lsm_hooks.h
-
-    34	
-    35	/* Include the generated MAX_LSM_COUNT */
-  > 36	#include <generated/lsm_count.h>
-    37	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
