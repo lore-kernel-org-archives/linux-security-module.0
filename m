@@ -2,228 +2,165 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A34BC004D4
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 00:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3FDC004D4
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 01:13:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbjATA1J (ORCPT
+        id S229583AbjATBNU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 Jan 2023 19:27:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39974 "EHLO
+        Thu, 19 Jan 2023 20:13:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbjATA1F (ORCPT
+        with ESMTP id S229500AbjATBNT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 Jan 2023 19:27:05 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4DDA3152
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Jan 2023 16:27:03 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AC43C61DB0
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Jan 2023 00:27:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14DFFC43392
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Jan 2023 00:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674174422;
-        bh=ROdLTe3LexbexnDR/PGA5NONfhz+ix0AhBH64LjX+J8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=uVCeHyrsJEQ8IWopSBnf8u4tb3O3luBDdgeTUGFkJU4OGy5gqAT7xBhTyt/jtoL3e
-         H+Ye4r4WcP1RXbkbCogFlsoB+7XqOzMPgrRN3vU1rrsj1bOx9lnR+/AevJRm5PLh/I
-         arWE9PjDtWwT/y6EKH4M6eAiwY7LnZIoGKUlw81x1VuKOwkEfGGi9ysYaI7h2enYri
-         2cGzBPaEnOdCtcWeeyaqmuE8STvMGMYRl0N9u5+/eHtPL9YjNDovTFibfoVgZvu6rB
-         RRJRwSS19W+H0q4eYuFbweMN5aCBpqbymPlwrb50ZvSyfuQBl8xTabgM2vkqqc5QFJ
-         /9YxzNLx3O2IA==
-Received: by mail-ej1-f41.google.com with SMTP id mp20so10079902ejc.7
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Jan 2023 16:27:01 -0800 (PST)
-X-Gm-Message-State: AFqh2kqmhC9VDV/31vYdNAkIDnURyMWMi23VY2yBXC44S063QxF+VqX3
-        NkxlbSIm8m4bjEn5DPi4JpFAbprjKhtIPIv4Zb9Qjw==
-X-Google-Smtp-Source: AMrXdXvQH4nrvVw+xUNYF/o795gSMWU8pL1Yf+iSGHGdXk9VA3BPp09x29rUk7QtWvAa9pzCpDmTYoEDEmNbE/i61tc=
-X-Received: by 2002:a17:906:b788:b0:871:3103:a6aa with SMTP id
- dt8-20020a170906b78800b008713103a6aamr1132859ejb.88.1674174420059; Thu, 19
- Jan 2023 16:27:00 -0800 (PST)
+        Thu, 19 Jan 2023 20:13:19 -0500
+Received: from sonic305-28.consmr.mail.ne1.yahoo.com (sonic305-28.consmr.mail.ne1.yahoo.com [66.163.185.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BD369FDD1
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Jan 2023 17:13:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1674177196; bh=PWiF7VI1pvPfMmzI9UWE2qMd04DIcRMVunfWKdX0zTI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=D4qcjbK74yQVWjXypXFDlW8aQVtrjMhXWogywzZi+d91B2FothfcZWVLtdfS+fIVonLdwi31gf+gfm1GBChCrgPC7aDx0jnJM7Z969WleZjsUbQnehtt/J4seXuyv7kV3SmMcUmfkTSixUQGVTpZ+fIqUTOI6CTdC81Tt6uviIvOn0X8o1/BLHMOgoMoJ0EW6pGE96N94DNAfsZUZT70fly9OPnN/eFNrmN7dVr7B9H0/dkVgDHcrhHt6FglyIU96WyvJr5+URv4qod7Yrs/f8+SPmkXP2P9/tvw6+lzS9Fiy7VB3I+VWPPFbziCR5OVwdde3xgwgqosuf0io1WeMw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1674177196; bh=qNFfTeRVn8o1sKtL9Apy5071YYCztH5qJmVxd13JugE=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=V7kPKWgLiZXZLx7Rmc8el4vPbCzBNtZRtlLkJ2epMXkKWgulXLaXGp+cn1Wbhb0YUpVqGuTZBOmdchQzcTf1g8rCoIMFzAIkXBuKWKsvK8AQKbwz01HeFddFSnORGER2eNUw1N5M6CqSlTK+rDwOoc8jCdcUJUjCAHE/AR2zCV8Te3nWHOnHNs3ppCsF7sWg6xrWMpLQ7OpqlmFHY/8NnNvKurH37b9ZRgYxPkzP73uFOIczfyxWDeP2q0CWSipM2eCgCPhCau7bebTmuTvXk2YE/ndpS4uGxE7J/G7HdS8yVIRLDXbIRQMU8t+BvZ2ZNfwmWaojOJq1TkSA6n2l2w==
+X-YMail-OSG: eNIZ8JIVM1liopnK7u9suUY_Sif9jAWeWedcR91DIu0ptyey0ojyJk0UG_imOKG
+ gB_qa55A9Th2FY1iEnf8Ori4U5KszUvAfdlNa9RZbWrVs4s.MjOT8PHYTRcKfh9ijjEMqM9C5fM0
+ rT4sXNjWyIwwB8nPXNy9zdJhV9r8VOXaw.bOcMU56hFullAzGUBYTpRZ2Db5QjPihBj5DNs8GjEg
+ HmAkTybd1hU9h3r5d3ks.iwXxVw_Og_cPz_noxp7nWLr1WosG7UKhlFKofWLIQ5EQTtWj2TGkXW8
+ w95WcohtKoM9_XF9Zae.ZTx.KtbJxcUJUJ7v.xhyDGurx5TTfipMxUBYgxvlyCWNORcRmsFXpWrV
+ tRDNDzDlLLrpPBnyzqp7xvPERZ_qVn0tdZAhVveSP_OTQO48y0ZKNeuZeYAm20v_Ix0eydF4Tv1K
+ la4fwxt4thf8th8wrudHfhDSTzBDjT9XGTq0o_znsbuB4dGMk4bvzZ0FyPj_iUB6AqmKBzlmTzj9
+ 2kfP83R4ovtM_P5F8jSFJECROYCrdh.X08yHbvDdaZBolT8XsUqhirYVWfkjbrXWAk1VBYufxtnL
+ HJ6lNdNAR2JAcZ1JWB1dz56UIUU6leCrqZyQcsU3_8yaoHihaTKIcv4H54mVTye.W8QpKePChkoo
+ 6gUQ.BgwRI.KerGJvXdvfS_ZUvocrcgrh0DZfal_GScX4kx6ZZ65G2SRtt4Mwr8mb0QlUk830UQW
+ 7lxRLiwPPOqGBbKh74_qKjeBalS6IyL6qv0SmdB9Y8_5sRdR0qCCqA5VdNPum5v3aAFhr6gS8NQp
+ j7GdKrUEA8ir.OSRxEgIopsdVFAW.2JfKsW9cfn6veAp2DggBtgJ_yfMy7vHdGJuSaBGE6EnldUn
+ J_WQbOsIgXd53RYtvP0AyG2PMFYvhT1YqVTOQDEmi3xfoBGA.uEbvG2jtNqBNwhnQpcOIIbGdjZY
+ j5IWgKtYyPeGMJS345UuoJMMpc8ltcEMMsNY_nDIEUT8Ydfv5WZehAHPJp49xJn2_IIOpAa32m4V
+ P7L6B4fz1RlOk_uL_DpUYBM4uQJPvx45m2rL57pMBDKLkt7khqKuykYC8Vo0EumRPdG3v8ZVz0g5
+ up3AmQDbgI_Lh6IPmbnVSPg_DZwj21qoOdXUiZPqdabo5JBtU0hB3sknBWLhaTZysKhuB5JrNEzh
+ A4Ygmql9FCKIJap6Kk1fgm09NprNh7OB0ZrZ5tjbstfm5.SdATlVNZlciRNcxVEsA5HqqxWM_eQO
+ 9woqxQKYuzBc5R.P62ywtsLdis_chT5y9UNbsYt2OrsNd3NmkU1j1xqZdMBwRU2EWOpPh9B5tFpt
+ vBH6CcZyhlEVI4c.0UkIXsrWBuPCegJTRfbPpKxHmce83BbBeOZccfg3PoNBD9.T.XMfPiCvujbs
+ dBkzyfDaHvsz3bqOJoq.DlTlgzmnKGVwPWlGDPjErfiUDTZr0Ijy.s9c2pTdPPIQqSor34x2n7QZ
+ KU4kHjLCHOYKkifULhbLOoBPG..3rMZ3jHvfuIsC_OtJlmt4Z_mix.n1POeTx8_XJNNXZMPd0C67
+ e.6Yy1J3MRkFQ9WwTXWPd_GSffz_AAEQ3KBa8thrKpAM75Wq3wQeBC0jHIequls5H9CuR_89_R1n
+ zRv2bXt8p4371kC_KMoslDirMzxH06vK.V_S4ryBrRUEp9VX.eEP.l6ybEf3zO4PfHMncii3yglL
+ jxLJmSc9sWj5jexO5ivrt8k_5WktF8cwp_Ebp7kDSQVNPozxhFIM9FtIwTeilpswosqsscmTGmtm
+ .UiSUPE1szk5dTr8nZguVKEV4rYLvppm.0UgoDUeeCZYQKqaA2pw4Fuzwnc2ngne6FSP3LUtEcSA
+ WoHPH0IURn16OpP_1gYQOOC3CXbNvuwY.uuJQ8sTQN9g9OXT4.a1jLOXmuTxj7E5bKN6GtkGBSfB
+ BFauxmATnspUR_Yik_MLeQ7jbRKb9xVQvHzzqlTHcpDy8XAljOIC78bd69YzpxUbhePnni2M_vHL
+ PiBtuDp6bfqwE_MMi6kJVOEluvag287I87NhFBmM1ILESxXnuiweeRTziNvtxbnBgAP1gMGlaYup
+ qSrQVuhYY7C587.YkaoSl0eqjMK6BZZmjS96IRnX5gbHPaDW5.oQCRC0DH6g7dpodp05lmrRZcjU
+ rhVUuYGfaQmq.GfN78WFtT3__tgK1vERFR71w3I8nwalvTGyoAnL6RVLID_kwRs.m5gDPXAMw5pV
+ N3wJnIAjpDFSZWlzz4HXrW_VocWDV2LjAu6lxzUZKQpS25YN_aZgHEV.cHEytRyxiBBuh7ikWUC9
+ DODqYyjrc_8s-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Fri, 20 Jan 2023 01:13:16 +0000
+Received: by hermes--production-ne1-749986b79f-sfndk (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c9500df96a050e18d3e1ff2859261def;
+          Fri, 20 Jan 2023 01:13:11 +0000 (UTC)
+Message-ID: <1e14f68c-90ba-f406-f08c-6d62bbfef6a0@schaufler-ca.com>
+Date:   Thu, 19 Jan 2023 17:13:10 -0800
 MIME-Version: 1.0
-References: <CAEiveUd_N8qHy54AS0q90FuUSQ=7mePm8FL88Aw-sY7fT7NqFQ@mail.gmail.com>
- <20230119042244.763779-1-clangllvm@126.com>
-In-Reply-To: <20230119042244.763779-1-clangllvm@126.com>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Fri, 20 Jan 2023 01:26:49 +0100
-X-Gmail-Original-Message-ID: <CACYkzJ4Wu1DCY=r2OW8X2JsEJQq3Dt=baXKhUcZiAHqaa9dptg@mail.gmail.com>
-Message-ID: <CACYkzJ4Wu1DCY=r2OW8X2JsEJQq3Dt=baXKhUcZiAHqaa9dptg@mail.gmail.com>
-Subject: Re: [PATCH V2] bpf: security enhancement by limiting the offensive
- eBPF helpers
-To:     Yi He <clangllvm@126.com>
-Cc:     tixxdz@gmail.com, andrii@kernel.org, ast@kernel.org,
-        bpf@vger.kernel.org, daniel@iogearbox.net, haoluo@google.com,
-        john.fastabend@gmail.com, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, martin.lau@linux.dev,
-        mhiramat@kernel.org, rostedt@goodmis.org, sdf@google.com,
-        song@kernel.org, yhs@fb.com, yhs@meta.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH bpf-next 0/4] Reduce overhead of LSMs with static calls
+To:     KP Singh <kpsingh@kernel.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Cc:     ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
+        renauld@google.com, paul@paul-moore.com, song@kernel.org,
+        revest@chromium.org, keescook@chromium.org, casey@schaufler-ca.com
+References: <20230119231033.1307221-1-kpsingh@kernel.org>
+Content-Language: en-US
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20230119231033.1307221-1-kpsingh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21096 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 19, 2023 at 5:25 AM Yi He <clangllvm@126.com> wrote:
+On 1/19/2023 3:10 PM, KP Singh wrote:
+> # Background
 >
-> The bpf_send_singal, bpf_send_singal_thread and bpf_override_return
-> is similar to bpf_write_user and can affect userspace processes.
-> Thus, these three helpers should also be restricted by security lockdown.
+> LSM hooks (callbacks) are currently invoked as indirect function calls. These
+> callbacks are registered into a linked list at boot time as the order of the
+> LSMs can be configured on the kernel command line with the "lsm=" command line
+> parameter.
 >
-> Signed-off-by: Yi He <clangllvm@126.com>
-> ---
+> Indirect function calls have a high overhead due to retpoline mitigation for
+> various speculative execution attacks.
 >
-> Thanks for you reply.
+> Retpolines remain relevant even with newer generation CPUs as recently
+> discovered speculative attacks, like Spectre BHB need Retpolines to mitigate
+> against branch history injection and still need to be used in combination with
+> newer mitigation features like eIBRS.
 >
-> I have studied this problem for months. I would like to give more details to
->  clarify why these two helpers can break the INTEGRITY and should be lockdown.
+> This overhead is especially significant for the "bpf" LSM which allows the user
+> to implement LSM functionality with eBPF program. In order to facilitate this
+> the "bpf" LSM provides a default callback for all LSM hooks. When enabled,
+> the "bpf" LSM incurs an unnecessary / avoidable indirect call. This is
+> especially bad in OS hot paths (e.g. in the networking stack).
+> This overhead prevents the adoption of bpf LSM on performance critical
+> systems, and also, in general, slows down all LSMs.
 >
-> First, this helpers are only for eBPF tracing programs. LSM-bpf and seccomp do
-> not need them. The documents say the two functions are experimental.
-> Now the eBPF products (e.g., Cillium, Falco) seldom use them but the evil eBPF
-> can abuse them.
+> Since we know the address of the enabled LSM callbacks at compile time and only
+> the order is determined at boot time,
 
-This has got nothing to do with breaking integrity.
+No quite true. A system with Smack and AppArmor compiled in will only
+be allowed to use one or the other.
 
+>  the LSM framework can allocate static
+> calls for each of the possible LSM callbacks and these calls can be updated once
+> the order is determined at boot.
+
+True if you also provide for the single "major" LSM restriction.
+
+> This series is a respin of the RFC proposed by Paul Renauld (renauld@google.com)
+> and Brendan Jackman (jackmanb@google.com) [1]
 >
-> Second, override_return is similar to bpf_write_user can defintely break the
-> INTEGRITY by altering other processes' system call or kernel functions
-> (KProbe)'s return code.
-
-Then any fault injection can break integrity? This is another can of
-worms waiting to be opened here. It's not productive and doesn't help.
-Let's focus on a better / flexible MAC policy here.
-
+> # Performance improvement
 >
-> > Then solution should be toward restricting eBPF in container, there is already
-> > sysctl, per process seccomp, LSM + bpf LSM for that.
-> Yes, the solution is for restricting eBPF in container. But a fine-gained access
-> control is required, such as assigning different eBPF privilege to various containers,
-> rather than just disable eBPF in a container.
+> With this patch-set some syscalls with lots of LSM hooks in their path
+> benefitted at an average of ~3%. Here are the results of the relevant Unixbench
+> system benchmarks with BPF LSM and a major LSM (in this case apparmor) enabled
+> with and without the series.
 >
-You might want to reconsider your threat model about allowing partial
-unprivileged access to eBPF, even if it's partial access. What you are
-eventually going to run into is side channel attacks (please look at
-the recent side channel issues exploited with unprivileged eBPF and
-you don't need "offensive helpers" for these).
+> Benchmark                                               Delta(%): (+ is better)
+> ===============================================================================
+> Execl Throughput                                             +2.9015
+> File Write 1024 bufsize 2000 maxblocks                       +5.4196
+> Pipe Throughput                                              +7.7434
+> Pipe-based Context Switching                                 +3.5118
+> Process Creation                                             +0.3552
+> Shell Scripts (1 concurrent)                                 +1.7106
+> System Call Overhead                                         +3.0067
+> System Benchmarks Index Score (Partial Only):                +3.1809
 
-> The mechanisms you mententioned do not properly sovle the problem.
-> sysctl can only disable the unprivielge
-> users to access eBPF via the kernel.unprivileged_bpf_disabled flag. The untrusted eBPF
-> are installed by privielge users inside a container but can harm the whole system and
-> other shared-kernel containers.
-> seccomp also can only disable the bpf system call to totally disable eBPF while we may
-> need to selectively enable the benign features of eBPF and disallow the offensive features
-> which may be abused.
-> LSM + bpf LSM can implement this functionality. However, it is difficult to identify
-> a process from a container [1] as at many LSM hooks, we can only get a process's pid and
+How about socket creation and packet delivery impact? You'll need to
+use either SELinux or Smack to get those numbers.
 
-It's not difficult. The core primitive is that the container manager
-generates a unique ID per process and sets it on the task blob / local
-storage (this can be flexible on what a definition of a container is
-in your runtime [i.e a mix and match of different namespace ids)].
-This can then be passed on the subprocesses via LSM hooks
-
->  name which can be forged by the mailicous program. A correct way is to use the inode number
->  to set policy for benign processes. Moreover, the LSM bpf's overhead is unacceptable.
-
-BPF LSM is the worst case, but all LSMs have overhead.  I hear you and
-here's my series to address this overhead.
-
-https://lore.kernel.org/bpf/20230119231033.1307221-1-kpsingh@kernel.org/T/#t
-[hasn't been delivered fully by vger yet] so I resent it as
-https://lore.kernel.org/linux-security-module/20230120000818.1324170-3-kpsingh@kernel.org/T/#t
-and, as of now, between them they have most of the patches.
-
+> In the best case, some syscalls like eventfd_create benefitted to about ~10%.
+> The full analysis can be viewed at https://kpsingh.ch/lsm-perf
 >
-> [1]. https://blog.doyensec.com/2022/10/11/ebpf-bypass-security-monitoring.html
+> [1] https://lore.kernel.org/linux-security-module/20200820164753.3256899-1-jackmanb@chromium.org/
 >
-> > Those are more or less same as bpf sending signal. Supervisors are using
-> > seccomp to ret kill process and/or sending signals. Where will you draw the
-> > line? should we go restrict those too? IMHO this does not relate to lockdown.
-> > I don't see that much difference between a seccomp kill and ebpf signal.
+> KP Singh (4):
+>   kernel: Add helper macros for loop unrolling
+>   security: Generate a header with the count of enabled LSMs
+>   security: Replace indirect LSM hook calls with static calls
+>   bpf: Only enable BPF LSM hooks when an LSM program is attached
 >
-> The bpf_send_singal is different to any other signal sending functions as it
-> enables a eBPF tracing program from a container to kill any processes
-> (even the privielge proceess) of the host or other containers.
-> Supervisors and seccomp can only kill its child process. Other signal sending
-> do not need to be restricted as they can not be used inside a container to kill
-> any processes outside of a container.
->
-> > This reasoning will kill any effort to improve sandbox mechanisms that are
-> > moving some functionality from seccomp ret kill to a more flexible and
-> > transparent bpf-LSM model where privileged installs the sandbox. Actually,
-> > we are already doing this and beside eBPF flexibility and transparency
-> > (change policy at runtime without restart) from a _user perspective_
-> We will try to implement alternative mechanisms for constrained eBPF
-> features only since the LSM-bpf have shortages in both flexibility and
->  performance.
->
-> This patch is only for blocking the offensive features of eBPF and avoiding them
-> affecting the INTEGRITY of the container, given that the evil eBPF can abuse these
-> helpers to affect any processes running in inside or outside of the container,
-> sharing the same kernel.
-
-This has got nothing to do with kernel integrity. Please don't try to
-shoe-horn your policy requirements into integrity.
-
-If you really want to go with your threat model and allow partially
-available unprivileged BPF, this should be done via BPF LSM. The
-kernel should not try to adjust its definition of integrity based on a
-rather questionable threat model. Let's fix the LSM overhead and
-unblock flexibility for your use-case.
-
-- KP
-
-
->
-> [1]. https://github.com/Gui774ume/krie/blob/master/ebpf/krie/hooks/lsm.h
->
->  include/linux/security.h | 2 ++
->  kernel/trace/bpf_trace.c | 9 ++++++---
->  2 files changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 5b67f208f..42420e620 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -123,6 +123,8 @@ enum lockdown_reason {
->         LOCKDOWN_DEBUGFS,
->         LOCKDOWN_XMON_WR,
->         LOCKDOWN_BPF_WRITE_USER,
-> +       LOCKDOWN_BPF_SEND_SIGNAL,
-> +       LOCKDOWN_BPF_OVERRIDE_RETURN,
->         LOCKDOWN_DBG_WRITE_KERNEL,
->         LOCKDOWN_RTAS_ERROR_INJECTION,
->         LOCKDOWN_INTEGRITY_MAX,
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index 3bbd3f0c8..fdb94868d 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -1463,9 +1463,11 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
->                 return &bpf_cgrp_storage_delete_proto;
->  #endif
->         case BPF_FUNC_send_signal:
-> -               return &bpf_send_signal_proto;
-> +               return security_locked_down(LOCKDOWN_BPF_SEND_SIGNAL) < 0 ?
-> +                      NULL : &bpf_send_signal_proto;
->         case BPF_FUNC_send_signal_thread:
-> -               return &bpf_send_signal_thread_proto;
-> +               return security_locked_down(LOCKDOWN_BPF_SEND_SIGNAL) < 0 ?
-> +                      NULL : &bpf_send_signal_thread_proto;
->         case BPF_FUNC_perf_event_read_value:
->                 return &bpf_perf_event_read_value_proto;
->         case BPF_FUNC_get_ns_current_pid_tgid:
-> @@ -1531,7 +1533,8 @@ kprobe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
->                 return &bpf_get_stack_proto;
->  #ifdef CONFIG_BPF_KPROBE_OVERRIDE
->         case BPF_FUNC_override_return:
-> -               return &bpf_override_return_proto;
-> +               return security_locked_down(LOCKDOWN_BPF_OVERRIDE_RETURN) < 0 ?
-> +                      NULL : &bpf_override_return_proto;
->  #endif
->         case BPF_FUNC_get_func_ip:
->                 return prog->expected_attach_type == BPF_TRACE_KPROBE_MULTI ?
-> --
-> 2.25.1
+>  include/linux/bpf.h              |   1 +
+>  include/linux/bpf_lsm.h          |   1 +
+>  include/linux/lsm_hooks.h        |  94 +++++++++++--
+>  include/linux/unroll.h           |  35 +++++
+>  kernel/bpf/trampoline.c          |  29 ++++-
+>  scripts/Makefile                 |   1 +
+>  scripts/security/.gitignore      |   1 +
+>  scripts/security/Makefile        |   4 +
+>  scripts/security/gen_lsm_count.c |  57 ++++++++
+>  security/Makefile                |  11 ++
+>  security/bpf/hooks.c             |  26 +++-
+>  security/security.c              | 217 ++++++++++++++++++++-----------
+>  12 files changed, 386 insertions(+), 91 deletions(-)
+>  create mode 100644 include/linux/unroll.h
+>  create mode 100644 scripts/security/.gitignore
+>  create mode 100644 scripts/security/Makefile
+>  create mode 100644 scripts/security/gen_lsm_count.c
 >
