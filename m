@@ -2,116 +2,107 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC00CC05027
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 19:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF25C27C76
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 19:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229526AbjATTkb (ORCPT
+        id S229501AbjATTnU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Jan 2023 14:40:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36870 "EHLO
+        Fri, 20 Jan 2023 14:43:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjATTkb (ORCPT
+        with ESMTP id S229445AbjATTnT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Jan 2023 14:40:31 -0500
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7156D59B78
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Jan 2023 11:40:30 -0800 (PST)
-Received: by mail-pg1-x530.google.com with SMTP id 78so4924140pgb.8
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Jan 2023 11:40:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g9rk3wSJYDen1bQJK/Grwb+UARFZene4MCi4bul4wfg=;
-        b=f+VkXPJiJfVg0gQc9Cz9ulWT1cagCuiuGo1S+jk/Xfohis/QpnrhUdaGf6+c1MyxKl
-         mCYITt4BnIvA3ZdjWxdcNcoE2EPVB1kuDFpJ3BuXqDfwuOL2B6yNYSpZCcnMNEPMxye1
-         BIldwuX6jV9JrJ0sYli//u69QbwD97ATMeRyY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g9rk3wSJYDen1bQJK/Grwb+UARFZene4MCi4bul4wfg=;
-        b=tI5AdtIhcLsjNY35molqw5Rc9EnzshkWIir1LhzJueNngxLFK9xP0jdJObdfYP/K6w
-         3IM4OSxFNB8T7kMGbrMqM5Dzl/lD+P+P4BeOBHthXLgEkGLZgWmiUGHRuHj/DJsr6Dvc
-         Pvw74upa/OqID1do0pQBJNhMLRxVsCsEFgmQ/0JrKrxJ9HbhJeSNP/Yy15u0p9SkRJRB
-         P8f3gFB82XQzCd4GA7t0qJliCqYI5L6vU/PifasAQb8YzbDTimpfN68EsIL8LG9/mTV6
-         3M9Gb0DkG+qrz5V5ByYHDoc/pobdC5YaYDcd91oAyu7GFJFUBWMVrsJJBJPE6gFcujuZ
-         BoZw==
-X-Gm-Message-State: AFqh2kpC7sH6/KCOakSGRBPNxyIo2szlAJ1SOTeTRM8uf5km5Dy9XhS5
-        5fVGIIzYIf1tf7sga6ktdx3hfg==
-X-Google-Smtp-Source: AMrXdXtda4qIv4lo54po2/BkemEYycrwcg+xo4uHR7ZvkSKzQ86OezBkepBV+lz/d44ZLesVsPjpyw==
-X-Received: by 2002:a62:38d8:0:b0:582:ca4d:f6a7 with SMTP id f207-20020a6238d8000000b00582ca4df6a7mr40638208pfa.4.1674243629982;
-        Fri, 20 Jan 2023 11:40:29 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id z188-20020a6265c5000000b0055f209690c0sm25528964pfb.50.2023.01.20.11.40.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jan 2023 11:40:29 -0800 (PST)
-Date:   Fri, 20 Jan 2023 11:40:28 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Kui-Feng Lee <sinquersw@gmail.com>
-Cc:     KP Singh <kpsingh@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
-        renauld@google.com, paul@paul-moore.com, song@kernel.org,
-        revest@chromium.org
-Subject: Re: [PATCH bpf-next 2/4] security: Generate a header with the count
- of enabled LSMs
-Message-ID: <202301201137.93A66D1C76@keescook>
-References: <20230119231033.1307221-1-kpsingh@kernel.org>
- <20230119231033.1307221-3-kpsingh@kernel.org>
- <5e99e2d6-30a8-ea94-d911-de272a2a0a69@schaufler-ca.com>
- <CACYkzJ5LwLD_yo=b5MMvpDUBGJ_puzr2TLYEK-DR3NRDRwgSLw@mail.gmail.com>
- <9bf988ba-3f16-a402-2110-107cebfa7025@gmail.com>
+        Fri, 20 Jan 2023 14:43:19 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AA4A5866C;
+        Fri, 20 Jan 2023 11:43:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 357ED62060;
+        Fri, 20 Jan 2023 19:43:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35A22C433EF;
+        Fri, 20 Jan 2023 19:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674243797;
+        bh=azOg0MIqYgKZS8GLqeUG5CB0Bpkb5f04dnPdSV/ttvc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lJs5IIjiYFj4SGVJPv2J6v/Ih37u+/uQw4RC/a0I0rzUz5tHk1RwstedXglHB5mcq
+         P/z6F0ielD3/03MV6vnDM5xeQjG/mhVTwyCwSVtLiQ052Zc7Eqd6NIRF55KbpMkt19
+         r9VrSgIqRHdVLoTP0fRcPvd2bj4xgw9vqWvWsDrjHBhlfdLCytEA0BUzKVIoiqDz8u
+         IYC+RJAfx2kbJQjfdErbudYKt9VUswCRCifRspnBhjpAwyKkmVSIBmjllQALPwirIJ
+         fuTSMPABDmcde5kZJB2WsOXzydFd8SZYL6DWoGoEDZ3ljL1iJYhdni9rMMCRReQwMm
+         WneOTKnP9/J9Q==
+Date:   Fri, 20 Jan 2023 11:43:15 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Roberto Sassu <roberto.sassu@huaweicloud.com>, dhowells@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH] public_key: Add a comment to public_key_signature struct
+ definition
+Message-ID: <Y8ru09KeMwwaU/IS@sol.localdomain>
+References: <20221207105430.248613-1-roberto.sassu@huaweicloud.com>
+ <CAHC9VhRSLh9y7KBCOhpvK2cwPmhyMr2dudhjcsEZ-Qmovi86Nw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9bf988ba-3f16-a402-2110-107cebfa7025@gmail.com>
+In-Reply-To: <CAHC9VhRSLh9y7KBCOhpvK2cwPmhyMr2dudhjcsEZ-Qmovi86Nw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 20, 2023 at 10:35:02AM -0800, Kui-Feng Lee wrote:
-> The following idea should work with the use case here.
+On Fri, Jan 20, 2023 at 02:21:04PM -0500, Paul Moore wrote:
+> On Wed, Dec 7, 2022 at 5:55 AM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> >
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >
+> > public_key_verify_signature() calls sg_set_buf() to set the signature and
+> > digest for the signature verification.
+> >
+> > As sg_set_buf() requires the buffer to be in physically contiguous memory,
+> > see commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in
+> > linear mapping"), mention that in a comment for the signature and digest
+> > fields of the public_key_signature structure.
+> >
+> > Link: https://lore.kernel.org/linux-integrity/Y4pIpxbjBdajymBJ@sol.localdomain/
+> > Suggested-by: Eric Biggers <ebiggers@kernel.org>
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  include/crypto/public_key.h | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> #define COUNT_8(x, y...) 8
-> #define COUNT_7(x, y...) 7
-> #define COUNT_6(x, y...) 6
-> #define COUNT_5(x, y...) 5
-> #define COUNT_4(x, y...) 4
-> #define COUNT_3(x, y...) 3
-> #define COUNT_2(x, y...) 2
-> #define COUNT_1(x, y...) 1
-> #define COUNT_0(x, y...) 0
-> #define COUNT1_8(x, y...) COUNT ## x ## _9(y)
-> #define COUNT1_7(x, y...) COUNT ## x ## _8(y)
-> #define COUNT1_6(x, y...) COUNT ## x ## _7(y)
-> #define COUNT1_5(x, y...) COUNT ## x ## _6(y)
-> #define COUNT1_4(x, y...) COUNT ## x ## _5(y)
-> #define COUNT1_3(x, y...) COUNT ## x ## _4(y)
-> #define COUNT1_2(x, y...) COUNT ## x ## _3(y)
-> #define COUNT1_1(x, y...) COUNT ## x ## _2(y)
-> #define COUNT1_0(x, y...) COUNT ## x ## _1(y)
-> #define COUNT(x, y...) COUNT ## x ## _0(y)
+> This seems especially important considering the BUG_ON that could be triggered.
 > 
-> #define COUNT_EXPAND(x...) COUNT(x)
+> David, are you going to pick this up?
 > 
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
 > 
-> #if IS_ENABLED(CONFIG_SECURITY_SELINUX)
-> #define SELINUX_ENABLE 1,
-> #else
-> #define SELINUX_ENABLE
-> #endif
-> #if IS_ENABLED(CONFIG_SECURITY_XXXX)
-> #define XXX_ENABLE 1,
-> #else
-> #define XXX_ENABLE
-> #endif
-> ....
-> 
-> #define MAX_LSM_COUNT COUNT_EXPAND(SELINUX_ENABLE XXX_ENABLE ......)
+> > diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
+> > index 68f7aa2a7e55..6d623e063034 100644
+> > --- a/include/crypto/public_key.h
+> > +++ b/include/crypto/public_key.h
+> > @@ -37,8 +37,8 @@ extern void public_key_free(struct public_key *key);
+> >   */
+> >  struct public_key_signature {
+> >         struct asymmetric_key_id *auth_ids[3];
+> > -       u8 *s;                  /* Signature */
+> > -       u8 *digest;
+> > +       u8 *s;                  /* Signature (in physically contiguous mem) */
+> > +       u8 *digest;             /* Digest (in physically contiguous mem) */
+> >         u32 s_size;             /* Number of bytes in signature */
+> >         u32 digest_size;        /* Number of bytes in digest */
+> >         const char *pkey_algo;
+> > --
+> > 2.25.1
 
-Oh, I love it! :) Yup, that should do it nicely.
+This patch has been superseded by
+"KEYS: asymmetric: Copy sig and digest in public_key_verify_signature()"
+(https://lore.kernel.org/r/20221227142740.2807136-1-roberto.sassu@huaweicloud.com).
 
--- 
-Kees Cook
+- Eric
