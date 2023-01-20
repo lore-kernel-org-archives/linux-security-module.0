@@ -2,158 +2,138 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17476C004D4
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 02:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB64C38159
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 03:48:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229489AbjATCSJ (ORCPT
+        id S229490AbjATDsg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 Jan 2023 21:18:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37198 "EHLO
+        Thu, 19 Jan 2023 22:48:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjATCSI (ORCPT
+        with ESMTP id S229458AbjATDsf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 Jan 2023 21:18:08 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D85F69D288
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Jan 2023 18:18:05 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7EC9861DDB
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Jan 2023 02:18:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D81E4C433F1
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Jan 2023 02:18:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674181084;
-        bh=2PrCTaCjkG8rOBsJOOm3wGXslPkcR1xqq6T6pH+p4mU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=PqxjX0ggvA7R9rfBXXusaZDIcceEg1DYdnJ7xLgRe/3SLqTnE18HUasJJZxxULfaC
-         rflk6KgwF8cj+CgvU8NdAWl5TNfwzj2KCT88kK2GpAScmrWS5C25mh3YvI2JbiDRAS
-         hjNMx9lep3P4LtDu7KY+mfTyodiBH1ZW+HlP8bUuJMXa1lusVLZADqnfh4cqz4GIfI
-         k7VsAloadx7NAsGaJL/49CEB9m29DyrKXmDBDSYfACZHMgWCz3a4lxFgBcGRrd/X/G
-         IUkhX0wE1ClMJXYVK7RmCxMCOzs/yYZTt/5yJglHmi0Xb9ws7qa5bzGvqT0Ch4GqOz
-         PxwNejohSddOw==
-Received: by mail-ej1-f43.google.com with SMTP id v6so10553972ejg.6
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Jan 2023 18:18:04 -0800 (PST)
-X-Gm-Message-State: AFqh2kqJJkeq+leaYNZ1c2RaMDls6qvOmg+uzBg+/gs2BODQxyarB9/j
-        OPvpaNnSYM+mv0micBZDsL4emi+PIM92S8iHdmqGug==
-X-Google-Smtp-Source: AMrXdXsKS69bduFdqEDXQPj4B6yMaPqYxzlAnuiOv6G42gYiDX+uCuVbm4APDAoGQ2o6hqLDoDqlGRXzop783N+YeSw=
-X-Received: by 2002:a17:906:78d:b0:855:d6ed:60d8 with SMTP id
- l13-20020a170906078d00b00855d6ed60d8mr872102ejc.302.1674181083112; Thu, 19
- Jan 2023 18:18:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20230119231033.1307221-1-kpsingh@kernel.org> <1e14f68c-90ba-f406-f08c-6d62bbfef6a0@schaufler-ca.com>
-In-Reply-To: <1e14f68c-90ba-f406-f08c-6d62bbfef6a0@schaufler-ca.com>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Fri, 20 Jan 2023 03:17:52 +0100
-X-Gmail-Original-Message-ID: <CACYkzJ6DEegggQBRJwe0Z2gChfxficOVmoe2K5mjAx7Zq0aApw@mail.gmail.com>
-Message-ID: <CACYkzJ6DEegggQBRJwe0Z2gChfxficOVmoe2K5mjAx7Zq0aApw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/4] Reduce overhead of LSMs with static calls
-To:     Casey Schaufler <casey@schaufler-ca.com>
+        Thu, 19 Jan 2023 22:48:35 -0500
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9683B7D657
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Jan 2023 19:48:33 -0800 (PST)
+Received: by mail-pg1-x52a.google.com with SMTP id b6so3181927pgi.7
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Jan 2023 19:48:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5xYlYYwidFMsYGMcEAqTW/TSYKnVvBTImcdKv0esWOg=;
+        b=I/hCvBgArkRJYrKjLErfJ1lV42+ANPGFDVtEjg6t987XpBK3FBhyVvno/lo4aSL/dT
+         PbuweWutUZ+PwzDMbE9ARqEpJ4VlkEB7BmhMUcYqaXJCEIfzK/wy2yok7ogGYaPEERa8
+         ++kpPOQJ2yDe+cLBQUaU3kKK08drO+kynVThk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5xYlYYwidFMsYGMcEAqTW/TSYKnVvBTImcdKv0esWOg=;
+        b=uRGd8/VKT0n32LgEPkVH1IoGX0Ea8UdkpP8hxxA+2Fp+NO5SVvqE8eR/u3EHgtDaiF
+         SVo5vPQMMbp4dzXAHqqKagP3KkN7ROV2es+DUlTddtfOihbSGu+h+TI3A+RRRW/5aabp
+         pjVVWwrh/pAZf8XhwHyWHXqiBF1n+5sLyXaNTwjYzSQSEn+jMeV3ekBtAgLD6If6lJKf
+         lYc05ha5AzwbwXTWuRxspHQFPf4z9RfR8RVBDi0kpgIBfHE/kMnSr7RM6OFqLPvkrH27
+         k9r5bnoq0YnWh3SBZy1FKOFVGIid49JSZCLtkYAqnk5n76/DHe1l5ubGbmzAWlOprdJH
+         A+Kg==
+X-Gm-Message-State: AFqh2kpESU8lN3DF1v9sFi+dedNQyZ89y6H82NJOhCfkvunb9b9i5Qqy
+        t6I96fhqj8ujA70nbn2JFXpikg==
+X-Google-Smtp-Source: AMrXdXuax1LzobrWZKP/qQYBYMBg3lpUvoOqNaUBZ09TA0aRtS+pTYsDlgKqY/lBz5hhwaYk+J6s4g==
+X-Received: by 2002:aa7:88d5:0:b0:58d:a683:bb2d with SMTP id k21-20020aa788d5000000b0058da683bb2dmr18113345pff.30.1674186513080;
+        Thu, 19 Jan 2023 19:48:33 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id v4-20020a626104000000b0058de0998f17sm4629415pfb.154.2023.01.19.19.48.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jan 2023 19:48:32 -0800 (PST)
+Date:   Thu, 19 Jan 2023 19:48:31 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     KP Singh <kpsingh@kernel.org>
 Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
         ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
-        renauld@google.com, paul@paul-moore.com, song@kernel.org,
-        revest@chromium.org, keescook@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+        renauld@google.com, paul@paul-moore.com, casey@schaufler-ca.com,
+        song@kernel.org, revest@chromium.org
+Subject: Re: [PATCH RESEND bpf-next 1/4] kernel: Add helper macros for loop
+ unrolling
+Message-ID: <202301191938.A7465D123@keescook>
+References: <20230120000818.1324170-1-kpsingh@kernel.org>
+ <20230120000818.1324170-2-kpsingh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230120000818.1324170-2-kpsingh@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 20, 2023 at 2:13 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 1/19/2023 3:10 PM, KP Singh wrote:
-> > # Background
-> >
-> > LSM hooks (callbacks) are currently invoked as indirect function calls. These
-> > callbacks are registered into a linked list at boot time as the order of the
-> > LSMs can be configured on the kernel command line with the "lsm=" command line
-> > parameter.
-> >
-> > Indirect function calls have a high overhead due to retpoline mitigation for
-> > various speculative execution attacks.
-> >
-> > Retpolines remain relevant even with newer generation CPUs as recently
-> > discovered speculative attacks, like Spectre BHB need Retpolines to mitigate
-> > against branch history injection and still need to be used in combination with
-> > newer mitigation features like eIBRS.
-> >
-> > This overhead is especially significant for the "bpf" LSM which allows the user
-> > to implement LSM functionality with eBPF program. In order to facilitate this
-> > the "bpf" LSM provides a default callback for all LSM hooks. When enabled,
-> > the "bpf" LSM incurs an unnecessary / avoidable indirect call. This is
-> > especially bad in OS hot paths (e.g. in the networking stack).
-> > This overhead prevents the adoption of bpf LSM on performance critical
-> > systems, and also, in general, slows down all LSMs.
-> >
-> > Since we know the address of the enabled LSM callbacks at compile time and only
-> > the order is determined at boot time,
->
-> No quite true. A system with Smack and AppArmor compiled in will only
-> be allowed to use one or the other.
->
-> >  the LSM framework can allocate static
-> > calls for each of the possible LSM callbacks and these calls can be updated once
-> > the order is determined at boot.
->
-> True if you also provide for the single "major" LSM restriction.
->
-> > This series is a respin of the RFC proposed by Paul Renauld (renauld@google.com)
-> > and Brendan Jackman (jackmanb@google.com) [1]
-> >
-> > # Performance improvement
-> >
-> > With this patch-set some syscalls with lots of LSM hooks in their path
-> > benefitted at an average of ~3%. Here are the results of the relevant Unixbench
-> > system benchmarks with BPF LSM and a major LSM (in this case apparmor) enabled
-> > with and without the series.
-> >
-> > Benchmark                                               Delta(%): (+ is better)
-> > ===============================================================================
-> > Execl Throughput                                             +2.9015
-> > File Write 1024 bufsize 2000 maxblocks                       +5.4196
-> > Pipe Throughput                                              +7.7434
-> > Pipe-based Context Switching                                 +3.5118
-> > Process Creation                                             +0.3552
-> > Shell Scripts (1 concurrent)                                 +1.7106
-> > System Call Overhead                                         +3.0067
-> > System Benchmarks Index Score (Partial Only):                +3.1809
->
-> How about socket creation and packet delivery impact? You'll need to
-> use either SELinux or Smack to get those numbers.
+On Fri, Jan 20, 2023 at 01:08:15AM +0100, KP Singh wrote:
+> This helps in easily initializing blocks of code (e.g. static calls and
+> keys).
+> 
+> UNROLL(N, MACRO, __VA_ARGS__) calls MACRO N times with the first
+> argument as the index of the iteration. This allows string pasting to
+> create unique tokens for variable names, function calls etc.
+> 
+> As an example:
+> 
+> 	#include <linux/unroll.h>
+> 
+> 	#define MACRO(N, a, b)            \
+> 		int add_##N(int a, int b) \
+> 		{                         \
+> 			return a + b + N; \
+> 		}
+> 
+> 	UNROLL(2, MACRO, x, y)
+> 
+> expands to:
+> 
+> 	int add_0(int x, int y)
+> 	{
+> 		return x + y + 0;
+> 	}
+> 
+> 	int add_1(int x, int y)
+> 	{
+> 		return x + y + 1;
+> 	}
+> 
+> Signed-off-by: KP Singh <kpsingh@kernel.org>
+> ---
+>  include/linux/unroll.h | 35 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 include/linux/unroll.h
+> 
+> diff --git a/include/linux/unroll.h b/include/linux/unroll.h
+> new file mode 100644
+> index 000000000000..e19aef95b94b
+> --- /dev/null
+> +++ b/include/linux/unroll.h
+> @@ -0,0 +1,35 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +/*
+> + * Copyright (C) 2020 Google LLC.
+> + */
+> +
+> +#ifndef __UNROLL_H
+> +#define __UNROLL_H
+> +
+> +#define __UNROLL_CONCAT(a, b) a ## _ ## b
 
-I think the goal here is to show that hot paths are beneficial, and
-the results are pretty clear from this. I have an even more detailed
-analysis in https://kpsingh.ch/lsm-perf as to what happens when the
-static calls are enabled v/s not enabled. I don't have the socket
-numbers, but I expect this to be very similar to pipes. Is there a
-particular Unixbench test you want me to run?
+#include <linux/kernel.h>
+and just use CONCATENATE
 
->
-> > In the best case, some syscalls like eventfd_create benefitted to about ~10%.
-> > The full analysis can be viewed at https://kpsingh.ch/lsm-perf
-> >
-> > [1] https://lore.kernel.org/linux-security-module/20200820164753.3256899-1-jackmanb@chromium.org/
-> >
-> > KP Singh (4):
-> >   kernel: Add helper macros for loop unrolling
-> >   security: Generate a header with the count of enabled LSMs
-> >   security: Replace indirect LSM hook calls with static calls
-> >   bpf: Only enable BPF LSM hooks when an LSM program is attached
-> >
-> >  include/linux/bpf.h              |   1 +
-> >  include/linux/bpf_lsm.h          |   1 +
-> >  include/linux/lsm_hooks.h        |  94 +++++++++++--
-> >  include/linux/unroll.h           |  35 +++++
-> >  kernel/bpf/trampoline.c          |  29 ++++-
-> >  scripts/Makefile                 |   1 +
-> >  scripts/security/.gitignore      |   1 +
-> >  scripts/security/Makefile        |   4 +
-> >  scripts/security/gen_lsm_count.c |  57 ++++++++
-> >  security/Makefile                |  11 ++
-> >  security/bpf/hooks.c             |  26 +++-
-> >  security/security.c              | 217 ++++++++++++++++++++-----------
-> >  12 files changed, 386 insertions(+), 91 deletions(-)
-> >  create mode 100644 include/linux/unroll.h
-> >  create mode 100644 scripts/security/.gitignore
-> >  create mode 100644 scripts/security/Makefile
-> >  create mode 100644 scripts/security/gen_lsm_count.c
-> >
+> +#define UNROLL(N, MACRO, args...) __UNROLL_CONCAT(__UNROLL, N)(MACRO, args)
+
+Which would be, and it just loses the _, which isn't important here:
+#define UNROLL(N, MACRO, args...) CONCATENATE(__UNROLL, N)(MACRO, args)
+
+> +#define __UNROLL_0(MACRO, args...)
+> +#define __UNROLL_1(MACRO, args...)  __UNROLL_0(MACRO, args)  MACRO(0, args)
+
+But yeah, I like it. It's an expression version of the __MAP() macro
+used by the syscall wrappers for arguments.
+
+-- 
+Kees Cook
