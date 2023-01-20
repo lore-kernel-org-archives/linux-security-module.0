@@ -2,123 +2,179 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 659F5C27C76
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 20:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F836C27C76
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Jan 2023 20:45:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230261AbjATUQm (ORCPT
+        id S229537AbjATUpt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Jan 2023 15:16:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33156 "EHLO
+        Fri, 20 Jan 2023 15:45:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230240AbjATUQl (ORCPT
+        with ESMTP id S229456AbjATUps (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Jan 2023 15:16:41 -0500
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAD58A5007
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Jan 2023 12:16:40 -0800 (PST)
-Received: by mail-pl1-x636.google.com with SMTP id b17so6300941pld.7
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Jan 2023 12:16:40 -0800 (PST)
+        Fri, 20 Jan 2023 15:45:48 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCF369D291
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Jan 2023 12:45:46 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id v23so6387695plo.1
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Jan 2023 12:45:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RFrFWK6Yuz4He+Q+Dd7A5b23oGgMXF7yIM0sMxwjnok=;
-        b=GEtp91po33uJf+p1P5Hc5s/2tlvFCr7HQo8fMdtWdFwOAKV/cTbo4kIAQnDjNlZDjU
-         14vOnNGtt87RBXe3J1jpz5oAeoA31b2snqnMZHdgwsEtFs1hzmAdRFMriSqk3OVzCQiN
-         nZQVn75hMHzF/9+WXFXvcDX9dIl3pVF/+sJQTfiM+xfVJLlR6LS2ggokyEeCGRBm6Igk
-         v1VzjEnio1hBX2if1z5QARkEPtO0eK7lA4d0OyvLyhSy8ifs6a+zrGeZeyB3ymBIZLTS
-         LAMgOey1bNWRBY9DgftgDtvvBLiUKR7p7PX7twdgkAsiumDnsGuMJIsaBH5JVIqEwTh6
-         12Uw==
+        bh=x62E/nl+ONbICiSsmar4KjRWoAfoTSBdrOdf9qKQras=;
+        b=LlMl9c3NNGZmycFs5fSTn3CIyY+wd5nQUAS9vIqtV2A1S10Snz9ztD6ABsdBAIJMRX
+         oOqyZ9S+OA9lpbBymTACh/JWRKDGwvqeTHfjPnQKyCRpvfE8/kR08j3fH1/fBHcmzXW+
+         TameGWN6nJVw0vttTbxWtt9aJX7iXSs3sRQbx3v6Im2BnGLE8bw+ILl7oI/tGr8nE3K9
+         w0W39/8ApnDEXH2dAz1PRBoVc6nRzQCJet7n6Dt4cJAHBnHCBFVZCcL2Cuuj+41U6mTN
+         5YH9HJS4Zk1qsDfsPa38q/o9UzgT13gMNA75WHbP8gGNlwakrQWhF/PC1Ia7CBB96akN
+         hkbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RFrFWK6Yuz4He+Q+Dd7A5b23oGgMXF7yIM0sMxwjnok=;
-        b=g4zvHkUwOfO7ntKZuEbz8U94YwpBwF5sACASMJWo+tFhWJjyTuIpBxDAuUpjDVNy5U
-         2XSD53dpybdgCAcjAdIZtuqoCkgTI+IfWxhQ1251X9eEc2QuSt61Z27dI8nqrJNbzGEC
-         OwKZeurstbSP4h3hHKCO1696s/9sekKI9i9+4Q6n1heFtbpK5L736uKx8R8ZOzMLJ69n
-         kms3bYQIcuJBojMLgFqMrT8qVyVlHqB4v0h9mSKhZYH3XRYKAocItkgsQ8+ybx7W1HfX
-         hvJuS6IEvuVqaR9BxkacMyDhxNjOl2AnNr17Ap5+/urBDbAtWRUgfsx04ZAnXHEYgtdz
-         l7zQ==
-X-Gm-Message-State: AFqh2koMcPWYz040SJx8OsBHeod+1jgaEJZJjUCH9J9i8mjFMez70NDX
-        3IPiFGlf5EzRbSJ6vrQyDhJObgdqo9vIXjRgis+s
-X-Google-Smtp-Source: AMrXdXuIJAna3jkn3HiysLFrRqrv7OboK2tJCEm7+hxOFIuo7F9HcZsXCZ1R/smMHmOl8DKk/3Z2TPkdG70lEMoVXF4=
-X-Received: by 2002:a17:902:b496:b0:172:86a2:8e68 with SMTP id
- y22-20020a170902b49600b0017286a28e68mr1610008plr.27.1674245800136; Fri, 20
- Jan 2023 12:16:40 -0800 (PST)
+        bh=x62E/nl+ONbICiSsmar4KjRWoAfoTSBdrOdf9qKQras=;
+        b=JoKmwp93GPFG4wjO0sJm9f0RPHuzcdm5ETWS1ZhJFz6I7FbjeD7A2OYZyVE0PI8Yyw
+         3/cIWRARlur3FON1ExqxzUtV0Mk2K415ZF5w/1Hz1MauD0POByJ1UciYzIJzHVOT5Aih
+         CprlaExD/zjIsukr+aHZSFnWKaJt2pMWVoQVTTBviY93xczuUWLmVOXA3r8aALiSeQpU
+         4ptHD3X7aZFJ5dozmdoV03U3l5rWmKz+64/PwidNOBlsDRfpJlVL0e2tmCYpuAcybKk8
+         ALnc3yUigQcuiUluAkM3dwNQJwNNrUrjaKbaYFL1MCzNNSomNXaTryciKmdYiPvupWKf
+         EiEA==
+X-Gm-Message-State: AFqh2kqaZswARhuLq45yPaT6UxGSiHlx2nn9HQzleLD6Qnt8antXGbud
+        2H5pjrRtAqchBJi7BrwvNGsxpeySF3Srp7Whimk+
+X-Google-Smtp-Source: AMrXdXvQWGH+TfxgJ4yUEtio0sfEpYaSLEATZ2oGg7OHBsGmzao1b/xL9lJ3//JRhrCw2Td14bRYp8jbP4onPyGj+Rw=
+X-Received: by 2002:a17:90a:17a1:b0:229:9ffe:135b with SMTP id
+ q30-20020a17090a17a100b002299ffe135bmr1730636pja.72.1674247546190; Fri, 20
+ Jan 2023 12:45:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20221207105430.248613-1-roberto.sassu@huaweicloud.com>
- <CAHC9VhRSLh9y7KBCOhpvK2cwPmhyMr2dudhjcsEZ-Qmovi86Nw@mail.gmail.com> <Y8ru09KeMwwaU/IS@sol.localdomain>
-In-Reply-To: <Y8ru09KeMwwaU/IS@sol.localdomain>
+References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
+In-Reply-To: <20230116212105.1840362-2-mjguzik@gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 20 Jan 2023 15:16:28 -0500
-Message-ID: <CAHC9VhSfr2Re6ZV6_USdvw__c1ou87uM6K_MF1wm-ENdEY7X5Q@mail.gmail.com>
-Subject: Re: [PATCH] public_key: Add a comment to public_key_signature struct definition
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Roberto Sassu <roberto.sassu@huaweicloud.com>, dhowells@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Fri, 20 Jan 2023 15:45:34 -0500
+Message-ID: <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, serge@hallyn.com,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 20, 2023 at 2:43 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> On Fri, Jan 20, 2023 at 02:21:04PM -0500, Paul Moore wrote:
-> > On Wed, Dec 7, 2022 at 5:55 AM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > >
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > >
-> > > public_key_verify_signature() calls sg_set_buf() to set the signature and
-> > > digest for the signature verification.
-> > >
-> > > As sg_set_buf() requires the buffer to be in physically contiguous memory,
-> > > see commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in
-> > > linear mapping"), mention that in a comment for the signature and digest
-> > > fields of the public_key_signature structure.
-> > >
-> > > Link: https://lore.kernel.org/linux-integrity/Y4pIpxbjBdajymBJ@sol.localdomain/
-> > > Suggested-by: Eric Biggers <ebiggers@kernel.org>
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >  include/crypto/public_key.h | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > This seems especially important considering the BUG_ON that could be triggered.
-> >
-> > David, are you going to pick this up?
-> >
-> > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> >
-> > > diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
-> > > index 68f7aa2a7e55..6d623e063034 100644
-> > > --- a/include/crypto/public_key.h
-> > > +++ b/include/crypto/public_key.h
-> > > @@ -37,8 +37,8 @@ extern void public_key_free(struct public_key *key);
-> > >   */
-> > >  struct public_key_signature {
-> > >         struct asymmetric_key_id *auth_ids[3];
-> > > -       u8 *s;                  /* Signature */
-> > > -       u8 *digest;
-> > > +       u8 *s;                  /* Signature (in physically contiguous mem) */
-> > > +       u8 *digest;             /* Digest (in physically contiguous mem) */
-> > >         u32 s_size;             /* Number of bytes in signature */
-> > >         u32 digest_size;        /* Number of bytes in digest */
-> > >         const char *pkey_algo;
-> > > --
-> > > 2.25.1
+On Mon, Jan 16, 2023 at 4:21 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
 >
-> This patch has been superseded by
-> "KEYS: asymmetric: Copy sig and digest in public_key_verify_signature()"
-> (https://lore.kernel.org/r/20221227142740.2807136-1-roberto.sassu@huaweicloud.com).
+> access(2) remains commonly used, for example on exec:
+> access("/etc/ld.so.preload", R_OK)
+>
+> or when running gcc: strace -c gcc empty.c
+> % time     seconds  usecs/call     calls    errors syscall
+> ------ ----------- ----------- --------- --------- ----------------
+>   0.00    0.000000           0        42        26 access
+>
+> It falls down to do_faccessat without the AT_EACCESS flag, which in turn
+> results in allocation of new creds in order to modify fsuid/fsgid and
+> caps. This is a very expensive process single-threaded and most notably
+> multi-threaded, with numerous structures getting refed and unrefed on
+> imminent new cred destruction.
+>
+> Turns out for typical consumers the resulting creds would be identical
+> and this can be checked upfront, avoiding the hard work.
+>
+> An access benchmark plugged into will-it-scale running on Cascade Lake
+> shows:
+> test    proc    before  after
+> access1 1       1310582 2908735  (+121%)  # distinct files
+> access1 24      4716491 63822173 (+1353%) # distinct files
+> access2 24      2378041 5370335  (+125%)  # same file
 
-Well nevermind then :)
+Out of curiosity, do you have any measurements of the impact this
+patch has on the AT_EACCESS case when the creds do need to be
+modified?
+
+> The above benchmarks are not integrated into will-it-scale, but can be
+> found in a pull request:
+> https://github.com/antonblanchard/will-it-scale/pull/36/files
+>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+>
+> v2:
+> - fix current->cred usage warn reported by the kernel test robot
+> Link: https://lore.kernel.org/all/202301150709.9EC6UKBT-lkp@intel.com/
+> ---
+>  fs/open.c | 32 +++++++++++++++++++++++++++++++-
+>  1 file changed, 31 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/open.c b/fs/open.c
+> index 82c1a28b3308..3c068a38044c 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -367,7 +367,37 @@ COMPAT_SYSCALL_DEFINE6(fallocate, int, fd, int, mode, compat_arg_u64_dual(offset
+>   * access() needs to use the real uid/gid, not the effective uid/gid.
+>   * We do this by temporarily clearing all FS-related capabilities and
+>   * switching the fsuid/fsgid around to the real ones.
+> + *
+> + * Creating new credentials is expensive, so we try to skip doing it,
+> + * which we can if the result would match what we already got.
+>   */
+> +static bool access_need_override_creds(int flags)
+> +{
+> +       const struct cred *cred;
+> +
+> +       if (flags & AT_EACCESS)
+> +               return false;
+> +
+> +       cred = current_cred();
+> +       if (!uid_eq(cred->fsuid, cred->uid) ||
+> +           !gid_eq(cred->fsgid, cred->gid))
+> +               return true;
+> +
+> +       if (!issecure(SECURE_NO_SETUID_FIXUP)) {
+> +               kuid_t root_uid = make_kuid(cred->user_ns, 0);
+> +               if (!uid_eq(cred->uid, root_uid)) {
+> +                       if (!cap_isclear(cred->cap_effective))
+> +                               return true;
+> +               } else {
+> +                       if (!cap_isidentical(cred->cap_effective,
+> +                           cred->cap_permitted))
+> +                               return true;
+> +               }
+> +       }
+> +
+> +       return false;
+> +}
+
+I worry a little that with nothing connecting
+access_need_override_creds() to access_override_creds() there is a bug
+waiting to happen if/when only one of the functions is updated.
+
+Given the limited credential changes in access_override_creds(), I
+wonder if a better solution would be to see if we could create a
+light(er)weight prepare_creds()/override_creds() that would avoid some
+of the prepare_creds() hotspots (I'm assuming that is where most of
+the time is being spent).  It's possible this could help improve the
+performance of other, similar operations that need to modify task
+creds for a brief, and synchronous, period of time.
+
+Have you done any profiling inside of access_override_creds() to see
+where the most time is spent?  Looking at the code I have some gut
+feelings on the hotspots, but it would be good to see some proper data
+before jumping to any conclusions.
+
+>  static const struct cred *access_override_creds(void)
+>  {
+>         const struct cred *old_cred;
+> @@ -436,7 +466,7 @@ static long do_faccessat(int dfd, const char __user *filename, int mode, int fla
+>         if (flags & AT_EMPTY_PATH)
+>                 lookup_flags |= LOOKUP_EMPTY;
+>
+> -       if (!(flags & AT_EACCESS)) {
+> +       if (access_need_override_creds(flags)) {
+>                 old_cred = access_override_creds();
+>                 if (!old_cred)
+>                         return -ENOMEM;
+> --
+> 2.34.1
 
 -- 
 paul-moore.com
