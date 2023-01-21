@@ -2,67 +2,290 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F210C05027
-	for <linux-security-module@archiver.kernel.org>; Sat, 21 Jan 2023 01:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A24C05027
+	for <linux-security-module@archiver.kernel.org>; Sat, 21 Jan 2023 01:18:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229540AbjAUBSC (ORCPT
+        id S229485AbjAUBSy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Jan 2023 20:18:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35014 "EHLO
+        Fri, 20 Jan 2023 20:18:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbjAUBSB (ORCPT
+        with ESMTP id S229461AbjAUBSv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Jan 2023 20:18:01 -0500
-X-Greylist: delayed 4200 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 20 Jan 2023 17:17:58 PST
-Received: from mail.namei.org (namei.org [65.99.196.166])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 332E6521CC;
-        Fri, 20 Jan 2023 17:17:58 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.namei.org (Postfix) with ESMTPS id E3C12AD;
-        Fri, 20 Jan 2023 22:24:57 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.namei.org E3C12AD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=namei.org; s=2;
-        t=1674253497; bh=832X1wFeFvBP7zn6qg1MnTozywg+pZKIevCV58PkLuU=;
-        h=Date:From:To:cc:Subject:From;
-        b=2OvRPlLlu0IRwFkzk7r/g4QoHBpbqWNvQvLLAd2FjSSRQ6uTnF7VFpFfWdQljqLZ9
-         K0mp8sBsE3y6tP/GGTGqEJRSeyPNGKBVyggPNZ1agSJKeQ528q5mouUmCxAgh9G8bm
-         V0OqQUV/M4DT+zX+z0EyR7SGjqKsLz/n3bAbAhHk=
-Date:   Sat, 21 Jan 2023 09:24:57 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     linux-security-module@vger.kernel.org
-cc:     Linux Security Summit Program Committee 
-        <lss-pc@lists.linuxfoundation.org>, lwn@lwn.net,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        Audit-ML <linux-audit@redhat.com>, gentoo-hardened@gentoo.org,
-        keyrings@linux-nfs.org, tpmdd-devel@lists.sourceforge.net
-Subject: [ANNOUNCE] Linux Security Summit North Americ (LSS-NA) CfP
-Message-ID: <3a8f10eb-df2-cfad-1d-5aeab14568e@namei.org>
+        Fri, 20 Jan 2023 20:18:51 -0500
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5586A5E516;
+        Fri, 20 Jan 2023 17:18:46 -0800 (PST)
+Received: by mail-ot1-x333.google.com with SMTP id t7-20020a05683014c700b006864760b1caso4119658otq.0;
+        Fri, 20 Jan 2023 17:18:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qcPA0pWGUDvQhjv6dm7cOHWptTY3vn2FM7bK1UHoJ8o=;
+        b=PlVoDR1I6FlhqsUwlYcFXvDsiWzPAJTy6W7XyXzOd85E2Yo11hD0R2bBUZEDEpm0D1
+         DhXVPZSOtPAFZcWJhV7xfCQSnbkeQXVijT+UZV2lfX17lB5wqkMhVzZJfT7JEDAGvbef
+         vdOdndWYHWnAKzOWH/4pwtsaYX+rmv1U6UC0sF3gT8rdfGKXqeJP/b1uCD9mRiVXzWXJ
+         M1ilHaoUedx3ZZ6A4j201BPB8scrHPj6BDbdUF//CVB2HlIQD3PWUpoGWpybAg1mhZOO
+         5ir8MSjAj/qpRvOQxYM658UyY7oiF16CQIS4WMSsDblaHfPOLjDuc1AFJp74y+ci1yJZ
+         LvnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qcPA0pWGUDvQhjv6dm7cOHWptTY3vn2FM7bK1UHoJ8o=;
+        b=a8602v0F7xwIVbA33DnWBU5YdSETYTB/wD5TamOGF8AJSAZirsiRaPBvaofuUnNT32
+         zOjYkX0Ploo+jOq5gxBideaUw1sGxSA5btwF4Ok4WovcAavrdGnQV/fd88cL2mdHK998
+         S+hdZHofz0HOaP/tIxKLLqs5PhgC4AG7M489ia2s0UQvsws/0/DaS/BrnKspH7wT/pa5
+         94TNQ0Ok+qlqqPrLNgQ+CADDTxVLCtkh7a/4fjLfSHui1Q71elEUCCMc3Fev60VVOblT
+         qggSQerZebVjrLIaL2Q3qJuQqK3YTVELguOnO2pq47eToRvaYtbX0S9VHsAJxVWzovRP
+         Dzcw==
+X-Gm-Message-State: AFqh2kqFEkmdpoBagbZ4oCjpJedi3nLEsvac5M6Fi6tC1DGELob2RmIX
+        sA1DF91rnrH9tI5tKqxKParvqvudnpSFTitrlTxMhGR8
+X-Google-Smtp-Source: AMrXdXuMw5kX9emwnPMuxvN5PjB7bqt8OibiIEXUDWYdCMyo5XZ7ywMzckiQWnr7chRoczaxK9vKARzDEx+cx/DVAZI=
+X-Received: by 2002:a05:6830:308f:b0:686:5fff:a6e6 with SMTP id
+ g15-20020a056830308f00b006865fffa6e6mr515079ots.345.1674263925607; Fri, 20
+ Jan 2023 17:18:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: by 2002:a8a:ad6:0:b0:49c:e11d:f815 with HTTP; Fri, 20 Jan 2023
+ 17:18:45 -0800 (PST)
+In-Reply-To: <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
+References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
+ <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com> <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Sat, 21 Jan 2023 02:18:45 +0100
+Message-ID: <CAGudoHFyK4RSsK=h48R-wADX5ZoPB4y_d6zv6Vh2imbfcZTzzA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     viro@zeniv.linux.org.uk, serge@hallyn.com,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The Call for Participation for the 2023 LSS-NA conference is open!
+On 1/21/23, Mateusz Guzik <mjguzik@gmail.com> wrote:
+> On 1/20/23, Paul Moore <paul@paul-moore.com> wrote:
+>> On Mon, Jan 16, 2023 at 4:21 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
+>>>
+>>> access(2) remains commonly used, for example on exec:
+>>> access("/etc/ld.so.preload", R_OK)
+>>>
+>>> or when running gcc: strace -c gcc empty.c
+>>> % time     seconds  usecs/call     calls    errors syscall
+>>> ------ ----------- ----------- --------- --------- ----------------
+>>>   0.00    0.000000           0        42        26 access
+>>>
+>>> It falls down to do_faccessat without the AT_EACCESS flag, which in turn
+>>> results in allocation of new creds in order to modify fsuid/fsgid and
+>>> caps. This is a very expensive process single-threaded and most notably
+>>> multi-threaded, with numerous structures getting refed and unrefed on
+>>> imminent new cred destruction.
+>>>
+>>> Turns out for typical consumers the resulting creds would be identical
+>>> and this can be checked upfront, avoiding the hard work.
+>>>
+>>> An access benchmark plugged into will-it-scale running on Cascade Lake
+>>> shows:
+>>> test    proc    before  after
+>>> access1 1       1310582 2908735  (+121%)  # distinct files
+>>> access1 24      4716491 63822173 (+1353%) # distinct files
+>>> access2 24      2378041 5370335  (+125%)  # same file
+>>
+>> Out of curiosity, do you have any measurements of the impact this
+>> patch has on the AT_EACCESS case when the creds do need to be
+>> modified?
+>>
+>
+> I could not be arsed to bench that. I'm not saying there is literally 0
+> impact, but it should not be high and the massive win in the case I
+> patched imho justifies it.
+>
+> Last week I got a private reply from Linus suggesting the new checks
+> only happen once at commit_cred() time, which would mean there would be
+> at most one extra branch for the case you are concerned with. However,
+> this quickly turn out to be rather hairy as there are games being
+> played for example in copy_creds() which assigns them *without* calling
+> commit_creds(). I was not comfortable pre-computing without sorting out
+> the mess first and he conceded the new branchfest is not necessarily a
+> big deal.
+>
+> That said, if you want some performance recovered for this case, here
+> is an easy one:
+>
+> static const struct cred *access_override_creds(void)
+> [..]
+>         old_cred = override_creds(override_cred);
+>
+>         /* override_cred() gets its own ref */
+>         put_cred(override_cred);
+>
+> As in the new creds get refed only to get unrefed immediately after.
+> Whacking the 2 atomics should make up for it no problem on x86-64.
+>
+> Also see below.
+>
+>>> The above benchmarks are not integrated into will-it-scale, but can be
+>>> found in a pull request:
+>>> https://github.com/antonblanchard/will-it-scale/pull/36/files
+>>>
+>>> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+>>>
+>>> v2:
+>>> - fix current->cred usage warn reported by the kernel test robot
+>>> Link: https://lore.kernel.org/all/202301150709.9EC6UKBT-lkp@intel.com/
+>>> ---
+>>>  fs/open.c | 32 +++++++++++++++++++++++++++++++-
+>>>  1 file changed, 31 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/open.c b/fs/open.c
+>>> index 82c1a28b3308..3c068a38044c 100644
+>>> --- a/fs/open.c
+>>> +++ b/fs/open.c
+>>> @@ -367,7 +367,37 @@ COMPAT_SYSCALL_DEFINE6(fallocate, int, fd, int,
+>>> mode,
+>>> compat_arg_u64_dual(offset
+>>>   * access() needs to use the real uid/gid, not the effective uid/gid.
+>>>   * We do this by temporarily clearing all FS-related capabilities and
+>>>   * switching the fsuid/fsgid around to the real ones.
+>>> + *
+>>> + * Creating new credentials is expensive, so we try to skip doing it,
+>>> + * which we can if the result would match what we already got.
+>>>   */
+>>> +static bool access_need_override_creds(int flags)
+>>> +{
+>>> +       const struct cred *cred;
+>>> +
+>>> +       if (flags & AT_EACCESS)
+>>> +               return false;
+>>> +
+>>> +       cred = current_cred();
+>>> +       if (!uid_eq(cred->fsuid, cred->uid) ||
+>>> +           !gid_eq(cred->fsgid, cred->gid))
+>>> +               return true;
+>>> +
+>>> +       if (!issecure(SECURE_NO_SETUID_FIXUP)) {
+>>> +               kuid_t root_uid = make_kuid(cred->user_ns, 0);
+>>> +               if (!uid_eq(cred->uid, root_uid)) {
+>>> +                       if (!cap_isclear(cred->cap_effective))
+>>> +                               return true;
+>>> +               } else {
+>>> +                       if (!cap_isidentical(cred->cap_effective,
+>>> +                           cred->cap_permitted))
+>>> +                               return true;
+>>> +               }
+>>> +       }
+>>> +
+>>> +       return false;
+>>> +}
+>>
+>> I worry a little that with nothing connecting
+>> access_need_override_creds() to access_override_creds() there is a bug
+>> waiting to happen if/when only one of the functions is updated.
+>>
+>
+> These funcs are literally next to each other, I don't think that is easy
+> to miss. I concede a comment in access_override_creds to take a look at
+> access_need_override_creds would not hurt, but I don't know if a resend
+> to add it is justified.
+>
+>> Given the limited credential changes in access_override_creds(), I
+>> wonder if a better solution would be to see if we could create a
+>> light(er)weight prepare_creds()/override_creds() that would avoid some
+>> of the prepare_creds() hotspots (I'm assuming that is where most of
+>> the time is being spent).  It's possible this could help improve the
+>> performance of other, similar operations that need to modify task
+>> creds for a brief, and synchronous, period of time.
+>>
+>
+> So the fundamental problem here is that several refs need to be grabbed
+> to make fully-fledged credentials. Then, as you are done, you have to
+> undo them. This clearly sucks single-threaded. As other threads copying
+> the same creds do the same atomics on the same vars, this sucks even
+> more multithreaded.
+>
+> As a cop out one may notice several of these are probably always the
+> same for creds derived from given base, so perhaps there can be an obj
+> which wraps them and then you only have to ref *that* obj to implicitly
+> hold on to the entire thing.
+>
+> As in this (and more):
+>         get_uid(new->user);
+>         get_user_ns(new->user_ns);
+>         get_group_info(new->group_info);
+>
+> would get replaced with:
+>         new->fancy_obj = getref_fancy_obj(new->fancy_obj);
+>         /* populate pointers here */
+>
+> ... conceptually at least.
+>
+> But even then, while less shafted both multi and single-threaded, there
+> is still a bottleneck.
+>
+> For a Real Solution(tm) for a general case I think has to start with an
+> observartion creds either persist for a long time *OR* keep getting
+> recreated. This would suggest holding on to them and looking them up
+> instead just allocating, but all this opens another can of worms and
+> I don't believe is worth the effort at this stage. But maybe someone
+> has a better idea.
+>
+> That said, for the case of access(), I had the following in mind but
+> once more considered it not justified at this stage.
+>
+> pseudocode-wise:
+> struct cred *prepare_shallow_creds(void)
+>         new = kmem_cache_alloc(cred_jar, GFP_KERNEL);
+>         old = task->cred;
+>         memcpy(new, old, sizeof(struct cred));
+>
+> here new creds have all the same pointers as old, but the target objs
+> are only kept alive by the old creds still refing them. So by API
+> contract you are required to keep them around.
+>
+> after you temporarily assign them you call revert_shallow_creds():
+>         if (tempcred->usage == 1)
+>                 /* nobody refed them, do the non_rcu check */
+>                 ...
+>         else
+>                 /* somebody grabbed them, legitimize creds by
+>                  * grabbing the missing refs
+>                  */
+>                  get_uid(new->user);
+>                  get_user_ns(new->user_ns);
+>                  get_group_info(new->group_info);
+>                  /* and so on */
+>
+> So this would shave work from the case you are concerned with probably
+> for all calls.
+>
+> I do think this is an ok idea overall, but I felt like overengineering for
+> the
+> problem at hand *at the time*.
+>
+> For some context, I'm looking at performance of certain VFS stuff and
+> there is some serious fish to fry in the fstat department. The patch I
+> posted is definitely worthwhile perf-wise and easy enough to reason
+> about that I did no expect much opposition to it. If anything I expected
+> opposition to the idea outlined above.
+>
 
-See details of the event and information on submitting proposals here:
-https://events.linuxfoundation.org/linux-security-summit-north-america/
+So just in case, if ultimately the consensus is that shallow copy or similar
+is the way to go, I can take a stab some time next week.
 
-LSS-NA 2023 will be in Vancouver, BC, Canada, from May 10th to May 12th. 
-This will be a three day event, co-located with Open Source Summit North 
-America [1].
-
-The LSS-NA CfP is open until March 1st, 2023.
-
-
-Note that announcements relating to the Linux Security Summit may be found 
-now on the Fediverse, via: https://social.kernel.org/LinuxSecSummit
+>> Have you done any profiling inside of access_override_creds() to see
+>> where the most time is spent?  Looking at the code I have some gut
+>> feelings on the hotspots, but it would be good to see some proper data
+>> before jumping to any conclusions.
+>>
+>
+> See above. It's the atomics all the way down.
+>
+> --
+> Mateusz Guzik <mjguzik gmail.com>
+>
 
 
 -- 
-James Morris
-<jmorris@namei.org>
-
-
-[1] https://events.linuxfoundation.org/open-source-summit-north-america/
+Mateusz Guzik <mjguzik gmail.com>
