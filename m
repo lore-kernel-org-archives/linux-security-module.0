@@ -2,290 +2,291 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A24C05027
-	for <linux-security-module@archiver.kernel.org>; Sat, 21 Jan 2023 01:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C518FC27C76
+	for <linux-security-module@archiver.kernel.org>; Sat, 21 Jan 2023 23:07:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229485AbjAUBSy (ORCPT
+        id S229656AbjAUXHc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Jan 2023 20:18:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35428 "EHLO
+        Sat, 21 Jan 2023 18:07:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjAUBSv (ORCPT
+        with ESMTP id S229463AbjAUXHb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Jan 2023 20:18:51 -0500
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5586A5E516;
-        Fri, 20 Jan 2023 17:18:46 -0800 (PST)
-Received: by mail-ot1-x333.google.com with SMTP id t7-20020a05683014c700b006864760b1caso4119658otq.0;
-        Fri, 20 Jan 2023 17:18:46 -0800 (PST)
+        Sat, 21 Jan 2023 18:07:31 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4B103C15;
+        Sat, 21 Jan 2023 15:07:29 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id v13so10626442eda.11;
+        Sat, 21 Jan 2023 15:07:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qcPA0pWGUDvQhjv6dm7cOHWptTY3vn2FM7bK1UHoJ8o=;
-        b=PlVoDR1I6FlhqsUwlYcFXvDsiWzPAJTy6W7XyXzOd85E2Yo11hD0R2bBUZEDEpm0D1
-         DhXVPZSOtPAFZcWJhV7xfCQSnbkeQXVijT+UZV2lfX17lB5wqkMhVzZJfT7JEDAGvbef
-         vdOdndWYHWnAKzOWH/4pwtsaYX+rmv1U6UC0sF3gT8rdfGKXqeJP/b1uCD9mRiVXzWXJ
-         M1ilHaoUedx3ZZ6A4j201BPB8scrHPj6BDbdUF//CVB2HlIQD3PWUpoGWpybAg1mhZOO
-         5ir8MSjAj/qpRvOQxYM658UyY7oiF16CQIS4WMSsDblaHfPOLjDuc1AFJp74y+ci1yJZ
-         LvnA==
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5W5FXRUDgu1hTQjxZFO4OyeWjrcuKQnGQ+NdBC2JCLc=;
+        b=TQzEHgJzRrrr12GYVA0fzC3V4YQvIyu2sAdd9OoOjBHzNvEBn8VGS2I+RZYAkzQqVD
+         dqzdLVWyG6Uf0P8AaJAPxdjfCXMuKVqsR8Y6tsQYsrac3KtZB70i4aVSpHCmoAJXmRvG
+         c0X2ZlZ97omAZEmG0RXI00qhncC3m950FoTea7SEwoEonAVajRx0ARsSLU16081GWTSE
+         jVVgG6aaYVZdhbesJ0n0uBn5t0diA8AL1G/fvmk2tiV1s5aKEld5swNzas6H79O2N/7d
+         BFYpBlpJ1pxv5QTnuKmRzFQ7tsa9LhvaDsPwDJUBaUFwULuo1r0xVy77iamJmyoDnh0q
+         uvzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qcPA0pWGUDvQhjv6dm7cOHWptTY3vn2FM7bK1UHoJ8o=;
-        b=a8602v0F7xwIVbA33DnWBU5YdSETYTB/wD5TamOGF8AJSAZirsiRaPBvaofuUnNT32
-         zOjYkX0Ploo+jOq5gxBideaUw1sGxSA5btwF4Ok4WovcAavrdGnQV/fd88cL2mdHK998
-         S+hdZHofz0HOaP/tIxKLLqs5PhgC4AG7M489ia2s0UQvsws/0/DaS/BrnKspH7wT/pa5
-         94TNQ0Ok+qlqqPrLNgQ+CADDTxVLCtkh7a/4fjLfSHui1Q71elEUCCMc3Fev60VVOblT
-         qggSQerZebVjrLIaL2Q3qJuQqK3YTVELguOnO2pq47eToRvaYtbX0S9VHsAJxVWzovRP
-         Dzcw==
-X-Gm-Message-State: AFqh2kqFEkmdpoBagbZ4oCjpJedi3nLEsvac5M6Fi6tC1DGELob2RmIX
-        sA1DF91rnrH9tI5tKqxKParvqvudnpSFTitrlTxMhGR8
-X-Google-Smtp-Source: AMrXdXuMw5kX9emwnPMuxvN5PjB7bqt8OibiIEXUDWYdCMyo5XZ7ywMzckiQWnr7chRoczaxK9vKARzDEx+cx/DVAZI=
-X-Received: by 2002:a05:6830:308f:b0:686:5fff:a6e6 with SMTP id
- g15-20020a056830308f00b006865fffa6e6mr515079ots.345.1674263925607; Fri, 20
- Jan 2023 17:18:45 -0800 (PST)
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5W5FXRUDgu1hTQjxZFO4OyeWjrcuKQnGQ+NdBC2JCLc=;
+        b=wImm+w23Zu0OOVWn0o+SUbiJrlL/TOdkNmGG5A4TuSqN15+b23iWqv0y5OyBh3Hf1j
+         CMGsKIuK9q9NQBVGGdzWutfvMbaVsf7FqSCKlyTqqPGpTDQkhvAkxj5sZMrx6nc9vNwe
+         efKKT6679l+yrQad382FyyHH0ASOlh1tBJCtm76RGoEBnLODgF407X+cYcRmYrGkS/VC
+         RQfVwE8zdA/+RT0EYk/bcdw+BAacFYDVusDWKMR+gzlxb8c2xuAF5D9jiz3rVMluPliC
+         SxhcZJ0HuZ4BB0/Sw5N/Molr6ACN43XbGOlJJnBzxyCPncu07nM88wb+Op4Ii2Gyvcut
+         QVng==
+X-Gm-Message-State: AFqh2krfXJz1mif9DenxeOZOmZCNqNBMGXF+/2/n2bnrWt2U6OstvQq7
+        xRSsSpHLvoFi8qd4X0kXANg=
+X-Google-Smtp-Source: AMrXdXtRJkbVY0vGPMCoTJ1C33SkbNPoPLu/TFRkCSX/Ya5fGGDae3RMcjsazn8nVO8P/D7OAbM+ow==
+X-Received: by 2002:a05:6402:f04:b0:480:cbe7:9ee2 with SMTP id i4-20020a0564020f0400b00480cbe79ee2mr24001268eda.22.1674342448181;
+        Sat, 21 Jan 2023 15:07:28 -0800 (PST)
+Received: from localhost ([2a02:168:633b:1:485:9427:753:83a])
+        by smtp.gmail.com with ESMTPSA id x13-20020aa7cd8d000000b0047e6fdbf81csm3991802edv.82.2023.01.21.15.07.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Jan 2023 15:07:27 -0800 (PST)
+Date:   Sun, 22 Jan 2023 00:07:26 +0100
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     mic@digikod.net, willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+Subject: Re: [PATCH v9 12/12] landlock: Document Landlock's network support
+Message-ID: <Y8xwLvDbhKPG8JqY@galopp>
+References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
+ <20230116085818.165539-13-konstantin.meskhidze@huawei.com>
 MIME-Version: 1.0
-Received: by 2002:a8a:ad6:0:b0:49c:e11d:f815 with HTTP; Fri, 20 Jan 2023
- 17:18:45 -0800 (PST)
-In-Reply-To: <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
-References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
- <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com> <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
-From:   Mateusz Guzik <mjguzik@gmail.com>
-Date:   Sat, 21 Jan 2023 02:18:45 +0100
-Message-ID: <CAGudoHFyK4RSsK=h48R-wADX5ZoPB4y_d6zv6Vh2imbfcZTzzA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     viro@zeniv.linux.org.uk, serge@hallyn.com,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230116085818.165539-13-konstantin.meskhidze@huawei.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/21/23, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> On 1/20/23, Paul Moore <paul@paul-moore.com> wrote:
->> On Mon, Jan 16, 2023 at 4:21 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
->>>
->>> access(2) remains commonly used, for example on exec:
->>> access("/etc/ld.so.preload", R_OK)
->>>
->>> or when running gcc: strace -c gcc empty.c
->>> % time     seconds  usecs/call     calls    errors syscall
->>> ------ ----------- ----------- --------- --------- ----------------
->>>   0.00    0.000000           0        42        26 access
->>>
->>> It falls down to do_faccessat without the AT_EACCESS flag, which in turn
->>> results in allocation of new creds in order to modify fsuid/fsgid and
->>> caps. This is a very expensive process single-threaded and most notably
->>> multi-threaded, with numerous structures getting refed and unrefed on
->>> imminent new cred destruction.
->>>
->>> Turns out for typical consumers the resulting creds would be identical
->>> and this can be checked upfront, avoiding the hard work.
->>>
->>> An access benchmark plugged into will-it-scale running on Cascade Lake
->>> shows:
->>> test    proc    before  after
->>> access1 1       1310582 2908735  (+121%)  # distinct files
->>> access1 24      4716491 63822173 (+1353%) # distinct files
->>> access2 24      2378041 5370335  (+125%)  # same file
->>
->> Out of curiosity, do you have any measurements of the impact this
->> patch has on the AT_EACCESS case when the creds do need to be
->> modified?
->>
->
-> I could not be arsed to bench that. I'm not saying there is literally 0
-> impact, but it should not be high and the massive win in the case I
-> patched imho justifies it.
->
-> Last week I got a private reply from Linus suggesting the new checks
-> only happen once at commit_cred() time, which would mean there would be
-> at most one extra branch for the case you are concerned with. However,
-> this quickly turn out to be rather hairy as there are games being
-> played for example in copy_creds() which assigns them *without* calling
-> commit_creds(). I was not comfortable pre-computing without sorting out
-> the mess first and he conceded the new branchfest is not necessarily a
-> big deal.
->
-> That said, if you want some performance recovered for this case, here
-> is an easy one:
->
-> static const struct cred *access_override_creds(void)
-> [..]
->         old_cred = override_creds(override_cred);
->
->         /* override_cred() gets its own ref */
->         put_cred(override_cred);
->
-> As in the new creds get refed only to get unrefed immediately after.
-> Whacking the 2 atomics should make up for it no problem on x86-64.
->
-> Also see below.
->
->>> The above benchmarks are not integrated into will-it-scale, but can be
->>> found in a pull request:
->>> https://github.com/antonblanchard/will-it-scale/pull/36/files
->>>
->>> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
->>>
->>> v2:
->>> - fix current->cred usage warn reported by the kernel test robot
->>> Link: https://lore.kernel.org/all/202301150709.9EC6UKBT-lkp@intel.com/
->>> ---
->>>  fs/open.c | 32 +++++++++++++++++++++++++++++++-
->>>  1 file changed, 31 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/open.c b/fs/open.c
->>> index 82c1a28b3308..3c068a38044c 100644
->>> --- a/fs/open.c
->>> +++ b/fs/open.c
->>> @@ -367,7 +367,37 @@ COMPAT_SYSCALL_DEFINE6(fallocate, int, fd, int,
->>> mode,
->>> compat_arg_u64_dual(offset
->>>   * access() needs to use the real uid/gid, not the effective uid/gid.
->>>   * We do this by temporarily clearing all FS-related capabilities and
->>>   * switching the fsuid/fsgid around to the real ones.
->>> + *
->>> + * Creating new credentials is expensive, so we try to skip doing it,
->>> + * which we can if the result would match what we already got.
->>>   */
->>> +static bool access_need_override_creds(int flags)
->>> +{
->>> +       const struct cred *cred;
->>> +
->>> +       if (flags & AT_EACCESS)
->>> +               return false;
->>> +
->>> +       cred = current_cred();
->>> +       if (!uid_eq(cred->fsuid, cred->uid) ||
->>> +           !gid_eq(cred->fsgid, cred->gid))
->>> +               return true;
->>> +
->>> +       if (!issecure(SECURE_NO_SETUID_FIXUP)) {
->>> +               kuid_t root_uid = make_kuid(cred->user_ns, 0);
->>> +               if (!uid_eq(cred->uid, root_uid)) {
->>> +                       if (!cap_isclear(cred->cap_effective))
->>> +                               return true;
->>> +               } else {
->>> +                       if (!cap_isidentical(cred->cap_effective,
->>> +                           cred->cap_permitted))
->>> +                               return true;
->>> +               }
->>> +       }
->>> +
->>> +       return false;
->>> +}
->>
->> I worry a little that with nothing connecting
->> access_need_override_creds() to access_override_creds() there is a bug
->> waiting to happen if/when only one of the functions is updated.
->>
->
-> These funcs are literally next to each other, I don't think that is easy
-> to miss. I concede a comment in access_override_creds to take a look at
-> access_need_override_creds would not hurt, but I don't know if a resend
-> to add it is justified.
->
->> Given the limited credential changes in access_override_creds(), I
->> wonder if a better solution would be to see if we could create a
->> light(er)weight prepare_creds()/override_creds() that would avoid some
->> of the prepare_creds() hotspots (I'm assuming that is where most of
->> the time is being spent).  It's possible this could help improve the
->> performance of other, similar operations that need to modify task
->> creds for a brief, and synchronous, period of time.
->>
->
-> So the fundamental problem here is that several refs need to be grabbed
-> to make fully-fledged credentials. Then, as you are done, you have to
-> undo them. This clearly sucks single-threaded. As other threads copying
-> the same creds do the same atomics on the same vars, this sucks even
-> more multithreaded.
->
-> As a cop out one may notice several of these are probably always the
-> same for creds derived from given base, so perhaps there can be an obj
-> which wraps them and then you only have to ref *that* obj to implicitly
-> hold on to the entire thing.
->
-> As in this (and more):
->         get_uid(new->user);
->         get_user_ns(new->user_ns);
->         get_group_info(new->group_info);
->
-> would get replaced with:
->         new->fancy_obj = getref_fancy_obj(new->fancy_obj);
->         /* populate pointers here */
->
-> ... conceptually at least.
->
-> But even then, while less shafted both multi and single-threaded, there
-> is still a bottleneck.
->
-> For a Real Solution(tm) for a general case I think has to start with an
-> observartion creds either persist for a long time *OR* keep getting
-> recreated. This would suggest holding on to them and looking them up
-> instead just allocating, but all this opens another can of worms and
-> I don't believe is worth the effort at this stage. But maybe someone
-> has a better idea.
->
-> That said, for the case of access(), I had the following in mind but
-> once more considered it not justified at this stage.
->
-> pseudocode-wise:
-> struct cred *prepare_shallow_creds(void)
->         new = kmem_cache_alloc(cred_jar, GFP_KERNEL);
->         old = task->cred;
->         memcpy(new, old, sizeof(struct cred));
->
-> here new creds have all the same pointers as old, but the target objs
-> are only kept alive by the old creds still refing them. So by API
-> contract you are required to keep them around.
->
-> after you temporarily assign them you call revert_shallow_creds():
->         if (tempcred->usage == 1)
->                 /* nobody refed them, do the non_rcu check */
->                 ...
->         else
->                 /* somebody grabbed them, legitimize creds by
->                  * grabbing the missing refs
->                  */
->                  get_uid(new->user);
->                  get_user_ns(new->user_ns);
->                  get_group_info(new->group_info);
->                  /* and so on */
->
-> So this would shave work from the case you are concerned with probably
-> for all calls.
->
-> I do think this is an ok idea overall, but I felt like overengineering for
-> the
-> problem at hand *at the time*.
->
-> For some context, I'm looking at performance of certain VFS stuff and
-> there is some serious fish to fry in the fstat department. The patch I
-> posted is definitely worthwhile perf-wise and easy enough to reason
-> about that I did no expect much opposition to it. If anything I expected
-> opposition to the idea outlined above.
->
+Hello!
 
-So just in case, if ultimately the consensus is that shallow copy or similar
-is the way to go, I can take a stab some time next week.
+Thank you for sending these patches! I'll start poking a bit at the
+Go-Landlock library to see how we can support it there when this lands.
 
->> Have you done any profiling inside of access_override_creds() to see
->> where the most time is spent?  Looking at the code I have some gut
->> feelings on the hotspots, but it would be good to see some proper data
->> before jumping to any conclusions.
->>
->
-> See above. It's the atomics all the way down.
->
-> --
-> Mateusz Guzik <mjguzik gmail.com>
->
+On Mon, Jan 16, 2023 at 04:58:18PM +0800, Konstantin Meskhidze wrote:
+> Describe network access rules for TCP sockets. Add network access
+> example in the tutorial. Add kernel configuration support for network.
+> 
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
+> 
+> Changes since v8:
+> * Minor refactoring.
+> 
+> Changes since v7:
+> * Fixes documentaion logic errors and typos as Mickaёl suggested:
+> https://lore.kernel.org/netdev/9f354862-2bc3-39ea-92fd-53803d9bbc21@digikod.net/
+> 
+> Changes since v6:
+> * Adds network support documentaion.
+> 
+> ---
+>  Documentation/userspace-api/landlock.rst | 72 ++++++++++++++++++------
+>  1 file changed, 56 insertions(+), 16 deletions(-)
+> 
+> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> index d8cd8cd9ce25..980558b879d6 100644
+> --- a/Documentation/userspace-api/landlock.rst
+> +++ b/Documentation/userspace-api/landlock.rst
+> @@ -11,10 +11,10 @@ Landlock: unprivileged access control
+>  :Date: October 2022
+>  
+>  The goal of Landlock is to enable to restrict ambient rights (e.g. global
+> -filesystem access) for a set of processes.  Because Landlock is a stackable
+> -LSM, it makes possible to create safe security sandboxes as new security layers
+> -in addition to the existing system-wide access-controls. This kind of sandbox
+> -is expected to help mitigate the security impact of bugs or
+> +filesystem or network access) for a set of processes.  Because Landlock
+> +is a stackable LSM, it makes possible to create safe security sandboxes as new
+> +security layers in addition to the existing system-wide access-controls. This
+> +kind of sandbox is expected to help mitigate the security impact of bugs or
+>  unexpected/malicious behaviors in user space applications.  Landlock empowers
+>  any process, including unprivileged ones, to securely restrict themselves.
+>  
+> @@ -30,18 +30,20 @@ Landlock rules
+>  
+>  A Landlock rule describes an action on an object.  An object is currently a
+>  file hierarchy, and the related filesystem actions are defined with `access
+> -rights`_.  A set of rules is aggregated in a ruleset, which can then restrict
+> -the thread enforcing it, and its future children.
+> +rights`_.  Since ABI version 4 a port data appears with related network actions
+> +for TCP socket families.  A set of rules is aggregated in a ruleset, which
+> +can then restrict the thread enforcing it, and its future children.
+>  
+>  Defining and enforcing a security policy
+>  ----------------------------------------
+>  
+>  We first need to define the ruleset that will contain our rules.  For this
+>  example, the ruleset will contain rules that only allow read actions, but write
+> -actions will be denied.  The ruleset then needs to handle both of these kind of
+> +actions will be denied. The ruleset then needs to handle both of these kind of
 
+(This one looks like an unintentional whitespace change; the
+double-space ending is used in this file, so we should probably stay
+consistent.)
 
--- 
-Mateusz Guzik <mjguzik gmail.com>
+>  actions.  This is required for backward and forward compatibility (i.e. the
+>  kernel and user space may not know each other's supported restrictions), hence
+> -the need to be explicit about the denied-by-default access rights.
+> +the need to be explicit about the denied-by-default access rights.  Also ruleset
+
+Wording nit: "Also, the ruleset"...?
+
+> +will have network rules for specific ports, so it should handle network actions.
+>  
+>  .. code-block:: c
+>  
+> @@ -62,6 +64,9 @@ the need to be explicit about the denied-by-default access rights.
+>              LANDLOCK_ACCESS_FS_MAKE_SYM |
+>              LANDLOCK_ACCESS_FS_REFER |
+>              LANDLOCK_ACCESS_FS_TRUNCATE,
+> +        .handled_access_net =
+> +            LANDLOCK_ACCESS_NET_BIND_TCP |
+> +            LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>      };
+>  
+>  Because we may not know on which kernel version an application will be
+> @@ -70,14 +75,18 @@ should try to protect users as much as possible whatever the kernel they are
+>  using.  To avoid binary enforcement (i.e. either all security features or
+>  none), we can leverage a dedicated Landlock command to get the current version
+>  of the Landlock ABI and adapt the handled accesses.  Let's check if we should
+> -remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
+> -access rights, which are only supported starting with the second and third
+> -version of the ABI.
+> +remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE`` or
+> +network access rights, which are only supported starting with the second,
+> +third and fourth version of the ABI.
+>  
+>  .. code-block:: c
+>  
+>      int abi;
+>  
+> +    #define ACCESS_NET_BIND_CONNECT ( \
+> +        LANDLOCK_ACCESS_NET_BIND_TCP | \
+> +        LANDLOCK_ACCESS_NET_CONNECT_TCP)
+> +
+>      abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
+>      if (abi < 0) {
+>          /* Degrades gracefully if Landlock is not handled. */
+> @@ -92,6 +101,11 @@ version of the ABI.
+>      case 2:
+>          /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
+>          ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
+> +    case 3:
+> +        /* Removes network support for ABI < 4 */
+> +		ruleset_attr.handled_access_net &=
+           ^^^^^
+           Nit: Indentation differs from "case 2"
+           
+> +			~(LANDLOCK_ACCESS_NET_BIND_TCP |
+> +			  LANDLOCK_ACCESS_NET_CONNECT_TCP);
+>      }
+>  
+>  This enables to create an inclusive ruleset that will contain our rules.
+> @@ -143,10 +157,24 @@ for the ruleset creation, by filtering access rights according to the Landlock
+>  ABI version.  In this example, this is not required because all of the requested
+>  ``allowed_access`` rights are already available in ABI 1.
+>  
+> -We now have a ruleset with one rule allowing read access to ``/usr`` while
+> -denying all other handled accesses for the filesystem.  The next step is to
+> -restrict the current thread from gaining more privileges (e.g. thanks to a SUID
+> -binary).
+> +For network access-control, we can add a set of rules that allow to use a port
+> +number for a specific action. All ports values must be defined in network byte
+> +order.
+
+What is the point of asking user space to convert this to network byte
+order? It seems to me that the kernel would be able to convert it to
+network byte order very easily internally and in a single place -- why
+ask all of the users to deal with that complexity? Am I overlooking
+something?
+
+> +
+> +.. code-block:: c
+> +
+> +    struct landlock_net_service_attr net_service = {
+> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
+> +        .port = htons(8080),
+> +    };
+
+This is a more high-level comment:
+
+The notion of a 16-bit "port" seems to be specific to TCP and UDP --
+how do you envision this struct to evolve if other protocols need to
+be supported in the future?
+
+Should this struct and the associated constants have "TCP" in its
+name, and other protocols use a separate struct in the future?
+
+> +
+> +    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+> +                            &net_service, 0);
+> +
+> +The next step is to restrict the current thread from gaining more privileges
+> +(e.g. thanks to a SUID binary). We now have a ruleset with the first rule allowing
+         ^^^^^^
+         "through" a SUID binary? "thanks to" sounds like it's desired
+         to do that, while we're actually trying to prevent it here?
+
+> +read access to ``/usr`` while denying all other handled accesses for the filesystem,
+> +and a second rule allowing TCP binding on port 8080.
+>  
+>  .. code-block:: c
+>  
+> @@ -355,7 +383,7 @@ Access rights
+>  -------------
+>  
+>  .. kernel-doc:: include/uapi/linux/landlock.h
+> -    :identifiers: fs_access
+> +    :identifiers: fs_access net_access
+>  
+>  Creating a new ruleset
+>  ----------------------
+> @@ -374,6 +402,7 @@ Extending a ruleset
+>  
+>  .. kernel-doc:: include/uapi/linux/landlock.h
+>      :identifiers: landlock_rule_type landlock_path_beneath_attr
+> +                  landlock_net_service_attr
+>  
+>  Enforcing a ruleset
+>  -------------------
+> @@ -451,6 +480,12 @@ always allowed when using a kernel that only supports the first or second ABI.
+>  Starting with the Landlock ABI version 3, it is now possible to securely control
+>  truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
+>  
+> +Network support (ABI < 4)
+> +-------------------------
+> +
+> +Starting with the Landlock ABI version 4, it is now possible to restrict TCP
+> +bind and connect actions to only a set of allowed ports.
+> +
+>  .. _kernel_support:
+>  
+>  Kernel support
+> @@ -469,6 +504,11 @@ still enable it by adding ``lsm=landlock,[...]`` to
+>  Documentation/admin-guide/kernel-parameters.rst thanks to the bootloader
+>  configuration.
+>  
+> +To be able to explicitly allow TCP operations (e.g., adding a network rule with
+> +``LANDLOCK_ACCESS_NET_TCP_BIND``), the kernel must support TCP (``CONFIG_INET=y``).
+> +Otherwise, sys_landlock_add_rule() returns an ``EAFNOSUPPORT`` error, which can
+> +safely be ignored because this kind of TCP operation is already not possible.
+> +
+>  Questions and answers
+>  =====================
+>  
+> -- 
+> 2.25.1
+> 
