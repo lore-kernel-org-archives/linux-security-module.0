@@ -2,265 +2,158 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB1C9C05027
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Jan 2023 21:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7B0C38142
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Jan 2023 21:36:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232947AbjAWVaO (ORCPT
+        id S232427AbjAWVgr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Jan 2023 16:30:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55300 "EHLO
+        Mon, 23 Jan 2023 16:36:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232889AbjAWVaO (ORCPT
+        with ESMTP id S232207AbjAWVgq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Jan 2023 16:30:14 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 755B016AD6
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Jan 2023 13:30:11 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id d3so12761773plr.10
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Jan 2023 13:30:11 -0800 (PST)
+        Mon, 23 Jan 2023 16:36:46 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9614F34C03
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Jan 2023 13:36:44 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id b10so12956584pjo.1
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Jan 2023 13:36:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3CXjuIq+evsfgA3IK+fUzmMcrAKyki1aZvq33cby3Hw=;
-        b=PrhBAQsJ8QVyf7PeldKMnDrqvqSWRERblwTNL7klfEj/XuIcxUo3ZcuxnH7Kve8zim
-         X3L4+P5505xaUSoE80Pok3PHOwJAYuAoIqxeToF2f6JuwiuX33a8bNHxsRQwKvAAi744
-         hBzblxYOJt+8BBGSCCiypXmATdXv2kVBmOglwoXcYBg9x2ktg2JUUjI553mWya2s4FOc
-         C8vLzcVIVflGtPF03e/unFkWEj3LRhoeKftUgVFIQ/E3r3bOd+3qQEruu4YXM0Ppp2Ck
-         2XcgQDrZ0OQ6+CLjNCplGDe13tC1itgncilQAAJ6KM71kiV5XAGO6mWOMXAZ6xAB3Vaf
-         zOow==
+        bh=yGXvyQjwLmOy53oIzm1ZLaTMK3/o09Vv8V+chgSLdeY=;
+        b=CcWptSLeFIccOdIwrrQruiIQVbfQw+qTyjT3yv+7o4oiOdtJnaGwyxjNF8KqV8JCPb
+         EtEuwCUakT7bXDWuTHstKBBxFfx/NFD6nI++Zxx33wEt2LsDHWWFbVo+nWs5aJpvgbDt
+         bcNjHlr2/smIeZ2DgR6hyv29jjDSqQQI+8Qj+9AAlhetLTyxbKX75Vw/uzLti5pjdjDD
+         1gqqU5UtNkfvmUk9ZygMGK8+1jwTN9eFYCq597DzigUSvomN5c9XhKqAjmlcR+BL0bRb
+         fkuAUTdTl6ZIMoENwrU3bfv6UbzvTXWAqgAlNJDWfnVuL4Hhf5bRgdVGoARAYxrNCCDe
+         ljRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3CXjuIq+evsfgA3IK+fUzmMcrAKyki1aZvq33cby3Hw=;
-        b=kTTnVzfRRyiQJUexjatNfAm5rr8M4WzNlM0c0lDFnyLHceDzDNtyGCNoNQLKL3Sv8J
-         0Vgoz09enAL3nH+7G6jtVYKoLPgMag1wNTCyLXkv05lDaNLhZxcXwb9LWcCxi0dTLNwF
-         EffuktiwHMvqN3s4fm/UWnvPUxZIfaEIzOAR1ISNDOXpXqsFUc7pGq4lMl2ZRH2RA+Hp
-         rXCCbPETx7fHENOP7hQdYCw4FZpFCxy2gToxlINhjE+tcFkrc65fFoUaiRExcrsn16Nx
-         2mw14cSSAALROwGY4Z+6gvDUe7ub7OBND7TI3AMDMpzLvTbEuQ8pTxSC4H3nrh54uPXO
-         zHCw==
-X-Gm-Message-State: AFqh2koKXUi7p6RwJ7B/o6+AVJwDGbA9Z7JFsk3vxK2bcDZghUZ8/O6f
-        gqqnU9/ZDofryPqTbQW56XUJp/ua07XfxvrcjLc9
-X-Google-Smtp-Source: AMrXdXt6nnp1chN91l/keRi65PeLkFLfyDMkNuj5KKKeJZ/tAe4Ffdk/DaqnXAbK3nVyNifZ5DN6P4wh53FYOPNX5XM=
-X-Received: by 2002:a17:90a:17a1:b0:229:9ffe:135b with SMTP id
- q30-20020a17090a17a100b002299ffe135bmr2908716pja.72.1674509410794; Mon, 23
- Jan 2023 13:30:10 -0800 (PST)
+        bh=yGXvyQjwLmOy53oIzm1ZLaTMK3/o09Vv8V+chgSLdeY=;
+        b=OdQOKa/1y+I4AqLudn5EdSansbMmEuK36pCSRG5D3ywXb/Vs4wkmQfwf8EJTlTJsIn
+         K06f9056CnA05xE2eyQDTXKMapV99WVbEhmh7ZG7RcTrSKgpT+KvwXseug4ki6c3XPn4
+         6++xeE6+6vNP0qRMQXCvqeTPFPEE+2PLG9ebcPlHNt3hXRTqjaq8TV56M2xJsV4gyEge
+         PEK3ddne9GCflJLcb41da7UHFHfllwE4mMpqHr3Wk3d4JbtQocb/F2468J2W/LyNhMHH
+         vDfeVxwv10uciNy6JMHD6w3Rot8gYPJGmH9q/HDDxz5VahL+U7uku6T71rYHBNWLOkvc
+         KCPA==
+X-Gm-Message-State: AFqh2kqrjY+SzloiCNyUHbszGkEvf++dWDRyVduXKeym1SZ1Z6GPDlt/
+        xum0j/+WABirbshyVoD14ZFUxTk1sh7wmedKIT05kbBvM8wI
+X-Google-Smtp-Source: AMrXdXsTqILQIvoKLSzn2vsOwuLpTkEPmSgexyL8bv143mvjcjNDhObnaFgjhL7UQHe0gGX5etBgH6e4mhBUZDn4fO0=
+X-Received: by 2002:a17:90a:c784:b0:227:202b:8eaa with SMTP id
+ gn4-20020a17090ac78400b00227202b8eaamr2957806pjb.147.1674509804015; Mon, 23
+ Jan 2023 13:36:44 -0800 (PST)
 MIME-Version: 1.0
-References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
- <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com> <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
-In-Reply-To: <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
+References: <20230123191728.2928839-1-tjmercier@google.com> <20230123191728.2928839-5-tjmercier@google.com>
+In-Reply-To: <20230123191728.2928839-5-tjmercier@google.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 23 Jan 2023 16:29:59 -0500
-Message-ID: <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, serge@hallyn.com,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Date:   Mon, 23 Jan 2023 16:36:32 -0500
+Message-ID: <CAHC9VhQtbTWXXy8mNxNDdukaAp6YB4CX5Xa6dvSZ_r4DhM2EXg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] security: binder: Add binder object flags to selinux_binder_transfer_file
+To:     "T.J. Mercier" <tjmercier@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Carlos Llamas <cmllamas@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, hannes@cmpxchg.org,
+        daniel.vetter@ffwll.ch, android-mm@google.com, jstultz@google.com,
+        jeffv@google.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 20, 2023 at 7:50 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
-> On 1/20/23, Paul Moore <paul@paul-moore.com> wrote:
-> > On Mon, Jan 16, 2023 at 4:21 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >>
-> >> access(2) remains commonly used, for example on exec:
-> >> access("/etc/ld.so.preload", R_OK)
-> >>
-> >> or when running gcc: strace -c gcc empty.c
-> >> % time     seconds  usecs/call     calls    errors syscall
-> >> ------ ----------- ----------- --------- --------- ----------------
-> >>   0.00    0.000000           0        42        26 access
-> >>
-> >> It falls down to do_faccessat without the AT_EACCESS flag, which in turn
-> >> results in allocation of new creds in order to modify fsuid/fsgid and
-> >> caps. This is a very expensive process single-threaded and most notably
-> >> multi-threaded, with numerous structures getting refed and unrefed on
-> >> imminent new cred destruction.
-> >>
-> >> Turns out for typical consumers the resulting creds would be identical
-> >> and this can be checked upfront, avoiding the hard work.
-> >>
-> >> An access benchmark plugged into will-it-scale running on Cascade Lake
-> >> shows:
-> >> test    proc    before  after
-> >> access1 1       1310582 2908735  (+121%)  # distinct files
-> >> access1 24      4716491 63822173 (+1353%) # distinct files
-> >> access2 24      2378041 5370335  (+125%)  # same file
-> >
-> > Out of curiosity, do you have any measurements of the impact this
-> > patch has on the AT_EACCESS case when the creds do need to be
-> > modified?
+On Mon, Jan 23, 2023 at 2:18 PM T.J. Mercier <tjmercier@google.com> wrote:
 >
-> I could not be arsed to bench that. I'm not saying there is literally 0
-> impact, but it should not be high and the massive win in the case I
-> patched imho justifies it.
-
-That's one way to respond to an honest question asking if you've done
-any tests on the other side of the change.  I agree the impact should
-be less than the advantage you've shown, but sometimes it's nice to
-see these things.
-
-> Last week I got a private reply from Linus suggesting the new checks
-> only happen once at commit_cred() time, which would mean there would be
-> at most one extra branch for the case you are concerned with. However,
-> this quickly turn out to be rather hairy as there are games being
-> played for example in copy_creds() which assigns them *without* calling
-> commit_creds(). I was not comfortable pre-computing without sorting out
-> the mess first and he conceded the new branchfest is not necessarily a
-> big deal.
+> Any process can cause a memory charge transfer to occur to any other
+> process when transmitting a file descriptor through binder. This should
+> only be possible for central allocator processes, so the binder object
+> flags are added to the security_binder_transfer_file hook so that LSMs
+> can enforce restrictions on charge transfers.
 >
-> That said, if you want some performance recovered for this case, here
-> is an easy one:
->
-> static const struct cred *access_override_creds(void)
-> [..]
->         old_cred = override_creds(override_cred);
->
->         /* override_cred() gets its own ref */
->         put_cred(override_cred);
->
-> As in the new creds get refed only to get unrefed immediately after.
-> Whacking the 2 atomics should make up for it no problem on x86-64.
->
-> Also see below.
->
-> >> The above benchmarks are not integrated into will-it-scale, but can be
-> >> found in a pull request:
-> >> https://github.com/antonblanchard/will-it-scale/pull/36/files
-> >>
-> >> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> >>
-> >> v2:
-> >> - fix current->cred usage warn reported by the kernel test robot
-> >> Link: https://lore.kernel.org/all/202301150709.9EC6UKBT-lkp@intel.com/
-> >> ---
-> >>  fs/open.c | 32 +++++++++++++++++++++++++++++++-
-> >>  1 file changed, 31 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/fs/open.c b/fs/open.c
-> >> index 82c1a28b3308..3c068a38044c 100644
-> >> --- a/fs/open.c
-> >> +++ b/fs/open.c
-> >> @@ -367,7 +367,37 @@ COMPAT_SYSCALL_DEFINE6(fallocate, int, fd, int, mode,
-> >> compat_arg_u64_dual(offset
-> >>   * access() needs to use the real uid/gid, not the effective uid/gid.
-> >>   * We do this by temporarily clearing all FS-related capabilities and
-> >>   * switching the fsuid/fsgid around to the real ones.
-> >> + *
-> >> + * Creating new credentials is expensive, so we try to skip doing it,
-> >> + * which we can if the result would match what we already got.
-> >>   */
-> >> +static bool access_need_override_creds(int flags)
-> >> +{
-> >> +       const struct cred *cred;
-> >> +
-> >> +       if (flags & AT_EACCESS)
-> >> +               return false;
-> >> +
-> >> +       cred = current_cred();
-> >> +       if (!uid_eq(cred->fsuid, cred->uid) ||
-> >> +           !gid_eq(cred->fsgid, cred->gid))
-> >> +               return true;
-> >> +
-> >> +       if (!issecure(SECURE_NO_SETUID_FIXUP)) {
-> >> +               kuid_t root_uid = make_kuid(cred->user_ns, 0);
-> >> +               if (!uid_eq(cred->uid, root_uid)) {
-> >> +                       if (!cap_isclear(cred->cap_effective))
-> >> +                               return true;
-> >> +               } else {
-> >> +                       if (!cap_isidentical(cred->cap_effective,
-> >> +                           cred->cap_permitted))
-> >> +                               return true;
-> >> +               }
-> >> +       }
-> >> +
-> >> +       return false;
-> >> +}
-> >
-> > I worry a little that with nothing connecting
-> > access_need_override_creds() to access_override_creds() there is a bug
-> > waiting to happen if/when only one of the functions is updated.
->
-> These funcs are literally next to each other, I don't think that is easy
-> to miss. I concede a comment in access_override_creds to take a look at
-> access_need_override_creds would not hurt, but I don't know if a resend
-> to add it is justified.
-
-Perhaps it's because I have to deal with a fair amount of code getting
-changed in one place and not another, but I would think that a comment
-would be the least one could do here and would justify a respin.
-
-> > Given the limited credential changes in access_override_creds(), I
-> > wonder if a better solution would be to see if we could create a
-> > light(er)weight prepare_creds()/override_creds() that would avoid some
-> > of the prepare_creds() hotspots (I'm assuming that is where most of
-> > the time is being spent).  It's possible this could help improve the
-> > performance of other, similar operations that need to modify task
-> > creds for a brief, and synchronous, period of time.
+> Signed-off-by: T.J. Mercier <tjmercier@google.com>
+> ---
+>  drivers/android/binder.c            |  2 +-
+>  include/linux/lsm_hook_defs.h       |  2 +-
+>  include/linux/lsm_hooks.h           |  5 ++++-
+>  include/linux/security.h            |  6 ++++--
+>  security/security.c                 |  4 ++--
+>  security/selinux/hooks.c            | 13 ++++++++++++-
+>  security/selinux/include/classmap.h |  2 +-
+>  7 files changed, 25 insertions(+), 9 deletions(-)
 
 ...
 
-> For a Real Solution(tm) for a general case I think has to start with an
-> observartion creds either persist for a long time *OR* keep getting
-> recreated. This would suggest holding on to them and looking them up
-> instead just allocating, but all this opens another can of worms and
-> I don't believe is worth the effort at this stage. But maybe someone
-> has a better idea.
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 3c5be76a9199..d4cfca3c9a3b 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -88,6 +88,7 @@
+>  #include <linux/bpf.h>
+>  #include <linux/kernfs.h>
+>  #include <linux/stringhash.h>  /* for hashlen_string() */
+> +#include <uapi/linux/android/binder.h>
+>  #include <uapi/linux/mount.h>
+>  #include <linux/fsnotify.h>
+>  #include <linux/fanotify.h>
+> @@ -2029,7 +2030,8 @@ static int selinux_binder_transfer_binder(const struct cred *from,
 >
-> That said, for the case of access(), I had the following in mind but
-> once more considered it not justified at this stage.
+>  static int selinux_binder_transfer_file(const struct cred *from,
+>                                         const struct cred *to,
+> -                                       struct file *file)
+> +                                       struct file *file,
+> +                                       u32 binder_object_flags)
+>  {
+>         u32 sid = cred_sid(to);
+>         struct file_security_struct *fsec = selinux_file(file);
+> @@ -2038,6 +2040,15 @@ static int selinux_binder_transfer_file(const struct cred *from,
+>         struct common_audit_data ad;
+>         int rc;
 >
-> pseudocode-wise:
-> struct cred *prepare_shallow_creds(void)
->         new = kmem_cache_alloc(cred_jar, GFP_KERNEL);
->         old = task->cred;
->         memcpy(new, old, sizeof(struct cred));
+> +       if (binder_object_flags & BINDER_FD_FLAG_XFER_CHARGE) {
+> +               rc = avc_has_perm(&selinux_state,
+> +                           cred_sid(from), sid,
+> +                           SECCLASS_BINDER, BINDER__TRANSFER_CHARGE,
+> +                           NULL);
+> +               if (rc)
+> +                       return rc;
+> +       }
+> +
+>         ad.type = LSM_AUDIT_DATA_PATH;
+>         ad.u.path = file->f_path;
 >
-> here new creds have all the same pointers as old, but the target objs
-> are only kept alive by the old creds still refing them. So by API
-> contract you are required to keep them around.
->
-> after you temporarily assign them you call revert_shallow_creds():
->         if (tempcred->usage == 1)
->                 /* nobody refed them, do the non_rcu check */
->                 ...
->         else
->                 /* somebody grabbed them, legitimize creds by
->                  * grabbing the missing refs
->                  */
->                  get_uid(new->user);
->                  get_user_ns(new->user_ns);
->                  get_group_info(new->group_info);
->                  /* and so on */
->
-> So this would shave work from the case you are concerned with probably
-> for all calls.
->
-> I do think this is an ok idea overall, but I felt like overengineering for the
-> problem at hand *at the time*.
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+> index a3c380775d41..2eef180d10d7 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -172,7 +172,7 @@ const struct security_class_mapping secclass_map[] = {
+>         { "tun_socket",
+>           { COMMON_SOCK_PERMS, "attach_queue", NULL } },
+>         { "binder", { "impersonate", "call", "set_context_mgr", "transfer",
+> -                     NULL } },
+> +                     "transfer_charge", NULL } },
+>         { "cap_userns",
+>           { COMMON_CAP_PERMS, NULL } },
+>         { "cap2_userns",
 
-In my opinion a generalized shallow copy approach has more value than
-a one-off solution that has the potential to fall out of sync and
-cause a problem in the future (I recognize that you disagree on the
-likelihood of this happening).
+My first take on reading these changes above is that you've completely
+ignored my previous comments about SELinux access controls around
+resource management.  You've leveraged the existing LSM/SELinux hook
+as we discussed previously, that's good, but can you explain what
+changes you've made to address my concerns about one-off resource
+management controls?
 
-> For some context, I'm looking at performance of certain VFS stuff and
-> there is some serious fish to fry in the fstat department.
-
-I assumed it was part of some larger perf work, but I'm not sure the
-context is that important for this particular discussion.
-
-> The patch I
-> posted is definitely worthwhile perf-wise and easy enough to reason
-> about that I did no expect much opposition to it. If anything I expected
-> opposition to the idea outlined above.
-
-Ultimately it's a call for the VFS folks as they are responsible for
-the access() code.
-
---
+-- 
 paul-moore.com
