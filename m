@@ -2,151 +2,135 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6568C25B4E
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Jan 2023 18:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B97EC54E94
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Jan 2023 18:56:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233852AbjAXSnP (ORCPT
+        id S234210AbjAXS4V (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Jan 2023 13:43:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48288 "EHLO
+        Tue, 24 Jan 2023 13:56:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233977AbjAXSnE (ORCPT
+        with ESMTP id S234323AbjAXS4V (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Jan 2023 13:43:04 -0500
-Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19209166DE;
-        Tue, 24 Jan 2023 10:42:57 -0800 (PST)
-Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-15b9c93848dso18749142fac.1;
-        Tue, 24 Jan 2023 10:42:57 -0800 (PST)
+        Tue, 24 Jan 2023 13:56:21 -0500
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34DF34A1F6
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Jan 2023 10:55:56 -0800 (PST)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-50112511ba7so172785447b3.3
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Jan 2023 10:55:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wiC7R/H94hYc1SsjxtFjmBRg+lLwk6SCWMFgpc1MdSs=;
-        b=TWgfRWQ1fiNK9XA0MeyWCulPPMMPqNScBqLHRvlK6asoKbQj9I0w6ySJijKI+mhMT8
-         pRnZDojAvcUNveVWtL1UWkAJ6zTSCUAbo5UNdTdmSaW6AV/Wr33UDUBcr6cO+2pHFkwe
-         G/piuIrO5Vb167eQnFEvCsEi1aq8oJzQSZjLzScoLNLbF5GdveawKeGu0G2+8/tGRMbl
-         E9ajFnwZuXJNlk/ROCjHZzvanQHNAUxvWie/YsD3BvzPxx5DpEoGTePvjKBYSvAbcQEe
-         MLrcimPt1cSVDJ+Q9Detk45kXFYiVobuCsfoRzp3IWBharfpwmF1HBtC87H3MSYidHIG
-         gdag==
+        bh=5iP8zaH4qhJm7u23Me24MfP0ksC5myih/koifVjd6bQ=;
+        b=L97ftDdvRyPqQWji9bbudEKZD0LDLmKOVOT0VCiZU2LCV4qkff4lF/IdPTXrUURWIL
+         ff9SdNebMBFiJK7tO0W11Q1G3UAXgTPUqwqhK5wAl6n35fMRrabPmvj7OKd4VEXabKNe
+         fPfG1+wRSo+CGN8gb1ygCJ4/kEeW/hVXaBUNrg4mvfNQT/BKe7VDh8MR1pAOAXvVpeRH
+         iSMTwWB8dLyPnn97HzVO9MptWE6TkOpSAkEtIzxtQqNOTsOqkk7JQsVXrGtclwnaZu3B
+         HwIb13tYMPFn1tPWBxylMI8CnFv9i3PBeFrmGSlZCW+l6NJP5u3gl1vi0n9snU8rYOV/
+         xPKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wiC7R/H94hYc1SsjxtFjmBRg+lLwk6SCWMFgpc1MdSs=;
-        b=0UBYV48mrppEyAaHGAAaa5036iKRK4Kl0D8mbLvPcQcGO7U7+Kf4AmBVG0E5dYSM80
-         GkB9vQDnvgiUW93Yhle3wHkSoUOybHfH1LvDiD6zGzEfgsoQoLBwmdE6fBk03fg7im3n
-         es8AhKSLdz69Ruuvuz9GIcUs6TEm+OEfU/WjB6H4G2cFvKeB721h6ezNKkVWCebvk9/H
-         FOvlybTSx4nv2QUMTCQcxPxiEjLpUhCVwmFy6ej2t7bxuPcHaACsiE8n2o0SZyZAHZQT
-         Go6FDeMNa68soYWyw8tK34XL69GS+qxODHOqM9CUTK44m3Ce8QQjYBTKrS3UlAvKsosD
-         4kDg==
-X-Gm-Message-State: AO0yUKVgFtHjyK+Cm2QAC9bsAaQQQNO8ZrQW2iidzotLT4UIQ/AbgWpj
-        f7w3X/yF02TX+eMuqPrXq45Rc1yAClEH3zMaKEs=
-X-Google-Smtp-Source: AK7set/yUllb1k65k/qoEf6g8aCEBffXa0VIT5A8LJQ/UtfJd94cYwGOrF92P7dAa0f9KBNc/egCyQP7T7Rgfgrct00=
-X-Received: by 2002:a05:6870:1115:b0:163:1d2a:aa5d with SMTP id
- 21-20020a056870111500b001631d2aaa5dmr124635oaf.81.1674585776376; Tue, 24 Jan
- 2023 10:42:56 -0800 (PST)
+        bh=5iP8zaH4qhJm7u23Me24MfP0ksC5myih/koifVjd6bQ=;
+        b=Kfq2JzsPtiN8dQWxCWSRBIc2B/SrLvt6W91mBZ53r8AypFO01M9ZkfUgOExDNjrH8M
+         aPtgf0HuTEx2QSr1SXDAHy2YnCfBc6ka3Vpgg5F1PVcatqzOeTndWIocC7wjZtgqJL7N
+         uMFA4+3aTkfAJmecXGcMnk++niz+ldjt65DocpYzx1YPt2CQ5carA2jcYh0r/kOXfiTn
+         VM3lAVoEwOENJH+xmJe9xhunxPRiwukBmV8lDb2nx9JCoHtTA0q/KVoCF85shpWo5S7Q
+         +iYF5XPAkxz6B2rLdmve/vqLCYk+HMwWLZm0LrfCOAquu0W7hqtZthvdJgt4xBPGdnmT
+         XpKA==
+X-Gm-Message-State: AFqh2kp+zvWylfAISq3uMk+Vy3lLXxLM0ZmbqXyx81fwvbO23C24QChe
+        EHzR6+Ux8tr5jCzM/POlfEfWBVRwSIHZWT+4zfAnhQ==
+X-Google-Smtp-Source: AMrXdXvYfqSwoaAvj+x6Y8rOABSC1o3UELoBjL8mxdEcOy8itZdY1Gyy4qtRJtS0OI19YGFM9lWbjo9sqQUT8b8rESs=
+X-Received: by 2002:a81:ee03:0:b0:4ec:8f55:59f7 with SMTP id
+ l3-20020a81ee03000000b004ec8f5559f7mr3333976ywm.317.1674586532265; Tue, 24
+ Jan 2023 10:55:32 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a8a:ad6:0:b0:49c:e11d:f815 with HTTP; Tue, 24 Jan 2023
- 10:42:55 -0800 (PST)
-In-Reply-To: <CAHk-=wiG5wdWrx2uXRK3-i31Zp416krnu_KjmBbS3BVkiAUXLQ@mail.gmail.com>
-References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
- <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
- <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
- <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com>
- <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com>
- <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com> <CAHk-=wiG5wdWrx2uXRK3-i31Zp416krnu_KjmBbS3BVkiAUXLQ@mail.gmail.com>
-From:   Mateusz Guzik <mjguzik@gmail.com>
-Date:   Tue, 24 Jan 2023 19:42:55 +0100
-Message-ID: <CAGudoHG22iS3Bt1rh_kEJDEstj3r1Mj4Z305vqRbP8vBjQZ3dg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
-        serge@hallyn.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20230123191728.2928839-1-tjmercier@google.com>
+ <20230123191728.2928839-2-tjmercier@google.com> <Y8/ybgp2FW+e3bjc@dhcp22.suse.cz>
+In-Reply-To: <Y8/ybgp2FW+e3bjc@dhcp22.suse.cz>
+From:   "T.J. Mercier" <tjmercier@google.com>
+Date:   Tue, 24 Jan 2023 10:55:21 -0800
+Message-ID: <CABdmKX1c_8LdJJboENnZhwGjrszDWOOVt-Do93-sJW46mZMD6A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] memcg: Track exported dma-buffers
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <muchun.song@linux.dev>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        daniel.vetter@ffwll.ch, android-mm@google.com, jstultz@google.com,
+        jeffv@google.com, cmllamas@google.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/24/23, Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> On Tue, Jan 24, 2023 at 9:00 AM Paul Moore <paul@paul-moore.com> wrote:
->>
->> My main concern is the duplication between the cred check and the cred
->> override functions leading to a bug at some unknown point in the
->> future.
+On Tue, Jan 24, 2023 at 7:00 AM Michal Hocko <mhocko@suse.com> wrote:
 >
-> Yeah, it might be good to try to have some common logic for this,
-> although it's kind of messy.
+> On Mon 23-01-23 19:17:23, T.J. Mercier wrote:
+> > When a buffer is exported to userspace, use memcg to attribute the
+> > buffer to the allocating cgroup until all buffer references are
+> > released.
 >
-> The access_override_creds() logic is fairly different from the "do I
-> need to create new creds" decision, since instead of *testing* whether
-> the fs[ug]id and [ug]id matches, it just sets the fs[ug]id to the
-> expected values.
->
-> So that part of the test doesn't really exist.
->
-> And the same is true of the !SECURE_NO_SETUID_FIXUP logic case - the
-> current access() override doesn't _test_ those variables for equality,
-> it just sets them.
->
-> So Mateusz' patch doesn't really duplicate any actual logic, it just
-> has similarities in that it checks "would that new cred that
-> access_override_creds() would create be the same as the old one".
->
-> So sharing code is hard, because the code is fundamentally not the same.
->
-> The new access_need_override_creds() function is right next to the
-> pre-existing access_override_creds() one, so at least they are close
-> to each other. That may be the best that can be done.
->
-> Maybe some of the "is it the root uid" logic could be shared, though.
-> Both cases do have this part in common:
->
->         if (!issecure(SECURE_NO_SETUID_FIXUP)) {
->                 /* Clear the capabilities if we switch to a non-root user
-> */
->                 kuid_t root_uid = make_kuid(override_cred->user_ns, 0);
->                 if (!uid_eq(override_cred->uid, root_uid))
->
-> and that is arguably the nastiest part of it all.
->
-> I don't think it's all that likely to change in the future, though
-> (except for possible changes due to user_ns re-orgs, but then changing
-> both would be very natural).
->
+> Is there any reason why this memory cannot be charged during the
+> allocation (__GFP_ACCOUNT used)?
 
-You could dedup make_kuid + uid_eq check, but does it really buy
-anything?
+My main motivation was to keep code changes away from exporters and
+implement the accounting in one common spot for all of them. This is a
+bit of a carryover from a previous approach [1] where there was some
+objection to pushing off this work onto exporters and forcing them to
+adapt, but __GFP_ACCOUNT does seem like a smaller burden than before
+at least initially. However in order to support charge transfer
+between cgroups with __GFP_ACCOUNT we'd need to be able to get at the
+pages backing dmabuf objects, and the exporters are the ones with that
+access. Meaning I think we'd have to add some additional dma_buf_ops
+to achieve that, which was the objection from [1].
 
-ns changes which break compilation will find both spots. Similarly
-any grep used to find one should also automagically find the other
-one.
+[1] https://lore.kernel.org/lkml/5cc27a05-8131-ce9b-dea1-5c75e994216d@amd.com/
 
-I think this patch generated way more discussion than it warrants,
-especially since I deliberately went for the trivial approach in
-hopes of avoiding this kind of stuff.
+>
+> Also you do charge and account the memory but underlying pages do not
+> know about their memcg (this is normally done with commit_charge for
+> user mapped pages). This would become a problem if the memory is
+> migrated for example.
 
-So how about I simply respin with the comment I mailed earlier,
-repasted here for reference (with a slight tweak):
+Hmm, what problem do you see in this situation? If the backing pages
+are to be migrated that requires the cooperation of the exporter,
+which currently has no influence on how the cgroup charging is done
+and that seems fine. (Unless you mean migrating the charge across
+cgroups? In which case that's the next patch.)
 
-diff --git a/fs/open.c b/fs/open.c
-index 3c068a38044c..756177b94b04 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -407,6 +407,11 @@ static const struct cred *access_override_creds(void)
-        if (!override_cred)
-                return NULL;
+> This also means that you have to maintain memcg
+> reference outside of the memcg proper which is not really nice either.
+> This mimicks tcp kmem limit implementation which I really have to say I
+> am not a great fan of and this pattern shouldn't be coppied.
+>
+Ah, what can I say. This way looked simple to me. I think otherwise
+we're back to making all exporters do more stuff for the accounting.
 
-+       /*
-+        * XXX access_need_override_creds performs checks in hopes of
-+        * skipping this work. Make sure it stays in sync if making any
-+        * changes in this routine.
-+        */
-        override_cred->fsuid = override_cred->uid;
-        override_cred->fsgid = override_cred->gid;
+> Also you are not really saying anything about the oom behavior. With
+> this implementation the kernel will try to reclaim the memory and even
+> trigger the memcg oom killer if the request size is <= 8 pages. Is this
+> a desirable behavior?
 
-sounds like a plan?
+It will try to reclaim some memory, but not the dmabuf pages right?
+Not *yet* anyway. This behavior sounds expected to me. I would only
+expect it to be surprising for cgroups making heavy use of dmabufs
+(that weren't accounted before) *and* with hard limits already very
+close to actual usage. I remember Johannes mentioning that what counts
+under memcg use is already a bit of a moving target.
 
--- 
-Mateusz Guzik <mjguzik gmail.com>
+> --
+> Michal Hocko
+> SUSE Labs
