@@ -2,170 +2,119 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B8FC38142
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Jan 2023 17:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45624C54E94
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Jan 2023 17:14:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234410AbjAXRBA (ORCPT
+        id S234617AbjAXROn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Jan 2023 12:01:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34242 "EHLO
+        Tue, 24 Jan 2023 12:14:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234077AbjAXRA7 (ORCPT
+        with ESMTP id S234668AbjAXROk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Jan 2023 12:00:59 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 433C346D55
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Jan 2023 09:00:56 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id z1-20020a17090a66c100b00226f05b9595so14654030pjl.0
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Jan 2023 09:00:56 -0800 (PST)
+        Tue, 24 Jan 2023 12:14:40 -0500
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C106D45885
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Jan 2023 09:14:35 -0800 (PST)
+Received: by mail-vs1-xe2b.google.com with SMTP id i185so17146873vsc.6
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Jan 2023 09:14:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google;
+        d=linux-foundation.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NvlI0i6tuIH+cEsFMK651QuzmfDYjvdOyfnJQ4mWPaM=;
-        b=fBCyoy0jsWCHcQ5tg6XSqYXIY6XFpXsrjLZ6mXT3WPizdVoFT6JVhQEWOkpHqjh6wd
-         ngsgH5NdU4lVbh05bTwLfzo8vbU25MvXhkW7NPzn049LZvVCtXWQ38wIYoIYkz3gtNlN
-         5YUbcMG5dqMJh67/3Z3i2GpSIA9l3JSInqAIhpIl1NkXTUjXaFXOqA5dEagK8pD/6z6y
-         x6Uw73dClMjkTkQx0hS/sjlyaxOGmjFopku5JE1XKSHnHHXmK/H3ALIIad9NX0SUR5di
-         ZbiNpEi1Y2sd/fQJ/WSWuycdhMHRhMbsEWnYRwc6HZn8+YIxs2nztaNFQaXsNjVH78uX
-         VF+w==
+        bh=spY1Ga4Htt/e4/S3YR+lJ4bQ2N92evKYOkZEiqiKzXc=;
+        b=OdfpXJDvwGfjoa/f0B3U31apaRVO+bHLetpe4JZQeT9jcGD15bvQ0ANB1i2v8cy/0e
+         ZAvaAK8BR5efiy/dEM/Rdur3S8J8CNsF/ZTG/wknYZFmNOY0JTvlRw1ZWLbMnXAuDhB2
+         gcfq49QV6SqUItxv2HJN+/3Z0MAIXynTjELL8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NvlI0i6tuIH+cEsFMK651QuzmfDYjvdOyfnJQ4mWPaM=;
-        b=EA6Hiw680xcB+h4zwWZat9jpkGxuBcR/SkyJFvuoDclAuARKNGRQKr2fijjZQnjgie
-         bQmhob4Z4vU32NYxVSLKG5poxb6ySF9828lp1oJ81Bf08vvKf1PYdVPQUe8ne37SCoxu
-         ezHFsv4MeudLSh7Fva0UN4PGGTMEi5en3GoXDbhuJAXaoWNkaITUAl8WhK2xgaV7tjIs
-         8BmH2e0upver7ZK3kxaQpyf8YIahH3exlQEdgbdXunHeAqc9iPEef7jP4OIsJb2mIKzH
-         Q2zpTmduRXUJsZMqoVyg8ubDqwcWP9V0kvmzhY6kPDiQ7cpA01Ll81dFnrauiO+6iXV7
-         NRlg==
-X-Gm-Message-State: AFqh2kp8XokkNUmdiSih1+poH1iQwg8NLw6NvX1RuAGeEuVOM3oHWacR
-        FBviIN0Ee4Oz7bXGK5Dv+ayVjdcG/0C6f2IzHhzT
-X-Google-Smtp-Source: AMrXdXs5LwusCrxpDA+RsriJbYMYR5uAig0mVQQF9cpIROxbArDIWF2uu/OmQcjY4r+XZtUpmQv4jd4LezcJvj0+/Zk=
-X-Received: by 2002:a17:90a:17a1:b0:229:9ffe:135b with SMTP id
- q30-20020a17090a17a100b002299ffe135bmr3346473pja.72.1674579655647; Tue, 24
- Jan 2023 09:00:55 -0800 (PST)
+        bh=spY1Ga4Htt/e4/S3YR+lJ4bQ2N92evKYOkZEiqiKzXc=;
+        b=zlmHngn8ZHTVxAzXiOaiNTloAb7uWNQVKB0rcaSltc1UXlGjFmRZupqBmRUpFq1J5X
+         ahhNiFAj3xRpljvLpSk1P4tGH5Bm2jzfGoTqM2X2z8v1ZEK6hO+JaamHW/vPXAYp7tla
+         yQgIhC7HBR74ujqYLD7y9b4GX4ZO3H5IkmYLQ2vBuINcYkveSB0ncMFlWR60juvst+mb
+         qneoURO6xfvRBykLyeyusFIyQZxhoEHumnf17QcqsXbsmlIZF7AdEIWSsR/hYsT8wVkk
+         DFrwsVFmlzYY5bdDljACY9x5u8eAgwpb3tEFe7tIyxXMERCORXTVE+4zfFpbXpDqTB/1
+         HT+Q==
+X-Gm-Message-State: AFqh2kooLrxnHGMTfC7wZUOuaTnMZllHL7IkIkZqW8wVDvefktfX+v8i
+        V/La87sm/yQY8q61Uuo+XPwjy++Q6LUK2IdF
+X-Google-Smtp-Source: AMrXdXs3QVqVwOOJWXYRzWM7ykn71UXnUYmDfcoh6MR6Q4JCqvOxBx4GW86XGBkhYK22yS+Yb8hFUg==
+X-Received: by 2002:a05:6102:5f8:b0:3d0:d383:72b7 with SMTP id w24-20020a05610205f800b003d0d38372b7mr16512464vsf.21.1674580474514;
+        Tue, 24 Jan 2023 09:14:34 -0800 (PST)
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com. [209.85.219.50])
+        by smtp.gmail.com with ESMTPSA id bi11-20020a05620a318b00b007090bb886a2sm1770821qkb.118.2023.01.24.09.14.33
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Jan 2023 09:14:34 -0800 (PST)
+Received: by mail-qv1-f50.google.com with SMTP id q10so12092508qvt.10
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Jan 2023 09:14:33 -0800 (PST)
+X-Received: by 2002:a05:6214:5f82:b0:534:252f:b091 with SMTP id
+ ls2-20020a0562145f8200b00534252fb091mr1278555qvb.130.1674580473657; Tue, 24
+ Jan 2023 09:14:33 -0800 (PST)
 MIME-Version: 1.0
 References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
  <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
  <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
- <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com> <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com>
-In-Reply-To: <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 24 Jan 2023 12:00:46 -0500
-Message-ID: <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com>
+ <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com>
+ <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com> <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 24 Jan 2023 09:14:17 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiG5wdWrx2uXRK3-i31Zp416krnu_KjmBbS3BVkiAUXLQ@mail.gmail.com>
+Message-ID: <CAHk-=wiG5wdWrx2uXRK3-i31Zp416krnu_KjmBbS3BVkiAUXLQ@mail.gmail.com>
 Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, serge@hallyn.com,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk,
+        serge@hallyn.com, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 24, 2023 at 5:16 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
-> On 1/23/23, Paul Moore <paul@paul-moore.com> wrote:
-> > On Fri, Jan 20, 2023 at 7:50 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >> On 1/20/23, Paul Moore <paul@paul-moore.com> wrote:
-> >> > On Mon, Jan 16, 2023 at 4:21 PM Mateusz Guzik <mjguzik@gmail.com>
-> >> > wrote:
-> >> >>
-> >> >> access(2) remains commonly used, for example on exec:
-> >> >> access("/etc/ld.so.preload", R_OK)
-> >> >>
-> >> >> or when running gcc: strace -c gcc empty.c
-> >> >> % time     seconds  usecs/call     calls    errors syscall
-> >> >> ------ ----------- ----------- --------- --------- ----------------
-> >> >>   0.00    0.000000           0        42        26 access
-> >> >>
-> >> >> It falls down to do_faccessat without the AT_EACCESS flag, which in
-> >> >> turn
-> >> >> results in allocation of new creds in order to modify fsuid/fsgid and
-> >> >> caps. This is a very expensive process single-threaded and most
-> >> >> notably
-> >> >> multi-threaded, with numerous structures getting refed and unrefed on
-> >> >> imminent new cred destruction.
-> >> >>
-> >> >> Turns out for typical consumers the resulting creds would be identical
-> >> >> and this can be checked upfront, avoiding the hard work.
-> >> >>
-> >> >> An access benchmark plugged into will-it-scale running on Cascade Lake
-> >> >> shows:
-> >> >> test    proc    before  after
-> >> >> access1 1       1310582 2908735  (+121%)  # distinct files
-> >> >> access1 24      4716491 63822173 (+1353%) # distinct files
-> >> >> access2 24      2378041 5370335  (+125%)  # same file
-> >> >
-> >> > Out of curiosity, do you have any measurements of the impact this
-> >> > patch has on the AT_EACCESS case when the creds do need to be
-> >> > modified?
-> >>
-> >> I could not be arsed to bench that. I'm not saying there is literally 0
-> >> impact, but it should not be high and the massive win in the case I
-> >> patched imho justifies it.
-> >
-> > That's one way to respond to an honest question asking if you've done
-> > any tests on the other side of the change.  I agree the impact should
-> > be less than the advantage you've shown, but sometimes it's nice to
-> > see these things.
+On Tue, Jan 24, 2023 at 9:00 AM Paul Moore <paul@paul-moore.com> wrote:
 >
-> So reading this now I do think it was worded in quite a poor manner, so
-> apologies for that.
+> My main concern is the duplication between the cred check and the cred
+> override functions leading to a bug at some unknown point in the
+> future.
 
-Thanks, but no worries.  Work in this space long enough and everyone
-eventually ends up sending a mail or two that could have been worded
-better, myself included.
+Yeah, it might be good to try to have some common logic for this,
+although it's kind of messy.
 
-> Wording aside, I don't know whether this is just a passing remark or
-> are you genuinely concerned about the other case.
+The access_override_creds() logic is fairly different from the "do I
+need to create new creds" decision, since instead of *testing* whether
+the fs[ug]id and [ug]id matches, it just sets the fs[ug]id to the
+expected values.
 
-My main concern is the duplication between the cred check and the cred
-override functions leading to a bug at some unknown point in the
-future.  Changes to credential checking, and access control in
-general, always gets my attention and due to past bruises I'm very
-sensitive to out-of-sync issues due to code duplication; so your patch
-was a bit of a "perfect storm" of concern for me :)
+So that part of the test doesn't really exist.
 
-The profiling questions were mainly there as a curiosity since it
-looked like this was part of a larger performance oriented effort and
-I thought you might have more data that didn't make it into the commit
-description.
+And the same is true of the !SECURE_NO_SETUID_FIXUP logic case - the
+current access() override doesn't _test_ those variables for equality,
+it just sets them.
 
-> >> These funcs are literally next to each other, I don't think that is easy
-> >> to miss. I concede a comment in access_override_creds to take a look at
-> >> access_need_override_creds would not hurt, but I don't know if a resend
-> >> to add it is justified.
-> >
-> > Perhaps it's because I have to deal with a fair amount of code getting
-> > changed in one place and not another, but I would think that a comment
-> > would be the least one could do here and would justify a respin.
->
-> I'm not going to *insist* on not adding that comment.
->
-> Would this work for you?
->
-> diff --git a/fs/open.c b/fs/open.c
-> index 3c068a38044c..756177b94b04 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -407,6 +407,11 @@ static const struct cred *access_override_creds(void)
->         if (!override_cred)
->                 return NULL;
->
-> +       /*
-> +        * XXX access_need_override_creds performs checks in hopes of
-> +        * skipping this work. Make sure it stays in sync if making any
-> +        * changes here.
-> +        */
->         override_cred->fsuid = override_cred->uid;
->         override_cred->fsgid = override_cred->gid;
->
-> if not, can you phrase it however you see fit for me to copy-paste?
+So Mateusz' patch doesn't really duplicate any actual logic, it just
+has similarities in that it checks "would that new cred that
+access_override_creds() would create be the same as the old one".
 
-That wording looks good to me and would help me feel a bit better
-about this change, thank you.
+So sharing code is hard, because the code is fundamentally not the same.
 
--- 
-paul-moore.com
+The new access_need_override_creds() function is right next to the
+pre-existing access_override_creds() one, so at least they are close
+to each other. That may be the best that can be done.
+
+Maybe some of the "is it the root uid" logic could be shared, though.
+Both cases do have this part in common:
+
+        if (!issecure(SECURE_NO_SETUID_FIXUP)) {
+                /* Clear the capabilities if we switch to a non-root user */
+                kuid_t root_uid = make_kuid(override_cred->user_ns, 0);
+                if (!uid_eq(override_cred->uid, root_uid))
+
+and that is arguably the nastiest part of it all.
+
+I don't think it's all that likely to change in the future, though
+(except for possible changes due to user_ns re-orgs, but then changing
+both would be very natural).
+
+               Linus
