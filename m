@@ -2,88 +2,93 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5EDFC25B4E
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Jan 2023 11:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB715C38142
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Jan 2023 15:00:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233914AbjAXLP7 (ORCPT
+        id S234788AbjAXPAI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Jan 2023 06:15:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45686 "EHLO
+        Tue, 24 Jan 2023 10:00:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233915AbjAXLPz (ORCPT
+        with ESMTP id S235306AbjAXPAF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Jan 2023 06:15:55 -0500
-X-Greylist: delayed 901 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 24 Jan 2023 03:15:48 PST
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E21813E63F;
-        Tue, 24 Jan 2023 03:15:47 -0800 (PST)
-From:   Denis Arefev <arefev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-        t=1674557437;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=aD4/h9d4fdnCay6mck+bYpcLc26YjKd4Wc2Mq5yvcbU=;
-        b=kAotjoS+d+k9Lh4ogAm7MW/ZgGTPfW79NNEjl8gEv4rnxU/Xb1Tddt+3YMXPUpPLwKXfkp
-        VIA3w+ahpW5+XvvAn9oBzTGPzL1W85NiQ2RV3HqLVZQ9dr4Tj3Wbs0hV29GgzJPafPdfkS
-        +JftDJcFoxCQE3Duax3BwNwr1Wvfpoo=
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, trufanov@swemel.ru, vfh@swemel.ru
-Subject: [PATCH] smackfs: Added check catlen
-Date:   Tue, 24 Jan 2023 13:50:37 +0300
-Message-Id: <20230124105037.23108-1-arefev@swemel.ru>
+        Tue, 24 Jan 2023 10:00:05 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FE03113D7;
+        Tue, 24 Jan 2023 07:00:01 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B6431210E7;
+        Tue, 24 Jan 2023 14:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1674572399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=XLqxBQfQ00tnQcihjlqxyWWIteOiPhmeVkN+U5n5QiU=;
+        b=ioVsAhbBdV1YHrLBEs6yIdAAV1QXNCZMBuzPaF312N9LCK2343XbyDbjM+FY8t1ZkxHq4n
+        Oiz2oPGK3yovgBjLtnfOF0kKVLRWhKt1RSD2ksahTFWRZVbES3/JrtXujjXbbOKWjgqA2O
+        iC2w/WyjLdNarJQAiedANs3mQbkKCFc=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8DC75139FB;
+        Tue, 24 Jan 2023 14:59:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id ScUvIm/yz2PoFgAAMHmgww
+        (envelope-from <mhocko@suse.com>); Tue, 24 Jan 2023 14:59:59 +0000
+Date:   Tue, 24 Jan 2023 15:59:58 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     "T.J. Mercier" <tjmercier@google.com>
+Cc:     Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <muchun.song@linux.dev>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        daniel.vetter@ffwll.ch, android-mm@google.com, jstultz@google.com,
+        jeffv@google.com, cmllamas@google.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v2 1/4] memcg: Track exported dma-buffers
+Message-ID: <Y8/ybgp2FW+e3bjc@dhcp22.suse.cz>
+References: <20230123191728.2928839-1-tjmercier@google.com>
+ <20230123191728.2928839-2-tjmercier@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230123191728.2928839-2-tjmercier@google.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  If the catlen is 0, the memory for the netlbl_lsm_catmap
-  structure must be allocated anyway, otherwise the check of
-  such rules is not completed correctly.
+On Mon 23-01-23 19:17:23, T.J. Mercier wrote:
+> When a buffer is exported to userspace, use memcg to attribute the
+> buffer to the allocating cgroup until all buffer references are
+> released.
 
-Signed-off-by: Denis Arefev <arefev@swemel.ru>
----
- security/smack/smackfs.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+Is there any reason why this memory cannot be charged during the
+allocation (__GFP_ACCOUNT used)?
+Also you do charge and account the memory but underlying pages do not
+know about their memcg (this is normally done with commit_charge for
+user mapped pages). This would become a problem if the memory is
+migrated for example. This also means that you have to maintain memcg
+reference outside of the memcg proper which is not really nice either.
+This mimicks tcp kmem limit implementation which I really have to say I
+am not a great fan of and this pattern shouldn't be coppied.
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 4b58526450d4..d45f4395a6ce 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -830,7 +830,7 @@ static int smk_open_cipso(struct inode *inode, struct file *file)
- static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
- 				size_t count, loff_t *ppos, int format)
- {
--	struct netlbl_lsm_catmap *old_cat;
-+	struct netlbl_lsm_catmap *old_cat, *new_cat = NULL;
- 	struct smack_known *skp;
- 	struct netlbl_lsm_secattr ncats;
- 	char mapcatset[SMK_CIPSOLEN];
-@@ -917,8 +917,19 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
- 
- 		smack_catset_bit(cat, mapcatset);
- 	}
--
--	rc = smk_netlbl_mls(maplevel, mapcatset, &ncats, SMK_CIPSOLEN);
-+	ncats.flags = 0;
-+	if (catlen == 0) {
-+		ncats.attr.mls.cat = NULL;
-+		ncats.attr.mls.lvl = maplevel;
-+		new_cat = netlbl_catmap_alloc(GFP_ATOMIC);
-+		if (new_cat)
-+			new_cat->next = ncats.attr.mls.cat;
-+		ncats.attr.mls.cat = new_cat;
-+		skp->smk_netlabel.flags &= ~(1U << 3);
-+		rc = 0;
-+	} else {
-+		rc = smk_netlbl_mls(maplevel, mapcatset, &ncats, SMK_CIPSOLEN);
-+	}
- 	if (rc >= 0) {
- 		old_cat = skp->smk_netlabel.attr.mls.cat;
- 		skp->smk_netlabel.attr.mls.cat = ncats.attr.mls.cat;
+Also you are not really saying anything about the oom behavior. With
+this implementation the kernel will try to reclaim the memory and even
+trigger the memcg oom killer if the request size is <= 8 pages. Is this
+a desirable behavior?
 -- 
-2.25.1
-
+Michal Hocko
+SUSE Labs
