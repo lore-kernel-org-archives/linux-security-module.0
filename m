@@ -2,55 +2,52 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E823C27C76
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Jan 2023 16:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E567AC27C76
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Jan 2023 17:09:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235161AbjAYQRo (ORCPT
+        id S236059AbjAYRJD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Jan 2023 11:17:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50774 "EHLO
+        Wed, 25 Jan 2023 12:09:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229778AbjAYQRo (ORCPT
+        with ESMTP id S235506AbjAYRIn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Jan 2023 11:17:44 -0500
-Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB838A61;
-        Wed, 25 Jan 2023 08:17:42 -0800 (PST)
-Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-15f97c478a8so21892179fac.13;
-        Wed, 25 Jan 2023 08:17:42 -0800 (PST)
+        Wed, 25 Jan 2023 12:08:43 -0500
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30A65A81F
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Jan 2023 09:08:01 -0800 (PST)
+Received: by mail-pg1-x534.google.com with SMTP id v3so13836456pgh.4
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Jan 2023 09:08:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=G6fehPfifrX/RPot9q+cZL35omyfpQUYf5YWxcfsJTM=;
-        b=jN+V+j7z0c8rXiKWo20rYjTy+nuiCv22HCWx68ZBsucB7hx+6MaudjF/MzNsV2oXz6
-         l07MJMoKR2k0tlQLBkwP8iAvVsYktri+NYl22xlCRxvfH0QKIDMkcxh2RlKiaeFsSeC0
-         +gpysUgpGMzeLfcP66iatj5mJ0Vg7JGVffnjxDc205glA1Dj8UJyzTxFwlu/MYGqAbJW
-         7DlOrH37t9J4NtKhurCSaHYmMyotxoh7pI234IaaXOewcNHYMVOFgIJBa84KagubsiZT
-         THNPG/yxTyXbXPh7WwDR6jK0V7fPf7c9pZ32kN92rjiGB1cAEzHR2oQhGH5jeNTDFAGU
-         VCog==
+        bh=ZL4e11xv+GmUFacOcRwvCqNYJ3WEjaPDuu6riYZ8W5o=;
+        b=Okczn7ZItRWhjh977ouqswLR4HNMLLYBj9IDXl6Rdzvd06Fu4RqPbT9QVmdfePhfZK
+         nirgjF5gXkxLLrhei7M7iSj6zEpT/5ws3XRi4mfxB0mRTsr2TT2S6AiVXK/YdeO74iJW
+         XH13Q6Yb7bO4OQq7DI9dXM23B1r4NbBBiSB+zjjNbAaqQNGwCrZR2rMMH2OIePzOZ/eL
+         EykJcTyBq/x7PG+0dALSsvFI1LffgH8JWI6YZTI5MOTkdnZ0yR9TVYx9HofTIoYp9mi4
+         PbcgQlDFWtsKi9hYLq6nqe7IH+a3rUc1PNmpW0oYOa4A9OD8ftr2QeyvBQEwBkNbo9WW
+         cZQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=G6fehPfifrX/RPot9q+cZL35omyfpQUYf5YWxcfsJTM=;
-        b=is97E9Kq2cORukjaZ56yToTkjzU8221Q9dltBozpKepA4xVmnIcO0nKWSeCTzhTJfp
-         oIHrmmWGr5vsXutGjnjh2R44dri6EVKehYTl74mmUUiClaYgHx1SNLCdW43FlOimg8bx
-         jYreLBNwPFwomrJ4jrp5yCeIyY4oDQsbZWKNvI4rln5iLYEBJmGdzJSV60jqkaFIx2Ie
-         uiWdwKJs+unkL7tb1F5EdvqMwsNIdYWtlZW/rf7ojLB/9sxlswDfljXzX0/FNiWK2w4U
-         6ySYdJgyd5cRb0rOwEuReakPuRryQiUpFyyZPb0zvEu++1WGI4P3GKyygeI8OwxNyA88
-         Qw8Q==
-X-Gm-Message-State: AO0yUKWJphUrTply4sfDSFC+7GXMLmGqOpJxvRl8QnlwJHBCvs5o7sLN
-        nnNPqGReiPAbdTQi/xkAzl19X+T9ms45qDNPw9gJ6VUk
-X-Google-Smtp-Source: AK7set8Nw9HWqCnwUl9Dh9bx8TiuKFQo1VUtoK4VQflaGueUpuYcZ4LiyuM7wvD0WjmmnIc4n0NtKaTBjpOttqRQQ7I=
-X-Received: by 2002:a05:6870:10d5:b0:163:1dac:5acb with SMTP id
- 21-20020a05687010d500b001631dac5acbmr396514oar.159.1674663460908; Wed, 25 Jan
- 2023 08:17:40 -0800 (PST)
+        bh=ZL4e11xv+GmUFacOcRwvCqNYJ3WEjaPDuu6riYZ8W5o=;
+        b=1L6Q6GSlJYahAwAajtFkdEYfRMIDqgeYO7eYYamtgh/sqr87/gJXLJMWrmBevhoTPU
+         rz5wyOnHUiaJloOiiW3TjtppBDz775l6B6lZQ1cjum7eE9tuY52S90m9fOigNXgtYlYw
+         QSsObzG0yvk5L45y2GmDy/8jOIv7Ml/HfPxI2EVfA/B3ys5SBqkUL7XEtc5aC7te/YZa
+         kxfAHIDXGnPJX1MMq1lvq1WeAsniQug58CCLzcU4WXvZS9oaL408T4DWkZLwjlAmSk0m
+         D1wKnJGFJVywOlHspcmQAkxEKCDEjhIWX1EKcs85lfVwZPj9QhoJrDEMXv3VWboWdccw
+         krhA==
+X-Gm-Message-State: AFqh2kq3Rla+qFFwbuwTpnp7YCsxNXMgJiKPIxjNl/hQ6HsrrhtnWFtZ
+        WxIz7jsdtdm2ItelP19GQiXYevC13Q3sge7iMB9F01OjN717
+X-Google-Smtp-Source: AMrXdXupWJ8tBREWhIQtIi3TU9O3qakvdpfreLWBVJoR65PEUnCtaekjQGcelo0lRu3P4bk3KD6sLcTSU8QzxlJ6OAo=
+X-Received: by 2002:a65:4d09:0:b0:4a0:8210:f47a with SMTP id
+ i9-20020a654d09000000b004a08210f47amr2853810pgt.14.1674666479563; Wed, 25 Jan
+ 2023 09:07:59 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a8a:ad6:0:b0:49c:e11d:f815 with HTTP; Wed, 25 Jan 2023
- 08:17:40 -0800 (PST)
-In-Reply-To: <CAGudoHG-42ziSNT0g8asRj8iGzx-Gn=ETZuXkswER3Daov37=A@mail.gmail.com>
 References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
  <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
  <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
@@ -59,11 +56,12 @@ References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362
  <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com>
  <CAHk-=wiG5wdWrx2uXRK3-i31Zp416krnu_KjmBbS3BVkiAUXLQ@mail.gmail.com>
  <CAHC9VhTg8mMHzdSPbpxvOQCWxuNuXzR7c6FJOg5+XGb-PYemRw@mail.gmail.com> <CAGudoHG-42ziSNT0g8asRj8iGzx-Gn=ETZuXkswER3Daov37=A@mail.gmail.com>
-From:   Mateusz Guzik <mjguzik@gmail.com>
-Date:   Wed, 25 Jan 2023 17:17:40 +0100
-Message-ID: <CAGudoHHkeF-ozA-A+7ZcJP-Su02PwE4rfQ79VgD0zw8zS84YwA@mail.gmail.com>
+In-Reply-To: <CAGudoHG-42ziSNT0g8asRj8iGzx-Gn=ETZuXkswER3Daov37=A@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 25 Jan 2023 12:07:48 -0500
+Message-ID: <CAHC9VhRG2gcuuN87sKtsPeF-S2BG1DrSCHruAnCAdCkviHuS3g@mail.gmail.com>
 Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Paul Moore <paul@paul-moore.com>
+To:     Mateusz Guzik <mjguzik@gmail.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         viro@zeniv.linux.org.uk, serge@hallyn.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -72,22 +70,25 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/25/23, Mateusz Guzik <mjguzik@gmail.com> wrote:
+On Wed, Jan 25, 2023 at 10:00 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
 > On 1/24/23, Paul Moore <paul@paul-moore.com> wrote:
->> Although I'm looking at this again and realized that only
->> do_faccessat() calls access_override_creds(), so why not just fold the
->> new access_need_override_creds() logic into access_override_creds()?
->> Just have one function that takes the flag value, and returns an
->> old_cred/NULL pointer (or pass old_cred to the function by reference
->> and return an error code); that should still provide the performance
->> win Mateusz is looking for while providing additional safety against
->> out-of-sync changes.  I would guess the code would be smaller too.
->>
+> > Although I'm looking at this again and realized that only
+> > do_faccessat() calls access_override_creds(), so why not just fold the
+> > new access_need_override_creds() logic into access_override_creds()?
+> > Just have one function that takes the flag value, and returns an
+> > old_cred/NULL pointer (or pass old_cred to the function by reference
+> > and return an error code); that should still provide the performance
+> > win Mateusz is looking for while providing additional safety against
+> > out-of-sync changes.  I would guess the code would be smaller too.
 >
 > It is unclear from the description if you are arguing for moving the new
 > func into access_override_creds almost as is just put prior to existing
 > code *or* mixing checks with assignments.
->
+
+"arguing" is a bit strong of a word for what I was thinking, it was
+more of just tossing out an idea to see if it has any merit with you,
+the VFS folks, and possibly Linus.
+
 > static bool *access_override_creds(struct cred **ptr)
 >         [snip]
 >         if (!uid_eq(cred->fsuid, cred->uid) ||
@@ -112,32 +113,15 @@ On 1/25/23, Mateusz Guzik <mjguzik@gmail.com> wrote:
 >
 > At the same time the downside is that it uglifies error handling at the
 > callsite, so I would say a net loss.
->
-> Alternatively, if you want to somehow keep tests aroung assignments the
-> code gets super hairy.
->
-> But maybe you wanted something else?
->
-> As I noted in another email this already got more discussion than it
-> warrants.
->
+
+Yes, I was thinking of combining the two functions into one to better
+link the cred checks with the cred adjustments.
+
 > Addition of the warning comment makes sense, but concerns after that
 > don't sound legitimate to me.
->
 
-So I posted v3 with the comment, you are CC'ed.
+Well, as we talked about earlier, it's really up to the VFS folks to
+pick what they want, and they have been suspiciously quiet thus far.
 
-I'm not going to further argue about the patch. If you want to write
-your own variant that's fine with me, feel free to take my bench results
-and denote they come from a similar version.
-
-There is other stuff I want to post and unslowed access() helps making
-the case. The CONFIG_INIT_ON_ALLOC_DEFAULT_ON option is enabled on
-Debian, Ubuntu and Arch and as a side effect it zeroes bufs allocated
-every time a path lookup is performed. As these are 4096 bytes in size
-it is not pretty whatsoever and I'm confident not worth the hardening
-promised by mandatory zeroing. Got patches to add exemption support for
-caches to sort it out without disabling the opt.
-
--- 
-Mateusz Guzik <mjguzik gmail.com>
+--
+paul-moore.com
