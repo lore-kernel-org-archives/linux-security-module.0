@@ -2,111 +2,151 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D11F4C61D9D
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Jan 2023 04:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3491CC61D9D
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Jan 2023 11:52:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbjAYEWM (ORCPT
+        id S235356AbjAYLwa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Jan 2023 23:22:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36466 "EHLO
+        Wed, 25 Jan 2023 06:52:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231286AbjAYEWL (ORCPT
+        with ESMTP id S233330AbjAYLw3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Jan 2023 23:22:11 -0500
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE8A053B01;
-        Tue, 24 Jan 2023 20:22:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674620525; x=1706156525;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NhOPx0gE0BklEYBntjw2S+n2t7urmONIUgn/cw4sNzQ=;
-  b=cmZ/hpHuoi62xxIcTXpfAEozZ4cthOFFo5c8At44kqH5FJkVKQg54rPQ
-   mtwrELPFObeZqdpgPpfgtW7gbsMwusud/pTS50NWnNQLiO3JOI6eYJ4wb
-   6x1zKEtkulQbCwvApEFoR9t5/FN1zbVzDC/BDLK1uvadUDxtiybx0DYrW
-   9v3uTyW/l2+86+kfxZmPXSQzdTfQrz5ubG2i7xIuB79oWz4N4OeACtAmr
-   Pz1c05rwyy0Bx4F/iaGND6Q/R+/8U/83QgdRPVQDxHSVKnOT3Auy/vWga
-   +AiStsNc94j+Xv6djwwIOGvfwMkWFB6P4yJsxXcTs4OTgfLL7UKOztDKl
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10600"; a="310052477"
-X-IronPort-AV: E=Sophos;i="5.97,244,1669104000"; 
-   d="scan'208";a="310052477"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2023 20:21:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10600"; a="786312481"
-X-IronPort-AV: E=Sophos;i="5.97,244,1669104000"; 
-   d="scan'208";a="786312481"
-Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 24 Jan 2023 20:21:42 -0800
-Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pKXI5-000720-1T;
-        Wed, 25 Jan 2023 04:21:41 +0000
-Date:   Wed, 25 Jan 2023 12:20:49 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     "T.J. Mercier" <tjmercier@google.com>, Tejun Heo <tj@kernel.org>,
+        Wed, 25 Jan 2023 06:52:29 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B4F4617C;
+        Wed, 25 Jan 2023 03:52:28 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id F356B1FF27;
+        Wed, 25 Jan 2023 11:52:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1674647547; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=SJ/Hov8dA5AtQwjazEvVbMXGIJ9ndLLp47N7ofQ4cx4=;
+        b=pXgacsTdHgiGYyBVN9vgcoDkHPc99KMqxN2lHF4x8BCAe49JWYrvjhluYPBo8Aeiyuau/n
+        HZpptJzXCIUorXumCdWJLU1ZdriRaVaJLMK8evnFcYo8OX8aItgG9bo+TU9MqtAEMbhTxh
+        0FmX6ijtqb1rsOdAc8WxYlw22VbBysI=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CFD3E1358F;
+        Wed, 25 Jan 2023 11:52:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id YZ4UMvoX0WP4bAAAMHmgww
+        (envelope-from <mhocko@suse.com>); Wed, 25 Jan 2023 11:52:26 +0000
+Date:   Wed, 25 Jan 2023 12:52:26 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     "T.J. Mercier" <tjmercier@google.com>, Tejun Heo <tj@kernel.org>,
         Zefan Li <lizefan.x@bytedance.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Carlos Llamas <cmllamas@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Muchun Song <muchun.song@linux.dev>,
+        Andrew Morton <akpm@linux-foundation.org>,
         daniel.vetter@ffwll.ch, android-mm@google.com, jstultz@google.com,
-        jeffv@google.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, cgroups@vger.kernel.org,
-        Hridya Valsaraju <hridya@google.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] binder: Add flags to relinquish ownership of fds
-Message-ID: <202301251234.klClMpZF-lkp@intel.com>
-References: <20230123191728.2928839-4-tjmercier@google.com>
+        jeffv@google.com, cmllamas@google.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v2 1/4] memcg: Track exported dma-buffers
+Message-ID: <Y9EX+usSpAjZ/8LS@dhcp22.suse.cz>
+References: <20230123191728.2928839-1-tjmercier@google.com>
+ <20230123191728.2928839-2-tjmercier@google.com>
+ <Y8/ybgp2FW+e3bjc@dhcp22.suse.cz>
+ <20230124194628.d44rtcfsv23fndxw@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230123191728.2928839-4-tjmercier@google.com>
+In-Reply-To: <20230124194628.d44rtcfsv23fndxw@google.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mercier",
+On Tue 24-01-23 19:46:28, Shakeel Butt wrote:
+> On Tue, Jan 24, 2023 at 03:59:58PM +0100, Michal Hocko wrote:
+> > On Mon 23-01-23 19:17:23, T.J. Mercier wrote:
+> > > When a buffer is exported to userspace, use memcg to attribute the
+> > > buffer to the allocating cgroup until all buffer references are
+> > > released.
+> > 
+> > Is there any reason why this memory cannot be charged during the
+> > allocation (__GFP_ACCOUNT used)?
+> > Also you do charge and account the memory but underlying pages do not
+> > know about their memcg (this is normally done with commit_charge for
+> > user mapped pages). This would become a problem if the memory is
+> > migrated for example.
+> 
+> I don't think this is movable memory.
+> 
+> > This also means that you have to maintain memcg
+> > reference outside of the memcg proper which is not really nice either.
+> > This mimicks tcp kmem limit implementation which I really have to say I
+> > am not a great fan of and this pattern shouldn't be coppied.
+> > 
+> 
+> I think we should keep the discussion on technical merits instead of
+> personal perference. To me using skmem like interface is totally fine
+> but the pros/cons need to be very explicit and the clear reasons to
+> select that option should be included.
 
-Thank you for the patch! Yet something to improve:
+I do agree with that. I didn't want sound to be personal wrt tcp kmem
+accounting but the overall code maintenance cost is higher because
+of how tcp take on accounting differs from anything else in the memcg
+proper. I would prefer to not grow another example like that.
 
-[auto build test ERROR on 2241ab53cbb5cdb08a6b2d4688feb13971058f65]
+> To me there are two options:
+> 
+> 1. Using skmem like interface as this patch series:
+> 
+> The main pros of this option is that it is very simple. Let me list down
+> the cons of this approach:
+> 
+> a. There is time window between the actual memory allocation/free and
+> the charge and uncharge and [un]charge happen when the whole memory is
+> allocated or freed. I think for the charge path that might not be a big
+> issue but on the uncharge, this can cause issues. The application and
+> the potential shrinkers have freed some of this dmabuf memory but until
+> the whole dmabuf is freed, the memcg uncharge will not happen. This can
+> consequences on reclaim and oom behavior of the application.
+> 
+> b. Due to the usage model i.e. a central daemon allocating the dmabuf
+> memory upfront, there is a requirement to have a memcg charge transfer
+> functionality to transfer the charge from the central daemon to the
+> client applications. This does introduce complexity and avenues of weird
+> reclaim and oom behavior.
+> 
+> 
+> 2. Allocate and charge the memory on page fault by actual user
+> 
+> In this approach, the memory is not allocated upfront by the central
+> daemon but rather on the page fault by the client application and the
+> memcg charge happen at the same time.
+> 
+> The only cons I can think of is this approach is more involved and may
+> need some clever tricks to track the page on the free patch i.e. we to
+> decrement the dmabuf memcg stat on free path. Maybe a page flag.
+> 
+> The pros of this approach is there is no need have a charge transfer
+> functionality and the charge/uncharge being closely tied to the actual
+> memory allocation and free.
+> 
+> Personally I would prefer the second approach but I don't want to just
+> block this work if the dmabuf folks are ok with the cons mentioned of
+> the first approach.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/T-J-Mercier/memcg-Track-exported-dma-buffers/20230124-032017
-base:   2241ab53cbb5cdb08a6b2d4688feb13971058f65
-patch link:    https://lore.kernel.org/r/20230123191728.2928839-4-tjmercier%40google.com
-patch subject: [PATCH v2 3/4] binder: Add flags to relinquish ownership of fds
-config: x86_64-randconfig-a016-20230123 (https://download.01.org/0day-ci/archive/20230125/202301251234.klClMpZF-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/41e80f59d1b70691eefc0490e7f1df800cead9f2
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review T-J-Mercier/memcg-Track-exported-dma-buffers/20230124-032017
-        git checkout 41e80f59d1b70691eefc0490e7f1df800cead9f2
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: dma_buf_transfer_charge
-   >>> referenced by binder.c:2280 (drivers/android/binder.c:2280)
-   >>>               drivers/android/binder.o:(binder_translate_fd) in archive vmlinux.a
-
+I am not familiar with dmabuf internals to judge complexity on their end
+but I fully agree that charge-when-used is much more easier to reason
+about and it should have less subtle surprises.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Michal Hocko
+SUSE Labs
