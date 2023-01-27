@@ -2,124 +2,147 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A66C54EAA
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Jan 2023 18:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B55EDC38142
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Jan 2023 18:22:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233077AbjA0SBh (ORCPT
+        id S235017AbjA0SWH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Jan 2023 13:01:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43046 "EHLO
+        Fri, 27 Jan 2023 13:22:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233171AbjA0SBg (ORCPT
+        with ESMTP id S234747AbjA0SWG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 Jan 2023 13:01:36 -0500
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 064A77CCB9
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Jan 2023 10:01:36 -0800 (PST)
-Received: by mail-pf1-x429.google.com with SMTP id ay1so3722403pfb.7
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Jan 2023 10:01:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KT7Kn5x2Wu1FCI9gyzBjdUw9zENHLmXMgAr1g8mXS8U=;
-        b=lE7jhcWfvt1eskx7t93mYi4pl1ljCVde7nttDfLoHEOyKkGRCfXWgrmn61MLpjhiZz
-         guJ17Riyx/IO6p8uuAZLki7BipcwzMXnf647WctU6QRNqrJ0ntBVUN3hwgRGtBdPuTFN
-         hQ5WL8Vvu267lZ7TX3Qsbhe5dqCcqANdSBVeLaWdylUAdmwmG3posbvw0O+jd8nc/lFn
-         1S0WAtJm0m7aLDCg9eawPt0IRnDmYMojNME8bOuJ87LWDsjo2F0bezkYf2hohYRG804K
-         V76xKvywVUztgQ8QgQy3xXCwZIMPL4J5eSO7mIOAnouYXzv5Dy+cnpaD57nURJ9nO+zy
-         S1Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KT7Kn5x2Wu1FCI9gyzBjdUw9zENHLmXMgAr1g8mXS8U=;
-        b=J6Ia1uS5yfZjKGf+Qmq9nyI4ZyMPb1g+CERtI9YreyPRzCv5ymbZQaT02vQIN3T6Gm
-         Whwgwu7HQu/MwyTPGtGu8XpA6a+As/Oam2+grRjGVJ1AcYW0e9Z7zo8TdeYLoXUSPbdz
-         ++A9ipn0Bi6g6KBmopfagNeiUOpPGfxoKswoxsR8KLt8iJolGvGNwjkK0mmWuqDwz2Ex
-         sw0gqlnl1t/W9tEPSqLq+3dKVFjSY+uFqb8Wc0664V2F724HAKS8U60uoOz4HG5hY6hy
-         nOxorgYMiSc86jae6xVOMnzvRvuWYhUAUG4TgAQKXskRdtrHtkTwdLma17EVsAtbOmJP
-         jvqg==
-X-Gm-Message-State: AFqh2koQ3n1GO4lsfu1NpieT2gqgVduwjJVMENCXJVHct73UjMgPGwnc
-        MnWBwDjuPtWf3G9qdBqqVRfs28EKlf5J3CiTY8pGxw==
-X-Google-Smtp-Source: AMrXdXvMgOtQ9iDD4nY5mH6Uzc1+rh+cfI3Lf461g/XsE5jjs1mKRyLEztdGBUfpjCNjE7r8Ki1NLI4f3ukqtGS6yTQ=
-X-Received: by 2002:aa7:90d8:0:b0:577:3e5e:7a4 with SMTP id
- k24-20020aa790d8000000b005773e5e07a4mr5284446pfk.57.1674842495136; Fri, 27
- Jan 2023 10:01:35 -0800 (PST)
+        Fri, 27 Jan 2023 13:22:06 -0500
+Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6A9C14A
+        for <linux-security-module@vger.kernel.org>; Fri, 27 Jan 2023 10:22:04 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4P3Qs70cMgzMrKjv;
+        Fri, 27 Jan 2023 19:22:03 +0100 (CET)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4P3Qs62JxwzMqRTG;
+        Fri, 27 Jan 2023 19:22:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1674843722;
+        bh=mbU1ZCTAJKgGA0HVCsd8RhnkbptpgGkUzNoNdAFWErk=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=S5quP2KXbpiMOFnxYVBjWYQ3y7WKU49VNSVtVbJ2idyrXmNYGlPRwIZ051yNDaf2B
+         Kg/5ULPbNpe5sQS3lfLlqs9e6Wov5ahf54vauMXw3EmuuCVdfPiunob9RTfuPgw7ls
+         tOqs1WluKkBXXz8wk5A66twKt4NZVKiHaLSmNXoM=
+Message-ID: <68f26cf2-f382-4d31-c80f-22392a85376f@digikod.net>
+Date:   Fri, 27 Jan 2023 19:22:01 +0100
 MIME-Version: 1.0
-References: <20230114020306.1407195-1-jeffxu@google.com> <bf4f1810-86a3-0b3d-2cb6-3431861d03c9@digikod.net>
-In-Reply-To: <bf4f1810-86a3-0b3d-2cb6-3431861d03c9@digikod.net>
-From:   Jeff Xu <jeffxu@google.com>
-Date:   Fri, 27 Jan 2023 10:00:57 -0800
-Message-ID: <CALmYWFvZ+oEpkM7t0xiJT=aTDkoj1meGmgMa6PoRb7oZP-TAYQ@mail.gmail.com>
-Subject: Re: [PATCH v6 0/1] selftests/landlock: fix ptrace_test
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     jeffxu@chromium.org, jorgelo@chromium.org, keescook@chromium.org,
-        linux-security-module@vger.kernel.org, groeck@chromium.org,
-        gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: 
+Subject: Re: [PATCH v9 12/12] landlock: Document Landlock's network support
+Content-Language: en-US
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
+ <20230116085818.165539-13-konstantin.meskhidze@huawei.com>
+ <Y8xwLvDbhKPG8JqY@galopp> <eb33371b-551e-ae6c-d7e3-a3101644b7ec@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <eb33371b-551e-ae6c-d7e3-a3101644b7ec@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Awesome, thanks!
 
-On Fri, Jan 27, 2023 at 10:00 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
- wrote:
->
-> Thanks, it will soon be in -next:
-> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=3Dne=
-xt
->
-> On 14/01/2023 03:03, jeffxu@chromium.org wrote:
-> > From: Jeff Xu <jeffxu@google.com>
-> >
-> > Landlock ptrace failed because YAMA is enabled.
-> > This patch check YAMA value and skip related tests.
-> >
-> > V6:
-> > - Squash change from Micka=C3=ABl Sala=C3=BCn
-> > - Link: https://lore.kernel.org/r/20230113175308.50900-1-mic@digikod.ne=
-t
-> > - Add can_read_child and can_read_parent
-> > - Remove SKIP(), add log for incomplete test.
-> >
-> > V5:
-> > - https://lore.kernel.org/all/20230113050755.1277736-1-jeffxu@google.co=
-m/
-> > - address comments from groeck@google.com
-> >
-> > V4:
-> > - https://lore.kernel.org/all/20230103190314.3882177-1-jeffxu@google.co=
-m
-> > - apply can_trace_parent and can_trace_child to smaller scope.
-> >
-> > V3:
-> > https://lore.kernel.org/all/20221227140244.1041292-1-jeffxu@google.com
-> > - add can_trace_parent and can_trace_child to handle yama value.
-> >
-> > V2:
-> > https://lore.kernel.org/all/20221213185816.3942853-1-jeffxu@chromium.or=
-g
-> > - update from code review comments.
-> >
-> > V1:
-> > https://lore.kernel.org/all/20221213185816.3942853-1-jeffxu@chromium.or=
-g
-> > - skip specific testcase according to YAMA value
-> >
-> > V0:
-> > https://lore.kernel.org/r/20220628222941.2642917-1-jeffxu@google.com
-> > - skip entire ptrace when YAMA is not 0.
-> >
-> > Jeff Xu (1):
-> >    selftests/landlock: skip ptrace_test according to YAMA
-> >
-> >   .../testing/selftests/landlock/ptrace_test.c  | 112 +++++++++++++++--=
--
-> >   1 file changed, 94 insertions(+), 18 deletions(-)
-> >
-> >
-> > base-commit: 963a70bee5880640d0fd83ed29dc1e7ec0d2bd4a
+On 23/01/2023 10:38, Konstantin Meskhidze (A) wrote:
+> 
+> 
+> 1/22/2023 2:07 AM, Günther Noack пишет:
+
+[...]
+
+>>> @@ -143,10 +157,24 @@ for the ruleset creation, by filtering access rights according to the Landlock
+>>>   ABI version.  In this example, this is not required because all of the requested
+>>>   ``allowed_access`` rights are already available in ABI 1.
+>>>   
+>>> -We now have a ruleset with one rule allowing read access to ``/usr`` while
+>>> -denying all other handled accesses for the filesystem.  The next step is to
+>>> -restrict the current thread from gaining more privileges (e.g. thanks to a SUID
+>>> -binary).
+>>> +For network access-control, we can add a set of rules that allow to use a port
+>>> +number for a specific action. All ports values must be defined in network byte
+>>> +order.
+>>
+>> What is the point of asking user space to convert this to network byte
+>> order? It seems to me that the kernel would be able to convert it to
+>> network byte order very easily internally and in a single place -- why
+>> ask all of the users to deal with that complexity? Am I overlooking
+>> something?
+> 
+>    I had a discussion about this issue with Mickaёl.
+>    Please check these threads:
+>    1.
+> https://lore.kernel.org/netdev/49391484-7401-e7c7-d909-3bd6bd024731@digikod.net/
+>    2.
+> https://lore.kernel.org/netdev/1ed20e34-c252-b849-ab92-78c82901c979@huawei.com/
+
+I'm definitely not sure if this is the right solution, or if there is 
+one. The rationale is to make it close to the current (POSIX) API. We 
+didn't get many opinion about that but I'd really like to have a 
+discussion about port endianness for this Landlock API.
+
+I looked at some code (e.g. see [1]) and it seems that using htons() 
+might make application patching more complex after all. What do you 
+think? Is there some network (syscall) API that don't use this convention?
+
+[1] https://github.com/landlock-lsm/tuto-lighttpd
+
+>>
+>>> +
+>>> +.. code-block:: c
+>>> +
+>>> +    struct landlock_net_service_attr net_service = {
+>>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
+>>> +        .port = htons(8080),
+>>> +    };
+>>
+>> This is a more high-level comment:
+>>
+>> The notion of a 16-bit "port" seems to be specific to TCP and UDP --
+>> how do you envision this struct to evolve if other protocols need to
+>> be supported in the future?
+> 
+>     When TCP restrictions land into Linux, we need to think about UDP
+> support. Then other protocols will be on the road. Anyway you are right
+> this struct will be evolving in long term, but I don't have a particular
+> envision now. Thanks for the question - we need to think about it.
+>>
+>> Should this struct and the associated constants have "TCP" in its
+>> name, and other protocols use a separate struct in the future?
+
+Other protocols such as AF_VSOCK uses a 32-bit port. We could use a 
+32-bits port field or ever a 64-bit one. The later could make more sense 
+because each field would eventually be aligned on 64-bit. Picking a 
+16-bit value was to help developers (and compilers/linters) with the 
+"correct" type (for TCP).
+
+If we think about protocols other than TCP and UDP (e.g. AF_VSOCK), it 
+could make sense to have a dedicated attr struct specifying other 
+properties (e.g. CID). Anyway, the API is flexible but it would be nice 
+to not mess with it too much. What do you think?
+
+
+>>
+>>> +
+>>> +    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>>> +                            &net_service, 0);
+>>> +
+>>> +The next step is to restrict the current thread from gaining more privileges
+>>> +(e.g. thanks to a SUID binary). We now have a ruleset with the first rule allowing
+>>            ^^^^^^
+>>            "through" a SUID binary? "thanks to" sounds like it's desired
+>>            to do that, while we're actually trying to prevent it here?
+> 
+>     This is Mickaёl's part. Let's ask his opinion here.
+> 
+>     Mickaёl, any thoughts?
+
+Yep, "through" looks better.
