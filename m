@@ -2,92 +2,96 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B3CC38142
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Jan 2023 19:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A915C61DA4
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Jan 2023 20:16:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232009AbjA0TWW (ORCPT
+        id S231972AbjA0UQw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Jan 2023 14:22:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38600 "EHLO
+        Fri, 27 Jan 2023 15:16:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbjA0TWV (ORCPT
+        with ESMTP id S230513AbjA0UQv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 Jan 2023 14:22:21 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83C9A2687D;
-        Fri, 27 Jan 2023 11:22:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2F941B821D2;
-        Fri, 27 Jan 2023 19:22:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B59EAC4339B;
-        Fri, 27 Jan 2023 19:22:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674847337;
-        bh=yNIfrEdohpdh5fCRk3yNBC8sZ5ibSoBtGTcyVnCDfS4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VgnxxtA/4J914EEFdi8Mvdo9C14DYENYXeHnbmHAY4sKx879nydxMr5OfEEXt+t4Q
-         /T4WLZTjJXzYyrPpIbFi0gsqo/VPrmkqn5lvnmExjEELh4j76jFe6bPjYKK9e0xBck
-         lKAOd3pMNnlApcRmQNKmbvdqMielDkKEsw6XI6pDWmBff52c6sgf5lsuoMVgv87KkL
-         J8YbLseFd0ntg6Ge8fDhVoDkMnbQwsFQgIc19xZxloHHo72YV4AiPttWeE/vp2wRF+
-         /Kc3tscEZ8aqWoTNHGF+inbKRdfrxVlB65B0mJxByMA9+G5Ay3RJBQus5ypgstcEj/
-         wMYQoH6BdiqtA==
-Received: by mail-lf1-f51.google.com with SMTP id j17so9728768lfr.3;
-        Fri, 27 Jan 2023 11:22:17 -0800 (PST)
-X-Gm-Message-State: AFqh2kpqIqU1h2pB7Yv71wIzK4EmU+eFJIAm7eWpz/7J0HHVdDaYNPLZ
-        DYrwe0dcldgSkSNdJgk0Mw1fNS+kiyiJnFVqWZ8=
-X-Google-Smtp-Source: AMrXdXvWdYPofc9LxfNkk+EGQNGgMD+umwhwaK92+e3ejrGJ4tmPk9KEe2Q8GUWGNOVMfoDVwUcwAP6ZEzPKW9ag3yc=
-X-Received: by 2002:a05:6512:3b8b:b0:4b5:b767:dda6 with SMTP id
- g11-20020a0565123b8b00b004b5b767dda6mr3962603lfv.398.1674847335772; Fri, 27
- Jan 2023 11:22:15 -0800 (PST)
+        Fri, 27 Jan 2023 15:16:51 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 274062CFE4
+        for <linux-security-module@vger.kernel.org>; Fri, 27 Jan 2023 12:16:50 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id g9so1983935pfk.13
+        for <linux-security-module@vger.kernel.org>; Fri, 27 Jan 2023 12:16:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C1DZbq5Scy3myblZme4Od3syRaep87TAKxbsaCO1y10=;
+        b=ZkOa6ib4S9RBZHXTtmxuJVeMMD3KnTR/NQw2GVEspbp5xuZu8otx8DZRUsCNa2yVH5
+         yTLcvx/CWsJglLSuzu2+2oWzSbp6qQWiIpoRfpGrWOnKUxAEcP4F7OO9dCXtiQYfNxWL
+         IfLUfiImE2CFwRRSwi7g15myB/eeGAWhUNHhqw3uLbU1VMe20vBl5cfsRJOS67vOU4e+
+         c1lYrY09/E/0JIzxbnEnQNveMB425CaCz5ttRXQuqIAGcQ/UXGTIXX1PqMv9NqXKaXRn
+         s6GzVUwBb9rsym+9eWDUIkGJngJqlw2DLonMJo8xff3kx9cX7Nath7UsMGGITmHG225N
+         dsNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C1DZbq5Scy3myblZme4Od3syRaep87TAKxbsaCO1y10=;
+        b=sV3+e4aIXiJF4fVcoDB3v1fVjfyc/uS6BxbH+pvadkKEiilVcbj5bnsESSLacSfzta
+         LfcKbp65ArI7sHlKVwheAAtHfUKKGVYLNIVkTBuJYUxo2CGypnqpNhAaPkAyjJxshzvD
+         DtoaQOBMcndG1clvdYwns84pJJ0gylb1/2m8IT132VibTKsakJ6ecMPQ50UXTaIRIelC
+         BNNiNtantb/7Di+T1U/BfiNAWBcHk10KCLR76hoEzPH/BVTKSMZXT2eu17G7opSWJd17
+         zyaUtrDXEIdBpax1iUg/9t3TQlazWhMgci93pxecNSvEvjRHzUfjXwRWQCBltzpAUFxh
+         b/wQ==
+X-Gm-Message-State: AO0yUKWNSqNcpzZA31ty9LRGJ6DEKAlB9cktjd3zCABS8dqcLcaRH8LB
+        UB3ytu412qxKOFMj2s6++BanT0VLi81bpEfHe5+/
+X-Google-Smtp-Source: AK7set9rn7fqzqighdS/6BdpeEFo2c0cEytXTnzFapZu/SdC4RNhf6JdQBKuerY1Fw3hAWJfw7rRx/XUE+FZjftsRso=
+X-Received: by 2002:a62:8e0a:0:b0:592:a8af:4ffc with SMTP id
+ k10-20020a628e0a000000b00592a8af4ffcmr495205pfe.52.1674850609581; Fri, 27 Jan
+ 2023 12:16:49 -0800 (PST)
 MIME-Version: 1.0
 References: <20230119231033.1307221-1-kpsingh@kernel.org>
 In-Reply-To: <20230119231033.1307221-1-kpsingh@kernel.org>
-From:   Song Liu <song@kernel.org>
-Date:   Fri, 27 Jan 2023 11:22:03 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW4cOELtM=AmskmtwcKm-x=ELRVQ5tGpmaD0b0jwfjoH6g@mail.gmail.com>
-Message-ID: <CAPhsuW4cOELtM=AmskmtwcKm-x=ELRVQ5tGpmaD0b0jwfjoH6g@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 27 Jan 2023 15:16:38 -0500
+Message-ID: <CAHC9VhRpsXME9Wht_RuSACuU97k359dihye4hW15nWwSQpxtng@mail.gmail.com>
 Subject: Re: [PATCH bpf-next 0/4] Reduce overhead of LSMs with static calls
 To:     KP Singh <kpsingh@kernel.org>
 Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
         ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
-        renauld@google.com, paul@paul-moore.com, casey@schaufler-ca.com,
+        renauld@google.com, casey@schaufler-ca.com, song@kernel.org,
         revest@chromium.org, keescook@chromium.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi KP,
+On Thu, Jan 19, 2023 at 6:10 PM KP Singh <kpsingh@kernel.org> wrote:
+>
+> # Background
+>
+> LSM hooks (callbacks) are currently invoked as indirect function calls. These
+> callbacks are registered into a linked list at boot time as the order of the
+> LSMs can be configured on the kernel command line with the "lsm=" command line
+> parameter.
 
-Thanks for working on this!
+Thanks for sending this KP.  I had hoped to make a proper pass through
+this patchset this week but I ended up getting stuck trying to wrap my
+head around some network segmentation offload issues and didn't quite
+make it here.  Rest assured it is still in my review queue.
 
-On Thu, Jan 19, 2023 at 3:10 PM KP Singh <kpsingh@kernel.org> wrote:
->
-[...]
->
-> # Performance improvement
->
-> With this patch-set some syscalls with lots of LSM hooks in their path
-> benefitted at an average of ~3%. Here are the results of the relevant Unixbench
-> system benchmarks with BPF LSM and a major LSM (in this case apparmor) enabled
-> with and without the series.
->
-> Benchmark                                               Delta(%): (+ is better)
-> ===============================================================================
-> Execl Throughput                                             +2.9015
-> File Write 1024 bufsize 2000 maxblocks                       +5.4196
-> Pipe Throughput                                              +7.7434
-> Pipe-based Context Switching                                 +3.5118
-> Process Creation                                             +0.3552
-> Shell Scripts (1 concurrent)                                 +1.7106
-> System Call Overhead                                         +3.0067
-> System Benchmarks Index Score (Partial Only):                +3.1809
->
-> In the best case, some syscalls like eventfd_create benefitted to about ~10%.
+However, I did manage to take a quick look at the patches and one of
+the first things that jumped out at me is it *looks* like this
+patchset is attempting two things: fix a problem where one LSM could
+trample another (especially problematic with the BPF LSM due to its
+nature), and reduce the overhead of making LSM calls.  I realize that
+in this patchset the fix and the optimization are heavily
+intermingled, but I wonder what it would take to develop a standalone
+fix using the existing indirect call approach?  I'm guessing that is
+going to potentially be a pretty significant patch, but if we could
+add a little standardization to the LSM hooks without adding too much
+in the way of code complexity or execution overhead I think that might
+be a win independent of any changes to how we call the hooks.
 
-The results look very promising. These optimizations will make it easier
-for our users (at Meta) to adopt LSM solutions.
+Of course this could be crazy too, but I'm the guy who has to ask
+these questions :)
 
-Thanks again!
-Song
+-- 
+paul-moore.com
