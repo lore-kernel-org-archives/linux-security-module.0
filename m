@@ -2,147 +2,92 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B55EDC38142
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Jan 2023 18:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B3CC38142
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Jan 2023 19:22:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235017AbjA0SWH (ORCPT
+        id S232009AbjA0TWW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Jan 2023 13:22:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56624 "EHLO
+        Fri, 27 Jan 2023 14:22:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234747AbjA0SWG (ORCPT
+        with ESMTP id S230195AbjA0TWV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 Jan 2023 13:22:06 -0500
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6A9C14A
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Jan 2023 10:22:04 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4P3Qs70cMgzMrKjv;
-        Fri, 27 Jan 2023 19:22:03 +0100 (CET)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4P3Qs62JxwzMqRTG;
-        Fri, 27 Jan 2023 19:22:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1674843722;
-        bh=mbU1ZCTAJKgGA0HVCsd8RhnkbptpgGkUzNoNdAFWErk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=S5quP2KXbpiMOFnxYVBjWYQ3y7WKU49VNSVtVbJ2idyrXmNYGlPRwIZ051yNDaf2B
-         Kg/5ULPbNpe5sQS3lfLlqs9e6Wov5ahf54vauMXw3EmuuCVdfPiunob9RTfuPgw7ls
-         tOqs1WluKkBXXz8wk5A66twKt4NZVKiHaLSmNXoM=
-Message-ID: <68f26cf2-f382-4d31-c80f-22392a85376f@digikod.net>
-Date:   Fri, 27 Jan 2023 19:22:01 +0100
+        Fri, 27 Jan 2023 14:22:21 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83C9A2687D;
+        Fri, 27 Jan 2023 11:22:20 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2F941B821D2;
+        Fri, 27 Jan 2023 19:22:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B59EAC4339B;
+        Fri, 27 Jan 2023 19:22:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674847337;
+        bh=yNIfrEdohpdh5fCRk3yNBC8sZ5ibSoBtGTcyVnCDfS4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VgnxxtA/4J914EEFdi8Mvdo9C14DYENYXeHnbmHAY4sKx879nydxMr5OfEEXt+t4Q
+         /T4WLZTjJXzYyrPpIbFi0gsqo/VPrmkqn5lvnmExjEELh4j76jFe6bPjYKK9e0xBck
+         lKAOd3pMNnlApcRmQNKmbvdqMielDkKEsw6XI6pDWmBff52c6sgf5lsuoMVgv87KkL
+         J8YbLseFd0ntg6Ge8fDhVoDkMnbQwsFQgIc19xZxloHHo72YV4AiPttWeE/vp2wRF+
+         /Kc3tscEZ8aqWoTNHGF+inbKRdfrxVlB65B0mJxByMA9+G5Ay3RJBQus5ypgstcEj/
+         wMYQoH6BdiqtA==
+Received: by mail-lf1-f51.google.com with SMTP id j17so9728768lfr.3;
+        Fri, 27 Jan 2023 11:22:17 -0800 (PST)
+X-Gm-Message-State: AFqh2kpqIqU1h2pB7Yv71wIzK4EmU+eFJIAm7eWpz/7J0HHVdDaYNPLZ
+        DYrwe0dcldgSkSNdJgk0Mw1fNS+kiyiJnFVqWZ8=
+X-Google-Smtp-Source: AMrXdXvWdYPofc9LxfNkk+EGQNGgMD+umwhwaK92+e3ejrGJ4tmPk9KEe2Q8GUWGNOVMfoDVwUcwAP6ZEzPKW9ag3yc=
+X-Received: by 2002:a05:6512:3b8b:b0:4b5:b767:dda6 with SMTP id
+ g11-20020a0565123b8b00b004b5b767dda6mr3962603lfv.398.1674847335772; Fri, 27
+ Jan 2023 11:22:15 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v9 12/12] landlock: Document Landlock's network support
-Content-Language: en-US
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
- <20230116085818.165539-13-konstantin.meskhidze@huawei.com>
- <Y8xwLvDbhKPG8JqY@galopp> <eb33371b-551e-ae6c-d7e3-a3101644b7ec@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <eb33371b-551e-ae6c-d7e3-a3101644b7ec@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20230119231033.1307221-1-kpsingh@kernel.org>
+In-Reply-To: <20230119231033.1307221-1-kpsingh@kernel.org>
+From:   Song Liu <song@kernel.org>
+Date:   Fri, 27 Jan 2023 11:22:03 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW4cOELtM=AmskmtwcKm-x=ELRVQ5tGpmaD0b0jwfjoH6g@mail.gmail.com>
+Message-ID: <CAPhsuW4cOELtM=AmskmtwcKm-x=ELRVQ5tGpmaD0b0jwfjoH6g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/4] Reduce overhead of LSMs with static calls
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
+        renauld@google.com, paul@paul-moore.com, casey@schaufler-ca.com,
+        revest@chromium.org, keescook@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi KP,
 
-On 23/01/2023 10:38, Konstantin Meskhidze (A) wrote:
-> 
-> 
-> 1/22/2023 2:07 AM, Günther Noack пишет:
+Thanks for working on this!
 
+On Thu, Jan 19, 2023 at 3:10 PM KP Singh <kpsingh@kernel.org> wrote:
+>
 [...]
+>
+> # Performance improvement
+>
+> With this patch-set some syscalls with lots of LSM hooks in their path
+> benefitted at an average of ~3%. Here are the results of the relevant Unixbench
+> system benchmarks with BPF LSM and a major LSM (in this case apparmor) enabled
+> with and without the series.
+>
+> Benchmark                                               Delta(%): (+ is better)
+> ===============================================================================
+> Execl Throughput                                             +2.9015
+> File Write 1024 bufsize 2000 maxblocks                       +5.4196
+> Pipe Throughput                                              +7.7434
+> Pipe-based Context Switching                                 +3.5118
+> Process Creation                                             +0.3552
+> Shell Scripts (1 concurrent)                                 +1.7106
+> System Call Overhead                                         +3.0067
+> System Benchmarks Index Score (Partial Only):                +3.1809
+>
+> In the best case, some syscalls like eventfd_create benefitted to about ~10%.
 
->>> @@ -143,10 +157,24 @@ for the ruleset creation, by filtering access rights according to the Landlock
->>>   ABI version.  In this example, this is not required because all of the requested
->>>   ``allowed_access`` rights are already available in ABI 1.
->>>   
->>> -We now have a ruleset with one rule allowing read access to ``/usr`` while
->>> -denying all other handled accesses for the filesystem.  The next step is to
->>> -restrict the current thread from gaining more privileges (e.g. thanks to a SUID
->>> -binary).
->>> +For network access-control, we can add a set of rules that allow to use a port
->>> +number for a specific action. All ports values must be defined in network byte
->>> +order.
->>
->> What is the point of asking user space to convert this to network byte
->> order? It seems to me that the kernel would be able to convert it to
->> network byte order very easily internally and in a single place -- why
->> ask all of the users to deal with that complexity? Am I overlooking
->> something?
-> 
->    I had a discussion about this issue with Mickaёl.
->    Please check these threads:
->    1.
-> https://lore.kernel.org/netdev/49391484-7401-e7c7-d909-3bd6bd024731@digikod.net/
->    2.
-> https://lore.kernel.org/netdev/1ed20e34-c252-b849-ab92-78c82901c979@huawei.com/
+The results look very promising. These optimizations will make it easier
+for our users (at Meta) to adopt LSM solutions.
 
-I'm definitely not sure if this is the right solution, or if there is 
-one. The rationale is to make it close to the current (POSIX) API. We 
-didn't get many opinion about that but I'd really like to have a 
-discussion about port endianness for this Landlock API.
-
-I looked at some code (e.g. see [1]) and it seems that using htons() 
-might make application patching more complex after all. What do you 
-think? Is there some network (syscall) API that don't use this convention?
-
-[1] https://github.com/landlock-lsm/tuto-lighttpd
-
->>
->>> +
->>> +.. code-block:: c
->>> +
->>> +    struct landlock_net_service_attr net_service = {
->>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
->>> +        .port = htons(8080),
->>> +    };
->>
->> This is a more high-level comment:
->>
->> The notion of a 16-bit "port" seems to be specific to TCP and UDP --
->> how do you envision this struct to evolve if other protocols need to
->> be supported in the future?
-> 
->     When TCP restrictions land into Linux, we need to think about UDP
-> support. Then other protocols will be on the road. Anyway you are right
-> this struct will be evolving in long term, but I don't have a particular
-> envision now. Thanks for the question - we need to think about it.
->>
->> Should this struct and the associated constants have "TCP" in its
->> name, and other protocols use a separate struct in the future?
-
-Other protocols such as AF_VSOCK uses a 32-bit port. We could use a 
-32-bits port field or ever a 64-bit one. The later could make more sense 
-because each field would eventually be aligned on 64-bit. Picking a 
-16-bit value was to help developers (and compilers/linters) with the 
-"correct" type (for TCP).
-
-If we think about protocols other than TCP and UDP (e.g. AF_VSOCK), it 
-could make sense to have a dedicated attr struct specifying other 
-properties (e.g. CID). Anyway, the API is flexible but it would be nice 
-to not mess with it too much. What do you think?
-
-
->>
->>> +
->>> +    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
->>> +                            &net_service, 0);
->>> +
->>> +The next step is to restrict the current thread from gaining more privileges
->>> +(e.g. thanks to a SUID binary). We now have a ruleset with the first rule allowing
->>            ^^^^^^
->>            "through" a SUID binary? "thanks to" sounds like it's desired
->>            to do that, while we're actually trying to prevent it here?
-> 
->     This is Mickaёl's part. Let's ask his opinion here.
-> 
->     Mickaёl, any thoughts?
-
-Yep, "through" looks better.
+Thanks again!
+Song
