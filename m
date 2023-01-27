@@ -2,131 +2,115 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 153B1C54EAA
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Jan 2023 22:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8091C61DA3
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Jan 2023 06:40:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231915AbjAZWZj (ORCPT
+        id S232048AbjA0Gka (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Jan 2023 17:25:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54534 "EHLO
+        Fri, 27 Jan 2023 01:40:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229813AbjAZWZi (ORCPT
+        with ESMTP id S231913AbjA0GkX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Jan 2023 17:25:38 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88AE94A23D;
-        Thu, 26 Jan 2023 14:25:37 -0800 (PST)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30QLePsg024992;
-        Thu, 26 Jan 2023 22:25:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=xvhz7s98kQ6LyPUTtIiOoOJOeYRwStvFiluZ2yyJIUw=;
- b=HlXhTBHhcEkpIV+60fKn8WDIqBSXPIc77UOinbUqBa9SFC/yyDroWD6OQE59Y5y+OYVg
- GeeL96RNgfNiXdhHvKJAIFuTx/XT8Us42oPJtKeBZvAotvBon5jOcgYxz44uOkkIANoe
- 090u5lF6xt7YLg4p/bAbjxcSuX+yzB9F2gmB52yYSy9brKe/UyFZM5sAZE1FxWMJUMbz
- 42TpAtzKJ4KLEmlqqLmdjiYjTJvqVo1wPS/4hjLQxbwJRe1x4tCzo9db7q4XpGulb/F6
- mS3XaDKZwj1bMdigBoLXjYKommLtyi93rsRIM/WaYaiua8sERSYkHkqFeeOvWcuUXgnw MA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nc1aq133k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 26 Jan 2023 22:25:19 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30QMAUfW005888;
-        Thu, 26 Jan 2023 22:25:19 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nc1aq1332-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 26 Jan 2023 22:25:19 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30QLFf2F025656;
-        Thu, 26 Jan 2023 22:25:18 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([9.208.129.116])
-        by ppma02dal.us.ibm.com (PPS) with ESMTPS id 3n87p7ydpe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 26 Jan 2023 22:25:18 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30QMPGGb2818710
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Jan 2023 22:25:16 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7958258056;
-        Thu, 26 Jan 2023 22:25:16 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CA6EF5804C;
-        Thu, 26 Jan 2023 22:25:15 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Thu, 26 Jan 2023 22:25:15 +0000 (GMT)
-Message-ID: <5a2b46ef-71de-03f5-3d4d-ef6834a33971@linux.ibm.com>
-Date:   Thu, 26 Jan 2023 17:25:15 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH ima-evm-utils] Add tests for MMAP_CHECK and
- MMAP_CHECK_REQPROT hooks
-Content-Language: en-US
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
+        Fri, 27 Jan 2023 01:40:23 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 679E56DFF7;
+        Thu, 26 Jan 2023 22:40:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=Ln37KE47BBRyA/eAdZx39q0YL3EdBd4mcLXFNQP5HLU=; b=svL7mF3zSL0l8ZvDWTYz1UXyeH
+        z4k9p1zlUDEFI85bAQeUdYmJ4SOnKmK/ejX0fCMklvB9SVjGajzcFWqJLLa4ZIgvVbKjbco9MRz/i
+        XOekELtQ80Kwc/VUCsdCxgAkK9qLASniMy1C+8snwXxXADJNUKoLPfMoKuXhtlmbiq1GINbWF63u9
+        s9N3Nv72DuLQe675UiDkToFrk33iaJnEJybZh3rbHnkKVvCzj7BKq17bEgs73zOFzqchMM1jERvZv
+        h/Sn3nE3WhbfZOSRlcoi+6b+ePL0d9qjdS2FtJQ6PovP/Fym8G5nVbkJruXGkYcE1e/4iVhEG4P+M
+        6jiICmlQ==;
+Received: from [2601:1c2:d80:3110::9307] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pLIPN-00DM0u-V5; Fri, 27 Jan 2023 06:40:22 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Roberto Sassu <roberto.sassu@huawei.com>
-References: <20230126163812.1870942-1-roberto.sassu@huaweicloud.com>
- <20230126163812.1870942-3-roberto.sassu@huaweicloud.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20230126163812.1870942-3-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: -Mw7vpOL2zgx8fWd_5w-IhiqtoV88s2L
-X-Proofpoint-GUID: DLJtTCkGPSqhABZM3YmwNIV8g3FhYvV3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-26_09,2023-01-26_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- spamscore=0 malwarescore=0 priorityscore=1501 phishscore=0 suspectscore=0
- mlxscore=0 lowpriorityscore=0 mlxlogscore=718 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
- definitions=main-2301260207
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: [PATCH 25/35] Documentation: security: correct spelling
+Date:   Thu, 26 Jan 2023 22:39:55 -0800
+Message-Id: <20230127064005.1558-26-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230127064005.1558-1-rdunlap@infradead.org>
+References: <20230127064005.1558-1-rdunlap@infradead.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Correct spelling problems for Documentation/security/ as reported
+by codespell.
 
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: keyrings@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org
+---
+ Documentation/security/digsig.rst       |    4 ++--
+ Documentation/security/keys/core.rst    |    2 +-
+ Documentation/security/secrets/coco.rst |    2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-On 1/26/23 11:38, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Add tests to ensure that, after applying the kernel patch 'ima: Align
-> ima_file_mmap() parameters with mmap_file LSM hook', the MMAP_CHECK hook
-> checks the protections applied by the kernel and not those requested by the
-> application.
-> 
-> Also ensure that after applying 'ima: Introduce MMAP_CHECK_REQPROT hook',
-> the MMAP_CHECK_REQPROT hook checks the protections requested by the
-> application.
-
-below LGTM
-
-How do you tell the user that the patches need to be applied for the test to
-succeed and not worry about it when the patches are not applied?
-
-
-> 
-> Test both with the test_mmap application that by default requests the
-> PROT_READ protection flag. Its syntax is:
-> 
-
-> +
-> +check_mmap() {
-> +	local hook="$1"
-> +	local arg="$2"
-> +	local test_file
-> +	local fowner
-> +	local rule
-> +	local result
-> +	local test_file_entry
-> +
-
-you can write them all in one line: 'local test_file fowner rule result test_file_entry'
+diff -- a/Documentation/security/digsig.rst b/Documentation/security/digsig.rst
+--- a/Documentation/security/digsig.rst
++++ b/Documentation/security/digsig.rst
+@@ -62,7 +62,7 @@ API currently includes only 1 function::
+ 	* digsig_verify() - digital signature verification with public key
+ 	* @keyring:	keyring to search key in
+ 	* @sig:	digital signature
+-	* @sigen:	length of the signature
++	* @siglen:	length of the signature
+ 	* @data:	data
+ 	* @datalen:	length of the data
+ 	* @return:	0 on success, -EINVAL otherwise
+@@ -82,7 +82,7 @@ The signing and key management utilities
+ to generate signatures, to load keys into the kernel keyring.
+ Keys can be in PEM or converted to the kernel format.
+ When the key is added to the kernel keyring, the keyid defines the name
+-of the key: 5D2B05FC633EE3E8 in the example bellow.
++of the key: 5D2B05FC633EE3E8 in the example below.
+ 
+ Here is example output of the keyctl utility::
+ 
+diff -- a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
+--- a/Documentation/security/keys/core.rst
++++ b/Documentation/security/keys/core.rst
+@@ -869,7 +869,7 @@ The keyctl syscall functions are:
+ 
+ 	 - ``char *hashname`` specifies the NUL terminated string identifying
+ 	   the hash used from the kernel crypto API and applied for the KDF
+-	   operation. The KDF implemenation complies with SP800-56A as well
++	   operation. The KDF implementation complies with SP800-56A as well
+ 	   as with SP800-108 (the counter KDF).
+ 
+ 	 - ``char *otherinfo`` specifies the OtherInfo data as documented in
+diff -- a/Documentation/security/secrets/coco.rst b/Documentation/security/secrets/coco.rst
+--- a/Documentation/security/secrets/coco.rst
++++ b/Documentation/security/secrets/coco.rst
+@@ -34,7 +34,7 @@ be use it for its own purposes.
+ 
+ During the VM's launch, the virtual machine manager may inject a secret to that
+ area.  In AMD SEV and SEV-ES this is performed using the
+-``KVM_SEV_LAUNCH_SECRET`` command (see [sev]_).  The strucutre of the injected
++``KVM_SEV_LAUNCH_SECRET`` command (see [sev]_).  The structure of the injected
+ Guest Owner secret data should be a GUIDed table of secret values; the binary
+ format is described in ``drivers/virt/coco/efi_secret/efi_secret.c`` under
+ "Structure of the EFI secret area".
