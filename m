@@ -2,96 +2,169 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A915C61DA4
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Jan 2023 20:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FEBC38142
+	for <linux-security-module@archiver.kernel.org>; Sat, 28 Jan 2023 10:49:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231972AbjA0UQw (ORCPT
+        id S234358AbjA1KtB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Jan 2023 15:16:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33902 "EHLO
+        Sat, 28 Jan 2023 05:49:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230513AbjA0UQv (ORCPT
+        with ESMTP id S234320AbjA1Ksy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 Jan 2023 15:16:51 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 274062CFE4
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Jan 2023 12:16:50 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id g9so1983935pfk.13
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Jan 2023 12:16:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=C1DZbq5Scy3myblZme4Od3syRaep87TAKxbsaCO1y10=;
-        b=ZkOa6ib4S9RBZHXTtmxuJVeMMD3KnTR/NQw2GVEspbp5xuZu8otx8DZRUsCNa2yVH5
-         yTLcvx/CWsJglLSuzu2+2oWzSbp6qQWiIpoRfpGrWOnKUxAEcP4F7OO9dCXtiQYfNxWL
-         IfLUfiImE2CFwRRSwi7g15myB/eeGAWhUNHhqw3uLbU1VMe20vBl5cfsRJOS67vOU4e+
-         c1lYrY09/E/0JIzxbnEnQNveMB425CaCz5ttRXQuqIAGcQ/UXGTIXX1PqMv9NqXKaXRn
-         s6GzVUwBb9rsym+9eWDUIkGJngJqlw2DLonMJo8xff3kx9cX7Nath7UsMGGITmHG225N
-         dsNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C1DZbq5Scy3myblZme4Od3syRaep87TAKxbsaCO1y10=;
-        b=sV3+e4aIXiJF4fVcoDB3v1fVjfyc/uS6BxbH+pvadkKEiilVcbj5bnsESSLacSfzta
-         LfcKbp65ArI7sHlKVwheAAtHfUKKGVYLNIVkTBuJYUxo2CGypnqpNhAaPkAyjJxshzvD
-         DtoaQOBMcndG1clvdYwns84pJJ0gylb1/2m8IT132VibTKsakJ6ecMPQ50UXTaIRIelC
-         BNNiNtantb/7Di+T1U/BfiNAWBcHk10KCLR76hoEzPH/BVTKSMZXT2eu17G7opSWJd17
-         zyaUtrDXEIdBpax1iUg/9t3TQlazWhMgci93pxecNSvEvjRHzUfjXwRWQCBltzpAUFxh
-         b/wQ==
-X-Gm-Message-State: AO0yUKWNSqNcpzZA31ty9LRGJ6DEKAlB9cktjd3zCABS8dqcLcaRH8LB
-        UB3ytu412qxKOFMj2s6++BanT0VLi81bpEfHe5+/
-X-Google-Smtp-Source: AK7set9rn7fqzqighdS/6BdpeEFo2c0cEytXTnzFapZu/SdC4RNhf6JdQBKuerY1Fw3hAWJfw7rRx/XUE+FZjftsRso=
-X-Received: by 2002:a62:8e0a:0:b0:592:a8af:4ffc with SMTP id
- k10-20020a628e0a000000b00592a8af4ffcmr495205pfe.52.1674850609581; Fri, 27 Jan
- 2023 12:16:49 -0800 (PST)
+        Sat, 28 Jan 2023 05:48:54 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F9837963E;
+        Sat, 28 Jan 2023 02:48:38 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C60C360B49;
+        Sat, 28 Jan 2023 10:48:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F057DC433D2;
+        Sat, 28 Jan 2023 10:48:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674902917;
+        bh=Y432cQgFP5F34pSdT8J5cN2U4/Abh03N/7/nnZFsfgA=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=ucQIwNrYn1j82n5kEO9WaLijY1byLMow61bm47krLw9/rm4ppKVrlbLz6phB9zNbS
+         qYY9lfErpOzRey8+JWhrlP2K20ge8aTXRGAB1RaAXSma5mb3gsVcM7JjsMlaYHRq6p
+         5Sc6Wb+I4Y9+t6nEP7exbyKAI00PmKAmlmdPi+RpRtLkxQxgwEsoweOc60InbgtjXH
+         FqvZ8MvQZkaZTFpjHfucUR24TwuTg8tFdRbslI7LaInKzs0Rwp3ur5+5MyfOIl4uaR
+         6DEA3qekp8dP3oIUZTw+yBhAfVg6biPer6tOhWjPLMuQk2/uOpgUZPcQmhGK5/Sihz
+         AcjSu+HZd6TdA==
+From:   Mark Brown <broonie@kernel.org>
+To:     linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Helge Deller <deller@gmx.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        =?utf-8?q?J=C3=A9r=C3=B4me_Glisse?= <jglisse@redhat.com>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Len Brown <len.brown@intel.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Daniel Bristot de Oliveira <bristot@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Evgeniy Polyakov <zbr@ioremap.net>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>, alsa-devel@alsa-project.org,
+        coresight@lists.linaro.org, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, isdn4linux@listserv.isdn4linux.de,
+        keyrings@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-sgx@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-trace-devel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-mm@kvack.org,
+        openrisc@lists.librecores.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+In-Reply-To: <20230127064005.1558-1-rdunlap@infradead.org>
+References: <20230127064005.1558-1-rdunlap@infradead.org>
+Subject: Re: (subset) [PATCH 00/35] Documentation: correct lots of spelling
+ errors (series 1)
+Message-Id: <167490289567.2145989.15703368734300500078.b4-ty@kernel.org>
+Date:   Sat, 28 Jan 2023 10:48:15 +0000
 MIME-Version: 1.0
-References: <20230119231033.1307221-1-kpsingh@kernel.org>
-In-Reply-To: <20230119231033.1307221-1-kpsingh@kernel.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 27 Jan 2023 15:16:38 -0500
-Message-ID: <CAHC9VhRpsXME9Wht_RuSACuU97k359dihye4hW15nWwSQpxtng@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/4] Reduce overhead of LSMs with static calls
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
-        renauld@google.com, casey@schaufler-ca.com, song@kernel.org,
-        revest@chromium.org, keescook@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.0
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 19, 2023 at 6:10 PM KP Singh <kpsingh@kernel.org> wrote:
->
-> # Background
->
-> LSM hooks (callbacks) are currently invoked as indirect function calls. These
-> callbacks are registered into a linked list at boot time as the order of the
-> LSMs can be configured on the kernel command line with the "lsm=" command line
-> parameter.
+On Thu, 26 Jan 2023 22:39:30 -0800, Randy Dunlap wrote:
+> Correct many spelling errors in Documentation/ as reported by codespell.
+> 
+> Maintainers of specific kernel subsystems are only Cc-ed on their
+> respective patches, not the entire series. [if all goes well]
+> 
+> These patches are based on linux-next-20230125.
+> 
+> [...]
 
-Thanks for sending this KP.  I had hoped to make a proper pass through
-this patchset this week but I ended up getting stuck trying to wrap my
-head around some network segmentation offload issues and didn't quite
-make it here.  Rest assured it is still in my review queue.
+Applied to
 
-However, I did manage to take a quick look at the patches and one of
-the first things that jumped out at me is it *looks* like this
-patchset is attempting two things: fix a problem where one LSM could
-trample another (especially problematic with the BPF LSM due to its
-nature), and reduce the overhead of making LSM calls.  I realize that
-in this patchset the fix and the optimization are heavily
-intermingled, but I wonder what it would take to develop a standalone
-fix using the existing indirect call approach?  I'm guessing that is
-going to potentially be a pretty significant patch, but if we could
-add a little standardization to the LSM hooks without adding too much
-in the way of code complexity or execution overhead I think that might
-be a win independent of any changes to how we call the hooks.
+   broonie/spi.git for-next
 
-Of course this could be crazy too, but I'm the guy who has to ask
-these questions :)
+Thanks!
 
--- 
-paul-moore.com
+[27/35] Documentation: spi: correct spelling
+        commit: 0f6d2cee58f1ff2ebf66f0bceb113d79f66ecb07
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
