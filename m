@@ -2,124 +2,121 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B57F6C636BD
-	for <linux-security-module@archiver.kernel.org>; Sat, 28 Jan 2023 20:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51EE1C636CD
+	for <linux-security-module@archiver.kernel.org>; Sun, 29 Jan 2023 00:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234909AbjA1Ua1 (ORCPT
+        id S233616AbjA2AtG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 28 Jan 2023 15:30:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57328 "EHLO
+        Sat, 28 Jan 2023 19:49:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233816AbjA1UaV (ORCPT
+        with ESMTP id S230302AbjA2AtF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 28 Jan 2023 15:30:21 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51E9E1C305;
-        Sat, 28 Jan 2023 12:30:19 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3F85DB80BEC;
-        Sat, 28 Jan 2023 20:30:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AA46EC4339C;
-        Sat, 28 Jan 2023 20:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674937816;
-        bh=NyfyYmvHuYCep7B9YHaipGsiO9fFZKxd2hw/3QQJwqQ=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=LEOdKD+xVK+ChdUeMYF7EWUBmGq14I7a4s4JCxsX0Z2pbDfy98ZnOQg9LaM70RuVC
-         9xRu4+lF+DVHmBGVHpWV6C3DKQnB6htlyuiQ1J3mBpVE0Cta4vW2RE/BXmcJavx0so
-         NpT9ZM/k0gp3REittQZbOAE5Pu2nnNW4ZzWWewKaFAFD3E6WwCsC+zOFh5CoV4HfQe
-         lQLG294nW9w5VbGq5Yt6s9D6T/oia27mZXgUwJMw43HV8z7gJz+N1dbAJrJr5rDjld
-         W58/LuDYy+LQisFZsbodjJ+lGQoGjrCfyPfOcghY/B7T6gUkoFPJyIGFHljP3NeW1j
-         sFiy6/39HdTbA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 76D09E52504;
-        Sat, 28 Jan 2023 20:30:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sat, 28 Jan 2023 19:49:05 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 089AF23109;
+        Sat, 28 Jan 2023 16:49:02 -0800 (PST)
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4P4CMM6zcDzJqdw;
+        Sun, 29 Jan 2023 08:47:27 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.58) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.34; Sun, 29 Jan 2023 08:49:00 +0800
+From:   Xiu Jianfeng <xiujianfeng@huawei.com>
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] evm: call dump_security_xattr() in all cases to remove code duplication
+Date:   Sun, 29 Jan 2023 08:46:37 +0800
+Message-ID: <20230129004637.191106-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 00/35] Documentation: correct lots of spelling errors (series
- 1)
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167493781647.31903.18128774325127042067.git-patchwork-notify@kernel.org>
-Date:   Sat, 28 Jan 2023 20:30:16 +0000
-References: <20230127064005.1558-1-rdunlap@infradead.org>
-In-Reply-To: <20230127064005.1558-1-rdunlap@infradead.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net,
-        catalin.marinas@arm.com, will@kernel.org, linux@armlinux.org.uk,
-        axboe@kernel.dk, andrii@kernel.org, ast@kernel.org,
-        daniel@iogearbox.net, olteanv@gmail.com,
-        steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
-        akinobu.mita@gmail.com, deller@gmx.de, rafael@kernel.org,
-        jikos@kernel.org, benjamin.tissoires@redhat.com,
-        srinivas.pandruvada@linux.intel.com, wsa@kernel.org,
-        dmitry.torokhov@gmail.com, rydberg@bitmath.org,
-        isdn@linux-pingi.de, pavel@ucw.cz, lee@kernel.org,
-        jpoimboe@kernel.org, mbenes@suse.cz, pmladek@suse.com,
-        peterz@infradead.org, mingo@redhat.com, jglisse@redhat.com,
-        naoya.horiguchi@nec.com, linmiaohe@huawei.com, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        bhelgaas@google.com, lpieralisi@kernel.org, maz@kernel.org,
-        mpe@ellerman.id.au, len.brown@intel.com, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dhowells@redhat.com, jarkko@kernel.org,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        perex@perex.cz, tiwai@suse.com, broonie@kernel.org,
-        martin.petersen@oracle.com, bristot@kernel.org,
-        rostedt@goodmis.org, gregkh@linuxfoundation.org,
-        mhiramat@kernel.org, mathieu.poirier@linaro.org,
-        suzuki.poulose@arm.com, zbr@ioremap.net, fenghua.yu@intel.com,
-        reinette.chatre@intel.com, tglx@linutronix.de, bp@alien8.de,
-        chris@zankel.net, jcmvbkbc@gmail.com, alsa-devel@alsa-project.org,
-        coresight@lists.linaro.org, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, isdn4linux@listserv.isdn4linux.de,
-        keyrings@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-sgx@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-trace-devel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-mm@kvack.org,
-        openrisc@lists.librecores.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
+Content-Type: text/plain
+X-Originating-IP: [10.67.174.58]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello:
+Currently dump_security_xattr() is used to dump security xattr value
+which is larger than 64 bytes, otherwise, pr_debug() is used. In order
+to remove code duplication, refator dump_security_xattr() and call it in
+all cases.
 
-This series was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+---
+ security/integrity/evm/evm_crypto.c | 33 ++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
-On Thu, 26 Jan 2023 22:39:30 -0800 you wrote:
-> Correct many spelling errors in Documentation/ as reported by codespell.
-> 
-> Maintainers of specific kernel subsystems are only Cc-ed on their
-> respective patches, not the entire series. [if all goes well]
-> 
-> These patches are based on linux-next-20230125.
-> 
-> [...]
-
-Here is the summary with links:
-  - [04/35] Documentation: bpf: correct spelling
-    https://git.kernel.org/bpf/bpf-next/c/1d3cab43f4c7
-  - [05/35] Documentation: core-api: correct spelling
-    (no matching commit)
-  - [13/35] Documentation: isdn: correct spelling
-    (no matching commit)
-
-You are awesome, thank you!
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 52b811da6989..033804f5a5f2 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -183,8 +183,8 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+  * Dump large security xattr values as a continuous ascii hexademical string.
+  * (pr_debug is limited to 64 bytes.)
+  */
+-static void dump_security_xattr(const char *prefix, const void *src,
+-				size_t count)
++static void dump_security_xattr_l(const char *prefix, const void *src,
++				  size_t count)
+ {
+ #if defined(DEBUG) || defined(CONFIG_DYNAMIC_DEBUG)
+ 	char *asciihex, *p;
+@@ -200,6 +200,16 @@ static void dump_security_xattr(const char *prefix, const void *src,
+ #endif
+ }
+ 
++static void dump_security_xattr(const char *name, const char *value,
++				size_t value_len)
++{
++	if (value_len < 64)
++		pr_debug("%s: (%zu) [%*phN]\n", name, value_len,
++			 (int)value_len, value);
++	else
++		dump_security_xattr_l(name, value, value_len);
++}
++
+ /*
+  * Calculate the HMAC value across the set of protected security xattrs.
+  *
+@@ -254,15 +264,9 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 			if (is_ima)
+ 				ima_present = true;
+ 
+-			if (req_xattr_value_len < 64)
+-				pr_debug("%s: (%zu) [%*phN]\n", req_xattr_name,
+-					 req_xattr_value_len,
+-					 (int)req_xattr_value_len,
+-					 req_xattr_value);
+-			else
+-				dump_security_xattr(req_xattr_name,
+-						    req_xattr_value,
+-						    req_xattr_value_len);
++			dump_security_xattr(req_xattr_name,
++					    req_xattr_value,
++					    req_xattr_value_len);
+ 			continue;
+ 		}
+ 		size = vfs_getxattr_alloc(&nop_mnt_idmap, dentry, xattr->name,
+@@ -286,12 +290,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 		if (is_ima)
+ 			ima_present = true;
+ 
+-		if (xattr_size < 64)
+-			pr_debug("%s: (%zu) [%*phN]", xattr->name, xattr_size,
+-				 (int)xattr_size, xattr_value);
+-		else
+-			dump_security_xattr(xattr->name, xattr_value,
+-					    xattr_size);
++		dump_security_xattr(xattr->name, xattr_value, xattr_size);
+ 	}
+ 	hmac_add_misc(desc, inode, type, data->digest);
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.17.1
 
