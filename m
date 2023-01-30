@@ -2,157 +2,115 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 666B1C54EED
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Jan 2023 10:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28388C61DA4
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Jan 2023 10:37:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236336AbjA3KEU (ORCPT
+        id S231377AbjA3Kht (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Jan 2023 05:04:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39216 "EHLO
+        Mon, 30 Jan 2023 05:37:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236333AbjA3KEN (ORCPT
+        with ESMTP id S229969AbjA3Khs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Jan 2023 05:04:13 -0500
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34C21974B;
-        Mon, 30 Jan 2023 02:03:53 -0800 (PST)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4P53Z21Fb8z6J7dm;
-        Mon, 30 Jan 2023 17:59:38 +0800 (CST)
-Received: from [10.123.123.126] (10.123.123.126) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.34; Mon, 30 Jan 2023 10:03:50 +0000
-Message-ID: <526a70a2-b0bc-f29a-6558-022ca12a6430@huawei.com>
-Date:   Mon, 30 Jan 2023 13:03:49 +0300
+        Mon, 30 Jan 2023 05:37:48 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07275170C;
+        Mon, 30 Jan 2023 02:37:46 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4P54Df4Wx4z9xFPt;
+        Mon, 30 Jan 2023 18:29:38 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwCHDQnlnddjABXcAA--.26027S2;
+        Mon, 30 Jan 2023 11:37:33 +0100 (CET)
+Message-ID: <08ad72c3ddebb829acd66697c14e9bb5fadc6f97.camel@huaweicloud.com>
+Subject: Re: [PATCH v3 2/2] ima: Introduce MMAP_CHECK_REQPROT hook
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stefanb@linux.ibm.com,
+        viro@zeniv.linux.org.uk, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Mon, 30 Jan 2023 11:37:17 +0100
+In-Reply-To: <89a7cc7efe1545e18c9af6c3ec53468d6f528a7a.camel@linux.ibm.com>
+References: <20230126163812.1870942-1-roberto.sassu@huaweicloud.com>
+         <20230126163812.1870942-2-roberto.sassu@huaweicloud.com>
+         <89a7cc7efe1545e18c9af6c3ec53468d6f528a7a.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v9 12/12] landlock: Document Landlock's network support
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-CC:     <willemdebruijn.kernel@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
- <20230116085818.165539-13-konstantin.meskhidze@huawei.com>
- <Y8xwLvDbhKPG8JqY@galopp> <eb33371b-551e-ae6c-d7e3-a3101644b7ec@huawei.com>
- <68f26cf2-f382-4d31-c80f-22392a85376f@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <68f26cf2-f382-4d31-c80f-22392a85376f@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.123.126]
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwCHDQnlnddjABXcAA--.26027S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr15JrWDJFyfWF1DurWrAFb_yoW8AF13pF
+        W8Ca4kKa1vqF15Arnagw17ZayrG393Kw1UXryDA34UZrs8XF9Y9r4S9FWYgFyIkr1kCw1Y
+        vrZ8Kayfuw4DAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQANBF1jj4hCEwABsh
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Sun, 2023-01-29 at 09:52 -0500, Mimi Zohar wrote:
+> On Thu, 2023-01-26 at 17:38 +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > Commit 98de59bfe4b2f ("take calculation of final prot in
+> > security_mmap_file() into a helper") caused ima_file_mmap() to receive the
+> > protections requested by the application and not those applied by the
+> > kernel.
+> > 
+> > After restoring the original MMAP_CHECK behavior with a patch, existing
+> > systems might be broken due to not being ready to handle new entries
+> > (previously missing) in the IMA measurement list.
+> 
+> Is this a broken system or a broken attestation server?  The
+> attestation server might not be able to handle the additional
+> measurements, but the system, itself, is not broken.
 
+Ok, wasn't clear. I meant attestation server. The system itself is not
+broken.
 
-1/27/2023 9:22 PM, Mickaël Salaün пишет:
-> 
-> On 23/01/2023 10:38, Konstantin Meskhidze (A) wrote:
->> 
->> 
->> 1/22/2023 2:07 AM, Günther Noack пишет:
-> 
-> [...]
-> 
->>>> @@ -143,10 +157,24 @@ for the ruleset creation, by filtering access rights according to the Landlock
->>>>   ABI version.  In this example, this is not required because all of the requested
->>>>   ``allowed_access`` rights are already available in ABI 1.
->>>>   
->>>> -We now have a ruleset with one rule allowing read access to ``/usr`` while
->>>> -denying all other handled accesses for the filesystem.  The next step is to
->>>> -restrict the current thread from gaining more privileges (e.g. thanks to a SUID
->>>> -binary).
->>>> +For network access-control, we can add a set of rules that allow to use a port
->>>> +number for a specific action. All ports values must be defined in network byte
->>>> +order.
->>>
->>> What is the point of asking user space to convert this to network byte
->>> order? It seems to me that the kernel would be able to convert it to
->>> network byte order very easily internally and in a single place -- why
->>> ask all of the users to deal with that complexity? Am I overlooking
->>> something?
->> 
->>    I had a discussion about this issue with Mickaёl.
->>    Please check these threads:
->>    1.
->> https://lore.kernel.org/netdev/49391484-7401-e7c7-d909-3bd6bd024731@digikod.net/
->>    2.
->> https://lore.kernel.org/netdev/1ed20e34-c252-b849-ab92-78c82901c979@huawei.com/
-> 
-> I'm definitely not sure if this is the right solution, or if there is
-> one. The rationale is to make it close to the current (POSIX) API. We
-> didn't get many opinion about that but I'd really like to have a
-> discussion about port endianness for this Landlock API.
+> "with a patch" is unnecessary.
 
-   As for me, the kernel should take care about port converting. This 
-work should be done under the hood.
+Ok.
 
-   Any thoughts?
+> > Restore the original correct MMAP_CHECK behavior instead of keeping the
+> 
+> ^ add missing comma after "behavior"
+> 
+> > current buggy one and introducing a new hook with the correct behavior. The
+> > second option 
+> 
+> ^ The second option -> Otherwise,
+> 
+> > would have had the risk of IMA users not noticing the problem
+> > at all, as they would actively have to update the IMA policy, to switch to
+> > the correct behavior.
+> > 
+> > Also, introduce the new MMAP_CHECK_REQPROT hook to keep the current
+> > behavior, so that IMA users could easily fix a broken system, although this
+> > approach is discouraged due to potentially missing measurements.
+> 
+> Again, is this a broken system or a broken attestation server? 
+> 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Otherwise, the patch looks good.
 
-> 
-> I looked at some code (e.g. see [1]) and it seems that using htons()
-> might make application patching more complex after all. What do you
-> think? Is there some network (syscall) API that don't use this convention?
-> 
-> [1] https://github.com/landlock-lsm/tuto-lighttpd
-> 
->>>
->>>> +
->>>> +.. code-block:: c
->>>> +
->>>> +    struct landlock_net_service_attr net_service = {
->>>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
->>>> +        .port = htons(8080),
->>>> +    };
->>>
->>> This is a more high-level comment:
->>>
->>> The notion of a 16-bit "port" seems to be specific to TCP and UDP --
->>> how do you envision this struct to evolve if other protocols need to
->>> be supported in the future?
->> 
->>     When TCP restrictions land into Linux, we need to think about UDP
->> support. Then other protocols will be on the road. Anyway you are right
->> this struct will be evolving in long term, but I don't have a particular
->> envision now. Thanks for the question - we need to think about it.
->>>
->>> Should this struct and the associated constants have "TCP" in its
->>> name, and other protocols use a separate struct in the future?
-> 
-> Other protocols such as AF_VSOCK uses a 32-bit port. We could use a
-> 32-bits port field or ever a 64-bit one. The later could make more sense
-> because each field would eventually be aligned on 64-bit. Picking a
-> 16-bit value was to help developers (and compilers/linters) with the
-> "correct" type (for TCP).
-> 
-> If we think about protocols other than TCP and UDP (e.g. AF_VSOCK), it
-> could make sense to have a dedicated attr struct specifying other
-> properties (e.g. CID). Anyway, the API is flexible but it would be nice
-> to not mess with it too much. What do you think?
-> 
-> 
->>>
->>>> +
->>>> +    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
->>>> +                            &net_service, 0);
->>>> +
->>>> +The next step is to restrict the current thread from gaining more privileges
->>>> +(e.g. thanks to a SUID binary). We now have a ruleset with the first rule allowing
->>>            ^^^^^^
->>>            "through" a SUID binary? "thanks to" sounds like it's desired
->>>            to do that, while we're actually trying to prevent it here?
->> 
->>     This is Mickaёl's part. Let's ask his opinion here.
->> 
->>     Mickaёl, any thoughts?
-> 
-> Yep, "through" looks better.
-> .
+Ok, will make the changes.
+
+Thanks
+
+Roberto
+
