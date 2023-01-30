@@ -2,115 +2,135 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28388C61DA4
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Jan 2023 10:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67FADC54EAA
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Jan 2023 12:17:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231377AbjA3Kht (ORCPT
+        id S236272AbjA3MR5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Jan 2023 05:37:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34458 "EHLO
+        Mon, 30 Jan 2023 07:17:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229969AbjA3Khs (ORCPT
+        with ESMTP id S236302AbjA3MR4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Jan 2023 05:37:48 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07275170C;
-        Mon, 30 Jan 2023 02:37:46 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4P54Df4Wx4z9xFPt;
-        Mon, 30 Jan 2023 18:29:38 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwCHDQnlnddjABXcAA--.26027S2;
-        Mon, 30 Jan 2023 11:37:33 +0100 (CET)
-Message-ID: <08ad72c3ddebb829acd66697c14e9bb5fadc6f97.camel@huaweicloud.com>
-Subject: Re: [PATCH v3 2/2] ima: Introduce MMAP_CHECK_REQPROT hook
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com,
-        jmorris@namei.org, serge@hallyn.com
+        Mon, 30 Jan 2023 07:17:56 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7265DB466;
+        Mon, 30 Jan 2023 04:17:55 -0800 (PST)
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30UB7kVt003506;
+        Mon, 30 Jan 2023 12:17:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=i40+gziWh7C/2x/dRRV+Ofcoa07nssiNjMbPCIBuiJE=;
+ b=TWDzGWDLPxWaBZoekTlpcfQ6FkamvCdQXTO63lQr2ZsAxORkvJ4ZZLH8uVjPODEgUzfH
+ OBo8wFuMCUlXKFU/C+uHjnlf5ZOOsb9Gs7UM6Od+UMMTGrlXrEu3siiunfzowG0BQXG5
+ fgeF45hJFW6Al2mnzAwEbpRZWXYcwXTa3SXMw5HLZEPMXnGYu4ILlU+q4foGcB7uxbnJ
+ AGtsCaCrboYIPLFVtot8BJx28Crmvy0Crp6htx35Ykpfvy3tGqqLJG8ywdqCketCaKGX
+ QmXusuy3DD05mTEXgIEWB11HwP7S2A5VgGQEbZXa6q2p4XfAbtIsju9Ctn6spLMz7CO1 lA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3neb2mc45m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Jan 2023 12:17:38 +0000
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30UBifjs009455;
+        Mon, 30 Jan 2023 12:17:38 GMT
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3neb2mc457-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Jan 2023 12:17:38 +0000
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30UBv5G6026845;
+        Mon, 30 Jan 2023 12:17:37 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([9.208.129.116])
+        by ppma01wdc.us.ibm.com (PPS) with ESMTPS id 3ncvtmtka8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Jan 2023 12:17:37 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30UCHaft49545480
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 30 Jan 2023 12:17:36 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A404058054;
+        Mon, 30 Jan 2023 12:17:36 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A274C5803F;
+        Mon, 30 Jan 2023 12:17:35 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.4.127])
+        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Mon, 30 Jan 2023 12:17:35 +0000 (GMT)
+Message-ID: <9c6826bb7e5aa85be06865f5a2bed0e30b4ad33e.camel@linux.ibm.com>
+Subject: Re: [PATCH -next] evm: call dump_security_xattr() in all cases to
+ remove code duplication
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     xiujianfeng <xiujianfeng@huawei.com>, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        Christian Brauner b <brauner@kernel.org>
 Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stefanb@linux.ibm.com,
-        viro@zeniv.linux.org.uk, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Mon, 30 Jan 2023 11:37:17 +0100
-In-Reply-To: <89a7cc7efe1545e18c9af6c3ec53468d6f528a7a.camel@linux.ibm.com>
-References: <20230126163812.1870942-1-roberto.sassu@huaweicloud.com>
-         <20230126163812.1870942-2-roberto.sassu@huaweicloud.com>
-         <89a7cc7efe1545e18c9af6c3ec53468d6f528a7a.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
-MIME-Version: 1.0
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 30 Jan 2023 07:17:35 -0500
+In-Reply-To: <c95487db-f304-2610-5e93-41d7b39934d7@huawei.com>
+References: <20230129004637.191106-1-xiujianfeng@huawei.com>
+         <a7f1324e88023a86c3489d53268bde17069ece1f.camel@linux.ibm.com>
+         <c95487db-f304-2610-5e93-41d7b39934d7@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwCHDQnlnddjABXcAA--.26027S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr15JrWDJFyfWF1DurWrAFb_yoW8AF13pF
-        W8Ca4kKa1vqF15Arnagw17ZayrG393Kw1UXryDA34UZrs8XF9Y9r4S9FWYgFyIkr1kCw1Y
-        vrZ8Kayfuw4DAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQANBF1jj4hCEwABsh
-X-CFilter-Loop: Reflected
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: yyQPi3eyiELmEbrlE5M183Hj_t8fKXwr
+X-Proofpoint-ORIG-GUID: aCyXdoosdXqLZfAvXRvgPPdb4596M_YN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-30_10,2023-01-30_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ clxscore=1011 spamscore=0 mlxlogscore=981 priorityscore=1501 adultscore=0
+ mlxscore=0 impostorscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2301300116
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 2023-01-29 at 09:52 -0500, Mimi Zohar wrote:
-> On Thu, 2023-01-26 at 17:38 +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
+[Cc: Christian Brauner <brauner@kernel.org>]
+
+On Mon, 2023-01-30 at 12:02 +0800, xiujianfeng wrote:
+> Hi,
+> 
+> On 2023/1/30 0:15, Mimi Zohar wrote:
+> >> @@ -254,15 +264,9 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+> >>  			if (is_ima)
+> >>  				ima_present = true;
+> >>  
+> >> -			if (req_xattr_value_len < 64)
+> >> -				pr_debug("%s: (%zu) [%*phN]\n", req_xattr_name,
+> >> -					 req_xattr_value_len,
+> >> -					 (int)req_xattr_value_len,
+> >> -					 req_xattr_value);
+> >> -			else
+> >> -				dump_security_xattr(req_xattr_name,
+> >> -						    req_xattr_value,
+> >> -						    req_xattr_value_len);
+> >> +			dump_security_xattr(req_xattr_name,
+> >> +					    req_xattr_value,
+> >> +					    req_xattr_value_len);
+> >>  			continue;
+> >>  		}
+> >>  		size = vfs_getxattr_alloc(&nop_mnt_idmap, dentry, xattr->name,
 > > 
-> > Commit 98de59bfe4b2f ("take calculation of final prot in
-> > security_mmap_file() into a helper") caused ima_file_mmap() to receive the
-> > protections requested by the application and not those applied by the
-> > kernel.
-> > 
-> > After restoring the original MMAP_CHECK behavior with a patch, existing
-> > systems might be broken due to not being ready to handle new entries
-> > (previously missing) in the IMA measurement list.
+> > Hm, this patch doesn't apply properly.
 > 
-> Is this a broken system or a broken attestation server?  The
-> attestation server might not be able to handle the additional
-> measurements, but the system, itself, is not broken.
+> I noticed that the patch fails to apply on linux master, however this
+> patch is meant for linux-next, would you please maybe have a look?
 
-Ok, wasn't clear. I meant attestation server. The system itself is not
-broken.
+I wasn't aware of the change.  However, merge conflicts should not be
+"fixed", but mentioned immediately after the patch break line ("---") .
+FYI, this merge conflict is a result of commit 4609e1f18e19 ("fs: port
+->permission() to pass mnt_idmap").
 
-> "with a patch" is unnecessary.
+Patches for the linux-integrity branch should be based on the next-
+integrity branch.
+-- 
+thanks,
 
-Ok.
-
-> > Restore the original correct MMAP_CHECK behavior instead of keeping the
-> 
-> ^ add missing comma after "behavior"
-> 
-> > current buggy one and introducing a new hook with the correct behavior. The
-> > second option 
-> 
-> ^ The second option -> Otherwise,
-> 
-> > would have had the risk of IMA users not noticing the problem
-> > at all, as they would actively have to update the IMA policy, to switch to
-> > the correct behavior.
-> > 
-> > Also, introduce the new MMAP_CHECK_REQPROT hook to keep the current
-> > behavior, so that IMA users could easily fix a broken system, although this
-> > approach is discouraged due to potentially missing measurements.
-> 
-> Again, is this a broken system or a broken attestation server? 
-> 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Otherwise, the patch looks good.
-
-Ok, will make the changes.
-
-Thanks
-
-Roberto
+Mimi
 
