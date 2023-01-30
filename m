@@ -2,131 +2,81 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B2AC05027
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Jan 2023 01:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24530C54EAA
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Jan 2023 06:07:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232771AbjA3Bx0 (ORCPT
+        id S229741AbjA3GHH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 29 Jan 2023 20:53:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59426 "EHLO
+        Mon, 30 Jan 2023 01:07:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229977AbjA3BxZ (ORCPT
+        with ESMTP id S229578AbjA3GHE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 29 Jan 2023 20:53:25 -0500
+        Mon, 30 Jan 2023 01:07:04 -0500
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 325FA1C305;
-        Sun, 29 Jan 2023 17:53:24 -0800 (PST)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4P4rl81r3CzJrSt;
-        Mon, 30 Jan 2023 09:51:48 +0800 (CST)
-Received: from [10.67.110.173] (10.67.110.173) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B74916338;
+        Sun, 29 Jan 2023 22:07:02 -0800 (PST)
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4P4yM56SQQzRr4V;
+        Mon, 30 Jan 2023 14:04:49 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.34; Mon, 30 Jan 2023 09:53:21 +0800
-Message-ID: <f90bd732-a3a0-80b5-07ce-386500b12968@huawei.com>
-Date:   Mon, 30 Jan 2023 09:53:20 +0800
+ 15.1.2375.34; Mon, 30 Jan 2023 14:06:59 +0800
+Message-ID: <c95487db-f304-2610-5e93-41d7b39934d7@huawei.com>
+Date:   Mon, 30 Jan 2023 12:02:44 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH -next] evm: Use __vfs_setxattr() to update security.evm
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        <dmitry.kasatkin@gmail.com>, <paul@paul-moore.com>,
-        <jmorris@namei.org>, <serge@hallyn.com>
+ Thunderbird/102.5.1
+Subject: Re: [PATCH -next] evm: call dump_security_xattr() in all cases to
+ remove code duplication
+To:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-References: <20221228030248.94285-1-xiujianfeng@huawei.com>
- <3c34c1e8c74722110e5d7e87146b090791734916.camel@linux.ibm.com>
+References: <20230129004637.191106-1-xiujianfeng@huawei.com>
+ <a7f1324e88023a86c3489d53268bde17069ece1f.camel@linux.ibm.com>
 Content-Language: en-US
-From:   "Guozihua (Scott)" <guozihua@huawei.com>
-In-Reply-To: <3c34c1e8c74722110e5d7e87146b090791734916.camel@linux.ibm.com>
+From:   xiujianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <a7f1324e88023a86c3489d53268bde17069ece1f.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.173]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500024.china.huawei.com (7.185.36.203)
+X-Originating-IP: [10.67.110.112]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2023/1/19 5:45, Mimi Zohar wrote:
-> On Wed, 2022-12-28 at 11:02 +0800, Xiu Jianfeng wrote:
->> Currently it uses __vfs_setxattr_noperm() to update "security.evm",
->> however there are two lsm hooks(inode_post_setxattr and inode_setsecurity)
->> being called inside this function, which don't make any sense for xattr
->> "security.evm", because the handlers of these two hooks, such as selinux
->> and smack, only care about their own xattr.
-> 
-> Updating the security.ima hash triggers re-calculating and writing the
-> security.evm HMAC.  Refer to evm_inode_post_setxattr().
-> 
-> Mimi
+Hi,
 
-Hi Mimi,
-
-I believe what Jianfeng is trying to do is to avoid re-triggering
-security_inode_post_setxattr if we are updating security.evm. I can't
-think of any other xattr that could "absorb" security.evm.
-> 
->>
->> On the other hand, there is a literally rather than actually cyclical
->> callchain as follows:
->> security_inode_post_setxattr
->>   ->evm_inode_post_setxattr
->>     ->evm_update_evmxattr
->>       ->__vfs_setxattr_noperm
->>         ->security_inode_post_setxattr
->>
->> So use __vfs_setxattr() to update "security.evm".
->>
->> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
->> ---
->>  security/integrity/evm/evm_crypto.c   | 7 +++----
->>  security/integrity/ima/ima_appraise.c | 8 ++++----
->>  2 files changed, 7 insertions(+), 8 deletions(-)
->>
->> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
->> index fa5ff13fa8c9..d8275dfa49ef 100644
->> --- a/security/integrity/evm/evm_crypto.c
->> +++ b/security/integrity/evm/evm_crypto.c
->> @@ -376,10 +376,9 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
->>  			   xattr_value_len, &data);
->>  	if (rc == 0) {
->>  		data.hdr.xattr.sha1.type = EVM_XATTR_HMAC;
->> -		rc = __vfs_setxattr_noperm(&init_user_ns, dentry,
->> -					   XATTR_NAME_EVM,
->> -					   &data.hdr.xattr.data[1],
->> -					   SHA1_DIGEST_SIZE + 1, 0);
->> +		rc = __vfs_setxattr(&init_user_ns, dentry, d_inode(dentry),
->> +				    XATTR_NAME_EVM, &data.hdr.xattr.data[1],
->> +				    SHA1_DIGEST_SIZE + 1, 0);
->>  	} else if (rc == -ENODATA && (inode->i_opflags & IOP_XATTR)) {
->>  		rc = __vfs_removexattr(&init_user_ns, dentry, XATTR_NAME_EVM);
->>  	}
->> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
->> index ee6f7e237f2e..d2de9dc6c345 100644
->> --- a/security/integrity/ima/ima_appraise.c
->> +++ b/security/integrity/ima/ima_appraise.c
->> @@ -98,10 +98,10 @@ static int ima_fix_xattr(struct dentry *dentry,
->>  		iint->ima_hash->xattr.ng.type = IMA_XATTR_DIGEST_NG;
->>  		iint->ima_hash->xattr.ng.algo = algo;
->>  	}
->> -	rc = __vfs_setxattr_noperm(&init_user_ns, dentry, XATTR_NAME_IMA,
->> -				   &iint->ima_hash->xattr.data[offset],
->> -				   (sizeof(iint->ima_hash->xattr) - offset) +
->> -				   iint->ima_hash->length, 0);
->> +	rc = __vfs_setxattr(&init_user_ns, dentry, d_inode(dentry),
->> +			    XATTR_NAME_IMA, &iint->ima_hash->xattr.data[offset],
->> +			    (sizeof(iint->ima_hash->xattr) - offset) +
->> +			    iint->ima_hash->length, 0);
->>  	return rc;
->>  }
+On 2023/1/30 0:15, Mimi Zohar wrote:
+>> @@ -254,15 +264,9 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+>>  			if (is_ima)
+>>  				ima_present = true;
 >>  
+>> -			if (req_xattr_value_len < 64)
+>> -				pr_debug("%s: (%zu) [%*phN]\n", req_xattr_name,
+>> -					 req_xattr_value_len,
+>> -					 (int)req_xattr_value_len,
+>> -					 req_xattr_value);
+>> -			else
+>> -				dump_security_xattr(req_xattr_name,
+>> -						    req_xattr_value,
+>> -						    req_xattr_value_len);
+>> +			dump_security_xattr(req_xattr_name,
+>> +					    req_xattr_value,
+>> +					    req_xattr_value_len);
+>>  			continue;
+>>  		}
+>>  		size = vfs_getxattr_alloc(&nop_mnt_idmap, dentry, xattr->name,
 > 
+> Hm, this patch doesn't apply properly.
+
+I noticed that the patch fails to apply on linux master, however this
+patch is meant for linux-next, would you please maybe have a look?
+
 > 
-
--- 
-Best
-GUO Zihua
-
+> Mimi>
+> 
