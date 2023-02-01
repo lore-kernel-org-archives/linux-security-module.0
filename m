@@ -2,149 +2,59 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01575C636D6
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Feb 2023 07:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D790BC63797
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Feb 2023 09:45:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231571AbjBAHK0 (ORCPT
+        id S230447AbjBAJp6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Feb 2023 02:10:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50406 "EHLO
+        Wed, 1 Feb 2023 04:45:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231769AbjBAHKR (ORCPT
+        with ESMTP id S230496AbjBAJpx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Feb 2023 02:10:17 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A152A7AA6;
-        Tue, 31 Jan 2023 23:10:13 -0800 (PST)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4P6Cgm0BqtzJs7K;
-        Wed,  1 Feb 2023 15:08:36 +0800 (CST)
-Received: from [10.67.110.173] (10.67.110.173) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.34; Wed, 1 Feb 2023 15:10:11 +0800
-Message-ID: <c58c1c63-d886-04ee-97cb-2de2545d85cc@huawei.com>
-Date:   Wed, 1 Feb 2023 15:10:11 +0800
+        Wed, 1 Feb 2023 04:45:53 -0500
+X-Greylist: delayed 1198 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 01 Feb 2023 01:45:52 PST
+Received: from mail.corrib.pl (mail.corrib.pl [185.58.226.145])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A90AD1D
+        for <linux-security-module@vger.kernel.org>; Wed,  1 Feb 2023 01:45:52 -0800 (PST)
+Received: by mail.corrib.pl (Postfix, from userid 1001)
+        id A1838A42FF; Wed,  1 Feb 2023 09:06:54 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corrib.pl; s=mail;
+        t=1675242448; bh=X6IEpSISwJiYlJ3uA866lskXve3r+4o2hf4z7VM6m5o=;
+        h=Date:From:To:Subject:From;
+        b=qGGfyQ4aFTyhcUUIb/qQH57trj+xfpErUuP6dm0NBkFdKh/ODSWhiYQMINBcndZqd
+         gK5oZseS+wpI7W2eNZaADKSR5TocnFdU0ZexuaBm2vJhHUKGghTZxKQlCzgjf+cmtR
+         7GL2AqRob/RyoJV40A+7qQTfpLoGRCTYkXhivTntkLhqc119D/ObhlCa/2x1T464n2
+         Vl1LbGtTSEwUAO0bYhNehOu1hDKTKSd4lWjhFm4FzHIsycYGgPbDD1J7B3aqX1P4vd
+         8CcprYwQZXiSumr2i/7A2eTsfdBKB7GQ5rCyavixbtWTBrRNVrGWqMRgzuyaMl53Oj
+         d5TSSJCNHizCQ==
+Received: by mail.corrib.pl for <linux-security-module@vger.kernel.org>; Wed,  1 Feb 2023 09:06:19 GMT
+Message-ID: <20230201074500-0.1.58.fibf.0.8khw0y9ah9@corrib.pl>
+Date:   Wed,  1 Feb 2023 09:06:19 GMT
+From:   =?UTF-8?Q? "Szczepan_Kie=C5=82basa" ?= 
+        <szczepan.kielbasa@corrib.pl>
+To:     <linux-security-module@vger.kernel.org>
+Subject: Faktoring
+X-Mailer: mail.corrib.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH -next] evm: Use __vfs_setxattr() to update security.evm
-Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        <dmitry.kasatkin@gmail.com>, <paul@paul-moore.com>,
-        <jmorris@namei.org>, <serge@hallyn.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20221228030248.94285-1-xiujianfeng@huawei.com>
- <3c34c1e8c74722110e5d7e87146b090791734916.camel@linux.ibm.com>
- <f90bd732-a3a0-80b5-07ce-386500b12968@huawei.com>
- <1c7d861a143106e56cfe382d1ab6c293fa43aff1.camel@linux.ibm.com>
-From:   "Guozihua (Scott)" <guozihua@huawei.com>
-In-Reply-To: <1c7d861a143106e56cfe382d1ab6c293fa43aff1.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.173]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2023/1/31 19:31, Mimi Zohar wrote:
-> On Mon, 2023-01-30 at 09:53 +0800, Guozihua (Scott) wrote:
->> On 2023/1/19 5:45, Mimi Zohar wrote:
->>> On Wed, 2022-12-28 at 11:02 +0800, Xiu Jianfeng wrote:
->>>> Currently it uses __vfs_setxattr_noperm() to update "security.evm",
->>>> however there are two lsm hooks(inode_post_setxattr and inode_setsecurity)
->>>> being called inside this function, which don't make any sense for xattr
->>>> "security.evm", because the handlers of these two hooks, such as selinux
->>>> and smack, only care about their own xattr.
->>>
->>> Updating the security.ima hash triggers re-calculating and writing the
->>> security.evm HMAC.  Refer to evm_inode_post_setxattr().
->>
->> Hi Mimi,
->>
->> I believe what Jianfeng is trying to do is to avoid re-triggering
->> security_inode_post_setxattr if we are updating security.evm. I can't
->> think of any other xattr that could "absorb" security.evm.
-> 
-> I understand.  Comments below ...
->>>
->>>>
->>>> On the other hand, there is a literally rather than actually cyclical
->>>> callchain as follows:
->>>> security_inode_post_setxattr
->>>>   ->evm_inode_post_setxattr
->>>>     ->evm_update_evmxattr
->>>>       ->__vfs_setxattr_noperm
->>>>         ->security_inode_post_setxattr
->>>>
->>>> So use __vfs_setxattr() to update "security.evm".
->>>>
->>>> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
->>>> ---
->>>>  security/integrity/evm/evm_crypto.c   | 7 +++----
->>>>  security/integrity/ima/ima_appraise.c | 8 ++++----
->>>>  2 files changed, 7 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
->>>> index fa5ff13fa8c9..d8275dfa49ef 100644
->>>> --- a/security/integrity/evm/evm_crypto.c
->>>> +++ b/security/integrity/evm/evm_crypto.c
->>>> @@ -376,10 +376,9 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
->>>>  			   xattr_value_len, &data);
->>>>  	if (rc == 0) {
->>>>  		data.hdr.xattr.sha1.type = EVM_XATTR_HMAC;
->>>> -		rc = __vfs_setxattr_noperm(&init_user_ns, dentry,
->>>> -					   XATTR_NAME_EVM,
->>>> -					   &data.hdr.xattr.data[1],
->>>> -					   SHA1_DIGEST_SIZE + 1, 0);
->>>> +		rc = __vfs_setxattr(&init_user_ns, dentry, d_inode(dentry),
->>>> +				    XATTR_NAME_EVM, &data.hdr.xattr.data[1],
->>>> +				    SHA1_DIGEST_SIZE + 1, 0);
-> 
-> Although __vfs_setxattr_noperm() doesn't do any permission checking, it
-> does other things - make sure the filesystem supports writing xattrs,
-> calls fsnotify_xattr().
+Dzie=C5=84 dobry,
 
-Thanks for the explanation Mimi, this makes sense.
-> 
->>>>  	} else if (rc == -ENODATA && (inode->i_opflags & IOP_XATTR)) {
->>>>  		rc = __vfs_removexattr(&init_user_ns, dentry, XATTR_NAME_EVM);
->>>>  	}
->>>> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
->>>> index ee6f7e237f2e..d2de9dc6c345 100644
->>>> --- a/security/integrity/ima/ima_appraise.c
->>>> +++ b/security/integrity/ima/ima_appraise.c
->>>> @@ -98,10 +98,10 @@ static int ima_fix_xattr(struct dentry *dentry,
->>>>  		iint->ima_hash->xattr.ng.type = IMA_XATTR_DIGEST_NG;
->>>>  		iint->ima_hash->xattr.ng.algo = algo;
->>>>  	}
->>>> -	rc = __vfs_setxattr_noperm(&init_user_ns, dentry, XATTR_NAME_IMA,
->>>> -				   &iint->ima_hash->xattr.data[offset],
->>>> -				   (sizeof(iint->ima_hash->xattr) - offset) +
->>>> -				   iint->ima_hash->length, 0);
->>>> +	rc = __vfs_setxattr(&init_user_ns, dentry, d_inode(dentry),
->>>> +			    XATTR_NAME_IMA, &iint->ima_hash->xattr.data[offset],
->>>> +			    (sizeof(iint->ima_hash->xattr) - offset) +
->>>> +			    iint->ima_hash->length, 0);
-> 
-> To clarify, ima_fix_xattr() is either directly called when in "fix"
-> mode or from ima_update_xattr().  With this change, the recalculated
-> file hash would be written to security.ima, but security.evm would not
-> be updated.
+rozwa=C5=BCali Pa=C5=84stwo wyb=C3=B3r finansowania, kt=C3=B3re spe=C5=82=
+ni potrzeby firmy, zapewniaj=C4=85c natychmiastowy dost=C4=99p do got=C3=B3=
+wki, bez zb=C4=99dnych przestoj=C3=B3w?=20
 
-Sorry I missed this part. I agree that it is not a good idea to alter
-ima_fix_xattr().
-> 
->>>>  	return rc;
->>>>  }
-> 
+Przygotowali=C5=9Bmy rozwi=C4=85zania faktoringowe dopasowane do Pa=C5=84=
+stwa bran=C5=BCy i wielko=C5=9Bci firmy, dzi=C4=99ki kt=C3=B3rym, nie mus=
+z=C4=85 Pa=C5=84stwo martwi=C4=87 si=C4=99 o niewyp=C5=82acalno=C5=9B=C4=87=
+ kontrahent=C3=B3w, poniewa=C5=BC transakcje s=C4=85 zabezpieczone i posi=
+adaj=C4=85 gwarancj=C4=99 sp=C5=82aty.=20
+Chc=C4=85 Pa=C5=84stwo przeanalizowa=C4=87 dost=C4=99pne opcje?
 
--- 
-Best
-GUO Zihua
 
+Pozdrawiam
+Szczepan Kie=C5=82basa
