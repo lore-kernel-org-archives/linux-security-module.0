@@ -2,90 +2,244 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 143D9C63797
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Feb 2023 00:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 715AEC63797
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Feb 2023 01:49:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230244AbjBAAsz (ORCPT
+        id S230202AbjBABtZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 31 Jan 2023 19:48:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42348 "EHLO
+        Tue, 31 Jan 2023 20:49:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229613AbjBAAsx (ORCPT
+        with ESMTP id S229876AbjBABtY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 31 Jan 2023 19:48:53 -0500
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BB297125A3;
-        Tue, 31 Jan 2023 16:48:52 -0800 (PST)
-Received: by linux.microsoft.com (Postfix, from userid 1052)
-        id 6F5F120E0A00; Tue, 31 Jan 2023 16:48:52 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6F5F120E0A00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1675212532;
-        bh=QtJOGoJNRx6Y5psopcsbrkvVOd9n83DwG6TAX2fVAEM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qhvwMPCpPd9vbDNzrPjs1oZIe5jI0seyMdSzUuuc5HR6DkZ14Hf6P0cI2f+oh6DGv
-         76VMuAXIVoCv65wvxPld5tZex+OTLKcBVka2rNlJJBrhjS44ZIHEQ+lFV1y4yUS9qY
-         CduWMrllvFR26wDQtbMgNAHH2QmUm72WhSPXXT2E=
-Date:   Tue, 31 Jan 2023 16:48:52 -0800
-From:   Fan Wu <wufan@linux.microsoft.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
-        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        eparis@redhat.com, paul@paul-moore.com, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, linux-audit@redhat.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v9 00/16] Integrity Policy Enforcement LSM (IPE)
-Message-ID: <20230201004852.GB30104@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com>
- <033335b26f6becdc3dc0325ef926efd94fcc4dda.camel@huaweicloud.com>
+        Tue, 31 Jan 2023 20:49:24 -0500
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C396437F1E
+        for <linux-security-module@vger.kernel.org>; Tue, 31 Jan 2023 17:49:22 -0800 (PST)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-4c24993965eso226754777b3.12
+        for <linux-security-module@vger.kernel.org>; Tue, 31 Jan 2023 17:49:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=z1m13XCTvymftA/AFOwDDbr1NYjXo09zVt/zVuxJnSQ=;
+        b=R+Dcj4zWuzGr6r5l2F611kxVGta7vRkU+AzU3k2BaP+94g2UqWf7s+N1I3h1EPQeMg
+         tpyP1vFQ+tdCTJ5KZ95KtfSVCOkWEovHqWTCR94pctkt7jjLjVi8OIs60iUq+0WuPNbT
+         amhAhh5vE5kQN8BodyTGKRKkGfOb9NNNSRCMY4pMl9Pksww6Mfubu9pdWcRvveIK8ryr
+         rCO5ZKGxag4fXrEew8JYN0tbv6E1yBBAxA2cxrRyOnVBeVJp/tHNbqD0AeeV7ut8Usrt
+         A+hHwUu5nUSHBlpn9CNBoTt2oPdDAAibNma7TzDQGp39pw/kSA+ZBcKqO+A1cVZa2/U9
+         gFzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z1m13XCTvymftA/AFOwDDbr1NYjXo09zVt/zVuxJnSQ=;
+        b=vhUPasgDexQjt0vc4zSFycstPpUGN/Apmm9oADevoReQ2ST3Ov/g9/wil+jmXIh168
+         UI3Ng7lreETRw2Nuyc4cO0Sk/YFvf/Cja5tAguNNPzKnAx0X3psA4b4DJcIImwVliAZA
+         A9o2fbvyYIUG8ikymcNmcyCQrdFUKgzH5cK2SDz2x3sLUJMBK7O6/oDk2hOt+FP7BS9k
+         prejQY8HLYAoG0dVq+r9GmonIRvu4gxB/dy/FRHrQ87Lzq+xHhivj7vMlVrfOf/0IDGS
+         h3TLiPFwUknlNobN467BxJKPPSVt5cahAO3uqdmRbbrThZrA3zywccx1eC/BWM07ho+r
+         iKqQ==
+X-Gm-Message-State: AO0yUKVGsFekzOfV3BXTBN4ZS1W+1+i+DMNdGWh5EX9qQ82kHgW0GJZV
+        yb47npJm1ng6Kj4DeyB53j84Foy8YmdBEGwwvQ4+8Q==
+X-Google-Smtp-Source: AK7set/wzA5afz5mZ+K94QaPji2ux5+fHm9/NlE+zLFQpSQHQsfBw/F6ZgDvrWDx4avq/xII6/kRx6OUWDoCRKtYyGc=
+X-Received: by 2002:a81:994d:0:b0:508:4dc0:7f7c with SMTP id
+ q74-20020a81994d000000b005084dc07f7cmr54078ywg.240.1675216161793; Tue, 31 Jan
+ 2023 17:49:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <033335b26f6becdc3dc0325ef926efd94fcc4dda.camel@huaweicloud.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20230123191728.2928839-1-tjmercier@google.com>
+ <20230123191728.2928839-2-tjmercier@google.com> <Y8/ybgp2FW+e3bjc@dhcp22.suse.cz>
+ <20230124194628.d44rtcfsv23fndxw@google.com> <Y9EX+usSpAjZ/8LS@dhcp22.suse.cz>
+ <347560bc-d06a-92b7-8003-133d2b8af2df@linux.intel.com> <CABdmKX09S3bYzX+xBkhfkFULk2BtzS11RhzrvWv94j+cHSezPA@mail.gmail.com>
+ <ad6bd448-91bd-d47e-5b54-8755fe0e0340@linux.intel.com>
+In-Reply-To: <ad6bd448-91bd-d47e-5b54-8755fe0e0340@linux.intel.com>
+From:   "T.J. Mercier" <tjmercier@google.com>
+Date:   Tue, 31 Jan 2023 17:49:10 -0800
+Message-ID: <CABdmKX3VSdF3jmktpw9VH4k+J+ZtQCLCPdNN6uye4XnZGPhG5g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] memcg: Track exported dma-buffers
+To:     Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Cc:     Michal Hocko <mhocko@suse.com>, Shakeel Butt <shakeelb@google.com>,
+        linux-doc@vger.kernel.org, daniel.vetter@ffwll.ch,
+        Roman Gushchin <roman.gushchin@linux.dev>, cmllamas@google.com,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        jstultz@google.com, Zefan Li <lizefan.x@bytedance.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>, android-mm@google.com,
+        Jonathan Corbet <corbet@lwn.net>, jeffv@google.com,
+        linux-media@vger.kernel.org, selinux@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org, cgroups@vger.kernel.org,
+        Muchun Song <muchun.song@linux.dev>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 31, 2023 at 03:22:05PM +0100, Roberto Sassu wrote:
-> On Mon, 2023-01-30 at 14:57 -0800, Fan Wu wrote:
-> > IPE has two known gaps:
-> > 
-> > 1. IPE cannot verify the integrity of anonymous executable memory, such as
-> >   the trampolines created by gcc closures and libffi (<3.4.2), or JIT'd code.
-> >   Unfortunately, as this is dynamically generated code, there is no way
-> >   for IPE to ensure the integrity of this code to form a trust basis. In all
-> >   cases, the return result for these operations will be whatever the admin
-> >   configures the DEFAULT action for "EXECUTE".
-> 
-> I think it would be useful to handle special cases, for example you
-> could allow a process that created a file with memfd to use it, at the
-> condition that nobody else writes it.
-> 
-> This would be required during the boot, otherwise services could fail
-> to start (depending on the policy).
-> 
-Thanks for the suggestion. I agree with your opinion and I think supporting
-memfd is possible but restricting read/write needs more hooks. We would like
-to avoid adding more complexity to this initial posting as necessary. 
-We will consider this as a future work and will post follow-on patches
-in the future.
+On Tue, Jan 31, 2023 at 6:01 AM Tvrtko Ursulin
+<tvrtko.ursulin@linux.intel.com> wrote:
+>
+>
+> On 25/01/2023 20:04, T.J. Mercier wrote:
+> > On Wed, Jan 25, 2023 at 9:31 AM Tvrtko Ursulin
+> > <tvrtko.ursulin@linux.intel.com> wrote:
+> >>
+> >>
+> >> Hi,
+> >>
+> >> On 25/01/2023 11:52, Michal Hocko wrote:
+> >>> On Tue 24-01-23 19:46:28, Shakeel Butt wrote:
+> >>>> On Tue, Jan 24, 2023 at 03:59:58PM +0100, Michal Hocko wrote:
+> >>>>> On Mon 23-01-23 19:17:23, T.J. Mercier wrote:
+> >>>>>> When a buffer is exported to userspace, use memcg to attribute the
+> >>>>>> buffer to the allocating cgroup until all buffer references are
+> >>>>>> released.
+> >>>>>
+> >>>>> Is there any reason why this memory cannot be charged during the
+> >>>>> allocation (__GFP_ACCOUNT used)?
+> >>>>> Also you do charge and account the memory but underlying pages do not
+> >>>>> know about their memcg (this is normally done with commit_charge for
+> >>>>> user mapped pages). This would become a problem if the memory is
+> >>>>> migrated for example.
+> >>>>
+> >>>> I don't think this is movable memory.
+> >>>>
+> >>>>> This also means that you have to maintain memcg
+> >>>>> reference outside of the memcg proper which is not really nice either.
+> >>>>> This mimicks tcp kmem limit implementation which I really have to say I
+> >>>>> am not a great fan of and this pattern shouldn't be coppied.
+> >>>>>
+> >>>>
+> >>>> I think we should keep the discussion on technical merits instead of
+> >>>> personal perference. To me using skmem like interface is totally fine
+> >>>> but the pros/cons need to be very explicit and the clear reasons to
+> >>>> select that option should be included.
+> >>>
+> >>> I do agree with that. I didn't want sound to be personal wrt tcp kmem
+> >>> accounting but the overall code maintenance cost is higher because
+> >>> of how tcp take on accounting differs from anything else in the memcg
+> >>> proper. I would prefer to not grow another example like that.
+> >>>
+> >>>> To me there are two options:
+> >>>>
+> >>>> 1. Using skmem like interface as this patch series:
+> >>>>
+> >>>> The main pros of this option is that it is very simple. Let me list down
+> >>>> the cons of this approach:
+> >>>>
+> >>>> a. There is time window between the actual memory allocation/free and
+> >>>> the charge and uncharge and [un]charge happen when the whole memory is
+> >>>> allocated or freed. I think for the charge path that might not be a big
+> >>>> issue but on the uncharge, this can cause issues. The application and
+> >>>> the potential shrinkers have freed some of this dmabuf memory but until
+> >>>> the whole dmabuf is freed, the memcg uncharge will not happen. This can
+> >>>> consequences on reclaim and oom behavior of the application.
+> >>>>
+> >>>> b. Due to the usage model i.e. a central daemon allocating the dmabuf
+> >>>> memory upfront, there is a requirement to have a memcg charge transfer
+> >>>> functionality to transfer the charge from the central daemon to the
+> >>>> client applications. This does introduce complexity and avenues of weird
+> >>>> reclaim and oom behavior.
+> >>>>
+> >>>>
+> >>>> 2. Allocate and charge the memory on page fault by actual user
+> >>>>
+> >>>> In this approach, the memory is not allocated upfront by the central
+> >>>> daemon but rather on the page fault by the client application and the
+> >>>> memcg charge happen at the same time.
+> >>>>
+> >>>> The only cons I can think of is this approach is more involved and may
+> >>>> need some clever tricks to track the page on the free patch i.e. we to
+> >>>> decrement the dmabuf memcg stat on free path. Maybe a page flag.
+> >>>>
+> >>>> The pros of this approach is there is no need have a charge transfer
+> >>>> functionality and the charge/uncharge being closely tied to the actual
+> >>>> memory allocation and free.
+> >>>>
+> >>>> Personally I would prefer the second approach but I don't want to just
+> >>>> block this work if the dmabuf folks are ok with the cons mentioned of
+> >>>> the first approach.
+> >>>
+> >>> I am not familiar with dmabuf internals to judge complexity on their end
+> >>> but I fully agree that charge-when-used is much more easier to reason
+> >>> about and it should have less subtle surprises.
+> >>
+> >> Disclaimer that I don't seem to see patches 3&4 on dri-devel so maybe I
+> >> am missing something, but in principle yes, I agree that the 2nd option
+> >> (charge the user, not exporter) should be preferred. Thing being that at
+> >> export time there may not be any backing store allocated, plus if the
+> >> series is restricting the charge transfer to just Android clients then
+> >> it seems it has the potential to miss many other use cases. At least
+> >> needs to outline a description on how the feature will be useful outside
+> >> Android.
+> >>
+> > There is no restriction like that. It's available to anybody who wants
+> > to call dma_buf_charge_transfer if they actually have a need for that,
+> > which I don't really expect to be common since most users/owners of
+> > the buffers will be the ones causing the export in the first place.
+> > It's just not like that on Android with the extra allocator process in
+> > the middle most of the time.
+>
+> Yeah I used the wrong term "restrict", apologies. What I meant was, if
+> the idea was to allow spotting memory leaks, with the charge transfer
+> being optional and in the series only wired up for Android Binder, then
+> it obviously only fully works for that one case. So a step back..
+>
+Oh, spotting kernel memory leaks is a side-benefit of accounting
+kernel-only buffers in the root cgroup. The primary goal is to
+attribute buffers to applications that originated them (via
+per-application cgroups) simply for accounting purposes. Buffers are
+using memory on the system, and we want to know who created them and
+how much memory is used. That information is/will no longer available
+with the recent deprecation of the dmabuf sysfs statistics.
 
--Fan
+> .. For instance, it is not feasible to transfer the charge when dmabuf
+> is attached, or imported? That would attribute the usage to the
+> user/importer so give better visibility on who is actually causing the
+> memory leak.
+>
+Instead of accounting at export, we could account at attach. That just
+turns out not to be very useful when the majority of our
+heap-allocated buffers don't have attachments at any particular point
+in time. :\ But again it's less about leaks and more about knowing
+which buffers exist in the first place.
 
-> > 2. IPE cannot verify the integrity of interpreted languages' programs when
-> >   these scripts invoked via ``<interpreter> <file>``. This is because the
-> >   way interpreters execute these files, the scripts themselves are not
-> >   evaluated as executable code through one of IPE's hooks. Interpreters
-> >   can be enlightened to the usage of IPE by trying to mmap a file into
-> >   executable memory (+X), after opening the file and responding to the
-> >   error code appropriately. This also applies to included files, or high
-> >   value files, such as configuration files of critical system components.
-> 
-> Ok, it is a well known issue. Hopefully, it will be fixed soon.
-> 
-> Roberto
-> 
+> Further more, if above is feasible, then could it also be implemented in
+> the common layer so it would automatically cover all drivers?
+>
+Which common layer code specifically? The dmabuf interface appears to
+be the most central/common place to me.
+
+> >> Also stepping back for a moment - is a new memory category really
+> >> needed, versus perhaps attempting to charge the actual backing store
+> >> memory to the correct client? (There might have been many past
+> >> discussions on this so it's okay to point me towards something in the
+> >> archives.)
+> >>
+> > Well the dmabuf counter for the stat file is really just a subcategory
+> > of memory that is charged. Its existence is not related to getting the
+> > charge attributed to the right process/cgroup. We do want to know how
+> > much of the memory attributed to a process is for dmabufs, which is
+> > the main point of this series.
+>
+> Then I am probably missing something because the statement how proposal
+> is not intended to charge to the right process, but wants to know how
+> much dmabuf "size" is attributed to a process, confuses me due a seeming
+> contradiction. And the fact it would not be externally observable how
+> much of the stats is accurate and how much is not (without knowing the
+> implementation detail of which drivers implement charge transfer and
+> when). Maybe I completely misunderstood the use case.
+>
+Hmm, did I clear this up above or no? The current proposal is for the
+process causing the export of a buffer to be charged for it,
+regardless of whatever happens afterwards. (Unless that process is
+like gralloc on Android, in which case the charge is transferred from
+gralloc to whoever called gralloc to allocate the buffer on their
+behalf.)
+
+> Regards,
+>
+> Tvrtko
