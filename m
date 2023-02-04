@@ -2,206 +2,185 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24DDC636D3
-	for <linux-security-module@archiver.kernel.org>; Sat,  4 Feb 2023 05:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7FEC636CD
+	for <linux-security-module@archiver.kernel.org>; Sat,  4 Feb 2023 05:32:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232601AbjBDFct (ORCPT
+        id S232568AbjBDFct (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Sat, 4 Feb 2023 00:32:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43148 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232978AbjBDFcp (ORCPT
+        with ESMTP id S233338AbjBDFcs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 4 Feb 2023 00:32:45 -0500
+        Sat, 4 Feb 2023 00:32:48 -0500
 Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1343A93AD0
-        for <linux-security-module@vger.kernel.org>; Fri,  3 Feb 2023 21:32:43 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5146C93E14
+        for <linux-security-module@vger.kernel.org>; Fri,  3 Feb 2023 21:32:45 -0800 (PST)
 Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-        by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 31459xIQ011642;
-        Fri, 3 Feb 2023 23:09:59 -0600
+        by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 31459tBX011607;
+        Fri, 3 Feb 2023 23:09:55 -0600
 Received: (from greg@localhost)
-        by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 31459xb4011640;
-        Fri, 3 Feb 2023 23:09:59 -0600
+        by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 31459sjA011605;
+        Fri, 3 Feb 2023 23:09:54 -0600
 X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
 From:   "Dr. Greg" <greg@enjellic.com>
 To:     linux-security-module@vger.kernel.org
-Subject: [PATCH 07/14] Add root domain trust implementation.
-Date:   Fri,  3 Feb 2023 23:09:47 -0600
-Message-Id: <20230204050954.11583-8-greg@enjellic.com>
+Subject: [PATCH 00/14] Implement Trusted Security Event Modeling.
+Date:   Fri,  3 Feb 2023 23:09:40 -0600
+Message-Id: <20230204050954.11583-1-greg@enjellic.com>
 X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230204050954.11583-1-greg@enjellic.com>
-References: <20230204050954.11583-1-greg@enjellic.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The trust.c contains the support infrastructure for anchoring the
-root modeling domain in a hardware TPM implementation if it is
-available.
+This patch series implements Trusted Security Event Modeling (TSEM) as
+a new Linux Security Module (LSM) architecture.
 
-The security event state points are extended into Platform
-Configuration Register (PCR) 11 in order to provide authentication of
-the security execution trajectory for the root domain.  This
-value was chosen to avoid the use of PCR register 10 that the
-Integrity Measurement Architecture uses to register the integrity
-events that it handles.
+At a conceptual level, TSEM can be thought of as an integration of
+integrity measurement and mandatory access controls.  TSEM brings to
+Linux security, a new model for implementing security controls that is
+unique among current operating system platforms.
 
-This file is also responsible for computing the hardware platform
-aggregate measurement.  This is the linear extension sum over PCR
-rsegisters 0 through 7.  This file contains an accessor function
-for surfacing this value to either the internal or external
-Trusted Modeling Agent implementations.
+TSEM is designed to support the concept of a Trust Orchestration
+System (TOS).  Trust orchestration involves the process of modeling
+the security behavior of a workload, or a platform at large, and
+defining whether or not a process is to be trusted, based on whether
+or not the security events that it produces are consistent with a
+security model that has been designed for a workload or platform.
 
-The platform hardware aggregate value is designed to be the first
-security event state point injected into a model.
+TSEM operates under the premise, that security, like all other
+physical phenomena in science and engineering, can be mathematically
+modeled.  TSEM notionally treats the LSM security event hooks as a
+basis set that is capable of generating a functional value for a
+security model.
 
-Signed-off-by: Greg Wettstein <greg@enjellic.com>
----
- security/tsem/trust.c | 134 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 134 insertions(+)
+To support this notion, TSEM implements, entirely within the context
+of the LSM architecture, the notion of security modeling domains which
+are akin to resource namespaces.  A modeling domain is designed to be
+paired with a Trusted Modeling Agent (TMA) that implements the root of
+trust for a security domain/namespace.
+
+A TMA implementation uses the descriptive parameters of a security
+event hook to compute task specific coefficients for each security
+event that occurs in a modeling domain.  The sum of these
+coefficients, represents the security 'state' of the model.  These
+coefficients, nee state points, for a security model are designed to
+be developed by unit testing of an application stack.
+
+TSEM thus represents a security architecture designed to support
+modern software development strategies that are embracing
+resource containerization and continuous integration and
+development practices.  The objective of TSEM, along with
+Quixote, it's userspace TOS implementation, is to bring to Linux
+integrity and mandatory what Docker brought to Linux resource
+namespaces.
+
+The Quixote TOS has implementations of trust orchestrator's for the
+following TMA trust roots:
+
+Kernel.
+
+Userspace process.
+
+SGX enclave.
+
+Xen Hypervisor domain.
+
+Hardware based security coprocessors.
+
+One of the objectives for Quixote/TSEM is to provide a framework for
+developing next generation security co-processor technology that
+extends beyond what is currently represented in the form of Trusted
+Platform Modules.
+
+Included with the Quixote TOS is an implementation of a security
+co-processor based on the Nordic NRF52840-DONGLE micro-controller.
+This is a USB form factor device that is currently being used for
+projects such as GOOGLE's OpenSK security key initiative and 3mdeb's
+Fobnail attestation server project.
+
+Included in the patch series is an extensive documentation file that
+can be found in the following location after the series is applied:
+
+Documentation/admin-guide/LSM/tsem.rst
+
+Reviewers, and other who are interested, are referred to this
+document for a more extensive discussion into the rationale,
+design and implementation of the TSEM architecture.
+
+Control of TSEM is surfaced entirely through the tsemfs filesystem
+that has the following mountpoint:
+
+/sys/fs/tsem
+
+TSEM is designed to be largely self-contained and independent of the
+kernel at large and other LSM's.  It operates without the need for
+filesystem labeling or cryptographic integrity protection of
+filesystem metadata.
+
+Source code for the userspace trust orchestration system and
+pre-compiled binariesare available at the following location:
+
+ftp://ftp.enjellic.com/pub/Quixote
+
+The Quixote/TSEM TMA currently implements a very simple deterministic
+security model.  The architecture is designed to provide a flexible
+framework to support the potential implementation of more advanced
+models that use stochastics, inference or other machine learning
+methodologies.
+
+Dr. Greg (14):
+  Update MAINTAINERS file.
+  Add TSEM specific documentation.
+  Add magic number for tsemfs.
+  Implement CAP_TRUST capability.
+  Add TSEM master header file.
+  Add primary TSEM implementation file.
+  Add root domain trust implementation.
+  Implement TSEM control plane.
+  Add namespace implementation.
+  Add security event description export facility.
+  Add event description implementation.
+  Implement security event mapping.
+  Implement an internal Trusted Modeling Agent.
+  Activate the configuration and build of the TSEM LSM.
+
+ Documentation/ABI/testing/tsemfs              |  576 ++++++
+ Documentation/admin-guide/LSM/index.rst       |    1 +
+ Documentation/admin-guide/LSM/tsem.rst        | 1240 ++++++++++++
+ .../admin-guide/kernel-parameters.txt         |    5 +
+ MAINTAINERS                                   |    8 +
+ include/uapi/linux/capability.h               |    6 +-
+ include/uapi/linux/magic.h                    |    1 +
+ security/Kconfig                              |   11 +-
+ security/Makefile                             |    1 +
+ security/selinux/include/classmap.h           |    2 +-
+ security/tsem/Kconfig                         |   22 +
+ security/tsem/Makefile                        |    2 +
+ security/tsem/event.c                         |  474 +++++
+ security/tsem/export.c                        |  388 ++++
+ security/tsem/fs.c                            |  894 ++++++++
+ security/tsem/map.c                           |  497 +++++
+ security/tsem/model.c                         |  598 ++++++
+ security/tsem/namespace.c                     |  226 +++
+ security/tsem/trust.c                         |  134 ++
+ security/tsem/tsem.c                          | 1801 +++++++++++++++++
+ security/tsem/tsem.h                          |  388 ++++
+ 21 files changed, 7268 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/ABI/testing/tsemfs
+ create mode 100644 Documentation/admin-guide/LSM/tsem.rst
+ create mode 100644 security/tsem/Kconfig
+ create mode 100644 security/tsem/Makefile
+ create mode 100644 security/tsem/event.c
+ create mode 100644 security/tsem/export.c
+ create mode 100644 security/tsem/fs.c
+ create mode 100644 security/tsem/map.c
+ create mode 100644 security/tsem/model.c
+ create mode 100644 security/tsem/namespace.c
  create mode 100644 security/tsem/trust.c
+ create mode 100644 security/tsem/tsem.c
+ create mode 100644 security/tsem/tsem.h
 
-diff --git a/security/tsem/trust.c b/security/tsem/trust.c
-new file mode 100644
-index 000000000000..77190c07f772
---- /dev/null
-+++ b/security/tsem/trust.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+/*
-+ * Copyright (C) 2022 Enjellic Systems Development, LLC
-+ * Author: Dr. Greg Wettstein <greg@enjellic.com>
-+ *
-+ * Implements management of a TPM trust root for the in kernel TMA.
-+ */
-+
-+#include <crypto/hash.h>
-+#include <linux/tpm.h>
-+
-+#include "tsem.h"
-+
-+#define TSEM_TRUST_ROOT 11
-+
-+static u8 hardware_aggregate[WP256_DIGEST_SIZE];
-+
-+static struct tpm_chip *tpm;
-+
-+static struct tpm_digest *digests;
-+
-+
-+void __init generate_aggregate(struct crypto_shash *tfm)
-+{
-+	int retn = 0, lp;
-+	struct tpm_digest pcr;
-+	u8 digest[WP256_DIGEST_SIZE];
-+	SHASH_DESC_ON_STACK(shash, tfm);
-+
-+	shash->tfm = tfm;
-+	retn = crypto_shash_init(shash);
-+	if (retn)
-+		goto done;
-+
-+	if (tpm_is_tpm2(tpm))
-+		pcr.alg_id = TPM_ALG_SHA256;
-+	else
-+		pcr.alg_id = TPM_ALG_SHA1;
-+	memset(pcr.digest, '\0', TPM_MAX_DIGEST_SIZE);
-+
-+	for (lp = 0; lp < 8; ++lp) {
-+		retn = tpm_pcr_read(tpm, lp, &pcr);
-+		if (retn)
-+			goto done;
-+		memcpy(digest, pcr.digest, sizeof(digest));
-+		retn = crypto_shash_update(shash, digest, WP256_DIGEST_SIZE);
-+		if (retn)
-+			goto done;
-+	}
-+	if (!retn)
-+		retn = crypto_shash_final(shash, hardware_aggregate);
-+
-+ done:
-+	if (retn)
-+		pr_info("Unable to generate platform aggregate\n");
-+}
-+
-+static int __init trust_init(void)
-+{
-+	int retn = -EINVAL, lp;
-+	struct crypto_shash *tfm = NULL;
-+
-+	tpm = tpm_default_chip();
-+	if (!tpm) {
-+		pr_info("No TPM found for event modeling.\n");
-+		return retn;
-+	}
-+
-+	digests = kcalloc(tpm->nr_allocated_banks, sizeof(*digests), GFP_NOFS);
-+	if (!digests) {
-+		tpm = NULL;
-+		return retn;
-+	}
-+	for (lp = 0; lp < tpm->nr_allocated_banks; lp++)
-+		digests[lp].alg_id = tpm->allocated_banks[lp].alg_id;
-+
-+	tfm = crypto_alloc_shash("sha256", 0, 0);
-+	if (IS_ERR(tfm))
-+		retn = PTR_ERR(tfm);
-+	else {
-+		generate_aggregate(tfm);
-+		retn = 0;
-+	}
-+	crypto_free_shash(tfm);
-+
-+	return retn;
-+}
-+
-+/**
-+ * tsem_trust_aggregate() - Return a pointer to the hardware aggregate.
-+ *
-+ * This function returns a pointer to the hardware aggregate that
-+ * is computed at system boot time.
-+ *
-+ * Return: A byte pointer is returned to the statically scoped array
-+ *	   that contains the hardware aggregate value.
-+ */
-+u8 *tsem_trust_aggregate(void)
-+{
-+	return hardware_aggregate;
-+}
-+
-+/**
-+ * tsem_trust_add_point() - Add a measurement to the trust root.
-+ * @coefficient: A pointer to the event coefficient to be added.
-+ *
-+ * This function extends the platform configuration register being
-+ * used to document the hardware root of trust for internally modeled
-+ * domains with a security event coefficient value.
-+ *
-+ * Return: If the extension fails the error return value from the
-+ *	   TPM command is returned, otherwise a value of zero is
-+ *	   returned.
-+ */
-+int tsem_trust_add_event(u8 *coefficient)
-+{
-+	int amt, bank;
-+
-+	if (!tpm)
-+		return 0;
-+
-+	for (bank = 0; bank < tpm->nr_allocated_banks; bank++) {
-+		if (tpm->allocated_banks[bank].digest_size < WP256_DIGEST_SIZE)
-+			amt = tpm->allocated_banks[bank].digest_size;
-+		else
-+			amt = WP256_DIGEST_SIZE;
-+		memcpy(digests[bank].digest, coefficient, amt);
-+	}
-+
-+	return tpm_pcr_extend(tpm, TSEM_TRUST_ROOT, digests);
-+}
-+
-+late_initcall(trust_init);
 -- 
 2.39.1
-
