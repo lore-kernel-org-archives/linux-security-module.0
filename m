@@ -2,185 +2,323 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7FEC636CD
-	for <linux-security-module@archiver.kernel.org>; Sat,  4 Feb 2023 05:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BDDC636D3
+	for <linux-security-module@archiver.kernel.org>; Sat,  4 Feb 2023 05:32:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232568AbjBDFct (ORCPT
+        id S232978AbjBDFc4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 4 Feb 2023 00:32:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43206 "EHLO
+        Sat, 4 Feb 2023 00:32:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233338AbjBDFcs (ORCPT
+        with ESMTP id S233010AbjBDFcu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 4 Feb 2023 00:32:48 -0500
+        Sat, 4 Feb 2023 00:32:50 -0500
 Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5146C93E14
-        for <linux-security-module@vger.kernel.org>; Fri,  3 Feb 2023 21:32:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2B19693AEC
+        for <linux-security-module@vger.kernel.org>; Fri,  3 Feb 2023 21:32:47 -0800 (PST)
 Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-        by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 31459tBX011607;
-        Fri, 3 Feb 2023 23:09:55 -0600
+        by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 3145A1k0011661;
+        Fri, 3 Feb 2023 23:10:01 -0600
 Received: (from greg@localhost)
-        by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 31459sjA011605;
-        Fri, 3 Feb 2023 23:09:54 -0600
+        by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 3145A1tj011659;
+        Fri, 3 Feb 2023 23:10:01 -0600
 X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
 From:   "Dr. Greg" <greg@enjellic.com>
 To:     linux-security-module@vger.kernel.org
-Subject: [PATCH 00/14] Implement Trusted Security Event Modeling.
-Date:   Fri,  3 Feb 2023 23:09:40 -0600
-Message-Id: <20230204050954.11583-1-greg@enjellic.com>
+Subject: [PATCH 09/14] Add namespace implementation.
+Date:   Fri,  3 Feb 2023 23:09:49 -0600
+Message-Id: <20230204050954.11583-10-greg@enjellic.com>
 X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230204050954.11583-1-greg@enjellic.com>
+References: <20230204050954.11583-1-greg@enjellic.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch series implements Trusted Security Event Modeling (TSEM) as
-a new Linux Security Module (LSM) architecture.
+The TSEM LSM has its own 'namespace' implementation for security
+modeling domains that is independent of other resource namespaces
+but which is designed to act in much the same manner.
 
-At a conceptual level, TSEM can be thought of as an integration of
-integrity measurement and mandatory access controls.  TSEM brings to
-Linux security, a new model for implementing security controls that is
-unique among current operating system platforms.
+The sysfs control plane is used to signal that a process should
+leave its current modeling domain/namespace and institute a new
+domain.  Additional processes that derive from this process
+inherit the modeling domain.
 
-TSEM is designed to support the concept of a Trust Orchestration
-System (TOS).  Trust orchestration involves the process of modeling
-the security behavior of a workload, or a platform at large, and
-defining whether or not a process is to be trusted, based on whether
-or not the security events that it produces are consistent with a
-security model that has been designed for a workload or platform.
+Each modeling domain has a unique numeric identifier that is
+implemented as an incremented unsigned 64 bit value in order to
+preclude overflow.  The id value of 0 is reserved for the root
+modeling domain.
 
-TSEM operates under the premise, that security, like all other
-physical phenomena in science and engineering, can be mathematically
-modeled.  TSEM notionally treats the LSM security event hooks as a
-basis set that is capable of generating a functional value for a
+Each modeling domain is designated as either internally or
+externally modeled.  An internally modeled domain has its
+security model implemented by a Trusted Modeling Agent (TMA)
+implementation that is run in the context of the kernel.
+
+Externally modeled domains have a description of the security
+event exported to an trust orchestrator running in userspace.
+That trust orchestrator has an associated Trusted Modeling Agent
+run in a context that implements the root of trust for the
 security model.
 
-To support this notion, TSEM implements, entirely within the context
-of the LSM architecture, the notion of security modeling domains which
-are akin to resource namespaces.  A modeling domain is designed to be
-paired with a Trusted Modeling Agent (TMA) that implements the root of
-trust for a security domain/namespace.
+A process that exports a security event description is scheduled
+away into an interruptible sleep state.  The trust orchestrator
+that created the external modeling domain is responsible for
+using the TSEM control plane to wake the process up and set the
+trust status of the process to be trusted or untrusted.  Only
+process that carries the CAP_TRUST capability can wake up a
+process and set its trust status.
 
-A TMA implementation uses the descriptive parameters of a security
-event hook to compute task specific coefficients for each security
-event that occurs in a modeling domain.  The sum of these
-coefficients, represents the security 'state' of the model.  These
-coefficients, nee state points, for a security model are designed to
-be developed by unit testing of an application stack.
+An init function is surfaced from this file that is called by the
+TSEM initialization function.  This function is responsible for
+creating a workqueue that will handle asynchronous release of
+resources that were allocated for a modeling domain, including
+the release of the pseudo-file that was created for exporting
+domain events.
 
-TSEM thus represents a security architecture designed to support
-modern software development strategies that are embracing
-resource containerization and continuous integration and
-development practices.  The objective of TSEM, along with
-Quixote, it's userspace TOS implementation, is to bring to Linux
-integrity and mandatory what Docker brought to Linux resource
-namespaces.
+Only processes that carry the CAP_TRUST capability are allowed to
+create subordinate modeling domains.  The modeling domains are
+independent entities whose trust state is designed to be managed
+exclusively by its associated TMA.
 
-The Quixote TOS has implementations of trust orchestrator's for the
-following TMA trust roots:
-
-Kernel.
-
-Userspace process.
-
-SGX enclave.
-
-Xen Hypervisor domain.
-
-Hardware based security coprocessors.
-
-One of the objectives for Quixote/TSEM is to provide a framework for
-developing next generation security co-processor technology that
-extends beyond what is currently represented in the form of Trusted
-Platform Modules.
-
-Included with the Quixote TOS is an implementation of a security
-co-processor based on the Nordic NRF52840-DONGLE micro-controller.
-This is a USB form factor device that is currently being used for
-projects such as GOOGLE's OpenSK security key initiative and 3mdeb's
-Fobnail attestation server project.
-
-Included in the patch series is an extensive documentation file that
-can be found in the following location after the series is applied:
-
-Documentation/admin-guide/LSM/tsem.rst
-
-Reviewers, and other who are interested, are referred to this
-document for a more extensive discussion into the rationale,
-design and implementation of the TSEM architecture.
-
-Control of TSEM is surfaced entirely through the tsemfs filesystem
-that has the following mountpoint:
-
-/sys/fs/tsem
-
-TSEM is designed to be largely self-contained and independent of the
-kernel at large and other LSM's.  It operates without the need for
-filesystem labeling or cryptographic integrity protection of
-filesystem metadata.
-
-Source code for the userspace trust orchestration system and
-pre-compiled binariesare available at the following location:
-
-ftp://ftp.enjellic.com/pub/Quixote
-
-The Quixote/TSEM TMA currently implements a very simple deterministic
-security model.  The architecture is designed to provide a flexible
-framework to support the potential implementation of more advanced
-models that use stochastics, inference or other machine learning
-methodologies.
-
-Dr. Greg (14):
-  Update MAINTAINERS file.
-  Add TSEM specific documentation.
-  Add magic number for tsemfs.
-  Implement CAP_TRUST capability.
-  Add TSEM master header file.
-  Add primary TSEM implementation file.
-  Add root domain trust implementation.
-  Implement TSEM control plane.
-  Add namespace implementation.
-  Add security event description export facility.
-  Add event description implementation.
-  Implement security event mapping.
-  Implement an internal Trusted Modeling Agent.
-  Activate the configuration and build of the TSEM LSM.
-
- Documentation/ABI/testing/tsemfs              |  576 ++++++
- Documentation/admin-guide/LSM/index.rst       |    1 +
- Documentation/admin-guide/LSM/tsem.rst        | 1240 ++++++++++++
- .../admin-guide/kernel-parameters.txt         |    5 +
- MAINTAINERS                                   |    8 +
- include/uapi/linux/capability.h               |    6 +-
- include/uapi/linux/magic.h                    |    1 +
- security/Kconfig                              |   11 +-
- security/Makefile                             |    1 +
- security/selinux/include/classmap.h           |    2 +-
- security/tsem/Kconfig                         |   22 +
- security/tsem/Makefile                        |    2 +
- security/tsem/event.c                         |  474 +++++
- security/tsem/export.c                        |  388 ++++
- security/tsem/fs.c                            |  894 ++++++++
- security/tsem/map.c                           |  497 +++++
- security/tsem/model.c                         |  598 ++++++
- security/tsem/namespace.c                     |  226 +++
- security/tsem/trust.c                         |  134 ++
- security/tsem/tsem.c                          | 1801 +++++++++++++++++
- security/tsem/tsem.h                          |  388 ++++
- 21 files changed, 7268 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/ABI/testing/tsemfs
- create mode 100644 Documentation/admin-guide/LSM/tsem.rst
- create mode 100644 security/tsem/Kconfig
- create mode 100644 security/tsem/Makefile
- create mode 100644 security/tsem/event.c
- create mode 100644 security/tsem/export.c
- create mode 100644 security/tsem/fs.c
- create mode 100644 security/tsem/map.c
- create mode 100644 security/tsem/model.c
+Signed-off-by: Greg Wettstein <greg@enjellic.com>
+---
+ security/tsem/namespace.c | 226 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 226 insertions(+)
  create mode 100644 security/tsem/namespace.c
- create mode 100644 security/tsem/trust.c
- create mode 100644 security/tsem/tsem.c
- create mode 100644 security/tsem/tsem.h
 
+diff --git a/security/tsem/namespace.c b/security/tsem/namespace.c
+new file mode 100644
+index 000000000000..632d5d4d967c
+--- /dev/null
++++ b/security/tsem/namespace.c
+@@ -0,0 +1,226 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++/*
++ * Copyright (C) 2022 Enjellic Systems Development, LLC
++ * Author: Dr. Greg Wettstein <greg@enjellic.com>
++ *
++ * This file implements TSEM namespaces.
++ */
++
++#include "tsem.h"
++
++static u64 context_id;
++
++static struct workqueue_struct *release_wq;
++
++struct lsm_blob_sizes tsem_blob_sizes __lsm_ro_after_init = {
++	.lbs_task = sizeof(struct tsem_task),
++	.lbs_inode = sizeof(struct tsem_inode)
++};
++
++enum tsem_action_type tsem_root_actions[TSEM_EVENT_CNT] = {
++	TSEM_ACTION_EPERM	/* Undefined. */
++};
++
++struct tsem_model root_model = {
++	.point_mutex = __MUTEX_INITIALIZER(root_model.point_mutex),
++	.point_list = LIST_HEAD_INIT(root_model.point_list),
++	.state_list = LIST_HEAD_INIT(root_model.state_list),
++
++	.trajectory_mutex = __MUTEX_INITIALIZER(root_model.trajectory_mutex),
++	.trajectory_list = LIST_HEAD_INIT(root_model.trajectory_list),
++
++	.max_forensics_count = 100,
++	.forensics_mutex = __MUTEX_INITIALIZER(root_model.forensics_mutex),
++	.forensics_list = LIST_HEAD_INIT(root_model.forensics_list),
++
++	.pseudonym_mutex = __MUTEX_INITIALIZER(root_model.pseudonym_mutex),
++	.pseudonym_list = LIST_HEAD_INIT(root_model.pseudonym_list)
++};
++
++struct tsem_TMA_context root_TMA_context = {
++	.kref = KREF_INIT(2),
++	.id = 0,
++	.external = false,
++	.model = &root_model
++};
++
++static struct tsem_external *allocate_external(void)
++{
++	int retn = -ENOMEM;
++	struct tsem_external *external;
++	char bufr[20 + 1];
++
++	external = kzalloc(sizeof(struct tsem_external), GFP_KERNEL);
++	if (!external)
++		return NULL;
++
++	mutex_init(&external->measurement_mutex);
++	INIT_LIST_HEAD(&external->measurement_list);
++
++	init_waitqueue_head(&external->wq);
++
++	scnprintf(bufr, sizeof(bufr), "%llu", context_id + 1);
++	external->dentry = tsem_fs_create_external(bufr);
++	if (IS_ERR(external->dentry)) {
++		retn = PTR_ERR(external->dentry);
++		external->dentry = NULL;
++	} else
++		retn = 0;
++
++	if (retn) {
++		kfree(external);
++		external = NULL;
++	}
++
++	return external;
++}
++
++/**
++ * tsem_ns_free() - Releases the namespace model infrastructure.
++ * @kref: A pointer to the reference counting structure for the namespace.
++ *
++ * This function is called when the last reference to a kernel
++ * based TMA model structure is released.
++ */
++void tsem_ns_free(struct kref *kref)
++{
++	struct tsem_TMA_context *ctx;
++
++	ctx = container_of(kref, struct tsem_TMA_context, kref);
++
++	if (ctx->external) {
++		tsem_fs_remove_external(ctx->external->dentry);
++		kfree(ctx->external);
++	} else
++		tsem_model_free(ctx);
++
++	kfree(ctx);
++}
++
++static void wq_put(struct work_struct *work)
++{
++	struct tsem_TMA_work *tsem_work;
++	struct tsem_TMA_context *ctx;
++
++	tsem_work = container_of(work, struct tsem_TMA_work, work);
++	ctx = tsem_work->ctx;
++	kref_put(&ctx->kref, tsem_ns_free);
++}
++
++/**
++ * tsem_ns_get() - Obtain a reference on a TSEM TMA namespace.
++ * @ctx: A pointer to the TMA modeling context for which a reference is
++ *	 to be released.
++ *
++ * This function is called to release a reference to a TMA modeling
++ * domain.
++ */
++void tsem_ns_put(struct tsem_TMA_context *ctx)
++{
++	if (kref_read(&ctx->kref) > 1) {
++		kref_put(&ctx->kref, tsem_ns_free);
++		return;
++	}
++
++	INIT_WORK(&ctx->work.work, wq_put);
++	ctx->work.ctx = ctx;
++	if (!queue_work(release_wq, &ctx->work.work))
++		WARN_ON_ONCE(1);
++}
++
++/**
++ * tsem_ns_put() - Obtain a reference on a TSEM TMA namespace.
++ * @ctx: A pointer to the TMA modeling context for which a reference is
++ *	 to be acquired.
++ *
++ * This function is called on each invocation of the tsem_task_alloc
++ * event to obtain a reference against the current modeling domain.
++ */
++void tsem_ns_get(struct tsem_TMA_context *ctx)
++{
++	kref_get(&ctx->kref);
++}
++
++/**
++ * tsem_ns_namespace() - Create a TSEM modeling namespace.
++ * @event: The numeric identifer of the control message that is to
++ *	   be processed.
++ *
++ * This function is used to create either an internally or externally
++ * modeled TSEM namespace.  The boolean argument to this function
++ * selects the type of namespace that is being created.  Specification
++ * of an internal namespace causes the ->model pointer to be initialized
++ * with a tsem_model structure.
++ *
++ * Return: This function returns 0 if the namespace was created and
++ *	   a negative error value on error.
++ */
++int tsem_ns_create(enum tsem_control_type event)
++{
++	int retn = -ENOMEM;
++	struct tsem_task *tsk = tsem_task(current);
++	struct tsem_TMA_context *new_ctx;
++	struct tsem_model *model = NULL;
++
++	new_ctx = kzalloc(sizeof(struct tsem_TMA_context), GFP_KERNEL);
++	if (!new_ctx)
++		goto done;
++
++	if (event == TSEM_CONTROL_INTERNAL) {
++		model = tsem_model_allocate();
++		if (!model)
++			goto done;
++		new_ctx->model = model;
++	}
++	if (event == TSEM_CONTROL_EXTERNAL) {
++		new_ctx->external = allocate_external();
++		if (!new_ctx->external)
++			goto done;
++	}
++
++	kref_init(&new_ctx->kref);
++	new_ctx->id = ++context_id;
++	memcpy(new_ctx->actions, tsk->context->actions,
++	       sizeof(new_ctx->actions));
++	retn = 0;
++
++ done:
++	if (retn) {
++		kfree(new_ctx->external);
++		kfree(new_ctx);
++		kfree(model);
++	} else {
++		tsk->context = new_ctx;
++		if (event == TSEM_CONTROL_EXTERNAL)
++			retn = tsem_export_aggregate();
++		else
++			retn = tsem_model_add_aggregate();
++	}
++
++	return retn;
++}
++
++/**
++ * tsem_ns_init() - Initialize TSEM namespace processing.
++ *
++ * This function is called as part of the TSEM LSM initialization
++ * process.  It initializes the workqueue that will be used to
++ * conduct the asynchronous release of modeling contexts.  The
++ * deferral of the namespace clean is needed in order to address
++ * the fact that the /sys/fs/tsem pseudo-files cannot be done
++ * in atomic context.
++ *
++ * Return: If the initialization succeeds a return code of 0 is returned.
++ *	   A negative return value is returned on failure.
++ */
++int __init tsem_ns_init(void)
++{
++	int retn = 0;
++
++	release_wq = create_workqueue("tsem_ns_release");
++	if (IS_ERR(release_wq))
++		retn = PTR_ERR(release_wq);
++
++	return retn;
++}
 -- 
 2.39.1
+
