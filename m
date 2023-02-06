@@ -2,97 +2,400 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84BDBC636CD
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Feb 2023 00:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D53EAC61DA4
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Feb 2023 13:04:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229532AbjBFAKz (ORCPT
+        id S230222AbjBFNEf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 5 Feb 2023 19:10:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39250 "EHLO
+        Mon, 6 Feb 2023 08:04:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjBFAKy (ORCPT
+        with ESMTP id S229867AbjBFNEe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 5 Feb 2023 19:10:54 -0500
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 057FC17157
-        for <linux-security-module@vger.kernel.org>; Sun,  5 Feb 2023 16:10:52 -0800 (PST)
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 3160AP94016703;
-        Sun, 5 Feb 2023 18:10:26 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 3160AP5P016702;
-        Sun, 5 Feb 2023 18:10:25 -0600
-Date:   Sun, 5 Feb 2023 18:10:25 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 05/14] Add TSEM master header file.
-Message-ID: <20230206001025.GA16594@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20230204050954.11583-1-greg@enjellic.com> <20230204050954.11583-6-greg@enjellic.com> <ecb168ef-b82d-fd61-f2f8-54a4ef8c3b48@schaufler-ca.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ecb168ef-b82d-fd61-f2f8-54a4ef8c3b48@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sun, 05 Feb 2023 18:10:26 -0600 (CST)
+        Mon, 6 Feb 2023 08:04:34 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5B74C3B
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Feb 2023 05:04:32 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 16E0DB8108F
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Feb 2023 13:04:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D49C433EF
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Feb 2023 13:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675688669;
+        bh=UBAoFwxNyiGvuTmkAnCVSkkb6F2CDQ/bNw6FesuTT+o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=O3qWGV5QCUKyqp3eAhGAf6zkhkzIbuH5mTuxUxIA+CZbGPldY56hUj1JpMTQOLCON
+         D1rMJmsvExb7FTSNuXNTUugYXcaGjYIUM95/H7Skd9XTo9h1oHyTgGPDG5D67NCWD6
+         GvOk5TIJZM+xrhD5qR5Z7Tv2dqIGF4cXyHUSfSIifnfVWeLjAwdY+9KPtQp5fAd8gc
+         Bkj6PHv8WODAR+xUObYYrqX/Z7TMNxwxGulGd9XWQeBBOBZOq6bSzcV1xnVg/7aPbf
+         JRmlX3I1BLtq0EYalmIbQZ4vs/46MO5HFaaUovRor7swn+nSoMUqlN0ryArp9S9K0v
+         stJn0L4mypENg==
+Received: by mail-ej1-f48.google.com with SMTP id dr8so33892614ejc.12
+        for <linux-security-module@vger.kernel.org>; Mon, 06 Feb 2023 05:04:29 -0800 (PST)
+X-Gm-Message-State: AO0yUKV5SNvQkh290kKGG2ypI7ipqS5VPOlIoW4Vte9vCpVyOX3QmPaP
+        JWM31HPz0LLYfys0wDZE+EXB1pJ1nbfFJNbVk5wc6Q==
+X-Google-Smtp-Source: AK7set+WtPOXiEb/sjnBI4MqokJ9Ocsztf5JzLCxxnGlSfhAuy4unS8NWGeq4sSTl/HrqxqJXYQjJA5TDESveAy88PI=
+X-Received: by 2002:a17:906:6c86:b0:87c:c2eb:6dfa with SMTP id
+ s6-20020a1709066c8600b0087cc2eb6dfamr6023618ejr.204.1675688667651; Mon, 06
+ Feb 2023 05:04:27 -0800 (PST)
+MIME-Version: 1.0
+References: <20230120000818.1324170-1-kpsingh@kernel.org> <20230120000818.1324170-4-kpsingh@kernel.org>
+ <202301192004.777AEFFE@keescook>
+In-Reply-To: <202301192004.777AEFFE@keescook>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Mon, 6 Feb 2023 14:04:16 +0100
+X-Gmail-Original-Message-ID: <CACYkzJ75nYnunhcAaE-20p9YHLzVynUEAA+uK1tmGeOWA83MjA@mail.gmail.com>
+Message-ID: <CACYkzJ75nYnunhcAaE-20p9YHLzVynUEAA+uK1tmGeOWA83MjA@mail.gmail.com>
+Subject: Re: [PATCH RESEND bpf-next 3/4] security: Replace indirect LSM hook
+ calls with static calls
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
+        renauld@google.com, paul@paul-moore.com, casey@schaufler-ca.com,
+        song@kernel.org, revest@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Feb 04, 2023 at 06:58:08PM -0800, Casey Schaufler wrote:
+On Fri, Jan 20, 2023 at 5:36 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Fri, Jan 20, 2023 at 01:08:17AM +0100, KP Singh wrote:
+> > The indirect calls are not really needed as one knows the addresses of
 
-> On 2/3/2023 9:09 PM, Dr. Greg wrote:
-> > TSEM is designed, from a functional perspective, to be contained
-> > entirely in its own directory.
+[...]
+
+> > A static key guards whether an LSM static call is enabled or not,
+> > without this static key, for LSM hooks that return an int, the presence
+> > of the hook that returns a default value can create side-effects which
+> > has resulted in bugs [1].
+>
+> I think this patch has too many logic changes in it. There are basically
+> two things going on here:
+>
+> - replace list with unrolled calls
+> - replace calls with static calls
+>
+> I see why it was merged, since some of the logic that would be added for
+> step 1 would be immediate replaced, but I think it might make things a
+> bit more clear.
+>
+> There is likely a few intermediate steps here too, to rename things,
+> etc.
+
+I can try to split this patch, but I am not able to find a decent
+slice without duplicating a lot of work which will get squashed in the
+end anyways.
+
+>
+> > There are some hooks that don't use the call_int_hook and
+> > call_void_hook. These hooks are updated to use a new macro called
+> > security_for_each_hook where the lsm_callback is directly invoked as an
+
+[...]
+
+> > + * Call the macro M for each LSM hook MAX_LSM_COUNT times.
+> > + */
+> > +#define LSM_UNROLL(M, ...) UNROLL(MAX_LSM_COUNT, M, __VA_ARGS__)
+>
+> I think this should be:
+>
+> #define LSM_UNROLL(M, ...)      do {                    \
+>                 UNROLL(MAX_LSM_COUNT, M, __VA_ARGS__);  \
+>         } while (0)
+>
+> or maybe UNROLL needs the do/while.
+
+UNROLL is used for both declaration and loop unrolling. So I have
+split the LSM macros into LSM_UNROLL to LSM_LOOP_UNROLL (which is
+surrounded by a do/while) and an LSM_DEFINE_UNROLL which is not.
+
+>
 > >
-> > The tsem.h header file defines the enumeration types, structure
-> > definitions and externally visiable functions that are referenced
-> > by the TSEM LSM implementation.
+> >  /**
+> >   * union security_list_options - Linux Security Module hook function list
+> > @@ -1657,21 +1677,48 @@ union security_list_options {
+> >       #define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS__);
+> >       #include "lsm_hook_defs.h"
+> >       #undef LSM_HOOK
+> > +     void *lsm_callback;
+> >  };
+> >
+> > -struct security_hook_heads {
+> > -     #define LSM_HOOK(RET, DEFAULT, NAME, ...) struct hlist_head NAME;
+> > -     #include "lsm_hook_defs.h"
+> > +/*
+> > + * @key: static call key as defined by STATIC_CALL_KEY
+> > + * @trampoline: static call trampoline as defined by STATIC_CALL_TRAMP
+> > + * @hl: The security_hook_list as initialized by the owning LSM.
 
-Hi Casey, thanks for taking the time to look at all of this and raise
-issues, we appreciate the feedback.
+[...]
 
-> This is really awkward.
+> > +             struct lsm_static_call NAME[MAX_LSM_COUNT];
+> > +     #include <linux/lsm_hook_defs.h>
+> >       #undef LSM_HOOK
+> >  } __randomize_layout;
+> >
+> >  /*
+> >   * Security module hook list structure.
+> >   * For use with generic list macros for common operations.
+> > + *
+> > + * struct security_hook_list - Contents of a cacheable, mappable object.
 
-With respect to awkward, those who know me well would never accuse me
-of terpsichoric elegance, either balletic or in technology.... :-)
+[...]
 
-> Without the uses of the structures and constants it's very difficult
-> to understand how any of this makes sense. It would be easier to
-> review if the structures and constants were introduced as they are
-> used rather than being presented in one massive dump.
+> > -#define LSM_HOOK_INIT(HEAD, HOOK) \
+> > -     { .head = &security_hook_heads.HEAD, .hook = { .HEAD = HOOK } }
+> > +#define LSM_HOOK_INIT(NAME, CALLBACK)                        \
+> > +     {                                               \
+> > +             .scalls = static_calls_table.NAME,      \
+> > +             .hook = { .NAME = CALLBACK }            \
+> > +     }
+> >
+> > -extern struct security_hook_heads security_hook_heads;
+> >  extern char *lsm_names;
+> >
+> >  extern void security_add_hooks(struct security_hook_list *hooks, int count,
+> > @@ -1756,10 +1805,21 @@ extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
+> >  static inline void security_delete_hooks(struct security_hook_list *hooks,
+> >                                               int count)
+>
+> Hey Paul, can we get rid of CONFIG_SECURITY_SELINUX_DISABLE yet? It's
+> been deprecated for years....
+>
+> >  {
+> > -     int i;
+> > +     struct lsm_static_call *scalls;
+> > +     int i, j;
+> > +
+> > +     for (i = 0; i < count; i++) {
+> > +             scalls = hooks[i].scalls;
+> > +             for (j = 0; j < MAX_LSM_COUNT; j++) {
+> > +                     if (scalls[j].hl != &hooks[i])
+> > +                             continue;
+> >
+> > -     for (i = 0; i < count; i++)
+> > -             hlist_del_rcu(&hooks[i].list);
+> > +                     static_key_disable(scalls[j].enabled_key);
+> > +                     __static_call_update(scalls[j].key,
+> > +                                          scalls[j].trampoline, NULL);
+> > +                     scalls[j].hl = NULL;
+> > +             }
+> > +     }
+> >  }
+> >  #endif /* CONFIG_SECURITY_SELINUX_DISABLE */
+> >
+> > @@ -1771,5 +1831,6 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+> >  #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
+> >
+> >  extern int lsm_inode_alloc(struct inode *inode);
+> > +extern struct lsm_static_calls_table static_calls_table __ro_after_init;
 
-With respect to any of this making sense, we've read and studied the
-existing LSM's fairly extensively as we built TSEM, we accept our
-prejudices of course, but we think that TSEM is probably one of the
-easiest to follow conceptually.
+[...]
 
-Doesn't mean we can't do better though, particularly as we look at the
-issue of that header file retrospectively.
+> >
+> > +/*
+> > + * Define static calls and static keys for each LSM hook.
+> > + */
+> > +
+> > +#define DEFINE_LSM_STATIC_CALL(NUM, NAME, RET, ...)                  \
+> > +     DEFINE_STATIC_CALL_NULL(LSM_STATIC_CALL(NAME, NUM),             \
+> > +                             *((RET(*)(__VA_ARGS__))NULL));          \
+> > +     DEFINE_STATIC_KEY_FALSE(SECURITY_HOOK_ENABLED_KEY(NAME, NUM));
+>
+> Hm, another place where we would benefit from having separated logic for
+> "is it built?" and "is it enabled by default?" and we could use
+> DEFINE_STATIC_KEY_MAYBE(). But, since we don't, I think we need to use
+> DEFINE_STATIC_KEY_TRUE() here or else won't all the calls be
+> out-of-line? (i.e. the default compiled state will be NOPs?) If we're
+> trying to optimize for having LSMs, I think we should default to inline
+> calls. (The machine code in the commit log seems to indicate that they
+> are out of line -- it uses jumps.)
+>
 
-I think where the presentation of the structures and enumeration
-types, as a single entity falls down, is not explicitly documenting
-the role and function of the structures and constants in that file.
-We did that for the external functions in the compilation units and
-should have done that for the contents of the include file.
+I should have added it in the commit description, actually we are
+optimizing for "hot paths are less likely to have LSM hooks enabled"
+(eg. socket_sendmsg). But I do see that there are LSMs that have these
+enabled. Maybe we can put this behind a config option, possibly
+depending on CONFIG_EXPERT?
 
-I'm not sure that adding things to the include file incrementally will
-be any more understandable without more explicit documentation.  If we
-document them now, it should help not only the review process but
-anyone who needs to look at the code down the road with a mind on
-understanding whqt is going on.
+> > [...]
+> > +#define __CALL_STATIC_VOID(NUM, HOOK, ...)                                   \
+> > +     if (static_branch_unlikely(&SECURITY_HOOK_ENABLED_KEY(HOOK, NUM))) { \
+> > +             static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);        \
+> > +     }
+>
+> Same here -- I would expect this to be static_branch_likely() or we'll
+> get out-of-line branches. Also, IMO, this should be:
+>
+>         do {
+>                 if (...)
+>                         static_call(...);
+>         } while (0)
+>
 
-Having the include file introduced as a standalone entity also assists
-in reliably rolling a review patch set.  It is already easy enough to
-make a mistake and we don't want to waste reviewer time and list
-bandwidith with a blown patchset.
+Note we cannot really omit the semicolon here. We also use the UNROLL
+macro for declaring struct members which cannot assume that the MACRO
+to UNROLL will be terminated by a semicolon.
 
-We will collect whatever additional comments are forthcoming and fully
-document the contents of that file for the second spin of the patch.
+>
+> > +#define call_void_hook(FUNC, ...)                                 \
+> > +     do {                                                      \
+> > +             LSM_UNROLL(__CALL_STATIC_VOID, FUNC, __VA_ARGS__) \
+> >       } while (0)
+>
+> With the do/while in LSM_UNROLL, this is more readable.
 
-Thanks again for your observations.
+Agreed, done.
 
-As always,
-Dr. Greg
+>
+> >
+> > -#define call_int_hook(FUNC, IRC, ...) ({                     \
+> > -     int RC = IRC;                                           \
+> > -     do {                                                    \
+> > -             struct security_hook_list *P;                   \
+> > -                                                             \
+> > -             hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+> > -                     RC = P->hook.FUNC(__VA_ARGS__);         \
+> > -                     if (RC != 0)                            \
+> > -                             break;                          \
+> > -             }                                               \
+> > -     } while (0);                                            \
+> > -     RC;                                                     \
+> > -})
+> > +#define __CALL_STATIC_INT(NUM, R, HOOK, ...)                                 \
+> > +     if (static_branch_unlikely(&SECURITY_HOOK_ENABLED_KEY(HOOK, NUM))) { \
+> > +             R = static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);    \
+> > +             if (R != 0)                                                  \
+> > +                     goto out;                                            \
+> > +     }
+>
+> I would expect the label to be a passed argument, but maybe since it
+> never changes, it's fine as-is?
 
-The Quixote Project - Flailing at the Travails of Cybersecurity
+I think passing the label as an argument is cleaner, so I went ahead
+and did that.
+
+>
+> And again, I'd expect a do/while wrapper, and for it to be s_b_likely.
+
+The problem with the do/while wrapper here again is that UNROLL macros
+are terminated by semi-colons which does not work for unrolling struct
+member initialization, in particular for the static_calls_table where
+it's used to initialize the array.
+
+Now we could do what I suggested in LSM_LOOP_UNROLL and
+LSM_DEFINE_UNROLL and push the logic up to UNROLL into:
+
+* UNROLL_LOOP: Which expects a macro that will be surrounded by a
+do/while and terminated by a semicolon in the unroll body
+* UNROLL_DEFINE (or UNROLL_RAW) where you can pass anything.
+
+What do you think?
+
+>
+> > +
+> > +#define call_int_hook(FUNC, IRC, ...)                                        \
+> > +     ({                                                                   \
+> > +             __label__ out;                                               \
+> > +             int RC = IRC;                                                \
+> > +             do {                                                         \
+> > +                     LSM_UNROLL(__CALL_STATIC_INT, RC, FUNC, __VA_ARGS__) \
+> > +                                                                          \
+> > +             } while (0);                                                 \
+>
+> Then this becomes:
+>
+> ({
+>         int RC = IRC;
+>         LSM_UNROLL(__CALL_STATIC_INT, RC, FUNC, __VA_ARGS__);
+> out:
+>         RC;
+> })
+>
+> > +#define security_for_each_hook(scall, NAME, expression)                  \
+> > +     for (scall = static_calls_table.NAME;                            \
+> > +          scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++) { \
+> > +             if (!static_key_enabled(scall->enabled_key))             \
+> > +                     continue;                                        \
+> > +             (expression);                                            \
+> > +     }
+>
+> Why isn't this using static_branch_enabled()? I would expect this to be:
+
+I am guessing you mean static_branch_likely, I tried using
+static_branch_likely here and it does not work, the key is now being
+visited from a loop counter and the static_branch_likely needs it at
+compile time. So one needs to resort to the underlying static_key
+implementation. Doing this causes:
+
+./arch/x86/include/asm/jump_label.h:27:20: error: invalid operand for
+inline asm constraint 'i'
+./arch/x86/include/asm/jump_label.h:27:20: error: invalid operand for
+inline asm constraint 'i'
+
+The operand needs to be an immediate operand and needs patching at
+runtime. I think it's okay we are already not doing any optimization
+here as we still have the indirect call.
+
+TL; DR static_branch_likely  cannot depend on runtime computations
+
+>
+> #define security_for_each_hook(scall, NAME)                             \
+>         for (scall = static_calls_table.NAME;                           \
+>              scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++)  \
+>                 if (static_branch_likely(scall->enabled_key))
+
+I like this macro, it does make the code easier to read thanks.
+
+>
+> >
+> >  /* Security operations */
+> >
+> > @@ -859,7 +924,7 @@ int security_settime64(const struct timespec64 *ts, const struct timezone *tz)
+> >
+> >  int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
+> >  {
+> > -     struct security_hook_list *hp;
+> > +     struct lsm_static_call *scall;
+> >       int cap_sys_admin = 1;
+> >       int rc;
+> >
+> > @@ -870,13 +935,13 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
+> >        * agree that it should be set it will. If any module
+> >        * thinks it should not be set it won't.
+> >        */
+> > -     hlist_for_each_entry(hp, &security_hook_heads.vm_enough_memory, list) {
+> > -             rc = hp->hook.vm_enough_memory(mm, pages);
+> > +     security_for_each_hook(scall, vm_enough_memory, ({
+> > +             rc = scall->hl->hook.vm_enough_memory(mm, pages);
+> >               if (rc <= 0) {
+> >                       cap_sys_admin = 0;
+> >                       break;
+> >               }
+> > -     }
+> > +     }));
+>
+> Then these replacements don't look weird. This would just be:
+>
+>         security_for_each_hook(scall, vm_enough_memory) {
+>                 rc = scall->hl->hook.vm_enough_memory(mm, pages);
+>                 if (rc <= 0) {
+>                         cap_sys_admin = 0;
+>                         break;
+>                 }
+>         }
+
+Agreed, Thanks!
+
+>
+> I'm excited to have this. The speed improvements are pretty nice.
+
+Yay!
+
+
+>
+> --
+> Kees Cook
