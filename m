@@ -2,63 +2,63 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F92C6379F
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Feb 2023 14:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC3E9C6379F
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Feb 2023 14:03:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229708AbjBFODp (ORCPT
+        id S230110AbjBFODy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Feb 2023 09:03:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47790 "EHLO
+        Mon, 6 Feb 2023 09:03:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbjBFODo (ORCPT
+        with ESMTP id S229821AbjBFODq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Feb 2023 09:03:44 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC3835AA;
-        Mon,  6 Feb 2023 06:03:43 -0800 (PST)
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 316DqLt6014800;
-        Mon, 6 Feb 2023 14:03:14 GMT
+        Mon, 6 Feb 2023 09:03:46 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A06E4EC0;
+        Mon,  6 Feb 2023 06:03:45 -0800 (PST)
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 316DqNjX038544;
+        Mon, 6 Feb 2023 14:03:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=dhZu17WkPk2gtHfUPvpU8O1UwdHNGl7Q2rxvdB5u20M=;
- b=CpacAugtXkHnPelMWNSETXgF9Nkfa3sBeU4cO2AzSVdnvbb3lsxC2mLPU9c+cAXf9Apg
- lp/xMRY+U7qThDP2ATdFrWALmDKl+qWHPIeKUaQchAVb18hR82HnEgrLISweDioY8Aft
- jmh+wT8rVYD+n1eE6p/a1TVyL0PoBjLryN6usIZvvPE8onECQsnr0hRlYoXBfYGjNibn
- 5126t/XTBEDssDami2pOcpSNWduJLt48NOPTRm3Ko4F/98jjZNhIys+lE5WPEVf/Yv3S
- HSaxJx4KU2KZScWFPmZh1HOHUl2bd+03hI1dFLI8M4ZSHHvUDTiilCqjcyeSJP3K2CBG /A== 
+ bh=kKQhrk5A1Qv2RmSFb28fdbuzCGp97RIc9sMhgrJBQ1Q=;
+ b=MOlNzOfMuas0JU/ZBqIGaMz3gtatEqAyzYO8rqioJx8q4p7TairHCEWjtFUSwGDLo8jg
+ haoWLhmEimOWAiNpkthZ88GAojcogZUbWjJehy7Nx/FLbFk5nD/1TyGVjS23IbCcRjfb
+ VcPDlkiTi9x3vNrNd0lGqkkqCwwT+R7e8rWyR8xYMuogQ6q4iQ2f7xEnGuKZfKixRQhu
+ FCD//NJFEYuFbIfeXivlZPH6qXEQWM5ix4vE44WSr+awZHvshtd4DjjnkiSS+DF20D6O
+ ujTyjOYJGFQtKn3tzvq3rTtZYSRoE9iUIE3RenoqzPEf0DvRx88xTWALgfCnOCs7FA0N OA== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nk1gkk3mt-1
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nk2qaghe1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Feb 2023 14:03:13 +0000
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 316DvItV030157;
-        Mon, 6 Feb 2023 14:03:12 GMT
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nk1gkk3kf-1
+        Mon, 06 Feb 2023 14:03:20 +0000
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 316Dqjet002536;
+        Mon, 6 Feb 2023 14:03:20 GMT
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nk2qaghdq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Feb 2023 14:03:12 +0000
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 316CAFJJ001062;
-        Mon, 6 Feb 2023 14:03:11 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([9.208.129.116])
-        by ppma01wdc.us.ibm.com (PPS) with ESMTPS id 3nhf072ygn-1
+        Mon, 06 Feb 2023 14:03:19 +0000
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 316Bu56m006162;
+        Mon, 6 Feb 2023 14:03:19 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([9.208.129.113])
+        by ppma03wdc.us.ibm.com (PPS) with ESMTPS id 3nhf06u1c7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Feb 2023 14:03:11 +0000
+        Mon, 06 Feb 2023 14:03:19 +0000
 Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 316E39748979114
+        by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 316E3HtM2425466
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 6 Feb 2023 14:03:09 GMT
+        Mon, 6 Feb 2023 14:03:17 GMT
 Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 78D6E5805C;
-        Mon,  6 Feb 2023 14:03:09 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 77C0D5805C;
+        Mon,  6 Feb 2023 14:03:17 +0000 (GMT)
 Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A7D0D5805B;
-        Mon,  6 Feb 2023 14:03:07 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id A84E65805B;
+        Mon,  6 Feb 2023 14:03:15 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon,  6 Feb 2023 14:03:07 +0000 (GMT)
+        Mon,  6 Feb 2023 14:03:15 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, serge@hallyn.com, brauner@kernel.org,
@@ -70,139 +70,151 @@ Cc:     zohar@linux.ibm.com, serge@hallyn.com, brauner@kernel.org,
         paul@paul-moore.com, rgb@redhat.com,
         linux-security-module@vger.kernel.org, jmorris@namei.org,
         jpenumak@redhat.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v15 04/26] ima: Move arch_policy_entry into ima_namespace
-Date:   Mon,  6 Feb 2023 09:02:31 -0500
-Message-Id: <20230206140253.3755945-5-stefanb@linux.ibm.com>
+Subject: [PATCH v15 08/26] ima: Move IMA securityfs files into ima_namespace or onto stack
+Date:   Mon,  6 Feb 2023 09:02:35 -0500
+Message-Id: <20230206140253.3755945-9-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230206140253.3755945-1-stefanb@linux.ibm.com>
 References: <20230206140253.3755945-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 7TOiA8l1auhSpHrAOh_hiDdkp1IVaSKC
-X-Proofpoint-GUID: eR6uiqeUQ7McHE54kZ09gukNQbaDZgiL
+X-Proofpoint-GUID: FRxRaYEkJKMSLNkrKaqL3uW7SEF9xR3q
+X-Proofpoint-ORIG-GUID: dsZXaHwdksX5pB6yXBm_qjfXBLh6nP8o
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
  definitions=2023-02-06_07,2023-02-06_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- clxscore=1015 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
- impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302060121
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ clxscore=1015 impostorscore=0 mlxscore=0 phishscore=0 malwarescore=0
+ suspectscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302060116
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The architecture-specific policy rules, currently defined for EFI and
-powerpc, require the kexec kernel image and kernel modules to be
-validly signed and measured, based on the system's secure boot and/or
-trusted boot mode and the IMA_ARCH_POLICY Kconfig option being enabled.
+Earlier we simplified how dentry creation and deletion is manged in
+securityfs. This allows us to move IMA securityfs files from global
+variables directly into ima_fs_ns_init() itself. We can now rely on
+those dentries to be cleaned up when the securityfs instance is cleaned
+when the last reference to it is dropped.
 
-To avoid special-casing init_ima_ns as much as possible, move the
-arch_policy_entry into the ima_namespace.
+Things are slightly different for the initial IMA namespace. In contrast
+to non-initial IMA namespaces it has pinning logic binding the lifetime
+of the securityfs superblock to created dentries. We need to keep this
+behavior to not regress userspace. Since IMA never removes most of the
+securityfs files the initial securityfs instance stays pinned. This also
+means even for the initial IMA namespace we don't need to keep
+references to these dentries anywhere.
 
-When freeing the arch_policy_entry set the pointer to NULL.
+The ima_policy file is the exception since IMA can end up removing it
+on systems that don't allow reading or extending the IMA custom policy.
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 Acked-by: Christian Brauner <brauner@kernel.org>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+Acked-by: Serge Hallyn <serge@hallyn.com>
+
 ---
- security/integrity/ima/ima.h             |  3 +++
- security/integrity/ima/ima_init_ima_ns.c |  1 +
- security/integrity/ima/ima_policy.c      | 23 +++++++++++------------
- 3 files changed, 15 insertions(+), 12 deletions(-)
+
+v9:
+ - Revert renaming of ima_policy to policy_dentry
+---
+ security/integrity/ima/ima.h    |  2 ++
+ security/integrity/ima/ima_fs.c | 37 ++++++++++++++++++---------------
+ 2 files changed, 22 insertions(+), 17 deletions(-)
 
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 61986e271c5c..d82dbeceb913 100644
+index 4141a219bdd6..75993ad061fa 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -125,6 +125,9 @@ struct ima_namespace {
- 
- 	struct list_head __rcu *ima_rules;  /* Pointer to the current policy */
- 	int ima_policy_flag;
+@@ -142,6 +142,8 @@ struct ima_namespace {
+ 	struct mutex ima_write_mutex;
+ 	unsigned long ima_fs_flags;
+ 	int valid_policy;
 +
-+	/* An array of architecture specific rules */
-+	struct ima_rule_entry *arch_policy_entry;
++	struct dentry *ima_policy;
  } __randomize_layout;
  extern struct ima_namespace init_ima_ns;
  
-diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
-index c919a456b525..ae33621c3955 100644
---- a/security/integrity/ima/ima_init_ima_ns.c
-+++ b/security/integrity/ima/ima_init_ima_ns.c
-@@ -15,6 +15,7 @@ static int ima_init_namespace(struct ima_namespace *ns)
- 	INIT_LIST_HEAD(&ns->ima_temp_rules);
- 	ns->ima_rules = (struct list_head __rcu *)(&ns->ima_default_rules);
- 	ns->ima_policy_flag = 0;
-+	ns->arch_policy_entry = NULL;
- 
- 	return 0;
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 4cf786f0bba8..89d3113ceda1 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -359,14 +359,6 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 	return result;
  }
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 671994bd07cb..502b1e8021a6 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -252,9 +252,6 @@ static struct ima_rule_entry critical_data_rules[] __ro_after_init = {
- 	{.action = MEASURE, .func = CRITICAL_DATA, .flags = IMA_FUNC},
+ 
+-static struct dentry *ima_dir;
+-static struct dentry *ima_symlink;
+-static struct dentry *binary_runtime_measurements;
+-static struct dentry *ascii_runtime_measurements;
+-static struct dentry *runtime_measurements_count;
+-static struct dentry *violations;
+-static struct dentry *ima_policy;
+-
+ enum ima_fs_flags {
+ 	IMA_FS_BUSY,
+ };
+@@ -436,8 +428,8 @@ static int ima_release_policy(struct inode *inode, struct file *file)
+ 
+ 	ima_update_policy(ns);
+ #if !defined(CONFIG_IMA_WRITE_POLICY) && !defined(CONFIG_IMA_READ_POLICY)
+-	securityfs_remove(ima_policy);
+-	ima_policy = NULL;
++	securityfs_remove(ns->ima_policy);
++	ns->ima_policy = NULL;
+ #elif defined(CONFIG_IMA_WRITE_POLICY)
+ 	clear_bit(IMA_FS_BUSY, &ns->ima_fs_flags);
+ #elif defined(CONFIG_IMA_READ_POLICY)
+@@ -454,8 +446,14 @@ static const struct file_operations ima_measure_policy_ops = {
+ 	.llseek = generic_file_llseek,
  };
  
--/* An array of architecture specific rules */
--static struct ima_rule_entry *arch_policy_entry __ro_after_init;
--
- static int ima_policy __initdata;
+-int __init ima_fs_init(void)
++static int __init ima_fs_ns_init(struct ima_namespace *ns)
+ {
++	struct dentry *ima_dir;
++	struct dentry *ima_symlink = NULL;
++	struct dentry *binary_runtime_measurements = NULL;
++	struct dentry *ascii_runtime_measurements = NULL;
++	struct dentry *runtime_measurements_count = NULL;
++	struct dentry *violations = NULL;
+ 	int ret;
  
- static int __init default_measure_policy_setup(char *str)
-@@ -904,9 +901,10 @@ static int __init ima_init_arch_policy(struct ima_namespace *ns)
- 	for (rules = arch_rules; *rules != NULL; rules++)
- 		arch_entries++;
- 
--	arch_policy_entry = kcalloc(arch_entries + 1,
--				    sizeof(*arch_policy_entry), GFP_KERNEL);
--	if (!arch_policy_entry)
-+	ns->arch_policy_entry = kcalloc(arch_entries + 1,
-+					sizeof(*ns->arch_policy_entry),
-+					GFP_KERNEL);
-+	if (!ns->arch_policy_entry)
- 		return 0;
- 
- 	/* Convert each policy string rules to struct ima_rule_entry format */
-@@ -916,13 +914,13 @@ static int __init ima_init_arch_policy(struct ima_namespace *ns)
- 
- 		result = strscpy(rule, *rules, sizeof(rule));
- 
--		INIT_LIST_HEAD(&arch_policy_entry[i].list);
--		result = ima_parse_rule(ns, rule, &arch_policy_entry[i]);
-+		INIT_LIST_HEAD(&ns->arch_policy_entry[i].list);
-+		result = ima_parse_rule(ns, rule, &ns->arch_policy_entry[i]);
- 		if (result) {
- 			pr_warn("Skipping unknown architecture policy rule: %s\n",
- 				rule);
--			memset(&arch_policy_entry[i], 0,
--			       sizeof(*arch_policy_entry));
-+			memset(&ns->arch_policy_entry[i], 0,
-+			       sizeof(ns->arch_policy_entry[i]));
- 			continue;
- 		}
- 		i++;
-@@ -970,7 +968,7 @@ void __init ima_init_policy(struct ima_namespace *ns)
- 	if (!arch_entries)
- 		pr_info("No architecture policies found\n");
- 	else
--		add_rules(ns, arch_policy_entry, arch_entries,
-+		add_rules(ns, ns->arch_policy_entry, arch_entries,
- 			  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY);
- 
- 	/*
-@@ -1050,7 +1048,8 @@ void ima_update_policy(struct ima_namespace *ns)
- 		 * on boot.  After loading a custom policy, free the
- 		 * architecture specific rules stored as an array.
- 		 */
--		kfree(arch_policy_entry);
-+		kfree(ns->arch_policy_entry);
-+		ns->arch_policy_entry = NULL;
+ 	ima_dir = securityfs_create_dir("ima", integrity_dir);
+@@ -504,17 +502,17 @@ int __init ima_fs_init(void)
+ 		goto out;
  	}
- 	ima_update_policy_flags(ns);
  
+-	ima_policy = securityfs_create_file("policy", POLICY_FILE_FLAGS,
+-					    ima_dir, NULL,
+-					    &ima_measure_policy_ops);
+-	if (IS_ERR(ima_policy)) {
+-		ret = PTR_ERR(ima_policy);
++	ns->ima_policy = securityfs_create_file("policy", POLICY_FILE_FLAGS,
++						ima_dir, NULL,
++						&ima_measure_policy_ops);
++	if (IS_ERR(ns->ima_policy)) {
++		ret = PTR_ERR(ns->ima_policy);
+ 		goto out;
+ 	}
+ 
+ 	return 0;
+ out:
+-	securityfs_remove(ima_policy);
++	securityfs_remove(ns->ima_policy);
+ 	securityfs_remove(violations);
+ 	securityfs_remove(runtime_measurements_count);
+ 	securityfs_remove(ascii_runtime_measurements);
+@@ -524,3 +522,8 @@ int __init ima_fs_init(void)
+ 
+ 	return ret;
+ }
++
++int __init ima_fs_init(void)
++{
++	return ima_fs_ns_init(&init_ima_ns);
++}
 -- 
 2.37.3
 
