@@ -2,58 +2,59 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9CCC636D3
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Feb 2023 17:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 363D0C05027
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Feb 2023 18:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230015AbjBFRtR (ORCPT
+        id S229513AbjBFSTh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Feb 2023 12:49:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48302 "EHLO
+        Mon, 6 Feb 2023 13:19:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229940AbjBFRtQ (ORCPT
+        with ESMTP id S229741AbjBFSTg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Feb 2023 12:49:16 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C11BF1CF41;
-        Mon,  6 Feb 2023 09:49:13 -0800 (PST)
+        Mon, 6 Feb 2023 13:19:36 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9EE72D4F
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Feb 2023 10:19:35 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3D29D60FC6;
-        Mon,  6 Feb 2023 17:49:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6C15C4339B;
-        Mon,  6 Feb 2023 17:49:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D79860FD3
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Feb 2023 18:19:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C22A3C433AC
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Feb 2023 18:19:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675705752;
-        bh=Q6U8O/+O8ktOW5TwrWzmYYWFhoc5mnoVra9PevbBKu4=;
+        s=k20201202; t=1675707574;
+        bh=9FO1UbEf8YHFmiTB0KZkS7B5W296ywbqyj2o66NVD5g=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=kToAHsCE73O3vI265cOKmjo7Hp/5wz+aPNK6vuMejLSCRc4y7p04MigexbGCOzvac
-         aZ6T3vCpEbS4FpA+jAT63YzdSVOeVxNTN2oVBgt7Egzm0PQ0lon4MzjwP4u8Qa2MxT
-         WYJbAWaGaZVpBtB0R/M5HbEFPn9Nr3I66zQMSan2GVc/8Qb1BxL/uMxZxWzmlWkUgi
-         /Zxe7RdH9F5JmB7hM5MUF8LEqlJdei0oQms5dgizdfLtwRT4mo6/7Gp9fJuVQwUIb6
-         OE6CUhZbkjSUYDxVpTxrUAryhCLB/Dk0mKE4KWXWVP5wq/F/XuMoq1HoJQK+yEEmdj
-         80g9YiK8ZRq5A==
-Received: by mail-lf1-f43.google.com with SMTP id j17so18788394lfr.3;
-        Mon, 06 Feb 2023 09:49:12 -0800 (PST)
-X-Gm-Message-State: AO0yUKWKP/v0uQ9hN99o+tJSCi23QZYX3sg19XiH5rx8QCpK1lHxXFwK
-        cR/a7PgBaI6x862ZaB3qICFmfmuwwrpT8LXuxLo=
-X-Google-Smtp-Source: AK7set/MtMP/TeNFMAuG8UTa7R5RNt6agX9+RtocVxWMfng3xHZhRy8VqYERZK7W4TnN0fCfFPEXBBhwUbOmJOft32Y=
-X-Received: by 2002:a05:6512:31b:b0:4d5:82bb:c06d with SMTP id
- t27-20020a056512031b00b004d582bbc06dmr4922983lfp.256.1675705750725; Mon, 06
- Feb 2023 09:49:10 -0800 (PST)
+        b=YptveKfVbeL/cI8JUD0Jr+4B6/w2h/ZdKlm5cVdKEaEk5JtRSH4SvJG0oydgRs8YI
+         8upldQn2bGg01y/irH89cTwKJStHeMtqs/YWgxZDaksrhLKiri1h3CyoSjrVoD3iOa
+         3M0saCPY/x0ouoeI3MHAy0t6uEjFB+2/sciMoi/os1kGvg1qzgdRQGwamxieLSSp84
+         7zAvE3oqobCFzed5QhPlu5X8FHnwek8lhLc/JlNz2p2acOL1J8zwJQbkNVYEkDVY1a
+         LIlJIoVQBEaWz8gogYU+TrQqVo1QUDDIexzaUYkiy9oazlr5h+89HbCWfsc1jK7efN
+         ifWrPho4Z1xxg==
+Received: by mail-ej1-f51.google.com with SMTP id sa10so6310749ejc.9
+        for <linux-security-module@vger.kernel.org>; Mon, 06 Feb 2023 10:19:34 -0800 (PST)
+X-Gm-Message-State: AO0yUKWNWVQB+i9BjHr3Bb97hWeSWfy82qazBj5mvUVHE/HjECOTNb5Q
+        CXldGBuoxKsHdSrqm5zcp6nglRP81MI4zP8K3F7N5w==
+X-Google-Smtp-Source: AK7set/62grWCqAae9xHJ1fG7puzQ2ciFFN6zfRWTUMnO9nX8ggqkErBrEuW7cSADF/lS8oWBgsRM2AWhXhVSw5SeQY=
+X-Received: by 2002:a17:906:53d8:b0:87c:c2eb:6dfa with SMTP id
+ p24-20020a17090653d800b0087cc2eb6dfamr75568ejo.204.1675707572830; Mon, 06 Feb
+ 2023 10:19:32 -0800 (PST)
 MIME-Version: 1.0
 References: <20230120000818.1324170-1-kpsingh@kernel.org> <20230120000818.1324170-4-kpsingh@kernel.org>
  <202301192004.777AEFFE@keescook> <CACYkzJ75nYnunhcAaE-20p9YHLzVynUEAA+uK1tmGeOWA83MjA@mail.gmail.com>
- <db1fed31-0283-5401-cf55-d18a98ca33ae@schaufler-ca.com>
-In-Reply-To: <db1fed31-0283-5401-cf55-d18a98ca33ae@schaufler-ca.com>
-From:   Song Liu <song@kernel.org>
-Date:   Mon, 6 Feb 2023 09:48:56 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW4C8NU15mjetX8Ucp3R66xEgOGS6udiaauUtPg06Si93Q@mail.gmail.com>
-Message-ID: <CAPhsuW4C8NU15mjetX8Ucp3R66xEgOGS6udiaauUtPg06Si93Q@mail.gmail.com>
+ <db1fed31-0283-5401-cf55-d18a98ca33ae@schaufler-ca.com> <CAPhsuW4C8NU15mjetX8Ucp3R66xEgOGS6udiaauUtPg06Si93Q@mail.gmail.com>
+In-Reply-To: <CAPhsuW4C8NU15mjetX8Ucp3R66xEgOGS6udiaauUtPg06Si93Q@mail.gmail.com>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Mon, 6 Feb 2023 19:19:22 +0100
+X-Gmail-Original-Message-ID: <CACYkzJ62BdqaUp5ufTq7dW32=N_yP0AaMoYoH-KJK2J6ax+D0w@mail.gmail.com>
+Message-ID: <CACYkzJ62BdqaUp5ufTq7dW32=N_yP0AaMoYoH-KJK2J6ax+D0w@mail.gmail.com>
 Subject: Re: [PATCH RESEND bpf-next 3/4] security: Replace indirect LSM hook
  calls with static calls
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     KP Singh <kpsingh@kernel.org>, Kees Cook <keescook@chromium.org>,
+To:     Song Liu <song@kernel.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>,
         linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
         ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
         renauld@google.com, paul@paul-moore.com, revest@chromium.org
@@ -61,57 +62,72 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 6, 2023 at 8:29 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Mon, Feb 6, 2023 at 6:49 PM Song Liu <song@kernel.org> wrote:
 >
-> On 2/6/2023 5:04 AM, KP Singh wrote:
-> > On Fri, Jan 20, 2023 at 5:36 AM Kees Cook <keescook@chromium.org> wrote:
-> >> On Fri, Jan 20, 2023 at 01:08:17AM +0100, KP Singh wrote:
-> >>> The indirect calls are not really needed as one knows the addresses of
-> > [...]
+> On Mon, Feb 6, 2023 at 8:29 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
 > >
-> >>> +/*
-> >>> + * Define static calls and static keys for each LSM hook.
-> >>> + */
-> >>> +
-> >>> +#define DEFINE_LSM_STATIC_CALL(NUM, NAME, RET, ...)                  \
-> >>> +     DEFINE_STATIC_CALL_NULL(LSM_STATIC_CALL(NAME, NUM),             \
-> >>> +                             *((RET(*)(__VA_ARGS__))NULL));          \
-> >>> +     DEFINE_STATIC_KEY_FALSE(SECURITY_HOOK_ENABLED_KEY(NAME, NUM));
-> >> Hm, another place where we would benefit from having separated logic for
-> >> "is it built?" and "is it enabled by default?" and we could use
-> >> DEFINE_STATIC_KEY_MAYBE(). But, since we don't, I think we need to use
-> >> DEFINE_STATIC_KEY_TRUE() here or else won't all the calls be
-> >> out-of-line? (i.e. the default compiled state will be NOPs?) If we're
-> >> trying to optimize for having LSMs, I think we should default to inline
-> >> calls. (The machine code in the commit log seems to indicate that they
-> >> are out of line -- it uses jumps.)
-> >>
-> > I should have added it in the commit description, actually we are
-> > optimizing for "hot paths are less likely to have LSM hooks enabled"
-> > (eg. socket_sendmsg).
+> > On 2/6/2023 5:04 AM, KP Singh wrote:
+> > > On Fri, Jan 20, 2023 at 5:36 AM Kees Cook <keescook@chromium.org> wrote:
+> > >> On Fri, Jan 20, 2023 at 01:08:17AM +0100, KP Singh wrote:
+> > >>> The indirect calls are not really needed as one knows the addresses of
+> > > [...]
+> > >
+> > >>> +/*
+> > >>> + * Define static calls and static keys for each LSM hook.
+> > >>> + */
+> > >>> +
+> > >>> +#define DEFINE_LSM_STATIC_CALL(NUM, NAME, RET, ...)                  \
+> > >>> +     DEFINE_STATIC_CALL_NULL(LSM_STATIC_CALL(NAME, NUM),             \
+> > >>> +                             *((RET(*)(__VA_ARGS__))NULL));          \
+> > >>> +     DEFINE_STATIC_KEY_FALSE(SECURITY_HOOK_ENABLED_KEY(NAME, NUM));
+> > >> Hm, another place where we would benefit from having separated logic for
+> > >> "is it built?" and "is it enabled by default?" and we could use
+> > >> DEFINE_STATIC_KEY_MAYBE(). But, since we don't, I think we need to use
+> > >> DEFINE_STATIC_KEY_TRUE() here or else won't all the calls be
+> > >> out-of-line? (i.e. the default compiled state will be NOPs?) If we're
+> > >> trying to optimize for having LSMs, I think we should default to inline
+> > >> calls. (The machine code in the commit log seems to indicate that they
+> > >> are out of line -- it uses jumps.)
+> > >>
+> > > I should have added it in the commit description, actually we are
+> > > optimizing for "hot paths are less likely to have LSM hooks enabled"
+> > > (eg. socket_sendmsg).
+> >
+> > How did you come to that conclusion? Where is there a correlation between
+> > "hot path" and "less likely to be enabled"?
 >
-> How did you come to that conclusion? Where is there a correlation between
-> "hot path" and "less likely to be enabled"?
+> I could echo KP's reasoning here. AFAICT, the correlation is that LSMs on
+> hot path will give more performance overhead. In our use cases (Meta),
+> we are very careful with "small" performance hits. 0.25% is significant
 
-I could echo KP's reasoning here. AFAICT, the correlation is that LSMs on
-hot path will give more performance overhead. In our use cases (Meta),
-we are very careful with "small" performance hits. 0.25% is significant
-overhead; 1% overhead will not fly without very good reasons (Do we
-have to do this? Are there any other alternatives?). If it is possible to
-achieve similar security on a different hook, we will not enable the hook on
-the hot path. For example, we may not enable socket_sendmsg, but try
-to disallow opening such sockets instead.
++1 to everything Song said, I am not saying that one direction is
+better than the other and for distros that have LSMs (like SELinux and
+AppArmor enabled) it's okay to have this default to
+static_branch_likely. On systems that will have just the BPF LSM
+enabled, it's the opposite that is true, i.e. one would never add a
+hook on a hotpath as the overheads are unacceptable, and when one does
+add a hook, they are willing to add the extra overhead (this is
+already much less compared to the indirect calls). I am okay with the
+default being static_branch_likely if that's what the other LSM
+maintainers prefer.
 
+
+> overhead; 1% overhead will not fly without very good reasons (Do we
+> have to do this? Are there any other alternatives?). If it is possible to
+> achieve similar security on a different hook, we will not enable the hook on
+> the hot path. For example, we may not enable socket_sendmsg, but try
+> to disallow opening such sockets instead.
 >
-> >  But I do see that there are LSMs that have these
-> > enabled. Maybe we can put this behind a config option, possibly
-> > depending on CONFIG_EXPERT?
+> >
+> > >  But I do see that there are LSMs that have these
+> > > enabled. Maybe we can put this behind a config option, possibly
+> > > depending on CONFIG_EXPERT?
+> >
+> > Help me, as the maintainer of one of those LSMs, understand why that would
+> > be a good idea.
 >
-> Help me, as the maintainer of one of those LSMs, understand why that would
-> be a good idea.
-
-IIUC, this is also from performance concerns. We would like to manage
-the complexity at compile time for performance benefits.
-
-Thanks,
-Song
+> IIUC, this is also from performance concerns. We would like to manage
+> the complexity at compile time for performance benefits.
+>
+> Thanks,
+> Song
