@@ -2,184 +2,107 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F2CC636D3
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Feb 2023 17:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C739C636CD
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Feb 2023 23:52:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232136AbjBGRsd (ORCPT
+        id S229704AbjBGXw4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Feb 2023 12:48:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50326 "EHLO
+        Tue, 7 Feb 2023 18:52:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231838AbjBGRsc (ORCPT
+        with ESMTP id S229500AbjBGXwq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Feb 2023 12:48:32 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B620A5E0;
-        Tue,  7 Feb 2023 09:48:31 -0800 (PST)
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 317HDA4i023148;
-        Tue, 7 Feb 2023 17:48:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=I6YqOjsVJXBoVvu3lCwpjBpbkJBlsw5y1jnnvceKMsM=;
- b=U6adYuBVNCAfRTgWMKx/0Y2jmLGJc2m6BEI9mMZQ1VLCp5/E1+gB56ie7HsIMLDaWvhF
- sxBrqrkPXyUT3NFXKc2p/Kt+YIViTGR68M+IyPWU8fv7nNVQTRrlW8EavFaFtsZ0l2vU
- KgMRBuqsum9zmNn0u2RP+AzPW+AaGzOrglHu1VkJQzIBHHbcVwKjMIxVu5CzcfGBfg1m
- YvhcdsA+QJSA8r0L5xIeKVUSy9hN5JD54jvwqpJ64MD8HVUvMMyxMrrCEUDvQA6Jj4NN
- ibW6T3ZM09jR+X+JUJFaSdSeuOeeJ+ZVfLnOUy9vV+hBiLF8IHMYtt+6JJ7SyRBFBnuh TA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nks1rwm1p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Feb 2023 17:48:01 +0000
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 317HTw9p008558;
-        Tue, 7 Feb 2023 17:48:00 GMT
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nks1rwm14-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Feb 2023 17:48:00 +0000
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 317FUpoI027478;
-        Tue, 7 Feb 2023 17:47:59 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([9.208.130.97])
-        by ppma02wdc.us.ibm.com (PPS) with ESMTPS id 3nhf07s635-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Feb 2023 17:47:59 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 317HlwMx37945944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 7 Feb 2023 17:47:58 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4204158061;
-        Tue,  7 Feb 2023 17:47:58 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2114158053;
-        Tue,  7 Feb 2023 17:47:57 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.18.153])
-        by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Tue,  7 Feb 2023 17:47:57 +0000 (GMT)
-Message-ID: <6e01fda2e1f322689123955fcad4d449d036074c.camel@linux.ibm.com>
-Subject: Re: [PATCH ima-evm-utils v5] Add tests for MMAP_CHECK and
- MMAP_CHECK_REQPROT hooks
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
+        Tue, 7 Feb 2023 18:52:46 -0500
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AD5022DE56;
+        Tue,  7 Feb 2023 15:52:43 -0800 (PST)
+Received: by linux.microsoft.com (Postfix, from userid 1052)
+        id 176D020C7E3B; Tue,  7 Feb 2023 15:52:43 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 176D020C7E3B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1675813963;
+        bh=bN+LfT2jCsmdfpuG53FeQKLA8B080GGv4HrkY+14DXQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hSfonHypMPNXA/gQOAT23RUpooup3G7+qibjblfPVtx6A1CKJWe3gizG59dykFgCp
+         YZqOCVC1arTMI5pL3NStHy3tE1QO8YQMlWNJGnDgL355x/w6sgpO0tkgu8YIRLPlzi
+         yoxiJL98QkkTB+6GGAMiog/8Qevkz8CRvtEUpSI0=
+Date:   Tue, 7 Feb 2023 15:52:43 -0800
+From:   Fan Wu <wufan@linux.microsoft.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+        eparis@redhat.com, paul@paul-moore.com, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stefanb@linux.ibm.com,
-        viro@zeniv.linux.org.uk, pvorel@suse.cz,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Tue, 07 Feb 2023 12:47:56 -0500
-In-Reply-To: <c0ba2244832ea4c95e936674c4e818b26b511d61.camel@huaweicloud.com>
-References: <20230203125637.2673781-1-roberto.sassu@huaweicloud.com>
-         <cd21f0d2a65f9673a0abe7f0a7219d5f1fe55911.camel@linux.ibm.com>
-         <d6efb292273eee6caff9afc8b64e42984a3ae517.camel@huaweicloud.com>
-         <c0ba2244832ea4c95e936674c4e818b26b511d61.camel@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Yyn4wRD4y_O-zjceXO1hhLnkH_sIOB1v
-X-Proofpoint-GUID: dPfBxlvo7wOWyxhMhXZkQyd7AJWjjHAq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-02-07_09,2023-02-06_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- clxscore=1015 malwarescore=0 phishscore=0 priorityscore=1501 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302070156
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, linux-audit@redhat.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>
+Subject: Re: [RFC PATCH v9 10/16] dm-verity: consume root hash digest and
+ signature data via LSM hook
+Message-ID: <20230207235243.GA5107@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com>
+ <1675119451-23180-11-git-send-email-wufan@linux.microsoft.com>
+ <4f029a41d80d883d9b4729cbc85211955c9efe8e.camel@huaweicloud.com>
+ <20230201232639.GB9075@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <903062f7b2e2709ae0e4416545ffadd91c132676.camel@huaweicloud.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <903062f7b2e2709ae0e4416545ffadd91c132676.camel@huaweicloud.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2023-02-07 at 17:57 +0100, Roberto Sassu wrote:
-> On Tue, 2023-02-07 at 11:16 +0100, Roberto Sassu wrote:
-> > On Mon, 2023-02-06 at 08:20 -0500, Mimi Zohar wrote:
-> > > On Fri, 2023-02-03 at 13:56 +0100, Roberto Sassu wrote:
-> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+On Thu, Feb 02, 2023 at 09:21:24AM +0100, Roberto Sassu wrote:
+> On Wed, 2023-02-01 at 15:26 -0800, Fan Wu wrote:
+> > On Tue, Jan 31, 2023 at 02:22:01PM +0100, Roberto Sassu wrote:
+> > > On Mon, 2023-01-30 at 14:57 -0800, Fan Wu wrote:
+> > > > From: Deven Bowers <deven.desai@linux.microsoft.com>
 > > > > 
-> > > > Add tests to ensure that, after applying the kernel patch 'ima: Align
-> > > > ima_file_mmap() parameters with mmap_file LSM hook', the MMAP_CHECK hook
-> > > > checks the protections applied by the kernel and not those requested by the
-> > > > application.
-> > > > 
-> > > > Also ensure that after applying 'ima: Introduce MMAP_CHECK_REQPROT hook',
-> > > > the MMAP_CHECK_REQPROT hook checks the protections requested by the
-> > > > application.
-> > > > 
-> > > > Test both with the test_mmap application that by default requests the
-> > > > PROT_READ protection flag. Its syntax is:
-> > > > 
-> > > > test_mmap <file> <mode>
-> > > > 
-> > > > where mode can be:
-> > > > - exec: adds the PROT_EXEC protection flag to mmap()
-> > > > - read_implies_exec: calls the personality() system call with
-> > > >                      READ_IMPLIES_EXEC as the first argument before mmap()
-> > > > - mprotect: adds the PROT_EXEC protection flag to a memory area in addition
-> > > >             to PROT_READ
-> > > > - exec_on_writable: calls mmap() with PROT_EXEC on a file which has a
-> > > >                     writable mapping
-> > > > 
-> > > > Check the different combinations of hooks/modes and ensure that a
-> > > > measurement entry is found in the IMA measurement list only when it is
-> > > > expected. No measurement entry should be found when only the PROT_READ
-> > > > protection flag is requested or the matching policy rule has the
-> > > > MMAP_CHECK_REQPROT hook and the personality() system call was called with
-> > > > READ_IMPLIES_EXEC.
-> > > > 
-> > > > mprotect() with PROT_EXEC on an existing memory area protected with
-> > > > PROT_READ should be denied (with an appraisal rule), regardless of the MMAP
-> > > > hook specified in the policy. The same applies for mmap() with PROT_EXEC on
-> > > > a file with a writable mapping.
-> > > > 
-> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > dm-verity provides a strong guarantee of a block device's integrity. As
+> > > > a generic way to check the integrity of a block device, it provides
+> > > > those integrity guarantees to its higher layers, including the filesystem
+> > > > level.
 > > > 
-> > > Thanks, Roberto.  Other than the one comment below, it looks good.
+> > > I think you could reuse most of is_trusted_verity_target(), in
+> > > particular dm_verity_get_root_digest().
 > > > 
-> > > > +
-> > > > +if ! awk '$0 ~ /^(measure|appraise)/ && $0 !~ /fsuuid=/ && $0 !~ /fowner=/ { exit 1 }' < /sys/kernel/security/ima/policy; then
-> > > > +	echo "${CYAN}IMA policy rules without fsuuid= and fowner=, cannot continue due to possible interference with the tests${NORM}"
-> > > > +	exit "$SKIP"
-> > > > +fi
+> > > And probably, the previous patch is not necessary.
 > > > 
-> > > The test should be limited to just MMAP_CHECK and MMAP_CHECK_REQPROT
-> > > policy rules.
+> > > Roberto
 > > > 
-> > > +if ! awk '$0 ~ /^(measure|appraise)/ && $0 ~ /func=MMAP_CHECK/ && $0 !~ /fsuuid=/ && ...
-> > 
-> > Oh, yes. Better.
+> > Thanks for the info. This function seems could be used to get the roothash
+> > but for saving the signature we still need the hook function in the previous
+> > patch.
 > 
-> It seems more complicated than that.
+> Uhm, look at the LoadPin case. It does not need to temporarily store
+> the root digest in a security blob. It evaluates it directly.
 > 
-> If we consider only MMAP_CHECK and MMAP_CHECK_REQPROT rules, we might
-> miss rules without func= that can potentially overlap.
+> Well, ok, dm_verity_loadpin_is_bdev_trusted() looks for trusted digests
+> in the dm_verity_loadpin_trusted_root_digests list. So, something
+> equivalent needs to be made for IPE (or you just get the digest).
+> However, I find not introducing new hooks and evaluating the
+> information directly more efficient.
 > 
-> Overlap of measure and appraise rules per se should not be a problem,
-> unless additional options are specified in the rule. In that case, the
-> options of the first matching rule are taken and the other options from
-> other rules might not be processed (IMA stops checking the policy when
-> it has encountered rules with the possible actions, determined when the
-> policy is loaded).
-> 
-> Also, dont_measure and dont_appraise rules are a possible concern, as
-> they could be matched before ours and could change the expected
-> outcome.
-> 
-> A proposal could be to ignore existing rules, regardless of the action,
-> if they provide a different value for at least one of the policy
-> keywords (in 'base' and 'lsm') present in the rule being added.
-> 
-> For the rules that we didn't ignore, we can accept them if they have
-> the same action and no/the same policy options.
+> Roberto
 
-Agreed.   Since this is much more complex than the awk test, I assume
-it would need to be a function.  For now keep it in the
-mmap_check.test, not functions.sh.
+Thanks for the input. I did a deeper dive into the source code and did some
+experiements, my conclusion is the hook is still the preferred way for us.
 
-thanks,
+For the root digest part, dm_verity_loadpin_is_bdev_trusted is able to query
+the root digest is because the root digest is saved in struct dm_verity.
+Specifically it will call dm_verity_get_root_digest to kmemdup the digest.
+If every binary execution will trigger a kmemdup to copy a digest,
+the overhead will be noticeable. 
+Using a hook can let us copy the root digest exactly once when
+the block device is created and free the copied digest when 
+the block device is unmounted. 
 
-Mimi
+For the signature, it is currently an optional parameter and it is not
+saved in struct dm_verity. But even if we let struct dm_verity saves
+the signature it will still have the kmemdup problem above. 
+So using the hook will be the cleanest way.
 
+-Fan
