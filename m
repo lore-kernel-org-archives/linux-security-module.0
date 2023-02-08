@@ -2,116 +2,168 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E508C64EC5
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Feb 2023 00:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8016EC636CC
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Feb 2023 12:39:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229928AbjBHAbG (ORCPT
+        id S230366AbjBHMjl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Feb 2023 19:31:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54428 "EHLO
+        Wed, 8 Feb 2023 07:39:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbjBHAbF (ORCPT
+        with ESMTP id S229509AbjBHMjk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Feb 2023 19:31:05 -0500
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2CFC93AAC;
-        Tue,  7 Feb 2023 16:31:04 -0800 (PST)
-Received: by linux.microsoft.com (Postfix, from userid 1052)
-        id 91E3120C7E38; Tue,  7 Feb 2023 16:31:03 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 91E3120C7E38
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1675816263;
-        bh=LeJteH6AJ9Cbyv23AKIZT9Zr5jPTl5CR5NBjrB7jEH0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bs+VMgppVphlNRwXazqjLvcderqyiIoxWf+J92+m0ALQDuvgh/o/nhk1BNWcBQsPh
-         gz0C3u2HuwTEnY5P1iqMjO1CzkD/+HiRK+CfRh+GX6szjyKALHkQS/5Vqjg1EHw7/2
-         kMQ7Bn9LNIzaQRwZ/K5EZ4sZYQKeFDqpGmC9IVrc=
-Date:   Tue, 7 Feb 2023 16:31:03 -0800
-From:   Fan Wu <wufan@linux.microsoft.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
-        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        eparis@redhat.com, paul@paul-moore.com, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
+        Wed, 8 Feb 2023 07:39:40 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBAB63A879;
+        Wed,  8 Feb 2023 04:39:38 -0800 (PST)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 318CXYvC007368;
+        Wed, 8 Feb 2023 12:38:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=IRzwm9AVGgskVp8h3mjPNd2/4+TK1U8rD6DSXrUD8DM=;
+ b=EfrAWiezbwrEuDSNLKkJAJJInfdyoKMNQ42ncgDZV3CTUzFm1WpQDCNKgqwLkAflhY8W
+ 3j/UcR8IYtq2sj/aJJVqAVEFGs/ClyucM/0GaMphi0B/AJ/aDTNn3E4h32WeX0SY83Ed
+ 1ntyjyvAgKm8GK7MfRLLFoFt+8mpRG2IGH3dP0ifh5o2SY8+kzD9jEhoF6gvW9nmzb+k
+ R40XhJPeCOO8hUHE6p38ajmj61xFE6m0FDxDE52TQJaN+VLcsms38hD8JlRIaN4Q/T/P
+ re4OlVAVc1PEu7YbKKmvov0CaNJp8Q9MN5GnNcppbN/dAvlnskksvGEgVCV8XXFCk4PS zw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3nmbukg5bc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Feb 2023 12:38:59 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 318CaID3017889;
+        Wed, 8 Feb 2023 12:38:58 GMT
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3nmbukg5aq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Feb 2023 12:38:58 +0000
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 318BFQA4020070;
+        Wed, 8 Feb 2023 12:38:57 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([9.208.130.99])
+        by ppma04wdc.us.ibm.com (PPS) with ESMTPS id 3nhf07dbnx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Feb 2023 12:38:57 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+        by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 318CcuP339322000
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 8 Feb 2023 12:38:56 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A23F258056;
+        Wed,  8 Feb 2023 12:38:56 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D78B85804E;
+        Wed,  8 Feb 2023 12:38:54 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.35.178])
+        by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Wed,  8 Feb 2023 12:38:54 +0000 (GMT)
+Message-ID: <41dffdaeb7eb7840f7e38bc691fbda836635c9f9.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 0/6] Add CA enforcement keyring restrictions
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>, jarkko@kernel.org,
+        dhowells@redhat.com, dwmw2@infradead.org
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, pvorel@suse.cz, tadeusz.struk@intel.com,
+        kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
+        erpalmer@linux.vnet.ibm.com, coxu@redhat.com,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, linux-audit@redhat.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v9 00/16] Integrity Policy Enforcement LSM (IPE)
-Message-ID: <20230208003103.GC5107@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com>
- <033335b26f6becdc3dc0325ef926efd94fcc4dda.camel@huaweicloud.com>
- <20230201004852.GB30104@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <7dc9963c563d0b55bb35109be012e355eef13882.camel@huaweicloud.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7dc9963c563d0b55bb35109be012e355eef13882.camel@huaweicloud.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        "Lee, Chun-Yi" <jlee@suse.com>
+Date:   Wed, 08 Feb 2023 07:38:54 -0500
+In-Reply-To: <20230207025958.974056-1-eric.snowberg@oracle.com>
+References: <20230207025958.974056-1-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: fyZ3pT9D0GHxvR0UwdzOlRn_yDOSgX35
+X-Proofpoint-GUID: wRw-yqSDbypCUtr1XIWbFxRUbQoSLijl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-02-08_04,2023-02-08_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=999 lowpriorityscore=0 mlxscore=0 adultscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2302080112
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 02, 2023 at 11:48:18AM +0100, Roberto Sassu wrote:
-> On Tue, 2023-01-31 at 16:48 -0800, Fan Wu wrote:
-> > On Tue, Jan 31, 2023 at 03:22:05PM +0100, Roberto Sassu wrote:
-> > > On Mon, 2023-01-30 at 14:57 -0800, Fan Wu wrote:
-> > > > IPE has two known gaps:
-> > > > 
-> > > > 1. IPE cannot verify the integrity of anonymous executable memory, such as
-> > > >   the trampolines created by gcc closures and libffi (<3.4.2), or JIT'd code.
-> > > >   Unfortunately, as this is dynamically generated code, there is no way
-> > > >   for IPE to ensure the integrity of this code to form a trust basis. In all
-> > > >   cases, the return result for these operations will be whatever the admin
-> > > >   configures the DEFAULT action for "EXECUTE".
-> > > 
-> > > I think it would be useful to handle special cases, for example you
-> > > could allow a process that created a file with memfd to use it, at the
-> > > condition that nobody else writes it.
-> > > 
-> > > This would be required during the boot, otherwise services could fail
-> > > to start (depending on the policy).
-> > > 
-> > Thanks for the suggestion. I agree with your opinion and I think supporting
-> > memfd is possible but restricting read/write needs more hooks. We would like
-> > to avoid adding more complexity to this initial posting as necessary. 
-> > We will consider this as a future work and will post follow-on patches
-> > in the future.
-> 
-> Ok, maybe it is necessary to specify better the scope of IPE, why the
-> current implementation can be considered as complete.
-> 
-> If we say, IPE can only allow/deny operations on system components with
-> immutable security properties, clearly memfd as a component cannot
-> fullfill this goal due to the non-immutability. This would apply to any
-> component allowing modifications.
-> 
-> How to address this? What is the immutable property then?
-> 
-> In the case of memfd, intuitively, a useful property for integrity
-> could be for example that the content can be accessed/modified by only
-> one process. No other (possibly malicious) processes can tamper with
-> that file.
-> 
-> So, it is true, to make this property immutable more hooks are needed.
-> But should it be something that IPE does? Or it should be done by an
-> external component (another LSM) that does the enforcement and reports
-> to IPE that the property is true? Theoretically (with a proper policy),
-> existing LSMs could be used for that purpose too.
-> 
-> I would say more the second, it should not be IPE job, so that IPE can
-> exclusively focus on evaluating properties, not making sure that the
-> properties are immutable.
-> 
-> Roberto
-> 
-I think the issue here is not about the scope of IPE but the use cases
-of IPE. 
+[CC'ing: Lee, Chun-Yi]
 
-We use IPE on fixed-function devices, which are completely locked down.
-In our system, IPE denies all anonymous memory execution so memfd will
-not work on our system.
+On Mon, 2023-02-06 at 21:59 -0500, Eric Snowberg wrote:
+> Prior to the introduction of the machine keyring, most distros simply 
+> allowed all keys contained within the platform keyring to be used
+> for both kernel and module verification.  This was done by an out of
+> tree patch.  Some distros took it even further and loaded all these keys
+> into the secondary trusted keyring.  This also allowed the system owner 
+> to add their own key for IMA usage.
+> 
+> Each distro contains similar documentation on how to sign kernel modules
+> and enroll the key into the MOK.  The process is fairly straightforward.
+> With the introduction of the machine keyring, the process remains
+> basically the same, without the need for any out of tree patches.
+> 
+> The machine keyring allowed distros to eliminate the out of tree patches
+> for kernel module signing.  However, it falls short in allowing the end 
+> user to add their own keys for IMA. Currently, the machine keyring can not 
+> be used as another trust anchor for adding keys to the ima keyring, since 
+> CA enforcement does not currently exist.  This would expand the current 
+> integrity gap. The IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY 
+> Kconfig states that keys may be added to the ima keyrings if the key is 
+> validly signed by a CA cert in the system built-in or secondary trusted 
+> keyring.  Currently, there is not code that enforces the contents of a
+> CA cert.
+> 
+> This series introduces a way to do CA enforement with the machine
+> keyring. It introduces three different ways to configure the machine
+> keyring. A new menu option is added to control the type of keys that may
+> be added to it.  The options include none, min, and max restrictions. The
+> default is CONFIG_INTEGRITY_CA_MACHINE_KEYRING_NONE. This allows all MOK
+> keys into the machine keyring.  When CONFIG_INTEGRITY_CA_MACHINE_KEYRING_MIN
+> is selected, the X.509 CA bit must be true.  Also, the key usage must
+> contain keyCertSign, any other usage field may also be set. When 
+> CONFIG_INTEGRITY_CA_MACHINE_KEYRING_MAX is selected, the X.509 CA bit
+> must be true.  Also, the key usage must contain keyCertSign and the
+> digitialSignature usage may not be set. If a key doesn't pass the CA
+> restriction check, instead of going into the machine keyring, it is
+> added to the platform keyring. With the ability to configure the machine
+> keyring with CA restrictions, code that prevented the machine keyring
+> from being enabled with IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
+> has been removed.
+> 
+> Changelog:
+> v4:
+> - Removed all code that validated the certificate chain back to the root
+>   CA. Now the only restriction is what is initially placed in the
+>   machine keyring.
+> - Check and store if the X.509 usage contains digitalSignature
+> - New Kconfig menu item with none, min and max CA restriction on the 
+>   machine keyring
 
-Therefore, to make memfd useable with IPE we must add more properties.
+Thank you, Eric.
 
--Fan
+For complete separation of certificate usage, at least in the "max" CA
+restriction case, the next step would be to limit certificates being
+loaded onto the IMA keyring to those with key usage of
+"digitalSignature".
+
+Perhaps also require a "codeSigning" extendedKeyUsage, though that
+might break existing usages.  The "codeSigning" checking could
+piggyback on Joey's proposed "Check codeSigning extended key usage
+extension" patch set.
+
+What do you think?  Do you have any concerns with limiting the type of
+certificate being loaded onto the IMA keyring to those with
+"digitalSignature"?
+
+-- 
+thanks,
+
+Mimi
+
