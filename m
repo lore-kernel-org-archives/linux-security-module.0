@@ -2,139 +2,112 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D9DC636D7
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Feb 2023 19:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7881C05027
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Feb 2023 21:03:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231847AbjBHTc1 (ORCPT
+        id S231962AbjBHVDY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Feb 2023 14:32:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44154 "EHLO
+        Wed, 8 Feb 2023 16:03:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229559AbjBHTc0 (ORCPT
+        with ESMTP id S230514AbjBHVDX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Feb 2023 14:32:26 -0500
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD4F48A37
-        for <linux-security-module@vger.kernel.org>; Wed,  8 Feb 2023 11:32:25 -0800 (PST)
-Received: by mail-pg1-x532.google.com with SMTP id x31so4393763pgl.6
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Feb 2023 11:32:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ulrUQLJUP9RxcM6ZD9CxmoB1+p/LmgjBqM64v5ROwNg=;
-        b=Y/wZleiJgYDPwrKFBcrlT6u/1xcORwHwg87WEGQkc0RtFFNVVqtz+yNTJEUllPEFc0
-         +bXL1ZBGllwAn5k5jAHnZzdVPjsI3nfCU7FOGg7doqM90u8cZwVlNEiKkD/oLtjyRAas
-         xcclPYcRcRNy0VMcz8uuQEFaJ9CREVxPaU9zg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ulrUQLJUP9RxcM6ZD9CxmoB1+p/LmgjBqM64v5ROwNg=;
-        b=I5ewd2j/sW10ursdjmvPKd3A/unWiHfBvVHC19EIlWDHKwzP60l9KdBu7E9PaPST5U
-         gkIqI/R4gxODQGS3WJMV/HeubiL3WHXYfKNWh7+zNmPMnYmkX7+n3Tp0oU16z3DNg7wr
-         RU6XfqJOMQyOL+7o5T2GUeNwOVVEdlN7eDE3ZoUtaC6oWfq9B5l6LPhtKX5TC7DmuNLH
-         OabZoly9bNGYlfmBJFT8nd3J2C5FVAgdu16JjyUHXZNHIUk2Maa8oLkT1nzkF0jTLH9V
-         r1cQR4jVeCFxKc/60wq81hkf9YyZeMahW3Rcm/lKzKpxV3nEAqkfjzI6LxQ4C+0JYdwl
-         XSLA==
-X-Gm-Message-State: AO0yUKXvr80iJs5KZVNjJy0ragcWHwCH3XWdzcnEsi5QFAMGiyJFmiCw
-        rNlEEUmJ5gx9bsaNFAJYCrq1ag==
-X-Google-Smtp-Source: AK7set+P7rm+dGDTETrU2yzMMvUtrqjrfbTlBVXOCaBnQQFdsubS7A0XGoLGi5keRbMZOiZCbhxF5Q==
-X-Received: by 2002:a62:1b8a:0:b0:592:de72:4750 with SMTP id b132-20020a621b8a000000b00592de724750mr6518043pfb.23.1675884744778;
-        Wed, 08 Feb 2023 11:32:24 -0800 (PST)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id t2-20020a056a0021c200b0058173c4b3d1sm11604471pfj.80.2023.02.08.11.32.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Feb 2023 11:32:24 -0800 (PST)
-Message-ID: <63e3f8c8.050a0220.c0b3f.434b@mx.google.com>
-X-Google-Original-Message-ID: <202302081129.@keescook>
-Date:   Wed, 8 Feb 2023 11:32:23 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     concord@gentoo.org, linux-hardening@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Heimes <christian@python.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Steve Dower <steve.dower@python.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
-References: <20220321161557.495388-1-mic@digikod.net>
- <202204041130.F649632@keescook>
- <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
- <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
- <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
- <202204041451.CC4F6BF@keescook>
- <CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com>
- <7e8d9f8a-f119-6d1a-7861-0493dc513aa7@digikod.net>
+        Wed, 8 Feb 2023 16:03:23 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD64249409;
+        Wed,  8 Feb 2023 13:02:59 -0800 (PST)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 318KpdSb013904;
+        Wed, 8 Feb 2023 21:02:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=rvd1JA6+zz485exTtePCEeWJ5Uu5+iP6CvMXrmv4+Kw=;
+ b=qjOR1rBygB3V++lpY/aEDBaZ8c4pAtaiOTHV/b+WW/89e0MpSfMCvXkwXvtI34AmggW+
+ TauQdgdUVis/3aPpmvVNSBjlcpqFgSaIaQ7Me8zwzpkwpcikTmIIx1i71SQyhzc3PQNm
+ wPy3KsjRAQ3wE9PMmWducFtFaeRuViQT2vcl1RuIJopz0YklK2pBxds9WF/Df2y+JKh0
+ dGyw1BzTOrqKMxVDBQ9iIHAi6ThsLxfSuLqdHIdHpTQamGu8meJhI7g9vVKiVXYSqov2
+ kWE+Gb1iyFzBaTUBXi5L6gzVDIoarDPtxN8uUKHGmz5sDnYvEqqwX2LYuJ+tKeQCR3xC NQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3nmk5207r8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Feb 2023 21:02:08 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 318KpoxO014226;
+        Wed, 8 Feb 2023 21:02:07 GMT
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3nmk5207qf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Feb 2023 21:02:07 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 318I3R2E017625;
+        Wed, 8 Feb 2023 21:02:06 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([9.208.129.116])
+        by ppma03dal.us.ibm.com (PPS) with ESMTPS id 3nhf07vvh6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Feb 2023 21:02:06 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 318L24LE58261904
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 8 Feb 2023 21:02:04 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9CCDC58059;
+        Wed,  8 Feb 2023 21:02:04 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EAF8458043;
+        Wed,  8 Feb 2023 21:02:01 +0000 (GMT)
+Received: from sig-9-65-211-196.ibm.com (unknown [9.65.211.196])
+        by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Wed,  8 Feb 2023 21:02:01 +0000 (GMT)
+Message-ID: <9f3f7a0eaa55bf5f61309b9d46e3c69f8c655154.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 3/6] KEYS: X.509: Parse Basic Constraints for CA
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>, jarkko@kernel.org,
+        dhowells@redhat.com, dwmw2@infradead.org
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, pvorel@suse.cz, tadeusz.struk@intel.com,
+        kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
+        erpalmer@linux.vnet.ibm.com, coxu@redhat.com,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Wed, 08 Feb 2023 16:01:56 -0500
+In-Reply-To: <20230207025958.974056-4-eric.snowberg@oracle.com>
+References: <20230207025958.974056-1-eric.snowberg@oracle.com>
+         <20230207025958.974056-4-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Npt-d7LhF3Q8-fTGMpvCAT3ETFYZV5Xk
+X-Proofpoint-ORIG-GUID: 4er8aJ4c7mUXtf9nq5KcorXDq7eWc_jS
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7e8d9f8a-f119-6d1a-7861-0493dc513aa7@digikod.net>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-02-08_09,2023-02-08_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 impostorscore=0 adultscore=0 suspectscore=0 bulkscore=0
+ spamscore=0 mlxscore=0 clxscore=1015 malwarescore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302080175
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-*thread necromancy*
+On Mon, 2023-02-06 at 21:59 -0500, Eric Snowberg wrote:
+> Parse the X.509 Basic Constraints.  The basic constraints extension
+> identifies whether the subject of the certificate is a CA.
+> 
+> BasicConstraints ::= SEQUENCE {
+>         cA                      BOOLEAN DEFAULT FALSE,
+>         pathLenConstraint       INTEGER (0..MAX) OPTIONAL }
+> 
+> If the CA is true, store it in the public_key.  This will be used
+> in a follow on patch that requires knowing if the public key is a CA.
+> 
+> Link: https://www.rfc-editor.org/rfc/rfc5280#section-4.2.1.9
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 
-On Tue, Apr 05, 2022 at 06:09:03PM +0200, Mickaël Salaün wrote:
-> 
-> On 05/04/2022 01:26, Linus Torvalds wrote:
-> > On Mon, Apr 4, 2022 at 3:25 PM Kees Cook <keescook@chromium.org> wrote:
-> 
-> [...]
-> 
-> > 
-> > > I think this already exists as AT_EACCESS? It was added with
-> > > faccessat2() itself, if I'm reading the history correctly.
-> > 
-> > Yeah, I noticed myself, I just hadn't looked (and I don't do enough
-> > user-space programming to be aware of if that way).
-> 
-> I think AT_EACCESS should be usable with the new EXECVE_OK too.
-> 
-> 
-> > 
-> > > >      (a) "what about suid bits that user space cannot react to"
-> > > 
-> > > What do you mean here? Do you mean setid bits on the file itself?
-> > 
-> > Right.
-> > 
-> > Maybe we don't care.
-> 
-> I think we don't. I think the only corner case that could be different is
-> for files that are executable, SUID and non-readable. In this case it
-> wouldn't matter because userspace could not read the file, which is required
-> for interpretation/execution. Anyway, S[GU]ID bits in scripts are just
-> ignored by execve and we want to follow the same semantic.
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-Hi Mickaël,
-
-Is there a new version of this being worked on? It would be really nice
-to have the O_MAYEXEC/faccessat2() visibility for script execution control
-in userspace. It seems like it would be mainly a respin of an earlier
-version of this series before trusted_for() was proposed.
-
--Kees
-
--- 
-Kees Cook
