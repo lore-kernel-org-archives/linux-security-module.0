@@ -2,107 +2,107 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C78C1C636D6
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 16:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDDFC6379F
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 18:53:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229504AbjBIQ4N (ORCPT
+        id S229870AbjBISxp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Feb 2023 11:56:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59672 "EHLO
+        Thu, 9 Feb 2023 13:53:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbjBIQ4N (ORCPT
+        with ESMTP id S229865AbjBISxo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Feb 2023 11:56:13 -0500
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1901B64DA5
-        for <linux-security-module@vger.kernel.org>; Thu,  9 Feb 2023 08:56:09 -0800 (PST)
-Received: by mail-pj1-x1031.google.com with SMTP id mi9so2647289pjb.4
-        for <linux-security-module@vger.kernel.org>; Thu, 09 Feb 2023 08:56:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=vSUYbG4jVWl2xCjF0Serf/tGjpIWSuQjwXGgOB7JPGo=;
-        b=TV5RB2VKmFDl+6XbBT8eTObx5P3NMEvQomv4ix5vmhKRTnzrbZTySY/yAY2CTDm+sR
-         rwFn5jkRlY5NRbtR1LFayd19uUKCTYc7eWimgxPYt7dJZBJQOgeL9jMs/Vm43wXHtfqi
-         R4F3BBvW+x6raRBgTo1E9MF0Myx4tb575us78=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vSUYbG4jVWl2xCjF0Serf/tGjpIWSuQjwXGgOB7JPGo=;
-        b=hWEBWi/F5GiqWWR7zTNoKIoR/DJnf9y+5wgW60NMNfdWMzjhlcNp4WOB+yTCWbq6P7
-         3hacWCG5ri9+C/+PPMCyG+ykBy4LF7kE8OdsJa4vppK3Hb4APdMGtiL3edXzL3pbToRy
-         2lQ73dd8ILKKR6jtIwq3nMvh+q/FmQTbU9aYHAPu63PKIL/yVznlutrqTFk3pOJPMT2I
-         kXrmD2rSjeesFRMaT5761BmnvblkE040TNTXpog/hFm7n8JgdYPUD4vxkJQv82bwZimT
-         bcydRBSej55GTUF43O8+A3rIp5TNy1yfwnM3CJFi1tMec9pa4/X/vhMip+yBs7sMBS6E
-         d8yw==
-X-Gm-Message-State: AO0yUKWs94S9qVcysUpFfQmWFM5TvN2/GRNR8EoA7trGt5sTObnCf0rF
-        hK7cCQIwOrthxKfCXNLUIz3nxg==
-X-Google-Smtp-Source: AK7set/RO3/yjk0+J1lmhGuWIWTHW4dZ7JYqlfByG3YjDWTpvo/LX4f46cRkksH1IqHV8A79s/KRYQ==
-X-Received: by 2002:a17:902:f243:b0:198:f1e2:25f6 with SMTP id j3-20020a170902f24300b00198f1e225f6mr4567126plc.5.1675961768567;
-        Thu, 09 Feb 2023 08:56:08 -0800 (PST)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id a4-20020a170902710400b00194c90ca320sm1720648pll.204.2023.02.09.08.56.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 08:56:08 -0800 (PST)
-Message-ID: <63e525a8.170a0220.e8217.2fdb@mx.google.com>
-X-Google-Original-Message-ID: <202302090853.@keescook>
-Date:   Thu, 9 Feb 2023 08:56:07 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     KP Singh <kpsingh@kernel.org>,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
-        renauld@google.com, casey@schaufler-ca.com, song@kernel.org,
-        revest@chromium.org
-Subject: Re: [PATCH bpf-next 0/4] Reduce overhead of LSMs with static calls
-References: <20230119231033.1307221-1-kpsingh@kernel.org>
- <CAHC9VhRpsXME9Wht_RuSACuU97k359dihye4hW15nWwSQpxtng@mail.gmail.com>
+        Thu, 9 Feb 2023 13:53:44 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4655860D79;
+        Thu,  9 Feb 2023 10:53:40 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9B52261B9F;
+        Thu,  9 Feb 2023 18:53:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9C76C4339B;
+        Thu,  9 Feb 2023 18:53:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675968819;
+        bh=/EJIsbHlXYqxqRDnynhzcObanhAGUH6x/EXbOvBSPik=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nwn2gcag7jq/vB794G8EMIyOYd6GFKDmOrPKUYpi1Ma2ao0645MDlyMG9B0BPd9bj
+         x5g0gxl5qNvq4ROdQhl3wlU+VCl6SFuuZR4hC9kNKIpJkFWxnpQyQH6fR54uatpA2Q
+         MdKgfOJKlNEPHiZSDlwCu1FJTCLJz10Nmm5+C3KYNdcH7V1M1XCqpwjymCay2UbIWK
+         Tmg5Xsfn9BppBIF67pg8TBhlu51atrshG/gng8ysA7iKAOULKTrYY9F1sdV5rX6eHu
+         f8fjbSDrVGGxNc+121Yzw5NR4KnE+w1BVHDDxlq4mVVLEGf/EbEV+Bv4Raqiv9V2YL
+         oxWX0UAtc1mSg==
+Date:   Thu, 9 Feb 2023 18:53:37 +0000
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     davem@davemloft.net, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v5 2/2] KEYS: asymmetric: Copy sig and digest in
+ public_key_verify_signature()
+Message-ID: <Y+VBMQEwPTPGBIpP@gmail.com>
+References: <20221227142740.2807136-1-roberto.sassu@huaweicloud.com>
+ <20221227142740.2807136-3-roberto.sassu@huaweicloud.com>
+ <Y64XB0yi24yjeBDw@sol.localdomain>
+ <d2a54ddec403cad12c003132542070bf781d5e26.camel@huaweicloud.com>
+ <857eedc5ad18eddae7686dca63cf8c613a051be4.camel@huaweicloud.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhRpsXME9Wht_RuSACuU97k359dihye4hW15nWwSQpxtng@mail.gmail.com>
+In-Reply-To: <857eedc5ad18eddae7686dca63cf8c613a051be4.camel@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 27, 2023 at 03:16:38PM -0500, Paul Moore wrote:
-> On Thu, Jan 19, 2023 at 6:10 PM KP Singh <kpsingh@kernel.org> wrote:
-> >
-> > # Background
-> >
-> > LSM hooks (callbacks) are currently invoked as indirect function calls. These
-> > callbacks are registered into a linked list at boot time as the order of the
-> > LSMs can be configured on the kernel command line with the "lsm=" command line
-> > parameter.
+On Thu, Feb 09, 2023 at 11:49:19AM +0100, Roberto Sassu wrote:
+> On Fri, 2023-01-27 at 09:27 +0100, Roberto Sassu wrote:
+> > On Thu, 2022-12-29 at 14:39 -0800, Eric Biggers wrote:
+> > > On Tue, Dec 27, 2022 at 03:27:40PM +0100, Roberto Sassu wrote:
+> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > 
+> > > > Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
+> > > > mapping") checks that both the signature and the digest reside in the
+> > > > linear mapping area.
+> > > > 
+> > > > However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
+> > > > stack support") made it possible to move the stack in the vmalloc area,
+> > > > which is not contiguous, and thus not suitable for sg_set_buf() which needs
+> > > > adjacent pages.
+> > > > 
+> > > > Always make a copy of the signature and digest in the same buffer used to
+> > > > store the key and its parameters, and pass them to sg_init_one(). Prefer it
+> > > > to conditionally doing the copy if necessary, to keep the code simple. The
+> > > > buffer allocated with kmalloc() is in the linear mapping area.
+> > > > 
+> > > > Cc: stable@vger.kernel.org # 4.9.x
+> > > > Fixes: ba14a194a434 ("fork: Add generic vmalloced stack support")
+> > > > Link: https://lore.kernel.org/linux-integrity/Y4pIpxbjBdajymBJ@sol.localdomain/
+> > > > Suggested-by: Eric Biggers <ebiggers@kernel.org>
+> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > ---
+> > > >  crypto/asymmetric_keys/public_key.c | 38 ++++++++++++++++-------------
+> > > >  1 file changed, 21 insertions(+), 17 deletions(-)
+> > > 
+> > > Reviewed-by: Eric Biggers <ebiggers@google.com>
+> > 
+> > Hi David
+> > 
+> > could you please take this patch in your repo, if it is ok?
 > 
-> Thanks for sending this KP.  I had hoped to make a proper pass through
-> this patchset this week but I ended up getting stuck trying to wrap my
-> head around some network segmentation offload issues and didn't quite
-> make it here.  Rest assured it is still in my review queue.
+> Kindly ask your support here. Has this patch been queued somewhere?
+> Wasn't able to find it, also it is not in linux-next.
 > 
-> However, I did manage to take a quick look at the patches and one of
-> the first things that jumped out at me is it *looks* like this
-> patchset is attempting two things: fix a problem where one LSM could
-> trample another (especially problematic with the BPF LSM due to its
-> nature), and reduce the overhead of making LSM calls.  I realize that
-> in this patchset the fix and the optimization are heavily
-> intermingled, but I wonder what it would take to develop a standalone
-> fix using the existing indirect call approach?  I'm guessing that is
-> going to potentially be a pretty significant patch, but if we could
-> add a little standardization to the LSM hooks without adding too much
-> in the way of code complexity or execution overhead I think that might
-> be a win independent of any changes to how we call the hooks.
-> 
-> Of course this could be crazy too, but I'm the guy who has to ask
-> these questions :)
 
-Hm, I am expecting this patch series to _not_ change any semantics of
-the LSM "stack". I would agree: nothing should change in this series, as
-it should be strictly a mechanical change from "iterate a list of
-indirect calls" to "make a series of direct calls". Perhaps I missed
-a logical change?
+The maintainer of asymmetric_keys (David Howells) is ignoring this patch, so
+you'll need to find someone else to apply it.  Herbert Xu, the maintainer of the
+crypto subsystem, might be willing to apply it.  Or maybe Jarkko Sakkinen, who
+is a co-maintainer of the keyrings subsystem (but not asymmetric_keys, for some
+reason; should that change?).
 
--- 
-Kees Cook
+- Eric
