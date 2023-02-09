@@ -2,276 +2,107 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39600C636D4
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 07:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 640E9C64EC5
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 10:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbjBIHOd (ORCPT
+        id S229685AbjBIKvH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Feb 2023 02:14:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49048 "EHLO
+        Thu, 9 Feb 2023 05:51:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229818AbjBIHOS (ORCPT
+        with ESMTP id S229710AbjBIKuq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Feb 2023 02:14:18 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13C9942DC2;
-        Wed,  8 Feb 2023 23:14:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=hOwPtrFr9W1RAetj4yw8lS4WGxzVY9WeB5xiD+rtLZk=; b=YzYv5Lu+GhnsQWcrh/P3dNn99Y
-        kFFn/VTStVzrVt7izdrqqcFl3XXWJTiUSU7zkMNSHLZccvHB/fdFfsSF2G3d9l6tM8mZkGWrqFoL+
-        zV70haeTAUkVk/rmntIAjBbeTETDQ9gynZkiS5FkcxD5ysQrDwctOiqgUEqy0Xc8jqVEGJ0uWfK0f
-        t2HqZ/A6Oxx0EJl+SAADCmwyxjMuktOo75CIMUWNmk83r+Z+8eyEK1uwZEhembDTSx9i7ostc00tO
-        /jouGLzfxYzc3+YcINRJIpim6ul86T5PcNwp2g7wUJajkYggQ+pjUyATSgrXOBG/P/NTAUzC9nrO4
-        AJo7w9JQ==;
-Received: from [2601:1c2:980:9ec0::df2f] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pQ189-000LPt-4s; Thu, 09 Feb 2023 07:14:05 +0000
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Helge Deller <deller@gmx.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Daniel Bristot de Oliveira <bristot@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Evgeniy Polyakov <zbr@ioremap.net>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>, coresight@lists.linaro.org,
-        dri-devel@lists.freedesktop.org, keyrings@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-sgx@vger.kernel.org, linux-trace-devel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, linux-mm@kvack.org,
-        openrisc@lists.librecores.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: [PATCH 00/24 v2] Documentation: correct lots of spelling errors (series 1)
-Date:   Wed,  8 Feb 2023 23:13:36 -0800
-Message-Id: <20230209071400.31476-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.39.1
+        Thu, 9 Feb 2023 05:50:46 -0500
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1E5E23C7E;
+        Thu,  9 Feb 2023 02:49:59 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4PCD1z0Vqsz9v7Yl;
+        Thu,  9 Feb 2023 18:41:43 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwDHTgqyz+RjuWYIAQ--.48002S2;
+        Thu, 09 Feb 2023 11:49:33 +0100 (CET)
+Message-ID: <857eedc5ad18eddae7686dca63cf8c613a051be4.camel@huaweicloud.com>
+Subject: Re: [PATCH v5 2/2] KEYS: asymmetric: Copy sig and digest in
+ public_key_verify_signature()
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     dhowells@redhat.com
+Cc:     Eric Biggers <ebiggers@kernel.org>, herbert@gondor.apana.org.au,
+        davem@davemloft.net, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Thu, 09 Feb 2023 11:49:19 +0100
+In-Reply-To: <d2a54ddec403cad12c003132542070bf781d5e26.camel@huaweicloud.com>
+References: <20221227142740.2807136-1-roberto.sassu@huaweicloud.com>
+         <20221227142740.2807136-3-roberto.sassu@huaweicloud.com>
+         <Y64XB0yi24yjeBDw@sol.localdomain>
+         <d2a54ddec403cad12c003132542070bf781d5e26.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwDHTgqyz+RjuWYIAQ--.48002S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AryUCw1fKr1kZF1DKr48WFg_yoW8AF18pF
+        W3G3W5AF4qqryfCFsIv3yF9ayFy3ykJr43Xw43X34Fvr1kurn8ur1IgF4fWFyDAry8KFWF
+        yFW5XFnrW34YyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgADBF1jj4TD3wAAss
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Correct many spelling errors in Documentation/ as reported by codespell.
+On Fri, 2023-01-27 at 09:27 +0100, Roberto Sassu wrote:
+> On Thu, 2022-12-29 at 14:39 -0800, Eric Biggers wrote:
+> > On Tue, Dec 27, 2022 at 03:27:40PM +0100, Roberto Sassu wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > 
+> > > Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
+> > > mapping") checks that both the signature and the digest reside in the
+> > > linear mapping area.
+> > > 
+> > > However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
+> > > stack support") made it possible to move the stack in the vmalloc area,
+> > > which is not contiguous, and thus not suitable for sg_set_buf() which needs
+> > > adjacent pages.
+> > > 
+> > > Always make a copy of the signature and digest in the same buffer used to
+> > > store the key and its parameters, and pass them to sg_init_one(). Prefer it
+> > > to conditionally doing the copy if necessary, to keep the code simple. The
+> > > buffer allocated with kmalloc() is in the linear mapping area.
+> > > 
+> > > Cc: stable@vger.kernel.org # 4.9.x
+> > > Fixes: ba14a194a434 ("fork: Add generic vmalloced stack support")
+> > > Link: https://lore.kernel.org/linux-integrity/Y4pIpxbjBdajymBJ@sol.localdomain/
+> > > Suggested-by: Eric Biggers <ebiggers@kernel.org>
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >  crypto/asymmetric_keys/public_key.c | 38 ++++++++++++++++-------------
+> > >  1 file changed, 21 insertions(+), 17 deletions(-)
+> > 
+> > Reviewed-by: Eric Biggers <ebiggers@google.com>
+> 
+> Hi David
+> 
+> could you please take this patch in your repo, if it is ok?
 
-Maintainers of specific kernel subsystems are only Cc-ed on their
-respective patches, not the entire series.
+Kindly ask your support here. Has this patch been queued somewhere?
+Wasn't able to find it, also it is not in linux-next.
 
-These patches are based on linux-next-20230209.
+Thanks
 
+Roberto
 
- [PATCH 01/24] Documentation: arm: correct spelling
- [PATCH 02/24] Documentation: block: correct spelling
- [PATCH 03/24] Documentation: core-api: correct spelling
- [PATCH 04/24] Documentation: fault-injection: correct spelling
- [PATCH 05/24] Documentation: fb: correct spelling
- [PATCH 06/24] Documentation: features: correct spelling
- [PATCH 07/24] Documentation: input: correct spelling
- [PATCH 08/24] Documentation: isdn: correct spelling
- [PATCH 09/24] Documentation: livepatch: correct spelling
- [PATCH 10/24] Documentation: locking: correct spelling
- [PATCH 11/24] Documentation: mm: correct spelling
- [PATCH 12/24] Documentation: openrisc: correct spelling
- [PATCH 13/24] Documentation: PCI: correct spelling
- [PATCH 14/24] Documentation: powerpc: correct spelling
- [PATCH 15/24] Documentation: s390: correct spelling
- [PATCH 16/24] Documentation: scheduler: correct spelling
- [PATCH 17/24] Documentation: security: correct spelling
- [PATCH 18/24] Documentation: timers: correct spelling
- [PATCH 19/24] Documentation: tools/rtla: correct spelling
- [PATCH 20/24] Documentation: trace/rv: correct spelling
- [PATCH 21/24] Documentation: trace: correct spelling
- [PATCH 22/24] Documentation: w1: correct spelling
- [PATCH 23/24] Documentation: x86: correct spelling
- [PATCH 24/24] Documentation: xtensa: correct spelling
-
-
-diffstat:
- Documentation/PCI/endpoint/pci-vntb-howto.rst                    |    2 +-
- Documentation/PCI/msi-howto.rst                                  |    2 +-
- Documentation/arm/arm.rst                                        |    2 +-
- Documentation/arm/ixp4xx.rst                                     |    4 ++--
- Documentation/arm/keystone/knav-qmss.rst                         |    2 +-
- Documentation/arm/stm32/stm32-dma-mdma-chaining.rst              |    6 +++---
- Documentation/arm/sunxi/clocks.rst                               |    2 +-
- Documentation/arm/swp_emulation.rst                              |    2 +-
- Documentation/arm/tcm.rst                                        |    2 +-
- Documentation/arm/vlocks.rst                                     |    2 +-
- Documentation/block/data-integrity.rst                           |    2 +-
- Documentation/core-api/packing.rst                               |    2 +-
- Documentation/core-api/padata.rst                                |    2 +-
- Documentation/fault-injection/fault-injection.rst                |    2 +-
- Documentation/fb/sm712fb.rst                                     |    2 +-
- Documentation/fb/sstfb.rst                                       |    2 +-
- Documentation/features/core/thread-info-in-task/arch-support.txt |    2 +-
- Documentation/input/devices/iforce-protocol.rst                  |    2 +-
- Documentation/input/multi-touch-protocol.rst                     |    2 +-
- Documentation/isdn/interface_capi.rst                            |    2 +-
- Documentation/isdn/m_isdn.rst                                    |    2 +-
- Documentation/livepatch/reliable-stacktrace.rst                  |    2 +-
- Documentation/locking/lockdep-design.rst                         |    4 ++--
- Documentation/locking/locktorture.rst                            |    2 +-
- Documentation/locking/locktypes.rst                              |    2 +-
- Documentation/locking/preempt-locking.rst                        |    2 +-
- Documentation/mm/hmm.rst                                         |    4 ++--
- Documentation/mm/hwpoison.rst                                    |    2 +-
- Documentation/openrisc/openrisc_port.rst                         |    4 ++--
- Documentation/power/suspend-and-interrupts.rst                   |    2 +-
- Documentation/powerpc/kasan.txt                                  |    2 +-
- Documentation/powerpc/papr_hcalls.rst                            |    2 +-
- Documentation/powerpc/qe_firmware.rst                            |    4 ++--
- Documentation/powerpc/vas-api.rst                                |    4 ++--
- Documentation/s390/pci.rst                                       |    4 ++--
- Documentation/s390/vfio-ccw.rst                                  |    2 +-
- Documentation/scheduler/sched-bwc.rst                            |    2 +-
- Documentation/scheduler/sched-energy.rst                         |    4 ++--
- Documentation/security/digsig.rst                                |    4 ++--
- Documentation/security/keys/core.rst                             |    2 +-
- Documentation/security/secrets/coco.rst                          |    2 +-
- Documentation/timers/hrtimers.rst                                |    2 +-
- Documentation/tools/rtla/rtla-timerlat-top.rst                   |    2 +-
- Documentation/trace/coresight/coresight-etm4x-reference.rst      |    2 +-
- Documentation/trace/events.rst                                   |    6 +++---
- Documentation/trace/fprobe.rst                                   |    2 +-
- Documentation/trace/ftrace-uses.rst                              |    2 +-
- Documentation/trace/hwlat_detector.rst                           |    2 +-
- Documentation/trace/rv/runtime-verification.rst                  |    2 +-
- Documentation/trace/uprobetracer.rst                             |    2 +-
- Documentation/w1/w1-netlink.rst                                  |    2 +-
- Documentation/x86/boot.rst                                       |    2 +-
- Documentation/x86/buslock.rst                                    |    2 +-
- Documentation/x86/mds.rst                                        |    2 +-
- Documentation/x86/resctrl.rst                                    |    2 +-
- Documentation/x86/sgx.rst                                        |    2 +-
- Documentation/xtensa/atomctl.rst                                 |    2 +-
- 57 files changed, 70 insertions(+), 70 deletions(-)
-
-
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Vladimir Oltean <olteanv@gmail.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: Helge Deller <deller@gmx.de>
-?Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Henrik Rydberg <rydberg@bitmath.org>
-Cc: Karsten Keil <isdn@linux-pingi.de>
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Miroslav Benes <mbenes@suse.cz>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Jérôme Glisse <jglisse@redhat.com>
-Cc: Naoya Horiguchi <naoya.horiguchi@nec.com>
-Cc: Miaohe Lin <linmiaohe@huawei.com>
-Cc: Jonas Bonn <jonas@southpole.se>
-Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-Cc: Stafford Horne <shorne@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Heiko Carstens <hca@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Daniel Bristot de Oliveira <bristot@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Evgeniy Polyakov <zbr@ioremap.net>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Chris Zankel <chris@zankel.net>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-
-Cc: coresight@lists.linaro.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: keyrings@vger.kernel.org
-Cc: linux-block@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-fbdev@vger.kernel.org
-Cc: linux-input@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-s390@vger.kernel.org
-Cc: linux-scsi@vger.kernel.org
-Cc: linux-sgx@vger.kernel.org
-Cc: linux-trace-devel@vger.kernel.org
-Cc: linux-trace-kernel@vger.kernel.org
-Cc: live-patching@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: openrisc@lists.librecores.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-xtensa@linux-xtensa.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: x86@kernel.org
