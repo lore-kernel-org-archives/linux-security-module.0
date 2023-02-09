@@ -2,99 +2,128 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A275C05027
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 22:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3CB7C64EC5
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 22:43:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbjBIWmO (ORCPT
+        id S230427AbjBIWnW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Feb 2023 17:42:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41614 "EHLO
+        Thu, 9 Feb 2023 17:43:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230499AbjBIWlf (ORCPT
+        with ESMTP id S230503AbjBIWnF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Feb 2023 17:41:35 -0500
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B8546D8F6
-        for <linux-security-module@vger.kernel.org>; Thu,  9 Feb 2023 14:40:55 -0800 (PST)
-Received: by mail-pg1-x533.google.com with SMTP id n3so2546869pgr.9
-        for <linux-security-module@vger.kernel.org>; Thu, 09 Feb 2023 14:40:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z8WD2Tk2aMsAKkpoh/02h7dwq14Lo/nQ5ijqmG2ognM=;
-        b=JqhDpOWUO0e7lVagrg2jSszeXP/Yl46O0L093WS7t++4Uh9q5RQLBsLQzDK5rpaEmT
-         mMOUX2bZ8pjCBXSfGJN/rniC9VgcRkk5ZMqu1+tuQ3Dqm+jvsr66YeL4i/AOVDvCISk2
-         7FJ+BsJfELPDOgy6kTr+4P4qWrZfgkPrbF1V0auhmgAKhZkTKxN3WWqU58ccuVrMzt/E
-         sw9C/DcFgoKHyiRwm16dInV3wPSm0i2CBn7XUUgvLAWDdBAtexadYayXxw1EPGhrghpu
-         Qxr4vsHUm0cKKKu2EueqUo7rWcRzjfkXmPmr3AVVPC5Zelyb/iJRK4wKn6Fk3gLq9PiY
-         04nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z8WD2Tk2aMsAKkpoh/02h7dwq14Lo/nQ5ijqmG2ognM=;
-        b=Ki7BUbxW3XS5Sad5KxFL12onqFjaMIvyaIkrduutU1wT0kfzTIUl7BTcD5Cqz8sXeO
-         XBSQqbe1OCjDfSjH1xrYKkYtZw6cq6lhHGs5Xnf3sBgNyoPWVcOmmHfDplcfLPqbgdsv
-         q7mIJe6fCOuP8yDG+HyzX16VgNalDDACC5pN59puloYHtV2eYPnf71id5/zlmsMmGWU6
-         cEARUAFD5VdtN6Or90EU/p4WteucGE/64ofbEofSHkcpP4RZ8tszL6kQcQBv/61bBIcH
-         Lbv9NXJfS599amzYRHebG53ACHxMq3mvVCt6lalKUhunVCc2uW0JpzNC8hU/REfYxau7
-         6i4Q==
-X-Gm-Message-State: AO0yUKUOq67zA57va3pqgd63NyzDin1KVQrg+GKwjAQWtHmu369qpcNu
-        oumpDVksVyMK65wz4FglOnf5z8p6DHcZHsgbbX9O
-X-Google-Smtp-Source: AK7set+aAm3AleeHjYOu78iZj7lQ/qZLZif3YC6WdLurY09xDxthywTU6LWeeI31+6RAF3co5hNQ5qyRgr0yk7M1wzY=
-X-Received: by 2002:a62:6456:0:b0:5a8:4d9f:d51f with SMTP id
- y83-20020a626456000000b005a84d9fd51fmr1169389pfb.22.1675982448164; Thu, 09
- Feb 2023 14:40:48 -0800 (PST)
+        Thu, 9 Feb 2023 17:43:05 -0500
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 802076A58;
+        Thu,  9 Feb 2023 14:42:44 -0800 (PST)
+Received: by linux.microsoft.com (Postfix, from userid 1052)
+        id F1D2D20C8AF3; Thu,  9 Feb 2023 14:42:43 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F1D2D20C8AF3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1675982564;
+        bh=twQrcBPkL//FHJ6DuWZAJcdyzb2KtmPBGq3WDULJ5IA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KS6NUOHT53V1toIWOzZ/B95ebJ5eY0gLTk1eC5rRL0tSXiDlIiuJVvP7SoqvF8jFO
+         XYpL69kk1pddbeXiBgrVMfd1Tcxz6KAoUp3onHgeS92LxxFjYFWnPciIXEya1X+2in
+         W8cVKwaTHJS1LF3ACYcFE1JjThrIw4QRvKhAwv1w=
+Date:   Thu, 9 Feb 2023 14:42:43 -0800
+From:   Fan Wu <wufan@linux.microsoft.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+        eparis@redhat.com, paul@paul-moore.com, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, linux-audit@redhat.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>
+Subject: Re: [RFC PATCH v9 06/16] ipe: add LSM hooks on execution and kernel
+ read
+Message-ID: <20230209224243.GA9462@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com>
+ <1675119451-23180-7-git-send-email-wufan@linux.microsoft.com>
+ <412da9a9da2e75e896911f01bfd735dd4b5789f4.camel@huaweicloud.com>
 MIME-Version: 1.0
-References: <20230209223814.308370-1-mic@digikod.net>
-In-Reply-To: <20230209223814.308370-1-mic@digikod.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 9 Feb 2023 17:40:37 -0500
-Message-ID: <CAHC9VhSYAWMJ+d9k7m75X+eDmEA82anJZEu228XweCkA0rPTQw@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Update Landlock repository
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <412da9a9da2e75e896911f01bfd735dd4b5789f4.camel@huaweicloud.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 9, 2023 at 5:38 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
-rote:
->
-> I only use the kernel.org repository for Landlock.
->
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20230209223814.308370-1-mic@digikod.net
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Jan 31, 2023 at 01:51:39PM +0100, Roberto Sassu wrote:
+> On Mon, 2023-01-30 at 14:57 -0800, Fan Wu wrote:
+> > +
+> > +/**
+> > + * ipe_mmap_file - ipe security hook function for mmap check.
+> > + * @f: File being mmap'd. Can be NULL in the case of anonymous memory.
+> > + * @reqprot: The requested protection on the mmap, passed from usermode.
+> > + * @prot: The effective protection on the mmap, resolved from reqprot and
+> > + *	  system configuration.
+> > + * @flags: Unused.
+> > + *
+> > + * This hook is called when a file is loaded through the mmap
+> > + * family of system calls.
+> > + *
+> > + * Return:
+> > + * * 0	- OK
+> > + * * !0	- Error
+> > + */
+> > +int ipe_mmap_file(struct file *f, unsigned long reqprot, unsigned long prot,
+> > +		  unsigned long flags)
+> > +{
+> > +	struct ipe_eval_ctx ctx = { 0 };
+> > +
+> > +	if (prot & PROT_EXEC || reqprot & PROT_EXEC) {
+> 
+> Since the kernel only adds flags and doesn't clear them, isn't safe to
+> just consider prot? Oh, you mentioned it in the changelog, maybe just
+> for ipe_file_mprotect().
+> 
 
-Looks like a proper git repo to me :)
+Thanks for pointing that out, yes reqprot it indeed unnecessary, I will remove
+this part in the next version. 
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
+> > +		build_eval_ctx(&ctx, f, ipe_op_exec);
+> > +		return ipe_evaluate_event(&ctx);
+> > +	}
+> 
+> Uhm, I think some considerations that IMA does for mmap() are relevant
+> also for IPE.
+> 
+> For example, look at mmap_violation_check(). It checks if there are
+> writable mappings, and if yes, it denies the access.
+> 
+> Similarly for mprotect(), is adding PROT_EXEC safe?
+> 
 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a36df9ed283d..70f13280921a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11686,7 +11686,7 @@ M:      Micka=C3=ABl Sala=C3=BCn <mic@digikod.net=
->
->  L:     linux-security-module@vger.kernel.org
->  S:     Supported
->  W:     https://landlock.io
-> -T:     git https://github.com/landlock-lsm/linux.git
-> +T:     git https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
->  F:     Documentation/security/landlock.rst
->  F:     Documentation/userspace-api/landlock.rst
->  F:     include/uapi/linux/landlock.h
-> --
-> 2.39.1
+Yes, writable mapping might need to treat differently. But for the current version
+I think it is safe because currently we only support dmverity and fsverity,
+they are inherently read-only.
 
---=20
-paul-moore.com
+But if in the future if there is a feature can support writable mapping, IPE might
+better provide user the flexibility to allow or deny execute writable mappings,
+for example, adding a new property like file_writable=TRUE. Then user can deploy
+a rule like op=EXECUTE file_writable=TRUE action=DENY to deny execute a writable
+mapping.
+
+> >  
+> > @@ -12,6 +13,11 @@ static struct lsm_blob_sizes ipe_blobs __lsm_ro_after_init = {
+> >  
+> >  static struct security_hook_list ipe_hooks[] __lsm_ro_after_init = {
+> >  	LSM_HOOK_INIT(sb_free_security, ipe_sb_free_security),
+> > +	LSM_HOOK_INIT(bprm_check_security, ipe_bprm_check_security),
+> > +	LSM_HOOK_INIT(mmap_file, ipe_mmap_file),
+> > +	LSM_HOOK_INIT(file_mprotect, ipe_file_mprotect),
+> > +	LSM_HOOK_INIT(kernel_read_file, ipe_kernel_read_file),
+> > +	LSM_HOOK_INIT(kernel_load_data, ipe_kernel_load_data),
+> >  };
+> 
+> Uhm, maybe I would incorporate patch 1 with this.
+> 
+> Roberto
+
+This might not be possible because this patch has some dependencies on the previous patches.
+-Fan
