@@ -2,84 +2,124 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A29F4C61DA4
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 11:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5987FC636D6
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 15:54:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229654AbjBIL6w (ORCPT
+        id S231151AbjBIPyf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Feb 2023 06:58:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58970 "EHLO
+        Thu, 9 Feb 2023 10:54:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbjBIL4u (ORCPT
+        with ESMTP id S229733AbjBIPye (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Feb 2023 06:56:50 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4DB77683
-        for <linux-security-module@vger.kernel.org>; Thu,  9 Feb 2023 03:47:28 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 82CE9B82100
-        for <linux-security-module@vger.kernel.org>; Thu,  9 Feb 2023 11:47:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 987C2C433EF;
-        Thu,  9 Feb 2023 11:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1675943246;
-        bh=KcEP21+pF4KwMmglSmsSBGTbmJs+n+Qw0DzK8I7J0jc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xtwTiTCyY1FlnXEw9OfTCRgYMQDFAYLGJqRVc+g3CV7m6lL271KmivOHbqNMFIzpF
-         izRKPxk+Cgoj5jGMK229ogKAX9dU5YkxgEUcmANY3INEsz+KlZLAG5LRC76Y60QFC0
-         /6aAenv4WGxeXJ56Pxk8O4RjRw8CXfWm5wifDsZc=
-Date:   Thu, 9 Feb 2023 12:47:22 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 02/14] Add TSEM specific documentation.
-Message-ID: <Y+TdSivplpimof7o@kroah.com>
-References: <20230204050954.11583-1-greg@enjellic.com>
- <20230204050954.11583-3-greg@enjellic.com>
+        Thu, 9 Feb 2023 10:54:34 -0500
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AD221C7DD
+        for <linux-security-module@vger.kernel.org>; Thu,  9 Feb 2023 07:54:31 -0800 (PST)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PCLk53YH7zMrkNX;
+        Thu,  9 Feb 2023 16:43:25 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4PCLk258CPzlh7;
+        Thu,  9 Feb 2023 16:43:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1675957405;
+        bh=bNW1Wg5WZW0nIMURTxjwXxKKJeK4hLfabPIk0obS01U=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=yhrC9HODCmFSivOVE0IKp2ondNaaLvcg5W8tO3K+NLu2V/sCkaEy51YAikMxX/bO+
+         JxbV6GVXYwWp/EAnZjDieUo20IlNb8SiewRkBmtbJDATbN4UF9y7i7V377UMQNMKZD
+         zeNtRSi9skrTTd1wFJGc6zKnCNxdcpxM9Wxblc2U=
+Message-ID: <376258a7-b7fa-51f9-2137-c123b8ff304e@digikod.net>
+Date:   Thu, 9 Feb 2023 16:43:21 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230204050954.11583-3-greg@enjellic.com>
+User-Agent: 
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>
+Cc:     concord@gentoo.org, linux-hardening@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>
+References: <20220321161557.495388-1-mic@digikod.net>
+ <202204041130.F649632@keescook>
+ <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
+ <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
+ <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
+ <202204041451.CC4F6BF@keescook>
+ <CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com>
+ <7e8d9f8a-f119-6d1a-7861-0493dc513aa7@digikod.net>
+ <63e3f8c8.050a0220.c0b3f.434b@mx.google.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <63e3f8c8.050a0220.c0b3f.434b@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 03, 2023 at 11:09:42PM -0600, Dr. Greg wrote:
-> An entry was added to the ABI testing documentation to document
-> the files in the TSEM management filesystem.
+
+On 08/02/2023 20:32, Kees Cook wrote:
+> *thread necromancy*
 > 
-> The file documenting the kernel command-line parameters was
-> updated to document the tsem_mode command-line parameter.
+> On Tue, Apr 05, 2022 at 06:09:03PM +0200, Mickaël Salaün wrote:
+>>
+>> On 05/04/2022 01:26, Linus Torvalds wrote:
+>>> On Mon, Apr 4, 2022 at 3:25 PM Kees Cook <keescook@chromium.org> wrote:
+>>
+>> [...]
+>>
+>>>
+>>>> I think this already exists as AT_EACCESS? It was added with
+>>>> faccessat2() itself, if I'm reading the history correctly.
+>>>
+>>> Yeah, I noticed myself, I just hadn't looked (and I don't do enough
+>>> user-space programming to be aware of if that way).
+>>
+>> I think AT_EACCESS should be usable with the new EXECVE_OK too.
+>>
+>>
+>>>
+>>>>>       (a) "what about suid bits that user space cannot react to"
+>>>>
+>>>> What do you mean here? Do you mean setid bits on the file itself?
+>>>
+>>> Right.
+>>>
+>>> Maybe we don't care.
+>>
+>> I think we don't. I think the only corner case that could be different is
+>> for files that are executable, SUID and non-readable. In this case it
+>> wouldn't matter because userspace could not read the file, which is required
+>> for interpretation/execution. Anyway, S[GU]ID bits in scripts are just
+>> ignored by execve and we want to follow the same semantic.
 > 
-> The primary TSEM documentation file was added to the LSM
-> administration guide and the file was linked to the index of LSM
-> documentation.
+> Hi Mickaël,
 > 
-> Signed-off-by: Greg Wettstein <greg@enjellic.com>
-> ---
->  Documentation/ABI/testing/tsemfs              |  576 ++++++++
+> Is there a new version of this being worked on? It would be really nice
+> to have the O_MAYEXEC/faccessat2() visibility for script execution control
+> in userspace. It seems like it would be mainly a respin of an earlier
+> version of this series before trusted_for() was proposed.
 
-Ah, here's the documentation, thanks.
+Yes, I plan to send a new version in a few weeks.
 
->  Documentation/admin-guide/LSM/index.rst       |    1 +
->  Documentation/admin-guide/LSM/tsem.rst        | 1240 +++++++++++++++++
->  .../admin-guide/kernel-parameters.txt         |    5 +
->  4 files changed, 1822 insertions(+)
->  create mode 100644 Documentation/ABI/testing/tsemfs
->  create mode 100644 Documentation/admin-guide/LSM/tsem.rst
 > 
-> diff --git a/Documentation/ABI/testing/tsemfs b/Documentation/ABI/testing/tsemfs
-> new file mode 100644
-> index 000000000000..3d326934624c
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/tsemfs
-> @@ -0,0 +1,576 @@
-> +What:		/sys/fs/tsem
-> +Date:		November 2022
-
-It's not November 2022 anymore :(
-
-thanks,
-
-greg k-h
+> -Kees
+> 
