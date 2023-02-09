@@ -2,111 +2,133 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C251C61DA4
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 22:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C90C64EC5
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 22:22:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230212AbjBIWVp (ORCPT
+        id S230197AbjBIWV5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Feb 2023 17:21:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56096 "EHLO
+        Thu, 9 Feb 2023 17:21:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229746AbjBIWVo (ORCPT
+        with ESMTP id S230206AbjBIWV4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Feb 2023 17:21:44 -0500
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D39DA6ADF2
-        for <linux-security-module@vger.kernel.org>; Thu,  9 Feb 2023 14:21:34 -0800 (PST)
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 319ML70Y022738;
-        Thu, 9 Feb 2023 16:21:07 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 319ML6Cc022737;
-        Thu, 9 Feb 2023 16:21:06 -0600
-Date:   Thu, 9 Feb 2023 16:21:06 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 14/14] Activate the configuration and build of the TSEM LSM.
-Message-ID: <20230209222106.GA22543@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20230204050954.11583-1-greg@enjellic.com> <20230204050954.11583-15-greg@enjellic.com> <ca0a230c-7e4f-e8c7-1f7f-53c3b4017e2d@schaufler-ca.com>
-Mime-Version: 1.0
+        Thu, 9 Feb 2023 17:21:56 -0500
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 17EC331E01;
+        Thu,  9 Feb 2023 14:21:54 -0800 (PST)
+Received: by linux.microsoft.com (Postfix, from userid 1052)
+        id 89F6A20C8AF3; Thu,  9 Feb 2023 14:21:53 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 89F6A20C8AF3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1675981313;
+        bh=RUdC5B9WQx/P13jBYCe9d9UCa08CXDooaF6pn5xM0XU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ACCtgB1V7Pj9HpbZCzfkwRaa8mEyqbQ0An9AlLvmPyHKDFnGuWFzikGMzAkAnnOnV
+         6un5wxDChEKMJoG7iGI7AGL8y3IjmRdgvalSdG1Nt3mQ4jy/DFmmUFx2did+hj91Sf
+         +O7rYKknS0EHfFnT9Mu+AfuLB7ZENeKJWbKO5+wU=
+Date:   Thu, 9 Feb 2023 14:21:53 -0800
+From:   Fan Wu <wufan@linux.microsoft.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, agk@redhat.com,
+        snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com,
+        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, linux-audit@redhat.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>
+Subject: Re: [RFC PATCH v9 12/16] fsverity: consume builtin signature via LSM
+ hook
+Message-ID: <20230209222153.GA6647@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com>
+ <1675119451-23180-13-git-send-email-wufan@linux.microsoft.com>
+ <Y+Ro2Uor21d/Gfqc@sol.localdomain>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ca0a230c-7e4f-e8c7-1f7f-53c3b4017e2d@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 09 Feb 2023 16:21:07 -0600 (CST)
+In-Reply-To: <Y+Ro2Uor21d/Gfqc@sol.localdomain>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 08, 2023 at 02:15:26PM -0800, Casey Schaufler wrote:
-> On 2/3/2023 9:09 PM, Dr. Greg wrote:
-> > Complete the implementation by integrating the LSM into the
-> > configuration and kernel build infrastructure.
-> >
-> > Signed-off-by: Greg Wettstein <greg@enjellic.com>
-> > ---
-> >  security/Kconfig       | 11 ++++++-----
-> >  security/Makefile      |  1 +
-> >  security/tsem/Kconfig  | 22 ++++++++++++++++++++++
-> >  security/tsem/Makefile |  2 ++
-> >  4 files changed, 31 insertions(+), 5 deletions(-)
-> >  create mode 100644 security/tsem/Kconfig
-> >  create mode 100644 security/tsem/Makefile
-> >
-> > diff --git a/security/Kconfig b/security/Kconfig
-> > index e6db09a779b7..98c538ad6790 100644
-> > --- a/security/Kconfig
-> > +++ b/security/Kconfig
-> > @@ -207,6 +207,7 @@ source "security/yama/Kconfig"
-> >  source "security/safesetid/Kconfig"
-> >  source "security/lockdown/Kconfig"
-> >  source "security/landlock/Kconfig"
-> > +source "security/tsem/Kconfig"
+On Wed, Feb 08, 2023 at 07:30:33PM -0800, Eric Biggers wrote:
+> So disregarding the fact that using the fsverity builtin signatures still seems
+> like a bad idea to me, here's a few comments on the diff itself:
+> 
+Thanks for the review. I have verified the headers are indeed unnecessary,
+I will remove them in the next version.
+
+> On Mon, Jan 30, 2023 at 02:57:27PM -0800, Fan Wu wrote:
+> > diff --git a/fs/verity/open.c b/fs/verity/open.c
+> > index 81ff94442f7b..7e6fa52c0e9c 100644
+> > --- a/fs/verity/open.c
+> > +++ b/fs/verity/open.c
+> > @@ -7,7 +7,9 @@
 > >  
-> >  source "security/integrity/Kconfig"
+> >  #include "fsverity_private.h"
 > >  
-> > @@ -246,11 +247,11 @@ endchoice
+> > +#include <linux/security.h>
+> >  #include <linux/slab.h>
+> > +#include <crypto/public_key.h>
+> 
+> There's no need to include <crypto/public_key.h>.
+> 
 > >  
-> >  config LSM
-> >  	string "Ordered list of enabled LSMs"
-> > -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-> > -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-> > -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-> > -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
-> > -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
-> > +	default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selin
-ux,tomoyo,apparmor,bpf,tsem" 
+> > +	if (err) {
+> > +		fsverity_err(inode, "Error %d verifying signature", err);
+> > +		goto out;
+> > +	}
+> 
+> The above error message is unnecessary because fsverity_verify_signature()
+> already prints an error message on failure.
+> 
+> > +
+> > +	err = security_inode_setsecurity(inode, FS_VERITY_INODE_SEC_NAME, desc->signature,
+> > +					 le32_to_cpu(desc->sig_size), 0);
+> 
+> This runs even if CONFIG_FS_VERITY_BUILTIN_SIGNATURES is disabled.  Is that
+> really the right behavior?
+> 
+Yes the hook call should better depend on a KCONFIG. After second thought I think it
+should depend on CONFIG_IPE_PROP_FS_VERITY, which also indirectly introduces the
+dependency on CONFIG_FS_VERITY_BUILTIN_SIGNATURES.
 
-Hi Casey, thanks for the note, I hope your week is going well.
+Currently security_inode_setsecurity only allows one LSM to save data with a given name.
+In our case IPE will be the only LSM that saves the signature.
 
-> Better check with the BPF team to see if they're OK with TSEM
-> following BPF in loading order.
+I will update this part in the next version.
 
-We can do that, however, as we noted in the documentation, TSEM, being
-the first LSM to be based on a narratival security logic philosophy,
-should be largely ambivalent with respect to its stacking order.
+> Also a nit: please stick to the preferred line length of 80 characters.
+> See Documentation/process/coding-style.rst
+> 
+> > diff --git a/fs/verity/signature.c b/fs/verity/signature.c
+> > index 143a530a8008..5d7b9496f9c4 100644
+> > --- a/fs/verity/signature.c
+> > +++ b/fs/verity/signature.c
+> > @@ -9,6 +9,7 @@
+> >  
+> >  #include <linux/cred.h>
+> >  #include <linux/key.h>
+> > +#include <linux/security.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/verification.h>
+> 
+> This change is unnecessary.
+> 
+> > diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+> > index 40f14e5fed9d..29e9888287ba 100644
+> > --- a/include/linux/fsverity.h
+> > +++ b/include/linux/fsverity.h
+> > @@ -254,4 +254,6 @@ static inline bool fsverity_active(const struct inode *inode)
+> >  	return fsverity_get_info(inode) != NULL;
+> >  }
+> >  
+> > +#define FS_VERITY_INODE_SEC_NAME "fsverity.inode-info"
+> 
+> "inode-info" is very vague.  Shouldn't it be named "builtin-sig" or something?
+> 
+> - Eric
 
-We would thus, happily, entertain suggestions from the community as to
-where it would like us to stand in line.
-
-As an example, without going off into the weeds, since TSEM is a
-generic security modeling architecture, it can implement any integrity
-policies, including validation of extended security attributes.
-Placing it first in line would allow a security workload architect to
-reject any modifications to expected MAC security labels as an invalid
-security model state point before the event got to the deontological
-handlers.
-
-However, being the new kid on the block, we would never presume to be
-first or last, given that they may be coveted positions.
-
-So we will remain open to suggestions for the second spin of the
-patches.
-
-Have a good afternoon.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
+I agree this name works better, I will change it to "fsverity.builtin-sig".
+-Fan
