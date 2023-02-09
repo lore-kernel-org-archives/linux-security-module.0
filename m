@@ -2,137 +2,116 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6594BC636D7
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 03:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA3CCC636D7
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 07:14:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232487AbjBIDbT (ORCPT
+        id S229833AbjBIHOT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Feb 2023 22:31:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34628 "EHLO
+        Thu, 9 Feb 2023 02:14:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232318AbjBIDak (ORCPT
+        with ESMTP id S229758AbjBIHON (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Feb 2023 22:30:40 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28C13E04E;
-        Wed,  8 Feb 2023 19:30:37 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B9E096187E;
-        Thu,  9 Feb 2023 03:30:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 811C9C433EF;
-        Thu,  9 Feb 2023 03:30:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675913436;
-        bh=DbojSuLwxvxHTVD5904kFFvTdY99TONLdsOPCTQ9EhM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FA0VUJj7ytZLpiHkeewSZwqz9dEmgx0S3pifki8Zcpk9++H3Dqe+ArXeU9EurEFys
-         ncnXUbFFqyS9VkC+E8xoFZquwJXy9AVKuAwPwv3ga2wiJWXdWpzFj1p3Xjqo20tInp
-         QZfUyf7VMb2de0AVoGcS9d6TwcYYx4KlLDxzLck5lO4Gm+r41WiAU2NazDYBvoHoFw
-         SYHH4IYpw9aQvAdWes6uALQdiP83QzMgGmH+TMupJAVoK2V4dPWN3PVi7ixp4oeUJO
-         N05xOagdxelzguO4h2Ct5mt2kfIXcBqgA4Ke6UiB4SM6vCbypBiN/Mmptr3UWmlD8k
-         gSiecvIQEJMkw==
-Date:   Wed, 8 Feb 2023 19:30:33 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Fan Wu <wufan@linux.microsoft.com>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, agk@redhat.com,
-        snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com,
-        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Thu, 9 Feb 2023 02:14:13 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 381303C28;
+        Wed,  8 Feb 2023 23:14:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=1UCwqKkdi+iMeKnxe2a0f+agmuR5eX82xtKDbJBG/eQ=; b=uqCYr9QPZeK/DAmoWVOcS1RDUS
+        Jes9PXFPB1yY7BQtSqs6/kYb0MMFUWyAkacZF5AVuDDK8HNHn2ilBmgw4udBOiufuCzP5aYrGg41o
+        Jo434Nad39spPEJckwdOHOZ69rFXrY17CQB+WKhL4C2zBhAOfI89TbvMCF977OjOBCUYQuvOBW0n2
+        zmrVjHy9F5roJy8rayt0RLlR+MKvpYGO6EMuzHz7F84CNoub2EyyjaNnlyodpjwjG7lrLGoUEnGDC
+        eXaOX2fx9bUfHr+KIiNbjSmNIFAVpQX2MR7pgqN48eXyJZ+5MMAY1Nt+5hCRZn4UwDf0jNZ+8hsZz
+        hBfIoJhw==;
+Received: from [2601:1c2:980:9ec0::df2f] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pQ18F-000LPt-Pv; Thu, 09 Feb 2023 07:14:11 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, linux-audit@redhat.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [RFC PATCH v9 12/16] fsverity: consume builtin signature via LSM
- hook
-Message-ID: <Y+Ro2Uor21d/Gfqc@sol.localdomain>
-References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com>
- <1675119451-23180-13-git-send-email-wufan@linux.microsoft.com>
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: [PATCH 17/24] Documentation: security: correct spelling
+Date:   Wed,  8 Feb 2023 23:13:53 -0800
+Message-Id: <20230209071400.31476-18-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230209071400.31476-1-rdunlap@infradead.org>
+References: <20230209071400.31476-1-rdunlap@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1675119451-23180-13-git-send-email-wufan@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-So disregarding the fact that using the fsverity builtin signatures still seems
-like a bad idea to me, here's a few comments on the diff itself:
+Correct spelling problems for Documentation/security/ as reported
+by codespell.
 
-On Mon, Jan 30, 2023 at 02:57:27PM -0800, Fan Wu wrote:
-> diff --git a/fs/verity/open.c b/fs/verity/open.c
-> index 81ff94442f7b..7e6fa52c0e9c 100644
-> --- a/fs/verity/open.c
-> +++ b/fs/verity/open.c
-> @@ -7,7 +7,9 @@
->  
->  #include "fsverity_private.h"
->  
-> +#include <linux/security.h>
->  #include <linux/slab.h>
-> +#include <crypto/public_key.h>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: keyrings@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org
+Reviewed-by: David Howells <dhowells@redhat.com>
+---
+ Documentation/security/digsig.rst       |    4 ++--
+ Documentation/security/keys/core.rst    |    2 +-
+ Documentation/security/secrets/coco.rst |    2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-There's no need to include <crypto/public_key.h>.
-
->  
->  static struct kmem_cache *fsverity_info_cachep;
->  
-> @@ -146,7 +148,7 @@ static int compute_file_digest(struct fsverity_hash_alg *hash_alg,
->   * appended signature), and check the signature if present.  The
->   * fsverity_descriptor must have already undergone basic validation.
->   */
-> -struct fsverity_info *fsverity_create_info(const struct inode *inode,
-> +struct fsverity_info *fsverity_create_info(struct inode *inode,
->  					   struct fsverity_descriptor *desc)
->  {
->  	struct fsverity_info *vi;
-> @@ -182,6 +184,15 @@ struct fsverity_info *fsverity_create_info(const struct inode *inode,
->  
->  	err = fsverity_verify_signature(vi, desc->signature,
->  					le32_to_cpu(desc->sig_size));
-> +	if (err) {
-> +		fsverity_err(inode, "Error %d verifying signature", err);
-> +		goto out;
-> +	}
-
-The above error message is unnecessary because fsverity_verify_signature()
-already prints an error message on failure.
-
-> +
-> +	err = security_inode_setsecurity(inode, FS_VERITY_INODE_SEC_NAME, desc->signature,
-> +					 le32_to_cpu(desc->sig_size), 0);
-
-This runs even if CONFIG_FS_VERITY_BUILTIN_SIGNATURES is disabled.  Is that
-really the right behavior?
-
-Also a nit: please stick to the preferred line length of 80 characters.
-See Documentation/process/coding-style.rst
-
-> diff --git a/fs/verity/signature.c b/fs/verity/signature.c
-> index 143a530a8008..5d7b9496f9c4 100644
-> --- a/fs/verity/signature.c
-> +++ b/fs/verity/signature.c
-> @@ -9,6 +9,7 @@
->  
->  #include <linux/cred.h>
->  #include <linux/key.h>
-> +#include <linux/security.h>
->  #include <linux/slab.h>
->  #include <linux/verification.h>
-
-This change is unnecessary.
-
-> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> index 40f14e5fed9d..29e9888287ba 100644
-> --- a/include/linux/fsverity.h
-> +++ b/include/linux/fsverity.h
-> @@ -254,4 +254,6 @@ static inline bool fsverity_active(const struct inode *inode)
->  	return fsverity_get_info(inode) != NULL;
->  }
->  
-> +#define FS_VERITY_INODE_SEC_NAME "fsverity.inode-info"
-
-"inode-info" is very vague.  Shouldn't it be named "builtin-sig" or something?
-
-- Eric
+diff -- a/Documentation/security/digsig.rst b/Documentation/security/digsig.rst
+--- a/Documentation/security/digsig.rst
++++ b/Documentation/security/digsig.rst
+@@ -62,7 +62,7 @@ API currently includes only 1 function::
+ 	* digsig_verify() - digital signature verification with public key
+ 	* @keyring:	keyring to search key in
+ 	* @sig:	digital signature
+-	* @sigen:	length of the signature
++	* @siglen:	length of the signature
+ 	* @data:	data
+ 	* @datalen:	length of the data
+ 	* @return:	0 on success, -EINVAL otherwise
+@@ -82,7 +82,7 @@ The signing and key management utilities
+ to generate signatures, to load keys into the kernel keyring.
+ Keys can be in PEM or converted to the kernel format.
+ When the key is added to the kernel keyring, the keyid defines the name
+-of the key: 5D2B05FC633EE3E8 in the example bellow.
++of the key: 5D2B05FC633EE3E8 in the example below.
+ 
+ Here is example output of the keyctl utility::
+ 
+diff -- a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
+--- a/Documentation/security/keys/core.rst
++++ b/Documentation/security/keys/core.rst
+@@ -869,7 +869,7 @@ The keyctl syscall functions are:
+ 
+ 	 - ``char *hashname`` specifies the NUL terminated string identifying
+ 	   the hash used from the kernel crypto API and applied for the KDF
+-	   operation. The KDF implemenation complies with SP800-56A as well
++	   operation. The KDF implementation complies with SP800-56A as well
+ 	   as with SP800-108 (the counter KDF).
+ 
+ 	 - ``char *otherinfo`` specifies the OtherInfo data as documented in
+diff -- a/Documentation/security/secrets/coco.rst b/Documentation/security/secrets/coco.rst
+--- a/Documentation/security/secrets/coco.rst
++++ b/Documentation/security/secrets/coco.rst
+@@ -34,7 +34,7 @@ be use it for its own purposes.
+ 
+ During the VM's launch, the virtual machine manager may inject a secret to that
+ area.  In AMD SEV and SEV-ES this is performed using the
+-``KVM_SEV_LAUNCH_SECRET`` command (see [sev]_).  The strucutre of the injected
++``KVM_SEV_LAUNCH_SECRET`` command (see [sev]_).  The structure of the injected
+ Guest Owner secret data should be a GUIDed table of secret values; the binary
+ format is described in ``drivers/virt/coco/efi_secret/efi_secret.c`` under
+ "Structure of the EFI secret area".
