@@ -2,133 +2,68 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C90C64EC5
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 22:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB31C636D3
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 22:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230197AbjBIWV5 (ORCPT
+        id S230445AbjBIWkI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Feb 2023 17:21:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56568 "EHLO
+        Thu, 9 Feb 2023 17:40:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230206AbjBIWV4 (ORCPT
+        with ESMTP id S230479AbjBIWjp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Feb 2023 17:21:56 -0500
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 17EC331E01;
-        Thu,  9 Feb 2023 14:21:54 -0800 (PST)
-Received: by linux.microsoft.com (Postfix, from userid 1052)
-        id 89F6A20C8AF3; Thu,  9 Feb 2023 14:21:53 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 89F6A20C8AF3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1675981313;
-        bh=RUdC5B9WQx/P13jBYCe9d9UCa08CXDooaF6pn5xM0XU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ACCtgB1V7Pj9HpbZCzfkwRaa8mEyqbQ0An9AlLvmPyHKDFnGuWFzikGMzAkAnnOnV
-         6un5wxDChEKMJoG7iGI7AGL8y3IjmRdgvalSdG1Nt3mQ4jy/DFmmUFx2did+hj91Sf
-         +O7rYKknS0EHfFnT9Mu+AfuLB7ZENeKJWbKO5+wU=
-Date:   Thu, 9 Feb 2023 14:21:53 -0800
-From:   Fan Wu <wufan@linux.microsoft.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, agk@redhat.com,
-        snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com,
-        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, linux-audit@redhat.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [RFC PATCH v9 12/16] fsverity: consume builtin signature via LSM
- hook
-Message-ID: <20230209222153.GA6647@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com>
- <1675119451-23180-13-git-send-email-wufan@linux.microsoft.com>
- <Y+Ro2Uor21d/Gfqc@sol.localdomain>
+        Thu, 9 Feb 2023 17:39:45 -0500
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [IPv6:2001:1600:4:17::1908])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 748526D8C1
+        for <linux-security-module@vger.kernel.org>; Thu,  9 Feb 2023 14:38:50 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PCWxN2RGvzMqhcv;
+        Thu,  9 Feb 2023 23:38:48 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4PCWxM4sQtzMqmwt;
+        Thu,  9 Feb 2023 23:38:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1675982328;
+        bh=3C2A52d/ypevFEfK5Ea/Q07EcfdWxoWV4VrxTpkOYRA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=La36TCzeFX5lX49SxEtSPPD8CEhSE2x9ZeQ0A9fkUYcedOS11sncjEhOmyWdsfQKE
+         oGXZmeLD2PbnJl73Lkze+9USZb8ysFygbQTeceHAB9w89BWi0d/37Nnc6OAQrhNdmI
+         e5nT9GX4Vv04N1Am8qlUrlsDJNMohqU+l50aJ2H8=
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Update Landlock repository
+Date:   Thu,  9 Feb 2023 23:38:14 +0100
+Message-Id: <20230209223814.308370-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y+Ro2Uor21d/Gfqc@sol.localdomain>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 08, 2023 at 07:30:33PM -0800, Eric Biggers wrote:
-> So disregarding the fact that using the fsverity builtin signatures still seems
-> like a bad idea to me, here's a few comments on the diff itself:
-> 
-Thanks for the review. I have verified the headers are indeed unnecessary,
-I will remove them in the next version.
+I only use the kernel.org repository for Landlock.
 
-> On Mon, Jan 30, 2023 at 02:57:27PM -0800, Fan Wu wrote:
-> > diff --git a/fs/verity/open.c b/fs/verity/open.c
-> > index 81ff94442f7b..7e6fa52c0e9c 100644
-> > --- a/fs/verity/open.c
-> > +++ b/fs/verity/open.c
-> > @@ -7,7 +7,9 @@
-> >  
-> >  #include "fsverity_private.h"
-> >  
-> > +#include <linux/security.h>
-> >  #include <linux/slab.h>
-> > +#include <crypto/public_key.h>
-> 
-> There's no need to include <crypto/public_key.h>.
-> 
-> >  
-> > +	if (err) {
-> > +		fsverity_err(inode, "Error %d verifying signature", err);
-> > +		goto out;
-> > +	}
-> 
-> The above error message is unnecessary because fsverity_verify_signature()
-> already prints an error message on failure.
-> 
-> > +
-> > +	err = security_inode_setsecurity(inode, FS_VERITY_INODE_SEC_NAME, desc->signature,
-> > +					 le32_to_cpu(desc->sig_size), 0);
-> 
-> This runs even if CONFIG_FS_VERITY_BUILTIN_SIGNATURES is disabled.  Is that
-> really the right behavior?
-> 
-Yes the hook call should better depend on a KCONFIG. After second thought I think it
-should depend on CONFIG_IPE_PROP_FS_VERITY, which also indirectly introduces the
-dependency on CONFIG_FS_VERITY_BUILTIN_SIGNATURES.
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20230209223814.308370-1-mic@digikod.net
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Currently security_inode_setsecurity only allows one LSM to save data with a given name.
-In our case IPE will be the only LSM that saves the signature.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a36df9ed283d..70f13280921a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11686,7 +11686,7 @@ M:	Mickaël Salaün <mic@digikod.net>
+ L:	linux-security-module@vger.kernel.org
+ S:	Supported
+ W:	https://landlock.io
+-T:	git https://github.com/landlock-lsm/linux.git
++T:	git https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
+ F:	Documentation/security/landlock.rst
+ F:	Documentation/userspace-api/landlock.rst
+ F:	include/uapi/linux/landlock.h
+-- 
+2.39.1
 
-I will update this part in the next version.
-
-> Also a nit: please stick to the preferred line length of 80 characters.
-> See Documentation/process/coding-style.rst
-> 
-> > diff --git a/fs/verity/signature.c b/fs/verity/signature.c
-> > index 143a530a8008..5d7b9496f9c4 100644
-> > --- a/fs/verity/signature.c
-> > +++ b/fs/verity/signature.c
-> > @@ -9,6 +9,7 @@
-> >  
-> >  #include <linux/cred.h>
-> >  #include <linux/key.h>
-> > +#include <linux/security.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/verification.h>
-> 
-> This change is unnecessary.
-> 
-> > diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> > index 40f14e5fed9d..29e9888287ba 100644
-> > --- a/include/linux/fsverity.h
-> > +++ b/include/linux/fsverity.h
-> > @@ -254,4 +254,6 @@ static inline bool fsverity_active(const struct inode *inode)
-> >  	return fsverity_get_info(inode) != NULL;
-> >  }
-> >  
-> > +#define FS_VERITY_INODE_SEC_NAME "fsverity.inode-info"
-> 
-> "inode-info" is very vague.  Shouldn't it be named "builtin-sig" or something?
-> 
-> - Eric
-
-I agree this name works better, I will change it to "fsverity.builtin-sig".
--Fan
