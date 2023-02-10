@@ -2,227 +2,130 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8CBC05027
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Feb 2023 17:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 450F0C6379F
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Feb 2023 20:03:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232713AbjBJRlI (ORCPT
+        id S232701AbjBJUDn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Feb 2023 12:41:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48292 "EHLO
+        Fri, 10 Feb 2023 15:03:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232666AbjBJRlH (ORCPT
+        with ESMTP id S233501AbjBJUDm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Feb 2023 12:41:07 -0500
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09DEA7A7FE
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Feb 2023 09:40:48 -0800 (PST)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PD1H32dRFzMpvjj;
-        Fri, 10 Feb 2023 18:40:47 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4PD1H24mf3zMqmN0;
-        Fri, 10 Feb 2023 18:40:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1676050847;
-        bh=R4gco7UPEtTNC52xDcLSo2QqcjLYWuHHQ2ctmEPI3O4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=mnl4vDI+FEVduqNylqLopK3EXIm/jYi/YIwWuJCw9tCJq9SGUHmVHxWRrA6WDIBaG
-         12HrVmKHVevi8O/ljXQpeoFQMyrhBv6nSJv69g+rnBQXe4+Bj20lUi9DvQcmwj+iLv
-         zXPO5JUAkTCvt91TvdcWh7j/Uqzw1/K3BQjpbntw=
-Message-ID: <ff460f1e-fc0c-d362-a97d-573df193fedb@digikod.net>
-Date:   Fri, 10 Feb 2023 18:40:45 +0100
+        Fri, 10 Feb 2023 15:03:42 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D28A7D3F9
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Feb 2023 12:03:40 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id r18so4436356pgr.12
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Feb 2023 12:03:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=c94oebdQAYOnWa5OBenvbbTJl3HSCIzlCdwEo0rrVKw=;
+        b=Zyg2AmPPYBtXlDQvmAKLDQiv0KkS8B/AUP6rAoDns1XWizHDTHVPtASr6ynZ5TfP9+
+         TEq9Y8aF6TovKgR+yZoTnlldOnVLa3StdjhOSQK//wWPSF7BRbWDDVIpNtEXN96tCOaA
+         Lfmqg71s1eP9oTn8EKVt1SdbC1yGeYIvgKsV4MfilMle6BkDXthUNKIxf5HTIwocjNC1
+         /j34iAeGtUxVlG0HeDL1GUm0doCkQ/qqXMY0+Zhw5gen+EdPjuARuD0JPyeQ0NF7MnZ+
+         /r3CbjlPuYqV179Rvpe1fYUI+mFMcEDiD8VEhZ8/+zeRTIGUzoy06eUpL536TE5Jy0mk
+         Pj1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c94oebdQAYOnWa5OBenvbbTJl3HSCIzlCdwEo0rrVKw=;
+        b=25zbukAmeV0jeXM+HPzctm2Yh21+cFWCqIYR8cg5BmOBQwHQvCINuV9HqABWpHFnq0
+         htJWgZVqrS7CllkEUrPRI0Bw0/FxOBSPO6JcuR3effhx/RhTbHFSXYYgwEvmsQgij3kj
+         TsPYyHLlBlqT+d9j01y5WeltcjJLKlt3/1jpp9kdrPR3zzZKFDIRYm7lUC/y87bqCJSJ
+         5gVe32kyIMLBfJItQKhxR7qQUksfoeCs0HvwIGUfUcoe8YAU9blc7R7+wB9SPF/wd/0q
+         x2BkdicJepET+JUOHO5uhvcfwb0k5AXgtgFrMxnSAR3tAwNvAxE3TiGT5l9Z8zY2f6aK
+         j4tA==
+X-Gm-Message-State: AO0yUKWTXysQs1TqFm48p5twAiLrUrL6lBl4+mBxws7iYQEEhwEAPIRG
+        PrTonoeqyelDBXPyphyHBzVXTZ+tocADTdbOeXAm
+X-Google-Smtp-Source: AK7set+h0C24/7+kDGsz6RtMYZdf+WcUCXAre7w6Ea1rII5G24VEGhCPdhwkzif9KZRxq00tMHYHXOI9ycnSkWzjsg0=
+X-Received: by 2002:aa7:9af1:0:b0:592:7c9a:1236 with SMTP id
+ y17-20020aa79af1000000b005927c9a1236mr3299055pfp.26.1676059419391; Fri, 10
+ Feb 2023 12:03:39 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v9 10/12] selftests/landlock: Add 10 new test suites
- dedicated to network
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
- <20230116085818.165539-11-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230116085818.165539-11-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Infomaniak-Routing: alpha
+References: <20230119231033.1307221-1-kpsingh@kernel.org> <CAHC9VhRpsXME9Wht_RuSACuU97k359dihye4hW15nWwSQpxtng@mail.gmail.com>
+ <63e525a8.170a0220.e8217.2fdb@mx.google.com>
+In-Reply-To: <63e525a8.170a0220.e8217.2fdb@mx.google.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 10 Feb 2023 15:03:28 -0500
+Message-ID: <CAHC9VhTCiCNjfQBZOq2DM7QteeiE1eRBxW77eVguj4=y7kS+eQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/4] Reduce overhead of LSMs with static calls
+To:     Kees Cook <keescook@chromium.org>
+Cc:     KP Singh <kpsingh@kernel.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
+        renauld@google.com, casey@schaufler-ca.com, song@kernel.org,
+        revest@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Feb 9, 2023 at 11:56 AM Kees Cook <keescook@chromium.org> wrote:
+> On Fri, Jan 27, 2023 at 03:16:38PM -0500, Paul Moore wrote:
+> > On Thu, Jan 19, 2023 at 6:10 PM KP Singh <kpsingh@kernel.org> wrote:
+> > >
+> > > # Background
+> > >
+> > > LSM hooks (callbacks) are currently invoked as indirect function calls. These
+> > > callbacks are registered into a linked list at boot time as the order of the
+> > > LSMs can be configured on the kernel command line with the "lsm=" command line
+> > > parameter.
+> >
+> > Thanks for sending this KP.  I had hoped to make a proper pass through
+> > this patchset this week but I ended up getting stuck trying to wrap my
+> > head around some network segmentation offload issues and didn't quite
+> > make it here.  Rest assured it is still in my review queue.
+> >
+> > However, I did manage to take a quick look at the patches and one of
+> > the first things that jumped out at me is it *looks* like this
+> > patchset is attempting two things: fix a problem where one LSM could
+> > trample another (especially problematic with the BPF LSM due to its
+> > nature), and reduce the overhead of making LSM calls.  I realize that
+> > in this patchset the fix and the optimization are heavily
+> > intermingled, but I wonder what it would take to develop a standalone
+> > fix using the existing indirect call approach?  I'm guessing that is
+> > going to potentially be a pretty significant patch, but if we could
+> > add a little standardization to the LSM hooks without adding too much
+> > in the way of code complexity or execution overhead I think that might
+> > be a win independent of any changes to how we call the hooks.
+> >
+> > Of course this could be crazy too, but I'm the guy who has to ask
+> > these questions :)
+>
+> Hm, I am expecting this patch series to _not_ change any semantics of
+> the LSM "stack". I would agree: nothing should change in this series, as
+> it should be strictly a mechanical change from "iterate a list of
+> indirect calls" to "make a series of direct calls". Perhaps I missed
+> a logical change?
 
-On 16/01/2023 09:58, Konstantin Meskhidze wrote:
-> These test suites try to check edge cases for TCP sockets
-> bind() and connect() actions.
-> 
-> socket:
-> * bind: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
-> * connect: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
-> * bind_afunspec: Tests with non-landlocked/landlocked restrictions
-> for bind action with AF_UNSPEC socket family.
-> * connect_afunspec: Tests with non-landlocked/landlocked restrictions
-> for connect action with AF_UNSPEC socket family.
-> * ruleset_overlap: Tests with overlapping rules for one port.
-> * ruleset_expanding: Tests with expanding rulesets in which rules are
-> gradually added one by one, restricting sockets' connections.
-> * inval: Tests with invalid user space supplied data:
->      - out of range ruleset attribute;
->      - unhandled allowed access;
->      - zero port value;
->      - zero access value;
->      - legitimate access values;
-> * bind_connect_inval_addrlen: Tests with invalid address length
-> for ipv4/ipv6 sockets.
-> * inval_port_format: Tests with wrong port format for ipv4/ipv6 sockets.
-> 
-> layout1:
-> * with_net: Tests with network bind() socket action within
-> filesystem directory access test.
-> 
-> Test coverage for security/landlock is 94.1% of 946 lines according
-> to gcc/gcov-11.
-> 
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> ---
-> 
-> Changes since v8:
-> * Adds is_sandboxed const for FIXTURE_VARIANT(socket).
-> * Refactors AF_UNSPEC tests.
-> * Adds address length checking tests.
-> * Convert ports in all tests to __be16.
-> * Adds invalid port values tests.
-> * Minor fixes.
-> 
-> Changes since v7:
-> * Squashes all selftest commits.
-> * Adds fs test with network bind() socket action.
-> * Minor fixes.
-> 
-> ---
->   tools/testing/selftests/landlock/config     |    4 +
->   tools/testing/selftests/landlock/fs_test.c  |   65 ++
->   tools/testing/selftests/landlock/net_test.c | 1157 +++++++++++++++++++
->   3 files changed, 1226 insertions(+)
->   create mode 100644 tools/testing/selftests/landlock/net_test.c
-> 
-> diff --git a/tools/testing/selftests/landlock/config b/tools/testing/selftests/landlock/config
-> index 0f0a65287bac..71f7e9a8a64c 100644
-> --- a/tools/testing/selftests/landlock/config
-> +++ b/tools/testing/selftests/landlock/config
-> @@ -1,3 +1,7 @@
-> +CONFIG_INET=y
-> +CONFIG_IPV6=y
-> +CONFIG_NET=y
-> +CONFIG_NET_NS=y
->   CONFIG_OVERLAY_FS=y
->   CONFIG_SECURITY_LANDLOCK=y
->   CONFIG_SECURITY_PATH=y
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index b762b5419a89..5de4559c7fbb 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -8,8 +8,10 @@
->    */
->   
->   #define _GNU_SOURCE
-> +#include <arpa/inet.h>
->   #include <fcntl.h>
->   #include <linux/landlock.h>
-> +#include <netinet/in.h>
->   #include <sched.h>
->   #include <stdio.h>
->   #include <string.h>
-> @@ -17,6 +19,7 @@
->   #include <sys/mount.h>
->   #include <sys/prctl.h>
->   #include <sys/sendfile.h>
-> +#include <sys/socket.h>
->   #include <sys/stat.h>
->   #include <sys/sysmacros.h>
->   #include <unistd.h>
-> @@ -4413,4 +4416,66 @@ TEST_F_FORK(layout2_overlay, same_content_different_file)
->   	}
->   }
->   
-> +#define IP_ADDRESS "127.0.0.1"
-> +
-> +TEST_F_FORK(layout1, with_net)
-> +{
-> +	int sockfd;
-> +	int sock_port = 15000;
-> +	struct sockaddr_in addr4;
-> +
-> +	addr4.sin_family = AF_INET;
-> +	addr4.sin_port = htons(sock_port);
-> +	addr4.sin_addr.s_addr = inet_addr(IP_ADDRESS);
-> +	memset(&addr4.sin_zero, '\0', 8);
+I might be missing something too, but I'm thinking of patch 4/4 in
+this series that starts with this sentence:
 
-Please don't mix declaration and code. Follow the 
-./scripts/checkpatch.pl recommendations, except the "braces {} are not 
-necessary" for tests (not kernel) code because of ASSERT_* macros.
+ "BPF LSM hooks have side-effects (even when a default value is
+  returned), as some hooks end up behaving differently due to
+  the very presence of the hook."
 
+Ignoring the static call changes for a moment, I'm curious what it
+would look like to have a better mechanism for handling things like
+this.  What would it look like if we expanded the individual LSM error
+reporting back to the LSM layer to have a bit more information, e.g.
+"this LSM erred, but it is safe to continue evaluating other LSMs" and
+"this LSM erred, and it was too severe to continue evaluating other
+LSMs"?  Similarly, would we want to expand the hook registration to
+have more info, e.g. "run this hook even when other LSMs have failed"
+and "if other LSMs have failed, do not run this hook"?
 
-> +
-> +	const struct rule rules[] = {
-> +		{
-> +			.path = dir_s1d2,
-> +			.access = ACCESS_RO,
-> +		},
-> +		{},
-> +	};
-> +
-> +	struct landlock_ruleset_attr ruleset_attr_net = {
-> +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
-> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +	};
-> +	struct landlock_net_service_attr net_service = {
-> +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-> +
-> +		.port = htons(sock_port),
-> +	};
-> +
-> +	/* Creates ruleset for network access. */
-> +	const int ruleset_fd_net = landlock_create_ruleset(
-> +		&ruleset_attr_net, sizeof(ruleset_attr_net), 0);
-> +	ASSERT_LE(0, ruleset_fd_net);
-> +
-> +	/* Adds a network rule. */
-> +	ASSERT_EQ(0,
-> +		  landlock_add_rule(ruleset_fd_net, LANDLOCK_RULE_NET_SERVICE,
-> +				    &net_service, 0));
-> +
-> +	enforce_ruleset(_metadata, ruleset_fd_net);
-> +	ASSERT_EQ(0, close(ruleset_fd_net));
-> +
-> +	const int ruleset_fd = create_ruleset(_metadata, ACCESS_RW, rules);
-> +	ASSERT_LE(0, ruleset_fd);
-> +	enforce_ruleset(_metadata, ruleset_fd);
-> +	ASSERT_EQ(0, close(ruleset_fd));
-> +
-> +	/* Tests on a directory with the network rule loaded. */
-> +	ASSERT_EQ(0, test_open(dir_s1d2, O_RDONLY));
-> +	ASSERT_EQ(0, test_open(file1_s1d2, O_RDONLY));
-> +
-> +	sockfd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
-> +	ASSERT_LE(0, sockfd);
-> +	/* Binds a socket to port 15000. */
-> +	ASSERT_EQ(0, bind(sockfd, &addr4, sizeof(addr4)));
-> +
-> +	/* Closes bounded socket. */
-> +	ASSERT_EQ(0, close(sockfd));
-> +}
-> +
->   TEST_HARNESS_MAIN
-> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-> new file mode 100644
-> index 000000000000..b9543089a4d3
-> --- /dev/null
-> +++ b/tools/testing/selftests/landlock/net_test.c
+I realize that loading a BPF LSM is a privileged operation so we've
+largely mitigated the risk there, but with stacking on it's way to
+being more full featured, and IMA slowly working its way to proper LSM
+status, it seems to me like having a richer, and proper way to handle
+individual LSM failures would be a good thing.  I feel like patch 4/4
+definitely hints at this, but I could be mistaken.
 
-[...]
-
-> +FIXTURE_TEARDOWN(socket){};
-
-Remove such trailing ";" and format with clang-format for both 
-FIXTURE_TEARDOWN().
-
+--
+paul-moore.com
