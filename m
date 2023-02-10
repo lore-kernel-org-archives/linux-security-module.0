@@ -2,132 +2,104 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 170D7C64EC4
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Feb 2023 17:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC17BC636CD
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Feb 2023 17:35:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232879AbjBJRcy (ORCPT
+        id S232516AbjBJRfH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Feb 2023 12:32:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41960 "EHLO
+        Fri, 10 Feb 2023 12:35:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232781AbjBJRcw (ORCPT
+        with ESMTP id S232596AbjBJRfG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Feb 2023 12:32:52 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 705F678D4F
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Feb 2023 09:32:50 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id n3so4174986pgr.9
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Feb 2023 09:32:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1676050370;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VGMTFKoCBVoIuyA3qlOD8xOm7koGj1xemOk912C4V+A=;
-        b=Vn7d2rD7KGb7soIfLuYz1nXiJpWVaDMVEjgXteyCUSzsxr9Ncgw5UXzFLSbVKN4S/A
-         0cNjJaodxEQj/fEADyE0WZIGlfJzE3cvA6yuJWvmOcY8Qn0ZRFbwDDaHDLXQOmXjKGKc
-         +6YnLJWmQb25ktasgn3xtGPPz8uMe2oJdmnz0VyDW+gRGgo9/ZpuRjeshqHyQhrqC9BJ
-         coRxqszDAsqrCbcMcC9a5OSEMQXOoHhTWVUeu6/bqCxv30bjtf20ysQVu/JwpLN9Oirv
-         XqIFUU9DzANMzAhpTEARzChmzDzUQDJ7HPGzBvtmHrwHJ2Wj+5jzViU7/t0T8CXtQG3O
-         UubQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676050370;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VGMTFKoCBVoIuyA3qlOD8xOm7koGj1xemOk912C4V+A=;
-        b=z3RnO4My1J70797HS+rPCXqmiADK+N8cEBePwE5581FAd28JqN/UuW5/6oXL/TG7BP
-         8Lzbq3zhQMxPoGLZQqN58uNTNEodP4VAbMKpQvDvEzHayuBZv0g+y06o+zptvliMb/6r
-         Aa34QNgX4nrUYKMJbzl80GMzEivzGKyVWyD8N8j8LvG58qDyWoaMyywALdNkyY2dQxBM
-         uSRD3dofoLuVEoNSQ36dqOyEgW0xTX9j6Kw/fmxN+6G+0AxRnnN22tdTRYrUDJToi2Vi
-         penYXCbqRO64e6hyRds/BgGf9Yrc2XGSQiSxyIfwbYJyrvK46gsgBmTS6MSkkiBNr9ZI
-         qyew==
-X-Gm-Message-State: AO0yUKVY2Jl1gMmY5igpJeb/3iZTyuHYfeIIrB8wafLOTsUMvDvIcnYF
-        hdC/sN+wxowbrjac+ZHD4NnaI699WpThrzR6zNzU
-X-Google-Smtp-Source: AK7set+OFwR+/j/4Th5qsCUEm60XL68IDyvuTHzlxIKdhE8fa2HwbFZ2wXzS/HuuMttpavQk/9qh74WXRb4WZw948c8=
-X-Received: by 2002:a62:5f02:0:b0:5a8:5247:2589 with SMTP id
- t2-20020a625f02000000b005a852472589mr1477860pfb.7.1676050369837; Fri, 10 Feb
- 2023 09:32:49 -0800 (PST)
+        Fri, 10 Feb 2023 12:35:06 -0500
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ac])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 602D277B84
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Feb 2023 09:35:03 -0800 (PST)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PD18N0KhrzMqHj0;
+        Fri, 10 Feb 2023 18:35:00 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4PD18M2XF2zlgQ;
+        Fri, 10 Feb 2023 18:34:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1676050499;
+        bh=qq9/iBzdW2JJ7LVb5FrkmL3nT8Cyk8jQS1aBdesp2Ow=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=bE223pPu7T9gAGiAJsTtK6XLms+0odBCnUoBzhwBQrVindPNB5yE0QKyy+BxaEidy
+         K+AwcJHzSKfPCHFVZ0QZWNufG2cGNQbiOtRWdbccqVPj9ZDJFUtPu6m2/NLc2umAL6
+         t23GJ2z0PesQM6V3oEmcHP22Md/C533XceBElnyY=
+Message-ID: <97ff3f0f-1704-3003-fe60-d7444579e0d7@digikod.net>
+Date:   Fri, 10 Feb 2023 18:34:57 +0100
 MIME-Version: 1.0
-References: <20221227142740.2807136-1-roberto.sassu@huaweicloud.com>
- <20221227142740.2807136-3-roberto.sassu@huaweicloud.com> <Y64XB0yi24yjeBDw@sol.localdomain>
- <d2a54ddec403cad12c003132542070bf781d5e26.camel@huaweicloud.com>
- <857eedc5ad18eddae7686dca63cf8c613a051be4.camel@huaweicloud.com>
- <Y+VBMQEwPTPGBIpP@gmail.com> <CAHC9VhTYeqCB8roaNvWUYJeKPwT35ixJ8MMXBe0v0+a9o8CXWw@mail.gmail.com>
- <Y+XAbz6YmazGNFQr@kernel.org>
-In-Reply-To: <Y+XAbz6YmazGNFQr@kernel.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 10 Feb 2023 12:32:38 -0500
-Message-ID: <CAHC9VhQ8e96LbCSBMXoQwETJBmWvazjzSDE2X4cr3ezhaC_5uA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] KEYS: asymmetric: Copy sig and digest in public_key_verify_signature()
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Subject: Re: [PATCH v9 02/12] landlock: Allow filesystem layout changes for
+ domains without such rule type
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
+ <20230116085818.165539-3-konstantin.meskhidze@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230116085818.165539-3-konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 9, 2023 at 10:56 PM Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> On Thu, Feb 09, 2023 at 05:46:32PM -0500, Paul Moore wrote:
-> > On Thu, Feb 9, 2023 at 1:53 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > > On Thu, Feb 09, 2023 at 11:49:19AM +0100, Roberto Sassu wrote:
-> > > > On Fri, 2023-01-27 at 09:27 +0100, Roberto Sassu wrote:
-> > > > > On Thu, 2022-12-29 at 14:39 -0800, Eric Biggers wrote:
-> > > > > > On Tue, Dec 27, 2022 at 03:27:40PM +0100, Roberto Sassu wrote:
-> > > > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > >
-> > > > > > > Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
-> > > > > > > mapping") checks that both the signature and the digest reside in the
-> > > > > > > linear mapping area.
-> > > > > > >
-> > > > > > > However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
-> > > > > > > stack support") made it possible to move the stack in the vmalloc area,
-> > > > > > > which is not contiguous, and thus not suitable for sg_set_buf() which needs
-> > > > > > > adjacent pages.
-> > > > > > >
-> > > > > > > Always make a copy of the signature and digest in the same buffer used to
-> > > > > > > store the key and its parameters, and pass them to sg_init_one(). Prefer it
-> > > > > > > to conditionally doing the copy if necessary, to keep the code simple. The
-> > > > > > > buffer allocated with kmalloc() is in the linear mapping area.
-> > > > > > >
-> > > > > > > Cc: stable@vger.kernel.org # 4.9.x
-> > > > > > > Fixes: ba14a194a434 ("fork: Add generic vmalloced stack support")
-> > > > > > > Link: https://lore.kernel.org/linux-integrity/Y4pIpxbjBdajymBJ@sol.localdomain/
-> > > > > > > Suggested-by: Eric Biggers <ebiggers@kernel.org>
-> > > > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > > ---
-> > > > > > >  crypto/asymmetric_keys/public_key.c | 38 ++++++++++++++++-------------
-> > > > > > >  1 file changed, 21 insertions(+), 17 deletions(-)
-> > > > > >
-> > > > > > Reviewed-by: Eric Biggers <ebiggers@google.com>
-> > > > >
-> > > > > Hi David
-> > > > >
-> > > > > could you please take this patch in your repo, if it is ok?
-> > > >
-> > > > Kindly ask your support here. Has this patch been queued somewhere?
-> > > > Wasn't able to find it, also it is not in linux-next.
-> > > >
-> > >
-> > > The maintainer of asymmetric_keys (David Howells) is ignoring this patch, so
-> > > you'll need to find someone else to apply it.  Herbert Xu, the maintainer of the
-> > > crypto subsystem, might be willing to apply it.  Or maybe Jarkko Sakkinen, who
-> > > is a co-maintainer of the keyrings subsystem (but not asymmetric_keys, for some
-> > > reason; should that change?).
-> >
-> > It is problematic that David isn't replying to this.  I have no idea
-> > if it will work, but I just reached out to him to see if I can draw
-> > his attention back to this ...
->
-> See my response to Eric.
+Hi Konstantin,
 
-Thanks Jarkko.
+I think this patch series is almost ready. Here is a first batch of 
+review, I'll send more next week.
 
--- 
-paul-moore.com
+
+I forgot to update the documentation. Can you please squash the 
+following patch into this one?
+
+
+diff --git a/Documentation/userspace-api/landlock.rst 
+b/Documentation/userspace-api/landlock.rst
+index 980558b879d6..fc2be89b423f 100644
+--- a/Documentation/userspace-api/landlock.rst
++++ b/Documentation/userspace-api/landlock.rst
+@@ -416,9 +416,9 @@ Current limitations
+  Filesystem topology modification
+  --------------------------------
+
+-As for file renaming and linking, a sandboxed thread cannot modify its
+-filesystem topology, whether via :manpage:`mount(2)` or
+-:manpage:`pivot_root(2)`.  However, :manpage:`chroot(2)` calls are not 
+denied.
++Threads sandboxed with filesystem restrictions cannot modify filesystem
++topology, whether via :manpage:`mount(2)` or :manpage:`pivot_root(2)`.
++However, :manpage:`chroot(2)` calls are not denied.
+
+  Special filesystems
+  -------------------
+
+
+On 16/01/2023 09:58, Konstantin Meskhidze wrote:
+> From: Mickaël Salaün <mic@digikod.net>
+> 
+> Allow mount point and root directory changes when there is no filesystem
+> rule tied to the current Landlock domain.  This doesn't change anything
+> for now because a domain must have at least a (filesystem) rule, but
+> this will change when other rule types will come.  For instance, a
+> domain only restricting the network should have no impact on filesystem
+> restrictions.
+> 
+> Add a new get_current_fs_domain() helper to quickly check filesystem
+> rule existence for all filesystem LSM hooks.
+> 
+> Remove unnecessary inlining.
+> 
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+> 
+> Changes since v8:
+> * Refactors get_handled_fs_accesses().
+> * Adds landlock_get_raw_fs_access_mask() helper.
+> 
