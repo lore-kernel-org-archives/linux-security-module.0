@@ -2,87 +2,183 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AC5C05027
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Feb 2023 23:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED663C636D3
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Feb 2023 00:40:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229726AbjBIXsA (ORCPT
+        id S230299AbjBJAkZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Feb 2023 18:48:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59974 "EHLO
+        Thu, 9 Feb 2023 19:40:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbjBIXr7 (ORCPT
+        with ESMTP id S231258AbjBJAkE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Feb 2023 18:47:59 -0500
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0B24E23317
-        for <linux-security-module@vger.kernel.org>; Thu,  9 Feb 2023 15:47:57 -0800 (PST)
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 319NleVV023306;
-        Thu, 9 Feb 2023 17:47:40 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 319NleI6023305;
-        Thu, 9 Feb 2023 17:47:40 -0600
-Date:   Thu, 9 Feb 2023 17:47:40 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 02/14] Add TSEM specific documentation.
-Message-ID: <20230209234740.GA23164@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20230204050954.11583-1-greg@enjellic.com> <20230204050954.11583-3-greg@enjellic.com> <Y+TdSivplpimof7o@kroah.com>
-Mime-Version: 1.0
+        Thu, 9 Feb 2023 19:40:04 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E27DF3865D;
+        Thu,  9 Feb 2023 16:39:43 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AA3C061C32;
+        Fri, 10 Feb 2023 00:39:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A88C433D2;
+        Fri, 10 Feb 2023 00:39:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675989562;
+        bh=hvCkR1t/J0Mibwje1+vHzGzwiD5E4DAShPqq+y0oXz4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=t7IsNPRCpzmKYAxcxeb/bxM5uLLpWOCLDx00vj+qX1dBPE2+H//GKuyx6LJLvqm6n
+         tr7gKVb1Rlwx7tiO1WOuOTioD+Yc3gnsUlsrJpJO4GW96JDs6BzUBlnBwpNvBgaang
+         QIE73tuptViDmCJvmd/FUCnkGER8XmwMrdtdWKKm/KTWTW1dKwlkuHhvbZ12JHCRXE
+         C1bWcw3KMXCvQPcDXuVojttF5WWOOdI1jvSBsBNjXf0NRn4zR4SqULLbQnwWvG9OL7
+         LK3LBt3EUZgzywyQCF/T1BsYHd+PjIZviuBZDvvga0Fn1/W3he0R2GFnejmIjZWahs
+         0+xxxzf7A8VUQ==
+Date:   Fri, 10 Feb 2023 02:39:19 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        serge@hallyn.com, brauner@kernel.org, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        jpenumak@redhat.com, John Johansen <john.johansen@canonical.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Micah Morton <mortonm@chromium.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>
+Subject: Re: [PATCH v15 01/26] securityfs: rework dentry creation
+Message-ID: <Y+WSDX/zxRpxzqLP@kernel.org>
+References: <20230206140253.3755945-1-stefanb@linux.ibm.com>
+ <20230206140253.3755945-2-stefanb@linux.ibm.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y+TdSivplpimof7o@kroah.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 09 Feb 2023 17:47:41 -0600 (CST)
+In-Reply-To: <20230206140253.3755945-2-stefanb@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 09, 2023 at 12:47:22PM +0100, Greg KH wrote:
-> On Fri, Feb 03, 2023 at 11:09:42PM -0600, Dr. Greg wrote:
-> > An entry was added to the ABI testing documentation to document
-> > the files in the TSEM management filesystem.
-> > 
-> > The file documenting the kernel command-line parameters was
-> > updated to document the tsem_mode command-line parameter.
-> > 
-> > The primary TSEM documentation file was added to the LSM
-> > administration guide and the file was linked to the index of LSM
-> > documentation.
-> > 
-> > Signed-off-by: Greg Wettstein <greg@enjellic.com>
-> > ---
-> >  Documentation/ABI/testing/tsemfs              |  576 ++++++++
-
-> Ah, here's the documentation, thanks.
-
-Very good, hopefully it was found to be complete.
-
-I will respond to the control plane filesystem concerns in your
-comments in response to the patch that introduces the filesytem.
-
-> > diff --git a/Documentation/ABI/testing/tsemfs b/Documentation/ABI/testing/tsemfs
-> > new file mode 100644
-> > index 000000000000..3d326934624c
-> > --- /dev/null
-> > +++ b/Documentation/ABI/testing/tsemfs
-> > @@ -0,0 +1,576 @@
-> > +What:		/sys/fs/tsem
-> > +Date:		November 2022
-
-> It's not November 2022 anymore :(
-
-I know, we will fix all of the 2022 dates in the second spin of the
-patchset.
-
-> thanks,
+On Mon, Feb 06, 2023 at 09:02:28AM -0500, Stefan Berger wrote:
+> From: Christian Brauner <brauner@kernel.org>
 > 
-> greg k-h
+> When securityfs creates a new file or directory via
+> securityfs_create_dentry() it will take an additional reference on the
+> newly created dentry after it has attached the new inode to the new
+> dentry and added it to the hashqueues.
+> If we contrast this with debugfs, which has the same underlying logic as
 
-Have a good evening.
+nit: "Constrating this with debugfs"
 
-As always,
-Dr. Greg
+Passive form is better when there is no well-defined definition of "we".
 
-The Quixote Project - Flailing at the Travails of Cybersecurity
+> securityfs, it uses a similar pairing as securityfs. Where securityfs
+> has the securityfs_create_dentry() and securityfs_remove() pairing,
+> debugfs has the __debugfs_create_file() and debugfs_remove() pairing.
+> 
+> In contrast to securityfs, debugfs doesn't take an additional reference
+> on the newly created dentry in __debugfs_create_file() which would need
+> to be put in debugfs_remove().
+> 
+> The additional dget() isn't a problem per se. In the current
+> implementation of securityfs each created dentry pins the filesystem via
+> securityfs_create_dentry() until it is removed. Since it is virtually
+> guaranteed that there is at least one user of securityfs that has created
+> dentries the initial securityfs mount cannot go away until all dentries
+> have been removed.
+> 
+> Since most of the users of the initial securityfs mount don't go away
+> until the system is shutdown the initial securityfs won't go away when
+> unmounted. Instead a mount will usually surface the same superblock as
+> before. The additional dget() doesn't matter in this scenario since it
+> is required that all dentries have been cleaned up by the respective
+> users before the superblock can be destroyed, i.e. superblock shutdown
+> is tied to the lifetime of the associated dentries.
+> 
+> However, in order to support ima namespaces we need to extend securityfs
+> to support being mounted outside of the initial user namespace. For
+> namespaced users the pinning logic doesn't make sense. Whereas in the
+> initial namespace the securityfs instance and the associated data
+> structures of its users can't go away for reason explained earlier users
+> of non-initial securityfs instances do go away when the last users of
+> the namespace are gone.
+
+"for reason explained earlier" ?
+
+> So for those users we neither want to duplicate the pinning logic nor
+> make the global securityfs instance display different information based
+> on the namespace. Both options would be really messy and hacky.
+> 
+> Instead we will simply give each namespace its own securityfs instance
+> similar to how each ipc namespace has its own mqueue instance and all
+> entries in there are cleaned up on umount or when the last user of the
+> associated namespace is gone.
+> 
+> This means that the superblock's lifetime isn't tied to the dentries.
+> Instead the last umount, without any fds kept open, will trigger a clean
+> shutdown. But now the additional dget() gets in the way. Instead of
+> being able to rely on the generic superblock shutdown logic we would
+> need to drop the additional dentry reference during superblock shutdown
+> for all associated users. That would force the use of a generic
+> coordination mechanism for current and future users of securityfs which
+> is unnecessary. Simply remove the additional dget() in
+> securityfs_dentry_create().
+> 
+> In securityfs_remove() we will call dget() to take an additional
+> reference on the dentry about to be removed. After simple_unlink() or
+> simple_rmdir() have dropped the dentry refcount we can call d_delete()
+> which will either turn the dentry into negative dentry if our earlier
+> dget() is the only reference to the dentry, i.e. it has no other users,
+> or remove it from the hashqueues in case there are additional users.
+> 
+> All of these changes should not have any effect on the userspace
+> semantics of the initial securityfs mount.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Cc: John Johansen <john.johansen@canonical.com>
+> Cc: Matthew Garrett <mjg59@srcf.ucam.org>
+> Cc: Micah Morton <mortonm@chromium.org>
+> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> 
+> ---
+> v13:
+>   - Slight improvements in 1st paragraph of commit message
+> ---
+>  security/inode.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/inode.c b/security/inode.c
+> index 6c326939750d..13e6780c4444 100644
+> --- a/security/inode.c
+> +++ b/security/inode.c
+> @@ -159,7 +159,6 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
+>  		inode->i_fop = fops;
+>  	}
+>  	d_instantiate(dentry, inode);
+> -	dget(dentry);
+>  	inode_unlock(dir);
+>  	return dentry;
+>  
+> @@ -302,10 +301,12 @@ void securityfs_remove(struct dentry *dentry)
+>  	dir = d_inode(dentry->d_parent);
+>  	inode_lock(dir);
+>  	if (simple_positive(dentry)) {
+> +		dget(dentry);
+>  		if (d_is_dir(dentry))
+>  			simple_rmdir(dir, dentry);
+>  		else
+>  			simple_unlink(dir, dentry);
+> +		d_delete(dentry);
+>  		dput(dentry);
+>  	}
+>  	inode_unlock(dir);
+> -- 
+> 2.37.3
+> 
+
+BR, Jarkko
