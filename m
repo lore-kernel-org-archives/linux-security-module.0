@@ -2,230 +2,172 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7824FC636D3
-	for <linux-security-module@archiver.kernel.org>; Sun, 12 Feb 2023 06:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FC2C636D3
+	for <linux-security-module@archiver.kernel.org>; Sun, 12 Feb 2023 22:00:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229491AbjBLGzG (ORCPT
+        id S229613AbjBLWAj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 Feb 2023 01:55:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37334 "EHLO
+        Sun, 12 Feb 2023 17:00:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbjBLGzF (ORCPT
+        with ESMTP id S229581AbjBLWAi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 Feb 2023 01:55:05 -0500
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D212514233
-        for <linux-security-module@vger.kernel.org>; Sat, 11 Feb 2023 22:55:03 -0800 (PST)
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 31C6sfvD007305;
-        Sun, 12 Feb 2023 00:54:41 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 31C6se2B007304;
-        Sun, 12 Feb 2023 00:54:40 -0600
-Date:   Sun, 12 Feb 2023 00:54:40 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-security-module@vger.kernel.org, paul@paul-moore.com
-Subject: Re: [PATCH 08/14] Implement TSEM control plane.
-Message-ID: <20230212065439.GA5189@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20230204050954.11583-1-greg@enjellic.com> <20230204050954.11583-9-greg@enjellic.com> <Y+TZa60YQlehJtJu@kroah.com> <20230211001806.GA30741@wind.enjellic.com> <Y+d1B2+McB0pxuOn@kroah.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y+d1B2+McB0pxuOn@kroah.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sun, 12 Feb 2023 00:54:41 -0600 (CST)
+        Sun, 12 Feb 2023 17:00:38 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00206DBE6
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Feb 2023 14:00:36 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id on9-20020a17090b1d0900b002300a96b358so10442172pjb.1
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Feb 2023 14:00:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=66Qj76jDtLqMKQ1ONBOOUWaAju4+iVhgaW6iZJJpGeI=;
+        b=GI1qAntTuk3fnNN77umUgFisba+NJvlyh/e0bPmzAv/DnZliruV0m8iu6UD23shTCs
+         0398ZN2XKGl4V03203RX/E2i0nX0l1iPYAopHL2aJgHxLjOdqRZkfwcfuflM4tWl5cpI
+         Weprd4AAdiy4TFt459usO3mn4YpT7+U/MUlnDrj2/7EWuwLIqoq68+GKhMY/m19gEhXz
+         peSYI5XeObqH0n/uWb0oYttxEUD/hHqrKGYPSIPv6EiGp81JSWNUX1us0lxH8wmPbi9S
+         FpL/4cu+ghau+TsUDBtXmO1ZIOOP4qpOkn3UnOaZ+fXQdR1CFv0LDKCGNyzKqpv1KSTU
+         PD7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=66Qj76jDtLqMKQ1ONBOOUWaAju4+iVhgaW6iZJJpGeI=;
+        b=zZAfZbn+a/KAVNBZuca9aRJQ2cgM2nK9D3mPYPP9OMP0VIDJUiRScxKZePcGhZMmoN
+         2bXQqt6Oz+B7uxKliKeSNUbiYPJ5v0SV1j0aKlbXcDULvQ97ytSZe0BjJmBwNrYkAmS0
+         KWKF9Sc0KOzP6ZMVGOBsxuUNNoYWQUfmbvx11255ZhxtK/VHU4k9szf1digc4lQcJmCT
+         fxrP69UfQmgfoa0lL4Lw0bor+Hp912zPwHg7sFI/Pap30UfqvAPgsuqjM4cVllII741S
+         Z0CcIU9mSfZzzaa579tcsTdh0rpfQe+6DaHUa4U73PI1bdQo7vpHNshjjn+I441tLDKW
+         ZXJA==
+X-Gm-Message-State: AO0yUKXRZ6pkr1QS/UdQQyuppGRCxfCtbDJZ6QQnHStp3iB2BEzWzeVt
+        +CNwI6lqCQydqP46lKJd8AWGP7Pzh3R7+qr9Make
+X-Google-Smtp-Source: AK7set/hNH8kF86n5/5FzMu5RNAjME7KLuHBESyzfUOoDICk6MkHS+QwhaDATiqEVX08S8kKI+0Vo/dntv+YeTsHAu4=
+X-Received: by 2002:a17:90a:4f85:b0:22c:41c7:c7ed with SMTP id
+ q5-20020a17090a4f8500b0022c41c7c7edmr4034565pjh.61.1676239236187; Sun, 12 Feb
+ 2023 14:00:36 -0800 (PST)
+MIME-Version: 1.0
+References: <20230119231033.1307221-1-kpsingh@kernel.org> <CAHC9VhRpsXME9Wht_RuSACuU97k359dihye4hW15nWwSQpxtng@mail.gmail.com>
+ <63e525a8.170a0220.e8217.2fdb@mx.google.com> <CAHC9VhTCiCNjfQBZOq2DM7QteeiE1eRBxW77eVguj4=y7kS+eQ@mail.gmail.com>
+ <98799a20-1025-3677-d215-69b13ac73ee5@schaufler-ca.com>
+In-Reply-To: <98799a20-1025-3677-d215-69b13ac73ee5@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sun, 12 Feb 2023 17:00:25 -0500
+Message-ID: <CAHC9VhTo=VDuFFfX7o__CRwbHTT-OTDBQ090-ZwbTRQYdO-_Gg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/4] Reduce overhead of LSMs with static calls
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Kees Cook <keescook@chromium.org>, KP Singh <kpsingh@kernel.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
+        renauld@google.com, song@kernel.org, revest@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Feb 11, 2023 at 11:59:19AM +0100, Greg KH wrote:
+On Fri, Feb 10, 2023 at 9:32 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 2/10/2023 12:03 PM, Paul Moore wrote:
+> > On Thu, Feb 9, 2023 at 11:56 AM Kees Cook <keescook@chromium.org> wrote:
+> >> On Fri, Jan 27, 2023 at 03:16:38PM -0500, Paul Moore wrote:
+> >>> On Thu, Jan 19, 2023 at 6:10 PM KP Singh <kpsingh@kernel.org> wrote:
+> >>>> # Background
+> >>>>
+> >>>> LSM hooks (callbacks) are currently invoked as indirect function calls. These
+> >>>> callbacks are registered into a linked list at boot time as the order of the
+> >>>> LSMs can be configured on the kernel command line with the "lsm=" command line
+> >>>> parameter.
+> >>> Thanks for sending this KP.  I had hoped to make a proper pass through
+> >>> this patchset this week but I ended up getting stuck trying to wrap my
+> >>> head around some network segmentation offload issues and didn't quite
+> >>> make it here.  Rest assured it is still in my review queue.
+> >>>
+> >>> However, I did manage to take a quick look at the patches and one of
+> >>> the first things that jumped out at me is it *looks* like this
+> >>> patchset is attempting two things: fix a problem where one LSM could
+> >>> trample another (especially problematic with the BPF LSM due to its
+> >>> nature), and reduce the overhead of making LSM calls.  I realize that
+> >>> in this patchset the fix and the optimization are heavily
+> >>> intermingled, but I wonder what it would take to develop a standalone
+> >>> fix using the existing indirect call approach?  I'm guessing that is
+> >>> going to potentially be a pretty significant patch, but if we could
+> >>> add a little standardization to the LSM hooks without adding too much
+> >>> in the way of code complexity or execution overhead I think that might
+> >>> be a win independent of any changes to how we call the hooks.
+> >>>
+> >>> Of course this could be crazy too, but I'm the guy who has to ask
+> >>> these questions :)
+> >> Hm, I am expecting this patch series to _not_ change any semantics of
+> >> the LSM "stack". I would agree: nothing should change in this series, as
+> >> it should be strictly a mechanical change from "iterate a list of
+> >> indirect calls" to "make a series of direct calls". Perhaps I missed
+> >> a logical change?
+> > I might be missing something too, but I'm thinking of patch 4/4 in
+> > this series that starts with this sentence:
+> >
+> >  "BPF LSM hooks have side-effects (even when a default value is
+> >   returned), as some hooks end up behaving differently due to
+> >   the very presence of the hook."
+>
+> My understanding of the current "agreement" is that we keep BPF
+> hooks at the end for this very reason.
 
-Looping in Paul Moore in order to get his thoughts.
+It would be nice to not have these conventions.  I get that it's the
+only knob we have at the moment to tweak, but I would hope that we
+could do better in the future.
 
-> On Fri, Feb 10, 2023 at 06:18:06PM -0600, Dr. Greg wrote:
-> > On Thu, Feb 09, 2023 at 12:30:51PM +0100, Greg KH wrote:
-> > 
-> > Good afternoon Greg, thanks for taking the time to review the patches
-> > and pass along comments.
-> > 
-> > > On Fri, Feb 03, 2023 at 11:09:48PM -0600, Dr. Greg wrote:
-> > > > The fs.c file contains the implementation of the TSEM control
-> > > > plane that is in the form of a pseudo-filesystem mounted on the
-> > > > following directory:
-> > > > 
-> > > > /sys/fs/tsem
-> > 
-> > > Why are you using sysfs to mount this?
+> > Ignoring the static call changes for a moment, I'm curious what it
+> > would look like to have a better mechanism for handling things like
+> > this.  What would it look like if we expanded the individual LSM error
+> > reporting back to the LSM layer to have a bit more information, e.g.
+> > "this LSM erred, but it is safe to continue evaluating other LSMs" and
+> > "this LSM erred, and it was too severe to continue evaluating other
+> > LSMs"?  Similarly, would we want to expand the hook registration to
+> > have more info, e.g. "run this hook even when other LSMs have failed"
+> > and "if other LSMs have failed, do not run this hook"?
+>
+> I really don't want another LSM to have sway over Smack enforcement.
 
-> > We followed the lead of the SMACK and SeLinux LSM's, both of which
-> > create the mount points for their control plane filesystems in
-> > /sys/fs.
-> > 
-> > In addition, as a filesystem, we chose to have tsemfs closely follow
-> > their design for continuity across the LSM's.  So they share similar
-> > functionality and design, modulo of course, the event description and
-> > trajectory export files that we will chat about below.
-> > 
-> > We can't use securityfs, secondary to the fact that it doesn't
-> > implement pollable files, which are a requirement for trust
-> > orchestrators based on external Trusted Modeling Agents.
+I think we can all agree that the one LSM should not have the ability
+to affect the operation of another, especially when it would cause the
+violation of a different LSM's security policy.
 
-> Why not fix securityfs to provide pollable files?  Other than that,
-> why can't you just use securityfs?
+> I would hate to see, for example, an LSM decide that because it has
+> initialized an inode no other LSM should be allowed to, even in an
+> error situation. There are really only two options Call all the hooks
+> every time and either succeed on all or report the most important
+> error. Or, "bail on fail", and acknowledge that following hooks may
+> not be called. Really, does "I failed, but it's not that important"
+> make sense as a return value?
 
-Now that we have had some additional bandwidth to look at issues after
-the first round release, it may be more straight forward to implement
-the pollable files in securityfs than we thought.  We will take
-another run at this and see what is possible without having to meddle
-with the internals of securityfs proper.
+Of the two things I tossed out, richer return values and richer hook
+registration, perhaps it's really only the latter, richer hook
+registration that is important here.  It would allow a LSM to indicate
+to the LSM hook layer how the individual hook implementation should be
+called: always, or only if previously called implementations have not
+failed.  I believe that should eliminate any worry of a BPF LSM, or
+any LSM for that matter, from impacting the security policy of
+another.  However, I will admit that I haven't spent the necessary
+amount of time chasing down all the hooks to verify if that is 100%
+correct.
 
-As the diffstat for the patch series indicates, we spent considerable
-time working to implement TSEM without touching anything outside its
-implementation directory.  I think this is something that anyone who
-has tried to upstream functionality into the mainline kernel would
-understand the merit of.
+> > I realize that loading a BPF LSM is a privileged operation so we've
+> > largely mitigated the risk there, but with stacking on it's way to
+> > being more full featured, and IMA slowly working its way to proper LSM
+> > status, it seems to me like having a richer, and proper way to handle
+> > individual LSM failures would be a good thing.  I feel like patch 4/4
+> > definitely hints at this, but I could be mistaken.
+>
+> We have bigger issues with BPF. There's nothing to prevent BPF from
+> implementing a secid_to_secctx() hook and making a system with SELinux
+> go cattywampus. BPF is stacked as if it isn't a "major" LSM, while
+> allowing it to do "major" LSM things. One reason we need full stacking
+> is to address this.
 
-Paul, I know you are busy, but if you can, weigh in briefly with any
-thoughts you may have on where we put the control plane so we can
-optimize everyone's time with the second spin of the patch set.
+That's a different issue, and one of the reasons why I suggested
+taking an all-or-nothing approach to stacking many years ago, but ...
+well, you know how that worked out.  I promise to not keep saying "I
+told you so" if you promise to not keep bringing up LSM stacking as
+the answer to all that ails you ;)
 
-> > > > +static void show_event(struct seq_file *c, struct tsem_event *ep, char *file)
-> > > > +{
-> > > > +	seq_printf(c, "event{process=%s, filename=%s, type=%s, task_id=%*phN}",
-> > > > +		   ep->comm, file ? file : "none", tsem_names[ep->event],
-> > > > +		   WP256_DIGEST_SIZE, ep->task_id);
-> > > > +	seq_printf(c, " COE{uid=%d, euid=%d, suid=%d, gid=%d, egid=%d, sgid=%d, fsuid=%d, fsgid=%d, cap=0x%llx} ",
-> > > > +		   ep->COE.uid, ep->COE.euid, ep->COE.suid, ep->COE.gid,
-> > > > +		   ep->COE.egid, ep->COE.sgid, ep->COE.fsuid, ep->COE.fsgid,
-> > > > +		   ep->COE.capability.value);
-> > > > +}
-> > 
-> > > You are printing out a lot of specific data in a specific format
-> > > that is documented no where that I can see :(
-> > 
-> > It appears you found the ABI documentation in the second patch that
-> > was posted in the series, hopefully it was found to be complete, we
-> > are currently in 13th position out of 494 files with respect to
-> > quantity of ABI documentation... :-)
-> > 
-> > For the sake of 'lore':
-> > 
-> > After applying the patch series, the control plane API is documented in the
-> > following file:
-> > 
-> > Documentation/ABI/testing/tsemfs
-> > 
-> > The TSEM LSM documentation proper will be in the following file:
-> > 
-> > Documentation/admin-guide/LSM/tsem.rst
-> > 
-> > Where we currently hold the poll position.
-> > 
-> > > Also, you are making the same mistake that /proc made decades ago,
-> > > creating files that must be parsed and can NEVER be changed in the
-> > > future.  Why not make this a one-value-per-file filesystem instead
-> > > so that you have flexibility going forward?
-> > 
-> > Personally, I've been working on Linux since late 1991, so we, as a
-> > team, are well aware, and sensitive, to the issues and discussions
-> > surrounding the file formatting decisions that were made with the
-> > /proc filesystem.  So we did not make the decision with respect to
-> > formatted output lightly.
-> > 
-> > In fact, I presumed that the top two things we would hear about with
-> > respect to TSEM, would be about the introduction of CAP_TRUST from
-> > Casey and the format of the event export and execution trajectory
-> > files from you.
-> > 
-> > The issue is that the kernel needs to present to trust orchestrators,
-> > a description of each LSM security hook, in the form of an atomic
-> > update or transaction.
-> > 
-> > To help clarify the discussion, here are examples of records that are
-> > output for a file_open and socket_bind hook event:
-> > 
-> > pid{1186} event{process=quixote-us, filename=/opt/Quixote/bin/runc, type=file_open, task_id=0000000000000000000000000000000000000000000000000000000000000000} COE{uid=0, euid=0, suid=0, gid=0, egid=0, sgid=0, fsuid=0, fsgid=0, cap=0x3ffffffffff} file{flags=32800, uid=2, gid=2, mode=0100755, name_length=21, name=4829ead93d026770746f9cdebc76cc4d2a27f45db2d3ac436aa6fce4e2640415, s_magic=0xef53, s_id=xvda, s_uuid=feadbeaffeadbeaffeadbeaffeadbeaf, digest=7c1a43eb99fa739056d6554001d450ca1c9c184ca7e2d8a785bd1e5fd53bad8c}
-> > 
-> > pid{1204} event{process=ncat, filename=none, type=socket_bind, task_id=a5bc0eb22141657132f29e80ca6ea9b211e8443ead1f4b6b766935a14995040f} COE{uid=0, euid=0, suid=0, gid=0, egid=0, sgid=0, fsuid=0, fsgid=0, cap=0x20000420} socket_bind{family=2, port=28695, addr=0}
-> > 
-> > TSEM is currently modeling 84 LSM hooks.  We would certainly be open
-> > to suggestions as to how we would architect the one-value-per-file
-> > filesystem model in a manner that would scale, both with respect to
-> > pseudo-filesystem complexity and system call overhead.
-
-> You are creating a new structure-type-api here, why not use a
-> already-designed protocol instead like varlink if you need userspace
-> to parse events in an atomic way?  Or heck even json would be better
-> as there are universal userspace tools for that today.
-
-As an industry, we are in the middle of a software supply chain
-security crisis.  In a trust orchestrated architecture, the trust
-orchestrators, and their Sancho TMA implementations, are the most
-security critical components on the system.  Our objective is to keep
-the supply chain footprint for Quixote as small as possible.
-
-To that point:
-
-size /usr/local/lib/libyajl.so.2.1.1:
-   text    data     bss     dec     hex filename
-  33333     784      16   34133    8555 /usr/local/lib/libyajl.so.2.1.1
-
-size /u/usr/sources/quixote-1.4/SecurityModel/EventParser.o
-   text    data     bss     dec     hex filename
-   2520       0       0    2520     9d8 /u/usr/sources/quixote-1.4/SecurityModel/EventParser.o
-
-If we were to use JSON, we would use yajl, it is probably as light as
-anything out there.  Given that, on face value, this would represent
-over an order of magnitude increase in code size to achieve the same
-objective, plus add an external dependency.
-
-We can't claim to have dealt with varlink very much, but that actually
-may make sense, down the road, given that TSEM can be conceptualized
-as being about advertising resources that a client application needs
-to provide a security service to the kernel.
-
-Hopefully our concerns about software dependency issues make sense,
-given the context that we wrote, and released, as part of Quixote, a
-complete SGX Platform Software Implementation in order to avoid
-exposing the SanchoSGX implementation to the 20+ shared library
-dependencies that come with the Intel SGX software stack.
-
-> Or use the audit interface, this feels very close to that, why not
-> just tie into that subsystem instead?
-
-I'm not sure the audit system is a good fit for all of this, but I
-will defer to Paul on that, given that he stewards over audit as well
-as the security sub-system.
-
-So, I was doing some thinking, while I was cross-country skiing for
-about 10 miles across what the weather service is calling the glacial
-icepack that is currently covering our wheat and soybean fields out
-here in eastern North Dakota.
-
-How about this for an idea, why don't we let the trust orchestrators
-select the output format for the security event description interfaces?
-
-We can start with the format that we are currently using and then add
-things like varlink or other alternatives down the road.  That allows
-different trust orchestration implementations to select what they feel
-is the most desirable output format and doesn't lock the kernel into a
-specific ABI format until we are actually covered by the next ice age.
-
-Unless I miss my guess, in 25 years, if we have a reunion of trust
-orchestration architectects, it will be pretty cheap to buy a round of
-drinks, even if everyone is drinking 25 year old McAllen.
-
-Paul, thoughts, given that if we move this to securityfs it will be
-completely in your domain?
-
-> thanks,
-> 
-> greg k-h
-
-Have a good remainder of the weekend.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
+-- 
+paul-moore.com
