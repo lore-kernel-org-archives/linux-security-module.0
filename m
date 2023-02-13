@@ -2,214 +2,181 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA4EC6379F
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Feb 2023 18:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1A8C6379F
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Feb 2023 18:14:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229832AbjBMSCY (ORCPT
+        id S229641AbjBMSOk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Feb 2023 13:02:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45908 "EHLO
+        Mon, 13 Feb 2023 13:14:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229796AbjBMSCX (ORCPT
+        with ESMTP id S229648AbjBMSOk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Feb 2023 13:02:23 -0500
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CFB6166DF
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Feb 2023 10:02:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1676311339; bh=thJs4ClSmOLBC+CkiUuia+gADz4iDjPF3AwZ+FR51wA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=aUPLJ1mukrb+3PVqQnoDj5wrSLa7IxqqzdPC7vQZT4p97+CxTwE/XhhDhyJUaMeCRD261AGGk9BvIbXEuMzrZ4Amu9St59Yvd7bHUxjdViBiGNv8LDsvhXokrGnA6qZHzKXrQecAI23LhVb98X/VszwLULxPFzioczh+8XT8uKZIC5V2ndWzaKSPzgMNALxDYRmtTEWKao/lChjagadq4OV/P6MBoMIhvuCGkY0/L9B29Yk+V1pLOR9+yqo2WoMZD+rOfJeop65K9gWybCLMZESzjTa9OSYSBIw3BKvsGZ9hMytl5HMtSLhWcXbquz2V/V4PgQ5AtBHIP0DO7kO4YQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1676311339; bh=914jzUAEXgJ4D3MxKzCvC/wySFMTIV/GDUX0jGcnKxF=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=l3dDlLKZpirqujoPRMfwPqwjMESjMa9gFqXzu+wiMs9PRYhI72vBBBS9VmFvLPBAnXy1DckRreBwz8qXsEaL4tTs1F4bg6w3nTnnCMxiM+Aj0VSEWzzKGN4N+GPhW8CHL/WVB2NngmpUcBlpf+x/9jCA4sNTW9digZLWdBTeupavkJrTrzZd74ntXPN3djmyY6UdrvD9q394CJ654yqOVWBw/8CLQf6/QecbYF/raMDHBVzLrKI2jJHtzRMUmVng4JwPpuHjjO8K9Rpl+Jm4n2RHDXDfEF1AfMf4qN/4K3oxaq7BWuobDq/83RwENkbBnq6a+nsAZOOL6S5mzxDCWA==
-X-YMail-OSG: hDuQzZoVM1m0LhRtKLSgAFu2auAUY_ESJF5ZrdFcKfrt6UYp2dP3EZg3eRaIw8T
- LYTAmQDAdrrsCG6tPvdCTD3DaUNXbG0qtXaj08Q_qtIXsvTQmUG2BbPhotDCmtV5Wdr4KFGeuBXu
- WnRJZS7obZAG2u0p317_DnQnQiEJkDCFByPy4swuBWrf2zWtKk6nl7Pqa9jaqvvrxSua3O0.Uau_
- Vxc.lE7.DKX.uP.Y8cHJ9FVoNi8ZlDQhG5BSAMhEGfTAnEjfzTuRUt.YGSH6diTEkl64IQMmCg_P
- NZ8vrVyuz_9dJYJAgm0WhrGzje4pVOlWs5bzcaY9ADPjhbd3o.W6IC3Wqcy1hdM.SvmABGDVMYvG
- ZLqxxVf80Vz9T7Kd2mAQApxd5QQjSrtsdE0QbG6qBO9aTo.FRUc19mWSsBkPqHC3oNmco_Kqp5O9
- QxiwYNTM24Mm8ff.bJa.pUhpQsiy5wMW79pCzVcnS1WEKJD4NI.3DDh60nmGEli5gpghIkmzdeC9
- 4wy8P1i2WsWxu27mOFHvXRaEybMH9sYa8A8zbc3JRc3RQHANk_iJ5dcSXxVHMTiAMnFkxGddw4C3
- uLqiBTqrT1QTSdpnCMvZOD0qfiAHhlEQq1x552w4l9VlYoCVmlNo9jHM8udMtPOdBPl4xqMsXFeT
- 6YTv.3gsqoxGPZsVMs8EnjsfFUl6oJsZ9DRb9xZ0QrpRcnSs4TZGqyyWkOUPUG8J7u9IkBONHoC6
- mIjTY5RpUi9QMay4_QAHLNcldNE82xhdNbG6BPxG9gfNOlhxuZWGNMx0StabjslIpsNiyeeUtsOu
- mSDNyuYd1r0Hsk1Hy1RvcrYNOlg.yg18i_3uaMiw3PFM_6ukEiDCHcSaNPj7iHpgCYfXhZP0g5n8
- c1KRtw7Bbd3xltvJRk0vlo30TRUQoWWkqojPRGYMk7rsPhV6n9Vd2W17uMhkjKmSLwdlpIpWrSMl
- MEEiPpUFQ1nqMhWiT1wldwzPfHIiyrL0yUH7yZNr1p.1OjTuxFa0hPK.FkzpnUe2exftbyKji5TM
- EzsTerIr0E8XO.j94PgiK6iB7C4.lg0btTqKpBWIWSme6NF0Jd1HghgtC.4FYKN.5gUEc5ZSFtHT
- otDTva58tOnQ5iVsdxj6j7VvVEEFxNH0vHoathHYV5XCjKOI9uIFq75GaS0AcQQia6.M4JMTPOro
- RQCYpy9eu2XiJXLsBFIaNklqJzqs52Tpx_tz38pMb6cUdT6Eu5f85koehHWeH3IaR8.DmEkpTP8G
- PmScy.vnyS3_cdxEANiIw.WAW1YjofS80sGmbBVYrinXaKL10B7LZYWYpxM8bfwNqpsnUTu6yMy2
- q9rhOIDENS8wBODtXajrnOinEPY8svfEISz_XT1MDlkpIdx.4CraGIV8KHS6GyTjMwsagXe4u7hF
- H15bNlbwLlZng2jbeI5ZhM0eao9IbAKuWKmpPfqxNNKFqk6nakQNc5E2Qj_DNIL9BQGnk3ZFXSu3
- R59Tn4zhafU0wP679BnXlsErUt1Q44d_q5KL_EHnHZBAlpysKBUtDxSzgpgdyQJuGtnRSolLijsm
- rOdK56NO8e_3vY0K6QiOJcUBNFDN_6wfbrEPrv4ntu.Bqchb2tu6XyRuSj8vNRctw_YUI89vTDUp
- he6NDPN2pJ3EjMddO4AWNdJ8ipy2TJnfs4E2xDT7DhcjwXwN7IUSc40FFN9wbKnkLF1kyUtA_gLB
- 4tQ52QZ8XctexZIMw8GtiZJFYq_9opW7DD8VssL2Cfiy3BV0M44yfYASypY5ZljXZoUh6_s5SNMV
- TX77J8PZmPuVPUaQ.77zfn.sv6KeuaRvLcKgcFO0_.6W87Hq3ACB0Bp.o6TK_GnAKE9pBXuangMR
- 5.sli.bTvlkqHOlkV5DMvKqjOyPCu9RmBIr4PpJ2BU5nQ8CHOjYQ1G4jMriges0qCZoltVluBybK
- sASbKxPgv7pOM65cPc5KZVY.aoRVTZg.EaFqcFZdGwEEjp4bJwhcJfpiJMZ9knp_N6ITz8actVjg
- X6xImbeX2UrEVSGgrfLwRaglgu.nJ4YwqSLyydF1Of6qYbv18TIx5HvnfeiBWxWoY22BF1aohVU8
- .obJs840zgFEbUueHPITy6imfk7.Je2FHk4Ym8J3DBsqPxN9ib_8jIQbOfknocHpUcsrLl.LqEpD
- zq5SSlkQRq6NHPFv10DLZ55qFVc72oJFZCrW64wg9QSjgzJih6mmVvCbO7_7qL72hvwCviRZJ1Tk
- oUP3IxYxOOM0SnxTt4mMaQeqwF7.fLMj6PVvKfZp1tNdQMy8kqTbYa11JiBGIZghsZzqNpXA-
+        Mon, 13 Feb 2023 13:14:40 -0500
+Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D569196
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Feb 2023 10:14:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1676312078; bh=RKMD+yY8dulLx8938IJ/Cp89VmQElQ25HeNolFr7j4A=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gXW1iKcRR5Soxr9IGCtuHXeBX0FxaNQ9p7TjgOJqnILO7gnky7J/NFb2toHF2GIANuCy3zffBn8fe6sJRuq1/ZEIZSD1d2B5wvvRfG8GUMkNy13NVlr6NuQZwsZ3qo14SISjMbvf7Dv1iwFK39ZnYk3c8MqRUo3qQOVZtNGLWNllddhUio2bdFwP3bVIgP4Rf69Sfzy9Rt8QN86SCbIap10RWd6dqQSd/8mte2usydC2Zl7UTIFJ66d0yaSvLp/tAlBbEQbu3Bx1wbXbEjk8GPR+lH/DTwb6fWiQ7aXfJGUefVN/ySAOno2Gd1B3E9ny0+wtSXTPP2UhOwXn0xfWPA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1676312078; bh=1rb4ieo85mhQGYb3/WfSSQXphZXGJHXCTtIcnVpqou8=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=FhdCfQ3yf3wwADKc4bsbhcSbSw9j8/FS/67imX6Htso+GlhEst/w5SYcB/H01jNzjguPkDECE/Ug0NbLC+QypJ1uPIJrEIeyVOAZa9JpfPNpowD+am4xpicvjRcsQ47rP5Rexv8v5sOciXHxGpZx4xegDsphwDAEC97hcnHfAvG1ioUGCO2YREzSSshmLLzUOeepgjxuh0v8LE02Or1Rgb0W9OFSAnqqgZBLlFt0AXGS6HqY4wAVJAhNA53MHDMfoaWy8XwxoFBXicFNBimVU40CH0cHzWSRz/Eb0Rni18B4HtyeHq+Dt69D3mhIiBIog/2WCYjN22Qmf+OuEL9lUw==
+X-YMail-OSG: wbqsAxMVM1k6feaekGr9lFJG4Cg_9YQ1XuxkNFKdnwYE4lvlGcwNEVlpzFJCLRn
+ kYQ1ShMEM4mpq3SMa8jR0c.vbicMP.gJ8UTgP9gbJstU0jjFbLSnZE6.6fq_7BLhPk4WxYmdnRsD
+ 1Pkrf1d5CeLMRkLvoeA38XysDRF2.0RxNEK58N4LlwOj_HVmW_NTTHa_e.QvrgjKKKWSM2fhhNa9
+ MdAS5e1qPdiUmxDUgcUrqpYY.9JEFOUJr2n_OHzR7YOjTlMET_G7nnsKIhyp7WzZWrzLYXLPHcsZ
+ 6PlTW0njy9pT9j5vIn2JspLP6P18_9PZuwZqV._YZiJ6NuisMu1Bgq9Bgg6KE5FjAryWdpOZ7NYS
+ OyP97SQRXvYdcj8WE7Sju_SsTkJMaFiSmjWORPwODHA2BxwSo48tJikAhiaN0Y7w96z2VvzFCIkm
+ 9a5ED1LdWyzMy19yHzRAFImoADIpSCWF6UFBiPU7Nq50CCCwzxCtiOJhsxvPAswWBZyS6DWfCJl9
+ hLm8f1iECGKuAJQpGoVxQ6LBlGXQLT6pyZTBA5ukbmYN1Fd0_dqLaF59ihKlPgEYNgv5qznSmhTi
+ KrnFVpHtr_BISiqnexCden8QXxIlxcZhx4ReZnWhB8DM4YLE19HzzeamX442IsNUcr_yz7YPW4PR
+ BW05AEijSZQxpH0TNnSlGgkfRf7uVdJ.mty2p80NoMCfhIAGI7szmi0aOVUnrbRAxFl9Fkkaxp1p
+ _GjEfYbIH5AoYKmj_1FZFIPFIXEnjs_sHzO4h1G3eSkV6fgvhAtwEQ_SxuuJnsgJBtsqx7.zZCja
+ HrKcJsy3Ir6Yz6qfcXsa3NIoI8XmBZzNHhb4ccWMh2RDEDqG0bbMzYvQp9KuZtplpaXCLDIeJZHL
+ uDOW4zZW6fd64Qkeu0WNd.czflDtztStKWSl4SCuRiKJA4vyz7o0_BNXgU5LSavIAsS.7hM3qk6F
+ 4lrUXWYavP21NgqW05MU3.MmAamR_MT4za7ptHjYjtCJ25GHmEVVOM49WV_twXrQwfpebsJSmo.B
+ HhiV9UzNYsHxz1hLr2M6xCzePP3vb_esKZfAw6zFfkLngF.4llw1n.717QAKaSQIHb2FiM_4R1Yo
+ nscqZV1k8Y3dNsVSzKnjLzQkozxzKf.1Rfe4ZyfYWgg_xvLemy1ZJAl1l1U2aO7.HysJD4rPGiTF
+ S1.jrJVLrF8fMK7J9yBSu2TyARrNGe8kjVuJ8jrgkqsCWjWWbsGvwkcn5uz2uOzY3FXmI.tJQObO
+ 00tef5OEw3uf.PWVAOSFpFTSuwNuUR7ENdgppxxf3axgstrsauUVj_4tASCIHVqT5HFpo6v07jGO
+ iITLKYTxaSqgBQeEpBu5CbvX3tboJQGKzlFdDf9mAmn8qcc1qB9juND9ATgBwhMvqxciFyhfkBQz
+ r_nYCn7XPbmj8c47ZLEOXpnd7aWptt2AbQtdYHafpYDtZ4_khh8cLIHrSCJkxUh3mnHIvfCEYOrv
+ of_YfpaztjCoO1KPhHMpA.N02YPugmhRZPdEFBhf03X5T0ORZsXpJMcRI1_H_PzjlBylbbAYJZsg
+ o3CsTKpY6NvzqXKwLrY6YHfmf32aSLjVcTAlEfw0PR6Dh_FE.suH6EWJ6BIPKt2GHf7jMKF1VOUJ
+ fMwC64jYDntAkpTf8cw.05wpybKwpsGEH9b0qub0BqBQNj9zarvk0CdKnB4sCRi0Sc2ItzAFbn.F
+ GUep58q4F2Kh0amnEf874KlGZDdQJaLX8KIszA0vVW0FsoUK.ihmNRBOcbyfSw9nQRs5Nc0.HM_O
+ c1yuonvbgf9LyY0.DN3xVd_p3NBVDvvtM2jYrzv58o8nePufpbhPdWV9fqU0EYI1T4zeN88ZQbE7
+ arYCYGz9B7znkAqoB_RDEYvG6YnuHsQIkyQ_._Cp1EEaPFpJ.s6cVQ_qYvUUySdfYFeeGmE14r65
+ .q_55s_yYsnDD93q608s.oGMX5BFJjQki9gfP4QPyo0bAKbJx4FVYszAEmD6Beb49dLLT_EGgvMF
+ btU8EFit8Bz5ikLPPFDobk26IvkpAy6EPLkg1AYXANg9e0f_hy.m.sJIhlI23PQ2D6jYKC0A8dao
+ lUjtn4E8w7WYp0ef6rh2IcEWa7vqeNKmAWsagbdPf3CWq.xzMwZDZ_4u_XSMqsNsJnr1w2jWBsJb
+ 0ca8v6DPD_5.FtvnZ_T82RbQV7WX6gEfsSodAD7GNjpf95gPjp4aVEZxZ9Qv53eckILXzixB0YbP
+ Iir4b3h9GLKGOXqr_cowMdQ--
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 13 Feb 2023 18:02:19 +0000
-Received: by hermes--production-gq1-655ddccc9-4ln2x (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f87940cc2d7ccc9948a0dc7cbd108b67;
-          Mon, 13 Feb 2023 18:02:17 +0000 (UTC)
-Message-ID: <553358e7-1bd7-c416-0e0f-ee504c0d0c66@schaufler-ca.com>
-Date:   Mon, 13 Feb 2023 10:02:16 -0800
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Mon, 13 Feb 2023 18:14:38 +0000
+Received: by hermes--production-gq1-655ddccc9-spmtr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b074ad83ffd3b6b789ae4e31a6313cb6;
+          Mon, 13 Feb 2023 18:04:05 +0000 (UTC)
+Message-ID: <2160af7d-eaf6-511a-72a4-9bac352891e4@schaufler-ca.com>
+Date:   Mon, 13 Feb 2023 10:04:03 -0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH 04/14] Implement CAP_TRUST capability.
+Subject: Re: [PATCH bpf-next 0/4] Reduce overhead of LSMs with static calls
 Content-Language: en-US
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shallyn@cisco.com, corbet@lwn.net, casey@schaufler-ca.com
-References: <20230204050954.11583-1-greg@enjellic.com>
- <20230204050954.11583-5-greg@enjellic.com>
- <a12483d1-9d57-d429-789b-9e47ff575546@schaufler-ca.com>
- <20230213114313.GA15496@wind.enjellic.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Kees Cook <keescook@chromium.org>, KP Singh <kpsingh@kernel.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
+        renauld@google.com, song@kernel.org, revest@chromium.org
+References: <20230119231033.1307221-1-kpsingh@kernel.org>
+ <CAHC9VhRpsXME9Wht_RuSACuU97k359dihye4hW15nWwSQpxtng@mail.gmail.com>
+ <63e525a8.170a0220.e8217.2fdb@mx.google.com>
+ <CAHC9VhTCiCNjfQBZOq2DM7QteeiE1eRBxW77eVguj4=y7kS+eQ@mail.gmail.com>
+ <98799a20-1025-3677-d215-69b13ac73ee5@schaufler-ca.com>
+ <CAHC9VhTo=VDuFFfX7o__CRwbHTT-OTDBQ090-ZwbTRQYdO-_Gg@mail.gmail.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20230213114313.GA15496@wind.enjellic.com>
+In-Reply-To: <CAHC9VhTo=VDuFFfX7o__CRwbHTT-OTDBQ090-ZwbTRQYdO-_Gg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.21183 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/13/2023 3:43 AM, Dr. Greg wrote:
-> On Sat, Feb 04, 2023 at 06:54:20PM -0800, Casey Schaufler wrote:
->
-> Looping in some others, given that this issue is fundamental to
-> influencing how Linux can do security, also Sergey who raised a
-> similar issue to Casey.
->
-> Apologies for the delay in responding to this, catching up on issues
-> after a week of travel.
->
->> On 2/3/2023 9:09 PM, Dr. Greg wrote:
->>> TSEM was designed to support a Trust Orchestration System (TOS)
->>> security architecture.  A TOS based system uses the concept of a
->>> minimum Trusted Computing Base of utilities, referred to as trust
->>> orchestrators, that maintain workloads in a trusted execution
->>> state.  The trust orchestrators are thus, from a security
->>> perspective, the most privileged assets on the platform.
+On 2/12/2023 2:00 PM, Paul Moore wrote:
+> On Fri, Feb 10, 2023 at 9:32 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 2/10/2023 12:03 PM, Paul Moore wrote:
+>>> On Thu, Feb 9, 2023 at 11:56 AM Kees Cook <keescook@chromium.org> wrote:
+>>>> On Fri, Jan 27, 2023 at 03:16:38PM -0500, Paul Moore wrote:
+>>>>> On Thu, Jan 19, 2023 at 6:10 PM KP Singh <kpsingh@kernel.org> wrote:
+>>>>>> # Background
+>>>>>>
+>>>>>> LSM hooks (callbacks) are currently invoked as indirect function calls. These
+>>>>>> callbacks are registered into a linked list at boot time as the order of the
+>>>>>> LSMs can be configured on the kernel command line with the "lsm=" command line
+>>>>>> parameter.
+>>>>> Thanks for sending this KP.  I had hoped to make a proper pass through
+>>>>> this patchset this week but I ended up getting stuck trying to wrap my
+>>>>> head around some network segmentation offload issues and didn't quite
+>>>>> make it here.  Rest assured it is still in my review queue.
+>>>>>
+>>>>> However, I did manage to take a quick look at the patches and one of
+>>>>> the first things that jumped out at me is it *looks* like this
+>>>>> patchset is attempting two things: fix a problem where one LSM could
+>>>>> trample another (especially problematic with the BPF LSM due to its
+>>>>> nature), and reduce the overhead of making LSM calls.  I realize that
+>>>>> in this patchset the fix and the optimization are heavily
+>>>>> intermingled, but I wonder what it would take to develop a standalone
+>>>>> fix using the existing indirect call approach?  I'm guessing that is
+>>>>> going to potentially be a pretty significant patch, but if we could
+>>>>> add a little standardization to the LSM hooks without adding too much
+>>>>> in the way of code complexity or execution overhead I think that might
+>>>>> be a win independent of any changes to how we call the hooks.
+>>>>>
+>>>>> Of course this could be crazy too, but I'm the guy who has to ask
+>>>>> these questions :)
+>>>> Hm, I am expecting this patch series to _not_ change any semantics of
+>>>> the LSM "stack". I would agree: nothing should change in this series, as
+>>>> it should be strictly a mechanical change from "iterate a list of
+>>>> indirect calls" to "make a series of direct calls". Perhaps I missed
+>>>> a logical change?
+>>> I might be missing something too, but I'm thinking of patch 4/4 in
+>>> this series that starts with this sentence:
 >>>
->>> Introduce the CAP_TRUST capability that is defined as a
->>> capability that allows a process to alter the trust status of the
->>> platform.  In a fully trust orchestrated system only the
->>> orchestrators carry this capability bit.
->> How is this distinguishable from CAP_MAC_ADMIN?
-> CAP_TRUST is being introduced to enable Linux security architects to
-> ontologically differentiate processes that are allowed to modify
-> security guarantees based on deontological (rule-based) predicates
-> from processes allowed to modify security guarantees that are based on
-> narratival (event-based) predicates.
->
-> More generally, but less accurately, it allows security architectures
-> to be shaped by both Kantian and Hegelian logic perspectives. [0]
->
-> Given that the above will probably not be seen as an overly compelling
-> argument, in and of itself .... :-), some technical observations in
-> support of CAP_TRUST
->
-> Dictating to the choir here, but a brief background for those
-> following this discussion with an interest in security issues.
->
-> In general, classic mandatory access controls (MAC) are policy based.
-> For example, the standard bearers, SMACK and SeLinux, use classic
-> subject/object philosophies.  A process (subject) has a role/label
-> attached to it and objects acted on by the processes have a label
-> associated with them.  Policies, that can be viewed as rules, usually
-> quite elaborate and detailed for a whole system security policy, are
-> developed that define how subject labels may or may not interact with
-> object labels.
->
-> TSEM introduces an alternate notion of a security policy, defined as a
-> security model in TSEM parlance, that is created by unit testing of a
-> platform or workload.  Precise descriptions of the security events
-> generated by the testing are captured and used to maintain subsequent
-> executions of the workload in a known security or trust state.
+>>>  "BPF LSM hooks have side-effects (even when a default value is
+>>>   returned), as some hooks end up behaving differently due to
+>>>   the very presence of the hook."
+>> My understanding of the current "agreement" is that we keep BPF
+>> hooks at the end for this very reason.
+> It would be nice to not have these conventions.  I get that it's the
+> only knob we have at the moment to tweak, but I would hope that we
+> could do better in the future.
 
-There's nothing fundamentally new here. You are claiming the common
-practice of looking at the audit trail to develop "policy" is a new
-"alternative notion" for security. You are familiar with SELinux's
-audit2allow I assume.
+Agreed. I don't care much for it.
 
-> Both approaches are considered 'mandatory' in nature, since userspace
-> cannot modify, in the case of policy based systems the labeling, or in
-> event based systems the security model being enforced.  Unless of
-> course a process has been assigned the capability to do so, hence this
-> discussion.
 >
-> We are proposing CAP_TRUST as the privilege that is required by
-> processes to maintain the security state of a workload based on a set
-> of known valid security events.  In theory, and practice, it is
-> orthogonal to the actions permitted by CAP_MAC_ADMIN.  Although,
-> obviously, the intent of all these systems is to maintain a known
-> security state, however different those schemes may be from a
-> methodological perspective.
-
-I read this as an argument for using CAP_MAC_ADMIN.
-
-> In security architectures, the concept of 'trust' has connotated the
-> notion of having a cryptographic guarantee of the state of a system.
-> As the cover letter and documentation discuss, TSEM is about blending
-> integrity measurement and mandatory access controls.
+> Ignoring the static call changes for a moment, I'm curious what it
+> would look like to have a better mechanism for handling things like
+> this.  What would it look like if we expanded the individual LSM error
+> reporting back to the LSM layer to have a bit more information, e.g.
+> "this LSM erred, but it is safe to continue evaluating other LSMs" and
+> "this LSM erred, and it was too severe to continue evaluating other
+> LSMs"?  Similarly, would we want to expand the hook registration to
+> have more info, e.g. "run this hook even when other LSMs have failed"
+> and "if other LSMs have failed, do not run this hook"?
+>> I really don't want another LSM to have sway over Smack enforcement.
+> I think we can all agree that the one LSM should not have the ability
+> to affect the operation of another, especially when it would cause the
+> violation of a different LSM's security policy.
 >
-> Trust orchestrators are designed to provide an attestation that a
-> workload has not deviated in any way from a previously defined
-> security model, CAP_TRUST is the privilege required to influence this
-> guarantee.  Once again, we view this as a different concept and
-> objective than the ability to modify a security policy.
-
-This is (to my simple mind) indistinguishable from the way SELinux is
-used in distributions. SELinux does not require a CAP_TRUST, and only
-uses CAP_MAC_ADMIN in certain unlikely error conditions which I believe
-you don't encounter.
-
-> Perhaps most importantly, TSEM shouldn't be viewed as an either/or
-> proposition when it comes to classic subject/object MAC
-> implementations.  A differentiation between CAP_TRUST and
-> CAP_MAC_ADMIN is needed in order to allow both architectures to work
-> together in a collaborative fashion.
+>> I would hate to see, for example, an LSM decide that because it has
+>> initialized an inode no other LSM should be allowed to, even in an
+>> error situation. There are really only two options Call all the hooks
+>> every time and either succeed on all or report the most important
+>> error. Or, "bail on fail", and acknowledge that following hooks may
+>> not be called. Really, does "I failed, but it's not that important"
+>> make sense as a return value?
+> Of the two things I tossed out, richer return values and richer hook
+> registration, perhaps it's really only the latter, richer hook
+> registration that is important here.  It would allow a LSM to indicate
+> to the LSM hook layer how the individual hook implementation should be
+> called: always, or only if previously called implementations have not
+> failed.  I believe that should eliminate any worry of a BPF LSM, or
+> any LSM for that matter, from impacting the security policy of
+> another.  However, I will admit that I haven't spent the necessary
+> amount of time chasing down all the hooks to verify if that is 100%
+> correct.
 >
-> It would be perfectly reasonable to believe that a TSEM modeled
-> workload would implement MAC (rules based) security controls.  In
-> order to achieve event based security guarantees, a trust orchestrator
-> drops CAP_TRUST for the workload process chain.  If CAP_MAC_ADMIN were
-> used, it would potentially impair the ability of the workload to
-> implement MAC policies, hence the desire to keep the privileges
-> orthogonal.
-
-If you're giving the workload process chain the ability to modify the
-configuration of another LSM you are already on marshy ground.
-
-> A quick example as to why this may be relevant.
+>>> I realize that loading a BPF LSM is a privileged operation so we've
+>>> largely mitigated the risk there, but with stacking on it's way to
+>>> being more full featured, and IMA slowly working its way to proper LSM
+>>> status, it seems to me like having a richer, and proper way to handle
+>>> individual LSM failures would be a good thing.  I feel like patch 4/4
+>>> definitely hints at this, but I could be mistaken.
+>> We have bigger issues with BPF. There's nothing to prevent BPF from
+>> implementing a secid_to_secctx() hook and making a system with SELinux
+>> go cattywampus. BPF is stacked as if it isn't a "major" LSM, while
+>> allowing it to do "major" LSM things. One reason we need full stacking
+>> is to address this.
+> That's a different issue, and one of the reasons why I suggested
+> taking an all-or-nothing approach to stacking many years ago, but ...
+> well, you know how that worked out.  I promise to not keep saying "I
+> told you so" if you promise to not keep bringing up LSM stacking as
+> the answer to all that ails you ;)
 >
-> Since TSEM is a generic security modeling architecture, with full
-> access to all security events, it can model the integrity of the
-> security meta-data needed by MAC based policies, similar to what
-> IMA/EVM does now, but entirely in the context of the LSM architecture
-> itself.  It would therefore be reasonable to operate both security
-> architectures in unison, with the event based TSEM protecting the
-> rules based MAC implementation.
->
-> Hopefully all of this helps clarify our thinking on this.
->
-> After reviewing the TSEM ABI and documentation, Paul Moore had some
-> questions and requests for clarification.  I am composing a response
-> to that e-mail that may also assist in understanding the role for
-> CAP_TRUST.
->
-> As always,
-> Dr. Greg
->
-> The Quixote Project - Flailing at the Travails of Cybersecurity
->
-> [0]: In the interest of full disclosure, I need to officially
-> attribute the notion of the philosophical differences between the two
-> security architectures to a brilliant young cybersecurity engineer
-> that I was privileged to mentor in the field of security modeling.  We
-> struggled for a long time to explain why and how TSEM was different
-> until he offered this inspired reasoning.  I recognize him, but will
-> leave him anonymous due to his current roles and responsibilities.
