@@ -2,96 +2,62 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07AF8C636D4
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Feb 2023 07:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F15C636D4
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Feb 2023 09:17:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229912AbjBMHzT (ORCPT
+        id S230261AbjBMJRY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Feb 2023 02:55:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44308 "EHLO
+        Mon, 13 Feb 2023 04:17:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229942AbjBMHzP (ORCPT
+        with ESMTP id S229604AbjBMJRT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Feb 2023 02:55:15 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB498126CC;
-        Sun, 12 Feb 2023 23:54:58 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 764FB6091F;
-        Mon, 13 Feb 2023 07:54:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 887CAC433D2;
-        Mon, 13 Feb 2023 07:54:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676274897;
-        bh=DqzDuNoxyaD1ldPm3X/0qqam3Ewe4anz3SG/CvWps/0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dSpumf4qd22kq7DKkT0xsWGl8dAnbzWGS+fxJ73M1Hl/a0LIL65Zbwfe/ba5Mt/a/
-         TvWzd0SzTyHL99D7qW46cJJh28zDP9fZNNubkeZdDj+5TbxOnta+KOQv1k6aKKRlzC
-         /E4cW/i+DvnvAE616OXW9wZ9Da6Cdq+uuTL+ZE9BpEueQcdbsAEuGX07oc+jLoNuvr
-         IIFelrG2Ky3q1eKCBge8eTo6pE7oB7QE5TrrX8FKpbHEcAjRs5B2juikoRjfHQaePC
-         hkYAzoyodgrxv9UEoRTYGBvT85Odz8oBxT5cGMfuuV+2DHyR15ljw3MCcRXr24cJBQ
-         zZJ6FetTtsjEw==
-Date:   Mon, 13 Feb 2023 09:54:54 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Eric Snowberg <eric.snowberg@oracle.com>, dhowells@redhat.com,
-        dwmw2@infradead.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        pvorel@suse.cz, tadeusz.struk@intel.com, kanth.ghatraju@oracle.com,
-        konrad.wilk@oracle.com, erpalmer@linux.vnet.ibm.com,
-        coxu@redhat.com, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4 6/6] integrity: machine keyring CA configuration
-Message-ID: <Y+nszt7I9rGem1az@kernel.org>
-References: <20230207025958.974056-1-eric.snowberg@oracle.com>
- <20230207025958.974056-7-eric.snowberg@oracle.com>
- <4bda209dfc891ac9044ce847785c383e89f14f97.camel@linux.ibm.com>
+        Mon, 13 Feb 2023 04:17:19 -0500
+Received: from mail.tryweryn.pl (mail.tryweryn.pl [5.196.29.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EA4D14490
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Feb 2023 01:17:14 -0800 (PST)
+Received: by mail.tryweryn.pl (Postfix, from userid 1002)
+        id CC694A2EBE; Mon, 13 Feb 2023 09:16:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tryweryn.pl; s=mail;
+        t=1676279832; bh=Bo+/jg3TCpOeS79PpZREuOWEeqJV//jojylD9dSrSik=;
+        h=Date:From:To:Subject:From;
+        b=oDP1OnvFL/N3m4nrKA6mpG3S/niGQZL6Z+pe/MQcSAFxPG50YwxgC0uYZu+iKNPhv
+         7O6IoC7JpNAlDTFCp98P1x9CA1Cgka443QHV1kCxSlM80Nvy35UpaVNWkuFgjck3cq
+         7QFsriinLc6n3E8TU9JFCeb6h1tTEJhVyLmEZ4my0NgVsW58M+0J6T570E9yP83Nys
+         mBtFJF/RIwUqLNMeha2vgnC+5Ri5S9+WjpdaSsudpAJYTgNbJ8uUHYIpys7A5rjgLX
+         RAOr9oDlbcEV4lnVZpcgnma0Q8OEFKEriq00dz/Jdar65dcM5Sduv9JQPeYvOz3wAA
+         eRv8liNdRQXcg==
+Received: by mail.tryweryn.pl for <linux-security-module@vger.kernel.org>; Mon, 13 Feb 2023 09:15:46 GMT
+Message-ID: <20230213074500-0.1.84.2y7zz.0.7mjhm080wy@tryweryn.pl>
+Date:   Mon, 13 Feb 2023 09:15:46 GMT
+From:   "Karol Michun" <karol.michun@tryweryn.pl>
+To:     <linux-security-module@vger.kernel.org>
+Subject: Prezentacja
+X-Mailer: mail.tryweryn.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4bda209dfc891ac9044ce847785c383e89f14f97.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 10, 2023 at 08:05:22AM -0500, Mimi Zohar wrote:
-> Hi Eric,
-> 
-> On Mon, 2023-02-06 at 21:59 -0500, Eric Snowberg wrote:
-> > Add a machine keyring CA restriction menu option to control the type of
-> > keys that may be added to it. The options include none, min and max
-> > restrictions.
-> > 
-> > When no restrictions are selected, all Machine Owner Keys (MOK) are added
-> > to the machine keyring.  When CONFIG_INTEGRITY_CA_MACHINE_KEYRING_MIN is
-> > selected, the CA bit must be true.  Also the key usage must contain
-> > keyCertSign, any other usage field may be set as well.
-> > 
-> > When CONFIG_INTEGRITY_CA_MACHINE_KEYRING_MAX is selected, the CA bit must
-> > be true. Also the key usage must contain keyCertSign and the
-> > digitialSignature usage may not be set.
-> > 
-> > Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> 
-> Missing from the patch description is the motivation for this change.  
-> The choices none, min, max implies a progression, which is good, and
-> the technical differences between the choices, but not the reason.
-> 
-> The motivation, at least from my perspective, is separation of
-> certificate signing from code signing keys, where "none" is no
-> separation and "max" being total separation of keys based on usage.
-> 
-> Subsequent work, as discussed in the cover letter thread, will limit
-> certificates being loaded onto the IMA keyring to code signing keys
-> used for signature verification.
+Dzie=C5=84 dobry!
+
+Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
+=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
+zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
+
+Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
+=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
+dostaw.
+
+Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
+nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
+ co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
+
+Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
+=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
+zania w Pa=C5=84stwa firmie.
 
 
-It would be more robust just to have two binary options for CA bit and
-keyCertSign. You can use "select" for setting keyCertSign, when CA bit
-option is selected.
-
-BR, Jarkko
+Pozdrawiam
+Karol Michun
