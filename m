@@ -2,59 +2,59 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1A8C6379F
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Feb 2023 18:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F61C636D4
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Feb 2023 18:30:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbjBMSOk (ORCPT
+        id S229472AbjBMSaG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Feb 2023 13:14:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35870 "EHLO
+        Mon, 13 Feb 2023 13:30:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbjBMSOk (ORCPT
+        with ESMTP id S229509AbjBMSaF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Feb 2023 13:14:40 -0500
-Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D569196
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Feb 2023 10:14:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1676312078; bh=RKMD+yY8dulLx8938IJ/Cp89VmQElQ25HeNolFr7j4A=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gXW1iKcRR5Soxr9IGCtuHXeBX0FxaNQ9p7TjgOJqnILO7gnky7J/NFb2toHF2GIANuCy3zffBn8fe6sJRuq1/ZEIZSD1d2B5wvvRfG8GUMkNy13NVlr6NuQZwsZ3qo14SISjMbvf7Dv1iwFK39ZnYk3c8MqRUo3qQOVZtNGLWNllddhUio2bdFwP3bVIgP4Rf69Sfzy9Rt8QN86SCbIap10RWd6dqQSd/8mte2usydC2Zl7UTIFJ66d0yaSvLp/tAlBbEQbu3Bx1wbXbEjk8GPR+lH/DTwb6fWiQ7aXfJGUefVN/ySAOno2Gd1B3E9ny0+wtSXTPP2UhOwXn0xfWPA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1676312078; bh=1rb4ieo85mhQGYb3/WfSSQXphZXGJHXCTtIcnVpqou8=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=FhdCfQ3yf3wwADKc4bsbhcSbSw9j8/FS/67imX6Htso+GlhEst/w5SYcB/H01jNzjguPkDECE/Ug0NbLC+QypJ1uPIJrEIeyVOAZa9JpfPNpowD+am4xpicvjRcsQ47rP5Rexv8v5sOciXHxGpZx4xegDsphwDAEC97hcnHfAvG1ioUGCO2YREzSSshmLLzUOeepgjxuh0v8LE02Or1Rgb0W9OFSAnqqgZBLlFt0AXGS6HqY4wAVJAhNA53MHDMfoaWy8XwxoFBXicFNBimVU40CH0cHzWSRz/Eb0Rni18B4HtyeHq+Dt69D3mhIiBIog/2WCYjN22Qmf+OuEL9lUw==
-X-YMail-OSG: wbqsAxMVM1k6feaekGr9lFJG4Cg_9YQ1XuxkNFKdnwYE4lvlGcwNEVlpzFJCLRn
- kYQ1ShMEM4mpq3SMa8jR0c.vbicMP.gJ8UTgP9gbJstU0jjFbLSnZE6.6fq_7BLhPk4WxYmdnRsD
- 1Pkrf1d5CeLMRkLvoeA38XysDRF2.0RxNEK58N4LlwOj_HVmW_NTTHa_e.QvrgjKKKWSM2fhhNa9
- MdAS5e1qPdiUmxDUgcUrqpYY.9JEFOUJr2n_OHzR7YOjTlMET_G7nnsKIhyp7WzZWrzLYXLPHcsZ
- 6PlTW0njy9pT9j5vIn2JspLP6P18_9PZuwZqV._YZiJ6NuisMu1Bgq9Bgg6KE5FjAryWdpOZ7NYS
- OyP97SQRXvYdcj8WE7Sju_SsTkJMaFiSmjWORPwODHA2BxwSo48tJikAhiaN0Y7w96z2VvzFCIkm
- 9a5ED1LdWyzMy19yHzRAFImoADIpSCWF6UFBiPU7Nq50CCCwzxCtiOJhsxvPAswWBZyS6DWfCJl9
- hLm8f1iECGKuAJQpGoVxQ6LBlGXQLT6pyZTBA5ukbmYN1Fd0_dqLaF59ihKlPgEYNgv5qznSmhTi
- KrnFVpHtr_BISiqnexCden8QXxIlxcZhx4ReZnWhB8DM4YLE19HzzeamX442IsNUcr_yz7YPW4PR
- BW05AEijSZQxpH0TNnSlGgkfRf7uVdJ.mty2p80NoMCfhIAGI7szmi0aOVUnrbRAxFl9Fkkaxp1p
- _GjEfYbIH5AoYKmj_1FZFIPFIXEnjs_sHzO4h1G3eSkV6fgvhAtwEQ_SxuuJnsgJBtsqx7.zZCja
- HrKcJsy3Ir6Yz6qfcXsa3NIoI8XmBZzNHhb4ccWMh2RDEDqG0bbMzYvQp9KuZtplpaXCLDIeJZHL
- uDOW4zZW6fd64Qkeu0WNd.czflDtztStKWSl4SCuRiKJA4vyz7o0_BNXgU5LSavIAsS.7hM3qk6F
- 4lrUXWYavP21NgqW05MU3.MmAamR_MT4za7ptHjYjtCJ25GHmEVVOM49WV_twXrQwfpebsJSmo.B
- HhiV9UzNYsHxz1hLr2M6xCzePP3vb_esKZfAw6zFfkLngF.4llw1n.717QAKaSQIHb2FiM_4R1Yo
- nscqZV1k8Y3dNsVSzKnjLzQkozxzKf.1Rfe4ZyfYWgg_xvLemy1ZJAl1l1U2aO7.HysJD4rPGiTF
- S1.jrJVLrF8fMK7J9yBSu2TyARrNGe8kjVuJ8jrgkqsCWjWWbsGvwkcn5uz2uOzY3FXmI.tJQObO
- 00tef5OEw3uf.PWVAOSFpFTSuwNuUR7ENdgppxxf3axgstrsauUVj_4tASCIHVqT5HFpo6v07jGO
- iITLKYTxaSqgBQeEpBu5CbvX3tboJQGKzlFdDf9mAmn8qcc1qB9juND9ATgBwhMvqxciFyhfkBQz
- r_nYCn7XPbmj8c47ZLEOXpnd7aWptt2AbQtdYHafpYDtZ4_khh8cLIHrSCJkxUh3mnHIvfCEYOrv
- of_YfpaztjCoO1KPhHMpA.N02YPugmhRZPdEFBhf03X5T0ORZsXpJMcRI1_H_PzjlBylbbAYJZsg
- o3CsTKpY6NvzqXKwLrY6YHfmf32aSLjVcTAlEfw0PR6Dh_FE.suH6EWJ6BIPKt2GHf7jMKF1VOUJ
- fMwC64jYDntAkpTf8cw.05wpybKwpsGEH9b0qub0BqBQNj9zarvk0CdKnB4sCRi0Sc2ItzAFbn.F
- GUep58q4F2Kh0amnEf874KlGZDdQJaLX8KIszA0vVW0FsoUK.ihmNRBOcbyfSw9nQRs5Nc0.HM_O
- c1yuonvbgf9LyY0.DN3xVd_p3NBVDvvtM2jYrzv58o8nePufpbhPdWV9fqU0EYI1T4zeN88ZQbE7
- arYCYGz9B7znkAqoB_RDEYvG6YnuHsQIkyQ_._Cp1EEaPFpJ.s6cVQ_qYvUUySdfYFeeGmE14r65
- .q_55s_yYsnDD93q608s.oGMX5BFJjQki9gfP4QPyo0bAKbJx4FVYszAEmD6Beb49dLLT_EGgvMF
- btU8EFit8Bz5ikLPPFDobk26IvkpAy6EPLkg1AYXANg9e0f_hy.m.sJIhlI23PQ2D6jYKC0A8dao
- lUjtn4E8w7WYp0ef6rh2IcEWa7vqeNKmAWsagbdPf3CWq.xzMwZDZ_4u_XSMqsNsJnr1w2jWBsJb
- 0ca8v6DPD_5.FtvnZ_T82RbQV7WX6gEfsSodAD7GNjpf95gPjp4aVEZxZ9Qv53eckILXzixB0YbP
- Iir4b3h9GLKGOXqr_cowMdQ--
+        Mon, 13 Feb 2023 13:30:05 -0500
+Received: from sonic307-15.consmr.mail.ne1.yahoo.com (sonic307-15.consmr.mail.ne1.yahoo.com [66.163.190.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02364211D4
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Feb 2023 10:29:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1676312951; bh=kDBXYlsFu4+RlWBTZxfxcgS32waSMhNsfRAKzly4Aas=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=bDEIbEzmWwOCz5684e1EX+h7B27sP/rtpFLSjpdlmTEp9f61pD4iONQO6A+EtDr9Y3aiUuQ6obfuXouJeINIpRyIAMhWDb91rMvzo/9Tb+ANa/Vu70TBjChYgZJ2190skidf5uOYlJeK7R6suhTVog3WdaiuytmMvgqwCPFf9DAnqWnTCjKfWnqGVzSy/V7D9jegL1at1MdH0obPAKVnf6mnUZ8gdmk/fHcps0c2zkP1DCG6jCJJFyo514ZNoQbAf6TnZbXto7zb4uv8Xv7Q7PLmGB7uaZWQjLW7pCVS4g7Oy9UK1mUhx/VkFHc//C5R3nncueugVHXERYTyBYCzoA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1676312951; bh=fQsx59JOPN4X7LWIKKL+56dSqwwjsAAjg+IQkVi7Mdf=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=XgfvnKpbCAorSKk0gCy0rEmSua3gFJXbIv2FBjQEExp15Fg94tKgshxKmch3OSilC3/pVMd8DHEflS9T2Reli9sjWlJGCruFBWmZlG6Kie/N0nflrXdTnSfVj6s3sB1hR4QczlB8wpVPs8q1y4zEXLv98cwgdkLoPexIE0qgezGPc0Yzu1G7ZrQ6qZuj78j8xU02xCathm0NETV3V4SYhzJmkYqcZjYYHK8gtBb4UCMzBARyUjbLx/aDvfpsnsv9KJZws1jUg/bgSn+Cp3LPP9hUKgYkfZ5Ve3qaPh4AZghE5Bxl0hIpYbUSgOtFGr0cchopP+YlBofI/snpvV4a6g==
+X-YMail-OSG: DW35OWIVM1nmWSmPHDC477Qsa1qPdymFe_jef6uPbRBuJ3X_2Bdh7jbsHA3ESBs
+ .DeIJry3_UXsRfRWlbYVoUtRMDL1u4lc7CXUzRTgGOPjYYEIvx8BZ_cFLFVQIC9CPUg7ThhfwvZ5
+ aECg6NgPNBx1vccr3jDC3zLbmMPHtYBPXg7JQRAATe0p4ng5xVk1ik.5TTJXH0Q64TvcLlk5dKLG
+ _S035f9ESnp3qF5aa0.RcW5HknYNllqEPUFbLiO7PyegV_FwePMWzMwJS6_L5jPxMS97H8Ge.__U
+ 5d5Tfbd8YEPJ7TOOPW3R3wG_iBaScY4o7xJD7X5mWXKHiwXZtkp2FwrDCCUq9OtQcevDB3pM6DhN
+ QSP5FayiKLf4WQ0IMMMytsy3ks8avoFj5fFj1jjMtTybw1mJns1PsH36rIMNK3TrkkR5sVgyX1.D
+ hDDGKF1FucKSqnCEN.KVOj5NfIcqUycVUqLnUhYxG57.7UR1huSC_.TDezIlEUutIJfnEAT7mcZ4
+ QCyYwu_NcrwSvjxhyGXkDU.f2FH9mjuDHcFmxePa4fBq7hGPT0enjhis_2nsXocz4b2gpzRQwp4Y
+ .kU.bTZ9RXm5bC9BuUglF51R9yB4Tipz81YW4RL7BufmECwdZBd8NwKla0iplm0LSR7Um4rz7xJG
+ z5UH_sT.iAUQ4S6pwZAeUsvc8lmOfJfQGAtwMrdRDjzJzSm7fzWnJCeNzBDnYAupNO.67UkbnUx4
+ t34H6cJbtl3I.vRCbd_N6vsq.CnMYN.tuxfRS05hB_d4KbC8BiBLfzpX2R32XSq7eMKwZ4TYNj2R
+ USfNdYYIXHwfKXCZWOexOH0SMkBwX6iVpGrvQWRwSHXYFbOZzCbZhMyB.zhHMBMPRaspkzYlznQg
+ sJAV.sYufoxQ6nn4oI8u2ngSkiLJYp.wGa9yzPfyw.RWhs4XJB8vxP5xuix4CxOTemsf2N.A1Xjv
+ ChKQ4CrJ3SZbD1bb4YA_fK2gc3cCa868AH9UXdfcTmrnUzxYKU1VxF0zDVscJkoplnGz3iYfnIGj
+ YmXzeHzUrq6eFjvlBdMsG5.lv5K6Nxz1LPCAMetciN.5hW0jGEy2oQS0yV.14Mu.eiTerIew3wIY
+ Y3qHwLMQsx.f5lFWsYrsRsGD6Q.zEdheX.SPDSBRyj5fmZlx85TalUWd3PVv51Pp7WsXBTrKbyFO
+ uAHMRXbW3xJrcK.0BAdHWEjIJOU4bQRuru7Q8dHup78bjuSxfZ6erNbV92wul8.slUEB1Ad8deY_
+ zWcmBuFN1GV1cb1KZEw_gIZ.YIbhuJctIE2pvsU5R489vKoA0VIs9.kNJDEV1xZdj6529HENSHsy
+ w.0ejLP9Ckn0z.VIBKlpL3eC9bAwwbqUkK0ULhXpmsG_5CuOXwCdCTXNPat4bBKbzQjcArFPWb9D
+ w0.8RupKMhYcOki3GhLOJSTmg2bsZlEfHaDqg7N_hsCR5lHrPbyhLSoIY5zUNe3mx_0SKLdhsH6n
+ ODSwQM3DBOC5QD55TDpjTsqUElh1njAUoScoqKK4isqJUIauYPm7DBJoXIqs5mMWaf_Eo6qZCklt
+ WC.EwcUk7UYVtBMUjQPtcy8vpwZDsbIkQhgeaggHU8HYrLmNrvz5ZY3O08vSMggTUrHanqrkriiF
+ 7OYWo0gvu5UvcHLgdHPRxBJqck08QXOYUSt9B1j2akZX7HBe3mJ9bBgqqVDc8AoIG_obA6KGAtC2
+ N62JJM1vE8I6lWbEI4MIgo7dYaAe6OZ5aRmU9ceNL8ssQDzu1ILA9NmEUTUO2t3fsqwqRcUoTPwq
+ V3s9UtJGExO4nmqwBFyj.xv2ikHJSrIlnagWJYPp8t69AL76MOhMUoWG30ClnswyDFN0c_Gh1lAu
+ yhI54deX8ukivMkdtJ6zmb23D58KXzXwjJXU4WB7lylNWrnzvEHyExZqQMcOPRR8n2ll4_e1ket2
+ O2ClkVXBkHOcjHY_QvURP6k7DvYPbTzDnCDwpMcE4kLLRih2hkJTPa5vwjr1D_ypPcb8WGfU5qV.
+ wC4zdxG7esCWuto3i6VgDhKrL1OdrofmN_36kiKqHhEK8bFXeIsdGV3eREAPU01LPPRjB25QqYux
+ CeKac1C27Th6RSeuQDWh5LvBPM.zyOLttDxXjkEgCkEL0ftE9b7e8eh6NUQxH9AicDZJVUThXGxx
+ Mdo42HNYYWdcuOkI0ZixjtNfhZlMbImVOwBqdRCjGDTBArtkjCbM8j029pk0_bUdW09SB0QizpHm
+ NOM9k6xnpgYozLiqudLwDcXpKx9DMBA--
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Mon, 13 Feb 2023 18:14:38 +0000
-Received: by hermes--production-gq1-655ddccc9-spmtr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b074ad83ffd3b6b789ae4e31a6313cb6;
-          Mon, 13 Feb 2023 18:04:05 +0000 (UTC)
-Message-ID: <2160af7d-eaf6-511a-72a4-9bac352891e4@schaufler-ca.com>
-Date:   Mon, 13 Feb 2023 10:04:03 -0800
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Mon, 13 Feb 2023 18:29:11 +0000
+Received: by hermes--production-gq1-655ddccc9-zfzhj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b8c1300af8bfc82838ee07ea3d1e6045;
+          Mon, 13 Feb 2023 18:29:07 +0000 (UTC)
+Message-ID: <be87a5c2-5766-1096-11cb-e0910a9fa7d4@schaufler-ca.com>
+Date:   Mon, 13 Feb 2023 10:29:05 -0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
@@ -64,7 +64,8 @@ To:     Paul Moore <paul@paul-moore.com>
 Cc:     Kees Cook <keescook@chromium.org>, KP Singh <kpsingh@kernel.org>,
         linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
         ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
-        renauld@google.com, song@kernel.org, revest@chromium.org
+        renauld@google.com, song@kernel.org, revest@chromium.org,
+        casey@schaufler-ca.com
 References: <20230119231033.1307221-1-kpsingh@kernel.org>
  <CAHC9VhRpsXME9Wht_RuSACuU97k359dihye4hW15nWwSQpxtng@mail.gmail.com>
  <63e525a8.170a0220.e8217.2fdb@mx.google.com>
@@ -128,18 +129,18 @@ On 2/12/2023 2:00 PM, Paul Moore wrote:
 > only knob we have at the moment to tweak, but I would hope that we
 > could do better in the future.
 
-Agreed. I don't care much for it.
+Agreed. I don't much care for what we have now. The enthusiasm for BPF
+overwhelmed the caution that would normally protect the LSM infrastructure.
 
->
-> Ignoring the static call changes for a moment, I'm curious what it
-> would look like to have a better mechanism for handling things like
-> this.  What would it look like if we expanded the individual LSM error
-> reporting back to the LSM layer to have a bit more information, e.g.
-> "this LSM erred, but it is safe to continue evaluating other LSMs" and
-> "this LSM erred, and it was too severe to continue evaluating other
-> LSMs"?  Similarly, would we want to expand the hook registration to
-> have more info, e.g. "run this hook even when other LSMs have failed"
-> and "if other LSMs have failed, do not run this hook"?
+>>> Ignoring the static call changes for a moment, I'm curious what it
+>>> would look like to have a better mechanism for handling things like
+>>> this.  What would it look like if we expanded the individual LSM error
+>>> reporting back to the LSM layer to have a bit more information, e.g.
+>>> "this LSM erred, but it is safe to continue evaluating other LSMs" and
+>>> "this LSM erred, and it was too severe to continue evaluating other
+>>> LSMs"?  Similarly, would we want to expand the hook registration to
+>>> have more info, e.g. "run this hook even when other LSMs have failed"
+>>> and "if other LSMs have failed, do not run this hook"?
 >> I really don't want another LSM to have sway over Smack enforcement.
 > I think we can all agree that the one LSM should not have the ability
 > to affect the operation of another, especially when it would cause the
@@ -162,7 +163,15 @@ Agreed. I don't care much for it.
 > another.  However, I will admit that I haven't spent the necessary
 > amount of time chasing down all the hooks to verify if that is 100%
 > correct.
->
+
+Even this approach leads to the problem of which error to return in
+the presence of multiple, unrelated failures. My earliest efforts on
+stacking used a "call all" approach, with success returned if all
+modules approved. I abandoned this because it's impossible to identify
+for all cases which error is best to report. In some cases -EACCES is
+less significant than -EPERM, but if you have both, what might the
+application care about most?
+
 >>> I realize that loading a BPF LSM is a privileged operation so we've
 >>> largely mitigated the risk there, but with stacking on it's way to
 >>> being more full featured, and IMA slowly working its way to proper LSM
@@ -176,7 +185,13 @@ Agreed. I don't care much for it.
 >> is to address this.
 > That's a different issue, and one of the reasons why I suggested
 > taking an all-or-nothing approach to stacking many years ago, but ...
-> well, you know how that worked out.  I promise to not keep saying "I
+> well, you know how that worked out.
+
+I'm still shooting for getting "all".
+
+>   I promise to not keep saying "I
 > told you so" if you promise to not keep bringing up LSM stacking as
 > the answer to all that ails you ;)
->
+
+Sigh.
+
