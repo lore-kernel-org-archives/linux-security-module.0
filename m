@@ -2,252 +2,105 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07684C05027
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Feb 2023 13:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C168DC05027
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Feb 2023 16:54:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232457AbjBNN3A (ORCPT
+        id S232818AbjBNQyy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Feb 2023 08:29:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37780 "EHLO
+        Tue, 14 Feb 2023 11:54:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231236AbjBNN27 (ORCPT
+        with ESMTP id S232730AbjBNQys (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Feb 2023 08:28:59 -0500
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E38244A6;
-        Tue, 14 Feb 2023 05:28:57 -0800 (PST)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4PGMSg2c5dz6801v;
-        Tue, 14 Feb 2023 21:27:15 +0800 (CST)
-Received: from [10.123.123.126] (10.123.123.126) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.17; Tue, 14 Feb 2023 13:28:54 +0000
-Message-ID: <1fb0ee51-ca6b-052c-da52-52a5a8ca409f@huawei.com>
-Date:   Tue, 14 Feb 2023 16:28:54 +0300
+        Tue, 14 Feb 2023 11:54:48 -0500
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [IPv6:2001:1600:4:17::42aa])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B17F3279B6
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Feb 2023 08:54:46 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PGRwT0VT7zMqdTZ;
+        Tue, 14 Feb 2023 17:48:09 +0100 (CET)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4PGRwP613lzMrY8P;
+        Tue, 14 Feb 2023 17:48:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1676393288;
+        bh=StyQV5VlfkbUqiAvO0zOrs/9byjjPFA4+fUSOycYmmE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=1/F48u5CG0IsU99YnekoUmb0RzF7DmvDMzBOukyFkT6iIJhdfpZmTt71ylV0xLMF7
+         K8IhQ8TUc/LZ4Bpb8nN8nk5YnxzoIsT93HzI1QjaKfBkYrmTDveT2QHfb6BlyqnwS4
+         TNaemjyBVXrPwG1xleOajIUz73mJQrjML+N2qesE=
+Message-ID: <b25a6279-2531-4711-1876-b181fce4acbe@digikod.net>
+Date:   Tue, 14 Feb 2023 17:48:05 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v9 10/12] selftests/landlock: Add 10 new test suites
- dedicated to network
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
- <20230116085818.165539-11-konstantin.meskhidze@huawei.com>
- <ff460f1e-fc0c-d362-a97d-573df193fedb@digikod.net>
- <78583ab7-031f-cc21-f3a8-dd900dc3c47a@huawei.com>
- <7abfa7f7-73c2-1aae-5acf-bf8ba1699074@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <7abfa7f7-73c2-1aae-5acf-bf8ba1699074@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.123.126]
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
+User-Agent: 
+Subject: Re: [PATCH v5 4/8] LSM: lsm_get_self_attr syscall for LSM self
+ attributes
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        jmorris@namei.org, Kees Cook <keescook@chromium.org>,
+        john.johansen@canonical.com,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+References: <20230109180717.58855-1-casey@schaufler-ca.com>
+ <20230109180717.58855-5-casey@schaufler-ca.com>
+ <f8dca9d2-6e5e-4584-88b3-f71f62988dab@app.fastmail.com>
+ <CAHC9VhRRRo9V-q8jT7AbSh1eTPGN7OmxP9hrPz=GTPQa80RjCg@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <CAHC9VhRRRo9V-q8jT7AbSh1eTPGN7OmxP9hrPz=GTPQa80RjCg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
+On 12/01/2023 22:39, Paul Moore wrote:
+> On Thu, Jan 12, 2023 at 9:40 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Mon, Jan 9, 2023, at 19:07, Casey Schaufler wrote:
+>>> +/**
+>>> + * struct lsm_ctx - LSM context
+>>> + * @id: the LSM id number, see LSM_ID_XXX
+>>> + * @flags: context specifier and LSM specific flags
+>>> + * @ctx_len: the size of @ctx
+>>> + * @ctx: the LSM context, a nul terminated string
+>>> + *
+>>> + * @ctx in a nul terminated string.
+>>> + *   (strlen(@ctx) < @ctx_len) is always true.
+>>> + *   (strlen(@ctx) == @ctx_len + 1) is not guaranteed.
+>>> + */
+>>> +struct lsm_ctx {
+>>> +     __u32           id;
+There is a hole here for 64-bit architectures.
 
-2/14/2023 3:13 PM, Mickaël Salaün пишет:
-> 
-> On 14/02/2023 11:36, Konstantin Meskhidze (A) wrote:
->> 
->> 
->> 2/10/2023 8:40 PM, Mickaël Salaün пишет:
->>>
->>> On 16/01/2023 09:58, Konstantin Meskhidze wrote:
->>>> These test suites try to check edge cases for TCP sockets
->>>> bind() and connect() actions.
->>>>
->>>> socket:
->>>> * bind: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
->>>> * connect: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
->>>> * bind_afunspec: Tests with non-landlocked/landlocked restrictions
->>>> for bind action with AF_UNSPEC socket family.
->>>> * connect_afunspec: Tests with non-landlocked/landlocked restrictions
->>>> for connect action with AF_UNSPEC socket family.
->>>> * ruleset_overlap: Tests with overlapping rules for one port.
->>>> * ruleset_expanding: Tests with expanding rulesets in which rules are
->>>> gradually added one by one, restricting sockets' connections.
->>>> * inval: Tests with invalid user space supplied data:
->>>>       - out of range ruleset attribute;
->>>>       - unhandled allowed access;
->>>>       - zero port value;
->>>>       - zero access value;
->>>>       - legitimate access values;
->>>> * bind_connect_inval_addrlen: Tests with invalid address length
->>>> for ipv4/ipv6 sockets.
->>>> * inval_port_format: Tests with wrong port format for ipv4/ipv6 sockets.
->>>>
->>>> layout1:
->>>> * with_net: Tests with network bind() socket action within
->>>> filesystem directory access test.
->>>>
->>>> Test coverage for security/landlock is 94.1% of 946 lines according
->>>> to gcc/gcov-11.
->>>>
->>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>>> ---
->>>>
->>>> Changes since v8:
->>>> * Adds is_sandboxed const for FIXTURE_VARIANT(socket).
->>>> * Refactors AF_UNSPEC tests.
->>>> * Adds address length checking tests.
->>>> * Convert ports in all tests to __be16.
->>>> * Adds invalid port values tests.
->>>> * Minor fixes.
->>>>
->>>> Changes since v7:
->>>> * Squashes all selftest commits.
->>>> * Adds fs test with network bind() socket action.
->>>> * Minor fixes.
->>>>
->>>> ---
->>>>    tools/testing/selftests/landlock/config     |    4 +
->>>>    tools/testing/selftests/landlock/fs_test.c  |   65 ++
->>>>    tools/testing/selftests/landlock/net_test.c | 1157 +++++++++++++++++++
->>>>    3 files changed, 1226 insertions(+)
->>>>    create mode 100644 tools/testing/selftests/landlock/net_test.c
->>>>
->>>> diff --git a/tools/testing/selftests/landlock/config b/tools/testing/selftests/landlock/config
->>>> index 0f0a65287bac..71f7e9a8a64c 100644
->>>> --- a/tools/testing/selftests/landlock/config
->>>> +++ b/tools/testing/selftests/landlock/config
->>>> @@ -1,3 +1,7 @@
->>>> +CONFIG_INET=y
->>>> +CONFIG_IPV6=y
->>>> +CONFIG_NET=y
->>>> +CONFIG_NET_NS=y
->>>>    CONFIG_OVERLAY_FS=y
->>>>    CONFIG_SECURITY_LANDLOCK=y
->>>>    CONFIG_SECURITY_PATH=y
->>>> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
->>>> index b762b5419a89..5de4559c7fbb 100644
->>>> --- a/tools/testing/selftests/landlock/fs_test.c
->>>> +++ b/tools/testing/selftests/landlock/fs_test.c
->>>> @@ -8,8 +8,10 @@
->>>>     */
->>>>    
->>>>    #define _GNU_SOURCE
->>>> +#include <arpa/inet.h>
->>>>    #include <fcntl.h>
->>>>    #include <linux/landlock.h>
->>>> +#include <netinet/in.h>
->>>>    #include <sched.h>
->>>>    #include <stdio.h>
->>>>    #include <string.h>
->>>> @@ -17,6 +19,7 @@
->>>>    #include <sys/mount.h>
->>>>    #include <sys/prctl.h>
->>>>    #include <sys/sendfile.h>
->>>> +#include <sys/socket.h>
->>>>    #include <sys/stat.h>
->>>>    #include <sys/sysmacros.h>
->>>>    #include <unistd.h>
->>>> @@ -4413,4 +4416,66 @@ TEST_F_FORK(layout2_overlay, same_content_different_file)
->>>>    	}
->>>>    }
->>>>    
->>>> +#define IP_ADDRESS "127.0.0.1"
->>>> +
->>>> +TEST_F_FORK(layout1, with_net)
->>>> +{
->>>> +	int sockfd;
->>>> +	int sock_port = 15000;
->>>> +	struct sockaddr_in addr4;
->>>> +
->>>> +	addr4.sin_family = AF_INET;
->>>> +	addr4.sin_port = htons(sock_port);
->>>> +	addr4.sin_addr.s_addr = inet_addr(IP_ADDRESS);
->>>> +	memset(&addr4.sin_zero, '\0', 8);
->>>
->>> Please don't mix declaration and code. Follow the
->>> ./scripts/checkpatch.pl recommendations, except the "braces {} are not
->>> necessary" for tests (not kernel) code because of ASSERT_* macros.
->>>
->>     Ok. Will be moved down the code.
->>     Thank you.
->>>
->>>> +
->>>> +	const struct rule rules[] = {
->>>> +		{
->>>> +			.path = dir_s1d2,
->>>> +			.access = ACCESS_RO,
->>>> +		},
->>>> +		{},
->>>> +	};
->>>> +
->>>> +	struct landlock_ruleset_attr ruleset_attr_net = {
->>>> +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
->>>> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
->>>> +	};
->>>> +	struct landlock_net_service_attr net_service = {
->>>> +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
->>>> +
->>>> +		.port = htons(sock_port),
->>>> +	};
->>>> +
->>>> +	/* Creates ruleset for network access. */
->>>> +	const int ruleset_fd_net = landlock_create_ruleset(
->>>> +		&ruleset_attr_net, sizeof(ruleset_attr_net), 0);
->>>> +	ASSERT_LE(0, ruleset_fd_net);
->>>> +
->>>> +	/* Adds a network rule. */
->>>> +	ASSERT_EQ(0,
->>>> +		  landlock_add_rule(ruleset_fd_net, LANDLOCK_RULE_NET_SERVICE,
->>>> +				    &net_service, 0));
->>>> +
->>>> +	enforce_ruleset(_metadata, ruleset_fd_net);
->>>> +	ASSERT_EQ(0, close(ruleset_fd_net));
->>>> +
->>>> +	const int ruleset_fd = create_ruleset(_metadata, ACCESS_RW, rules);
->>>> +	ASSERT_LE(0, ruleset_fd);
->>>> +	enforce_ruleset(_metadata, ruleset_fd);
->>>> +	ASSERT_EQ(0, close(ruleset_fd));
->>>> +
->>>> +	/* Tests on a directory with the network rule loaded. */
->>>> +	ASSERT_EQ(0, test_open(dir_s1d2, O_RDONLY));
->>>> +	ASSERT_EQ(0, test_open(file1_s1d2, O_RDONLY));
->>>> +
->>>> +	sockfd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
->>>> +	ASSERT_LE(0, sockfd);
->>>> +	/* Binds a socket to port 15000. */
->>>> +	ASSERT_EQ(0, bind(sockfd, &addr4, sizeof(addr4)));
->>>> +
->>>> +	/* Closes bounded socket. */
->>>> +	ASSERT_EQ(0, close(sockfd));
->>>> +}
->>>> +
->>>>    TEST_HARNESS_MAIN
->>>> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
->>>> new file mode 100644
->>>> index 000000000000..b9543089a4d3
->>>> --- /dev/null
->>>> +++ b/tools/testing/selftests/landlock/net_test.c
->>>
->>> [...]
->>>
->>>> +FIXTURE_TEARDOWN(socket){};
->>>
->>> Remove such trailing ";" and format with clang-format for both
->>> FIXTURE_TEARDOWN().
->> 
->> Like this :
->> 
->> FIXTURE_TEARDOWN(socket)
->> {
->> }
->> 
->> ???
-> 
-> Yes, it may not looks nice but it pleases both checkpatch.pl and
-> clang-format. :)
+>>> +     __u64           flags;
+>>> +     __kernel_size_t ctx_len;
 
-   Got it. Thanks.
-> .
+This is an architecture-related size, which makes the struct size 
+different according to architectures. We should avoid that.
+
+>>> +     __u8            ctx[];
+>>> +};
+
+I suggest packing this struct.
+
+>>
+>> I think this should be changed to be the same layout on
+>> all architectures regardless of __u64 alignment and
+>> sizeof(__kernel_size_t) differences, to avoid the need
+>> for compat syscalls and explicit clearing of the
+>> internal padding.
+>>
+>> Maybe just use __u64 fields for all three integers?
+> 
+> I have no problem with that ... the ctx[] field is variable length
+> anyway so keeping it as a __u8 should be fine.
+> 
+
+For Landlock, we make sure the UAPI structs don't contain holes,  are 
+packed, and have the same size for all architectures. We can check that 
+with pahole but for strong guarantee I suggest the same build check as 
+for Landlock's build_check_abi(): 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/landlock/syscalls.c#n68
+We don't need to use 64-bit fields everywhere.
