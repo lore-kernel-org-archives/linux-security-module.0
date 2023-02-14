@@ -2,105 +2,169 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C168DC05027
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Feb 2023 16:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8C1C6379F
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Feb 2023 17:00:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232818AbjBNQyy (ORCPT
+        id S232855AbjBNRAU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Feb 2023 11:54:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48580 "EHLO
+        Tue, 14 Feb 2023 12:00:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232730AbjBNQys (ORCPT
+        with ESMTP id S229930AbjBNQ7g (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Feb 2023 11:54:48 -0500
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [IPv6:2001:1600:4:17::42aa])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B17F3279B6
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Feb 2023 08:54:46 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PGRwT0VT7zMqdTZ;
-        Tue, 14 Feb 2023 17:48:09 +0100 (CET)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4PGRwP613lzMrY8P;
-        Tue, 14 Feb 2023 17:48:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1676393288;
-        bh=StyQV5VlfkbUqiAvO0zOrs/9byjjPFA4+fUSOycYmmE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=1/F48u5CG0IsU99YnekoUmb0RzF7DmvDMzBOukyFkT6iIJhdfpZmTt71ylV0xLMF7
-         K8IhQ8TUc/LZ4Bpb8nN8nk5YnxzoIsT93HzI1QjaKfBkYrmTDveT2QHfb6BlyqnwS4
-         TNaemjyBVXrPwG1xleOajIUz73mJQrjML+N2qesE=
-Message-ID: <b25a6279-2531-4711-1876-b181fce4acbe@digikod.net>
-Date:   Tue, 14 Feb 2023 17:48:05 +0100
+        Tue, 14 Feb 2023 11:59:36 -0500
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0140D2E0E6;
+        Tue, 14 Feb 2023 08:59:13 -0800 (PST)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31EGXk5t027870;
+        Tue, 14 Feb 2023 16:57:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2022-7-12;
+ bh=COxPmLf+paRDDdFuvH25Zi2bcrkGUWbmw1AV1Vzz6fg=;
+ b=YLvFKW+EqHo4lJihtKam5O2u/Ez9btXYR9UATFH2zB8Iu5e5Y/RW6Fp0KY6CkhCradAN
+ WTilqdKWZFcLKiqsqfa4V8mYN1ZQvBadLk2TsOnIkEtZUKsfbgOWWK7HvSPFJKd8W46X
+ 6I8lZN4dOtwp7sy+z6JM8Hyy2wb+bAGvhr+gIyRw8kVIAEWVmTfaTTf5O0Ec6XCJ2W+/
+ s+ECjqJ+6XkIgXtXUIiTIJDq/ia5qoW1iTGafvouFXOp0XKQKEIPCwqm6SXEU/hwPFGd
+ rIIwhMwB2pOtB0Be/uO7OEApgaB8P0mSiaWnOpESEKGFyDpTBPCUpGUYLIbIrtBSw8Fd aQ== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3np2mtdxts-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Feb 2023 16:57:48 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 31EGuKPb009707;
+        Tue, 14 Feb 2023 16:57:47 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3np1f5uuka-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Feb 2023 16:57:47 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 31EGuHor039739;
+        Tue, 14 Feb 2023 16:57:45 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3np1f5uuff-9;
+        Tue, 14 Feb 2023 16:57:45 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Helge Deller <deller@gmx.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Len Brown <len.brown@intel.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+        Daniel Bristot de Oliveira <bristot@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Evgeniy Polyakov <zbr@ioremap.net>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>, alsa-devel@alsa-project.org,
+        coresight@lists.linaro.org, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, isdn4linux@listserv.isdn4linux.de,
+        keyrings@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-sgx@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-trace-devel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-mm@kvack.org,
+        openrisc@lists.librecores.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: (subset) [PATCH 00/35] Documentation: correct lots of spelling errors (series 1)
+Date:   Tue, 14 Feb 2023 11:57:35 -0500
+Message-Id: <167639371105.486235.1228754650636546815.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230127064005.1558-1-rdunlap@infradead.org>
+References: <20230127064005.1558-1-rdunlap@infradead.org>
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v5 4/8] LSM: lsm_get_self_attr syscall for LSM self
- attributes
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, Kees Cook <keescook@chromium.org>,
-        john.johansen@canonical.com,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-References: <20230109180717.58855-1-casey@schaufler-ca.com>
- <20230109180717.58855-5-casey@schaufler-ca.com>
- <f8dca9d2-6e5e-4584-88b3-f71f62988dab@app.fastmail.com>
- <CAHC9VhRRRo9V-q8jT7AbSh1eTPGN7OmxP9hrPz=GTPQa80RjCg@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <CAHC9VhRRRo9V-q8jT7AbSh1eTPGN7OmxP9hrPz=GTPQa80RjCg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-14_11,2023-02-14_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
+ suspectscore=0 mlxscore=0 spamscore=0 mlxlogscore=997 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302140144
+X-Proofpoint-GUID: F9bpdPmEiXIR5xn5JduF_4kuCVCc4so3
+X-Proofpoint-ORIG-GUID: F9bpdPmEiXIR5xn5JduF_4kuCVCc4so3
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, 26 Jan 2023 22:39:30 -0800, Randy Dunlap wrote:
 
-On 12/01/2023 22:39, Paul Moore wrote:
-> On Thu, Jan 12, 2023 at 9:40 AM Arnd Bergmann <arnd@arndb.de> wrote:
->> On Mon, Jan 9, 2023, at 19:07, Casey Schaufler wrote:
->>> +/**
->>> + * struct lsm_ctx - LSM context
->>> + * @id: the LSM id number, see LSM_ID_XXX
->>> + * @flags: context specifier and LSM specific flags
->>> + * @ctx_len: the size of @ctx
->>> + * @ctx: the LSM context, a nul terminated string
->>> + *
->>> + * @ctx in a nul terminated string.
->>> + *   (strlen(@ctx) < @ctx_len) is always true.
->>> + *   (strlen(@ctx) == @ctx_len + 1) is not guaranteed.
->>> + */
->>> +struct lsm_ctx {
->>> +     __u32           id;
-There is a hole here for 64-bit architectures.
-
->>> +     __u64           flags;
->>> +     __kernel_size_t ctx_len;
-
-This is an architecture-related size, which makes the struct size 
-different according to architectures. We should avoid that.
-
->>> +     __u8            ctx[];
->>> +};
-
-I suggest packing this struct.
-
->>
->> I think this should be changed to be the same layout on
->> all architectures regardless of __u64 alignment and
->> sizeof(__kernel_size_t) differences, to avoid the need
->> for compat syscalls and explicit clearing of the
->> internal padding.
->>
->> Maybe just use __u64 fields for all three integers?
+> Correct many spelling errors in Documentation/ as reported by codespell.
 > 
-> I have no problem with that ... the ctx[] field is variable length
-> anyway so keeping it as a __u8 should be fine.
+> Maintainers of specific kernel subsystems are only Cc-ed on their
+> respective patches, not the entire series. [if all goes well]
 > 
+> These patches are based on linux-next-20230125.
+> 
+> [...]
 
-For Landlock, we make sure the UAPI structs don't contain holes,  are 
-packed, and have the same size for all architectures. We can check that 
-with pahole but for strong guarantee I suggest the same build check as 
-for Landlock's build_check_abi(): 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/landlock/syscalls.c#n68
-We don't need to use 64-bit fields everywhere.
+Applied to 6.3/scsi-queue, thanks!
+
+[28/35] Documentation: target: correct spelling
+        https://git.kernel.org/mkp/scsi/c/c57ac5748be5
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
