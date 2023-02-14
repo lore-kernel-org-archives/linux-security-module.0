@@ -2,47 +2,50 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B19EC61DA4
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Feb 2023 12:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3155C05027
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Feb 2023 12:07:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229569AbjBNMFQ (ORCPT
+        id S229742AbjBNMHj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Feb 2023 07:05:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33278 "EHLO
+        Tue, 14 Feb 2023 07:07:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbjBNMFP (ORCPT
+        with ESMTP id S229826AbjBNMHj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Feb 2023 07:05:15 -0500
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C81326EA6
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Feb 2023 04:04:41 -0800 (PST)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PGKcj60TrzMrfQf;
-        Tue, 14 Feb 2023 13:04:05 +0100 (CET)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4PGKcj233CzMs4Gt;
-        Tue, 14 Feb 2023 13:04:05 +0100 (CET)
+        Tue, 14 Feb 2023 07:07:39 -0500
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [IPv6:2001:1600:4:17::190e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C43F159D0
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Feb 2023 04:07:34 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PGKhh4qTRzMq2h3;
+        Tue, 14 Feb 2023 13:07:32 +0100 (CET)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4PGKhg6Qt1zMrY7q;
+        Tue, 14 Feb 2023 13:07:31 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1676376245;
-        bh=Hn8pyKXiGMV54Cg71TJp+lGJCaMbEOwe/VlvoLeHEk8=;
+        s=20191114; t=1676376452;
+        bh=gqIDRvWGTzT4nklKmWvFibafE6/JDz2MqIevgZJRG2U=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=t+EasRYeSPQMpyKG5/R5XHZTIZt5NXjfUOC8+CXGL9kzerNUnlLDxmD45ASan1B0v
-         BCZL7QOzonKXcug+hzPApfzfpX8gIZHe4fGn7adz+tRrn/iKkIxhYskvtjZ89FjvPr
-         xDp7zr2jOHWqVZ2hhaTFeFmclPTeZG2586jnO+ms=
-Message-ID: <d8112efe-d270-3013-97e6-bcc7c5237c02@digikod.net>
-Date:   Tue, 14 Feb 2023 13:04:04 +0100
+        b=moSXJG+9/kIX5O4QFtTZZNEudfDUK8enluJSh4YRMvlKmbf3YI6PymqWPirLRDFQi
+         75yVJ4CFk/lm70U06xor75sQPDi77butsXBn9/foZtYg/w6UgNyoCd1Rno0KWWjQE3
+         ZlsLQbwvfYFLQtGNtg2xkiJxvXH1vYQJ5gju4GUk=
+Message-ID: <e4008258-aad3-02d2-86fa-9c8118dcbd9e@digikod.net>
+Date:   Tue, 14 Feb 2023 13:07:31 +0100
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v2] landlock: Clarify documentation for the
- LANDLOCK_ACCESS_FS_REFER right
+Subject: Re: [PATCH v9 02/12] landlock: Allow filesystem layout changes for
+ domains without such rule type
 Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>
-References: <20230213210115.5150-1-gnoack3000@gmail.com>
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
+ <20230116085818.165539-3-konstantin.meskhidze@huawei.com>
+ <97ff3f0f-1704-3003-fe60-d7444579e0d7@digikod.net>
+ <f60af74e-bfdc-8e4b-03dd-2355c648588a@huawei.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230213210115.5150-1-gnoack3000@gmail.com>
+In-Reply-To: <f60af74e-bfdc-8e4b-03dd-2355c648588a@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
@@ -50,104 +53,70 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 13/02/2023 22:01, Günther Noack wrote:
-> Clarify the "refer" documentation by splitting up a big paragraph of text.
+On 14/02/2023 09:51, Konstantin Meskhidze (A) wrote:
 > 
-> - Call out specifically that the denial by default applies to ABI v1 as well.
-> - Turn the three additional constraints for link/rename operations
->    into bullet points, to give it more structure.
 > 
-> Includes wording and semantics corrections by Mickaël Salaün.
+> 2/10/2023 8:34 PM, Mickaël Salaün пишет:
+>> Hi Konstantin,
+>>
+>> I think this patch series is almost ready. Here is a first batch of
+>> review, I'll send more next week.
+>>
+>     Hi Mickaёl.
+>     thnaks for the review.
 > 
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> ---
->   include/uapi/linux/landlock.h | 41 ++++++++++++++++++++++-------------
->   1 file changed, 26 insertions(+), 15 deletions(-)
+>>
+>> I forgot to update the documentation. Can you please squash the
+>> following patch into this one?
 > 
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index f3223f96469..f6bccd87aa0 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -130,21 +130,32 @@ struct landlock_path_beneath_attr {
->    * - %LANDLOCK_ACCESS_FS_MAKE_BLOCK: Create (or rename or link) a block device.
->    * - %LANDLOCK_ACCESS_FS_MAKE_SYM: Create (or rename or link) a symbolic link.
->    * - %LANDLOCK_ACCESS_FS_REFER: Link or rename a file from or to a different
-> - *   directory (i.e. reparent a file hierarchy).  This access right is
-> - *   available since the second version of the Landlock ABI.  This is also the
-> - *   only access right which is always considered handled by any ruleset in
-> - *   such a way that reparenting a file hierarchy is always denied by default.
-> - *   To avoid privilege escalation, it is not enough to add a rule with this
-> - *   access right.  When linking or renaming a file, the destination directory
-> - *   hierarchy must also always have the same or a superset of restrictions of
-> - *   the source hierarchy.  If it is not the case, or if the domain doesn't
-> - *   handle this access right, such actions are denied by default with errno
-> - *   set to ``EXDEV``.  Linking also requires a ``LANDLOCK_ACCESS_FS_MAKE_*``
-> - *   access right on the destination directory, and renaming also requires a
-> - *   ``LANDLOCK_ACCESS_FS_REMOVE_*`` access right on the source's (file or
-> - *   directory) parent.  Otherwise, such actions are denied with errno set to
-> - *   ``EACCES``.  The ``EACCES`` errno prevails over ``EXDEV`` to let user space
-> - *   efficiently deal with an unrecoverable error.
-> + *   directory (i.e. reparent a file hierarchy).
-> + *
-> + *   This access right is available since the second version of the Landlock
-> + *   ABI.  This is also the only access right which is always considered
-> + *   handled by any ruleset in such a way that reparenting a file hierarchy is
+>     No problem. I will squash.
+>     Can I download this doc patch from your repo or I can use the diff below?
 
-This is from me, but do you think "reparenting a file hierarchy" is not 
-confusing? What about "reparenting a file or a directory"? Not sure 
-which one is better.
+You can take the diff below.
 
-I'm not sure either if we should use "deny" or "forbidden". Is there a 
-difference? According to https://www.wikidiff.com/deny/forbid it seems 
-that "deny" would be more appropriate because Landlock rules add 
-exceptions to a forbidden set of actions… However, "deny" needs to be 
-followed by "access" for the same use, which makes your wording correct. 
-Just a thought.
-
-
-> + *   always denied by default.  If left unspecified during the creation of a
-> + *   ruleset, linking and renaming files between different directories will be
-> + *   forbidden, which is also the case when using the first Landlock ABI.
-> + *
-> + *   In addition to permitting this access right, the following constraints
-> + *   must hold for the access rights on the source and destination directory:
-> + *
-> + *   * The destination directory may not grant any access rights which are
-> + *     forbidden for the source file. Otherwise, the operation results in an
-
-The files/directories don't grant accesses but the sandbox/domain do 
-grant some accesses for a set of file hierarchies.
-
-What about "Any forbidden actions on the source file must also be 
-forbidden on the destination file."
-Or "Any denied accesses on the source file…"
-
-This seems a bit weird according to the previous "must hold for the 
-access rights on the source and destination directory" though.
-
-
-> + *     ``EXDEV`` error.
-> + *
-> + *   * When linking or renaming, the ``LANDLOCK_ACCESS_FS_MAKE_*`` right for
-> + *     the respective file type is required in the destination directory.
-
-s/is required in the destination/must be granted for the destination/ ?
-
-
-> + *     Otherwise, the operation results in an ``EACCES`` error.
-> + *
-> + *   * When renaming, the ``LANDLOCK_ACCESS_FS_REMOVE_*`` right for the
-> + *     respective file type is required in the source directory.  Otherwise,
-
-Same "must be granted for"
-
-
-> + *     the operation results in an ``EACCES`` error.
-> + *
-> + *   If multiple requirements are not met, the ``EACCES`` error code takes
-> + *   precedence over ``EXDEV``.
->    *
->    * .. warning::
->    *
-> 
-> base-commit: ceaa837f96adb69c0df0397937cd74991d5d821a
+>>
+>>
+>> diff --git a/Documentation/userspace-api/landlock.rst
+>> b/Documentation/userspace-api/landlock.rst
+>> index 980558b879d6..fc2be89b423f 100644
+>> --- a/Documentation/userspace-api/landlock.rst
+>> +++ b/Documentation/userspace-api/landlock.rst
+>> @@ -416,9 +416,9 @@ Current limitations
+>>     Filesystem topology modification
+>>     --------------------------------
+>>
+>> -As for file renaming and linking, a sandboxed thread cannot modify its
+>> -filesystem topology, whether via :manpage:`mount(2)` or
+>> -:manpage:`pivot_root(2)`.  However, :manpage:`chroot(2)` calls are not
+>> denied.
+>> +Threads sandboxed with filesystem restrictions cannot modify filesystem
+>> +topology, whether via :manpage:`mount(2)` or :manpage:`pivot_root(2)`.
+>> +However, :manpage:`chroot(2)` calls are not denied.
+>>
+>>     Special filesystems
+>>     -------------------
+>>
+>>
+>> On 16/01/2023 09:58, Konstantin Meskhidze wrote:
+>>> From: Mickaël Salaün <mic@digikod.net>
+>>>
+>>> Allow mount point and root directory changes when there is no filesystem
+>>> rule tied to the current Landlock domain.  This doesn't change anything
+>>> for now because a domain must have at least a (filesystem) rule, but
+>>> this will change when other rule types will come.  For instance, a
+>>> domain only restricting the network should have no impact on filesystem
+>>> restrictions.
+>>>
+>>> Add a new get_current_fs_domain() helper to quickly check filesystem
+>>> rule existence for all filesystem LSM hooks.
+>>>
+>>> Remove unnecessary inlining.
+>>>
+>>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>>> ---
+>>>
+>>> Changes since v8:
+>>> * Refactors get_handled_fs_accesses().
+>>> * Adds landlock_get_raw_fs_access_mask() helper.
+>>>
+>> .
