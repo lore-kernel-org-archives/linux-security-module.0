@@ -2,60 +2,70 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09783C64ED6
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Feb 2023 20:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 620ECC636D4
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Feb 2023 22:57:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230311AbjBOUu7 (ORCPT
+        id S229560AbjBOW5S (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Feb 2023 15:50:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34318 "EHLO
+        Wed, 15 Feb 2023 17:57:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230115AbjBOUun (ORCPT
+        with ESMTP id S229585AbjBOW5R (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Feb 2023 15:50:43 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B78D5B92;
-        Wed, 15 Feb 2023 12:47:50 -0800 (PST)
+        Wed, 15 Feb 2023 17:57:17 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E982EA5EC;
+        Wed, 15 Feb 2023 14:57:16 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 577F061D92;
-        Wed, 15 Feb 2023 20:47:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F417C4339B;
-        Wed, 15 Feb 2023 20:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1676494068;
-        bh=x9NsaW/xZtFVUjG+JboNIoA9JNxSi3d95U8uvAAB2XM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gZj1HxZujuimUkFxi5KP14HEqb1TOkdlf9S0IrYl69IsqFJL5flgBSpFSXQwjIgbD
-         h1Tb4FXM1gxx4Kv0hj8koYB1/0KQqwKptwNTAaj1x6V2PcyfyNNq/vG4mtSrhgk0z0
-         YqEkJf62PVlElB7D0UDmhsuNsFy0Hwb14LZ/CLdY=
-Date:   Wed, 15 Feb 2023 12:47:47 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/sys.c: fix and improve control flow in
- __sys_setres[ug]id()
-Message-Id: <20230215124747.6f8df3c4675517eacf1e9a39@linux-foundation.org>
-In-Reply-To: <20230215131807.293556-1-omosnace@redhat.com>
-References: <20230215131807.293556-1-omosnace@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 84C5461DE4;
+        Wed, 15 Feb 2023 22:57:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E81DDC433D2;
+        Wed, 15 Feb 2023 22:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676501835;
+        bh=DGMyazRgF0IVnZtTrpH0KyNlUnskq8UeEyjWF8BqUZk=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=jpyWDAd+6Z4jjEQ7A14rH7XEHmgGp0Yn0ZATWFM09yx7JXkSigVPsdwJ2TVz/vfFl
+         Ee2q5UF2zE9ohVllc+jvghcWDHIa8NHMNfKrY90amZfUUcbcgQGyO1ZBwLkjgNla86
+         rIkxw2Z5ivVL6meYcJ9/V7Yb4JoX0KMwiVUn6Cf0U/6G35W1MJBcviNs8GwcS+gk/v
+         o1bSuHqJDIVeqZC9/6FHAQpKYbp57Da13I/kk6DFq2NfZ/AVdyzV7L5cRury36+iJ5
+         +WmHV+XRUOqMJMvMJmlcUohuIT3SgHi3mQqDVVjD6Z2122SL8enPVU/0pNzHonVU9L
+         w4Juvvfap10DA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D4212C4166F;
+        Wed, 15 Feb 2023 22:57:15 +0000 (UTC)
+Subject: Re: [GIT PULL] apparmor fix for v6.2
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <442b2890-7b94-e2a1-91c6-6dac18d67463@canonical.com>
+References: <442b2890-7b94-e2a1-91c6-6dac18d67463@canonical.com>
+X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
+X-PR-Tracked-Message-Id: <442b2890-7b94-e2a1-91c6-6dac18d67463@canonical.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-v6.2-rc9
+X-PR-Tracked-Commit-Id: cbb13e12a5d3ecef400716ea7d12a9268b0f37ca
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 033c40a89f55525139fd5b6342281b09b97d05bf
+Message-Id: <167650183586.1740.18210642145263349664.pr-tracker-bot@kernel.org>
+Date:   Wed, 15 Feb 2023 22:57:15 +0000
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 15 Feb 2023 14:18:07 +0100 Ondrej Mosnacek <omosnace@redhat.com> wrote:
+The pull request you sent on Wed, 15 Feb 2023 12:07:19 -0800:
 
-> 1. First determine if CAP_SET[UG]ID is required and only then call
->    ns_capable_setid(), to avoid bogus LSM (SELinux) denials.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-v6.2-rc9
 
-Can we please have more details on the selinux failures?  Under what
-circumstances?  What is the end-user impact?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/033c40a89f55525139fd5b6342281b09b97d05bf
 
-Because a fix for "bogus LSM (SELinux) denials" sounds like something
-which should be backported into earlier kernels, but there simply isn't
-sufficient information here for others to decide on this.
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
