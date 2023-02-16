@@ -2,150 +2,98 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B613C61DA4
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Feb 2023 06:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D513EC61DA4
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Feb 2023 12:44:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229518AbjBPGxg (ORCPT
+        id S230202AbjBPMow (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Feb 2023 01:53:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54250 "EHLO
+        Thu, 16 Feb 2023 07:44:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbjBPGxf (ORCPT
+        with ESMTP id S229909AbjBPMoq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Feb 2023 01:53:35 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E59721F5E1
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Feb 2023 22:53:33 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9F600B825DD
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 06:53:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3497C433D2;
-        Thu, 16 Feb 2023 06:53:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1676530411;
-        bh=CrpWTlwyl4ID4FNJzF7Ia5Irp6XcDH+IwFTRdbRBAOo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XmLXTzO5fxnkf4FmY8IVVeDvLEB+ewOxUcmsQekOnvcg4El25skx/qW/1SIBlwDnU
-         /TkVw972gAUQXv41ym4viY+vC/q/NkLKlLvIOsfX2z3iZ/6Xa+hfqa12bZfazB9lXY
-         IvtNhGl6UD+2WDhsoNeD9CxZxk4Ik79TIvIYczW0=
-Date:   Thu, 16 Feb 2023 07:53:28 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     linux-security-module@vger.kernel.org, paul@paul-moore.com
-Subject: Re: [PATCH 08/14] Implement TSEM control plane.
-Message-ID: <Y+3S6COr4U86wi8A@kroah.com>
-References: <20230204050954.11583-1-greg@enjellic.com>
- <20230204050954.11583-9-greg@enjellic.com>
- <Y+TZa60YQlehJtJu@kroah.com>
- <20230211001806.GA30741@wind.enjellic.com>
- <Y+d1B2+McB0pxuOn@kroah.com>
- <20230212065439.GA5189@wind.enjellic.com>
+        Thu, 16 Feb 2023 07:44:46 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22E501712;
+        Thu, 16 Feb 2023 04:44:44 -0800 (PST)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4PHZQ76m8SzrRxk;
+        Thu, 16 Feb 2023 20:44:15 +0800 (CST)
+Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
+ (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Thu, 16 Feb
+ 2023 20:44:41 +0800
+From:   GUO Zihua <guozihua@huawei.com>
+To:     <zohar@linux.ibm.com>, <paul@paul-moore.com>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <dledford@redhat.com>, <jgg@ziepe.ca>
+Subject: [PATCH 4.19 v2 0/5] Backport handling -ESTALE policy update failure to 4.19
+Date:   Thu, 16 Feb 2023 20:42:22 +0800
+Message-ID: <20230216124227.44058-1-guozihua@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230212065439.GA5189@wind.enjellic.com>
+Content-Type: text/plain
+X-Originating-IP: [10.67.175.31]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Feb 12, 2023 at 12:54:40AM -0600, Dr. Greg wrote:
-> On Sat, Feb 11, 2023 at 11:59:19AM +0100, Greg KH wrote:
-> 
-> Looping in Paul Moore in order to get his thoughts.
-> 
-> > On Fri, Feb 10, 2023 at 06:18:06PM -0600, Dr. Greg wrote:
-> > > On Thu, Feb 09, 2023 at 12:30:51PM +0100, Greg KH wrote:
-> > > 
-> > > Good afternoon Greg, thanks for taking the time to review the patches
-> > > and pass along comments.
-> > > 
-> > > > On Fri, Feb 03, 2023 at 11:09:48PM -0600, Dr. Greg wrote:
-> > > > > The fs.c file contains the implementation of the TSEM control
-> > > > > plane that is in the form of a pseudo-filesystem mounted on the
-> > > > > following directory:
-> > > > > 
-> > > > > /sys/fs/tsem
-> > > 
-> > > > Why are you using sysfs to mount this?
-> 
-> > > We followed the lead of the SMACK and SeLinux LSM's, both of which
-> > > create the mount points for their control plane filesystems in
-> > > /sys/fs.
-> > > 
-> > > In addition, as a filesystem, we chose to have tsemfs closely follow
-> > > their design for continuity across the LSM's.  So they share similar
-> > > functionality and design, modulo of course, the event description and
-> > > trajectory export files that we will chat about below.
-> > > 
-> > > We can't use securityfs, secondary to the fact that it doesn't
-> > > implement pollable files, which are a requirement for trust
-> > > orchestrators based on external Trusted Modeling Agents.
-> 
-> > Why not fix securityfs to provide pollable files?  Other than that,
-> > why can't you just use securityfs?
-> 
-> Now that we have had some additional bandwidth to look at issues after
-> the first round release, it may be more straight forward to implement
-> the pollable files in securityfs than we thought.  We will take
-> another run at this and see what is possible without having to meddle
-> with the internals of securityfs proper.
+This series backports patches in order to resolve the issue discussed here:
+https://lore.kernel.org/selinux/389334fe-6e12-96b2-6ce9-9f0e8fcb85bf@huawei.com/
 
-It's ok to mess around with securityfs to get it to work properly for
-your use case, there's no reason to create a whole new filesystem just
-because of one missing functionality.
+This required backporting the non-blocking LSM policy update mechanism
+prerequisite patches. As well as bugfixes that follows.
 
-> As the diffstat for the patch series indicates, we spent considerable
-> time working to implement TSEM without touching anything outside its
-> implementation directory.  I think this is something that anyone who
-> has tried to upstream functionality into the mainline kernel would
-> understand the merit of.
+c66f67414c1f ("IB/core: Don't register each MAD agent for LSM notifier")
+is merged as the prerequisite of 42df744c4166 ("LSM: switch to blocking
+policy update notifiers"). e144d6b26541 ("ima: Evaluate error in
+init_ima()") is merged as a follow up bugfix for b16942455193 ("ima:
+use the lsm policy update notifier"). 483ec26eed42 ("ima: ima/lsm policy
+rule loading logic bug fixes") and 9ff8a616dfab ("ima: Have the LSM free
+its audit rule") is also followup bugfixes. The former would change the
+behavior of rule loading without fixing any criticial bug so I don't
+think it's necessary, while the latter has already been merged.
 
-No, that's not how kernel development works, it's ok to touch other
-portions when needed, otherwise you duplicate lots of extra code and
-functionality as you are doing here.  Please do not do that.
+I've tested the patches against said issue and can confirm that the
+issue is fixed.
 
-> > You are creating a new structure-type-api here, why not use a
-> > already-designed protocol instead like varlink if you need userspace
-> > to parse events in an atomic way?  Or heck even json would be better
-> > as there are universal userspace tools for that today.
-> 
-> As an industry, we are in the middle of a software supply chain
-> security crisis.
+This is a re-send of the original patchset as the original patchset
+might have a faulty cover letter. The original patchset could be found
+here:
+https://patchwork.kernel.org/project/linux-integrity/list/?series=709367
 
-That has nothing to do with the kernel, sorry.
+Change log:
+  v2: Fixed build issue and backport bugfix commits for backported
+patches.
 
-> In a trust orchestrated architecture, the trust
-> orchestrators, and their Sancho TMA implementations, are the most
-> security critical components on the system.  Our objective is to keep
-> the supply chain footprint for Quixote as small as possible.
-> 
-> To that point:
-> 
-> size /usr/local/lib/libyajl.so.2.1.1:
->    text    data     bss     dec     hex filename
->   33333     784      16   34133    8555 /usr/local/lib/libyajl.so.2.1.1
-> 
-> size /u/usr/sources/quixote-1.4/SecurityModel/EventParser.o
->    text    data     bss     dec     hex filename
->    2520       0       0    2520     9d8 /u/usr/sources/quixote-1.4/SecurityModel/EventParser.o
-> 
-> If we were to use JSON, we would use yajl, it is probably as light as
-> anything out there.  Given that, on face value, this would represent
-> over an order of magnitude increase in code size to achieve the same
-> objective, plus add an external dependency.
+Daniel Jurgens (1):
+  IB/core: Don't register each MAD agent for LSM notifier
 
-So you require people to trust your custom parser and format just
-because you don't want to rely on a trusted tool that the whole world
-depends on?
+GUO Zihua (1):
+  ima: Handle -ESTALE returned by ima_filter_rule_match()
 
-Again, not a valid argument, sorry, please use common parsing tools
-otherwise you are guaranteed to make mistakes and everyone will have to
-rely on your custom tools only, which is not something that you would
-accept from any other kernel change.
+Janne Karhunen (2):
+  LSM: switch to blocking policy update notifiers
+  ima: use the lsm policy update notifier
 
-And I don't see a link to the userspace tools anywhere, did I miss it?
+Roberto Sassu (1):
+  ima: Evaluate error in init_ima()
 
-thanks,
+ drivers/infiniband/core/core_priv.h |   5 +
+ drivers/infiniband/core/device.c    |   5 +-
+ drivers/infiniband/core/security.c  |  51 +++++-----
+ include/linux/security.h            |  12 +--
+ include/rdma/ib_mad.h               |   3 +-
+ security/integrity/ima/ima.h        |   2 +
+ security/integrity/ima/ima_main.c   |  11 ++
+ security/integrity/ima/ima_policy.c | 151 ++++++++++++++++++++++------
+ security/security.c                 |  23 +++--
+ security/selinux/hooks.c            |   2 +-
+ security/selinux/selinuxfs.c        |   2 +-
+ 11 files changed, 193 insertions(+), 74 deletions(-)
 
-greg k-h
+-- 
+2.17.1
+
