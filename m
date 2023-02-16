@@ -2,70 +2,150 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 620ECC636D4
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Feb 2023 22:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B613C61DA4
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Feb 2023 06:53:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbjBOW5S (ORCPT
+        id S229518AbjBPGxg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Feb 2023 17:57:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52042 "EHLO
+        Thu, 16 Feb 2023 01:53:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbjBOW5R (ORCPT
+        with ESMTP id S229460AbjBPGxf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Feb 2023 17:57:17 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E982EA5EC;
-        Wed, 15 Feb 2023 14:57:16 -0800 (PST)
+        Thu, 16 Feb 2023 01:53:35 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E59721F5E1
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Feb 2023 22:53:33 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 84C5461DE4;
-        Wed, 15 Feb 2023 22:57:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E81DDC433D2;
-        Wed, 15 Feb 2023 22:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676501835;
-        bh=DGMyazRgF0IVnZtTrpH0KyNlUnskq8UeEyjWF8BqUZk=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=jpyWDAd+6Z4jjEQ7A14rH7XEHmgGp0Yn0ZATWFM09yx7JXkSigVPsdwJ2TVz/vfFl
-         Ee2q5UF2zE9ohVllc+jvghcWDHIa8NHMNfKrY90amZfUUcbcgQGyO1ZBwLkjgNla86
-         rIkxw2Z5ivVL6meYcJ9/V7Yb4JoX0KMwiVUn6Cf0U/6G35W1MJBcviNs8GwcS+gk/v
-         o1bSuHqJDIVeqZC9/6FHAQpKYbp57Da13I/kk6DFq2NfZ/AVdyzV7L5cRury36+iJ5
-         +WmHV+XRUOqMJMvMJmlcUohuIT3SgHi3mQqDVVjD6Z2122SL8enPVU/0pNzHonVU9L
-         w4Juvvfap10DA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D4212C4166F;
-        Wed, 15 Feb 2023 22:57:15 +0000 (UTC)
-Subject: Re: [GIT PULL] apparmor fix for v6.2
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <442b2890-7b94-e2a1-91c6-6dac18d67463@canonical.com>
-References: <442b2890-7b94-e2a1-91c6-6dac18d67463@canonical.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <442b2890-7b94-e2a1-91c6-6dac18d67463@canonical.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-v6.2-rc9
-X-PR-Tracked-Commit-Id: cbb13e12a5d3ecef400716ea7d12a9268b0f37ca
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 033c40a89f55525139fd5b6342281b09b97d05bf
-Message-Id: <167650183586.1740.18210642145263349664.pr-tracker-bot@kernel.org>
-Date:   Wed, 15 Feb 2023 22:57:15 +0000
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9F600B825DD
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 06:53:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3497C433D2;
+        Thu, 16 Feb 2023 06:53:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1676530411;
+        bh=CrpWTlwyl4ID4FNJzF7Ia5Irp6XcDH+IwFTRdbRBAOo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XmLXTzO5fxnkf4FmY8IVVeDvLEB+ewOxUcmsQekOnvcg4El25skx/qW/1SIBlwDnU
+         /TkVw972gAUQXv41ym4viY+vC/q/NkLKlLvIOsfX2z3iZ/6Xa+hfqa12bZfazB9lXY
+         IvtNhGl6UD+2WDhsoNeD9CxZxk4Ik79TIvIYczW0=
+Date:   Thu, 16 Feb 2023 07:53:28 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     "Dr. Greg" <greg@enjellic.com>
+Cc:     linux-security-module@vger.kernel.org, paul@paul-moore.com
+Subject: Re: [PATCH 08/14] Implement TSEM control plane.
+Message-ID: <Y+3S6COr4U86wi8A@kroah.com>
+References: <20230204050954.11583-1-greg@enjellic.com>
+ <20230204050954.11583-9-greg@enjellic.com>
+ <Y+TZa60YQlehJtJu@kroah.com>
+ <20230211001806.GA30741@wind.enjellic.com>
+ <Y+d1B2+McB0pxuOn@kroah.com>
+ <20230212065439.GA5189@wind.enjellic.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230212065439.GA5189@wind.enjellic.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Wed, 15 Feb 2023 12:07:19 -0800:
+On Sun, Feb 12, 2023 at 12:54:40AM -0600, Dr. Greg wrote:
+> On Sat, Feb 11, 2023 at 11:59:19AM +0100, Greg KH wrote:
+> 
+> Looping in Paul Moore in order to get his thoughts.
+> 
+> > On Fri, Feb 10, 2023 at 06:18:06PM -0600, Dr. Greg wrote:
+> > > On Thu, Feb 09, 2023 at 12:30:51PM +0100, Greg KH wrote:
+> > > 
+> > > Good afternoon Greg, thanks for taking the time to review the patches
+> > > and pass along comments.
+> > > 
+> > > > On Fri, Feb 03, 2023 at 11:09:48PM -0600, Dr. Greg wrote:
+> > > > > The fs.c file contains the implementation of the TSEM control
+> > > > > plane that is in the form of a pseudo-filesystem mounted on the
+> > > > > following directory:
+> > > > > 
+> > > > > /sys/fs/tsem
+> > > 
+> > > > Why are you using sysfs to mount this?
+> 
+> > > We followed the lead of the SMACK and SeLinux LSM's, both of which
+> > > create the mount points for their control plane filesystems in
+> > > /sys/fs.
+> > > 
+> > > In addition, as a filesystem, we chose to have tsemfs closely follow
+> > > their design for continuity across the LSM's.  So they share similar
+> > > functionality and design, modulo of course, the event description and
+> > > trajectory export files that we will chat about below.
+> > > 
+> > > We can't use securityfs, secondary to the fact that it doesn't
+> > > implement pollable files, which are a requirement for trust
+> > > orchestrators based on external Trusted Modeling Agents.
+> 
+> > Why not fix securityfs to provide pollable files?  Other than that,
+> > why can't you just use securityfs?
+> 
+> Now that we have had some additional bandwidth to look at issues after
+> the first round release, it may be more straight forward to implement
+> the pollable files in securityfs than we thought.  We will take
+> another run at this and see what is possible without having to meddle
+> with the internals of securityfs proper.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-v6.2-rc9
+It's ok to mess around with securityfs to get it to work properly for
+your use case, there's no reason to create a whole new filesystem just
+because of one missing functionality.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/033c40a89f55525139fd5b6342281b09b97d05bf
+> As the diffstat for the patch series indicates, we spent considerable
+> time working to implement TSEM without touching anything outside its
+> implementation directory.  I think this is something that anyone who
+> has tried to upstream functionality into the mainline kernel would
+> understand the merit of.
 
-Thank you!
+No, that's not how kernel development works, it's ok to touch other
+portions when needed, otherwise you duplicate lots of extra code and
+functionality as you are doing here.  Please do not do that.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> > You are creating a new structure-type-api here, why not use a
+> > already-designed protocol instead like varlink if you need userspace
+> > to parse events in an atomic way?  Or heck even json would be better
+> > as there are universal userspace tools for that today.
+> 
+> As an industry, we are in the middle of a software supply chain
+> security crisis.
+
+That has nothing to do with the kernel, sorry.
+
+> In a trust orchestrated architecture, the trust
+> orchestrators, and their Sancho TMA implementations, are the most
+> security critical components on the system.  Our objective is to keep
+> the supply chain footprint for Quixote as small as possible.
+> 
+> To that point:
+> 
+> size /usr/local/lib/libyajl.so.2.1.1:
+>    text    data     bss     dec     hex filename
+>   33333     784      16   34133    8555 /usr/local/lib/libyajl.so.2.1.1
+> 
+> size /u/usr/sources/quixote-1.4/SecurityModel/EventParser.o
+>    text    data     bss     dec     hex filename
+>    2520       0       0    2520     9d8 /u/usr/sources/quixote-1.4/SecurityModel/EventParser.o
+> 
+> If we were to use JSON, we would use yajl, it is probably as light as
+> anything out there.  Given that, on face value, this would represent
+> over an order of magnitude increase in code size to achieve the same
+> objective, plus add an external dependency.
+
+So you require people to trust your custom parser and format just
+because you don't want to rely on a trusted tool that the whole world
+depends on?
+
+Again, not a valid argument, sorry, please use common parsing tools
+otherwise you are guaranteed to make mistakes and everyone will have to
+rely on your custom tools only, which is not something that you would
+accept from any other kernel change.
+
+And I don't see a link to the userspace tools anywhere, did I miss it?
+
+thanks,
+
+greg k-h
