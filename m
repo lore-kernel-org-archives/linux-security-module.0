@@ -2,61 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 992C8C05027
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4784C636D7
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230207AbjBQD1E (ORCPT
+        id S230252AbjBQD1O (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Feb 2023 22:27:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44514 "EHLO
+        Thu, 16 Feb 2023 22:27:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230250AbjBQD0z (ORCPT
+        with ESMTP id S230130AbjBQD05 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Feb 2023 22:26:55 -0500
-Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E71AA4FC91
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:50 -0800 (PST)
-Received: by mail-qt1-x82c.google.com with SMTP id c2so4294676qtw.5
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:50 -0800 (PST)
+        Thu, 16 Feb 2023 22:26:57 -0500
+Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A94A95A385
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:52 -0800 (PST)
+Received: by mail-qv1-xf30.google.com with SMTP id i5so3132547qvp.6
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xeeHpA6lvQHPO/ftGpgUKQvSyPEmE3Df9MfvHzYRoGc=;
-        b=ZrAJCoTjUbnKaKirz/acxVCH3IIApCF4mx6fRKixGIM3rQTXrsmtRTSpXi3yWqUdC5
-         QWfPFu+vo9b4JS6ZfkffnEjKZCyeGRw6FVYnm7betGWoaJZNr+OhJYjviJfDQzGjnvln
-         9iOWTNn++SJFZ5M3yFtayAdLJEjotjmn4f/MRtl0Qfq158MC4ut4ln5g0gGEUyElQuHI
-         rCVOI9IBAWoYrx3kesO3ueVUhNRGKdXrdJwM7HhQBS7B09xH+ycaeOh6hSnmJ1oJ0HK1
-         64mHXXNGp+m2QtXqRs9gfNr46YN+GFL1N7TEuGtkauAfGRWimK9sc82ddES/sLwNkfu1
-         Wysw==
+        bh=Q6G9lKyS1KVfFFMP7ztRA7H7QDEyjlDjPSIl6UQnbPw=;
+        b=dTYb7rQEfoZGgDon/mEvmnD+PmBnJABrMDd04O3HPf3TH3aYn4fMbozyc4+e2re2sY
+         ASvD7j+mzTb/frfiIv0AV9O5SqTTzIgowNiPXx5E4Iye+2h2UfXjH8seFivVQUzxpeL0
+         WZhQwDkQsVPDuyk4a3NZTwLPbQeZCoaiXUbbNGFdj6WsTqOEoGRYoBtuhetqNlQFdVrU
+         CsgXGz8Pl/PUbH85sPXZnwYBYr7z9QsshuOfi6yAP3LzhOEO0CmVvXKgLH2GtqxdRNtk
+         X6PBxUXHb8fTWCmUHYZMVO+dfQLVqaxpE69MEt4ML/hE7oYwdFKgfSygaFnwEYHB9182
+         C7Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xeeHpA6lvQHPO/ftGpgUKQvSyPEmE3Df9MfvHzYRoGc=;
-        b=iELLyFBCuHf1kvKEX68V16EFzKwdvZDPA5HBaBIu5+3FYjb2qJ2XdNHDjgs0Hai13R
-         lYFevI3fFVkT/C2QQaa/6JlBTKvZj6f3CRdL42vNJ1GM2OxIlgCrGeTmvlTYms4Q30wC
-         uV1jD67elxJCY4FJGV34TpcRbB7eeSEVQPuzdwg0q3R6+mDRq1WCYuB4fe9synSirGf5
-         h1opyGU09ueOcT66NLI+xpT2BLnFS+oTb4hLWCXKMpE3QrP64oeLUNXPPcj1Jk3WvalI
-         OtWBAdn568QHipoNZ9hGi7EbxtiM79MmkGTMIbtjlQaqxLMAMo3hZuTxTvvUHAj9FTk1
-         S7+g==
-X-Gm-Message-State: AO0yUKVj42SXNII7wd7nU9sDofu3COkPR9k8c1QrWBPq8mwvvN+zNpzh
-        b9Gg1RxgS8TUGmxfEH23zV1mofTcetGSzCM=
-X-Google-Smtp-Source: AK7set+U5raHTtpzcwduoMWpxr2LatO2nOPAvp72opvfivRmOu9I938SInGAC7ZlcPwogYiiFuKfcg==
-X-Received: by 2002:ac8:7f02:0:b0:3b9:c9c3:cc2b with SMTP id f2-20020ac87f02000000b003b9c9c3cc2bmr13268431qtk.7.1676604410136;
-        Thu, 16 Feb 2023 19:26:50 -0800 (PST)
+        bh=Q6G9lKyS1KVfFFMP7ztRA7H7QDEyjlDjPSIl6UQnbPw=;
+        b=DVGHlAFhrKf3gJht1nnMTaKpEUMl+bjwH1Qm0l3UmoVON1YX/YmZepL/5Dqib6jyim
+         F7hr3B4mZmcU/NfzryElSfoIWimHoyOJvsxFGeRrbqLwzVnf0Jlj3+nebrT4TI4Ocwcy
+         R2nO1Lhsk8raQA7V1CN9/ME7NRpHmFPWns42uwJ50qK3HhgtrQcSI2go/V7sCbeUSEx2
+         N9GgFeiFnktFGCprOW7YFzJY1QXGzu3iKxsLIZB2WvKCa80cPseUc8hz0/jXkGidgtxS
+         mDwNeM4UkegrCITKRX8PcZ19EuJtxu+WJsn/99Aspg4/oXOfCyrZ9PMXb3r2wwRqPleg
+         hK/g==
+X-Gm-Message-State: AO0yUKXAbqssWve8lCvYjFUv6bpWAKjpXcD2bX9ZxAxWEgcrlTlIPFxg
+        UWX+/GRiaxa5laT5U0+wjHz4VO5fwM0ncG8=
+X-Google-Smtp-Source: AK7set8g0xGc5CofamsXw7wbGwFDJmjJZbHSk4LiYb2vUJItiBwcfZM/hXnP9rdKRYQSyGtMTVy8Vw==
+X-Received: by 2002:ad4:5c86:0:b0:56b:ff69:7df8 with SMTP id o6-20020ad45c86000000b0056bff697df8mr17755123qvh.51.1676604411342;
+        Thu, 16 Feb 2023 19:26:51 -0800 (PST)
 Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
-        by smtp.gmail.com with ESMTPSA id s18-20020ac87592000000b003b868cdc689sm2500692qtq.5.2023.02.16.19.26.49
+        by smtp.gmail.com with ESMTPSA id b68-20020a37b247000000b0073980414888sm2483677qkf.42.2023.02.16.19.26.50
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 19:26:49 -0800 (PST)
+        Thu, 16 Feb 2023 19:26:50 -0800 (PST)
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org
-Subject: [PATCH 16/22] lsm: move the binder hook comments to security/security.c
-Date:   Thu, 16 Feb 2023 22:26:19 -0500
-Message-Id: <20230217032625.678457-17-paul@paul-moore.com>
+Subject: [PATCH 17/22] lsm: move the audit hook comments to security/security.c
+Date:   Thu, 16 Feb 2023 22:26:20 -0500
+Message-Id: <20230217032625.678457-18-paul@paul-moore.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230217032625.678457-1-paul@paul-moore.com>
 References: <20230217032625.678457-1-paul@paul-moore.com>
@@ -78,107 +78,120 @@ comments.
 
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- include/linux/lsm_hooks.h | 22 ----------------------
- security/security.c       | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+), 22 deletions(-)
+ include/linux/lsm_hooks.h | 32 ------------------------------
+ security/security.c       | 41 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 41 insertions(+), 32 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index f6679fead627..0a5b3b46fc2b 100644
+index 0a5b3b46fc2b..e36387f88083 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -32,28 +32,6 @@
- /**
-  * union security_list_options - Linux Security Module hook function list
+@@ -135,38 +135,6 @@
+  *	@secdata contains the security context.
+  *	@seclen contains the length of the security context.
   *
-- * @binder_set_context_mgr:
-- *	Check whether @mgr is allowed to be the binder context manager.
-- *	@mgr contains the struct cred for the current binder process.
-- *	Return 0 if permission is granted.
-- * @binder_transaction:
-- *	Check whether @from is allowed to invoke a binder transaction call
-- *	to @to.
-- *	@from contains the struct cred for the sending process.
-- *	@to contains the struct cred for the receiving process.
-- *	Return 0 if permission is granted.
-- * @binder_transfer_binder:
-- *	Check whether @from is allowed to transfer a binder reference to @to.
-- *	@from contains the struct cred for the sending process.
-- *	@to contains the struct cred for the receiving process.
-- *	Return 0 if permission is granted.
-- * @binder_transfer_file:
-- *	Check whether @from is allowed to transfer @file to @to.
-- *	@from contains the struct cred for the sending process.
-- *	@file contains the struct file being transferred.
-- *	@to contains the struct cred for the receiving process.
-- *	Return 0 if permission is granted.
+- * Security hooks for Audit
 - *
-  * @ptrace_access_check:
-  *	Check permission before allowing the current process to trace the
-  *	@child process.
+- * @audit_rule_init:
+- *	Allocate and initialize an LSM audit rule structure.
+- *	@field contains the required Audit action.
+- *	Fields flags are defined in <include/linux/audit.h>
+- *	@op contains the operator the rule uses.
+- *	@rulestr contains the context where the rule will be applied to.
+- *	@lsmrule contains a pointer to receive the result.
+- *	Return 0 if @lsmrule has been successfully set,
+- *	-EINVAL in case of an invalid rule.
+- *
+- * @audit_rule_known:
+- *	Specifies whether given @krule contains any fields related to
+- *	current LSM.
+- *	@krule contains the audit rule of interest.
+- *	Return 1 in case of relation found, 0 otherwise.
+- *
+- * @audit_rule_match:
+- *	Determine if given @secid matches a rule previously approved
+- *	by @audit_rule_known.
+- *	@secid contains the security id in question.
+- *	@field contains the field which relates to current LSM.
+- *	@op contains the operator that will be used for matching.
+- *	@lrule points to the audit rule that will be checked against.
+- *	Return 1 if secid matches the rule, 0 if it does not, -ERRNO on failure.
+- *
+- * @audit_rule_free:
+- *	Deallocate the LSM audit rule structure previously allocated by
+- *	audit_rule_init.
+- *	@lsmrule contains the allocated rule.
+- *
+  * @inode_invalidate_secctx:
+  *	Notify the security module that it must revalidate the security context
+  *	of an inode.
 diff --git a/security/security.c b/security/security.c
-index e26903e4ff75..d7a07264fb73 100644
+index d7a07264fb73..4a2eff06f418 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -779,23 +779,59 @@ static int lsm_superblock_alloc(struct super_block *sb)
+@@ -4761,21 +4761,62 @@ int security_key_getsecurity(struct key *key, char **_buffer)
  
- /* Security operations */
+ #ifdef CONFIG_AUDIT
  
 +/**
-+ * security_binder_set_context_mgr() - Check if becoming binder ctx mgr is ok
-+ * @mgr: task credentials of current binder process
++ * security_audit_rule_init() - Allocate and init an LSM audit rule struct
++ * @field: audit action
++ * @op: rule operator
++ * @rulestr: rule context
++ * @lsmrule: receive buffer for audit rule struct
 + *
-+ * Check whether @mgr is allowed to be the binder context manager.
++ * Allocate and initialize an LSM audit rule structure.
 + *
-+ * Return: Return 0 if permission is granted.
++ * Return: Return 0 if @lsmrule has been successfully set, -EINVAL in case of
++ *         an invalid rule.
 + */
- int security_binder_set_context_mgr(const struct cred *mgr)
+ int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
  {
- 	return call_int_hook(binder_set_context_mgr, 0, mgr);
+ 	return call_int_hook(audit_rule_init, 0, field, op, rulestr, lsmrule);
  }
  
 +/**
-+ * security_binder_transaction() - Check if a binder transaction is allowed
-+ * @from: sending process
-+ * @to: receiving process
++ * security_audit_rule_known() - Check if an audit rule contains LSM fields
++ * @krule: audit rule
 + *
-+ * Check whether @from is allowed to invoke a binder transaction call to @to.
++ * Specifies whether given @krule contains any fields related to the current
++ * LSM.
 + *
-+ * Return: Returns 0 if permission is granted.
++ * Return: Returns 1 in case of relation found, 0 otherwise.
 + */
- int security_binder_transaction(const struct cred *from,
- 				const struct cred *to)
+ int security_audit_rule_known(struct audit_krule *krule)
  {
- 	return call_int_hook(binder_transaction, 0, from, to);
+ 	return call_int_hook(audit_rule_known, 0, krule);
  }
  
 +/**
-+ * security_binder_transfer_binder() - Check if a binder transfer is allowed
-+ * @from: sending process
-+ * @to: receiving process
++ * security_audit_rule_free() - Free an LSM audit rule struct
++ * @lsmrule: audit rule struct
 + *
-+ * Check whether @from is allowed to transfer a binder reference to @to.
-+ *
-+ * Return: Returns 0 if permission is granted.
++ * Deallocate the LSM audit rule structure previously allocated by
++ * audit_rule_init().
 + */
- int security_binder_transfer_binder(const struct cred *from,
- 				    const struct cred *to)
+ void security_audit_rule_free(void *lsmrule)
  {
- 	return call_int_hook(binder_transfer_binder, 0, from, to);
+ 	call_void_hook(audit_rule_free, lsmrule);
  }
  
 +/**
-+ * security_binder_transfer_file() - Check if a binder file xfer is allowed
-+ * @from: sending process
-+ * @to: receiving process
-+ * @file: file being transferred
++ * security_audit_rule_match() - Check if a label matches an audit rule
++ * @secid: security label
++ * @field: LSM audit field
++ * @op: matching operator
++ * @lsmrule: audit rule
 + *
-+ * Check whether @from is allowed to transfer @file to @to.
++ * Determine if given @secid matches a rule previously approved by
++ * security_audit_rule_known().
 + *
-+ * Return: Returns 0 if permission is granted.
++ * Return: Returns 1 if secid matches the rule, 0 if it does not, -ERRNO on
++ *         failure.
 + */
- int security_binder_transfer_file(const struct cred *from,
- 				  const struct cred *to, struct file *file)
+ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
  {
+ 	return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
 -- 
 2.39.2
 
