@@ -2,61 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FD3C636D4
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B792C636D7
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:27:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230154AbjBQD1A (ORCPT
+        id S230048AbjBQD1B (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Feb 2023 22:27:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44446 "EHLO
+        Thu, 16 Feb 2023 22:27:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230048AbjBQD0p (ORCPT
+        with ESMTP id S229739AbjBQD0y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Feb 2023 22:26:45 -0500
-Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F53B4D61D
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:44 -0800 (PST)
-Received: by mail-qt1-x829.google.com with SMTP id e26so59825qtq.6
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:44 -0800 (PST)
+        Thu, 16 Feb 2023 22:26:54 -0500
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80B2759731
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:48 -0800 (PST)
+Received: by mail-qt1-x830.google.com with SMTP id b21so4247752qtr.13
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fx5RnoeqsWMkyF9r54r84IsyP6auWb4mLof5PwpW+4U=;
-        b=OoyexwPsQB/2yf5CC1NcoCPbDhv0FOdpDOpP+4oaRF2McjfpOQbwfR0OcwnzYBFWph
-         4dgUv+le7Fx6+93lDeK3TqIe99EsCML21E7WdKHsZKFkznmc3y+Ge+AeWyFN/vps7sEo
-         GrBsFchx5Yc3Zk3TCiQNJT4p66XYflszfXCQV4VQLwnacpmCnBjyfDUSEzakThiAVC8J
-         pPmy/d9XqVZxLgZRyb+24f5jtkZKrq0zkO5x0qj5IP2fLTrwEfXtC7EUbWNEYwVV/bPz
-         B26ADO/9NQTW08sqJd1xfXSCOiwwK9nwHqytVViM/1XCsU+APS3noNULZloDjSsEKSLb
-         Aqow==
+        bh=l941xZLUa3StD56ZJmY0zkFqLlRGjjOVeTEPQ20n3vs=;
+        b=eRHx8jDqnIcPXybD5LpUKsCI0ZKpGyK9cZQPc3tM/eNJQcvHE/25DHymDS1KpeqGOT
+         dYpDqnJL+O70LBXQBbSfNPfBmiLno9Qty8fLLWSmeHqVhClAR3QluHNOumMHKe6WXXLH
+         7vlISXugywqhwDbAiZu41KttVsLZfWXV7dnCc9G9LaHprzRfJLZJAIyVi8/xwJJvA2MT
+         d6DnR/v96+k5dlz+OlBVtqGWWScQ6e0SO+bV85Z8IM/nheZloxJkepxITxD3gmhWt4SQ
+         o6wbTdNCSkwVhdyR8RBHD7iY5San//Yy5kmsgYZ0z29Yxsvv61TZx0Df8JkTtuZW61H7
+         L+Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fx5RnoeqsWMkyF9r54r84IsyP6auWb4mLof5PwpW+4U=;
-        b=DGnA5ZPXGNmDbpCvnQH9LQEGKseSsd6tMqH58aKB8EOAcwYbtG7bjChWrl0pq4O5LH
-         jie8UfMZpMUTX1dHazouMBZrKydviy5W6IJSHtj/q97Kejv0/3Y4DIeWPHgMpC1/f9dZ
-         NweFsGBciAOKEnYORyNYCWha5KzErKXgbluo/qAyrfPcBMZYNILxna2GERWuRiqZxYSw
-         oZvl1Zaq5sWCp9bRExWOm8eYd2xlycJxJAOpjz8RkHLULgJa6Xy7Z4jzrrwWqXkbZezF
-         WLwhjl2Ehx8PPXi0vMwVCdORSP9ZUGkd3MbDdFCFHf/JoCErbAWpYBfiZuWtchAYJQOB
-         k44A==
-X-Gm-Message-State: AO0yUKV9bMN1pNV59GKgGTEJjdmQ9fjwJM3tFXRmJDz+rmkyfVGugCzJ
-        uzMhsQHUq+KmKloBP8763O6nK0+iF76Gx/4=
-X-Google-Smtp-Source: AK7set+ZHJwfdWLeE0xzvs3uEhg95BYsrQ6V85+ze72xrDp3NXrTX3X0OdPyiIgbt5FqTs5HoHA2lg==
-X-Received: by 2002:a05:622a:5ce:b0:3b8:629e:afd9 with SMTP id d14-20020a05622a05ce00b003b8629eafd9mr13115840qtb.17.1676604403524;
-        Thu, 16 Feb 2023 19:26:43 -0800 (PST)
+        bh=l941xZLUa3StD56ZJmY0zkFqLlRGjjOVeTEPQ20n3vs=;
+        b=WZwiZ+NWCLIHHF0b6eT7p0qW/JmutS99vZB2Mlx0q4MUquriYEc3HVSI6Ka54RsUZm
+         hV6wFcWR5Q9InIhF2I4+CjPOcSsmf3OhXQ8HmgBr6R9Zan4aDoKF2R/navXA+FoUt1G0
+         RVVGwkKnlIIJUPGqqSewxyB1vHtizbP93k34rLEL1q8j+Vbhw5N1jWTajbAZLM9sOPAo
+         Ui2XB+2+OVXwsAU+/iHJivAHegJs0o7602udTjo2FmGQbfodlB5uThtBklUMg7PShPuQ
+         Dm3L+hZOISI/YsR11epVQkLNt42vTZlqvhikszrFtTZiKwq4MjoFnvNU5zwMj8D1baIe
+         eyEg==
+X-Gm-Message-State: AO0yUKXYk2nnEH6RpIDr5zNM3AAn6GQUd+LcNsHrXXLFfWYSeOxZ22FS
+        d1ABwi17GUnXSBwV6uD19JYynnRdD1vSUdY=
+X-Google-Smtp-Source: AK7set+ePfaO5feU7SsoOUV51735wGCSgsHQ56ghRmvUEsjE3kQfJKlhEN2u7ajvvnEb1cM7RP1PAQ==
+X-Received: by 2002:ac8:5c0e:0:b0:3bd:d8f:2d79 with SMTP id i14-20020ac85c0e000000b003bd0d8f2d79mr6291940qti.64.1676604407706;
+        Thu, 16 Feb 2023 19:26:47 -0800 (PST)
 Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
-        by smtp.gmail.com with ESMTPSA id r207-20020a3744d8000000b00706bc44fda8sm2438332qka.79.2023.02.16.19.26.42
+        by smtp.gmail.com with ESMTPSA id 196-20020a3707cd000000b0073ba97eb13csm489832qkh.50.2023.02.16.19.26.46
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 19:26:43 -0800 (PST)
+        Thu, 16 Feb 2023 19:26:46 -0800 (PST)
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org
-Subject: [PATCH 11/22] lsm: move the SCTP hook comments to security/security.c
-Date:   Thu, 16 Feb 2023 22:26:14 -0500
-Message-Id: <20230217032625.678457-12-paul@paul-moore.com>
+Subject: [PATCH 14/22] lsm: move the key hook comments to security/security.c
+Date:   Thu, 16 Feb 2023 22:26:17 -0500
+Message-Id: <20230217032625.678457-15-paul@paul-moore.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230217032625.678457-1-paul@paul-moore.com>
 References: <20230217032625.678457-1-paul@paul-moore.com>
@@ -78,128 +78,121 @@ comments.
 
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- include/linux/lsm_hooks.h | 33 ------------------------------
- security/security.c       | 43 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+), 33 deletions(-)
+ include/linux/lsm_hooks.h | 32 -------------------------------
+ security/security.c       | 40 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 40 insertions(+), 32 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 531d141083ed..bb460e0b1ff2 100644
+index 9c5254e4e9d1..2cfa56e3abc3 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -32,39 +32,6 @@
+@@ -32,38 +32,6 @@
  /**
   * union security_list_options - Linux Security Module hook function list
   *
-- * Security hooks for SCTP
+- * Security hooks affecting all Key Management operations
 - *
-- * @sctp_assoc_request:
-- *	Passes the @asoc and @chunk->skb of the association INIT packet to
-- *	the security module.
-- *	@asoc pointer to sctp association structure.
-- *	@skb pointer to skbuff of association packet.
-- *	Return 0 on success, error on failure.
-- * @sctp_bind_connect:
-- *	Validiate permissions required for each address associated with sock
-- *	@sk. Depending on @optname, the addresses will be treated as either
-- *	for a connect or bind service. The @addrlen is calculated on each
-- *	ipv4 and ipv6 address using sizeof(struct sockaddr_in) or
-- *	sizeof(struct sockaddr_in6).
-- *	@sk pointer to sock structure.
-- *	@optname name of the option to validate.
-- *	@address list containing one or more ipv4/ipv6 addresses.
-- *	@addrlen total length of address(s).
-- *	Return 0 on success, error on failure.
-- * @sctp_sk_clone:
-- *	Called whenever a new socket is created by accept(2) (i.e. a TCP
-- *	style socket) or when a socket is 'peeled off' e.g userspace
-- *	calls sctp_peeloff(3).
-- *	@asoc pointer to current sctp association structure.
-- *	@sk pointer to current sock structure.
-- *	@newsk pointer to new sock structure.
-- * @sctp_assoc_established:
-- *	Passes the @asoc and @chunk->skb of the association COOKIE_ACK packet
-- *	to the security module.
-- *	@asoc pointer to sctp association structure.
-- *	@skb pointer to skbuff of association packet.
-- *	Return 0 if permission is granted.
+- * @key_alloc:
+- *	Permit allocation of a key and assign security data. Note that key does
+- *	not have a serial number assigned at this point.
+- *	@key points to the key.
+- *	@flags is the allocation flags.
+- *	Return 0 if permission is granted, -ve error otherwise.
+- * @key_free:
+- *	Notification of destruction; free security data.
+- *	@key points to the key.
+- *	No return value.
+- * @key_permission:
+- *	See whether a specific operational right is granted to a process on a
+- *	key.
+- *	@key_ref refers to the key (key pointer + possession attribute bit).
+- *	@cred points to the credentials to provide the context against which to
+- *	evaluate the security data on the key.
+- *	@perm describes the combination of permissions required of this key.
+- *	Return 0 if permission is granted, -ve error otherwise.
+- * @key_getsecurity:
+- *	Get a textual representation of the security context attached to a key
+- *	for the purposes of honouring KEYCTL_GETSECURITY.  This function
+- *	allocates the storage for the NUL-terminated string and the caller
+- *	should free it.
+- *	@key points to the key to be queried.
+- *	@_buffer points to a pointer that should be set to point to the
+- *	resulting string (if no label or an error occurs).
+- *	Return the length of the string (including terminating NUL) or -ve if
+- *	an error.
+- *	May also return 0 (and a NULL buffer pointer) if there is no label.
 - *
-  * Security hooks for Infiniband
+  * Security hooks affecting all System V IPC operations.
   *
-  * @ib_pkey_access:
+  * @ipc_permission:
 diff --git a/security/security.c b/security/security.c
-index 844670d7754f..1ada27c7917f 100644
+index f06b95a9705c..cc2294e094ec 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -4132,12 +4132,35 @@ int security_tun_dev_open(void *security)
- }
- EXPORT_SYMBOL(security_tun_dev_open);
+@@ -4467,23 +4467,63 @@ EXPORT_SYMBOL(security_skb_classify_flow);
+ 
+ #ifdef CONFIG_KEYS
  
 +/**
-+ * security_sctp_assoc_request() - Update the LSM on a SCTP association req
-+ * @asoc: SCTP association
-+ * @skb: packet requesting the association
++ * security_key_alloc() - Allocate and initialize a kernel key LSM blob
++ * @key: key
++ * @cred: credentials
++ * @flags: allocation flags
 + *
-+ * Passes the @asoc and @chunk->skb of the association INIT packet to the LSM.
++ * Permit allocation of a key and assign security data. Note that key does not
++ * have a serial number assigned at this point.
 + *
-+ * Return: Returns 0 on success, error on failure.
++ * Return: Return 0 if permission is granted, -ve error otherwise.
 + */
- int security_sctp_assoc_request(struct sctp_association *asoc, struct sk_buff *skb)
+ int security_key_alloc(struct key *key, const struct cred *cred,
+ 		       unsigned long flags)
  {
- 	return call_int_hook(sctp_assoc_request, 0, asoc, skb);
+ 	return call_int_hook(key_alloc, 0, key, cred, flags);
  }
- EXPORT_SYMBOL(security_sctp_assoc_request);
  
 +/**
-+ * security_sctp_bind_connect() - Validate a list of addrs for a SCTP option
-+ * @sk: socket
-+ * @optname: SCTP option to validate
-+ * @address: list of IP addresses to validate
-+ * @addrlen: length of the address list
++ * security_key_free() - Free a kernel key LSM blob
++ * @key: key
 + *
-+ * Validiate permissions required for each address associated with sock	@sk.
-+ * Depending on @optname, the addresses will be treated as either a connect or
-+ * bind service. The @addrlen is calculated on each IPv4 and IPv6 address using
-+ * sizeof(struct sockaddr_in) or sizeof(struct sockaddr_in6).
-+ *
-+ * Return: Returns 0 on success, error on failure.
++ * Notification of destruction; free security data.
 + */
- int security_sctp_bind_connect(struct sock *sk, int optname,
- 			       struct sockaddr *address, int addrlen)
+ void security_key_free(struct key *key)
  {
-@@ -4146,6 +4169,16 @@ int security_sctp_bind_connect(struct sock *sk, int optname,
+ 	call_void_hook(key_free, key);
  }
- EXPORT_SYMBOL(security_sctp_bind_connect);
  
 +/**
-+ * security_sctp_sk_clone() - Clone a SCTP sock's LSM state
-+ * @asoc: SCTP association
-+ * @sk: original sock
-+ * @newsk: target sock
++ * security_key_permission() - Check if a kernel key operation is allowed
++ * @key_ref: key reference
++ * @cred: credentials of actor requesting access
++ * @need_perm: requested permissions
 + *
-+ * Called whenever a new socket is created by accept(2) (i.e. a TCP style
-+ * socket) or when a socket is 'peeled off' e.g userspace calls
-+ * sctp_peeloff(3).
++ * See whether a specific operational right is granted to a process on a key.
++ *
++ * Return: Return 0 if permission is granted, -ve error otherwise.
 + */
- void security_sctp_sk_clone(struct sctp_association *asoc, struct sock *sk,
- 			    struct sock *newsk)
+ int security_key_permission(key_ref_t key_ref, const struct cred *cred,
+ 			    enum key_need_perm need_perm)
  {
-@@ -4153,6 +4186,16 @@ void security_sctp_sk_clone(struct sctp_association *asoc, struct sock *sk,
+ 	return call_int_hook(key_permission, 0, key_ref, cred, need_perm);
  }
- EXPORT_SYMBOL(security_sctp_sk_clone);
  
 +/**
-+ * security_sctp_assoc_established() - Update LSM state when assoc established
-+ * @asoc: SCTP association
-+ * @skb: packet establishing the association
++ * security_key_getsecurity() - Get the key's security label
++ * @key: key
++ * @buffer: security label buffer
 + *
-+ * Passes the @asoc and @chunk->skb of the association COOKIE_ACK packet to the
-+ * security module.
++ * Get a textual representation of the security context attached to a key for
++ * the purposes of honouring KEYCTL_GETSECURITY.  This function allocates the
++ * storage for the NUL-terminated string and the caller should free it.
 + *
-+ * Return: Returns 0 if permission is granted.
++ * Return: Returns the length of @buffer (including terminating NUL) or -ve if
++ *         an error occurs.  May also return 0 (and a NULL buffer pointer) if
++ *         there is no security label assigned to the key.
 + */
- int security_sctp_assoc_established(struct sctp_association *asoc,
- 				    struct sk_buff *skb)
+ int security_key_getsecurity(struct key *key, char **_buffer)
  {
+ 	*_buffer = NULL;
 -- 
 2.39.2
 
