@@ -2,61 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C58C64ED6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1F1C636D7
 	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:27:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229620AbjBQD1n (ORCPT
+        id S230216AbjBQD1m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Feb 2023 22:27:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44534 "EHLO
+        Thu, 16 Feb 2023 22:27:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbjBQD1D (ORCPT
+        with ESMTP id S230266AbjBQD1D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Thu, 16 Feb 2023 22:27:03 -0500
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBC024FC84
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4D9759731
         for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:58 -0800 (PST)
-Received: by mail-qt1-x82a.google.com with SMTP id 5so4269990qtp.9
+Received: by mail-qt1-x82b.google.com with SMTP id t16so1773388qto.3
         for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=L8fGGD5vUlN4EKfOE3nQqzT8piertkUkXLziMS3T+f4=;
-        b=fVnnZcpnTham7QlSNPLacAaUQ8cAD0tTaeJwqxhVz/ygkpWfFodmP5MiW4BKsv5VKE
-         CMl4bwsqNtR4axvGvaf5zNtSAgOgxueY27cMdfGtjyvWczXKXJ4WpVBSlp7++3P2O20t
-         7P9f11kG107KzMr/VfV9Rzrq3IAE1OeMQFdzwBrHPUyUtmjE3cy6PZYo8SfZ4qew/nTs
-         ar2ukp6HSMoWI6f+kOC5a/swE8nrT1yBmHUSzP7CSBV3jMERThS686KY2w5VE0OkbfJq
-         mHZTX87an8pI+YPc5Tq5Bwwm3yS6DMEo98yeKwwY9vNGVL5cxZGsA1+U0a06KGrrpppB
-         UxLg==
+        bh=QZDYE/D+C7/Nf8E9H+aCHM6gSe5lfLZoegwtT/8PIvI=;
+        b=FfsohesZpdah0w7PtMZg2Ecq9Ymh9t836V+Pp4Aw0P8x2Wx+6v7+bgJA7lY6u2hIwI
+         yGZIqKaDZg7zOqtlFNE24bpEtIlgNNnM51Dzdr0gdqq+g9RL9xUI0N7nOTzYg7br93kZ
+         lJZbqbiSRuBoiT8epTuKZya5wXPAwXRAptiCzCQSyyWQJL0tCJERLNQYOqTUch+RRXNU
+         XGP1c0yHwb34VarogpGF+IAaQLW0ts57XG1CKHBbIVLnY9jwTsUhYdyBik/H25XtBTS0
+         2Z7CoIzpF7NoPY/oMTJa+07XtjrIVzrnPaA9tnQltsE9XIBulVDj2juuL5AyXQUn9H3T
+         jIUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=L8fGGD5vUlN4EKfOE3nQqzT8piertkUkXLziMS3T+f4=;
-        b=hL4B6SQACj97TrDNg33OcCOCxZN8XS4F6td9X5QJ6xB/1DOzwSIuho/emMcGjDY8tm
-         wtCKVCAXP8HKDxdf2OXnoPIOY8XSL1XKJrFYEcbDTuzG3l0ZR86nCkborLATi4KMojBm
-         EvSFWS4UcuDZYZjH2SNCsDTEMKTnIxRbx7R2fXKXVexdlffRVi1IV4bgOl3AE42buY2Y
-         wy125FYSweBpj3EIvsfTcUuLvJRFAA+HchxVq9apZExMC7GaFd5DxRMf3lrky6KdZVij
-         XbTSgq4QXU9HhuN+17/1vF74fzBMFfTzjFdUg7c/CL7Nopp4hJjf2u7MwdKMN0rsqdE3
-         n23Q==
-X-Gm-Message-State: AO0yUKV9fR0JB+H99ST3KY5lTkt1ALaH1GNxXLaRWQUWFmO26zu+p9D8
-        6UXYP42nBh6chi60M/8fdjEuAHvfyicfqfM=
-X-Google-Smtp-Source: AK7set9jOO4NIzEa2dtibf66zbsb2xVTX6j6YYcIUrflXppisPNyD67uIXGVfi52oGI+dc70inHH3g==
-X-Received: by 2002:ac8:594a:0:b0:3bd:a75:1cb with SMTP id 10-20020ac8594a000000b003bd0a7501cbmr7449643qtz.53.1676604416702;
-        Thu, 16 Feb 2023 19:26:56 -0800 (PST)
+        bh=QZDYE/D+C7/Nf8E9H+aCHM6gSe5lfLZoegwtT/8PIvI=;
+        b=PqSSLOU1X+rv55k3NDGHNY3MJsBQhga1kaGtGIYKmvqw3mmFU8IsYSl+QNOyCRUva4
+         jJM/LsqOQq5IVRuYE2VjfkV8viw+y0CeacSvsfO4wXNNMCtGq95MRSHxN4Qr9GtNEixT
+         WM3dKLAdXBSIeBg54DItETGiOT77gnHqF+gMdieNu+g2UzhIpKxRigv5rmEynmQg8Pxs
+         cJqZT0Qwtz+hFhBYzfNQBKgwMY9MMIGfEpn8K3Xp0d6tzoic6//4I9ckMDpPrPc0xthJ
+         JGAZ+cP8dPb0uAUESzp7FcP6rgQrctcszQR09lztXEOtnHMcczpqaa31bOo0P6enW8Pk
+         ub8Q==
+X-Gm-Message-State: AO0yUKWdgmE0ZU9ZKO2ryTPuJfGenDntg2JCw1ihXqKqz0oaqFWkudlB
+        CnBKWdvnpJr8vrc2qgWk9mozLKOl8AP0yIE=
+X-Google-Smtp-Source: AK7set+UoRnwsMYXa9csyj9WG+nK1kMsdtICGsm2n2nhOxJvTIiSVLIopoJbxt76okpxvhhpVzlKgw==
+X-Received: by 2002:ac8:5b86:0:b0:3b8:4144:fe72 with SMTP id a6-20020ac85b86000000b003b84144fe72mr14459120qta.9.1676604417756;
+        Thu, 16 Feb 2023 19:26:57 -0800 (PST)
 Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
-        by smtp.gmail.com with ESMTPSA id t189-20020a372dc6000000b006fa4ac86bfbsm2429377qkh.55.2023.02.16.19.26.55
+        by smtp.gmail.com with ESMTPSA id c186-20020a37b3c3000000b0072a375c291csm2494993qkf.30.2023.02.16.19.26.57
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 19:26:56 -0800 (PST)
+        Thu, 16 Feb 2023 19:26:57 -0800 (PST)
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org
-Subject: [PATCH 21/22] lsm: move the remaining LSM hook comments to security/security.c
-Date:   Thu, 16 Feb 2023 22:26:24 -0500
-Message-Id: <20230217032625.678457-22-paul@paul-moore.com>
+Subject: [PATCH 22/22] lsm: styling fixes to security/security.c
+Date:   Thu, 16 Feb 2023 22:26:25 -0500
+Message-Id: <20230217032625.678457-23-paul@paul-moore.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230217032625.678457-1-paul@paul-moore.com>
 References: <20230217032625.678457-1-paul@paul-moore.com>
@@ -65,567 +65,657 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch relocates the LSM hook function comments to the function
-definitions, in keeping with the current kernel conventions.  This
-should make the hook descriptions more easily discoverable and easier
-to maintain.
-
-While formatting changes have been done to better fit the kernel-doc
-style, content changes have been kept to a minimum and limited to
-text which was obviously incorrect and/or outdated.  It is expected
-the future patches will improve the quality of the function header
-comments.
+As we were already making massive changes to security/security.c by
+moving all of the function header comments above the function
+definitions, let's take the opportunity to fix various style crimes.
 
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- include/linux/lsm_hooks.h | 168 ---------------------------
- security/security.c       | 231 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 231 insertions(+), 168 deletions(-)
+ security/security.c | 184 ++++++++++++++++++++++++--------------------
+ 1 file changed, 99 insertions(+), 85 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 8e006df1db56..ddbbe89a7a48 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -29,174 +29,6 @@
- #include <linux/init.h>
- #include <linux/rculist.h>
- 
--/**
-- * union security_list_options - Linux Security Module hook function list
-- *
-- * @ptrace_access_check:
-- *	Check permission before allowing the current process to trace the
-- *	@child process.
-- *	Security modules may also want to perform a process tracing check
-- *	during an execve in the set_security or apply_creds hooks of
-- *	tracing check during an execve in the bprm_set_creds hook of
-- *	binprm_security_ops if the process is being traced and its security
-- *	attributes would be changed by the execve.
-- *	@child contains the task_struct structure for the target process.
-- *	@mode contains the PTRACE_MODE flags indicating the form of access.
-- *	Return 0 if permission is granted.
-- * @ptrace_traceme:
-- *	Check that the @parent process has sufficient permission to trace the
-- *	current process before allowing the current process to present itself
-- *	to the @parent process for tracing.
-- *	@parent contains the task_struct structure for debugger process.
-- *	Return 0 if permission is granted.
-- * @capget:
-- *	Get the @effective, @inheritable, and @permitted capability sets for
-- *	the @target process.  The hook may also perform permission checking to
-- *	determine if the current process is allowed to see the capability sets
-- *	of the @target process.
-- *	@target contains the task_struct structure for target process.
-- *	@effective contains the effective capability set.
-- *	@inheritable contains the inheritable capability set.
-- *	@permitted contains the permitted capability set.
-- *	Return 0 if the capability sets were successfully obtained.
-- * @capset:
-- *	Set the @effective, @inheritable, and @permitted capability sets for
-- *	the current process.
-- *	@new contains the new credentials structure for target process.
-- *	@old contains the current credentials structure for target process.
-- *	@effective contains the effective capability set.
-- *	@inheritable contains the inheritable capability set.
-- *	@permitted contains the permitted capability set.
-- *	Return 0 and update @new if permission is granted.
-- * @capable:
-- *	Check whether the @tsk process has the @cap capability in the indicated
-- *	credentials.
-- *	@cred contains the credentials to use.
-- *	@ns contains the user namespace we want the capability in.
-- *	@cap contains the capability <include/linux/capability.h>.
-- *	@opts contains options for the capable check <include/linux/security.h>.
-- *	Return 0 if the capability is granted for @tsk.
-- * @quotactl:
-- *	Check whether the quotactl syscall is allowed for this @sb.
-- *	Return 0 if permission is granted.
-- * @quota_on:
-- *	Check whether QUOTAON is allowed for this @dentry.
-- *	Return 0 if permission is granted.
-- * @syslog:
-- *	Check permission before accessing the kernel message ring or changing
-- *	logging to the console.
-- *	See the syslog(2) manual page for an explanation of the @type values.
-- *	@type contains the SYSLOG_ACTION_* constant from
-- *	<include/linux/syslog.h>.
-- *	Return 0 if permission is granted.
-- * @settime:
-- *	Check permission to change the system time.
-- *	struct timespec64 is defined in <include/linux/time64.h> and timezone
-- *	is defined in <include/linux/time.h>
-- *	@ts contains new time.
-- *	@tz contains new timezone.
-- *	Return 0 if permission is granted.
-- * @vm_enough_memory:
-- *	Check permissions for allocating a new virtual mapping.
-- *	@mm contains the mm struct it is being added to.
-- *	@pages contains the number of pages.
-- *	Return 0 if permission is granted by the LSM infrastructure to the
-- *	caller. If all LSMs return a positive value, __vm_enough_memory() will
-- *	be called with cap_sys_admin set. If at least one LSM returns 0 or
-- *	negative, __vm_enough_memory() will be called with cap_sys_admin
-- *	cleared.
-- *
-- * @ismaclabel:
-- *	Check if the extended attribute specified by @name
-- *	represents a MAC label. Returns 1 if name is a MAC
-- *	attribute otherwise returns 0.
-- *	@name full extended attribute name to check against
-- *	LSM as a MAC label.
-- *
-- * @secid_to_secctx:
-- *	Convert secid to security context.  If secdata is NULL the length of
-- *	the result will be returned in seclen, but no secdata will be returned.
-- *	This does mean that the length could change between calls to check the
-- *	length and the next call which actually allocates and returns the
-- *	secdata.
-- *	@secid contains the security ID.
-- *	@secdata contains the pointer that stores the converted security
-- *	context.
-- *	@seclen pointer which contains the length of the data.
-- *	Return 0 on success, error on failure.
-- * @secctx_to_secid:
-- *	Convert security context to secid.
-- *	@secid contains the pointer to the generated security ID.
-- *	@secdata contains the security context.
-- *	Return 0 on success, error on failure.
-- *
-- * @release_secctx:
-- *	Release the security context.
-- *	@secdata contains the security context.
-- *	@seclen contains the length of the security context.
-- *
-- * @inode_invalidate_secctx:
-- *	Notify the security module that it must revalidate the security context
-- *	of an inode.
-- *
-- * @inode_notifysecctx:
-- *	Notify the security module of what the security context of an inode
-- *	should be.  Initializes the incore security context managed by the
-- *	security module for this inode.  Example usage:  NFS client invokes
-- *	this hook to initialize the security context in its incore inode to the
-- *	value provided by the server for the file when the server returned the
-- *	file's attributes to the client.
-- *	Must be called with inode->i_mutex locked.
-- *	@inode we wish to set the security context of.
-- *	@ctx contains the string which we wish to set in the inode.
-- *	@ctxlen contains the length of @ctx.
-- *	Return 0 on success, error on failure.
-- *
-- * @inode_setsecctx:
-- *	Change the security context of an inode.  Updates the
-- *	incore security context managed by the security module and invokes the
-- *	fs code as needed (via __vfs_setxattr_noperm) to update any backing
-- *	xattrs that represent the context.  Example usage:  NFS server invokes
-- *	this hook to change the security context in its incore inode and on the
-- *	backing filesystem to a value provided by the client on a SETATTR
-- *	operation.
-- *	Must be called with inode->i_mutex locked.
-- *	@dentry contains the inode we wish to set the security context of.
-- *	@ctx contains the string which we wish to set in the inode.
-- *	@ctxlen contains the length of @ctx.
-- *	Return 0 on success, error on failure.
-- *
-- * @inode_getsecctx:
-- *	On success, returns 0 and fills out @ctx and @ctxlen with the security
-- *	context for the given @inode.
-- *	@inode we wish to get the security context of.
-- *	@ctx is a pointer in which to place the allocated security context.
-- *	@ctxlen points to the place to put the length of @ctx.
-- *	Return 0 on success, error on failure.
-- *
-- * Security hooks for the general notification queue:
-- *
-- * @post_notification:
-- *	Check to see if a watch notification can be posted to a particular
-- *	queue.
-- *	@w_cred: The credentials of the whoever set the watch.
-- *	@cred: The event-triggerer's credentials.
-- *	@n: The notification being posted.
-- *	Return 0 if permission is granted.
-- *
-- * @watch_key:
-- *	Check to see if a process is allowed to watch for event notifications
-- *	from a key or keyring.
-- *	@key: The key to watch.
-- *	Return 0 if permission is granted.
-- *
-- * @locked_down:
-- *	Determine whether a kernel feature that potentially enables arbitrary
-- *	code execution in kernel space should be permitted.
-- *	@what: kernel feature being accessed.
-- *	Return 0 if permission is granted.
-- *
-- */
- union security_list_options {
- 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS__);
- 	#include "lsm_hook_defs.h"
 diff --git a/security/security.c b/security/security.c
-index f4b093673ca6..4362d9b9140f 100644
+index 4362d9b9140f..f5ff06868e0b 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -838,16 +838,54 @@ int security_binder_transfer_file(const struct cred *from,
- 	return call_int_hook(binder_transfer_file, 0, from, to, file);
- }
+@@ -42,7 +42,7 @@
+  * all security modules to use the same descriptions for auditing
+  * purposes.
+  */
+-const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
++const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
+ 	[LOCKDOWN_NONE] = "none",
+ 	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
+ 	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
+@@ -88,7 +88,7 @@ static struct lsm_blob_sizes blob_sizes __lsm_ro_after_init;
+ static __initdata const char *chosen_lsm_order;
+ static __initdata const char *chosen_major_lsm;
  
-+/**
-+ * security_ptrace_access_check() - Check if tracing is allowed
-+ * @child: target process
-+ * @mode: PTRACE_MODE flags
-+ *
-+ * Check permission before allowing the current process to trace the @child
-+ * process.  Security modules may also want to perform a process tracing check
-+ * during an execve in the set_security or apply_creds hooks of tracing check
-+ * during an execve in the bprm_set_creds hook of binprm_security_ops if the
-+ * process is being traced and its security attributes would be changed by the
-+ * execve.
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
- int security_ptrace_access_check(struct task_struct *child, unsigned int mode)
+-static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
++static __initconst const char *const builtin_lsm_order = CONFIG_LSM;
+ 
+ /* Ordered list of LSMs to initialize. */
+ static __initdata struct lsm_info **ordered_lsms;
+@@ -332,7 +332,8 @@ static void __init report_lsm_order(void)
+ 	pr_info("initializing lsm=");
+ 
+ 	/* Report each enabled LSM name, comma separated. */
+-	for (early = __start_early_lsm_info; early < __end_early_lsm_info; early++)
++	for (early = __start_early_lsm_info;
++	     early < __end_early_lsm_info; early++)
+ 		if (is_enabled(early))
+ 			pr_cont("%s%s", first++ == 0 ? "" : ",", early->name);
+ 	for (lsm = ordered_lsms; *lsm; lsm++)
+@@ -347,7 +348,7 @@ static void __init ordered_lsm_init(void)
+ 	struct lsm_info **lsm;
+ 
+ 	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
+-				GFP_KERNEL);
++			       GFP_KERNEL);
+ 
+ 	if (chosen_lsm_order) {
+ 		if (chosen_major_lsm) {
+@@ -420,9 +421,9 @@ int __init security_init(void)
  {
- 	return call_int_hook(ptrace_access_check, 0, child, mode);
- }
+ 	struct lsm_info *lsm;
  
-+/**
-+ * security_ptrace_traceme() - Check if tracing is allowed
-+ * @parent: tracing process
-+ *
-+ * Check that the @parent process has sufficient permission to trace the
-+ * current process before allowing the current process to present itself to the
-+ * @parent process for tracing.
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
- int security_ptrace_traceme(struct task_struct *parent)
+-	init_debug("legacy security=%s\n", chosen_major_lsm ?: " *unspecified*");
++	init_debug("legacy security=%s\n", chosen_major_lsm ? : " *unspecified*");
+ 	init_debug("  CONFIG_LSM=%s\n", builtin_lsm_order);
+-	init_debug("boot arg lsm=%s\n", chosen_lsm_order ?: " *unspecified*");
++	init_debug("boot arg lsm=%s\n", chosen_lsm_order ? : " *unspecified*");
+ 
+ 	/*
+ 	 * Append the names of the early LSM modules now that kmalloc() is
+@@ -510,7 +511,7 @@ static int lsm_append(const char *new, char **result)
+  * Each LSM has to register its hooks with the infrastructure.
+  */
+ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+-				const char *lsm)
++			       const char *lsm)
  {
- 	return call_int_hook(ptrace_traceme, 0, parent);
- }
+ 	int i;
  
-+/**
-+ * security_capget() - Get the capability sets for a process
-+ * @target: target process
-+ * @effective: effective capability set
-+ * @inheritable: inheritable capability set
-+ * @permitted: permitted capability set
-+ *
-+ * Get the @effective, @inheritable, and @permitted capability sets for the
-+ * @target process.  The hook may also perform permission checking to determine
-+ * if the current process is allowed to see the capability sets of the @target
-+ * process.
-+ *
-+ * Return: Returns 0 if the capability sets were successfully obtained.
-+ */
+@@ -887,12 +888,12 @@ int security_ptrace_traceme(struct task_struct *parent)
+  * Return: Returns 0 if the capability sets were successfully obtained.
+  */
  int security_capget(struct task_struct *target,
- 		     kernel_cap_t *effective,
- 		     kernel_cap_t *inheritable,
-@@ -857,6 +895,19 @@ int security_capget(struct task_struct *target,
- 				effective, inheritable, permitted);
- }
- 
-+/**
-+ * security_capset() - Set the capability sets for a process
-+ * @new: new credentials for the target process
-+ * @old: current credentials of the target process
-+ * @effective: effective capability set
-+ * @inheritable: inheritable capability set
-+ * @permitted: permitted capability set
-+ *
-+ * Set the @effective, @inheritable, and @permitted capability sets for the
-+ * current process.
-+ *
-+ * Return: Returns 0 and update @new if permission is granted.
-+ */
- int security_capset(struct cred *new, const struct cred *old,
- 		    const kernel_cap_t *effective,
- 		    const kernel_cap_t *inheritable,
-@@ -866,6 +917,19 @@ int security_capset(struct cred *new, const struct cred *old,
- 				effective, inheritable, permitted);
- }
- 
-+/**
-+ * security_capable() - Check if a process has the necessary capability
-+ * @cred: credentials to examine
-+ * @ns: user namespace
-+ * @cap: capability requested
-+ * @opts: capability check options
-+ *
-+ * Check whether the @tsk process has the @cap capability in the indicated
-+ * credentials.  @cap contains the capability <include/linux/capability.h>.
-+ * @opts contains options for the capable check <include/linux/security.h>.
-+ *
-+ * Return: Returns 0 if the capability is granted.
-+ */
- int security_capable(const struct cred *cred,
- 		     struct user_namespace *ns,
- 		     int cap,
-@@ -874,26 +938,78 @@ int security_capable(const struct cred *cred,
- 	return call_int_hook(capable, 0, cred, ns, cap, opts);
- }
- 
-+/**
-+ * security_quotactl() - Check if a quotactl() syscall is allowed for this fs
-+ * @cmds: commands
-+ * @type: type
-+ * @id: id
-+ * @sb: filesystem
-+ *
-+ * Check whether the quotactl syscall is allowed for this @sb.
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
- int security_quotactl(int cmds, int type, int id, struct super_block *sb)
+-		     kernel_cap_t *effective,
+-		     kernel_cap_t *inheritable,
+-		     kernel_cap_t *permitted)
++		    kernel_cap_t *effective,
++		    kernel_cap_t *inheritable,
++		    kernel_cap_t *permitted)
  {
- 	return call_int_hook(quotactl, 0, cmds, type, id, sb);
+ 	return call_int_hook(capget, 0, target,
+-				effective, inheritable, permitted);
++			     effective, inheritable, permitted);
  }
  
-+/**
-+ * security_quota_on() - Check if QUOTAON is allowed for a dentry
-+ * @dentry: dentry
-+ *
-+ * Check whether QUOTAON is allowed for @dentry.
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
- int security_quota_on(struct dentry *dentry)
+ /**
+@@ -914,7 +915,7 @@ int security_capset(struct cred *new, const struct cred *old,
+ 		    const kernel_cap_t *permitted)
  {
- 	return call_int_hook(quota_on, 0, dentry);
+ 	return call_int_hook(capset, 0, new, old,
+-				effective, inheritable, permitted);
++			     effective, inheritable, permitted);
  }
  
-+/**
-+ * security_syslog() - Check if accessing the kernel message ring is allowed
-+ * @type: SYSLOG_ACTION_* type
-+ *
-+ * Check permission before accessing the kernel message ring or changing
-+ * logging to the console.  See the syslog(2) manual page for an explanation of
-+ * the @type values.
-+ *
-+ * Return: Return 0 if permission is granted.
-+ */
- int security_syslog(int type)
+ /**
+@@ -1348,7 +1349,7 @@ int security_sb_statfs(struct dentry *dentry)
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_sb_mount(const char *dev_name, const struct path *path,
+-                       const char *type, unsigned long flags, void *data)
++		      const char *type, unsigned long flags, void *data)
  {
- 	return call_int_hook(syslog, 0, type);
+ 	return call_int_hook(sb_mount, 0, dev_name, path, type, flags, data);
  }
- 
-+/**
-+ * security_settime64() - Check if changing the system time is allowed
-+ * @ts: new time
-+ * @tz: timezone
-+ *
-+ * Check permission to change the system time, struct timespec64 is defined in
-+ * <include/linux/time64.h> and timezone is defined in <include/linux/time.h>.
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
- int security_settime64(const struct timespec64 *ts, const struct timezone *tz)
+@@ -1376,7 +1377,8 @@ int security_sb_umount(struct vfsmount *mnt, int flags)
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_sb_pivotroot(const struct path *old_path, const struct path *new_path)
++int security_sb_pivotroot(const struct path *old_path,
++			  const struct path *new_path)
  {
- 	return call_int_hook(settime, 0, ts, tz);
+ 	return call_int_hook(sb_pivotroot, 0, old_path, new_path);
+ }
+@@ -1393,13 +1395,13 @@ int security_sb_pivotroot(const struct path *old_path, const struct path *new_pa
+  * Return: Returns 0 on success, error on failure.
+  */
+ int security_sb_set_mnt_opts(struct super_block *sb,
+-				void *mnt_opts,
+-				unsigned long kern_flags,
+-				unsigned long *set_kern_flags)
++			     void *mnt_opts,
++			     unsigned long kern_flags,
++			     unsigned long *set_kern_flags)
+ {
+ 	return call_int_hook(sb_set_mnt_opts,
+-				mnt_opts ? -EOPNOTSUPP : 0, sb,
+-				mnt_opts, kern_flags, set_kern_flags);
++			     mnt_opts ? -EOPNOTSUPP : 0, sb,
++			     mnt_opts, kern_flags, set_kern_flags);
+ }
+ EXPORT_SYMBOL(security_sb_set_mnt_opts);
+ 
+@@ -1415,12 +1417,12 @@ EXPORT_SYMBOL(security_sb_set_mnt_opts);
+  * Return: Returns 0 on success, error on failure.
+  */
+ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
+-				struct super_block *newsb,
+-				unsigned long kern_flags,
+-				unsigned long *set_kern_flags)
++			       struct super_block *newsb,
++			       unsigned long kern_flags,
++			       unsigned long *set_kern_flags)
+ {
+ 	return call_int_hook(sb_clone_mnt_opts, 0, oldsb, newsb,
+-				kern_flags, set_kern_flags);
++			     kern_flags, set_kern_flags);
+ }
+ EXPORT_SYMBOL(security_sb_clone_mnt_opts);
+ 
+@@ -1433,7 +1435,8 @@ EXPORT_SYMBOL(security_sb_clone_mnt_opts);
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_move_mount(const struct path *from_path, const struct path *to_path)
++int security_move_mount(const struct path *from_path,
++			const struct path *to_path)
+ {
+ 	return call_int_hook(move_mount, 0, from_path, to_path);
+ }
+@@ -1450,7 +1453,7 @@ int security_move_mount(const struct path *from_path, const struct path *to_path
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_path_notify(const struct path *path, u64 mask,
+-				unsigned int obj_type)
++			 unsigned int obj_type)
+ {
+ 	return call_int_hook(path_notify, 0, path, mask, obj_type);
+ }
+@@ -1506,7 +1509,7 @@ void security_inode_free(struct inode *inode)
+ 	 */
+ 	if (inode->i_security)
+ 		call_rcu((struct rcu_head *)inode->i_security,
+-				inode_free_by_rcu);
++			 inode_free_by_rcu);
  }
  
-+/**
-+ * security_vm_enough_memory_mm() - Check if allocating a new mem map is allowed
-+ * @mm: mm struct
-+ * @pages: number of pages
-+ *
-+ * Check permissions for allocating a new virtual mapping.  If all LSMs return
-+ * a positive value, __vm_enough_memory() will be called with cap_sys_admin
-+ * set. If at least one LSM returns 0 or negative, __vm_enough_memory() will be
-+ * called with cap_sys_admin cleared.
-+ *
-+ * Return: Returns 0 if permission is granted by the LSM infrastructure to the
-+ *         caller.
-+ */
- int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
+ /**
+@@ -1535,7 +1538,8 @@ int security_dentry_init_security(struct dentry *dentry, int mode,
+ 	/*
+ 	 * Only one module will provide a security context.
+ 	 */
+-	hlist_for_each_entry(hp, &security_hook_heads.dentry_init_security, list) {
++	hlist_for_each_entry(hp, &security_hook_heads.dentry_init_security,
++			     list) {
+ 		rc = hp->hook.dentry_init_security(dentry, mode, name,
+ 						   xattr_name, ctx, ctxlen);
+ 		if (rc != LSM_RET_DEFAULT(dentry_init_security))
+@@ -1565,7 +1569,7 @@ int security_dentry_create_files_as(struct dentry *dentry, int mode,
+ 				    const struct cred *old, struct cred *new)
+ {
+ 	return call_int_hook(dentry_create_files_as, 0, dentry, mode,
+-				name, old, new);
++			     name, old, new);
+ }
+ EXPORT_SYMBOL(security_dentry_create_files_as);
+ 
+@@ -1607,9 +1611,9 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 	memset(new_xattrs, 0, sizeof(new_xattrs));
+ 	lsm_xattr = new_xattrs;
+ 	ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
+-						&lsm_xattr->name,
+-						&lsm_xattr->value,
+-						&lsm_xattr->value_len);
++			    &lsm_xattr->name,
++			    &lsm_xattr->value,
++			    &lsm_xattr->value_len);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -1669,8 +1673,8 @@ EXPORT_SYMBOL(security_old_inode_init_security);
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_path_mknod(const struct path *dir, struct dentry *dentry, umode_t mode,
+-			unsigned int dev)
++int security_path_mknod(const struct path *dir, struct dentry *dentry,
++			umode_t mode, unsigned int dev)
+ {
+ 	if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
+ 		return 0;
+@@ -1688,7 +1692,8 @@ EXPORT_SYMBOL(security_path_mknod);
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_path_mkdir(const struct path *dir, struct dentry *dentry, umode_t mode)
++int security_path_mkdir(const struct path *dir, struct dentry *dentry,
++			umode_t mode)
+ {
+ 	if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
+ 		return 0;
+@@ -1782,11 +1787,12 @@ int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
+ 			 unsigned int flags)
+ {
+ 	if (unlikely(IS_PRIVATE(d_backing_inode(old_dentry)) ||
+-		     (d_is_positive(new_dentry) && IS_PRIVATE(d_backing_inode(new_dentry)))))
++		     (d_is_positive(new_dentry) &&
++		      IS_PRIVATE(d_backing_inode(new_dentry)))))
+ 		return 0;
+ 
+ 	return call_int_hook(path_rename, 0, old_dir, old_dentry, new_dir,
+-				new_dentry, flags);
++			     new_dentry, flags);
+ }
+ EXPORT_SYMBOL(security_path_rename);
+ 
+@@ -1854,7 +1860,7 @@ int security_path_chroot(const struct path *path)
+ {
+ 	return call_int_hook(path_chroot, 0, path);
+ }
+-#endif
++#endif /* CONFIG_SECURITY_PATH */
+ 
+ /**
+  * security_inode_create() - Check if creating a file is allowed
+@@ -1866,7 +1872,8 @@ int security_path_chroot(const struct path *path)
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode)
++int security_inode_create(struct inode *dir, struct dentry *dentry,
++			  umode_t mode)
+ {
+ 	if (unlikely(IS_PRIVATE(dir)))
+ 		return 0;
+@@ -1885,7 +1892,7 @@ EXPORT_SYMBOL_GPL(security_inode_create);
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_inode_link(struct dentry *old_dentry, struct inode *dir,
+-			 struct dentry *new_dentry)
++			struct dentry *new_dentry)
+ {
+ 	if (unlikely(IS_PRIVATE(d_backing_inode(old_dentry))))
+ 		return 0;
+@@ -1919,7 +1926,7 @@ int security_inode_unlink(struct inode *dir, struct dentry *dentry)
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_inode_symlink(struct inode *dir, struct dentry *dentry,
+-			    const char *old_name)
++			   const char *old_name)
+ {
+ 	if (unlikely(IS_PRIVATE(dir)))
+ 		return 0;
+@@ -1975,7 +1982,8 @@ int security_inode_rmdir(struct inode *dir, struct dentry *dentry)
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_inode_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
++int security_inode_mknod(struct inode *dir, struct dentry *dentry,
++			 umode_t mode, dev_t dev)
+ {
+ 	if (unlikely(IS_PRIVATE(dir)))
+ 		return 0;
+@@ -1995,22 +2003,23 @@ int security_inode_mknod(struct inode *dir, struct dentry *dentry, umode_t mode,
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_inode_rename(struct inode *old_dir, struct dentry *old_dentry,
+-			   struct inode *new_dir, struct dentry *new_dentry,
+-			   unsigned int flags)
++			  struct inode *new_dir, struct dentry *new_dentry,
++			  unsigned int flags)
+ {
+-        if (unlikely(IS_PRIVATE(d_backing_inode(old_dentry)) ||
+-            (d_is_positive(new_dentry) && IS_PRIVATE(d_backing_inode(new_dentry)))))
++	if (unlikely(IS_PRIVATE(d_backing_inode(old_dentry)) ||
++		     (d_is_positive(new_dentry) &&
++		      IS_PRIVATE(d_backing_inode(new_dentry)))))
+ 		return 0;
+ 
+ 	if (flags & RENAME_EXCHANGE) {
+ 		int err = call_int_hook(inode_rename, 0, new_dir, new_dentry,
+-						     old_dir, old_dentry);
++					old_dir, old_dentry);
+ 		if (err)
+ 			return err;
+ 	}
+ 
+ 	return call_int_hook(inode_rename, 0, old_dir, old_dentry,
+-					   new_dir, new_dentry);
++			     new_dir, new_dentry);
+ }
+ 
+ /**
+@@ -2370,7 +2379,8 @@ int security_inode_getsecurity(struct user_namespace *mnt_userns,
+ 	 * Only one module will provide an attribute with a given name.
+ 	 */
+ 	hlist_for_each_entry(hp, &security_hook_heads.inode_getsecurity, list) {
+-		rc = hp->hook.inode_getsecurity(mnt_userns, inode, name, buffer, alloc);
++		rc = hp->hook.inode_getsecurity(mnt_userns, inode, name,
++						buffer, alloc);
+ 		if (rc != LSM_RET_DEFAULT(inode_getsecurity))
+ 			return rc;
+ 	}
+@@ -2392,7 +2402,8 @@ int security_inode_getsecurity(struct user_namespace *mnt_userns,
+  *
+  * Return: Returns 0 on success.
+  */
+-int security_inode_setsecurity(struct inode *inode, const char *name, const void *value, size_t size, int flags)
++int security_inode_setsecurity(struct inode *inode, const char *name,
++			       const void *value, size_t size, int flags)
  {
  	struct security_hook_list *hp;
-@@ -3702,12 +3818,33 @@ int security_netlink_send(struct sock *sk, struct sk_buff *skb)
- 	return call_int_hook(netlink_send, 0, sk, skb);
- }
- 
-+/**
-+ * security_ismaclabel() - Check is the named attribute is a MAC label
-+ * @name: full extended attribute name
-+ *
-+ * Check if the extended attribute specified by @name represents a MAC label.
-+ *
-+ * Return: Returns 1 if name is a MAC attribute otherwise returns 0.
-+ */
- int security_ismaclabel(const char *name)
+ 	int rc;
+@@ -2404,7 +2415,7 @@ int security_inode_setsecurity(struct inode *inode, const char *name, const void
+ 	 */
+ 	hlist_for_each_entry(hp, &security_hook_heads.inode_setsecurity, list) {
+ 		rc = hp->hook.inode_setsecurity(inode, name, value, size,
+-								flags);
++						flags);
+ 		if (rc != LSM_RET_DEFAULT(inode_setsecurity))
+ 			return rc;
+ 	}
+@@ -2424,7 +2435,8 @@ int security_inode_setsecurity(struct inode *inode, const char *name, const void
+  *
+  * Return: Returns number of bytes used/required on success.
+  */
+-int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size)
++int security_inode_listsecurity(struct inode *inode,
++				char *buffer, size_t buffer_size)
  {
- 	return call_int_hook(ismaclabel, 0, name);
- }
- EXPORT_SYMBOL(security_ismaclabel);
- 
-+/**
-+ * security_secid_to_secctx() - Convert a secid to a secctx
-+ * @secid: secid
-+ * @secdata: secctx
-+ * @seclen: secctx length
-+ *
-+ * Convert secid to security context.  If @secdata is NULL the length of the
-+ * result will be returned in @seclen, but no @secdata will be returned.  This
-+ * does mean that the length could change between calls to check the length and
-+ * the next call which actually allocates and returns the @secdata.
-+ *
-+ * Return: Return 0 on success, error on failure.
-+ */
- int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ 	if (unlikely(IS_PRIVATE(inode)))
+ 		return 0;
+@@ -2486,7 +2498,7 @@ int security_inode_copy_up_xattr(const char *name)
+ 	 * any other error code incase of an error.
+ 	 */
+ 	hlist_for_each_entry(hp,
+-		&security_hook_heads.inode_copy_up_xattr, list) {
++			     &security_hook_heads.inode_copy_up_xattr, list) {
+ 		rc = hp->hook.inode_copy_up_xattr(name);
+ 		if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
+ 			return rc;
+@@ -2646,11 +2658,11 @@ static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_mmap_file(struct file *file, unsigned long prot,
+-			unsigned long flags)
++		       unsigned long flags)
  {
- 	struct security_hook_list *hp;
-@@ -3727,6 +3864,16 @@ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
- }
- EXPORT_SYMBOL(security_secid_to_secctx);
- 
-+/**
-+ * security_secctx_to_secid() - Convert a secctx to a secid
-+ * @secdata: secctx
-+ * @seclen: length of secctx
-+ * @secid: secid
-+ *
-+ * Convert security context to secid.
-+ *
-+ * Return: Returns 0 on success, error on failure.
-+ */
- int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+ 	int ret;
+ 	ret = call_int_hook(mmap_file, 0, file, prot,
+-					mmap_prot(file, prot), flags);
++			    mmap_prot(file, prot), flags);
+ 	if (ret)
+ 		return ret;
+ 	return ima_file_mmap(file, prot);
+@@ -2680,7 +2692,7 @@ int security_mmap_addr(unsigned long addr)
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
+-			    unsigned long prot)
++			   unsigned long prot)
  {
- 	*secid = 0;
-@@ -3734,30 +3881,86 @@ int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
- }
- EXPORT_SYMBOL(security_secctx_to_secid);
+ 	int ret;
  
-+/**
-+ * security_release_secctx() - Free a secctx buffer
-+ * @secdata: secctx
-+ * @seclen: length of secctx
-+ *
-+ * Release the security context.
-+ */
- void security_release_secctx(char *secdata, u32 seclen)
+@@ -2753,7 +2765,7 @@ void security_file_set_fowner(struct file *file)
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_file_send_sigiotask(struct task_struct *tsk,
+-				  struct fown_struct *fown, int sig)
++				 struct fown_struct *fown, int sig)
  {
- 	call_void_hook(release_secctx, secdata, seclen);
+ 	return call_int_hook(file_send_sigiotask, 0, tsk, fown, sig);
  }
- EXPORT_SYMBOL(security_release_secctx);
- 
-+/**
-+ * security_inode_invalidate_secctx() - Invalidate an inode's security label
-+ * @inode: inode
-+ *
-+ * Notify the security module that it must revalidate the security context of
-+ * an inode.
-+ */
- void security_inode_invalidate_secctx(struct inode *inode)
+@@ -3117,7 +3129,7 @@ int security_task_fix_setuid(struct cred *new, const struct cred *old,
+  * Return: Returns 0 on success.
+  */
+ int security_task_fix_setgid(struct cred *new, const struct cred *old,
+-				 int flags)
++			     int flags)
  {
- 	call_void_hook(inode_invalidate_secctx, inode);
+ 	return call_int_hook(task_fix_setgid, 0, new, old, flags);
  }
- EXPORT_SYMBOL(security_inode_invalidate_secctx);
- 
-+/**
-+ * security_inode_notifysecctx() - Nofify the LSM of an inode's security label
-+ * @inode: inode
-+ * @ctx: secctx
-+ * @ctxlen: length of secctx
-+ *
-+ * Notify the security module of what the security context of an inode should
-+ * be.  Initializes the incore security context managed by the security module
-+ * for this inode.  Example usage: NFS client invokes this hook to initialize
-+ * the security context in its incore inode to the value provided by the server
-+ * for the file when the server returned the file's attributes to the client.
-+ * Must be called with inode->i_mutex locked.
-+ *
-+ * Return: Returns 0 on success, error on failure.
-+ */
- int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen)
+@@ -3281,7 +3293,7 @@ int security_task_prlimit(const struct cred *cred, const struct cred *tcred,
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_task_setrlimit(struct task_struct *p, unsigned int resource,
+-		struct rlimit *new_rlim)
++			    struct rlimit *new_rlim)
  {
- 	return call_int_hook(inode_notifysecctx, 0, inode, ctx, ctxlen);
+ 	return call_int_hook(task_setrlimit, 0, p, resource, new_rlim);
  }
- EXPORT_SYMBOL(security_inode_notifysecctx);
- 
-+/**
-+ * security_inode_setsecctx() - Change the security label of an inode
-+ * @dentry: inode
-+ * @ctx: secctx
-+ * @ctxlen: length of secctx
-+ *
-+ * Change the security context of an inode.  Updates the incore security
-+ * context managed by the security module and invokes the fs code as needed
-+ * (via __vfs_setxattr_noperm) to update any backing xattrs that represent the
-+ * context.  Example usage: NFS server invokes this hook to change the security
-+ * context in its incore inode and on the backing filesystem to a value
-+ * provided by the client on a SETATTR operation.  Must be called with
-+ * inode->i_mutex locked.
-+ *
-+ * Return: Returns 0 on success, error on failure.
-+ */
- int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen)
+@@ -3342,7 +3354,7 @@ int security_task_movememory(struct task_struct *p)
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_task_kill(struct task_struct *p, struct kernel_siginfo *info,
+-			int sig, const struct cred *cred)
++		       int sig, const struct cred *cred)
  {
- 	return call_int_hook(inode_setsecctx, 0, dentry, ctx, ctxlen);
+ 	return call_int_hook(task_kill, 0, p, info, sig, cred);
  }
- EXPORT_SYMBOL(security_inode_setsecctx);
- 
-+/**
-+ * security_inode_getsecctx() - Get the security label of an inode
-+ * @inode: inode
-+ * @ctx: secctx
-+ * @ctxlen: length of secctx
-+ *
-+ * On success, returns 0 and fills out @ctx and @ctxlen with the security
-+ * context for the given @inode.
-+ *
-+ * Return: Returns 0 on success, error on failure.
-+ */
- int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
+@@ -3362,7 +3374,7 @@ int security_task_kill(struct task_struct *p, struct kernel_siginfo *info,
+  *         to cause prctl() to return immediately with that value.
+  */
+ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+-			 unsigned long arg4, unsigned long arg5)
++			unsigned long arg4, unsigned long arg5)
  {
- 	return call_int_hook(inode_getsecctx, -EOPNOTSUPP, inode, ctx, ctxlen);
-@@ -3765,6 +3968,16 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
- EXPORT_SYMBOL(security_inode_getsecctx);
- 
- #ifdef CONFIG_WATCH_QUEUE
-+/**
-+ * security_post_notification() - Check if a watch notification can be posted
-+ * @w_cred: credentials of the task that set the watch
-+ * @cred: credentials of the task which triggered the watch
-+ * @n: the notification
-+ *
-+ * Check to see if a watch notification can be posted to a particular queue.
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
- int security_post_notification(const struct cred *w_cred,
- 			       const struct cred *cred,
- 			       struct watch_notification *n)
-@@ -3774,6 +3987,15 @@ int security_post_notification(const struct cred *w_cred,
- #endif /* CONFIG_WATCH_QUEUE */
- 
- #ifdef CONFIG_KEY_NOTIFICATIONS
-+/**
-+ * security_watch_key() - Check if a task is allowed to watch for key events
-+ * @key: the key to watch
-+ *
-+ * Check to see if a process is allowed to watch for event notifications from
-+ * a key or keyring.
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
- int security_watch_key(struct key *key)
+ 	int thisrc;
+ 	int rc = LSM_RET_DEFAULT(task_prctl);
+@@ -3544,7 +3556,7 @@ int security_msg_queue_msgctl(struct kern_ipc_perm *msq, int cmd)
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_msg_queue_msgsnd(struct kern_ipc_perm *msq,
+-			       struct msg_msg *msg, int msqflg)
++			      struct msg_msg *msg, int msqflg)
+ {
+ 	return call_int_hook(msg_queue_msgsnd, 0, msq, msg, msqflg);
+ }
+@@ -3565,7 +3577,7 @@ int security_msg_queue_msgsnd(struct kern_ipc_perm *msq,
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_msg_queue_msgrcv(struct kern_ipc_perm *msq, struct msg_msg *msg,
+-			       struct task_struct *target, long type, int mode)
++			      struct task_struct *target, long type, int mode)
+ {
+ 	return call_int_hook(msg_queue_msgrcv, 0, msq, msg, target, type, mode);
+ }
+@@ -3648,7 +3660,8 @@ int security_shm_shmctl(struct kern_ipc_perm *shp, int cmd)
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_shm_shmat(struct kern_ipc_perm *shp, char __user *shmaddr, int shmflg)
++int security_shm_shmat(struct kern_ipc_perm *shp,
++		       char __user *shmaddr, int shmflg)
+ {
+ 	return call_int_hook(shm_shmat, 0, shp, shmaddr, shmflg);
+ }
+@@ -3731,7 +3744,7 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd)
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
+-			unsigned nsops, int alter)
++		       unsigned nsops, int alter)
+ {
+ 	return call_int_hook(sem_semop, 0, sma, sops, nsops, alter);
+ }
+@@ -4000,7 +4013,7 @@ int security_watch_key(struct key *key)
  {
  	return call_int_hook(watch_key, 0, key);
-@@ -4919,6 +5141,15 @@ void security_bpf_prog_free(struct bpf_prog_aux *aux)
  }
- #endif /* CONFIG_BPF_SYSCALL */
+-#endif
++#endif /* CONFIG_KEY_NOTIFICATIONS */
  
-+/**
-+ * security_locked_down() - Check if a kernel feature is allowed
-+ * @what: requested kernel feature
-+ *
-+ * Determine whether a kernel feature that potentially enables arbitrary code
-+ * execution in kernel space should be permitted.
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
- int security_locked_down(enum lockdown_reason what)
+ #ifdef CONFIG_SECURITY_NETWORK
+ /**
+@@ -4024,7 +4037,8 @@ int security_watch_key(struct key *key)
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk)
++int security_unix_stream_connect(struct sock *sock, struct sock *other,
++				 struct sock *newsk)
  {
- 	return call_int_hook(locked_down, 0, what);
+ 	return call_int_hook(unix_stream_connect, 0, sock, other, newsk);
+ }
+@@ -4094,7 +4108,7 @@ int security_socket_post_create(struct socket *sock, int family,
+ 				int type, int protocol, int kern)
+ {
+ 	return call_int_hook(socket_post_create, 0, sock, family, type,
+-						protocol, kern);
++			     protocol, kern);
+ }
+ 
+ /**
+@@ -4125,7 +4139,8 @@ EXPORT_SYMBOL(security_socket_socketpair);
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_socket_bind(struct socket *sock, struct sockaddr *address, int addrlen)
++int security_socket_bind(struct socket *sock,
++			 struct sockaddr *address, int addrlen)
+ {
+ 	return call_int_hook(socket_bind, 0, sock, address, addrlen);
+ }
+@@ -4141,7 +4156,8 @@ int security_socket_bind(struct socket *sock, struct sockaddr *address, int addr
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_socket_connect(struct socket *sock, struct sockaddr *address, int addrlen)
++int security_socket_connect(struct socket *sock,
++			    struct sockaddr *address, int addrlen)
+ {
+ 	return call_int_hook(socket_connect, 0, sock, address, addrlen);
+ }
+@@ -4335,7 +4351,8 @@ int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
+  *
+  * Return: Returns 0 on success, error on failure.
+  */
+-int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb, u32 *secid)
++int security_socket_getpeersec_dgram(struct socket *sock,
++				     struct sk_buff *skb, u32 *secid)
+ {
+ 	return call_int_hook(socket_getpeersec_dgram, -ENOPROTOOPT, sock,
+ 			     skb, secid);
+@@ -4427,7 +4444,7 @@ EXPORT_SYMBOL(security_sock_graft);
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_inet_conn_request(const struct sock *sk,
+-			struct sk_buff *skb, struct request_sock *req)
++			       struct sk_buff *skb, struct request_sock *req)
+ {
+ 	return call_int_hook(inet_conn_request, 0, sk, skb, req);
+ }
+@@ -4441,7 +4458,7 @@ EXPORT_SYMBOL(security_inet_conn_request);
+  * Set that LSM state of @sock using the LSM state from @req.
+  */
+ void security_inet_csk_clone(struct sock *newsk,
+-			const struct request_sock *req)
++			     const struct request_sock *req)
+ {
+ 	call_void_hook(inet_csk_clone, newsk, req);
+ }
+@@ -4454,7 +4471,7 @@ void security_inet_csk_clone(struct sock *newsk,
+  * Update @sock's LSM state to represent a new connection from @skb.
+  */
+ void security_inet_conn_established(struct sock *sk,
+-			struct sk_buff *skb)
++				    struct sk_buff *skb)
+ {
+ 	call_void_hook(inet_conn_established, sk, skb);
+ }
+@@ -4590,7 +4607,8 @@ EXPORT_SYMBOL(security_tun_dev_open);
+  *
+  * Return: Returns 0 on success, error on failure.
+  */
+-int security_sctp_assoc_request(struct sctp_association *asoc, struct sk_buff *skb)
++int security_sctp_assoc_request(struct sctp_association *asoc,
++				struct sk_buff *skb)
+ {
+ 	return call_int_hook(sctp_assoc_request, 0, asoc, skb);
+ }
+@@ -4655,7 +4673,6 @@ EXPORT_SYMBOL(security_sctp_assoc_established);
+ #endif	/* CONFIG_SECURITY_NETWORK */
+ 
+ #ifdef CONFIG_SECURITY_INFINIBAND
+-
+ /**
+  * security_ib_pkey_access() - Check if access to an IB pkey is allowed
+  * @sec: LSM blob
+@@ -4682,9 +4699,11 @@ EXPORT_SYMBOL(security_ib_pkey_access);
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_ib_endport_manage_subnet(void *sec, const char *dev_name, u8 port_num)
++int security_ib_endport_manage_subnet(void *sec,
++				      const char *dev_name, u8 port_num)
+ {
+-	return call_int_hook(ib_endport_manage_subnet, 0, sec, dev_name, port_num);
++	return call_int_hook(ib_endport_manage_subnet, 0, sec,
++			     dev_name, port_num);
+ }
+ EXPORT_SYMBOL(security_ib_endport_manage_subnet);
+ 
+@@ -4716,7 +4735,6 @@ EXPORT_SYMBOL(security_ib_free_security);
+ #endif	/* CONFIG_SECURITY_INFINIBAND */
+ 
+ #ifdef CONFIG_SECURITY_NETWORK_XFRM
+-
+ /**
+  * security_xfrm_policy_alloc() - Allocate a xfrm policy LSM blob
+  * @ctxp: xfrm security context being added to the SPD
+@@ -4747,7 +4765,7 @@ EXPORT_SYMBOL(security_xfrm_policy_alloc);
+  * Return: Return 0 if operation was successful.
+  */
+ int security_xfrm_policy_clone(struct xfrm_sec_ctx *old_ctx,
+-			      struct xfrm_sec_ctx **new_ctxp)
++			       struct xfrm_sec_ctx **new_ctxp)
+ {
+ 	return call_int_hook(xfrm_policy_clone_security, 0, old_ctx, new_ctxp);
+ }
+@@ -4882,7 +4900,7 @@ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+ 	 * using the macro
+ 	 */
+ 	hlist_for_each_entry(hp, &security_hook_heads.xfrm_state_pol_flow_match,
+-				list) {
++			     list) {
+ 		rc = hp->hook.xfrm_state_pol_flow_match(x, xp, flic);
+ 		break;
+ 	}
+@@ -4906,16 +4924,14 @@ int security_xfrm_decode_session(struct sk_buff *skb, u32 *secid)
+ void security_skb_classify_flow(struct sk_buff *skb, struct flowi_common *flic)
+ {
+ 	int rc = call_int_hook(xfrm_decode_session, 0, skb, &flic->flowic_secid,
+-				0);
++			       0);
+ 
+ 	BUG_ON(rc);
+ }
+ EXPORT_SYMBOL(security_skb_classify_flow);
+-
+ #endif	/* CONFIG_SECURITY_NETWORK_XFRM */
+ 
+ #ifdef CONFIG_KEYS
+-
+ /**
+  * security_key_alloc() - Allocate and initialize a kernel key LSM blob
+  * @key: key
+@@ -4978,11 +4994,9 @@ int security_key_getsecurity(struct key *key, char **_buffer)
+ 	*_buffer = NULL;
+ 	return call_int_hook(key_getsecurity, 0, key, _buffer);
+ }
+-
+ #endif	/* CONFIG_KEYS */
+ 
+ #ifdef CONFIG_AUDIT
+-
+ /**
+  * security_audit_rule_init() - Allocate and init an LSM audit rule struct
+  * @field: audit action
 -- 
 2.39.2
 
