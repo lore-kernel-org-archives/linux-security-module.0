@@ -2,100 +2,134 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C49C61DA4
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 00:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E27BAC61DA4
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 00:12:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbjBQAIR (ORCPT
+        id S229448AbjBQAM4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Feb 2023 19:08:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38306 "EHLO
+        Thu, 16 Feb 2023 19:12:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbjBQAIQ (ORCPT
+        with ESMTP id S229678AbjBQAMz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Feb 2023 19:08:16 -0500
+        Thu, 16 Feb 2023 19:12:55 -0500
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 247AC33446;
-        Thu, 16 Feb 2023 16:08:15 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14521BBAD;
+        Thu, 16 Feb 2023 16:12:54 -0800 (PST)
 Received: from [192.168.192.83] (unknown [50.47.134.245])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 274923F2FE;
-        Fri, 17 Feb 2023 00:08:12 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 0F3F43F2FE;
+        Fri, 17 Feb 2023 00:12:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1676592493;
-        bh=p3JVtjx8dt3W0Q/dpd/SmnqOoJaOmvUOKPFg8yElruU=;
-        h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+        s=20210705; t=1676592772;
+        bh=DcFnEo9lEutyx7EOR4YhzVageQ7131M3CTXVyA9b2iU=;
+        h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
          In-Reply-To:Content-Type;
-        b=rH9PWZ/Owu/OXnl5Dun4c7nD2nsnIqv+GXb8iqpG+HF4+fKEgCv0LKt8z6JKdHNZ0
-         XNnZxc+dGDE9raz2bSLU0djYC47vJDCrQm2D2Vt6XWQuy/h2EjNJggD+bIId6HNof3
-         f3Iz7VsIkOFpwOcgebQxdBZLrD4lPxLSCsyzcMFdq/2yrdzTeBtwk7GluUrB5QXtUS
-         kYmcKK1bN4AnmPSuWpTz0Akh4X3SI4ySijXkOAm2BiHtQ2mXjo1KSZqd/9dS9jU64o
-         hvzKVazm9OoeX23+HtAQegJ8R9upfYlA+YyIRHSKfWeGzHFJuZVP3uEIOo24PmzMcC
-         Omd/IwAXIWIjQ==
-Message-ID: <4595e7b4-ea31-5b01-f636-259e84737dfc@canonical.com>
-Date:   Thu, 16 Feb 2023 16:08:10 -0800
+        b=diDKZWuSQGniABxqh2ewMFw0WwPi4GW6k6XzKRV4vRPbOcpv4FtywB0TWWQSLECe0
+         FN7WAnfEXGhaF7jRP0UUM4eYvyMhD1duDU4hrNRRgz3cDfG7tPm2QB42Cbvi86IeVy
+         h9ZuWnum2XbIhSrrpTyrhHqrbxHPXrzCdoR5bLJca8PbSTv46hcqO2vJZ/LI+jGniV
+         H/KMLX5z3NbYdMKtlLI5K5n6XI4gOerMElqkmqFjmJJBBBiabMs40WD/+QzJDl0Ke4
+         6hYH3Gb0Ih0kSYV2Tfj7OWQe+c/MV1YziBWSTvJWsmCfpiaMnGivg+bhmC9cJsAGmN
+         gRVHoIAv3yjpA==
+Message-ID: <92f2b931-4d3d-6ac7-cae8-9815d79beb61@canonical.com>
+Date:   Thu, 16 Feb 2023 16:12:50 -0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-From:   John Johansen <john.johansen@canonical.com>
-Subject: [PATCH v3] apparmor: global buffers spin lock may get contended
-To:     LKLM <linux-kernel@vger.kernel.org>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        Anil Altinay <aaltinay@google.com>
-References: <YO2S+C7Cw7AS7bsg@google.com>
- <cfd5cc6f-5943-2e06-1dbe-f4b4ad5c1fa1@canonical.com>
- <Y19GhTg8Q/3ym/VD@google.com>
- <dac1c2d5-367f-c8a7-c61e-c1774d98d602@canonical.com>
+Subject: Re: [PATCH 1/1] apparmor: cache buffers on percpu list if there is
+ lock contention
 Content-Language: en-US
+From:   John Johansen <john.johansen@canonical.com>
+To:     Anil Altinay <aaltinay@google.com>,
+        linux-security-module@vger.kernel.org
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        stable@vger.kernel.org
+References: <20230216214651.3514675-1-aaltinay@google.com>
+ <20230216214651.3514675-2-aaltinay@google.com>
+ <a1f3a093-f86a-0200-8fbf-9cd17956669a@canonical.com>
 Organization: Canonical
-In-Reply-To: <dac1c2d5-367f-c8a7-c61e-c1774d98d602@canonical.com>
+In-Reply-To: <a1f3a093-f86a-0200-8fbf-9cd17956669a@canonical.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
- From f44dee132b0b55386b7ea31e68c80d367b073ee0 Mon Sep 17 00:00:00 2001
-From: John Johansen <john.johansen@canonical.com>
-Date: Tue, 25 Oct 2022 01:18:41 -0700
-Subject: [PATCH] apparmor: cache buffers on percpu list if there is lock
-  contention
+On 2/16/23 15:42, John Johansen wrote:
+> On 2/16/23 13:46, Anil Altinay wrote:
+>> On a heavily loaded machine there can be lock contention on the
+>> global buffers lock. Add a percpu list to cache buffers on when
+>> lock contention is encountered.
+>>
+>> When allocating buffers attempt to use cached buffers first,
+>> before taking the global buffers lock. When freeing buffers
+>> try to put them back to the global list but if contention is
+>> encountered, put the buffer on the percpu list.
+>>
+>> The length of time a buffer is held on the percpu list is dynamically
+>> adjusted based on lock contention.  The amount of hold time is rapidly
+>> increased and slow ramped down.
+>>
+>> Fixes: df323337e507 ("apparmor: Use a memory pool instead per-CPU caches")
+>> Link: https://lore.kernel.org/lkml/cfd5cc6f-5943-2e06-1dbe-f4b4ad5c1fa1@canonical.com/
+>> Signed-off-by: John Johansen <john.johansen@canonical.com>
+>> Reported-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+>> Signed-off-by: Anil Altinay <aaltinay@google.com>
+>> Cc: stable@vger.kernel.org
+> 
+> NAK, this version of the patch has an issue that prevented it from
+> being pushed upstream.
+> 
+> I can send out the revised version for people to look at but I
+> haven't been able to get proper testing on it yet, hence why
+> I haven't pushed it yet either.
+> 
 
-On a heavily loaded machine there can be lock contention on the
-global buffers lock. Add a percpu list to cache buffers on when
-lock contention is encountered.
+I should add what we need to get this upstream is some testing. I
+think its good but I haven't been able do any testing of v3 on
+a larger machine.
 
-When allocating buffers attempt to use cached buffers first,
-before taking the global buffers lock. When freeing buffers
-try to put them back to the global list but if contention is
-encountered, put the buffer on the percpu list.
+There is a debug patch below that can be dropped on top of v3. Its
+not included as part of the patch series as it needs some
+revisions/improvements if its going to go upstream but its works
+for devel debugging.
 
-The length of time a buffer is held on the percpu list is dynamically
-adjusted based on lock contention.  The amount of hold time is rapidly
-increased and slow ramped down.
 
-v3:
-- limit number of buffers that can be pushed onto the percpu
-   list. This avoids a problem on some kernels where one percpu
-   list can inherit buffers from another cpu after a reschedule,
-   causing more kernel memory to used than is necessary. Under
-   normal conditions this should eventually return to normal
-   but under pathelogical conditions the extra memory consumption
-   may have been unbouanded
-v2:
-- dynamically adjust buffer hold time on percpu list based on
-   lock contention.
-v1:
-- cache buffers on percpu list on lock contention
+commit f44dee132b0b55386b7ea31e68c80d367b073ee0
+Author: John Johansen <john.johansen@canonical.com>
+Date:   Tue Oct 25 01:18:41 2022 -0700
 
-Signed-off-by: John Johansen <john.johansen@canonical.com>
----
-  security/apparmor/lsm.c | 81 ++++++++++++++++++++++++++++++++++++++---
-  1 file changed, 76 insertions(+), 5 deletions(-)
+     apparmor: cache buffers on percpu list if there is lock contention
+     
+     On a heavily loaded machine there can be lock contention on the
+     global buffers lock. Add a percpu list to cache buffers on when
+     lock contention is encountered.
+     
+     When allocating buffers attempt to use cached buffers first,
+     before taking the global buffers lock. When freeing buffers
+     try to put them back to the global list but if contention is
+     encountered, put the buffer on the percpu list.
+     
+     The length of time a buffer is held on the percpu list is dynamically
+     adjusted based on lock contention.  The amount of hold time is rapidly
+     increased and slow ramped down.
+     
+     v3:
+     - limit number of buffers that can be pushed onto the percpu
+       list. This avoids a problem on some kernels where one percpu
+       list can inherit buffers from another cpu after a reschedule,
+       causing more kernel memory to used than is necessary. Under
+       normal conditions this should eventually return to normal
+       but under pathelogical conditions the extra memory consumption
+       may have been unbouanded
+     v2:
+     - dynamically adjust buffer hold time on percpu list based on
+       lock contention.
+     v1:
+     - cache buffers on percpu list on lock contention
+     
+     Signed-off-by: John Johansen <john.johansen@canonical.com>
 
 diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
 index 25114735bc11..21f5ea20e715 100644
@@ -235,6 +269,4 @@ index 25114735bc11..21f5ea20e715 100644
   	/*
   	 * A function may require two buffers at once. Usually the buffers are
   	 * used for a short period of time and are shared. On UP kernel buffers
--- 
-2.34.1
 
