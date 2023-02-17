@@ -2,61 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4784C636D7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E5BC636D4
 	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230252AbjBQD1O (ORCPT
+        id S230242AbjBQD1N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Feb 2023 22:27:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44504 "EHLO
+        Thu, 16 Feb 2023 22:27:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230130AbjBQD05 (ORCPT
+        with ESMTP id S230252AbjBQD0z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Feb 2023 22:26:57 -0500
-Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A94A95A385
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:52 -0800 (PST)
-Received: by mail-qv1-xf30.google.com with SMTP id i5so3132547qvp.6
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:52 -0800 (PST)
+        Thu, 16 Feb 2023 22:26:55 -0500
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9ECD4FC8C
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:47 -0800 (PST)
+Received: by mail-qt1-x82b.google.com with SMTP id t16so1773169qto.3
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Q6G9lKyS1KVfFFMP7ztRA7H7QDEyjlDjPSIl6UQnbPw=;
-        b=dTYb7rQEfoZGgDon/mEvmnD+PmBnJABrMDd04O3HPf3TH3aYn4fMbozyc4+e2re2sY
-         ASvD7j+mzTb/frfiIv0AV9O5SqTTzIgowNiPXx5E4Iye+2h2UfXjH8seFivVQUzxpeL0
-         WZhQwDkQsVPDuyk4a3NZTwLPbQeZCoaiXUbbNGFdj6WsTqOEoGRYoBtuhetqNlQFdVrU
-         CsgXGz8Pl/PUbH85sPXZnwYBYr7z9QsshuOfi6yAP3LzhOEO0CmVvXKgLH2GtqxdRNtk
-         X6PBxUXHb8fTWCmUHYZMVO+dfQLVqaxpE69MEt4ML/hE7oYwdFKgfSygaFnwEYHB9182
-         C7Lw==
+        bh=8LhYESzoJTyJbG8UIuPE/K4ImH+HITUZGlYLJUGWzzo=;
+        b=A2tugsMP0O89l/YxZNSbNoXq8klBsK36+Q+l6p7qbiGnQ2uB0peO8I91eFGXfY0z7t
+         uuOF0KTDk69WRcEhSisN+B3W20dzpUZ3J1Ij4ojcZFy8PmvU547pqqBrXQ4uJGcJcGud
+         IsA9PcttjxH/Sszid8Uy3xnpJ3gu7CyRBpLrv7AXWa+DhpPaR4rMAIyDOpBdRgq4Wi6S
+         I/7IC3rb6nj2FZi3VevPzgZWkJpveqQYl0QFT3D/wkWOCC3ODNNWrsW5JXg9x40/BlJu
+         i1lhkCuUfaZY/gJAaMVdxsCe3jsFhnzoDLyyM85LY7CxqntGPeXEORZzPB9TbSVDqYRQ
+         BhZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q6G9lKyS1KVfFFMP7ztRA7H7QDEyjlDjPSIl6UQnbPw=;
-        b=DVGHlAFhrKf3gJht1nnMTaKpEUMl+bjwH1Qm0l3UmoVON1YX/YmZepL/5Dqib6jyim
-         F7hr3B4mZmcU/NfzryElSfoIWimHoyOJvsxFGeRrbqLwzVnf0Jlj3+nebrT4TI4Ocwcy
-         R2nO1Lhsk8raQA7V1CN9/ME7NRpHmFPWns42uwJ50qK3HhgtrQcSI2go/V7sCbeUSEx2
-         N9GgFeiFnktFGCprOW7YFzJY1QXGzu3iKxsLIZB2WvKCa80cPseUc8hz0/jXkGidgtxS
-         mDwNeM4UkegrCITKRX8PcZ19EuJtxu+WJsn/99Aspg4/oXOfCyrZ9PMXb3r2wwRqPleg
-         hK/g==
-X-Gm-Message-State: AO0yUKXAbqssWve8lCvYjFUv6bpWAKjpXcD2bX9ZxAxWEgcrlTlIPFxg
-        UWX+/GRiaxa5laT5U0+wjHz4VO5fwM0ncG8=
-X-Google-Smtp-Source: AK7set8g0xGc5CofamsXw7wbGwFDJmjJZbHSk4LiYb2vUJItiBwcfZM/hXnP9rdKRYQSyGtMTVy8Vw==
-X-Received: by 2002:ad4:5c86:0:b0:56b:ff69:7df8 with SMTP id o6-20020ad45c86000000b0056bff697df8mr17755123qvh.51.1676604411342;
-        Thu, 16 Feb 2023 19:26:51 -0800 (PST)
+        bh=8LhYESzoJTyJbG8UIuPE/K4ImH+HITUZGlYLJUGWzzo=;
+        b=vnvBZgSSINqVA9LkyAj95gQlqMDkuWlB3M/R3qsMQbk9BX5CVUS2reyqjtuolMUkZ+
+         BJMgBhN3ifxPd8xZIWcj5ItoTEsAXqjnFP07tXrKCWp3wBxI2f+VXoxToO7fjmY5bSyE
+         pCHi7dztSkbzwXtNlKGOUbTgG2Tdld0lgBfr+G079jVGyvflBcGEW+ucjLcqmMtVACa9
+         9H7mNk+wJP/9UcJOTyJ8aDPti/fOs8JAXXoLIy0o/BH9EtCdcGiSqYJJYfmpGrQ2YlzG
+         kYl6dwXZkABL1g/JjGmddPJ+yOodnflpPs/Ey6aX7sEX9pQFfb2NmZRHaLtEsrTeZKRi
+         fqNg==
+X-Gm-Message-State: AO0yUKWHkruQlja1o6kp9MGu6rIwyuQkuGYrLL1LlsHJYpBCOXtodNVE
+        3W1+Hiq+Eei6kt+oCGBgulqNjfUiLdVX0mE=
+X-Google-Smtp-Source: AK7set8b4bFnSukwn9+qTUO90lQN7tzqgi9t4NxT0UTmn9ZwOqFRiAVICX/upGH0sdT4zIjz5672HQ==
+X-Received: by 2002:ac8:7d84:0:b0:3ba:1acd:4f8 with SMTP id c4-20020ac87d84000000b003ba1acd04f8mr12496537qtd.42.1676604406212;
+        Thu, 16 Feb 2023 19:26:46 -0800 (PST)
 Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
-        by smtp.gmail.com with ESMTPSA id b68-20020a37b247000000b0073980414888sm2483677qkf.42.2023.02.16.19.26.50
+        by smtp.gmail.com with ESMTPSA id jt12-20020a05622aa00c00b003bd0d04bf1esm2108011qtb.90.2023.02.16.19.26.45
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 19:26:50 -0800 (PST)
+        Thu, 16 Feb 2023 19:26:45 -0800 (PST)
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org
-Subject: [PATCH 17/22] lsm: move the audit hook comments to security/security.c
-Date:   Thu, 16 Feb 2023 22:26:20 -0500
-Message-Id: <20230217032625.678457-18-paul@paul-moore.com>
+Subject: [PATCH 13/22] lsm: move the xfrm hook comments to security/security.c
+Date:   Thu, 16 Feb 2023 22:26:16 -0500
+Message-Id: <20230217032625.678457-14-paul@paul-moore.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230217032625.678457-1-paul@paul-moore.com>
 References: <20230217032625.678457-1-paul@paul-moore.com>
@@ -78,120 +78,268 @@ comments.
 
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- include/linux/lsm_hooks.h | 32 ------------------------------
- security/security.c       | 41 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 41 insertions(+), 32 deletions(-)
+ include/linux/lsm_hooks.h |  73 ---------------------------
+ security/security.c       | 103 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 103 insertions(+), 73 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 0a5b3b46fc2b..e36387f88083 100644
+index 9fc6417af980..9c5254e4e9d1 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -135,38 +135,6 @@
-  *	@secdata contains the security context.
-  *	@seclen contains the length of the security context.
+@@ -32,79 +32,6 @@
+ /**
+  * union security_list_options - Linux Security Module hook function list
   *
-- * Security hooks for Audit
+- * Security hooks for XFRM operations.
 - *
-- * @audit_rule_init:
-- *	Allocate and initialize an LSM audit rule structure.
-- *	@field contains the required Audit action.
-- *	Fields flags are defined in <include/linux/audit.h>
-- *	@op contains the operator the rule uses.
-- *	@rulestr contains the context where the rule will be applied to.
-- *	@lsmrule contains a pointer to receive the result.
-- *	Return 0 if @lsmrule has been successfully set,
-- *	-EINVAL in case of an invalid rule.
+- * @xfrm_policy_alloc_security:
+- *	@ctxp is a pointer to the xfrm_sec_ctx being added to Security Policy
+- *	Database used by the XFRM system.
+- *	@sec_ctx contains the security context information being provided by
+- *	the user-level policy update program (e.g., setkey).
+- *	@gfp is to specify the context for the allocation.
+- *	Allocate a security structure to the xp->security field; the security
+- *	field is initialized to NULL when the xfrm_policy is allocated.
+- *	Return 0 if operation was successful (memory to allocate, legal
+- *	context).
+- * @xfrm_policy_clone_security:
+- *	@old_ctx contains an existing xfrm_sec_ctx.
+- *	@new_ctxp contains a new xfrm_sec_ctx being cloned from old.
+- *	Allocate a security structure in new_ctxp that contains the
+- *	information from the old_ctx structure.
+- *	Return 0 if operation was successful (memory to allocate).
+- * @xfrm_policy_free_security:
+- *	@ctx contains the xfrm_sec_ctx.
+- *	Deallocate xp->security.
+- * @xfrm_policy_delete_security:
+- *	@ctx contains the xfrm_sec_ctx.
+- *	Authorize deletion of xp->security.
+- *	Return 0 if permission is granted.
+- * @xfrm_state_alloc:
+- *	@x contains the xfrm_state being added to the Security Association
+- *	Database by the XFRM system.
+- *	@sec_ctx contains the security context information being provided by
+- *	the user-level SA generation program (e.g., setkey or racoon).
+- *	Allocate a security structure to the x->security field; the security
+- *	field is initialized to NULL when the xfrm_state is allocated. Set the
+- *	context to correspond to sec_ctx. Return 0 if operation was successful
+- *	(memory to allocate, legal context).
+- * @xfrm_state_alloc_acquire:
+- *	@x contains the xfrm_state being added to the Security Association
+- *	Database by the XFRM system.
+- *	@polsec contains the policy's security context.
+- *	@secid contains the secid from which to take the mls portion of the
+- *	context.
+- *	Allocate a security structure to the x->security field; the security
+- *	field is initialized to NULL when the xfrm_state is allocated. Set the
+- *	context to correspond to secid. Return 0 if operation was successful
+- *	(memory to allocate, legal context).
+- * @xfrm_state_free_security:
+- *	@x contains the xfrm_state.
+- *	Deallocate x->security.
+- * @xfrm_state_delete_security:
+- *	@x contains the xfrm_state.
+- *	Authorize deletion of x->security.
+- *	Return 0 if permission is granted.
+- * @xfrm_policy_lookup:
+- *	@ctx contains the xfrm_sec_ctx for which the access control is being
+- *	checked.
+- *	@fl_secid contains the flow security label that is used to authorize
+- *	access to the policy xp.
+- *	@dir contains the direction of the flow (input or output).
+- *	Check permission when a flow selects a xfrm_policy for processing
+- *	XFRMs on a packet.  The hook is called when selecting either a
+- *	per-socket policy or a generic xfrm policy.
+- *	Return 0 if permission is granted, -ESRCH otherwise, or -errno
+- *	on other errors.
+- * @xfrm_state_pol_flow_match:
+- *	@x contains the state to match.
+- *	@xp contains the policy to check for a match.
+- *	@flic contains the flowi_common struct to check for a match.
+- *	Return 1 if there is a match.
+- * @xfrm_decode_session:
+- *	@skb points to skb to decode.
+- *	@secid points to the flow key secid to set.
+- *	@ckall says if all xfrms used should be checked for same secid.
+- *	Return 0 if ckall is zero or all xfrms used have the same secid.
 - *
-- * @audit_rule_known:
-- *	Specifies whether given @krule contains any fields related to
-- *	current LSM.
-- *	@krule contains the audit rule of interest.
-- *	Return 1 in case of relation found, 0 otherwise.
-- *
-- * @audit_rule_match:
-- *	Determine if given @secid matches a rule previously approved
-- *	by @audit_rule_known.
-- *	@secid contains the security id in question.
-- *	@field contains the field which relates to current LSM.
-- *	@op contains the operator that will be used for matching.
-- *	@lrule points to the audit rule that will be checked against.
-- *	Return 1 if secid matches the rule, 0 if it does not, -ERRNO on failure.
-- *
-- * @audit_rule_free:
-- *	Deallocate the LSM audit rule structure previously allocated by
-- *	audit_rule_init.
-- *	@lsmrule contains the allocated rule.
-- *
-  * @inode_invalidate_secctx:
-  *	Notify the security module that it must revalidate the security context
-  *	of an inode.
+  * Security hooks affecting all Key Management operations
+  *
+  * @key_alloc:
 diff --git a/security/security.c b/security/security.c
-index d7a07264fb73..4a2eff06f418 100644
+index 3b713ed3d29c..f06b95a9705c 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -4761,21 +4761,62 @@ int security_key_getsecurity(struct key *key, char **_buffer)
+@@ -4268,6 +4268,17 @@ EXPORT_SYMBOL(security_ib_free_security);
  
- #ifdef CONFIG_AUDIT
+ #ifdef CONFIG_SECURITY_NETWORK_XFRM
  
 +/**
-+ * security_audit_rule_init() - Allocate and init an LSM audit rule struct
-+ * @field: audit action
-+ * @op: rule operator
-+ * @rulestr: rule context
-+ * @lsmrule: receive buffer for audit rule struct
++ * security_xfrm_policy_alloc() - Allocate a xfrm policy LSM blob
++ * @ctxp: xfrm security context being added to the SPD
++ * @sec_ctx: security label provided by userspace
++ * @gfp: gfp flags
 + *
-+ * Allocate and initialize an LSM audit rule structure.
++ * Allocate a security structure to the xp->security field; the security field
++ * is initialized to NULL when the xfrm_policy is allocated.
 + *
-+ * Return: Return 0 if @lsmrule has been successfully set, -EINVAL in case of
-+ *         an invalid rule.
++ * Return:  Return 0 if operation was successful.
 + */
- int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
+ int security_xfrm_policy_alloc(struct xfrm_sec_ctx **ctxp,
+ 			       struct xfrm_user_sec_ctx *sec_ctx,
+ 			       gfp_t gfp)
+@@ -4276,23 +4287,58 @@ int security_xfrm_policy_alloc(struct xfrm_sec_ctx **ctxp,
+ }
+ EXPORT_SYMBOL(security_xfrm_policy_alloc);
+ 
++/**
++ * security_xfrm_policy_clone() - Clone xfrm policy LSM state
++ * @old_ctx: xfrm security context
++ * @new_ctxp: target xfrm security context
++ *
++ * Allocate a security structure in new_ctxp that contains the information from
++ * the old_ctx structure.
++ *
++ * Return: Return 0 if operation was successful.
++ */
+ int security_xfrm_policy_clone(struct xfrm_sec_ctx *old_ctx,
+ 			      struct xfrm_sec_ctx **new_ctxp)
  {
- 	return call_int_hook(audit_rule_init, 0, field, op, rulestr, lsmrule);
+ 	return call_int_hook(xfrm_policy_clone_security, 0, old_ctx, new_ctxp);
  }
  
 +/**
-+ * security_audit_rule_known() - Check if an audit rule contains LSM fields
-+ * @krule: audit rule
++ * security_xfrm_policy_free() - Free a xfrm security context
++ * @ctx: xfrm security context
 + *
-+ * Specifies whether given @krule contains any fields related to the current
-+ * LSM.
-+ *
-+ * Return: Returns 1 in case of relation found, 0 otherwise.
++ * Free LSM resources associated with @ctx.
 + */
- int security_audit_rule_known(struct audit_krule *krule)
+ void security_xfrm_policy_free(struct xfrm_sec_ctx *ctx)
  {
- 	return call_int_hook(audit_rule_known, 0, krule);
+ 	call_void_hook(xfrm_policy_free_security, ctx);
+ }
+ EXPORT_SYMBOL(security_xfrm_policy_free);
+ 
++/**
++ * security_xfrm_policy_delete() - Check if deleting a xfrm policy is allowed
++ * @ctx: xfrm security context
++ *
++ * Authorize deletion of a SPD entry.
++ *
++ * Return: Returns 0 if permission is granted.
++ */
+ int security_xfrm_policy_delete(struct xfrm_sec_ctx *ctx)
+ {
+ 	return call_int_hook(xfrm_policy_delete_security, 0, ctx);
  }
  
 +/**
-+ * security_audit_rule_free() - Free an LSM audit rule struct
-+ * @lsmrule: audit rule struct
++ * security_xfrm_state_alloc() - Allocate a xfrm state LSM blob
++ * @x: xfrm state being added to the SAD
++ * @sec_ctx: security label provided by userspace
 + *
-+ * Deallocate the LSM audit rule structure previously allocated by
-+ * audit_rule_init().
++ * Allocate a security structure to the @x->security field; the security field
++ * is initialized to NULL when the xfrm_state is allocated. Set the context to
++ * correspond to @sec_ctx.
++ *
++ * Return: Return 0 if operation was successful.
 + */
- void security_audit_rule_free(void *lsmrule)
+ int security_xfrm_state_alloc(struct xfrm_state *x,
+ 			      struct xfrm_user_sec_ctx *sec_ctx)
  {
- 	call_void_hook(audit_rule_free, lsmrule);
+@@ -4300,28 +4346,76 @@ int security_xfrm_state_alloc(struct xfrm_state *x,
+ }
+ EXPORT_SYMBOL(security_xfrm_state_alloc);
+ 
++/**
++ * security_xfrm_state_alloc_acquire() - Allocate a xfrm state LSM blob
++ * @x: xfrm state being added to the SAD
++ * @polsec: associated policy's security context
++ * @secid: secid from the flow
++ *
++ * Allocate a security structure to the x->security field; the security field
++ * is initialized to NULL when the xfrm_state is allocated.  Set the context to
++ * correspond to secid.
++ *
++ * Return: Returns 0 if operation was successful.
++ */
+ int security_xfrm_state_alloc_acquire(struct xfrm_state *x,
+ 				      struct xfrm_sec_ctx *polsec, u32 secid)
+ {
+ 	return call_int_hook(xfrm_state_alloc_acquire, 0, x, polsec, secid);
  }
  
 +/**
-+ * security_audit_rule_match() - Check if a label matches an audit rule
-+ * @secid: security label
-+ * @field: LSM audit field
-+ * @op: matching operator
-+ * @lsmrule: audit rule
++ * security_xfrm_state_delete() - Check if deleting a xfrm state is allowed
++ * @x: xfrm state
 + *
-+ * Determine if given @secid matches a rule previously approved by
-+ * security_audit_rule_known().
++ * Authorize deletion of x->security.
 + *
-+ * Return: Returns 1 if secid matches the rule, 0 if it does not, -ERRNO on
-+ *         failure.
++ * Return: Returns 0 if permission is granted.
 + */
- int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+ int security_xfrm_state_delete(struct xfrm_state *x)
  {
- 	return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
+ 	return call_int_hook(xfrm_state_delete_security, 0, x);
+ }
+ EXPORT_SYMBOL(security_xfrm_state_delete);
+ 
++/**
++ * security_xfrm_state_free() - Free a xfrm state
++ * @x: xfrm state
++ *
++ * Deallocate x->security.
++ */
+ void security_xfrm_state_free(struct xfrm_state *x)
+ {
+ 	call_void_hook(xfrm_state_free_security, x);
+ }
+ 
++/**
++ * security_xfrm_policy_lookup() - Check if using a xfrm policy is allowed
++ * @ctx: target xfrm security context
++ * @fl_secid: flow secid used to authorize access
++ *
++ * Check permission when a flow selects a xfrm_policy for processing XFRMs on a
++ * packet.  The hook is called when selecting either a per-socket policy or a
++ * generic xfrm policy.
++ *
++ * Return: Return 0 if permission is granted, -ESRCH otherwise, or -errno on
++ *         other errors.
++ */
+ int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid)
+ {
+ 	return call_int_hook(xfrm_policy_lookup, 0, ctx, fl_secid);
+ }
+ 
++/**
++ * security_xfrm_state_pol_flow_match() - Check for a xfrm match
++ * @x: xfrm state to match
++ * @xp xfrm policy to check for a match
++ * @flic: flow to check for a match.
++ *
++ * Check @xp and @flic for a match with @x.
++ *
++ * Return: Returns 1 if there is a match.
++ */
+ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+ 				       struct xfrm_policy *xp,
+ 				       const struct flowi_common *flic)
+@@ -4346,6 +4440,15 @@ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+ 	return rc;
+ }
+ 
++/**
++ * security_xfrm_decode_session() - Determine the xfrm secid for a packet
++ * @skb: xfrm packet
++ * @secid: secid
++ *
++ * Decode the packet in @skb and return the security label in @secid.
++ *
++ * Return: Return 0 if all xfrms used have the same secid.
++ */
+ int security_xfrm_decode_session(struct sk_buff *skb, u32 *secid)
+ {
+ 	return call_int_hook(xfrm_decode_session, 0, skb, secid, 1);
 -- 
 2.39.2
 
