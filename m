@@ -2,61 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEDFC636D4
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B632DC05027
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:27:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230268AbjBQD1l (ORCPT
+        id S230309AbjBQD1k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Feb 2023 22:27:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44570 "EHLO
+        Thu, 16 Feb 2023 22:27:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230200AbjBQD1D (ORCPT
+        with ESMTP id S229738AbjBQD1C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Feb 2023 22:27:03 -0500
-Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A41CB5A395
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:56 -0800 (PST)
-Received: by mail-qv1-xf36.google.com with SMTP id t8so3133363qvr.5
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:56 -0800 (PST)
+        Thu, 16 Feb 2023 22:27:02 -0500
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C624BEA8
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:55 -0800 (PST)
+Received: by mail-qv1-xf34.google.com with SMTP id y2so3143697qvo.4
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=S9cXi8vvXPR0wKFluf79d1bkz/E0cEEMbKHBRKBLXCY=;
-        b=XJhx7QhnL+6lV+KybLEKzlEfhOwp4HUrfgozM8JynyFLvSGqSFomlGgztqIIooKz8y
-         3xxkWBcJrV6my2hVA2t6UAGwpM1hPOJ3kvRpT+cK9qvmRDlZOMT4lf0KIlW5KNhmV3yo
-         c5Qc+AajXDvSjHuFSrkkSATvw5AoR0IbK0rDadaxjn/JuIU7AYAS97RLUr8lkjM4TOka
-         TG+CP9RZWXjxwz86lM3A1wDN27kj3CR17nFKmTm8VVz/ka2imk1pP/4d9eYJLQm9bMcQ
-         6wkyhxBRcT8EXrgv8qqJZJOtYrDJCL4Sg1sF4NfiS16G4RZ8YLvKhuRqqqZewc3yy8Y6
-         Mt1g==
+        bh=QGJTy/KKbGyyQHVdcCeKOFNsWJh1zHVmQkOjCyezJ64=;
+        b=O7Qy5BcKOmfzpELQGHbhZTuC9Oe7jDzUHYXEq5HVO4dtduBYHRjDOG/sUUUk4rh/L4
+         +LLgI2grtgPKiOm0+iSaAJYbk9V5xVEqRfWGdi943CjsB4bQsipzCBmxCDCZhcjNQsfs
+         6mZZi89wKGPtIWZ+XqonyiKE9zVnmshwS1gFVJkAnKXv5MsEkvRTrvXAlTq24qGfNYXS
+         4gogdOBRxGaxGKWydZBgsMyqi3vBHhD1UP6fdb78nVY83V3iBXp6y03KtFdqL94v1olL
+         ysoVV6YJ1bdQeqca+gD73MukrmxNJm0We9uURvnKnXBu0/GsgVysfCiQUsKQdGCAQYY2
+         4dHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S9cXi8vvXPR0wKFluf79d1bkz/E0cEEMbKHBRKBLXCY=;
-        b=ox6mZgF5WGP2yoybKfCt2StXRj/Su2nEBNAx+3L5Hih08jPLaIjiNV6LVXigvv70Do
-         7+bER3B8FRGsFFIMLqXLrTpQSUuvExtpDLVXdi/mb5uDnqSD+mtZ949R7Hku0W0CMwkI
-         0l7/UzlJ3g8YUJoEuD6/cQDt/12O4TXyKib7+QvVEuWWERU+5r2ktY+/I7Qzd7unH4A3
-         vSrTwh0M4H9H0Aswp/1FOTjOSoASM9q3vg4NvnDWuDJ1c0EfyStYpBkpdhJvlMdd2GVK
-         lfolFkgizpog6ov6Mr8bHGzIPA5bUaGjZDa2SU8l+ShEESjrhcV9J7GB8PGFROaN2OOr
-         JGew==
-X-Gm-Message-State: AO0yUKX6Qa5NBKsCezw/uayCyWZ8zmKMqjFpRIQtIvmXTWJ5dhr5Krlq
-        aZFvt36jlohbJW03GqE4ale71vLWmYFIs0c=
-X-Google-Smtp-Source: AK7set9a6exRM9GGfiXHamXgZ56J1thFZUuyM2cQgXxpIn0H0FOnJTtUoDLPNYYv0N7vbLwmq+WRfg==
-X-Received: by 2002:a05:6214:1ccb:b0:56e:961a:b454 with SMTP id g11-20020a0562141ccb00b0056e961ab454mr7770564qvd.21.1676604415232;
-        Thu, 16 Feb 2023 19:26:55 -0800 (PST)
+        bh=QGJTy/KKbGyyQHVdcCeKOFNsWJh1zHVmQkOjCyezJ64=;
+        b=7Ad61qELxhG+JvRw8WRkwFsZf8Wd7tn8JCXfCjukcuB7T9KirJh+QwIo0uDw8E9nQL
+         ZuRTJ/3l/IWUdxNnau1cc2bwfmNf4CdoftaY9g8IJAO+FKdCEMCardFICT+GJipDTzIm
+         qHw8zOXlGTDtMH2FpZxdlta3K7z+HvNJuzLUkqASiOEyYylsT1X/oI9B7l8me35kUbLX
+         X3v848WK1ZMffTbvhxfdqT2P9K4XSrvjWVkJVggGLUwQBvUBxR7HnRXJVfanu/ooaSdX
+         uoZbQnEhYJUQHcOOHOK2WAuj4tTSj3SRpWFsqcilVPmkXx4G0Jy+UnE+mRGWM1//iLW6
+         1flg==
+X-Gm-Message-State: AO0yUKUkOH3AsyFyXRi2pyOLjFLJ5m61W1ITeDXyRk70xqQThdruIAxY
+        xXPCaJRXFxQiwWHgthdnzHxcaHCYRhirIk0=
+X-Google-Smtp-Source: AK7set8TK7i5qzaYxGtqhCQQFdidVyo4NRm8AgJ0tNUCNQZOuU11w6kMltpAANtn+LUFIVyQ5C1COA==
+X-Received: by 2002:a05:6214:1d2e:b0:56f:154:2517 with SMTP id f14-20020a0562141d2e00b0056f01542517mr5892916qvd.10.1676604413896;
+        Thu, 16 Feb 2023 19:26:53 -0800 (PST)
 Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
-        by smtp.gmail.com with ESMTPSA id o62-20020a374141000000b0073b676274e7sm2460142qka.94.2023.02.16.19.26.54
+        by smtp.gmail.com with ESMTPSA id a143-20020ae9e895000000b007389403f7e6sm2552426qkg.9.2023.02.16.19.26.53
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 19:26:54 -0800 (PST)
+        Thu, 16 Feb 2023 19:26:53 -0800 (PST)
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org
-Subject: [PATCH 20/22] lsm: move the io_uring hook comments to security/security.c
-Date:   Thu, 16 Feb 2023 22:26:23 -0500
-Message-Id: <20230217032625.678457-21-paul@paul-moore.com>
+Subject: [PATCH 19/22] lsm: move the perf hook comments to security/security.c
+Date:   Thu, 16 Feb 2023 22:26:22 -0500
+Message-Id: <20230217032625.678457-20-paul@paul-moore.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230217032625.678457-1-paul@paul-moore.com>
 References: <20230217032625.678457-1-paul@paul-moore.com>
@@ -79,83 +79,107 @@ comments.
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
  include/linux/lsm_hooks.h | 17 -----------------
- security/security.c       | 26 ++++++++++++++++++++++++++
- 2 files changed, 26 insertions(+), 17 deletions(-)
+ security/security.c       | 39 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 39 insertions(+), 17 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 3d8d430e271a..8e006df1db56 100644
+index 601d1ecdae0f..3d8d430e271a 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
 @@ -196,23 +196,6 @@
   *	@what: kernel feature being accessed.
   *	Return 0 if permission is granted.
   *
-- * Security hooks for io_uring
+- * Security hooks for perf events
 - *
-- * @uring_override_creds:
-- *	Check if the current task, executing an io_uring operation, is allowed
-- *	to override it's credentials with @new.
-- *	@new: the new creds to use.
+- * @perf_event_open:
+- *	Check whether the @type of perf_event_open syscall is allowed.
+- *	Return 0 if permission is granted.
+- * @perf_event_alloc:
+- *	Allocate and save perf_event security info.
+- *	Return 0 on success, error on failure.
+- * @perf_event_free:
+- *	Release (free) perf_event security info.
+- * @perf_event_read:
+- *	Read perf_event security info if allowed.
+- *	Return 0 if permission is granted.
+- * @perf_event_write:
+- *	Write perf_event security info if allowed.
 - *	Return 0 if permission is granted.
 - *
-- * @uring_sqpoll:
-- *	Check whether the current task is allowed to spawn a io_uring polling
-- *	thread (IORING_SETUP_SQPOLL).
-- *	Return 0 if permission is granted.
-- *
-- * @uring_cmd:
-- *	Check whether the file_operations uring_cmd is allowed to run.
-- *	Return 0 if permission is granted.
-- *
-  */
- union security_list_options {
- 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS__);
+  * Security hooks for io_uring
+  *
+  * @uring_override_creds:
 diff --git a/security/security.c b/security/security.c
-index 557dbd748f7b..f4b093673ca6 100644
+index 8eb0cef761dd..557dbd748f7b 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -4992,15 +4992,41 @@ int security_perf_event_write(struct perf_event *event)
- #endif /* CONFIG_PERF_EVENTS */
+@@ -4926,26 +4926,65 @@ int security_locked_down(enum lockdown_reason what)
+ EXPORT_SYMBOL(security_locked_down);
  
- #ifdef CONFIG_IO_URING
+ #ifdef CONFIG_PERF_EVENTS
 +/**
-+ * security_uring_override_creds() - Check if overriding creds is allowed
-+ * @new: new credentials
++ * security_perf_event_open() - Check if a perf event open is allowed
++ * @attr: perf event attribute
++ * @type: type of event
 + *
-+ * Check if the current task, executing an io_uring operation, is allowed to
-+ * override it's credentials with @new.
++ * Check whether the @type of perf_event_open syscall is allowed.
 + *
 + * Return: Returns 0 if permission is granted.
 + */
- int security_uring_override_creds(const struct cred *new)
+ int security_perf_event_open(struct perf_event_attr *attr, int type)
  {
- 	return call_int_hook(uring_override_creds, 0, new);
+ 	return call_int_hook(perf_event_open, 0, attr, type);
  }
  
 +/**
-+ * security_uring_sqpoll() - Check if IORING_SETUP_SQPOLL is allowed
++ * security_perf_event_alloc() - Allocate a perf event LSM blob
++ * @event: perf event
 + *
-+ * Check whether the current task is allowed to spawn a io_uring polling thread
-+ * (IORING_SETUP_SQPOLL).
++ * Allocate and save perf_event security info.
 + *
-+ * Return: Returns 0 if permission is granted.
++ * Return: Returns 0 on success, error on failure.
 + */
- int security_uring_sqpoll(void)
+ int security_perf_event_alloc(struct perf_event *event)
  {
- 	return call_int_hook(uring_sqpoll, 0);
+ 	return call_int_hook(perf_event_alloc, 0, event);
  }
-+
+ 
 +/**
-+ * security_uring_cmd() - Check if a io_uring passthrough command is allowed
-+ * @ioucmd: command
++ * security_perf_event_free() - Free a perf event LSM blob
++ * @event: perf event
 + *
-+ * Check whether the file_operations uring_cmd is allowed to run.
++ * Release (free) perf_event security info.
++ */
+ void security_perf_event_free(struct perf_event *event)
+ {
+ 	call_void_hook(perf_event_free, event);
+ }
+ 
++/**
++ * security_perf_event_read() - Check if reading a perf event label is allowed
++ * @event: perf event
++ *
++ * Read perf_event security info if allowed.
 + *
 + * Return: Returns 0 if permission is granted.
 + */
- int security_uring_cmd(struct io_uring_cmd *ioucmd)
+ int security_perf_event_read(struct perf_event *event)
  {
- 	return call_int_hook(uring_cmd, 0, ioucmd);
+ 	return call_int_hook(perf_event_read, 0, event);
+ }
+ 
++/**
++ * security_perf_event_write() - Check if writing a perf event label is allowed
++ * @event: perf event
++ *
++ * Write perf_event security info if allowed.
++ *
++ * Return: Returns 0 if permission is granted.
++ */
+ int security_perf_event_write(struct perf_event *event)
+ {
+ 	return call_int_hook(perf_event_write, 0, event);
 -- 
 2.39.2
 
