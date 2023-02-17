@@ -2,61 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E5BC636D4
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 577E3C64EC4
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:27:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230242AbjBQD1N (ORCPT
+        id S229493AbjBQD1P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Feb 2023 22:27:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44516 "EHLO
+        Thu, 16 Feb 2023 22:27:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230252AbjBQD0z (ORCPT
+        with ESMTP id S230144AbjBQD05 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Feb 2023 22:26:55 -0500
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9ECD4FC8C
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:47 -0800 (PST)
-Received: by mail-qt1-x82b.google.com with SMTP id t16so1773169qto.3
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:47 -0800 (PST)
+        Thu, 16 Feb 2023 22:26:57 -0500
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728BC5972D
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:53 -0800 (PST)
+Received: by mail-qt1-x82e.google.com with SMTP id q13so4306780qtx.2
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8LhYESzoJTyJbG8UIuPE/K4ImH+HITUZGlYLJUGWzzo=;
-        b=A2tugsMP0O89l/YxZNSbNoXq8klBsK36+Q+l6p7qbiGnQ2uB0peO8I91eFGXfY0z7t
-         uuOF0KTDk69WRcEhSisN+B3W20dzpUZ3J1Ij4ojcZFy8PmvU547pqqBrXQ4uJGcJcGud
-         IsA9PcttjxH/Sszid8Uy3xnpJ3gu7CyRBpLrv7AXWa+DhpPaR4rMAIyDOpBdRgq4Wi6S
-         I/7IC3rb6nj2FZi3VevPzgZWkJpveqQYl0QFT3D/wkWOCC3ODNNWrsW5JXg9x40/BlJu
-         i1lhkCuUfaZY/gJAaMVdxsCe3jsFhnzoDLyyM85LY7CxqntGPeXEORZzPB9TbSVDqYRQ
-         BhZA==
+        bh=bc7zwUTAdB7OsU4/MJPO3KTv9ylTakbgk8wB6QrWFg4=;
+        b=LEtjQcT/g9jMZb/Ohms9DjEx9WcUEEdM3KWUeNuTQ2DpQ/n1IM3kn3i6AbfPxJG13j
+         WCeQB2AP+Cbt6k0k/hh3SYP3pU+2TgPMrBRRBDMYmVD7beY29C90vaPsLhVrjFRv0JY7
+         MtZJU+ShZrCo7X55YUpziHh9LJvhDDeZ8K+xCBdrV6iCc4AvxC/975eBjTy9K7Z0Rdd/
+         2yJF7xNgx3ll9OmCTOP65HtWMNOQoJCuXz91lxuDN8zL5UQOBy3uRcpC/yldsyTCWzdu
+         3Baqu/jlbscNdQfUkpq32R3PywYnVqxBFcDia6aVXzqC2vrsulbd9F980TSL3Rpmo0GR
+         C6lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8LhYESzoJTyJbG8UIuPE/K4ImH+HITUZGlYLJUGWzzo=;
-        b=vnvBZgSSINqVA9LkyAj95gQlqMDkuWlB3M/R3qsMQbk9BX5CVUS2reyqjtuolMUkZ+
-         BJMgBhN3ifxPd8xZIWcj5ItoTEsAXqjnFP07tXrKCWp3wBxI2f+VXoxToO7fjmY5bSyE
-         pCHi7dztSkbzwXtNlKGOUbTgG2Tdld0lgBfr+G079jVGyvflBcGEW+ucjLcqmMtVACa9
-         9H7mNk+wJP/9UcJOTyJ8aDPti/fOs8JAXXoLIy0o/BH9EtCdcGiSqYJJYfmpGrQ2YlzG
-         kYl6dwXZkABL1g/JjGmddPJ+yOodnflpPs/Ey6aX7sEX9pQFfb2NmZRHaLtEsrTeZKRi
-         fqNg==
-X-Gm-Message-State: AO0yUKWHkruQlja1o6kp9MGu6rIwyuQkuGYrLL1LlsHJYpBCOXtodNVE
-        3W1+Hiq+Eei6kt+oCGBgulqNjfUiLdVX0mE=
-X-Google-Smtp-Source: AK7set8b4bFnSukwn9+qTUO90lQN7tzqgi9t4NxT0UTmn9ZwOqFRiAVICX/upGH0sdT4zIjz5672HQ==
-X-Received: by 2002:ac8:7d84:0:b0:3ba:1acd:4f8 with SMTP id c4-20020ac87d84000000b003ba1acd04f8mr12496537qtd.42.1676604406212;
-        Thu, 16 Feb 2023 19:26:46 -0800 (PST)
+        bh=bc7zwUTAdB7OsU4/MJPO3KTv9ylTakbgk8wB6QrWFg4=;
+        b=17+Aebm0+ySPhsHrmIxAGZdOcWbUzMK/tVix4aX+z60kWUE1V2XEq3tLl1Q7Q6MCVw
+         qOJdpxUPxs5LlfNW1JxDLQsCEdy3u3P8muI0HPleGzGSWNQG54wfSx2w8piuAy8tlNt7
+         2O+ceSzRAAl6mngGwMoh47t40xX9/9oP71by3M4c0BNFwQY9FYMXJ0FZrr09Bd7XV6IC
+         0LHv94O1QRhBl8oSW6mN89oAU9ALn6JwZuWa5S3Jemj3ao5IayPcReqxwjcY71MAE1my
+         ier2JBb9LKuHQdSHz1KHMDvvH+sXdATsYG5epVD92hEuWfhW2fRIw2YMNsWEsQqm5mg8
+         vRcw==
+X-Gm-Message-State: AO0yUKVfHCrOhFagesrrEDbxUs52TfYZQx5BwVywdazU8JieoloLZfsE
+        aIoceRdzNoVXl8hwEhVeUONosJh0WaULLA8=
+X-Google-Smtp-Source: AK7set/r38Y+rSZp1BGknEotow7zteWMcZlDiz4mKHOcyXi7KqKRwfvsJ31C48PErcW0mUT5bYohxw==
+X-Received: by 2002:ac8:5990:0:b0:3bd:1647:9333 with SMTP id e16-20020ac85990000000b003bd16479333mr4154652qte.28.1676604412594;
+        Thu, 16 Feb 2023 19:26:52 -0800 (PST)
 Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
-        by smtp.gmail.com with ESMTPSA id jt12-20020a05622aa00c00b003bd0d04bf1esm2108011qtb.90.2023.02.16.19.26.45
+        by smtp.gmail.com with ESMTPSA id b1-20020a378001000000b0073b597ce5f8sm2456045qkd.120.2023.02.16.19.26.51
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 19:26:45 -0800 (PST)
+        Thu, 16 Feb 2023 19:26:52 -0800 (PST)
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org
-Subject: [PATCH 13/22] lsm: move the xfrm hook comments to security/security.c
-Date:   Thu, 16 Feb 2023 22:26:16 -0500
-Message-Id: <20230217032625.678457-14-paul@paul-moore.com>
+Subject: [PATCH 18/22] lsm: move the bpf hook comments to security/security.c
+Date:   Thu, 16 Feb 2023 22:26:21 -0500
+Message-Id: <20230217032625.678457-19-paul@paul-moore.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230217032625.678457-1-paul@paul-moore.com>
 References: <20230217032625.678457-1-paul@paul-moore.com>
@@ -78,268 +78,157 @@ comments.
 
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- include/linux/lsm_hooks.h |  73 ---------------------------
- security/security.c       | 103 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 103 insertions(+), 73 deletions(-)
+ include/linux/lsm_hooks.h | 36 ----------------------
+ security/security.c       | 65 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 65 insertions(+), 36 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 9fc6417af980..9c5254e4e9d1 100644
+index e36387f88083..601d1ecdae0f 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -32,79 +32,6 @@
- /**
-  * union security_list_options - Linux Security Module hook function list
+@@ -190,42 +190,6 @@
+  *	@key: The key to watch.
+  *	Return 0 if permission is granted.
   *
-- * Security hooks for XFRM operations.
+- * Security hooks for using the eBPF maps and programs functionalities through
+- * eBPF syscalls.
 - *
-- * @xfrm_policy_alloc_security:
-- *	@ctxp is a pointer to the xfrm_sec_ctx being added to Security Policy
-- *	Database used by the XFRM system.
-- *	@sec_ctx contains the security context information being provided by
-- *	the user-level policy update program (e.g., setkey).
-- *	@gfp is to specify the context for the allocation.
-- *	Allocate a security structure to the xp->security field; the security
-- *	field is initialized to NULL when the xfrm_policy is allocated.
-- *	Return 0 if operation was successful (memory to allocate, legal
-- *	context).
-- * @xfrm_policy_clone_security:
-- *	@old_ctx contains an existing xfrm_sec_ctx.
-- *	@new_ctxp contains a new xfrm_sec_ctx being cloned from old.
-- *	Allocate a security structure in new_ctxp that contains the
-- *	information from the old_ctx structure.
-- *	Return 0 if operation was successful (memory to allocate).
-- * @xfrm_policy_free_security:
-- *	@ctx contains the xfrm_sec_ctx.
-- *	Deallocate xp->security.
-- * @xfrm_policy_delete_security:
-- *	@ctx contains the xfrm_sec_ctx.
-- *	Authorize deletion of xp->security.
+- * @bpf:
+- *	Do a initial check for all bpf syscalls after the attribute is copied
+- *	into the kernel. The actual security module can implement their own
+- *	rules to check the specific cmd they need.
 - *	Return 0 if permission is granted.
-- * @xfrm_state_alloc:
-- *	@x contains the xfrm_state being added to the Security Association
-- *	Database by the XFRM system.
-- *	@sec_ctx contains the security context information being provided by
-- *	the user-level SA generation program (e.g., setkey or racoon).
-- *	Allocate a security structure to the x->security field; the security
-- *	field is initialized to NULL when the xfrm_state is allocated. Set the
-- *	context to correspond to sec_ctx. Return 0 if operation was successful
-- *	(memory to allocate, legal context).
-- * @xfrm_state_alloc_acquire:
-- *	@x contains the xfrm_state being added to the Security Association
-- *	Database by the XFRM system.
-- *	@polsec contains the policy's security context.
-- *	@secid contains the secid from which to take the mls portion of the
-- *	context.
-- *	Allocate a security structure to the x->security field; the security
-- *	field is initialized to NULL when the xfrm_state is allocated. Set the
-- *	context to correspond to secid. Return 0 if operation was successful
-- *	(memory to allocate, legal context).
-- * @xfrm_state_free_security:
-- *	@x contains the xfrm_state.
-- *	Deallocate x->security.
-- * @xfrm_state_delete_security:
-- *	@x contains the xfrm_state.
-- *	Authorize deletion of x->security.
-- *	Return 0 if permission is granted.
-- * @xfrm_policy_lookup:
-- *	@ctx contains the xfrm_sec_ctx for which the access control is being
-- *	checked.
-- *	@fl_secid contains the flow security label that is used to authorize
-- *	access to the policy xp.
-- *	@dir contains the direction of the flow (input or output).
-- *	Check permission when a flow selects a xfrm_policy for processing
-- *	XFRMs on a packet.  The hook is called when selecting either a
-- *	per-socket policy or a generic xfrm policy.
-- *	Return 0 if permission is granted, -ESRCH otherwise, or -errno
-- *	on other errors.
-- * @xfrm_state_pol_flow_match:
-- *	@x contains the state to match.
-- *	@xp contains the policy to check for a match.
-- *	@flic contains the flowi_common struct to check for a match.
-- *	Return 1 if there is a match.
-- * @xfrm_decode_session:
-- *	@skb points to skb to decode.
-- *	@secid points to the flow key secid to set.
-- *	@ckall says if all xfrms used should be checked for same secid.
-- *	Return 0 if ckall is zero or all xfrms used have the same secid.
 - *
-  * Security hooks affecting all Key Management operations
-  *
-  * @key_alloc:
+- * @bpf_map:
+- *	Do a check when the kernel generate and return a file descriptor for
+- *	eBPF maps.
+- *	@map: bpf map that we want to access.
+- *	@mask: the access flags.
+- *	Return 0 if permission is granted.
+- *
+- * @bpf_prog:
+- *	Do a check when the kernel generate and return a file descriptor for
+- *	eBPF programs.
+- *	@prog: bpf prog that userspace want to use.
+- *	Return 0 if permission is granted.
+- *
+- * @bpf_map_alloc_security:
+- *	Initialize the security field inside bpf map.
+- *	Return 0 on success, error on failure.
+- *
+- * @bpf_map_free_security:
+- *	Clean up the security information stored inside bpf map.
+- *
+- * @bpf_prog_alloc_security:
+- *	Initialize the security field inside bpf program.
+- *	Return 0 on success, error on failure.
+- *
+- * @bpf_prog_free_security:
+- *	Clean up the security information stored inside bpf prog.
+- *
+  * @locked_down:
+  *	Determine whether a kernel feature that potentially enables arbitrary
+  *	code execution in kernel space should be permitted.
 diff --git a/security/security.c b/security/security.c
-index 3b713ed3d29c..f06b95a9705c 100644
+index 4a2eff06f418..8eb0cef761dd 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -4268,6 +4268,17 @@ EXPORT_SYMBOL(security_ib_free_security);
+@@ -4824,30 +4824,95 @@ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+ #endif /* CONFIG_AUDIT */
  
- #ifdef CONFIG_SECURITY_NETWORK_XFRM
- 
+ #ifdef CONFIG_BPF_SYSCALL
 +/**
-+ * security_xfrm_policy_alloc() - Allocate a xfrm policy LSM blob
-+ * @ctxp: xfrm security context being added to the SPD
-+ * @sec_ctx: security label provided by userspace
-+ * @gfp: gfp flags
++ * security_bpf() - Check if the bpf syscall operation is allowed
++ * @cmd: command
++ * @attr: bpf attribute
++ * @size: size
 + *
-+ * Allocate a security structure to the xp->security field; the security field
-+ * is initialized to NULL when the xfrm_policy is allocated.
-+ *
-+ * Return:  Return 0 if operation was successful.
-+ */
- int security_xfrm_policy_alloc(struct xfrm_sec_ctx **ctxp,
- 			       struct xfrm_user_sec_ctx *sec_ctx,
- 			       gfp_t gfp)
-@@ -4276,23 +4287,58 @@ int security_xfrm_policy_alloc(struct xfrm_sec_ctx **ctxp,
- }
- EXPORT_SYMBOL(security_xfrm_policy_alloc);
- 
-+/**
-+ * security_xfrm_policy_clone() - Clone xfrm policy LSM state
-+ * @old_ctx: xfrm security context
-+ * @new_ctxp: target xfrm security context
-+ *
-+ * Allocate a security structure in new_ctxp that contains the information from
-+ * the old_ctx structure.
-+ *
-+ * Return: Return 0 if operation was successful.
-+ */
- int security_xfrm_policy_clone(struct xfrm_sec_ctx *old_ctx,
- 			      struct xfrm_sec_ctx **new_ctxp)
- {
- 	return call_int_hook(xfrm_policy_clone_security, 0, old_ctx, new_ctxp);
- }
- 
-+/**
-+ * security_xfrm_policy_free() - Free a xfrm security context
-+ * @ctx: xfrm security context
-+ *
-+ * Free LSM resources associated with @ctx.
-+ */
- void security_xfrm_policy_free(struct xfrm_sec_ctx *ctx)
- {
- 	call_void_hook(xfrm_policy_free_security, ctx);
- }
- EXPORT_SYMBOL(security_xfrm_policy_free);
- 
-+/**
-+ * security_xfrm_policy_delete() - Check if deleting a xfrm policy is allowed
-+ * @ctx: xfrm security context
-+ *
-+ * Authorize deletion of a SPD entry.
++ * Do a initial check for all bpf syscalls after the attribute is copied into
++ * the kernel. The actual security module can implement their own rules to
++ * check the specific cmd they need.
 + *
 + * Return: Returns 0 if permission is granted.
 + */
- int security_xfrm_policy_delete(struct xfrm_sec_ctx *ctx)
+ int security_bpf(int cmd, union bpf_attr *attr, unsigned int size)
  {
- 	return call_int_hook(xfrm_policy_delete_security, 0, ctx);
+ 	return call_int_hook(bpf, 0, cmd, attr, size);
  }
- 
++
 +/**
-+ * security_xfrm_state_alloc() - Allocate a xfrm state LSM blob
-+ * @x: xfrm state being added to the SAD
-+ * @sec_ctx: security label provided by userspace
++ * security_bpf_map() - Check if access to a bpf map is allowed
++ * @map: bpf map
++ * @fmode: mode
 + *
-+ * Allocate a security structure to the @x->security field; the security field
-+ * is initialized to NULL when the xfrm_state is allocated. Set the context to
-+ * correspond to @sec_ctx.
-+ *
-+ * Return: Return 0 if operation was successful.
-+ */
- int security_xfrm_state_alloc(struct xfrm_state *x,
- 			      struct xfrm_user_sec_ctx *sec_ctx)
- {
-@@ -4300,28 +4346,76 @@ int security_xfrm_state_alloc(struct xfrm_state *x,
- }
- EXPORT_SYMBOL(security_xfrm_state_alloc);
- 
-+/**
-+ * security_xfrm_state_alloc_acquire() - Allocate a xfrm state LSM blob
-+ * @x: xfrm state being added to the SAD
-+ * @polsec: associated policy's security context
-+ * @secid: secid from the flow
-+ *
-+ * Allocate a security structure to the x->security field; the security field
-+ * is initialized to NULL when the xfrm_state is allocated.  Set the context to
-+ * correspond to secid.
-+ *
-+ * Return: Returns 0 if operation was successful.
-+ */
- int security_xfrm_state_alloc_acquire(struct xfrm_state *x,
- 				      struct xfrm_sec_ctx *polsec, u32 secid)
- {
- 	return call_int_hook(xfrm_state_alloc_acquire, 0, x, polsec, secid);
- }
- 
-+/**
-+ * security_xfrm_state_delete() - Check if deleting a xfrm state is allowed
-+ * @x: xfrm state
-+ *
-+ * Authorize deletion of x->security.
++ * Do a check when the kernel generates and returns a file descriptor for eBPF
++ * maps.
 + *
 + * Return: Returns 0 if permission is granted.
 + */
- int security_xfrm_state_delete(struct xfrm_state *x)
+ int security_bpf_map(struct bpf_map *map, fmode_t fmode)
  {
- 	return call_int_hook(xfrm_state_delete_security, 0, x);
+ 	return call_int_hook(bpf_map, 0, map, fmode);
  }
- EXPORT_SYMBOL(security_xfrm_state_delete);
- 
++
 +/**
-+ * security_xfrm_state_free() - Free a xfrm state
-+ * @x: xfrm state
++ * security_bpf_prog() - Check if access to a bpf program is allowed
++ * @prog: bpf program
 + *
-+ * Deallocate x->security.
++ * Do a check when the kernel generates and returns a file descriptor for eBPF
++ * programs.
++ *
++ * Return: Returns 0 if permission is granted.
 + */
- void security_xfrm_state_free(struct xfrm_state *x)
+ int security_bpf_prog(struct bpf_prog *prog)
  {
- 	call_void_hook(xfrm_state_free_security, x);
+ 	return call_int_hook(bpf_prog, 0, prog);
  }
- 
++
 +/**
-+ * security_xfrm_policy_lookup() - Check if using a xfrm policy is allowed
-+ * @ctx: target xfrm security context
-+ * @fl_secid: flow secid used to authorize access
++ * security_bpf_map_alloc() - Allocate a bpf map LSM blob
++ * @map: bpf map
 + *
-+ * Check permission when a flow selects a xfrm_policy for processing XFRMs on a
-+ * packet.  The hook is called when selecting either a per-socket policy or a
-+ * generic xfrm policy.
++ * Initialize the security field inside bpf map.
 + *
-+ * Return: Return 0 if permission is granted, -ESRCH otherwise, or -errno on
-+ *         other errors.
++ * Return: Returns 0 on success, error on failure.
 + */
- int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid)
+ int security_bpf_map_alloc(struct bpf_map *map)
  {
- 	return call_int_hook(xfrm_policy_lookup, 0, ctx, fl_secid);
+ 	return call_int_hook(bpf_map_alloc_security, 0, map);
  }
- 
++
 +/**
-+ * security_xfrm_state_pol_flow_match() - Check for a xfrm match
-+ * @x: xfrm state to match
-+ * @xp xfrm policy to check for a match
-+ * @flic: flow to check for a match.
++ * security_bpf_prog_alloc() - Allocate a bpf program LSM blob
++ * @aux: bpf program aux info struct
 + *
-+ * Check @xp and @flic for a match with @x.
++ * Initialize the security field inside bpf program.
 + *
-+ * Return: Returns 1 if there is a match.
++ * Return: Returns 0 on success, error on failure.
 + */
- int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
- 				       struct xfrm_policy *xp,
- 				       const struct flowi_common *flic)
-@@ -4346,6 +4440,15 @@ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
- 	return rc;
- }
- 
-+/**
-+ * security_xfrm_decode_session() - Determine the xfrm secid for a packet
-+ * @skb: xfrm packet
-+ * @secid: secid
-+ *
-+ * Decode the packet in @skb and return the security label in @secid.
-+ *
-+ * Return: Return 0 if all xfrms used have the same secid.
-+ */
- int security_xfrm_decode_session(struct sk_buff *skb, u32 *secid)
+ int security_bpf_prog_alloc(struct bpf_prog_aux *aux)
  {
- 	return call_int_hook(xfrm_decode_session, 0, skb, secid, 1);
+ 	return call_int_hook(bpf_prog_alloc_security, 0, aux);
+ }
++
++/**
++ * security_bpf_map_free() - Free a bpf map's LSM blob
++ * @map: bpf map
++ *
++ * Clean up the security information stored inside bpf map.
++ */
+ void security_bpf_map_free(struct bpf_map *map)
+ {
+ 	call_void_hook(bpf_map_free_security, map);
+ }
++
++/**
++ * security_bpf_prog_free() - Free a bpf program's LSM blob
++ * @aux: bpf program aux info struct
++ *
++ * Clean up the security information stored inside bpf prog.
++ */
+ void security_bpf_prog_free(struct bpf_prog_aux *aux)
+ {
+ 	call_void_hook(bpf_prog_free_security, aux);
 -- 
 2.39.2
 
