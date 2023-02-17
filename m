@@ -2,89 +2,153 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB0CC05027
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A88C636D4
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:26:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbjBQD0c (ORCPT
+        id S229538AbjBQD0f (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Feb 2023 22:26:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44288 "EHLO
+        Thu, 16 Feb 2023 22:26:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbjBQD0b (ORCPT
+        with ESMTP id S229721AbjBQD0d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Feb 2023 22:26:31 -0500
-Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 142994BEA8
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:30 -0800 (PST)
-Received: by mail-qt1-x830.google.com with SMTP id f10so4314262qtv.1
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:30 -0800 (PST)
+        Thu, 16 Feb 2023 22:26:33 -0500
+Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6ABE4BEA8
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:32 -0800 (PST)
+Received: by mail-qt1-x836.google.com with SMTP id s22so58084qtw.11
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IdRxv1RtQfXxhQJougOqU4ZDN+0HvYJ25uWNDB/9CQk=;
-        b=aGwRZ20UPWiUgtZc2FfC5kDFW4M8C/nZlLjrR5Q8hbP4Wy/s/Kh/sPmbEC0RkwUJOW
-         kLaCMRILsmXA56r5+t69Olv0NtN1F/la54N0GSMe1Q5tyqeq8wXurFai9ffHlH04OGWM
-         lqbLJ3ML26YYY3yq0pm5RyEaJZ3/2SthE8PNAEheYeL7U1VCQt1fOrmwzuM5wYMEXKCM
-         C1CSdO2ZMtkzUYko3/DMvGl+c4XEbaiAP3WuWF5wSPx9hNoIVNV1RxvoKHleCrguMnBN
-         jweGBdeCY4TuWZ5frYFI6rLZWx4g65YA0D0sjw9SRs60zVKzArej1S7es6fca3nQDylL
-         iegg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ENbnQ+kzWqQkhQbwpFGeWjy1AoNkiavZM84Pz0J1QCc=;
+        b=SSd6GeRncHUdasPtk950vg/P8/w7WnhUWjSKj2a2X9v9fAm0itn3Sxd7KxLfH+L9mx
+         bZbC7kdG3r8QklNxErd05Swp144x5yaUhgUymV6fuptYKFW4X9aSp5ENznFxq+NEevyl
+         17uHKUjyv5JXYrXbsMWhZEafUKw+pJp9LZA7VSLxd8w9q9Mb2j28KuYsbYjbetDTg5Gz
+         BXD8LB/L8tm5KXSZcwj4cMCxA0YgnBdzrf+OhwE6o1e8UV3zVgV7QZ6YnIYcfSQL9GBw
+         NoKicpF5+NzsW1cKcvfGx/NRz8tVLhwGp7z6xHCaHTz2eOPAbjCW8Pawtf4SCb24qvCJ
+         dRIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IdRxv1RtQfXxhQJougOqU4ZDN+0HvYJ25uWNDB/9CQk=;
-        b=cbHIGl4YP28rkKBGevRtObphG25omjvQYtR0aNIG+b0bRPSo0sEuaOg9EtDUlnHRRB
-         oF2ZvdDQWPXCKHaUZIbKARQwKnzvifz7a5afjwSIpMf00FcbGrQCiAZL0tf0M9WgjS+L
-         Ow0GpEhMPp/tbxD1hAylOLlR/BUcXFbL6yd5UkPCYfxJvumfej2+nq/Ilg+lUIxPTrsZ
-         +vhcScDUf6yVqVGboc0xOsce3s3jQNj/G0KgyVv5NoiT9O/83KfF60SjvAG2ZrNmQpKm
-         /+RRvNR0vi8dGWFclyobKzSkdNBIXHrBZGLHAIR2a+4PYJH1qfs5+zQOYBEbjJTy8ZmC
-         +mIw==
-X-Gm-Message-State: AO0yUKXUcyu8frOmNqJmvHF0B/rLtPRJHc3aHAc/O87y1Ceu2ff84YPo
-        EpzM12B9XNnamKHWjWszhav3DHRLtv53vOo=
-X-Google-Smtp-Source: AK7set8BvJoabARBDY3V0bOBZZjp7ESZ9tmwloG0tY5tAwwfcriwOrwOipO99Ku7dL6w75dHYSJxyw==
-X-Received: by 2002:ac8:7d49:0:b0:3b8:6d92:bf62 with SMTP id h9-20020ac87d49000000b003b86d92bf62mr13473263qtb.46.1676604388763;
-        Thu, 16 Feb 2023 19:26:28 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ENbnQ+kzWqQkhQbwpFGeWjy1AoNkiavZM84Pz0J1QCc=;
+        b=Id91UZT3/1b3pO+iTqQycKepBI/ORqJ/S+IZu0gJdDFUykRiNw0V4BYqZ9WbfWGqrt
+         MY+CF6M5t6ksxYrmRw6ZxazIKF9p7Y+c7c1/T1IsmfIlhJSDu4SGS9XHj3LojlIUMjfY
+         MC0rH1+kJQAw563IXEC/Ai0IUYzJXiK1gLsOZrf95gfmFnEj5JLjgcPcJw90R8zL5q0V
+         fXcnzQ6kLPFGasIoFMZp9TScfTGdceGC9dwgXLXPOpQdr8ZfaomS6o+5mMwCZg0paoXB
+         UviUVaE++j4gX+Fij6oYI7aL/SsH+GAxrLiCjq+t0qcMkiQ1HeDr9HS3V8cYUigAsw/Z
+         Cifg==
+X-Gm-Message-State: AO0yUKXmYD+xFDqeJ8m5KXC8iRZpBMlbhctpa2Tns4beujvY6ke1XDxc
+        rk+2nraHOeZOb79fIDrwp5ui4nXGszQ79c4=
+X-Google-Smtp-Source: AK7set/zEe7/df86WS63uK67jvjQVF9ZrQxptq43rgg3p3VFx3L40rG4Ccwqlg0czsC/IK+83AdDqw==
+X-Received: by 2002:a05:622a:194:b0:3ab:d932:6c4e with SMTP id s20-20020a05622a019400b003abd9326c4emr13791851qtw.18.1676604391359;
+        Thu, 16 Feb 2023 19:26:31 -0800 (PST)
 Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
-        by smtp.gmail.com with ESMTPSA id j63-20020a37b942000000b0073b8512d2dbsm2450026qkf.72.2023.02.16.19.26.28
+        by smtp.gmail.com with ESMTPSA id 13-20020ac8564d000000b003afbf704c7csm1334663qtt.24.2023.02.16.19.26.30
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 19:26:28 -0800 (PST)
+        Thu, 16 Feb 2023 19:26:30 -0800 (PST)
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org
-Subject: [PATCH 00/22] Move LSM hook comments into security/security.c
-Date:   Thu, 16 Feb 2023 22:26:03 -0500
-Message-Id: <20230217032625.678457-1-paul@paul-moore.com>
+Subject: [PATCH 02/22] lsm: move the fs_context hook comments to security/security.c
+Date:   Thu, 16 Feb 2023 22:26:05 -0500
+Message-Id: <20230217032625.678457-3-paul@paul-moore.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230217032625.678457-1-paul@paul-moore.com>
+References: <20230217032625.678457-1-paul@paul-moore.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello all,
+This patch relocates the LSM hook function comments to the function
+definitions, in keeping with the current kernel conventions.  This
+should make the hook descriptions more easily discoverable and easier
+to maintain.
 
-The LSM hook comment blocks are a in a rather sad state; separated from
-the hook definitions they are often out of mind, and as a result
-most of them are in varying levels of bit-rot, some severely.  This
-patchset moves all of the comment blocks out of lsm_hooks.c and onto
-the top of the function definitions as one would normally expect.
-In the process of moving the comment blocks, they have been massaged
-into the standard kernel-doc format for the sake of consistency and
-easier reading.  Unfortunately, correcting all of the errors in the
-comments would have made an extremely long and painful task even worse,
-so a number of errors remain, but the worst offenders were corrected in
-the move.  Now that the comments are in the proper location, and in the
-proper format, my hope is that future patch submissions correcting the
-actual comment contents will be much easier and the comments as a whole
-will be easier to maintain.
+While formatting changes have been done to better fit the kernel-doc
+style, content changes have been kept to a minimum and limited to
+text which was obviously incorrect and/or outdated.  It is expected
+the future patches will improve the quality of the function header
+comments.
 
-There are no code changes in this patchset, although since I was
-already adding a lot of churn to security.c, the last patch in this
-patchset (22/22) does take the liberty of fixing some rather ugly
-style problems.
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ include/linux/lsm_hooks.h | 17 -----------------
+ security/security.c       | 23 +++++++++++++++++++++++
+ 2 files changed, 23 insertions(+), 17 deletions(-)
 
- include/linux/lsm_hooks.h | 1624 +++++++++++++++++++++
- security/security.c       | 2702 +---------------------------------------
- 2 files changed, 1710 insertions(+), 2616 deletions(-)
-
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 24c242713a44..84afd93b878f 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -32,23 +32,6 @@
+ /**
+  * union security_list_options - Linux Security Module hook function list
+  *
+- * Security hooks for mount using fs_context.
+- *	[See also Documentation/filesystems/mount_api.rst]
+- *
+- * @fs_context_dup:
+- *	Allocate and attach a security structure to sc->security.  This pointer
+- *	is initialised to NULL by the caller.
+- *	@fc indicates the new filesystem context.
+- *	@src_fc indicates the original filesystem context.
+- *	Return 0 on success or a negative error code on failure.
+- * @fs_context_parse_param:
+- *	Userspace provided a parameter to configure a superblock.  The LSM may
+- *	reject it with an error and may use it for itself, in which case it
+- *	should return 0; otherwise it should return -ENOPARAM to pass it on to
+- *	the filesystem.
+- *	@fc indicates the filesystem context.
+- *	@param The parameter.
+- *
+  * Security hooks for filesystem operations.
+  *
+  * @sb_alloc_security:
+diff --git a/security/security.c b/security/security.c
+index 9e98f6703e18..3170df73a7cd 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -979,11 +979,34 @@ void security_bprm_committed_creds(struct linux_binprm *bprm)
+ 	call_void_hook(bprm_committed_creds, bprm);
+ }
+ 
++/**
++ * security_fs_context_dup() - Duplicate a fs_context LSM blob
++ * @fc: destination filesystem context
++ * @src_fc: source filesystem context
++ *
++ * Allocate and attach a security structure to sc->security.  This pointer is
++ * initialised to NULL by the caller.  @fc indicates the new filesystem context.
++ * @src_fc indicates the original filesystem context.
++ *
++ * Return: Returns 0 on success or a negative error code on failure.
++ */
+ int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
+ {
+ 	return call_int_hook(fs_context_dup, 0, fc, src_fc);
+ }
+ 
++/**
++ * security_fs_context_parse_param() - Configure a filesystem context
++ * @fc: filesystem context
++ * @param: filesystem parameter
++ *
++ * Userspace provided a parameter to configure a superblock.  The LSM can
++ * consume the parameter or return it to the caller for use elsewhere.
++ *
++ * Return: If the parameter is used by the LSM it should return 0, if it is
++ *         returned to the caller -ENOPARAM is returned, otherwise a negative
++ *         error code is returned.
++ */
+ int security_fs_context_parse_param(struct fs_context *fc,
+ 				    struct fs_parameter *param)
+ {
+-- 
+2.39.2
 
