@@ -2,61 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D31EC05027
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FD3C636D4
 	for <linux-security-module@archiver.kernel.org>; Fri, 17 Feb 2023 03:27:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230194AbjBQD07 (ORCPT
+        id S230154AbjBQD1A (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Feb 2023 22:26:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44462 "EHLO
+        Thu, 16 Feb 2023 22:27:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230154AbjBQD0q (ORCPT
+        with ESMTP id S230048AbjBQD0p (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Feb 2023 22:26:46 -0500
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B35835383B
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:45 -0800 (PST)
-Received: by mail-qt1-x836.google.com with SMTP id s22so58366qtw.11
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:45 -0800 (PST)
+        Thu, 16 Feb 2023 22:26:45 -0500
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F53B4D61D
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:44 -0800 (PST)
+Received: by mail-qt1-x829.google.com with SMTP id e26so59825qtq.6
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Feb 2023 19:26:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=P2KO/U1GMnbjWKNCR9OH5iKe9wqlpCjHaefBClgFJWE=;
-        b=gDpltovinM6pc0fpd8keETx0SB+w2/aMnYuoYXA2F6tg4X2IRJKP/i5X5ft36k2H0l
-         XbhJu1wqAW7S3H7JbQqPDeAXvNLDkVwmGkxewJHgrD04HSKaU1yQP+eP0qoPxIezyvPD
-         4IqCgDJ2vcX2VgBoKLWcuPk/DGNuejY2+Q5o3QFX+VsmgfpwBXoaJ+/iR03krVd+E3pI
-         JnBhdrVFSrDvaxRn3Zh+C/uZ4R3Tiia0kls5P8Us3CwuC1r3j5zbWfYyu4aGZwT7CNCs
-         ZIkMHtn4WBxltevthdiHzN6lKxU/MJeo9dqNmx4Aif5m5BCATQChjesXAXnnoNDGpIIR
-         trfw==
+        bh=fx5RnoeqsWMkyF9r54r84IsyP6auWb4mLof5PwpW+4U=;
+        b=OoyexwPsQB/2yf5CC1NcoCPbDhv0FOdpDOpP+4oaRF2McjfpOQbwfR0OcwnzYBFWph
+         4dgUv+le7Fx6+93lDeK3TqIe99EsCML21E7WdKHsZKFkznmc3y+Ge+AeWyFN/vps7sEo
+         GrBsFchx5Yc3Zk3TCiQNJT4p66XYflszfXCQV4VQLwnacpmCnBjyfDUSEzakThiAVC8J
+         pPmy/d9XqVZxLgZRyb+24f5jtkZKrq0zkO5x0qj5IP2fLTrwEfXtC7EUbWNEYwVV/bPz
+         B26ADO/9NQTW08sqJd1xfXSCOiwwK9nwHqytVViM/1XCsU+APS3noNULZloDjSsEKSLb
+         Aqow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P2KO/U1GMnbjWKNCR9OH5iKe9wqlpCjHaefBClgFJWE=;
-        b=aKYqX9HuOi/9s5pgBZA8w+U9wGusRcE7aAUAbX28RbGp7TrOZLrg2EtvRf+yN8TDlD
-         HwFISKVwfNDipZ8p6P1ZAL89cSnnMdfMr/w0gq5rk/kH+H0XVxlwwL3UuowS/7gOpgyn
-         Q3yyW4eSms/Lc9VlyXh9F1xoc4QegZOXadtRqSQMV87lLneOtPOPjswv8emZO2O7/vNY
-         0xfr/EipwYlPPntJuUotft8eRN+DBSMZc/zCcDW1UVIVdRcb1K2qd6/wrmpy2fWZFVqr
-         9nY4gC2Kw98z4ZD1DojJ4iWESdcKY8vJ2F8fOAx3d0klk6TD/FAdm+4xNh8Q41Wm0yvr
-         ImrQ==
-X-Gm-Message-State: AO0yUKXvVcw9wylQxM3sx+neEmJeRZyaWaTUOfSLEkw5FJ+NtvI9s1Yu
-        5eimOFOtpH4fdKjm1QbnvZx0/YOo2z2dprA=
-X-Google-Smtp-Source: AK7set8g2TydCwhqU1PTYWPs93LbYwszRNS0znPYDIHS5InSIsYVkUuPvbL3+/FUokVnU0vW6SqunQ==
-X-Received: by 2002:ac8:5c07:0:b0:3b6:5fc7:f554 with SMTP id i7-20020ac85c07000000b003b65fc7f554mr7575295qti.7.1676604404842;
-        Thu, 16 Feb 2023 19:26:44 -0800 (PST)
+        bh=fx5RnoeqsWMkyF9r54r84IsyP6auWb4mLof5PwpW+4U=;
+        b=DGnA5ZPXGNmDbpCvnQH9LQEGKseSsd6tMqH58aKB8EOAcwYbtG7bjChWrl0pq4O5LH
+         jie8UfMZpMUTX1dHazouMBZrKydviy5W6IJSHtj/q97Kejv0/3Y4DIeWPHgMpC1/f9dZ
+         NweFsGBciAOKEnYORyNYCWha5KzErKXgbluo/qAyrfPcBMZYNILxna2GERWuRiqZxYSw
+         oZvl1Zaq5sWCp9bRExWOm8eYd2xlycJxJAOpjz8RkHLULgJa6Xy7Z4jzrrwWqXkbZezF
+         WLwhjl2Ehx8PPXi0vMwVCdORSP9ZUGkd3MbDdFCFHf/JoCErbAWpYBfiZuWtchAYJQOB
+         k44A==
+X-Gm-Message-State: AO0yUKV9bMN1pNV59GKgGTEJjdmQ9fjwJM3tFXRmJDz+rmkyfVGugCzJ
+        uzMhsQHUq+KmKloBP8763O6nK0+iF76Gx/4=
+X-Google-Smtp-Source: AK7set+ZHJwfdWLeE0xzvs3uEhg95BYsrQ6V85+ze72xrDp3NXrTX3X0OdPyiIgbt5FqTs5HoHA2lg==
+X-Received: by 2002:a05:622a:5ce:b0:3b8:629e:afd9 with SMTP id d14-20020a05622a05ce00b003b8629eafd9mr13115840qtb.17.1676604403524;
+        Thu, 16 Feb 2023 19:26:43 -0800 (PST)
 Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
-        by smtp.gmail.com with ESMTPSA id x4-20020ac84d44000000b003b82a07c4d6sm2444142qtv.84.2023.02.16.19.26.43
+        by smtp.gmail.com with ESMTPSA id r207-20020a3744d8000000b00706bc44fda8sm2438332qka.79.2023.02.16.19.26.42
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 19:26:44 -0800 (PST)
+        Thu, 16 Feb 2023 19:26:43 -0800 (PST)
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org
-Subject: [PATCH 12/22] lsm: move the Infiniband hook comments to security/security.c
-Date:   Thu, 16 Feb 2023 22:26:15 -0500
-Message-Id: <20230217032625.678457-13-paul@paul-moore.com>
+Subject: [PATCH 11/22] lsm: move the SCTP hook comments to security/security.c
+Date:   Thu, 16 Feb 2023 22:26:14 -0500
+Message-Id: <20230217032625.678457-12-paul@paul-moore.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230217032625.678457-1-paul@paul-moore.com>
 References: <20230217032625.678457-1-paul@paul-moore.com>
@@ -78,106 +78,128 @@ comments.
 
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- include/linux/lsm_hooks.h | 22 ----------------------
- security/security.c       | 34 ++++++++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+), 22 deletions(-)
+ include/linux/lsm_hooks.h | 33 ------------------------------
+ security/security.c       | 43 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 43 insertions(+), 33 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index bb460e0b1ff2..9fc6417af980 100644
+index 531d141083ed..bb460e0b1ff2 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -32,28 +32,6 @@
+@@ -32,39 +32,6 @@
  /**
   * union security_list_options - Linux Security Module hook function list
   *
-- * Security hooks for Infiniband
+- * Security hooks for SCTP
 - *
-- * @ib_pkey_access:
-- *	Check permission to access a pkey when modifing a QP.
-- *	@subnet_prefix the subnet prefix of the port being used.
-- *	@pkey the pkey to be accessed.
-- *	@sec pointer to a security structure.
+- * @sctp_assoc_request:
+- *	Passes the @asoc and @chunk->skb of the association INIT packet to
+- *	the security module.
+- *	@asoc pointer to sctp association structure.
+- *	@skb pointer to skbuff of association packet.
+- *	Return 0 on success, error on failure.
+- * @sctp_bind_connect:
+- *	Validiate permissions required for each address associated with sock
+- *	@sk. Depending on @optname, the addresses will be treated as either
+- *	for a connect or bind service. The @addrlen is calculated on each
+- *	ipv4 and ipv6 address using sizeof(struct sockaddr_in) or
+- *	sizeof(struct sockaddr_in6).
+- *	@sk pointer to sock structure.
+- *	@optname name of the option to validate.
+- *	@address list containing one or more ipv4/ipv6 addresses.
+- *	@addrlen total length of address(s).
+- *	Return 0 on success, error on failure.
+- * @sctp_sk_clone:
+- *	Called whenever a new socket is created by accept(2) (i.e. a TCP
+- *	style socket) or when a socket is 'peeled off' e.g userspace
+- *	calls sctp_peeloff(3).
+- *	@asoc pointer to current sctp association structure.
+- *	@sk pointer to current sock structure.
+- *	@newsk pointer to new sock structure.
+- * @sctp_assoc_established:
+- *	Passes the @asoc and @chunk->skb of the association COOKIE_ACK packet
+- *	to the security module.
+- *	@asoc pointer to sctp association structure.
+- *	@skb pointer to skbuff of association packet.
 - *	Return 0 if permission is granted.
-- * @ib_endport_manage_subnet:
-- *	Check permissions to send and receive SMPs on a end port.
-- *	@dev_name the IB device name (i.e. mlx4_0).
-- *	@port_num the port number.
-- *	@sec pointer to a security structure.
-- *	Return 0 if permission is granted.
-- * @ib_alloc_security:
-- *	Allocate a security structure for Infiniband objects.
-- *	@sec pointer to a security structure pointer.
-- *	Returns 0 on success, non-zero on failure.
-- * @ib_free_security:
-- *	Deallocate an Infiniband security structure.
-- *	@sec contains the security structure to be freed.
 - *
-  * Security hooks for XFRM operations.
+  * Security hooks for Infiniband
   *
-  * @xfrm_policy_alloc_security:
+  * @ib_pkey_access:
 diff --git a/security/security.c b/security/security.c
-index 1ada27c7917f..3b713ed3d29c 100644
+index 844670d7754f..1ada27c7917f 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -4207,24 +4207,58 @@ EXPORT_SYMBOL(security_sctp_assoc_established);
- 
- #ifdef CONFIG_SECURITY_INFINIBAND
+@@ -4132,12 +4132,35 @@ int security_tun_dev_open(void *security)
+ }
+ EXPORT_SYMBOL(security_tun_dev_open);
  
 +/**
-+ * security_ib_pkey_access() - Check if access to an IB pkey is allowed
-+ * @sec: LSM blob
-+ * @subnet_prefix: subnet prefix of the port
-+ * @pkey: IB pkey
++ * security_sctp_assoc_request() - Update the LSM on a SCTP association req
++ * @asoc: SCTP association
++ * @skb: packet requesting the association
 + *
-+ * Check permission to access a pkey when modifing a QP.
++ * Passes the @asoc and @chunk->skb of the association INIT packet to the LSM.
++ *
++ * Return: Returns 0 on success, error on failure.
++ */
+ int security_sctp_assoc_request(struct sctp_association *asoc, struct sk_buff *skb)
+ {
+ 	return call_int_hook(sctp_assoc_request, 0, asoc, skb);
+ }
+ EXPORT_SYMBOL(security_sctp_assoc_request);
+ 
++/**
++ * security_sctp_bind_connect() - Validate a list of addrs for a SCTP option
++ * @sk: socket
++ * @optname: SCTP option to validate
++ * @address: list of IP addresses to validate
++ * @addrlen: length of the address list
++ *
++ * Validiate permissions required for each address associated with sock	@sk.
++ * Depending on @optname, the addresses will be treated as either a connect or
++ * bind service. The @addrlen is calculated on each IPv4 and IPv6 address using
++ * sizeof(struct sockaddr_in) or sizeof(struct sockaddr_in6).
++ *
++ * Return: Returns 0 on success, error on failure.
++ */
+ int security_sctp_bind_connect(struct sock *sk, int optname,
+ 			       struct sockaddr *address, int addrlen)
+ {
+@@ -4146,6 +4169,16 @@ int security_sctp_bind_connect(struct sock *sk, int optname,
+ }
+ EXPORT_SYMBOL(security_sctp_bind_connect);
+ 
++/**
++ * security_sctp_sk_clone() - Clone a SCTP sock's LSM state
++ * @asoc: SCTP association
++ * @sk: original sock
++ * @newsk: target sock
++ *
++ * Called whenever a new socket is created by accept(2) (i.e. a TCP style
++ * socket) or when a socket is 'peeled off' e.g userspace calls
++ * sctp_peeloff(3).
++ */
+ void security_sctp_sk_clone(struct sctp_association *asoc, struct sock *sk,
+ 			    struct sock *newsk)
+ {
+@@ -4153,6 +4186,16 @@ void security_sctp_sk_clone(struct sctp_association *asoc, struct sock *sk,
+ }
+ EXPORT_SYMBOL(security_sctp_sk_clone);
+ 
++/**
++ * security_sctp_assoc_established() - Update LSM state when assoc established
++ * @asoc: SCTP association
++ * @skb: packet establishing the association
++ *
++ * Passes the @asoc and @chunk->skb of the association COOKIE_ACK packet to the
++ * security module.
 + *
 + * Return: Returns 0 if permission is granted.
 + */
- int security_ib_pkey_access(void *sec, u64 subnet_prefix, u16 pkey)
+ int security_sctp_assoc_established(struct sctp_association *asoc,
+ 				    struct sk_buff *skb)
  {
- 	return call_int_hook(ib_pkey_access, 0, sec, subnet_prefix, pkey);
- }
- EXPORT_SYMBOL(security_ib_pkey_access);
- 
-+/**
-+ * security_ib_endport_manage_subnet() - Check if SMPs traffic is allowed
-+ * @sec: LSM blob
-+ * @dev_name: IB device name
-+ * @port_num: port number
-+ *
-+ * Check permissions to send and receive SMPs on a end port.
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
- int security_ib_endport_manage_subnet(void *sec, const char *dev_name, u8 port_num)
- {
- 	return call_int_hook(ib_endport_manage_subnet, 0, sec, dev_name, port_num);
- }
- EXPORT_SYMBOL(security_ib_endport_manage_subnet);
- 
-+/**
-+ * security_ib_alloc_security() - Allocate an Infiniband LSM blob
-+ * @sec: LSM blob
-+ *
-+ * Allocate a security structure for Infiniband objects.
-+ *
-+ * Return: Returns 0 on success, non-zero on failure.
-+ */
- int security_ib_alloc_security(void **sec)
- {
- 	return call_int_hook(ib_alloc_security, 0, sec);
- }
- EXPORT_SYMBOL(security_ib_alloc_security);
- 
-+/**
-+ * security_ib_free_security() - Free an Infiniband LSM blob
-+ * @sec: LSM blob
-+ *
-+ * Deallocate an Infiniband security structure.
-+ */
- void security_ib_free_security(void *sec)
- {
- 	call_void_hook(ib_free_security, sec);
 -- 
 2.39.2
 
