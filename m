@@ -2,104 +2,139 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B77C61DA3
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Feb 2023 21:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48000C61DA3
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Feb 2023 21:27:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229501AbjBUVQf (ORCPT
+        id S229719AbjBUV1z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Feb 2023 16:16:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49788 "EHLO
+        Tue, 21 Feb 2023 16:27:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230274AbjBUVQ0 (ORCPT
+        with ESMTP id S229591AbjBUV1y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Feb 2023 16:16:26 -0500
-Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31D0311F4
-        for <linux-security-module@vger.kernel.org>; Tue, 21 Feb 2023 13:16:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1677014173; bh=Ib/cS2Qh96O4CctBXZz55Jmef1wJrs3tR80qdd/yMQA=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=EsVhkeSS3S7Y0pEjLub56SxG2hEUoh6SsgfBTc8EHc0tIKD0oGzF+6BRWoYGmoOtwTZ1mUJD1IvslYKTOE7TwTsiLzYEvUtjtbUIjIyL5bkvABAIWmQ4wj6acqOhU5/3m2BVQZ5IarPiU62pW2mqRFt1JZCknzkNCYDRbIjGj7E8AVSdnAAso15bpD+6Wf65PfpIPtaLrkap1RY8MZvtgWnvNSAoXhPZLIdprKyPziMJtZSBnGQP9zrLgjE+LL2jYGy5d2+tzLG+REotaJa5I+VK1ZsjAgArgVTqtr6FrKcrvW2T3NTs1LO8YlLvzqiX+tb8IjSMAEiZDc6DH6oC8g==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1677014173; bh=k/U6JCZMbNT0GaMzBW3KRkb5Xs7xWlyZRig9JCC/SMN=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=hgMXRDvirL7iL9NJhzUAXb5av8gJEHXbGLy2heXy/eomgn7rY1+x7ut64M80iZDLcWnLQyQ6IkQUjp2t10YDNTCgzNset4z72ux9PiTszmUi38JceEVa5hCfY758brtVnrZnyNhHqKqJRJp6ubXLbpRR3kNvWm/fhCe23DJBYZqa0sU+s0ck1zDSIfiAnOJ8gl6YfCdMEwy7PU4Z+No+9wZWxl+1htuGUVI+ThqdXksxu272Gut96nUBQ/zVXkp9qp8wjbKSBYcp51L+gHd/JsLKpWCu7XkX5XBoM/IPzIh7bx7670JsKManuQHtV+zgr2t0EkUZtfQqNdON52KbgA==
-X-YMail-OSG: xTZfUWIVM1kvLp0Mm.eE.ZYGH1PBbal8O228UcE2YGRG92qqWMELk7Z_HBusKWG
- je0TmCT5KkUJru5KzqXN4blalUCXZbjZBCAOU7CjjnW6rGHEIELItAachw3iqSMTzK5LZTAhNUok
- XUHx0ninY48zOD7_Cdd.DssI5yZjXunyzask.IZub50pie6nov4IJyZsWTDHk6R3HbyfBlv4M29C
- _GVo4B69CxwzmOQz3ugtF75uCbsECK7p4fx5MpVpOnt1xrgC0TF5Uj3x1nZ.FWyrxm4MGWeHpEsn
- mXD410sZH0SemDRmK_ODRXvFYSVoCoPocF6C62JD0YhNiHytIft0Yi3lg_MXdUI9UDqpmS_WUoUt
- fG.Xps1td_OPZzcLfxpRh41wCTLjHboiZUUwiI2O.ZDTcm5u0sgdEWZ759dCf.sDiXXSPUmZEdaQ
- rUbLVx41fkp2c06.QKUrxZYgoDcm5H093APWGzTVcNLtegc1._1y2BShWjef8C9SR46Q1VtEDJCS
- wkR.fJY_bT65OZI5fPWFM_EuAXps524yie.lHmIZnTyvgfsEHoOItoMXHWa7Xx80pcnKXtRgAG5Q
- .sntnPK1MHx8w8QyNbOB5Pzjf1OnNLGL9a1pbxQKRqwlMIdq6GI5DEddnbEALfASMxNss80nBjky
- yUXKJpIFtAmwB4OjrCf5iotLgbEqWNJRjGZrd.OKYjDkcexEBHPpS8B1YOlkv.__k_9r0n2GiZ0W
- JKBjQ3b9WEe_2wS9HkzP_kDBDhEBdKLRClR_4kAQUvELsqHI_bhCvnPappwiIwD1pmkjI90mPvKC
- Ts.8KSj4zNnGdzsfLGMO6rDO0ZMwL6LGc92IGxSz1lxxQ6r0JS_dpXm440BfUomcD6xAhtGt8CKW
- 7yZJ_IZ_HkXdVowD8v..L.AwxmXaaXKEMjKY0USicuB_37VFRpbkODiWvQNZWFeUxgKZmw6hF3du
- hozsEpmJ2c8GlhPNAMYcBw4qAHADiKB36eJbobt4Ixo7rm3a5ZqVmkaF1PnzSPPir92U_zAFYy_r
- 1GWsUnqBo7_sBQX5qQo5h_t4C1wfbjFnFKjSYJz8x_f48qXHAlLLolMr_9cX.ruRa3tWBNMb_BI_
- OR1IJfsVx_X6mYzep07W4q7pNNImuVsnWt0_NYOpPhBr.YFNtHW5t2dVmJxMLnhAVTqmg_Hsm2e0
- mxHFyHtqcDa4QV0hpyFQVFQF5v8Mn8Ggk3vRBx8Pz7IVJ23CJOeHTe4G.OAQMEacio24BQn6Ku3.
- NJuigqLnz3t861tkaPRvSFzTiGIDIZ_631JnTmi7RVquoIvHH2avA9cu4kiKB9U1owehxu6GWIui
- eI28ZLhFZwLj1ZDLtmWoDPFNj336bPpbV9Pu5Y_cjj3Y2b2cak3FFy4AZPq.sP8bb9YTA9F.9SDe
- dn6KdC1qqdR7ppqABP6vRvFDyC7qBnr0ouc5c6zzTkQl7ku5ZjMdvnmAB3MKnpnm7ZUS8Wgnpp7S
- idlNOA4o2V58DTQvjH9LsiaHUS_D8R9YtxcxaqJRnrzaFkL.oqNjkei3jIyWbt3LWF7rQwbo7eEj
- voi7xpzLhgYj7uykPkxH9hDVPTf3oHpYHnWgccCv8MU0vwgKgsmbyTAAP7jVDIobvZYp2KyWvUTb
- 230doTm_dG_IxGyNYIfdFghGO_BcWDDN1sF.fEhIwXo.SeEBhADKI5z.a6OOcSUYowgfX4cMOzFP
- D9qkOhTolY4GmS6OAbNbJCxWpnsP5aCsCRFy7U_7yipd4R6zcrfLI4OqiaK7hQswmyVtgnRU5l2p
- kke5JbnfEMpvOmTCbhP5GMsZj_Tnb9WCa97Fgf_lkvQP08shVkgiqTF5sIbeslHVYXirqrSVXEpP
- iocIPeRpnkiQN3zYGIEcY4fzK0YcPyNhboKe1VNy4rtSwxA5IXX0PECUlq5dJcHQ1AxdezHmO9yJ
- Fjh5yz8N.90Er7Ij2aM5MVp45l4kie.ZzDKHWjzTAz1IVIMVUEe_YPYcpOEoLgK6NHZOQawHnm9u
- IVIQHstaIcDOE8_mO6wF44ynAIeWuth2ZTExBpGmPLxM_kKMV6.B2eCv.Xfk.E7oJ5BWy2XSzaK8
- RDXvgNH32ks61dLa59mqu59e6IOSwMvi2majgaM7fkE.HhW0gzPt9p6feoArhqLPHJzwSdBQNoCb
- yD50rxah.9wIJsDEP64eUIwZWig6Gf9XthgxzK_tdg3aFL88iYI9T43JX0RmkgqgLGo9jRQdf4Jg
- aIpCNHEYOqsn303NbqfUJ_IVmj8eJqPDP6GLJMqIaZPNt5xidbGNEl8WNxc2IwmZFfgS_LHBi
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Tue, 21 Feb 2023 21:16:13 +0000
-Received: by hermes--production-ne1-746bc6c6c4-8sf8l (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7427840e83a31f83050c1968654ec381;
-          Tue, 21 Feb 2023 21:16:09 +0000 (UTC)
-Message-ID: <5c203a3e-3f92-9e23-c2c2-8f82baed3a47@schaufler-ca.com>
-Date:   Tue, 21 Feb 2023 13:16:08 -0800
+        Tue, 21 Feb 2023 16:27:54 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E884311E0
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Feb 2023 13:27:21 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id c23so1675771pjo.4
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Feb 2023 13:27:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OY49XJYkmM8JwgqMEdZVA4MqBlSEgJvqRRu26pssVSQ=;
+        b=MK1ZdFyoSgafsQYiNhM2z8RU8qST7kMFlVALVE84kW9msIKU4uzzNItmuVOIsYu9ka
+         nHpiR+GtxyydEbFK9iE9TeAMMJYXsmZOia/0H6JEW+UMyTAYZh71Rvzc+MZEmbsZ7nFy
+         LX3+qZ4aZFt1/nETKxIHJ4nSfNj/Gqm0XJI/+f70tv+RwGnYx4pNGQeLhmdp+BSAuJ5L
+         +972AzpiHg+DVaYuqwUtVr1ipToYs9cKZfYMAxvJ18lt3soz4ZxuWmHvvwS+/zJ43UqO
+         +2+JG7EqG94638AL6QxidFvaw+kzxYdkg0CLQzIK/9IkcIoRl2r5b0gZTsRvRSj/RWSb
+         KBxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OY49XJYkmM8JwgqMEdZVA4MqBlSEgJvqRRu26pssVSQ=;
+        b=50B2fjHGN4ry2yXJwtd91IM1ahFUwBulxXxJ0Jb8UH5xyyhPWrGGMSmCUELzJ2r+Rr
+         FPRIeIH2ezAPbTIZW1XCeocOp+6uqTax1Q6Pp5szQl+fhon6psdm7NuS62rXaZ9nlZjj
+         r6lGOaaCXsyuPWkAxYO9eNzIp7MVNBo7u2rKWnvmOjWJ+njBWqcdaotzR4uRoSJrnHpn
+         vPH35HSMsArbr54bK7fGTg5xsy2GXBeuOIZASGQKo7vSV9fCEisghApauKtpxgeXNvYz
+         qBGGx86wlw89SkUSniaRLkqDJLYzgxnVkJcPQGGALVc3XfTS44D3VK9VZF8AjZjAGx4j
+         aaoA==
+X-Gm-Message-State: AO0yUKWNOOPfHQdQQIH4FjuAqj07MSOqQ329PceEAra8zjYQ9RQjl+Es
+        McuhdrwscGm4PyM5nkai3IkNhD0mztuTxb8kVk++Jw==
+X-Google-Smtp-Source: AK7set867sporZ6Oxux1gnqSqjH0N76mlhGVHkzYxRu5jfG0srUFnnFaMa832/+NgaXWwsI+EMVAy0m81JmVEZXbCL0=
+X-Received: by 2002:a17:90b:38c8:b0:230:8730:c1f7 with SMTP id
+ nn8-20020a17090b38c800b002308730c1f7mr1659668pjb.27.1677014836106; Tue, 21
+ Feb 2023 13:27:16 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LSM List <linux-security-module@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        casey@schaufler-ca.com
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: [GIT PULL] Smack patches for v6.3
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <5c203a3e-3f92-9e23-c2c2-8f82baed3a47.ref@schaufler-ca.com>
-X-Mailer: WebService/1.1.21183 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <YO2S+C7Cw7AS7bsg@google.com> <cfd5cc6f-5943-2e06-1dbe-f4b4ad5c1fa1@canonical.com>
+ <Y19GhTg8Q/3ym/VD@google.com> <dac1c2d5-367f-c8a7-c61e-c1774d98d602@canonical.com>
+ <4595e7b4-ea31-5b01-f636-259e84737dfc@canonical.com> <Y+9aoFjrYkpFSvuE@linutronix.de>
+ <f3fd5dd8-9d78-43be-fc5c-bf990ad3a64d@canonical.com>
+In-Reply-To: <f3fd5dd8-9d78-43be-fc5c-bf990ad3a64d@canonical.com>
+From:   Anil Altinay <aaltinay@google.com>
+Date:   Tue, 21 Feb 2023 13:27:03 -0800
+Message-ID: <CACCxZWOK6=mHNQrWEhjw4pC2i3qBKYdn9joiaaCNE7ge8FAz0A@mail.gmail.com>
+Subject: Re: [PATCH v3] apparmor: global buffers spin lock may get contended
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Linus,
+I can test the patch with 5.10 and 5.15 kernels in different machines.
+Just let me know which machine types you would like me to test.
 
-Here is the Smack pull request for v6.3.
-
-There is only one change, a fix for an edge case when
-resetting the CIPSO representation of a Smack label.
-The change has had a good spell in next and passes all
-tests. Thank you.
-
-The following changes since commit 2241ab53cbb5cdb08a6b2d4688feb13971058f65:
-
-  Linux 6.2-rc5 (2023-01-21 16:27:01 -0800)
-
-are available in the Git repository at:
-
-  https://github.com/cschaufler/smack-next tags/Smack-for-6.3
-
-for you to fetch changes up to ccfd889acb06eab10b98deb4b5eef0ec74157ea0:
-
-  smackfs: Added check catlen (2023-02-21 11:22:02 -0800)
-
-----------------------------------------------------------------
-One fix for resetting CIPSO labeling.
-
-----------------------------------------------------------------
-Denis Arefev (1):
-      smackfs: Added check catlen
-
- security/smack/smackfs.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
-
+On Mon, Feb 20, 2023 at 12:42 AM John Johansen
+<john.johansen@canonical.com> wrote:
+>
+> On 2/17/23 02:44, Sebastian Andrzej Siewior wrote:
+> > On 2023-02-16 16:08:10 [-0800], John Johansen wrote:
+> >> --- a/security/apparmor/lsm.c
+> >> +++ b/security/apparmor/lsm.c
+> >> @@ -49,12 +49,19 @@ union aa_buffer {
+> >>      char buffer[1];
+> >>   };
+> >> +struct aa_local_cache {
+> >> +    unsigned int contention;
+> >> +    unsigned int hold;
+> >> +    struct list_head head;
+> >> +};
+> >
+> > if you stick a local_lock_t into that struct, then you could replace
+> >       cache = get_cpu_ptr(&aa_local_buffers);
+> > with
+> >       local_lock(&aa_local_buffers.lock);
+> >       cache = this_cpu_ptr(&aa_local_buffers);
+> >
+> > You would get the preempt_disable() based locking for the per-CPU
+> > variable (as with get_cpu_ptr()) and additionally some lockdep
+> > validation which would warn if it is used outside of task context (IRQ).
+> >
+> I did look at local_locks and there was a reason I didn't use them. I
+> can't recall as the original iteration of this is over a year old now.
+> I will have to dig into it again.
+>
+> > I didn't parse completely the hold/contention logic but it seems to work
+> > ;)
+> > You check "cache->count >=  2" twice but I don't see an inc/ dec of it
+> > nor is it part of aa_local_cache.
+> >
+> sadly I messed up the reordering of this and the debug patch. This will be
+> fixed in v4.
+>
+> > I can't parse how many items can end up on the local list if the global
+> > list is locked. My guess would be more than 2 due the ->hold parameter.
+> >
+> So this iteration, forces pushing back to global list if there are already
+> two on the local list. The hold parameter just affects how long the
+> buffers remain on the local list, before trying to place them back on
+> the global list.
+>
+> Originally before the count was added more than 2 buffers could end up
+> on the local list, and having too many local buffers is a waste of
+> memory. The count got added to address this. The value of 2 (which should
+> be switched to a define) was chosen because no mediation routine currently
+> uses more than 2 buffers.
+>
+> Note that this doesn't mean that more than two buffers can be allocated
+> to a tasks on a cpu. Its possible in some cases to have a task have
+> allocated buffers and to still have buffers on the local cache list.
+>
+> > Do you have any numbers on the machine and performance it improved? It
+> > sure will be a good selling point.
+> >
+>
+> I can include some supporting info, for a 16 core machine. But it will
+> take some time to for me to get access to a bigger machine, where this
+> is much more important. Hence the call for some of the other people
+> on this thread to test.
+>
+> thanks for the feedback
+>
