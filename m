@@ -2,340 +2,104 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DD0C636D7
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Feb 2023 18:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B77C61DA3
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Feb 2023 21:16:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231491AbjBUSH1 (ORCPT
+        id S229501AbjBUVQf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Feb 2023 13:07:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57620 "EHLO
+        Tue, 21 Feb 2023 16:16:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229867AbjBUSHW (ORCPT
+        with ESMTP id S230274AbjBUVQ0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Feb 2023 13:07:22 -0500
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDEAB30188;
-        Tue, 21 Feb 2023 10:07:19 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PLnLZ4wkwzMrDZH;
-        Tue, 21 Feb 2023 19:07:18 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4PLnLY70qyz1c9S;
-        Tue, 21 Feb 2023 19:07:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1677002838;
-        bh=zXJIin2CHxFo9lK7CQ2jXmL3VUqX/fQEaz+z1MwBk38=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ogncoP81p7OvYpG5VwzasszV13hStgg5LIhSdMh6BP3WvCelY5iUubUU/7hLnSb0s
-         U/iWUR0WjR7u/cupuwtt0zt9IuJXMQo/2j3ye8+f2YJffmsB/AxjSQr0mdLdLoRu22
-         AvUkSaR2g7h1xg8nLUsx8EeOHxL20qPN77s6uZ7c=
-Message-ID: <3e9ef23b-c599-6ba1-1d18-a615f53b6e7b@digikod.net>
-Date:   Tue, 21 Feb 2023 19:07:17 +0100
+        Tue, 21 Feb 2023 16:16:26 -0500
+Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31D0311F4
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Feb 2023 13:16:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1677014173; bh=Ib/cS2Qh96O4CctBXZz55Jmef1wJrs3tR80qdd/yMQA=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=EsVhkeSS3S7Y0pEjLub56SxG2hEUoh6SsgfBTc8EHc0tIKD0oGzF+6BRWoYGmoOtwTZ1mUJD1IvslYKTOE7TwTsiLzYEvUtjtbUIjIyL5bkvABAIWmQ4wj6acqOhU5/3m2BVQZ5IarPiU62pW2mqRFt1JZCknzkNCYDRbIjGj7E8AVSdnAAso15bpD+6Wf65PfpIPtaLrkap1RY8MZvtgWnvNSAoXhPZLIdprKyPziMJtZSBnGQP9zrLgjE+LL2jYGy5d2+tzLG+REotaJa5I+VK1ZsjAgArgVTqtr6FrKcrvW2T3NTs1LO8YlLvzqiX+tb8IjSMAEiZDc6DH6oC8g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1677014173; bh=k/U6JCZMbNT0GaMzBW3KRkb5Xs7xWlyZRig9JCC/SMN=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=hgMXRDvirL7iL9NJhzUAXb5av8gJEHXbGLy2heXy/eomgn7rY1+x7ut64M80iZDLcWnLQyQ6IkQUjp2t10YDNTCgzNset4z72ux9PiTszmUi38JceEVa5hCfY758brtVnrZnyNhHqKqJRJp6ubXLbpRR3kNvWm/fhCe23DJBYZqa0sU+s0ck1zDSIfiAnOJ8gl6YfCdMEwy7PU4Z+No+9wZWxl+1htuGUVI+ThqdXksxu272Gut96nUBQ/zVXkp9qp8wjbKSBYcp51L+gHd/JsLKpWCu7XkX5XBoM/IPzIh7bx7670JsKManuQHtV+zgr2t0EkUZtfQqNdON52KbgA==
+X-YMail-OSG: xTZfUWIVM1kvLp0Mm.eE.ZYGH1PBbal8O228UcE2YGRG92qqWMELk7Z_HBusKWG
+ je0TmCT5KkUJru5KzqXN4blalUCXZbjZBCAOU7CjjnW6rGHEIELItAachw3iqSMTzK5LZTAhNUok
+ XUHx0ninY48zOD7_Cdd.DssI5yZjXunyzask.IZub50pie6nov4IJyZsWTDHk6R3HbyfBlv4M29C
+ _GVo4B69CxwzmOQz3ugtF75uCbsECK7p4fx5MpVpOnt1xrgC0TF5Uj3x1nZ.FWyrxm4MGWeHpEsn
+ mXD410sZH0SemDRmK_ODRXvFYSVoCoPocF6C62JD0YhNiHytIft0Yi3lg_MXdUI9UDqpmS_WUoUt
+ fG.Xps1td_OPZzcLfxpRh41wCTLjHboiZUUwiI2O.ZDTcm5u0sgdEWZ759dCf.sDiXXSPUmZEdaQ
+ rUbLVx41fkp2c06.QKUrxZYgoDcm5H093APWGzTVcNLtegc1._1y2BShWjef8C9SR46Q1VtEDJCS
+ wkR.fJY_bT65OZI5fPWFM_EuAXps524yie.lHmIZnTyvgfsEHoOItoMXHWa7Xx80pcnKXtRgAG5Q
+ .sntnPK1MHx8w8QyNbOB5Pzjf1OnNLGL9a1pbxQKRqwlMIdq6GI5DEddnbEALfASMxNss80nBjky
+ yUXKJpIFtAmwB4OjrCf5iotLgbEqWNJRjGZrd.OKYjDkcexEBHPpS8B1YOlkv.__k_9r0n2GiZ0W
+ JKBjQ3b9WEe_2wS9HkzP_kDBDhEBdKLRClR_4kAQUvELsqHI_bhCvnPappwiIwD1pmkjI90mPvKC
+ Ts.8KSj4zNnGdzsfLGMO6rDO0ZMwL6LGc92IGxSz1lxxQ6r0JS_dpXm440BfUomcD6xAhtGt8CKW
+ 7yZJ_IZ_HkXdVowD8v..L.AwxmXaaXKEMjKY0USicuB_37VFRpbkODiWvQNZWFeUxgKZmw6hF3du
+ hozsEpmJ2c8GlhPNAMYcBw4qAHADiKB36eJbobt4Ixo7rm3a5ZqVmkaF1PnzSPPir92U_zAFYy_r
+ 1GWsUnqBo7_sBQX5qQo5h_t4C1wfbjFnFKjSYJz8x_f48qXHAlLLolMr_9cX.ruRa3tWBNMb_BI_
+ OR1IJfsVx_X6mYzep07W4q7pNNImuVsnWt0_NYOpPhBr.YFNtHW5t2dVmJxMLnhAVTqmg_Hsm2e0
+ mxHFyHtqcDa4QV0hpyFQVFQF5v8Mn8Ggk3vRBx8Pz7IVJ23CJOeHTe4G.OAQMEacio24BQn6Ku3.
+ NJuigqLnz3t861tkaPRvSFzTiGIDIZ_631JnTmi7RVquoIvHH2avA9cu4kiKB9U1owehxu6GWIui
+ eI28ZLhFZwLj1ZDLtmWoDPFNj336bPpbV9Pu5Y_cjj3Y2b2cak3FFy4AZPq.sP8bb9YTA9F.9SDe
+ dn6KdC1qqdR7ppqABP6vRvFDyC7qBnr0ouc5c6zzTkQl7ku5ZjMdvnmAB3MKnpnm7ZUS8Wgnpp7S
+ idlNOA4o2V58DTQvjH9LsiaHUS_D8R9YtxcxaqJRnrzaFkL.oqNjkei3jIyWbt3LWF7rQwbo7eEj
+ voi7xpzLhgYj7uykPkxH9hDVPTf3oHpYHnWgccCv8MU0vwgKgsmbyTAAP7jVDIobvZYp2KyWvUTb
+ 230doTm_dG_IxGyNYIfdFghGO_BcWDDN1sF.fEhIwXo.SeEBhADKI5z.a6OOcSUYowgfX4cMOzFP
+ D9qkOhTolY4GmS6OAbNbJCxWpnsP5aCsCRFy7U_7yipd4R6zcrfLI4OqiaK7hQswmyVtgnRU5l2p
+ kke5JbnfEMpvOmTCbhP5GMsZj_Tnb9WCa97Fgf_lkvQP08shVkgiqTF5sIbeslHVYXirqrSVXEpP
+ iocIPeRpnkiQN3zYGIEcY4fzK0YcPyNhboKe1VNy4rtSwxA5IXX0PECUlq5dJcHQ1AxdezHmO9yJ
+ Fjh5yz8N.90Er7Ij2aM5MVp45l4kie.ZzDKHWjzTAz1IVIMVUEe_YPYcpOEoLgK6NHZOQawHnm9u
+ IVIQHstaIcDOE8_mO6wF44ynAIeWuth2ZTExBpGmPLxM_kKMV6.B2eCv.Xfk.E7oJ5BWy2XSzaK8
+ RDXvgNH32ks61dLa59mqu59e6IOSwMvi2majgaM7fkE.HhW0gzPt9p6feoArhqLPHJzwSdBQNoCb
+ yD50rxah.9wIJsDEP64eUIwZWig6Gf9XthgxzK_tdg3aFL88iYI9T43JX0RmkgqgLGo9jRQdf4Jg
+ aIpCNHEYOqsn303NbqfUJ_IVmj8eJqPDP6GLJMqIaZPNt5xidbGNEl8WNxc2IwmZFfgS_LHBi
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Tue, 21 Feb 2023 21:16:13 +0000
+Received: by hermes--production-ne1-746bc6c6c4-8sf8l (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7427840e83a31f83050c1968654ec381;
+          Tue, 21 Feb 2023 21:16:09 +0000 (UTC)
+Message-ID: <5c203a3e-3f92-9e23-c2c2-8f82baed3a47@schaufler-ca.com>
+Date:   Tue, 21 Feb 2023 13:16:08 -0800
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v9 06/12] landlock: Refactor _unmask_layers() and
- _init_layer_masks()
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
 Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
- <20230116085818.165539-7-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230116085818.165539-7-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        casey@schaufler-ca.com
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Subject: [GIT PULL] Smack patches for v6.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <5c203a3e-3f92-9e23-c2c2-8f82baed3a47.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.21183 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-It's not "_unmask_layers() and _init_layer_masks()": there is no "_" 
-prefixes.
-Using "landlock_unmask_layers()" in the subject would be too long, so 
-you can replace it with "landlock: Refactor layer helpers".
-For consistency, you can change the previous patch's subject to 
-"landlock: Move and rename layer helpers"
+Hello Linus,
 
-Anyway, please send a new patch series. Most of the kernel code should 
-be good and I could then push it to -next for testing while reviewing 
-the last parts.
+Here is the Smack pull request for v6.3.
 
+There is only one change, a fix for an edge case when
+resetting the CIPSO representation of a Smack label.
+The change has had a good spell in next and passes all
+tests. Thank you.
 
-On 16/01/2023 09:58, Konstantin Meskhidze wrote:
-> Add new key_type argument to the landlock_init_layer_masks() helper.
-> Add a masks_array_size argument to the landlock_unmask_layers() helper.
-> These modifications support implementing new rule types in the next
-> Landlock versions.
-> 
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> ---
-> 
-> Changes since v8:
-> * None.
-> 
-> Changes since v7:
-> * Refactors commit message, adds a co-developer.
-> * Minor fixes.
-> 
-> Changes since v6:
-> * Removes masks_size attribute from init_layer_masks().
-> * Refactors init_layer_masks() with new landlock_key_type.
-> 
-> Changes since v5:
-> * Splits commit.
-> * Formats code with clang-format-14.
-> 
-> Changes since v4:
-> * Refactors init_layer_masks(), get_handled_accesses()
-> and unmask_layers() functions to support multiple rule types.
-> * Refactors landlock_get_fs_access_mask() function with
-> LANDLOCK_MASK_ACCESS_FS mask.
-> 
-> Changes since v3:
-> * Splits commit.
-> * Refactors landlock_unmask_layers functions.
-> 
-> ---
->   security/landlock/fs.c      | 43 ++++++++++++++++--------------
->   security/landlock/ruleset.c | 52 ++++++++++++++++++++++++++-----------
->   security/landlock/ruleset.h | 17 ++++++------
->   3 files changed, 70 insertions(+), 42 deletions(-)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 73a7399f93ba..a73dbd3f9ddb 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -441,20 +441,22 @@ static bool is_access_to_paths_allowed(
->   	}
->   
->   	if (unlikely(dentry_child1)) {
-> -		landlock_unmask_layers(find_rule(domain, dentry_child1),
-> -				       landlock_init_layer_masks(
-> -					       domain, LANDLOCK_MASK_ACCESS_FS,
-> -					       &_layer_masks_child1),
-> -				       &_layer_masks_child1);
-> +		landlock_unmask_layers(
-> +			find_rule(domain, dentry_child1),
-> +			landlock_init_layer_masks(
-> +				domain, LANDLOCK_MASK_ACCESS_FS,
-> +				&_layer_masks_child1, LANDLOCK_KEY_INODE),
-> +			&_layer_masks_child1, ARRAY_SIZE(_layer_masks_child1));
->   		layer_masks_child1 = &_layer_masks_child1;
->   		child1_is_directory = d_is_dir(dentry_child1);
->   	}
->   	if (unlikely(dentry_child2)) {
-> -		landlock_unmask_layers(find_rule(domain, dentry_child2),
-> -				       landlock_init_layer_masks(
-> -					       domain, LANDLOCK_MASK_ACCESS_FS,
-> -					       &_layer_masks_child2),
-> -				       &_layer_masks_child2);
-> +		landlock_unmask_layers(
-> +			find_rule(domain, dentry_child2),
-> +			landlock_init_layer_masks(
-> +				domain, LANDLOCK_MASK_ACCESS_FS,
-> +				&_layer_masks_child2, LANDLOCK_KEY_INODE),
-> +			&_layer_masks_child2, ARRAY_SIZE(_layer_masks_child2));
->   		layer_masks_child2 = &_layer_masks_child2;
->   		child2_is_directory = d_is_dir(dentry_child2);
->   	}
-> @@ -507,14 +509,15 @@ static bool is_access_to_paths_allowed(
->   
->   		rule = find_rule(domain, walker_path.dentry);
->   		allowed_parent1 = landlock_unmask_layers(
-> -			rule, access_masked_parent1, layer_masks_parent1);
-> +			rule, access_masked_parent1, layer_masks_parent1,
-> +			ARRAY_SIZE(*layer_masks_parent1));
->   		allowed_parent2 = landlock_unmask_layers(
-> -			rule, access_masked_parent2, layer_masks_parent2);
-> +			rule, access_masked_parent2, layer_masks_parent2,
-> +			ARRAY_SIZE(*layer_masks_parent2));
->   
->   		/* Stops when a rule from each layer grants access. */
->   		if (allowed_parent1 && allowed_parent2)
->   			break;
-> -
->   jump_up:
->   		if (walker_path.dentry == walker_path.mnt->mnt_root) {
->   			if (follow_up(&walker_path)) {
-> @@ -553,8 +556,8 @@ static int check_access_path(const struct landlock_ruleset *const domain,
->   {
->   	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
->   
-> -	access_request =
-> -		landlock_init_layer_masks(domain, access_request, &layer_masks);
-> +	access_request = landlock_init_layer_masks(
-> +		domain, access_request, &layer_masks, LANDLOCK_KEY_INODE);
->   	if (is_access_to_paths_allowed(domain, path, access_request,
->   				       &layer_masks, NULL, 0, NULL, NULL))
->   		return 0;
-> @@ -640,7 +643,8 @@ static bool collect_domain_accesses(
->   		return true;
->   
->   	access_dom = landlock_init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
-> -					       layer_masks_dom);
-> +					       layer_masks_dom,
-> +					       LANDLOCK_KEY_INODE);
->   
->   	dget(dir);
->   	while (true) {
-> @@ -648,7 +652,8 @@ static bool collect_domain_accesses(
->   
->   		/* Gets all layers allowing all domain accesses. */
->   		if (landlock_unmask_layers(find_rule(domain, dir), access_dom,
-> -					   layer_masks_dom)) {
-> +					   layer_masks_dom,
-> +					   ARRAY_SIZE(*layer_masks_dom))) {
->   			/*
->   			 * Stops when all handled accesses are allowed by at
->   			 * least one rule in each layer.
-> @@ -763,7 +768,7 @@ static int current_check_refer_path(struct dentry *const old_dentry,
->   		 */
->   		access_request_parent1 = landlock_init_layer_masks(
->   			dom, access_request_parent1 | access_request_parent2,
-> -			&layer_masks_parent1);
-> +			&layer_masks_parent1, LANDLOCK_KEY_INODE);
->   		if (is_access_to_paths_allowed(
->   			    dom, new_dir, access_request_parent1,
->   			    &layer_masks_parent1, NULL, 0, NULL, NULL))
-> @@ -1139,7 +1144,7 @@ static int hook_file_open(struct file *const file)
->   	if (is_access_to_paths_allowed(
->   		    dom, &file->f_path,
->   		    landlock_init_layer_masks(dom, full_access_request,
-> -					      &layer_masks),
-> +					      &layer_masks, LANDLOCK_KEY_INODE),
->   		    &layer_masks, NULL, 0, NULL, NULL)) {
->   		allowed_access = full_access_request;
->   	} else {
-> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> index 22590cac3d56..9748b54b42fe 100644
-> --- a/security/landlock/ruleset.c
-> +++ b/security/landlock/ruleset.c
-> @@ -576,14 +576,15 @@ landlock_find_rule(const struct landlock_ruleset *const ruleset,
->   /*
->    * @layer_masks is read and may be updated according to the access request and
->    * the matching rule.
-> + * @masks_array_size must be equal to ARRAY_SIZE(*layer_masks).
->    *
->    * Returns true if the request is allowed (i.e. relevant layer masks for the
->    * request are empty).
->    */
-> -bool landlock_unmask_layers(
-> -	const struct landlock_rule *const rule,
-> -	const access_mask_t access_request,
-> -	layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
-> +bool landlock_unmask_layers(const struct landlock_rule *const rule,
-> +			    const access_mask_t access_request,
-> +			    layer_mask_t (*const layer_masks)[],
-> +			    const size_t masks_array_size)
->   {
->   	size_t layer_level;
->   
-> @@ -615,8 +616,7 @@ bool landlock_unmask_layers(
->   		 * requested access.
->   		 */
->   		is_empty = true;
-> -		for_each_set_bit(access_bit, &access_req,
-> -				 ARRAY_SIZE(*layer_masks)) {
-> +		for_each_set_bit(access_bit, &access_req, masks_array_size) {
->   			if (layer->access & BIT_ULL(access_bit))
->   				(*layer_masks)[access_bit] &= ~layer_bit;
->   			is_empty = is_empty && !(*layer_masks)[access_bit];
-> @@ -627,6 +627,10 @@ bool landlock_unmask_layers(
->   	return false;
->   }
->   
-> +typedef access_mask_t
-> +get_access_mask_t(const struct landlock_ruleset *const ruleset,
-> +		  const u16 layer_level);
-> +
->   /*
->    * init_layer_masks - Initialize layer masks from an access request
->    *
-> @@ -636,19 +640,34 @@ bool landlock_unmask_layers(
->    * @domain: The domain that defines the current restrictions.
->    * @access_request: The requested access rights to check.
->    * @layer_masks: The layer masks to populate.
-> + * @key_type: The key type to switch between access masks of different types.
->    *
->    * Returns: An access mask where each access right bit is set which is handled
->    * in any of the active layers in @domain.
->    */
-> -access_mask_t landlock_init_layer_masks(
-> -	const struct landlock_ruleset *const domain,
-> -	const access_mask_t access_request,
-> -	layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
-> +access_mask_t
-> +landlock_init_layer_masks(const struct landlock_ruleset *const domain,
-> +			  const access_mask_t access_request,
-> +			  layer_mask_t (*const layer_masks)[],
-> +			  const enum landlock_key_type key_type)
->   {
->   	access_mask_t handled_accesses = 0;
-> -	size_t layer_level;
-> +	size_t layer_level, num_access;
-> +	get_access_mask_t *get_access_mask;
-> +
-> +	switch (key_type) {
-> +	case LANDLOCK_KEY_INODE:
-> +		get_access_mask = landlock_get_fs_access_mask;
-> +		num_access = LANDLOCK_NUM_ACCESS_FS;
-> +		break;
-> +	default:
-> +		WARN_ON_ONCE(1);
-> +		return 0;
-> +	}
-> +
-> +	memset(layer_masks, 0,
-> +	       array_size(sizeof((*layer_masks)[0]), num_access));
->   
-> -	memset(layer_masks, 0, sizeof(*layer_masks));
->   	/* An empty access request can happen because of O_WRONLY | O_RDWR. */
->   	if (!access_request)
->   		return 0;
-> @@ -658,10 +677,13 @@ access_mask_t landlock_init_layer_masks(
->   		const unsigned long access_req = access_request;
->   		unsigned long access_bit;
->   
-> -		for_each_set_bit(access_bit, &access_req,
-> -				 ARRAY_SIZE(*layer_masks)) {
-> +		for_each_set_bit(access_bit, &access_req, num_access) {
-> +			/*
-> +			 * Artificially handles all initially denied by default
-> +			 * access rights.
-> +			 */
->   			if (BIT_ULL(access_bit) &
-> -			    landlock_get_fs_access_mask(domain, layer_level)) {
-> +			    get_access_mask(domain, layer_level)) {
->   				(*layer_masks)[access_bit] |=
->   					BIT_ULL(layer_level);
->   				handled_accesses |= BIT_ULL(access_bit);
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index 60a3c4d4d961..77349764e111 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -266,14 +266,15 @@ landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
->   	return landlock_get_raw_fs_access_mask(ruleset, layer_level) |
->   	       ACCESS_FS_INITIALLY_DENIED;
->   }
-> -bool landlock_unmask_layers(
-> -	const struct landlock_rule *const rule,
-> -	const access_mask_t access_request,
-> -	layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS]);
-> +bool landlock_unmask_layers(const struct landlock_rule *const rule,
-> +			    const access_mask_t access_request,
-> +			    layer_mask_t (*const layer_masks)[],
-> +			    const size_t masks_array_size);
->   
-> -access_mask_t landlock_init_layer_masks(
-> -	const struct landlock_ruleset *const domain,
-> -	const access_mask_t access_request,
-> -	layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS]);
-> +access_mask_t
-> +landlock_init_layer_masks(const struct landlock_ruleset *const domain,
-> +			  const access_mask_t access_request,
-> +			  layer_mask_t (*const layer_masks)[],
-> +			  const enum landlock_key_type key_type);
->   
->   #endif /* _SECURITY_LANDLOCK_RULESET_H */
+The following changes since commit 2241ab53cbb5cdb08a6b2d4688feb13971058f65:
+
+  Linux 6.2-rc5 (2023-01-21 16:27:01 -0800)
+
+are available in the Git repository at:
+
+  https://github.com/cschaufler/smack-next tags/Smack-for-6.3
+
+for you to fetch changes up to ccfd889acb06eab10b98deb4b5eef0ec74157ea0:
+
+  smackfs: Added check catlen (2023-02-21 11:22:02 -0800)
+
+----------------------------------------------------------------
+One fix for resetting CIPSO labeling.
+
+----------------------------------------------------------------
+Denis Arefev (1):
+      smackfs: Added check catlen
+
+ security/smack/smackfs.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
