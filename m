@@ -2,191 +2,110 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BC2C61DA3
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Feb 2023 16:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A71EDC636D7
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Feb 2023 16:51:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233769AbjBUQQM (ORCPT
+        id S233775AbjBUQvb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Feb 2023 11:16:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40258 "EHLO
+        Tue, 21 Feb 2023 11:51:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233461AbjBUQQM (ORCPT
+        with ESMTP id S233273AbjBUQva (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Feb 2023 11:16:12 -0500
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ac])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB0382BEC1
-        for <linux-security-module@vger.kernel.org>; Tue, 21 Feb 2023 08:16:09 -0800 (PST)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PLktH65WSzMrN9b;
-        Tue, 21 Feb 2023 17:16:07 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4PLktH1FrhzMsYJy;
-        Tue, 21 Feb 2023 17:16:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1676996167;
-        bh=MP2Iae2qufmo2MaYLH9WMQWBeFZRcbBTutsxp2tsFR4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Qg5jrwEKFB6jvwTwWv59ENt4yOvkg1lGg411952a0CIK220mYhviUzCHjQfsXPsRr
-         bJ4Cn+QA+btjIGX0gKE7LojDV5dV1IzTv9CI9GhaitP7WGd5gGk9efH7JxqSgKKW1S
-         zR2mzDxt0jZgmgLlCkgmSIHTrvKWTkSnx+nh+nkc=
-Message-ID: <278ab07f-7583-a4e0-3d37-1bacd091531d@digikod.net>
-Date:   Tue, 21 Feb 2023 17:16:06 +0100
+        Tue, 21 Feb 2023 11:51:30 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63DC62A140;
+        Tue, 21 Feb 2023 08:51:29 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id l25so4753974wrb.3;
+        Tue, 21 Feb 2023 08:51:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=D08MB0A+qBNVeOH6aq7XN8nQRa4U2c9RkXpOy8QFNCM=;
+        b=ZQzPyzVfCM1VDrOg7jld8kTbJjJJXvVy2RJNNMM27fEwFpiO2fAQ/J44ymaTYK4QHy
+         Oa3TwEgrqDz8s6YdH5foMHs/gsnQEzUIUpScLYjFkeHNvHRWtGh4C4jeqe4ZK2+mNNUh
+         5naT5PPifD9Nj2i/tEdmGbZC5fCGiPhDw3TMs52EGgqhZt7R6DOI2l2iPYkPvOORgTrn
+         RVDwHlFi1W2LSpiV0NAtBZVv9/icrES7dVprz54xRtvlweqVhFvJkb5SRNDJiFk0GN+I
+         mYgGWIm2cvEk6nQB1qh4N67EVf6ZO5pzbEZw0SZBHinqfla75A11UQBWL/lauIGP7scC
+         FBPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D08MB0A+qBNVeOH6aq7XN8nQRa4U2c9RkXpOy8QFNCM=;
+        b=DkfK7UnRsYdltOst4Eao2z48FfteC3Q9y7zvXzdwhmJPr2YQ8vbFd6RIVlShBQ8DZg
+         xj1kLGGU5SD1Wq7MxTHwNIhO6NLqzED4rpAWqblCVezFyVZznpUBdnmNLVPk42kr1PPG
+         3mqvz9teskiYOnOMlb4CfK/CIiX6E1V1G3JvJRdgZNUmlqnBYKpRbQWpz8FLA/YG0yZ5
+         jQig1HQjIadlKZYKkcKK6hpKNwYl8YhDXnow/Q5+iUU1sAeeu6DD9UiYAsamMyD9q4V9
+         HWr1QLaeoXtbe3blBVJnmnczT2ULnzOsGkyLBRdO+18tf8xuRa3E0M/+wdDCgr+ncae2
+         TUCQ==
+X-Gm-Message-State: AO0yUKXJ+rDgHFQwZLAEYKACBuffeDolZUumrCJ3mlYduzu1rWMcr44j
+        7WkLKb2r6wiPYQSAtATyHew=
+X-Google-Smtp-Source: AK7set+V1xqMb77oQA3kb/X190XD26WIfW0xI5M2lOf3qRoxH31ILZVVkTzmFbEIjumUbN63FW/8EQ==
+X-Received: by 2002:a5d:6105:0:b0:2c5:588c:84a8 with SMTP id v5-20020a5d6105000000b002c5588c84a8mr4155968wrt.19.1676998287698;
+        Tue, 21 Feb 2023 08:51:27 -0800 (PST)
+Received: from localhost ([2a02:168:633b:1:7c09:9c3b:256e:8ba1])
+        by smtp.gmail.com with ESMTPSA id j16-20020a056000125000b002c5706f7c6dsm1937580wrx.94.2023.02.21.08.51.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Feb 2023 08:51:27 -0800 (PST)
+Date:   Tue, 21 Feb 2023 17:51:25 +0100
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        linux-security-module@vger.kernel.org,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3] landlock: Clarify documentation for the
+ LANDLOCK_ACCESS_FS_REFER right
+Message-ID: <Y/T2jcoFcjYO8LZj@galopp>
+References: <20230216200729.12438-1-gnoack3000@gmail.com>
+ <0e5bf1f7-47b5-382e-ae56-4556980a908b@digikod.net>
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v9 12/12] landlock: Document Landlock's network support
-Content-Language: en-US
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
- <20230116085818.165539-13-konstantin.meskhidze@huawei.com>
- <Y8xwLvDbhKPG8JqY@galopp> <eb33371b-551e-ae6c-d7e3-a3101644b7ec@huawei.com>
- <68f26cf2-f382-4d31-c80f-22392a85376f@digikod.net>
- <526a70a2-b0bc-f29a-6558-022ca12a6430@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <526a70a2-b0bc-f29a-6558-022ca12a6430@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+In-Reply-To: <0e5bf1f7-47b5-382e-ae56-4556980a908b@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 30/01/2023 11:03, Konstantin Meskhidze (A) wrote:
+On Fri, Feb 17, 2023 at 08:28:41PM +0100, Mickaël Salaün wrote:
+> On 16/02/2023 21:07, Günther Noack wrote:
+> > Clarify the "refer" documentation by splitting up a big paragraph of text.
+> > 
+> > - Call out specifically that the denial by default applies to ABI v1 as well.
+> > - Turn the three additional constraints for link/rename operations
+> >    into bullet points, to give it more structure.
+> > 
+> > Includes wording and semantics corrections by Mickaël Salaün.
 > 
+> No need to add this line, It's part of the maintainer job. ;)
+
+OK, removed for V4.
+
+> Some of my suggestions are about style, so feel free to ignore them if you
+> think the original is better. Anyway, I'm not a native english speaker
+> either, so there are good chances I'm not correct on some suggestions. What
+> about that?:
 > 
-> 1/27/2023 9:22 PM, Mickaël Salaün пишет:
->>
->> On 23/01/2023 10:38, Konstantin Meskhidze (A) wrote:
->>>
->>>
->>> 1/22/2023 2:07 AM, Günther Noack пишет:
->>
->> [...]
->>
->>>>> @@ -143,10 +157,24 @@ for the ruleset creation, by filtering access rights according to the Landlock
->>>>>    ABI version.  In this example, this is not required because all of the requested
->>>>>    ``allowed_access`` rights are already available in ABI 1.
->>>>>    
->>>>> -We now have a ruleset with one rule allowing read access to ``/usr`` while
->>>>> -denying all other handled accesses for the filesystem.  The next step is to
->>>>> -restrict the current thread from gaining more privileges (e.g. thanks to a SUID
->>>>> -binary).
->>>>> +For network access-control, we can add a set of rules that allow to use a port
->>>>> +number for a specific action. All ports values must be defined in network byte
->>>>> +order.
->>>>
->>>> What is the point of asking user space to convert this to network byte
->>>> order? It seems to me that the kernel would be able to convert it to
->>>> network byte order very easily internally and in a single place -- why
->>>> ask all of the users to deal with that complexity? Am I overlooking
->>>> something?
->>>
->>>     I had a discussion about this issue with Mickaёl.
->>>     Please check these threads:
->>>     1.
->>> https://lore.kernel.org/netdev/49391484-7401-e7c7-d909-3bd6bd024731@digikod.net/
->>>     2.
->>> https://lore.kernel.org/netdev/1ed20e34-c252-b849-ab92-78c82901c979@huawei.com/
->>
->> I'm definitely not sure if this is the right solution, or if there is
->> one. The rationale is to make it close to the current (POSIX) API. We
->> didn't get many opinion about that but I'd really like to have a
->> discussion about port endianness for this Landlock API.
+> This is the only access right implicitly handled by any ruleset, even if
+> this right is not specified at ruleset creation time. Reparenting files will
+> then always be denied by default. Given that %LANDLOCK_ACCESS_FS_REFER is
+> available since the second Landlock ABI version, using the first Landlock
+> ABI version will always forbid file reparenting.
 > 
->     As for me, the kernel should take care about port converting. This
-> work should be done under the hood.
-> 
->     Any thoughts?
-> 
->>
->> I looked at some code (e.g. see [1]) and it seems that using htons()
->> might make application patching more complex after all. What do you
->> think? Is there some network (syscall) API that don't use this convention?
->>
->> [1] https://github.com/landlock-lsm/tuto-lighttpd
->>
->>>>
->>>>> +
->>>>> +.. code-block:: c
->>>>> +
->>>>> +    struct landlock_net_service_attr net_service = {
->>>>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
->>>>> +        .port = htons(8080),
->>>>> +    };
->>>>
->>>> This is a more high-level comment:
->>>>
->>>> The notion of a 16-bit "port" seems to be specific to TCP and UDP --
->>>> how do you envision this struct to evolve if other protocols need to
->>>> be supported in the future?
->>>
->>>      When TCP restrictions land into Linux, we need to think about UDP
->>> support. Then other protocols will be on the road. Anyway you are right
->>> this struct will be evolving in long term, but I don't have a particular
->>> envision now. Thanks for the question - we need to think about it.
->>>>
->>>> Should this struct and the associated constants have "TCP" in its
->>>> name, and other protocols use a separate struct in the future?
->>
->> Other protocols such as AF_VSOCK uses a 32-bit port. We could use a
->> 32-bits port field or ever a 64-bit one. The later could make more sense
->> because each field would eventually be aligned on 64-bit. Picking a
->> 16-bit value was to help developers (and compilers/linters) with the
->> "correct" type (for TCP).
+> For these kind of link or rename actions to be possible, one or two rules
+> must explicitly allow %LANDLOCK_ACCESS_FS_REFER on the source and the
+> destination hierarchies. In addition, the following constraints must be met:
 
-Thinking more about this, let's use a __u64 port (and remove the 
-explicit packing). The landlock_append_net_rule() function should use a 
-__u16 port argument, but the add_rule_net_service() function should 
-check that there is no overflow with the port attribute (not higher than 
-U16_MAX) before passing it to landlock_append_net_rule(). We should 
-prioritize flexibility for the kernel UAPI over stricter types. User 
-space libraries can improve this kind of types with a more complex API.
+I reworded it again, it's meeting somewhere in the middle I hope. It
+should be a bit better now. (Sending another version.)
 
-Big endian can make sense for a pure network API because the port value 
-(and the IP address) is passed to other machines through the network, 
-as-is. However, with Landlock, the port value is only used by the 
-kernel. Moreover, in practice, port values are mostly converted when 
-filling the sockaddr*_in structs. It would then make it more risky to 
-ask developers another explicit htons() conversion for Landlock 
-syscalls. Let's stick to the host endianess and let the kernel do the 
-conversion.
+Documentation is hard... it's difficult to find an objective best wording.
 
-Please include these rationales in code comments. We also need to update 
-the tests for endianess, but still check big and little endian 
-consistency as it is currently done in these tests. A new test should be 
-added to check port boundaries with:
-- port = 0
-- port = U16_MAX
-- port = U16_MAX + 1 (which should get an EINVAL)
-- port = U16_MAX + 2 (to check u16 casting != 0)
-- port = U32_MAX + 1
-- port = U32_MAX + 2
-
-
->>
->> If we think about protocols other than TCP and UDP (e.g. AF_VSOCK), it
->> could make sense to have a dedicated attr struct specifying other
->> properties (e.g. CID). Anyway, the API is flexible but it would be nice
->> to not mess with it too much. What do you think?
->>
->>
->>>>
->>>>> +
->>>>> +    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
->>>>> +                            &net_service, 0);
->>>>> +
->>>>> +The next step is to restrict the current thread from gaining more privileges
->>>>> +(e.g. thanks to a SUID binary). We now have a ruleset with the first rule allowing
->>>>             ^^^^^^
->>>>             "through" a SUID binary? "thanks to" sounds like it's desired
->>>>             to do that, while we're actually trying to prevent it here?
->>>
->>>      This is Mickaёl's part. Let's ask his opinion here.
->>>
->>>      Mickaёl, any thoughts?
->>
->> Yep, "through" looks better.
->> .
+–-Günther
