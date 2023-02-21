@@ -2,110 +2,143 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A71EDC636D7
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Feb 2023 16:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E7AC636D7
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Feb 2023 16:52:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233775AbjBUQvb (ORCPT
+        id S234637AbjBUQwQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Feb 2023 11:51:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54276 "EHLO
+        Tue, 21 Feb 2023 11:52:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233273AbjBUQva (ORCPT
+        with ESMTP id S234835AbjBUQwP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Feb 2023 11:51:30 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63DC62A140;
-        Tue, 21 Feb 2023 08:51:29 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id l25so4753974wrb.3;
-        Tue, 21 Feb 2023 08:51:29 -0800 (PST)
+        Tue, 21 Feb 2023 11:52:15 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 949C22CC5F;
+        Tue, 21 Feb 2023 08:52:10 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id k37so764326wms.0;
+        Tue, 21 Feb 2023 08:52:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=D08MB0A+qBNVeOH6aq7XN8nQRa4U2c9RkXpOy8QFNCM=;
-        b=ZQzPyzVfCM1VDrOg7jld8kTbJjJJXvVy2RJNNMM27fEwFpiO2fAQ/J44ymaTYK4QHy
-         Oa3TwEgrqDz8s6YdH5foMHs/gsnQEzUIUpScLYjFkeHNvHRWtGh4C4jeqe4ZK2+mNNUh
-         5naT5PPifD9Nj2i/tEdmGbZC5fCGiPhDw3TMs52EGgqhZt7R6DOI2l2iPYkPvOORgTrn
-         RVDwHlFi1W2LSpiV0NAtBZVv9/icrES7dVprz54xRtvlweqVhFvJkb5SRNDJiFk0GN+I
-         mYgGWIm2cvEk6nQB1qh4N67EVf6ZO5pzbEZw0SZBHinqfla75A11UQBWL/lauIGP7scC
-         FBPA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zzis0Bciaa3Y7LYjvE8aSfC0aoJCUi4Vc/8GrLyMyF8=;
+        b=eeFr+iA6heQSSLBUeZYbuUtu/SEztMCCHq/nvBCeNm1vShLuvneU3py1DFwTSgiqTM
+         kxgXoz49k18kp//rEoXlTmLXoCOgftzWh5hT+u2E5FXEsrCTDV4PcTW+tzwAMCqrPsyA
+         d2rEb3P10cWFY0VL2vFlk/O0i8O8Jm7kroGWQe7o1+IanuaJ+r/PCigASESU4RQyDOvx
+         08bi1A7dhy1P6h9BN8IJRh7Hhq9fPa0f181f8w62k8scoOyoFO7X+7n2BO9pT/6DdN3p
+         MXa+Syfjoz/g4b0QSKiPc83/6U4BMF+nPP4XcKiCOtBoXfAcC1VNX28tJsLt2IXM2Fnh
+         5lwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D08MB0A+qBNVeOH6aq7XN8nQRa4U2c9RkXpOy8QFNCM=;
-        b=DkfK7UnRsYdltOst4Eao2z48FfteC3Q9y7zvXzdwhmJPr2YQ8vbFd6RIVlShBQ8DZg
-         xj1kLGGU5SD1Wq7MxTHwNIhO6NLqzED4rpAWqblCVezFyVZznpUBdnmNLVPk42kr1PPG
-         3mqvz9teskiYOnOMlb4CfK/CIiX6E1V1G3JvJRdgZNUmlqnBYKpRbQWpz8FLA/YG0yZ5
-         jQig1HQjIadlKZYKkcKK6hpKNwYl8YhDXnow/Q5+iUU1sAeeu6DD9UiYAsamMyD9q4V9
-         HWr1QLaeoXtbe3blBVJnmnczT2ULnzOsGkyLBRdO+18tf8xuRa3E0M/+wdDCgr+ncae2
-         TUCQ==
-X-Gm-Message-State: AO0yUKXJ+rDgHFQwZLAEYKACBuffeDolZUumrCJ3mlYduzu1rWMcr44j
-        7WkLKb2r6wiPYQSAtATyHew=
-X-Google-Smtp-Source: AK7set+V1xqMb77oQA3kb/X190XD26WIfW0xI5M2lOf3qRoxH31ILZVVkTzmFbEIjumUbN63FW/8EQ==
-X-Received: by 2002:a5d:6105:0:b0:2c5:588c:84a8 with SMTP id v5-20020a5d6105000000b002c5588c84a8mr4155968wrt.19.1676998287698;
-        Tue, 21 Feb 2023 08:51:27 -0800 (PST)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zzis0Bciaa3Y7LYjvE8aSfC0aoJCUi4Vc/8GrLyMyF8=;
+        b=TWYOl1AwuNrt1/pcmtagPeBPy9iZB7cbHN0Gpu5Hn1Ct/t7zJ7eOz7OIxdJe7/xEfm
+         wXvjyWUVRn/gfkgY/ykfvU7ke4NDObyR6Lxto4+yDzJzGdstnt8OxWW4z6kJXI2q2yrk
+         qyYW9/ytYdyQ9+OX55FQWhrkDzUcBPBovRbZqVXrOc77BQoHkv1SECPZ30hIYAkIzyaW
+         uoq2BvF04n4ip+rLjp70v3+4w+f/eYju5ewfeCfpgiIDPLc6r+c3e1NXJkupRSerT09w
+         RJ+B7NgHT9w/w92BJEcXxs7Y5VXLYLNZ+pLwIBVn2UnHnIUdtiQQugLoiupyZUmt2pig
+         WXzA==
+X-Gm-Message-State: AO0yUKUiCLeeknsUaZUf/G0Pmm0fdQIvYr9ABTLRwtmPgmwJPENVxEc1
+        q322k4/jNyITVH46FpfXu+lTZWRkv4k=
+X-Google-Smtp-Source: AK7set/1YQqeQVqQ2DwUPIZlD3K/y6yN2zBSZCePOvw0fGQ0HeJRXq5cxOJDpqL8zavotiiu07bnFg==
+X-Received: by 2002:a05:600c:164a:b0:3e2:20c7:6556 with SMTP id o10-20020a05600c164a00b003e220c76556mr10896079wmn.35.1676998328986;
+        Tue, 21 Feb 2023 08:52:08 -0800 (PST)
 Received: from localhost ([2a02:168:633b:1:7c09:9c3b:256e:8ba1])
-        by smtp.gmail.com with ESMTPSA id j16-20020a056000125000b002c5706f7c6dsm1937580wrx.94.2023.02.21.08.51.27
+        by smtp.gmail.com with ESMTPSA id r26-20020a05600c2f1a00b003db0bb81b6asm4447172wmn.1.2023.02.21.08.52.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Feb 2023 08:51:27 -0800 (PST)
-Date:   Tue, 21 Feb 2023 17:51:25 +0100
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        linux-security-module@vger.kernel.org,
-        Alejandro Colomar <alx.manpages@gmail.com>,
+        Tue, 21 Feb 2023 08:52:08 -0800 (PST)
+From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+To:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Alejandro Colomar <alx.manpages@gmail.com>
+Cc:     linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
         Paul Moore <paul@paul-moore.com>,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
         Xiu Jianfeng <xiujianfeng@huawei.com>,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3] landlock: Clarify documentation for the
- LANDLOCK_ACCESS_FS_REFER right
-Message-ID: <Y/T2jcoFcjYO8LZj@galopp>
-References: <20230216200729.12438-1-gnoack3000@gmail.com>
- <0e5bf1f7-47b5-382e-ae56-4556980a908b@digikod.net>
+        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+Subject: [PATCH v4] landlock: Clarify documentation for the LANDLOCK_ACCESS_FS_REFER right
+Date:   Tue, 21 Feb 2023 17:52:05 +0100
+Message-Id: <20230221165205.4231-1-gnoack3000@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0e5bf1f7-47b5-382e-ae56-4556980a908b@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 17, 2023 at 08:28:41PM +0100, Mickaël Salaün wrote:
-> On 16/02/2023 21:07, Günther Noack wrote:
-> > Clarify the "refer" documentation by splitting up a big paragraph of text.
-> > 
-> > - Call out specifically that the denial by default applies to ABI v1 as well.
-> > - Turn the three additional constraints for link/rename operations
-> >    into bullet points, to give it more structure.
-> > 
-> > Includes wording and semantics corrections by Mickaël Salaün.
-> 
-> No need to add this line, It's part of the maintainer job. ;)
+Clarify the "refer" documentation by splitting up a big paragraph of text.
 
-OK, removed for V4.
+- Call out specifically that the denial by default applies to ABI v1 as well.
+- Turn the three additional constraints for link/rename operations
+  into bullet points, to give it more structure.
 
-> Some of my suggestions are about style, so feel free to ignore them if you
-> think the original is better. Anyway, I'm not a native english speaker
-> either, so there are good chances I'm not correct on some suggestions. What
-> about that?:
-> 
-> This is the only access right implicitly handled by any ruleset, even if
-> this right is not specified at ruleset creation time. Reparenting files will
-> then always be denied by default. Given that %LANDLOCK_ACCESS_FS_REFER is
-> available since the second Landlock ABI version, using the first Landlock
-> ABI version will always forbid file reparenting.
-> 
-> For these kind of link or rename actions to be possible, one or two rules
-> must explicitly allow %LANDLOCK_ACCESS_FS_REFER on the source and the
-> destination hierarchies. In addition, the following constraints must be met:
+Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+---
+ include/uapi/linux/landlock.h | 46 +++++++++++++++++++++++------------
+ 1 file changed, 31 insertions(+), 15 deletions(-)
 
-I reworded it again, it's meeting somewhere in the middle I hope. It
-should be a bit better now. (Sending another version.)
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index f3223f96469..81d09ef9aa5 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -130,21 +130,37 @@ struct landlock_path_beneath_attr {
+  * - %LANDLOCK_ACCESS_FS_MAKE_BLOCK: Create (or rename or link) a block device.
+  * - %LANDLOCK_ACCESS_FS_MAKE_SYM: Create (or rename or link) a symbolic link.
+  * - %LANDLOCK_ACCESS_FS_REFER: Link or rename a file from or to a different
+- *   directory (i.e. reparent a file hierarchy).  This access right is
+- *   available since the second version of the Landlock ABI.  This is also the
+- *   only access right which is always considered handled by any ruleset in
+- *   such a way that reparenting a file hierarchy is always denied by default.
+- *   To avoid privilege escalation, it is not enough to add a rule with this
+- *   access right.  When linking or renaming a file, the destination directory
+- *   hierarchy must also always have the same or a superset of restrictions of
+- *   the source hierarchy.  If it is not the case, or if the domain doesn't
+- *   handle this access right, such actions are denied by default with errno
+- *   set to ``EXDEV``.  Linking also requires a ``LANDLOCK_ACCESS_FS_MAKE_*``
+- *   access right on the destination directory, and renaming also requires a
+- *   ``LANDLOCK_ACCESS_FS_REMOVE_*`` access right on the source's (file or
+- *   directory) parent.  Otherwise, such actions are denied with errno set to
+- *   ``EACCES``.  The ``EACCES`` errno prevails over ``EXDEV`` to let user space
+- *   efficiently deal with an unrecoverable error.
++ *   directory (i.e. reparent a file hierarchy).
++ *
++ *   This access right is available since the second version of the Landlock
++ *   ABI.
++ *
++ *   This is the only access right which is denied by default by any ruleset,
++ *   even if the right is not specified as handled at ruleset creation time.
++ *   The only way to make a ruleset grant this right is to explicitly allow it
++ *   for a specific directory by adding a matching rule to the ruleset.
++ *
++ *   In particular, when using the first Landlock ABI version, Landlock will
++ *   always deny attempts to reparent files between different directories.
++ *
++ *   In addition to the source and destination directories having the
++ *   %LANDLOCK_ACCESS_FS_REFER access right, the attempted link or rename
++ *   operation must meet the following constraints:
++ *
++ *   * The reparented file may not gain more access rights in the destination
++ *     directory than it previously had in the source directory.  If this is
++ *     attempted, the operation results in an ``EXDEV`` error.
++ *
++ *   * When linking or renaming, the ``LANDLOCK_ACCESS_FS_MAKE_*`` right for the
++ *     respective file type must be granted for the destination directory.
++ *     Otherwise, the operation results in an ``EACCES`` error.
++ *
++ *   * When renaming, the ``LANDLOCK_ACCESS_FS_REMOVE_*`` right for the
++ *     respective file type must be granted for the source directory.  Otherwise,
++ *     the operation results in an ``EACCES`` error.
++ *
++ *   If multiple requirements are not met, the ``EACCES`` error code takes
++ *   precedence over ``EXDEV``.
+  *
+  * .. warning::
+  *
 
-Documentation is hard... it's difficult to find an objective best wording.
+base-commit: c9c3395d5e3dcc6daee66c6908354d47bf98cb0c
+-- 
+2.39.2
 
-–-Günther
