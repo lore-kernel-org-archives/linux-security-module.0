@@ -2,251 +2,191 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B791C64EC7
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Feb 2023 07:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BC2C61DA3
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Feb 2023 16:16:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233634AbjBUHwp (ORCPT
+        id S233769AbjBUQQM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Feb 2023 02:52:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45670 "EHLO
+        Tue, 21 Feb 2023 11:16:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232710AbjBUHwo (ORCPT
+        with ESMTP id S233461AbjBUQQM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Feb 2023 02:52:44 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E19041D901;
-        Mon, 20 Feb 2023 23:52:41 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4PLWWb6NyFz9v7ZD;
-        Tue, 21 Feb 2023 15:44:11 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwD3wlkhePRj0Cc7AQ--.55243S2;
-        Tue, 21 Feb 2023 08:52:12 +0100 (CET)
-Message-ID: <76f8e98bd89d19545ff84ebcac4c41853455d22b.camel@huaweicloud.com>
-Subject: Re: [PATCH v7 2/6] ocfs2: Switch to security_inode_init_security()
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Joseph Qi <joseph.qi@linux.alibaba.com>, mark@fasheh.com,
-        jlbec@evilplan.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Tue, 21 Feb 2023 08:51:56 +0100
-In-Reply-To: <d5180ef2-70dc-0a43-3e1b-c04d9e14ab23@linux.alibaba.com>
-References: <20221201104125.919483-1-roberto.sassu@huaweicloud.com>
-         <20221201104125.919483-3-roberto.sassu@huaweicloud.com>
-         <6905166125130c22c244ebf234723d1587a01ae8.camel@huaweicloud.com>
-         <d5180ef2-70dc-0a43-3e1b-c04d9e14ab23@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Tue, 21 Feb 2023 11:16:12 -0500
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ac])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB0382BEC1
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Feb 2023 08:16:09 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PLktH65WSzMrN9b;
+        Tue, 21 Feb 2023 17:16:07 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4PLktH1FrhzMsYJy;
+        Tue, 21 Feb 2023 17:16:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1676996167;
+        bh=MP2Iae2qufmo2MaYLH9WMQWBeFZRcbBTutsxp2tsFR4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Qg5jrwEKFB6jvwTwWv59ENt4yOvkg1lGg411952a0CIK220mYhviUzCHjQfsXPsRr
+         bJ4Cn+QA+btjIGX0gKE7LojDV5dV1IzTv9CI9GhaitP7WGd5gGk9efH7JxqSgKKW1S
+         zR2mzDxt0jZgmgLlCkgmSIHTrvKWTkSnx+nh+nkc=
+Message-ID: <278ab07f-7583-a4e0-3d37-1bacd091531d@digikod.net>
+Date:   Tue, 21 Feb 2023 17:16:06 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwD3wlkhePRj0Cc7AQ--.55243S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKry7Aw1kCFW3ury5ZF1fJFb_yoWxAw4UpF
-        WrtF1akF4rJFyUuryaq3WY9a1I9rWfGrZrGrs3J347ZF1q9r1ftry8Ar15ua45ZrW8JFy8
-        tr4UCFsxu3Z8Ja7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBF1jj4WkAQADsb
-X-CFilter-Loop: Reflected
+User-Agent: 
+Subject: Re: [PATCH v9 12/12] landlock: Document Landlock's network support
+Content-Language: en-US
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
+ <20230116085818.165539-13-konstantin.meskhidze@huawei.com>
+ <Y8xwLvDbhKPG8JqY@galopp> <eb33371b-551e-ae6c-d7e3-a3101644b7ec@huawei.com>
+ <68f26cf2-f382-4d31-c80f-22392a85376f@digikod.net>
+ <526a70a2-b0bc-f29a-6558-022ca12a6430@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <526a70a2-b0bc-f29a-6558-022ca12a6430@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2023-02-21 at 14:45 +0800, Joseph Qi wrote:
-> Hi,
+
+On 30/01/2023 11:03, Konstantin Meskhidze (A) wrote:
 > 
-> Sorry for the late reply.
 > 
-> I don't have much background on this thread. It seems that we have to
-> check EOPNOTSUPP since ocfs2_init_security_get() may return EOPNOTSUPP
-> if it doesn't support extended attribute feature for backward
-> compatibility.
-
-Hi Joseph
-
-yes, I already reintroduced the check. Thanks for having a look.
-
-Roberto
-
-> Other looks good. So with above comments addressed, you can add:
-> Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> 1/27/2023 9:22 PM, Mickaël Salaün пишет:
+>>
+>> On 23/01/2023 10:38, Konstantin Meskhidze (A) wrote:
+>>>
+>>>
+>>> 1/22/2023 2:07 AM, Günther Noack пишет:
+>>
+>> [...]
+>>
+>>>>> @@ -143,10 +157,24 @@ for the ruleset creation, by filtering access rights according to the Landlock
+>>>>>    ABI version.  In this example, this is not required because all of the requested
+>>>>>    ``allowed_access`` rights are already available in ABI 1.
+>>>>>    
+>>>>> -We now have a ruleset with one rule allowing read access to ``/usr`` while
+>>>>> -denying all other handled accesses for the filesystem.  The next step is to
+>>>>> -restrict the current thread from gaining more privileges (e.g. thanks to a SUID
+>>>>> -binary).
+>>>>> +For network access-control, we can add a set of rules that allow to use a port
+>>>>> +number for a specific action. All ports values must be defined in network byte
+>>>>> +order.
+>>>>
+>>>> What is the point of asking user space to convert this to network byte
+>>>> order? It seems to me that the kernel would be able to convert it to
+>>>> network byte order very easily internally and in a single place -- why
+>>>> ask all of the users to deal with that complexity? Am I overlooking
+>>>> something?
+>>>
+>>>     I had a discussion about this issue with Mickaёl.
+>>>     Please check these threads:
+>>>     1.
+>>> https://lore.kernel.org/netdev/49391484-7401-e7c7-d909-3bd6bd024731@digikod.net/
+>>>     2.
+>>> https://lore.kernel.org/netdev/1ed20e34-c252-b849-ab92-78c82901c979@huawei.com/
+>>
+>> I'm definitely not sure if this is the right solution, or if there is
+>> one. The rationale is to make it close to the current (POSIX) API. We
+>> didn't get many opinion about that but I'd really like to have a
+>> discussion about port endianness for this Landlock API.
 > 
-> On 1/10/23 4:55 PM, Roberto Sassu wrote:
-> > On Thu, 2022-12-01 at 11:41 +0100, Roberto Sassu wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > 
-> > > In preparation for removing security_old_inode_init_security(), switch to
-> > > security_inode_init_security().
-> > > 
-> > > Extend the existing ocfs2_initxattrs() to take the
-> > > ocfs2_security_xattr_info structure from fs_info, and populate the
-> > > name/value/len triple with the first xattr provided by LSMs.
-> > 
-> > Hi Mark, Joel, Joseph
-> > 
-> > some time ago I sent this patch set to switch to the newer
-> > function security_inode_init_security(). Almost all the other parts of
-> > this patch set have been reviewed, and the patch set itself should be
-> > ready to be merged.
-> > 
-> > I kindly ask if you could have a look at this patch and give your
-> > Reviewed-by, so that Paul could take the patch set.
-> > 
-> > Thanks a lot!
-> > 
-> > Roberto
-> > 
-> > > As fs_info was not used before, ocfs2_initxattrs() can now handle the case
-> > > of replicating the behavior of security_old_inode_init_security(), i.e.
-> > > just obtaining the xattr, in addition to setting all xattrs provided by
-> > > LSMs.
-> > > 
-> > > Supporting multiple xattrs is not currently supported where
-> > > security_old_inode_init_security() was called (mknod, symlink), as it
-> > > requires non-trivial changes that can be done at a later time. Like for
-> > > reiserfs, even if EVM is invoked, it will not provide an xattr (if it is
-> > > not the first to set it, its xattr will be discarded; if it is the first,
-> > > it does not have xattrs to calculate the HMAC on).
-> > > 
-> > > Finally, modify the handling of the return value from
-> > > ocfs2_init_security_get(). As security_inode_init_security() does not
-> > > return -EOPNOTSUPP, remove this case and directly handle the error if the
-> > > return value is not zero.
-> > > 
-> > > However, the previous case of receiving -EOPNOTSUPP should be still
-> > > taken into account, as security_inode_init_security() could return zero
-> > > without setting xattrs and ocfs2 would consider it as if the xattr was set.
-> > > 
-> > > Instead, if security_inode_init_security() returned zero, look at the xattr
-> > > if it was set, and behave accordingly, i.e. set si->enable to zero to
-> > > notify to the functions following ocfs2_init_security_get() that the xattr
-> > > is not available (same as if security_old_inode_init_security() returned
-> > > -EOPNOTSUPP).
-> > > 
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > ---
-> > >  fs/ocfs2/namei.c | 18 ++++++------------
-> > >  fs/ocfs2/xattr.c | 30 ++++++++++++++++++++++++++----
-> > >  2 files changed, 32 insertions(+), 16 deletions(-)
-> > > 
-> > > diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-> > > index 05f32989bad6..55fba81cd2d1 100644
-> > > --- a/fs/ocfs2/namei.c
-> > > +++ b/fs/ocfs2/namei.c
-> > > @@ -242,6 +242,7 @@ static int ocfs2_mknod(struct user_namespace *mnt_userns,
-> > >  	int want_meta = 0;
-> > >  	int xattr_credits = 0;
-> > >  	struct ocfs2_security_xattr_info si = {
-> > > +		.name = NULL,
-> > >  		.enable = 1,
-> > >  	};
-> > >  	int did_quota_inode = 0;
-> > > @@ -315,12 +316,8 @@ static int ocfs2_mknod(struct user_namespace *mnt_userns,
-> > >  	/* get security xattr */
-> > >  	status = ocfs2_init_security_get(inode, dir, &dentry->d_name, &si);
-> > >  	if (status) {
-> > > -		if (status == -EOPNOTSUPP)
-> > > -			si.enable = 0;
-> > > -		else {
-> > > -			mlog_errno(status);
-> > > -			goto leave;
-> > > -		}
-> > > +		mlog_errno(status);
-> > > +		goto leave;
-> > >  	}
-> > >  
-> > >  	/* calculate meta data/clusters for setting security and acl xattr */
-> > > @@ -1805,6 +1802,7 @@ static int ocfs2_symlink(struct user_namespace *mnt_userns,
-> > >  	int want_clusters = 0;
-> > >  	int xattr_credits = 0;
-> > >  	struct ocfs2_security_xattr_info si = {
-> > > +		.name = NULL,
-> > >  		.enable = 1,
-> > >  	};
-> > >  	int did_quota = 0, did_quota_inode = 0;
-> > > @@ -1875,12 +1873,8 @@ static int ocfs2_symlink(struct user_namespace *mnt_userns,
-> > >  	/* get security xattr */
-> > >  	status = ocfs2_init_security_get(inode, dir, &dentry->d_name, &si);
-> > >  	if (status) {
-> > > -		if (status == -EOPNOTSUPP)
-> > > -			si.enable = 0;
-> > > -		else {
-> > > -			mlog_errno(status);
-> > > -			goto bail;
-> > > -		}
-> > > +		mlog_errno(status);
-> > > +		goto bail;
-> > >  	}
-> > >  
-> > >  	/* calculate meta data/clusters for setting security xattr */
-> > > diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-> > > index 95d0611c5fc7..55699c573541 100644
-> > > --- a/fs/ocfs2/xattr.c
-> > > +++ b/fs/ocfs2/xattr.c
-> > > @@ -7259,9 +7259,21 @@ static int ocfs2_xattr_security_set(const struct xattr_handler *handler,
-> > >  static int ocfs2_initxattrs(struct inode *inode, const struct xattr *xattr_array,
-> > >  		     void *fs_info)
-> > >  {
-> > > +	struct ocfs2_security_xattr_info *si = fs_info;
-> > >  	const struct xattr *xattr;
-> > >  	int err = 0;
-> > >  
-> > > +	if (si) {
-> > > +		si->value = kmemdup(xattr_array->value, xattr_array->value_len,
-> > > +				    GFP_KERNEL);
-> > > +		if (!si->value)
-> > > +			return -ENOMEM;
-> > > +
-> > > +		si->name = xattr_array->name;
-> > > +		si->value_len = xattr_array->value_len;
-> > > +		return 0;
-> > > +	}
-> > > +
-> > >  	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
-> > >  		err = ocfs2_xattr_set(inode, OCFS2_XATTR_INDEX_SECURITY,
-> > >  				      xattr->name, xattr->value,
-> > > @@ -7277,13 +7289,23 @@ int ocfs2_init_security_get(struct inode *inode,
-> > >  			    const struct qstr *qstr,
-> > >  			    struct ocfs2_security_xattr_info *si)
-> > >  {
-> > > +	int ret;
-> > > +
-> > >  	/* check whether ocfs2 support feature xattr */
-> > >  	if (!ocfs2_supports_xattr(OCFS2_SB(dir->i_sb)))
-> > >  		return -EOPNOTSUPP;
-> > > -	if (si)
-> > > -		return security_old_inode_init_security(inode, dir, qstr,
-> > > -							&si->name, &si->value,
-> > > -							&si->value_len);
-> > > +	if (si) {
-> > > +		ret = security_inode_init_security(inode, dir, qstr,
-> > > +						   &ocfs2_initxattrs, si);
-> > > +		/*
-> > > +		 * security_inode_init_security() does not return -EOPNOTSUPP,
-> > > +		 * we have to check the xattr ourselves.
-> > > +		 */
-> > > +		if (!ret && !si->name)
-> > > +			si->enable = 0;
-> > > +
-> > > +		return ret;
-> > > +	}
-> > >  
-> > >  	return security_inode_init_security(inode, dir, qstr,
-> > >  					    &ocfs2_initxattrs, NULL);
+>     As for me, the kernel should take care about port converting. This
+> work should be done under the hood.
+> 
+>     Any thoughts?
+> 
+>>
+>> I looked at some code (e.g. see [1]) and it seems that using htons()
+>> might make application patching more complex after all. What do you
+>> think? Is there some network (syscall) API that don't use this convention?
+>>
+>> [1] https://github.com/landlock-lsm/tuto-lighttpd
+>>
+>>>>
+>>>>> +
+>>>>> +.. code-block:: c
+>>>>> +
+>>>>> +    struct landlock_net_service_attr net_service = {
+>>>>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
+>>>>> +        .port = htons(8080),
+>>>>> +    };
+>>>>
+>>>> This is a more high-level comment:
+>>>>
+>>>> The notion of a 16-bit "port" seems to be specific to TCP and UDP --
+>>>> how do you envision this struct to evolve if other protocols need to
+>>>> be supported in the future?
+>>>
+>>>      When TCP restrictions land into Linux, we need to think about UDP
+>>> support. Then other protocols will be on the road. Anyway you are right
+>>> this struct will be evolving in long term, but I don't have a particular
+>>> envision now. Thanks for the question - we need to think about it.
+>>>>
+>>>> Should this struct and the associated constants have "TCP" in its
+>>>> name, and other protocols use a separate struct in the future?
+>>
+>> Other protocols such as AF_VSOCK uses a 32-bit port. We could use a
+>> 32-bits port field or ever a 64-bit one. The later could make more sense
+>> because each field would eventually be aligned on 64-bit. Picking a
+>> 16-bit value was to help developers (and compilers/linters) with the
+>> "correct" type (for TCP).
 
+Thinking more about this, let's use a __u64 port (and remove the 
+explicit packing). The landlock_append_net_rule() function should use a 
+__u16 port argument, but the add_rule_net_service() function should 
+check that there is no overflow with the port attribute (not higher than 
+U16_MAX) before passing it to landlock_append_net_rule(). We should 
+prioritize flexibility for the kernel UAPI over stricter types. User 
+space libraries can improve this kind of types with a more complex API.
+
+Big endian can make sense for a pure network API because the port value 
+(and the IP address) is passed to other machines through the network, 
+as-is. However, with Landlock, the port value is only used by the 
+kernel. Moreover, in practice, port values are mostly converted when 
+filling the sockaddr*_in structs. It would then make it more risky to 
+ask developers another explicit htons() conversion for Landlock 
+syscalls. Let's stick to the host endianess and let the kernel do the 
+conversion.
+
+Please include these rationales in code comments. We also need to update 
+the tests for endianess, but still check big and little endian 
+consistency as it is currently done in these tests. A new test should be 
+added to check port boundaries with:
+- port = 0
+- port = U16_MAX
+- port = U16_MAX + 1 (which should get an EINVAL)
+- port = U16_MAX + 2 (to check u16 casting != 0)
+- port = U32_MAX + 1
+- port = U32_MAX + 2
+
+
+>>
+>> If we think about protocols other than TCP and UDP (e.g. AF_VSOCK), it
+>> could make sense to have a dedicated attr struct specifying other
+>> properties (e.g. CID). Anyway, the API is flexible but it would be nice
+>> to not mess with it too much. What do you think?
+>>
+>>
+>>>>
+>>>>> +
+>>>>> +    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>>>>> +                            &net_service, 0);
+>>>>> +
+>>>>> +The next step is to restrict the current thread from gaining more privileges
+>>>>> +(e.g. thanks to a SUID binary). We now have a ruleset with the first rule allowing
+>>>>             ^^^^^^
+>>>>             "through" a SUID binary? "thanks to" sounds like it's desired
+>>>>             to do that, while we're actually trying to prevent it here?
+>>>
+>>>      This is Mickaёl's part. Let's ask his opinion here.
+>>>
+>>>      Mickaёl, any thoughts?
+>>
+>> Yep, "through" looks better.
+>> .
