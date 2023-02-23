@@ -2,127 +2,164 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4778C61DA4
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Feb 2023 12:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A239CC636D6
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Feb 2023 18:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232954AbjBWMuT (ORCPT
+        id S229546AbjBWSl4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Feb 2023 07:50:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45834 "EHLO
+        Thu, 23 Feb 2023 13:41:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233289AbjBWMuR (ORCPT
+        with ESMTP id S231508AbjBWSl4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Feb 2023 07:50:17 -0500
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5647148E3B;
-        Thu, 23 Feb 2023 04:50:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1677156604; x=1708692604;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eASNSwL36ptZ/4xtIdgPWLQrNC65cNYiYtDWNhiD6Og=;
-  b=dFKv4g3nj7P4q5j3ca3KYLo6aX8qSzB/NhlJO2B3hFv6HBctLCmgPKJO
-   jAE74YYHP8myHsBJgNScB9eT5TejRczc1MB2OHZFyBg3CpXRu8k3LwQXt
-   6oiNl5AjQ036rlCceOxJtLRAAJY2kAYDPWj7U2VloFqJ4v8ECUmI7DH1R
-   h+Vs6gM2ysUudI1qw5j4yivEdo7l63rx2zua8wEGMOXKgVR4Is4TiU0gf
-   5o2HVftdDdV/ZsEZpUBPRqya6C+Wad7JEomzZlq0JyrOlPy7fh578FaJx
-   J+RZT9xOhI4g9u+5ZrdttD31oigcEpKfRcYrDn+2Ylb8QI01Z+y4BIEcu
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10629"; a="335407719"
-X-IronPort-AV: E=Sophos;i="5.97,320,1669104000"; 
-   d="scan'208";a="335407719"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2023 04:50:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10629"; a="741259700"
-X-IronPort-AV: E=Sophos;i="5.97,320,1669104000"; 
-   d="scan'208";a="741259700"
-Received: from lkp-server01.sh.intel.com (HELO 3895f5c55ead) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 23 Feb 2023 04:50:00 -0800
-Received: from kbuild by 3895f5c55ead with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pVB2t-0001L7-2c;
-        Thu, 23 Feb 2023 12:49:59 +0000
-Date:   Thu, 23 Feb 2023 20:49:52 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, jmorris@namei.org,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        mic@digikod.net
-Subject: Re: [PATCH v6 04/11] LSM: syscalls for current process attributes
-Message-ID: <202302232007.dcqfhRnw-lkp@intel.com>
-References: <20230222200838.8149-5-casey@schaufler-ca.com>
-MIME-Version: 1.0
+        Thu, 23 Feb 2023 13:41:56 -0500
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D25545BBBE;
+        Thu, 23 Feb 2023 10:41:51 -0800 (PST)
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 31NIfNDg025492;
+        Thu, 23 Feb 2023 12:41:23 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 31NIfLQ4025490;
+        Thu, 23 Feb 2023 12:41:21 -0600
+Date:   Thu, 23 Feb 2023 12:41:21 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/14] Add namespace implementation.
+Message-ID: <20230223184121.GA25233@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20230204050954.11583-1-greg@enjellic.com> <20230204115917.1015-1-hdanton@sina.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230222200838.8149-5-casey@schaufler-ca.com>
+In-Reply-To: <20230204115917.1015-1-hdanton@sina.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 23 Feb 2023 12:41:23 -0600 (CST)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Casey,
+On Sat, Feb 04, 2023 at 07:59:17PM +0800, Hillf Danton wrote:
 
-I love your patch! Perhaps something to improve:
+Good afternoon Hillf, I hope this note finds your week going well.
 
-[auto build test WARNING on tip/perf/core]
-[also build test WARNING on acme/perf/core shuah-kselftest/next shuah-kselftest/fixes v6.2]
-[cannot apply to linus/master next-20230223]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Sorry for the delay in getting back to you on this, had some travel
+and we are now in the process of readying the second spin of the
+patches.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/LSM-Maintain-a-table-of-LSM-attribute-data/20230223-050902
-patch link:    https://lore.kernel.org/r/20230222200838.8149-5-casey%40schaufler-ca.com
-patch subject: [PATCH v6 04/11] LSM: syscalls for current process attributes
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20230223/202302232007.dcqfhRnw-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-8) 11.3.0
-reproduce (this is a W=1 build):
-        # https://github.com/intel-lab-lkp/linux/commit/04ba82c1bd629c2114ad851b4723d6e8b0f9d08f
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Casey-Schaufler/LSM-Maintain-a-table-of-LSM-attribute-data/20230223-050902
-        git checkout 04ba82c1bd629c2114ad851b4723d6e8b0f9d08f
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=x86_64 olddefconfig
-        make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
+Thank you, up front, for taking the time to comment on the series.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202302232007.dcqfhRnw-lkp@intel.com/
+> [with lkml Cced]
 
-All warnings (new ones prefixed by >>):
+Noted.
 
->> security/lsm_syscalls.c:61:5: warning: no previous prototype for 'lsm_name_to_attr' [-Wmissing-prototypes]
-      61 | u64 lsm_name_to_attr(const char *name)
-         |     ^~~~~~~~~~~~~~~~
+> On Fri, 3 Feb 2023 23:09:49 -0600 Dr. Greg <greg@enjellic.com>
+> > +/**
+> > + * tsem_ns_free() - Releases the namespace model infrastructure.
+> > + * @kref: A pointer to the reference counting structure for the namespace.
+> > + *
+> > + * This function is called when the last reference to a kernel
+> > + * based TMA model structure is released.
+> > + */
+> > +void tsem_ns_free(struct kref *kref)
+> > +{
+> > +	struct tsem_TMA_context *ctx;
+> > +
+> > +	ctx = container_of(kref, struct tsem_TMA_context, kref);
+> > +
+> > +	if (ctx->external) {
+> > +		tsem_fs_remove_external(ctx->external->dentry);
+> > +		kfree(ctx->external);
+> > +	} else
+> > +		tsem_model_free(ctx);
+> > +
+> > +	kfree(ctx);
+> > +}
+> > +
+> > +static void wq_put(struct work_struct *work)
+> > +{
+> > +	struct tsem_TMA_work *tsem_work;
+> > +	struct tsem_TMA_context *ctx;
+> > +
+> > +	tsem_work = container_of(work, struct tsem_TMA_work, work);
+> > +	ctx = tsem_work->ctx;
+> > +	kref_put(&ctx->kref, tsem_ns_free);
+> > +}
+> > +
+> > +/**
+> > + * tsem_ns_get() - Obtain a reference on a TSEM TMA namespace.
+> > + * @ctx: A pointer to the TMA modeling context for which a reference is
+> > + *	 to be released.
+> > + *
+> > + * This function is called to release a reference to a TMA modeling
+> > + * domain.
+> > + */
+> > +void tsem_ns_put(struct tsem_TMA_context *ctx)
+> > +{
+> > +	if (kref_read(&ctx->kref) > 1) {
+> > +		kref_put(&ctx->kref, tsem_ns_free);
+> > +		return;
+> > +	}
 
+> Given ctx->kref is 2, in the below scenario
+> 
+> 	cpu 0		cpu 2
+> 	---		---
+> 	ctx->kref > 1
+> 			ctx->kref > 1
+> 			kref_put
+> 	kref_put
+> 
+> no work will be scheduled, so it makes sense to move scheduling work to
+> tsem_ns_free() by making tsem_ns_put() only a wrapper of kref_put(), if
+> ctx has to be released in workqueue.
+> 
+> void tsem_ns_put(struct tsem_TMA_context *ctx)
+> {
+> 	kref_put(&ctx->kref, tsem_ns_free);
+> }
 
-vim +/lsm_name_to_attr +61 security/lsm_syscalls.c
+Missed this issue, thank you for pointing it out.
 
-    51	
-    52	/**
-    53	 * lsm_name_to_attr - map an LSM attribute name to its ID
-    54	 * @name: name of the attribute
-    55	 *
-    56	 * Look the given @name up in the table of know attribute names.
-    57	 *
-    58	 * Returns the LSM attribute value associated with @name, or 0 if
-    59	 * there is no mapping.
-    60	 */
-  > 61	u64 lsm_name_to_attr(const char *name)
-    62	{
-    63		int i;
-    64	
-    65		for (i = 0; i < ARRAY_SIZE(lsm_attr_names); i++)
-    66			if (!strcmp(name, lsm_attr_names[i].name))
-    67				return lsm_attr_names[i].attrs;
-    68		return 0;
-    69	}
-    70	
+Based on your observations we re-worked the handling of the modeling
+context reference handling and release and we should have the issue
+addressed.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+In the process we managed to clean up and simplify the implementation
+as well, always good.
+
+The changes will be in the second version of the patch series.
+
+> > +
+> > +	INIT_WORK(&ctx->work.work, wq_put);
+> > +	ctx->work.ctx = ctx;
+> > +	if (!queue_work(release_wq, &ctx->work.work))
+> > +		WARN_ON_ONCE(1);
+> > +}
+
+> PS given system_unbound_wq and system_wq for instance, release_wq looks
+> not mandatory if kfree is the major job.
+
+Based on this observation, we also dropped the TSEM specific workqueue
+and the code is now scheduling the modeling domain release work onto
+the system_wq queue, given that there is nothing sophisticated about
+the work that is being scheduled.
+
+This work includes the freeing of the memory for the structure that
+defines the external modeling context, or in the case of an internally
+modeled domain, the internal model description state.
+
+In addition, in the case of an externally modeled domain, the
+workqueue also handles the removal of the securityfs based pseudo-file
+that surfaces the event descriptions to the trust orchestrator.
+
+The use of the workqueue silences a series of lock debugging
+complaints about the release of the modeling domain/namespace
+infrastructure.
+
+Thanks again for your comments, have a good day.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
