@@ -2,90 +2,127 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3CDC636D7
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Feb 2023 10:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4778C61DA4
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Feb 2023 12:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233710AbjBWKTU (ORCPT
+        id S232954AbjBWMuT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Feb 2023 05:19:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51684 "EHLO
+        Thu, 23 Feb 2023 07:50:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233472AbjBWKTT (ORCPT
+        with ESMTP id S233289AbjBWMuR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Feb 2023 05:19:19 -0500
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F253D928;
-        Thu, 23 Feb 2023 02:19:18 -0800 (PST)
-Received: by mail-qt1-f182.google.com with SMTP id w42so10208601qtc.2;
-        Thu, 23 Feb 2023 02:19:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hiSyPZd76dU3y97iocP4+7J5nmKEdq6xDxkhc6e2U4Y=;
-        b=u8gh4vv4cQRT8kDj07i4Z0lgvsGsFjbAhUWJU0dUaGRG7FafUkfqr4CUaEsRwnqNVB
-         eVtKU7mlJi/xgWX8/oV5/loPmhr0eJqmJZb6yXDwe5qVcJFi77Ih68hbADbOc0gvOkM/
-         4aAUMYw3Nnjs4Rt+5+8TYCUzQVhvNfa44uQ6b/ahcfKdjZTVPrmoowvNoHDF10e/RSM9
-         2vOCn10XIdXVCDq6U9igkXKCLfhuqKAXl79i0I4fukhWCbkSxT2nqAm4cU7UXgMhFhyO
-         u5rThj8CaVu3uEl1n+kI822Id/1WeAoF3J+szSa02FPhsdrg9AJT4+yGdThSlUejCwO7
-         dVvg==
-X-Gm-Message-State: AO0yUKXuCCV/xRbUIOPz3zP/zwjiFoCXegMx9GUBpfT55r61C4chk/dv
-        zNGs+ebtv4Z1Rxk0OWGKFc0UMAWLapIU1LqD
-X-Google-Smtp-Source: AK7set9BvN12U2VTr2A/DbFOyw8HOlA5kjuiB3JeItJS0423kx0DOtMCBUzi5XLzL97F31WJvFW1HQ==
-X-Received: by 2002:a05:622a:10:b0:3b8:4325:7610 with SMTP id x16-20020a05622a001000b003b843257610mr20623938qtw.67.1677147557715;
-        Thu, 23 Feb 2023 02:19:17 -0800 (PST)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id a8-20020ac81088000000b003bd1a464346sm2931127qtj.9.2023.02.23.02.19.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Feb 2023 02:19:16 -0800 (PST)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-536cd8f6034so145891047b3.10;
-        Thu, 23 Feb 2023 02:19:16 -0800 (PST)
-X-Received: by 2002:a81:ae0c:0:b0:52e:cacb:d7c4 with SMTP id
- m12-20020a81ae0c000000b0052ecacbd7c4mr1883570ywh.5.1677147556298; Thu, 23 Feb
- 2023 02:19:16 -0800 (PST)
+        Thu, 23 Feb 2023 07:50:17 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5647148E3B;
+        Thu, 23 Feb 2023 04:50:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1677156604; x=1708692604;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eASNSwL36ptZ/4xtIdgPWLQrNC65cNYiYtDWNhiD6Og=;
+  b=dFKv4g3nj7P4q5j3ca3KYLo6aX8qSzB/NhlJO2B3hFv6HBctLCmgPKJO
+   jAE74YYHP8myHsBJgNScB9eT5TejRczc1MB2OHZFyBg3CpXRu8k3LwQXt
+   6oiNl5AjQ036rlCceOxJtLRAAJY2kAYDPWj7U2VloFqJ4v8ECUmI7DH1R
+   h+Vs6gM2ysUudI1qw5j4yivEdo7l63rx2zua8wEGMOXKgVR4Is4TiU0gf
+   5o2HVftdDdV/ZsEZpUBPRqya6C+Wad7JEomzZlq0JyrOlPy7fh578FaJx
+   J+RZT9xOhI4g9u+5ZrdttD31oigcEpKfRcYrDn+2Ylb8QI01Z+y4BIEcu
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10629"; a="335407719"
+X-IronPort-AV: E=Sophos;i="5.97,320,1669104000"; 
+   d="scan'208";a="335407719"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2023 04:50:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10629"; a="741259700"
+X-IronPort-AV: E=Sophos;i="5.97,320,1669104000"; 
+   d="scan'208";a="741259700"
+Received: from lkp-server01.sh.intel.com (HELO 3895f5c55ead) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 23 Feb 2023 04:50:00 -0800
+Received: from kbuild by 3895f5c55ead with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pVB2t-0001L7-2c;
+        Thu, 23 Feb 2023 12:49:59 +0000
+Date:   Thu, 23 Feb 2023 20:49:52 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, jmorris@namei.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        mic@digikod.net
+Subject: Re: [PATCH v6 04/11] LSM: syscalls for current process attributes
+Message-ID: <202302232007.dcqfhRnw-lkp@intel.com>
+References: <20230222200838.8149-5-casey@schaufler-ca.com>
 MIME-Version: 1.0
-References: <20230222200838.8149-1-casey@schaufler-ca.com> <20230222200838.8149-7-casey@schaufler-ca.com>
-In-Reply-To: <20230222200838.8149-7-casey@schaufler-ca.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 23 Feb 2023 11:19:02 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWGVmdTD5vZW1ObsCsXSxDnYp6WvFtfpKQKPCdHfu7Zvw@mail.gmail.com>
-Message-ID: <CAMuHMdWGVmdTD5vZW1ObsCsXSxDnYp6WvFtfpKQKPCdHfu7Zvw@mail.gmail.com>
-Subject: Re: [PATCH v6 06/11] LSM: wireup Linux Security Module syscalls
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230222200838.8149-5-casey@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 Hi Casey,
 
-On Wed, Feb 22, 2023 at 9:18 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> Wireup lsm_get_self_attr, lsm_set_self_attr and lsm_module_list
-> system calls.
->
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+I love your patch! Perhaps something to improve:
 
-Thanks for your patch!
+[auto build test WARNING on tip/perf/core]
+[also build test WARNING on acme/perf/core shuah-kselftest/next shuah-kselftest/fixes v6.2]
+[cannot apply to linus/master next-20230223]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->  arch/m68k/kernel/syscalls/syscall.tbl               |  3 +++
+url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/LSM-Maintain-a-table-of-LSM-attribute-data/20230223-050902
+patch link:    https://lore.kernel.org/r/20230222200838.8149-5-casey%40schaufler-ca.com
+patch subject: [PATCH v6 04/11] LSM: syscalls for current process attributes
+config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20230223/202302232007.dcqfhRnw-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-8) 11.3.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/04ba82c1bd629c2114ad851b4723d6e8b0f9d08f
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Casey-Schaufler/LSM-Maintain-a-table-of-LSM-attribute-data/20230223-050902
+        git checkout 04ba82c1bd629c2114ad851b4723d6e8b0f9d08f
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 O=build_dir ARCH=x86_64 olddefconfig
+        make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
 
-Please collect tags given, and add them when reposting.
-I'm providing my
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> [m68k]
-for the third time.
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202302232007.dcqfhRnw-lkp@intel.com/
 
-Gr{oetje,eeting}s,
+All warnings (new ones prefixed by >>):
 
-                        Geert
+>> security/lsm_syscalls.c:61:5: warning: no previous prototype for 'lsm_name_to_attr' [-Wmissing-prototypes]
+      61 | u64 lsm_name_to_attr(const char *name)
+         |     ^~~~~~~~~~~~~~~~
+
+
+vim +/lsm_name_to_attr +61 security/lsm_syscalls.c
+
+    51	
+    52	/**
+    53	 * lsm_name_to_attr - map an LSM attribute name to its ID
+    54	 * @name: name of the attribute
+    55	 *
+    56	 * Look the given @name up in the table of know attribute names.
+    57	 *
+    58	 * Returns the LSM attribute value associated with @name, or 0 if
+    59	 * there is no mapping.
+    60	 */
+  > 61	u64 lsm_name_to_attr(const char *name)
+    62	{
+    63		int i;
+    64	
+    65		for (i = 0; i < ARRAY_SIZE(lsm_attr_names); i++)
+    66			if (!strcmp(name, lsm_attr_names[i].name))
+    67				return lsm_attr_names[i].attrs;
+    68		return 0;
+    69	}
+    70	
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
