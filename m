@@ -2,77 +2,176 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98482C64ED6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Feb 2023 08:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850F7C64ED6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Feb 2023 09:36:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230267AbjB1IJM (ORCPT
+        id S229469AbjB1JgL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Feb 2023 03:09:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56152 "EHLO
+        Tue, 28 Feb 2023 04:36:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230268AbjB1IJG (ORCPT
+        with ESMTP id S229659AbjB1JgK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Feb 2023 03:09:06 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B31D1D926;
-        Tue, 28 Feb 2023 00:09:04 -0800 (PST)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4PQqhc3H04z9tBn;
-        Tue, 28 Feb 2023 16:06:56 +0800 (CST)
-Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
- (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Tue, 28 Feb
- 2023 16:08:41 +0800
-From:   GUO Zihua <guozihua@huawei.com>
-To:     <zohar@linux.ibm.com>, <paul@paul-moore.com>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-rdma@vger.kernel.org>, <dledford@redhat.com>, <jgg@ziepe.ca>
-Subject: [PATCH 4.19 v3 5/6] ima: Evaluate error in init_ima()
-Date:   Tue, 28 Feb 2023 16:06:29 +0800
-Message-ID: <20230228080630.52370-6-guozihua@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230228080630.52370-1-guozihua@huawei.com>
-References: <20230228080630.52370-1-guozihua@huawei.com>
+        Tue, 28 Feb 2023 04:36:10 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9699029E15;
+        Tue, 28 Feb 2023 01:36:08 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 48BE71FDC2;
+        Tue, 28 Feb 2023 09:36:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1677576967; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=taaLiLGPxaqufQ2R430/cnXrJjAKnDyXV614KjX4P38=;
+        b=sRYmU6Y+9Zjnuojqw1yyR1C1Xp+9gqic7ETrAJ3f22NJo30oigfnbYDwhbX0i9t2VjZoiO
+        sW2uWwZ7QfeFSPg9axfWslKerdOqD5BZAFjkeRhprGry1Hbpts70WHkSdwvXa6I0suORvg
+        NemgZnzptyk33aeqDm6EmH8/Q88KE/0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1677576967;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=taaLiLGPxaqufQ2R430/cnXrJjAKnDyXV614KjX4P38=;
+        b=8pKw1F7iyYH/ijfXTkoUdIAp9bjuwkUcZT407zpqJ4gKz/BMDqpCi53C+jNZm/ueHSUeNr
+        oiwzzXLaHnb/VTDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 21EE91333C;
+        Tue, 28 Feb 2023 09:36:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id mMCXBwfL/WNzOAAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Tue, 28 Feb 2023 09:36:07 +0000
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH] tomoyo: replace tomoyo_round2() with kmalloc_size_roundup()
+Date:   Tue, 28 Feb 2023 10:35:56 +0100
+Message-Id: <20230228093556.19027-1-vbabka@suse.cz>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.175.31]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+It seems tomoyo has had its own implementation of what
+kmalloc_size_roundup() does today. Remove the function tomoyo_round2()
+and replace it with kmalloc_size_roundup(). It provides more accurate
+results and doesn't contain a while loop.
 
-[ Upstream commit e144d6b265415ddbdc54b3f17f4f95133effa5a8 ]
-
-Evaluate error in init_ima() before register_blocking_lsm_notifier() and
-return if not zero.
-
-Cc: stable@vger.kernel.org # 5.3.x
-Fixes: b16942455193 ("ima: use the lsm policy update notifier")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: GUO Zihua <guozihua@huawei.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- security/integrity/ima/ima_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+ security/tomoyo/audit.c  |  6 +++---
+ security/tomoyo/common.c |  2 +-
+ security/tomoyo/common.h | 44 ----------------------------------------
+ 3 files changed, 4 insertions(+), 48 deletions(-)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 55681872c6ce..fcaaf2c2ba4b 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -557,6 +557,9 @@ static int __init init_ima(void)
- 		error = ima_init();
+diff --git a/security/tomoyo/audit.c b/security/tomoyo/audit.c
+index 7cf8fdbb29bf..610c1536cf70 100644
+--- a/security/tomoyo/audit.c
++++ b/security/tomoyo/audit.c
+@@ -271,7 +271,7 @@ char *tomoyo_init_log(struct tomoyo_request_info *r, int len, const char *fmt,
+ 		/* +18 is for " symlink.target=\"%s\"" */
+ 		len += 18 + strlen(symlink);
  	}
+-	len = tomoyo_round2(len);
++	len = kmalloc_size_roundup(len);
+ 	buf = kzalloc(len, GFP_NOFS);
+ 	if (!buf)
+ 		goto out;
+@@ -382,12 +382,12 @@ void tomoyo_write_log2(struct tomoyo_request_info *r, int len, const char *fmt,
+ 		goto out;
+ 	}
+ 	entry->log = buf;
+-	len = tomoyo_round2(strlen(buf) + 1);
++	len = kmalloc_size_roundup(strlen(buf) + 1);
+ 	/*
+ 	 * The entry->size is used for memory quota checks.
+ 	 * Don't go beyond strlen(entry->log).
+ 	 */
+-	entry->size = len + tomoyo_round2(sizeof(*entry));
++	entry->size = len + kmalloc_size_roundup(sizeof(*entry));
+ 	spin_lock(&tomoyo_log_lock);
+ 	if (tomoyo_memory_quota[TOMOYO_MEMORY_AUDIT] &&
+ 	    tomoyo_memory_used[TOMOYO_MEMORY_AUDIT] + entry->size >=
+diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
+index f4cd9b58b205..969d4aa6fd55 100644
+--- a/security/tomoyo/common.c
++++ b/security/tomoyo/common.c
+@@ -2094,7 +2094,7 @@ int tomoyo_supervisor(struct tomoyo_request_info *r, const char *fmt, ...)
+ 		tomoyo_add_entry(r->domain, entry.query);
+ 		goto out;
+ 	}
+-	len = tomoyo_round2(entry.query_len);
++	len = kmalloc_size_roundup(entry.query_len);
+ 	entry.domain = r->domain;
+ 	spin_lock(&tomoyo_query_list_lock);
+ 	if (tomoyo_memory_quota[TOMOYO_MEMORY_QUERY] &&
+diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
+index ca285f362705..a539b2cbb5c4 100644
+--- a/security/tomoyo/common.h
++++ b/security/tomoyo/common.h
+@@ -1276,50 +1276,6 @@ static inline struct tomoyo_policy_namespace *tomoyo_current_namespace(void)
+ 	return tomoyo_domain()->ns;
+ }
  
-+	if (error)
-+		return error;
-+
- 	error = register_blocking_lsm_notifier(&ima_lsm_policy_notifier);
- 	if (error)
- 		pr_warn("Couldn't register LSM notifier, error %d\n", error);
+-#if defined(CONFIG_SLOB)
+-
+-/**
+- * tomoyo_round2 - Round up to power of 2 for calculating memory usage.
+- *
+- * @size: Size to be rounded up.
+- *
+- * Returns @size.
+- *
+- * Since SLOB does not round up, this function simply returns @size.
+- */
+-static inline int tomoyo_round2(size_t size)
+-{
+-	return size;
+-}
+-
+-#else
+-
+-/**
+- * tomoyo_round2 - Round up to power of 2 for calculating memory usage.
+- *
+- * @size: Size to be rounded up.
+- *
+- * Returns rounded size.
+- *
+- * Strictly speaking, SLAB may be able to allocate (e.g.) 96 bytes instead of
+- * (e.g.) 128 bytes.
+- */
+-static inline int tomoyo_round2(size_t size)
+-{
+-#if PAGE_SIZE == 4096
+-	size_t bsize = 32;
+-#else
+-	size_t bsize = 64;
+-#endif
+-	if (!size)
+-		return 0;
+-	while (size > bsize)
+-		bsize <<= 1;
+-	return bsize;
+-}
+-
+-#endif
+-
+ /**
+  * list_for_each_cookie - iterate over a list with cookie.
+  * @pos:        the &struct list_head to use as a loop cursor.
 -- 
-2.17.1
+2.39.2
 
