@@ -2,176 +2,165 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850F7C64ED6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Feb 2023 09:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A39C64EC7
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Feb 2023 14:47:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229469AbjB1JgL (ORCPT
+        id S229528AbjB1Org (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Feb 2023 04:36:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53784 "EHLO
+        Tue, 28 Feb 2023 09:47:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229659AbjB1JgK (ORCPT
+        with ESMTP id S229565AbjB1Orf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Feb 2023 04:36:10 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9699029E15;
-        Tue, 28 Feb 2023 01:36:08 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 48BE71FDC2;
-        Tue, 28 Feb 2023 09:36:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1677576967; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=taaLiLGPxaqufQ2R430/cnXrJjAKnDyXV614KjX4P38=;
-        b=sRYmU6Y+9Zjnuojqw1yyR1C1Xp+9gqic7ETrAJ3f22NJo30oigfnbYDwhbX0i9t2VjZoiO
-        sW2uWwZ7QfeFSPg9axfWslKerdOqD5BZAFjkeRhprGry1Hbpts70WHkSdwvXa6I0suORvg
-        NemgZnzptyk33aeqDm6EmH8/Q88KE/0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1677576967;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=taaLiLGPxaqufQ2R430/cnXrJjAKnDyXV614KjX4P38=;
-        b=8pKw1F7iyYH/ijfXTkoUdIAp9bjuwkUcZT407zpqJ4gKz/BMDqpCi53C+jNZm/ueHSUeNr
-        oiwzzXLaHnb/VTDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 21EE91333C;
-        Tue, 28 Feb 2023 09:36:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id mMCXBwfL/WNzOAAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Tue, 28 Feb 2023 09:36:07 +0000
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH] tomoyo: replace tomoyo_round2() with kmalloc_size_roundup()
-Date:   Tue, 28 Feb 2023 10:35:56 +0100
-Message-Id: <20230228093556.19027-1-vbabka@suse.cz>
-X-Mailer: git-send-email 2.39.2
+        Tue, 28 Feb 2023 09:47:35 -0500
+Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF9AE1CF4F;
+        Tue, 28 Feb 2023 06:47:34 -0800 (PST)
+Received: by mail-oo1-xc2a.google.com with SMTP id p8-20020a4a3c48000000b0052527a9d5f0so1593800oof.1;
+        Tue, 28 Feb 2023 06:47:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1677595654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :references:in-reply-to:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MQqtgFt2ZrPoR/y5o9mWftXFVOmEsTr/lW9kmkGwIeU=;
+        b=hkwXo3LNwgRxN74Mc8UpBqQy4W9v8MFdb0B21cwtvjSroAqCKA3nGxYMkFFR/hxN8q
+         aTNjbWywo7ciKcrX/dnDhIDIQDPXwAML1PurY27j4DuewIwMigmXK49TVFyd8Ex/y3yE
+         +HV8wGXMGu4+MFmfYE+BOqwYdjWL1L0WpQ6ousW4/XWyjZADA7iGsERDoj0msCc5UTYg
+         60I1980f/Qnl/D9OAjS91fUJF7lhM+U4NjMw9APFLMG5Gs5/G3xsza1BtMilSEGBupYQ
+         ec7zxIdDR9BnETts277yPYHeIMGKkJOvGn5i4dITRj9MwYquyO21oXy9da1jQTWz/bqa
+         fe/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677595654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :references:in-reply-to:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MQqtgFt2ZrPoR/y5o9mWftXFVOmEsTr/lW9kmkGwIeU=;
+        b=mXuFm/2zZzjskzTvO3nC8zP705zd6mAr7kEK45Uc5VbCQtgpvHrOrI4Wm901og9rT4
+         AgZCfG5Ex5y9VZYSSoBCcen3UN0Txpc0eWpdUV3GnfLDuUAVIs0IQpsQ9Yg6hUhgy64o
+         +jW0tqkCjsQZdbo6bNFxrASbTCgAJtav4w0jnTdamdQT0u0MFD8Sh7HucgNgH7msRxdQ
+         leUjm0+Hc/qHvhxQbirLnJ5zj+HUYiKOs2SCW/gc7RzihiyS7S4lWvzMrKlZNZzfUdug
+         HdumwBp0Urmu9UrfZYAo0Ni6ZgBpw5AaefSo6oYw7EVbRvQ610o23/2rMrCDQ9us83OA
+         BFGw==
+X-Gm-Message-State: AO0yUKUY3MPNwAxjH7h5U8pcwQ8fd4voAZQBFo/1Qud8cKP1RsiZkJ3S
+        rwy2GLejJ+1xuuNHzkSW2YQD5P2b5NQUSoWQiNo=
+X-Google-Smtp-Source: AK7set8WvLmeK/3EEtJ41emSb/vN7XfCJ35JD48P5Pnt1sFUrR4W6SiHncUKVeXAqFboiMUX6ywXwL5DpvosfbdPRH4=
+X-Received: by 2002:a4a:a302:0:b0:525:2b47:93cb with SMTP id
+ q2-20020a4aa302000000b005252b4793cbmr908579ool.1.1677595654090; Tue, 28 Feb
+ 2023 06:47:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac9:4304:0:b0:4c1:4768:8c59 with HTTP; Tue, 28 Feb 2023
+ 06:47:33 -0800 (PST)
+In-Reply-To: <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com>
+References: <20230125155557.37816-1-mjguzik@gmail.com> <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
+ <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Tue, 28 Feb 2023 15:47:33 +0100
+Message-ID: <CAGudoHEV_aNymUq6v9Trn_ZRU45TL12AVXqQeV2kA90FuawxiQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] capability: add cap_isidentical
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-It seems tomoyo has had its own implementation of what
-kmalloc_size_roundup() does today. Remove the function tomoyo_round2()
-and replace it with kmalloc_size_roundup(). It provides more accurate
-results and doesn't contain a while loop.
+On 2/28/23, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 2/27/2023 5:14 PM, Linus Torvalds wrote:
+>> On Wed, Jan 25, 2023 at 7:56=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com=
+> wrote:
+>>> +static inline bool cap_isidentical(const kernel_cap_t a, const
+>>> kernel_cap_t b)
+>>> +{
+>>> +       unsigned __capi;
+>>> +       CAP_FOR_EACH_U32(__capi) {
+>>> +               if (a.cap[__capi] !=3D b.cap[__capi])
+>>> +                       return false;
+>>> +       }
+>>> +       return true;
+>>> +}
+>>> +
+>> Side note, and this is not really related to this particular patch
+>> other than because it just brought up the issue once more..
+>>
+>> Our "kernel_cap_t" thing is disgusting.
+>>
+>> It's been a structure containing
+>>
+>>         __u32 cap[_KERNEL_CAPABILITY_U32S];
+>>
+>> basically forever, and it's not likely to change in the future. I
+>> would object to any crazy capability expansion, considering how
+>> useless and painful they've been anyway, and I don't think anybody
+>> really is even remotely planning anything like that anyway.
+>>
+>> And what is _KERNEL_CAPABILITY_U32S anyway? It's the "third version"
+>> of that size:
+>>
+>>   #define _KERNEL_CAPABILITY_U32S    _LINUX_CAPABILITY_U32S_3
+>>
+>> which happens to be the same number as the second version of said
+>> #define, which happens to be "2".
+>>
+>> In other words, that fancy array is just 64 bits. And we'd probably be
+>> better off just treating it as such, and just doing
+>>
+>>         typedef u64 kernel_cap_t;
+>>
+>> since we have to do the special "convert from user space format"
+>> _anyway_, and this isn't something that is shared to user space as-is.
+>>
+>> Then that "cap_isidentical()" would literally be just "a =3D=3D b" inste=
+ad
+>> of us playing games with for-loops that are just two wide, and a
+>> compiler that may or may not realize.
+>>
+>> It would literally remove some of the insanity in <linux/capability.h>
+>> - look for CAP_TO_MASK() and CAP_TO_INDEX and CAP_FS_MASK_B0 and
+>> CAP_FS_MASK_B1 and just plain ugliness that comes from this entirely
+>> historical oddity.
+>>
+>> Yes, yes, we started out having it be a single-word array, and yes,
+>> the code is written to think that it might some day be expanded past
+>> the two words it then in 2008 it expanded to two words and 64 bits.
+>> And now, fifteen years later, we use 40 of those 64 bits, and
+>> hopefully we'll never add another one.
+>
+> I agree that the addition of 24 more capabilities is unlikely. The
+> two reasons presented recently for adding capabilities are to implement
+> boutique policies (CAP_MYHARDWAREISSPECIAL) or to break up CAP_SYS_ADMIN.
+> Neither of these is sustainable with a finite number of capabilities, nor
+> do they fit the security model capabilities implement. It's possible that
+> a small number of additional capabilities will be approved, but even that
+> seems unlikely.
+>
+>
+>> So we have historical reasons for why our kernel_cap_t is so odd. But
+>> it *is* odd.
+>>
+>> Hmm?
+>
+> I don't see any reason that kernel_cap_t shouldn't be a u64. If by some
+> amazing change in mindset we develop need for 65 capabilities, someone ca=
+n
+> dredge up the old code, shout "I told you so!" and put it back the way it
+> was. Or maybe by then we'll have u128, and can just switch to that.
+>
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- security/tomoyo/audit.c  |  6 +++---
- security/tomoyo/common.c |  2 +-
- security/tomoyo/common.h | 44 ----------------------------------------
- 3 files changed, 4 insertions(+), 48 deletions(-)
+Premature generalization is the root of all evil (or however the
+saying goes), as evidenced above.
 
-diff --git a/security/tomoyo/audit.c b/security/tomoyo/audit.c
-index 7cf8fdbb29bf..610c1536cf70 100644
---- a/security/tomoyo/audit.c
-+++ b/security/tomoyo/audit.c
-@@ -271,7 +271,7 @@ char *tomoyo_init_log(struct tomoyo_request_info *r, int len, const char *fmt,
- 		/* +18 is for " symlink.target=\"%s\"" */
- 		len += 18 + strlen(symlink);
- 	}
--	len = tomoyo_round2(len);
-+	len = kmalloc_size_roundup(len);
- 	buf = kzalloc(len, GFP_NOFS);
- 	if (!buf)
- 		goto out;
-@@ -382,12 +382,12 @@ void tomoyo_write_log2(struct tomoyo_request_info *r, int len, const char *fmt,
- 		goto out;
- 	}
- 	entry->log = buf;
--	len = tomoyo_round2(strlen(buf) + 1);
-+	len = kmalloc_size_roundup(strlen(buf) + 1);
- 	/*
- 	 * The entry->size is used for memory quota checks.
- 	 * Don't go beyond strlen(entry->log).
- 	 */
--	entry->size = len + tomoyo_round2(sizeof(*entry));
-+	entry->size = len + kmalloc_size_roundup(sizeof(*entry));
- 	spin_lock(&tomoyo_log_lock);
- 	if (tomoyo_memory_quota[TOMOYO_MEMORY_AUDIT] &&
- 	    tomoyo_memory_used[TOMOYO_MEMORY_AUDIT] + entry->size >=
-diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index f4cd9b58b205..969d4aa6fd55 100644
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -2094,7 +2094,7 @@ int tomoyo_supervisor(struct tomoyo_request_info *r, const char *fmt, ...)
- 		tomoyo_add_entry(r->domain, entry.query);
- 		goto out;
- 	}
--	len = tomoyo_round2(entry.query_len);
-+	len = kmalloc_size_roundup(entry.query_len);
- 	entry.domain = r->domain;
- 	spin_lock(&tomoyo_query_list_lock);
- 	if (tomoyo_memory_quota[TOMOYO_MEMORY_QUERY] &&
-diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-index ca285f362705..a539b2cbb5c4 100644
---- a/security/tomoyo/common.h
-+++ b/security/tomoyo/common.h
-@@ -1276,50 +1276,6 @@ static inline struct tomoyo_policy_namespace *tomoyo_current_namespace(void)
- 	return tomoyo_domain()->ns;
- }
- 
--#if defined(CONFIG_SLOB)
--
--/**
-- * tomoyo_round2 - Round up to power of 2 for calculating memory usage.
-- *
-- * @size: Size to be rounded up.
-- *
-- * Returns @size.
-- *
-- * Since SLOB does not round up, this function simply returns @size.
-- */
--static inline int tomoyo_round2(size_t size)
--{
--	return size;
--}
--
--#else
--
--/**
-- * tomoyo_round2 - Round up to power of 2 for calculating memory usage.
-- *
-- * @size: Size to be rounded up.
-- *
-- * Returns rounded size.
-- *
-- * Strictly speaking, SLAB may be able to allocate (e.g.) 96 bytes instead of
-- * (e.g.) 128 bytes.
-- */
--static inline int tomoyo_round2(size_t size)
--{
--#if PAGE_SIZE == 4096
--	size_t bsize = 32;
--#else
--	size_t bsize = 64;
--#endif
--	if (!size)
--		return 0;
--	while (size > bsize)
--		bsize <<= 1;
--	return bsize;
--}
--
--#endif
--
- /**
-  * list_for_each_cookie - iterate over a list with cookie.
-  * @pos:        the &struct list_head to use as a loop cursor.
--- 
-2.39.2
+The fact that this is an array of u32 escaped the confines of
+capability.h and as a result there would be unpleasant churn to sort
+it out, and more importantly this requires a lot more testing than you
+would normally expect.
 
+Personally I would only touch it as a result of losing a bet (and I'm
+not taking any with this in play), but that's just my $0.05 (adjusted
+for inflation).
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
