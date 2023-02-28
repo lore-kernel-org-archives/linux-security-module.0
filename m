@@ -2,154 +2,102 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED632C64ED6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Feb 2023 02:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EA8C64EC7
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Feb 2023 08:09:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229829AbjB1CqV (ORCPT
+        id S230296AbjB1IJH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Feb 2023 21:46:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34886 "EHLO
+        Tue, 28 Feb 2023 03:09:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbjB1CqU (ORCPT
+        with ESMTP id S229671AbjB1IJF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Feb 2023 21:46:20 -0500
-Received: from sonic314-28.consmr.mail.ne1.yahoo.com (sonic314-28.consmr.mail.ne1.yahoo.com [66.163.189.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C06CD19F3F
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Feb 2023 18:46:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1677552378; bh=BQ+WXlqpXh/uVG2MKB5itNMQ6Bd25Ipr7yTqsr/SVgo=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Lr+3eRhGyfq+C1ZSB+BQVj7xCTZ+SzGg5OlaocQiuwwjan+ZiD1iGT9PY+dUT5Q52kkk/3lyYkGZK4zfygbFjO9b0HaZ3k7PB0bo/5I5a3kubItuUAmiE/+wBDYVJ+awz2HH2j4LYMTYtCgLrndk0Nt9iaUdW5n/mscv00PvN8UQ2Vv/JIiVLv5JiHeuK3Ep4/Kr+/SNjAlAJdQjJajjExiwcyGqISD4HAoMVxR7J7MadlQzGYwbphww4W9muARwb8+316o4/WeZLrqOMkTBBQ1G21042DcoWWvu5PzqW0JD5FAniqkAvoTFUvHP91fM8YXqlHMljo9tL+qgMdRBag==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1677552378; bh=CQMeHqcj7aXG5ZlssH8sHHcD3WVvtuLyXO4qUFLtlWX=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=XOzdlBgztf+yNBsBb5135Z0taK+0hGMkGs4oN3VWZkPWwy8V0A795aGEaXASQ8rm6pc+g4ShG+wNlb1anwZAv2HCu9j5Ks3xhVvXTNR3vjcesj12ARH3LTj4Z4Tis0L3Gsl8PpkbDdIYxPhtg1mAb0ossvBom7C1rXxxxsfqJliRvAeCHOJWlqr4D6o3Yi/SM8JVCgKDHyq1HF2BgX3RgYjLJHfCeuxuzx6d8QCPFFDdMi0ThPcbQL9f3hx+ipjqCU+ezH7G5mKwQzzYS8xmAPz758QrAkYfzeTtLsT4E+XyNVr2ZpR7jiRqKWDla73xxHxceJG/jriQmbDevI1FWw==
-X-YMail-OSG: ci610LsVM1mzE2wJyzYQMs_u41uMdgejp1hCT7fxgMe3Hk2FE5DaJoEXW2iwB0f
- WpAlwqs7BG0ebXhR1xCTeCvVq_pRnLIY1YMmiLy8AC7HuX1yddhfV7WixyI_DZ0nRoalNQUxYARF
- f0oZ6NUshS4Q5p.rOSOIYBVp45UZsDlD0XipBnzmL81Md9qqzHRLuGfQtMnvhwe.mfOKWtYP8gFn
- 2hiSopzljNdbHRhXTZhpgE61WUnB1aQ7qXEvcERb3kwaQlo0UAVBZ0PghBTZliVS.I0h89Nogcb0
- cThtpiDwRsuEtH0IMlg6rGUyk8V_tjv_1ky3bdZS0A4qSjWy05VGz.KGFpuxnOygqYu_8m0_XBIy
- nHDI7W2PNb7VTvT.IG7OLM1Il7XBq_fFy5xCaXsGKVI2LGD5kPqaDqvP79bP22AQH8goZWJhqKyr
- LGYodniDi1x179ITC9TVtdtPVuHo7BkkZFp2DYZaL849g3H1iyWwCMiSIXiGVnaTxyQ33tnCF_K3
- cYMW9g.PtqI7BaCttIzZjzS0rfmk4GJTBtjotUeZzrCPfZN6h1VPYw84HyXu2S0.8OjAt7Klyl77
- Ha49eUujDL60MZ5HjdDHnlzNEsVcbmSgi3WXunlAZFZbKG4Vyuf14.yhEFv9JqbKpiKv2954hW0r
- qxap0mycBx1B0d4xubnx300y0YXHz_vWcs4EyBD8Mv8xIycvKn1INPHJYzDRQWKzhDNIfmi5.2bT
- SRi2kB0XMyipnZ6fR.uu5bHmQ99xDBFH_R_ZRf60DYbqw.YUKfycRD2NrFYoTfyR4qNJdZkO.i51
- I2_KqBgYYPcRb8BFW5fuD4fHCpsud8eF81dLKJkvvxagGWbm5IvSTGQOmC2hB792EFCGN5UCIX9h
- GO_t5GWp3NHotwDLE4ODQsldHIYhrQ0S3MCYnJqsAFhh2wa1Z6nqltF3wjBdPXzDCH98R8rfQrWT
- Nae6ta.s_FSPR5WQmHEC2jQcAfSlEeQWUAAj7UwctkS9LxiPVHnDN763vbMz09S6cRQS9Nw73JAI
- .Dd8SMBPTaKFBJsXNtggzsWnyXR9q9es77XHnX0hXo5zXmQj0mlfvgqdIYEkuE65lstciv2aCWdK
- 6KzcshgGnQw4DXmLA.mXW86ZylktiQHC.bnScVzgalC2gLzXsc9TlT_QbksM9oU_6N.A.DzbY49o
- nod1QL60zTUagREZRfHlxlzp.S9K2iPZEckJE_xaDqoeWMNDk0705XXBw_Isy3JeQykxBuMWYrbI
- fgKr.RiwdcYlKXqeYnMXVgjz.109P45_025CwLGAHrBTbO4RuuEu8aTG8YSGeu86ye5U.d0kMmYg
- OqHbXftMrlKRhZJrP1QhI0kcLYMf.6P4JtLlml1iI4ovLLtUEF4WJJMFxsLptkKmq.YGthh1HsLh
- wmlr11mqcAKBv50IKmO3xWGJzFzhbE5bzdOg6x4fDqrfQHfIqT2zpHNM6obPgKdXaZuxOPfGmZh6
- z72cKYxD9.gtPvTnEpJPcSSsXIZk8kMUHDI9EpCsa_76O0p.FeaNdvpN0ioVmCOlKJG6xqnaJ6m7
- z2LJtL7JWapqyAi6vTyWfkeiZTjw27cYSgI_j_9tHaAgK5TiCcVGGgLTWkOBjlv_hxkl129xrw.N
- G6CpMg.Ely8UDu4Lodz0sT1FGVbXYtF6TDaZ2AC8z0PcI.j6PUbWGhGhRp.pMMFEYXvSpdDuq142
- tIk1DO2rgOtowwvJrCPyLKoshJtMzuaxWhuR.7zj4Oi03.1Ifz3TqJVoK5EKaTHD3YFdtOlySTXg
- giRq_WouLi6ZLxACfFolIJxy92P8xP7r4QHrDLL.IKBK1cQuom_z6cPzpqd2Qf72KSD9_fP_x62j
- 5s1oDWF7ZK5JkFSaT.uCDdP43uzhByB2KGtZCz3oJsMdssqM2KTSyb6dXAhrbb_9cSlVuUI4pPeI
- 3_9KXUPJ3ZbORA_7NihWOfRq.rva7d8kucLf09gFQqDH7XYzzM9CymiqzqsHZMDriPgOBtkFp158
- 2D_JOVH7_Gbed4ng0NrrCNZE10VeB.tr7.z8fFVkvYgmY0u.zzjpUmM04TsnKlxUEWBSRN6WB8zA
- 1g_MxorlOO50XfISIBgZfGI13Wjt1U_C1TRfroh0k_FXqBlA2k3AuSit1awPeEfuuq4A6lR7fSle
- OfXKC.veY4sdULIwUYN0NYzdhjeXPGQu5rslXjWJo4kGJnvH4g9A6KZLTEMxyfUy8VQF_lLWf2dt
- zkFvjbJoD6mxLU_VxJs0uPGaAiQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Tue, 28 Feb 2023 02:46:18 +0000
-Received: by hermes--production-bf1-57c96c66f6-l6456 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d4e562dc8e3f825fd81194f5c4ddb2ab;
-          Tue, 28 Feb 2023 02:46:16 +0000 (UTC)
-Message-ID: <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com>
-Date:   Mon, 27 Feb 2023 18:46:12 -0800
+        Tue, 28 Feb 2023 03:09:05 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40295166EA;
+        Tue, 28 Feb 2023 00:08:56 -0800 (PST)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4PQqhb1nrLz9tBj;
+        Tue, 28 Feb 2023 16:06:55 +0800 (CST)
+Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
+ (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Tue, 28 Feb
+ 2023 16:08:36 +0800
+From:   GUO Zihua <guozihua@huawei.com>
+To:     <zohar@linux.ibm.com>, <paul@paul-moore.com>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <dledford@redhat.com>, <jgg@ziepe.ca>
+Subject: [PATCH 4.19 v3 0/6] Backport handling -ESTALE policy update failure to 4.19
+Date:   Tue, 28 Feb 2023 16:06:24 +0800
+Message-ID: <20230228080630.52370-1-guozihua@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v3 1/2] capability: add cap_isidentical
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Mateusz Guzik <mjguzik@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>
-Cc:     viro@zeniv.linux.org.uk, paul@paul-moore.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, casey@schaufler-ca.com
-References: <20230125155557.37816-1-mjguzik@gmail.com>
- <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21221 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain
+X-Originating-IP: [10.67.175.31]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/27/2023 5:14 PM, Linus Torvalds wrote:
-> On Wed, Jan 25, 2023 at 7:56 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
->> +static inline bool cap_isidentical(const kernel_cap_t a, const kernel_cap_t b)
->> +{
->> +       unsigned __capi;
->> +       CAP_FOR_EACH_U32(__capi) {
->> +               if (a.cap[__capi] != b.cap[__capi])
->> +                       return false;
->> +       }
->> +       return true;
->> +}
->> +
-> Side note, and this is not really related to this particular patch
-> other than because it just brought up the issue once more..
->
-> Our "kernel_cap_t" thing is disgusting.
->
-> It's been a structure containing
->
->         __u32 cap[_KERNEL_CAPABILITY_U32S];
->
-> basically forever, and it's not likely to change in the future. I
-> would object to any crazy capability expansion, considering how
-> useless and painful they've been anyway, and I don't think anybody
-> really is even remotely planning anything like that anyway.
->
-> And what is _KERNEL_CAPABILITY_U32S anyway? It's the "third version"
-> of that size:
->
->   #define _KERNEL_CAPABILITY_U32S    _LINUX_CAPABILITY_U32S_3
->
-> which happens to be the same number as the second version of said
-> #define, which happens to be "2".
->
-> In other words, that fancy array is just 64 bits. And we'd probably be
-> better off just treating it as such, and just doing
->
->         typedef u64 kernel_cap_t;
->
-> since we have to do the special "convert from user space format"
-> _anyway_, and this isn't something that is shared to user space as-is.
->
-> Then that "cap_isidentical()" would literally be just "a == b" instead
-> of us playing games with for-loops that are just two wide, and a
-> compiler that may or may not realize.
->
-> It would literally remove some of the insanity in <linux/capability.h>
-> - look for CAP_TO_MASK() and CAP_TO_INDEX and CAP_FS_MASK_B0 and
-> CAP_FS_MASK_B1 and just plain ugliness that comes from this entirely
-> historical oddity.
->
-> Yes, yes, we started out having it be a single-word array, and yes,
-> the code is written to think that it might some day be expanded past
-> the two words it then in 2008 it expanded to two words and 64 bits.
-> And now, fifteen years later, we use 40 of those 64 bits, and
-> hopefully we'll never add another one.
+This series backports patches in order to resolve the issue discussed here:
+https://lore.kernel.org/selinux/389334fe-6e12-96b2-6ce9-9f0e8fcb85bf@huawei.com/
 
-I agree that the addition of 24 more capabilities is unlikely. The
-two reasons presented recently for adding capabilities are to implement
-boutique policies (CAP_MYHARDWAREISSPECIAL) or to break up CAP_SYS_ADMIN.
-Neither of these is sustainable with a finite number of capabilities, nor
-do they fit the security model capabilities implement. It's possible that
-a small number of additional capabilities will be approved, but even that
-seems unlikely.
+This required backporting the non-blocking LSM policy update mechanism
+prerequisite patches. As well as bugfixes that follows:
 
+c66f67414c1f ("IB/core: Don't register each MAD agent for LSM notifier")
+42df744c4166 ("LSM: switch to blocking policy update notifiers")
+b16942455193 ("ima: use the lsm policy update notifier")
+483ec26eed42 ("ima: ima/lsm policy rule loading logic bug fixes")
+e144d6b26541 ("ima: Evaluate error in init_ima()")
+c7423dbdbc9e ("ima: Handle -ESTALE returned by ima_filter_rule_match()")
 
-> So we have historical reasons for why our kernel_cap_t is so odd. But
-> it *is* odd.
->
-> Hmm?
+c66f67414c1f ("IB/core: Don't register each MAD agent for LSM notifier")
+is merged as the prerequisite of 42df744c4166 ("LSM: switch to blocking
+policy update notifiers"). e144d6b26541 ("ima: Evaluate error in
+init_ima()"), 483ec26eed42 ("ima: ima/lsm policy rule loading logic bug
+fixes") and 9ff8a616dfab ("ima: Have the LSM free its audit rule") are
+merged as a follow up bugfix for b16942455193 ("ima: use the lsm policy
+update notifier").
 
-I don't see any reason that kernel_cap_t shouldn't be a u64. If by some
-amazing change in mindset we develop need for 65 capabilities, someone can
-dredge up the old code, shout "I told you so!" and put it back the way it
-was. Or maybe by then we'll have u128, and can just switch to that.
+I've tested the patches against said issue and can confirm that the
+issue is fixed.
 
->              Linus
+Link to the original maillist discussion:
+https://lore.kernel.org/all/389334fe-6e12-96b2-6ce9-9f0e8fcb85bf@huawei.com/
+
+Change log:
+  v2: Fixed build issue and backport bugfix commits for backported
+patches.
+
+Daniel Jurgens (1):
+  IB/core: Don't register each MAD agent for LSM notifier
+
+GUO Zihua (1):
+  ima: Handle -ESTALE returned by ima_filter_rule_match()
+
+Janne Karhunen (3):
+  LSM: switch to blocking policy update notifiers
+  ima: use the lsm policy update notifier
+  ima: ima/lsm policy rule loading logic bug fixes
+
+Roberto Sassu (1):
+  ima: Evaluate error in init_ima()
+
+ drivers/infiniband/core/core_priv.h |   5 +
+ drivers/infiniband/core/device.c    |   5 +-
+ drivers/infiniband/core/security.c  |  51 +++++----
+ include/linux/security.h            |  12 +-
+ include/rdma/ib_mad.h               |   3 +-
+ security/integrity/ima/ima.h        |   2 +
+ security/integrity/ima/ima_main.c   |  11 ++
+ security/integrity/ima/ima_policy.c | 172 ++++++++++++++++++++++------
+ security/security.c                 |  23 ++--
+ security/selinux/hooks.c            |   2 +-
+ security/selinux/selinuxfs.c        |   2 +-
+ 11 files changed, 208 insertions(+), 80 deletions(-)
+
+-- 
+2.17.1
+
