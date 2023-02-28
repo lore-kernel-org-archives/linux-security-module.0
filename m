@@ -2,165 +2,106 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A39C64EC7
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Feb 2023 14:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBA7C64EC7
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Feb 2023 16:25:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229528AbjB1Org (ORCPT
+        id S229578AbjB1QZK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Feb 2023 09:47:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38888 "EHLO
+        Tue, 28 Feb 2023 11:25:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbjB1Orf (ORCPT
+        with ESMTP id S229548AbjB1QZJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Feb 2023 09:47:35 -0500
-Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF9AE1CF4F;
-        Tue, 28 Feb 2023 06:47:34 -0800 (PST)
-Received: by mail-oo1-xc2a.google.com with SMTP id p8-20020a4a3c48000000b0052527a9d5f0so1593800oof.1;
-        Tue, 28 Feb 2023 06:47:34 -0800 (PST)
+        Tue, 28 Feb 2023 11:25:09 -0500
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4DA2ED53
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Feb 2023 08:25:05 -0800 (PST)
+Received: by mail-pg1-x532.google.com with SMTP id 132so5978938pgh.13
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Feb 2023 08:25:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677595654;
+        d=paul-moore.com; s=google; t=1677601505;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:from:to:cc:subject:date
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MQqtgFt2ZrPoR/y5o9mWftXFVOmEsTr/lW9kmkGwIeU=;
-        b=hkwXo3LNwgRxN74Mc8UpBqQy4W9v8MFdb0B21cwtvjSroAqCKA3nGxYMkFFR/hxN8q
-         aTNjbWywo7ciKcrX/dnDhIDIQDPXwAML1PurY27j4DuewIwMigmXK49TVFyd8Ex/y3yE
-         +HV8wGXMGu4+MFmfYE+BOqwYdjWL1L0WpQ6ousW4/XWyjZADA7iGsERDoj0msCc5UTYg
-         60I1980f/Qnl/D9OAjS91fUJF7lhM+U4NjMw9APFLMG5Gs5/G3xsza1BtMilSEGBupYQ
-         ec7zxIdDR9BnETts277yPYHeIMGKkJOvGn5i4dITRj9MwYquyO21oXy9da1jQTWz/bqa
-         fe/w==
+        bh=H+fERSfhCwXo4Ex3TEn8k7hJWF1bL6uvNF6EVmO00E8=;
+        b=aARHvIepBxuQIKhGjTPssPZUetIbmmVhmtZLRCV9WG4LWv512AK68pSLEDl7d9ZBJI
+         jeT6aSd6NoqUiBqvyjFDqY4Niogt8n2PZ0aaYQcYlIgK8gpTK1KAHBT/39UC7uY8oDva
+         J4DZvInFjCsL0QfLiqR4u3k4hUjDP5G74tN4hcRRQ6jxvmrnzyS370YZFNB5DtEiaIB2
+         TP/reqdR+N36XBvC0xd53Xw3fYguTn+nWWWXyzCBDEtPoV0zMRHYiSjp9zxgz/tlqtXv
+         wMUpapdM2hwA3jG1uv2950tfEOswygXNV6qg67oEGPDktwZ5AqlQeXd87C2a6XIiYzRZ
+         jhMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677595654;
+        d=1e100.net; s=20210112; t=1677601505;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:x-gm-message-state:from:to:cc
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MQqtgFt2ZrPoR/y5o9mWftXFVOmEsTr/lW9kmkGwIeU=;
-        b=mXuFm/2zZzjskzTvO3nC8zP705zd6mAr7kEK45Uc5VbCQtgpvHrOrI4Wm901og9rT4
-         AgZCfG5Ex5y9VZYSSoBCcen3UN0Txpc0eWpdUV3GnfLDuUAVIs0IQpsQ9Yg6hUhgy64o
-         +jW0tqkCjsQZdbo6bNFxrASbTCgAJtav4w0jnTdamdQT0u0MFD8Sh7HucgNgH7msRxdQ
-         leUjm0+Hc/qHvhxQbirLnJ5zj+HUYiKOs2SCW/gc7RzihiyS7S4lWvzMrKlZNZzfUdug
-         HdumwBp0Urmu9UrfZYAo0Ni6ZgBpw5AaefSo6oYw7EVbRvQ610o23/2rMrCDQ9us83OA
-         BFGw==
-X-Gm-Message-State: AO0yUKUY3MPNwAxjH7h5U8pcwQ8fd4voAZQBFo/1Qud8cKP1RsiZkJ3S
-        rwy2GLejJ+1xuuNHzkSW2YQD5P2b5NQUSoWQiNo=
-X-Google-Smtp-Source: AK7set8WvLmeK/3EEtJ41emSb/vN7XfCJ35JD48P5Pnt1sFUrR4W6SiHncUKVeXAqFboiMUX6ywXwL5DpvosfbdPRH4=
-X-Received: by 2002:a4a:a302:0:b0:525:2b47:93cb with SMTP id
- q2-20020a4aa302000000b005252b4793cbmr908579ool.1.1677595654090; Tue, 28 Feb
- 2023 06:47:34 -0800 (PST)
+        bh=H+fERSfhCwXo4Ex3TEn8k7hJWF1bL6uvNF6EVmO00E8=;
+        b=auij1shpbTQcZq4lwrAVTFx/kLBewYJALCsjQACKE0EMr6Xgp0SYIvZMwBCs9MKFL8
+         ybDeHfGMWoc8SVPPOntbYPdUhQ6ysBm9jlvk93U/YYwWeFSNkZYne3P1jQnPTm7vMAa3
+         rSbIbn18udALVU8dQsv6Gtk/6gwHFoxVwGthVoK2yQc7pUoaPdViEiLOyRyjXjx9fW2J
+         d1DGKTYNRg0hbEG/I0Fw6gumx+j65NGiufTQe+acjHbw5LiVTD8qEV5IJfuSXQEeH6tU
+         Al+tYZemc3b+mKvOmW4R+V/85Ltlpi537/Nzto1zq8JOSzgw6KNSfDe/Uww+5QcaI+pq
+         zNqA==
+X-Gm-Message-State: AO0yUKUdjjXHxXfUO75m1GxKMuUy6c7iVhVi4W7q+qfIqB2ImGT+r352
+        7JsASKjz4fI+HfUMBbLIZU1OJnpsIy6GUnmDojwk
+X-Google-Smtp-Source: AK7set83QsN7UWJgdqrF+1F5+JpRedzhw7A27UFW2nkLkaeL4CfC6rZUDaDc7wmUItsfyt9Xkz6xmj3TzD6cEWg9os8=
+X-Received: by 2002:a65:6d99:0:b0:502:f20a:6e0a with SMTP id
+ bc25-20020a656d99000000b00502f20a6e0amr1418637pgb.0.1677601504819; Tue, 28
+ Feb 2023 08:25:04 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:ac9:4304:0:b0:4c1:4768:8c59 with HTTP; Tue, 28 Feb 2023
- 06:47:33 -0800 (PST)
-In-Reply-To: <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com>
-References: <20230125155557.37816-1-mjguzik@gmail.com> <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
- <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com>
-From:   Mateusz Guzik <mjguzik@gmail.com>
-Date:   Tue, 28 Feb 2023 15:47:33 +0100
-Message-ID: <CAGudoHEV_aNymUq6v9Trn_ZRU45TL12AVXqQeV2kA90FuawxiQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] capability: add cap_isidentical
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk,
-        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20230228080630.52370-1-guozihua@huawei.com>
+In-Reply-To: <20230228080630.52370-1-guozihua@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 28 Feb 2023 11:25:03 -0500
+Message-ID: <CAHC9VhR1UxGQnsWU1bhG1_XMVfdt_j-cVZkKnQ+rjzqcEP_NHw@mail.gmail.com>
+Subject: Re: [PATCH 4.19 v3 0/6] Backport handling -ESTALE policy update
+ failure to 4.19
+To:     GUO Zihua <guozihua@huawei.com>
+Cc:     zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
+        linux-rdma@vger.kernel.org, dledford@redhat.com, jgg@ziepe.ca
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/28/23, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 2/27/2023 5:14 PM, Linus Torvalds wrote:
->> On Wed, Jan 25, 2023 at 7:56=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com=
-> wrote:
->>> +static inline bool cap_isidentical(const kernel_cap_t a, const
->>> kernel_cap_t b)
->>> +{
->>> +       unsigned __capi;
->>> +       CAP_FOR_EACH_U32(__capi) {
->>> +               if (a.cap[__capi] !=3D b.cap[__capi])
->>> +                       return false;
->>> +       }
->>> +       return true;
->>> +}
->>> +
->> Side note, and this is not really related to this particular patch
->> other than because it just brought up the issue once more..
->>
->> Our "kernel_cap_t" thing is disgusting.
->>
->> It's been a structure containing
->>
->>         __u32 cap[_KERNEL_CAPABILITY_U32S];
->>
->> basically forever, and it's not likely to change in the future. I
->> would object to any crazy capability expansion, considering how
->> useless and painful they've been anyway, and I don't think anybody
->> really is even remotely planning anything like that anyway.
->>
->> And what is _KERNEL_CAPABILITY_U32S anyway? It's the "third version"
->> of that size:
->>
->>   #define _KERNEL_CAPABILITY_U32S    _LINUX_CAPABILITY_U32S_3
->>
->> which happens to be the same number as the second version of said
->> #define, which happens to be "2".
->>
->> In other words, that fancy array is just 64 bits. And we'd probably be
->> better off just treating it as such, and just doing
->>
->>         typedef u64 kernel_cap_t;
->>
->> since we have to do the special "convert from user space format"
->> _anyway_, and this isn't something that is shared to user space as-is.
->>
->> Then that "cap_isidentical()" would literally be just "a =3D=3D b" inste=
-ad
->> of us playing games with for-loops that are just two wide, and a
->> compiler that may or may not realize.
->>
->> It would literally remove some of the insanity in <linux/capability.h>
->> - look for CAP_TO_MASK() and CAP_TO_INDEX and CAP_FS_MASK_B0 and
->> CAP_FS_MASK_B1 and just plain ugliness that comes from this entirely
->> historical oddity.
->>
->> Yes, yes, we started out having it be a single-word array, and yes,
->> the code is written to think that it might some day be expanded past
->> the two words it then in 2008 it expanded to two words and 64 bits.
->> And now, fifteen years later, we use 40 of those 64 bits, and
->> hopefully we'll never add another one.
+On Tue, Feb 28, 2023 at 3:09=E2=80=AFAM GUO Zihua <guozihua@huawei.com> wro=
+te:
 >
-> I agree that the addition of 24 more capabilities is unlikely. The
-> two reasons presented recently for adding capabilities are to implement
-> boutique policies (CAP_MYHARDWAREISSPECIAL) or to break up CAP_SYS_ADMIN.
-> Neither of these is sustainable with a finite number of capabilities, nor
-> do they fit the security model capabilities implement. It's possible that
-> a small number of additional capabilities will be approved, but even that
-> seems unlikely.
+> This series backports patches in order to resolve the issue discussed her=
+e:
+> https://lore.kernel.org/selinux/389334fe-6e12-96b2-6ce9-9f0e8fcb85bf@huaw=
+ei.com/
 >
+> This required backporting the non-blocking LSM policy update mechanism
+> prerequisite patches. As well as bugfixes that follows:
 >
->> So we have historical reasons for why our kernel_cap_t is so odd. But
->> it *is* odd.
->>
->> Hmm?
+> c66f67414c1f ("IB/core: Don't register each MAD agent for LSM notifier")
+> 42df744c4166 ("LSM: switch to blocking policy update notifiers")
+> b16942455193 ("ima: use the lsm policy update notifier")
+> 483ec26eed42 ("ima: ima/lsm policy rule loading logic bug fixes")
+> e144d6b26541 ("ima: Evaluate error in init_ima()")
+> c7423dbdbc9e ("ima: Handle -ESTALE returned by ima_filter_rule_match()")
 >
-> I don't see any reason that kernel_cap_t shouldn't be a u64. If by some
-> amazing change in mindset we develop need for 65 capabilities, someone ca=
-n
-> dredge up the old code, shout "I told you so!" and put it back the way it
-> was. Or maybe by then we'll have u128, and can just switch to that.
+> c66f67414c1f ("IB/core: Don't register each MAD agent for LSM notifier")
+> is merged as the prerequisite of 42df744c4166 ("LSM: switch to blocking
+> policy update notifiers"). e144d6b26541 ("ima: Evaluate error in
+> init_ima()"), 483ec26eed42 ("ima: ima/lsm policy rule loading logic bug
+> fixes") and 9ff8a616dfab ("ima: Have the LSM free its audit rule") are
+> merged as a follow up bugfix for b16942455193 ("ima: use the lsm policy
+> update notifier").
 >
+> I've tested the patches against said issue and can confirm that the
+> issue is fixed.
+>
+> Link to the original maillist discussion:
+> https://lore.kernel.org/all/389334fe-6e12-96b2-6ce9-9f0e8fcb85bf@huawei.c=
+om/
+>
+> Change log:
+>   v2: Fixed build issue and backport bugfix commits for backported
+> patches.
 
-Premature generalization is the root of all evil (or however the
-saying goes), as evidenced above.
-
-The fact that this is an array of u32 escaped the confines of
-capability.h and as a result there would be unpleasant churn to sort
-it out, and more importantly this requires a lot more testing than you
-would normally expect.
-
-Personally I would only touch it as a result of losing a bet (and I'm
-not taking any with this in play), but that's just my $0.05 (adjusted
-for inflation).
+Is there a quick summary of the changes in v3 of this patchset?
 
 --=20
-Mateusz Guzik <mjguzik gmail.com>
+paul-moore.com
