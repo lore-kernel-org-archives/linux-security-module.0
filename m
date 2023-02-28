@@ -2,139 +2,117 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 695B0C64ED6
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Feb 2023 19:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE52AC64ED6
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Feb 2023 19:52:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230011AbjB1TqT (ORCPT
+        id S229954AbjB1TwG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Feb 2023 14:46:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47034 "EHLO
+        Tue, 28 Feb 2023 14:52:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229969AbjB1TqS (ORCPT
+        with ESMTP id S229895AbjB1TwF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Feb 2023 14:46:18 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 934AE1BAFE;
-        Tue, 28 Feb 2023 11:46:17 -0800 (PST)
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31SIJv9g006935;
-        Tue, 28 Feb 2023 19:46:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=zXLbJQnUztunJ+IAJYxPhkwQ5LnDz7KnX8kAeWB2rW4=;
- b=Ggrm3lPbk1/rNbTtyitCi88YinILxdnxMB//+SvZRyK9MMzMB8QOWwjsgtWsmY6KQz2F
- ciVcf46rWI1Oo/z7a6XYloPb8cOKwe1ieKccPndkCFIoOC5cV5v3b/WKjU/yzecYip+A
- 0iCs2t1ZRI1N4f5Fl7DGghfWbwGeL78R+ehBEb/O8DStyxcaqAEkoE5TTzlRSuddYCqQ
- w7WRlotluHx91kqCpxbQSKWepk4x3hyGJ2Bj+WXDT3I6SohJ/UtzUuluZLG6YK/fo/yl
- uEAfRXqIv9wliGvGglvrDZzXUbSlqMphwOx0vgHfwJ0nYPvYm0kL7sF9gyYkhmmt22Lf Aw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p1pswjg6j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 Feb 2023 19:46:08 +0000
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 31SIKV2v008505;
-        Tue, 28 Feb 2023 19:46:08 GMT
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p1pswjg6d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 Feb 2023 19:46:08 +0000
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 31SIna7q024474;
-        Tue, 28 Feb 2023 19:45:07 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([9.208.129.117])
-        by ppma05wdc.us.ibm.com (PPS) with ESMTPS id 3nybe9js7d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 Feb 2023 19:45:07 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-        by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 31SJj6QD7471674
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 Feb 2023 19:45:06 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C9B75805C;
-        Tue, 28 Feb 2023 19:45:06 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5F0FE58051;
-        Tue, 28 Feb 2023 19:45:05 +0000 (GMT)
-Received: from sig-9-65-248-59.ibm.com (unknown [9.65.248.59])
-        by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 28 Feb 2023 19:45:05 +0000 (GMT)
-Message-ID: <57ebd18a95caa0a8df9ad542478d5dca3ff5760c.camel@linux.ibm.com>
-Subject: Re: [PATCH 4.19 v3 0/6] Backport handling -ESTALE policy update
- failure to 4.19
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Paul Moore <paul@paul-moore.com>, GUO Zihua <guozihua@huawei.com>
-Cc:     linux-security-module@vger.kernel.org, linux-rdma@vger.kernel.org,
-        dledford@redhat.com, jgg@ziepe.ca
-Date:   Tue, 28 Feb 2023 14:45:04 -0500
-In-Reply-To: <CAHC9VhR1UxGQnsWU1bhG1_XMVfdt_j-cVZkKnQ+rjzqcEP_NHw@mail.gmail.com>
-References: <20230228080630.52370-1-guozihua@huawei.com>
-         <CAHC9VhR1UxGQnsWU1bhG1_XMVfdt_j-cVZkKnQ+rjzqcEP_NHw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: QyVMhysK9XYRtHg8Eq-M0c1YYVoXsWzk
-X-Proofpoint-ORIG-GUID: xsW4uq7gDxrB2Uc1jJH5xv_A_AHr3tk3
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Tue, 28 Feb 2023 14:52:05 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28E7D34C24
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Feb 2023 11:51:57 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id o12so44737976edb.9
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Feb 2023 11:51:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1677613915;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CI4tO9SBnVHbpP1UFj/aIsZLnQqSb0KukHtZDEVF+9Q=;
+        b=EGqXWGb6FO9oqjBg/RjdN/86icRC1mPJ3oftK9FFQmtW1fgTuj/zmUleWUKUiXp25b
+         c6AlQmcV0atsC/y67K5zu2wXxvzhbGCaOD7syFHQ9VXJzRYz6NH2pn9up0dOx+dWjEbu
+         VnxtlH/hlKeQ5BYQrPpt5FLATZFI06UDFf424=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677613915;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CI4tO9SBnVHbpP1UFj/aIsZLnQqSb0KukHtZDEVF+9Q=;
+        b=PjCy1I9Pdd7DGDkTzpxdm5LJ77mAw5bYjhMXiU4tcv1s0Gk7WbEVpxKKJA5/MmeYca
+         kb+RMwFuG32s5ksJZhBb2viOoGd4ZqEmKrwWDtjHV4ZtDvdrad4E2TTV3YuyuT99T4xB
+         N2ogB3xMt62HFp5bsOd92xl5kAm9OrugJCsqd/CHm39Slryen8HAZ9482qmVt2257gLZ
+         I95ozpKplapJ07rt8yZpqXRGlpO3hXtrev9t5w/6fSE3K5hpvruFzh98KLJmXsJdvY49
+         Xdm2XioIyfZcAJmTDWAOzCRMWlmtFRVgugUAZcb0IcGgKmEFJFs1N7tq2XJOYAWWEVsa
+         6TRA==
+X-Gm-Message-State: AO0yUKW0vu2R0ujb9jYqUyCEJDUTvAZWhRCcWvqkZJsv84fldgE36Q05
+        b4JgRYfFUnX8kOaEJDzMxQOvl4qjkaqGiAEEQ0o=
+X-Google-Smtp-Source: AK7set+f9OZG1gsKdZab5IGVzeD/k3wAYTejzG2B8Onr6ynE4wg5mGfp9QCdZ9Dn+x8wkwV6jUCaxQ==
+X-Received: by 2002:a17:906:2350:b0:8b1:7e88:c20e with SMTP id m16-20020a170906235000b008b17e88c20emr4048615eja.41.1677613915195;
+        Tue, 28 Feb 2023 11:51:55 -0800 (PST)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id jl9-20020a17090775c900b008b17de96f00sm4834530ejc.151.2023.02.28.11.51.54
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Feb 2023 11:51:54 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id i34so44761175eda.7
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Feb 2023 11:51:54 -0800 (PST)
+X-Received: by 2002:a17:906:c08c:b0:8f1:4cc5:f14c with SMTP id
+ f12-20020a170906c08c00b008f14cc5f14cmr1947231ejz.0.1677613914258; Tue, 28 Feb
+ 2023 11:51:54 -0800 (PST)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-02-28_15,2023-02-28_03,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
- malwarescore=0 adultscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302280162
+References: <20230125155557.37816-1-mjguzik@gmail.com> <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
+ <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com> <CAGudoHEV_aNymUq6v9Trn_ZRU45TL12AVXqQeV2kA90FuawxiQ@mail.gmail.com>
+ <CAHk-=wgCMTUV=5aE-V8WjxuCME8LTBh-8k5XTPKz6oRXJ_sgTg@mail.gmail.com>
+In-Reply-To: <CAHk-=wgCMTUV=5aE-V8WjxuCME8LTBh-8k5XTPKz6oRXJ_sgTg@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 28 Feb 2023 11:51:37 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjrQ_+PCrdNRWKsmf=SZP45_N7r51NbbB55DUdGb5f76A@mail.gmail.com>
+Message-ID: <CAHk-=wjrQ_+PCrdNRWKsmf=SZP45_N7r51NbbB55DUdGb5f76A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] capability: add cap_isidentical
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2023-02-28 at 11:25 -0500, Paul Moore wrote:
-> On Tue, Feb 28, 2023 at 3:09 AM GUO Zihua <guozihua@huawei.com> wrote:
-> >
-> > This series backports patches in order to resolve the issue discussed here:
-> > https://lore.kernel.org/selinux/389334fe-6e12-96b2-6ce9-9f0e8fcb85bf@huawei.com/
-> >
-> > This required backporting the non-blocking LSM policy update mechanism
-> > prerequisite patches. As well as bugfixes that follows:
-> >
-> > c66f67414c1f ("IB/core: Don't register each MAD agent for LSM notifier")
-> > 42df744c4166 ("LSM: switch to blocking policy update notifiers")
-> > b16942455193 ("ima: use the lsm policy update notifier")
-> > 483ec26eed42 ("ima: ima/lsm policy rule loading logic bug fixes")
-> > e144d6b26541 ("ima: Evaluate error in init_ima()")
-> > c7423dbdbc9e ("ima: Handle -ESTALE returned by ima_filter_rule_match()")
-> >
-> > c66f67414c1f ("IB/core: Don't register each MAD agent for LSM notifier")
-> > is merged as the prerequisite of 42df744c4166 ("LSM: switch to blocking
-> > policy update notifiers"). e144d6b26541 ("ima: Evaluate error in
-> > init_ima()"), 483ec26eed42 ("ima: ima/lsm policy rule loading logic bug
-> > fixes") and 9ff8a616dfab ("ima: Have the LSM free its audit rule") are
-> > merged as a follow up bugfix for b16942455193 ("ima: use the lsm policy
-> > update notifier").
+On Tue, Feb 28, 2023 at 11:39=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> This actually looks sane enough that I might even boot it. Call me crazy.
 
-Scott, there's no need to duplicate the list of commits like this. 
-Having an unordered list would have been fine.
+Oh, and while I haven't actually booted it or tested it in any way, I
+did verify that it changes
 
-> >
-> > I've tested the patches against said issue and can confirm that the
-> > issue is fixed.
-> >
-> > Link to the original maillist discussion:
-> > https://lore.kernel.org/all/389334fe-6e12-96b2-6ce9-9f0e8fcb85bf@huawei.com/
-> >
-> > Change log:
-> >   v2: Fixed build issue and backport bugfix commits for backported
-> > patches.
-> 
-> Is there a quick summary of the changes in v3 of this patchset?
+-       movq    48(%rbx), %rax
+-       movq    56(%rbx), %rcx
+-       cmpl    %eax, %ecx
+-       jne     .LBB58_13
+-       shrq    $32, %rax
+-       shrq    $32, %rcx
+-       cmpl    %eax, %ecx
+-       jne     .LBB58_13
 
-v3:  Backport commit 483ec26eed42b ("ima: ima/lsm policy rule loading
-logic bug fixes")  as well.
+into
 
--- 
-thanks,
++       movq    56(%rbx), %rax
++       cmpq    48(%rbx), %rax
++       jne     .LBB58_12
 
-Mimi
+because it looks like clang was smart enough to unroll the silly
+fixed-size loop and do the two adjacent 32-bit loads of the old cap[]
+array as one 64-bit load, but then was _not_ smart enough to combine
+the two 32-bit compares into one 64-bit one.
 
+And gcc didn't do the load optimization (which is questionable since
+it then just results in extra shifts and extra registers), so it just
+kept it as two 32-bit loads and compares. Again, with the patch, gcc
+obviously does the sane "one 64-bit load, one 64-bit compare" too.
 
+There's a lot to be said for compiler optimizations fixing up silly
+source code, but I personally would just prefer to make the source
+code DTRT.
+
+Could the compiler have been even smarter and generated the same code?
+Yes it could. We shouldn't expect that, though. Particularly when the
+sane code is much more legible to humans too.
+
+                 Linus
