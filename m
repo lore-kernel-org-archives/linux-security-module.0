@@ -2,88 +2,100 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A658C64EC4
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Feb 2023 21:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3462C64EC4
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Mar 2023 01:26:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229593AbjB1V35 (ORCPT
+        id S229549AbjCAB0l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Feb 2023 16:29:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45574 "EHLO
+        Tue, 28 Feb 2023 20:26:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229492AbjB1V35 (ORCPT
+        with ESMTP id S229537AbjCAB0l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Feb 2023 16:29:57 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 447E02D156
-        for <linux-security-module@vger.kernel.org>; Tue, 28 Feb 2023 13:29:54 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id eg37so45658569edb.12
-        for <linux-security-module@vger.kernel.org>; Tue, 28 Feb 2023 13:29:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1677619792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+8cphB32FCA+JDrayMTXIg9hnTVIdgiqn6d+31xf70g=;
-        b=RnvoGAxGwdikhKT4SupAxcADFamYOt+/v6RSL1oTb/zDbv1TM2he0JfutFX0uxibsD
-         aXfgAAPUlUpjgysAiDQd4529DHvHf+CRHuCzA3rdEZt3Lo9uF070u8Vc6hdwtGGCfB+P
-         QOl8M4FHCDbGl0EnClfCc8ZznvdwK40yN+tsU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677619792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+8cphB32FCA+JDrayMTXIg9hnTVIdgiqn6d+31xf70g=;
-        b=dkotsjPv/cyUV06NBT0EasY6X5PujY0O2UP7re6VBMkybPnBZebu1uP3bTfmM/X78Q
-         EB+pzA6RdJvkiq6gY5n4Vm23TjOhCjEPiizycGsfW8bgTnZtghJc57yCDALHsHQOY87L
-         Im1QiyGkce1Dt2jqw7K67seVgy2rd7lFuwwAMrELu5pDIOUopOLcNSYirWA6B1DaXWwV
-         s9YaoaeXzxx7JwEPcj37pYD6px8KKSZAgc0waIDi+6fr5+pm345goqEQqBclYYCed5MY
-         4kEwZMVb8+lc1jhVvECR+8rxE2LHMyAGA/thTMpKNBwXiRce94iLbQzoGwRQKmVybq/d
-         YlqA==
-X-Gm-Message-State: AO0yUKWPjKwQyyyr4RdOBSYVUU8bRb5TCHEbOA/1pIgfSDKMzZR3AxVz
-        CZYsEUrkOEDEW6WKL2+MvpP8hattTG2nca7CPis=
-X-Google-Smtp-Source: AK7set9ITmfkSf23Ijk4VO47fSHhYC7XWU/RdttsAMUigPXAS7Id1LbskoGOgY3XW+0nxB34UYMjow==
-X-Received: by 2002:a17:907:2495:b0:8ac:8f3c:7f65 with SMTP id zg21-20020a170907249500b008ac8f3c7f65mr4294188ejb.48.1677619792358;
-        Tue, 28 Feb 2023 13:29:52 -0800 (PST)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id rs9-20020a170907036900b008d21431e705sm4850939ejb.84.2023.02.28.13.29.51
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Feb 2023 13:29:51 -0800 (PST)
-Received: by mail-ed1-f45.google.com with SMTP id da10so45909202edb.3
-        for <linux-security-module@vger.kernel.org>; Tue, 28 Feb 2023 13:29:51 -0800 (PST)
-X-Received: by 2002:a50:c34a:0:b0:4ae:f144:2c8e with SMTP id
- q10-20020a50c34a000000b004aef1442c8emr2699107edb.5.1677619791223; Tue, 28 Feb
- 2023 13:29:51 -0800 (PST)
+        Tue, 28 Feb 2023 20:26:41 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 009E936FFD;
+        Tue, 28 Feb 2023 17:26:39 -0800 (PST)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4PRGjB0PFHznWFN;
+        Wed,  1 Mar 2023 09:23:58 +0800 (CST)
+Received: from [10.67.110.173] (10.67.110.173) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Wed, 1 Mar 2023 09:26:36 +0800
+Message-ID: <419d45a3-f106-a6f4-4f91-347af7be4f82@huawei.com>
+Date:   Wed, 1 Mar 2023 09:26:36 +0800
 MIME-Version: 1.0
-References: <20230125155557.37816-1-mjguzik@gmail.com> <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
- <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com> <CAGudoHEV_aNymUq6v9Trn_ZRU45TL12AVXqQeV2kA90FuawxiQ@mail.gmail.com>
- <CAHk-=wgCMTUV=5aE-V8WjxuCME8LTBh-8k5XTPKz6oRXJ_sgTg@mail.gmail.com>
- <CAHk-=whwBb5Ws8x6aDV9u6CzMBQmsAtzF+UjWRnoe9xZxuW=qQ@mail.gmail.com> <CAGudoHH-u3KkwSsrSQPGKmhL9uke4HEL8U1Z+aU9etk9-PmdQQ@mail.gmail.com>
-In-Reply-To: <CAGudoHH-u3KkwSsrSQPGKmhL9uke4HEL8U1Z+aU9etk9-PmdQQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 28 Feb 2023 13:29:34 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgsVFvGrmbedVgpUjUJaRTMVxvGkr-dcR7s30S_MyDZfA@mail.gmail.com>
-Message-ID: <CAHk-=wgsVFvGrmbedVgpUjUJaRTMVxvGkr-dcR7s30S_MyDZfA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] capability: add cap_isidentical
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk,
-        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 4.19 v3 0/6] Backport handling -ESTALE policy update
+ failure to 4.19
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <dledford@redhat.com>, <jgg@ziepe.ca>
+References: <20230228080630.52370-1-guozihua@huawei.com>
+ <CAHC9VhR1UxGQnsWU1bhG1_XMVfdt_j-cVZkKnQ+rjzqcEP_NHw@mail.gmail.com>
+ <57ebd18a95caa0a8df9ad542478d5dca3ff5760c.camel@linux.ibm.com>
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+In-Reply-To: <57ebd18a95caa0a8df9ad542478d5dca3ff5760c.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 28, 2023 at 1:21=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> This is part of the crap which made me unwilling to do the clean up.
+On 2023/3/1 3:45, Mimi Zohar wrote:
+> On Tue, 2023-02-28 at 11:25 -0500, Paul Moore wrote:
+>> On Tue, Feb 28, 2023 at 3:09 AM GUO Zihua <guozihua@huawei.com> wrote:
+>>>
+>>> This series backports patches in order to resolve the issue discussed here:
+>>> https://lore.kernel.org/selinux/389334fe-6e12-96b2-6ce9-9f0e8fcb85bf@huawei.com/
+>>>
+>>> This required backporting the non-blocking LSM policy update mechanism
+>>> prerequisite patches. As well as bugfixes that follows:
+>>>
+>>> c66f67414c1f ("IB/core: Don't register each MAD agent for LSM notifier")
+>>> 42df744c4166 ("LSM: switch to blocking policy update notifiers")
+>>> b16942455193 ("ima: use the lsm policy update notifier")
+>>> 483ec26eed42 ("ima: ima/lsm policy rule loading logic bug fixes")
+>>> e144d6b26541 ("ima: Evaluate error in init_ima()")
+>>> c7423dbdbc9e ("ima: Handle -ESTALE returned by ima_filter_rule_match()")
+>>>
+>>> c66f67414c1f ("IB/core: Don't register each MAD agent for LSM notifier")
+>>> is merged as the prerequisite of 42df744c4166 ("LSM: switch to blocking
+>>> policy update notifiers"). e144d6b26541 ("ima: Evaluate error in
+>>> init_ima()"), 483ec26eed42 ("ima: ima/lsm policy rule loading logic bug
+>>> fixes") and 9ff8a616dfab ("ima: Have the LSM free its audit rule") are
+>>> merged as a follow up bugfix for b16942455193 ("ima: use the lsm policy
+>>> update notifier").
+> 
+> Scott, there's no need to duplicate the list of commits like this. 
+> Having an unordered list would have been fine.
+> 
+>>>
+>>> I've tested the patches against said issue and can confirm that the
+>>> issue is fixed.
+>>>
+>>> Link to the original maillist discussion:
+>>> https://lore.kernel.org/all/389334fe-6e12-96b2-6ce9-9f0e8fcb85bf@huawei.com/
+>>>
+>>> Change log:
+>>>   v2: Fixed build issue and backport bugfix commits for backported
+>>> patches.
+>>
+>> Is there a quick summary of the changes in v3 of this patchset?
+> 
+> v3:  Backport commit 483ec26eed42b ("ima: ima/lsm policy rule loading
+> logic bug fixes")  as well.
+> 
+Oh Shoot! Totally forgot about it. Sorry.
 
-Yeah, it's not pretty.
+The change is as Mimi said, backporting an additional IMA bugfix commit.
+-- 
+Best
+GUO Zihua
 
-That said, the old code was worse. The only redeeming feature of the
-old code was that "nobody has touched it in ages", so it was at least
-stable.
-
-              Linus
