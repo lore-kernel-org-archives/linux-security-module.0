@@ -2,32 +2,32 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BE3C7EE3A
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 20:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1D3C7EE30
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 20:29:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjCBU3V (ORCPT
+        id S230102AbjCBU31 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Mar 2023 15:29:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58150 "EHLO
+        Thu, 2 Mar 2023 15:29:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229946AbjCBU3P (ORCPT
+        with ESMTP id S229970AbjCBU3Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Mar 2023 15:29:15 -0500
+        Thu, 2 Mar 2023 15:29:16 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66E161A96D;
-        Thu,  2 Mar 2023 12:29:13 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4A4C2202D;
+        Thu,  2 Mar 2023 12:29:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=xBLSlmQtAyz0qvRsNFvWuwWpKiVVHBEV1aJjBlE0tQE=; b=4T8dlcCaoBdPNTMUrPR4ZbnWKQ
-        U/IiQYDF39ySJMrN6t8k85pINxzuzMBynHpatoaVq6IXt382QmOz4MCgHXk4gQyssT+L2V6r2Xgp0
-        mHMRuBldnqbFgWlOBCQJ3Wr1Se7TbGQGcfyx4FUCT8tHP9Yz7384pJlViVAMhMm1yVlDrykvbhx8A
-        oDhxb2B5OrxGxRGCsnlNBqirlR8fG48v1/jZurECPr7nqG8Ax/uhyLvYwpFRcqf/eGQvfIOCYuLVY
-        kjnFShUFiauUdPpIKvVPSmPerkyLZy0SUhMx1g5sR934vN3pnwjtbVdx3dtsOvNTV+bIB+yvThhWJ
-        e44/VfRA==;
+        bh=+Hoy53VeqZDOL/t9ch2P6jt/ahEQQ6UBHYjZPmP5kVI=; b=Pc795+UC8GmLBrVgybdkFp55Y8
+        315+vdPN8i3iM63aUS7f+Bs9nYk0siO1Smy4WXyTKX4WnXYTW317Ls+MdoHwjPtaJBBNrmkKmrRIZ
+        KHYF0wDjJ9lM0uHA+Yoa5IWrsNzTN0F5G24GFM0fnpK94APmt7QI6hLGYvl6S5RM9LQx7qtZzAJ1a
+        wo+xnJLrUNLJLtoY4EOjzj1p9mOCpV+GCulivVw8EcDbsAKVp7urur1hSh0wTy0UyyHkfajf7F0Yc
+        u6Y+2ntmlAtdyf/PeyB09Rnt5PWHWHN3RIoFE1e6NjYSeBtRijn7YFOFzIRKFO2ougvtK7txbQ6y2
+        piHryISw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pXpXR-003Fx9-Rz; Thu, 02 Mar 2023 20:28:29 +0000
+        id 1pXpXS-003FxL-Ca; Thu, 02 Mar 2023 20:28:30 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
         john.johansen@canonical.com, paul@paul-moore.com,
@@ -41,9 +41,9 @@ Cc:     j.granados@samsung.com, zhangpeng362@huawei.com,
         linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
         linux-security-module@vger.kernel.org, linux-csky@vger.kernel.org,
         linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 01/11] proc_sysctl: update docs for __register_sysctl_table()
-Date:   Thu,  2 Mar 2023 12:28:16 -0800
-Message-Id: <20230302202826.776286-2-mcgrof@kernel.org>
+Subject: [PATCH 07/11] seccomp: simplify sysctls with register_sysctl_init()
+Date:   Thu,  2 Mar 2023 12:28:22 -0800
+Message-Id: <20230302202826.776286-8-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230302202826.776286-1-mcgrof@kernel.org>
 References: <20230302202826.776286-1-mcgrof@kernel.org>
@@ -53,67 +53,48 @@ Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Update the docs for __register_sysctl_table() to make it clear no child
-entries can be passed. When the child is true these are non-leaf entries
-on the ctl table and sysctl treats these as directories. The point to
-__register_sysctl_table() is to deal only with directories not part of
-the ctl table where thay may riside, to be simple and avoid recursion.
-
-While at it, hint towards using long on extra1 and extra2 later.
+register_sysctl_paths() is only needed if you have childs (directories)
+with entries. Just use register_sysctl_init() as it also does the
+kmemleak check for you.
 
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/proc/proc_sysctl.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ kernel/seccomp.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 5851eb5bc726..1df0beb50dbe 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -1287,7 +1287,7 @@ static int insert_links(struct ctl_table_header *head)
-  * __register_sysctl_table - register a leaf sysctl table
-  * @set: Sysctl tree to register on
-  * @path: The path to the directory the sysctl table is in.
-- * @table: the top-level table structure
-+ * @table: the top-level table structure without any child
-  *
-  * Register a sysctl table hierarchy. @table should be a filled in ctl_table
-  * array. A completely 0 filled entry terminates the table.
-@@ -1308,9 +1308,12 @@ static int insert_links(struct ctl_table_header *head)
-  * proc_handler - the text handler routine (described below)
-  *
-  * extra1, extra2 - extra pointers usable by the proc handler routines
-+ * XXX: we should eventually modify these to use long min / max [0]
-+ * [0] https://lkml.kernel.org/87zgpte9o4.fsf@email.froward.int.ebiederm.org
-  *
-  * Leaf nodes in the sysctl tree will be represented by a single file
-- * under /proc; non-leaf nodes will be represented by directories.
-+ * under /proc; non-leaf nodes (where child is not NULL) are not allowed,
-+ * sysctl_check_table() verifies this.
-  *
-  * There must be a proc_handler routine for any terminal nodes.
-  * Several default handlers are available to cover common cases -
-@@ -1352,7 +1355,7 @@ struct ctl_table_header *__register_sysctl_table(
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index cebf26445f9e..d3e584065c7f 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -2368,12 +2368,6 @@ static int seccomp_actions_logged_handler(struct ctl_table *ro_table, int write,
+ 	return ret;
+ }
  
- 	spin_lock(&sysctl_lock);
- 	dir = &set->dir;
--	/* Reference moved down the diretory tree get_subdir */
-+	/* Reference moved down the directory tree get_subdir */
- 	dir->header.nreg++;
- 	spin_unlock(&sysctl_lock);
+-static struct ctl_path seccomp_sysctl_path[] = {
+-	{ .procname = "kernel", },
+-	{ .procname = "seccomp", },
+-	{ }
+-};
+-
+ static struct ctl_table seccomp_sysctl_table[] = {
+ 	{
+ 		.procname	= "actions_avail",
+@@ -2392,14 +2386,7 @@ static struct ctl_table seccomp_sysctl_table[] = {
  
-@@ -1369,6 +1372,11 @@ struct ctl_table_header *__register_sysctl_table(
- 		if (namelen == 0)
- 			continue;
+ static int __init seccomp_sysctl_init(void)
+ {
+-	struct ctl_table_header *hdr;
+-
+-	hdr = register_sysctl_paths(seccomp_sysctl_path, seccomp_sysctl_table);
+-	if (!hdr)
+-		pr_warn("sysctl registration failed\n");
+-	else
+-		kmemleak_not_leak(hdr);
+-
++	register_sysctl_init("kernel/seccomp", seccomp_sysctl_table);
+ 	return 0;
+ }
  
-+		/*
-+		 * namelen ensures if name is "foo/bar/yay" only foo is
-+		 * registered first. We traverse as if using mkdir -p and
-+		 * return a ctl_dir for the last directory entry.
-+		 */
- 		dir = get_subdir(dir, name, namelen);
- 		if (IS_ERR(dir))
- 			goto fail;
 -- 
 2.39.1
 
