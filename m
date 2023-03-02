@@ -2,54 +2,54 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A77BC6FA8E
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 22:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D441DC678D4
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 22:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230234AbjCBW4J (ORCPT
+        id S230249AbjCBW4i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Mar 2023 17:56:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41752 "EHLO
+        Thu, 2 Mar 2023 17:56:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230227AbjCBW4I (ORCPT
+        with ESMTP id S230230AbjCBW4g (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Mar 2023 17:56:08 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E52F34F67
-        for <linux-security-module@vger.kernel.org>; Thu,  2 Mar 2023 14:56:07 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id p20so831529plw.13
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Mar 2023 14:56:07 -0800 (PST)
+        Thu, 2 Mar 2023 17:56:36 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31210559D8
+        for <linux-security-module@vger.kernel.org>; Thu,  2 Mar 2023 14:56:29 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id m8-20020a17090a4d8800b002377bced051so4402656pjh.0
+        for <linux-security-module@vger.kernel.org>; Thu, 02 Mar 2023 14:56:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1677797767;
+        d=chromium.org; s=google; t=1677797788;
         h=in-reply-to:content-disposition:mime-version:references:subject:cc
          :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=fDa++rPUZHG1cADT97wEka7i9XpBCSMw+BsUJit3tM8=;
-        b=apW6CO+GriA5ax10w+Ltl21EZyiCuiEkrosyVJE39MbM7iiqBxUYPqTnJSZJrvIQ5m
-         AyBgf/dBZT8ggeDyaszfb5BRhMl3PsNMujEvWYmubxg2OsoEQS9fDcbnxUg4wG8mHx8b
-         JSd7FVNrEyw/RGhiZ1WY6WaWHYqk9swiQFrcM=
+        bh=qXTwXNN5BPBJ/NZ3OYbXwmxOPd3hLZf5+C8HCX49djg=;
+        b=cPNPEoDiS/HfsiIItPLGT3E2KS7Pa2nDCzgKjzoBCNTmF5ovdMVml+ppsm005Cz2gc
+         pMD41ueS/rsqWBDjk0Ang+swrwWISO9NpTVI+XcAlfsXxlunEfDcOqSyRkjHfJ2N7W3M
+         nXhJv2G01aF56hxwfL9a8N8s/N1YUs1FWh6Ok=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677797767;
+        d=1e100.net; s=20210112; t=1677797788;
         h=in-reply-to:content-disposition:mime-version:references:subject:cc
          :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fDa++rPUZHG1cADT97wEka7i9XpBCSMw+BsUJit3tM8=;
-        b=AlNJz+A7EJA6sUOwx9fCfJXPEDPkIgICiBedk4eNuTi2yjUDCO6SQnQCIuWh5QKjFa
-         jgHFQ9Zyj7x6By74n/PsxNfW6kb82PAvE95uKraUpO6YoryAVAplYqYxA4ejmJt6z1Ei
-         CBnaLC4tqjVfSM4eRVq8d01eSnArnZkDCbj+nCXeutx5eZVwEj9RGves+W1Fu/AfLcjO
-         DN5ZEE514ChohaZHG+IXPmO8dscjhfdEd8vHGv+nvV7L9cTc5YS84EdO1F9xNIxOeawP
-         miuAKBBE7SbRmai+FyX3jA7fSXSRrXPcDIsQH1Dt9NzJZKdilNmcPjHkpfg0XAl7X5Yv
-         JwDw==
-X-Gm-Message-State: AO0yUKVOPcd7Yxp0LQbFKXwyGjX3kfW+nPFBRCsnoAMvEeD5lUtWe5zE
-        MXYgCeEkMznHf3qIBDH1JerZ+g==
-X-Google-Smtp-Source: AK7set+MEnLjHdrL/UF2pQiGl3CRsjFYnt0FAye8NGhtXVtdNjGBD457Drx+Q5YR8VVMf1FPUpgIMQ==
-X-Received: by 2002:a17:90b:4a8c:b0:237:b702:49c0 with SMTP id lp12-20020a17090b4a8c00b00237b70249c0mr12768587pjb.45.1677797766720;
-        Thu, 02 Mar 2023 14:56:06 -0800 (PST)
+        bh=qXTwXNN5BPBJ/NZ3OYbXwmxOPd3hLZf5+C8HCX49djg=;
+        b=iR0k6rIkfNOXca/sCFZUpoGp/a+63c4eVKUkWlOzJbuHTjPwtK/knhsxEAcPmkcV7K
+         PcK67SN2gCTJHGkiNcLqVcPPLkJUgP2BQ2X7fjcPYsukFHHo5kRL7THtCvH0pPb3wnQO
+         oBsStV7KiucaFm/JOKeOYOevQ6APTBs8R+A/j1rszryBJ9LiBr2CZjq3n0FYDQHUYdd0
+         yzc+5y7Ib9sXVhLqQPUWdaVGv80a7nhBB15bEkQP5dsL5GnSIkmb/SgEcWCCK9iHNR1A
+         8KwWtNboiW0b3QpYsr3d4Eq+G+v/xnDpz+rfk/oKkJFmlIlGSTRzVfCnKT3eIuMuUqye
+         gtTw==
+X-Gm-Message-State: AO0yUKUtsglEueXb8pJo9WZXv2YxNUMMnlfLglxrDzoczNgQ0KcBJILA
+        JQu+13DH5uVfHnEuYmUnTDE5Fg==
+X-Google-Smtp-Source: AK7set+MdZhHyeith+B94HrQd6WpkfpBD5XCV21gXOzsSKhUw+dB78RFefTe7N6XbvDbdrdQDA//KA==
+X-Received: by 2002:a17:902:ec88:b0:19a:e762:a1af with SMTP id x8-20020a170902ec8800b0019ae762a1afmr3404427plg.33.1677797788585;
+        Thu, 02 Mar 2023 14:56:28 -0800 (PST)
 Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id x13-20020a17090a294d00b00234a2f6d9c0sm224637pjf.57.2023.03.02.14.56.06
+        by smtp.gmail.com with ESMTPSA id b9-20020a170903228900b00198d7b52eefsm168326plh.257.2023.03.02.14.56.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Mar 2023 14:56:06 -0800 (PST)
-Message-ID: <64012986.170a0220.67312.124e@mx.google.com>
-X-Google-Original-Message-ID: <202303021455.@keescook>
-Date:   Thu, 2 Mar 2023 14:56:05 -0800
+        Thu, 02 Mar 2023 14:56:28 -0800 (PST)
+Message-ID: <6401299c.170a0220.3a2e.0b8a@mx.google.com>
+X-Google-Original-Message-ID: <202303021456.@keescook>
+Date:   Thu, 2 Mar 2023 14:56:27 -0800
 From:   Kees Cook <keescook@chromium.org>
 To:     Luis Chamberlain <mcgrof@kernel.org>
 Cc:     ebiederm@xmission.com, yzaikin@google.com,
@@ -64,20 +64,21 @@ Cc:     ebiederm@xmission.com, yzaikin@google.com,
         linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
         linux-security-module@vger.kernel.org, linux-csky@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/11] loadpin: simplify sysctls use with
- register_sysctl()
+Subject: Re: [PATCH 07/11] seccomp: simplify sysctls with
+ register_sysctl_init()
 References: <20230302202826.776286-1-mcgrof@kernel.org>
- <20230302202826.776286-6-mcgrof@kernel.org>
+ <20230302202826.776286-8-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230302202826.776286-6-mcgrof@kernel.org>
+In-Reply-To: <20230302202826.776286-8-mcgrof@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 02, 2023 at 12:28:20PM -0800, Luis Chamberlain wrote:
-> register_sysctl_paths() is not required, we can just use
-> register_sysctl() with the required path specified.
+On Thu, Mar 02, 2023 at 12:28:22PM -0800, Luis Chamberlain wrote:
+> register_sysctl_paths() is only needed if you have childs (directories)
+> with entries. Just use register_sysctl_init() as it also does the
+> kmemleak check for you.
 > 
 > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
