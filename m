@@ -2,135 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802CCC678D4
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 19:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C07A3C6FA8E
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 19:02:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbjCBTBF (ORCPT
+        id S229623AbjCBTCR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Mar 2023 14:01:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50084 "EHLO
+        Thu, 2 Mar 2023 14:02:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbjCBTBD (ORCPT
+        with ESMTP id S229537AbjCBTCR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Mar 2023 14:01:03 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A28220057
-        for <linux-security-module@vger.kernel.org>; Thu,  2 Mar 2023 11:01:01 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id p6so109856pga.0
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Mar 2023 11:01:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1677783660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sbKqTB1BWmST+UKS3o/pcnOIniBYA6/WBLEtc9haQn4=;
-        b=f6CB0s+KV2OW0hRLDgrai9rYXWAdgEzOd1HKjzgncsSTbWytg8B0shiJ79cVHIi1vO
-         NfrTj+lMOtmVES/SN5tUizQ34VKdLqix9CWELeH+KrTcEymXdzPIEexDiBaqMU7ww0GK
-         sGzZ7mXcF5H5dCoMBQm44MSvQYc8W4Wy/Uzn9pe7oVpFrQ270ldOFxuD0OsCggJ0HBqc
-         bMLhtiOMAAtD+EpZC0R6O8ttn+ahurnj9OFXO0sVBcvxvdJHFYhROyspmOHRH+P1DqMB
-         PN1J3UoPaWpHoy6A49mEBkZV5JgSIJF6mSkQjZ9rqaOJmSJo8zGtxSMzri02uyU/YtOE
-         ipwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677783660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sbKqTB1BWmST+UKS3o/pcnOIniBYA6/WBLEtc9haQn4=;
-        b=HfWm86eZ0xvsZ0xjeNdiflsV8y+HFzQ0BorLX0yeHxCJGMEK6cuCbWikryvnFGktXZ
-         SUiyjylt7wZs4WE240sogvAKsHSZQEZyqYqKslAxnIQTB/f4OXu8tCRcNd+KKCNSx6KK
-         DMWNLKJ9XSGRbRl9NWm6EMg8egiAxozNijvpnVstVuo9EPrIb60BCQra0Dkg032qpB/k
-         YQ2ynjaKTUXk5PtKWIHcffqPZxoJ2mInNKI2yIGcoLCRHjtwVWXh1Tr8alv+TVvL3TRM
-         AkbDLxITsPJkzAYRFwnCCxN6HbPGuWB93Z0zMsI7Li8dUWoBGVWBRgIfT35knQmXQMRs
-         CZgQ==
-X-Gm-Message-State: AO0yUKUjtiBkuUII2qgv0tMmrNUuSpOfqH0xdfBZ6FsWaiuV5yJctKZC
-        lpHMxF7E2oL/Kp/Phg5T/yS/nys0OK58aLif6RN9
-X-Google-Smtp-Source: AK7set/JqphcjYj9seuvS6xKNvURMu+S3V/LEScKzhxHP7SqFb0AhXhOojS1vVfFsCMHm+0xdSDtgJ0BLFb+6ahFIIw=
-X-Received: by 2002:a63:2953:0:b0:503:91ff:8dd8 with SMTP id
- bu19-20020a632953000000b0050391ff8dd8mr2858904pgb.4.1677783659129; Thu, 02
- Mar 2023 11:00:59 -0800 (PST)
+        Thu, 2 Mar 2023 14:02:17 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4EC3193F3;
+        Thu,  2 Mar 2023 11:02:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=lpBNVR74iubjvON2wguO4B8ttWa6FZ0mrtSI3Z/IcA8=; b=rL03dt7h2WxlaKHIIhcEPhjJxg
+        bn28ifI4tDnDJLbkFxlRtgBxfHTWBCn3JNL/d67e3Qek5xAdY9QlEWOeA2rtKVd8FI/HWCLZtWTA3
+        bBEGr74fT+YeSYz6BKm1vQQc7m1zT7oZ+Kr6ixxkfHdmgsp2m5+pEkOvmTBTUWAe7EnQQC92qcCWw
+        0/b6MbJRr2vvy0BChdIuu5UlRVaKuRNo3giHvqq8i1e3Qi2J/3v5fUzuris51tvCvNdQuRFNrcQkp
+        R8v4jASZ7AcFUyk97Ebmvr/yK3LI1XZyQEPz67Mw38spqI95ibMVF2ht8IY4n+Ui+ynvR4fDbv8cA
+        Gw530wDA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pXoBv-00DNPR-05;
+        Thu, 02 Mar 2023 19:02:11 +0000
+Date:   Thu, 2 Mar 2023 19:02:10 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
+ possible
+Message-ID: <ZADysodnEPRqhKqc@ZenIV>
+References: <20230125155557.37816-1-mjguzik@gmail.com>
+ <20230125155557.37816-2-mjguzik@gmail.com>
+ <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
+ <20230302083025.khqdizrnjkzs2lt6@wittgenstein>
+ <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
+ <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
+ <ZADoeOiJs6BRLUSd@ZenIV>
+ <CAGudoHFhnJ1z-81FKYpzfDmvcWFeHNkKGdr00CkuH5WJa2FAMQ@mail.gmail.com>
+ <ZADuWxU963sInrj/@ZenIV>
 MIME-Version: 1.0
-References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com> <1675119451-23180-2-git-send-email-wufan@linux.microsoft.com>
-In-Reply-To: <1675119451-23180-2-git-send-email-wufan@linux.microsoft.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 2 Mar 2023 14:00:48 -0500
-Message-ID: <CAHC9VhTtXC=HMUF8uak-29E__xLN2Kh_znn0xdRbm-GkgqBNiA@mail.gmail.com>
-Subject: Re: [RFC PATCH v9 01/16] security: add ipe lsm
-To:     Fan Wu <wufan@linux.microsoft.com>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
-        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        eparis@redhat.com, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, linux-audit@redhat.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZADuWxU963sInrj/@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 30, 2023 at 5:58=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> =
-wrote:
->
-> From: Deven Bowers <deven.desai@linux.microsoft.com>
->
-> Integrity Policy Enforcement (IPE) is an LSM that provides an
-> complimentary approach to Mandatory Access Control than existing LSMs
-> today.
->
-> Existing LSMs have centered around the concept of access to a resource
-> should be controlled by the current user's credentials. IPE's approach,
-> is that access to a resource should be controlled by the system's trust
-> of a current resource.
->
-> The basis of this approach is defining a global policy to specify which
-> resource can be trusted.
->
-> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+On Thu, Mar 02, 2023 at 06:43:39PM +0000, Al Viro wrote:
+> On Thu, Mar 02, 2023 at 07:22:17PM +0100, Mateusz Guzik wrote:
+> 
+> > Ops, I meant "names_cache", here:
+> > 	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
+> > 			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
+> > 
+> > it is fs/dcache.c and I brainfarted into the above.
+> 
+> So you mean __getname() stuff?
 
-...
+The thing is, getname_flags()/getname_kernel() is not the only user of that
+thing; grep and you'll see (and keep in mind that cifs alloc_dentry_path()
+is a __getname() wrapper, with its own callers).  We might have bugs papered
+over^W^Whardened away^W^Wpapered over in some of those users.
 
-> ---
->  MAINTAINERS           |  5 +++++
->  security/Kconfig      | 11 ++++++-----
->  security/Makefile     |  1 +
->  security/ipe/Kconfig  | 17 +++++++++++++++++
->  security/ipe/Makefile | 10 ++++++++++
->  security/ipe/ipe.c    | 40 ++++++++++++++++++++++++++++++++++++++++
->  security/ipe/ipe.h    | 13 +++++++++++++
->  7 files changed, 92 insertions(+), 5 deletions(-)
->  create mode 100644 security/ipe/Kconfig
->  create mode 100644 security/ipe/Makefile
->  create mode 100644 security/ipe/ipe.c
->  create mode 100644 security/ipe/ipe.h
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8a5c25c20d00..5e27e84763cc 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10273,6 +10273,11 @@ T:     git git://git.kernel.org/pub/scm/linux/ke=
-rnel/git/zohar/linux-integrity.git
->  F:     security/integrity/ima/
->  F:     security/integrity/
->
-> +INTEGRITY POLICY ENFORCEMENT (IPE)
-> +M:     Fan Wu <wufan@linux.microsoft.com>
-> +S:     Supported
-> +F:     security/ipe/
+I agree that getname_flags()/getname_kernel()/sys_getcwd() have no need of
+pre-zeroing; fw_get_filesystem_firmware(), ceph_mdsc_build_path(),
+[hostfs]dentry_name() and ima_d_path() seem to be safe.  So's
+vboxsf_path_from_dentry() (I think).  But with this bunch I'd need
+a review before I'd be willing to say "this security theatre buys us
+nothing here":
 
-You should probably add a mailing list (L:) and source tree URL (T:)
-to the IPE entry.  You can use the LSM mailing list to start if you
-like, there are several LSMs that do that today, e.g. Smack, Landlock,
-etc.  As far as the source tree is concerned, probably the easiest
-option is a simple GitHub repo, but there are plenty of other choices
-too.
+fs/cifs/cifsproto.h:67: return __getname();
+fs/exfat/dir.c:195:     nb->lfn = __getname();
+fs/fat/dir.c:287:               *unicode = __getname();
+fs/fat/namei_vfat.c:598:        uname = __getname();
+fs/ntfs3/dir.c:394:     name = __getname();
+fs/ntfs3/inode.c:1289:  new_de = __getname();
+fs/ntfs3/inode.c:1694:  de = __getname();
+fs/ntfs3/inode.c:1732:  de = __getname();
+fs/ntfs3/namei.c:71:    struct cpu_str *uni = __getname();
+fs/ntfs3/namei.c:286:   de = __getname();
+fs/ntfs3/namei.c:355:   struct cpu_str *uni = __getname();
+fs/ntfs3/namei.c:494:   uni = __getname();
+fs/ntfs3/namei.c:555:   uni1 = __getname();
+fs/ntfs3/xattr.c:532:   buf = __getname();
 
-Both the mailing list and the source URLs can always be updated in the
-future so don't worry too much about being stuck with either long
-term.
-
---
-paul-moore.com
+fs/cifs/cifs_dfs_ref.c:168:     page = alloc_dentry_path();
+fs/cifs/cifsacl.c:1697: page = alloc_dentry_path();
+fs/cifs/cifsacl.c:1760: page = alloc_dentry_path();
+fs/cifs/cifsproto.h:65:static inline void *alloc_dentry_path(void)
+fs/cifs/dir.c:187:      void *page = alloc_dentry_path();
+fs/cifs/dir.c:604:      page = alloc_dentry_path();
+fs/cifs/dir.c:664:      page = alloc_dentry_path();
+fs/cifs/file.c:594:     page = alloc_dentry_path();
+fs/cifs/file.c:796:     page = alloc_dentry_path();
+fs/cifs/file.c:2223:    void *page = alloc_dentry_path();
+fs/cifs/file.c:2255:    void *page = alloc_dentry_path();
+fs/cifs/inode.c:1663:   page = alloc_dentry_path();
+fs/cifs/inode.c:1938:   page = alloc_dentry_path();
+fs/cifs/inode.c:2001:   void *page = alloc_dentry_path();
+fs/cifs/inode.c:2170:   page1 = alloc_dentry_path();
+fs/cifs/inode.c:2171:   page2 = alloc_dentry_path();
+fs/cifs/inode.c:2446:   page = alloc_dentry_path();
+fs/cifs/inode.c:2738:   void *page = alloc_dentry_path();
+fs/cifs/inode.c:2893:   void *page = alloc_dentry_path();
+fs/cifs/ioctl.c:34:     void *page = alloc_dentry_path();
+fs/cifs/link.c:491:     page1 = alloc_dentry_path();
+fs/cifs/link.c:492:     page2 = alloc_dentry_path();
+fs/cifs/misc.c:803:     page = alloc_dentry_path();
+fs/cifs/readdir.c:1071: void *page = alloc_dentry_path();
+fs/cifs/smb2ops.c:2059: void *page = alloc_dentry_path();
+fs/cifs/xattr.c:112:    page = alloc_dentry_path();
+fs/cifs/xattr.c:277:    page = alloc_dentry_path();
+fs/cifs/xattr.c:382:    page = alloc_dentry_path();
