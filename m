@@ -2,32 +2,32 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9476C678D4
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 20:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3142C7EE30
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 20:29:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230029AbjCBU3T (ORCPT
+        id S230050AbjCBU3U (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Mar 2023 15:29:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58198 "EHLO
+        Thu, 2 Mar 2023 15:29:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229959AbjCBU3Q (ORCPT
+        with ESMTP id S229943AbjCBU3P (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Mar 2023 15:29:16 -0500
+        Thu, 2 Mar 2023 15:29:15 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68D821ABDC;
-        Thu,  2 Mar 2023 12:29:14 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 535CE1A969;
+        Thu,  2 Mar 2023 12:29:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=H2cUIW21WZq17g9O2oNgRsa778WFbjBOimotIrmyA/E=; b=nNmP8ACa3bYQFO+va5O1HA9FsY
-        7uEoxbwqkYk/qt113tW2SYA9YMG3a2AHu8L7Iv3iQ0EMlgc7BBKKyksmjuEvEnZO0sSPh+srw21Ed
-        92vGNiItW9t2AeJ5aH7Je//Kla0sYsQd6yw57DZXv4g5YLEqNM5fx8BqApdQ2WOzt1ETsFacehG28
-        1v5ozP5b85IjoFEOhl2RVeEKNDt9QH7O2q/lI+HC3DfepUovBBCkaCjB4ahImpZOYcj2qeiGF+SSR
-        bKm0l0YVBiFRo1VjmJYCVnVBvM6yvLikEV5zJHWv1DMHYb3GMsppkfKWHIApcwT0D+DZwuAqLb0xi
-        hYGi9dkg==;
+        bh=aQxjJTI+/dgkfmOIkPQGBpoNeT0L25JfaRzqJBNjzfI=; b=M9Ls3cLPjLxNw64e3/lgGKMi96
+        8TAGSLVibINE1yswDzR8JzobcbigsqbuREDkc+CYrF+RiHQSMgAmf6yrV1lO4kjZ2FzXnswl3+03A
+        fcXNLxcyw8wBceOCZgds3wn3ORO7gc72kXSfmwu1mIvI/VrkdFToLXMUmTN/4AFfj8FMxmgxKCTlW
+        a2hz5P4cP+sg7uV9qEpfkZGPF+NtATW9+gSwUB4XXxjdkzh/W3WwvSlZt9iJNRHdedq1LxFqmXf7F
+        v2p6ZK6mtaRZOj4/WdAkAizmAIpcCkvVRU8DvSY2i5CXtjK6tQvdpqTDANTTSQUtTD/eXXdsfuX5j
+        +pvTdI2g==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pXpXS-003FxJ-9n; Thu, 02 Mar 2023 20:28:30 +0000
+        id 1pXpXS-003FxF-4H; Thu, 02 Mar 2023 20:28:30 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
         john.johansen@canonical.com, paul@paul-moore.com,
@@ -41,9 +41,9 @@ Cc:     j.granados@samsung.com, zhangpeng362@huawei.com,
         linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
         linux-security-module@vger.kernel.org, linux-csky@vger.kernel.org,
         linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 06/11] yama: simplfy sysctls with register_sysctl()
-Date:   Thu,  2 Mar 2023 12:28:21 -0800
-Message-Id: <20230302202826.776286-7-mcgrof@kernel.org>
+Subject: [PATCH 04/11] apparmor: simplify sysctls with register_sysctl_init()
+Date:   Thu,  2 Mar 2023 12:28:19 -0800
+Message-Id: <20230302202826.776286-5-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230302202826.776286-1-mcgrof@kernel.org>
 References: <20230302202826.776286-1-mcgrof@kernel.org>
@@ -53,40 +53,41 @@ Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-register_sysctl_paths() is only need if you have directories with
-entries, simplify this by using register_sysctl().
+Using register_sysctl_paths() is really only needed if you have
+subdirectories with entries. We can use the simple register_sysctl()
+instead.
 
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- security/yama/yama_lsm.c | 8 +-------
+ security/apparmor/lsm.c | 8 +-------
  1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index 06e226166aab..90dd012b0db5 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -447,12 +447,6 @@ static int yama_dointvec_minmax(struct ctl_table *table, int write,
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index d6cc4812ca53..47c7ec7e5a80 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1764,11 +1764,6 @@ static int apparmor_dointvec(struct ctl_table *table, int write,
+ 	return proc_dointvec(table, write, buffer, lenp, ppos);
+ }
  
- static int max_scope = YAMA_SCOPE_NO_ATTACH;
- 
--static struct ctl_path yama_sysctl_path[] = {
+-static struct ctl_path apparmor_sysctl_path[] = {
 -	{ .procname = "kernel", },
--	{ .procname = "yama", },
 -	{ }
 -};
 -
- static struct ctl_table yama_sysctl_table[] = {
+ static struct ctl_table apparmor_sysctl_table[] = {
  	{
- 		.procname       = "ptrace_scope",
-@@ -467,7 +461,7 @@ static struct ctl_table yama_sysctl_table[] = {
- };
- static void __init yama_init_sysctl(void)
+ 		.procname       = "unprivileged_userns_apparmor_policy",
+@@ -1790,8 +1785,7 @@ static struct ctl_table apparmor_sysctl_table[] = {
+ 
+ static int __init apparmor_init_sysctl(void)
  {
--	if (!register_sysctl_paths(yama_sysctl_path, yama_sysctl_table))
-+	if (!register_sysctl("kernel/yama", yama_sysctl_table))
- 		panic("Yama: sysctl registration failed.\n");
+-	return register_sysctl_paths(apparmor_sysctl_path,
+-				     apparmor_sysctl_table) ? 0 : -ENOMEM;
++	return register_sysctl("kernel", apparmor_sysctl_table) ? 0 : -ENOMEM;
  }
  #else
+ static inline int apparmor_init_sysctl(void)
 -- 
 2.39.1
 
