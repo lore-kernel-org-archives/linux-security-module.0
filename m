@@ -2,88 +2,83 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3479C678D4
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 17:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BC8C678D4
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 18:11:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229921AbjCBRwN (ORCPT
+        id S229529AbjCBSLS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Mar 2023 12:52:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53910 "EHLO
+        Thu, 2 Mar 2023 13:11:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229621AbjCBRwM (ORCPT
+        with ESMTP id S229455AbjCBSLR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Mar 2023 12:52:12 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C1539BA5
-        for <linux-security-module@vger.kernel.org>; Thu,  2 Mar 2023 09:52:11 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id cy23so159005edb.12
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Mar 2023 09:52:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1677779529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A5aFcQHv0N7yL7akZl+srFSiIjdpFMlk0jHiL9q2NCU=;
-        b=Rg0CNtgX0eLMgdHgQfPOud2SKsPZqOhhVKlMy0ALZrL/PHjt/MVnWeuBIBz3oznil8
-         n2igdVoUYYnz9o9meqnpj07f/GNys7NpBg7aaiI9JwdK5uF7yecJ2qT9EUUy+7x54Ya1
-         qvVGdXUZ7F+oR+IKyvKYNwqUGp1/67jnibc+Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677779529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A5aFcQHv0N7yL7akZl+srFSiIjdpFMlk0jHiL9q2NCU=;
-        b=F+kUeK73S2srD6GHWTgd6HTdxVaBODrJ7O6QF95T7tGxm2YRJTFiDiuGyiY/1nnM4C
-         yaN6VBkhNxXMtYTrsD4RYSoMI4YE1SWOeO+X+9q4shaHMOW22Eo9yijZREq9R86YsxR7
-         yDDxVAmK82U3OyGDWnLoljNSsGLfKlXhRqPY7BcKuywuktrrK3c58EuRrVj3C++liR58
-         0klHPqaHfb5ohFYWCUNhewEEyyYcbjGKUaHJ61ptAz5aJiu75/vkqzIYXWTxIW30F/2m
-         EuP5dWgNVIdnX4QioUn1uR2KVDkPuvzpJqsbTaLUEXXZJSyddRXv92gsjYeOc/6/hPY7
-         M6KA==
-X-Gm-Message-State: AO0yUKXN7ktwmexYk1u/D8VjBwJ1475dAwmopkaLlXltqt+I0iezcBdB
-        Zccyks67vHPUBrAr8XeieI/IFaR+BmG8KmWs5mE=
-X-Google-Smtp-Source: AK7set/9nohSz/w3IXZlzr8BUa+uRP5RUu9PyIw/PzrmRPiSrLaG51iGzbdx3xZpxFE8ZUm5S9S9qQ==
-X-Received: by 2002:a17:906:cf91:b0:8b8:c04f:c5f9 with SMTP id um17-20020a170906cf9100b008b8c04fc5f9mr13941051ejb.73.1677779529391;
-        Thu, 02 Mar 2023 09:52:09 -0800 (PST)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id g26-20020a170906199a00b008ea8effe947sm7351714ejd.225.2023.03.02.09.52.06
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Mar 2023 09:52:06 -0800 (PST)
-Received: by mail-ed1-f51.google.com with SMTP id u9so382787edd.2
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Mar 2023 09:52:06 -0800 (PST)
-X-Received: by 2002:a17:906:2ec8:b0:877:747e:f076 with SMTP id
- s8-20020a1709062ec800b00877747ef076mr5367831eji.0.1677779526028; Thu, 02 Mar
- 2023 09:52:06 -0800 (PST)
-MIME-Version: 1.0
-References: <20230125155557.37816-1-mjguzik@gmail.com> <20230125155557.37816-2-mjguzik@gmail.com>
- <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com> <20230302083025.khqdizrnjkzs2lt6@wittgenstein>
-In-Reply-To: <20230302083025.khqdizrnjkzs2lt6@wittgenstein>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 2 Mar 2023 09:51:48 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
-Message-ID: <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
+        Thu, 2 Mar 2023 13:11:17 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0761C3C796;
+        Thu,  2 Mar 2023 10:11:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+        bh=ibBYQQeIiiGAZn1jkw/8iD8zchDBJYmzitBNnNfffKU=; b=qkWBA+Mclu35E811ntqp6YmvCO
+        RR3OMkAPCgUeQg56ODLX8MF35b4I8H5SdZNbSHP3xaHNT9p9kDXjqLJ87VyIZ3syAes93tpzxnZuw
+        7m6LlO7gEJnZM0zXv/Fj/ZdP6PDduhMav6oUkwsaY1PwIbINSFKRkghbzfQ3ba8tvVWddZkvvuxpy
+        UAzvmw7DC4JcR3jlrZBu9t0jzhrz0S/XpZDL0naDS+PrnfZYDGLP2JiAEhYqf8BfYHlK4f14D4FfX
+        ynn207lh1XX3e7Kx4EXmvvdu8jVehz6ILL5pFVAn9ygBykT79sUTd7G3OFLNwu7ySOMKv+C9/MLgW
+        BsgZ0Xtg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pXnOV-00DMyn-2L;
+        Thu, 02 Mar 2023 18:11:07 +0000
+Date:   Thu, 2 Mar 2023 18:11:07 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Christian Brauner <brauner@kernel.org>
-Cc:     Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk,
-        serge@hallyn.com, paul@paul-moore.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mateusz Guzik <mjguzik@gmail.com>, serge@hallyn.com,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
+ possible
+Message-ID: <ZADmuzDEr6yznutq@ZenIV>
+References: <20230125155557.37816-1-mjguzik@gmail.com>
+ <20230125155557.37816-2-mjguzik@gmail.com>
+ <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
+ <20230302083025.khqdizrnjkzs2lt6@wittgenstein>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230302083025.khqdizrnjkzs2lt6@wittgenstein>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 2, 2023 at 12:30=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
+On Thu, Mar 02, 2023 at 09:30:25AM +0100, Christian Brauner wrote:
+> On Mon, Feb 27, 2023 at 04:44:06PM -0800, Linus Torvalds wrote:
+> > On Wed, Jan 25, 2023 at 7:56 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> > >
+> > > Turns out for typical consumers the resulting creds would be identical
+> > > and this can be checked upfront, avoiding the hard work.
+> > 
+> > I've applied this v3 of the two patches.
+> > 
+> > Normally it would go through Al, but he's clearly been under the
+> > weather and is drowning in email. Besides, I'm comfortable with this
+> > particular set of patches anyway as I was involved in the previous
+> > round of access() overhead avoidance with the whole RCU grace period
+> > thing.
+> > 
+> > So I think we're all better off having Al look at any iov_iter issues.
+> > 
+> > Anybody holler if there are issues,
+> 
 > Fwiw, as long as you, Al, and others are fine with it and I'm aware of
 > it I'm happy to pick up more stuff like this. I've done it before and
 > have worked in this area so I'm happy to help with some of the load.
 
-Yeah, that would work. We've actually had discussions of vfs
-maintenance in general.
+TBH, I've missed that series; patches look sane, so consider them
+belatedly ACKed.
 
-In this case it really wasn't an issue, with this being just two
-fairly straightforward patches for code that I was familiar with.
-
-              Linus
+And I've no problem with sharing the load - you have been doing that with
+idmapping stuff anyway.  As far as I'm concerned, I generally trust your
+taste; it doesn't matter that I won't disagree with specific decisions,
+of course, but...
