@@ -2,89 +2,97 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 144BFC6FA8E
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 18:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAC9C678D4
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 18:53:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229449AbjCBSwA (ORCPT
+        id S229501AbjCBSxp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Mar 2023 13:52:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44842 "EHLO
+        Thu, 2 Mar 2023 13:53:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjCBSv7 (ORCPT
+        with ESMTP id S229566AbjCBSx2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Mar 2023 13:51:59 -0500
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E17624C85;
-        Thu,  2 Mar 2023 10:51:56 -0800 (PST)
-Received: by mail-oi1-x22c.google.com with SMTP id bh20so14334994oib.9;
-        Thu, 02 Mar 2023 10:51:56 -0800 (PST)
+        Thu, 2 Mar 2023 13:53:28 -0500
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFA2913D75
+        for <linux-security-module@vger.kernel.org>; Thu,  2 Mar 2023 10:53:27 -0800 (PST)
+Received: by mail-pg1-x52a.google.com with SMTP id s17so63863pgv.4
+        for <linux-security-module@vger.kernel.org>; Thu, 02 Mar 2023 10:53:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677783116;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g4miANRftKXvw3pXYRIpYFtXe5ceS+myUMxfIqC9f6g=;
-        b=eNTLwlcwVO9qt7WefOE/XSaVIJNFp3TkE3k79MaNYDmvuzhbrXB1q7do4Bwg4uyf//
-         HpuBJwSTrpJUE1IWFrIM/cAQQnspE7NJH8t/uARIWuCNC1z+kyd2/C5gDB0cNVprK77k
-         PkBZfGkNZFXL04GJ1qnNvAPo+NaINpS+y0yodzxbUVGKpY/pLEE/6pR1OnmDtsQNBCMk
-         P6jzmTJxsjtugzXKq7zeUTWCg49fmIkciZLhrdRlZ+j4+25o2YFaGMS9FOl1yWi1dd0X
-         1ByeOBMmrdHUK1A03dQ+ZFEpQU1nvIGo34NZDAgGRU/9ej7S4R2sRyRXuf1Bc7lh5ezZ
-         63Iw==
+        d=chromium.org; s=google; t=1677783207;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=19sPNpvioqmjHXQZ8W0SFyJmIXuAcC13sOwLHHa3IcA=;
+        b=ObsjiKyzXTrtjl2JEJibctf3fv5TVe68XHTmQ5MCfoHwYL/Iaq51dPKbWx4L8/yhws
+         mMJPuow1YaQuaq5J3PhNoIAYGd+KDc4Tagf8G3Eo3XUm1VYTmYkou4D0UBCvin0GfgEd
+         pNI2DmqF9/5QQWajVH+2NtSOnR+ZNTQjV2sOk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677783116;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20210112; t=1677783207;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g4miANRftKXvw3pXYRIpYFtXe5ceS+myUMxfIqC9f6g=;
-        b=rzUZFdN5SKbH/67HOw2xj+Ha2DU/R25mJcQN8nq4sSeMtrkP0TFNjNRJMRPnLAfPk5
-         YhRTe05VMBNvNSQb6wDYyqqIo3YIvdiuqtZxbvUwM2eE60Z2fNmL7eErf2TIJLQAjEhJ
-         l4QhlOmSzY0Lao30v2WDEIubu2o695KLcwZa+g8qZ6vh7FX2itpNZsX5UpdvDp39CGIR
-         ipSBK8PYoU8kTcs7/YdMmLf5oIKXu/FnE+pVDEIUlEM+S8A/z+nsTq9cK3eqVPQppiHR
-         8Kt5Vozc2vDNXJgh27Kr6wzm+cat0y5VzRfRwr7IFi+hZAndLdxbuagsck1qwGN2IEhX
-         saHQ==
-X-Gm-Message-State: AO0yUKXau+Ggucz4wKQn5HLs1YKvbfvtmF71aYy6tZSvt3ceAxj3KFgD
-        Qm2IshrMxNfV8kOfNJrGo54dfyydvuMweRVg6T0=
-X-Google-Smtp-Source: AK7set8etazuQfWIK1AczOuew0I3NCmGN8J9YEHY9RTCA/pE6sM0ooCMbqPCnY41ITM7XwmeL6pSLFygSIv5F50p5Sk=
-X-Received: by 2002:a05:6808:d3:b0:378:74af:45ef with SMTP id
- t19-20020a05680800d300b0037874af45efmr3358790oic.11.1677783116012; Thu, 02
- Mar 2023 10:51:56 -0800 (PST)
+        bh=19sPNpvioqmjHXQZ8W0SFyJmIXuAcC13sOwLHHa3IcA=;
+        b=iVRwncfopf3pMqopR6vS2gsfnU+6HbkTkxXF2InA9qvxDrYCVqli53fSUNcUMEVHSO
+         L3wM3qTyrzn4DNldzERmhKVdoNqiEIZOkbmjbYQSZIHNBEu52JB9NbdWxTrZ/eLs/wO+
+         EaAbFX8o7387fx1oC3OBZFW3dgKuUtQPZdEU7CkvwlJi7DFW/O8i99QAI6zFZhocelyb
+         NacHJAivQ38uX46nlO0tEDfP8DLfByLDd7DFTkCZpNfzUMyJA0vtOtL6GcRUFSnQ09xk
+         gaVnUrRCivKm6QV/UuCuvGq1vnulKqK7Wtu8R3Bn9M9AeyjnUL3q4GIHINtXKdiuznh7
+         SdRA==
+X-Gm-Message-State: AO0yUKU6HmM1QMdpsD78A8ZQrr+pbPuHehVoBRHVi+QT4Q9QGH867ihF
+        uBoiGPkn7YN1ka/+18ilWq3RUQ==
+X-Google-Smtp-Source: AK7set+4pfKeFUKh/zbxlktuGsGPOpfJcs9R1u3y2rDpvUVQ0bGQ1po8bTqb2Bqj/2yRy7TtJ03/Ug==
+X-Received: by 2002:aa7:9466:0:b0:5a8:cf20:e35f with SMTP id t6-20020aa79466000000b005a8cf20e35fmr8426363pfq.28.1677783207272;
+        Thu, 02 Mar 2023 10:53:27 -0800 (PST)
+Received: from enlightened2.mtv.corp.google.com ([2620:15c:9d:6:9b33:9b92:f51d:bd4])
+        by smtp.gmail.com with ESMTPSA id b4-20020aa78704000000b005a8c60ce93bsm26782pfo.149.2023.03.02.10.53.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Mar 2023 10:53:26 -0800 (PST)
+From:   enlightened@chromium.org
+To:     mic@digikod.net
+Cc:     linux-security-module@vger.kernel.org, jorgelo@chromium.org,
+        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
+        allenwebb@chromium.org, Shervin Oloumi <enlightened@chromium.org>
+Subject: [PATCH 0/1] process attribute support for Landlock
+Date:   Thu,  2 Mar 2023 10:52:56 -0800
+Message-Id: <20230302185257.850681-1-enlightened@chromium.org>
+X-Mailer: git-send-email 2.40.0.rc0.216.gc4246ad0f0-goog
 MIME-Version: 1.0
-Received: by 2002:ac9:4304:0:b0:4c1:4768:8c59 with HTTP; Thu, 2 Mar 2023
- 10:51:55 -0800 (PST)
-In-Reply-To: <ZADuWxU963sInrj/@ZenIV>
-References: <20230125155557.37816-1-mjguzik@gmail.com> <20230125155557.37816-2-mjguzik@gmail.com>
- <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
- <20230302083025.khqdizrnjkzs2lt6@wittgenstein> <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
- <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
- <ZADoeOiJs6BRLUSd@ZenIV> <CAGudoHFhnJ1z-81FKYpzfDmvcWFeHNkKGdr00CkuH5WJa2FAMQ@mail.gmail.com>
- <ZADuWxU963sInrj/@ZenIV>
-From:   Mateusz Guzik <mjguzik@gmail.com>
-Date:   Thu, 2 Mar 2023 19:51:55 +0100
-Message-ID: <CAGudoHFUkchB93rvOSFgBxkLJWT59hyGs==uTcvtO3pKyekxvQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
-        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/2/23, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Thu, Mar 02, 2023 at 07:22:17PM +0100, Mateusz Guzik wrote:
->
->> Ops, I meant "names_cache", here:
->> 	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
->> 			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
->>
->> it is fs/dcache.c and I brainfarted into the above.
->
-> So you mean __getname() stuff?
->
+From: Shervin Oloumi <enlightened@chromium.org>
 
-yes. do some lookups in a loop on a kernel built with
-CONFIG_INIT_ON_ALLOC_DEFAULT_ON=y (there may be a runtime switch for
-it?) and  you will see memset using most time in perf top
+Hi Mickaël,
 
+I'm looking into adding a simple process attribute getter to Landlock so
+we can determine the sand-boxing state of each process based on
+/proc/[PID]/attr/current. As ChromeOS is expanding Landlock support,
+this would help us paint a clear picture of Landlock coverage in the
+fleet. I prepared a patch as a starting point, and would love to get
+your feedback.
+
+One area I am not very sure of is the case where more than one LSM is in
+use. In such cases each LSM could have its own process attribute
+getters and setters. What I learned is that when this is the case, the
+kernel only calls the hook function for the LSM that is loaded first in
+the CONFIG_LSM option. For example if landlock comes first
+(CONFIG_LSM=landlock,...), then the kernel only calls the hook function
+for Landlock, when the userspace interacts with process attribute files.
+This is not a blocker for us, as we only currently care about reading
+the Landlock related attributes, and my understanding is that this is
+working as intended, but wanted to get your input.
+
+Shervin Oloumi (1):
+  lsm: adds process attribute getter for Landlock
+
+ fs/proc/base.c         | 11 +++++++++++
+ security/landlock/fs.c | 33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+)
+
+
+base-commit: e2ca6ba6ba0152361aa4fcbf6067db71b2c7a770
 -- 
-Mateusz Guzik <mjguzik gmail.com>
+2.39.2.722.g9855ee24e9-goog
+
