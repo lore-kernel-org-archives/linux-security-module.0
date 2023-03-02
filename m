@@ -2,165 +2,135 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4E5C6FA8E
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 18:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 802CCC678D4
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 19:01:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbjCBSxq (ORCPT
+        id S229632AbjCBTBF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Mar 2023 13:53:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45980 "EHLO
+        Thu, 2 Mar 2023 14:01:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjCBSxc (ORCPT
+        with ESMTP id S229518AbjCBTBD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Mar 2023 13:53:32 -0500
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24F2A13D75
-        for <linux-security-module@vger.kernel.org>; Thu,  2 Mar 2023 10:53:31 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id y11so299476plg.1
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Mar 2023 10:53:31 -0800 (PST)
+        Thu, 2 Mar 2023 14:01:03 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A28220057
+        for <linux-security-module@vger.kernel.org>; Thu,  2 Mar 2023 11:01:01 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id p6so109856pga.0
+        for <linux-security-module@vger.kernel.org>; Thu, 02 Mar 2023 11:01:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1677783210;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1677783660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9jdvYZf78lZC9tZJePPFDF8pKZnry00n1BO70ycmPTU=;
-        b=KrSU26IkmAXsBGLQT8lqs2uIOhnOlwlt8upL4rpUMCafv9uGmg7YU5jMz/abDLwPEx
-         S8PjGRZ6d1OGXYI59wv/TGJtAM8LUsMLngBPidwNmUvENOxinnhiwbNUtvtsiUKe+YIN
-         LSp0X5BnnMPAGJc+3ctXTueEs3nJw25I8TIiU=
+        bh=sbKqTB1BWmST+UKS3o/pcnOIniBYA6/WBLEtc9haQn4=;
+        b=f6CB0s+KV2OW0hRLDgrai9rYXWAdgEzOd1HKjzgncsSTbWytg8B0shiJ79cVHIi1vO
+         NfrTj+lMOtmVES/SN5tUizQ34VKdLqix9CWELeH+KrTcEymXdzPIEexDiBaqMU7ww0GK
+         sGzZ7mXcF5H5dCoMBQm44MSvQYc8W4Wy/Uzn9pe7oVpFrQ270ldOFxuD0OsCggJ0HBqc
+         bMLhtiOMAAtD+EpZC0R6O8ttn+ahurnj9OFXO0sVBcvxvdJHFYhROyspmOHRH+P1DqMB
+         PN1J3UoPaWpHoy6A49mEBkZV5JgSIJF6mSkQjZ9rqaOJmSJo8zGtxSMzri02uyU/YtOE
+         ipwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677783210;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112; t=1677783660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9jdvYZf78lZC9tZJePPFDF8pKZnry00n1BO70ycmPTU=;
-        b=kj6KhHy4uUTpyvrpwLr+15lSWx0OV+XJh/78v+fOCBPyqaCNLylTZjgn2MfeJezeMP
-         quUR5srgWTK+S4y6OlUUKaexka5znjSD9NUcnS9G1sVYnyW1Vb3OihguKJ4yaT69bQax
-         enKHtVLKb7hH3IZ66yRtcNf0+XHK3WvlSdapzdMprj393kA85lhaOFhWWJHiOuoTEaOs
-         /FCgiRIDn7kJTlrJ6itDi0kFYCBLXthIm3c7obVIFgsmAt5HHWOLNqbIZbxQLEWYor/k
-         QEEXnpn9sJfm6KJPh7UJiKPVcalvK/0U/Baby3lMePzqqHqO5rfeFUQTH3Nayw4PeEO0
-         7D9g==
-X-Gm-Message-State: AO0yUKXy7KqCdPF/VJg3R9+Zpolq3VtPg0bf1ZaHbXuTuhW84Qa6ysnH
-        4w6Zu+ElsKpZUTlRDIbQj45nyg==
-X-Google-Smtp-Source: AK7set8w1A5QyRATh+UEn4AwFU5lbnO/QJftdUDotgpDtA5CzThV6xi3EGL3IObzMEH3d6jEYfF27g==
-X-Received: by 2002:a05:6a20:244d:b0:ce:c109:2d58 with SMTP id t13-20020a056a20244d00b000cec1092d58mr1384943pzc.10.1677783210662;
-        Thu, 02 Mar 2023 10:53:30 -0800 (PST)
-Received: from enlightened2.mtv.corp.google.com ([2620:15c:9d:6:9b33:9b92:f51d:bd4])
-        by smtp.gmail.com with ESMTPSA id b4-20020aa78704000000b005a8c60ce93bsm26782pfo.149.2023.03.02.10.53.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Mar 2023 10:53:30 -0800 (PST)
-From:   enlightened@chromium.org
-To:     mic@digikod.net
-Cc:     linux-security-module@vger.kernel.org, jorgelo@chromium.org,
-        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
-        allenwebb@chromium.org, Shervin Oloumi <enlightened@chromium.org>
-Subject: [PATCH 1/1] lsm: adds process attribute getter for Landlock
-Date:   Thu,  2 Mar 2023 10:52:57 -0800
-Message-Id: <20230302185257.850681-2-enlightened@chromium.org>
-X-Mailer: git-send-email 2.40.0.rc0.216.gc4246ad0f0-goog
-In-Reply-To: <20230302185257.850681-1-enlightened@chromium.org>
-References: <20230302185257.850681-1-enlightened@chromium.org>
+        bh=sbKqTB1BWmST+UKS3o/pcnOIniBYA6/WBLEtc9haQn4=;
+        b=HfWm86eZ0xvsZ0xjeNdiflsV8y+HFzQ0BorLX0yeHxCJGMEK6cuCbWikryvnFGktXZ
+         SUiyjylt7wZs4WE240sogvAKsHSZQEZyqYqKslAxnIQTB/f4OXu8tCRcNd+KKCNSx6KK
+         DMWNLKJ9XSGRbRl9NWm6EMg8egiAxozNijvpnVstVuo9EPrIb60BCQra0Dkg032qpB/k
+         YQ2ynjaKTUXk5PtKWIHcffqPZxoJ2mInNKI2yIGcoLCRHjtwVWXh1Tr8alv+TVvL3TRM
+         AkbDLxITsPJkzAYRFwnCCxN6HbPGuWB93Z0zMsI7Li8dUWoBGVWBRgIfT35knQmXQMRs
+         CZgQ==
+X-Gm-Message-State: AO0yUKUjtiBkuUII2qgv0tMmrNUuSpOfqH0xdfBZ6FsWaiuV5yJctKZC
+        lpHMxF7E2oL/Kp/Phg5T/yS/nys0OK58aLif6RN9
+X-Google-Smtp-Source: AK7set/JqphcjYj9seuvS6xKNvURMu+S3V/LEScKzhxHP7SqFb0AhXhOojS1vVfFsCMHm+0xdSDtgJ0BLFb+6ahFIIw=
+X-Received: by 2002:a63:2953:0:b0:503:91ff:8dd8 with SMTP id
+ bu19-20020a632953000000b0050391ff8dd8mr2858904pgb.4.1677783659129; Thu, 02
+ Mar 2023 11:00:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com> <1675119451-23180-2-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1675119451-23180-2-git-send-email-wufan@linux.microsoft.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 2 Mar 2023 14:00:48 -0500
+Message-ID: <CAHC9VhTtXC=HMUF8uak-29E__xLN2Kh_znn0xdRbm-GkgqBNiA@mail.gmail.com>
+Subject: Re: [RFC PATCH v9 01/16] security: add ipe lsm
+To:     Fan Wu <wufan@linux.microsoft.com>
+Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+        eparis@redhat.com, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, linux-audit@redhat.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Shervin Oloumi <enlightened@chromium.org>
+On Mon, Jan 30, 2023 at 5:58=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> =
+wrote:
+>
+> From: Deven Bowers <deven.desai@linux.microsoft.com>
+>
+> Integrity Policy Enforcement (IPE) is an LSM that provides an
+> complimentary approach to Mandatory Access Control than existing LSMs
+> today.
+>
+> Existing LSMs have centered around the concept of access to a resource
+> should be controlled by the current user's credentials. IPE's approach,
+> is that access to a resource should be controlled by the system's trust
+> of a current resource.
+>
+> The basis of this approach is defining a global policy to specify which
+> resource can be trusted.
+>
+> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
-Adds a new getprocattr hook function to the Landlock LSM, which tracks
-the landlocked state of the process. This is invoked when user-space
-reads /proc/[pid]/attr/current to determine whether a given process is
-sand-boxed using Landlock.
+...
 
-Adds a new directory for landlock under the process attribute
-filesystem, and defines "current" as a read-only process attribute entry
-for landlock.
+> ---
+>  MAINTAINERS           |  5 +++++
+>  security/Kconfig      | 11 ++++++-----
+>  security/Makefile     |  1 +
+>  security/ipe/Kconfig  | 17 +++++++++++++++++
+>  security/ipe/Makefile | 10 ++++++++++
+>  security/ipe/ipe.c    | 40 ++++++++++++++++++++++++++++++++++++++++
+>  security/ipe/ipe.h    | 13 +++++++++++++
+>  7 files changed, 92 insertions(+), 5 deletions(-)
+>  create mode 100644 security/ipe/Kconfig
+>  create mode 100644 security/ipe/Makefile
+>  create mode 100644 security/ipe/ipe.c
+>  create mode 100644 security/ipe/ipe.h
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8a5c25c20d00..5e27e84763cc 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10273,6 +10273,11 @@ T:     git git://git.kernel.org/pub/scm/linux/ke=
+rnel/git/zohar/linux-integrity.git
+>  F:     security/integrity/ima/
+>  F:     security/integrity/
+>
+> +INTEGRITY POLICY ENFORCEMENT (IPE)
+> +M:     Fan Wu <wufan@linux.microsoft.com>
+> +S:     Supported
+> +F:     security/ipe/
 
-Signed-off-by: Shervin Oloumi <enlightened@chromium.org>
----
- fs/proc/base.c         | 11 +++++++++++
- security/landlock/fs.c | 33 +++++++++++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+You should probably add a mailing list (L:) and source tree URL (T:)
+to the IPE entry.  You can use the LSM mailing list to start if you
+like, there are several LSMs that do that today, e.g. Smack, Landlock,
+etc.  As far as the source tree is concerned, probably the easiest
+option is a simple GitHub repo, but there are plenty of other choices
+too.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 9e479d7d202b..3ab29a965911 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2851,6 +2851,13 @@ static const struct pid_entry apparmor_attr_dir_stuff[] = {
- LSM_DIR_OPS(apparmor);
- #endif
- 
-+#ifdef CONFIG_SECURITY_LANDLOCK
-+static const struct pid_entry landlock_attr_dir_stuff[] = {
-+       ATTR("landlock", "current", 0444),
-+};
-+LSM_DIR_OPS(landlock);
-+#endif
-+
- static const struct pid_entry attr_dir_stuff[] = {
- 	ATTR(NULL, "current",		0666),
- 	ATTR(NULL, "prev",		0444),
-@@ -2866,6 +2873,10 @@ static const struct pid_entry attr_dir_stuff[] = {
- 	DIR("apparmor",			0555,
- 	    proc_apparmor_attr_dir_inode_ops, proc_apparmor_attr_dir_ops),
- #endif
-+#ifdef CONFIG_SECURITY_LANDLOCK
-+       DIR("landlock",                  0555,
-+	    proc_landlock_attr_dir_inode_ops, proc_landlock_attr_dir_ops),
-+#endif
- };
- 
- static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index adcea0fe7e68..179ba22ce0fc 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1280,6 +1280,37 @@ static int hook_file_truncate(struct file *const file)
- 	return -EACCES;
- }
- 
-+/* process attribute interfaces */
-+
-+/**
-+ * landlock_getprocattr - Landlock process attribute getter
-+ * @p: the object task
-+ * @name: the name of the attribute in /proc/.../attr
-+ * @value: where to put the result
-+ *
-+ * Writes the status of landlock to value
-+ *
-+ * Returns the length of the result inside value
-+ */
-+static int landlock_getprocattr(struct task_struct *task, const char *name,
-+				char **value)
-+{
-+	char *val;
-+	int slen;
-+
-+	if (strcmp(name, "current") != 0)
-+		return -EINVAL;
-+
-+	if (landlocked(task))
-+		val = "landlocked:1";
-+	else
-+		val = "landlocked:0";
-+
-+	slen = strlen(val);
-+	*value = val;
-+	return slen;
-+}
-+
- static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_free_security, hook_inode_free_security),
- 
-@@ -1302,6 +1333,8 @@ static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(file_alloc_security, hook_file_alloc_security),
- 	LSM_HOOK_INIT(file_open, hook_file_open),
- 	LSM_HOOK_INIT(file_truncate, hook_file_truncate),
-+
-+	LSM_HOOK_INIT(getprocattr, landlock_getprocattr),
- };
- 
- __init void landlock_add_fs_hooks(void)
--- 
-2.39.2.722.g9855ee24e9-goog
+Both the mailing list and the source URLs can always be updated in the
+future so don't worry too much about being stuck with either long
+term.
 
+--
+paul-moore.com
