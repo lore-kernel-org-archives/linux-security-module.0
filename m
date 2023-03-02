@@ -2,102 +2,131 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4EAC678D4
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 22:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A4EC6FA8E
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 23:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229827AbjCBW6m (ORCPT
+        id S229751AbjCBXOg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Mar 2023 17:58:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45714 "EHLO
+        Thu, 2 Mar 2023 18:14:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229795AbjCBW6l (ORCPT
+        with ESMTP id S229636AbjCBXOe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Mar 2023 17:58:41 -0500
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8A4138037;
-        Thu,  2 Mar 2023 14:58:38 -0800 (PST)
-Received: from [192.168.192.83] (unknown [50.47.134.245])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 2A9E13F301;
-        Thu,  2 Mar 2023 22:58:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1677797915;
-        bh=nkU4U7NSmjI2zWgPD+AtYN7NNzpxjnc7tmq01qgN89k=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=QkcSCzV3s2aj6boz+mHxWsvucqomXVM/UQMrhA8Io4U8bKBeQ81oMS6ckekAuDzcQ
-         nkee4Drs6MUphvNdT3zxLyELL0QBD3OjNecncPrTQ+WRLaN25mbdEPFtaIB/hxBYjZ
-         6LQWJNNw1PSTwYQ9GiuttKxMpIh3lrywy15enDkd4vPX4jww9qJK/F3V6v+YoVGM8p
-         KwJTSxjKOR0eVcxtl4LhCOnUwTRrQuiV6DbFt5hbn1WrxG7+UhtfmpUHN3F3VQ90D6
-         3Txt4UavSwO0JpLNRp9W8onES1k7FXy6P1GVHKx0l9OcE5dMacEx5bs89r2WVKcrd2
-         wQtRYLKHRCkVg==
-Message-ID: <257aa5c0-144b-b157-0270-0a7f470c195b@canonical.com>
-Date:   Thu, 2 Mar 2023 14:58:28 -0800
+        Thu, 2 Mar 2023 18:14:34 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B11656536
+        for <linux-security-module@vger.kernel.org>; Thu,  2 Mar 2023 15:14:33 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id ce8-20020a17090aff0800b0023a61cff2c6so1035999pjb.0
+        for <linux-security-module@vger.kernel.org>; Thu, 02 Mar 2023 15:14:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1677798873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dK5xBsNL80qIVhQ78+b+C534EV7ZA+MEtH4IecrU8fs=;
+        b=dQa60YkNB2aHmO2eQcUKKkWMpQNb0V1GmMgzCtjajumKPoUa34DT1KW4VyAmnDllnW
+         tBCca31eWsY8i/Th0ibNmqeeF5yKTzOum5xPC8aoXRqxuyQgj9C/JlnCifC4KCtAwKb8
+         v4pqyQ4ZiU+89CoZ5Y65rTyJozDPpo4HdJgXVwtmjxF22wLTfQyCouIvPQxV5uYQuCrw
+         P/jszesABAwdcZOuQmfKH1fSIxYPeLX27XyemZD3D40bp1QyeRTI9GkjDnwy80Yz6mZP
+         Y/v9wqkSOnnwI/cKXAGsP8HdbUugB3KtD44ZKRukUPs4uhA9J+HxV/G+qQp6JCvY/BCl
+         suAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677798873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dK5xBsNL80qIVhQ78+b+C534EV7ZA+MEtH4IecrU8fs=;
+        b=B2OjY9auSqWnH7muZulNfO+ZrnPIuVuTnKuYIjnntKHWwifqbayBCvp0S/eK9Hknz3
+         /z03JfuSWyzBXmfZxpov5X1qzBVN1TxcSUGfeaWWlspExaSqYdo8d635nZ5BwbVSEpKa
+         pbDgXGy/pqLXQYEm34kWPkenndmIQkQnj3DxmcskH4KoG595xQHRyoLEPJQ0njVvJZIA
+         KMGFHP+dpnE3I1v42WQRCIGxwiEJ4znMAePRWOKsa/otA2apqoLjN7SDaOPyqpPlPVul
+         fXNapMo6tygjRdBT8syrM3zqHEOuEe58tQmCBamtVuGfzVPyff7bJSUsstho5OqX5tgt
+         xtXg==
+X-Gm-Message-State: AO0yUKWiObU++u54s/DY6fswzE5vGkghxp7XWlqLiMwrEQx9iYrxEBU1
+        0UFGHb6Qzgpf+uoNZdZT4s5jDrkvZU1lA+aL2Ln3gA==
+X-Google-Smtp-Source: AK7set/wy4RYTpF9DE9+esAO3swTwx9AMlMSD7Y2MF1LhQ+HmQO3b//lY81QPmALZdw979D/M11S681c0YXmtKI/bVE=
+X-Received: by 2002:a17:903:2591:b0:19a:8bc7:d814 with SMTP id
+ jb17-20020a170903259100b0019a8bc7d814mr4441125plb.13.1677798872570; Thu, 02
+ Mar 2023 15:14:32 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 05/11] loadpin: simplify sysctls use with
- register_sysctl()
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>, ebiederm@xmission.com,
-        keescook@chromium.org, yzaikin@google.com, paul@paul-moore.com,
+References: <20230302202826.776286-1-mcgrof@kernel.org> <20230302202826.776286-9-mcgrof@kernel.org>
+In-Reply-To: <20230302202826.776286-9-mcgrof@kernel.org>
+From:   Jeff Xu <jeffxu@google.com>
+Date:   Thu, 2 Mar 2023 15:13:54 -0800
+Message-ID: <CALmYWFucv6-9yfS=gamwSsqjgxSKZS0nvVjj_QfBmsLmQD5XOQ@mail.gmail.com>
+Subject: Re: [PATCH 08/11] kernel: pid_namespace: simplify sysctls with register_sysctl()
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
+        john.johansen@canonical.com, paul@paul-moore.com,
         jmorris@namei.org, serge@hallyn.com, luto@amacapital.net,
         wad@chromium.org, dverkamp@chromium.org, paulmck@kernel.org,
-        baihaowen@meizu.com, frederic@kernel.org, jeffxu@google.com,
-        ebiggers@kernel.org, tytso@mit.edu, guoren@kernel.org
-Cc:     j.granados@samsung.com, zhangpeng362@huawei.com,
-        tangmeng@uniontech.com, willy@infradead.org, nixiaoming@huawei.com,
-        sujiaxun@uniontech.com, patches@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230302202826.776286-1-mcgrof@kernel.org>
- <20230302202826.776286-6-mcgrof@kernel.org>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20230302202826.776286-6-mcgrof@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        baihaowen@meizu.com, frederic@kernel.org, ebiggers@kernel.org,
+        tytso@mit.edu, guoren@kernel.org, j.granados@samsung.com,
+        zhangpeng362@huawei.com, tangmeng@uniontech.com,
+        willy@infradead.org, nixiaoming@huawei.com, sujiaxun@uniontech.com,
+        patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/2/23 12:28, Luis Chamberlain wrote:
-> register_sysctl_paths() is not required, we can just use
-> register_sysctl() with the required path specified.
-> 
+On Thu, Mar 2, 2023 at 12:28=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
+> wrote:
+>
+> register_sysctl_paths() is only required if your child (directories)
+> have entries and pid_namespace does not. So use register_sysctl_init()
+> instead where we don't care about the return value and use
+> register_sysctl() where we do.
+>
 > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
-
 > ---
->   security/loadpin/loadpin.c | 8 +-------
->   1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-> index d73a281adf86..c971464b4ad5 100644
-> --- a/security/loadpin/loadpin.c
-> +++ b/security/loadpin/loadpin.c
-> @@ -52,12 +52,6 @@ static bool deny_reading_verity_digests;
->   #endif
->   
->   #ifdef CONFIG_SYSCTL
-> -static struct ctl_path loadpin_sysctl_path[] = {
-> -	{ .procname = "kernel", },
-> -	{ .procname = "loadpin", },
-> -	{ }
-> -};
-> -
->   static struct ctl_table loadpin_sysctl_table[] = {
->   	{
->   		.procname       = "enforce",
-> @@ -262,7 +256,7 @@ static int __init loadpin_init(void)
->   		enforce ? "" : "not ");
->   	parse_exclude();
->   #ifdef CONFIG_SYSCTL
-> -	if (!register_sysctl_paths(loadpin_sysctl_path, loadpin_sysctl_table))
-> +	if (!register_sysctl("kernel/loadpin", loadpin_sysctl_table))
->   		pr_notice("sysctl registration failed!\n");
->   #endif
->   	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
-
+>  kernel/pid_namespace.c | 3 +--
+>  kernel/pid_sysctl.h    | 3 +--
+>  2 files changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+> index 46e0d5a3f91f..b43eee07b00c 100644
+> --- a/kernel/pid_namespace.c
+> +++ b/kernel/pid_namespace.c
+> @@ -314,7 +314,6 @@ static struct ctl_table pid_ns_ctl_table[] =3D {
+>         },
+>         { }
+>  };
+> -static struct ctl_path kern_path[] =3D { { .procname =3D "kernel", }, { =
+} };
+>  #endif /* CONFIG_CHECKPOINT_RESTORE */
+>
+>  int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
+> @@ -473,7 +472,7 @@ static __init int pid_namespaces_init(void)
+>         pid_ns_cachep =3D KMEM_CACHE(pid_namespace, SLAB_PANIC | SLAB_ACC=
+OUNT);
+>
+>  #ifdef CONFIG_CHECKPOINT_RESTORE
+> -       register_sysctl_paths(kern_path, pid_ns_ctl_table);
+> +       register_sysctl_init("kernel", pid_ns_ctl_table);
+>  #endif
+>
+>         register_pid_ns_sysctl_table_vm();
+> diff --git a/kernel/pid_sysctl.h b/kernel/pid_sysctl.h
+> index e22d072e1e24..d67a4d45bb42 100644
+> --- a/kernel/pid_sysctl.h
+> +++ b/kernel/pid_sysctl.h
+> @@ -46,10 +46,9 @@ static struct ctl_table pid_ns_ctl_table_vm[] =3D {
+>         },
+>         { }
+>  };
+> -static struct ctl_path vm_path[] =3D { { .procname =3D "vm", }, { } };
+>  static inline void register_pid_ns_sysctl_table_vm(void)
+>  {
+> -       register_sysctl_paths(vm_path, pid_ns_ctl_table_vm);
+> +       register_sysctl("vm", pid_ns_ctl_table_vm);
+>  }
+>  #else
+>  static inline void initialize_memfd_noexec_scope(struct pid_namespace *n=
+s) {}
+> --
+> 2.39.1
+>
+Acked-by: Jeff Xu <jeffxu@google.com>
