@@ -2,94 +2,109 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B876C64ED6
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Mar 2023 18:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA784C7EE36
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 02:33:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbjCASOG (ORCPT
+        id S229527AbjCBCdf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Mar 2023 13:14:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49484 "EHLO
+        Wed, 1 Mar 2023 21:33:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230117AbjCASOF (ORCPT
+        with ESMTP id S229451AbjCBCde (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Mar 2023 13:14:05 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7329941B5E
-        for <linux-security-module@vger.kernel.org>; Wed,  1 Mar 2023 10:13:59 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id o15so54988054edr.13
-        for <linux-security-module@vger.kernel.org>; Wed, 01 Mar 2023 10:13:59 -0800 (PST)
+        Wed, 1 Mar 2023 21:33:34 -0500
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C20D1ACF3
+        for <linux-security-module@vger.kernel.org>; Wed,  1 Mar 2023 18:33:31 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id p20so14890356plw.13
+        for <linux-security-module@vger.kernel.org>; Wed, 01 Mar 2023 18:33:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1677694437;
+        d=paul-moore.com; s=google; t=1677724410;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6/asb3PYi302CsLXOXWpBQTKIfyQX2PG5Qj/oLUdH5k=;
-        b=VcEiiaTfxPmiqwXoecvpahehdctu63BLGW4saFO/UrTcs1beWBHcWiztIw4qeMLbtN
-         UDhVjdTYZ+U8fsUpZKjsT4dWBeA5xIObDM5vZ0oqdg6xFxGAE/ONB29DGc4bgwj08Yi/
-         pe4O9bVEPFq8625OTiGntkymQ9EyiAsiFSpUs=
+        bh=b0lZNoVt9lJ6J8uwaJdMmpDSpbdScMq/0KTuhIjVkUQ=;
+        b=LBK+rKiKoXKZ/dbsn6xOP1h/1DdhUKpftUh9e+mkGx24Ct1QSUdx91ynl9oxmsdOmu
+         AY8rWlxThr7PyU90SvB4UXjE6M5VHvjWx4KfK9GsYGkN3hLA/9NX+ZGRYO521cn5HoV/
+         L4jLAkDTaJkUj2nKsaBy/Az+XIjOhnJpuKJKZ477nIPry0z8rgcjlZ2QsKxicDEtQVKp
+         qFpzchl85bH4lVPP54ms7k/a61sS9zFQWXTwWJRVD0naVRlEs9F3Hyi4XBBHf5kj6brb
+         ssow4TEkTpN1pS5sL1n+r5CheMH8kPZkPSRkwSE7afnWqqvApSlU63NoKvUKbd68prZj
+         EoXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677694437;
+        d=1e100.net; s=20210112; t=1677724410;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6/asb3PYi302CsLXOXWpBQTKIfyQX2PG5Qj/oLUdH5k=;
-        b=l0q0Bgvc5K2xVHH+ZRNw+G1rJ1MELoezIwmh2om9DHeQ1kj8KegK6FLfsne4LloxVv
-         8V8xikaaqO13Eup2+lnaVY84mndVxtTCLLf8bi5tLs94N36DT6jlSDi0EosEQnm54oPm
-         18cz3RsiCMqEMr5HddcC9pfb0TszyYFT716RY6K7482BMPx6caHzyce98euFYvm/62D8
-         8WR2vLpHgG2GgLD6xsYXfuQHJN44XVl24BjQ4ZMUIiXHzrsIymuL/VXmjg0v1/sDu7FD
-         PdFhwaQxSr6nLoIEeUlCaviqJNi77qy6fIUBxP43GGrEGSKSQJO03tHg7KX/fFZt+lGE
-         E+JA==
-X-Gm-Message-State: AO0yUKUxSszAZCoeOAJ2axu5yZK7uuOgYQU6X+xS3pfuWNXoDiEASVqr
-        +fc09S5iVSR9HZfDmQ1pHF3JIaqg/HxoRKEz4HIPfQ==
-X-Google-Smtp-Source: AK7set8eI0YbIH0sgAOHaUh4tcwyQmQgGY4akWLnUb8SXzEG0hqYnxroF3qsywnJfzn1wXMdgBAoXw==
-X-Received: by 2002:a17:906:2658:b0:88a:a27c:c282 with SMTP id i24-20020a170906265800b0088aa27cc282mr7368767ejc.47.1677694437498;
-        Wed, 01 Mar 2023 10:13:57 -0800 (PST)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id hg24-20020a1709072cd800b008d68d018153sm5993248ejc.23.2023.03.01.10.13.56
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Mar 2023 10:13:56 -0800 (PST)
-Received: by mail-ed1-f50.google.com with SMTP id o15so54987646edr.13
-        for <linux-security-module@vger.kernel.org>; Wed, 01 Mar 2023 10:13:56 -0800 (PST)
-X-Received: by 2002:a17:906:2ec8:b0:877:747e:f076 with SMTP id
- s8-20020a1709062ec800b00877747ef076mr3586877eji.0.1677694436076; Wed, 01 Mar
- 2023 10:13:56 -0800 (PST)
+        bh=b0lZNoVt9lJ6J8uwaJdMmpDSpbdScMq/0KTuhIjVkUQ=;
+        b=j4xk/XkCLc+5JQ+cXyxz9l4pLy/1gLpEQ1xBO5Uf72GMnD1K4ddLvxDt342FvPfh16
+         XBH6nB4DxDsgOdZft60B+/iZ3FSPbjEYNSpqw4Q1gGIQ1fgCFjgR6qZ1fNy5N3mOUB+I
+         N/IRVPK6H91dswQhgj9TC5wT9SIN8y1fdJLxtAVEe/10I4vC7WPpuxIT9BlhANRVC/z0
+         4Gdql0JqT6WAMXgRMvRsAQW6ix2M6gj1As95Jd3P990N5/uXYEbLckpMDA3/1pUkUtZX
+         DG37ZavG29pnVS5gs9hvNRx/T5HXtptt3ggwgxrajOvpIPH4TnaAEqvq+lyy7+wTHR9D
+         +NzQ==
+X-Gm-Message-State: AO0yUKWByq5GPHNdH1NVRNw70LqgPrbuKoSFXm+zmdGlLnez7KD+6E2F
+        keVuQuPghEY0G+j8sYTAYlN+jla3rHLXDApJm1ka
+X-Google-Smtp-Source: AK7set+xzLCM6twBgJCibMqi0G3TLp91UnzEQU5FoUMwEXykcRoWlNU/HbsG/K6w+XprDCA87nJQJ5CJfxasDk2ZryU=
+X-Received: by 2002:a17:903:2782:b0:19b:373:94ad with SMTP id
+ jw2-20020a170903278200b0019b037394admr3206594plb.3.1677724410550; Wed, 01 Mar
+ 2023 18:33:30 -0800 (PST)
 MIME-Version: 1.0
-References: <20230125155557.37816-1-mjguzik@gmail.com> <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
- <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com> <CAGudoHEV_aNymUq6v9Trn_ZRU45TL12AVXqQeV2kA90FuawxiQ@mail.gmail.com>
- <CAHk-=wgCMTUV=5aE-V8WjxuCME8LTBh-8k5XTPKz6oRXJ_sgTg@mail.gmail.com>
- <CAHk-=whwBb5Ws8x6aDV9u6CzMBQmsAtzF+UjWRnoe9xZxuW=qQ@mail.gmail.com>
- <CAGudoHH-u3KkwSsrSQPGKmhL9uke4HEL8U1Z+aU9etk9-PmdQQ@mail.gmail.com> <CAHk-=wgsVFvGrmbedVgpUjUJaRTMVxvGkr-dcR7s30S_MyDZfA@mail.gmail.com>
-In-Reply-To: <CAHk-=wgsVFvGrmbedVgpUjUJaRTMVxvGkr-dcR7s30S_MyDZfA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 1 Mar 2023 10:13:39 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whmk3EnmFU6XbLjMZW_ZBU8UJGDEyua7m5Aa3pmgtVQRg@mail.gmail.com>
-Message-ID: <CAHk-=whmk3EnmFU6XbLjMZW_ZBU8UJGDEyua7m5Aa3pmgtVQRg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] capability: add cap_isidentical
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk,
-        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com>
+ <1675119451-23180-4-git-send-email-wufan@linux.microsoft.com>
+ <061df661004a06ef1e8790d48157c7ba4ecfc009.camel@huaweicloud.com> <20230210232154.GA17962@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+In-Reply-To: <20230210232154.GA17962@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 1 Mar 2023 21:33:19 -0500
+Message-ID: <CAHC9VhShcgFtdxxoFX9x+QOM3Qb7xWa-AJuJGrHgaK_N8nKtzQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v9 03/16] ipe: add evaluation loop and introduce
+ 'boot_verified' as a trust provider
+To:     Fan Wu <wufan@linux.microsoft.com>
+Cc:     Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk,
+        agk@redhat.com, snitzer@kernel.org, eparis@redhat.com,
+        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, linux-audit@redhat.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 28, 2023 at 1:29=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Fri, Feb 10, 2023 at 6:21=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> =
+wrote:
+> On Tue, Jan 31, 2023 at 04:49:44PM +0100, Roberto Sassu wrote:
+> > On Mon, 2023-01-30 at 14:57 -0800, Fan Wu wrote:
+> > > From: Deven Bowers <deven.desai@linux.microsoft.com>
+> > >
+> > > IPE must have a centralized function to evaluate incoming callers
+> > > against IPE's policy. This iteration of the policy against the rules
+> > > for that specific caller is known as the evaluation loop.
+> >
+> > Not sure if you check the properties at every access.
+> >
+> > >From my previous comments (also for previous versions of the patches)
+> > you could evaluate the property once, by calling the respective
+> > functions in the other subsystems.
+> >
+> > Then, you reserve space in the security blob for inodes and superblocks
+> > to cache the decision. The format could be a policy sequence number, to
+> > ensure that the cache is valid only for the current policy, and a bit
+> > for every hook you enforce.
 >
-> That said, the old code was worse. The only redeeming feature of the
-> old code was that "nobody has touched it in ages", so it was at least
-> stable.
+> Thanks for raising this idea. I agree that if the property evaluation
+> leads to a performance issue, it will be better to cache the evaluation
+> result. But for this version, all the property evaluations are simple,
+> so it is just as fast as accessing a cache. Also, for the initial
+> version we prefer to keep the patch as minimal as possible.
 
-Bah. I've walked through that patch something like ten times now, and
-decided that there's no way it breaks anything. Famous last words.
+FWIW, I think that is the right decision.  Keeping the initial
+submission relatively small and focused has a lot of advantages when
+it comes both to review and prematurely optimizing things that might
+not need optimization.
 
-It also means that I don't want to look at that ugly old code when I
-have the fix for it all, so I just moved it over from my experimental
-tree to the main tree, since it's still the merge window.
-
-Quod licet Iovi, non licet bovi, or something.
-
-                 Linus
+--=20
+paul-moore.com
