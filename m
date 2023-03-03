@@ -2,56 +2,59 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDB1C64EC4
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 19:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21473C7EE2F
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 20:08:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231230AbjCCTiT (ORCPT
+        id S231543AbjCCUIY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Mar 2023 14:38:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39188 "EHLO
+        Fri, 3 Mar 2023 15:08:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230228AbjCCTiS (ORCPT
+        with ESMTP id S229643AbjCCUIX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Mar 2023 14:38:18 -0500
-Received: from mail-oa1-x32.google.com (mail-oa1-x32.google.com [IPv6:2001:4860:4864:20::32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79B8D11660;
-        Fri,  3 Mar 2023 11:38:17 -0800 (PST)
-Received: by mail-oa1-x32.google.com with SMTP id 586e51a60fabf-17683b570b8so1403245fac.13;
-        Fri, 03 Mar 2023 11:38:17 -0800 (PST)
+        Fri, 3 Mar 2023 15:08:23 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 339881285D
+        for <linux-security-module@vger.kernel.org>; Fri,  3 Mar 2023 12:08:22 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id da10so14950110edb.3
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 12:08:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677872297;
+        d=linux-foundation.org; s=google; t=1677874100;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:from:to:cc:subject:date
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cjfveb4XQ23lZE64Ydv3NZ2SC+rFGEeAzwnztmkxQwg=;
-        b=gMaZWrIW2W+i2r5au1EcNXbhAzZE2amE+QeSAxhJPTsyFfl5pgSVZrNZG/04riiQYO
-         OvDvRrsVAFWt1GXGjQuEY5/5J8UrDWVRDJ2QjJOz0j0vw2CorwBTbwyH2xTHgI7gNSJI
-         0CXNRsiYT1qsbE3AKnMGTU4xHueAu8S8W9XMvP29iolJX86TxQ5vkUNf5vLpeM1CYzSH
-         SDca/a8iWrFP1hI67F8s+asQ12icrAz5VMTaEId+U2FdltJkNaZni6yols3ozjrkv1JM
-         X9rWiN9DDKqw+plPl+GP8w2FP5B/WRNeClEm46Gyugs2vqqHVYKyxM7YXezYcHByEkCG
-         0Urg==
+        bh=icUeuEqvqPbQnLnoTJFmZqOp/anQ4LMobszRgORXgsw=;
+        b=f2MLzsq14+IZ8TyfPiFoG9W1v55K/iJwVqrLY+ExatakJDVAxbzI3HEhLavhUvW88+
+         e0OAp1q6aIj6Hr7vee/Jkxfuz5A4MuBoRwjTQbSouqPLRLdC1Mp/P9Rpj5qLX1AaGVGt
+         +1dOjBj8u+KCYqfbHCSCkSlfKCWOZirPrNnH8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677872297;
+        d=1e100.net; s=20210112; t=1677874100;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:x-gm-message-state:from:to:cc
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cjfveb4XQ23lZE64Ydv3NZ2SC+rFGEeAzwnztmkxQwg=;
-        b=SjXGoKCTlEXbvjIXHOslQJ4sSL+G2LYFBz3sLu8Jc0JtyEUkkfwwoa88IM1HSMJVqm
-         m2AT1EeyhCz4e2TgAkGf8DhOZfwFEj055DU9KdD/gX5RrFRkfGqexkBiN2fDpdF0pj0J
-         aHMKd4mYYhWVnHEfLP33LsoABq5D1QFOSJYvHdY22eFXJ6BSM30I491Kk57sWpZv0Lcc
-         GwOlVUmTsChaITiZQEys7wf0ns0RvtS9q7VDcDplEBafFxVSYrxAxdtft5SAJFnGMvPm
-         1o4qFX2EGixnno7mwYeyZumsnjJl+/gwNPuiCcgwtzvF3Fxur8p5f5dVh8h062AVyL45
-         y1Sw==
-X-Gm-Message-State: AO0yUKXsoNUQ2FIlVdhWIdrBpKzGW68Q/n34PhIFLgF6nfv3yceW/rcj
-        nrIRMIVr7fgd5p1KTdmKZzZSswnTA3jgiu/NhOE=
-X-Google-Smtp-Source: AK7set/MeIheGBjyuqN+eObdQ8W3Dcv3Qm/gbeXuqiPnmK+CrhWItaYrGwyNPft5yi56DHXpasGJ6sOKNb3Z0bI6l+Q=
-X-Received: by 2002:a05:6870:5ab3:b0:176:69f4:d98a with SMTP id
- dt51-20020a0568705ab300b0017669f4d98amr835510oab.11.1677872296830; Fri, 03
- Mar 2023 11:38:16 -0800 (PST)
+        bh=icUeuEqvqPbQnLnoTJFmZqOp/anQ4LMobszRgORXgsw=;
+        b=KH4pn2rZ6FbJpuXoylDGlt4/YR2liy8kXjuRYZPZLBaPyOP82dfgIq59PwuYcPnxd5
+         f410B6tG5tAI4HaDtUXOoxuF/rAZhpHsKcxnzJ+86h720Guj429jZFnCg3xYBR2uV0d/
+         6dBA9nOpCo3NFJK7972UxUn84hH8wxE7xy/gfQmLBxR4kLJhjR2OmABW64SrXmqPnYrz
+         98qRyoLMd7kBK4cmNJ/4XO0GAPrXQFUYzYdLoc9TaKYAp6rJGkgdOe2FSw61OW7n5kE0
+         4bnQjVMNBgGTyIVW03LtfgtqsWhL70w4wv5gnqxZwirKmmnYepJGgmz4TEZoeUHtgVKb
+         ORxw==
+X-Gm-Message-State: AO0yUKWOfBr94GE+XU/zIeVG2uE6wYDCLEDB0dKCJdaAj+SrFf+TBHfO
+        SY33n9yM8RIDzK7AGUnK/SuDbnSm7n+hlHwER+g=
+X-Google-Smtp-Source: AK7set+GCeldgBzuuxsRdN/CsSamayFQh/Q48xjEczrrsI8zlIxSNFv+M3TIIoha+YKA5Sp+HlPD6w==
+X-Received: by 2002:a17:906:a3c3:b0:8f2:5c64:d53b with SMTP id ca3-20020a170906a3c300b008f25c64d53bmr7002521ejb.24.1677874100409;
+        Fri, 03 Mar 2023 12:08:20 -0800 (PST)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id z1-20020a17090674c100b008e3bf17fb2asm1319274ejl.19.2023.03.03.12.08.19
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Mar 2023 12:08:19 -0800 (PST)
+Received: by mail-ed1-f50.google.com with SMTP id s11so14836632edy.8
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 12:08:19 -0800 (PST)
+X-Received: by 2002:a17:906:498e:b0:901:e556:6e23 with SMTP id
+ p14-20020a170906498e00b00901e5566e23mr1471718eju.0.1677874098906; Fri, 03 Mar
+ 2023 12:08:18 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a05:6802:31f:b0:4c2:d201:fe1f with HTTP; Fri, 3 Mar 2023
- 11:38:16 -0800 (PST)
-In-Reply-To: <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
 References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
  <20230302083025.khqdizrnjkzs2lt6@wittgenstein> <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
  <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
@@ -62,11 +65,13 @@ References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
  <ZAEC3LN6oUe6BKSN@ZenIV> <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
  <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
  <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com> <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
-From:   Mateusz Guzik <mjguzik@gmail.com>
-Date:   Fri, 3 Mar 2023 20:38:16 +0100
-Message-ID: <CAGudoHGB-7rq0YMU8o-vv=Nh_bhcwmOh8YpPnLF-TqdOySCDEw@mail.gmail.com>
+In-Reply-To: <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 3 Mar 2023 12:08:01 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
+Message-ID: <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
 Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+To:     Mateusz Guzik <mjguzik@gmail.com>
 Cc:     Alexander Potapenko <glider@google.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Kees Cook <keescook@chromium.org>,
@@ -79,137 +84,28 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/3/23, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> On 3/3/23, Linus Torvalds <torvalds@linux-foundation.org> wrote:
->> On Fri, Mar 3, 2023 at 9:39=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com>=
- wrote:
->>>
->>> So the key is: memset is underperforming at least on x86-64 for
->>> certain sizes and the init-on-alloc thingy makes it used significantly
->>> more, exacerbating the problem
->>
->> One reason that the kernel memset isn't as optimized as memcpy, is
->> simply because under normal circumstances it shouldn't be *used* that
->> much outside of page clearing and constant-sized structure
->> initialization.
->>
+On Fri, Mar 3, 2023 at 11:37=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> w=
+rote:
 >
 > I mentioned in the previous e-mail that memset is used a lot even
 > without the problematic opt and even have shown size distribution of
 > what's getting passed there.
->
-> You made me curious how usage compares to memcpy, so I checked 'make'
-> in kernel dir once again.
->
-> I stress the init-on-alloc opt is *OFF*:
-> # CONFIG_INIT_ON_ALLOC_DEFAULT_ON is not set
-> # CONFIG_INIT_ON_FREE_DEFAULT_ON is not set
->
-> # bpftrace -e 'kprobe:memset,kprobe:memcpy { @[probe] =3D count(); }'
-> [snip]
-> @[kprobe:memcpy]: 6948498
-> @[kprobe:memset]: 36150671
->
-> iow memset is used about 7 times as much as memcpy when building the
-> kernel. If it matters I'm building on top of
-> 2eb29d59ddf02e39774abfb60b2030b0b7e27c1f (reasonably fresh master).
->
->> So this is literally a problem with pointless automated memset,
->> introduced by that hardening option. And hardening people generally
->> simply don't care about performance, and the people who _do _care
->> about performance usually don't enable the known-expensive crazy
->> stuff.
->>
->> Honestly, I think the INIT_ONCE stuff is actively detrimental, and
->> only hides issues (and in this case adds its own). So I can't but help
->> to say "don't do that then". I think it's literally stupid to clear
->> allocations by default.
->>
->
-> Questioning usability of the entire thing was on the menu in what I
-> intended to write, but I did not read entire public discussion so
-> perhaps I missed a crucial insight.
->
->> I'm not opposed to improving memset, but honestly, if the argument is
->> based on the stupid hardening behavior, I really think *that* needs to
->> be fixed first.
->>
->
-> It is not. The argument is that this is a core primitive, used a lot
-> with sizes where rep stos is detrimental to its performance. There is
-> no urgency, but eventually someone(tm) should sort it out. For
-> $reasons I don't want to do it myself.
->
-> I do bring it up in the context of the init-on-alloc machinery because
-> it disfigures whatever results are obtained testing on x86-64 -- they
-> can get exactly the same effect for much smaller cost, consequently
-> they should have interest in sorting this out.
->
-> General point though was that the work should have sanity-checked
-> performance of the primitive it relies on, instead of assuming it is
-> ~optimal. I'm guilty of this mistake myself, so not going to throw
-> stones.
->
 
-Forgot to paste the crapper I used to make both visible to bpftrace.
+Well, I *have* been pushing Intel to try to fix memcpy and memset for
+over two decades by now, but with FSRM I haven't actually seen the
+huge problems any more.
 
-I'm guessing there is a sensible way, I just don't see it and would
-love an instruction :)
+It may just be that the loads I look at don't have issues (or the
+machines I've done profiles on don't tend to show them as much).
 
-diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
-index a64017602010..c40084308d58 100644
---- a/arch/x86/lib/memcpy_64.S
-+++ b/arch/x86/lib/memcpy_64.S
-@@ -43,9 +43,6 @@ SYM_TYPED_FUNC_START(__memcpy)
- SYM_FUNC_END(__memcpy)
- EXPORT_SYMBOL(__memcpy)
+Hmm. Just re-did my usual kernel profile. It may also be that
+something has changed. I do see "clear_page" at the top, but yes,
+memset is higher up than I remembered.
 
--SYM_FUNC_ALIAS(memcpy, __memcpy)
--EXPORT_SYMBOL(memcpy)
--
- /*
-  * memcpy_erms() - enhanced fast string memcpy. This is faster and
-  * simpler than memcpy. Use memcpy_erms when possible.
-diff --git a/arch/x86/lib/memset_64.S b/arch/x86/lib/memset_64.S
-index 6143b1a6fa2c..141d899d5f1d 100644
---- a/arch/x86/lib/memset_64.S
-+++ b/arch/x86/lib/memset_64.S
-@@ -45,9 +45,6 @@ SYM_FUNC_START(__memset)
- SYM_FUNC_END(__memset)
- EXPORT_SYMBOL(__memset)
+I actually used to have the reverse of your hack for this - I've had
+various hacks over the year that made memcpy and memset be inlined
+"rep movs/stos", which (along with inlined spinlocks) is a great way
+to see the _culprit_ (without having to deal with the call chains -
+which always get done the wrong way around imnsho).
 
--SYM_FUNC_ALIAS(memset, __memset)
--EXPORT_SYMBOL(memset)
--
- /*
-  * ISO C memset - set a memory block to a byte value. This function uses
-  * enhanced rep stosb to override the fast string function.
-diff --git a/fs/open.c b/fs/open.c
-index 4401a73d4032..a3383391bd17 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1564,3 +1564,19 @@ int stream_open(struct inode *inode, struct file *fi=
-lp)
- }
-
- EXPORT_SYMBOL(stream_open);
-+
-+void *(memset)(void *s, int c, size_t n)
-+{
-+       return __memset(s, c, n);
-+}
-+
-+EXPORT_SYMBOL(memset);
-+
-+
-+void *(memcpy)(void *d, const void *s, size_t n)
-+{
-+       return __memcpy(d, s, n);
-+}
-+
-+EXPORT_SYMBOL(memcpy);
-
-
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+            Linus
