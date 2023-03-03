@@ -2,146 +2,115 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9BDC7EE43
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 18:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C15FC7EE2F
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 18:43:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231563AbjCCSjO (ORCPT
+        id S231277AbjCCSnH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Mar 2023 13:39:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37274 "EHLO
+        Fri, 3 Mar 2023 13:43:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231203AbjCCSip (ORCPT
+        with ESMTP id S231349AbjCCSnG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Mar 2023 13:38:45 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38274BDC7;
-        Fri,  3 Mar 2023 10:37:59 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4PSwyW0Mq8z9xrtQ;
-        Sat,  4 Mar 2023 02:11:15 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwBnMVgKOgJk5iFpAQ--.12605S5;
-        Fri, 03 Mar 2023 19:19:34 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
-        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 03/28] ima: Align ima_post_create_tmpfile() definition with LSM infrastructure
-Date:   Fri,  3 Mar 2023 19:18:17 +0100
-Message-Id: <20230303181842.1087717-4-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwBnMVgKOgJk5iFpAQ--.12605S5
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF1fWrWUtrW3tr4DKryDZFb_yoW5Wr45pF
-        s3Kw1UGrZ5Wry7urykJa1UZ34fKrWqqr1UurWfW34vyF1Dtr1SvF1fCr1akFy3JFWrCry2
-        vr45KrZ8Ar1UKaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
-        A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-        w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-        WxJr0_GcWl84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-        6F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ew
-        Av7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY
-        6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14
-        v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
-        rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXw
-        CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x02
-        67AKxVWxJr0_GcWlIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-        4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdYxBIdaVFxhVjvjDU0xZFpf9x07jz
-        E__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj4otVAAAsC
-X-CFilter-Loop: Reflected
+        Fri, 3 Mar 2023 13:43:06 -0500
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3969C618A1;
+        Fri,  3 Mar 2023 10:42:38 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id EE91A5C017D;
+        Fri,  3 Mar 2023 13:41:23 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Fri, 03 Mar 2023 13:41:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1677868883; x=1677955283; bh=Ng
+        3KaGBt9FfhSdxDKWomRYkYp7ZCZFAwvA7XAxQUyIg=; b=eEIcntwJziW7el4D+T
+        UcHYKEc/VsIHWB5lobP2j0DoyREGbsUZOSto5K6k2HW75Rjly+bE7l38JPkZgqIk
+        P0ts9Wp+99gehuY8rLkZInrb+iwIMH8sfUbSbvkkiubm7LnOa7EwulHJQbpEXqp3
+        nnQtoWvmypuYGW/pByhVO5plLfzZDAZrKLqhpPv3lKtdFpF4aRcjQuU0103I/uxs
+        IzA/WD3nnAQsO7WjLXlC0oVyHX8jUtW32BtDKL32D9rIpyNy1wJgMHSX9Ev8IgOi
+        Q1LAQV29AoM3rqpuU+HhMO5iW1jmzWDR487seuruRqRk01SJgLAZGoiV1B/gpzsC
+        XQlw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1677868883; x=1677955283; bh=Ng3KaGBt9FfhS
+        dxDKWomRYkYp7ZCZFAwvA7XAxQUyIg=; b=URsbq6yRSTfJOH5jyD/TNvfWvYhEl
+        FGgkqd0j1vZr/+HGsa8zYpLh/VrJhAY+j+qet6C0nT1dfVJ3XQfkGbpzi6drn0Bw
+        3Rtr/eNslftW2bjODew0ZeO/RcCZypKmTLnBePESx7iwMuIXIX2LV8AGRwRdV8+e
+        8TtRF+aIppVNYSIRqcK/2tw0P/hASB8xwv6GCqIRgBrtgFSb6gOiGWCTtx8kpbdl
+        iIvM+HZ3MPu6fe/21d5mtLJ6mExecogyoNZPvq/VXgEcnjbNVVKrktngyAQWeMdL
+        qdG0AMlvJvjWtUZXbDtKQlW9KVCFAvBHRvCgO0HzYdYh8FHyhAhTN5UNA==
+X-ME-Sender: <xms:Uz8CZNENF2Ay1zQkvxZ3x9kd2GKcjqPmCFXnipbr4KQppNTX-JvrJA>
+    <xme:Uz8CZCXE3OK7oprcL7jGQaNTG-cXRZsb_h4BI5XgSSlLkh_TjWFukc-gP_SD27nl3
+    uPJb5piJi_ruxADrYc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudelledguddtlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:Uz8CZPIZtc9X0TnB943YrmDV89pSd3lD_ghLt7XwvxWoVzt_9KoWbA>
+    <xmx:Uz8CZDHkZjF5gxN6J_PKV8OwZZByt2Pu0XASTDOFqxdr576hqdPcXQ>
+    <xmx:Uz8CZDXzQpF5GVEKlSANwsyRTRtPJDmj8R1o1G3z55-TMEa_pHtrgw>
+    <xmx:Uz8CZPpihuCd7N35FpeYDFJSky5l01GKWEfI8Ljw0pZioTP2y1XAUQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 9C669B60086; Fri,  3 Mar 2023 13:41:23 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-183-gbf7d00f500-fm-20230220.001-gbf7d00f5
+Mime-Version: 1.0
+Message-Id: <902422c3-504f-40e8-b530-5e72e9fd5863@app.fastmail.com>
+In-Reply-To: <20230222200838.8149-5-casey@schaufler-ca.com>
+References: <20230222200838.8149-1-casey@schaufler-ca.com>
+ <20230222200838.8149-5-casey@schaufler-ca.com>
+Date:   Fri, 03 Mar 2023 19:41:02 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Casey Schaufler" <casey@schaufler-ca.com>,
+        "Paul Moore" <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, "Kees Cook" <keescook@chromium.org>,
+        john.johansen@canonical.com,
+        "Tetsuo Handa" <penguin-kernel@i-love.sakura.ne.jp>,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org,
+        =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Subject: Re: [PATCH v6 04/11] LSM: syscalls for current process attributes
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Wed, Feb 22, 2023, at 21:08, Casey Schaufler wrote:
 
-Change ima_post_create_tmpfile() definition, so that it can be registered
-as implementation of the post_create_tmpfile hook.
+> +/**
+> + * sys_lsm_set_self_attr - Set current task's security module attribute
+> + * @ctx: the LSM contexts
+> + * @size: size of @ctx
+> + * @flags: which attribute to set
+> + *
+> + * Sets the calling task's LSM context. On success this function
+> + * returns 0. If the attribute specified cannot be set a negative
+> + * value indicating the reason for the error is returned.
+> + */
+> +SYSCALL_DEFINE3(lsm_set_self_attr, struct lsm_ctx __user *, ctx, 
+> size_t __user,
+> +		size, u64, flags)
+> +{
+> +	return security_setselfattr(flags, ctx, size);
+> +}
+> +
+> +SYSCALL_DEFINE3(lsm_get_self_attr, struct lsm_ctx __user *, ctx,
+> +		size_t __user *, size, u64, flags)
+> +{
+> +	return security_getselfattr(flags, ctx, size);
+> +}
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- fs/namei.c                        | 2 +-
- include/linux/ima.h               | 7 +++++--
- security/integrity/ima/ima_main.c | 8 ++++++--
- 3 files changed, 12 insertions(+), 5 deletions(-)
+As with the other patch I commented on, I think it's better to use a
+32-bit 'flags' argument here, to make this work for compat tasks.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index b5a1ec29193..57727a1ae38 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3622,7 +3622,7 @@ static int vfs_tmpfile(struct mnt_idmap *idmap,
- 		inode->i_state |= I_LINKABLE;
- 		spin_unlock(&inode->i_lock);
- 	}
--	ima_post_create_tmpfile(idmap, inode);
-+	ima_post_create_tmpfile(idmap, dir, file_dentry(file), mode);
- 	return 0;
- }
- 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 179ce52013b..7535686a403 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -19,7 +19,8 @@ extern enum hash_algo ima_get_current_hash_algo(void);
- extern int ima_bprm_check(struct linux_binprm *bprm);
- extern int ima_file_check(struct file *file, int mask);
- extern void ima_post_create_tmpfile(struct mnt_idmap *idmap,
--				    struct inode *inode);
-+				    struct inode *dir, struct dentry *dentry,
-+				    umode_t mode);
- extern void ima_file_free(struct file *file);
- extern int ima_file_mmap(struct file *file, unsigned long reqprot,
- 			 unsigned long prot, unsigned long flags);
-@@ -69,7 +70,9 @@ static inline int ima_file_check(struct file *file, int mask)
- }
- 
- static inline void ima_post_create_tmpfile(struct mnt_idmap *idmap,
--					   struct inode *inode)
-+					   struct inode *dir,
-+					   struct dentry *dentry,
-+					   umode_t mode)
- {
- }
- 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 8941305376b..4a3d0c8bcba 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -659,16 +659,20 @@ EXPORT_SYMBOL_GPL(ima_inode_hash);
- /**
-  * ima_post_create_tmpfile - mark newly created tmpfile as new
-  * @idmap: idmap of the mount the inode was found from
-- * @inode: inode of the newly created tmpfile
-+ * @dir: inode structure of the parent of the new file
-+ * @dentry: dentry structure of the new file
-+ * @mode: mode of the new file
-  *
-  * No measuring, appraising or auditing of newly created tmpfiles is needed.
-  * Skip calling process_measurement(), but indicate which newly, created
-  * tmpfiles are in policy.
-  */
- void ima_post_create_tmpfile(struct mnt_idmap *idmap,
--			     struct inode *inode)
-+			     struct inode *dir, struct dentry *dentry,
-+			     umode_t mode)
- {
- 	struct integrity_iint_cache *iint;
-+	struct inode *inode = dentry->d_inode;
- 	int must_appraise;
- 
- 	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
--- 
-2.25.1
-
+      Arnd
