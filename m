@@ -2,59 +2,56 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21473C7EE2F
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 20:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11313C64EC4
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 20:39:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231543AbjCCUIY (ORCPT
+        id S231588AbjCCUjP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Mar 2023 15:08:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36400 "EHLO
+        Fri, 3 Mar 2023 15:39:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbjCCUIX (ORCPT
+        with ESMTP id S230512AbjCCUjO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Mar 2023 15:08:23 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 339881285D
-        for <linux-security-module@vger.kernel.org>; Fri,  3 Mar 2023 12:08:22 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id da10so14950110edb.3
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 12:08:22 -0800 (PST)
+        Fri, 3 Mar 2023 15:39:14 -0500
+Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62C8512043;
+        Fri,  3 Mar 2023 12:39:13 -0800 (PST)
+Received: by mail-oi1-x22b.google.com with SMTP id bh20so2721062oib.9;
+        Fri, 03 Mar 2023 12:39:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1677874100;
+        d=gmail.com; s=20210112; t=1677875952;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :references:in-reply-to:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=icUeuEqvqPbQnLnoTJFmZqOp/anQ4LMobszRgORXgsw=;
-        b=f2MLzsq14+IZ8TyfPiFoG9W1v55K/iJwVqrLY+ExatakJDVAxbzI3HEhLavhUvW88+
-         e0OAp1q6aIj6Hr7vee/Jkxfuz5A4MuBoRwjTQbSouqPLRLdC1Mp/P9Rpj5qLX1AaGVGt
-         +1dOjBj8u+KCYqfbHCSCkSlfKCWOZirPrNnH8=
+        bh=NG6EKujrzKyN55ZG7hxXPBM9OaZ+zgs1s5FPu+FTZes=;
+        b=lsqBDPsZuu7gE5EbM8Q+y8jrcDlY/HC/QV2Z2BrEljqejz2M6qHDnp1xPAbthI4ZYe
+         6sFuYReqJu2i23Q8RB0PsHwKq3Z3mIwVyuPxkqSsCy9T03EmNZTiLFRpWJ+Qyv4pGQBh
+         CeC2v8N2fZEAygBtyVB63+7wekUl2hnU4wAk30AULZ79SREwZ7OW98DSs0DG7AmzAZNL
+         s6ovCMC7aA9+O5XoHmtgUy1FNFDQ+XiGicXrJ44W8VKrJXQiQjrILpupQ1q0wZNP5iE1
+         2KjjOnCdunZ5NkiO78fqWOdQzz1d1Ru5qHw6amvCRLaspFa7zVvNjynMO90bUf9N8BLF
+         ps2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677874100;
+        d=1e100.net; s=20210112; t=1677875952;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :references:in-reply-to:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=icUeuEqvqPbQnLnoTJFmZqOp/anQ4LMobszRgORXgsw=;
-        b=KH4pn2rZ6FbJpuXoylDGlt4/YR2liy8kXjuRYZPZLBaPyOP82dfgIq59PwuYcPnxd5
-         f410B6tG5tAI4HaDtUXOoxuF/rAZhpHsKcxnzJ+86h720Guj429jZFnCg3xYBR2uV0d/
-         6dBA9nOpCo3NFJK7972UxUn84hH8wxE7xy/gfQmLBxR4kLJhjR2OmABW64SrXmqPnYrz
-         98qRyoLMd7kBK4cmNJ/4XO0GAPrXQFUYzYdLoc9TaKYAp6rJGkgdOe2FSw61OW7n5kE0
-         4bnQjVMNBgGTyIVW03LtfgtqsWhL70w4wv5gnqxZwirKmmnYepJGgmz4TEZoeUHtgVKb
-         ORxw==
-X-Gm-Message-State: AO0yUKWOfBr94GE+XU/zIeVG2uE6wYDCLEDB0dKCJdaAj+SrFf+TBHfO
-        SY33n9yM8RIDzK7AGUnK/SuDbnSm7n+hlHwER+g=
-X-Google-Smtp-Source: AK7set+GCeldgBzuuxsRdN/CsSamayFQh/Q48xjEczrrsI8zlIxSNFv+M3TIIoha+YKA5Sp+HlPD6w==
-X-Received: by 2002:a17:906:a3c3:b0:8f2:5c64:d53b with SMTP id ca3-20020a170906a3c300b008f25c64d53bmr7002521ejb.24.1677874100409;
-        Fri, 03 Mar 2023 12:08:20 -0800 (PST)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id z1-20020a17090674c100b008e3bf17fb2asm1319274ejl.19.2023.03.03.12.08.19
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Mar 2023 12:08:19 -0800 (PST)
-Received: by mail-ed1-f50.google.com with SMTP id s11so14836632edy.8
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 12:08:19 -0800 (PST)
-X-Received: by 2002:a17:906:498e:b0:901:e556:6e23 with SMTP id
- p14-20020a170906498e00b00901e5566e23mr1471718eju.0.1677874098906; Fri, 03 Mar
- 2023 12:08:18 -0800 (PST)
+        bh=NG6EKujrzKyN55ZG7hxXPBM9OaZ+zgs1s5FPu+FTZes=;
+        b=y/IGfJtysJrf6sUUaKsAjw2tig8IvITtQzA/dO/4/wJ6dmTdQS1r6de+Xn9ZckmHRX
+         vQn22lprMGjQcKPNH2AJbu0TciGkVx9vwKuZ1bQIg1ZyxTjKLds/g+cQRjlRa7sCamfA
+         ycD1Cnsc+QdVsWGdXuZw8+mtfGMHzzMl847KYvC4Bt4cGbkat7rko9wyySn75EYN4y7y
+         ++61GSjYzj8kP73HYPGSnYgwQPeyfyoxP6nZ8V2JDI+tBViJ/rPW4k+MU0/3pxQXiLCa
+         s/+UBNy9N4lN5BfRvSTBQLel25DUT5oAA5uy9b8+MZz8wACg4fti246ADgiKT+a5VUmT
+         1dRQ==
+X-Gm-Message-State: AO0yUKXfe2bCTq18/Xr44s2P7zzi2LX6TGWV66HrpxC8odq9Ad9fotPv
+        MO65prMyKDbRF+Lt0t7yKmAmXLG8hb7bDJkqGZM=
+X-Google-Smtp-Source: AK7set/mqM3zFV4SCOt6b4PSJMXUFm4gpSadoEGXGfUF3+qxJSFjjOfT1eDZ6LQYAmR+TkScgh4SpaRqJAGq2X6A3TU=
+X-Received: by 2002:a05:6808:2098:b0:383:f981:b1e5 with SMTP id
+ s24-20020a056808209800b00383f981b1e5mr3495245oiw.5.1677875952073; Fri, 03 Mar
+ 2023 12:39:12 -0800 (PST)
 MIME-Version: 1.0
+Received: by 2002:a05:6802:31f:b0:4c2:d201:fe1f with HTTP; Fri, 3 Mar 2023
+ 12:39:11 -0800 (PST)
+In-Reply-To: <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
 References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
  <20230302083025.khqdizrnjkzs2lt6@wittgenstein> <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
  <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
@@ -64,14 +61,13 @@ References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
  <ZAD21ZEiB2V9Ttto@ZenIV> <6400fedb.170a0220.ece29.04b8@mx.google.com>
  <ZAEC3LN6oUe6BKSN@ZenIV> <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
  <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
- <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com> <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
-In-Reply-To: <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 3 Mar 2023 12:08:01 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
-Message-ID: <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
+ <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
+ <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com> <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Fri, 3 Mar 2023 21:39:11 +0100
+Message-ID: <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
 Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Mateusz Guzik <mjguzik@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Alexander Potapenko <glider@google.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Kees Cook <keescook@chromium.org>,
@@ -84,28 +80,105 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 3, 2023 at 11:37=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
+On 3/3/23, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> On Fri, Mar 3, 2023 at 11:37=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com>=
+ wrote:
+>>
+>> I mentioned in the previous e-mail that memset is used a lot even
+>> without the problematic opt and even have shown size distribution of
+>> what's getting passed there.
 >
-> I mentioned in the previous e-mail that memset is used a lot even
-> without the problematic opt and even have shown size distribution of
-> what's getting passed there.
+> Well, I *have* been pushing Intel to try to fix memcpy and memset for
+> over two decades by now, but with FSRM I haven't actually seen the
+> huge problems any more.
+>
 
-Well, I *have* been pushing Intel to try to fix memcpy and memset for
-over two decades by now, but with FSRM I haven't actually seen the
-huge problems any more.
+rep *stos* remains crap with FSRM, but I don't have sensible tests
+handy nor the ice lake cpu i tested on at the moment
 
-It may just be that the loads I look at don't have issues (or the
-machines I've done profiles on don't tend to show them as much).
+> I actually used to have the reverse of your hack for this - I've had
+> various hacks over the year that made memcpy and memset be inlined
+> "rep movs/stos", which (along with inlined spinlocks) is a great way
+> to see the _culprit_ (without having to deal with the call chains -
+> which always get done the wrong way around imnsho).
+>
 
-Hmm. Just re-did my usual kernel profile. It may also be that
-something has changed. I do see "clear_page" at the top, but yes,
-memset is higher up than I remembered.
+that's all hackery which makes sense pre tooling like bpftrace, people
+can do better now (see the second part of the email)
 
-I actually used to have the reverse of your hack for this - I've had
-various hacks over the year that made memcpy and memset be inlined
-"rep movs/stos", which (along with inlined spinlocks) is a great way
-to see the _culprit_ (without having to deal with the call chains -
-which always get done the wrong way around imnsho).
+I think there is a systemic problem which comes with the kzalloc API, consi=
+der:
+static struct file *__alloc_file(int flags, const struct cred *cred)
+{
+	struct file *f;
+	int error;
 
-            Linus
+	f =3D kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
+	if (unlikely(!f))
+		return ERR_PTR(-ENOMEM);
+        [bunch of the struct gets initialized here]
+
+the allocation routine does not have any information about the size
+available at compilation time, so has to resort to a memset call at
+runtime. Instead, should this be:
+
+f =3D kmem_cache_alloc(...);
+memset(f, 0, sizeof(*f));
+
+... the compiler could in principle inititalize stuff as indicated by
+code and emit zerofill for the rest. Interestingly, last I checked
+neither clang nor gcc knew how to do it, they instead resort to a full
+sized memset anyway, which is quite a bummer.
+
+Personally i grew up on dtrace, bpftrace I can barely use and don't
+know how to specifically get the caller, but kstack(2) seems like a
+good enough workaround.
+
+as an example here is a one-liner to show crappers which do 0-sized ops:
+bpftrace -e 'kprobe:memset,kprobe:memcpy /arg2 =3D=3D 0/ { @[probe,
+kstack(2)] =3D count(); }'
+
+one can trace all kinds of degeneracy like that without recompiling
+anything, provided funcs are visible to bpftrace
+
+sample result from the above one-liner while doing 'make clean' in the
+kernel dir:
+@[kprobe:memcpy,
+    memcpy+5
+    realloc_array+78
+]: 1
+@[kprobe:memcpy,
+    memcpy+5
+    push_jmp_history+125
+]: 1
+@[kprobe:memset,
+    memset+5
+    blk_mq_dispatch_rq_list+687
+]: 3
+@[kprobe:memcpy,
+    memcpy+5
+    mix_interrupt_randomness+192
+]: 4
+@[kprobe:memcpy,
+    memcpy+5
+    d_alloc_pseudo+18
+]: 59
+@[kprobe:memcpy,
+    memcpy+5
+    add_device_randomness+111
+]: 241
+@[kprobe:memcpy,
+    memcpy+5
+    add_device_randomness+93
+]: 527
+@[kprobe:memset,
+    memset+5
+    copy_process+2904
+]: 2054
+@[kprobe:memset,
+    memset+5
+    dup_fd+283
+]: 6162
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
