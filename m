@@ -2,115 +2,161 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C15FC7EE2F
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 18:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 400CBC7EE45
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 18:43:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231277AbjCCSnH (ORCPT
+        id S231902AbjCCSnu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Mar 2023 13:43:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46828 "EHLO
+        Fri, 3 Mar 2023 13:43:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231349AbjCCSnG (ORCPT
+        with ESMTP id S231829AbjCCSnn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Mar 2023 13:43:06 -0500
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3969C618A1;
-        Fri,  3 Mar 2023 10:42:38 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id EE91A5C017D;
-        Fri,  3 Mar 2023 13:41:23 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Fri, 03 Mar 2023 13:41:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1677868883; x=1677955283; bh=Ng
-        3KaGBt9FfhSdxDKWomRYkYp7ZCZFAwvA7XAxQUyIg=; b=eEIcntwJziW7el4D+T
-        UcHYKEc/VsIHWB5lobP2j0DoyREGbsUZOSto5K6k2HW75Rjly+bE7l38JPkZgqIk
-        P0ts9Wp+99gehuY8rLkZInrb+iwIMH8sfUbSbvkkiubm7LnOa7EwulHJQbpEXqp3
-        nnQtoWvmypuYGW/pByhVO5plLfzZDAZrKLqhpPv3lKtdFpF4aRcjQuU0103I/uxs
-        IzA/WD3nnAQsO7WjLXlC0oVyHX8jUtW32BtDKL32D9rIpyNy1wJgMHSX9Ev8IgOi
-        Q1LAQV29AoM3rqpuU+HhMO5iW1jmzWDR487seuruRqRk01SJgLAZGoiV1B/gpzsC
-        XQlw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1677868883; x=1677955283; bh=Ng3KaGBt9FfhS
-        dxDKWomRYkYp7ZCZFAwvA7XAxQUyIg=; b=URsbq6yRSTfJOH5jyD/TNvfWvYhEl
-        FGgkqd0j1vZr/+HGsa8zYpLh/VrJhAY+j+qet6C0nT1dfVJ3XQfkGbpzi6drn0Bw
-        3Rtr/eNslftW2bjODew0ZeO/RcCZypKmTLnBePESx7iwMuIXIX2LV8AGRwRdV8+e
-        8TtRF+aIppVNYSIRqcK/2tw0P/hASB8xwv6GCqIRgBrtgFSb6gOiGWCTtx8kpbdl
-        iIvM+HZ3MPu6fe/21d5mtLJ6mExecogyoNZPvq/VXgEcnjbNVVKrktngyAQWeMdL
-        qdG0AMlvJvjWtUZXbDtKQlW9KVCFAvBHRvCgO0HzYdYh8FHyhAhTN5UNA==
-X-ME-Sender: <xms:Uz8CZNENF2Ay1zQkvxZ3x9kd2GKcjqPmCFXnipbr4KQppNTX-JvrJA>
-    <xme:Uz8CZCXE3OK7oprcL7jGQaNTG-cXRZsb_h4BI5XgSSlLkh_TjWFukc-gP_SD27nl3
-    uPJb5piJi_ruxADrYc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudelledguddtlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
-    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:Uz8CZPIZtc9X0TnB943YrmDV89pSd3lD_ghLt7XwvxWoVzt_9KoWbA>
-    <xmx:Uz8CZDHkZjF5gxN6J_PKV8OwZZByt2Pu0XASTDOFqxdr576hqdPcXQ>
-    <xmx:Uz8CZDXzQpF5GVEKlSANwsyRTRtPJDmj8R1o1G3z55-TMEa_pHtrgw>
-    <xmx:Uz8CZPpihuCd7N35FpeYDFJSky5l01GKWEfI8Ljw0pZioTP2y1XAUQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 9C669B60086; Fri,  3 Mar 2023 13:41:23 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-183-gbf7d00f500-fm-20230220.001-gbf7d00f5
-Mime-Version: 1.0
-Message-Id: <902422c3-504f-40e8-b530-5e72e9fd5863@app.fastmail.com>
-In-Reply-To: <20230222200838.8149-5-casey@schaufler-ca.com>
-References: <20230222200838.8149-1-casey@schaufler-ca.com>
- <20230222200838.8149-5-casey@schaufler-ca.com>
-Date:   Fri, 03 Mar 2023 19:41:02 +0100
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Casey Schaufler" <casey@schaufler-ca.com>,
-        "Paul Moore" <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org
-Cc:     jmorris@namei.org, "Kees Cook" <keescook@chromium.org>,
-        john.johansen@canonical.com,
-        "Tetsuo Handa" <penguin-kernel@i-love.sakura.ne.jp>,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org,
-        =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Subject: Re: [PATCH v6 04/11] LSM: syscalls for current process attributes
-Content-Type: text/plain
+        Fri, 3 Mar 2023 13:43:43 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F23659E62;
+        Fri,  3 Mar 2023 10:43:15 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4PSx2961kzz9xqxM;
+        Sat,  4 Mar 2023 02:14:25 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwBnMVgKOgJk5iFpAQ--.12605S23;
+        Fri, 03 Mar 2023 19:22:45 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
+        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH 21/28] security: Introduce inode_post_remove_acl hook
+Date:   Fri,  3 Mar 2023 19:18:35 +0100
+Message-Id: <20230303181842.1087717-22-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwBnMVgKOgJk5iFpAQ--.12605S23
+X-Coremail-Antispam: 1UD129KBjvJXoWxJF1fWrW8WFW8ZryfKry8Krg_yoWrJFy8pF
+        sxK3ZxWw4rXFy2gryktFWUuw1IvFWFgry7A3y2gw4SyFn2yr1qqFsxGFyUCry5ArW8KF1q
+        qFnIqrsxC343Jr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
+        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
+        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
+        AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
+        wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
+        WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
+        bVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7
+        AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+        F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
+        ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW7JVWDJwCI42IY6xIIjxv20xvEc7Cj
+        xVAFwI0_GcCE3s1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F
+        4j6r4UJwCI42IY6I8E87Iv6xkF7I0E14v26rxl6s0DYxBIdaVFxhVjvjDU0xZFpf9x07j7
+        GYLUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBF1jj4YvegABsg
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 22, 2023, at 21:08, Casey Schaufler wrote:
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-> +/**
-> + * sys_lsm_set_self_attr - Set current task's security module attribute
-> + * @ctx: the LSM contexts
-> + * @size: size of @ctx
-> + * @flags: which attribute to set
-> + *
-> + * Sets the calling task's LSM context. On success this function
-> + * returns 0. If the attribute specified cannot be set a negative
-> + * value indicating the reason for the error is returned.
-> + */
-> +SYSCALL_DEFINE3(lsm_set_self_attr, struct lsm_ctx __user *, ctx, 
-> size_t __user,
-> +		size, u64, flags)
-> +{
-> +	return security_setselfattr(flags, ctx, size);
-> +}
-> +
-> +SYSCALL_DEFINE3(lsm_get_self_attr, struct lsm_ctx __user *, ctx,
-> +		size_t __user *, size, u64, flags)
-> +{
-> +	return security_getselfattr(flags, ctx, size);
-> +}
+In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+the inode_post_remove_acl hook.
 
-As with the other patch I commented on, I think it's better to use a
-32-bit 'flags' argument here, to make this work for compat tasks.
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ fs/posix_acl.c                |  1 +
+ include/linux/lsm_hook_defs.h |  2 ++
+ include/linux/security.h      |  8 ++++++++
+ security/security.c           | 17 +++++++++++++++++
+ 4 files changed, 28 insertions(+)
 
-      Arnd
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index acddf2dff4c..5b8c92fce0c 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -1213,6 +1213,7 @@ int vfs_remove_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		error = -EOPNOTSUPP;
+ 	if (!error) {
+ 		fsnotify_xattr(dentry);
++		security_inode_post_remove_acl(idmap, dentry, acl_name);
+ 		evm_inode_post_remove_acl(idmap, dentry, acl_name);
+ 	}
+ 
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 9a3e14db0af..6c324fe5099 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -162,6 +162,8 @@ LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
+ 	 struct dentry *dentry, const char *acl_name)
+ LSM_HOOK(int, 0, inode_remove_acl, struct mnt_idmap *idmap,
+ 	 struct dentry *dentry, const char *acl_name)
++LSM_HOOK(void, LSM_RET_VOID, inode_post_remove_acl, struct mnt_idmap *idmap,
++	 struct dentry *dentry, const char *acl_name)
+ LSM_HOOK(int, 0, inode_need_killpriv, struct dentry *dentry)
+ LSM_HOOK(int, 0, inode_killpriv, struct mnt_idmap *idmap,
+ 	 struct dentry *dentry)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index b0691bf7237..f8df5b69667 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -372,6 +372,9 @@ int security_inode_get_acl(struct mnt_idmap *idmap,
+ 			   struct dentry *dentry, const char *acl_name);
+ int security_inode_remove_acl(struct mnt_idmap *idmap,
+ 			      struct dentry *dentry, const char *acl_name);
++void security_inode_post_remove_acl(struct mnt_idmap *idmap,
++				    struct dentry *dentry,
++				    const char *acl_name);
+ void security_inode_post_setxattr(struct dentry *dentry, const char *name,
+ 				  const void *value, size_t size, int flags);
+ int security_inode_getxattr(struct dentry *dentry, const char *name);
+@@ -914,6 +917,11 @@ static inline int security_inode_remove_acl(struct mnt_idmap *idmap,
+ 	return 0;
+ }
+ 
++static inline void security_inode_post_remove_acl(struct mnt_idmap *idmap,
++						  struct dentry *dentry,
++						  const char *acl_name)
++{ }
++
+ static inline void security_inode_post_setxattr(struct dentry *dentry,
+ 		const char *name, const void *value, size_t size, int flags)
+ { }
+diff --git a/security/security.c b/security/security.c
+index fc11d70bb02..b3a9c317f75 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2373,6 +2373,23 @@ int security_inode_remove_acl(struct mnt_idmap *idmap,
+ 	return evm_inode_remove_acl(idmap, dentry, acl_name);
+ }
+ 
++/**
++ * security_inode_post_remove_acl() - Update inode sec after remove_acl op
++ * @idmap: idmap of the mount
++ * @dentry: file
++ * @acl_name: acl name
++ *
++ * Update inode security field after successful remove_acl operation on @dentry
++ * in @idmap. The posix acls are identified by @acl_name.
++ */
++void security_inode_post_remove_acl(struct mnt_idmap *idmap,
++				    struct dentry *dentry, const char *acl_name)
++{
++	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
++		return;
++	call_void_hook(inode_post_remove_acl, idmap, dentry, acl_name);
++}
++
+ /**
+  * security_inode_post_setxattr() - Update the inode after a setxattr operation
+  * @dentry: file
+-- 
+2.25.1
+
