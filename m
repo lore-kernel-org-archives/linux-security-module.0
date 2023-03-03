@@ -2,131 +2,65 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A4EC6FA8E
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Mar 2023 23:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A4BC6FA8E
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 01:28:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229751AbjCBXOg (ORCPT
+        id S229456AbjCCB2k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Mar 2023 18:14:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56436 "EHLO
+        Thu, 2 Mar 2023 20:28:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229636AbjCBXOe (ORCPT
+        with ESMTP id S229487AbjCCB2k (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Mar 2023 18:14:34 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B11656536
-        for <linux-security-module@vger.kernel.org>; Thu,  2 Mar 2023 15:14:33 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id ce8-20020a17090aff0800b0023a61cff2c6so1035999pjb.0
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Mar 2023 15:14:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1677798873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dK5xBsNL80qIVhQ78+b+C534EV7ZA+MEtH4IecrU8fs=;
-        b=dQa60YkNB2aHmO2eQcUKKkWMpQNb0V1GmMgzCtjajumKPoUa34DT1KW4VyAmnDllnW
-         tBCca31eWsY8i/Th0ibNmqeeF5yKTzOum5xPC8aoXRqxuyQgj9C/JlnCifC4KCtAwKb8
-         v4pqyQ4ZiU+89CoZ5Y65rTyJozDPpo4HdJgXVwtmjxF22wLTfQyCouIvPQxV5uYQuCrw
-         P/jszesABAwdcZOuQmfKH1fSIxYPeLX27XyemZD3D40bp1QyeRTI9GkjDnwy80Yz6mZP
-         Y/v9wqkSOnnwI/cKXAGsP8HdbUugB3KtD44ZKRukUPs4uhA9J+HxV/G+qQp6JCvY/BCl
-         suAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677798873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dK5xBsNL80qIVhQ78+b+C534EV7ZA+MEtH4IecrU8fs=;
-        b=B2OjY9auSqWnH7muZulNfO+ZrnPIuVuTnKuYIjnntKHWwifqbayBCvp0S/eK9Hknz3
-         /z03JfuSWyzBXmfZxpov5X1qzBVN1TxcSUGfeaWWlspExaSqYdo8d635nZ5BwbVSEpKa
-         pbDgXGy/pqLXQYEm34kWPkenndmIQkQnj3DxmcskH4KoG595xQHRyoLEPJQ0njVvJZIA
-         KMGFHP+dpnE3I1v42WQRCIGxwiEJ4znMAePRWOKsa/otA2apqoLjN7SDaOPyqpPlPVul
-         fXNapMo6tygjRdBT8syrM3zqHEOuEe58tQmCBamtVuGfzVPyff7bJSUsstho5OqX5tgt
-         xtXg==
-X-Gm-Message-State: AO0yUKWiObU++u54s/DY6fswzE5vGkghxp7XWlqLiMwrEQx9iYrxEBU1
-        0UFGHb6Qzgpf+uoNZdZT4s5jDrkvZU1lA+aL2Ln3gA==
-X-Google-Smtp-Source: AK7set/wy4RYTpF9DE9+esAO3swTwx9AMlMSD7Y2MF1LhQ+HmQO3b//lY81QPmALZdw979D/M11S681c0YXmtKI/bVE=
-X-Received: by 2002:a17:903:2591:b0:19a:8bc7:d814 with SMTP id
- jb17-20020a170903259100b0019a8bc7d814mr4441125plb.13.1677798872570; Thu, 02
- Mar 2023 15:14:32 -0800 (PST)
-MIME-Version: 1.0
-References: <20230302202826.776286-1-mcgrof@kernel.org> <20230302202826.776286-9-mcgrof@kernel.org>
-In-Reply-To: <20230302202826.776286-9-mcgrof@kernel.org>
-From:   Jeff Xu <jeffxu@google.com>
-Date:   Thu, 2 Mar 2023 15:13:54 -0800
-Message-ID: <CALmYWFucv6-9yfS=gamwSsqjgxSKZS0nvVjj_QfBmsLmQD5XOQ@mail.gmail.com>
-Subject: Re: [PATCH 08/11] kernel: pid_namespace: simplify sysctls with register_sysctl()
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
-        john.johansen@canonical.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, luto@amacapital.net,
-        wad@chromium.org, dverkamp@chromium.org, paulmck@kernel.org,
-        baihaowen@meizu.com, frederic@kernel.org, ebiggers@kernel.org,
-        tytso@mit.edu, guoren@kernel.org, j.granados@samsung.com,
-        zhangpeng362@huawei.com, tangmeng@uniontech.com,
-        willy@infradead.org, nixiaoming@huawei.com, sujiaxun@uniontech.com,
-        patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        Thu, 2 Mar 2023 20:28:40 -0500
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6B78173B;
+        Thu,  2 Mar 2023 17:28:37 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Vcyz2mq_1677806914;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0Vcyz2mq_1677806914)
+          by smtp.aliyun-inc.com;
+          Fri, 03 Mar 2023 09:28:35 +0800
+From:   Yang Li <yang.lee@linux.alibaba.com>
+To:     john.johansen@canonical.com
+Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
         apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] AppArmor: Fix some kernel-doc comments
+Date:   Fri,  3 Mar 2023 09:28:33 +0800
+Message-Id: <20230303012833.57690-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 2, 2023 at 12:28=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
-> wrote:
->
-> register_sysctl_paths() is only required if your child (directories)
-> have entries and pid_namespace does not. So use register_sysctl_init()
-> instead where we don't care about the return value and use
-> register_sysctl() where we do.
->
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  kernel/pid_namespace.c | 3 +--
->  kernel/pid_sysctl.h    | 3 +--
->  2 files changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index 46e0d5a3f91f..b43eee07b00c 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -314,7 +314,6 @@ static struct ctl_table pid_ns_ctl_table[] =3D {
->         },
->         { }
->  };
-> -static struct ctl_path kern_path[] =3D { { .procname =3D "kernel", }, { =
-} };
->  #endif /* CONFIG_CHECKPOINT_RESTORE */
->
->  int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
-> @@ -473,7 +472,7 @@ static __init int pid_namespaces_init(void)
->         pid_ns_cachep =3D KMEM_CACHE(pid_namespace, SLAB_PANIC | SLAB_ACC=
-OUNT);
->
->  #ifdef CONFIG_CHECKPOINT_RESTORE
-> -       register_sysctl_paths(kern_path, pid_ns_ctl_table);
-> +       register_sysctl_init("kernel", pid_ns_ctl_table);
->  #endif
->
->         register_pid_ns_sysctl_table_vm();
-> diff --git a/kernel/pid_sysctl.h b/kernel/pid_sysctl.h
-> index e22d072e1e24..d67a4d45bb42 100644
-> --- a/kernel/pid_sysctl.h
-> +++ b/kernel/pid_sysctl.h
-> @@ -46,10 +46,9 @@ static struct ctl_table pid_ns_ctl_table_vm[] =3D {
->         },
->         { }
->  };
-> -static struct ctl_path vm_path[] =3D { { .procname =3D "vm", }, { } };
->  static inline void register_pid_ns_sysctl_table_vm(void)
->  {
-> -       register_sysctl_paths(vm_path, pid_ns_ctl_table_vm);
-> +       register_sysctl("vm", pid_ns_ctl_table_vm);
->  }
->  #else
->  static inline void initialize_memfd_noexec_scope(struct pid_namespace *n=
-s) {}
-> --
-> 2.39.1
->
-Acked-by: Jeff Xu <jeffxu@google.com>
+Make the description of @table to @strs in function unpack_trans_table()
+to silence the warnings:
+
+security/apparmor/policy_unpack.c:456: warning: Function parameter or member 'strs' not described in 'unpack_trans_table'
+security/apparmor/policy_unpack.c:456: warning: Excess function parameter 'table' description in 'unpack_trans_table'
+
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=4332
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ security/apparmor/policy_unpack.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index cf2ceec40b28..c3f44f1deb07 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -448,7 +448,7 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e, int flags)
+ /**
+  * unpack_trans_table - unpack a profile transition table
+  * @e: serialized data extent information  (NOT NULL)
+- * @table: str table to unpack to (NOT NULL)
++ * @strs: str table to unpack to (NOT NULL)
+  *
+  * Returns: true if table successfully unpacked or not present
+  */
+-- 
+2.20.1.7.g153144c
+
