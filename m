@@ -2,56 +2,59 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11313C64EC4
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 20:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FDAC64EC4
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 20:58:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231588AbjCCUjP (ORCPT
+        id S231760AbjCCU6o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Mar 2023 15:39:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58096 "EHLO
+        Fri, 3 Mar 2023 15:58:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230512AbjCCUjO (ORCPT
+        with ESMTP id S231615AbjCCU6n (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Mar 2023 15:39:14 -0500
-Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62C8512043;
-        Fri,  3 Mar 2023 12:39:13 -0800 (PST)
-Received: by mail-oi1-x22b.google.com with SMTP id bh20so2721062oib.9;
-        Fri, 03 Mar 2023 12:39:13 -0800 (PST)
+        Fri, 3 Mar 2023 15:58:43 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 735D918152
+        for <linux-security-module@vger.kernel.org>; Fri,  3 Mar 2023 12:58:33 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id cy23so15189058edb.12
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 12:58:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677875952;
+        d=linux-foundation.org; s=google; t=1677877111;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:from:to:cc:subject:date
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NG6EKujrzKyN55ZG7hxXPBM9OaZ+zgs1s5FPu+FTZes=;
-        b=lsqBDPsZuu7gE5EbM8Q+y8jrcDlY/HC/QV2Z2BrEljqejz2M6qHDnp1xPAbthI4ZYe
-         6sFuYReqJu2i23Q8RB0PsHwKq3Z3mIwVyuPxkqSsCy9T03EmNZTiLFRpWJ+Qyv4pGQBh
-         CeC2v8N2fZEAygBtyVB63+7wekUl2hnU4wAk30AULZ79SREwZ7OW98DSs0DG7AmzAZNL
-         s6ovCMC7aA9+O5XoHmtgUy1FNFDQ+XiGicXrJ44W8VKrJXQiQjrILpupQ1q0wZNP5iE1
-         2KjjOnCdunZ5NkiO78fqWOdQzz1d1Ru5qHw6amvCRLaspFa7zVvNjynMO90bUf9N8BLF
-         ps2A==
+        bh=1o4OY5lQPKh+GkI89Rz6TXZXk/LYf31mRBJK3Sl9ezg=;
+        b=he65XQOu+UTB4in3Szyiw11xAa8mqRP2ytbOj4xIHb6LvrWUZKUzdsqGCCEJ1W4C3X
+         TuMyEiexc/qgDlzevsKPjI04q8h/4QsxnWeO2rFK26G98RH928vITMEmJoE2GmYgnrT9
+         +mC3ntKhkSOfnIoYv0aY8TgoZDk1kMSa2WELY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677875952;
+        d=1e100.net; s=20210112; t=1677877111;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:x-gm-message-state:from:to:cc
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NG6EKujrzKyN55ZG7hxXPBM9OaZ+zgs1s5FPu+FTZes=;
-        b=y/IGfJtysJrf6sUUaKsAjw2tig8IvITtQzA/dO/4/wJ6dmTdQS1r6de+Xn9ZckmHRX
-         vQn22lprMGjQcKPNH2AJbu0TciGkVx9vwKuZ1bQIg1ZyxTjKLds/g+cQRjlRa7sCamfA
-         ycD1Cnsc+QdVsWGdXuZw8+mtfGMHzzMl847KYvC4Bt4cGbkat7rko9wyySn75EYN4y7y
-         ++61GSjYzj8kP73HYPGSnYgwQPeyfyoxP6nZ8V2JDI+tBViJ/rPW4k+MU0/3pxQXiLCa
-         s/+UBNy9N4lN5BfRvSTBQLel25DUT5oAA5uy9b8+MZz8wACg4fti246ADgiKT+a5VUmT
-         1dRQ==
-X-Gm-Message-State: AO0yUKXfe2bCTq18/Xr44s2P7zzi2LX6TGWV66HrpxC8odq9Ad9fotPv
-        MO65prMyKDbRF+Lt0t7yKmAmXLG8hb7bDJkqGZM=
-X-Google-Smtp-Source: AK7set/mqM3zFV4SCOt6b4PSJMXUFm4gpSadoEGXGfUF3+qxJSFjjOfT1eDZ6LQYAmR+TkScgh4SpaRqJAGq2X6A3TU=
-X-Received: by 2002:a05:6808:2098:b0:383:f981:b1e5 with SMTP id
- s24-20020a056808209800b00383f981b1e5mr3495245oiw.5.1677875952073; Fri, 03 Mar
- 2023 12:39:12 -0800 (PST)
+        bh=1o4OY5lQPKh+GkI89Rz6TXZXk/LYf31mRBJK3Sl9ezg=;
+        b=y6YlEKGyRU4Xl8NBlVcaGBVbLEmEcj84wNfWOa8tSzUgK/qGGQaSl6ModNwMoGQmTO
+         llLoSsUeVEPeq20iIDM1zrZ6dyVX7oyk5BsaQkL6ffaKp/yQV2ydTszCXqmYwzT0CXK2
+         t0+o7pkBuIIk6jkPBlW0cghIrwJptHJJ2D1pkszG7FW0I3uaeQNMmcEn/qKdu0xgqfSF
+         pg7gXM2TxkrGDmukoctWW8Vh+Hof05D+caoZvgDXmkyd085gV+ZGGlpYnmkKaLLF8e9A
+         yTkMYMRKlz/4kzfxUVcJEHNH7EJdqSg1U0hnTxMAtnVS1hqi1Vs6rqJlvSIzIzsL8PFc
+         yU0Q==
+X-Gm-Message-State: AO0yUKXsuOh2R7ZHF4O6vWLwHyR08Dc7BmTy9ca0EQoWbcLOqhLasBIL
+        1KY7BZuEZmKySiLm9EMeilAoqKwDpI79n34NlRl3tg==
+X-Google-Smtp-Source: AK7set9vZZ6BMsElSXBLAnO8Khhiqlbf992NjswsisNsaABOOVmFUFQXsAPaTcJ0y8OcNWxU5Jyurw==
+X-Received: by 2002:a17:907:6d87:b0:8f6:52c:afa0 with SMTP id sb7-20020a1709076d8700b008f6052cafa0mr3584397ejc.23.1677877111350;
+        Fri, 03 Mar 2023 12:58:31 -0800 (PST)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id p12-20020a17090628cc00b008b1797b77b2sm1315961ejd.221.2023.03.03.12.58.30
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Mar 2023 12:58:30 -0800 (PST)
+Received: by mail-ed1-f54.google.com with SMTP id u9so15422561edd.2
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 12:58:30 -0800 (PST)
+X-Received: by 2002:a17:906:3d51:b0:8f1:4c6a:e72 with SMTP id
+ q17-20020a1709063d5100b008f14c6a0e72mr1497478ejf.0.1677877109830; Fri, 03 Mar
+ 2023 12:58:29 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a05:6802:31f:b0:4c2:d201:fe1f with HTTP; Fri, 3 Mar 2023
- 12:39:11 -0800 (PST)
-In-Reply-To: <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
 References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
  <20230302083025.khqdizrnjkzs2lt6@wittgenstein> <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
  <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
@@ -62,12 +65,15 @@ References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
  <ZAEC3LN6oUe6BKSN@ZenIV> <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
  <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
  <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
- <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com> <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
-From:   Mateusz Guzik <mjguzik@gmail.com>
-Date:   Fri, 3 Mar 2023 21:39:11 +0100
-Message-ID: <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
+ <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
+ <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com> <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
+In-Reply-To: <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 3 Mar 2023 12:58:13 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgz51x2gaiD4=6T3UGZtKOSm3k56iq=h4tqy3wQsN-VTA@mail.gmail.com>
+Message-ID: <CAHk-=wgz51x2gaiD4=6T3UGZtKOSm3k56iq=h4tqy3wQsN-VTA@mail.gmail.com>
 Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+To:     Mateusz Guzik <mjguzik@gmail.com>
 Cc:     Alexander Potapenko <glider@google.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Kees Cook <keescook@chromium.org>,
@@ -80,105 +86,53 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/3/23, Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> On Fri, Mar 3, 2023 at 11:37=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com>=
- wrote:
->>
->> I mentioned in the previous e-mail that memset is used a lot even
->> without the problematic opt and even have shown size distribution of
->> what's getting passed there.
+On Fri, Mar 3, 2023 at 12:39=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
+rote:
 >
-> Well, I *have* been pushing Intel to try to fix memcpy and memset for
-> over two decades by now, but with FSRM I haven't actually seen the
-> huge problems any more.
->
+> I think there is a systemic problem which comes with the kzalloc API
 
-rep *stos* remains crap with FSRM, but I don't have sensible tests
-handy nor the ice lake cpu i tested on at the moment
+Well, it's not necessarily the API that is bad, but the implementation.
 
-> I actually used to have the reverse of your hack for this - I've had
-> various hacks over the year that made memcpy and memset be inlined
-> "rep movs/stos", which (along with inlined spinlocks) is a great way
-> to see the _culprit_ (without having to deal with the call chains -
-> which always get done the wrong way around imnsho).
->
+We could easily make kzalloc() with a constant size just expand to
+kmalloc+memset, and get the behavior you want.
 
-that's all hackery which makes sense pre tooling like bpftrace, people
-can do better now (see the second part of the email)
+We already do magical things for "find the right slab bucket" part of
+kmalloc too for constant sizes. It's changed over the years, but that
+policy goes back a long long time. See
 
-I think there is a systemic problem which comes with the kzalloc API, consi=
-der:
-static struct file *__alloc_file(int flags, const struct cred *cred)
-{
-	struct file *f;
-	int error;
+   https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/=
+?id=3D95203fe78007f9ab3aebb96606473ae18c00a5a8
 
-	f =3D kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
-	if (unlikely(!f))
-		return ERR_PTR(-ENOMEM);
-        [bunch of the struct gets initialized here]
+from the BK history tree.
 
-the allocation routine does not have any information about the size
-available at compilation time, so has to resort to a memset call at
-runtime. Instead, should this be:
+Exactly because some things are worth optimizing for when the size is
+known at compile time.
 
-f =3D kmem_cache_alloc(...);
-memset(f, 0, sizeof(*f));
+Maybe just extending kzalloc() similarly? Trivial and entirely untested pat=
+ch:
 
-... the compiler could in principle inititalize stuff as indicated by
-code and emit zerofill for the rest. Interestingly, last I checked
-neither clang nor gcc knew how to do it, they instead resort to a full
-sized memset anyway, which is quite a bummer.
+   --- a/include/linux/slab.h
+   +++ b/include/linux/slab.h
+   @@ -717,6 +717,12 @@ static inline void *kmem_cache_zalloc(struct
+kmem_cache *k, gfp_t flags)
+     */
+    static inline __alloc_size(1) void *kzalloc(size_t size, gfp_t flags)
+    {
+   +    if (__builtin_constant_p(size)) {
+   +            void *ret =3D kmalloc(size, flags);
+   +            if (ret)
+   +                    memset(ret, 0, size);
+   +            return ret;
+   +    }
+        return kmalloc(size, flags | __GFP_ZERO);
+    }
 
-Personally i grew up on dtrace, bpftrace I can barely use and don't
-know how to specifically get the caller, but kstack(2) seems like a
-good enough workaround.
+This may well be part of what has changed over the years. People have
+done a *lot* of pseudo-automated "kmalloc+memset -> kzalloc" code
+simplification. And in the process we've lost a lot of good
+optimizations.
 
-as an example here is a one-liner to show crappers which do 0-sized ops:
-bpftrace -e 'kprobe:memset,kprobe:memcpy /arg2 =3D=3D 0/ { @[probe,
-kstack(2)] =3D count(); }'
+I used to do profiling religiously, but these days I only do it for
+particular areas (usually just the walking part of pathname lookup)
 
-one can trace all kinds of degeneracy like that without recompiling
-anything, provided funcs are visible to bpftrace
-
-sample result from the above one-liner while doing 'make clean' in the
-kernel dir:
-@[kprobe:memcpy,
-    memcpy+5
-    realloc_array+78
-]: 1
-@[kprobe:memcpy,
-    memcpy+5
-    push_jmp_history+125
-]: 1
-@[kprobe:memset,
-    memset+5
-    blk_mq_dispatch_rq_list+687
-]: 3
-@[kprobe:memcpy,
-    memcpy+5
-    mix_interrupt_randomness+192
-]: 4
-@[kprobe:memcpy,
-    memcpy+5
-    d_alloc_pseudo+18
-]: 59
-@[kprobe:memcpy,
-    memcpy+5
-    add_device_randomness+111
-]: 241
-@[kprobe:memcpy,
-    memcpy+5
-    add_device_randomness+93
-]: 527
-@[kprobe:memset,
-    memset+5
-    copy_process+2904
-]: 2054
-@[kprobe:memset,
-    memset+5
-    dup_fd+283
-]: 6162
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+             Linus
