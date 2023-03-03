@@ -2,398 +2,313 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30330C7EE2F
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 17:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 563A5C7EE2D
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 17:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231470AbjCCRPE (ORCPT
+        id S231236AbjCCRjQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Mar 2023 12:15:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34208 "EHLO
+        Fri, 3 Mar 2023 12:39:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231276AbjCCRPE (ORCPT
+        with ESMTP id S231222AbjCCRjP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Mar 2023 12:15:04 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 579F314EB6
-        for <linux-security-module@vger.kernel.org>; Fri,  3 Mar 2023 09:15:02 -0800 (PST)
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com [209.85.210.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 3813B3F10A
-        for <linux-security-module@vger.kernel.org>; Fri,  3 Mar 2023 17:15:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1677863701;
-        bh=DgYuLHBDbdAWqdmpPBV0ZgLbsqK4fpD+XI7eYMml57w=;
-        h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-         Content-Type:MIME-Version;
-        b=aK++xD32DM3EgMB+f5RFHhpkTO3IKZecZoM4xsFT0IWr93bAX1j4rbw6MgF9Jh+bV
-         Kz7Qr56Q1+ypImWtx0EL/ctEYQmH5EoNin84SR56anTXzS+wPuztVY8mf4xth7/ryp
-         O2sITWSg0a1fBwutMAyq0j8MqPoxhlRuw1ck/8VxsHURX9b+YR5ZnjA5dBNx0Cdkr3
-         AV5H756n2GnU5nwGNgiwWO12gENqLQTquGDYJfkQyq2X0xgBAIQ1ZY62GLSIMgMF0/
-         vQtU5xpJUDhfoMyMEG+Uo4fejwGw1rXpLHNAkwHRnlSkD0KlOByDbmqw33unjYaWNS
-         jmxJB25YUfvrg==
-Received: by mail-ot1-f72.google.com with SMTP id a11-20020a05683012cb00b0068bdd21c8d7so1467875otq.2
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 09:15:01 -0800 (PST)
+        Fri, 3 Mar 2023 12:39:15 -0500
+Received: from mail-oo1-xc32.google.com (mail-oo1-xc32.google.com [IPv6:2607:f8b0:4864:20::c32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB84619F35;
+        Fri,  3 Mar 2023 09:39:13 -0800 (PST)
+Received: by mail-oo1-xc32.google.com with SMTP id n27-20020a4ad63b000000b005252709efdbso548245oon.4;
+        Fri, 03 Mar 2023 09:39:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1677865153;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :references:in-reply-to:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ml/fW6uXGZ8Kx6hmQHBX1K/9bVHlrFzX/LDTLTFj11g=;
+        b=O1mais1ppI/17jnqGCgJc4Hp6kEaPm0/KdWJUtzWWgKpyrNHoPKVOP3mWL2lH28cOR
+         bgskgNElQ+bX2ZUYledWouqqkloG97AKokQ21ACxm+fYP8W6P9aCrcNlnvitl9U523kr
+         C1GMYtgfKfmnukPWeLxlR307mJk6yV4xmF/21cxr9NbOC2rCFv9WcGFdhxSigc8LzsDW
+         B5q+LVn66YOfVpi2yCrKGCy/ag7CxVcGbq2vmOA1UU83nZZXymhruQ3daRcdiq2MHnIN
+         o0p/V3B6ivt8Upkuo+xN0U4kEXsQjSEcF39m/A0Igm1wmesShJW5xh/ywRyaagvnqsVH
+         ol0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677863698;
-        h=mime-version:user-agent:content-transfer-encoding:organization
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DgYuLHBDbdAWqdmpPBV0ZgLbsqK4fpD+XI7eYMml57w=;
-        b=vUu4F7zTLiuVZssLOPfgOuob/RCCSQbLYbupoc1Y2wVbiKWItEDgECTzavKJTfkace
-         hCGLCFrBUH5T6pOL2ZKYcWzOxG1MDhwjFpq6R8ZM0ZXm9C89AKgzgU7aIEIXtCCnIyM6
-         6xzkkgGzP5FOdplPs1VTpTH7OyNtjPdRl670zAkvPCKuty5134T9BwLCRqV2YnmjhowL
-         BoRMbx2RVNhU8F+8gV579LCrO17qT+Sna2EEO9rjKz60ebF2tg182mLOnJEzdWEcaglT
-         ioS+q6lucEGOYrQdVvAbu7H0B2IM2cELCWufYAodu6F44uI5b1gKH+8OiyKapDrqW9r/
-         E/kw==
-X-Gm-Message-State: AO0yUKXpEna6lXVoT83Gr7ujVmakDKodQwYZxxQpa0yQXFhJHSd0Fhw6
-        +5Q5+Y+HlfsEOdJE76ee/YExMp/Me5pu9UcWCFHo6VSijradjKWgKtqdxDla6sZaovB06mtq5IR
-        ewRINmcNgnfUDiX1M8eE6xXI2aBYfc8KgYlilmT2EgCUR0mjmZ9YjSw==
-X-Received: by 2002:a05:6808:2da:b0:383:f572:2646 with SMTP id a26-20020a05680802da00b00383f5722646mr1024912oid.5.1677863698246;
-        Fri, 03 Mar 2023 09:14:58 -0800 (PST)
-X-Google-Smtp-Source: AK7set91nMG7k4hO2azPicxGrh/XawJFU9THxqJLa8ekYeoTNuviyDUD4h3iG2EGjdO8YhglzEJxMg==
-X-Received: by 2002:a05:6808:2da:b0:383:f572:2646 with SMTP id a26-20020a05680802da00b00383f5722646mr1024907oid.5.1677863697929;
-        Fri, 03 Mar 2023 09:14:57 -0800 (PST)
-Received: from ?IPv6:2804:1b3:a7c3:d46d:73b6:f440:93a4:30? ([2804:1b3:a7c3:d46d:73b6:f440:93a4:30])
-        by smtp.gmail.com with ESMTPSA id bb16-20020a056808169000b00383ebc74edasm1122650oib.7.2023.03.03.09.14.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Mar 2023 09:14:57 -0800 (PST)
-Message-ID: <d04cf3d047712ff7f705c3f895ea5a09b9a81211.camel@canonical.com>
-Subject: Re: [PATCH v38 02/39] LSM: Add an LSM identifier for external use
-From:   Georgia Garcia <georgia.garcia@canonical.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     linux-audit@redhat.com, jmorris@namei.org, selinux@vger.kernel.org,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 03 Mar 2023 14:14:52 -0300
-In-Reply-To: <20220927195421.14713-3-casey@schaufler-ca.com>
-References: <20220927195421.14713-1-casey@schaufler-ca.com>
-         <20220927195421.14713-3-casey@schaufler-ca.com>
-Organization: Canonical
+        d=1e100.net; s=20210112; t=1677865153;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :references:in-reply-to:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ml/fW6uXGZ8Kx6hmQHBX1K/9bVHlrFzX/LDTLTFj11g=;
+        b=gRIKG/WIZE2nsiQvQG1UOcnr9cyOqXNe7dXQ+3y71KOToXvhNgGaDV1LAFmwB1/dEv
+         7nd68xKKkyqGyVammskttOAbx12jNA7w8niKS1eOJoWpsxWTBkYddqmc99k3Ty2aBgTO
+         ZPmsY8stAeYdiQwXLK9HEQRwQnFe8/F6HCjr/w4DJH/JTdYBUXBDWNzZnD/GNWVP0Omo
+         aooJuqimmsCwvXSemxJMOctPIhm/S1fQ3Tc+2suB/j/DiLnuD8Yfyf6Pj18bPJP1/waY
+         xPJffdDA4KvUw2Yj5EVYVdetgUK+sw5JU5tTuqWGcMpkqnKqqphvo7U8dp53kK5x5l0e
+         wxxg==
+X-Gm-Message-State: AO0yUKUvx+BsbAKPWgh5cY0z2ALRkQeYLZ+I9ZZHZW7c+tgQtY1iK3Nq
+        j87Ri7BWUbAEuRq4rvWdsB/hieMT8+QnRdDgfOfiluCpNOc=
+X-Google-Smtp-Source: AK7set8sOGXUffR2UWjf1aVlRLZsiZzZbbn35nJdWBr42oUE2+83OF2vMAST0UrhRIdxj/MkA1Pbap1mHikHKrJKxi0=
+X-Received: by 2002:a4a:b101:0:b0:525:5f43:215a with SMTP id
+ a1-20020a4ab101000000b005255f43215amr2449978ooo.1.1677865152922; Fri, 03 Mar
+ 2023 09:39:12 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a05:6802:31f:b0:4c2:d201:fe1f with HTTP; Fri, 3 Mar 2023
+ 09:39:12 -0800 (PST)
+In-Reply-To: <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
+References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
+ <20230302083025.khqdizrnjkzs2lt6@wittgenstein> <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
+ <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
+ <ZADoeOiJs6BRLUSd@ZenIV> <CAGudoHFhnJ1z-81FKYpzfDmvcWFeHNkKGdr00CkuH5WJa2FAMQ@mail.gmail.com>
+ <CAHk-=wjp5fMupRwnROtC5Yn+MVLA7v=J+_QJSi1rr3qAjdsfXw@mail.gmail.com>
+ <CAHk-=wi11ZbOBdMR5hQDz0x0NNZ9gM-4SxXxK-7R3_yh7e10rQ@mail.gmail.com>
+ <ZAD21ZEiB2V9Ttto@ZenIV> <6400fedb.170a0220.ece29.04b8@mx.google.com>
+ <ZAEC3LN6oUe6BKSN@ZenIV> <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Fri, 3 Mar 2023 18:39:12 +0100
+Message-ID: <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
+To:     Alexander Potapenko <glider@google.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu1 
-MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-09-27 at 12:53 -0700, Casey Schaufler wrote:
-> Add an integer member "id" to the struct lsm_id. This value is
-> a unique identifier associated with each security module. The
-> values are defined in a new UAPI header file. Each existing LSM
-> has been updated to include it's LSMID in the lsm_id.
->=20
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+On 3/3/23, Alexander Potapenko <glider@google.com> wrote:
+> On Thu, Mar 2, 2023 at 9:11=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
+>>
+>> On Thu, Mar 02, 2023 at 11:54:03AM -0800, Kees Cook wrote:
+>> > On Thu, Mar 02, 2023 at 07:19:49PM +0000, Al Viro wrote:
+>> > > On Thu, Mar 02, 2023 at 11:10:03AM -0800, Linus Torvalds wrote:
+>> > > > On Thu, Mar 2, 2023 at 11:03=E2=80=AFAM Linus Torvalds
+>> > > > <torvalds@linux-foundation.org> wrote:
+>> > > > >
+>> > > > > It might be best if we actually exposed it as a SLAB_SKIP_ZERO
+>> > > > > thing,
+>> > > > > just to make it possible to say - exactly in situations like thi=
+s
+>> > > > > -
+>> > > > > that this particular slab cache has no advantage from
+>> > > > > pre-zeroing.
+>> > > >
+>> > > > Actually, maybe it's just as well to keep it per-allocation, and
+>> > > > just
+>> > > > special-case getname_flags() itself.
+>> > > >
+>> > > > We could replace the __getname() there with just a
+>> > > >
+>> > > >         kmem_cache_alloc(names_cachep, GFP_KERNEL |
+>> > > > __GFP_SKIP_ZERO);
+>> > > >
+>> > > > we're going to overwrite the beginning of the buffer with the path
+>> > > > we
+>> > > > copy from user space, and then we'd have to make people comfortabl=
+e
+>> > > > with the fact that even with zero initialization hardening on, the
+>> > > > space after the filename wouldn't be initialized...
+>> > >
+>> > > ACK; same in getname_kernel() and sys_getcwd(), at the very least.
+>> >
+>> > FWIW, much earlier analysis suggested opting out these kmem caches:
+>> >
+>> >       buffer_head
+>> >       names_cache
+>> >       mm_struct
+>> >       anon_vma
+>> >       skbuff_head_cache
+>> >       skbuff_fclone_cache
+>>
+>> I would probably add dentry_cache to it; the only subtle part is
+>> ->d_iname and I'm convinced that explicit "make sure there's a NUL
+>> at the very end" is enough.
+>
+> FWIW, a couple of years ago I was looking into implementing the
+> following scheme for opt-out that I also discussed with Kees:
+>
+> 1. Add a ___GFP_SKIP_ZERO flag that is not intended to be used
+> explicitly (e.g. disallow passing it to kmalloc(), add a checkpatch.pl
+> warning). Explicitly passing an opt-out flag to allocation functions
+> was considered harmful previously:
+> https://lore.kernel.org/kernel-hardening/20190423083148.GF25106@dhcp22.su=
+se.cz/
+>
+> 2. Define new allocation API that will allow opt-out:
+>
+>   struct page *alloc_pages_uninit(gfp_t gfp, unsigned int order, const
+> char *key);
+>   void *kmalloc_uninit(size_t size, gfp_t flags, const char *key);
+>   void *kmem_cache_alloc_uninit(struct kmem_cache *, gfp_t flags,
+> const char *key);
+>
+> , where @key is an arbitrary string that identifies a single
+> allocation or a group of allocations.
+>
+> 3. Provide a boot-time flag that holds a comma-separated list of
+> opt-out keys that actually take effect:
+>
+>   init_on_alloc.skip=3D"xyz-camera-driver,some_big_buffer".
+>
+> The rationale behind this two-step mechanism is that despite certain
+> allocations may be appealing opt-out targets for performance reasons,
+> some vendors may choose to be on the safe side and explicitly list the
+> allocations that should not be zeroed.
+>
+> Several possible enhancements include:
+> 1. A SLAB_NOINIT memcache flag that prohibits cache merging and
+> disables initialization. Because the number of caches is relatively
+> small, it might be fine to explicitly pass SLAB_NOINIT at cache
+> creation sites.
+> Again, if needed, we could only use this flag as a hint that needs to
+> be acknowledged by a boot-time option.
+> 2. No opt-out for kmalloc() - instead advise users to promote the
+> anonymous allocations they want to opt-out to memory caches with
+> SLAB_NOINIT.
+> 3. Provide an emergency brake that completely disables
+> ___GFP_SKIP_ZERO if a major security breach is discovered.
+>
+> Extending this idea of per-callsite opt-out we could generate unique
+> keys for every allocation in the kernel (or e.g. group them together
+> by the caller name) and decide at runtime if we want to opt them out.
+> But I am not sure anyone would want this level of control in their distro=
+.
+>
 
-Reviewed-by: Georgia Garcia <georgia.garcia@canonical.com>
+I intended to write a longer e-mail concerning the entire
+init-on-alloc situation along with some patches in not-so-distant
+future, but the bare minimum I wrote previously already got numerous
+people involved (unsurprisingly now that I look at it). I don't have
+time to write the thing I wanted at the moment, but now that there is
+traffic I think I should at least mention one other important bit.
 
-> ---
->  include/linux/lsm_hooks.h    |  1 +
->  include/uapi/linux/lsm.h     | 32 ++++++++++++++++++++++++++++++++
->  security/apparmor/lsm.c      |  2 ++
->  security/bpf/hooks.c         |  2 ++
->  security/commoncap.c         |  2 ++
->  security/landlock/setup.c    |  2 ++
->  security/loadpin/loadpin.c   |  2 ++
->  security/lockdown/lockdown.c |  4 +++-
->  security/safesetid/lsm.c     |  2 ++
->  security/selinux/hooks.c     |  2 ++
->  security/smack/smack_lsm.c   |  2 ++
->  security/tomoyo/tomoyo.c     |  2 ++
->  security/yama/yama_lsm.c     |  2 ++
->  13 files changed, 56 insertions(+), 1 deletion(-)
->  create mode 100644 include/uapi/linux/lsm.h
->=20
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 23054881eb08..407f57aaa6ef 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -1603,6 +1603,7 @@ struct security_hook_heads {
->   */
->  struct lsm_id {
->  	const char	*lsm;		/* Name of the LSM */
-> +	int		id;		/* LSM ID */
->  };
-> =20
->  /*
-> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-> new file mode 100644
-> index 000000000000..5647c3e220c0
-> --- /dev/null
-> +++ b/include/uapi/linux/lsm.h
-> @@ -0,0 +1,32 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +/*
-> + * Linus Security Modules (LSM) - User space API
-> + *
-> + * Copyright (C) 2022 Casey Schaufler <casey@schaufler-ca.com>
-> + * Copyright (C) Intel Corporation
-> + */
-> +
-> +#ifndef _UAPI_LINUX_LSM_H
-> +#define _UAPI_LINUX_LSM_H
-> +
-> +/*
-> + * ID values to identify security modules.
-> + * A system may use more than one security module.
-> + *
-> + * LSM_ID_XXX values 32 and below are reserved for future use
-> + */
-> +#define LSM_ID_INVALID		-1
-> +#define LSM_ID_SELINUX		33
-> +#define LSM_ID_SMACK		34
-> +#define LSM_ID_TOMOYO		35
-> +#define LSM_ID_IMA		36
-> +#define LSM_ID_APPARMOR		37
-> +#define LSM_ID_YAMA		38
-> +#define LSM_ID_LOADPIN		39
-> +#define LSM_ID_SAFESETID	40
-> +#define LSM_ID_LOCKDOWN		41
-> +#define LSM_ID_BPF		42
-> +#define LSM_ID_LANDLOCK		43
-> +#define LSM_ID_CAPABILITY	44
-> +
-> +#endif /* _UAPI_LINUX_LSM_H */
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index b71f7d4159d7..fb6c7edd5393 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -24,6 +24,7 @@
->  #include <linux/zlib.h>
->  #include <net/sock.h>
->  #include <uapi/linux/mount.h>
-> +#include <uapi/linux/lsm.h>
-> =20
->  #include "include/apparmor.h"
->  #include "include/apparmorfs.h"
-> @@ -1204,6 +1205,7 @@ struct lsm_blob_sizes apparmor_blob_sizes __lsm_ro_=
-after_init =3D {
-> =20
->  static struct lsm_id apparmor_lsmid __lsm_ro_after_init =3D {
->  	.lsm      =3D "apparmor",
-> +	.id       =3D LSM_ID_APPARMOR,
->  };
-> =20
->  static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init =
-=3D {
-> diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
-> index e50de3abfde2..c462fc41dd57 100644
-> --- a/security/bpf/hooks.c
-> +++ b/security/bpf/hooks.c
-> @@ -5,6 +5,7 @@
->   */
->  #include <linux/lsm_hooks.h>
->  #include <linux/bpf_lsm.h>
-> +#include <uapi/linux/lsm.h>
-> =20
->  static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init =3D=
- {
->  	#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
-> @@ -21,6 +22,7 @@ static struct security_hook_list bpf_lsm_hooks[] __lsm_=
-ro_after_init =3D {
->   */
->  struct lsm_id bpf_lsmid __lsm_ro_after_init =3D {
->  	.lsm      =3D "bpf",
-> +	.id       =3D LSM_ID_BPF,
->  };
-> =20
->  static int __init bpf_lsm_init(void)
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index dab1b5f5e6aa..4e9b140159d8 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -25,6 +25,7 @@
->  #include <linux/binfmts.h>
->  #include <linux/personality.h>
->  #include <linux/mnt_idmapping.h>
-> +#include <uapi/linux/lsm.h>
-> =20
->  /*
->   * If a non-root user executes a setuid-root binary in
-> @@ -1448,6 +1449,7 @@ int cap_mmap_file(struct file *file, unsigned long =
-reqprot,
-> =20
->  static struct lsm_id capability_lsmid __lsm_ro_after_init =3D {
->  	.lsm      =3D "capability",
-> +	.id       =3D LSM_ID_CAPABILITY,
->  };
-> =20
->  static struct security_hook_list capability_hooks[] __lsm_ro_after_init =
-=3D {
-> diff --git a/security/landlock/setup.c b/security/landlock/setup.c
-> index fc7b69c5839e..1242c61c9de4 100644
-> --- a/security/landlock/setup.c
-> +++ b/security/landlock/setup.c
-> @@ -8,6 +8,7 @@
-> =20
->  #include <linux/init.h>
->  #include <linux/lsm_hooks.h>
-> +#include <uapi/linux/lsm.h>
-> =20
->  #include "common.h"
->  #include "cred.h"
-> @@ -25,6 +26,7 @@ struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_afte=
-r_init =3D {
-> =20
->  struct lsm_id landlock_lsmid __lsm_ro_after_init =3D {
->  	.lsm      =3D LANDLOCK_NAME,
-> +	.id       =3D LSM_ID_LANDLOCK,
->  };
-> =20
->  static int __init landlock_init(void)
-> diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-> index 7e5c897ccbb2..276c8a7cd6fe 100644
-> --- a/security/loadpin/loadpin.c
-> +++ b/security/loadpin/loadpin.c
-> @@ -20,6 +20,7 @@
->  #include <linux/string_helpers.h>
->  #include <linux/dm-verity-loadpin.h>
->  #include <uapi/linux/loadpin.h>
-> +#include <uapi/linux/lsm.h>
-> =20
->  static void report_load(const char *origin, struct file *file, char *ope=
-ration)
->  {
-> @@ -197,6 +198,7 @@ static int loadpin_load_data(enum kernel_load_data_id=
- id, bool contents)
-> =20
->  static struct lsm_id loadpin_lsmid __lsm_ro_after_init =3D {
->  	.lsm      =3D "loadpin",
-> +	.id       =3D LSM_ID_LOADPIN,
->  };
-> =20
->  static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init =3D=
- {
-> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> index 2af4bff8d101..3d3347f3dbd1 100644
-> --- a/security/lockdown/lockdown.c
-> +++ b/security/lockdown/lockdown.c
-> @@ -13,6 +13,7 @@
->  #include <linux/security.h>
->  #include <linux/export.h>
->  #include <linux/lsm_hooks.h>
-> +#include <uapi/linux/lsm.h>
-> =20
->  static enum lockdown_reason kernel_locked_down;
-> =20
-> @@ -76,7 +77,8 @@ static struct security_hook_list lockdown_hooks[] __lsm=
-_ro_after_init =3D {
->  };
-> =20
->  static struct lsm_id lockdown_lsmid __lsm_ro_after_init =3D {
-> -	.lsm     =3D "lockdown",
-> +	.lsm      =3D "lockdown",
-> +	.id       =3D LSM_ID_LOCKDOWN,
->  };
-> =20
->  static int __init lockdown_lsm_init(void)
-> diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-> index 3a94103f3c5b..88002731e603 100644
-> --- a/security/safesetid/lsm.c
-> +++ b/security/safesetid/lsm.c
-> @@ -19,6 +19,7 @@
->  #include <linux/ptrace.h>
->  #include <linux/sched/task_stack.h>
->  #include <linux/security.h>
-> +#include <uapi/linux/lsm.h>
->  #include "lsm.h"
-> =20
->  /* Flag indicating whether initialization completed */
-> @@ -263,6 +264,7 @@ static int safesetid_task_fix_setgroups(struct cred *=
-new, const struct cred *old
-> =20
->  static struct lsm_id safesetid_lsmid __lsm_ro_after_init =3D {
->  	.lsm      =3D "safesetid",
-> +	.id       =3D LSM_ID_SAFESETID,
->  };
-> =20
->  static struct security_hook_list safesetid_security_hooks[] =3D {
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 5e4938f3ce11..9803bbbc6747 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -92,6 +92,7 @@
->  #include <linux/fsnotify.h>
->  #include <linux/fanotify.h>
->  #include <linux/io_uring.h>
-> +#include <uapi/linux/lsm.h>
-> =20
->  #include "avc.h"
->  #include "objsec.h"
-> @@ -7014,6 +7015,7 @@ static int selinux_uring_cmd(struct io_uring_cmd *i=
-oucmd)
-> =20
->  static struct lsm_id selinux_lsmid __lsm_ro_after_init =3D {
->  	.lsm      =3D "selinux",
-> +	.id       =3D LSM_ID_SELINUX,
->  };
-> =20
->  /*
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 5d8bc13feb09..2a88b4e7669e 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -43,6 +43,7 @@
->  #include <linux/fs_parser.h>
->  #include <linux/watch_queue.h>
->  #include <linux/io_uring.h>
-> +#include <uapi/linux/lsm.h>
->  #include "smack.h"
-> =20
->  #define TRANS_TRUE	"TRUE"
-> @@ -4776,6 +4777,7 @@ struct lsm_blob_sizes smack_blob_sizes __lsm_ro_aft=
-er_init =3D {
-> =20
->  static struct lsm_id smack_lsmid __lsm_ro_after_init =3D {
->  	.lsm      =3D "smack",
-> +	.id       =3D LSM_ID_SMACK,
->  };
-> =20
->  static struct security_hook_list smack_hooks[] __lsm_ro_after_init =3D {
-> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-> index 38342c1fa4bc..71eab206ba6e 100644
-> --- a/security/tomoyo/tomoyo.c
-> +++ b/security/tomoyo/tomoyo.c
-> @@ -6,6 +6,7 @@
->   */
-> =20
->  #include <linux/lsm_hooks.h>
-> +#include <uapi/linux/lsm.h>
->  #include "common.h"
-> =20
->  /**
-> @@ -532,6 +533,7 @@ static void tomoyo_task_free(struct task_struct *task=
-)
-> =20
->  static struct lsm_id tomoyo_lsmid __lsm_ro_after_init =3D {
->  	.lsm      =3D "tomoyo",
-> +	.id       =3D LSM_ID_TOMOYO,
->  };
-> =20
->  /*
-> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-> index ed6d45e62e0d..b178d74bb00b 100644
-> --- a/security/yama/yama_lsm.c
-> +++ b/security/yama/yama_lsm.c
-> @@ -18,6 +18,7 @@
->  #include <linux/task_work.h>
->  #include <linux/sched.h>
->  #include <linux/spinlock.h>
-> +#include <uapi/linux/lsm.h>
-> =20
->  #define YAMA_SCOPE_DISABLED	0
->  #define YAMA_SCOPE_RELATIONAL	1
-> @@ -423,6 +424,7 @@ static int yama_ptrace_traceme(struct task_struct *pa=
-rent)
-> =20
->  static struct lsm_id yama_lsmid __lsm_ro_after_init =3D {
->  	.lsm      =3D "yama",
-> +	.id       =3D LSM_ID_YAMA,
->  };
-> =20
->  static struct security_hook_list yama_hooks[] __lsm_ro_after_init =3D {
+I'm not going to argue for any particular level of granularity -- I'm
+a happy camper as long as I can end up with names_cachep allocations
+excluded without disabling the entire thing.
 
+So the key is: memset is underperforming at least on x86-64 for
+certain sizes and the init-on-alloc thingy makes it used significantly
+more, exacerbating the problem. Fixing it is worthwhile on its own and
+will reduce the impact of the option, but the need for some form of
+opt-out will remain.
+
+I don't have any numbers handy nor time to produce them, so the mail
+will be a little handwave-y. I only write it in case someone decides
+to bench now what would warrant exclusion with the mechanism under
+discussion. Should any of the claims below be challenged, I can
+respond some time late next week with hard data(tm).
+
+Onto the issue:
+Most cpus in use today have the ERMS bit, in which case the routine is:
+
+SYM_FUNC_START_LOCAL(memset_erms)
+        movq %rdi,%r9
+        movb %sil,%al
+        movq %rdx,%rcx
+        rep stosb
+        movq %r9,%rax
+        RET
+SYM_FUNC_END(memset_erms)
+
+The problem here is that instructions with the rep prefix have a very
+high startup latency. Afair this remains true even on cpus with FSRM
+in case of rep *stos* (what is helped by FSRM is rep *mov*, whereas
+stos remains unaffected).
+
+Interestingly looks like the problem was recognized in general --
+memcpy and copy_{to,from}_user have hand rolled smaller copies. Apart
+from that __clear_user relatively recently got a treatment of that
+sort but it somehow never got implemented in memset itself.
+
+If memory serves right, the least slow way to do it is to *NOT* use
+rep stos below 128 bytes of size (and this number is even higher the
+better the cpu). Instead, a 32-byte loop (as in 4 times movsq) would
+do it as long as there is space, along with overlapping stores to take
+care of whatever < 32 bytes.
+
+__clear_user got rep stos if FSRM is present and 64 byte non-rep
+treatment, with an 8 byte loop and 1 byte loop to cover the tail. As
+noted above, this leaves perf on the table. Even then, it would be an
+improvement for memset if transplanted over. Maybe this was mentioned
+in the discussion concerning the func, I had not read the thread -- I
+only see that memset remains unpatched.
+
+memset, even with init-on-alloc disabled, is used *a lot* with very
+small sizes. For that bit I do have data collected over 'make' in the
+kernel directory.
+
+bpftrace -e 'kprobe:memset { @ =3D lhist(arg2, 0, 128, 8); }'
+
+[0, 8)           9126030 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@       =
+   |
+[8, 16)           515728 |@@                                               =
+   |
+[16, 24)          621902 |@@                                               =
+   |
+[24, 32)          110822 |                                                 =
+   |
+[32, 40)        11003451 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
+@  |
+[40, 48)             488 |                                                 =
+   |
+[48, 56)             164 |                                                 =
+   |
+[56, 64)         1493851 |@@@@@@                                           =
+   |
+[64, 72)          214613 |                                                 =
+   |
+[72, 80)           10468 |                                                 =
+   |
+[80, 88)           10524 |                                                 =
+   |
+[88, 96)             121 |                                                 =
+   |
+[96, 104)          81591 |                                                 =
+   |
+[104, 112)       1659699 |@@@@@@@                                          =
+   |
+[112, 120)          3240 |                                                 =
+   |
+[120, 128)          9058 |                                                 =
+   |
+[128, ...)      11287204 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
+@@@|
+
+note: i failed to figure out how to attach to memset on stock kernel,
+thus the kernel was booted with the crappery below:
+
+diff --git a/arch/x86/lib/memset_64.S b/arch/x86/lib/memset_64.S
+index 6143b1a6fa2c..141d899d5f1d 100644
+--- a/arch/x86/lib/memset_64.S
++++ b/arch/x86/lib/memset_64.S
+@@ -45,9 +45,6 @@ SYM_FUNC_START(__memset)
+ SYM_FUNC_END(__memset)
+ EXPORT_SYMBOL(__memset)
+
+-SYM_FUNC_ALIAS(memset, __memset)
+-EXPORT_SYMBOL(memset)
+-
+ /*
+  * ISO C memset - set a memory block to a byte value. This function uses
+  * enhanced rep stosb to override the fast string function.
+diff --git a/fs/open.c b/fs/open.c
+index 4401a73d4032..6e11e95ad9c3 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1564,3 +1564,11 @@ int stream_open(struct inode *inode, struct file *fi=
+lp)
+ }
+
+ EXPORT_SYMBOL(stream_open);
++
++void *(memset)(void *s, int c, size_t n)
++{
++       return __memset(s, c, n);
++}
++
++EXPORT_SYMBOL(memset);
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
