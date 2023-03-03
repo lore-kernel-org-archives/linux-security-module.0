@@ -2,169 +2,93 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A38DC64EC4
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 15:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E551C64EC4
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 16:39:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230243AbjCCPbE (ORCPT
+        id S230229AbjCCQjS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Mar 2023 10:31:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46490 "EHLO
+        Fri, 3 Mar 2023 11:39:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231450AbjCCPbB (ORCPT
+        with ESMTP id S230039AbjCCQjR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Mar 2023 10:31:01 -0500
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 156022312A
-        for <linux-security-module@vger.kernel.org>; Fri,  3 Mar 2023 07:30:58 -0800 (PST)
-Received: by mail-il1-x131.google.com with SMTP id x10so1794274ill.12
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 07:30:58 -0800 (PST)
+        Fri, 3 Mar 2023 11:39:17 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D7E18A8E
+        for <linux-security-module@vger.kernel.org>; Fri,  3 Mar 2023 08:39:16 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id az36so1994537wmb.1
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 08:39:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1677857457;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ivYNExXn1wG97fVTST3XeNaQklU6TM1KpbQL9nqgRVE=;
-        b=TJLnJxUlO9BpWopUmYbnlOcffV0+QgOqT6Lv9TaHngZbMcjv0s6BL+73qf19o9ONE9
-         bPV/e8A6Y6fNCKX/9Pyi8yhROr8+Pdp0UruTVmRqpm+h5Ov05rhYcDj4+Spj9vIkPZ5P
-         8uUhblNfNQUHuNQSNEU46xh3e488KI0Hgi3AXMCV3HpE8QKs1izLFxwY5MSiT82Ya39B
-         ZxtsxbA4ypkU4uudzN27K+O27/i2cEg89VfLNcm5vf2YhPOKh3B3bz6dcx2qAqgvLRWl
-         Y5pavR75GxEWLOt13yWlgLrZPEYPp7zT7v5WAx6iOdI8K+/FDRUlSpEOF4dSrtAoTDnU
-         LPwA==
+        d=gmail.com; s=20210112; t=1677861555;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=31I07e7lhfZ86RBOVPxLGMJkymKTXstteSUgSLtkVn4=;
+        b=WvAaJGvELrbE5hc3JnT/95UEkrlBlS4qbrbSnLndepoPAe0TpucumoexZbtX9omAxK
+         uOWAuvGI6+0wcvr9EvoXTRuutPnKhBAuu+DwMU1RS5I6juMl6RWduAbxGcFk0Ky19/P7
+         78lMFsPgBpgrxjU5R6fAXapkPgB2xS89ZBI3mjlUouL2vSjymOIpOdY2AIvX5Cps2fOi
+         EHBsv9A7y+htBWwGVce+P/pyPSZdYIFevDt0ySx6jZIY0SEPxXv2+JKrfImp07WkODpg
+         rqGMEEq44s33qGVVgTbWUap9B8f+0pdI9r8Mt1SdQvArF+/8TSuu8rjDbOZdbOQMlMCO
+         07xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677857457;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ivYNExXn1wG97fVTST3XeNaQklU6TM1KpbQL9nqgRVE=;
-        b=ly77E2gqRqCwL92xSOpBtMuFnPvFL1nzHzI62JRzUl5bD0Ucl7J2JXcadIUjqRYTSt
-         FEUGF8yf024Dpvp8B07bzjS5l77NdJpCFdvPhKJ5/Lg96mhfA3juBWW71mu60OH06HVt
-         P/IWJfoFffN95rTs2EEEByMCCKLnXUWPs4OBaUZriwpxltgYwYvfGAxw2IP++vrky7Gm
-         zpHqUSB6HqEl5UlRcrcTV3ykUb6fSW436oX79/JTvtW6aqL1Jh2rUcn7zIe0qRyB1yjC
-         zirEQ9exQ3PIolxBoai2iifEXQ1328BFqt74J3jaN+9yheB/jbAi+XQSp9tb9reQRzHz
-         7MAA==
-X-Gm-Message-State: AO0yUKU4aJqbDKlqbPxQa9yuy2qyZSrUKHx8eNkwSgAPAVI6ymUI3Z+B
-        I0Y5pTj4QGx7UaRrY0PeRONIhY7zO1KN4v2KzOlysA==
-X-Google-Smtp-Source: AK7set/WaCpaoe2jC5WxYG9nj+2ggsMdB668GmzsmKzMssQC+JsgfP4rpsFOLdISKiY2FChuUZzix+rTw4ac1+brFnY=
-X-Received: by 2002:a92:c5c2:0:b0:315:8de2:2163 with SMTP id
- s2-20020a92c5c2000000b003158de22163mr1034041ilt.5.1677857457256; Fri, 03 Mar
- 2023 07:30:57 -0800 (PST)
+        d=1e100.net; s=20210112; t=1677861555;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=31I07e7lhfZ86RBOVPxLGMJkymKTXstteSUgSLtkVn4=;
+        b=eqkcJ8NDiyFX/P1LBVAXA0JU55PouTwla36mayosZngCu2doBQr6WO6ZpLcdjIGLzx
+         AU8evBA7msVFpYAyD3vJceV0/NUqHrflORrJQYgud8zgCZgF7/a8Pw+jcs1Q4+oVkOaS
+         Rt5anIK/hwko5gbcyWdmjmSujdpud+M9F0FwTH2T59sy1ok90XAXWO9rfbf65LiMPMJd
+         KwyJP5oH3kNrBRSnuOtFU5offfmW4yRuOc1dVPV0T553G5jCR1ZwtQI3G9a42Lugu86z
+         3rYoC3C+4PM5tjXUPhh9aGCXCzlL6uLDgJCOOiBheR1viCtHy62DuIghhMo/1bTXgsmu
+         I3cw==
+X-Gm-Message-State: AO0yUKXRHBAU6ZCMorw8b6qKE1YVJblpmZvyZgY7SxyTpx8is3PAKtHH
+        khk+bzjNH0tauoPjdvbKvh0=
+X-Google-Smtp-Source: AK7set+P9od8tW798HctJwCQ7LSF91Ata4ghAqKUqfjVHUBJvQ8kifaBb+ZRU8pijX+Ae8eNVURVJA==
+X-Received: by 2002:a05:600c:4f88:b0:3e2:66b:e90e with SMTP id n8-20020a05600c4f8800b003e2066be90emr2406921wmq.10.1677861554885;
+        Fri, 03 Mar 2023 08:39:14 -0800 (PST)
+Received: from localhost ([2a02:168:633b:1:7c09:9c3b:256e:8ba1])
+        by smtp.gmail.com with ESMTPSA id r9-20020a05600c458900b003e1f6e18c95sm7008619wmo.21.2023.03.03.08.39.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Mar 2023 08:39:14 -0800 (PST)
+Date:   Fri, 3 Mar 2023 17:39:13 +0100
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     enlightened@chromium.org
+Cc:     mic@digikod.net, linux-security-module@vger.kernel.org,
+        jorgelo@chromium.org, keescook@chromium.org, groeck@chromium.org,
+        jeffxu@chromium.org, allenwebb@chromium.org
+Subject: Re: [PATCH 1/1] lsm: adds process attribute getter for Landlock
+Message-ID: <20230303.c98f1b8fa91e@gnoack.org>
+References: <20230302185257.850681-1-enlightened@chromium.org>
+ <20230302185257.850681-2-enlightened@chromium.org>
 MIME-Version: 1.0
-References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
- <20230302083025.khqdizrnjkzs2lt6@wittgenstein> <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
- <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
- <ZADoeOiJs6BRLUSd@ZenIV> <CAGudoHFhnJ1z-81FKYpzfDmvcWFeHNkKGdr00CkuH5WJa2FAMQ@mail.gmail.com>
- <CAHk-=wjp5fMupRwnROtC5Yn+MVLA7v=J+_QJSi1rr3qAjdsfXw@mail.gmail.com>
- <CAHk-=wi11ZbOBdMR5hQDz0x0NNZ9gM-4SxXxK-7R3_yh7e10rQ@mail.gmail.com>
- <ZAD21ZEiB2V9Ttto@ZenIV> <6400fedb.170a0220.ece29.04b8@mx.google.com> <ZAEC3LN6oUe6BKSN@ZenIV>
-In-Reply-To: <ZAEC3LN6oUe6BKSN@ZenIV>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Fri, 3 Mar 2023 16:30:20 +0100
-Message-ID: <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mateusz Guzik <mjguzik@gmail.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
-        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230302185257.850681-2-enlightened@chromium.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 2, 2023 at 9:11=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->
-> On Thu, Mar 02, 2023 at 11:54:03AM -0800, Kees Cook wrote:
-> > On Thu, Mar 02, 2023 at 07:19:49PM +0000, Al Viro wrote:
-> > > On Thu, Mar 02, 2023 at 11:10:03AM -0800, Linus Torvalds wrote:
-> > > > On Thu, Mar 2, 2023 at 11:03=E2=80=AFAM Linus Torvalds
-> > > > <torvalds@linux-foundation.org> wrote:
-> > > > >
-> > > > > It might be best if we actually exposed it as a SLAB_SKIP_ZERO th=
-ing,
-> > > > > just to make it possible to say - exactly in situations like this=
- -
-> > > > > that this particular slab cache has no advantage from pre-zeroing=
-.
-> > > >
-> > > > Actually, maybe it's just as well to keep it per-allocation, and ju=
-st
-> > > > special-case getname_flags() itself.
-> > > >
-> > > > We could replace the __getname() there with just a
-> > > >
-> > > >         kmem_cache_alloc(names_cachep, GFP_KERNEL | __GFP_SKIP_ZERO=
-);
-> > > >
-> > > > we're going to overwrite the beginning of the buffer with the path =
-we
-> > > > copy from user space, and then we'd have to make people comfortable
-> > > > with the fact that even with zero initialization hardening on, the
-> > > > space after the filename wouldn't be initialized...
-> > >
-> > > ACK; same in getname_kernel() and sys_getcwd(), at the very least.
-> >
-> > FWIW, much earlier analysis suggested opting out these kmem caches:
-> >
-> >       buffer_head
-> >       names_cache
-> >       mm_struct
-> >       anon_vma
-> >       skbuff_head_cache
-> >       skbuff_fclone_cache
->
-> I would probably add dentry_cache to it; the only subtle part is
-> ->d_iname and I'm convinced that explicit "make sure there's a NUL
-> at the very end" is enough.
+Hello Shervin!
 
-FWIW, a couple of years ago I was looking into implementing the
-following scheme for opt-out that I also discussed with Kees:
+On Thu, Mar 02, 2023 at 10:52:57AM -0800, enlightened@chromium.org wrote:
+> +	if (landlocked(task))
+> +		val = "landlocked:1";
+> +	else
+> +		val = "landlocked:0";
 
-1. Add a ___GFP_SKIP_ZERO flag that is not intended to be used
-explicitly (e.g. disallow passing it to kmalloc(), add a checkpatch.pl
-warning). Explicitly passing an opt-out flag to allocation functions
-was considered harmful previously:
-https://lore.kernel.org/kernel-hardening/20190423083148.GF25106@dhcp22.suse=
-.cz/
+Landlock policies can be stacked on top of each other, similar to
+seccomp-bpf.
 
-2. Define new allocation API that will allow opt-out:
+If a parent process has already enforced a (potentially trivial)
+Landlock policy, then you can't tell apart based on this boolean
+whether any additional policies are stacked on top. So what does
+Chromium do with that information, if the flag is true for all the
+involved processes that it manages?
 
-  struct page *alloc_pages_uninit(gfp_t gfp, unsigned int order, const
-char *key);
-  void *kmalloc_uninit(size_t size, gfp_t flags, const char *key);
-  void *kmem_cache_alloc_uninit(struct kmem_cache *, gfp_t flags,
-const char *key);
+Does this meet the needs of your intended use case?  Should your API
+expose more information about the stacked policies, so that it becomes
+possible to tell it apart?
 
-, where @key is an arbitrary string that identifies a single
-allocation or a group of allocations.
-
-3. Provide a boot-time flag that holds a comma-separated list of
-opt-out keys that actually take effect:
-
-  init_on_alloc.skip=3D"xyz-camera-driver,some_big_buffer".
-
-The rationale behind this two-step mechanism is that despite certain
-allocations may be appealing opt-out targets for performance reasons,
-some vendors may choose to be on the safe side and explicitly list the
-allocations that should not be zeroed.
-
-Several possible enhancements include:
-1. A SLAB_NOINIT memcache flag that prohibits cache merging and
-disables initialization. Because the number of caches is relatively
-small, it might be fine to explicitly pass SLAB_NOINIT at cache
-creation sites.
-Again, if needed, we could only use this flag as a hint that needs to
-be acknowledged by a boot-time option.
-2. No opt-out for kmalloc() - instead advise users to promote the
-anonymous allocations they want to opt-out to memory caches with
-SLAB_NOINIT.
-3. Provide an emergency brake that completely disables
-___GFP_SKIP_ZERO if a major security breach is discovered.
-
-Extending this idea of per-callsite opt-out we could generate unique
-keys for every allocation in the kernel (or e.g. group them together
-by the caller name) and decide at runtime if we want to opt them out.
-But I am not sure anyone would want this level of control in their distro.
+Thanks,
+–Günther
