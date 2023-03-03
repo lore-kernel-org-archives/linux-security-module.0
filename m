@@ -2,115 +2,97 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 281A5C64EC4
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 17:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9B6C7EE37
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Mar 2023 18:21:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231485AbjCCRy1 (ORCPT
+        id S231631AbjCCSVh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Mar 2023 12:54:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42284 "EHLO
+        Fri, 3 Mar 2023 13:21:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231460AbjCCRy0 (ORCPT
+        with ESMTP id S231597AbjCCSVf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Mar 2023 12:54:26 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C50DD5B5F6
-        for <linux-security-module@vger.kernel.org>; Fri,  3 Mar 2023 09:54:19 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id o12so13467949edb.9
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 09:54:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1677866058;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2o3rQetZgv6ewfCPpQy7L56u60VboNrnPcXuCAU8c9I=;
-        b=e2Ior9ml2a6sA3xqp7/mjoi0eleFZCbAWkfIeYEfktk8tXziMAOZD/rb60OwD1S8Tq
-         0ZKD5Fv3R1sSQd0bkxwWKqa3qP3F6K54E1OHOetzjSw1or205pyp9m8SbKstEClDabn9
-         z96OmJ2w4kxlFMTrccZmn1jsSCSNXTRtfFVQs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677866058;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2o3rQetZgv6ewfCPpQy7L56u60VboNrnPcXuCAU8c9I=;
-        b=i3Dw/fjfvSIN193Fwet+aVxNAEk3RNl0FB3k2mwED02Gd1hjDwrX6Ct2R7/2HZJsLL
-         djNeA9kV3s1DbXEsUBZlQgCBrAG3SO1Q8ZL47/T2tQ5IDfCTc3+7kLIpGO9fn88DLl4i
-         bX4n2iTOAwhwsm4LDPinC8s3i79X/B2H2extjury5MxxTyZtHu22jfSHuzwWSb6GQfms
-         +jetM8mqwqgdCQCR2Od5WfrVw8QyBtZj88r0dohNvw/bORqU0LBlu0hfGqY2wwHlKi+h
-         jpj375GUd1r2ecgVvNj+UAc+wUnUztpt+2apELEBM8ZhViqiCOf1/f/l7kXWQvUgKwwp
-         v/vQ==
-X-Gm-Message-State: AO0yUKWMcRTUJpKFMCmOcEb+nrmjbpelpXSerd3Dt4m10du8IDTevSgl
-        k7pYkOmsFh5twLtkps5CFdAqtMt34sCZEDDs1p52zg==
-X-Google-Smtp-Source: AK7set9unG6a/s304L1GVH4zKdRZDq9WqyPE0cqeA+jsOcWeSnpOX+H8W70bgVHyjwzdgNre3MOjsw==
-X-Received: by 2002:aa7:c585:0:b0:4bf:38dc:d78 with SMTP id g5-20020aa7c585000000b004bf38dc0d78mr3078336edq.21.1677866058059;
-        Fri, 03 Mar 2023 09:54:18 -0800 (PST)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id s23-20020a50d497000000b004c8948162e8sm1033798edi.67.2023.03.03.09.54.17
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Mar 2023 09:54:17 -0800 (PST)
-Received: by mail-ed1-f53.google.com with SMTP id f13so13539581edz.6
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 09:54:17 -0800 (PST)
-X-Received: by 2002:a17:906:b281:b0:8b8:aef3:f2a9 with SMTP id
- q1-20020a170906b28100b008b8aef3f2a9mr1190087ejz.0.1677866056901; Fri, 03 Mar
- 2023 09:54:16 -0800 (PST)
+        Fri, 3 Mar 2023 13:21:35 -0500
+X-Greylist: delayed 64 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 03 Mar 2023 10:21:34 PST
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E90A9D53B;
+        Fri,  3 Mar 2023 10:21:33 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PSwzp5m6nz9xtRp;
+        Sat,  4 Mar 2023 02:12:22 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwBnMVgKOgJk5iFpAQ--.12605S14;
+        Fri, 03 Mar 2023 19:21:09 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
+        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH 12/28] fs: Fix description of vfs_tmpfile()
+Date:   Fri,  3 Mar 2023 19:18:26 +0100
+Message-Id: <20230303181842.1087717-13-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
-References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
- <20230302083025.khqdizrnjkzs2lt6@wittgenstein> <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
- <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
- <ZADoeOiJs6BRLUSd@ZenIV> <CAGudoHFhnJ1z-81FKYpzfDmvcWFeHNkKGdr00CkuH5WJa2FAMQ@mail.gmail.com>
- <CAHk-=wjp5fMupRwnROtC5Yn+MVLA7v=J+_QJSi1rr3qAjdsfXw@mail.gmail.com>
- <CAHk-=wi11ZbOBdMR5hQDz0x0NNZ9gM-4SxXxK-7R3_yh7e10rQ@mail.gmail.com>
- <ZAD21ZEiB2V9Ttto@ZenIV> <6400fedb.170a0220.ece29.04b8@mx.google.com>
- <ZAEC3LN6oUe6BKSN@ZenIV> <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
- <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
-In-Reply-To: <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 3 Mar 2023 09:54:00 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
-Message-ID: <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
-        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwBnMVgKOgJk5iFpAQ--.12605S14
+X-Coremail-Antispam: 1UD129KBjvdXoWrZw4rWF43tr1kXFy8ur4rKrg_yoWfGFc_CF
+        WvqF18Wan8Xr17Za1FkrWaqry3u3Z8Ar1akws3t342grZ8Jr95JFWkArWrX34kZ3WxXr13
+        Cr92v3WaqF17WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbg8YFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
+        0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+        Y2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+        v26F4UJVW0owA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
+        wI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
+        xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
+        z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2
+        AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
+        x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
+        W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Ar0_tr1lIxAIcVC0I7IYx2IY6xkF
+        7I0E14v26F4UJVW0owCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
+        0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7I
+        U0189tUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBF1jj4YvdwAAss
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 3, 2023 at 9:39=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> wr=
-ote:
->
-> So the key is: memset is underperforming at least on x86-64 for
-> certain sizes and the init-on-alloc thingy makes it used significantly
-> more, exacerbating the problem
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-One reason that the kernel memset isn't as optimized as memcpy, is
-simply because under normal circumstances it shouldn't be *used* that
-much outside of page clearing and constant-sized structure
-initialization.
+Update the description of vfs_tmpfile() to match the current parameters of
+that function.
 
-Page clearing is fine, and constant-sized structure inits are also
-generally fine (ie the compiler does the small ones directly).
+Fixes: 9751b338656f ("vfs: move open right after ->tmpfile()")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ fs/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-So this is literally a problem with pointless automated memset,
-introduced by that hardening option. And hardening people generally
-simply don't care about performance, and the people who _do _care
-about performance usually don't enable the known-expensive crazy
-stuff.
+diff --git a/fs/namei.c b/fs/namei.c
+index 57727a1ae38..b4c52c4890b 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3574,9 +3574,9 @@ static int do_open(struct nameidata *nd,
+ /**
+  * vfs_tmpfile - create tmpfile
+  * @idmap:	idmap of the mount the inode was found from
+- * @dentry:	pointer to dentry of the base directory
++ * @parentpath:	pointer to the path of the base directory
++ * @file:	file descriptor of the new tmpfile
+  * @mode:	mode of the new tmpfile
+- * @open_flag:	flags
+  *
+  * Create a temporary file.
+  *
+-- 
+2.25.1
 
-Honestly, I think the INIT_ONCE stuff is actively detrimental, and
-only hides issues (and in this case adds its own). So I can't but help
-to say "don't do that then". I think it's literally stupid to clear
-allocations by default.
-
-I'm not opposed to improving memset, but honestly, if the argument is
-based on the stupid hardening behavior, I really think *that* needs to
-be fixed first.
-
-               Linus
