@@ -2,57 +2,74 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F565C61DA3
-	for <linux-security-module@archiver.kernel.org>; Sat,  4 Mar 2023 03:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 029BBC61DA4
+	for <linux-security-module@archiver.kernel.org>; Sat,  4 Mar 2023 03:43:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbjCDDZH (ORCPT
+        id S229644AbjCDDnC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Mar 2023 22:25:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48854 "EHLO
+        Fri, 3 Mar 2023 22:43:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjCDDZG (ORCPT
+        with ESMTP id S229658AbjCDDnA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Mar 2023 22:25:06 -0500
-Received: from mail-oa1-x32.google.com (mail-oa1-x32.google.com [IPv6:2001:4860:4864:20::32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E13661B3;
-        Fri,  3 Mar 2023 19:25:05 -0800 (PST)
-Received: by mail-oa1-x32.google.com with SMTP id 586e51a60fabf-17638494edbso5289748fac.10;
-        Fri, 03 Mar 2023 19:25:05 -0800 (PST)
+        Fri, 3 Mar 2023 22:43:00 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BD6E6A4F
+        for <linux-security-module@vger.kernel.org>; Fri,  3 Mar 2023 19:42:56 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id d30so17882598eda.4
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 19:42:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677900304;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=De/kLTneLvXzHEBgIWucE5xB8O5Vnx+8IbmgurjxawA=;
-        b=ho0gXEYddhN3jlxiuXsuDnbe8PQRJ7cQsQ+yR6KrhafvX/gUF7qG9OCwlOd0WXQUsv
-         Z0bwBCX65uzpm3XYibQOZ1Mn3Ma+1bN8Ipp3G8EDpNC3EapFvXcyaQix9jnu50RTwAg+
-         v700TuO7vs2ibQlTLhG95BEk/sH1zx/hWm1GmSoAMQFT3bAsPp+QjbrcNrhpGmNsVT5m
-         FEq/xE2H22a5HvfpxHOlfYCt5Mnavig9sM3mE3TYPzkezNMfOEkUYh9dNck4TubTMjer
-         n2/zgZ3YHEb42vY8c+dpvObmmH5MHBt7ZcB2GdfKf50Uq8lBKFkW3pUCWCMeacxHHBNa
-         cMSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677900304;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linux-foundation.org; s=google; t=1677901375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=De/kLTneLvXzHEBgIWucE5xB8O5Vnx+8IbmgurjxawA=;
-        b=G2LhOc9phkPT3IRK/kSuEvRiUWAZGBMiw7lST7FZA0A8gkBJEKRPPy/lI6yMMlXMDs
-         /VXaOkPrjNZAeUWAWlDoixxae7IexwSSz35Ts+PfvuAOgmt1gF2TAH8Azivd5xwgjDzv
-         H/nICerIDBVvkHcb/6mQP8j5P6UxeHT4jkW/4otICLki4RGc0Glo1otqZ6ml78ifsH/J
-         x4ElfqivQCu1DO6XaNRmWPHA3tNOFXOIDemp9NbbiIJBJXjWL3v8YXgnV/+Xm7Ft16+8
-         kLN8X575MIP6J+r/atRGPSq/qT7n4cwFHDCpVp30Nvth2TS3UCKMQwdIIJ6gshBhjr+o
-         tYrw==
-X-Gm-Message-State: AO0yUKW+jUKj9yq7n6IOEDjfEUgQJEwy2zjY+CGFiesbiH7+ifkZiraL
-        teVLA9Tprj6qlfpfR5AWAcU=
-X-Google-Smtp-Source: AK7set/m3K3+OJ063AciflXFmtktgX0pn9hwBEuJky8opjHMbWqPjzFwtIg9Cr21j2BN0+YvF6/SEg==
-X-Received: by 2002:a05:6870:a44b:b0:176:4b04:522e with SMTP id n11-20020a056870a44b00b001764b04522emr2436468oal.35.1677900304467;
-        Fri, 03 Mar 2023 19:25:04 -0800 (PST)
-Received: from localhost ([50.208.89.9])
-        by smtp.gmail.com with ESMTPSA id z6-20020a05687042c600b00172289de1besm1733133oah.18.2023.03.03.19.25.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Mar 2023 19:25:03 -0800 (PST)
-Date:   Fri, 3 Mar 2023 19:25:02 -0800
-From:   Yury Norov <yury.norov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        bh=BRI2r+nGaYoc/6DC9g4x/BneKMapCVAkn7Icxvx9UyE=;
+        b=gOk0r7IRyae11l5C54SWiNiUvgkha+5UOxrFtkZuCOq5WzJBwVOKijP66ljuIoVkMx
+         OgBLbxOMIQM6b5q0q40eiJtRBjqVkHEcxVbohaNPqvci2K/m+zuK0VJWL7uN4XlbAgw+
+         xOiDFKE8EoNI8PDeqzIG4PT5dQQoYmga5jmXk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677901375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BRI2r+nGaYoc/6DC9g4x/BneKMapCVAkn7Icxvx9UyE=;
+        b=yEXdz5FbJe2hOyInL34P5Na1QJAsrOCXy/uDuUDPEBZfem36ifkPewWq6ZQL9xAYpt
+         xdrpPPMjQlGxTJWintVcHEQAczHrWtqSNcPP8q+G7xlx2Vq+RBA1kAelLORI4oxEAk5U
+         fh9V7YI1xTpYw09txD8sE6IXZUx+i1517Rn+ktkdrSaRi9qLVgNwtqFuhZG0K1drwxAc
+         puDtRg1E3c8UYmNQcfvxwfdUM3VFWt6T9xQqNba6zj63hVvLK07KFy4SMGuLtzQ/aEsM
+         M/BjEZYiVppjgiqps4/6ELLkYJAgBVw4oHOIFyNQdQB+oG4LrUz2pzb6qTIlXJirvzMH
+         gYtA==
+X-Gm-Message-State: AO0yUKVs0iq2clXBARlZcB3+y1QruIos4Xf9DeT+FwDKX11u24iTxcrh
+        /B0fRLoYsd7gMlbkpNxrSV1oKb69xTY4Pv9RpHLfKQ==
+X-Google-Smtp-Source: AK7set/ZNe9TbMverXcKifDqHHZG6nLWQF2dmR4yG5t53paFuVauqaalBuQ6zXl7BhftIERleXGq7A==
+X-Received: by 2002:aa7:d850:0:b0:4aa:a4ea:cdc9 with SMTP id f16-20020aa7d850000000b004aaa4eacdc9mr4559458eds.16.1677901374662;
+        Fri, 03 Mar 2023 19:42:54 -0800 (PST)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id q10-20020a50c34a000000b004bda465da32sm1933775edb.1.2023.03.03.19.42.53
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Mar 2023 19:42:53 -0800 (PST)
+Received: by mail-ed1-f42.google.com with SMTP id x3so17707450edb.10
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Mar 2023 19:42:53 -0800 (PST)
+X-Received: by 2002:a50:9f47:0:b0:4bc:13f5:68a5 with SMTP id
+ b65-20020a509f47000000b004bc13f568a5mr2310202edf.5.1677901373386; Fri, 03 Mar
+ 2023 19:42:53 -0800 (PST)
+MIME-Version: 1.0
+References: <ZAD21ZEiB2V9Ttto@ZenIV> <6400fedb.170a0220.ece29.04b8@mx.google.com>
+ <ZAEC3LN6oUe6BKSN@ZenIV> <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
+ <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
+ <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
+ <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
+ <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
+ <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
+ <CAHk-=wgfNrMFQCFWFtn+UXjAdJAGAAFFJZ1JpEomTneza32A6g@mail.gmail.com> <ZAK6Duaf4mlgpZPP@yury-laptop>
+In-Reply-To: <ZAK6Duaf4mlgpZPP@yury-laptop>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 3 Mar 2023 19:42:36 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh1r3KfATA-JSdt3qt2y3sC=5U9+wZsbabW+dvPsqRCvA@mail.gmail.com>
+Message-ID: <CAHk-=wh1r3KfATA-JSdt3qt2y3sC=5U9+wZsbabW+dvPsqRCvA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
+To:     Yury Norov <yury.norov@gmail.com>
 Cc:     Mateusz Guzik <mjguzik@gmail.com>,
         Alexander Potapenko <glider@google.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -61,64 +78,49 @@ Cc:     Mateusz Guzik <mjguzik@gmail.com>,
         Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
         paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
- possible
-Message-ID: <ZAK6Duaf4mlgpZPP@yury-laptop>
-References: <ZAD21ZEiB2V9Ttto@ZenIV>
- <6400fedb.170a0220.ece29.04b8@mx.google.com>
- <ZAEC3LN6oUe6BKSN@ZenIV>
- <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
- <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
- <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
- <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
- <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
- <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
- <CAHk-=wgfNrMFQCFWFtn+UXjAdJAGAAFFJZ1JpEomTneza32A6g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgfNrMFQCFWFtn+UXjAdJAGAAFFJZ1JpEomTneza32A6g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[...]
+On Fri, Mar 3, 2023 at 7:25=E2=80=AFPM Yury Norov <yury.norov@gmail.com> wr=
+ote:
+>
+> Did you enable CONFIG_FORCE_NR_CPUS? If you pick it, the kernel will
+> bind nr_cpu_ids to NR_CPUS at compile time, and the memset() call
+> should disappear.
 
-> In particular, 'cpumask_clear()' should just zero the cpumask, and on
-> the config I use, I have
-> 
->     CONFIG_NR_CPUS=64
-> 
-> so it should literally just be a single "store zero to cpumask word".
-> And that's what it used to be.
-> 
-> But then we had commit aa47a7c215e7 ("lib/cpumask: deprecate
-> nr_cpumask_bits") and suddenly 'nr_cpumask_bits' isn't a simple
-> constant any more for the "small mask that fits on stack" case, and
-> instead you end up with code like
-> 
->         movl    nr_cpu_ids(%rip), %edx
->         addq    $63, %rdx
->         shrq    $3, %rdx
->         andl    $-8, %edx
->         ..
->         callq   memset@PLT
-> 
-> that does a 8-byte memset because I have 32 cores and 64 threads.
+I do not believe CONFIG_FORCE_NR_CPUS makes any sense, and I think I
+told you so at the time.
 
-Did you enable CONFIG_FORCE_NR_CPUS? If you pick it, the kernel will
-bind nr_cpu_ids to NR_CPUS at compile time, and the memset() call
-should disappear.
+This all used to just work *without* some kind of config thing, First
+removing the automatic "do the right thing", and then adding a config
+option to "force" doing the right thing seems more than a bit silly to
+me.
 
-Depending on your compiler you might want to apply this patch as well:
+I think CONFIG_FORCE_NR_CPUS should go away, and - once more - become
+just the "is the cpumask small enough to be just allocated directly"
+thing.
 
-https://lore.kernel.org/lkml/20221027043810.350460-2-yury.norov@gmail.com/
+Of course, the problem for others remain that distros will do that
+CONFIG_CPUMASK_OFFSTACK thing, and then things will suck regardless.
 
-> Now, at least some distro kernels seem to be built with CONFIG_MAXSMP,
-> so CONFIG_NR_CPUS is something insane (namely 8192), and then it is
-> indeed better to calculate some minimum size instead of doing a 1kB
-> memset().
+I was *so* happy with our clever "you can have large cpumasks, and
+we'll just allocate them off the stack" long long ago, because it
+meant that we could have one single source tree where this was all
+cleanly abstracted away, and we even had nice types and type safety
+for it all.
 
-Ubuntu too. That was one of the reasons for the patch.
+That meant that we could support all the fancy SGI machines with
+several thousand cores, and it all "JustWorked(tm)", and didn't make
+the normal case any worse.
 
-Thanks,
-Yury
+I didn't expect distros to then go "ooh, we want that too", and enable
+it all by default, and make all our clever "you only see this
+indirection if you need it" go away, and now the normal case is the
+*bad* case, unless you just build your own kernel and pick sane
+defaults.
+
+Oh well.
+
+                   Linus
