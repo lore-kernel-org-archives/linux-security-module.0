@@ -2,80 +2,59 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0957AC61DA4
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Mar 2023 18:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4D4C61DA4
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 05:44:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229589AbjCESno (ORCPT
+        id S229515AbjCFFoB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 5 Mar 2023 13:43:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38922 "EHLO
+        Mon, 6 Mar 2023 00:44:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbjCESnm (ORCPT
+        with ESMTP id S229450AbjCFFoA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 5 Mar 2023 13:43:42 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66510CDFF
-        for <linux-security-module@vger.kernel.org>; Sun,  5 Mar 2023 10:43:41 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id x3so29891455edb.10
-        for <linux-security-module@vger.kernel.org>; Sun, 05 Mar 2023 10:43:41 -0800 (PST)
+        Mon, 6 Mar 2023 00:44:00 -0500
+Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FCE68A53;
+        Sun,  5 Mar 2023 21:43:59 -0800 (PST)
+Received: by mail-oi1-x22b.google.com with SMTP id bp19so6195016oib.4;
+        Sun, 05 Mar 2023 21:43:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1678041820;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zK/rrMwqyPmyu+qAqo29lnLv2pRkbjMCkopb9tAe0Bw=;
-        b=RTjUTdRzjCNLMH/AzmrlSX0E8XO9VIYATH2aNgkvaLzNHc+dCk4Pa6JBfG1amKOXOb
-         XsJzUzHChfMvxk8tL4j2gExlkQvga2aFg0OB5fIdI2KFIBPm54gTZi4HaT/MQkx5Q7VD
-         7J/lqd6kXZQQW/QAU5L4+oSutawTm0rfBIoAg=
+        d=gmail.com; s=20210112; t=1678081438;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=G3blmO4OTuJouJDAqgjhtGz5rmKBjjr7Lny23sxTPkQ=;
+        b=YBfsKiJVUgGZgJn+qLtLdAsdY74xD9tciqi1XoAi0bwgZ6JvyMKrRkhBBtCMaiUvb+
+         HpVh4SG1v1agDgxWC6nbm5zb0upiR6h2PuapQRh2iGLwyQ4qoLLd3PdONVbu5i8Fd/PE
+         wANeRXvOaQjA7p2JjKuHyLR5cOXCbeFkxxDvU5tg/dFZ0jPBSvulQllvFOY0ORb1avle
+         OvXg+vVkZO1hpRRIlCAUDAlONZZqIc4LBF7PVHgP0jC1f26YAwNKYJ+72zFh6XZv33Qo
+         SGnLlclgWUVcAz93ebM60EcpSQLaezqjuAkvVAbinpyUuhotE1nEhPH2hmI2xFnG3ZDy
+         ylUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678041820;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zK/rrMwqyPmyu+qAqo29lnLv2pRkbjMCkopb9tAe0Bw=;
-        b=DAHbAjTCGw2epZ7ajWPlqhXgK5QXYu/UVkLw352IJlvtSoxJou7DLG0BLhCtc8OtfW
-         r/+69+JRmhNmuPZKKQc7niLWhVEdlS7UpCo/CjsDZqPWHyIsjblyX5Sq2J+sGwey2VKk
-         Iw/nBnRaEP+iK7tYC0iAr6CnheRj7dRK1NTxu7wtypUrpweqjhxQhIKPWXtwNEGFHBKb
-         rmtWpxcZ5lXNvA3S5u5IvkbEPqA7jKh38cpty8hgq+WEh2vG77SN9U0/hSCCj6rXMj0o
-         KCirDfbVQhFJFYuxC+MoKBe1yCsZfA8KcOz3NCWGMoCsTyOPjxOWftjNJb7kbNR1cPVk
-         0e0A==
-X-Gm-Message-State: AO0yUKWtf3U3ZmHCEYQttOTN7gnAqIhu7LckEVKj+zdEoD0Y1uG4FyMC
-        QPalcwLIxDn9KLgBc3RkAPldKFB1mcB4sAcFimETLg==
-X-Google-Smtp-Source: AK7set/Fv+CEQuehPevW/tY/XkhNVQMPf98vBwig1Nlc4NNVKPJfA1sitOoJq5hhSwsixB+dvAmoeQ==
-X-Received: by 2002:a17:907:6e28:b0:87d:ed60:cb7e with SMTP id sd40-20020a1709076e2800b0087ded60cb7emr11573611ejc.68.1678041819709;
-        Sun, 05 Mar 2023 10:43:39 -0800 (PST)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id k2-20020a50ce42000000b004bc59951d6fsm4025163edj.57.2023.03.05.10.43.37
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Mar 2023 10:43:37 -0800 (PST)
-Received: by mail-ed1-f54.google.com with SMTP id o12so29938824edb.9
-        for <linux-security-module@vger.kernel.org>; Sun, 05 Mar 2023 10:43:37 -0800 (PST)
-X-Received: by 2002:a50:9f47:0:b0:4bc:13f5:68a5 with SMTP id
- b65-20020a509f47000000b004bc13f568a5mr4529109edf.5.1678041816888; Sun, 05 Mar
- 2023 10:43:36 -0800 (PST)
-MIME-Version: 1.0
-References: <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
- <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
- <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
- <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
- <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
- <CAHk-=wgfNrMFQCFWFtn+UXjAdJAGAAFFJZ1JpEomTneza32A6g@mail.gmail.com>
- <ZAK6Duaf4mlgpZPP@yury-laptop> <CAHk-=wh1r3KfATA-JSdt3qt2y3sC=5U9+wZsbabW+dvPsqRCvA@mail.gmail.com>
- <ZALcbQoKA7K8k2gJ@yury-laptop> <CAHk-=wjit4tstX3q4DkiYLTD6zet_7j=CfjbvTMqtnOwmY7jzA@mail.gmail.com>
- <ZAOvUuxJP7tAKc1e@yury-laptop> <CAHk-=wh2U3a7AdvekB3uyAmH+NNk-CxN-NxGzQ=GZwjaEcM-tg@mail.gmail.com>
- <CAHk-=whEwe1H1_YXki1aYwGnVwazY+z0=6deU-Zd855ogvLgww@mail.gmail.com>
- <CAHk-=wiHp3AkvFThpnGSA7k=KpPbXd0vurga+-8FqUNRbML_fA@mail.gmail.com>
- <CA+icZUUH-J3eh=PSEcaHRDtcKB9svA2Qct6RiOq_MFP_+KeBLQ@mail.gmail.com> <CAHk-=wgzNnvVwjoW0Ojn1V_BcEoYX=wydcMs-FTNV+7kJmfq=A@mail.gmail.com>
-In-Reply-To: <CAHk-=wgzNnvVwjoW0Ojn1V_BcEoYX=wydcMs-FTNV+7kJmfq=A@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 5 Mar 2023 10:43:19 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg1evFSMjkpNgL-6p2Qx44nR9r0GK+1mPodous89czBfQ@mail.gmail.com>
-Message-ID: <CAHk-=wg1evFSMjkpNgL-6p2Qx44nR9r0GK+1mPodous89czBfQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     sedat.dilek@gmail.com
-Cc:     Yury Norov <yury.norov@gmail.com>,
-        Mateusz Guzik <mjguzik@gmail.com>,
+        d=1e100.net; s=20210112; t=1678081438;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G3blmO4OTuJouJDAqgjhtGz5rmKBjjr7Lny23sxTPkQ=;
+        b=HoYUtEAVU90PtejycDQJHe/dQGU2HkomgUD4qpSnkZj1v4GlI2EPJAIGfNnyduEKDP
+         en+WMBf4JnedBL/KCeBxsWpwHYNfLx1HY3OnBPf9XBrXYrzVj7XIs7NfedNRe1NWxwvo
+         2vsALoL4VzxhklZPTJYVZLAwmqNssJEHRcuIZj2ABMpXAt1c1xOcmnVSE9mHVSejrcyr
+         Hv+/UtK3ZGp/D55WsJzkGxXuyVnaJ051Gov3w6pyhSGATEXhYKCknYhujvGHc6DVGNF/
+         ORp0GG1qP0Wd+eq/Up06z2b0Jzg12DjghYRJEaDkv9+ADMQa/9auZYDGtpfnvre55lgq
+         zLLw==
+X-Gm-Message-State: AO0yUKVwSNOcExyNW3Nmnh0FFldYhBWkLtLCZxUe9HcQG/nwwXDxM+qc
+        iYzyp4RnEHrGrYvQq207Bc0=
+X-Google-Smtp-Source: AK7set8319Kc1VjHI7N7B4HWlfW3Wdd+y1hQJ0Ptk1Lc50YJcx7O0qMgv5PqUs8Dxg4Ivqrv/sKsLQ==
+X-Received: by 2002:a05:6808:2805:b0:384:2171:2891 with SMTP id et5-20020a056808280500b0038421712891mr4230097oib.36.1678081438448;
+        Sun, 05 Mar 2023 21:43:58 -0800 (PST)
+Received: from localhost ([12.97.180.36])
+        by smtp.gmail.com with ESMTPSA id h19-20020a056808015300b00384926684b8sm3502808oie.13.2023.03.05.21.43.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Mar 2023 21:43:57 -0800 (PST)
+Date:   Sun, 5 Mar 2023 21:43:56 -0800
+From:   Yury Norov <yury.norov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Mateusz Guzik <mjguzik@gmail.com>,
         Alexander Potapenko <glider@google.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Kees Cook <keescook@chromium.org>,
@@ -83,70 +62,149 @@ Cc:     Yury Norov <yury.norov@gmail.com>,
         Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
         paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
+ possible
+Message-ID: <ZAV9nGG9e1/rV+L/@yury-laptop>
+References: <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
+ <CAHk-=wgfNrMFQCFWFtn+UXjAdJAGAAFFJZ1JpEomTneza32A6g@mail.gmail.com>
+ <ZAK6Duaf4mlgpZPP@yury-laptop>
+ <CAHk-=wh1r3KfATA-JSdt3qt2y3sC=5U9+wZsbabW+dvPsqRCvA@mail.gmail.com>
+ <ZALcbQoKA7K8k2gJ@yury-laptop>
+ <CAHk-=wjit4tstX3q4DkiYLTD6zet_7j=CfjbvTMqtnOwmY7jzA@mail.gmail.com>
+ <ZAOvUuxJP7tAKc1e@yury-laptop>
+ <CAHk-=wh2U3a7AdvekB3uyAmH+NNk-CxN-NxGzQ=GZwjaEcM-tg@mail.gmail.com>
+ <CAHk-=whEwe1H1_YXki1aYwGnVwazY+z0=6deU-Zd855ogvLgww@mail.gmail.com>
+ <CAHk-=wiHp3AkvFThpnGSA7k=KpPbXd0vurga+-8FqUNRbML_fA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wiHp3AkvFThpnGSA7k=KpPbXd0vurga+-8FqUNRbML_fA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Mar 5, 2023 at 10:17=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> There are a few main issues with MAXSMP:
+On Sat, Mar 04, 2023 at 03:08:49PM -0800, Linus Torvalds wrote:
+> On Sat, Mar 4, 2023 at 1:10 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Whether the end result _works_ or not, I still haven't checked.
+> 
+> Well, this particular patch at least boots for me for my normal
+> config. Not that I've run any extensive tests, but I'm writing this
+> email while running this patch, so ..
+> 
+>            Linus
 
-It's probably worth noting that most architectures don't even support
-MAXSMP at all.
+I didn't test it properly, but the approach looks good. Need some time
+to think on implications of the new rule. At the first glance, there
+should be no major impact on cpumask machinery. 
 
-Only x86-64 does.
+It should be very well tested on arm and m68k because they implement
+their own bitmap functions.
 
-For example, ia64 and sparc64, which both did techncially support a
-lot of cores, just made "cpumask_t" huge, and had no support for the
-whole "use a pointer to an indirect allocation".
+Please see comments inline.
 
-That ends up meaning that you allocate those huge structures on the
-stack or just make other structures enormous when they contain a CPU
-mask, but it mostly works. It's a horrid, horrid model, though. But at
-least ia64 had 64kB stacks anyway, and in the book of "bad engineering
-decisions of Itanium", this is all just a footnote.
+Thanks,
+Yury
 
-arm64 also has that "range 2 4096" for number of CPUs but defaults to
-a much saner 256 cpus.
+[...]
 
-I suspect (and sincerely hope) that nobody actually tries to use an
-arm64 build with that 4k cpu build. If/when arm64 actually does get up
-to that 'thousands of cores" situation, they'll hopefully enable the
-MAXSMP kind of indirection and off-stack cpu mask arrays.
+> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+> index 10c92bd9b807..bd9576e8d856 100644
+> --- a/include/linux/cpumask.h
+> +++ b/include/linux/cpumask.h
+> @@ -50,8 +50,30 @@ static inline void set_nr_cpu_ids(unsigned int nr)
+>  #endif
+>  }
+>  
+> -/* Deprecated. Always use nr_cpu_ids. */
+> -#define nr_cpumask_bits	nr_cpu_ids
+> +/*
+> + * The difference between nr_cpumask_bits and nr_cpu_ids is that
+> + * 'nr_cpu_ids' is the actual number of CPU ids in the system, while
+> + * nr_cpumask_bits is a "reasonable upper value" that is often more
+> + * efficient because it can be a fixed constant.
+> + *
+> + * So when clearing or traversing a cpumask, use 'nr_cpumask_bits',
+> + * but when checking exact limits (and when _setting_ bits), use the
+> + * tighter exact limit of 'nr_cpu_ids'.
+> + *
+> + * NOTE! The code depends on any exyta bits in nr_cpumask_bits a always
 
-So MAXSMP and the whole CPUMASK_OFFSTACK option is an architecture
-choice, and you don't have to do it the way x86-64 does it. But the
-x86 choice is likely the best tested and thought out by far.
+s/exyta/extra ?
+s/a always/as always ?
 
-For example, POWERPC technically supports CPUMASK_OFFSTACK too, but
-really only in theory. On powerpc, you have
+> + * being (a) allocated and (b) zero, so that the only effect of using
+> + * 'nr_cpumask_bits' is that we might return a higher maximum CPU value
+> + * (which is why we have that pattern of
+> + *
+> + *   Returns >= nr_cpu_ids if no cpus set.
+> + *
+> + * for many of the functions - they can return that higher value).
+> + */
+> +#ifndef CONFIG_CPUMASK_OFFSTACK
+> + #define nr_cpumask_bits ((unsigned int)NR_CPUS)
+> +#else
+> + #define nr_cpumask_bits	nr_cpu_ids
+> +#endif
+>  
+>  /*
+>   * The following particular system cpumasks and operations manage
+> @@ -114,7 +136,7 @@ static __always_inline void cpu_max_bits_warn(unsigned int cpu, unsigned int bit
+>  /* verify cpu argument to cpumask_* operators */
+>  static __always_inline unsigned int cpumask_check(unsigned int cpu)
+>  {
+> -	cpu_max_bits_warn(cpu, nr_cpumask_bits);
+> +	cpu_max_bits_warn(cpu, nr_cpu_ids);
+>  	return cpu;
+>  }
+>  
+> @@ -248,16 +270,6 @@ unsigned int cpumask_next_and(int n, const struct cpumask *src1p,
+>  #define for_each_cpu(cpu, mask)				\
+>  	for_each_set_bit(cpu, cpumask_bits(mask), nr_cpumask_bits)
+>  
+> -/**
+> - * for_each_cpu_not - iterate over every cpu in a complemented mask
+> - * @cpu: the (optionally unsigned) integer iterator
+> - * @mask: the cpumask pointer
+> - *
+> - * After the loop, cpu is >= nr_cpu_ids.
+> - */
+> -#define for_each_cpu_not(cpu, mask)				\
+> -	for_each_clear_bit(cpu, cpumask_bits(mask), nr_cpumask_bits)
+> -
 
-    config NR_CPUS
-          range 2 8192 if SMP
-          default "32" if PPC64
+We can do it like:
 
-so while configuration the range is technically up to 8k CPUs, I doubt
-people use that value very much. And we have
+    for ((bit) = 0;
+         (bit) = find_next_zero_bit((addr), nr_cpumask_bits, (bit)),
+         (bit) < nr_cpu_ids;
+         (bit)++)
 
-        select CPUMASK_OFFSTACK if NR_CPUS >=3D 8192
+>  #if NR_CPUS == 1
+>  static inline
+>  unsigned int cpumask_next_wrap(int n, const struct cpumask *mask, int start, bool wrap)
+> @@ -495,10 +507,14 @@ static __always_inline bool cpumask_test_and_clear_cpu(int cpu, struct cpumask *
+>  /**
+>   * cpumask_setall - set all cpus (< nr_cpu_ids) in a cpumask
+>   * @dstp: the cpumask pointer
+> + *
+> + * Note: since we set bits, we should use the tighter 'bitmap_set()' with
+> + * the eact number of bits, not 'bitmap_fill()' that will fill past the
 
-so it only uses that OFFSTACK one if you pick exactly 8192 CPUs (which
-presumably nobody does in real life outside of build testing - it's
-not the default, and I think most of the POWER range tops up in the
-192 core range, eg E980 with 16 sockets of 12 cores each).
+s/eact/exact
 
-So I suspect that x86-64 is the *only* one to actually use this
-widely, and I think distros have been *much* too eager to do so.
+> + * end.
+>   */
+>  static inline void cpumask_setall(struct cpumask *dstp)
+>  {
+> -	bitmap_fill(cpumask_bits(dstp), nr_cpumask_bits);
+> +	bitmap_set(cpumask_bits(dstp), 0, nr_cpu_ids);
+>  }
 
-The fact that most distros default to
+It should be like:
 
-    CONFIG_MAXSMP=3Dy
-    CONFIG_NR_CPUS=3D8192
+ +	bitmap_set(cpumask_bits(dstp), 0, nr_cpu_ids);
+ +	bitmap_clear(cpumask_bits(dstp), nr_cpu_ids, nr_cpumask_bits);
 
-seems pretty crazy, when I have a hard time finding anything with more
-than 192 cores.  I'm sure they exist. But do they _really_ run
-unmodified vendor kernels?
-
-               Linus
+Because bitmap_set() will not zero memory beyond round_up(nr_cpu_ids, 64).
