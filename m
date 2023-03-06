@@ -2,687 +2,451 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF58C6FD1A
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 09:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1557CC61DA4
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 10:19:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229942AbjCFJWj (ORCPT
+        id S230402AbjCFKTd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Mar 2023 04:22:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59736 "EHLO
+        Mon, 6 Mar 2023 05:19:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229842AbjCFJWh (ORCPT
+        with ESMTP id S230451AbjCFKTL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Mar 2023 04:22:37 -0500
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4050BDFA;
-        Mon,  6 Mar 2023 01:22:33 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PVXtQ5ygTz9xGWJ;
-        Mon,  6 Mar 2023 17:13:18 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwD3xl22sAVkoGh0AQ--.34080S2;
-        Mon, 06 Mar 2023 10:22:10 +0100 (CET)
-Message-ID: <dc3f43e0f445b0339aac510ecd4a74accc83dd6a.camel@huaweicloud.com>
-Subject: Re: [PATCH 26/28] evm: Move to LSM infrastructure
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com, jlayton@kernel.org, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Mon, 06 Mar 2023 10:21:56 +0100
-In-Reply-To: <688527a9-c164-581e-ae60-f82bd8ccccad@schaufler-ca.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-         <20230303182602.1088032-4-roberto.sassu@huaweicloud.com>
-         <688527a9-c164-581e-ae60-f82bd8ccccad@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Mon, 6 Mar 2023 05:19:11 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A04FD32B;
+        Mon,  6 Mar 2023 02:18:44 -0800 (PST)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4PVZKN6w6Pz6J6mk;
+        Mon,  6 Mar 2023 18:18:16 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Mon, 6 Mar 2023 10:18:41 +0000
+Message-ID: <41a17dab-3697-5c02-3fd2-66f5fc3a37e1@huawei.com>
+Date:   Mon, 6 Mar 2023 13:18:40 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwD3xl22sAVkoGh0AQ--.34080S2
-X-Coremail-Antispam: 1UD129KBjvAXoWfuF48Gryktr13WFy8GFy7trb_yoW8trW8Ao
-        WIqwn7tFWkWr13A3y5G3W7KFZFgayrG3y5Aas5A39ru3W2yw1jk34akFy3JF45XF1rGrW7
-        K3s2q34j9FWUXwn5n29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-        AaLaJ3UjIYCTnIWjp_UUUYj7kC6x804xWl14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK
-        8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
-        AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF
-        7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-        AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
-        aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbG2NtUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAIBF1jj4Y7UQABsS
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v9 08/12] landlock: Add network rules and TCP hooks
+ support
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>
+References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
+ <20230116085818.165539-9-konstantin.meskhidze@huawei.com>
+ <866f6633-4360-13b5-7d25-ef7acb6255a0@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <866f6633-4360-13b5-7d25-ef7acb6255a0@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.123.126]
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 2023-03-04 at 13:36 -0800, Casey Schaufler wrote:
-> On 3/3/2023 10:26 AM, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > As for IMA, remove hardcoded EVM function calls from the LSM infrastructure
-> > and the VFS. Make EVM functions as static (except for
-> > evm_inode_init_security(), which is exported), and register them as hook
-> > implementations in init_evm_lsm(), called from integrity_lsm_init().
-> > 
-> > Finally, switch to the LSM reservation mechanism for the EVM xattr, by
-> > setting the lbs_xattr field of the lsm_blob_sizes structure, and
-> > consequently decrement the number of xattrs to allocate in
-> > security_inode_init_security().
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  fs/attr.c                         |   2 -
-> >  fs/posix_acl.c                    |   3 -
-> >  fs/xattr.c                        |   2 -
-> >  include/linux/evm.h               | 116 ------------------------------
-> >  security/integrity/evm/evm_main.c | 106 ++++++++++++++++++++++-----
-> >  security/integrity/iint.c         |   7 ++
-> >  security/integrity/integrity.h    |   9 +++
-> >  security/security.c               |  41 +++--------
-> >  8 files changed, 115 insertions(+), 171 deletions(-)
-> > 
-> > diff --git a/fs/attr.c b/fs/attr.c
-> > index 406d782dfab..1b911a627fe 100644
-> > --- a/fs/attr.c
-> > +++ b/fs/attr.c
-> > @@ -16,7 +16,6 @@
-> >  #include <linux/fcntl.h>
-> >  #include <linux/filelock.h>
-> >  #include <linux/security.h>
-> > -#include <linux/evm.h>
-> >  
-> >  #include "internal.h"
-> >  
-> > @@ -485,7 +484,6 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
-> >  	if (!error) {
-> >  		fsnotify_change(dentry, ia_valid);
-> >  		security_inode_post_setattr(idmap, dentry, ia_valid);
-> > -		evm_inode_post_setattr(idmap, dentry, ia_valid);
-> >  	}
-> >  
-> >  	return error;
-> > diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-> > index 5b8c92fce0c..608cb0a9f84 100644
-> > --- a/fs/posix_acl.c
-> > +++ b/fs/posix_acl.c
-> > @@ -26,7 +26,6 @@
-> >  #include <linux/mnt_idmapping.h>
-> >  #include <linux/iversion.h>
-> >  #include <linux/security.h>
-> > -#include <linux/evm.h>
-> >  #include <linux/fsnotify.h>
-> >  #include <linux/filelock.h>
-> >  
-> > @@ -1103,7 +1102,6 @@ int vfs_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-> >  	if (!error) {
-> >  		fsnotify_xattr(dentry);
-> >  		security_inode_post_set_acl(dentry, acl_name, kacl);
-> > -		evm_inode_post_set_acl(dentry, acl_name, kacl);
-> >  	}
-> >  
-> >  out_inode_unlock:
-> > @@ -1214,7 +1212,6 @@ int vfs_remove_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-> >  	if (!error) {
-> >  		fsnotify_xattr(dentry);
-> >  		security_inode_post_remove_acl(idmap, dentry, acl_name);
-> > -		evm_inode_post_remove_acl(idmap, dentry, acl_name);
-> >  	}
-> >  
-> >  out_inode_unlock:
-> > diff --git a/fs/xattr.c b/fs/xattr.c
-> > index 10c959d9fc6..7708ffdacca 100644
-> > --- a/fs/xattr.c
-> > +++ b/fs/xattr.c
-> > @@ -16,7 +16,6 @@
-> >  #include <linux/mount.h>
-> >  #include <linux/namei.h>
-> >  #include <linux/security.h>
-> > -#include <linux/evm.h>
-> >  #include <linux/syscalls.h>
-> >  #include <linux/export.h>
-> >  #include <linux/fsnotify.h>
-> > @@ -535,7 +534,6 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
-> >  	if (!error) {
-> >  		fsnotify_xattr(dentry);
-> >  		security_inode_post_removexattr(dentry, name);
-> > -		evm_inode_post_removexattr(dentry, name);
-> >  	}
-> >  
-> >  out:
-> > diff --git a/include/linux/evm.h b/include/linux/evm.h
-> > index 8c043273552..61794299f09 100644
-> > --- a/include/linux/evm.h
-> > +++ b/include/linux/evm.h
-> > @@ -21,46 +21,6 @@ extern enum integrity_status evm_verifyxattr(struct dentry *dentry,
-> >  					     void *xattr_value,
-> >  					     size_t xattr_value_len,
-> >  					     struct integrity_iint_cache *iint);
-> > -extern int evm_inode_setattr(struct mnt_idmap *idmap,
-> > -			     struct dentry *dentry, struct iattr *attr);
-> > -extern void evm_inode_post_setattr(struct mnt_idmap *idmap,
-> > -				   struct dentry *dentry, int ia_valid);
-> > -extern int evm_inode_setxattr(struct mnt_idmap *idmap,
-> > -			      struct dentry *dentry, const char *name,
-> > -			      const void *value, size_t size, int flags);
-> > -extern void evm_inode_post_setxattr(struct dentry *dentry,
-> > -				    const char *xattr_name,
-> > -				    const void *xattr_value,
-> > -				    size_t xattr_value_len,
-> > -				    int flags);
-> > -extern int evm_inode_removexattr(struct mnt_idmap *idmap,
-> > -				 struct dentry *dentry, const char *xattr_name);
-> > -extern void evm_inode_post_removexattr(struct dentry *dentry,
-> > -				       const char *xattr_name);
-> > -static inline void evm_inode_post_remove_acl(struct mnt_idmap *idmap,
-> > -					     struct dentry *dentry,
-> > -					     const char *acl_name)
-> > -{
-> > -	evm_inode_post_removexattr(dentry, acl_name);
-> > -}
-> > -extern int evm_inode_set_acl(struct mnt_idmap *idmap,
-> > -			     struct dentry *dentry, const char *acl_name,
-> > -			     struct posix_acl *kacl);
-> > -static inline int evm_inode_remove_acl(struct mnt_idmap *idmap,
-> > -				       struct dentry *dentry,
-> > -				       const char *acl_name)
-> > -{
-> > -	return evm_inode_set_acl(idmap, dentry, acl_name, NULL);
-> > -}
-> > -static inline void evm_inode_post_set_acl(struct dentry *dentry,
-> > -					  const char *acl_name,
-> > -					  struct posix_acl *kacl)
-> > -{
-> > -	return evm_inode_post_setxattr(dentry, acl_name, NULL, 0, 0);
-> > -}
-> > -extern int evm_inode_init_security(struct inode *inode, struct inode *dir,
-> > -				   const struct qstr *qstr,
-> > -				   struct xattr *xattrs);
-> >  extern bool evm_revalidate_status(const char *xattr_name);
-> >  extern int evm_protected_xattr_if_enabled(const char *req_xattr_name);
-> >  extern int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
-> > @@ -92,82 +52,6 @@ static inline enum integrity_status evm_verifyxattr(struct dentry *dentry,
-> >  }
-> >  #endif
-> >  
-> > -static inline int evm_inode_setattr(struct mnt_idmap *idmap,
-> > -				    struct dentry *dentry, struct iattr *attr)
-> > -{
-> > -	return 0;
-> > -}
-> > -
-> > -static inline void evm_inode_post_setattr(struct mnt_idmap *idmap,
-> > -					  struct dentry *dentry, int ia_valid)
-> > -{
-> > -	return;
-> > -}
-> > -
-> > -static inline int evm_inode_setxattr(struct mnt_idmap *idmap,
-> > -				     struct dentry *dentry, const char *name,
-> > -				     const void *value, size_t size, int flags)
-> > -{
-> > -	return 0;
-> > -}
-> > -
-> > -static inline void evm_inode_post_setxattr(struct dentry *dentry,
-> > -					   const char *xattr_name,
-> > -					   const void *xattr_value,
-> > -					   size_t xattr_value_len,
-> > -					   int flags)
-> > -{
-> > -	return;
-> > -}
-> > -
-> > -static inline int evm_inode_removexattr(struct mnt_idmap *idmap,
-> > -					struct dentry *dentry,
-> > -					const char *xattr_name)
-> > -{
-> > -	return 0;
-> > -}
-> > -
-> > -static inline void evm_inode_post_removexattr(struct dentry *dentry,
-> > -					      const char *xattr_name)
-> > -{
-> > -	return;
-> > -}
-> > -
-> > -static inline void evm_inode_post_remove_acl(struct mnt_idmap *idmap,
-> > -					     struct dentry *dentry,
-> > -					     const char *acl_name)
-> > -{
-> > -	return;
-> > -}
-> > -
-> > -static inline int evm_inode_set_acl(struct mnt_idmap *idmap,
-> > -				    struct dentry *dentry, const char *acl_name,
-> > -				    struct posix_acl *kacl)
-> > -{
-> > -	return 0;
-> > -}
-> > -
-> > -static inline int evm_inode_remove_acl(struct mnt_idmap *idmap,
-> > -				       struct dentry *dentry,
-> > -				       const char *acl_name)
-> > -{
-> > -	return 0;
-> > -}
-> > -
-> > -static inline void evm_inode_post_set_acl(struct dentry *dentry,
-> > -					  const char *acl_name,
-> > -					  struct posix_acl *kacl)
-> > -{
-> > -	return;
-> > -}
-> > -
-> > -static inline int evm_inode_init_security(struct inode *inode, struct inode *dir,
-> > -					  const struct qstr *qstr,
-> > -					  struct xattr *xattrs)
-> > -{
-> > -	return 0;
-> > -}
-> > -
-> >  static inline bool evm_revalidate_status(const char *xattr_name)
-> >  {
-> >  	return false;
-> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> > index 8b5c472f78b..c45bc97277c 100644
-> > --- a/security/integrity/evm/evm_main.c
-> > +++ b/security/integrity/evm/evm_main.c
-> > @@ -19,6 +19,7 @@
-> >  #include <linux/xattr.h>
-> >  #include <linux/integrity.h>
-> >  #include <linux/evm.h>
-> > +#include <linux/lsm_hooks.h>
-> >  #include <linux/magic.h>
-> >  #include <linux/posix_acl_xattr.h>
-> >  
-> > @@ -566,9 +567,9 @@ static int evm_protect_xattr(struct mnt_idmap *idmap,
-> >   * userspace from writing HMAC value.  Writing 'security.evm' requires
-> >   * requires CAP_SYS_ADMIN privileges.
-> >   */
-> > -int evm_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> > -		       const char *xattr_name, const void *xattr_value,
-> > -		       size_t xattr_value_len, int flags)
-> > +static int evm_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> > +			      const char *xattr_name, const void *xattr_value,
-> > +			      size_t xattr_value_len, int flags)
-> >  {
-> >  	const struct evm_ima_xattr_data *xattr_data = xattr_value;
-> >  
-> > @@ -598,8 +599,8 @@ int evm_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> >   * Removing 'security.evm' requires CAP_SYS_ADMIN privileges and that
-> >   * the current value is valid.
-> >   */
-> > -int evm_inode_removexattr(struct mnt_idmap *idmap,
-> > -			  struct dentry *dentry, const char *xattr_name)
-> > +static int evm_inode_removexattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> > +				 const char *xattr_name)
-> >  {
-> >  	/* Policy permits modification of the protected xattrs even though
-> >  	 * there's no HMAC key loaded
-> > @@ -649,9 +650,11 @@ static inline int evm_inode_set_acl_change(struct mnt_idmap *idmap,
-> >   * Prevent modifying posix acls causing the EVM HMAC to be re-calculated
-> >   * and 'security.evm' xattr updated, unless the existing 'security.evm' is
-> >   * valid.
-> > + *
-> > + * Return: zero on success, -EPERM on failure.
-> >   */
-> > -int evm_inode_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-> > -		      const char *acl_name, struct posix_acl *kacl)
-> > +static int evm_inode_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-> > +			     const char *acl_name, struct posix_acl *kacl)
-> >  {
-> >  	enum integrity_status evm_status;
-> >  
-> > @@ -690,6 +693,24 @@ int evm_inode_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-> >  	return -EPERM;
-> >  }
-> >  
-> > +/**
-> > + * evm_inode_remove_acl - Protect the EVM extended attribute from posix acls
-> > + * @idmap: idmap of the mount
-> > + * @dentry: pointer to the affected dentry
-> > + * @acl_name: name of the posix acl
-> > + *
-> > + * Prevent removing posix acls causing the EVM HMAC to be re-calculated
-> > + * and 'security.evm' xattr updated, unless the existing 'security.evm' is
-> > + * valid.
-> > + *
-> > + * Return: zero on success, -EPERM on failure.
-> > + */
-> > +static int evm_inode_remove_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-> > +				const char *acl_name)
-> > +{
-> > +	return evm_inode_set_acl(idmap, dentry, acl_name, NULL);
-> > +}
-> > +
-> >  static void evm_reset_status(struct inode *inode)
-> >  {
-> >  	struct integrity_iint_cache *iint;
-> > @@ -738,9 +759,11 @@ bool evm_revalidate_status(const char *xattr_name)
-> >   * __vfs_setxattr_noperm().  The caller of which has taken the inode's
-> >   * i_mutex lock.
-> >   */
-> > -void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
-> > -			     const void *xattr_value, size_t xattr_value_len,
-> > -			     int flags)
-> > +static void evm_inode_post_setxattr(struct dentry *dentry,
-> > +				    const char *xattr_name,
-> > +				    const void *xattr_value,
-> > +				    size_t xattr_value_len,
-> > +				    int flags)
-> >  {
-> >  	if (!evm_revalidate_status(xattr_name))
-> >  		return;
-> > @@ -756,6 +779,21 @@ void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
-> >  	evm_update_evmxattr(dentry, xattr_name, xattr_value, xattr_value_len);
-> >  }
-> >  
-> > +/**
-> > + * evm_inode_post_set_acl - Update the EVM extended attribute from posix acls
-> > + * @dentry: pointer to the affected dentry
-> > + * @acl_name: name of the posix acl
-> > + * @kacl: pointer to the posix acls
-> > + *
-> > + * Update the 'security.evm' xattr with the EVM HMAC re-calculated after setting
-> > + * posix acls.
-> > + */
-> > +static void evm_inode_post_set_acl(struct dentry *dentry, const char *acl_name,
-> > +				   struct posix_acl *kacl)
-> > +{
-> > +	return evm_inode_post_setxattr(dentry, acl_name, NULL, 0, 0);
-> > +}
-> > +
-> >  /**
-> >   * evm_inode_post_removexattr - update 'security.evm' after removing the xattr
-> >   * @dentry: pointer to the affected dentry
-> > @@ -766,7 +804,8 @@ void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
-> >   * No need to take the i_mutex lock here, as this function is called from
-> >   * vfs_removexattr() which takes the i_mutex.
-> >   */
-> > -void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
-> > +static void evm_inode_post_removexattr(struct dentry *dentry,
-> > +				       const char *xattr_name)
-> >  {
-> >  	if (!evm_revalidate_status(xattr_name))
-> >  		return;
-> > @@ -782,6 +821,22 @@ void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
-> >  	evm_update_evmxattr(dentry, xattr_name, NULL, 0);
-> >  }
-> >  
-> > +/**
-> > + * evm_inode_post_remove_acl - Update the EVM extended attribute from posix acls
-> > + * @idmap: idmap of the mount
-> > + * @dentry: pointer to the affected dentry
-> > + * @acl_name: name of the posix acl
-> > + *
-> > + * Update the 'security.evm' xattr with the EVM HMAC re-calculated after
-> > + * removing posix acls.
-> > + */
-> > +static inline void evm_inode_post_remove_acl(struct mnt_idmap *idmap,
-> > +					     struct dentry *dentry,
-> > +					     const char *acl_name)
-> > +{
-> > +	evm_inode_post_removexattr(dentry, acl_name);
-> > +}
-> > +
-> >  static int evm_attr_change(struct mnt_idmap *idmap,
-> >  			   struct dentry *dentry, struct iattr *attr)
-> >  {
-> > @@ -805,8 +860,8 @@ static int evm_attr_change(struct mnt_idmap *idmap,
-> >   * Permit update of file attributes when files have a valid EVM signature,
-> >   * except in the case of them having an immutable portable signature.
-> >   */
-> > -int evm_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> > -		      struct iattr *attr)
-> > +static int evm_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> > +			     struct iattr *attr)
-> >  {
-> >  	unsigned int ia_valid = attr->ia_valid;
-> >  	enum integrity_status evm_status;
-> > @@ -853,8 +908,8 @@ int evm_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> >   * This function is called from notify_change(), which expects the caller
-> >   * to lock the inode's i_mutex.
-> >   */
-> > -void evm_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> > -			    int ia_valid)
-> > +static void evm_inode_post_setattr(struct mnt_idmap *idmap,
-> > +				   struct dentry *dentry, int ia_valid)
-> >  {
-> >  	if (!evm_revalidate_status(NULL))
-> >  		return;
-> > @@ -892,7 +947,7 @@ int evm_inode_init_security(struct inode *inode, struct inode *dir,
-> >  	if (!evm_protected_xattrs)
-> >  		return -EOPNOTSUPP;
-> >  
-> > -	evm_xattr = xattr;
-> > +	evm_xattr = xattrs + integrity_blob_sizes.lbs_xattr;
+
+
+2/21/2023 9:04 PM, Mickaël Salaün пишет:
 > 
-> Please don't do this inline. Convention is to use a function,
-> intergrity_xattrs() for this.
-
-Ok.
-
-> >  
-> >  	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
-> >  	if (!xattr_data)
-> > @@ -952,4 +1007,23 @@ static int __init init_evm(void)
-> >  	return error;
-> >  }
-> >  
-> > +static struct security_hook_list evm_hooks[] __lsm_ro_after_init = {
-> > +	LSM_HOOK_INIT(inode_setattr, evm_inode_setattr),
-> > +	LSM_HOOK_INIT(inode_post_setattr, evm_inode_post_setattr),
-> > +	LSM_HOOK_INIT(inode_setxattr, evm_inode_setxattr),
-> > +	LSM_HOOK_INIT(inode_set_acl, evm_inode_set_acl),
-> > +	LSM_HOOK_INIT(inode_post_set_acl, evm_inode_post_set_acl),
-> > +	LSM_HOOK_INIT(inode_remove_acl, evm_inode_remove_acl),
-> > +	LSM_HOOK_INIT(inode_post_remove_acl, evm_inode_post_remove_acl),
-> > +	LSM_HOOK_INIT(inode_post_setxattr, evm_inode_post_setxattr),
-> > +	LSM_HOOK_INIT(inode_removexattr, evm_inode_removexattr),
-> > +	LSM_HOOK_INIT(inode_post_removexattr, evm_inode_post_removexattr),
-> > +	LSM_HOOK_INIT(inode_init_security, evm_inode_init_security),
-> > +};
-> > +
-> > +void __init init_evm_lsm(void)
-> > +{
-> > +	security_add_hooks(evm_hooks, ARRAY_SIZE(evm_hooks), "integrity");
-> > +}
-> > +
-> >  late_initcall(init_evm);
-> > diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> > index bbadf974b31..952d5ea4e18 100644
-> > --- a/security/integrity/iint.c
-> > +++ b/security/integrity/iint.c
-> > @@ -179,12 +179,19 @@ static int __init integrity_lsm_init(void)
-> >  			      0, SLAB_PANIC, init_once);
-> >  
-> >  	init_ima_lsm();
-> > +	init_evm_lsm();
-> >  	return 0;
-> >  }
-> > +
-> > +struct lsm_blob_sizes integrity_blob_sizes __lsm_ro_after_init = {
-> > +	.lbs_xattr = 1,
 > 
-> Really? 1 byte? Don't even think of storing number of elements in lbs_xattr.
-> The linux_blob_size structure contains sizes of blobs, not number of elements.
-
-Oh, I see it can be confusing.
-
-However, lbs_xattr does not help to position in the security blob but
-in the new_xattrs array, allocated in security_inode_init_security()
-(see below). Any suggestion on how to make this part better?
-
-Thanks
-
-Roberto
-
-> > +};
-> > +
-> >  DEFINE_LSM(integrity) = {
-> >  	.name = "integrity",
-> >  	.init = integrity_lsm_init,
-> >  	.order = LSM_ORDER_LAST,
-> > +	.blobs = &integrity_blob_sizes,
-> >  };
-> >  
-> >  /*
-> > diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-> > index c72d375a356..76e7eda6651 100644
-> > --- a/security/integrity/integrity.h
-> > +++ b/security/integrity/integrity.h
-> > @@ -188,6 +188,7 @@ int integrity_kernel_read(struct file *file, loff_t offset,
-> >  #define INTEGRITY_KEYRING_MAX		4
-> >  
-> >  extern struct dentry *integrity_dir;
-> > +extern struct lsm_blob_sizes integrity_blob_sizes;
-> >  
-> >  struct modsig;
-> >  
-> > @@ -199,6 +200,14 @@ static inline void __init init_ima_lsm(void)
-> >  }
-> >  #endif
-> >  
-> > +#ifdef CONFIG_EVM
-> > +void __init init_evm_lsm(void);
-> > +#else
-> > +static inline void __init init_evm_lsm(void)
-> > +{
-> > +}
-> > +#endif
-> > +
-> >  #ifdef CONFIG_INTEGRITY_SIGNATURE
-> >  
-> >  int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
-> > diff --git a/security/security.c b/security/security.c
-> > index 9bc6a4ef758..74abf04feef 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -20,13 +20,13 @@
-> >  #include <linux/kernel_read_file.h>
-> >  #include <linux/lsm_hooks.h>
-> >  #include <linux/integrity.h>
-> > -#include <linux/evm.h>
-> >  #include <linux/fsnotify.h>
-> >  #include <linux/mman.h>
-> >  #include <linux/mount.h>
-> >  #include <linux/personality.h>
-> >  #include <linux/backing-dev.h>
-> >  #include <linux/string.h>
-> > +#include <linux/xattr.h>
-> >  #include <linux/msg.h>
-> >  #include <net/flow.h>
-> >  
-> > @@ -1662,8 +1662,8 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
-> >  	if (!initxattrs)
-> >  		return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
-> >  				    dir, qstr, NULL);
-> > -	/* Allocate +1 for EVM and +1 as terminator. */
-> > -	new_xattrs = kcalloc(blob_sizes.lbs_xattr + 2, sizeof(*new_xattrs),
-> > +	/* Allocate +1 for terminator. */
-> > +	new_xattrs = kcalloc(blob_sizes.lbs_xattr + 1, sizeof(*new_xattrs),
-> >  			     GFP_NOFS);
-> >  	if (!new_xattrs)
-> >  		return -ENOMEM;
-> > @@ -1699,9 +1699,6 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
-> >  	if (!num_filled_xattrs)
-> >  		goto out;
-> >  
-> > -	ret = evm_inode_init_security(inode, dir, qstr, new_xattrs);
-> > -	if (ret && ret != -EOPNOTSUPP)
-> > -		goto out;
-> >  	ret = initxattrs(inode, new_xattrs, fs_data);
-> >  out:
-> >  	for (xattr = new_xattrs; xattr->value != NULL; xattr++)
-> > @@ -2201,14 +2198,9 @@ int security_inode_permission(struct inode *inode, int mask)
-> >  int security_inode_setattr(struct mnt_idmap *idmap,
-> >  			   struct dentry *dentry, struct iattr *attr)
-> >  {
-> > -	int ret;
-> > -
-> >  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> >  		return 0;
-> > -	ret = call_int_hook(inode_setattr, 0, idmap, dentry, attr);
-> > -	if (ret)
-> > -		return ret;
-> > -	return evm_inode_setattr(idmap, dentry, attr);
-> > +	return call_int_hook(inode_setattr, 0, idmap, dentry, attr);
-> >  }
-> >  EXPORT_SYMBOL_GPL(security_inode_setattr);
-> >  
-> > @@ -2272,9 +2264,7 @@ int security_inode_setxattr(struct mnt_idmap *idmap,
-> >  
-> >  	if (ret == 1)
-> >  		ret = cap_inode_setxattr(dentry, name, value, size, flags);
-> > -	if (ret)
-> > -		return ret;
-> > -	return evm_inode_setxattr(idmap, dentry, name, value, size, flags);
-> > +	return ret;
-> >  }
-> >  
-> >  /**
-> > @@ -2293,15 +2283,10 @@ int security_inode_set_acl(struct mnt_idmap *idmap,
-> >  			   struct dentry *dentry, const char *acl_name,
-> >  			   struct posix_acl *kacl)
-> >  {
-> > -	int ret;
-> > -
-> >  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> >  		return 0;
-> > -	ret = call_int_hook(inode_set_acl, 0, idmap, dentry, acl_name,
-> > -			    kacl);
-> > -	if (ret)
-> > -		return ret;
-> > -	return evm_inode_set_acl(idmap, dentry, acl_name, kacl);
-> > +	return call_int_hook(inode_set_acl, 0, idmap, dentry, acl_name,
-> > +			     kacl);
-> >  }
-> >  
-> >  /**
-> > @@ -2354,14 +2339,9 @@ int security_inode_get_acl(struct mnt_idmap *idmap,
-> >  int security_inode_remove_acl(struct mnt_idmap *idmap,
-> >  			      struct dentry *dentry, const char *acl_name)
-> >  {
-> > -	int ret;
-> > -
-> >  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> >  		return 0;
-> > -	ret = call_int_hook(inode_remove_acl, 0, idmap, dentry, acl_name);
-> > -	if (ret)
-> > -		return ret;
-> > -	return evm_inode_remove_acl(idmap, dentry, acl_name);
-> > +	return call_int_hook(inode_remove_acl, 0, idmap, dentry, acl_name);
-> >  }
-> >  
-> >  /**
-> > @@ -2397,7 +2377,6 @@ void security_inode_post_setxattr(struct dentry *dentry, const char *name,
-> >  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> >  		return;
-> >  	call_void_hook(inode_post_setxattr, dentry, name, value, size, flags);
-> > -	evm_inode_post_setxattr(dentry, name, value, size, flags);
-> >  }
-> >  
-> >  /**
-> > @@ -2458,9 +2437,7 @@ int security_inode_removexattr(struct mnt_idmap *idmap,
-> >  	ret = call_int_hook(inode_removexattr, 1, idmap, dentry, name);
-> >  	if (ret == 1)
-> >  		ret = cap_inode_removexattr(idmap, dentry, name);
-> > -	if (ret)
-> > -		return ret;
-> > -	return evm_inode_removexattr(idmap, dentry, name);
-> > +	return ret;
-> >  }
-> >  
-> >  /**
-
+> On 16/01/2023 09:58, Konstantin Meskhidze wrote:
+>> This commit adds network rules support in the ruleset management
+>> helpers and the landlock_create_ruleset syscall.
+>> Refactor user space API to support network actions. Add new network
+>> access flags, network rule and network attributes. Increment Landlock
+>> ABI version. Expand access_masks_t to u32 to be sure network access
+>> rights can be stored. Implement socket_bind() and socket_connect()
+>> LSM hooks, which enable to restrict TCP socket binding and connection
+>> to specific ports.
+>> 
+>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>> ---
+>> 
+>> Changes since v8:
+>> * Squashes commits.
+>> * Refactors commit message.
+>> * Changes UAPI port field to __be16.
+>> * Changes logic of bind/connect hooks with AF_UNSPEC families.
+>> * Adds address length checking.
+>> * Minor fixes.
+>> 
+>> Changes since v7:
+>> * Squashes commits.
+>> * Increments ABI version to 4.
+>> * Refactors commit message.
+>> * Minor fixes.
+>> 
+>> Changes since v6:
+>> * Renames landlock_set_net_access_mask() to landlock_add_net_access_mask()
+>>    because it OR values.
+>> * Makes landlock_add_net_access_mask() more resilient incorrect values.
+>> * Refactors landlock_get_net_access_mask().
+>> * Renames LANDLOCK_MASK_SHIFT_NET to LANDLOCK_SHIFT_ACCESS_NET and use
+>>    LANDLOCK_NUM_ACCESS_FS as value.
+>> * Updates access_masks_t to u32 to support network access actions.
+>> * Refactors landlock internal functions to support network actions with
+>>    landlock_key/key_type/id types.
+>> 
+>> Changes since v5:
+>> * Gets rid of partial revert from landlock_add_rule
+>> syscall.
+>> * Formats code with clang-format-14.
+>> 
+>> Changes since v4:
+>> * Refactors landlock_create_ruleset() - splits ruleset and
+>> masks checks.
+>> * Refactors landlock_create_ruleset() and landlock mask
+>> setters/getters to support two rule types.
+>> * Refactors landlock_add_rule syscall add_rule_path_beneath
+>> function by factoring out get_ruleset_from_fd() and
+>> landlock_put_ruleset().
+>> 
+>> Changes since v3:
+>> * Splits commit.
+>> * Adds network rule support for internal landlock functions.
+>> * Adds set_mask and get_mask for network.
+>> * Adds rb_root root_net_port.
+>> 
+>> ---
+>>   include/uapi/linux/landlock.h                |  49 +++++
+>>   security/landlock/Kconfig                    |   1 +
+>>   security/landlock/Makefile                   |   2 +
+>>   security/landlock/limits.h                   |   6 +-
+>>   security/landlock/net.c                      | 200 +++++++++++++++++++
+>>   security/landlock/net.h                      |  26 +++
+>>   security/landlock/ruleset.c                  |  52 ++++-
+>>   security/landlock/ruleset.h                  |  63 +++++-
+>>   security/landlock/setup.c                    |   2 +
+>>   security/landlock/syscalls.c                 |  72 ++++++-
+>>   tools/testing/selftests/landlock/base_test.c |   2 +-
+>>   11 files changed, 452 insertions(+), 23 deletions(-)
+>>   create mode 100644 security/landlock/net.c
+>>   create mode 100644 security/landlock/net.h
+>> 
+>> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+>> index f3223f964691..ae11c663c975 100644
+>> --- a/include/uapi/linux/landlock.h
+>> +++ b/include/uapi/linux/landlock.h
+>> @@ -31,6 +31,13 @@ struct landlock_ruleset_attr {
+>>   	 * this access right.
+>>   	 */
+>>   	__u64 handled_access_fs;
+>> +
+>> +	/**
+>> +	 * @handled_access_net: Bitmask of actions (cf. `Network flags`_)
+>> +	 * that is handled by this ruleset and should then be forbidden if no
+>> +	 * rule explicitly allow them.
+>> +	 */
+>> +	__u64 handled_access_net;
+>>   };
+>>   
+>>   /*
+>> @@ -54,6 +61,11 @@ enum landlock_rule_type {
+>>   	 * landlock_path_beneath_attr .
+>>   	 */
+>>   	LANDLOCK_RULE_PATH_BENEATH = 1,
+>> +	/**
+>> +	 * @LANDLOCK_RULE_NET_SERVICE: Type of a &struct
+>> +	 * landlock_net_service_attr .
+>> +	 */
+>> +	LANDLOCK_RULE_NET_SERVICE = 2,
+>>   };
+>>   
+>>   /**
+>> @@ -79,6 +91,24 @@ struct landlock_path_beneath_attr {
+>>   	 */
+>>   } __attribute__((packed));
+>>   
+>> +/**
+>> + * struct landlock_net_service_attr - TCP subnet definition
+>> + *
+>> + * Argument of sys_landlock_add_rule().
+>> + */
+>> +struct landlock_net_service_attr {
+>> +	/**
+>> +	 * @allowed_access: Bitmask of allowed access network for services
+>> +	 * (cf. `Network flags`_).
+>> +	 */
+>> +	__u64 allowed_access;
+>> +	/**
+>> +	 * @port: Network port.
+>> +	 */
+>> +	__be16 port;
+>> +
+>> +} __attribute__((packed));
+>> +
+>>   /**
+>>    * DOC: fs_access
+>>    *
+>> @@ -173,4 +203,23 @@ struct landlock_path_beneath_attr {
+>>   #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
+>>   /* clang-format on */
+>>   
+>> +/**
+>> + * DOC: net_access
+>> + *
+>> + * Network flags
+>> + * ~~~~~~~~~~~~~~~~
+>> + *
+>> + * These flags enable to restrict a sandboxed process to a set of network
+>> + * actions.
+>> + *
+>> + * TCP sockets with allowed actions:
+>> + *
+>> + * - %LANDLOCK_ACCESS_NET_BIND_TCP: Bind a TCP socket to a local port.
+>> + * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect an active TCP socket to
+>> + *   a remote port.
+>> + */
+>> +/* clang-format off */
+>> +#define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+>> +#define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+>> +/* clang-format on */
+>>   #endif /* _UAPI_LINUX_LANDLOCK_H */
+>> diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
+>> index 8e33c4e8ffb8..10c099097533 100644
+>> --- a/security/landlock/Kconfig
+>> +++ b/security/landlock/Kconfig
+>> @@ -3,6 +3,7 @@
+>>   config SECURITY_LANDLOCK
+>>   	bool "Landlock support"
+>>   	depends on SECURITY && !ARCH_EPHEMERAL_INODES
+>> +	select SECURITY_NETWORK
+>>   	select SECURITY_PATH
+>>   	help
+>>   	  Landlock is a sandboxing mechanism that enables processes to restrict
+>> diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+>> index 7bbd2f413b3e..53d3c92ae22e 100644
+>> --- a/security/landlock/Makefile
+>> +++ b/security/landlock/Makefile
+>> @@ -2,3 +2,5 @@ obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
+>>   
+>>   landlock-y := setup.o syscalls.o object.o ruleset.o \
+>>   	cred.o ptrace.o fs.o
+>> +
+>> +landlock-$(CONFIG_INET) += net.o
+>> \ No newline at end of file
+>> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+>> index bafb3b8dc677..8a1a6463c64e 100644
+>> --- a/security/landlock/limits.h
+>> +++ b/security/landlock/limits.h
+>> @@ -23,6 +23,10 @@
+>>   #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+>>   #define LANDLOCK_SHIFT_ACCESS_FS	0
+>>   
+>> -/* clang-format on */
+>> +#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_TCP
+>> +#define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+>> +#define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+>> +#define LANDLOCK_SHIFT_ACCESS_NET	LANDLOCK_NUM_ACCESS_FS
+>>   
+>> +/* clang-format on */
+>>   #endif /* _SECURITY_LANDLOCK_LIMITS_H */
+>> diff --git a/security/landlock/net.c b/security/landlock/net.c
+>> new file mode 100644
+>> index 000000000000..338bd6dd8e3f
+>> --- /dev/null
+>> +++ b/security/landlock/net.c
+>> @@ -0,0 +1,200 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Landlock LSM - Network management and hooks
+>> + *
+>> + * Copyright © 2022 Huawei Tech. Co., Ltd.
+>> + * Copyright © 2022 Microsoft Corporation
+>> + */
+>> +
+>> +#include <linux/in.h>
+>> +#include <linux/net.h>
+>> +#include <linux/socket.h>
+>> +#include <net/ipv6.h>
+>> +
+>> +#include "common.h"
+>> +#include "cred.h"
+>> +#include "limits.h"
+>> +#include "net.h"
+>> +#include "ruleset.h"
+>> +
+>> +int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
+>> +			     const __be16 port, access_mask_t access_rights)
+>> +{
+>> +	int err;
+>> +	const struct landlock_id id = {
+>> +		.key.data = port,
+>> +		.type = LANDLOCK_KEY_NET_PORT,
+>> +	};
+>> +	BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
+>> +
+>> +	/* Transforms relative access rights to absolute ones. */
+>> +	access_rights |= LANDLOCK_MASK_ACCESS_NET &
+>> +			 ~landlock_get_net_access_mask(ruleset, 0);
+>> +
+>> +	mutex_lock(&ruleset->lock);
+>> +	err = landlock_insert_rule(ruleset, id, access_rights);
+>> +	mutex_unlock(&ruleset->lock);
+>> +
+>> +	return err;
+>> +}
+>> +
+>> +static int check_addrlen(const struct sockaddr *const address, int addrlen)
+>> +{
+>> +	if (addrlen < offsetofend(struct sockaddr, sa_family))
+>> +		return -EINVAL;
+>> +	switch (address->sa_family) {
+>> +	case AF_UNSPEC:
+>> +	case AF_INET:
+>> +		if (addrlen < sizeof(struct sockaddr_in))
+>> +			return -EINVAL;
+>> +		return 0;
+>> +#if IS_ENABLED(CONFIG_IPV6)
+>> +	case AF_INET6:
+>> +		if (addrlen < SIN6_LEN_RFC2133)
+>> +			return -EINVAL;
+>> +		return 0;
+>> +#endif
+>> +	}
+>> +	WARN_ON_ONCE(1);
+>> +	return 0;
+>> +}
+>> +
+>> +static int check_socket_access(const struct landlock_ruleset *const domain,
+>> +			       struct sockaddr *address, __be16 port,
+>> +			       access_mask_t access_request)
+>> +{
+>> +	bool allowed = false;
+>> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
+>> +	const struct landlock_rule *rule;
+>> +	access_mask_t handled_access;
+>> +	const struct landlock_id id = {
+>> +		.key.data = port,
+>> +		.type = LANDLOCK_KEY_NET_PORT,
+>> +	};
+>> +
+>> +	if (WARN_ON_ONCE(!domain))
+>> +		return 0;
+>> +	if (WARN_ON_ONCE(domain->num_layers < 1))
+>> +		return -EACCES;
+>> +
+>> +	switch (address->sa_family) {
+>> +	case AF_UNSPEC:
+>> +		/*
+>> +		 * Connecting to an address with AF_UNSPEC dissolves the TCP
+>> +		 * association, which have the same effect as closing the
+>> +		 * connection while retaining the socket object (i.e., the file
+>> +		 * descriptor).  As for dropping privileges, closing
+>> +		 * connections is always allowed.
+>> +		 */
+>> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP)
+>> +			return 0;
+>> +
+>> +		/*
+>> +		 * For compatibility reason, accept AF_UNSPEC for bind
+>> +		 * accesses (mapped to AF_INET) only if the address is
+>> +		 * INADDR_ANY (cf. __inet_bind).  Checking the address is
+>> +		 * required to not wrongfully return -EACCES instead of
+>> +		 * -EAFNOSUPPORT.
+>> +		 */
+>> +		if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
+>> +			const struct sockaddr_in *const sockaddr =
+>> +				(struct sockaddr_in *)address;
+>> +
+>> +			if (sockaddr->sin_addr.s_addr != htonl(INADDR_ANY))
+>> +				return -EAFNOSUPPORT;
+>> +		}
+>> +
+>> +		fallthrough;
+>> +	case AF_INET:
+>> +#if IS_ENABLED(CONFIG_IPV6)
+>> +	case AF_INET6:
+>> +#endif
+>> +		rule = landlock_find_rule(domain, id);
+>> +		handled_access = landlock_init_layer_masks(
+>> +			domain, access_request, &layer_masks,
+>> +			LANDLOCK_KEY_NET_PORT);
+>> +		allowed = landlock_unmask_layers(rule, handled_access,
+>> +						 &layer_masks,
+>> +						 ARRAY_SIZE(layer_masks));
+>> +
+>> +		fallthrough;
+>> +	}
+>> +	return allowed ? 0 : -EACCES;
+>> +}
+>> +
+>> +static u16 get_port(const struct sockaddr *const address)
+>> +{
+>> +	/* Gets port value in host byte order. */
+>> +	switch (address->sa_family) {
+>> +	case AF_UNSPEC:
+>> +	case AF_INET: {
+>> +		const struct sockaddr_in *const sockaddr =
+>> +			(struct sockaddr_in *)address;
+>> +		return sockaddr->sin_port;
+>> +	}
+>> +#if IS_ENABLED(CONFIG_IPV6)
+>> +	case AF_INET6: {
+>> +		const struct sockaddr_in6 *const sockaddr_ip6 =
+>> +			(struct sockaddr_in6 *)address;
+>> +		return sockaddr_ip6->sin6_port;
+>> +	}
+>> +#endif
+>> +	}
+>> +	WARN_ON_ONCE(1);
+>> +	return 0;
+>> +}
+>> +
+>> +static int hook_socket_bind(struct socket *sock, struct sockaddr *address,
+>> +			    int addrlen)
+>> +{
+>> +	int ret;
+>> +	const struct landlock_ruleset *const dom =
+>> +		landlock_get_current_domain();
+>> +
+>> +	if (!dom)
+>> +		return 0;
+>> +
+>> +	/* Check if it's a TCP socket. */
+>> +	if (sock->type != SOCK_STREAM)
+>> +		return 0;
+>> +
+>> +	ret = check_addrlen(address, addrlen);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return check_socket_access(dom, address, get_port(address),
+>> +				   LANDLOCK_ACCESS_NET_BIND_TCP);
+> 
+> Both hook_socket_bind() and hook_socket_connect() looks the same except
+> the access right. All this code could be moved to check_socket_access().
+> get_port() would need to be defined before.
+> 
+   Ok. I got it.
+> 
+>> +}
+>> +
+>> +static int hook_socket_connect(struct socket *sock, struct sockaddr *address,
+>> +			       int addrlen)
+>> +{
+>> +	int ret;
+>> +	const struct landlock_ruleset *const dom =
+>> +		landlock_get_current_domain();
+>> +
+>> +	if (!dom)
+>> +		return 0;
+>> +
+>> +	/* Check if it's a TCP socket. */
+>> +	if (sock->type != SOCK_STREAM)
+>> +		return 0;
+>> +
+>> +	ret = check_addrlen(address, addrlen);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return check_socket_access(dom, address, get_port(address),
+>> +				   LANDLOCK_ACCESS_NET_CONNECT_TCP);
+>> +}
+> .
