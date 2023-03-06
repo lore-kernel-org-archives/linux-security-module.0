@@ -2,99 +2,151 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D04C6FD1B
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 18:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C8AC6FD1D
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 19:18:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230223AbjCFSt1 (ORCPT
+        id S229494AbjCFTSX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Mar 2023 13:49:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56370 "EHLO
+        Mon, 6 Mar 2023 14:18:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230166AbjCFStZ (ORCPT
+        with ESMTP id S229878AbjCFTSQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Mar 2023 13:49:25 -0500
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C32811A658
-        for <linux-security-module@vger.kernel.org>; Mon,  6 Mar 2023 10:49:23 -0800 (PST)
-Received: by mail-pf1-x42f.google.com with SMTP id ce7so6472367pfb.9
-        for <linux-security-module@vger.kernel.org>; Mon, 06 Mar 2023 10:49:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1678128563;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3/dAOgGOb62V2zK33/81eVK4BPQmGGtO54/EVqtNnL8=;
-        b=cnQWTgpAjPCUocNlZLqXEIJBBsS84oCi683vzHQyGg2JH6hkkUuPu1Sn8otDPVsXMf
-         vqXVrvuwUDR/Q72TPQMKrxMJfm+y1LBTdfvDv7gtEBUYp9NcD0B1VXhKDOLssVxEaqtz
-         G7rj4+Yr+xA55rRjXQYngOFBYx6Lnrx/xYorSKaVrGFH0Mq6YBykH0ZuCkPjj9KTJtjv
-         1qIF14ehwpOiyf/JHdBmeewCGgyLaRDojn0/AfJAVTrOxiQW+2kqk0xU7hqUWJkXL8l4
-         PO+gsvpZ+VFEqkZ4tkfOaivvVWvbt3Q7TIAPrlAFw9BSzUI2ZqnShBFYchEARZVlFaae
-         ThUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678128563;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3/dAOgGOb62V2zK33/81eVK4BPQmGGtO54/EVqtNnL8=;
-        b=N4dfsDaHeRpyo1yNfa9gMenvVrrJL0IVLcNfeERC8iHN0AFYFQ/CegdK/juYH8i7Yl
-         037H6JfuAQRSGJKzs8kdZoBByg4upD6yvVYia4ih9Wm2H56+d24uVVzldMcROKTpJ0it
-         NVSaYuPLFkVFdLq6Y6SVJTCPYEGhADjOpzPRVzTzjWX6IQ0wYfbuxOkfdqTUKIEoOpJH
-         TZhz8xXUME6oD2mjKBkn2q0Sgk3LfqyIRlPNs2jdvP+dn7RoQOfx2Hr+EKudCQYoUCa8
-         TQQ42pFJKCR5eLZ/7+wHzx6BWFr66YCtRciG9MVghXuN++LejrFUCvcb2JFd5CkRJg/Z
-         tmuQ==
-X-Gm-Message-State: AO0yUKXrfFJCey7ZZOnvVLCVOQumbA7WbDy/xs0DGY7Xpwqj6qE55IVT
-        9MKYFMaPvlnRtwayseq2jFIVi3D0EUbvQUxZbCqyIkx9YzahMGw=
-X-Google-Smtp-Source: AK7set8LEM5ZX5HiwnKTkfyvG2DmWZOrzjQVvz/WzYzvwLIb0pNdXfUjgqzeVxFTy33HlGhrpOqKS5hrwJRb9SIxi7M=
-X-Received: by 2002:a65:6a85:0:b0:503:25af:f50d with SMTP id
- q5-20020a656a85000000b0050325aff50dmr4135924pgu.4.1678128562622; Mon, 06 Mar
- 2023 10:49:22 -0800 (PST)
+        Mon, 6 Mar 2023 14:18:16 -0500
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57750233FF
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Mar 2023 11:18:04 -0800 (PST)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PVpJB4ZXCzMql9P;
+        Mon,  6 Mar 2023 20:18:02 +0100 (CET)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4PVpJ934QZzMsbgd;
+        Mon,  6 Mar 2023 20:18:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1678130282;
+        bh=km+ZIZT9n7UyXmGudAckqTdfhH3KWWGzsiHMBFhtwIs=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=sZgd39Co0PYHph22i+bM6kxUNd/LqfEtNo4fW7ik0QbjQF8TcFPVqYunUiO4BoKAn
+         JyOr1rOtxKK/rHBTuYWjOxndljJhDNiTDhbmWcggqVdSBKvMr+bv0Dgc4I290OIxh7
+         ddId8AtfqdaAwYx3HeU8Z80JIYGZ3WD4MqiHfzPg=
+Message-ID: <247f3194-2dd2-1414-0a4d-6e41addf5e64@digikod.net>
+Date:   Mon, 6 Mar 2023 20:18:00 +0100
 MIME-Version: 1.0
-References: <20230217032625.678457-1-paul@paul-moore.com>
-In-Reply-To: <20230217032625.678457-1-paul@paul-moore.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 6 Mar 2023 13:49:11 -0500
-Message-ID: <CAHC9VhQnjmX9n2KJhj97SnQfuO50kaJxX3p8p4gHBC5mBkLfxg@mail.gmail.com>
-Subject: Re: [PATCH 00/22] Move LSM hook comments into security/security.c
-To:     linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: 
+Subject: Re: [PATCH 0/1] process attribute support for Landlock
+Content-Language: en-US
+To:     enlightened@chromium.org
+Cc:     linux-security-module@vger.kernel.org, jorgelo@chromium.org,
+        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
+        allenwebb@chromium.org,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        Adrian Reber <areber@redhat.com>, criu@openvz.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <brauner@kernel.org>
+References: <20230302185257.850681-1-enlightened@chromium.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230302185257.850681-1-enlightened@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 16, 2023 at 10:26=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> Hello all,
->
-> The LSM hook comment blocks are a in a rather sad state; separated from
-> the hook definitions they are often out of mind, and as a result
-> most of them are in varying levels of bit-rot, some severely.  This
-> patchset moves all of the comment blocks out of lsm_hooks.c and onto
-> the top of the function definitions as one would normally expect.
-> In the process of moving the comment blocks, they have been massaged
-> into the standard kernel-doc format for the sake of consistency and
-> easier reading.  Unfortunately, correcting all of the errors in the
-> comments would have made an extremely long and painful task even worse,
-> so a number of errors remain, but the worst offenders were corrected in
-> the move.  Now that the comments are in the proper location, and in the
-> proper format, my hope is that future patch submissions correcting the
-> actual comment contents will be much easier and the comments as a whole
-> will be easier to maintain.
->
-> There are no code changes in this patchset, although since I was
-> already adding a lot of churn to security.c, the last patch in this
-> patchset (22/22) does take the liberty of fixing some rather ugly
-> style problems.
->
->  include/linux/lsm_hooks.h | 1624 +++++++++++++++++++++
->  security/security.c       | 2702 +--------------------------------------=
--
->  2 files changed, 1710 insertions(+), 2616 deletions(-)
+Hi Shervin,
 
-Seeing no objections, and the ACK from Casey, I've gone ahead and
-merged this patchset into the lsm/next branch.  There was some minor
-merge fuzz due to the mount idmap work and some IMA changes, but the
-vast majority of the patchset is exactly as posted.
+Thanks for this initial patch.
 
---=20
-paul-moore.com
+On 02/03/2023 19:52, enlightened@chromium.org wrote:
+> From: Shervin Oloumi <enlightened@chromium.org>
+> 
+> Hi Mickaël,
+> 
+> I'm looking into adding a simple process attribute getter to Landlock so
+> we can determine the sand-boxing state of each process based on
+> /proc/[PID]/attr/current. As ChromeOS is expanding Landlock support,
+> this would help us paint a clear picture of Landlock coverage in the
+> fleet. I prepared a patch as a starting point, and would love to get
+> your feedback.
+
+It would help to know exactly what are your needs short term, and long 
+term. As Günther is wondering, what about nested sandboxing?
+
+I'm thinking about a new /sys/kernel/security/landlock filesystem to be 
+able to audit Landlock domains (i.e. sandboxes). As for your use case, 
+it would be useful to be able to tie a process to a Landlock domain 
+thanks to IDs.
+
+Here are the guiding principles I think would make sense:
+1. A sandboxed thread shall not be able to directly know if it is 
+sandbox nor get any specific information from it's restrictions. The 
+reason for this principle is to avoid applications to simply jump to 
+conclusions (and change behavior) if they see that they are sandboxed 
+with Landlock, instead of trying to access resources and falling back 
+accordingly. A thread should only be able to inspect its 
+own/children/nested domains.
+2. Access to any Landlock domain information should be checked according 
+to PTRACE_MODE_READ_FSCREDS, the Landlock domain hierarchy (cf. 
+ptrace.c:domain_scope_le), and the first principle.
+3. Any (domain) ID should be unique to the whole system (or maybe to the 
+reader's PID namespace, and then in theory relative to the /proc 
+content) to make it possible to compare Landlock domains (like 
+/proc/[pid]/ns/* symlinks enable), and avoid trivial races.
+4. These IDs should be the same during the whole lifetime of the related 
+domain.
+5. These IDs should not enable to infer information from other Landlock 
+domains (e.g. how many are in use, current and parent domains), nor the 
+kernel internals (e.g. addresses).
+6. These IDs should not be sequential nor easily guessed to avoid 
+anti-patterns (cf. file descriptors).
+7. These IDs should be CRIU-friendly, to be able to easily restore such 
+state. This doesn't help the previous principles and I don't know how/if 
+CRIU supports namespace IDs though.
+
+The /proc/[pid]/ns/* symlinks should be a good inspiration for a 
+/proc/[pid]/attr/landlock/domain symlink with similar properties. Such 
+file could then be used to pin or enforce the same Landlock domain on 
+other threads in the future (out of scope for this patch series). Being 
+able to open such "domain" file would make it possible to avoid races 
+while reading the related ID and looking for the related entry in 
+/sys/kernel/security/landlock/ by holding this file open.
+
+It would be nice if the /proc/[pid]/attr/landlock directory would only 
+exists if Landlock is enabled.
+
+Similarly, /proc/[pid]/attr/landlock/domain should only exist (or be 
+viewable) for a thread if [pid] is part of one of its child domain.
+
+For now, I don't see any file in /proc/[pid]/attr/landlock/ other than 
+"domain" that would make sense, but a dedicated directory is useful anyway.
+
+I though about an entire file hierarchy to reflect a Landlock domain 
+(e.g., with rule attributes), but that would make the /proc filesystem 
+dynamically deep, so this should be dedicated to the 
+/sys/kernel/security/landlock filesystem, but tied with /proc in some 
+way, in this case with same domain IDs.
+
+
+> 
+> One area I am not very sure of is the case where more than one LSM is in
+> use. In such cases each LSM could have its own process attribute
+> getters and setters. What I learned is that when this is the case, the
+> kernel only calls the hook function for the LSM that is loaded first in
+> the CONFIG_LSM option. For example if landlock comes first
+> (CONFIG_LSM=landlock,...), then the kernel only calls the hook function
+> for Landlock, when the userspace interacts with process attribute files.
+> This is not a blocker for us, as we only currently care about reading
+> the Landlock related attributes, and my understanding is that this is
+> working as intended, but wanted to get your input.
+
+Using the /proc/[pid]/attr/landlock/domain path will remove this issue.
+
+> 
+> Shervin Oloumi (1):
+>    lsm: adds process attribute getter for Landlock
+> 
+>   fs/proc/base.c         | 11 +++++++++++
+>   security/landlock/fs.c | 33 +++++++++++++++++++++++++++++++++
+>   2 files changed, 44 insertions(+)
+> 
+> 
+> base-commit: e2ca6ba6ba0152361aa4fcbf6067db71b2c7a770
