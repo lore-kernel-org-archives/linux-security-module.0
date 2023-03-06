@@ -2,102 +2,170 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 015CDC6FD1B
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 15:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 617AEC61DA4
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 16:01:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231396AbjCFPgp (ORCPT
+        id S229807AbjCFQBL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Mar 2023 10:36:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33312 "EHLO
+        Mon, 6 Mar 2023 11:01:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231340AbjCFPg1 (ORCPT
+        with ESMTP id S231316AbjCFQAw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Mar 2023 10:36:27 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FC237B4B;
-        Mon,  6 Mar 2023 07:35:32 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4PVj8P3kJJz9xrsC;
-        Mon,  6 Mar 2023 23:25:57 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwA3wAvvBwZkGfJ3AQ--.19155S2;
-        Mon, 06 Mar 2023 16:34:20 +0100 (CET)
-Message-ID: <7bde74e6e5ccf24b2a2bd9dc2bbfcae5c424eac7.camel@huaweicloud.com>
-Subject: Re: [PATCH 21/28] security: Introduce inode_post_remove_acl hook
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com, jlayton@kernel.org, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Mon, 06 Mar 2023 16:34:04 +0100
-In-Reply-To: <6393eb31-5eb3-cb1c-feb7-2ab347703042@linux.ibm.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-         <20230303181842.1087717-22-roberto.sassu@huaweicloud.com>
-         <6393eb31-5eb3-cb1c-feb7-2ab347703042@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Mon, 6 Mar 2023 11:00:52 -0500
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E0A2FCDE
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Mar 2023 08:00:48 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PVjwZ5BNWzMq0bV;
+        Mon,  6 Mar 2023 17:00:46 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4PVjwY6ttHzMtDdV;
+        Mon,  6 Mar 2023 17:00:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1678118446;
+        bh=W9bxayx1B7vEQkL2vJ0A4EzTLbTTWSnAAKU6B5OE5bg=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=IddPPHRGl7MDwiat8dL4ZmRxRLyXBRJA0Vj2QQU+7JZI7awA3IZwK+ZLkJBcvLksI
+         WKVCnSRyAjyKOvOs1cQifWsoL9HYg+QBFKY2cb0zLx4Zc01xehgQXHI+fRqeJp7wHW
+         IL8RVjooFQ7xGguaZFveggTh5rXckKzezHBUApgQ=
+Message-ID: <0efdc745-2365-a8c2-43cb-ef3608586481@digikod.net>
+Date:   Mon, 6 Mar 2023 17:00:45 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwA3wAvvBwZkGfJ3AQ--.19155S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZrW5CrW7Ww47Gr43GrykXwb_yoWDurc_CF
-        4vy3s7GFs8XF1kJr4q9r1FqFsa9rZ5XrnxtryrGrs8AayxJFn5WF4IyryfZrW8Xrn7A3y5
-        AFyxAay2vFy7ujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-        67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-        AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIBF1jj4o+5gAEsq
-X-CFilter-Loop: Reflected
+User-Agent: 
+Subject: Re: [PATCH v9 10/12] selftests/landlock: Add 10 new test suites
+ dedicated to network
+Content-Language: en-US
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
+ <20230116085818.165539-11-konstantin.meskhidze@huawei.com>
+ <fa306757-2040-415b-99a7-ba40c100638a@digikod.net>
+ <b324a6bc-0b0f-c299-72b9-903eede187e8@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <b324a6bc-0b0f-c299-72b9-903eede187e8@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-03-06 at 10:22 -0500, Stefan Berger wrote:
+
+On 06/03/2023 13:03, Konstantin Meskhidze (A) wrote:
 > 
-> On 3/3/23 13:18, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> > the inode_post_remove_acl hook.
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >   
-> > +/**
-> > + * security_inode_post_remove_acl() - Update inode sec after remove_acl op
-> > + * @idmap: idmap of the mount
-> > + * @dentry: file
-> > + * @acl_name: acl name
-> > + *
-> > + * Update inode security field after successful remove_acl operation on @dentry
-> > + * in @idmap. The posix acls are identified by @acl_name.
-> > + */
-> > +void security_inode_post_remove_acl(struct mnt_idmap *idmap,
-> > +				    struct dentry *dentry, const char *acl_name)
-> > +{
-> > +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> > +		return;
 > 
-> Was that a mistake before that EVM and IMA functions did not filtered out private inodes?
+> 2/21/2023 9:05 PM, Mickaël Salaün пишет:
+>>
+>> On 16/01/2023 09:58, Konstantin Meskhidze wrote:
+>>> These test suites try to check edge cases for TCP sockets
+>>> bind() and connect() actions.
+>>>
+>>> socket:
+>>> * bind: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
+>>> * connect: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
+>>> * bind_afunspec: Tests with non-landlocked/landlocked restrictions
+>>> for bind action with AF_UNSPEC socket family.
+>>> * connect_afunspec: Tests with non-landlocked/landlocked restrictions
+>>> for connect action with AF_UNSPEC socket family.
+>>> * ruleset_overlap: Tests with overlapping rules for one port.
+>>> * ruleset_expanding: Tests with expanding rulesets in which rules are
+>>> gradually added one by one, restricting sockets' connections.
+>>> * inval: Tests with invalid user space supplied data:
+>>>       - out of range ruleset attribute;
+>>>       - unhandled allowed access;
+>>>       - zero port value;
+>>>       - zero access value;
+>>>       - legitimate access values;
+>>> * bind_connect_inval_addrlen: Tests with invalid address length
+>>> for ipv4/ipv6 sockets.
+>>> * inval_port_format: Tests with wrong port format for ipv4/ipv6 sockets.
+>>>
+>>> layout1:
+>>> * with_net: Tests with network bind() socket action within
+>>> filesystem directory access test.
+>>>
+>>> Test coverage for security/landlock is 94.1% of 946 lines according
+>>> to gcc/gcov-11.
+>>>
+>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>>> ---
+>>>
+>>> Changes since v8:
+>>> * Adds is_sandboxed const for FIXTURE_VARIANT(socket).
+>>> * Refactors AF_UNSPEC tests.
+>>> * Adds address length checking tests.
+>>> * Convert ports in all tests to __be16.
+>>> * Adds invalid port values tests.
+>>> * Minor fixes.
+>>>
+>>> Changes since v7:
+>>> * Squashes all selftest commits.
+>>> * Adds fs test with network bind() socket action.
+>>> * Minor fixes.
+>>>
+>>> ---
+>>>    tools/testing/selftests/landlock/config     |    4 +
+>>>    tools/testing/selftests/landlock/fs_test.c  |   65 ++
+>>>    tools/testing/selftests/landlock/net_test.c | 1157 +++++++++++++++++++
+>>>    3 files changed, 1226 insertions(+)
+>>>    create mode 100644 tools/testing/selftests/landlock/net_test.c
+>>>
+>>> diff --git a/tools/testing/selftests/landlock/config b/tools/testing/selftests/landlock/config
+>>> index 0f0a65287bac..71f7e9a8a64c 100644
+>>> --- a/tools/testing/selftests/landlock/config
+>>> +++ b/tools/testing/selftests/landlock/config
 
-Looks like that. At least for hooks that are not called from
-security.c.
+[...]
 
-Thanks
+>>> +static int bind_variant(const struct _fixture_variant_socket *const variant,
+>>> +			const int sockfd,
+>>> +			const struct _test_data_socket *const self,
+>>> +			const size_t index, const bool zero_size)
+>>> +
+>>
+>> Extra new line.
+> 
+>    Will be deleted. Thanks. >>
+>>> +{
+>>> +	if (variant->is_ipv4)
+>>> +		return bind(sockfd, &self->addr4[index],
+>>> +			    (zero_size ? 0 : sizeof(self->addr4[index])));
+>>
+>> Is the zero_size really useful? Do calling bind and connect with this
+>> argument reaches the Landlock code (check_addrlen) or is it caught by
+>> the network code beforehand?
+> 
+>     In __sys_bind() syscall security_socket_bind() function goes before
+>     sock->ops->bind() method. Selinux and Smacks provide such checks in
+>     bind()/connect() hooks, so I think Landlock should do the same.
+>     What do you think?
 
-Roberto
+Yes, we should keep these checks. However, we should have a 
+bind_variant() without the zero_size argument because it is only set to 
+true once (in bind_connect_inval_addrlen). You can explicitly call 
+bind() with a zero size in bind_connect_inval_addrlen().
 
+Same for connect_variant().
+
+
+>>
+>>
+>>> +	else
+>>> +		return bind(sockfd, &self->addr6[index],
+>>> +			    (zero_size ? 0 : sizeof(self->addr6[index])));
+>>> +}
+>>> +
+>>> +static int connect_variant(const struct _fixture_variant_socket *const variant,
+>>> +			   const int sockfd,
+>>> +			   const struct _test_data_socket *const self,
+>>> +			   const size_t index, const bool zero_size)
+>>> +{
+>>> +	if (variant->is_ipv4)
+>>> +		return connect(sockfd, &self->addr4[index],
+>>> +			       (zero_size ? 0 : sizeof(self->addr4[index])));
+>>> +	else
+>>> +		return connect(sockfd, &self->addr6[index],
+>>> +			       (zero_size ? 0 : sizeof(self->addr6[index])));
+>>> +}
