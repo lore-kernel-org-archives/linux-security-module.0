@@ -2,151 +2,110 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C8AC6FD1D
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 19:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E49AC64EC4
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 19:18:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229494AbjCFTSX (ORCPT
+        id S229915AbjCFTSY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Mar 2023 14:18:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42108 "EHLO
+        Mon, 6 Mar 2023 14:18:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229878AbjCFTSQ (ORCPT
+        with ESMTP id S229872AbjCFTSP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Mar 2023 14:18:16 -0500
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57750233FF
-        for <linux-security-module@vger.kernel.org>; Mon,  6 Mar 2023 11:18:04 -0800 (PST)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PVpJB4ZXCzMql9P;
-        Mon,  6 Mar 2023 20:18:02 +0100 (CET)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4PVpJ934QZzMsbgd;
-        Mon,  6 Mar 2023 20:18:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1678130282;
-        bh=km+ZIZT9n7UyXmGudAckqTdfhH3KWWGzsiHMBFhtwIs=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=sZgd39Co0PYHph22i+bM6kxUNd/LqfEtNo4fW7ik0QbjQF8TcFPVqYunUiO4BoKAn
-         JyOr1rOtxKK/rHBTuYWjOxndljJhDNiTDhbmWcggqVdSBKvMr+bv0Dgc4I290OIxh7
-         ddId8AtfqdaAwYx3HeU8Z80JIYGZ3WD4MqiHfzPg=
-Message-ID: <247f3194-2dd2-1414-0a4d-6e41addf5e64@digikod.net>
-Date:   Mon, 6 Mar 2023 20:18:00 +0100
+        Mon, 6 Mar 2023 14:18:15 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00377421C;
+        Mon,  6 Mar 2023 11:18:03 -0800 (PST)
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 326JD5dg028623;
+        Mon, 6 Mar 2023 19:17:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=o6xkr4nzKTBS3fMWrupc5UKolZaC3WVJzFolcWMp0P4=;
+ b=aJy7Zbp+SuSfc9qqXnp1zPRs3eWIsMK61m61quulzMm98zxTRmDXjd+hhbTC2UrAH6Dk
+ u/RqKSLAbc43M/Vdr9mW08hfgQr26MpgZlxWbbgF5kbevMYq+Tc9slbeZi34X/lPdha9
+ fU0mx999KfJnyKXRCH9yYSFgmQB+mE9oxcOlAuD/Gvu83SUemQ/mhZctuFZP7WkslywN
+ 0LrjwxJxc8y56b5WSse9Nx9MbYZoWbVvhPvBEhVSzdFd3KOyMh99eOncAE2SQJh5s4bT
+ S6w3sMDTJbOtRzUPvg1GJ6gOgtvINEBPj2LF4at75LU3xZLCgViGT+EO0Qa6MgPg8xai fg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p5p4wg4b0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 19:17:41 +0000
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 326JGxRW030802;
+        Mon, 6 Mar 2023 19:17:40 GMT
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p5p4wg4af-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 19:17:40 +0000
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 326JDqoV005417;
+        Mon, 6 Mar 2023 19:17:39 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([9.208.129.118])
+        by ppma01dal.us.ibm.com (PPS) with ESMTPS id 3p4184tkpg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 19:17:39 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 326JHba047579438
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 Mar 2023 19:17:38 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A2B535803F;
+        Mon,  6 Mar 2023 19:17:37 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6583158064;
+        Mon,  6 Mar 2023 19:17:36 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Mon,  6 Mar 2023 19:17:36 +0000 (GMT)
+Message-ID: <ee26e82d-ba69-2234-cf3e-930fa5a958c3@linux.ibm.com>
+Date:   Mon, 6 Mar 2023 14:17:36 -0500
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH 0/1] process attribute support for Landlock
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 15/28] security: Introduce inode_post_removexattr hook
 Content-Language: en-US
-To:     enlightened@chromium.org
-Cc:     linux-security-module@vger.kernel.org, jorgelo@chromium.org,
-        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
-        allenwebb@chromium.org,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        Adrian Reber <areber@redhat.com>, criu@openvz.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Christian Brauner <brauner@kernel.org>
-References: <20230302185257.850681-1-enlightened@chromium.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230302185257.850681-1-enlightened@chromium.org>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
+        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+ <20230303181842.1087717-16-roberto.sassu@huaweicloud.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20230303181842.1087717-16-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: vKs_Z_5RXZAfcawrO2Wy1RQCSZNFnWJe
+X-Proofpoint-GUID: YNQ3JgBTL9Aby-E6XF-4Xdvl0d0HMsCG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-06_12,2023-03-06_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 mlxscore=0 clxscore=1015 impostorscore=0 phishscore=0
+ spamscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2303060168
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Shervin,
 
-Thanks for this initial patch.
 
-On 02/03/2023 19:52, enlightened@chromium.org wrote:
-> From: Shervin Oloumi <enlightened@chromium.org>
+On 3/3/23 13:18, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> Hi Mickaël,
+> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> the inode_post_removexattr hook.
 > 
-> I'm looking into adding a simple process attribute getter to Landlock so
-> we can determine the sand-boxing state of each process based on
-> /proc/[PID]/attr/current. As ChromeOS is expanding Landlock support,
-> this would help us paint a clear picture of Landlock coverage in the
-> fleet. I prepared a patch as a starting point, and would love to get
-> your feedback.
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-It would help to know exactly what are your needs short term, and long 
-term. As Günther is wondering, what about nested sandboxing?
-
-I'm thinking about a new /sys/kernel/security/landlock filesystem to be 
-able to audit Landlock domains (i.e. sandboxes). As for your use case, 
-it would be useful to be able to tie a process to a Landlock domain 
-thanks to IDs.
-
-Here are the guiding principles I think would make sense:
-1. A sandboxed thread shall not be able to directly know if it is 
-sandbox nor get any specific information from it's restrictions. The 
-reason for this principle is to avoid applications to simply jump to 
-conclusions (and change behavior) if they see that they are sandboxed 
-with Landlock, instead of trying to access resources and falling back 
-accordingly. A thread should only be able to inspect its 
-own/children/nested domains.
-2. Access to any Landlock domain information should be checked according 
-to PTRACE_MODE_READ_FSCREDS, the Landlock domain hierarchy (cf. 
-ptrace.c:domain_scope_le), and the first principle.
-3. Any (domain) ID should be unique to the whole system (or maybe to the 
-reader's PID namespace, and then in theory relative to the /proc 
-content) to make it possible to compare Landlock domains (like 
-/proc/[pid]/ns/* symlinks enable), and avoid trivial races.
-4. These IDs should be the same during the whole lifetime of the related 
-domain.
-5. These IDs should not enable to infer information from other Landlock 
-domains (e.g. how many are in use, current and parent domains), nor the 
-kernel internals (e.g. addresses).
-6. These IDs should not be sequential nor easily guessed to avoid 
-anti-patterns (cf. file descriptors).
-7. These IDs should be CRIU-friendly, to be able to easily restore such 
-state. This doesn't help the previous principles and I don't know how/if 
-CRIU supports namespace IDs though.
-
-The /proc/[pid]/ns/* symlinks should be a good inspiration for a 
-/proc/[pid]/attr/landlock/domain symlink with similar properties. Such 
-file could then be used to pin or enforce the same Landlock domain on 
-other threads in the future (out of scope for this patch series). Being 
-able to open such "domain" file would make it possible to avoid races 
-while reading the related ID and looking for the related entry in 
-/sys/kernel/security/landlock/ by holding this file open.
-
-It would be nice if the /proc/[pid]/attr/landlock directory would only 
-exists if Landlock is enabled.
-
-Similarly, /proc/[pid]/attr/landlock/domain should only exist (or be 
-viewable) for a thread if [pid] is part of one of its child domain.
-
-For now, I don't see any file in /proc/[pid]/attr/landlock/ other than 
-"domain" that would make sense, but a dedicated directory is useful anyway.
-
-I though about an entire file hierarchy to reflect a Landlock domain 
-(e.g., with rule attributes), but that would make the /proc filesystem 
-dynamically deep, so this should be dedicated to the 
-/sys/kernel/security/landlock filesystem, but tied with /proc in some 
-way, in this case with same domain IDs.
-
-
-> 
-> One area I am not very sure of is the case where more than one LSM is in
-> use. In such cases each LSM could have its own process attribute
-> getters and setters. What I learned is that when this is the case, the
-> kernel only calls the hook function for the LSM that is loaded first in
-> the CONFIG_LSM option. For example if landlock comes first
-> (CONFIG_LSM=landlock,...), then the kernel only calls the hook function
-> for Landlock, when the userspace interacts with process attribute files.
-> This is not a blocker for us, as we only currently care about reading
-> the Landlock related attributes, and my understanding is that this is
-> working as intended, but wanted to get your input.
-
-Using the /proc/[pid]/attr/landlock/domain path will remove this issue.
-
-> 
-> Shervin Oloumi (1):
->    lsm: adds process attribute getter for Landlock
-> 
->   fs/proc/base.c         | 11 +++++++++++
->   security/landlock/fs.c | 33 +++++++++++++++++++++++++++++++++
->   2 files changed, 44 insertions(+)
-> 
-> 
-> base-commit: e2ca6ba6ba0152361aa4fcbf6067db71b2c7a770
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
