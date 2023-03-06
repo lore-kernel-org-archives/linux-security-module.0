@@ -2,176 +2,144 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C2CC6FA99
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 18:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E86C6FD1B
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 18:16:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229595AbjCFSPN (ORCPT
+        id S229543AbjCFSQT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Mar 2023 13:15:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55934 "EHLO
+        Mon, 6 Mar 2023 13:16:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231166AbjCFSOp (ORCPT
+        with ESMTP id S229901AbjCFSQG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Mar 2023 13:14:45 -0500
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2636618A2;
-        Mon,  6 Mar 2023 10:14:09 -0800 (PST)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4PVmsF0n1dz6J7MV;
-        Tue,  7 Mar 2023 02:13:05 +0800 (CST)
-Received: from [10.123.123.126] (10.123.123.126) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Mon, 6 Mar 2023 18:13:30 +0000
-Message-ID: <562fbb68-936c-ca1d-ef4c-b94610a65ef9@huawei.com>
-Date:   Mon, 6 Mar 2023 21:13:29 +0300
+        Mon, 6 Mar 2023 13:16:06 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42FBB6F63F;
+        Mon,  6 Mar 2023 10:15:34 -0800 (PST)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 326EUeor007186;
+        Mon, 6 Mar 2023 16:16:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=bqD1fQf93A6+PaLYS1ZatZURmW6WTInu6NJMIouFU7U=;
+ b=s0BkIkhtcb1oglvI6BqMSVe0Bpi6YaPQ2uU4pH0EOVstHKuJcHwYXsGRK1REFdeSh4/Q
+ oiGS7TtjJP8WrermVftdH4oU40JA7cH2WEkXwJLKX5rR7Xy7Omk17aPN4RQTRloogO7U
+ c1uirCEEWyrI4EnUTxyCNp76S6Lb8gNSeA7v/wDTbiVCdfEZTs+anoq+U450kGxmvqMt
+ RCGqUNserq4U0VxGn2v671W9H9TDgS7RqkYQ2FQiH2ja4YrHorky8ybZuQSeXv1hc+/s
+ CHEMs3AK59+DhwaZ5h6HaM4Q7HaHsCPpu/A538m8ouQubCGZ9olG69kj8GtAfdNt7FvR 4g== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p4ysdshg5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 16:16:49 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 326EbGbm005496;
+        Mon, 6 Mar 2023 16:16:48 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p4ysdshfp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 16:16:48 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 326DoL6X017299;
+        Mon, 6 Mar 2023 16:16:47 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([9.208.129.118])
+        by ppma04dal.us.ibm.com (PPS) with ESMTPS id 3p41ak9kf7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 16:16:47 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 326GGkAF58982828
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 Mar 2023 16:16:46 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 37C3058067;
+        Mon,  6 Mar 2023 16:16:46 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2F34B58065;
+        Mon,  6 Mar 2023 16:16:44 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Mon,  6 Mar 2023 16:16:44 +0000 (GMT)
+Message-ID: <2dcc460c-73ff-d468-0c43-63ccbe0c4f9e@linux.ibm.com>
+Date:   Mon, 6 Mar 2023 11:16:43 -0500
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v9 10/12] selftests/landlock: Add 10 new test suites
- dedicated to network
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
- <20230116085818.165539-11-konstantin.meskhidze@huawei.com>
- <fa306757-2040-415b-99a7-ba40c100638a@digikod.net>
- <b324a6bc-0b0f-c299-72b9-903eede187e8@huawei.com>
- <0efdc745-2365-a8c2-43cb-ef3608586481@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <0efdc745-2365-a8c2-43cb-ef3608586481@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.123.126]
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 21/28] security: Introduce inode_post_remove_acl hook
+Content-Language: en-US
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
+        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+ <20230303181842.1087717-22-roberto.sassu@huaweicloud.com>
+ <6393eb31-5eb3-cb1c-feb7-2ab347703042@linux.ibm.com>
+ <7bde74e6e5ccf24b2a2bd9dc2bbfcae5c424eac7.camel@huaweicloud.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <7bde74e6e5ccf24b2a2bd9dc2bbfcae5c424eac7.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: MWaLbIaI9NdMBOq3S9HXS4e_XU0QxD-l
+X-Proofpoint-GUID: nqChop_acBrGbOPxx8sFOam96JFy-FH-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-06_08,2023-03-06_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ malwarescore=0 adultscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+ mlxlogscore=999 suspectscore=0 bulkscore=0 priorityscore=1501 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2303060142
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
 
-3/6/2023 7:00 PM, Mickaël Salaün пишет:
-> 
-> On 06/03/2023 13:03, Konstantin Meskhidze (A) wrote:
->> 
->> 
->> 2/21/2023 9:05 PM, Mickaël Salaün пишет:
+On 3/6/23 10:34, Roberto Sassu wrote:
+> On Mon, 2023-03-06 at 10:22 -0500, Stefan Berger wrote:
+>>
+>> On 3/3/23 13:18, Roberto Sassu wrote:
+>>> From: Roberto Sassu <roberto.sassu@huawei.com>
 >>>
->>> On 16/01/2023 09:58, Konstantin Meskhidze wrote:
->>>> These test suites try to check edge cases for TCP sockets
->>>> bind() and connect() actions.
->>>>
->>>> socket:
->>>> * bind: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
->>>> * connect: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
->>>> * bind_afunspec: Tests with non-landlocked/landlocked restrictions
->>>> for bind action with AF_UNSPEC socket family.
->>>> * connect_afunspec: Tests with non-landlocked/landlocked restrictions
->>>> for connect action with AF_UNSPEC socket family.
->>>> * ruleset_overlap: Tests with overlapping rules for one port.
->>>> * ruleset_expanding: Tests with expanding rulesets in which rules are
->>>> gradually added one by one, restricting sockets' connections.
->>>> * inval: Tests with invalid user space supplied data:
->>>>       - out of range ruleset attribute;
->>>>       - unhandled allowed access;
->>>>       - zero port value;
->>>>       - zero access value;
->>>>       - legitimate access values;
->>>> * bind_connect_inval_addrlen: Tests with invalid address length
->>>> for ipv4/ipv6 sockets.
->>>> * inval_port_format: Tests with wrong port format for ipv4/ipv6 sockets.
->>>>
->>>> layout1:
->>>> * with_net: Tests with network bind() socket action within
->>>> filesystem directory access test.
->>>>
->>>> Test coverage for security/landlock is 94.1% of 946 lines according
->>>> to gcc/gcov-11.
->>>>
->>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>>> ---
->>>>
->>>> Changes since v8:
->>>> * Adds is_sandboxed const for FIXTURE_VARIANT(socket).
->>>> * Refactors AF_UNSPEC tests.
->>>> * Adds address length checking tests.
->>>> * Convert ports in all tests to __be16.
->>>> * Adds invalid port values tests.
->>>> * Minor fixes.
->>>>
->>>> Changes since v7:
->>>> * Squashes all selftest commits.
->>>> * Adds fs test with network bind() socket action.
->>>> * Minor fixes.
->>>>
->>>> ---
->>>>    tools/testing/selftests/landlock/config     |    4 +
->>>>    tools/testing/selftests/landlock/fs_test.c  |   65 ++
->>>>    tools/testing/selftests/landlock/net_test.c | 1157 +++++++++++++++++++
->>>>    3 files changed, 1226 insertions(+)
->>>>    create mode 100644 tools/testing/selftests/landlock/net_test.c
->>>>
->>>> diff --git a/tools/testing/selftests/landlock/config b/tools/testing/selftests/landlock/config
->>>> index 0f0a65287bac..71f7e9a8a64c 100644
->>>> --- a/tools/testing/selftests/landlock/config
->>>> +++ b/tools/testing/selftests/landlock/config
-> 
-> [...]
-> 
->>>> +static int bind_variant(const struct _fixture_variant_socket *const variant,
->>>> +			const int sockfd,
->>>> +			const struct _test_data_socket *const self,
->>>> +			const size_t index, const bool zero_size)
->>>> +
+>>> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+>>> the inode_post_remove_acl hook.
 >>>
->>> Extra new line.
->> 
->>    Will be deleted. Thanks. >>
->>>> +{
->>>> +	if (variant->is_ipv4)
->>>> +		return bind(sockfd, &self->addr4[index],
->>>> +			    (zero_size ? 0 : sizeof(self->addr4[index])));
->>>
->>> Is the zero_size really useful? Do calling bind and connect with this
->>> argument reaches the Landlock code (check_addrlen) or is it caught by
->>> the network code beforehand?
->> 
->>     In __sys_bind() syscall security_socket_bind() function goes before
->>     sock->ops->bind() method. Selinux and Smacks provide such checks in
->>     bind()/connect() hooks, so I think Landlock should do the same.
->>     What do you think?
+>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>>> ---
+>>>    
+>>> +/**
+>>> + * security_inode_post_remove_acl() - Update inode sec after remove_acl op
+>>> + * @idmap: idmap of the mount
+>>> + * @dentry: file
+>>> + * @acl_name: acl name
+>>> + *
+>>> + * Update inode security field after successful remove_acl operation on @dentry
+>>> + * in @idmap. The posix acls are identified by @acl_name.
+>>> + */
+>>> +void security_inode_post_remove_acl(struct mnt_idmap *idmap,
+>>> +				    struct dentry *dentry, const char *acl_name)
+>>> +{
+>>> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+>>> +		return;
+>>
+>> Was that a mistake before that EVM and IMA functions did not filtered out private inodes?
 > 
-> Yes, we should keep these checks. However, we should have a
-> bind_variant() without the zero_size argument because it is only set to
-> true once (in bind_connect_inval_addrlen). You can explicitly call
-> bind() with a zero size in bind_connect_inval_addrlen().
-> 
-> Same for connect_variant().
+> Looks like that. At least for hooks that are not called from
+> security.c.
 
-  Ok. Will be fixed.
+It seems like that all security_* functions are filtering on private inodes. Anonymous inodes have them and some filesystem set the S_PRIVATE flag. So it may not make a difference fro IMA and EVM then.
+
+     Stefan
+
 > 
+> Thanks
 > 
->>>
->>>
->>>> +	else
->>>> +		return bind(sockfd, &self->addr6[index],
->>>> +			    (zero_size ? 0 : sizeof(self->addr6[index])));
->>>> +}
->>>> +
->>>> +static int connect_variant(const struct _fixture_variant_socket *const variant,
->>>> +			   const int sockfd,
->>>> +			   const struct _test_data_socket *const self,
->>>> +			   const size_t index, const bool zero_size)
->>>> +{
->>>> +	if (variant->is_ipv4)
->>>> +		return connect(sockfd, &self->addr4[index],
->>>> +			       (zero_size ? 0 : sizeof(self->addr4[index])));
->>>> +	else
->>>> +		return connect(sockfd, &self->addr6[index],
->>>> +			       (zero_size ? 0 : sizeof(self->addr6[index])));
->>>> +}
-> .
+> Roberto
+> 
