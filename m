@@ -2,227 +2,111 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2196AC64EC4
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 16:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA45C6FD1B
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 16:48:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231376AbjCFQPb (ORCPT
+        id S231136AbjCFQs1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Mar 2023 11:15:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39494 "EHLO
+        Mon, 6 Mar 2023 11:48:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229997AbjCFQPL (ORCPT
+        with ESMTP id S230392AbjCFQsM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Mar 2023 11:15:11 -0500
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fad])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE13C8A78
-        for <linux-security-module@vger.kernel.org>; Mon,  6 Mar 2023 08:11:37 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PVk6n0ydDzMqFhm;
-        Mon,  6 Mar 2023 17:09:37 +0100 (CET)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4PVk6m2GZzzMs97C;
-        Mon,  6 Mar 2023 17:09:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1678118977;
-        bh=4ihYqjRB0GwxSKQIQyW2AaDLli+JWwa70EQF7JSXzrs=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=kyCrErUHhfqkF3dxojq4RbhmrHW/4IM5zaTKPqZb/IJ0GZv3Bn0F2yVqWO7h/gOWD
-         ptPE8l2aHwaTpcBLPsRlPaLpRoE5Lr2TRFp6+2A98JAheJxH938oErCHomgipSDVuA
-         YItj3eDRmTQ47qjr9gWji9v6greGB1VSvsBOfn4A=
-Message-ID: <950d64ee-5b17-af81-8b85-dd2b392c7487@digikod.net>
-Date:   Mon, 6 Mar 2023 17:09:35 +0100
+        Mon, 6 Mar 2023 11:48:12 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7B244C6E2;
+        Mon,  6 Mar 2023 08:47:43 -0800 (PST)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 326FGtLP007103;
+        Mon, 6 Mar 2023 16:46:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=Prg32a8lypSzsuzKaLaRGI/598mjJ01sZ+3Tf2eA04o=;
+ b=WPr+37PUtw4EvxFS7nTnqlOPXddkNrZMARg2cCBjv+yiMR2WfOss6zzbv1bYsJnVCenW
+ BU4sx6jUyt3DXUD8jkpJuWbVVt7g5QNSBSC9IOZ1VMt8H8vD5ldvSkYDy2G0fg0STPv9
+ xW3RtaCVeTv4aHOFHk+jETz1WHqTtS5RQorDmzejdEiLaMGKf1EjdO3QmMLF1lxuOLWh
+ AW4/Zyeq8pXVWsTzjokRodmszy6ZXGXY766K0qWUHyO0HqZxHS7Balh/w9LAKnNtDAhb
+ kZcU9KoxOM0VOQfaqIJ07lrYkBAWcub0yD6ldShft3RctU3l4oO3Rb+Z0PHRuix23DDN wA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p4ysdt79x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 16:46:05 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 326Eb8kJ004998;
+        Mon, 6 Mar 2023 16:46:05 GMT
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p4ysdt79d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 16:46:05 +0000
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 326GNp3Z010183;
+        Mon, 6 Mar 2023 16:46:03 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([9.208.130.101])
+        by ppma04wdc.us.ibm.com (PPS) with ESMTPS id 3p419e67k6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 16:46:03 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+        by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 326Gk2dm46465464
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 Mar 2023 16:46:02 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B814F5805E;
+        Mon,  6 Mar 2023 16:46:02 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7E82A5805A;
+        Mon,  6 Mar 2023 16:46:01 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Mon,  6 Mar 2023 16:46:01 +0000 (GMT)
+Message-ID: <c3360cee-b6c8-2ea3-a9e3-e6fbba198b57@linux.ibm.com>
+Date:   Mon, 6 Mar 2023 11:46:01 -0500
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v9 12/12] landlock: Document Landlock's network support
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 01/28] ima: Align ima_inode_post_setattr() definition with
+ LSM infrastructure
 Content-Language: en-US
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
- <20230116085818.165539-13-konstantin.meskhidze@huawei.com>
- <Y8xwLvDbhKPG8JqY@galopp> <eb33371b-551e-ae6c-d7e3-a3101644b7ec@huawei.com>
- <68f26cf2-f382-4d31-c80f-22392a85376f@digikod.net>
- <526a70a2-b0bc-f29a-6558-022ca12a6430@huawei.com>
- <278ab07f-7583-a4e0-3d37-1bacd091531d@digikod.net>
- <85b31cb8-1aeb-d6f0-6c7d-91cea6b563d4@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <85b31cb8-1aeb-d6f0-6c7d-91cea6b563d4@huawei.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
+        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+ <20230303181842.1087717-2-roberto.sassu@huaweicloud.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20230303181842.1087717-2-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Hjw8-b5VOVH_KkdYeH9FjpUbzxLar_WK
+X-Proofpoint-GUID: dPhapGl98lRGn8zDeRdkzVYryXO4oXcc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-06_10,2023-03-06_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ malwarescore=0 adultscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+ mlxlogscore=956 suspectscore=0 bulkscore=0 priorityscore=1501 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2303060142
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 06/03/2023 14:43, Konstantin Meskhidze (A) wrote:
+
+On 3/3/23 13:18, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 > 
+> Change ima_inode_post_setattr() definition, so that it can be registered as
+> implementation of the inode_post_setattr hook.
 > 
-> 2/21/2023 7:16 PM, Mickaël Salaün пишет:
->>
->> On 30/01/2023 11:03, Konstantin Meskhidze (A) wrote:
->>>
->>>
->>> 1/27/2023 9:22 PM, Mickaël Salaün пишет:
->>>>
->>>> On 23/01/2023 10:38, Konstantin Meskhidze (A) wrote:
->>>>>
->>>>>
->>>>> 1/22/2023 2:07 AM, Günther Noack пишет:
->>>>
->>>> [...]
->>>>
->>>>>>> @@ -143,10 +157,24 @@ for the ruleset creation, by filtering access rights according to the Landlock
->>>>>>>     ABI version.  In this example, this is not required because all of the requested
->>>>>>>     ``allowed_access`` rights are already available in ABI 1.
->>>>>>>     
->>>>>>> -We now have a ruleset with one rule allowing read access to ``/usr`` while
->>>>>>> -denying all other handled accesses for the filesystem.  The next step is to
->>>>>>> -restrict the current thread from gaining more privileges (e.g. thanks to a SUID
->>>>>>> -binary).
->>>>>>> +For network access-control, we can add a set of rules that allow to use a port
->>>>>>> +number for a specific action. All ports values must be defined in network byte
->>>>>>> +order.
->>>>>>
->>>>>> What is the point of asking user space to convert this to network byte
->>>>>> order? It seems to me that the kernel would be able to convert it to
->>>>>> network byte order very easily internally and in a single place -- why
->>>>>> ask all of the users to deal with that complexity? Am I overlooking
->>>>>> something?
->>>>>
->>>>>      I had a discussion about this issue with Mickaёl.
->>>>>      Please check these threads:
->>>>>      1.
->>>>> https://lore.kernel.org/netdev/49391484-7401-e7c7-d909-3bd6bd024731@digikod.net/
->>>>>      2.
->>>>> https://lore.kernel.org/netdev/1ed20e34-c252-b849-ab92-78c82901c979@huawei.com/
->>>>
->>>> I'm definitely not sure if this is the right solution, or if there is
->>>> one. The rationale is to make it close to the current (POSIX) API. We
->>>> didn't get many opinion about that but I'd really like to have a
->>>> discussion about port endianness for this Landlock API.
->>>
->>>      As for me, the kernel should take care about port converting. This
->>> work should be done under the hood.
->>>
->>>      Any thoughts?
->>>
->>>>
->>>> I looked at some code (e.g. see [1]) and it seems that using htons()
->>>> might make application patching more complex after all. What do you
->>>> think? Is there some network (syscall) API that don't use this convention?
->>>>
->>>> [1] https://github.com/landlock-lsm/tuto-lighttpd
->>>>
->>>>>>
->>>>>>> +
->>>>>>> +.. code-block:: c
->>>>>>> +
->>>>>>> +    struct landlock_net_service_attr net_service = {
->>>>>>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
->>>>>>> +        .port = htons(8080),
->>>>>>> +    };
->>>>>>
->>>>>> This is a more high-level comment:
->>>>>>
->>>>>> The notion of a 16-bit "port" seems to be specific to TCP and UDP --
->>>>>> how do you envision this struct to evolve if other protocols need to
->>>>>> be supported in the future?
->>>>>
->>>>>       When TCP restrictions land into Linux, we need to think about UDP
->>>>> support. Then other protocols will be on the road. Anyway you are right
->>>>> this struct will be evolving in long term, but I don't have a particular
->>>>> envision now. Thanks for the question - we need to think about it.
->>>>>>
->>>>>> Should this struct and the associated constants have "TCP" in its
->>>>>> name, and other protocols use a separate struct in the future?
->>>>
->>>> Other protocols such as AF_VSOCK uses a 32-bit port. We could use a
->>>> 32-bits port field or ever a 64-bit one. The later could make more sense
->>>> because each field would eventually be aligned on 64-bit. Picking a
->>>> 16-bit value was to help developers (and compilers/linters) with the
->>>> "correct" type (for TCP).
->>
->> Thinking more about this, let's use a __u64 port (and remove the
->> explicit packing). The landlock_append_net_rule() function should use a
->> __u16 port argument, but the add_rule_net_service() function should
->> check that there is no overflow with the port attribute (not higher than
->> U16_MAX) before passing it to landlock_append_net_rule(). We should
->> prioritize flexibility for the kernel UAPI over stricter types. User
->> space libraries can improve this kind of types with a more complex API.
->>
->> Big endian can make sense for a pure network API because the port value
->> (and the IP address) is passed to other machines through the network,
->> as-is. However, with Landlock, the port value is only used by the
->> kernel. Moreover, in practice, port values are mostly converted when
->> filling the sockaddr*_in structs. It would then make it more risky to
->> ask developers another explicit htons() conversion for Landlock
->> syscalls. Let's stick to the host endianess and let the kernel do the
->> conversion.
->>
->> Please include these rationales in code comments. We also need to update
->> the tests for endianess, but still check big and little endian
->> consistency as it is currently done in these tests. A new test should be
->> added to check port boundaries with:
->> - port = 0
->> - port = U16_MAX
->       port = U16_MAX value passes.
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-correct
-
-> 
->> - port = U16_MAX + 1 (which should get an EINVAL)
->       port = U16_MAX + 1 after casting is 0, EINVAL is returned.
-
-In the tests, we want the casting to be be done by the kernel. The test 
-should then pass 0x10000 to the struct and the kernel should return 
-EINVAL because it is greater than U16_MAX, not because it is zero.
-
-> 
->> - port = U16_MAX + 2 (to check u16 casting != 0)
->       port = U16_MAX + 2 after casting is 1, is it passes?
-
-In this case, 0x10001 should be rejected by the kernel (and return 
-EINVAL) because it is greater than U16_MAX.
-
-> 
->> - port = U32_MAX + 1
->> - port = U32_MAX + 2
-> 
->       Don't you think that all port values >= U16_MAX + 1, EINVAL should
->       be returned?
-
-All port values > U16_MAX should indeed return EINVAL, and tests should 
-check kernel casting (i.e. the kernel must check the 64-bit value before 
-casting it to a 16-bit value and only check the casted zero). I didn't 
-mean that these cases should pass, only that they should be tested, but 
-I think you got it. ;)
-
->>
->>
->>>>
->>>> If we think about protocols other than TCP and UDP (e.g. AF_VSOCK), it
->>>> could make sense to have a dedicated attr struct specifying other
->>>> properties (e.g. CID). Anyway, the API is flexible but it would be nice
->>>> to not mess with it too much. What do you think?
->>>>
->>>>
->>>>>>
->>>>>>> +
->>>>>>> +    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
->>>>>>> +                            &net_service, 0);
->>>>>>> +
->>>>>>> +The next step is to restrict the current thread from gaining more privileges
->>>>>>> +(e.g. thanks to a SUID binary). We now have a ruleset with the first rule allowing
->>>>>>              ^^^^^^
->>>>>>              "through" a SUID binary? "thanks to" sounds like it's desired
->>>>>>              to do that, while we're actually trying to prevent it here?
->>>>>
->>>>>       This is Mickaёl's part. Let's ask his opinion here.
->>>>>
->>>>>       Mickaёl, any thoughts?
->>>>
->>>> Yep, "through" looks better.
->>>> .
->> .
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
