@@ -2,127 +2,99 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E24AC61DA4
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 18:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D04C6FD1B
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Mar 2023 18:49:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229824AbjCFS3A (ORCPT
+        id S230223AbjCFSt1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Mar 2023 13:29:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52398 "EHLO
+        Mon, 6 Mar 2023 13:49:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229718AbjCFS26 (ORCPT
+        with ESMTP id S230166AbjCFStZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Mar 2023 13:28:58 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8B9B34317;
-        Mon,  6 Mar 2023 10:28:37 -0800 (PST)
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 326F229r032225;
-        Mon, 6 Mar 2023 16:52:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=Qmb+wAuWZ++BAHNyIHrpxJlNwrEdwiaNpMW6hsm+jrw=;
- b=sOAHNLdpoGmHSyZ2ajlW8OMzQL1sJcQo7ANDzBbtQd0g7G96kNVjczG7NCCQESssGZre
- QTfAzkE/dCo2xP5PpLYADBej8T2wQm9FStizxJeKWUCPB/YbeluWzj96++LVjabxvtGt
- nhJ7FL3G5CcXud70UFbxzjmEnqIZTHAVOU9no82QzjVqPACCB2ITpbU7NfyV++BaDbze
- NurjUilf7GPeOx5/JRwvhmCP6O9IzLBy1AQBF7kCEsAscReZDrnNrsEuYd3v1/Jisszj
- nN6vdhVKeb2wgPkv3IhbpEW9DZk1wT7UHs3VtLDh9FNh08bTh2uyM7Vv7QP/PK+B0MwD bA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3p4x1humsk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Mar 2023 16:52:16 +0000
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 326GfkIZ023728;
-        Mon, 6 Mar 2023 16:52:15 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3p4x1hums0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Mar 2023 16:52:15 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 326Fwjux017270;
-        Mon, 6 Mar 2023 16:52:14 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([9.208.129.117])
-        by ppma04dal.us.ibm.com (PPS) with ESMTPS id 3p41ak9s46-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Mar 2023 16:52:14 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-        by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 326GqDSw64487822
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 6 Mar 2023 16:52:13 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4E32D5805C;
-        Mon,  6 Mar 2023 16:52:13 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6542B5805E;
-        Mon,  6 Mar 2023 16:52:09 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon,  6 Mar 2023 16:52:09 +0000 (GMT)
-Message-ID: <297a6bd8-fd91-bdf1-1c45-ebbc0a424711@linux.ibm.com>
-Date:   Mon, 6 Mar 2023 11:52:08 -0500
+        Mon, 6 Mar 2023 13:49:25 -0500
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C32811A658
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Mar 2023 10:49:23 -0800 (PST)
+Received: by mail-pf1-x42f.google.com with SMTP id ce7so6472367pfb.9
+        for <linux-security-module@vger.kernel.org>; Mon, 06 Mar 2023 10:49:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1678128563;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3/dAOgGOb62V2zK33/81eVK4BPQmGGtO54/EVqtNnL8=;
+        b=cnQWTgpAjPCUocNlZLqXEIJBBsS84oCi683vzHQyGg2JH6hkkUuPu1Sn8otDPVsXMf
+         vqXVrvuwUDR/Q72TPQMKrxMJfm+y1LBTdfvDv7gtEBUYp9NcD0B1VXhKDOLssVxEaqtz
+         G7rj4+Yr+xA55rRjXQYngOFBYx6Lnrx/xYorSKaVrGFH0Mq6YBykH0ZuCkPjj9KTJtjv
+         1qIF14ehwpOiyf/JHdBmeewCGgyLaRDojn0/AfJAVTrOxiQW+2kqk0xU7hqUWJkXL8l4
+         PO+gsvpZ+VFEqkZ4tkfOaivvVWvbt3Q7TIAPrlAFw9BSzUI2ZqnShBFYchEARZVlFaae
+         ThUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678128563;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3/dAOgGOb62V2zK33/81eVK4BPQmGGtO54/EVqtNnL8=;
+        b=N4dfsDaHeRpyo1yNfa9gMenvVrrJL0IVLcNfeERC8iHN0AFYFQ/CegdK/juYH8i7Yl
+         037H6JfuAQRSGJKzs8kdZoBByg4upD6yvVYia4ih9Wm2H56+d24uVVzldMcROKTpJ0it
+         NVSaYuPLFkVFdLq6Y6SVJTCPYEGhADjOpzPRVzTzjWX6IQ0wYfbuxOkfdqTUKIEoOpJH
+         TZhz8xXUME6oD2mjKBkn2q0Sgk3LfqyIRlPNs2jdvP+dn7RoQOfx2Hr+EKudCQYoUCa8
+         TQQ42pFJKCR5eLZ/7+wHzx6BWFr66YCtRciG9MVghXuN++LejrFUCvcb2JFd5CkRJg/Z
+         tmuQ==
+X-Gm-Message-State: AO0yUKXrfFJCey7ZZOnvVLCVOQumbA7WbDy/xs0DGY7Xpwqj6qE55IVT
+        9MKYFMaPvlnRtwayseq2jFIVi3D0EUbvQUxZbCqyIkx9YzahMGw=
+X-Google-Smtp-Source: AK7set8LEM5ZX5HiwnKTkfyvG2DmWZOrzjQVvz/WzYzvwLIb0pNdXfUjgqzeVxFTy33HlGhrpOqKS5hrwJRb9SIxi7M=
+X-Received: by 2002:a65:6a85:0:b0:503:25af:f50d with SMTP id
+ q5-20020a656a85000000b0050325aff50dmr4135924pgu.4.1678128562622; Mon, 06 Mar
+ 2023 10:49:22 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 02/28] ima: Align ima_post_path_mknod() definition with
- LSM infrastructure
-Content-Language: en-US
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
-        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
- <20230303181842.1087717-3-roberto.sassu@huaweicloud.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20230303181842.1087717-3-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ch7eh3n3M6hNzFx4iV-VKLQYvZxCHWC-
-X-Proofpoint-ORIG-GUID: nBfLHMSSXtcL4sth2LFlHrHwraCz-G7O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-06_09,2023-03-06_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=968 spamscore=0 lowpriorityscore=0 suspectscore=0
- clxscore=1015 adultscore=0 phishscore=0 mlxscore=0 bulkscore=0
- impostorscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2212070000 definitions=main-2303060142
+References: <20230217032625.678457-1-paul@paul-moore.com>
+In-Reply-To: <20230217032625.678457-1-paul@paul-moore.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 6 Mar 2023 13:49:11 -0500
+Message-ID: <CAHC9VhQnjmX9n2KJhj97SnQfuO50kaJxX3p8p4gHBC5mBkLfxg@mail.gmail.com>
+Subject: Re: [PATCH 00/22] Move LSM hook comments into security/security.c
+To:     linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Feb 16, 2023 at 10:26=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+>
+> Hello all,
+>
+> The LSM hook comment blocks are a in a rather sad state; separated from
+> the hook definitions they are often out of mind, and as a result
+> most of them are in varying levels of bit-rot, some severely.  This
+> patchset moves all of the comment blocks out of lsm_hooks.c and onto
+> the top of the function definitions as one would normally expect.
+> In the process of moving the comment blocks, they have been massaged
+> into the standard kernel-doc format for the sake of consistency and
+> easier reading.  Unfortunately, correcting all of the errors in the
+> comments would have made an extremely long and painful task even worse,
+> so a number of errors remain, but the worst offenders were corrected in
+> the move.  Now that the comments are in the proper location, and in the
+> proper format, my hope is that future patch submissions correcting the
+> actual comment contents will be much easier and the comments as a whole
+> will be easier to maintain.
+>
+> There are no code changes in this patchset, although since I was
+> already adding a lot of churn to security.c, the last patch in this
+> patchset (22/22) does take the liberty of fixing some rather ugly
+> style problems.
+>
+>  include/linux/lsm_hooks.h | 1624 +++++++++++++++++++++
+>  security/security.c       | 2702 +--------------------------------------=
+-
+>  2 files changed, 1710 insertions(+), 2616 deletions(-)
 
+Seeing no objections, and the ACK from Casey, I've gone ahead and
+merged this patchset into the lsm/next branch.  There was some minor
+merge fuzz due to the mount idmap work and some IMA changes, but the
+vast majority of the patchset is exactly as posted.
 
-On 3/3/23 13:18, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Change ima_post_path_mknod() definition, so that it can be registered as
-> implementation of the path_post_mknod hook.
-> 
-> Also, make sure that ima_post_path_mknod() is executed only if
-> (mode & S_IFMT) is equal to zero or S_IFREG.
-> 
-> Add this check to take into account the different placement of the
-> path_post_mknod hook (to be introduced) in do_mknodat(). Since the new hook
-> will be placed after the switch(), the check ensures that
-> ima_post_path_mknod() is invoked as originally intended when it is
-> registered as implementation of path_post_mknod.
-
-                 case 0: case S_IFREG:    <---- this here
-                         error = vfs_create(mnt_userns, path.dentry->d_inode,
-                                            dentry, mode, true);
-                         if (!error)
-                                 ima_post_path_mknod(mnt_userns, dentry);
-
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+--=20
+paul-moore.com
