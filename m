@@ -2,124 +2,110 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E14DC6FD1E
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Mar 2023 17:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9339EC678D5
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Mar 2023 17:55:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229826AbjCGRSd (ORCPT
+        id S229838AbjCGRzK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Mar 2023 12:18:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60720 "EHLO
+        Tue, 7 Mar 2023 12:55:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbjCGRSL (ORCPT
+        with ESMTP id S230219AbjCGRyl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Mar 2023 12:18:11 -0500
-Received: from sonic303-27.consmr.mail.ne1.yahoo.com (sonic303-27.consmr.mail.ne1.yahoo.com [66.163.188.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EB829475C
-        for <linux-security-module@vger.kernel.org>; Tue,  7 Mar 2023 09:13:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1678209231; bh=uZ18eq+KE68358mnuCeXuV/vvinw/K9wC8rXpWJAgzk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=qaYOAVMkNAhDXRUxJTW3PR09BRTcrumaZY3Wvw7wYaRO9eCqp+5O3z2vPiIJQG/tWRHdqviP0mbfDameMyttUyIrYdqz57/SpvBzBbZqskPhVtS2VlJkvl+zl5kz1g/dt3QqauEVjtmILHhWVyakTCRVrksgb7uYgFgeVED+C8jkvGsRvLseReNV9STO0HLBo8Uc8uLaF7C9JFzyJCiSo06QFuW8eFfNgJ8H7vfToJQ+ScZLVUn2kbAguftwM7iXM0X5bw2HjBn3/xXCn7NroESNYTOY11TPKLFSz4wUH5P/iKIVP95PcnoSzHma2Onz29Z+m6n+EiP4bN/DYxxmQA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1678209231; bh=A/nx8p+cIlbaC8I2Bkszlxcodwtw8xUlfc5U+zY12nc=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=gEU/AG9mCqnzgqnsu3xuw97uj+6zIzy5+4eyNL4V6MHBxW9cJ2oQDpRom6V7UuVVT/iOf88IWAHzAAZTz9qKkxW/+CQzGHjLCv4P6EFDfm609wHtaVUD92geATK8dW363yoGkDnoIdUjS5vXfA+HFnhBomitm5ZZ+5f546qPR4amuH/aEhoWrksVC67YBDY4nPlLpc7sr2+s94cGjkvwwUQxB1cBuJOSYTberY2B8t5bnpuS8e1KeVocnw1vOzAV5O5bmlu58Ie/9DGfMM4SGWulTpj0f3U2T0D2f2bC22gLTSOQbFVQM4s3N2SkOgvETkT1aIuzGAeFmvMXPXjUFQ==
-X-YMail-OSG: M6R9XRwVM1k_DWJCIKAtsK7u_P4H8o7YVo4CwYeFAwgscohJglT4atCq1JQL2Ia
- HJGMHOf43FBzIbNQAd4CGEMBnJ9BC0sRbL7UZIEuarkscSrST2m03P8V3wnN8kFyDrWjGro1.O6e
- xWJcXoujpmyYTXY4swhxnRjLpjKDcNIzIO.GPSgByH6vFrGTURTlfvhiFuh8fDUYYWC76L6tXVEs
- I9qIgGyXsiUSU4CTuThbMA.pZ5o4jRtRrNvmHyPLFigMloH.5kPftgllcHGgQCY7Up9vYBmubs_q
- Szqemma6RC9.nPfe8EwOzCeK6h1z.Yz2KpUNLXsp6qGS5jLoa8dEvdktQ1OB1FYJS34dp2ibCbWR
- kvShQa7eFr1Ovrdcr40gDsUmIfilbd.c4TEDFSrcI_zoMgc_srG.b7boOJFX2JHPFagAxPAhKKYT
- _wEMRNbRa1C_YWjpZo.knQTdg8R.SUInN87BGOSaKXwYxIEXhc80WYGFArvNyK4gED3R6GiBHUEv
- 3gfMUpmbZrgzivjZmB03MHFJJ1w6JGdB3GTAwgnf4haXLO8P.FXD4FfFBg51mfaz9V88mLrFl3tz
- afAjyOeE5TeaGMVv44bB3oA0sPn0H8thvag_RzIBA8HgYk.Os.P0DDibH80B7yDJWCyWG_hSurtr
- 21lUUwxDDxg_CRVZgoNI_U6.NS4sO5Ls1Ik3RXRk_Gddrkeat5gT4MNo_zXxs0ahi935zhNo4LdL
- sdVmQaq_pGAtACWCBzg.yIix0qGZb1YAeh6iQLBHftl.8nq3yqtHEXcGz50DgGw2qv9Za52Y05NL
- 4UjLILbfpoTAoqIPOqfU.M15uIHdl4MIhpauUrPQk7VLaXGdchAt18_vEI8kQqMfaZIIez5vNK7H
- huLYLb0UrkS.lqi6jkG15plpoJtfIZpsgkl8OsYfmnooX1RwxruZAwplcF_kw_rtqzNDo_rXdIiz
- yuhjszoDtlN6MwO_LrhdZGtFAuSEfvYmcxajAyp2fD_Gm2qNUTM81mM9_rjuPpfUFcxitt1Zwt3N
- X8eDkWG5fBzTQDn__6snY97jxR_qY6_UBfupu8Z4dDpBk2W8kdqgiZtBpB1eqxP3WIkrG.YNnKGY
- gX5AiJiREWGJBOv7DnPHycMHpeVR7LuIHz7ZWh2F.SDFF3BwBMyBv8AhhXFN7hlJS.ASGoG410pm
- HcRHxqg57v7Sn6_kPANGVoNPqg_2nBmYy1yu.wqyTFOx5G2jtWY8POB1fmxkiJ2WwYIWVg3zEcTA
- BWU.GUZmfv9xBavgPTBHhufTIyfS5wJHf53x4EkB0QF87oJQYwaZ7HPD0rrvkynI7BZh7.ZQ38n0
- SpJKh98PI7.dp2r9cHxjWKejm7cyBmwVUyUC_lvpy_Q5qzVCfj9rC3rGuCmFTpPohvTocJMphd5A
- mPYJ0I3eLdCuqM1E8Ssg.60gYsW743Tdxg3kN3coPEANxOSsiU1j55UTdO8wKtA7QncSL1Rtx5tY
- FnCcwRpoGt49kQ2aD1_UUOnUGhGyBqJljN3W05PKuoemC41jsF9OETZ0mdwIQhkv82ZXCfWnMn1U
- mZlfJU9IIpsDx8sij8uNk9.cvnI07rcDy.FJop8uCFr4dPBDt.7HwlpotlZviKH079x48fZza3QT
- ZHmYvEgjg2QvdajaW0xNNpiJr_SLK5Qwcmpa.s2pQOTRx_g9IUv0SG6wfJXyARSQrhNSMlMuB4Vk
- KL18L8jhHI0BdTsv9uQNQ.mGNhphfAHkApCTJ_3oumuMqr79pxEadlS28QosMTvQiCBg9BCwcnFU
- xP267eXvqlLgNilToA4EiGmWGaORW4btt7P3zi7rKQzvB0EqACMC3THjx3UTi9nQOxHR2lRyL9bb
- 1WZunhUBtmCqCQpmBnYh05ewUoqLeBnTkkq4AUYXG2XGrSDWQe6oQNPnGU2GR7JgTvJbkSbN9R8s
- D4ennHpg_Alzg3bWR7YCyKPgFFike0Gbgdkehi6NmD4cTT6HlGjwHESb5uvueLp0.cy.zHjvXKdS
- y2Judqid.xrBFu23tKH4p.7ilLgn9PRc_0eWppv0yf9ZaovPNPdU.VdYBn4lxPV6TT_l9xSq4obp
- vd.vJ8U275ant3VAOZNlJ6H2dV79hay8RNMWXpU9SbTmPHZfND7ix6c_dd8taCtHgppQWH0apUBV
- iEScS_a7f1b2iq2.sCna_cJ.8FmWrv6hgEInUTnPrcpNt9MBWAu0d65XPDV3s.9IzDUj5eraVFJt
- I33TMPZunmfZn3_giq3DAfJJPuxni0LnBp5b0DlnLVMfRsTZhkb_ys1L9VPpaaPk5NeOpwJm1.ma
- Fms7WXQ4n9HibJ1kg9UM-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Tue, 7 Mar 2023 17:13:51 +0000
-Received: by hermes--production-ne1-7688d778d7-l5k5m (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 2ada3e063c3db3053feeb0e87bb880c6;
-          Tue, 07 Mar 2023 17:13:49 +0000 (UTC)
-Message-ID: <c5a11d40-9081-dfad-3d5a-7d46ba764dd5@schaufler-ca.com>
-Date:   Tue, 7 Mar 2023 09:13:48 -0800
+        Tue, 7 Mar 2023 12:54:41 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2C561BAF5;
+        Tue,  7 Mar 2023 09:49:29 -0800 (PST)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 327G4rhm028559;
+        Tue, 7 Mar 2023 17:48:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=4aAJWJBy975NS+0ZaKkPZz9k8xW/dBALS7N/Lh1ppNI=;
+ b=qHhYfoo1Ym8JeCNzGkEWB0Wb33jiZ/DJ13mKTE8uPGTZUxBtyl0crkgWwNsDUxJqaeSP
+ 1SvNWyuXjcBLRkvuGtNP9kZEFJnTbhzHHUllLvHesAesWYjXweHy+hf6LDkpg+FYi3yn
+ rUHoj+c726kyoGRrlDe0zKyd8W1H3NaFcKeedQvpNtZD6J4xiwF3jNFpd6t4q204HbRi
+ wiXjnIr1/iao42mp20VuE075569kjYd+XtktZJkZnXWaj45mc4WrqV91R2akiIO/IfTX
+ SMhxJ4B3ENAcKoDTNkaEvmbEbM+QS/5Njbar9MqrJIMmANx+EMGRUh1Z3SI4MYHl/Uq7 Aw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3p66uup6sb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Mar 2023 17:48:55 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 327HLCmp012848;
+        Tue, 7 Mar 2023 17:48:54 GMT
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3p66uup6s1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Mar 2023 17:48:54 +0000
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 327GtTjE010337;
+        Tue, 7 Mar 2023 17:48:53 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([9.208.129.116])
+        by ppma04wdc.us.ibm.com (PPS) with ESMTPS id 3p419ecgf8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Mar 2023 17:48:53 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 327HmpM96161056
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 7 Mar 2023 17:48:52 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6F355805D;
+        Tue,  7 Mar 2023 17:48:51 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EF42E58053;
+        Tue,  7 Mar 2023 17:48:49 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Tue,  7 Mar 2023 17:48:49 +0000 (GMT)
+Message-ID: <89c5588f-e039-6048-84a2-653194bd6eb8@linux.ibm.com>
+Date:   Tue, 7 Mar 2023 12:48:49 -0500
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v6 04/11] LSM: syscalls for current process attributes
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 22/28] security: Introduce key_post_create_or_update hook
 Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        paul@paul-moore.com, linux-security-module@vger.kernel.org
-Cc:     jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, casey@schaufler-ca.com
-References: <20230222200838.8149-1-casey@schaufler-ca.com>
- <20230222200838.8149-5-casey@schaufler-ca.com>
- <83b6310f-6101-2cdf-ec41-b850fe66b1c2@digikod.net>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <83b6310f-6101-2cdf-ec41-b850fe66b1c2@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21284 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
+        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+ <20230303181842.1087717-23-roberto.sassu@huaweicloud.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20230303181842.1087717-23-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: tKntTEC0eACe4lrs-UD5ZSxdfWUJ8N9j
+X-Proofpoint-ORIG-GUID: 1J7-_yGEaxKEfEZLMGq6PBJqb3ufz54B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-07_12,2023-03-07_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ impostorscore=0 mlxlogscore=999 clxscore=1015 lowpriorityscore=0
+ adultscore=0 malwarescore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303070157
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/7/2023 3:56 AM, Mickaël Salaün wrote:
-> Let's say an LSM need to pass a file descriptor instead of a text
-> value. Would that be possible or would it need to use another interface?
 
-You could use this interface. LSM_ATTR_MAGICFD would have a
-ctx_len = sizeof(fd) and the value in ctx. The underlying
-plumbing is another matter entirely. It's likely you'd need
-to provide more information in the ctx than the fd, but I
-couldn't say what it would be, and I won't speculate.
 
-I would not advocate such a use, as I am not now nor have
-ever been a fan of passed file descriptors.
+On 3/3/23 13:18, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> the key_post_create_or_update hook.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
->
->
-> On 22/02/2023 21:08, Casey Schaufler wrote:
->> Create a system call lsm_get_self_attr() to provide the security
->> module maintained attributes of the current process.
->> Create a system call lsm_set_self_attr() to set a security
->> module maintained attribute of the current process.
->> Historically these attributes have been exposed to user space via
->> entries in procfs under /proc/self/attr.
->>
->> The attribute value is provided in a lsm_ctx structure. The structure
->> identifys the size of the attribute, and the attribute value. The format
->> of the attribute value is defined by the security module. A flags field
->> is included for LSM specific information. It is currently unused and
->> must
->> be 0. The total size of the data, including the lsm_ctx structure and
->> any
->> padding, is maintained as well.
->>
->> struct lsm_ctx {
->>          __u64   id;
->>          __u64   flags;
->>          __u64   len;
->>          __u64   ctx_len;
->>          __u8    ctx[];
->> };
->>
->> Two new LSM hooks are used to interface with the LSMs.
->> security_getselfattr() collects the lsm_ctx values from the
->> LSMs that support the hook, accounting for space requirements.
->> security_setselfattr() identifies which LSM the attribute is
->> intended for and passes it along.
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
