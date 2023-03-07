@@ -2,107 +2,192 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF3FC678D4
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Mar 2023 08:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E41AAC6FA99
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Mar 2023 11:35:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230158AbjCGI65 (ORCPT
+        id S230138AbjCGLe6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Mar 2023 03:58:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41372 "EHLO
+        Tue, 7 Mar 2023 06:34:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbjCGI6z (ORCPT
+        with ESMTP id S230497AbjCGLel (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Mar 2023 03:58:55 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 478E7515F7;
-        Tue,  7 Mar 2023 00:58:53 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4PW8KD3lV2z9yB6h;
-        Tue,  7 Mar 2023 16:50:08 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwC3gVio_AZktq14AQ--.19560S2;
-        Tue, 07 Mar 2023 09:58:29 +0100 (CET)
-Message-ID: <f604ce5c7a535755a56736395a82220f65bcbc3f.camel@huaweicloud.com>
-Subject: Re: [PATCH 11/28] evm: Complete description of evm_inode_setattr()
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com, jlayton@kernel.org, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Tue, 07 Mar 2023 09:58:14 +0100
-In-Reply-To: <ecb168e5-e85f-73ee-7bc4-c13d0ea8811e@linux.ibm.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-         <20230303181842.1087717-12-roberto.sassu@huaweicloud.com>
-         <ecb168e5-e85f-73ee-7bc4-c13d0ea8811e@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Tue, 7 Mar 2023 06:34:41 -0500
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E1D626591
+        for <linux-security-module@vger.kernel.org>; Tue,  7 Mar 2023 03:33:34 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PWCxm3GfKzMrLKv;
+        Tue,  7 Mar 2023 12:33:32 +0100 (CET)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4PWCxk2dGMzMsF6k;
+        Tue,  7 Mar 2023 12:33:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1678188812;
+        bh=pCML9nu7R/npDpAM9amdFGrWk9nZdMBQ+LSX0iUteFc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=w+b5AAJMx6m57HZHWwFOGZVzqTiTftc/35JByv0pR4HWpctkFSisHv2F5/vRnKbFK
+         JVHykUJ2dWwuU7bU2t37rkGdXmnNdjKbRT72TX13Jj2WeXqALnb/euYvSG8pY1z7Xx
+         1AkJtYe7Y1s6aTmCnFpdo97hSdlV5Nc0KI1Zo7SQ=
+Message-ID: <1ca41f67-ffa1-56c2-b4ee-f5deece95130@digikod.net>
+Date:   Tue, 7 Mar 2023 12:33:29 +0100
 MIME-Version: 1.0
+User-Agent: 
+Subject: Re: [PATCH v6 05/11] LSM: Create lsm_module_list system call
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+References: <20230222200838.8149-1-casey@schaufler-ca.com>
+ <20230222200838.8149-6-casey@schaufler-ca.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230222200838.8149-6-casey@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwC3gVio_AZktq14AQ--.19560S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WrWkJF48Xr4UCFyUAr45GFg_yoW8XF13pa
-        yfKa48Gr4rtry29F98ta1xZa4Sg3y0gryj9398Aw4qyFn8GrnavryIkryrur98Kr18Cr1F
-        ya4av3W3Za15A3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAJBF1jj4pFJgACsW
-X-CFilter-Loop: Reflected
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-03-06 at 12:04 -0500, Stefan Berger wrote:
+
+On 22/02/2023 21:08, Casey Schaufler wrote:
+> Create a system call to report the list of Linux Security Modules
+> that are active on the system. The list is provided as an array
+> of LSM ID numbers.
 > 
-> On 3/3/23 13:18, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Add the description for missing parameters of evm_inode_setattr() to
-> > avoid the warning arising with W=n compile option.
-> > 
-> > Fixes: 817b54aa45db ("evm: add evm_inode_setattr to prevent updating an invalid security.evm")
-> > Fixes: c1632a0f1120 ("fs: port ->setattr() to pass mnt_idmap")
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> The calling application can use this list determine what LSM
+> specific actions it might take. That might include chosing an
+
+"choosing"
+
+> output format, determining required privilege or bypassing
+> security module specific behavior.
 > 
-> Among the previous patches I think there were 2 fixes like this one you could possibly also split off.
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>   Documentation/userspace-api/lsm.rst |  3 ++
+>   include/linux/syscalls.h            |  1 +
+>   kernel/sys_ni.c                     |  1 +
+>   security/lsm_syscalls.c             | 43 ++++++++++++++++++++++++++++-
+>   4 files changed, 47 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/userspace-api/lsm.rst b/Documentation/userspace-api/lsm.rst
+> index b45e402302b3..ecdf1acd15b1 100644
+> --- a/Documentation/userspace-api/lsm.rst
+> +++ b/Documentation/userspace-api/lsm.rst
+> @@ -63,6 +63,9 @@ Get the specified security attributes of the current process
+>   .. kernel-doc:: security/lsm_syscalls.c
+>       :identifiers: sys_lsm_get_self_attr
+>   
+> +.. kernel-doc:: security/lsm_syscalls.c
+> +    :identifiers: sys_lsm_module_list
+> +
+>   Additional documentation
+>   ========================
+>   
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index 1ef2a3de8ae0..9c947022a411 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -1062,6 +1062,7 @@ asmlinkage long sys_set_mempolicy_home_node(unsigned long start, unsigned long l
+>   asmlinkage long sys_lsm_get_self_attr(struct lsm_ctx *ctx, size_t *size,
+>   				      __u64 flags);
+>   asmlinkage long sys_lsm_set_self_attr(struct lsm_ctx *ctx, __u64 flags);
+> +asmlinkage long sys_lsm_module_list(u64 *ids, size_t *size, int flags);
+>   
+>   /*
+>    * Architecture-specific system calls
+> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+> index d03c78ef1562..32784e271fa5 100644
+> --- a/kernel/sys_ni.c
+> +++ b/kernel/sys_ni.c
+> @@ -265,6 +265,7 @@ COND_SYSCALL(mremap);
+>   /* security/lsm_syscalls.c */
+>   COND_SYSCALL(lsm_get_self_attr);
+>   COND_SYSCALL(lsm_set_self_attr);
+> +COND_SYSCALL(lsm_module_list);
+>   
+>   /* security/keys/keyctl.c */
+>   COND_SYSCALL(add_key);
+> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
+> index b89c4e7d009e..ccd3b236670b 100644
+> --- a/security/lsm_syscalls.c
+> +++ b/security/lsm_syscalls.c
+> @@ -19,7 +19,7 @@
+>   
+>   struct attrs_map {
+>   	char *name;
+> -	int attrs;
+> +	u64 attrs;
 
-Didn't find it.
+Why do we need this change in this patch?
 
-Thanks
 
-Roberto
+>   };
+>   
+>   static const struct attrs_map lsm_attr_names[] = {
+> @@ -102,3 +102,44 @@ SYSCALL_DEFINE3(lsm_get_self_attr, struct lsm_ctx __user *, ctx,
+>   {
+>   	return security_getselfattr(flags, ctx, size);
+>   }
+> +
+> +/**
+> + * sys_lsm_module_list - Return a list of the active security modules
+> + * @ids: the LSM module ids
+> + * @size: size of @ids, updated on return
+> + * @flags: reserved for future use, must be zero
+> + *
+> + * Returns a list of the active LSM ids. On success this function
+> + * returns the number of @ids array elements. This value may be zero
+> + * if there are no LSMs active. If @size is insufficient to contain
+> + * the return data -E2BIG is returned and @size is set to the minimum
+> + * required size. In all other cases a negative value indicating the
+> + * error is returned.
+> + */
+> +SYSCALL_DEFINE3(lsm_module_list,
 
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > ---
-> >   security/integrity/evm/evm_main.c | 2 ++
-> >   1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> > index 1155a58ae87..8b5c472f78b 100644
-> > --- a/security/integrity/evm/evm_main.c
-> > +++ b/security/integrity/evm/evm_main.c
-> > @@ -798,7 +798,9 @@ static int evm_attr_change(struct mnt_idmap *idmap,
-> >   
-> >   /**
-> >    * evm_inode_setattr - prevent updating an invalid EVM extended attribute
-> > + * @idmap: idmap of the mount
-> >    * @dentry: pointer to the affected dentry
-> > + * @attr: iattr structure containing the new file attributes
-> >    *
-> >    * Permit update of file attributes when files have a valid EVM signature,
-> >    * except in the case of them having an immutable portable signature.
+The name of this syscall differ from the two others: there is not "get" 
+verb. What about "lsm_get_modules" or "lsm_list_modules"?
 
+
+> +		u64 __user *, ids,
+> +		size_t __user *, size,
+> +		u64, flags)
+
+As Arnd said, flags should be a u32.
+
+> +{
+> +	size_t total_size = lsm_active_cnt * sizeof(*ids);
+> +	size_t usize;
+> +	int i;
+> +
+> +	if (flags)
+> +		return -EINVAL;
+> +
+> +	if (get_user(usize, size))
+> +		return -EFAULT;
+
+I'm not a fan of using the same pointer to read and write. This avoid 
+using const pointers and differentiate between input and output values. 
+I suggest using a dedicated argument for each.
+
+
+> +
+> +	if (put_user(total_size, size) != 0)
+> +		return -EFAULT;
+> +
+> +	if (usize < total_size)
+> +		return -E2BIG;
+> +
+> +	for (i = 0; i < lsm_active_cnt; i++)
+> +		if (put_user(lsm_idlist[i]->id, ids++))
+
+I'm not sure about it, but it may be better to put the complete list of 
+IDs at once. Is it better to set the size before or after?
+
+
+> +			return -EFAULT;
+> +
+> +	return lsm_active_cnt;
+> +}
