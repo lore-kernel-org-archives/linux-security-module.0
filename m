@@ -2,99 +2,163 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF67C678D5
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Mar 2023 17:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F94C742A7
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Mar 2023 18:11:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230320AbjCGR53 (ORCPT
+        id S230212AbjCGSLH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Mar 2023 12:57:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48830 "EHLO
+        Tue, 7 Mar 2023 13:11:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230288AbjCGR4y (ORCPT
+        with ESMTP id S229586AbjCGSKu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Mar 2023 12:56:54 -0500
-Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62BECA3B4D
-        for <linux-security-module@vger.kernel.org>; Tue,  7 Mar 2023 09:51:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1678211500; bh=j1xXZ7AsC0SiMy/xoLGhGDWAEScUiPsakL/c2zQSjSk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Qf3JsGN0BG2utCpv0EU1oHMI02STZHdT83vavRU+sDIs7e/AkREXIxF5IeBotS7Egv4gQDLhheSTsRLkET04jtCaq/M3+oh006Mj0TOrkmcC4EbkN2QN4NTEKWMBtfgRkkXRJnGcj8SSsDheWI0quJk9YT2Q3goW103Grtx3QYw4MOv0nFGJK3Ga951Cv9Ru2d0FC5SUXROOeGFawCY2UK8jcCxqhNwEuRIshY9YGfmDjeN+G4kJZcftmVkMLeFZLreLGYKyrv+uxJYqPBr0bl8ls+v3bTujbwAR9qgmJZTgqZwwfXnunKBwB0+xfMRaMfZvGRhHoK/UObYBL7AKfw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1678211500; bh=TqX//aNrylf3uY04/XYPW/2pwOHu0S2I26jrnAa/Ypn=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=hU7wQngi8m7rY5BgKDdvhFIg+ym3+lYZHUdHCoCiXQXH2xIxZUDNs8ANA8C/INRJw398cbtzIhzkXJtCt3g7fLo7eVogA/Fy2DcbYwIgmWY5nX6aV68faitrirAsKXhhT3BlttgXEw6MH+F8QsB9nirOIVMF371AkXKITzKeH2PSRp65D60dO8KlVyr1MZEMPG29PcqsjfDwJnHIG41RI+X10Gow73SBpNa7i8O0kPEn+QxC9qReJi8YZ4U0zICKUy8jXZLKEWwuDdvfSI2aSSsqT0gUdtMH1YQX24AKmINBCwIaLJDuVgBRqMTM7GOB/D9s+9u9yu/UQfIV63rRpQ==
-X-YMail-OSG: aza0gbIVM1mSqS2YSXZafwDRlo84_S4r8I3Jn5G1d2LprBz0S6_2UQsIraczz0W
- r_XIRJgSurJQYgfyWoGGlhaKrvmzr0W9jNlnhrsM0R1fuZCWj7Td3TiGeMuoyCnnudV_Wh1FzciY
- 1UKaASvqhL_AKCjjRBMe3sQt1BBGq26WEylZ3yoisdE5dh4GK56Uy.4Bw_NB6Ydgxvhie.pzguqY
- EDnD2LAbN9fIA4LMUwsnACWltczblgB1KpYhmWN6xCSE.A8.H9l60gFkUA.iHhNVvhadZMeN255s
- knB0Rn_Ah40D018V84QvzfjMNZPoXd5J1m3rh4n0g9osVai0KKU04_XadT3Pikhh8hIepFTWc6RY
- .DWmDmXlJ7gh56lu7qOj.KQ09AecdThLplohEIhdmpS1zimbhMpbS4y9qXo6cPmtW8Zg9TSqdeRy
- keLO5MyGJNO7uYdC5Z0J3emG3JQ9aRg3flX_NyXLmFycO7VlkjuokC.nAPHSof0u4TP243YQ43zx
- l5uoxDVVqXO05KI.huwy9T7fAW4EXdAG.5ubeEHJGkt6ptzbjStMOAnj_ZHPD2FdU14_136wIGAt
- iljlVh.x9n57bfn7F_7OIvblS7pOMhDoA_ku0WhtpotJhJY7DLNIV5mFVyuD9iMj4JfVypVuM0tw
- YQzs_yMZ9eYjNBGlR4JuHM4gvYQSPI.lvRPA6IPiJUO885j2XpllxTqajrlIbtAtiFMdZXCF2wFb
- yxJdnOOuhZqpvp3PGoynFatIsW58B4ddpl11TxH3P5jLmyd0a6_5RXXQdv6hjgAf13Pw5tYMntaM
- xpbXWPXhFgWnOeYJu_XLBBBre36qrmdcbpDhjLIxKh1Mj97TQ.9ZhSn5tBaIRgfFNRWgvBNll6SU
- boZAucbxZ2AB8cnMbfGAQxPCgbYxQ_Ghea1dg1tw7wGK_yVZQcdt9CseccwfU95_1Nf5v78KG95r
- tvTuHKAF40jBw_LwUdr94FcHiYoy3KruRU0Ga1AMDeORovkrzTY.kmQrQmhVkFAzevK3hDguOjjC
- jrPOW8XKmbnwap99thldAbNF4myKrny1IR0qvD9oSZOohA0CuURCI23D2z.bGaA4zuwfBPPZtLQ1
- 3rDShcHI59gOfY6G5QnmcNX9FlM4jkvWtqdTXRzZnY8ZAVZ8Qt7TAXUr0RVy6R90P4sxnbKFAZbL
- jQ5BlpLUT0wwuYaVTaQWcJ46e2TEhRMKrfoO_mZqdCfLUqeSlNvz37rOxTyW2xjO6OvkIHfG6xlx
- fUlHvFIj_yrJI6MhsvYIHEMf_S3ReJbid_zcSAEouwqlsgXICbko64X1gm9cWluWaWIY370LiqhP
- Dk6yhET.KOc.u.4pEo1APMoQONh7jbD4.tlki1pUAWp6_MfgtypCJ1V9UGO5DdqMWPTNOOoQNvjs
- rIS05Ra8LxoAyh47PLqJutIcaLONhyOehavE9QYkzuUDTEhmGhXy59TtXgm7H1bnoJSv_nStI9HM
- L17HJWb8.6AJnsfCinArjwtZoetSesq2EWtXtK.tNCFNoKI.31nNeDv76RvtLrx.niTzHOLbryo2
- _z2QpeiC5gauGYXNUdzIA.yFEDjcdP_5bTa6bQksUQHbbH0JqUfiwpKgkaHGFfi8R8LYiBBHTPtN
- usmUG8ytbudYAdB7kjbxpxyj22Klez_ZsTzUzEW_ngmldAiuDM_8ETOaMoGIqu2qzdK3ekgHRyg.
- FYgzBZ2IA6RYCVnwDPzKgI7w6rCt17Tn63jPolKn7r9M1kpwzy0JhYH4LMJarWnoeLLrotONVdYM
- k48ym5PkR55_gWe8PIeYXzD3bKIG9N5vMXHabYjB77qbkzMqbGYVeiZ8ivHqQwoxUxqD8yEZrKj7
- RTLOWfzT_fnKUny2RZxfrgsPp14gQ5g1PUHX30ZX2uLHV3EjSYXA9LJU_8Y0oR20SwW9R0gxfILP
- RUCEQZpQOqBy2VkTBjIY0sSdMZx_wnCB6ipSEnIRycG5YEnonkNc1kYjFYS3AXLbpz4HGoukWNaP
- JsZdJNk88Ni4_aRGNaW4RwYHx0.Wy1vTuSErCO78fMGdgKczZ.HOK9xMaCEFStemmA9ntYY0CDm3
- 83ipZlbwSckiwRxLV6tTvez_NokkHIPfM3C.DGPhiOqKIrWVlLxCYENOM.Uaufa07c6TmKJfDc0Q
- cFB3b7UIYXPkIZdVVrUciOcPJjIOhAbRkeY3jze.Kmy5u9AukduC0xZ0W4lnUBdtvDlThyRLHyoj
- E60SmMZv.XdCGP2NwlTbBv1_eik1Mtw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Tue, 7 Mar 2023 17:51:40 +0000
-Received: by hermes--production-ne1-7688d778d7-pf58k (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7d524da5514d4ae1565de090f2be6d00;
-          Tue, 07 Mar 2023 17:51:38 +0000 (UTC)
-Message-ID: <dedc8ab7-1b85-de92-cfe3-85b30bec1cac@schaufler-ca.com>
-Date:   Tue, 7 Mar 2023 09:51:37 -0800
+        Tue, 7 Mar 2023 13:10:50 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CFE35DECD;
+        Tue,  7 Mar 2023 10:05:40 -0800 (PST)
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 327HGv5u002333;
+        Tue, 7 Mar 2023 18:05:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=hoz4RkVCJGwvQNNgSt4WLK6sHH0UVal/pigvAKVzo24=;
+ b=KmYsR+wgzGHSKd2v0EhZiBj2MtYYjTed21FDk7VT0FDzn++Pa9LUhrxtOEdxY1tP0GZn
+ VCO1Pk7iNQb8lGXM/S9XQPemTobWQnBQj7eT7rsay6FepXWh4Vk2WHPUWmiWf3X26ynZ
+ xpKLFriFrXs4D92nYjxy3GxMkhkqhHPc0vCg4KiBUo0ZneDWg2BskimpR5tEBFVlRJNp
+ wYFOMgYkiaVk7X23H12gTFeYEu5DwpqaxTHc6dbfJXw6dVhwAczgX0yMrDagPpdZdOyt
+ fSDCSzMNYNS3VWM9c6Y1/VrYkJm+ZPLzWaqGz+/s2UEAxhn8pGxzUTYZf/f+1/lYJ/dc hw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p67wfmdtg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Mar 2023 18:05:03 +0000
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 327HqNgi004706;
+        Tue, 7 Mar 2023 18:05:02 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p67wfmdsy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Mar 2023 18:05:02 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 327H9dUc015329;
+        Tue, 7 Mar 2023 18:05:01 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([9.208.129.119])
+        by ppma02dal.us.ibm.com (PPS) with ESMTPS id 3p4199sp2n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Mar 2023 18:05:01 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+        by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 327I4xJr32309734
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 7 Mar 2023 18:05:00 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE1DD5805A;
+        Tue,  7 Mar 2023 18:04:59 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 600B15803F;
+        Tue,  7 Mar 2023 18:04:55 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Tue,  7 Mar 2023 18:04:55 +0000 (GMT)
+Message-ID: <4b158d7e-a96d-58ae-cc34-0ad6abc1cea9@linux.ibm.com>
+Date:   Tue, 7 Mar 2023 13:04:54 -0500
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 0/1] process attribute support for Landlock
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 23/28] security: Introduce LSM_ORDER_LAST
 Content-Language: en-US
-To:     Shervin Oloumi <enlightened@chromium.org>
-Cc:     mic@digikod.net, linux-security-module@vger.kernel.org,
-        jorgelo@chromium.org, keescook@chromium.org, groeck@chromium.org,
-        jeffxu@chromium.org, allenwebb@chromium.org, casey@schaufler-ca.com
-References: <20230302185257.850681-1-enlightened@chromium.org>
- <e8cf7da9-77e4-e836-9107-db219a266158@schaufler-ca.com>
- <CAMb9sThf-ys4a+vmH=p5SKLixfhJtm8j3XX_4M004WvZheyRoA@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAMb9sThf-ys4a+vmH=p5SKLixfhJtm8j3XX_4M004WvZheyRoA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
+        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+ <20230303182602.1088032-1-roberto.sassu@huaweicloud.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20230303182602.1088032-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21284 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: z2sA_jePHs3pgRRx2w8x57GTfaIXwbl5
+X-Proofpoint-ORIG-GUID: giscmAA8yJRKHabeezSzr5z2e0B3EN--
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-07_12,2023-03-07_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ clxscore=1015 malwarescore=0 bulkscore=0 mlxscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303070161
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/6/2023 2:40 PM, Shervin Oloumi wrote:
->> Emphasis: DO NOT USE /proc/.../attr/current! Seriously!
->>
->> I made a huge mistake reusing current in Smack. If you want to
->> provide a Landlock attribute in /proc create a new one. Long term
->> we're trying to move to a syscall interface (patches in review).
->> But for the time being (and backports) a new name in attr is easy
->> enough to do and will avoid many headaches. Better yet, a subdirectory
->> in attr - /proc/.../attr/landlock - will avoid all sorts of issues.
-> Thanks for flagging this. Creating a new directory and attribute name
-> for this makes sense, but you can still only interact with process
-> attributes of a single LSM on the system right? Just want to make sure
-> my understanding is correct, because even when Landlock uses a
-> different name and a new subdirectory for this, still the kernel only
-> calls the hook function of the first LSM on the list (Landlock in our
-> case). So reading proc/.../attr/current or any other attribute besides
-> /proc/.../attr/landlock/some_attribute would result in EINVAL if
-> Landlock was first on the CONFIG_LSM list.
 
-That's true, but we've been able to move parts of the general stacking
-process forward when there's a specific need for them. In this case we'd
-need changes for security_[gs]etprocattr() that are already understood.
 
+On 3/3/23 13:25, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Introduce LSM_ORDER_LAST, to satisfy the requirement of LSMs willing to be
+> the last, e.g. the 'integrity' LSM, without changing the kernel command
+> line or configuration.
+> 
+> As for LSM_ORDER_FIRST, LSMs with LSM_ORDER_LAST are always enabled and put
+> at the end of the LSM list in no particular order.
+> 
+
+I think you should describe the reason for the change for LSM_ORDER_MUTABLE as well.
+
+
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>   include/linux/lsm_hooks.h |  1 +
+>   security/security.c       | 12 +++++++++---
+>   2 files changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 21a8ce23108..05c4b831d99 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -93,6 +93,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+>   enum lsm_order {
+>   	LSM_ORDER_FIRST = -1,	/* This is only for capabilities. */
+>   	LSM_ORDER_MUTABLE = 0,
+> +	LSM_ORDER_LAST = 1,
+>   };
+>   
+>   struct lsm_info {
+> diff --git a/security/security.c b/security/security.c
+> index 322090a50cd..24f52ba3218 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -284,9 +284,9 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+>   		bool found = false;
+>   
+>   		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+> -			if (lsm->order == LSM_ORDER_MUTABLE &&
+> -			    strcmp(lsm->name, name) == 0) {
+> -				append_ordered_lsm(lsm, origin);
+> +			if (strcmp(lsm->name, name) == 0) {
+> +				if (lsm->order == LSM_ORDER_MUTABLE)
+> +					append_ordered_lsm(lsm, origin);
+>   				found = true;
+>   			}
+>   		}
+> @@ -306,6 +306,12 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+>   		}
+>   	}
+>   
+> +	/* LSM_ORDER_LAST is always last. */
+> +	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+> +		if (lsm->order == LSM_ORDER_LAST)
+> +			append_ordered_lsm(lsm, "   last");
+> +	}
+> +
+>   	/* Disable all LSMs not in the ordered list. */
+>   	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+>   		if (exists_ordered_lsm(lsm))
