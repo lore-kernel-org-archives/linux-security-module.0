@@ -2,156 +2,148 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99099C678D5
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Mar 2023 17:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 711D7C64EC4
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Mar 2023 17:11:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229477AbjCHRJj (ORCPT
+        id S229635AbjCHRLx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Mar 2023 12:09:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50972 "EHLO
+        Wed, 8 Mar 2023 12:11:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjCHRJh (ORCPT
+        with ESMTP id S229611AbjCHRLx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Mar 2023 12:09:37 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB7CBC7A6
-        for <linux-security-module@vger.kernel.org>; Wed,  8 Mar 2023 09:09:36 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id v11so18287245plz.8
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Mar 2023 09:09:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1678295375;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e0E7IdBcPGDWLVrEs3VCRDoj5ebPnxVAi2ObOXtwaIw=;
-        b=RwZUWiHFc3FlawweWuI4Le2kYf/vo6kg1f4tKGBa3FOo7cSj963WCm/6hFa+JRIcHC
-         cm34KkwP5RroNuAVtFIu6WNDts1H58drkwuYGWt10HU8fy4xJRpIMoXe+dF0MZFZHeTu
-         2VIviA/ULVvC2SCZaZ9TI8FdjiYrlwhfT1iGVku0A27zVrT1YhoxhVZaNnmqO5RtlFZ0
-         ocGVZVovh6MopvuEEz0EwCXAYe74dGSwcksZxiw7UFlLO0TjKIr8Bl7TVthcAZY45sZ0
-         WSuAE7TnuJUKHm3aVBqElIJ7AA0fHSZvtBiEvNbbdYi+Ind2ZPoTti4U89G8QRsfCG/E
-         Qteg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678295375;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e0E7IdBcPGDWLVrEs3VCRDoj5ebPnxVAi2ObOXtwaIw=;
-        b=jPKtylCU2s7OPOFy3wVwO2pEhosg9JtzErxsDVWoFm00h21+UdRl3/p4IsNyt58Kax
-         rubaegfhdAlcjK3WoAiCiLkp6Vh0GKhBJH3X9CdNH8GlRQCsGdI9GVoKo7dQzLmhdcJM
-         8l3s5aQ27MLjbipj4gN6ureHKBDgxaaXhF150AYm9UHOGxNebucr9QBlM+dbWiJnFupg
-         HTEkbO+6vyQUNY6pBmE1kKSWarsuxiT6mDtSuGaQPF0u1j9ydFd3/+/F5ZWLSWiMU1hm
-         8VD1RNAhlxOmws1D7CDLhuTF0jRVOL9hF1t/gHGq/uckZzvbhFV9lYgFJ2rOkZ7RAfoJ
-         lCyw==
-X-Gm-Message-State: AO0yUKUNIbqudMUWoItTkEl+CeIgOhgeBB4CDEZlSAPfQDw8ujJBooG1
-        e7TfP6ZMQNcW1gEje+nC0wvQLBFELk3894aMGBebby7h1U0kfcI=
-X-Google-Smtp-Source: AK7set/pulongWMsqooQuOI2UHyGjztX7eS74v0eGP95Ea3g8wMaMgMPJTQFmanNHkZvOlp1UFK+t7q2aiPcJZtkEKY=
-X-Received: by 2002:a17:903:493:b0:19a:f63a:47de with SMTP id
- jj19-20020a170903049300b0019af63a47demr7283277plb.7.1678295375427; Wed, 08
- Mar 2023 09:09:35 -0800 (PST)
+        Wed, 8 Mar 2023 12:11:53 -0500
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FF00136DC;
+        Wed,  8 Mar 2023 09:11:50 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4PWzCW3J82z9xGnQ;
+        Thu,  9 Mar 2023 01:03:03 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwDnbwu8wQhkZuyAAQ--.23704S2;
+        Wed, 08 Mar 2023 18:11:31 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v2] security: Introduce LSM_ORDER_LAST and set it for the integrity LSM
+Date:   Wed,  8 Mar 2023 18:11:18 +0100
+Message-Id: <20230308171119.1784326-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20230217032625.678457-1-paul@paul-moore.com> <CAHC9VhQnjmX9n2KJhj97SnQfuO50kaJxX3p8p4gHBC5mBkLfxg@mail.gmail.com>
- <d2fdf2baa635d3b301d54f07faadb5a440b87d46.camel@huaweicloud.com>
- <CAHC9VhRMcEDY88vfRQ8KM8apGgC-jZAygJ4gyb2_QoFx5vTthw@mail.gmail.com> <5871614020e20f3e529e6d1244c2e207c7ce6004.camel@huaweicloud.com>
-In-Reply-To: <5871614020e20f3e529e6d1244c2e207c7ce6004.camel@huaweicloud.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 8 Mar 2023 12:09:24 -0500
-Message-ID: <CAHC9VhTdBTopwGeyfr9YrOPdvczTk3mSGtjoW3_CYKDHMGkf9g@mail.gmail.com>
-Subject: Re: [PATCH 00/22] Move LSM hook comments into security/security.c
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: LxC2BwDnbwu8wQhkZuyAAQ--.23704S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxuryrZw4xKw1kur47tr4rAFb_yoW5Crykpa
+        yDtFWfGr18AFWS93ZrA3Wak3WfK39YkFy7GrZ8Ww1DAa95Xry0vr4akrySkryUXFyvyF1I
+        vr42vr4ak3Wqy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+        n4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+        0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+        tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+        CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE
+        14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyT
+        uYvjxUsrcTDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAKBF1jj4ZaNAAAsV
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 7, 2023 at 11:38=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Tue, 2023-03-07 at 11:33 -0500, Paul Moore wrote:
-> > On Tue, Mar 7, 2023 at 3:09=E2=80=AFAM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > On Mon, 2023-03-06 at 13:49 -0500, Paul Moore wrote:
-> > > > On Thu, Feb 16, 2023 at 10:26=E2=80=AFPM Paul Moore <paul@paul-moor=
-e.com> wrote:
-> > > > > Hello all,
-> > > > >
-> > > > > The LSM hook comment blocks are a in a rather sad state; separate=
-d from
-> > > > > the hook definitions they are often out of mind, and as a result
-> > > > > most of them are in varying levels of bit-rot, some severely.  Th=
-is
-> > > > > patchset moves all of the comment blocks out of lsm_hooks.c and o=
-nto
-> > > > > the top of the function definitions as one would normally expect.
-> > > > > In the process of moving the comment blocks, they have been massa=
-ged
-> > > > > into the standard kernel-doc format for the sake of consistency a=
-nd
-> > > > > easier reading.  Unfortunately, correcting all of the errors in t=
-he
-> > > > > comments would have made an extremely long and painful task even =
-worse,
-> > > > > so a number of errors remain, but the worst offenders were correc=
-ted in
-> > > > > the move.  Now that the comments are in the proper location, and =
-in the
-> > > > > proper format, my hope is that future patch submissions correctin=
-g the
-> > > > > actual comment contents will be much easier and the comments as a=
- whole
-> > > > > will be easier to maintain.
-> > > > >
-> > > > > There are no code changes in this patchset, although since I was
-> > > > > already adding a lot of churn to security.c, the last patch in th=
-is
-> > > > > patchset (22/22) does take the liberty of fixing some rather ugly
-> > > > > style problems.
-> > > > >
-> > > > >  include/linux/lsm_hooks.h | 1624 +++++++++++++++++++++
-> > > > >  security/security.c       | 2702 +------------------------------=
----------
-> > > > >  2 files changed, 1710 insertions(+), 2616 deletions(-)
-> > > >
-> > > > Seeing no objections, and the ACK from Casey, I've gone ahead and
-> > > > merged this patchset into the lsm/next branch.  There was some mino=
-r
-> > > > merge fuzz due to the mount idmap work and some IMA changes, but th=
-e
-> > > > vast majority of the patchset is exactly as posted.
-> > >
-> > > Oh, I thought it was an intermediate version and didn't report some
-> > > issues:
-> >
-> > If you don't see a "RFC" in the patch subject line it's safe to assume
-> > it is a "final" version.  Regardless, feedback is never bad, even if
-> > it is a RFC.
-> >
-> > > scripts/kernel-doc security/security.c|grep warning
-> > > security/security.c:1236: warning: Function parameter or member 'mnt_=
-opts' not described in 'security_free_mnt_opts'
-> > > security/security.c:1236: warning: Excess function parameter 'mnt_ops=
-' description in 'security_free_mnt_opts'
-> > > security/security.c:1254: warning: Function parameter or member 'mnt_=
-opts' not described in 'security_sb_eat_lsm_opts'
-> > > security/security.c:1254: warning: Excess function parameter 'mnt_ops=
-' description in 'security_sb_eat_lsm_opts'
-> > > security/security.c:1423: warning: Function parameter or member 'olds=
-b' not described in 'security_sb_clone_mnt_opts'
-> > > security/security.c:1423: warning: Function parameter or member 'news=
-b' not described in 'security_sb_clone_mnt_opts'
-> >
-> > Unsurprising.  Those patches were mostly just to relocate the comment
-> > blocks out of lsm_hooks.h and into security.c; while I did fix some of
-> > the really bad errors, fixing everything in the move wasn't really the
-> > goal, that's for future work.
-> >
-> > Did you want to submit a patch to fix those?
->
-> I rebased the stacked IMA/EVM to your patch set, so that it is closer
-> to the final version. I expect there will not be too many conflicts.
->
-> It is also ok for me to fix those issues in the future.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-That would be great, thanks.
+Introduce LSM_ORDER_LAST, to satisfy the requirement of LSMs willing to be
+the last, e.g. the 'integrity' LSM, without changing the kernel command
+line or configuration.
 
---=20
-paul-moore.com
+Also, set this order for the 'integrity' LSM. While not enforced, this is
+the only LSM expected to use it.
+
+Similarly to LSM_ORDER_FIRST, LSMs with LSM_ORDER_LAST are always enabled
+and put at the end of the LSM list.
+
+Finally, for LSM_ORDER_MUTABLE LSMs, set the found variable to true if an
+LSM is found, regardless of its order. In this way, the kernel would not
+wrongly report that the LSM is not built-in in the kernel if its order is
+LSM_ORDER_LAST.
+
+Fixes: 79f7865d844c ("LSM: Introduce "lsm=" for boottime LSM selection")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+
+Changelog
+
+v1:
+- Add comment for LSM_ORDER_LAST definition (suggested by Mimi)
+- Add Fixes tag (suggested by Mimi)
+- Do minor corrections in the commit messages (suggested by Mimi and Stefan)
+
+ include/linux/lsm_hooks.h |  1 +
+ security/integrity/iint.c |  1 +
+ security/security.c       | 12 +++++++++---
+ 3 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 6e156d2acff..c55761d93a2 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1716,6 +1716,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ enum lsm_order {
+ 	LSM_ORDER_FIRST = -1,	/* This is only for capabilities. */
+ 	LSM_ORDER_MUTABLE = 0,
++	LSM_ORDER_LAST = 1,	/* This is only for integrity. */
+ };
+ 
+ struct lsm_info {
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index 8638976f799..b97eb59e0e3 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -182,6 +182,7 @@ static int __init integrity_iintcache_init(void)
+ DEFINE_LSM(integrity) = {
+ 	.name = "integrity",
+ 	.init = integrity_iintcache_init,
++	.order = LSM_ORDER_LAST,
+ };
+ 
+ 
+diff --git a/security/security.c b/security/security.c
+index cf6cc576736..2f36229d5b6 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -284,9 +284,9 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ 		bool found = false;
+ 
+ 		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+-			if (lsm->order == LSM_ORDER_MUTABLE &&
+-			    strcmp(lsm->name, name) == 0) {
+-				append_ordered_lsm(lsm, origin);
++			if (strcmp(lsm->name, name) == 0) {
++				if (lsm->order == LSM_ORDER_MUTABLE)
++					append_ordered_lsm(lsm, origin);
+ 				found = true;
+ 			}
+ 		}
+@@ -306,6 +306,12 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ 		}
+ 	}
+ 
++	/* LSM_ORDER_LAST is always last. */
++	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		if (lsm->order == LSM_ORDER_LAST)
++			append_ordered_lsm(lsm, "   last");
++	}
++
+ 	/* Disable all LSMs not in the ordered list. */
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+ 		if (exists_ordered_lsm(lsm))
+-- 
+2.25.1
+
