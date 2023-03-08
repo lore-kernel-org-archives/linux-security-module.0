@@ -2,179 +2,204 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A56C678D5
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Mar 2023 17:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F169C64EC4
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Mar 2023 18:28:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbjCHRWG (ORCPT
+        id S229456AbjCHS2K (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Mar 2023 12:22:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39748 "EHLO
+        Wed, 8 Mar 2023 13:28:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjCHRVl (ORCPT
+        with ESMTP id S230028AbjCHS2I (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Mar 2023 12:21:41 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 299FDBC6C6
-        for <linux-security-module@vger.kernel.org>; Wed,  8 Mar 2023 09:20:39 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id nn12so2409562pjb.5
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Mar 2023 09:20:39 -0800 (PST)
+        Wed, 8 Mar 2023 13:28:08 -0500
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12CF710432
+        for <linux-security-module@vger.kernel.org>; Wed,  8 Mar 2023 10:28:05 -0800 (PST)
+Received: by mail-qt1-x82d.google.com with SMTP id c3so19079991qtc.8
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Mar 2023 10:28:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1678296038;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BHX6cu7G2oq0OoVmoAYwuSHxrT6e7BdRcaqbogw5xBQ=;
-        b=LcfklqPNlhUKJbhE4T+81HP0misiB6PEXffjStOPHmHJ/9wZzvyMcmUG7IEJKrstxJ
-         SHoMSym8lNHuz5wPMTdhF9ogLAVex16nIKLopCcGB6UhGsxw061AJYa4Kr7CRj3FBahz
-         JK8z14vZCU+ro9rLINJIlen+1+cl5iIqlzdCZgp61EZcfvXbdYVfvZ0c7jaEXYbYhSBM
-         mcztkDkVu+IX9lt0SS4P2c6XfDXjwSGm3akM5daQxYEkPHSvdTo6/Ij4fSZCtFrHds1y
-         ExX/5MDZXDuQEt1aEIT9yn9xfluFyBkm7BDX4/P0UatsjfRrnNh67gdDTsrmM2/iuptz
-         Fl4Q==
+        d=paul-moore.com; s=google; t=1678300084;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nyMeMTN/k0IbBhzVgQibikni6EeLKP8gpYMu4eIGsJc=;
+        b=KTX6mB2GIFXLkkmBA4jsYC3PBJF2FigeRJksiG+BYsELieWbuUVzburZQD3mSZ68ER
+         /c9adWl5EzMCaVb3eWeFzN+Y4MCYyIB1QI0/h2yPFgV4WkIkFETnZQMPr0UoBg4Tqc8l
+         rFJwgqOCW+ATpVYGmcZHszFu7k1d3r6b4+7uq4dwWNDX99LRYh1215WM1jPKQ3qUSPI2
+         YasfLTGPhnojcyD3u8m/EZmN2ul7LgqZq3gJpNOEIll5IK/gvALa23oPKQIimMB9kgQd
+         +U2NU8GFlJr5MiOOsZL1XRmFLZD1VAtFPAgTCkFby02QmoLgJ1wx++gfLgPj+eZpifOp
+         kNpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678296038;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BHX6cu7G2oq0OoVmoAYwuSHxrT6e7BdRcaqbogw5xBQ=;
-        b=2Z9OakLy6f3jpncghaiGDUWaUL0s8zYosfmkQ9t9rPxKZGqPkaDTL2I7N/xvGQ9C4C
-         wU2yEst75kwaYkpkh8pV1cpHge5lKl/ZwPDcZFTFlym0tMs+qbG+maWB9H5PjvbvvKVz
-         f0MvmvA7c3IByeCyU9NjK5uCXBN95+WBqo6x8vJoReIokO2JD8qMMuYHBxqeJ/gMaRad
-         zdpX8jhwAyCdeoUkrrSJVJwF1iqqefkWVr51BImXYVkehVaNt+2Yq4c3kMafwOe6gPmk
-         qAJgGL8uOxHirwZT4anim09/GrsERGGU2di3V5+hw+kPkLko1e3ucfNV7BwxyiBZpgrF
-         WEiA==
-X-Gm-Message-State: AO0yUKUly7dqoNM3dg9AEcdOUjuJ6Af9FidEiRcSCXcYUzCnLf/0/aWj
-        PCHRAg5jdjLHYvsY2+6oCXlzaynemUyCC5/xFAP4khObwqryT7c=
-X-Google-Smtp-Source: AK7set97lO8BWYLEG91BAU1sPDHbsSk6IBUA3GWA90c9SpPkeB9XO8lbUMdxa2pUhbu3eu6gF0PLpndMNRfelj4XZkA=
-X-Received: by 2002:a17:902:ab0f:b0:19a:64f6:e147 with SMTP id
- ik15-20020a170902ab0f00b0019a64f6e147mr7692932plb.2.1678296038508; Wed, 08
- Mar 2023 09:20:38 -0800 (PST)
-MIME-Version: 1.0
-References: <20230217032625.678457-1-paul@paul-moore.com> <CAHC9VhQnjmX9n2KJhj97SnQfuO50kaJxX3p8p4gHBC5mBkLfxg@mail.gmail.com>
- <d2fdf2baa635d3b301d54f07faadb5a440b87d46.camel@huaweicloud.com>
- <CAHC9VhRMcEDY88vfRQ8KM8apGgC-jZAygJ4gyb2_QoFx5vTthw@mail.gmail.com>
- <5871614020e20f3e529e6d1244c2e207c7ce6004.camel@huaweicloud.com>
- <CAHC9VhTdBTopwGeyfr9YrOPdvczTk3mSGtjoW3_CYKDHMGkf9g@mail.gmail.com> <8a899d7f5f68a9f602efa50c71505f05130eb383.camel@huaweicloud.com>
-In-Reply-To: <8a899d7f5f68a9f602efa50c71505f05130eb383.camel@huaweicloud.com>
+        d=1e100.net; s=20210112; t=1678300084;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nyMeMTN/k0IbBhzVgQibikni6EeLKP8gpYMu4eIGsJc=;
+        b=6gt2B7sN3JhmvOcMehE70/xKupZRYZfPHicuDoWKqTRp3dU+Ax4CUd5Ca0unrA90Z7
+         6TCK1ZTD363Yg93llLCeslW3DMCU2GznvG6ZkkNXetSgljvK0An2NOliw5oqHVaWv1t3
+         u7ymZLPq/OEq+BIDzpQ4ObiDBsQdUIG8w8MTniYVLJuVuZO9BDhuYGPcPeU1cVar5rsS
+         H0OIOh6lrdLZNx9L6QVHuuxJ8RuOXmpUHCcSP31XJTUKtY2uwmsfvzJhC9nlJb3ZUYWf
+         eOgBtd6v66Yq25wLTEw2umx6KaFLdHx3NSVrCXgQN3STBbWbiNkPHN57znSrDtH9+BJu
+         6qlQ==
+X-Gm-Message-State: AO0yUKX4Ky9q0DyPjC+yzOnSMgIsp0sjN1nizZBBYo5E5LUq/b1o1Vg9
+        aWzZHWl2nyoxKmMnAgKMd9ZMshJWYD1KuR9lMQ==
+X-Google-Smtp-Source: AK7set+6obqzrAXlR3y1cWDIPNfP3B5l7ena0cRan1OqL6nDhKJ3NCWPC9B+4IKV3aCUX5RIbFh8Lw==
+X-Received: by 2002:ac8:5b95:0:b0:3b6:8b52:1359 with SMTP id a21-20020ac85b95000000b003b68b521359mr32696425qta.0.1678300083598;
+        Wed, 08 Mar 2023 10:28:03 -0800 (PST)
+Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
+        by smtp.gmail.com with ESMTPSA id m18-20020ac866d2000000b003bfbfd9a4aesm11957138qtp.56.2023.03.08.10.28.02
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Mar 2023 10:28:02 -0800 (PST)
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 8 Mar 2023 12:20:27 -0500
-Message-ID: <CAHC9VhSUjkdm0jfm+m=6GK3v9Vf7hV0287U+DrqvQ3RFauQLzQ@mail.gmail.com>
-Subject: Re: [PATCH 00/22] Move LSM hook comments into security/security.c
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To:     linux-security-module@vger.kernel.org
+Subject: [PATCH] lsm: fix doc warnings in the LSM hook comments
+Date:   Wed,  8 Mar 2023 13:28:02 -0500
+Message-Id: <20230308182802.195662-1-paul@paul-moore.com>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 8, 2023 at 12:14=E2=80=AFPM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> On Wed, 2023-03-08 at 12:09 -0500, Paul Moore wrote:
-> > On Tue, Mar 7, 2023 at 11:38=E2=80=AFAM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > On Tue, 2023-03-07 at 11:33 -0500, Paul Moore wrote:
-> > > > On Tue, Mar 7, 2023 at 3:09=E2=80=AFAM Roberto Sassu
-> > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > On Mon, 2023-03-06 at 13:49 -0500, Paul Moore wrote:
-> > > > > > On Thu, Feb 16, 2023 at 10:26=E2=80=AFPM Paul Moore <paul@paul-=
-moore.com> wrote:
-> > > > > > > Hello all,
-> > > > > > >
-> > > > > > > The LSM hook comment blocks are a in a rather sad state; sepa=
-rated from
-> > > > > > > the hook definitions they are often out of mind, and as a res=
-ult
-> > > > > > > most of them are in varying levels of bit-rot, some severely.=
-  This
-> > > > > > > patchset moves all of the comment blocks out of lsm_hooks.c a=
-nd onto
-> > > > > > > the top of the function definitions as one would normally exp=
-ect.
-> > > > > > > In the process of moving the comment blocks, they have been m=
-assaged
-> > > > > > > into the standard kernel-doc format for the sake of consisten=
-cy and
-> > > > > > > easier reading.  Unfortunately, correcting all of the errors =
-in the
-> > > > > > > comments would have made an extremely long and painful task e=
-ven worse,
-> > > > > > > so a number of errors remain, but the worst offenders were co=
-rrected in
-> > > > > > > the move.  Now that the comments are in the proper location, =
-and in the
-> > > > > > > proper format, my hope is that future patch submissions corre=
-cting the
-> > > > > > > actual comment contents will be much easier and the comments =
-as a whole
-> > > > > > > will be easier to maintain.
-> > > > > > >
-> > > > > > > There are no code changes in this patchset, although since I =
-was
-> > > > > > > already adding a lot of churn to security.c, the last patch i=
-n this
-> > > > > > > patchset (22/22) does take the liberty of fixing some rather =
-ugly
-> > > > > > > style problems.
-> > > > > > >
-> > > > > > >  include/linux/lsm_hooks.h | 1624 +++++++++++++++++++++
-> > > > > > >  security/security.c       | 2702 +--------------------------=
--------------
-> > > > > > >  2 files changed, 1710 insertions(+), 2616 deletions(-)
-> > > > > >
-> > > > > > Seeing no objections, and the ACK from Casey, I've gone ahead a=
-nd
-> > > > > > merged this patchset into the lsm/next branch.  There was some =
-minor
-> > > > > > merge fuzz due to the mount idmap work and some IMA changes, bu=
-t the
-> > > > > > vast majority of the patchset is exactly as posted.
-> > > > >
-> > > > > Oh, I thought it was an intermediate version and didn't report so=
-me
-> > > > > issues:
-> > > >
-> > > > If you don't see a "RFC" in the patch subject line it's safe to ass=
-ume
-> > > > it is a "final" version.  Regardless, feedback is never bad, even i=
-f
-> > > > it is a RFC.
-> > > >
-> > > > > scripts/kernel-doc security/security.c|grep warning
-> > > > > security/security.c:1236: warning: Function parameter or member '=
-mnt_opts' not described in 'security_free_mnt_opts'
-> > > > > security/security.c:1236: warning: Excess function parameter 'mnt=
-_ops' description in 'security_free_mnt_opts'
-> > > > > security/security.c:1254: warning: Function parameter or member '=
-mnt_opts' not described in 'security_sb_eat_lsm_opts'
-> > > > > security/security.c:1254: warning: Excess function parameter 'mnt=
-_ops' description in 'security_sb_eat_lsm_opts'
-> > > > > security/security.c:1423: warning: Function parameter or member '=
-oldsb' not described in 'security_sb_clone_mnt_opts'
-> > > > > security/security.c:1423: warning: Function parameter or member '=
-newsb' not described in 'security_sb_clone_mnt_opts'
-> > > >
-> > > > Unsurprising.  Those patches were mostly just to relocate the comme=
-nt
-> > > > blocks out of lsm_hooks.h and into security.c; while I did fix some=
- of
-> > > > the really bad errors, fixing everything in the move wasn't really =
-the
-> > > > goal, that's for future work.
-> > > >
-> > > > Did you want to submit a patch to fix those?
-> > >
-> > > I rebased the stacked IMA/EVM to your patch set, so that it is closer
-> > > to the final version. I expect there will not be too many conflicts.
-> > >
-> > > It is also ok for me to fix those issues in the future.
-> >
-> > That would be great, thanks.
->
-> I meant generically someone... (ok, I got the task).
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ security/security.c | 33 +++++++++++++++++----------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
-Ah, okay, no worries.  I'll go ahead and fixup the current kdoc
-warnings (today?), but the comment blocks could still use a bit of
-review to fix/improve the quality of the comments in general.
+diff --git a/security/security.c b/security/security.c
+index f6482fd7b4b9..4c39cfe313bf 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1228,7 +1228,7 @@ void security_sb_free(struct super_block *sb)
+ 
+ /**
+  * security_free_mnt_opts() - Free memory associated with mount options
+- * @mnt_ops: LSM processed mount options
++ * @mnt_opts: LSM processed mount options
+  *
+  * Free memory associated with @mnt_ops.
+  */
+@@ -1244,7 +1244,7 @@ EXPORT_SYMBOL(security_free_mnt_opts);
+ /**
+  * security_sb_eat_lsm_opts() - Consume LSM mount options
+  * @options: mount options
+- * @mnt_ops: LSM processed mount options
++ * @mnt_opts: LSM processed mount options
+  *
+  * Eat (scan @options) and save them in @mnt_opts.
+  *
+@@ -1407,8 +1407,8 @@ EXPORT_SYMBOL(security_sb_set_mnt_opts);
+ 
+ /**
+  * security_sb_clone_mnt_opts() - Duplicate superblock mount options
+- * @olddb: source superblock
+- * @newdb: destination superblock
++ * @oldsb: source superblock
++ * @newsb: destination superblock
+  * @kern_flags: kernel flags (in)
+  * @set_kern_flags: kernel flags (out)
+  *
+@@ -1916,7 +1916,7 @@ int security_inode_unlink(struct inode *dir, struct dentry *dentry)
+ }
+ 
+ /**
+- * security_inode_symlink() Check if creating a symbolic link is allowed
++ * security_inode_symlink() - Check if creating a symbolic link is allowed
+  * @dir: parent directory
+  * @dentry: symbolic link
+  * @old_name: existing filename
+@@ -2125,6 +2125,7 @@ int security_inode_getattr(const struct path *path)
+  * @dentry: file
+  * @name: xattr name
+  * @value: xattr value
++ * @size: size of xattr value
+  * @flags: flags
+  *
+  * Check permission before setting the extended attributes.
+@@ -2686,7 +2687,7 @@ int security_mmap_addr(unsigned long addr)
+  * security_file_mprotect() - Check if changing memory protections is allowed
+  * @vma: memory region
+  * @reqprot: application requested protection
+- * @prog: protection applied by the kernel
++ * @prot: protection applied by the kernel
+  *
+  * Check permissions before changing memory access permissions.
+  *
+@@ -3421,7 +3422,7 @@ int security_create_user_ns(const struct cred *cred)
+ /**
+  * security_ipc_permission() - Check if sysv ipc access is allowed
+  * @ipcp: ipc permission structure
+- * @flags: requested permissions
++ * @flag: requested permissions
+  *
+  * Check permissions for access to IPC.
+  *
+@@ -3718,7 +3719,7 @@ int security_sem_associate(struct kern_ipc_perm *sma, int semflg)
+ }
+ 
+ /**
+- * security_sem_ctl() - Check if a sysv semaphore operation is allowed
++ * security_sem_semctl() - Check if a sysv semaphore operation is allowed
+  * @sma: sysv ipc permission structure
+  * @cmd: operation
+  *
+@@ -4088,7 +4089,7 @@ int security_socket_create(int family, int type, int protocol, int kern)
+ }
+ 
+ /**
+- * security_socket_create() - Initialize a newly created socket
++ * security_socket_post_create() - Initialize a newly created socket
+  * @sock: socket
+  * @family: protocol family
+  * @type: communications type
+@@ -4364,7 +4365,7 @@ EXPORT_SYMBOL(security_socket_getpeersec_dgram);
+  * security_sk_alloc() - Allocate and initialize a sock's LSM blob
+  * @sk: sock
+  * @family: protocol family
+- * @priotity: gfp flags
++ * @priority: gfp flags
+  *
+  * Allocate and attach a security structure to the sk->sk_security field, which
+  * is used to copy security attributes between local stream sockets.
+@@ -4423,10 +4424,10 @@ EXPORT_SYMBOL(security_req_classify_flow);
+ /**
+  * security_sock_graft() - Reconcile LSM state when grafting a sock on a socket
+  * @sk: sock being grafted
+- * @sock: target socket
++ * @parent: target parent socket
+  *
+- * Sets @sock's inode secid to @sk's secid and update @sk with any necessary
+- * LSM state from @sock.
++ * Sets @parent's inode secid to @sk's secid and update @sk with any necessary
++ * LSM state from @parent.
+  */
+ void security_sock_graft(struct sock *sk, struct socket *parent)
+ {
+@@ -4877,7 +4878,7 @@ int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid)
+ /**
+  * security_xfrm_state_pol_flow_match() - Check for a xfrm match
+  * @x: xfrm state to match
+- * @xp xfrm policy to check for a match
++ * @xp: xfrm policy to check for a match
+  * @flic: flow to check for a match.
+  *
+  * Check @xp and @flic for a match with @x.
+@@ -4980,13 +4981,13 @@ int security_key_permission(key_ref_t key_ref, const struct cred *cred,
+ /**
+  * security_key_getsecurity() - Get the key's security label
+  * @key: key
+- * @buffer: security label buffer
++ * @_buffer: security label buffer
+  *
+  * Get a textual representation of the security context attached to a key for
+  * the purposes of honouring KEYCTL_GETSECURITY.  This function allocates the
+  * storage for the NUL-terminated string and the caller should free it.
+  *
+- * Return: Returns the length of @buffer (including terminating NUL) or -ve if
++ * Return: Returns the length of @_buffer (including terminating NUL) or -ve if
+  *         an error occurs.  May also return 0 (and a NULL buffer pointer) if
+  *         there is no security label assigned to the key.
+  */
+-- 
+2.39.2
 
---=20
-paul-moore.com
