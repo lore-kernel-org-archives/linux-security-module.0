@@ -2,98 +2,167 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E95E0C678D5
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Mar 2023 22:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D210EC678D5
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Mar 2023 22:26:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230220AbjCHWQk (ORCPT
+        id S230205AbjCHWZ7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Mar 2023 17:16:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58662 "EHLO
+        Wed, 8 Mar 2023 17:25:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230111AbjCHWQk (ORCPT
+        with ESMTP id S230156AbjCHWZy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Mar 2023 17:16:40 -0500
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D99286147
-        for <linux-security-module@vger.kernel.org>; Wed,  8 Mar 2023 14:16:38 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id y11so31494plg.1
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Mar 2023 14:16:38 -0800 (PST)
+        Wed, 8 Mar 2023 17:25:54 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FB15C1C0D
+        for <linux-security-module@vger.kernel.org>; Wed,  8 Mar 2023 14:25:51 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id u5so19296plq.7
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Mar 2023 14:25:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1678313798;
+        d=chromium.org; s=google; t=1678314350;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tkhViH9kdWNjYXwKnPEs08Xl3095dV6IZ6LM3uHmPgg=;
-        b=bPXrjsfNIA8aCilQN80V8tZJJRnYiUaUiYYE6WDP0poZXHmgRnngHO4Lb96J8qrY8s
-         0UFv5K7lMRJloKD0tWGMmVKDB1rB7L2PYgY245lC/cGDS2TdHabWAHsD74tYHk7XWX+9
-         ctSErcrpU4ra1h7MNt4j2JB1T46qH5KSu8XZMjjoIq7fVYdLws67bRDNtSSAyq5ddIEU
-         URzRfvXhHoHE7mhDjTIo/KgBW+4k4yBsfFL5q4a+jwiG/cTxuGsLWCziz32JVyllZ+pC
-         DZbdjHIIJFo9Zy6iaSLyCS5thVAOwak49iMLSnuOr6HQ+YCMlQc6/QjcnOmMkEQALnF5
-         7qLg==
+        bh=T45Iy3OV+OW/flDxF4MmO42sG5KpQ7XCkwp0OqDKye8=;
+        b=DRE6M29hUUAts1s+nHPRdk4EsIoEAm6H0pOgVdkME4cTwCpb0v9adgQEkHHwgLr/bD
+         udAvqohDoEdQ/Ywvr4mB3wMuaRvET3izoqtAqNZ5uf+Y7plCsOcU7pIudVW7DvVuvSNy
+         lbfG/J5QpkuPa0UvSdDPL1zn810f/F/ibrYrs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678313798;
+        d=1e100.net; s=20210112; t=1678314350;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tkhViH9kdWNjYXwKnPEs08Xl3095dV6IZ6LM3uHmPgg=;
-        b=MSNCOxaiXqR3C5RDfDysME4sIYX9alOky2+2Li54fy1z7p6+9H0nUM6cxpOdhpf6GS
-         2M5uoiGKG916IMUDrCwbzSy6WEf9iEt6Pnxhqyv/PhoT1AgYBh2oNN2kSjI07cWHFxXv
-         Eg/DCulQswKNjqPgeyYSivsaFpUSsKUHTM0FebLS6AX++Wycik4ZsO3BJ2Xtwp1qNgTj
-         +O4piIQqkC510Ikd49qdDUD/hIa06Uj98MDehvfuo9F+gctJB9eS93gSAz5WrKAAFXxH
-         SeloqtKM5ToJu3s9j9DpETf8QdEB22vBFlCOOGr4dHK0+8cJL56N29oHnQwjrEFOwJVO
-         iGog==
-X-Gm-Message-State: AO0yUKWvFTQVJ6f8DLFlJnG+QqeAd7FoGjzmp3J2X+7jZo0TxXpDHz+A
-        tCV3Uo0eMRu8maTpu5ay2VEii8A7TqqrvN9Qk/uq
-X-Google-Smtp-Source: AK7set++0GvPRL/fArYHKN0SqlsLssuQ2AVagfsEuJmq+L5qFprSO0qSDic4f0ylWLwNIoHyQ3gpdgkwfLpUMJ7FI+Y=
-X-Received: by 2002:a17:903:2587:b0:19a:9f86:adab with SMTP id
- jb7-20020a170903258700b0019a9f86adabmr7646529plb.7.1678313797868; Wed, 08 Mar
- 2023 14:16:37 -0800 (PST)
+        bh=T45Iy3OV+OW/flDxF4MmO42sG5KpQ7XCkwp0OqDKye8=;
+        b=Dkt0tqQNkShQGK7aJFA89pAyW2yHYZdenjvRpyJQyyqU/ZXYnfFzcKA5o3d4qsU63c
+         oBd+HHSXLaJXwNMQwrD0W9V72DhFONMQhqLJTzUjOzxSkbYZd2HdhwTm+0ENU6SPQ0KF
+         LbMhz5uh4dF5Senk9dUwIu0Zzm1+9hpavlpEGUQpxm7/a/GQYQK6z+c//pSxBqr+ngvv
+         We7e03J4eosZH7YoZXdDVLzDaHJGSJong7UKTAr1ZadYQUBwjSEhcjOhdbZDBSw2nUeA
+         b7ZxRSiMfMiPzTVqfsDnVGRV6Z8p9ER+Sw/4jOqqQqEy/B/RkK2jNpyalFPWhtLLgZ14
+         35Dw==
+X-Gm-Message-State: AO0yUKUVZuOXDxsvo0W18DfkdTFb/NCRA5umzafXn+srFvzywCm1Ya/0
+        zdJpn5IxYiJAEa8JH80oWpadITGM1rucmr0C09oFWw==
+X-Google-Smtp-Source: AK7set9mXuDbv0wvZzkAoKLHRMLLX6pABGaw7DEFgax+R2IVRXschlVKrhOoLypEtkaLbm1nGzQ8d02hWIm4+jPwCcc=
+X-Received: by 2002:a17:902:ef95:b0:19b:8be:33dc with SMTP id
+ iz21-20020a170902ef9500b0019b08be33dcmr7511259plb.6.1678314350307; Wed, 08
+ Mar 2023 14:25:50 -0800 (PST)
 MIME-Version: 1.0
-References: <20221201104125.919483-1-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20221201104125.919483-1-roberto.sassu@huaweicloud.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 8 Mar 2023 17:16:26 -0500
-Message-ID: <CAHC9VhTRT=o9Rv+EhZ4aab1FDCyTNa7XEYuhuOiSEkWh0Cdrnw@mail.gmail.com>
-Subject: Re: [PATCH v7 0/6] evm: Do HMAC of multiple per LSM xattrs for new inodes
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com,
-        ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20230302185257.850681-1-enlightened@chromium.org> <247f3194-2dd2-1414-0a4d-6e41addf5e64@digikod.net>
+In-Reply-To: <247f3194-2dd2-1414-0a4d-6e41addf5e64@digikod.net>
+From:   Shervin Oloumi <enlightened@chromium.org>
+Date:   Wed, 8 Mar 2023 14:25:39 -0800
+Message-ID: <CAMb9sTir8Gde=DwZ9LnW2Hq7YmSZ13u_aX8AyR=JEQWGBhCvAQ@mail.gmail.com>
+Subject: Re: [PATCH 0/1] process attribute support for Landlock
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org, jorgelo@chromium.org,
+        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
+        allenwebb@chromium.org,
+        =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+        Adrian Reber <areber@redhat.com>, criu@openvz.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Dec 1, 2022 at 5:42=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> One of the major goals of LSM stacking is to run multiple LSMs side by si=
-de
-> without interfering with each other. The ultimate decision will depend on
-> individual LSM decision.
->
-> Several changes need to be made to the LSM infrastructure to be able to
-> support that. This patch set tackles one of them: gives to each LSM the
-> ability to specify one or multiple xattrs to be set at inode creation
-> time and, at the same time, gives to EVM the ability to access all those
-> xattrs and calculate the HMAC on them.
+Thanks all for the feedback. This is in reply to Micka=C3=ABl, but should
+answer G=C3=BCnther's questions as well.
 
-Hi Roberto,
+> It would help to know exactly what are your needs short term, and long
+> term. As G=C3=BCnther is wondering, what about nested sandboxing?
 
-The v7 draft of this patchset had some good discussion, and based on a
-quick read of the comments it looks like everyone was eventually
-satisfied that the v7 draft was good and no further changes were
-necessary, is that correct or do you have an updated draft of this
-patchset?
+Our plan is to use the "landlocked" process attribute defined in the
+patch to determine the sandbox state of the system processes and send
+information to our metrics server regarding Landlock coverage. For
+example, the percentage of processes on the system that are sandboxed
+using Landlock.
 
---=20
-paul-moore.com
+Given that we use Landlock in a very specific and controlled way, we
+are not concerned about the inheritance behavior and nested policies,
+at least for the use case of metrics. When daemons are launched in
+ChromiumOS, they have a pre-defined sandboxing configuration that
+dictates whether Landlock should be applied or not. So this attribute
+would help us verify that the processes running on devices in the wild
+indeed have the general sandboxing state that we expect and the
+reality matches our expectation.
+
+Long-term, it would be useful to learn more information about domains
+and policies through the process attribute interface, but we do not
+currently have a need for that, apart from maybe doing troubleshooting
+when defining Landlock rules for system daemons.
+
+> I'm thinking about a new /sys/kernel/security/landlock filesystem to be
+> able to audit Landlock domains (i.e. sandboxes). As for your use case,
+> it would be useful to be able to tie a process to a Landlock domain
+> thanks to IDs.
+
+I think this goes beyond the scope for our current needs, but
+certainly a nice feature that we could potentially use in the future.
+So given this, I was wondering what would be the minimum changes we
+can make now (if any) that would serve our purpose AND would be
+compatible with your long-term vision, without getting too deep into
+the implementation of broader concepts. We are flexible on the
+approach for querying the landlocked property (for example whether it
+is based on the presence of a /proc/.../attr/domain or actually
+reading an attribute).
+
+> Here are the guiding principles I think would make sense:
+> 1. A sandboxed thread shall not be able to directly know if it is
+> sandbox nor get any specific information from it's restrictions. The
+> reason for this principle is to avoid applications to simply jump to
+> conclusions (and change behavior) if they see that they are sandboxed
+> with Landlock, instead of trying to access resources and falling back
+> accordingly. A thread should only be able to inspect its
+> own/children/nested domains.
+> 2. Access to any Landlock domain information should be checked according
+> to PTRACE_MODE_READ_FSCREDS, the Landlock domain hierarchy (cf.
+> ptrace.c:domain_scope_le), and the first principle.
+
+One thing worth noting is that we use a system daemon to read process
+attributes. We have the ptrace_scope set to 1 and the daemon reading
+the attributes does have cap_sys_ptrace, however it is not related to
+the other processes on the system. Do you see this as a problem given
+principle#1?
+
+> 3. Any (domain) ID should be unique to the whole system (or maybe to the
+> reader's PID namespace, and then in theory relative to the /proc
+> content) to make it possible to compare Landlock domains (like
+> /proc/[pid]/ns/* symlinks enable), and avoid trivial races.
+> 4. These IDs should be the same during the whole lifetime of the related
+> domain.
+> 5. These IDs should not enable to infer information from other Landlock
+> domains (e.g. how many are in use, current and parent domains), nor the
+> kernel internals (e.g. addresses).
+> 6. These IDs should not be sequential nor easily guessed to avoid
+> anti-patterns (cf. file descriptors).
+> 7. These IDs should be CRIU-friendly, to be able to easily restore such
+> state. This doesn't help the previous principles and I don't know how/if
+> CRIU supports namespace IDs though.
+
+Since these points are regarding the properties of the domain IDs,
+they should not interfere with anything we would implement for
+determining the process sandbox status in any initial patch, but are
+good to know.
+
+> It would be nice if the /proc/[pid]/attr/landlock directory would only
+> exists if Landlock is enabled.
+
+This is the current default behavior I believe.
+
+> Similarly, /proc/[pid]/attr/landlock/domain should only exist (or be
+> viewable) for a thread if [pid] is part of one of its child domain.
+
+I am not sure if this is a blocker for our model of a single daemon
+querying the attribute for all processes. Are you suggesting that the
+file would not exist from the view of the other processes if they are
+not the parent process?
+
+> For now, I don't see any file in /proc/[pid]/attr/landlock/ other than
+> "domain" that would make sense, but a dedicated directory is useful anywa=
+y.
+
+Determining the sandbox status of processes based on the existence of
+/proc/[pid]/landlock/domain would serve our simple use case, pending
+the open questions/potential blockers above and a clarification on
+minimum requirements for an initial version.
