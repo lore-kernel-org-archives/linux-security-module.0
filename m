@@ -2,67 +2,107 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBEEC61DA4
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Mar 2023 22:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4123C6FD1C
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Mar 2023 23:44:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231321AbjCIW1y (ORCPT
+        id S231195AbjCIXop (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Mar 2023 17:27:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43042 "EHLO
+        Thu, 9 Mar 2023 18:44:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231324AbjCIW1x (ORCPT
+        with ESMTP id S231146AbjCIXoo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Mar 2023 17:27:53 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15A91FA0AE;
-        Thu,  9 Mar 2023 14:27:52 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 7080FCE2687;
-        Thu,  9 Mar 2023 22:27:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C4FCC433D2;
-        Thu,  9 Mar 2023 22:27:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1678400868;
-        bh=8ypCYFnJ44r5UZkUrRg3YEA023GJRxYOCkGkfnGE1rI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LrikRTauMWxorofVtFJUp/PBs3uUKJgK6V3mYsnNSRpNYK3BImPEY6YjP0wUhuNLo
-         QUcCIZjm8X/yGI8zhtzvFEKQfPm8e6WopsnDGU3LdJNXEddBFgUuPDHeh0wO6LzEMt
-         h43MST25WcQmDjkkaZBS2Wsit/I/gAU1diaptB9Q=
-Date:   Thu, 9 Mar 2023 14:27:46 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Jeff Xu <jeffxu@google.com>, Eric Biggers <ebiggers@kernel.org>,
-        ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
-        john.johansen@canonical.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, luto@amacapital.net,
-        wad@chromium.org, dverkamp@chromium.org, paulmck@kernel.org,
-        baihaowen@meizu.com, frederic@kernel.org, tytso@mit.edu,
-        guoren@kernel.org, j.granados@samsung.com, zhangpeng362@huawei.com,
-        tangmeng@uniontech.com, willy@infradead.org, nixiaoming@huawei.com,
-        sujiaxun@uniontech.com, patches@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/11] kernel: pid_namespace: simplify sysctls with
- register_sysctl()
-Message-Id: <20230309142746.0bc649a31e76bc46fd929304@linux-foundation.org>
-In-Reply-To: <ZApZj9DmMYKuCQ3g@bombadil.infradead.org>
-References: <20230302202826.776286-1-mcgrof@kernel.org>
-        <20230302202826.776286-9-mcgrof@kernel.org>
-        <CALmYWFucv6-9yfS=gamwSsqjgxSKZS0nvVjj_QfBmsLmQD5XOQ@mail.gmail.com>
-        <ZApZj9DmMYKuCQ3g@bombadil.infradead.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 9 Mar 2023 18:44:44 -0500
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 221EDFAD79
+        for <linux-security-module@vger.kernel.org>; Thu,  9 Mar 2023 15:44:42 -0800 (PST)
+Received: by mail-pf1-x433.google.com with SMTP id fa28so2576090pfb.12
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Mar 2023 15:44:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1678405481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CrNSaYamQnIMzMjL3om7b+i4Qx2zDlX6VDGkZ+puoGo=;
+        b=JLMRPN8SMReI/aLN8kuDM3HcfCcm0p3UcCdfR79QSOXtTWGJOju99YadxuDMnF8iQH
+         D4Ya3e5WDQM0DJrbJkjRMSDt/lke2/0SxEzg8sv29Wfeunpu+TnDsgE7tSwImPbCjbyx
+         My319TZxJmvj6Vcbx37J28jOi5FsfRGn4aMknL4IAf3NaNc03H7pKNztF41dRXPwninq
+         +qVllkPnkMugYflJbOiv8sssZLqEstamUFDbs1T9CKXeYA4EelsUzrud6AO+flYObslT
+         EM0utm7f9ClVuKVUOe3g9NEtm+PBicTWhktKuCk4DF4N6wGzuG7uDQBcuWY5PtaUjdhd
+         jrFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678405481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CrNSaYamQnIMzMjL3om7b+i4Qx2zDlX6VDGkZ+puoGo=;
+        b=oZYCxJHRSXd+XEH3TPVEwG2N7PJdg678lEUhGzUaTJ60Y5Fhn66l1d8lZZIipxAQNo
+         trB/NIl6uD2RMZQXhrEb7zYBZWrDvMl/0jUDt0gFepqfX563EaNTZlsuxqjmcIUEPcIR
+         rG6Lg/TrpimFU9kDbjHr/4XWLx3Gbi8xxZGO748iQI7yJrFg0xxuglnZU2ijmkppprtw
+         YOijvkOy7wMpvtLpYuWaC36d4il56LAgA7/HAj8FvzWxql3b8oRfY7aPoiGlSy7iWFbA
+         sTarxfAKgIEEPXP7wcj32wy3WcNbyUa/UUF6v6ZIRcodR0xdolDoLOON3GU1xrBiOLQW
+         zTAw==
+X-Gm-Message-State: AO0yUKX1jqLe55a+ZgufH5lFRxlhdUNT0Asl67NldBFkpXuLTsTGQV/T
+        Cr1tXPbQMNNk09oqY+KfA+I7UeoezmV6E4rI8i8/XZDZtWmrmhs=
+X-Google-Smtp-Source: AK7set+BMvFWwBxakNhkWQwRzL4c9oiBvrgSJisCe+ag6p1mDE7MrQ54FtmUTCgXSzR5PCdVV0/3CCTEiEwp6YOudjQ=
+X-Received: by 2002:a62:834a:0:b0:596:78f:1532 with SMTP id
+ h71-20020a62834a000000b00596078f1532mr9486868pfe.2.1678405481553; Thu, 09 Mar
+ 2023 15:44:41 -0800 (PST)
+MIME-Version: 1.0
+References: <20230309085433.1810314-1-roberto.sassu@huaweicloud.com> <20230309085433.1810314-2-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20230309085433.1810314-2-roberto.sassu@huaweicloud.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 9 Mar 2023 18:44:30 -0500
+Message-ID: <CAHC9VhRBxPnQeQ4SPHKXP_k1epoaZRGNUzCa+QJR9se_t+4+-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] security: Introduce LSM_ORDER_LAST and set it for
+ the integrity LSM
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, mic@digikod.net, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 9 Mar 2023 14:11:27 -0800 Luis Chamberlain <mcgrof@kernel.org> wrote:
+On Thu, Mar 9, 2023 at 3:55=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> Introduce LSM_ORDER_LAST, to satisfy the requirement of LSMs needing to b=
+e
+> last, e.g. the 'integrity' LSM, without changing the kernel command line =
+or
+> configuration.
+>
+> Also, set this order for the 'integrity' LSM. While not enforced, this is
+> the only LSM expected to use it.
+>
+> Similarly to LSM_ORDER_FIRST, LSMs with LSM_ORDER_LAST are always enabled
+> and put at the end of the LSM list.
 
-> Andrew, kernel/pid_sysctl.h is new, not on v6.3-rc1 and so I cannot
-> carry this on sysctl-next. Can you carry this patch on your tree?
+Since you are respinning this patchset anyway, I might make it clear
+that the LSM_ORDER_LAST LSMs are always enabled only when they are
+enabled at kernel configure/build time.  Simply marking a LSM as
+LSM_ORDER_LAST does not mean you don't have to explicitly select the
+LSM in the rest of the Kconfig.
 
-Sure, no probs.
+> Finally, for LSM_ORDER_MUTABLE LSMs, set the found variable to true if an
+> LSM is found, regardless of its order. In this way, the kernel would not
+> wrongly report that the LSM is not built-in in the kernel if its order is
+> LSM_ORDER_LAST.
+>
+> Fixes: 79f7865d844c ("LSM: Introduce "lsm=3D" for boottime LSM selection"=
+)
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  include/linux/lsm_hooks.h |  1 +
+>  security/integrity/iint.c |  1 +
+>  security/security.c       | 12 +++++++++---
+>  3 files changed, 11 insertions(+), 3 deletions(-)
+
+--=20
+paul-moore.com
