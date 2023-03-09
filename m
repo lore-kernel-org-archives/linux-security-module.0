@@ -2,167 +2,125 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D210EC678D5
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Mar 2023 22:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CE0C678D5
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Mar 2023 00:23:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230205AbjCHWZ7 (ORCPT
+        id S229657AbjCIAXp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Mar 2023 17:25:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46800 "EHLO
+        Wed, 8 Mar 2023 19:23:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230156AbjCHWZy (ORCPT
+        with ESMTP id S229577AbjCIAXo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Mar 2023 17:25:54 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FB15C1C0D
-        for <linux-security-module@vger.kernel.org>; Wed,  8 Mar 2023 14:25:51 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id u5so19296plq.7
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Mar 2023 14:25:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1678314350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T45Iy3OV+OW/flDxF4MmO42sG5KpQ7XCkwp0OqDKye8=;
-        b=DRE6M29hUUAts1s+nHPRdk4EsIoEAm6H0pOgVdkME4cTwCpb0v9adgQEkHHwgLr/bD
-         udAvqohDoEdQ/Ywvr4mB3wMuaRvET3izoqtAqNZ5uf+Y7plCsOcU7pIudVW7DvVuvSNy
-         lbfG/J5QpkuPa0UvSdDPL1zn810f/F/ibrYrs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678314350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T45Iy3OV+OW/flDxF4MmO42sG5KpQ7XCkwp0OqDKye8=;
-        b=Dkt0tqQNkShQGK7aJFA89pAyW2yHYZdenjvRpyJQyyqU/ZXYnfFzcKA5o3d4qsU63c
-         oBd+HHSXLaJXwNMQwrD0W9V72DhFONMQhqLJTzUjOzxSkbYZd2HdhwTm+0ENU6SPQ0KF
-         LbMhz5uh4dF5Senk9dUwIu0Zzm1+9hpavlpEGUQpxm7/a/GQYQK6z+c//pSxBqr+ngvv
-         We7e03J4eosZH7YoZXdDVLzDaHJGSJong7UKTAr1ZadYQUBwjSEhcjOhdbZDBSw2nUeA
-         b7ZxRSiMfMiPzTVqfsDnVGRV6Z8p9ER+Sw/4jOqqQqEy/B/RkK2jNpyalFPWhtLLgZ14
-         35Dw==
-X-Gm-Message-State: AO0yUKUVZuOXDxsvo0W18DfkdTFb/NCRA5umzafXn+srFvzywCm1Ya/0
-        zdJpn5IxYiJAEa8JH80oWpadITGM1rucmr0C09oFWw==
-X-Google-Smtp-Source: AK7set9mXuDbv0wvZzkAoKLHRMLLX6pABGaw7DEFgax+R2IVRXschlVKrhOoLypEtkaLbm1nGzQ8d02hWIm4+jPwCcc=
-X-Received: by 2002:a17:902:ef95:b0:19b:8be:33dc with SMTP id
- iz21-20020a170902ef9500b0019b08be33dcmr7511259plb.6.1678314350307; Wed, 08
- Mar 2023 14:25:50 -0800 (PST)
-MIME-Version: 1.0
-References: <20230302185257.850681-1-enlightened@chromium.org> <247f3194-2dd2-1414-0a4d-6e41addf5e64@digikod.net>
-In-Reply-To: <247f3194-2dd2-1414-0a4d-6e41addf5e64@digikod.net>
-From:   Shervin Oloumi <enlightened@chromium.org>
-Date:   Wed, 8 Mar 2023 14:25:39 -0800
-Message-ID: <CAMb9sTir8Gde=DwZ9LnW2Hq7YmSZ13u_aX8AyR=JEQWGBhCvAQ@mail.gmail.com>
-Subject: Re: [PATCH 0/1] process attribute support for Landlock
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org, jorgelo@chromium.org,
-        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
-        allenwebb@chromium.org,
-        =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
-        Adrian Reber <areber@redhat.com>, criu@openvz.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 8 Mar 2023 19:23:44 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 927B66486F;
+        Wed,  8 Mar 2023 16:23:42 -0800 (PST)
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 328NQ3MO012078;
+        Thu, 9 Mar 2023 00:23:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=ow1SlrV3VkY4IMsLryNLahQ4dIZNZmzPOnahCnP8KdM=;
+ b=Rr39/ZR+twTBGooUxR9g/sR6GzGyF5zEqs39hqTfwKYv/hVQbllDOWkeo31X4cu0C66L
+ +L72tROPD+XZicRQeho5gauxa5NoODJFj82ozxiDtwl0xLrNITSt1IuqzwNtL5L8IvUI
+ krfHQOCPgUF6TTfqZmW1mCauBw58CFFpqIbWCUenCZ2Encf65gDXQU221weHS6/MpAG9
+ yEM3Y5Ztk8keT80t0PySpL8z6SY0uuJLMfpc6QHEhPCbWXwymtDRUdRQOfJ4Vb4kO8Xa
+ rxWzMO23Pa6hTXFcpYsIHSHEOK0jURBqnnSYBDNujpn/McCw/OtPYOqZa62fLhm13E/D WA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p6ry3u08n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Mar 2023 00:23:20 +0000
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3290Mxhg030392;
+        Thu, 9 Mar 2023 00:23:20 GMT
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p6ry3u08c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Mar 2023 00:23:20 +0000
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 328NlIh6016691;
+        Thu, 9 Mar 2023 00:23:18 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([9.208.129.116])
+        by ppma04wdc.us.ibm.com (PPS) with ESMTPS id 3p6fhk68v9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Mar 2023 00:23:18 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3290NHZx6160992
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 9 Mar 2023 00:23:17 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5EA1358061;
+        Thu,  9 Mar 2023 00:23:17 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 702005803F;
+        Thu,  9 Mar 2023 00:23:16 +0000 (GMT)
+Received: from sig-9-77-134-135.ibm.com (unknown [9.77.134.135])
+        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Mar 2023 00:23:16 +0000 (GMT)
+Message-ID: <b8ed9f24e051158580c561a8d8863622ba2f4c8e.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] security: Introduce LSM_ORDER_LAST and set it for
+ the integrity LSM
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 08 Mar 2023 19:23:16 -0500
+In-Reply-To: <20230308171119.1784326-1-roberto.sassu@huaweicloud.com>
+References: <20230308171119.1784326-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: c-VbPkxHX5k1D9-kLy0mz-FB7xTTCgW4
+X-Proofpoint-ORIG-GUID: fDqI-sBskH4SOAuOpEB0E9XinzmYVQHB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-08_15,2023-03-08_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ mlxlogscore=555 priorityscore=1501 lowpriorityscore=0 spamscore=0
+ bulkscore=0 malwarescore=0 phishscore=0 suspectscore=0 clxscore=1015
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303080202
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thanks all for the feedback. This is in reply to Micka=C3=ABl, but should
-answer G=C3=BCnther's questions as well.
+On Wed, 2023-03-08 at 18:11 +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Introduce LSM_ORDER_LAST, to satisfy the requirement of LSMs willing to be
+> the last, e.g. the 'integrity' LSM, without changing the kernel command
+> line or configuration.
 
-> It would help to know exactly what are your needs short term, and long
-> term. As G=C3=BCnther is wondering, what about nested sandboxing?
+^needing to be last
 
-Our plan is to use the "landlocked" process attribute defined in the
-patch to determine the sandbox state of the system processes and send
-information to our metrics server regarding Landlock coverage. For
-example, the percentage of processes on the system that are sandboxed
-using Landlock.
+> 
+> Also, set this order for the 'integrity' LSM. While not enforced, this is
+> the only LSM expected to use it.
+> 
+> Similarly to LSM_ORDER_FIRST, LSMs with LSM_ORDER_LAST are always enabled
+> and put at the end of the LSM list.
+> 
+> Finally, for LSM_ORDER_MUTABLE LSMs, set the found variable to true if an
+> LSM is found, regardless of its order. In this way, the kernel would not
+> wrongly report that the LSM is not built-in in the kernel if its order is
+> LSM_ORDER_LAST.
+> 
+> Fixes: 79f7865d844c ("LSM: Introduce "lsm=" for boottime LSM selection")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Given that we use Landlock in a very specific and controlled way, we
-are not concerned about the inheritance behavior and nested policies,
-at least for the use case of metrics. When daemons are launched in
-ChromiumOS, they have a pre-defined sandboxing configuration that
-dictates whether Landlock should be applied or not. So this attribute
-would help us verify that the processes running on devices in the wild
-indeed have the general sandboxing state that we expect and the
-reality matches our expectation.
+Thanks, Roberto.  With this patch, 'integrity' can be safely removed
+from CONFIG_LSM definitions.
 
-Long-term, it would be useful to learn more information about domains
-and policies through the process attribute interface, but we do not
-currently have a need for that, apart from maybe doing troubleshooting
-when defining Landlock rules for system daemons.
+-- 
+thanks,
 
-> I'm thinking about a new /sys/kernel/security/landlock filesystem to be
-> able to audit Landlock domains (i.e. sandboxes). As for your use case,
-> it would be useful to be able to tie a process to a Landlock domain
-> thanks to IDs.
+Mimi
 
-I think this goes beyond the scope for our current needs, but
-certainly a nice feature that we could potentially use in the future.
-So given this, I was wondering what would be the minimum changes we
-can make now (if any) that would serve our purpose AND would be
-compatible with your long-term vision, without getting too deep into
-the implementation of broader concepts. We are flexible on the
-approach for querying the landlocked property (for example whether it
-is based on the presence of a /proc/.../attr/domain or actually
-reading an attribute).
 
-> Here are the guiding principles I think would make sense:
-> 1. A sandboxed thread shall not be able to directly know if it is
-> sandbox nor get any specific information from it's restrictions. The
-> reason for this principle is to avoid applications to simply jump to
-> conclusions (and change behavior) if they see that they are sandboxed
-> with Landlock, instead of trying to access resources and falling back
-> accordingly. A thread should only be able to inspect its
-> own/children/nested domains.
-> 2. Access to any Landlock domain information should be checked according
-> to PTRACE_MODE_READ_FSCREDS, the Landlock domain hierarchy (cf.
-> ptrace.c:domain_scope_le), and the first principle.
-
-One thing worth noting is that we use a system daemon to read process
-attributes. We have the ptrace_scope set to 1 and the daemon reading
-the attributes does have cap_sys_ptrace, however it is not related to
-the other processes on the system. Do you see this as a problem given
-principle#1?
-
-> 3. Any (domain) ID should be unique to the whole system (or maybe to the
-> reader's PID namespace, and then in theory relative to the /proc
-> content) to make it possible to compare Landlock domains (like
-> /proc/[pid]/ns/* symlinks enable), and avoid trivial races.
-> 4. These IDs should be the same during the whole lifetime of the related
-> domain.
-> 5. These IDs should not enable to infer information from other Landlock
-> domains (e.g. how many are in use, current and parent domains), nor the
-> kernel internals (e.g. addresses).
-> 6. These IDs should not be sequential nor easily guessed to avoid
-> anti-patterns (cf. file descriptors).
-> 7. These IDs should be CRIU-friendly, to be able to easily restore such
-> state. This doesn't help the previous principles and I don't know how/if
-> CRIU supports namespace IDs though.
-
-Since these points are regarding the properties of the domain IDs,
-they should not interfere with anything we would implement for
-determining the process sandbox status in any initial patch, but are
-good to know.
-
-> It would be nice if the /proc/[pid]/attr/landlock directory would only
-> exists if Landlock is enabled.
-
-This is the current default behavior I believe.
-
-> Similarly, /proc/[pid]/attr/landlock/domain should only exist (or be
-> viewable) for a thread if [pid] is part of one of its child domain.
-
-I am not sure if this is a blocker for our model of a single daemon
-querying the attribute for all processes. Are you suggesting that the
-file would not exist from the view of the other processes if they are
-not the parent process?
-
-> For now, I don't see any file in /proc/[pid]/attr/landlock/ other than
-> "domain" that would make sense, but a dedicated directory is useful anywa=
-y.
-
-Determining the sandbox status of processes based on the existence of
-/proc/[pid]/landlock/domain would serve our simple use case, pending
-the open questions/potential blockers above and a clarification on
-minimum requirements for an initial version.
