@@ -2,115 +2,103 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D66C64EC4
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Mar 2023 13:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A25C76186
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Mar 2023 17:01:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230399AbjCINbq (ORCPT
+        id S230506AbjCIRBF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Mar 2023 08:31:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52938 "EHLO
+        Thu, 9 Mar 2023 12:01:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230492AbjCINb3 (ORCPT
+        with ESMTP id S230440AbjCIRAk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Mar 2023 08:31:29 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E384DB6C1;
-        Thu,  9 Mar 2023 05:30:51 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4PXVDt6GHdz9xs5V;
-        Thu,  9 Mar 2023 21:21:02 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwDXXAgz3wlkQ7WEAQ--.25197S2;
-        Thu, 09 Mar 2023 14:29:31 +0100 (CET)
-Message-ID: <73084c169038938384a3177b82481f2d48026e6a.camel@huaweicloud.com>
-Subject: Re: [PATCH v3 3/3] security: Remove integrity from the LSM list in
- Kconfig
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        mic@digikod.net
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Thu, 09 Mar 2023 14:29:19 +0100
-In-Reply-To: <bfcfcf4ee3ea4c489f70bacb8160d0b5583fa383.camel@linux.ibm.com>
-References: <20230309085433.1810314-1-roberto.sassu@huaweicloud.com>
-         <20230309085433.1810314-4-roberto.sassu@huaweicloud.com>
-         <bfcfcf4ee3ea4c489f70bacb8160d0b5583fa383.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Thu, 9 Mar 2023 12:00:40 -0500
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47222DB6DA
+        for <linux-security-module@vger.kernel.org>; Thu,  9 Mar 2023 08:55:40 -0800 (PST)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PXb0V2x4kzMrBsq;
+        Thu,  9 Mar 2023 17:55:38 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4PXb0S4yJxz28qt;
+        Thu,  9 Mar 2023 17:55:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1678380938;
+        bh=ogM5pzTOPJ57a+lItppwvkB6tXtQU91aX+WE5VtmmcE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CVXMq/rQbiuM9zOgGARjrSOVIjtO1kgaAhwvBp8NUHE3mNkiQ/2xHLdfd0MUJvTIg
+         7v0YEpQaMbG6AGVYpDPVBHqvrjtay+Yzp78DwLMrN8ui7hppXKT7z4HkTYuYsTvjRp
+         ZXF3Ti6YH59tZhuUZi8ONTjjDxyd1oH5LNrvy6fA=
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Richard Weinberger <richard@nod.at>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Christopher Obbard <chris.obbard@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        James Morris <jmorris@namei.org>, Jeff Xu <jeffxu@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Ritesh Raj Sarraf <ritesh@collabora.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Sjoerd Simons <sjoerd@collabora.com>,
+        Willem de Bruijn <willemb@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v1 0/5] Landlock support for UML
+Date:   Thu,  9 Mar 2023 17:54:50 +0100
+Message-Id: <20230309165455.175131-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwDXXAgz3wlkQ7WEAQ--.25197S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cry5Zry7uw1ruFW8uw1rZwb_yoW8KrW5pF
-        srKay7KrnFvrya9ws0qwnxCFyxC395Gr98Cay3WF1qya43A3Wqgr47Kr1UCFy5Wrs7ArZ8
-        GryYg3yav3ZF9a7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-        AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280
-        aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQALBF1jj4phswABsm
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2023-03-09 at 08:20 -0500, Mimi Zohar wrote:
-> On Thu, 2023-03-09 at 09:54 +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Remove 'integrity' from the list of LSMs in Kconfig, as it is no longer
-> > necessary. Since the recent change (set order to LSM_ORDER_LAST), the
-> > 'integrity' LSM is always enabled.
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  security/Kconfig | 10 +++++-----
-> >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/security/Kconfig b/security/Kconfig
-> > index e6db09a779b..e109b4d5616 100644
-> > --- a/security/Kconfig
-> > +++ b/security/Kconfig
-> > @@ -246,11 +246,11 @@ endchoice
-> >  
-> >  config LSM
-> >  	string "Ordered list of enabled LSMs"
-> > -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-> > -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-> > -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-> > -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
-> > -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
-> > +	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-> > +	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-> > +	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-> > +	default "landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
-> > +	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
-> >  	help
-> >  	  A comma-separated list of LSMs, in initialization order.
-> >  	  Any LSMs left off this list will be ignored. This can be
-> 
-> This comment should be updated to reflect the LSM_ORDER_FIRST and
-> LSM_ORDER_LAST LSMs are included as well.
+Hi,
 
-Oh, ok. Will resend shortly.
+Commit cb2c7d1a1776 ("landlock: Support filesystem access-control")
+introduced a new ARCH_EPHEMERAL_INODES configuration, only enabled for
+User-Mode Linux.  The reason was that UML's hostfs managed inodes in an
+ephemeral way: from the kernel point of view, the same inode struct
+could be created several times while being used by user space because
+the kernel didn't hold references to inodes.  Because Landlock (and
+probably other subsystems) ties properties (i.e. access rights) to inode
+objects, it wasn't possible to create rules that match inodes and then
+allow specific accesses.
 
-Thanks
+This patch series fixes the way UML manages inodes according to the
+underlying filesystem.  They are now properly handles as for other
+filesystems, which enables to support Landlock (and probably other
+features).
 
-Roberto
+Backporting these patches requires some selftest harness patches
+backports too.
 
-> Otherwise,
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> 
-> 
-> 
-> 
+Regards,
+
+Mickaël Salaün (5):
+  hostfs: Fix ephemeral inodes
+  selftests/landlock: Don't create useless file layouts
+  selftests/landlock: Add supports_filesystem() helper
+  selftests/landlock: Make mounts configurable
+  selftests/landlock: Add tests for pseudo filesystems
+
+ arch/Kconfig                               |   7 -
+ arch/um/Kconfig                            |   1 -
+ fs/hostfs/hostfs.h                         |   1 +
+ fs/hostfs/hostfs_kern.c                    | 213 ++++++------
+ fs/hostfs/hostfs_user.c                    |   1 +
+ security/landlock/Kconfig                  |   2 +-
+ tools/testing/selftests/landlock/config    |   8 +-
+ tools/testing/selftests/landlock/fs_test.c | 381 +++++++++++++++++++--
+ 8 files changed, 472 insertions(+), 142 deletions(-)
+
+
+base-commit: fe15c26ee26efa11741a7b632e9f23b01aca4cc6
+-- 
+2.39.2
 
