@@ -2,63 +2,63 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3097C74A44
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Mar 2023 19:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD0BC6FD19
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Mar 2023 19:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229659AbjCJT0W (ORCPT
+        id S230361AbjCJTmG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Mar 2023 14:26:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43948 "EHLO
+        Fri, 10 Mar 2023 14:42:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229580AbjCJT0V (ORCPT
+        with ESMTP id S230058AbjCJTmF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Mar 2023 14:26:21 -0500
-Received: from domac.alu.hr (domac.alu.unizg.hr [IPv6:2001:b68:2:2800::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D23441340E8;
-        Fri, 10 Mar 2023 11:26:19 -0800 (PST)
+        Fri, 10 Mar 2023 14:42:05 -0500
+Received: from domac.alu.hr (domac.alu.unizg.hr [161.53.235.3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92C7CF8E72;
+        Fri, 10 Mar 2023 11:42:04 -0800 (PST)
 Received: from localhost (localhost [127.0.0.1])
-        by domac.alu.hr (Postfix) with ESMTP id 9A67860501;
-        Fri, 10 Mar 2023 20:26:16 +0100 (CET)
+        by domac.alu.hr (Postfix) with ESMTP id 4685460501;
+        Fri, 10 Mar 2023 20:42:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.hr; s=mail;
-        t=1678476377; bh=Q5wxs19SY0EymuNpLehBcnkGyEEzKnIQG/lWl0cjgdw=;
+        t=1678477322; bh=cj0o+XqVTrRektdE/wKq96D66nRJDWQYPgaoiKUVv6s=;
         h=Date:From:To:Cc:Subject:From;
-        b=Y2bHxrgCaCfhlj6IOjpAOyS8eKcAQ8AUxOd53GorXBWVTTvicQDgyL07IR/AAtujN
-         4n5+xE1OTLj8VzpUCjbBOwmSdLEKhdASz5vDNIJJkmRIuZH79QcaZAwGIcHLNPMSuQ
-         WhxndFqz63PTEnrA5dmLX9Zt/Pz0q6Ebc1oZdMf470FBcwJTpOo5+bcUAkIqUP699G
-         DRGWlaNAmjrI+DkkCadQK0hhXluZw6tk7jkhkrsxRzDEAXJzER2qQ1uHa8Y2SJY51T
-         8mQlc7FlY+C0f//yl2b/tug3WnDqRjD4k1H5P3ZMSryG+z+NlNwBYgx7KTkYCgIo7n
-         oXcacUAtVCIkw==
+        b=Zj2kvUMc1VyW7LJ4lRyMTLAIstjZHWWc+/oPa0R+VK49kUMjhnV1btr0YtMuB9vDf
+         wT8ghbUdsFWD4LRfaMNcHaIfaiFY+gR/U1i61yB2tHVUWoEZ/1UQ7p7rxUPOadd9aU
+         Dx5fothsLInSPn1R80GnnRZDNxidJpWc3iZ6UmGZ+PFm+3pRR3i4U0pO8+YIh/6n5Q
+         trTOFQSWA2b6kYDcyyCRUTQIyOOSqtMJur7AgutFhpNfUGIJ6+ZRko97TgWwukSqeL
+         Za7FGpB15gtplfqQgoczbRhHSsxd9AHbjEJ190bCn+IQxHNnZs1Hd725RAeZXp6ug2
+         viw08LhVVxTOg==
 X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
 Received: from domac.alu.hr ([127.0.0.1])
         by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id omi2TE8uLxU7; Fri, 10 Mar 2023 20:26:14 +0100 (CET)
+        with ESMTP id CY3lqGu51-DQ; Fri, 10 Mar 2023 20:42:00 +0100 (CET)
 Received: by domac.alu.hr (Postfix, from userid 1014)
-        id 7AB7560502; Fri, 10 Mar 2023 20:26:14 +0100 (CET)
+        id 0AE5760502; Fri, 10 Mar 2023 20:42:00 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.hr; s=mail;
-        t=1678476374; bh=Q5wxs19SY0EymuNpLehBcnkGyEEzKnIQG/lWl0cjgdw=;
+        t=1678477320; bh=cj0o+XqVTrRektdE/wKq96D66nRJDWQYPgaoiKUVv6s=;
         h=Date:From:To:Cc:Subject:From;
-        b=oAxssaA7+wt7b6MQOwv+Z1DgULMXdg3Gv/Z7J+kQ8DXpFDJPYbsi5b3RQ9HJVrXgA
-         RmGHQqJNGYTN3Itm1/lNuMSqoeBktnhNA6iKqxBBjyrtHQVssWkAXNYC4wMrxn1+z/
-         Le+/fujeMnga0TwF0OXoBi25myUojapr9j93IP70YLZEDMb5NA72Eh1V/rAd7B5T7F
-         PAqSbRtILsv1EItJtI5S633wZ3j9wHN58by2w2M85Vm+W9cIQpLKVHxlNYVz3An5jC
-         lZRwP3jvYxt469qgNrsM+rAK+Xgv9tyRQCGf+tDaNZKqssRRAEDl3cZDyozFPKiJ/J
-         YH7ntR7HORvzA==
-Date:   Fri, 10 Mar 2023 20:26:14 +0100
+        b=hxtoO2FizQmqBf5u2BrG0oax8xtvbo2Oj4IsjgiVnLtvfu4J5NnmxaJOpsrfaMbhu
+         KqE/09n6Mec4T9ZD33BK3auxlalAxQMlWw9X42rVNkteEm+qQ18mCkdlFwnkDwB/WO
+         0LVI4EmXJRTQbOH0AcUh0/QOp2PYZsVJPq3hDficL65w0PJejG0LL8Q2yKZyGAIVhu
+         IsGzb6B7zAcpH6Qfgy7P/zQ1K3KSJxGN5+DFYZda3IWxShZr96VD5sORR/S94wofTH
+         2qKuD0s80PSFXKLFEK9ZDC1b/HcJZ+3tUeJo2SeUhnxQNEbbWsCoI4nLFgP3ZcUJgI
+         mQbC41zihRkmw==
+Date:   Fri, 10 Mar 2023 20:42:00 +0100
 From:   Mirsad Goran Todorovac <mirsad.goran.todorovac@alu.hr>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
         Mimi Zohar <zohar@linux.ibm.com>,
+        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
         Paul Moore <paul@paul-moore.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
         =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
         Frederick Lawler <fred@cloudflare.com>
-Subject: [PATCH v1 0/2] Add destructor hook to LSM modules
-Message-ID: <20230310192614.GA528@domac.alu.hr>
+Subject: [PATCH v1 1/2] Add release hook to LSM
+Message-ID: <20230310194159.GB528@domac.alu.hr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -68,20 +68,33 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-LSM security/integrity/iint.c had the case of kmem_cache_create() w/o a proper
-kmem_cache_destroy() destructor.
+Add release() hook to the definition of the LSM modules, to enable calling
+destructors and deallocating allocated resources cleanly.
 
-Introducing the release() hook would enable LSMs to release allocated resources
-on exit, and in proper order, rather than dying all together with kernel shutdown
-in an undefined order.
-
-Thanks,
-	Mirsad
+Signed-off-by: Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Thomas Weißschuh <linux@weissschuh.net>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 ---
  include/linux/lsm_hooks.h | 1 +
- security/integrity/iint.c | 7 +++++++
- 2 files changed, 8 insertions(+)
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 6e156d2acffc..d5a6ab9b5eb2 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1724,6 +1724,7 @@ struct lsm_info {
+ 	unsigned long flags;	/* Optional: flags describing LSM */
+ 	int *enabled;		/* Optional: controlled by CONFIG_LSM */
+ 	int (*init)(void);	/* Required. */
++	int (*release)(void);	/* Release associated resources */
+ 	struct lsm_blob_sizes *blobs; /* Optional: for blob sharing. */
+ };
+ 
 
 --
 Mirsad Goran Todorovac
