@@ -2,93 +2,103 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2D3C6FD19
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Mar 2023 07:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 753D8C6FA99
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Mar 2023 07:58:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229972AbjCJHBi (ORCPT
+        id S229878AbjCJH6K (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Mar 2023 02:01:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33934 "EHLO
+        Fri, 10 Mar 2023 02:58:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbjCJHBd (ORCPT
+        with ESMTP id S229761AbjCJH6J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Mar 2023 02:01:33 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B35F9ECD;
-        Thu,  9 Mar 2023 23:01:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=0N+SCtcY/k9CimqgVMe/YX4md4YEbNQzEDvTCcqt4bw=; b=TbHcAKwtP7qVQnyr4M3BCyYIa9
-        /0zMoVu1Ym18t94ZPKH+tFOvb05xiFTdpVwC6jwn/i8aWIfnathj3m2nd+Fz/WuY6K+sj1gnbIrJw
-        PLDE5rtBFWDjO8xqpWgtSV+v7c/cZooSVNk+OWZnYWUfuOpDR7H3LV29R6TOwEN1+8fpgTxENcRrN
-        Vk5E2dz3TZTGLbzB/xxNiLvMzRNND6Xb1fYjLRDR9K5vOZvqInK/MTtgg8RzRwvLq61MMSRU8Kksp
-        qm2jVnkmnbSN62TJt7mvrf5Uw2cddBqIVlrEL4EqgGEdcmBpFlQAduFI+Hsk2g1cx0r2tLMgsSepe
-        DNHJzz+A==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1paWkT-00DKkw-B4; Fri, 10 Mar 2023 07:01:05 +0000
-Date:   Thu, 9 Mar 2023 23:01:05 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
-        john.johansen@canonical.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, luto@amacapital.net,
-        wad@chromium.org, dverkamp@chromium.org, paulmck@kernel.org,
-        baihaowen@meizu.com, frederic@kernel.org, jeffxu@google.com,
-        tytso@mit.edu, guoren@kernel.org, j.granados@samsung.com,
-        zhangpeng362@huawei.com, tangmeng@uniontech.com,
-        willy@infradead.org, nixiaoming@huawei.com, sujiaxun@uniontech.com,
-        patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/11] proc_sysctl: deprecate register_sysctl_paths()
-Message-ID: <ZArVscnCxYfZXwLR@bombadil.infradead.org>
-References: <20230302202826.776286-1-mcgrof@kernel.org>
- <20230302202826.776286-12-mcgrof@kernel.org>
- <ZAqvQ57PmdDoNo+F@sol.localdomain>
+        Fri, 10 Mar 2023 02:58:09 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4D414216;
+        Thu,  9 Mar 2023 23:58:06 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4PXyqb4fT0z9v7H3;
+        Fri, 10 Mar 2023 15:49:15 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwDnvGPz4gpkCr6FAQ--.63736S2;
+        Fri, 10 Mar 2023 08:57:47 +0100 (CET)
+Message-ID: <93b680a9a31357b21610dd988d3c653a9ace3492.camel@huaweicloud.com>
+Subject: Re: [PATCH v3 1/3] security: Introduce LSM_ORDER_LAST and set it
+ for the integrity LSM
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, mic@digikod.net, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Fri, 10 Mar 2023 08:57:36 +0100
+In-Reply-To: <CAHC9VhRBxPnQeQ4SPHKXP_k1epoaZRGNUzCa+QJR9se_t+4+-Q@mail.gmail.com>
+References: <20230309085433.1810314-1-roberto.sassu@huaweicloud.com>
+         <20230309085433.1810314-2-roberto.sassu@huaweicloud.com>
+         <CAHC9VhRBxPnQeQ4SPHKXP_k1epoaZRGNUzCa+QJR9se_t+4+-Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZAqvQ57PmdDoNo+F@sol.localdomain>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwDnvGPz4gpkCr6FAQ--.63736S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4kJryrtr45uw1rtFW7CFg_yoW8XFWUpF
+        W7KayrCr1qvFWrCa9xA3W3ua48C393GFnrGrsxZw1DZas5Zry0kr1IgrZ7WryDXF4vyFyS
+        9Fy3WFyakw1DArDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAMBF1jj4ppUQACsI
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 09, 2023 at 08:17:07PM -0800, Eric Biggers wrote:
-> On Thu, Mar 02, 2023 at 12:28:26PM -0800, Luis Chamberlain wrote:
-> > diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-> > index 780690dc08cd..e8459fc56b50 100644
-> > --- a/include/linux/sysctl.h
-> > +++ b/include/linux/sysctl.h
-> > @@ -221,13 +221,8 @@ extern void retire_sysctl_set(struct ctl_table_set *set);
-> >  struct ctl_table_header *__register_sysctl_table(
-> >  	struct ctl_table_set *set,
-> >  	const char *path, struct ctl_table *table);
-> > -struct ctl_table_header *__register_sysctl_paths(
-> > -	struct ctl_table_set *set,
-> > -	const struct ctl_path *path, struct ctl_table *table);
-> >  struct ctl_table_header *register_sysctl(const char *path, struct ctl_table *table);
-> >  struct ctl_table_header *register_sysctl_table(struct ctl_table * table);
-> > -struct ctl_table_header *register_sysctl_paths(const struct ctl_path *path,
-> > -						struct ctl_table *table);
-> >  
-> >  void unregister_sysctl_table(struct ctl_table_header * table);
-> >  
-> > @@ -277,12 +272,6 @@ static inline struct ctl_table_header *register_sysctl_mount_point(const char *p
-> >  	return NULL;
-> >  }
-> >  
-> > -static inline struct ctl_table_header *register_sysctl_paths(
-> > -			const struct ctl_path *path, struct ctl_table *table)
-> > -{
-> > -	return NULL;
-> > -}
-> > -
+On Thu, 2023-03-09 at 18:44 -0500, Paul Moore wrote:
+> On Thu, Mar 9, 2023 at 3:55 AM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > Introduce LSM_ORDER_LAST, to satisfy the requirement of LSMs needing to be
+> > last, e.g. the 'integrity' LSM, without changing the kernel command line or
+> > configuration.
+> > 
+> > Also, set this order for the 'integrity' LSM. While not enforced, this is
+> > the only LSM expected to use it.
+> > 
+> > Similarly to LSM_ORDER_FIRST, LSMs with LSM_ORDER_LAST are always enabled
+> > and put at the end of the LSM list.
 > 
-> Seems that this patch should be titled "remove register_sysctl_paths()", not
-> "deprecate register_sysctl_paths()"?
+> Since you are respinning this patchset anyway, I might make it clear
+> that the LSM_ORDER_LAST LSMs are always enabled only when they are
+> enabled at kernel configure/build time.  Simply marking a LSM as
+> LSM_ORDER_LAST does not mean you don't have to explicitly select the
+> LSM in the rest of the Kconfig.
 
-Good call! Will adjust.
+Ok, yes, better to clarify.
 
-  Luis
+Thanks
+
+Roberto
+
+> > Finally, for LSM_ORDER_MUTABLE LSMs, set the found variable to true if an
+> > LSM is found, regardless of its order. In this way, the kernel would not
+> > wrongly report that the LSM is not built-in in the kernel if its order is
+> > LSM_ORDER_LAST.
+> > 
+> > Fixes: 79f7865d844c ("LSM: Introduce "lsm=" for boottime LSM selection")
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  include/linux/lsm_hooks.h |  1 +
+> >  security/integrity/iint.c |  1 +
+> >  security/security.c       | 12 +++++++++---
+> >  3 files changed, 11 insertions(+), 3 deletions(-)
+
