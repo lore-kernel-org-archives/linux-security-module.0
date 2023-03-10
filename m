@@ -2,105 +2,119 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC6BC6FD19
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Mar 2023 09:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA9DC6FA99
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Mar 2023 13:30:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229725AbjCJJBp (ORCPT
+        id S229959AbjCJNax (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Mar 2023 04:01:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58756 "EHLO
+        Fri, 10 Mar 2023 08:30:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229876AbjCJJA5 (ORCPT
+        with ESMTP id S229652AbjCJNaw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Mar 2023 04:00:57 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D8DB10E278;
-        Fri, 10 Mar 2023 00:54:55 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4PY0593rGsz9v7H9;
-        Fri, 10 Mar 2023 16:46:05 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwDnbmUy8ApkK+yFAQ--.17497S5;
-        Fri, 10 Mar 2023 09:54:37 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        mic@digikod.net
+        Fri, 10 Mar 2023 08:30:52 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C37171009D2;
+        Fri, 10 Mar 2023 05:30:49 -0800 (PST)
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32ACCBYh015137;
+        Fri, 10 Mar 2023 13:30:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=asYICjIrjQrbR77e2tmK7a69X9wRaG/debRPa7BHsck=;
+ b=hz7KbY3BGPI5wPZaMVeD45ZG9+PA/Fd9hRfNv1m69OckQBgfyA0K8UZb4Vif0ljtw9SV
+ Iz+aLB1pPx2VMXat2XqiEQQBZt1ZgYrTxgeXNiedZYid8Ko5NA6j8OVzpWRJyyZwtwV7
+ 7PJ0cimAyGWyPa0nBHYybn4uzfoNC69EsF18LsbzSv0sCANz9YR94UzQ8d2L/76KlmQF
+ rDLGTny3iqcqAkei/rXzdToEtJ2BV/9a4BeABzC4yKKlRL8GkYcO7bduVb9p2EOCMq25
+ SWP8Epxxum0yu66MkAcB6trk9ft941qBwEOm9gs86LIeUo7Mf2nnrbpuu/pCz7E0EkWz vg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p84be1urb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Mar 2023 13:30:21 +0000
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32AD0Nh6009740;
+        Fri, 10 Mar 2023 13:30:20 GMT
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p84be1uqv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Mar 2023 13:30:20 +0000
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32AClFDh007600;
+        Fri, 10 Mar 2023 13:30:19 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([9.208.129.120])
+        by ppma03wdc.us.ibm.com (PPS) with ESMTPS id 3p6fmy7448-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Mar 2023 13:30:19 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+        by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32ADUI2e13107786
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 10 Mar 2023 13:30:18 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C93D5805F;
+        Fri, 10 Mar 2023 13:30:18 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E760B58045;
+        Fri, 10 Mar 2023 13:30:16 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.71.208])
+        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 10 Mar 2023 13:30:16 +0000 (GMT)
+Message-ID: <aea1e9de5120522be376e29828991f8975d3c165.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 1/3] security: Introduce LSM_ORDER_LAST and set it
+ for the integrity LSM
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, mic@digikod.net
 Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
         linux-kernel@vger.kernel.org, keescook@chromium.org,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 3/3] security: Remove integrity from the LSM list in Kconfig
-Date:   Fri, 10 Mar 2023 09:54:01 +0100
-Message-Id: <20230310085401.1964889-4-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230310085401.1964889-1-roberto.sassu@huaweicloud.com>
+Date:   Fri, 10 Mar 2023 08:30:16 -0500
+In-Reply-To: <20230310085401.1964889-2-roberto.sassu@huaweicloud.com>
 References: <20230310085401.1964889-1-roberto.sassu@huaweicloud.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwDnbmUy8ApkK+yFAQ--.17497S5
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFykCF13uw4rJw4xWr18Grg_yoW8Kr1fpF
-        srKay7trnrZFyF9r4DWrnxCFyxC3s5Wr98Cay3WF4DKa43Aa4qqrsrKr15CFy5Wrs7AFZ8
-        Gryagw1a93ZFgFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
-        A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-        w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-        W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8
-        JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
-        0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
-        JVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwI
-        xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-        Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-        IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
-        6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAMBF1jj4ZsBQABsV
-X-CFilter-Loop: Reflected
+         <20230310085401.1964889-2-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: QhnLh_pJkHytYD-v3mK939KA5L0zcvjn
+X-Proofpoint-ORIG-GUID: WMY2OYkPrgpJefZDEKM2bbSCbOATQIQN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-10_03,2023-03-09_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=803
+ malwarescore=0 phishscore=0 suspectscore=0 priorityscore=1501 spamscore=0
+ impostorscore=0 clxscore=1015 bulkscore=0 adultscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303100104
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Fri, 2023-03-10 at 09:53 +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Introduce LSM_ORDER_LAST, to satisfy the requirement of LSMs needing to be
+> last, e.g. the 'integrity' LSM, without changing the kernel command line or
+> configuration.
+> 
+> Also, set this order for the 'integrity' LSM. While not enforced, this is
+> the only LSM expected to use it.
+> 
+> Similarly to LSM_ORDER_FIRST, LSMs with LSM_ORDER_LAST are always enabled
+> and put at the end of the LSM list, if selected in the kernel
+> configuration. Setting one of these orders alone, does not cause the LSMs
+> to be selected and compiled built-in in the kernel.
+> 
+> Finally, for LSM_ORDER_MUTABLE LSMs, set the found variable to true if an
+> LSM is found, regardless of its order. In this way, the kernel would not
+> wrongly report that the LSM is not built-in in the kernel if its order is
+> LSM_ORDER_LAST.
+> 
+> Fixes: 79f7865d844c ("LSM: Introduce "lsm=" for boottime LSM selection")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Remove 'integrity' from the list of LSMs in Kconfig, as it is no longer
-necessary. Since the recent change (set order to LSM_ORDER_LAST), the
-'integrity' LSM is always enabled (if selected in the kernel
-configuration).
+Acked-by: Mimi Zohar <zohar@linux.ibm.com>
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/Kconfig | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/security/Kconfig b/security/Kconfig
-index e6db09a779b..1699dda6821 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -246,15 +246,17 @@ endchoice
- 
- config LSM
- 	string "Ordered list of enabled LSMs"
--	default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
--	default "landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
--	default "landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
--	default "landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
--	default "landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
-+	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-+	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-+	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-+	default "landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
-+	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
- 	help
- 	  A comma-separated list of LSMs, in initialization order.
--	  Any LSMs left off this list will be ignored. This can be
--	  controlled at boot with the "lsm=" parameter.
-+	  Any LSMs left off this list, except for those with order
-+	  LSM_ORDER_FIRST and LSM_ORDER_LAST, which are always enabled
-+	  if selected in the kernel configuration, will be ignored.
-+	  This can be controlled at boot with the "lsm=" parameter.
- 
- 	  If unsure, leave this as the default.
- 
--- 
-2.25.1
 
