@@ -2,85 +2,156 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65502C6FD1C
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Mar 2023 23:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F18F7C6FD1C
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Mar 2023 00:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231265AbjCIXp0 (ORCPT
+        id S229506AbjCJAcl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Mar 2023 18:45:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49420 "EHLO
+        Thu, 9 Mar 2023 19:32:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231273AbjCIXpY (ORCPT
+        with ESMTP id S229453AbjCJAck (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Mar 2023 18:45:24 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9EBEFCBEB
-        for <linux-security-module@vger.kernel.org>; Thu,  9 Mar 2023 15:45:23 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id me6-20020a17090b17c600b0023816b0c7ceso8008280pjb.2
-        for <linux-security-module@vger.kernel.org>; Thu, 09 Mar 2023 15:45:23 -0800 (PST)
+        Thu, 9 Mar 2023 19:32:40 -0500
+Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3176510285A
+        for <linux-security-module@vger.kernel.org>; Thu,  9 Mar 2023 16:32:38 -0800 (PST)
+Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-17683b570b8so4164582fac.13
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Mar 2023 16:32:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1678405523;
+        d=chromium.org; s=google; t=1678408357;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=joK1iLs9YJ7HYS6kSzl2rZbt/PuSCafHcz/xrLe7jGo=;
-        b=bJFC/lAxRaHk+mJqFSplHzH565OHscdq/bY/9CaWiQOg8ijsx/QWt+KjSnlFrcR+xR
-         4I1MJqqwVstjWukbZY6XdRsy9bNQSN/vXnzu/GEMWzZTYVGIw135HxxyK2++JSB1jCwy
-         bP7vzNceDo79Gggr+2xGhQQcleXlWrDTzDQUlFJMW8ZQE1RtzafjjlEqdvydZ4fz8OTD
-         Y6VnRI+sJpkqAnzSvB0URvwz+nejVbgHzuJuAT+kACmJuxKTloH6ahZu62YHu56dSLtK
-         pQvzd09T9tcOEZKDsBrx1zvXbF56C2jQ+8HzE0y00ywXkIa00ErlFPhBOm7+RwTIXAz6
-         4XTA==
+        bh=WDDMqwW1GLC8UUv9JUljZTRtLeluA0sa4qkSLYsTZUk=;
+        b=jLMBdmA1DctdygM0KaJKaF4HoA/uEkWX/OIvNbcARfYCzNd86E3GFnNc+Zm0GZV/Og
+         b2Oe3PepZFx/3XNuNV/42fLDLVWatCFh5p4Tx1+LUQLoeqGHZp2uSGBg/RpqFcdEEgJe
+         axj7m0tnscF+Y1EsbK0cKOCs8k1XRkKM+QWUo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678405523;
+        d=1e100.net; s=20210112; t=1678408357;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=joK1iLs9YJ7HYS6kSzl2rZbt/PuSCafHcz/xrLe7jGo=;
-        b=xks2Xq4rZQxywLvGMsMH2uYTqB6RjqSXAW1aooJXTBnYentxRdP7XZmDtLfK5koRr6
-         rrAA/o693Y4ZNGWymN6WVsB+a8mZPGKuWxUAxcTRYIVsRlmBCxKx7hU+22QJ//etG/GQ
-         ME6tOSHn4hufGYNPrpVhCXfjkBJU0QJuAMklG01ldd9J+T6y9jOZBSlpMF+8YQJTMhbS
-         h1EaWvNCxb1SOiqGVubqX8nwnAPT5QHgaVIExnxDhl6z/NIKsZmxwNuORmkfy8L1aRuU
-         cjIFhT01d8ExvZyHwooJWQvcI2jbqA+3+pdD3XIWhvDhJjZ8gOXKvRLURluwC0+t8pLi
-         9JPg==
-X-Gm-Message-State: AO0yUKWbQ9bGOKKetA2sz0j9VevxYVau+m+SyP8ZKwoDlOF4IvPnXtAT
-        mrDkXk5zA82Z1HvhbzhJ+fKaeqKDTyMYJ2m9okNO
-X-Google-Smtp-Source: AK7set9RqqZSFE77wMatvCcE/t3Pq4nptu8SVgLeYYg9Y3Xs8cDwkREIi1LMWiYTY9uI7Ha62QlVV3bMgcEiTsZhy9c=
-X-Received: by 2002:a17:903:485:b0:19a:f22b:31d4 with SMTP id
- jj5-20020a170903048500b0019af22b31d4mr9142241plb.7.1678405523115; Thu, 09 Mar
- 2023 15:45:23 -0800 (PST)
+        bh=WDDMqwW1GLC8UUv9JUljZTRtLeluA0sa4qkSLYsTZUk=;
+        b=E/LycOtu32eSOpl+2Yh/eKD/5KCEM0b/Pf36dtyICKNtxxvY3jke/9PaBqaaPG4nsQ
+         4+9nX5zGypDSz1thaeIxcNUHJC57iXKIJcNjP/HJEb18N68HJgJi5xuXHzVHJ+KZ8blK
+         X9LZqXST6fkTOWXhFJAbAepYTUhqTaK2tRpfO0YwSimUy2HAKijIPJytnEwhxL5zNd5x
+         TxbmjgF9hW3V7vERqgQqwBANFV0iE/EbKyffnxb8G2FUfr2cg8kUXLRNYV29FaKBd7MC
+         M3/HkaZH1yE8N0ErG/5hZXe8bU+AyjHtmt8hiE5vcHZhGL5Ht2E0k2xEX9X0TsvKyRIE
+         MEFA==
+X-Gm-Message-State: AO0yUKXG8AJrupKSo+NLLKCaU5IuX8Z7DRxhh2WaBFE7/9JJHSojopM4
+        v/pt3a9uvpdGGI4aFq7AJsDgyMQ/9vXFWVNPK3oUNA==
+X-Google-Smtp-Source: AK7set+p4AewkRkijc5ome9qvzmpVoUPb7cFQqPzldM97wQ31oYnl6pmwhvpaQ09qjETLqHdSfbIpdUo+DXRx3lfTG4=
+X-Received: by 2002:a05:6870:5b01:b0:176:4416:eeff with SMTP id
+ ds1-20020a0568705b0100b001764416eeffmr6930112oab.8.1678408357486; Thu, 09 Mar
+ 2023 16:32:37 -0800 (PST)
 MIME-Version: 1.0
-References: <20230309085433.1810314-1-roberto.sassu@huaweicloud.com> <20230309085433.1810314-4-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20230309085433.1810314-4-roberto.sassu@huaweicloud.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 9 Mar 2023 18:45:12 -0500
-Message-ID: <CAHC9VhSuXxpS_eae0gi4zGFYWEXrxFZD7joaV-qhNmmvf_tcMg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] security: Remove integrity from the LSM list in Kconfig
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, mic@digikod.net, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20220921185426.1663357-1-jeffxu@chromium.org> <20220921185426.1663357-2-jeffxu@chromium.org>
+ <CAHC9VhS-jv5cpSdq7dxFGYH=z=5grQceNMyjroeL2KHdrVUV6g@mail.gmail.com>
+ <CABi2SkXRxomrYn-xUf3B+XswmQjXZUJXmYJECmr_nBfrZWwqkA@mail.gmail.com>
+ <CAHC9VhRuUZxdsVQftqWa0zEuNAxk8ur0-TZp5KecJ537hRONRQ@mail.gmail.com>
+ <875yhe6ial.fsf@defensec.nl> <CABi2SkXU+C77PqXnH_OHs9rjsiOQAHMmkDF5H9EYkU=ZG_tNrg@mail.gmail.com>
+ <CAEjxPJ43nNKG4QEKK5W2_K_TGeUjyUywvsqiPipT8Pom5VNMxw@mail.gmail.com> <CAEjxPJ5_K7mxCbDGErQdoULA5n7pu1FP0y0cFq-NZAO6aQDiaQ@mail.gmail.com>
+In-Reply-To: <CAEjxPJ5_K7mxCbDGErQdoULA5n7pu1FP0y0cFq-NZAO6aQDiaQ@mail.gmail.com>
+From:   Jeff Xu <jeffxu@chromium.org>
+Date:   Thu, 9 Mar 2023 16:32:26 -0800
+Message-ID: <CABi2SkVC04CNUXFXG6dNMvao-VVt0+NqkpfbxE4zFfjRXhw5_w@mail.gmail.com>
+Subject: Re: [PATCH 1/1] Add CONFIG_SECURITY_SELINUX_PERMISSIVE_DONTAUDIT
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     Dominick Grift <dominick.grift@defensec.nl>,
+        Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, jorgelo@chromium.org,
+        groeck@chromium.org, Luis Hector Chavez <lhchavez@google.com>,
+        Luis Hector Chavez <lhchavez@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 9, 2023 at 3:55=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
+On Fri, Feb 17, 2023 at 7:25=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
 >
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+> On Fri, Feb 17, 2023 at 10:22 AM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> >
+> > On Mon, Feb 13, 2023 at 1:02 AM Jeff Xu <jeffxu@chromium.org> wrote:
+> > >
+> > > On Fri, Sep 23, 2022 at 11:45 AM Dominick Grift
+> > > <dominick.grift@defensec.nl> wrote:
+> > > >
+> > > > Paul Moore <paul@paul-moore.com> writes:
+> > > >
+> > > > > On Fri, Sep 23, 2022 at 1:43 PM Jeff Xu <jeffxu@chromium.org> wro=
+te:
+> > > > >> On Wed, Sep 21, 2022 at 12:11 PM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > > > >> > On Wed, Sep 21, 2022 at 2:54 PM <jeffxu@chromium.org> wrote:
+> > > > >> > >
+> > > > >> > > From: Jeff Xu <jeffxu@chromium.org>
+> > > > >> > >
+> > > > >> > > When SECURITY_SELINUX_DEVELOP=3Dy and the system is running =
+in permissive
+> > > > >> > > mode, it is useful to disable logging from permissive domain=
+, so audit
+> > > > >> > > log does not get spamed.
+> > > > >> > >
+> > > > >> > > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> > > > >> > > Signed-off-by: Luis Hector Chavez <lhchavez@google.com>
+> > > > >> > > Tested-by: Luis Hector Chavez <lhchavez@chromium.org>
+> > > > >> > > Tested-by: Jeff Xu<jeffxu@chromium.org>
+> > > > >> > > ---
+> > > > >> > >  security/selinux/Kconfig | 10 ++++++++++
+> > > > >> > >  security/selinux/avc.c   |  9 +++++++++
+> > > > >> > >  2 files changed, 19 insertions(+)
+> > > > >> >
+> > > > >> > I'm sorry, but I can't accept this into the upstream kernel.
+> > > > >> > Permissive mode, both per-domain and system-wide, is not inten=
+ded to
+> > > > >> > be a long term solution.  Permissive mode should really only b=
+e used
+> > > > >> > as a development tool or emergency "hotfix" with the proper so=
+lution
+> > > > >> > being either an adjustment of the existing policy (SELinux pol=
+icy
+> > > > >> > booleans, labeling changes, etc.) or the development of a new =
+policy
+> > > > >> > module which better fits your use case.
+> > > > >>
+> > > > >> Thanks for the response.
+> > > > >> For a system that wants to control a few daemons, is there a
+> > > > >> recommended pattern from selinux ?
+> > > >
+> > > > That is effectively a "targeted" policy model. You target a selecti=
+on of
+> > > > entities and everything else is "unconfined" (ie not targeteed).
+> > > >
+> > > > An "unconfined" domain is just a process type that has many allow r=
+ules
+> > > > associated with it making it effectively similar to an "permissive"
+> > > > domain. The difference is that since "unconfined" domains have full
+> > > > access there should not be any AVC denials (nothing is blocked by
+> > > > SELinux because the policy does not target the entity)
+> > > >
+> > > It seems that my system doesn't have unconfined_t, so
+> > > I am trying to get an example.
+> > >
+> > > Can I use a wildcard, something like below ?
+> > > type unconfined_t
+> > > allow unconfined_t *
+> > >
+> > > An example would be appreciated.
+> >
+> > If your policy in Android-based, then the su domain would be the
+> > easiest starting point. It isn't quite what you want (a permissive
+> > domain with dontaudit rules that suppress all denials, only included
+> > in userdebug or eng builds) but if you replace "dontaudit" with allow
+> > everywhere, it would be "unconfined".
 >
-> Remove 'integrity' from the list of LSMs in Kconfig, as it is no longer
-> necessary. Since the recent change (set order to LSM_ORDER_LAST), the
-> 'integrity' LSM is always enabled.
+> BTW SELinux already has a way to achieve the same end as your kernel
+> patch without any code changes; there are dontaudit rules in policy
+> that can silence denials and you just need to write them to cover all
+> classes/permissions. This is done in the Android su policy.
 
-See my comment in 1/3 about "always enabled".
+Got it, Thanks everyone for pointing out solutions!
 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/Kconfig | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-
---=20
-paul-moore.com
+-Jeff
