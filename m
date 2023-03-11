@@ -2,118 +2,142 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D0FC6FA99
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Mar 2023 23:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 661BBC61DA4
+	for <linux-security-module@archiver.kernel.org>; Sat, 11 Mar 2023 14:59:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230477AbjCJXiE (ORCPT
+        id S230405AbjCKO7g (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Mar 2023 18:38:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49952 "EHLO
+        Sat, 11 Mar 2023 09:59:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230523AbjCJXiC (ORCPT
+        with ESMTP id S230263AbjCKO7e (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Mar 2023 18:38:02 -0500
-Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60BD7B74A
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Mar 2023 15:37:59 -0800 (PST)
-Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-5416698e889so6562717b3.2
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Mar 2023 15:37:59 -0800 (PST)
+        Sat, 11 Mar 2023 09:59:34 -0500
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85AE4E6DAB
+        for <linux-security-module@vger.kernel.org>; Sat, 11 Mar 2023 06:59:29 -0800 (PST)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-5416698e889so35042057b3.2
+        for <linux-security-module@vger.kernel.org>; Sat, 11 Mar 2023 06:59:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1678491478;
+        d=paul-moore.com; s=google; t=1678546768;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZAsl0x71H/TTZvG/oR3VnRExXsP3bWi1hx0WaLiiJtE=;
-        b=JRXQCPq5zg4qTSmdgtUN7OP9NuAGsnrIjn54cqLJRcwrqbHTRa18hfGhrk/xDG+ZXr
-         EVxMsV2iDJDu2udOakivT+l6gvHAkZuGLkaXpFsa7orCJki3sp8dk00C7WIUAp1I1Tl6
-         eYGsqZ/lew99fWvKU9ppRH7LM+kJoQbS9q2mW4mvk6Rp61nklzhL/Fbw5YMfdkexBJkq
-         fSCpscmBOOej+qEb2mL2mBfgHgJtTKFIZT0oFbWGQ6ab9vOfOj6+viJwmDEBl31kjUVO
-         yxNKRwXF2NjkunG1GCdwbUmwZ4YKcNDU/e9PEAfHA9Mi/Ir2gGOpdzMNxshxh9dVnKcB
-         I4QA==
+        bh=8hP9f5ahD00gGd8rqkmyWxcLZVI5nl4ZoNtez5PA0r4=;
+        b=PkUwoTwpZa3+W0h9YKjj42q47zdeK1CMRi+tRAQYRbwSYvvgX+PNs76C1XJj7WPTwS
+         JNEIlZSuQA6b7FhqDp37dUJZR/GPShawVww3y3w3s60Rhj+eAxtZG3aZDBtjYRtA9zhP
+         VTg1uCJtgAE59bZwp4kuHgdEIDIiaeq2VQXZ+wv3r1DiWssC4ntBhpQMarf47MxTzkEm
+         y8f6RYMryhP39ECfBmqvSuCwcpwlMeHFHDZhE1IvJF/bqMSl8yWCvX4H63WDhl+fs5ZQ
+         kLiuMQVJ5Aqcd1V9gYTmgVm4pEXjoer3Lo335C4QXCJyt3qqs+B2zZCEsx8Zy7JKOzVA
+         8RLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678491478;
+        d=1e100.net; s=20210112; t=1678546768;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZAsl0x71H/TTZvG/oR3VnRExXsP3bWi1hx0WaLiiJtE=;
-        b=K/omL3E9H9vi6Iisn3woo9FYktT34fyDBhapXEd/Yf9M93F9YzOCjORIP7arsKppdc
-         tTtcAcy8qfmvQ3HVdgje7VxuK0xgtCjWRuVNWze3Z5gbePdiWg4tSCr91YH99N6QegCt
-         c1ss1pixNm/0Pl/NZlNaP5ObQppkUdoFFWiBEzj20XFVvK3Y02YtaOyYH2p7DaLrVtFp
-         T/1BcrPR2BYSOOZh5TrgpKy7SRAiXxkqEbAti8H1ZFthanR3ApJDpR014+YSR884QzhB
-         PHYZzgyxwJHeke3/gjOVaAnEYgi4d/AG2I5wKZvfTRCxf01xK/9QC7db0LxtZAeSwTeV
-         dHHw==
-X-Gm-Message-State: AO0yUKXoeBBLn8QHIxozeOwHDOCBdR+DR2fSgcssm1MuJS6mbdEAaZQ4
-        1r7+pf6nz8gSrey8X/Gz8rVE/P6DTy5MTm5jSPfZ
-X-Google-Smtp-Source: AK7set/UM/hEEMUK6bVRDLfraDarPiY+xljrjjvUO83Jh4wDTGJ/dbydMv2X6EqZ1OFoJoykot/hNCtL+11T2bdzWew=
-X-Received: by 2002:a0d:dbca:0:b0:533:9d13:a067 with SMTP id
- d193-20020a0ddbca000000b005339d13a067mr2648739ywe.3.1678491478514; Fri, 10
- Mar 2023 15:37:58 -0800 (PST)
+        bh=8hP9f5ahD00gGd8rqkmyWxcLZVI5nl4ZoNtez5PA0r4=;
+        b=MjATezQq3G0cUKIg8E5wpLJvxRcuwUFR7K0MymjT5FUV+9W8lBYXpGe0dBE+yhbNj9
+         EqsHaCtpkwrSL1cmmqL2LBe97e+6pPV0KpLqkauJKg4SyIU1yx1ydrUGLIfJZB2DUw41
+         zP1eCf0/2mW5VLvV3tZlnP4LLH8n1/pjs49nNRudxsy0hRCwqBu20htUo17mxN99scuF
+         ZHo63lPVyQMa30xKaNwfZiRcbGZMnIivoRIsAyLfrPRvDvNwpoLlIwTeLajCSDbROGGY
+         ow+rDel1biuDNpAnQFZb3wLwMMGDtb1bBvnBMNmyBkptIa6qfvKiJQ6xc7fdYZbnznyC
+         kzjw==
+X-Gm-Message-State: AO0yUKV4eO4+udPpVIE4dVVAqTgWu11xqmkIaexdjX4uVvvvCLse654s
+        KA81bfwt0ESbbkrP7q0zX/NdGdFH4GFmgqPYaIS/
+X-Google-Smtp-Source: AK7set81IOjSWwCoFQC0qeCyY/b34lVXphnKYgtEMgSkuNEAjDbexPT2fTgfLBBQH+V/2egtIg2cwLUOvhKErZY5p2k=
+X-Received: by 2002:a81:ac28:0:b0:536:55e5:2eaa with SMTP id
+ k40-20020a81ac28000000b0053655e52eaamr18718463ywh.3.1678546768643; Sat, 11
+ Mar 2023 06:59:28 -0800 (PST)
 MIME-Version: 1.0
-References: <20230310085401.1964889-1-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20230310085401.1964889-1-roberto.sassu@huaweicloud.com>
+References: <20230310192614.GA528@domac.alu.hr> <CAHC9VhSzppHevG_Td+hKU4KRSDgV_NYf2RSeKA06PR-rD+dJLw@mail.gmail.com>
+ <c1c1cbcc-10b6-de3f-81e8-78e6b173d46f@alu.unizg.hr>
+In-Reply-To: <c1c1cbcc-10b6-de3f-81e8-78e6b173d46f@alu.unizg.hr>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 10 Mar 2023 18:37:47 -0500
-Message-ID: <CAHC9VhR=Kv7U2ERqVadFx4Gu5zR2VJeEb1m4UAD-im-ef4_aVQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] security: Always enable integrity LSM
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, mic@digikod.net, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Sat, 11 Mar 2023 09:59:17 -0500
+Message-ID: <CAHC9VhRFQtqTZku==BkW0uz1oZgG63j15GoQD1iexW4aPoAPcA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] Add destructor hook to LSM modules
+To:     Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
+Cc:     Mirsad Goran Todorovac <mirsad.goran.todorovac@alu.hr>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Frederick Lawler <fred@cloudflare.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 10, 2023 at 3:54=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
+On Fri, Mar 10, 2023 at 5:53=E2=80=AFPM Mirsad Goran Todorovac
+<mirsad.todorovac@alu.unizg.hr> wrote:
+> On 10. 03. 2023. 23:33, Paul Moore wrote:
+> > On Fri, Mar 10, 2023 at 2:26=E2=80=AFPM Mirsad Goran Todorovac
+> > <mirsad.goran.todorovac@alu.hr> wrote:
+> >>
+> >> LSM security/integrity/iint.c had the case of kmem_cache_create() w/o =
+a proper
+> >> kmem_cache_destroy() destructor.
+> >>
+> >> Introducing the release() hook would enable LSMs to release allocated =
+resources
+> >> on exit, and in proper order, rather than dying all together with kern=
+el shutdown
+> >> in an undefined order.
+> >>
+> >> Thanks,
+> >>         Mirsad
+> >>
+> >> ---
+> >>  include/linux/lsm_hooks.h | 1 +
+> >>  security/integrity/iint.c | 7 +++++++
+> >>  2 files changed, 8 insertions(+)
+> >
+> > I only see the 1/2 patch, did you send the 2/2 patch to the LSM list?
+> > If not, you need to do that
 >
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+> I will resend everything, because this first attempt was buggy and
+> incorrect regarding the credits. Will try this, Andy said that I wait
+> for the comments, but I did not expect them before the weekend.
 >
-> Since the integrity (including IMA and EVM) functions are currently alway=
-s
-> called by the LSM infrastructure, and always after all LSMs, formalize
-> these requirements by introducing a new LSM ordering called LSM_ORDER_LAS=
-T,
-> and set it for the 'integrity' LSM (patch 1).
->
-> Consequently, revert commit 92063f3ca73a ("integrity: double check
-> iint_cache was initialized"), as the double check becomes always verified
-> (patch 2), and remove 'integrity' from the list of LSMs in
-> security/Kconfig (patch 3).
->
-> Changelog
->
-> v3:
-> - Remove Signed-off-by tag by Mimi (suggested by Paul)
-> - Clarify that an LSM with order LSM_ORDER_FIRST or LSM_ORDER_LAST is
->   always enabled if it is selected in the kernel configuration (suggested
->   by Paul)
->
-> v2:
-> - Fix commit message in patch 1 (suggested by Mimi)
-> - Bump version of patch 2 (v1 -> v3) to make one patch set
-> - Add patch 3 (suggested by Mimi)
->
-> v1:
-> - Add comment for LSM_ORDER_LAST definition (suggested by Mimi)
-> - Add Fixes tag (suggested by Mimi)
-> - Do minor corrections in the commit messages (suggested by Mimi and
->   Stefan)
->
-> Roberto Sassu (3):
->   security: Introduce LSM_ORDER_LAST and set it for the integrity LSM
->   Revert "integrity: double check iint_cache was initialized"
->   security: Remove integrity from the LSM list in Kconfig
->
->  include/linux/lsm_hooks.h |  1 +
->  security/Kconfig          | 16 +++++++++-------
->  security/integrity/iint.c |  9 +--------
->  security/security.c       | 12 +++++++++---
->  4 files changed, 20 insertions(+), 18 deletions(-)
+> Thank you guys for patience, I am just finishing the test of devres
+> patch and then I will proceed with integrity LSM patch submission.
 
-I just merged the full patchset into the lsm/next branch, thanks everyone!
+Thank you for resending the patchset, although a couple of
+administrative things to consider for your next posting:
 
---=20
+* Each time you post a patchset it is generally considered a best
+practice to increment the version number, e.g. "[PATCH vX 0/2]" with
+'X' being the version number.  This makes it easier to identify
+specific revisions and ensure that everyone is reviewing the latest
+patchset.
+
+* It is a good idea to use the "./scripts/get_maintainer.pl" script to
+ensure you have included the right people and mailing lists on your
+submissions as your latest resend did not include the LSM list when it
+should have.
+
+With that out of the way, I wanted to make a quick comment on the
+patch itself.  Currently LSMs do not support unloading, or dynamic
+loading for that matter.  There are several reasons for this, but
+perhaps the most important is that in order to help meet the security
+goals for several of the LSMs they need to be present in the kernel
+from the very beginning and remain until the very end.  Adding a
+proper "release" method to a LSM is going to be far more complicated
+than what you've done with this patchset, involving a lot of
+discussion both for the LSM layer itself and all of the currently
+supported LSMs, and ultimately I don't believe it is something we will
+want to support.
+
+I appreciate your desire to help, and I want to thank you for your
+patch and the effort behind it, but I don't believe the kobject memory
+leak you saw at kernel shutdown was a real issue (it was only "leaked"
+because the system was shutting down) and I'm not sure the current
+behavior is something we want to change in the near future.
+
+--
 paul-moore.com
