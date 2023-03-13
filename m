@@ -2,152 +2,71 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FD7C74A44
-	for <linux-security-module@archiver.kernel.org>; Sat, 11 Mar 2023 22:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A90C6FD1F
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Mar 2023 08:30:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229984AbjCKWKQ (ORCPT
+        id S229640AbjCMIai (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 11 Mar 2023 17:10:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39570 "EHLO
+        Mon, 13 Mar 2023 04:30:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbjCKWKP (ORCPT
+        with ESMTP id S229583AbjCMIag (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 11 Mar 2023 17:10:15 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3B542C657;
-        Sat, 11 Mar 2023 14:10:14 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4191260E88;
-        Sat, 11 Mar 2023 22:10:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F8D5C433EF;
-        Sat, 11 Mar 2023 22:10:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678572613;
-        bh=D9dLzCfeqWuXouu3aKrlHiE1Tazt/6/b97r6ngWPJaQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IcT1ljkO4RsToJDNXqRwIOVoh9Tb36Q+04t6fC7zd0cfP8TRMGf5bMbwtfK87hzFK
-         sQm8pjQdlYqZVP1Xk6R7jqXhEcOtvME3a8cuAzgfG/v0HtPpxOnTx2AQ/cE/5+Ro3G
-         6pTPNO7m5fiMXrv3NowItD4nghj/opIfSPIE7sO/k1B7DWPYdI2efez+g2VBIRZAOc
-         YFBPZIXZbkrH4KJ/EQ/rnAG1BVFQLrd30B1w/j2GNFr/5Vc4w2GnwecKIIK48ByelG
-         WqR2W3F1vGR2IUedndTYh8iSYqzB3bff/PyXf2CUPRZMPhnG9vFWarhsTAi96BkTmG
-         vLaq+x9s2AIHQ==
-Date:   Sun, 12 Mar 2023 00:10:10 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     zohar@linux.ibm.com, dhowells@redhat.com, dwmw2@infradead.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, pvorel@suse.cz, kanth.ghatraju@oracle.com,
-        konrad.wilk@oracle.com, erpalmer@linux.vnet.ibm.com,
-        coxu@redhat.com, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v5 5/6] KEYS: CA link restriction
-Message-ID: <ZAz8QlynTSMD7kuE@kernel.org>
-References: <20230302164652.83571-1-eric.snowberg@oracle.com>
- <20230302164652.83571-6-eric.snowberg@oracle.com>
+        Mon, 13 Mar 2023 04:30:36 -0400
+Received: from mail.amblevebiz.com (mail.amblevebiz.com [80.211.239.97])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F28A3647E
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Mar 2023 01:30:31 -0700 (PDT)
+Received: by mail.amblevebiz.com (Postfix, from userid 1002)
+        id 3B04382475; Mon, 13 Mar 2023 09:30:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=amblevebiz.com;
+        s=mail; t=1678696228;
+        bh=mG5KF9rXIT2hCcIXZaMY449X9Ndwb1czFhgZLlqDg7A=;
+        h=Date:From:To:Subject:From;
+        b=i6Mr9XwumEUG7krE/cbXBEFVtNkvrU6BD28fKFnOBvuCqJn30CoZiMpYYUGSg2541
+         wuUrkXXuHiIwgq24gFq6wpLRy0hdomveKLtfCFeOAmxmt3u13DKF7Pw1MZdYcpMU/I
+         I6MGqhF9K0lzU1HUAOIR5hZLjJaGZgmjLFqcp7r55Dz4hiVtjpNPm7B2t0tt9vksJr
+         G1oC1NHsG7eyfnCvv1iIOgWIMFNcX68mqgzsD8fbQzpOvr+d+4ylf7CAo5LEzmqIf+
+         uC+cAM0RLTkm++z/AhGNqOHJJ6Azr+nFkypxgHk/t1wD9mVtm+vZHor+ZppI78fMY7
+         FMdhNSoHUnwVw==
+Received: by mail.amblevebiz.com for <linux-security-module@vger.kernel.org>; Mon, 13 Mar 2023 08:30:19 GMT
+Message-ID: <20230313084500-0.1.n.1apm.0.ftdk9imc8q@amblevebiz.com>
+Date:   Mon, 13 Mar 2023 08:30:19 GMT
+From:   =?UTF-8?Q? "Luk=C3=A1=C5=A1_Horv=C3=A1th" ?= 
+        <lukas.horvath@amblevebiz.com>
+To:     <linux-security-module@vger.kernel.org>
+Subject: =?UTF-8?Q?Technick=C3=BD_audit_podlah?=
+X-Mailer: mail.amblevebiz.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230302164652.83571-6-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 02, 2023 at 11:46:51AM -0500, Eric Snowberg wrote:
-> Add a new link restriction.  Restrict the addition of keys in a keyring
-> based on the key to be added being a CA.
-> 
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  crypto/asymmetric_keys/restrict.c | 38 +++++++++++++++++++++++++++++++
->  include/crypto/public_key.h       | 15 ++++++++++++
->  2 files changed, 53 insertions(+)
-> 
-> diff --git a/crypto/asymmetric_keys/restrict.c b/crypto/asymmetric_keys/restrict.c
-> index 6b1ac5f5896a..48457c6f33f9 100644
-> --- a/crypto/asymmetric_keys/restrict.c
-> +++ b/crypto/asymmetric_keys/restrict.c
-> @@ -108,6 +108,44 @@ int restrict_link_by_signature(struct key *dest_keyring,
->  	return ret;
->  }
->  
-> +/**
-> + * restrict_link_by_ca - Restrict additions to a ring of CA keys
-> + * @dest_keyring: Keyring being linked to.
-> + * @type: The type of key being added.
-> + * @payload: The payload of the new key.
-> + * @trust_keyring: Unused.
-> + *
-> + * Check if the new certificate is a CA. If it is a CA, then mark the new
-> + * certificate as being ok to link.
-> + *
-> + * Returns 0 if the new certificate was accepted, -ENOKEY if the
-> + * certificate is not a CA. -ENOPKG if the signature uses unsupported
-> + * crypto, or some other error if there is a matching certificate but
-> + * the signature check cannot be performed.
-> + */
-> +int restrict_link_by_ca(struct key *dest_keyring,
-> +			const struct key_type *type,
-> +			const union key_payload *payload,
-> +			struct key *trust_keyring)
-> +{
-> +	const struct public_key *pkey;
-> +
-> +	if (type != &key_type_asymmetric)
-> +		return -EOPNOTSUPP;
-> +
-> +	pkey = payload->data[asym_crypto];
-> +	if (!pkey)
-> +		return -ENOPKG;
-> +	if (!test_bit(KEY_EFLAG_CA, &pkey->key_eflags))
-> +		return -ENOKEY;
-> +	if (!test_bit(KEY_EFLAG_KEYCERTSIGN, &pkey->key_eflags))
-> +		return -ENOKEY;
-> +	if (test_bit(KEY_EFLAG_DIGITALSIG, &pkey->key_eflags))
-> +		return -ENOKEY;
+Dobr=C3=A9 r=C3=A1no,
 
-nit: would be more readable, if conditions were separated by
-empty lines.
+uva=C5=BEujete o bezesp=C3=A1rov=C3=A9 podlaze pro v=C3=BDrobn=C3=AD prov=
+oz?
 
-> +
-> +	return 0;
-> +}
-> +
->  static bool match_either_id(const struct asymmetric_key_id **pair,
->  			    const struct asymmetric_key_id *single)
->  {
-> diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
-> index 03c3fb990d59..653992a6e941 100644
-> --- a/include/crypto/public_key.h
-> +++ b/include/crypto/public_key.h
-> @@ -75,6 +75,21 @@ extern int restrict_link_by_key_or_keyring_chain(struct key *trust_keyring,
->  						 const union key_payload *payload,
->  						 struct key *trusted);
->  
-> +#if IS_REACHABLE(CONFIG_ASYMMETRIC_KEY_TYPE)
-> +extern int restrict_link_by_ca(struct key *dest_keyring,
-> +			       const struct key_type *type,
-> +			       const union key_payload *payload,
-> +			       struct key *trust_keyring);
-> +#else
-> +static inline int restrict_link_by_ca(struct key *dest_keyring,
-> +				      const struct key_type *type,
-> +				      const union key_payload *payload,
-> +				      struct key *trust_keyring)
-> +{
-> +	return 0;
-> +}
-> +#endif
-> +
->  extern int query_asymmetric_key(const struct kernel_pkey_params *,
->  				struct kernel_pkey_query *);
->  
-> -- 
-> 2.27.0
-> 
+Jako sv=C4=9Btov=C3=BD l=C3=ADdr ve v=C3=BDrob=C4=9B a pokl=C3=A1dce podl=
+ah =C5=99e=C5=A1=C3=ADme probl=C3=A9my vypl=C3=BDvaj=C3=ADc=C3=AD z vlivu=
+ chemick=C3=BDch slou=C4=8Denin, ot=C4=9Bru, n=C3=A1raz=C5=AF, vlhkosti n=
+ebo n=C3=A1hl=C3=BDch zm=C4=9Bn teplot - na=C5=A1e podlahov=C3=A9 syst=C3=
+=A9my jsou p=C5=99izp=C5=AFsobeny nejt=C4=9B=C5=BE=C5=A1=C3=ADm podm=C3=AD=
+nk=C3=A1m prost=C5=99ed=C3=AD.
 
-BR, Jarkko
+Garantujeme v=C3=A1m =C5=99e=C5=A1en=C3=AD, kter=C3=A1 jsou =C5=A1etrn=C3=
+=A1 k =C5=BEivotn=C3=ADmu prost=C5=99ed=C3=AD, odoln=C3=A1 a snadno se =C4=
+=8Dist=C3=AD, hygienick=C3=A1, protiskluzov=C3=A1 a bezpe=C4=8Dn=C3=A1 pr=
+o zam=C4=9Bstnance.
+
+Poskytujeme kr=C3=A1tkou dobu instalace a nep=C5=99etr=C5=BEit=C3=BD prov=
+oz i o v=C3=ADkendech a sv=C3=A1tc=C3=ADch, =C4=8D=C3=ADm=C5=BE eliminuje=
+me riziko prostoj=C5=AF.
+
+Mohu V=C3=A1m zdarma nab=C3=ADdnout technick=C3=BD audit podlah s komplex=
+n=C3=ADm rozborem podkladu.
+
+M=C5=AF=C5=BEeme pro v=C3=A1s mluvit o =C5=99e=C5=A1en=C3=ADch?
+
+
+Luk=C3=A1=C5=A1 Horv=C3=A1th
