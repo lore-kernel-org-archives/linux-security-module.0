@@ -2,129 +2,158 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A685CC74A4B
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Mar 2023 20:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A826C6FD1C
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Mar 2023 20:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229915AbjCMU2m (ORCPT
+        id S229998AbjCMUn4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Mar 2023 16:28:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49010 "EHLO
+        Mon, 13 Mar 2023 16:43:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbjCMU2k (ORCPT
+        with ESMTP id S229534AbjCMUnz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Mar 2023 16:28:40 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A4738C50B
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Mar 2023 13:27:55 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id c200so3222601ybf.3
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Mar 2023 13:27:55 -0700 (PDT)
+        Mon, 13 Mar 2023 16:43:55 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02FB9212B8
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Mar 2023 13:43:47 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id t4so13326031ybg.11
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Mar 2023 13:43:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1678739273;
+        d=paul-moore.com; s=google; t=1678740226;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gFnxh6ChwFpFm5r6DaepAUcIfT7/Tx7g2a94eMxrXFM=;
-        b=gixUeT4Ubigv+gUryvD1n8kXhVuY6FIFBf8gg4I7hdEB5cz0ej/6HVI4XQXVUFbqHu
-         Md2v534oXJ5kUonyMVSwW6G+UiHQZ1l7WWkB3FcnpcFUpWlqV9Lz9GQAcPW6rHI06dqv
-         5guJ9aHDXhUq3vcvdWKETFKP1Uk0rDckcCR3prsdIEwRB6QjCVCvDp08XZQ0TAGZAxdc
-         ry3KXn9w9lG+tv8gAMQf3hrLraK4M1naV8n8Zw99xYqLrfvAOECHLge7mUSMBUHft02A
-         m4I1Lzb+1yrEewh0+XQmcUlesZDHUvdtoDKSymWhsEzW6lR4dx+a3cm5r1rlwZoDrPKf
-         CE/g==
+        bh=bpallsyVWp4X08BRu3LzaIlUbB9qVedyIOW4XaLO78U=;
+        b=Dx4W9y+4xxpBpOolAKWkBObbAUSIOoX15XjrVmudQUQkcarwJO9dT/EhcKvnmhM3Fr
+         WXwSkHhcaxuCM8SBlGj3oE7APCuTCpfnnSPWk0SK9EhPd7iT/tXv6ypU0poAJsArJqO7
+         AqRRPpbQGwNgk1m8W70qIQMEvH5luiJiLd2PknArRGQ9VMCcXARtSbEJatx2hSRZC7bs
+         4g/tYhfdljmFC6S+XSmvmE+k8gZSo7lHoynQbkq8/TFcj7GlC5RLe4RPqFBXWvIIaVG4
+         NA9QjSkSBh1tnKXNzk0gbJ+nkoadadzD9J+lx5jzzgwpkkbpE6A2YfTyNjs0o7M5+rNT
+         2xfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678739273;
+        d=1e100.net; s=20210112; t=1678740226;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gFnxh6ChwFpFm5r6DaepAUcIfT7/Tx7g2a94eMxrXFM=;
-        b=toVOUEwAHch55o/8rnBPrZ2bb3Y8UCQ9aJHKh/xoRRtOHTdJyIDXCkLk5PBzxWezZB
-         gocHhFdw39J3JnZiHuFEsmYF2N77szL9xyTQT303k0U70IQxnOxflSEFSeckEPRMeATg
-         JnoT+5IOaoEvYBzEjFm3tq9wDUpkWczM8BlmZ4o3Fq54tRvLgWDdhmg4aLlkOT2z+/1f
-         QP9Clwa7aYRqTiUqxFIYLi7MRq3Y3J5hsosVgB1HRfZ7NxFswuZp8sST5KUZybehIy5i
-         X9MDbLK+42tOgcCdNiNt3J75MVbyJXpLT7cjVj9j+cbofJ+kFtCKUOIVAB2NAr7drgww
-         vgdA==
-X-Gm-Message-State: AO0yUKUYw6+eZwDXGJ8zDCDqBVgLdFTdmTQ+52R4balpfWEx+V0pXqFa
-        7h8rn5XmTzHEI3lt7Qad7FLrWP4TrcF6Xa8KWfps
-X-Google-Smtp-Source: AK7set/I0y9ItLKYj2Yw/npMPux8FEEhdrk4Zeo1yP8Tu8wlBFXVCN12SYX3+ZYI4S6xcsXkyCtr2vJKznbvJX29hYU=
-X-Received: by 2002:a5b:40e:0:b0:ac2:ffe:9cc9 with SMTP id m14-20020a5b040e000000b00ac20ffe9cc9mr22178487ybp.3.1678739273093;
- Mon, 13 Mar 2023 13:27:53 -0700 (PDT)
+        bh=bpallsyVWp4X08BRu3LzaIlUbB9qVedyIOW4XaLO78U=;
+        b=jvJIXaJIyFNnsPjNj9D8dJB3lblv0B/xlMqbWSL50wwE+MGSAzJrilaSFnjnp53Zxl
+         SPrmh4Flsg6uD8ORJrHxhY2XdfVMtdQ3tETp5HX+EcMCjwfL1fBEICA8Zb4q/l71YELG
+         ghdxv4TNivrFpAA3Vg+8yYdcLWpI/iezsS/KFfAHaPDnMlX6f2miir9/X6z8HSb2NEh2
+         bXD+7Nq6e7BW4Lzk5Rq9YHviKL7Ftg3txr/C0Rs+46bnXI3VnRU/q1ojCVYVjxCcOCN/
+         dIK+uZ7lZNGffGyzzrKx4rpRudN0xUsqS3bhGvGi/xKrCyCxB3rwF8Tzmyenl1/Q8TaM
+         ehSw==
+X-Gm-Message-State: AO0yUKVl8g5bGWORPKcTMAQ9Sa9C3/scVI+uKwe7QhUEohAN4uNcqJhq
+        V2YxJxHyiu0l5qd2EXOYGeVCpR8n1YBjlhXLnK07
+X-Google-Smtp-Source: AK7set/1ypMPSZDs4sjqyzXZkstT0dQPtsqkKvXnonoSsgmW2pediUdIt/g4UY9GajMI7WUokHtC6jGZjJ9LMqdP+SU=
+X-Received: by 2002:a05:6902:4f0:b0:ab8:1ed9:cfc1 with SMTP id
+ w16-20020a05690204f000b00ab81ed9cfc1mr19911211ybs.3.1678740226073; Mon, 13
+ Mar 2023 13:43:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230310192614.GA528@domac.alu.hr> <CAHC9VhSzppHevG_Td+hKU4KRSDgV_NYf2RSeKA06PR-rD+dJLw@mail.gmail.com>
- <c1c1cbcc-10b6-de3f-81e8-78e6b173d46f@alu.unizg.hr> <CAHC9VhRFQtqTZku==BkW0uz1oZgG63j15GoQD1iexW4aPoAPcA@mail.gmail.com>
- <ZA7tyrscjwavzY3a@smile.fi.intel.com>
-In-Reply-To: <ZA7tyrscjwavzY3a@smile.fi.intel.com>
+References: <20230313113211.178010-1-aleksandr.mikhalitsyn@canonical.com> <CAEivzxf630y_kjVLNM4m1vfQxnwyOBK+0wiCLW1T+8miPVC5Fg@mail.gmail.com>
+In-Reply-To: <CAEivzxf630y_kjVLNM4m1vfQxnwyOBK+0wiCLW1T+8miPVC5Fg@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 13 Mar 2023 16:27:42 -0400
-Message-ID: <CAHC9VhTMoCAFhaa36Bq7_jiKGiaeMbYTuWv7tTQP1OHpY0EUsg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] Add destructor hook to LSM modules
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>,
-        Mirsad Goran Todorovac <mirsad.goran.todorovac@alu.hr>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Frederick Lawler <fred@cloudflare.com>
+Date:   Mon, 13 Mar 2023 16:43:35 -0400
+Message-ID: <CAHC9VhT2-QJ6yRoAvbicg5n_NUZLpJ5YjNer4TcHwiaW2hq6FQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] scm: fix MSG_CTRUNC setting condition for SO_PASSSEC
+To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>, jmorris@namei.org,
+        serge@hallyn.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 13, 2023 at 5:33=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Sat, Mar 11, 2023 at 09:59:17AM -0500, Paul Moore wrote:
-> > On Fri, Mar 10, 2023 at 5:53=E2=80=AFPM Mirsad Goran Todorovac
-> > <mirsad.todorovac@alu.unizg.hr> wrote:
+On Mon, Mar 13, 2023 at 7:40=E2=80=AFAM Aleksandr Mikhalitsyn
+<aleksandr.mikhalitsyn@canonical.com> wrote:
 >
-> ...
+> +CC security subsystem folks
 >
-> > With that out of the way, I wanted to make a quick comment on the
-> > patch itself.  Currently LSMs do not support unloading, or dynamic
-> > loading for that matter.  There are several reasons for this, but
-> > perhaps the most important is that in order to help meet the security
-> > goals for several of the LSMs they need to be present in the kernel
-> > from the very beginning and remain until the very end.  Adding a
-> > proper "release" method to a LSM is going to be far more complicated
-> > than what you've done with this patchset, involving a lot of
-> > discussion both for the LSM layer itself and all of the currently
-> > supported LSMs, and ultimately I don't believe it is something we will
-> > want to support.
+> On Mon, Mar 13, 2023 at 12:32=E2=80=AFPM Alexander Mikhalitsyn
+> <aleksandr.mikhalitsyn@canonical.com> wrote:
 > >
-> > I appreciate your desire to help, and I want to thank you for your
-> > patch and the effort behind it, but I don't believe the kobject memory
-> > leak you saw at kernel shutdown was a real issue (it was only "leaked"
-> > because the system was shutting down) and I'm not sure the current
-> > behavior is something we want to change in the near future.
->
-> Currently the security module so secure that even adds an unneeded noise =
-to
-> the debugging output.
->
-> At very least it would be nice to add a stub and put a big comment
-> (on your taste) explaining why we do not do anything there.
->
-> Agree?
+> > Currently, kernel would set MSG_CTRUNC flag if msg_control buffer
+> > wasn't provided and SO_PASSCRED was set or if there was pending SCM_RIG=
+HTS.
+> >
+> > For some reason we have no corresponding check for SO_PASSSEC.
+> >
+> > In the recvmsg(2) doc we have:
+> >        MSG_CTRUNC
+> >               indicates that some control data was discarded due to lac=
+k
+> >               of space in the buffer for ancillary data.
+> >
+> > So, we need to set MSG_CTRUNC flag for all types of SCM.
+> >
+> > This change can break applications those don't check MSG_CTRUNC flag.
 
-No.  At least not without a lot of additional work beyond what was
-presented in this patchset.  What about all of the other kobject
-caches created by other LSMs, this is more than just the IMA
-iint_cache.  I'm also skeptical that this patchset was ever tested and
-verified as the newly added release() method was never actually called
-from anywhere that I could see.
+Unless I'm missing something I don't think this will actually result
+in a userspace visible change as put_cmsg() already has a number of
+checks which set the MSG_CTRUNC flag if necessary (including if no
+control buffer is passed, e.g. msg_control =3D=3D NULL).
 
-I think we would need to see a proper, verified fix before I could say
-for certain.  If you want to discuss potential designs, we can do that
-too, but please remember the constraints that were already mentioned
-about intentionally not allowing the LSMs to be unloaded (prior to
-system shutdown).
+Regardless, it looks fine to me.
 
-I don't know the answer to this, but I'm guessing the LSMs aren't the
-only kernel subsystems to "leak" memory on system shutdown; working on
-the assumption that this is the case, how are those "leaked"
-allocations handled?
+Acked-by: Paul Moore <paul@paul-moore.com>
 
---
+> > Cc: "David S. Miller" <davem@davemloft.net>
+> > Cc: Eric Dumazet <edumazet@google.com>
+> > Cc: Jakub Kicinski <kuba@kernel.org>
+> > Cc: Paolo Abeni <pabeni@redhat.com>
+> > Cc: Leon Romanovsky <leon@kernel.org>
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
+om>
+> >
+> > v2:
+> > - commit message was rewritten according to Eric's suggestion
+> > ---
+> >  include/net/scm.h | 13 ++++++++++++-
+> >  1 file changed, 12 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/net/scm.h b/include/net/scm.h
+> > index 1ce365f4c256..585adc1346bd 100644
+> > --- a/include/net/scm.h
+> > +++ b/include/net/scm.h
+> > @@ -105,16 +105,27 @@ static inline void scm_passec(struct socket *sock=
+, struct msghdr *msg, struct sc
+> >                 }
+> >         }
+> >  }
+> > +
+> > +static inline bool scm_has_secdata(struct socket *sock)
+> > +{
+> > +       return test_bit(SOCK_PASSSEC, &sock->flags);
+> > +}
+> >  #else
+> >  static inline void scm_passec(struct socket *sock, struct msghdr *msg,=
+ struct scm_cookie *scm)
+> >  { }
+> > +
+> > +static inline bool scm_has_secdata(struct socket *sock)
+> > +{
+> > +       return false;
+> > +}
+> >  #endif /* CONFIG_SECURITY_NETWORK */
+> >
+> >  static __inline__ void scm_recv(struct socket *sock, struct msghdr *ms=
+g,
+> >                                 struct scm_cookie *scm, int flags)
+> >  {
+> >         if (!msg->msg_control) {
+> > -               if (test_bit(SOCK_PASSCRED, &sock->flags) || scm->fp)
+> > +               if (test_bit(SOCK_PASSCRED, &sock->flags) || scm->fp ||
+> > +                   scm_has_secdata(sock))
+> >                         msg->msg_flags |=3D MSG_CTRUNC;
+> >                 scm_destroy(scm);
+> >                 return;
+> > --
+> > 2.34.1
+
+--=20
 paul-moore.com
