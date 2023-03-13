@@ -2,71 +2,111 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A90C6FD1F
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Mar 2023 08:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DB2C61DA4
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Mar 2023 09:35:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbjCMIai (ORCPT
+        id S231186AbjCMJfP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Mar 2023 04:30:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56974 "EHLO
+        Mon, 13 Mar 2023 05:35:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbjCMIag (ORCPT
+        with ESMTP id S230186AbjCMJet (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Mar 2023 04:30:36 -0400
-Received: from mail.amblevebiz.com (mail.amblevebiz.com [80.211.239.97])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F28A3647E
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Mar 2023 01:30:31 -0700 (PDT)
-Received: by mail.amblevebiz.com (Postfix, from userid 1002)
-        id 3B04382475; Mon, 13 Mar 2023 09:30:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=amblevebiz.com;
-        s=mail; t=1678696228;
-        bh=mG5KF9rXIT2hCcIXZaMY449X9Ndwb1czFhgZLlqDg7A=;
-        h=Date:From:To:Subject:From;
-        b=i6Mr9XwumEUG7krE/cbXBEFVtNkvrU6BD28fKFnOBvuCqJn30CoZiMpYYUGSg2541
-         wuUrkXXuHiIwgq24gFq6wpLRy0hdomveKLtfCFeOAmxmt3u13DKF7Pw1MZdYcpMU/I
-         I6MGqhF9K0lzU1HUAOIR5hZLjJaGZgmjLFqcp7r55Dz4hiVtjpNPm7B2t0tt9vksJr
-         G1oC1NHsG7eyfnCvv1iIOgWIMFNcX68mqgzsD8fbQzpOvr+d+4ylf7CAo5LEzmqIf+
-         uC+cAM0RLTkm++z/AhGNqOHJJ6Azr+nFkypxgHk/t1wD9mVtm+vZHor+ZppI78fMY7
-         FMdhNSoHUnwVw==
-Received: by mail.amblevebiz.com for <linux-security-module@vger.kernel.org>; Mon, 13 Mar 2023 08:30:19 GMT
-Message-ID: <20230313084500-0.1.n.1apm.0.ftdk9imc8q@amblevebiz.com>
-Date:   Mon, 13 Mar 2023 08:30:19 GMT
-From:   =?UTF-8?Q? "Luk=C3=A1=C5=A1_Horv=C3=A1th" ?= 
-        <lukas.horvath@amblevebiz.com>
-To:     <linux-security-module@vger.kernel.org>
-Subject: =?UTF-8?Q?Technick=C3=BD_audit_podlah?=
-X-Mailer: mail.amblevebiz.com
+        Mon, 13 Mar 2023 05:34:49 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58FB012BD8;
+        Mon, 13 Mar 2023 02:33:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678699994; x=1710235994;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=F26rz5vL8ASK0vwBawwnPkZu1yacUTeFb5CHoZ+HiH0=;
+  b=SlDJJ1A85O6yTggIhVRUVypHdLD27XC3VrHX1tNut9NpKkUbRn23JrOn
+   09/reILQJMq1R5D0nrLx8dE1asq5jgICQ2pELXCCW/qlVZ43SNIGZWdDX
+   fj0Ql4aaUe+xDoxI/dLcyWyjqZ3IHidTR2doE6wbBxy2oTNUpPnCmi5R3
+   xM0NKNBqCyqvw280kGz/r/Y8KFZiObrh78xsHheuoGf7rPdqzKxshtBAv
+   xdpMfiHZG39MSHnNNHrs5UgUXtJeOwGfTLM4cls7FGRkFm2Jhn1lJUY49
+   MLlM+PpWYZi4gg/kYwli0t6cBL2rMOSn8/bNLBoqxby42MIWWRBTcu1Od
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10647"; a="325459694"
+X-IronPort-AV: E=Sophos;i="5.98,256,1673942400"; 
+   d="scan'208";a="325459694"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2023 02:33:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10647"; a="655914665"
+X-IronPort-AV: E=Sophos;i="5.98,256,1673942400"; 
+   d="scan'208";a="655914665"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga006.jf.intel.com with ESMTP; 13 Mar 2023 02:33:01 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1pbeY6-002Xjv-27;
+        Mon, 13 Mar 2023 11:32:58 +0200
+Date:   Mon, 13 Mar 2023 11:32:58 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>,
+        Mirsad Goran Todorovac <mirsad.goran.todorovac@alu.hr>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Frederick Lawler <fred@cloudflare.com>
+Subject: Re: [PATCH v1 0/2] Add destructor hook to LSM modules
+Message-ID: <ZA7tyrscjwavzY3a@smile.fi.intel.com>
+References: <20230310192614.GA528@domac.alu.hr>
+ <CAHC9VhSzppHevG_Td+hKU4KRSDgV_NYf2RSeKA06PR-rD+dJLw@mail.gmail.com>
+ <c1c1cbcc-10b6-de3f-81e8-78e6b173d46f@alu.unizg.hr>
+ <CAHC9VhRFQtqTZku==BkW0uz1oZgG63j15GoQD1iexW4aPoAPcA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRFQtqTZku==BkW0uz1oZgG63j15GoQD1iexW4aPoAPcA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dobr=C3=A9 r=C3=A1no,
+On Sat, Mar 11, 2023 at 09:59:17AM -0500, Paul Moore wrote:
+> On Fri, Mar 10, 2023 at 5:53 PM Mirsad Goran Todorovac
+> <mirsad.todorovac@alu.unizg.hr> wrote:
 
-uva=C5=BEujete o bezesp=C3=A1rov=C3=A9 podlaze pro v=C3=BDrobn=C3=AD prov=
-oz?
+...
 
-Jako sv=C4=9Btov=C3=BD l=C3=ADdr ve v=C3=BDrob=C4=9B a pokl=C3=A1dce podl=
-ah =C5=99e=C5=A1=C3=ADme probl=C3=A9my vypl=C3=BDvaj=C3=ADc=C3=AD z vlivu=
- chemick=C3=BDch slou=C4=8Denin, ot=C4=9Bru, n=C3=A1raz=C5=AF, vlhkosti n=
-ebo n=C3=A1hl=C3=BDch zm=C4=9Bn teplot - na=C5=A1e podlahov=C3=A9 syst=C3=
-=A9my jsou p=C5=99izp=C5=AFsobeny nejt=C4=9B=C5=BE=C5=A1=C3=ADm podm=C3=AD=
-nk=C3=A1m prost=C5=99ed=C3=AD.
+> With that out of the way, I wanted to make a quick comment on the
+> patch itself.  Currently LSMs do not support unloading, or dynamic
+> loading for that matter.  There are several reasons for this, but
+> perhaps the most important is that in order to help meet the security
+> goals for several of the LSMs they need to be present in the kernel
+> from the very beginning and remain until the very end.  Adding a
+> proper "release" method to a LSM is going to be far more complicated
+> than what you've done with this patchset, involving a lot of
+> discussion both for the LSM layer itself and all of the currently
+> supported LSMs, and ultimately I don't believe it is something we will
+> want to support.
+> 
+> I appreciate your desire to help, and I want to thank you for your
+> patch and the effort behind it, but I don't believe the kobject memory
+> leak you saw at kernel shutdown was a real issue (it was only "leaked"
+> because the system was shutting down) and I'm not sure the current
+> behavior is something we want to change in the near future.
 
-Garantujeme v=C3=A1m =C5=99e=C5=A1en=C3=AD, kter=C3=A1 jsou =C5=A1etrn=C3=
-=A1 k =C5=BEivotn=C3=ADmu prost=C5=99ed=C3=AD, odoln=C3=A1 a snadno se =C4=
-=8Dist=C3=AD, hygienick=C3=A1, protiskluzov=C3=A1 a bezpe=C4=8Dn=C3=A1 pr=
-o zam=C4=9Bstnance.
+Currently the security module so secure that even adds an unneeded noise to
+the debugging output.
 
-Poskytujeme kr=C3=A1tkou dobu instalace a nep=C5=99etr=C5=BEit=C3=BD prov=
-oz i o v=C3=ADkendech a sv=C3=A1tc=C3=ADch, =C4=8D=C3=ADm=C5=BE eliminuje=
-me riziko prostoj=C5=AF.
+At very least it would be nice to add a stub and put a big comment
+(on your taste) explaining why we do not do anything there.
 
-Mohu V=C3=A1m zdarma nab=C3=ADdnout technick=C3=BD audit podlah s komplex=
-n=C3=ADm rozborem podkladu.
+Agree?
 
-M=C5=AF=C5=BEeme pro v=C3=A1s mluvit o =C5=99e=C5=A1en=C3=ADch?
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Luk=C3=A1=C5=A1 Horv=C3=A1th
