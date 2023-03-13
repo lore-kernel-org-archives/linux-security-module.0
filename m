@@ -2,252 +2,117 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCCDC61DA4
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Mar 2023 09:35:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC17DC61DA4
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Mar 2023 13:16:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231312AbjCMJfb (ORCPT
+        id S229655AbjCMNQz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Mar 2023 05:35:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50438 "EHLO
+        Mon, 13 Mar 2023 09:16:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231422AbjCMJfA (ORCPT
+        with ESMTP id S229819AbjCMNQw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Mar 2023 05:35:00 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6535915170;
-        Mon, 13 Mar 2023 02:33:09 -0700 (PDT)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4PZrz23NrRz6J70K;
-        Mon, 13 Mar 2023 17:32:14 +0800 (CST)
-Received: from [10.123.123.126] (10.123.123.126) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Mon, 13 Mar 2023 09:33:01 +0000
-Message-ID: <7598f777-8458-0984-b058-2026d8163d3a@huawei.com>
-Date:   Mon, 13 Mar 2023 12:33:00 +0300
+        Mon, 13 Mar 2023 09:16:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A2A13DF7
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Mar 2023 06:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678713367;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FKyM6Ht9zjiLJ40pzCKLDw3GXf9qFWWMut5Ela7p7gs=;
+        b=aAtlfzreisg+TS+fbbtNUNar0el9NacknQxzQAppxDv1BvmB2hob5OnjCH+UnWPfDqifJn
+        Ap33n1PpzYCNXgTMgfqlWQf91liNm1ap39cSZ1tBI8gy11Nw5dAW3ATe2uc4p2tKOCbKNW
+        cRg1ncvm9vV8an0PuEg54S3F9Y92usc=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-220-O9qKYfxqMoWsQE1sum53pg-1; Mon, 13 Mar 2023 09:16:06 -0400
+X-MC-Unique: O9qKYfxqMoWsQE1sum53pg-1
+Received: by mail-pg1-f200.google.com with SMTP id q15-20020a63d60f000000b00502e1c551aaso2658275pgg.21
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Mar 2023 06:16:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678713365;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FKyM6Ht9zjiLJ40pzCKLDw3GXf9qFWWMut5Ela7p7gs=;
+        b=YhbXQhH39mpRvw/Xy2vPx/GrGkxY8Oq2t3Tt7p4nwg70RDp62BE0p+Tbe0jXJuC4hA
+         BSG4T4uWDtiMyXZVkDziLWrNqOzy7ctY5r0lowsb72bMIniV71jSIreZuBrrL1bb2oRx
+         1P/gEfNBkQwAbkPCSVPKRfVS687Mk5bRbpjZFT6ljTSWS2JOyiw9glNmFYOLzPUvJBx5
+         npmNMACWTE2A7n9ZoQcn8eVa81xeUF22Cl1DCY84RfT1vbC26OsyYnt+ifPcc+tY8ezg
+         5cgF8ThHKhM9X68BmdtzZL4bDGYP1NvUpF8PCLbi976elFNQ9vlH/zHN3ofWKPcu39FF
+         VPIg==
+X-Gm-Message-State: AO0yUKVRn9N6jzVlwREEs62XT1TfVFI2GUWK0mtZ4ugMMwYOB51NnRSi
+        ptTEfXj/nHcLP6YlcHd1HOSv0N360CfeAWirU3OImtxVvkOqbzuIgEZmKZiUpJtARcrKj+gaIwp
+        vH+0/eb16t2uVQAJKqwYysFlFjk2NTXUXPeX0ZVIUDUxYTvp13NJ/
+X-Received: by 2002:a17:90a:985:b0:23d:27cd:f1dd with SMTP id 5-20020a17090a098500b0023d27cdf1ddmr241959pjo.9.1678713364977;
+        Mon, 13 Mar 2023 06:16:04 -0700 (PDT)
+X-Google-Smtp-Source: AK7set+SLBCllaY6lNZjLf2eCbIw673Z3tIbWDKAnR8hTQYgqNIrmqcuHi0dKPnJ+lnGCE2DZKJ+sn1hEuJzJdTDuDE=
+X-Received: by 2002:a17:90a:985:b0:23d:27cd:f1dd with SMTP id
+ 5-20020a17090a098500b0023d27cdf1ddmr241952pjo.9.1678713364657; Mon, 13 Mar
+ 2023 06:16:04 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v9 08/12] landlock: Add network rules and TCP hooks
- support
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
- <20230116085818.165539-9-konstantin.meskhidze@huawei.com>
- <5198f456-91f5-5c65-76c2-45b82ccb05eb@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <5198f456-91f5-5c65-76c2-45b82ccb05eb@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.123.126]
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
+References: <20230217162154.837549-1-omosnace@redhat.com>
+In-Reply-To: <20230217162154.837549-1-omosnace@redhat.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Mon, 13 Mar 2023 14:15:53 +0100
+Message-ID: <CAFqZXNtjh5WqY-ShdbJr_0=wVhQs=X+-8C00_UzooP666SNnHg@mail.gmail.com>
+Subject: Re: [PATCH v2] kernel/sys.c: fix and improve control flow in __sys_setres[ug]id()
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Feb 17, 2023 at 5:21=E2=80=AFPM Ondrej Mosnacek <omosnace@redhat.co=
+m> wrote:
+>
+> Linux Security Modules (LSMs) that implement the "capable" hook will
+> usually emit an access denial message to the audit log whenever they
+> "block" the current task from using the given capability based on their
+> security policy.
+>
+> The occurrence of a denial is used as an indication that the given task
+> has attempted an operation that requires the given access permission, so
+> the callers of functions that perform LSM permission checks must take
+> care to avoid calling them too early (before it is decided if the
+> permission is actually needed to perform the requested operation).
+>
+> The __sys_setres[ug]id() functions violate this convention by first
+> calling ns_capable_setid() and only then checking if the operation
+> requires the capability or not. It means that any caller that has the
+> capability granted by DAC (task's capability set) but not by MAC (LSMs)
+> will generate a "denied" audit record, even if is doing an operation for
+> which the capability is not required.
+>
+> Fix this by reordering the checks such that ns_capable_setid() is
+> checked last and -EPERM is returned immediately if it returns false.
+>
+> While there, also do two small optimizations:
+> * move the capability check before prepare_creds() and
+> * bail out early in case of a no-op.
+>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>
+> v2: improve commit message
+>
+>  kernel/sys.c | 69 ++++++++++++++++++++++++++++++----------------------
+>  1 file changed, 40 insertions(+), 29 deletions(-)
 
+Ping?
 
-2/10/2023 8:39 PM, Mickaël Salaün пишет:
-> 
-> On 16/01/2023 09:58, Konstantin Meskhidze wrote:
->> This commit adds network rules support in the ruleset management
->> helpers and the landlock_create_ruleset syscall.
->> Refactor user space API to support network actions. Add new network
->> access flags, network rule and network attributes. Increment Landlock
->> ABI version. Expand access_masks_t to u32 to be sure network access
->> rights can be stored. Implement socket_bind() and socket_connect()
->> LSM hooks, which enable to restrict TCP socket binding and connection
->> to specific ports.
->> 
->> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->> ---
->> 
->> Changes since v8:
->> * Squashes commits.
->> * Refactors commit message.
->> * Changes UAPI port field to __be16.
->> * Changes logic of bind/connect hooks with AF_UNSPEC families.
->> * Adds address length checking.
->> * Minor fixes.
->> 
->> Changes since v7:
->> * Squashes commits.
->> * Increments ABI version to 4.
->> * Refactors commit message.
->> * Minor fixes.
->> 
->> Changes since v6:
->> * Renames landlock_set_net_access_mask() to landlock_add_net_access_mask()
->>    because it OR values.
->> * Makes landlock_add_net_access_mask() more resilient incorrect values.
->> * Refactors landlock_get_net_access_mask().
->> * Renames LANDLOCK_MASK_SHIFT_NET to LANDLOCK_SHIFT_ACCESS_NET and use
->>    LANDLOCK_NUM_ACCESS_FS as value.
->> * Updates access_masks_t to u32 to support network access actions.
->> * Refactors landlock internal functions to support network actions with
->>    landlock_key/key_type/id types.
->> 
->> Changes since v5:
->> * Gets rid of partial revert from landlock_add_rule
->> syscall.
->> * Formats code with clang-format-14.
->> 
->> Changes since v4:
->> * Refactors landlock_create_ruleset() - splits ruleset and
->> masks checks.
->> * Refactors landlock_create_ruleset() and landlock mask
->> setters/getters to support two rule types.
->> * Refactors landlock_add_rule syscall add_rule_path_beneath
->> function by factoring out get_ruleset_from_fd() and
->> landlock_put_ruleset().
->> 
->> Changes since v3:
->> * Splits commit.
->> * Adds network rule support for internal landlock functions.
->> * Adds set_mask and get_mask for network.
->> * Adds rb_root root_net_port.
-> 
-> [...]
-> 
->> +static int check_socket_access(const struct landlock_ruleset *const domain,
->> +			       struct sockaddr *address, __be16 port,
->> +			       access_mask_t access_request)
->> +{
->> +	bool allowed = false;
->> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
->> +	const struct landlock_rule *rule;
->> +	access_mask_t handled_access;
->> +	const struct landlock_id id = {
->> +		.key.data = port,
->> +		.type = LANDLOCK_KEY_NET_PORT,
->> +	};
->> +
->> +	if (WARN_ON_ONCE(!domain))
->> +		return 0;
->> +	if (WARN_ON_ONCE(domain->num_layers < 1))
->> +		return -EACCES;
->> +
->> +	switch (address->sa_family) {
->> +	case AF_UNSPEC:
->> +		/*
->> +		 * Connecting to an address with AF_UNSPEC dissolves the TCP
->> +		 * association, which have the same effect as closing the
->> +		 * connection while retaining the socket object (i.e., the file
->> +		 * descriptor).  As for dropping privileges, closing
->> +		 * connections is always allowed.
->> +		 */
->> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP)
->> +			return 0;
->> +
->> +		/*
->> +		 * For compatibility reason, accept AF_UNSPEC for bind
->> +		 * accesses (mapped to AF_INET) only if the address is
->> +		 * INADDR_ANY (cf. __inet_bind).  Checking the address is
->> +		 * required to not wrongfully return -EACCES instead of
->> +		 * -EAFNOSUPPORT.
->> +		 */
->> +		if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
->> +			const struct sockaddr_in *const sockaddr =
->> +				(struct sockaddr_in *)address;
->> +
->> +			if (sockaddr->sin_addr.s_addr != htonl(INADDR_ANY))
->> +				return -EAFNOSUPPORT;
->> +		}
->> +
->> +		fallthrough;
->> +	case AF_INET:
->> +#if IS_ENABLED(CONFIG_IPV6)
->> +	case AF_INET6:
->> +#endif
->> +		rule = landlock_find_rule(domain, id);
->> +		handled_access = landlock_init_layer_masks(
->> +			domain, access_request, &layer_masks,
->> +			LANDLOCK_KEY_NET_PORT);
->> +		allowed = landlock_unmask_layers(rule, handled_access,
->> +						 &layer_masks,
->> +						 ARRAY_SIZE(layer_masks));
->> +
->> +		fallthrough;
-> 
-> You can remove this fallthrough.
-> 
-> 
->> +	}
->> +	return allowed ? 0 : -EACCES;
->> +}
->> +
->> +static u16 get_port(const struct sockaddr *const address)
->> +{
->> +	/* Gets port value in host byte order. */
->> +	switch (address->sa_family) {
->> +	case AF_UNSPEC:
->> +	case AF_INET: {
->> +		const struct sockaddr_in *const sockaddr =
->> +			(struct sockaddr_in *)address;
->> +		return sockaddr->sin_port;
->> +	}
->> +#if IS_ENABLED(CONFIG_IPV6)
->> +	case AF_INET6: {
->> +		const struct sockaddr_in6 *const sockaddr_ip6 =
->> +			(struct sockaddr_in6 *)address;
->> +		return sockaddr_ip6->sin6_port;
->> +	}
->> +#endif
->> +	}
->> +	WARN_ON_ONCE(1);
->> +	return 0;
->> +}
->> +
->> +static int hook_socket_bind(struct socket *sock, struct sockaddr *address,
->> +			    int addrlen)
->> +{
->> +	int ret;
->> +	const struct landlock_ruleset *const dom =
->> +		landlock_get_current_domain();
-> 
-> landlock_get_current_domain() should only be called by a
-> get_current_net_domain() wrapper that checks if the current domain
-> handles network accesses. See get_current_fs_domain() in patch 2/12.
+--=20
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
-   Hi Mickaël.
-   I have question:
-
-   static access_mask_t
-get_raw_handled_fs_accesses(const struct landlock_ruleset *const domain)
-{
-	access_mask_t access_dom = 0;
-	size_t layer_level;
-
-	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
-		access_dom |=
-			landlock_get_raw_fs_access_mask(domain, layer_level);
-	return access_dom & LANDLOCK_MASK_ACCESS_FS;
-}
-
-landlock_get_raw_fs_access_mask() function is already mask by 
-LANDLOCK_MASK_ACCESS_FS. We could get rid of access_dom masking.
-What do you think?
-
-> 
-> 
->> +
->> +	if (!dom)
->> +		return 0;
->> +
->> +	/* Check if it's a TCP socket. */
->> +	if (sock->type != SOCK_STREAM)
->> +		return 0;
->> +
->> +	ret = check_addrlen(address, addrlen);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return check_socket_access(dom, address, get_port(address),
->> +				   LANDLOCK_ACCESS_NET_BIND_TCP);
->> +}
-> .
