@@ -2,117 +2,117 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC17DC61DA4
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Mar 2023 13:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3524C74A4B
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Mar 2023 14:33:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229655AbjCMNQz (ORCPT
+        id S231472AbjCMOdL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Mar 2023 09:16:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51656 "EHLO
+        Mon, 13 Mar 2023 10:33:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229819AbjCMNQw (ORCPT
+        with ESMTP id S231466AbjCMOdG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Mar 2023 09:16:52 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A2A13DF7
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Mar 2023 06:16:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678713367;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FKyM6Ht9zjiLJ40pzCKLDw3GXf9qFWWMut5Ela7p7gs=;
-        b=aAtlfzreisg+TS+fbbtNUNar0el9NacknQxzQAppxDv1BvmB2hob5OnjCH+UnWPfDqifJn
-        Ap33n1PpzYCNXgTMgfqlWQf91liNm1ap39cSZ1tBI8gy11Nw5dAW3ATe2uc4p2tKOCbKNW
-        cRg1ncvm9vV8an0PuEg54S3F9Y92usc=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-220-O9qKYfxqMoWsQE1sum53pg-1; Mon, 13 Mar 2023 09:16:06 -0400
-X-MC-Unique: O9qKYfxqMoWsQE1sum53pg-1
-Received: by mail-pg1-f200.google.com with SMTP id q15-20020a63d60f000000b00502e1c551aaso2658275pgg.21
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Mar 2023 06:16:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678713365;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FKyM6Ht9zjiLJ40pzCKLDw3GXf9qFWWMut5Ela7p7gs=;
-        b=YhbXQhH39mpRvw/Xy2vPx/GrGkxY8Oq2t3Tt7p4nwg70RDp62BE0p+Tbe0jXJuC4hA
-         BSG4T4uWDtiMyXZVkDziLWrNqOzy7ctY5r0lowsb72bMIniV71jSIreZuBrrL1bb2oRx
-         1P/gEfNBkQwAbkPCSVPKRfVS687Mk5bRbpjZFT6ljTSWS2JOyiw9glNmFYOLzPUvJBx5
-         npmNMACWTE2A7n9ZoQcn8eVa81xeUF22Cl1DCY84RfT1vbC26OsyYnt+ifPcc+tY8ezg
-         5cgF8ThHKhM9X68BmdtzZL4bDGYP1NvUpF8PCLbi976elFNQ9vlH/zHN3ofWKPcu39FF
-         VPIg==
-X-Gm-Message-State: AO0yUKVRn9N6jzVlwREEs62XT1TfVFI2GUWK0mtZ4ugMMwYOB51NnRSi
-        ptTEfXj/nHcLP6YlcHd1HOSv0N360CfeAWirU3OImtxVvkOqbzuIgEZmKZiUpJtARcrKj+gaIwp
-        vH+0/eb16t2uVQAJKqwYysFlFjk2NTXUXPeX0ZVIUDUxYTvp13NJ/
-X-Received: by 2002:a17:90a:985:b0:23d:27cd:f1dd with SMTP id 5-20020a17090a098500b0023d27cdf1ddmr241959pjo.9.1678713364977;
-        Mon, 13 Mar 2023 06:16:04 -0700 (PDT)
-X-Google-Smtp-Source: AK7set+SLBCllaY6lNZjLf2eCbIw673Z3tIbWDKAnR8hTQYgqNIrmqcuHi0dKPnJ+lnGCE2DZKJ+sn1hEuJzJdTDuDE=
-X-Received: by 2002:a17:90a:985:b0:23d:27cd:f1dd with SMTP id
- 5-20020a17090a098500b0023d27cdf1ddmr241952pjo.9.1678713364657; Mon, 13 Mar
- 2023 06:16:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230217162154.837549-1-omosnace@redhat.com>
-In-Reply-To: <20230217162154.837549-1-omosnace@redhat.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Mon, 13 Mar 2023 14:15:53 +0100
-Message-ID: <CAFqZXNtjh5WqY-ShdbJr_0=wVhQs=X+-8C00_UzooP666SNnHg@mail.gmail.com>
-Subject: Re: [PATCH v2] kernel/sys.c: fix and improve control flow in __sys_setres[ug]id()
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 13 Mar 2023 10:33:06 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30201BBB7;
+        Mon, 13 Mar 2023 07:33:02 -0700 (PDT)
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32DDw8fL020315;
+        Mon, 13 Mar 2023 14:27:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=EB0cwcFCZq1QLZZYrEEn68+CuFIz0tlLaFF5ULkdTrk=;
+ b=f21UmAlv7MrKkKkvYFQWyRSm+St/EO8iiq0Sv7VRtq5QYNWajhG1TENN2hPgxZR64Hfv
+ rQ4pCLqiiOapWqbo4GkUxKlp2Spkz9CU2KyjLHiUsOqaOb1j++jEvqc+a52V/AALd60a
+ 9GIbberPbVQklB6jvPQtReFHHzowO0pd3naWhp/4jLJO4NHGLS4KmStwvypfnzJ63anr
+ CbZZ9vqWP2mceT0f8RJjrn01xGng0SOysxSLU9ubaM4YM/ElViacKZM3Ul9e3eq+Hla1
+ 7+W5F5liGaCuviypPNac/vjP+vGfPCs6wjthgmvfYz0wo4qMpuwmSzCJKWfGc00zA/LA SQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pa3sbupxs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Mar 2023 14:27:03 +0000
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32DCMJdB020816;
+        Mon, 13 Mar 2023 14:27:02 GMT
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pa3sbupx8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Mar 2023 14:27:02 +0000
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32DDwa9Z008599;
+        Mon, 13 Mar 2023 14:27:01 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([9.208.130.99])
+        by ppma04wdc.us.ibm.com (PPS) with ESMTPS id 3p8h96x5d0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Mar 2023 14:27:01 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+        by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32DER01f37355910
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 Mar 2023 14:27:00 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 84B9C5805C;
+        Mon, 13 Mar 2023 14:27:00 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A26A5805A;
+        Mon, 13 Mar 2023 14:26:59 +0000 (GMT)
+Received: from sig-9-77-159-147.ibm.com (unknown [9.77.159.147])
+        by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Mon, 13 Mar 2023 14:26:59 +0000 (GMT)
+Message-ID: <32ec16c9c3caa731c3de69371de6318da7f7ea91.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 6/6] integrity: machine keyring CA configuration
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>, jarkko@kernel.org,
+        dhowells@redhat.com, dwmw2@infradead.org
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, pvorel@suse.cz, kanth.ghatraju@oracle.com,
+        konrad.wilk@oracle.com, erpalmer@linux.vnet.ibm.com,
+        coxu@redhat.com, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Mon, 13 Mar 2023 10:26:47 -0400
+In-Reply-To: <20230302164652.83571-7-eric.snowberg@oracle.com>
+References: <20230302164652.83571-1-eric.snowberg@oracle.com>
+         <20230302164652.83571-7-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: AVn6e_N1RxRLy5krPqhqwYoTOHO05acB
+X-Proofpoint-GUID: Ns97NCTx73M2atYukwJYoFiNIAEjPIeb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-13_06,2023-03-13_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ adultscore=0 lowpriorityscore=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999 clxscore=1011
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303130112
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 17, 2023 at 5:21=E2=80=AFPM Ondrej Mosnacek <omosnace@redhat.co=
-m> wrote:
->
-> Linux Security Modules (LSMs) that implement the "capable" hook will
-> usually emit an access denial message to the audit log whenever they
-> "block" the current task from using the given capability based on their
-> security policy.
->
-> The occurrence of a denial is used as an indication that the given task
-> has attempted an operation that requires the given access permission, so
-> the callers of functions that perform LSM permission checks must take
-> care to avoid calling them too early (before it is decided if the
-> permission is actually needed to perform the requested operation).
->
-> The __sys_setres[ug]id() functions violate this convention by first
-> calling ns_capable_setid() and only then checking if the operation
-> requires the capability or not. It means that any caller that has the
-> capability granted by DAC (task's capability set) but not by MAC (LSMs)
-> will generate a "denied" audit record, even if is doing an operation for
-> which the capability is not required.
->
-> Fix this by reordering the checks such that ns_capable_setid() is
-> checked last and -EPERM is returned immediately if it returns false.
->
-> While there, also do two small optimizations:
-> * move the capability check before prepare_creds() and
-> * bail out early in case of a no-op.
->
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->
-> v2: improve commit message
->
->  kernel/sys.c | 69 ++++++++++++++++++++++++++++++----------------------
->  1 file changed, 40 insertions(+), 29 deletions(-)
+On Thu, 2023-03-02 at 11:46 -0500, Eric Snowberg wrote:
+> Add machine keyring CA restriction options to control the type of
+> keys that may be added to it. The motivation is separation of
+> certificate signing from code signing keys. Subsquent work will
+> limit certificates being loaded into the IMA keyring to code
+> signing keys used for signature verification.
+> 
+> When no restrictions are selected, all Machine Owner Keys (MOK) are added
+> to the machine keyring.  When CONFIG_INTEGRITY_CA_MACHINE_KEYRING is
+> selected, the CA bit must be true.  Also the key usage must contain
+> keyCertSign, any other usage field may be set as well.
+> 
+> When CONFIG_INTEGRITY_CA_MACHINE_KEYRING_MAX is selected, the CA bit must
+> be true. Also the key usage must contain keyCertSign and the
+> digitialSignature usage may not be set.
+> 
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 
-Ping?
+Thanks, Eric.
 
---=20
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+Acked-by: Mimi Zohar <zohar@linux.ibm.com>
 
