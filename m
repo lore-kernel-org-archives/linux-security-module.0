@@ -2,298 +2,125 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D221C6FD1F
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Mar 2023 08:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17378C6FD1C
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Mar 2023 09:19:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229564AbjCNIYy (ORCPT
+        id S229472AbjCNJTN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Mar 2023 04:24:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41692 "EHLO
+        Tue, 14 Mar 2023 05:19:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229872AbjCNIYT (ORCPT
+        with ESMTP id S229529AbjCNJTM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Mar 2023 04:24:19 -0400
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E3C1CBC1;
-        Tue, 14 Mar 2023 01:22:55 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4PbR9w6Npzz9xtmh;
-        Tue, 14 Mar 2023 16:13:40 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwAX4liiLhBks3eXAQ--.33895S2;
-        Tue, 14 Mar 2023 09:22:04 +0100 (CET)
-Message-ID: <bae3bf3c768d5ce3e71354a77e814dcb4d67b1c1.camel@huaweicloud.com>
-Subject: Re: [PATCH v8 0/6] evm: Do HMAC of multiple per LSM xattrs for new
- inodes
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Tue, 14 Mar 2023 09:21:52 +0100
-In-Reply-To: <20230314081720.4158676-1-roberto.sassu@huaweicloud.com>
-References: <20230314081720.4158676-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Tue, 14 Mar 2023 05:19:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6BA393E30
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Mar 2023 02:17:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678785432;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fgK8jeijDMxB85rbRrmU9CTvwNcdx5i+gm9+kTFqBrw=;
+        b=Nl3HERNxfJCkI9dLvW1oP5cbBpIHsc6uOYJcwd4O9+qYMq2WJ37LrDHjYP291gDphP7Hd/
+        m1PQa0wAyR1wr251Jt56jKkfdIw+yhA5DJDYpLObPqRIk0Kd2shOguvZKSlv5984YM5fSm
+        vJ5+GXXoCUkU+O3YGynXlsUWc/3IUmc=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-166-4fKK6GIcOqmp2DKmxBq_1Q-1; Tue, 14 Mar 2023 05:17:11 -0400
+X-MC-Unique: 4fKK6GIcOqmp2DKmxBq_1Q-1
+Received: by mail-pj1-f72.google.com with SMTP id nv2-20020a17090b1b4200b0023d18722af2so812588pjb.8
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Mar 2023 02:17:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678785430;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fgK8jeijDMxB85rbRrmU9CTvwNcdx5i+gm9+kTFqBrw=;
+        b=P4JQZsx3x9l6bfc8fvcnJeLtXHiRL1cbjAplKwKyQ5rUfIcSv1e4z4QxVJ5UNH8ta2
+         q8mD4CdVJXpqcF7jZ0hFWjJGf9G1eRo8Y/Y3GkSaXshkoPpwpLPAfIuKpFvZIfCV5pmQ
+         xAWUi13f8Zwp4X9+OKX6WnKJ0wELuQmFsF+p5nzF6tAtZ9HGGrvZ1a1Yjni3XN485rMS
+         RuIgniCNs8ePNd3uHrQQR4SjqtF7SBQ+Oits8N3bVhiZb3zUg1Bdj9TOicrQjxi4x2w6
+         znui+E+Tvdw3lFiN5fzGsOxvFPXUTPFXTXvfvJCr9ujr6K87dxdPlevVSl3aQ1XrK78v
+         8sbQ==
+X-Gm-Message-State: AO0yUKVINgUqVSkHToaXWN1Y+m5Ft2i19YUq0TpFxmf5C4Y8JkFvMt3d
+        ozLkdVvcm1nNy0hl6GTbAfuGguaIn4N/VHN3xJtjr+YSXWbNIs3TEJ7sR0foH9jYLJC2uPiXXKY
+        sWKpXyMEFNpln7nyTIPSBvlmhq/QvtNKqVuqMSMF0lWDJlV00HXa3
+X-Received: by 2002:a63:385d:0:b0:50a:c011:19f2 with SMTP id h29-20020a63385d000000b0050ac01119f2mr2325457pgn.1.1678785430548;
+        Tue, 14 Mar 2023 02:17:10 -0700 (PDT)
+X-Google-Smtp-Source: AK7set+rm4R+bBfbjv6VaIdBvRAITSL4G8Fa2r0a8Pf400YlXM6B8mgRI9o1cuiJpmG4Nm6xXjQpR4zL8UaFvdSdbko=
+X-Received: by 2002:a63:385d:0:b0:50a:c011:19f2 with SMTP id
+ h29-20020a63385d000000b0050ac01119f2mr2325447pgn.1.1678785430233; Tue, 14 Mar
+ 2023 02:17:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwAX4liiLhBks3eXAQ--.33895S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3ur48CF45AFW3Ary7Jw17Awb_yoWkGF4xpF
-        WjgF4Ykrn8AFW2grySyF4xua1Sg3yrGrWDJrZ3GryUA3Z8Kr1xtr1Ikry5uas8XrZ5AFn2
-        qw17Awn8uwn8A37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x
-        0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02
-        F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4I
-        kC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IY
-        c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
-        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF
-        0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIx
-        AIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E
-        87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IUbG2NtUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAQBF1jj4qHcQAAsY
-X-CFilter-Loop: Reflected
+References: <20230217162154.837549-1-omosnace@redhat.com> <20230313112923.340128142a92fe50140974db@linux-foundation.org>
+In-Reply-To: <20230313112923.340128142a92fe50140974db@linux-foundation.org>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 14 Mar 2023 10:16:58 +0100
+Message-ID: <CAFqZXNveSFuYDF+upR_6F3ipZe56Xok6FPBwDJn-gBw7n6A26A@mail.gmail.com>
+Subject: Re: [PATCH v2] kernel/sys.c: fix and improve control flow in __sys_setres[ug]id()
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2023-03-14 at 09:17 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> One of the major goals of LSM stacking is to run multiple LSMs side by side
-> without interfering with each other. The ultimate decision will depend on
-> individual LSM decision.
-> 
-> Several changes need to be made to the LSM infrastructure to be able to
-> support that. This patch set tackles one of them: gives to each LSM the
-> ability to specify one or multiple xattrs to be set at inode creation
-> time and, at the same time, gives to EVM the ability to access all those
-> xattrs and calculate the HMAC on them.
-> 
-> The first problem that this patch set addresses is to make the
-> inode_init_security hook definition suitable to use with EVM which, unlike
-> other LSMs, needs to have visibility of all xattrs and not only the one
-> that the LSM infrastructure passes to the LSM to be set.
-> 
-> The solution is to replace in the inode_init_security definition the
-> name/value/len parameters with the beginning of the array containing all
-> xattrs set by LSMs. Due to security_old_inode_init_security() API
-> limitation of setting only one xattr, it has been dropped and the remaining
-> users, ocfs2 and reiserfs, switch to security_inode_init_security().
-> However, due to the complexity of the changes required to fully exploit the
-> ability of security_inode_init_security() to set multiple xattrs, those
-> users can still set only one xattr (the first set in the xattr array) where
-> previously they called security_old_inode_init_security().
-> 
-> Furthermore, while EVM is invoked unlike before, its xattr will not be set
-> as it would not be the first set in the xattr array, or if it is the first,
-> there would not be protected xattrs to calculate the HMAC on.
-> 
-> The second problem this patch set addresses is the limitation of the
-> call_int_hook() of stopping the loop when the return value from a hook
-> implementation is not zero. Unfortunately, for the inode_init_security hook
-> it is a legitimate case to return -EOPNOTSUPP, but this would not
-> necessarily mean that there is an error to report to the LSM infrastructure
-> but just that an LSM does not will to set an xattr. Other LSMs should be
-> still consulted as well.
-> 
-> The solution for this specific case is to replace the call_int_hook() with
-> the loop itself, so that -EOPNOTSUPP can be ignored.
-> 
-> Next, this patch set removes the limitation of creating only two xattrs,
-> one by an active LSM and another by EVM. This patch set extends the
-> reservation mechanism of the LSM infrastructure, to allow each LSM to
-> request one or multiple xattrs. While this could potentially lead to
-> reaching the filesystem limits of number/size of the xattrs, it seems not
-> an issue that need to be solved by the LSM infrastructure but by the
-> filesystems themselves. Currently, if the limit is reached, the only
-> workaround would be to use fewer LSMs.
-> 
-> The reservation mechanism concept makes it very easy for LSMs to position
-> themselves correctly in the xattr array, as the LSM infrastructure at
-> initialization time changes the number of xattrs requested by each LSM with
-> an offset. LSMs can just take that offset as the starting index in the
-> xattr array and fill the next slots depending on how many xattrs they
-> requested.
-> 
-> However, while this concept is intuitive, it needs extra care. While for
-> security blobs (the main reason of the reservation mechanism) it is not
-> relevant for an LSM if other LSMs filled their portion, it matters for
-> xattrs, as both EVM and initxattrs() callbacks scan the entire array until
-> a terminator (xattr with NULL name). If an LSM did not provide an xattr,
-> which could happen if it is loaded but not initialized, consumers of the
-> xattr array would stop prematurely.
-> 
-> This patch set avoids this problem by compacting the xattr array each time
-> after an LSM executed its implementation of the inode_init_security hook.
-> It needs to be done after each LSM, and not after all, since there might be
-> LSMs scanning that xattr array too. Compacting the array after all LSMs
-> would be too late.
-> 
-> Finally, this patch set modifies the evm_inode_init_security() definition
-> to be compatible with the inode_init_security hook definition and adds
-> support for scanning the whole xattr array and for calculating the HMAC
-> on all xattrs provided by LSMs.
-> 
-> This patch set has been tested by introducing several instances of a
-> TestLSM (some providing an xattr, some not, one with a wrong implementation
-> to see how the LSM infrastructure handles it, one providing multiple xattrs
-> and another providing an xattr but in a disabled state). The patch is not
-> included in this set but it is available here:
-> 
-> https://github.com/robertosassu/linux/commit/311b83a98757915cc3ccb363f545578e7c38df54
-> 
-> The test, added to ima-evm-utils, is available here:
-> 
-> https://github.com/robertosassu/ima-evm-utils/blob/evm-multiple-lsms-v8-devel-v2/tests/evm_multiple_lsms.test
-> 
-> The test takes a UML kernel built by Github Actions and launches it several
-> times, each time with a different combination of LSMs and filesystems (ext4,
-> reiserfs, ocfs2). After boot, it first checks that there is an xattr for each
-> LSM providing it (for reiserfs and ocfs2 just the first LSM), and then (for
-> ext4) calculates the HMAC in user space and compares it with the HMAC
-> calculated by EVM in kernel space.
-> 
-> A test report can be obtained here:
-> 
-> https://github.com/robertosassu/ima-evm-utils/actions/runs/4403223954/jobs/7722101662
-> 
-> The patch set has been tested with both the SElinux and Smack test suites.
-> Below, there is the summary of the test results:
-> 
-> SELinux Test Suite result (without patches):
-> All tests successful.
-> Files=76, Tests=1343, 255 wallclock secs ( 0.51 usr  0.19 sys +  6.30 cusr 58.15 csys = 65.15 CPU)
-> Result: PASS
-> 
-> SELinux Test Suite result (with patches):
-> All tests successful.
-> Files=76, Tests=1343, 258 wallclock secs ( 0.49 usr  0.21 sys +  6.46 cusr 59.27 csys = 66.43 CPU)
-> Result: PASS
+On Mon, Mar 13, 2023 at 7:29=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Fri, 17 Feb 2023 17:21:54 +0100 Ondrej Mosnacek <omosnace@redhat.com> =
+wrote:
+>
+> > Linux Security Modules (LSMs) that implement the "capable" hook will
+> > usually emit an access denial message to the audit log whenever they
+> > "block" the current task from using the given capability based on their
+> > security policy.
+> >
+> > The occurrence of a denial is used as an indication that the given task
+> > has attempted an operation that requires the given access permission, s=
+o
+> > the callers of functions that perform LSM permission checks must take
+> > care to avoid calling them too early (before it is decided if the
+> > permission is actually needed to perform the requested operation).
+> >
+> > The __sys_setres[ug]id() functions violate this convention by first
+> > calling ns_capable_setid() and only then checking if the operation
+> > requires the capability or not. It means that any caller that has the
+> > capability granted by DAC (task's capability set) but not by MAC (LSMs)
+> > will generate a "denied" audit record, even if is doing an operation fo=
+r
+> > which the capability is not required.
+> >
+> > Fix this by reordering the checks such that ns_capable_setid() is
+> > checked last and -EPERM is returned immediately if it returns false.
+> >
+> > While there, also do two small optimizations:
+> > * move the capability check before prepare_creds() and
+> > * bail out early in case of a no-op.
+> >
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+>
+> Looks and sounds good to me, so I queued it up for some testing.  I'd
+> ask that someone more familiar with this code perform review, please.
+>
+> I assume that you believe that a -stable backport is desirable?  I'll
+> add a cc:stable to the patch for now.
 
-Side note:
+Yes, it's a minor bug, but we hit it while testing on Fedora and it's
+better for us to have the fix in stable kernels than adding a
+workaround elsewhere.
 
-https://github.com/SELinuxProject/selinux-testsuite/blob/master/tests/mmap/test#L51
+Thanks,
 
-This test fails if CONFIG_LSM_MMAP_MIN_ADDR=0
-
-Roberto
-
-> Smack Test Suite result (without patches):
-> 95 Passed, 0 Failed, 100% Success rate
-> 
-> Smack Test Suite result (with patches):
-> 95 Passed, 0 Failed, 100% Success rate
-> 
-> Changelog
-> 
-> v7:
-> - Add a patch dependency comment in patch 1 (suggested by Mimi)
-> - Restore check of -EOPNOTSUPP status in ocfs2_mknod() and ocfs2_symlink()
->   (reported by Mimi)
-> - Add explanation in evm_inode_init_security() why walking through the
->   xattrs array is safe (suggested by Mimi)
-> - Document the lbs_xattr field of struct lsm_blob_sizes (suggested by
->   Casey)
-> - Move documentation changes of the inode_init_security hook to security.c,
->   after LSM documentation reorganization by Paul
-> - Use attributes in plural form in the description of the xattrs parameter
->   of smack_inode_init_security()
-> - Check xattr name instead of xattr value in evm_inode_init_security(),
->   for consistency with evm_init_hmac(); equivalent, since
->   security_check_compact_filled_xattrs() rejects xattrs with xattr name
->   NULL and value not NULL, and viceversa
-> 
-> v6:
-> - Add a comment in Smack to introduce its xattrs (suggested by Casey)
-> - Document the overloaded meaning of -EOPNOTSUPP in
->   security_inode_init_security() (suggested by Mimi)
-> 
-> v5:
-> - Modify the cover letter to explain that the goal of this patch set is
->   supporting multiple per LSM xattrs in EVM, and not moving IMA and EVM to
->   the LSM infrastructure (suggested by Mimi)
-> - Remove references in the patches description about moving IMA and EVM
->   to the LSM infrastructure (suggested by Mimi)
-> - Explain that the additional EVM invocation due to the switch to
->   security_inode_init_security() will not cause the EVM xattr to be added
->   (suggested by Mimi)
-> 
-> v4:
-> - Remove patch to call reiserfs_security_free(), already queued
-> - Switch ocfs2 and reiserfs to security_inode_init_security() (suggested by
->   Mimi)
-> - Remove security_old_inode_init_security() (suggested by Paul)
-> - Rename security_check_compact_xattrs() to
->   security_check_compact_filled_xattrs() and add function description
->   (suggested by Mimi)
-> - Rename checked_xattrs parameter of security_check_compact_filled_xattrs()
->   to num_filled_xattrs (suggested by Mimi)
-> - Rename cur_xattrs variable in security_inode_init_security() to
->   num_filled_xattrs (suggested by Mimi)
-> 
-> v3:
-> - Don't free the xattr name in reiserfs_security_free()
-> - Don't include fs_data parameter in inode_init_security hook
-> - Don't change evm_inode_init_security(), as it will be removed if EVM is
->   stacked
-> - Fix inode_init_security hook documentation
-> - Drop lsm_find_xattr_slot(), use simple xattr reservation mechanism and
->   introduce security_check_compact_xattrs() to compact the xattr array
-> - Don't allocate xattr array if LSMs didn't reserve any xattr
-> - Return zero if initxattrs() is not provided to
->   security_inode_init_security(), -EOPNOTSUPP if value is not provided to
->   security_old_inode_init_security()
-> - Request LSMs to fill xattrs if only value (not the triple) is provided to
->   security_old_inode_init_security(), to avoid unnecessary memory
->   allocation
-> 
-> v2:
-> - rewrite selinux_old_inode_init_security() to use
->   security_inode_init_security()
-> - add lbs_xattr field to lsm_blob_sizes structure, to give the ability to
->   LSMs to reserve slots in the xattr array (suggested by Casey)
-> - add new parameter base_slot to inode_init_security hook definition
-> 
-> v1:
-> - add calls to reiserfs_security_free() and initialize sec->value to NULL
->   (suggested by Tetsuo and Mimi)
-> - change definition of inode_init_security hook, replace the name, value
->   and len triple with the xattr array (suggested by Casey)
-> - introduce lsm_find_xattr_slot() helper for LSMs to find an unused slot in
->   the passed xattr array
-> 
-> Roberto Sassu (6):
->   reiserfs: Switch to security_inode_init_security()
->   ocfs2: Switch to security_inode_init_security()
->   security: Remove security_old_inode_init_security()
->   security: Allow all LSMs to provide xattrs for inode_init_security
->     hook
->   evm: Align evm_inode_init_security() definition with LSM
->     infrastructure
->   evm: Support multiple LSMs providing an xattr
-> 
->  fs/ocfs2/namei.c                    |   2 +
->  fs/ocfs2/xattr.c                    |  30 ++++++-
->  fs/reiserfs/xattr_security.c        |  23 +++--
->  include/linux/evm.h                 |  12 +--
->  include/linux/lsm_hook_defs.h       |   3 +-
->  include/linux/lsm_hooks.h           |   1 +
->  include/linux/security.h            |  12 ---
->  security/integrity/evm/evm.h        |   2 +
->  security/integrity/evm/evm_crypto.c |   9 +-
->  security/integrity/evm/evm_main.c   |  33 +++++--
->  security/security.c                 | 131 +++++++++++++++++++++-------
->  security/selinux/hooks.c            |  19 ++--
->  security/smack/smack_lsm.c          |  33 ++++---
->  13 files changed, 224 insertions(+), 86 deletions(-)
-> 
+--=20
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
