@@ -2,123 +2,415 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D13C6FD1F
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Mar 2023 00:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0EE4C74A5B
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Mar 2023 09:54:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbjCOARx (ORCPT
+        id S232124AbjCOJyO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Mar 2023 20:17:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42936 "EHLO
+        Wed, 15 Mar 2023 05:54:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbjCOARw (ORCPT
+        with ESMTP id S232127AbjCOJxx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Mar 2023 20:17:52 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6A61410AF;
-        Tue, 14 Mar 2023 17:17:51 -0700 (PDT)
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32ENoJOM022049;
-        Wed, 15 Mar 2023 00:17:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=/xItYpSlSXkmWgakFckcb3pK1C/l+P6F65k0vZXytZM=;
- b=cQpS/M/zG/RUYfGbyRjjq7Ih20/9UjnZbkazNBd0rqmPW2iuyoZ+Ejv5DCXKEurlVvc7
- qF599/eYwsZ1Nyg7tCRADdpfGbGH4CH5TfFJ7sszyk98g4Zj9+kCYYLe3gm4egyNJU2R
- 9DW91NQnkELVLtZ49zBxwUJloXhuDrakI+CC143ha5AvjlI/R4TFg/kRE2qnJVCFXDhd
- M8Uvt3jyIlVjRZGg7glkIYAs5SY5BJ2qijErPvqjtoVo4hN/LVCingOSyDGAmiRfLFR2
- K4jIiogF2MCp5gq+y8jzicOLY/h3BD3HtxCOCfswuW+glJRFPCKlXB4hM2YESUfxJmrw dg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pb2xx8h5u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Mar 2023 00:17:06 +0000
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32ENoa4M022881;
-        Wed, 15 Mar 2023 00:17:06 GMT
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pb2xx8h5k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Mar 2023 00:17:05 +0000
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32EN5hOB010490;
-        Wed, 15 Mar 2023 00:17:05 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([9.208.130.102])
-        by ppma01dal.us.ibm.com (PPS) with ESMTPS id 3pb29tgbcy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Mar 2023 00:17:04 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-        by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32F0H31I11469482
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Mar 2023 00:17:03 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CAA8358067;
-        Wed, 15 Mar 2023 00:17:03 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0711758056;
-        Wed, 15 Mar 2023 00:17:03 +0000 (GMT)
-Received: from sig-9-65-194-57.ibm.com (unknown [9.65.194.57])
-        by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 15 Mar 2023 00:17:02 +0000 (GMT)
-Message-ID: <ef330bdbf0e0a176a2e5c32121e86dc2c46934b6.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Fix potential NULL pointer access in
- ima_match_rules()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roman Danilov <romanosauce57@gmail.com>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Wed, 15 Mar 2023 05:53:53 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57762848C1;
+        Wed, 15 Mar 2023 02:52:22 -0700 (PDT)
+Received: from dggpemm500016.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Pc5JF4rjrzrSsT;
+        Wed, 15 Mar 2023 17:51:25 +0800 (CST)
+Received: from huawei.com (10.67.174.33) by dggpemm500016.china.huawei.com
+ (7.185.36.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Wed, 15 Mar
+ 2023 17:52:19 +0800
+From:   "GONG, Ruiqi" <gongruiqi1@huawei.com>
+To:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+CC:     Roman Gushchin <roman.gushchin@linux.dev>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <kasan-dev@googlegroups.com>,
+        Kees Cook <keescook@chromium.org>,
+        <linux-hardening@vger.kernel.org>,
         Paul Moore <paul@paul-moore.com>,
+        <linux-security-module@vger.kernel.org>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        GUO Zihua <guozihua@huawei.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>
-Date:   Tue, 14 Mar 2023 20:17:02 -0400
-In-Reply-To: <20230314180308.17909-1-romanosauce57@gmail.com>
-References: <20230314180308.17909-1-romanosauce57@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: fm_xGXehMN9UzVFo63IadlZq9xz4Z9dw
-X-Proofpoint-GUID: ynuiJB6pcg0-dg7-GWNRj44cQqznIre7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-14_15,2023-03-14_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- clxscore=1011 impostorscore=0 mlxscore=0 malwarescore=0 adultscore=0
- phishscore=0 lowpriorityscore=0 spamscore=0 priorityscore=1501
- mlxlogscore=810 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2302240000 definitions=main-2303140189
+        Wang Weiyang <wangweiyang2@huawei.com>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>
+Subject: [PATCH RFC] Randomized slab caches for kmalloc()
+Date:   Wed, 15 Mar 2023 17:54:59 +0800
+Message-ID: <20230315095459.186113-1-gongruiqi1@huawei.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.67.174.33]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm500016.china.huawei.com (7.185.36.25)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2023-03-14 at 21:03 +0300, Roman Danilov wrote:
-> In ima_match_rules(), when ima_lsm_copy_rule() fails, NULL pointer
-> is assigned to lsm_rule. After that, in the next step of the loop
-> NULL pointer is dereferenced in lsm_rule->lsm[i].rule.
+When exploiting memory vulnerabilities, "heap spraying" is a common
+technique targeting those related to dynamic memory allocation (i.e. the
+"heap"), and it plays an important role in a successful exploitation.
+Basically, it is to overwrite the memory area of vulnerable object by
+triggering allocation in other subsystems or modules and therefore
+getting a reference to the targeted memory location. It's usable on
+various types of vulnerablity including use after free (UAF), heap out-
+of-bound write and etc.
 
-I must being missing something.  The next step of the loop tests
-whether rule_reinitialized is set before accessing lsm_rule-
->lsm[i].rule.
+There are (at least) two reasons why the heap can be sprayed: 1) generic
+slab caches are shared among different subsystems and modules, and
+2) dedicated slab caches could be merged with the generic ones.
+Currently these two factors cannot be prevented at a low cost: the first
+one is a widely used memory allocation mechanism, and shutting down slab
+merging completely via `slub_nomerge` would be overkill.
 
-> 
-> As far as ima_match_rules() is not designed to return error code,
-> add __GFP_NOFAIL to make sure memory allocation succeeds.
+To efficiently prevent heap spraying, we propose the following approach:
+to create multiple copies of generic slab caches that will never be
+merged, and random one of them will be used at allocation. The random
+selection is based on the location of code that calls `kmalloc()`, which
+means it is static at runtime (rather than dynamically determined at
+each time of allocation, which could be bypassed by repeatedly spraying
+in brute force). In this way, the vulnerable object and memory allocated
+in other subsystems and modules will (most probably) be on different
+slab caches, which prevents the object from being sprayed.
 
-Using  __GFP_NOFAIL here would be safer.
+Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
+---
 
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: c7423dbdbc9e ("ima: Handle -ESTALE returned by ima_filter_rule_match()")
-> Signed-off-by: Roman Danilov <romanosauce57@gmail.com>
-> Reviewed-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+v0:
+The current implementation only randomize slab caches for KMALLOC_NORMAL
+allocation. Besides the patch itself, we would also like to know the
+opinion of the community about whether or not it's necessary to extend
+this randomization to all KMALLOC_*, and if so, if implementing a three-
+dimensional `kmalloc_caches` is a better choice.
 
+
+ include/linux/percpu.h  | 12 +++++++++---
+ include/linux/slab.h    | 24 +++++++++++++++++++-----
+ mm/Kconfig              | 20 ++++++++++++++++++++
+ mm/kfence/kfence_test.c |  4 ++--
+ mm/slab.c               |  2 +-
+ mm/slab.h               |  3 ++-
+ mm/slab_common.c        | 40 +++++++++++++++++++++++++++++++++++-----
+ 7 files changed, 88 insertions(+), 17 deletions(-)
+
+diff --git a/include/linux/percpu.h b/include/linux/percpu.h
+index 1338ea2aa720..6cee6425951f 100644
+--- a/include/linux/percpu.h
++++ b/include/linux/percpu.h
+@@ -34,6 +34,12 @@
+ #define PCPU_BITMAP_BLOCK_BITS		(PCPU_BITMAP_BLOCK_SIZE >>	\
+ 					 PCPU_MIN_ALLOC_SHIFT)
+ 
++#ifdef CONFIG_RANDOM_KMALLOC_CACHES
++#define PERCPU_DYNAMIC_SIZE_SHIFT      13
++#else
++#define PERCPU_DYNAMIC_SIZE_SHIFT      10
++#endif
++
+ /*
+  * Percpu allocator can serve percpu allocations before slab is
+  * initialized which allows slab to depend on the percpu allocator.
+@@ -41,7 +47,7 @@
+  * for this.  Keep PERCPU_DYNAMIC_RESERVE equal to or larger than
+  * PERCPU_DYNAMIC_EARLY_SIZE.
+  */
+-#define PERCPU_DYNAMIC_EARLY_SIZE	(20 << 10)
++#define PERCPU_DYNAMIC_EARLY_SIZE	(20 << PERCPU_DYNAMIC_SIZE_SHIFT)
+ 
+ /*
+  * PERCPU_DYNAMIC_RESERVE indicates the amount of free area to piggy
+@@ -55,9 +61,9 @@
+  * intelligent way to determine this would be nice.
+  */
+ #if BITS_PER_LONG > 32
+-#define PERCPU_DYNAMIC_RESERVE		(28 << 10)
++#define PERCPU_DYNAMIC_RESERVE		(28 << PERCPU_DYNAMIC_SIZE_SHIFT)
+ #else
+-#define PERCPU_DYNAMIC_RESERVE		(20 << 10)
++#define PERCPU_DYNAMIC_RESERVE		(20 << PERCPU_DYNAMIC_SIZE_SHIFT)
+ #endif
+ 
+ extern void *pcpu_base_addr;
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 87d687c43d8c..fea7644a1985 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -106,6 +106,12 @@
+ /* Avoid kmemleak tracing */
+ #define SLAB_NOLEAKTRACE	((slab_flags_t __force)0x00800000U)
+ 
++#ifdef CONFIG_RANDOM_KMALLOC_CACHES
++# define SLAB_RANDOMSLAB	((slab_flags_t __force)0x01000000U)
++#else
++# define SLAB_RANDOMSLAB	0
++#endif
++
+ /* Fault injection mark */
+ #ifdef CONFIG_FAILSLAB
+ # define SLAB_FAILSLAB		((slab_flags_t __force)0x02000000U)
+@@ -336,6 +342,12 @@ static inline unsigned int arch_slab_minalign(void)
+ #define SLAB_OBJ_MIN_SIZE      (KMALLOC_MIN_SIZE < 16 ? \
+                                (KMALLOC_MIN_SIZE) : 16)
+ 
++#ifdef CONFIG_RANDOM_KMALLOC_CACHES
++#define KMALLOC_RANDOM_NR CONFIG_RANDOM_KMALLOC_CACHES_NR
++#else
++#define KMALLOC_RANDOM_NR 1
++#endif
++
+ /*
+  * Whenever changing this, take care of that kmalloc_type() and
+  * create_kmalloc_caches() still work as intended.
+@@ -345,7 +357,9 @@ static inline unsigned int arch_slab_minalign(void)
+  * kmem caches can have both accounted and unaccounted objects.
+  */
+ enum kmalloc_cache_type {
+-	KMALLOC_NORMAL = 0,
++	KMALLOC_RANDOM_START = 0,
++	KMALLOC_RANDOM_END = KMALLOC_RANDOM_START + KMALLOC_RANDOM_NR - 1,
++	KMALLOC_NORMAL = KMALLOC_RANDOM_END,
+ #ifndef CONFIG_ZONE_DMA
+ 	KMALLOC_DMA = KMALLOC_NORMAL,
+ #endif
+@@ -378,14 +392,14 @@ kmalloc_caches[NR_KMALLOC_TYPES][KMALLOC_SHIFT_HIGH + 1];
+ 	(IS_ENABLED(CONFIG_ZONE_DMA)   ? __GFP_DMA : 0) |	\
+ 	(IS_ENABLED(CONFIG_MEMCG_KMEM) ? __GFP_ACCOUNT : 0))
+ 
+-static __always_inline enum kmalloc_cache_type kmalloc_type(gfp_t flags)
++static __always_inline enum kmalloc_cache_type kmalloc_type(gfp_t flags, unsigned long caller)
+ {
+ 	/*
+ 	 * The most common case is KMALLOC_NORMAL, so test for it
+ 	 * with a single branch for all the relevant flags.
+ 	 */
+ 	if (likely((flags & KMALLOC_NOT_NORMAL_BITS) == 0))
+-		return KMALLOC_NORMAL;
++		return KMALLOC_RANDOM_START + caller % KMALLOC_RANDOM_NR;
+ 
+ 	/*
+ 	 * At least one of the flags has to be set. Their priorities in
+@@ -578,7 +592,7 @@ static __always_inline __alloc_size(1) void *kmalloc(size_t size, gfp_t flags)
+ 
+ 		index = kmalloc_index(size);
+ 		return kmalloc_trace(
+-				kmalloc_caches[kmalloc_type(flags)][index],
++				kmalloc_caches[kmalloc_type(flags, _RET_IP_)][index],
+ 				flags, size);
+ 	}
+ 	return __kmalloc(size, flags);
+@@ -604,7 +618,7 @@ static __always_inline __alloc_size(1) void *kmalloc_node(size_t size, gfp_t fla
+ 
+ 		index = kmalloc_index(size);
+ 		return kmalloc_node_trace(
+-				kmalloc_caches[kmalloc_type(flags)][index],
++				kmalloc_caches[kmalloc_type(flags, _RET_IP_)][index],
+ 				flags, node, size);
+ 	}
+ 	return __kmalloc_node(size, flags, node);
+diff --git a/mm/Kconfig b/mm/Kconfig
+index bc828f640cd9..0b116bd8fdf0 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -333,6 +333,26 @@ config SLUB_CPU_PARTIAL
+ 	  which requires the taking of locks that may cause latency spikes.
+ 	  Typically one would choose no for a realtime system.
+ 
++config RANDOM_KMALLOC_CACHES
++	default n
++	depends on SLUB
++	bool "Random slab caches for normal kmalloc"
++	help
++	  A hardening feature that creates multiple copies of slab caches for
++	  normal kmalloc allocation and makes kmalloc randomly pick one based
++	  on code address, which makes the attackers unable to spray vulnerable
++	  memory objects on the heap for exploiting memory vulnerabilities.
++
++config RANDOM_KMALLOC_CACHES_NR
++	int "Number of random slab caches copies"
++	default 16
++	range 4 16
++	depends on RANDOM_KMALLOC_CACHES
++	help
++	  The number of copies of random slab caches. Bigger value makes the
++	  potentially vulnerable memory object less likely to collide with
++	  objects allocated from other subsystems or modules.
++
+ endmenu # SLAB allocator options
+ 
+ config SHUFFLE_PAGE_ALLOCATOR
+diff --git a/mm/kfence/kfence_test.c b/mm/kfence/kfence_test.c
+index b5d66a69200d..316d12af7202 100644
+--- a/mm/kfence/kfence_test.c
++++ b/mm/kfence/kfence_test.c
+@@ -213,7 +213,7 @@ static void test_cache_destroy(void)
+ 
+ static inline size_t kmalloc_cache_alignment(size_t size)
+ {
+-	return kmalloc_caches[kmalloc_type(GFP_KERNEL)][__kmalloc_index(size, false)]->align;
++	return kmalloc_caches[kmalloc_type(GFP_KERNEL, _RET_IP_)][__kmalloc_index(size, false)]->align;
+ }
+ 
+ /* Must always inline to match stack trace against caller. */
+@@ -284,7 +284,7 @@ static void *test_alloc(struct kunit *test, size_t size, gfp_t gfp, enum allocat
+ 		if (is_kfence_address(alloc)) {
+ 			struct slab *slab = virt_to_slab(alloc);
+ 			struct kmem_cache *s = test_cache ?:
+-					kmalloc_caches[kmalloc_type(GFP_KERNEL)][__kmalloc_index(size, false)];
++					kmalloc_caches[kmalloc_type(GFP_KERNEL, _RET_IP_)][__kmalloc_index(size, false)];
+ 
+ 			/*
+ 			 * Verify that various helpers return the right values
+diff --git a/mm/slab.c b/mm/slab.c
+index dabc2a671fc6..8dc7e183dcc5 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -1675,7 +1675,7 @@ static size_t calculate_slab_order(struct kmem_cache *cachep,
+ 			if (freelist_size > KMALLOC_MAX_CACHE_SIZE) {
+ 				freelist_cache_size = PAGE_SIZE << get_order(freelist_size);
+ 			} else {
+-				freelist_cache = kmalloc_slab(freelist_size, 0u);
++				freelist_cache = kmalloc_slab(freelist_size, 0u, _RET_IP_);
+ 				if (!freelist_cache)
+ 					continue;
+ 				freelist_cache_size = freelist_cache->size;
+diff --git a/mm/slab.h b/mm/slab.h
+index 43966aa5fadf..4f4caf422b77 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -280,7 +280,7 @@ void setup_kmalloc_cache_index_table(void);
+ void create_kmalloc_caches(slab_flags_t);
+ 
+ /* Find the kmalloc slab corresponding for a certain size */
+-struct kmem_cache *kmalloc_slab(size_t, gfp_t);
++struct kmem_cache *kmalloc_slab(size_t, gfp_t, unsigned long);
+ 
+ void *__kmem_cache_alloc_node(struct kmem_cache *s, gfp_t gfpflags,
+ 			      int node, size_t orig_size,
+@@ -374,6 +374,7 @@ static inline bool is_kmalloc_cache(struct kmem_cache *s)
+ 			      SLAB_TEMPORARY | \
+ 			      SLAB_ACCOUNT | \
+ 			      SLAB_KMALLOC | \
++			      SLAB_RANDOMSLAB | \
+ 			      SLAB_NO_USER_FLAGS)
+ 
+ bool __kmem_cache_empty(struct kmem_cache *);
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index bf4e777cfe90..895a3edb82d4 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -47,6 +47,7 @@ static DECLARE_WORK(slab_caches_to_rcu_destroy_work,
+  */
+ #define SLAB_NEVER_MERGE (SLAB_RED_ZONE | SLAB_POISON | SLAB_STORE_USER | \
+ 		SLAB_TRACE | SLAB_TYPESAFE_BY_RCU | SLAB_NOLEAKTRACE | \
++		SLAB_RANDOMSLAB | \
+ 		SLAB_FAILSLAB | kasan_never_merge())
+ 
+ #define SLAB_MERGE_SAME (SLAB_RECLAIM_ACCOUNT | SLAB_CACHE_DMA | \
+@@ -722,7 +723,7 @@ static inline unsigned int size_index_elem(unsigned int bytes)
+  * Find the kmem_cache structure that serves a given size of
+  * allocation
+  */
+-struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
++struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags, unsigned long caller)
+ {
+ 	unsigned int index;
+ 
+@@ -737,7 +738,7 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
+ 		index = fls(size - 1);
+ 	}
+ 
+-	return kmalloc_caches[kmalloc_type(flags)][index];
++	return kmalloc_caches[kmalloc_type(flags, caller)][index];
+ }
+ 
+ size_t kmalloc_size_roundup(size_t size)
+@@ -755,7 +756,7 @@ size_t kmalloc_size_roundup(size_t size)
+ 		return PAGE_SIZE << get_order(size);
+ 
+ 	/* The flags don't matter since size_index is common to all. */
+-	c = kmalloc_slab(size, GFP_KERNEL);
++	c = kmalloc_slab(size, GFP_KERNEL, _RET_IP_);
+ 	return c ? c->object_size : 0;
+ }
+ EXPORT_SYMBOL(kmalloc_size_roundup);
+@@ -778,12 +779,36 @@ EXPORT_SYMBOL(kmalloc_size_roundup);
+ #define KMALLOC_RCL_NAME(sz)
+ #endif
+ 
++#ifdef CONFIG_RANDOM_KMALLOC_CACHES
++#define __KMALLOC_RANDOM_CONCAT(a, b, c) a ## b ## c
++#define KMALLOC_RANDOM_NAME(N, sz) __KMALLOC_RANDOM_CONCAT(KMALLOC_RANDOM_, N, _NAME)(sz)
++#define KMALLOC_RANDOM_1_NAME(sz)                             .name[KMALLOC_RANDOM_START +  0] = "kmalloc-random-01-" #sz,
++#define KMALLOC_RANDOM_2_NAME(sz)  KMALLOC_RANDOM_1_NAME(sz)  .name[KMALLOC_RANDOM_START +  1] = "kmalloc-random-02-" #sz,
++#define KMALLOC_RANDOM_3_NAME(sz)  KMALLOC_RANDOM_2_NAME(sz)  .name[KMALLOC_RANDOM_START +  2] = "kmalloc-random-03-" #sz,
++#define KMALLOC_RANDOM_4_NAME(sz)  KMALLOC_RANDOM_3_NAME(sz)  .name[KMALLOC_RANDOM_START +  3] = "kmalloc-random-04-" #sz,
++#define KMALLOC_RANDOM_5_NAME(sz)  KMALLOC_RANDOM_4_NAME(sz)  .name[KMALLOC_RANDOM_START +  4] = "kmalloc-random-05-" #sz,
++#define KMALLOC_RANDOM_6_NAME(sz)  KMALLOC_RANDOM_5_NAME(sz)  .name[KMALLOC_RANDOM_START +  5] = "kmalloc-random-06-" #sz,
++#define KMALLOC_RANDOM_7_NAME(sz)  KMALLOC_RANDOM_6_NAME(sz)  .name[KMALLOC_RANDOM_START +  6] = "kmalloc-random-07-" #sz,
++#define KMALLOC_RANDOM_8_NAME(sz)  KMALLOC_RANDOM_7_NAME(sz)  .name[KMALLOC_RANDOM_START +  7] = "kmalloc-random-08-" #sz,
++#define KMALLOC_RANDOM_9_NAME(sz)  KMALLOC_RANDOM_8_NAME(sz)  .name[KMALLOC_RANDOM_START +  8] = "kmalloc-random-09-" #sz,
++#define KMALLOC_RANDOM_10_NAME(sz) KMALLOC_RANDOM_9_NAME(sz)  .name[KMALLOC_RANDOM_START +  9] = "kmalloc-random-10-" #sz,
++#define KMALLOC_RANDOM_11_NAME(sz) KMALLOC_RANDOM_10_NAME(sz) .name[KMALLOC_RANDOM_START + 10] = "kmalloc-random-11-" #sz,
++#define KMALLOC_RANDOM_12_NAME(sz) KMALLOC_RANDOM_11_NAME(sz) .name[KMALLOC_RANDOM_START + 11] = "kmalloc-random-12-" #sz,
++#define KMALLOC_RANDOM_13_NAME(sz) KMALLOC_RANDOM_12_NAME(sz) .name[KMALLOC_RANDOM_START + 12] = "kmalloc-random-13-" #sz,
++#define KMALLOC_RANDOM_14_NAME(sz) KMALLOC_RANDOM_13_NAME(sz) .name[KMALLOC_RANDOM_START + 13] = "kmalloc-random-14-" #sz,
++#define KMALLOC_RANDOM_15_NAME(sz) KMALLOC_RANDOM_14_NAME(sz) .name[KMALLOC_RANDOM_START + 14] = "kmalloc-random-15-" #sz,
++#define KMALLOC_RANDOM_16_NAME(sz) KMALLOC_RANDOM_15_NAME(sz) .name[KMALLOC_RANDOM_START + 15] = "kmalloc-random-16-" #sz,
++#else
++#define KMALLOC_RANDOM_NAME(N, sz)
++#endif
++
+ #define INIT_KMALLOC_INFO(__size, __short_size)			\
+ {								\
+ 	.name[KMALLOC_NORMAL]  = "kmalloc-" #__short_size,	\
+ 	KMALLOC_RCL_NAME(__short_size)				\
+ 	KMALLOC_CGROUP_NAME(__short_size)			\
+ 	KMALLOC_DMA_NAME(__short_size)				\
++	KMALLOC_RANDOM_NAME(CONFIG_RANDOM_KMALLOC_CACHES_NR, __short_size)	\
+ 	.size = __size,						\
+ }
+ 
+@@ -879,6 +904,11 @@ new_kmalloc_cache(int idx, enum kmalloc_cache_type type, slab_flags_t flags)
+ 		flags |= SLAB_CACHE_DMA;
+ 	}
+ 
++#ifdef CONFIG_RANDOM_KMALLOC_CACHES
++	if (type >= KMALLOC_RANDOM_START && type <= KMALLOC_RANDOM_END)
++		flags |= SLAB_RANDOMSLAB;
++#endif
++
+ 	kmalloc_caches[type][idx] = create_kmalloc_cache(
+ 					kmalloc_info[idx].name[type],
+ 					kmalloc_info[idx].size, flags, 0,
+@@ -905,7 +935,7 @@ void __init create_kmalloc_caches(slab_flags_t flags)
+ 	/*
+ 	 * Including KMALLOC_CGROUP if CONFIG_MEMCG_KMEM defined
+ 	 */
+-	for (type = KMALLOC_NORMAL; type < NR_KMALLOC_TYPES; type++) {
++	for (type = KMALLOC_RANDOM_START; type < NR_KMALLOC_TYPES; type++) {
+ 		for (i = KMALLOC_SHIFT_LOW; i <= KMALLOC_SHIFT_HIGH; i++) {
+ 			if (!kmalloc_caches[type][i])
+ 				new_kmalloc_cache(i, type, flags);
+@@ -958,7 +988,7 @@ void *__do_kmalloc_node(size_t size, gfp_t flags, int node, unsigned long caller
+ 		return ret;
+ 	}
+ 
+-	s = kmalloc_slab(size, flags);
++	s = kmalloc_slab(size, flags, caller);
+ 
+ 	if (unlikely(ZERO_OR_NULL_PTR(s)))
+ 		return s;
 -- 
-thanks,
-
-Mimi
+2.25.1
 
