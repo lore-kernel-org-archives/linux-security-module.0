@@ -2,415 +2,178 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0EE4C74A5B
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Mar 2023 09:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7556AC6FD1D
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Mar 2023 09:58:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232124AbjCOJyO (ORCPT
+        id S231782AbjCOJ6F (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Mar 2023 05:54:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37378 "EHLO
+        Wed, 15 Mar 2023 05:58:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232127AbjCOJxx (ORCPT
+        with ESMTP id S231367AbjCOJ5p (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Mar 2023 05:53:53 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57762848C1;
-        Wed, 15 Mar 2023 02:52:22 -0700 (PDT)
-Received: from dggpemm500016.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Pc5JF4rjrzrSsT;
-        Wed, 15 Mar 2023 17:51:25 +0800 (CST)
-Received: from huawei.com (10.67.174.33) by dggpemm500016.china.huawei.com
- (7.185.36.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Wed, 15 Mar
- 2023 17:52:19 +0800
-From:   "GONG, Ruiqi" <gongruiqi1@huawei.com>
-To:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-CC:     Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <kasan-dev@googlegroups.com>,
-        Kees Cook <keescook@chromium.org>,
-        <linux-hardening@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Wang Weiyang <wangweiyang2@huawei.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>
-Subject: [PATCH RFC] Randomized slab caches for kmalloc()
-Date:   Wed, 15 Mar 2023 17:54:59 +0800
-Message-ID: <20230315095459.186113-1-gongruiqi1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 15 Mar 2023 05:57:45 -0400
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc08])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5835585342
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Mar 2023 02:56:09 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Pc5Pd5bLRzMqPGT;
+        Wed, 15 Mar 2023 10:56:05 +0100 (CET)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Pc5Pc4QWtzMshZV;
+        Wed, 15 Mar 2023 10:56:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1678874165;
+        bh=E3Wrf/GKUfCx4B2zr2Kvo7G+ww/TUs8cNCp78tKxA8M=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=VkhTRqbK4CytL0zHrVD2wl5qOULfB24AGFgjzXoV3dWM+RRv5Uj8lZmnLDzG0JjuW
+         RYpGYjBqgF8QfTGqTg8bn5InH3mJsMxVlwMfIzTN9m+IDavqdPvwn8WSOi6Ft/ANFD
+         V9dYjeIePsdIby+owk5XCLvR6eNX9+AendAvFdv0=
+Message-ID: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
+Date:   Wed, 15 Mar 2023 10:56:03 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.67.174.33]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm500016.china.huawei.com (7.185.36.25)
-X-CFilter-Loop: Reflected
+User-Agent: 
+Subject: Re: [PATCH 0/1] process attribute support for Landlock
+Content-Language: en-US
+To:     Shervin Oloumi <enlightened@chromium.org>
+Cc:     linux-security-module@vger.kernel.org, jorgelo@chromium.org,
+        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
+        allenwebb@chromium.org,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        Adrian Reber <areber@redhat.com>, criu@openvz.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <brauner@kernel.org>
+References: <20230302185257.850681-1-enlightened@chromium.org>
+ <247f3194-2dd2-1414-0a4d-6e41addf5e64@digikod.net>
+ <CAMb9sTir8Gde=DwZ9LnW2Hq7YmSZ13u_aX8AyR=JEQWGBhCvAQ@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <CAMb9sTir8Gde=DwZ9LnW2Hq7YmSZ13u_aX8AyR=JEQWGBhCvAQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When exploiting memory vulnerabilities, "heap spraying" is a common
-technique targeting those related to dynamic memory allocation (i.e. the
-"heap"), and it plays an important role in a successful exploitation.
-Basically, it is to overwrite the memory area of vulnerable object by
-triggering allocation in other subsystems or modules and therefore
-getting a reference to the targeted memory location. It's usable on
-various types of vulnerablity including use after free (UAF), heap out-
-of-bound write and etc.
 
-There are (at least) two reasons why the heap can be sprayed: 1) generic
-slab caches are shared among different subsystems and modules, and
-2) dedicated slab caches could be merged with the generic ones.
-Currently these two factors cannot be prevented at a low cost: the first
-one is a widely used memory allocation mechanism, and shutting down slab
-merging completely via `slub_nomerge` would be overkill.
+On 08/03/2023 23:25, Shervin Oloumi wrote:
+> Thanks all for the feedback. This is in reply to Mickaël, but should
+> answer Günther's questions as well.
+> 
+>> It would help to know exactly what are your needs short term, and long
+>> term. As Günther is wondering, what about nested sandboxing?
+> 
+> Our plan is to use the "landlocked" process attribute defined in the
+> patch to determine the sandbox state of the system processes and send
+> information to our metrics server regarding Landlock coverage. For
+> example, the percentage of processes on the system that are sandboxed
+> using Landlock.
+> 
+> Given that we use Landlock in a very specific and controlled way, we
+> are not concerned about the inheritance behavior and nested policies,
+> at least for the use case of metrics. When daemons are launched in
+> ChromiumOS, they have a pre-defined sandboxing configuration that
+> dictates whether Landlock should be applied or not. So this attribute
+> would help us verify that the processes running on devices in the wild
+> indeed have the general sandboxing state that we expect and the
+> reality matches our expectation.
+> 
+> Long-term, it would be useful to learn more information about domains
+> and policies through the process attribute interface, but we do not
+> currently have a need for that, apart from maybe doing troubleshooting
+> when defining Landlock rules for system daemons.
 
-To efficiently prevent heap spraying, we propose the following approach:
-to create multiple copies of generic slab caches that will never be
-merged, and random one of them will be used at allocation. The random
-selection is based on the location of code that calls `kmalloc()`, which
-means it is static at runtime (rather than dynamically determined at
-each time of allocation, which could be bypassed by repeatedly spraying
-in brute force). In this way, the vulnerable object and memory allocated
-in other subsystems and modules will (most probably) be on different
-slab caches, which prevents the object from being sprayed.
-
-Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
----
-
-v0:
-The current implementation only randomize slab caches for KMALLOC_NORMAL
-allocation. Besides the patch itself, we would also like to know the
-opinion of the community about whether or not it's necessary to extend
-this randomization to all KMALLOC_*, and if so, if implementing a three-
-dimensional `kmalloc_caches` is a better choice.
+OK, it makes sense.
 
 
- include/linux/percpu.h  | 12 +++++++++---
- include/linux/slab.h    | 24 +++++++++++++++++++-----
- mm/Kconfig              | 20 ++++++++++++++++++++
- mm/kfence/kfence_test.c |  4 ++--
- mm/slab.c               |  2 +-
- mm/slab.h               |  3 ++-
- mm/slab_common.c        | 40 +++++++++++++++++++++++++++++++++++-----
- 7 files changed, 88 insertions(+), 17 deletions(-)
+> 
+>> I'm thinking about a new /sys/kernel/security/landlock filesystem to be
+>> able to audit Landlock domains (i.e. sandboxes). As for your use case,
+>> it would be useful to be able to tie a process to a Landlock domain
+>> thanks to IDs.
+> 
+> I think this goes beyond the scope for our current needs, but
+> certainly a nice feature that we could potentially use in the future.
+> So given this, I was wondering what would be the minimum changes we
+> can make now (if any) that would serve our purpose AND would be
+> compatible with your long-term vision, without getting too deep into
+> the implementation of broader concepts. We are flexible on the
+> approach for querying the landlocked property (for example whether it
+> is based on the presence of a /proc/.../attr/domain or actually
+> reading an attribute).
 
-diff --git a/include/linux/percpu.h b/include/linux/percpu.h
-index 1338ea2aa720..6cee6425951f 100644
---- a/include/linux/percpu.h
-+++ b/include/linux/percpu.h
-@@ -34,6 +34,12 @@
- #define PCPU_BITMAP_BLOCK_BITS		(PCPU_BITMAP_BLOCK_SIZE >>	\
- 					 PCPU_MIN_ALLOC_SHIFT)
- 
-+#ifdef CONFIG_RANDOM_KMALLOC_CACHES
-+#define PERCPU_DYNAMIC_SIZE_SHIFT      13
-+#else
-+#define PERCPU_DYNAMIC_SIZE_SHIFT      10
-+#endif
-+
- /*
-  * Percpu allocator can serve percpu allocations before slab is
-  * initialized which allows slab to depend on the percpu allocator.
-@@ -41,7 +47,7 @@
-  * for this.  Keep PERCPU_DYNAMIC_RESERVE equal to or larger than
-  * PERCPU_DYNAMIC_EARLY_SIZE.
-  */
--#define PERCPU_DYNAMIC_EARLY_SIZE	(20 << 10)
-+#define PERCPU_DYNAMIC_EARLY_SIZE	(20 << PERCPU_DYNAMIC_SIZE_SHIFT)
- 
- /*
-  * PERCPU_DYNAMIC_RESERVE indicates the amount of free area to piggy
-@@ -55,9 +61,9 @@
-  * intelligent way to determine this would be nice.
-  */
- #if BITS_PER_LONG > 32
--#define PERCPU_DYNAMIC_RESERVE		(28 << 10)
-+#define PERCPU_DYNAMIC_RESERVE		(28 << PERCPU_DYNAMIC_SIZE_SHIFT)
- #else
--#define PERCPU_DYNAMIC_RESERVE		(20 << 10)
-+#define PERCPU_DYNAMIC_RESERVE		(20 << PERCPU_DYNAMIC_SIZE_SHIFT)
- #endif
- 
- extern void *pcpu_base_addr;
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 87d687c43d8c..fea7644a1985 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -106,6 +106,12 @@
- /* Avoid kmemleak tracing */
- #define SLAB_NOLEAKTRACE	((slab_flags_t __force)0x00800000U)
- 
-+#ifdef CONFIG_RANDOM_KMALLOC_CACHES
-+# define SLAB_RANDOMSLAB	((slab_flags_t __force)0x01000000U)
-+#else
-+# define SLAB_RANDOMSLAB	0
-+#endif
-+
- /* Fault injection mark */
- #ifdef CONFIG_FAILSLAB
- # define SLAB_FAILSLAB		((slab_flags_t __force)0x02000000U)
-@@ -336,6 +342,12 @@ static inline unsigned int arch_slab_minalign(void)
- #define SLAB_OBJ_MIN_SIZE      (KMALLOC_MIN_SIZE < 16 ? \
-                                (KMALLOC_MIN_SIZE) : 16)
- 
-+#ifdef CONFIG_RANDOM_KMALLOC_CACHES
-+#define KMALLOC_RANDOM_NR CONFIG_RANDOM_KMALLOC_CACHES_NR
-+#else
-+#define KMALLOC_RANDOM_NR 1
-+#endif
-+
- /*
-  * Whenever changing this, take care of that kmalloc_type() and
-  * create_kmalloc_caches() still work as intended.
-@@ -345,7 +357,9 @@ static inline unsigned int arch_slab_minalign(void)
-  * kmem caches can have both accounted and unaccounted objects.
-  */
- enum kmalloc_cache_type {
--	KMALLOC_NORMAL = 0,
-+	KMALLOC_RANDOM_START = 0,
-+	KMALLOC_RANDOM_END = KMALLOC_RANDOM_START + KMALLOC_RANDOM_NR - 1,
-+	KMALLOC_NORMAL = KMALLOC_RANDOM_END,
- #ifndef CONFIG_ZONE_DMA
- 	KMALLOC_DMA = KMALLOC_NORMAL,
- #endif
-@@ -378,14 +392,14 @@ kmalloc_caches[NR_KMALLOC_TYPES][KMALLOC_SHIFT_HIGH + 1];
- 	(IS_ENABLED(CONFIG_ZONE_DMA)   ? __GFP_DMA : 0) |	\
- 	(IS_ENABLED(CONFIG_MEMCG_KMEM) ? __GFP_ACCOUNT : 0))
- 
--static __always_inline enum kmalloc_cache_type kmalloc_type(gfp_t flags)
-+static __always_inline enum kmalloc_cache_type kmalloc_type(gfp_t flags, unsigned long caller)
- {
- 	/*
- 	 * The most common case is KMALLOC_NORMAL, so test for it
- 	 * with a single branch for all the relevant flags.
- 	 */
- 	if (likely((flags & KMALLOC_NOT_NORMAL_BITS) == 0))
--		return KMALLOC_NORMAL;
-+		return KMALLOC_RANDOM_START + caller % KMALLOC_RANDOM_NR;
- 
- 	/*
- 	 * At least one of the flags has to be set. Their priorities in
-@@ -578,7 +592,7 @@ static __always_inline __alloc_size(1) void *kmalloc(size_t size, gfp_t flags)
- 
- 		index = kmalloc_index(size);
- 		return kmalloc_trace(
--				kmalloc_caches[kmalloc_type(flags)][index],
-+				kmalloc_caches[kmalloc_type(flags, _RET_IP_)][index],
- 				flags, size);
- 	}
- 	return __kmalloc(size, flags);
-@@ -604,7 +618,7 @@ static __always_inline __alloc_size(1) void *kmalloc_node(size_t size, gfp_t fla
- 
- 		index = kmalloc_index(size);
- 		return kmalloc_node_trace(
--				kmalloc_caches[kmalloc_type(flags)][index],
-+				kmalloc_caches[kmalloc_type(flags, _RET_IP_)][index],
- 				flags, node, size);
- 	}
- 	return __kmalloc_node(size, flags, node);
-diff --git a/mm/Kconfig b/mm/Kconfig
-index bc828f640cd9..0b116bd8fdf0 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -333,6 +333,26 @@ config SLUB_CPU_PARTIAL
- 	  which requires the taking of locks that may cause latency spikes.
- 	  Typically one would choose no for a realtime system.
- 
-+config RANDOM_KMALLOC_CACHES
-+	default n
-+	depends on SLUB
-+	bool "Random slab caches for normal kmalloc"
-+	help
-+	  A hardening feature that creates multiple copies of slab caches for
-+	  normal kmalloc allocation and makes kmalloc randomly pick one based
-+	  on code address, which makes the attackers unable to spray vulnerable
-+	  memory objects on the heap for exploiting memory vulnerabilities.
-+
-+config RANDOM_KMALLOC_CACHES_NR
-+	int "Number of random slab caches copies"
-+	default 16
-+	range 4 16
-+	depends on RANDOM_KMALLOC_CACHES
-+	help
-+	  The number of copies of random slab caches. Bigger value makes the
-+	  potentially vulnerable memory object less likely to collide with
-+	  objects allocated from other subsystems or modules.
-+
- endmenu # SLAB allocator options
- 
- config SHUFFLE_PAGE_ALLOCATOR
-diff --git a/mm/kfence/kfence_test.c b/mm/kfence/kfence_test.c
-index b5d66a69200d..316d12af7202 100644
---- a/mm/kfence/kfence_test.c
-+++ b/mm/kfence/kfence_test.c
-@@ -213,7 +213,7 @@ static void test_cache_destroy(void)
- 
- static inline size_t kmalloc_cache_alignment(size_t size)
- {
--	return kmalloc_caches[kmalloc_type(GFP_KERNEL)][__kmalloc_index(size, false)]->align;
-+	return kmalloc_caches[kmalloc_type(GFP_KERNEL, _RET_IP_)][__kmalloc_index(size, false)]->align;
- }
- 
- /* Must always inline to match stack trace against caller. */
-@@ -284,7 +284,7 @@ static void *test_alloc(struct kunit *test, size_t size, gfp_t gfp, enum allocat
- 		if (is_kfence_address(alloc)) {
- 			struct slab *slab = virt_to_slab(alloc);
- 			struct kmem_cache *s = test_cache ?:
--					kmalloc_caches[kmalloc_type(GFP_KERNEL)][__kmalloc_index(size, false)];
-+					kmalloc_caches[kmalloc_type(GFP_KERNEL, _RET_IP_)][__kmalloc_index(size, false)];
- 
- 			/*
- 			 * Verify that various helpers return the right values
-diff --git a/mm/slab.c b/mm/slab.c
-index dabc2a671fc6..8dc7e183dcc5 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -1675,7 +1675,7 @@ static size_t calculate_slab_order(struct kmem_cache *cachep,
- 			if (freelist_size > KMALLOC_MAX_CACHE_SIZE) {
- 				freelist_cache_size = PAGE_SIZE << get_order(freelist_size);
- 			} else {
--				freelist_cache = kmalloc_slab(freelist_size, 0u);
-+				freelist_cache = kmalloc_slab(freelist_size, 0u, _RET_IP_);
- 				if (!freelist_cache)
- 					continue;
- 				freelist_cache_size = freelist_cache->size;
-diff --git a/mm/slab.h b/mm/slab.h
-index 43966aa5fadf..4f4caf422b77 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -280,7 +280,7 @@ void setup_kmalloc_cache_index_table(void);
- void create_kmalloc_caches(slab_flags_t);
- 
- /* Find the kmalloc slab corresponding for a certain size */
--struct kmem_cache *kmalloc_slab(size_t, gfp_t);
-+struct kmem_cache *kmalloc_slab(size_t, gfp_t, unsigned long);
- 
- void *__kmem_cache_alloc_node(struct kmem_cache *s, gfp_t gfpflags,
- 			      int node, size_t orig_size,
-@@ -374,6 +374,7 @@ static inline bool is_kmalloc_cache(struct kmem_cache *s)
- 			      SLAB_TEMPORARY | \
- 			      SLAB_ACCOUNT | \
- 			      SLAB_KMALLOC | \
-+			      SLAB_RANDOMSLAB | \
- 			      SLAB_NO_USER_FLAGS)
- 
- bool __kmem_cache_empty(struct kmem_cache *);
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index bf4e777cfe90..895a3edb82d4 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -47,6 +47,7 @@ static DECLARE_WORK(slab_caches_to_rcu_destroy_work,
-  */
- #define SLAB_NEVER_MERGE (SLAB_RED_ZONE | SLAB_POISON | SLAB_STORE_USER | \
- 		SLAB_TRACE | SLAB_TYPESAFE_BY_RCU | SLAB_NOLEAKTRACE | \
-+		SLAB_RANDOMSLAB | \
- 		SLAB_FAILSLAB | kasan_never_merge())
- 
- #define SLAB_MERGE_SAME (SLAB_RECLAIM_ACCOUNT | SLAB_CACHE_DMA | \
-@@ -722,7 +723,7 @@ static inline unsigned int size_index_elem(unsigned int bytes)
-  * Find the kmem_cache structure that serves a given size of
-  * allocation
-  */
--struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
-+struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags, unsigned long caller)
- {
- 	unsigned int index;
- 
-@@ -737,7 +738,7 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
- 		index = fls(size - 1);
- 	}
- 
--	return kmalloc_caches[kmalloc_type(flags)][index];
-+	return kmalloc_caches[kmalloc_type(flags, caller)][index];
- }
- 
- size_t kmalloc_size_roundup(size_t size)
-@@ -755,7 +756,7 @@ size_t kmalloc_size_roundup(size_t size)
- 		return PAGE_SIZE << get_order(size);
- 
- 	/* The flags don't matter since size_index is common to all. */
--	c = kmalloc_slab(size, GFP_KERNEL);
-+	c = kmalloc_slab(size, GFP_KERNEL, _RET_IP_);
- 	return c ? c->object_size : 0;
- }
- EXPORT_SYMBOL(kmalloc_size_roundup);
-@@ -778,12 +779,36 @@ EXPORT_SYMBOL(kmalloc_size_roundup);
- #define KMALLOC_RCL_NAME(sz)
- #endif
- 
-+#ifdef CONFIG_RANDOM_KMALLOC_CACHES
-+#define __KMALLOC_RANDOM_CONCAT(a, b, c) a ## b ## c
-+#define KMALLOC_RANDOM_NAME(N, sz) __KMALLOC_RANDOM_CONCAT(KMALLOC_RANDOM_, N, _NAME)(sz)
-+#define KMALLOC_RANDOM_1_NAME(sz)                             .name[KMALLOC_RANDOM_START +  0] = "kmalloc-random-01-" #sz,
-+#define KMALLOC_RANDOM_2_NAME(sz)  KMALLOC_RANDOM_1_NAME(sz)  .name[KMALLOC_RANDOM_START +  1] = "kmalloc-random-02-" #sz,
-+#define KMALLOC_RANDOM_3_NAME(sz)  KMALLOC_RANDOM_2_NAME(sz)  .name[KMALLOC_RANDOM_START +  2] = "kmalloc-random-03-" #sz,
-+#define KMALLOC_RANDOM_4_NAME(sz)  KMALLOC_RANDOM_3_NAME(sz)  .name[KMALLOC_RANDOM_START +  3] = "kmalloc-random-04-" #sz,
-+#define KMALLOC_RANDOM_5_NAME(sz)  KMALLOC_RANDOM_4_NAME(sz)  .name[KMALLOC_RANDOM_START +  4] = "kmalloc-random-05-" #sz,
-+#define KMALLOC_RANDOM_6_NAME(sz)  KMALLOC_RANDOM_5_NAME(sz)  .name[KMALLOC_RANDOM_START +  5] = "kmalloc-random-06-" #sz,
-+#define KMALLOC_RANDOM_7_NAME(sz)  KMALLOC_RANDOM_6_NAME(sz)  .name[KMALLOC_RANDOM_START +  6] = "kmalloc-random-07-" #sz,
-+#define KMALLOC_RANDOM_8_NAME(sz)  KMALLOC_RANDOM_7_NAME(sz)  .name[KMALLOC_RANDOM_START +  7] = "kmalloc-random-08-" #sz,
-+#define KMALLOC_RANDOM_9_NAME(sz)  KMALLOC_RANDOM_8_NAME(sz)  .name[KMALLOC_RANDOM_START +  8] = "kmalloc-random-09-" #sz,
-+#define KMALLOC_RANDOM_10_NAME(sz) KMALLOC_RANDOM_9_NAME(sz)  .name[KMALLOC_RANDOM_START +  9] = "kmalloc-random-10-" #sz,
-+#define KMALLOC_RANDOM_11_NAME(sz) KMALLOC_RANDOM_10_NAME(sz) .name[KMALLOC_RANDOM_START + 10] = "kmalloc-random-11-" #sz,
-+#define KMALLOC_RANDOM_12_NAME(sz) KMALLOC_RANDOM_11_NAME(sz) .name[KMALLOC_RANDOM_START + 11] = "kmalloc-random-12-" #sz,
-+#define KMALLOC_RANDOM_13_NAME(sz) KMALLOC_RANDOM_12_NAME(sz) .name[KMALLOC_RANDOM_START + 12] = "kmalloc-random-13-" #sz,
-+#define KMALLOC_RANDOM_14_NAME(sz) KMALLOC_RANDOM_13_NAME(sz) .name[KMALLOC_RANDOM_START + 13] = "kmalloc-random-14-" #sz,
-+#define KMALLOC_RANDOM_15_NAME(sz) KMALLOC_RANDOM_14_NAME(sz) .name[KMALLOC_RANDOM_START + 14] = "kmalloc-random-15-" #sz,
-+#define KMALLOC_RANDOM_16_NAME(sz) KMALLOC_RANDOM_15_NAME(sz) .name[KMALLOC_RANDOM_START + 15] = "kmalloc-random-16-" #sz,
-+#else
-+#define KMALLOC_RANDOM_NAME(N, sz)
-+#endif
-+
- #define INIT_KMALLOC_INFO(__size, __short_size)			\
- {								\
- 	.name[KMALLOC_NORMAL]  = "kmalloc-" #__short_size,	\
- 	KMALLOC_RCL_NAME(__short_size)				\
- 	KMALLOC_CGROUP_NAME(__short_size)			\
- 	KMALLOC_DMA_NAME(__short_size)				\
-+	KMALLOC_RANDOM_NAME(CONFIG_RANDOM_KMALLOC_CACHES_NR, __short_size)	\
- 	.size = __size,						\
- }
- 
-@@ -879,6 +904,11 @@ new_kmalloc_cache(int idx, enum kmalloc_cache_type type, slab_flags_t flags)
- 		flags |= SLAB_CACHE_DMA;
- 	}
- 
-+#ifdef CONFIG_RANDOM_KMALLOC_CACHES
-+	if (type >= KMALLOC_RANDOM_START && type <= KMALLOC_RANDOM_END)
-+		flags |= SLAB_RANDOMSLAB;
-+#endif
-+
- 	kmalloc_caches[type][idx] = create_kmalloc_cache(
- 					kmalloc_info[idx].name[type],
- 					kmalloc_info[idx].size, flags, 0,
-@@ -905,7 +935,7 @@ void __init create_kmalloc_caches(slab_flags_t flags)
- 	/*
- 	 * Including KMALLOC_CGROUP if CONFIG_MEMCG_KMEM defined
- 	 */
--	for (type = KMALLOC_NORMAL; type < NR_KMALLOC_TYPES; type++) {
-+	for (type = KMALLOC_RANDOM_START; type < NR_KMALLOC_TYPES; type++) {
- 		for (i = KMALLOC_SHIFT_LOW; i <= KMALLOC_SHIFT_HIGH; i++) {
- 			if (!kmalloc_caches[type][i])
- 				new_kmalloc_cache(i, type, flags);
-@@ -958,7 +988,7 @@ void *__do_kmalloc_node(size_t size, gfp_t flags, int node, unsigned long caller
- 		return ret;
- 	}
- 
--	s = kmalloc_slab(size, flags);
-+	s = kmalloc_slab(size, flags, caller);
- 
- 	if (unlikely(ZERO_OR_NULL_PTR(s)))
- 		return s;
--- 
-2.25.1
+Yes, the approach I suggested, check the /proc/.../attr/landlock/domain 
+presence would enable you to check the landlocked state of a process. It 
+should not change much from your initial patch. In fact it will be 
+quicker to check because there is no need for the open/read/close 
+syscalls, but only faccessat2.
 
+
+>> Here are the guiding principles I think would make sense:
+>> 1. A sandboxed thread shall not be able to directly know if it is
+>> sandbox nor get any specific information from it's restrictions. The
+>> reason for this principle is to avoid applications to simply jump to
+>> conclusions (and change behavior) if they see that they are sandboxed
+>> with Landlock, instead of trying to access resources and falling back
+>> accordingly. A thread should only be able to inspect its
+>> own/children/nested domains.
+>> 2. Access to any Landlock domain information should be checked according
+>> to PTRACE_MODE_READ_FSCREDS, the Landlock domain hierarchy (cf.
+>> ptrace.c:domain_scope_le), and the first principle.
+> 
+> One thing worth noting is that we use a system daemon to read process
+> attributes. We have the ptrace_scope set to 1 and the daemon reading
+> the attributes does have cap_sys_ptrace, however it is not related to
+> the other processes on the system. Do you see this as a problem given
+> principle#1?
+
+That should work fine because your deamon is more privileged than the 
+checked processes.
+
+
+>> 3. Any (domain) ID should be unique to the whole system (or maybe to the
+>> reader's PID namespace, and then in theory relative to the /proc
+>> content) to make it possible to compare Landlock domains (like
+>> /proc/[pid]/ns/* symlinks enable), and avoid trivial races.
+>> 4. These IDs should be the same during the whole lifetime of the related
+>> domain.
+>> 5. These IDs should not enable to infer information from other Landlock
+>> domains (e.g. how many are in use, current and parent domains), nor the
+>> kernel internals (e.g. addresses).
+>> 6. These IDs should not be sequential nor easily guessed to avoid
+>> anti-patterns (cf. file descriptors).
+>> 7. These IDs should be CRIU-friendly, to be able to easily restore such
+>> state. This doesn't help the previous principles and I don't know how/if
+>> CRIU supports namespace IDs though.
+> 
+> Since these points are regarding the properties of the domain IDs,
+> they should not interfere with anything we would implement for
+> determining the process sandbox status in any initial patch, but are
+> good to know.
+> 
+>> It would be nice if the /proc/[pid]/attr/landlock directory would only
+>> exists if Landlock is enabled.
+> 
+> This is the current default behavior I believe.
+> 
+>> Similarly, /proc/[pid]/attr/landlock/domain should only exist (or be
+>> viewable) for a thread if [pid] is part of one of its child domain.
+> 
+> I am not sure if this is a blocker for our model of a single daemon
+> querying the attribute for all processes. Are you suggesting that the
+> file would not exist from the view of the other processes if they are
+> not the parent process?
+
+Not the parent process, but a parent domain, *or in no domain at all*, 
+which is your case.
+
+> 
+>> For now, I don't see any file in /proc/[pid]/attr/landlock/ other than
+>> "domain" that would make sense, but a dedicated directory is useful anyway.
+> 
+> Determining the sandbox status of processes based on the existence of
+> /proc/[pid]/landlock/domain would serve our simple use case, pending
+> the open questions/potential blockers above and a clarification on
+> minimum requirements for an initial version.
+
+It should be fine for all these use cases, and only requires a small set 
+of changes for now.
