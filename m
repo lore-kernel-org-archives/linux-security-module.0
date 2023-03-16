@@ -2,165 +2,146 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8356C6FD19
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Mar 2023 12:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4014CC6FD1F
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Mar 2023 13:08:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbjCPMgq (ORCPT
+        id S229726AbjCPNIr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Mar 2023 08:36:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60002 "EHLO
+        Thu, 16 Mar 2023 09:08:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229678AbjCPMgp (ORCPT
+        with ESMTP id S229802AbjCPNIp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Mar 2023 08:36:45 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E83A42E7;
-        Thu, 16 Mar 2023 05:36:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678970197; x=1710506197;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0VNdeGsSmFwWcpyMxSZKKLNkZhIZ+u3xoeNhoZCNaOc=;
-  b=OPZst0rBltULR9SsBMKs+/q+9sKjbm1GpyweZs0GtyXdJskO8BRalchH
-   ODr3uJcCQO4ffV2vXEfEJBO9Ev49B9lKFVNOCQRC32KlvK78tfobQ/Zk6
-   gtxGVQic4s+k4ihSUNKLR1ic1FKeRmHJI2E3XQcKD0xV0yx7ovFVuAgrm
-   nvZvHe+IWaI3bh+O4V45YXCn43l+JJydW8pRd367Tzys1wzuAti53uUM7
-   ujYfEPuQXyTBH50QAkXHG8cB3dJ8KlE8biebI48llOSJHoVRk9JGN8TBx
-   5jMhLbcwTRioAxqW4g1ll6sHx3oD3f20P3+bPjIq348IS5azWticzsaI7
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10650"; a="321810657"
-X-IronPort-AV: E=Sophos;i="5.98,265,1673942400"; 
-   d="scan'208";a="321810657"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2023 05:36:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10650"; a="925761028"
-X-IronPort-AV: E=Sophos;i="5.98,265,1673942400"; 
-   d="scan'208";a="925761028"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Mar 2023 05:36:30 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pcmqL-0008W6-1e;
-        Thu, 16 Mar 2023 12:36:29 +0000
-Date:   Thu, 16 Mar 2023 20:35:59 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, jmorris@namei.org,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        mic@digikod.net
-Subject: Re: [PATCH v7 04/11] LSM: syscalls for current process attributes
-Message-ID: <202303162018.FY1iL9wN-lkp@intel.com>
-References: <20230315224704.2672-5-casey@schaufler-ca.com>
+        Thu, 16 Mar 2023 09:08:45 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1398313DDC
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Mar 2023 06:07:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678972076;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=I4vj27Hz37BxjdFryH4DTKt4lnMon3Rk+vYNnIOGHac=;
+        b=TfClJtNeoHQCkDiy/LeFQu8HpUrR3WcrpbKDwJkU00RuZp7HZHlofIwDh0vF11uEiATl8P
+        f9zpkiPQ8r18+z8wKDPxpmkUavZCwC+j1OeC4uqebDApqEEoLRbc8UJOkqYLghmAXHYpc/
+        KTSS+3aHTRmEQzm5/WGjjNRepkpx7l4=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-271-ALSEWPEEPdecTV2xg1YVoQ-1; Thu, 16 Mar 2023 09:07:54 -0400
+X-MC-Unique: ALSEWPEEPdecTV2xg1YVoQ-1
+Received: by mail-wm1-f71.google.com with SMTP id j6-20020a05600c1c0600b003eaf882cb85so631284wms.9
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Mar 2023 06:07:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678972073;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I4vj27Hz37BxjdFryH4DTKt4lnMon3Rk+vYNnIOGHac=;
+        b=hqTq3/DHZlUqu1krzMTE8IS9AS/ls7RLde4QVHcFxaQHi+Q/7w+ebbTjkRRkFJmJUi
+         oHycyRkyKUuYNCLV2xTpj0s9L8fq1x2WfiprnVaPHfzSRJ0642Og5mw6/jbz00mtd93Q
+         3Q0x7kXlFWkpDM3e/Wfm99ivYMdSIZqwQqN68EHMggp9QQhifFXzeGb7nrXBU3WMrnUr
+         /9RcVzd50eH78iWSEfyJK65In4q8FHNMb1wTk0YNlYiJZXHWApJbA2PjM5ZQlszvC0H4
+         XRbtVBlF1M3s9HVd3QSscQ0KpcUuBbKaE3TtaPGHMfVgln1jfec1jUyLu0jqxsCXhxiU
+         d6TQ==
+X-Gm-Message-State: AO0yUKW+oOxi5SZzPT/mFNGcpwcIsXi1Tfnzj022kU9FOwnfu9cCEN+G
+        1eZI2ghgHoiRl+avBN3Y6KKYjfALVYLVbe9qf9VJlf5F1XaDr9Kt5Qw/nM2Xks3iDasOHJ8oorg
+        A9J7LR/dK/VTtG730R8qX3thRbxLD6K4gfoPD
+X-Received: by 2002:adf:e8cd:0:b0:2ca:175b:d850 with SMTP id k13-20020adfe8cd000000b002ca175bd850mr4240829wrn.11.1678972073782;
+        Thu, 16 Mar 2023 06:07:53 -0700 (PDT)
+X-Google-Smtp-Source: AK7set9LHvhEZrQSzipUnLqiW/wptvdsDgTL4g6HkRzIVhGziWAGhpLTd6aBZEyk2PFeQSTNEnBmJA==
+X-Received: by 2002:adf:e8cd:0:b0:2ca:175b:d850 with SMTP id k13-20020adfe8cd000000b002ca175bd850mr4240814wrn.11.1678972073510;
+        Thu, 16 Mar 2023 06:07:53 -0700 (PDT)
+Received: from localhost.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id g8-20020a5d4888000000b002d1959d2cf7sm2451012wrq.111.2023.03.16.06.07.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Mar 2023 06:07:52 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: [PATCH RESEND] fs_context: drop the unused lsm_flags member
+Date:   Thu, 16 Mar 2023 14:07:51 +0100
+Message-Id: <20230316130751.334227-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230315224704.2672-5-casey@schaufler-ca.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"; x-default=true
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Casey,
+This isn't ever used by VFS now, and it couldn't even work. Any FS that
+uses the SECURITY_LSM_NATIVE_LABELS flag needs to also process the
+value returned back from the LSM, so it needs to do its
+security_sb_set_mnt_opts() call on its own anyway.
 
-I love your patch! Yet something to improve:
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
 
-[auto build test ERROR on shuah-kselftest/next]
-[also build test ERROR on shuah-kselftest/fixes linus/master v6.3-rc2]
-[cannot apply to tip/perf/core acme/perf/core next-20230316]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Resending because of no response for almost 2 years...
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/LSM-Maintain-a-table-of-LSM-attribute-data/20230316-074751
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
-patch link:    https://lore.kernel.org/r/20230315224704.2672-5-casey%40schaufler-ca.com
-patch subject: [PATCH v7 04/11] LSM: syscalls for current process attributes
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20230316/202303162018.FY1iL9wN-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/0883a93af669a6fcb80a9cc74737d5285a1c46ae
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Casey-Schaufler/LSM-Maintain-a-table-of-LSM-attribute-data/20230316-074751
-        git checkout 0883a93af669a6fcb80a9cc74737d5285a1c46ae
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sh olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sh SHELL=/bin/bash
+Previous submission:
+https://lore.kernel.org/linux-fsdevel/20210409111234.271707-1-omosnace@redhat.com/
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303162018.FY1iL9wN-lkp@intel.com/
+ Documentation/filesystems/mount_api.rst | 1 -
+ fs/nfs/super.c                          | 3 ---
+ include/linux/fs_context.h              | 1 -
+ include/linux/security.h                | 2 +-
+ 4 files changed, 1 insertion(+), 6 deletions(-)
 
-All errors (new ones prefixed by >>):
-
-   In file included from security/lsm_syscalls.c:15:
->> include/linux/syscalls.h:243:25: error: conflicting types for 'sys_lsm_set_self_attr'; have 'long int(unsigned int,  struct lsm_ctx *, size_t,  u32)' {aka 'long int(unsigned int,  struct lsm_ctx *, unsigned int,  unsigned int)'}
-     243 |         asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))       \
-         |                         ^~~
-   include/linux/syscalls.h:229:9: note: in expansion of macro '__SYSCALL_DEFINEx'
-     229 |         __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:221:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-     221 | #define SYSCALL_DEFINE4(name, ...) SYSCALL_DEFINEx(4, _##name, __VA_ARGS__)
-         |                                    ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:31:1: note: in expansion of macro 'SYSCALL_DEFINE4'
-      31 | SYSCALL_DEFINE4(lsm_set_self_attr, unsigned int, attr, struct lsm_ctx __user *,
-         | ^~~~~~~~~~~~~~~
-   include/linux/syscalls.h:1064:17: note: previous declaration of 'sys_lsm_set_self_attr' with type 'long int(unsigned int,  struct lsm_ctx *, __u64)' {aka 'long int(unsigned int,  struct lsm_ctx *, long long unsigned int)'}
-    1064 | asmlinkage long sys_lsm_set_self_attr(unsigned int attr, struct lsm_ctx *ctx,
-         |                 ^~~~~~~~~~~~~~~~~~~~~
->> include/linux/syscalls.h:243:25: error: conflicting types for 'sys_lsm_get_self_attr'; have 'long int(unsigned int,  struct lsm_ctx *, size_t *, u32)' {aka 'long int(unsigned int,  struct lsm_ctx *, unsigned int *, unsigned int)'}
-     243 |         asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))       \
-         |                         ^~~
-   include/linux/syscalls.h:229:9: note: in expansion of macro '__SYSCALL_DEFINEx'
-     229 |         __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:221:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-     221 | #define SYSCALL_DEFINE4(name, ...) SYSCALL_DEFINEx(4, _##name, __VA_ARGS__)
-         |                                    ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:51:1: note: in expansion of macro 'SYSCALL_DEFINE4'
-      51 | SYSCALL_DEFINE4(lsm_get_self_attr, unsigned int, attr, struct lsm_ctx __user *,
-         | ^~~~~~~~~~~~~~~
-   include/linux/syscalls.h:1062:17: note: previous declaration of 'sys_lsm_get_self_attr' with type 'long int(unsigned int,  struct lsm_ctx *, size_t *, __u64)' {aka 'long int(unsigned int,  struct lsm_ctx *, unsigned int *, long long unsigned int)'}
-    1062 | asmlinkage long sys_lsm_get_self_attr(unsigned int attr, struct lsm_ctx *ctx,
-         |                 ^~~~~~~~~~~~~~~~~~~~~
-
-
-vim +243 include/linux/syscalls.h
-
-1bd21c6c21e848 Dominik Brodowski   2018-04-05  232  
-e145242ea0df6b Dominik Brodowski   2018-04-09  233  /*
-e145242ea0df6b Dominik Brodowski   2018-04-09  234   * The asmlinkage stub is aliased to a function named __se_sys_*() which
-e145242ea0df6b Dominik Brodowski   2018-04-09  235   * sign-extends 32-bit ints to longs whenever needed. The actual work is
-e145242ea0df6b Dominik Brodowski   2018-04-09  236   * done within __do_sys_*().
-e145242ea0df6b Dominik Brodowski   2018-04-09  237   */
-1bd21c6c21e848 Dominik Brodowski   2018-04-05  238  #ifndef __SYSCALL_DEFINEx
-bed1ffca022cc8 Frederic Weisbecker 2009-03-13  239  #define __SYSCALL_DEFINEx(x, name, ...)					\
-bee20031772af3 Arnd Bergmann       2018-06-19  240  	__diag_push();							\
-bee20031772af3 Arnd Bergmann       2018-06-19  241  	__diag_ignore(GCC, 8, "-Wattribute-alias",			\
-bee20031772af3 Arnd Bergmann       2018-06-19  242  		      "Type aliasing is used to sanitize syscall arguments");\
-83460ec8dcac14 Andi Kleen          2013-11-12 @243  	asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))	\
-e145242ea0df6b Dominik Brodowski   2018-04-09  244  		__attribute__((alias(__stringify(__se_sys##name))));	\
-c9a211951c7c79 Howard McLauchlan   2018-03-21  245  	ALLOW_ERROR_INJECTION(sys##name, ERRNO);			\
-e145242ea0df6b Dominik Brodowski   2018-04-09  246  	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
-e145242ea0df6b Dominik Brodowski   2018-04-09  247  	asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
-e145242ea0df6b Dominik Brodowski   2018-04-09  248  	asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))	\
-1a94bc34768e46 Heiko Carstens      2009-01-14  249  	{								\
-e145242ea0df6b Dominik Brodowski   2018-04-09  250  		long ret = __do_sys##name(__MAP(x,__SC_CAST,__VA_ARGS__));\
-07fe6e00f6cca6 Al Viro             2013-01-21  251  		__MAP(x,__SC_TEST,__VA_ARGS__);				\
-2cf0966683430b Al Viro             2013-01-21  252  		__PROTECT(x, ret,__MAP(x,__SC_ARGS,__VA_ARGS__));	\
-2cf0966683430b Al Viro             2013-01-21  253  		return ret;						\
-1a94bc34768e46 Heiko Carstens      2009-01-14  254  	}								\
-bee20031772af3 Arnd Bergmann       2018-06-19  255  	__diag_pop();							\
-e145242ea0df6b Dominik Brodowski   2018-04-09  256  	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
-1bd21c6c21e848 Dominik Brodowski   2018-04-05  257  #endif /* __SYSCALL_DEFINEx */
-1a94bc34768e46 Heiko Carstens      2009-01-14  258  
-
+diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
+index 63204d2094fdf..9aaf6ef75eb53 100644
+--- a/Documentation/filesystems/mount_api.rst
++++ b/Documentation/filesystems/mount_api.rst
+@@ -79,7 +79,6 @@ context.  This is represented by the fs_context structure::
+ 		unsigned int		sb_flags;
+ 		unsigned int		sb_flags_mask;
+ 		unsigned int		s_iflags;
+-		unsigned int		lsm_flags;
+ 		enum fs_context_purpose	purpose:8;
+ 		...
+ 	};
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 05ae23657527d..397c096d874eb 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1274,9 +1274,6 @@ int nfs_get_tree_common(struct fs_context *fc)
+ 		if (ctx->clone_data.sb->s_flags & SB_SYNCHRONOUS)
+ 			fc->sb_flags |= SB_SYNCHRONOUS;
+ 
+-	if (server->caps & NFS_CAP_SECURITY_LABEL)
+-		fc->lsm_flags |= SECURITY_LSM_NATIVE_LABELS;
+-
+ 	/* Get a superblock - note that we may end up sharing one that already exists */
+ 	fc->s_fs_info = server;
+ 	s = sget_fc(fc, compare_super, nfs_set_super);
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index 5469ffee21c73..ff6341e09925b 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -104,7 +104,6 @@ struct fs_context {
+ 	unsigned int		sb_flags;	/* Proposed superblock flags (SB_*) */
+ 	unsigned int		sb_flags_mask;	/* Superblock flags that were changed */
+ 	unsigned int		s_iflags;	/* OR'd with sb->s_iflags */
+-	unsigned int		lsm_flags;	/* Information flags from the fs to the LSM */
+ 	enum fs_context_purpose	purpose:8;
+ 	enum fs_context_phase	phase:8;	/* The phase the context is in */
+ 	bool			need_free:1;	/* Need to call ops->free() */
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5984d0d550b41..db9b659b02b91 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -68,7 +68,7 @@ struct watch_notification;
+ /* If capable is being called by a setid function */
+ #define CAP_OPT_INSETID BIT(2)
+ 
+-/* LSM Agnostic defines for fs_context::lsm_flags */
++/* LSM Agnostic defines for security_sb_set_mnt_opts() flags */
+ #define SECURITY_LSM_NATIVE_LABELS	1
+ 
+ struct ctl_table;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.39.2
+
