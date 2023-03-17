@@ -2,118 +2,161 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2591CC7619A
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Mar 2023 22:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C6CC6FD1D
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Mar 2023 08:40:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230140AbjCPWxn (ORCPT
+        id S231721AbjCQIk6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Mar 2023 18:53:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57018 "EHLO
+        Fri, 17 Mar 2023 04:40:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229589AbjCPWxm (ORCPT
+        with ESMTP id S231903AbjCQIk0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Mar 2023 18:53:42 -0400
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9BC3B2F7BB;
-        Thu, 16 Mar 2023 15:53:41 -0700 (PDT)
-Received: by linux.microsoft.com (Postfix, from userid 1052)
-        id EC6622057035; Thu, 16 Mar 2023 15:53:40 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EC6622057035
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1679007220;
-        bh=ozAKii3/G+nF0B4iMSAidkpr8EKBtFwptQ71Sgukeww=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KkZPlvrZkwVJk9N6tCVcfEWVijYklxICoHBlfmIBUdyC9L+DFQd4o9FIlLtaz5zo9
-         LlqgvLme5WmK8AGXZvR43afaNUceUwk8wqOJUB8SBwuHtIGBuXChLJM+Ctaq1+q6w0
-         SjFFKl2n5uJm/6kczK6TR5zqAcTMDJ2OG5M9TlUA=
-Date:   Thu, 16 Mar 2023 15:53:40 -0700
-From:   Fan Wu <wufan@linux.microsoft.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Steve Grubb <sgrubb@redhat.com>, corbet@lwn.net,
-        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk,
-        agk@redhat.com, snitzer@kernel.org, eparis@redhat.com,
-        linux-audit@redhat.com, dm-devel@redhat.com,
-        linux-doc@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [RFC PATCH v9 07/16] uapi|audit|ipe: add ipe auditing support
-Message-ID: <20230316225340.GB22567@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com>
- <1675119451-23180-8-git-send-email-wufan@linux.microsoft.com>
- <3723852.kQq0lBPeGt@x2>
- <CAHC9VhRqMrTuvVtwzJoK2U=6O1QuaQ8ceA6+qm=6ib0TOUEeSw@mail.gmail.com>
+        Fri, 17 Mar 2023 04:40:26 -0400
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDF42E2501
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Mar 2023 01:39:03 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PdHbk65rVzMrFtq;
+        Fri, 17 Mar 2023 09:38:58 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4PdHbj33c2zMtj7j;
+        Fri, 17 Mar 2023 09:38:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1679042338;
+        bh=gEFNZNyzzNkTkIX589egniVJsyrpQ5YQ4cGwXbnxpWY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=1Oels4oMX2i5m7AOJZF2oxA13VrQAAudlEM4O1x+IPAENN3TziYHdDfUe4aHeA30G
+         Lks3p/P8c5VY80B+kyKT3irBl5Df9H42YXN7xJ7UiI6SdL06YunPOBRxJTs8ZcrBfI
+         6hU5aJ1esyjOyohrE2MgTPwgX8MghtCFOKTluwiU=
+Message-ID: <b0ed38a5-09fe-c84a-b64a-cbb4ec7ab076@digikod.net>
+Date:   Fri, 17 Mar 2023 09:38:56 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRqMrTuvVtwzJoK2U=6O1QuaQ8ceA6+qm=6ib0TOUEeSw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: 
+Subject: Re: [PATCH 0/1] process attribute support for Landlock
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     Shervin Oloumi <enlightened@chromium.org>,
+        linux-security-module@vger.kernel.org, jorgelo@chromium.org,
+        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
+        allenwebb@chromium.org, Adrian Reber <areber@redhat.com>,
+        criu@openvz.org, Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <brauner@kernel.org>
+References: <20230302185257.850681-1-enlightened@chromium.org>
+ <247f3194-2dd2-1414-0a4d-6e41addf5e64@digikod.net>
+ <CAMb9sTir8Gde=DwZ9LnW2Hq7YmSZ13u_aX8AyR=JEQWGBhCvAQ@mail.gmail.com>
+ <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
+ <20230316.17835bf118d5@gnoack.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230316.17835bf118d5@gnoack.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 02, 2023 at 02:05:33PM -0500, Paul Moore wrote:
-> On Tue, Jan 31, 2023 at 12:11???PM Steve Grubb <sgrubb@redhat.com> wrote:
-> >
-> > Hello,
-> >
-> > On Monday, January 30, 2023 5:57:22 PM EST Fan Wu wrote:
-> > > From: Deven Bowers <deven.desai@linux.microsoft.com>
-> > >
-> > > Users of IPE require a way to identify when and why an operation fails,
-> > > allowing them to both respond to violations of policy and be notified
-> > > of potentially malicious actions on their systens with respect to IPE
-> > > itself.
-> > >
-> > > The new 1420 audit, AUDIT_IPE_ACCESS indicates the result of a policy
-> > > evaulation of a resource. The other two events, AUDIT_MAC_POLICY_LOAD,
-> > > and AUDIT_MAC_CONFIG_CHANGE represent a new policy was loaded into the
-> > > kernel and the currently active policy changed, respectively.
-> >
-> > Typically when you reuse an existing record type, it is expected to maintain
-> > the same fields in the same order. Also, it is expect that fields that are
-> > common across diferent records have the same meaning. To aid in this, we have
-> > a field dictionary here:
-> >
-> > https://github.com/linux-audit/audit-documentation/blob/main/specs/fields/
-> > field-dictionary.csv
-> >
-> > For example, dev is expected to be 2 hex numbers separated by a colon which
-> > are the device major and minor numbers. But down a couple lines from here, we
-> > find dev="tmpfs". But isn't that a filesystem type?
-> 
-> What Steve said.
-> 
-> I'll also add an administrative note, we just moved upstream Linux
-> audit development to a new mailing list, audit@vger.kernel.org, please
-> use that in future patch submissions.  As a positive, it's a fully
-> open list so you won't run into moderation delays/notifications/etc.
-> 
-Thanks for the info, I will update the address.
 
-> > > This patch also adds support for success auditing, allowing users to
-> > > identify how a resource passed policy. It is recommended to use this
-> > > option with caution, as it is quite noisy.
-> > >
-> > > This patch adds the following audit records:
-> > >
-> > >   audit: AUDIT1420 path="/tmp/tmpwxmam366/deny/bin/hello" dev="tmpfs"
-> > >     ino=72 rule="DEFAULT op=EXECUTE action=DENY"
-> >
-> > Do we really need to log the whole rule?
+On 16/03/2023 07:19, Günther Noack wrote:
+> Hi!
 > 
-> Fan, would it be reasonable to list the properties which caused the
-> access denial?  That seems like it might be more helpful than the
-> specific rule, or am I missing something?
+> On Wed, Mar 15, 2023 at 10:56:03AM +0100, Mickaël Salaün wrote:
+>> On 08/03/2023 23:25, Shervin Oloumi wrote:
+>>> Thanks all for the feedback. This is in reply to Mickaël, but should
+>>> answer Günther's questions as well.
+>>>
+>>>> It would help to know exactly what are your needs short term, and long
+>>>> term. As Günther is wondering, what about nested sandboxing?
+>>>
+>>> Our plan is to use the "landlocked" process attribute defined in the
+>>> patch to determine the sandbox state of the system processes and send
+>>> information to our metrics server regarding Landlock coverage. For
+>>> example, the percentage of processes on the system that are sandboxed
+>>> using Landlock.
+>>>
+>>> Given that we use Landlock in a very specific and controlled way, we
+>>> are not concerned about the inheritance behavior and nested policies,
+>>> at least for the use case of metrics. When daemons are launched in
+>>> ChromiumOS, they have a pre-defined sandboxing configuration that
+>>> dictates whether Landlock should be applied or not. So this attribute
+>>> would help us verify that the processes running on devices in the wild
+>>> indeed have the general sandboxing state that we expect and the
+>>> reality matches our expectation.
+>>>
+>>> Long-term, it would be useful to learn more information about domains
+>>> and policies through the process attribute interface, but we do not
+>>> currently have a need for that, apart from maybe doing troubleshooting
+>>> when defining Landlock rules for system daemons.
+>>
+>> OK, it makes sense.
 > 
-Audit the whole rule can let the user find the reason of a policy decision.
-We need the whole rule because an allow/block is not caused by a specific
-property, but the combination of all property conditions in a rule.
+> Fair enough.  I missed the fact that this was about the OS rather than
+> the browser.
+> 
+> Still, out of curiosity: Hypothetically, if you were to expose the
+> number of stacked Landlock policies instead of the boolean in that
+> place -- would there be any drawbacks to that which I'm overlooking?
+> 
+> It seems to me, superficially, that the implementation should be
+> similarly simple, it would be useful in more cases where Landlock
+> users do not have control over the full OS, and I can't currently see
+> any cases where having a number instead of a boolean would complicate
+> the usage from userspace?  Am I missing something?
 
-We could also add a verbose switch such that we only audit
-the whole rule when a user turned the verbose switch on. 
+I'd like to hear from Shervin, but here is my reasoning.
 
--Fan
+I'd like to avoid as much as possible the procfs interface (for security 
+and usability reasons specific to Landlock), but to only extend it to 
+the minimal requirement needed to tie a process to a Landlock domain. 
+Exposing any domain information (e.g. nested domain depth) should then 
+be managed by a new interface (i.e. /sys/kernel/security/landlock), and 
+we should avoid duplicating this information in the procfs interface. 
+Making an attr/landlock/domain file gives the information that a 
+(nested) domain exists for this PID, which is anyway a required minimal 
+interface.
 
-> paul-moore.com
+
+> 
+> (But in any case, the boolean is also fine I think.)
+> 
+> 
+>>>> Here are the guiding principles I think would make sense:
+>>>> 1. A sandboxed thread shall not be able to directly know if it is
+>>>> sandbox nor get any specific information from it's restrictions. The
+>>>> reason for this principle is to avoid applications to simply jump to
+>>>> conclusions (and change behavior) if they see that they are sandboxed
+>>>> with Landlock, instead of trying to access resources and falling back
+>>>> accordingly. A thread should only be able to inspect its
+>>>> own/children/nested domains.
+
+For a more up-to-date idea, see 
+https://lore.kernel.org/all/ee878a04-51f4-a8aa-7d4c-13e519b7409d@digikod.net/
+The fdinfo trick would not be required though, I found a better design 
+to tie an opened domain to its properties. Anyway, this is future work 
+and would be compatible with the /proc/[pid]/attr/landlock/domain file.
+
+> 
+> (Small remark:
+> 
+> Doing anything differently depending on whether and how you are
+> landlocked is definitely an antipattern which we should not encourage.
+> But I'm not sure whether we can hide the fact very easily.
+> 
+> It's already possible for a thread to detect whether it is landlocked,
+> by using this hack: Create a new thread and then in that thread count
+> how many additional sandboxes you can stack on top.
+> 
+> If you have knowledge about what Landlock configuration you are
+> looking for, it will be even easier to detect.
+> 
+> I hope noone takes the above example as inspiration.)
+
+Indeed, there are multiple ways to detect that a thread is landlocked, 
+but we should not make any effort to make it easy to check unless there 
+is at least a valid use case. I'd like to only add/show new interfaces 
+were/when they are needed, in this case, "a thread should only be able 
+to inspect/see its nested domains". For now, the only valid usage I can 
+think of to detect sandboxing is for debug and metrics, not for a 
+legitimate sandboxed application. Furthermore, what I'd like to have for 
+Landlock is the ability to use this "domain" file to get access to 
+domain properties (e.g. handled accesses, rules), and giving the sandbox 
+configuration to the sandboxed process looks like a bad idea.
