@@ -2,161 +2,155 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C6CC6FD1D
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Mar 2023 08:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC0FC74A5B
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Mar 2023 15:21:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231721AbjCQIk6 (ORCPT
+        id S229554AbjCQPVl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Mar 2023 04:40:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33912 "EHLO
+        Fri, 17 Mar 2023 11:21:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231903AbjCQIk0 (ORCPT
+        with ESMTP id S229488AbjCQPVk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Mar 2023 04:40:26 -0400
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDF42E2501
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Mar 2023 01:39:03 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PdHbk65rVzMrFtq;
-        Fri, 17 Mar 2023 09:38:58 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4PdHbj33c2zMtj7j;
-        Fri, 17 Mar 2023 09:38:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1679042338;
-        bh=gEFNZNyzzNkTkIX589egniVJsyrpQ5YQ4cGwXbnxpWY=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=1Oels4oMX2i5m7AOJZF2oxA13VrQAAudlEM4O1x+IPAENN3TziYHdDfUe4aHeA30G
-         Lks3p/P8c5VY80B+kyKT3irBl5Df9H42YXN7xJ7UiI6SdL06YunPOBRxJTs8ZcrBfI
-         6hU5aJ1esyjOyohrE2MgTPwgX8MghtCFOKTluwiU=
-Message-ID: <b0ed38a5-09fe-c84a-b64a-cbb4ec7ab076@digikod.net>
-Date:   Fri, 17 Mar 2023 09:38:56 +0100
+        Fri, 17 Mar 2023 11:21:40 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 359DB52924
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Mar 2023 08:21:39 -0700 (PDT)
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32HEktei003656;
+        Fri, 17 Mar 2023 15:21:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : in-reply-to : references : date : message-id : content-type :
+ mime-version; s=pp1; bh=wl8zH3ZF1CNo4CqmReSzmoRkoYnprhLy7oZRp3HsQJk=;
+ b=Mwo+gYfnuHSJ81oDYHMBjQCyucM/yFWLUAZS6SFhM4Ru+OYcOgOksfkZ6AuvJI21lToP
+ 5P6SsYD5YGpHG2jLsF+z7+0cpYuQ6fy3Mc2Zk6J4QxzuxZ2Valt7SQchCxVdF+1Hy20Q
+ Jzis9OSc0dDDz/C69I+HYSvf9wdZpSawGVQY4lcHvBXO6MCHAKG6Tu8QR0pnQGx0YvcB
+ Iqb5WEOOoXcdP1u2Zv/QN+8lhQu4Hz4Z+/3p81iFSN/ppmc9GVkyW8sMkZvGlIR1Z3VP
+ R6Nxak9nrerKMRF8VoXWujsf6EIK9lGuobrhz79Kd1uCy+/QRKSahWpZVodCcETCE4zs Dg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pct8yh45d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 15:21:00 +0000
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32HF0o8S007384;
+        Fri, 17 Mar 2023 15:20:59 GMT
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pct8yh454-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 15:20:59 +0000
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32HElT3i005425;
+        Fri, 17 Mar 2023 15:20:58 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([9.208.129.118])
+        by ppma01wdc.us.ibm.com (PPS) with ESMTPS id 3pbswp90tx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 15:20:58 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32HFKvsC57672074
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Mar 2023 15:20:57 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B0C6C5805E;
+        Fri, 17 Mar 2023 15:20:57 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 81B005805B;
+        Fri, 17 Mar 2023 15:20:57 +0000 (GMT)
+Received: from localhost (unknown [9.163.4.251])
+        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 17 Mar 2023 15:20:57 +0000 (GMT)
+From:   Nathan Lynch <nathanl@linux.ibm.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzkaller <syzkaller@googlegroups.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>, jmorris@namei.org,
+        mjg59@srcf.ucam.org,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: LOCK_DOWN_FORCE_INTEGRITY_FOR_FUZZING?
+In-Reply-To: <CACT4Y+Z-9KCgKwkktvdJwNJZxxeA1f74zkP7KD6c=OmKXxXfjw@mail.gmail.com>
+References: <CACT4Y+Z-9KCgKwkktvdJwNJZxxeA1f74zkP7KD6c=OmKXxXfjw@mail.gmail.com>
+Date:   Fri, 17 Mar 2023 10:20:57 -0500
+Message-ID: <87y1nv76au.fsf@linux.ibm.com>
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: tgR9hKeucj2xHmuDH2yr9K59Qa8QoG0i
+X-Proofpoint-GUID: y3SzL4SAWn7ZTjL6B2hHSMI36g12aXkW
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH 0/1] process attribute support for Landlock
-Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     Shervin Oloumi <enlightened@chromium.org>,
-        linux-security-module@vger.kernel.org, jorgelo@chromium.org,
-        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
-        allenwebb@chromium.org, Adrian Reber <areber@redhat.com>,
-        criu@openvz.org, Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Christian Brauner <brauner@kernel.org>
-References: <20230302185257.850681-1-enlightened@chromium.org>
- <247f3194-2dd2-1414-0a4d-6e41addf5e64@digikod.net>
- <CAMb9sTir8Gde=DwZ9LnW2Hq7YmSZ13u_aX8AyR=JEQWGBhCvAQ@mail.gmail.com>
- <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
- <20230316.17835bf118d5@gnoack.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230316.17835bf118d5@gnoack.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-17_10,2023-03-16_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 mlxlogscore=534 impostorscore=0
+ suspectscore=0 adultscore=0 mlxscore=0 clxscore=1011 priorityscore=1501
+ spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303150002 definitions=main-2303170103
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi Dmitry,
 
-On 16/03/2023 07:19, Günther Noack wrote:
-> Hi!
-> 
-> On Wed, Mar 15, 2023 at 10:56:03AM +0100, Mickaël Salaün wrote:
->> On 08/03/2023 23:25, Shervin Oloumi wrote:
->>> Thanks all for the feedback. This is in reply to Mickaël, but should
->>> answer Günther's questions as well.
->>>
->>>> It would help to know exactly what are your needs short term, and long
->>>> term. As Günther is wondering, what about nested sandboxing?
->>>
->>> Our plan is to use the "landlocked" process attribute defined in the
->>> patch to determine the sandbox state of the system processes and send
->>> information to our metrics server regarding Landlock coverage. For
->>> example, the percentage of processes on the system that are sandboxed
->>> using Landlock.
->>>
->>> Given that we use Landlock in a very specific and controlled way, we
->>> are not concerned about the inheritance behavior and nested policies,
->>> at least for the use case of metrics. When daemons are launched in
->>> ChromiumOS, they have a pre-defined sandboxing configuration that
->>> dictates whether Landlock should be applied or not. So this attribute
->>> would help us verify that the processes running on devices in the wild
->>> indeed have the general sandboxing state that we expect and the
->>> reality matches our expectation.
->>>
->>> Long-term, it would be useful to learn more information about domains
->>> and policies through the process attribute interface, but we do not
->>> currently have a need for that, apart from maybe doing troubleshooting
->>> when defining Landlock rules for system daemons.
->>
->> OK, it makes sense.
-> 
-> Fair enough.  I missed the fact that this was about the OS rather than
-> the browser.
-> 
-> Still, out of curiosity: Hypothetically, if you were to expose the
-> number of stacked Landlock policies instead of the boolean in that
-> place -- would there be any drawbacks to that which I'm overlooking?
-> 
-> It seems to me, superficially, that the implementation should be
-> similarly simple, it would be useful in more cases where Landlock
-> users do not have control over the full OS, and I can't currently see
-> any cases where having a number instead of a boolean would complicate
-> the usage from userspace?  Am I missing something?
+Dmitry Vyukov <dvyukov@google.com> writes:
+> Hi Lockdown maintainers,
 
-I'd like to hear from Shervin, but here is my reasoning.
+I'm not a lockdown maintainer, but I feel like I can respond to a couple
+things here.
 
-I'd like to avoid as much as possible the procfs interface (for security 
-and usability reasons specific to Landlock), but to only extend it to 
-the minimal requirement needed to tie a process to a Landlock domain. 
-Exposing any domain information (e.g. nested domain depth) should then 
-be managed by a new interface (i.e. /sys/kernel/security/landlock), and 
-we should avoid duplicating this information in the procfs interface. 
-Making an attr/landlock/domain file gives the information that a 
-(nested) domain exists for this PID, which is anyway a required minimal 
-interface.
+> We don't enable Lockdown integrity mode on syzbot during fuzzing, but
+> we would like to. The main problem is the restriction of debugfs,
+> which we need for fuzzing. But we do duplicate some of its
+> restrictions (e.g. DEVKMEM=n).
+>
+> It come up again recently in the context of discussion of memory
+> corruptions when a mounted blocked device is being written to by root:
+> https://lore.kernel.org/all/CACT4Y+b1vGfe0Uvp6YmKahK4GfCfvdBLCh0SAQzGgWN1s6A+0Q@mail.gmail.com/
+> It looks like this restriction of writing to mounted block devices
+> should be part of integrity lockdown (but I am not an expert).
 
+I'm not sure, I'll leave that question to others.
 
-> 
-> (But in any case, the boolean is also fine I think.)
-> 
-> 
->>>> Here are the guiding principles I think would make sense:
->>>> 1. A sandboxed thread shall not be able to directly know if it is
->>>> sandbox nor get any specific information from it's restrictions. The
->>>> reason for this principle is to avoid applications to simply jump to
->>>> conclusions (and change behavior) if they see that they are sandboxed
->>>> with Landlock, instead of trying to access resources and falling back
->>>> accordingly. A thread should only be able to inspect its
->>>> own/children/nested domains.
+> What do you think about the addition of a new level that is integrity
+> but with debug fs access?
+> LOCKDOWN_RTAS_ERROR_INJECTION also looks like it's in the same bucket
+> of "fine for testing".
 
-For a more up-to-date idea, see 
-https://lore.kernel.org/all/ee878a04-51f4-a8aa-7d4c-13e519b7409d@digikod.net/
-The fdinfo trick would not be required though, I found a better design 
-to tie an opened domain to its properties. Anyway, this is future work 
-and would be compatible with the /proc/[pid]/attr/landlock/domain file.
+Thanks for checking. Error injection via RTAS (pseries partition
+firmware) can cause unrecoverable cache and memory corruption. Right now
+I don't think including LOCKDOWN_RTAS_ERROR_INJECTION in a relaxed
+integrity mode for fuzzing would yield useful results.
 
-> 
-> (Small remark:
-> 
-> Doing anything differently depending on whether and how you are
-> landlocked is definitely an antipattern which we should not encourage.
-> But I'm not sure whether we can hide the fact very easily.
-> 
-> It's already possible for a thread to detect whether it is landlocked,
-> by using this hack: Create a new thread and then in that thread count
-> how many additional sandboxes you can stack on top.
-> 
-> If you have knowledge about what Landlock configuration you are
-> looking for, it will be even easier to detect.
-> 
-> I hope noone takes the above example as inspiration.)
+> At least for us it is OK if it can be enabled only via kernel config
+> (no cmd line) and named accordingly
+> (TEST_ONLY_DONT_ENABLE_IN_PRODUCTION).
+>
+> If we have it, we could restrict writing to mounted devices in
+> integrity mode and enable this mode on syzbot.
 
-Indeed, there are multiple ways to detect that a thread is landlocked, 
-but we should not make any effort to make it easy to check unless there 
-is at least a valid use case. I'd like to only add/show new interfaces 
-were/when they are needed, in this case, "a thread should only be able 
-to inspect/see its nested domains". For now, the only valid usage I can 
-think of to detect sandboxing is for debug and metrics, not for a 
-legitimate sandboxed application. Furthermore, what I'd like to have for 
-Landlock is the ability to use this "domain" file to get access to 
-domain properties (e.g. handled accesses, rules), and giving the sandbox 
-configuration to the sandboxed process looks like a bad idea.
+So I understand the proposal to involve something like:
+
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -120,11 +120,12 @@ enum lockdown_reason {
+ 	LOCKDOWN_TIOCSSERIAL,
+ 	LOCKDOWN_MODULE_PARAMETERS,
+ 	LOCKDOWN_MMIOTRACE,
+-	LOCKDOWN_DEBUGFS,
+ 	LOCKDOWN_XMON_WR,
+ 	LOCKDOWN_BPF_WRITE_USER,
+ 	LOCKDOWN_DBG_WRITE_KERNEL,
+ 	LOCKDOWN_RTAS_ERROR_INJECTION,
++	LOCKDOWN_INTEGRITY_FUZZING_MAX,
++	LOCKDOWN_DEBUGFS,
+ 	LOCKDOWN_INTEGRITY_MAX,
+ 	LOCKDOWN_KCORE,
+ 	LOCKDOWN_KPROBES,
+
+Is that right?
+
+I don't have a specific example at hand, but I suspect that enabling all
+of debugfs would allow syzbot to reach code that integrity mode
+ordinarily would prevent. Which doesn't seem like what you would want?
+
+I wonder if the debugfs-hosted facilities needed by syzbot could be
+identified in a finer-grained way that could be incorporated into the
+lockdown reason list for this purpose. So that way only the things
+syzbot needs would be exposed.
