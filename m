@@ -2,146 +2,133 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0605FC74A5B
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Mar 2023 15:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E46C76195
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Mar 2023 19:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230033AbjCQP1z (ORCPT
+        id S230256AbjCQTjz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Mar 2023 11:27:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59008 "EHLO
+        Fri, 17 Mar 2023 15:39:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229669AbjCQP1y (ORCPT
+        with ESMTP id S229735AbjCQTjy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Mar 2023 11:27:54 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A33C692F1C
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Mar 2023 08:27:53 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id y20so6975412lfj.2
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Mar 2023 08:27:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1679066872;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nv5cOEcdxEBmp663aNSEQdflb05PiC21ONlyQB9IU1g=;
-        b=Mq/VKKNzWbwpAnIHgBPYSROApket/7Go0yuyT5+Iny5gJVPspQpzMvXOXPwvhlcnuo
-         8xhw7C0mmz7InfY0XLFZRRNTKoJPu0Qf1ymibgj2SXPkXBzY+OGHW2RdGoFxX5yo5MO0
-         YOw4GlS9xpQsu0/0lU83MPqIzNhOfgQkNIJaz+g0haw+OY7yYwIaO6LKPOTIOTJzo/B0
-         N4Y2E/z9tDoY9VfsMyKz293jaFEI9vsbHb3bHV3PLU9qoHMXCpHQM1q9mN8VRDkv5k5p
-         Jjz5Ghm0+VQNz8Q5brdvsKKv3KwnOS2YQA8Z2ePUHUElC4eXq6cOoOd6KWrzF2NjFsvn
-         gzKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679066872;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nv5cOEcdxEBmp663aNSEQdflb05PiC21ONlyQB9IU1g=;
-        b=UjDFeNuWnvafJV5T70+C8BKIzF+gxZ+q+yNV3o/88o7y7ufsN4qK72M0XPnD1H9s+a
-         djtYxs1yNiuUPOcKS/Hgmr8xloyMwWtpik5JHA/pHN247SZXN46U7ywL4uGHUDsX5pZl
-         0O6xj1zGzqXdkjT2B+mC6E1GarrnzHbJalR2cLoXhtPzgfBU6UIuMbUcxL4CZgK3OqBm
-         Av2jE2ENsToO1bWXvBvHx9vSyH4mIekp8NlelDOFDAn1xYE3M0KFmCpmzPdWIsndkMAl
-         TMSNcGmRmZB+pDj6KJHCDGgihdHpRzJJtzDu4fmofxXLU3m7BNElvYn2l0CtFEltIdMW
-         UObA==
-X-Gm-Message-State: AO0yUKWKTzdBfy1NEoRtvsuuTyBLmq8MHqQasZgmDOaatdYi8Ybje+dm
-        9JciObhuklMMuFMfL9ucGs9RbY+Hy5wlSVyEvAHpIg==
-X-Google-Smtp-Source: AK7set/Wzjr8T0RiAIbq2pXVyJ87t0h1QpURbaYUliCvi7szZqLLwtfi/oxSutsEDerrvGj4YaRYeBPAqR8efT0E61o=
-X-Received: by 2002:ac2:5deb:0:b0:4db:3ab2:896e with SMTP id
- z11-20020ac25deb000000b004db3ab2896emr4642945lfq.6.1679066871689; Fri, 17 Mar
- 2023 08:27:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <CACT4Y+Z-9KCgKwkktvdJwNJZxxeA1f74zkP7KD6c=OmKXxXfjw@mail.gmail.com>
- <87y1nv76au.fsf@linux.ibm.com>
-In-Reply-To: <87y1nv76au.fsf@linux.ibm.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 17 Mar 2023 16:27:38 +0100
-Message-ID: <CACT4Y+Z1TmGuFRfaSPfJkzu2Fo-3JN4XPrWpME=bPwe=50-kFg@mail.gmail.com>
-Subject: Re: LOCK_DOWN_FORCE_INTEGRITY_FOR_FUZZING?
-To:     Nathan Lynch <nathanl@linux.ibm.com>
-Cc:     syzkaller <syzkaller@googlegroups.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>, jmorris@namei.org,
-        mjg59@srcf.ucam.org,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 17 Mar 2023 15:39:54 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4EF1E18E;
+        Fri, 17 Mar 2023 12:39:52 -0700 (PDT)
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32HIqYt4031513;
+        Fri, 17 Mar 2023 19:39:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=1URlbCasJqipj7wwAu3MyeP8tjG8naLb0x+gto5CH0E=;
+ b=Pefo3U+lud4skk509kTTR+mhHmLTPOJvxx+Wv6DaLae1M24kbAhsa3/5WNzpvDFNkbrq
+ wiTxibGXwGRpT7XkXvj7mqYp86h6z1EWERlGT+dsZ45G+Rpc0t7enir2XbcXiwM0lrnw
+ gYIfhFhlnPdI8bkJjbLWBs8hjB9+kCRZpNqFy1aKAl606W/vQG4Trh27QqCOeGVYd53H
+ zy87NURsiYjOLinVrdr6qBIa75cXbHVtDFBjnis+eEa59OzXZo3PGXfqAYHU//LnYDFF
+ KsFQzFrvugKuh4SHXPhJqeNtBKnXHNK8xxFAxu3Pn4ojwpJV/c3MGS/2L9pKXofrcKiP HA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3pcwv9rxnj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 19:39:11 +0000
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32HIw2HF021247;
+        Fri, 17 Mar 2023 19:39:10 GMT
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3pcwv9rxmq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 19:39:10 +0000
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32HH6Ime002877;
+        Fri, 17 Mar 2023 19:39:09 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([9.208.129.117])
+        by ppma04wdc.us.ibm.com (PPS) with ESMTPS id 3pbs53a8uw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 19:39:09 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+        by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32HJd7nE62587342
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Mar 2023 19:39:08 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C99DA58055;
+        Fri, 17 Mar 2023 19:39:07 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9C16158054;
+        Fri, 17 Mar 2023 19:39:05 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.19.65])
+        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 17 Mar 2023 19:39:05 +0000 (GMT)
+Message-ID: <31fc7724c9689e8ec5bd6bfe026652d238d9fb84.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 2/6] ocfs2: Switch to security_inode_init_security()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, mark@fasheh.com,
+        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com
+Cc:     ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Fri, 17 Mar 2023 15:39:05 -0400
+In-Reply-To: <20230314081720.4158676-3-roberto.sassu@huaweicloud.com>
+References: <20230314081720.4158676-1-roberto.sassu@huaweicloud.com>
+         <20230314081720.4158676-3-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: S7g3m59HbJIce5-uMRJxwKvga7inpPsh
+X-Proofpoint-ORIG-GUID: 7R3ra_JluMXnCBHsDouDCvpfAnMIw3yP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-17_17,2023-03-16_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ clxscore=1011 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ malwarescore=0 bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303150002 definitions=main-2303170136
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 17 Mar 2023 at 16:21, Nathan Lynch <nathanl@linux.ibm.com> wrote:
->
-> Hi Dmitry,
->
-> Dmitry Vyukov <dvyukov@google.com> writes:
-> > Hi Lockdown maintainers,
->
-> I'm not a lockdown maintainer, but I feel like I can respond to a couple
-> things here.
->
-> > We don't enable Lockdown integrity mode on syzbot during fuzzing, but
-> > we would like to. The main problem is the restriction of debugfs,
-> > which we need for fuzzing. But we do duplicate some of its
-> > restrictions (e.g. DEVKMEM=n).
-> >
-> > It come up again recently in the context of discussion of memory
-> > corruptions when a mounted blocked device is being written to by root:
-> > https://lore.kernel.org/all/CACT4Y+b1vGfe0Uvp6YmKahK4GfCfvdBLCh0SAQzGgWN1s6A+0Q@mail.gmail.com/
-> > It looks like this restriction of writing to mounted block devices
-> > should be part of integrity lockdown (but I am not an expert).
->
-> I'm not sure, I'll leave that question to others.
->
-> > What do you think about the addition of a new level that is integrity
-> > but with debug fs access?
-> > LOCKDOWN_RTAS_ERROR_INJECTION also looks like it's in the same bucket
-> > of "fine for testing".
->
-> Thanks for checking. Error injection via RTAS (pseries partition
-> firmware) can cause unrecoverable cache and memory corruption. Right now
-> I don't think including LOCKDOWN_RTAS_ERROR_INJECTION in a relaxed
-> integrity mode for fuzzing would yield useful results.
->
-> > At least for us it is OK if it can be enabled only via kernel config
-> > (no cmd line) and named accordingly
-> > (TEST_ONLY_DONT_ENABLE_IN_PRODUCTION).
-> >
-> > If we have it, we could restrict writing to mounted devices in
-> > integrity mode and enable this mode on syzbot.
->
-> So I understand the proposal to involve something like:
->
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -120,11 +120,12 @@ enum lockdown_reason {
->         LOCKDOWN_TIOCSSERIAL,
->         LOCKDOWN_MODULE_PARAMETERS,
->         LOCKDOWN_MMIOTRACE,
-> -       LOCKDOWN_DEBUGFS,
->         LOCKDOWN_XMON_WR,
->         LOCKDOWN_BPF_WRITE_USER,
->         LOCKDOWN_DBG_WRITE_KERNEL,
->         LOCKDOWN_RTAS_ERROR_INJECTION,
-> +       LOCKDOWN_INTEGRITY_FUZZING_MAX,
-> +       LOCKDOWN_DEBUGFS,
->         LOCKDOWN_INTEGRITY_MAX,
->         LOCKDOWN_KCORE,
->         LOCKDOWN_KPROBES,
->
-> Is that right?
+On Tue, 2023-03-14 at 09:17 +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> In preparation for removing security_old_inode_init_security(), switch to
+> security_inode_init_security().
+> 
+> Extend the existing ocfs2_initxattrs() to take the
+> ocfs2_security_xattr_info structure from fs_info, and populate the
+> name/value/len triple with the first xattr provided by LSMs.
+> 
+> As fs_info was not used before, ocfs2_initxattrs() can now handle the case
+> of replicating the behavior of security_old_inode_init_security(), i.e.
+> just obtaining the xattr, in addition to setting all xattrs provided by
+> LSMs.
+> 
+> Supporting multiple xattrs is not currently supported where
+> security_old_inode_init_security() was called (mknod, symlink), as it
+> requires non-trivial changes that can be done at a later time. Like for
+> reiserfs, even if EVM is invoked, it will not provide an xattr (if it is
+> not the first to set it, its xattr will be discarded; if it is the first,
+> it does not have xattrs to calculate the HMAC on).
+> 
+> Finally, since security_inode_init_security(), unlike
+> security_old_inode_init_security(), returns zero instead of -EOPNOTSUPP if
+> no xattrs were provided by LSMs or if inodes are private, additionally
+> check in ocfs2_init_security_get() if the xattr name is set.
+> 
+> If not, act as if security_old_inode_init_security() returned -EOPNOTSUPP,
+> and set si->enable to zero to notify to the functions following
+> ocfs2_init_security_get() that no xattrs are available.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 
-Hi Nathan,
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-Thanks for the feedback.
-Yes, something like this + config to enable this mode.
-
-> I don't have a specific example at hand, but I suspect that enabling all
-> of debugfs would allow syzbot to reach code that integrity mode
-> ordinarily would prevent. Which doesn't seem like what you would want?
->
-> I wonder if the debugfs-hosted facilities needed by syzbot could be
-> identified in a finer-grained way that could be incorporated into the
-> lockdown reason list for this purpose. So that way only the things
-> syzbot needs would be exposed.
-
-Debugfs also contains lots of code that needs to be tested.
-It's also required to test production code, e.g. set up some stub devices, etc.
-We generally can restrict fuzzer access based on paths (it's also
-required to avoid writing garbage into /dev/sda, etc). So far having
-debugfs accessible did not cause any problems.
