@@ -2,155 +2,146 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC0FC74A5B
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Mar 2023 15:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0605FC74A5B
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Mar 2023 15:27:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229554AbjCQPVl (ORCPT
+        id S230033AbjCQP1z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Mar 2023 11:21:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51438 "EHLO
+        Fri, 17 Mar 2023 11:27:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbjCQPVk (ORCPT
+        with ESMTP id S229669AbjCQP1y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Mar 2023 11:21:40 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 359DB52924
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Mar 2023 08:21:39 -0700 (PDT)
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32HEktei003656;
-        Fri, 17 Mar 2023 15:21:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : in-reply-to : references : date : message-id : content-type :
- mime-version; s=pp1; bh=wl8zH3ZF1CNo4CqmReSzmoRkoYnprhLy7oZRp3HsQJk=;
- b=Mwo+gYfnuHSJ81oDYHMBjQCyucM/yFWLUAZS6SFhM4Ru+OYcOgOksfkZ6AuvJI21lToP
- 5P6SsYD5YGpHG2jLsF+z7+0cpYuQ6fy3Mc2Zk6J4QxzuxZ2Valt7SQchCxVdF+1Hy20Q
- Jzis9OSc0dDDz/C69I+HYSvf9wdZpSawGVQY4lcHvBXO6MCHAKG6Tu8QR0pnQGx0YvcB
- Iqb5WEOOoXcdP1u2Zv/QN+8lhQu4Hz4Z+/3p81iFSN/ppmc9GVkyW8sMkZvGlIR1Z3VP
- R6Nxak9nrerKMRF8VoXWujsf6EIK9lGuobrhz79Kd1uCy+/QRKSahWpZVodCcETCE4zs Dg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pct8yh45d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Mar 2023 15:21:00 +0000
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32HF0o8S007384;
-        Fri, 17 Mar 2023 15:20:59 GMT
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pct8yh454-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Mar 2023 15:20:59 +0000
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32HElT3i005425;
-        Fri, 17 Mar 2023 15:20:58 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([9.208.129.118])
-        by ppma01wdc.us.ibm.com (PPS) with ESMTPS id 3pbswp90tx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Mar 2023 15:20:58 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32HFKvsC57672074
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Mar 2023 15:20:57 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B0C6C5805E;
-        Fri, 17 Mar 2023 15:20:57 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 81B005805B;
-        Fri, 17 Mar 2023 15:20:57 +0000 (GMT)
-Received: from localhost (unknown [9.163.4.251])
-        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 17 Mar 2023 15:20:57 +0000 (GMT)
-From:   Nathan Lynch <nathanl@linux.ibm.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
+        Fri, 17 Mar 2023 11:27:54 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A33C692F1C
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Mar 2023 08:27:53 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id y20so6975412lfj.2
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Mar 2023 08:27:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1679066872;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nv5cOEcdxEBmp663aNSEQdflb05PiC21ONlyQB9IU1g=;
+        b=Mq/VKKNzWbwpAnIHgBPYSROApket/7Go0yuyT5+Iny5gJVPspQpzMvXOXPwvhlcnuo
+         8xhw7C0mmz7InfY0XLFZRRNTKoJPu0Qf1ymibgj2SXPkXBzY+OGHW2RdGoFxX5yo5MO0
+         YOw4GlS9xpQsu0/0lU83MPqIzNhOfgQkNIJaz+g0haw+OY7yYwIaO6LKPOTIOTJzo/B0
+         N4Y2E/z9tDoY9VfsMyKz293jaFEI9vsbHb3bHV3PLU9qoHMXCpHQM1q9mN8VRDkv5k5p
+         Jjz5Ghm0+VQNz8Q5brdvsKKv3KwnOS2YQA8Z2ePUHUElC4eXq6cOoOd6KWrzF2NjFsvn
+         gzKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679066872;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nv5cOEcdxEBmp663aNSEQdflb05PiC21ONlyQB9IU1g=;
+        b=UjDFeNuWnvafJV5T70+C8BKIzF+gxZ+q+yNV3o/88o7y7ufsN4qK72M0XPnD1H9s+a
+         djtYxs1yNiuUPOcKS/Hgmr8xloyMwWtpik5JHA/pHN247SZXN46U7ywL4uGHUDsX5pZl
+         0O6xj1zGzqXdkjT2B+mC6E1GarrnzHbJalR2cLoXhtPzgfBU6UIuMbUcxL4CZgK3OqBm
+         Av2jE2ENsToO1bWXvBvHx9vSyH4mIekp8NlelDOFDAn1xYE3M0KFmCpmzPdWIsndkMAl
+         TMSNcGmRmZB+pDj6KJHCDGgihdHpRzJJtzDu4fmofxXLU3m7BNElvYn2l0CtFEltIdMW
+         UObA==
+X-Gm-Message-State: AO0yUKWKTzdBfy1NEoRtvsuuTyBLmq8MHqQasZgmDOaatdYi8Ybje+dm
+        9JciObhuklMMuFMfL9ucGs9RbY+Hy5wlSVyEvAHpIg==
+X-Google-Smtp-Source: AK7set/Wzjr8T0RiAIbq2pXVyJ87t0h1QpURbaYUliCvi7szZqLLwtfi/oxSutsEDerrvGj4YaRYeBPAqR8efT0E61o=
+X-Received: by 2002:ac2:5deb:0:b0:4db:3ab2:896e with SMTP id
+ z11-20020ac25deb000000b004db3ab2896emr4642945lfq.6.1679066871689; Fri, 17 Mar
+ 2023 08:27:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <CACT4Y+Z-9KCgKwkktvdJwNJZxxeA1f74zkP7KD6c=OmKXxXfjw@mail.gmail.com>
+ <87y1nv76au.fsf@linux.ibm.com>
+In-Reply-To: <87y1nv76au.fsf@linux.ibm.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 17 Mar 2023 16:27:38 +0100
+Message-ID: <CACT4Y+Z1TmGuFRfaSPfJkzu2Fo-3JN4XPrWpME=bPwe=50-kFg@mail.gmail.com>
+Subject: Re: LOCK_DOWN_FORCE_INTEGRITY_FOR_FUZZING?
+To:     Nathan Lynch <nathanl@linux.ibm.com>
 Cc:     syzkaller <syzkaller@googlegroups.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Paul Moore <paul@paul-moore.com>, jmorris@namei.org,
         mjg59@srcf.ucam.org,
         linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: LOCK_DOWN_FORCE_INTEGRITY_FOR_FUZZING?
-In-Reply-To: <CACT4Y+Z-9KCgKwkktvdJwNJZxxeA1f74zkP7KD6c=OmKXxXfjw@mail.gmail.com>
-References: <CACT4Y+Z-9KCgKwkktvdJwNJZxxeA1f74zkP7KD6c=OmKXxXfjw@mail.gmail.com>
-Date:   Fri, 17 Mar 2023 10:20:57 -0500
-Message-ID: <87y1nv76au.fsf@linux.ibm.com>
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: tgR9hKeucj2xHmuDH2yr9K59Qa8QoG0i
-X-Proofpoint-GUID: y3SzL4SAWn7ZTjL6B2hHSMI36g12aXkW
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-17_10,2023-03-16_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 bulkscore=0 mlxlogscore=534 impostorscore=0
- suspectscore=0 adultscore=0 mlxscore=0 clxscore=1011 priorityscore=1501
- spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303150002 definitions=main-2303170103
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Dmitry,
-
-Dmitry Vyukov <dvyukov@google.com> writes:
-> Hi Lockdown maintainers,
-
-I'm not a lockdown maintainer, but I feel like I can respond to a couple
-things here.
-
-> We don't enable Lockdown integrity mode on syzbot during fuzzing, but
-> we would like to. The main problem is the restriction of debugfs,
-> which we need for fuzzing. But we do duplicate some of its
-> restrictions (e.g. DEVKMEM=n).
+On Fri, 17 Mar 2023 at 16:21, Nathan Lynch <nathanl@linux.ibm.com> wrote:
 >
-> It come up again recently in the context of discussion of memory
-> corruptions when a mounted blocked device is being written to by root:
-> https://lore.kernel.org/all/CACT4Y+b1vGfe0Uvp6YmKahK4GfCfvdBLCh0SAQzGgWN1s6A+0Q@mail.gmail.com/
-> It looks like this restriction of writing to mounted block devices
-> should be part of integrity lockdown (but I am not an expert).
-
-I'm not sure, I'll leave that question to others.
-
-> What do you think about the addition of a new level that is integrity
-> but with debug fs access?
-> LOCKDOWN_RTAS_ERROR_INJECTION also looks like it's in the same bucket
-> of "fine for testing".
-
-Thanks for checking. Error injection via RTAS (pseries partition
-firmware) can cause unrecoverable cache and memory corruption. Right now
-I don't think including LOCKDOWN_RTAS_ERROR_INJECTION in a relaxed
-integrity mode for fuzzing would yield useful results.
-
-> At least for us it is OK if it can be enabled only via kernel config
-> (no cmd line) and named accordingly
-> (TEST_ONLY_DONT_ENABLE_IN_PRODUCTION).
+> Hi Dmitry,
 >
-> If we have it, we could restrict writing to mounted devices in
-> integrity mode and enable this mode on syzbot.
+> Dmitry Vyukov <dvyukov@google.com> writes:
+> > Hi Lockdown maintainers,
+>
+> I'm not a lockdown maintainer, but I feel like I can respond to a couple
+> things here.
+>
+> > We don't enable Lockdown integrity mode on syzbot during fuzzing, but
+> > we would like to. The main problem is the restriction of debugfs,
+> > which we need for fuzzing. But we do duplicate some of its
+> > restrictions (e.g. DEVKMEM=n).
+> >
+> > It come up again recently in the context of discussion of memory
+> > corruptions when a mounted blocked device is being written to by root:
+> > https://lore.kernel.org/all/CACT4Y+b1vGfe0Uvp6YmKahK4GfCfvdBLCh0SAQzGgWN1s6A+0Q@mail.gmail.com/
+> > It looks like this restriction of writing to mounted block devices
+> > should be part of integrity lockdown (but I am not an expert).
+>
+> I'm not sure, I'll leave that question to others.
+>
+> > What do you think about the addition of a new level that is integrity
+> > but with debug fs access?
+> > LOCKDOWN_RTAS_ERROR_INJECTION also looks like it's in the same bucket
+> > of "fine for testing".
+>
+> Thanks for checking. Error injection via RTAS (pseries partition
+> firmware) can cause unrecoverable cache and memory corruption. Right now
+> I don't think including LOCKDOWN_RTAS_ERROR_INJECTION in a relaxed
+> integrity mode for fuzzing would yield useful results.
+>
+> > At least for us it is OK if it can be enabled only via kernel config
+> > (no cmd line) and named accordingly
+> > (TEST_ONLY_DONT_ENABLE_IN_PRODUCTION).
+> >
+> > If we have it, we could restrict writing to mounted devices in
+> > integrity mode and enable this mode on syzbot.
+>
+> So I understand the proposal to involve something like:
+>
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -120,11 +120,12 @@ enum lockdown_reason {
+>         LOCKDOWN_TIOCSSERIAL,
+>         LOCKDOWN_MODULE_PARAMETERS,
+>         LOCKDOWN_MMIOTRACE,
+> -       LOCKDOWN_DEBUGFS,
+>         LOCKDOWN_XMON_WR,
+>         LOCKDOWN_BPF_WRITE_USER,
+>         LOCKDOWN_DBG_WRITE_KERNEL,
+>         LOCKDOWN_RTAS_ERROR_INJECTION,
+> +       LOCKDOWN_INTEGRITY_FUZZING_MAX,
+> +       LOCKDOWN_DEBUGFS,
+>         LOCKDOWN_INTEGRITY_MAX,
+>         LOCKDOWN_KCORE,
+>         LOCKDOWN_KPROBES,
+>
+> Is that right?
 
-So I understand the proposal to involve something like:
+Hi Nathan,
 
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -120,11 +120,12 @@ enum lockdown_reason {
- 	LOCKDOWN_TIOCSSERIAL,
- 	LOCKDOWN_MODULE_PARAMETERS,
- 	LOCKDOWN_MMIOTRACE,
--	LOCKDOWN_DEBUGFS,
- 	LOCKDOWN_XMON_WR,
- 	LOCKDOWN_BPF_WRITE_USER,
- 	LOCKDOWN_DBG_WRITE_KERNEL,
- 	LOCKDOWN_RTAS_ERROR_INJECTION,
-+	LOCKDOWN_INTEGRITY_FUZZING_MAX,
-+	LOCKDOWN_DEBUGFS,
- 	LOCKDOWN_INTEGRITY_MAX,
- 	LOCKDOWN_KCORE,
- 	LOCKDOWN_KPROBES,
+Thanks for the feedback.
+Yes, something like this + config to enable this mode.
 
-Is that right?
+> I don't have a specific example at hand, but I suspect that enabling all
+> of debugfs would allow syzbot to reach code that integrity mode
+> ordinarily would prevent. Which doesn't seem like what you would want?
+>
+> I wonder if the debugfs-hosted facilities needed by syzbot could be
+> identified in a finer-grained way that could be incorporated into the
+> lockdown reason list for this purpose. So that way only the things
+> syzbot needs would be exposed.
 
-I don't have a specific example at hand, but I suspect that enabling all
-of debugfs would allow syzbot to reach code that integrity mode
-ordinarily would prevent. Which doesn't seem like what you would want?
-
-I wonder if the debugfs-hosted facilities needed by syzbot could be
-identified in a finer-grained way that could be incorporated into the
-lockdown reason list for this purpose. So that way only the things
-syzbot needs would be exposed.
+Debugfs also contains lots of code that needs to be tested.
+It's also required to test production code, e.g. set up some stub devices, etc.
+We generally can restrict fuzzer access based on paths (it's also
+required to avoid writing garbage into /dev/sda, etc). So far having
+debugfs accessible did not cause any problems.
