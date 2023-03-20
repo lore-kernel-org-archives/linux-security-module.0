@@ -2,95 +2,71 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05776C6FD1C
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Mar 2023 22:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D642BC761A6
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Mar 2023 22:41:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229730AbjCTWRu (ORCPT
+        id S229824AbjCTWlH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Mar 2023 18:17:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43078 "EHLO
+        Mon, 20 Mar 2023 18:41:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229898AbjCTWRr (ORCPT
+        with ESMTP id S229819AbjCTWlG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Mar 2023 18:17:47 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C143936444
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Mar 2023 15:17:08 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id i5so5786241eda.0
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Mar 2023 15:17:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1679350626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WPrDTO6iMVUmjsFudsdQ6YBX68bwKPdUhbwstJv4XRI=;
-        b=U9pCEA/2HPHSqwZzPiHP/qfKDCjVpG6XCI8XxaO2Lplmo38RjSSj5QnZheuIwgVmm2
-         7Vs42NzwDz83AqAHsQ8qmNdD5VkquV6MeRmOTXuxa4GxMR0tlKI9pPsvUQFJYwFKCape
-         Dmszt+dpWmbhSWOczSMnE51zYN5nGNlsnFZxo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679350626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WPrDTO6iMVUmjsFudsdQ6YBX68bwKPdUhbwstJv4XRI=;
-        b=1X7GEdhNIeZnl2BTcQgqqbGBwBZqUFwo7Dvu/GEycX8sXutnGvRTw9kFTPgTcz56Nl
-         yR0N6ihfVkm6g9TR+CXpbauPCZRD8l2YuDTt5lI+wSlg7+h5YXgfHBMkSZgekkRMGgcM
-         Uh8Z0H2m+R/1qbtQFokgshuyQzt+8KZUMv1hqpzAO8714LGDaLqawyoBc0CIUqMCgCpI
-         YzZFYRHw385x0K/QQKFq9ROqjNUa7AL5jMf87Xd/613xjzMDsfn0cvITocau/7BGHvy1
-         MqrnEzHjenGV0LVeoWyyRBm9vzrSzRlhog0NIXtIfMzICguOxyod+10+aqa/Rv3291ph
-         DIbg==
-X-Gm-Message-State: AO0yUKVX9lm/pHR9h+iZzqoyQ3JojqBiR5EFj4fVzkG4U2X6pCJiqwzl
-        2C+OrVl2hg9TE/ovZwubjzewqzvPsLumDsqSMiUuXSTz
-X-Google-Smtp-Source: AK7set9t32g6vuiCNEZNcfsO6zXPzzUhDTQEPlfpipk9vjXfFa3Mjdxw6Vu8piqyEZyFPvSnCk4IdQ==
-X-Received: by 2002:aa7:cd89:0:b0:4fc:687a:c29d with SMTP id x9-20020aa7cd89000000b004fc687ac29dmr1128899edv.1.1679350626722;
-        Mon, 20 Mar 2023 15:17:06 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id i28-20020a50871c000000b004fd204d180dsm5410187edb.64.2023.03.20.15.17.05
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Mar 2023 15:17:05 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id eh3so52647895edb.11
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Mar 2023 15:17:05 -0700 (PDT)
-X-Received: by 2002:a50:9546:0:b0:4fb:2593:844 with SMTP id
- v6-20020a509546000000b004fb25930844mr582214eda.2.1679350625492; Mon, 20 Mar
- 2023 15:17:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230320205617.GA1434@sol.localdomain>
-In-Reply-To: <20230320205617.GA1434@sol.localdomain>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 20 Mar 2023 15:16:48 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whefxRGyNGzCzG6BVeM=5vnvgb-XhSeFJVxJyAxAF8XRA@mail.gmail.com>
-Message-ID: <CAHk-=whefxRGyNGzCzG6BVeM=5vnvgb-XhSeFJVxJyAxAF8XRA@mail.gmail.com>
+        Mon, 20 Mar 2023 18:41:06 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBC4833CFA;
+        Mon, 20 Mar 2023 15:41:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 86A9BB8108F;
+        Mon, 20 Mar 2023 22:40:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 36DC8C4339B;
+        Mon, 20 Mar 2023 22:40:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679352058;
+        bh=Y9+fRvoA6JYPY6fCFaksLpkN5oy7meel0lfHKE7i2Wk=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=UQYeAsXZlU81Ab+CZWcTDJ90C2AMox2MUjW8uH+OyIOyfvkDV0Dp/ZuNXcZjQkCmV
+         +jpE+uVVr9MBraJDdKSjdQWb8NOvwTcDAqxPyzam8a6CKL2q/S33QI6phWksclDFNA
+         PQBn/hNbqDi5VtIChR67NyAuDUp8MnuDldYvMX5htxBYA5TaVcxWqYOUZNPRpgoso5
+         3Qw1DTT8T+XqPPY+04Gi+3Q31u8UNTR0sFUw/vs97Wx2E2njooB219z7iUQOlR0wMY
+         KvU0TWT8C5MTzXdc3RlMMIIhIpP9YAIrcBcMIZU+aaefHj/dhVaUy8LWCCsWCLbrxU
+         vRTKbTrmRyE2A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1CBC5E68C18;
+        Mon, 20 Mar 2023 22:40:58 +0000 (UTC)
 Subject: Re: [GIT PULL] fscrypt fix for v6.3-rc4
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20230320205617.GA1434@sol.localdomain>
+References: <20230320205617.GA1434@sol.localdomain>
+X-PR-Tracked-List-Id: <linux-fscrypt.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20230320205617.GA1434@sol.localdomain>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
+X-PR-Tracked-Commit-Id: 4bcf6f827a79c59806c695dc280e763c5b6a6813
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4f1e308df88ad25c88ab4240161cbac45ba2d78e
+Message-Id: <167935205811.2111.13125595942983592868.pr-tracker-bot@kernel.org>
+Date:   Mon, 20 Mar 2023 22:40:58 +0000
 To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
         Jaegeuk Kim <jaegeuk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 20, 2023 at 1:56=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
-wrote:
->
->       fscrypt: check for NULL keyring in fscrypt_put_master_key_activeref=
-()
+The pull request you sent on Mon, 20 Mar 2023 13:56:17 -0700:
 
-Side note: please just use WARN_ON_ONCE() for things like this, not WARN_ON=
-.
+> https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
 
-If it's triggerable, it should be triggered only once rather than
-flood the logs and possibly cause a DoS.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4f1e308df88ad25c88ab4240161cbac45ba2d78e
 
-And if it's not triggerable, the "ONCE" doesn't matter.
+Thank you!
 
-I note that fscypt in general seems to be *way* too happy with
-WARN_ON() as some kind of debugging aid.
-
-It's not good in general (printf for debugging is wonderful, but
-shouldn't be left in the sources to rot for all eternity), but it's
-particularly not good in that form.
-
-              Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
