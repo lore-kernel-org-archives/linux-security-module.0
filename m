@@ -2,90 +2,71 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4072DC7619A
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Mar 2023 22:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B4EC6FD1C
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Mar 2023 02:03:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229523AbjCTW7j (ORCPT
+        id S229643AbjCUCDn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Mar 2023 18:59:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37086 "EHLO
+        Mon, 20 Mar 2023 22:03:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbjCTW7i (ORCPT
+        with ESMTP id S229803AbjCUCDj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Mar 2023 18:59:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4F1B3C09;
-        Mon, 20 Mar 2023 15:59:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7CA61618A6;
-        Mon, 20 Mar 2023 22:59:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB9CC433EF;
-        Mon, 20 Mar 2023 22:59:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679353176;
-        bh=za2Gl7eeUWgx7zbEJwo9bzWn5tZ8aI+vrlqCpm0t8sE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UFKytX4Q33Rhin2D5ugs6L0tIMzUAcK7BqaWJ03fIiZCBn9ncz4aEg+YwYrfxBs6T
-         TisZTe/l+EYQ6UkUpZUuA/+sy80QraO9frJn6omCWYlD/pwok5XKcDu1N8rEESWmXb
-         Z0yORlSLS1A4Uu4iiPFkcJig26ct0AOFurx6+mnEzQAIjWBvL5pr3VGaJyPoePxGi0
-         Rn3BgbFgXqV9QZhRrBJ9P8xWpaE+MHvHG0VKXcXOBKv/jywYwu9tuKq4Jb5GBaoCqa
-         gmAd9/7NflUZ2aeLcubhAmTyV6iZGJ8132teVju1vwWy3+W1cuP+I8ycXMtFDNoG5L
-         j0Lbij3Mh5BGA==
-Date:   Mon, 20 Mar 2023 15:59:34 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Mon, 20 Mar 2023 22:03:39 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FBAB16318
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Mar 2023 19:03:38 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 32L23D4S017789
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Mar 2023 22:03:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1679364195; bh=1++IKRnqZ+BH2bM0eGHWtNbecEk8GgRIA8+jEij3mzM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=jYHIUJj5Nxaj3F8dekW6ywk+SvD8er7agnGjI9VKHDxL0C3uFSGGUuEOlVGIfTOvE
+         WY6BohWTcaw2OgL9PVRHJm+DbVfhrvf/Te1PQ6W04mgvgUu/1MYxGSEBA54rkG2YgY
+         4OREog7fyMLtMLzv7GELovYZm1rZp/9pn4oEOatZWRvbaAJq600GLiT96DE4Wne0CB
+         g+pMdMJw/RdypxImFlqNmYIp8BoR8hFSuy9psdAcKD56FdL+Q8abj9/98tFQncZRKk
+         Mv/CRcEtDoR3/+TJbUrkots9gtDyunBWcuZF43Jd25Y0ML2fmp2rIftMQmscymcFwC
+         v6KihMmhYzxNQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 6D1AE15C4279; Mon, 20 Mar 2023 22:03:13 -0400 (EDT)
+Date:   Mon, 20 Mar 2023 22:03:13 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
+        linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: Re: [GIT PULL] fscrypt fix for v6.3-rc4
-Message-ID: <20230320225934.GB21979@sol.localdomain>
+Message-ID: <20230321020313.GA108653@mit.edu>
 References: <20230320205617.GA1434@sol.localdomain>
  <CAHk-=whefxRGyNGzCzG6BVeM=5vnvgb-XhSeFJVxJyAxAF8XRA@mail.gmail.com>
+ <20230320225934.GB21979@sol.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=whefxRGyNGzCzG6BVeM=5vnvgb-XhSeFJVxJyAxAF8XRA@mail.gmail.com>
+In-Reply-To: <20230320225934.GB21979@sol.localdomain>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 20, 2023 at 03:16:48PM -0700, Linus Torvalds wrote:
-> On Mon, Mar 20, 2023 at 1:56 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> >       fscrypt: check for NULL keyring in fscrypt_put_master_key_activeref()
+On Mon, Mar 20, 2023 at 03:59:34PM -0700, Eric Biggers wrote:
 > 
-> Side note: please just use WARN_ON_ONCE() for things like this, not WARN_ON.
-> 
-> If it's triggerable, it should be triggered only once rather than
-> flood the logs and possibly cause a DoS.
-> 
-> And if it's not triggerable, the "ONCE" doesn't matter.
-> 
-> I note that fscypt in general seems to be *way* too happy with
-> WARN_ON() as some kind of debugging aid.
-> 
-> It's not good in general (printf for debugging is wonderful, but
-> shouldn't be left in the sources to rot for all eternity), but it's
-> particularly not good in that form.
-> 
+> Yes, I agree that most of the WARN_ONs should be WARN_ON_ONCEs.  I think I've
+> been assuming that WARN_ON is significantly more lightweight than WARN_ON_ONCE.
+> But that doesn't seem to be the case, especially since commit 19d436268dde
+> ("debug: Add _ONCE() logic to report_bug()").
 
-Yes, I agree that most of the WARN_ONs should be WARN_ON_ONCEs.  I think I've
-been assuming that WARN_ON is significantly more lightweight than WARN_ON_ONCE.
-But that doesn't seem to be the case, especially since commit 19d436268dde
-("debug: Add _ONCE() logic to report_bug()").
+Another option is WARN_RATELIMITED.
 
-But besides that, I believe WARN* is generally being used appropriately in
-fs/crypto/.  It's used when assumptions made by the code are violated, but where
-the hard crash of a BUG() is not necessary.  I think this is a good thing to
-have, versus the alternative of doing nothing and making it much harder to track
-down bugs...  Some particularly bad crypto bugs that we can easily WARN about,
-such as IVs being truncated, may not even be detectable by users otherwise.
+As an unrelated side-note, one of the things I've been working on in
+some of the ext4 code paths when I've been moving BUG_ON's to
+WARN_RATELIMITED is to think about what might be needed to debug a
+problem, and sometimes it can be helpful to use a printf string to
+provide more context than just a WARN_ON.
 
-There are probably a few that should be removed, though.  I'm also considering
-whether the refcounting-related ones should use CHECK_DATA_CORRUPTION, though
-that may run afoul of the "don't use BUG() unless absolutely needed" rule...
+Cheers,
 
-- Eric
+						- Ted
