@@ -2,103 +2,111 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0F9C74A5B
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Mar 2023 18:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF8AC74A5B
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Mar 2023 19:04:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230254AbjCUSQn (ORCPT
+        id S229821AbjCUTEr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Mar 2023 14:16:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52814 "EHLO
+        Tue, 21 Mar 2023 15:04:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229739AbjCUSQm (ORCPT
+        with ESMTP id S229835AbjCUTEo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Mar 2023 14:16:42 -0400
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fae])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A424513DCE
-        for <linux-security-module@vger.kernel.org>; Tue, 21 Mar 2023 11:16:32 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Ph0DG2scGzMrCRT;
-        Tue, 21 Mar 2023 19:16:30 +0100 (CET)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Ph0DF4m7rzMsmJw;
-        Tue, 21 Mar 2023 19:16:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1679422590;
-        bh=SExsR16XCgyMAqbuSM0sJKtdFLVWin9yFJ9p3JYsOHA=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=tuoeucrs9/7efetPKzQOxTlNAcxWW2zlLLZq7yXWFV9ZNXlwK9GIFeovz3Zn+ue5p
-         9IuabRhYKIUiihW7d+zgv8Wr3ZIEwk9mokwDW8+64AME9y9a6tvvP2mtTINzYic0R5
-         SOqBxYNAF06bdGBk3AXdJnaULshdKs8j04zP6CpM=
-Message-ID: <42ffeef4-e71f-dd2b-6332-c805d1db2e3f@digikod.net>
-Date:   Tue, 21 Mar 2023 19:16:28 +0100
+        Tue, 21 Mar 2023 15:04:44 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E96F1A492
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Mar 2023 12:04:15 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id ew6so761150edb.7
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Mar 2023 12:04:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1679425443;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=86Y1u5mLe9v/pBUgkOz+GqSgxjFJqe1/jbcXyRYiTnE=;
+        b=flGgnsoy2zA9nwYcGJNTRsyctDtIDckL2GqnI2TIwCNHrfNhGbyfl0vzhMEASxp1Fy
+         T/A/1w9Kr4ji9Pvl/2AxLUDqc/HU7yq4NQzEHfA0URTc/GmspvlQBsV63VY80iXpBj5l
+         zAp2RomfgS+QF2V2+e5DaAVGGqyuYp2aSgJPM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679425443;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=86Y1u5mLe9v/pBUgkOz+GqSgxjFJqe1/jbcXyRYiTnE=;
+        b=7UB/uEtRj3mq9jPsho4akebFDL5Q5j12QWKf1wv6b2I7PFCLfo8c8UhQttMCvXrDkI
+         uVUmkDaNz791R6Tz1mYjc/0cZcxPro70Tee5gjCr0ZTUpWlkjwOTSPowZg7jZNmZl98v
+         kKTUdHJoq7wEY3NHWet2DCZyfvzPC5DYAmdFqSHTxn0c+fY+aAY8CqcjkOXZ18Lta9+Y
+         H+NqsE+7Fgw5kjtgMSVDxfhYiwlStXSfmrZ9Ci+LxfJNsOE2sQQ2hU7eoxhYfHPcqiaU
+         JZYU8wQQemMhKsyd+6uT2MwNu/ufWIWpV7DAj8Q/fYS2/dWQNvmyjbUDPgtD+OrnQPYR
+         h2cw==
+X-Gm-Message-State: AO0yUKWJiGvNG5+2xJ6X4ouWtodx1nyXnICmNpffhm5v6KwNAm2k8HPj
+        1ZepSZUbvmjyztyS88uLWiDmEuQMyMzB71UiXiDT7NDT
+X-Google-Smtp-Source: AK7set8yXf+on4IcMfz6mEPuQE1VtwIgloCuNrbHvyP/lzzQKoHJR69XXQzfiGm9/+P+MRvnN8DSCg==
+X-Received: by 2002:aa7:de82:0:b0:500:3a14:82c2 with SMTP id j2-20020aa7de82000000b005003a1482c2mr4495878edv.15.1679425443273;
+        Tue, 21 Mar 2023 12:04:03 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id u20-20020a50a414000000b004fd1ee3f723sm6648982edb.67.2023.03.21.12.04.02
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Mar 2023 12:04:02 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id cn12so18099412edb.4
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Mar 2023 12:04:02 -0700 (PDT)
+X-Received: by 2002:a17:907:9b03:b0:932:da0d:9375 with SMTP id
+ kn3-20020a1709079b0300b00932da0d9375mr2435070ejc.4.1679425442225; Tue, 21 Mar
+ 2023 12:04:02 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: Does Landlock not work with eCryptfs?
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        landlock@lists.linux.dev, Tyler Hicks <code@tyhicks.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20230319.2139b35f996f@gnoack.org>
- <c1c9c688-c64d-adf2-cc96-dc2aaaae5944@digikod.net>
- <20230320.c6b83047622f@gnoack.org>
- <5d415985-d6ac-2312-3475-9d117f3be30f@digikod.net>
- <e70f7926-21b6-fbce-c5d6-7b3899555535@digikod.net>
- <20230321172450.crwyhiulcal6jvvk@wittgenstein>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230321172450.crwyhiulcal6jvvk@wittgenstein>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20230320205617.GA1434@sol.localdomain> <CAHk-=whefxRGyNGzCzG6BVeM=5vnvgb-XhSeFJVxJyAxAF8XRA@mail.gmail.com>
+ <20230320225934.GB21979@sol.localdomain> <20230321020313.GA108653@mit.edu>
+In-Reply-To: <20230321020313.GA108653@mit.edu>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 21 Mar 2023 12:03:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjVTfej6+D62rzedjY_wzBVFqH0+U5vbq+ava8VhYPH3g@mail.gmail.com>
+Message-ID: <CAHk-=wjVTfej6+D62rzedjY_wzBVFqH0+U5vbq+ava8VhYPH3g@mail.gmail.com>
+Subject: Re: [GIT PULL] fscrypt fix for v6.3-rc4
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Mar 20, 2023 at 7:03=E2=80=AFPM Theodore Ts'o <tytso@mit.edu> wrote=
+:
+>
+> Another option is WARN_RATELIMITED.
 
-On 21/03/2023 18:24, Christian Brauner wrote:
-> On Tue, Mar 21, 2023 at 05:36:19PM +0100, Mickaël Salaün wrote:
->> There is an inconsistency between ecryptfs_dir_open() and ecryptfs_open().
->> ecryptfs_dir_open() actually checks access right to the lower directory,
->> which is why landlocked processes may not access the upper directory when
->> reading its content. ecryptfs_open() uses a cache for upper files (which
->> could be a problem on its own). The execution flow is:
->>
->> ecryptfs_open() -> ecryptfs_get_lower_file() -> ecryptfs_init_lower_file()
->> -> ecryptfs_privileged_open()
->>
->> In ecryptfs_privileged_open(), the dentry_open() call failed if access to
->> the lower file is not allowed by Landlock (or other access-control systems).
->> Then wait_for_completion(&req.done) waits for a kernel's thread executing
->> ecryptfs_threadfn(), which uses the kernel's credential to access the lower
->> file.
->>
->> I think there are two main solutions to fix this consistency issue:
->> - store the mounter credentials and uses them instead of the kernel's
->> credentials for lower file and directory access checks (ecryptfs_dir_open
->> and ecryptfs_threadfn changes);
->> - use the kernel's credentials for all lower file/dir access check,
->> especially in ecryptfs_dir_open().
->>
->> I think using the mounter credentials makes more sense, is much safer, and
->> fits with overlayfs. It may not work in cases where the mounter doesn't have
->> access to the lower file hierarchy though.
->>
->> File creation calls vfs_*() helpers (lower directory) and there is not path
->> nor file security hook calls for those, so it works unconditionally.
->>
->>  From Landlock end users point of view, it makes more sense to grants access
->> to a file hierarchy (where access is already allowed) and be allowed to
->> access this file hierarchy, whatever it belongs to a specific filesystem
->> (and whatever the potential lower file hierarchy, which may be unknown to
->> users). This is how it works for overlayfs and I'd like to have the same
->> behavior for ecryptfs.
-> 
-> So given that ecryptfs is marked as "Odd Fixes" who is realistically
-> going to do the work of switching it to a mounter's credentials model,
-> making sure this doesn't regress anything, and dealing with any
-> potential bugs caused by this. It might be potentially better to just
-> refuse to combine Landlock with ecryptfs if that's possible.
+I don't think that exists.
 
-If Tyler is OK with the proposed solutions, I'll get a closer look at it 
-in a few months. If anyone is interested to work on that, I'd be happy 
-to review and test (the Landlock part).
+There's 'pr_warn_ratelimited()', but honestly, the rate limiting is a
+joke. It's fine for things that never happen, but if you can flood
+things without the rate limiting, you can still flood things with the
+rate limiting.
+
+The default rate limiting is "max five reports every five seconds".
+
+For some "this should never happen", a reasonable rate limit might be
+"once every 24 hours" or something like that. Just make sure that if
+the machine stays up for months or years at a time, it doesn't get
+hidden in all the *other* noise.
+
+Our rate limiting sucks. The only thing that really saves it is that
+rate limiting is used for things that never happen in the first place,
+and the default values are basically picked for "this is a network DoS
+attempt, let's make sure it stands out in the logs without completely
+bogging down the machine".
+
+So no. Please don't use "ratelimited" for "this shouldn't happen".
+It's still going to suck. We had that *exact* thing just a couple of
+weeks ago:
+
+   https://lore.kernel.org/all/CAHk-=3DwjTMgB0=3DPQt8synf1MRTfetVXAWWLOibnM=
+Kvv1ETn_1uw@mail.gmail.com/
+
+where the networking people thought that ratelimiting would be a good idea.
+
+It's not a good idea.
+
+                    Linus
