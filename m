@@ -2,150 +2,110 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD1DC6FD1C
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Mar 2023 17:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E26A9C74A5B
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Mar 2023 23:33:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231700AbjCWRFo (ORCPT
+        id S231302AbjCWXd4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Mar 2023 13:05:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36046 "EHLO
+        Thu, 23 Mar 2023 19:33:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229680AbjCWRFo (ORCPT
+        with ESMTP id S231271AbjCWXdz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Mar 2023 13:05:44 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E17EB123;
-        Thu, 23 Mar 2023 10:05:42 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id x20so4931164ljq.9;
-        Thu, 23 Mar 2023 10:05:42 -0700 (PDT)
+        Thu, 23 Mar 2023 19:33:55 -0400
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA6B82412A
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Mar 2023 16:33:51 -0700 (PDT)
+Received: by mail-yb1-xb2f.google.com with SMTP id i7so348303ybt.0
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Mar 2023 16:33:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679591141;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NL5YETvbTVX6NvgeIAiWqv8iSFPQe7SEcD7n2fM2gVI=;
-        b=XeI06lmqyrE2ixMlQwp5zgwZAEjsc7iD49ptf2wJTrnu2fBxESPOpX/iTgmFVdmxJR
-         SMzOckFwprXOXThMb0YsMcAZGBm/meIIYwfV3Qg+X7xkeUfM3PbVwJmqe6w1tFDk8lHK
-         OIT3ZeAHMXrun7/adcc2xqxXAoZp1MmiihDP50m+9K0fvNHXv9PeNEf4ak06RrHBkXeR
-         jmb+5PFVCZdNVc6aegSXcGUalFxg7MYctfiqYEfhftDRF1DNEPRxeFGeKRdc6NxRrX3S
-         1toWJVsvBo3qPS5593q7E+f94AdsRZPL9YOfdGvtFn0La7dvHoyTTeMvvYhqeUsYSLmk
-         P8WA==
+        d=paul-moore.com; s=google; t=1679614431;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I4UQt9s0uViyb6ofhmfjXLpk2tpOHMTrFO4xtiTE1F0=;
+        b=B/0sSV7njn/GnbdGsZmwGqohjHyQKCvOu/6lA3UnCwY5crL557lHVTU44KJxZHT7yP
+         aPP+W3L7LsThfn1d73iOPDaxJ4xaogwioYx8PIMl/sbmCYK2QpbhQ/C3TGah4c41AH7d
+         34VK1xWYZtimyZLICoxE+b9Eqs8qV62zR0LZst+Hl5muiDzrsbLT4VjJQjVnxo20RgOx
+         QS6XgqmI6PTjN2jji+M23xYUJA5aMnZhcnEc1UWcg8cyTAqJUozNTyGh4D0U2mOYANmT
+         m2TjS6e7s7ht3ZDMN60F3ByMAURAMBiNlLvT9cSW4f6JHrOJwK9tvY7F3QFHQYSulqjZ
+         TNsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679591141;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NL5YETvbTVX6NvgeIAiWqv8iSFPQe7SEcD7n2fM2gVI=;
-        b=3m1g9PApXelcensJseyyWHxR3drpWVUSEWlkelRkRd1NcghujjnHUnhpRr82U4Y6B6
-         Rxhp1c59K2xTcUjtBXdmx2sAsm7tRpXqKVxtAGak2OXSRx25byH7fMx8NvcFvoTczXsN
-         dDq4GdQo7F9QYR3WRtuy1drfilapFX7bMKMWo6OS9v4S6+cARImWYwRd/0jzpHPCc0nS
-         xNLwaFGEgnxiT8ixsOjr9g46Cz2D7pvn7uxqvbyL81K7JehtFUkenG8zt82Upcoq4CoV
-         NZ8oco7Aohgw6xYPxSkK1m0HTq8QQyN41Zx+yJKLaTOHDWmBhe4J7m3fFMdnbxe9RXQR
-         iJWw==
-X-Gm-Message-State: AAQBX9fsvxSIlC9UG7qjs/Q8WeFLL94MfnkQkZ7lrHOFw91nz9B/8XZk
-        E1Qfzt/lWxL9a7KcVO5e2lY=
-X-Google-Smtp-Source: AKy350akuSGeJefGGbCYLsuICjgCH/JYQszrC8QkAKLBapSxSiGpbvxyc++fNdgks1RW6NA6kCuEbQ==
-X-Received: by 2002:a2e:3219:0:b0:2a2:c618:1f51 with SMTP id y25-20020a2e3219000000b002a2c6181f51mr366045ljy.24.1679591141028;
-        Thu, 23 Mar 2023 10:05:41 -0700 (PDT)
-Received: from localhost ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id y2-20020a05651c020200b00295a33eda65sm3067484ljn.137.2023.03.23.10.05.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Mar 2023 10:05:40 -0700 (PDT)
-Date:   Thu, 23 Mar 2023 18:05:38 +0100
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Christian Brauner <brauner@kernel.org>, landlock@lists.linux.dev,
-        Tyler Hicks <code@tyhicks.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        eCryptfs <ecryptfs@vger.kernel.org>
-Subject: Re: Does Landlock not work with eCryptfs?
-Message-ID: <ZByG4u1L6yF5kfeD@nuc>
-References: <20230319.2139b35f996f@gnoack.org>
- <c1c9c688-c64d-adf2-cc96-dc2aaaae5944@digikod.net>
- <20230320.c6b83047622f@gnoack.org>
- <5d415985-d6ac-2312-3475-9d117f3be30f@digikod.net>
- <e70f7926-21b6-fbce-c5d6-7b3899555535@digikod.net>
- <20230321172450.crwyhiulcal6jvvk@wittgenstein>
- <42ffeef4-e71f-dd2b-6332-c805d1db2e3f@digikod.net>
+        d=1e100.net; s=20210112; t=1679614431;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I4UQt9s0uViyb6ofhmfjXLpk2tpOHMTrFO4xtiTE1F0=;
+        b=yTTrCcUqbqztR6HLtSVAkeyDFemHKZ+NljOLjHHduXFBJljW6eH9GDVRFQApI6cw/b
+         LHf75JQjm33ZnRLT48WYKTcT4fKVdhsqyRxKOGeVYjJem+o7reFP5kNvSnFZJh+goqkC
+         M8gcaZY4akYmHPQzuh8mUnxOHbBRwxSUP2sjm0tQR1rmoSJZcg6BgixhElF1Yq3QIFfG
+         Ir3ty1nuuZhk4lBtZIghyuJCsAgfvWVbi/hIfijGR33Jw4f3cBVXUSPk8ZsRo5X1pYA8
+         mWABcOpXbScRncI2rH43JBtXBWTj2k0+fZ2Tbc307YEra8INor/F5RwlfNcrFVTbdKLn
+         c4/g==
+X-Gm-Message-State: AAQBX9cb3wNwL+WXftXPwdwZakHVDWrVC/rsOHtn5Kv8ZkL8lD2N6akn
+        KXC7MOhhAleG3KCxTTxZnRwunkXvZAnf94lbNyDp
+X-Google-Smtp-Source: AKy350Ythv2mrmo7XSEuLMBIjFRTDHgBFPhqt6X4Wf9cwlS+qXqGx6EuJGwGC9z42MtKE37zO8JrjgFxkcxJXq4nSaI=
+X-Received: by 2002:a25:abee:0:b0:b68:7a4a:5258 with SMTP id
+ v101-20020a25abee000000b00b687a4a5258mr211351ybi.3.1679614430992; Thu, 23 Mar
+ 2023 16:33:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <42ffeef4-e71f-dd2b-6332-c805d1db2e3f@digikod.net>
+References: <20230314081720.4158676-1-roberto.sassu@huaweicloud.com> <20230314081720.4158676-2-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20230314081720.4158676-2-roberto.sassu@huaweicloud.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 23 Mar 2023 19:33:40 -0400
+Message-ID: <CAHC9VhS1htA=cFqbc3KJsrZ3by6_m=f3Bd0sTbztC=qMZEvedA@mail.gmail.com>
+Subject: Re: [PATCH v8 1/6] reiserfs: Switch to security_inode_init_security()
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com,
+        ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-+ecryptfs mailing list FYI
+On Tue, Mar 14, 2023 at 4:18=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> In preparation for removing security_old_inode_init_security(), switch to
+> security_inode_init_security(). Commit 572302af1258 ("reiserfs: Add missi=
+ng
+> calls to reiserfs_security_free()") fixed possible memory leaks and anoth=
+er
+> issue related to adding an xattr at inode creation time.
+>
+> Define the initxattrs callback reiserfs_initxattrs(), to populate the
+> name/value/len triple in the reiserfs_security_handle() with the first
+> xattr provided by LSMs. Make a copy of the xattr value, as
+> security_inode_init_security() frees it.
+>
+> After the call to security_inode_init_security(), remove the check for
+> returning -EOPNOTSUPP, as security_inode_init_security() changes it to
+> zero.
+>
+> Multiple xattrs are currently not supported, as the
+> reiserfs_security_handle structure is exported to user space. As a
+> consequence, even if EVM is invoked, it will not provide an xattr (if it
+> is not the first to set it, its xattr will be discarded; if it is the
+> first, it does not have xattrs to calculate the HMAC on).
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  fs/reiserfs/xattr_security.c | 23 ++++++++++++++++++-----
+>  1 file changed, 18 insertions(+), 5 deletions(-)
 
-Just some additional data points on the Landlock/eCryptfs issues.
+Merged into lsm/next, thanks.
 
-On Tue, Mar 21, 2023 at 07:16:28PM +0100, Mickaël Salaün wrote:
-> On 21/03/2023 18:24, Christian Brauner wrote:
-> > On Tue, Mar 21, 2023 at 05:36:19PM +0100, Mickaël Salaün wrote:
-> > > There is an inconsistency between ecryptfs_dir_open() and ecryptfs_open().
-> > > ecryptfs_dir_open() actually checks access right to the lower directory,
-> > > which is why landlocked processes may not access the upper directory when
-> > > reading its content. ecryptfs_open() uses a cache for upper files (which
-> > > could be a problem on its own). The execution flow is:
-> > > 
-> > > ecryptfs_open() -> ecryptfs_get_lower_file() -> ecryptfs_init_lower_file()
-> > > -> ecryptfs_privileged_open()
-> > > 
-> > > In ecryptfs_privileged_open(), the dentry_open() call failed if access to
-> > > the lower file is not allowed by Landlock (or other access-control systems).
-> > > Then wait_for_completion(&req.done) waits for a kernel's thread executing
-> > > ecryptfs_threadfn(), which uses the kernel's credential to access the lower
-> > > file.
-> > > 
-> > > I think there are two main solutions to fix this consistency issue:
-> > > - store the mounter credentials and uses them instead of the kernel's
-> > > credentials for lower file and directory access checks (ecryptfs_dir_open
-> > > and ecryptfs_threadfn changes);
-> > > - use the kernel's credentials for all lower file/dir access check,
-> > > especially in ecryptfs_dir_open().
-> > > 
-> > > I think using the mounter credentials makes more sense, is much safer, and
-> > > fits with overlayfs. It may not work in cases where the mounter doesn't have
-> > > access to the lower file hierarchy though.
-> > > 
-> > > File creation calls vfs_*() helpers (lower directory) and there is not path
-> > > nor file security hook calls for those, so it works unconditionally.
-> > > 
-> > >  From Landlock end users point of view, it makes more sense to grants access
-> > > to a file hierarchy (where access is already allowed) and be allowed to
-> > > access this file hierarchy, whatever it belongs to a specific filesystem
-> > > (and whatever the potential lower file hierarchy, which may be unknown to
-> > > users). This is how it works for overlayfs and I'd like to have the same
-> > > behavior for ecryptfs.
-> > 
-> > So given that ecryptfs is marked as "Odd Fixes" who is realistically
-> > going to do the work of switching it to a mounter's credentials model,
-> > making sure this doesn't regress anything, and dealing with any
-> > potential bugs caused by this. It might be potentially better to just
-> > refuse to combine Landlock with ecryptfs if that's possible.
-
-There is now a patch to mark it orphaned (independent of this thread):
-https://lore.kernel.org/all/20230320182103.46350-1-frank.li@vivo.com/
-
-> If Tyler is OK with the proposed solutions, I'll get a closer look at it in
-> a few months. If anyone is interested to work on that, I'd be happy to
-> review and test (the Landlock part).
-
-I wonder whether this problem of calling security hooks for the
-underlying directory might have been affecting AppArmor and SELinux as
-well?  There seem to be reports on the web, but it's possible that I
-am misinterpreting some of them:
-
-https://wiki.ubuntu.com/SecurityTeam/Roadmap
-  mentions this "unscheduled wishlist item":
-  "eCryptfs + SELinux/AppArmor integration, to protect encrypted data from root"
-
-https://askubuntu.com/a/1195430
-  reports that AppArmor does not work on an eCryptfs mount for their use case
-  "i tried adding the [eCryptfs] source folder as an alias in apparmor and it now works."
-
-—Günther
-
--- 
+--=20
+paul-moore.com
