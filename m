@@ -2,227 +2,150 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD71C761AF
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Mar 2023 08:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD1DC6FD1C
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Mar 2023 17:05:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231570AbjCWIyE (ORCPT
+        id S231700AbjCWRFo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Mar 2023 04:54:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52046 "EHLO
+        Thu, 23 Mar 2023 13:05:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231231AbjCWIxQ (ORCPT
+        with ESMTP id S229680AbjCWRFo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Mar 2023 04:53:16 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6732B1717B;
-        Thu, 23 Mar 2023 01:52:55 -0700 (PDT)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4PhzY45FxXz67Tvl;
-        Thu, 23 Mar 2023 16:49:28 +0800 (CST)
-Received: from mscphis00759.huawei.com (10.123.66.134) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Thu, 23 Mar 2023 08:52:52 +0000
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-To:     <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-Subject: [PATCH v10 13/13] landlock: Document Landlock's network support
-Date:   Thu, 23 Mar 2023 16:52:26 +0800
-Message-ID: <20230323085226.1432550-14-konstantin.meskhidze@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230323085226.1432550-1-konstantin.meskhidze@huawei.com>
-References: <20230323085226.1432550-1-konstantin.meskhidze@huawei.com>
+        Thu, 23 Mar 2023 13:05:44 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E17EB123;
+        Thu, 23 Mar 2023 10:05:42 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id x20so4931164ljq.9;
+        Thu, 23 Mar 2023 10:05:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679591141;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NL5YETvbTVX6NvgeIAiWqv8iSFPQe7SEcD7n2fM2gVI=;
+        b=XeI06lmqyrE2ixMlQwp5zgwZAEjsc7iD49ptf2wJTrnu2fBxESPOpX/iTgmFVdmxJR
+         SMzOckFwprXOXThMb0YsMcAZGBm/meIIYwfV3Qg+X7xkeUfM3PbVwJmqe6w1tFDk8lHK
+         OIT3ZeAHMXrun7/adcc2xqxXAoZp1MmiihDP50m+9K0fvNHXv9PeNEf4ak06RrHBkXeR
+         jmb+5PFVCZdNVc6aegSXcGUalFxg7MYctfiqYEfhftDRF1DNEPRxeFGeKRdc6NxRrX3S
+         1toWJVsvBo3qPS5593q7E+f94AdsRZPL9YOfdGvtFn0La7dvHoyTTeMvvYhqeUsYSLmk
+         P8WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679591141;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NL5YETvbTVX6NvgeIAiWqv8iSFPQe7SEcD7n2fM2gVI=;
+        b=3m1g9PApXelcensJseyyWHxR3drpWVUSEWlkelRkRd1NcghujjnHUnhpRr82U4Y6B6
+         Rxhp1c59K2xTcUjtBXdmx2sAsm7tRpXqKVxtAGak2OXSRx25byH7fMx8NvcFvoTczXsN
+         dDq4GdQo7F9QYR3WRtuy1drfilapFX7bMKMWo6OS9v4S6+cARImWYwRd/0jzpHPCc0nS
+         xNLwaFGEgnxiT8ixsOjr9g46Cz2D7pvn7uxqvbyL81K7JehtFUkenG8zt82Upcoq4CoV
+         NZ8oco7Aohgw6xYPxSkK1m0HTq8QQyN41Zx+yJKLaTOHDWmBhe4J7m3fFMdnbxe9RXQR
+         iJWw==
+X-Gm-Message-State: AAQBX9fsvxSIlC9UG7qjs/Q8WeFLL94MfnkQkZ7lrHOFw91nz9B/8XZk
+        E1Qfzt/lWxL9a7KcVO5e2lY=
+X-Google-Smtp-Source: AKy350akuSGeJefGGbCYLsuICjgCH/JYQszrC8QkAKLBapSxSiGpbvxyc++fNdgks1RW6NA6kCuEbQ==
+X-Received: by 2002:a2e:3219:0:b0:2a2:c618:1f51 with SMTP id y25-20020a2e3219000000b002a2c6181f51mr366045ljy.24.1679591141028;
+        Thu, 23 Mar 2023 10:05:41 -0700 (PDT)
+Received: from localhost ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id y2-20020a05651c020200b00295a33eda65sm3067484ljn.137.2023.03.23.10.05.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Mar 2023 10:05:40 -0700 (PDT)
+Date:   Thu, 23 Mar 2023 18:05:38 +0100
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Christian Brauner <brauner@kernel.org>, landlock@lists.linux.dev,
+        Tyler Hicks <code@tyhicks.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        eCryptfs <ecryptfs@vger.kernel.org>
+Subject: Re: Does Landlock not work with eCryptfs?
+Message-ID: <ZByG4u1L6yF5kfeD@nuc>
+References: <20230319.2139b35f996f@gnoack.org>
+ <c1c9c688-c64d-adf2-cc96-dc2aaaae5944@digikod.net>
+ <20230320.c6b83047622f@gnoack.org>
+ <5d415985-d6ac-2312-3475-9d117f3be30f@digikod.net>
+ <e70f7926-21b6-fbce-c5d6-7b3899555535@digikod.net>
+ <20230321172450.crwyhiulcal6jvvk@wittgenstein>
+ <42ffeef4-e71f-dd2b-6332-c805d1db2e3f@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.66.134]
-X-ClientProxiedBy: mscpeml500001.china.huawei.com (7.188.26.142) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
+In-Reply-To: <42ffeef4-e71f-dd2b-6332-c805d1db2e3f@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Describe network access rules for TCP sockets. Add network access
-example in the tutorial. Add kernel configuration support for network.
++ecryptfs mailing list FYI
 
-Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
----
+Just some additional data points on the Landlock/eCryptfs issues.
 
-Changes since v9:
-* Minor refactoring.
+On Tue, Mar 21, 2023 at 07:16:28PM +0100, Mickaël Salaün wrote:
+> On 21/03/2023 18:24, Christian Brauner wrote:
+> > On Tue, Mar 21, 2023 at 05:36:19PM +0100, Mickaël Salaün wrote:
+> > > There is an inconsistency between ecryptfs_dir_open() and ecryptfs_open().
+> > > ecryptfs_dir_open() actually checks access right to the lower directory,
+> > > which is why landlocked processes may not access the upper directory when
+> > > reading its content. ecryptfs_open() uses a cache for upper files (which
+> > > could be a problem on its own). The execution flow is:
+> > > 
+> > > ecryptfs_open() -> ecryptfs_get_lower_file() -> ecryptfs_init_lower_file()
+> > > -> ecryptfs_privileged_open()
+> > > 
+> > > In ecryptfs_privileged_open(), the dentry_open() call failed if access to
+> > > the lower file is not allowed by Landlock (or other access-control systems).
+> > > Then wait_for_completion(&req.done) waits for a kernel's thread executing
+> > > ecryptfs_threadfn(), which uses the kernel's credential to access the lower
+> > > file.
+> > > 
+> > > I think there are two main solutions to fix this consistency issue:
+> > > - store the mounter credentials and uses them instead of the kernel's
+> > > credentials for lower file and directory access checks (ecryptfs_dir_open
+> > > and ecryptfs_threadfn changes);
+> > > - use the kernel's credentials for all lower file/dir access check,
+> > > especially in ecryptfs_dir_open().
+> > > 
+> > > I think using the mounter credentials makes more sense, is much safer, and
+> > > fits with overlayfs. It may not work in cases where the mounter doesn't have
+> > > access to the lower file hierarchy though.
+> > > 
+> > > File creation calls vfs_*() helpers (lower directory) and there is not path
+> > > nor file security hook calls for those, so it works unconditionally.
+> > > 
+> > >  From Landlock end users point of view, it makes more sense to grants access
+> > > to a file hierarchy (where access is already allowed) and be allowed to
+> > > access this file hierarchy, whatever it belongs to a specific filesystem
+> > > (and whatever the potential lower file hierarchy, which may be unknown to
+> > > users). This is how it works for overlayfs and I'd like to have the same
+> > > behavior for ecryptfs.
+> > 
+> > So given that ecryptfs is marked as "Odd Fixes" who is realistically
+> > going to do the work of switching it to a mounter's credentials model,
+> > making sure this doesn't regress anything, and dealing with any
+> > potential bugs caused by this. It might be potentially better to just
+> > refuse to combine Landlock with ecryptfs if that's possible.
 
-Changes since v8:
-* Minor refactoring.
+There is now a patch to mark it orphaned (independent of this thread):
+https://lore.kernel.org/all/20230320182103.46350-1-frank.li@vivo.com/
 
-Changes since v7:
-* Fixes documentaion logic errors and typos as Mickaёl suggested:
-https://lore.kernel.org/netdev/9f354862-2bc3-39ea-92fd-53803d9bbc21@digikod.net/
+> If Tyler is OK with the proposed solutions, I'll get a closer look at it in
+> a few months. If anyone is interested to work on that, I'd be happy to
+> review and test (the Landlock part).
 
-Changes since v6:
-* Adds network support documentaion.
+I wonder whether this problem of calling security hooks for the
+underlying directory might have been affecting AppArmor and SELinux as
+well?  There seem to be reports on the web, but it's possible that I
+am misinterpreting some of them:
 
----
- Documentation/userspace-api/landlock.rst | 69 ++++++++++++++++++------
- 1 file changed, 54 insertions(+), 15 deletions(-)
+https://wiki.ubuntu.com/SecurityTeam/Roadmap
+  mentions this "unscheduled wishlist item":
+  "eCryptfs + SELinux/AppArmor integration, to protect encrypted data from root"
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index f6a7da21708a..0d640bfa3126 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -11,10 +11,10 @@ Landlock: unprivileged access control
- :Date: October 2022
+https://askubuntu.com/a/1195430
+  reports that AppArmor does not work on an eCryptfs mount for their use case
+  "i tried adding the [eCryptfs] source folder as an alias in apparmor and it now works."
 
- The goal of Landlock is to enable to restrict ambient rights (e.g. global
--filesystem access) for a set of processes.  Because Landlock is a stackable
--LSM, it makes possible to create safe security sandboxes as new security layers
--in addition to the existing system-wide access-controls. This kind of sandbox
--is expected to help mitigate the security impact of bugs or
-+filesystem or network access) for a set of processes.  Because Landlock
-+is a stackable LSM, it makes possible to create safe security sandboxes as new
-+security layers in addition to the existing system-wide access-controls. This
-+kind of sandbox is expected to help mitigate the security impact of bugs or
- unexpected/malicious behaviors in user space applications.  Landlock empowers
- any process, including unprivileged ones, to securely restrict themselves.
+—Günther
 
-@@ -30,8 +30,9 @@ Landlock rules
-
- A Landlock rule describes an action on an object.  An object is currently a
- file hierarchy, and the related filesystem actions are defined with `access
--rights`_.  A set of rules is aggregated in a ruleset, which can then restrict
--the thread enforcing it, and its future children.
-+rights`_.  Since ABI version 4 a port data appears with related network actions
-+for TCP socket families.  A set of rules is aggregated in a ruleset, which
-+can then restrict the thread enforcing it, and its future children.
-
- Defining and enforcing a security policy
- ----------------------------------------
-@@ -41,7 +42,8 @@ example, the ruleset will contain rules that only allow read actions, but write
- actions will be denied.  The ruleset then needs to handle both of these kind of
- actions.  This is required for backward and forward compatibility (i.e. the
- kernel and user space may not know each other's supported restrictions), hence
--the need to be explicit about the denied-by-default access rights.
-+the need to be explicit about the denied-by-default access rights.  Also, ruleset
-+will have network rules for specific ports, so it should handle network actions.
-
- .. code-block:: c
-
-@@ -62,6 +64,9 @@ the need to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
-             LANDLOCK_ACCESS_FS_REFER |
-             LANDLOCK_ACCESS_FS_TRUNCATE,
-+        .handled_access_net =
-+            LANDLOCK_ACCESS_NET_BIND_TCP |
-+            LANDLOCK_ACCESS_NET_CONNECT_TCP,
-     };
-
- Because we may not know on which kernel version an application will be
-@@ -70,14 +75,18 @@ should try to protect users as much as possible whatever the kernel they are
- using.  To avoid binary enforcement (i.e. either all security features or
- none), we can leverage a dedicated Landlock command to get the current version
- of the Landlock ABI and adapt the handled accesses.  Let's check if we should
--remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
--access rights, which are only supported starting with the second and third
--version of the ABI.
-+remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE`` or
-+network access rights, which are only supported starting with the second,
-+third and fourth version of the ABI.
-
- .. code-block:: c
-
-     int abi;
-
-+    #define ACCESS_NET_BIND_CONNECT ( \
-+        LANDLOCK_ACCESS_NET_BIND_TCP | \
-+        LANDLOCK_ACCESS_NET_CONNECT_TCP)
-+
-     abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
-     if (abi < 0) {
-         /* Degrades gracefully if Landlock is not handled. */
-@@ -92,6 +101,11 @@ version of the ABI.
-     case 2:
-         /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-         ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-+    case 3:
-+        /* Removes network support for ABI < 4 */
-+        ruleset_attr.handled_access_net &=
-+            ~(LANDLOCK_ACCESS_NET_BIND_TCP |
-+              LANDLOCK_ACCESS_NET_CONNECT_TCP);
-     }
-
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -143,10 +157,23 @@ for the ruleset creation, by filtering access rights according to the Landlock
- ABI version.  In this example, this is not required because all of the requested
- ``allowed_access`` rights are already available in ABI 1.
-
--We now have a ruleset with one rule allowing read access to ``/usr`` while
--denying all other handled accesses for the filesystem.  The next step is to
--restrict the current thread from gaining more privileges (e.g. thanks to a SUID
--binary).
-+For network access-control, we can add a set of rules that allow to use a port
-+number for a specific action.
-+
-+.. code-block:: c
-+
-+    struct landlock_net_service_attr net_service = {
-+        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-+        .port = 8080,
-+    };
-+
-+    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+                            &net_service, 0);
-+
-+The next step is to restrict the current thread from gaining more privileges
-+(e.g. through a SUID binary). We now have a ruleset with the first rule allowing
-+read access to ``/usr`` while denying all other handled accesses for the filesystem,
-+and a second rule allowing TCP binding on port 8080.
-
- .. code-block:: c
-
-@@ -355,7 +382,7 @@ Access rights
- -------------
-
- .. kernel-doc:: include/uapi/linux/landlock.h
--    :identifiers: fs_access
-+    :identifiers: fs_access net_access
-
- Creating a new ruleset
- ----------------------
-@@ -374,6 +401,7 @@ Extending a ruleset
-
- .. kernel-doc:: include/uapi/linux/landlock.h
-     :identifiers: landlock_rule_type landlock_path_beneath_attr
-+                  landlock_net_service_attr
-
- Enforcing a ruleset
- -------------------
-@@ -451,6 +479,12 @@ always allowed when using a kernel that only supports the first or second ABI.
- Starting with the Landlock ABI version 3, it is now possible to securely control
- truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
-
-+Network support (ABI < 4)
-+-------------------------
-+
-+Starting with the Landlock ABI version 4, it is now possible to restrict TCP
-+bind and connect actions to only a set of allowed ports.
-+
- .. _kernel_support:
-
- Kernel support
-@@ -469,6 +503,11 @@ still enable it by adding ``lsm=landlock,[...]`` to
- Documentation/admin-guide/kernel-parameters.rst thanks to the bootloader
- configuration.
-
-+To be able to explicitly allow TCP operations (e.g., adding a network rule with
-+``LANDLOCK_ACCESS_NET_TCP_BIND``), the kernel must support TCP (``CONFIG_INET=y``).
-+Otherwise, sys_landlock_add_rule() returns an ``EAFNOSUPPORT`` error, which can
-+safely be ignored because this kind of TCP operation is already not possible.
-+
- Questions and answers
- =====================
-
---
-2.25.1
-
+-- 
