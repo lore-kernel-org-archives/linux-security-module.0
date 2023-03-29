@@ -2,198 +2,210 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0282C74A5B
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Mar 2023 13:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B888EC74A5B
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Mar 2023 18:59:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230102AbjC2NGI (ORCPT
+        id S229946AbjC2S7X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Mar 2023 09:06:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51204 "EHLO
+        Wed, 29 Mar 2023 14:59:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230104AbjC2NFw (ORCPT
+        with ESMTP id S229457AbjC2S7W (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Mar 2023 09:05:52 -0400
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E37095257;
-        Wed, 29 Mar 2023 06:05:42 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4PmmlP00qtz9v7ZK;
-        Wed, 29 Mar 2023 20:56:32 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwCXFABgNyRk2AzcAQ--.1625S6;
-        Wed, 29 Mar 2023 14:05:18 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v9 4/4] evm: Support multiple LSMs providing an xattr
-Date:   Wed, 29 Mar 2023 15:04:15 +0200
-Message-Id: <20230329130415.2312521-5-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230329130415.2312521-1-roberto.sassu@huaweicloud.com>
-References: <20230329130415.2312521-1-roberto.sassu@huaweicloud.com>
+        Wed, 29 Mar 2023 14:59:22 -0400
+Received: from sonic307-15.consmr.mail.ne1.yahoo.com (sonic307-15.consmr.mail.ne1.yahoo.com [66.163.190.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB17659C
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Mar 2023 11:59:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1680116359; bh=oeFMu7b3kDgXeJ9fyBphMRIOdzdISv9B+XVirna/e8g=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=pz3gEtZk2N81ZLllXadiaCEn8h8slAh3gHKLCzvTay+LFQQG9OdD/rm88ScQn7jIaQbVFCldu32TCzLrWXCpA2PSH/e7uWRAaPGb4qQGZpxdnfFCpvmtbo/4hX2dAJXzqeJ9thk5tgHRN5g7iJeOv2QIg8rtBF+XGtiFx/zLNuDvDuvcQRawLIo+VnMJpmXHqYs+1l4SV8lyuyFS/swHVYp7IE++TXCOYUgmy4GNnjPOJ2CMtnqQfUF43SYi/LjWH77VbCXuCQ32eKPxCxBngaET1mtoE0MeWElJz+MfP60i472krFZUHkq32zQLUYc0kd35Qu4+CU8X7YrCSgU9Ew==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1680116359; bh=5bngX48L7ND5Oj93nZITwj9eNBpNzHC52AOYMPAjHoH=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=RqV95THwvqhlPKqE8LUaZOPzF2CnE+uDtVviXvC/p7pTHG5dnbsFXuPKjQ+U5lgLtAuZh7i2bjOyBg8JTTyJTNIDpfrZuEj8KocNfrTPmIqbu7QfgXwiMaSC1ifZPt1naSrd7HhLUqSFgUEt4ZSGfq0CYlKDPu6JqWSe4D0w2QX+bRWmilM7DWo5lQb2JdbQFooX5cDw6D1Ly1CpURNG5CQOzYZ6VGpqAxDk2dESzMbc64Dbt0IoZQXQEbKie9cY9Rf7IonrMgVimMs2GRJ4GSchfZzsay1mJlp7GNJJ0cwQihIubIVtqQbnTIaQUqP281tIn8I7BKLW6aaPKB4p5w==
+X-YMail-OSG: 8_BNccQVM1ljCqgwbp4_akzsgLniuUYciG4iVObn49EOmZDq1BXFyW99uNhzDZI
+ jynKzTsuXNr.Z8VlKBUn1NjTNBAmhAmjKg9gIFbO7zXE1Ud6f_GDpvBwQp2KxmXuivSWJdleS_88
+ VyEaEuyGTShPnemeVWZL_w97NkCwcFP0GQj1SORkNeC_PmRmnEL.p8i0as1y5JEjmaQU200IR8zZ
+ Wp3LEokM6du90JZYy70C42NFv89jqmJGqxF0Zl0ve2JWtEt4S.HfKy9UffhE11cbtnSY_vZP7ZAu
+ ePZfCPd2t1rBa8ubVT5uQg8AKoxpNWZCp8pSVbwrGhhCfT4a.YlYmVXutIWlwsnUQU.DUONwvepR
+ 9urgKDHCz81JxLhp22bpdb8Hzsit57lbtbZumrW378AnTUjEhn2fmpoas_I4yPdSB9tmYDOsSQaj
+ 6KCtDnNHULuKKs3C20ijKcGLzbA03OanpKYBQNApva4N7uMmxDAXXU9tb97MQd.thSnrvlC_NOmH
+ IbNijmafHhbRMsg2Laknjrz7ncbMTtxsiDRNh.SxiA51guMuSwGkiuwc0inJCdWa91q2Xw6Y4Oco
+ aWqTzqyubAnJNZyqcnqAroKo2gZZqikCoxBhHkjRu00W9oTtX0d4tEJumG3ukBsf.ZLA6de8Nirc
+ HE4c2Y12T3ZqJQXDCOZQVd9xgsgC8Zy9.wm4uFnrBzDm8t.wOiKZs12UPhyKAUMJR1IcLsAcbh8k
+ bj61Ktg9ohslLutAIAIKlsL_KFVjkrXls1Ck2AtxonPWGY1N.EwCXD5wAcgjN5ADkGI6qOMGUs7V
+ miR22HzsmhF1CiLkc_iR68VZnjgsJ44KPb1FoxAMKtdgIDhs0XOU.qmV5UljaNClUUKPXThFqNCG
+ a4Su2aBu1SlET7T.gaBJwyLnDo1rG0mKSgfz9z9s8KEJkkYPtn73OAsvwwFetprD6o8ZpnMyFrm9
+ JhwRJ3xl6JKQ72Itp_s7KZDPtwxgCXrNpv6QQ0HykAz0Ks63DARvNdY3n_8g.SYT8nGRRmnpHlzG
+ b0fK1V.wOECbf_Ewly2n8TpjyXcy0n1BrHu4AjpUGXHasKrpJYgcr0TCYfeX5za9qJyjlpz5P1HM
+ f3H1Qze5HkHDjJ7LjmdkKp0ohyIra3IPsWtnfUxZIPEkyr3B.rOZoUHsInDddC4ZJ54goK2Uptxb
+ B4OCmUqK6oq_fJtfl8ctt2_rF5TXJ2_IsGJo7e1RQseMzMHe1H6BskciGbLSNziVCz8yFQRYxLAg
+ cQR5AjmH9KnZmBy8EP8pl_.IhpjaMZP3kzjwHVyQt6eRMVmQU7.USmc_cgKImepU1CziJHRKFuvt
+ u9GA9mwonQPOm07Ub66zWtVpwogwW5CY9XqCzKEIBLVT7WUPqYUlAZ9z3YGkQIJxg.cRYYFWIh_8
+ PnOPiHW7hOrR8GmKmjAzXilVzbYLdPaMeIAVJ.oiePAMPN2XdJuTZjDwVsqkHekbjGMB_i9j.BMJ
+ VVqkXD1B5P.DklpEADEIus8SU0bZg9bR0LYbtRHA5ItbbbCCAgzB1bsnBn_YfaV_i8hGw.SG26W6
+ 8AQDUmh_bvEqFzjwaYq_i3aqGa_E6ku4JcPs.s8nw7wJEq9K9u8Do1Uu22PZr2mD0gDoXsDlDetM
+ I.oNKFlos4AIg7HmOpvlbjM3P_uxyyANTd8UqGf8Ayq8wEN3iFgrVwcEbGBXhUK1R5R9S2_HNfH2
+ 7mKecrHRxoHdn5vUbw.VRG.HTj00NiNAJ0xNCkMh9o6TPEr03.4Q7H54kP1dYDBupeOjDfGjszWX
+ AHaDr_ohRAwNxyjgQoFKGsawki_xmiL80mn2NyhvONiETQDx..AmgJqdDi9zHmmX.LX62B8jDArr
+ p54U74EYWMgtky4jy.lGQEPOpJd1j46qcqXI3RZ2jQPlAcBzQxJE4B6Wq6lTyUO8g60ZsXvgc5TE
+ LSwokhcBOyiPW7JIUkRe8Fx5gY9Wil_VM2z8Xu6q6pwPays.F.D1bHIUZ7seHwjB3lqvPnkcVfWC
+ r.0i.F9zixy8VPS35t4ldr55Az5AoPO4LSmLnHO4s8P.50veWrwXke2dQxbaqvwiKLfHrRM8QeUU
+ Tg4FCjoFzqhT0LtuXjqjWM1otxBGl2f2Qs3Y2lZ_XrnlWumWSsrWeUYMaSZqPedrj7js8aF2oiPc
+ lgnoi6GMFuj7yMo8nntZKl7RMWwjDaMF7GnQf_j9_bV2mshBETHz44Zqe34Ua0HApaqGwzBkNrSP
+ gmKXEXxxfFpEvpuMb
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 46594e67-67ce-4159-a3c9-8e9139b5d02a
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Wed, 29 Mar 2023 18:59:19 +0000
+Received: by hermes--production-bf1-777648578f-286lr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f180f0c54ebbf84baabd1599b9c7b800;
+          Wed, 29 Mar 2023 18:59:15 +0000 (UTC)
+Message-ID: <d3b983f7-58c4-6d98-1ce7-fdb482572c8f@schaufler-ca.com>
+Date:   Wed, 29 Mar 2023 11:59:12 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwCXFABgNyRk2AzcAQ--.1625S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxGryktFy8JF1rur15Kw48WFg_yoWrKF15pa
-        98tas8Crn5JFy7Wr9aya18ua4SgrW8Gw1UK393GryjyFnIqr1IvryIyr15ur98WrW8Jrnx
-        tw4Yvw15Cw15t3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-        AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
-        14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
-        C2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
-        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262
-        kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s02
-        6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GF
-        v_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvE
-        c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-        AFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
-        pf9x07j7GYLUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQALBF1jj4tPUAAAsr
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Content-Language: en-US
+To:     LSM List <linux-security-module@vger.kernel.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Subject: Smack: Improve mount process memory use
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <d3b983f7-58c4-6d98-1ce7-fdb482572c8f.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.21284 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+The existing mount processing code in Smack makes many unnecessary
+copies of Smack labels. Because Smack labels never go away once
+imported it is safe to use pointers to them rather than copies.
+Replace the use of copies of label names to pointers to the global
+label list entries.
 
-Currently, evm_inode_init_security() processes a single LSM xattr from the
-array passed by security_inode_init_security(), and calculates the HMAC on
-it and other inode metadata.
-
-As the LSM infrastructure now can pass to EVM an array with multiple
-xattrs, scan them until the terminator (xattr name NULL), and calculate the
-HMAC on all of them.
-
-Also, double check that the xattrs array terminator is the first non-filled
-slot (obtained with lsm_find_xattr_slot()). Consumers of the xattrs array,
-such as the initxattrs() callbacks, rely on the terminator.
-
-Finally, change the name of the lsm_xattr parameter of evm_init_hmac() to
-xattrs, to reflect the new type of information passed.
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/integrity/evm/evm.h        |  4 +++-
- security/integrity/evm/evm_crypto.c | 11 +++++++++--
- security/integrity/evm/evm_main.c   | 29 +++++++++++++++++++++++++----
- 3 files changed, 37 insertions(+), 7 deletions(-)
+ security/smack/smack_lsm.c | 62 +++++++++++++++++-----------------------------
+ 1 file changed, 23 insertions(+), 39 deletions(-)
 
-diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
-index f8b8c5004fc..53bd7fec93f 100644
---- a/security/integrity/evm/evm.h
-+++ b/security/integrity/evm/evm.h
-@@ -46,6 +46,8 @@ struct evm_digest {
- 	char digest[IMA_MAX_DIGEST_SIZE];
- } __packed;
- 
-+int evm_protected_xattr(const char *req_xattr_name);
-+
- int evm_init_key(void);
- int evm_update_evmxattr(struct dentry *dentry,
- 			const char *req_xattr_name,
-@@ -58,7 +60,7 @@ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value,
- 		  size_t req_xattr_value_len, char type,
- 		  struct evm_digest *data);
--int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
-+int evm_init_hmac(struct inode *inode, const struct xattr *xattrs,
- 		  char *hmac_val);
- int evm_init_secfs(void);
- 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 033804f5a5f..0fdd382b58e 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -385,10 +385,11 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
- 	return rc;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 24ade96e17b3..027f6e2a3a27 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -550,23 +550,22 @@ static int smack_sb_alloc_security(struct super_block *sb)
  }
  
--int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
-+int evm_init_hmac(struct inode *inode, const struct xattr *xattrs,
- 		  char *hmac_val)
- {
- 	struct shash_desc *desc;
-+	const struct xattr *xattr;
+ struct smack_mnt_opts {
+-	const char *fsdefault, *fsfloor, *fshat, *fsroot, *fstransmute;
++	const char *fsdefault;
++	const char *fsfloor;
++	const char *fshat;
++	const char *fsroot;
++	const char *fstransmute;
+ };
  
- 	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
- 	if (IS_ERR(desc)) {
-@@ -396,7 +397,13 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
- 		return PTR_ERR(desc);
+ static void smack_free_mnt_opts(void *mnt_opts)
+ {
+-	struct smack_mnt_opts *opts = mnt_opts;
+-	kfree(opts->fsdefault);
+-	kfree(opts->fsfloor);
+-	kfree(opts->fshat);
+-	kfree(opts->fsroot);
+-	kfree(opts->fstransmute);
+-	kfree(opts);
++	kfree(mnt_opts);
+ }
+ 
+ static int smack_add_opt(int token, const char *s, void **mnt_opts)
+ {
+ 	struct smack_mnt_opts *opts = *mnt_opts;
++	struct smack_known *skp;
+ 
+ 	if (!opts) {
+ 		opts = kzalloc(sizeof(struct smack_mnt_opts), GFP_KERNEL);
+@@ -577,31 +576,35 @@ static int smack_add_opt(int token, const char *s, void **mnt_opts)
+ 	if (!s)
+ 		return -ENOMEM;
+ 
++	skp = smk_import_entry(s, 0);
++	if (IS_ERR(skp))
++		return PTR_ERR(skp);
++
+ 	switch (token) {
+ 	case Opt_fsdefault:
+ 		if (opts->fsdefault)
+ 			goto out_opt_err;
+-		opts->fsdefault = s;
++		opts->fsdefault = skp->smk_known;
+ 		break;
+ 	case Opt_fsfloor:
+ 		if (opts->fsfloor)
+ 			goto out_opt_err;
+-		opts->fsfloor = s;
++		opts->fsfloor = skp->smk_known;
+ 		break;
+ 	case Opt_fshat:
+ 		if (opts->fshat)
+ 			goto out_opt_err;
+-		opts->fshat = s;
++		opts->fshat = skp->smk_known;
+ 		break;
+ 	case Opt_fsroot:
+ 		if (opts->fsroot)
+ 			goto out_opt_err;
+-		opts->fsroot = s;
++		opts->fsroot = skp->smk_known;
+ 		break;
+ 	case Opt_fstransmute:
+ 		if (opts->fstransmute)
+ 			goto out_opt_err;
+-		opts->fstransmute = s;
++		opts->fstransmute = skp->smk_known;
+ 		break;
  	}
- 
--	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
-+	for (xattr = xattrs; xattr->name != NULL; xattr++) {
-+		if (!evm_protected_xattr(xattr->name))
-+			continue;
-+
-+		crypto_shash_update(desc, xattr->value, xattr->value_len);
-+	}
-+
- 	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
- 	kfree(desc);
  	return 0;
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 9e75759150c..6cbd739cf84 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -306,7 +306,7 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
- 	return found;
+@@ -629,33 +632,14 @@ static int smack_fs_context_dup(struct fs_context *fc,
+ 	fc->security = kzalloc(sizeof(struct smack_mnt_opts), GFP_KERNEL);
+ 	if (!fc->security)
+ 		return -ENOMEM;
++
+ 	dst = fc->security;
++	dst->fsdefault = src->fsdefault;
++	dst->fsfloor = src->fsfloor;
++	dst->fshat = src->fshat;
++	dst->fsroot = src->fsroot;
++	dst->fstransmute = src->fstransmute;
+ 
+-	if (src->fsdefault) {
+-		dst->fsdefault = kstrdup(src->fsdefault, GFP_KERNEL);
+-		if (!dst->fsdefault)
+-			return -ENOMEM;
+-	}
+-	if (src->fsfloor) {
+-		dst->fsfloor = kstrdup(src->fsfloor, GFP_KERNEL);
+-		if (!dst->fsfloor)
+-			return -ENOMEM;
+-	}
+-	if (src->fshat) {
+-		dst->fshat = kstrdup(src->fshat, GFP_KERNEL);
+-		if (!dst->fshat)
+-			return -ENOMEM;
+-	}
+-	if (src->fsroot) {
+-		dst->fsroot = kstrdup(src->fsroot, GFP_KERNEL);
+-		if (!dst->fsroot)
+-			return -ENOMEM;
+-	}
+-	if (src->fstransmute) {
+-		dst->fstransmute = kstrdup(src->fstransmute, GFP_KERNEL);
+-		if (!dst->fstransmute)
+-			return -ENOMEM;
+-	}
+ 	return 0;
  }
  
--static int evm_protected_xattr(const char *req_xattr_name)
-+int evm_protected_xattr(const char *req_xattr_name)
- {
- 	return evm_protected_xattr_common(req_xattr_name, false);
- }
-@@ -870,14 +870,35 @@ int evm_inode_init_security(struct inode *inode, struct inode *dir,
- 			    int *num_filled_xattrs)
- {
- 	struct evm_xattr *xattr_data;
--	struct xattr *evm_xattr;
-+	struct xattr *xattr, *evm_xattr;
-+	bool evm_protected_xattrs = false;
- 	int rc;
- 
--	if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs ||
--	    !evm_protected_xattr(xattrs->name))
-+	if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs)
-+		return -EOPNOTSUPP;
-+
-+	/*
-+	 * security_inode_init_security() makes sure that the xattrs array is
-+	 * contiguous, there is enough space for security.evm, and that there is
-+	 * a terminator at the end of the array.
-+	 */
-+	for (xattr = xattrs; xattr->name != NULL; xattr++) {
-+		if (evm_protected_xattr(xattr->name))
-+			evm_protected_xattrs = true;
-+	}
-+
-+	/* EVM xattr not needed. */
-+	if (!evm_protected_xattrs)
- 		return -EOPNOTSUPP;
- 
- 	evm_xattr = lsm_find_xattr_slot(xattrs, num_filled_xattrs);
-+	/*
-+	 * Array terminator (xattr name = NULL) must be the first non-filled
-+	 * xattr slot.
-+	 */
-+	WARN_ONCE(evm_xattr != xattr,
-+		  "%s: xattrs terminator is not the first non-filled slot\n",
-+		  __func__);
- 
- 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
- 	if (!xattr_data)
--- 
-2.25.1
+@@ -712,8 +696,8 @@ static int smack_sb_eat_lsm_opts(char *options, void **mnt_opts)
+ 		if (token != Opt_error) {
+ 			arg = kmemdup_nul(arg, from + len - arg, GFP_KERNEL);
+ 			rc = smack_add_opt(token, arg, mnt_opts);
++			kfree(arg);
+ 			if (unlikely(rc)) {
+-				kfree(arg);
+ 				if (*mnt_opts)
+ 					smack_free_mnt_opts(*mnt_opts);
+ 				*mnt_opts = NULL;
 
