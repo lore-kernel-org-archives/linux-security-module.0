@@ -2,150 +2,221 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3833CC761A6
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Mar 2023 23:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB5CC74A5B
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Mar 2023 01:10:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231246AbjC2X1l (ORCPT
+        id S229801AbjC3BKf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Mar 2023 19:27:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37192 "EHLO
+        Wed, 29 Mar 2023 21:10:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230434AbjC2X1k (ORCPT
+        with ESMTP id S229638AbjC3BKe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Mar 2023 19:27:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 371A51BCD;
-        Wed, 29 Mar 2023 16:27:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C20DE61E90;
-        Wed, 29 Mar 2023 23:27:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF961C433EF;
-        Wed, 29 Mar 2023 23:27:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680132458;
-        bh=va7d2GLw1gA/1mUq8elp7JWAd8lhqItS9Egqxi+FOis=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cSCuYQqsQL7EeGLKDZsKHIqRpjXtodrv003f6xzz5XrVPEdJdcujCAxyRV1/mAwrN
-         9Nqz6Oex7zqdB5ExLj53TEPIZNa8KjvoxSm+E3tvfBiBzTLQm3mfLKOjVwuLwNoY9M
-         3X+5doH5ew4C9yGwBBvRvos6WLnGIEptr3gzNHl9MLNCDqa44yQeh15R8AETuhBg8r
-         lsUcFMKlR37plEdlCioPZO5OBt9IAt3uhWBredAw+FVfeXohzPHq7wUxMocNIKy7fn
-         5Fgrl/BOA/etfDdwb6dZazyo89jxjdVHAnc7HNYfKmfg3OHHyq+FicI5vDY5gft7HG
-         bMH0BB1knqMbA==
-Date:   Thu, 30 Mar 2023 02:27:35 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Eric Snowberg <eric.snowberg@oracle.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "pvorel@suse.cz" <pvorel@suse.cz>,
-        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>,
-        "erpalmer@linux.vnet.ibm.com" <erpalmer@linux.vnet.ibm.com>,
-        "coxu@redhat.com" <coxu@redhat.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v5 5/6] KEYS: CA link restriction
-Message-ID: <20230329232735.dvmxvwis2psbvyw5@kernel.org>
-References: <20230302164652.83571-1-eric.snowberg@oracle.com>
- <20230302164652.83571-6-eric.snowberg@oracle.com>
- <ZAz8QlynTSMD7kuE@kernel.org>
- <07FFED83-501D-418C-A4BB-862A547DD7B0@oracle.com>
- <20230320182822.6xyh6ibatrz5yrhb@kernel.org>
- <84d46fb108f6ce2a322b6486529fc6dd0f8deea5.camel@linux.ibm.com>
+        Wed, 29 Mar 2023 21:10:34 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76EF0558E
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Mar 2023 18:10:28 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id e65so21638469ybh.10
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Mar 2023 18:10:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1680138627;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0SGh3fZWr7hGlmOJJyEOV+nHbXyUtBvRhIDq9a23Cf8=;
+        b=bmTUyijVn1l5Flp50doP9tPK+ixFjShRWiQyZM/Z5EPAuv6t3tWyTSPK7SH7Ywn6TJ
+         ofpimuXBl8593gBSB4VG8NvpOa/x2sqXARQK7N+iqUMtqTUr0PDGVlvzlhBNWXBP/cWm
+         kSnyDU9lH59nY8zlkBHtV3EYvU8x/2DZnmummRNE5xT27AW0lMWEutv7p3rZIDSO+Qk+
+         CnnqZJnu6NT/7qqI504i/SksAnqSD4GjZEyY1EuibJTdwEsOeZZwOic4gc45la6y3Poz
+         5g8Uy8XPHkeicYBTnkTpn4porfisuodnF125fBmozroANNnp6HVnjPg1synrSVBbU3HK
+         rccg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680138627;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0SGh3fZWr7hGlmOJJyEOV+nHbXyUtBvRhIDq9a23Cf8=;
+        b=EvP/GTyqatYPljkCmmOxkMrCjjilBqmPRR6yCqgCgTRcVEVo0cVcLyOOANGhNurtqx
+         1P2M8FGdvAbahK5LzSUepP+167GrFqjxDUdXzEaONJ9OF9pPWjy6ogBHbGB1YI6dLFq4
+         XcH7lgmASK3S9ncVGXAm2K3oshSCSvqVnwtjzklvzBIezHIqFpGaq7Q1eAmf17fbJXsO
+         5+C2GU3+YXyiYnBj5QHYHznRViEBQLelpg8ncG63lcWAl/+4MQsYKWh6pYT4e8IOR6SY
+         DiMbzbNVRZFvoDw6EswPpMBy6do1aSRgV5RMqgUzf+uImygw8WUMdrv6EjzrCaelTA+1
+         QqBQ==
+X-Gm-Message-State: AAQBX9fcVO8wtG9YgSLSVh9LFRytD+Nh3TIYxWQYF2iLJjSLUaHmd08B
+        aLdfWV83XW+XdlJRKNKpiCtVAMcRdFIUAiS68x1E
+X-Google-Smtp-Source: AKy350Z/cQ952yf9ZDOWZown0C3FWIiWHZiMhKCaOLerWDAR4sqXen8YH7/P0OZwdzzR7iZBQF6gbXJJO2/73tXA4rg=
+X-Received: by 2002:a05:6902:102a:b0:b71:f49f:8d22 with SMTP id
+ x10-20020a056902102a00b00b71f49f8d22mr11290085ybt.3.1680138627424; Wed, 29
+ Mar 2023 18:10:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84d46fb108f6ce2a322b6486529fc6dd0f8deea5.camel@linux.ibm.com>
+References: <20230315224704.2672-1-casey@schaufler-ca.com> <20230315224704.2672-2-casey@schaufler-ca.com>
+In-Reply-To: <20230315224704.2672-2-casey@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 29 Mar 2023 21:10:16 -0400
+Message-ID: <CAHC9VhTdiKi99Hx1OVDQkG3DEf_V_LV0DhB8n2=BoyH7r69TCQ@mail.gmail.com>
+Subject: Re: [PATCH v7 01/11] LSM: Identify modules by more than name
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-security-module@vger.kernel.org, jmorris@namei.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        mic@digikod.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 20, 2023 at 04:35:33PM -0400, Mimi Zohar wrote:
-> On Mon, 2023-03-20 at 20:28 +0200, Jarkko Sakkinen wrote:
-> > On Mon, Mar 20, 2023 at 05:35:05PM +0000, Eric Snowberg wrote:
-> > > 
-> > > 
-> > > > On Mar 11, 2023, at 3:10 PM, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > > > 
-> > > > On Thu, Mar 02, 2023 at 11:46:51AM -0500, Eric Snowberg wrote:
-> > > >> Add a new link restriction.  Restrict the addition of keys in a keyring
-> > > >> based on the key to be added being a CA.
-> > > >> 
-> > > >> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> > > >> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > >> ---
-> > > >> crypto/asymmetric_keys/restrict.c | 38 +++++++++++++++++++++++++++++++
-> > > >> include/crypto/public_key.h       | 15 ++++++++++++
-> > > >> 2 files changed, 53 insertions(+)
-> > > >> 
-> > > >> diff --git a/crypto/asymmetric_keys/restrict.c b/crypto/asymmetric_keys/restrict.c
-> > > >> index 6b1ac5f5896a..48457c6f33f9 100644
-> > > >> --- a/crypto/asymmetric_keys/restrict.c
-> > > >> +++ b/crypto/asymmetric_keys/restrict.c
-> > > >> @@ -108,6 +108,44 @@ int restrict_link_by_signature(struct key *dest_keyring,
-> > > >> 	return ret;
-> > > >> }
-> > > >> 
-> > > >> +/**
-> > > >> + * restrict_link_by_ca - Restrict additions to a ring of CA keys
-> > > >> + * @dest_keyring: Keyring being linked to.
-> > > >> + * @type: The type of key being added.
-> > > >> + * @payload: The payload of the new key.
-> > > >> + * @trust_keyring: Unused.
-> > > >> + *
-> > > >> + * Check if the new certificate is a CA. If it is a CA, then mark the new
-> > > >> + * certificate as being ok to link.
-> > > >> + *
-> > > >> + * Returns 0 if the new certificate was accepted, -ENOKEY if the
-> > > >> + * certificate is not a CA. -ENOPKG if the signature uses unsupported
-> > > >> + * crypto, or some other error if there is a matching certificate but
-> > > >> + * the signature check cannot be performed.
-> > > >> + */
-> > > >> +int restrict_link_by_ca(struct key *dest_keyring,
-> > > >> +			const struct key_type *type,
-> > > >> +			const union key_payload *payload,
-> > > >> +			struct key *trust_keyring)
-> > > >> +{
-> > > >> +	const struct public_key *pkey;
-> > > >> +
-> > > >> +	if (type != &key_type_asymmetric)
-> > > >> +		return -EOPNOTSUPP;
-> > > >> +
-> > > >> +	pkey = payload->data[asym_crypto];
-> > > >> +	if (!pkey)
-> > > >> +		return -ENOPKG;
-> > > >> +	if (!test_bit(KEY_EFLAG_CA, &pkey->key_eflags))
-> > > >> +		return -ENOKEY;
-> > > >> +	if (!test_bit(KEY_EFLAG_KEYCERTSIGN, &pkey->key_eflags))
-> > > >> +		return -ENOKEY;
-> > > >> +	if (test_bit(KEY_EFLAG_DIGITALSIG, &pkey->key_eflags))
-> > > >> +		return -ENOKEY;
-> > > > 
-> > > > nit: would be more readable, if conditions were separated by
-> > > > empty lines.
-> > > 
-> > > Ok, I will make this change in the next round.  Thanks.
-> > 
-> > Cool! Mimi have you tested these patches with IMA applied?
-> 
-> Yes, it's working as expected.
+On Wed, Mar 15, 2023 at 6:47=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+>
+> Create a struct lsm_id to contain identifying information
+> about Linux Security Modules (LSMs). At inception this contains
+> the name of the module, an identifier associated with the security
+> module and an integer member "attrs" which identifies the API
+> related data associated with each security module. The initial set
+> of features maps to information that has traditionaly been available
+> in /proc/self/attr. They are documented in a new userspace-api file.
+> Change the security_add_hooks() interface to use this structure.
+> Change the individual modules to maintain their own struct lsm_id
+> and pass it to security_add_hooks().
+>
+> The values are for LSM identifiers are defined in a new UAPI
+> header file linux/lsm.h. Each existing LSM has been updated to
+> include it's LSMID in the lsm_id.
+>
+> The LSM ID values are sequential, with the oldest module
+> LSM_ID_CAPABILITY being the lowest value and the existing modules
+> numbered in the order they were included in the main line kernel.
+> This is an arbitrary convention for assigning the values, but
+> none better presents itself. The value 0 is defined as being invalid.
+> The values 1-99 are reserved for any special case uses which may
+> arise in the future. This may include attributes of the LSM
+> infrastructure itself, possibly related to namespacing or network
+> attribute management. A special range is identified for such attributes
+> to help reduce confusion for developers unfamiliar with LSMs.
+>
+> LSM attribute values are defined for the attributes presented by
+> modules that are available today. As with the LSM IDs, The value 0
+> is defined as being invalid. The values 1-99 are reserved for any
+> special case uses which may arise in the future.
+>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: linux-security-module <linux-security-module@vger.kernel.org>
+> ---
+>  Documentation/userspace-api/index.rst |  1 +
+>  Documentation/userspace-api/lsm.rst   | 55 +++++++++++++++++++++++++++
+>  MAINTAINERS                           |  1 +
+>  include/linux/lsm_hooks.h             | 18 ++++++++-
+>  include/uapi/linux/lsm.h              | 53 ++++++++++++++++++++++++++
+>  security/apparmor/lsm.c               |  8 +++-
+>  security/bpf/hooks.c                  |  9 ++++-
+>  security/commoncap.c                  |  8 +++-
+>  security/landlock/cred.c              |  2 +-
+>  security/landlock/fs.c                |  2 +-
+>  security/landlock/ptrace.c            |  2 +-
+>  security/landlock/setup.c             |  6 +++
+>  security/landlock/setup.h             |  1 +
+>  security/loadpin/loadpin.c            |  9 ++++-
+>  security/lockdown/lockdown.c          |  8 +++-
+>  security/safesetid/lsm.c              |  9 ++++-
+>  security/security.c                   | 12 +++---
+>  security/selinux/hooks.c              |  9 ++++-
+>  security/smack/smack_lsm.c            |  8 +++-
+>  security/tomoyo/tomoyo.c              |  9 ++++-
+>  security/yama/yama_lsm.c              |  8 +++-
+>  21 files changed, 217 insertions(+), 21 deletions(-)
+>  create mode 100644 Documentation/userspace-api/lsm.rst
+>  create mode 100644 include/uapi/linux/lsm.h
 
-Thank you. Please check that I filled additional tags correctly:
+...
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 6e156d2acffc..32285ce65419 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1665,6 +1665,20 @@ struct security_hook_heads {
+>         #undef LSM_HOOK
+>  } __randomize_layout;
+>
+> +/**
+> + * struct lsm_id - Identify a Linux Security Module.
+> + * @lsm: name of the LSM, must be approved by the LSM maintainers
+> + * @id: LSM ID number from uapi/linux/lsm.h
+> + * @attrs: which attributes this LSM supports
+> + *
+> + * Contains the information that identifies the LSM.
+> + */
+> +struct lsm_id {
+> +       const u8        *lsm;
+> +       u64             id;
+> +       u64             attrs;
+> +};
 
-I will then put these also to my 'next' branch and they will get mirrored
-to linux-next.
+I would either start setting the 'attrs' field values in the LSMs when
+their 'lsm_id' struct is defined or I would leave it out of this patch
+and add it later in the patchset when it is used.
 
-BR, Jarkko
+> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+> new file mode 100644
+> index 000000000000..aa3e01867739
+> --- /dev/null
+> +++ b/include/uapi/linux/lsm.h
+> @@ -0,0 +1,53 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * Linux Security Modules (LSM) - User space API
+> + *
+> + * Copyright (C) 2022 Casey Schaufler <casey@schaufler-ca.com>
+> + * Copyright (C) 2022 Intel Corporation
+> + */
+> +
+> +#ifndef _UAPI_LINUX_LSM_H
+> +#define _UAPI_LINUX_LSM_H
+> +
+> +/*
+> + * ID tokens to identify Linux Security Modules (LSMs)
+> + *
+> + * These token values are used to uniquely identify specific LSMs
+> + * in the kernel as well as in the kernel's LSM userspace API.
+> + *
+> + * A value of zero/0 is considered undefined and should not be used
+> + * outside the kernel. Values 1-99 are reserved for potential
+> + * future use.
+> + */
+> +#define LSM_ID_UNDEF           0
+> +#define LSM_ID_CAPABILITY      100
+> +#define LSM_ID_SELINUX         101
+> +#define LSM_ID_SMACK           102
+> +#define LSM_ID_TOMOYO          103
+> +#define LSM_ID_IMA             104
+> +#define LSM_ID_APPARMOR                105
+> +#define LSM_ID_YAMA            106
+> +#define LSM_ID_LOADPIN         107
+> +#define LSM_ID_SAFESETID       108
+> +#define LSM_ID_LOCKDOWN                109
+> +#define LSM_ID_BPF             110
+> +#define LSM_ID_LANDLOCK                111
+> +
+> +/*
+> + * LSM_ATTR_XXX definitions identify different LSM attributes
+> + * which are used in the kernel's LSM userspace API. Support
+> + * for these attributes vary across the different LSMs. None
+> + * are required.
+> + *
+> + * A value of zero/0 is considered undefined and should not be used
+> + * outside the kernel. Values 1-99 are reserved for potential
+> + * future use.
+> + */
+> +#define LSM_ATTR_CURRENT       100
+> +#define LSM_ATTR_EXEC          101
+> +#define LSM_ATTR_FSCREATE      102
+> +#define LSM_ATTR_KEYCREATE     103
+> +#define LSM_ATTR_PREV          104
+> +#define LSM_ATTR_SOCKCREATE    105
+
+We might as well add a LSM_ATTR_UNDEF for zero/0.
+
+> +#endif /* _UAPI_LINUX_LSM_H */
+
+--
+paul-moore.com
