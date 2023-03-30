@@ -2,59 +2,59 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E755C74A5B
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Mar 2023 01:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73352C74A5B
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Mar 2023 01:13:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229592AbjC3BNL (ORCPT
+        id S229501AbjC3BNi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Mar 2023 21:13:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40992 "EHLO
+        Wed, 29 Mar 2023 21:13:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229513AbjC3BNK (ORCPT
+        with ESMTP id S229603AbjC3BNh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Mar 2023 21:13:10 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CA34558E
-        for <linux-security-module@vger.kernel.org>; Wed, 29 Mar 2023 18:13:03 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id z83so21716869ybb.2
-        for <linux-security-module@vger.kernel.org>; Wed, 29 Mar 2023 18:13:03 -0700 (PDT)
+        Wed, 29 Mar 2023 21:13:37 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CE9D10F3
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Mar 2023 18:13:36 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id f188so3244125ybb.3
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Mar 2023 18:13:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1680138782;
+        d=paul-moore.com; s=google; t=1680138816;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XXJuH4+zi+/MMgrdfkbLfVL94s0Gkym3lpLnVhFgnPI=;
-        b=Ya57IjZqn3R/knpdkFDNWTnpqO1nF9sa9ZtXoRj3N9gyG3h6UOysD16RMv4WcS/QN7
-         qnNA3Mkr+uPa5bzE7TylZb63MxWB2+rJyzmetuCVHJyb+306IA2zr0cXgbdYNENVj5dY
-         aq1YBAbDb+o4XT3xBqvTIx1ZpdcehR2vXkhqok4rGf913AFv0bYJ7WJEF+7tih3qOE1+
-         8XA3FL6MuU0Ndr2Vh8fJ0j3m0yU9uF+gnJIAspxx3KqubipTJIP1S6E3Dxe0daROawsD
-         O6ut/OBesdTxPwkwBNhXnEH5KgHfNG65Yj9wxq99xvukBXZgkBM9Yl2X2X72x+XzDgzB
-         BZag==
+        bh=mD7V827LGMQPDZbYWYTAu0xqEkrvaQm+VNiFn3rB9QQ=;
+        b=EBrqm2rDlSB6FuiS8DTfp+/vWKwVt9hpV0zhN0JAOunLZZhcROqVbb0JQ0AaMUKqyT
+         a4lV2L7GWtZwYSMcj9RkdeqD5UAu7Tg4SCPLsl9FOsecFPLjxbms6VjuN+PIraWEkCSo
+         I1NLYy1TeIH8x2jsAnxo2e6to9SXQev011GxU2WqzyHpXaTgr1vEcYBHdSNXsdawOtOS
+         6q9Y6OORsj+i3XlaMcLeGh00oPW1nRuHGrOUpDhGBMn9VsBXN53AExx62294YnB4sT0k
+         AjOj8DA3wwqLLLdelTif+Em6PND78Xgooyq0dCFhFK5/Ux1B3vEFUyNdvfw73s6OvXFT
+         ZN2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680138782;
+        d=1e100.net; s=20210112; t=1680138816;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XXJuH4+zi+/MMgrdfkbLfVL94s0Gkym3lpLnVhFgnPI=;
-        b=ITJanyxLp7S5TDe+VLTlZKls/KgtnXKBwhxI4aa5k59deYHKUfuOGA2KaSus5oHhRx
-         Z1dvnVFpSAHDIMnNsNUbKGpKCw96+Zhus6rFyqfO48eFTxTkIQg6KBlcIM9bGaU+GOeW
-         Q7mi7CzcHOnjGS2Fw91I5FFNXD2jTob94DOTODtKMF8P2Pi7mIo77HqUTRsfHHcwxNAB
-         EjJihuWKkiHRdji8lnLp5qVTwEgccrrvE86dtlFSmnkhTUXIS6Efyl3WBU24lU9TRw4o
-         PKR2fQUf6aG2mvxt+1V0Ml6+1UDzUcWdrPw8G4LaVlQFj4I3oyBO2xadqB7I3cqqvOr3
-         1mHQ==
-X-Gm-Message-State: AAQBX9eewp0f8ooIN6VZrdR4iHbaX4DneYXEf/QM4LSL0t9L656D/u7w
-        rG0jRSNmTspkplHNu9PFuQy6GEE6lWqoulCTpaR1TZxl4LGlceo=
-X-Google-Smtp-Source: AKy350Z2yN4kbSDx95+6XZH60LES+XR6Emn1TIIxi2Oa1YE8MnNCgKw3ExsdxuD7KyItixgjDglwUMX+dwrjl/3PAPM=
-X-Received: by 2002:a05:6902:72e:b0:b6c:f26c:e5ab with SMTP id
- l14-20020a056902072e00b00b6cf26ce5abmr14718432ybt.3.1680138782566; Wed, 29
- Mar 2023 18:13:02 -0700 (PDT)
+        bh=mD7V827LGMQPDZbYWYTAu0xqEkrvaQm+VNiFn3rB9QQ=;
+        b=ifmtZ3khxA3inZfIgPMobHG2dM0tVqdnlwTPhUeWSf7DklMHHCjrhgK4qP9HyRNY54
+         /FwdnTKkxTuuBU0FzO2miN8dMVVqTdZ22SAN8xnk6uga3Oync/abP4gR3ikzBgLOII62
+         nQVpeH/ZyTb7043RC+sRw80NaOk0bu2Mo3qJUHdFP1Qg2c6chrxEAHXb/T0pkVlzXl0+
+         ZYO7Osf33jp2wpZARM3vOrLes1ZdwozhJeKqDuM7PWGgyW+bd6XkSqvgfF4hPTzCb19S
+         YYqP1aapSqGz9fYfAk3/i4sOrccI/YnR5xL6uNYrn3mW7gnWjDxMrsEZ8fuK+A2LfkLH
+         ogiw==
+X-Gm-Message-State: AAQBX9eJ62UNPqVrs72qw7KBO8/DtxkqK5TmLNdO5B9uYDXQQfkTUYSl
+        heq2OSqTPaljxtYg7VKuXxRkxD8HxF3mNBh3v1C3
+X-Google-Smtp-Source: AKy350aLjsjvpAwhol6hTTKWeSJXqiTRC6amNQl3l2YyGTmzC92tDsow1wYnpDLkuu/ZTZRpeh+bHilakoLHCD8u+eY=
+X-Received: by 2002:a05:6902:70a:b0:b6e:361a:c86 with SMTP id
+ k10-20020a056902070a00b00b6e361a0c86mr11608972ybt.3.1680138816161; Wed, 29
+ Mar 2023 18:13:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230315224704.2672-1-casey@schaufler-ca.com> <20230315224704.2672-6-casey@schaufler-ca.com>
-In-Reply-To: <20230315224704.2672-6-casey@schaufler-ca.com>
+References: <20230315224704.2672-1-casey@schaufler-ca.com> <20230315224704.2672-8-casey@schaufler-ca.com>
+In-Reply-To: <20230315224704.2672-8-casey@schaufler-ca.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 29 Mar 2023 21:12:51 -0400
-Message-ID: <CAHC9VhR8WycNQ_mxeB9icN6ddQKtNCkkzTPtdJJKDW-qQXL3ug@mail.gmail.com>
-Subject: Re: [PATCH v7 05/11] LSM: Create lsm_list_modules system call
+Date:   Wed, 29 Mar 2023 21:13:25 -0400
+Message-ID: <CAHC9VhT9j78jC66xv-pV1iPmgEK6=fHddFVaAS8Qmm_WyYMypQ@mail.gmail.com>
+Subject: Re: [PATCH v7 07/11] LSM: Helpers for attribute names and filling an lsm_ctx
 To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     linux-security-module@vger.kernel.org, jmorris@namei.org,
         keescook@chromium.org, john.johansen@canonical.com,
@@ -66,87 +66,140 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 15, 2023 at 6:48=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+On Wed, Mar 15, 2023 at 6:50=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
 .com> wrote:
 >
-> Create a system call to report the list of Linux Security Modules
-> that are active on the system. The list is provided as an array
-> of LSM ID numbers.
+> Add lsm_name_to_attr(), which translates a text string to a
+> LSM_ATTR value if one is available.
 >
-> The calling application can use this list determine what LSM
-> specific actions it might take. That might include chosing an
-> output format, determining required privilege or bypassing
-> security module specific behavior.
+> Add lsm_fill_user_ctx(), which fills a struct lsm_ctx, including
+> the trailing attribute value.
+>
+> All are used in module specific components of LSM system calls.
 >
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->  Documentation/userspace-api/lsm.rst |  3 +++
->  include/linux/syscalls.h            |  1 +
->  kernel/sys_ni.c                     |  1 +
->  security/lsm_syscalls.c             | 39 +++++++++++++++++++++++++++++
->  4 files changed, 44 insertions(+)
+>  include/linux/security.h | 13 ++++++++++
+>  security/lsm_syscalls.c  | 51 ++++++++++++++++++++++++++++++++++++++++
+>  security/security.c      | 31 ++++++++++++++++++++++++
+>  3 files changed, 95 insertions(+)
 
 ...
 
 > diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
-> index feee31600219..6efbe244d304 100644
+> index 6efbe244d304..55d849ad5d6e 100644
 > --- a/security/lsm_syscalls.c
 > +++ b/security/lsm_syscalls.c
-> @@ -53,3 +53,42 @@ SYSCALL_DEFINE4(lsm_get_self_attr, unsigned int, attr,=
- struct lsm_ctx __user *,
->  {
->         return security_getselfattr(attr, ctx, size, flags);
->  }
+> @@ -17,6 +17,57 @@
+>  #include <linux/lsm_hooks.h>
+>  #include <uapi/linux/lsm.h>
+>
+> +struct attr_map {
+> +       char *name;
+> +       u64 attr;
+> +};
+> +
+> +static const struct attr_map lsm_attr_names[] =3D {
+> +       {
+> +               .name =3D "current",
+> +               .attr =3D LSM_ATTR_CURRENT,
+> +       },
+> +       {
+> +               .name =3D "exec",
+> +               .attr =3D LSM_ATTR_EXEC,
+> +       },
+> +       {
+> +               .name =3D "fscreate",
+> +               .attr =3D LSM_ATTR_FSCREATE,
+> +       },
+> +       {
+> +               .name =3D "keycreate",
+> +               .attr =3D LSM_ATTR_KEYCREATE,
+> +       },
+> +       {
+> +               .name =3D "prev",
+> +               .attr =3D LSM_ATTR_PREV,
+> +       },
+> +       {
+> +               .name =3D "sockcreate",
+> +               .attr =3D LSM_ATTR_SOCKCREATE,
+> +       },
+> +};
 > +
 > +/**
-> + * sys_lsm_list_modules - Return a list of the active security modules
-> + * @ids: the LSM module ids
-> + * @size: size of @ids, updated on return
-> + * @flags: reserved for future use, must be zero
+> + * lsm_name_to_attr - map an LSM attribute name to its ID
+> + * @name: name of the attribute
 > + *
-> + * Returns a list of the active LSM ids. On success this function
-> + * returns the number of @ids array elements. This value may be zero
-> + * if there are no LSMs active. If @size is insufficient to contain
-> + * the return data -E2BIG is returned and @size is set to the minimum
-> + * required size. In all other cases a negative value indicating the
-> + * error is returned.
+> + * Look the given @name up in the table of know attribute names.
+> + *
+> + * Returns the LSM attribute value associated with @name, or 0 if
+> + * there is no mapping.
 > + */
-> +SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, size_t __user *, si=
-ze,
-> +               u32, flags)
+> +u64 lsm_name_to_attr(const char *name)
 > +{
-> +       size_t total_size =3D lsm_active_cnt * sizeof(*ids);
-> +       size_t usize;
 > +       int i;
 > +
-> +       if (flags)
-> +               return -EINVAL;
+> +       for (i =3D 0; i < ARRAY_SIZE(lsm_attr_names); i++)
+> +               if (!strcmp(name, lsm_attr_names[i].name))
+> +                       return lsm_attr_names[i].attr;
 
-In other patches in this patchset you use 'if (flags !=3D 0)'; I don't
-care too much which approach you take, but please be consistent.
+I'm pretty sure this is the only place where @lsm_attr_names is used,
+right?  If true, when coupled with the idea that these syscalls are
+going to close the door on new LSM attributes in procfs I think we can
+just put the mapping directly in this function via a series of
+if-statements.
 
-Actually, I guess you might as well just go with 'if (flags)' since
-I'm pretty sure someone later down the line will end up wasting
-reviewer time by changing '(flags !=3D 0)' into '(flags)' ...
-
-
-> +       if (get_user(usize, size))
-> +               return -EFAULT;
-> +
-> +       if (put_user(total_size, size) !=3D 0)
-> +               return -EFAULT;
-> +
-> +       if (usize < total_size)
-> +               return -E2BIG;
-> +
-> +       for (i =3D 0; i < lsm_active_cnt; i++)
-> +               if (put_user(lsm_idlist[i]->id, ids++))
-> +                       return -EFAULT;
-> +
-> +       return lsm_active_cnt;
+> +       return 0;
 > +}
-> --
-> 2.39.2
+> +
+>  /**
+>   * sys_lsm_set_self_attr - Set current task's security module attribute
+>   * @attr: which attribute to set
+> diff --git a/security/security.c b/security/security.c
+> index 2c57fe28c4f7..f7b814a3940c 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -753,6 +753,37 @@ static int lsm_superblock_alloc(struct super_block *=
+sb)
+>         return 0;
+>  }
+>
+> +/**
+> + * lsm_fill_user_ctx - Fill a user space lsm_ctx structure
+> + * @ctx: an LSM context to be filled
+> + * @context: the new context value
+> + * @context_size: the size of the new context value
+> + * @id: LSM id
+> + * @flags: LSM defined flags
+> + *
+> + * Fill all of the fields in a user space lsm_ctx structure.
+> + * Caller is assumed to have verified that @ctx has enough space
+> + * for @context.
+> + * Returns 0 on success, -EFAULT on a copyout error.
+> + */
+> +int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
+> +                     size_t context_size, u64 id, u64 flags)
+> +{
+> +       struct lsm_ctx local;
+> +       void __user *vc =3D ctx;
+> +
+> +       local.id =3D id;
+> +       local.flags =3D flags;
+> +       local.ctx_len =3D context_size;
+> +       local.len =3D context_size + sizeof(local);
+> +       vc +=3D sizeof(local);
+
+See my prior comments about void pointer math.
+
+> +       if (copy_to_user(ctx, &local, sizeof(local)))
+> +               return -EFAULT;
+> +       if (context_size > 0 && copy_to_user(vc, context, context_size))
+> +               return -EFAULT;
+
+Should we handle the padding in this function?
+
+> +       return 0;
+> +}
 
 --
 paul-moore.com
