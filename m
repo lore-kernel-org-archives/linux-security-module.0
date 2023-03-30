@@ -2,197 +2,129 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA679C761AF
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Mar 2023 06:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E95C6FD1D
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Mar 2023 11:24:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230004AbjC3GCp (ORCPT
+        id S231580AbjC3LYe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Mar 2023 02:02:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58122 "EHLO
+        Thu, 30 Mar 2023 07:24:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229717AbjC3GCo (ORCPT
+        with ESMTP id S231592AbjC3LYd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Mar 2023 02:02:44 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE0E761B5;
-        Wed, 29 Mar 2023 23:02:30 -0700 (PDT)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32U5cVhZ015618;
-        Thu, 30 Mar 2023 06:02:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=D8BLJKqTKr4rrKXsGkt3MWAUhN1P3ddzzG00QTMTrcA=;
- b=CIgbVvP8nY4lSzLuwgFNXcbkpi0+yT2OAzGlRC+5Xf1sH7i6BE+m1AZPjX0MYkzPllSt
- iNNjguigA39uPBENAZfX1cB+KjR28PFsjmCGwPLFGJr49g9+YGRqtNtv96m0zXmA2p4d
- UfEKZUxd5z5TVgV4ugp9aELRGs0Xpk/1fJNSBTUXQyp4TrDXBDpSw+gW8CsoGig1rPO1
- mRNiPHxZw7YXc8+AY1VbYpXdoCETJtfUyM1n24NZ/dq9O7G2hjSXiOPCcyc+vyAkox/t
- bA17STqHKwXVy9rH7r+tte/exp1PVFL9ImCHQP5hWw5D4uXi3zzD/ZgQI6UxmPCMGWck rg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3pmph951bn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 30 Mar 2023 06:02:01 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32U5qwwR026070;
-        Thu, 30 Mar 2023 06:02:01 GMT
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3pmph951au-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 30 Mar 2023 06:02:00 +0000
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32U2JgfY002608;
-        Thu, 30 Mar 2023 06:01:59 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([9.208.130.99])
-        by ppma05wdc.us.ibm.com (PPS) with ESMTPS id 3phrk7jc4t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 30 Mar 2023 06:01:59 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-        by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32U61wF239322280
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Mar 2023 06:01:58 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8AFCF580FF;
-        Thu, 30 Mar 2023 06:01:58 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DE5DF580F9;
-        Thu, 30 Mar 2023 06:01:53 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.174.114])
-        by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Thu, 30 Mar 2023 06:01:53 +0000 (GMT)
-Message-ID: <55b5c21ee1cf47aff0b2e5a94ec65fe326c8d6ba.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 5/6] KEYS: CA link restriction
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Eric Snowberg <eric.snowberg@oracle.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "pvorel@suse.cz" <pvorel@suse.cz>,
-        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>,
-        "erpalmer@linux.vnet.ibm.com" <erpalmer@linux.vnet.ibm.com>,
-        "coxu@redhat.com" <coxu@redhat.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Date:   Thu, 30 Mar 2023 02:01:52 -0400
-In-Reply-To: <20230329232735.dvmxvwis2psbvyw5@kernel.org>
-References: <20230302164652.83571-1-eric.snowberg@oracle.com>
-         <20230302164652.83571-6-eric.snowberg@oracle.com>
-         <ZAz8QlynTSMD7kuE@kernel.org>
-         <07FFED83-501D-418C-A4BB-862A547DD7B0@oracle.com>
-         <20230320182822.6xyh6ibatrz5yrhb@kernel.org>
-         <84d46fb108f6ce2a322b6486529fc6dd0f8deea5.camel@linux.ibm.com>
-         <20230329232735.dvmxvwis2psbvyw5@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -AYgNS0hJQzkaFq2dbj8oeeSCLCBxsU7
-X-Proofpoint-ORIG-GUID: dV2z4ZQOEAl_wn7WkpC7Te5PoSYskE6S
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Thu, 30 Mar 2023 07:24:33 -0400
+Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 149B5A267
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Mar 2023 04:24:21 -0700 (PDT)
+Received: by mail-qv1-xf32.google.com with SMTP id g9so13722291qvt.8
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Mar 2023 04:24:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1680175461;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fdKipMhEB4vdHlMiUNkGlf7Pph62xlLHFGj7LA3sLc4=;
+        b=GhqPwpwm5+aLWZSGZL6KHY5T3Ky+2petggxGW82jJbcYqQ+weEcb2ErZbOnLTPrize
+         CLPG2oWR5Nc5kmNfj4GpSPLJez/OcRkgPdBAicUHTzYD3kOqrDDYrPLD7JDj/HvaeYtK
+         kicvzLF9Y3Bb2n4SQbyxFYlo5vV2K2otGONB/PPXBlJ/PqBVwM6pFOalEYNaVZ8N1DYj
+         qYMxEa1HNTKRkgu75YjuRkDwSeBtllf0mbDI++YFOh2gBaoVTB1XW6KCYDsWm1QXTZBF
+         CwkCfv3U6QJ2iEeTDMnyyLcZuFWnWJTp+4RM8S7g0hbJx8tik9HQK5AJ9F70Xbca6LMt
+         Rqow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680175461;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fdKipMhEB4vdHlMiUNkGlf7Pph62xlLHFGj7LA3sLc4=;
+        b=j5dXh2VsMO7i6CKV6lfZlyKlYBrKE/omomcoMrRtgMI4HZcJzkmI45oxfaV9CNesUE
+         SZx5jTmL9YkOqZtx86kHuimKpkSshfdCNI4qtGfIULSQ1p9w1NYm1lW2R3Nyd/YEMvaM
+         PRM5OBYAl9TlTaRpE1FrHZHOoPhUxSNltEBg5RgGbfo0YEFbr8MLt+EF54eGn4Tm6M9Y
+         eLMjy1apgg8o35yotxFYGA8IYfQGYpT0a/pyZPKYVSstFkRJg6CdPzkA1Tu2ZcG0r75J
+         CcHcDmY8rAzcxDdLukpc/PWByvDyrpCL83JC2c1iKcQXXDhIJabG0kdHG5ZS3gPZZNDh
+         QzxA==
+X-Gm-Message-State: AAQBX9cHsI/ydLE5MEb/e4Edvb5R9NUgbkoH0XKvUvs/C8oOA5k1+nPj
+        suH9tSQKEgLQDS08EW+bmjb9
+X-Google-Smtp-Source: AKy350a6oy3DHYMDNZaU05eApS6TE1WaIFpW/qqCnUoroDzzZn+WcUIYOnzzHq9JqNYcTgvToFTJJw==
+X-Received: by 2002:a05:6214:27e8:b0:5bc:7989:ea31 with SMTP id jt8-20020a05621427e800b005bc7989ea31mr33839189qvb.38.1680175460900;
+        Thu, 30 Mar 2023 04:24:20 -0700 (PDT)
+Received: from [192.168.7.217] (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
+        by smtp.gmail.com with ESMTPSA id z6-20020a0cfec6000000b005dd8b9345a0sm5385498qvs.56.2023.03.30.04.24.19
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 Mar 2023 04:24:20 -0700 (PDT)
+From:   Paul Moore <paul@paul-moore.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+CC:     <linux-security-module@vger.kernel.org>, <jmorris@namei.org>,
+        <keescook@chromium.org>, <john.johansen@canonical.com>,
+        <penguin-kernel@i-love.sakura.ne.jp>,
+        <stephen.smalley.work@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <mic@digikod.net>
+Date:   Thu, 30 Mar 2023 07:24:19 -0400
+Message-ID: <1873242bbd8.28e3.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+In-Reply-To: <CAHC9VhRuKqaYD=WCzuuk4=+qFSvCjCEMEsPjAh9pQe-=LyMthA@mail.gmail.com>
+References: <20230315224704.2672-1-casey@schaufler-ca.com>
+ <20230315224704.2672-5-casey@schaufler-ca.com>
+ <CAHC9VhRuKqaYD=WCzuuk4=+qFSvCjCEMEsPjAh9pQe-=LyMthA@mail.gmail.com>
+User-Agent: AquaMail/1.43.0 (build: 104300275)
+Subject: Re: [PATCH v7 04/11] LSM: syscalls for current process attributes
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-30_02,2023-03-30_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- malwarescore=0 spamscore=0 mlxscore=0 priorityscore=1501 clxscore=1011
- impostorscore=0 lowpriorityscore=0 mlxlogscore=999 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2303300047
+Content-Type: text/plain; format=flowed; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2023-03-30 at 02:27 +0300, Jarkko Sakkinen wrote:
-> On Mon, Mar 20, 2023 at 04:35:33PM -0400, Mimi Zohar wrote:
-> > On Mon, 2023-03-20 at 20:28 +0200, Jarkko Sakkinen wrote:
-> > > On Mon, Mar 20, 2023 at 05:35:05PM +0000, Eric Snowberg wrote:
-> > > > 
-> > > > 
-> > > > > On Mar 11, 2023, at 3:10 PM, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > > > > 
-> > > > > On Thu, Mar 02, 2023 at 11:46:51AM -0500, Eric Snowberg wrote:
-> > > > >> Add a new link restriction.  Restrict the addition of keys in a keyring
-> > > > >> based on the key to be added being a CA.
-> > > > >> 
-> > > > >> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> > > > >> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > > >> ---
-> > > > >> crypto/asymmetric_keys/restrict.c | 38 +++++++++++++++++++++++++++++++
-> > > > >> include/crypto/public_key.h       | 15 ++++++++++++
-> > > > >> 2 files changed, 53 insertions(+)
-> > > > >> 
-> > > > >> diff --git a/crypto/asymmetric_keys/restrict.c b/crypto/asymmetric_keys/restrict.c
-> > > > >> index 6b1ac5f5896a..48457c6f33f9 100644
-> > > > >> --- a/crypto/asymmetric_keys/restrict.c
-> > > > >> +++ b/crypto/asymmetric_keys/restrict.c
-> > > > >> @@ -108,6 +108,44 @@ int restrict_link_by_signature(struct key *dest_keyring,
-> > > > >> 	return ret;
-> > > > >> }
-> > > > >> 
-> > > > >> +/**
-> > > > >> + * restrict_link_by_ca - Restrict additions to a ring of CA keys
-> > > > >> + * @dest_keyring: Keyring being linked to.
-> > > > >> + * @type: The type of key being added.
-> > > > >> + * @payload: The payload of the new key.
-> > > > >> + * @trust_keyring: Unused.
-> > > > >> + *
-> > > > >> + * Check if the new certificate is a CA. If it is a CA, then mark the new
-> > > > >> + * certificate as being ok to link.
-> > > > >> + *
-> > > > >> + * Returns 0 if the new certificate was accepted, -ENOKEY if the
-> > > > >> + * certificate is not a CA. -ENOPKG if the signature uses unsupported
-> > > > >> + * crypto, or some other error if there is a matching certificate but
-> > > > >> + * the signature check cannot be performed.
-> > > > >> + */
-> > > > >> +int restrict_link_by_ca(struct key *dest_keyring,
-> > > > >> +			const struct key_type *type,
-> > > > >> +			const union key_payload *payload,
-> > > > >> +			struct key *trust_keyring)
-> > > > >> +{
-> > > > >> +	const struct public_key *pkey;
-> > > > >> +
-> > > > >> +	if (type != &key_type_asymmetric)
-> > > > >> +		return -EOPNOTSUPP;
-> > > > >> +
-> > > > >> +	pkey = payload->data[asym_crypto];
-> > > > >> +	if (!pkey)
-> > > > >> +		return -ENOPKG;
-> > > > >> +	if (!test_bit(KEY_EFLAG_CA, &pkey->key_eflags))
-> > > > >> +		return -ENOKEY;
-> > > > >> +	if (!test_bit(KEY_EFLAG_KEYCERTSIGN, &pkey->key_eflags))
-> > > > >> +		return -ENOKEY;
-> > > > >> +	if (test_bit(KEY_EFLAG_DIGITALSIG, &pkey->key_eflags))
-> > > > >> +		return -ENOKEY;
-> > > > > 
-> > > > > nit: would be more readable, if conditions were separated by
-> > > > > empty lines.
-> > > > 
-> > > > Ok, I will make this change in the next round.  Thanks.
-> > > 
-> > > Cool! Mimi have you tested these patches with IMA applied?
-> > 
-> > Yes, it's working as expected.
-> 
-> Thank you. Please check that I filled additional tags correctly:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/
-> 
-> I will then put these also to my 'next' branch and they will get mirrored
-> to linux-next.
 
-Thanks, Jarkko.  The tags look good.
+On March 29, 2023 9:12:19 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Wed, Mar 15, 2023 at 6:48 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
 
--- 
-thanks,
+...
 
-Mimi
+>
+>> +/**
+>> + * security_setselfattr - Set an LSM attribute on the current process.
+>> + * @attr: which attribute to set
+>> + * @ctx: the user-space source for the information
+>> + * @size: the size of the data
+>> + * @flags: reserved for future use, must be 0
+>> + *
+>> + * Set an LSM attribute for the current process. The LSM, attribute
+>> + * and new value are included in @ctx.
+>> + *
+>> + * Returns 0 on success, an LSM specific value on failure.
+>> + */
+>> +int security_setselfattr(unsigned int __user attr, struct lsm_ctx __user *ctx,
+>> +                        size_t __user size, u32 __user flags)
+>> +{
+>> +       struct security_hook_list *hp;
+>> +       struct lsm_ctx lctx;
+>
+> Shouldn't we check @attr for valid values and return -EINVAL if bogus?
+>
+>> +       if (flags != 0)
+>> +               return -EINVAL;
+>> +       if (size < sizeof(*ctx))
+>> +               return -EINVAL;
+>
+> If we're only going to support on 'lsm_ctx' entry in this function we
+> should verify that the 'len' and 'ctx_len' fields are sane.  Although
+> more on this below ...
+>
+>> +       if (copy_from_user(&lctx, ctx, sizeof(*ctx)))
+>> +               return -EFAULT;
+>> +
+>> +       hlist_for_each_entry(hp, &security_hook_heads.setselfattr, list)
+>> +               if ((hp->lsmid->id) == lctx.id)
+>> +                       return hp->hook.setselfattr(attr, ctx, size, flags);
+>
+> Can anyone think of any good reason why we shouldn't support setting
+> multiple LSMs in one call, similar to what we do with
+> security_getselfattr()?  It seems like it might be a nice thing to
+> have ...
+
+Scratch that, I just reminded myself why attempting to set an attribute on 
+multiple LSMs in one operation would be a nightmare. Sorry about the confusion.
+
+--
+paul-moore.com
+
+
 
