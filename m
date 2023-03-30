@@ -2,59 +2,59 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB5CC74A5B
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Mar 2023 01:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09483C74A5B
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Mar 2023 01:10:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229801AbjC3BKf (ORCPT
+        id S229596AbjC3BKu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Mar 2023 21:10:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36736 "EHLO
+        Wed, 29 Mar 2023 21:10:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbjC3BKe (ORCPT
+        with ESMTP id S229821AbjC3BKt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Mar 2023 21:10:34 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76EF0558E
-        for <linux-security-module@vger.kernel.org>; Wed, 29 Mar 2023 18:10:28 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id e65so21638469ybh.10
-        for <linux-security-module@vger.kernel.org>; Wed, 29 Mar 2023 18:10:28 -0700 (PDT)
+        Wed, 29 Mar 2023 21:10:49 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3696F5B8F
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Mar 2023 18:10:42 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-54184571389so326885997b3.4
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Mar 2023 18:10:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1680138627;
+        d=paul-moore.com; s=google; t=1680138641;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0SGh3fZWr7hGlmOJJyEOV+nHbXyUtBvRhIDq9a23Cf8=;
-        b=bmTUyijVn1l5Flp50doP9tPK+ixFjShRWiQyZM/Z5EPAuv6t3tWyTSPK7SH7Ywn6TJ
-         ofpimuXBl8593gBSB4VG8NvpOa/x2sqXARQK7N+iqUMtqTUr0PDGVlvzlhBNWXBP/cWm
-         kSnyDU9lH59nY8zlkBHtV3EYvU8x/2DZnmummRNE5xT27AW0lMWEutv7p3rZIDSO+Qk+
-         CnnqZJnu6NT/7qqI504i/SksAnqSD4GjZEyY1EuibJTdwEsOeZZwOic4gc45la6y3Poz
-         5g8Uy8XPHkeicYBTnkTpn4porfisuodnF125fBmozroANNnp6HVnjPg1synrSVBbU3HK
-         rccg==
+        bh=trHb4ZOG7XU5ZjiWJc1P83x2prz9WeqvxotCOi1K6Ow=;
+        b=DS/uhgZThWHoOTi9eBksq5fEsaIGz7ngHca8dbA8p8bF7mQD8TH7k9rtmQR8pc9/kw
+         5csXEDiz0NNIXY4cG7rj4I9hXaTbcEkzCKr0l6Lk57uogUjfT5DFjLOvT8J93GlHkU9F
+         QqRveaP0eHdQ3h234e/3IDC0YpBf09gnLVp1WVFmVjYkdh5djkRH7Fk8FW/kAvel6Eh4
+         uWKfYMvJ0E7cv9W3N8nWb3MT3Wbml+pU0ZZVzREjvQpTfHgMf9nUy8YAgJ35Tg/n7B9m
+         Fq2RsVdlSubBCk3ntpmHELGXrkhlGRz8gsUiPD9WQUDIxl18CKGmABMgjVoLYiv8o8VW
+         rjJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680138627;
+        d=1e100.net; s=20210112; t=1680138641;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0SGh3fZWr7hGlmOJJyEOV+nHbXyUtBvRhIDq9a23Cf8=;
-        b=EvP/GTyqatYPljkCmmOxkMrCjjilBqmPRR6yCqgCgTRcVEVo0cVcLyOOANGhNurtqx
-         1P2M8FGdvAbahK5LzSUepP+167GrFqjxDUdXzEaONJ9OF9pPWjy6ogBHbGB1YI6dLFq4
-         XcH7lgmASK3S9ncVGXAm2K3oshSCSvqVnwtjzklvzBIezHIqFpGaq7Q1eAmf17fbJXsO
-         5+C2GU3+YXyiYnBj5QHYHznRViEBQLelpg8ncG63lcWAl/+4MQsYKWh6pYT4e8IOR6SY
-         DiMbzbNVRZFvoDw6EswPpMBy6do1aSRgV5RMqgUzf+uImygw8WUMdrv6EjzrCaelTA+1
-         QqBQ==
-X-Gm-Message-State: AAQBX9fcVO8wtG9YgSLSVh9LFRytD+Nh3TIYxWQYF2iLJjSLUaHmd08B
-        aLdfWV83XW+XdlJRKNKpiCtVAMcRdFIUAiS68x1E
-X-Google-Smtp-Source: AKy350Z/cQ952yf9ZDOWZown0C3FWIiWHZiMhKCaOLerWDAR4sqXen8YH7/P0OZwdzzR7iZBQF6gbXJJO2/73tXA4rg=
-X-Received: by 2002:a05:6902:102a:b0:b71:f49f:8d22 with SMTP id
- x10-20020a056902102a00b00b71f49f8d22mr11290085ybt.3.1680138627424; Wed, 29
- Mar 2023 18:10:27 -0700 (PDT)
+        bh=trHb4ZOG7XU5ZjiWJc1P83x2prz9WeqvxotCOi1K6Ow=;
+        b=3JLNGjiu4vz/4lV51G8QbYJAynOravm6chbh02HEe3jZymXd5nRgR3/s9w57wZF1Wy
+         oe9BfssaLtycbh6CwJY9NHPB2S6r/oiY9ioAKR2Tvr/TnmSQ2EeU60uYUycKR230nUxm
+         fwIlKmSwHA64bGobJaOFvf7ehEoK5hhnF9c5fGXNnqJHlL0MxFV/47zWTUqvqh4VeWLN
+         sCHVn9RBjP44YUo7yo6Jc/PtQkGf89q6xZjCdkJxAj/6SXa4WWfTp9FVXs1gyWc9V5um
+         5mPjz6/0BvYYPo/sZExVhe/wU4wT1wEgVoPbGEjiDGmQFvDrhCwiOqaFJ4W2fw8RPNeU
+         ugbQ==
+X-Gm-Message-State: AAQBX9fLvvFjNHtwOXgxswdFKTFsoclHbvV73hYloxX0oWMWakkdD7fy
+        a2MVR2/b2OExrjlXoU1D6e1tvPzyytZPD3Kd/Y0c
+X-Google-Smtp-Source: AKy350YFd9HgM1JadFaOcawRIMLYxQxdwNgPA5DDSFpKyb0PXktJ6Z52BAMcyyw/1+BhkBiBeS99qbIG3x1DxfMmdA0=
+X-Received: by 2002:a81:c406:0:b0:546:8e4:703f with SMTP id
+ j6-20020a81c406000000b0054608e4703fmr4919710ywi.8.1680138641366; Wed, 29 Mar
+ 2023 18:10:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230315224704.2672-1-casey@schaufler-ca.com> <20230315224704.2672-2-casey@schaufler-ca.com>
-In-Reply-To: <20230315224704.2672-2-casey@schaufler-ca.com>
+References: <20230315224704.2672-1-casey@schaufler-ca.com> <20230315224704.2672-3-casey@schaufler-ca.com>
+In-Reply-To: <20230315224704.2672-3-casey@schaufler-ca.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 29 Mar 2023 21:10:16 -0400
-Message-ID: <CAHC9VhTdiKi99Hx1OVDQkG3DEf_V_LV0DhB8n2=BoyH7r69TCQ@mail.gmail.com>
-Subject: Re: [PATCH v7 01/11] LSM: Identify modules by more than name
+Date:   Wed, 29 Mar 2023 21:10:30 -0400
+Message-ID: <CAHC9VhT3PpgTzUdGEdn4Jg8=91PFzto5w+9ZnQRJgxnTCc9hMg@mail.gmail.com>
+Subject: Re: [PATCH v7 02/11] LSM: Maintain a table of LSM attribute data
 To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     linux-security-module@vger.kernel.org, jmorris@namei.org,
         keescook@chromium.org, john.johansen@canonical.com,
@@ -69,154 +69,51 @@ List-ID: <linux-security-module.vger.kernel.org>
 On Wed, Mar 15, 2023 at 6:47=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
 .com> wrote:
 >
-> Create a struct lsm_id to contain identifying information
-> about Linux Security Modules (LSMs). At inception this contains
-> the name of the module, an identifier associated with the security
-> module and an integer member "attrs" which identifies the API
-> related data associated with each security module. The initial set
-> of features maps to information that has traditionaly been available
-> in /proc/self/attr. They are documented in a new userspace-api file.
-> Change the security_add_hooks() interface to use this structure.
-> Change the individual modules to maintain their own struct lsm_id
-> and pass it to security_add_hooks().
+> As LSMs are registered add their lsm_id pointers to a table.
+> This will be used later for attribute reporting.
 >
-> The values are for LSM identifiers are defined in a new UAPI
-> header file linux/lsm.h. Each existing LSM has been updated to
-> include it's LSMID in the lsm_id.
->
-> The LSM ID values are sequential, with the oldest module
-> LSM_ID_CAPABILITY being the lowest value and the existing modules
-> numbered in the order they were included in the main line kernel.
-> This is an arbitrary convention for assigning the values, but
-> none better presents itself. The value 0 is defined as being invalid.
-> The values 1-99 are reserved for any special case uses which may
-> arise in the future. This may include attributes of the LSM
-> infrastructure itself, possibly related to namespacing or network
-> attribute management. A special range is identified for such attributes
-> to help reduce confusion for developers unfamiliar with LSMs.
->
-> LSM attribute values are defined for the attributes presented by
-> modules that are available today. As with the LSM IDs, The value 0
-> is defined as being invalid. The values 1-99 are reserved for any
-> special case uses which may arise in the future.
+> Determine the number of possible security modules based on
+> their respective CONFIG options. This allows the number to be
+> known at build time. This allows data structures and tables
+> to use the constant.
 >
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: linux-security-module <linux-security-module@vger.kernel.org>
 > ---
->  Documentation/userspace-api/index.rst |  1 +
->  Documentation/userspace-api/lsm.rst   | 55 +++++++++++++++++++++++++++
->  MAINTAINERS                           |  1 +
->  include/linux/lsm_hooks.h             | 18 ++++++++-
->  include/uapi/linux/lsm.h              | 53 ++++++++++++++++++++++++++
->  security/apparmor/lsm.c               |  8 +++-
->  security/bpf/hooks.c                  |  9 ++++-
->  security/commoncap.c                  |  8 +++-
->  security/landlock/cred.c              |  2 +-
->  security/landlock/fs.c                |  2 +-
->  security/landlock/ptrace.c            |  2 +-
->  security/landlock/setup.c             |  6 +++
->  security/landlock/setup.h             |  1 +
->  security/loadpin/loadpin.c            |  9 ++++-
->  security/lockdown/lockdown.c          |  8 +++-
->  security/safesetid/lsm.c              |  9 ++++-
->  security/security.c                   | 12 +++---
->  security/selinux/hooks.c              |  9 ++++-
->  security/smack/smack_lsm.c            |  8 +++-
->  security/tomoyo/tomoyo.c              |  9 ++++-
->  security/yama/yama_lsm.c              |  8 +++-
->  21 files changed, 217 insertions(+), 21 deletions(-)
->  create mode 100644 Documentation/userspace-api/lsm.rst
->  create mode 100644 include/uapi/linux/lsm.h
+>  include/linux/security.h |  2 ++
+>  security/security.c      | 44 ++++++++++++++++++++++++++++++++--------
+>  2 files changed, 38 insertions(+), 8 deletions(-)
 
 ...
 
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 6e156d2acffc..32285ce65419 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -1665,6 +1665,20 @@ struct security_hook_heads {
->         #undef LSM_HOOK
->  } __randomize_layout;
+> diff --git a/security/security.c b/security/security.c
+> index 58828a326024..aa84b1cf4253 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -513,6 +531,16 @@ void __init security_add_hooks(struct security_hook_=
+list *hooks, int count,
+>  {
+>         int i;
 >
-> +/**
-> + * struct lsm_id - Identify a Linux Security Module.
-> + * @lsm: name of the LSM, must be approved by the LSM maintainers
-> + * @id: LSM ID number from uapi/linux/lsm.h
-> + * @attrs: which attributes this LSM supports
-> + *
-> + * Contains the information that identifies the LSM.
-> + */
-> +struct lsm_id {
-> +       const u8        *lsm;
-> +       u64             id;
-> +       u64             attrs;
-> +};
-
-I would either start setting the 'attrs' field values in the LSMs when
-their 'lsm_id' struct is defined or I would leave it out of this patch
-and add it later in the patchset when it is used.
-
-> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-> new file mode 100644
-> index 000000000000..aa3e01867739
-> --- /dev/null
-> +++ b/include/uapi/linux/lsm.h
-> @@ -0,0 +1,53 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +/*
-> + * Linux Security Modules (LSM) - User space API
-> + *
-> + * Copyright (C) 2022 Casey Schaufler <casey@schaufler-ca.com>
-> + * Copyright (C) 2022 Intel Corporation
-> + */
+> +       /*
+> +        * A security module may call security_add_hooks() more
+> +        * than once. Landlock is one such case.
+> +        */
+> +       if (lsm_active_cnt =3D=3D 0 || lsm_idlist[lsm_active_cnt - 1] !=
+=3D lsmid)
+> +               lsm_idlist[lsm_active_cnt++] =3D lsmid;
 > +
-> +#ifndef _UAPI_LINUX_LSM_H
-> +#define _UAPI_LINUX_LSM_H
-> +
-> +/*
-> + * ID tokens to identify Linux Security Modules (LSMs)
-> + *
-> + * These token values are used to uniquely identify specific LSMs
-> + * in the kernel as well as in the kernel's LSM userspace API.
-> + *
-> + * A value of zero/0 is considered undefined and should not be used
-> + * outside the kernel. Values 1-99 are reserved for potential
-> + * future use.
-> + */
-> +#define LSM_ID_UNDEF           0
-> +#define LSM_ID_CAPABILITY      100
-> +#define LSM_ID_SELINUX         101
-> +#define LSM_ID_SMACK           102
-> +#define LSM_ID_TOMOYO          103
-> +#define LSM_ID_IMA             104
-> +#define LSM_ID_APPARMOR                105
-> +#define LSM_ID_YAMA            106
-> +#define LSM_ID_LOADPIN         107
-> +#define LSM_ID_SAFESETID       108
-> +#define LSM_ID_LOCKDOWN                109
-> +#define LSM_ID_BPF             110
-> +#define LSM_ID_LANDLOCK                111
-> +
-> +/*
-> + * LSM_ATTR_XXX definitions identify different LSM attributes
-> + * which are used in the kernel's LSM userspace API. Support
-> + * for these attributes vary across the different LSMs. None
-> + * are required.
-> + *
-> + * A value of zero/0 is considered undefined and should not be used
-> + * outside the kernel. Values 1-99 are reserved for potential
-> + * future use.
-> + */
-> +#define LSM_ATTR_CURRENT       100
-> +#define LSM_ATTR_EXEC          101
-> +#define LSM_ATTR_FSCREATE      102
-> +#define LSM_ATTR_KEYCREATE     103
-> +#define LSM_ATTR_PREV          104
-> +#define LSM_ATTR_SOCKCREATE    105
+> +       if (lsm_active_cnt > LSM_COUNT)
+> +               panic("%s Too many LSMs registered.\n", __func__);
 
-We might as well add a LSM_ATTR_UNDEF for zero/0.
+In addition to the fixes needed to resolve the bug identified by the
+kernel test robot, I think it might be wise to do the @lsm_active_cnt
+check *before* potentially adding it to the @lsm_idlist array.
 
-> +#endif /* _UAPI_LINUX_LSM_H */
+>         for (i =3D 0; i < count; i++) {
+>                 hooks[i].lsmid =3D lsmid;
+>                 hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
+> --
+> 2.39.2
 
 --
 paul-moore.com
