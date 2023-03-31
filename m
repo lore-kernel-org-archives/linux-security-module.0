@@ -2,198 +2,215 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AF0C77B62
-	for <linux-security-module@archiver.kernel.org>; Fri, 31 Mar 2023 12:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADDAC77B60
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 Mar 2023 16:56:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232286AbjCaMeB (ORCPT
+        id S229756AbjCaQ4M (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 31 Mar 2023 08:34:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52976 "EHLO
+        Fri, 31 Mar 2023 12:56:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232513AbjCaMdy (ORCPT
+        with ESMTP id S229817AbjCaQ4L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 31 Mar 2023 08:33:54 -0400
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DC5E20C23;
-        Fri, 31 Mar 2023 05:33:34 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PnzwS1CsSz9v7Yt;
-        Fri, 31 Mar 2023 20:23:36 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwDnumHa0iZkr6ziAQ--.5882S6;
-        Fri, 31 Mar 2023 13:33:10 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v10 4/4] evm: Support multiple LSMs providing an xattr
-Date:   Fri, 31 Mar 2023 14:32:21 +0200
-Message-Id: <20230331123221.3273328-5-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230331123221.3273328-1-roberto.sassu@huaweicloud.com>
-References: <20230331123221.3273328-1-roberto.sassu@huaweicloud.com>
+        Fri, 31 Mar 2023 12:56:11 -0400
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C412F2681
+        for <linux-security-module@vger.kernel.org>; Fri, 31 Mar 2023 09:56:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1680281768; bh=AJiAukCC8U8cuyDn6Yxs5+uEGUTHBK3qlX68PN2Gmcc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Bm7b/KjmLlg3MUwTbpG8N9mIC57M7Z1It9L+Ml3F65fAxB8afoEtVLQ0FvuCORmI26hQaCh5FgYofxZI2UEstgEIIqdny2eNOUPw4vnpoKZBWYrWUevoaO81SIpl50FxSOvzHtnkIcG/Bs7EzZXbcSlqCznpGw7TIZsBbdbqSOToUU9QDyd8ZdbWMTEmkrGhmXtvTy+wQGB67C0ZpjMu9P5cChLAS0m3pgsbYhQZSpsrfNqIuEfpJOp/r1Zo4oouQeG05gWyCboF5CedaMjxfan4Yle84YgEc1tqsJYn4XO4ck8hq+Z5vWcrz2adjhXLaNu+jRzoQ0r5OJcM5SNeGQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1680281768; bh=Ws3vRXVYYZ3F+eteLxOJnA2FdDEB9nSSic9ajaJ7efM=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=rh7FqULxB0t0aBAtmgslfm56z2JHDzjvwbvF03Ia42Jpfp//2xdfe3kurgPESFC3Wq66S9+D8mQgLfsiCkjXLe+AwyeRz09z2udcCqPqK9YvgZxo1wmHlc80VpDO1KJ6fjmFVLd5PH0mKQijUMxZ+NuC2rdHrc+V9UYEdHnKG4l+5uA1u7+g8vTUQaZkhWcfIWi4ynA/kJoe+4BSz1nV3qKMyraocP8bjr9h38pNWqASYTIdc+GZd74ChLfGdGCTG2sa36sDHMcMSmoyXCQrd+IkAndJ9koyh35M7JbOHyRwwYkorPAKLJwOOI7bG8xS/yry8PtJgRWcKgyZhKBrFQ==
+X-YMail-OSG: _Z.2GnsVM1lYjdTyDOzIX2vB8tuFWeICkvCHutbtnXR8KJFHc0Akb.kto21bFcg
+ r3Q.P050fgwLBda4rLeRCckq.VxgfqmsQ9OvNpzLL1OzVEiAbNtng0CoSzHIVGvMRvmC5Lgs4kra
+ CPRvXvhQWIa0C2__diSIOB3djszlKZ_RpmiVnU8GNbff4owlG61XZJ6YcFua6xU8My4Ia6ifnZht
+ KCy_f0mdF7700aAG01uS1mZuq_JKdDHklyy2MdZ_DtcXQ0Dm.72UW3L_PpgP8x0Bzcrvtg_5pxaI
+ 2fYwBiFqDAaWNb8IKmOdiIpRafcixn5KINizbL6VHSynICqdo0I57BKlLaIh8VSuI8SCJ7rQBO.V
+ E4f2EHJCnYSRdKuu9Mc0BUnCt1vmaPlCzlfzGvS1a1QeG2Dc9pWFpGPdpk6RlYu1xF8gd8_BoPZO
+ wAXTndEae9XK9y7jFubM36UtWDg7SdOEDT6C9T6lSmGLozFvk8c.1zVRbcRREMAkjPjyTkNN6BW.
+ pmqjZRbns8xJWCFrVMvxp_s2sROmbGP5ySgKc2hvdrT4szCyXHmcOR81eSzQ3eUapAHgniQuGRU2
+ QcOeeQrYAkDF8EuAhLhrtCRKJPzKkvmNJ6ToQa9fCPXnI2rZtCsGJl9LFD3xdXwWJAnoLv5Jsw0M
+ HBvK4TU06krSgiHQhjSZvIgCND6aFm3PWQdnGzn3BHVMeMmKXfh2W0nbnXKsIzttaY.rvP87X.hK
+ 8hOlTQxl715IKXlL.fXRllm8BJG4FiBw12dKtdickphb1SJJxHtGvJmtoepkpTx3_L6hWtGTPLcg
+ rc7dL5sydDazaSnpHfeqo8CrNF86glpJCvCgnTOpbuzPDwb23ZMTzKzqgmUrkIHwGI1QkjanGY_D
+ nAYDGvjvDyToumzCrk4T3dztnL.dR4GREkB1t.BgpiD.P37zmoFh99G5Br14XenPxSSDspWsLJJO
+ 4AnnbSHQD27mQxDQuWA7bYr_1K8wRQ2GhH6lY0peBilWqThjcBGPP7inBs1BxHzWjcwd_SXJX9dX
+ zGqW4pPvx0AP5CeIEBpLKHaZ4k_Bfd1Dc58b0o5IkklwZQySVjoWu892NaqZ8lT6KNjFy3f40o77
+ vzalK1YnN4mAKcR2GzhkPEatjCViVwFRrMljiq0jjf9IM5MT9kFLco._rA8FOnWId5M7WU1pcVvU
+ d4naphM7mnP_cN9Qu367vZmVUWLDXYGUK6Tb6V4gs4uvvZzfeAU7jtLTJiV5HslAmWmbgsqf6r7Y
+ ZcaOrm5ZPeF92euP36zYwMIsYLFJXzt95Ck79KhFmVC9VNdtUTregeLDlXdBbpLw5uICX3Y7ukhV
+ 426wZfhMlr7RrEmTTMiSoaZwMAhND4slhcmK4AmrlVVUz6PgGfHd36wZQQ4s55QSjQsv.8kpLHGq
+ qaE66PkjMC.hmoUh7CcHoQlIjihRjtiJzQ6jGyxUFKRQ9lz3IiCj0fnWEkaIAd1mJDjhOR2pZdzN
+ jkC4SNuak0RtF5gNA5iZ.qgsfgjFeql0cnL32B6V_rRwe9doDPZnFSx.xNj361I5i4fuq6hH9xJB
+ jdJv5i66AFEgSwFte5cCumB0Z82GCsCTPHDb1V_PiwQ0nLYTphhh1PVLN8k8y_Gzh4K7riIo7W28
+ XkUKAI9DD9OyxjyyH3fg4E4PNCP64u5PTEneHFRwoXGu5TEdbZ2Lh4cIcU45HrwgYMdHyxZAWgff
+ noF.8Fwrl6CZTtn40YScfzklF24BjbQC2eL9c7Ev7y2CM97yd_JMCdoBLR.L9VPX5G8gT3wJ3u0g
+ j2l2Rxfg34Pqqovx5G_y58GCu4Ch_qfeTj2zJdGVXmHSShA98O9gBWF_RblBuTGuN5KyF53Mc1aD
+ lvO2GJqDfVQAY6cu9rDwrnM3DdvuOy2K2oVLBwp1nzmRusvkiQsOrCzY6S146d6UaNl7DzYopq9X
+ l3AHPGXtxQyrvq4JNF6GT_DWYg8RwsAZHcoDWlmkk1PAGPeEMZRGVG9Bky_2lQ7Lo7Xcq6fSqsrn
+ pGm3g.QYkKvYYw8sdGbyzIzWby3hth543zmYLQBiUyv7ra3e6haoXOVi4cXwKw1vBWvXa17C2dn5
+ dJrcKGF3rnh7yWrraPNbuHSjKlnAWy9_Fw3kUEy2Yr090aEkeFAmoFwXMlvMmYKYyx4BYb65JOvd
+ Kb.J.OFAExZVM7Zhm5vzEFiGgq40W45Lt0vFI8jZ3t.MQv4UzM1qaQ4n5Vnz7nhZyZPniw3jAfnM
+ .BvzCySxT0IgEcP1Yf4cYI33vgAPaeg--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 1d98ea83-6fc2-45c6-8cc9-493da977cec7
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Fri, 31 Mar 2023 16:56:08 +0000
+Received: by hermes--production-bf1-5f9df5c5c4-v79q2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 88f1a2f7e522d33700b3bc61befd142f;
+          Fri, 31 Mar 2023 16:56:03 +0000 (UTC)
+Message-ID: <00efa1f2-e6ae-3ce3-2bf2-03b7846568f7@schaufler-ca.com>
+Date:   Fri, 31 Mar 2023 09:56:00 -0700
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v7 07/11] LSM: Helpers for attribute names and filling an
+ lsm_ctx
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, jmorris@namei.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        mic@digikod.net, Casey Schaufler <casey@schaufler-ca.com>
+References: <20230315224704.2672-1-casey@schaufler-ca.com>
+ <20230315224704.2672-8-casey@schaufler-ca.com>
+ <CAHC9VhT9j78jC66xv-pV1iPmgEK6=fHddFVaAS8Qmm_WyYMypQ@mail.gmail.com>
+ <c79a66f4-53c0-66f5-4539-4994365aa656@schaufler-ca.com>
+ <CAHC9VhRVru1xK3SPp80cUX-jtVzpqhtieZ-RABjwJ8xi3GGm9Q@mail.gmail.com>
+Content-Language: en-US
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhRVru1xK3SPp80cUX-jtVzpqhtieZ-RABjwJ8xi3GGm9Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwDnumHa0iZkr6ziAQ--.5882S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxGryktFy8JF1rur15Kw48WFg_yoWrKr1Dpa
-        98tas8Arn5JFy7Wr9aya18ua4SgrW8Cw1UK393JryjyFnIqr1IvryIyr15ur98WrW8JrnI
-        yw4Yvw15Cw15t3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-        AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
-        14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
-        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
-        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262
-        kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s02
-        6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GF
-        v_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvE
-        c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-        AFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
-        pf9x07jxwIDUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANBF1jj4dsJQABs1
-X-CFilter-Loop: Reflected
+X-Mailer: WebService/1.1.21284 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On 3/30/2023 4:28 PM, Paul Moore wrote:
+> On Thu, Mar 30, 2023 at 4:42 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 3/29/2023 6:13 PM, Paul Moore wrote:
+>>> On Wed, Mar 15, 2023 at 6:50 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> Add lsm_name_to_attr(), which translates a text string to a
+>>>> LSM_ATTR value if one is available.
+>>>>
+>>>> Add lsm_fill_user_ctx(), which fills a struct lsm_ctx, including
+>>>> the trailing attribute value.
+>>>>
+>>>> All are used in module specific components of LSM system calls.
+>>>>
+>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>>> ---
+>>>>  include/linux/security.h | 13 ++++++++++
+>>>>  security/lsm_syscalls.c  | 51 ++++++++++++++++++++++++++++++++++++++++
+>>>>  security/security.c      | 31 ++++++++++++++++++++++++
+>>>>  3 files changed, 95 insertions(+)
+>>> ..
+>>>
+>>>> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
+>>>> index 6efbe244d304..55d849ad5d6e 100644
+>>>> --- a/security/lsm_syscalls.c
+>>>> +++ b/security/lsm_syscalls.c
+>>>> @@ -17,6 +17,57 @@
+>>>>  #include <linux/lsm_hooks.h>
+>>>>  #include <uapi/linux/lsm.h>
+>>>>
+>>>> +struct attr_map {
+>>>> +       char *name;
+>>>> +       u64 attr;
+>>>> +};
+>>>> +
+>>>> +static const struct attr_map lsm_attr_names[] = {
+>>>> +       {
+>>>> +               .name = "current",
+>>>> +               .attr = LSM_ATTR_CURRENT,
+>>>> +       },
+>>>> +       {
+>>>> +               .name = "exec",
+>>>> +               .attr = LSM_ATTR_EXEC,
+>>>> +       },
+>>>> +       {
+>>>> +               .name = "fscreate",
+>>>> +               .attr = LSM_ATTR_FSCREATE,
+>>>> +       },
+>>>> +       {
+>>>> +               .name = "keycreate",
+>>>> +               .attr = LSM_ATTR_KEYCREATE,
+>>>> +       },
+>>>> +       {
+>>>> +               .name = "prev",
+>>>> +               .attr = LSM_ATTR_PREV,
+>>>> +       },
+>>>> +       {
+>>>> +               .name = "sockcreate",
+>>>> +               .attr = LSM_ATTR_SOCKCREATE,
+>>>> +       },
+>>>> +};
+>>>> +
+>>>> +/**
+>>>> + * lsm_name_to_attr - map an LSM attribute name to its ID
+>>>> + * @name: name of the attribute
+>>>> + *
+>>>> + * Look the given @name up in the table of know attribute names.
+>>>> + *
+>>>> + * Returns the LSM attribute value associated with @name, or 0 if
+>>>> + * there is no mapping.
+>>>> + */
+>>>> +u64 lsm_name_to_attr(const char *name)
+>>>> +{
+>>>> +       int i;
+>>>> +
+>>>> +       for (i = 0; i < ARRAY_SIZE(lsm_attr_names); i++)
+>>>> +               if (!strcmp(name, lsm_attr_names[i].name))
+>>>> +                       return lsm_attr_names[i].attr;
+>>> I'm pretty sure this is the only place where @lsm_attr_names is used,
+>>> right?  If true, when coupled with the idea that these syscalls are
+>>> going to close the door on new LSM attributes in procfs I think we can
+>>> just put the mapping directly in this function via a series of
+>>> if-statements.
+>> Ick. You're not wrong, but the hard coded if-statement approach goes
+>> against all sorts of coding principles. I'll do it, but I can't say I
+>> like it.
+> If it helps any, I understand and am sympathetic.  I guess I've gotten
+> to that point where in addition to "code elegance", I'm also very
+> concerned about defending against "code abuse", and something like an
+> nicely defined mapping array is ripe for someone to come along and use
+> that to justify further use of the attribute string names in some
+> other function/API.
+>
+> If you want to stick with the array - I have no problem with that -
+> make it local to lsm_name_to_attr().
+>
+>>>> +/**
+>>>> + * lsm_fill_user_ctx - Fill a user space lsm_ctx structure
+>>>> + * @ctx: an LSM context to be filled
+>>>> + * @context: the new context value
+>>>> + * @context_size: the size of the new context value
+>>>> + * @id: LSM id
+>>>> + * @flags: LSM defined flags
+>>>> + *
+>>>> + * Fill all of the fields in a user space lsm_ctx structure.
+>>>> + * Caller is assumed to have verified that @ctx has enough space
+>>>> + * for @context.
+>>>> + * Returns 0 on success, -EFAULT on a copyout error.
+>>>> + */
+>>>> +int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
+>>>> +                     size_t context_size, u64 id, u64 flags)
+>>>> +{
+>>>> +       struct lsm_ctx local;
+>>>> +       void __user *vc = ctx;
+>>>> +
+>>>> +       local.id = id;
+>>>> +       local.flags = flags;
+>>>> +       local.ctx_len = context_size;
+>>>> +       local.len = context_size + sizeof(local);
+>>>> +       vc += sizeof(local);
+>>> See my prior comments about void pointer math.
+>>>
+>>>> +       if (copy_to_user(ctx, &local, sizeof(local)))
+>>>> +               return -EFAULT;
+>>>> +       if (context_size > 0 && copy_to_user(vc, context, context_size))
+>>>> +               return -EFAULT;
+>>> Should we handle the padding in this function?
+>> This function fills in a lsm_ctx. The padding, if any, is in addition to
+>> the lsm_ctx, not part of it.
+> Okay, so where is the padding managed?  I may have missed it, but I
+> don't recall seeing it anywhere in this patchset ...
 
-Currently, evm_inode_init_security() processes a single LSM xattr from the
-array passed by security_inode_init_security(), and calculates the HMAC on
-it and other inode metadata.
-
-As the LSM infrastructure now can pass to EVM an array with multiple
-xattrs, scan them until the terminator (xattr name NULL), and calculate the
-HMAC on all of them.
-
-Also, double check that the xattrs array terminator is the first non-filled
-slot (obtained with lsm_get_xattr_slot()). Consumers of the xattrs array,
-such as the initxattrs() callbacks, rely on the terminator.
-
-Finally, change the name of the lsm_xattr parameter of evm_init_hmac() to
-xattrs, to reflect the new type of information passed.
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/evm/evm.h        |  4 +++-
- security/integrity/evm/evm_crypto.c | 11 +++++++++--
- security/integrity/evm/evm_main.c   | 29 +++++++++++++++++++++++++----
- 3 files changed, 37 insertions(+), 7 deletions(-)
-
-diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
-index f8b8c5004fc..53bd7fec93f 100644
---- a/security/integrity/evm/evm.h
-+++ b/security/integrity/evm/evm.h
-@@ -46,6 +46,8 @@ struct evm_digest {
- 	char digest[IMA_MAX_DIGEST_SIZE];
- } __packed;
- 
-+int evm_protected_xattr(const char *req_xattr_name);
-+
- int evm_init_key(void);
- int evm_update_evmxattr(struct dentry *dentry,
- 			const char *req_xattr_name,
-@@ -58,7 +60,7 @@ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value,
- 		  size_t req_xattr_value_len, char type,
- 		  struct evm_digest *data);
--int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
-+int evm_init_hmac(struct inode *inode, const struct xattr *xattrs,
- 		  char *hmac_val);
- int evm_init_secfs(void);
- 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 033804f5a5f..0fdd382b58e 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -385,10 +385,11 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
- 	return rc;
- }
- 
--int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
-+int evm_init_hmac(struct inode *inode, const struct xattr *xattrs,
- 		  char *hmac_val)
- {
- 	struct shash_desc *desc;
-+	const struct xattr *xattr;
- 
- 	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
- 	if (IS_ERR(desc)) {
-@@ -396,7 +397,13 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
- 		return PTR_ERR(desc);
- 	}
- 
--	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
-+	for (xattr = xattrs; xattr->name != NULL; xattr++) {
-+		if (!evm_protected_xattr(xattr->name))
-+			continue;
-+
-+		crypto_shash_update(desc, xattr->value, xattr->value_len);
-+	}
-+
- 	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
- 	kfree(desc);
- 	return 0;
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 475196ce712..e9441419a81 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -306,7 +306,7 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
- 	return found;
- }
- 
--static int evm_protected_xattr(const char *req_xattr_name)
-+int evm_protected_xattr(const char *req_xattr_name)
- {
- 	return evm_protected_xattr_common(req_xattr_name, false);
- }
-@@ -870,14 +870,35 @@ int evm_inode_init_security(struct inode *inode, struct inode *dir,
- 			    int *xattr_count)
- {
- 	struct evm_xattr *xattr_data;
--	struct xattr *evm_xattr;
-+	struct xattr *xattr, *evm_xattr;
-+	bool evm_protected_xattrs = false;
- 	int rc;
- 
--	if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs ||
--	    !evm_protected_xattr(xattrs->name))
-+	if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs)
-+		return 0;
-+
-+	/*
-+	 * security_inode_init_security() makes sure that the xattrs array is
-+	 * contiguous, there is enough space for security.evm, and that there is
-+	 * a terminator at the end of the array.
-+	 */
-+	for (xattr = xattrs; xattr->name != NULL; xattr++) {
-+		if (evm_protected_xattr(xattr->name))
-+			evm_protected_xattrs = true;
-+	}
-+
-+	/* EVM xattr not needed. */
-+	if (!evm_protected_xattrs)
- 		return 0;
- 
- 	evm_xattr = lsm_get_xattr_slot(xattrs, xattr_count);
-+	/*
-+	 * Array terminator (xattr name = NULL) must be the first non-filled
-+	 * xattr slot.
-+	 */
-+	WARN_ONCE(evm_xattr != xattr,
-+		  "%s: xattrs terminator is not the first non-filled slot\n",
-+		  __func__);
- 
- 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
- 	if (!xattr_data)
--- 
-2.25.1
+Padding isn't being managed. There has been talk about using padding to
+expand the API, but there is no use for it now. Or is there?
 
