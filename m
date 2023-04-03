@@ -2,267 +2,164 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D45EC76196
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Apr 2023 10:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42206C761A6
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Apr 2023 11:47:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232230AbjDCKkB (ORCPT
+        id S231761AbjDCLrS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Apr 2023 06:40:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58748 "EHLO
+        Mon, 3 Apr 2023 07:47:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjDCKjv (ORCPT
+        with ESMTP id S231411AbjDCLrR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Apr 2023 06:39:51 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5378212BE6;
-        Mon,  3 Apr 2023 03:39:21 -0700 (PDT)
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 333AE6dw024727;
-        Mon, 3 Apr 2023 10:37:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=CFuKEPFFQM7kQzgTrYjPL4AY7Pi37UZRMecFHRosweE=;
- b=U+Osj3dttd61Gqkleo8NodD0T4dqNYPSeEQx1MUa1nPU+/OtvwYkQz6LRHalAtrN0vBb
- ESZKWdyxWgGyUifAqZIGH74kJid1NxqYHjbNoxJJiJGybzaPyLqUjxxVd6o1vnvz+TR4
- QGJ44mq3lvCpI/qxWhpzmw69mKIw1HcGeVSaXU0Z1LYpnOo/d+RAMgzueyf0QWpzORN7
- hdtusqCqf/tmafHx4x3qsmDpsG1eM13aHhzMYfINO856vZLFQ9G5EM/IIIQnuANtdLO+
- pSS7+Jo6rzdTRnOQe0csEiLkPJXZMSbp+LmOkj0OxxhUDQp6SNfnDG/Gnns8eRYry2Cq fg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pqvv1rmy1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Apr 2023 10:37:58 +0000
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 333Abvcj030774;
-        Mon, 3 Apr 2023 10:37:57 GMT
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pqvv1rmxm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Apr 2023 10:37:57 +0000
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3339YsoI024983;
-        Mon, 3 Apr 2023 10:37:57 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([9.208.130.101])
-        by ppma01wdc.us.ibm.com (PPS) with ESMTPS id 3ppc87ju0y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Apr 2023 10:37:57 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-        by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 333Abtd316712304
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 3 Apr 2023 10:37:56 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D9BAF58163;
-        Mon,  3 Apr 2023 10:37:55 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 55CE758158;
-        Mon,  3 Apr 2023 10:37:50 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.66.117])
-        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon,  3 Apr 2023 10:37:49 +0000 (GMT)
-Message-ID: <ef1ff552e16eadf5bc8d6219d463b35511103c38.camel@linux.ibm.com>
-Subject: Re: [PATCH v9 3/4] evm: Align evm_inode_init_security() definition
- with LSM infrastructure
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, reiserfs-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Mon, 03 Apr 2023 06:37:48 -0400
-In-Reply-To: <ca6d4080b0f234b5321d965fb1350bfcd291646e.camel@huaweicloud.com>
-References: <20230329130415.2312521-1-roberto.sassu@huaweicloud.com>
-         <20230329130415.2312521-4-roberto.sassu@huaweicloud.com>
-         <CAHC9VhSDVv30ce2652kridRU7iaQQ19tiGubWpyP0mi7pf+JJw@mail.gmail.com>
-         <bfe74fff24a5a7a8059acc00c29ac957bf0b7880.camel@huaweicloud.com>
-         <ca6d4080b0f234b5321d965fb1350bfcd291646e.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
+        Mon, 3 Apr 2023 07:47:17 -0400
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD84F10D5
+        for <linux-security-module@vger.kernel.org>; Mon,  3 Apr 2023 04:47:14 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Pqpz46kG2zMqR6Y;
+        Mon,  3 Apr 2023 13:47:12 +0200 (CEST)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Pqpz22sdDzMpqjL;
+        Mon,  3 Apr 2023 13:47:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1680522432;
+        bh=l/Miq1FXcuzbR9T4SFEdiVhywd+ZoHuDueWC1NgtO10=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=parMgoYOeYZBV33/rJmJ+eAckFCZZpy5lx7PAuQfzAOBTgtwZdaa1gNnPCiHnV/j/
+         0e8VE5xQzF5hJjMMvL5TcYZoPAxf+pMVCT4+24NSF2SeOz+2KMdg+K4NkzU70S6nO1
+         XgaXeFdMsajoahOpGUvZ/v4zaLVmH3yBfS61mpks=
+Message-ID: <40081d47-14f3-b86c-59e3-6f78aeae4e2b@digikod.net>
+Date:   Mon, 3 Apr 2023 13:47:09 +0200
+MIME-Version: 1.0
+User-Agent: 
+Subject: Re: [PATCH v7 07/11] LSM: Helpers for attribute names and filling an
+ lsm_ctx
+Content-Language: en-US
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+References: <20230315224704.2672-1-casey@schaufler-ca.com>
+ <20230315224704.2672-8-casey@schaufler-ca.com>
+ <544a4809-1a79-9dd7-61a5-5fce1f4a5f10@digikod.net>
+ <539e698a-1ab7-a390-a3a4-6c7e43db4eb6@digikod.net>
+In-Reply-To: <539e698a-1ab7-a390-a3a4-6c7e43db4eb6@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 4HnafZ_8XDHqvoCwkEGm4_Y9zfImSkbC
-X-Proofpoint-ORIG-GUID: dDlv3V5Bnc7q_d3CLfPITjeLxvL5-_yX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-03_06,2023-04-03_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- suspectscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 spamscore=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304030080
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2023-03-31 at 14:18 +0200, Roberto Sassu wrote:
-> On Fri, 2023-03-31 at 09:32 +0200, Roberto Sassu wrote:
-> > On Thu, 2023-03-30 at 18:55 -0400, Paul Moore wrote:
-> > > On Wed, Mar 29, 2023 at 9:05 AM Roberto Sassu
-> > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > 
-> > > > Change the evm_inode_init_security() definition to align with the LSM
-> > > > infrastructure. Keep the existing behavior of including in the HMAC
-> > > > calculation only the first xattr provided by LSMs.
-> > > > 
-> > > > Changing the evm_inode_init_security() definition requires passing the
-> > > > xattr array allocated by security_inode_init_security(), and the number of
-> > > > xattrs filled by previously invoked LSMs.
-> > > > 
-> > > > Use the newly introduced lsm_find_xattr_slot() to position EVM correctly in
-> > > > the xattrs array, like a regular LSM, and to increment the number of filled
-> > > > slots. For now, the LSM infrastructure allocates enough xattrs slots to
-> > > > store the EVM xattr, without using the reservation mechanism.
-> > > > 
-> > > > Finally, make evm_inode_init_security() return value compatible with the
-> > > > inode_init_security hook conventions, i.e. return -EOPNOTSUPP if it is not
-> > > > setting an xattr.
-> > > > 
-> > > > EVM is a bit tricky, because xattrs is both an input and an output. If it
-> > > > was just output, EVM should have returned zero if xattrs is NULL. But,
-> > > > since xattrs is also input, EVM is unable to do its calculations, so return
-> > > > -EOPNOTSUPP and handle this error in security_inode_init_security().
-> > > 
-> > > I don't quite understand why EVM would return EOPNOTSUPP if it is
-> > > enabled but there are not xattrs to measure.  It seems like EVM should
-> > > return success/0 in the no-xattr case; there were no xattrs to
-> > > measure, so it succeeded in measuring nothing.  Am I missing
-> > > something?
-> > 
-> > From a very quick look at what other LSMs do, it seems that they return
-> > zero even if they are not initialized.
-> > 
-> > So, it makes sense to return zero also here.
+
+On 03/04/2023 11:54, Mickaël Salaün wrote:
 > 
-> Oh, actually there was a reason to do that. If an LSM does not wish to
-> provide an xattr, it should return -EOPNOTSUPP.
+> On 03/04/2023 11:47, Mickaël Salaün wrote:
+>>
+>> On 15/03/2023 23:47, Casey Schaufler wrote:
+>>> Add lsm_name_to_attr(), which translates a text string to a
+>>> LSM_ATTR value if one is available.
+>>>
+>>> Add lsm_fill_user_ctx(), which fills a struct lsm_ctx, including
+>>> the trailing attribute value.
+>>>
+>>> All are used in module specific components of LSM system calls.
+>>>
+>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>> ---
+>>>     include/linux/security.h | 13 ++++++++++
+>>>     security/lsm_syscalls.c  | 51 ++++++++++++++++++++++++++++++++++++++++
+>>>     security/security.c      | 31 ++++++++++++++++++++++++
+>>>     3 files changed, 95 insertions(+)
+>>
+>> [...]
+>>
+>>> diff --git a/security/security.c b/security/security.c
+>>> index 2c57fe28c4f7..f7b814a3940c 100644
+>>> --- a/security/security.c
+>>> +++ b/security/security.c
+>>> @@ -753,6 +753,37 @@ static int lsm_superblock_alloc(struct super_block *sb)
+>>>     	return 0;
+>>>     }
+>>>     
+>>> +/**
+>>> + * lsm_fill_user_ctx - Fill a user space lsm_ctx structure
+>>> + * @ctx: an LSM context to be filled
+>>> + * @context: the new context value
+>>> + * @context_size: the size of the new context value
+>>> + * @id: LSM id
+>>> + * @flags: LSM defined flags
+>>> + *
+>>> + * Fill all of the fields in a user space lsm_ctx structure.
+>>> + * Caller is assumed to have verified that @ctx has enough space
+>>> + * for @context.
+>>> + * Returns 0 on success, -EFAULT on a copyout error.
+>>> + */
+>>> +int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
+>>> +		      size_t context_size, u64 id, u64 flags)
+>>> +{
+>>> +	struct lsm_ctx local;
+>>> +	void __user *vc = ctx;
+>>> +
+>>> +	local.id = id;
+>>> +	local.flags = flags;
+>>> +	local.ctx_len = context_size;
+>>> +	local.len = context_size + sizeof(local);
+>>> +	vc += sizeof(local);
+>>> +	if (copy_to_user(ctx, &local, sizeof(local)))
+>>> +		return -EFAULT;
+>>> +	if (context_size > 0 && copy_to_user(vc, context, context_size))
+>>> +		return -EFAULT;
+>>
+>> Can we do a single copy_to_user() call? That would avoid inconsistent
+>> user space data, could speed up a bit the operation, and make the code
+>> easier to understand. To use the stack, we need to know the maximum size
+>> of context_size for all use cases, which seems reasonable and can be
+>> checked at build time (on each LSM side, and potentially with specific
+>> context type passed as enum instead of context_size) and run time (for
+>> this generic helper).
+> 
+> Well, actually the context_size should be inferred from id, and the
+> "local" size should be defined and check at build time against all
+> context ID sizes.
 
-In general, the original purpose of -EOPNOTSUPP was to indicate that
-the filesystem itself did not support security xattrs.  This can be
-seen in evm_verify_hmac(), which returns different values (e.g.
-INTEGRITY_NOLABEL, INTEGRITY_NOXATTRS, INTEGRITY_UNKNOWN) based on
-whether security.evm or any protected security xattrs exist.
+@ctx_len should already be known by user space according to the LSM ID 
+and the requested attribute. @len should already be known by user space 
+because lsm_ctx is part of the ABI.
+
+The only reason I can think of the rationale for @len and @ctx_len is 
+that struct lsm_ctx could gain more fields. If this happen, they would 
+then need to be inserted before @ctx. This would make this struct 
+lsm_ctx too flexible and complex for user space to parse correctly (e.g. 
+for strace, gdb).
+
+I don't see where we could use @flags instead of relying on a new 
+attribute type.
+
+I think security_getselfattr() and lsm_fill_user_ctx() could be changed 
+to avoid each LSM to pass their own ID to lsm_fill_user_ctx(). We could 
+have a lsm_get_attr_size(lsm_id, attr) helper (called by 
+security_getselfattr) to group these relations, based on fixed values, 
+exposed in the UAPI, and checked at build time with the size of the 
+related LSM-specific attribute type. This would also allow to factor out 
+the total size calculation needed before calling the getselfattr() 
+implementers, and then rely on a common consistent behavior. That could 
+also be used to not call getselfattr() implementers if they don't handle 
+a specific attribute, and then remove their related error handling for 
+this case.
+
+For now, the getselfattr() hook (not the related syscall) doesn't need 
+to pass a "flags" argument to each LSM because there is no use of it.
+
 
 > 
-> As we are not checking this convention anymore, it is probably fine to
-> return zero. I already made the change, will send the new version
-> shortly.
-
-For security xattr initialization, agreed.
-
-Mimi
-
-> 
-> > 
-> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > ---
-> > > >  include/linux/evm.h               | 14 ++++++++------
-> > > >  security/integrity/evm/evm_main.c | 18 +++++++++++-------
-> > > >  security/security.c               |  6 +++---
-> > > >  3 files changed, 22 insertions(+), 16 deletions(-)
-> > > > 
-> > > > diff --git a/include/linux/evm.h b/include/linux/evm.h
-> > > > index 7dc1ee74169..3c0e8591b69 100644
-> > > > --- a/include/linux/evm.h
-> > > > +++ b/include/linux/evm.h
-> > > > @@ -56,9 +56,10 @@ static inline void evm_inode_post_set_acl(struct dentry *dentry,
-> > > >  {
-> > > >         return evm_inode_post_setxattr(dentry, acl_name, NULL, 0);
-> > > >  }
-> > > > -extern int evm_inode_init_security(struct inode *inode,
-> > > > -                                  const struct xattr *xattr_array,
-> > > > -                                  struct xattr *evm);
-> > > > +extern int evm_inode_init_security(struct inode *inode, struct inode *dir,
-> > > > +                                  const struct qstr *qstr,
-> > > > +                                  struct xattr *xattrs,
-> > > > +                                  int *num_filled_xattrs);
-> > > >  extern bool evm_revalidate_status(const char *xattr_name);
-> > > >  extern int evm_protected_xattr_if_enabled(const char *req_xattr_name);
-> > > >  extern int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
-> > > > @@ -157,9 +158,10 @@ static inline void evm_inode_post_set_acl(struct dentry *dentry,
-> > > >         return;
-> > > >  }
-> > > > 
-> > > > -static inline int evm_inode_init_security(struct inode *inode,
-> > > > -                                         const struct xattr *xattr_array,
-> > > > -                                         struct xattr *evm)
-> > > > +static inline int evm_inode_init_security(struct inode *inode, struct inode *dir,
-> > > > +                                         const struct qstr *qstr,
-> > > > +                                         struct xattr *xattrs,
-> > > > +                                         int *num_filled_xattrs)
-> > > >  {
-> > > >         return 0;
-> > > >  }
-> > > > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> > > > index cf24c525558..9e75759150c 100644
-> > > > --- a/security/integrity/evm/evm_main.c
-> > > > +++ b/security/integrity/evm/evm_main.c
-> > > > @@ -21,6 +21,7 @@
-> > > >  #include <linux/evm.h>
-> > > >  #include <linux/magic.h>
-> > > >  #include <linux/posix_acl_xattr.h>
-> > > > +#include <linux/lsm_hooks.h>
-> > > > 
-> > > >  #include <crypto/hash.h>
-> > > >  #include <crypto/hash_info.h>
-> > > > @@ -864,23 +865,26 @@ void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
-> > > >  /*
-> > > >   * evm_inode_init_security - initializes security.evm HMAC value
-> > > >   */
-> > > > -int evm_inode_init_security(struct inode *inode,
-> > > > -                                const struct xattr *lsm_xattr,
-> > > > -                                struct xattr *evm_xattr)
-> > > > +int evm_inode_init_security(struct inode *inode, struct inode *dir,
-> > > > +                           const struct qstr *qstr, struct xattr *xattrs,
-> > > > +                           int *num_filled_xattrs)
-> > > >  {
-> > > >         struct evm_xattr *xattr_data;
-> > > > +       struct xattr *evm_xattr;
-> > > >         int rc;
-> > > > 
-> > > > -       if (!(evm_initialized & EVM_INIT_HMAC) ||
-> > > > -           !evm_protected_xattr(lsm_xattr->name))
-> > > > -               return 0;
-> > > > +       if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs ||
-> > > > +           !evm_protected_xattr(xattrs->name))
-> > > > +               return -EOPNOTSUPP;
-> > > > +
-> > > > +       evm_xattr = lsm_find_xattr_slot(xattrs, num_filled_xattrs);
-> > > > 
-> > > >         xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
-> > > >         if (!xattr_data)
-> > > >                 return -ENOMEM;
-> > > > 
-> > > >         xattr_data->data.type = EVM_XATTR_HMAC;
-> > > > -       rc = evm_init_hmac(inode, lsm_xattr, xattr_data->digest);
-> > > > +       rc = evm_init_hmac(inode, xattrs, xattr_data->digest);
-> > > >         if (rc < 0)
-> > > >                 goto out;
-> > > > 
-> > > > diff --git a/security/security.c b/security/security.c
-> > > > index be33d643a81..22ab4fb7ebf 100644
-> > > > --- a/security/security.c
-> > > > +++ b/security/security.c
-> > > > @@ -1674,9 +1674,9 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
-> > > >         if (!num_filled_xattrs)
-> > > >                 goto out;
-> > > > 
-> > > > -       ret = evm_inode_init_security(inode, new_xattrs,
-> > > > -                                     new_xattrs + num_filled_xattrs);
-> > > > -       if (ret)
-> > > > +       ret = evm_inode_init_security(inode, dir, qstr, new_xattrs,
-> > > > +                                     &num_filled_xattrs);
-> > > > +       if (ret && ret != -EOPNOTSUPP)
-> > > >                 goto out;
-> > > >         ret = initxattrs(inode, new_xattrs, fs_data);
-> > > >  out:
-> > > > --
-> > > > 2.25.1
-> > > > 
-> 
-
-
+>>
+>>
+>>> +	return 0;
+>>> +}
+>>> +
+>>>     /*
+>>>      * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
+>>>      * can be accessed with:
