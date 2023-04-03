@@ -2,79 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE55C7619A
-	for <linux-security-module@archiver.kernel.org>; Sun,  2 Apr 2023 20:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6CDBC77B60
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Apr 2023 09:47:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230121AbjDBUDT (ORCPT
+        id S232345AbjDCJrs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 2 Apr 2023 16:03:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43416 "EHLO
+        Mon, 3 Apr 2023 05:47:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230175AbjDBUDS (ORCPT
+        with ESMTP id S232317AbjDCJrd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 2 Apr 2023 16:03:18 -0400
-Received: from valentin-vidic.from.hr (valentin-vidic.from.hr [IPv6:2001:470:1f0b:3b7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2015A8A49;
-        Sun,  2 Apr 2023 13:03:16 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at valentin-vidic.from.hr
-Received: by valentin-vidic.from.hr (Postfix, from userid 1000)
-        id 32CA1295B5; Sun,  2 Apr 2023 22:03:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=valentin-vidic.from.hr; s=2020; t=1680465791;
-        bh=9VdTdi38B+ohBYB7mtje7rl53RM9eLoGTNFkms+HzbE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=P3zQOheTkGXjBNtEJf5A2qf6YkJ32PjA29Prfa5xseW4hrwSq+qEWFXeEQGezBDMT
-         wx7w2YEcMjz3l6q4YAgjhzTtWpvrj5kRaTHtGtwuBAZtBCZMqoEVkXicDQ2bUy/wcG
-         DYDq907W2MlUjmlG7P/r2z3RCLksqMFOS8LTlsQ10evFhefimbOTDxcNRenbL+qcwl
-         IFvL/42Zr+1zNHxXqb69AtyBV3/LS6jNj2sjtz4eXaUXjRkp6eXM2w8058Sn8UTTJD
-         xKS09CY8bSBCn9eUn9QdVtQz/lcpa6zzjGMb6fNaUSgDm3Aa7QzBreyteCTwBWsxY8
-         FN33R5V0GD4k1F4oZTEB46ivyUXxuk9Sme8sNHd9bIGAZxKBQnVz+ODd1PgeLaFwGC
-         b3LSXJvxepn7mjloawdID81IE5sr8IM5E07aQYd1xWzmqxYxCAeiJHLBxYpjdZmxLh
-         7BlZApm3Q32CFVmSSbuao4qR0KJaVMD4YY+aG/lx6Qf+NIKmRLn+TQJTbhyTkVNhD7
-         6gFb2ae2hCawUWYF9ZZBrq6SVPwWGqWAMFctkaWKSoA2IYMUlpbHtVdPIlQV6rH/r5
-         BIhireO219++LWC26DWQrKp9g94j83911I2FGhu/CHp+X7qXma4AqyAol+XIHDfvzi
-         /DzeNmGZkh5j8tWZhqR+Cf9Y=
-Date:   Sun, 2 Apr 2023 22:03:11 +0200
-From:   Valentin =?utf-8?B?VmlkacSH?= <vvidic@valentin-vidic.from.hr>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Micah Morton <mortonm@chromium.org>,
-        =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH] security, lsm: security_old_inode_init_security() Handle
- multi LSM registration
-Message-ID: <ZCnff6gUjU89zfAb@valentin-vidic.from.hr>
-References: <20230401214151.1243189-1-vvidic@valentin-vidic.from.hr>
- <CAHC9VhT6VXwybScqsnYHHtbHNPoWMVQJzQ7VAccm2MWZEz+5Dw@mail.gmail.com>
+        Mon, 3 Apr 2023 05:47:33 -0400
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ac])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A6B1164E
+        for <linux-security-module@vger.kernel.org>; Mon,  3 Apr 2023 02:47:14 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PqmJb6CRBzMq5Wj;
+        Mon,  3 Apr 2023 11:47:11 +0200 (CEST)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4PqmJY2s6lz20sV;
+        Mon,  3 Apr 2023 11:47:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1680515231;
+        bh=p6azdZmCDetm+MRuPRyQn9dJl2cUhUw3RMYCZChzekU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=iqrdHqmKYIqoL2fYNNMc/PoJgmDfGOuk8UYr8hsggWQCMAA8AHiOzIZyHCT75CfFA
+         pymslOIadB0FD1DorIoMObhUfBl5alJHvzbr4knUzyaGi4gwhkjuTWz1AuUwcSpdi2
+         fbEHgAlzUV2gQ1u0+InDivuRlgszNU3HF55+GWaI=
+Message-ID: <544a4809-1a79-9dd7-61a5-5fce1f4a5f10@digikod.net>
+Date:   Mon, 3 Apr 2023 11:47:08 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhT6VXwybScqsnYHHtbHNPoWMVQJzQ7VAccm2MWZEz+5Dw@mail.gmail.com>
+User-Agent: 
+Subject: Re: [PATCH v7 07/11] LSM: Helpers for attribute names and filling an
+ lsm_ctx
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+References: <20230315224704.2672-1-casey@schaufler-ca.com>
+ <20230315224704.2672-8-casey@schaufler-ca.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230315224704.2672-8-casey@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Apr 02, 2023 at 11:14:33AM -0400, Paul Moore wrote:
-> If you have the time, could you try a patch we have queued up in the
-> lsm/next branch?  We are in the process of removing
-> security_old_inode_init_security() and transitioning all the callers
-> over to security_inode_init_security(), and I believe the ocfs2 patch
-> for this should solve the problem you are seeing, can you test it on
-> your system and let us know?
+
+On 15/03/2023 23:47, Casey Schaufler wrote:
+> Add lsm_name_to_attr(), which translates a text string to a
+> LSM_ATTR value if one is available.
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/patch/?id=de3004c874e740304cc4f4a83d6200acb511bbda
+> Add lsm_fill_user_ctx(), which fills a struct lsm_ctx, including
+> the trailing attribute value.
+> 
+> All are used in module specific components of LSM system calls.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>   include/linux/security.h | 13 ++++++++++
+>   security/lsm_syscalls.c  | 51 ++++++++++++++++++++++++++++++++++++++++
+>   security/security.c      | 31 ++++++++++++++++++++++++
+>   3 files changed, 95 insertions(+)
 
-Great, thanks for the pointer. This patch also works for me as I don't
-see the crash anymore. Can it also be included in the 6.1 LTS kernel
-since this is were I first noticed the problem?
+[...]
 
--- 
-Valentin
+> diff --git a/security/security.c b/security/security.c
+> index 2c57fe28c4f7..f7b814a3940c 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -753,6 +753,37 @@ static int lsm_superblock_alloc(struct super_block *sb)
+>   	return 0;
+>   }
+>   
+> +/**
+> + * lsm_fill_user_ctx - Fill a user space lsm_ctx structure
+> + * @ctx: an LSM context to be filled
+> + * @context: the new context value
+> + * @context_size: the size of the new context value
+> + * @id: LSM id
+> + * @flags: LSM defined flags
+> + *
+> + * Fill all of the fields in a user space lsm_ctx structure.
+> + * Caller is assumed to have verified that @ctx has enough space
+> + * for @context.
+> + * Returns 0 on success, -EFAULT on a copyout error.
+> + */
+> +int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
+> +		      size_t context_size, u64 id, u64 flags)
+> +{
+> +	struct lsm_ctx local;
+> +	void __user *vc = ctx;
+> +
+> +	local.id = id;
+> +	local.flags = flags;
+> +	local.ctx_len = context_size;
+> +	local.len = context_size + sizeof(local);
+> +	vc += sizeof(local);
+> +	if (copy_to_user(ctx, &local, sizeof(local)))
+> +		return -EFAULT;
+> +	if (context_size > 0 && copy_to_user(vc, context, context_size))
+> +		return -EFAULT;
+
+Can we do a single copy_to_user() call? That would avoid inconsistent 
+user space data, could speed up a bit the operation, and make the code 
+easier to understand. To use the stack, we need to know the maximum size 
+of context_size for all use cases, which seems reasonable and can be 
+checked at build time (on each LSM side, and potentially with specific 
+context type passed as enum instead of context_size) and run time (for 
+this generic helper).
+
+
+> +	return 0;
+> +}
+> +
+>   /*
+>    * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
+>    * can be accessed with:
