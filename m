@@ -2,105 +2,100 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33774C77B60
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Apr 2023 18:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627B4C761A6
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Apr 2023 19:33:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236070AbjDDS4b (ORCPT
+        id S235874AbjDDTdJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Apr 2023 14:56:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57658 "EHLO
+        Tue, 4 Apr 2023 15:33:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235839AbjDDS4a (ORCPT
+        with ESMTP id S236048AbjDDTdI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Apr 2023 14:56:30 -0400
-Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEFDC35BD
-        for <linux-security-module@vger.kernel.org>; Tue,  4 Apr 2023 11:56:28 -0700 (PDT)
-Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-54606036bb3so467844267b3.6
-        for <linux-security-module@vger.kernel.org>; Tue, 04 Apr 2023 11:56:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1680634588;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yuYMP9oERucJ/O/ah5M668zvZcUxIDKJFH+6ndYhYhw=;
-        b=PQaRIIZkpGihz6wkjt6tSlzCY4838BGeVloFrkgUy+TiPjGJbg3Xju0fSOz0ugEkLa
-         4M8JsBMaHjY8ojIZiBKrw25TFChUm/J4/9aimvN5zAF5yyzAJlL2UfxkMYrv/zAJW/nA
-         jwyh8THBan3RpnhNHPD9gjX0xuKBf51UcePGUO7o0LaDMyF74f8YReyFbAXUUPkQpImX
-         DC76fVSQD8bpquZb3y4h8S8ed1r8VitaUMVJbkb5wVqkWxpxh/fzAO9pT/D1XDoekIuz
-         qjzS8hMqbNGhmWQaD035n8+tMbSOtDVlAbMYXFICMdWGmUL28QNylVAGMUDdcFBiprXN
-         MQSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680634588;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yuYMP9oERucJ/O/ah5M668zvZcUxIDKJFH+6ndYhYhw=;
-        b=7gnGutBDtSsksGTmsDO4BA2lUvVIReWDTpIXLAv0AW+BMdf+RRFmBpSqUVskpbNXjI
-         O5s8PIMmVc3o4StrwaF5b8pT1pg9qH7nydehDZrL7X9K1eUkZSFUZMRr+Ft6FPKpTH1l
-         zvO9V0lw+9uJPClA0ivJSHLw6hUQIS7VHbPNPp2JkGTdtAElSXNsWsmHrqOk3NJQ20AR
-         y47lzHC2jdU8UEThQtxtYmzTx4HL1hDsDSD4+3dSjs7C33B92xci8Crr/FSKbeotM1sX
-         C+WkBleLrC3sLjRW9hdcDcSxMneTf80lPPge894055TmAwdKxwBj++7jl4vW4d3kqNRR
-         BPAA==
-X-Gm-Message-State: AAQBX9e9WqVd2FZnoI6KLNQH54Err95ST1tMGqB0FQ/PizRRasIOFdl/
-        qyixwETeh9K3NcpK0rgfR8Rcjqtw79vc7pjrjCbT
-X-Google-Smtp-Source: AKy350YxxXydXcJ3GRJ0BEKkYqhynh4SF2ERZFWAntaIKyMLNleszHadlV51xUjwR+gGb8zwomvEMLjrI4Z2QWit7js=
-X-Received: by 2002:a81:b389:0:b0:544:cd0e:2f80 with SMTP id
- r131-20020a81b389000000b00544cd0e2f80mr1986292ywh.8.1680634587849; Tue, 04
- Apr 2023 11:56:27 -0700 (PDT)
+        Tue, 4 Apr 2023 15:33:08 -0400
+X-Greylist: delayed 1552 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 04 Apr 2023 12:33:00 PDT
+Received: from fallback19.i.mail.ru (fallback19.i.mail.ru [79.137.243.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D10C52713;
+        Tue,  4 Apr 2023 12:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail4;
+        h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=dKMZm81LcHiP6EBCk3sYRLgVyw8rB2A6lKoRpsJ+gTA=;
+        t=1680636780;x=1680726780; 
+        b=gyhUyLV8LbW4lgAo+8jtT4qL0fPamUBQzP/Ql1NxgyJDZrthQfmoYYHkx9NWebKI5sDNYKdz74RcjOS+LgH5fOmRhbN+Rkvsya/4hnuPiQqq0oBTQgDBPm6Lj3V+rty2RVMQSmUllp7A56quJBepvwG4NsFyKQ+vFb8NHslO7tR9WPhyOtfp1VAM4/VsHKmCS/fBMv4HtUBSPc/nazQQB5MGGTBjBdcWJkDASa8DHl0UA6kaPJPVS9xhC2mTR4AVQoqjd3mBfvKw7rIj+JT4pksJdCNbybRz3kR2osRyZ4G/7MNiA3HQXtbgrlmhpDw6i1rKPlkH2AQ61hRg7cXSSg==;
+Received: from [10.12.4.3] (port=53562 helo=smtp17.i.mail.ru)
+        by fallback19.i.mail.ru with esmtp (envelope-from <listdansp@mail.ru>)
+        id 1pjlzl-007ioS-GM; Tue, 04 Apr 2023 22:07:05 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail4;
+        h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=dKMZm81LcHiP6EBCk3sYRLgVyw8rB2A6lKoRpsJ+gTA=;
+        t=1680635225;x=1680725225; 
+        b=fLC4vJuAXgkLFLb1XKShV+Wb+FmtxHVn5NjCiKZF/TMJSAZs1u36t3T+vURnRcGsIjR1e2lENeP+QDtgYKUVtd+bGxJxifpI6XZVHuGIIQOcbDO6+dKWrpDx8POfbpLjyycKj1bhyJB/8vbaTNyvCYixYJW7PQI30HAnrpwjrhDiuyujIIeB6A8C3RP6RogksAXgYMY3Ry6NmFeflScSbMHwOe+DQKzCjY2HGKQiVqFRPkcePaoRaRCw13/bnTEa3fO2pKaOx5pCiE12DYVQV+muTugv2lcgUoZ7jKC1Ftq+Ig0AlOna4fsdthFnhuhlckNZQKTLehWkG9OmkV/VcA==;
+Received: by smtp17.i.mail.ru with esmtpa (envelope-from <listdansp@mail.ru>)
+        id 1pjlzd-000qM6-Ey; Tue, 04 Apr 2023 22:06:57 +0300
+From:   Danila Chernetsov <listdansp@mail.ru>
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Danila Chernetsov <listdansp@mail.ru>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: [PATCH] apparmor: fix missing error check for rhashtable_insert_fast
+Date:   Tue,  4 Apr 2023 19:05:49 +0000
+Message-Id: <20230404190549.18257-1-listdansp@mail.ru>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20230331123221.3273328-1-roberto.sassu@huaweicloud.com> <20230331123221.3273328-4-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20230331123221.3273328-4-roberto.sassu@huaweicloud.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 4 Apr 2023 14:56:17 -0400
-Message-ID: <CAHC9VhSMdrPP6+9cmhAU1=tDikJ5Y8_mJEORdqiaJw3pQuFDDg@mail.gmail.com>
-Subject: Re: [PATCH v10 3/4] evm: Align evm_inode_init_security() definition
- with LSM infrastructure
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Mailru-Src: smtp
+X-7564579A: 78E4E2B564C1792B
+X-77F55803: 4F1203BC0FB41BD9487C1178585EEA1562B1701A890F216C76CC45EB59DA31C9182A05F5380850401C632EE49EDBB8BF8A15A11582A26E8475CF8690F3F7FD4EB2A5FB020275D3CD
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7DCDABBCBEAF682B1EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637D3219148F76DED538638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D8440EC792D69FF37D2486F6435A6FE30B6F9789CCF6C18C3F8528715B7D10C86878DA827A17800CE7A6779F98BF527B7A9FA2833FD35BB23D9E625A9149C048EE902A1BE408319B29618001F51B5FD3F9D2E47CDBA5A96583BD4B6F7A4D31EC0BC014FD901B82EE079FA2833FD35BB23D27C277FBC8AE2E8B9C5BD8F4E2319607A471835C12D1D977C4224003CC836476EB9C4185024447017B076A6E789B0E975F5C1EE8F4F765FCB6748121CF5D1ADF3AA81AA40904B5D9CF19DD082D7633A078D18283394535A93AA81AA40904B5D98AA50765F7900637930F67DCF033EC49D81D268191BDAD3D3666184CF4C3C14F3FC91FA280E0CE3D1A620F70A64A45A98AA50765F79006372E808ACE2090B5E1725E5C173C3A84C3C5EA940A35A165FF2DBA43225CD8A89FD2A95C73FD1EFF45A91E23F1B6B78B78B5C8C57E37DE458BEDA766A37F9254B7
+X-C1DE0DAB: 0D63561A33F958A5F8E95A6F260E20B98084B99C43D30E5DC8E40915B2419E445A4FF58CDAEABE2AA132EA92956906CB697742550EFD07B07E0012C66AE17B00823CB91A9FED034534781492E4B8EEAD831CA35E4C50C31B
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF26627E0B569FD6DE0357DC0226EF9A8E87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF26FCB280AB568EE2BFD61DE8EC32DF547C17237253DAC90F37F3C9000BDCFD99136DDA45E01CE4BED93D275CAE0A69C49B13468CD3F8C481F9E6CF646832CDA3FF926C0F406FFAF7
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojJlgUV9tWvkTPEdJRH8loIg==
+X-Mailru-Sender: 4CE1109FD677D2770147F6A9E21DCA7BC94347EFF6D7DBEA0369EBC0B88D7114960CD386AD0F2D317E3C9C7AF06D9E7B78274A4A9E9E44FD3C3897ABF9FF211DE8284E426C7B2D9A5FEEDEB644C299C0ED14614B50AE0675
+X-Mras: Ok
+X-174C08C4: 5188C02AEC42908C481ED7ADC579193296BBA28369E3F2D2713F3D5F7D406D31BCF678C7329BA986
+X-7564579A: 646B95376F6C166E
+X-77F55803: 6242723A09DB00B421986EB18E28D707CC603B1B97CA7101138A1EADC532FE32049FFFDB7839CE9E50A261C4403C6B6106EE0CCD7CAD63BD26B1E944E070CD3EF127895C3F315542
+X-7FA49CB5: 0D63561A33F958A562AF04CF706B1AC29417BC0475936FB5C9294CDEC67E8CD0CACD7DF95DA8FC8BD5E8D9A59859A8B60AB5F3D1D7EC82DA
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5xhPKz0ZEsZ5k6NOOPWz5QAiZSCXKGQRq3/7KxbCLSB2ESzQkaOXqCBFZPLWFrEGlV1shfWe2EVcxl5toh0c/aCGOghz/frdRhzMe95NxDFdhn9Z/5tnkGSNFiBohEM5tQ==
+X-Mailru-MI: C000000000001000
+X-Mras: Ok
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 31, 2023 at 8:33=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> Change the evm_inode_init_security() definition to align with the LSM
-> infrastructure. Keep the existing behavior of including in the HMAC
-> calculation only the first xattr provided by LSMs.
->
-> Changing the evm_inode_init_security() definition requires passing the
-> xattr array allocated by security_inode_init_security(), and the number o=
-f
-> xattrs filled by previously invoked LSMs.
->
-> Use the newly introduced lsm_get_xattr_slot() to position EVM correctly i=
-n
-> the xattrs array, like a regular LSM, and to increment the number of fill=
-ed
-> slots. For now, the LSM infrastructure allocates enough xattrs slots to
-> store the EVM xattr, without using the reservation mechanism.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  include/linux/evm.h               | 13 +++++++------
->  security/integrity/evm/evm_main.c | 16 ++++++++++------
->  security/security.c               |  6 +++---
->  3 files changed, 20 insertions(+), 15 deletions(-)
+ rhashtable_insert_fast() could return err value when memory allocation is
+ failed. but unpack_profile() do not check values and this always returns
+ success value. This patch just adds error check code.
 
-This seems reasonable to me, but I'll want to see a sign-off from Mimi
-for the EVM bits.  Same thing for patch 4/4.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
---=20
-paul-moore.com
+Fixes: e025be0f26d5 ("apparmor: support querying extended trusted helper extra data")
+
+Signed-off-by: Danila Chernetsov <listdansp@mail.ru>
+---
+ security/apparmor/policy_unpack.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index cf2ceec40b28..4d8adb21732c 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -1046,8 +1046,13 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
+ 				goto fail;
+ 			}
+ 
+-			rhashtable_insert_fast(profile->data, &data->head,
+-					       profile->data->p);
++			if(rhashtable_insert_fast(profile->data, &data->head,
++						profile->data->p)) {
++				kfree_sensitive(data->key);
++				kfree_sensitive(data);
++				info = "failed to insert data to table"; 
++				goto fail;
++			}
+ 		}
+ 
+ 		if (!aa_unpack_nameX(e, AA_STRUCTEND, NULL)) {
+-- 
+2.25.1
+
