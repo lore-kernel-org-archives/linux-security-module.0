@@ -2,118 +2,287 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D23C76188
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Apr 2023 19:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6508CC6FD1D
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Apr 2023 09:31:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231946AbjDCT2Z (ORCPT
+        id S234276AbjDDJbT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Apr 2023 15:28:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48764 "EHLO
+        Tue, 4 Apr 2023 05:31:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231416AbjDCT2Y (ORCPT
+        with ESMTP id S234233AbjDDJbP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Apr 2023 15:28:24 -0400
-Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6935CE7E
-        for <linux-security-module@vger.kernel.org>; Mon,  3 Apr 2023 12:28:23 -0700 (PDT)
-Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-5491fa028adso75670107b3.10
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Apr 2023 12:28:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1680550102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T9I3S15nqjmq/VpBKAht/PvKJEFQQLGuZ/bW1VqZbfs=;
-        b=IyN7FxGoF35SVlsmVSkP+ewtImKekTWA1yEJClJ/qU1ZeHLLJe7j1a6XkZM+QwnitG
-         iOI4L+AFo18QVXaJzP9yXKDip2x3G6pgxoWSZj6ZDtk9cuwxrYcNOmbIDSCtc0iuUuSG
-         rR/fbS0p5MgU6TbaC0UcdVAQ58GnqXJHUqSSNiadbUE2j8nIvSArRYjKbAUyEkmRo2h2
-         wnS7Yc4p7Y8Y4FrZ06tBKDMKRv9MqlJqDx0QjyEXEIeXZwQIfnQ67rb3XVWebvkvlBjr
-         XxQGcXOp7u0LC8xRGR3+h6+ph/m59TUiD8xm8no45CPYK+MxKzWXLJoBmWDZTT6x9SZC
-         oC8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680550102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T9I3S15nqjmq/VpBKAht/PvKJEFQQLGuZ/bW1VqZbfs=;
-        b=jpK7G0mS2bSYg1aVL6eKzkfNDfoY2E007vpUr24bvAWYMnYxtN1ah+uUqH7XLPx9a2
-         TBxLyFGoowH0UvnKeIQE14dLui1EvvndfFhlKnbjSi05M/gHuyLfRKdO58gYlL0aAt0D
-         qJbyMdXnGD/fUXYOAI2Em8klF1votpqaJ7IpqH4y4RfvPjPyzXx8QNWqXem+GD7Bjit+
-         uVF0B/ypY1UW3oULaT040fyey2VZD8lIjIj4Idwv0WEb3vA3C+IZd0fBqi8Xkdmqb7t+
-         zTUQMBffqUv999fHByTLomiHodtLewtbdBy6aN7ZlFu8dyPk+frM5XwS01ch2MrzE5rn
-         8QFQ==
-X-Gm-Message-State: AAQBX9fYSQY8uK0RPbZLQ44ETWH4vjmC6HgsjV+D+HqO82UX3DhXbnB9
-        EBMw8HiMgg6y5rQjl4xdJy4JHS8g7LIqulCQD/Ev
-X-Google-Smtp-Source: AKy350ZpuRBVczYWzU7b23b5YYokSEQwjmixNyc9iDT2GeF6yGMPV9McOXbrBeADGCew0tY98H4oDujnNQU83gb4STg=
-X-Received: by 2002:a81:b389:0:b0:544:cd0e:2f80 with SMTP id
- r131-20020a81b389000000b00544cd0e2f80mr24438ywh.8.1680550102543; Mon, 03 Apr
- 2023 12:28:22 -0700 (PDT)
+        Tue, 4 Apr 2023 05:31:15 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96E5E1FD8;
+        Tue,  4 Apr 2023 02:31:12 -0700 (PDT)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4PrMsP4wKXz6J7Kk;
+        Tue,  4 Apr 2023 17:29:13 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Tue, 4 Apr 2023 10:31:09 +0100
+Message-ID: <1f84d88f-9977-13a9-245a-c75cd3444b29@huawei.com>
+Date:   Tue, 4 Apr 2023 12:31:08 +0300
 MIME-Version: 1.0
-References: <20230401214151.1243189-1-vvidic@valentin-vidic.from.hr>
- <CAHC9VhT6VXwybScqsnYHHtbHNPoWMVQJzQ7VAccm2MWZEz+5Dw@mail.gmail.com> <ZCnff6gUjU89zfAb@valentin-vidic.from.hr>
-In-Reply-To: <ZCnff6gUjU89zfAb@valentin-vidic.from.hr>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 3 Apr 2023 15:28:11 -0400
-Message-ID: <CAHC9VhTCafjmo7k=qGnOMDm4s4UHL9g=o5KgRfg9_xwWCzUhcw@mail.gmail.com>
-Subject: Re: [PATCH] security, lsm: security_old_inode_init_security() Handle
- multi LSM registration
-To:     =?UTF-8?Q?Valentin_Vidi=C4=87?= <vvidic@valentin-vidic.from.hr>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Micah Morton <mortonm@chromium.org>,
-        =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Vivek Goyal <vgoyal@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v10 09/13] landlock: Add network rules and TCP hooks
+ support
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>
+References: <20230323085226.1432550-1-konstantin.meskhidze@huawei.com>
+ <20230323085226.1432550-10-konstantin.meskhidze@huawei.com>
+ <468fbb05-6d72-3570-3453-b1f8bfdd5bc2@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <468fbb05-6d72-3570-3453-b1f8bfdd5bc2@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.123.126]
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Apr 2, 2023 at 4:03=E2=80=AFPM Valentin Vidi=C4=87
-<vvidic@valentin-vidic.from.hr> wrote:
->
-> On Sun, Apr 02, 2023 at 11:14:33AM -0400, Paul Moore wrote:
-> > If you have the time, could you try a patch we have queued up in the
-> > lsm/next branch?  We are in the process of removing
-> > security_old_inode_init_security() and transitioning all the callers
-> > over to security_inode_init_security(), and I believe the ocfs2 patch
-> > for this should solve the problem you are seeing, can you test it on
-> > your system and let us know?
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/patch/?=
-id=3Dde3004c874e740304cc4f4a83d6200acb511bbda
->
-> Great, thanks for the pointer. This patch also works for me as I don't
-> see the crash anymore. Can it also be included in the 6.1 LTS kernel
-> since this is were I first noticed the problem?
 
-I'm glad that solved your problem, thanks for taking the time to test it ou=
-t.
 
-I think backporting it to the stable kernels would be okay, but I'd
-prefer to let it get some more testing in linux-next first if that's
-okay with you.  Since we are currently at v6.3-rc5 and this patch is
-scheduled to go up to Linus during the next merge window, it might
-make the most sense to give this two more weeks in -next, let it land
-in Linus' tree, and they ask the stable team for a backport ("Option
-2" in the stable kernel docs):
+3/31/2023 8:24 PM, Mickaël Salaün пишет:
+> 
+> On 23/03/2023 09:52, Konstantin Meskhidze wrote:
+>> This commit adds network rules support in the ruleset management
+>> helpers and the landlock_create_ruleset syscall.
+>> Refactor user space API to support network actions. Add new network
+>> access flags, network rule and network attributes. Increment Landlock
+>> ABI version. Expand access_masks_t to u32 to be sure network access
+>> rights can be stored. Implement socket_bind() and socket_connect()
+>> LSM hooks, which enable to restrict TCP socket binding and connection
+>> to specific ports.
+>> 
+>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>> ---
+>> 
+>> Changes since v9:
+>> * Changes UAPI port field to __u64.
+>> * Moves shared code into check_socket_access().
+>> * Adds get_raw_handled_net_accesses() and
+>> get_current_net_domain() helpers.
+>> * Minor fixes.
+>> 
+>> Changes since v8:
+>> * Squashes commits.
+>> * Refactors commit message.
+>> * Changes UAPI port field to __be16.
+>> * Changes logic of bind/connect hooks with AF_UNSPEC families.
+>> * Adds address length checking.
+>> * Minor fixes.
+>> 
+>> Changes since v7:
+>> * Squashes commits.
+>> * Increments ABI version to 4.
+>> * Refactors commit message.
+>> * Minor fixes.
+>> 
+>> Changes since v6:
+>> * Renames landlock_set_net_access_mask() to landlock_add_net_access_mask()
+>>    because it OR values.
+>> * Makes landlock_add_net_access_mask() more resilient incorrect values.
+>> * Refactors landlock_get_net_access_mask().
+>> * Renames LANDLOCK_MASK_SHIFT_NET to LANDLOCK_SHIFT_ACCESS_NET and use
+>>    LANDLOCK_NUM_ACCESS_FS as value.
+>> * Updates access_masks_t to u32 to support network access actions.
+>> * Refactors landlock internal functions to support network actions with
+>>    landlock_key/key_type/id types.
+>> 
+>> Changes since v5:
+>> * Gets rid of partial revert from landlock_add_rule
+>> syscall.
+>> * Formats code with clang-format-14.
+>> 
+>> Changes since v4:
+>> * Refactors landlock_create_ruleset() - splits ruleset and
+>> masks checks.
+>> * Refactors landlock_create_ruleset() and landlock mask
+>> setters/getters to support two rule types.
+>> * Refactors landlock_add_rule syscall add_rule_path_beneath
+>> function by factoring out get_ruleset_from_fd() and
+>> landlock_put_ruleset().
+>> 
+>> Changes since v3:
+>> * Splits commit.
+>> * Adds network rule support for internal landlock functions.
+>> * Adds set_mask and get_mask for network.
+>> * Adds rb_root root_net_port.
+>> 
+>> ---
+>>   include/uapi/linux/landlock.h                |  49 +++++
+>>   security/landlock/Kconfig                    |   1 +
+>>   security/landlock/Makefile                   |   2 +
+>>   security/landlock/limits.h                   |   6 +-
+>>   security/landlock/net.c                      | 198 +++++++++++++++++++
+>>   security/landlock/net.h                      |  26 +++
+>>   security/landlock/ruleset.c                  |  52 ++++-
+>>   security/landlock/ruleset.h                  |  63 +++++-
+>>   security/landlock/setup.c                    |   2 +
+>>   security/landlock/syscalls.c                 |  72 ++++++-
+>>   tools/testing/selftests/landlock/base_test.c |   2 +-
+>>   11 files changed, 450 insertions(+), 23 deletions(-)
+>>   create mode 100644 security/landlock/net.c
+>>   create mode 100644 security/landlock/net.h
+> 
+> [...]
+> 
+>> diff --git a/security/landlock/net.c b/security/landlock/net.c
+> 
+> [...]
+> 
+>> +static int check_addrlen(const struct sockaddr *const address, int addrlen)
+> 
+> const int addrlen
 
-https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+   Got it.
+> 
+>> +{
+>> +	if (addrlen < offsetofend(struct sockaddr, sa_family))
+>> +		return -EINVAL;
+>> +	switch (address->sa_family) {
+>> +	case AF_UNSPEC:
+>> +	case AF_INET:
+>> +		if (addrlen < sizeof(struct sockaddr_in))
+>> +			return -EINVAL;
+>> +		return 0;
+>> +#if IS_ENABLED(CONFIG_IPV6)
+>> +	case AF_INET6:
+>> +		if (addrlen < SIN6_LEN_RFC2133)
+>> +			return -EINVAL;
+>> +		return 0;
+>> +#endif
+>> +	}
+>> +	WARN_ON_ONCE(1);
+>> +	return 0;
+>> +}
+>> +
+>> +static u16 get_port(const struct sockaddr *const address)
+>> +{
+>> +	/* Gets port value in host byte order. */
+>> +	switch (address->sa_family) {
+>> +	case AF_UNSPEC:
+>> +	case AF_INET: {
+>> +		const struct sockaddr_in *const sockaddr =
+>> +			(struct sockaddr_in *)address;
+>> +		return ntohs(sockaddr->sin_port);
+> 
+> Storing ports in big endian (in rulesets) would avoid converting them
+> every time the kernel checks a socket port. The above comment should
+> then be updated too.
 
-Thoughts?
+   I thought we came to a conclusion to stick to host endianess and
+let kernel do the checks under the hood:
+https://lore.kernel.org/linux-security-module/278ab07f-7583-a4e0-3d37-1bacd091531d@digikod.net/
 
-In addition to the ocfs2 patch mentioned above, there is a similar
-reiserfs patch which should probably also be backported:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/patch/?id=
-=3D52ca4b6435a493e47aaa98e7345e19e1e8710b13
-
---=20
-paul-moore.com
+Did I misunderstand something?
+> 
+> 
+>> +	}
+>> +#if IS_ENABLED(CONFIG_IPV6)
+>> +	case AF_INET6: {
+>> +		const struct sockaddr_in6 *const sockaddr_ip6 =
+>> +			(struct sockaddr_in6 *)address;
+>> +		return ntohs(sockaddr_ip6->sin6_port);
+>> +	}
+>> +#endif
+>> +	}
+>> +	WARN_ON_ONCE(1);
+>> +	return 0;
+>> +}
+>> +
+>> +static int check_socket_access(struct socket *sock, struct sockaddr *address, int addrlen, u16 port,
+>> +			       access_mask_t access_request)
+>> +{
+>> +	int ret;
+>> +	bool allowed = false;
+>> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
+>> +	const struct landlock_rule *rule;
+>> +	access_mask_t handled_access;
+>> +	const struct landlock_id id = {
+>> +		.key.data = port,
+>> +		.type = LANDLOCK_KEY_NET_PORT,
+>> +	};
+>> +	const struct landlock_ruleset *const domain = get_current_net_domain();
+>> +
+>> +	if (WARN_ON_ONCE(!domain))
+>> +		return 0;
+>> +	if (WARN_ON_ONCE(domain->num_layers < 1))
+>> +		return -EACCES;
+>> +	/* Check if it's a TCP socket. */
+>> +	if (sock->type != SOCK_STREAM)
+>> +		return 0;
+>> +
+>> +	ret = check_addrlen(address, addrlen);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	switch (address->sa_family) {
+>> +	case AF_UNSPEC:
+>> +		/*
+>> +		 * Connecting to an address with AF_UNSPEC dissolves the TCP
+>> +		 * association, which have the same effect as closing the
+>> +		 * connection while retaining the socket object (i.e., the file
+>> +		 * descriptor).  As for dropping privileges, closing
+>> +		 * connections is always allowed.
+>> +		 */
+>> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP)
+>> +			return 0;
+>> +
+>> +		/*
+>> +		 * For compatibility reason, accept AF_UNSPEC for bind
+>> +		 * accesses (mapped to AF_INET) only if the address is
+>> +		 * INADDR_ANY (cf. __inet_bind).  Checking the address is
+>> +		 * required to not wrongfully return -EACCES instead of
+>> +		 * -EAFNOSUPPORT.
+>> +		 */
+>> +		if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
+>> +			const struct sockaddr_in *const sockaddr =
+>> +				(struct sockaddr_in *)address;
+>> +
+>> +			if (sockaddr->sin_addr.s_addr != htonl(INADDR_ANY))
+>> +				return -EAFNOSUPPORT;
+>> +		}
+>> +
+>> +		fallthrough;
+>> +	case AF_INET:
+>> +#if IS_ENABLED(CONFIG_IPV6)
+>> +	case AF_INET6:
+>> +#endif
+>> +		rule = landlock_find_rule(domain, id);
+>> +		handled_access = landlock_init_layer_masks(
+>> +			domain, access_request, &layer_masks,
+>> +			LANDLOCK_KEY_NET_PORT);
+>> +		allowed = landlock_unmask_layers(rule, handled_access,
+>> +						 &layer_masks,
+>> +						 ARRAY_SIZE(layer_masks));
+>> +	}
+>> +	return allowed ? 0 : -EACCES;
+>> +}
+>> +
+>> +static int hook_socket_bind(struct socket *sock, struct sockaddr *address,
+>> +			    int addrlen)
+>> +{
+>> +	return check_socket_access(sock, address, addrlen, get_port(address),
+>> +				   LANDLOCK_ACCESS_NET_BIND_TCP);
+>> +}
+>> +
+>> +static int hook_socket_connect(struct socket *sock, struct sockaddr *address,
+>> +			       int addrlen)
+>> +{
+>> +	return check_socket_access(sock, address, addrlen, get_port(address),
+>> +				   LANDLOCK_ACCESS_NET_CONNECT_TCP);
+>> +}
+> 
+> [...]
+> .
