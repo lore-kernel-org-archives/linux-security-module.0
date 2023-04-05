@@ -2,152 +2,161 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C72C76188
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Apr 2023 20:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7CAC76188
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Apr 2023 20:45:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233654AbjDEUoT (ORCPT
+        id S229945AbjDEUpw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Apr 2023 16:44:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36406 "EHLO
+        Wed, 5 Apr 2023 16:45:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233852AbjDEUoE (ORCPT
+        with ESMTP id S231346AbjDEUpv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Apr 2023 16:44:04 -0400
-Received: from sonic304-16.consmr.mail.bf2.yahoo.com (sonic304-16.consmr.mail.bf2.yahoo.com [74.6.128.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 251C87EE7
-        for <linux-security-module@vger.kernel.org>; Wed,  5 Apr 2023 13:43:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1680727429; bh=o79+MK6dpUzZUQXvocZyHLwH3RptZrKXroxGX/4QlUk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ieE0DjEhftH/TEwvf/6S90sdZLDG7xCc4FtHlvMCrpgR6w0j7eEH4LMzborZxM+mBFWR5oRDukzLrojlh5dyWFKeS2MNW1UTxDM45tgNlCtKL/+lKvbgktp1QLFjIrwWgrMQD7NAeO/bYkto0FKEg2NCwJ5Nm5nTZErLXUl8o/XwfnCtx+xT3ZOE9+gV+SHQPRX+9xKCtLdGNA/CQqs0HCL03ojXwcjbaigHq3+9BKuTULiVhw2rT/4bYSO6e0aOsM/12jHhU6EquTNqVRB0pmHegZEMqCEJZW2/f3srgtSvrKhalh5OtspFcNJmftTyKZ5MQWHAh95XwlD4fu2QGA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1680727429; bh=k5D18lCf6ys6zehgqpmGHlf6J/sxe8IO1texY18gVOH=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=JJeZQJtNv+xp01noIOqtNc+ybpPIOtQByEi84rMElvG4I23OS6ziiy7jwg54BDdy1lolVlhNAaKLWjvyo2o7fPR0Tt/StVcC7GFKu9hA/0j5IeORKoVkqBIwfA4pTOSQuSHbf1VjodA1Fx6F9E7EOTHYZfY3SC3A4dZ7x3OHj1qSLlxLdwlBKkUzdP9WtagXrJo4j3P4d0skLBzb1QEHb6SO2jlKcJJSk0px2yqUvdYxvf23uQkYpMnu/0CHukZtTS44IDwxMbvbeFN/zWfyt/KDJ5v1nZkcJVvUgqbp3sdm8uY3fMMI9Amm3YfF/4BEAix9QmmC7NuYt0tvlhrO8g==
-X-YMail-OSG: pGkYCcMVM1nXs1G3qp3EEk4uRDZUEogs8IkOwmZb7_E_GvwyQ0Mb7UP4ruFY7CJ
- SsexIpSaG0rHXiUxzB9Y8eAtsrwEnO6Go7TjAMX8cBwtlbInty.18CSPtyu.QZK3g.Vv8OIQNf8k
- viXyX.dmX8JxXGxMExcc6Z67JqdeSGdrxdwQnZHwyZbQMur0n_t3CbPR5HyYIYQh_GLHKM2daHlt
- TtJ1uQMs0ki1UtR0jTUYX4aLbfO0OGoOHY3bPjeauMyFWStQyryjD4PxL0wh7AmxY.S1KUQGk16l
- aWu4hcqdPc_oR5l41Z43v6LcAhcIwbIYlYN_0xUiXzMNWwrAjpEHO4XGruNbVRj3KGHhAMb956dB
- i6pIsbX_w64mDLxz9.otx279RxjnK7wGabSew5n4NzgNXgKxcrGm.OBhHNGhKAXvf_FzyxZP6XhN
- 0.W3JtKOORDvR9xISzpLCfAvE4mgYowk1l_9m25LUXC77uWCFeYna9vmQLdsSbUJqpKoUFKMKeYC
- 3MOd1podyV1EGZw0vGoI5jZcmxIRAyWU6OOVLfwxSYHc2DYuNbfmoe_AGczw8uJ7g72jW8qSQ_AZ
- 8ZQpyzYSbf4JQw.JlZo_rs.Dtx5NUcGGu3t7aRhBuMCOfkWsPT9KXpl.Apbk4b9RXYJwIPGmClfN
- UCICJKPVGu1xj7ZtFDlZZnIOHWIWDvlkX2wGBOAtT.CvYsVNDThYu_0XxcbLIylNGsSxaFv6r95_
- NIvcOHfmdPMYGrXO_ha59nbUYkqSGKTZz_yEpgeXL6Pbm349.ZM78G1Nfwq4dsvleHgUbMHeusBH
- jjrJsBCaVUmT2EV03JdVRXLsnlMBrIiMGhYhnWB_IzI0Khj3kaSyHgWOIJrbOiFwOyMwI.3ZDD91
- ouQrErNw7zFua3HRwFXrXssOD36HQ0nHns_LDR.bvO3RjX53BsJvlMjYQvjuElDGDHIESlNQA1Bw
- SmSaaHw5CCVAcRfStZ9ue9PoApAREMP3PPn1WPVNO6bYF1MZ_JGZ0VdLXJkr2r5p08bg_ZK38YCE
- jBA4RPg3mQxG4I9OpPBvHBQvROsu4VtDUh7._o0otpQc_xzfOtT6SKtzxQfSw0ASMZqKMXZaIj6a
- yxWUmlG5cutIDixf.BSfLYPRbtJsjHm0FLRKzEaDpS0L5OFFqLX4evooHBayEB6OBtpuBhokYiQV
- CnF5E6I_lG_Zozjgm6GLWx5fyiFErB1F4WOObsaz.36PxAXR5S9zfijxoKCul_4NLpqLBMZ2Ze2D
- XBzBloXGykzjWPfWiyFS6sY.1kdUsp0zhMyQxi3TwUP3wN1UifZlJcGT3ZyLoZexOrdPfvu9Crwh
- rn_xXeFCh6kC5_Z3Wlh..Y7w.HDr_KhsPg_NoqMMOEeF8Ne5BYjzyfLKFaIvmTABmthZl741gWHA
- u9wS641YpGg49vDgPv0fE6cy6GqQVRu0jE3kV.CUbHl.1yip0CmP2D_mC56wIzUJ2MpOI98uQOfd
- HuS2P.pReMlq_a8LLhVmqVi5_6R_ohnQid5cM85iodrl3ry_B4FiRY2wS3OMQKAgCrwqksaSiEtz
- 1Vjt4rfexQPocrz0kfs9_4mZxFdgRJl6GFqOjec3pSy6jyjVQScTG9TMnp_iTNsVc3GAuCu0aogB
- WK310mQzz7aESOLfhFDBY4beFzpeBjwxl_1ZJiUsJfWtLHUYREGcPU1Ags0jBqoxqJas4fVECoRS
- gOuqqdYZoGEWvQiWVNtYXLYUDTizHPRX4NDhL.CTl6DqqSu_gdvj2EngZ05QDARibIMpFt9opCv6
- lUObqtZ4gXn.bLyKZqmBmvP7zFVLlcjAFqzNYDBDD6fl03rpFYmmtT0ZsWp_amuJUTMicHrLodYt
- .nI0Th_XGrF8WLBEmidme5NbJwDPE1if3XjrhCfULE3ifaWYpjq2FJIZxmhPR0dWRtpCL9I6bVdL
- fyn0Mb_qG_QH3JKhKNqkX1z__KFFyE_xmRpoubIk_hMkKjKv13k_IS60zIuHaGyxlG43iqXtgFQO
- NltK.hVWiRG47fQ5_WHaz0DNq05Q.PjYYJ5y93MkFjqixC0VHTeNMyBIeNmAnzbyyaRtf3oyjelv
- YT7c54V7BiDcQrfDQYn70DQlKLXwItRReLbZ1N1VZTRA4FqLM12EMlCNn2s161BaeqZciUV84tA.
- A8bGh1qNAGeOMUUNdr_YHRxB3lreoUytRUpjbFH9HYWyRIHvWfUuXgQ5MyApiXSH2oahmQ5q05ir
- FGGm8kWKKOgTPO0l1Xl94GVfm5SGQN6WkxPqBe5RuDb1OsEScD5stzPfodTQs.AhzGhMPqtDctlf
- EWc787yi550Hd
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 2e24c7fd-7294-401d-8e1a-0b8c9b02a20a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Wed, 5 Apr 2023 20:43:49 +0000
-Received: by hermes--production-ne1-7dbd98dd99-t5dz4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f9cdb95437a94bd13984470700a1b503;
-          Wed, 05 Apr 2023 20:43:45 +0000 (UTC)
-Message-ID: <83ddfcb9-b4a6-71b4-a20c-62f484c8e040@schaufler-ca.com>
-Date:   Wed, 5 Apr 2023 13:43:42 -0700
+        Wed, 5 Apr 2023 16:45:51 -0400
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 940FF2127
+        for <linux-security-module@vger.kernel.org>; Wed,  5 Apr 2023 13:45:38 -0700 (PDT)
+Received: by mail-yb1-xb2f.google.com with SMTP id j7so44125115ybg.4
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Apr 2023 13:45:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1680727537;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q0UeBOixLMx1/cwwlyY3v1wGnqeW+j/bgN/ib4krdBY=;
+        b=TRn3CL/q99AzGptSrOeZtnVsKF41kG2zO/Mqmx39s8EWQEDWiIJcFmGzjLNtTFArLc
+         07/oVPzc/kPj9E37FTsEk5z2DNfcD9enN6mol2qejUMGimkmZWvXojlEU70AAv/CaJQ3
+         moyXiz6PYBNcwLCBITw6pxloM0XfGyjoqGzq0V+bqFb37jAvAqdwQzkn3bRxZAtnrrNO
+         MlX4mbX8T+PCpFCo4v6FdQ7BHiWq46Ul/+n3fi2WbbNYd5FD+8XMwffnUVP2RT3pV3Ym
+         ct5FB64krA489a6r7lPBwUi2Cfy8wr2NTmnV87GI02qFLJwfjF4xJJqEr7FYXi9f2ZZT
+         eRfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680727537;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q0UeBOixLMx1/cwwlyY3v1wGnqeW+j/bgN/ib4krdBY=;
+        b=245H3JzQ1+S0Xc5eCxVYo2dWefVo+y3Vhry3vwW7b1S+12HNeC82x9Bm3eQZQ37vO+
+         A1IB02fVyvuC6MA7U4/eQZ7euQX/V0LiYeczNnPfH3XOiukuu42IT5lbbz3meHvXPd/m
+         hQPCbG4Z+GIg3bF9yRKTCw2qdBZ8Rv/0IjCysdtFs7qi/Io664lkSU/Iy57duI5cM4uK
+         SeX5CSpgDuiuVcjuESsUYIToRw6dO7OWutx38ZCrlD1zvaPoSqUgK6GLFUWHYdGbRoBw
+         4Ot7r7ji8KsZs9q7RnBkLUWujBOJ99AzmE+Aaxs+/79xed2a17Der1Pvfl3LH4lztLvU
+         ESMw==
+X-Gm-Message-State: AAQBX9d9bnlDpsjENPnNp7+cqH6up/wviDUcD+S+HY3QP30uWLt6eAQC
+        FWNYniPbB8NASSRwvdJCN3VhXBKBDYPD8C83N9QYpYQEqkaqDIoJSw==
+X-Google-Smtp-Source: AKy350Z/eeYzwlTjAipSYJYuiiIebGn4Q0mwc/FsHOIoNoCYUxVJ815mA1JdAIvg8BDeH+rG0esdGa1WwB6Z2cKayO0=
+X-Received: by 2002:a25:cc42:0:b0:b76:ceb2:661b with SMTP id
+ l63-20020a25cc42000000b00b76ceb2661bmr466502ybf.3.1680727537267; Wed, 05 Apr
+ 2023 13:45:37 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v10 2/4] security: Allow all LSMs to provide xattrs for
- inode_init_security hook
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>,
-        Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, reiserfs-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20230331123221.3273328-1-roberto.sassu@huaweicloud.com>
- <20230331123221.3273328-3-roberto.sassu@huaweicloud.com>
- <CAHC9VhSbGdij6xz9D49my37kD9qYrBmh2x7=cNFFDL2dZ=EZTw@mail.gmail.com>
- <5dbb9430-1e26-ec12-26a2-3718c84e33c2@schaufler-ca.com>
- <7549b624-421e-30b9-ca99-de42929354c7@huaweicloud.com>
- <CAHC9VhTsSUM6_g5+ZOqZ=P6307hCAJW+-xEc4fKQcymPs5pYjQ@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhTsSUM6_g5+ZOqZ=P6307hCAJW+-xEc4fKQcymPs5pYjQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21284 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20230204050954.11583-1-greg@enjellic.com> <20230204050954.11583-3-greg@enjellic.com>
+ <CAHC9VhQnZhczVRifSnM-zv46Cb9OFuh=6ha+1zKJaOUK15=K5A@mail.gmail.com>
+ <20230214115822.GA28408@wind.enjellic.com> <CAHC9VhQoj-aWrN5SxfkT2zaNmaKCG7VyYVvGsaHAbp5iA8OBZw@mail.gmail.com>
+ <20230313225227.GA23057@wind.enjellic.com> <CAHC9VhSfQOw-q6b-DHL=zXFr7_Dw=44VxkDTpPp_=4XAZk2k7g@mail.gmail.com>
+ <20230330033442.GA1014@wind.enjellic.com>
+In-Reply-To: <20230330033442.GA1014@wind.enjellic.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 5 Apr 2023 16:45:26 -0400
+Message-ID: <CAHC9VhTQCLHQjEnBbGBZ7ya5s01hMr6WLLf_N54AmfYp_6TwsQ@mail.gmail.com>
+Subject: Re: [PATCH 02/14] Add TSEM specific documentation.
+To:     "Dr. Greg" <greg@enjellic.com>
+Cc:     linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/5/2023 12:59 PM, Paul Moore wrote:
-> On Wed, Apr 5, 2023 at 5:44 AM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
->> On 4/5/2023 4:08 AM, Casey Schaufler wrote:
->>> On 4/4/2023 11:54 AM, Paul Moore wrote:
->>>> On Fri, Mar 31, 2023 at 8:33 AM Roberto Sassu
->>>> <roberto.sassu@huaweicloud.com> wrote:
-> ..
+On Wed, Mar 29, 2023 at 11:35=E2=80=AFPM Dr. Greg <greg@enjellic.com> wrote=
+:
+> On Wed, Mar 22, 2023 at 07:45:26PM -0400, Paul Moore wrote:
+> > On Mon, Mar 13, 2023 at 6:52???PM Dr. Greg <greg@enjellic.com> wrote:
+> > > On Thu, Mar 02, 2023 at 11:15:56PM -0500, Paul Moore wrote:
+> > >
+> > > Hi Paul, thanks for sending along further comments.
+> > >
+> > > You note below that you haven't had time to look at the code since yo=
+u
+> > > wanted to confirm the TSEM security model before moving forward.
+> > >
+> > > From a development perspective we are now three weeks into what will
+> > > become version 2 of the patch series.  So at this point I wouldn't
+> > > advocate spending a lot of time on the current patchset.
+> > >
+> > > That being said, if you some have time, we would appreciate a quick
+> > > look at the code on your part, with respect to style changes and the
+> > > like we can enforce in the second series, ie. ordering of local
+> > > variable declarations by length and the like.
 >
->>>>> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
->>>>> index cfcbb748da2..8392983334b 100644
->>>>> --- a/security/smack/smack_lsm.c
->>>>> +++ b/security/smack/smack_lsm.c
->>>>> @@ -52,6 +52,15 @@
->>>>>   #define SMK_RECEIVING  1
->>>>>   #define SMK_SENDING    2
->>>>>
->>>>> +/*
->>>>> + * Smack uses multiple xattrs.
->>>>> + * SMACK64 - for access control, SMACK64EXEC - label for the program,
->>>> I think it would be good to move SMACK64EXEC to its own line; it took
->>>> me a minute to figure out why SMACK_INODE_INIT_XATTRS was set to '4'
->>>> when I only say three comment lines ... ;)
->>>>
->>>>> + * SMACK64MMAP - controls library loading,
->>>>> + * SMACK64TRANSMUTE - label initialization,
->>>>> + * Not saved on files - SMACK64IPIN and SMACK64IPOUT
->>>>> + */
->>>>> +#define SMACK_INODE_INIT_XATTRS 4
->>>> If smack_inode_init_security() only ever populates a single xattr, and
->>>> that is the only current user of SMACK_INODE_INIT_XATTRS, can we make
->>>> this '1' and shrink the xattr allocation a bit?
->>> If the parent directory is marked with SMACK64_TRANSMUTE, the access
->>> rule allowing the access has the "t" mode, and the object being initialized
->>> is a directory, the new inode should get the SMACK64_TRANSMUTE attribute.
->>> The callers of security_inode_init_security() don't seem to care.
->>> I can't say if the evm code is getting SMACK64_TRANSMUTE or, for that
->>> matter, SMACK64_EXEC and SMACK64_MMAP, some other way. The older system
->>> allowed for multiple Smack xattrs, but I'm not clear on exactly how.
->> If you like to set an additional xattr, that would be possible now.
->> Since we reserve multiple xattrs, we can call lsm_get_xattr_slot()
->> another time and set SMACK64_TRANSMUTE.
->>
->> I think, if the kernel config has CONFIG_EVM_EXTRA_SMACK_XATTRS set,
->> EVM would protect SMACK64_TRANSMUTE too.
-> Ooookay, but can someone explain to me how either the current, or
-> patched, smack_inode_init_security() function can return multiple
-> xattrs via the security_inode_init_security() LSM hook?
+> > To be perfectly honest I'm still very concerned about some of the
+> > issues that I've seen in the docs, until that is sorted out I'm not
+> > sure there is much point in looking at the code.
+>
+> I think those concerns can be resolved, see below for more
+> information, the second patch series that we are closing in on should
+> help address the concerns that are currently on the table.
 
-It can't.
+In that case, I think it might be best to wrap up this thread and we
+can resume the discussion on the next patchset.
 
->   I'm hoping
-> I'm missing something really obvious, but I can only see a single
-> Smack xattr being returned ...
+> That being said, since TSEM is a new codebase, we were hoping that you
+> could give us some guidance on function local variable ordering.
+> Reverse Christmas tree seems popular writ large in the kernel, I
+> believe that you commented in a posting a month or two ago that you
+> prefer standard Christmas tree, SMACK and SeLinux don't seem to
+> religiously embrace a style.
+>
+> Our codebase uses ordering based on least complex to most complex
+> variables and has worked for us, both in the kernel and elsewhere, but
+> we are ambivalent, as our primary objective is to avoid wasting
+> everyone's time on issues such as this.
 
-Smack is setting the transmute attribute in smack_d_instantiate().
-The exec and mmap attributes are always set explicitly.
+The canonical guidance on coding style within the kernel is in the kernel d=
+ocs:
 
-I don't know how the "extra" Smack attributes were obtained by evm
-before, and I haven't been looking at how they're doing it now.
-I have assumed that CONFIG_EVM_EXTRA_SMACK_XATTRS does something
-meaningful.
+https://www.kernel.org/doc/html/latest/process/coding-style.html
 
+When in doubt, I would recommend following that as closely as possible.
+
+As far as local variable ordering is concerned, I don't believe I've
+ever rejected patches due to that.  My own personal preference usually
+follows what you've described above: the least complex (simple
+scalars) at the top, with the more complex variables (composites) at
+the bottom.  In practice this tends to result in a "Christmas Tree"
+ordering, but it can be a bit lumpy (?) in some cases; that is fine.
+
+There are two style nitpicks which annoy me enough to make it worth mention=
+ing:
+
+* Stick to 80 characters as much as possible, yes we all have
+terminals that can go wider, but I like to have several terminals on
+my screen and if they all need to be 100 chars wide I can't fit as
+many.  There are going to be some exceptions, e.g. error message
+string literals, but that should only happen a few times in a given
+file.  If you are finding that every function you write has a line
+that goes past 80 characters you are doing *something* wrong.
+
+* If/when you split a single line across multiple lines due to the
+above, make sure the
+lines are indented properly such that they line up properly with the
+code above.  It's tricky to give all of the different examples so I'm
+not going to even try.  I realize that is garbage guidance, but the
+kernel coding style is a help here.
+
+If you are really lost, I use the following 'astyle' command in other
+projects, and it should produce fairly kernel-style friendly code:
+
+% astyle --options=3Dnone --lineend=3Dlinux --mode=3Dc \
+    --style=3Dlinux \
+    --indent=3Dforce-tab=3D8 \
+    --indent-preprocessor \
+    --indent-col1-comments \
+    --min-conditional-indent=3D0 \
+    --max-instatement-indent=3D80 \
+    --pad-oper \
+    --align-pointer=3Dname \
+    --align-reference=3Dname \
+    --max-code-length=3D80 \
+    --break-after-logical
+
+--=20
+paul-moore.com
