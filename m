@@ -2,250 +2,134 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F202CC77B6C
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Apr 2023 19:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B51C77B62
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Apr 2023 19:59:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233440AbjDETTR (ORCPT
+        id S231650AbjDET7v (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Apr 2023 15:19:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42086 "EHLO
+        Wed, 5 Apr 2023 15:59:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233050AbjDETTQ (ORCPT
+        with ESMTP id S233858AbjDET7t (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Apr 2023 15:19:16 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65FC84C12;
-        Wed,  5 Apr 2023 12:19:12 -0700 (PDT)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4PsDpz3dsMz67j6m;
-        Thu,  6 Apr 2023 03:15:07 +0800 (CST)
-Received: from [10.123.123.126] (10.123.123.126) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Wed, 5 Apr 2023 20:19:06 +0100
-Message-ID: <816ac968-daff-20ec-92d3-3f80b53205f5@huawei.com>
-Date:   Wed, 5 Apr 2023 22:19:05 +0300
+        Wed, 5 Apr 2023 15:59:49 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE565468F
+        for <linux-security-module@vger.kernel.org>; Wed,  5 Apr 2023 12:59:47 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id cf7so43984210ybb.5
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Apr 2023 12:59:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1680724787;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=16oMn1NNzoMGhRBfxhPQbT5X5eCgj0j1VfPTFGPRXYA=;
+        b=M6bRM2KlH9Lx5lsl1rif9t0ScqLJIdivfDowNos4t0MnSqxdPlWxdu1CtgPNVsf6PQ
+         8U5VUfoOsmfJmq2XRa8ctGuBct1KIf4mat5CVl4r9vCtgWvPc73og4XPAPJKiOsAPB+Q
+         TzbfcFogPV6U8zGTa4ijQ6IBjmsU6UYaRrrgV+MOlHiWQwISa6b0bt+EsHa7MUmooDWm
+         1rx7Y/edmVIxZTJxu4jBKhmeO+u5C9tr4U0UPwgtrDnUgxq6zmZDc1w3LPqaQTij0hMF
+         tRaNkccvCmTc4mjM2PROEHzoz75i9wuaWNb56YFKuf2qr5UxdsWp10j3px0yPT+mbFd2
+         LPNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680724787;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=16oMn1NNzoMGhRBfxhPQbT5X5eCgj0j1VfPTFGPRXYA=;
+        b=WF0/9l4m3EDuqvyZZSqM1gfne3K1z8Fmu5ZPQ7akDPRboaUijP5V8KlkQ7aKZXcli0
+         SIayAfSit+qJhWYIhGe+1RxLOIa/rVgv0eOnD2tuMFpWlQjoiVXypg+/rJ3zxzgSPqWs
+         iZceAVsMxoQy6uGzkQte8LNHxZD752LQzUj4vBqvfENSF0I6lzCl9UVvy5SO4XW/2eNu
+         jMAd+h/+ZOYkRxahAln33EFhPewoHMzjeQGXR37cBn40A/LrUNNRPLpiSM/cTMl40mZn
+         alR8M5Pfwa2PBx7qoP+6QhlDSu7paIhqhxjboHSMxwUKRaeyCLwKibrTIxBKCLWCi9g5
+         6bMQ==
+X-Gm-Message-State: AAQBX9eW9k3XdYRXDq3/QnvQ8Mf5MxZoys/LbWNWC3v2oodmBvXdCtcx
+        DwG2bu/q2Z3wXph0RZndhiEiLGkZwbKivtXYVp3U
+X-Google-Smtp-Source: AKy350Z4agPWqKP3S9SXcOAMKHENY/iZ5KsoGSPHS8QSL3pWzVPqwyrXG0+vzOYZvsNJa9+F9yj3Fqs4TEDZfwYCMxc=
+X-Received: by 2002:a25:d707:0:b0:b68:7a4a:5258 with SMTP id
+ o7-20020a25d707000000b00b687a4a5258mr390159ybg.3.1680724786891; Wed, 05 Apr
+ 2023 12:59:46 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v10 09/13] landlock: Add network rules and TCP hooks
- support
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-References: <20230323085226.1432550-1-konstantin.meskhidze@huawei.com>
- <20230323085226.1432550-10-konstantin.meskhidze@huawei.com>
- <468fbb05-6d72-3570-3453-b1f8bfdd5bc2@digikod.net>
- <1f84d88f-9977-13a9-245a-c75cd3444b29@huawei.com>
- <ac4d6244-641b-e1d4-5c34-d9a9bcd10498@digikod.net>
- <f126c31b-f0cf-0746-e517-9f3f19c1915f@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <f126c31b-f0cf-0746-e517-9f3f19c1915f@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.123.126]
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
+References: <20230331123221.3273328-1-roberto.sassu@huaweicloud.com>
+ <20230331123221.3273328-3-roberto.sassu@huaweicloud.com> <CAHC9VhSbGdij6xz9D49my37kD9qYrBmh2x7=cNFFDL2dZ=EZTw@mail.gmail.com>
+ <5dbb9430-1e26-ec12-26a2-3718c84e33c2@schaufler-ca.com> <7549b624-421e-30b9-ca99-de42929354c7@huaweicloud.com>
+In-Reply-To: <7549b624-421e-30b9-ca99-de42929354c7@huaweicloud.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 5 Apr 2023 15:59:36 -0400
+Message-ID: <CAHC9VhTsSUM6_g5+ZOqZ=P6307hCAJW+-xEc4fKQcymPs5pYjQ@mail.gmail.com>
+Subject: Re: [PATCH v10 2/4] security: Allow all LSMs to provide xattrs for
+ inode_init_security hook
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Apr 5, 2023 at 5:44=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On 4/5/2023 4:08 AM, Casey Schaufler wrote:
+> > On 4/4/2023 11:54 AM, Paul Moore wrote:
+> >> On Fri, Mar 31, 2023 at 8:33=E2=80=AFAM Roberto Sassu
+> >> <roberto.sassu@huaweicloud.com> wrote:
 
+...
 
-4/4/2023 8:02 PM, Mickaël Salaün пишет:
-> 
-> On 04/04/2023 18:42, Mickaël Salaün wrote:
->> 
->> On 04/04/2023 11:31, Konstantin Meskhidze (A) wrote:
->>>
->>>
->>> 3/31/2023 8:24 PM, Mickaël Salaün пишет:
->>>>
->>>> On 23/03/2023 09:52, Konstantin Meskhidze wrote:
->>>>> This commit adds network rules support in the ruleset management
->>>>> helpers and the landlock_create_ruleset syscall.
->>>>> Refactor user space API to support network actions. Add new network
->>>>> access flags, network rule and network attributes. Increment Landlock
->>>>> ABI version. Expand access_masks_t to u32 to be sure network access
->>>>> rights can be stored. Implement socket_bind() and socket_connect()
->>>>> LSM hooks, which enable to restrict TCP socket binding and connection
->>>>> to specific ports.
->>>>>
->>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>>>> ---
->>>>>
->>>>> Changes since v9:
->>>>> * Changes UAPI port field to __u64.
->>>>> * Moves shared code into check_socket_access().
->>>>> * Adds get_raw_handled_net_accesses() and
->>>>> get_current_net_domain() helpers.
->>>>> * Minor fixes.
->>>>>
->>>>> Changes since v8:
->>>>> * Squashes commits.
->>>>> * Refactors commit message.
->>>>> * Changes UAPI port field to __be16.
->>>>> * Changes logic of bind/connect hooks with AF_UNSPEC families.
->>>>> * Adds address length checking.
->>>>> * Minor fixes.
->>>>>
->>>>> Changes since v7:
->>>>> * Squashes commits.
->>>>> * Increments ABI version to 4.
->>>>> * Refactors commit message.
->>>>> * Minor fixes.
->>>>>
->>>>> Changes since v6:
->>>>> * Renames landlock_set_net_access_mask() to landlock_add_net_access_mask()
->>>>>      because it OR values.
->>>>> * Makes landlock_add_net_access_mask() more resilient incorrect values.
->>>>> * Refactors landlock_get_net_access_mask().
->>>>> * Renames LANDLOCK_MASK_SHIFT_NET to LANDLOCK_SHIFT_ACCESS_NET and use
->>>>>      LANDLOCK_NUM_ACCESS_FS as value.
->>>>> * Updates access_masks_t to u32 to support network access actions.
->>>>> * Refactors landlock internal functions to support network actions with
->>>>>      landlock_key/key_type/id types.
->>>>>
->>>>> Changes since v5:
->>>>> * Gets rid of partial revert from landlock_add_rule
->>>>> syscall.
->>>>> * Formats code with clang-format-14.
->>>>>
->>>>> Changes since v4:
->>>>> * Refactors landlock_create_ruleset() - splits ruleset and
->>>>> masks checks.
->>>>> * Refactors landlock_create_ruleset() and landlock mask
->>>>> setters/getters to support two rule types.
->>>>> * Refactors landlock_add_rule syscall add_rule_path_beneath
->>>>> function by factoring out get_ruleset_from_fd() and
->>>>> landlock_put_ruleset().
->>>>>
->>>>> Changes since v3:
->>>>> * Splits commit.
->>>>> * Adds network rule support for internal landlock functions.
->>>>> * Adds set_mask and get_mask for network.
->>>>> * Adds rb_root root_net_port.
->>>>>
->>>>> ---
->>>>>     include/uapi/linux/landlock.h                |  49 +++++
->>>>>     security/landlock/Kconfig                    |   1 +
->>>>>     security/landlock/Makefile                   |   2 +
->>>>>     security/landlock/limits.h                   |   6 +-
->>>>>     security/landlock/net.c                      | 198 +++++++++++++++++++
->>>>>     security/landlock/net.h                      |  26 +++
->>>>>     security/landlock/ruleset.c                  |  52 ++++-
->>>>>     security/landlock/ruleset.h                  |  63 +++++-
->>>>>     security/landlock/setup.c                    |   2 +
->>>>>     security/landlock/syscalls.c                 |  72 ++++++-
->>>>>     tools/testing/selftests/landlock/base_test.c |   2 +-
->>>>>     11 files changed, 450 insertions(+), 23 deletions(-)
->>>>>     create mode 100644 security/landlock/net.c
->>>>>     create mode 100644 security/landlock/net.h
->>>>
->>>> [...]
->>>>
->>>>> diff --git a/security/landlock/net.c b/security/landlock/net.c
->>>>
->>>> [...]
-> 
-> 
->>>>> +static int check_socket_access(struct socket *sock, struct sockaddr *address, int addrlen, u16 port,
->>>>> +			       access_mask_t access_request)
->>>>> +{
->>>>> +	int ret;
->>>>> +	bool allowed = false;
->>>>> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
->>>>> +	const struct landlock_rule *rule;
->>>>> +	access_mask_t handled_access;
->>>>> +	const struct landlock_id id = {
->>>>> +		.key.data = port,
->>>>> +		.type = LANDLOCK_KEY_NET_PORT,
->>>>> +	};
->>>>> +	const struct landlock_ruleset *const domain = get_current_net_domain();
->>>>> +
->>>>> +	if (WARN_ON_ONCE(!domain))
->>>>> +		return 0;
->>>>> +	if (WARN_ON_ONCE(domain->num_layers < 1))
->>>>> +		return -EACCES;
->>>>> +	/* Check if it's a TCP socket. */
->>>>> +	if (sock->type != SOCK_STREAM)
->>>>> +		return 0;
->>>>> +
->>>>> +	ret = check_addrlen(address, addrlen);
->>>>> +	if (ret)
->>>>> +		return ret;
->>>>> +
->>>>> +	switch (address->sa_family) {
->>>>> +	case AF_UNSPEC:
->>>>> +		/*
->>>>> +		 * Connecting to an address with AF_UNSPEC dissolves the TCP
->>>>> +		 * association, which have the same effect as closing the
->>>>> +		 * connection while retaining the socket object (i.e., the file
->>>>> +		 * descriptor).  As for dropping privileges, closing
->>>>> +		 * connections is always allowed.
->>>>> +		 */
->>>>> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP)
->>>>> +			return 0;
->>>>> +
->>>>> +		/*
->>>>> +		 * For compatibility reason, accept AF_UNSPEC for bind
->>>>> +		 * accesses (mapped to AF_INET) only if the address is
->>>>> +		 * INADDR_ANY (cf. __inet_bind).  Checking the address is
->>>>> +		 * required to not wrongfully return -EACCES instead of
->>>>> +		 * -EAFNOSUPPORT.
->>>>> +		 */
->>>>> +		if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
->>>>> +			const struct sockaddr_in *const sockaddr =
->>>>> +				(struct sockaddr_in *)address;
->>>>> +
->>>>> +			if (sockaddr->sin_addr.s_addr != htonl(INADDR_ANY))
->>>>> +				return -EAFNOSUPPORT;
->>>>> +		}
->>>>> +
->>>>> +		fallthrough;
->>>>> +	case AF_INET:
->>>>> +#if IS_ENABLED(CONFIG_IPV6)
->>>>> +	case AF_INET6:
->>>>> +#endif
-> 
-> Some more fixes:
-> 
-> You can move the port/id.key.data block from my patch here, where it is
-> actually used.
-> 
-   Ok. Thank you. I will apply it.
-> 
->>>>> +		rule = landlock_find_rule(domain, id);
->>>>> +		handled_access = landlock_init_layer_masks(
->>>>> +			domain, access_request, &layer_masks,
->>>>> +			LANDLOCK_KEY_NET_PORT);
->>>>> +		allowed = landlock_unmask_layers(rule, handled_access,
->>>>> +						 &layer_masks,
->>>>> +						 ARRAY_SIZE(layer_masks));
-> 
-> The `return allowed ? 0 : -EACCES;` should be here.
-> 
->>>>> +	}
->>>>> +	return allowed ? 0 : -EACCES;
-> 
-> We should have `return 0;` here.
-> 
-   Got it. Thanks
+> >>> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> >>> index cfcbb748da2..8392983334b 100644
+> >>> --- a/security/smack/smack_lsm.c
+> >>> +++ b/security/smack/smack_lsm.c
+> >>> @@ -52,6 +52,15 @@
+> >>>   #define SMK_RECEIVING  1
+> >>>   #define SMK_SENDING    2
+> >>>
+> >>> +/*
+> >>> + * Smack uses multiple xattrs.
+> >>> + * SMACK64 - for access control, SMACK64EXEC - label for the program=
+,
+> >> I think it would be good to move SMACK64EXEC to its own line; it took
+> >> me a minute to figure out why SMACK_INODE_INIT_XATTRS was set to '4'
+> >> when I only say three comment lines ... ;)
+> >>
+> >>> + * SMACK64MMAP - controls library loading,
+> >>> + * SMACK64TRANSMUTE - label initialization,
+> >>> + * Not saved on files - SMACK64IPIN and SMACK64IPOUT
+> >>> + */
+> >>> +#define SMACK_INODE_INIT_XATTRS 4
+> >>
+> >> If smack_inode_init_security() only ever populates a single xattr, and
+> >> that is the only current user of SMACK_INODE_INIT_XATTRS, can we make
+> >> this '1' and shrink the xattr allocation a bit?
+> >
+> > If the parent directory is marked with SMACK64_TRANSMUTE, the access
+> > rule allowing the access has the "t" mode, and the object being initial=
+ized
+> > is a directory, the new inode should get the SMACK64_TRANSMUTE attribut=
+e.
+> > The callers of security_inode_init_security() don't seem to care.
+> > I can't say if the evm code is getting SMACK64_TRANSMUTE or, for that
+> > matter, SMACK64_EXEC and SMACK64_MMAP, some other way. The older system
+> > allowed for multiple Smack xattrs, but I'm not clear on exactly how.
+>
+> If you like to set an additional xattr, that would be possible now.
+> Since we reserve multiple xattrs, we can call lsm_get_xattr_slot()
+> another time and set SMACK64_TRANSMUTE.
+>
+> I think, if the kernel config has CONFIG_EVM_EXTRA_SMACK_XATTRS set,
+> EVM would protect SMACK64_TRANSMUTE too.
 
-> We need a test for an sa_family different than AF_UNSPEC, AF_INET, and
-> AF_INET6 to make sure everything else is allowed (e.g. AF_UNIX with
-> SOCK_STREAM and another test with SOCK_DGRAM). Please make sure this new
-> test will not pass with SOCK_STREAM and the current patch series, but of
-> course it should pass with the next one.
+Ooookay, but can someone explain to me how either the current, or
+patched, smack_inode_init_security() function can return multiple
+xattrs via the security_inode_init_security() LSM hook?  I'm hoping
+I'm missing something really obvious, but I can only see a single
+Smack xattr being returned ...
 
-   Do you mean AF_UNIX with SOCK_STREAM will not be passed as well as
-   AF_UNIX with SOCK_DGRAM?
-> 
-
-> 
->>>>> +}
->>>>> +
-> .
+--=20
+paul-moore.com
