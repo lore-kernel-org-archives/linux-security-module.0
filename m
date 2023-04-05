@@ -2,82 +2,174 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B4EC761A6
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Apr 2023 15:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F014C77B62
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Apr 2023 17:15:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238227AbjDEPay (ORCPT
+        id S232435AbjDERPI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Apr 2023 11:30:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34580 "EHLO
+        Wed, 5 Apr 2023 13:15:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238568AbjDEPal (ORCPT
+        with ESMTP id S229748AbjDERPG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Apr 2023 11:30:41 -0400
-Received: from valentin-vidic.from.hr (valentin-vidic.from.hr [IPv6:2001:470:1f0b:3b7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F96F5251;
-        Wed,  5 Apr 2023 08:30:38 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at valentin-vidic.from.hr
-Received: by valentin-vidic.from.hr (Postfix, from userid 1000)
-        id B2DA3297E1; Wed,  5 Apr 2023 17:30:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=valentin-vidic.from.hr; s=2020; t=1680708631;
-        bh=r5XRUYKahCaALtmf0y8l5u58U9M52WuvSYB8cnVeaGY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kpSBJQZDMNFSfUp0iuSjiYe3wVqsp4eyfgX3Rit0OHu5iWbg+JRv5dOtbsAlu2jhy
-         Rml+Qm2VPCkxxb+MF6o1D7ZzYTRM4Axa6BDobl4pHAyyxgF+ZrZ6Dt8JDkrflwKMC+
-         AuZZ7lFIW9C2AJJr1M85w2b4ipSJxC5inaTber4+xO0xQR7zsuDgO+0MNHQDzcyTkm
-         oXevpf6mTqWara1X72yzKPPoIzVwRuSNhHj1lF7M1NwAsZORYjQL7Y05vVu8ZTT4Ut
-         qqEvn8q+pr0Zx8te3iKDo8v2aduPF2tY8CanqWl/sbeBVuPQg+EpVpdkJtXNCcG1qJ
-         AGtSdh5r5L5MFJQF6Ow6hposZQlDI2iJCmnohXfSVqn0FRb+3wMiMZe7b7s0RqLpF6
-         EY1Q05j9QvsNEJVF+P3to2A3Ro8eJudRD5hdsDppSZ3ywjsNAZoYGexaE8wYkPofRn
-         1p4+jE+i4U6PQAKctlaW6EmvcxMvmp9czuGLLGi90TGuZdNR5UxJ0ugQeMxvNwznGE
-         FxhykonvAJXBvmTSfdGIJ+SPrFKm+4H9VWY+J/XOHD0c6iHHcPnqzKDcAxBtER91Sj
-         JlBKuky8CuFt5iq1kCUIdEDtlotnwbAFz0QUWa0RBSATVWrxaRIX/0HgF5UNYkOC2F
-         nsyF258bc1PLuRYmE/YfqU7A=
-Date:   Wed, 5 Apr 2023 17:30:31 +0200
-From:   Valentin =?utf-8?B?VmlkacSH?= <vvidic@valentin-vidic.from.hr>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Micah Morton <mortonm@chromium.org>,
-        =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org,
+        Wed, 5 Apr 2023 13:15:06 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C08DA1BEF;
+        Wed,  5 Apr 2023 10:15:05 -0700 (PDT)
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 335GG6GM013112;
+        Wed, 5 Apr 2023 17:15:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=xdPANpjtlbwea8smzHbacqN4g1Ruy2zYgHhQtcKL4jA=;
+ b=JviavfdghGpxFybYoZ5PlrAS6QH2tK6y0r0h+eXId+HQSVyuZwFsAE51ZdMf1ff8IoSY
+ P++/zzbiTHnTDBH9nzhlqIg3PrXzCqG3Ag4Ui7vYjJ+SYDACo3jAydx7qX4BAmris178
+ pSHQRQqmageLgFAvtA+6VddGcD5/HFH4snG+444FBWx9UBBRgbMxO4wf0+V11IoVldbJ
+ fUBcS1Y+CJcWyp+IS+74gxvt0hoNYLjeLOYYde0GmAJIDbwNDfVjwLU3s2pSjWN+I7DV
+ 8BrNIpuZsqc1J5HzEP9DCeb9eWi6kAyGm4xsmky9G580xQpWuJGp80zwxn/Zy53Yj8r8 GA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3ps8w7yu2n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 Apr 2023 17:15:04 +0000
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 335Gk6am002751;
+        Wed, 5 Apr 2023 17:15:03 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3ps8w7yu29-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 Apr 2023 17:15:03 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 335H1GMO031516;
+        Wed, 5 Apr 2023 17:15:03 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([9.208.130.97])
+        by ppma02dal.us.ibm.com (PPS) with ESMTPS id 3ppc88d3y0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 Apr 2023 17:15:02 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 335HF1hV36307508
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Apr 2023 17:15:01 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 17F085805C;
+        Wed,  5 Apr 2023 17:15:01 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2D01B58059;
+        Wed,  5 Apr 2023 17:15:00 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Wed,  5 Apr 2023 17:15:00 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        miklos@szeredi.hu
+Cc:     linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH] security, lsm: security_old_inode_init_security() Handle
- multi LSM registration
-Message-ID: <ZC2UF7FfJ1XDEu67@valentin-vidic.from.hr>
-References: <20230401214151.1243189-1-vvidic@valentin-vidic.from.hr>
- <CAHC9VhT6VXwybScqsnYHHtbHNPoWMVQJzQ7VAccm2MWZEz+5Dw@mail.gmail.com>
- <ZCnff6gUjU89zfAb@valentin-vidic.from.hr>
- <CAHC9VhTCafjmo7k=qGnOMDm4s4UHL9g=o5KgRfg9_xwWCzUhcw@mail.gmail.com>
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        amir73il@gmail.com, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after writes
+Date:   Wed,  5 Apr 2023 13:14:49 -0400
+Message-Id: <20230405171449.4064321-1-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTCafjmo7k=qGnOMDm4s4UHL9g=o5KgRfg9_xwWCzUhcw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: I-u9B3_Iu8NUUSka9TVqB0TEA3acKn1L
+X-Proofpoint-ORIG-GUID: usiMNPTQycmGVGH7XZb5S6smuMFo-bqs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-05_11,2023-04-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ lowpriorityscore=0 clxscore=1011 phishscore=0 spamscore=0 bulkscore=0
+ adultscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304050154
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 03, 2023 at 03:28:11PM -0400, Paul Moore wrote:
-> I think backporting it to the stable kernels would be okay, but I'd
-> prefer to let it get some more testing in linux-next first if that's
-> okay with you.  Since we are currently at v6.3-rc5 and this patch is
-> scheduled to go up to Linus during the next merge window, it might
-> make the most sense to give this two more weeks in -next, let it land
-> in Linus' tree, and they ask the stable team for a backport ("Option
-> 2" in the stable kernel docs):
-> 
-> https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-> 
-> Thoughts?
+Overlayfs fails to notify IMA / EVM about file content modifications
+and therefore IMA-appraised files may execute even though their file
+signature does not validate against the changed hash of the file
+anymore. To resolve this issue, add a call to integrity_notify_change()
+to the ovl_release() function to notify the integrity subsystem about
+file changes. The set flag triggers the re-evaluation of the file by
+IMA / EVM once the file is accessed again.
 
-No problem for me, as long as it gets included in the LTS at some point :)
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ fs/overlayfs/file.c       |  4 ++++
+ include/linux/integrity.h |  6 ++++++
+ security/integrity/iint.c | 13 +++++++++++++
+ 3 files changed, 23 insertions(+)
 
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index 6011f955436b..19b8f4bcc18c 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -13,6 +13,7 @@
+ #include <linux/security.h>
+ #include <linux/mm.h>
+ #include <linux/fs.h>
++#include <linux/integrity.h>
+ #include "overlayfs.h"
+ 
+ struct ovl_aio_req {
+@@ -169,6 +170,9 @@ static int ovl_open(struct inode *inode, struct file *file)
+ 
+ static int ovl_release(struct inode *inode, struct file *file)
+ {
++	if (file->f_flags & O_ACCMODE)
++		integrity_notify_change(inode);
++
+ 	fput(file->private_data);
+ 
+ 	return 0;
+diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+index 2ea0f2f65ab6..cefdeccc1619 100644
+--- a/include/linux/integrity.h
++++ b/include/linux/integrity.h
+@@ -23,6 +23,7 @@ enum integrity_status {
+ #ifdef CONFIG_INTEGRITY
+ extern struct integrity_iint_cache *integrity_inode_get(struct inode *inode);
+ extern void integrity_inode_free(struct inode *inode);
++extern void integrity_notify_change(struct inode *inode);
+ extern void __init integrity_load_keys(void);
+ 
+ #else
+@@ -37,6 +38,11 @@ static inline void integrity_inode_free(struct inode *inode)
+ 	return;
+ }
+ 
++static inline void integrity_notify_change(struct inode *inode)
++{
++	return;
++}
++
+ static inline void integrity_load_keys(void)
+ {
+ }
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index 8638976f7990..70d2d716f3ae 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -85,6 +85,19 @@ static void iint_free(struct integrity_iint_cache *iint)
+ 	kmem_cache_free(iint_cache, iint);
+ }
+ 
++void integrity_notify_change(struct inode *inode)
++{
++	struct integrity_iint_cache *iint;
++
++	if (!IS_IMA(inode))
++		return;
++
++	iint = integrity_iint_find(inode);
++	if (iint)
++		set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
++}
++EXPORT_SYMBOL_GPL(integrity_notify_change);
++
+ /**
+  * integrity_inode_get - find or allocate an iint associated with an inode
+  * @inode: pointer to the inode
 -- 
-Valentin
+2.34.1
+
