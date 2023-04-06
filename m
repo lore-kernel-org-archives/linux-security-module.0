@@ -2,237 +2,273 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E15EC761A6
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Apr 2023 16:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B79AC7618D
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Apr 2023 17:38:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239085AbjDFQcK (ORCPT
+        id S239388AbjDFRi0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Apr 2023 12:32:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45562 "EHLO
+        Thu, 6 Apr 2023 13:38:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238996AbjDFQcI (ORCPT
+        with ESMTP id S238972AbjDFRiY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Apr 2023 12:32:08 -0400
-Received: from sonic315-21.consmr.mail.bf2.yahoo.com (sonic315-21.consmr.mail.bf2.yahoo.com [74.6.134.195])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E16F183D6
-        for <linux-security-module@vger.kernel.org>; Thu,  6 Apr 2023 09:32:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1680798726; bh=2EEQ5E8g1H3VSKHgc++rDAVAN8lw9f16R+5OH9wR8cg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=VQm9jIsFSkwlC4pvzQPdG2IiOoBTChwqa4YUvm067UMkJuXPgicfn52a9/R4YaLYs3/oHPcJ2+e/lmEvwwGDG1kAAP5x0WuPUdKp1anyUjpMuk9QEeRGH54l1wlnU9iDe9SHWPmMXAyTnDSbuLQQpfPRnpSP+aQAIz9XhtciWUaZ/nodMygWQB+GIyehYRzuyxHplDVhiE0O0jqzEPs8D0QdVSAhOoB3ec53BVY2IvM/NPNbWuQxkLXaMiAi4vjTzq1tIfVAfVbcGAegVv/UaHtxYJ4/zT0XwhypDDnXwGjgbtQATmriKrRG2BkRMhhE6IjlTfycVXOAQt3EV++8tQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1680798726; bh=reldIx6TIrjgTPm6RaWsjyOEDps90EuKcIWdi7zZpdj=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=anO1jl9oPtPvrGQNWppzDEt6VnSli+iGyOEaPNe28G8rJDyygp/bXUzd44VnMWuGWDLQarhbz9ZJI78Cmn6IqUXGRHwtBd/PaBUxxiNezAC5POnlIaj07VnyAPvIJ2Jn2jo3KKKMZGV1wNsdsd3DJN8/oUwLbIhboa9NLha62xJ7v4jTVWZ+NzlW709vOFJYpu3sTCO0Xr+FIu8k41sUHeEua+UaCibPHTZqg95xVJdxY85dyW/bCLr1rmQbDJmmyzQGtfHErR89zUgpHych8BnITFGXCzMPUCTW1Dhzc2oIPWPQeGRwI7OJZghgx5LsAn6kG8dOTlhrjFDZQ+HZjg==
-X-YMail-OSG: naSjp1oVM1mHiQBkZnRqts43fOtUBN5JY78azwELz2ex8iwYYT7QpVpnRgUYHjC
- Jm9jtMLdlWHqg2nte3aIgT5vA3QlBvVn1NDdINjONvWc0nFI4NSqEovyXJVa_.xuYOIOnoQzRiAE
- 5JY_WerThOSkRtYQ2qk3m_GANGhy6h47XavQMw8G2od14u.imzscgBsKKmLuFwJNGrZ0b5CeReaZ
- z.EbYdPSUt6vXORn5XbL_W3ubNtLSOfrFiidUZ5X69CBMRV7jxVSMWJp.MQVczBibff_fdgkuoPW
- .MOSj1tbaQDP3z8KR2CfYgGyNIsBJx7zRX7LvqbOu1O.vB.EppqipK8VdJOU4Jkrf8r9QIzHCh_B
- 56qIhWopAThazJPi5s8xTnEOlz87.hM4z7Dv5JMd8FLssKrSkUu2lvvLRkUjRh9n6OWHZ2mxGPrh
- wh.v.xpdbajFQ0XbH.JzACShqbMm7gLHBxvwyvq3yVfoobYiBQehtH.EZmVAYe39GLv5tXzGeMHe
- RK1i9B17StREPo4sAddlevQn0eidmI64PJ9Q13_q3Z7IFY1IoYnW9FeUB74bH9Wxc9ddFJGgdu9G
- GhCthW09FHlHDqEl1pf3DmFW7DatOVnTzKceYX8Dm7Wz3nq9r1_svvPexpEOD46TMwyxPWcxInGb
- OePILfgdHSk.nSUrYqBG78_bbZknfzSkFD.HoajHGqhW3mkguMNEXJF.ib9.mP3wtIvzjhj8A6uV
- u2nZmB1MCdBqVIIZ3AAQYW0of3vcJ9huUE9GUhoNpL53ypWoyvbBIYaX16Eg8w0lqRFCe12rWrJ8
- jYRQVUOSdUKStKScWhQ_3ufjTAYYdN6Ud1TfcimIn5lNN.xdtqaFq7rf3P1T5uB0wtQlKofZ6OMk
- uWjguhr4XAG3J12xfpzqoW3Lk9qXZrfTZqbxgKPvaLnX9vBbnSdEVUcZ_n9NDzej5sUB9EBei1nB
- 4AHRwNkEGm_F7zPaZ2TQnKLYZm7NdHkNU.O4DJwi0u_YIjJqGtgdTqWmFehWSogY.WEEtLg5L0SK
- JS_54q1Mdjte47H4pQx0DBmx18VhUKMX0wvSX4YaP7H.yo1EW7ImPbXOLAhRhoIZ7.8qoLS2GYMZ
- EwI6DynCv03dYrhVWjwkjM0BCt0.dUt7OQ7u1CATOHNUye0fU2sD92mQJpnPRwsCy_VAdi8b2Kf6
- irovuZ_XQzBBikyIKfdD5ahXBOrSqULM5hyH5iDdSJXmS3YADmnvd3rAPY3t_Qog_jtGckZDSouH
- 9Jb8g.q7y8wxB1MuOsNpaRuRlS9Hux8ojjr.XFbgD34e45knaePLtqvakCszDF_0td7g87R.Ch8w
- 8Lng8WVNK2zEV.SHugpCX9ro.y5z6kxoxGD9.WLu.RNL_Q5GzT6nLihdUHgotF5s6MNHI2uOQygG
- i9hEvr_Er4zws9P9uqzpphLQpgtcwwvzE6z1pfBPWzHUfeheBtqv2i7Hc8XMhBkiMiJEk3JZi_TG
- gLJRoFYovEFT.9im0lwo8iEkgjWtKpaVFw6TSJSnsOBalqjOQnwGLRiCpIzA2KVtHLkEPxq8P1I0
- 9DK1MBsJYS8z0FYGzGjAlCjfSArXdyTtnnf.TtcH0IR64kKn485k5JAvDShaNTimXK.IdztS0wnk
- q72NtRdi7ZiNYwkdCOF23LWfvaanbl8RTE8lWshdcFhhx4Ol1h1Jzyin2hlhTg8b_suKDTOJAq_X
- 4klv5LAJM5NMoTlycwVRwid4JMLDjGN7RFCu0a96ihXtcCGnA9oSyoUxuFegMikFvd_faIUnuQjs
- 7JkJnfCswnvxJmEVoOkSRHisql7BFtPEtmBxczGtBjRt9_9SOSCQfmNWuL_eJgH5LB.gGCXFKFXB
- .PBg77zU7dgge.zJx6GRREM.vnwtHaXtNeHYNyYj6REJ5HeN_EbahDak_qBFS085M7lrLmASrUTO
- zfsqxEOZ0OK4uIgUSUAJNZ_cqPJRTqN4DvP.6UlNQm8fEE1SPamEgo5.H4pz6p8UN9y1ouR69Tcq
- U5YErOMYhcp9bXzL7Htjqxh7y22m2DnpYRHzxo6AO9J9N7iIupQ9S.MWyNZB0etc3WCQpy4iAcvi
- htlCf5SnkRBZbwWb4CQ4FBkc5CDqBZ.nZrEWJNOIzURyyrId2ZOSaWV3n3.a_q2rn7YseYYbFj0A
- wxVr6A4U4b.xzxgtQJkftVEewuLn5A8y8hIrBf8T3T8SKojlNXO_1py2k3Iu0x9XNcZBcQ3LCg90
- EGG3XzFHtXuu0b2d9xp23.aFb.LtvmsAOdLSOsmyEsfS8pRwhiADIieT7ZVv_TpRQM8z95UQWZZQ
- eLGMU9skKm.giYVTz4GJp
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: afeeb1df-d2b2-4fde-b99d-a791b720d2f1
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.bf2.yahoo.com with HTTP; Thu, 6 Apr 2023 16:32:06 +0000
-Received: by hermes--production-ne1-7dbd98dd99-84p8v (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID fe54b9c6177a887473eeae74b12f75c4;
-          Thu, 06 Apr 2023 16:32:00 +0000 (UTC)
-Message-ID: <8819e4eb-1e99-bb38-6501-638677d3f4cf@schaufler-ca.com>
-Date:   Thu, 6 Apr 2023 09:31:58 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v6 05/11] LSM: Create lsm_module_list system call
-Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        paul@paul-moore.com, linux-security-module@vger.kernel.org
-Cc:     jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20230222200838.8149-1-casey@schaufler-ca.com>
- <20230222200838.8149-6-casey@schaufler-ca.com>
- <1ca41f67-ffa1-56c2-b4ee-f5deece95130@digikod.net>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <1ca41f67-ffa1-56c2-b4ee-f5deece95130@digikod.net>
-Content-Type: text/plain; charset=UTF-8
+        Thu, 6 Apr 2023 13:38:24 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B66FD4C21;
+        Thu,  6 Apr 2023 10:38:22 -0700 (PDT)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 336EhKS1015317;
+        Thu, 6 Apr 2023 17:38:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
+ subject : message-id : content-type : content-transfer-encoding :
+ mime-version; s=corp-2022-7-12;
+ bh=k49EoDHJovtRM5MPKhxMeaVtnBGGH8CDi7giycPX3us=;
+ b=cv0y1/qY7GbTqh0IeJhkmg1nIne+KirnWCyR+d47AZeDhasI0/ihHpr09DbivEOWIn2v
+ EImYeElRqhJ9/WIfMsGkN+E77B95XjXuVJArHbWopF4TYk/bOhC9mQyoJ8yup8V2SjBy
+ Fx3JjNCuI7ZFghVc3jor8N7RwYikPfAXu1sma36fd1xEulc3hCmBtZjBTCPfL6p5YXug
+ Im3eeaQNOeMfUAokLuq863jGh4FxefiPJNm5rwAltEPnqPTH6oS5qsAWGkbw/JlQK86V
+ qKAsvZEjHh4LVMmAjpmDI7/XlrSH1zbBOTVC2lclO6/sIthcjFpstXNVTww+y19gtcIP cA== 
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ppc7u3ees-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Apr 2023 17:38:10 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 336GrVRx034243;
+        Thu, 6 Apr 2023 17:38:09 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3pptjvm6kj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Apr 2023 17:38:09 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Sf0DwGbmHaPoJzueJQt1sIipJV8GIaS/kkJXtJh/2iA+eY/tDgFDJLmoDPtNOpFDWxFxHyqiU8kGAbz5pAqR46hrzixZ1XDz4piKOMDsbVNIDpD/J+mGc06kQ7j7zE3YDC9hOhIos6EnxMln3txTRuKqBO1w7BECzdYiAIAgxAbBY+fInL4PoKE4/Li+/L8NOJ03P8n5BvNhBkWKVzLRHWkyLjrHnCekqpo6tuFWfVl/bbKsqMZCJyhTRCZmyL3wYyWub+3yJuxZ6msYZ/brpexA0TlaTSaio7UrI6UHZHTur52ClTuOyrO0q7V3i2oFL29eG9HQOQDGng0ma03OMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=k49EoDHJovtRM5MPKhxMeaVtnBGGH8CDi7giycPX3us=;
+ b=Yia8HPLuliyUKrg/D2V7PiBSf2+pXGuW0NPu4DaphfjyHX+OMeGkb8/LwtNFftPA7gqsh89LvsYRK0SRsZhtK9y73SNTVr3iILhzcxz9t/b/qr/tmeNY2UHT082ClxM1Etg7IFJhbLbJOMbmE+IgJwABdjETfIf7W89f6nSGCAH0SxTAeurrGVvqwR2Y+sKPqqAS8zHenuW2zSKTvDC2DcND38Jh0nzANU5xU+zQwhblQ2FYhYuoxx6Mr7g896aBjy8/08TzrO8w9UTqumjJtojFMJCzZRwfe7WRexc6WHzof+OANHeVgKeV1Bi0c1Qt/lLkno5JzXkiGnMSSD3lHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k49EoDHJovtRM5MPKhxMeaVtnBGGH8CDi7giycPX3us=;
+ b=Hrxrd8t+0r9691psE0DtxM+ZmksV7NGTy//rVHj/UeQbFh2tYiWeYz9FTjrKsxu1y7wup8rfKPjYNjukWXg5FeUqsDVPZm8+iVVMx9iYY4U1Plnszez9M6EnG2cIyW+yqUEtJtcrlNPzCpFmDkVmZ86DN2A5BrSMxAb9lyfcDh8=
+Received: from BYAPR10MB2999.namprd10.prod.outlook.com (2603:10b6:a03:85::27)
+ by CH3PR10MB6882.namprd10.prod.outlook.com (2603:10b6:610:14e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.35; Thu, 6 Apr
+ 2023 17:38:07 +0000
+Received: from BYAPR10MB2999.namprd10.prod.outlook.com
+ ([fe80::d8d2:ddf3:e236:99ef]) by BYAPR10MB2999.namprd10.prod.outlook.com
+ ([fe80::d8d2:ddf3:e236:99ef%4]) with mapi id 15.20.6277.031; Thu, 6 Apr 2023
+ 17:38:06 +0000
+Date:   Thu, 6 Apr 2023 13:37:50 -0400
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, nathanl@linux.ibm.com,
+        junxiao.bi@oracle.com, joe.jin@oracle.com,
+        Eric <eric.snowberg@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>, axboe@kernel.dk
+Subject: Semantics of blktrace with lockdown (integrity) enabled kernel.
+Message-ID: <ZC8Dbux56HbJjpTy@char.us.oracle.com>
+Content-Type: multipart/mixed; boundary="5iavvndJv1wOMM1M"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21284 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-ClientProxiedBy: MN2PR11CA0026.namprd11.prod.outlook.com
+ (2603:10b6:208:23b::31) To BYAPR10MB2999.namprd10.prod.outlook.com
+ (2603:10b6:a03:85::27)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR10MB2999:EE_|CH3PR10MB6882:EE_
+X-MS-Office365-Filtering-Correlation-Id: e7ee6596-19cf-40be-88ab-08db36c5ae44
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: vIyKtOq1aQkV5hoZSvkkD29W+unbsrFxlRYObshURBb2NCyuCG36OENWx1sfiRtilruCmJNaraC+BJQwYqCvSoJcGP6b+Ld6bGI8WeblC9zbLQLHau+veT52msZWW3RIcAb2jJ1hets/PyG88E7ryblJJXG4h7WluZf5QMq1g20SLIHBCQhC8cEOcvcHy9kyJ898+sjBQhMk8WYJik15J1Xgy65xQvHLc8aAFos+yXNReQux42L+Rr7dhvYRIiAz1nFXqtnVpb0OYHPuqrBsGxXlnVKsDf3G06DWw/qdO8c0g3xYoGigbcKuJEwJ1b51NvIa001hiZQ6eBaz/SrDdVkYrisNz6L+421N5skPP9/9y3LVJo1P0l5X1chWwXeHJ7AjxwvwOPPOmdV75i9Dl40ZrT/zU6OSCTkzVGPRI0sczYnXkHlpcQPQ9ez2Im64iEwVgfuyZAQgJ94C+mLVxnUCDaYrcujVCYbIoVKUsQtRim6RwofisXljY0qi7s3VcU0gGFqSoEk6QdyenVgV8m3wI5rpnW5gmSB7Rs4a16GEp8CdU6bgGdEwt3DbJ0MHidw0el3h77KgNmOx5reyMrCuYSc6wX6F+U1sb2UrdlOeK9fY4r2IPTC2YLvL4RtIAPTzWCSz26vEu3vyqmP8dA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB2999.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(396003)(376002)(346002)(366004)(136003)(39860400002)(451199021)(38100700002)(6512007)(26005)(6506007)(33964004)(44144004)(8936002)(186003)(478600001)(110136005)(316002)(86362001)(66946007)(8676002)(66476007)(6486002)(6666004)(66556008)(2906002)(41300700001)(921005)(83380400001)(235185007)(5660300002)(2700100001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?V2xqbjVDUVpvNTZpSW5oSkxlc2FoSEMvekxkM1NXNkd4QWpXTHdHcy9nTVdR?=
+ =?utf-8?B?TVRCYlBIS0RrSFhuT3dmMVJmSjdhLzhENFhraXlmWkZ5amYvZTczTVJ2SFhT?=
+ =?utf-8?B?YjBtS0gzL253RDMzNUZ4YkpvKzJGdnpGRGNZcjBlQjJPYm0zZXNRRVpsWk1O?=
+ =?utf-8?B?R0FkQUExaEhZZ2k3SmFJMXduWXVCbTJvM0lMQnRsUWExT2tub0I0NTBZZFQ3?=
+ =?utf-8?B?L0syRGorbHhXc0gwcTJBOXY3YUJVNXMwenZVU3NyMjNYK1UvZEtNNmQxU1I5?=
+ =?utf-8?B?ekJjbk4rbHh0TUx1ZVFPb2dDUXNEcUZPbGtCWGJyamVmb3laSHFPVS9POWFQ?=
+ =?utf-8?B?eE5vV24zOWExUm5Vb1dia25vZHhib0hudDl6UnZicklZVFExL08zZmp3enI2?=
+ =?utf-8?B?RTQwcENITVYwbnQweTBVTGVZc3B6Q1FUYlhReW1tdVd5R01ZMERwS3ZXbEdv?=
+ =?utf-8?B?VERFdmtJYlZLNHVCZEpLTTkwdExraUc5cEk2dXRVeWcwVEswSWdXWmduR1JK?=
+ =?utf-8?B?NXhrMGRETkgxRW40dEhCRmkyNFFXTGMxK0NVM0NNenlBaGgyaGJoZ05aUEVj?=
+ =?utf-8?B?YnNQZHNnVnlvWndqVGFDbWZwajNaakx0dTFmYXQrb2VDRVByY1MrZWJlbnBE?=
+ =?utf-8?B?UUJUam1Qc1B6K3JGZEhwcWlCVC9SUG05RFlRY0JNVHkrSXdiZS9HOHc4N1pL?=
+ =?utf-8?B?amNRTXVJUVdPZ1NIcE4xUktLanBjS0lBazlmSEJMWmF2WFM4VkxtVzVUNmJO?=
+ =?utf-8?B?d1BFZy9GM0pTQmdVUGVmTWlESzg2MXZ2b1FXdUg1WVdYRlRKRnB1QWFJdVNj?=
+ =?utf-8?B?RnM2OGN1YnJFSGpqUjUrMEdJTXhPQzhYanN1YmFjSkEwVjc5MXRaaXFRYk4r?=
+ =?utf-8?B?QTgyaHNlbkg1UHRyZ1JkbEo1cTA4QW1RdGVzd3ZtU1U2WThFY0V4K2hSVnBK?=
+ =?utf-8?B?MVg1ckdTZVltM05rVFlSbmVqN215L01sbHlOWForY2tHMmNPSUY4Y2p1c0x6?=
+ =?utf-8?B?MDZUVVVaYXNwYzcxR2NGY1dlcnRFRUI1ZXk3WGIxQUpvY1hxVk5QVEI0MnMw?=
+ =?utf-8?B?YkV4dlZDRVk1UkNLQ1ZsZkI4cTNRU2pWcXBoTWdUWnd6RXYwS25zOTFrY1hp?=
+ =?utf-8?B?M1pHVUJJeWVWQWVmRE1SRU82dFJ6TUpBT2xQRVJvdGRsditvdXduMlYvY1pU?=
+ =?utf-8?B?ZjJiMm40dzBuVzA3eUpYRWd4YklRbm9Oc0YxZU5tVG1SVjFIYklNcXNXYzIx?=
+ =?utf-8?B?UEVDY1BLUjBOU0lpc2NHSjVYQmJ6UFQ3RVEzam0vbXM1WTh4Tk1ucVlDdXd6?=
+ =?utf-8?B?QUx4K0g0RGRGSFA5ZlVpT2QxcVd5QXAzZVNWMjlGeGtyYVk3aU9vWFFEeFhy?=
+ =?utf-8?B?R1Qyc2pVdTlFa3A4RUUzcEFrMGI0MmNxWnp3bDVaM01TbXczc1BLRHJYVmVF?=
+ =?utf-8?B?QjNQakxBMUUva2hRSlFTQjZGSWVrbEs4TWtYc1BobjRQUWNtTmcwUDdqdXBv?=
+ =?utf-8?B?WEw5bE1iTFZURzVLZGs4ZklWSXFzeHVHT0tGOXlybjRkNUFjR3ovNzR5Tkc1?=
+ =?utf-8?B?SWNMb1lvTURaK1BLbUsyTnI2OE5ZTVNzS0ZhTXhvOU5ZcXU0bkJLUFBMbnBI?=
+ =?utf-8?B?dW1ydTF3VmZnYzRwZVJrQmFpOE4wRHlTclRuVWJqdEtTaHNJK1BhRDNSMDBI?=
+ =?utf-8?B?akxzRkcrdldUQkVPZ3pISE43RU9Ddzk2L3lmdk1wTUw5SDdBZG4rVW5mY21u?=
+ =?utf-8?B?RmpPZ2U2TEV5eDJuOUcwVTlFbU56OS9ydnhWZTZFanVQTnlVcjFJK1lLVUtW?=
+ =?utf-8?B?TWdVMnBWM25vdVZneHRMeWdIV3k3R2JVNUhoVTZUdHorcDl4WTFwVVE3RWk2?=
+ =?utf-8?B?UXlZMFNFLzVPend2NElqaUJOazQ2ZFEyTnBMRHdSL2NwSkNwNzVSRmEyWFhy?=
+ =?utf-8?B?empRY2VKYzFUQW1SanJOYisrRytoelBpY05makhFTmNMSzhPd01kVXMwVXZG?=
+ =?utf-8?B?eE5CQVN6eThJTjlZMkFVeDR4ZE4vdms2SFM3UkdZRGxWckRURW54bjhDL0R3?=
+ =?utf-8?B?dHp3b2Z1ZFF3UnFqQktWQmR4UGVuVVlXaGJKaUlkWUQxMUpkTExGZlJzVk9M?=
+ =?utf-8?B?aUZaN0Zpa3BBM1QxRnFzOStKTDNmUFZnVk1RSDRRZ2pRYVoweTloRndKcnFa?=
+ =?utf-8?B?b1E9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: xRx43EviDMqyJKu/9PEPTWyp8GUKF3/xLy3GvNVRuyEsop1wV3ILDKb57VSGB/umQDgHXRlwywT/QxRNPZ8MN3/pinXEZIL+74bnQwA+wWXG3lpakszNR1HHMf1FkgwayzHst4BvsFOgNTQL/jJ+zdep57myOIGmLll+1DMriIK1Pkf6os1ocsG2xs36mHsdbekGUZPTJW797hCGQ0o68KylaGjz481dlXuTK4yFn17AGDNHDGtHvDA1nX9IYqf/jDop3eIQg76hgyxD6/Uqxw4hQ2AEcJ8RM75gAaiDOn9ZlrlSJP+kh9RHga6VlzTZsPYjKAfJ12Aar2ffE1sqb94sKy8HzVHaoLG7OudoD8k1I3XCAaW8axyWXXRd5fjO1Jia0bNAlh9566KxvuDfaW6xWmvs8LDeQQOBxDqxXJ/SZqSAqHdNuxAcR8O9oznZm+WfgUNdZam9khMG+S62DGQ4twdgEebbH8YDcT0zH0i8i1RmizRhg4MAkpjFzh9KBFZfmUoX+zSXPJWwUNyA/lYmu2hJNTPNb0vPa0brp9aOPgVRC1wRTFH5nrcedIXlIDa6trKNZN/uEqEzyyNOe3hne6DbdLvCrnbXQlzW5py1YOpBpFkgnkjziLRsw08qP+vSK2K4lbROGyxJfVl5+sNFrcRN77DMBfmWLegPmvbStgqXaG1UMSNTt97cqiKsjkqguI+dNV7dUuQx4+LCPUiKX9IfiHIVUiWyUiAPPIbb4K9wDR18N02HXWJl3+Fu/GB4U8ogr3FNoJkGeLXcO2brzrdwIrO9Le6mdK9DMcFofrwRVQoInlQEtAhhMYFRqIhTnc8ImnDWn3EN6YtAXGjouKtRspje0HKLk+rQvuw+qsqAKy99p3aGxywpExqz13G9vJfFga2LOegXfJPEO0V6D3EtnuVmV3RuQb3QIu8=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7ee6596-19cf-40be-88ab-08db36c5ae44
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB2999.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2023 17:38:06.7904
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QCM+15/My87+to+npI3mSmUMm7iRw/NYNFNTY+XqmFs8D83GHMpB05c4D5Eeeoa9CXhCGXUICeNUYLiJHZjUJQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6882
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-06_10,2023-04-06_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0
+ phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304060155
+X-Proofpoint-ORIG-GUID: 1TP6tYX6Uh9FgLgZvYpYkBSuk35_xxGf
+X-Proofpoint-GUID: 1TP6tYX6Uh9FgLgZvYpYkBSuk35_xxGf
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/7/2023 3:33 AM, Mickaël Salaün wrote:
->
-> On 22/02/2023 21:08, Casey Schaufler wrote:
->> Create a system call to report the list of Linux Security Modules
->> that are active on the system. The list is provided as an array
->> of LSM ID numbers.
->>
->> The calling application can use this list determine what LSM
->> specific actions it might take. That might include chosing an
->
-> "choosing"
+--5iavvndJv1wOMM1M
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Oops. Thank you.
+Hey Jens, Paul, James, Nathan,
 
->
->> output format, determining required privilege or bypassing
->> security module specific behavior.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>   Documentation/userspace-api/lsm.rst |  3 ++
->>   include/linux/syscalls.h            |  1 +
->>   kernel/sys_ni.c                     |  1 +
->>   security/lsm_syscalls.c             | 43 ++++++++++++++++++++++++++++-
->>   4 files changed, 47 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/userspace-api/lsm.rst
->> b/Documentation/userspace-api/lsm.rst
->> index b45e402302b3..ecdf1acd15b1 100644
->> --- a/Documentation/userspace-api/lsm.rst
->> +++ b/Documentation/userspace-api/lsm.rst
->> @@ -63,6 +63,9 @@ Get the specified security attributes of the
->> current process
->>   .. kernel-doc:: security/lsm_syscalls.c
->>       :identifiers: sys_lsm_get_self_attr
->>   +.. kernel-doc:: security/lsm_syscalls.c
->> +    :identifiers: sys_lsm_module_list
->> +
->>   Additional documentation
->>   ========================
->>   diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
->> index 1ef2a3de8ae0..9c947022a411 100644
->> --- a/include/linux/syscalls.h
->> +++ b/include/linux/syscalls.h
->> @@ -1062,6 +1062,7 @@ asmlinkage long
->> sys_set_mempolicy_home_node(unsigned long start, unsigned long l
->>   asmlinkage long sys_lsm_get_self_attr(struct lsm_ctx *ctx, size_t
->> *size,
->>                         __u64 flags);
->>   asmlinkage long sys_lsm_set_self_attr(struct lsm_ctx *ctx, __u64
->> flags);
->> +asmlinkage long sys_lsm_module_list(u64 *ids, size_t *size, int flags);
->>     /*
->>    * Architecture-specific system calls
->> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
->> index d03c78ef1562..32784e271fa5 100644
->> --- a/kernel/sys_ni.c
->> +++ b/kernel/sys_ni.c
->> @@ -265,6 +265,7 @@ COND_SYSCALL(mremap);
->>   /* security/lsm_syscalls.c */
->>   COND_SYSCALL(lsm_get_self_attr);
->>   COND_SYSCALL(lsm_set_self_attr);
->> +COND_SYSCALL(lsm_module_list);
->>     /* security/keys/keyctl.c */
->>   COND_SYSCALL(add_key);
->> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
->> index b89c4e7d009e..ccd3b236670b 100644
->> --- a/security/lsm_syscalls.c
->> +++ b/security/lsm_syscalls.c
->> @@ -19,7 +19,7 @@
->>     struct attrs_map {
->>       char *name;
->> -    int attrs;
->> +    u64 attrs;
->
-> Why do we need this change in this patch?
+We are trying to use blktrace with a kernel that has lockdown enabled and find that it cannot run.
 
-We don't. It's gone in subsequent versions.
+Specifically the issue is that we are trying to do is pretty simple:
 
->
->>   };
->>     static const struct attrs_map lsm_attr_names[] = {
->> @@ -102,3 +102,44 @@ SYSCALL_DEFINE3(lsm_get_self_attr, struct
->> lsm_ctx __user *, ctx,
->>   {
->>       return security_getselfattr(flags, ctx, size);
->>   }
->> +
->> +/**
->> + * sys_lsm_module_list - Return a list of the active security modules
->> + * @ids: the LSM module ids
->> + * @size: size of @ids, updated on return
->> + * @flags: reserved for future use, must be zero
->> + *
->> + * Returns a list of the active LSM ids. On success this function
->> + * returns the number of @ids array elements. This value may be zero
->> + * if there are no LSMs active. If @size is insufficient to contain
->> + * the return data -E2BIG is returned and @size is set to the minimum
->> + * required size. In all other cases a negative value indicating the
->> + * error is returned.
->> + */
->> +SYSCALL_DEFINE3(lsm_module_list,
->
-> The name of this syscall differ from the two others: there is not
-> "get" verb. What about "lsm_get_modules" or "lsm_list_modules"?
+strace -f blktrace -d /dev/sda -w 60
+ 
+[pid 148882] <... mprotect resumed>)    = 0
+[pid 148881] openat(AT_FDCWD, "/sys/kernel/debug/block/sda/trace0", O_RDONLY|O_NONBLOCK <unfinished ...>
+[pid 148882] sched_setaffinity(0, 8, [1]) = 0
+[pid 148881] <... openat resumed>)      = -1 EPERM (Operation not permitted)
 
-lsm_list_modules() it is henceforth.
+which fails. The analysis from Eric (CCed) is that 
 
->
->> +        u64 __user *, ids,
->> +        size_t __user *, size,
->> +        u64, flags)
->
-> As Arnd said, flags should be a u32.
+All debugfs entries do not exist until blktrace is run.  It is opening
+/sys/kernel/debug/block/sda/trace0 which isn’t there normally. While running the utility, 
+to place something in it, it must have the write permission set.  When exiting out of 
+blktrace, the entry is gone, both on a machine running with secure boot enabled 
+and one with it disabled.  Which also indicates the write permission was set, 
+otherwise the entry would still be there.
 
-Agreed.
+The fix is simple enough (see attachment) but we are not sure about the semantics of what
+lockdown has in mind.
 
->
->> +{
->> +    size_t total_size = lsm_active_cnt * sizeof(*ids);
->> +    size_t usize;
->> +    int i;
->> +
->> +    if (flags)
->> +        return -EINVAL;
->> +
->> +    if (get_user(usize, size))
->> +        return -EFAULT;
->
-> I'm not a fan of using the same pointer to read and write. This avoid
-> using const pointers and differentiate between input and output
-> values. I suggest using a dedicated argument for each.
+Looking at the include/linux/security.h the LOCKDOWN_TRACEFS exists which would
+imply that it is expected that operations with tracefs *should* work with lockdown (integrity mode).
 
-This is pretty standard practice.
+But at the same point, debugfs writable attributes are a nono with lockdown.
 
->
->> +
->> +    if (put_user(total_size, size) != 0)
->> +        return -EFAULT;
->> +
->> +    if (usize < total_size)
->> +        return -E2BIG;
->> +
->> +    for (i = 0; i < lsm_active_cnt; i++)
->> +        if (put_user(lsm_idlist[i]->id, ids++))
->
-> I'm not sure about it, but it may be better to put the complete list
-> of IDs at once. Is it better to set the size before or after?
+So what is the right way forward?
 
-You may be right. I'll consider it.
+Thank you.
 
->
->
->> +            return -EFAULT;
->> +
->> +    return lsm_active_cnt;
->> +}
+--5iavvndJv1wOMM1M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-debugfs-whitelisted-relay-file-for-lockdown.patch"
+
+From 20bd7b8c91463191924ec69833bbd6e6a6231f52 Mon Sep 17 00:00:00 2001
+From: Junxiao Bi <junxiao.bi@oracle.com>
+Date: Tue, 4 Apr 2023 19:13:21 -0700
+Subject: [PATCH] debugfs: whitelisted relay file for lockdown
+
+Relay files in debugfs are used for sending data from kernel to userspace,
+the permission of these files are 0444, looks safe to skip lockdown.
+
+Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+---
+ fs/debugfs/file.c     | 17 +++++++++++++++++
+ fs/debugfs/internal.h |  5 +++++
+ 2 files changed, 22 insertions(+)
+
+diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+index d574bda24e21..93ab719d8c7b 100644
+--- a/fs/debugfs/file.c
++++ b/fs/debugfs/file.c
+@@ -20,6 +20,7 @@
+ #include <linux/device.h>
+ #include <linux/poll.h>
+ #include <linux/security.h>
++#include <linux/relay.h>
+ 
+ #include "internal.h"
+ 
+@@ -137,6 +138,22 @@ void debugfs_file_put(struct dentry *dentry)
+ }
+ EXPORT_SYMBOL_GPL(debugfs_file_put);
+ 
++bool debugfs_file_is_relay(struct dentry *dentry)
++{
++	struct debugfs_fsdata *fsd;
++	void *d_fsd;
++	void *fops;
++
++	d_fsd = READ_ONCE(dentry->d_fsdata);
++	if (!((unsigned long)d_fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT)) {
++		fsd = d_fsd;
++		fops = (void *)fsd->real_fops;
++	} else
++		fops = (void *)((unsigned long)d_fsd &
++					~DEBUGFS_FSDATA_IS_REAL_FOPS_BIT);
++    return fops == (void *)&relay_file_operations;
++}
++
+ /*
+  * Only permit access to world-readable files when the kernel is locked down.
+  * We also need to exclude any file that has ways to write or alter it as root
+diff --git a/fs/debugfs/internal.h b/fs/debugfs/internal.h
+index 6bcedb3f90b3..392bb1972226 100644
+--- a/fs/debugfs/internal.h
++++ b/fs/debugfs/internal.h
+@@ -37,6 +37,7 @@ static const char * const arch_whitelist[] = {
+ 	"mds_user_clear"
+ };
+ 
++extern bool debugfs_file_is_relay(struct dentry *dentry);
+ struct dentry *__attribute__((weak))get_arch_debugfs_dir(void) {return NULL; }
+ 
+ static bool debugfs_lockdown_whitelisted(struct dentry *dentry)
+@@ -51,6 +52,10 @@ static bool debugfs_lockdown_whitelisted(struct dentry *dentry)
+ 		}
+ 	}
+ 
++	/* relay file is used for userspace/kernel communicate.*/
++	if (debugfs_file_is_relay(dentry))
++		return true;
++
+ 	return false;
+ }
+ 
+-- 
+2.24.3 (Apple Git-128)
+
+
+--5iavvndJv1wOMM1M--
