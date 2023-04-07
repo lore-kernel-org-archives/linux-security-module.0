@@ -2,161 +2,148 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9B2C77B6C
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Apr 2023 13:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 489DFC77B61
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Apr 2023 14:11:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240853AbjDGNbG (ORCPT
+        id S231204AbjDGOLG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Apr 2023 09:31:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40446 "EHLO
+        Fri, 7 Apr 2023 10:11:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240823AbjDGNbB (ORCPT
+        with ESMTP id S230113AbjDGOLF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Apr 2023 09:31:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53B1CAF15;
-        Fri,  7 Apr 2023 06:30:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9C08164C35;
-        Fri,  7 Apr 2023 13:29:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07DB5C433EF;
-        Fri,  7 Apr 2023 13:29:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680874172;
-        bh=4fZ5vntQ/4/IuDVoBsJvMKJ19n4BQOxP6Cy308sJ/DE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=I/zq6k3P5nn52mhmhbzjcSMiXW9bl9DnNsKvNvuzvQDw951D+EWmav2b9kVlG9PJk
-         VYAUKQF43anEnBAgb0f3hD1g1AASkQwMABcopx3JbX2VszYIFpTpFKkGLAN7MwZcq4
-         87/e09TZUosHESlvMKma8pftyvqpeS6+Eyw3SY/bUEDFGtvBjpQDU3qDldYwNBRYY9
-         Li2s8xSBD3mWFOnxkzYu3kxjJdxxPDpM1eAOUbYcbldDDxrZPeFlE/bVDaehRDEdht
-         r6NHGiWn9k9Kd/HrMgS2Q5SXhidZrjRByrHcsC1dRwCtJTVnAEkCPtyNhgzT9D8h/w
-         C7mSjYNpMP48A==
-Message-ID: <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
-Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM
- after writes
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     Stefan Berger <stefanb@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Date:   Fri, 07 Apr 2023 09:29:29 -0400
-In-Reply-To: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
-References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
-MIME-Version: 1.0
+        Fri, 7 Apr 2023 10:11:05 -0400
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CDE3335A6
+        for <linux-security-module@vger.kernel.org>; Fri,  7 Apr 2023 07:11:03 -0700 (PDT)
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 337EAPKQ017348;
+        Fri, 7 Apr 2023 09:10:25 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 337EAOOb017347;
+        Fri, 7 Apr 2023 09:10:24 -0500
+Date:   Fri, 7 Apr 2023 09:10:24 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 02/14] Add TSEM specific documentation.
+Message-ID: <20230407141024.GA17078@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20230204050954.11583-1-greg@enjellic.com> <20230204050954.11583-3-greg@enjellic.com> <CAHC9VhQnZhczVRifSnM-zv46Cb9OFuh=6ha+1zKJaOUK15=K5A@mail.gmail.com> <20230214115822.GA28408@wind.enjellic.com> <CAHC9VhQoj-aWrN5SxfkT2zaNmaKCG7VyYVvGsaHAbp5iA8OBZw@mail.gmail.com> <20230313225227.GA23057@wind.enjellic.com> <CAHC9VhSfQOw-q6b-DHL=zXFr7_Dw=44VxkDTpPp_=4XAZk2k7g@mail.gmail.com> <20230330033442.GA1014@wind.enjellic.com> <CAHC9VhTQCLHQjEnBbGBZ7ya5s01hMr6WLLf_N54AmfYp_6TwsQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTQCLHQjEnBbGBZ7ya5s01hMr6WLLf_N54AmfYp_6TwsQ@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 07 Apr 2023 09:10:25 -0500 (CDT)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> > > >=20
-> > > > I would ditch the original proposal in favor of this 2-line patch s=
-hown here:
-> > > >=20
-> > > > https://lore.kernel.org/linux-integrity/a95f62ed-8b8a-38e5-e468-ecb=
-de3b221af@linux.ibm.com/T/#m3bd047c6e5c8200df1d273c0ad551c645dd43232
->=20
-> We should cool it with the quick hacks to fix things. :)
->=20
+On Wed, Apr 05, 2023 at 04:45:26PM -0400, Paul Moore wrote:
 
-Yeah. It might fix this specific testcase, but I think the way it uses
-the i_version is "gameable" in other situations. Then again, I don't
-know a lot about IMA in this regard.
+Good morning, I hope the week has gone well for everyone.
 
-When is it expected to remeasure? If it's only expected to remeasure on
-a close(), then that's one thing. That would be a weird design though.
+> On Wed, Mar 29, 2023 at 11:35???PM Dr. Greg <greg@enjellic.com> wrote:
+> > On Wed, Mar 22, 2023 at 07:45:26PM -0400, Paul Moore wrote:
+> > > On Mon, Mar 13, 2023 at 6:52???PM Dr. Greg <greg@enjellic.com> wrote:
+> > > > On Thu, Mar 02, 2023 at 11:15:56PM -0500, Paul Moore wrote:
+> > > >
+> > > > Hi Paul, thanks for sending along further comments.
+> > > >
+> > > > You note below that you haven't had time to look at the code since you
+> > > > wanted to confirm the TSEM security model before moving forward.
+> > > >
+> > > > From a development perspective we are now three weeks into what will
+> > > > become version 2 of the patch series.  So at this point I wouldn't
+> > > > advocate spending a lot of time on the current patchset.
+> > > >
+> > > > That being said, if you some have time, we would appreciate a quick
+> > > > look at the code on your part, with respect to style changes and the
+> > > > like we can enforce in the second series, ie. ordering of local
+> > > > variable declarations by length and the like.
+> >
+> > > To be perfectly honest I'm still very concerned about some of the
+> > > issues that I've seen in the docs, until that is sorted out I'm not
+> > > sure there is much point in looking at the code.
+> >
+> > I think those concerns can be resolved, see below for more
+> > information, the second patch series that we are closing in on should
+> > help address the concerns that are currently on the table.
 
-> > > >=20
-> > > >=20
-> > >=20
-> > > Ok, I think I get it. IMA is trying to use the i_version from the
-> > > overlayfs inode.
-> > >=20
-> > > I suspect that the real problem here is that IMA is just doing a bare
-> > > inode_query_iversion. Really, we ought to make IMA call
-> > > vfs_getattr_nosec (or something like it) to query the getattr routine=
- in
-> > > the upper layer. Then overlayfs could just propagate the results from
-> > > the upper layer in its response.
-> > >=20
-> > > That sort of design may also eventually help IMA work properly with m=
-ore
-> > > exotic filesystems, like NFS or Ceph.
-> > >=20
-> > >=20
-> > >=20
-> >=20
-> > Maybe something like this? It builds for me but I haven't tested it. It
-> > looks like overlayfs already should report the upper layer's i_version
-> > in getattr, though I haven't tested that either:
-> >=20
-> > -----------------------8<---------------------------
-> >=20
-> > [PATCH] IMA: use vfs_getattr_nosec to get the i_version
-> >=20
-> > IMA currently accesses the i_version out of the inode directly when it
-> > does a measurement. This is fine for most simple filesystems, but can b=
-e
-> > problematic with more complex setups (e.g. overlayfs).
-> >=20
-> > Make IMA instead call vfs_getattr_nosec to get this info. This allows
-> > the filesystem to determine whether and how to report the i_version, an=
-d
-> > should allow IMA to work properly with a broader class of filesystems i=
-n
-> > the future.
-> >=20
-> > Reported-by: Stefan Berger <stefanb@linux.ibm.com>
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
->=20
-> So, I think we want both; we want the ovl_copyattr() and the
-> vfs_getattr_nosec() change:
->=20
-> (1) overlayfs should copy up the inode version in ovl_copyattr(). That
->     is in line what we do with all other inode attributes. IOW, the
->     overlayfs inode's i_version counter should aim to mirror the
->     relevant layer's i_version counter. I wouldn't know why that
->     shouldn't be the case. Asking the other way around there doesn't
->     seem to be any use for overlayfs inodes to have an i_version that
->     isn't just mirroring the relevant layer's i_version.
+> In that case, I think it might be best to wrap up this thread and we
+> can resume the discussion on the next patchset.
 
-It's less than ideal to do this IMO, particularly with an IS_I_VERSION
-inode.
+Very good, we will look forward to the review of V2, which has now
+been enhanced on a number of fronts.
 
-You can't just copy=A0up the value from the upper. You'll need to call
-inode_query_iversion(upper_inode), which will flag the upper inode for a
-logged i_version update on the next write. IOW, this could create some
-(probably minor) metadata write amplification in the upper layer inode
-with IS_I_VERSION inodes.
+> > That being said, since TSEM is a new codebase, we were hoping that you
+> > could give us some guidance on function local variable ordering.
+> > Reverse Christmas tree seems popular writ large in the kernel, I
+> > believe that you commented in a posting a month or two ago that you
+> > prefer standard Christmas tree, SMACK and SeLinux don't seem to
+> > religiously embrace a style.
+> >
+> > Our codebase uses ordering based on least complex to most complex
+> > variables and has worked for us, both in the kernel and elsewhere, but
+> > we are ambivalent, as our primary objective is to avoid wasting
+> > everyone's time on issues such as this.
+> 
+> The canonical guidance on coding style within the kernel is in the kernel docs:
+> 
+> https://www.kernel.org/doc/html/latest/process/coding-style.html
+> 
+> When in doubt, I would recommend following that as closely as possible.
+> 
+> As far as local variable ordering is concerned, I don't believe I've
+> ever rejected patches due to that.  My own personal preference usually
+> follows what you've described above: the least complex (simple
+> scalars) at the top, with the more complex variables (composites) at
+> the bottom.  In practice this tends to result in a "Christmas Tree"
+> ordering, but it can be a bit lumpy (?) in some cases; that is fine.
+> 
+> There are two style nitpicks which annoy me enough to make it worth mentioning:
+> 
+> * Stick to 80 characters as much as possible, yes we all have
+> terminals that can go wider, but I like to have several terminals on
+> my screen and if they all need to be 100 chars wide I can't fit as
+> many.  There are going to be some exceptions, e.g. error message
+> string literals, but that should only happen a few times in a given
+> file.  If you are finding that every function you write has a line
+> that goes past 80 characters you are doing *something* wrong.
+> 
+> * If/when you split a single line across multiple lines due to the
+> above, make sure the
+> lines are indented properly such that they line up properly with the
+> code above.  It's tricky to give all of the different examples so I'm
+> not going to even try.  I realize that is garbage guidance, but the
+> kernel coding style is a help here.
+> 
+> If you are really lost, I use the following 'astyle' command in other
+> projects, and it should produce fairly kernel-style friendly code:
+> 
+> % astyle --options=none --lineend=linux --mode=c \
+>     --style=linux \
+>     --indent=force-tab=8 \
+>     --indent-preprocessor \
+>     --indent-col1-comments \
+>     --min-conditional-indent=0 \
+>     --max-instatement-indent=80 \
+>     --pad-oper \
+>     --align-pointer=name \
+>     --align-reference=name \
+>     --max-code-length=80 \
+>     --break-after-logical
 
+All of the above is consistent with what we have used for years,
+particularly 80 columns, given that the principles of TSEM extend from
+programming with a Model 29 keypunch and a drum card to applying
+machine learning to security.
 
-> (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
->     Currently, ima assumes that it will get the correct i_version from
->     an inode but that just doesn't hold for stacking filesystem.
->=20
-> While (1) would likely just fix the immediate bug (2) is correct and
-> _robust_. If we change how attributes are handled vfs_*() helpers will
-> get updated and ima with it. Poking at raw inodes without using
-> appropriate helpers is much more likely to get ima into trouble.
+> paul-moore.com
 
-This will fix it the right way, I think (assuming it actually works),
-and should open the door for IMA to work properly with networked
-filesystems that support i_version as well.
+Have a good weekend.
 
-Note that there Stephen is correct that calling getattr is probably
-going to be less efficient here since we're going to end up calling
-generic_fillattr unnecessarily, but I still think it's the right thing
-to do.
+As always,
+Dr. Greg
 
-If it turns out to cause measurable performance regressions though,
-maybe we can look at adding a something that still calls ->getattr if it
-exists but only returns the change_cookie value.
---=20
-Jeff Layton <jlayton@kernel.org>
+The Quixote Project - Flailing at the Travails of Cybersecurity
