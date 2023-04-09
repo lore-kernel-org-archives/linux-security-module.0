@@ -2,87 +2,126 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4DF3C77B6E
-	for <linux-security-module@archiver.kernel.org>; Sun,  9 Apr 2023 22:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D56C77B61
+	for <linux-security-module@archiver.kernel.org>; Sun,  9 Apr 2023 23:16:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229511AbjDIWTj (ORCPT
+        id S229569AbjDIXQH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 9 Apr 2023 18:19:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40110 "EHLO
+        Sun, 9 Apr 2023 19:16:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjDIWTi (ORCPT
+        with ESMTP id S229445AbjDIXQH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 9 Apr 2023 18:19:38 -0400
+        Sun, 9 Apr 2023 19:16:07 -0400
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E52AEB1;
-        Sun,  9 Apr 2023 15:19:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B08C2694;
+        Sun,  9 Apr 2023 16:16:04 -0700 (PDT)
 Received: from [192.168.192.83] (unknown [50.47.134.245])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 88D4D3F372;
-        Sun,  9 Apr 2023 22:19:32 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 43E3D3F373;
+        Sun,  9 Apr 2023 23:16:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1681078774;
-        bh=ywZa4gMVjJ/TgMA3MbzGqeq/4k214O2pnBHSmSdaKn8=;
+        s=20210705; t=1681082161;
+        bh=VzZtUugz5Z6wG4Nk2gp8O0xbsEGnMTB9pV/EotnGfmo=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=b/rXpEengsCUfkk+NpMEHK0wKrxJkq6JRuChFDGc22hycOi3tkcJ5xSAbDGEg9iIY
-         wcbkt0NrTYHbF1aM3NJlyh/hAGEYBwU5++dWT5MQpSOeVHZOpj5TN7RIK48flJRVBd
-         E7aGzH5VKiuoNhBKun+tAJhWBHeXNzsced5dkQyXHX5/NI5rwH9oHsz0OgUc7f59rP
-         rTMMEqOXFe9W2GOcE1CYitSRytTD5jhvmpAku/u0MT0hgvu6bUbzm5xV2V3PQB1cK/
-         UpHfOGfD5AF8WmkzMd6uTGFTHA3RTXJFMcsH+1ONkSTQmU/7388CshJKxxv5Jk+Jc0
-         pH5gSBTiD0E6A==
-Message-ID: <2bc5865b-62a5-27a3-63c7-9c4ee9b697aa@canonical.com>
-Date:   Sun, 9 Apr 2023 15:19:27 -0700
+        b=SCNIsjnDSDqBX2UE3SsBX1YgQF+fLFVKC3LFmoNlZGeg4Kbzwh2BePsQv5PnqkrXm
+         bIDjex7IKcHuVN+2hfu00qjiet4r93pZHBGJvLzWsqYeLSsfJs+jh14YkYAR4ieJeT
+         RAR8fh7ox7Ty9pPjkNrHDZ1q3a7kvUVOKWWwXXq4JguwkgzqCukaKpR/NT4m4s1sda
+         U8KpH4TuNxruw3dYPdbb5MUVwFf0mw/ojLYxbd5hZxqyydhZJHHbe7r0wJcPJcPgMR
+         PG9/GBeSULITEJlzLWI2tDXOsnGETECAdfzxKdIgflz9VJsExiFRLVXdmCjScGJ6v+
+         roOdJg95kvUnw==
+Message-ID: <763073bf-44db-701e-c100-c392cb11e958@canonical.com>
+Date:   Sun, 9 Apr 2023 16:15:58 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH -next] AppArmor: Fix some kernel-doc comments
+Subject: Re: [PATCH] apparmor: Return directly after a failed kzalloc() in two
+ functions
 Content-Language: en-US
-To:     Yang Li <yang.lee@linux.alibaba.com>
-Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-References: <20230303012833.57690-1-yang.lee@linux.alibaba.com>
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        kernel-janitors@vger.kernel.org,
+        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
+ <d33ebeca-0900-8c6c-ac44-f301daf24a5b@web.de>
 From:   John Johansen <john.johansen@canonical.com>
 Organization: Canonical
-In-Reply-To: <20230303012833.57690-1-yang.lee@linux.alibaba.com>
+In-Reply-To: <d33ebeca-0900-8c6c-ac44-f301daf24a5b@web.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/2/23 17:28, Yang Li wrote:
-> Make the description of @table to @strs in function unpack_trans_table()
-> to silence the warnings:
+On 3/29/23 03:12, Markus Elfring wrote:
+> Date: Wed, 29 Mar 2023 11:50:44 +0200
 > 
-> security/apparmor/policy_unpack.c:456: warning: Function parameter or member 'strs' not described in 'unpack_trans_table'
-> security/apparmor/policy_unpack.c:456: warning: Excess function parameter 'table' description in 'unpack_trans_table'
+> 1. Return directly after a call of the function “kzalloc” failed
+>     at the beginning in these function implementations.
 > 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=4332
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> 2. Omit extra initialisations (for a few local variables)
+>     which became unnecessary with this refactoring.
+> 
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
 Acked-by: John Johansen <john.johansen@canonical.com>
 
-I have pulled this into the apparmor tree thanks
+thanks, I have pulled this into the apparmor tree
 
 > ---
->   security/apparmor/policy_unpack.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   security/apparmor/crypto.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> index cf2ceec40b28..c3f44f1deb07 100644
-> --- a/security/apparmor/policy_unpack.c
-> +++ b/security/apparmor/policy_unpack.c
-> @@ -448,7 +448,7 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e, int flags)
->   /**
->    * unpack_trans_table - unpack a profile transition table
->    * @e: serialized data extent information  (NOT NULL)
-> - * @table: str table to unpack to (NOT NULL)
-> + * @strs: str table to unpack to (NOT NULL)
->    *
->    * Returns: true if table successfully unpacked or not present
->    */
+> diff --git a/security/apparmor/crypto.c b/security/apparmor/crypto.c
+> index b498ed302461..6724e2ff6da8 100644
+> --- a/security/apparmor/crypto.c
+> +++ b/security/apparmor/crypto.c
+> @@ -28,15 +28,15 @@ unsigned int aa_hash_size(void)
+>   char *aa_calc_hash(void *data, size_t len)
+>   {
+>   	SHASH_DESC_ON_STACK(desc, apparmor_tfm);
+> -	char *hash = NULL;
+> -	int error = -ENOMEM;
+> +	char *hash;
+> +	int error;
+> 
+>   	if (!apparmor_tfm)
+>   		return NULL;
+> 
+>   	hash = kzalloc(apparmor_hash_size, GFP_KERNEL);
+>   	if (!hash)
+> -		goto fail;
+> +		return ERR_PTR(-ENOMEM);
+> 
+>   	desc->tfm = apparmor_tfm;
+> 
+> @@ -62,7 +62,7 @@ int aa_calc_profile_hash(struct aa_profile *profile, u32 version, void *start,
+>   			 size_t len)
+>   {
+>   	SHASH_DESC_ON_STACK(desc, apparmor_tfm);
+> -	int error = -ENOMEM;
+> +	int error;
+>   	__le32 le32_version = cpu_to_le32(version);
+> 
+>   	if (!aa_g_hash_policy)
+> @@ -73,7 +73,7 @@ int aa_calc_profile_hash(struct aa_profile *profile, u32 version, void *start,
+> 
+>   	profile->hash = kzalloc(apparmor_hash_size, GFP_KERNEL);
+>   	if (!profile->hash)
+> -		goto fail;
+> +		return -ENOMEM;
+> 
+>   	desc->tfm = apparmor_tfm;
+> 
+> --
+> 2.40.0
+> 
 
