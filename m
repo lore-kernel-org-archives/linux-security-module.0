@@ -2,149 +2,99 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6439CC77B6E
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Apr 2023 11:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B194C7619A
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Apr 2023 16:50:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229559AbjDLLEN (ORCPT
+        id S231501AbjDLQuq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Apr 2023 07:04:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57986 "EHLO
+        Wed, 12 Apr 2023 12:50:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjDLLEM (ORCPT
+        with ESMTP id S231522AbjDLQuk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Apr 2023 07:04:12 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73E1A65B0;
-        Wed, 12 Apr 2023 04:04:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681297451; x=1712833451;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wASHHa1jhQxtW4fY4VimABiJjIV6Yy6QxwIyZkdzWYc=;
-  b=SP8LDdt/XfSlqOOeLVrHmavi5iCor6rOjZIlAH46ar1C/05Jl7MKlxfB
-   AULwLXHdpkXd4mVb8q2Rf4s7ftJ8N7L1kHVzEKM6v0BdBWX9HJqBjA3uK
-   VE87yxhlaXl70uAta5WWjwbR5DUqC2ixo4m/yL0AU6Wd0BCSS9ksHefBV
-   hEWgWMwsWCr4XKRyerlE4a1i6fwKo1u3LXfkhWWTh8qmXmDHRqjQQjnzy
-   eTw+8o0UrR8qO88zEQjWLgik2OU9B6kjXWoAsxhuRW4uuxgS4lZ39u7Xe
-   Ah+r++x0wbAyCLF3jEIKZYVpory/uTzNkPBfkYlzfffWn4K+UXp17BrwB
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10677"; a="324226419"
-X-IronPort-AV: E=Sophos;i="5.98,339,1673942400"; 
-   d="scan'208";a="324226419"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2023 04:04:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10677"; a="753488981"
-X-IronPort-AV: E=Sophos;i="5.98,339,1673942400"; 
-   d="scan'208";a="753488981"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Apr 2023 04:04:07 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pmYGk-000XeF-1Z;
-        Wed, 12 Apr 2023 11:04:06 +0000
-Date:   Wed, 12 Apr 2023 19:03:56 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, jmorris@namei.org,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        mic@digikod.net
-Subject: Re: [PATCH v8 04/11] LSM: syscalls for current process attributes
-Message-ID: <202304121843.QWCxhPE9-lkp@intel.com>
-References: <20230411155921.14716-5-casey@schaufler-ca.com>
+        Wed, 12 Apr 2023 12:50:40 -0400
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FEB5659E
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Apr 2023 09:50:15 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-54f6fc7943eso112332247b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Apr 2023 09:50:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1681318158; x=1683910158;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8x2GYQVTWi+sPNYvJWEXQwUM4/xewwyCUDz0TcH8TOo=;
+        b=K6l7g0Yj4XlJqjAsyHyWP+Q1rL9gJtHxD1PnxWOB3Q7aHr+SYV9cIBfSPEOu9Nx5k1
+         UbHIT8aHIROyoCvDEUMRaT348cFCflSr5lG/byaxjgOTXyGRGGL7JSjPpoenu7LHieTq
+         V2eRmw7klQlY++6lH9RMNUxrJyuPhVLhLvocwndrawpEtqiKc6KRi0SofZhGrsicNbno
+         +jbxiR+iaUQwpiscPx9oZ3A031YDcBndEmEmk7kK02NxmotA7B5EZobCi1pNG/Pl5DN/
+         8Vur2y1JAU+LAzV78OPE/yUndwunnnm0A5aw3gzV7VjAuNrLE4rE6VrllMOWDWCMUrd1
+         KSnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681318158; x=1683910158;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8x2GYQVTWi+sPNYvJWEXQwUM4/xewwyCUDz0TcH8TOo=;
+        b=j0HwbBIrpYOA/PwjJZxHPKOhu1UJpQ+gGEmuEsBbLxMwb7tEqwCPedI5t3RQfTNPyT
+         xrVS0vAz0L6SK8rJ0r2Z4/JodKOWQqjAxN1CfUHPAn0J0fJPPyaSZWikbXbpIgFJ7PWv
+         uzqjaECB335o53wcG+mA1fJW6KxMHATKYoGhDThDCnGUSBvFhQDj/nIKZNMrGyeJrVy9
+         KMP4DdoqquGCHz6fibYWyanHN/SS4YRn5pzQ1hKiM95Rc+CM4mRS6lqPwerfRlFBJ02r
+         EcI64mRnCYbBDbLAmRnRhByyfg3T/Ov4j8sKgapLqNTTxdtxhgy/AMJ9i3AX3ZpYAtjE
+         nrDg==
+X-Gm-Message-State: AAQBX9fklalUMWGhGzeQsI1p8g6GHUNEwRrOZADoE3o7Mi158ByF1Nzv
+        YMl9CBxU4DR/6NCTxTmP8Bk++HUnz21a/rt5+z9h
+X-Google-Smtp-Source: AKy350ZDdYjcoWPVpXbg3FDE6dTQVUa/J9xJsjd6TMn/vmDnRg7KoxhVhQyxkVUzi7NoSRBJQKREjnpA/3hquvo0mek=
+X-Received: by 2002:a81:a744:0:b0:54f:69a4:151e with SMTP id
+ e65-20020a81a744000000b0054f69a4151emr4401389ywh.8.1681318157759; Wed, 12 Apr
+ 2023 09:49:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230411155921.14716-5-casey@schaufler-ca.com>
+References: <20230412043300.360803-1-andrii@kernel.org>
+In-Reply-To: <20230412043300.360803-1-andrii@kernel.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 12 Apr 2023 12:49:06 -0400
+Message-ID: <CAHC9VhQHmdZYnR=+rX-3FcRh127mhJt=jAnototfTiuSoOTptg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/8] New BPF map and BTF security LSM hooks
+To:     Andrii Nakryiko <andrii@kernel.org>
+Cc:     bpf@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        kpsingh@kernel.org, keescook@chromium.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Casey,
+On Wed, Apr 12, 2023 at 12:33=E2=80=AFAM Andrii Nakryiko <andrii@kernel.org=
+> wrote:
+>
+> Add new LSM hooks, bpf_map_create_security and bpf_btf_load_security, whi=
+ch
+> are meant to allow highly-granular LSM-based control over the usage of BP=
+F
+> subsytem. Specifically, to control the creation of BPF maps and BTF data
+> objects, which are fundamental building blocks of any modern BPF applicat=
+ion.
+>
+> These new hooks are able to override default kernel-side CAP_BPF-based (a=
+nd
+> sometimes CAP_NET_ADMIN-based) permission checks. It is now possible to
+> implement LSM policies that could granularly enforce more restrictions on
+> a per-BPF map basis (beyond checking coarse CAP_BPF/CAP_NET_ADMIN
+> capabilities), but also, importantly, allow to *bypass kernel-side
+> enforcement* of CAP_BPF/CAP_NET_ADMIN checks for trusted applications and=
+ use
+> cases.
 
-kernel test robot noticed the following build errors:
+One of the hallmarks of the LSM has always been that it is
+non-authoritative: it cannot unilaterally grant access, it can only
+restrict what would have been otherwise permitted on a traditional
+Linux system.  Put another way, a LSM should not undermine the Linux
+discretionary access controls, e.g. capabilities.
 
-[auto build test ERROR on tip/perf/core]
-[also build test ERROR on acme/perf/core shuah-kselftest/next shuah-kselftest/fixes linus/master v6.3-rc6]
-[cannot apply to next-20230412]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+If there is a problem with the eBPF capability-based access controls,
+that problem needs to be addressed in how the core eBPF code
+implements its capability checks, not by modifying the LSM mechanism
+to bypass these checks.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/LSM-Maintain-a-table-of-LSM-attribute-data/20230412-005929
-patch link:    https://lore.kernel.org/r/20230411155921.14716-5-casey%40schaufler-ca.com
-patch subject: [PATCH v8 04/11] LSM: syscalls for current process attributes
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20230412/202304121843.QWCxhPE9-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/0308dbcd345400b5ded1e1721045c6941979c7a6
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Casey-Schaufler/LSM-Maintain-a-table-of-LSM-attribute-data/20230412-005929
-        git checkout 0308dbcd345400b5ded1e1721045c6941979c7a6
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304121843.QWCxhPE9-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from security/lsm_syscalls.c:15:
->> include/linux/syscalls.h:243:25: error: conflicting types for 'sys_lsm_set_self_attr'; have 'long int(unsigned int,  struct lsm_ctx *, size_t,  u32)' {aka 'long int(unsigned int,  struct lsm_ctx *, unsigned int,  unsigned int)'}
-     243 |         asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))       \
-         |                         ^~~
-   include/linux/syscalls.h:229:9: note: in expansion of macro '__SYSCALL_DEFINEx'
-     229 |         __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:221:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-     221 | #define SYSCALL_DEFINE4(name, ...) SYSCALL_DEFINEx(4, _##name, __VA_ARGS__)
-         |                                    ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:31:1: note: in expansion of macro 'SYSCALL_DEFINE4'
-      31 | SYSCALL_DEFINE4(lsm_set_self_attr, unsigned int, attr, struct lsm_ctx __user *,
-         | ^~~~~~~~~~~~~~~
-   include/linux/syscalls.h:1064:17: note: previous declaration of 'sys_lsm_set_self_attr' with type 'long int(unsigned int,  struct lsm_ctx *, __u32)' {aka 'long int(unsigned int,  struct lsm_ctx *, unsigned int)'}
-    1064 | asmlinkage long sys_lsm_set_self_attr(unsigned int attr, struct lsm_ctx *ctx,
-         |                 ^~~~~~~~~~~~~~~~~~~~~
-
-
-vim +243 include/linux/syscalls.h
-
-1bd21c6c21e848 Dominik Brodowski   2018-04-05  232  
-e145242ea0df6b Dominik Brodowski   2018-04-09  233  /*
-e145242ea0df6b Dominik Brodowski   2018-04-09  234   * The asmlinkage stub is aliased to a function named __se_sys_*() which
-e145242ea0df6b Dominik Brodowski   2018-04-09  235   * sign-extends 32-bit ints to longs whenever needed. The actual work is
-e145242ea0df6b Dominik Brodowski   2018-04-09  236   * done within __do_sys_*().
-e145242ea0df6b Dominik Brodowski   2018-04-09  237   */
-1bd21c6c21e848 Dominik Brodowski   2018-04-05  238  #ifndef __SYSCALL_DEFINEx
-bed1ffca022cc8 Frederic Weisbecker 2009-03-13  239  #define __SYSCALL_DEFINEx(x, name, ...)					\
-bee20031772af3 Arnd Bergmann       2018-06-19  240  	__diag_push();							\
-bee20031772af3 Arnd Bergmann       2018-06-19  241  	__diag_ignore(GCC, 8, "-Wattribute-alias",			\
-bee20031772af3 Arnd Bergmann       2018-06-19  242  		      "Type aliasing is used to sanitize syscall arguments");\
-83460ec8dcac14 Andi Kleen          2013-11-12 @243  	asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))	\
-e145242ea0df6b Dominik Brodowski   2018-04-09  244  		__attribute__((alias(__stringify(__se_sys##name))));	\
-c9a211951c7c79 Howard McLauchlan   2018-03-21  245  	ALLOW_ERROR_INJECTION(sys##name, ERRNO);			\
-e145242ea0df6b Dominik Brodowski   2018-04-09  246  	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
-e145242ea0df6b Dominik Brodowski   2018-04-09  247  	asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
-e145242ea0df6b Dominik Brodowski   2018-04-09  248  	asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))	\
-1a94bc34768e46 Heiko Carstens      2009-01-14  249  	{								\
-e145242ea0df6b Dominik Brodowski   2018-04-09  250  		long ret = __do_sys##name(__MAP(x,__SC_CAST,__VA_ARGS__));\
-07fe6e00f6cca6 Al Viro             2013-01-21  251  		__MAP(x,__SC_TEST,__VA_ARGS__);				\
-2cf0966683430b Al Viro             2013-01-21  252  		__PROTECT(x, ret,__MAP(x,__SC_ARGS,__VA_ARGS__));	\
-2cf0966683430b Al Viro             2013-01-21  253  		return ret;						\
-1a94bc34768e46 Heiko Carstens      2009-01-14  254  	}								\
-bee20031772af3 Arnd Bergmann       2018-06-19  255  	__diag_pop();							\
-e145242ea0df6b Dominik Brodowski   2018-04-09  256  	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
-1bd21c6c21e848 Dominik Brodowski   2018-04-05  257  #endif /* __SYSCALL_DEFINEx */
-1a94bc34768e46 Heiko Carstens      2009-01-14  258  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+--=20
+paul-moore.com
