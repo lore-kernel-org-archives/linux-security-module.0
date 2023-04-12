@@ -2,172 +2,236 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC62C77B6E
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Apr 2023 19:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D813C7619A
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Apr 2023 20:29:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229589AbjDLTHG (ORCPT
+        id S229901AbjDLU3v (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Apr 2023 15:07:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48928 "EHLO
+        Wed, 12 Apr 2023 16:29:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229506AbjDLTHG (ORCPT
+        with ESMTP id S230255AbjDLU3v (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Apr 2023 15:07:06 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0FD8E75
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Apr 2023 12:07:01 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id y69so19828072ybe.2
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Apr 2023 12:07:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1681326421; x=1683918421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RWjKbekkP8a3hscvaXgC6k5dNgXGIcnoNZ//JMZZDGU=;
-        b=YHM441zyCJlrGXKzDbUc4uJEnWbsWfGR6vFBvOgR02umvX7GVThuLg1bjpPlnykQzT
-         a9W5ZskXQyy6OnfAZlHc90yfdY5HIYXuVy8UhmNfrfeEzFdqxTHy1ejIXBSC+jjasjWy
-         SzdtXJJSU3ZBVi/KEa/Th6qByEjxiyp5hZKNqHZ2kS+gOg5ehq2+DmzVnIuUD9R1GeQs
-         +JynuL26w/9C4PUMDuQ8/LjUTtW36dSRufg43epwyQvXclUPgWzgqE2zfaw0uBBOl6j5
-         vbEK0VZ1+aUYrW/+ZzacXBAJboogxyQLqlPCbMNXm+P0xL4dzty5pU2KZLbUXn5qkNa/
-         ++iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681326421; x=1683918421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RWjKbekkP8a3hscvaXgC6k5dNgXGIcnoNZ//JMZZDGU=;
-        b=bwWANk2edlsamiGJvYQieNoqa6s8Tvg93uomT63BASjVGPYSYRVleqCsbxjd+vwsct
-         vL2DZNR7Ar+y5rBOZLh5r4hAaqki3MDDYwsuAwCaf/KpLua899t6aQaj6j6tqe8iJaAt
-         A12mDUGjQfF9kq5iYHLpxON1/MZft2OTcNzLYQvW7Ncuhwi3QhAhM8Y7Jl2x73r6nOzy
-         Tvxmi/g35lj6xBtLIjeh5xhHbOQ8aoHKbAmrzIfjXW6KSownaY5IEuLPOeESwV6v6CYC
-         kgpyJjksVYd9iXnkTRFxh7aFmzPIKhnKhxLlrsE8nhiv73hQHTNu0c23zHqj1lEdiJhs
-         RdEA==
-X-Gm-Message-State: AAQBX9dO6rhKsxUhI7XwOd/v+pP/XRPlGoYWD0DxfIPaKHErHDpqCQF/
-        x2jx7A4vK7kKXTm/gBSfYvnt6hkAZMm8tlUN3u71
-X-Google-Smtp-Source: AKy350ZahLXSXPqw0eLIKIzoET2RDmTKo8zjzMH0pk0vnFMwayVviX/LK4xaW5wuV7kSUNlyoPm+G/H0E2TyoO+kaRM=
-X-Received: by 2002:a25:d702:0:b0:b68:7a4a:5258 with SMTP id
- o2-20020a25d702000000b00b687a4a5258mr2441859ybg.3.1681326420746; Wed, 12 Apr
- 2023 12:07:00 -0700 (PDT)
+        Wed, 12 Apr 2023 16:29:51 -0400
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A874768B
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Apr 2023 13:29:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1681331385; bh=2/Rleu8Lgu7q0ljiF/HtbOjKUdbZsdOnZo+57VAAZvM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ZNQe0acWsnezWAr9imAaYciSRhEGmpeG1bneEIx+25R7FTEUE04Urvs3s0T3Ws0mAhAzF2YOZM10zL87RJGe/BMhmpQjp4xkpiNYctVpJLoztHCo2UgefsRxv1JNMkWyKKQjVFx8xhGAKdwUKl4XZruZrXqkHCGSUTqQoTY5b9DAsaIAZo9V3vXa9EH5k5fcg3vxc4uuS36sunTxJDFOCmWWzQvbbXg97/KdmqWNcjfMeD2xFFMbHAI7WX2WMh0B4x1hRT5Nomx0Jmk0rd/H+UIDvXM8WEHw6LF/O2h8jo9Xo8dUhWuucog/Fen7PpBqP+ricJsmESMSAp3/YGtP2w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1681331385; bh=pEkyF/PatcQqQRZrHQ9GwTvSug0vj03Fb50IJLp0Cw3=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=C5/O7f7f7raRw9BlUAaOkn+5NjHtpbTT95hCLTcSwCdbecrQnCsM1b9tBGIFruNxxm2pBCkAM9zprtH7RZ3FGkVeRRZpn613CWWjPZ1VTV4ImlXn6zsAGFOxnx91nd0g8mV6E9jrx3n7O4i+JBJdoO8Fc1bYF7qVRd3RgGg49iNsP60SycW7q5sE1l6cBfHjnF1a00t6cqaEkgSw3g5o8bzIyCtcLML537nyL6ZfIroH0fY36URfzxM+smoNrTL2in5PgHhfHhg/Mbg7Kw16Xe9y2tjQ06b8hW+p7Nk+/3rbbKaZSMMMBeH0cLT85poen4bNc6dr3xi6cW6aKIJF6g==
+X-YMail-OSG: eoJgcs0VM1nIcuNV.uaSNAP7obN8iAUnHSqwWwH3zMj1hZiI_c1c.pZXh6GiF3M
+ oVOQOc57.W8uqNrVidygXtWUv4A1Ubm1XQ42OA535bO_RZqWL8gLUZeDmn3j7mLB3m9H7jj5Qmo1
+ zVXCCMTP8H89OhyWjqud90b2ieWws9OXCy9no21MJEu3FYzzUlUn_RMJb_KuQIGA3TVrETGdrGe8
+ nOWkmmPaFqP48rTY5j.sUX2qDCVbohJaA_Md8yx6h8NKELM_EFKV62sThYIbOISuYFWEq8KNrQAG
+ V536IbvccJZ2W3emWfHLyKYs1LV3ZiFs3U1FmHHEZSIZ6_8t9z3ihsWUBV_8wofCRAd3PcXp_io8
+ DYqYGAEVDlfXkCMVyRc2QWcGXDJHrQv98bGhmmAFu8Jm.lVRrOf8CIQXf4GDBe6LnNI1AtPaIc1m
+ X4VDrQgq8ya5.dUYrOQuOLVXcQB3h.Hbx64KZUfFYJJS1xNTwX_E5mduWZMzOAcDCc2YSZ5uoATo
+ 0mXkf6nRCJcCn3nkZ0.s4uP2mUJwovwXU3l1R1Uy8j6yJ4uc5o4cJwz5BG0IdQQx5XtvlAu98A2P
+ mCBwkNctA_bdHnS6EhKIkk_OCCCfeaEwpMKTmR2J.uiiYwyAB0xbCRd72jsic4YKfObYC_RpX7PO
+ 8cmWuGQ0vpyMRYJAqO.zHQiw2TxuXQdGh9Q8JUtscL8zB8Djw7Y0HuhUK58fmhS9ppH2FlZ1XC25
+ IQf_n3_U_4O27F5p6lzv.GeehOvS4MjsxkVNhUEIAs5CebDOWPh_Wvm2Ze1GB1VEDXIvAMc7nTju
+ Gqjbipt5iI_DBXteYW2lTFtUimBKWDS9qCdTddMD8gx6F419By.1JOATFjRK0aGqiF3hNDaxbJEe
+ 9Yzt1l9ayaWFaqvuQiVD.oEKtxXoaJHKHaaMgkgNnk9Ee3DrUAY26RrgH2tPpkwuu6n5Kbic_Jml
+ cw0nJ95hE1p._bN7yWUEVzXblbWeQZ5hkMZVC1CsD716XzPpT0ApfKoKLcV_6y4hlbYAQKj3nlZN
+ WZviERcgi8Q7D6B0fBeuKSh8xOB4Q90M0e6U0uKZoemXE1pmSMkFeGe0Sq2M4781_3ojasXUOF2X
+ FCs8kgghuGgG1FRXBoF2RnpwVPgV5IlKZgsXPOdjlOt27Y2cE1mUW2y5cpMHysCWmNJHbIIW3Ds1
+ cxPp8VzTBHwMvrBiAr5y22B6enpbT93mzYYXzQb.FdrXVdu46RZ1Qfo_6Ij7Q.T6peb3.mhVRkHI
+ GdcWv5WdZzJM_wboyYPbxRIL2i9o3c8WAeXVspdG8_TQKZB84s4Ucu0STHvO2WhA2WBLm.z6jVTh
+ jZzVSAHM.LSZ597V4LQVHMvjAZD9QAGkj_PAK4vysDOTF5O1xJpifNO7ZbQEenMQ7D8pxQdDplkN
+ q3BQGbHjdYq87XUp3FLxTwXK2JclEXVI8IezG7r0cGFxvY48U8RNejkOcQjpmgcX1bx9cueNfbMn
+ tT.MdMPddrJE4_MN50on0Bl_LIvMWpiJARI4YgYV6Bnlc558zHzd5JsgO6RAuJkR4QKFGk_qlS3I
+ zvVCNtwM0YS28gzrkcbQ_xbSwWjYUr47g9W_4sMvStMFkMBWgXT0vuvmSeECC6M743.asIC5txqG
+ ZUzmuYA5cQI1_vffpfRMM5K2I8SGcNfgmE.DTZsy3D8YCk7ogorC3vxlhiAx1R0RYH6_QnblE.Sw
+ MiI4mm5i9I5QLH1CQ5X_Hkx8QcEeQqdLHD89oplZrSr2w2pnQ0119QqfZcki8txpNNEFifb8Am6p
+ RletxWOTUHp0C8wrU9HcelPFnfmVD4YxSs8Z1aHI.3Uk1ZUNB7uN3q6dGM_8LoPqBvPwe.sApmKH
+ RaRZaJTsDrFdU0BMTCGRKV7YP08ODbMqBWbY4LEc1pdv4wpD1gy1HbALBYQzpH_cwXTqgYklyOtG
+ YopeNZyCE6G2ZqZ8EhugqVetgWjGEARZIEKSvjyaxfJLTbR_GTkgssvenxkEoFz6SkdQvrtPZzy2
+ PUL8LMIHiw.UwXiBWE1OypE4OytM4e9gFzaT1QfTMIcK6xgz28mXi1elUvOEMV_xIgsgX1c38Nuh
+ V0PBUY80jP0vlzN3ktUpHtUrXptrsxooC0wPSxxqqzQ03D1OLsaK3ffStqfye0BDdETZLKyQlQXw
+ cxAPwlLnEhtQOnzdGlzEuFfrTZtU5OG5nT7smF_RhbJK7rkd_802gRzs.HyVdRDXGL0S.uj5WYaY
+ EceGeDDnhY4sQi_sDj_C1hZ8T6lAjdfDgorbezExMcOqSc_j9RQsn2aA6JNcTEzUvM7CXLIjHDly
+ RKyWVqrYVq2qzC2Ay
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 9a43225b-4c57-443c-8941-a6d373658187
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Wed, 12 Apr 2023 20:29:45 +0000
+Received: by hermes--production-bf1-5f9df5c5c4-bqwvr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b1668afe2a93b144acd4394e0275b411;
+          Wed, 12 Apr 2023 20:29:41 +0000 (UTC)
+Message-ID: <72b46d0f-75c7-ac18-4984-2bf1d6dad352@schaufler-ca.com>
+Date:   Wed, 12 Apr 2023 13:29:38 -0700
 MIME-Version: 1.0
-References: <20230412043300.360803-1-andrii@kernel.org> <CAHC9VhQHmdZYnR=+rX-3FcRh127mhJt=jAnototfTiuSoOTptg@mail.gmail.com>
- <6436eea2.170a0220.97ead.52a8@mx.google.com> <CAHC9VhR6ebsxtjSG8-fm7e=HU+srmziVuO6MU+pMpeSBv4vN+A@mail.gmail.com>
- <6436f837.a70a0220.ada87.d446@mx.google.com>
-In-Reply-To: <6436f837.a70a0220.ada87.d446@mx.google.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 12 Apr 2023 15:06:50 -0400
-Message-ID: <CAHC9VhTF0JX3_zZ1ZRnoOw0ToYj6AsvK6OCiKqQgPvHepH9W3Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/8] New BPF map and BTF security LSM hooks
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, kpsingh@kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH] Smack modifications for: security: Allow all LSMs to
+ provide xattrs for inode_init_security hook
+Content-Language: en-US
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org
+Cc:     reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <c7f38789-fe47-8289-e73a-4d07fbaf791d@schaufler-ca.com>
+ <20230411172337.340518-1-roberto.sassu@huaweicloud.com>
+ <2dc6486f-ce9b-f171-14fe-48a90386e1b7@schaufler-ca.com>
+ <8e7705972a0f306922d8bc4893cf940e319abb19.camel@huaweicloud.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <8e7705972a0f306922d8bc4893cf940e319abb19.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21365 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 12, 2023 at 2:28=E2=80=AFPM Kees Cook <keescook@chromium.org> w=
-rote:
-> On Wed, Apr 12, 2023 at 02:06:23PM -0400, Paul Moore wrote:
-> > On Wed, Apr 12, 2023 at 1:47=E2=80=AFPM Kees Cook <keescook@chromium.or=
-g> wrote:
-> > > On Wed, Apr 12, 2023 at 12:49:06PM -0400, Paul Moore wrote:
-> > > > On Wed, Apr 12, 2023 at 12:33=E2=80=AFAM Andrii Nakryiko <andrii@ke=
-rnel.org> wrote:
-> > > > >
-> > > > > Add new LSM hooks, bpf_map_create_security and bpf_btf_load_secur=
-ity, which
-> > > > > are meant to allow highly-granular LSM-based control over the usa=
-ge of BPF
-> > > > > subsytem. Specifically, to control the creation of BPF maps and B=
-TF data
-> > > > > objects, which are fundamental building blocks of any modern BPF =
-application.
-> > > > >
-> > > > > These new hooks are able to override default kernel-side CAP_BPF-=
-based (and
-> > > > > sometimes CAP_NET_ADMIN-based) permission checks. It is now possi=
-ble to
-> > > > > implement LSM policies that could granularly enforce more restric=
-tions on
-> > > > > a per-BPF map basis (beyond checking coarse CAP_BPF/CAP_NET_ADMIN
-> > > > > capabilities), but also, importantly, allow to *bypass kernel-sid=
-e
-> > > > > enforcement* of CAP_BPF/CAP_NET_ADMIN checks for trusted applicat=
-ions and use
-> > > > > cases.
-> > > >
-> > > > One of the hallmarks of the LSM has always been that it is
-> > > > non-authoritative: it cannot unilaterally grant access, it can only
-> > > > restrict what would have been otherwise permitted on a traditional
-> > > > Linux system.  Put another way, a LSM should not undermine the Linu=
-x
-> > > > discretionary access controls, e.g. capabilities.
-> > > >
-> > > > If there is a problem with the eBPF capability-based access control=
-s,
-> > > > that problem needs to be addressed in how the core eBPF code
-> > > > implements its capability checks, not by modifying the LSM mechanis=
-m
-> > > > to bypass these checks.
-> > >
-> > > I think semantics matter here. I wouldn't view this as _bypassing_
-> > > capability enforcement: it's just more fine-grained access control.
-> > >
-> > > For example, in many places we have things like:
-> > >
-> > >         if (!some_check(...) && !capable(...))
-> > >                 return -EPERM;
-> > >
-> > > I would expect this is a similar logic. An operation can succeed if t=
-he
-> > > access control requirement is met. The mismatch we have through-out t=
-he
-> > > kernel is that capability checks aren't strictly done by LSM hooks. A=
-nd
-> > > this series conceptually, I think, doesn't violate that -- it's chang=
-ing
-> > > the logic of the capability checks, not the LSM (i.e. there no LSM ho=
-oks
-> > > yet here).
-> >
-> > Patch 04/08 creates a new LSM hook, security_bpf_map_create(), which
-> > when it returns a positive value "bypasses kernel checks".  The patch
-> > isn't based on either Linus' tree or the LSM tree, I'm guessing it is
-> > based on a eBPF tree, so I can't say with 100% certainty that it is
-> > bypassing a capability check, but the description claims that to be
-> > the case.
-> >
-> > Regardless of how you want to spin this, I'm not supportive of a LSM
-> > hook which allows a LSM to bypass a capability check.  A LSM hook can
-> > be used to provide additional access control restrictions beyond a
-> > capability check, but a LSM hook should never be allowed to overrule
-> > an access denial due to a capability check.
-> >
-> > > The reason CAP_BPF was created was because there was nothing else tha=
-t
-> > > would be fine-grained enough at the time.
-> >
-> > The LSM layer predates CAP_BPF, and one could make a very solid
-> > argument that one of the reasons LSMs exist is to provide
-> > supplementary controls due to capability-based access controls being a
-> > poor fit for many modern use cases.
+On 4/12/2023 12:22 AM, Roberto Sassu wrote:
+> On Tue, 2023-04-11 at 10:54 -0700, Casey Schaufler wrote:
+>> On 4/11/2023 10:23 AM, Roberto Sassu wrote:
+>>> From: Roberto Sassu <roberto.sassu@huawei.com>
+>>>
+>>> Very very quick modification. Not tested.
+>>>
+>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>>> ---
+>>>  security/smack/smack.h     |  2 +-
+>>>  security/smack/smack_lsm.c | 42 ++++++++++++++++++++------------------
+>>>  2 files changed, 23 insertions(+), 21 deletions(-)
+>>>
+>>> diff --git a/security/smack/smack.h b/security/smack/smack.h
+>>> index e2239be7bd6..f00c8498c60 100644
+>>> --- a/security/smack/smack.h
+>>> +++ b/security/smack/smack.h
+>>> @@ -127,7 +127,7 @@ struct task_smack {
+>>>  
+>>>  #define	SMK_INODE_INSTANT	0x01	/* inode is instantiated */
+>>>  #define	SMK_INODE_TRANSMUTE	0x02	/* directory is transmuting */
+>>> -#define	SMK_INODE_CHANGED	0x04	/* smack was transmuted */
+>>> +#define	SMK_INODE_CHANGED	0x04	/* smack was transmuted (unused) */
+>> See below ...
+>>
+>>>  #define	SMK_INODE_IMPURE	0x08	/* involved in an impure transaction */
+>>>  
+>>>  /*
+>>> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+>>> index 8392983334b..b43820bdbd0 100644
+>>> --- a/security/smack/smack_lsm.c
+>>> +++ b/security/smack/smack_lsm.c
+>>> @@ -54,12 +54,12 @@
+>>>  
+>>>  /*
+>>>   * Smack uses multiple xattrs.
+>>> - * SMACK64 - for access control, SMACK64EXEC - label for the program,
+>>> - * SMACK64MMAP - controls library loading,
+>>> + * SMACK64 - for access control,
+>>>   * SMACK64TRANSMUTE - label initialization,
+>>> - * Not saved on files - SMACK64IPIN and SMACK64IPOUT
+>>> + * Not saved on files - SMACK64IPIN and SMACK64IPOUT,
+>>> + * Must be set explicitly - SMACK64EXEC and SMACK64MMAP
+>>>   */
+>>> -#define SMACK_INODE_INIT_XATTRS 4
+>>> +#define SMACK_INODE_INIT_XATTRS 2
+>>>  
+>>>  #ifdef SMACK_IPV6_PORT_LABELING
+>>>  static DEFINE_MUTEX(smack_ipv6_lock);
+>>> @@ -957,11 +957,11 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+>>>  				     const struct qstr *qstr,
+>>>  				     struct xattr *xattrs, int *xattr_count)
+>>>  {
+>>> -	struct inode_smack *issp = smack_inode(inode);
+>>>  	struct smack_known *skp = smk_of_current();
+>>>  	struct smack_known *isp = smk_of_inode(inode);
+>>>  	struct smack_known *dsp = smk_of_inode(dir);
+>>>  	struct xattr *xattr = lsm_get_xattr_slot(xattrs, xattr_count);
+>>> +	struct xattr *xattr2;
+>> I'm going to channel Paul and suggest this be xattr_transmute instead of xattr2.
+>> It also looks like it could move to be declared in the if clause.
+>>
+>>>  	int may;
+>>>  
+>>>  	if (xattr) {
+>>> @@ -979,7 +979,17 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+>>>  		if (may > 0 && ((may & MAY_TRANSMUTE) != 0) &&
+>>>  		    smk_inode_transmutable(dir)) {
+>>>  			isp = dsp;
+>>> -			issp->smk_flags |= SMK_INODE_CHANGED;
+>> I think you need to keep this. More below.
+>>
+>>> +			xattr2 = lsm_get_xattr_slot(xattrs, xattr_count);
+>>> +			if (xattr2) {
+>>> +				xattr2->value = kmemdup(TRANS_TRUE,
+>>> +							TRANS_TRUE_SIZE,
+>>> +							GFP_NOFS);
+>>> +				if (xattr2->value == NULL)
+>>> +					return -ENOMEM;
+>>> +
+>>> +				xattr2->value_len = TRANS_TRUE_SIZE;
+>>> +				xattr2->name = XATTR_NAME_SMACKTRANSMUTE;
+>>> +			}
+>>>  		}
+>>>  
+>>>  		xattr->value = kstrdup(isp->smk_known, GFP_NOFS);
+>>> @@ -3512,20 +3522,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+>>>  			 * If there is a transmute attribute on the
+>>>  			 * directory mark the inode.
+>>>  			 */
+>>> -			if (isp->smk_flags & SMK_INODE_CHANGED) {
+>>> -				isp->smk_flags &= ~SMK_INODE_CHANGED;
+>>> -				rc = __vfs_setxattr(&nop_mnt_idmap, dp, inode,
+>>> -					XATTR_NAME_SMACKTRANSMUTE,
+>>> -					TRANS_TRUE, TRANS_TRUE_SIZE,
+>>> -					0);
+>>> -			} else {
+>>> -				rc = __vfs_getxattr(dp, inode,
+>>> -					XATTR_NAME_SMACKTRANSMUTE, trattr,
+>>> -					TRANS_TRUE_SIZE);
+>>> -				if (rc >= 0 && strncmp(trattr, TRANS_TRUE,
+>>> -						       TRANS_TRUE_SIZE) != 0)
+>>> -					rc = -EINVAL;
+>>> -			}
+>>> +			rc = __vfs_getxattr(dp, inode,
+>>> +					    XATTR_NAME_SMACKTRANSMUTE, trattr,
+>>> +					    TRANS_TRUE_SIZE);
+>>> +			if (rc >= 0 && strncmp(trattr, TRANS_TRUE,
+>>> +					       TRANS_TRUE_SIZE) != 0)
+>>> +				rc = -EINVAL;
+>> Where is the SMACK64_TRANSMUTE attribute going to get set on the file?
+>> It's not going to get set in smack_init_inode_security(). The inode will
+> Isn't that the purpose of the inode_init_security hook?
+
+No. It initializes the in-memory inode. 
+
+> After all LSMs provide one or multiple xattrs, xattrs are going to be
+> written to the disk with the initxattr() callback of filesystems.
 >
-> I generally agree with what you say, but we DO have this code pattern:
+> There is a small mistake above (XATTR_SMACK_TRANSMUTE instead
+> of XATTR_NAME_SMACKTRANSMUTE, as we are providing just the suffix).
 >
->          if (!some_check(...) && !capable(...))
->                  return -EPERM;
+> After fixing that, Smack tests succeed:
 
-I think we need to make this more concrete; we don't have a pattern in
-the upstream kernel where 'some_check(...)' is a LSM hook, right?
-Simply because there is another kernel access control mechanism which
-allows a capability check to be skipped doesn't mean I want to allow a
-LSM hook to be used to skip a capability check.
+It's over a decade since I seriously looked at this code path,
+but I'm pretty sure the __vfs_setxattr() call is necessary to get
+the attribute written out. With your change the in-memory inode will
+get the attribute, but if you reboot it won't be on the directory.
 
-> It looks to me like this series can be refactored to do the same. I
-> wouldn't consider that to be a "bypass", but I would agree the current
-> series looks too much like "bypass", and makes reasoning about the
-> effect of the LSM hooks too "special". :)
-
---=20
-paul-moore.com
+>
+> 95 Passed, 0 Failed, 100% Success rate
+>
+> There was a test failing in dir-transmute.sh, before I fixed the xattr
+> name.
+>
+> Thanks
+>
+> Roberto
+>
+>> know it's transmuting, but it won't get to disk without the __vfs_setxattr()
+>> here in smack_d_instantiate(). Now, it's been a long time since that code
+>> was written, so I could be wrong, but I'm pretty sure about that.
+>>
+>> I think that you should be fine with the changes in smack_init_inode_security(),
+>> and leaving smack_d_instantiate() untouched. 
+>>
+>>>  			if (rc >= 0)
+>>>  				transflag = SMK_INODE_TRANSMUTE;
+>>>  		}
