@@ -2,49 +2,49 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C9FC7619A
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Apr 2023 09:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB7FC77B6E
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Apr 2023 10:23:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbjDLJcf (ORCPT
+        id S230248AbjDLKXf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Apr 2023 05:32:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49166 "EHLO
+        Wed, 12 Apr 2023 06:23:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230046AbjDLJce (ORCPT
+        with ESMTP id S230345AbjDLKXN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Apr 2023 05:32:34 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63EE6109;
-        Wed, 12 Apr 2023 02:32:23 -0700 (PDT)
+        Wed, 12 Apr 2023 06:23:13 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 929127DA4;
+        Wed, 12 Apr 2023 03:23:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681291943; x=1712827943;
+  t=1681294990; x=1712830990;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=6LyGJ7yfM5nnCxnEhnmLVXOixE8B8BrtZ8PeO9Ko7VM=;
-  b=JUFfTsO2zkLbKyqQ02OG36alrqdy2BnQE0+WlxkD8Hr3zDu91W0ao6eW
-   TA5524D2ofC2wMknVWcFohPXDrAGxLEbzhM+vq91jkdZno5th4rWeFAaD
-   xCBKGuhnCqV98gkJEEvKq/YhoOwNDPY04Yxr6yLAxONISGvy9mXRxa1x1
-   7miEHHWuXu0V6d3GeEDI2zbIasmDrVGCXgPqtwW3Jzq1J6xXnVW6glPjq
-   moNrMLwug0SiCEJ1xU5qARjYdy1G0Z2/Okz/pEnrruHAzWlq6RQt7O/ci
-   6n5CTYoD0Cx9rSyVmdDcka4gh6JPpQImYCzT/Dv1BMQ/BTwCRt8o1bDQy
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10677"; a="408987799"
-X-IronPort-AV: E=Sophos;i="5.98,338,1673942400"; 
-   d="scan'208";a="408987799"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2023 02:32:22 -0700
+  bh=NYVZJBLrI4AK1v6HThNOAVJ+dk8TflhyXolcYHdUZuo=;
+  b=DpqbQSlc8g8kGne14Ejn1Jy6VAuziBgghOGJ7Ap8yitOK1Yt3Y6L1GcM
+   V3ugUP600SKlEItBalUGtQMsPVuPcs+7ILl2vZiE8+uS9hKLzPzkOyDkG
+   vbTvjWJ2ZB67U5lyZlGmYeBEykapkujRc/ZkREY8jyc+f/TqMfwWyPz5N
+   coO/c6mATpC+lZ8VmNNmWVhjLsik5Fom7ZRfj4Iwwzob64FUxEB37QhHS
+   oCN2esMmPUZckl+hoRgnwzhJtus9m9GvfrmeCAqZfY4xjyOQRkEB2IvX4
+   4lZppX0QjPRPrDNOz9t00MwiwBHF50MEhobphZVsffKHQAyKRsDpBC1Yg
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10677"; a="406685892"
+X-IronPort-AV: E=Sophos;i="5.98,339,1673942400"; 
+   d="scan'208";a="406685892"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2023 03:23:09 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10677"; a="863236403"
-X-IronPort-AV: E=Sophos;i="5.98,338,1673942400"; 
-   d="scan'208";a="863236403"
+X-IronPort-AV: E=McAfee;i="6600,9927,10677"; a="1018691016"
+X-IronPort-AV: E=Sophos;i="5.98,339,1673942400"; 
+   d="scan'208";a="1018691016"
 Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 12 Apr 2023 02:32:05 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 12 Apr 2023 03:23:06 -0700
 Received: from kbuild by b613635ddfff with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1pmWpg-000XZn-0l;
-        Wed, 12 Apr 2023 09:32:04 +0000
-Date:   Wed, 12 Apr 2023 17:31:45 +0800
+        id 1pmXd3-000Xct-2F;
+        Wed, 12 Apr 2023 10:23:05 +0000
+Date:   Wed, 12 Apr 2023 18:22:56 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Junxiao Bi <junxiao.bi@oracle.com>, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org
@@ -52,7 +52,7 @@ Cc:     oe-kbuild-all@lists.linux.dev, paul@paul-moore.com,
         jmorris@namei.org, serge@hallyn.com, nathanl@linux.ibm.com,
         axboe@kernel.dk, konrad.wilk@oracle.com, joe.jin@oracle.com
 Subject: Re: [PATCH] debugfs: allow access relay files in lockdown mode
-Message-ID: <202304121714.6mahd9EW-lkp@intel.com>
+Message-ID: <202304121808.IDucPQw7-lkp@intel.com>
 References: <20230412001030.88441-1-junxiao.bi@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -74,61 +74,29 @@ https://git-scm.com/docs/git-format-patch#_base_tree_information]
 url:    https://github.com/intel-lab-lkp/linux/commits/Junxiao-Bi/debugfs-allow-access-relay-files-in-lockdown-mode/20230412-081241
 patch link:    https://lore.kernel.org/r/20230412001030.88441-1-junxiao.bi%40oracle.com
 patch subject: [PATCH] debugfs: allow access relay files in lockdown mode
-config: i386-randconfig-a015-20230410 (https://download.01.org/0day-ci/archive/20230412/202304121714.6mahd9EW-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-8) 11.3.0
+config: powerpc-buildonly-randconfig-r003-20230410 (https://download.01.org/0day-ci/archive/20230412/202304121808.IDucPQw7-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 12.1.0
 reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
         # https://github.com/intel-lab-lkp/linux/commit/7891278613631bb6076e7b4603c1e907d1304cfa
         git remote add linux-review https://github.com/intel-lab-lkp/linux
         git fetch --no-tags linux-review Junxiao-Bi/debugfs-allow-access-relay-files-in-lockdown-mode/20230412-081241
         git checkout 7891278613631bb6076e7b4603c1e907d1304cfa
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=i386 olddefconfig
-        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=powerpc olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=powerpc SHELL=/bin/bash
 
 If you fix the issue, kindly add following tag where applicable
 | Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304121714.6mahd9EW-lkp@intel.com/
+| Link: https://lore.kernel.org/oe-kbuild-all/202304121808.IDucPQw7-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   ld: fs/debugfs/file.o: in function `debugfs_locked_down':
->> fs/debugfs/file.c:163: undefined reference to `relay_file_operations'
-
-
-vim +163 fs/debugfs/file.c
-
-   141	
-   142	/*
-   143	 * Only permit access to world-readable files when the kernel is locked down.
-   144	 * We also need to exclude any file that has ways to write or alter it as root
-   145	 * can bypass the permissions check.
-   146	 * Exception:
-   147	 * Relay files are used by kernel to transfer information to userspace, these
-   148	 * files have permission 0400, but mmap is supported, so they are blocked by
-   149	 * lockdown. But since kernel just generates the contents of those files while
-   150	 * not reading it, it is saft to access relay files in lockdown mode.
-   151	 */
-   152	static int debugfs_locked_down(struct inode *inode,
-   153				       struct file *filp,
-   154				       const struct file_operations *real_fops)
-   155	{
-   156		if ((inode->i_mode & 07777 & ~0444) == 0 &&
-   157		    !(filp->f_mode & FMODE_WRITE) &&
-   158		    !real_fops->unlocked_ioctl &&
-   159		    !real_fops->compat_ioctl &&
-   160		    !real_fops->mmap)
-   161			return 0;
-   162	
- > 163		if (real_fops == &relay_file_operations)
-   164			return 0;
-   165	
-   166		if (security_locked_down(LOCKDOWN_DEBUGFS))
-   167			return -EPERM;
-   168	
-   169		return 0;
-   170	}
-   171	
+   powerpc-linux-ld: fs/debugfs/file.o: in function `debugfs_locked_down':
+   fs/debugfs/file.c:163: undefined reference to `relay_file_operations'
+>> powerpc-linux-ld: fs/debugfs/file.c:163: undefined reference to `relay_file_operations'
 
 -- 
 0-DAY CI Kernel Test Service
