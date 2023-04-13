@@ -2,166 +2,128 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E96D7C77B77
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Apr 2023 23:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC61C7619A
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Apr 2023 00:18:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbjDLXgM (ORCPT
+        id S229621AbjDMASM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Apr 2023 19:36:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41204 "EHLO
+        Wed, 12 Apr 2023 20:18:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbjDLXgL (ORCPT
+        with ESMTP id S229503AbjDMASM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Apr 2023 19:36:11 -0400
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 07DE419BE;
-        Wed, 12 Apr 2023 16:36:07 -0700 (PDT)
-Received: by linux.microsoft.com (Postfix, from userid 1052)
-        id 7CD3D21779D8; Wed, 12 Apr 2023 16:36:06 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7CD3D21779D8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1681342566;
-        bh=YPXWa/7TYeGcUcrSe6JmCqFPK2vN2hRqkpxy8Lf9hp8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YuvgGUEjnvrbLnB0mThO0/tNDZ+pzM/L8mr1DVspNRj6O+y0N8B/6epPpbYWZWjbK
-         G1mzu0i9tJ7cZl4x+x8Od4BO0L1b9Enskrn3H6DdyL1bIL3S4RtVPsZ/KFIcIROYQZ
-         0JLI4PQ8S0LdHkBOtrPDOXTqszDAjnr9JhbX5NBs=
-Date:   Wed, 12 Apr 2023 16:36:06 -0700
-From:   Fan Wu <wufan@linux.microsoft.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
-        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        eparis@redhat.com, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, linux-audit@redhat.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [RFC PATCH v9 05/16] ipe: add userspace interface
-Message-ID: <20230412233606.GA16658@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com>
- <1675119451-23180-6-git-send-email-wufan@linux.microsoft.com>
- <CAHC9VhRa+NwKzLfQBmHfMgUp6_d5soQG7JBq-Vn=MUeUAt4tuQ@mail.gmail.com>
- <20230410191035.GB18827@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <CAHC9VhQDvWDshaZvJrHmjcwyHFxv9oYTN9bn0xiTtFZQRp+GPg@mail.gmail.com>
+        Wed, 12 Apr 2023 20:18:12 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21E4A526C;
+        Wed, 12 Apr 2023 17:18:11 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-504eac2f0b2so1291970a12.3;
+        Wed, 12 Apr 2023 17:18:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681345089;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Dmh+VIDeCcD/Q00JmxO2G3y2ob4RNcDcQ/2975pkRs=;
+        b=Ep1+AY3ghglkutH09gm6EKmB2QobJXVJtWPW57gB+sWv4JOGd+Ne+HHbKA9IvN3GFY
+         tfqivFQ7TS5K8O4xNESNs01YHF3SLaQEPTXd1J0GtFVtCSH9MpwN7gA2cIWLw1dfBl2e
+         dzdGjGyoBpldr1fqvSZdOAo90vxUDvvdje6s5iKKzZs55gSdR/uUef2Y2RE/tFLnNIrd
+         ZAUwOOn72s9uOyZBfK0u+2li00A00OuFXUyxk4+tOgsSSx5V1qfR+JZ6Zx6kN+CkTKkb
+         szSHAJrOeyUeg2Jdjs7FitPca0RSCc59sVjHYYm/yxbrNgJALfdQHXKvnZPbiKlnw/Un
+         mrOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681345089;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3Dmh+VIDeCcD/Q00JmxO2G3y2ob4RNcDcQ/2975pkRs=;
+        b=fo1TOwWIqn4cGHdPdudkcX3mKuYstbSRbtg7k4lyLlT+Fu6RrDlRbBHt0riY2d7GOi
+         a8cgfjcDkdkZCg6mwLGn40kP/Ys1kur1FBWozyPw621foCnN9IQZQYwnJLJMeYwzWKdf
+         12K3dgow30Wkml49DjecxBMCvwaxYH/KbavumcIaHtd5T7ecMBsNyKIZpX62GE3cfr5T
+         SadleY9HimC8/TfmKQJTeQO4tqNRJ63xDKXaskQAQsTQjqB4wL7xydh2VbTl2b8ATKLr
+         fjQlt3tiLTWqfk5E4JKnAWZkM0/ZumbzdtdTr/f5zQZOMipiJFnkzLngyxniDBOstHBR
+         FMQA==
+X-Gm-Message-State: AAQBX9c6hBDNMNPXj3LJl0FXaFKkPhmft2MwtPGzR3Fj+uvCklypRQGO
+        jG7rMsXcqxmn8iyJqlRjYEURanFAqKXMSQdsYXvD0Pgy
+X-Google-Smtp-Source: AKy350ZMpMj0J6KuSn03ULiovglYl3M5W6Mw1LStQW0XCE3KWMUseAQ99n1z8d6ERmrtUW53VanzxU0/SG/1V9Nj8Z8=
+X-Received: by 2002:a50:d783:0:b0:504:e957:2926 with SMTP id
+ w3-20020a50d783000000b00504e9572926mr257972edi.1.1681345089301; Wed, 12 Apr
+ 2023 17:18:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQDvWDshaZvJrHmjcwyHFxv9oYTN9bn0xiTtFZQRp+GPg@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20230412043300.360803-1-andrii@kernel.org> <20230412043300.360803-7-andrii@kernel.org>
+ <6436f765.a70a0220.1091d.f714@mx.google.com>
+In-Reply-To: <6436f765.a70a0220.1091d.f714@mx.google.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Wed, 12 Apr 2023 17:17:57 -0700
+Message-ID: <CAEf4BzYgPzJgu-uizPEvqiPL6Lb5Zx1dKMhgDE2h0r8-0+1AGg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 6/8] bpf: drop unnecessary bpf_capable() check in
+ BPF_MAP_FREEZE command
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, kpsingh@kernel.org,
+        paul@paul-moore.com, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 11, 2023 at 05:45:41PM -0400, Paul Moore wrote:
-> On Mon, Apr 10, 2023 at 3:10???PM Fan Wu <wufan@linux.microsoft.com> wrote:
-> > On Thu, Mar 02, 2023 at 02:04:42PM -0500, Paul Moore wrote:
-> > > On Mon, Jan 30, 2023 at 5:58???PM Fan Wu <wufan@linux.microsoft.com> wrote:
-> > > >
-> > > > From: Deven Bowers <deven.desai@linux.microsoft.com>
-> > > >
-> > > > As is typical with LSMs, IPE uses securityfs as its interface with
-> > > > userspace. for a complete list of the interfaces and the respective
-> > > > inputs/outputs, please see the documentation under
-> > > > admin-guide/LSM/ipe.rst
-> > > >
-> > > > Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> > > > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> > >
-> > > ...
-> > >
-> > > > ---
-> > > >  security/ipe/Makefile    |   2 +
-> > > >  security/ipe/fs.c        | 101 +++++++++
-> > > >  security/ipe/fs.h        |  17 ++
-> > > >  security/ipe/ipe.c       |   3 +
-> > > >  security/ipe/ipe.h       |   2 +
-> > > >  security/ipe/policy.c    | 135 ++++++++++++
-> > > >  security/ipe/policy.h    |   7 +
-> > > >  security/ipe/policy_fs.c | 459 +++++++++++++++++++++++++++++++++++++++
-> > > >  8 files changed, 726 insertions(+)
-> > > >  create mode 100644 security/ipe/fs.c
-> > > >  create mode 100644 security/ipe/fs.h
-> > > >  create mode 100644 security/ipe/policy_fs.c
-> 
-> ...
-> 
-> > > > +/**
-> > > > + * ipe_update_policy - parse a new policy and replace @old with it.
-> > > > + * @addr: Supplies a pointer to the i_private for saving policy.
-> > > > + * @text: Supplies a pointer to the plain text policy.
-> > > > + * @textlen: Supplies the length of @text.
-> > > > + * @pkcs7: Supplies a pointer to a buffer containing a pkcs7 message.
-> > > > + * @pkcs7len: Supplies the length of @pkcs7len.
-> > > > + *
-> > > > + * @text/@textlen is mutually exclusive with @pkcs7/@pkcs7len - see
-> > > > + * ipe_new_policy.
-> > > > + *
-> > > > + * Return:
-> > > > + * * !IS_ERR   - OK
-> > > > + * * -ENOENT   - Policy doesn't exist
-> > > > + * * -EINVAL   - New policy is invalid
-> > > > + */
-> > > > +struct ipe_policy *ipe_update_policy(struct ipe_policy __rcu **addr,
-> > > > +                                    const char *text, size_t textlen,
-> > > > +                                    const char *pkcs7, size_t pkcs7len)
-> > > > +{
-> > > > +       int rc = 0;
-> > > > +       struct ipe_policy *old, *new;
-> > > > +
-> > > > +       old = ipe_get_policy_rcu(*addr);
-> > > > +       if (!old) {
-> > > > +               rc = -ENOENT;
-> > > > +               goto err;
-> > > > +       }
-> > > > +
-> > > > +       new = ipe_new_policy(text, textlen, pkcs7, pkcs7len);
-> > > > +       if (IS_ERR(new)) {
-> > > > +               rc = PTR_ERR(new);
-> > > > +               goto err;
-> > > > +       }
-> > > > +
-> > > > +       if (strcmp(new->parsed->name, old->parsed->name)) {
-> > > > +               rc = -EINVAL;
-> > > > +               goto err;
-> > > > +       }
-> > > > +
-> > > > +       if (ver_to_u64(old) > ver_to_u64(new)) {
-> > > > +               rc = -EINVAL;
-> > > > +               goto err;
-> > > > +       }
-> > > > +
-> > > > +       if (ipe_is_policy_active(old)) {
-> > >
-> > > I don't understand the is-active check, you want to make @new the new
-> > > active policy regardless, right?  Could this is-active check ever be
-> > > false?
+On Wed, Apr 12, 2023 at 11:24=E2=80=AFAM Kees Cook <keescook@chromium.org> =
+wrote:
+>
+> On Tue, Apr 11, 2023 at 09:32:58PM -0700, Andrii Nakryiko wrote:
+> > Seems like that extra bpf_capable() check in BPF_MAP_FREEZE handler was
+> > unintentionally left when we switched to a model that all BPF map
+> > operations should be allowed regardless of CAP_BPF (or any other
+> > capabilities), as long as process got BPF map FD somehow.
 > >
-> > Actually this is needed. Policy updates can be applied to any deployed
-> > policy, which may be saved in two places: the securityfs file node
-> > and the ipe_active_policy pointer. To update a policy, this function first
-> > checks if the policy saved in the securityfs file node is currently active.
-> > If so, it updates the ipe_active_policy pointer to point to the new policy,
-> > and finally updates the policy pointer in the securityfs to the new policy.
-> 
-> Ah, okay.  I must have forgotten, or not realized, that multiple
-> policies could be loaded and not active.
-> 
-> I guess this does make me wonder about keeping a non-active policy
-> loaded in the kernel, what purpose does that serve?
-> 
+> > This patch replaces bpf_capable() check in BPF_MAP_FREEZE handler with
+> > writeable access check, given conceptually freezing the map is modifyin=
+g
+> > it: map becomes unmodifiable for subsequent updates.
+> >
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+>
+> Is this patch stand-alone? It seems like this could be taken separately,
+> or at least just be the first patch in the series?
+>
 
-The non-active policy doesn't serve anything unless it is activated. User can
-even delete a policy if that is no longer needed. Non-active is just the default
-state when a new policy is loaded.
+yep, I'll send it separately, good point
 
-If IPE supports namespace, there is another use case where different containers
-can select different policies as the active policy from among multiple loaded
-policies. Deven has presented a demo of this during LSS 2021. But this goes
-beyond the scope of this version.
-
--Fan
-
-> -- 
-> paul-moore.com
+> > ---
+> >  kernel/bpf/syscall.c | 9 +++++----
+> >  1 file changed, 5 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> > index 7d1165814efc..42d8473237ab 100644
+> > --- a/kernel/bpf/syscall.c
+> > +++ b/kernel/bpf/syscall.c
+> > @@ -2001,6 +2001,11 @@ static int map_freeze(const union bpf_attr *attr=
+)
+> >               return -ENOTSUPP;
+> >       }
+> >
+> > +     if (!(map_get_sys_perms(map, f) & FMODE_CAN_WRITE)) {
+> > +             err =3D -EPERM;
+> > +             goto err_put;
+> > +     }
+> > +
+> >       mutex_lock(&map->freeze_mutex);
+> >       if (bpf_map_write_active(map)) {
+> >               err =3D -EBUSY;
+> > @@ -2010,10 +2015,6 @@ static int map_freeze(const union bpf_attr *attr=
+)
+> >               err =3D -EBUSY;
+> >               goto err_put;
+> >       }
+> > -     if (!bpf_capable()) {
+> > -             err =3D -EPERM;
+> > -             goto err_put;
+> > -     }
+> >
+> >       WRITE_ONCE(map->frozen, true);
+> >  err_put:
+> > --
+> > 2.34.1
+> >
+>
+> --
+> Kees Cook
