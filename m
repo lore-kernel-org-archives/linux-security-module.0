@@ -2,321 +2,212 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F36C77B6E
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Apr 2023 15:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DFDC77B6E
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Apr 2023 16:27:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230235AbjDMPMA (ORCPT
+        id S229900AbjDMQ10 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Apr 2023 11:12:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32896 "EHLO
+        Thu, 13 Apr 2023 12:27:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229908AbjDMPL7 (ORCPT
+        with ESMTP id S229959AbjDMQ1V (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Apr 2023 11:11:59 -0400
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88345AF22
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Apr 2023 08:11:42 -0700 (PDT)
-Received: by mail-yb1-xb2a.google.com with SMTP id q5so18544595ybk.7
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Apr 2023 08:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1681398701; x=1683990701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IfnvIvr58VX0S2k2YZ2WDLYoPBSUQXcjimV8CYYLANg=;
-        b=KNwXJj6cr2penqQ8cCWynNR0EdzxheKrM1eRiM0bO+hW6xyl99BgSnUzysQFb6Mcu0
-         3V29WGcuw/srbGIRIv6+c0IYp08DIksxu1FKpoubGz3zIhrqjsTjgiNpenuRItBM88bp
-         2/wtzI0LvqrrvJhXfuB13Yvt30EHYTa0vbKHcu8f2v5vBiqZKiC74ARxA9JecU3nNE78
-         TnPfAECwmeKp5mffHCK1SXTAQu+rbVd4ouE0gYE7Adxz7RWbU8LvvBONEv+KTftf5jY2
-         zGqwKggPtEQA2qICUAdFqZ7cYKA+3qbT5kwTzVjKJvNNdG+pAouayA2I/6t059LyBrVo
-         tgjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681398701; x=1683990701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IfnvIvr58VX0S2k2YZ2WDLYoPBSUQXcjimV8CYYLANg=;
-        b=d7ne+hNtnNJ7zfpIDxXjrEOp1UXMN0qaVeCmIIUUpx8zH2pQ22t6lAy8Ha3n6iY+YI
-         5AkzwkQb9H6+MjQiTzw716MLGPPVgP0ZmsbOvGBbTbxsUsJEnpXNczMfScPb2azjSh9d
-         3mN9QNLxSlzl1R53EjOijGDmEDJUGHn7uWI2RTf0kNvJafKO3cG89XLcpyUzCPORl9Tm
-         GzCCD7F+W+mcD/TWjbAB5bBJhUfxMPoaFbBzas7NIZdWUvN3yxC6WtAFj4eFcx1ZyUkf
-         +9ZayN/nF8RewwvEnwN+fV/hZjhiYpl/dPIKX/2S28J2sdG9fFXDEHvZH/GMKgNN/7Eo
-         VATQ==
-X-Gm-Message-State: AAQBX9eW3ZYhWoHChNKzaiSO7CJ/VnkQMBUkvRXYIGRe6Kvv12O2vuYc
-        xHjQbZCbDEaGBJk5Lw///YW2WMTmdTiCFjanZyiVT5UJZzrjLeqRWw==
-X-Google-Smtp-Source: AKy350aMRCPwWBk7EsrH/k3KYo5MKykamxxCYLtDctw/BqJUIUOC/KpU/ZDjjMFrOFfzPitLJpDSrxAAgj1QH41uPtc=
-X-Received: by 2002:a25:d7d3:0:b0:b68:7a4a:5258 with SMTP id
- o202-20020a25d7d3000000b00b687a4a5258mr1678857ybg.3.1681398701495; Thu, 13
- Apr 2023 08:11:41 -0700 (PDT)
+        Thu, 13 Apr 2023 12:27:21 -0400
+Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7340FA275
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Apr 2023 09:27:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1681403233; bh=CdU1Ksxg5NcYtASldD9uQ9vn3rEMn6kMjP0tgp1ljDw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=iZt8i6E3ULJtratK0wT9ozl95Nzi4KwlaLOdNeua0KCLI22w3nk0/oPBBcnP937bRmHb49biqazlVVJhutFd7WJgNgvBBh/wMerICvu/mAqjI9mlORRKzlWXakQq0XRo60PT3g7Rf8rwNoEHdTjlkfPMzQt+ZXkEgHNdhVDsKZ0vMxYdeydBIGpHcsn0/oUa/Kf2JV/QasUw5yDDGWBABdjCSv2K554a6Y7Li3Wm3rT7p1WSbPN+9NP/9nZ6UlfYgM8xPCKuUvPjVzS7H/rAEzGMp0G1gwp/o+NamcZLwm1907WlKR0KiUnBtEaoJHzrK7JZh5SBMdbQ6xDfR30Rbw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1681403233; bh=1TTMi3S4V3wgHgPcG7zwiEE1Mk5Jlz1lbCVx2Uukj5B=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=gPbEzn+7Ya23zXqJ6zipd+C8i6pCyd+RqKq12zDiPY8Y53kKh31+Yx9mIdEVuCEIepC3DJzgdzJF4ELS+35OZAfCO1G+ayhUc9dNbR6aX7I4XEwO8u46ZPqA7OJzSaZkHJ/khJLZcXOWIshTD3jY4T3bl0dd7z6dKWSB9SKgvaDMakU4lU16ctrg1cbFcphrcU1WdrWvv1E/reoPivBVrrNHux289QQtT+3sJI49bbjAX3LhAywRKtJzsjUD51cyJXOU/5o43hNUhNesAJ89H4ZnL0VIpvHX/u2xVdYyIBxvEwt+FBkqAVUdRitCW+40eFqsrOwEk5lLDw/9IToPsw==
+X-YMail-OSG: cdrmD1YVM1mONg0WXP8VPUcCF382cCLipZ90KrAWOnnDeVGj4vwJcS9y.gI3zI3
+ Rgi99K1q9ZgpVzxIlXtHInlx3pelvPliIQGmqxv9ylD2A6K2ML6EtNWF6eYA48ex4WKDIUQ_ceo3
+ 5vOIgK9ZGtrRiJK6D6RwbxhEJtwp6arLE4nwO3baS1q783S4Un1lUsi.hMFzOMJTdFaD4UrA3am5
+ GSNb1XVRIFt.YlES8RQC_dUcZjBexEcR20Z_GJoIH_WjTEzLZqEe9SjPQgDzTstyCz65a80SFrd1
+ uFKq6MQsWfUAZd4SMTDI226WpZChFSi9RKTcKJnNmZiE9eW3PFV.AhDIsLOrVdNRI1w4tLbAv6gm
+ N2wbPFTn4.HtF3G3M5XAMLHTdnKYJdpPO1joHr4oCoMMS1P_8LsZ6c_24l7fQxEIumkjE6YARcJ_
+ RvH7DJQQUnDc1wY.7CLZRPKgaGapux7Z4S.VpSRx50qHALmtqj3lQDZm6UoEoPVrSdTHx3qmz0Ls
+ wFGgF0c23DFBvWLSYOA3LNcv9eeVhbVnFQ65NXefYr5mSPtNVeeL4.JBoqBf3lww8Sk9fa7f1yPT
+ Ncueo9hKcT0obrnerF0QwwWRHFxyNYl5zBMGRcmrQHZXyV1ADgW1LkAvi97Fmwi67crz3kj57kRp
+ ojvKMZNJ1kqzKKUmxJaIDN3dRXbIiDBdTFkXHxbOyLZxTyePU1dbbyp8Dxbxefv4ZBqj4svBtq7Y
+ 1qTeglwqx9mGCrAvYkmEj6fIrPgDKjKHZ8kl2TtdLbLOKB01rC.NuAI126wzBAYWr5cGaCAjysh7
+ .Xp1__wS6.u7.Mvgka9yAIJGEfPT_BzFWtHcodI4FVdTugxA48LO0m_Zu4ut06sDA9Ir4JTJJSQF
+ Yb1qmepTNiPGpX8W87wxgAUpq25MjZpyUd_RXuUllxU5d..7rzzsrfpxDgWlu3DZc2h2xakUxyf7
+ sQ_OkKJVMQGMtt0y79rei.F6lKr4WjOs60rT1T3LfcbvBc3xGlVSr1FDRR8835V3uxuZf0fskwsh
+ kIt5xIMWLuIE2vYyqArXCZdIVNKqVz0EFX_v4qkT.Qe.qPgwF.Yu_wd5ClAlbQLd.MtVhqPQ7BLz
+ oI5wlIClX9jgDsD78ja3.73c3pNX2OmzANzdglCX3jHKQjeG_9NilQHu72pwzXyxe_cPTVZOsiaL
+ 8eCCMtPuTj8RUPjCsix4BZDFm.9Qz50TEriR1v2AGiBtoiU7yLYkMy_5EODWJ_LR7AEXtTqRSDRE
+ ZOGDKT7jd19kD6ZeIBPIpOHHQznUaBinw5IlW5tPJF.wDCVt9WNmkEA574XNVeDoMT3L1VnJrRsk
+ wO7R7VDfDMHfQgpNytq2OBMsfEXFL4jXmZXmnEh3ap9L2tUHACgTT4gVevHPqO40iq6wyg.hRvc0
+ 7RVaNlAnPgxmP8EjjyM7DnzCealKLvcs9nYzRYKrFlf9GVKHP1FpkRyLCNlx2HdmXfOXbdvAUmfw
+ cVjtQ0dhQRfTsiCNxeLc.18gGOYFPFzCe4LOdUQ.58qByhJXQ9OXUW5.ezvRvDmvcY1AYrGm4uy3
+ Hkeop1rf6SJ3XNay9FZwVrantuGn4jvZWKeBhPUVFXoA13cMO1cz.H3nTVNkbVNPF4s58WfXaxG5
+ YnFeSWiVsO81Bx3qfieR.rvwVRY8bdmHidMQbOK2cekJyaq8.JO1dLmrL5RsNtXeHwyJfLK0Zl5C
+ oAqSTnV8KcH.8Q0Q3P3aUAy5LKEv2zsy2j13eBf_kPKhLGTENqiEB3LQpbIru86yKEBEfXem7b90
+ p6rXNeamrauIl9oZr9f2xwAWmhhCQi9sK40aGomZ.53l.9wVoPz2hyPtZxYMk5dAMjyYvxghC7rv
+ vDVkIPn3F9UW6HmioAgDafa_hi5O9n9oQfHlDqPa89C.Ok0KXn5H.rWTId0ymXTolO.kI7Gm9BYS
+ 11xw1ZHTdQoNC6SOzBraieDgleLxdJauRU3tc8PAWKXa5oRGgVCo0by_hZKBUowmfB0lEnnw6778
+ 5CLhbb2r7WVYnJPPjwiUQ5bhSmtxXBKSAp_tNMM79mExuMDV.AOfDU0jHouOHV1KgZccA3PX1ahD
+ dg2JhIp678sstJgSpY0u45FuwA__E3Hao6TeYh3W4kdRwmqomyFJOfoMhZh0C05zJ28o6qu5L0sr
+ 5xhmR0YefWiXGHuGJ6fXoLidHdv8KTPzo_omMRULw7RKCmZBjgEfxWiSPsY9CCCxUuaWptw.q6FA
+ ZyWgos9QgxfoHw.4s0PDK_nARHy0hn2pWOSgeKMrThWlXM5v7KRcboFQS6fo4Fw1KW.73UTKu5W5
+ lBBpJDvQE2tJ5aJwCQlJf
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: fac2b4e3-efd6-4499-9325-9f03ca846f35
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Thu, 13 Apr 2023 16:27:13 +0000
+Received: by hermes--production-bf1-5f9df5c5c4-8dccp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6b73db0fc8977652a8f02cdda1c40c96;
+          Thu, 13 Apr 2023 16:27:11 +0000 (UTC)
+Message-ID: <afd17142-9243-8b72-d16a-41165e8deda1@schaufler-ca.com>
+Date:   Thu, 13 Apr 2023 09:27:08 -0700
 MIME-Version: 1.0
-References: <20230412043300.360803-1-andrii@kernel.org> <CAHC9VhQHmdZYnR=+rX-3FcRh127mhJt=jAnototfTiuSoOTptg@mail.gmail.com>
- <6436eea2.170a0220.97ead.52a8@mx.google.com> <CAHC9VhR6ebsxtjSG8-fm7e=HU+srmziVuO6MU+pMpeSBv4vN+A@mail.gmail.com>
- <6436f837.a70a0220.ada87.d446@mx.google.com> <CAHC9VhTF0JX3_zZ1ZRnoOw0ToYj6AsvK6OCiKqQgPvHepH9W3Q@mail.gmail.com>
- <CAEf4BzY9GPr9c2fTUS6ijHURtdNDL4xM6+JAEggEqLuz9sk4Dg@mail.gmail.com>
- <CAHC9VhT8RXG6zEwUdQZH4HE_HkF6B8XebWnUDc-k6AeH2NVe0w@mail.gmail.com> <CAEf4BzaRkAtyigmu9fybW0_+TZJJX2i93BXjiNUfazt2dFDFbQ@mail.gmail.com>
-In-Reply-To: <CAEf4BzaRkAtyigmu9fybW0_+TZJJX2i93BXjiNUfazt2dFDFbQ@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 13 Apr 2023 11:11:30 -0400
-Message-ID: <CAHC9VhQFJafyW5r9YzG47NjrBcKURj3D0V-u7eN2eb5tBM2pkg@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
 Subject: Re: [PATCH bpf-next 0/8] New BPF map and BTF security LSM hooks
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Content-Language: en-US
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Paul Moore <paul@paul-moore.com>
 Cc:     Kees Cook <keescook@chromium.org>,
         Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
         ast@kernel.org, daniel@iogearbox.net, kpsingh@kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20230412043300.360803-1-andrii@kernel.org>
+ <CAHC9VhQHmdZYnR=+rX-3FcRh127mhJt=jAnototfTiuSoOTptg@mail.gmail.com>
+ <6436eea2.170a0220.97ead.52a8@mx.google.com>
+ <CAHC9VhR6ebsxtjSG8-fm7e=HU+srmziVuO6MU+pMpeSBv4vN+A@mail.gmail.com>
+ <6436f837.a70a0220.ada87.d446@mx.google.com>
+ <CAHC9VhTF0JX3_zZ1ZRnoOw0ToYj6AsvK6OCiKqQgPvHepH9W3Q@mail.gmail.com>
+ <CAEf4BzY9GPr9c2fTUS6ijHURtdNDL4xM6+JAEggEqLuz9sk4Dg@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAEf4BzY9GPr9c2fTUS6ijHURtdNDL4xM6+JAEggEqLuz9sk4Dg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.21365 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 13, 2023 at 1:16=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
-> On Wed, Apr 12, 2023 at 7:56=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Wed, Apr 12, 2023 at 9:43=E2=80=AFPM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > > On Wed, Apr 12, 2023 at 12:07=E2=80=AFPM Paul Moore <paul@paul-moore.=
-com> wrote:
-> > > > On Wed, Apr 12, 2023 at 2:28=E2=80=AFPM Kees Cook <keescook@chromiu=
-m.org> wrote:
-> > > > > On Wed, Apr 12, 2023 at 02:06:23PM -0400, Paul Moore wrote:
-> > > > > > On Wed, Apr 12, 2023 at 1:47=E2=80=AFPM Kees Cook <keescook@chr=
-omium.org> wrote:
-> > > > > > > On Wed, Apr 12, 2023 at 12:49:06PM -0400, Paul Moore wrote:
-> > > > > > > > On Wed, Apr 12, 2023 at 12:33=E2=80=AFAM Andrii Nakryiko <a=
-ndrii@kernel.org> wrote:
-> >
-> > ...
-> >
-> > > > > > > For example, in many places we have things like:
-> > > > > > >
-> > > > > > >         if (!some_check(...) && !capable(...))
-> > > > > > >                 return -EPERM;
-> > > > > > >
-> > > > > > > I would expect this is a similar logic. An operation can succ=
-eed if the
-> > > > > > > access control requirement is met. The mismatch we have throu=
-gh-out the
-> > > > > > > kernel is that capability checks aren't strictly done by LSM =
-hooks. And
-> > > > > > > this series conceptually, I think, doesn't violate that -- it=
-'s changing
-> > > > > > > the logic of the capability checks, not the LSM (i.e. there n=
-o LSM hooks
-> > > > > > > yet here).
-> > > > > >
-> > > > > > Patch 04/08 creates a new LSM hook, security_bpf_map_create(), =
-which
-> > > > > > when it returns a positive value "bypasses kernel checks".  The=
- patch
-> > > > > > isn't based on either Linus' tree or the LSM tree, I'm guessing=
- it is
-> > > > > > based on a eBPF tree, so I can't say with 100% certainty that i=
-t is
-> > > > > > bypassing a capability check, but the description claims that t=
-o be
-> > > > > > the case.
-> > > > > >
-> > > > > > Regardless of how you want to spin this, I'm not supportive of =
-a LSM
-> > > > > > hook which allows a LSM to bypass a capability check.  A LSM ho=
-ok can
-> > > > > > be used to provide additional access control restrictions beyon=
-d a
-> > > > > > capability check, but a LSM hook should never be allowed to ove=
-rrule
-> > > > > > an access denial due to a capability check.
-> > > > > >
-> > > > > > > The reason CAP_BPF was created was because there was nothing =
-else that
-> > > > > > > would be fine-grained enough at the time.
-> > > > > >
-> > > > > > The LSM layer predates CAP_BPF, and one could make a very solid
-> > > > > > argument that one of the reasons LSMs exist is to provide
-> > > > > > supplementary controls due to capability-based access controls =
-being a
-> > > > > > poor fit for many modern use cases.
-> > > > >
-> > > > > I generally agree with what you say, but we DO have this code pat=
-tern:
-> > > > >
-> > > > >          if (!some_check(...) && !capable(...))
-> > > > >                  return -EPERM;
-> > > >
-> > > > I think we need to make this more concrete; we don't have a pattern=
- in
-> > > > the upstream kernel where 'some_check(...)' is a LSM hook, right?
-> > > > Simply because there is another kernel access control mechanism whi=
-ch
-> > > > allows a capability check to be skipped doesn't mean I want to allo=
-w a
-> > > > LSM hook to be used to skip a capability check.
-> > >
-> > > This work is an attempt to tighten the security of production systems
-> > > by allowing to drop too coarse-grained and permissive capabilities
-> > > (like CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, which inevitable allow mor=
-e
-> > > than production use cases are meant to be able to do) and then grant
-> > > specific BPF operations on specific BPF programs/maps based on custom
-> > > LSM security policy, which validates application trustworthiness usin=
-g
-> > > custom production-specific logic.
-> >
-> > There are ways to leverage the LSMs to apply finer grained access
-> > control on top of the relatively coarse capabilities that do not
-> > require circumventing those capability controls.  One grants the
-> > capabilities, just as one would do today, and then leverages the
-> > security functionality of a LSM to further restrict specific users,
-> > applications, etc. with a level of granularity beyond that offered by
-> > the capability controls.
+On 4/12/2023 6:43 PM, Andrii Nakryiko wrote:
+> On Wed, Apr 12, 2023 at 12:07 PM Paul Moore <paul@paul-moore.com> wrote:
+>> On Wed, Apr 12, 2023 at 2:28 PM Kees Cook <keescook@chromium.org> wrote:
+>>> On Wed, Apr 12, 2023 at 02:06:23PM -0400, Paul Moore wrote:
+>>>> On Wed, Apr 12, 2023 at 1:47 PM Kees Cook <keescook@chromium.org> wrote:
+>>>>> On Wed, Apr 12, 2023 at 12:49:06PM -0400, Paul Moore wrote:
+>>>>>> On Wed, Apr 12, 2023 at 12:33 AM Andrii Nakryiko <andrii@kernel.org> wrote:
+>>>>>>> Add new LSM hooks, bpf_map_create_security and bpf_btf_load_security, which
+>>>>>>> are meant to allow highly-granular LSM-based control over the usage of BPF
+>>>>>>> subsytem. Specifically, to control the creation of BPF maps and BTF data
+>>>>>>> objects, which are fundamental building blocks of any modern BPF application.
+>>>>>>>
+>>>>>>> These new hooks are able to override default kernel-side CAP_BPF-based (and
+>>>>>>> sometimes CAP_NET_ADMIN-based) permission checks. It is now possible to
+>>>>>>> implement LSM policies that could granularly enforce more restrictions on
+>>>>>>> a per-BPF map basis (beyond checking coarse CAP_BPF/CAP_NET_ADMIN
+>>>>>>> capabilities), but also, importantly, allow to *bypass kernel-side
+>>>>>>> enforcement* of CAP_BPF/CAP_NET_ADMIN checks for trusted applications and use
+>>>>>>> cases.
+>>>>>> One of the hallmarks of the LSM has always been that it is
+>>>>>> non-authoritative: it cannot unilaterally grant access, it can only
+>>>>>> restrict what would have been otherwise permitted on a traditional
+>>>>>> Linux system.  Put another way, a LSM should not undermine the Linux
+>>>>>> discretionary access controls, e.g. capabilities.
+>>>>>>
+>>>>>> If there is a problem with the eBPF capability-based access controls,
+>>>>>> that problem needs to be addressed in how the core eBPF code
+>>>>>> implements its capability checks, not by modifying the LSM mechanism
+>>>>>> to bypass these checks.
+>>>>> I think semantics matter here. I wouldn't view this as _bypassing_
+>>>>> capability enforcement: it's just more fine-grained access control.
+> Exactly. One of the motivations for this work was the need to move
+> some production use cases that are only needing extra privileges so
+> that they can use BPF into a more restrictive environment. Granting
+> CAP_BPF+CAP_PERFMON+CAP_NET_ADMIN to all such use cases that need them
+> for BPF usage is too coarse grained. These caps would allow those
+> applications way more than just BPF usage. So the idea here is more
+> finer-grained control of BPF-specific operations, granting *effective*
+> CAP_BPF+CAP_PERFMON+CAP_NET_ADMIN caps dynamically based on custom
+> production logic that would validate the use case.
+
+That's an authoritative model which is in direct conflict with the
+design and implementation of both capabilities and LSM.
+
 >
-> Please help me understand something. What you and Casey are proposing,
-> when taken to the logical extreme, is to grant to all processes root
-> permissions and then use LSM to restrict specific actions, do I
-> understand correctly? This strikes me as a less secure and more
-> error-prone way of doing things.
-
-When taken to the "logical extreme" most concepts end up sounding a
-bit absurd, but that was the point, wasn't it?
-
-Here is a fun story which seems relevant ... in the early days of
-SELinux, one of the community devs setup up a system with a SELinux
-policy which restricted all privileged operations from the root user,
-put the system on a publicly accessible network, posted the root
-password for all to see, and invited the public to login to the system
-and attempt to exercise root privilege (it's been well over 10 years
-at this point so the details are a bit fuzzy).  Granted, there were
-some hiccups in the beginning, mostly due to the crude state of policy
-development/analysis at the time, but after a few policy revisions the
-system held up quite well.
-
-On the more practical side of things, there are several use cases
-which require, by way of legal or contractual requirements, that full
-root/admin privileges are decomposed into separate roles: security
-admin, audit admin, backup admin, etc.  These users satisfy these
-requirements by using LSMs, such as SELinux, to restrict the
-administrative capabilities based on the SELinux user/role/domain.
-
-> By the way, even the above proposal of yours doesn't work for
-> production use cases when user namespaces are involved, as far as I
-> understand. We cannot grant CAP_BPF+CAP_PERFMON+CAP_NET_ADMIN for
-> containers running inside user namespaces, as CAP_BPF in non-init
-> namespace is not enough for bpf() syscall to allow loading BPF maps or
-> BPF program ...
-
-Once again, the LSM has always intended to be a restrictive mechanism,
-not a privilege granting mechanism.  If an operation is not possible
-without the LSM layer enabled, it should not be possible with the LSM
-layer enabled.  The LSM is not a mechanism to circumvent other access
-control mechanisms in the kernel.
-
-> Also, in previous email you said:
+> This *is* an attempt to achieve a more secure production approach.
 >
-> > Simply because there is another kernel access control mechanism which
-> > allows a capability check to be skipped doesn't mean I want to allow a
-> > LSM hook to be used to skip a capability check.
+>>>>> For example, in many places we have things like:
+>>>>>
+>>>>>         if (!some_check(...) && !capable(...))
+>>>>>                 return -EPERM;
+>>>>>
+>>>>> I would expect this is a similar logic. An operation can succeed if the
+>>>>> access control requirement is met. The mismatch we have through-out the
+>>>>> kernel is that capability checks aren't strictly done by LSM hooks. And
+>>>>> this series conceptually, I think, doesn't violate that -- it's changing
+>>>>> the logic of the capability checks, not the LSM (i.e. there no LSM hooks
+>>>>> yet here).
+>>>> Patch 04/08 creates a new LSM hook, security_bpf_map_create(), which
+>>>> when it returns a positive value "bypasses kernel checks".  The patch
+>>>> isn't based on either Linus' tree or the LSM tree, I'm guessing it is
+>>>> based on a eBPF tree, so I can't say with 100% certainty that it is
+>>>> bypassing a capability check, but the description claims that to be
+>>>> the case.
+>>>>
+>>>> Regardless of how you want to spin this, I'm not supportive of a LSM
+>>>> hook which allows a LSM to bypass a capability check.  A LSM hook can
+>>>> be used to provide additional access control restrictions beyond a
+>>>> capability check, but a LSM hook should never be allowed to overrule
+>>>> an access denial due to a capability check.
+>>>>
+>>>>> The reason CAP_BPF was created was because there was nothing else that
+>>>>> would be fine-grained enough at the time.
+>>>> The LSM layer predates CAP_BPF, and one could make a very solid
+>>>> argument that one of the reasons LSMs exist is to provide
+>>>> supplementary controls due to capability-based access controls being a
+>>>> poor fit for many modern use cases.
+>>> I generally agree with what you say, but we DO have this code pattern:
+>>>
+>>>          if (!some_check(...) && !capable(...))
+>>>                  return -EPERM;
+>> I think we need to make this more concrete; we don't have a pattern in
+>> the upstream kernel where 'some_check(...)' is a LSM hook, right?
+>> Simply because there is another kernel access control mechanism which
+>> allows a capability check to be skipped doesn't mean I want to allow a
+>> LSM hook to be used to skip a capability check.
+> This work is an attempt to tighten the security of production systems
+> by allowing to drop too coarse-grained and permissive capabilities
+> (like CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, which inevitable allow more
+> than production use cases are meant to be able to do)
+
+The BPF developers are in complete control of what CAP_BPF controls.
+You can easily address the granularity issue by adding addition restrictions
+on processes that have CAP_BPF. That is the intended use of LSM.
+The whole point of having multiple capabilities is so that you can
+grant just those that are required by the system security policy, and
+do so safely. That leads to differences of opinion regarding the definition
+of the system security policy. BPF chose to set itself up as an element
+of security policy (you need CAP_BPF) rather than define elements such that
+existing capabilities (CAP_FOWNER, CAP_KILL, CAP_MAC_OVERRIDE, ...) would
+control. 
+
+>  and then grant
+> specific BPF operations on specific BPF programs/maps based on custom
+> LSM security policy,
+
+This is backwards. The correct implementation is to require CAP_BPF and
+further restrict BPF operations based on a custom LSM security policy.
+That's how LSM is designed.
+
+>  which validates application trustworthiness using
+> custom production-specific logic.
 >
-> I understand your stated position, but can you please help me
-> understand the reasoning behind it?
+> Isn't this goal in line with LSMs mission to enhance system security?
 
-Keeping the LSM as a restrictive access control mechanism helps ensure
-some level of sanity and consistency across different Linux
-installations.  If a certain operation requires CAP_SYS_ADMIN on one
-Linux system, it should require CAP_SYS_ADMIN on another Linux system.
-Granted, a LSM running on one system might impose additional
-constraints on that operation, but the CAP_SYS_ADMIN requirement still
-applies.
+We're not arguing the goal, we're discussing the implementation.
 
-There is also an issue of safety in knowing that enabling a LSM will
-not degrade the access controls on a system by potentially granting
-operations that were previously denied.
-
-> Does the above also mean that you'd be fine if we just don't plug into
-> the LSM subsystem at all and instead come up with some ad-hoc solution
-> to allow effectively the same policies? This sounds detrimental both
-> to LSM and BPF subsystems, so I hope we can talk this through before
-> finalizing decisions.
-
-Based on your patches and our discussion, it seems to me that the
-problem you are trying to resolve is related more to the
-capability-based access controls in the eBPF, and possibly other
-kernel subsystems, and not any LSM-based restrictions.  I'm happy to
-work with you on a solution involving the LSM, but please understand
-that I'm not going to support a solution which changes a core
-philosophy of the LSM layer.
-
-> Lastly, you mentioned before:
+>>> It looks to me like this series can be refactored to do the same. I
+>>> wouldn't consider that to be a "bypass", but I would agree the current
+>>> series looks too much like "bypass", and makes reasoning about the
+>>> effect of the LSM hooks too "special". :)
+> Sorry, I didn't realize that the current code layout is making things
+> more confusing. I'll address feedback to make the intent a bit
+> clearer.
 >
-> > > > I think we need to make this more concrete; we don't have a pattern=
- in
-> > > > the upstream kernel where 'some_check(...)' is a LSM hook, right?
->
-> Unfortunately I don't have enough familiarity with all LSM hooks, so I
-> can't confirm or disprove the above statement. But earlier someone
-> brought to my attention the case of security_vm_enough_memory_mm(),
-> which seems to be granting effectively CAP_SYS_ADMIN for the purposes
-> of memory accounting. Am I missing something subtle there or does it
-> grant effective caps indeed?
-
-Some of the comments around that hook can be misleading, but if you
-look at the actual code it starts to make more sense.
-
-First, look at the LSM-disabled case and you'll see that the
-security_vm_enough_memory_mm() hook ends up looking like this:
-
-int security_vm_enough_memory_mm(...)
-{
-  return __vm_enough_memory(mm, pages, cap_vm_enough_memory(mm, pages));
-}
-
-... which basically calls into the core capability code to check for
-CAP_SYS_ADMIN, passing the result onto __vm_enough_memory.
-
-If we then look at the LSM-enabled case, things are a little more
-complicated, but it looks something like this:
-
-int security_vm_enough_memory_mm(...)
-{
-  int cap_admin =3D 1;
-
-  for_each_lsm_hook(...) {
-    rc =3D lsm_hook(...);
-    if (rc <=3D 0) {
-      cap_admin =3D 0;
-      break;
-    }
-  }
-
-  return __vm_enough_memory(mm, pages, cap_admin);
-}
-
-... which as the comment says, "If all of the modules agree that it
-should be set it will. If any module thinks it should not be set it
-won't.".  However, if we look at which LSMs define vm_enough_memory()
-hooks we see just two: the capability LSM, and SELinux.  The
-capability LSM[1] just uses cap_vm_enough_memory() so that's
-straightforward, and the SELinux hook is selinux_vm_enough_memory(),
-which simply checks the loaded SELinux policy to see if the current
-task has permission to exercise the CAP_SYS_ADMIN capability.  SELinux
-can't grant CAP_SYS_ADMIN beyond what the capability code permits, it
-only restricts its use.  Put another way, if the capability code does
-not allow CAP_SYS_ADMIN in a call to security_vm_enough_memory() then
-CAP_SYS_ADMIN will not be granted regardless of what the other LSMs
-may decide.
-
-I do agree that the security_vm_enough_memory() hook is structured a
-bit differently than most of the other LSM hooks, but it still
-operates with the same philosophy: a LSM should only be allowed to
-restrict access, a LSM should never be allowed to grant access that
-would otherwise be denied by the traditional Linux access controls.
-
-Hopefully that explanation makes sense, but if things are still a bit
-fuzzy I would encourage you to go look at the code, I'm sure it will
-make sense once you spend a few minutes figuring out how it works.
-
-[1] There is a long and sorta bizarre history with the capability LSM,
-but just understand it is a bit "special" in many ways, and those
-"special" behaviors are intentional.
-
---
-paul-moore.com
+>> --
+>> paul-moore.com
