@@ -2,208 +2,209 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F080EC77B6E
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Apr 2023 00:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D8BC77B6C
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Apr 2023 01:43:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229624AbjDMAXi (ORCPT
+        id S229785AbjDMBnS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Apr 2023 20:23:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37374 "EHLO
+        Wed, 12 Apr 2023 21:43:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229822AbjDMAXh (ORCPT
+        with ESMTP id S229755AbjDMBnP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Apr 2023 20:23:37 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2B006E86;
-        Wed, 12 Apr 2023 17:23:34 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id e10so4680256ybp.4;
-        Wed, 12 Apr 2023 17:23:34 -0700 (PDT)
+        Wed, 12 Apr 2023 21:43:15 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DFC54202;
+        Wed, 12 Apr 2023 18:43:14 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id f26so27413666ejb.1;
+        Wed, 12 Apr 2023 18:43:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681345414;
+        d=gmail.com; s=20221208; t=1681350192;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fkJbxz/rx3LkE5iVVFcRLvjr8BVPXloxofNBD6GpIwU=;
-        b=S6jAUU3dev32j4+L0u63oQHokRTsmSx8MkTX9mypek2gt9tV6PqlMktxOIAACPobkH
-         rrDZUc2JXFQ8jKcC335QKfQJ/FCJXutTjTEnbYbZeWAMvCz31o9JaF/aBlls9bOgqplf
-         I26UYX+C9oYfuBcF9pnMcv57ESEtKBAoJWAAeVJ/xUpyQ1p7nhQyvZGlV9NgdYg+RPcR
-         b3qQKzrIIFzTQRev22vcwqCSGNPyks7C6uG71xBl99AUy7QEqFAnNNDzs4q+E5MQvCvB
-         ZXLT4FlSGr7CMFSZs8SldOFQNVpP6pqvwRAXDp7cxUXcF5C6dVdStkFe05ZBoUd4MSqp
-         1BXQ==
+        bh=PkivxPE2LhlDcunS+AzzmE3dct0mDEdNoJrScQ6Mvls=;
+        b=iAM6fyBgbg5yLl8qguTQJMIdKBppKPZv9PxjteyX/TrqO5FdZ+NybQkFZDZbS9I4xm
+         vtV6RP7ROS4iaMoBMlGQUrlvTS/oRiEyC1LzuhNMevrkeXiZf8ciQ5PxYlb2XNzQq4EH
+         UIWwEt2Nb6L32fhcaFPbkPca9m8QZ6esFc1sdp3Hn+ApZpefkgslaY6bPrRr/2XktaLR
+         XTkZobnZ9c1WG1223WvZ07Tt1mg0AGh97MuFQwCMm5umGuYG9M4RzBnrpnfNfg2lsFRA
+         wACzyNvNvi+5BJjwH9LYisYu/4EFhd0QCXgQyLTAGkyLkMddtOzLuDUKyqoHcF9m5CCs
+         Znvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681345414;
+        d=1e100.net; s=20221208; t=1681350192;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fkJbxz/rx3LkE5iVVFcRLvjr8BVPXloxofNBD6GpIwU=;
-        b=DgsNvhRd/tllI11y/JzS2XbRTpBIzaMzUfG0xB879YG/wB2XmEyxvxFO0+mn9Ss0Np
-         uGuIF19/ifnsicuCG0LJNTnSlcGX5/kmIOOujGLB48GH7ZL82Ck83hdJqMSS0/WskdYE
-         wjddlyu8slZnPxNkU2pQloEMNkc+E0Llao7ymEI7925MRahrZ4ul0KeQ9m6iaalGgZ4U
-         22sfNsxPg9/zVypRtVyMCSQSi7aeEu2eu+CUpCdGLFPqVU1cdjgmBqcKXA9JyzN/ipp/
-         fHBh+4GXa0COHEEISNjzHM3/PvB37RRuiiHvLcoPC09WkekiyWWJRsusutHvQQWw2g4B
-         cjRw==
-X-Gm-Message-State: AAQBX9c/yo/6RkOO5Xc0vHBdT82gi7DHwUiPsjMwHZT/A2Hh85Gcz8s+
-        aHlpq+45azr2xc+2KLxOgT1j8byRGpfWhgWOQdY=
-X-Google-Smtp-Source: AKy350ZJ4fnpGicjECv77SpcMYRfn5cN8NQQ9FTjoGq53Lky+pXDWcL+4uPtQ2DXR0QcQkKsQtV6G9nYOaetLMB/mVU=
-X-Received: by 2002:a25:72d6:0:b0:b8f:55f6:e50f with SMTP id
- n205-20020a2572d6000000b00b8f55f6e50fmr300765ybc.1.1681345413679; Wed, 12 Apr
- 2023 17:23:33 -0700 (PDT)
+        bh=PkivxPE2LhlDcunS+AzzmE3dct0mDEdNoJrScQ6Mvls=;
+        b=Df4f8pQvFUjeahJmJU1hVCGJmDW/J85lF7t2YU6uwBX8KZ6MxkhgEalWizFsjeBq/0
+         qUp9oWv11QjSgGuyKBuUus99BBsDu/KmgBnM94f6DZQFiu0ypEoy/bN7hAjlNwsSURWX
+         JqFDha2D+MTJ3HEimBPuEjj3EmUzxWnyHIn6XrkYuBnHFNzKnH1czlVu+Qe3AugYRWPk
+         viQips9WoZM0gMXbIPoa0W0sjtuLoG88vvVzlv81tfqN2x0q+Tm3jFTwMrcAEIMxcXio
+         XZcS+lKGC5U1rLiKc6xudXvGMSwnSG5Eure5ialGckK3el3WI0Bbnrv1l5i7laBlt0gV
+         yAVA==
+X-Gm-Message-State: AAQBX9ebaPSlouduyory1DIqObaq0ntrn9hHcfb09LPeL2bfcbSBTn5E
+        3WYqlOV6P6rr55roCjEtRVMxGpbyNG/276XSGPo=
+X-Google-Smtp-Source: AKy350YsZsHAoGOvyJyUVEIx9pT6liiv8dqrEdYiOD4TaFWOPDPbP7J0ILnS5VygxAGJ6uxjPjoNr9X0qmUbP8JpP30=
+X-Received: by 2002:a17:906:52d6:b0:949:8e10:31c1 with SMTP id
+ w22-20020a17090652d600b009498e1031c1mr407079ejn.5.1681350192512; Wed, 12 Apr
+ 2023 18:43:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230412043300.360803-1-andrii@kernel.org> <20230412043300.360803-6-andrii@kernel.org>
- <6436f71e.170a0220.75de.385b@mx.google.com>
-In-Reply-To: <6436f71e.170a0220.75de.385b@mx.google.com>
+References: <20230412043300.360803-1-andrii@kernel.org> <CAHC9VhQHmdZYnR=+rX-3FcRh127mhJt=jAnototfTiuSoOTptg@mail.gmail.com>
+ <6436eea2.170a0220.97ead.52a8@mx.google.com> <CAHC9VhR6ebsxtjSG8-fm7e=HU+srmziVuO6MU+pMpeSBv4vN+A@mail.gmail.com>
+ <6436f837.a70a0220.ada87.d446@mx.google.com> <CAHC9VhTF0JX3_zZ1ZRnoOw0ToYj6AsvK6OCiKqQgPvHepH9W3Q@mail.gmail.com>
+In-Reply-To: <CAHC9VhTF0JX3_zZ1ZRnoOw0ToYj6AsvK6OCiKqQgPvHepH9W3Q@mail.gmail.com>
 From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Wed, 12 Apr 2023 17:23:19 -0700
-Message-ID: <CAEf4Bzbq0ZD=0W4-4fn-be20DkU9HgFLyebKJC9zay3NW5KG1Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 5/8] selftests/bpf: validate new
- bpf_map_create_security LSM hook
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+Date:   Wed, 12 Apr 2023 18:43:00 -0700
+Message-ID: <CAEf4BzY9GPr9c2fTUS6ijHURtdNDL4xM6+JAEggEqLuz9sk4Dg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/8] New BPF map and BTF security LSM hooks
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
         ast@kernel.org, daniel@iogearbox.net, kpsingh@kernel.org,
-        paul@paul-moore.com, linux-security-module@vger.kernel.org
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 12, 2023 at 11:23=E2=80=AFAM Kees Cook <keescook@chromium.org> =
-wrote:
+On Wed, Apr 12, 2023 at 12:07=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
 >
-> On Tue, Apr 11, 2023 at 09:32:57PM -0700, Andrii Nakryiko wrote:
-> > Add selftests that goes over every known map type and validates that
-> > a combination of privileged/unprivileged modes and allow/reject/pass-th=
-rough
-> > LSM policy decisions behave as expected.
-> >
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
-> >  .../selftests/bpf/prog_tests/lsm_map_create.c | 143 ++++++++++++++++++
-> >  .../selftests/bpf/progs/lsm_map_create.c      |  32 ++++
-> >  tools/testing/selftests/bpf/test_progs.h      |   6 +
-> >  3 files changed, 181 insertions(+)
-> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_map_crea=
-te.c
-> >  create mode 100644 tools/testing/selftests/bpf/progs/lsm_map_create.c
-> >
+> On Wed, Apr 12, 2023 at 2:28=E2=80=AFPM Kees Cook <keescook@chromium.org>=
+ wrote:
+> > On Wed, Apr 12, 2023 at 02:06:23PM -0400, Paul Moore wrote:
+> > > On Wed, Apr 12, 2023 at 1:47=E2=80=AFPM Kees Cook <keescook@chromium.=
+org> wrote:
+> > > > On Wed, Apr 12, 2023 at 12:49:06PM -0400, Paul Moore wrote:
+> > > > > On Wed, Apr 12, 2023 at 12:33=E2=80=AFAM Andrii Nakryiko <andrii@=
+kernel.org> wrote:
+> > > > > >
+> > > > > > Add new LSM hooks, bpf_map_create_security and bpf_btf_load_sec=
+urity, which
+> > > > > > are meant to allow highly-granular LSM-based control over the u=
+sage of BPF
+> > > > > > subsytem. Specifically, to control the creation of BPF maps and=
+ BTF data
+> > > > > > objects, which are fundamental building blocks of any modern BP=
+F application.
+> > > > > >
+> > > > > > These new hooks are able to override default kernel-side CAP_BP=
+F-based (and
+> > > > > > sometimes CAP_NET_ADMIN-based) permission checks. It is now pos=
+sible to
+> > > > > > implement LSM policies that could granularly enforce more restr=
+ictions on
+> > > > > > a per-BPF map basis (beyond checking coarse CAP_BPF/CAP_NET_ADM=
+IN
+> > > > > > capabilities), but also, importantly, allow to *bypass kernel-s=
+ide
+> > > > > > enforcement* of CAP_BPF/CAP_NET_ADMIN checks for trusted applic=
+ations and use
+> > > > > > cases.
+> > > > >
+> > > > > One of the hallmarks of the LSM has always been that it is
+> > > > > non-authoritative: it cannot unilaterally grant access, it can on=
+ly
+> > > > > restrict what would have been otherwise permitted on a traditiona=
+l
+> > > > > Linux system.  Put another way, a LSM should not undermine the Li=
+nux
+> > > > > discretionary access controls, e.g. capabilities.
+> > > > >
+> > > > > If there is a problem with the eBPF capability-based access contr=
+ols,
+> > > > > that problem needs to be addressed in how the core eBPF code
+> > > > > implements its capability checks, not by modifying the LSM mechan=
+ism
+> > > > > to bypass these checks.
+> > > >
+> > > > I think semantics matter here. I wouldn't view this as _bypassing_
+> > > > capability enforcement: it's just more fine-grained access control.
 
-[...]
+Exactly. One of the motivations for this work was the need to move
+some production use cases that are only needing extra privileges so
+that they can use BPF into a more restrictive environment. Granting
+CAP_BPF+CAP_PERFMON+CAP_NET_ADMIN to all such use cases that need them
+for BPF usage is too coarse grained. These caps would allow those
+applications way more than just BPF usage. So the idea here is more
+finer-grained control of BPF-specific operations, granting *effective*
+CAP_BPF+CAP_PERFMON+CAP_NET_ADMIN caps dynamically based on custom
+production logic that would validate the use case.
 
-> > +             ret =3D libbpf_probe_bpf_map_type(map_type, NULL);
-> > +             ASSERT_EQ(ret, is_map_priv ? 0 : 1,  "default_unpriv_mode=
-");
-> > +
-> > +             /* allow any map creation for our thread */
-> > +             skel->bss->decision =3D 1;
-> > +             ret =3D libbpf_probe_bpf_map_type(map_type, NULL);
-> > +             ASSERT_EQ(ret, 1, "lsm_allow_unpriv_mode");
-> > +
-> > +             /* reject any map creation for our thread */
-> > +             skel->bss->decision =3D -1;
-> > +             ret =3D libbpf_probe_bpf_map_type(map_type, NULL);
-> > +             ASSERT_EQ(ret, 0, "lsm_reject_unpriv_mode");
-> > +
-> > +             /* restore privileges, but keep reject LSM policy */
-> > +             if (!ASSERT_OK(restore_priv_caps(orig_caps), "restore_cap=
-s"))
-> > +                     goto cleanup;
-> > +
-> > +skip_if_needs_btf:
-> > +             /* even with all caps map create will fail */
-> > +             skel->bss->decision =3D -1;
-> > +             ret =3D libbpf_probe_bpf_map_type(map_type, NULL);
-> > +             ASSERT_EQ(ret, 0, "lsm_reject_priv_mode");
-> > +     }
-> > +
-> > +cleanup:
-> > +     btf__free(btf);
-> > +     lsm_map_create__destroy(skel);
-> > +}
+This *is* an attempt to achieve a more secure production approach.
+
+> > > >
+> > > > For example, in many places we have things like:
+> > > >
+> > > >         if (!some_check(...) && !capable(...))
+> > > >                 return -EPERM;
+> > > >
+> > > > I would expect this is a similar logic. An operation can succeed if=
+ the
+> > > > access control requirement is met. The mismatch we have through-out=
+ the
+> > > > kernel is that capability checks aren't strictly done by LSM hooks.=
+ And
+> > > > this series conceptually, I think, doesn't violate that -- it's cha=
+nging
+> > > > the logic of the capability checks, not the LSM (i.e. there no LSM =
+hooks
+> > > > yet here).
+> > >
+> > > Patch 04/08 creates a new LSM hook, security_bpf_map_create(), which
+> > > when it returns a positive value "bypasses kernel checks".  The patch
+> > > isn't based on either Linus' tree or the LSM tree, I'm guessing it is
+> > > based on a eBPF tree, so I can't say with 100% certainty that it is
+> > > bypassing a capability check, but the description claims that to be
+> > > the case.
+> > >
+> > > Regardless of how you want to spin this, I'm not supportive of a LSM
+> > > hook which allows a LSM to bypass a capability check.  A LSM hook can
+> > > be used to provide additional access control restrictions beyond a
+> > > capability check, but a LSM hook should never be allowed to overrule
+> > > an access denial due to a capability check.
+> > >
+> > > > The reason CAP_BPF was created was because there was nothing else t=
+hat
+> > > > would be fine-grained enough at the time.
+> > >
+> > > The LSM layer predates CAP_BPF, and one could make a very solid
+> > > argument that one of the reasons LSMs exist is to provide
+> > > supplementary controls due to capability-based access controls being =
+a
+> > > poor fit for many modern use cases.
+> >
+> > I generally agree with what you say, but we DO have this code pattern:
+> >
+> >          if (!some_check(...) && !capable(...))
+> >                  return -EPERM;
 >
-> This test looks good! One meta-comment about testing would be: are you
-> sure each needs to be ASSERT instead of EXPECT? (i.e. should forward
-> progress through this test always be aborted when a check fails?)
+> I think we need to make this more concrete; we don't have a pattern in
+> the upstream kernel where 'some_check(...)' is a LSM hook, right?
+> Simply because there is another kernel access control mechanism which
+> allows a capability check to be skipped doesn't mean I want to allow a
+> LSM hook to be used to skip a capability check.
+
+This work is an attempt to tighten the security of production systems
+by allowing to drop too coarse-grained and permissive capabilities
+(like CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, which inevitable allow more
+than production use cases are meant to be able to do) and then grant
+specific BPF operations on specific BPF programs/maps based on custom
+LSM security policy, which validates application trustworthiness using
+custom production-specific logic.
+
+Isn't this goal in line with LSMs mission to enhance system security?
+
 >
+> > It looks to me like this series can be refactored to do the same. I
+> > wouldn't consider that to be a "bypass", but I would agree the current
+> > series looks too much like "bypass", and makes reasoning about the
+> > effect of the LSM hooks too "special". :)
 
-it's our custom BPF selftests ASSERTs, they don't really do assert()
-and panic, they really are just a check (so I'm guessing they have
-EXPECT semantics you are referring to). And if check doesn't pass, we
-just set a flag notifying our own custom test runner that test failed
-and proceed.
+Sorry, I didn't realize that the current code layout is making things
+more confusing. I'll address feedback to make the intent a bit
+clearer.
 
-So in short, it already behaves like you would want with EXPECT. We
-just don't use kselftests's ASSERTs and EXPECTs.
-
-
-> > diff --git a/tools/testing/selftests/bpf/progs/lsm_map_create.c b/tools=
-/testing/selftests/bpf/progs/lsm_map_create.c
-> > new file mode 100644
-> > index 000000000000..093825c68459
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/progs/lsm_map_create.c
-> > @@ -0,0 +1,32 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
-> > +
-> > +#include "vmlinux.h"
-> > +#include <bpf/bpf_helpers.h>
-> > +#include <bpf/bpf_tracing.h>
-> > +#include <errno.h>
-> > +
-> > +char _license[] SEC("license") =3D "GPL";
-> > +
-> > +int my_tid;
-> > +/* LSM enforcement:
-> > + *   - 0, delegate to kernel;
-> > + *   - 1, allow;
-> > + *   - -1, reject.
-> > + */
-> > +int decision;
-> > +
-> > +SEC("lsm/bpf_map_create_security")
-> > +int BPF_PROG(allow_unpriv_maps, union bpf_attr *attr)
-> > +{
-> > +     if (!my_tid || (u32)bpf_get_current_pid_tgid() !=3D my_tid)
-> > +             return 0; /* keep processing LSM hooks */
-> > +
-> > +     if (decision =3D=3D 0)
-> > +             return 0;
-> > +
-> > +     if (decision > 0)
-> > +             return 1; /* allow */
-> > +
-> > +     return -EPERM;
-> > +}
-> > diff --git a/tools/testing/selftests/bpf/test_progs.h b/tools/testing/s=
-elftests/bpf/test_progs.h
-> > index 10ba43250668..12f9c6652d40 100644
-> > --- a/tools/testing/selftests/bpf/test_progs.h
-> > +++ b/tools/testing/selftests/bpf/test_progs.h
-> > @@ -23,6 +23,7 @@ typedef __u16 __sum16;
-> >  #include <linux/perf_event.h>
-> >  #include <linux/socket.h>
-> >  #include <linux/unistd.h>
-> > +#include <sys/syscall.h>
-> >
-> >  #include <sys/ioctl.h>
-> >  #include <sys/wait.h>
-> > @@ -176,6 +177,11 @@ void test__skip(void);
-> >  void test__fail(void);
-> >  int test__join_cgroup(const char *path);
-> >
-> > +static inline int gettid(void)
-> > +{
-> > +     return syscall(SYS_gettid);
-> > +}
-> > +
-> >  #define PRINT_FAIL(format...)                                         =
-         \
-> >       ({                                                               =
-      \
-> >               test__fail();                                            =
-      \
-> > --
-> > 2.34.1
-> >
 >
 > --
-> Kees Cook
+> paul-moore.com
