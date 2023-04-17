@@ -2,269 +2,185 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7438C77B73
-	for <linux-security-module@archiver.kernel.org>; Sun, 16 Apr 2023 16:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D823AC77B61
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Apr 2023 01:57:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230110AbjDPQNe (ORCPT
+        id S229571AbjDQB53 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 16 Apr 2023 12:13:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55232 "EHLO
+        Sun, 16 Apr 2023 21:57:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230329AbjDPQNd (ORCPT
+        with ESMTP id S229461AbjDQB52 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 16 Apr 2023 12:13:33 -0400
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc08])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C303595
-        for <linux-security-module@vger.kernel.org>; Sun, 16 Apr 2023 09:13:30 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4PzwGJ41rmzMqCyp;
-        Sun, 16 Apr 2023 18:13:28 +0200 (CEST)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4PzwGH32D6zMppDR;
-        Sun, 16 Apr 2023 18:13:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1681661608;
-        bh=wvZktsS2wovttTPKhuIKuxoQ9kE6pVtEyePlXYSAocU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=snAwV5HoppK8rU92IrbLQPI5kLV4FAtdWXM9erbn4J9qeDk+8dQ+TJHb00MyqtEh/
-         WWFcQr5dQ/atS6nigS2oSoWuaoe6EpEskhGukpXD6ZHzsEkN51aXdqj+5XJyyHYxiV
-         ZY0HpqHtIscLGKWaBGYEraSZDp4v85AdMvL5l4Wk=
-Message-ID: <ec23be77-566e-c8fd-179e-f50e025ac2cf@digikod.net>
-Date:   Sun, 16 Apr 2023 18:13:32 +0200
-MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v10 13/13] landlock: Document Landlock's network support
+        Sun, 16 Apr 2023 21:57:28 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5E751732;
+        Sun, 16 Apr 2023 18:57:26 -0700 (PDT)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33GNUA2O001326;
+        Mon, 17 Apr 2023 01:57:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=L9Wcv8rkKVN5YPndk6JYhl0L5ZbWkzhm+xluOAyJPHs=;
+ b=lGqZ1ukiHNFWg/PALeJBikL6Cl8lCmFpUyRdRJgDDFdX66PkzF8DyqO+iy1XF6XR1BEF
+ i127tW3IUKxyvNc4URbU//R5ADdFDRpqUMBnwzkNipwUm65n5aXNRxocl1EWsysCJvX1
+ 4ilABjuUGNeqtsWRYReXQv44JzLfSGyqmI+gDfSloV7+ZB+5VNuTzAaZdPrqUAr1iZ1z
+ msmq1b7C6B+I/v0F9sZUSHVba1r6Pm9I5pVCvbYJsHBqJFu7jdxjt9qUhH8vHnJc+cTr
+ rdhFATZnwkmwuM4o8gamlAvLk2P82G0tD5KjKNXwBlRmXWTVc2wJ+FKw1m4dP1WiESMv hA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q0deyu3kn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Apr 2023 01:57:15 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33H1uKvw022701;
+        Mon, 17 Apr 2023 01:57:15 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q0deyu3kc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Apr 2023 01:57:15 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 33H1u8Wr001635;
+        Mon, 17 Apr 2023 01:57:14 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([9.208.130.97])
+        by ppma02dal.us.ibm.com (PPS) with ESMTPS id 3pykj72q5g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Apr 2023 01:57:13 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 33H1vCfU12059198
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Apr 2023 01:57:12 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7EF9858054;
+        Mon, 17 Apr 2023 01:57:12 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 384485803F;
+        Mon, 17 Apr 2023 01:57:11 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Apr 2023 01:57:11 +0000 (GMT)
+Message-ID: <e2455c0e-5a17-7fc1-95e3-5f2aca2eb409@linux.ibm.com>
+Date:   Sun, 16 Apr 2023 21:57:10 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after
+ writes
 Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20230323085226.1432550-1-konstantin.meskhidze@huawei.com>
- <20230323085226.1432550-14-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230323085226.1432550-14-konstantin.meskhidze@huawei.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Paul Moore <paul@paul-moore.com>, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+ <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: lzAmk8wQKKpT3TCd3DOaOW_gHklSx6J9
+X-Proofpoint-GUID: hmd0gN8gzfOCF7eDU2NlxfKWEDSI_Btz
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-16_16,2023-04-14_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ suspectscore=0 spamscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304170012
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 23/03/2023 09:52, Konstantin Meskhidze wrote:
-> Describe network access rules for TCP sockets. Add network access
-> example in the tutorial. Add kernel configuration support for network.
-> 
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> ---
-> 
-> Changes since v9:
-> * Minor refactoring.
-> 
-> Changes since v8:
-> * Minor refactoring.
-> 
-> Changes since v7:
-> * Fixes documentaion logic errors and typos as Mickaёl suggested:
-> https://lore.kernel.org/netdev/9f354862-2bc3-39ea-92fd-53803d9bbc21@digikod.net/
-> 
-> Changes since v6:
-> * Adds network support documentaion.
-> 
-> ---
->   Documentation/userspace-api/landlock.rst | 69 ++++++++++++++++++------
->   1 file changed, 54 insertions(+), 15 deletions(-)
-> 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index f6a7da21708a..0d640bfa3126 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -11,10 +11,10 @@ Landlock: unprivileged access control
->   :Date: October 2022
-> 
->   The goal of Landlock is to enable to restrict ambient rights (e.g. global
-> -filesystem access) for a set of processes.  Because Landlock is a stackable
-> -LSM, it makes possible to create safe security sandboxes as new security layers
-> -in addition to the existing system-wide access-controls. This kind of sandbox
-> -is expected to help mitigate the security impact of bugs or
-> +filesystem or network access) for a set of processes.  Because Landlock
-> +is a stackable LSM, it makes possible to create safe security sandboxes as new
-> +security layers in addition to the existing system-wide access-controls. This
-> +kind of sandbox is expected to help mitigate the security impact of bugs or
->   unexpected/malicious behaviors in user space applications.  Landlock empowers
->   any process, including unprivileged ones, to securely restrict themselves.
-> 
-> @@ -30,8 +30,9 @@ Landlock rules
-> 
->   A Landlock rule describes an action on an object.  An object is currently a
 
-A Landlock rule describes an action on a kernel object.  Filesystem 
-objects can be defined with a file hierarchy.  Since the fourth ABI 
-version, TCP ports enable to identify inbound or outbound connections. 
-Actions on these kernel objects are defined according to `access 
-rights`_.  A set of rules…
+On 4/7/23 09:29, Jeff Layton wrote:
+>>>>>
+>>>>> I would ditch the original proposal in favor of this 2-line patch shown here:
+>>>>>
+>>>>> https://lore.kernel.org/linux-integrity/a95f62ed-8b8a-38e5-e468-ecbde3b221af@linux.ibm.com/T/#m3bd047c6e5c8200df1d273c0ad551c645dd43232
+>>
+>> We should cool it with the quick hacks to fix things. :)
+>>
+> 
+> Yeah. It might fix this specific testcase, but I think the way it uses
+> the i_version is "gameable" in other situations. Then again, I don't
+> know a lot about IMA in this regard.
+> 
+> When is it expected to remeasure? If it's only expected to remeasure on
+> a close(), then that's one thing. That would be a weird design though.
+
+IMA should remeasure the file when it has visibly changed for another thread or process.
 
 
->   file hierarchy, and the related filesystem actions are defined with `access
-> -rights`_.  A set of rules is aggregated in a ruleset, which can then restrict
-> -the thread enforcing it, and its future children.
-> +rights`_.  Since ABI version 4 a port data appears with related network actions
-> +for TCP socket families.  A set of rules is aggregated in a ruleset, which
-> +can then restrict the thread enforcing it, and its future children.
+>>> -----------------------8<---------------------------
+>>>
+>>> [PATCH] IMA: use vfs_getattr_nosec to get the i_version
+>>>
+>>> IMA currently accesses the i_version out of the inode directly when it
+>>> does a measurement. This is fine for most simple filesystems, but can be
+>>> problematic with more complex setups (e.g. overlayfs).
+>>>
+>>> Make IMA instead call vfs_getattr_nosec to get this info. This allows
+>>> the filesystem to determine whether and how to report the i_version, and
+>>> should allow IMA to work properly with a broader class of filesystems in
+>>> the future.
+>>>
+>>> Reported-by: Stefan Berger <stefanb@linux.ibm.com>
+>>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>>> ---
+>>
+>> So, I think we want both; we want the ovl_copyattr() and the
+>> vfs_getattr_nosec() change:
+>>
+>> (1) overlayfs should copy up the inode version in ovl_copyattr(). That
+>>      is in line what we do with all other inode attributes. IOW, the
+>>      overlayfs inode's i_version counter should aim to mirror the
+>>      relevant layer's i_version counter. I wouldn't know why that
+>>      shouldn't be the case. Asking the other way around there doesn't
+>>      seem to be any use for overlayfs inodes to have an i_version that
+>>      isn't just mirroring the relevant layer's i_version.
 > 
->   Defining and enforcing a security policy
->   ----------------------------------------
-> @@ -41,7 +42,8 @@ example, the ruleset will contain rules that only allow read actions, but write
-
-"the ruleset will contain rules that only allow filesystem read actions 
-and establish a specific TCP connection, but filesystem write actions 
-and other TCP actions will be denied."
-
-
->   actions will be denied.  The ruleset then needs to handle both of these kind of
->   actions.  This is required for backward and forward compatibility (i.e. the
->   kernel and user space may not know each other's supported restrictions), hence
-> -the need to be explicit about the denied-by-default access rights.
-> +the need to be explicit about the denied-by-default access rights.  Also, ruleset > +will have network rules for specific ports, so it should handle 
-network actions.
-
-This hunk can then be removed.
-
-
+> It's less than ideal to do this IMO, particularly with an IS_I_VERSION
+> inode.
 > 
->   .. code-block:: c
+> You can't just copy up the value from the upper. You'll need to call
+> inode_query_iversion(upper_inode), which will flag the upper inode for a
+> logged i_version update on the next write. IOW, this could create some
+> (probably minor) metadata write amplification in the upper layer inode
+> with IS_I_VERSION inodes.
 > 
-> @@ -62,6 +64,9 @@ the need to be explicit about the denied-by-default access rights.
->               LANDLOCK_ACCESS_FS_MAKE_SYM |
->               LANDLOCK_ACCESS_FS_REFER |
->               LANDLOCK_ACCESS_FS_TRUNCATE,
-> +        .handled_access_net =
-> +            LANDLOCK_ACCESS_NET_BIND_TCP |
-> +            LANDLOCK_ACCESS_NET_CONNECT_TCP,
->       };
 > 
->   Because we may not know on which kernel version an application will be
-> @@ -70,14 +75,18 @@ should try to protect users as much as possible whatever the kernel they are
->   using.  To avoid binary enforcement (i.e. either all security features or
->   none), we can leverage a dedicated Landlock command to get the current version
->   of the Landlock ABI and adapt the handled accesses.  Let's check if we should
-> -remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
-> -access rights, which are only supported starting with the second and third
-> -version of the ABI.
-> +remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE`` or
-> +network access rights, which are only supported starting with the second,
-> +third and fourth version of the ABI.
+>> (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
+>>      Currently, ima assumes that it will get the correct i_version from
+>>      an inode but that just doesn't hold for stacking filesystem.
+>>
+>> While (1) would likely just fix the immediate bug (2) is correct and
+>> _robust_. If we change how attributes are handled vfs_*() helpers will
+>> get updated and ima with it. Poking at raw inodes without using
+>> appropriate helpers is much more likely to get ima into trouble.
 > 
->   .. code-block:: c
+> This will fix it the right way, I think (assuming it actually works),
+> and should open the door for IMA to work properly with networked
+> filesystems that support i_version as well.
 > 
->       int abi;
-> 
-> +    #define ACCESS_NET_BIND_CONNECT ( \
-> +        LANDLOCK_ACCESS_NET_BIND_TCP | \
-> +        LANDLOCK_ACCESS_NET_CONNECT_TCP)
-> +
->       abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
->       if (abi < 0) {
->           /* Degrades gracefully if Landlock is not handled. */
-> @@ -92,6 +101,11 @@ version of the ABI.
->       case 2:
->           /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
->           ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-> +    case 3:
-> +        /* Removes network support for ABI < 4 */
-> +        ruleset_attr.handled_access_net &=
-> +            ~(LANDLOCK_ACCESS_NET_BIND_TCP |
-> +              LANDLOCK_ACCESS_NET_CONNECT_TCP);
->       }
-> 
->   This enables to create an inclusive ruleset that will contain our rules.
-> @@ -143,10 +157,23 @@ for the ruleset creation, by filtering access rights according to the Landlock
->   ABI version.  In this example, this is not required because all of the requested
->   ``allowed_access`` rights are already available in ABI 1.
-> 
-> -We now have a ruleset with one rule allowing read access to ``/usr`` while
-> -denying all other handled accesses for the filesystem.  The next step is to
-> -restrict the current thread from gaining more privileges (e.g. thanks to a SUID
-> -binary).
-> +For network access-control, we can add a set of rules that allow to use a port
-> +number for a specific action.
+> Note that there Stephen is correct that calling getattr is probably
+> going to be less efficient here since we're going to end up calling
+> generic_fillattr unnecessarily, but I still think it's the right thing
+> to do.
 
-It would be more useful to change this example with a TCP connection to 
-port 443 and explain that it will only allow to connect to HTTPS services.
+I was wondering whether to use the existing inode_eq_iversion() for all
+other filesystems than overlayfs, nfs, and possibly other ones (which ones?)
+where we would use the vfs_getattr_nosec() via a case on inode->i_sb->s_magic?
+If so, would this function be generic enough to be a public function for libfs.c?
 
-"…for a specific action: HTTPS connections."
-
-
-> +
-> +.. code-block:: c
-> +
-> +    struct landlock_net_service_attr net_service = {
-> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-
-NET_CONNECT_TCP
-
-> +        .port = 8080,
-
-443
-
-
-> +    };
-> +
-> +    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-> +                            &net_service, 0);
-> +
-> +The next step is to restrict the current thread from gaining more privileges
-> +(e.g. through a SUID binary). We now have a ruleset with the first rule allowing
-> +read access to ``/usr`` while denying all other handled accesses for the filesystem,
-> +and a second rule allowing TCP binding on port 8080.
-
-"allowing HTTPS connections."
-
+I'll hopefully be able to test the proposed patch tomorrow.
 
 > 
->   .. code-block:: c
-> 
-> @@ -355,7 +382,7 @@ Access rights
->   -------------
-> 
->   .. kernel-doc:: include/uapi/linux/landlock.h
-> -    :identifiers: fs_access
-> +    :identifiers: fs_access net_access
-> 
->   Creating a new ruleset
->   ----------------------
-> @@ -374,6 +401,7 @@ Extending a ruleset
-> 
->   .. kernel-doc:: include/uapi/linux/landlock.h
->       :identifiers: landlock_rule_type landlock_path_beneath_attr
-> +                  landlock_net_service_attr
-> 
->   Enforcing a ruleset
->   -------------------
-> @@ -451,6 +479,12 @@ always allowed when using a kernel that only supports the first or second ABI.
->   Starting with the Landlock ABI version 3, it is now possible to securely control
->   truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
-> 
-> +Network support (ABI < 4)
-> +-------------------------
-> +
-> +Starting with the Landlock ABI version 4, it is now possible to restrict TCP
-> +bind and connect actions to only a set of allowed ports.
-> +
->   .. _kernel_support:
-> 
->   Kernel support
-> @@ -469,6 +503,11 @@ still enable it by adding ``lsm=landlock,[...]`` to
->   Documentation/admin-guide/kernel-parameters.rst thanks to the bootloader
->   configuration.
-> 
-> +To be able to explicitly allow TCP operations (e.g., adding a network rule with
-> +``LANDLOCK_ACCESS_NET_TCP_BIND``), the kernel must support TCP (``CONFIG_INET=y``).
-> +Otherwise, sys_landlock_add_rule() returns an ``EAFNOSUPPORT`` error, which can
-> +safely be ignored because this kind of TCP operation is already not possible.
-> +
->   Questions and answers
->   =====================
-> 
-> --
-> 2.25.1
-> 
+> If it turns out to cause measurable performance regressions though,
+> maybe we can look at adding a something that still calls ->getattr if it
+> exists but only returns the change_cookie value.
