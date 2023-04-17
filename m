@@ -2,198 +2,259 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 720E3C77B76
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Apr 2023 13:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F369EC77B70
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Apr 2023 14:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230097AbjDQNYG (ORCPT
+        id S230436AbjDQOIW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Apr 2023 09:24:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51850 "EHLO
+        Mon, 17 Apr 2023 10:08:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229898AbjDQNYC (ORCPT
+        with ESMTP id S230285AbjDQOIF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Apr 2023 09:24:02 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 510F549FF;
-        Mon, 17 Apr 2023 06:23:56 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-2f625d52275so1550487f8f.3;
-        Mon, 17 Apr 2023 06:23:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681737835; x=1684329835;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RKAAc3ZsjOsQZpjk6XJI6NMJzVbDtqI98XsTFMuJ8w4=;
-        b=oNOvCHGNkSBvUbh4ERh8j/DqJtUwbQoII2LGqZbVAhWFWfbbcnRnf+8UhdDzO/d1ET
-         i21AXWRsFFh1RWrHvwHpOF6isEiP2D2zO1ON4sIutL4dtw2gJaEBVtjK+ZX1jqOwfXxe
-         bVmx0wrpYw1yojVfAmWruLcF69lFlLHUEQKj/58zZKf6DmefiuCIzxxqH4DJID8yaXbt
-         urENc2lY29lF4j2ZupatM9Uz2p8FmREaiqOOYw7xEoUPXmJhrPFMpD8ihomU3gxN+/no
-         nX01agI2B5Q0NxrW9XatoyAzGuOV0xtn3Regsk8O0VTAdr+YKUHGHmxJzeZsjHXbaZ7u
-         1r4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681737835; x=1684329835;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RKAAc3ZsjOsQZpjk6XJI6NMJzVbDtqI98XsTFMuJ8w4=;
-        b=FSSFwy/LXp1yxMfUHZds9iHh9uVVd9SMbz4BvAJ6OylEtIyPLs/MI4HyaGarwz2Kel
-         aJTg3iaMENh6AEZI4CSI9GfJ22EcVbHtZrYG8DjKbOJ99KlJtACG18g9RgBzUV43UtcN
-         OVEDxHUtoWYbTbWrel4tlp/eJ10mS7c+YkWro7DPRA/amM28+xOxgUIQd8GC1/5ft84k
-         0iUxiWDBdXFEhegYO3p1cLi31bclAYk6ZBGxotkKupqXT5UW3+J+AOArtlqJdwv6JGcv
-         dhaNWDpC47kng0W4qUPGLDHHNxcjdtu7dSREooy6d0fqMTL+TgPZ4SJ3d8CalcYOsI3d
-         iQow==
-X-Gm-Message-State: AAQBX9cxtwIfd2bfg8RTtISqu9GkCF3uK2agGjGSGIfkdHRLLvOqOaTS
-        /MkDroe32/oMe3mRyR3jXq4=
-X-Google-Smtp-Source: AKy350ZgGhmNdbORfcWWT3+kEaLh1DjBGO2Qr9T2OkuqSkpU4KmNaszZ8mszkHwAUCbDgkdgFsooIQ==
-X-Received: by 2002:adf:dd4b:0:b0:2ef:eb54:4dc0 with SMTP id u11-20020adfdd4b000000b002efeb544dc0mr6790292wrm.51.1681737834522;
-        Mon, 17 Apr 2023 06:23:54 -0700 (PDT)
-Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
-        by smtp.gmail.com with ESMTPSA id k14-20020a5d66ce000000b002f103ca90cdsm10571529wrw.101.2023.04.17.06.23.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Apr 2023 06:23:53 -0700 (PDT)
-Date:   Mon, 17 Apr 2023 14:23:52 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mon, 17 Apr 2023 10:08:05 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0D517EDA;
+        Mon, 17 Apr 2023 07:07:33 -0700 (PDT)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33HCqiBF006625;
+        Mon, 17 Apr 2023 14:07:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=laoXS98o4L49IyYojK48ave0JpcBP4QNQBAEUKLJsqQ=;
+ b=Yxk+/6UtyQ2VoxtSYIMywS5JS8/eo7yZIh49cUs3tiKaBPVzr2HoT1BAEm4W30JuHyM0
+ 3w7NyJ4iC4wiKmB80IlpAWZMkh081xrcSokaJNaTy200tkb/i1juDRPy2KMm3tVgOVKq
+ JxtEUqkAfUkVgw/TUu28gwtyY5O/ZuwQE5oIbO9Ly5iX0T3/tDy6SvkhxnWppzME/8wz
+ wD6JDvdpbvl6h6lPcXTQ13ZASmXxSmyewCGLmiVq5xqqGFPa6Fvsh4unJAVFXc5oiDW3
+ MO2847gxTIciCA6I5Ng7Jt9uKQYy/Ul0HHD/+ZtVVTmk0KvgEqctaEh1BqN2cqe3dARq YA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3q12vkg8cm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Apr 2023 14:07:10 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33HDQZSB024433;
+        Mon, 17 Apr 2023 14:07:10 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3q12vkg8c9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Apr 2023 14:07:10 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 33HC5u5D029086;
+        Mon, 17 Apr 2023 14:07:09 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([9.208.129.118])
+        by ppma04dal.us.ibm.com (PPS) with ESMTPS id 3pykj760v4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Apr 2023 14:07:09 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 33HE77Gr8651388
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Apr 2023 14:07:07 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 971C858056;
+        Mon, 17 Apr 2023 14:07:07 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE94758062;
+        Mon, 17 Apr 2023 14:07:05 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Apr 2023 14:07:05 +0000 (GMT)
+Message-ID: <496ba5fc-9c0b-a906-2373-5ac061d6da3a@linux.ibm.com>
+Date:   Mon, 17 Apr 2023 10:07:05 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after
+ writes
+Content-Language: en-US
+To:     Jeff Layton <jlayton@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH 3/7] mm/gup: remove vmas parameter from
- get_user_pages_remote()
-Message-ID: <241f0c22-f3d6-436e-a0d8-be04e281ed2f@lucifer.local>
-References: <cover.1681508038.git.lstoakes@gmail.com>
- <5a4cf1ebf1c6cdfabbf2f5209facb0180dd20006.1681508038.git.lstoakes@gmail.com>
- <ZD1FECftWekha6Do@nvidia.com>
- <9be77e7e-4531-4e1c-9e0d-4edbb5ad3bd5@lucifer.local>
- <ZD1GrBezHrJTo6x2@nvidia.com>
+        Paul Moore <paul@paul-moore.com>
+Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        miklos@szeredi.hu, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        amir73il@gmail.com
+References: <20230405171449.4064321-1-stefanb@linux.ibm.com>
+ <20230406-diffamieren-langhaarig-87511897e77d@brauner>
+ <CAHC9VhQsnkLzT7eTwVr-3SvUs+mcEircwztfaRtA+4ZaAh+zow@mail.gmail.com>
+ <a6c6e0e4-047f-444b-3343-28b71ddae7ae@linux.ibm.com>
+ <CAHC9VhQyWa1OnsOvoOzD37EmDnESfo4Rxt2eCSUgu+9U8po-CA@mail.gmail.com>
+ <20230406-wasser-zwanzig-791bc0bf416c@brauner>
+ <546145ecbf514c4c1a997abade5f74e65e5b1726.camel@kernel.org>
+ <45a9c575-0b7e-f66a-4765-884865d14b72@linux.ibm.com>
+ <60339e3bd08a18358ac8c8a16dc67c74eb8ba756.camel@kernel.org>
+ <d61ed13b-0fd2-0283-96d2-0ff9c5e0a2f9@linux.ibm.com>
+ <4f739cc6847975991874d56ef9b9716c82cf62a3.camel@kernel.org>
+ <7d8f05e26dc7152dfad771dfc867dec145aa054b.camel@kernel.org>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <7d8f05e26dc7152dfad771dfc867dec145aa054b.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: vaSjj_r0eeuQAYQrTvAwNhKeBSsvRQyk
+X-Proofpoint-ORIG-GUID: 9Zb0X9YUjnhtVPWptrW6DyL4kDDUKdjv
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZD1GrBezHrJTo6x2@nvidia.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-17_08,2023-04-17_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ malwarescore=0 adultscore=0 lowpriorityscore=0 mlxlogscore=999 bulkscore=0
+ spamscore=0 phishscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2304170126
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 17, 2023 at 10:16:28AM -0300, Jason Gunthorpe wrote:
-> On Mon, Apr 17, 2023 at 02:13:39PM +0100, Lorenzo Stoakes wrote:
-> > On Mon, Apr 17, 2023 at 10:09:36AM -0300, Jason Gunthorpe wrote:
-> > > On Sat, Apr 15, 2023 at 12:27:31AM +0100, Lorenzo Stoakes wrote:
-> > > > The only instances of get_user_pages_remote() invocations which used the
-> > > > vmas parameter were for a single page which can instead simply look up the
-> > > > VMA directly. In particular:-
-> > > >
-> > > > - __update_ref_ctr() looked up the VMA but did nothing with it so we simply
-> > > >   remove it.
-> > > >
-> > > > - __access_remote_vm() was already using vma_lookup() when the original
-> > > >   lookup failed so by doing the lookup directly this also de-duplicates the
-> > > >   code.
-> > > >
-> > > > This forms part of a broader set of patches intended to eliminate the vmas
-> > > > parameter altogether.
-> > > >
-> > > > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-> > > > ---
-> > > >  arch/arm64/kernel/mte.c   |  5 +++--
-> > > >  arch/s390/kvm/interrupt.c |  2 +-
-> > > >  fs/exec.c                 |  2 +-
-> > > >  include/linux/mm.h        |  2 +-
-> > > >  kernel/events/uprobes.c   | 10 +++++-----
-> > > >  mm/gup.c                  | 12 ++++--------
-> > > >  mm/memory.c               |  9 +++++----
-> > > >  mm/rmap.c                 |  2 +-
-> > > >  security/tomoyo/domain.c  |  2 +-
-> > > >  virt/kvm/async_pf.c       |  3 +--
-> > > >  10 files changed, 23 insertions(+), 26 deletions(-)
-> > > >
-> > > > diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
-> > > > index f5bcb0dc6267..74d8d4007dec 100644
-> > > > --- a/arch/arm64/kernel/mte.c
-> > > > +++ b/arch/arm64/kernel/mte.c
-> > > > @@ -437,8 +437,9 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
-> > > >  		struct page *page = NULL;
-> > > >
-> > > >  		ret = get_user_pages_remote(mm, addr, 1, gup_flags, &page,
-> > > > -					    &vma, NULL);
-> > > > -		if (ret <= 0)
-> > > > +					    NULL);
-> > > > +		vma = vma_lookup(mm, addr);
-> > > > +		if (ret <= 0 || !vma)
-> > > >  			break;
-> > >
-> > > Given the slightly tricky error handling, it would make sense to turn
-> > > this pattern into a helper function:
-> > >
-> > > page = get_single_user_page_locked(mm, addr, gup_flags, &vma);
-> > > if (IS_ERR(page))
-> > >   [..]
-> > >
-> > > static inline struct page *get_single_user_page_locked(struct mm_struct *mm,
-> > >    unsigned long addr, int gup_flags, struct vm_area_struct **vma)
-> > > {
-> > > 	struct page *page;
-> > > 	int ret;
-> > >
-> > > 	ret = get_user_pages_remote(*mm, addr, 1, gup_flags, &page, NULL, NULL);
-> > > 	if (ret < 0)
-> > > 	   return ERR_PTR(ret);
-> > > 	if (WARN_ON(ret == 0))
-> > > 	   return ERR_PTR(-EINVAL);
-> > >         *vma = vma_lookup(mm, addr);
-> > > 	if (WARN_ON(!*vma) {
-> > > 	   put_user_page(page);
-> > > 	   return ERR_PTR(-EINVAL);
-> > >         }
-> > > 	return page;
-> > > }
-> > >
-> > > It could be its own patch so this change was just a mechanical removal
-> > > of NULL
-> > >
-> > > Jason
-> > >
-> >
-> > Agreed, I think this would work better as a follow up patch however so as
-> > not to distract too much from the core change.
->
-> I don't think you should open code sketchy error handling in several
-> places and then clean it up later. Just do it right from the start.
->
 
-Intent was to do smallest change possible (though through review that grew
-of course), but I see your point, in this instance this is fiddly stuff and
-probably better to abstract it to enforce correct handling.
 
-I'll respin + add something like this.
+On 4/6/23 18:04, Jeff Layton wrote:
+> On Thu, 2023-04-06 at 17:24 -0400, Jeff Layton wrote:
+>> On Thu, 2023-04-06 at 16:22 -0400, Stefan Berger wrote:
+>>>
+>>> On 4/6/23 15:37, Jeff Layton wrote:
+>>>> On Thu, 2023-04-06 at 15:11 -0400, Stefan Berger wrote:
+>>>>>
+>>>>> On 4/6/23 14:46, Jeff Layton wrote:
+>>>>>> On Thu, 2023-04-06 at 17:01 +0200, Christian Brauner wrote:
+>>>>>>> On Thu, Apr 06, 2023 at 10:36:41AM -0400, Paul Moore wrote:
+>>>>>
+>>>>>>
+>>>>>> Correct. As long as IMA is also measuring the upper inode then it seems
+>>>>>> like you shouldn't need to do anything special here.
+>>>>>
+>>>>> Unfortunately IMA does not notice the changes. With the patch provided in the other email IMA works as expected.
+>>>>>
+>>>>
+>>>>
+>>>> It looks like remeasurement is usually done in ima_check_last_writer.
+>>>> That gets called from __fput which is called when we're releasing the
+>>>> last reference to the struct file.
+>>>>
+>>>> You've hooked into the ->release op, which gets called whenever
+>>>> filp_close is called, which happens when we're disassociating the file
+>>>> from the file descriptor table.
+>>>>
+>>>> So...I don't get it. Is ima_file_free not getting called on your file
+>>>> for some reason when you go to close it? It seems like that should be
+>>>> handling this.
+>>>
+>>> I would ditch the original proposal in favor of this 2-line patch shown here:
+>>>
+>>> https://lore.kernel.org/linux-integrity/a95f62ed-8b8a-38e5-e468-ecbde3b221af@linux.ibm.com/T/#m3bd047c6e5c8200df1d273c0ad551c645dd43232
+>>>
+>>>
+>>
+>> Ok, I think I get it. IMA is trying to use the i_version from the
+>> overlayfs inode.
+>>
+>> I suspect that the real problem here is that IMA is just doing a bare
+>> inode_query_iversion. Really, we ought to make IMA call
+>> vfs_getattr_nosec (or something like it) to query the getattr routine in
+>> the upper layer. Then overlayfs could just propagate the results from
+>> the upper layer in its response.
+>>
+>> That sort of design may also eventually help IMA work properly with more
+>> exotic filesystems, like NFS or Ceph.
+>>
+>>
+>>
+> 
+> Maybe something like this? It builds for me but I haven't tested it. It
+> looks like overlayfs already should report the upper layer's i_version
+> in getattr, though I haven't tested that either:
+> 
+> -----------------------8<---------------------------
+> 
+> [PATCH] IMA: use vfs_getattr_nosec to get the i_version
+> 
+> IMA currently accesses the i_version out of the inode directly when it
+> does a measurement. This is fine for most simple filesystems, but can be
+> problematic with more complex setups (e.g. overlayfs).
+> 
+> Make IMA instead call vfs_getattr_nosec to get this info. This allows
+> the filesystem to determine whether and how to report the i_version, and
+> should allow IMA to work properly with a broader class of filesystems in
+> the future.
+> 
+> Reported-by: Stefan Berger <stefanb@linux.ibm.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   security/integrity/ima/ima_api.c  |  9 ++++++---
+>   security/integrity/ima/ima_main.c | 12 ++++++++----
+>   2 files changed, 14 insertions(+), 7 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> index d3662f4acadc..c45902e72044 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -13,7 +13,6 @@
+>   #include <linux/fs.h>
+>   #include <linux/xattr.h>
+>   #include <linux/evm.h>
+> -#include <linux/iversion.h>
+>   #include <linux/fsverity.h>
+>   
+>   #include "ima.h"
+> @@ -246,10 +245,11 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+>   	struct inode *inode = file_inode(file);
+>   	const char *filename = file->f_path.dentry->d_name.name;
+>   	struct ima_max_digest_data hash;
+> +	struct kstat stat;
+>   	int result = 0;
+>   	int length;
+>   	void *tmpbuf;
+> -	u64 i_version;
+> +	u64 i_version = 0;
+>   
+>   	/*
+>   	 * Always collect the modsig, because IMA might have already collected
+> @@ -268,7 +268,10 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+>   	 * to an initial measurement/appraisal/audit, but was modified to
+>   	 * assume the file changed.
+>   	 */
+> -	i_version = inode_query_iversion(inode);
+> +	result = vfs_getattr_nosec(&file->f_path, &stat, STATX_CHANGE_COOKIE,
+> +				   AT_STATX_SYNC_AS_STAT);
+> +	if (!result && (stat.result_mask & STATX_CHANGE_COOKIE))
+> +		i_version = stat.change_cookie;
+>   	hash.hdr.algo = algo;
+>   	hash.hdr.length = hash_digest_size[algo];
+>   
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index d66a0a36415e..365db0e43d7c 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -24,7 +24,6 @@
+>   #include <linux/slab.h>
+>   #include <linux/xattr.h>
+>   #include <linux/ima.h>
+> -#include <linux/iversion.h>
+>   #include <linux/fs.h>
+>   
+>   #include "ima.h"
+> @@ -164,11 +163,16 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
+>   
+>   	mutex_lock(&iint->mutex);
+>   	if (atomic_read(&inode->i_writecount) == 1) {
+> +		struct kstat stat;
+> +
+>   		update = test_and_clear_bit(IMA_UPDATE_XATTR,
+>   					    &iint->atomic_flags);
+> -		if (!IS_I_VERSION(inode) ||
+> -		    !inode_eq_iversion(inode, iint->version) ||
+> -		    (iint->flags & IMA_NEW_FILE)) {
+> +		if ((iint->flags & IMA_NEW_FILE) ||
+> +		    vfs_getattr_nosec(&file->f_path, &stat,
+> +				      STATX_CHANGE_COOKIE,
+> +				      AT_STATX_SYNC_AS_STAT) ||
+> +		    !(stat.result_mask & STATX_CHANGE_COOKIE) ||
+> +		    stat.change_cookie != iint->version) {
+>   			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+>   			iint->measured_pcrs = 0;
+>   			if (update)
 
-> Jason
+I tested this in the OpenBMC setup with overlayfs acting as rootfs. It works now as expected.
+
+Tested-by: Stefan Berger <stefanb@linux.ibm.com>
+
