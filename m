@@ -2,169 +2,218 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF424C77B76
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Apr 2023 12:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C943C77B7A
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Apr 2023 13:11:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231193AbjDQMp5 (ORCPT
+        id S230034AbjDQNLG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Apr 2023 08:45:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38456 "EHLO
+        Mon, 17 Apr 2023 09:11:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229878AbjDQMp5 (ORCPT
+        with ESMTP id S231284AbjDQNKw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Apr 2023 08:45:57 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E8E1E6;
-        Mon, 17 Apr 2023 05:45:55 -0700 (PDT)
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33HCh8uY022220;
-        Mon, 17 Apr 2023 12:45:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=Me3xl4OpCSeGXaMuaTCLA7+/DYZluuE1PRxzYqFhpEg=;
- b=ETbjwJmLvWd2Op/GmOgktP8anNkCO8a0bH3soeywbbpx2eE2YgUySA6EGFyxRzON6HRz
- 9YjfKGEj43rfjaTo/JAU75GdS0WtudD9HGE/gnGklBumcVLAOu5vR8iBzGVcRIANEpvn
- HqdDTneTt54nfvSVXCvuLxWvsmLVyAr12n2N9RgytSVpiVFo9C3ywd+KyfJnQ0T1/87H
- 7pT4XM70OZuyFWkTWceyb70bNd9SvY5ehfus3QE+HJAxvxNZh251eKc+aDWUYUoW3OUI
- nnbx9nMZPjVtzg7QnGYSO5t2w7juxTrbLdlTSht5PnVQHSBoBlm/nDqXgueQH+lDBIYJ Tg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q13jtvpky-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Apr 2023 12:45:44 +0000
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33HCaUxV003374;
-        Mon, 17 Apr 2023 12:45:44 GMT
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q13jtvpkh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Apr 2023 12:45:44 +0000
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 33HBo8Ve015441;
-        Mon, 17 Apr 2023 12:45:43 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([9.208.130.98])
-        by ppma05wdc.us.ibm.com (PPS) with ESMTPS id 3pykj72vx4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Apr 2023 12:45:43 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-        by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 33HCjgAm15467250
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Apr 2023 12:45:42 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 09EE658062;
-        Mon, 17 Apr 2023 12:45:42 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C48D75803F;
-        Mon, 17 Apr 2023 12:45:40 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Apr 2023 12:45:40 +0000 (GMT)
-Message-ID: <176640ae-3ff7-c3e9-218a-2952425336e7@linux.ibm.com>
-Date:   Mon, 17 Apr 2023 08:45:40 -0400
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after
- writes
-Content-Language: en-US
-To:     Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     Paul Moore <paul@paul-moore.com>, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
-        linux-kernel@vger.kernel.org,
+        Mon, 17 Apr 2023 09:10:52 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CA55AF14;
+        Mon, 17 Apr 2023 06:10:14 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G89tKpt92EgpYtGMuTmPDClwEL6Bus+Y5BkijqX0cvypUGqGZsdSIG3UY056wpexw/L0xDpcAEHigfGdzP85pSIPX6QN18ARhNUGezdMNecdFyLAokmd2sY0OWMxEezO79YzCfIU7+hXNpd1UqMKwjANUXOtWI5eQbLvQ95GPKa3delnYoR9hRUhRLjKbs8ic5qOtEv8+UWAVibOm6RSPn03jo5D6zpOaM2gwzGBD46rIQx5nlqdmxn01jcP7p2Fl8r3CJaxcFK8uickW2hgxYTN4UWXyE6eoqwtSKHUPKRDh6isYu0wEq6LsK+e9V4CDiMuQLXjkHt6jWpnQuTehw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tpz1+HfZkJgLZIIfaMx+w8aaEDg/GsNeWlrjiVnRJ8w=;
+ b=PFrPgZLRGeUA+LPTJ518X42m1h1D5mEQufK9HTGGDYRUeX7pl3nFi7GWkp2XPy/f0/trVIBG8ISYvI/1HsFTP3bcwOP9hIjDKjlO2BbVzEqMkFiuZODA66kv59MncLffO9Ei6D3K36ZUwyUkZOjOj8QD/G6vDM7kCRhd9efI2wg19iY2ELC7U0pIYCo1Xq/4O9uWGdqIo59sZgkoAI5y1F15ckSYnbvZlYvcYAWe4O22YLNzqGyvqW4cxDHcnKzzVy852sJWx6I6lFN9iQUsk9o0ducVLWGOypEulQNrHagXcpZ1ZS6Bv6DJFiZ9EW2aPZ55Jaud+22NuV6zWzHOrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tpz1+HfZkJgLZIIfaMx+w8aaEDg/GsNeWlrjiVnRJ8w=;
+ b=hSMZxaJp7VZRdReDy1wmcNcTYgmu+28UhvMcULa2Jcoj5+UJSB2bQPtipi29MKmOC0FuXZcUFQkeBBEQ78H+mBNAs+JuoEPS1egMWprjbovIb0r7lLmtFlRQXKoZEduOwNWkWMUIPCcvF6K7b09VXkn27GBHj7hNOowiZGNFBSk3zS+YQ7GzgIqVtMSGVY5UG2T6hHcMCuEQAQ5IqvkjO1byX1/F6BypO0/iidRH3nSPaTDWO9PLV6aSpJ3M/kzjq50JlP9R5k7dta1ymysgaI2YHW/Bc6eisJup57n8sAn/Nvni/p5r+BT4xK16wYcp+HHX7loSjyy7udezUP6Acg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by MN2PR12MB4440.namprd12.prod.outlook.com (2603:10b6:208:26e::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.45; Mon, 17 Apr
+ 2023 13:09:39 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::6045:ad97:10b7:62a2]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::6045:ad97:10b7:62a2%9]) with mapi id 15.20.6298.030; Mon, 17 Apr 2023
+ 13:09:39 +0000
+Date:   Mon, 17 Apr 2023 10:09:36 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
- <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
- <e2455c0e-5a17-7fc1-95e3-5f2aca2eb409@linux.ibm.com>
- <94c2aadfb2fe7830d0289ffe6084581b99505a58.camel@kernel.org>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <94c2aadfb2fe7830d0289ffe6084581b99505a58.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 85Q8tAJWRbLCXkztfuFx5wGoC_6DRp6r
-X-Proofpoint-GUID: M7pTikFpMhcOf2yCNYob2HPnxFymdJ7z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-17_07,2023-04-17_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 clxscore=1015 malwarescore=0 suspectscore=0 spamscore=0
- priorityscore=1501 mlxlogscore=989 mlxscore=0 phishscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2304170113
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH 3/7] mm/gup: remove vmas parameter from
+ get_user_pages_remote()
+Message-ID: <ZD1FECftWekha6Do@nvidia.com>
+References: <cover.1681508038.git.lstoakes@gmail.com>
+ <5a4cf1ebf1c6cdfabbf2f5209facb0180dd20006.1681508038.git.lstoakes@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5a4cf1ebf1c6cdfabbf2f5209facb0180dd20006.1681508038.git.lstoakes@gmail.com>
+X-ClientProxiedBy: SJ0P220CA0002.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:41b::10) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|MN2PR12MB4440:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8cb5713-fc5a-448e-077b-08db3f45004f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: O7dBBRxVm8mYOzQ0DfUx4MiwDO8ArpSlgOiBFpJVFAyI+ICLr3S5D5ikpC8c9pQzZY4Y29fQy9IxdvJO1M515WvAqgBy/b9KxZm5J8qrqsPHFLB8ZB3/kXcKXK5zE0ioIITO4JpvJvFrRKYuVA/OBXlzlbIPiDPNZzTgYycAnvqKMD7sUqDd8pgK/+VqByvV9Zre8PlnH9peDwr3eKIkkHwoTzK21TkwdKazZr4S14gHYADrhkfJuah996afkuxmKEhSF+YxUAk4GKwd7XHzRoR8S7hIiKpz5Djudnb2aFywEIqMK9ybR1LcBSsLjlMNB9/4nDpIUmC206kiJUNDM0WhzsG/Q09Y/uOcvLMB1SnPrqXuK8neVOo1RDA5jG4FrWWDLiAc+fhZ4CKpAsAi58AmPXQwumdMgr6A3ts6WLw4s6obW51lgf7SKhTednqLIYp+Fbp6QgXLnIauYOC9uueiTduwVHLInqDmTZ+QLB63th0KpKkUrA2+WBw/RQurzA87PIsdM7M2IZGnTqUW4d9untlBR2mjFAejaXVQCvNTEesSr7BW7sL9cX69OpuJ
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(396003)(136003)(39860400002)(366004)(346002)(451199021)(6486002)(6666004)(86362001)(478600001)(2616005)(36756003)(83380400001)(26005)(6506007)(186003)(6512007)(38100700002)(6916009)(66946007)(66476007)(66556008)(316002)(2906002)(4326008)(8936002)(8676002)(5660300002)(7416002)(7406005)(41300700001)(54906003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?E2yy/biwPHZy8ilmq0YNL9tCqzoGpXPyswKP3G3dXPbfIpTNNDb3UnMtCvbT?=
+ =?us-ascii?Q?r9uDLALWDAwSc5Z99LIoT8RoZBz16DmCXXkDaXP+8vlKtbmO1GsbUcYGbQmM?=
+ =?us-ascii?Q?bGF/goPa/+CedsTe+XoLua3vFa6/zBdFAEJ3W9hfql7dJbA2AcWRbKp4yyPF?=
+ =?us-ascii?Q?0dmDXVf3GED3wHhqytl5uZZRycX29NmoDpANbfzdVG+dDc0Tjj1GWyzKF8x3?=
+ =?us-ascii?Q?MGdum14NYZVIVy8E/eY1DE50HFqV5onse3j6no+SHQ6ZI0mLwlyzF3cE/Oyx?=
+ =?us-ascii?Q?ywHJqIipG7VvrRbw7ipT6IumPF1sUULDSDefzTLhaW+4cNsHvaFA/QhG1a3+?=
+ =?us-ascii?Q?VenE96xv//f0EfiDt6g9DvrtNCltgvduiU6jVmw7koiHDlDKC+R1LnuZyBRY?=
+ =?us-ascii?Q?GTwpgoTd0uyp7j/dkXV5udgkgq9HBCpTXdNPUt5HoF62hw84c2Xf/2WzX/OO?=
+ =?us-ascii?Q?i+J3NfZuamM+CNpE6TsjghKl6Fcagv+iT9HmvLF2pLvc5ZslOC6mrdAubPvx?=
+ =?us-ascii?Q?WOj5ZkDIk9fPmWXUbYxTWJht5rcaV4niHjPOKCDMJqKMiYCq344/85xOZbS8?=
+ =?us-ascii?Q?jltRxw94+YlXPQ1KJDxxgJwf3PA+LmuiIDF1sKQaNEbS8eQRx8pADaDLUU/i?=
+ =?us-ascii?Q?tNRJz9wZUYCuLU6adFAU/WizSzNrfO+4QSAGnUZ0wRH3ZtOwwAWFsA8Ktpcd?=
+ =?us-ascii?Q?j2c2IMu7YEvW1FaHMrT7kHgSje4WdZcMue6BvehIHoIXvZwiTcha5wJpFaAJ?=
+ =?us-ascii?Q?NLtPS4UE/qB1dEqs6NfyAIZ9eeynBI4OJgojb6sSEF0TsXIIRA9gR4iG0jux?=
+ =?us-ascii?Q?q4CYyBuYg4Iqt+ZtZQn5Zrd4y3C2Y49I3Dy1PPVLpmnVI1gTwhPqRoRYj+V0?=
+ =?us-ascii?Q?PtwwIBBdlQe2DCCWVdi1N0W1mdG0zW4MfZGJ6wAM1chp8uo+2/N5LjIj06/C?=
+ =?us-ascii?Q?G1xCh7azkgJtI5j4qtLwXDaWd3lHG0JU/VWtM/xSjcOBNFz9Cx3CTnB7z0Yn?=
+ =?us-ascii?Q?hZ/f6CJt12k5kEtSUthmsGUnakr5i3lyZYpMdGyBMkLPKvYVn3zgp29dqoMS?=
+ =?us-ascii?Q?7ePmgRhdKsuNOjx95Z0f9wI+l8CQx7IDmPDRWd7uK0tK7XtSdf77k8vJNQMr?=
+ =?us-ascii?Q?sMFIVNsaa/yYu+MiXuB9NXSX/wSLcdAudgXBiYxunIJ8yrxF1CSPEZvePjpt?=
+ =?us-ascii?Q?W5I+WbPlr/n+CJmrgVNhFvJK9IhPTD8NihYNZvXrdKA3bT2lMEkiWURkzzsF?=
+ =?us-ascii?Q?cZCQMbl+9dF+4H4TlhnejIGMSsU8PRpD37fRpzmefgOVJV3H30C96mYZe9sf?=
+ =?us-ascii?Q?PVrFXCHUzd8zHglrVlrPkCxBZzf92vG50WBSg+Bo4F3lGbXE+/RUEy5hqjsl?=
+ =?us-ascii?Q?PCd+htLB8utfRkhBrN993hOnLxSHtVEdoEPUB1sG87P1VpnPzyvg0PAAK7ee?=
+ =?us-ascii?Q?FFajWMQjqLlZxzropW7qQIoZDyDtKK0STTON3wwshbmgiq/gJM804YrOgC/7?=
+ =?us-ascii?Q?QlqrA3WrolQSeS2oGRvTeQrHqz6Z2Krx0y2LpZE6NhooL+RKct3H7VWlWNpb?=
+ =?us-ascii?Q?TlpOxOlRuMr9n05l3HtCHBM77v8x2dk5x7v6Vdmg?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8cb5713-fc5a-448e-077b-08db3f45004f
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2023 13:09:39.5631
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7oLjo/OBSveZ+2eKG/RE5a388wGBSDA1kBSQ3y0ei7335TXbQmvdSaC6x2eaZ5AU
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4440
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 4/17/23 06:05, Jeff Layton wrote:
-> On Sun, 2023-04-16 at 21:57 -0400, Stefan Berger wrote:
->>
->> On 4/7/23 09:29, Jeff Layton wrote:
-
->>>
->>> Note that there Stephen is correct that calling getattr is probably
->>> going to be less efficient here since we're going to end up calling
->>> generic_fillattr unnecessarily, but I still think it's the right thing
->>> to do.
->>
->> I was wondering whether to use the existing inode_eq_iversion() for all
->> other filesystems than overlayfs, nfs, and possibly other ones (which ones?)
->> where we would use the vfs_getattr_nosec() via a case on inode->i_sb->s_magic?
->> If so, would this function be generic enough to be a public function for libfs.c?
->>
->> I'll hopefully be able to test the proposed patch tomorrow.
->>
->>
+On Sat, Apr 15, 2023 at 12:27:31AM +0100, Lorenzo Stoakes wrote:
+> The only instances of get_user_pages_remote() invocations which used the
+> vmas parameter were for a single page which can instead simply look up the
+> VMA directly. In particular:-
 > 
-> No, you don't want to use inode_eq_iversion here because (as the comment
-> over it says):
-
-In the ima_check_last_writer() case the usage of inode_eq_iversion() was correct since
-at this point no record of  its value was made and therefore no writer needed to change
-the i_value again due to IMA:
-
-		update = test_and_clear_bit(IMA_UPDATE_XATTR,
-					    &iint->atomic_flags);
-		if (!IS_I_VERSION(inode) ||
-		    !inode_eq_iversion(inode, iint->version) ||
-		    (iint->flags & IMA_NEW_FILE)) {
-			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
-			iint->measured_pcrs = 0;
-			if (update)
-				ima_update_xattr(iint, file);
-		}
-
-The record of the value is only made when the actual measurement is done in
-ima_collect_measurement()
-
-Compared to this the usage of vfs_getattr_nosec() is expensive since it resets the flag.
-
-         if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
-                 stat->result_mask |= STATX_CHANGE_COOKIE;
-                 stat->change_cookie = inode_query_iversion(inode);
-         }
-
-	idmap = mnt_idmap(path->mnt);
-	if (inode->i_op->getattr)
-		return inode->i_op->getattr(idmap, path, stat,
-					    request_mask, query_flags);
-
-Also, many filesystems will have their getattr now called as well.
-
-I understand Christian's argument about the maintenance headache to a certain degree...
-
-    Stefan
-
+> - __update_ref_ctr() looked up the VMA but did nothing with it so we simply
+>   remove it.
 > 
->   * Note that we don't need to set the QUERIED flag in this case, as the value
->   * in the inode is not being recorded for later use.
+> - __access_remote_vm() was already using vma_lookup() when the original
+>   lookup failed so by doing the lookup directly this also de-duplicates the
+>   code.
 > 
-> The IMA code _does_ record the value for later use. Furthermore, it's
-> not valid to use inode_eq_iversion on a non-IS_I_VERSION inode, so it's
-> better to just use vfs_getattr_nosec which allows IMA to avoid all of
-> those gory details.
+> This forms part of a broader set of patches intended to eliminate the vmas
+> parameter altogether.
 > 
-> Thanks,
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> ---
+>  arch/arm64/kernel/mte.c   |  5 +++--
+>  arch/s390/kvm/interrupt.c |  2 +-
+>  fs/exec.c                 |  2 +-
+>  include/linux/mm.h        |  2 +-
+>  kernel/events/uprobes.c   | 10 +++++-----
+>  mm/gup.c                  | 12 ++++--------
+>  mm/memory.c               |  9 +++++----
+>  mm/rmap.c                 |  2 +-
+>  security/tomoyo/domain.c  |  2 +-
+>  virt/kvm/async_pf.c       |  3 +--
+>  10 files changed, 23 insertions(+), 26 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
+> index f5bcb0dc6267..74d8d4007dec 100644
+> --- a/arch/arm64/kernel/mte.c
+> +++ b/arch/arm64/kernel/mte.c
+> @@ -437,8 +437,9 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+>  		struct page *page = NULL;
+>  
+>  		ret = get_user_pages_remote(mm, addr, 1, gup_flags, &page,
+> -					    &vma, NULL);
+> -		if (ret <= 0)
+> +					    NULL);
+> +		vma = vma_lookup(mm, addr);
+> +		if (ret <= 0 || !vma)
+>  			break;
+
+Given the slightly tricky error handling, it would make sense to turn
+this pattern into a helper function:
+
+page = get_single_user_page_locked(mm, addr, gup_flags, &vma);
+if (IS_ERR(page))
+  [..]
+
+static inline struct page *get_single_user_page_locked(struct mm_struct *mm,
+   unsigned long addr, int gup_flags, struct vm_area_struct **vma)
+{
+	struct page *page;
+	int ret;
+
+	ret = get_user_pages_remote(*mm, addr, 1, gup_flags, &page, NULL, NULL);
+	if (ret < 0)
+	   return ERR_PTR(ret);
+	if (WARN_ON(ret == 0))
+	   return ERR_PTR(-EINVAL);
+        *vma = vma_lookup(mm, addr);
+	if (WARN_ON(!*vma) {
+	   put_user_page(page);
+	   return ERR_PTR(-EINVAL);
+        }
+	return page;
+}
+
+It could be its own patch so this change was just a mechanical removal
+of NULL
+
+Jason
