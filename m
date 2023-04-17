@@ -2,184 +2,99 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C1CC77B76
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Apr 2023 21:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AB7C77B72
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Apr 2023 21:57:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230418AbjDQVb0 (ORCPT
+        id S229713AbjDQV5H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Apr 2023 17:31:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36230 "EHLO
+        Mon, 17 Apr 2023 17:57:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbjDQVbZ (ORCPT
+        with ESMTP id S229779AbjDQV5F (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Apr 2023 17:31:25 -0400
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A852049F2
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Apr 2023 14:31:23 -0700 (PDT)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-54c0c86a436so553075387b3.6
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Apr 2023 14:31:23 -0700 (PDT)
+        Mon, 17 Apr 2023 17:57:05 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 782643AA9
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Apr 2023 14:56:54 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-54fbee98814so186046667b3.8
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Apr 2023 14:56:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1681767083; x=1684359083;
+        d=paul-moore.com; s=google; t=1681768613; x=1684360613;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BCzVu2UsKp7hdLDjLx5y43eqwBluLCZhJw8zkmfWK7s=;
-        b=L4lIgMDUo+CoVwZROqgkHM1P5l8PMDt1tMF+3n6mYb/oTyl6jZZARiOyi4mY749zTf
-         kd6MKQWITu/+gFbXbDd8PRN889Ab1UneKVGjM8dJfGHZk1x69itMrG6mVAMXx6c94Kgj
-         wsnxittzLcJmNlQ2TmgAffk7LZPA0GjY7q3YVrjMNaQxDody759vfh8QxNsbIEZIbNpi
-         YEiGC7lB/ogD9pMXaYUg7qcmHjeO7XkF2svcHQ6pd/dMN/CipBYMhe50S/ctKhKU/5Xb
-         VduqXgJXIwtVunLI04d/oZ9995Fp6s9L0vc6khDXs8odobPBxwM6nmpDBHJfyzOBpVBf
-         lSXA==
+        bh=XQQxoxnDlO79aAcPDshmupzvZRwHB19vPO2rZiGwcJk=;
+        b=DTgNvNbhdjpyHxKadnk1WKqzC8oWcbXEDZMpG5ipntlwByNQl/nHFOj+ZbO6VNSJNP
+         N0LZ/vbh+gQuqjg1WyKdRnvLqdwYs8F5J5cIp04+agUSqaj6jVoHqd1J1fcOgTtiVddd
+         Kl2M3dMuAtZ2Xg+C25uPJMaPLt6dJOGBakz1FFSR5NLfbH7eKzr7SWS0tUo2/eX67S0b
+         vm91xdMIzFOBjv2tsoQJYMrDxzO9aIe32clVYoPFwrXbQHd/dtVlMF2V1KJUETdtEUn3
+         hW0k9XKt/gJnSC6AUFcrEACfy4Q1aznBHs7MaEi+sE+oLfAWbRebVd30FwNNCw3MyOxq
+         ud8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681767083; x=1684359083;
+        d=1e100.net; s=20221208; t=1681768613; x=1684360613;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BCzVu2UsKp7hdLDjLx5y43eqwBluLCZhJw8zkmfWK7s=;
-        b=KxmJCpF8fvMnKNqgngkb3IISzvMW5lXLP3EevH61HUyzGnV5ACptMhFd7ZlTWXqVtb
-         K4NZGSIWhNMxn/7wpMNfWC4QPc9RdYjqn8gEWFPes0CA+X5H5EMIstNYAFCYmJE7Mc5x
-         2KKUsvykCHnqQQwc5lt3e4A9ToNJR7aE8OOwTpZ48jiNR/IYxGxf9hUPe/35GGpI+Plo
-         nWeV32OkiQVecDGe/G6ej/3zPBGE72MDJaHkFZ1pw8zymPN5lq2JTpX9IGbaLm1O5lMx
-         eDurzgFPCwxHfnDsJ6U3xK5I91WPUQn4WDqewNAHUm2VFtQzR4kbJjCXDsxqXN2kQpEF
-         W7vg==
-X-Gm-Message-State: AAQBX9eQmhxT6Nx5Q0AIEPHIQHbDgBCUGKIGbrg1lEYu3CgRA4iIOJPv
-        5CqUfs+lRhfGdIIOGb9+/+9pca3dUJ0FD4mH0snH
-X-Google-Smtp-Source: AKy350bgu9ZFLZmYkOlWaVpVvG9J/JdkBbU14XNGAtkoY2ENWGlUCNYD5NN6A3BCb0Ne4rd9gsfKQgsCVLB08+3wRKo=
-X-Received: by 2002:a81:c649:0:b0:54f:2b65:a865 with SMTP id
- q9-20020a81c649000000b0054f2b65a865mr10208390ywj.8.1681767082657; Mon, 17 Apr
- 2023 14:31:22 -0700 (PDT)
+        bh=XQQxoxnDlO79aAcPDshmupzvZRwHB19vPO2rZiGwcJk=;
+        b=WWufe6YDVlYwAcjniPtpPb7JhINBy1DEld78YS/teJdCAIq5xb72KMKzvnTxYokX8f
+         4kH7yuwmnAtliow3696Q956tzrz2WwAG/xsXKjJ1rul/1PhpCrQYUwywShAktyhDspSh
+         72inSNY89ArFCLemmjBwhnKRZALNb0imV0aYwAYtbwKptAHQuGDDSPz00yNH8wbQw7t2
+         4cKTAYCQCbFQtAqXG0Uo8TvLGu1Jm8SUyHDqx/VpEJj3GV8B2QZ8OskWNXmZjxN9Bvg0
+         g0wxd116eVQgR4M7XASHWGzaKpg4JgZ4Wk2i4aIigAP8KALF9/JW76g5an3t2qCczL9z
+         XcKA==
+X-Gm-Message-State: AAQBX9e3Q50dR4a7fimKj1Xro4OLvd1qTuAvLuOE3BpMcoTxvP50i2fc
+        Ws9kMMD31GtLiXtOm8aQqNUUcRINGLYjJFavLf30
+X-Google-Smtp-Source: AKy350b/9VSgQDkcO3dfWMA8H7V+Tq9BIMgJP3E2JG5C4kAEJXd40vYSYLfGaD38SdySX4eX++Q8ewkTP/6Z5qkvI/Y=
+X-Received: by 2002:a81:ac49:0:b0:54f:8824:8836 with SMTP id
+ z9-20020a81ac49000000b0054f88248836mr10491315ywj.8.1681768613668; Mon, 17 Apr
+ 2023 14:56:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com>
- <1675119451-23180-6-git-send-email-wufan@linux.microsoft.com>
- <CAHC9VhRa+NwKzLfQBmHfMgUp6_d5soQG7JBq-Vn=MUeUAt4tuQ@mail.gmail.com>
- <20230410191035.GB18827@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <CAHC9VhQDvWDshaZvJrHmjcwyHFxv9oYTN9bn0xiTtFZQRp+GPg@mail.gmail.com>
- <20230412233606.GA16658@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <CAHC9VhTs3Njfg=1baQ6=58rPLBmyB3cW0R-MfAaEcRF-jAaYBw@mail.gmail.com>
- <20230417180605.GA402@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <CAHC9VhSnKbhtgFxOAY7NYZyOkV4kEA0=mVsCyogLBSCJs0r_ig@mail.gmail.com> <20230417211826.GA6475@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-In-Reply-To: <20230417211826.GA6475@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20230412205316.7114-1-junxiao.bi@oracle.com> <878reqs0xg.fsf@linux.ibm.com>
+In-Reply-To: <878reqs0xg.fsf@linux.ibm.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 17 Apr 2023 17:31:11 -0400
-Message-ID: <CAHC9VhT9uTYrtEsXUvj5qaTpNL2ix762dE5AzUaSqzas8-frXA@mail.gmail.com>
-Subject: Re: [RFC PATCH v9 05/16] ipe: add userspace interface
-To:     Fan Wu <wufan@linux.microsoft.com>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
-        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        eparis@redhat.com, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, linux-audit@redhat.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>
+Date:   Mon, 17 Apr 2023 17:56:42 -0400
+Message-ID: <CAHC9VhS3LpJ_x7ZfdV83KY3U49XFGMLejz7rsiEH19rzyUfD-w@mail.gmail.com>
+Subject: Re: [PATCH V2] debugfs: allow access relay files in lockdown mode
+To:     Nathan Lynch <nathanl@linux.ibm.com>
+Cc:     Junxiao Bi <junxiao.bi@oracle.com>, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        serge@hallyn.com, axboe@kernel.dk, konrad.wilk@oracle.com,
+        joe.jin@oracle.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 17, 2023 at 5:18=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> =
-wrote:
-> On Mon, Apr 17, 2023 at 04:16:29PM -0400, Paul Moore wrote:
-> > On Mon, Apr 17, 2023 at 2:06???PM Fan Wu <wufan@linux.microsoft.com> wr=
-ote:
-> > > On Thu, Apr 13, 2023 at 02:45:07PM -0400, Paul Moore wrote:
-> > > > On Wed, Apr 12, 2023 at 7:36???PM Fan Wu <wufan@linux.microsoft.com=
+On Mon, Apr 17, 2023 at 4:39=E2=80=AFPM Nathan Lynch <nathanl@linux.ibm.com=
 > wrote:
-> > > > > On Tue, Apr 11, 2023 at 05:45:41PM -0400, Paul Moore wrote:
-> > > > > > On Mon, Apr 10, 2023 at 3:10???PM Fan Wu <wufan@linux.microsoft=
-.com> wrote:
-> > > > > > > On Thu, Mar 02, 2023 at 02:04:42PM -0500, Paul Moore wrote:
-> > > > > > > > On Mon, Jan 30, 2023 at 5:58???PM Fan Wu <wufan@linux.micro=
-soft.com> wrote:
-> > > >
-> > > > ...
-> > > >
-> > > > > > I guess this does make me wonder about keeping a non-active pol=
-icy
-> > > > > > loaded in the kernel, what purpose does that serve?
-> > > > > >
-> > > > >
-> > > > > The non-active policy doesn't serve anything unless it is activat=
-ed. User can
-> > > > > even delete a policy if that is no longer needed. Non-active is j=
-ust the default
-> > > > > state when a new policy is loaded.
-> > > > >
-> > > > > If IPE supports namespace, there is another use case where differ=
-ent containers
-> > > > > can select different policies as the active policy from among mul=
-tiple loaded
-> > > > > policies. Deven has presented a demo of this during LSS 2021. But=
- this goes
-> > > > > beyond the scope of this version.
-> > > >
-> > > > Do you plan to add namespace support at some point in the
-> > > > not-too-distant future?  If so, I'm okay with keeping support for
-> > > > multiple policies, but if you think you're only going to support on=
-e
-> > > > active policy at a time, it might be better to remove support for
-> > > > multiple (inactive) policies.
-> > > >
-> > > > --
-> > > > paul-moore.com
-> > >
-> > > Another benefit of having multiple policies is that it provides isola=
-tion
-> > > between different policies. For instance, if we have two policies nam=
-ed
-> > > "policy_a" and "policy_b," we can ensure that only team a can update =
-"policy_a,"
-> > > and only team b can update "policy_b." This way, both teams can updat=
-e
-> > > their policy without affecting others. However, if there is only one =
-policy
-> > > in the system, both teams will have to operate on the same policy, ma=
-king it
-> > > less manageable.
+> Junxiao Bi <junxiao.bi@oracle.com> writes:
+> > Relay files are used by kernel to transfer information to userspace, th=
+ese
+> > files have permission 0400, but mmap is supported, so they are blocked =
+by
+> > lockdown. But since kernel just generates the contents of those files w=
+hile
+> > not reading it, it is saft to access relay files in lockdown mode.
 > >
-> > That only really matters if both policies are active at the same time;
-> > if only one policy can be active at one point in time the only
-> > permission that matters is the one who can load/activate a policy.
-> >
-> > Allowing for multiple policies complicates the code.  If there is
-> > another feature that requires multiple policies, e.g. IPE namespaces,
-> > then that is okay.  However, if there is no feature which requires
-> > multiple active policies, supporting multiple loaded policies only
-> > increases the risk of an exploitable bug in the IPE code.
-> >
-> > > Besides, removing multiple (inactive) policies support will
-> > > render the policy_name field meaningless, and we should only audit th=
-e policy
-> > > hash. I am fine if we decide to go for the single policy option.
-> >
-> > Once again, I think it comes back to: do you still want to support IPE
-> > namespaces at some point in the future, and if so, when do you expect
-> > to work on that?
+> > With this, blktrace can work well in lockdown mode.
 >
-> Yes, absolutely! We definitely have plans to support namespaces in the fu=
-ture.
-> However, it's worth mentioning that there are other tasks that we may nee=
-d
-> to prioritize due to their relatively lower complexity. For example, befo=
-re
-> we can fully implement namespaces, we need to address some other importan=
-t
-> aspects of the system, such as adding a policy language for integrity
-> enforcement on configuration files and defining trusted certificates
-> that can sign the root hash. Therefore, the timeline for implementing
-> namespaces will depend on the completion time of these tasks.
->
-> I understand your concerns, and we can proceed with a single policy desig=
-n
-> for the initial version.
+> Assuming that all relay users do not expose the kinds of information
+> that confidentiality mode tries to restrict, this change seems OK to
+> me. I think that assumption applies to blktrace; apart from that, there
+> is a handful of drivers that use relay files (I searched for
+> relay_open() call sites, maybe there is a better way).
 
-I think it's okay to stick with the multi-policy code for the initial
-submission, you've got the code now, and it's tested.  I just wanted
-to make sure there were plans to make use of it at some point, if not
-we might as well drop it now.  However, it sounds like you've got a
-plan to utilize the multi-policy support so that's fine with me.
+At the very least I see an Intel graphics driver and some network
+drivers, but like you, that was a quick search and I'm probably
+missing something.  At the very least someone needs to go audit those
+users/drivers to ensure this is safe to merge.
+
+However, regardless of what that code audit may turn up, I'm a little
+concerned that it would be all too easy to add a new relay interface
+user which isn't safe.  The check in debugfs_locked_down() is far too
+removed from the code which is using the relay interface for it to be
+likely noticed in a future case where an unsafe user is added.  This
+looks like a vulnerability waiting to happen.
 
 --=20
 paul-moore.com
