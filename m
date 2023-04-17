@@ -2,197 +2,151 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C295C77B7E
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Apr 2023 18:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62927C77B7A
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Apr 2023 20:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230039AbjDQSdl (ORCPT
+        id S229531AbjDQUQp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Apr 2023 14:33:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46050 "EHLO
+        Mon, 17 Apr 2023 16:16:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230146AbjDQSdj (ORCPT
+        with ESMTP id S229758AbjDQUQo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Apr 2023 14:33:39 -0400
-X-Greylist: delayed 1484 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 17 Apr 2023 11:33:33 PDT
-Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1B7A10DD;
-        Mon, 17 Apr 2023 11:33:32 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:41666)
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1poQSt-00AYUx-8R; Mon, 17 Apr 2023 09:08:23 -0600
-Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:35070 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1poQSs-004oqS-3G; Mon, 17 Apr 2023 09:08:22 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     Jason Gunthorpe <jgg@nvidia.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-References: <cover.1681508038.git.lstoakes@gmail.com>
-        <5a4cf1ebf1c6cdfabbf2f5209facb0180dd20006.1681508038.git.lstoakes@gmail.com>
-        <ZD1FECftWekha6Do@nvidia.com>
-        <9be77e7e-4531-4e1c-9e0d-4edbb5ad3bd5@lucifer.local>
-        <ZD1GrBezHrJTo6x2@nvidia.com>
-        <241f0c22-f3d6-436e-a0d8-be04e281ed2f@lucifer.local>
-Date:   Mon, 17 Apr 2023 10:07:53 -0500
-In-Reply-To: <241f0c22-f3d6-436e-a0d8-be04e281ed2f@lucifer.local> (Lorenzo
-        Stoakes's message of "Mon, 17 Apr 2023 14:23:52 +0100")
-Message-ID: <87cz427diu.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Mon, 17 Apr 2023 16:16:44 -0400
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F6C49CA
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Apr 2023 13:16:41 -0700 (PDT)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-54c12009c30so538193747b3.9
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Apr 2023 13:16:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1681762600; x=1684354600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mkFM4OddDI3MzXQTdAgqfF3VU3F/+LgzOjoA+7s8XA4=;
+        b=Ml35Br1S4fB3lQjg+85g3UBuNpD2qRSHHrPy7eSM2cIKJ0UHgLPilBvXvoOd26NpVQ
+         XScr4M6uxDpgNOv8wz3lwCYE24jCZFRGgOvMfIhHkdttvMie4TqlWXyoZi7H5u5YSb/G
+         jW/p817xKSmzxkgQXaPUdAbZpNp4DpLIB3lm+1FhoqzLTLUUqTavEQlTtnPv9HlQ8HMQ
+         e119/w9x96Z3IkM9ZXV6zNWtzvuCmN5sJD3GY4c5m6weNq50I9GDsXzCjT4/5MAIWwbl
+         /EqEfWvaLjxUeqvn7BVtzYa97LE8hT7Mu7aE7S+4t84d0NzWjqskd+G/HvvL/AJivftr
+         B7xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681762600; x=1684354600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mkFM4OddDI3MzXQTdAgqfF3VU3F/+LgzOjoA+7s8XA4=;
+        b=ekCh02aYjj+u7AABG2c+cFBN2imWeQ/Zqvs8rEMACerz0ujj6eB9c5XC/lUz0Are/U
+         9qXnQauJmXEAaGomOhcltLFFXNUo714SjhbFMKErIJfqYxdNX1KiI6eJLOsK9mGIKi3m
+         qQLFecPciu6VbON0feuKEDxLA2i+IgH+sxifseCI9en8DSmSvL+/B82wfnJ3NO5KYpYp
+         NpIaQnksdPX6yiwQeQk/Zmvidn7o4RJpn7o2zpT6puR+wcISa5T7CPQgITlP42uC4bOi
+         4A5SLy8qCNYry3oIE3AeNmhbZkOKUqQtXrDaGrBjsS/MbyzVOPXnChr4IrFaZVGNFQVO
+         fTIg==
+X-Gm-Message-State: AAQBX9dXFmJzAGJCIJfNy1ZyyUK10m/Vr8cpSr9nMJySykXro0Wq04A2
+        YvQ+Kk+HDR/oQOlb3hRSHhQxPScZYMHEv/usbNEQ
+X-Google-Smtp-Source: AKy350ZxQlOfbob70cyzh//3Qo4gX/RJVSVzb07xLMzIeYlrCU36AjFdx5P2s2Fo1lBjmj4URw4Qp0a1MdAC8VUyDYc=
+X-Received: by 2002:a81:4524:0:b0:54f:aa4b:100c with SMTP id
+ s36-20020a814524000000b0054faa4b100cmr9804160ywa.8.1681762600389; Mon, 17 Apr
+ 2023 13:16:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1poQSs-004oqS-3G;;;mid=<87cz427diu.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/hlfhbMYdh8TSwqCEEto245myqDJhBbl8=
-X-SA-Exim-Connect-IP: 68.110.29.46
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 3/7] mm/gup: remove vmas parameter from
- get_user_pages_remote()
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <1675119451-23180-1-git-send-email-wufan@linux.microsoft.com>
+ <1675119451-23180-6-git-send-email-wufan@linux.microsoft.com>
+ <CAHC9VhRa+NwKzLfQBmHfMgUp6_d5soQG7JBq-Vn=MUeUAt4tuQ@mail.gmail.com>
+ <20230410191035.GB18827@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CAHC9VhQDvWDshaZvJrHmjcwyHFxv9oYTN9bn0xiTtFZQRp+GPg@mail.gmail.com>
+ <20230412233606.GA16658@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CAHC9VhTs3Njfg=1baQ6=58rPLBmyB3cW0R-MfAaEcRF-jAaYBw@mail.gmail.com> <20230417180605.GA402@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+In-Reply-To: <20230417180605.GA402@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 17 Apr 2023 16:16:29 -0400
+Message-ID: <CAHC9VhSnKbhtgFxOAY7NYZyOkV4kEA0=mVsCyogLBSCJs0r_ig@mail.gmail.com>
+Subject: Re: [RFC PATCH v9 05/16] ipe: add userspace interface
+To:     Fan Wu <wufan@linux.microsoft.com>
+Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+        eparis@redhat.com, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, linux-audit@redhat.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Lorenzo Stoakes <lstoakes@gmail.com> writes:
-
-> On Mon, Apr 17, 2023 at 10:16:28AM -0300, Jason Gunthorpe wrote:
->> On Mon, Apr 17, 2023 at 02:13:39PM +0100, Lorenzo Stoakes wrote:
->> > On Mon, Apr 17, 2023 at 10:09:36AM -0300, Jason Gunthorpe wrote:
->> > > On Sat, Apr 15, 2023 at 12:27:31AM +0100, Lorenzo Stoakes wrote:
->> > > > The only instances of get_user_pages_remote() invocations which used the
->> > > > vmas parameter were for a single page which can instead simply look up the
->> > > > VMA directly. In particular:-
->> > > >
->> > > > - __update_ref_ctr() looked up the VMA but did nothing with it so we simply
->> > > >   remove it.
->> > > >
->> > > > - __access_remote_vm() was already using vma_lookup() when the original
->> > > >   lookup failed so by doing the lookup directly this also de-duplicates the
->> > > >   code.
->> > > >
->> > > > This forms part of a broader set of patches intended to eliminate the vmas
->> > > > parameter altogether.
->> > > >
->> > > > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
->> > > > ---
->> > > >  arch/arm64/kernel/mte.c   |  5 +++--
->> > > >  arch/s390/kvm/interrupt.c |  2 +-
->> > > >  fs/exec.c                 |  2 +-
->> > > >  include/linux/mm.h        |  2 +-
->> > > >  kernel/events/uprobes.c   | 10 +++++-----
->> > > >  mm/gup.c                  | 12 ++++--------
->> > > >  mm/memory.c               |  9 +++++----
->> > > >  mm/rmap.c                 |  2 +-
->> > > >  security/tomoyo/domain.c  |  2 +-
->> > > >  virt/kvm/async_pf.c       |  3 +--
->> > > >  10 files changed, 23 insertions(+), 26 deletions(-)
->> > > >
->> > > > diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
->> > > > index f5bcb0dc6267..74d8d4007dec 100644
->> > > > --- a/arch/arm64/kernel/mte.c
->> > > > +++ b/arch/arm64/kernel/mte.c
->> > > > @@ -437,8 +437,9 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
->> > > >  		struct page *page = NULL;
->> > > >
->> > > >  		ret = get_user_pages_remote(mm, addr, 1, gup_flags, &page,
->> > > > -					    &vma, NULL);
->> > > > -		if (ret <= 0)
->> > > > +					    NULL);
->> > > > +		vma = vma_lookup(mm, addr);
->> > > > +		if (ret <= 0 || !vma)
->> > > >  			break;
->> > >
->> > > Given the slightly tricky error handling, it would make sense to turn
->> > > this pattern into a helper function:
->> > >
->> > > page = get_single_user_page_locked(mm, addr, gup_flags, &vma);
->> > > if (IS_ERR(page))
->> > >   [..]
->> > >
->> > > static inline struct page *get_single_user_page_locked(struct mm_struct *mm,
->> > >    unsigned long addr, int gup_flags, struct vm_area_struct **vma)
->> > > {
->> > > 	struct page *page;
->> > > 	int ret;
->> > >
->> > > 	ret = get_user_pages_remote(*mm, addr, 1, gup_flags, &page, NULL, NULL);
->> > > 	if (ret < 0)
->> > > 	   return ERR_PTR(ret);
->> > > 	if (WARN_ON(ret == 0))
->> > > 	   return ERR_PTR(-EINVAL);
->> > >         *vma = vma_lookup(mm, addr);
->> > > 	if (WARN_ON(!*vma) {
->> > > 	   put_user_page(page);
->> > > 	   return ERR_PTR(-EINVAL);
->> > >         }
->> > > 	return page;
->> > > }
->> > >
->> > > It could be its own patch so this change was just a mechanical removal
->> > > of NULL
->> > >
->> > > Jason
->> > >
->> >
->> > Agreed, I think this would work better as a follow up patch however so as
->> > not to distract too much from the core change.
->>
->> I don't think you should open code sketchy error handling in several
->> places and then clean it up later. Just do it right from the start.
->>
+On Mon, Apr 17, 2023 at 2:06=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> =
+wrote:
+> On Thu, Apr 13, 2023 at 02:45:07PM -0400, Paul Moore wrote:
+> > On Wed, Apr 12, 2023 at 7:36???PM Fan Wu <wufan@linux.microsoft.com> wr=
+ote:
+> > > On Tue, Apr 11, 2023 at 05:45:41PM -0400, Paul Moore wrote:
+> > > > On Mon, Apr 10, 2023 at 3:10???PM Fan Wu <wufan@linux.microsoft.com=
+> wrote:
+> > > > > On Thu, Mar 02, 2023 at 02:04:42PM -0500, Paul Moore wrote:
+> > > > > > On Mon, Jan 30, 2023 at 5:58???PM Fan Wu <wufan@linux.microsoft=
+.com> wrote:
+> >
+> > ...
+> >
+> > > > I guess this does make me wonder about keeping a non-active policy
+> > > > loaded in the kernel, what purpose does that serve?
+> > > >
+> > >
+> > > The non-active policy doesn't serve anything unless it is activated. =
+User can
+> > > even delete a policy if that is no longer needed. Non-active is just =
+the default
+> > > state when a new policy is loaded.
+> > >
+> > > If IPE supports namespace, there is another use case where different =
+containers
+> > > can select different policies as the active policy from among multipl=
+e loaded
+> > > policies. Deven has presented a demo of this during LSS 2021. But thi=
+s goes
+> > > beyond the scope of this version.
+> >
+> > Do you plan to add namespace support at some point in the
+> > not-too-distant future?  If so, I'm okay with keeping support for
+> > multiple policies, but if you think you're only going to support one
+> > active policy at a time, it might be better to remove support for
+> > multiple (inactive) policies.
+> >
+> > --
+> > paul-moore.com
 >
-> Intent was to do smallest change possible (though through review that grew
-> of course), but I see your point, in this instance this is fiddly stuff and
-> probably better to abstract it to enforce correct handling.
->
-> I'll respin + add something like this.
+> Another benefit of having multiple policies is that it provides isolation
+> between different policies. For instance, if we have two policies named
+> "policy_a" and "policy_b," we can ensure that only team a can update "pol=
+icy_a,"
+> and only team b can update "policy_b." This way, both teams can update
+> their policy without affecting others. However, if there is only one poli=
+cy
+> in the system, both teams will have to operate on the same policy, making=
+ it
+> less manageable.
 
-Could you include in your description why looking up the vma after
-getting the page does not introduce a race?
+That only really matters if both policies are active at the same time;
+if only one policy can be active at one point in time the only
+permission that matters is the one who can load/activate a policy.
 
-I am probably silly and just looking at this quickly but it does not
-seem immediately obvious why the vma and the page should match.
+Allowing for multiple policies complicates the code.  If there is
+another feature that requires multiple policies, e.g. IPE namespaces,
+then that is okay.  However, if there is no feature which requires
+multiple active policies, supporting multiple loaded policies only
+increases the risk of an exploitable bug in the IPE code.
 
-I would not be surprised if you hold the appropriate mutex over the
-entire operation but it just isn't apparent from the diff.
+> Besides, removing multiple (inactive) policies support will
+> render the policy_name field meaningless, and we should only audit the po=
+licy
+> hash. I am fine if we decide to go for the single policy option.
 
-I am concerned because it is an easy mistake to refactor something into
-two steps and then discover you have introduced a race.
+Once again, I think it comes back to: do you still want to support IPE
+namespaces at some point in the future, and if so, when do you expect
+to work on that?
 
-Eric
+--=20
+paul-moore.com
