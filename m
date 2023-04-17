@@ -2,99 +2,94 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AB7C77B72
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Apr 2023 21:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B631C77B75
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Apr 2023 23:29:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbjDQV5H (ORCPT
+        id S229971AbjDQX3D (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Apr 2023 17:57:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50102 "EHLO
+        Mon, 17 Apr 2023 19:29:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229779AbjDQV5F (ORCPT
+        with ESMTP id S229461AbjDQX3C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Apr 2023 17:57:05 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 782643AA9
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Apr 2023 14:56:54 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-54fbee98814so186046667b3.8
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Apr 2023 14:56:54 -0700 (PDT)
+        Mon, 17 Apr 2023 19:29:02 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DE9844B6;
+        Mon, 17 Apr 2023 16:28:56 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id u3so16549651ejj.12;
+        Mon, 17 Apr 2023 16:28:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1681768613; x=1684360613;
+        d=gmail.com; s=20221208; t=1681774134; x=1684366134;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XQQxoxnDlO79aAcPDshmupzvZRwHB19vPO2rZiGwcJk=;
-        b=DTgNvNbhdjpyHxKadnk1WKqzC8oWcbXEDZMpG5ipntlwByNQl/nHFOj+ZbO6VNSJNP
-         N0LZ/vbh+gQuqjg1WyKdRnvLqdwYs8F5J5cIp04+agUSqaj6jVoHqd1J1fcOgTtiVddd
-         Kl2M3dMuAtZ2Xg+C25uPJMaPLt6dJOGBakz1FFSR5NLfbH7eKzr7SWS0tUo2/eX67S0b
-         vm91xdMIzFOBjv2tsoQJYMrDxzO9aIe32clVYoPFwrXbQHd/dtVlMF2V1KJUETdtEUn3
-         hW0k9XKt/gJnSC6AUFcrEACfy4Q1aznBHs7MaEi+sE+oLfAWbRebVd30FwNNCw3MyOxq
-         ud8g==
+        bh=ZcK5SPnV3oXjtVURjd0PIBbzQgyYu9f1Ri6Sa67Eomw=;
+        b=K91qppt+dHtukpsuRdWUWzYdpSwkN8iG+l6NWRLq8RR92qcsIeELytQrFzOGuTwoZn
+         ZdtdG94cDZLOsFyBz1seYaG9S+avTfpQsRtj04gw/pbe4byPA+sEN9l63JQW6YehsyYz
+         a2ULT04i1vckF3L3/QzyzW38aKFQDrCTT2r+0goejYTbS0SGNUrDZiNGCTNWmaKOzJa1
+         fA65S4XSbXxnywuV2b+QanKVAoTr1FPgCqfz2lyqP/UarAr2y/u7sM0Bo9u+npdrf6Wn
+         GcNi6sGBkQw12GCF9sYAKtOgrb+8L9uGoBSvdJj1kpRBxTFDNGr9lpBMVNNzhZmjXEqz
+         MZwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681768613; x=1684360613;
+        d=1e100.net; s=20221208; t=1681774134; x=1684366134;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XQQxoxnDlO79aAcPDshmupzvZRwHB19vPO2rZiGwcJk=;
-        b=WWufe6YDVlYwAcjniPtpPb7JhINBy1DEld78YS/teJdCAIq5xb72KMKzvnTxYokX8f
-         4kH7yuwmnAtliow3696Q956tzrz2WwAG/xsXKjJ1rul/1PhpCrQYUwywShAktyhDspSh
-         72inSNY89ArFCLemmjBwhnKRZALNb0imV0aYwAYtbwKptAHQuGDDSPz00yNH8wbQw7t2
-         4cKTAYCQCbFQtAqXG0Uo8TvLGu1Jm8SUyHDqx/VpEJj3GV8B2QZ8OskWNXmZjxN9Bvg0
-         g0wxd116eVQgR4M7XASHWGzaKpg4JgZ4Wk2i4aIigAP8KALF9/JW76g5an3t2qCczL9z
-         XcKA==
-X-Gm-Message-State: AAQBX9e3Q50dR4a7fimKj1Xro4OLvd1qTuAvLuOE3BpMcoTxvP50i2fc
-        Ws9kMMD31GtLiXtOm8aQqNUUcRINGLYjJFavLf30
-X-Google-Smtp-Source: AKy350b/9VSgQDkcO3dfWMA8H7V+Tq9BIMgJP3E2JG5C4kAEJXd40vYSYLfGaD38SdySX4eX++Q8ewkTP/6Z5qkvI/Y=
-X-Received: by 2002:a81:ac49:0:b0:54f:8824:8836 with SMTP id
- z9-20020a81ac49000000b0054f88248836mr10491315ywj.8.1681768613668; Mon, 17 Apr
- 2023 14:56:53 -0700 (PDT)
+        bh=ZcK5SPnV3oXjtVURjd0PIBbzQgyYu9f1Ri6Sa67Eomw=;
+        b=DcxEz9KiWxdbAKROIybAnCvQ+ZlzeAZMZ1SRvqychRkRxdVrZrj+ellDxppN8DEeh8
+         7DOMZZHNnmiN3TjR8K1cnkSeTv0SDKLHsugPkgRUNOzDHrixuH99t8htVg2g2XUgdORH
+         mVD+Ibqg2u8Dwprj5hm1MC9eNcL4OVCvrawDAD+rUlcOjBqcBSl5Du8fKDGckahCSX8q
+         0OhyysXX9nZhau/uYt8SS41iGRP7pIBIhN7wAfjgnmu/UjfhJjTkFnJ+aNYybrx75nNR
+         RDD3I4iMesoVDmQUjKBubhPI5Ov6FJfhxnn1u6QFnMXnM3lXxJ8XvJTOVp8lNgNx6dTj
+         BwtA==
+X-Gm-Message-State: AAQBX9f3V5Nq5Am8I5JY17qSKPk1YCSZOiO07893CdTF0kO5pZT/o+OM
+        iWParmgdTa7hi3RMNma+6RPHuPLRZFZVWHRm/obcqSKY
+X-Google-Smtp-Source: AKy350bpyb9nWpQII3t4Oam91iDa4IHEcSy5RgKYsKlqc75TAJiMWLedwaji6pikWYDGd3PokSTk69mHR6Dnh/jA7uE=
+X-Received: by 2002:a17:906:3b88:b0:94e:c0fe:415a with SMTP id
+ u8-20020a1709063b8800b0094ec0fe415amr4379173ejf.5.1681774134345; Mon, 17 Apr
+ 2023 16:28:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230412205316.7114-1-junxiao.bi@oracle.com> <878reqs0xg.fsf@linux.ibm.com>
-In-Reply-To: <878reqs0xg.fsf@linux.ibm.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 17 Apr 2023 17:56:42 -0400
-Message-ID: <CAHC9VhS3LpJ_x7ZfdV83KY3U49XFGMLejz7rsiEH19rzyUfD-w@mail.gmail.com>
-Subject: Re: [PATCH V2] debugfs: allow access relay files in lockdown mode
-To:     Nathan Lynch <nathanl@linux.ibm.com>
-Cc:     Junxiao Bi <junxiao.bi@oracle.com>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, axboe@kernel.dk, konrad.wilk@oracle.com,
-        joe.jin@oracle.com
+References: <20230412043300.360803-1-andrii@kernel.org> <CAHC9VhQHmdZYnR=+rX-3FcRh127mhJt=jAnototfTiuSoOTptg@mail.gmail.com>
+ <6436eea2.170a0220.97ead.52a8@mx.google.com> <CAHC9VhR6ebsxtjSG8-fm7e=HU+srmziVuO6MU+pMpeSBv4vN+A@mail.gmail.com>
+ <6436f837.a70a0220.ada87.d446@mx.google.com> <CAHC9VhTF0JX3_zZ1ZRnoOw0ToYj6AsvK6OCiKqQgPvHepH9W3Q@mail.gmail.com>
+ <CAEf4BzY9GPr9c2fTUS6ijHURtdNDL4xM6+JAEggEqLuz9sk4Dg@mail.gmail.com>
+ <CAHC9VhT8RXG6zEwUdQZH4HE_HkF6B8XebWnUDc-k6AeH2NVe0w@mail.gmail.com>
+ <CAEf4BzaRkAtyigmu9fybW0_+TZJJX2i93BXjiNUfazt2dFDFbQ@mail.gmail.com> <87leiv4nb5.fsf@meer.lwn.net>
+In-Reply-To: <87leiv4nb5.fsf@meer.lwn.net>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Mon, 17 Apr 2023 16:28:41 -0700
+Message-ID: <CAEf4BzYx+49iG5q0JqJAiWmZoqDjSMa8ED75v2Q2K3enGaLHTg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/8] New BPF map and BTF security LSM hooks
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, kpsingh@kernel.org,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 17, 2023 at 4:39=E2=80=AFPM Nathan Lynch <nathanl@linux.ibm.com=
-> wrote:
-> Junxiao Bi <junxiao.bi@oracle.com> writes:
-> > Relay files are used by kernel to transfer information to userspace, th=
-ese
-> > files have permission 0400, but mmap is supported, so they are blocked =
-by
-> > lockdown. But since kernel just generates the contents of those files w=
-hile
-> > not reading it, it is saft to access relay files in lockdown mode.
-> >
-> > With this, blktrace can work well in lockdown mode.
+On Thu, Apr 13, 2023 at 12:03=E2=80=AFPM Jonathan Corbet <corbet@lwn.net> w=
+rote:
 >
-> Assuming that all relay users do not expose the kinds of information
-> that confidentiality mode tries to restrict, this change seems OK to
-> me. I think that assumption applies to blktrace; apart from that, there
-> is a handful of drivers that use relay files (I searched for
-> relay_open() call sites, maybe there is a better way).
+> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+>
+> > Why do you prefer such
+> > an approach instead of going with no extra permissions by default, but
+> > allowing custom LSM policy to grant few exceptions for known and
+> > trusted use cases?
+>
+> Should you be curious, you can find some of the history of the "no
+> authoritative hooks" policy at:
+>
+>   https://lwn.net/2001/1108/kernel.php3
+>
+> It was fairly heatedly discussed at the time.
+>
 
-At the very least I see an Intel graphics driver and some network
-drivers, but like you, that was a quick search and I'm probably
-missing something.  At the very least someone needs to go audit those
-users/drivers to ensure this is safe to merge.
+Thanks, Jonathan! Yes, it was very useful to get a bit of context.
 
-However, regardless of what that code audit may turn up, I'm a little
-concerned that it would be all too easy to add a new relay interface
-user which isn't safe.  The check in debugfs_locked_down() is far too
-removed from the code which is using the relay interface for it to be
-likely noticed in a future case where an unsafe user is added.  This
-looks like a vulnerability waiting to happen.
 
---=20
-paul-moore.com
+> jon
