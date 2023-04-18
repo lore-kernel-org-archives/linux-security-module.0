@@ -2,347 +2,454 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFD4C6FD18
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Apr 2023 14:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55980C77B7D
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Apr 2023 15:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231650AbjDROWb (ORCPT
+        id S232412AbjDRPt2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Apr 2023 10:22:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59950 "EHLO
+        Tue, 18 Apr 2023 11:49:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231153AbjDROW3 (ORCPT
+        with ESMTP id S232356AbjDRPtR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Apr 2023 10:22:29 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B505B13F8F
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Apr 2023 07:22:00 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-54fbb713301so218313697b3.11
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Apr 2023 07:22:00 -0700 (PDT)
+        Tue, 18 Apr 2023 11:49:17 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90A1812CB4;
+        Tue, 18 Apr 2023 08:49:13 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f16fd9bc0dso21468825e9.2;
+        Tue, 18 Apr 2023 08:49:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1681827712; x=1684419712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1681832952; x=1684424952;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vkZIV8wD6fZ668pob6ItL042FzskDWRIa/PyKOt3ihc=;
-        b=V2CL7xGrfyxO/Sp81tJYPF8GpmoqmMZIh/0PWpKDRDetVXb/9M4qVYecfYVKv3/XLJ
-         pAtOPzUdzfSye3cF1afgapx4F+DtWYmaoEVj8QzM52eoSW96hvCNqytsx13Y+Drn4WJt
-         /2hjIUtuvRyhFWwBHwElwhO3jtFK8MhuwPcWy/FKQjNAZdU2iRogI5hSv8RkCdgUP7Cv
-         PuCnX1LAKAbok8+HJUVInQgz4UYRqn0CeUYh4MIp5qZreVdFHzfZ4yf9pMVq6bsO2Cw6
-         hWyBUg+Nlvu68DWMHRYjJjQHiXY7KxIFR79ac192aRjY1CZnlLNZl6shGhOzTbDQkCYs
-         2cMA==
+        bh=UpDTnbIF542CSHK255t29C0dsriOPjDrlIOTnq6VGhg=;
+        b=dQ/UuKqsfe7uYvWeE5Pns5rtVd/0AdPad8c6UcyQo+zRskVc5bILEFh+J+6CCSO2kB
+         EQFeaaF6avE2fcC6GNrRKY+SbeSrwYTTV+HgN1j0eSYVYP8/UkNn49BMZvplcC8SFFiJ
+         kT68gM1qGUkiZoWqhPxmjveTuQXDah1AOW2VZX/EN4P9WCTE1SPbZtTO43LrVfB12rJf
+         HyAHHKgmiIS9VMKrGTV3L5McvFJAzvLANCZzingrQGv819mJXKz10LaT85JPYPpzyFE4
+         8YTBz1NpC4zpqv0L+IeiVh6WgfmFVhz+XnMhKpUP1RVuAoO9uQO+k8AEsFVgT0uaZXKy
+         4lYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681827712; x=1684419712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1681832952; x=1684424952;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vkZIV8wD6fZ668pob6ItL042FzskDWRIa/PyKOt3ihc=;
-        b=hb990XJ7ahNaxOJCDfv0XelsU9jTAjKNnV3JV1IbTHY/1Z0KPCTxoQCVCJeJ2QNHFu
-         RKe4OKH+QHqq7U/7eNNsRo7cFBW5Sgwpvx4gRUu1/u8qB5zehEbwFYa8fOT+qJ3Usabj
-         /U4WSwOUQ0cwOyLKYp4ODujnFFYLoHZdNRowtWWmhJlPWXuGYMPS1Ivvbp44qClMQehR
-         g3JY3CV5JaLHICJ1ns438SJB84jy0c1Ukr9FjohnfsSbUnLImxTmu+LxH1zwCXf8Jd55
-         sPVu39jslaeElznDKhN6LN3oHlYGEjXrPAVqOTStuneE2Y6No+fCw6IjXacFfVwpiYXi
-         oHAQ==
-X-Gm-Message-State: AAQBX9eRmDPpTT4MIAhstYI+C6ObAIKKw4GqY4GLnSaRSpU67zESseX/
-        G9Aq9q/rDP4lleRUQhiY1tB86FHA/8k9pHHQZEj4
-X-Google-Smtp-Source: AKy350YK0WaynxlRUO7kOmWy6SzXD7GArqCXl0/UXRwSVBUrQgkBOwzXMjWbSI6Yxl7w1XrIbu+TYAZzC88rmqiQeYc=
-X-Received: by 2002:a81:440e:0:b0:544:cd0e:2f80 with SMTP id
- r14-20020a81440e000000b00544cd0e2f80mr1667ywa.8.1681827711642; Tue, 18 Apr
- 2023 07:21:51 -0700 (PDT)
+        bh=UpDTnbIF542CSHK255t29C0dsriOPjDrlIOTnq6VGhg=;
+        b=TxOKB62d6qgfzEsZ2dwFqOnyKBFE40DkpYTXSBJjWdKnQOPRLFO/EuXCLdZ6XOfnRk
+         f+bhPcJkLupTCYk1dRDl1pfbO2/Px0xIps97mlkDZ3SayLdtgShzhe1U27BVyLd2VDrF
+         1cHkzIi7D0XYPa+snaIqNQsaquCpyeBlUCOULIwUezvlvOKyWnWN1bQ7og4u+pJxwGML
+         n+CCOcEJw1j8btMFLYAtYFBfHwjEOw0QuSvZ7VbeRFy4aVhjGKqDfmY+l7nDYf35DVLv
+         OAOxa1wRqRHi4Z+IZ7vf1IQEpyj744eRG/CU3I2VMA62+CdzxRQbpVu/rqGS0/6gGafm
+         L6+Q==
+X-Gm-Message-State: AAQBX9ewLSRf8b3hqTJO0gXfz4xNUxbVcN9dieHB1Z0CDXWDnYcpw+Bv
+        OkeFBy4Gjo25ZVsdRVtNmQk=
+X-Google-Smtp-Source: AKy350bVV4uQ8lR+SE5X/kHt9mn8be5pAW7rko/h8BvM6/W0i2CW942gZ/uHrHsWr5XB841GP2+ddg==
+X-Received: by 2002:adf:f8d1:0:b0:2e6:3804:5be with SMTP id f17-20020adff8d1000000b002e6380405bemr2239587wrq.59.1681832951798;
+        Tue, 18 Apr 2023 08:49:11 -0700 (PDT)
+Received: from lucifer.home (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
+        by smtp.googlemail.com with ESMTPSA id l12-20020a1c790c000000b003f179fc6d8esm2254274wme.44.2023.04.18.08.49.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Apr 2023 08:49:11 -0700 (PDT)
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>
+Subject: [PATCH v4 3/6] mm/gup: remove vmas parameter from get_user_pages_remote()
+Date:   Tue, 18 Apr 2023 16:49:08 +0100
+Message-Id: <7c6f1ae88320bf11d2f583178a3d9e653e06ac63.1681831798.git.lstoakes@gmail.com>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <cover.1681831798.git.lstoakes@gmail.com>
+References: <cover.1681831798.git.lstoakes@gmail.com>
 MIME-Version: 1.0
-References: <20230412043300.360803-1-andrii@kernel.org> <CAHC9VhQHmdZYnR=+rX-3FcRh127mhJt=jAnototfTiuSoOTptg@mail.gmail.com>
- <6436eea2.170a0220.97ead.52a8@mx.google.com> <CAHC9VhR6ebsxtjSG8-fm7e=HU+srmziVuO6MU+pMpeSBv4vN+A@mail.gmail.com>
- <6436f837.a70a0220.ada87.d446@mx.google.com> <CAHC9VhTF0JX3_zZ1ZRnoOw0ToYj6AsvK6OCiKqQgPvHepH9W3Q@mail.gmail.com>
- <CAEf4BzY9GPr9c2fTUS6ijHURtdNDL4xM6+JAEggEqLuz9sk4Dg@mail.gmail.com>
- <CAHC9VhT8RXG6zEwUdQZH4HE_HkF6B8XebWnUDc-k6AeH2NVe0w@mail.gmail.com>
- <CAEf4BzaRkAtyigmu9fybW0_+TZJJX2i93BXjiNUfazt2dFDFbQ@mail.gmail.com>
- <CAHC9VhQFJafyW5r9YzG47NjrBcKURj3D0V-u7eN2eb5tBM2pkg@mail.gmail.com> <CAEf4BzZa26JHa=gBgMm-sqyNy_S71-2Rs_-F6mrRXQF9z9KcmA@mail.gmail.com>
-In-Reply-To: <CAEf4BzZa26JHa=gBgMm-sqyNy_S71-2Rs_-F6mrRXQF9z9KcmA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 18 Apr 2023 10:21:40 -0400
-Message-ID: <CAHC9VhRH6Z2r_A7YkDEmW7kiCA8e5j2u270gE48jpQmqS+t75A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/8] New BPF map and BTF security LSM hooks
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, kpsingh@kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 17, 2023 at 7:29=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
-> On Thu, Apr 13, 2023 at 8:11=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Thu, Apr 13, 2023 at 1:16=E2=80=AFAM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > > On Wed, Apr 12, 2023 at 7:56=E2=80=AFPM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> > > > On Wed, Apr 12, 2023 at 9:43=E2=80=AFPM Andrii Nakryiko
-> > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > On Wed, Apr 12, 2023 at 12:07=E2=80=AFPM Paul Moore <paul@paul-mo=
-ore.com> wrote:
-> > > > > > On Wed, Apr 12, 2023 at 2:28=E2=80=AFPM Kees Cook <keescook@chr=
-omium.org> wrote:
-> > > > > > > On Wed, Apr 12, 2023 at 02:06:23PM -0400, Paul Moore wrote:
-> > > > > > > > On Wed, Apr 12, 2023 at 1:47=E2=80=AFPM Kees Cook <keescook=
-@chromium.org> wrote:
-> > > > > > > > > On Wed, Apr 12, 2023 at 12:49:06PM -0400, Paul Moore wrot=
-e:
-> > > > > > > > > > On Wed, Apr 12, 2023 at 12:33=E2=80=AFAM Andrii Nakryik=
-o <andrii@kernel.org> wrote:
-> > > >
-> > > > ...
-> > > >
-> > > > > > > > > For example, in many places we have things like:
-> > > > > > > > >
-> > > > > > > > >         if (!some_check(...) && !capable(...))
-> > > > > > > > >                 return -EPERM;
-> > > > > > > > >
-> > > > > > > > > I would expect this is a similar logic. An operation can =
-succeed if the
-> > > > > > > > > access control requirement is met. The mismatch we have t=
-hrough-out the
-> > > > > > > > > kernel is that capability checks aren't strictly done by =
-LSM hooks. And
-> > > > > > > > > this series conceptually, I think, doesn't violate that -=
-- it's changing
-> > > > > > > > > the logic of the capability checks, not the LSM (i.e. the=
-re no LSM hooks
-> > > > > > > > > yet here).
-> > > > > > > >
-> > > > > > > > Patch 04/08 creates a new LSM hook, security_bpf_map_create=
-(), which
-> > > > > > > > when it returns a positive value "bypasses kernel checks". =
- The patch
-> > > > > > > > isn't based on either Linus' tree or the LSM tree, I'm gues=
-sing it is
-> > > > > > > > based on a eBPF tree, so I can't say with 100% certainty th=
-at it is
-> > > > > > > > bypassing a capability check, but the description claims th=
-at to be
-> > > > > > > > the case.
-> > > > > > > >
-> > > > > > > > Regardless of how you want to spin this, I'm not supportive=
- of a LSM
-> > > > > > > > hook which allows a LSM to bypass a capability check.  A LS=
-M hook can
-> > > > > > > > be used to provide additional access control restrictions b=
-eyond a
-> > > > > > > > capability check, but a LSM hook should never be allowed to=
- overrule
-> > > > > > > > an access denial due to a capability check.
-> > > > > > > >
-> > > > > > > > > The reason CAP_BPF was created was because there was noth=
-ing else that
-> > > > > > > > > would be fine-grained enough at the time.
-> > > > > > > >
-> > > > > > > > The LSM layer predates CAP_BPF, and one could make a very s=
-olid
-> > > > > > > > argument that one of the reasons LSMs exist is to provide
-> > > > > > > > supplementary controls due to capability-based access contr=
-ols being a
-> > > > > > > > poor fit for many modern use cases.
-> > > > > > >
-> > > > > > > I generally agree with what you say, but we DO have this code=
- pattern:
-> > > > > > >
-> > > > > > >          if (!some_check(...) && !capable(...))
-> > > > > > >                  return -EPERM;
-> > > > > >
-> > > > > > I think we need to make this more concrete; we don't have a pat=
-tern in
-> > > > > > the upstream kernel where 'some_check(...)' is a LSM hook, righ=
-t?
-> > > > > > Simply because there is another kernel access control mechanism=
- which
-> > > > > > allows a capability check to be skipped doesn't mean I want to =
-allow a
-> > > > > > LSM hook to be used to skip a capability check.
-> > > > >
-> > > > > This work is an attempt to tighten the security of production sys=
-tems
-> > > > > by allowing to drop too coarse-grained and permissive capabilitie=
-s
-> > > > > (like CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, which inevitable allow=
- more
-> > > > > than production use cases are meant to be able to do) and then gr=
-ant
-> > > > > specific BPF operations on specific BPF programs/maps based on cu=
-stom
-> > > > > LSM security policy, which validates application trustworthiness =
-using
-> > > > > custom production-specific logic.
-> > > >
-> > > > There are ways to leverage the LSMs to apply finer grained access
-> > > > control on top of the relatively coarse capabilities that do not
-> > > > require circumventing those capability controls.  One grants the
-> > > > capabilities, just as one would do today, and then leverages the
-> > > > security functionality of a LSM to further restrict specific users,
-> > > > applications, etc. with a level of granularity beyond that offered =
-by
-> > > > the capability controls.
-> > >
-> > > Please help me understand something. What you and Casey are proposing=
-,
-> > > when taken to the logical extreme, is to grant to all processes root
-> > > permissions and then use LSM to restrict specific actions, do I
-> > > understand correctly? This strikes me as a less secure and more
-> > > error-prone way of doing things.
-> >
-> > When taken to the "logical extreme" most concepts end up sounding a
-> > bit absurd, but that was the point, wasn't it?
->
-> Wasn't my intent to make it sound absurd, sorry. The way I see it, for
-> the sake of example, let's say CAP_BPF allows 20 different operations
-> (each with its own security_xxx hook). And let's say in production I
-> want to only allow 3 of them. Sure, technically it should be possible
-> to deny access at 17 hooks and let it through in just those 3. But if
-> someone adds 21st and I forget to add 21st restriction, that would be
-> bad (but very probably with such approach).
+The only instances of get_user_pages_remote() invocations which used the
+vmas parameter were for a single page which can instead simply look up the
+VMA directly. In particular:-
 
-Welcome to the challenges of maintaining access controls within the
-Linux Kernel, LSM or otherwise.  As we all know, the Linux Kernel
-moves forward at a staggering pace sometimes, and it is not uncommon
-for new features/subsystems to be added without consulting all of the
-different folks who worry about access controls.  In many cases it can
-be a simple misunderstanding, but in some cases it's a willful
-rejection of a particular form of access control, the LSM being a
-prime example.  Thankfully in almost all of those cases we have been
-moderately successful in retrofitting the necessary access controls,
-sometimes they are not as good/capable/granular/etc. as we would like
-because of design limitations, but such is life.
+- __update_ref_ctr() looked up the VMA but did nothing with it so we simply
+  remove it.
 
-I say this not because I believe this is a valid argument for
-authoritative LSM hooks, I say this simply to acknowledge that this
-*is* a problem.
+- __access_remote_vm() was already using vma_lookup() when the original
+  lookup failed so by doing the lookup directly this also de-duplicates the
+  code.
 
-> So my point is that for situations like this, dropping CAP_BPF, but
-> allowing only 3 hooks to proceed seems a safer approach, because if we
-> add 21st hook, it will safely be denied without CAP_BPF *by default*.
-> That's what I tried to point out.
+We are able to perform these VMA operations as we already hold the
+mmap_lock in order to be able to call get_user_pages_remote().
 
-I believe I understand your point, I just disagree with you on
-accepting authoritative LSM hooks in the upstream Linux Kernel; I
-believe it would be a *big* mistake to move away from the restrictive
-LSM hook philosophy at this point in time.
+As part of this work we add get_user_page_vma_remote() which abstracts the
+VMA lookup, error handling and decrementing the page reference count should
+the VMA lookup fail.
 
-> But even if we ignore this "safe by default when a new hook is added"
-> behavior, when taking user namespaces into account, the restrictive
-> LSM approach just doesn't seem to work at all for something like
-> CAP_BPF. CAP_BPF cannot be "namespaced", just like, say, CAP_SYS_TIME,
-> because we cannot ensure that a given BPF program won't access kernel
-> state "belonging" to another process (as one example).
+This forms part of a broader set of patches intended to eliminate the vmas
+parameter altogether.
 
-Once again, the root of this problem lies in the capabilities and/or
-namespace mechanisms, not the LSM; if you want to fix this properly
-you should be looking at how eBPF leverages capabilities for access
-control.  Changing the very core behavior of the LSM layer in order to
-work around an issue with another access control mechanism is a
-non-starter.  I can't say this enough.
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com> (for arm64)
+Acked-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+---
+ arch/arm64/kernel/mte.c   | 17 +++++++++--------
+ arch/s390/kvm/interrupt.c |  2 +-
+ fs/exec.c                 |  2 +-
+ include/linux/mm.h        | 34 +++++++++++++++++++++++++++++++---
+ kernel/events/uprobes.c   | 13 +++++--------
+ mm/gup.c                  | 12 ++++--------
+ mm/memory.c               | 14 +++++++-------
+ mm/rmap.c                 |  2 +-
+ security/tomoyo/domain.c  |  2 +-
+ virt/kvm/async_pf.c       |  3 +--
+ 10 files changed, 61 insertions(+), 40 deletions(-)
 
-> Now, thanks to Jonathan, I get that there was a heated discussion 20
-> years ago about authoritative vs restrictive LSMs. But if I read a
-> summary at that time ([0]), authoritative hooks were not out of the
-> question *in principle*. Surely, "walk before we can run" makes sense,
-> but it's been a while ago.
+diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
+index f5bcb0dc6267..cc793c246653 100644
+--- a/arch/arm64/kernel/mte.c
++++ b/arch/arm64/kernel/mte.c
+@@ -419,10 +419,9 @@ long get_mte_ctrl(struct task_struct *task)
+ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+ 				struct iovec *kiov, unsigned int gup_flags)
+ {
+-	struct vm_area_struct *vma;
+ 	void __user *buf = kiov->iov_base;
+ 	size_t len = kiov->iov_len;
+-	int ret;
++	int err = 0;
+ 	int write = gup_flags & FOLL_WRITE;
+ 
+ 	if (!access_ok(buf, len))
+@@ -432,14 +431,16 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+ 		return -EIO;
+ 
+ 	while (len) {
++		struct vm_area_struct *vma;
+ 		unsigned long tags, offset;
+ 		void *maddr;
+-		struct page *page = NULL;
++		struct page *page = get_user_page_vma_remote(mm, addr,
++							     gup_flags, &vma);
+ 
+-		ret = get_user_pages_remote(mm, addr, 1, gup_flags, &page,
+-					    &vma, NULL);
+-		if (ret <= 0)
++		if (IS_ERR_OR_NULL(page)) {
++			err = page == NULL ? -EIO : PTR_ERR(page);
+ 			break;
++		}
+ 
+ 		/*
+ 		 * Only copy tags if the page has been mapped as PROT_MTE
+@@ -449,7 +450,7 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+ 		 * was never mapped with PROT_MTE.
+ 		 */
+ 		if (!(vma->vm_flags & VM_MTE)) {
+-			ret = -EOPNOTSUPP;
++			err = -EOPNOTSUPP;
+ 			put_page(page);
+ 			break;
+ 		}
+@@ -482,7 +483,7 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+ 	kiov->iov_len = buf - kiov->iov_base;
+ 	if (!kiov->iov_len) {
+ 		/* check for error accessing the tracee's address space */
+-		if (ret <= 0)
++		if (err)
+ 			return -EIO;
+ 		else
+ 			return -EFAULT;
+diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+index 9250fde1f97d..c19d0cb7d2f2 100644
+--- a/arch/s390/kvm/interrupt.c
++++ b/arch/s390/kvm/interrupt.c
+@@ -2777,7 +2777,7 @@ static struct page *get_map_page(struct kvm *kvm, u64 uaddr)
+ 
+ 	mmap_read_lock(kvm->mm);
+ 	get_user_pages_remote(kvm->mm, uaddr, 1, FOLL_WRITE,
+-			      &page, NULL, NULL);
++			      &page, NULL);
+ 	mmap_read_unlock(kvm->mm);
+ 	return page;
+ }
+diff --git a/fs/exec.c b/fs/exec.c
+index 87cf3a2f0e9a..d8d48ee15aac 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -219,7 +219,7 @@ static struct page *get_arg_page(struct linux_binprm *bprm, unsigned long pos,
+ 	 */
+ 	mmap_read_lock(bprm->mm);
+ 	ret = get_user_pages_remote(bprm->mm, pos, 1, gup_flags,
+-			&page, NULL, NULL);
++			&page, NULL);
+ 	mmap_read_unlock(bprm->mm);
+ 	if (ret <= 0)
+ 		return NULL;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ec9875c59f6d..0c236e2f25e2 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2364,6 +2364,9 @@ static inline void unmap_shared_mapping_range(struct address_space *mapping,
+ 	unmap_mapping_range(mapping, holebegin, holelen, 0);
+ }
+ 
++static inline struct vm_area_struct *vma_lookup(struct mm_struct *mm,
++						unsigned long addr);
++
+ extern int access_process_vm(struct task_struct *tsk, unsigned long addr,
+ 		void *buf, int len, unsigned int gup_flags);
+ extern int access_remote_vm(struct mm_struct *mm, unsigned long addr,
+@@ -2372,13 +2375,38 @@ extern int __access_remote_vm(struct mm_struct *mm, unsigned long addr,
+ 			      void *buf, int len, unsigned int gup_flags);
+ 
+ long get_user_pages_remote(struct mm_struct *mm,
+-			    unsigned long start, unsigned long nr_pages,
+-			    unsigned int gup_flags, struct page **pages,
+-			    struct vm_area_struct **vmas, int *locked);
++			   unsigned long start, unsigned long nr_pages,
++			   unsigned int gup_flags, struct page **pages,
++			   int *locked);
+ long pin_user_pages_remote(struct mm_struct *mm,
+ 			   unsigned long start, unsigned long nr_pages,
+ 			   unsigned int gup_flags, struct page **pages,
+ 			   int *locked);
++
++static inline struct page *get_user_page_vma_remote(struct mm_struct *mm,
++						    unsigned long addr,
++						    int gup_flags,
++						    struct vm_area_struct **vmap)
++{
++	struct page *page;
++	struct vm_area_struct *vma;
++	int got = get_user_pages_remote(mm, addr, 1, gup_flags, &page, NULL);
++
++	if (got < 0)
++		return ERR_PTR(got);
++	if (got == 0)
++		return NULL;
++
++	vma = vma_lookup(mm, addr);
++	if (WARN_ON_ONCE(!vma)) {
++		put_page(page);
++		return ERR_PTR(-EINVAL);
++	}
++
++	*vmap = vma;
++	return page;
++}
++
+ long get_user_pages(unsigned long start, unsigned long nr_pages,
+ 		    unsigned int gup_flags, struct page **pages);
+ long pin_user_pages(unsigned long start, unsigned long nr_pages,
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 59887c69d54c..cac3aef7c6f7 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -365,7 +365,6 @@ __update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
+ {
+ 	void *kaddr;
+ 	struct page *page;
+-	struct vm_area_struct *vma;
+ 	int ret;
+ 	short *ptr;
+ 
+@@ -373,7 +372,7 @@ __update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
+ 		return -EINVAL;
+ 
+ 	ret = get_user_pages_remote(mm, vaddr, 1,
+-			FOLL_WRITE, &page, &vma, NULL);
++				    FOLL_WRITE, &page, NULL);
+ 	if (unlikely(ret <= 0)) {
+ 		/*
+ 		 * We are asking for 1 page. If get_user_pages_remote() fails,
+@@ -474,10 +473,9 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+ 	if (is_register)
+ 		gup_flags |= FOLL_SPLIT_PMD;
+ 	/* Read the page with vaddr into memory */
+-	ret = get_user_pages_remote(mm, vaddr, 1, gup_flags,
+-				    &old_page, &vma, NULL);
+-	if (ret <= 0)
+-		return ret;
++	old_page = get_user_page_vma_remote(mm, vaddr, gup_flags, &vma);
++	if (IS_ERR_OR_NULL(old_page))
++		return PTR_ERR(old_page);
+ 
+ 	ret = verify_opcode(old_page, vaddr, &opcode);
+ 	if (ret <= 0)
+@@ -2027,8 +2025,7 @@ static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr)
+ 	 * but we treat this as a 'remote' access since it is
+ 	 * essentially a kernel access to the memory.
+ 	 */
+-	result = get_user_pages_remote(mm, vaddr, 1, FOLL_FORCE, &page,
+-			NULL, NULL);
++	result = get_user_pages_remote(mm, vaddr, 1, FOLL_FORCE, &page, NULL);
+ 	if (result < 0)
+ 		return result;
+ 
+diff --git a/mm/gup.c b/mm/gup.c
+index 931c805bc32b..9440aa54c741 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2165,8 +2165,6 @@ static bool is_valid_gup_args(struct page **pages, struct vm_area_struct **vmas,
+  * @pages:	array that receives pointers to the pages pinned.
+  *		Should be at least nr_pages long. Or NULL, if caller
+  *		only intends to ensure the pages are faulted in.
+- * @vmas:	array of pointers to vmas corresponding to each page.
+- *		Or NULL if the caller does not require them.
+  * @locked:	pointer to lock flag indicating whether lock is held and
+  *		subsequently whether VM_FAULT_RETRY functionality can be
+  *		utilised. Lock must initially be held.
+@@ -2181,8 +2179,6 @@ static bool is_valid_gup_args(struct page **pages, struct vm_area_struct **vmas,
+  *
+  * The caller is responsible for releasing returned @pages, via put_page().
+  *
+- * @vmas are valid only as long as mmap_lock is held.
+- *
+  * Must be called with mmap_lock held for read or write.
+  *
+  * get_user_pages_remote walks a process's page tables and takes a reference
+@@ -2219,15 +2215,15 @@ static bool is_valid_gup_args(struct page **pages, struct vm_area_struct **vmas,
+ long get_user_pages_remote(struct mm_struct *mm,
+ 		unsigned long start, unsigned long nr_pages,
+ 		unsigned int gup_flags, struct page **pages,
+-		struct vm_area_struct **vmas, int *locked)
++		int *locked)
+ {
+ 	int local_locked = 1;
+ 
+-	if (!is_valid_gup_args(pages, vmas, locked, &gup_flags,
++	if (!is_valid_gup_args(pages, NULL, locked, &gup_flags,
+ 			       FOLL_TOUCH | FOLL_REMOTE))
+ 		return -EINVAL;
+ 
+-	return __get_user_pages_locked(mm, start, nr_pages, pages, vmas,
++	return __get_user_pages_locked(mm, start, nr_pages, pages, NULL,
+ 				       locked ? locked : &local_locked,
+ 				       gup_flags);
+ }
+@@ -2237,7 +2233,7 @@ EXPORT_SYMBOL(get_user_pages_remote);
+ long get_user_pages_remote(struct mm_struct *mm,
+ 			   unsigned long start, unsigned long nr_pages,
+ 			   unsigned int gup_flags, struct page **pages,
+-			   struct vm_area_struct **vmas, int *locked)
++			   int *locked)
+ {
+ 	return 0;
+ }
+diff --git a/mm/memory.c b/mm/memory.c
+index 8ddb10199e8d..61b7192acf98 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -5577,7 +5577,6 @@ EXPORT_SYMBOL_GPL(generic_access_phys);
+ int __access_remote_vm(struct mm_struct *mm, unsigned long addr, void *buf,
+ 		       int len, unsigned int gup_flags)
+ {
+-	struct vm_area_struct *vma;
+ 	void *old_buf = buf;
+ 	int write = gup_flags & FOLL_WRITE;
+ 
+@@ -5586,13 +5585,15 @@ int __access_remote_vm(struct mm_struct *mm, unsigned long addr, void *buf,
+ 
+ 	/* ignore errors, just check how much was successfully transferred */
+ 	while (len) {
+-		int bytes, ret, offset;
++		int bytes, offset;
+ 		void *maddr;
+-		struct page *page = NULL;
++		struct vm_area_struct *vma;
++		struct page *page = get_user_page_vma_remote(mm, addr,
++							     gup_flags, &vma);
++
++		if (IS_ERR_OR_NULL(page)) {
++			int ret = 0;
+ 
+-		ret = get_user_pages_remote(mm, addr, 1,
+-				gup_flags, &page, &vma, NULL);
+-		if (ret <= 0) {
+ #ifndef CONFIG_HAVE_IOREMAP_PROT
+ 			break;
+ #else
+@@ -5600,7 +5601,6 @@ int __access_remote_vm(struct mm_struct *mm, unsigned long addr, void *buf,
+ 			 * Check if this is a VM_IO | VM_PFNMAP VMA, which
+ 			 * we can access using slightly different code.
+ 			 */
+-			vma = vma_lookup(mm, addr);
+ 			if (!vma)
+ 				break;
+ 			if (vma->vm_ops && vma->vm_ops->access)
+diff --git a/mm/rmap.c b/mm/rmap.c
+index ba901c416785..756ea8a9bb90 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -2324,7 +2324,7 @@ int make_device_exclusive_range(struct mm_struct *mm, unsigned long start,
+ 
+ 	npages = get_user_pages_remote(mm, start, npages,
+ 				       FOLL_GET | FOLL_WRITE | FOLL_SPLIT_PMD,
+-				       pages, NULL, NULL);
++				       pages, NULL);
+ 	if (npages < 0)
+ 		return npages;
+ 
+diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
+index 31af29f669d2..ac20c0bdff9d 100644
+--- a/security/tomoyo/domain.c
++++ b/security/tomoyo/domain.c
+@@ -916,7 +916,7 @@ bool tomoyo_dump_page(struct linux_binprm *bprm, unsigned long pos,
+ 	 */
+ 	mmap_read_lock(bprm->mm);
+ 	ret = get_user_pages_remote(bprm->mm, pos, 1,
+-				    FOLL_FORCE, &page, NULL, NULL);
++				    FOLL_FORCE, &page, NULL);
+ 	mmap_read_unlock(bprm->mm);
+ 	if (ret <= 0)
+ 		return false;
+diff --git a/virt/kvm/async_pf.c b/virt/kvm/async_pf.c
+index 9bfe1d6f6529..e033c79d528e 100644
+--- a/virt/kvm/async_pf.c
++++ b/virt/kvm/async_pf.c
+@@ -61,8 +61,7 @@ static void async_pf_execute(struct work_struct *work)
+ 	 * access remotely.
+ 	 */
+ 	mmap_read_lock(mm);
+-	get_user_pages_remote(mm, addr, 1, FOLL_WRITE, NULL, NULL,
+-			&locked);
++	get_user_pages_remote(mm, addr, 1, FOLL_WRITE, NULL, &locked);
+ 	if (locked)
+ 		mmap_read_unlock(mm);
+ 
+-- 
+2.40.0
 
-... and once again, the restrictive approach has proven to work
-reasonably well over the past ~20 years, why would we abandon that
-simply to work around a problem with a different access control
-mechanism.  Don't break the LSM layer to fix something else.
-
-> > Here is a fun story which seems relevant ... in the early days of
-> > SELinux, one of the community devs setup up a system with a SELinux
-> > policy which restricted all privileged operations from the root user,
-> > put the system on a publicly accessible network, posted the root
-> > password for all to see, and invited the public to login to the system
-> > and attempt to exercise root privilege (it's been well over 10 years
-> > at this point so the details are a bit fuzzy).  Granted, there were
-> > some hiccups in the beginning, mostly due to the crude state of policy
-> > development/analysis at the time, but after a few policy revisions the
-> > system held up quite well.
->
-> Honest question out of curiosity: was the intent to demonstrate that
-> with LSM one can completely restrict root? Or that root was actually
-> allowed to do something useful?
-
-The intent was to show that it is possible to restrict
-capability-based access controls with the LSM layer; it was the best
-example of the "logical extreme" carried out in the real world that I
-could think of when writing my response.
-
-> > On the more practical side of things, there are several use cases
-> > which require, by way of legal or contractual requirements, that full
-> > root/admin privileges are decomposed into separate roles: security
-> > admin, audit admin, backup admin, etc.  These users satisfy these
-> > requirements by using LSMs, such as SELinux, to restrict the
-> > administrative capabilities based on the SELinux user/role/domain.
-> >
-> > > By the way, even the above proposal of yours doesn't work for
-> > > production use cases when user namespaces are involved, as far as I
-> > > understand. We cannot grant CAP_BPF+CAP_PERFMON+CAP_NET_ADMIN for
-> > > containers running inside user namespaces, as CAP_BPF in non-init
-> > > namespace is not enough for bpf() syscall to allow loading BPF maps o=
-r
-> > > BPF program ...
-> >
-> > Once again, the LSM has always intended to be a restrictive mechanism,
-> > not a privilege granting mechanism.  If an operation is not possible
->
-> Not according to [0] above:
-
-When one considers what has been present in Linus' tree, then yes.
-The idea of authoritative LSM hooks has been rejected for ~20 years
-and I've seen nothing in this thread to make me believe that we should
-change that now, and for this use case.
-
-> > Based on your patches and our discussion, it seems to me that the
-> > problem you are trying to resolve is related more to the
-> > capability-based access controls in the eBPF, and possibly other
-> > kernel subsystems, and not any LSM-based restrictions.  I'm happy to
-> > work with you on a solution involving the LSM, but please understand
-> > that I'm not going to support a solution which changes a core
-> > philosophy of the LSM layer.
->
-> Great, I'd really appreciate help and suggestions on how to solve the
-> following problem.
->
-> We have a BPF subsystem that allows loading BPF programs. Those BPF
-> programs cannot be contained within a particular namespace just by its
-> system-wide tracing nature (it can safely read kernel and user memory
-> and we can't restrict whether that memory belongs to a particular
-> namespace), so it's like CAP_SYS_TIME, just with much broader API
-> surface.
->
-> The other piece of a puzzle is user namespaces. We do want to run
-> applications inside user namespaces, but allow them to use BPF
-> programs. As far as I can tell, there is no way to grant real CAP_BPF
-> that will be recognized by capable(CAP_BPF) (not ns_capable, see above
-> about system-wide nature of BPF). If there is, please help me
-> understand how. All my local experiments failed, and looking at
-> cap_capable() implementation it is not intended to even check the
-> initial namespace's capability if the process is running in the user
-> namespace.
->
-> So, given that a) we can't make CAP_BPF namespace-aware and b) we
-> can't grant real CAP_BPF to processes in user namespace, how could we
-> allow user namespaced applications to do useful work with BPF?
-
-I would start by talking with the user namespace folks.  I may be
-misunderstanding the problem as you've described it, but it seems like
-the core issue is how capabilities, specifically CAP_BPF, are handled
-in user namespaces.  To be honest, I'm not sure how much luck you'll
-have there, but you stand a better chance in changing how capabilities
-are handled across user namespaces than you do in getting an
-authoritative LSM hook merged.
-
-Regardless, my offer still stands, if you have a solution which sticks
-to a restrictive LSM model, I'm happy to work with you further to sort
-out the details and try to make that work.  I don't have any great
-ideas there at the moment, but there are plenty of smart people on
-this mailing list and others who might have something clever in mind.
-
---=20
-paul-moore.com
