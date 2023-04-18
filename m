@@ -2,72 +2,89 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A082C77B76
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Apr 2023 09:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6979C77B76
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Apr 2023 10:53:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231281AbjDRJIj (ORCPT
+        id S229734AbjDRKxd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Apr 2023 05:08:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45320 "EHLO
+        Tue, 18 Apr 2023 06:53:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231320AbjDRJIT (ORCPT
+        with ESMTP id S229726AbjDRKxc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Apr 2023 05:08:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BBE7659E;
-        Tue, 18 Apr 2023 02:08:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4688D61B1C;
-        Tue, 18 Apr 2023 09:08:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A47F1C433D2;
-        Tue, 18 Apr 2023 09:08:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681808893;
-        bh=/TGjxtJugjADcv+bp2Z47PlcioFCR2cdHAZw6bKOkHY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Pp5nPlueSoTeeAkF+K54c2C71mg4SuGRp5hkgDI0ts9sKD/4YdDMXgo521KcX9RHX
-         HHXU9+octQcYtL0yUmgW4UsS3QJcUSTRZ/2u3I7W+pjr8fxmwSgUGnrghdAMmmCp/a
-         DnDUYssFoFkUdl0TKr23OjIomHYgn8EkuHet7Anz+L83jL0ifeLEoBc1uLLJMl2pMu
-         LjWPqee8shUkAN2tTKFFNa1G27xl/ukGbLM1opAgFnAg5115ppgTScaRpgdqPzjxik
-         oVJxPIs5moNHNltdozr9hjNniBDyyuaFv2orV0mZnIejZtsxKrGqfxvg017v/Mik9x
-         FlBBaWiQOY8wQ==
-Date:   Tue, 18 Apr 2023 11:08:07 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, amir73il@gmail.com,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] IMA: use vfs_getattr_nosec to get the i_version
-Message-ID: <20230418-engste-gastwirtschaft-601fb389bba5@brauner>
-References: <20230417165551.31130-1-jlayton@kernel.org>
+        Tue, 18 Apr 2023 06:53:32 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34FE3E62;
+        Tue, 18 Apr 2023 03:53:31 -0700 (PDT)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Q113B5HWJz8wx1;
+        Tue, 18 Apr 2023 18:52:38 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Tue, 18 Apr 2023 18:53:28 +0800
+Message-ID: <d55baf4d-01d3-e4d7-e07f-9658d1606a8c@huawei.com>
+Date:   Tue, 18 Apr 2023 18:53:28 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230417165551.31130-1-jlayton@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH -next v2 0/6] landlock: add chmod and chown support
+From:   xiujianfeng <xiujianfeng@huawei.com>
+To:     <mic@digikod.net>, <paul@paul-moore.com>, <jmorris@namei.org>,
+        <serge@hallyn.com>, <shuah@kernel.org>, <corbet@lwn.net>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <roberto.sassu@huawei.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+References: <20220827111215.131442-1-xiujianfeng@huawei.com>
+Content-Language: en-US
+In-Reply-To: <20220827111215.131442-1-xiujianfeng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.110.112]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 17, 2023 at 12:55:51PM -0400, Jeff Layton wrote:
-> IMA currently accesses the i_version out of the inode directly when it
-> does a measurement. This is fine for most simple filesystems, but can be
-> problematic with more complex setups (e.g. overlayfs).
-> 
-> Make IMA instead call vfs_getattr_nosec to get this info. This allows
-> the filesystem to determine whether and how to report the i_version, and
-> should allow IMA to work properly with a broader class of filesystems in
-> the future.
-> 
-> Reported-and-Tested-by: Stefan Berger <stefanb@linux.ibm.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
+Hi Mickael,
 
-Excellent, thanks,
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+Sorry about the long silence on this work, As we known this work depends
+on another work about changing argument from struct dentry to struct
+path for some attr/xattr related lsm hooks, I'm stuck with this thing,
+because IMA/EVM is a special security module which is not LSM-based
+currently, and severely coupled with the file system. so I am waiting
+for Roberto Sassu' work (Move IMA and EVM to the LSM infrastructure) to
+be ready, I think it can make my work more easy. you can find
+Roberto'work here,
+https://lwn.net/ml/linux-kernel/20230303181842.1087717-1-roberto.sassu@huaweicloud.com/
+
+Any good idea are welcome, thanks.
+
+
+On 2022/8/27 19:12, Xiu Jianfeng wrote:
+> v2:
+>  * abstract walk_to_visible_parent() helper
+>  * chmod and chown rights only take affect on directory's context
+>  * add testcase for fchmodat/lchown/fchownat
+>  * fix other review issues
+> 
+> Xiu Jianfeng (6):
+>   landlock: expand access_mask_t to u32 type
+>   landlock: abstract walk_to_visible_parent() helper
+>   landlock: add chmod and chown support
+>   landlock/selftests: add selftests for chmod and chown
+>   landlock/samples: add chmod and chown support
+>   landlock: update chmod and chown support in document
+> 
+>  Documentation/userspace-api/landlock.rst     |   9 +-
+>  include/uapi/linux/landlock.h                |  10 +-
+>  samples/landlock/sandboxer.c                 |  13 +-
+>  security/landlock/fs.c                       | 110 ++++++--
+>  security/landlock/limits.h                   |   2 +-
+>  security/landlock/ruleset.h                  |   2 +-
+>  security/landlock/syscalls.c                 |   2 +-
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  tools/testing/selftests/landlock/fs_test.c   | 267 ++++++++++++++++++-
+>  9 files changed, 386 insertions(+), 31 deletions(-)
+> 
