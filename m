@@ -2,115 +2,261 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8334C77B72
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Apr 2023 00:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82809C77B75
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Apr 2023 07:06:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229585AbjDRAwL (ORCPT
+        id S229903AbjDRHGc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Apr 2023 20:52:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59094 "EHLO
+        Tue, 18 Apr 2023 03:06:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjDRAwK (ORCPT
+        with ESMTP id S230465AbjDRHGb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Apr 2023 20:52:10 -0400
-Received: from sonic307-16.consmr.mail.ne1.yahoo.com (sonic307-16.consmr.mail.ne1.yahoo.com [66.163.190.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACD914C1E
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Apr 2023 17:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1681779126; bh=Nbsy0VFN6If15pT0m78u23vy9zJKwmD15mlDxP+zhaM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=mQ2N7dk0MfT+PXn+NueegD6X4635nV7RYQaNUvp4S3wT8RuWeAjJdm9o+ffW5FfTSHA/CrSsgWfPyheMGpcU36L6OUe+SglcOgFFnZG28WpOrDjFwL/2uAEs3bAlMFZ9W/JkIJeXmv+0l/e+lcheBmh+SD95U1S9pGx+fcxfeFVHAqLn3ZFngIZHoN6bZYTo/Ddms/y+BcFqGQZW0HRfqhNSuJ8v/4KyGQeZQW2VL3vM/xa9LuexENxqJh6wo+BqMqOXbdXhHr2UQ7bqFUCyyZvjjDovZhoYxTf9RHxIZtiC3t0KeKDn3KjiS3gtOxEk1QKTofehzNX7lphNG/m/1w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1681779126; bh=nZ8YfRKkK4yR0BCNZeKOrOKyqXpBt6lJPiHb/30l2Ld=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Y2ST51bHhzgxP6X18BEcwSEhTuFX5ejE3FjjK/mSfiYUYjUm6OfJmfJ5tQp1VMrbqxlTgAYDnnTJ2k4hsVrrrvU8zyYr3tUyCK7yBm/fB2ZfQtOWJvYRozoUR+I8KvhUCW44cnXkGAk4nECtSCFNnN17RrCzbskyibt8A0c06f8YuaZ5fPUmjNRFW/NnaC3DeeLT+7o1msuGu1SeTLS/RwG+HMKrrJW5/lQdGmqd0W6cF6Kjafwaur+hAbeq+ZMUtxTFQxrlB/lPW8ErijSds0W5K4J+nSIASEFVXDDv1o1k1AqJpAxm/yNud9wVkQF5P+PMlTgW4tvLrIJQ9feLqQ==
-X-YMail-OSG: buy3.HUVM1mewdzFBrP0azfvMLyUc5wGK5nSo3a.Xq7QCbKGgrdT2HkCYMjko.2
- 2ODaRo4PJP6El4XPHOq4p16flcnm7iaDUj2Xt.bGNtftnkw9HGAoPQUnDAUF7_rbKpoJmqOLVRmC
- DRqxWkN36CkQsGCqjOWUvpOuOVd2kZ2fGg_C7bhSpn2oB9SeF6cFS6pRvlyQ8PAgZH69rCFg13ZS
- 0VQOTX684QiwGnQ8g5S79zL53DgcsF56drlSGIngbg_lb905F3tSusIn4okB2uQotHijTAWn8r6i
- Sk0FBHvhTU2BEHRvJzqAvHCa_y21o6Ih.fZgPM22BEmk8h9dp26coF6m7gcXa7VLxe2_ZfnPs3Ij
- oLTB_z1RwckqtWoUwmPXmue13qu1lx7Lv64ruAdBzQwXBrj65are7.K1DENV0XmcxkqdGKcj9YqG
- bg8FZfti67yPc_IjSObfnD3MPD4OMBFmLd.9va126Q069_IDLOKfRG8qxEULAMBLV4GUHIp8K.f3
- OUeChWXpi0ONaWA6iXCcqEWi1lSJnTF4UoBvehCKvkMXk3VFIqnleudhC4wtibkxYKyNAI3Bo2rr
- R_ZZ1YbYo7338F4noEG0a2jbtJcx7bD013BwoBFiEv3L6EVo97cMEd8J08bBHAvmwjYcePODWSXV
- mDWXV04H1oh1rPaNeEUxz8hbbEFDZEZWJy3n_pZwQPMZ7p7GaVYP218sEqT3V3FNbJH7T9zhJNs8
- 1KyqrznSn7eQBkp_qvkNus0AKuksiQY3YsGbNgOdpSIVN7lCkYT.pcajG2.wrDDIv2MdPuxyHWE.
- znonLHUovhfugNOeJoeMhiZoGhtw4uEckb9Nad3icGoTHGj5qy4jxcT2bDYut.UnUlEITlvu7yv8
- HYTruKjQvdKFBGzdDPtU1PXOpMTdXZgZiiEh7SSelOFV_yrs6bENzOUcBXbjlz.C6WbAvJqeWHEz
- 5BEG0Qmw45mqBgfYbxuML9oVFqLDZ4VRQqGc4Bu510RqA0WpnF5KKRax7lo5NSW5fK97jZR9Z6pi
- 51Ucz7SoXTOp420eKcsSDJMT1WoxrM5Fi7gpjN3uopQDnvgZx4ChKc4.R77z2izdkrFoENArV5JN
- 6XmqI5J1OBOEVfzV7nS_gCnIlzv2VYUuPAoB6yBIbtDCF8F8c_mMDrjmAunTgSycC3GjzJWFlkMC
- Q_6i59J3sampvmS7kHjuLXOAWdIRfdYt6ut4AXaPtOFuIkTPzGbwLCIDE7GnBS2BNPbn4KBorvum
- J.DqNdn53CTA9shyie4CUhioUqaUv43AwygeBPcG4BA9OAc1ZCIjzHbzmtPeee1nA_EHCkc8QFcP
- 5E0ltnpKV_wd2hnKuuLDvuC0ijHh9zP7Pfhwfk1JTtQtawGdF85zpaeW3efKWZUm6jn9PcFlZ.Ub
- KU.5tDumNwbLFDpSMSbctLzyhSTEJjQtKA5obMR6C6Y.THcO5lgCB8yD9FFhvHNEx4fKHBhgVxwR
- c_Tn4qB3EcICJhSDvh6WRiydh10LVebsAJxUbQygiDoq1GjoGHOx7ZDv6.D9fdvO6hZtgaHy.C8a
- KEMext4n.oGYB8zvbgg8hX85AfmEPn5YGPLETqYcBTzjeX9WxjMyMY97bACxTQFade81G4OLe3B4
- q7YaY4FKzkdi_ImJMOdvj7KL3qZNb6bB_I_9jBUNq6.J3Yql0fBgIbV03Mx9Epd77C8mlhs4lEv8
- VmUHhrWCrco0KPE8KLWzzcNQZ5f_afdP.WAh0V3ihv4s.QPJj7.219rf09ALCoICGfFP6786HZTT
- TXdcVO_BloTx_ddB0ucdOxNL1Ybb9OfZHAY48uhgzH11juQD02dlRujoQlo9pta2k_zADTWUYU8H
- hEWUvR2GPK3Y95q_KK8yTa5DACCgRY_HdJLbbyIfuzMxMhoe_hwRvecyEXovwu6pEM5iTpwyBY11
- a4Z6ZbrjjMaSfRLl96NFecH5DYPhAtT6tZ.nE7EmmF2NndqAllUT2dRl3vRuF8GdpjVho1g1l8Y2
- G58rVSRx4ti7xZFegB4HgVRWYe97xGCxsDpWAf.tuSLzyzgkOaxWcLpM4Lma0LMnTvsVujNSMfz3
- tWHcylBLqkvjMFzSQNVnQVq9gonX3H9nFDt4M7MzryzCR.t7N1HYDGgJqjmd.yw82n5AhePjsPuu
- SnIeBHWOo.Q.V_y3VrZqA.akLM08D8vf4aDJQglK3esQsLjJcK2.2tpcCbWzHT8hLXSj1EsCefHD
- m_TUwyCW3ASch10JvFpYTQI5rhSfCP4lnAnVdhfKxZNIS6XiF8R_QKGMrlVHDvJ9mtCZq86WPZIx
- rPlVGww--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 1e395ae4-1aee-4d1f-aafb-9f03dba58eff
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Tue, 18 Apr 2023 00:52:06 +0000
-Received: by hermes--production-bf1-5f9df5c5c4-fgkgh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3d6a7b5eae83e84ab6d79974880bc353;
-          Tue, 18 Apr 2023 00:52:05 +0000 (UTC)
-Message-ID: <678b5aeb-1fbd-9060-d1dc-aa6dab3d5390@schaufler-ca.com>
-Date:   Mon, 17 Apr 2023 17:52:02 -0700
+        Tue, 18 Apr 2023 03:06:31 -0400
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65FF01FE4;
+        Tue, 18 Apr 2023 00:06:26 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Q0vqC2HR4z9xrpS;
+        Tue, 18 Apr 2023 14:56:55 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwDXWgZMQT5kTuo0Ag--.1714S2;
+        Tue, 18 Apr 2023 08:06:00 +0100 (CET)
+Message-ID: <5c50d98f1e5745c88270ae4ad3de6d9a803db4c6.camel@huaweicloud.com>
+Subject: Re: [PATCH] Smack modifications for: security: Allow all LSMs to
+ provide xattrs for inode_init_security hook
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org
+Cc:     reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Tue, 18 Apr 2023 09:05:44 +0200
+In-Reply-To: <91f05dc4-a4b7-b40a-ba1a-0ccc489c84b2@schaufler-ca.com>
+References: <c7f38789-fe47-8289-e73a-4d07fbaf791d@schaufler-ca.com>
+         <20230411172337.340518-1-roberto.sassu@huaweicloud.com>
+         <2dc6486f-ce9b-f171-14fe-48a90386e1b7@schaufler-ca.com>
+         <8e7705972a0f306922d8bc4893cf940e319abb19.camel@huaweicloud.com>
+         <72b46d0f-75c7-ac18-4984-2bf1d6dad352@schaufler-ca.com>
+         <82ee6ddf66bb34470aa7b591df4d70783fdb2422.camel@huaweicloud.com>
+         <91f05dc4-a4b7-b40a-ba1a-0ccc489c84b2@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH bpf-next 0/8] New BPF map and BTF security LSM hooks
-Content-Language: en-US
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, kpsingh@kernel.org,
-        linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20230412043300.360803-1-andrii@kernel.org>
- <CAHC9VhQHmdZYnR=+rX-3FcRh127mhJt=jAnototfTiuSoOTptg@mail.gmail.com>
- <6436eea2.170a0220.97ead.52a8@mx.google.com>
- <CAHC9VhR6ebsxtjSG8-fm7e=HU+srmziVuO6MU+pMpeSBv4vN+A@mail.gmail.com>
- <6436f837.a70a0220.ada87.d446@mx.google.com>
- <CAHC9VhTF0JX3_zZ1ZRnoOw0ToYj6AsvK6OCiKqQgPvHepH9W3Q@mail.gmail.com>
- <CAEf4BzY9GPr9c2fTUS6ijHURtdNDL4xM6+JAEggEqLuz9sk4Dg@mail.gmail.com>
- <afd17142-9243-8b72-d16a-41165e8deda1@schaufler-ca.com>
- <CAEf4BzaaFruReHByj_ngz+BiQmKQGeK+1DsAzg1YmVnZxfADug@mail.gmail.com>
- <eb0a2955-0ca0-8b95-526f-3eb3dc720c26@schaufler-ca.com>
- <CAEf4BzYaiqe13fjYVQ0gbv=OXm+RC-VubGJhD69V11eiiELPDQ@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAEf4BzYaiqe13fjYVQ0gbv=OXm+RC-VubGJhD69V11eiiELPDQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21365 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwDXWgZMQT5kTuo0Ag--.1714S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3JF17urWkuF47KryUtr47Jwb_yoW3Gw48pr
+        WUG3W7Kr4UtFyDGryFva1UWw12k3y8Kr1UWwn8Jr1xZF1qqrn7Kry8Jr15CF1xXr1kur1F
+        qr4jqry3WFn8A37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBF1jj4gqmgAAsE
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/17/2023 5:28 PM, Andrii Nakryiko wrote:
-> On Mon, Apr 17, 2023 at 4:53 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> ...
->>
->> The BPF developers are in complete control of what CAP_BPF controls.
->> You can easily address the granularity issue by adding addition restrictions
->> on processes that have CAP_BPF. That is the intended use of LSM.
->> The whole point of having multiple capabilities is so that you can
->> grant just those that are required by the system security policy, and
->> do so safely. That leads to differences of opinion regarding the definition
->> of the system security policy. BPF chose to set itself up as an element
->> of security policy (you need CAP_BPF) rather than define elements such that
->> existing capabilities (CAP_FOWNER, CAP_KILL, CAP_MAC_OVERRIDE, ...) would
->> control.
->>> Please see my reply to Paul, where I explain CAP_BPF's system-wide
->>> nature and problem with user namespaces. I don't think the problem is
->>> in the granularity of CAP_BPF, it's more of a "non-namespaceable"
->>> nature of the BPF subsystem in general.
->> Paul is approaching this from a different angle. Your response to Paul
->> does not address the issue I have raised.
-> I see, I definitely missed this. Re-reading your reply, I still am not
-> clear on what you are proposing, tbh. Can you please elaborate what
-> you have in mind?
+On Mon, 2023-04-17 at 09:41 -0700, Casey Schaufler wrote:
+> On 4/13/2023 12:11 AM, Roberto Sassu wrote:
+> > On Wed, 2023-04-12 at 13:29 -0700, Casey Schaufler wrote:
+> > > On 4/12/2023 12:22 AM, Roberto Sassu wrote:
+> > > > On Tue, 2023-04-11 at 10:54 -0700, Casey Schaufler wrote:
+> > > > > On 4/11/2023 10:23 AM, Roberto Sassu wrote:
+> > > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > > > 
+> > > > > > Very very quick modification. Not tested.
+> > > > > > 
+> > > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > > > ---
+> > > > > >  security/smack/smack.h     |  2 +-
+> > > > > >  security/smack/smack_lsm.c | 42 ++++++++++++++++++++------------------
+> > > > > >  2 files changed, 23 insertions(+), 21 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/security/smack/smack.h b/security/smack/smack.h
+> > > > > > index e2239be7bd6..f00c8498c60 100644
+> > > > > > --- a/security/smack/smack.h
+> > > > > > +++ b/security/smack/smack.h
+> > > > > > @@ -127,7 +127,7 @@ struct task_smack {
+> > > > > >  
+> > > > > >  #define	SMK_INODE_INSTANT	0x01	/* inode is instantiated */
+> > > > > >  #define	SMK_INODE_TRANSMUTE	0x02	/* directory is transmuting */
+> > > > > > -#define	SMK_INODE_CHANGED	0x04	/* smack was transmuted */
+> > > > > > +#define	SMK_INODE_CHANGED	0x04	/* smack was transmuted (unused) */
+> > > > > See below ...
+> > > > > 
+> > > > > >  #define	SMK_INODE_IMPURE	0x08	/* involved in an impure transaction */
+> > > > > >  
+> > > > > >  /*
+> > > > > > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> > > > > > index 8392983334b..b43820bdbd0 100644
+> > > > > > --- a/security/smack/smack_lsm.c
+> > > > > > +++ b/security/smack/smack_lsm.c
+> > > > > > @@ -54,12 +54,12 @@
+> > > > > >  
+> > > > > >  /*
+> > > > > >   * Smack uses multiple xattrs.
+> > > > > > - * SMACK64 - for access control, SMACK64EXEC - label for the program,
+> > > > > > - * SMACK64MMAP - controls library loading,
+> > > > > > + * SMACK64 - for access control,
+> > > > > >   * SMACK64TRANSMUTE - label initialization,
+> > > > > > - * Not saved on files - SMACK64IPIN and SMACK64IPOUT
+> > > > > > + * Not saved on files - SMACK64IPIN and SMACK64IPOUT,
+> > > > > > + * Must be set explicitly - SMACK64EXEC and SMACK64MMAP
+> > > > > >   */
+> > > > > > -#define SMACK_INODE_INIT_XATTRS 4
+> > > > > > +#define SMACK_INODE_INIT_XATTRS 2
+> > > > > >  
+> > > > > >  #ifdef SMACK_IPV6_PORT_LABELING
+> > > > > >  static DEFINE_MUTEX(smack_ipv6_lock);
+> > > > > > @@ -957,11 +957,11 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+> > > > > >  				     const struct qstr *qstr,
+> > > > > >  				     struct xattr *xattrs, int *xattr_count)
+> > > > > >  {
+> > > > > > -	struct inode_smack *issp = smack_inode(inode);
+> > > > > >  	struct smack_known *skp = smk_of_current();
+> > > > > >  	struct smack_known *isp = smk_of_inode(inode);
+> > > > > >  	struct smack_known *dsp = smk_of_inode(dir);
+> > > > > >  	struct xattr *xattr = lsm_get_xattr_slot(xattrs, xattr_count);
+> > > > > > +	struct xattr *xattr2;
+> > > > > I'm going to channel Paul and suggest this be xattr_transmute instead of xattr2.
+> > > > > It also looks like it could move to be declared in the if clause.
+> > > > > 
+> > > > > >  	int may;
+> > > > > >  
+> > > > > >  	if (xattr) {
+> > > > > > @@ -979,7 +979,17 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+> > > > > >  		if (may > 0 && ((may & MAY_TRANSMUTE) != 0) &&
+> > > > > >  		    smk_inode_transmutable(dir)) {
+> > > > > >  			isp = dsp;
+> > > > > > -			issp->smk_flags |= SMK_INODE_CHANGED;
+> > > > > I think you need to keep this. More below.
+> > > > > 
+> > > > > > +			xattr2 = lsm_get_xattr_slot(xattrs, xattr_count);
+> > > > > > +			if (xattr2) {
+> > > > > > +				xattr2->value = kmemdup(TRANS_TRUE,
+> > > > > > +							TRANS_TRUE_SIZE,
+> > > > > > +							GFP_NOFS);
+> > > > > > +				if (xattr2->value == NULL)
+> > > > > > +					return -ENOMEM;
+> > > > > > +
+> > > > > > +				xattr2->value_len = TRANS_TRUE_SIZE;
+> > > > > > +				xattr2->name = XATTR_NAME_SMACKTRANSMUTE;
+> > > > > > +			}
+> > > > > >  		}
+> > > > > >  
+> > > > > >  		xattr->value = kstrdup(isp->smk_known, GFP_NOFS);
+> > > > > > @@ -3512,20 +3522,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+> > > > > >  			 * If there is a transmute attribute on the
+> > > > > >  			 * directory mark the inode.
+> > > > > >  			 */
+> > > > > > -			if (isp->smk_flags & SMK_INODE_CHANGED) {
+> > > > > > -				isp->smk_flags &= ~SMK_INODE_CHANGED;
+> > > > > > -				rc = __vfs_setxattr(&nop_mnt_idmap, dp, inode,
+> > > > > > -					XATTR_NAME_SMACKTRANSMUTE,
+> > > > > > -					TRANS_TRUE, TRANS_TRUE_SIZE,
+> > > > > > -					0);
+> > > > > > -			} else {
+> > > > > > -				rc = __vfs_getxattr(dp, inode,
+> > > > > > -					XATTR_NAME_SMACKTRANSMUTE, trattr,
+> > > > > > -					TRANS_TRUE_SIZE);
+> > > > > > -				if (rc >= 0 && strncmp(trattr, TRANS_TRUE,
+> > > > > > -						       TRANS_TRUE_SIZE) != 0)
+> > > > > > -					rc = -EINVAL;
+> > > > > > -			}
+> > > > > > +			rc = __vfs_getxattr(dp, inode,
+> > > > > > +					    XATTR_NAME_SMACKTRANSMUTE, trattr,
+> > > > > > +					    TRANS_TRUE_SIZE);
+> > > > > > +			if (rc >= 0 && strncmp(trattr, TRANS_TRUE,
+> > > > > > +					       TRANS_TRUE_SIZE) != 0)
+> > > > > > +				rc = -EINVAL;
+> > > > > Where is the SMACK64_TRANSMUTE attribute going to get set on the file?
+> > > > > It's not going to get set in smack_init_inode_security(). The inode will
+> > > > Isn't that the purpose of the inode_init_security hook?
+> > > No. It initializes the in-memory inode. 
+> > I hope I'm not mistaken here...
+> > 
+> > I make a small example. Filesystems call
+> > security_inode_init_security(). Ext4 does:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ext4/xattr_security.c?h=v6.3-rc6#n54
+> > 
+> > security_inode_init_security() allocates new_xattrs. Each LSM fills
+> > new_xattrs. At the end of the loop, if there is at least one xattr
+> > filled, the initxattrs() callback passed by the caller of
+> > security_inode_init_security() is called.
+> > 
+> > The ext4 initxattrs() callback is:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ext4/xattr_security.c?h=v6.3-rc6#n35
+> > 
+> > which scans the xattr array and, for each xattr,
+> > calls ext4_xattr_set_handle().
+> > 
+> > Maybe I'm overlooking it, but ext4_xattr_set_handle() is setting xattrs
+> > on the disk. Am I wrong?
+> 
+> Yes, you're wrong. I tried your change, and the SMACK64_TRANSMUTE isn't
+> set on the sub-directory when it's created. The __vfs_setxattr() call really
+> is necessary. 
 
-As requested, I've moved over to the "other" thread.
+Could you please also check if there is any change with this fix:
+
+Replace:
+
+	xattr2->name = XATTR_NAME_SMACKTRANSMUTE;
+
+with:
+
+	xattr2->name = XATTR_SMACK_TRANSMUTE;
+
+Thanks
+
+Roberto
+
+> > Thanks
+> > 
+> > Roberto
+> > 
+> > > > After all LSMs provide one or multiple xattrs, xattrs are going to be
+> > > > written to the disk with the initxattr() callback of filesystems.
+> > > > 
+> > > > There is a small mistake above (XATTR_SMACK_TRANSMUTE instead
+> > > > of XATTR_NAME_SMACKTRANSMUTE, as we are providing just the suffix).
+> > > but I'm pretty sure the __vfs_setxattr() call is necessary to get
+> > > the attribute written out. With your change the in-memory inode will
+> > > get the attribute, but if you reboot it won't be on the directory.
+> > > 
+> > > > 95 Passed, 0 Failed, 100% Success rate
+> > > > 
+> > > > There was a test failing in dir-transmute.sh, before I fixed the xattr
+> > > > name.
+> > > > 
+> > > > Thanks
+> > > > 
+> > > > Roberto
+> > > > 
+> > > > > know it's transmuting, but it won't get to disk without the __vfs_setxattr()
+> > > > > here in smack_d_instantiate(). Now, it's been a long time since that code
+> > > > > was written, so I could be wrong, but I'm pretty sure about that.
+> > > > > 
+> > > > > I think that you should be fine with the changes in smack_init_inode_security(),
+> > > > > and leaving smack_d_instantiate() untouched. 
+> > > > > 
+> > > > > >  			if (rc >= 0)
+> > > > > >  				transflag = SMK_INODE_TRANSMUTE;
+> > > > > >  		}
 
