@@ -2,170 +2,156 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 821ECC77B73
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Apr 2023 14:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 940A1C77B73
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Apr 2023 17:44:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233303AbjDSOit (ORCPT
+        id S233100AbjDSRoi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Apr 2023 10:38:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39284 "EHLO
+        Wed, 19 Apr 2023 13:44:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233302AbjDSOip (ORCPT
+        with ESMTP id S232432AbjDSRoh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Apr 2023 10:38:45 -0400
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15BD08A7E
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Apr 2023 07:38:40 -0700 (PDT)
-Received: by mail-yb1-xb2a.google.com with SMTP id n203so20065179ybg.6
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Apr 2023 07:38:40 -0700 (PDT)
+        Wed, 19 Apr 2023 13:44:37 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B4DE6EB5
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Apr 2023 10:44:32 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f17e5fe8bbso454705e9.1
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Apr 2023 10:44:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1681915120; x=1684507120;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fWZiMALMH89i7PDBcLl9ZeqJbldqh6JjZ32NtRW6De4=;
-        b=LQN4aCOqoHQ5A0XxtIiHiweiMtxVPWBLvrXNdIl/cTWwf0SCEDWxa5DtjLN5b0TV0b
-         pqweuMH6UWw3sANhI2F9HIF3EqYZivxt5L57nmH365GJ9Ngtnjy/C+cfy3U/9cc/ej0d
-         lK0TAHQT1xBmSO80pIojRmzPa6Iaxsctu0wnpC9zX8wIpZM0lGsIx+qkSxsHf5YnVw/3
-         kNdwdnoEy9auCi7Ib1PuezR6J2Djb7+mawoXuzRMjRfLTELeh0o7Rawec08WY7tiXPV7
-         Io7koP2QS0TNmmsZ4i4wnYWbZ7Nda5sOYWMm+mtC0yVEQKAydo6G019+TMJVpgAgt+9E
-         xctQ==
+        d=tessares.net; s=google; t=1681926270; x=1684518270;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cekCW+SqV/BFx5znWNnA1xPGxJLXH0PS1n/sZ8CHAHc=;
+        b=M4vPROgbnjX5wvsvoBVlCGhAl97U6yDSb8O3HKWgF2vJ8IeRxgM0J0N8PATq0bTdHr
+         b7s18BOLvfXBi49sesz1T8vrHZXv1E+L7iba7AMvvqkx8sxG7RQ8twu6snNgInwvbapp
+         Fuy7AF2b+9U9jEKO5ZmQgWMRnwqPIF3+hxzoRH+SR6LlXQbDc0MXjIqnF3itk41+hyA3
+         SFYpv5kPTfINHhvZeKDb6rW0HPFrSXyYr8PE2hm0Qun97QoiyeqgTppWPN/VRjLFBFiE
+         E6rLGadxRsuPxNqAaaGMS0cuGOsnAZVbmKuuTzG4J/gLSWRJ58vDNPgm5cjW+RoeqJJs
+         LBhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681915120; x=1684507120;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fWZiMALMH89i7PDBcLl9ZeqJbldqh6JjZ32NtRW6De4=;
-        b=O2AyAmKt7TU6dE1k3vaazHwYT2TR3E1KWrTjenFXrLEp6G5aVLE+dxSuBovGHpJ+Z8
-         WBYJj5rUkDoYoA1ysDhfolmrn2Ozmb/o37bRCxOeyGIi6p6WKNpmsck+X4OZwpFMmHPN
-         j4nTaZQFt1CdiRz+dUF6gB8ru4cUooVJjC6xRt8iDi3K/2Y+MIazSHy4cwstU4+KqEvv
-         DUQFoIG4lhklD92eIresLGljz7yPfeQmRI8v8w5cN7H+o2+bwrczCeo/xbjyetIWlCXn
-         vjPsFn/z07Q80Pnzo97B8cb0OlQXRsrDzBZckVsa1WX02uVCq7uYEML/ZK3Gq9YwyBpg
-         5GYA==
-X-Gm-Message-State: AAQBX9dcvqYPPzD8wQ7zXINzDolqRj4omtq1UOjbisJLadKAUJDaQ85j
-        TvBwTm1Hk5x1Uy/HgmoPVxWmckn8JKAOlRLFzaUNT01FU3FzX1Bg/w==
-X-Google-Smtp-Source: AKy350Z4qMNIiRgB/vcByC5+mNU91yN6YSfmxnRnim0l4y4Smf7s0LYagf+ZnWYtLR5cTFGYaT3phWDJ7z6zjqPa6EI=
-X-Received: by 2002:a25:aea2:0:b0:b8f:523f:3d02 with SMTP id
- b34-20020a25aea2000000b00b8f523f3d02mr21147135ybj.21.1681915119903; Wed, 19
- Apr 2023 07:38:39 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1681926270; x=1684518270;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cekCW+SqV/BFx5znWNnA1xPGxJLXH0PS1n/sZ8CHAHc=;
+        b=lXtkj90+nv28ThDtCaKSeyPowO8TMVIxaD6wWgxGc3fON+XShGZQssHZ8EF7Kg77ns
+         pwMKColdk2aELWb431NUGhPjpme1964MOZitbxyY3H42aZYEfSb8vvo7cgmLgcPUdpFC
+         duApAhp5dLz3/4ffoXxUBX5MWGvj358n65DAwOVMz+KZAYltVJjyM2C2mXIXCWUhhpj/
+         kmiT/W78hk3hKkSvOn8mYhBnhAomx7ezaajmoLdMGipu8jnVgHjfeJ8ZHrNpSMshuhMD
+         AoHSyID2qWLzraN6qbbPppTb5CXmmEg3H30O6XZvFrdNir1GaRU8VXAjdr4rZd3vTxaR
+         ytQA==
+X-Gm-Message-State: AAQBX9fmuHaPlOetAbG22ZeSE11X7Vwssnoz5UqE853r9VZBaxS0VRSp
+        lRTSGpk2zpaHbHmCa4VtEsRYwQ==
+X-Google-Smtp-Source: AKy350ZoEi+fS+LUYvy1NEQODgr6EfXOnXZZDsYvWL+IrBTTzRuno/1y5jP6qVHtFe7LEio6+0WB0A==
+X-Received: by 2002:a05:6000:11cb:b0:2f0:bab2:dc3c with SMTP id i11-20020a05600011cb00b002f0bab2dc3cmr5534481wrx.27.1681926270546;
+        Wed, 19 Apr 2023 10:44:30 -0700 (PDT)
+Received: from vdi08.nix.tessares.net (static.219.156.76.144.clients.your-server.de. [144.76.156.219])
+        by smtp.gmail.com with ESMTPSA id o18-20020a5d4092000000b002fe87e0706bsm3027879wrp.97.2023.04.19.10.44.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Apr 2023 10:44:30 -0700 (PDT)
+From:   Matthieu Baerts <matthieu.baerts@tessares.net>
+Subject: [PATCH LSM 0/2] security: SELinux/LSM label with MPTCP and accept
+Date:   Wed, 19 Apr 2023 19:44:03 +0200
+Message-Id: <20230419-upstream-lsm-next-20230419-mptcp-sublows-user-ctx-v1-0-9d4064cb0075@tessares.net>
 MIME-Version: 1.0
-References: <20230418210230.3495922-1-longman@redhat.com> <20230418141852.75e551e57e97f4b522957c5c@linux-foundation.org>
- <6c3c68b1-c4d4-dd82-58e8-f7013fb6c8e5@redhat.com> <cffc7454-614-1939-f235-7b139dc46b41@google.com>
- <22aee5ea-dd6b-ac2b-0b28-a25ee6602b48@redhat.com> <ZD9e7A4gaZ6qkGhy@casper.infradead.org>
-In-Reply-To: <ZD9e7A4gaZ6qkGhy@casper.infradead.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 19 Apr 2023 10:38:29 -0400
-Message-ID: <CAHC9VhTcVzth0N+tTj_HHCPfHnp+-MfWkj+Ft2Uk4xMncDL9HA@mail.gmail.com>
-Subject: Re: [PATCH] mm/mmap: Map MAP_STACK to VM_STACK
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Waiman Long <longman@redhat.com>, Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Joe Mario <jmario@redhat.com>,
-        Barry Marson <bmarson@redhat.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGQoQGQC/z3OywrCMBCF4Vcps3agrRfUZ7Arl+JiEic20KQhk
+ 2ih9N1NBV3+HPg4MwhHywLnaobILyt29CWaTQW6J/9ktI/S0Nbttt41J8xBUmRyOIhDz1PC/+R
+ C0gElq2F8C+Yio04TMvNhfzRktCIoriJhVJG87lf556xTiGzs9L1zg8u1g/uyfAB5Ce4+owAAA
+ A==
+To:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>
+Cc:     Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>, mptcp@lists.linux.dev,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Matthieu Baerts <matthieu.baerts@tessares.net>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3225;
+ i=matthieu.baerts@tessares.net; h=from:subject:message-id;
+ bh=Rl5GtGwq+L7wyDWK7TEacZMevn8jICzh9/ucI2yapPY=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBkQCh9PbGJu9bdgZRzN41wd9bdr7geV1tmVBs6h
+ MEEW5+fktaJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZEAofQAKCRD2t4JPQmmg
+ cxTMD/0UsSFEDeb9i0olgkNDk55w5NjuaDc8AfJoA6yuknO6m5Jdg74k+wA9ZlsdHNyle3AtBHv
+ CcOhw7aGerioF14LEJ+E9rUjmZFqMrdaV2Ut317M7Vfk5LTq3dceQZc16RE1slC8MngZfWsJeRJ
+ FfdBhvnhxYRXXDOLVGrCpm7wn8ZQcva4hOJ5qF5aK/WM6gyFw6V20MhMogTN+Be84S3raNH6ywi
+ G5n+o7FLiGGQ+e0M0kgd7aBR8TFPyvAlKlrj7h4mqdvQkkWjL7h64W17/tzp1wU6+6B8U38blK5
+ cr7wOrMBWfmknZiJfrFwsDDB2FyityI/8Gu7UimzRIy/a8OPq8bL3kURS2WSd8NVfn/ecWTee/v
+ FPqMkxf9fcFZI6tBSu1uNedS9v6qios+adtBdVC120Swt5eUEuuNqMI+A8InmN1dt7v5Zz7h++7
+ 37rsJqh1e8GJ0aU5km/6QLLDUb3mo0anp3KFNE6N6+oyIpVd23ws7pFT6VCFglBka5JAPrazrOM
+ s3R+bV/y8PGIPTWEGfdY3TQDBjULKnlNodOud8kXmkgzcvgE9VtQL/WhXoYt4FTmsejmB08IwMa
+ lzETZGYL1ZwxQ8AN3bw83zjySShptQnaqndReUGDD5cbMtY6FUVBnwtPquDBkPVjJgmZmd+xWok
+ lHoTOyvdY0UHDuQ==
+X-Developer-Key: i=matthieu.baerts@tessares.net; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 18, 2023 at 11:24=E2=80=AFPM Matthew Wilcox <willy@infradead.or=
-g> wrote:
-> On Tue, Apr 18, 2023 at 09:45:34PM -0400, Waiman Long wrote:
-> > On 4/18/23 21:36, Hugh Dickins wrote:
-> > > On Tue, 18 Apr 2023, Waiman Long wrote:
-> > > > On 4/18/23 17:18, Andrew Morton wrote:
-> > > > > On Tue, 18 Apr 2023 17:02:30 -0400 Waiman Long <longman@redhat.co=
-m> wrote:
-> > > > >
-> > > > > > One of the flags of mmap(2) is MAP_STACK to request a memory se=
-gment
-> > > > > > suitable for a process or thread stack. The kernel currently ig=
-nores
-> > > > > > this flags. Glibc uses MAP_STACK when mmapping a thread stack. =
-However,
-> > > > > > selinux has an execstack check in selinux_file_mprotect() which=
- disallows
-> > > > > > a stack VMA to be made executable.
-> > > > > >
-> > > > > > Since MAP_STACK is a noop, it is possible for a stack VMA to be=
- merged
-> > > > > > with an adjacent anonymous VMA. With that merging, using mprote=
-ct(2)
-> > > > > > to change a part of the merged anonymous VMA to make it executa=
-ble may
-> > > > > > fail. This can lead to sporadic failure of applications that ne=
-ed to
-> > > > > > make those changes.
-> > > > > "Sporadic failure of applications" sounds quite serious.  Can you
-> > > > > provide more details?
-> > > > The problem boils down to the fact that it is possible for user cod=
-e to mmap a
-> > > > region of memory and then for the kernel to merge the VMA for that =
-memory with
-> > > > the VMA for one of the application's thread stacks. This is causing=
- random
-> > > > SEGVs with one of our large customer application.
-> > > >
-> > > > At a high level, this is what's happening:
-> > > >
-> > > >   1) App runs creating lots of threads.
-> > > >   2) It mmap's 256K pages of anonymous memory.
-> > > >   3) It writes executable code to that memory.
-> > > >   4) It calls mprotect() with PROT_EXEC on that memory so
-> > > >      it can subsequently execute the code.
-> > > >
-> > > > The above mprotect() will fail if the mmap'd region's VMA gets merg=
-ed with the
-> > > > VMA for one of the thread stacks.  That's because the default RHEL =
-SELinux
-> > > > policy is to not allow executable stacks.
-> > > Then wouldn't the bug be at the SELinux end?  VMAs may have been merg=
-ed
-> > > already, but the mprotect() with PROT_EXEC of the good non-stack rang=
-e
-> > > will then split that area off from the stack again - maybe the SELinu=
-x
-> > > check does not understand that must happen?
-> >
-> > The SELinux check is done per VMA, not a region within a VMA. After VMA
-> > merging, SELinux is probably not able to determine which part of a VMA =
-is a
-> > stack unless we keep that information somewhere and provide an API for
-> > SELinux to query. That can be quite a lot of work. So the easiest way t=
-o
-> > prevent this problem is to avoid merging a stack VMA with a regular
-> > anonymous VMA.
->
-> To paraphrase you, "Yes, SELinux is buggy, but we don't want to fix it".
->
-> Cc'ing the SELinux people so it can be fixed properly.
+In [1], Ondrej Mosnacek explained they discovered the (userspace-facing)
+sockets returned by accept(2) when using MPTCP always end up with the
+label representing the kernel (typically system_u:system_r:kernel_t:s0),
+while it would make more sense to inherit the context from the parent
+socket (the one that is passed to accept(2)). Thanks to the
+participation of Paul Moore in the discussions, modifications on MPTCP
+side have started and the result is available here.
 
-SELinux needs some way to determine what memory region is currently
-being used by an application's stacks.  The current logic can be found
-in selinux_file_mprotect(), the relevant snippet is below:
+Paolo Abeni worked hard to refactor the initialisation of the first
+subflow of a listen socket. The first subflow allocation is no longer
+done at the initialisation of the socket but later, when the connection
+request is received or when requested by the userspace. This was a
+prerequisite to proper support of SELinux/LSM labels with MPTCP and
+accept. The last batch containing the commit ddb1a072f858 ("mptcp: move
+first subflow allocation at mpc access time") [2] has been recently
+accepted and applied in netdev/net-next repo [3].
 
-int selinux_file_mprotect(struct vm_area_struct *vma, ...)
-{
-  ...
-  } else if (!vma->vm_file &&
-    ((vma->vm_start <=3D vma->vm_mm->start_stack &&
-      vma->vm_end >=3D vma->vm_mm->start_stack) ||
-    vma_is_stack_for_current(vma))) {
-      rc =3D avc_has_perm(&selinux_state,
-                        sid, sid, SECCLASS_PROCESS,
-                        PROCESS__EXECSTACK, NULL);
- }
-  ...
-}
+This series of 2 patches is based on top of the lsm/next branch. Despite
+the fact they depend on commits that are in netdev/net-next repo to
+support the new feature, they can be applied in lsm/next without
+creating conflicts with net-next or causing build issues. These two
+patches on top of lsm/next still passes all the MPTCP-specific tests.
+The only thing is that the new feature only works properly with the
+patches that are on netdev/net-next. The tests with the new labels have
+been done on top of them.
 
-If someone has a better, more foolproof way to determine an
-application's stack please let us know, or better yet submit a patch
-:)
+It then looks OK to us to send these patches for review on your side. We
+hope that's OK for you as well. If the patches look good to you and if
+you prefer, it is fine to apply these patches before or after having
+synced the lsm/next branch with Linus' tree when it will include the
+modifications from the netdev/net-next repo.
 
---=20
-paul-moore.com
+Regarding the two patches, the first one introduces a new LSM hook
+called from MPTCP side when creating a new subflow socket. This hook
+allows the security module to relabel the subflow according to the owing
+process. The second one implements this new hook on the SELinux side.
+
+Link: https://lore.kernel.org/netdev/CAFqZXNs2LF-OoQBUiiSEyranJUXkPLcCfBkMkwFeM6qEwMKCTw@mail.gmail.com/ [1]
+Link: https://git.kernel.org/netdev/net-next/c/ddb1a072f858 [2]
+Link: https://lore.kernel.org/netdev/20230414-upstream-net-next-20230414-mptcp-refactor-first-subflow-init-v1-0-04d177057eb9@tessares.net/ [3]
+Signed-off-by: Matthieu Baerts <matthieu.baerts@tessares.net>
+---
+Paolo Abeni (2):
+      security, lsm: Introduce security_mptcp_add_subflow()
+      selinux: Implement mptcp_add_subflow hook
+
+ include/linux/lsm_hook_defs.h |  1 +
+ include/linux/security.h      |  6 ++++++
+ net/mptcp/subflow.c           |  6 ++++++
+ security/security.c           | 15 +++++++++++++++
+ security/selinux/hooks.c      | 16 ++++++++++++++++
+ security/selinux/netlabel.c   |  8 ++++++--
+ 6 files changed, 50 insertions(+), 2 deletions(-)
+---
+base-commit: d82dcd9e21b77d338dc4875f3d4111f0db314a7c
+change-id: 20230419-upstream-lsm-next-20230419-mptcp-sublows-user-ctx-eee658fafcba
+
+Best regards,
+-- 
+Matthieu Baerts <matthieu.baerts@tessares.net>
+
