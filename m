@@ -2,247 +2,154 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5F8C77B73
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Apr 2023 10:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D69C77B7C
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Apr 2023 12:06:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231688AbjDSKyY (ORCPT
+        id S233057AbjDSMGY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Apr 2023 06:54:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55854 "EHLO
+        Wed, 19 Apr 2023 08:06:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231214AbjDSKyY (ORCPT
+        with ESMTP id S230141AbjDSMGW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Apr 2023 06:54:24 -0400
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BE4DE12CA4;
-        Wed, 19 Apr 2023 03:54:11 -0700 (PDT)
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 33JArQ9R010864;
-        Wed, 19 Apr 2023 05:53:26 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 33JArO2V010863;
-        Wed, 19 Apr 2023 05:53:24 -0500
-Date:   Wed, 19 Apr 2023 05:53:24 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Kees Cook <keescook@chromium.org>,
+        Wed, 19 Apr 2023 08:06:22 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 583F21991;
+        Wed, 19 Apr 2023 05:06:21 -0700 (PDT)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33JBmiVs034942;
+        Wed, 19 Apr 2023 12:05:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=XxQyWGNU20y3Wnv7oBYdxQVoyeJRqhv7cvwcPncLqqk=;
+ b=MaUkKBXx8iVhZnQfi2RDt8faEETMnMKAbEzNZO+lpYZA4Qzm/42cfcABcujSIwghRV0X
+ 3PeqNDRd4IaTppWUkLe9WhVR7DHaK67napzSWb0/fyAY5su8TJWCvhMrkWNBKYnZzWpL
+ nrZow2Y7r/vmn90Ku0+11UMeCHt4krQqymOUrwysBfKhQ3gB8XVNTfmR2AisCvruWOoC
+ HGrgnECisFQCMRlF+rKjlvt0AJiiXkbKhxoPOW9SAl/j9H94nYFHqgnk9sLjyUqIjTb9
+ M4kh5I4Iraa1TWc6fPCqKtgixwG8fAM688OISqzSFuM22pbbenILF8ksGHq+DRGoNVxP lg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q2apmt6hp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Apr 2023 12:05:38 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33JBoDWh003607;
+        Wed, 19 Apr 2023 12:05:37 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q2apmt6g9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Apr 2023 12:05:37 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 33J0WAFx000870;
+        Wed, 19 Apr 2023 12:05:34 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3pykj6jqcr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Apr 2023 12:05:34 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+        by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 33JC5V2D45941078
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Apr 2023 12:05:31 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4647620040;
+        Wed, 19 Apr 2023 12:05:31 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 91F6F20043;
+        Wed, 19 Apr 2023 12:05:27 +0000 (GMT)
+Received: from [9.171.27.132] (unknown [9.171.27.132])
+        by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 19 Apr 2023 12:05:27 +0000 (GMT)
+Message-ID: <ab586b59-7d62-2ea1-a617-ffbcf91f4037@linux.ibm.com>
+Date:   Wed, 19 Apr 2023 14:05:26 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v4 3/6] mm/gup: remove vmas parameter from
+ get_user_pages_remote()
+Content-Language: en-US
+To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         Paul Moore <paul@paul-moore.com>,
-        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, kpsingh@kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH bpf-next 0/8] New BPF map and BTF security LSM hooks
-Message-ID: <20230419105324.GA10725@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20230412043300.360803-1-andrii@kernel.org> <CAHC9VhQHmdZYnR=+rX-3FcRh127mhJt=jAnototfTiuSoOTptg@mail.gmail.com> <6436eea2.170a0220.97ead.52a8@mx.google.com> <20230414202345.GA3971@wind.enjellic.com> <CAEf4BzZQ8EYNe_oGDEoc0_a3k8C2CYe2F6scBD2Xj2MZ9TE7ug@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzZQ8EYNe_oGDEoc0_a3k8C2CYe2F6scBD2Xj2MZ9TE7ug@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 19 Apr 2023 05:53:26 -0500 (CDT)
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+References: <cover.1681831798.git.lstoakes@gmail.com>
+ <7c6f1ae88320bf11d2f583178a3d9e653e06ac63.1681831798.git.lstoakes@gmail.com>
+From:   Janosch Frank <frankja@linux.ibm.com>
+In-Reply-To: <7c6f1ae88320bf11d2f583178a3d9e653e06ac63.1681831798.git.lstoakes@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: YoUBdd5kWLHDb-6WjYvIk2NpjLH1WX8c
+X-Proofpoint-GUID: aezbm9zbIzDKmcuHzP9oULlrIcksYyaJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-19_06,2023-04-18_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ suspectscore=0 priorityscore=1501 mlxlogscore=566 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 bulkscore=0 malwarescore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304190108
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 17, 2023 at 04:31:31PM -0700, Andrii Nakryiko wrote:
+On 4/18/23 17:49, Lorenzo Stoakes wrote:
+> The only instances of get_user_pages_remote() invocations which used the
+> vmas parameter were for a single page which can instead simply look up the
+> VMA directly. In particular:-
+> 
+> - __update_ref_ctr() looked up the VMA but did nothing with it so we simply
+>    remove it.
+> 
+> - __access_remote_vm() was already using vma_lookup() when the original
+>    lookup failed so by doing the lookup directly this also de-duplicates the
+>    code.
+> 
+> We are able to perform these VMA operations as we already hold the
+> mmap_lock in order to be able to call get_user_pages_remote().
+> 
+> As part of this work we add get_user_page_vma_remote() which abstracts the
+> VMA lookup, error handling and decrementing the page reference count should
+> the VMA lookup fail.
+> 
+> This forms part of a broader set of patches intended to eliminate the vmas
+> parameter altogether.
+> 
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com> (for arm64)
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> ---
 
-Hi, I hope the week is going well for everyone.
+For the s390 part:
+Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
 
-> On Fri, Apr 14, 2023 at 1:24???PM Dr. Greg <greg@enjellic.com> wrote:
-> >
-> > On Wed, Apr 12, 2023 at 10:47:13AM -0700, Kees Cook wrote:
-> >
-> > Hi, I hope the week is ending well for everyone.
-> >
-> > > On Wed, Apr 12, 2023 at 12:49:06PM -0400, Paul Moore wrote:
-> > > > On Wed, Apr 12, 2023 at 12:33???AM Andrii Nakryiko <andrii@kernel.org> wrote:
-> > > > >
-> > > > > Add new LSM hooks, bpf_map_create_security and bpf_btf_load_security, which
-> > > > > are meant to allow highly-granular LSM-based control over the usage of BPF
-> > > > > subsytem. Specifically, to control the creation of BPF maps and BTF data
-> > > > > objects, which are fundamental building blocks of any modern BPF application.
-> > > > >
-> > > > > These new hooks are able to override default kernel-side CAP_BPF-based (and
-> > > > > sometimes CAP_NET_ADMIN-based) permission checks. It is now possible to
-> > > > > implement LSM policies that could granularly enforce more restrictions on
-> > > > > a per-BPF map basis (beyond checking coarse CAP_BPF/CAP_NET_ADMIN
-> > > > > capabilities), but also, importantly, allow to *bypass kernel-side
-> > > > > enforcement* of CAP_BPF/CAP_NET_ADMIN checks for trusted applications and use
-> > > > > cases.
-> > > >
-> > > > One of the hallmarks of the LSM has always been that it is
-> > > > non-authoritative: it cannot unilaterally grant access, it can only
-> > > > restrict what would have been otherwise permitted on a traditional
-> > > > Linux system.  Put another way, a LSM should not undermine the Linux
-> > > > discretionary access controls, e.g. capabilities.
-> > > >
-> > > > If there is a problem with the eBPF capability-based access controls,
-> > > > that problem needs to be addressed in how the core eBPF code
-> > > > implements its capability checks, not by modifying the LSM mechanism
-> > > > to bypass these checks.
-> >
-> > > I think semantics matter here. I wouldn't view this as _bypassing_
-> > > capability enforcement: it's just more fine-grained access control.
-> > >
-> > > For example, in many places we have things like:
-> > >
-> > >       if (!some_check(...) && !capable(...))
-> > >               return -EPERM;
-> > >
-> > > I would expect this is a similar logic. An operation can succeed if the
-> > > access control requirement is met. The mismatch we have through-out the
-> > > kernel is that capability checks aren't strictly done by LSM hooks. And
-> > > this series conceptually, I think, doesn't violate that -- it's changing
-> > > the logic of the capability checks, not the LSM (i.e. there no LSM hooks
-> > > yet here).
-> > >
-> > > The reason CAP_BPF was created was because there was nothing else that
-> > > would be fine-grained enough at the time.
-
-> > This was one of the issues, among others, that the TSEM LSM we are
-> > working to upstream, was designed to address and may be an avenue
-> > forward.
-> >
-> > TSEM, being narratival rather than deontologically based, provides a
-> > framework for security permissions that are based on a
-> > characterization of the event itself.  So the permissions are as
-> > variable as the contents of whatever BPF related information is passed
-> > to the bpf* LSM hooks [1].
-> >
-> > Currently, the tsem_bpf_* hooks are generically modeled.  We would
-> > certainly entertain any discussion or suggestions as to what elements
-> > of the structures passed to the hooks would be useful with respect
-> > to establishing security policies useful and appropriate to the BPF
-> > community.
-
-> Could you please provide some links to get a bit more context and
-> information? I'd like to understand at least "narratival rather than
-> deontologically based" part of this.
-
-We don't have much in the way of links, hopefully some simple prose
-will be helpful.
-
-'Narratival vs deontological' contrasts the logic philosophy that is
-being used in the design of a security architecture.
-
-Deontological implies that the security architecture is 'rules' based.
-A concept embraced by the classic mandatory access control
-architectures such as SeLinux.
-
-Narratival, the logic predicate embraced by TSEM, implies that the
-security architecture is events based and is constructed from a
-narration of a known good workload by unit testing.
-
-At the risk of indulging in further philosophical wonkiness, the two
-bodies of logic arise from the constrasting philosopies espoused by
-Immanual Kant and Georg Wilhelm Friedrich Hegel.  It is somewhat less
-precise, but a security architecture that is rules based would be
-considered 'Kantian' motivated while an events based architecture
-would be considered 'Hegelian' inspired.
-
-So, departing from epistemology, what does all of this mean with
-respect to security.
-
-In a policy based architecture, the security decision is a product of
-the rules, in the case of SeLinux a rather complex corpus, that have
-been established to regulate the interaction of a role, subject and
-object label.
-
-In an events based architecture, the security decision is a product of
-the characteristics of the event.  From a granularity perspective,
-which seems to be an issue in this BPF/BTF discussion, the granularity
-of the security decision can be as variable as any of characteristics
-that is used to describe the LSM event at the operating system level.
-
-In TSEM, the characteristics of the event are used to generic a unique
-numeric coefficient specific to the event.  The TSEM documentation
-discusses the functional generation of these coefficients.
-
-In the case of the three bpf LSM hooks that are in 6.5, this would be
-any of the characteristics embodied in the following variables.
-
-bpf command
-bpf_attributes
-bpf_map
-fmode_t
-bpf_prog
-
-With respect to your problem at hand; Paul Moore suggested elsewhere
-in this thread that there were smart people hanging around on the list
-that might be able to comment on the challenge of CAP_BPF lacking
-granularity and being unavailable in a user namespace.
-
-I can't claim to being very smart, but I did hook up the big screen TV
-at our lake place in west-central Minnesota and it worked the first
-time, so here goes some thoughts.
-
-I can't claim a great deal of experience with BPF, but I'm assuming
-that any of the characteristics above, or that would be passed to the
-proposed BPF LSM hooks, would embody sufficient information about a
-BPF program to fully characterize it from a security perspective.
-
-I'm also assuming that the BPF implementation in the Linux kernel is
-now sufficiently featureful for a BPF program to assist in making a
-security decision by analyzing any of the attributes passed to an LSM
-hook for a subsequent and subordinate BPF program.
-
-We currently don't have support in TSEM for connecting a BPF program
-to an in kernel Trusted Modeling Agent (TMA), but it is on our radar
-screen, desperately seeking attention cycles.  With such hypothetical
-support in place, I would propose gating the ability to attach a BPF
-program to a TMA with CAP_BPF.  Said program would then assume the
-role of assisting the TMA in generating the security coefficients for
-subsequent BPF related security events in the modeling namespace.
-
-At that point, the security behavior of subsequent BPF programs will
-be under the control of the security model being run by the TMA
-assigned to that security namespace.  It can be as granular and
-restrictive as any security characteristics that would be described as
-being relevant to BPF.
-
-From a security perspective, you don't write any security policy, you
-unit test the BPF application and the trust orchestrator generates the
-security model that would be subsequently enforced.
-
-With this model, you don't override any existing security controls and
-the LSM implementation remains purely restrictive.  CAP_BPF regulates
-whether the BPF infrastructure can be accessed and BPF itself becomes
-responsible for defining the permissable security behavior of any
-subordinate BPF applications.
-
-There are undoubtedly considerations needed in the BPF implementation
-to support this model but I haven't had time to look at those
-particulars.
-
-There is further discussion of the concepts involved in the 18+ page
-documentation file that was included in the V0 release of TSEM.  Here
-is the lore link for the original series:
-
-https://lore.kernel.org/linux-security-module/20230204050954.11583-1-greg@enjellic.com/#t
-
-The V1 release, currently being finalized, is a significantly enhanced
-implementation but the architectural and security concepts discussed
-are all still relevant, if there is a desire to dig into this further.
-
-With respect to the thinking and writings of Kant and Hegel, Wikipedia
-is your friend.... :-)
-
-To conclude in a big picture context, if it hasn't already jumped out
-at people.  While TSEM operates practically from a narratival design
-perspective, it is designed to do so by applying either deterministic
-or machine learning models to the characterization and enforcement of
-the security behavior of a platform.
-
-The reason we have a somewhat intense interest in BPF is that HIDS
-based machine learning models need to do characteristic screening in
-order to be properly trained for anomaly detection.  BPF is a pathway
-to achieving this with a single kernel based trusted modeling agent
-implementation.
-
-Now, back to figuring out how to hook up the stereo/hifi.
-
-Have a good remainder of the week.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
