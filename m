@@ -2,255 +2,193 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3105EC6FD18
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Apr 2023 22:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3253C77B73
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Apr 2023 23:19:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232018AbjDSWXR (ORCPT
+        id S232179AbjDSXTI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Apr 2023 18:23:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42210 "EHLO
+        Wed, 19 Apr 2023 19:19:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233511AbjDSWWz (ORCPT
+        with ESMTP id S231671AbjDSXTI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Apr 2023 18:22:55 -0400
-Received: from sonic307-16.consmr.mail.ne1.yahoo.com (sonic307-16.consmr.mail.ne1.yahoo.com [66.163.190.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E908283CF
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Apr 2023 15:21:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1681942796; bh=aSold790iIFBdC8z4K+bYyXd6pqgIE8gjXw+bOy50tI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=QC4qtXllZr7SGusrm6Ui7yy3C8sinM948PfSw9EennEJAG5Z5v9VMqrlKThzZjWawYehdsRrHTldR+ctQZjtjYjrakkrDG6VCaDJ4fQZom/jhWoDacs+VNT3XOR26eVabk6RZCGop5CATO+ng+ZlIdkTfG8NrVf4B6156+MtreWEpnqm5AjJG+D6b9swcquFah+nDEgQWveO8Gc/LAfWihriQW4umh0S+qb4yydcAD1M9AahHtrfIRE+qA91sdFyv2gc2ZHuJ8ipKFqNdi1TgrfTjUQQULtZghmGkleVOmkJRvkfwYC+zja/LCRZlZT35VVcDsDYFcs8yhBQvY9ogw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1681942796; bh=9ySQqozhPuAdqSa6lqg5MULYFAhCuNo01W5VK2s51v/=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=eJV4bvFZFQQ3XAia3BDyeFCKDPPLE7n85vhS5ntWZAxwZzZIduvYo4e+A/QJ2FJWYZN1WBJs0rMd3LPSGyBPOMd49QuDohqL4DAznMutpBstQm+0XIvd8IzHTkTzB+FLrzW9s6gDTfcT/12Bz0riutTVlAwNmT7hUiR07hlGQ4Y6vAgnRkSw2uYpXQGj9dnit+/4tR9SWcJ8m+xeUpv8UsR0jN9HIQnNa6Z5U8O8IrzjuRnpCoAMSgie9RCKrMEGXkge27cxtMNO2inXWuT+WMtmY9aYNrBjormPrcg4noGme7J7IsuFFFfY3mzoKy0qFfT8Z9fY6E9xR4AWii97QQ==
-X-YMail-OSG: WAmE6TUVM1nuSeBfV_IcibnQZnRaewdcD9OKlw2SZsT9YZ8QhtH_Ztt07XO7_Dj
- 3cuhXBlZWLY4HnBAwALciM6Sd7UyAGVkz46waOJct0HbPDH0e55NWo_54ol23BCS7nNgfO5zXAwE
- 5SJOvqiIs7NLIwmpLDyeR0fL9sF_vuw8OmfvIK6_KT7Difoh92A77VnkFbqDudW2MTR6wU2Yxeqm
- dLLxThBGwRS3H17hmuTIrkYo31ZYSNCkbJaRUQX0GdrMXVuER6SdsQTZN2GBwalP7X1wkUM2m9lW
- g6.66XyaNw_rPbda7BEoF606QoKW1kstDCNHF8xAgXfxaTQchrHzSeXqmkTZsPdfDJOeTFeq1Hb1
- 5I1WeCdsJ2GrktOtr3pK4zCFekroQsxBgphZUo4eMhhZEUyysmUNR.WlFkm.dmRVrQkot.8YJ6mr
- DuHMNs.KGFnxG4oz4mcuxfjJjupYtEW_nyp883KUg3Z7WqoyI_md3WW3hY6WYjlgYelXvedwJy4s
- PZDDJwGPUqOIvMG4quEqkO47Sg1chZ0cFKoswI.b2h8NJwdIFEfld0pTF6jkOvV_dopExN8ooiEF
- kHIgcYIjD__i1eD5G9DHS3uHY3Wu.x8xCNptMOvBUvcE3_9Vtgbtqfz9EbsUWVE6RY1KYocghep0
- AOMtfWHl1.VWCjGML72T.toEE_gH9ygXeRag1LaOEVbQD.6L4QaGZpLZ6mo2ASajWA_l7dubzDw_
- jxpBeTc8eIT5ANM0zYCs3bRWHN5lF3wRwkrj5K6.qKcAlQLpRV5UjrWJ46w0fqjVu29Qr9lBDz4e
- GzlKxuyV1tRERKE.My2PYTy7p3hbrO_KXf8RUigENH6dZWnvM7qrDGtxDPRisUWObS3NJ2sxOa.g
- nGVqh_KLXy_5ExCud4v4ZOXL.VC1vdN6Q.JkzfmD_nFQy5uWRjXxMOpfrd2naT3oi2ObW03i6lko
- cch12D6SEKKphtwbg91Ynd9il1L2gCTDqorS63Qpm.gxR_FHDTkjVeEySAD7wRCm5j6yyFNqhOEl
- ltAuQWnxLqMBGdTJVjm4iAQjRNOfYKBRdzhasQhHfyL8rPBAqbusYNeQ420rcWLzgtynsUGtL55H
- 0z8wVinlN5QDIC5UsobnWI4_N5JILlG3cFSHENGBSQJtIAoPqFQ.7fAKrGlJ0xia3WY..ck8G1wK
- 8HosnqORofLtpcYwqL8gLxsT0MZa.I3z6VQvEUeDfAMe_jZu5dGMs04s8_9BW3fJ4.hNAWBn3bCL
- Ls6soTT8ZmO4EfY0IyjD7Bx4SMizO4lIt1u9wOTMJ0mA3MZUdNwyJ3mIpGxKqSoKZMDc303T7_GJ
- CKWgf5uWepkzOWmXX5.IFxCJ6HDu45n6FsVRYETjj2s9sFbe5mW.uB20xvso8GSvBFzzZAhFbI_S
- V4VO2QjgKfzQsBYfgsGn43sBEb0aQNRDZQbh.zWq7xJ.5xyp5qgj4cUy3KgbjtAHmMVSpfgBSAXv
- S0Xa7Wq2hflqcFsd8FfgFGi.JSassOJ5J1r7lnKDgTv5DvrwwTOdgc8VxKScgyh98LEdB94nJMrm
- .Sp6HQP3ITTrN_MBtsGcyVwwsaRiZhLOviJOymzln87G_3gJUSlXD6iejI6Wf1fdbfwMPNKlnYAh
- xyIKjAWc_HJFZAlp53CJtIC6vtIRQ.IqPcGLNkoe98PPgtu5DfHc5SHTtw6b7TT70MaZFeyFqf4J
- tr.mLFh.VcY0cKJgHvMh3hLbh_XAQuTg186_OoQjj0ZBdAf3V6Lq3_lokv5VkLHDsc_NL3QHpf5I
- KVfHeLuOZgl2pejQpO3_.2rPOzUcq97pDRZqhH6JohHxM_lPgkwKGQK.oSStE_RMhh0jofl.82xH
- kLYgHUsK46zUuJp61Phe8OMxliJiOoJg3GBgzqACmCJ9RUYoB3OuE17fH13_7lThB6W1P1aHx3HN
- sC.F75q3XcZEYkkQr8a4MEeQl7TgGBYFDnrlNhjkd2bq8HzCocXi2xoxAqRDGb75h2JK_.3Iq1F0
- Kq4s7ZD5F12Jdw853rwAG8KD7pKtvcIKppQJDURTW1GwChimA8FOgW2TBGOdOcqaKI9yXleNcRR3
- IGPHdS5w2eesC3pocAIX3p1w86KnVBlyhSVAxpLbskkxl_uBxdTIBgSW3AXux62JmTA2d4dBs.N6
- KBvh5qmegp4kmXUXCRdKbG0IulhZ8DzQ_KDRYE9tgAHrylxnKLE9vbB7COEH0SLepdFe2PMMgi7.
- 7Kc9F8X4IVmoz_Uc3M2NwaaVB.l9O8TsvV4aFqopnOwuRzeDdB5DY8LJR6g4PZItMnzmKGfHJoXp
- 5CqSm3sLqv_Y-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 34405ddd-e74d-4453-9a33-fb61d41c6ac2
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Wed, 19 Apr 2023 22:19:56 +0000
-Received: by hermes--production-bf1-5f9df5c5c4-p5s6l (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d7e3d8c07fd19407715f678c13c2aa39;
-          Wed, 19 Apr 2023 22:19:52 +0000 (UTC)
-Message-ID: <4894d787-9849-91e0-7fa8-566dc42dd85e@schaufler-ca.com>
-Date:   Wed, 19 Apr 2023 15:19:49 -0700
+        Wed, 19 Apr 2023 19:19:08 -0400
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B2AC1BD6;
+        Wed, 19 Apr 2023 16:19:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1681946343; x=1713482343;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=rdFlcKCkz/AhcGgbWYwQ2kHsg5ReFHAwr4zQdFbSYEk=;
+  b=nfqqhP/ZIEcGi6bSuPJgjDkETO3EZvQm3oFaKU7iiuPz4joW6eyLWIQR
+   3AuR75nDikLZKwWDTLY+7vQ42v81sR6NfgQ+pC8WzhPZN9+OP2kti54j7
+   lcCxxN6cmOMXrkYqqYyAqPxPII8HtufVHyKnrSZm+5DMTxvwrVpVB1PEG
+   k=;
+X-IronPort-AV: E=Sophos;i="5.99,210,1677542400"; 
+   d="scan'208";a="320418118"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-iad-1e-m6i4x-7dc0ecf1.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2023 23:19:02 +0000
+Received: from EX19MTAUWC001.ant.amazon.com (iad12-ws-svc-p26-lb9-vlan2.iad.amazon.com [10.40.163.34])
+        by email-inbound-relay-iad-1e-m6i4x-7dc0ecf1.us-east-1.amazon.com (Postfix) with ESMTPS id F29C481045;
+        Wed, 19 Apr 2023 23:19:01 +0000 (UTC)
+Received: from EX19D028UWA002.ant.amazon.com (10.13.138.248) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.25; Wed, 19 Apr 2023 23:18:48 +0000
+Received: from uda95858fd22f53.ant.amazon.com (10.187.171.36) by
+ EX19D028UWA002.ant.amazon.com (10.13.138.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 19 Apr 2023 23:18:47 +0000
+From:   Mengchi Cheng <mengcc@amazon.com>
+To:     <casey@schaufler-ca.com>
+CC:     <kamatam@amazon.com>, <linux-security-module@vger.kernel.org>,
+        <linux-unionfs@vger.kernel.org>, <mengcc@amazon.com>,
+        <miklos@szeredi.hu>, <yoonjaeh@amazon.com>,
+        <roberto.sassu@huaweicloud.com>
+Subject: [RFC PATCH] Set SMK_INODE_CHANGED inside smack_dentry_create_files_as
+Date:   Wed, 19 Apr 2023 16:18:29 -0700
+Message-ID: <20230419231829.881830-1-mengcc@amazon.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <7d5c10b6-68da-dea9-b460-1427b17250b5@schaufler-ca.com>
+References: <7d5c10b6-68da-dea9-b460-1427b17250b5@schaufler-ca.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v8 07/11] LSM: Helpers for attribute names and filling an
- lsm_ctx
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, jmorris@namei.org,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        mic@digikod.net, Casey Schaufler <casey@schaufler-ca.com>
-References: <20230411155921.14716-1-casey@schaufler-ca.com>
- <20230411155921.14716-8-casey@schaufler-ca.com>
- <CAHC9VhTX-JnS11Ywfwf2aTvh1J3KBdsfCp3k1C=8WyLcgRNDig@mail.gmail.com>
- <5acc0c6c-0ef6-bc92-0af9-dc33d8a21afa@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <5acc0c6c-0ef6-bc92-0af9-dc33d8a21afa@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21365 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain
+X-Originating-IP: [10.187.171.36]
+X-ClientProxiedBy: EX19D043UWC004.ant.amazon.com (10.13.139.206) To
+ EX19D028UWA002.ant.amazon.com (10.13.138.248)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/18/2023 3:43 PM, Casey Schaufler wrote:
-> On 4/18/2023 2:51 PM, Paul Moore wrote:
->> On Tue, Apr 11, 2023 at 12:02 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> Add lsm_name_to_attr(), which translates a text string to a
->>> LSM_ATTR value if one is available.
->>>
->>> Add lsm_fill_user_ctx(), which fills a struct lsm_ctx, including
->>> the trailing attribute value. The .len value is padded to a multiple
->>> of the size of the structure for alignment.
->>>
->>> All are used in module specific components of LSM system calls.
->>>
->>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>> ---
->>>  include/linux/security.h | 13 +++++++++++
->>>  security/lsm_syscalls.c  | 24 ++++++++++++++++++++
->>>  security/security.c      | 48 ++++++++++++++++++++++++++++++++++++++++
->>>  3 files changed, 85 insertions(+)
->> ..
->>
->>> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
->>> index 6efbe244d304..67106f642422 100644
->>> --- a/security/lsm_syscalls.c
->>> +++ b/security/lsm_syscalls.c
->>> @@ -17,6 +17,30 @@
->>>  #include <linux/lsm_hooks.h>
->>>  #include <uapi/linux/lsm.h>
->>>
->>> +/**
->>> + * lsm_name_to_attr - map an LSM attribute name to its ID
->>> + * @name: name of the attribute
->>> + *
->>> + * Returns the LSM attribute value associated with @name, or 0 if
->>> + * there is no mapping.
->>> + */
->>> +u64 lsm_name_to_attr(const char *name)
->>> +{
->>> +       if (!strcmp(name, "current"))
->>> +               return LSM_ATTR_CURRENT;
->>> +       if (!strcmp(name, "exec"))
->>> +               return LSM_ATTR_EXEC;
->>> +       if (!strcmp(name, "fscreate"))
->>> +               return LSM_ATTR_FSCREATE;
->>> +       if (!strcmp(name, "keycreate"))
->>> +               return LSM_ATTR_KEYCREATE;
->>> +       if (!strcmp(name, "prev"))
->>> +               return LSM_ATTR_PREV;
->>> +       if (!strcmp(name, "sockcreate"))
->>> +               return LSM_ATTR_SOCKCREATE;
->>> +       return 0;
->>> +}
->> Thank you :)
-> It didn't hurt all that badly.
->
->>>  /**
->>>   * sys_lsm_set_self_attr - Set current task's security module attribute
->>>   * @attr: which attribute to set
->>> diff --git a/security/security.c b/security/security.c
->>> index bfe9a1a426b2..453f3ff591ec 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -752,6 +752,54 @@ static int lsm_superblock_alloc(struct super_block *sb)
->>>         return 0;
->>>  }
->>>
->>> +/**
->>> + * lsm_fill_user_ctx - Fill a user space lsm_ctx structure
->>> + * @ctx: an LSM context to be filled
->>> + * @context: the new context value
->>> + * @context_size: the size of the new context value
->>> + * @id: LSM id
->>> + * @flags: LSM defined flags
->>> + *
->>> + * Fill all of the fields in a user space lsm_ctx structure.
->>> + * Caller is assumed to have verified that @ctx has enough space
->>> + * for @context.
->>> + *
->>> + * The total length is padded to an integral number of lsm_ctx.
->> Considering that lsm_ctx is variable length I'm not sure that makes a
->> lot of sense, how about we pad the total length so that the @ctx entry
->> is a multiple of 64-bits?
-> 64 is fine.
->
->>   If needed we can always change this later
->> as the lsm_ctx struct is inherently variable in length and userspace
->> will need to deal with the buffer regardless of alignment.
->>
->>> + * Returns 0 on success, -EFAULT on a copyout error.
->>> + */
->>> +int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
->>> +                     size_t context_size, u64 id, u64 flags)
->>> +{
->>> +       struct lsm_ctx *lctx;
->>> +       size_t locallen;
->>> +       u8 *composite;
->>> +       int rc = 0;
->>> +
->>> +       locallen = sizeof(*ctx);
->>> +       if (context_size)
->>> +               locallen += sizeof(*ctx) * ((context_size / sizeof(*ctx)) + 1);
->> It seems cleaner to use the kernel's ALIGN() macro:
-> Indeed. I'll do it.
->
->>   /* ensure the lsm_ctx length is a multiple of 64-bits */
->>   locallen = ALIGN(sizeof(*ctx) + context_size, 8);
->>   lctx = kzalloc(locallen, GFP_KERNEL)
->>   if (!lctx)
->>     return -ENOMEM;
->>
->>> +       composite = kzalloc(locallen, GFP_KERNEL);
->>> +       if (composite == NULL)
->>> +               return -ENOMEM;
->>> +
->>> +       lctx = (struct lsm_ctx *)composite;
->>> +       lctx->id = id;
->>> +       lctx->flags = flags;
->>> +       lctx->ctx_len = context_size;
->>> +       lctx->len = locallen;
->>> +
->>> +       memcpy(composite + sizeof(*lctx), context, context_size);
->> Is there a problem with doing `memcpy(lctx->ctx, context,
->> context_size)` in place of the memcpy above?
-> Nope.
->
->>   That is easier to read
->> and we can get rid of @composite.
-> Point.
->
->>> +       if (copy_to_user(ctx, composite, locallen))
->>> +               rc = -EFAULT;
->>> +
->>> +       kfree(composite);
->>> +
->>> +       return rc;
->>> +}
->> I understand Mickaël asked you to do a single copy_to_user(), but I'm
->> not sure it is worth it if we have to add a temporary buffer
->> allocation like that.  How about something like below (v7 with some
->> tweaks/padding)?  You could be a bit more clever with the memset if
->> you want, I was just typing this up quickly ...
-> I prefer two copies to the allocation myself. I'll incorporate this.
+On the overlay fs with smack lsm enabled, new subdir did not inherit
+transmute xattr form parent dir.
 
-After further review ...
+One solution that can solve it is passing inode into
+smack_dentry_create_files_as. And Set SMK_INODE_CHANGED to smak_flags
+if directory has transmute xattr.
 
-The tweaks required for padding aren't as clean as all that, and memset()
-isn't going to work for __user memory. I'm having trouble coming up with a
-way to deal with the padding that doesn't require either allocation or a
-third copy_to_user(). The inclusion of padding makes the kzalloc() and
-single copy_to_user() pretty attractive. 
+Reported-by: Ryan Yoon <yoonjaeh@amazon.com>
+---
+ fs/overlayfs/dir.c            | 2 +-
+ include/linux/lsm_hook_defs.h | 2 +-
+ include/linux/security.h      | 4 ++--
+ security/security.c           | 4 ++--
+ security/selinux/hooks.c      | 2 +-
+ security/smack/smack_lsm.c    | 8 ++++++--
+ 6 files changed, 13 insertions(+), 9 deletions(-)
 
->
->> int lsm_fill_user_ctx(...)
->> {
->>   struct lsm_ctx lctx;
->>
->>   /* ensure the lctx length is a multiple of 64-bits */
->>   lctx.len = ALIGN(sizeof(lctx) + context_size, 8);
->>
->>   lctx.id = id;
->>   lctx.flags = flags;
->>   lctx.ctx_len = context_size;
->>
->>   memset(ctx, 0, lctx.len);
->>   if (copy_to_user(ctx, &lctx, sizeof(lctx))
->>     return -EFAULT;
->>   if (copy_to_user(&ctx[1], context, context_size)
->>     return -EFAULT;
->>
->>   return 0;
->> }
->>
->> --
->> paul-moore.com
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index fc25fb95d5fc..1b3f7f3a5468 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -598,7 +598,7 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
+ 		override_cred->fsgid = inode->i_gid;
+ 		err = security_dentry_create_files_as(dentry,
+ 				attr->mode, &dentry->d_name, old_cred,
+-				override_cred);
++				override_cred, inode);
+ 		if (err) {
+ 			put_cred(override_cred);
+ 			goto out_revert_creds;
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 094b76dc7164..96f1fdc21cbc 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -84,7 +84,7 @@ LSM_HOOK(int, -EOPNOTSUPP, dentry_init_security, struct dentry *dentry,
+ 	 int mode, const struct qstr *name, const char **xattr_name,
+ 	 void **ctx, u32 *ctxlen)
+ LSM_HOOK(int, 0, dentry_create_files_as, struct dentry *dentry, int mode,
+-	 struct qstr *name, const struct cred *old, struct cred *new)
++	 struct qstr *name, const struct cred *old, struct cred *new, struct inode *inode)
+ 
+ #ifdef CONFIG_SECURITY_PATH
+ LSM_HOOK(int, 0, path_unlink, const struct path *dir, struct dentry *dentry)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5984d0d550b4..354d68dc69c5 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -325,7 +325,7 @@ int security_dentry_init_security(struct dentry *dentry, int mode,
+ int security_dentry_create_files_as(struct dentry *dentry, int mode,
+ 					struct qstr *name,
+ 					const struct cred *old,
+-					struct cred *new);
++					struct cred *new, struct inode *inode);
+ int security_path_notify(const struct path *path, u64 mask,
+ 					unsigned int obj_type);
+ int security_inode_alloc(struct inode *inode);
+@@ -756,7 +756,7 @@ static inline int security_dentry_init_security(struct dentry *dentry,
+ static inline int security_dentry_create_files_as(struct dentry *dentry,
+ 						  int mode, struct qstr *name,
+ 						  const struct cred *old,
+-						  struct cred *new)
++						  struct cred *new, struct inode *inode)
+ {
+ 	return 0;
+ }
+diff --git a/security/security.c b/security/security.c
+index cf6cc576736f..0ffe98cc57fe 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1110,10 +1110,10 @@ EXPORT_SYMBOL(security_dentry_init_security);
+ 
+ int security_dentry_create_files_as(struct dentry *dentry, int mode,
+ 				    struct qstr *name,
+-				    const struct cred *old, struct cred *new)
++				    const struct cred *old, struct cred *new, struct inode *inode)
+ {
+ 	return call_int_hook(dentry_create_files_as, 0, dentry, mode,
+-				name, old, new);
++				name, old, new, inode);
+ }
+ EXPORT_SYMBOL(security_dentry_create_files_as);
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 9a5bdfc21314..2addc513bbb0 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2848,7 +2848,7 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+ static int selinux_dentry_create_files_as(struct dentry *dentry, int mode,
+ 					  struct qstr *name,
+ 					  const struct cred *old,
+-					  struct cred *new)
++					  struct cred *new, struct inode *inode)
+ {
+ 	u32 newsid;
+ 	int rc;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index cfcbb748da25..e929e3e131c2 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4739,12 +4739,14 @@ static int smack_inode_copy_up_xattr(const char *name)
+ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+ 					struct qstr *name,
+ 					const struct cred *old,
+-					struct cred *new)
++					struct cred *new,
++					struct inode *inode)
+ {
+ 	struct task_smack *otsp = smack_cred(old);
+ 	struct task_smack *ntsp = smack_cred(new);
+ 	struct inode_smack *isp;
+ 	int may;
++	struct inode_smack *issp = smack_inode(inode);
+ 
+ 	/*
+ 	 * Use the process credential unless all of
+@@ -4769,8 +4771,10 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+ 		 * providing access is transmuting use the containing
+ 		 * directory label instead of the process label.
+ 		 */
+-		if (may > 0 && (may & MAY_TRANSMUTE))
++		if (may > 0 && (may & MAY_TRANSMUTE)) {
+ 			ntsp->smk_task = isp->smk_inode;
++			issp->smk_flags |= SMK_INODE_CHANGED;
++		}
+ 	}
+ 	return 0;
+ }
+-- 
+2.25.1
+
