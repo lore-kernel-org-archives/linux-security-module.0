@@ -2,148 +2,101 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC13AC77B73
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Apr 2023 17:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345C8C77B7A
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Apr 2023 17:40:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231569AbjDTRcl (ORCPT
+        id S231331AbjDTRky (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Apr 2023 13:32:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36092 "EHLO
+        Thu, 20 Apr 2023 13:40:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231252AbjDTRck (ORCPT
+        with ESMTP id S230364AbjDTRkx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Apr 2023 13:32:40 -0400
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc08])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FD0E3590
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Apr 2023 10:32:39 -0700 (PDT)
+        Thu, 20 Apr 2023 13:40:53 -0400
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9C4A44BA
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Apr 2023 10:40:49 -0700 (PDT)
 Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Q2Pqn3z0KzMq6VV;
-        Thu, 20 Apr 2023 19:32:37 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Q2Pqm20sjzMppF7;
-        Thu, 20 Apr 2023 19:32:35 +0200 (CEST)
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Q2Q1C69WSzMqQVD;
+        Thu, 20 Apr 2023 19:40:47 +0200 (CEST)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Q2Q196HmLzMppF8;
+        Thu, 20 Apr 2023 19:40:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1682011957;
-        bh=fAnbmRZ7wTyF29YzCTBtEnYRkDr9hbMEBLNoGztZMtM=;
+        s=20191114; t=1682012447;
+        bh=C42CG0yEhZ3//t6vNF4EAp/UK1VoZRlM/xbyZMTq9sw=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=cIDOqDFj+mh+tVNGcDDcJEcbMC7z/JEwjq5mBTUb3kR99rhFDqVG8w+jIbezUKelx
-         vJvGpoB9IZyllDMY/y1paYOzKgrLUFyIL487Sqh/J5jYdngxbSIde1IhTYJ0IzIo1B
-         McwPgEfkNaDGxnXOIV/2uw6pnzJeur8X44cwclNg=
-Message-ID: <17ddf6a0-79d1-b493-0432-c8e84593b165@digikod.net>
-Date:   Thu, 20 Apr 2023 19:32:35 +0200
+        b=Ww1/qKoHdAKBnghB3zJAndSHHtlhWFME+1v84JiiUfZsB7CaOOqVsLbd0uITMgTCt
+         VvjQ/4XR7CHTonbqvGTXfTB8WETF74lCX0tx9l329juYD85bDx6iqcoL0DbZoes+0b
+         o+4McyPqybIf2i8Shqgmo4gSkoEP6pUNjKaAPGJU=
+Message-ID: <a4dc7c12-b485-2eb2-add5-4f7a387a50fa@digikod.net>
+Date:   Thu, 20 Apr 2023 19:40:44 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v10 02/13] landlock: Allow filesystem layout changes for
- domains without such rule type
+Subject: Re: [PATCH -next v2 0/6] landlock: add chmod and chown support
 Content-Language: en-US
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20230323085226.1432550-1-konstantin.meskhidze@huawei.com>
- <20230323085226.1432550-3-konstantin.meskhidze@huawei.com>
- <062447d5-bd64-f58e-9476-0d2d2034f333@digikod.net>
- <3dd0376c-2835-d1c0-60a9-79d1d22a4d3f@huawei.com>
+To:     xiujianfeng <xiujianfeng@huawei.com>, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, shuah@kernel.org,
+        corbet@lwn.net
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-doc@vger.kernel.org, roberto.sassu@huawei.com,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+References: <20220827111215.131442-1-xiujianfeng@huawei.com>
+ <d55baf4d-01d3-e4d7-e07f-9658d1606a8c@huawei.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <3dd0376c-2835-d1c0-60a9-79d1d22a4d3f@huawei.com>
+In-Reply-To: <d55baf4d-01d3-e4d7-e07f-9658d1606a8c@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 20/04/2023 13:42, Konstantin Meskhidze (A) wrote:
+On 18/04/2023 12:53, xiujianfeng wrote:
+> Hi Mickael,
+> 
+> Sorry about the long silence on this work, As we known this work depends
+> on another work about changing argument from struct dentry to struct
+> path for some attr/xattr related lsm hooks, I'm stuck with this thing,
+> because IMA/EVM is a special security module which is not LSM-based
+> currently, and severely coupled with the file system. so I am waiting
+> for Roberto Sassu' work (Move IMA and EVM to the LSM infrastructure) to
+> be ready, I think it can make my work more easy. you can find
+> Roberto'work here,
+> https://lwn.net/ml/linux-kernel/20230303181842.1087717-1-roberto.sassu@huaweicloud.com/
+> 
+> Any good idea are welcome, thanks.
+
+Thanks for the update Xiu.
+
+Which part would be needed from Roberto's patch series?
+
+
 > 
 > 
-> 4/16/2023 7:09 PM, Mickaël Salaün пишет:
+> On 2022/8/27 19:12, Xiu Jianfeng wrote:
+>> v2:
+>>   * abstract walk_to_visible_parent() helper
+>>   * chmod and chown rights only take affect on directory's context
+>>   * add testcase for fchmodat/lchown/fchownat
+>>   * fix other review issues
 >>
->> On 23/03/2023 09:52, Konstantin Meskhidze wrote:
->>> From: Mickaël Salaün <mic@digikod.net>
->>>
->>> Allow mount point and root directory changes when there is no filesystem
->>> rule tied to the current Landlock domain.  This doesn't change anything
->>> for now because a domain must have at least a (filesystem) rule, but
->>> this will change when other rule types will come.  For instance, a
->>> domain only restricting the network should have no impact on filesystem
->>> restrictions.
->>>
->>> Add a new get_current_fs_domain() helper to quickly check filesystem
->>> rule existence for all filesystem LSM hooks.
->>>
->>> Remove unnecessary inlining.
->>>
->>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->>> ---
->>>
->>> Changes since v9:
->>> * Refactors documentaion landlock.rst.
->>> * Changes ACCESS_FS_INITIALLY_DENIED constant
->>> to LANDLOCK_ACCESS_FS_INITIALLY_DENIED.
->>> * Gets rid of unnecessary masking of access_dom in
->>> get_raw_handled_fs_accesses() function.
->>>
->>> Changes since v8:
->>> * Refactors get_handled_fs_accesses().
->>> * Adds landlock_get_raw_fs_access_mask() helper.
->>>
->>> ---
->>>    Documentation/userspace-api/landlock.rst |  6 +-
->>>    security/landlock/fs.c                   | 78 ++++++++++++------------
->>>    security/landlock/ruleset.h              | 25 +++++++-
->>>    security/landlock/syscalls.c             |  6 +-
->>>    4 files changed, 68 insertions(+), 47 deletions(-)
->>>
+>> Xiu Jianfeng (6):
+>>    landlock: expand access_mask_t to u32 type
+>>    landlock: abstract walk_to_visible_parent() helper
+>>    landlock: add chmod and chown support
+>>    landlock/selftests: add selftests for chmod and chown
+>>    landlock/samples: add chmod and chown support
+>>    landlock: update chmod and chown support in document
 >>
->> [...]
+>>   Documentation/userspace-api/landlock.rst     |   9 +-
+>>   include/uapi/linux/landlock.h                |  10 +-
+>>   samples/landlock/sandboxer.c                 |  13 +-
+>>   security/landlock/fs.c                       | 110 ++++++--
+>>   security/landlock/limits.h                   |   2 +-
+>>   security/landlock/ruleset.h                  |   2 +-
+>>   security/landlock/syscalls.c                 |   2 +-
+>>   tools/testing/selftests/landlock/base_test.c |   2 +-
+>>   tools/testing/selftests/landlock/fs_test.c   | 267 ++++++++++++++++++-
+>>   9 files changed, 386 insertions(+), 31 deletions(-)
 >>
->>> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
->>> index 71aca7f990bc..d35cd5d304db 100644
->>> --- a/security/landlock/syscalls.c
->>> +++ b/security/landlock/syscalls.c
->>> @@ -310,6 +310,7 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
->>>    	struct path path;
->>>    	struct landlock_ruleset *ruleset;
->>>    	int res, err;
->>> +	access_mask_t mask;
->>>
->>>    	if (!landlock_initialized)
->>>    		return -EOPNOTSUPP;
->>> @@ -348,9 +349,8 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
->>>    	 * Checks that allowed_access matches the @ruleset constraints
->>>    	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
->>>    	 */
->>> -	if ((path_beneath_attr.allowed_access |
->>> -	     landlock_get_fs_access_mask(ruleset, 0)) !=
->>> -	    landlock_get_fs_access_mask(ruleset, 0)) {
->>> +	mask = landlock_get_raw_fs_access_mask(ruleset, 0);
->>> +	if ((path_beneath_attr.allowed_access | mask) != mask) {
->>
->> This hunk can be moved to the previous patch (i.e. mask = …). This patch
->> should only contains the new landlock_get_raw_fs_access_mask() call.
->>
-> 
->    Sorry. Did not get this tip. Please can you explain what do you mean here?
-
-You can squash this part in the previous patch:
-
--	if ((path_beneath_attr.allowed_access |
--	     landlock_get_fs_access_mask(ruleset, 0)) !=
--	    landlock_get_fs_access_mask(ruleset, 0)) {
-+	mask = landlock_get_fs_access_mask(ruleset, 0);
-+	if ((path_beneath_attr.allowed_access | mask) != mask) {
-
-And this patch will then only include this part:
-
--	mask = landlock_get_fs_access_mask(ruleset, 0);
-+	mask = landlock_get_raw_fs_access_mask(ruleset, 0);
-
-
->>
->>>    		err = -EINVAL;
->>>    		goto out_put_ruleset;
->>>    	}
->>> --
->>> 2.25.1
->>>
->> .
