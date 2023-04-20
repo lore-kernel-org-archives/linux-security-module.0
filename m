@@ -2,289 +2,130 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A82C2C77B72
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Apr 2023 11:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1565C77B7C
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Apr 2023 14:11:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234375AbjDTLqo (ORCPT
+        id S231912AbjDTOLb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Apr 2023 07:46:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46016 "EHLO
+        Thu, 20 Apr 2023 10:11:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233808AbjDTLqn (ORCPT
+        with ESMTP id S229769AbjDTOLa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Apr 2023 07:46:43 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA75C1FF0;
-        Thu, 20 Apr 2023 04:46:41 -0700 (PDT)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Q2G5M1JTQz6J773;
-        Thu, 20 Apr 2023 19:43:51 +0800 (CST)
-Received: from [10.123.123.126] (10.123.123.126) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Thu, 20 Apr 2023 12:46:38 +0100
-Message-ID: <13792f4e-3df7-9cc0-734a-285f95dbe7ca@huawei.com>
-Date:   Thu, 20 Apr 2023 14:46:38 +0300
+        Thu, 20 Apr 2023 10:11:30 -0400
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F83A212D;
+        Thu, 20 Apr 2023 07:11:28 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Q2K8c0mhtz9v7fx;
+        Thu, 20 Apr 2023 22:01:52 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwB3JDvmR0Fk1Yo8Ag--.1954S2;
+        Thu, 20 Apr 2023 15:10:59 +0100 (CET)
+Message-ID: <5a9ba6618b37a592cda13ce36ea35cf78c98122b.camel@huaweicloud.com>
+Subject: Re: [PATCH] Smack modifications for: security: Allow all LSMs to
+ provide xattrs for inode_init_security hook
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org
+Cc:     reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Mengchi Cheng <mengcc@amazon.com>, miklos@szeredi.hu,
+        linux-unionfs@vger.kernel.org, kamatam@amazon.com,
+        yoonjaeh@amazon.com
+Date:   Thu, 20 Apr 2023 16:10:42 +0200
+In-Reply-To: <97849695ef53ab3186e59d8a2c6b74812f13ee19.camel@linux.ibm.com>
+References: <c7f38789-fe47-8289-e73a-4d07fbaf791d@schaufler-ca.com>
+         <20230411172337.340518-1-roberto.sassu@huaweicloud.com>
+         <2dc6486f-ce9b-f171-14fe-48a90386e1b7@schaufler-ca.com>
+         <8e7705972a0f306922d8bc4893cf940e319abb19.camel@huaweicloud.com>
+         <72b46d0f-75c7-ac18-4984-2bf1d6dad352@schaufler-ca.com>
+         <82ee6ddf66bb34470aa7b591df4d70783fdb2422.camel@huaweicloud.com>
+         <91f05dc4-a4b7-b40a-ba1a-0ccc489c84b2@schaufler-ca.com>
+         <5c50d98f1e5745c88270ae4ad3de6d9a803db4c6.camel@huaweicloud.com>
+         <48c6073f-59b0-f5d1-532e-fe4b912b939d@schaufler-ca.com>
+         <0fccab67e496f10f4ee7bf2220e70a655013935f.camel@huaweicloud.com>
+         <c16dd895-f488-241d-0be8-e56e5f0c1adb@schaufler-ca.com>
+         <a98ddf946c474a3500bdcd72766c6cb0043278ff.camel@huaweicloud.com>
+         <97849695ef53ab3186e59d8a2c6b74812f13ee19.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v10 05/13] landlock: Refactor merge/inherit_ruleset
- functions
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-References: <20230323085226.1432550-1-konstantin.meskhidze@huawei.com>
- <20230323085226.1432550-6-konstantin.meskhidze@huawei.com>
- <8b2f2e0f-0a95-ef87-7eb2-286e75a62e2c@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <8b2f2e0f-0a95-ef87-7eb2-286e75a62e2c@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.123.126]
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: GxC2BwB3JDvmR0Fk1Yo8Ag--.1954S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFy5WrW3Zr1kur17GFW3ZFb_yoW8ZFW5pF
+        WIgayUKrs5tFWxGrZ2yr47Xa1I9rWrCF43JryYk34kAFn8Cr1ftFyFqw4Uuay8GrsYvr1Y
+        vFWUZ398Zr1DXaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+        AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+        aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU13rcDUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQANBF1jj4xFswAAsD
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, 2023-04-20 at 06:44 -0400, Mimi Zohar wrote:
+> On Thu, 2023-04-20 at 10:50 +0200, Roberto Sassu wrote:
+> > > It's possible. It's been a long time since I've looked at this.
+> > > I'm tempted to take a change to make overlayfs work upstream and
+> > > then worry about the ima changes. There seems to be a lot more
+> > > going on with the ima changes than is obvious from what's in the
+> > > Smack code.
+> 
+> It doesn't sound like the patch set introduces the overlayfs bug.
 
+Correct.
 
-4/16/2023 7:09 PM, Mickaël Salaün пишет:
-> 
-> On 23/03/2023 09:52, Konstantin Meskhidze wrote:
->> Refactor merge_ruleset() and inherit_ruleset() functions to support
->> new rule types. This patch adds merge_tree() and inherit_tree()
->> helpers. They use a specific ruleset's red-black tree according to
->> a key type argument.
->> 
->> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->> ---
->> 
->> Changes since v9:
->> * None
->> 
->> Changes since v8:
->> * Refactors commit message.
->> * Minor fixes.
->> 
->> Changes since v7:
->> * Adds missed lockdep_assert_held it inherit_tree() and merge_tree().
->> * Fixes comment.
->> 
->> Changes since v6:
->> * Refactors merge_ruleset() and inherit_ruleset() functions to support
->>    new rule types.
->> * Renames tree_merge() to merge_tree() (and reorder arguments), and
->>    tree_copy() to inherit_tree().
->> 
->> Changes since v5:
->> * Refactors some logic errors.
->> * Formats code with clang-format-14.
->> 
->> Changes since v4:
->> * None
->> 
->> ---
->>   security/landlock/ruleset.c | 110 ++++++++++++++++++++++++------------
->>   1 file changed, 73 insertions(+), 37 deletions(-)
->> 
->> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
->> index d3859d5e7306..2579c9bbedbc 100644
->> --- a/security/landlock/ruleset.c
->> +++ b/security/landlock/ruleset.c
->> @@ -302,36 +302,22 @@ static void put_hierarchy(struct landlock_hierarchy *hierarchy)
->>   	}
->>   }
->> 
->> -static int merge_ruleset(struct landlock_ruleset *const dst,
->> -			 struct landlock_ruleset *const src)
->> +static int merge_tree(struct landlock_ruleset *const dst,
->> +		      struct landlock_ruleset *const src,
->> +		      const enum landlock_key_type key_type)
->>   {
->>   	struct landlock_rule *walker_rule, *next_rule;
->>   	struct rb_root *src_root;
->>   	int err = 0;
->> 
->>   	might_sleep();
->> -	/* Should already be checked by landlock_merge_ruleset() */
->> -	if (WARN_ON_ONCE(!src))
->> -		return 0;
->> -	/* Only merge into a domain. */
->> -	if (WARN_ON_ONCE(!dst || !dst->hierarchy))
->> -		return -EINVAL;
->> +	lockdep_assert_held(&dst->lock);
->> +	lockdep_assert_held(&src->lock);
->> 
->> -	src_root = get_root(src, LANDLOCK_KEY_INODE);
->> +	src_root = get_root(src, key_type);
->>   	if (IS_ERR(src_root))
->>   		return PTR_ERR(src_root);
->> 
->> -	/* Locks @dst first because we are its only owner. */
->> -	mutex_lock(&dst->lock);
->> -	mutex_lock_nested(&src->lock, SINGLE_DEPTH_NESTING);
->> -
->> -	/* Stacks the new layer. */
->> -	if (WARN_ON_ONCE(src->num_layers != 1 || dst->num_layers < 1)) {
->> -		err = -EINVAL;
->> -		goto out_unlock;
->> -	}
->> -	dst->access_masks[dst->num_layers - 1] = src->access_masks[0];
->> -
->>   	/* Merges the @src tree. */
->>   	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule, src_root,
->>   					     node) {
->> @@ -340,23 +326,52 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
->>   		} };
->>   		const struct landlock_id id = {
->>   			.key = walker_rule->key,
->> -			.type = LANDLOCK_KEY_INODE,
->> +			.type = key_type,
->>   		};
->> 
->>   		if (WARN_ON_ONCE(walker_rule->num_layers != 1)) {
->>   			err = -EINVAL;
->> -			goto out_unlock;
-> 
-> This should be replaced with `return -EINVAL;` and the `{` `}` after the
-> if condition are not needed anymore.
-> 
-   Ok. Will be changed.
-> 
->>   		}
->>   		if (WARN_ON_ONCE(walker_rule->layers[0].level != 0)) {
->>   			err = -EINVAL;
->> -			goto out_unlock;
-> 
-> ditto
+The first problem of overlayfs is that smack_dentry_create_files_as()
+override the credentials in a way that transmuting is not detected
+correctly anymore in smack_inode_init_security(). The process label is
+already overwritten with the directory label, at the time smack_inode_i
+nit_security() calls smk_access_entry(), so the latter will not find
+the transmuting rule that refers to the original process label.
 
-   Got it.
+The second problem is that overlayfs temporarily creates the new
+directory in the working directory, that does not necessarily have the
+same label of the parent directory the new file/directory will be added
+to, causing the transmuting to be computed incorrectly.
+
+> The security_inode_init_security() change to initialize multiple LSMs
+> and IMA xattrs and include them in the EVM hmac calculation is straight
+> forward.
 > 
->>   		}
->>   		layers[0].access = walker_rule->layers[0].access;
->> 
->>   		err = insert_rule(dst, id, &layers, ARRAY_SIZE(layers));
->>   		if (err)
->> -			goto out_unlock;
->> +			return err;
->> +	}
->> +	return err;
->> +}
->> +
->> +static int merge_ruleset(struct landlock_ruleset *const dst,
->> +			 struct landlock_ruleset *const src)
->> +{
->> +	int err = 0;
->> +
->> +	might_sleep();
->> +	/* Should already be checked by landlock_merge_ruleset() */
->> +	if (WARN_ON_ONCE(!src))
->> +		return 0;
->> +	/* Only merge into a domain. */
->> +	if (WARN_ON_ONCE(!dst || !dst->hierarchy))
->> +		return -EINVAL;
->> +
->> +	/* Locks @dst first because we are its only owner. */
->> +	mutex_lock(&dst->lock);
->> +	mutex_lock_nested(&src->lock, SINGLE_DEPTH_NESTING);
->> +
->> +	/* Stacks the new layer. */
->> +	if (WARN_ON_ONCE(src->num_layers != 1 || dst->num_layers < 1)) {
->> +		err = -EINVAL;
->> +		goto out_unlock;
->>   	}
->> +	dst->access_masks[dst->num_layers - 1] = src->access_masks[0];
->> +
->> +	/* Merges the @src inode tree. */
->> +	err = merge_tree(dst, src, LANDLOCK_KEY_INODE);
->> +	if (err)
->> +		goto out_unlock;
->> 
->>   out_unlock:
->>   	mutex_unlock(&src->lock);
->> @@ -364,43 +379,64 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
->>   	return err;
->>   }
->> 
->> -static int inherit_ruleset(struct landlock_ruleset *const parent,
->> -			   struct landlock_ruleset *const child)
->> +static int inherit_tree(struct landlock_ruleset *const parent,
->> +			struct landlock_ruleset *const child,
->> +			const enum landlock_key_type key_type)
->>   {
->>   	struct landlock_rule *walker_rule, *next_rule;
->>   	struct rb_root *parent_root;
->>   	int err = 0;
->> 
->>   	might_sleep();
->> -	if (!parent)
->> -		return 0;
->> +	lockdep_assert_held(&parent->lock);
->> +	lockdep_assert_held(&child->lock);
->> 
->> -	parent_root = get_root(parent, LANDLOCK_KEY_INODE);
->> +	parent_root = get_root(parent, key_type);
->>   	if (IS_ERR(parent_root))
->>   		return PTR_ERR(parent_root);
->> 
->> -	/* Locks @child first because we are its only owner. */
->> -	mutex_lock(&child->lock);
->> -	mutex_lock_nested(&parent->lock, SINGLE_DEPTH_NESTING);
->> -
->> -	/* Copies the @parent tree. */
->> +	/* Copies the @parent inode or network tree. */
->>   	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
->>   					     parent_root, node) {
->>   		const struct landlock_id id = {
->>   			.key = walker_rule->key,
->> -			.type = LANDLOCK_KEY_INODE,
->> +			.type = key_type,
->>   		};
->> +
->>   		err = insert_rule(child, id, &walker_rule->layers,
->>   				  walker_rule->num_layers);
->>   		if (err)
->> -			goto out_unlock;
->> +			return err;
->>   	}
->> +	return err;
->> +}
->> +
->> +static int inherit_ruleset(struct landlock_ruleset *const parent,
->> +			   struct landlock_ruleset *const child)
->> +{
->> +	int err = 0;
->> +
->> +	might_sleep();
->> +	if (!parent)
->> +		return 0;
->> +
->> +	/* Locks @child first because we are its only owner. */
->> +	mutex_lock(&child->lock);
->> +	mutex_lock_nested(&parent->lock, SINGLE_DEPTH_NESTING);
->> +
->> +	/* Copies the @parent inode tree. */
->> +	err = inherit_tree(parent, child, LANDLOCK_KEY_INODE);
->> +	if (err)
->> +		goto out_unlock;
->> 
->>   	if (WARN_ON_ONCE(child->num_layers <= parent->num_layers)) {
->>   		err = -EINVAL;
->>   		goto out_unlock;
->>   	}
->> -	/* Copies the parent layer stack and leaves a space for the new layer. */
->> +	/*
->> +	 * Copies the parent layer stack and leaves a space
->> +	 * for the new layer.
->> +	 */
->>   	memcpy(child->access_masks, parent->access_masks,
->>   	       flex_array_size(parent, access_masks, parent->num_layers));
->> 
->> --
->> 2.25.1
->> 
-> .
+> In addition, the patch set creates the infrastructure for allowing
+> multiple per LSM xattrs, as requested, to be initialized in
+> security_inode_init_security() and included in the EVM hmac.
+> 
+> Mimi
+> 
+> > We could also set only SMACK64 in smack_inode_init_security(), and move
+> > SMACKTRANSMUTE64 later, when we figure out how to fix the case of
+> > overlayfs.
+> > 
+> > IMA and EVM would work in both cases.
+
+Thanks to Mimi, I realized that adding SMACKTRANSMUTE64 in
+smack_inode_init_security() is actually necessary.
+Calling __vfs_getxattr() in smack_d_instantiate() causes the xattr to
+be added without EVM updating the HMAC (thus, making the HMAC invalid).
+
+Thanks
+
+Roberto
+
