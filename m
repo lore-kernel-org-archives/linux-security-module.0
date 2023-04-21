@@ -2,657 +2,160 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C82C7618E
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Apr 2023 20:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69486C7618E
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Apr 2023 21:12:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233693AbjDUUBb (ORCPT
+        id S233278AbjDUVMH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Apr 2023 16:01:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34612 "EHLO
+        Fri, 21 Apr 2023 17:12:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233536AbjDUUBa (ORCPT
+        with ESMTP id S233046AbjDUVMF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Apr 2023 16:01:30 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9B542706
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Apr 2023 13:01:25 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1a68d61579bso21136875ad.1
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Apr 2023 13:01:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1682107285; x=1684699285;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=g0kfpaLHk3I9yKQguXu3E4Mv9Mkxg2I0bssImgqVEp8=;
-        b=HYRnC+MPjcys9SERzqYral2IFgMkOEA6k4/I7Ru8AnSVwBMlIoQ7c4irBllc7WKLN9
-         QiYBXJKHSYH7xZ0n57HcPz5R7RMwfybvtIuJDYfTBAB9c7YUqowzBcaYN9UTXJ3EOwNP
-         eULLxzNqt38VFalHQ8g82r4u7M3nguwa5mCNY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682107285; x=1684699285;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g0kfpaLHk3I9yKQguXu3E4Mv9Mkxg2I0bssImgqVEp8=;
-        b=SV+wN8QwsGIHwOMGaERU56MQspOSvwBUQEMyx4wexrFROlKDEyZTtMrariJqbKx5tZ
-         xqj8R6ijJD9GFbII7hCavUPk6qHSovmVeq5uiUPcpV20xuGCo7XirQ4C5KEXMvbfWKa5
-         GUb3VIotbRAIWjyaqr9eeZppAOlLvMsxOIGzbZwbIsl6sgnqmei8niDrbBy8sPG7X0gE
-         /o+g9eu5kxs0zsPM+BuTbsHxgAAgJbEc4ifBdNel4UNpWZ41M325C49Xpf3NkNlfjh2w
-         o4OXJaq42MMZmrmrpVlSH0TFqvtYjgUAxPxcndL6ovlKvmLO5M2fLUd8lKXbaXfOM9rt
-         bLhw==
-X-Gm-Message-State: AAQBX9daRqpDQPxh2dMdBc6uNaA13vSVT2gJ/iCs+4mhZqjGQ5xk7R9u
-        rL/eEdIqqg+dlldMGtbjkDnh9w==
-X-Google-Smtp-Source: AKy350Y6bUULfJjpOmEizOvcmv+AwAqfS1sMB5Dr2zAuVrfNZadkjeqIXtggEk6DCrW9ttuzTDFe4Q==
-X-Received: by 2002:a17:903:41ce:b0:1a2:19c1:a974 with SMTP id u14-20020a17090341ce00b001a219c1a974mr7306493ple.68.1682107285207;
-        Fri, 21 Apr 2023 13:01:25 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id k23-20020a170902761700b001a9581d3ef5sm318744pll.97.2023.04.21.13.01.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 13:01:24 -0700 (PDT)
-Message-ID: <6442eb94.170a0220.25865.0ef6@mx.google.com>
-X-Google-Original-Message-ID: <202304211258.@keescook>
-Date:   Fri, 21 Apr 2023 13:01:24 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        mic@digikod.net
-Subject: Re: [PATCH v9 11/11] LSM: selftests for Linux Security Module
- syscalls
-References: <20230421174259.2458-1-casey@schaufler-ca.com>
- <20230421174259.2458-12-casey@schaufler-ca.com>
+        Fri, 21 Apr 2023 17:12:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1405B3;
+        Fri, 21 Apr 2023 14:12:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D590C652FA;
+        Fri, 21 Apr 2023 21:12:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAEB5C433EF;
+        Fri, 21 Apr 2023 21:12:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682111523;
+        bh=PAOoIU6HaP+dNtnNsbCXQ8sw9/H/z7hjv1lJ3ORbvxc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jePOQTa0sfmvjhSWAEmpkRnbTF/ETBNc1qzMc+qjIB9xW/vx/o0xRkyg1ajg54vOS
+         HMJ5R1PWc1GnC1SvDrVNBjfHJ+KnYkPDK4KAoTyqGzCZWlON59OUAFgEUFUsapUE0l
+         QTYacVcekJ8VQlT5fjFTligNTnILJo8EDfztXiktOfOug+mut4f48NpG5HAWZJBYXk
+         Ewjt5EpATs5Tzf3yXz9JJOhpoKytKUuSgJpU8JZZZQ0V69ZmScwbHff/s6onQstssJ
+         1ff4rTxsp2rnujUvPt+kVI/Ju/XhBhZQPxds5orhDguE5OBhauRfkgfjyLkOyqKIle
+         0c3vTkrfOp+nA==
+Date:   Sat, 22 Apr 2023 00:12:00 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Eric Snowberg <eric.snowberg@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "pvorel@suse.cz" <pvorel@suse.cz>,
+        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>,
+        "erpalmer@linux.vnet.ibm.com" <erpalmer@linux.vnet.ibm.com>,
+        "coxu@redhat.com" <coxu@redhat.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v5 5/6] KEYS: CA link restriction
+Message-ID: <ZEL8IKYhMdOvpWa1@kernel.org>
+References: <20230302164652.83571-1-eric.snowberg@oracle.com>
+ <20230302164652.83571-6-eric.snowberg@oracle.com>
+ <ZAz8QlynTSMD7kuE@kernel.org>
+ <07FFED83-501D-418C-A4BB-862A547DD7B0@oracle.com>
+ <20230320182822.6xyh6ibatrz5yrhb@kernel.org>
+ <84d46fb108f6ce2a322b6486529fc6dd0f8deea5.camel@linux.ibm.com>
+ <20230329232735.dvmxvwis2psbvyw5@kernel.org>
+ <55b5c21ee1cf47aff0b2e5a94ec65fe326c8d6ba.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230421174259.2458-12-casey@schaufler-ca.com>
+In-Reply-To: <55b5c21ee1cf47aff0b2e5a94ec65fe326c8d6ba.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 21, 2023 at 10:42:59AM -0700, Casey Schaufler wrote:
-> Add selftests for the three system calls supporting the LSM
-> infrastructure.
-
-Yay tests!
-
-With nits below fixed:
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
+On Thu, Mar 30, 2023 at 02:01:52AM -0400, Mimi Zohar wrote:
+> On Thu, 2023-03-30 at 02:27 +0300, Jarkko Sakkinen wrote:
+> > On Mon, Mar 20, 2023 at 04:35:33PM -0400, Mimi Zohar wrote:
+> > > On Mon, 2023-03-20 at 20:28 +0200, Jarkko Sakkinen wrote:
+> > > > On Mon, Mar 20, 2023 at 05:35:05PM +0000, Eric Snowberg wrote:
+> > > > > 
+> > > > > 
+> > > > > > On Mar 11, 2023, at 3:10 PM, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > > > > > 
+> > > > > > On Thu, Mar 02, 2023 at 11:46:51AM -0500, Eric Snowberg wrote:
+> > > > > >> Add a new link restriction.  Restrict the addition of keys in a keyring
+> > > > > >> based on the key to be added being a CA.
+> > > > > >> 
+> > > > > >> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> > > > > >> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > > > >> ---
+> > > > > >> crypto/asymmetric_keys/restrict.c | 38 +++++++++++++++++++++++++++++++
+> > > > > >> include/crypto/public_key.h       | 15 ++++++++++++
+> > > > > >> 2 files changed, 53 insertions(+)
+> > > > > >> 
+> > > > > >> diff --git a/crypto/asymmetric_keys/restrict.c b/crypto/asymmetric_keys/restrict.c
+> > > > > >> index 6b1ac5f5896a..48457c6f33f9 100644
+> > > > > >> --- a/crypto/asymmetric_keys/restrict.c
+> > > > > >> +++ b/crypto/asymmetric_keys/restrict.c
+> > > > > >> @@ -108,6 +108,44 @@ int restrict_link_by_signature(struct key *dest_keyring,
+> > > > > >> 	return ret;
+> > > > > >> }
+> > > > > >> 
+> > > > > >> +/**
+> > > > > >> + * restrict_link_by_ca - Restrict additions to a ring of CA keys
+> > > > > >> + * @dest_keyring: Keyring being linked to.
+> > > > > >> + * @type: The type of key being added.
+> > > > > >> + * @payload: The payload of the new key.
+> > > > > >> + * @trust_keyring: Unused.
+> > > > > >> + *
+> > > > > >> + * Check if the new certificate is a CA. If it is a CA, then mark the new
+> > > > > >> + * certificate as being ok to link.
+> > > > > >> + *
+> > > > > >> + * Returns 0 if the new certificate was accepted, -ENOKEY if the
+> > > > > >> + * certificate is not a CA. -ENOPKG if the signature uses unsupported
+> > > > > >> + * crypto, or some other error if there is a matching certificate but
+> > > > > >> + * the signature check cannot be performed.
+> > > > > >> + */
+> > > > > >> +int restrict_link_by_ca(struct key *dest_keyring,
+> > > > > >> +			const struct key_type *type,
+> > > > > >> +			const union key_payload *payload,
+> > > > > >> +			struct key *trust_keyring)
+> > > > > >> +{
+> > > > > >> +	const struct public_key *pkey;
+> > > > > >> +
+> > > > > >> +	if (type != &key_type_asymmetric)
+> > > > > >> +		return -EOPNOTSUPP;
+> > > > > >> +
+> > > > > >> +	pkey = payload->data[asym_crypto];
+> > > > > >> +	if (!pkey)
+> > > > > >> +		return -ENOPKG;
+> > > > > >> +	if (!test_bit(KEY_EFLAG_CA, &pkey->key_eflags))
+> > > > > >> +		return -ENOKEY;
+> > > > > >> +	if (!test_bit(KEY_EFLAG_KEYCERTSIGN, &pkey->key_eflags))
+> > > > > >> +		return -ENOKEY;
+> > > > > >> +	if (test_bit(KEY_EFLAG_DIGITALSIG, &pkey->key_eflags))
+> > > > > >> +		return -ENOKEY;
+> > > > > > 
+> > > > > > nit: would be more readable, if conditions were separated by
+> > > > > > empty lines.
+> > > > > 
+> > > > > Ok, I will make this change in the next round.  Thanks.
+> > > > 
+> > > > Cool! Mimi have you tested these patches with IMA applied?
+> > > 
+> > > Yes, it's working as expected.
+> > 
+> > Thank you. Please check that I filled additional tags correctly:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/
+> > 
+> > I will then put these also to my 'next' branch and they will get mirrored
+> > to linux-next.
 > 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  tools/testing/selftests/Makefile              |   1 +
->  tools/testing/selftests/lsm/Makefile          |  12 +
->  tools/testing/selftests/lsm/config            |   2 +
->  .../selftests/lsm/lsm_get_self_attr_test.c    | 267 ++++++++++++++++++
->  .../selftests/lsm/lsm_list_modules_test.c     | 149 ++++++++++
->  .../selftests/lsm/lsm_set_self_attr_test.c    |  70 +++++
->  6 files changed, 501 insertions(+)
->  create mode 100644 tools/testing/selftests/lsm/Makefile
->  create mode 100644 tools/testing/selftests/lsm/config
->  create mode 100644 tools/testing/selftests/lsm/lsm_get_self_attr_test.c
->  create mode 100644 tools/testing/selftests/lsm/lsm_list_modules_test.c
->  create mode 100644 tools/testing/selftests/lsm/lsm_set_self_attr_test.c
-> 
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index 13a6837a0c6b..b18d133a1141 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -38,6 +38,7 @@ TARGETS += landlock
->  TARGETS += lib
->  TARGETS += livepatch
->  TARGETS += lkdtm
-> +TARGETS += lsm
->  TARGETS += membarrier
->  TARGETS += memfd
->  TARGETS += memory-hotplug
-> diff --git a/tools/testing/selftests/lsm/Makefile b/tools/testing/selftests/lsm/Makefile
-> new file mode 100644
-> index 000000000000..f39a75212b78
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/Makefile
-> @@ -0,0 +1,12 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# First run: make -C ../../../.. headers_install
-> +
-> +CFLAGS += -Wall -O2 $(KHDR_INCLUDES)
-> +
-> +TEST_GEN_PROGS := lsm_get_self_attr_test lsm_list_modules_test \
-> +		  lsm_set_self_attr_test
-> +
-> +include ../lib.mk
-> +
-> +$(TEST_GEN_PROGS):
-> diff --git a/tools/testing/selftests/lsm/config b/tools/testing/selftests/lsm/config
-> new file mode 100644
-> index 000000000000..afb887715f64
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/config
-> @@ -0,0 +1,2 @@
-> +CONFIG_SYSFS=y
-> +CONFIG_SECURITY=y
-> diff --git a/tools/testing/selftests/lsm/lsm_get_self_attr_test.c b/tools/testing/selftests/lsm/lsm_get_self_attr_test.c
-> new file mode 100644
-> index 000000000000..71c2b1a8a44e
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/lsm_get_self_attr_test.c
-> @@ -0,0 +1,267 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Linux Security Module infrastructure tests
-> + * Tests for the lsm_get_self_attr system call
-> + *
-> + * Copyright © 2022 Casey Schaufler <casey@schaufler-ca.com>
-> + * Copyright © 2022 Intel Corporation
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <linux/lsm.h>
-> +#include <fcntl.h>
-> +#include <string.h>
-> +#include <stdio.h>
-> +#include <unistd.h>
-> +#include <sys/types.h>
-> +#include "../kselftest_harness.h"
-> +
-> +#define PROCATTR	"/proc/self/attr/"
-> +
-> +static int read_proc_attr(const char *attr, char *value, __kernel_size_t size)
-> +{
-> +	int fd;
-> +	int len;
-> +	char *path;
-> +
-> +	len = strlen(PROCATTR) + strlen(attr) + 1;
-> +	path = calloc(len, 1);
-> +	if (path == NULL)
-> +		return -1;
-> +	sprintf(path, "%s%s", PROCATTR, attr);
-> +
-> +	fd = open(path, O_RDONLY);
-> +	free(path);
-> +
-> +	if (fd < 0)
-> +		return -1;
-> +	len = read(fd, value, size);
-> +	if (len <= 0)
-> +		return -1;
-> +fprintf(stderr, "len=%d\n", len);
+> Thanks, Jarkko.  The tags look good.
 
-Accidentally leftover debugging?
+Hi, sorry for radio silence. I've been transitioning to a new job.
 
-> +	close(fd);
-> +
-> +	path = strchr(value, '\n');
-> +	if (path)
-> +		*path = '\0';
-> +
-> +	return 0;
-> +}
-> +
-> +static struct lsm_ctx *next_ctx(struct lsm_ctx *ctxp)
-> +{
-> +	void *vp;
-> +
-> +	vp = (void *)ctxp + sizeof(*ctxp) + ctxp->ctx_len;
-> +	return (struct lsm_ctx *)vp;
-> +}
-> +
-> +TEST(size_null_lsm_get_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	char *ctx = calloc(page_size, 1);
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	ASSERT_EQ(-1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, ctx,
-> +			      NULL, 0));
-> +	ASSERT_EQ(EINVAL, errno);
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST(ctx_null_lsm_get_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	__kernel_size_t size = page_size;
-> +
-> +	ASSERT_NE(-1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, NULL,
-> +			      &size, 0));
-> +	ASSERT_NE(1, size);
-> +}
-> +
-> +TEST(size_too_small_lsm_get_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	char *ctx = calloc(page_size, 1);
-> +	__kernel_size_t size = 1;
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	ASSERT_EQ(-1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, ctx,
-> +			      &size, 0));
-> +	ASSERT_EQ(E2BIG, errno);
-> +	ASSERT_NE(1, size);
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST(flags_zero_lsm_get_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	char *ctx = calloc(page_size, 1);
-> +	__kernel_size_t size = page_size;
-> +
-> +	ASSERT_NE(NULL, ctx);
+Commits are in my next branch, and I will include them to my PR.
 
-I would explicitly set errno to 0 before syscalls, just to sure.
-
-> +	ASSERT_EQ(-1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, ctx,
-> +			      &size, 1));
-> +	ASSERT_EQ(EINVAL, errno);
-> +	ASSERT_EQ(page_size, size);
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST(flags_overset_lsm_get_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	char *ctx = calloc(page_size, 1);
-> +	__kernel_size_t size = page_size;
-> +
-> +	ASSERT_NE(NULL, ctx);
-
-e.g.:
-	errno = 0;
-
-but repeated for all syscalls below...
-
-> +	ASSERT_EQ(-1, syscall(__NR_lsm_get_self_attr,
-> +			      LSM_ATTR_CURRENT | LSM_ATTR_PREV, ctx, &size, 0));
-> +	ASSERT_EQ(EOPNOTSUPP, errno);
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST(basic_lsm_get_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	__kernel_size_t size = page_size;
-> +	struct lsm_ctx *ctx = calloc(page_size, 1);
-> +	struct lsm_ctx *tctx = NULL;
-> +	__u64 *syscall_lsms = calloc(page_size, 1);
-> +	char *attr = calloc(page_size, 1);
-> +	int cnt_current = 0;
-> +	int cnt_exec = 0;
-> +	int cnt_fscreate = 0;
-> +	int cnt_keycreate = 0;
-> +	int cnt_prev = 0;
-> +	int cnt_sockcreate = 0;
-> +	int lsmcount;
-> +	int count;
-> +	int i;
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	ASSERT_NE(NULL, syscall_lsms);
-> +
-> +	lsmcount = syscall(__NR_lsm_list_modules, syscall_lsms, &size, 0);
-> +	ASSERT_LE(1, lsmcount);
-> +
-> +	for (i = 0; i < lsmcount; i++) {
-> +		switch (syscall_lsms[i]) {
-> +		case LSM_ID_SELINUX:
-> +			cnt_current++;
-> +			cnt_exec++;
-> +			cnt_fscreate++;
-> +			cnt_keycreate++;
-> +			cnt_prev++;
-> +			cnt_sockcreate++;
-> +			break;
-> +		case LSM_ID_SMACK:
-> +			cnt_current++;
-> +			break;
-> +		case LSM_ID_APPARMOR:
-> +			cnt_current++;
-> +			cnt_exec++;
-> +			cnt_prev++;
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (cnt_current) {
-> +		size = page_size;
-> +		count = syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, ctx,
-> +				&size, 0);
-> +		ASSERT_EQ(cnt_current, count);
-> +		tctx = ctx;
-> +		ASSERT_EQ(0, read_proc_attr("current", attr, page_size));
-> +		ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-> +		for (i = 1; i < count; i++) {
-> +			tctx = next_ctx(tctx);
-> +			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +	}
-> +	if (cnt_exec) {
-> +		size = page_size;
-> +		count = syscall(__NR_lsm_get_self_attr, LSM_ATTR_EXEC, ctx,
-> +				&size, 0);
-> +		ASSERT_GE(cnt_exec, count);
-> +		if (count > 0) {
-> +			tctx = ctx;
-> +			if (read_proc_attr("exec", attr, page_size) == 0)
-> +				ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +		for (i = 1; i < count; i++) {
-> +			tctx = next_ctx(tctx);
-> +			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +	}
-> +	if (cnt_fscreate) {
-> +		size = page_size;
-> +		count = syscall(__NR_lsm_get_self_attr, LSM_ATTR_FSCREATE, ctx,
-> +				&size, 0);
-> +		ASSERT_GE(cnt_fscreate, count);
-> +		if (count > 0) {
-> +			tctx = ctx;
-> +			if (read_proc_attr("fscreate", attr, page_size) == 0)
-> +				ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +		for (i = 1; i < count; i++) {
-> +			tctx = next_ctx(tctx);
-> +			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +	}
-> +	if (cnt_keycreate) {
-> +		size = page_size;
-> +		count = syscall(__NR_lsm_get_self_attr, LSM_ATTR_KEYCREATE, ctx,
-> +				&size, 0);
-> +		ASSERT_GE(cnt_keycreate, count);
-> +		if (count > 0) {
-> +			tctx = ctx;
-> +			if (read_proc_attr("keycreate", attr, page_size) == 0)
-> +				ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +		for (i = 1; i < count; i++) {
-> +			tctx = next_ctx(tctx);
-> +			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +	}
-> +	if (cnt_prev) {
-> +		size = page_size;
-> +		count = syscall(__NR_lsm_get_self_attr, LSM_ATTR_PREV, ctx,
-> +				&size, 0);
-> +		ASSERT_GE(cnt_prev, count);
-> +		if (count > 0) {
-> +			tctx = ctx;
-> +			ASSERT_EQ(0, read_proc_attr("prev", attr, page_size));
-> +			ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-> +			for (i = 1; i < count; i++) {
-> +				tctx = next_ctx(tctx);
-> +				ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-> +			}
-> +		}
-> +	}
-> +	if (cnt_sockcreate) {
-> +		size = page_size;
-> +		count = syscall(__NR_lsm_get_self_attr, LSM_ATTR_SOCKCREATE,
-> +				ctx, &size, 0);
-> +		ASSERT_GE(cnt_sockcreate, count);
-> +		if (count > 0) {
-> +			tctx = ctx;
-> +			if (read_proc_attr("sockcreate", attr, page_size) == 0)
-> +				ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +		for (i = 1; i < count; i++) {
-> +			tctx = next_ctx(tctx);
-> +			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +	}
-> +
-> +	free(ctx);
-> +	free(attr);
-> +	free(syscall_lsms);
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> diff --git a/tools/testing/selftests/lsm/lsm_list_modules_test.c b/tools/testing/selftests/lsm/lsm_list_modules_test.c
-> new file mode 100644
-> index 000000000000..3ec814002710
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/lsm_list_modules_test.c
-> @@ -0,0 +1,149 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Linux Security Module infrastructure tests
-> + * Tests for the lsm_list_modules system call
-> + *
-> + * Copyright © 2022 Casey Schaufler <casey@schaufler-ca.com>
-> + * Copyright © 2022 Intel Corporation
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <linux/lsm.h>
-> +#include <string.h>
-> +#include <stdio.h>
-> +#include <unistd.h>
-> +#include <sys/types.h>
-> +#include "../kselftest_harness.h"
-> +
-> +static int read_sysfs_lsms(char *lsms, __kernel_size_t size)
-> +{
-> +	FILE *fp;
-> +
-> +	fp = fopen("/sys/kernel/security/lsm", "r");
-> +	if (fp == NULL)
-> +		return -1;
-> +	if (fread(lsms, 1, size, fp) <= 0)
-> +		return -1;
-> +	fclose(fp);
-> +	return 0;
-> +}
-> +
-> +TEST(size_null_lsm_list_modules)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	char *syscall_lsms = calloc(page_size, 1);
-> +
-> +	ASSERT_NE(NULL, syscall_lsms);
-> +	ASSERT_EQ(-1, syscall(__NR_lsm_list_modules, syscall_lsms, NULL, 0));
-> +	ASSERT_EQ(EFAULT, errno);
-> +
-> +	free(syscall_lsms);
-> +}
-> +
-> +TEST(ids_null_lsm_list_modules)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	__kernel_size_t size = page_size;
-> +
-> +	ASSERT_EQ(-1, syscall(__NR_lsm_list_modules, NULL, &size, 0));
-> +	ASSERT_EQ(EFAULT, errno);
-> +	ASSERT_NE(1, size);
-> +}
-> +
-> +TEST(size_too_small_lsm_list_modules)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	char *syscall_lsms = calloc(page_size, 1);
-> +	__kernel_size_t size = 1;
-> +
-> +	ASSERT_NE(NULL, syscall_lsms);
-> +	ASSERT_EQ(-1, syscall(__NR_lsm_list_modules, syscall_lsms, &size, 0));
-> +	ASSERT_EQ(E2BIG, errno);
-> +	ASSERT_NE(1, size);
-> +
-> +	free(syscall_lsms);
-> +}
-> +
-> +TEST(flags_set_lsm_list_modules)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	char *syscall_lsms = calloc(page_size, 1);
-> +	__kernel_size_t size = page_size;
-> +
-> +	ASSERT_NE(NULL, syscall_lsms);
-> +	ASSERT_EQ(-1, syscall(__NR_lsm_list_modules, syscall_lsms, &size, 7));
-> +	ASSERT_EQ(EINVAL, errno);
-> +	ASSERT_EQ(page_size, size);
-> +
-> +	free(syscall_lsms);
-> +}
-> +
-> +TEST(correct_lsm_list_modules)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	__kernel_size_t size = page_size;
-> +	__u64 *syscall_lsms = calloc(page_size, 1);
-> +	char *sysfs_lsms = calloc(page_size, 1);
-> +	char *name;
-> +	char *cp;
-> +	int count;
-> +	int i;
-> +
-> +	ASSERT_NE(NULL, sysfs_lsms);
-> +	ASSERT_NE(NULL, syscall_lsms);
-> +	ASSERT_EQ(0, read_sysfs_lsms(sysfs_lsms, page_size));
-> +
-> +	count = syscall(__NR_lsm_list_modules, syscall_lsms, &size, 0);
-> +	ASSERT_LE(1, count);
-> +	cp = sysfs_lsms;
-> +	for (i = 0; i < count; i++) {
-> +		switch (syscall_lsms[i]) {
-> +		case LSM_ID_CAPABILITY:
-> +			name = "capability";
-> +			break;
-> +		case LSM_ID_SELINUX:
-> +			name = "selinux";
-> +			break;
-> +		case LSM_ID_SMACK:
-> +			name = "smack";
-> +			break;
-> +		case LSM_ID_TOMOYO:
-> +			name = "tomoyo";
-> +			break;
-> +		case LSM_ID_IMA:
-> +			name = "ima";
-> +			break;
-> +		case LSM_ID_APPARMOR:
-> +			name = "apparmor";
-> +			break;
-> +		case LSM_ID_YAMA:
-> +			name = "yama";
-> +			break;
-> +		case LSM_ID_LOADPIN:
-> +			name = "loadpin";
-> +			break;
-> +		case LSM_ID_SAFESETID:
-> +			name = "safesetid";
-> +			break;
-> +		case LSM_ID_LOCKDOWN:
-> +			name = "lockdown";
-> +			break;
-> +		case LSM_ID_BPF:
-> +			name = "bpf";
-> +			break;
-> +		case LSM_ID_LANDLOCK:
-> +			name = "landlock";
-> +			break;
-> +		default:
-> +			name = "INVALID";
-> +			break;
-> +		}
-> +		ASSERT_EQ(0, strncmp(cp, name, strlen(name)));
-> +		cp += strlen(name) + 1;
-> +	}
-> +
-> +	free(sysfs_lsms);
-> +	free(syscall_lsms);
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> diff --git a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
-> new file mode 100644
-> index 000000000000..ca538a703168
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
-> @@ -0,0 +1,70 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Linux Security Module infrastructure tests
-> + * Tests for the lsm_set_self_attr system call
-> + *
-> + * Copyright © 2022 Casey Schaufler <casey@schaufler-ca.com>
-> + * Copyright © 2022 Intel Corporation
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <linux/lsm.h>
-> +#include <string.h>
-> +#include <stdio.h>
-> +#include <unistd.h>
-> +#include <sys/types.h>
-> +#include "../kselftest_harness.h"
-> +
-> +TEST(ctx_null_lsm_set_self_attr)
-> +{
-> +	ASSERT_EQ(-1, syscall(__NR_lsm_set_self_attr, LSM_ATTR_CURRENT, NULL,
-> +			      sizeof(struct lsm_ctx), 0));
-> +}
-> +
-> +TEST(size_too_small_lsm_set_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	struct lsm_ctx *ctx = calloc(page_size, 1);
-> +	__kernel_size_t size = page_size;
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	ASSERT_GE(1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, ctx,
-> +			     &size, 0));
-> +	ASSERT_EQ(-1, syscall(__NR_lsm_set_self_attr, LSM_ATTR_CURRENT, ctx, 1,
-> +			      0));
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST(flags_zero_lsm_set_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	char *ctx = calloc(page_size, 1);
-> +	__kernel_size_t size = page_size;
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	ASSERT_GE(1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, ctx,
-> +			     &size, 0));
-> +	ASSERT_EQ(-1, syscall(__NR_lsm_set_self_attr, LSM_ATTR_CURRENT, ctx,
-> +			      size, 1));
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST(flags_overset_lsm_set_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	char *ctx = calloc(page_size, 1);
-> +	__kernel_size_t size = page_size;
-> +	struct lsm_ctx *tctx = (struct lsm_ctx *)ctx;
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	ASSERT_GE(1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, tctx,
-> +			     &size, 0));
-> +	ASSERT_EQ(-1, syscall(__NR_lsm_set_self_attr,
-> +			      LSM_ATTR_CURRENT | LSM_ATTR_PREV, tctx, size, 0));
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> -- 
-> 2.39.2
-> 
-
--- 
-Kees Cook
+BR, Jarkko
