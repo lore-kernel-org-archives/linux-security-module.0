@@ -2,222 +2,260 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57454C77B7D
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Apr 2023 15:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 639D2C77B7F
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Apr 2023 17:43:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232869AbjDUPiD (ORCPT
+        id S233127AbjDURng (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Apr 2023 11:38:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35498 "EHLO
+        Fri, 21 Apr 2023 13:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231910AbjDUPiC (ORCPT
+        with ESMTP id S233097AbjDURnY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Apr 2023 11:38:02 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A451125AE;
-        Fri, 21 Apr 2023 08:38:00 -0700 (PDT)
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33LEgShG006511;
-        Fri, 21 Apr 2023 14:44:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=2Ju8pqGa2m0Pa7C+ibK08Mb+2OAt+YEF09z+pzB+moc=;
- b=N26po9zJepipAXftwZ9Ksf2SAFtmayQlXTl4fN4SKUX8PCEzpZJ8nOU26gJ9UdfAOREV
- pGfQpxXppJGcNAEVT//KcDRVXW5e8GuFIf5HDKmtTb11TzYqtW5aeZva67LS/S3CVZhJ
- RMwHhbQFsB+3ZI6CIkc32HEo89tIhB4XPrYeu1JvAG50ngkjRjgz4deL958l9Q/xj0ps
- 9DEwoj3R/y3+6qCE60Dwwkr2CyARU3i/b/FNUfl1hKwxUD32WuJIeyQeR8uHE9eaEsVX
- JR1vzIkNq2o/pIz9/eWGIKiPNQB4InEQQ/MlO8IF9goqNIQIWmACzozTgDtZ4lALjnsv sw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q3v2v94t7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Apr 2023 14:44:11 +0000
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33LEh5EA009609;
-        Fri, 21 Apr 2023 14:44:03 GMT
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q3v2v93x4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Apr 2023 14:44:03 +0000
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 33LCikYB027070;
-        Fri, 21 Apr 2023 14:43:50 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([9.208.130.101])
-        by ppma01wdc.us.ibm.com (PPS) with ESMTPS id 3pykj79wwc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Apr 2023 14:43:50 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-        by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 33LEhn109110270
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Apr 2023 14:43:49 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C7705805C;
-        Fri, 21 Apr 2023 14:43:49 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D66835805F;
-        Fri, 21 Apr 2023 14:43:47 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.163.8.185])
-        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Apr 2023 14:43:47 +0000 (GMT)
-Message-ID: <cbffa3dee65ecc0884dd16eb3af95c09a28f4297.camel@linux.ibm.com>
-Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM
- after writes
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     Stefan Berger <stefanb@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Date:   Fri, 21 Apr 2023 10:43:46 -0400
-In-Reply-To: <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
-References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
-         <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: CFy9FUIyV3xuItYoC68paE8NPsJ-Yhek
-X-Proofpoint-ORIG-GUID: RgiN1v2180XPGj715m7iNirTDfUGKBQ0
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Fri, 21 Apr 2023 13:43:24 -0400
+Received: from sonic317-38.consmr.mail.ne1.yahoo.com (sonic317-38.consmr.mail.ne1.yahoo.com [66.163.184.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9889B7EE6
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Apr 2023 10:43:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1682098988; bh=UWJcKqR1DObWnMZmjWycZG0T1ry4WVijmEromOGQ5+U=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=qPbsDPW6kW+PYO8xTG2/XsPFHajpV+CyQse2hz42p/aZa8yAO+CkhqYBi8BUPNlNgmCvnIxdoCQ5m7rp1HWlKTNroIkWmNaAExcyg+R5SDfCH55npw83GnKVm9egdDU0/rxo93PJbKhblPX1HuxneDXQhm5RpqKg48/eZYFbBzZA7e4TLDz4aCE/iDpfxUw+qVGyUbIhPIkWxpFReligzVmNBXFRMxmR+X5igMsnb1DpcnRKQRUUPlEeGRcf/vWCicpGkZVhwMQAT/vINX9xt1+Z8MIC5JuJd50ZVTEix5bvm9526SE6EOxbcoQGlUsWsoNe15/G5tyfJBbxtVciGA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1682098988; bh=mJyCNkvTDF16zWI0Ya935GdZhv5aCnwftZiHVqet5Uq=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=VINc/hMR4V7PkoJNi8JBuDqbvkBvQ1knNH7Bj25yY74Q2oinnulGKB/DbMt8wo7ecMSt+My1vQqGrfn42eDierXDbpr+xVcl67vtsjydSsuxvK+XCpEc6ZfWFOTzXNLcdyMUdfK4wbrO0Vz13f5YtpkA+DuyYTX9Oc1r/VOoOu3e3j3HgVMSWn7zSmN891wlQP9EwNuVfHCsrKkMzk2oGmiTg2xsHE7YnNiAqcDNb/wonbQfKCMrIZt9A+2hGSdgK+9HTwjnmq2YJhsYOwmPxQEi31iCTjXXPHpWOGgMkN1OpVqeQ0cJmKjaPZVJvquvHtx2hWB/SVdwQryWngJZ1g==
+X-YMail-OSG: 668RWKUVM1kcvw31Shs8V_bU4FFxkxuKquR_qu9iA9S.tUtdwHDsl2PVXjXwmVd
+ 6Q.IEFsXX0ZEaLgh.ySVDUKsBJGufQxhFVelvDUAKxM7wWOVFvTqcvzGduLIy3v6Nv.mcY7i6.2c
+ i4yhqaJ3PKg4arD5Z5e6PNDQX5KSPiFSLywhtHbuPtErLRjw1.L93p_QZ02ayVUvco2ZYN9EzLGa
+ i82GLoQWDC9qdN1gDfMRzTuApDIsUICEjfX3V2lJGZ80g2FPHNeRTXTjwEtokpHP_cWUvGfbO.VT
+ mpBfbdvPRPt86bJTl0Q0tRCBCLDq60GVFFQb2rXZxNQNdDSt0WIJh1Wcxk2d1bmHX3RfJL.JWkTe
+ CO2vE7OemHWkB88IE8D0CxxGAn5QsVmxSARWnFuXcA8O.YXHuSR.oZxwsMY3luLw8f5ayoMWCxz9
+ MmEwhPL9M_boIONLmDM_yg9l6AKThEdVZPhOJg_6NzJY_JP_mHnkYEuCKyPg4NhGxK83z.UUxVRy
+ _fh.g8Xq2crZD.dmKQA2KwWMImqHGyScUrU6DQfzTxqAkTIQRo_TOHVnkqO8UVErHE7dsQaR7EkB
+ BKJLU5I70.D.ukWD_ucOpGd5N2Ld0Tmtz5MN9Fl1BI95AEzRZ86Fmxzj8FjiCSeTdRnLska48feG
+ TL7RYksjXSi1kyguRFDTBizdynMzWX2eDBQw.u7Kv_DRvSHkzEDzJunzs.HlhIJ15bPLPj1nvVb2
+ sbwetqcRDV1VlgCLW3RH7el3gPVxEaD0WW8kvRE6.z.QjaUDp5abo9azlT_Rkz1LCnHDrAWASA0D
+ xeDfdTeQkvJHpg6HX632mr.HilvDYyLlk3S90NuhGFSokver6bQi6xGmoAAwermDwrDKhCdje3jr
+ ik.3Zf01Ud4Nv5f42sFIfRzHfVrSQ3LYt5PVc978RMPnrmRtn_fdSdPz_J4uLZyAHCwSbiITGOyq
+ C7zubWTmCnGV_gH4CzfLJqG._4Yb2GpXnHPLgsEce1LBQY_Q9aad.IeI.h_ndyWghntNzcIBIE6S
+ Y4c4cucsFtkzd7EXRPabZ2DNGcj7wtN.FuBjkein21hErdIHSPYVL_iQjj8jaxiGr8De4JlCK34l
+ DnE67JqdeTC.Ub5ioQJKcUdztzm2EHMWp3J8NgxhnQVWZNtf2g6t3T0YcEAFm.DaUmgI9FHCiw4q
+ W42v1SmR8ynibfYsWdYBaGiOz3LIR6o8H9vXrmM2Ge3VjYnUONbWojjDgpntOJXL5dVRGuHKdBR4
+ Aeyx6G.8K8IcRi2m695g40x5ApQ80sGelx0ymnE0MDi5ch1gdzD5Cxd6N.YsrR4HD85VlNnfi9XZ
+ lF6yykTR8KpMlXV0EtSKayH0iAiVmpMI4uLOjSf197vUrFl1vPUjm6PgFl7sbkzkQiE7CeD6b.a.
+ Jh8_L0Mt9arQHnxYHAIIzi0ogvz4Cnw41L_cXessRO9y1jWsN4Wwx0POEy_2eg8B5kuliC7lY6JJ
+ gufUy1pXsbQAwyarZNUeB_lWxLJrACTeaj85RKXdMgv49QZeLOvcbOLCUFw2yB2FlLOIYXJWS1Sc
+ 9NJc2wUnrRcmfnpPxA2FUYr.ybrdyY3vU2ovaJ2lODrUxCybu_.mavSB_UO6ugFlR0.n4ukqz2J2
+ 74rCTcSEHpFPo.u.FsPquGXRPH.iC7o.H0Wwolhj3sfGss_7vwFxs5xy5LwbhQK5oarzhqvoadt3
+ .Gdcg85aUfjVwA.Joa0rYm1r1mrmEAAzV8EcWtd_fLIHOijv2VTpISshdw.jj2QfchA10eMAoUvw
+ iYWXWUY2z5lPPGRqo660o_g9_EcSpTCyxwo5M1SdtTP4gIAcMn_4CuvfYUzfYBhXBk_firM78DV7
+ Gd90GgGm3nx5VtYISvYQfZYb1bB2uiUsMRRJdGBQGqjJAvcNgxZgbwSA7Agpet325OJZplAh3Orw
+ ydKK49WGxnvSFaXTj21ca9RFvSB0mW0cESf5_6VkNJMISvKWHSgOd2CLS8nB6YOrFrwr1K0cE1ql
+ mwQ.77Myu4ln640oMrxMdej6xiGtTiPr6Yizb2PHZ3SavlqFTyc9UFcXWP.rLoFFYu5B4IdV_x9A
+ cQpDy1GH9r_cVV6rA.czzbude378yd9s0AG_n936x_NoEzDpZgdcZodlvKHaWqV0hDo9GDymnUPP
+ NBO9uCxYTEqu59mkF036LqNoM2pLIbUMM8WkwFbuM1ahsVr7MXlAPNKkyNoRcrAlt7C9jGcE9O1t
+ 9D0_A30eKLuZU02bgX9u2QO.85lFGYs_43wit9MBVuG5L9NS5e2p7MSkMTbZX1OMcAkCtbPiPdT9
+ XQIoSw6TU1QNW5Q--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 71b9d165-8d3c-491e-882a-d2612406bc9d
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Apr 2023 17:43:08 +0000
+Received: by hermes--production-gq1-546798879c-qx24x (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 347f67eb1ff988d02ff1c10aa50548d0;
+          Fri, 21 Apr 2023 17:43:02 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     casey@schaufler-ca.com, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net
+Subject: [PATCH v9 00/11] LSM: Three basic syscalls
+Date:   Fri, 21 Apr 2023 10:42:48 -0700
+Message-Id: <20230421174259.2458-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-21_07,2023-04-21_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 malwarescore=0 phishscore=0 mlxlogscore=999 spamscore=0
- adultscore=0 bulkscore=0 mlxscore=0 priorityscore=1501 clxscore=1011
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304210127
+Content-Transfer-Encoding: 8bit
+References: <20230421174259.2458-1-casey.ref@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2023-04-07 at 09:29 -0400, Jeff Layton wrote:
-> > > > > 
-> > > > > I would ditch the original proposal in favor of this 2-line patch shown here:
-> > > > > 
-> > > > > https://lore.kernel.org/linux-integrity/a95f62ed-8b8a-38e5-e468-ecbde3b221af@linux.ibm.com/T/#m3bd047c6e5c8200df1d273c0ad551c645dd43232
-> > 
-> > We should cool it with the quick hacks to fix things. :)
-> > 
-> 
-> Yeah. It might fix this specific testcase, but I think the way it uses
-> the i_version is "gameable" in other situations. Then again, I don't
-> know a lot about IMA in this regard.
-> 
-> When is it expected to remeasure? If it's only expected to remeasure on
-> a close(), then that's one thing. That would be a weird design though.
+Add three system calls for the Linux Security Module ABI.
 
-Historical background:
+lsm_get_self_attr() provides the security module specific attributes
+that have previously been visible in the /proc/self/attr directory.
+For each security module that uses the specified attribute on the
+current process the system call will return an LSM identifier and
+the value of the attribute. The LSM and attribute identifier values
+are defined in include/uapi/linux/lsm.h
 
-Prior to IMA being upstreamed there was a lot of discussion about how
-much/how frequently to measure files.  Re-measuring files after each
-write would impact performance.  Instead of re-measuring files after
-each write, if a file already opened for write was opened for read
-(open writers) or a file already opened for read was opened for write
-(Time of Measure/Time of Use) the IMA meausrement list was invalidated
-by including a violation record in the measurement list.
+LSM identifiers are simple integers and reflect the order in which
+the LSM was added to the mainline kernel. This is a convention, not
+a promise of the API. LSM identifiers below the value of 100 are
+reserved for unspecified future uses. That could include information
+about the security infrastructure itself, or about how multiple LSMs
+might interact with each other.
 
-Only the BPRM hook prevents a file from being opened for write.
+A new LSM hook security_getselfattr() is introduced to get the
+required information from the security modules. This is similar
+to the existing security_getprocattr() hook, but specifies the
+format in which string data is returned and requires the module
+to put the information into a userspace destination.
 
-> 
-> > > > > 
-> > > > > 
-> > > > 
-> > > > Ok, I think I get it. IMA is trying to use the i_version from the
-> > > > overlayfs inode.
-> > > > 
-> > > > I suspect that the real problem here is that IMA is just doing a bare
-> > > > inode_query_iversion. Really, we ought to make IMA call
-> > > > vfs_getattr_nosec (or something like it) to query the getattr routine in
-> > > > the upper layer. Then overlayfs could just propagate the results from
-> > > > the upper layer in its response.
-> > > > 
-> > > > That sort of design may also eventually help IMA work properly with more
-> > > > exotic filesystems, like NFS or Ceph.
-> > > > 
-> > > > 
-> > > > 
-> > > 
-> > > Maybe something like this? It builds for me but I haven't tested it. It
-> > > looks like overlayfs already should report the upper layer's i_version
-> > > in getattr, though I haven't tested that either:
-> > > 
-> > > -----------------------8<---------------------------
-> > > 
-> > > [PATCH] IMA: use vfs_getattr_nosec to get the i_version
-> > > 
-> > > IMA currently accesses the i_version out of the inode directly when it
-> > > does a measurement. This is fine for most simple filesystems, but can be
-> > > problematic with more complex setups (e.g. overlayfs).
-> > > 
-> > > Make IMA instead call vfs_getattr_nosec to get this info. This allows
-> > > the filesystem to determine whether and how to report the i_version, and
-> > > should allow IMA to work properly with a broader class of filesystems in
-> > > the future.
-> > > 
-> > > Reported-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > 
-> > So, I think we want both; we want the ovl_copyattr() and the
-> > vfs_getattr_nosec() change:
-> > 
-> > (1) overlayfs should copy up the inode version in ovl_copyattr(). That
-> >     is in line what we do with all other inode attributes. IOW, the
-> >     overlayfs inode's i_version counter should aim to mirror the
-> >     relevant layer's i_version counter. I wouldn't know why that
-> >     shouldn't be the case. Asking the other way around there doesn't
-> >     seem to be any use for overlayfs inodes to have an i_version that
-> >     isn't just mirroring the relevant layer's i_version.
-> 
-> It's less than ideal to do this IMO, particularly with an IS_I_VERSION
-> inode.
-> 
-> You can't just copy up the value from the upper. You'll need to call
-> inode_query_iversion(upper_inode), which will flag the upper inode for a
-> logged i_version update on the next write. IOW, this could create some
-> (probably minor) metadata write amplification in the upper layer inode
-> with IS_I_VERSION inodes.
-> 
-> 
-> > (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
-> >     Currently, ima assumes that it will get the correct i_version from
-> >     an inode but that just doesn't hold for stacking filesystem.
-> > 
-> > While (1) would likely just fix the immediate bug (2) is correct and
-> > _robust_. If we change how attributes are handled vfs_*() helpers will
-> > get updated and ima with it. Poking at raw inodes without using
-> > appropriate helpers is much more likely to get ima into trouble.
-> 
-> This will fix it the right way, I think (assuming it actually works),
-> and should open the door for IMA to work properly with networked
-> filesystems that support i_version as well.
+lsm_set_self_attr() changes the specified LSM attribute. Only one
+attribute can be changed at a time, and then only if the specified
+security module allows the change.
 
-On a local filesystem, there are guarantees that the calculated file
-hash is that of the file being used.  Reminder IMA reads a file, page
-size chunk at a time into a single buffer, calculating the file hash. 
-Once the file hash is calculated, the memory is freed.
+A new LSM hook security_setselfattr() is introduced to set the
+required information in the security modules. This is similar
+to the existing security_setprocattr() hook, but specifies the
+format in which string data is presented and requires the module
+to get the information from a userspace destination.
 
-There are no guarantees on a fuse filesystem, for example, that the
-original file read and verified is the same as the one being executed. 
-I'm not sure that the integrity guarantees of a file on a remote
-filesystem will be the same as those on a local file system.
+lsm_list_modules() provides the LSM identifiers, in order, of the
+security modules that are active on the system. This has been
+available in the securityfs file /sys/kernel/security/lsm.
 
-> 
-> Note that there Stephen is correct that calling getattr is probably
-> going to be less efficient here since we're going to end up calling
-> generic_fillattr unnecessarily, but I still think it's the right thing
-> to do.
-> 
-> If it turns out to cause measurable performance regressions though,
-> maybe we can look at adding a something that still calls ->getattr if it
-> exists but only returns the change_cookie value.
+Patch 0001 changes the LSM registration from passing the name
+of the module to passing a lsm_id structure that contains the
+name of the module, an LSM identifier number and an attribute
+identifier.
+Patch 0002 adds the registered lsm_ids to a table.
+Patch 0003 changes security_[gs]etprocattr() to use LSM IDs instead
+of LSM names.
+Patch 0004 implements lsm_get_self_attr() and lsm_set_self_attr().
+New LSM hooks security_getselfattr() and security_setselfattr() are
+defined.
+Patch 0005 implements lsm_list_modules().
+Patch 0006 wires up the syscalls.
+Patch 0007 implements helper functions to make it easier for
+security modules to use lsm_ctx structures.
+Patch 0008 provides the Smack implementation for [gs]etselfattr().
+Patch 0009 provides the AppArmor implementation for [gs]etselfattr().
+Patch 0010 provides the SELinux implementation for [gs]etselfattr().
+Patch 0011 implements selftests for the three new syscalls.
 
-Sure.  For now,
+https://github.com/cschaufler/lsm-stacking.git#lsm-syscalls-6.3-rc7-v9
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+v9: Support a flag LSM_FLAG_SINGLE in lsm_get_self_attr() that
+    instructs the call to provide only the attribute for the LSM
+    identified in the referenced lsm_ctx structure.
+    Fix a typing error.
+    Change some coding style.
+v8: Allow an LSM to provide more than one instance of an attribute,
+    even though none of the existing modules do so.
+    Pad the data returned by lsm_get_self_attr() to the size of
+    the struct lsm_ctx.
+    Change some displeasing varilable names.
+v7: Pass the attribute desired to lsm_[gs]et_self_attr in its own
+    parameter rather than encoding it in the flags.
+    Change the flags parameters to u32.
+    Don't shortcut out of calling LSM specific code in the
+    infrastructure, let the LSM report that doesn't support an
+    attribute instead. With that it is not necessary to maintain
+    a set of supported attributes in the lsm_id structure.
+    Fix a typing error.
+v6: Switch from reusing security_[gs]procattr() to using new
+    security_[gs]selfattr() hooks. Use explicit sized data types
+    in the lsm_ctx structure.
+
+v5: Correct syscall parameter data types.
+
+v4: Restore "reserved" LSM ID values. Add explaination.
+    Squash patches that introduce fields in lsm_id.
+    Correct a wireup error.
+
+v3: Add lsm_set_self_attr().
+    Rename lsm_self_attr() to lsm_get_self_attr().
+    Provide the values only for a specifed attribute in
+    lsm_get_self_attr().
+    Add selftests for the three new syscalls.
+    Correct some parameter checking.
+
+v2: Use user-interface safe data types.
+    Remove "reserved" LSM ID values.
+    Improve kerneldoc comments
+    Include copyright dates
+    Use more descriptive name for LSM counter
+    Add documentation
+    Correct wireup errors
+
+
+Casey Schaufler (11):
+  LSM: Identify modules by more than name
+  LSM: Maintain a table of LSM attribute data
+  proc: Use lsmids instead of lsm names for attrs
+  LSM: syscalls for current process attributes
+  LSM: Create lsm_list_modules system call
+  LSM: wireup Linux Security Module syscalls
+  LSM: Helpers for attribute names and filling an lsm_ctx
+  Smack: implement setselfattr and getselfattr hooks
+  AppArmor: Add selfattr hooks
+  SELinux: Add selfattr hooks
+  LSM: selftests for Linux Security Module syscalls
+
+ Documentation/userspace-api/index.rst         |   1 +
+ Documentation/userspace-api/lsm.rst           |  73 +++++
+ MAINTAINERS                                   |   1 +
+ arch/alpha/kernel/syscalls/syscall.tbl        |   3 +
+ arch/arm/tools/syscall.tbl                    |   3 +
+ arch/arm64/include/asm/unistd.h               |   2 +-
+ arch/arm64/include/asm/unistd32.h             |   6 +
+ arch/ia64/kernel/syscalls/syscall.tbl         |   3 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |   3 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |   3 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |   3 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl     |   3 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |   3 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |   3 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |   3 +
+ arch/s390/kernel/syscalls/syscall.tbl         |   3 +
+ arch/sh/kernel/syscalls/syscall.tbl           |   3 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |   3 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |   3 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   3 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |   3 +
+ fs/proc/base.c                                |  29 +-
+ fs/proc/internal.h                            |   2 +-
+ include/linux/lsm_hook_defs.h                 |   4 +
+ include/linux/lsm_hooks.h                     |  25 +-
+ include/linux/security.h                      |  45 ++-
+ include/linux/syscalls.h                      |   6 +
+ include/uapi/asm-generic/unistd.h             |  11 +-
+ include/uapi/linux/lsm.h                      |  90 ++++++
+ kernel/sys_ni.c                               |   5 +
+ security/Makefile                             |   1 +
+ security/apparmor/include/procattr.h          |   2 +-
+ security/apparmor/lsm.c                       | 104 ++++++-
+ security/apparmor/procattr.c                  |  11 +-
+ security/bpf/hooks.c                          |   9 +-
+ security/commoncap.c                          |   8 +-
+ security/landlock/cred.c                      |   2 +-
+ security/landlock/fs.c                        |   2 +-
+ security/landlock/ptrace.c                    |   2 +-
+ security/landlock/setup.c                     |   6 +
+ security/landlock/setup.h                     |   1 +
+ security/loadpin/loadpin.c                    |   9 +-
+ security/lockdown/lockdown.c                  |   8 +-
+ security/lsm_syscalls.c                       | 118 ++++++++
+ security/safesetid/lsm.c                      |   9 +-
+ security/security.c                           | 215 ++++++++++++--
+ security/selinux/hooks.c                      | 162 +++++++++--
+ security/smack/smack_lsm.c                    | 113 +++++++-
+ security/tomoyo/tomoyo.c                      |   9 +-
+ security/yama/yama_lsm.c                      |   8 +-
+ .../arch/mips/entry/syscalls/syscall_n64.tbl  |   3 +
+ .../arch/powerpc/entry/syscalls/syscall.tbl   |   3 +
+ .../perf/arch/s390/entry/syscalls/syscall.tbl |   3 +
+ .../arch/x86/entry/syscalls/syscall_64.tbl    |   3 +
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/lsm/Makefile          |  12 +
+ tools/testing/selftests/lsm/config            |   2 +
+ .../selftests/lsm/lsm_get_self_attr_test.c    | 267 ++++++++++++++++++
+ .../selftests/lsm/lsm_list_modules_test.c     | 149 ++++++++++
+ .../selftests/lsm/lsm_set_self_attr_test.c    |  70 +++++
+ 60 files changed, 1559 insertions(+), 101 deletions(-)
+ create mode 100644 Documentation/userspace-api/lsm.rst
+ create mode 100644 include/uapi/linux/lsm.h
+ create mode 100644 security/lsm_syscalls.c
+ create mode 100644 tools/testing/selftests/lsm/Makefile
+ create mode 100644 tools/testing/selftests/lsm/config
+ create mode 100644 tools/testing/selftests/lsm/lsm_get_self_attr_test.c
+ create mode 100644 tools/testing/selftests/lsm/lsm_list_modules_test.c
+ create mode 100644 tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+
+-- 
+2.39.2
 
