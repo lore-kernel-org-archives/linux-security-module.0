@@ -2,54 +2,54 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C003AC77B78
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Apr 2023 19:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F562C77B78
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Apr 2023 19:49:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233358AbjDUTq4 (ORCPT
+        id S233643AbjDUTtp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Apr 2023 15:46:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53028 "EHLO
+        Fri, 21 Apr 2023 15:49:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232389AbjDUTqz (ORCPT
+        with ESMTP id S233641AbjDUTtn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Apr 2023 15:46:55 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A2241BD8
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Apr 2023 12:46:53 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1a66911f5faso22662565ad.0
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Apr 2023 12:46:53 -0700 (PDT)
+        Fri, 21 Apr 2023 15:49:43 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 386A92D4F
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Apr 2023 12:49:40 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-63b5fca48bcso2310991b3a.0
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Apr 2023 12:49:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1682106413; x=1684698413;
+        d=chromium.org; s=google; t=1682106579; x=1684698579;
         h=in-reply-to:content-disposition:mime-version:references:subject:cc
          :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=GWJ1G4KIGJZHUPonaz/BvWE3RJa28JgHMAwPZpSHSy4=;
-        b=kgIejzwv2XgumhZFygCgW4eeWN5RZVcB6z9ZCdjLBr5PQl8kdEKHoP5xDh+cOnAY9N
-         QBxxIxVX1tq8fIhuRf4brfHqNpawuo1dkwhLSH6cbUjejqcVQz3haQt/C3MiM5f3R2+D
-         05W07QuifK15I60q/HWY3UOFWkkc1vzB3gJm0=
+        bh=JIvd4x7LTmDxMSDhcMvwp3CwwVRBeE4EwRrm8E3OHq4=;
+        b=Qf4Fe9MPe5Sj8cgdIfHhirtvk0msL50MfrH/MbU696GxuEuSEK4DkX7X54jWkmKTkt
+         92UodqD70fJK92aU4yCXHFdiyKfFNouCzW+CnAxELl24bUhr1MV0RGZlKp+BqK/AYK9m
+         aymxZOALqVgWFAJoAzMFPfsQXI9dNbU8iaRoo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682106413; x=1684698413;
+        d=1e100.net; s=20221208; t=1682106579; x=1684698579;
         h=in-reply-to:content-disposition:mime-version:references:subject:cc
          :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GWJ1G4KIGJZHUPonaz/BvWE3RJa28JgHMAwPZpSHSy4=;
-        b=MOrshm0002wMwxMhbv2XDfxccge7ZVyodpHGzPyBFHWK5IaAFxhjI+YqJ1O9AsF+Qo
-         XVb/yg+52PDhoGg2hr3/orX1ao0pNJSR3AqOGHfgOnBE8bQkjjfA94gdpOv78Yfvqfh4
-         UJox9AuCxQCHl/GmNr+ZxHzE8EU/fpohD92BjtWnqpdqcN3K6WHdSl2L6Lm83zUC5kAf
-         92tS3j4U3GfOVmH/hGa7AMxPyd2FC98ixCPFqYtJHKiu64OEOzC5ufFIiCXM5R4aG/Af
-         EV163DvuzbWjYwj3mcYpKrmOCiZwjrWWOQ+x6oQlvyJGihxTuZLQoNApbnQU9bIMvDoz
-         tlAQ==
-X-Gm-Message-State: AAQBX9d3F+eL9tBoU/eojiHIXRik2c3bBoxdd8YhTnzteh4Mczb+FxyW
-        ThKay7EqqKQru/ucdEbbyM7law==
-X-Google-Smtp-Source: AKy350bQEYOYVWnsAwD8pg3hzyMjDL7X+FAY8Lgny8p0sII36RnZCyLj6W72YiyvBcENN+YMKc1yOg==
-X-Received: by 2002:a17:902:c74a:b0:1a5:a1b:bbd8 with SMTP id q10-20020a170902c74a00b001a50a1bbbd8mr5135894plq.45.1682106412705;
-        Fri, 21 Apr 2023 12:46:52 -0700 (PDT)
+        bh=JIvd4x7LTmDxMSDhcMvwp3CwwVRBeE4EwRrm8E3OHq4=;
+        b=RSk9HiOhIC9DZsbYdmU8Gxv8T72DcHAXLiwnowvRSXHlElhR60lqU4LeKC21AtinoH
+         IzjYzrhSOlPXH6YKDEVtr16HqKdqKUSEdyuEH75oXVAx/UbRaUoWe6gfRMWt6h6Cj23d
+         M61+ahfsJhgR75QKK70V6Jb8H6SgbuPwbQ9cCMfxpXFYBd/PCqlGpszVYzDXfFm3M3RT
+         z1f3dYP9zY2bqORqQfbBED4nKKSFR8SfwrVm98NltyTc1cPb4UqC6wPEa+JCWC9WRJQa
+         UeKzNRBQYGmIYrLXovStVN2DfKgmsv/NXT5lkwu88Bady2ROQFO0X+wzrgnW421+PWr0
+         u2hA==
+X-Gm-Message-State: AAQBX9etg0o5cNqK8eAKz3B4anMIyLdEWGaapVNvIT0IJ6+2mK+IgcTq
+        GHuNvYluD5ELnVybzxdmycctiw==
+X-Google-Smtp-Source: AKy350Y5XxLtjv4JulE2GGm+rJvmzJmA407m70wz0D8uBy7wGU21LL3TEB+ZO1R9v4L5F34Xq6yOEQ==
+X-Received: by 2002:a05:6a20:3941:b0:f0:1b0b:acf7 with SMTP id r1-20020a056a20394100b000f01b0bacf7mr8411267pzg.2.1682106579571;
+        Fri, 21 Apr 2023 12:49:39 -0700 (PDT)
 Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id n20-20020a170902969400b001a6e9d170b8sm2893676plp.265.2023.04.21.12.46.52
+        by smtp.gmail.com with ESMTPSA id t9-20020a6549c9000000b0051b3ef1295csm2926598pgs.53.2023.04.21.12.49.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 12:46:52 -0700 (PDT)
-Message-ID: <6442e82c.170a0220.ac293.63bf@mx.google.com>
-X-Google-Original-Message-ID: <202304211239.@keescook>
-Date:   Fri, 21 Apr 2023 12:46:51 -0700
+        Fri, 21 Apr 2023 12:49:39 -0700 (PDT)
+Message-ID: <6442e8d3.650a0220.f3e8d.6a3f@mx.google.com>
+X-Google-Original-Message-ID: <202304211247.@keescook>
+Date:   Fri, 21 Apr 2023 12:49:38 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
@@ -57,194 +57,186 @@ Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
         penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         mic@digikod.net
-Subject: Re: [PATCH v9 07/11] LSM: Helpers for attribute names and filling an
- lsm_ctx
+Subject: Re: [PATCH v9 08/11] Smack: implement setselfattr and getselfattr
+ hooks
 References: <20230421174259.2458-1-casey@schaufler-ca.com>
- <20230421174259.2458-8-casey@schaufler-ca.com>
+ <20230421174259.2458-9-casey@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230421174259.2458-8-casey@schaufler-ca.com>
+In-Reply-To: <20230421174259.2458-9-casey@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 21, 2023 at 10:42:55AM -0700, Casey Schaufler wrote:
-> Add lsm_name_to_attr(), which translates a text string to a
-> LSM_ATTR value if one is available.
-> 
-> Add lsm_fill_user_ctx(), which fills a struct lsm_ctx, including
-> the trailing attribute value. The .len value is padded to a multiple
-> of 64 bits
-> 
-> All are used in module specific components of LSM system calls.
+On Fri, Apr 21, 2023 at 10:42:56AM -0700, Casey Schaufler wrote:
+> Implement Smack support for security_[gs]etselfattr.
+> Refactor the setprocattr hook to avoid code duplication.
 > 
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->  include/linux/security.h | 13 ++++++++++++
->  security/lsm_syscalls.c  | 24 ++++++++++++++++++++++
->  security/security.c      | 43 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 80 insertions(+)
+>  security/smack/smack_lsm.c | 105 +++++++++++++++++++++++++++++++++++--
+>  1 file changed, 100 insertions(+), 5 deletions(-)
 > 
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index f7292890b6a2..c96fb56159e3 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -263,6 +263,7 @@ int unregister_blocking_lsm_notifier(struct notifier_block *nb);
->  /* prototypes */
->  extern int security_init(void);
->  extern int early_security_init(void);
-> +extern u64 lsm_name_to_attr(const char *name);
->  
->  /* Security operations */
->  int security_binder_set_context_mgr(const struct cred *mgr);
-> @@ -491,6 +492,8 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
->  int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
->  int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
->  int security_locked_down(enum lockdown_reason what);
-> +int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
-> +		      size_t context_size, u64 id, u64 flags);
->  #else /* CONFIG_SECURITY */
->  
->  static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
-> @@ -508,6 +511,11 @@ static inline  int unregister_blocking_lsm_notifier(struct notifier_block *nb)
->  	return 0;
->  }
->  
-> +static inline u64 lsm_name_to_attr(const char *name)
-> +{
-> +	return 0;
-
-I think this should return LSM_ATTR_UNDEF instead of literal 0.
-
-> +}
-> +
->  static inline void security_free_mnt_opts(void **mnt_opts)
->  {
->  }
-> @@ -1420,6 +1428,11 @@ static inline int security_locked_down(enum lockdown_reason what)
->  {
->  	return 0;
->  }
-> +static inline int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
-> +				    size_t context_size, u64 id, u64 flags)
-> +{
-> +	return 0;
-
-Shouldn't this either error or fill in an empty context?
-
-> +}
->  #endif	/* CONFIG_SECURITY */
->  
->  #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
-> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
-> index 6efbe244d304..67106f642422 100644
-> --- a/security/lsm_syscalls.c
-> +++ b/security/lsm_syscalls.c
-> @@ -17,6 +17,30 @@
->  #include <linux/lsm_hooks.h>
->  #include <uapi/linux/lsm.h>
->  
-> +/**
-> + * lsm_name_to_attr - map an LSM attribute name to its ID
-> + * @name: name of the attribute
-> + *
-> + * Returns the LSM attribute value associated with @name, or 0 if
-> + * there is no mapping.
-> + */
-> +u64 lsm_name_to_attr(const char *name)
-> +{
-> +	if (!strcmp(name, "current"))
-> +		return LSM_ATTR_CURRENT;
-> +	if (!strcmp(name, "exec"))
-> +		return LSM_ATTR_EXEC;
-> +	if (!strcmp(name, "fscreate"))
-> +		return LSM_ATTR_FSCREATE;
-> +	if (!strcmp(name, "keycreate"))
-> +		return LSM_ATTR_KEYCREATE;
-> +	if (!strcmp(name, "prev"))
-> +		return LSM_ATTR_PREV;
-> +	if (!strcmp(name, "sockcreate"))
-> +		return LSM_ATTR_SOCKCREATE;
-> +	return 0;
-
-LSM_ATTR_UNDEF again?
-
-> +}
-> +
->  /**
->   * sys_lsm_set_self_attr - Set current task's security module attribute
->   * @attr: which attribute to set
-> diff --git a/security/security.c b/security/security.c
-> index bc3f166b4bff..759f3d977d2e 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -752,6 +752,49 @@ static int lsm_superblock_alloc(struct super_block *sb)
->  	return 0;
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 3cf862fcbe08..902b39c187bf 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -3552,6 +3552,41 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+>  	return;
 >  }
 >  
 > +/**
-> + * lsm_fill_user_ctx - Fill a user space lsm_ctx structure
-> + * @ctx: an LSM context to be filled
-> + * @context: the new context value
-> + * @context_size: the size of the new context value
-> + * @id: LSM id
-> + * @flags: LSM defined flags
+> + * smack_getselfattr - Smack current process attribute
+> + * @attr: which attribute to fetch
+> + * @ctx: buffer to receive the result
+> + * @size: available size in, actual size out
+> + * @flags: unused
 > + *
-> + * Fill all of the fields in a user space lsm_ctx structure.
-> + * Caller is assumed to have verified that @ctx has enough space
-> + * for @context.
+> + * Fill the passed user space @ctx with the details of the requested
+> + * attribute.
 > + *
-> + * The total length is padded to a multiple of 64 bits.
-
-Why?
-
-> + *
-> + * Returns 0 on success, -EFAULT on a copyout error, -ENOMEM
-> + * if memory can't be allocated.
+> + * Returns 1, the number of attributes, on success, an error code otherwise.
 > + */
-> +int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
-> +		      size_t context_size, u64 id, u64 flags)
+> +static int smack_getselfattr(unsigned int __user attr,
+> +			     struct lsm_ctx __user *ctx, size_t *size,
+> +			     u32 __user flags)
 > +{
-> +	struct lsm_ctx *lctx;
-> +	size_t locallen = ALIGN(context_size + sizeof(*lctx), 8);
-
-Instead of the open-coded addition, since you're dealing with a flexible
-array structure:
-
-	size_t locallen = ALIGN(struct_size(lctx, ctx, context_size), 8);
-
-> +	int rc = 0;
+> +	struct smack_known *skp = smk_of_current();
+> +	int total;
+> +	int slen;
+> +	int rc = 1;
 > +
-> +	lctx = kzalloc(locallen, GFP_KERNEL);
-> +	if (lctx == NULL)
-> +		return -ENOMEM;
+> +	if (attr != LSM_ATTR_CURRENT)
+> +		return -EOPNOTSUPP;
 > +
-> +	lctx->id = id;
-> +	lctx->flags = flags;
-> +	lctx->ctx_len = context_size;
-> +	lctx->len = locallen;
+> +	slen = strlen(skp->smk_known) + 1;
+> +	total = ALIGN(slen + sizeof(*ctx), 8);
+> +	if (total > *size)
+> +		rc = -E2BIG;
+> +	else
+> +		lsm_fill_user_ctx(ctx, skp->smk_known, slen, LSM_ID_SMACK, 0);
 > +
-> +	memcpy(&lctx[1], context, context_size);
-
-Eek, no: there is no "second struct lsm_ctx" -- this may trip memcpy
-overflow checks under certain conditions. You're wanting to copy to
-the flexible array at the end, so this should be explicitly performed so
-the compiler knows what's going on:
-
-	memcpy(lctx->ctx, context, context_size);
-
-> +
-> +	if (copy_to_user(ctx, lctx, locallen))
-> +		rc = -EFAULT;
-> +
-> +	kfree(lctx);
-> +
+> +	*size = total;
 > +	return rc;
 > +}
 > +
->  /*
->   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
->   * can be accessed with:
+>  /**
+>   * smack_getprocattr - Smack process attribute access
+>   * @p: the object task
+> @@ -3581,8 +3616,8 @@ static int smack_getprocattr(struct task_struct *p, const char *name, char **val
+>  }
+>  
+>  /**
+> - * smack_setprocattr - Smack process attribute setting
+> - * @name: the name of the attribute in /proc/.../attr
+> + * do_setattr - Smack process attribute setting
+> + * @attr: the ID of the attribute
+>   * @value: the value to set
+>   * @size: the size of the value
+>   *
+> @@ -3591,7 +3626,7 @@ static int smack_getprocattr(struct task_struct *p, const char *name, char **val
+>   *
+>   * Returns the length of the smack label or an error code
+>   */
+> -static int smack_setprocattr(const char *name, void *value, size_t size)
+> +static int do_setattr(u64 attr, void *value, size_t size)
+>  {
+>  	struct task_smack *tsp = smack_cred(current_cred());
+>  	struct cred *new;
+> @@ -3605,8 +3640,8 @@ static int smack_setprocattr(const char *name, void *value, size_t size)
+>  	if (value == NULL || size == 0 || size >= SMK_LONGLABEL)
+>  		return -EINVAL;
+>  
+> -	if (strcmp(name, "current") != 0)
+> -		return -EINVAL;
+> +	if (attr != LSM_ATTR_CURRENT)
+> +		return -EOPNOTSUPP;
+>  
+>  	skp = smk_import_entry(value, size);
+>  	if (IS_ERR(skp))
+> @@ -3645,6 +3680,64 @@ static int smack_setprocattr(const char *name, void *value, size_t size)
+>  	return size;
+>  }
+>  
+> +/**
+> + * smack_setselfattr - Set a Smack process attribute
+> + * @attr: which attribute to set
+> + * @ctx: buffer containing the data
+> + * @size: size of @ctx
+> + * @flags: unused
+> + *
+> + * Fill the passed user space @ctx with the details of the requested
+> + * attribute.
+> + *
+> + * Returns 0 on success, an error code otherwise.
+> + */
+> +static int smack_setselfattr(unsigned int __user attr,
+> +			     struct lsm_ctx __user *ctx, size_t __user size,
+
+"size_t __user" isn't valid: it's not a pointer.
+
+> +			     u32 __user flags)
+> +{
+> +	struct lsm_ctx *lctx;
+> +	void *context;
+
+Why is "context" used here at all? Can't this entirely be lctx?
+
+> +	int rc;
+> +
+> +	context = kmalloc(size, GFP_KERNEL);
+> +	if (context == NULL)
+> +		return -ENOMEM;
+> +
+> +	lctx = (struct lsm_ctx *)context;
+> +	if (copy_from_user(context, ctx, size))
+> +		rc = -EFAULT;
+> +	else if (lctx->ctx_len > size)
+> +		rc = -EINVAL;
+> +	else
+> +		rc = do_setattr(attr, lctx + 1, lctx->ctx_len);
+
+There is no "second lctx", please pass lctx->ctx instead.
+
+> +
+> +	kfree(context);
+> +	if (rc > 0)
+> +		return 0;
+> +	return rc;
+> +}
+> +
+> +/**
+> + * smack_setprocattr - Smack process attribute setting
+> + * @name: the name of the attribute in /proc/.../attr
+> + * @value: the value to set
+> + * @size: the size of the value
+> + *
+> + * Sets the Smack value of the task. Only setting self
+> + * is permitted and only with privilege
+> + *
+> + * Returns the length of the smack label or an error code
+> + */
+> +static int smack_setprocattr(const char *name, void *value, size_t size)
+> +{
+> +	int attr = lsm_name_to_attr(name);
+> +
+> +	if (attr)
+> +		return do_setattr(attr, value, size);
+> +	return -EINVAL;
+> +}
+> +
+>  /**
+>   * smack_unix_stream_connect - Smack access on UDS
+>   * @sock: one sock
+> @@ -4955,6 +5048,8 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+>  
+>  	LSM_HOOK_INIT(d_instantiate, smack_d_instantiate),
+>  
+> +	LSM_HOOK_INIT(getselfattr, smack_getselfattr),
+> +	LSM_HOOK_INIT(setselfattr, smack_setselfattr),
+>  	LSM_HOOK_INIT(getprocattr, smack_getprocattr),
+>  	LSM_HOOK_INIT(setprocattr, smack_setprocattr),
+>  
 > -- 
 > 2.39.2
 > 
