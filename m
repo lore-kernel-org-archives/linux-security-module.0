@@ -2,64 +2,64 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4083C77B7C
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Apr 2023 01:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F09C77B76
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Apr 2023 13:12:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232094AbjDVBXh (ORCPT
+        id S229847AbjDVNMw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Apr 2023 21:23:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41460 "EHLO
+        Sat, 22 Apr 2023 09:12:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbjDVBXg (ORCPT
+        with ESMTP id S229680AbjDVNMv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Apr 2023 21:23:36 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A8AC2106;
-        Fri, 21 Apr 2023 18:23:34 -0700 (PDT)
+        Sat, 22 Apr 2023 09:12:51 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F53CE65;
+        Sat, 22 Apr 2023 06:12:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1682126614; x=1713662614;
+  t=1682169170; x=1713705170;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=8qaPqLf620JT3lsFtV3qPS9X2GQ8wbZ10jPK2VZDSjE=;
-  b=jsC6T6kx0IxnFkIt2UEqBVdNCrB4D77N8Jx43rijV0wa6QEgDtXiu2Qj
-   SndALJNAv+gYUHZ0FfkPtbPAoU6PUX0/AisQ4yqX9YeeK1e+i7Vd4Q3WX
-   DMRoYibF2lQNlLvq232w+fftW47qEraRajAwqnUI9Fj5/mIrph7ukzqa2
-   38w2i5cXf7PxETK3JleGR3m+AMOlhEMnpCQonHxrYGu8VMU5EDlquMtUL
-   jac0lwcFFzirg0+M63VN6KJJMCNWbOQzd1WJi2u7pUm4l244Uwf+DYwJF
-   k4JjvwobThPmJXOEZGPISVdKfh+PJquz3tBIaMt9pLkFATQPOoqCE/8ED
+  bh=siolPaBbzy3Sc50U7pDpe27/YvjBEvisAHA0WNyP5iw=;
+  b=Wqoisyc/jSSHBrIZdyhw+76BfpbMX6B+df2vnCWI7tUFQJDwbHQ4nnZH
+   qkPkjU3Vqo+bLx2ywclqL0gCuoVPJxfL2JO4O2jeEK0kD9FNnRqQIiHgz
+   lW6T3nGhU4Rwr/gvjI4/nAChXvo5inxRir6RZGJjh+yQw6SY3HYswVqPY
+   vkyLCqNhXfpL5/+Y99cuO1ijQnvD6Gxx7fzAVDjmE+VRHFnJAKMMwXcAd
+   6RhxFKCeajENQsMRQWgciL54EFC85H2ux3dVlEPEVubjJ5/mBRWKlOKm4
+   TEBcDUqWw0ty0W9i5R2JvsRs7FQHnf8uzH+XYW+kf3WrT+gshFaRr7uRp
    w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10687"; a="326445547"
-X-IronPort-AV: E=Sophos;i="5.99,216,1677571200"; 
-   d="scan'208";a="326445547"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2023 18:23:33 -0700
+X-IronPort-AV: E=McAfee;i="6600,9927,10688"; a="330362804"
+X-IronPort-AV: E=Sophos;i="5.99,218,1677571200"; 
+   d="scan'208";a="330362804"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2023 06:12:49 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10687"; a="722949863"
-X-IronPort-AV: E=Sophos;i="5.99,216,1677571200"; 
-   d="scan'208";a="722949863"
+X-IronPort-AV: E=McAfee;i="6600,9927,10688"; a="836441170"
+X-IronPort-AV: E=Sophos;i="5.99,218,1677571200"; 
+   d="scan'208";a="836441170"
 Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga008.jf.intel.com with ESMTP; 21 Apr 2023 18:23:29 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 22 Apr 2023 06:12:45 -0700
 Received: from kbuild by b613635ddfff with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1pq1yL-000gyu-0U;
-        Sat, 22 Apr 2023 01:23:29 +0000
-Date:   Sat, 22 Apr 2023 09:23:12 +0800
+        id 1pqD2i-000hJY-1T;
+        Sat, 22 Apr 2023 13:12:44 +0000
+Date:   Sat, 22 Apr 2023 21:12:12 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
         linux-security-module@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
-Subject: Re: [PATCH v9 09/11] AppArmor: Add selfattr hooks
-Message-ID: <202304220930.OFrY92as-lkp@intel.com>
-References: <20230421174259.2458-10-casey@schaufler-ca.com>
+Cc:     oe-kbuild-all@lists.linux.dev, jmorris@namei.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        mic@digikod.net
+Subject: Re: [PATCH v9 04/11] LSM: syscalls for current process attributes
+Message-ID: <202304222142.YHgqLhGF-lkp@intel.com>
+References: <20230421174259.2458-5-casey@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230421174259.2458-10-casey@schaufler-ca.com>
+In-Reply-To: <20230421174259.2458-5-casey@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
@@ -76,95 +76,65 @@ https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
 url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/LSM-Maintain-a-table-of-LSM-attribute-data/20230422-024331
 base:   tip/perf/core
-patch link:    https://lore.kernel.org/r/20230421174259.2458-10-casey%40schaufler-ca.com
-patch subject: [PATCH v9 09/11] AppArmor: Add selfattr hooks
-config: x86_64-randconfig-a005 (https://download.01.org/0day-ci/archive/20230422/202304220930.OFrY92as-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build):
+patch link:    https://lore.kernel.org/r/20230421174259.2458-5-casey%40schaufler-ca.com
+patch subject: [PATCH v9 04/11] LSM: syscalls for current process attributes
+config: mips-randconfig-s051-20230421 (https://download.01.org/0day-ci/archive/20230422/202304222142.YHgqLhGF-lkp@intel.com/config)
+compiler: mips64el-linux-gcc (GCC) 12.1.0
+reproduce:
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/2628bfcd3ff1b12fbae522a5449a7344ffe6ecbd
+        # apt-get install sparse
+        # sparse version: v0.6.4-39-gce1a6720-dirty
+        # https://github.com/intel-lab-lkp/linux/commit/78ea54cc31d7bd9e5a5c7fe8cf34fba9516fde95
         git remote add linux-review https://github.com/intel-lab-lkp/linux
         git fetch --no-tags linux-review Casey-Schaufler/LSM-Maintain-a-table-of-LSM-attribute-data/20230422-024331
-        git checkout 2628bfcd3ff1b12fbae522a5449a7344ffe6ecbd
+        git checkout 78ea54cc31d7bd9e5a5c7fe8cf34fba9516fde95
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash security/apparmor/
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=mips olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=mips SHELL=/bin/bash
 
 If you fix the issue, kindly add following tag where applicable
 | Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304220930.OFrY92as-lkp@intel.com/
+| Link: https://lore.kernel.org/oe-kbuild-all/202304222142.YHgqLhGF-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+sparse warnings: (new ones prefixed by >>)
+>> security/lsm_syscalls.c:34:48: sparse: sparse: dereference of noderef expression
+--
+   security/security.c:406:25: sparse: sparse: cast removes address space '__rcu' of expression
+>> security/security.c:2196:13: sparse: sparse: dereference of noderef expression
+   security/security.c:2203:14: sparse: sparse: dereference of noderef expression
+   security/security.c:2208:20: sparse: sparse: dereference of noderef expression
+   security/security.c:2218:43: sparse: sparse: dereference of noderef expression
+   security/security.c:2218:66: sparse: sparse: dereference of noderef expression
+   security/security.c:2263:13: sparse: sparse: dereference of noderef expression
+   security/security.c:2265:13: sparse: sparse: dereference of noderef expression
+   security/security.c:2269:13: sparse: sparse: dereference of noderef expression
+   security/security.c:2269:32: sparse: sparse: dereference of noderef expression
+   security/security.c:2275:53: sparse: sparse: dereference of noderef expression
+   security/security.c:2275:64: sparse: sparse: dereference of noderef expression
+   security/security.c:2275:70: sparse: sparse: dereference of noderef expression
 
->> security/apparmor/lsm.c:654:7: warning: variable 'total_len' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-                   if (error > 0) {
-                       ^~~~~~~~~
-   security/apparmor/lsm.c:666:10: note: uninitialized use occurs here
-           *size = total_len;
-                   ^~~~~~~~~
-   security/apparmor/lsm.c:654:3: note: remove the 'if' if its condition is always true
-                   if (error > 0) {
-                   ^~~~~~~~~~~~~~~
-   security/apparmor/lsm.c:652:6: warning: variable 'total_len' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-           if (label) {
-               ^~~~~
-   security/apparmor/lsm.c:666:10: note: uninitialized use occurs here
-           *size = total_len;
-                   ^~~~~~~~~
-   security/apparmor/lsm.c:652:2: note: remove the 'if' if its condition is always true
-           if (label) {
-           ^~~~~~~~~~~
-   security/apparmor/lsm.c:640:18: note: initialize the variable 'total_len' to silence this warning
-           size_t total_len;
-                           ^
-                            = 0
-   2 warnings generated.
+vim +34 security/lsm_syscalls.c
 
-
-vim +654 security/apparmor/lsm.c
-
-   632	
-   633	static int apparmor_getselfattr(unsigned int __user attr,
-   634					struct lsm_ctx __user *lx, size_t *size,
-   635					u32 __user flags)
-   636	{
-   637		int error = -ENOENT;
-   638		struct aa_task_ctx *ctx = task_ctx(current);
-   639		struct aa_label *label = NULL;
-   640		size_t total_len;
-   641		char *value;
-   642	
-   643		if (attr == LSM_ATTR_CURRENT)
-   644			label = aa_get_newest_label(cred_label(current_cred()));
-   645		else if (attr == LSM_ATTR_PREV && ctx->previous)
-   646			label = aa_get_newest_label(ctx->previous);
-   647		else if (attr == LSM_ATTR_EXEC && ctx->onexec)
-   648			label = aa_get_newest_label(ctx->onexec);
-   649		else
-   650			error = -EOPNOTSUPP;
-   651	
-   652		if (label) {
-   653			error = aa_getprocattr(label, &value, false);
- > 654			if (error > 0) {
-   655				total_len = ALIGN(error + sizeof(*ctx), 8);
-   656				if (total_len > *size)
-   657					error = -E2BIG;
-   658				else
-   659					lsm_fill_user_ctx(lx, value, error,
-   660							  LSM_ID_APPARMOR, 0);
-   661			}
-   662		}
-   663	
-   664		aa_put_label(label);
-   665	
-   666		*size = total_len;
-   667		if (error > 0)
-   668			return 1;
-   669		return error;
-   670	}
-   671	
+    19	
+    20	/**
+    21	 * sys_lsm_set_self_attr - Set current task's security module attribute
+    22	 * @attr: which attribute to set
+    23	 * @ctx: the LSM contexts
+    24	 * @size: size of @ctx
+    25	 * @flags: reserved for future use
+    26	 *
+    27	 * Sets the calling task's LSM context. On success this function
+    28	 * returns 0. If the attribute specified cannot be set a negative
+    29	 * value indicating the reason for the error is returned.
+    30	 */
+    31	SYSCALL_DEFINE4(lsm_set_self_attr, unsigned int, attr, struct lsm_ctx __user *,
+    32			ctx, size_t __user, size, u32, flags)
+    33	{
+  > 34		return security_setselfattr(attr, ctx, size, flags);
+    35	}
+    36	
 
 -- 
 0-DAY CI Kernel Test Service
