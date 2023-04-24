@@ -2,44 +2,43 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA98C77B73
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Apr 2023 02:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E1CC6FD18
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Apr 2023 03:16:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229598AbjDXCyx (ORCPT
+        id S230011AbjDXDQA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 23 Apr 2023 22:54:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52838 "EHLO
+        Sun, 23 Apr 2023 23:16:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjDXCyw (ORCPT
+        with ESMTP id S229476AbjDXDP7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 23 Apr 2023 22:54:52 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EAE8211F;
-        Sun, 23 Apr 2023 19:54:51 -0700 (PDT)
+        Sun, 23 Apr 2023 23:15:59 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25ECB1AB;
+        Sun, 23 Apr 2023 20:15:57 -0700 (PDT)
 Received: from dggpemm500016.china.huawei.com (unknown [172.30.72.56])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Q4V7z50zBzKtrQ;
-        Mon, 24 Apr 2023 10:53:51 +0800 (CST)
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Q4VXY1krXzSvPZ;
+        Mon, 24 Apr 2023 11:11:41 +0800 (CST)
 Received: from [10.67.110.48] (10.67.110.48) by dggpemm500016.china.huawei.com
  (7.185.36.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.23; Mon, 24 Apr
- 2023 10:54:47 +0800
-Message-ID: <f5b23bbc-6fb5-84d3-fcad-6253b346328a@huawei.com>
-Date:   Mon, 24 Apr 2023 10:54:33 +0800
+ 2023 11:15:54 +0800
+Message-ID: <8768d2ae-99ea-9890-83d9-7e1a35521aa3@huawei.com>
+Date:   Mon, 24 Apr 2023 11:15:54 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
 Subject: Re: [PATCH RFC] Randomized slab caches for kmalloc()
 Content-Language: en-US
-To:     Alexander Lobakin <aleksander.lobakin@intel.com>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>
-CC:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+To:     Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
         Christoph Lameter <cl@linux.com>,
         Pekka Enberg <penberg@kernel.org>,
         David Rientjes <rientjes@google.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
+        Vlastimil Babka <vbabka@suse.cz>
+CC:     Roman Gushchin <roman.gushchin@linux.dev>,
         Alexander Potapenko <glider@google.com>,
         Marco Elver <elver@google.com>,
         Dmitry Vyukov <dvyukov@google.com>, <linux-mm@kvack.org>,
@@ -53,9 +52,8 @@ CC:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
         Xiu Jianfeng <xiujianfeng@huawei.com>
 References: <20230315095459.186113-1-gongruiqi1@huawei.com>
  <b7a7c5d7-d3c8-503f-7447-602ec2a18fb0@gmail.com>
- <36019eb3-4b71-26c4-21ad-b0e0eabd0ca5@intel.com>
 From:   Gong Ruiqi <gongruiqi1@huawei.com>
-In-Reply-To: <36019eb3-4b71-26c4-21ad-b0e0eabd0ca5@intel.com>
+In-Reply-To: <b7a7c5d7-d3c8-503f-7447-602ec2a18fb0@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.67.110.48]
@@ -67,62 +65,59 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 Sorry for the late reply. I just came back from my paternity leave :)
 
-On 2023/04/05 23:15, Alexander Lobakin wrote:
-> From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-> Date: Wed, 5 Apr 2023 21:26:47 +0900
+On 2023/04/05 20:26, Hyeonggon Yoo wrote:
+> On 3/15/2023 6:54 PM, GONG, Ruiqi wrote:
+>> When exploiting memory vulnerabilities, "heap spraying" is a common
+>> technique targeting those related to dynamic memory allocation (i.e. the
+>> "heap"), and it plays an important role in a successful exploitation.
+>> Basically, it is to overwrite the memory area of vulnerable object by
+>> triggering allocation in other subsystems or modules and therefore
+>> getting a reference to the targeted memory location. It's usable on
+>> various types of vulnerablity including use after free (UAF), heap out-
+>> of-bound write and etc.
+>>
+>> There are (at least) two reasons why the heap can be sprayed: 1) generic
+>> slab caches are shared among different subsystems and modules, and
+>> 2) dedicated slab caches could be merged with the generic ones.
+>> Currently these two factors cannot be prevented at a low cost: the first
+>> one is a widely used memory allocation mechanism, and shutting down slab
+>> merging completely via `slub_nomerge` would be overkill.
+>>
+>> To efficiently prevent heap spraying, we propose the following approach:
+>> to create multiple copies of generic slab caches that will never be
+>> merged, and random one of them will be used at allocation. The random
+>> selection is based on the location of code that calls `kmalloc()`, which
+>> means it is static at runtime (rather than dynamically determined at
+>> each time of allocation, which could be bypassed by repeatedly spraying
+>> in brute force). In this way, the vulnerable object and memory allocated
+>> in other subsystems and modules will (most probably) be on different
+>> slab caches, which prevents the object from being sprayed.
+>>
+>> Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
+>> ---
 > 
->> ...
->>
->> I'm not yet sure if this feature is appropriate for mainline kernel.
->>
->> I have few questions:
->>
->> 1) What is cost of this configuration, in terms of memory overhead, or
->> execution time?
->>
->>
->> 2) The actual cache depends on caller which is static at build time, not
->> runtime.
->>
->>     What about using (caller ^ (some subsystem-wide random sequence)),
->>
->>     which is static at runtime?
+> I'm not yet sure if this feature is appropriate for mainline kernel.
 > 
-> Why can't we just do
+> I have few questions:
 > 
-> 	random_get_u32_below(CONFIG_RANDOM_KMALLOC_CACHES_NR)
-> 
-> ?
+> 1) What is cost of this configuration, in terms of memory overhead, or
+> execution time? 
 
-This makes the cache selection "dynamic", i.e. each kmalloc() will
-randomly pick a different cache at each time it's executed. The problem
-of this approach is that it only reduces the probability of the cache
-being sprayed by the attacker, and the attacker can bypass it by simply
-repeating the attack multiple times in a brute-force manner.
+I haven't done a throughout test on the runtime overhead yet, but in
+theory it won't be large because in essence what it does is to create
+some additionally `struct kmem_cache` instances and separate the
+management of slab objects from the original one cache to all these caches.
 
-Our proposal is to make the randomness be with respect to the code
-address rather than time, i.e. allocations in different code paths would
-most likely pick different caches, although kmalloc() at each place
-would use the same cache copy whenever it is executed. In this way, the
-code path that the attacker uses would most likely pick a different
-cache than which the targeted subsystem/driver would pick, which means
-in most of cases the heap spraying is unachievable.
-
-> It's fast enough according to Jason... `_RET_IP_ % nr` doesn't sound
-> "secure" to me. It really is a compile-time constant, which can be
-> calculated (or not?) manually. Even if it wasn't, `% nr` doesn't sound
-> good, there should be at least hash_32().
-
-Yes, `_RET_IP_ % nr` is a bit naive. Currently the patch is more like a
-PoC so I wrote this. Indeed a proper hash function should be used here.
-
-And yes _RET_IP_ could somehow be manually determined especially for
-kernels without KASLR, and I think adding a per-boot random seed into
-the selection could solve this.
-
-I will implement these in v2. Thanks!
+But indeed the test is necessary. I will do it based on the v2 patch.
 
 > 
-> Thanks,
-> Olek
+> 2) The actual cache depends on caller which is static at build time, not
+> runtime.
 > 
+>     What about using (caller ^ (some subsystem-wide random sequence)),
+> 
+>     which is static at runtime?
+
+Yes it could be better. As I said in my reply to Alexander, I will add a
+the per-boot random seed in v2, and I think it's basically the `(some
+subsystem-wide random sequence)` you mentioned here.
