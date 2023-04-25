@@ -2,71 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E30E1C7618E
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Apr 2023 18:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 373FEC77B61
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Apr 2023 03:55:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232533AbjDXSuW (ORCPT
+        id S232693AbjDYDzY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Apr 2023 14:50:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45078 "EHLO
+        Mon, 24 Apr 2023 23:55:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232547AbjDXSuA (ORCPT
+        with ESMTP id S229637AbjDYDzX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Apr 2023 14:50:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5FE4B446;
-        Mon, 24 Apr 2023 11:49:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CB563628B8;
-        Mon, 24 Apr 2023 18:47:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3BA12C4339E;
-        Mon, 24 Apr 2023 18:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682362056;
-        bh=QGZGRHrKvn2Zs2YQBPPiRvla6MKTQuzTSE9rJKLsdLw=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=MtE6DdFCuMRf5Hm4B9Yci7e376JtcgImeRlO7O1cLn5OW2lauC7K+5ehtveH94KYN
-         9HVc7UrpKMMp/eu+03zCFW1NmZiMTM/uugg0+W57PSSgJJaUdpWiZRFOJLO3Voddvw
-         vi1hSrBi9G4wpxAtUzSEu6miT8wAe142XogKa1y3301PyhmmouGeM12pc0K43Jw8l5
-         F32z1YwKSvQ/I/huSiRgLchq4VUg9hiqIzv6LejMSJEXTbbSfcUZiNvzguOHWS/PV6
-         TNFhyprgqqJkYsgSjm9tV/CPWgC8b4RQ8SYVCbACxUMpw65V3Hg4HeCzDE8qhgDTm5
-         ZlsIq686qBJsA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2B7D3E5FFC7;
-        Mon, 24 Apr 2023 18:47:36 +0000 (UTC)
-Subject: Re: [GIT PULL] Smack patches for v6.4
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <d4160d44-6dd4-abdf-e125-e3f5673445c9@schaufler-ca.com>
-References: <d4160d44-6dd4-abdf-e125-e3f5673445c9.ref@schaufler-ca.com> <d4160d44-6dd4-abdf-e125-e3f5673445c9@schaufler-ca.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <d4160d44-6dd4-abdf-e125-e3f5673445c9@schaufler-ca.com>
-X-PR-Tracked-Remote: https://github.com/cschaufler/smack-next tags/Smack-for-6.4
-X-PR-Tracked-Commit-Id: de93e515db306767549bb29a926f523ca2a601ab
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dc7e22a368c2a217d2d3338b3bd984fdd0301173
-Message-Id: <168236205617.5635.17082386310757265160.pr-tracker-bot@kernel.org>
-Date:   Mon, 24 Apr 2023 18:47:36 +0000
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        XU pengfei <xupengfei@nfschina.com>
+        Mon, 24 Apr 2023 23:55:23 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83575AD0F;
+        Mon, 24 Apr 2023 20:55:21 -0700 (PDT)
+Received: from dggpemm500016.china.huawei.com (unknown [172.30.72.53])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Q57RK54VWzKvMB;
+        Tue, 25 Apr 2023 11:54:21 +0800 (CST)
+Received: from [10.67.110.48] (10.67.110.48) by dggpemm500016.china.huawei.com
+ (7.185.36.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.23; Tue, 25 Apr
+ 2023 11:55:18 +0800
+Message-ID: <0f3abe0f-216b-dda6-38c4-26ffa79d966f@huawei.com>
+Date:   Tue, 25 Apr 2023 11:55:18 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH RFC] Randomized slab caches for kmalloc()
+Content-Language: en-US
+To:     Alexander Lobakin <aleksander.lobakin@intel.com>
+CC:     Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <kasan-dev@googlegroups.com>,
+        Kees Cook <keescook@chromium.org>,
+        <linux-hardening@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Wang Weiyang <wangweiyang2@huawei.com>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>
+References: <20230315095459.186113-1-gongruiqi1@huawei.com>
+ <b7a7c5d7-d3c8-503f-7447-602ec2a18fb0@gmail.com>
+ <36019eb3-4b71-26c4-21ad-b0e0eabd0ca5@intel.com>
+ <f5b23bbc-6fb5-84d3-fcad-6253b346328a@huawei.com>
+ <ce1c307e-b7ae-2590-7b2e-43cbe963bc4d@intel.com>
+From:   Gong Ruiqi <gongruiqi1@huawei.com>
+In-Reply-To: <ce1c307e-b7ae-2590-7b2e-43cbe963bc4d@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.110.48]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500016.china.huawei.com (7.185.36.25)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Mon, 24 Apr 2023 11:01:40 -0700:
 
-> https://github.com/cschaufler/smack-next tags/Smack-for-6.4
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dc7e22a368c2a217d2d3338b3bd984fdd0301173
+On 2023/04/24 21:46, Alexander Lobakin wrote:
+> From: Gong, Ruiqi <gongruiqi1@huawei.com>
+> Date: Mon, 24 Apr 2023 10:54:33 +0800
+> 
+> ...
+> 
+>>
+>>> It's fast enough according to Jason... `_RET_IP_ % nr` doesn't sound
+>>> "secure" to me. It really is a compile-time constant, which can be
+>>> calculated (or not?) manually. Even if it wasn't, `% nr` doesn't sound
+>>> good, there should be at least hash_32().
+>>
+>> Yes, `_RET_IP_ % nr` is a bit naive. Currently the patch is more like a
+>> PoC so I wrote this. Indeed a proper hash function should be used here.
+>>
+>> And yes _RET_IP_ could somehow be manually determined especially for
+>> kernels without KASLR, and I think adding a per-boot random seed into
+>> the selection could solve this.
+> 
+> I recall how it is done for kCFI/FineIBT in the x86 code -- it also uses
+> per-boot random seed (although it gets patched into the code itself each
+> time, when applying alternatives). So probably should be optimal enough.
+> The only thing I'm wondering is where to store this per-boot seed :D
+> It's generic code, so you can't patch it directly. OTOH storing it in
+> .data/.bss can make it vulnerable to attacks... Can't it?
 
-Thank you!
+I think marking the seed with __ro_after_init is enough, since we don't
+mind it could be read by the attacker.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Given that the code paths the attacker can utilize to spray the heap is
+limited, our address-related randomness in most cases prevents
+kmalloc()s on these paths from picking the same cache the vulnerable
+subsystem/module would pick. Although _RET_IP_ of kmalloc()s could be
+known, without tampering the source code and rebuilding the image, the
+attacker can't do anything to make those caches collide if the cache
+selection algorithm says they don't.
+
+So in my perspective the per-boot random seed is more like an
+enhancement: if one day, by analyzing the open source code, the attacker
+does find a usable kmalloc that happens to pick the same cache with the
+vulnerable subsystem/module, the seed could make his/her effort wasted ;)
+
+> 
+>>
+>> I will implement these in v2. Thanks!
+>>
+>>>
+>>> Thanks,
+>>> Olek
+>>>
+> 
+> Thanks,
+> Olek
