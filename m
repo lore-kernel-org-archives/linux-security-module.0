@@ -2,265 +2,185 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EFDC77B78
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Apr 2023 14:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED7CC77B7C
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Apr 2023 16:33:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241275AbjDZOPf (ORCPT
+        id S232158AbjDZQdV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Apr 2023 10:15:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54950 "EHLO
+        Wed, 26 Apr 2023 12:33:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241242AbjDZOPd (ORCPT
+        with ESMTP id S233082AbjDZQdT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Apr 2023 10:15:33 -0400
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63EB36E87;
-        Wed, 26 Apr 2023 07:15:31 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Q619Y5NhJzMq20C;
-        Wed, 26 Apr 2023 16:15:29 +0200 (CEST)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Q619Y0BqHz1C3;
-        Wed, 26 Apr 2023 16:15:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1682518529;
-        bh=FcZefFzib5MfGlesa1STquGjF77TMrAHm6Rc4XBvbgg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=asRumu1lxURvTBi1FJdnBXmIBRxcUKrN2uLXAaKuIq9iKmnLbsjL+Hxvx58rBFBbK
-         +5aOAIg0ipTOQj53T+EKQkH9tUqRAKTaCLOIbdjc6+jCkk0R3pRFFBiId95P4TRzxP
-         sX97wtguz6vHJhTwKYrKTAryGHNU9u0MUtZ4ZVfw=
-Message-ID: <8db42d8b-1ed0-6b00-de5b-57f350472160@digikod.net>
-Date:   Wed, 26 Apr 2023 16:15:28 +0200
-MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v10 09/13] landlock: Add network rules and TCP hooks
- support
+        Wed, 26 Apr 2023 12:33:19 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E19D769A;
+        Wed, 26 Apr 2023 09:33:18 -0700 (PDT)
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33QEiRog015505;
+        Wed, 26 Apr 2023 16:33:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-03-30;
+ bh=1Aruc4nCfo6bnmsHLjgtUA7t2mgwMdJb9XOj0kiv6DE=;
+ b=3mWmbXFQcHb636xZArlb6WcTkJXsI4jVDoQl3lbvpLezICkotVF4BRbLLGt4gxkSpts4
+ RFGwqSIJVjXk1gs2FzkfUCBsH/HoV1LuMn3CRDP9GveAaxujf3VqnrzHjFaPBp1wL6aq
+ hbbDplwcLx7IcHCQHt5EOCTSWUDUafFaxxVmi/A+2ESSnKc2faowJV7naWOTZJf8TSaJ
+ 3y2jE6C2PnDnF61+l2VpKU9vKI5xqx+K5eZ9wJ5AeTBx1y9FE8oiYKgV5gnJL9x9YiXg
+ EZLoI/8z2AideAH0QYA7hUGoF9hb+L9GY1k4dC1xWuwHlAujPOofRk5pXgEIQa6HlC9X Og== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3q47fasubp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Apr 2023 16:32:59 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 33QFOf98008754;
+        Wed, 26 Apr 2023 16:32:59 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2173.outbound.protection.outlook.com [104.47.55.173])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3q4618d695-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Apr 2023 16:32:58 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XyQhEjiW5Jzz5HLSDfVIe8PIxf/Hg1bnFpgxd27N0Zs+aiBKzM46qrrU/268rjv+afjve370nRKR/j6Nqn6eoPpR0wOMNDTD8LEe7iC+eAnYuLiwSHQk/ZMc7SVHP1tff2z7t4g+AmfgiU/w6McPzO2Jr7seHgIOhfKvhB5QFVxVmrzt3FZGa8HssXhxcefRrWZtI9uWGtikdCbpvBOFs7mE/QRHw56Yz60t7oCOjIrIZtYlQN+Sz7nuNtH882V8PiNw2sDL+Zk/AC4ZyTi9aBM1tGMB49/0bH7LrdQ4os0KE36Af8nkhE/qokviytANumsCYz6+J+ZVNXsRwYWHOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1Aruc4nCfo6bnmsHLjgtUA7t2mgwMdJb9XOj0kiv6DE=;
+ b=T57X0An+rXKILTFXoRCwHHUmOFia7Jzx6Nz586lDU3DmDc2vpsSc/K+xux05qx53Yc8EQfZJ8T7Wa3wAza1WK2m1JC+21BLAmIqxOMytI2BRne/+Lh3HV1n601Nzr/89SMHUyebufqb8fmzkuEgDWH09YYI55Bb7TLPKITgjjvjDxJboXw2rGH8y29P2aPVkLvOnxDDFF+5KUjJPq3tBpc8PrmwgrbsH6NigC1otrhqXeG5yoVvuQBHOMi+PiyapSlFEVqj9MjMF3NUZB3oIG8zierSVTNYy3mjzvqjrhIIZGQrjn2dGG0arQuKNFH9ML4KuLGUSZYBrQbTNXvuqMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1Aruc4nCfo6bnmsHLjgtUA7t2mgwMdJb9XOj0kiv6DE=;
+ b=CamAeQHoGMTxz0TsTUpyCkP7NTMbpcI4TxXXXThMfprdWVJ7TfDPV/I/Yqv6u/LFxl8QFSFZVgVb4OKAfUD59DQ71dN7vDzLAHkZnZ9Di00wKgeHs+xCVDRhHgPY1p0irRMFLOXuixZMVWC3WrMEoyv+CNO3nHD3W7OQRyYabEg=
+Received: from SJ0PR10MB4752.namprd10.prod.outlook.com (2603:10b6:a03:2d7::19)
+ by SJ1PR10MB6003.namprd10.prod.outlook.com (2603:10b6:a03:45e::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.21; Wed, 26 Apr
+ 2023 16:32:56 +0000
+Received: from SJ0PR10MB4752.namprd10.prod.outlook.com
+ ([fe80::4a9d:b42c:57c7:b53c]) by SJ0PR10MB4752.namprd10.prod.outlook.com
+ ([fe80::4a9d:b42c:57c7:b53c%5]) with mapi id 15.20.6319.033; Wed, 26 Apr 2023
+ 16:32:56 +0000
+Message-ID: <6300a33a-9d3d-42a2-d332-81e02d52d310@oracle.com>
+Date:   Wed, 26 Apr 2023 09:32:54 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.10.0
+Subject: Re: [PATCH V4 2/2] blktrace: allow access trace file in lockdown mode
 Content-Language: en-US
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20230323085226.1432550-1-konstantin.meskhidze@huawei.com>
- <20230323085226.1432550-10-konstantin.meskhidze@huawei.com>
- <9147b444-dec4-52c3-c724-f19b3f842738@digikod.net>
- <07629a06-935c-debf-d490-e02e5ee9f9ec@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <07629a06-935c-debf-d490-e02e5ee9f9ec@huawei.com>
+To:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-block@vger.kernel.org
+Cc:     paul@paul-moore.com, nathanl@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, konrad.wilk@oracle.com, joe.jin@oracle.com
+References: <20230420215331.88326-1-junxiao.bi@oracle.com>
+ <20230420215331.88326-2-junxiao.bi@oracle.com>
+ <05b3eebd-7a3f-13d5-1fe9-8f4ab3080521@oracle.com>
+ <30ab7555-8f36-cfb7-9101-0ebb92af3c2f@kernel.dk>
+From:   Junxiao Bi <junxiao.bi@oracle.com>
+In-Reply-To: <30ab7555-8f36-cfb7-9101-0ebb92af3c2f@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+X-ClientProxiedBy: BY3PR05CA0057.namprd05.prod.outlook.com
+ (2603:10b6:a03:39b::32) To SJ0PR10MB4752.namprd10.prod.outlook.com
+ (2603:10b6:a03:2d7::19)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB4752:EE_|SJ1PR10MB6003:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ee2a7f3-4aaf-4e9e-9ee3-08db4673e3f7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: SggnYtAX6RXF1YfeWq/EANx7eS0kNRZpKMKKSMqVhM/34rXN23eeIgVpE9UmEIHPjZLmKB0GAnHpKE1vbxlX2T7WB7hQp+uWy5bNN4OkQxNVWPxOs9k+areDIqu1pbteg+KPi7rio2VuafakOFgxvOoKUObz8pO52DJjLH8vthz9y9h9PMInakL4HhgxEIuN84HvilpESF6d22shczS9QO/8lOuPwLbJRE+tHTqNdWaegVmP35YNzTp5G93j6WPytXUiyewgShHotxoF146u6mRqZEEfUdgffHGBjgDyUIcA8kak2A+0/y2AGw92Owr2smxP4qgWpyVS9A8xQNGomHavce+wmQDdzeu36dyqq5ENGZkhl/p2amy/6ZdWv1mzy7/YOgLV6iM8eDFmKsrbCFMOv1CCgCSLPFVBpF6g8r9bMZQDorpAJeO80ymJLSWUEyJ/lofJajKtgb2UkUJ42v1kDb7SH3zKUy+2/ZFbrYT8fdKJqCx6c5KMYwP0QgsD3MaeLR91W9f4PsnyfvQui1dqSmmahSBaYBQJNlRaEjZmUIQKVBAv2482Dfh7Q0XWhb72TYovf1MIEB2woHzC0yQAbpntV8B5Ya6dm9byRouDh2VlvkOjxUJ57huYe4igdlU4VPf7o6N+ieG3InBZ6Q==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4752.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(39860400002)(136003)(396003)(346002)(376002)(451199021)(6506007)(26005)(6512007)(53546011)(186003)(478600001)(8936002)(5660300002)(8676002)(6486002)(36756003)(44832011)(41300700001)(2906002)(31696002)(4326008)(66476007)(316002)(86362001)(66556008)(66946007)(38100700002)(107886003)(2616005)(83380400001)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MU9paUp0SjlDeVVSajFwVGlhQUFnTEkwUkF5UlRrQ0NyQ2tDUEJualArYktN?=
+ =?utf-8?B?VURPR3k3R1JzalVRYnc3V3cyRUVPUEdBOTV4RGFvaWxZenhrN0ZscnJPSFpm?=
+ =?utf-8?B?NDI1SlFaWEhHenZiZURYZVM5V3FyRjZHWGZZUS9ZTktpOXVLNnF3cHd4WE5J?=
+ =?utf-8?B?S1poMlZOZ1M5UTkzcHc2R0lKVEF6Snh2R3RmekEzUHZtZWxobXJXWElGZlFr?=
+ =?utf-8?B?YkVRZTl1RFFWdk83QnE1TWdrUkxMUlNzYW1WNitnRlAxazlIT2dPYzBvOWh4?=
+ =?utf-8?B?VXg0aUZ4ZUdtUEQxVittby9walNFcnhkODVzNU56STYxTS9qcnUxdktZL0Js?=
+ =?utf-8?B?clhWNDlEd0RGbE5kblozbmFqRC95VWxlMEtTWmxHSUMza3VkME9IbElITlFN?=
+ =?utf-8?B?SDJvbm1FdUtLcmVtN2pISTJtZ01XSmlzSWdvSFVKbytGOExtZ05Oa3FEV0RX?=
+ =?utf-8?B?WTgxMVN6NVBBdTdFNjR6Rk1uRk1FZDB4QW4vc29oVERrYzY5YkpoeGFRbkhu?=
+ =?utf-8?B?QktRdjRKNndybmdsV0N2NU5adnJXbnllamQzcmtSSU5EZGpJMTU1SHhyQTE0?=
+ =?utf-8?B?YXRkUytNUDNySmtYWW9aUzhFcGVPZ3dTL2ZsSjcvWnJUNGdOWTlDZm4wUkhE?=
+ =?utf-8?B?WXd5eGpWMEx3M1NjNTkzdE1ld3JEKzE3QmdBeWptQWxoa09sUGZqM28wNVhl?=
+ =?utf-8?B?dkNtQjVtOGRBL0V2eWxMWitwTWovTkxkaDRDeE94NmNQRXpLQWNnUGtqdmFl?=
+ =?utf-8?B?aGZuNlpja1h0UWRZeERkdEVpbUdXNSswd2U0cytJZUVwR0JLSTNUdnNsbXgy?=
+ =?utf-8?B?T2tPOTlJVmtOZXRkdkpha1ZJNElIVTZnZE5DeFFtZUhzMVVHV3AvempWclZx?=
+ =?utf-8?B?Z2VRYU9NK0g5RExWTzl0WktnaXg2VGQyUmVUZm81dWJYTFgvc2E2MG05bDFI?=
+ =?utf-8?B?RmFyVlNmUjE1RWxKYmpCMVZVenRCZUU3OUdTT0JIR1NiUHdya21BM053LzVm?=
+ =?utf-8?B?M040Q0pNaGM4V01BTkx3UUN4QnVZRnBSM2tCYTJtK0lPWHl0a3pWT2xMVjRQ?=
+ =?utf-8?B?WFcyQTV4T2k2NXJ2ZWljWDgxUHIrRTA5N2w2NmdRcDFGVXl2L2lkZXVTeFJp?=
+ =?utf-8?B?WXlFOFNkVUt5NUNjd0VvWVg5V1RHSkJ6Q2Fsak0rRHlSbCtwSUs5THVSdUw0?=
+ =?utf-8?B?S00wRkc5a1U2VUJFM09KWFJESU53SVdJVVB0ME0rVTNBR3RrTzVBcU9ubVN0?=
+ =?utf-8?B?cC9oWVhNMkRxWG9Qd3d0RWdiM2tUTXdtR2JNUmMvQWdsY2ZqcDFybVN0N2Jh?=
+ =?utf-8?B?WllaV3g3THhVbEhieW5ZcytyN3FHazB3TUtHVC9zenU3VTlxZU9GRWNiWTJJ?=
+ =?utf-8?B?UzhKd002T0JkOENuejZJc2pPWTBEUFZMb0EySzg4SE1EOXZFbGpCLzJEeXpJ?=
+ =?utf-8?B?Vjg4K2IwdW1WMHIrNFNyZkNENXNwMk5WSW9UYlZaY2w4NUR2cStycnhkMlA4?=
+ =?utf-8?B?dHU5cUllemgvQTRSWENzZ2NVQkdteFQ1Zm8wWlpsT3F4QmpWcVZnOS9ZSnpj?=
+ =?utf-8?B?QW84UVowM3E0T1lEN3Z2Nk1qVXFDV0R0RDN5c1dNazllMFI0TG5TRXMxbDVO?=
+ =?utf-8?B?cWV4MldDdWRPWEFKUm1UQ01nQkdiZFk1bUQ1NDhYbk4yU1BHNUtWTHRVWXZH?=
+ =?utf-8?B?b29HbFhPdUVjdlAzOWNyWjJmV1hFejNlMDNVcWdmVWRTY2VudDJmZ0pnZGt5?=
+ =?utf-8?B?WE9UemZHTVRvRlFwekxmUVJDWEJ4WDlyVkJrRG9OMnFFMC9LekNhcEExbnJo?=
+ =?utf-8?B?eUhKQjYxTlZjY3Z5UGVCb1R6WTh1bGhTRXQ4K0lDOXZMN2JzeEgxQkwwZlJx?=
+ =?utf-8?B?K2FrR0FXUHhJOVFNdjB1dnNOY3EzQkYxWTF1amdwaHlzNU9vTVBYaVh1dG94?=
+ =?utf-8?B?dXN1UWpiM3VsNWRPOTFJWnRXc1M4c1dLNWZ3bW10am8rQ1dFOVFNNXhidkln?=
+ =?utf-8?B?eWRDc3ZsWVRlbzV6SHI1UW05dE5uRkRkY0xiencwU1AyT1RTWEVudzRoOS8v?=
+ =?utf-8?B?RUhhMWlURHlvclVpc0pDd0pzYjZCNFhSZ0M4dFAyR3VRNUR6Yjg3cFlaM21J?=
+ =?utf-8?Q?XNW88ayxmJ8fswv0XwhCqJT4K?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: S50RSrk8KVuJNeRBsPSMqY5MkmfSw9ug8lQ1yhB+BUgOQ8rYhexAmAExsmTgDXrm7Ysw90fjgrh32b3bpkCY57LP/D6GiHUSum3HWKjCSgzLIMiXUbI7pr9Bk/eofgemfqPMHU5xWsaMseMyUX5c3nKXstxeYZ131OOlhX36SJ8E+ou/jJIhOJE3aFPmh2vNHGTaCBrst06qpa8LCCLFXg2S/rM5zSEwROwrMmy5xmPGu+ZRzJM0DTP3mNctSEeCZlgbjTgGvoR/K0+BRdRvMCAXoGkKqIQz23LMngIcT8qo7cYSmPb4gVRYCsRgn3zZNAVX3/ysuAYC/yNP8nZ/yAu+qJpMHKDg5wibGnITOQNnpJRiTbgwCfmqY0ujMhuZ+qG8OdvbBI/Ur2EdRIJbHYY8Spnz8tY0OzXUiInAZ7fG3khpSHSDhJngmzYkc9uFrS34dtDuUwr7s8ye3W2Y4V4P+BLCwuXfFlpApLNzAjJBbRVi8ljSxMTkqC6jWpVA9gQ2QWxPMa9t3xWPkSgEu1O1JvgrMuNDmornYa+CJSrKimGxGPGo7c1UMBNuerL0G2mF64xAYXBMd4ExjMi7R/DgS7DE9NO+Xg7s5cYlUPV1cGCvDtqT7JbLA1xKwAa5FhmeM0bLqKFmDL4z8MfK4wCuaYfo5qu3Vj12H6IfGQdj2xCY3P9lENCtjNvslSgrEZcy6Ch8zTiURhCB7c1Zo4Ql2IJC0mIMlYPdWw/GZVz/5a3KJ8gWdU1SjY45ykhqSLPt5j4JJ+44lO90tIfXUEXmwBp4JG8+P48MoEbT76FSWDQGgQFYL5lWLm4OUABts7J6CWlN0E/MNxs2OojbxiUI0Qa0aVclVPjpzPPpXOFg2WwYIPqSuGmwJ//PjBhh1cducCoqDgFvtf4nk6wJ9ZpcU+tAQ3S0RY7G5/+oCX0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ee2a7f3-4aaf-4e9e-9ee3-08db4673e3f7
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4752.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2023 16:32:56.4803
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: u2FgmgJQft4tqiPhcyZmCIvB75V7am7foZAjPNguGbdN7bMXXBwlMO2Gzhlkg2e3EUX3ry2js4dQ/hfETo7k4g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR10MB6003
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-26_08,2023-04-26_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=678 spamscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304260145
+X-Proofpoint-ORIG-GUID: aySIAbyJT9IntZ06Jz51zvhqEp9M0Pqs
+X-Proofpoint-GUID: aySIAbyJT9IntZ06Jz51zvhqEp9M0Pqs
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 4/25/23 12:12 PM, Jens Axboe wrote:
 
-On 21/04/2023 11:39, Konstantin Meskhidze (A) wrote:
-> 
-> 
-> 4/16/2023 7:11 PM, Mickaël Salaün пишет:
+> On 4/25/23 11:55?AM, Junxiao Bi wrote:
+>> Any IO folks can help review this patch?
 >>
->> On 23/03/2023 09:52, Konstantin Meskhidze wrote:
->>> This commit adds network rules support in the ruleset management
->>> helpers and the landlock_create_ruleset syscall.
->>> Refactor user space API to support network actions. Add new network
->>> access flags, network rule and network attributes. Increment Landlock
->>> ABI version. Expand access_masks_t to u32 to be sure network access
->>> rights can be stored. Implement socket_bind() and socket_connect()
->>> LSM hooks, which enable to restrict TCP socket binding and connection
->>
->> "which enables to"
->>
->      Got it.
->>
->>> to specific ports.
->>>
->>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>> ---
+>> Paul needs a confirm from you that the information blktrace exporting
+>> to userspace through the relay files are safe, not leaking information
+>> that userspace shouldn't know in lockdown mode.
+> I don't know anything about what lockdown is, but in terms of blktrace,
+> it is a way to trace meta data associated with IO. It'll tell you things
+> like "task T wants to {read,write} on device D, at offset X, and of size
+> Y". For passthrough IO, it'll also dump the CDB. There's never any
+> actual data traced.
 
-[...]
-
->>> +static u16 get_port(const struct sockaddr *const address)
->>> +{
->>> +	/* Gets port value in host byte order. */
->>> +	switch (address->sa_family) {
->>> +	case AF_UNSPEC:
->>> +	case AF_INET: {
->>> +		const struct sockaddr_in *const sockaddr =
->>> +			(struct sockaddr_in *)address;
->>> +		return ntohs(sockaddr->sin_port);
->>> +	}
->>> +#if IS_ENABLED(CONFIG_IPV6)
->>> +	case AF_INET6: {
->>> +		const struct sockaddr_in6 *const sockaddr_ip6 =
->>> +			(struct sockaddr_in6 *)address;
->>> +		return ntohs(sockaddr_ip6->sin6_port);
->>> +	}
->>> +#endif
->>> +	}
->>> +	WARN_ON_ONCE(1);
->>> +	return 0;
->>> +}
->>> +
->>> +static int check_socket_access(struct socket *sock, struct sockaddr *address, int addrlen, u16 port,
->>> +			       access_mask_t access_request)
->>> +{
->>> +	int ret;
->>> +	bool allowed = false;
->>> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
->>> +	const struct landlock_rule *rule;
->>> +	access_mask_t handled_access;
->>> +	const struct landlock_id id = {
->>> +		.key.data = port,
->>> +		.type = LANDLOCK_KEY_NET_PORT,
->>> +	};
->>> +	const struct landlock_ruleset *const domain = get_current_net_domain();
->>> +
->>> +	if (WARN_ON_ONCE(!domain))
->>> +		return 0;
->>> +	if (WARN_ON_ONCE(domain->num_layers < 1))
->>> +		return -EACCES;
->>> +	/* Check if it's a TCP socket. */
->>> +	if (sock->type != SOCK_STREAM)
->>> +		return 0;
->>> +
->>> +	ret = check_addrlen(address, addrlen);
->>> +	if (ret)
->>> +		return ret;
->>
->> As explained above, this should be replaced with:
->>
->> if (addrlen < offsetofend(struct sockaddr, sa_family))
->> 	return -EINVAL;
->>
->     Ok.
->>
->>> +
->>> +	switch (address->sa_family) {
->>
->>
->> This below block should be moved after the generic switch statement
->> (i.e. once port is checked).
->>
->     Do you mean checking address family after a port has been checked??
+Thanks Jens. Lockdown is a security feature which is trying to limit 
+user's(including root) capability to access security sensitive 
+information inside kernel, there are two modes, read-only access is 
+allowed in "integrity" mode while both read and write access are 
+disabled in "confidentiality" mode.
 
 
-These specific AF_UNSPEC checks should be in an `if (address->sa_family 
-== AF_UNSPEC)` block after the generic AF_UNSPEC, AF_INET, and AF_INET6 
-checks in the address->sa_family switch/case, because the checks and 
-errors order must be consistent whatever the sa_family. The AF_UNSPEC 
-checks are really an exception to the AF_INET ones, and should then come 
-after.
+Paul,  do you have any other concerns regarding blktrace? As Jens 
+mentioned, blktrace just exported IO metadata to Userspace, those were 
+not security sensitive information.
 
-This may look like this:
+Thanks,
 
-switch (address->sa_family) {
-case AF_UNSPEC:
-case AF_INET:
-	port = ...;
-	break;
-#if IS_ENABLED(CONFIG_IPV6)
-	case AF_INET6:
-	port = ...;
-	break;
-#endif
-default:
-	return 0;
-}
+Junxiao.
 
-/* Specific AF_UNSPEC handling. */
-if (address->sa_family == AF_UNSPEC) {
-	...
-	if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP)
-		return 0;
-	...
-}
-
-id.key.data = (__force uintptr_t)port;
-BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
-
-rule = landlock_find_rule(domain, id);
-handled_access = landlock_init_layer_masks(
-	domain, access_request, &layer_masks,
-	LANDLOCK_KEY_NET_PORT);
-if (landlock_unmask_layers(rule, handled_access,
-				 &layer_masks,
-				 ARRAY_SIZE(layer_masks)))
-	return 0;
-
-return -EACCES;
-
-
-
-
-
-> 
->>
->>
->>> +	case AF_UNSPEC:
->>> +		/*
->>> +		 * Connecting to an address with AF_UNSPEC dissolves the TCP
->>> +		 * association, which have the same effect as closing the
->>> +		 * connection while retaining the socket object (i.e., the file
->>> +		 * descriptor).  As for dropping privileges, closing
->>> +		 * connections is always allowed.
->>> +		 */
->>> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP)
->>> +			return 0;
->>> +
->>> +		/*
->>> +		 * For compatibility reason, accept AF_UNSPEC for bind
->>> +		 * accesses (mapped to AF_INET) only if the address is
->>> +		 * INADDR_ANY (cf. __inet_bind).  Checking the address is
->>> +		 * required to not wrongfully return -EACCES instead of
->>> +		 * -EAFNOSUPPORT.
->>> +		 */
->>> +		if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
->>> +			const struct sockaddr_in *const sockaddr =
->>> +				(struct sockaddr_in *)address;
->>> +
->>> +			if (sockaddr->sin_addr.s_addr != htonl(INADDR_ANY))
->>> +				return -EAFNOSUPPORT;
->>> +		}
->>> +
->>> +		fallthrough;
->>
->>
->>
->> case AF_UNSPEC:
->>
->>> +	case AF_INET:
->>
->> if (addrlen < sizeof(struct sockaddr_in))
->> 	return -EINVAL;
->>
->> port = ((struct sockaddr_in *)address)->sin_port;
->> break;
->>
->>
->>> +#if IS_ENABLED(CONFIG_IPV6)
->>> +	case AF_INET6:
->>
->> if (addrlen < SIN6_LEN_RFC2133)
->> 	return -EINVAL;
->>
->> port = ((struct sockaddr_in6 *)address)->sin6_port;
->> break;
->>
->>
->>> +#endif
->>
->> /* Allows unhandled protocols. */
->> default:
->> 	return 0;
->> }
->>
->> if (address->sa_family == AF_UNSPEC) {
->>
->> // Add here the above AF_UNSPEC checks to be consistent with the
->> EINVAL/EAFNOSUPPORT return ordering.
->>
->> }
->>
->> id.key.data = (__force uintprt_t)port;
->> BUID_BUG_ON(...);
->>
->     Will be refactored. Thanks.
