@@ -2,96 +2,410 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B408C77B78
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Apr 2023 18:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87348C7618E
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Apr 2023 19:10:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239356AbjDZSS2 (ORCPT
+        id S239137AbjDZTKX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Apr 2023 14:18:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47300 "EHLO
+        Wed, 26 Apr 2023 15:10:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234643AbjDZSS1 (ORCPT
+        with ESMTP id S239394AbjDZTKU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Apr 2023 14:18:27 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38A3A83D4
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Apr 2023 11:18:26 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-b9246a5f3feso13273149276.1
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Apr 2023 11:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1682533105; x=1685125105;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k+1qxOGHVHkRrPD98Sn/YZv0hR5wBqMBpBQkLKg2EAw=;
-        b=C+4TVFBhuVp0jm6l04YVUZka7mb34JEyyTEUWJf1osTMczd7i5hEWV2TzsBAb8yxgB
-         DmNlslPBa2Zlut/dDFFq68D7Y4OeY3/9Jg/B4i8YIVFdX+5jA9XhDw2X6l4zw3YSMpD+
-         9Nh63tBj7KNbpDjsexBc14p6TsxkQ5nT80msUUC4B4VisaQVMWCBcOsVNuHDiOayPlwS
-         K/47nuadYZ/L9NH9c7djhcgHdEfbKMc5IocnJwXtNHuevT/h+u2l+deJlfeJ9zNkRepL
-         nC5vPVGG7g1zjLqhidyZOLOwi74z9ZZZPR5miTtggH0ZkRB6p9qY6Amsi9oIalZEsU+V
-         iw2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682533105; x=1685125105;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k+1qxOGHVHkRrPD98Sn/YZv0hR5wBqMBpBQkLKg2EAw=;
-        b=XKb0zq4U8AH0tbA6KkkIih67ekfSuF6/8aAxQr/kJaDEy9wtyTENhIw+wKGxNdlTjn
-         8DIoY3oIxBrCfM0ppKE1/PHNNoO+2nlZNJ9ckBSFyVcvDsfKTPPr0iI6eRzhRPjSH/XE
-         MdoDmTa+M3XjaKDbps5fsd/nlOa5WSeNLG8FL7g0Pb9rx1rWbJaDOKL4ymf07fdpvdB9
-         2jZrr6X+FNoVVYsfdoOEmD0uSyomw6UDbCCczPIspkDAflFYoHz/m+ycvXzJcffRdqMJ
-         pgt0RDOY4Xn2/dYAJAstv9lsDCSmKJA3nCa0H0d770E4ywCncE52gjGfJ29B3UIEZ71Q
-         ncHg==
-X-Gm-Message-State: AC+VfDyEsk/XTbtWOHtTuj4Ep4kNsMG6VPoqz5idoqgh1H23rHtJytcB
-        ScGc0OET8lBuwU6KDBSQ4QkqYXYc7Zn1rT53GeeK
-X-Google-Smtp-Source: ACHHUZ7PuRiZvR/La6IIPvSLwxPt5z5qVEWtyW0Uk9rxxxvkFWga52jGOFkX3y24DJcOqnynOEMD4YGtuRqnHrzbBVE=
-X-Received: by 2002:a05:6902:1029:b0:b99:f3ab:8a43 with SMTP id
- x9-20020a056902102900b00b99f3ab8a43mr6853968ybt.38.1682533105363; Wed, 26 Apr
- 2023 11:18:25 -0700 (PDT)
+        Wed, 26 Apr 2023 15:10:20 -0400
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 031C03C39
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Apr 2023 12:10:12 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Q67jZ4nJVzMqFhm;
+        Wed, 26 Apr 2023 21:10:10 +0200 (CEST)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Q67jY6fGvzMppwS;
+        Wed, 26 Apr 2023 21:10:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1682536210;
+        bh=yeNJbARILPe55mB7CG9/Gg4enw35pJDPzRdPqjbSVfA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Hjmhz39WUeKlAQWi+0deMp9pBn1FChbIcRmlE15Q9sE9NTG21qTObQSYA2lUpIx74
+         +hwVGNOFPw0PN0UJ9bKUEmy/GB8/I7byfgGlxFcIxa9SO6Wfqpi3B6AvgaSoVoVz9R
+         uJDC+c7bv9eCGXofDoJFR6J0LhExTor+VDUc8AME=
+Message-ID: <33c1f049-12e4-f06d-54c9-b54eec779e6f@digikod.net>
+Date:   Wed, 26 Apr 2023 21:10:08 +0200
 MIME-Version: 1.0
-References: <CAHC9VhQmV7=+eP0Rh6f+grz6=wigoHKuX5zZuMYVazsV8HVaVw@mail.gmail.com>
- <CAHk-=wji9GerfEOQ=9O6OOULFmpHneLPdvYtv+HM2ZK+tB3FDw@mail.gmail.com>
-In-Reply-To: <CAHk-=wji9GerfEOQ=9O6OOULFmpHneLPdvYtv+HM2ZK+tB3FDw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 26 Apr 2023 14:18:14 -0400
-Message-ID: <CAHC9VhSCO2-o=AMpxSJPKe0MVvHdyLBPiKcfvM_AvW156XBx8A@mail.gmail.com>
-Subject: Re: [GIT PULL] LSM patches for v6.4
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: 
+Subject: Re: [PATCH v10 11/13] selftests/landlock: Add 10 new test suites
+ dedicated to network
+Content-Language: en-US
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20230323085226.1432550-1-konstantin.meskhidze@huawei.com>
+ <20230323085226.1432550-12-konstantin.meskhidze@huawei.com>
+ <89335fdc-a9d4-5912-e766-5efd15877b62@digikod.net>
+ <6b7b5b4f-62b2-91cc-0607-94e8c9f71e23@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <6b7b5b4f-62b2-91cc-0607-94e8c9f71e23@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 24, 2023 at 2:28=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, Apr 20, 2023 at 4:53=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> >
-> > Due to some personal logistics challenges over the next few days I'm
-> > sending the LSM pull request for Linux v6.4 a bit early.  Here is a
-> > quick summary of the changes:
->
-> Well, you only had the summary, not where to pull from or what the
-> resulting diffstat and shortlog would be.
->
-> Normally I'd ask for a proper new pull request, but  since you
-> explicitly mention the logistics challenges, I looked around.
->
-> And it was obvious enough what the thing you wanted me to pull was:
-> you always use the same naming format for the tags etc, and the end
-> result matches what you described in the summary.
->
-> So I've pulled your 'lsm-pr-20230420' tag, but in general I really do
-> want to see that mentioned explicitly along with the diffstat etc
-> noise from 'git request-pull'.
 
-Ooof, my apologies, I suspect I was a bit distracted (and a little
-concerned about the size of the diffstat) when I sent that pull
-request last week and I simply forgot to do the final cut-n-paste of
-the pull request info into the email.
+On 21/04/2023 12:02, Konstantin Meskhidze (A) wrote:
+> 
+> 
+> 4/16/2023 7:13 PM, Mickaël Salaün пишет:
+>> First batch of the tests review:
+>>
+>> On 23/03/2023 09:52, Konstantin Meskhidze wrote:
+>>> These test suites try to check edge cases for TCP sockets
+>>> bind() and connect() actions.
+>>>
+>>> socket:
+>>> * bind: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
+>>> * connect: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
+>>> * bind_afunspec: Tests with non-landlocked/landlocked restrictions
+>>> for bind action with AF_UNSPEC socket family.
+>>> * connect_afunspec: Tests with non-landlocked/landlocked restrictions
+>>> for connect action with AF_UNSPEC socket family.
+>>> * ruleset_overlap: Tests with overlapping rules for one port.
+>>> * ruleset_expanding: Tests with expanding rulesets in which rules are
+>>> gradually added one by one, restricting sockets' connections.
+>>> * inval: Tests with invalid user space supplied data:
+>>>       - out of range ruleset attribute;
+>>>       - unhandled allowed access;
+>>>       - zero port value;
+>>>       - zero access value;
+>>>       - legitimate access values;
+>>> * bind_connect_inval_addrlen: Tests with invalid address length.
+>>> * inval_port_format: Tests with wrong port format for ipv4/ipv6 sockets
+>>> and with port values more than U16_MAX.
+>>>
+>>> layout1:
+>>> * with_net: Tests with network bind() socket action within
+>>> filesystem directory access test.
+>>>
+>>> Test coverage for security/landlock is 94.5% of 945 lines according
+>>> to gcc/gcov-11.
+>>>
+>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>>> ---
+>>>
+>>> Changes since v9:
+>>> * Fixes mixing code declaration and code.
+>>> * Refactors FIXTURE_TEARDOWN() with clang-format.
+>>> * Replaces struct _fixture_variant_socket with
+>>> FIXTURE_VARIANT(socket).
+>>
+>> I was pretty sure clang-format and checkpatch.pl were agree with
+>> FIXTURE_VARIANT(), but that was not the case. You'll need to get back to
+>> struct _fixture_variant_socket to pass both these checks, and also the
+>> "/* struct _fixture_variant_socket */" comments.
+>>
+>     Ok. I will refator this part. Thanks.
+>>
+>>> * Deletes useless condition if (variant->is_sandboxed)
+>>> in multiple locations.
+>>> * Deletes zero_size argument in bind_variant() and
+>>> connect_variant().
+>>> * Adds tests for port values exceeding U16_MAX.
+>>>
+>>> Changes since v8:
+>>> * Adds is_sandboxed const for FIXTURE_VARIANT(socket).
+>>> * Refactors AF_UNSPEC tests.
+>>> * Adds address length checking tests.
+>>> * Convert ports in all tests to __be16.
+>>> * Adds invalid port values tests.
+>>> * Minor fixes.
+>>>
+>>> Changes since v7:
+>>> * Squashes all selftest commits.
+>>> * Adds fs test with network bind() socket action.
+>>> * Minor fixes.
+>>>
+>>> ---
+>>>    tools/testing/selftests/landlock/config     |    4 +
+>>>    tools/testing/selftests/landlock/fs_test.c  |   64 +
+>>>    tools/testing/selftests/landlock/net_test.c | 1176 +++++++++++++++++++
+>>>    3 files changed, 1244 insertions(+)
+>>>    create mode 100644 tools/testing/selftests/landlock/net_test.c
+>>>
+>>> diff --git a/tools/testing/selftests/landlock/config b/tools/testing/selftests/landlock/config
+>>> index 0f0a65287bac..71f7e9a8a64c 100644
+>>> --- a/tools/testing/selftests/landlock/config
+>>> +++ b/tools/testing/selftests/landlock/config
+>>> @@ -1,3 +1,7 @@
+>>> +CONFIG_INET=y
+>>> +CONFIG_IPV6=y
+>>> +CONFIG_NET=y
+>>> +CONFIG_NET_NS=y
+>>>    CONFIG_OVERLAY_FS=y
+>>>    CONFIG_SECURITY_LANDLOCK=y
+>>>    CONFIG_SECURITY_PATH=y
+>>> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+>>> index b762b5419a89..9dfbef276e4e 100644
+>>> --- a/tools/testing/selftests/landlock/fs_test.c
+>>> +++ b/tools/testing/selftests/landlock/fs_test.c
+>>> @@ -8,8 +8,10 @@
+>>>     */
+>>>
+>>>    #define _GNU_SOURCE
+>>> +#include <arpa/inet.h>
+>>>    #include <fcntl.h>
+>>>    #include <linux/landlock.h>
+>>> +#include <netinet/in.h>
+>>>    #include <sched.h>
+>>>    #include <stdio.h>
+>>>    #include <string.h>
+>>> @@ -17,6 +19,7 @@
+>>>    #include <sys/mount.h>
+>>>    #include <sys/prctl.h>
+>>>    #include <sys/sendfile.h>
+>>> +#include <sys/socket.h>
+>>>    #include <sys/stat.h>
+>>>    #include <sys/sysmacros.h>
+>>>    #include <unistd.h>
+>>> @@ -4413,4 +4416,65 @@ TEST_F_FORK(layout2_overlay, same_content_different_file)
+>>>    	}
+>>>    }
+>>>
+>>> +#define IP_ADDRESS "127.0.0.1"
+>>> +
+>>> +TEST_F_FORK(layout1, with_net)
+>>> +{
+>>> +	const struct rule rules[] = {
+>>> +		{
+>>> +			.path = dir_s1d2,
+>>> +			.access = ACCESS_RO,
+>>> +		},
+>>> +		{},
+>>> +	};
+>>> +	int sockfd;
+>>> +	int sock_port = 15000;
+>>> +	struct sockaddr_in addr4;
+>>> +
+>>> +	struct landlock_ruleset_attr ruleset_attr_net = {
+>>> +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>>> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>>> +	};
+>>> +	struct landlock_net_service_attr net_service = {
+>>> +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
+>>> +
+>>> +		.port = sock_port,
+>>> +	};
+>>> +
+>>> +	addr4.sin_family = AF_INET;
+>>> +	addr4.sin_port = htons(sock_port);
+>>> +	addr4.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+>>> +	memset(&addr4.sin_zero, '\0', 8);
+>>> +
+>>> +	/* Creates ruleset for network access. */
+>>> +	const int ruleset_fd_net = landlock_create_ruleset(
+>>> +		&ruleset_attr_net, sizeof(ruleset_attr_net), 0);
+>>> +	ASSERT_LE(0, ruleset_fd_net);
+>>> +
+>>> +	/* Adds a network rule. */
+>>> +	ASSERT_EQ(0,
+>>> +		  landlock_add_rule(ruleset_fd_net, LANDLOCK_RULE_NET_SERVICE,
+>>> +				    &net_service, 0));
+>>> +
+>>> +	enforce_ruleset(_metadata, ruleset_fd_net);
+>>> +	ASSERT_EQ(0, close(ruleset_fd_net));
+>>> +
+>>> +	const int ruleset_fd = create_ruleset(_metadata, ACCESS_RW, rules);
+>>> +	ASSERT_LE(0, ruleset_fd);
+>>> +	enforce_ruleset(_metadata, ruleset_fd);
+>>> +	ASSERT_EQ(0, close(ruleset_fd));
+>>> +
+>>> +	/* Tests on a directory with the network rule loaded. */
+>>> +	ASSERT_EQ(0, test_open(dir_s1d2, O_RDONLY));
+>>> +	ASSERT_EQ(0, test_open(file1_s1d2, O_RDONLY));
+>>> +
+>>> +	sockfd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
+>>> +	ASSERT_LE(0, sockfd);
+>>> +	/* Binds a socket to port 15000. */
+>>> +	ASSERT_EQ(0, bind(sockfd, &addr4, sizeof(addr4)));
+>>> +
+>>> +	/* Closes bounded socket. */
+>>> +	ASSERT_EQ(0, close(sockfd));
+>>> +}
+>>> +
+>>>    TEST_HARNESS_MAIN
+>>> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+>>> new file mode 100644
+>>> index 000000000000..d15a93c5b2c3
+>>> --- /dev/null
+>>> +++ b/tools/testing/selftests/landlock/net_test.c
+>>> @@ -0,0 +1,1176 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +/*
+>>> + * Landlock tests - Network
+>>> + *
+>>> + * Copyright (C) 2022 Huawei Tech. Co., Ltd.
+>>> + */
+>>> +
+>>> +#define _GNU_SOURCE
+>>> +#include <arpa/inet.h>
+>>> +#include <errno.h>
+>>> +#include <fcntl.h>
+>>> +#include <linux/landlock.h>
+>>> +#include <linux/in.h>
+>>> +#include <sched.h>
+>>> +#include <stdint.h>
+>>> +#include <string.h>
+>>> +#include <sys/prctl.h>
+>>> +#include <sys/socket.h>
+>>> +
+>>> +#include "common.h"
+>>> +
+>>> +#define MAX_SOCKET_NUM 10
+>>
+>> You can define all other constants with either "const short" or const
+>> char ...[]" instead of "#define" (and use lower case).
+>>
+>     Thanks for the tip.
+>>
+>>> +
+>>> +#define SOCK_PORT_START 3470
+>>> +#define SOCK_PORT_ADD 10
+>>> +
+>>> +#define IP_ADDRESS_IPV4 "127.0.0.1"
+>>
+>> const char loopback_ipv4[] = "127.0.0.1";
+>>
+>     Ok.
+>>
+>>> +#define IP_ADDRESS_IPV6 "::1"
+>>> +#define SOCK_PORT 15000
+>>> +
+>>> +/* Number pending connections queue to be hold. */
+>>> +#define BACKLOG 10
+>>> +
+>>> +const struct sockaddr addr_unspec = { .sa_family = AF_UNSPEC };
+>>
+>> There is no need for this variable to be global.
+> 
+>     Ok. Thanks.
+>>
+>>
+>>> +
+>>> +/* Invalid attribute, out of landlock network access range. */
+>>> +#define LANDLOCK_INVAL_ATTR 7
+>>> +
+>>> +FIXTURE(socket)
+>>> +{
+>>> +	uint port[MAX_SOCKET_NUM];
+>>> +	struct sockaddr_in addr4[MAX_SOCKET_NUM];
+>>> +	struct sockaddr_in6 addr6[MAX_SOCKET_NUM];
+>>> +};
+>>> +
+>>> +FIXTURE_VARIANT(socket)
+>>> +{
+>>> +	const bool is_ipv4;
+>>> +	const bool is_sandboxed;
+>>> +};
+>>> +
+>>> +/* clang-format off */
+>>> +FIXTURE_VARIANT_ADD(socket, ipv4) {
+>>> +	/* clang-format on */
+>>> +	.is_ipv4 = true,
+>>> +	.is_sandboxed = false,
+>>> +};
+>>> +
+>>> +/* clang-format off */
+>>> +FIXTURE_VARIANT_ADD(socket, ipv4_sandboxed) {
+>>> +	/* clang-format on */
+>>> +	.is_ipv4 = true,
+>>> +	.is_sandboxed = true,
+>>> +};
+>>> +
+>>> +/* clang-format off */
+>>> +FIXTURE_VARIANT_ADD(socket, ipv6) {
+>>> +	/* clang-format on */
+>>> +	.is_ipv4 = false,
+>>> +	.is_sandboxed = false,
+>>> +};
+>>> +
+>>> +/* clang-format off */
+>>> +FIXTURE_VARIANT_ADD(socket, ipv6_sandboxed) {
+>>> +	/* clang-format on */
+>>> +	.is_ipv4 = false,
+>>> +	.is_sandboxed = true,
+>>> +};
+>>> +
+>>> +static int create_socket_variant(const FIXTURE_VARIANT(socket) * const variant,
+>>> +				 const int type)
+>>
+>> socket_variant() would be more consistent with other names.
+> 
+>     Sorry. What do mean ".. other names" ???
 
-Regardless, thanks for poking around and finding the right tag to pull.
+I meant with other *_variant() helpers. You can rename 
+create_socket_variant() to socket_variant() (i.e. original function name 
++ _variant).
 
---=20
-paul-moore.com
+
+>> [...]
+>>
+>>> +
+>>> +	/* Closes the connection*/
+>>> +	ASSERT_EQ(0, close(sockfd));
+>>> +
+>>> +	addr4.sin_family = AF_INET;
+>>> +	addr4.sin_port = htons(UINT16_MAX);
+>>> +	addr4.sin_addr.s_addr = htonl(INADDR_ANY);
+>>> +	memset(&addr4.sin_zero, '\0', 8);
+>>> +
+>>> +	/* Creates a socket. */
+>>> +	sockfd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
+>>
+>> Why not create_socket_variant()? Same question for all direct socket()
+>> calls.
+> 
+>     I thought it would be easier to add such specific tests than changing
+>     create_socket_variant(), cause its needs to add more variabless in
+> FIXTURE_VARIANT(socket) and makes tests' logic more tricky.
+
+Hmm, running all variants for that would indeed not be useful. However, 
+you can remove the addr* fields from the FIXTURE(socket_standalone) struct.
+
+Because there is no teardown, you should be able to replace all 
+TEST_F_FORK() with TEST_F().
+
+BTW, the socket's `self->port` field should be an `unsigned short` type.
+
+bind_afunspec doesn't need any fixture but only the `is_sandboxed` 
+variant, so you can use TEST_F(port, bind) instead, and declare a `port` 
+fixture with only a self->port data. This should also apply to 
+TEST_F(port, inval).
+
+To be consistent, you can also rename the `socket` fixture into `inet` 
+because it defines a set of IP (address) properties.
+
+
+
+>>
+>>
+>>> +	ASSERT_LE(0, sockfd);
+>>> +	/* Allows to reuse of local address. */
+>>> +	ASSERT_EQ(0, setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &one,
+>>> +				sizeof(one)));
+>>> +
+>>> +	/* Binds the socket to UINT16_MAX. */
+>>> +	ret = bind(sockfd, &addr4, sizeof(addr4));
+>>> +	ASSERT_EQ(0, ret);
+>>> +
+>>> +	/* Closes the connection*/
+>>> +	ASSERT_EQ(0, close(sockfd));
+>>> +}
+
+A line break here would be nice.
+
+
+>>> +TEST_HARNESS_MAIN
+>>> --
+>>> 2.25.1
+>>>
+>> .
