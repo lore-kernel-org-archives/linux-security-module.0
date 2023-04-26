@@ -2,53 +2,50 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D55C77B78
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Apr 2023 13:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EFDC77B78
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Apr 2023 14:15:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241193AbjDZN6m (ORCPT
+        id S241275AbjDZOPf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Apr 2023 09:58:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47392 "EHLO
+        Wed, 26 Apr 2023 10:15:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240952AbjDZN6l (ORCPT
+        with ESMTP id S241242AbjDZOPd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Apr 2023 09:58:41 -0400
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82ADD658C
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Apr 2023 06:58:37 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Q60p31RkfzMqKm8;
-        Wed, 26 Apr 2023 15:58:35 +0200 (CEST)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Q60p10S6VzMpnPs;
-        Wed, 26 Apr 2023 15:58:32 +0200 (CEST)
+        Wed, 26 Apr 2023 10:15:33 -0400
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63EB36E87;
+        Wed, 26 Apr 2023 07:15:31 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Q619Y5NhJzMq20C;
+        Wed, 26 Apr 2023 16:15:29 +0200 (CEST)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Q619Y0BqHz1C3;
+        Wed, 26 Apr 2023 16:15:28 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1682517515;
-        bh=q7YipNjqfn/z8kn3IJil8RM+axjuqfK/m4XxAXBUf+Y=;
+        s=20191114; t=1682518529;
+        bh=FcZefFzib5MfGlesa1STquGjF77TMrAHm6Rc4XBvbgg=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=W3ugWyQJtbD1oliKhX2Yzdcz480Vu9ygX9tFHZIoWk3rLpcrlhe0J0wGmRPKueSKw
-         3RvQkqQa2k9xP8f2ipclUpzNvmCuv6awzTMTl9zgXLWrce99hInBlJuFELbhM9S+66
-         ZTIfZHvu2s/84MMyRA7LTcejVHUjMyRZebV9J06g=
-Message-ID: <99c0648d-deec-c7e2-a54f-94a7f6a3a50f@digikod.net>
-Date:   Wed, 26 Apr 2023 15:58:31 +0200
+        b=asRumu1lxURvTBi1FJdnBXmIBRxcUKrN2uLXAaKuIq9iKmnLbsjL+Hxvx58rBFBbK
+         +5aOAIg0ipTOQj53T+EKQkH9tUqRAKTaCLOIbdjc6+jCkk0R3pRFFBiId95P4TRzxP
+         sX97wtguz6vHJhTwKYrKTAryGHNU9u0MUtZ4ZVfw=
+Message-ID: <8db42d8b-1ed0-6b00-de5b-57f350472160@digikod.net>
+Date:   Wed, 26 Apr 2023 16:15:28 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH -next v2 0/6] landlock: add chmod and chown support
+Subject: Re: [PATCH v10 09/13] landlock: Add network rules and TCP hooks
+ support
 Content-Language: en-US
-To:     xiujianfeng <xiujianfeng@huawei.com>, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, shuah@kernel.org,
-        corbet@lwn.net
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-doc@vger.kernel.org, roberto.sassu@huawei.com,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-References: <20220827111215.131442-1-xiujianfeng@huawei.com>
- <d55baf4d-01d3-e4d7-e07f-9658d1606a8c@huawei.com>
- <a4dc7c12-b485-2eb2-add5-4f7a387a50fa@digikod.net>
- <5fc97b5b-e76f-99c7-7314-6bb16851f66e@huawei.com>
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20230323085226.1432550-1-konstantin.meskhidze@huawei.com>
+ <20230323085226.1432550-10-konstantin.meskhidze@huawei.com>
+ <9147b444-dec4-52c3-c724-f19b3f842738@digikod.net>
+ <07629a06-935c-debf-d490-e02e5ee9f9ec@huawei.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <5fc97b5b-e76f-99c7-7314-6bb16851f66e@huawei.com>
+In-Reply-To: <07629a06-935c-debf-d490-e02e5ee9f9ec@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
@@ -56,142 +53,214 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-
-On 24/04/2023 10:52, xiujianfeng wrote:
+On 21/04/2023 11:39, Konstantin Meskhidze (A) wrote:
 > 
 > 
-> On 2023/4/21 1:40, Mickaël Salaün wrote:
+> 4/16/2023 7:11 PM, Mickaël Salaün пишет:
 >>
->> On 18/04/2023 12:53, xiujianfeng wrote:
->>> Hi Mickael,
+>> On 23/03/2023 09:52, Konstantin Meskhidze wrote:
+>>> This commit adds network rules support in the ruleset management
+>>> helpers and the landlock_create_ruleset syscall.
+>>> Refactor user space API to support network actions. Add new network
+>>> access flags, network rule and network attributes. Increment Landlock
+>>> ABI version. Expand access_masks_t to u32 to be sure network access
+>>> rights can be stored. Implement socket_bind() and socket_connect()
+>>> LSM hooks, which enable to restrict TCP socket binding and connection
+>>
+>> "which enables to"
+>>
+>      Got it.
+>>
+>>> to specific ports.
 >>>
->>> Sorry about the long silence on this work, As we known this work depends
->>> on another work about changing argument from struct dentry to struct
->>> path for some attr/xattr related lsm hooks, I'm stuck with this thing,
->>> because IMA/EVM is a special security module which is not LSM-based
->>> currently, and severely coupled with the file system. so I am waiting
->>> for Roberto Sassu' work (Move IMA and EVM to the LSM infrastructure) to
->>> be ready, I think it can make my work more easy. you can find
->>> Roberto'work here,
->>> https://lwn.net/ml/linux-kernel/20230303181842.1087717-1-roberto.sassu@huaweicloud.com/
->>>
->>> Any good idea are welcome, thanks.
+>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>>> ---
+
+[...]
+
+>>> +static u16 get_port(const struct sockaddr *const address)
+>>> +{
+>>> +	/* Gets port value in host byte order. */
+>>> +	switch (address->sa_family) {
+>>> +	case AF_UNSPEC:
+>>> +	case AF_INET: {
+>>> +		const struct sockaddr_in *const sockaddr =
+>>> +			(struct sockaddr_in *)address;
+>>> +		return ntohs(sockaddr->sin_port);
+>>> +	}
+>>> +#if IS_ENABLED(CONFIG_IPV6)
+>>> +	case AF_INET6: {
+>>> +		const struct sockaddr_in6 *const sockaddr_ip6 =
+>>> +			(struct sockaddr_in6 *)address;
+>>> +		return ntohs(sockaddr_ip6->sin6_port);
+>>> +	}
+>>> +#endif
+>>> +	}
+>>> +	WARN_ON_ONCE(1);
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int check_socket_access(struct socket *sock, struct sockaddr *address, int addrlen, u16 port,
+>>> +			       access_mask_t access_request)
+>>> +{
+>>> +	int ret;
+>>> +	bool allowed = false;
+>>> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
+>>> +	const struct landlock_rule *rule;
+>>> +	access_mask_t handled_access;
+>>> +	const struct landlock_id id = {
+>>> +		.key.data = port,
+>>> +		.type = LANDLOCK_KEY_NET_PORT,
+>>> +	};
+>>> +	const struct landlock_ruleset *const domain = get_current_net_domain();
+>>> +
+>>> +	if (WARN_ON_ONCE(!domain))
+>>> +		return 0;
+>>> +	if (WARN_ON_ONCE(domain->num_layers < 1))
+>>> +		return -EACCES;
+>>> +	/* Check if it's a TCP socket. */
+>>> +	if (sock->type != SOCK_STREAM)
+>>> +		return 0;
+>>> +
+>>> +	ret = check_addrlen(address, addrlen);
+>>> +	if (ret)
+>>> +		return ret;
 >>
->> Thanks for the update Xiu.
+>> As explained above, this should be replaced with:
 >>
->> Which part would be needed from Roberto's patch series?
+>> if (addrlen < offsetofend(struct sockaddr, sa_family))
+>> 	return -EINVAL;
 >>
-> As we discussed before, the two access rights that need to be added and
-> their usage is as below:
-> LANDLOCK_ACCESS_FS_WRITE_METADATA controls
-> 1.inode_setattr
-> 2.inode_setxattr
-> 3.inode_removexattr
-> 4.inode_set_acl
-> 5.inode_remove_acl
-> LANDLOCK_ACCESS_FS_READ_METADATA controls
-> 1.inode_getattr
-> 2.inode_get_acl
-> 3.inode_getxattr
-> 4.inode_listxattr
-> 
-> all these APIs should be changed to use struct path instead of dentry,
-> and then several vfs APIs as follows are invovled:
-> notify_change,
-> __vfs_setxattr_locked,
-> __vfs_removexattr_locked,
-> __vfs_setxattr_noperm
-> vfs_set_acl
-> vfs_remove_acl
-> vfs_getxattr
-> vfs_listxattr
-> vfs_get_acl
-> and also include some LSM hooks such as inode_post_setxattr and
-> inode_setsecctx.
-> 
-> Since the original places where pass dentry to security_inode_xxx may
-> not have any struct path, we have to pass it from the top caller, so
-> this also touches lots of filesystems(e.g. cachefiles, ecryptfs, ksmbd,
-> nfsd, overlayfs...).
-> 
-> Other LSMs such as selinux, smack can be easy to refator because they
-> are LSM-based, and if VFS passes path to security_inode_xxx and they can
-> just use path->dentry instead inside they own modules.
-> 
-> AS for IMA/EVM, unfortunately they are not LSM-based and coupled with
-> the file system. To make things worse, there is a recursive dependency
-> situation during the update of extended attribute which happen as follows:
-> 
-> __vfs_setxattr_noperm
->    => security_inode_post_setxattr
->      => evm_inode_post_setxattr
->        => evm_update_evmxattr
-> => __vfs_setxattr_noperm
-> 
-> To change the argument of __vfs_setxattr_noperm from a dentry to the
-> path structure, the two EVM functions would have to be altered as well.
-> However, evm_update_evmxattr is called by 3 other EVM functions who
-> lives in the very heart of the complicated EVM framework. Any change to
-> them would cause a nasty chain reaction in EVM and, as IMA would trigger
-> EVM directly, in IMA as well.
-> 
-> There is another callchain as follow:
-> ima_appraise_measurement
->    =>evm_verifyxattr
->      =>evm_verifyxattr
->        =>evm_verify_hmac
-> 	=>evm_calc_hash
-> 	   =>evm_calc_hmac_or_hash
-> 	     =>vfs_getxattr
-> Passing struct path into vfs_getxattr() would also affect this
-> callchain. Currently ima_appraise_measurment accepts a struct file, and
-> dentry is generated from file_dentry(file) in order to mitigate a
-> deadlock issue involving overlayfs(commit e71b9dff0634ed). Once
-> &file->f_path is passed through this callchain, and someone wants the
-> dentry, it will be using file->f_path.dentry, which is different from
-> file_dentry(file). In the overlayfs scenario, may this cause an issue?
+>     Ok.
+>>
+>>> +
+>>> +	switch (address->sa_family) {
+>>
+>>
+>> This below block should be moved after the generic switch statement
+>> (i.e. once port is checked).
+>>
+>     Do you mean checking address family after a port has been checked??
 
-I might be OK, but this need to be tested.
 
-> 
-> The patchset of moving IMA and EVM into the LSM infrastructe would be
-> helpfull but still can not completely resolve this situation. more
-> refactor would be needed in EVM. That's all that's happening right now.
+These specific AF_UNSPEC checks should be in an `if (address->sa_family 
+== AF_UNSPEC)` block after the generic AF_UNSPEC, AF_INET, and AF_INET6 
+checks in the address->sa_family switch/case, because the checks and 
+errors order must be consistent whatever the sa_family. The AF_UNSPEC 
+checks are really an exception to the AF_INET ones, and should then come 
+after.
 
-OK, thanks for the detailed explanation!
+This may look like this:
 
-I guess you could start with easier hooks (e.g. inode_getattr and 
-inode_setattr) to see if there is potentially other implications, and 
-incrementally build on that.
+switch (address->sa_family) {
+case AF_UNSPEC:
+case AF_INET:
+	port = ...;
+	break;
+#if IS_ENABLED(CONFIG_IPV6)
+	case AF_INET6:
+	port = ...;
+	break;
+#endif
+default:
+	return 0;
+}
+
+/* Specific AF_UNSPEC handling. */
+if (address->sa_family == AF_UNSPEC) {
+	...
+	if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP)
+		return 0;
+	...
+}
+
+id.key.data = (__force uintptr_t)port;
+BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
+
+rule = landlock_find_rule(domain, id);
+handled_access = landlock_init_layer_masks(
+	domain, access_request, &layer_masks,
+	LANDLOCK_KEY_NET_PORT);
+if (landlock_unmask_layers(rule, handled_access,
+				 &layer_masks,
+				 ARRAY_SIZE(layer_masks)))
+	return 0;
+
+return -EACCES;
+
+
+
 
 
 > 
 >>
->>>
->>>
->>> On 2022/8/27 19:12, Xiu Jianfeng wrote:
->>>> v2:
->>>>    * abstract walk_to_visible_parent() helper
->>>>    * chmod and chown rights only take affect on directory's context
->>>>    * add testcase for fchmodat/lchown/fchownat
->>>>    * fix other review issues
->>>>
->>>> Xiu Jianfeng (6):
->>>>     landlock: expand access_mask_t to u32 type
->>>>     landlock: abstract walk_to_visible_parent() helper
->>>>     landlock: add chmod and chown support
->>>>     landlock/selftests: add selftests for chmod and chown
->>>>     landlock/samples: add chmod and chown support
->>>>     landlock: update chmod and chown support in document
->>>>
->>>>    Documentation/userspace-api/landlock.rst     |   9 +-
->>>>    include/uapi/linux/landlock.h                |  10 +-
->>>>    samples/landlock/sandboxer.c                 |  13 +-
->>>>    security/landlock/fs.c                       | 110 ++++++--
->>>>    security/landlock/limits.h                   |   2 +-
->>>>    security/landlock/ruleset.h                  |   2 +-
->>>>    security/landlock/syscalls.c                 |   2 +-
->>>>    tools/testing/selftests/landlock/base_test.c |   2 +-
->>>>    tools/testing/selftests/landlock/fs_test.c   | 267 ++++++++++++++++++-
->>>>    9 files changed, 386 insertions(+), 31 deletions(-)
->>>>
+>>
+>>> +	case AF_UNSPEC:
+>>> +		/*
+>>> +		 * Connecting to an address with AF_UNSPEC dissolves the TCP
+>>> +		 * association, which have the same effect as closing the
+>>> +		 * connection while retaining the socket object (i.e., the file
+>>> +		 * descriptor).  As for dropping privileges, closing
+>>> +		 * connections is always allowed.
+>>> +		 */
+>>> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP)
+>>> +			return 0;
+>>> +
+>>> +		/*
+>>> +		 * For compatibility reason, accept AF_UNSPEC for bind
+>>> +		 * accesses (mapped to AF_INET) only if the address is
+>>> +		 * INADDR_ANY (cf. __inet_bind).  Checking the address is
+>>> +		 * required to not wrongfully return -EACCES instead of
+>>> +		 * -EAFNOSUPPORT.
+>>> +		 */
+>>> +		if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
+>>> +			const struct sockaddr_in *const sockaddr =
+>>> +				(struct sockaddr_in *)address;
+>>> +
+>>> +			if (sockaddr->sin_addr.s_addr != htonl(INADDR_ANY))
+>>> +				return -EAFNOSUPPORT;
+>>> +		}
+>>> +
+>>> +		fallthrough;
+>>
+>>
+>>
+>> case AF_UNSPEC:
+>>
+>>> +	case AF_INET:
+>>
+>> if (addrlen < sizeof(struct sockaddr_in))
+>> 	return -EINVAL;
+>>
+>> port = ((struct sockaddr_in *)address)->sin_port;
+>> break;
+>>
+>>
+>>> +#if IS_ENABLED(CONFIG_IPV6)
+>>> +	case AF_INET6:
+>>
+>> if (addrlen < SIN6_LEN_RFC2133)
+>> 	return -EINVAL;
+>>
+>> port = ((struct sockaddr_in6 *)address)->sin6_port;
+>> break;
+>>
+>>
+>>> +#endif
+>>
+>> /* Allows unhandled protocols. */
+>> default:
+>> 	return 0;
+>> }
+>>
+>> if (address->sa_family == AF_UNSPEC) {
+>>
+>> // Add here the above AF_UNSPEC checks to be consistent with the
+>> EINVAL/EAFNOSUPPORT return ordering.
+>>
+>> }
+>>
+>> id.key.data = (__force uintprt_t)port;
+>> BUID_BUG_ON(...);
+>>
+>     Will be refactored. Thanks.
