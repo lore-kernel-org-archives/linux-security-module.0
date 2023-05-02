@@ -2,101 +2,108 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D76CDC77B73
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 May 2023 14:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CEDC77B7E
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 May 2023 17:18:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234277AbjEBOTt (ORCPT
+        id S233875AbjEBRSM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 May 2023 10:19:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38304 "EHLO
+        Tue, 2 May 2023 13:18:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233849AbjEBOTt (ORCPT
+        with ESMTP id S234331AbjEBRSL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 May 2023 10:19:49 -0400
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69AB595
-        for <linux-security-module@vger.kernel.org>; Tue,  2 May 2023 07:19:47 -0700 (PDT)
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B0B783F235
-        for <linux-security-module@vger.kernel.org>; Tue,  2 May 2023 14:19:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1683037183;
-        bh=YEbt8fJaJHySlZTdZRpdSbFwcXzeFhKie6WmHehZH00=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=DKVJ+Zur1RXebmECPN8zKujN1W7Z+zyKs5JZkbep/04ljj6a8tHRn+Ha9tfFYtT3m
-         /ODtKG5LnGXbNXNVl1a5urwdQHq6R8a0cSSGW+0PUngZj45518GuXnHrKeGl2C5yNh
-         F4z5HmM6UpnIDWceuj0ssVus40G9jLkFKe1owrWlmOHQMd0P5TqMh5jdoTTeq4FHKc
-         ObD51jGVNAKtU5oEKaG1je47tPRFEjRyoGpjC4/hMKZFEZq85AOmah5ASg9hsaAopQ
-         USL7FaJf4X1RdiaTkA09xjqXS/qYAJETEhg2jA3h/zhse4j7hl64L//udFrhPReOlJ
-         rHWG/B0KwgrRQ==
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-953759a9d18so385006166b.0
-        for <linux-security-module@vger.kernel.org>; Tue, 02 May 2023 07:19:43 -0700 (PDT)
+        Tue, 2 May 2023 13:18:11 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70E3F1700
+        for <linux-security-module@vger.kernel.org>; Tue,  2 May 2023 10:18:02 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f20215fa70so26949875e9.0
+        for <linux-security-module@vger.kernel.org>; Tue, 02 May 2023 10:18:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683047881; x=1685639881;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8K1bnKuWYHqxbRlOxJJGQFetbQIj2EsjF7Ail6vx8I8=;
+        b=ddfs1GGQ6UuM0jIgPqjBkeDXsgzwuIBBGw2tF3qV4yjGuTzxU4habl4BucQ28cO6N4
+         kyFi7geTaJ+D3w9iIvcHHXpXaohFeSfHIENJWyGXWSrYji80AJSfKbFhcgbrNX/+V+ZS
+         JLC0UsofrVrg8/bMl6hKYHykXdIPtb647YU7U0U2h6x7M1RAb7pzega5tyYXWYcWnIfx
+         EGibNKMKyh1jlT4yalOKl7YvHCNpFC3Ur5ZpOJ4cWki2XbZMUpr0ybyhiIjuezsnsUBE
+         3Cvur17fJm/E6P21ApSSo/kISIwlqqYguWx9V7pouwBRBnPflHWU4EcfBij8ZKLgENbd
+         5IsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683037183; x=1685629183;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YEbt8fJaJHySlZTdZRpdSbFwcXzeFhKie6WmHehZH00=;
-        b=NVVIFqzWdT+BDkr8SyaairkrzewkvSt/mnSDOCqTp3NADQYDNJIDc3taN4Iqns5Auh
-         1057TmNq2z6lKMbhJmcYGfasbUfmu2Pb1j5qrui3KPfzIN9oAFIw2U+d9Ze1dGgyaUA3
-         r4z0mqQjKNykGiC3UVsNX8lSHT2T6bE5hOMT0140DeJF0r9FQpjIZEvtMXPWAGQTbnXv
-         3SwL5PFnaMfpr5037lmOthVsnCUb7JuXaQ4OGCK6PksBQJZebhD4XmnEeAQHpooB7TU+
-         gDQAKsv2fzFchhq1qh/F64DkJmMHdXie7Vy4ZydzY8B62P3wedYLdlqBBT1J0saiEGMm
-         knQQ==
-X-Gm-Message-State: AC+VfDxanEuhJgwvaGDIKpp9ClFdBhdlUBqbYyBCDmgCZYg6ESZiwMmI
-        nlzDJKSFRAtfzkss253hTyZADwmIg46qj1wr4aG5yQKIuAB+b/JcEVGds1TbQrRdPEbntIhDD4+
-        YMegpR25ZxXkSdqfCnNgZy3sTvLmJRSFdXCKmx6YAPurcRgOEpJB30w==
-X-Received: by 2002:a17:907:36c7:b0:94f:6025:be53 with SMTP id bj7-20020a17090736c700b0094f6025be53mr82666ejc.50.1683037182993;
-        Tue, 02 May 2023 07:19:42 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6DXO/3B64V8bJw9amh7S0N0hZheD2NW4YD1COF7NlvNtn+ZJpanfL+e6CluGemZjs9V5YXTA==
-X-Received: by 2002:a17:907:36c7:b0:94f:6025:be53 with SMTP id bj7-20020a17090736c700b0094f6025be53mr82651ejc.50.1683037182694;
-        Tue, 02 May 2023 07:19:42 -0700 (PDT)
-Received: from amikhalitsyn.. ([62.168.35.11])
-        by smtp.gmail.com with ESMTPSA id tk5-20020a170907c28500b0095004c87676sm16000802ejc.199.2023.05.02.07.19.41
+        d=1e100.net; s=20221208; t=1683047881; x=1685639881;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8K1bnKuWYHqxbRlOxJJGQFetbQIj2EsjF7Ail6vx8I8=;
+        b=hbJArP8eWhs4S0M2Wy7W8MaVJzFOCwHkqq0u3WUZ8NWPerXBhciwmXDinApr+oTUKc
+         brdRoewzow6WhK3xEnof7GbO71sXeyJHIFmYer7rRa5jkBxjEaPHE6keHda1dsiFuSqj
+         G26pGJSzAnAfGsfVcvHRvzyiN3TZVJDWDctMt2rHU7MbiHn2X6zNg+NVP961JdVFkPGi
+         /VT173NT4lYm92BV0xJSrIEmZ/ONPu7uvmsOLaz3eGvx9i3HfSYV+eDEzNVTcDNAkdju
+         eZkHRNvWkeWRudEWaeQLPCYGNnEdUNLUBTgKVP8ThTcp4srGJFYZUwBbeN+sIK53agbL
+         kuIg==
+X-Gm-Message-State: AC+VfDydHGEdwLJ2OPrEcLpltcjoguPu5mTt1L40BRAJy5NyvXmhDKQg
+        VdYymt/bu0dwfJF3ATUfZ2Uc5kq/MRM=
+X-Google-Smtp-Source: ACHHUZ4MBS2z5ZxE4wZPYM+T17dP6HlZKz+UJDhMlt8WJz4l/VmLj7tAPxrISgpT5xgp4kAMXEHkuA==
+X-Received: by 2002:a05:6000:124b:b0:306:31b7:abe4 with SMTP id j11-20020a056000124b00b0030631b7abe4mr4356796wrx.14.1683047880843;
+        Tue, 02 May 2023 10:18:00 -0700 (PDT)
+Received: from localhost ([2a02:168:633b:1:9d6a:15a4:c7d1:a0f0])
+        by smtp.gmail.com with ESMTPSA id i6-20020a5d6306000000b002fed865c55esm31507763wru.56.2023.05.02.10.18.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 May 2023 07:19:42 -0700 (PDT)
-From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To:     mortonm@chromium.org
-Cc:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+        Tue, 02 May 2023 10:18:00 -0700 (PDT)
+From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+To:     linux-security-module@vger.kernel.org,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc:     =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
         Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] LSM: SafeSetID: fix UID printed instead of GID
-Date:   Tue,  2 May 2023 16:18:32 +0200
-Message-Id: <20230502141832.217234-1-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.34.1
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Subject: [RFC 1/4] landlock: Increment Landlock ABI version to 4
+Date:   Tue,  2 May 2023 19:17:52 +0200
+Message-Id: <20230502171755.9788-2-gnoack3000@gmail.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230502171755.9788-1-gnoack3000@gmail.com>
+References: <20230502171755.9788-1-gnoack3000@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-pr_warn message clearly says that GID should be printed,
-but we have UID there. Let's fix that.
+Increment the Landlock ABI version in preparation for the ioctl
+feature.
 
-Found accidentaly during the work on isolated user namespaces.
-
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- security/safesetid/lsm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/landlock/syscalls.c                 | 2 +-
+ tools/testing/selftests/landlock/base_test.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-index e806739f7868..6191e5ba0f70 100644
---- a/security/safesetid/lsm.c
-+++ b/security/safesetid/lsm.c
-@@ -131,7 +131,7 @@ static int safesetid_security_capable(const struct cred *cred,
- 		 * set*gid() (e.g. setting up userns gid mappings).
- 		 */
- 		pr_warn("Operation requires CAP_SETGID, which is not available to GID %u for operations besides approved set*gid transitions\n",
--			__kuid_val(cred->uid));
-+			__kuid_val(cred->gid));
- 		return -EPERM;
- 	default:
- 		/* Error, the only capabilities were checking for is CAP_SETUID/GID */
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 245cc650a4d..c70fc9e6fe9 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -129,7 +129,7 @@ static const struct file_operations ruleset_fops = {
+ 	.write = fop_dummy_write,
+ };
+ 
+-#define LANDLOCK_ABI_VERSION 3
++#define LANDLOCK_ABI_VERSION 4
+ 
+ /**
+  * sys_landlock_create_ruleset - Create a new ruleset
+diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+index 792c3f0a59b..646f778dfb1 100644
+--- a/tools/testing/selftests/landlock/base_test.c
++++ b/tools/testing/selftests/landlock/base_test.c
+@@ -75,7 +75,7 @@ TEST(abi_version)
+ 	const struct landlock_ruleset_attr ruleset_attr = {
+ 		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
+ 	};
+-	ASSERT_EQ(3, landlock_create_ruleset(NULL, 0,
++	ASSERT_EQ(4, landlock_create_ruleset(NULL, 0,
+ 					     LANDLOCK_CREATE_RULESET_VERSION));
+ 
+ 	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
 -- 
-2.34.1
+2.40.1
 
