@@ -2,308 +2,273 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 244FCC7EE21
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 May 2023 05:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C0EFC77B78
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 May 2023 05:31:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229729AbjEDFAS (ORCPT
+        id S229612AbjEDFbD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 May 2023 01:00:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45588 "EHLO
+        Thu, 4 May 2023 01:31:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjEDFAQ (ORCPT
+        with ESMTP id S229550AbjEDFbD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 May 2023 01:00:16 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B4931BD3
-        for <linux-security-module@vger.kernel.org>; Wed,  3 May 2023 22:00:12 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-64115eef620so9763810b3a.1
-        for <linux-security-module@vger.kernel.org>; Wed, 03 May 2023 22:00:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1683176412; x=1685768412;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IUPJQJMsUAtFNWaWs/k01M+OCvj5uqpKKu6bkw90D5Q=;
-        b=ZrMZeHcIP6CgQ0Hg7pIJtgBe4Qnlq5C3+hql2iyKdydhASidvcCM0/yLxygOzXJMk8
-         EfSLHPhn+VcJxCuzH9VGoABjc6VQRclKAf5izVz/ddKoQn/VvqtgU5SqElGwvJz87zn6
-         J30uQKAR+7Wj31k9pTJlVTeISieIG0fHR3bw+CQDZ6+y4MDMXNpF5T9/sJuuqL+aVSeP
-         gh4jKQvgmL0ugkto4lz4K50XEeGBjM/em+OrFhe0ryVuX8aroW4y40WzJK5TUKchTmKQ
-         ZXnUMiSOHMaGw6+9CRzA3A1wXVv2H2yYlevtHnZlvhs5grUG4C//I+vu2VWCFan6caMm
-         mmVQ==
+        Thu, 4 May 2023 01:31:03 -0400
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 862F819B3
+        for <linux-security-module@vger.kernel.org>; Wed,  3 May 2023 22:31:00 -0700 (PDT)
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-766588051b3so1437439f.2
+        for <linux-security-module@vger.kernel.org>; Wed, 03 May 2023 22:31:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683176412; x=1685768412;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IUPJQJMsUAtFNWaWs/k01M+OCvj5uqpKKu6bkw90D5Q=;
-        b=QikWNr5VQzX9boORvn6iZYXE6MQ6vmmWDbSUQYgti8KVBC/i2A+GCZI5Mcp2SfpoKX
-         mrjqsek8iiuT1B37UO5D67lpor75foX+JwXZqdNfKXDeRVOjPxh1l25//vk9U0Mz95Vs
-         TZNZdGMYRwIrPZvRyObxijHhgh99oX5d6sLi7lgkNkZt2DrYv8M+K954s03a9hLEsbOa
-         WuPI1bM3qyUAeoXlqnOnFH9KX/l4bWopmFreOs6ajRgtGRi4n2FHQan52mkJ2OI88u4f
-         nD4qwKkovju1etm7HXVBEHuE7nsCEPzmtpPHgX6Po308vsmzY1phnvO29urZW1hV38Pi
-         ZBTA==
-X-Gm-Message-State: AC+VfDywCDEhO2kQj2Qf35aVFM265vQqW3sqmcJQw6Arkhe0o0xC5FK9
-        ZBjvQp5CXbzmboAPTotXHUsMkQ==
-X-Google-Smtp-Source: ACHHUZ74fa1Wz2edBfvfZ5Jj9KFI+rRTRpMssYNqBpRgKz9pQfc3B8JSfetyXSVsmrqcJxZLv3W5Fw==
-X-Received: by 2002:a17:902:e54c:b0:1a9:6604:2b1b with SMTP id n12-20020a170902e54c00b001a966042b1bmr2712859plf.20.1683176411757;
-        Wed, 03 May 2023 22:00:11 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-88-204.pa.nsw.optusnet.com.au. [49.181.88.204])
-        by smtp.gmail.com with ESMTPSA id r21-20020a170902ea5500b001a988a71617sm15709816plg.192.2023.05.03.22.00.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 May 2023 22:00:11 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1puR4Y-00B7pz-OY; Thu, 04 May 2023 15:00:06 +1000
-Date:   Thu, 4 May 2023 15:00:06 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     John Garry <john.g.garry@oracle.com>
-Cc:     axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        jejb@linux.ibm.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com
-Subject: Re: [PATCH RFC 11/16] fs: iomap: Atomic write support
-Message-ID: <20230504050006.GH3223426@dread.disaster.area>
-References: <20230503183821.1473305-1-john.g.garry@oracle.com>
- <20230503183821.1473305-12-john.g.garry@oracle.com>
+        d=1e100.net; s=20221208; t=1683178260; x=1685770260;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LvlYAZ3Me0ZvWK0peP7KkabrrzZnc1AAxIMZTphZeG0=;
+        b=kVUbEBA4kjZWFJvognfhwd3cXwWF/sBn5QysEIYUAmpE1lM0c6CNYfMROqIVnDNdBK
+         83YigPRfH+o9z3zt63rvr6PRkV7AMhkZrAXvRlb5iw8fM3I8TYD3XURXA28lKV90+ZTf
+         OEVCEXav9WatIicul60eGQ/u0UGDZD+L9Q4bO2W6e+A2zwcaS31juh5bVUZHF3OcymZ9
+         SZGGkM1EduWtdtM48iKpe3cNNNb6KF1z4hWsW1cB18so0Nf9Har8+NxzDkTZob90q1+0
+         ztJnC0amF99nSrZ8MKT0+dxRVWybRJ83QOw+KEwtSdQVtN3QE2lm3yMr0wgc+Mufn7qt
+         h8NQ==
+X-Gm-Message-State: AC+VfDy8D+90FhLkRZDelPZISA4A+ZR7ZFIE7f4nbhFvqgey+fAg6ov/
+        7ts0nt5vAxWDfSqb3i69TUVrB0aiHoyml+Dg/ANLko2yxUPB
+X-Google-Smtp-Source: ACHHUZ7Q9s0CaW0Fz9AD9scK66AIspx3NzAxoNU/dHnaFO7CaRSjRE/tkFPi6PHsJFkQEYg+F4uAjBIGV67ZDihI7Cu2O0xSsFjd
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230503183821.1473305-12-john.g.garry@oracle.com>
+X-Received: by 2002:a05:6602:114:b0:745:5e5c:f091 with SMTP id
+ s20-20020a056602011400b007455e5cf091mr11544478iot.0.1683178259880; Wed, 03
+ May 2023 22:30:59 -0700 (PDT)
+Date:   Wed, 03 May 2023 22:30:59 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004623de05fad77acc@google.com>
+Subject: [syzbot] [integrity?] [lsm?] possible deadlock in ima_file_free
+From:   syzbot <syzbot+a2bbe9020e59fdeab932@syzkaller.appspotmail.com>
+To:     dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, paul@paul-moore.com,
+        serge@hallyn.com, syzkaller-bugs@googlegroups.com,
+        zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 03, 2023 at 06:38:16PM +0000, John Garry wrote:
-> Add support to create bio's whose bi_sector and bi_size are aligned to and
-> multiple of atomic_write_unit, respectively.
-> 
-> When we call iomap_dio_bio_iter() -> bio_iov_iter_get_pages() ->
-> __bio_iov_iter_get_pages(), we trim the bio to a multiple of
-> atomic_write_unit.
-> 
-> As such, we expect the iomi start and length to have same size and
-> alignment requirements per iomap_dio_bio_iter() call.
-> 
-> In iomap_dio_bio_iter(), ensure that for a non-dsync iocb that the mapping
-> is not dirty nor unmapped.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/iomap/direct-io.c | 72 ++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 70 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index f771001574d0..37c3c926dfd8 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -36,6 +36,8 @@ struct iomap_dio {
->  	size_t			done_before;
->  	bool			wait_for_completion;
->  
-> +	unsigned int atomic_write_unit;
-> +
->  	union {
->  		/* used during submission and for synchronous completion: */
->  		struct {
-> @@ -229,9 +231,21 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
->  	return opflags;
->  }
->  
-> +
-> +/*
-> + * Note: For atomic writes, each bio which we create when we iter should have
-> + *	 bi_sector aligned to atomic_write_unit and also its bi_size should be
-> + *	 a multiple of atomic_write_unit.
-> + *	 The call to bio_iov_iter_get_pages() -> __bio_iov_iter_get_pages()
-> + *	 should trim the length to a multiple of atomic_write_unit for us.
-> + *	 This allows us to split each bio later in the block layer to fit
-> + *	 request_queue limit.
-> + */
->  static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  		struct iomap_dio *dio)
->  {
-> +	bool atomic_write = (dio->iocb->ki_flags & IOCB_ATOMIC) &&
-> +			    (dio->flags & IOMAP_DIO_WRITE);
->  	const struct iomap *iomap = &iter->iomap;
->  	struct inode *inode = iter->inode;
->  	unsigned int fs_block_size = i_blocksize(inode), pad;
-> @@ -249,6 +263,14 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
->  		return -EINVAL;
->  
-> +
-> +	if (atomic_write && !iocb_is_dsync(dio->iocb)) {
-> +		if (iomap->flags & IOMAP_F_DIRTY)
-> +			return -EIO;
-> +		if (iomap->type != IOMAP_MAPPED)
-> +			return -EIO;
-> +	}
+Hello,
 
-IDGI. If the iomap had space allocated for this dio iteration,
-then IOMAP_F_DIRTY will be set and it is likely (guaranteed for XFS)
-that the iomap type will be IOMAP_UNWRITTEN. Indeed, if we are doing
-a write into preallocated space (i.e. from fallocate()) then this
-will cause -EIO on all RWF_ATOMIC IO to that file unless RWF_DSYNC
-is also used.
+syzbot found the following issue on:
 
-"For a power fail, for each individual application block, all or
-none of the data to be written."
+HEAD commit:    c8c655c34e33 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=142ad18c280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5eadbf0d3c2ece89
+dashboard link: https://syzkaller.appspot.com/bug?extid=a2bbe9020e59fdeab932
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
 
-Ok, does this means RWF_ATOMIC still needs fdatasync() to guarantee
-that the data makes it to stable storage? And the result is
-undefined until fdatasync() is run, but the device will guarantee
-that either all or none of the data will be on stable storage
-prior to the next device cache flush completing?
+Unfortunately, I don't have any reproducer for this issue yet.
 
-i.e. does REQ_ATOMIC imply REQ_FUA, or does it require a separate
-device cache flush to commit the atomic IO to stable storage?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/618b22e20036/disk-c8c655c3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1388ab23cc1b/vmlinux-c8c655c3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/79496e207412/bzImage-c8c655c3.xz
 
-What about ordering - do the devices guarantee strict ordering of
-REQ_ATOMIC writes? i.e. if atomic write N is seen on disk, then all
-the previous atomic writes up to N will also be seen on disk? If
-not, how does the application and filesystem guarantee persistence
-of completed atomic writes?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a2bbe9020e59fdeab932@syzkaller.appspotmail.com
 
-i.e. If we still need a post-IO device cache flush to guarantee
-persistence and/or ordering of RWF_ATOMIC IOs, then the above code
-makes no sense - we'll still need fdatasync() to provide persistence
-checkpoints and that means we ensure metadata is also up to date
-at those checkpoints.
+syz-executor.1: attempt to access beyond end of device
+loop1: rw=2049, sector=77824, nr_sectors = 2048 limit=63271
+syz-executor.1: attempt to access beyond end of device
+loop1: rw=2049, sector=79872, nr_sectors = 2048 limit=63271
+======================================================
+WARNING: possible circular locking dependency detected
+6.3.0-syzkaller-12378-gc8c655c34e33 #0 Not tainted
+------------------------------------------------------
+syz-executor.1/26208 is trying to acquire lock:
+ffff8880294dc1a0 (&iint->mutex){+.+.}-{3:3}, at: ima_check_last_writer security/integrity/ima/ima_main.c:165 [inline]
+ffff8880294dc1a0 (&iint->mutex){+.+.}-{3:3}, at: ima_file_free+0x110/0x3c0 security/integrity/ima/ima_main.c:199
 
-I need someone to put down in writing exactly what the data
-integrity, ordering and persistence semantics of REQ_ATOMIC are
-before I can really comment any further. From my perspective as a
-filesystem developer, this is the single most important set of
-behaviours that need to be documented, as this determines how
-everything else interacts with atomic writes....
+but task is already holding lock:
+ffff88805b928448 (&sbi->node_write){++++}-{3:3}, at: f2fs_down_read fs/f2fs/f2fs.h:2087 [inline]
+ffff88805b928448 (&sbi->node_write){++++}-{3:3}, at: f2fs_write_single_data_page+0xa10/0x1d50 fs/f2fs/data.c:2842
 
->  	if (iomap->type == IOMAP_UNWRITTEN) {
->  		dio->flags |= IOMAP_DIO_UNWRITTEN;
->  		need_zeroout = true;
-> @@ -318,6 +340,10 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  					  GFP_KERNEL);
->  		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
->  		bio->bi_ioprio = dio->iocb->ki_ioprio;
-> +		if (atomic_write) {
-> +			bio->bi_opf |= REQ_ATOMIC;
-> +			bio->atomic_write_unit = dio->atomic_write_unit;
-> +		}
->  		bio->bi_private = dio;
->  		bio->bi_end_io = iomap_dio_bio_end_io;
->  
-> @@ -492,6 +518,8 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  		is_sync_kiocb(iocb) || (dio_flags & IOMAP_DIO_FORCE_WAIT);
->  	struct blk_plug plug;
->  	struct iomap_dio *dio;
-> +	bool is_read = iov_iter_rw(iter) == READ;
-> +	bool atomic_write = (iocb->ki_flags & IOCB_ATOMIC) && !is_read;
->  
->  	if (!iomi.len)
->  		return NULL;
-> @@ -500,6 +528,20 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	if (!dio)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	if (atomic_write) {
-> +		/*
-> +		 * Note: This lookup is not proper for a multi-device scenario,
-> +		 *	 however for current iomap users, the bdev per iter
-> +		 *	 will be fixed, so "works" for now.
-> +		 */
-> +		struct super_block *i_sb = inode->i_sb;
-> +		struct block_device *bdev = i_sb->s_bdev;
-> +
-> +		dio->atomic_write_unit =
-> +			bdev_find_max_atomic_write_alignment(bdev,
-> +					iomi.pos, iomi.len);
-> +	}
+which lock already depends on the new lock.
 
-This will break atomic IO to XFS realtime devices. The device we are
-doing IO to is iomap->bdev, we should never be using sb->s_bdev in
-the iomap code.  Of course, at this point in __iomap_dio_rw() we
-don't have an iomap so this "alignment constraint" can't be done
-correctly at this point in the IO path.
 
-However, even ignoring the bdev source, I think this is completely
-wrong. Passing a *file* offset to the underlying block device so the
-block device can return a device alignment constraint for IO is not
-valid. We don't know how that file offset/length is going to be
-mapped to the underlying block device until we ask the filesystem
-for an iomap covering the file range, so we can't possibly know what
-the device IO alignment of the user request will be until we have an
-iomap for it.
+the existing dependency chain (in reverse order) is:
 
-At which point, the "which block device should we ask for alignment
-constraints" question is moot, because we now have an iomap and can
-use iomap->bdev....
+-> #4 (&sbi->node_write){++++}-{3:3}:
+       reacquire_held_locks+0x3aa/0x660 kernel/locking/lockdep.c:5216
+       __lock_release kernel/locking/lockdep.c:5405 [inline]
+       lock_release+0x36f/0x9d0 kernel/locking/lockdep.c:5711
+       up_write+0x79/0x580 kernel/locking/rwsem.c:1625
+       f2fs_write_checkpoint+0x13a4/0x1f90 fs/f2fs/checkpoint.c:1651
+       __write_checkpoint_sync fs/f2fs/checkpoint.c:1768 [inline]
+       __checkpoint_and_complete_reqs+0xda/0x3b0 fs/f2fs/checkpoint.c:1787
+       issue_checkpoint_thread+0xda/0x260 fs/f2fs/checkpoint.c:1818
+       kthread+0x2b8/0x350 kernel/kthread.c:379
+       ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
 
-> @@ -592,6 +634,32 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  
->  	blk_start_plug(&plug);
->  	while ((ret = iomap_iter(&iomi, ops)) > 0) {
-> +		if (atomic_write) {
-> +			const struct iomap *_iomap = &iomi.iomap;
-> +			loff_t iomi_length = iomap_length(&iomi);
-> +
-> +			/*
-> +			 * Ensure length and start address is a multiple of
-> +			 * atomic_write_unit - this is critical. If the length
-> +			 * is not a multiple of atomic_write_unit, then we
-> +			 * cannot create a set of bio's in iomap_dio_bio_iter()
-> +			 * who are each a length which is a multiple of
-> +			 * atomic_write_unit.
-> +			 *
-> +			 * Note: It may be more appropiate to have this check
-> +			 *	 in iomap_dio_bio_iter()
-> +			 */
-> +			if ((iomap_sector(_iomap, iomi.pos) << SECTOR_SHIFT) %
-> +			    dio->atomic_write_unit) {
-> +				ret = -EIO;
-> +				break;
-> +			}
-> +
-> +			if (iomi_length % dio->atomic_write_unit) {
-> +				ret = -EIO;
-> +				break;
-> +			}
+-> #3 (&sbi->cp_rwsem){++++}-{3:3}:
+       lock_acquire+0x1e3/0x520 kernel/locking/lockdep.c:5691
+       down_read+0x3d/0x50 kernel/locking/rwsem.c:1520
+       f2fs_down_read fs/f2fs/f2fs.h:2087 [inline]
+       f2fs_lock_op fs/f2fs/f2fs.h:2130 [inline]
+       f2fs_convert_inline_inode+0x578/0x800 fs/f2fs/inline.c:218
+       f2fs_vm_page_mkwrite+0x32c/0x13d0 fs/f2fs/file.c:79
+       do_page_mkwrite+0x1a4/0x600 mm/memory.c:2931
+       do_shared_fault mm/memory.c:4595 [inline]
+       do_fault mm/memory.c:4663 [inline]
+       do_pte_missing mm/memory.c:3647 [inline]
+       handle_pte_fault mm/memory.c:4947 [inline]
+       __handle_mm_fault mm/memory.c:5089 [inline]
+       handle_mm_fault+0x2140/0x5860 mm/memory.c:5243
+       do_user_addr_fault arch/x86/mm/fault.c:1440 [inline]
+       handle_page_fault arch/x86/mm/fault.c:1534 [inline]
+       exc_page_fault+0x7d2/0x910 arch/x86/mm/fault.c:1590
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
 
-This looks wrong - the length of the mapped extent could be shorter
-than the max atomic write size returned by
-bdev_find_max_atomic_write_alignment() but the iomap could still be aligned
-to the minimum atomic write unit supported. At this point, we reject
-the IO with -EIO, even though it could have been done as an atomic
-write, just a shorter one than the user requested.
+-> #2 (&mm->mmap_lock){++++}-{3:3}:
+       lock_acquire+0x1e3/0x520 kernel/locking/lockdep.c:5691
+       internal_get_user_pages_fast+0x244/0x2ce0 mm/gup.c:2967
+       __iov_iter_get_pages_alloc+0x3c9/0x940 lib/iov_iter.c:1509
+       iov_iter_get_pages+0xd9/0x130 lib/iov_iter.c:1552
+       __bio_iov_iter_get_pages block/bio.c:1269 [inline]
+       bio_iov_iter_get_pages+0x480/0x12b0 block/bio.c:1340
+       iomap_dio_bio_iter+0xac2/0x1430 fs/iomap/direct-io.c:325
+       __iomap_dio_rw+0x12c3/0x22e0 fs/iomap/direct-io.c:598
+       iomap_dio_rw+0x46/0xa0 fs/iomap/direct-io.c:688
+       xfs_file_dio_write_aligned+0x222/0x350 fs/xfs/xfs_file.c:543
+       xfs_file_dio_write fs/xfs/xfs_file.c:655 [inline]
+       xfs_file_write_iter+0x508/0x620 fs/xfs/xfs_file.c:797
+       do_iter_write+0x7b1/0xcb0 fs/read_write.c:860
+       vfs_writev fs/read_write.c:933 [inline]
+       do_pwritev+0x21a/0x360 fs/read_write.c:1030
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-That said, I don't think we can call a user IO that is being
-sliced and diced into multiple individual IOs "atomic". "Atomic"
-implies all-or-none behaviour - slicing up a large DIO into smaller
-individual bios means the bios can be submitted and completed out of
-order. If we then we get a power failure, the application's "atomic"
-IO can appear on disk as only being partially complete - it violates
-the "all or none" semantics of "atomic IO".
+-> #1 (&sb->s_type->i_mutex_key#26){++++}-{3:3}:
+       lock_acquire+0x1e3/0x520 kernel/locking/lockdep.c:5691
+       down_read_nested+0x40/0x60 kernel/locking/rwsem.c:1645
+       xfs_ilock+0x10e/0x3a0 fs/xfs/xfs_inode.c:198
+       xfs_ilock_iocb fs/xfs/xfs_file.c:211 [inline]
+       xfs_file_buffered_read+0x160/0x320 fs/xfs/xfs_file.c:274
+       xfs_file_read_iter+0x262/0x4d0 fs/xfs/xfs_file.c:302
+       __kernel_read+0x422/0x8a0 fs/read_write.c:428
+       integrity_kernel_read+0xb0/0xf0 security/integrity/iint.c:192
+       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:485 [inline]
+       ima_calc_file_shash security/integrity/ima/ima_crypto.c:516 [inline]
+       ima_calc_file_hash+0x1643/0x1d20 security/integrity/ima/ima_crypto.c:573
+       ima_collect_measurement+0x3a7/0x880 security/integrity/ima/ima_api.c:293
+       process_measurement+0xfdb/0x1ce0 security/integrity/ima/ima_main.c:341
+       ima_file_check+0xf1/0x170 security/integrity/ima/ima_main.c:539
+       do_open fs/namei.c:3638 [inline]
+       path_openat+0x280a/0x3170 fs/namei.c:3791
+       do_filp_open+0x234/0x490 fs/namei.c:3818
+       do_sys_openat2+0x13f/0x500 fs/open.c:1356
+       do_sys_open fs/open.c:1372 [inline]
+       __do_sys_open fs/open.c:1380 [inline]
+       __se_sys_open fs/open.c:1376 [inline]
+       __x64_sys_open+0x225/0x270 fs/open.c:1376
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-Hence I think that we should be rejecting RWF_ATOMIC IOs that are
-larger than the maximum atomic write unit or cannot be dispatched in
-a single IO e.g. filesystem has allocated multiple minimum aligned
-extents and so a max len atomic write IO over that range must be
-broken up into multiple smaller IOs.
+-> #0 (&iint->mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3108 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3227 [inline]
+       validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3842
+       __lock_acquire+0x1295/0x2000 kernel/locking/lockdep.c:5074
+       lock_acquire+0x1e3/0x520 kernel/locking/lockdep.c:5691
+       __mutex_lock_common+0x1d8/0x2530 kernel/locking/mutex.c:603
+       __mutex_lock kernel/locking/mutex.c:747 [inline]
+       mutex_lock_nested+0x1b/0x20 kernel/locking/mutex.c:799
+       ima_check_last_writer security/integrity/ima/ima_main.c:165 [inline]
+       ima_file_free+0x110/0x3c0 security/integrity/ima/ima_main.c:199
+       __fput+0x32e/0x890 fs/file_table.c:315
+       task_work_run+0x24a/0x300 kernel/task_work.c:179
+       get_signal+0x1606/0x17e0 kernel/signal.c:2650
+       arch_do_signal_or_restart+0x91/0x670 arch/x86/kernel/signal.c:306
+       exit_to_user_mode_loop+0x6a/0x100 kernel/entry/common.c:168
+       exit_to_user_mode_prepare+0xb1/0x140 kernel/entry/common.c:204
+       __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
+       syscall_exit_to_user_mode+0x64/0x280 kernel/entry/common.c:297
+       do_syscall_64+0x4d/0xc0 arch/x86/entry/common.c:86
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-We should be doing max atomic write size rejection high up in the IO
-path (e.g. filesystem ->write_iter() method) before we get anywhere
-near the DIO path, and we should be rejecting atomic write IOs in
-the DIO path during the ->iomap_begin() mapping callback if we can't
-map the entire atomic IO to a single aligned filesystem extent.
+other info that might help us debug this:
 
-i.e. the alignment checks and constraints need to be applied by the
-filesystem mapping code, not the layer that packs the pages into the
-bio as directed by the filesystem mapping....
+Chain exists of:
+  &iint->mutex --> &sbi->cp_rwsem --> &sbi->node_write
 
-Cheers,
+ Possible unsafe locking scenario:
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+       CPU0                    CPU1
+       ----                    ----
+  rlock(&sbi->node_write);
+                               lock(&sbi->cp_rwsem);
+                               lock(&sbi->node_write);
+  lock(&iint->mutex);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.1/26208:
+ #0: ffff88805b928448 (&sbi->node_write){++++}-{3:3}, at: f2fs_down_read fs/f2fs/f2fs.h:2087 [inline]
+ #0: ffff88805b928448 (&sbi->node_write){++++}-{3:3}, at: f2fs_write_single_data_page+0xa10/0x1d50 fs/f2fs/data.c:2842
+
+stack backtrace:
+CPU: 0 PID: 26208 Comm: syz-executor.1 Not tainted 6.3.0-syzkaller-12378-gc8c655c34e33 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ check_noncircular+0x2fe/0x3b0 kernel/locking/lockdep.c:2188
+ check_prev_add kernel/locking/lockdep.c:3108 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3227 [inline]
+ validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3842
+ __lock_acquire+0x1295/0x2000 kernel/locking/lockdep.c:5074
+ lock_acquire+0x1e3/0x520 kernel/locking/lockdep.c:5691
+ __mutex_lock_common+0x1d8/0x2530 kernel/locking/mutex.c:603
+ __mutex_lock kernel/locking/mutex.c:747 [inline]
+ mutex_lock_nested+0x1b/0x20 kernel/locking/mutex.c:799
+ ima_check_last_writer security/integrity/ima/ima_main.c:165 [inline]
+ ima_file_free+0x110/0x3c0 security/integrity/ima/ima_main.c:199
+ __fput+0x32e/0x890 fs/file_table.c:315
+ task_work_run+0x24a/0x300 kernel/task_work.c:179
+ get_signal+0x1606/0x17e0 kernel/signal.c:2650
+ arch_do_signal_or_restart+0x91/0x670 arch/x86/kernel/signal.c:306
+ exit_to_user_mode_loop+0x6a/0x100 kernel/entry/common.c:168
+ exit_to_user_mode_prepare+0xb1/0x140 kernel/entry/common.c:204
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
+ syscall_exit_to_user_mode+0x64/0x280 kernel/entry/common.c:297
+ do_syscall_64+0x4d/0xc0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f8281a8c169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f82827f4168 EFLAGS: 00000246 ORIG_RAX: 0000000000000148
+RAX: fffffffffffffffb RBX: 00007f8281babf80 RCX: 00007f8281a8c169
+RDX: 0000000000000001 RSI: 0000000020000240 RDI: 0000000000000004
+RBP: 00007f8281ae7ca1 R08: 0000000000000000 R09: 0000000000000003
+R10: 0000000000001400 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffe420958ff R14: 00007f82827f4300 R15: 0000000000022000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
