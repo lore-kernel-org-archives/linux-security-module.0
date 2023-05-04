@@ -2,125 +2,181 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D06D9C7EE21
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 May 2023 16:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C53FC77B7C
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 May 2023 16:14:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229738AbjEDQMR (ORCPT
+        id S229515AbjEDQOY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 May 2023 12:12:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39986 "EHLO
+        Thu, 4 May 2023 12:14:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229619AbjEDQMJ (ORCPT
+        with ESMTP id S229553AbjEDQOX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 May 2023 12:12:09 -0400
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BD6265BA;
-        Thu,  4 May 2023 09:11:56 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4QBz8r33TPz9xFQP;
-        Fri,  5 May 2023 00:02:04 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwC3XjU42VNk7sF6Ag--.24034S2;
-        Thu, 04 May 2023 17:11:42 +0100 (CET)
-Message-ID: <1923bc2f330f576cd246856f976af448c035d02e.camel@huaweicloud.com>
-Subject: NFS mount fail
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org
-Date:   Thu, 04 May 2023 18:11:32 +0200
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Thu, 4 May 2023 12:14:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF60A59FD
+        for <linux-security-module@vger.kernel.org>; Thu,  4 May 2023 09:13:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683216810;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FCERTes3cUqeH2NVPYErrzXP04o1ceM5Rm63oz0hrwA=;
+        b=Kzrhjr0y3YpjtMQdhzVwM/x6pXVJ5c8jm1upIVJ0cZax+PqJZj3DM2NJGj1tK5AdQq0zJF
+        3jNmsaqZ8yvTGtB9URcq14TauKgwL1Heh/KWVb9aSC1C1OYNIBjNcZhs/UInlH0ytaSSJ3
+        9xdIhLoEZ7dbLhn57IbMvOiuU9WyFbc=
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
+ [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-592-k8RHwPG3PWCcdV1SA78SnQ-1; Thu, 04 May 2023 12:13:28 -0400
+X-MC-Unique: k8RHwPG3PWCcdV1SA78SnQ-1
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-44fe5556165so16457e0c.0
+        for <linux-security-module@vger.kernel.org>; Thu, 04 May 2023 09:13:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683216808; x=1685808808;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FCERTes3cUqeH2NVPYErrzXP04o1ceM5Rm63oz0hrwA=;
+        b=Yt+msNHlaLZcMyelQWWH2Sazx9sJp2YUeooDraJoNUMrSq+RKFXD6J3g3mOUqVM5T3
+         gQHdITmVcz01O5NJ3EKlHERO+yRa0K6Wh4fY0qtXeJNicKYm8fwe4tUWFSs1VW6zns0K
+         Q76rTLnGH/dq3SBhfMiqHxSp9KViR3LsR+9sSGkuYshsh4M/nh/UxDubJYC8ewkVUnpi
+         K82nPOJk4EboBNzLAozC2pdS1+9f86msOak50brljDQ3+V4EDsb0Mnr3ar/WlzMKuie5
+         DYdKY9tdp/lnboBtMA1ZAEqme04L2BsPkSbQc86cHoytqfTuejVVu8zf18YDjBztL79p
+         eY0A==
+X-Gm-Message-State: AC+VfDzDkCVl2+2rbn0iXCzZ/4lCRVwvSd0ekUnDNb/yvt03/T3zmNAK
+        ULUKYuYbE8nUlz9HbLdhhHCxFk0/mZYGtDa0SheMXfxpnAN6CjRY9NbgYn0zkO3aw5moZQQ8CQ8
+        BPcjBxpoZJwwFep88+UDHTQocro44Fl96fC8T
+X-Received: by 2002:a1f:b646:0:b0:448:1241:47ae with SMTP id g67-20020a1fb646000000b00448124147aemr3069421vkf.1.1683216807871;
+        Thu, 04 May 2023 09:13:27 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6pUnL9fUfiStXzh1jo+rajlFzURLwzhhKGNCKNVHx6d9nP0QKmPVmXXzyvOtLVq7RYWk28Ew==
+X-Received: by 2002:a1f:b646:0:b0:448:1241:47ae with SMTP id g67-20020a1fb646000000b00448124147aemr3069388vkf.1.1683216807461;
+        Thu, 04 May 2023 09:13:27 -0700 (PDT)
+Received: from gerbillo.redhat.com (146-241-244-79.dyn.eolo.it. [146.241.244.79])
+        by smtp.gmail.com with ESMTPSA id 75-20020a370b4e000000b0074df3f7e14esm11694249qkl.67.2023.05.04.09.13.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 May 2023 09:13:27 -0700 (PDT)
+Message-ID: <11201df515ec41db88ad915fd1e425e62c4f81e5.camel@redhat.com>
+Subject: Re: [PATCH LSM v2 0/2] security: SELinux/LSM label with MPTCP and
+ accept
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Ondrej Mosnacek <omosnace@redhat.com>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>
+Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>, mptcp@lists.linux.dev,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Date:   Thu, 04 May 2023 18:13:23 +0200
+In-Reply-To: <CAFqZXNt16B5A2o6fZeN5b1coNCW2m6kp7JToJFDorvPajhFyxA@mail.gmail.com>
+References: <20230419-upstream-lsm-next-20230419-mptcp-sublows-user-ctx-v2-0-e7a3c8c15676@tessares.net>
+         <CAFqZXNt16B5A2o6fZeN5b1coNCW2m6kp7JToJFDorvPajhFyxA@mail.gmail.com>
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwC3XjU42VNk7sF6Ag--.24034S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFy5AF1kCFWDXrWDtF4UCFg_yoW5GrW5pw
-        17JFs5CFW8ta4kZw1fGw4UJFWF9r1kuF18Ca4kX3yjv3WrWa47tw1UKrWY9ayDAF1qvF4S
-        yFWak3WSqF1UCaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-        AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
-        IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
-        KfnxnUUI43ZEXa7IU1CPfJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBF1jj4zRDAAAsi
-X-CFilter-Loop: Reflected
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Casey
+On Thu, 2023-05-04 at 16:14 +0200, Ondrej Mosnacek wrote:
+> On Thu, Apr 20, 2023 at 7:17=E2=80=AFPM Matthieu Baerts
+> <matthieu.baerts@tessares.net> wrote:
+> >=20
+> > In [1], Ondrej Mosnacek explained they discovered the (userspace-facing=
+)
+> > sockets returned by accept(2) when using MPTCP always end up with the
+> > label representing the kernel (typically system_u:system_r:kernel_t:s0)=
+,
+> > while it would make more sense to inherit the context from the parent
+> > socket (the one that is passed to accept(2)). Thanks to the
+> > participation of Paul Moore in the discussions, modifications on MPTCP
+> > side have started and the result is available here.
+> >=20
+> > Paolo Abeni worked hard to refactor the initialisation of the first
+> > subflow of a listen socket. The first subflow allocation is no longer
+> > done at the initialisation of the socket but later, when the connection
+> > request is received or when requested by the userspace. This was a
+> > prerequisite to proper support of SELinux/LSM labels with MPTCP and
+> > accept. The last batch containing the commit ddb1a072f858 ("mptcp: move
+> > first subflow allocation at mpc access time") [2] has been recently
+> > accepted and applied in netdev/net-next repo [3].
+> >=20
+> > This series of 2 patches is based on top of the lsm/next branch. Despit=
+e
+> > the fact they depend on commits that are in netdev/net-next repo to
+> > support the new feature, they can be applied in lsm/next without
+> > creating conflicts with net-next or causing build issues. These two
+> > patches on top of lsm/next still passes all the MPTCP-specific tests.
+> > The only thing is that the new feature only works properly with the
+> > patches that are on netdev/net-next. The tests with the new labels have
+> > been done on top of them.
+> >=20
+> > Regarding the two patches, the first one introduces a new LSM hook
+> > called from MPTCP side when creating a new subflow socket. This hook
+> > allows the security module to relabel the subflow according to the owin=
+g
+> > process. The second one implements this new hook on the SELinux side.
+> >=20
+> > Link: https://lore.kernel.org/netdev/CAFqZXNs2LF-OoQBUiiSEyranJUXkPLcCf=
+BkMkwFeM6qEwMKCTw@mail.gmail.com/ [1]
+> > Link: https://git.kernel.org/netdev/net-next/c/ddb1a072f858 [2]
+> > Link: https://lore.kernel.org/netdev/20230414-upstream-net-next-2023041=
+4-mptcp-refactor-first-subflow-init-v1-0-04d177057eb9@tessares.net/ [3]
+> > Signed-off-by: Matthieu Baerts <matthieu.baerts@tessares.net>
+> > ---
+> > Changes in v2:
+> > - Address Paul's comments, see the notes on each patch
+> > - Link to v1: https://lore.kernel.org/r/20230419-upstream-lsm-next-2023=
+0419-mptcp-sublows-user-ctx-v1-0-9d4064cb0075@tessares.net
+> >=20
+> > ---
+> > Paolo Abeni (2):
+> >       security, lsm: Introduce security_mptcp_add_subflow()
+> >       selinux: Implement mptcp_add_subflow hook
+> >=20
+> >  include/linux/lsm_hook_defs.h |  1 +
+> >  include/linux/security.h      |  6 ++++++
+> >  net/mptcp/subflow.c           |  6 ++++++
+> >  security/security.c           | 17 +++++++++++++++++
+> >  security/selinux/hooks.c      | 16 ++++++++++++++++
+> >  security/selinux/netlabel.c   |  8 ++++++--
+> >  6 files changed, 52 insertions(+), 2 deletions(-)
+> > ---
+> > base-commit: d82dcd9e21b77d338dc4875f3d4111f0db314a7c
+> > change-id: 20230419-upstream-lsm-next-20230419-mptcp-sublows-user-ctx-e=
+ee658fafcba
+> >=20
+> > Best regards,
+> > --
+> > Matthieu Baerts <matthieu.baerts@tessares.net>
+> >=20
+>=20
+> I haven't yet looked closer at the code in this series, but I can at
+> least confirm that with the series (applied on top of net-next) the
+> selinux-testsuite now passes when run under mptcpize, with one caveat:
+>=20
+> The "client" test prog in the inet_socket subtest sets the SO_SNDTIMEO
+> socket option on the client socket, but the subtest takes
+> significantly longer to complete than when run without mptcpize. That
+> suggests to me that there is possibly some (pre-existing) issue with
+> MPTCP where the send/receive timeouts are not being passed to the
+> subflow socket(s), leading to a longer wait (I guess the default is
+> higher?)=C2=A0
 
-while developing the fix for overlayfs, I tried first to address the
-issue of a NFS filesystem failing to mount.
+Indeed the behavior you describe is due to some mptcp bug in handling
+the SO_{SND,RCV}TIMEO socket tions, and it's really unrelated to the
+initially reported selinux issue.
 
-The NFS server does not like the packets sent by the client:
+If you could file an issue on our tracker, that would help ;)
 
-14:52:20.827208 IP (tos 0x0, ttl 64, id 60628, offset 0, flags [DF], proto TCP (6), length 72, options (unknown 134,EOL))
-    localhost.localdomain.omginitialrefs > _gateway.nfs: Flags [S], cksum 0x7618 (incorrect -> 0xa18c), seq 455337903, win 64240, options [mss 1460,sackOK,TS val 2178524519 ecr 0,nop,wscale 7], length 0
-14:52:20.827376 IP (tos 0xc0, ttl 64, id 5906, offset 0, flags [none], proto ICMP (1), length 112, options (unknown 134,EOL))
-    _gateway > localhost.localdomain: ICMP parameter problem - octet 22, length 80
+Thanks!
 
-I looked at the possible causes. SELinux works properly.
-
-What it seems to happen is that there is a default netlabel mapping,
-that is used to send the packets out.
-
-We are in this part of the code:
-
-Thread 1 hit Breakpoint 2, netlbl_sock_setattr (sk=sk@entry=0xffff888025178000, family=family@entry=2, secattr=0xffff88802504b200) at net/netlabel/netlabel_kapi.c:980
-980	{
-(gdb) n
-771		__rcu_read_lock();
-(gdb) 
-985		dom_entry = netlbl_domhsh_getentry(secattr->domain, family);
-(gdb) 
-986		if (dom_entry == NULL) {
-(gdb) 
-990		switch (family) {
-(gdb) 
-992			switch (dom_entry->def.type) {
-
-Here is the difference between Smack and SELinux.
-
-Smack:
-
-(gdb) p *dom_entry
-$2 = {domain = 0x0 <fixed_percpu_data>, family = 2, def = {type = 3, {addrsel = 0xffff888006bbef40, cipso = 0xffff888006bbef40, calipso = 0xffff888006bbef40}}, valid = 1, list = {next = 0xffff88800767f6e8, prev = 0xffff88800767f6e8}, rcu = {next = 0x0 <fixed_percpu_data>, 
-    func = 0x0 <fixed_percpu_data>}}
-
-SELinux:
-
-(gdb) p *dom_entry
-$5 = {domain = 0x0 <fixed_percpu_data>, family = 2, def = {type = 5, {addrsel = 0x0 <fixed_percpu_data>, cipso = 0x0 <fixed_percpu_data>, calipso = 0x0 <fixed_percpu_data>}}, valid = 1, list = {next = 0xffff888006012c88, prev = 0xffff888006012c88}, rcu = {
-    next = 0x0 <fixed_percpu_data>, func = 0x0 <fixed_percpu_data>}}
-
-
-type = 3 (for Smack) is NETLBL_NLTYPE_CIPSOV4.
-type = 5 (for SELinux) is NETLBL_NLTYPE_UNLABELED.
-
-This is why SELinux works (no incompatible options are sent).
-
-The netlabel mapping is added here:
-
-static void smk_cipso_doi(void)
-{
-
-[...]
-
-	rc = netlbl_cfg_cipsov4_map_add(doip->doi, NULL, NULL, NULL, &nai);
-
-
-Not sure exactly how we can solve this issue. Just checked that
-commenting the call to smk_cipso_doi() in init_smk_fs() allows the NFS
-filesystem to be mounted.
-
-Thanks
-
-Roberto
+Paolo
 
