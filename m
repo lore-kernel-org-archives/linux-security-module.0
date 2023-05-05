@@ -2,164 +2,141 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB51C77B7C
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 16:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE17C77B75
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 16:54:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231350AbjEEQuH (ORCPT
+        id S231687AbjEEQyP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 May 2023 12:50:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40210 "EHLO
+        Fri, 5 May 2023 12:54:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229795AbjEEQuG (ORCPT
+        with ESMTP id S231464AbjEEQyO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 May 2023 12:50:06 -0400
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4074156BF
-        for <linux-security-module@vger.kernel.org>; Fri,  5 May 2023 09:50:03 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QCc9j6pyZzMq29R;
-        Fri,  5 May 2023 18:50:01 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QCc9f1ZprzMpt9p;
-        Fri,  5 May 2023 18:49:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1683305401;
-        bh=RPOWf6TexJXD2F61Y+MwwaWrFJGnJ6O8Bzm/vPfHfEg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=KFqsV29bRBQXZVMUZDnW9//LbmTjZRdZ5CYSCvQtHGOugYPQZro4kAj1y6BuQuLMI
-         6ri9TjVKDdRi4alwo2oX8l60NkGjcqHjRzeAjieP1C8UKm+ZX2LPynTNK6yGyQO8br
-         /DpBAABiiqrinOuFsaScnqzH8PtKHmistKR3ODTI=
-Message-ID: <6412bf27-4d05-eab8-3db1-d4efa44af3aa@digikod.net>
-Date:   Fri, 5 May 2023 18:49:57 +0200
+        Fri, 5 May 2023 12:54:14 -0400
+Received: from sonic313-14.consmr.mail.ne1.yahoo.com (sonic313-14.consmr.mail.ne1.yahoo.com [66.163.185.37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 424A2191FE
+        for <linux-security-module@vger.kernel.org>; Fri,  5 May 2023 09:54:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1683305652; bh=qmS+yITaQIP29+iePr5tVQ+LCnz4GuDMsK1RUBrVGhg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gvc8wZgPHVSGyK6FJ5osb9KzCbdhjhry13KCMpz+2/Ybuwwi0i3supM6jOwUxaU8c1fm79FyE8ELpWceSowrfKfUwDj8BWWoqyjqQkE27jNzjG1TiA/8HpathNr7yvKku5pPvM7E68I5DZQsM6IafxGKlQgl8ivIn/LrgrQ5Aw33y4Jh1bxmrlyYfWccTbxRLehMSGXVUA8erxIHGPcZjybPa+m+nYFYApIglGG/52kWQXaXvjyt0rHO1PgHK/tbT/ugJAK5dWut5oxHHWO/R+iu98b5fHseOuSFSl5Rc2wQvsiN++476xDD5XTAf5IuySWSfMJ3wcyY8lRwCxcI3w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1683305652; bh=GnyRcDhCCWd49uLtYMtEATlT3I68OgfLr8B04gVfoQy=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=JCzOzBeWANOecrJoYxDOr9g2mRIzPZXN6hEYpk7vqLjnCK0yx9c9hKOen03e3D4SqE/lfAa80oLGX13w/3/VvfHU1+4Yy6vBnBDwZ5hg/mNCZOcp/F9obygwcZyhWRJQ+l49KgKDwDxkhlZO37OkOtdDSPjq5kxgilGjxaxSId4nh8cYa4kAX5GVkHQ/LlpuWCYO9E2wg7JNiKPoQTHFisSoNonTqhzFwQVqVOhMaNs3lC5UiCsiaQ71XF0az0/HVYufspCA6ZW8JVyyTQBCORh3MQSP0AHKsuae6IWHN9xPZFe4u8gYXnA9M2oNgNH9jjUhdOx1zs6pZ4ZBMoMLjg==
+X-YMail-OSG: OG98wlsVM1lsQ1.6u2uqa46LzgmZnXUHC86eZ3.M5BBvAH0o5qSYREuJ9atkNjL
+ D8gN021a4KK7J.fSx5BvXnuLvtVQMqvUIYzH1WW.HYDyUdcquuxhppsveK6.GyNWvqiXwYwoD4SJ
+ pnM3nDnOhH2yvMDy9_tNhhQBT2BBBgR0njwtV64CYWOWdwaPGIFRnLmGKkROI74Nc2iYykQkMR1Z
+ pL6DN_OuI2jIGMc4QBRyyL6Fe1.5lu0zkzAbj4E8m_3p8x0MKLwGCclrhwYnyzzeMMFbB26wMewt
+ Fp5aTAwEyi5c8Z2wTx7YkKJ_aPC_faKkkqsgbhrrmzKLj1VGckapU4GPhQX_uTdZbmqR3BBFre_f
+ C4RyY_v8PWRRNiZ7TrA2yexkKNLqAzk9jjgwGUjlu5_iYqp2vt0Syhh2VXVWZJdxtjPm8tVcAybL
+ Jz6Xmt0OgjBu.mW6JWYDAd_FnSHO35Qg6IYosV1q5Zxc6LS.kGIuZtJC1ptVptkf7iT_.juwIDDD
+ w5fmhnhReFOBr910BKQ8qKXE7Zaeas3T71elzJLQdPn9XuIV_v7K6U1hiW84CFeajY6L7FuDH9v5
+ pkDwsJ..dRhzclT5Supu7pMct_0p.39GT_j1Prz0ALIIz42yVplqIir3L0KZeS03yhgrzQQtBxNN
+ ermya7m3wycTExiPtgHNGViWk3k.b9UiUsAQGkZeITYuAxYlPPAcH4WrEglozq7bsAEygO6kQf4T
+ 1yaqLpcziWYv52U7czAdZ10s5PiAH8Znuv7dSlkvpQAtRGgVneJRiDO1_k9VsIhGvY8LGuJIjcHt
+ K.4c.L5WHuq9kD1WBxx13B7qF3n.hYvSyMfoe7QXgiXMc44QX9rup58VFuKllBf6xXqpQ2FnGdkp
+ JEaSpjEHAbfwfVmJ5NJRAZfZOim9FXEReWfxlobJT9Ui1rZa0LPjrI76BNtYNtX.11sN96LHUCZA
+ Pbkxk8sj55ai9b.5VltcPkOTj.vtBQyAyS1TgK5AI1xHmAtNAOz2UjLvUQdMNswW2OES1jSApScs
+ YZqaGd1f3RNjZfu5PV_VHaGKSaae97pnESsjz9VnJYuLldzXKkLlpvBKCq0.xk1ZKBFqkN2BvqYp
+ SpEF35tlbbw4b1wUECjn0HPcgY3EibYaWg_fnAW4tLI6A8qUekBxsRAePsZ7eMAVbo549pmpn2et
+ 8rczyQqVxcPdU4NeNDhsLsNLUmGbuagGiMPW_1MO6toi63rZZY1Fzn_N0irbytIk72hyDR8tkCSd
+ YwMz4X3iJUroRxg.an.A9oj4FAUy5Vmd7wQ2R8jF.SY.1iH6RknArUOeOljF2ndMB3gJA5CjD773
+ 62J28pq4ruABV.lTa4knqQADyWoZPIx6nm_23j8Ab8FxrRvY1OhzLk1pMwtaxD8PU0WIliHvH.gz
+ cVykLQhcnGFWveXR81tkJU3AXPBdcoE7YYK6YCi827HpVGNN36PU5qcuN63VY6GMg11tHUGO.Er3
+ iLL1ZfaCniRgD2srUc2CI0UTjNjqcE9jjTE8wKXRTRUobXP6sS4KS9a7ixfud7zOVBkoBdcsNspR
+ oOAKsdnB7ruMiZRnLVn3flPaDcxRgCYq37BJTZSIK_8gHH1p1qEeeYTx8f1yp1BRc2M.4T_qGpqo
+ Q3DDmdJC6VJzWm0MHPeMp1DIIDqD9an_WmIqqmdLOst3iSEF9k_jQsH6YdxF1BkqH3Iu_S_TJi3I
+ h24vibMwdTAue4t2nEe3AwURE5rT8RTKtWBip3MZq3Q7JOnBBqHht3Xs47SACb5zwrp4A.NDn3N_
+ 203g17DJC8x2ZLezikeZVRH27MOwpeY41B6IXH0Kn6XUx6iOZuOUdGoBvAvJjIE6_hjCU3M_FNCZ
+ Jl.JOhi83Ld3J8CSuN8uGOjRPK7OgrCjxJfjZXggbr7nD0PJoL2pbVEqzLPH.y3ElZoL0lpeXdsB
+ eEMymKaGrkB7ehyYiAHYh0S5KRqRzXYTAAGUO5GLkcpeOI3ik1JeTt6aCwEMRgNZNGF2zPIcdwDl
+ mdH5A_AebVKwnnN7IlPHYqaUwdXcA.u.bEUxTh8BkxbcSE4pcVSs3_nscJ59tCqgzeKBFsEJ4S8L
+ eFp9eUMMu_sGILc9QHvYm5XSMs7B4bFAYvDQeO392ERbNuYb58oRUm8DlXN21maaJ2UsbV7SGIMj
+ YCyTrvonvlxTjKoE7DqH1veDVcpXNpTXCIvUHD2l_6W2Jqdm27lJjBn1h.sUoGz88S6niF93Z_Rw
+ JpnATDnAxpCRzf57ONyQJ3Za.ntEHOhyB7ReL86hYaxjfE6CZqkBdKWKKXQ1wGfeARGgMmFedqKk
+ Qc.9fYQ--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 076b0c49-4c26-4ff6-a733-e41b8bfe0c79
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 5 May 2023 16:54:12 +0000
+Received: by hermes--production-bf1-5f9df5c5c4-8dccp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5ad00bb60cbca83274984f7707b1a4a4;
+          Fri, 05 May 2023 16:54:10 +0000 (UTC)
+Message-ID: <1600f24c-70fb-15f3-029a-7152d8225437@schaufler-ca.com>
+Date:   Fri, 5 May 2023 09:54:07 -0700
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v1 2/9] KVM: x86/mmu: Add support for prewrite page
- tracking
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: NFS mount fail
 Content-Language: en-US
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Alexander Graf <graf@amazon.com>,
-        Forrest Yuan Yu <yuanyu@google.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        John Andersen <john.s.andersen@intel.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Marian Rotariu <marian.c.rotariu@gmail.com>,
-        =?UTF-8?Q?Mihai_Don=c8=9bu?= <mdontu@bitdefender.com>,
-        =?UTF-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Thara Gopinath <tgopinath@microsoft.com>,
-        Will Deacon <will@kernel.org>,
-        Zahra Tarkhani <ztarkhani@microsoft.com>,
-        =?UTF-8?Q?=c8=98tefan_=c8=98icleru?= <ssicleru@bitdefender.com>,
-        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
-        virtualization@lists.linux-foundation.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20230505152046.6575-1-mic@digikod.net>
- <20230505152046.6575-3-mic@digikod.net> <ZFUumGdZDNs1tkQA@google.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <ZFUumGdZDNs1tkQA@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
+        chuck.lever@oracle.com, jlayton@kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <1923bc2f330f576cd246856f976af448c035d02e.camel@huaweicloud.com>
+ <d34c30ba-55cc-8662-3587-bb66e234b714@schaufler-ca.com>
+ <CAHC9VhQu7GQ54H0k=C8ZWU-5zOX35QNWrBMEyNTE1AU_e8DcPQ@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhQu7GQ54H0k=C8ZWU-5zOX35QNWrBMEyNTE1AU_e8DcPQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+X-Mailer: WebService/1.1.21417 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 5/5/2023 7:03 AM, Paul Moore wrote:
+> On Thu, May 4, 2023 at 9:00 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 5/4/2023 9:11 AM, Roberto Sassu wrote:
+>>> Hi Casey
+>>>
+>>> while developing the fix for overlayfs, I tried first to address the
+>>> issue of a NFS filesystem failing to mount.
+>>>
+>>> The NFS server does not like the packets sent by the client:
+>>>
+>>> 14:52:20.827208 IP (tos 0x0, ttl 64, id 60628, offset 0, flags [DF], proto TCP (6), length 72, options (unknown 134,EOL))
+>>>     localhost.localdomain.omginitialrefs > _gateway.nfs: Flags [S], cksum 0x7618 (incorrect -> 0xa18c), seq 455337903, win 64240, options [mss 1460,sackOK,TS val 2178524519 ecr 0,nop,wscale 7], length 0
+>>> 14:52:20.827376 IP (tos 0xc0, ttl 64, id 5906, offset 0, flags [none], proto ICMP (1), length 112, options (unknown 134,EOL))
+>>>     _gateway > localhost.localdomain: ICMP parameter problem - octet 22, length 80
+>>>
+>>> I looked at the possible causes. SELinux works properly.
+>> SELinux was the reference LSM implementation for labeled networking.
+>>
+>>> What it seems to happen is that there is a default netlabel mapping,
+>>> that is used to send the packets out.
+>> Correct. SELinux only uses CIPSO options for MLS.
+> SELinux can use the NetLabel/CIPSO "local" configuration to send a
+> full SELinux labels over a loopback connection.
 
-On 05/05/2023 18:28, Sean Christopherson wrote:
-> On Fri, May 05, 2023, Mickaï¿½l Salaï¿½n wrote:
->> diff --git a/arch/x86/include/asm/kvm_page_track.h b/arch/x86/include/asm/kvm_page_track.h
->> index eb186bc57f6a..a7fb4ff888e6 100644
->> --- a/arch/x86/include/asm/kvm_page_track.h
->> +++ b/arch/x86/include/asm/kvm_page_track.h
->> @@ -3,6 +3,7 @@
->>   #define _ASM_X86_KVM_PAGE_TRACK_H
->>   
->>   enum kvm_page_track_mode {
->> +	KVM_PAGE_TRACK_PREWRITE,
-> 
-> Heh, just when I decide to finally kill off support for multiple modes[1] :-)
-> 
-> My assessment from that changelog still holds true for this case:
-> 
->    Drop "support" for multiple page-track modes, as there is no evidence
->    that array-based and refcounted metadata is the optimal solution for
->    other modes, nor is there any evidence that other use cases, e.g. for
->    access-tracking, will be a good fit for the page-track machinery in
->    general.
->    
->    E.g. one potential use case of access-tracking would be to prevent guest
->    access to poisoned memory (from the guest's perspective).  In that case,
->    the number of poisoned pages is likely to be a very small percentage of
->    the guest memory, and there is no need to reference count the number of
->    access-tracking users, i.e. expanding gfn_track[] for a new mode would be
->    grossly inefficient.  And for poisoned memory, host userspace would also
->    likely want to trap accesses, e.g. to inject #MC into the guest, and that
->    isn't currently supported by the page-track framework.
->    
->    A better alternative for that poisoned page use case is likely a
->    variation of the proposed per-gfn attributes overlay (linked), which
->    would allow efficiently tracking the sparse set of poisoned pages, and by
->    default would exit to userspace on access.
-> 
-> Of particular relevance:
-> 
->    - Using the page-track machinery is inefficient because the guest is likely
->      going to write-protect a minority of its memory.  And this
-> 
->        select KVM_EXTERNAL_WRITE_TRACKING if KVM
-> 
->      is particularly nasty because simply enabling HEKI in the Kconfig will cause
->      KVM to allocate rmaps and gfn tracking.
-> 
->    - There's no need to reference count the protection, i.e. 15 of the 16 bits of
->      gfn_track are dead weight.
-> 
->    - As proposed, adding a second "mode" would double the cost of gfn tracking.
-> 
->    - Tying the protections to the memslots will create an impossible-to-maintain
->      ABI because the protections will be lost if the owning memslot is deleted and
->      recreated.
-> 
->    - The page-track framework provides incomplete protection and will lead to an
->      ongoing game of whack-a-mole, e.g. this patch catches the obvious cases by
->      adding calls to kvm_page_track_prewrite(), but misses things like kvm_vcpu_map().
-> 
->    - The scaling and maintenance issues will only get worse if/when someone tries
->      to support dropping read and/or execute permissions, e.g. for execute-only.
-> 
->    - The code is x86-only, and is likely to stay that way for the foreseeable
->      future.
-> 
-> The proposed alternative is to piggyback the memory attributes implementation[2]
-> that is being added (if all goes according to plan) for confidential VMs.  This
-> use case (dropping permissions) came up not too long ago[3], which is why I have
-> a ready-made answer).
-> 
-> I have no doubt that we'll need to solve performance and scaling issues with the
-> memory attributes implementation, e.g. to utilize xarray multi-range support
-> instead of storing information on a per-4KiB-page basis, but AFAICT, the core
-> idea is sound.  And a very big positive from a maintenance perspective is that
-> any optimizations, fixes, etc. for one use case (CoCo vs. hardening) should also
-> benefit the other use case.
-> 
-> [1] https://lore.kernel.org/all/20230311002258.852397-22-seanjc@google.com
-> [2] https://lore.kernel.org/all/Y2WB48kD0J4VGynX@google.com
-> [3] https://lore.kernel.org/all/Y1a1i9vbJ%2FpVmV9r@google.com
+True enough. As you point out below, that's an advanced configuration
+option. A typical SELinux system isn't going to be set up that way.
 
-I agree, I used this mechanism because it was easier at first to rely on 
-a previous work, but while I was working on the MBEC support, I realized 
-that it's not the optimal way to do it.
+> * https://www.paul-moore.com/blog/d/2012/06/cipso_loopback_full_labels.html
+>
+> There are several differences between how SELinux and Smack implement
+> labeled networking, one of the larger differences is that SELinux
+> leaves the labeling configuration, e.g. which networks/interfaces are
+> labeled and how, as a separate exercise for the admin whereas the
+> labeling configuration is much more integrated with Smack.
 
-I was thinking about using a new special EPT bit similar to 
-EPT_SPTE_HOST_WRITABLE, but it may not be portable though. What do you 
-think?
+Which is consistent with the general approach of the two systems.
+
+> I wouldn't say one approach is better than the other, they are simply
+> different.  
+
+Agreed, for the most part.
+
+> The SELinux approach provides for the greatest amount of
+> flexibility with the understanding that more work needs to be done by
+> the admin. The Smack approach provides a quicker path to getting a
+> system up and running, but it is less flexible for challenging/mixed
+> network environments.
+
+Smack does have knobs and levers for setting some network attributes,
+and netlabelctl can be useful in certain cases. Smack could take better
+advantage of the netlabel capabilities than it does.
+
+> There are other issues around handling IPv6,
+
+Smack CALIPSO support (to replace the existing IPv6 handling) is on
+the short list. When that gets done depends on many factors.
+
+>  the sockets-as-objects
+> debate, etc. but those shouldn't be relevant to this discussion.
+
+Agreed.
+
