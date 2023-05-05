@@ -2,32 +2,32 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3867CC7EE30
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 15:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D72A1C7EE2C
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 15:29:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232032AbjEEPWj (ORCPT
+        id S232912AbjEEP3j (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 May 2023 11:22:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54204 "EHLO
+        Fri, 5 May 2023 11:29:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232777AbjEEPWW (ORCPT
+        with ESMTP id S232896AbjEEP3i (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 May 2023 11:22:22 -0400
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fad])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFC8E15686
-        for <linux-security-module@vger.kernel.org>; Fri,  5 May 2023 08:22:08 -0700 (PDT)
+        Fri, 5 May 2023 11:29:38 -0400
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E03B1492D
+        for <linux-security-module@vger.kernel.org>; Fri,  5 May 2023 08:29:30 -0700 (PDT)
 Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QCZDH0FZXzMqc7P;
-        Fri,  5 May 2023 17:22:07 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QCZDG2bp6zMpxBc;
-        Fri,  5 May 2023 17:22:06 +0200 (CEST)
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QCZD938BPzMq1NC;
+        Fri,  5 May 2023 17:22:01 +0200 (CEST)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QCZD85V0tzMpt9P;
+        Fri,  5 May 2023 17:22:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1683300126;
-        bh=6hEUXV1Yu+QqE06q6YV92ksgcTE4SSVMGFp/YRlUSqM=;
+        s=20191114; t=1683300121;
+        bh=dkHjbqpuvSBmD/ZCnBFFFKsFtN1g9PxpijWtwL2weO4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cCom6GYQLGlk2nCbcclR8AZKUkW0AJpZFC6wR92gff0rbAnNjJlFfzBd5J+3y++84
-         WAx+LLa8CAjewu98goOyt+2vh84ogydmCURfKSQ02P+jr2VYlfAmiT9Knsjn08r/LT
-         Tng2aFdb73PL8bp/dTy6vPMFTznPlq63+NzYf8sI=
+        b=FR+pYomIgtrTj0WI3JRDUSbHVrdlibfnwQU30RKu6bstMqwIWNnbYH/f3efnA/++Y
+         PVW9ePmH83Lzuo5sF3eA8Zxiu6x5s8zasun6j41FzXtbI7LfAbR7ieVBarIcdhpBG1
+         xrxpuSnVobX97umCLQuu/zofOq0RUrhcLMOWIHuk=
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -59,9 +59,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
         virtualization@lists.linux-foundation.org, x86@kernel.org,
         xen-devel@lists.xenproject.org
-Subject: [PATCH v1 9/9] virt: Add Heki KUnit tests
-Date:   Fri,  5 May 2023 17:20:46 +0200
-Message-Id: <20230505152046.6575-10-mic@digikod.net>
+Subject: [PATCH v1 4/9] KVM: x86: Add new hypercall to set EPT permissions
+Date:   Fri,  5 May 2023 17:20:41 +0200
+Message-Id: <20230505152046.6575-5-mic@digikod.net>
 In-Reply-To: <20230505152046.6575-1-mic@digikod.net>
 References: <20230505152046.6575-1-mic@digikod.net>
 MIME-Version: 1.0
@@ -71,26 +71,33 @@ X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This adds a new CONFIG_HEKI_TEST option to run tests at boot.  Indeed,
-because this patch series forbids the loading of kernel modules after
-the boot, we need to make built-in tests.  Furthermore, because we use
-some symbols not exported to modules (e.g., kernel_set_to_readonly) this
-could not work as modules.
+Add a new KVM_HC_LOCK_MEM_PAGE_RANGES hypercall that enables a guest to
+set EPT permissions on a set of page ranges.
 
-To run these tests, we need to boot the kernel with the heki_test=N boot
-argument with N selecting a specific test:
-1. heki_test_cr_disable_smep: Check CR pinning and try to disable SMEP.
-2. heki_test_write_to_const: Check .rodata (const) protection.
-3. heki_test_write_to_ro_after_init: Check __ro_after_init protection.
-4. heki_test_exec: Check non-executable kernel memory.
+This hypercall takes three arguments.  The first contains the GPA
+pointing to an array of struct heki_pa_range.  The second argument is
+the size of the array, not the number of elements.  The third argument
+is for future proofness and is designed to contains optional flags (e.g.
+to change the array type), but must be zero for now.
 
-This way to select tests should not be required when the kernel will
-properly handle the triggered synthetic page faults.  For now, these
-page faults make the kernel loop.
+The struct heki_pa_range contains a GFN that starts the range and
+another that is the indicate the last (included) page.  A bit field of
+attributes are tied to this range.
 
-All these tests temporarily disable the related kernel self-protections
-and should then failed if Heki doesn't protect the kernel.  They are
-verbose to make it easier to understand what is going on.
+The HEKI_ATTR_MEM_NOWRITE attribute is interpreted as a removal of the
+EPT write permission to deny any write access from the guest through its
+lifetime.  We choose "nowrite" because "read-only" exclude
+execution, it follows a deny-list approach, and most importantly because
+it is an incremental addition to the status quo (i.e., everything is
+allowed from the TDP point of view).  This is implemented thanks to the
+KVM_PAGE_TRACK_PREWRITE mode previously introduced.
+
+The page ranges recording is currently implemented with a static array
+of 16 elements to make it simple, but this mechanism will be dynamic in
+a follow-up.
+
+Define a kernel command line parameter "heki" to turn the feature on or
+off.  By default, Heki is turned on.
 
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
@@ -104,262 +111,299 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
 Cc: Wanpeng Li <wanpengli@tencent.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20230505152046.6575-10-mic@digikod.net
+Link: https://lore.kernel.org/r/20230505152046.6575-5-mic@digikod.net
 ---
- virt/heki/Kconfig |  12 +++
- virt/heki/heki.c  | 194 +++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 205 insertions(+), 1 deletion(-)
+ Documentation/virt/kvm/x86/hypercalls.rst |  17 +++
+ arch/x86/kvm/x86.c                        | 169 ++++++++++++++++++++++
+ include/linux/kvm_host.h                  |  13 ++
+ include/uapi/linux/kvm_para.h             |   1 +
+ virt/kvm/kvm_main.c                       |   4 +
+ 5 files changed, 204 insertions(+)
 
-diff --git a/virt/heki/Kconfig b/virt/heki/Kconfig
-index 96f18ce03013..806981f2b22d 100644
---- a/virt/heki/Kconfig
-+++ b/virt/heki/Kconfig
-@@ -27,3 +27,15 @@ config HYPERVISOR_SUPPORTS_HEKI
- 	  A hypervisor should select this when it can successfully build
- 	  and run with CONFIG_HEKI. That is, it should provide all of the
- 	  hypervisor support required for the Heki feature.
+diff --git a/Documentation/virt/kvm/x86/hypercalls.rst b/Documentation/virt/kvm/x86/hypercalls.rst
+index 10db7924720f..0ec79cc77f53 100644
+--- a/Documentation/virt/kvm/x86/hypercalls.rst
++++ b/Documentation/virt/kvm/x86/hypercalls.rst
+@@ -190,3 +190,20 @@ the KVM_CAP_EXIT_HYPERCALL capability. Userspace must enable that capability
+ before advertising KVM_FEATURE_HC_MAP_GPA_RANGE in the guest CPUID.  In
+ addition, if the guest supports KVM_FEATURE_MIGRATION_CONTROL, userspace
+ must also set up an MSR filter to process writes to MSR_KVM_MIGRATION_CONTROL.
 +
-+config HEKI_TEST
-+	bool "Tests for Heki" if !KUNIT_ALL_TESTS
-+	depends on HEKI && KUNIT=y
-+	default KUNIT_ALL_TESTS
-+	help
-+	  Run Heki tests at runtime according to the heki_test=N boot
-+	  parameter, with N identifying the test to run (between 1 and 4).
++9. KVM_HC_LOCK_MEM_PAGE_RANGES
++------------------------------
 +
-+	  Before launching the init process, the system might not respond
-+	  because of unhandled kernel page fault.  This will be fixed in a
-+	  next patch series.
-diff --git a/virt/heki/heki.c b/virt/heki/heki.c
-index 142b5dc98a2f..361e7734e950 100644
---- a/virt/heki/heki.c
-+++ b/virt/heki/heki.c
-@@ -5,11 +5,13 @@
-  * Copyright © 2023 Microsoft Corporation
-  */
++:Architecture: x86
++:Status: active
++:Purpose: Request memory page ranges to be restricted.
++
++- a0: physical address of a struct heki_pa_range array
++- a1: size of the array
++- a2: optional flags, must be 0 for now
++
++The hypercall lets a guest request memory permissions to be removed for itself,
++identified with set of physical page ranges (GFNs).  The HEKI_ATTR_MEM_NOWRITE
++memory page range attribute forbids related modification to the guest.
++
++Returns 0 on success or a KVM error code otherwise.
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index fd05f42c9913..ffab64d08de3 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -59,6 +59,7 @@
+ #include <linux/mem_encrypt.h>
+ #include <linux/entry-kvm.h>
+ #include <linux/suspend.h>
++#include <linux/heki.h>
  
-+#include <kunit/test.h>
- #include <linux/cache.h>
- #include <linux/heki.h>
- #include <linux/kernel.h>
- #include <linux/mm.h>
- #include <linux/printk.h>
-+#include <linux/set_memory.h>
- #include <linux/types.h>
- #include <linux/vmalloc.h>
+ #include <trace/events/kvm.h>
  
-@@ -78,13 +80,201 @@ void __init heki_early_init(void)
- 	heki_arch_init();
+@@ -9596,6 +9597,161 @@ static void kvm_sched_yield(struct kvm_vcpu *vcpu, unsigned long dest_id)
+ 	return;
  }
  
-+#ifdef CONFIG_HEKI_TEST
++#ifdef CONFIG_HEKI
 +
-+/* Heki test data */
-+
-+/* Takes two pages to not change permission of other read-only pages. */
-+const char heki_test_const_buf[PAGE_SIZE * 2] = {};
-+char heki_test_ro_after_init_buf[PAGE_SIZE * 2] __ro_after_init = {};
-+
-+long heki_test_exec_data(long);
-+void _test_exec_data_end(void);
-+
-+/* Used to test ROP execution against the .rodata section. */
-+/* clang-format off */
-+asm(
-+".pushsection .rodata;" // NOT .text section
-+".global heki_test_exec_data;"
-+".type heki_test_exec_data, @function;"
-+"heki_test_exec_data:"
-+ASM_ENDBR
-+"movq %rdi, %rax;"
-+"inc %rax;"
-+ASM_RET
-+".size heki_test_exec_data, .-heki_test_exec_data;"
-+"_test_exec_data_end:"
-+".popsection");
-+/* clang-format on */
-+
-+static void heki_test_cr_disable_smep(struct kunit *test)
++static int heki_page_track_add(struct kvm *const kvm, const gfn_t gfn,
++			       const enum kvm_page_track_mode mode)
 +{
-+	unsigned long cr4;
++	struct kvm_memory_slot *slot;
++	int idx;
 +
-+	/* SMEP should be initially enabled. */
-+	KUNIT_ASSERT_TRUE(test, __read_cr4() & X86_CR4_SMEP);
++	BUILD_BUG_ON(!IS_ENABLED(CONFIG_KVM_EXTERNAL_WRITE_TRACKING));
 +
-+	kunit_warn(test,
-+		   "Starting control register pinning tests with SMEP check\n");
++	idx = srcu_read_lock(&kvm->srcu);
++	slot = gfn_to_memslot(kvm, gfn);
++	if (!slot) {
++		srcu_read_unlock(&kvm->srcu, idx);
++		return -EINVAL;
++	}
 +
-+	/*
-+	 * Trying to disable SMEP, bypassing kernel self-protection by not
-+	 * using cr4_clear_bits(X86_CR4_SMEP).
-+	 */
-+	cr4 = __read_cr4() & ~X86_CR4_SMEP;
-+	asm volatile("mov %0,%%cr4" : "+r"(cr4) : : "memory");
-+
-+	/* SMEP should still be enabled. */
-+	KUNIT_ASSERT_TRUE(test, __read_cr4() & X86_CR4_SMEP);
++	write_lock(&kvm->mmu_lock);
++	kvm_slot_page_track_add_page(kvm, slot, gfn, mode);
++	write_unlock(&kvm->mmu_lock);
++	srcu_read_unlock(&kvm->srcu, idx);
++	return 0;
 +}
 +
-+static inline void print_addr(struct kunit *test, const char *const buf_name,
-+			      void *const buf)
++static bool
++heki_page_track_prewrite(struct kvm_vcpu *const vcpu, const gpa_t gpa,
++			 struct kvm_page_track_notifier_node *const node)
 +{
-+	const pte_t pte = *virt_to_kpte((unsigned long)buf);
-+	const phys_addr_t paddr = slow_virt_to_phys(buf);
-+	bool present = pte_flags(pte) & (_PAGE_PRESENT);
-+	bool accessible = pte_accessible(&init_mm, pte);
++	const gfn_t gfn = gpa_to_gfn(gpa);
++	const struct kvm *const kvm = vcpu->kvm;
++	size_t i;
 +
-+	kunit_warn(
-+		test,
-+		"%s vaddr:%llx paddr:%llx exec:%d write:%d present:%d accessible:%d\n",
-+		buf_name, (unsigned long long)buf, paddr, !!pte_exec(pte),
-+		!!pte_write(pte), present, accessible);
++	/* Checks if it is our own tracked pages, or those of someone else. */
++	for (i = 0; i < HEKI_GFN_MAX; i++) {
++		if (gfn >= kvm->heki_gfn_no_write[i].start &&
++		    gfn <= kvm->heki_gfn_no_write[i].end)
++			return false;
++	}
++
++	return true;
 +}
 +
-+extern int kernel_set_to_readonly;
-+
-+static void heki_test_write_to_rodata(struct kunit *test,
-+				      const char *const buf_name,
-+				      char *const ro_buf)
++static int kvm_heki_init_vm(struct kvm *const kvm)
 +{
-+	print_addr(test, buf_name, (void *)ro_buf);
-+	KUNIT_EXPECT_EQ(test, 0, *ro_buf);
++	struct kvm_page_track_notifier_node *const node =
++		kzalloc(sizeof(*node), GFP_KERNEL);
 +
-+	kunit_warn(
-+		test,
-+		"Bypassing kernel self-protection: mark memory as writable\n");
-+	kernel_set_to_readonly = 0;
-+	/*
-+	 * Removes execute permission that might be set by bugdoor-exec,
-+	 * because change_page_attr_clear() is not use by set_memory_rw().
-+	 * This is required since commit 652c5bf380ad ("x86/mm: Refuse W^X
-+	 * violations").
-+	 */
-+	KUNIT_ASSERT_FALSE(test, set_memory_nx((unsigned long)PTR_ALIGN_DOWN(
-+						       ro_buf, PAGE_SIZE),
-+					       1));
-+	KUNIT_ASSERT_FALSE(test, set_memory_rw((unsigned long)PTR_ALIGN_DOWN(
-+						       ro_buf, PAGE_SIZE),
-+					       1));
-+	kernel_set_to_readonly = 1;
++	if (!node)
++		return -ENOMEM;
 +
-+	kunit_warn(test, "Trying memory write\n");
-+	*ro_buf = 0x11;
-+	KUNIT_EXPECT_EQ(test, 0, *ro_buf);
-+	kunit_warn(test, "New content: 0x%02x\n", *ro_buf);
++	node->track_prewrite = heki_page_track_prewrite;
++	kvm_page_track_register_notifier(kvm, node);
++	return 0;
 +}
 +
-+static void heki_test_write_to_const(struct kunit *test)
++static bool is_gfn_overflow(unsigned long val)
 +{
-+	heki_test_write_to_rodata(test, "const_buf",
-+				  (void *)heki_test_const_buf);
++	const gfn_t gfn_mask = gpa_to_gfn(~0);
++
++	return (val | gfn_mask) != gfn_mask;
 +}
 +
-+static void heki_test_write_to_ro_after_init(struct kunit *test)
++#define HEKI_PA_RANGE_MAX_SIZE	(sizeof(struct heki_pa_range) * HEKI_GFN_MAX)
++
++static int heki_lock_mem_page_ranges(struct kvm *const kvm, gpa_t mem_ranges,
++				     unsigned long mem_ranges_size)
 +{
-+	heki_test_write_to_rodata(test, "ro_after_init_buf",
-+				  (void *)heki_test_ro_after_init_buf);
++	int err;
++	size_t i, ranges_num;
++	struct heki_pa_range *ranges;
++
++	if (mem_ranges_size > HEKI_PA_RANGE_MAX_SIZE)
++		return -KVM_E2BIG;
++
++	if ((mem_ranges_size % sizeof(struct heki_pa_range)) != 0)
++		return -KVM_EINVAL;
++
++	ranges = kzalloc(mem_ranges_size, GFP_KERNEL);
++	if (!ranges)
++		return -KVM_E2BIG;
++
++	err = kvm_read_guest(kvm, mem_ranges, ranges, mem_ranges_size);
++	if (err) {
++		err = -KVM_EFAULT;
++		goto out_free_ranges;
++	}
++
++	ranges_num = mem_ranges_size / sizeof(struct heki_pa_range);
++	for (i = 0; i < ranges_num; i++) {
++		const u64 attributes_mask = HEKI_ATTR_MEM_NOWRITE;
++		const gfn_t gfn_start = ranges[i].gfn_start;
++		const gfn_t gfn_end = ranges[i].gfn_end;
++		const u64 attributes = ranges[i].attributes;
++
++		if (is_gfn_overflow(ranges[i].gfn_start)) {
++			err = -KVM_EINVAL;
++			goto out_free_ranges;
++		}
++		if (is_gfn_overflow(ranges[i].gfn_end)) {
++			err = -KVM_EINVAL;
++			goto out_free_ranges;
++		}
++		if (ranges[i].gfn_start > ranges[i].gfn_end) {
++			err = -KVM_EINVAL;
++			goto out_free_ranges;
++		}
++		if (!ranges[i].attributes) {
++			err = -KVM_EINVAL;
++			goto out_free_ranges;
++		}
++		if ((ranges[i].attributes | attributes_mask) !=
++		    attributes_mask) {
++			err = -KVM_EINVAL;
++			goto out_free_ranges;
++		}
++
++		if (attributes & HEKI_ATTR_MEM_NOWRITE) {
++			unsigned long gfn;
++			size_t gfn_i;
++
++			gfn_i = atomic_dec_if_positive(
++				&kvm->heki_gfn_no_write_num);
++			if (gfn_i == 0) {
++				err = -KVM_E2BIG;
++				goto out_free_ranges;
++			}
++
++			gfn_i--;
++			kvm->heki_gfn_no_write[gfn_i].start = gfn_start;
++			kvm->heki_gfn_no_write[gfn_i].end = gfn_end;
++
++			for (gfn = gfn_start; gfn <= gfn_end; gfn++)
++				WARN_ON_ONCE(heki_page_track_add(
++					kvm, gfn, KVM_PAGE_TRACK_PREWRITE));
++		}
++
++		pr_warn("heki-kvm: Locking GFN 0x%llx-0x%llx with %s\n",
++			gfn_start, gfn_end,
++			(attributes & HEKI_ATTR_MEM_NOWRITE) ? "[nowrite]" : "");
++	}
++
++out_free_ranges:
++	kfree(ranges);
++	return err;
 +}
 +
-+typedef long test_exec_t(long);
++#else /* CONFIG_HEKI */
 +
-+static void heki_test_exec(struct kunit *test)
++static int kvm_heki_init_vm(struct kvm *const kvm)
 +{
-+	const size_t exec_size = 7;
-+	unsigned long nx_page_start = (unsigned long)PTR_ALIGN_DOWN(
-+		(const void *const)heki_test_exec_data, PAGE_SIZE);
-+	unsigned long nx_page_end = (unsigned long)PTR_ALIGN(
-+		(const void *const)heki_test_exec_data + exec_size, PAGE_SIZE);
-+	test_exec_t *exec = (test_exec_t *)heki_test_exec_data;
-+	long ret;
-+
-+	/* Starting non-executable memory tests. */
-+	print_addr(test, "test_exec_data", heki_test_exec_data);
-+
-+	kunit_warn(
-+		test,
-+		"Bypassing kernel-self protection: mark memory as executable\n");
-+	kernel_set_to_readonly = 0;
-+	KUNIT_ASSERT_FALSE(test,
-+			   set_memory_rox(nx_page_start,
-+					  PFN_UP(nx_page_end - nx_page_start)));
-+	kernel_set_to_readonly = 1;
-+
-+	kunit_warn(
-+		test,
-+		"Trying to execute data (ROP) in (initially) non-executable memory\n");
-+	ret = exec(3);
-+
-+	/* This should not be reached because of the uncaught page fault. */
-+	KUNIT_EXPECT_EQ(test, 3, ret);
-+	kunit_warn(test, "Result of execution: 3 + 1 = %ld\n", ret);
++	return 0;
 +}
 +
-+const struct kunit_case heki_test_cases[] = {
-+	KUNIT_CASE(heki_test_cr_disable_smep),
-+	KUNIT_CASE(heki_test_write_to_const),
-+	KUNIT_CASE(heki_test_write_to_ro_after_init),
-+	KUNIT_CASE(heki_test_exec),
-+	{}
-+};
++#endif /* CONFIG_HEKI */
 +
-+static unsigned long heki_test __ro_after_init;
-+
-+static int __init parse_heki_test_config(char *str)
-+{
-+	if (kstrtoul(str, 10, &heki_test) ||
-+	    heki_test > (ARRAY_SIZE(heki_test_cases) - 1))
-+		pr_warn("Invalid option string for heki_test: '%s'\n", str);
-+	return 1;
-+}
-+
-+__setup("heki_test=", parse_heki_test_config);
-+
-+static void heki_run_test(void)
-+{
-+	struct kunit_case heki_test_case[2] = {};
-+	struct kunit_suite heki_test_suite = {
-+		.name = "heki",
-+		.test_cases = heki_test_case,
-+	};
-+	struct kunit_suite *const test_suite = &heki_test_suite;
-+
-+	if (!kunit_enabled() || heki_test == 0 ||
-+	    heki_test >= ARRAY_SIZE(heki_test_cases))
-+		return;
-+
-+	pr_warn("Running test #%lu\n", heki_test);
-+	heki_test_case[0] = heki_test_cases[heki_test - 1];
-+	__kunit_test_suites_init(&test_suite, 1);
-+}
-+
-+#else /* CONFIG_HEKI_TEST */
-+
-+static inline void heki_run_test(void)
-+{
-+}
-+
-+#endif /* CONFIG_HEKI_TEST */
-+
- void heki_late_init(void)
+ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
  {
- 	struct heki_hypervisor *hypervisor = heki.hypervisor;
- 	int ret;
+ 	u64 ret = vcpu->run->hypercall.ret;
+@@ -9694,6 +9850,15 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
+ 		vcpu->arch.complete_userspace_io = complete_hypercall_exit;
+ 		return 0;
+ 	}
++#ifdef CONFIG_HEKI
++	case KVM_HC_LOCK_MEM_PAGE_RANGES:
++		/* No flags for now. */
++		if (a2)
++			ret = -KVM_EINVAL;
++		else
++			ret = heki_lock_mem_page_ranges(vcpu->kvm, a0, a1);
++		break;
++#endif /* CONFIG_HEKI */
+ 	default:
+ 		ret = -KVM_ENOSYS;
+ 		break;
+@@ -12126,6 +12291,10 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+ 	if (ret)
+ 		goto out_page_track;
  
- 	if (!heki_enabled)
--		return;
-+		return heki_run_test();
- 
- 	if (!heki.static_ranges) {
- 		pr_warn("Architecture did not initialize static ranges\n");
-@@ -113,6 +303,8 @@ void heki_late_init(void)
- 		goto out;
- 	pr_warn("Control registers locked\n");
- 
-+	heki_run_test();
++	ret = kvm_heki_init_vm(kvm);
++	if (ret)
++		goto out_page_track;
 +
- out:
- 	heki_free_pa_ranges(heki.static_ranges, heki.num_static_ranges);
- 	heki.static_ranges = NULL;
+ 	ret = static_call(kvm_x86_vm_init)(kvm);
+ 	if (ret)
+ 		goto out_uninit_mmu;
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 4f26b244f6d0..39a1bdc2ba42 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -699,6 +699,13 @@ struct kvm_memslots {
+ 	int node_idx;
+ };
+ 
++#ifdef CONFIG_HEKI
++struct heki_gfn_range {
++	gfn_t start;
++	gfn_t end;
++};
++#endif /* CONFIG_HEKI */
++
+ struct kvm {
+ #ifdef KVM_HAVE_MMU_RWLOCK
+ 	rwlock_t mmu_lock;
+@@ -801,6 +808,12 @@ struct kvm {
+ 	bool vm_bugged;
+ 	bool vm_dead;
+ 
++#ifdef CONFIG_HEKI
++#define HEKI_GFN_MAX 16
++	atomic_t heki_gfn_no_write_num;
++	struct heki_gfn_range heki_gfn_no_write[HEKI_GFN_MAX];
++#endif /* CONFIG_HEKI */
++
+ #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
+ 	struct notifier_block pm_notifier;
+ #endif
+diff --git a/include/uapi/linux/kvm_para.h b/include/uapi/linux/kvm_para.h
+index 960c7e93d1a9..d7512a10880e 100644
+--- a/include/uapi/linux/kvm_para.h
++++ b/include/uapi/linux/kvm_para.h
+@@ -30,6 +30,7 @@
+ #define KVM_HC_SEND_IPI		10
+ #define KVM_HC_SCHED_YIELD		11
+ #define KVM_HC_MAP_GPA_RANGE		12
++#define KVM_HC_LOCK_MEM_PAGE_RANGES	13
+ 
+ /*
+  * hypercalls use architecture specific
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 9c60384b5ae0..4aea936dfe73 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1230,6 +1230,10 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+ 	list_add(&kvm->vm_list, &vm_list);
+ 	mutex_unlock(&kvm_lock);
+ 
++#ifdef CONFIG_HEKI
++	atomic_set(&kvm->heki_gfn_no_write_num, HEKI_GFN_MAX + 1);
++#endif /* CONFIG_HEKI */
++
+ 	preempt_notifier_inc();
+ 	kvm_init_pm_notifier(kvm);
+ 
 -- 
 2.40.1
 
