@@ -2,32 +2,32 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0D4C77B7C
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 15:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8D5C7EE24
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 15:22:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232681AbjEEPWY (ORCPT
+        id S232871AbjEEPWg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 May 2023 11:22:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54224 "EHLO
+        Fri, 5 May 2023 11:22:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232713AbjEEPWI (ORCPT
+        with ESMTP id S232767AbjEEPWW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 May 2023 11:22:08 -0400
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fae])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 446AC14E50
-        for <linux-security-module@vger.kernel.org>; Fri,  5 May 2023 08:22:05 -0700 (PDT)
+        Fri, 5 May 2023 11:22:22 -0400
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E566C11B7E
+        for <linux-security-module@vger.kernel.org>; Fri,  5 May 2023 08:22:07 -0700 (PDT)
 Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QCZDC54NKzMqP0t;
-        Fri,  5 May 2023 17:22:03 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QCZDB71wWzMpt9w;
-        Fri,  5 May 2023 17:22:02 +0200 (CEST)
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QCZDF6ppRzMq81r;
+        Fri,  5 May 2023 17:22:05 +0200 (CEST)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QCZDF1ydFzMptBL;
+        Fri,  5 May 2023 17:22:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1683300123;
-        bh=DM23zXDS+uuGwMhWqh31C3FvKal04OOOYj6BCpV8eTU=;
+        s=20191114; t=1683300125;
+        bh=PyAeGY6RXqTYQefM0sl5cf8gwLNcu9YypouNBS2PSvg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xWSKWq8GRjQntbZQyjyc/hcLfD/4e9Eo9VEQ3TyJ15GAj81rIlqRsji0rYWtV6o9s
-         DjYkgLxPq6tOCUL7E0ENshFSZ0cXEvowTkLwi08Dmqi/WhYCFJPWohunvkPKWdyymr
-         yIWmw5cSKPerfUXYOOtVgs7cuuhvsEWWph9Se7ZE=
+        b=gx2MJRBQRK/Q7zeNftCJx4FHowj9XptOmH9PCuCsUSu0Bp7v+0qbMxJPxRE/O0jXB
+         coJOo2nnquoJ+LYtPiXbpt1gGK6521yg3b0SbAlgonaVc1WJSFYSTnWf6gVnc0qPj3
+         BlSHXvPRMTfLaM2oFX0fm3FNVa7xLedl9XNnFLhY=
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -59,9 +59,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
         virtualization@lists.linux-foundation.org, x86@kernel.org,
         xen-devel@lists.xenproject.org
-Subject: [PATCH v1 6/9] KVM: x86: Add Heki hypervisor support
-Date:   Fri,  5 May 2023 17:20:43 +0200
-Message-Id: <20230505152046.6575-7-mic@digikod.net>
+Subject: [PATCH v1 8/9] KVM: x86/mmu: Enable guests to lock themselves thanks to MBEC
+Date:   Fri,  5 May 2023 17:20:45 +0200
+Message-Id: <20230505152046.6575-9-mic@digikod.net>
 In-Reply-To: <20230505152046.6575-1-mic@digikod.net>
 References: <20230505152046.6575-1-mic@digikod.net>
 MIME-Version: 1.0
@@ -71,247 +71,539 @@ X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
+This changes enable to enforce a deny-by-default execution security
+policy for guest kernels, leveraged by the Heki implementation.
 
-Each supported hypervisor in x86 implements a struct x86_hyper_init to
-define the init functions for the hypervisor.  Define a new init_heki()
-entry point in struct x86_hyper_init.  Hypervisors that support Heki
-must define this init_heki() function.  Call init_heki() of the chosen
-hypervisor in init_hypervisor_platform().
+Create synthetic page faults when an access is denied by Heki.  This
+kind of kernel page fault needs to be handled by guests, which is not
+currently the case, making it try again and again, but we are working to
+calm down such guests by teaching them how to handle such page faults.
 
-Create a heki_hypervisor structure that each hypervisor can fill
-with its data and functions. This will allow the Heki feature to work
-in a hypervisor agnostic way.
+The MMU tracepoints are updated to reflect the difference between kernel
+and user space executions.
 
-Declare and initialize a "heki_hypervisor" structure for KVM so KVM can
-support Heki.  Define the init_heki() function for KVM.  In init_heki(),
-set the hypervisor field in the generic "heki" structure to the KVM
-"heki_hypervisor".  After this point, generic Heki code can access the
-KVM Heki data and functions.
+kvm_heki_fix_all_ept_exec_perm() walks through all guest memory pages to
+set the configured default execution permissions (i.e. only allow
+configured executabel memory pages).
+
+The struct heki_mem_range's attribute field now understand
+HEKI_ATTR_MEM_EXEC, which allows the related kernel sections to be
+executable, and deny any other kernel memory from being executable for
+the whole lifetime of the guest.  This obviously can only work with
+static kernels and we are exploring ways to handle authenticated and
+dynamic kernel memory permission updates.
+
+If the host doesn't have MBEC enabled, the KVM_HC_LOCK_MEM_PAGE_RANGES
+hypecall will return -KVM_EOPNOTSUPP and might only apply the previous
+ranges, if any.  This is useful to develop this RFC and make sure
+execution restrictions are enforced (and not silently ignored), but this
+behavior might change in a future patch series.  Guest kernels could
+check for MBEC support to not use the HEKI_ATTR_MEM_EXEC attribute.
+
+The number of configurable memory ranges per guest is 16 for now.  This
+will change with a follow-up.
+
+There are currently some pr_warn() calls to make it easy to test this
+code.
 
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Kees Cook <keescook@chromium.org>
+Cc: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Sean Christopherson <seanjc@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
 Cc: Wanpeng Li <wanpengli@tencent.com>
-Co-developed-by: Mickaël Salaün <mic@digikod.net>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Signed-off-by: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20230505152046.6575-7-mic@digikod.net
+Link: https://lore.kernel.org/r/20230505152046.6575-9-mic@digikod.net
 ---
- arch/x86/include/asm/x86_init.h  |  2 +
- arch/x86/kernel/cpu/hypervisor.c |  1 +
- arch/x86/kernel/kvm.c            | 72 ++++++++++++++++++++++++++++++++
- arch/x86/kernel/x86_init.c       |  1 +
- arch/x86/kvm/Kconfig             |  1 +
- virt/heki/Kconfig                |  9 +++-
- virt/heki/heki.c                 |  6 ---
- 7 files changed, 85 insertions(+), 7 deletions(-)
+ Documentation/virt/kvm/x86/hypercalls.rst |  4 +-
+ arch/x86/kvm/mmu/mmu.c                    | 35 ++++++++-
+ arch/x86/kvm/mmu/mmutrace.h               | 11 ++-
+ arch/x86/kvm/mmu/spte.c                   | 19 ++++-
+ arch/x86/kvm/mmu/spte.h                   | 15 +++-
+ arch/x86/kvm/mmu/tdp_mmu.c                | 73 ++++++++++++++++++
+ arch/x86/kvm/mmu/tdp_mmu.h                |  4 +
+ arch/x86/kvm/x86.c                        | 90 ++++++++++++++++++++++-
+ arch/x86/kvm/x86.h                        |  7 ++
+ include/linux/kvm_host.h                  |  4 +
+ virt/kvm/kvm_main.c                       |  1 +
+ 11 files changed, 250 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-index c1c8c581759d..0fc5041a66c6 100644
---- a/arch/x86/include/asm/x86_init.h
-+++ b/arch/x86/include/asm/x86_init.h
-@@ -119,6 +119,7 @@ struct x86_init_pci {
-  * @msi_ext_dest_id:		MSI supports 15-bit APIC IDs
-  * @init_mem_mapping:		setup early mappings during init_mem_mapping()
-  * @init_after_bootmem:		guest init after boot allocator is finished
-+ * @init_heki:			Hypervisor enforced kernel integrity
-  */
- struct x86_hyper_init {
- 	void (*init_platform)(void);
-@@ -127,6 +128,7 @@ struct x86_hyper_init {
- 	bool (*msi_ext_dest_id)(void);
- 	void (*init_mem_mapping)(void);
- 	void (*init_after_bootmem)(void);
-+	void (*init_heki)(void);
- };
+diff --git a/Documentation/virt/kvm/x86/hypercalls.rst b/Documentation/virt/kvm/x86/hypercalls.rst
+index 8aa5d28986e3..5accf5f6de13 100644
+--- a/Documentation/virt/kvm/x86/hypercalls.rst
++++ b/Documentation/virt/kvm/x86/hypercalls.rst
+@@ -204,7 +204,9 @@ must also set up an MSR filter to process writes to MSR_KVM_MIGRATION_CONTROL.
  
- /**
-diff --git a/arch/x86/kernel/cpu/hypervisor.c b/arch/x86/kernel/cpu/hypervisor.c
-index 553bfbfc3a1b..6085c8129e0c 100644
---- a/arch/x86/kernel/cpu/hypervisor.c
-+++ b/arch/x86/kernel/cpu/hypervisor.c
-@@ -106,4 +106,5 @@ void __init init_hypervisor_platform(void)
+ The hypercall lets a guest request memory permissions to be removed for itself,
+ identified with set of physical page ranges (GFNs).  The HEKI_ATTR_MEM_NOWRITE
+-memory page range attribute forbids related modification to the guest.
++memory page range attribute forbids related modification to the guest.  The
++HEKI_ATTR_MEM_EXEC attribute allows execution on the specified pages while
++removing it for all the others.
  
- 	x86_hyper_type = h->type;
- 	x86_init.hyper.init_platform();
-+	x86_init.hyper.init_heki();
- }
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 1cceac5984da..e53cebdcf3ac 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -29,6 +29,7 @@
- #include <linux/syscore_ops.h>
- #include <linux/cc_platform.h>
- #include <linux/efi.h>
-+#include <linux/heki.h>
- #include <asm/timer.h>
- #include <asm/cpu.h>
- #include <asm/traps.h>
-@@ -866,6 +867,45 @@ static void __init kvm_guest_init(void)
- 	hardlockup_detector_disable();
- }
+ Returns 0 on success or a KVM error code otherwise.
  
-+#ifdef CONFIG_HEKI
-+
-+static int kvm_protect_ranges(struct heki_pa_range *ranges, int num_ranges)
-+{
-+	size_t size;
-+	long err;
-+
-+	WARN_ON(in_interrupt());
-+
-+	size = sizeof(ranges[0]) * num_ranges;
-+	err = kvm_hypercall3(KVM_HC_LOCK_MEM_PAGE_RANGES, __pa(ranges), size, 0);
-+	if (WARN(err, "Failed to enforce memory protection: %ld\n", err))
-+		return err;
-+
-+	return 0;
-+}
-+
-+extern unsigned long cr4_pinned_mask;
-+
-+/*
-+ * TODO: Check SMP policy consistency, e.g. with
-+ * this_cpu_read(cpu_tlbstate.cr4)
-+ */
-+static int kvm_lock_crs(void)
-+{
-+	unsigned long cr4;
-+	int err;
-+
-+	err = kvm_hypercall2(KVM_HC_LOCK_CR_UPDATE, 0, X86_CR0_WP);
-+	if (err)
-+		return err;
-+
-+	cr4 = __read_cr4();
-+	err = kvm_hypercall2(KVM_HC_LOCK_CR_UPDATE, 4, cr4 & cr4_pinned_mask);
-+	return err;
-+}
-+
-+#endif /* CONFIG_HEKI */
-+
- static noinline uint32_t __kvm_cpuid_base(void)
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index a47e63217eb8..56a8bcac1b82 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -3313,7 +3313,7 @@ fast_pf_fix_direct_spte(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault,
+ static bool is_access_allowed(struct kvm_page_fault *fault, u64 spte)
  {
- 	if (boot_cpu_data.cpuid_level < 0)
-@@ -999,6 +1039,37 @@ static bool kvm_sev_es_hcall_finish(struct ghcb *ghcb, struct pt_regs *regs)
- }
- #endif
+ 	if (fault->exec)
+-		return is_executable_pte(spte);
++		return is_executable_pte(spte, !fault->user);
  
-+#ifdef CONFIG_HEKI
-+
-+static struct heki_hypervisor kvm_heki_hypervisor = {
-+	.protect_ranges = kvm_protect_ranges,
-+	.lock_crs = kvm_lock_crs,
-+};
-+
-+static void kvm_init_heki(void)
-+{
-+	long err;
-+
-+	if (!kvm_para_available())
-+		/* Cannot make KVM hypercalls. */
-+		return;
-+
-+	err = kvm_hypercall3(KVM_HC_LOCK_MEM_PAGE_RANGES, -1, -1, -1);
-+	if (err == -KVM_ENOSYS)
-+		/* Ignores host. */
-+		return;
-+
-+	heki.hypervisor = &kvm_heki_hypervisor;
-+}
-+
-+#else /* CONFIG_HEKI */
-+
-+static void kvm_init_heki(void)
-+{
-+}
-+
-+#endif /* CONFIG_HEKI */
-+
- const __initconst struct hypervisor_x86 x86_hyper_kvm = {
- 	.name				= "KVM",
- 	.detect				= kvm_detect,
-@@ -1007,6 +1078,7 @@ const __initconst struct hypervisor_x86 x86_hyper_kvm = {
- 	.init.x2apic_available		= kvm_para_available,
- 	.init.msi_ext_dest_id		= kvm_msi_ext_dest_id,
- 	.init.init_platform		= kvm_init_platform,
-+	.init.init_heki			= kvm_init_heki,
- #if defined(CONFIG_AMD_MEM_ENCRYPT)
- 	.runtime.sev_es_hcall_prepare	= kvm_sev_es_hcall_prepare,
- 	.runtime.sev_es_hcall_finish	= kvm_sev_es_hcall_finish,
-diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
-index ef80d361b463..0a023c24fcdb 100644
---- a/arch/x86/kernel/x86_init.c
-+++ b/arch/x86/kernel/x86_init.c
-@@ -114,6 +114,7 @@ struct x86_init_ops x86_init __initdata = {
- 		.msi_ext_dest_id	= bool_x86_init_noop,
- 		.init_mem_mapping	= x86_init_noop,
- 		.init_after_bootmem	= x86_init_noop,
-+		.init_heki		= x86_init_noop,
- 	},
+ 	if (fault->write)
+ 		return is_writable_pte(spte);
+@@ -5602,6 +5602,39 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
+ 	if (WARN_ON(!VALID_PAGE(vcpu->arch.mmu->root.hpa)))
+ 		return RET_PF_RETRY;
  
- 	.acpi = {
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index fbeaa9ddef59..ba355171ceeb 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -49,6 +49,7 @@ config KVM
- 	select SRCU
- 	select INTERVAL_TREE
- 	select HAVE_KVM_PM_NOTIFIER if PM
-+	select HYPERVISOR_SUPPORTS_HEKI
- 	help
- 	  Support hosting fully virtualized guest machines using hardware
- 	  virtualization extensions.  You will need a fairly recent
-diff --git a/virt/heki/Kconfig b/virt/heki/Kconfig
-index 9858a827fe17..96f18ce03013 100644
---- a/virt/heki/Kconfig
-+++ b/virt/heki/Kconfig
-@@ -6,7 +6,7 @@
- config HEKI
- 	bool "Hypervisor Enforced Kernel Integrity (Heki)"
- 	default y
--	depends on !JUMP_LABEL && ARCH_SUPPORTS_HEKI
-+	depends on !JUMP_LABEL && ARCH_SUPPORTS_HEKI && HYPERVISOR_SUPPORTS_HEKI
- 	select KVM_EXTERNAL_WRITE_TRACKING if KVM
- 	help
- 	  This feature enhances guest virtual machine security by taking
-@@ -20,3 +20,10 @@ config ARCH_SUPPORTS_HEKI
- 	  An architecture should select this when it can successfully build
- 	  and run with CONFIG_HEKI. That is, it should provide all of the
- 	  architecture support required for the HEKI feature.
++	/* Skips real page faults if not needed. */
++	if ((error_code & PFERR_FETCH_MASK) &&
++	    !kvm_heki_is_exec_allowed(vcpu, cr2_or_gpa)) {
++		/*
++		 * TODO: To avoid kvm_heki_is_exec_allowed() call, check
++		 * enable_mbec and EPT_VIOLATION_KERNEL_INSTR, see
++		 * handle_ept_violation().
++		 */
++		struct x86_exception fault = {
++			.vector = PF_VECTOR,
++			.error_code_valid = true,
++			.error_code = error_code,
++			.nested_page_fault = false,
++			/*
++			 * TODO: This kind of kernel page fault needs to be handled by
++			 * the guest, which is not currently the case, making it try
++			 * again and again.
++			 *
++			 * You may want to test with cr2_or_gva to see the page
++			 * fault caught by the guest kernel (thinking it is a
++			 * user space fault).
++			 */
++			.address = static_call(kvm_x86_fault_gva)(vcpu),
++			.async_page_fault = false,
++		};
 +
-+config HYPERVISOR_SUPPORTS_HEKI
-+	bool "Hypervisor support for Heki"
-+	help
-+	  A hypervisor should select this when it can successfully build
-+	  and run with CONFIG_HEKI. That is, it should provide all of the
-+	  hypervisor support required for the Heki feature.
-diff --git a/virt/heki/heki.c b/virt/heki/heki.c
-index c8cb1b84cceb..142b5dc98a2f 100644
---- a/virt/heki/heki.c
-+++ b/virt/heki/heki.c
-@@ -91,12 +91,6 @@ void heki_late_init(void)
- 		return;
++		pr_warn_ratelimited(
++			"heki-kvm: Creating fetch #PF at 0x%016llx\n",
++			fault.address);
++		kvm_inject_page_fault(vcpu, &fault);
++		return RET_PF_INVALID;
++	}
++
+ 	r = RET_PF_INVALID;
+ 	if (unlikely(error_code & PFERR_RSVD_MASK)) {
+ 		r = handle_mmio_page_fault(vcpu, cr2_or_gpa, direct);
+diff --git a/arch/x86/kvm/mmu/mmutrace.h b/arch/x86/kvm/mmu/mmutrace.h
+index ae86820cef69..cb7df95aec25 100644
+--- a/arch/x86/kvm/mmu/mmutrace.h
++++ b/arch/x86/kvm/mmu/mmutrace.h
+@@ -342,7 +342,8 @@ TRACE_EVENT(
+ 		__field(u8, level)
+ 		/* These depend on page entry type, so compute them now.  */
+ 		__field(bool, r)
+-		__field(bool, x)
++		__field(bool, kx)
++		__field(bool, ux)
+ 		__field(signed char, u)
+ 	),
+ 
+@@ -352,15 +353,17 @@ TRACE_EVENT(
+ 		__entry->sptep = virt_to_phys(sptep);
+ 		__entry->level = level;
+ 		__entry->r = shadow_present_mask || (__entry->spte & PT_PRESENT_MASK);
+-		__entry->x = is_executable_pte(__entry->spte);
++		__entry->kx = is_executable_pte(__entry->spte, true);
++		__entry->ux = is_executable_pte(__entry->spte, false);
+ 		__entry->u = shadow_user_mask ? !!(__entry->spte & shadow_user_mask) : -1;
+ 	),
+ 
+-	TP_printk("gfn %llx spte %llx (%s%s%s%s) level %d at %llx",
++	TP_printk("gfn %llx spte %llx (%s%s%s%s%s) level %d at %llx",
+ 		  __entry->gfn, __entry->spte,
+ 		  __entry->r ? "r" : "-",
+ 		  __entry->spte & PT_WRITABLE_MASK ? "w" : "-",
+-		  __entry->x ? "x" : "-",
++		  __entry->kx ? "X" : "-",
++		  __entry->ux ? "x" : "-",
+ 		  __entry->u == -1 ? "" : (__entry->u ? "u" : "-"),
+ 		  __entry->level, __entry->sptep
+ 	)
+diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
+index f1e2e3cad878..c9fabb3c9cb2 100644
+--- a/arch/x86/kvm/mmu/spte.c
++++ b/arch/x86/kvm/mmu/spte.c
+@@ -184,10 +184,25 @@ bool make_spte(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
+ 		pte_access &= ~ACC_EXEC_MASK;
  	}
  
--	/*
--	 * Hypervisor support will be added in the future. When it is, the
--	 * hypervisor will be used to protect guest kernel memory and
--	 * control registers.
--	 */
--
- 	if (!hypervisor) {
- 		/* This happens for kernels running on bare metal as well. */
- 		pr_warn("No hypervisor support\n");
+-	if (pte_access & ACC_EXEC_MASK)
++	if (pte_access & ACC_EXEC_MASK) {
+ 		spte |= shadow_x_mask;
+-	else
++#ifdef CONFIG_HEKI
++		/*
++		 * FIXME: Race condition (at boot) if no
++		 * lockdep_assert_held_write(vcpu->kvm->mmu_lock);
++		 */
++		if (READ_ONCE(vcpu->kvm->heki_kernel_exec_locked)) {
++			if (!heki_exec_is_allowed(vcpu->kvm, gfn))
++				spte &= ~VMX_EPT_EXECUTABLE_MASK;
++			else
++				pr_warn("heki-kvm: Allowing kernel execution "
++					"for GFN 0x%llx\n",
++					gfn);
++		}
++#endif /* CONFIG_HEKI */
++	} else {
+ 		spte |= shadow_nx_mask;
++	}
+ 
+ 	if (pte_access & ACC_USER_MASK)
+ 		spte |= shadow_user_mask;
+diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
+index 6f54dc9409c9..30b250d03132 100644
+--- a/arch/x86/kvm/mmu/spte.h
++++ b/arch/x86/kvm/mmu/spte.h
+@@ -3,7 +3,10 @@
+ #ifndef KVM_X86_MMU_SPTE_H
+ #define KVM_X86_MMU_SPTE_H
+ 
++#include <asm/vmx.h>
++
+ #include "mmu_internal.h"
++#include "../vmx/vmx.h"
+ 
+ /*
+  * A MMU present SPTE is backed by actual memory and may or may not be present
+@@ -307,9 +310,17 @@ static inline bool is_last_spte(u64 pte, int level)
+ 	return (level == PG_LEVEL_4K) || is_large_pte(pte);
+ }
+ 
+-static inline bool is_executable_pte(u64 spte)
++static inline bool is_executable_pte(u64 spte, bool for_kernel_mode)
+ {
+-	return (spte & (shadow_x_mask | shadow_nx_mask)) == shadow_x_mask;
++	u64 x_mask = shadow_x_mask;
++
++	if (enable_mbec) {
++		if (for_kernel_mode)
++			x_mask &= ~VMX_EPT_USER_EXECUTABLE_MASK;
++		else
++			x_mask &= ~VMX_EPT_EXECUTABLE_MASK;
++	}
++	return (spte & (x_mask | shadow_nx_mask)) == x_mask;
+ }
+ 
+ static inline kvm_pfn_t spte_to_pfn(u64 pte)
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+index d6df38d371a0..0be34a9e90c0 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.c
++++ b/arch/x86/kvm/mmu/tdp_mmu.c
+@@ -7,7 +7,10 @@
+ #include "tdp_mmu.h"
+ #include "spte.h"
+ 
++#include "../x86.h"
++
+ #include <asm/cmpxchg.h>
++#include <asm/vmx.h>
+ #include <trace/events/kvm.h>
+ 
+ static bool __read_mostly tdp_mmu_enabled = true;
+@@ -1021,6 +1024,76 @@ void kvm_tdp_mmu_zap_all(struct kvm *kvm)
+ 	}
+ }
+ 
++#ifdef CONFIG_HEKI
++
++/* TODO: Handle flush? */
++void kvm_heki_fix_all_ept_exec_perm(struct kvm *const kvm)
++{
++	int i;
++	struct kvm_mmu_page *root;
++	const gfn_t start = 0;
++	const gfn_t end = tdp_mmu_max_gfn_exclusive();
++
++	if (WARN_ON_ONCE(!is_tdp_mmu_enabled(kvm)))
++		return;
++
++	if (WARN_ON_ONCE(!enable_mbec))
++		return;
++
++	write_lock(&kvm->mmu_lock);
++
++	/*
++	 * Because heki_exec_locked is only set with this code, it cannot be
++	 * unlocked.  This is protected against race condition thanks to
++	 * mmu_lock.
++	 */
++	WRITE_ONCE(kvm->heki_kernel_exec_locked, true);
++
++	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
++		for_each_tdp_mmu_root(kvm, root, i) {
++			struct tdp_iter iter;
++
++			WARN_ON_ONCE(!refcount_read(&root->tdp_mmu_root_count));
++
++			/*
++			 * TODO: Make sure
++			 * !is_shadow_present_pte()/SPTE_MMU_PRESENT_MASK are
++			 * well handled when they are present.
++			 */
++
++			rcu_read_lock();
++			tdp_root_for_each_leaf_pte(iter, root, start, end) {
++				u64 new_spte;
++
++				if (heki_exec_is_allowed(kvm, iter.gfn)) {
++					pr_warn("heki-kvm: Allowing kernel "
++						"execution for GFN 0x%llx\n",
++						iter.gfn);
++					continue;
++				}
++				pr_warn("heki-kvm: Denying kernel execution "
++					"for GFN 0x%llx\n",
++					iter.gfn);
++
++retry:
++				new_spte = iter.old_spte &
++					   ~VMX_EPT_EXECUTABLE_MASK;
++				if (new_spte == iter.old_spte)
++					continue;
++
++				if (tdp_mmu_set_spte_atomic(kvm, &iter,
++							    new_spte))
++					goto retry;
++			}
++			rcu_read_unlock();
++		}
++	}
++	write_unlock(&kvm->mmu_lock);
++	pr_warn("heki-kvm: Locked executable kernel memory\n");
++}
++
++#endif /* CONFIG_HEKI */
++
+ /*
+  * Zap all invalidated roots to ensure all SPTEs are dropped before the "fast
+  * zap" completes.
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.h b/arch/x86/kvm/mmu/tdp_mmu.h
+index d3714200b932..8b70b6af68d4 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.h
++++ b/arch/x86/kvm/mmu/tdp_mmu.h
+@@ -24,6 +24,10 @@ void kvm_tdp_mmu_zap_all(struct kvm *kvm);
+ void kvm_tdp_mmu_invalidate_all_roots(struct kvm *kvm);
+ void kvm_tdp_mmu_zap_invalidated_roots(struct kvm *kvm);
+ 
++#ifdef CONFIG_HEKI
++void kvm_heki_fix_all_ept_exec_perm(struct kvm *const kvm);
++#endif /* CONFIG_HEKI */
++
+ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault);
+ 
+ bool kvm_tdp_mmu_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range,
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index a529455359ac..7ac8d9fabc18 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -20,6 +20,7 @@
+ #include "irq.h"
+ #include "ioapic.h"
+ #include "mmu.h"
++#include "mmu/tdp_mmu.h"
+ #include "i8254.h"
+ #include "tss.h"
+ #include "kvm_cache_regs.h"
+@@ -31,6 +32,7 @@
+ #include "lapic.h"
+ #include "xen.h"
+ #include "smm.h"
++#include "vmx/capabilities.h"
+ 
+ #include <linux/clocksource.h>
+ #include <linux/interrupt.h>
+@@ -9705,6 +9707,45 @@ heki_page_track_prewrite(struct kvm_vcpu *const vcpu, const gpa_t gpa,
+ 	return true;
+ }
+ 
++bool heki_exec_is_allowed(const struct kvm *const kvm, const gfn_t gfn)
++{
++	unsigned int gfn_last;
++
++	if (!READ_ONCE(kvm->heki_kernel_exec_locked))
++		return true;
++
++	/*
++	 * heki_gfn_exec_last is initialized with (HEKI_GFN_MAX + 1),
++	 * and 0 means that heki_gfn_exec_last is full.
++	 */
++	for (gfn_last = atomic_read(&kvm->heki_gfn_exec_last);
++	     gfn_last > 0 && gfn_last <= HEKI_GFN_MAX;) {
++		gfn_last--;
++
++		/* Ignores unused slots. */
++		if (kvm->heki_gfn_exec[gfn_last].end == 0)
++			break;
++
++		if (gfn >= kvm->heki_gfn_exec[gfn_last].start &&
++		    gfn <= kvm->heki_gfn_exec[gfn_last].end) {
++			/* TODO: Opportunistically shrink heki_gfn_exec. */
++			return true;
++		}
++	}
++	return false;
++}
++
++bool kvm_heki_is_exec_allowed(struct kvm_vcpu *vcpu, gpa_t gpa)
++{
++	const gfn_t gfn = gpa_to_gfn(gpa);
++	const struct kvm *const kvm = vcpu->kvm;
++
++	if (heki_exec_is_allowed(kvm, gfn))
++		return true;
++
++	return false;
++}
++
+ static int kvm_heki_init_vm(struct kvm *const kvm)
+ {
+ 	struct kvm_page_track_notifier_node *const node =
+@@ -9733,6 +9774,7 @@ static int heki_lock_mem_page_ranges(struct kvm *const kvm, gpa_t mem_ranges,
+ 	int err;
+ 	size_t i, ranges_num;
+ 	struct heki_pa_range *ranges;
++	bool has_exec_restriction = false;
+ 
+ 	if (mem_ranges_size > HEKI_PA_RANGE_MAX_SIZE)
+ 		return -KVM_E2BIG;
+@@ -9752,7 +9794,8 @@ static int heki_lock_mem_page_ranges(struct kvm *const kvm, gpa_t mem_ranges,
+ 
+ 	ranges_num = mem_ranges_size / sizeof(struct heki_pa_range);
+ 	for (i = 0; i < ranges_num; i++) {
+-		const u64 attributes_mask = HEKI_ATTR_MEM_NOWRITE;
++		const u64 attributes_mask = HEKI_ATTR_MEM_NOWRITE |
++					    HEKI_ATTR_MEM_EXEC;
+ 		const gfn_t gfn_start = ranges[i].gfn_start;
+ 		const gfn_t gfn_end = ranges[i].gfn_end;
+ 		const u64 attributes = ranges[i].attributes;
+@@ -9799,11 +9842,52 @@ static int heki_lock_mem_page_ranges(struct kvm *const kvm, gpa_t mem_ranges,
+ 					kvm, gfn, KVM_PAGE_TRACK_PREWRITE));
+ 		}
+ 
+-		pr_warn("heki-kvm: Locking GFN 0x%llx-0x%llx with %s\n",
++		/*
++		 * Allow-list for execute permission,
++		 * see kvm_heki_fix_all_ept_exec_perm().
++		 */
++		if (attributes & HEKI_ATTR_MEM_EXEC) {
++			size_t gfn_i;
++
++			if (!enable_mbec) {
++				/*
++				 * Guests can check for MBEC support to avoid
++				 * such error by not using HEKI_ATTR_MEM_EXEC.
++				 */
++				err = -KVM_EOPNOTSUPP;
++				pr_warn("heki-kvm: HEKI_ATTR_MEM_EXEC "
++					"depends on MBEC, which is disabled.");
++				/*
++				 * We should continue partially applying
++				 * restrictions, but it is useful for this RFC
++				 * to exit early in case of missing MBEC
++				 * support.
++				 */
++				goto out_free_ranges;
++			}
++
++			has_exec_restriction = true;
++			gfn_i = atomic_dec_if_positive(
++				&kvm->heki_gfn_exec_last);
++			if (gfn_i == 0) {
++				err = -KVM_E2BIG;
++				goto out_free_ranges;
++			}
++
++			gfn_i--;
++			kvm->heki_gfn_exec[gfn_i].start = gfn_start;
++			kvm->heki_gfn_exec[gfn_i].end = gfn_end;
++		}
++
++		pr_warn("heki-kvm: Locking GFN 0x%llx-0x%llx with %s%s\n",
+ 			gfn_start, gfn_end,
+-			(attributes & HEKI_ATTR_MEM_NOWRITE) ? "[nowrite]" : "");
++			(attributes & HEKI_ATTR_MEM_NOWRITE) ? "[nowrite]" : "",
++			(attributes & HEKI_ATTR_MEM_EXEC) ? "[exec]" : "");
+ 	}
+ 
++	if (has_exec_restriction)
++		kvm_heki_fix_all_ept_exec_perm(kvm);
++
+ out_free_ranges:
+ 	kfree(ranges);
+ 	return err;
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index 3e80a60ecbd8..2127e551202d 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -282,6 +282,8 @@ int heki_check_cr(const struct kvm *kvm, unsigned long cr, unsigned long val);
+ 
+ bool kvm_heki_is_exec_allowed(struct kvm_vcpu *vcpu, gpa_t gpa);
+ 
++bool heki_exec_is_allowed(const struct kvm *const kvm, const gfn_t gfn);
++
+ #else /* CONFIG_HEKI */
+ 
+ static inline int heki_check_cr(const struct kvm *const kvm,
+@@ -290,6 +292,11 @@ static inline int heki_check_cr(const struct kvm *const kvm,
+ 	return 0;
+ }
+ 
++static inline bool kvm_heki_is_exec_allowed(struct kvm_vcpu *vcpu, gpa_t gpa)
++{
++	return true;
++}
++
+ #endif /* CONFIG_HEKI */
+ 
+ void kvm_inject_realmode_interrupt(struct kvm_vcpu *vcpu, int irq, int inc_eip);
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index ab9dc723bc89..82c7b02cbcc3 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -812,9 +812,13 @@ struct kvm {
+ #define HEKI_GFN_MAX 16
+ 	atomic_t heki_gfn_no_write_num;
+ 	struct heki_gfn_range heki_gfn_no_write[HEKI_GFN_MAX];
++	atomic_t heki_gfn_exec_last;
++	struct heki_gfn_range heki_gfn_exec[HEKI_GFN_MAX];
+ 
+ 	atomic_long_t heki_pinned_cr0;
+ 	atomic_long_t heki_pinned_cr4;
++
++	bool heki_kernel_exec_locked;
+ #endif /* CONFIG_HEKI */
+ 
+ #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 4aea936dfe73..a177f8ff5123 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1232,6 +1232,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+ 
+ #ifdef CONFIG_HEKI
+ 	atomic_set(&kvm->heki_gfn_no_write_num, HEKI_GFN_MAX + 1);
++	atomic_set(&kvm->heki_gfn_exec_last, HEKI_GFN_MAX + 1);
+ #endif /* CONFIG_HEKI */
+ 
+ 	preempt_notifier_inc();
 -- 
 2.40.1
 
