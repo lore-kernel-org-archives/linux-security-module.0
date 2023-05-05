@@ -2,43 +2,69 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D72A1C7EE2C
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 15:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB86C7EE22
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 16:28:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232912AbjEEP3j (ORCPT
+        id S230487AbjEEQ2S (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 May 2023 11:29:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60164 "EHLO
+        Fri, 5 May 2023 12:28:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232896AbjEEP3i (ORCPT
+        with ESMTP id S232726AbjEEQ2Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 May 2023 11:29:38 -0400
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E03B1492D
-        for <linux-security-module@vger.kernel.org>; Fri,  5 May 2023 08:29:30 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QCZD938BPzMq1NC;
-        Fri,  5 May 2023 17:22:01 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QCZD85V0tzMpt9P;
-        Fri,  5 May 2023 17:22:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1683300121;
-        bh=dkHjbqpuvSBmD/ZCnBFFFKsFtN1g9PxpijWtwL2weO4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FR+pYomIgtrTj0WI3JRDUSbHVrdlibfnwQU30RKu6bstMqwIWNnbYH/f3efnA/++Y
-         PVW9ePmH83Lzuo5sF3eA8Zxiu6x5s8zasun6j41FzXtbI7LfAbR7ieVBarIcdhpBG1
-         xrxpuSnVobX97umCLQuu/zofOq0RUrhcLMOWIHuk=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Borislav Petkov <bp@alien8.de>,
+        Fri, 5 May 2023 12:28:16 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBE14191FA
+        for <linux-security-module@vger.kernel.org>; Fri,  5 May 2023 09:28:10 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-55a3146ed47so19664547b3.2
+        for <linux-security-module@vger.kernel.org>; Fri, 05 May 2023 09:28:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1683304090; x=1685896090;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tpG4xiqP3mzArRx9Ask1She9PnSIKi9NV0T7HckdUAY=;
+        b=R7ZId5oM7hLrX+tcfVm/Bnk2u8JbAC1I8QSh2twc/YutVfGMASmtW7tbm2YP3uHqlk
+         RwtPwL861jZAZsMdLif5CXyQc6HVUK4hq+Rsigm7g9H5SwYxxSrPZKroysdphn0wBKMc
+         5pkuhlqCX/BOp4yTuk4h5T1NCQgcpfPZ9KLIiem4KASWPyrgXBR48rcxQa06YhEaqMbn
+         orfLSFQcdN2vNomHtco8b3soICbHS5a9W6R91ScgWRyqTuI6OJFa+omcbJE3G4QloJsc
+         Zd/UhaIHTp9GBfbJO6BShFyMFzXWMH9S7e+yp/9GzVVu/Y2uZsmKlNFrDjrpY2RYPhtU
+         7R+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683304090; x=1685896090;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tpG4xiqP3mzArRx9Ask1She9PnSIKi9NV0T7HckdUAY=;
+        b=X1XvIx2gcbPz6z6KGYsL1wn2Sa+V+CvkrwbenZrcyL7ZTUkZ7468KCutsYzuoP7rCS
+         fQ8btJ3mrDxdhxboQxsu/LXvlvvsQahTlR9Ez82GeoHM1Ovhqi0DDJUM5CYu8+wEsR8j
+         n1LBulDFue5FckdzXkzWd/Aij5innIr7CxEZ26KJo+/Mv06JxSwLZkgTR2e1NFcR7Vwl
+         PhZqA9R117mrpOVUtbmhcp9cpTlpuW51OimlfWZ51dVgqmLWbMmMaYwA8gsRSgoMMmI4
+         J1j4A2RzCeAeJH8HHwespLp9VBOp/AvqjyHAaaQ47PVhi5qNCNaIwXYKaNS6twbYp/6a
+         Zxeg==
+X-Gm-Message-State: AC+VfDxha0l87+5adhu2wRSpJzMuC1p8Z7zS01TJNKq+3xUqFeGHQxeR
+        po5d9Iopo/MsbrL569bF+0uu09wHzPg=
+X-Google-Smtp-Source: ACHHUZ6MaxIQ4e6CYkENF40G6p9cF+vIn2nNSO3VXw5131N/TbPSwiBkXRT2QEZKyWmorm0BLuruUfs9Bhg=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a81:ac24:0:b0:559:d859:d746 with SMTP id
+ k36-20020a81ac24000000b00559d859d746mr1208880ywh.10.1683304090087; Fri, 05
+ May 2023 09:28:10 -0700 (PDT)
+Date:   Fri, 5 May 2023 09:28:08 -0700
+In-Reply-To: <20230505152046.6575-3-mic@digikod.net>
+Mime-Version: 1.0
+References: <20230505152046.6575-1-mic@digikod.net> <20230505152046.6575-3-mic@digikod.net>
+Message-ID: <ZFUumGdZDNs1tkQA@google.com>
+Subject: Re: [PATCH v1 2/9] KVM: x86/mmu: Add support for prewrite page tracking
+From:   Sean Christopherson <seanjc@google.com>
+To:     "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
+Cc:     Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
         Kees Cook <keescook@chromium.org>,
         Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Wanpeng Li <wanpengli@tencent.com>,
         Alexander Graf <graf@amazon.com>,
         Forrest Yuan Yu <yuanyu@google.com>,
         James Morris <jamorris@linux.microsoft.com>,
@@ -46,364 +72,122 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         Liran Alon <liran.alon@oracle.com>,
         "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
         Marian Rotariu <marian.c.rotariu@gmail.com>,
-        =?UTF-8?q?Mihai=20Don=C8=9Bu?= <mdontu@bitdefender.com>,
-        =?UTF-8?q?Nicu=C8=99or=20C=C3=AE=C8=9Bu?= <nicu.citu@icloud.com>,
+        "Mihai =?utf-8?B?RG9uyJt1?=" <mdontu@bitdefender.com>,
+        "=?utf-8?B?TmljdciZb3IgQ8OuyJt1?=" <nicu.citu@icloud.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
         Thara Gopinath <tgopinath@microsoft.com>,
         Will Deacon <will@kernel.org>,
         Zahra Tarkhani <ztarkhani@microsoft.com>,
-        =?UTF-8?q?=C8=98tefan=20=C8=98icleru?= <ssicleru@bitdefender.com>,
+        "=?utf-8?Q?=C8=98tefan_=C8=98icleru?=" <ssicleru@bitdefender.com>,
         dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
         linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
         virtualization@lists.linux-foundation.org, x86@kernel.org,
         xen-devel@lists.xenproject.org
-Subject: [PATCH v1 4/9] KVM: x86: Add new hypercall to set EPT permissions
-Date:   Fri,  5 May 2023 17:20:41 +0200
-Message-Id: <20230505152046.6575-5-mic@digikod.net>
-In-Reply-To: <20230505152046.6575-1-mic@digikod.net>
-References: <20230505152046.6575-1-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a new KVM_HC_LOCK_MEM_PAGE_RANGES hypercall that enables a guest to
-set EPT permissions on a set of page ranges.
+On Fri, May 05, 2023, Micka=EF=BF=BDl Sala=EF=BF=BDn wrote:
+> diff --git a/arch/x86/include/asm/kvm_page_track.h b/arch/x86/include/asm=
+/kvm_page_track.h
+> index eb186bc57f6a..a7fb4ff888e6 100644
+> --- a/arch/x86/include/asm/kvm_page_track.h
+> +++ b/arch/x86/include/asm/kvm_page_track.h
+> @@ -3,6 +3,7 @@
+>  #define _ASM_X86_KVM_PAGE_TRACK_H
+> =20
+>  enum kvm_page_track_mode {
+> +	KVM_PAGE_TRACK_PREWRITE,
 
-This hypercall takes three arguments.  The first contains the GPA
-pointing to an array of struct heki_pa_range.  The second argument is
-the size of the array, not the number of elements.  The third argument
-is for future proofness and is designed to contains optional flags (e.g.
-to change the array type), but must be zero for now.
+Heh, just when I decide to finally kill off support for multiple modes[1] :=
+-)
 
-The struct heki_pa_range contains a GFN that starts the range and
-another that is the indicate the last (included) page.  A bit field of
-attributes are tied to this range.
+My assessment from that changelog still holds true for this case:
 
-The HEKI_ATTR_MEM_NOWRITE attribute is interpreted as a removal of the
-EPT write permission to deny any write access from the guest through its
-lifetime.  We choose "nowrite" because "read-only" exclude
-execution, it follows a deny-list approach, and most importantly because
-it is an incremental addition to the status quo (i.e., everything is
-allowed from the TDP point of view).  This is implemented thanks to the
-KVM_PAGE_TRACK_PREWRITE mode previously introduced.
+  Drop "support" for multiple page-track modes, as there is no evidence
+  that array-based and refcounted metadata is the optimal solution for
+  other modes, nor is there any evidence that other use cases, e.g. for
+  access-tracking, will be a good fit for the page-track machinery in
+  general.
+ =20
+  E.g. one potential use case of access-tracking would be to prevent guest
+  access to poisoned memory (from the guest's perspective).  In that case,
+  the number of poisoned pages is likely to be a very small percentage of
+  the guest memory, and there is no need to reference count the number of
+  access-tracking users, i.e. expanding gfn_track[] for a new mode would be
+  grossly inefficient.  And for poisoned memory, host userspace would also
+  likely want to trap accesses, e.g. to inject #MC into the guest, and that
+  isn't currently supported by the page-track framework.
+ =20
+  A better alternative for that poisoned page use case is likely a
+  variation of the proposed per-gfn attributes overlay (linked), which
+  would allow efficiently tracking the sparse set of poisoned pages, and by
+  default would exit to userspace on access.
 
-The page ranges recording is currently implemented with a static array
-of 16 elements to make it simple, but this mechanism will be dynamic in
-a follow-up.
+Of particular relevance:
 
-Define a kernel command line parameter "heki" to turn the feature on or
-off.  By default, Heki is turned on.
+  - Using the page-track machinery is inefficient because the guest is like=
+ly
+    going to write-protect a minority of its memory.  And this
 
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Wanpeng Li <wanpengli@tencent.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20230505152046.6575-5-mic@digikod.net
----
- Documentation/virt/kvm/x86/hypercalls.rst |  17 +++
- arch/x86/kvm/x86.c                        | 169 ++++++++++++++++++++++
- include/linux/kvm_host.h                  |  13 ++
- include/uapi/linux/kvm_para.h             |   1 +
- virt/kvm/kvm_main.c                       |   4 +
- 5 files changed, 204 insertions(+)
+      select KVM_EXTERNAL_WRITE_TRACKING if KVM
 
-diff --git a/Documentation/virt/kvm/x86/hypercalls.rst b/Documentation/virt/kvm/x86/hypercalls.rst
-index 10db7924720f..0ec79cc77f53 100644
---- a/Documentation/virt/kvm/x86/hypercalls.rst
-+++ b/Documentation/virt/kvm/x86/hypercalls.rst
-@@ -190,3 +190,20 @@ the KVM_CAP_EXIT_HYPERCALL capability. Userspace must enable that capability
- before advertising KVM_FEATURE_HC_MAP_GPA_RANGE in the guest CPUID.  In
- addition, if the guest supports KVM_FEATURE_MIGRATION_CONTROL, userspace
- must also set up an MSR filter to process writes to MSR_KVM_MIGRATION_CONTROL.
-+
-+9. KVM_HC_LOCK_MEM_PAGE_RANGES
-+------------------------------
-+
-+:Architecture: x86
-+:Status: active
-+:Purpose: Request memory page ranges to be restricted.
-+
-+- a0: physical address of a struct heki_pa_range array
-+- a1: size of the array
-+- a2: optional flags, must be 0 for now
-+
-+The hypercall lets a guest request memory permissions to be removed for itself,
-+identified with set of physical page ranges (GFNs).  The HEKI_ATTR_MEM_NOWRITE
-+memory page range attribute forbids related modification to the guest.
-+
-+Returns 0 on success or a KVM error code otherwise.
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index fd05f42c9913..ffab64d08de3 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -59,6 +59,7 @@
- #include <linux/mem_encrypt.h>
- #include <linux/entry-kvm.h>
- #include <linux/suspend.h>
-+#include <linux/heki.h>
- 
- #include <trace/events/kvm.h>
- 
-@@ -9596,6 +9597,161 @@ static void kvm_sched_yield(struct kvm_vcpu *vcpu, unsigned long dest_id)
- 	return;
- }
- 
-+#ifdef CONFIG_HEKI
-+
-+static int heki_page_track_add(struct kvm *const kvm, const gfn_t gfn,
-+			       const enum kvm_page_track_mode mode)
-+{
-+	struct kvm_memory_slot *slot;
-+	int idx;
-+
-+	BUILD_BUG_ON(!IS_ENABLED(CONFIG_KVM_EXTERNAL_WRITE_TRACKING));
-+
-+	idx = srcu_read_lock(&kvm->srcu);
-+	slot = gfn_to_memslot(kvm, gfn);
-+	if (!slot) {
-+		srcu_read_unlock(&kvm->srcu, idx);
-+		return -EINVAL;
-+	}
-+
-+	write_lock(&kvm->mmu_lock);
-+	kvm_slot_page_track_add_page(kvm, slot, gfn, mode);
-+	write_unlock(&kvm->mmu_lock);
-+	srcu_read_unlock(&kvm->srcu, idx);
-+	return 0;
-+}
-+
-+static bool
-+heki_page_track_prewrite(struct kvm_vcpu *const vcpu, const gpa_t gpa,
-+			 struct kvm_page_track_notifier_node *const node)
-+{
-+	const gfn_t gfn = gpa_to_gfn(gpa);
-+	const struct kvm *const kvm = vcpu->kvm;
-+	size_t i;
-+
-+	/* Checks if it is our own tracked pages, or those of someone else. */
-+	for (i = 0; i < HEKI_GFN_MAX; i++) {
-+		if (gfn >= kvm->heki_gfn_no_write[i].start &&
-+		    gfn <= kvm->heki_gfn_no_write[i].end)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
-+static int kvm_heki_init_vm(struct kvm *const kvm)
-+{
-+	struct kvm_page_track_notifier_node *const node =
-+		kzalloc(sizeof(*node), GFP_KERNEL);
-+
-+	if (!node)
-+		return -ENOMEM;
-+
-+	node->track_prewrite = heki_page_track_prewrite;
-+	kvm_page_track_register_notifier(kvm, node);
-+	return 0;
-+}
-+
-+static bool is_gfn_overflow(unsigned long val)
-+{
-+	const gfn_t gfn_mask = gpa_to_gfn(~0);
-+
-+	return (val | gfn_mask) != gfn_mask;
-+}
-+
-+#define HEKI_PA_RANGE_MAX_SIZE	(sizeof(struct heki_pa_range) * HEKI_GFN_MAX)
-+
-+static int heki_lock_mem_page_ranges(struct kvm *const kvm, gpa_t mem_ranges,
-+				     unsigned long mem_ranges_size)
-+{
-+	int err;
-+	size_t i, ranges_num;
-+	struct heki_pa_range *ranges;
-+
-+	if (mem_ranges_size > HEKI_PA_RANGE_MAX_SIZE)
-+		return -KVM_E2BIG;
-+
-+	if ((mem_ranges_size % sizeof(struct heki_pa_range)) != 0)
-+		return -KVM_EINVAL;
-+
-+	ranges = kzalloc(mem_ranges_size, GFP_KERNEL);
-+	if (!ranges)
-+		return -KVM_E2BIG;
-+
-+	err = kvm_read_guest(kvm, mem_ranges, ranges, mem_ranges_size);
-+	if (err) {
-+		err = -KVM_EFAULT;
-+		goto out_free_ranges;
-+	}
-+
-+	ranges_num = mem_ranges_size / sizeof(struct heki_pa_range);
-+	for (i = 0; i < ranges_num; i++) {
-+		const u64 attributes_mask = HEKI_ATTR_MEM_NOWRITE;
-+		const gfn_t gfn_start = ranges[i].gfn_start;
-+		const gfn_t gfn_end = ranges[i].gfn_end;
-+		const u64 attributes = ranges[i].attributes;
-+
-+		if (is_gfn_overflow(ranges[i].gfn_start)) {
-+			err = -KVM_EINVAL;
-+			goto out_free_ranges;
-+		}
-+		if (is_gfn_overflow(ranges[i].gfn_end)) {
-+			err = -KVM_EINVAL;
-+			goto out_free_ranges;
-+		}
-+		if (ranges[i].gfn_start > ranges[i].gfn_end) {
-+			err = -KVM_EINVAL;
-+			goto out_free_ranges;
-+		}
-+		if (!ranges[i].attributes) {
-+			err = -KVM_EINVAL;
-+			goto out_free_ranges;
-+		}
-+		if ((ranges[i].attributes | attributes_mask) !=
-+		    attributes_mask) {
-+			err = -KVM_EINVAL;
-+			goto out_free_ranges;
-+		}
-+
-+		if (attributes & HEKI_ATTR_MEM_NOWRITE) {
-+			unsigned long gfn;
-+			size_t gfn_i;
-+
-+			gfn_i = atomic_dec_if_positive(
-+				&kvm->heki_gfn_no_write_num);
-+			if (gfn_i == 0) {
-+				err = -KVM_E2BIG;
-+				goto out_free_ranges;
-+			}
-+
-+			gfn_i--;
-+			kvm->heki_gfn_no_write[gfn_i].start = gfn_start;
-+			kvm->heki_gfn_no_write[gfn_i].end = gfn_end;
-+
-+			for (gfn = gfn_start; gfn <= gfn_end; gfn++)
-+				WARN_ON_ONCE(heki_page_track_add(
-+					kvm, gfn, KVM_PAGE_TRACK_PREWRITE));
-+		}
-+
-+		pr_warn("heki-kvm: Locking GFN 0x%llx-0x%llx with %s\n",
-+			gfn_start, gfn_end,
-+			(attributes & HEKI_ATTR_MEM_NOWRITE) ? "[nowrite]" : "");
-+	}
-+
-+out_free_ranges:
-+	kfree(ranges);
-+	return err;
-+}
-+
-+#else /* CONFIG_HEKI */
-+
-+static int kvm_heki_init_vm(struct kvm *const kvm)
-+{
-+	return 0;
-+}
-+
-+#endif /* CONFIG_HEKI */
-+
- static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
- {
- 	u64 ret = vcpu->run->hypercall.ret;
-@@ -9694,6 +9850,15 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
- 		vcpu->arch.complete_userspace_io = complete_hypercall_exit;
- 		return 0;
- 	}
-+#ifdef CONFIG_HEKI
-+	case KVM_HC_LOCK_MEM_PAGE_RANGES:
-+		/* No flags for now. */
-+		if (a2)
-+			ret = -KVM_EINVAL;
-+		else
-+			ret = heki_lock_mem_page_ranges(vcpu->kvm, a0, a1);
-+		break;
-+#endif /* CONFIG_HEKI */
- 	default:
- 		ret = -KVM_ENOSYS;
- 		break;
-@@ -12126,6 +12291,10 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
- 	if (ret)
- 		goto out_page_track;
- 
-+	ret = kvm_heki_init_vm(kvm);
-+	if (ret)
-+		goto out_page_track;
-+
- 	ret = static_call(kvm_x86_vm_init)(kvm);
- 	if (ret)
- 		goto out_uninit_mmu;
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 4f26b244f6d0..39a1bdc2ba42 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -699,6 +699,13 @@ struct kvm_memslots {
- 	int node_idx;
- };
- 
-+#ifdef CONFIG_HEKI
-+struct heki_gfn_range {
-+	gfn_t start;
-+	gfn_t end;
-+};
-+#endif /* CONFIG_HEKI */
-+
- struct kvm {
- #ifdef KVM_HAVE_MMU_RWLOCK
- 	rwlock_t mmu_lock;
-@@ -801,6 +808,12 @@ struct kvm {
- 	bool vm_bugged;
- 	bool vm_dead;
- 
-+#ifdef CONFIG_HEKI
-+#define HEKI_GFN_MAX 16
-+	atomic_t heki_gfn_no_write_num;
-+	struct heki_gfn_range heki_gfn_no_write[HEKI_GFN_MAX];
-+#endif /* CONFIG_HEKI */
-+
- #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
- 	struct notifier_block pm_notifier;
- #endif
-diff --git a/include/uapi/linux/kvm_para.h b/include/uapi/linux/kvm_para.h
-index 960c7e93d1a9..d7512a10880e 100644
---- a/include/uapi/linux/kvm_para.h
-+++ b/include/uapi/linux/kvm_para.h
-@@ -30,6 +30,7 @@
- #define KVM_HC_SEND_IPI		10
- #define KVM_HC_SCHED_YIELD		11
- #define KVM_HC_MAP_GPA_RANGE		12
-+#define KVM_HC_LOCK_MEM_PAGE_RANGES	13
- 
- /*
-  * hypercalls use architecture specific
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 9c60384b5ae0..4aea936dfe73 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1230,6 +1230,10 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
- 	list_add(&kvm->vm_list, &vm_list);
- 	mutex_unlock(&kvm_lock);
- 
-+#ifdef CONFIG_HEKI
-+	atomic_set(&kvm->heki_gfn_no_write_num, HEKI_GFN_MAX + 1);
-+#endif /* CONFIG_HEKI */
-+
- 	preempt_notifier_inc();
- 	kvm_init_pm_notifier(kvm);
- 
--- 
-2.40.1
+    is particularly nasty because simply enabling HEKI in the Kconfig will =
+cause
+    KVM to allocate rmaps and gfn tracking.
 
+  - There's no need to reference count the protection, i.e. 15 of the 16 bi=
+ts of
+    gfn_track are dead weight.
+
+  - As proposed, adding a second "mode" would double the cost of gfn tracki=
+ng.
+
+  - Tying the protections to the memslots will create an impossible-to-main=
+tain
+    ABI because the protections will be lost if the owning memslot is delet=
+ed and
+    recreated.
+
+  - The page-track framework provides incomplete protection and will lead t=
+o an
+    ongoing game of whack-a-mole, e.g. this patch catches the obvious cases=
+ by
+    adding calls to kvm_page_track_prewrite(), but misses things like kvm_v=
+cpu_map().
+
+  - The scaling and maintenance issues will only get worse if/when someone =
+tries
+    to support dropping read and/or execute permissions, e.g. for execute-o=
+nly.
+
+  - The code is x86-only, and is likely to stay that way for the foreseeabl=
+e
+    future.
+
+The proposed alternative is to piggyback the memory attributes implementati=
+on[2]
+that is being added (if all goes according to plan) for confidential VMs.  =
+This
+use case (dropping permissions) came up not too long ago[3], which is why I=
+ have
+a ready-made answer).
+
+I have no doubt that we'll need to solve performance and scaling issues wit=
+h the
+memory attributes implementation, e.g. to utilize xarray multi-range suppor=
+t
+instead of storing information on a per-4KiB-page basis, but AFAICT, the co=
+re
+idea is sound.  And a very big positive from a maintenance perspective is t=
+hat
+any optimizations, fixes, etc. for one use case (CoCo vs. hardening) should=
+ also
+benefit the other use case.
+
+[1] https://lore.kernel.org/all/20230311002258.852397-22-seanjc@google.com
+[2] https://lore.kernel.org/all/Y2WB48kD0J4VGynX@google.com
+[3] https://lore.kernel.org/all/Y1a1i9vbJ%2FpVmV9r@google.com
