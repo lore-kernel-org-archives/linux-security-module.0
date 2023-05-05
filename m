@@ -2,32 +2,32 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 555ECC7EE2E
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 15:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3867CC7EE30
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 15:22:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232394AbjEEPWi (ORCPT
+        id S232032AbjEEPWj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 May 2023 11:22:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54708 "EHLO
+        Fri, 5 May 2023 11:22:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232766AbjEEPWW (ORCPT
+        with ESMTP id S232777AbjEEPWW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Fri, 5 May 2023 11:22:22 -0400
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C774515ED1
-        for <linux-security-module@vger.kernel.org>; Fri,  5 May 2023 08:22:06 -0700 (PDT)
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fad])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFC8E15686
+        for <linux-security-module@vger.kernel.org>; Fri,  5 May 2023 08:22:08 -0700 (PDT)
 Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QCZDD5yVJzMqDN2;
-        Fri,  5 May 2023 17:22:04 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QCZDD0z6dzMpxBc;
-        Fri,  5 May 2023 17:22:04 +0200 (CEST)
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QCZDH0FZXzMqc7P;
+        Fri,  5 May 2023 17:22:07 +0200 (CEST)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QCZDG2bp6zMpxBc;
+        Fri,  5 May 2023 17:22:06 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1683300124;
-        bh=numFKFwerBzb1GFmju5PzfUy3LvlXvoHGRlXH+KNT+c=;
+        s=20191114; t=1683300126;
+        bh=6hEUXV1Yu+QqE06q6YV92ksgcTE4SSVMGFp/YRlUSqM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aY8puWEd6eYwOhiBC5f3v2W8STDFR1ws5t4KGxnuMkV/veHF5dk9ikWYLtZACCzKL
-         ZZHQs/vJJkdeZe4WGYydF7qoNq+EgiNGsn5zsfWYHRSGNlObVxnWCaLzSzlH/rsRqO
-         0NTmO3IcYiupEfrP7vmngHe/c3dwNtOvqClQ6aug=
+        b=cCom6GYQLGlk2nCbcclR8AZKUkW0AJpZFC6wR92gff0rbAnNjJlFfzBd5J+3y++84
+         WAx+LLa8CAjewu98goOyt+2vh84ogydmCURfKSQ02P+jr2VYlfAmiT9Knsjn08r/LT
+         Tng2aFdb73PL8bp/dTy6vPMFTznPlq63+NzYf8sI=
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -59,9 +59,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
         virtualization@lists.linux-foundation.org, x86@kernel.org,
         xen-devel@lists.xenproject.org
-Subject: [PATCH v1 7/9] KVM: VMX: Add MBEC support
-Date:   Fri,  5 May 2023 17:20:44 +0200
-Message-Id: <20230505152046.6575-8-mic@digikod.net>
+Subject: [PATCH v1 9/9] virt: Add Heki KUnit tests
+Date:   Fri,  5 May 2023 17:20:46 +0200
+Message-Id: <20230505152046.6575-10-mic@digikod.net>
 In-Reply-To: <20230505152046.6575-1-mic@digikod.net>
 References: <20230505152046.6575-1-mic@digikod.net>
 MIME-Version: 1.0
@@ -71,60 +71,26 @@ X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This changes add support for VMX_FEATURE_MODE_BASED_EPT_EXEC (named
-ept_mode_based_exec in /proc/cpuinfo and MBEC elsewhere), which enables
-to separate EPT execution bits for supervisor vs. user.  It transforms
-the semantic of VMX_EPT_EXECUTABLE_MASK from a global execution to a
-kernel execution, and use the VMX_EPT_USER_EXECUTABLE_MASK bit to
-identify user execution.
+This adds a new CONFIG_HEKI_TEST option to run tests at boot.  Indeed,
+because this patch series forbids the loading of kernel modules after
+the boot, we need to make built-in tests.  Furthermore, because we use
+some symbols not exported to modules (e.g., kernel_set_to_readonly) this
+could not work as modules.
 
-The main use case is to be able to restrict kernel execution while
-ignoring user space execution from the hypervisor point of view.
-Indeed, user space execution can already be restricted by the guest
-kernel.
+To run these tests, we need to boot the kernel with the heki_test=N boot
+argument with N selecting a specific test:
+1. heki_test_cr_disable_smep: Check CR pinning and try to disable SMEP.
+2. heki_test_write_to_const: Check .rodata (const) protection.
+3. heki_test_write_to_ro_after_init: Check __ro_after_init protection.
+4. heki_test_exec: Check non-executable kernel memory.
 
-This change enables MBEC but doesn't change the default configuration,
-which is to allow execution for all guest memory.  However, the next
-commit levages MBEC to restrict kernel memory pages.
+This way to select tests should not be required when the kernel will
+properly handle the triggered synthetic page faults.  For now, these
+page faults make the kernel loop.
 
-MBEC can be configured with the new "enable_mbec" module parameter, set
-to true by default.  However, MBEC is disable for L1 and L2 for now.
-
-Replace EPT_VIOLATION_RWX_MASK (3 bits) with 4 dedicated
-EPT_VIOLATION_READ, EPT_VIOLATION_WRITE, EPT_VIOLATION_KERNEL_INSTR, and
-EPT_VIOLATION_USER_INSTR bits.
-
-From the Intel 64 and IA-32 Architectures Software Developer's Manual,
-Volume 3C (System Programming Guide), Part 3:
-
-SECONDARY_EXEC_MODE_BASED_EPT_EXEC (bit 22):
-If either the "unrestricted guest" VM-execution control or the
-"mode-based execute control for EPT" VM-execution control is 1, the
-"enable EPT" VM-execution control must also be 1.
-
-EPT_VIOLATION_KERNEL_INSTR_BIT (bit 5):
-The logical-AND of bit 2 in the EPT paging-structure entries used to
-translate the guest-physical address of the access causing the EPT
-violation.  If the "mode-based execute control for EPT" VM-execution
-control is 0, this indicates whether the guest-physical address was
-executable. If that control is 1, this indicates whether the
-guest-physical address was executable for supervisor-mode linear
-addresses.
-
-EPT_VIOLATION_USER_INSTR_BIT (bit 6):
-If the "mode-based execute control" VM-execution control is 0, the value
-of this bit is undefined. If that control is 1, this bit is the
-logical-AND of bit 10 in the EPT paging-structures entries used to
-translate the guest-physical address of the access causing the EPT
-violation. In this case, it indicates whether the guest-physical address
-was executable for user-mode linear addresses.
-
-PT_USER_EXEC_MASK (bit 10):
-Execute access for user-mode linear addresses. If the "mode-based
-execute control for EPT" VM-execution control is 1, indicates whether
-instruction fetches are allowed from user-mode linear addresses in the
-512-GByte region controlled by this entry. If that control is 0, this
-bit is ignored.
+All these tests temporarily disable the related kernel self-protections
+and should then failed if Heki doesn't protect the kernel.  They are
+verbose to make it easier to understand what is going on.
 
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
@@ -138,286 +104,262 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
 Cc: Wanpeng Li <wanpengli@tencent.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20230505152046.6575-8-mic@digikod.net
+Link: https://lore.kernel.org/r/20230505152046.6575-10-mic@digikod.net
 ---
- arch/x86/include/asm/vmx.h      | 11 +++++++++--
- arch/x86/kvm/mmu.h              |  3 ++-
- arch/x86/kvm/mmu/mmu.c          |  6 +++++-
- arch/x86/kvm/mmu/paging_tmpl.h  | 16 ++++++++++++++--
- arch/x86/kvm/mmu/spte.c         |  4 +++-
- arch/x86/kvm/vmx/capabilities.h |  7 +++++++
- arch/x86/kvm/vmx/nested.c       |  7 +++++++
- arch/x86/kvm/vmx/vmx.c          | 28 +++++++++++++++++++++++++---
- arch/x86/kvm/vmx/vmx.h          |  1 +
- 9 files changed, 73 insertions(+), 10 deletions(-)
+ virt/heki/Kconfig |  12 +++
+ virt/heki/heki.c  | 194 +++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 205 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-index 498dc600bd5c..452e7d153832 100644
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -511,6 +511,7 @@ enum vmcs_field {
- #define VMX_EPT_IPAT_BIT    			(1ull << 6)
- #define VMX_EPT_ACCESS_BIT			(1ull << 8)
- #define VMX_EPT_DIRTY_BIT			(1ull << 9)
-+#define VMX_EPT_USER_EXECUTABLE_MASK		(1ull << 10)
- #define VMX_EPT_RWX_MASK                        (VMX_EPT_READABLE_MASK |       \
- 						 VMX_EPT_WRITABLE_MASK |       \
- 						 VMX_EPT_EXECUTABLE_MASK)
-@@ -556,13 +557,19 @@ enum vm_entry_failure_code {
- #define EPT_VIOLATION_ACC_READ_BIT	0
- #define EPT_VIOLATION_ACC_WRITE_BIT	1
- #define EPT_VIOLATION_ACC_INSTR_BIT	2
--#define EPT_VIOLATION_RWX_SHIFT		3
-+#define EPT_VIOLATION_READ_BIT		3
-+#define EPT_VIOLATION_WRITE_BIT		4
-+#define EPT_VIOLATION_KERNEL_INSTR_BIT	5
-+#define EPT_VIOLATION_USER_INSTR_BIT	6
- #define EPT_VIOLATION_GVA_IS_VALID_BIT	7
- #define EPT_VIOLATION_GVA_TRANSLATED_BIT 8
- #define EPT_VIOLATION_ACC_READ		(1 << EPT_VIOLATION_ACC_READ_BIT)
- #define EPT_VIOLATION_ACC_WRITE		(1 << EPT_VIOLATION_ACC_WRITE_BIT)
- #define EPT_VIOLATION_ACC_INSTR		(1 << EPT_VIOLATION_ACC_INSTR_BIT)
--#define EPT_VIOLATION_RWX_MASK		(VMX_EPT_RWX_MASK << EPT_VIOLATION_RWX_SHIFT)
-+#define EPT_VIOLATION_READ		(1 << EPT_VIOLATION_READ_BIT)
-+#define EPT_VIOLATION_WRITE		(1 << EPT_VIOLATION_WRITE_BIT)
-+#define EPT_VIOLATION_KERNEL_INSTR	(1 << EPT_VIOLATION_KERNEL_INSTR_BIT)
-+#define EPT_VIOLATION_USER_INSTR	(1 << EPT_VIOLATION_USER_INSTR_BIT)
- #define EPT_VIOLATION_GVA_IS_VALID	(1 << EPT_VIOLATION_GVA_IS_VALID_BIT)
- #define EPT_VIOLATION_GVA_TRANSLATED	(1 << EPT_VIOLATION_GVA_TRANSLATED_BIT)
- 
-diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-index 6bdaacb6faa0..3c4fd4618cc1 100644
---- a/arch/x86/kvm/mmu.h
-+++ b/arch/x86/kvm/mmu.h
-@@ -24,6 +24,7 @@ extern bool __read_mostly enable_mmio_caching;
- #define PT_PAGE_SIZE_MASK (1ULL << PT_PAGE_SIZE_SHIFT)
- #define PT_PAT_MASK (1ULL << 7)
- #define PT_GLOBAL_MASK (1ULL << 8)
-+#define PT_USER_EXEC_MASK (1ULL << 10)
- #define PT64_NX_SHIFT 63
- #define PT64_NX_MASK (1ULL << PT64_NX_SHIFT)
- 
-@@ -102,7 +103,7 @@ static inline u8 kvm_get_shadow_phys_bits(void)
- 
- void kvm_mmu_set_mmio_spte_mask(u64 mmio_value, u64 mmio_mask, u64 access_mask);
- void kvm_mmu_set_me_spte_mask(u64 me_value, u64 me_mask);
--void kvm_mmu_set_ept_masks(bool has_ad_bits, bool has_exec_only);
-+void kvm_mmu_set_ept_masks(bool has_ad_bits, bool has_exec_only, bool has_mbec);
- 
- void kvm_init_mmu(struct kvm_vcpu *vcpu);
- void kvm_init_shadow_npt_mmu(struct kvm_vcpu *vcpu, unsigned long cr0,
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index e5d1e241ff0f..a47e63217eb8 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -27,6 +27,9 @@
- #include "cpuid.h"
- #include "spte.h"
- 
-+/* Required by paging_tmpl.h for enable_mbec */
-+#include "../vmx/capabilities.h"
+diff --git a/virt/heki/Kconfig b/virt/heki/Kconfig
+index 96f18ce03013..806981f2b22d 100644
+--- a/virt/heki/Kconfig
++++ b/virt/heki/Kconfig
+@@ -27,3 +27,15 @@ config HYPERVISOR_SUPPORTS_HEKI
+ 	  A hypervisor should select this when it can successfully build
+ 	  and run with CONFIG_HEKI. That is, it should provide all of the
+ 	  hypervisor support required for the Heki feature.
 +
- #include <linux/kvm_host.h>
++config HEKI_TEST
++	bool "Tests for Heki" if !KUNIT_ALL_TESTS
++	depends on HEKI && KUNIT=y
++	default KUNIT_ALL_TESTS
++	help
++	  Run Heki tests at runtime according to the heki_test=N boot
++	  parameter, with N identifying the test to run (between 1 and 4).
++
++	  Before launching the init process, the system might not respond
++	  because of unhandled kernel page fault.  This will be fixed in a
++	  next patch series.
+diff --git a/virt/heki/heki.c b/virt/heki/heki.c
+index 142b5dc98a2f..361e7734e950 100644
+--- a/virt/heki/heki.c
++++ b/virt/heki/heki.c
+@@ -5,11 +5,13 @@
+  * Copyright © 2023 Microsoft Corporation
+  */
+ 
++#include <kunit/test.h>
+ #include <linux/cache.h>
+ #include <linux/heki.h>
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/printk.h>
++#include <linux/set_memory.h>
  #include <linux/types.h>
- #include <linux/string.h>
-@@ -3763,7 +3766,8 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
- 	 */
- 	pm_mask = PT_PRESENT_MASK | shadow_me_value;
- 	if (mmu->root_role.level >= PT64_ROOT_4LEVEL) {
--		pm_mask |= PT_ACCESSED_MASK | PT_WRITABLE_MASK | PT_USER_MASK;
-+		pm_mask |= PT_ACCESSED_MASK | PT_WRITABLE_MASK | PT_USER_MASK |
-+			   PT_USER_EXEC_MASK;
+ #include <linux/vmalloc.h>
  
- 		if (WARN_ON_ONCE(!mmu->pml4_root)) {
- 			r = -EIO;
-diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
-index 0f6455072055..12119d519c77 100644
---- a/arch/x86/kvm/mmu/paging_tmpl.h
-+++ b/arch/x86/kvm/mmu/paging_tmpl.h
-@@ -498,8 +498,20 @@ static int FNAME(walk_addr_generic)(struct guest_walker *walker,
- 		 * Note, pte_access holds the raw RWX bits from the EPTE, not
- 		 * ACC_*_MASK flags!
- 		 */
--		vcpu->arch.exit_qualification |= (pte_access & VMX_EPT_RWX_MASK) <<
--						 EPT_VIOLATION_RWX_SHIFT;
-+		vcpu->arch.exit_qualification |=
-+			!!(pte_access & VMX_EPT_READABLE_MASK)
-+			<< EPT_VIOLATION_READ_BIT;
-+		vcpu->arch.exit_qualification |=
-+			!!(pte_access & VMX_EPT_WRITABLE_MASK)
-+			<< EPT_VIOLATION_WRITE_BIT;
-+		vcpu->arch.exit_qualification |=
-+			!!(pte_access & VMX_EPT_EXECUTABLE_MASK)
-+			<< EPT_VIOLATION_KERNEL_INSTR_BIT;
-+		if (enable_mbec) {
-+			vcpu->arch.exit_qualification |=
-+				!!(pte_access & VMX_EPT_USER_EXECUTABLE_MASK)
-+				<< EPT_VIOLATION_USER_INSTR_BIT;
-+		}
- 	}
- #endif
- 	walker->fault.address = addr;
-diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
-index 639f220a1ed5..f1e2e3cad878 100644
---- a/arch/x86/kvm/mmu/spte.c
-+++ b/arch/x86/kvm/mmu/spte.c
-@@ -430,13 +430,15 @@ void kvm_mmu_set_me_spte_mask(u64 me_value, u64 me_mask)
- }
- EXPORT_SYMBOL_GPL(kvm_mmu_set_me_spte_mask);
- 
--void kvm_mmu_set_ept_masks(bool has_ad_bits, bool has_exec_only)
-+void kvm_mmu_set_ept_masks(bool has_ad_bits, bool has_exec_only, bool has_mbec)
- {
- 	shadow_user_mask	= VMX_EPT_READABLE_MASK;
- 	shadow_accessed_mask	= has_ad_bits ? VMX_EPT_ACCESS_BIT : 0ull;
- 	shadow_dirty_mask	= has_ad_bits ? VMX_EPT_DIRTY_BIT : 0ull;
- 	shadow_nx_mask		= 0ull;
- 	shadow_x_mask		= VMX_EPT_EXECUTABLE_MASK;
-+	if (has_mbec)
-+		shadow_x_mask |= VMX_EPT_USER_EXECUTABLE_MASK;
- 	shadow_present_mask	= has_exec_only ? 0ull : VMX_EPT_READABLE_MASK;
- 	/*
- 	 * EPT overrides the host MTRRs, and so KVM must program the desired
-diff --git a/arch/x86/kvm/vmx/capabilities.h b/arch/x86/kvm/vmx/capabilities.h
-index cd2ac9536c99..2cc5d7d20144 100644
---- a/arch/x86/kvm/vmx/capabilities.h
-+++ b/arch/x86/kvm/vmx/capabilities.h
-@@ -13,6 +13,7 @@ extern bool __read_mostly enable_vpid;
- extern bool __read_mostly flexpriority_enabled;
- extern bool __read_mostly enable_ept;
- extern bool __read_mostly enable_unrestricted_guest;
-+extern bool __read_mostly enable_mbec;
- extern bool __read_mostly enable_ept_ad_bits;
- extern bool __read_mostly enable_pml;
- extern bool __read_mostly enable_ipiv;
-@@ -255,6 +256,12 @@ static inline bool cpu_has_vmx_xsaves(void)
- 		SECONDARY_EXEC_XSAVES;
+@@ -78,13 +80,201 @@ void __init heki_early_init(void)
+ 	heki_arch_init();
  }
  
-+static inline bool cpu_has_vmx_mbec(void)
++#ifdef CONFIG_HEKI_TEST
++
++/* Heki test data */
++
++/* Takes two pages to not change permission of other read-only pages. */
++const char heki_test_const_buf[PAGE_SIZE * 2] = {};
++char heki_test_ro_after_init_buf[PAGE_SIZE * 2] __ro_after_init = {};
++
++long heki_test_exec_data(long);
++void _test_exec_data_end(void);
++
++/* Used to test ROP execution against the .rodata section. */
++/* clang-format off */
++asm(
++".pushsection .rodata;" // NOT .text section
++".global heki_test_exec_data;"
++".type heki_test_exec_data, @function;"
++"heki_test_exec_data:"
++ASM_ENDBR
++"movq %rdi, %rax;"
++"inc %rax;"
++ASM_RET
++".size heki_test_exec_data, .-heki_test_exec_data;"
++"_test_exec_data_end:"
++".popsection");
++/* clang-format on */
++
++static void heki_test_cr_disable_smep(struct kunit *test)
 +{
-+	return vmcs_config.cpu_based_2nd_exec_ctrl &
-+		SECONDARY_EXEC_MODE_BASED_EPT_EXEC;
++	unsigned long cr4;
++
++	/* SMEP should be initially enabled. */
++	KUNIT_ASSERT_TRUE(test, __read_cr4() & X86_CR4_SMEP);
++
++	kunit_warn(test,
++		   "Starting control register pinning tests with SMEP check\n");
++
++	/*
++	 * Trying to disable SMEP, bypassing kernel self-protection by not
++	 * using cr4_clear_bits(X86_CR4_SMEP).
++	 */
++	cr4 = __read_cr4() & ~X86_CR4_SMEP;
++	asm volatile("mov %0,%%cr4" : "+r"(cr4) : : "memory");
++
++	/* SMEP should still be enabled. */
++	KUNIT_ASSERT_TRUE(test, __read_cr4() & X86_CR4_SMEP);
 +}
 +
- static inline bool cpu_has_vmx_waitpkg(void)
- {
- 	return vmcs_config.cpu_based_2nd_exec_ctrl &
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index d93c715cda6a..3c381c75e2a9 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -2317,6 +2317,9 @@ static void prepare_vmcs02_early(struct vcpu_vmx *vmx, struct loaded_vmcs *vmcs0
- 		/* VMCS shadowing for L2 is emulated for now */
- 		exec_control &= ~SECONDARY_EXEC_SHADOW_VMCS;
- 
-+		/* MBEC is currently only handled for L0. */
-+		exec_control &= ~SECONDARY_EXEC_MODE_BASED_EPT_EXEC;
++static inline void print_addr(struct kunit *test, const char *const buf_name,
++			      void *const buf)
++{
++	const pte_t pte = *virt_to_kpte((unsigned long)buf);
++	const phys_addr_t paddr = slow_virt_to_phys(buf);
++	bool present = pte_flags(pte) & (_PAGE_PRESENT);
++	bool accessible = pte_accessible(&init_mm, pte);
 +
- 		/*
- 		 * Preset *DT exiting when emulating UMIP, so that vmx_set_cr4()
- 		 * will not have to rewrite the controls just for this bit.
-@@ -6870,6 +6873,10 @@ void nested_vmx_setup_ctls_msrs(struct vmcs_config *vmcs_conf, u32 ept_caps)
- 	 */
- 	msrs->secondary_ctls_low = 0;
- 
++	kunit_warn(
++		test,
++		"%s vaddr:%llx paddr:%llx exec:%d write:%d present:%d accessible:%d\n",
++		buf_name, (unsigned long long)buf, paddr, !!pte_exec(pte),
++		!!pte_write(pte), present, accessible);
++}
++
++extern int kernel_set_to_readonly;
++
++static void heki_test_write_to_rodata(struct kunit *test,
++				      const char *const buf_name,
++				      char *const ro_buf)
++{
++	print_addr(test, buf_name, (void *)ro_buf);
++	KUNIT_EXPECT_EQ(test, 0, *ro_buf);
++
++	kunit_warn(
++		test,
++		"Bypassing kernel self-protection: mark memory as writable\n");
++	kernel_set_to_readonly = 0;
 +	/*
-+	 * Currently, SECONDARY_EXEC_MODE_BASED_EPT_EXEC is only handled for
-+	 * L0 and doesn't need to be exposed to L1 nor L2.
++	 * Removes execute permission that might be set by bugdoor-exec,
++	 * because change_page_attr_clear() is not use by set_memory_rw().
++	 * This is required since commit 652c5bf380ad ("x86/mm: Refuse W^X
++	 * violations").
 +	 */
- 	msrs->secondary_ctls_high = vmcs_conf->cpu_based_2nd_exec_ctrl;
- 	msrs->secondary_ctls_high &=
- 		SECONDARY_EXEC_DESC |
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 931688edc8eb..004fd4e5e057 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -94,6 +94,9 @@ bool __read_mostly enable_unrestricted_guest = 1;
- module_param_named(unrestricted_guest,
- 			enable_unrestricted_guest, bool, S_IRUGO);
- 
-+bool __read_mostly enable_mbec = true;
-+module_param_named(mbec, enable_mbec, bool, 0444);
++	KUNIT_ASSERT_FALSE(test, set_memory_nx((unsigned long)PTR_ALIGN_DOWN(
++						       ro_buf, PAGE_SIZE),
++					       1));
++	KUNIT_ASSERT_FALSE(test, set_memory_rw((unsigned long)PTR_ALIGN_DOWN(
++						       ro_buf, PAGE_SIZE),
++					       1));
++	kernel_set_to_readonly = 1;
 +
- bool __read_mostly enable_ept_ad_bits = 1;
- module_param_named(eptad, enable_ept_ad_bits, bool, S_IRUGO);
- 
-@@ -4518,10 +4521,21 @@ static u32 vmx_secondary_exec_control(struct vcpu_vmx *vmx)
- 		exec_control &= ~SECONDARY_EXEC_ENABLE_VPID;
- 	if (!enable_ept) {
- 		exec_control &= ~SECONDARY_EXEC_ENABLE_EPT;
-+		/*
-+		 * From Intel's SDM:
-+		 * If either the "unrestricted guest" VM-execution control or
-+		 * the "mode-based execute control for EPT" VM-execution
-+		 * control is 1, the "enable EPT" VM-execution control must
-+		 * also be 1.
-+		 */
- 		enable_unrestricted_guest = 0;
-+		enable_mbec = false;
- 	}
- 	if (!enable_unrestricted_guest)
- 		exec_control &= ~SECONDARY_EXEC_UNRESTRICTED_GUEST;
-+	if (!enable_mbec)
-+		exec_control &= ~SECONDARY_EXEC_MODE_BASED_EPT_EXEC;
++	kunit_warn(test, "Trying memory write\n");
++	*ro_buf = 0x11;
++	KUNIT_EXPECT_EQ(test, 0, *ro_buf);
++	kunit_warn(test, "New content: 0x%02x\n", *ro_buf);
++}
 +
- 	if (kvm_pause_in_guest(vmx->vcpu.kvm))
- 		exec_control &= ~SECONDARY_EXEC_PAUSE_LOOP_EXITING;
- 	if (!kvm_vcpu_apicv_active(vcpu))
-@@ -5658,7 +5672,7 @@ static int handle_task_switch(struct kvm_vcpu *vcpu)
- 
- static int handle_ept_violation(struct kvm_vcpu *vcpu)
++static void heki_test_write_to_const(struct kunit *test)
++{
++	heki_test_write_to_rodata(test, "const_buf",
++				  (void *)heki_test_const_buf);
++}
++
++static void heki_test_write_to_ro_after_init(struct kunit *test)
++{
++	heki_test_write_to_rodata(test, "ro_after_init_buf",
++				  (void *)heki_test_ro_after_init_buf);
++}
++
++typedef long test_exec_t(long);
++
++static void heki_test_exec(struct kunit *test)
++{
++	const size_t exec_size = 7;
++	unsigned long nx_page_start = (unsigned long)PTR_ALIGN_DOWN(
++		(const void *const)heki_test_exec_data, PAGE_SIZE);
++	unsigned long nx_page_end = (unsigned long)PTR_ALIGN(
++		(const void *const)heki_test_exec_data + exec_size, PAGE_SIZE);
++	test_exec_t *exec = (test_exec_t *)heki_test_exec_data;
++	long ret;
++
++	/* Starting non-executable memory tests. */
++	print_addr(test, "test_exec_data", heki_test_exec_data);
++
++	kunit_warn(
++		test,
++		"Bypassing kernel-self protection: mark memory as executable\n");
++	kernel_set_to_readonly = 0;
++	KUNIT_ASSERT_FALSE(test,
++			   set_memory_rox(nx_page_start,
++					  PFN_UP(nx_page_end - nx_page_start)));
++	kernel_set_to_readonly = 1;
++
++	kunit_warn(
++		test,
++		"Trying to execute data (ROP) in (initially) non-executable memory\n");
++	ret = exec(3);
++
++	/* This should not be reached because of the uncaught page fault. */
++	KUNIT_EXPECT_EQ(test, 3, ret);
++	kunit_warn(test, "Result of execution: 3 + 1 = %ld\n", ret);
++}
++
++const struct kunit_case heki_test_cases[] = {
++	KUNIT_CASE(heki_test_cr_disable_smep),
++	KUNIT_CASE(heki_test_write_to_const),
++	KUNIT_CASE(heki_test_write_to_ro_after_init),
++	KUNIT_CASE(heki_test_exec),
++	{}
++};
++
++static unsigned long heki_test __ro_after_init;
++
++static int __init parse_heki_test_config(char *str)
++{
++	if (kstrtoul(str, 10, &heki_test) ||
++	    heki_test > (ARRAY_SIZE(heki_test_cases) - 1))
++		pr_warn("Invalid option string for heki_test: '%s'\n", str);
++	return 1;
++}
++
++__setup("heki_test=", parse_heki_test_config);
++
++static void heki_run_test(void)
++{
++	struct kunit_case heki_test_case[2] = {};
++	struct kunit_suite heki_test_suite = {
++		.name = "heki",
++		.test_cases = heki_test_case,
++	};
++	struct kunit_suite *const test_suite = &heki_test_suite;
++
++	if (!kunit_enabled() || heki_test == 0 ||
++	    heki_test >= ARRAY_SIZE(heki_test_cases))
++		return;
++
++	pr_warn("Running test #%lu\n", heki_test);
++	heki_test_case[0] = heki_test_cases[heki_test - 1];
++	__kunit_test_suites_init(&test_suite, 1);
++}
++
++#else /* CONFIG_HEKI_TEST */
++
++static inline void heki_run_test(void)
++{
++}
++
++#endif /* CONFIG_HEKI_TEST */
++
+ void heki_late_init(void)
  {
--	unsigned long exit_qualification;
-+	unsigned long exit_qualification, rwx_mask;
- 	gpa_t gpa;
- 	u64 error_code;
+ 	struct heki_hypervisor *hypervisor = heki.hypervisor;
+ 	int ret;
  
-@@ -5688,7 +5702,11 @@ static int handle_ept_violation(struct kvm_vcpu *vcpu)
- 	error_code |= (exit_qualification & EPT_VIOLATION_ACC_INSTR)
- 		      ? PFERR_FETCH_MASK : 0;
- 	/* ept page table entry is present? */
--	error_code |= (exit_qualification & EPT_VIOLATION_RWX_MASK)
-+	rwx_mask = EPT_VIOLATION_READ | EPT_VIOLATION_WRITE |
-+		   EPT_VIOLATION_KERNEL_INSTR;
-+	if (enable_mbec)
-+		rwx_mask |= EPT_VIOLATION_USER_INSTR;
-+	error_code |= (exit_qualification & rwx_mask)
- 		      ? PFERR_PRESENT_MASK : 0;
+ 	if (!heki_enabled)
+-		return;
++		return heki_run_test();
  
- 	error_code |= (exit_qualification & EPT_VIOLATION_GVA_TRANSLATED) != 0 ?
-@@ -8345,6 +8363,9 @@ static __init int hardware_setup(void)
- 	if (!cpu_has_vmx_unrestricted_guest() || !enable_ept)
- 		enable_unrestricted_guest = 0;
+ 	if (!heki.static_ranges) {
+ 		pr_warn("Architecture did not initialize static ranges\n");
+@@ -113,6 +303,8 @@ void heki_late_init(void)
+ 		goto out;
+ 	pr_warn("Control registers locked\n");
  
-+	if (!cpu_has_vmx_mbec() || !enable_ept)
-+		enable_mbec = false;
++	heki_run_test();
 +
- 	if (!cpu_has_vmx_flexpriority())
- 		flexpriority_enabled = 0;
- 
-@@ -8404,7 +8425,8 @@ static __init int hardware_setup(void)
- 
- 	if (enable_ept)
- 		kvm_mmu_set_ept_masks(enable_ept_ad_bits,
--				      cpu_has_vmx_ept_execute_only());
-+				      cpu_has_vmx_ept_execute_only(),
-+				      enable_mbec);
- 
- 	/*
- 	 * Setup shadow_me_value/shadow_me_mask to include MKTME KeyID
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index a3da84f4ea45..815db44cd51e 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -585,6 +585,7 @@ static inline u8 vmx_get_rvi(void)
- 	 SECONDARY_EXEC_ENABLE_VMFUNC |					\
- 	 SECONDARY_EXEC_BUS_LOCK_DETECTION |				\
- 	 SECONDARY_EXEC_NOTIFY_VM_EXITING |				\
-+	 SECONDARY_EXEC_MODE_BASED_EPT_EXEC |				\
- 	 SECONDARY_EXEC_ENCLS_EXITING)
- 
- #define KVM_REQUIRED_VMX_TERTIARY_VM_EXEC_CONTROL 0
+ out:
+ 	heki_free_pa_ranges(heki.static_ranges, heki.num_static_ranges);
+ 	heki.static_ranges = NULL;
 -- 
 2.40.1
 
