@@ -2,118 +2,159 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A322C77B7C
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 May 2023 22:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A38FC77B7C
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 01:00:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229785AbjEDWkl (ORCPT
+        id S229754AbjEEBAF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 May 2023 18:40:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36844 "EHLO
+        Thu, 4 May 2023 21:00:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjEDWkj (ORCPT
+        with ESMTP id S229553AbjEEBAE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 May 2023 18:40:39 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 647FE9EEE
-        for <linux-security-module@vger.kernel.org>; Thu,  4 May 2023 15:40:38 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1aad5245571so7400985ad.1
-        for <linux-security-module@vger.kernel.org>; Thu, 04 May 2023 15:40:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1683240038; x=1685832038;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bSBn9yOinBU8m0yQLrSvbl7PKYZlBg3YhOgvbxEMud0=;
-        b=V2OWoWuBY9/BxFN6ZMrayZSPn34VUIMFwLKD1syjt3URVOHsk6eRCzBjJxyS/sTaxh
-         0ODMUc6Lrrs3v8zH3Sx/5e/PKEpsPzqFVGY4QckBPaQkZZfaM7pnBgEofNkOYx2I3eMh
-         /CUnaPOJFUPSRWZdnUNxTe8x2snVD8PtGIxSGOLogmkrfrhkWite1HB1ZWG+3fFJST9O
-         CMCv7TFFrBn2cKtBOmOLW8XQUBS/fB7r1lrmQ3GM1O5nbWEdOmtFcfUJmeIAnUxIbWpn
-         3ror2ojs9ATMDgL9RR5K3X4TvFjtnscejsS+p0QkHUHUt2WEuhfGkKNuQs/O+d5WTYRo
-         HM2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683240038; x=1685832038;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bSBn9yOinBU8m0yQLrSvbl7PKYZlBg3YhOgvbxEMud0=;
-        b=faVlCQ7gxrsD0aKabC52Vn1zg/EhNomyW7LEK8WS2VkgEvn0wK4cgNdgBieSfue/Uf
-         942QCN2bPJfYXuUILoZ6Y3/t2b/N0w5oOCrrhaHdj1hri0ybMK1ERGIAdBmfBEfswmhx
-         EPkzQEgfZgXkh7xuZNVPQog+wb+YPN2zxPHQuYdQFXs/SxvttA1Ymm4BwtZhj2IA+vPe
-         XKUOGsfzg3BxKos8d9SZLkI6iOF4vrqH2pMYMcgn+QMKMKdstBL353KFErxVphxnQZ1B
-         ePvCOmEM6hpAnly0R3VnDmp4vRoaiK6tOsu/S2Kvn7NREZwA97PNsn04H/beT+YLxtPZ
-         WtmA==
-X-Gm-Message-State: AC+VfDycnaYCqizsYLmyot8lExli+R9NZ7RNrnM2380G+JGeIi9wPuk2
-        rdphm7O38Ioo21OhuJ9RZq51fA==
-X-Google-Smtp-Source: ACHHUZ4sldKILzM05M5JtvE1zkTm8BdFnY+an0qc3+Zw6AS4jJ2XEp42XVgNkYwu+sP102Df03J4uQ==
-X-Received: by 2002:a17:903:48e:b0:1a6:cb66:681f with SMTP id jj14-20020a170903048e00b001a6cb66681fmr4825434plb.46.1683240037873;
-        Thu, 04 May 2023 15:40:37 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-88-204.pa.nsw.optusnet.com.au. [49.181.88.204])
-        by smtp.gmail.com with ESMTPSA id ix10-20020a170902f80a00b001ab0159b9edsm27390plb.250.2023.05.04.15.40.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 May 2023 15:40:36 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1puhcn-00BPr0-UX; Fri, 05 May 2023 08:40:33 +1000
-Date:   Fri, 5 May 2023 08:40:33 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     John Garry <john.g.garry@oracle.com>
-Cc:     axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        jejb@linux.ibm.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com,
-        Prasad Singamsetty <prasad.singamsetty@oracle.com>
-Subject: Re: [PATCH RFC 02/16] fs/bdev: Add atomic write support info to statx
-Message-ID: <20230504224033.GJ3223426@dread.disaster.area>
-References: <20230503183821.1473305-1-john.g.garry@oracle.com>
- <20230503183821.1473305-3-john.g.garry@oracle.com>
- <20230503215846.GE3223426@dread.disaster.area>
- <96a2f875-7f99-cd36-e9c3-abbadeb9833b@oracle.com>
+        Thu, 4 May 2023 21:00:04 -0400
+Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 415CB9EF1
+        for <linux-security-module@vger.kernel.org>; Thu,  4 May 2023 18:00:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1683248401; bh=XSlTbUo7LQiWoIvhBeE6OdGziT2EJXp5+t2fogCemmM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=QMAdnbtopMx6Ym8NKf2XyWrWEE0oEGVJO8H2TtovB/CNvrguNtMQ8qgm8vcjUW20y/GJrrkh0mFC3L3TXZgCdoDVWfoaOk4X0m5bD/yASF4kCj2QBsu0p9bMzumLBl9OFBel7Nu57AynBy1KpKvliOl2EIM8yLAdy4ybBOUjEjDlNS4B5K4FBLF6SEh4wnmLSFcYaMtAePxluEZRLAb4xk26Pq6GYky4MgFSQmDjy1mPXfX7Kw0Ttzn/rhoelE6MurFnuPZDpwCLFNsrsDDQP/uOF2yIdgc4BptcUeRQJYCMQSVD2oxpJ9Z92eewZs4PV+5BZvdbwQ8SekPuVYa8CQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1683248401; bh=lehQzImmGo0WtHzvGVhIjc4pufDPFdv9rEChoYVDWth=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=IdRChli01BXh6hlYMMTaEa2IEU4PeJCQaiMKbtqFYgOdaYRkF1+8gtq0m/YDkPiLmjZupLvDxCyFuDWojfPAau54UyigpEd0iyW+75+bIAN9hf3E5BFU5RZShOaKHoe1D/reGtkxWnmCatR3EePYc9NsDr5DDTeUvfC3OkURtw7YSLkeqpaYb5GC3semnoSmojzA93rFK+WkCe0Wj1MlqdZZhn+6TUBB1ZYwpuZUXCJzGFFowra+DqSvArW17WUGXVNHm4UHmjU4sL2lZLX76IX4f2pOPesqBJwbqASVnifIdLEu6NEmbQJLl13GuMr8CaTUdkqfQOiryujLLCJnJQ==
+X-YMail-OSG: FuP3TSIVM1lbq94tT4a3N.JpwL4InuHN_MBnGp.Uny_i06PWzZrK13paCpJnEwb
+ Hq.uooAcEOqQEMqfOI.OxSCJl3UF6kwa2PInY.do54ltmVy0frGJjM8c8POv9t1pS3NbC7j4_Ry9
+ mqkWUfHhCQTcz4LPvkovEi5h5WEM.uyyDv7YNnwP3s9H69iWpyI.cAjVAPXhRw1q6itfwCb7QCid
+ NVFlFh7Qr738cP98FE6aEKXuMO9LbelGVC1CK22WGGFYNcBRkfXS.H1mX6EG3rG5fvbcbD_9o9Ds
+ J2ExALWRCTNe7GktjeEBehSGCyiivtNUW_.BYIV4BDGjANq2ikDH7W4VGqrfKuLcIfw8e6nT6Yg0
+ rt8IfGIYLOTjSuntAaUem0mRDRqeT7Tk5kpM_L9k5Eo1.djW91FTqErpuADCT2jCcFKQkCNcoy2d
+ PaQhAAI0vlPA.fMaYhidaKgUj3PAJPhCwFpk.28WOuce_585nhakmY6gGEiuymWP6Te5rN.nrLbx
+ 6LKnxuPjhrKCa6dOaoLsCAc01BqVT6N2.5ZDqzTOxN.Ab0tpNndZvdIPlxxMyOQfh1zgHd4NJ6yw
+ .bDtKd4zGCbtbQQtzTjYdS2hZXWLUteFsPnaK6KLl0cv2ArPrbjLagi.DoWddBz9xO1Rlg8SjGgo
+ g.HLsgOCjuBK.0FBeM45.iY77MIrp4wVr24cLI7mVc6BtUKk5j.LZ7yPr7RBfnNNv2oj_.dGwV7_
+ 5p4vokTNIYRD5dun7hO2sxue2xj0mduWG2ep6WbQ7A84eEmPVshEJ46ovMe5UCqweBROvd5db4jW
+ 10V0vyiPys4SJ1ZSW4ecifErVYB3YH3iq3oACVLBLrXOFoSKw4z6APu9cbue7yu4MCB.lbZ5Eq1x
+ k0g3EqoEydpzXAK5Nfg2d4SfLOgjfLPMcJOmL1CQn7RkrmkGdRJxPPgZGy8bk5VAe6_8MFIuy8OV
+ k3I8iZ7WgIsJ40O2WmTN2AWRd03ecwq.jZ1kC34baA6ot.7g1VTbUR8aEiCrnOy73KTy_JNkxmfT
+ l0QmpecQXVs1k1GTX2cfuqNLD80RMYK9X8jmeAg2HziWuAZ1XL1hzDOojx2136zYuhWZom4UeP8Q
+ lEt5ruKYNnRDF8ZNyb7qVzrpuSUyMaJhm5sgnFAcurK42iWqkf9OGojtrNfxFRbe0yqw2Z_TJsii
+ 8LJ4MBA7no9GLfmzacfRyXDKaiDzE2EhDmVF_Wzn0esFJ.TEcqNmlVMPwS0EK4p5UZED5lTe8JUi
+ Wbmmlz.MC2u4Z86ZAEied1MadCwC9IVVlP7bzoQXUPzD5G7EXQLCo_j_K4CEVUSijiTN8pa2T921
+ f3AjTXGrWmbNds65UUNCJR2einU2SCfD_PB3xkA68R7mg6vxc7y1F.80_2dywzSD0Mms8poEw.V0
+ CDVjUVHkqPp85caVCVJ3m4E3CKmv0.CPMGkhFoTi6l_cyFXcDuBseQPsL8YsPYHfrQSkc9sMvJ1T
+ rOO38PGWUGz.6NQAOtuCYVFedW8SgMqHYwdyWcIcjWBDD_A3x9zAKEbQhjDBaU4S6.sR5fJtiMPB
+ EPQoiGtItAk3xgZO972A_QHrrg6kBaEanUp2BdAaAuG4n5HkaQzsfORNYPx9vwU4Z26DAJCXplMX
+ lyep0hTx6_qVhplaYKt4zUyTN3Um2cOgB01lm.RXSAYNld2acq87SIsEysSPH5S5Qw6lo5z3Dr13
+ A0LEsu67utuvvmUVg2Mf2g3FCg9o8Gr3b4tSLpq20VmZWHAbFP27hW387CDDwHGCJIh8um.QB.Sg
+ pldorU8LgnPgXvu2a0Tlfph2wWEJ2T_iS_rSlevz5YwpRM78VvhXeUuT_fehYrjvfngK8yEigcOq
+ 1.diimhdT.6a2Lw8LJwvON2ZFgNXGOk6fTBZPkOzHoN.k24KgnjYwi9XwnGT8VQ4yuAcFA6WxYsr
+ _Iqme_3hBA32R.30m0qKscfBIVTQELWcUoW1DFPwe4izc5xL0S6NHYhLx.KMNkym.68K8ip6JWPn
+ kMvlOBsViCMvbR8WcFV2.OFpn2Og4SHtNRwWtynSpaOxJDwzaHbhs7Y20OteGo8WGi6MaaxwsYnM
+ pPYdcbNgHP5o6Bqr65Yh2nVOBJJ5tOHOjJgGgkB1QCPAl4imypLPv3W5V77mxsRbSTv1eohalyVK
+ 3aWfNcWbDYAx4p2v76y529Xkc_Zh4GWJnm0xSCSehkUHpi9ujCslr9QON0YYP3d4dPvfVZnprkJ_
+ 6kG1EbCgVENw.b_4GddVZxYy9NhwiLDXR67xXpCOgiz36bjp_SLGtyn4Qwss2x4Bu56vDg7oQFU1
+ e7A--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: ad248e1c-0cce-4eb9-b53b-28a788965611
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Fri, 5 May 2023 01:00:01 +0000
+Received: by hermes--production-bf1-5f9df5c5c4-v79q2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 67027877a1b547b02fe7fa6df3ee4fa5;
+          Fri, 05 May 2023 00:59:56 +0000 (UTC)
+Message-ID: <d34c30ba-55cc-8662-3587-bb66e234b714@schaufler-ca.com>
+Date:   Thu, 4 May 2023 17:59:53 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <96a2f875-7f99-cd36-e9c3-abbadeb9833b@oracle.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: NFS mount fail
+Content-Language: en-US
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
+        chuck.lever@oracle.com, jlayton@kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <1923bc2f330f576cd246856f976af448c035d02e.camel@huaweicloud.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <1923bc2f330f576cd246856f976af448c035d02e.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21417 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 04, 2023 at 09:45:50AM +0100, John Garry wrote:
-> On 03/05/2023 22:58, Dave Chinner wrote:
-> > Is there a statx() man
-> > page update for this addition?
-> 
-> No, not yet. Is it normally expected to provide a proposed man page update
-> in parallel? Or somewhat later, when the kernel API change has some
-> appreciable level of agreement?
+On 5/4/2023 9:11 AM, Roberto Sassu wrote:
+> Hi Casey
+>
+> while developing the fix for overlayfs, I tried first to address the
+> issue of a NFS filesystem failing to mount.
+>
+> The NFS server does not like the packets sent by the client:
+>
+> 14:52:20.827208 IP (tos 0x0, ttl 64, id 60628, offset 0, flags [DF], proto TCP (6), length 72, options (unknown 134,EOL))
+>     localhost.localdomain.omginitialrefs > _gateway.nfs: Flags [S], cksum 0x7618 (incorrect -> 0xa18c), seq 455337903, win 64240, options [mss 1460,sackOK,TS val 2178524519 ecr 0,nop,wscale 7], length 0
+> 14:52:20.827376 IP (tos 0xc0, ttl 64, id 5906, offset 0, flags [none], proto ICMP (1), length 112, options (unknown 134,EOL))
+>     _gateway > localhost.localdomain: ICMP parameter problem - octet 22, length 80
+>
+> I looked at the possible causes. SELinux works properly.
 
-Normally we ask for man page updates to be presented at the same
-time, as the man page defines the user interface that is being
-implemented. In this case, we need updates for the pwritev2() man
-page to document RWF_ATOMIC semantics, and the statx() man page to
-document what the variables being exposed mean w.r.t. RWF_ATOMIC.
+SELinux was the reference LSM implementation for labeled networking.
 
-The pwritev2() man page is probably the most important one right now
-- it needs to explain the guarantees that RWF_ATOMIC is supposed to
-provide w.r.t. data integrity, IO ordering, persistence, etc.
-Indeed, it will need to explain exactly how this "multi-atomic-unit
-mulit-bio non-atomic RWF_ATOMIC" IO thing can be used safely and
-reliably, especially w.r.t. IO ordering and persistence guarantees
-in the face of crashes and power failures. Not to mention
-documenting error conditions specific to RWF_ATOMIC...
+> What it seems to happen is that there is a default netlabel mapping,
+> that is used to send the packets out.
 
-It's all well and good to have some implementation, but without
-actually defining and documenting the *guarantees* that RWF_ATOMIC
-provides userspace it is completely useless for application
-developers. And from the perspective of a reviewer, without the
-documentation stating what the infrastructure actually guarantees
-applications, we can't determine if the implementation being
-presented is fit for purpose....
+Correct. SELinux only uses CIPSO options for MLS. Smack uses CIPSO for
+almost all packets.
 
-Cheers,
+> We are in this part of the code:
+>
+> Thread 1 hit Breakpoint 2, netlbl_sock_setattr (sk=sk@entry=0xffff888025178000, family=family@entry=2, secattr=0xffff88802504b200) at net/netlabel/netlabel_kapi.c:980
+> 980	{
+> (gdb) n
+> 771		__rcu_read_lock();
+> (gdb) 
+> 985		dom_entry = netlbl_domhsh_getentry(secattr->domain, family);
+> (gdb) 
+> 986		if (dom_entry == NULL) {
+> (gdb) 
+> 990		switch (family) {
+> (gdb) 
+> 992			switch (dom_entry->def.type) {
+>
+> Here is the difference between Smack and SELinux.
+>
+> Smack:
+>
+> (gdb) p *dom_entry
+> $2 = {domain = 0x0 <fixed_percpu_data>, family = 2, def = {type = 3, {addrsel = 0xffff888006bbef40, cipso = 0xffff888006bbef40, calipso = 0xffff888006bbef40}}, valid = 1, list = {next = 0xffff88800767f6e8, prev = 0xffff88800767f6e8}, rcu = {next = 0x0 <fixed_percpu_data>, 
+>     func = 0x0 <fixed_percpu_data>}}
+>
+> SELinux:
+>
+> (gdb) p *dom_entry
+> $5 = {domain = 0x0 <fixed_percpu_data>, family = 2, def = {type = 5, {addrsel = 0x0 <fixed_percpu_data>, cipso = 0x0 <fixed_percpu_data>, calipso = 0x0 <fixed_percpu_data>}}, valid = 1, list = {next = 0xffff888006012c88, prev = 0xffff888006012c88}, rcu = {
+>     next = 0x0 <fixed_percpu_data>, func = 0x0 <fixed_percpu_data>}}
+>
+>
+> type = 3 (for Smack) is NETLBL_NLTYPE_CIPSOV4.
+> type = 5 (for SELinux) is NETLBL_NLTYPE_UNLABELED.
+>
+> This is why SELinux works (no incompatible options are sent).
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+SELinux "works" because that's the use case that was verified.
+
+>
+> The netlabel mapping is added here:
+>
+> static void smk_cipso_doi(void)
+> {
+>
+> [...]
+>
+> 	rc = netlbl_cfg_cipsov4_map_add(doip->doi, NULL, NULL, NULL, &nai);
+>
+>
+> Not sure exactly how we can solve this issue. Just checked that
+> commenting the call to smk_cipso_doi() in init_smk_fs() allows the NFS
+> filesystem to be mounted.
+
+Are both the server and client using Smack? Are they on a network that can
+propagate labeled packets? What are you using for a Smack rule configuration?
+
+>
+> Thanks
+>
+> Roberto
+>
