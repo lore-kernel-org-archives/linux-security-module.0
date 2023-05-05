@@ -2,211 +2,117 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18808C7EE2E
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 08:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B37C2C77B75
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 May 2023 14:04:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231496AbjEEIOB (ORCPT
+        id S232796AbjEEOEC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 May 2023 04:14:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47626 "EHLO
+        Fri, 5 May 2023 10:04:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231473AbjEEINk (ORCPT
+        with ESMTP id S232784AbjEEOEA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 May 2023 04:13:40 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E6091636D;
-        Fri,  5 May 2023 01:13:38 -0700 (PDT)
-Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4QCNcc6Nc2zTkCY;
-        Fri,  5 May 2023 16:09:04 +0800 (CST)
-Received: from ubuntu1804.huawei.com (10.67.174.58) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Fri, 5 May 2023 16:13:35 +0800
-From:   Xiu Jianfeng <xiujianfeng@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-        <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-        <dhowells@redhat.com>, <code@tyhicks.com>,
-        <hirofumi@mail.parknet.co.jp>, <linkinjeon@kernel.org>,
-        <sfrench@samba.org>, <senozhatsky@chromium.org>, <tom@talpey.com>,
-        <chuck.lever@oracle.com>, <jlayton@kernel.org>,
-        <miklos@szeredi.hu>, <paul@paul-moore.com>, <jmorris@namei.org>,
-        <serge@hallyn.com>, <stephen.smalley.work@gmail.com>,
-        <eparis@parisplace.org>, <casey@schaufler-ca.com>,
-        <dchinner@redhat.com>, <john.johansen@canonical.com>,
-        <mcgrof@kernel.org>, <mortonm@chromium.org>, <fred@cloudflare.com>,
-        <mic@digikod.net>, <mpe@ellerman.id.au>, <nathanl@linux.ibm.com>,
-        <gnoack3000@gmail.com>, <roberto.sassu@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-cachefs@redhat.com>, <ecryptfs@vger.kernel.org>,
-        <linux-cifs@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
-        <linux-unionfs@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>, <selinux@vger.kernel.org>,
-        <wangweiyang2@huawei.com>
-Subject: [PATCH -next 2/2] lsm: Change inode_setattr hook to take struct path argument
-Date:   Fri, 5 May 2023 16:12:00 +0800
-Message-ID: <20230505081200.254449-3-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230505081200.254449-1-xiujianfeng@huawei.com>
-References: <20230505081200.254449-1-xiujianfeng@huawei.com>
+        Fri, 5 May 2023 10:04:00 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7DED61B4
+        for <linux-security-module@vger.kernel.org>; Fri,  5 May 2023 07:03:59 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-b9e2f227640so2375053276.3
+        for <linux-security-module@vger.kernel.org>; Fri, 05 May 2023 07:03:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1683295439; x=1685887439;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6Zj99bBAIm1UppyS4HU4KQkIjs/a4617Uy0NiG4+A34=;
+        b=QG6VoJ7jXS9uKFBCFU5JHUoI75Tbl5ySfi/w5V5JTB1ZC+14ZR2C4vL+QBP6vpcJWV
+         GfLYeX5wZNmQt17b9LtpBYTWSjqzsV0I+Zxx8HAVnb8qtHLd7esItovGR2/k73NU/qoi
+         MesWqFqbteKlk8g2f0iGH/J/8F3LASopYq+pqPs4t6jIg31MaGlFiSdZryWt7YnxpFA1
+         f4VHRIA1cL7fu4Q4qZKPXGhio+pWcv9UPXm3Dws/0RrrvW14scp7RrpjQNagNvxhYWhj
+         aVVPKuPRNXjtrK5USm9AU7PM9k488EbTPZZi9APwKD7Tns1e7+RntA1HGAN0/22g1KBx
+         CDiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683295439; x=1685887439;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6Zj99bBAIm1UppyS4HU4KQkIjs/a4617Uy0NiG4+A34=;
+        b=hUKEq7EuCU4Uf76TMkRQrIDlfzHyIKUzkzVl7XhCs19Ms5EzhRysjfyLIREF9J5zT0
+         /eJxgHInGIqAKE8neSf1Z2ZhpWyNeNddkEXjg77hyo/y9lp7Ovg8hOfeU/+cJYLORA1s
+         s1MP9nw8Md2BS2BeyY3d2tGJYB8EWyjcPT+xEf27ZFnH4f4EppM8d7sfEliZO7KYWcG7
+         Di3VIuzX6MCdTlu4ePlrNw3n1dyNzORgDQUhEeq3dLwJ8aNKLNa8MuFChHLUK1pYdtDK
+         IwsNkGy/HTrUHZfg4ypPn+2AT1nUz8NCnAi6v+K6Aomn2BJotXx2t68k7KbOQ1tlUYaL
+         3nag==
+X-Gm-Message-State: AC+VfDyaysDjirY1jH6o7BCH1JR+l89GJN8G1fcz0mWwHENfPMA0OXCZ
+        NhvP+7NKHVfNm1Vjt2GiBI7kTd4zTodxp3a1sKU/PgH2LsYqCrCK7w==
+X-Google-Smtp-Source: ACHHUZ7dI6w54B6ymUq8pT1avcQtWdIkOdaUQwoSihiaxU4HnhOSY7DDr5WC06x+5srMXKFtKMgV9QbUtNZ9UqvuxNs=
+X-Received: by 2002:a25:aea0:0:b0:ba1:6097:999b with SMTP id
+ b32-20020a25aea0000000b00ba16097999bmr1685198ybj.4.1683295438927; Fri, 05 May
+ 2023 07:03:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.174.58]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500023.china.huawei.com (7.185.36.114)
-X-CFilter-Loop: Reflected
+References: <1923bc2f330f576cd246856f976af448c035d02e.camel@huaweicloud.com> <d34c30ba-55cc-8662-3587-bb66e234b714@schaufler-ca.com>
+In-Reply-To: <d34c30ba-55cc-8662-3587-bb66e234b714@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 5 May 2023 10:03:48 -0400
+Message-ID: <CAHC9VhQu7GQ54H0k=C8ZWU-5zOX35QNWrBMEyNTE1AU_e8DcPQ@mail.gmail.com>
+Subject: Re: NFS mount fail
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
+        chuck.lever@oracle.com, jlayton@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-For path-based LSMs such as Landlock, struct path instead of struct
-dentry is required to make sense of attr/xattr accesses. So change the
-argument of lsm hook inode_setattr() from struct dentry * to struct
-path *.
+On Thu, May 4, 2023 at 9:00=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
+com> wrote:
+> On 5/4/2023 9:11 AM, Roberto Sassu wrote:
+> > Hi Casey
+> >
+> > while developing the fix for overlayfs, I tried first to address the
+> > issue of a NFS filesystem failing to mount.
+> >
+> > The NFS server does not like the packets sent by the client:
+> >
+> > 14:52:20.827208 IP (tos 0x0, ttl 64, id 60628, offset 0, flags [DF], pr=
+oto TCP (6), length 72, options (unknown 134,EOL))
+> >     localhost.localdomain.omginitialrefs > _gateway.nfs: Flags [S], cks=
+um 0x7618 (incorrect -> 0xa18c), seq 455337903, win 64240, options [mss 146=
+0,sackOK,TS val 2178524519 ecr 0,nop,wscale 7], length 0
+> > 14:52:20.827376 IP (tos 0xc0, ttl 64, id 5906, offset 0, flags [none], =
+proto ICMP (1), length 112, options (unknown 134,EOL))
+> >     _gateway > localhost.localdomain: ICMP parameter problem - octet 22=
+, length 80
+> >
+> > I looked at the possible causes. SELinux works properly.
+>
+> SELinux was the reference LSM implementation for labeled networking.
+>
+> > What it seems to happen is that there is a default netlabel mapping,
+> > that is used to send the packets out.
+>
+> Correct. SELinux only uses CIPSO options for MLS.
 
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
----
- fs/attr.c                     |  2 +-
- fs/fat/file.c                 |  2 +-
- include/linux/lsm_hook_defs.h |  2 +-
- include/linux/security.h      |  4 ++--
- security/security.c           | 10 +++++-----
- security/selinux/hooks.c      |  3 ++-
- security/smack/smack_lsm.c    |  5 +++--
- 7 files changed, 15 insertions(+), 13 deletions(-)
+SELinux can use the NetLabel/CIPSO "local" configuration to send a
+full SELinux labels over a loopback connection.
 
-diff --git a/fs/attr.c b/fs/attr.c
-index eecd78944b83..54d4334c350f 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -473,7 +473,7 @@ int notify_change(struct mnt_idmap *idmap, const struct path *path,
- 	    !vfsgid_valid(i_gid_into_vfsgid(idmap, inode)))
- 		return -EOVERFLOW;
- 
--	error = security_inode_setattr(idmap, dentry, attr);
-+	error = security_inode_setattr(idmap, path, attr);
- 	if (error)
- 		return error;
- 	error = try_break_deleg(inode, delegated_inode);
-diff --git a/fs/fat/file.c b/fs/fat/file.c
-index 795a4fad5c40..bb31663f99b5 100644
---- a/fs/fat/file.c
-+++ b/fs/fat/file.c
-@@ -91,7 +91,7 @@ static int fat_ioctl_set_attributes(struct file *file, u32 __user *user_attr)
- 	 * module, just because it maps to a file mode.
- 	 */
- 	err = security_inode_setattr(file_mnt_idmap(file),
--				     file->f_path.dentry, &ia);
-+				     &file->f_path, &ia);
- 	if (err)
- 		goto out_unlock_inode;
- 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 6bb55e61e8e8..542fa6ab87c5 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -134,7 +134,7 @@ LSM_HOOK(int, 0, inode_readlink, struct dentry *dentry)
- LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
- 	 bool rcu)
- LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
--LSM_HOOK(int, 0, inode_setattr, struct dentry *dentry, struct iattr *attr)
-+LSM_HOOK(int, 0, inode_setattr, const struct path *path, struct iattr *attr)
- LSM_HOOK(int, 0, inode_getattr, const struct path *path)
- LSM_HOOK(int, 0, inode_setxattr, struct mnt_idmap *idmap,
- 	 struct dentry *dentry, const char *name, const void *value,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index e2734e9e44d5..9121f86feed1 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -353,7 +353,7 @@ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
- 			       bool rcu);
- int security_inode_permission(struct inode *inode, int mask);
- int security_inode_setattr(struct mnt_idmap *idmap,
--			   struct dentry *dentry, struct iattr *attr);
-+			   const struct path *path, struct iattr *attr);
- int security_inode_getattr(const struct path *path);
- int security_inode_setxattr(struct mnt_idmap *idmap,
- 			    struct dentry *dentry, const char *name,
-@@ -849,7 +849,7 @@ static inline int security_inode_permission(struct inode *inode, int mask)
- }
- 
- static inline int security_inode_setattr(struct mnt_idmap *idmap,
--					 struct dentry *dentry,
-+					 const struct path *path,
- 					 struct iattr *attr)
- {
- 	return 0;
-diff --git a/security/security.c b/security/security.c
-index d5ff7ff45b77..2ce7194fdb5c 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2075,7 +2075,7 @@ int security_inode_permission(struct inode *inode, int mask)
- /**
-  * security_inode_setattr() - Check if setting file attributes is allowed
-  * @idmap: idmap of the mount
-- * @dentry: file
-+ * @path: path of file
-  * @attr: new attributes
-  *
-  * Check permission before setting file attributes.  Note that the kernel call
-@@ -2086,16 +2086,16 @@ int security_inode_permission(struct inode *inode, int mask)
-  * Return: Returns 0 if permission is granted.
-  */
- int security_inode_setattr(struct mnt_idmap *idmap,
--			   struct dentry *dentry, struct iattr *attr)
-+			   const struct path *path, struct iattr *attr)
- {
- 	int ret;
- 
--	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-+	if (unlikely(IS_PRIVATE(d_backing_inode(path->dentry))))
- 		return 0;
--	ret = call_int_hook(inode_setattr, 0, dentry, attr);
-+	ret = call_int_hook(inode_setattr, 0, path, attr);
- 	if (ret)
- 		return ret;
--	return evm_inode_setattr(idmap, dentry, attr);
-+	return evm_inode_setattr(idmap, path->dentry, attr);
- }
- EXPORT_SYMBOL_GPL(security_inode_setattr);
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 79b4890e9936..81abaea4dd63 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3051,9 +3051,10 @@ static int selinux_inode_permission(struct inode *inode, int mask)
- 	return rc;
- }
- 
--static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
-+static int selinux_inode_setattr(const struct path *path, struct iattr *iattr)
- {
- 	const struct cred *cred = current_cred();
-+	struct dentry *dentry = path->dentry;
- 	struct inode *inode = d_backing_inode(dentry);
- 	unsigned int ia_valid = iattr->ia_valid;
- 	__u32 av = FILE__WRITE;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 7a3e9ab137d8..0b2931c87507 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1147,14 +1147,15 @@ static int smack_inode_permission(struct inode *inode, int mask)
- 
- /**
-  * smack_inode_setattr - Smack check for setting attributes
-- * @dentry: the object
-+ * @path: path of the object
-  * @iattr: for the force flag
-  *
-  * Returns 0 if access is permitted, an error code otherwise
-  */
--static int smack_inode_setattr(struct dentry *dentry, struct iattr *iattr)
-+static int smack_inode_setattr(const struct path *path, struct iattr *iattr)
- {
- 	struct smk_audit_info ad;
-+	struct dentry *dentry = path->dentry;
- 	int rc;
- 
- 	/*
--- 
-2.17.1
+* https://www.paul-moore.com/blog/d/2012/06/cipso_loopback_full_labels.html
 
+There are several differences between how SELinux and Smack implement
+labeled networking, one of the larger differences is that SELinux
+leaves the labeling configuration, e.g. which networks/interfaces are
+labeled and how, as a separate exercise for the admin whereas the
+labeling configuration is much more integrated with Smack.
+
+I wouldn't say one approach is better than the other, they are simply
+different.  The SELinux approach provides for the greatest amount of
+flexibility with the understanding that more work needs to be done by
+the admin. The Smack approach provides a quicker path to getting a
+system up and running, but it is less flexible for challenging/mixed
+network environments.
+
+There are other issues around handling IPv6, the sockets-as-objects
+debate, etc. but those shouldn't be relevant to this discussion.
+
+--=20
+paul-moore.com
