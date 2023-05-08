@@ -2,144 +2,175 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F392C7EE22
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 May 2023 17:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF63DC7EE2A
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 May 2023 17:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233033AbjEHRYx (ORCPT
+        id S233824AbjEHR3r (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 May 2023 13:24:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39364 "EHLO
+        Mon, 8 May 2023 13:29:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232692AbjEHRYw (ORCPT
+        with ESMTP id S232429AbjEHR3q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 May 2023 13:24:52 -0400
-Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9ED84ECD
-        for <linux-security-module@vger.kernel.org>; Mon,  8 May 2023 10:24:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1683566690; bh=W47C2Am1ASDpCiBJiSpeDsiHDjaCuY8JMXwH1J8T4uQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=qZ1Z/5xpc6q+ZzMITc6QKwS1dA86zkwdUKLLGMXwfGPGHNEqkUF9FNslgwbE1NX9/w2S1YvfhwpO3PTlPuYJFmScV7W2zofLw1wFUpETFNS034ZV9oZXepk3NbS6tUDCaDL3H2sbtEQMY5AQuJhmm5quS3Lz6s4khQ5bF0JT4aWkXtdmFgYkelUm8LnlQFfuShtX01hv7srnYv8Z+KEWtOvSK7Q7blP/wu2plhCAYX7aJpRAgLqWT8TO6cRI5U/aQpo9bINEk7PY4e3mMdTZ064P+Pxr5rUhnvsejrJNYb5p95EvgvKTcjTVEUgJa01JPpBNCG8oTTNktfA9pwcoyQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1683566690; bh=r7s1S+IuTN5a5zaCQ4yEeLm9SRVgtDyCtgVNqwW4YFi=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=JFo2j/jaPXzOoU5W1l0V3jAnqbHsVz9mzJ7BBcXyGg64uY3UylrD5AZukipFe8VwiHGK42jwBK2nkqO6m4MnWBVAXcvG2+jfJZKSmKrAgUks6W+nNIAJ/WoC7KqAaWEmyTaKkiDuqezvbiEGvyrZ1aGReJ5GKQvQOV6rA/LpDOlIfQWiJgtqpqrULh2QKWQ7C1QvuJTKoC6kzX/Al0PPMopSk91cL1+bPMC3G31amg0YuTb54rnlnkpsii/AysoyDt7Ws4LSEcLdLZjB0ytxEcNuaKMvp/5ib1Dsv+lOeMq+nb+1Xq/bSsnZdq+1GMsvC1uBa47ARf3jhDkoD88RHQ==
-X-YMail-OSG: b9bomroVM1nnoXuVUhrJmulhFsXUZmDllzLu.hlGYUs49GZAxyLNBdPrDg5jcWG
- .Tnbtae1QPy95Fg1AnC6sMHFy1BCge0QPUx22Php9efG7jnigTiaFS6MUIaf_4YOYrFORr2fnSpX
- Q02knVJ_W578_ga7vdZfi4C3z4wPTC901ofyNbB.rQ0S9OgmSnEW_VPS_9u7jKVbkYAp7ARY3Hih
- 0k8o3Ld.ZU7nHaEZVFfqfJF7eeAbHsjk9jNFpCc0Yg3hfwq19aoIuneZnv4c2HMBcZ2f7RqjX61q
- IGtKcNSsOLLIlLw5pZw4NeL8J2U4jX7caB28gDZ4BIJj_SVCkxq3sDE3i4p2TJJXeE5fyl5Y3b5Z
- EOrestSNmXEC1L8xxKCrZx4sJpLw6Wsr4BZjS74FMZ8TIwtNUw.Y2pyvaixiPant026XaC8U0RY9
- H2rB7wg890zJ0xUxHLhVXcC3z8Pei50NWNtpbkbDRraRiZmFdyrzqcFO2YaS_Nnj3uzXpJkwNdtZ
- ZZAsJeHhVfUtqsjuxFz3n0OsMB0EuCW7hBWnXZFaF1KhTEq24K1J0t5pro76WWRzksU2mfRxj9R2
- dADeLa0dRUw.0Z.D8MuterhiiWoa4vMHiX3pbmF0DSQdVPM9L8KyFNUA8huT.8HMNW2FNpLBqs39
- Pbx7PH7N6iDISFQgXOWEvwA3CAc.q_mZKsDS86BRqswRTHB7y.DjwNNv3c1SvYazFoJtOmDWFftr
- 4mcbHKiIqWhYtrqHpK1CbyDzKrApHmG9eViTvftsgBUXoQLdhynK0pUUWzoL8M_Va0ccIUHPrvBB
- onqG2vTB8HAs_EEwpuxZUOnDiey8BLGfaPqutg.xar_xpo.VSpgVGY1yluRxD.adCPYZjs7ZorXM
- QCJltyRTK9TIeF0VGGPwHmBAesVhkPDlnP0J7FHS7.4Q8UX5fTU467yXmsJgnWgPtYEoAUiXWMR5
- 3RF_fIgbcyFcV4XxMOFY0bnuS3BnqY2vp9ralzF_85wXkz_Ci4fvfIHiapkh3fbAM.7ltXlQ4JwJ
- 6dA6LY1.xlfJEtXnrylHC_yoZJNwjoRHLD7C1ylGoQOacZJJp7skuFRt7RJURAZvARwLBQG.3OSO
- QO39eSvkJhECob0pH_mR32.HsTQnYwdyP1yrmMfQ8Gxo43m.xY.xrOq2WAes63Ylkx2reyAvlG2t
- MGIUxfXIpaeNhktn0ChPykfC49hn3oSxLWJJrspeIPu7X9GURBSnB0b65NDNfWr1DbrUOLEqieMH
- 07A0Mhe8VFQPFcWorIWWVtNVaXh.q3cAXbUWRMI7lg3P.D2qug3Mcx4O7xTms7E54ax2Wq_1tmLd
- ta3_glkvL5pmc4Wp9QsZe6.fCTK0cQDHQZBHdpI48LcHGg6hSOx5siI.RcdPRwgSU5GSvj2WIYp3
- RYCELc5qxawEiHEYiJ30U9gxLjF6g0lF9dMYV9nfBI2E92w7B7W4HBvVU5DvtEzdZ0leP98PYXJI
- nVvmQ1dDy_m7Tzj3bIJ0nLHsyKObrhD5bjhIA28LxLHXhU8F9LfjRQYej69mvmzbosyfidaFKEPp
- zFI66HRrd9L6qBpX7pbXXIkmW4av2rdK.3.IGteXzpB1DQoPd7Zk.5tCJAdQBllQx1hSTtspsYW_
- Ru2SN7B1faHNwZEo9C9dy86Al8tlqkG91uCqnKPE7sjGGVtYc4eGoG3jJzaBFlWWsAVnVBPbVMlC
- lBK8U4UBTRMyVsr.eiCgYbGSUA_cVTth.fiDCkHaEJGLYbjbgRhFywUOv.hi0uNCix7PpodPOK2i
- QMHhd9TCpXXbbQ1WAgPG_O_4pBFArZJd6JfLYTlqEOFo4AIN447vH.pB0adJ4QsKdZt0Q91XhQxB
- JHTAUZbowubLpUTeJuDH7moyCjzYMrNLNH818iqL.TF4BqBNPD1.zHxX6LaCwGLKalMyRl_N9ETb
- G3.GCfZ1KNCnS9PLNQGLRzOGZ0GSXUx_Q14E7kV3q7Wi.RuAnuZxSJn3Kp59xL8ckCgrrjSe8uVv
- hN0nazNMaIGNUjFetv7vXdWnItEwb73SR5dflFe6ohSFxT8o.VX1Tv4.j7iJEXrYI_eliH5HRWVn
- uXMKWUiPGwwGf9tc7LNFYxpv.Qbnmv3Yh5tpzvRxPHFGk5RRogS5qoNiTmWHxdOcGd0Pd4syXDMr
- 9.2Y0PE6gaITOCey0q2DBIm9vUOfKXN4r4t0q2xeJeejgetP7KIvOvp7QhsCEd5SzU3Oogdvd5gh
- JYldzOmtD03YU143SjpXTSsZO1h5_.GnsGFCtyA--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 9dff67b1-6bf2-4781-85fe-dfe7e6f4485d
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Mon, 8 May 2023 17:24:50 +0000
-Received: by hermes--production-bf1-5f9df5c5c4-wvm2h (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 94c432530f44b25806002d2ec2a8c8da;
-          Mon, 08 May 2023 17:24:46 +0000 (UTC)
-Message-ID: <84e400ac-fb52-4305-e3c4-204e2c2b91b8@schaufler-ca.com>
-Date:   Mon, 8 May 2023 10:24:43 -0700
+        Mon, 8 May 2023 13:29:46 -0400
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B80561B0;
+        Mon,  8 May 2023 10:29:44 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-643990c5319so3236692b3a.2;
+        Mon, 08 May 2023 10:29:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683566983; x=1686158983;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3rfke9qB1DRHiCuMEOyzzXuV8oi0P7zjijqnIYynp3o=;
+        b=WJfaSuuV1ekEBAiD7cPHXE8+V1fa6ljBFWX4+wgtGd2BpjmEc5oaB9B2TwapRwAKtM
+         MJJMVu8FqUEp8/0jin4K/2/FEUn1ZrE/k5wuDK7LRAoaocRmo8q9/T0ca3iTaW/CT7yS
+         wFLr/e7SWBhy3cZgm5USsixgEOS0fI9WAkt/OtV3xVGy5AfdOgViPI4pNCel3zzV/ins
+         2X6+wwY5b2gW26I4IcslgW6L1a0ovEfBYTw86Gi4l98rsdIkxYJO6SPC1xaEDc2gS9lt
+         xxCYUgV2LUyXr0nuoGnE398GdJ1Lz/xMmAWTyR5qvtV8WaYtjl2MNVP06GrB/ycOu8fv
+         R6OQ==
+X-Gm-Message-State: AC+VfDxQ4MBRreQPfAhZsHBpVT3fjSYHJlLjJpf3FR8c0uIzqOMeZ2Zi
+        QSG9tf/qKYdVSe7y/Wyo9rs=
+X-Google-Smtp-Source: ACHHUZ75U4lCk4iijzyP5tOZ0JsVrz/EkvkWJ7HQDBXg3iSt23KVdFrierjfNZySz59EZ1uNpntsKQ==
+X-Received: by 2002:a05:6a20:a107:b0:ff:7c74:a799 with SMTP id q7-20020a056a20a10700b000ff7c74a799mr11302220pzk.9.1683566983497;
+        Mon, 08 May 2023 10:29:43 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id i4-20020aa787c4000000b0063d2d9990ecsm232036pfo.87.2023.05.08.10.29.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 May 2023 10:29:43 -0700 (PDT)
+Date:   Mon, 8 May 2023 17:29:41 +0000
+From:   Wei Liu <wei.liu@kernel.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Alexander Graf <graf@amazon.com>,
+        Forrest Yuan Yu <yuanyu@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        John Andersen <john.s.andersen@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Marian Rotariu <marian.c.rotariu@gmail.com>,
+        Mihai =?utf-8?B?RG9uyJt1?= <mdontu@bitdefender.com>,
+        =?utf-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Thara Gopinath <tgopinath@microsoft.com>,
+        Will Deacon <will@kernel.org>,
+        Zahra Tarkhani <ztarkhani@microsoft.com>,
+        =?utf-8?Q?=C8=98tefan_=C8=98icleru?= <ssicleru@bitdefender.com>,
+        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
+        virtualization@lists.linux-foundation.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org, Wei Liu <wei.liu@kernel.org>
+Subject: Re: [PATCH v1 3/9] virt: Implement Heki common code
+Message-ID: <ZFkxhWhjyIzrPkt8@liuwe-devbox-debian-v2>
+References: <20230505152046.6575-1-mic@digikod.net>
+ <20230505152046.6575-4-mic@digikod.net>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [RFC][PATCH 1/2] smack: Retrieve transmuting information in
- smack_inode_getsecurity()
-Content-Language: en-US
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        yoonjaeh@amazon.com, kamatam@amazon.com, mengcc@amazon.com,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20230508170234.3595105-1-roberto.sassu@huaweicloud.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20230508170234.3595105-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21417 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230505152046.6575-4-mic@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/8/2023 10:02 AM, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> Enhance smack_inode_getsecurity() to retrieve the value for
-> SMACK64TRANSMUTE from the inode security blob, similarly to SMACK64.
->
-> This helps to display accurate values in the situation where the security
-> labels come from mount options and not from xattrs.
+On Fri, May 05, 2023 at 05:20:40PM +0200, Mickaël Salaün wrote:
+> From: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
+> 
+> Hypervisor Enforced Kernel Integrity (Heki) is a feature that will use
+> the hypervisor to enhance guest virtual machine security.
+> 
+> Configuration
+> =============
+> 
+> Define the config variables for the feature. This feature depends on
+> support from the architecture as well as the hypervisor.
+> 
+> Enabling HEKI
+> =============
+> 
+> Define a kernel command line parameter "heki" to turn the feature on or
+> off. By default, Heki is on.
 
-I will kick the tires on these patches. They look good at first glance.
+For such a newfangled feature can we have it off by default? Especially
+when there are unsolved issues around dynamically loaded code.
 
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/smack/smack_lsm.c | 22 ++++++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 7a3e9ab137d..c7e37ed2799 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -1463,10 +1463,19 @@ static int smack_inode_getsecurity(struct mnt_idmap *idmap,
->  	struct super_block *sbp;
->  	struct inode *ip = inode;
->  	struct smack_known *isp;
-> +	struct inode_smack *ispp;
-> +	size_t label_len;
-> +	char *label = NULL;
+> 
+[...]
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 3604074a878b..5cf5a7a97811 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -297,6 +297,7 @@ config X86
+>  	select FUNCTION_ALIGNMENT_4B
+>  	imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
+>  	select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+> +	select ARCH_SUPPORTS_HEKI		if X86_64
+
+Why is there a restriction on X86_64?
+
 >  
-> -	if (strcmp(name, XATTR_SMACK_SUFFIX) == 0)
-> +	if (strcmp(name, XATTR_SMACK_SUFFIX) == 0) {
->  		isp = smk_of_inode(inode);
-> -	else {
-> +	} else if (strcmp(name, XATTR_SMACK_TRANSMUTE) == 0) {
-> +		ispp = smack_inode(inode);
-> +		if (ispp->smk_flags & SMK_INODE_TRANSMUTE)
-> +			label = TRANS_TRUE;
-> +		else
-> +			label = "";
-> +	} else {
->  		/*
->  		 * The rest of the Smack xattrs are only on sockets.
->  		 */
-> @@ -1488,13 +1497,18 @@ static int smack_inode_getsecurity(struct mnt_idmap *idmap,
->  			return -EOPNOTSUPP;
->  	}
+>  config INSTRUCTION_DECODER
+>  	def_bool y
+> diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
+> index a6e8373a5170..42ef1e33b8a5 100644
+> --- a/arch/x86/include/asm/sections.h
+> +++ b/arch/x86/include/asm/sections.h
+[...]
 >  
-> +	if (!label)
-> +		label = isp->smk_known;
+> +#ifdef CONFIG_HEKI
 > +
-> +	label_len = strlen(label);
+> +/*
+> + * Gather all of the statically defined sections so heki_late_init() can
+> + * protect these sections in the host page table.
+> + *
+> + * The sections are defined under "SECTIONS" in vmlinux.lds.S
+> + * Keep this array in sync with SECTIONS.
+> + */
+
+This seems a bit fragile, because it requires constant attention from
+people who care about this functionality. Can this table be
+automatically generated?
+
+Thanks,
+Wei.
+
+> +struct heki_va_range __initdata heki_va_ranges[] = {
+> +	{
+> +		.va_start = _stext,
+> +		.va_end = _etext,
+> +		.attributes = HEKI_ATTR_MEM_NOWRITE | HEKI_ATTR_MEM_EXEC,
+> +	},
+> +	{
+> +		.va_start = __start_rodata,
+> +		.va_end = __end_rodata,
+> +		.attributes = HEKI_ATTR_MEM_NOWRITE,
+> +	},
+> +#ifdef CONFIG_UNWINDER_ORC
+> +	{
+> +		.va_start = __start_orc_unwind_ip,
+> +		.va_end = __stop_orc_unwind_ip,
+> +		.attributes = HEKI_ATTR_MEM_NOWRITE,
+> +	},
+> +	{
+> +		.va_start = __start_orc_unwind,
+> +		.va_end = __stop_orc_unwind,
+> +		.attributes = HEKI_ATTR_MEM_NOWRITE,
+> +	},
+> +	{
+> +		.va_start = orc_lookup,
+> +		.va_end = orc_lookup_end,
+> +		.attributes = HEKI_ATTR_MEM_NOWRITE,
+> +	},
+> +#endif /* CONFIG_UNWINDER_ORC */
+> +};
 > +
->  	if (alloc) {
-> -		*buffer = kstrdup(isp->smk_known, GFP_KERNEL);
-> +		*buffer = kstrdup(label, GFP_KERNEL);
->  		if (*buffer == NULL)
->  			return -ENOMEM;
->  	}
->  
-> -	return strlen(isp->smk_known);
-> +	return label_len;
->  }
->  
->  
