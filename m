@@ -2,110 +2,62 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C222C7EE25
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 May 2023 00:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D7DC77B75
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 May 2023 08:27:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234200AbjEIAUD (ORCPT
+        id S229894AbjEII1L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 May 2023 20:20:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39118 "EHLO
+        Tue, 9 May 2023 04:27:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234169AbjEIAUB (ORCPT
+        with ESMTP id S234305AbjEII1E (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 May 2023 20:20:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF7B840FD
-        for <linux-security-module@vger.kernel.org>; Mon,  8 May 2023 17:19:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5073163051
-        for <linux-security-module@vger.kernel.org>; Tue,  9 May 2023 00:19:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3F22C433A4
-        for <linux-security-module@vger.kernel.org>; Tue,  9 May 2023 00:19:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683591598;
-        bh=MjkItiypktEo25V6DO99EB7GxcQEs1EfAiVhHUuOnbQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RSSudBY16vz4RroQGxUhku5OYcaCkTjMO58/KDOi1njcr8zgMeihbJkxIfe65FdwA
-         WTKRFk6yLOIpAzrnwSc0mgGoLoqHAmwLcw5j+/ZcE4ExvVWFtdQZHfyiT5v2LqPQAL
-         CJjAqVGQZKTLiM7Geg+UAZwtw9PLqV72x8dfHDiQPcnMah4gDRlxD0mfA6PQtR1ygY
-         tSHHJaV+yO9jZA69YjZYgxwTxbKWNwxGoRQkoKHqh2LcT4jRNC4u7QTtaySrD+bmEI
-         Jwb9ej+fJqbGeMH8Q1vK9wkTdfbBAJF3cszo7dZOpRxsmLDp07qqoh+s+uHedZ8+xd
-         8LPuzMoSTBDxA==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-966287b0f72so481693766b.0
-        for <linux-security-module@vger.kernel.org>; Mon, 08 May 2023 17:19:58 -0700 (PDT)
-X-Gm-Message-State: AC+VfDxHZyDtbvzwTpUwRGRpLKqyVMTk6lzmAEbHAJ/ANS/22Xfjkbzn
-        R5ziylKXNTtP2LkQkkG3BzGcw/aF+/91HoaobKRt
-X-Google-Smtp-Source: ACHHUZ6XguvB359TJD5EVeTjXaiA2ucEsERS2+WbXhgo3pznKhng9msxWTb8gnB50Rzaq/efZNnWYP+FsScnG1YYBIM=
-X-Received: by 2002:a17:907:9808:b0:94f:4801:6d08 with SMTP id
- ji8-20020a170907980800b0094f48016d08mr10822326ejc.71.1683591597081; Mon, 08
- May 2023 17:19:57 -0700 (PDT)
+        Tue, 9 May 2023 04:27:04 -0400
+X-Greylist: delayed 1188 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 09 May 2023 01:27:03 PDT
+Received: from mail.rawlinsfis.com (mail.rawlinsfis.com [89.40.118.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 218315246
+        for <linux-security-module@vger.kernel.org>; Tue,  9 May 2023 01:27:03 -0700 (PDT)
+Received: by mail.rawlinsfis.com (Postfix, from userid 1001)
+        id 0716382480; Tue,  9 May 2023 08:51:21 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rawlinsfis.com;
+        s=mail; t=1683618685;
+        bh=lDo1OjfzzJ3sOfR9tSDg5RMmT4aDyBP45hIVJCLtIrE=;
+        h=Date:From:To:Subject:From;
+        b=qzkpB355KhEq1esH3JdT/fkzo659phfDS5MIapNsMAFtLPcMhNZdhV9yFj8ve8UMu
+         vMprCyyZs7KzB9cUJhsxqSI3K+A943/GGSYiJ9ML2DbFFS1FeuuJaSVY1rkqkVBaik
+         zlWV5S0EpGJriQ0PchLOrAU8m0DjH31q4Ez8WyVwYF6Tqi2x4Zp9QZbOGtPvXOG1tT
+         mLU5w+2qjtPKDAtXMq40RV0G00LipauPwdBQwvAsqpULpAeVCRU/t1rDhqED4fR3Bl
+         EZZoPUCPryCtR+0VXt0E01A0RwYSL8GK8ZJ299yv377zatauT+L5liDHTb7GEZBeon
+         hRk9SBiMqKAtg==
+Received: by mail.rawlinsfis.com for <linux-security-module@vger.kernel.org>; Tue,  9 May 2023 07:51:09 GMT
+Message-ID: <20230509074500-0.1.3e.5py0.0.8qbhf8331h@rawlinsfis.com>
+Date:   Tue,  9 May 2023 07:51:09 GMT
+From:   "Damian Hordych" <damian.hordych@rawlinsfis.com>
+To:     <linux-security-module@vger.kernel.org>
+Subject: =?UTF-8?Q?Pompy_ciep=C5=82a_-_nowe_warunki_?=
+X-Mailer: mail.rawlinsfis.com
 MIME-Version: 1.0
-References: <20230503183821.1473305-1-john.g.garry@oracle.com> <20230503183821.1473305-2-john.g.garry@oracle.com>
-In-Reply-To: <20230503183821.1473305-2-john.g.garry@oracle.com>
-From:   Mike Snitzer <snitzer@kernel.org>
-Date:   Mon, 8 May 2023 20:19:46 -0400
-X-Gmail-Original-Message-ID: <CAH6w=ay1NNxh=9mQv5PCcDi3OY0mgvRXO_0VrmKBLAd1dcUQqQ@mail.gmail.com>
-Message-ID: <CAH6w=ay1NNxh=9mQv5PCcDi3OY0mgvRXO_0VrmKBLAd1dcUQqQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 01/16] block: Add atomic write operations to
- request_queue limits
-To:     John Garry <john.g.garry@oracle.com>
-Cc:     axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        jejb@linux.ibm.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com,
-        Himanshu Madhani <himanshu.madhani@oracle.com>,
-        dm-devel@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 3, 2023 at 2:40=E2=80=AFPM John Garry <john.g.garry@oracle.com>=
- wrote:
->
-> From: Himanshu Madhani <himanshu.madhani@oracle.com>
->
-> Add the following limits:
-> - atomic_write_boundary
-> - atomic_write_max_bytes
-> - atomic_write_unit_max
-> - atomic_write_unit_min
->
-> Signed-off-by: Himanshu Madhani <himanshu.madhani@oracle.com>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  Documentation/ABI/stable/sysfs-block | 42 +++++++++++++++++++++
->  block/blk-settings.c                 | 56 ++++++++++++++++++++++++++++
->  block/blk-sysfs.c                    | 33 ++++++++++++++++
->  include/linux/blkdev.h               | 23 ++++++++++++
->  4 files changed, 154 insertions(+)
->
+Dzie=C5=84 dobry,
 
-...
+w ramach nowej edycji programu Czyste Powietrze dla klient=C3=B3w indywid=
+ualnych mog=C4=85 otrzyma=C4=87 Pa=C5=84stwo do 135 tys. z=C5=82 wsparcia=
+ na zakup pompy ciep=C5=82a.
 
-> diff --git a/block/blk-settings.c b/block/blk-settings.c
-> index 896b4654ab00..e21731715a12 100644
-> --- a/block/blk-settings.c
-> +++ b/block/blk-settings.c
-> @@ -59,6 +59,9 @@ void blk_set_default_limits(struct queue_limits *lim)
->         lim->zoned =3D BLK_ZONED_NONE;
->         lim->zone_write_granularity =3D 0;
->         lim->dma_alignment =3D 511;
-> +       lim->atomic_write_unit_min =3D lim->atomic_write_unit_max =3D 1;
-> +       lim->atomic_write_max_bytes =3D 512;
-> +       lim->atomic_write_boundary =3D 0;
->  }
+Pr=C3=B3cz wy=C5=BCszego dofinansowania program zak=C5=82ada m.in. podwy=C5=
+=BCszenie prog=C3=B3w dochodowych oraz mo=C5=BCliwo=C5=9B=C4=87 z=C5=82o=C5=
+=BCenia kolejnego wniosku o dofinansowanie dla tych, kt=C3=B3rzy ju=C5=BC=
+ wcze=C5=9Bniej skorzystali z Programu.
 
-Not seeing required changes to blk_set_stacking_limits() nor blk_stack_limi=
-ts().
+Jako firma specjalizuj=C4=85ca si=C4=99 w dostawie, monta=C5=BCu i serwis=
+ie pomp ciep=C5=82a pomo=C5=BCemy Pa=C5=84stwu w uzyskaniu dofinansowania=
+ wraz z kompleksow=C4=85 realizacj=C4=85 ca=C5=82ego projektu.
 
-Sorry to remind you of DM and MD limits stacking requirements. ;)
+S=C4=85 Pa=C5=84stwo zainteresowani?
 
-Mike
+Pozdrawiam
+Damian Hordych
