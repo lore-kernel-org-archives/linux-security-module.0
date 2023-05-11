@@ -2,120 +2,145 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A231C77B7F
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 May 2023 16:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C879C77B7F
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 May 2023 17:12:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238757AbjEKQR3 (ORCPT
+        id S238873AbjEKRM5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 May 2023 12:17:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33820 "EHLO
+        Thu, 11 May 2023 13:12:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238536AbjEKQR2 (ORCPT
+        with ESMTP id S238868AbjEKRMz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 May 2023 12:17:28 -0400
-Received: from sonic303-27.consmr.mail.ne1.yahoo.com (sonic303-27.consmr.mail.ne1.yahoo.com [66.163.188.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D15C73AA4
-        for <linux-security-module@vger.kernel.org>; Thu, 11 May 2023 09:17:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1683821846; bh=tBePyjOsobbrh0POLBOAWPIX2IJq3gFqvcNAxxVll90=; h=Date:Subject:To:References:From:In-Reply-To:From:Subject:Reply-To; b=Pky1pr12kC0hniYc8eOYsrwiYqOfy8leelrXe41rJKlT2EWoHC36sPpMenNk2bVESNhxDc0jDw32y8qaKLaNPW2OFRTSgeqOuySK6hCuNEjiZYIB7T2xXVOtQvWk1tIx2hsHUKt5sProrgkhm7NlAn/L/3QGX+zwvOlC6cB8By8k+xUzltvanfbl3h1Hj9xRHZ9xX1bzfMC7tZPo+gvV8RkP7X9LpGhjfF4vrujKAm3sFSK3IY9CEws+PDIY1r61B1og235knq8xkj4wtrKX1Mg43qRcKQHsi6Aw4xuAbT1PwNlFOPhazXDlXoWeQ9JxD842Cdjwev3MLiIKLi5YQg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1683821846; bh=tuxVHm9t5X9p3QUiihBvLvdkUBpEiZ9Kuii+oT7AyQ9=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=YUT8ebnoO1912eok2zEKmY+pIBp7jV8ty1z7Iew9UMUOwdrC5MAFVkjkOhBJypKAW/fb37T+JyNAvoBO++wQVU0Z49v93mchI/BCW6y5OcoV0zOUi9+5KwktyUu53H051Qi3rxDpPAIrKt1zDtYZUKASudLSRAVXi5Ii68EhIqER1uLDK7KAq2FYxBHiFYevC2F4VLavzo4X8HDs351jAEdNj/4QrAacYZ0LXa71DYDKP3RtoawbgIiWVRdhMuGmtIAHkhWh9IKp6yiSe1c+jlK7UZhGf3m8OxLBEn4t+rdVCJkM25Ksp3wxPUgbnnYe7rz3uCNxLW2+fdnXzKJQ+A==
-X-YMail-OSG: LOLywCcVM1kVBzrWmlPsSC.VjpPcFpU21umt3pn0wgdqp2nFtK5cFH0DlnWWNap
- ABIC7vdbnor.9bdMG9QCyAwOLqN.4iBueEzzSUQFtPSzhgDAnEF7YqMcwqOrm6jo.606xgDlaMJA
- 1NnflFz8TYpO..NxumgTyLszys2FQlKap0u9OZ9VHi.HnZQM7LX8VbP.WBpyL241gMjFTnZDrP5z
- xO1mjZtD.UVTXuPQQrueXEyacpYFyDIfFdRNhATsqS77U0kTaD0scXtS359B4tmYl2X4qTwTC0Uo
- tYZKT.bfLq4pL0u9yJDLiyEQmdyXOlJagv7SVZqXyTE23J9ncnyq2FspIaiUX4AtcH4WIejXBQ9T
- P5WHXmubw7dyAJ0EH.NcLIrCngXS1YfKAEvDCFwMB.nf6GxJnmMv69SXLufbI1AmFFw3g7SQT3ye
- GV7Uaob144m39wSy.zVFlt1p0RL9j1V.pBVND5PidMC9LlubzKunrODq95VUiZkzWpWTIWjuVkrs
- uQJSr3odesfNGh1KHmFRXkCufLEQ.JzfioTG9o9Yr5O6aLTV07yCx7H4vs93tnB4OzVfz3.qhwJP
- aBX7f8pI91w37FO_psoPiJ5qpDZANKpYcOawQfQurO2qJT5NmXzKA9zaKj0tRszBr3nDREZBaEcs
- q_vtt9tNe7gQezdv8lRo36KEFtJqzkIby4LMd2boTnNujnvOXdgndzYkaHISwQMzoKIxrjaDo3WC
- Qh3kYJc4.FGP9OxF_ofO9kN828tzYCN1tLB.B7Seg8bMSu6ydnn_lrvkfnLtdqq9kyPvVR8ZjMCT
- aN4S5xSwSzEWh12yllymIaAhB.V_ocMS4G2SqjlacPkIYC4HftFcWbd8ntuthkpIvmxkqJLk8Tjh
- FmHUH.KJU3WrXN7W0oyPFitki9dxO6cmQYIlqzYCiEujqG0fJQ2tzpEv9uuByy6SU0l0jq_qdbTm
- Gs27ybGiwViMY9mxUgoy8WvSgZR0knsbka437OHkoDDwwoDKjIIwJwuU9sl7Bq0ytuCkv1ioYn14
- wikcNLdXTZovG7lxenrqg6ypd_xkklYpEgjLF.2zwV4FKR_3JJ1QU4zfGSg2p5ggqm4v_hkSIukp
- A.QpBc_1DXd1IOiwv4CsQijNnsG1fnPIvMorTyQ1srlrJbU4j.PBh5kmNEQMEifzFhXHA81drazj
- vwTofEkVQ70Lm9DABfcVPkZj0TyrdJIjcRYZ4Y.Bm8_HN7bYcTlYzZB5X2MCl6_VH2hK0zzOiEKP
- YmoeO09yWKFUFfH7rkLCEfwc6K9AtXDnIF_3Xf8DX4yyoDFZp8GcXDXDWuE56RrQMFNHikLpA.Iu
- eV4Q_8JOrWxoqq_oISEgnl8TehIB9wJ_1Rr9WltDNshqUsZoq.OinMr.O.Qk1JpgEwq2A4lT6CRF
- rgt0Fg3WvLyamABcKUVKB_uFcW.GoRrMoROPgd1OfiQ6hmhrWFv5Yzy526UjQ29rcQQ0csdQoWKz
- 8jlVj.UKfqKZ9soG8EGUoJDrMgl1tTeQJs3gHttmdI8uMuFy.pXCK4kpy_dRsyZ7UicNkbeNuR2m
- 9ungLrqqtaGUX6Y5b7u04_uZNEnzpduhqND8bDCXx9t49u4XqHGi9MYJ7R9.oLS9myY_9ZdB5svf
- pzXnrAKyOyx9U0scsW5IJwLX8cY66teCm4lhORXMB6cMpzYtf3pYQWYa6fyRCaZe7LWVCkIzjei3
- JDAHR5HZ5TfSkrLxyzpGD0eTtg3AfYmkr3gcz.SY6MNdn3e890ukssfvFZ2UOdrH87gH5fAS3NAz
- _mYloXYBlTkDyAaJ2lZ6KLdjKqyyeNCPTYjSG7cLQ5UfiYb2FNLtMxbe9PGD57LbIwotd_qakknq
- qIfeQ7bmNn8KXAvCYmp04a7gvTNGp.QFPe3lONtdKG8Mbv9e8Fi0YUHrXphf42ZwjsB0bXcGXu1k
- 2Df1wX8D7y0fQNhqJIP4R5j8zYC3HSxo6r4hrVoqPi_AXff5KiCLEggNOBSU3AD.Av2b9GgBsRs5
- ZdNdEIPZzu0uAOTBZqj4W1ydMp5JJEl7_zR3j3vhlzXOy1HOcP01UMXq2YfMIbm_pvbnNJFyhG8V
- QhO8x3H8HWJaRsZw.qMwd3gu9Zv7awBoKLNBk7IxhCn2zkfj.haxjYT9Ikrusra863uH0xeyBKX5
- ADNDH2dymFQ.AZXMAEa6JUVOXYw2KPlmOGwukDK1_ZaIm.yZyDqB_fjT6RkW9XCysahuQ2atqagt
- ZGZj4LHSM7sFj2tn9hERXIneWCNIJ
+        Thu, 11 May 2023 13:12:55 -0400
+Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9CAC65A7
+        for <linux-security-module@vger.kernel.org>; Thu, 11 May 2023 10:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1683825173; bh=6sP18BGDn9Rhj6efdS3FlKIM/wPiOLuvkuLDyhkTuDs=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=imwxkmKYe643ZXnVJGMDm0W5gmftuTU/RMRatqH73XeKgjhMnMb76SXzUO1tzEQxVrAn13V1wWrUFS23BDA/Cn7hamRA3uITmLmrsvGSNLiuJU/PdXI62tFsvi+KwMT8Vm6RvEUgAiO5LV4KzoN89/we0smwiD2d8u/EYKVs7XuC+ITXaouZ/DOeTI6fPIEIez5DGfNq9MdxmTWfskfWJqahNybHdmsn5qfTJas4NTrOwEEsiI1O64ZlLlpwz0/eXAvynCP/0iYsL/DnHMJB501B+xJ4pW/uwjZXDR8rTZftb3UK9XXs1JXXgP46EV4CUxUiEKjqZBUrrFrbS0SkHQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1683825173; bh=o5/r+ELgVWYP+OnVTmtw7tzsDF8cMtqmW7kfuXkV4Tv=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=bSlcjd7Sl5ntAOuRBVpSBBE2rdR2kKqzaL7DUYAShJyt/guLQnt+wFfe7x0F2gFdhhRElKnIctLHdOSJXu8tG4dAkkgXdzyX0b5f1NNS4WTmHHEh6XmciJuS+Degbi1z6sFS87Lp/qtUbm55QcKzX+XagRu95wuxvcg7smUdHoE7f0nSu/jqgYIrvCeqfRDKua97GLlvVEPB158txIO8uP20+TRrO8jwmDAsYu6pt/MsnBrjaYRRQh6VI+J+TGKxZ+7hkMj1nGaTtB1FkpERjbT95ozR+3oG8HKoRVmJutH10Q/D9KRkbJHreNLFMLFjasYR4VUyfDfKBoVYLrpPEQ==
+X-YMail-OSG: U4dGrcYVM1nSzm31IK_bWO0n9aIFI43z6Bo7MSMxI1MKyiXHxCZYnv7V6V4ZceY
+ NCpVmq2B6shuuJCDAAdZKN94ZipJf77CWe2HmQWemtp8w2Bn87_iG6JpKrC6CCMAuFeBAQ0fuM5f
+ FZUoJ03e7BttAydhjlHU0zdXGBvB7I.bXDbB.BFmlXpx_DwxLD4apLwTEzk7A7I_FYhlWWOpgIbz
+ aBg0opT597hypz_V2bklcPQ1Qwl5GvcMZm1zXCW6rjvJgKylRaIPBtzOfppUMj_ZDEEiNkyFDPFZ
+ xzwOGqB_L.QUkxR9p3OGW1Yb6hGUwv8csNzg59fA9i0r49DlWXki5K6x6lsndjBJl3pceEOQePXQ
+ 4EJgwF1LPWxdQrB9KzGH.DJHcVzXxNVqcZnW4LbaLb37_afLuwrjtNmXLwBU0F7xlQPGtPE8CV8y
+ Sx53DuqcI8aUMAswZhK6rdPdFGHbUNKItoeNWnUXngn4JQn5M21vmtLRXcqQyV2A9nyArlHBD4Hu
+ Wq4f78meT.v7KI2TUVjImaeH3DBbLQqBFVSVv1rrab9ndjhxWJRy.ah0DgoR9M7k7zS0pO7M1Lg5
+ D7nxC0ZPdpPGZvvVBneimDRRGEsA3R.e10luJNIfz6IR3lEigOLmP93hs_wvn_5U.mEHYUCVEUpd
+ 7RBvWeXkYMm3.3HSw0YMTKZGSkzzPGawxMcFT4WC978uPNT4xBIExMM07FVOsmx1XML_EP6j8WU2
+ tivuhMw0VvS35W.HXT3RE5yJfdhJT1x5MwAr43CESiir3x3UZupBRZ7GZAUKqUEZDXzPhRxV0tAM
+ ut8NfHdMxjcn8npT1s8zg_M332.aChKIb6wlySIi1xCW7azVH03NGiwbCB3QKwVEa6psmGNPRwBN
+ RpfnHCi78IvZmskcBFhDiw0VfqDsJjkKQhpBrN6pkDNwQAG5ux7OaAknmy6GhZqAEf40ABXreqv1
+ Xv.ZNdN5jH.rekwFDi4y17K_tGJ_.CnLxKp_jivWOx69_NxA.zeNjxdDY6I6oVTMnN.0T5VFvtBE
+ 7RZt4Xr4VQzlyGHkMDRgkrq.M73BhcjKEKMsqmopiyQsDDEaQ9nfKj8uiVrDRbWC9UqniBi5_2hf
+ RYzEj84ISXkWdXnmr_Q3FNrpY.NkgNu7iQwCKGZJydMt0Pyc_.BNAkzDKrcJqKNS5cJSI52Ad4G6
+ KzGg87DKP1vQM1vioNpXmmCJkbfzzE_72KcTyM4q5g0nMHQliGyrvX6G6FY1oY8NWbNJr_dd8h89
+ oM_vQjMmb4wOB8AuULDG8VnoLrqgaqXWw9ykp9cRFxc53sEZ3KbCHqzNnfojQAtHj8T0_KVK4h.H
+ BX9hXvis7NK1tn3TzkQXAhK5b.moYNwpYHkbePeoIKTyphSZRsMRJHM7buHQoP3fJU3mDwursc.U
+ kpUpUp.XpYKVhSkk3yyJS584tfHgvh8Jsg91OAbmJCl3P0cEdaeM9D9gmUmDfZTcIcg9c2C8isZL
+ 9vvMD03SPZiPAXWVjSDnqA4NUpl623AFY5W4WpI22X2YX4CiHlOFYh4JDC_0xj9EIKvbFQa9h770
+ ja43Zpp1LOVxyqy7Eo3Xgm9tgF.33t268RXPAPBN25QbU66QyC7i7RJhkXTBrUa.51Dh4KfDF9Wt
+ CbUqGsPPYbk9sK0yflqdKFGA3w82EE9.kwmiXWxELq21niUHSSfo1hgUG5LLGpREf16g6YEs0mmf
+ MmRpWwVVHxaFYwEsFTTIUH.4zYgvVphnKkv3bhYXvxkJeId3KUwkZfQphp.seWMN.himHJffqyNh
+ anUQdqvr8aYkT1J8NMR5Zm3qo6O9VBHwtoDMaZfrf8gxjEuVoe3gyn37MCfwXCxidFGbR0WIxaIB
+ BVrYUHzJUVAZc95hOO2ciUT._O_p7PmkiP66Hiv32nWHrrpKrqAvUlPkCWZYT9Wq9SgJ6p5bxzTh
+ HfOm1BhdOEHlWTl5EGnRZofqs0y.6lG3e06cFcMpIOQ.i2lqNnOIRhFhmphfS7jgFLQsRFHDr.Vb
+ YhTx1zK1t7HVcX7N_rve0PWYstIWYQA2UdJUscl4uRS8wlC4lnnGQ683gwtfOeJMkKVYrPwQIBj.
+ C5lLZI9rA0V4UNi9gP_O9s2TvKlASZ2M1DXB72nOoA3cIEcQEfJnGoiSRXnFICX6xl1hJEHN5.V2
+ BZLswkpRbOJDgh8z5Cz2r3lu4V9I7DsP3UvzeqMJyNIXtovopMlaxfH2QCf7pY2oE9M7eW27r6_E
+ T3xuPPEEullwhU4QuXY24GdEhRFYhuuQzL_6txVyPgPl5AjC776TRDv4O3IqPC6KiywU6dvRdQIY
+ 78EL9wKukdC0NGLDKSFbRqw--
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 4d41208e-0f56-4c5d-a9ca-d36dcaf86d48
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Thu, 11 May 2023 16:17:26 +0000
-Received: by hermes--production-ne1-574d4b7954-hz4nw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c439c490bbc67d9fb7ebb8e5a3da94e7;
-          Thu, 11 May 2023 16:17:21 +0000 (UTC)
-Message-ID: <b645e195-7875-9fc3-a8de-6676dfe800b8@schaufler-ca.com>
-Date:   Thu, 11 May 2023 09:17:19 -0700
+X-Sonic-ID: 872e19d1-a67f-4eb4-b4aa-ea2c3552d5e6
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Thu, 11 May 2023 17:12:53 +0000
+Received: by hermes--production-ne1-574d4b7954-q7frw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID febe671d59fdf6b915a22e0f8817eaa2;
+          Thu, 11 May 2023 17:12:51 +0000 (UTC)
+Message-ID: <b0a4fa15-df54-46df-afe7-2af03c3d56df@schaufler-ca.com>
+Date:   Thu, 11 May 2023 10:12:50 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.1
-Subject: Re: [PATCH 0/2] capability: Introduce CAP_BLOCK_ADMIN
+Subject: Re: [RFC][PATCH 1/2] smack: Retrieve transmuting information in
+ smack_inode_getsecurity()
 Content-Language: en-US
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Frederick Lawler <fred@cloudflare.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        yoonjaeh@amazon.com, kamatam@amazon.com, mengcc@amazon.com,
+        Roberto Sassu <roberto.sassu@huawei.com>,
         Casey Schaufler <casey@schaufler-ca.com>
-References: <20230511070520.72939-1-tianjia.zhang@linux.alibaba.com>
+References: <20230508170234.3595105-1-roberto.sassu@huaweicloud.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20230511070520.72939-1-tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <20230508170234.3595105-1-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.21471 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/11/2023 12:05 AM, Tianjia Zhang wrote:
-> Separated fine-grained capability CAP_BLOCK_ADMIN from CAP_SYS_ADMIN.
-> For backward compatibility, the CAP_BLOCK_ADMIN capability is included
-> within CAP_SYS_ADMIN.
+On 5/8/2023 10:02 AM, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 >
-> Some database products rely on shared storage to complete the
-> write-once-read-multiple and write-multiple-read-multiple functions.
-> When HA occurs, they rely on the PR (Persistent Reservations) protocol
-> provided by the storage layer to manage block device permissions to
-> ensure data correctness.
+> Enhance smack_inode_getsecurity() to retrieve the value for
+> SMACK64TRANSMUTE from the inode security blob, similarly to SMACK64.
 >
-> CAP_SYS_ADMIN is required in the PR protocol implementation of existing
-> block devices in the Linux kernel, which has too many sensitive
-> permissions, which may lead to risks such as container escape. The
-> kernel needs to provide more fine-grained permission management like
-> CAP_NET_ADMIN to avoid online products directly relying on root to run.
+> This helps to display accurate values in the situation where the security
+> labels come from mount options and not from xattrs.
 >
-> CAP_BLOCK_ADMIN can also provide support for other block device
-> operations that require CAP_SYS_ADMIN capabilities in the future,
-> ensuring that applications run with least privilege.
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Can you demonstrate that there are cases where a program that needs
-CAP_BLOCK_ADMIN does not also require CAP_SYS_ADMIN for other operations?
-How much of what's allowed by CAP_SYS_ADMIN would be allowed by
-CAP_BLOCK_ADMIN? If use of a new capability is rare it's difficult to
-justify.
+Looks good. I have added to smack next.
 
+> ---
+>  security/smack/smack_lsm.c | 22 ++++++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
 >
-> Tianjia Zhang (2):
->   capability: Introduce CAP_BLOCK_ADMIN
->   block: use block_admin_capable() for Persistent Reservations
->
->  block/ioctl.c                       | 10 +++++-----
->  include/linux/capability.h          |  5 +++++
->  include/uapi/linux/capability.h     |  7 ++++++-
->  security/selinux/include/classmap.h |  4 ++--
->  4 files changed, 18 insertions(+), 8 deletions(-)
->
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 7a3e9ab137d..c7e37ed2799 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -1463,10 +1463,19 @@ static int smack_inode_getsecurity(struct mnt_idmap *idmap,
+>  	struct super_block *sbp;
+>  	struct inode *ip = inode;
+>  	struct smack_known *isp;
+> +	struct inode_smack *ispp;
+> +	size_t label_len;
+> +	char *label = NULL;
+>  
+> -	if (strcmp(name, XATTR_SMACK_SUFFIX) == 0)
+> +	if (strcmp(name, XATTR_SMACK_SUFFIX) == 0) {
+>  		isp = smk_of_inode(inode);
+> -	else {
+> +	} else if (strcmp(name, XATTR_SMACK_TRANSMUTE) == 0) {
+> +		ispp = smack_inode(inode);
+> +		if (ispp->smk_flags & SMK_INODE_TRANSMUTE)
+> +			label = TRANS_TRUE;
+> +		else
+> +			label = "";
+> +	} else {
+>  		/*
+>  		 * The rest of the Smack xattrs are only on sockets.
+>  		 */
+> @@ -1488,13 +1497,18 @@ static int smack_inode_getsecurity(struct mnt_idmap *idmap,
+>  			return -EOPNOTSUPP;
+>  	}
+>  
+> +	if (!label)
+> +		label = isp->smk_known;
+> +
+> +	label_len = strlen(label);
+> +
+>  	if (alloc) {
+> -		*buffer = kstrdup(isp->smk_known, GFP_KERNEL);
+> +		*buffer = kstrdup(label, GFP_KERNEL);
+>  		if (*buffer == NULL)
+>  			return -ENOMEM;
+>  	}
+>  
+> -	return strlen(isp->smk_known);
+> +	return label_len;
+>  }
+>  
+>  
