@@ -2,102 +2,120 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AFBDC7EE30
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 May 2023 07:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8CF2C77B7C
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 May 2023 12:33:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236863AbjEKHGQ (ORCPT
+        id S237709AbjEKMdc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 May 2023 03:06:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40314 "EHLO
+        Thu, 11 May 2023 08:33:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237200AbjEKHGJ (ORCPT
+        with ESMTP id S237570AbjEKMda (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 May 2023 03:06:09 -0400
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AAFA6E87;
-        Thu, 11 May 2023 00:05:32 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0ViJb7g-_1683788728;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0ViJb7g-_1683788728)
-          by smtp.aliyun-inc.com;
-          Thu, 11 May 2023 15:05:29 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Frederick Lawler <fred@cloudflare.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH 2/2] block: use block_admin_capable() for Persistent Reservations
-Date:   Thu, 11 May 2023 15:05:20 +0800
-Message-Id: <20230511070520.72939-3-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <20230511070520.72939-1-tianjia.zhang@linux.alibaba.com>
-References: <20230511070520.72939-1-tianjia.zhang@linux.alibaba.com>
+        Thu, 11 May 2023 08:33:30 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7737293F4;
+        Thu, 11 May 2023 05:33:04 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-50bc040c7b8so13019291a12.2;
+        Thu, 11 May 2023 05:33:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20221208; t=1683808382; x=1686400382;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B1HnU7hHqbTpTiFx0D4GmXFi6g1csMfXh2pFRmqf63Q=;
+        b=cZOkZddVd06q0IYtPQjNvERik5w+80yb6gfW6TPrOrwznxgHEEZgC4SocVmagWAdxb
+         eZdcQwGi4lch1wKUmPdKMv4tAbDXvPO1fFAXO1Xqh2lO3AIUUpUPC70b/eFZQ4vjXC/k
+         Z/h1oA/vdZvVYjPlNWRZ7ThNRzdyuqmpPRIr8YmojTn4Qh25tGvkFvrIlhn70W4FoMvW
+         KuVuAtDuAKnEltwY4GQ4kbrXIyhHnbybA1iYLv8qsr1dSELGyWWcDauyJOhyD8nKTvE7
+         4zzEx2aM53p+TyrAv+9gF6Map+JhEgh55wsTYriqMLmLe20hfp2bG3E3Z06xlrBmwEEr
+         j5Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683808382; x=1686400382;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B1HnU7hHqbTpTiFx0D4GmXFi6g1csMfXh2pFRmqf63Q=;
+        b=dYf9cQDLjswyRAhn7zD0Qu/SQqHDd6f4/1qE4Lz9PALPZSwnnybROeLCV9JJPJMCcd
+         Jf09qHGT/qtFqlV1XFvdoMdZ9dyI2XRwNAAko33a/+o/IlU1lGq9j51CX+FPpCFP6oYA
+         /nxLoMIhJR1sW39hB7NX+TAw9nw0H32/Jo1ANu58S/3sqxS6IBZZAbLl+irUrPEUs4cI
+         JftQ55deW6sOCnaYh9qi0y4HWp3f8r5Otc1TuEVVEAuYlD6PzPRzKXjnNW0b98CVOPp5
+         1i/7wKiVw9K3qrw8nUzD4nKK+KPzdOyV1CAF6jY2Vsl7BGav34VfIPYtKCAebfSbE1Xt
+         ZI0w==
+X-Gm-Message-State: AC+VfDwOZdXGAJ6xHHRV4NVTK/SEvC1T4R1LJs7blxMoFB5/CFenGMis
+        5u1Sd29x0tGCKl5uvuXjuRKmhEyw6VUetw==
+X-Google-Smtp-Source: ACHHUZ4RhLm/85qEFAJSfeTkxZQiCvA9R35mMVU82bid3wS2Hw3iIXntAX9PvWGjM5zEmZdBdUqfnA==
+X-Received: by 2002:a17:907:1b17:b0:965:6075:d0e1 with SMTP id mp23-20020a1709071b1700b009656075d0e1mr16727032ejc.72.1683808382331;
+        Thu, 11 May 2023 05:33:02 -0700 (PDT)
+Received: from debianHome.localdomain (dynamic-077-008-180-228.77.8.pool.telefonica.de. [77.8.180.228])
+        by smtp.gmail.com with ESMTPSA id mz11-20020a1709071b8b00b009603d34cfecsm3908638ejc.164.2023.05.11.05.33.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 May 2023 05:33:02 -0700 (PDT)
+From:   =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
+To:     selinux@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] security: keys: perform capable check only on privileged operations
+Date:   Thu, 11 May 2023 14:32:52 +0200
+Message-Id: <20230511123252.723185-1-cgzones@googlemail.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use the newly introduced capability CAP_BLOCK_ADMIN for Persistent
-Reservations.
+If the current task fails the check for the queried capability via
+`capable(CAP_SYS_ADMIN)` LSMs like SELinux generate a denial message.
+Issuing such denial messages unnecessarily can lead to a policy author
+granting more privileges to a subject than needed to silence them.
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Reorder CAP_SYS_ADMIN checks after the check whether the operation is
+actually privileged.
+
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- block/ioctl.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ security/keys/keyctl.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index 9c5f637ff153..83af050eaa42 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -260,7 +260,7 @@ static int blkdev_pr_register(struct block_device *bdev,
- 	const struct pr_ops *ops = bdev->bd_disk->fops->pr_ops;
- 	struct pr_registration reg;
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index d54f73c558f7..19be69fa4d05 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -980,14 +980,19 @@ long keyctl_chown_key(key_serial_t id, uid_t user, gid_t group)
+ 	ret = -EACCES;
+ 	down_write(&key->sem);
  
--	if (!capable(CAP_SYS_ADMIN))
-+	if (!block_admin_capable())
- 		return -EPERM;
- 	if (!ops || !ops->pr_register)
- 		return -EOPNOTSUPP;
-@@ -278,7 +278,7 @@ static int blkdev_pr_reserve(struct block_device *bdev,
- 	const struct pr_ops *ops = bdev->bd_disk->fops->pr_ops;
- 	struct pr_reservation rsv;
+-	if (!capable(CAP_SYS_ADMIN)) {
++	{
++		bool is_privileged_op = false;
++
+ 		/* only the sysadmin can chown a key to some other UID */
+ 		if (user != (uid_t) -1 && !uid_eq(key->uid, uid))
+-			goto error_put;
++			is_privileged_op = true;
  
--	if (!capable(CAP_SYS_ADMIN))
-+	if (!block_admin_capable())
- 		return -EPERM;
- 	if (!ops || !ops->pr_reserve)
- 		return -EOPNOTSUPP;
-@@ -296,7 +296,7 @@ static int blkdev_pr_release(struct block_device *bdev,
- 	const struct pr_ops *ops = bdev->bd_disk->fops->pr_ops;
- 	struct pr_reservation rsv;
+ 		/* only the sysadmin can set the key's GID to a group other
+ 		 * than one of those that the current process subscribes to */
+ 		if (group != (gid_t) -1 && !gid_eq(gid, key->gid) && !in_group_p(gid))
++			is_privileged_op = true;
++
++		if (is_privileged_op && !capable(CAP_SYS_ADMIN))
+ 			goto error_put;
+ 	}
  
--	if (!capable(CAP_SYS_ADMIN))
-+	if (!block_admin_capable())
- 		return -EPERM;
- 	if (!ops || !ops->pr_release)
- 		return -EOPNOTSUPP;
-@@ -314,7 +314,7 @@ static int blkdev_pr_preempt(struct block_device *bdev,
- 	const struct pr_ops *ops = bdev->bd_disk->fops->pr_ops;
- 	struct pr_preempt p;
+@@ -1088,7 +1093,7 @@ long keyctl_setperm_key(key_serial_t id, key_perm_t perm)
+ 	down_write(&key->sem);
  
--	if (!capable(CAP_SYS_ADMIN))
-+	if (!block_admin_capable())
- 		return -EPERM;
- 	if (!ops || !ops->pr_preempt)
- 		return -EOPNOTSUPP;
-@@ -332,7 +332,7 @@ static int blkdev_pr_clear(struct block_device *bdev,
- 	const struct pr_ops *ops = bdev->bd_disk->fops->pr_ops;
- 	struct pr_clear c;
- 
--	if (!capable(CAP_SYS_ADMIN))
-+	if (!block_admin_capable())
- 		return -EPERM;
- 	if (!ops || !ops->pr_clear)
- 		return -EOPNOTSUPP;
+ 	/* if we're not the sysadmin, we can only change a key that we own */
+-	if (capable(CAP_SYS_ADMIN) || uid_eq(key->uid, current_fsuid())) {
++	if (uid_eq(key->uid, current_fsuid()) || capable(CAP_SYS_ADMIN)) {
+ 		key->perm = perm;
+ 		notify_key(key, NOTIFY_KEY_SETATTR, 0);
+ 		ret = 0;
 -- 
-2.24.3 (Apple Git-128)
+2.40.1
 
