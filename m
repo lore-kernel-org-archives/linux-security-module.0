@@ -2,224 +2,459 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F00EC77B7F
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 May 2023 22:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79AE1C7EE2A
+	for <linux-security-module@archiver.kernel.org>; Sun, 14 May 2023 21:27:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239556AbjEKWtF (ORCPT
+        id S238004AbjENV1I (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 May 2023 18:49:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48390 "EHLO
+        Sun, 14 May 2023 17:27:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239551AbjEKWtE (ORCPT
+        with ESMTP id S237835AbjENV1A (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 May 2023 18:49:04 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED8B4496;
-        Thu, 11 May 2023 15:49:03 -0700 (PDT)
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34BMOAui022240;
-        Thu, 11 May 2023 22:48:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2023-03-30;
- bh=V1HH/eyBS94jhdZ0e0imTl3Cj1IPme7uNXNqzXHW7wM=;
- b=AxhcyBFk9QhcFOQ189YxZ6bX+Xd8cfQUyz9FAC9r4HrfVf49BGcoQhd18msJtU6Uq9kL
- dOy8E7PaD+fGd4dyN2BJ43VYkM1eQhOighmjgZnZrxc9w9Ip4zAJg0im/RPFoD946cUc
- /tzL9WCEbyvfkZbFc2gfWvcZw6+6HVvmkqPnhgP6xKBjdke5OzlcLSSpRTN64QWO2f4u
- gzRHu0wRK5QYYEa3Mx9cbtroPYfeQQusgl4zcwfllQUycMEg2tCp4kCEIt5XcBrkvExY
- VDsAFW0KR7jHg0YOLCCTITznn4CUdJyr+wUIiwsA3tcymxRM63E1g9Fb1kQBKJFDxERP LQ== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qf7758f66-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 May 2023 22:48:31 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34BM0S1u030545;
-        Thu, 11 May 2023 22:48:30 GMT
-Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2047.outbound.protection.outlook.com [104.47.73.47])
-        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3qf81htgqy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 May 2023 22:48:30 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QUP/IZOimBRPX/ujSsmNHHpnWOvXehG5gKToimzF9nSLqEzssGwvMWB4DaHNxnjlHKz5/PJclq3+u4J+iMcnUQt1vUG3KyyEaJPCfeSqpfxYo1fkNC//aD6dAm6AYVjky0ICaFclU7tOax5JcwC48DJii3QuiHEIEUuO9viLhoTK4nnl8YiI/m80lvQd5r5j752dCamZ6ZyDyAaG4iHdX2YsP0C4sMabwpf/57q3WJ5hkPVQGC92TwMKuBZFy3YAAeeig0bKyg7Btaf+lWeSJOAMc2yitTqCHy3YYh4njeNdXxmiinlGeJlXx/tcdVfIrf2FlgHc8WVTfbR4V1TZxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V1HH/eyBS94jhdZ0e0imTl3Cj1IPme7uNXNqzXHW7wM=;
- b=mCgQhKCGTkcU8bfhRqiRHSl9w6gjjpW2ldvIfdgCAOIWsJ3I/WWHuQpBWDoCxp0qUgy1yTsaLgaqoXGb6YwyondbX1AGgzL1YEVkm340JJ5Aoqz0vuLgE9BXPsOmNkAXOxtc5W7LyX9XckA9kGGILwe6K3i2O+Ck3keILKDbcu7gPzT+IBeQ1x6gVBXTN5/kPyeRcgxaAqvJY1a+cM4qSBs8B77/BDDnHa5WCLlVbS2j54rc/gWudSeXJtNogb5uXQI+vSpUZIdehtBPd8baebyfMgatx2v0GJhET4P/Ki+2VOhY1qrfytrtnagjZn4maM5O4r2q2OiqWgz25HljoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Sun, 14 May 2023 17:27:00 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4982AE5A;
+        Sun, 14 May 2023 14:26:57 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-307d20548adso2316936f8f.0;
+        Sun, 14 May 2023 14:26:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V1HH/eyBS94jhdZ0e0imTl3Cj1IPme7uNXNqzXHW7wM=;
- b=NRw/tqs0CQm84Ge/mNSvpn/6KfVaiTUjSz28FuPmkyiAMYL8c3gvo5gCtvqFSl02CVqAQycTiEsDUsBpb3DMQTWNBFNnEiy+tNvdjeiRU5H4oivDga6rMcW+x/8/hhgjIdVuifaxSr+cF92iP+KpqeGumfgkS5ue5i4MuRKPfQA=
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by PH7PR10MB6985.namprd10.prod.outlook.com (2603:10b6:510:27a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.18; Thu, 11 May
- 2023 22:48:02 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::d074:eba3:3b2b:b48e]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::d074:eba3:3b2b:b48e%4]) with mapi id 15.20.6363.036; Thu, 11 May 2023
- 22:48:02 +0000
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-CC:     Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>, joeyli <jlee@suse.com>,
-        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/3] KEYS: DigitalSignature link restriction
-Thread-Topic: [PATCH 1/3] KEYS: DigitalSignature link restriction
-Thread-Index: AQHZgfnqJG9sa50YGUGehIJr7c/9WK9UGyiAgAGWK4A=
-Date:   Thu, 11 May 2023 22:48:02 +0000
-Message-ID: <347F4DEA-09BC-4069-B735-1D1B49F59CE2@oracle.com>
-References: <20230508220708.2888510-1-eric.snowberg@oracle.com>
- <20230508220708.2888510-2-eric.snowberg@oracle.com>
- <CSIYF14C6N58.7IDA6DAC9NHF@suppilovahvero>
-In-Reply-To: <CSIYF14C6N58.7IDA6DAC9NHF@suppilovahvero>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3696.120.41.1.1)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH2PR10MB4150:EE_|PH7PR10MB6985:EE_
-x-ms-office365-filtering-correlation-id: ae1e214b-9192-49d5-5f42-08db5271c6b8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: pN3ca5bKIOrzVnG57XYhUfpGkAhPszxEcw2ZZe40tA3dOniksMRIFo6sMIzNXRWtVXn+GxRfatNNJFdtM6LJbD3UhfGZUbcbx6N+OsT4y9Eo5lzTjNVdoTSMwPFSNwn3Uv9E2lrvwWnOTTj8rcS1yIttcljfqT/Qui6DOgx57mH3LB86m5ZL8UUv30fvux8MdjEHEP3sYYIAGvK39O51GhY2lOc5um6Y3FTOk/6LSfCFkOIVOWT1hcdo19wki7RP2awcEZyRkPYeKe9kdlsXV+x34zy5JxlI7CvMKqUkn45bOsHxZ9+/SdBABks0OqYvIYNcT/ooPHPURsgnW3hHonXGvKzjEYWqCJaU12cHuWqr3fi2adLk9dft5uJ/AcYsGMNMAZJ/A/kC9KUoNOwFGsApsg0AgZA70PNZOUrNl9p4Z4mWbCC7Pm0EphM7Tetj/NRjO+Dok5J9xu1yJCsyKgfijExaC2RFUmQr9tgpGF0mz0WRCyVHcyTm7EeKMemlo3hTx75d4e83igZTvl6OcSo2l0SvgDVm6beug/Vn7/8p8bMFopMhJOyDJwnxZ7bzhzarZXZMDrkwyh8NqhChdB3wYMBVIA7b1jEu7OIzgZn294qY6uM2Ce5aTS4cRWQDFuH8Z+3xSt8aQ5m1WbBuww==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(376002)(396003)(39860400002)(136003)(346002)(366004)(451199021)(38070700005)(6512007)(6506007)(316002)(186003)(71200400001)(6916009)(4326008)(64756008)(86362001)(66476007)(26005)(53546011)(91956017)(76116006)(66946007)(66446008)(66556008)(54906003)(33656002)(478600001)(36756003)(44832011)(5660300002)(6486002)(83380400001)(122000001)(7416002)(38100700002)(2906002)(8936002)(41300700001)(8676002)(2616005)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dVZ6WVU4QVN4ODNVTVlpam0rM1FuQnVYOWY3bWx2cTAxNUdIQzU2ZjEvNGxV?=
- =?utf-8?B?amtydDhQZjNEQy9vK01TaFVqb1dFWWVHV29iOGluL1Y0TWxrd1NrejFjRDVM?=
- =?utf-8?B?YW5hbTVLUS9qSmdHWmZpVElObFpRbERpVFFXb0dLTVRpa0M1SnQzS2NsaVNZ?=
- =?utf-8?B?VDN5N0NCRGJZa0lITFF5L2dNV3FlK0wzMlI0OW5Dd2JqcE82WS9NQ0piUFFM?=
- =?utf-8?B?c1NrTUloa3UvOWFReE1kdGw5bnF3MGxhTmtQaWdtRDhnWHdGQU5tK2JVSXZX?=
- =?utf-8?B?emIraG9sWmlGYTYwb2RDKzBtOWREdUN3R2dzMHlKVjgyNnYvZkxnTk5mYmZY?=
- =?utf-8?B?bzhsUEJBbmNmdWtKT1hOczFWbmgxQVBCSkZsVldITHBGT2V1Ym1SWlZhZWs2?=
- =?utf-8?B?QTBXUGYwVGpwQzZPYktyeFJmdWdVeG9qZVdMQUVyVTNWaktOby9rTCtJSlFa?=
- =?utf-8?B?eDlaTWZiSnBncFJTcEN5VnpabWIyYWRsdUxNekI2cFhYYklJVk1wcE15RU5x?=
- =?utf-8?B?ZjNFTTJRTU10ZG9qSk0vTW9JWDhDQ0hCT3cvUVRIcHJ4N3RNQ053ajNDRWJZ?=
- =?utf-8?B?ZVlaY2d1cVRzT3dPY2EzSU80cEFxWW9yVWpYVVNMbE1ZNFZTdm00TkZaTFpU?=
- =?utf-8?B?WXVLSm9tbWlCb3g2WlFwY1RnMHRKdUF0QWZnR25IYWs1MkZyRHpJbEs4Z0U5?=
- =?utf-8?B?Z1JCYzNDVWttTHNQd1NYQUtJQ1h6YXJjcFNNS3FYT1Q3VE9QdEJTbjNzNWg1?=
- =?utf-8?B?S2o4cGZxSWs2QnAyZFdoOE5pMVJ2VG4wUVZYWk1CaGpCYmFQcmF6a0ZYSG9N?=
- =?utf-8?B?QURsNkJqQTduM05JV3RSaUhpOWhDYXo0bzBLMmFzY1ZtZ3ZHSTQyMVc5U3dU?=
- =?utf-8?B?WTd3N2w5bE5GNXZVNUFvOWEwMXZ4bjdaWVJZbzRDOTUvK3V3blVLdW90YUV4?=
- =?utf-8?B?aDJUUDJMTURtemFKMHovZVhGMFA1SDVZV0FQYXdIWjlQYlRIRHNEdzdVK09O?=
- =?utf-8?B?aE54SG1vclVxaG9WU0FQOVVSL1lsbUhqd3ppMVFsSThwU2NscmQ1dEw5R0Z2?=
- =?utf-8?B?K0JzZWYvdjJYTFhxOW5wWFRvQWRpRDFDMFN4SW5yVkNoMm56Q0JnOCtaVXRI?=
- =?utf-8?B?RnA5bS9HTkw4NkxEY3Q5RkxsQWEzaFBhQVBPb3JBZEFZc2VJOW10VFZ3UUps?=
- =?utf-8?B?QXVISldhL0lrbVczZWVYaUhJK0diS2tKZGlOa1dpdmVPYU40aU1YZ0hsVlZG?=
- =?utf-8?B?bVFoMHJEbjQ3Ry9OSWtveHNDV0VEaEZwUHBWdUNuc3VrNFFsalhQTjdpWGl2?=
- =?utf-8?B?akxjZDVSRGNoRmoybG5mVnZ3a3lnK1FqbzF0TVJvME9Lc0MzUG5IZVZIQnFl?=
- =?utf-8?B?L2k1YkNEV3hsVDZmaVA2V250YVpHdU5FQkpwZDF1T3JaY1lMSFgycUI5cXJD?=
- =?utf-8?B?RHhsVFpPTHFRMm9XVTNPSUgzd1JpakRObXhlM1FZQnp3VWlYY3N1ekJaeXVB?=
- =?utf-8?B?dy9JbWJsV200c1BUeStzYTFRRlpmMWpqQkNLeEFPVnlnSWViL3RaODFJMXBX?=
- =?utf-8?B?YzdOclpoQ0ZJRkRBMXZzQW1rT01UandwdmhtTjV5ZGlNQnU4MTM5SjZXdExF?=
- =?utf-8?B?S1B6WW80TnpsclluLzFCejBXbWZMaWxmRlhMSmR3V25tam16WGh1WW1nNTRS?=
- =?utf-8?B?bXE3Y1NtTE54Tm5oQlNVdk52OGVTbjR4aXBmbVhBYU04TXBVSnhyZEsrOVox?=
- =?utf-8?B?YTRFblpuVlNDUU5INEFyUUFaY2tGcnRzNit2SytzZGQ0VG9lM3JVK3lVVDR3?=
- =?utf-8?B?dHZjSWMrMnA4ZTBEQk1FV1ljejFxNXgrSVVMYnM4L3U2MDRVT1lud0pCUjJt?=
- =?utf-8?B?WCtRanZzajlJeVlzVkM2T1ZPakxuSmxTQXM5SXlwcjRoZjlNOUFwdHEyc2Fh?=
- =?utf-8?B?elcydEZjTHBBaDQyaS96d2FXZFdPcFYya0M4K0wzOWRrbW1ObFh0ZW5ZS2Z4?=
- =?utf-8?B?djg1RzhrQ2ZNSGIzK2JjV0FuZm1vakdEdjdVODhJdy91Z2IxZ2kxc0Y5NEw0?=
- =?utf-8?B?Nk5uVjh4M1BQQzJ3SXVLRE91RDFFYTQ4OFZra2dLSUxtRlJUcWNTeE85Ui8w?=
- =?utf-8?B?OU9NYldPeEhOWUg0MG1JRTVYYUJqRFJRUE9CVzl6cjJidDBqYXRoUndqZkJI?=
- =?utf-8?B?L0E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5A49172EED11D042B477D503694D9F74@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20221208; t=1684099616; x=1686691616;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4UcwtmbMshSXuvMabtBGpRNNnrw3Ug7R4BdEk+jXhWU=;
+        b=SG8hxf81UnHmvvVjeEeKVeA+UZG3mnFP4B4L90u9UyEYnV56GRHXaKsoFAbnamoQIz
+         2YZhAbxnr00GHA4RxMN62csLPuERPgX0ifRwc3Q+5e5n1MswXKkZS+0GLgr3wOmfiWgn
+         ZPuChWywNQyL6flbeiqXURGxXz850TfIguYclXkSCjhrPENyODdyxWlKb6Y6tNj6/GX0
+         Sa4aP/Lpdi2Pnd+QzUgxgJcIiKrwqUjg4swH48d9SIJK5uumdrbd0W4L1hoD19HLBWfG
+         W0/IsO+qeRgPFzYOGC7ClZfu4sQo/MYceDdfxRtZQX+6idplJSEqwKzm4yvlQHNdyKCo
+         IgYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684099616; x=1686691616;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4UcwtmbMshSXuvMabtBGpRNNnrw3Ug7R4BdEk+jXhWU=;
+        b=hveA0hLd9o0a+ctYS6AfvEuWaujCuXaPulm9uoZuE5CLFZtNg72HsQ2XgwG5Gw3A7W
+         NqB5Q0r02jo0HqvNWzXKqXZia+QlFXXh/3IgDIf2Wnp1tD+0Wh5FHViEgLRUppzJYuWe
+         zmgz40RFfHC5yTbYZ1D/oZFSPZjg/iA2tkyzSVtO7y/pRlUwxjSEBj5Geu6BVsyKhhBi
+         777EqOrN+fq37LVlgccZzctyW7uce59jvSAZkVnEaX1ye8cQz6nBLBjn1+qmvQO2fEI3
+         zHYcA+X/nLY4OEmgZh57MyTL1wqgaKP0OIMLeZkCsK8EruWOhGkaFByZuIyEWHiXNQp6
+         8oiQ==
+X-Gm-Message-State: AC+VfDzbRJN6efBW2xbw9qZlv2T/zCksNeD8nldkBaeDs67R492TkVpP
+        MCzDHEbMukMu09ErehlZ860=
+X-Google-Smtp-Source: ACHHUZ6hrnBUVpEkIbW4de+Qex2SgXu2P8EgEWvpkktR/SPhZZH9saiI6bvSiuP8lMEwTG863yeNzQ==
+X-Received: by 2002:a5d:55c2:0:b0:306:5149:3aa8 with SMTP id i2-20020a5d55c2000000b0030651493aa8mr21936695wrw.24.1684099615381;
+        Sun, 14 May 2023 14:26:55 -0700 (PDT)
+Received: from lucifer.home ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
+        by smtp.googlemail.com with ESMTPSA id d19-20020a1c7313000000b003f508777e33sm2105965wmb.3.2023.05.14.14.26.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 May 2023 14:26:54 -0700 (PDT)
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>
+Subject: [PATCH v5 3/6] mm/gup: remove vmas parameter from get_user_pages_remote()
+Date:   Sun, 14 May 2023 22:26:51 +0100
+Message-Id: <afe323639b7bda066ee5c7a6cca906f5ad8df940.1684097002.git.lstoakes@gmail.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <cover.1684097001.git.lstoakes@gmail.com>
+References: <cover.1684097001.git.lstoakes@gmail.com>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?QUNmMXI1aHB2Z1pZR2FTUDZacGxjR3d2ZDRXaXZZL2lMbmFSMUhIUXFqemxO?=
- =?utf-8?B?Vkk3alVIUTNraWI0YkM4ZGMyZFBBblkvWk9GTU1hUHMxS29sNFp3ejVObHJw?=
- =?utf-8?B?ZW9YcENCa2VjQmpYM0NNMWdNQjB6Kzc0dXpWQmt2Y1k5dGhEanVISm1hS3FX?=
- =?utf-8?B?QmsxbkFOaFUxaUgyY0VtNlNIWkFhUUV0RklxZ3JyWXJmZXhRUGEvSXFoSTZr?=
- =?utf-8?B?ckZIaVA1ZDVvMWt6L0FxSXNwR3hVZEZSU21zdHBrMSs3cjhVMENTYXd0bDBV?=
- =?utf-8?B?YW5LSXdjZU5ySU90TFlQdW9oVFJRVlUvdmtWd20yUUN2YjBhdHkwU1JlSFZ0?=
- =?utf-8?B?ZmxUeUZJMU5tUW9pbVYxVnJ0UXA2YVNnc25jUXNsMGxUT21zU3RReXBPcXhR?=
- =?utf-8?B?MGRpVCtyellhakhEM1hBdUtVQnUrZTNCVHVyUS9GNFNIQzFDUmFCUm5kMVRV?=
- =?utf-8?B?TWdvMnUyaFE1NTBycDlIRzBPMUpicng0Nnp0MjJON29OWFVuMWVaMHU4YS9Y?=
- =?utf-8?B?MHRMY3Q2NHNUOS9QbWFwMmFPSFRmaWZNUlJhRmJacHhtSXZVU01KZHdXZ0RW?=
- =?utf-8?B?bFltZkpZcjlQaGg1YjJUdHBlK29LNnpCMitJSC9FUGM0YWZPSHNvWEN4SERK?=
- =?utf-8?B?YXdpUGtORlUrbTBqdHJZb21kcGxUQThDNzVNQTFzdStNbi94TXBYckNPZ3Ft?=
- =?utf-8?B?OHBFSmI1d3ZlUEdWMXRaZlFURldmYXJxMFVPQnJFQ3pKUjVwYUpjRFpvWm0r?=
- =?utf-8?B?dzZCL2xnR1hrL3hoZjM5YTNKcnZ4VGhFam5EZGlYYjJPOCtJcVR0N3Z3Wm5q?=
- =?utf-8?B?TFBhaWxNWGNxdVB1bFp3Y1pRbmlJbTFZQzg1c28ra3JWb0lHMk8vQ3k3Rjdn?=
- =?utf-8?B?TlRXdUNtU1lQZFg3Tnpkc21CNHh6b205R09mN1NCV2tTOUw5ZjhIMGd1R0Fq?=
- =?utf-8?B?SS84b3k3UVZYYVUrODNNMVpoTTg2cFVRSCtDOUxtN094TjByT1V1ZTZMZkM5?=
- =?utf-8?B?UUFIOVpPaW5kV2RYa3RPWEN1N0pvTStzajNpSDRhck5vZXRGTSt2a0tCV0xn?=
- =?utf-8?B?R0RoNDN1M2NISkhUM0ZXdElCV2pBNFdEbjlsMkFMTHhXSjlYMVZBUlVVTElF?=
- =?utf-8?B?eGJEMWJmZXBXK1c0Mk5qQ1h4dnIxa0t6RkpvNmd4WmNvdWJQdDJBczREY0ZS?=
- =?utf-8?B?K20ydEpUb0gzODVNY0o1eS91RVBRSUtnam9EckNOUWRQM1J2N1RaSkZsUGFW?=
- =?utf-8?B?a1dnck1nYzJsYVJWVUlFTXBzL3BvZ2c0RU5iclNldVNNUFlwV0VEdHZuTDk0?=
- =?utf-8?B?bmU5RS9OMlBEaTlISFJoUTdWRjZ0ZnAwcEROdFowZm1hTTJsYUxyMUZFRXB1?=
- =?utf-8?B?aUQxZ3E0VTZlV2xXbWkrOC91VGdhWEg3UW1LV0plZjRDZHBXcFplMjNwbHpw?=
- =?utf-8?B?QllBV0VMYVZYM0R4VlBJeGhKWThtM1k2SXdlWnJqR2ZDUXZpem53ckZoRTRS?=
- =?utf-8?Q?OfsE2wV/t2nGpYOkmsdz1uIVxd5?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae1e214b-9192-49d5-5f42-08db5271c6b8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 May 2023 22:48:02.1489
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yYla7RpIBwsLeagGI3mFS2dSDhGRPEmYItOn//dUKD687exPFTpAGPtefA8iUZcjgqoKz9sWwQPPu0fFrdydbQHrPE74sGcyAAUwA/j9vcE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6985
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-11_17,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0 mlxscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
- definitions=main-2305110194
-X-Proofpoint-GUID: 8eMLyYv8DsrxcgTe8vOb71qubSyL5Zeq
-X-Proofpoint-ORIG-GUID: 8eMLyYv8DsrxcgTe8vOb71qubSyL5Zeq
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-DQoNCj4gT24gTWF5IDEwLCAyMDIzLCBhdCA0OjM0IFBNLCBKYXJra28gU2Fra2luZW4gPGphcmtr
-b0BrZXJuZWwub3JnPiB3cm90ZToNCj4gDQo+IE9uIFR1ZSBNYXkgOSwgMjAyMyBhdCAxOjA3IEFN
-IEVFU1QsIEVyaWMgU25vd2Jlcmcgd3JvdGU6DQo+PiBBZGQgYSBuZXcgbGluayByZXN0cmljdGlv
-bi4gIFJlc3RyaWN0IHRoZSBhZGRpdGlvbiBvZiBrZXlzIGluIGEga2V5cmluZw0KPj4gYmFzZWQg
-b24gdGhlIGtleSBoYXZpbmcgZGlnaXRhbFNpZ25hdHVyZSB1c2FnZSBzZXQuIEFkZGl0aW9uYWxs
-eSwgdmVyaWZ5DQo+PiB0aGUgbmV3IGNlcnRpZmljYXRlIGFnYWluc3QgdGhlIG9uZXMgaW4gdGhl
-IHN5c3RlbSBrZXlyaW5ncy4gIEFkZCB0d28NCj4+IGFkZGl0aW9uYWwgZnVuY3Rpb25zIHRvIHVz
-ZSB0aGUgbmV3IHJlc3RyaWN0aW9uIHdpdGhpbiBlaXRoZXIgdGhlIGJ1aWx0aW4NCj4+IG9yIHNl
-Y29uZGFyeSBrZXlyaW5ncy4NCj4+IA0KPj4gU2lnbmVkLW9mZi1ieTogRXJpYyBTbm93YmVyZyA8
-ZXJpYy5zbm93YmVyZ0BvcmFjbGUuY29tPg0KPj4gLS0tDQo+PiBjZXJ0cy9zeXN0ZW1fa2V5cmlu
-Zy5jICAgICAgICAgICAgfCA1MiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+PiBj
-cnlwdG8vYXN5bW1ldHJpY19rZXlzL3Jlc3RyaWN0LmMgfCA0NCArKysrKysrKysrKysrKysrKysr
-KysrKysrKw0KPj4gaW5jbHVkZS9jcnlwdG8vcHVibGljX2tleS5oICAgICAgIHwgMTEgKysrKysr
-Kw0KPj4gaW5jbHVkZS9rZXlzL3N5c3RlbV9rZXlyaW5nLmggICAgIHwgMTEgKysrKysrKw0KPj4g
-NCBmaWxlcyBjaGFuZ2VkLCAxMTggaW5zZXJ0aW9ucygrKQ0KPj4gDQo+PiBkaWZmIC0tZ2l0IGEv
-Y2VydHMvc3lzdGVtX2tleXJpbmcuYyBiL2NlcnRzL3N5c3RlbV9rZXlyaW5nLmMNCj4+IGluZGV4
-IGE3YTQ5YjE3Y2ViMS4uNDI0OWM0OWJkNDNiIDEwMDY0NA0KPj4gLS0tIGEvY2VydHMvc3lzdGVt
-X2tleXJpbmcuYw0KPj4gKysrIGIvY2VydHMvc3lzdGVtX2tleXJpbmcuYw0KPj4gQEAgLTUxLDYg
-KzUxLDI3IEBAIGludCByZXN0cmljdF9saW5rX2J5X2J1aWx0aW5fdHJ1c3RlZChzdHJ1Y3Qga2V5
-ICpkZXN0X2tleXJpbmcsDQo+PiAJCQkJCSAgYnVpbHRpbl90cnVzdGVkX2tleXMpOw0KPj4gfQ0K
-Pj4gDQo+PiArLyoqDQo+PiArICogcmVzdHJpY3RfbGlua19ieV9kaWdzaWdfYnVpbHRpbiAtIFJl
-c3RyaWN0IGRpZ2l0YWxTaWduYXR1cmUga2V5IGFkZGl0aW9ucw0KPj4gKyAqICAgYnkgdGhlIGJ1
-aWx0LWluIGtleXJpbmcuDQo+IA0KPiBCVFcsIGRvZXMgY2hlY2twYXRjaCBjb21wbGFpbiBpZiB5
-b3UgcHV0IHRoYXQgdG8gYSBzaW5nbGUgbGluZSAoSSBkb24ndA0KPiBrbm93IHRoaXMpPw0KPiAN
-Cj4gSWYgbm90LCBJIHdvdWxkIGp1c3QgcHV0ICJSZXN0cmljdCBieSBkaWdpdGFsU2lnbmF0dXJl
-4oCdDQoNCkl0IGxvb2tzIGxpa2UgY2hlY2sgcGF0Y2ggd2lsbCBhbGxvdyB1cCB0byAxMDAgY2hh
-cnMuICBJIHdpbGwgdXBkYXRlIGl0IHRvIGEgc2luZ2xlIGxpbmUuDQpUaGFua3MuDQoNCg==
+The only instances of get_user_pages_remote() invocations which used the
+vmas parameter were for a single page which can instead simply look up the
+VMA directly. In particular:-
+
+- __update_ref_ctr() looked up the VMA but did nothing with it so we simply
+  remove it.
+
+- __access_remote_vm() was already using vma_lookup() when the original
+  lookup failed so by doing the lookup directly this also de-duplicates the
+  code.
+
+We are able to perform these VMA operations as we already hold the
+mmap_lock in order to be able to call get_user_pages_remote().
+
+As part of this work we add get_user_page_vma_remote() which abstracts the
+VMA lookup, error handling and decrementing the page reference count should
+the VMA lookup fail.
+
+This forms part of a broader set of patches intended to eliminate the vmas
+parameter altogether.
+
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com> (for arm64)
+Acked-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Janosch Frank <frankja@linux.ibm.com> (for s390)
+Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+---
+ arch/arm64/kernel/mte.c   | 17 +++++++++--------
+ arch/s390/kvm/interrupt.c |  2 +-
+ fs/exec.c                 |  2 +-
+ include/linux/mm.h        | 34 +++++++++++++++++++++++++++++++---
+ kernel/events/uprobes.c   | 13 +++++--------
+ mm/gup.c                  | 12 ++++--------
+ mm/memory.c               | 14 +++++++-------
+ mm/rmap.c                 |  2 +-
+ security/tomoyo/domain.c  |  2 +-
+ virt/kvm/async_pf.c       |  3 +--
+ 10 files changed, 61 insertions(+), 40 deletions(-)
+
+diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
+index f5bcb0dc6267..cc793c246653 100644
+--- a/arch/arm64/kernel/mte.c
++++ b/arch/arm64/kernel/mte.c
+@@ -419,10 +419,9 @@ long get_mte_ctrl(struct task_struct *task)
+ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+ 				struct iovec *kiov, unsigned int gup_flags)
+ {
+-	struct vm_area_struct *vma;
+ 	void __user *buf = kiov->iov_base;
+ 	size_t len = kiov->iov_len;
+-	int ret;
++	int err = 0;
+ 	int write = gup_flags & FOLL_WRITE;
+ 
+ 	if (!access_ok(buf, len))
+@@ -432,14 +431,16 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+ 		return -EIO;
+ 
+ 	while (len) {
++		struct vm_area_struct *vma;
+ 		unsigned long tags, offset;
+ 		void *maddr;
+-		struct page *page = NULL;
++		struct page *page = get_user_page_vma_remote(mm, addr,
++							     gup_flags, &vma);
+ 
+-		ret = get_user_pages_remote(mm, addr, 1, gup_flags, &page,
+-					    &vma, NULL);
+-		if (ret <= 0)
++		if (IS_ERR_OR_NULL(page)) {
++			err = page == NULL ? -EIO : PTR_ERR(page);
+ 			break;
++		}
+ 
+ 		/*
+ 		 * Only copy tags if the page has been mapped as PROT_MTE
+@@ -449,7 +450,7 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+ 		 * was never mapped with PROT_MTE.
+ 		 */
+ 		if (!(vma->vm_flags & VM_MTE)) {
+-			ret = -EOPNOTSUPP;
++			err = -EOPNOTSUPP;
+ 			put_page(page);
+ 			break;
+ 		}
+@@ -482,7 +483,7 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+ 	kiov->iov_len = buf - kiov->iov_base;
+ 	if (!kiov->iov_len) {
+ 		/* check for error accessing the tracee's address space */
+-		if (ret <= 0)
++		if (err)
+ 			return -EIO;
+ 		else
+ 			return -EFAULT;
+diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+index da6dac36e959..9bd0a873f3b1 100644
+--- a/arch/s390/kvm/interrupt.c
++++ b/arch/s390/kvm/interrupt.c
+@@ -2777,7 +2777,7 @@ static struct page *get_map_page(struct kvm *kvm, u64 uaddr)
+ 
+ 	mmap_read_lock(kvm->mm);
+ 	get_user_pages_remote(kvm->mm, uaddr, 1, FOLL_WRITE,
+-			      &page, NULL, NULL);
++			      &page, NULL);
+ 	mmap_read_unlock(kvm->mm);
+ 	return page;
+ }
+diff --git a/fs/exec.c b/fs/exec.c
+index a466e797c8e2..25c65b64544b 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -220,7 +220,7 @@ static struct page *get_arg_page(struct linux_binprm *bprm, unsigned long pos,
+ 	 */
+ 	mmap_read_lock(bprm->mm);
+ 	ret = get_user_pages_remote(bprm->mm, pos, 1, gup_flags,
+-			&page, NULL, NULL);
++			&page, NULL);
+ 	mmap_read_unlock(bprm->mm);
+ 	if (ret <= 0)
+ 		return NULL;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 8ea82e9e7719..679b41ef7a6d 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2366,6 +2366,9 @@ static inline void unmap_shared_mapping_range(struct address_space *mapping,
+ 	unmap_mapping_range(mapping, holebegin, holelen, 0);
+ }
+ 
++static inline struct vm_area_struct *vma_lookup(struct mm_struct *mm,
++						unsigned long addr);
++
+ extern int access_process_vm(struct task_struct *tsk, unsigned long addr,
+ 		void *buf, int len, unsigned int gup_flags);
+ extern int access_remote_vm(struct mm_struct *mm, unsigned long addr,
+@@ -2374,13 +2377,38 @@ extern int __access_remote_vm(struct mm_struct *mm, unsigned long addr,
+ 			      void *buf, int len, unsigned int gup_flags);
+ 
+ long get_user_pages_remote(struct mm_struct *mm,
+-			    unsigned long start, unsigned long nr_pages,
+-			    unsigned int gup_flags, struct page **pages,
+-			    struct vm_area_struct **vmas, int *locked);
++			   unsigned long start, unsigned long nr_pages,
++			   unsigned int gup_flags, struct page **pages,
++			   int *locked);
+ long pin_user_pages_remote(struct mm_struct *mm,
+ 			   unsigned long start, unsigned long nr_pages,
+ 			   unsigned int gup_flags, struct page **pages,
+ 			   int *locked);
++
++static inline struct page *get_user_page_vma_remote(struct mm_struct *mm,
++						    unsigned long addr,
++						    int gup_flags,
++						    struct vm_area_struct **vmap)
++{
++	struct page *page;
++	struct vm_area_struct *vma;
++	int got = get_user_pages_remote(mm, addr, 1, gup_flags, &page, NULL);
++
++	if (got < 0)
++		return ERR_PTR(got);
++	if (got == 0)
++		return NULL;
++
++	vma = vma_lookup(mm, addr);
++	if (WARN_ON_ONCE(!vma)) {
++		put_page(page);
++		return ERR_PTR(-EINVAL);
++	}
++
++	*vmap = vma;
++	return page;
++}
++
+ long get_user_pages(unsigned long start, unsigned long nr_pages,
+ 		    unsigned int gup_flags, struct page **pages);
+ long pin_user_pages(unsigned long start, unsigned long nr_pages,
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 59887c69d54c..cac3aef7c6f7 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -365,7 +365,6 @@ __update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
+ {
+ 	void *kaddr;
+ 	struct page *page;
+-	struct vm_area_struct *vma;
+ 	int ret;
+ 	short *ptr;
+ 
+@@ -373,7 +372,7 @@ __update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
+ 		return -EINVAL;
+ 
+ 	ret = get_user_pages_remote(mm, vaddr, 1,
+-			FOLL_WRITE, &page, &vma, NULL);
++				    FOLL_WRITE, &page, NULL);
+ 	if (unlikely(ret <= 0)) {
+ 		/*
+ 		 * We are asking for 1 page. If get_user_pages_remote() fails,
+@@ -474,10 +473,9 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+ 	if (is_register)
+ 		gup_flags |= FOLL_SPLIT_PMD;
+ 	/* Read the page with vaddr into memory */
+-	ret = get_user_pages_remote(mm, vaddr, 1, gup_flags,
+-				    &old_page, &vma, NULL);
+-	if (ret <= 0)
+-		return ret;
++	old_page = get_user_page_vma_remote(mm, vaddr, gup_flags, &vma);
++	if (IS_ERR_OR_NULL(old_page))
++		return PTR_ERR(old_page);
+ 
+ 	ret = verify_opcode(old_page, vaddr, &opcode);
+ 	if (ret <= 0)
+@@ -2027,8 +2025,7 @@ static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr)
+ 	 * but we treat this as a 'remote' access since it is
+ 	 * essentially a kernel access to the memory.
+ 	 */
+-	result = get_user_pages_remote(mm, vaddr, 1, FOLL_FORCE, &page,
+-			NULL, NULL);
++	result = get_user_pages_remote(mm, vaddr, 1, FOLL_FORCE, &page, NULL);
+ 	if (result < 0)
+ 		return result;
+ 
+diff --git a/mm/gup.c b/mm/gup.c
+index ce78a5186dbb..1493cc8dd526 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2208,8 +2208,6 @@ static bool is_valid_gup_args(struct page **pages, struct vm_area_struct **vmas,
+  * @pages:	array that receives pointers to the pages pinned.
+  *		Should be at least nr_pages long. Or NULL, if caller
+  *		only intends to ensure the pages are faulted in.
+- * @vmas:	array of pointers to vmas corresponding to each page.
+- *		Or NULL if the caller does not require them.
+  * @locked:	pointer to lock flag indicating whether lock is held and
+  *		subsequently whether VM_FAULT_RETRY functionality can be
+  *		utilised. Lock must initially be held.
+@@ -2224,8 +2222,6 @@ static bool is_valid_gup_args(struct page **pages, struct vm_area_struct **vmas,
+  *
+  * The caller is responsible for releasing returned @pages, via put_page().
+  *
+- * @vmas are valid only as long as mmap_lock is held.
+- *
+  * Must be called with mmap_lock held for read or write.
+  *
+  * get_user_pages_remote walks a process's page tables and takes a reference
+@@ -2262,15 +2258,15 @@ static bool is_valid_gup_args(struct page **pages, struct vm_area_struct **vmas,
+ long get_user_pages_remote(struct mm_struct *mm,
+ 		unsigned long start, unsigned long nr_pages,
+ 		unsigned int gup_flags, struct page **pages,
+-		struct vm_area_struct **vmas, int *locked)
++		int *locked)
+ {
+ 	int local_locked = 1;
+ 
+-	if (!is_valid_gup_args(pages, vmas, locked, &gup_flags,
++	if (!is_valid_gup_args(pages, NULL, locked, &gup_flags,
+ 			       FOLL_TOUCH | FOLL_REMOTE))
+ 		return -EINVAL;
+ 
+-	return __get_user_pages_locked(mm, start, nr_pages, pages, vmas,
++	return __get_user_pages_locked(mm, start, nr_pages, pages, NULL,
+ 				       locked ? locked : &local_locked,
+ 				       gup_flags);
+ }
+@@ -2280,7 +2276,7 @@ EXPORT_SYMBOL(get_user_pages_remote);
+ long get_user_pages_remote(struct mm_struct *mm,
+ 			   unsigned long start, unsigned long nr_pages,
+ 			   unsigned int gup_flags, struct page **pages,
+-			   struct vm_area_struct **vmas, int *locked)
++			   int *locked)
+ {
+ 	return 0;
+ }
+diff --git a/mm/memory.c b/mm/memory.c
+index 146bb94764f8..63632a5eafc1 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -5590,7 +5590,6 @@ EXPORT_SYMBOL_GPL(generic_access_phys);
+ int __access_remote_vm(struct mm_struct *mm, unsigned long addr, void *buf,
+ 		       int len, unsigned int gup_flags)
+ {
+-	struct vm_area_struct *vma;
+ 	void *old_buf = buf;
+ 	int write = gup_flags & FOLL_WRITE;
+ 
+@@ -5599,13 +5598,15 @@ int __access_remote_vm(struct mm_struct *mm, unsigned long addr, void *buf,
+ 
+ 	/* ignore errors, just check how much was successfully transferred */
+ 	while (len) {
+-		int bytes, ret, offset;
++		int bytes, offset;
+ 		void *maddr;
+-		struct page *page = NULL;
++		struct vm_area_struct *vma;
++		struct page *page = get_user_page_vma_remote(mm, addr,
++							     gup_flags, &vma);
++
++		if (IS_ERR_OR_NULL(page)) {
++			int ret = 0;
+ 
+-		ret = get_user_pages_remote(mm, addr, 1,
+-				gup_flags, &page, &vma, NULL);
+-		if (ret <= 0) {
+ #ifndef CONFIG_HAVE_IOREMAP_PROT
+ 			break;
+ #else
+@@ -5613,7 +5614,6 @@ int __access_remote_vm(struct mm_struct *mm, unsigned long addr, void *buf,
+ 			 * Check if this is a VM_IO | VM_PFNMAP VMA, which
+ 			 * we can access using slightly different code.
+ 			 */
+-			vma = vma_lookup(mm, addr);
+ 			if (!vma)
+ 				break;
+ 			if (vma->vm_ops && vma->vm_ops->access)
+diff --git a/mm/rmap.c b/mm/rmap.c
+index b42fc0389c24..ae127f60a4fb 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -2328,7 +2328,7 @@ int make_device_exclusive_range(struct mm_struct *mm, unsigned long start,
+ 
+ 	npages = get_user_pages_remote(mm, start, npages,
+ 				       FOLL_GET | FOLL_WRITE | FOLL_SPLIT_PMD,
+-				       pages, NULL, NULL);
++				       pages, NULL);
+ 	if (npages < 0)
+ 		return npages;
+ 
+diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
+index 31af29f669d2..ac20c0bdff9d 100644
+--- a/security/tomoyo/domain.c
++++ b/security/tomoyo/domain.c
+@@ -916,7 +916,7 @@ bool tomoyo_dump_page(struct linux_binprm *bprm, unsigned long pos,
+ 	 */
+ 	mmap_read_lock(bprm->mm);
+ 	ret = get_user_pages_remote(bprm->mm, pos, 1,
+-				    FOLL_FORCE, &page, NULL, NULL);
++				    FOLL_FORCE, &page, NULL);
+ 	mmap_read_unlock(bprm->mm);
+ 	if (ret <= 0)
+ 		return false;
+diff --git a/virt/kvm/async_pf.c b/virt/kvm/async_pf.c
+index 9bfe1d6f6529..e033c79d528e 100644
+--- a/virt/kvm/async_pf.c
++++ b/virt/kvm/async_pf.c
+@@ -61,8 +61,7 @@ static void async_pf_execute(struct work_struct *work)
+ 	 * access remotely.
+ 	 */
+ 	mmap_read_lock(mm);
+-	get_user_pages_remote(mm, addr, 1, FOLL_WRITE, NULL, NULL,
+-			&locked);
++	get_user_pages_remote(mm, addr, 1, FOLL_WRITE, NULL, &locked);
+ 	if (locked)
+ 		mmap_read_unlock(mm);
+ 
+-- 
+2.40.1
+
