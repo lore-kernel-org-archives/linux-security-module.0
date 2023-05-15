@@ -2,100 +2,114 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED275C7EE26
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 May 2023 15:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A963DC7EE24
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 May 2023 16:14:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242088AbjEOPMk (ORCPT
+        id S242523AbjEOQOC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 May 2023 11:12:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58010 "EHLO
+        Mon, 15 May 2023 12:14:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239217AbjEOPMi (ORCPT
+        with ESMTP id S242591AbjEOQOA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 May 2023 11:12:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27F9A8E;
-        Mon, 15 May 2023 08:12:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8AE57625F3;
-        Mon, 15 May 2023 15:12:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AA3FC433D2;
-        Mon, 15 May 2023 15:12:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684163557;
-        bh=W0/Ro3g+UnuQaJT98MLDjMPTmmzKa0SW17mCg2HptuM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qEwtpFA4B/izRqgX0Ybd2/WCOsnAVQoJrCFH/KTc479UYdVLoJ0CCpe6eI64JOn8t
-         1IUMF1n1TH7q3GPEeqE3DxNpZlBFGo4xjAV2N8V/AQpZjs78o85IccISP779XvEB0j
-         uQ2HJPQ8T3w6XH5FsTz+/wcYHQT39jwQU37RQI9xK7+grnrsT8A+1wDt+loetoEtQE
-         kX/E/qdTJRobgxzTV6j0aHTA1+rE8G2HJTsEZymPuCUZCQTepnSwR+L4qLoaMNsfQV
-         fa6j7N1q4xFWI0djfVNyNhnX9akdSQcaKgz0lrGYRdbLLg9ZP7ZeD6UeOIf9O1mnRt
-         nMKXs1lMWu9tQ==
-Date:   Mon, 15 May 2023 17:12:24 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        viro@zeniv.linux.org.uk, dhowells@redhat.com, code@tyhicks.com,
-        hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
-        sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
-        chuck.lever@oracle.com, jlayton@kernel.org, miklos@szeredi.hu,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, dchinner@redhat.com,
-        john.johansen@canonical.com, mcgrof@kernel.org,
-        mortonm@chromium.org, fred@cloudflare.com, mic@digikod.net,
-        mpe@ellerman.id.au, nathanl@linux.ibm.com, gnoack3000@gmail.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        wangweiyang2@huawei.com
-Subject: Re: [PATCH -next 0/2] lsm: Change inode_setattr() to take struct
-Message-ID: <20230515-nutzen-umgekehrt-eee629a0101e@brauner>
-References: <20230505081200.254449-1-xiujianfeng@huawei.com>
+        Mon, 15 May 2023 12:14:00 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B93A19BA;
+        Mon, 15 May 2023 09:13:56 -0700 (PDT)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4QKkpf0GFjz6J6wV;
+        Tue, 16 May 2023 00:09:46 +0800 (CST)
+Received: from mscphis00759.huawei.com (10.123.66.134) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Mon, 15 May 2023 17:13:53 +0100
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+To:     <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>
+Subject: [PATCH v11 00/12] Network support for Landlock
+Date:   Tue, 16 May 2023 00:13:27 +0800
+Message-ID: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230505081200.254449-1-xiujianfeng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.66.134]
+X-ClientProxiedBy: mscpeml500002.china.huawei.com (7.188.26.138) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 05, 2023 at 04:11:58PM +0800, Xiu Jianfeng wrote:
-> Hi,
-> 
-> I am working on adding xattr/attr support for landlock [1], so we can
-> control fs accesses such as chmod, chown, uptimes, setxattr, etc.. inside
-> landlock sandbox. the LSM hooks as following are invoved:
-> 1.inode_setattr
-> 2.inode_setxattr
-> 3.inode_removexattr
-> 4.inode_set_acl
-> 5.inode_remove_acl
-> which are controlled by LANDLOCK_ACCESS_FS_WRITE_METADATA.
-> 
-> and
-> 1.inode_getattr
-> 2.inode_get_acl
-> 3.inode_getxattr
-> 4.inode_listxattr
-> which are controlled by LANDLOCK_ACCESS_FS_READ_METADATA
+Hi,
+This is a new V11 patch related to Landlock LSM network confinement.
+It is based on the landlock's -next branch on top of v6.2-rc3+ kernel version:
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
 
-It would be helpful to get the complete, full picture.
+It brings refactoring of previous patch version V10.
+Mostly there are fixes of logic and typos, refactoring some selftests.
 
-Piecemeal extending vfs helpers with struct path arguments is costly,
-will cause a lot of churn and will require a lot of review time from us.
+All test were run in QEMU evironment and compiled with
+ -static flag.
+ 1. network_test: 36/36 tests passed.
+ 2. base_test: 7/7 tests passed.
+ 3. fs_test: 78/78 tests passed.
+ 4. ptrace_test: 8/8 tests passed.
 
-Please give us the list of all security hooks to which you want to pass
-a struct path (if there are more to come apart from the ones listed
-here). Then please follow all callchains and identify the vfs helpers
-that would need to be updated. Then please figure out where those
-vfs helpers are called from and follow all callchains finding all
-inode_operations that would have to be updated and passed a struct path
-argument. So ultimately we'll end up with a list of vfs helpers and
-inode_operations that would have to be changed.
+Previous versions:
+v10: https://lore.kernel.org/linux-security-module/20230323085226.1432550-1-konstantin.meskhidze@huawei.com/
+v9: https://lore.kernel.org/linux-security-module/20230116085818.165539-1-konstantin.meskhidze@huawei.com/
+v8: https://lore.kernel.org/linux-security-module/20221021152644.155136-1-konstantin.meskhidze@huawei.com/
+v7: https://lore.kernel.org/linux-security-module/20220829170401.834298-1-konstantin.meskhidze@huawei.com/
+v6: https://lore.kernel.org/linux-security-module/20220621082313.3330667-1-konstantin.meskhidze@huawei.com/
+v5: https://lore.kernel.org/linux-security-module/20220516152038.39594-1-konstantin.meskhidze@huawei.com
+v4: https://lore.kernel.org/linux-security-module/20220309134459.6448-1-konstantin.meskhidze@huawei.com/
+v3: https://lore.kernel.org/linux-security-module/20220124080215.265538-1-konstantin.meskhidze@huawei.com/
+v2: https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
+v1: https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
 
-I'm very reluctant to see anything merged without knowing _exactly_ what
-you're getting us into.
+Konstantin Meskhidze (11):
+  landlock: Make ruleset's access masks more generic
+  landlock: Refactor landlock_find_rule/insert_rule
+  landlock: Refactor merge/inherit_ruleset functions
+  landlock: Move and rename layer helpers
+  landlock: Refactor layer helpers
+  landlock: Refactor landlock_add_rule() syscall
+  landlock: Add network rules and TCP hooks support
+  selftests/landlock: Share enforce_ruleset()
+  selftests/landlock: Add 11 new test suites dedicated to network
+  samples/landlock: Add network demo
+  landlock: Document Landlock's network support
+
+Mickaël Salaün (1):
+  landlock: Allow filesystem layout changes for domains without such
+    rule type
+
+ Documentation/userspace-api/landlock.rst     |   89 +-
+ include/uapi/linux/landlock.h                |   48 +
+ samples/landlock/sandboxer.c                 |  128 +-
+ security/landlock/Kconfig                    |    1 +
+ security/landlock/Makefile                   |    2 +
+ security/landlock/fs.c                       |  232 +--
+ security/landlock/limits.h                   |    7 +-
+ security/landlock/net.c                      |  174 +++
+ security/landlock/net.h                      |   26 +
+ security/landlock/ruleset.c                  |  405 +++++-
+ security/landlock/ruleset.h                  |  185 ++-
+ security/landlock/setup.c                    |    2 +
+ security/landlock/syscalls.c                 |  163 ++-
+ tools/testing/selftests/landlock/base_test.c |    2 +-
+ tools/testing/selftests/landlock/common.h    |   10 +
+ tools/testing/selftests/landlock/config      |    4 +
+ tools/testing/selftests/landlock/fs_test.c   |   74 +-
+ tools/testing/selftests/landlock/net_test.c  | 1317 ++++++++++++++++++
+ 18 files changed, 2520 insertions(+), 349 deletions(-)
+ create mode 100644 security/landlock/net.c
+ create mode 100644 security/landlock/net.h
+ create mode 100644 tools/testing/selftests/landlock/net_test.c
+
+--
+2.25.1
+
