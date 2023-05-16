@@ -2,205 +2,104 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D672C7EE26
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 May 2023 09:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC246C77B7F
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 May 2023 12:05:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232140AbjEPJt2 (ORCPT
+        id S232661AbjEPMFh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 May 2023 05:49:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55296 "EHLO
+        Tue, 16 May 2023 08:05:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231921AbjEPJt1 (ORCPT
+        with ESMTP id S232827AbjEPMFf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 May 2023 05:49:27 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85AF52D6B
-        for <linux-security-module@vger.kernel.org>; Tue, 16 May 2023 02:49:24 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4f14ec8d72aso14024848e87.1
-        for <linux-security-module@vger.kernel.org>; Tue, 16 May 2023 02:49:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684230563; x=1686822563;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZU/9Bd1F4v4AQI4XYwGvMKtVUVhP+Ta/KlDV/Ofhgvw=;
-        b=DLO9Sp+4W+z5eLJ4OplpY56KL7dsXPxPyKzZN31e24ZgWla/8bs4IkvAtRU1sNrr4d
-         M/zIAUZjhZlW4P2rkk7T+6W0UVsyD90WG+YdGYFrH/Glii/KUDZq0IpUmntg707CdF5n
-         i37UB3Tbbcas87bL0/efYfe6w3ZnC5XyG3qMqn02SGpfBU+8hNkNlrN1nhw2lKAkzq5B
-         CRMAVzp4RUPFc/3/QZ675+4TlLXQLlc1iMNrOb5F/K4RaFPvTUMi9nJBxjhqICMZPBab
-         XEfOKIgxNn+kxSFXUOWAg+ZiVcGCmn7Ho0MHbSwpND8R8HARcto93DQrGrEkUYhsomoF
-         2BmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684230563; x=1686822563;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZU/9Bd1F4v4AQI4XYwGvMKtVUVhP+Ta/KlDV/Ofhgvw=;
-        b=d1pzAYGiivtugxyv+PGZ8wycRwhK/Df+eUk/L4+c7Mr/8Sfi3SwEN8ZeheWC9Xz5XD
-         7lsHEZkwXr0PCAa1JbLgT00oWvkCA/ihNi4rqsufGlkuoW9s0PdE525t1cSpJzWiaFwY
-         jpnHRGHQ7SgjLAKQOjzoiIFsG1m+lPx2EogpvwX7lAcJhjoIh/aSfMjwCXUUnMmriLeU
-         DK/nEwgjxi/Uo8VtPq4RL9j47QAE8ZqfQDqW3RJAv1oRHK+SHAAbr94PlBpGbiAhrxcd
-         1A/+vEvJ/22Ik+ZDVMxfmBaP6Gk/QsijpGC3GcupE5i/nmPB0jnca9M+KvC/mmUP58uJ
-         G4eQ==
-X-Gm-Message-State: AC+VfDyxuJ2g1bK3+FEgY05Ajtqw1x116o+4CoqsyXmdYSIKX71vQqnx
-        DPhyuiTqqezYHsYjQjEE4Be4Iw==
-X-Google-Smtp-Source: ACHHUZ4l3TyALRDEaGcVcIkdK7q9mH/ov5OVGGAezktN7u9QG834/IDjSuCD7zTf56ZU9ouww0Hd6Q==
-X-Received: by 2002:a05:6512:2181:b0:4e8:4a21:9c92 with SMTP id b1-20020a056512218100b004e84a219c92mr7419897lft.4.1684230562687;
-        Tue, 16 May 2023 02:49:22 -0700 (PDT)
-Received: from mutt (c-9b0ee555.07-21-73746f28.bbcust.telenor.se. [85.229.14.155])
-        by smtp.gmail.com with ESMTPSA id w11-20020a19c50b000000b004f251cf3d31sm2908003lfe.153.2023.05.16.02.49.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 May 2023 02:49:21 -0700 (PDT)
-Date:   Tue, 16 May 2023 11:49:19 +0200
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v5 3/6] mm/gup: remove vmas parameter from
- get_user_pages_remote()
-Message-ID: <20230516094919.GA411@mutt>
-References: <cover.1684097001.git.lstoakes@gmail.com>
- <afe323639b7bda066ee5c7a6cca906f5ad8df940.1684097002.git.lstoakes@gmail.com>
+        Tue, 16 May 2023 08:05:35 -0400
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EBEB59C0;
+        Tue, 16 May 2023 05:05:30 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0VioIoq8_1684238723;
+Received: from 30.240.108.124(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0VioIoq8_1684238723)
+          by smtp.aliyun-inc.com;
+          Tue, 16 May 2023 20:05:27 +0800
+Message-ID: <e1242268-e7b6-d77c-a94f-edd913845ca7@linux.alibaba.com>
+Date:   Tue, 16 May 2023 20:05:21 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <afe323639b7bda066ee5c7a6cca906f5ad8df940.1684097002.git.lstoakes@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.6.1
+Subject: Re: [PATCH 0/2] capability: Introduce CAP_BLOCK_ADMIN
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Frederick Lawler <fred@cloudflare.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        louxiao.lx@alibaba-inc.com
+References: <20230511070520.72939-1-tianjia.zhang@linux.alibaba.com>
+ <b645e195-7875-9fc3-a8de-6676dfe800b8@schaufler-ca.com>
+Content-Language: en-US
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <b645e195-7875-9fc3-a8de-6676dfe800b8@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2023-05-14 22:26, Lorenzo Stoakes wrote:
-> The only instances of get_user_pages_remote() invocations which used the
-> vmas parameter were for a single page which can instead simply look up the
-> VMA directly. In particular:-
+Hi Casey,
+
+On 5/12/23 12:17 AM, Casey Schaufler wrote:
+> On 5/11/2023 12:05 AM, Tianjia Zhang wrote:
+>> Separated fine-grained capability CAP_BLOCK_ADMIN from CAP_SYS_ADMIN.
+>> For backward compatibility, the CAP_BLOCK_ADMIN capability is included
+>> within CAP_SYS_ADMIN.
+>>
+>> Some database products rely on shared storage to complete the
+>> write-once-read-multiple and write-multiple-read-multiple functions.
+>> When HA occurs, they rely on the PR (Persistent Reservations) protocol
+>> provided by the storage layer to manage block device permissions to
+>> ensure data correctness.
+>>
+>> CAP_SYS_ADMIN is required in the PR protocol implementation of existing
+>> block devices in the Linux kernel, which has too many sensitive
+>> permissions, which may lead to risks such as container escape. The
+>> kernel needs to provide more fine-grained permission management like
+>> CAP_NET_ADMIN to avoid online products directly relying on root to run.
+>>
+>> CAP_BLOCK_ADMIN can also provide support for other block device
+>> operations that require CAP_SYS_ADMIN capabilities in the future,
+>> ensuring that applications run with least privilege.
 > 
-> - __update_ref_ctr() looked up the VMA but did nothing with it so we simply
->   remove it.
-> 
-> - __access_remote_vm() was already using vma_lookup() when the original
->   lookup failed so by doing the lookup directly this also de-duplicates the
->   code.
-> 
-> We are able to perform these VMA operations as we already hold the
-> mmap_lock in order to be able to call get_user_pages_remote().
-> 
-> As part of this work we add get_user_page_vma_remote() which abstracts the
-> VMA lookup, error handling and decrementing the page reference count should
-> the VMA lookup fail.
-> 
-> This forms part of a broader set of patches intended to eliminate the vmas
-> parameter altogether.
-> 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com> (for arm64)
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Janosch Frank <frankja@linux.ibm.com> (for s390)
-> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-> ---
->  arch/arm64/kernel/mte.c   | 17 +++++++++--------
->  arch/s390/kvm/interrupt.c |  2 +-
->  fs/exec.c                 |  2 +-
->  include/linux/mm.h        | 34 +++++++++++++++++++++++++++++++---
->  kernel/events/uprobes.c   | 13 +++++--------
->  mm/gup.c                  | 12 ++++--------
->  mm/memory.c               | 14 +++++++-------
->  mm/rmap.c                 |  2 +-
->  security/tomoyo/domain.c  |  2 +-
->  virt/kvm/async_pf.c       |  3 +--
->  10 files changed, 61 insertions(+), 40 deletions(-)
+> Can you demonstrate that there are cases where a program that needs
+> CAP_BLOCK_ADMIN does not also require CAP_SYS_ADMIN for other operations?
+> How much of what's allowed by CAP_SYS_ADMIN would be allowed by
+> CAP_BLOCK_ADMIN? If use of a new capability is rare it's difficult to
+> justify.
 > 
 
-[...]
+For the previous non-container scenarios, the block device is a shared
+device, because the business-system generally operates the file system
+on the block. Therefore, directly operating the block device has a high
+probability of affecting other processes on the same host, and it is a
+reasonable requirement to need the CAP_SYS_ADMIN capability.
 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 146bb94764f8..63632a5eafc1 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -5590,7 +5590,6 @@ EXPORT_SYMBOL_GPL(generic_access_phys);
->  int __access_remote_vm(struct mm_struct *mm, unsigned long addr, void *buf,
->  		       int len, unsigned int gup_flags)
->  {
-> -	struct vm_area_struct *vma;
->  	void *old_buf = buf;
->  	int write = gup_flags & FOLL_WRITE;
->  
-> @@ -5599,13 +5598,15 @@ int __access_remote_vm(struct mm_struct *mm, unsigned long addr, void *buf,
->  
->  	/* ignore errors, just check how much was successfully transferred */
->  	while (len) {
-> -		int bytes, ret, offset;
-> +		int bytes, offset;
->  		void *maddr;
-> -		struct page *page = NULL;
-> +		struct vm_area_struct *vma;
-> +		struct page *page = get_user_page_vma_remote(mm, addr,
-> +							     gup_flags, &vma);
-> +
-> +		if (IS_ERR_OR_NULL(page)) {
-> +			int ret = 0;
+But for a database running in a container scenario, especially a
+container scenario on the cloud, it is likely that a container
+exclusively occupies a block device. That is to say, for a container,
+its access to the block device will not affect other process, there is
+no need to obtain a higher CAP_SYS_ADMIN capability.
 
-I see the warning below when building without CONFIG_HAVE_IOREMAP_PROT set.
+For a file system similar to distributed write-once-read-many, it is
+necessary to ensure the correctness of recovery, then when recovery
+occurs, it is necessary to ensure that no inflighting-io is completed
+after recovery.
 
-make --silent --keep-going --jobs=32 \
-O=/home/anders/.cache/tuxmake/builds/1244/build ARCH=arm \
-CROSS_COMPILE=arm-linux-gnueabihf- /home/anders/src/kernel/next/mm/memory.c: In function '__access_remote_vm':
-/home/anders/src/kernel/next/mm/memory.c:5608:29: warning: unused variable 'ret' [-Wunused-variable]
- 5608 |                         int ret = 0;
-      |                             ^~~
+This can be guaranteed by performing operations such as SCSI/NVME
+Persistent Reservations on block devices on the distributed file system.
+Therefore, at present, it is only necessary to have the relevant
+permission support of the control command of such container-exclusive
+block devices.
 
-
->  
-> -		ret = get_user_pages_remote(mm, addr, 1,
-> -				gup_flags, &page, &vma, NULL);
-> -		if (ret <= 0) {
->  #ifndef CONFIG_HAVE_IOREMAP_PROT
->  			break;
->  #else
-> @@ -5613,7 +5614,6 @@ int __access_remote_vm(struct mm_struct *mm, unsigned long addr, void *buf,
->  			 * Check if this is a VM_IO | VM_PFNMAP VMA, which
->  			 * we can access using slightly different code.
->  			 */
-> -			vma = vma_lookup(mm, addr);
->  			if (!vma)
->  				break;
->  			if (vma->vm_ops && vma->vm_ops->access)
-
-Cheers,
-Anders
+Kind regards,
+Tianjia
