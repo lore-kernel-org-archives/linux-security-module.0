@@ -2,118 +2,169 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C13BC77B7A
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 May 2023 18:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E44C7EE2E
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 May 2023 22:02:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbjEPSmp (ORCPT
+        id S229994AbjEPWCY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 May 2023 14:42:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51010 "EHLO
+        Tue, 16 May 2023 18:02:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230110AbjEPSmo (ORCPT
+        with ESMTP id S229578AbjEPWCW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 May 2023 14:42:44 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08D58682;
-        Tue, 16 May 2023 11:42:41 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-50bc0117683so25648466a12.1;
-        Tue, 16 May 2023 11:42:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684262560; x=1686854560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ctdc7Vyub0mk2EGAJTcTi0bqYHOoN+2odaP2Y74iYhQ=;
-        b=ITTFYV9T1R0GCoNhHcirFKAfxFgL9j67lWUr6BaPppSIm8pNaLJGdLD1e9JxWTi4nh
-         aifTJbWIjyEOctvzEoey3XKA3OO5GctYulwVfv+shOcOfDJQTEwnXC2PQuJI4kGjZSUB
-         txhqj858QhYHIbMuQV7V6JzldmbLoZL4bvloWK9n+UUIBJvEOududEHqm7SabzlpWw37
-         NjEo7QTa58bf9G3mwyYTi2A+s++GIGZy5WDYKSPmsS3qJSu//Ooeww60wQRjPXPp6Y3P
-         diVnqUEE6m8JzLKNpFc6WVsUx0Ff1oD8UVyudDpP7+nCcRWlu2KmfTNGYq5CJoVfUA5w
-         tDWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684262560; x=1686854560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ctdc7Vyub0mk2EGAJTcTi0bqYHOoN+2odaP2Y74iYhQ=;
-        b=g/B7KHG2ZhUFTHk5Evl8zkW2Mtz3mGW6O5rcQaxgUeV5B1qfo6JfuBv20v2IiC+O8x
-         01DIA8qjwFWROxgwF3xRSbx6AV/FNE3Lh/siP+eUGqekf6j5eHEGnGEMqcMya3Vi18aH
-         lXzd6JoAFjj1/r3hL6xLm4CT+Q50jYje82QMQ06U9hRy2nO6aoaneUQwprU68np8gKQN
-         UyEQmU/m+3NVC1vB5HVKVSmg3i7Tm9OpjqyWZd7C4bxWaEgalZw97rILEZGn80svzKa0
-         B2fw6VPyynD6duNqjbfDmq+elOXzlf9FmZ5BRxPsM/+qCFIm5UA0pliX5r+PTuRkvsLq
-         7KOQ==
-X-Gm-Message-State: AC+VfDxnCrFLHf57MM0QYkoAfRr5QnavUNxgeJff6VELWuJcuXIHofMn
-        PB1XaGwqyE194aRrFbPT7p3C/n5I0oEiRXkAJSpuxGMgpwjqhA==
-X-Google-Smtp-Source: ACHHUZ5auCBVedIw+9g8zXMtUaifjrxWpSLDT4qGZEDOWMARxDQNXhz/LN8vqaTnrZvYr3HU/wSlGrY0Osx48mbsgCg=
-X-Received: by 2002:aa7:cfcc:0:b0:50b:fb29:1d8f with SMTP id
- r12-20020aa7cfcc000000b0050bfb291d8fmr228386edy.0.1684262559943; Tue, 16 May
- 2023 11:42:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230511142535.732324-1-cgzones@googlemail.com> <20230511142535.732324-3-cgzones@googlemail.com>
-In-Reply-To: <20230511142535.732324-3-cgzones@googlemail.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Tue, 16 May 2023 11:42:27 -0700
-Message-ID: <CAEf4BzYRzqGSd8QkNsEPpHzWoSDcH3h6o1m=fxQDKQNT_OCsQw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/9] capability: use new capable_any functionality
-To:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Cc:     selinux@vger.kernel.org, Serge Hallyn <serge@hallyn.com>,
+        Tue, 16 May 2023 18:02:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24A0CB4;
+        Tue, 16 May 2023 15:02:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B587363CF5;
+        Tue, 16 May 2023 22:02:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C90F7C433EF;
+        Tue, 16 May 2023 22:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1684274540;
+        bh=Xn5gFOegvDQoAs6fV+QPMtWJd/9gIN1gu+8PHj8jATQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=I8HmcSl3RSMNgObVi4nyzA8Dn0pIVn3Hyd4M9+6+jiCnOIEHPDAD1katsykkWAiMa
+         gn5fQMZJ0CFmK2NC9H7JKcNfD2tVhwbbUSeGJQe61+ttSYu+uB1762WRf9rvoaH/7u
+         R2FZf07p1aiooDIDhn5t28F6IgINIJ5khA8X4Fo4=
+Date:   Tue, 16 May 2023 15:02:18 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH v5 3/6] mm/gup: remove vmas parameter from
+ get_user_pages_remote()
+Message-Id: <20230516150218.477c5e9d0a2d9ef8b057069c@linux-foundation.org>
+In-Reply-To: <20230516094919.GA411@mutt>
+References: <cover.1684097001.git.lstoakes@gmail.com>
+        <afe323639b7bda066ee5c7a6cca906f5ad8df940.1684097002.git.lstoakes@gmail.com>
+        <20230516094919.GA411@mutt>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 11, 2023 at 7:27=E2=80=AFAM Christian G=C3=B6ttsche
-<cgzones@googlemail.com> wrote:
->
-> Use the new added capable_any function in appropriate cases, where a
-> task is required to have any of two capabilities.
->
-> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> ---
-> v3:
->   - rename to capable_any()
->   - simplify checkpoint_restore_ns_capable()
-> ---
->  include/linux/capability.h | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/include/linux/capability.h b/include/linux/capability.h
-> index eeb958440656..4db0ffb47271 100644
-> --- a/include/linux/capability.h
-> +++ b/include/linux/capability.h
-> @@ -204,18 +204,17 @@ extern bool file_ns_capable(const struct file *file=
-, struct user_namespace *ns,
->  extern bool ptracer_capable(struct task_struct *tsk, struct user_namespa=
-ce *ns);
->  static inline bool perfmon_capable(void)
->  {
-> -       return capable(CAP_PERFMON) || capable(CAP_SYS_ADMIN);
-> +       return capable_any(CAP_PERFMON, CAP_SYS_ADMIN);
->  }
->
->  static inline bool bpf_capable(void)
->  {
-> -       return capable(CAP_BPF) || capable(CAP_SYS_ADMIN);
-> +       return capable_any(CAP_BPF, CAP_SYS_ADMIN);
->  }
->
+On Tue, 16 May 2023 11:49:19 +0200 Anders Roxell <anders.roxell@linaro.org> wrote:
 
-For bpf parts:
+> On 2023-05-14 22:26, Lorenzo Stoakes wrote:
+> > The only instances of get_user_pages_remote() invocations which used the
+> > vmas parameter were for a single page which can instead simply look up the
+> > VMA directly. In particular:-
+> > 
+> > - __update_ref_ctr() looked up the VMA but did nothing with it so we simply
+> >   remove it.
+> > 
+> > - __access_remote_vm() was already using vma_lookup() when the original
+> >   lookup failed so by doing the lookup directly this also de-duplicates the
+> >   code.
+> > 
+> > We are able to perform these VMA operations as we already hold the
+> > mmap_lock in order to be able to call get_user_pages_remote().
+> > 
+> > As part of this work we add get_user_page_vma_remote() which abstracts the
+> > VMA lookup, error handling and decrementing the page reference count should
+> > the VMA lookup fail.
+> > 
+> > This forms part of a broader set of patches intended to eliminate the vmas
+> > parameter altogether.
+> > 
+> > -		int bytes, ret, offset;
+> > +		int bytes, offset;
+> >  		void *maddr;
+> > -		struct page *page = NULL;
+> > +		struct vm_area_struct *vma;
+> > +		struct page *page = get_user_page_vma_remote(mm, addr,
+> > +							     gup_flags, &vma);
+> > +
+> > +		if (IS_ERR_OR_NULL(page)) {
+> > +			int ret = 0;
+> 
+> I see the warning below when building without CONFIG_HAVE_IOREMAP_PROT set.
+> 
+> make --silent --keep-going --jobs=32 \
+> O=/home/anders/.cache/tuxmake/builds/1244/build ARCH=arm \
+> CROSS_COMPILE=arm-linux-gnueabihf- /home/anders/src/kernel/next/mm/memory.c: In function '__access_remote_vm':
+> /home/anders/src/kernel/next/mm/memory.c:5608:29: warning: unused variable 'ret' [-Wunused-variable]
+>  5608 |                         int ret = 0;
+>       |                             ^~~
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Thanks, I did the obvious.
 
->  static inline bool checkpoint_restore_ns_capable(struct user_namespace *=
-ns)
->  {
-> -       return ns_capable(ns, CAP_CHECKPOINT_RESTORE) ||
-> -               ns_capable(ns, CAP_SYS_ADMIN);
-> +       return ns_capable_any(ns, CAP_CHECKPOINT_RESTORE, CAP_SYS_ADMIN);
->  }
->
->  /* audit system wants to get cap info from files as well */
-> --
-> 2.40.1
->
->
+Also s/ret/res/, as `ret' is kinda reserved for "this is what this
+function will return".
+
+--- a/mm/memory.c~mm-gup-remove-vmas-parameter-from-get_user_pages_remote-fix
++++ a/mm/memory.c
+@@ -5605,11 +5605,11 @@ int __access_remote_vm(struct mm_struct
+ 							     gup_flags, &vma);
+ 
+ 		if (IS_ERR_OR_NULL(page)) {
+-			int ret = 0;
+-
+ #ifndef CONFIG_HAVE_IOREMAP_PROT
+ 			break;
+ #else
++			int res = 0;
++
+ 			/*
+ 			 * Check if this is a VM_IO | VM_PFNMAP VMA, which
+ 			 * we can access using slightly different code.
+@@ -5617,11 +5617,11 @@ int __access_remote_vm(struct mm_struct
+ 			if (!vma)
+ 				break;
+ 			if (vma->vm_ops && vma->vm_ops->access)
+-				ret = vma->vm_ops->access(vma, addr, buf,
++				res = vma->vm_ops->access(vma, addr, buf,
+ 							  len, write);
+-			if (ret <= 0)
++			if (res <= 0)
+ 				break;
+-			bytes = ret;
++			bytes = res;
+ #endif
+ 		} else {
+ 			bytes = len;
+_
+
