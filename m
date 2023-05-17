@@ -2,169 +2,107 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E44C7EE2E
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 May 2023 22:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29589C7EE2A
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 May 2023 01:18:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229994AbjEPWCY (ORCPT
+        id S231419AbjEQBSo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 May 2023 18:02:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44036 "EHLO
+        Tue, 16 May 2023 21:18:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbjEPWCW (ORCPT
+        with ESMTP id S229552AbjEQBSn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 May 2023 18:02:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24A0CB4;
-        Tue, 16 May 2023 15:02:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B587363CF5;
-        Tue, 16 May 2023 22:02:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C90F7C433EF;
-        Tue, 16 May 2023 22:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1684274540;
-        bh=Xn5gFOegvDQoAs6fV+QPMtWJd/9gIN1gu+8PHj8jATQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=I8HmcSl3RSMNgObVi4nyzA8Dn0pIVn3Hyd4M9+6+jiCnOIEHPDAD1katsykkWAiMa
-         gn5fQMZJ0CFmK2NC9H7JKcNfD2tVhwbbUSeGJQe61+ttSYu+uB1762WRf9rvoaH/7u
-         R2FZf07p1aiooDIDhn5t28F6IgINIJ5khA8X4Fo4=
-Date:   Tue, 16 May 2023 15:02:18 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v5 3/6] mm/gup: remove vmas parameter from
- get_user_pages_remote()
-Message-Id: <20230516150218.477c5e9d0a2d9ef8b057069c@linux-foundation.org>
-In-Reply-To: <20230516094919.GA411@mutt>
-References: <cover.1684097001.git.lstoakes@gmail.com>
-        <afe323639b7bda066ee5c7a6cca906f5ad8df940.1684097002.git.lstoakes@gmail.com>
-        <20230516094919.GA411@mutt>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Tue, 16 May 2023 21:18:43 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDCA9269D;
+        Tue, 16 May 2023 18:18:41 -0700 (PDT)
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34H17jt8025818;
+        Wed, 17 May 2023 01:18:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=KmU7UPnAnSf6c1RNg/uFbRLIxBBlxHBio2SWVAbWWFM=;
+ b=kbWjXyzASgiEX9FLUfizn4xO+bz7/O3QPlo7Vb5LXbvLHruiNJHKdImjWUzHk7pAQJEf
+ KzIqx+aWe6+MeW7nVfhkNDkWeS/GII0/izK7m90GkWdbPs02dAjLXaKqWutzZ/NIqO4Z
+ rkVQvWPp+L3fssSVHg+BTIUyIj3KIJvRdOMqGtUIMcnwRTuxaPgpRPv40HyWjvM5Ijxn
+ K8ii4yRFb8EytsGXLltuKR3mPKxxzlt6+G4A8oTJytdpn6DhuOYJG5ogY8r/3lLULQHH
+ Waf7ZL+XZ98o0KcPzRg4x5SWNOAHBhIM9o0/9ZWQC5stuqQ52LeFpLSKfIL9whhffPQE sw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qmmbu16kb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 17 May 2023 01:18:14 +0000
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34H1GJC0029300;
+        Wed, 17 May 2023 01:18:13 GMT
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qmmbu16jw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 17 May 2023 01:18:13 +0000
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34GLiqVg009219;
+        Wed, 17 May 2023 01:18:13 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([9.208.129.116])
+        by ppma04wdc.us.ibm.com (PPS) with ESMTPS id 3qj265k57v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 17 May 2023 01:18:12 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34H1IBGG52494720
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 May 2023 01:18:12 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D1C0C5805E;
+        Wed, 17 May 2023 01:18:11 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B89C58059;
+        Wed, 17 May 2023 01:18:09 +0000 (GMT)
+Received: from sig-9-77-133-203.ibm.com (unknown [9.77.133.203])
+        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 17 May 2023 01:18:09 +0000 (GMT)
+Message-ID: <d96f5b8ef6f4afdcae1a3be776d10749bf0b4984.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/3] KEYS: DigitalSignature link restriction
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>, dhowells@redhat.com,
+        dwmw2@infradead.org
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, jlee@suse.com, kanth.ghatraju@oracle.com,
+        konrad.wilk@oracle.com, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Tue, 16 May 2023 21:18:07 -0400
+In-Reply-To: <20230508220708.2888510-2-eric.snowberg@oracle.com>
+References: <20230508220708.2888510-1-eric.snowberg@oracle.com>
+         <20230508220708.2888510-2-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: XMO5lPHlzZjAtUWe1T3poojACAQ46MFQ
+X-Proofpoint-GUID: PW6OjyfkjRZcuKRr-tKInEv9N3JM2dEP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-16_14,2023-05-16_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
+ phishscore=0 spamscore=0 impostorscore=0 mlxlogscore=975 malwarescore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305170006
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 16 May 2023 11:49:19 +0200 Anders Roxell <anders.roxell@linaro.org> wrote:
-
-> On 2023-05-14 22:26, Lorenzo Stoakes wrote:
-> > The only instances of get_user_pages_remote() invocations which used the
-> > vmas parameter were for a single page which can instead simply look up the
-> > VMA directly. In particular:-
-> > 
-> > - __update_ref_ctr() looked up the VMA but did nothing with it so we simply
-> >   remove it.
-> > 
-> > - __access_remote_vm() was already using vma_lookup() when the original
-> >   lookup failed so by doing the lookup directly this also de-duplicates the
-> >   code.
-> > 
-> > We are able to perform these VMA operations as we already hold the
-> > mmap_lock in order to be able to call get_user_pages_remote().
-> > 
-> > As part of this work we add get_user_page_vma_remote() which abstracts the
-> > VMA lookup, error handling and decrementing the page reference count should
-> > the VMA lookup fail.
-> > 
-> > This forms part of a broader set of patches intended to eliminate the vmas
-> > parameter altogether.
-> > 
-> > -		int bytes, ret, offset;
-> > +		int bytes, offset;
-> >  		void *maddr;
-> > -		struct page *page = NULL;
-> > +		struct vm_area_struct *vma;
-> > +		struct page *page = get_user_page_vma_remote(mm, addr,
-> > +							     gup_flags, &vma);
-> > +
-> > +		if (IS_ERR_OR_NULL(page)) {
-> > +			int ret = 0;
+On Mon, 2023-05-08 at 18:07 -0400, Eric Snowberg wrote:
+> Add a new link restriction.  Restrict the addition of keys in a keyring
+> based on the key having digitalSignature usage set. Additionally, verify
+> the new certificate against the ones in the system keyrings.  Add two
+> additional functions to use the new restriction within either the builtin
+> or secondary keyrings.
 > 
-> I see the warning below when building without CONFIG_HAVE_IOREMAP_PROT set.
-> 
-> make --silent --keep-going --jobs=32 \
-> O=/home/anders/.cache/tuxmake/builds/1244/build ARCH=arm \
-> CROSS_COMPILE=arm-linux-gnueabihf- /home/anders/src/kernel/next/mm/memory.c: In function '__access_remote_vm':
-> /home/anders/src/kernel/next/mm/memory.c:5608:29: warning: unused variable 'ret' [-Wunused-variable]
->  5608 |                         int ret = 0;
->       |                             ^~~
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 
-Thanks, I did the obvious.
+Thanks, Eric.
 
-Also s/ret/res/, as `ret' is kinda reserved for "this is what this
-function will return".
-
---- a/mm/memory.c~mm-gup-remove-vmas-parameter-from-get_user_pages_remote-fix
-+++ a/mm/memory.c
-@@ -5605,11 +5605,11 @@ int __access_remote_vm(struct mm_struct
- 							     gup_flags, &vma);
- 
- 		if (IS_ERR_OR_NULL(page)) {
--			int ret = 0;
--
- #ifndef CONFIG_HAVE_IOREMAP_PROT
- 			break;
- #else
-+			int res = 0;
-+
- 			/*
- 			 * Check if this is a VM_IO | VM_PFNMAP VMA, which
- 			 * we can access using slightly different code.
-@@ -5617,11 +5617,11 @@ int __access_remote_vm(struct mm_struct
- 			if (!vma)
- 				break;
- 			if (vma->vm_ops && vma->vm_ops->access)
--				ret = vma->vm_ops->access(vma, addr, buf,
-+				res = vma->vm_ops->access(vma, addr, buf,
- 							  len, write);
--			if (ret <= 0)
-+			if (res <= 0)
- 				break;
--			bytes = ret;
-+			bytes = res;
- #endif
- 		} else {
- 			bytes = len;
-_
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
