@@ -2,103 +2,187 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8899C77B7A
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 May 2023 01:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F994C77B75
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 May 2023 12:47:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231549AbjEQBTQ (ORCPT
+        id S231724AbjEQMr1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 May 2023 21:19:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37366 "EHLO
+        Wed, 17 May 2023 08:47:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231530AbjEQBTL (ORCPT
+        with ESMTP id S229654AbjEQMrZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 May 2023 21:19:11 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CED3946B8;
-        Tue, 16 May 2023 18:18:57 -0700 (PDT)
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34H1Brql017084;
-        Wed, 17 May 2023 01:18:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=vIE2W4w77++8cdSRWw17/uGI+S/ioy1NWgJSZqgWq0k=;
- b=Say9xVllENx5owHUYNktS930wTKTj8lYf4apWDiNJdmpkFN1fzA4xTIhwLDuA4L5zsrJ
- 34n+lbO/P2Lmr4FjE3CSCZdrofFeXXRTgioGz0U31BpRh4j7QfSA6HxxtJHPjE0h1Sz6
- diqtBA7PNZlLOjYUt07LJF6fcl3T1cJj4Hzxusz8QC2ccj1toR2v+26xc2GOHeaFRcM5
- sC0o7moIQWWxPEHc04l39r7n/5Zqwdc8+LYNW5gtJkkzkJ7LSeG5dsV5Kz7lwoSYhjsz
- NmyMY+IZJtnGzfD6VzClwT0I/cRc4J/Kd0Y9GDj1Ql99a2GJ1rRRFPeylz+stamOoldo zw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qmn22r4hu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 17 May 2023 01:18:36 +0000
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34H1EoQV024877;
-        Wed, 17 May 2023 01:18:35 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qmn22r4h6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 17 May 2023 01:18:35 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34H0JDLU025221;
-        Wed, 17 May 2023 01:18:34 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([9.208.129.119])
-        by ppma02dal.us.ibm.com (PPS) with ESMTPS id 3qj265yy73-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 17 May 2023 01:18:34 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-        by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34H1IXeB31392250
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 May 2023 01:18:33 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EE9915805D;
-        Wed, 17 May 2023 01:18:32 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C63755805C;
-        Wed, 17 May 2023 01:18:30 +0000 (GMT)
-Received: from sig-9-77-133-203.ibm.com (unknown [9.77.133.203])
-        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 17 May 2023 01:18:30 +0000 (GMT)
-Message-ID: <e8c470bcf50282680300cd04a6aba0d0dbdef035.camel@linux.ibm.com>
-Subject: Re: [PATCH 3/3] integrity: Remove EXPERIMENTAL from Kconfig
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>, dhowells@redhat.com,
-        dwmw2@infradead.org
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, jlee@suse.com, kanth.ghatraju@oracle.com,
-        konrad.wilk@oracle.com, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Tue, 16 May 2023 21:18:30 -0400
-In-Reply-To: <20230508220708.2888510-4-eric.snowberg@oracle.com>
-References: <20230508220708.2888510-1-eric.snowberg@oracle.com>
-         <20230508220708.2888510-4-eric.snowberg@oracle.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: LwaftEa0i45zaMhbeCaoP0_meuq_ur0_
-X-Proofpoint-GUID: YOAFi2lIcuThCqoQJupaJ-ottlMst4CO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-16_14,2023-05-16_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- suspectscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
- malwarescore=0 spamscore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
- definitions=main-2305170006
+        Wed, 17 May 2023 08:47:25 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7A61512C;
+        Wed, 17 May 2023 05:47:24 -0700 (PDT)
+Received: from [192.168.254.32] (unknown [47.186.50.133])
+        by linux.microsoft.com (Postfix) with ESMTPSA id D164820F069A;
+        Wed, 17 May 2023 05:47:21 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D164820F069A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1684327643;
+        bh=LhIkPpJhPvIClwJ39pJZmrIh6zoXx6jE68xfB8W+VWs=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=mumhyWRm4PGisYlV+6k79BLPaamhkccyeiIlh7D48PRTzPjbzjxh2vVIF5IMgB/kg
+         ffvKm60yYk2+lOntvrropzUTEW8F4BOwI+8ppjyBg+mNGMVj/ubDGGKoWDypVfUwG4
+         iLdY81ZYifmsEzXVwEDBYtRVqeqDXr8NLjfUncbw=
+Message-ID: <e8fcc1b8-6c0f-9556-a110-bd994d3fe3c6@linux.microsoft.com>
+Date:   Wed, 17 May 2023 07:47:20 -0500
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v1 3/9] virt: Implement Heki common code
+To:     Wei Liu <wei.liu@kernel.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Alexander Graf <graf@amazon.com>,
+        Forrest Yuan Yu <yuanyu@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        John Andersen <john.s.andersen@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Marian Rotariu <marian.c.rotariu@gmail.com>,
+        =?UTF-8?Q?Mihai_Don=c8=9bu?= <mdontu@bitdefender.com>,
+        =?UTF-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Thara Gopinath <tgopinath@microsoft.com>,
+        Will Deacon <will@kernel.org>,
+        Zahra Tarkhani <ztarkhani@microsoft.com>,
+        =?UTF-8?Q?=c8=98tefan_=c8=98icleru?= <ssicleru@bitdefender.com>,
+        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
+        virtualization@lists.linux-foundation.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+References: <20230505152046.6575-1-mic@digikod.net>
+ <20230505152046.6575-4-mic@digikod.net>
+ <ZFkxhWhjyIzrPkt8@liuwe-devbox-debian-v2>
+Content-Language: en-US
+From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+In-Reply-To: <ZFkxhWhjyIzrPkt8@liuwe-devbox-debian-v2>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-05-08 at 18:07 -0400, Eric Snowberg wrote:
-> Remove the EXPERIMENTAL from the
-> IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY Kconfig
-> now that digitalSignature usage enforcement is set.
+Sorry for the delay. See inline...
+
+On 5/8/23 12:29, Wei Liu wrote:
+> On Fri, May 05, 2023 at 05:20:40PM +0200, Mickaël Salaün wrote:
+>> From: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
+>>
+>> Hypervisor Enforced Kernel Integrity (Heki) is a feature that will use
+>> the hypervisor to enhance guest virtual machine security.
+>>
+>> Configuration
+>> =============
+>>
+>> Define the config variables for the feature. This feature depends on
+>> support from the architecture as well as the hypervisor.
+>>
+>> Enabling HEKI
+>> =============
+>>
+>> Define a kernel command line parameter "heki" to turn the feature on or
+>> off. By default, Heki is on.
 > 
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> For such a newfangled feature can we have it off by default? Especially
+> when there are unsolved issues around dynamically loaded code.
+> 
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Yes. We can certainly do that.
 
+>>
+> [...]
+>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>> index 3604074a878b..5cf5a7a97811 100644
+>> --- a/arch/x86/Kconfig
+>> +++ b/arch/x86/Kconfig
+>> @@ -297,6 +297,7 @@ config X86
+>>  	select FUNCTION_ALIGNMENT_4B
+>>  	imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
+>>  	select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+>> +	select ARCH_SUPPORTS_HEKI		if X86_64
+> 
+> Why is there a restriction on X86_64?
+> 
+
+We want to get the PoC working and reviewed on X64 first. We have tested this only on X64 so far.
+
+>>  
+>>  config INSTRUCTION_DECODER
+>>  	def_bool y
+>> diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
+>> index a6e8373a5170..42ef1e33b8a5 100644
+>> --- a/arch/x86/include/asm/sections.h
+>> +++ b/arch/x86/include/asm/sections.h
+> [...]
+>>  
+>> +#ifdef CONFIG_HEKI
+>> +
+>> +/*
+>> + * Gather all of the statically defined sections so heki_late_init() can
+>> + * protect these sections in the host page table.
+>> + *
+>> + * The sections are defined under "SECTIONS" in vmlinux.lds.S
+>> + * Keep this array in sync with SECTIONS.
+>> + */
+> 
+> This seems a bit fragile, because it requires constant attention from
+> people who care about this functionality. Can this table be
+> automatically generated?
+> 
+
+We realize that. But I don't know of a way this can be automatically generated. Also, the permissions for
+each section is specific to the use of that section. The developer who introduces a new section is the
+one who will know what the permissions should be.
+
+If any one has any ideas of how we can generate this table automatically or even just add a build time check
+of some sort, please let us know.
+
+Thanks.
+
+Madhavan
+
+> Thanks,
+> Wei.
+> 
+>> +struct heki_va_range __initdata heki_va_ranges[] = {
+>> +	{
+>> +		.va_start = _stext,
+>> +		.va_end = _etext,
+>> +		.attributes = HEKI_ATTR_MEM_NOWRITE | HEKI_ATTR_MEM_EXEC,
+>> +	},
+>> +	{
+>> +		.va_start = __start_rodata,
+>> +		.va_end = __end_rodata,
+>> +		.attributes = HEKI_ATTR_MEM_NOWRITE,
+>> +	},
+>> +#ifdef CONFIG_UNWINDER_ORC
+>> +	{
+>> +		.va_start = __start_orc_unwind_ip,
+>> +		.va_end = __stop_orc_unwind_ip,
+>> +		.attributes = HEKI_ATTR_MEM_NOWRITE,
+>> +	},
+>> +	{
+>> +		.va_start = __start_orc_unwind,
+>> +		.va_end = __stop_orc_unwind,
+>> +		.attributes = HEKI_ATTR_MEM_NOWRITE,
+>> +	},
+>> +	{
+>> +		.va_start = orc_lookup,
+>> +		.va_end = orc_lookup_end,
+>> +		.attributes = HEKI_ATTR_MEM_NOWRITE,
+>> +	},
+>> +#endif /* CONFIG_UNWINDER_ORC */
+>> +};
+>> +
