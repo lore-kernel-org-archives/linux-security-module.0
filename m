@@ -2,108 +2,112 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579A9C77B7A
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 May 2023 18:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF183C7EE2A
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 May 2023 20:44:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229483AbjERS75 (ORCPT
+        id S229934AbjERUo1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 May 2023 14:59:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43574 "EHLO
+        Thu, 18 May 2023 16:44:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230059AbjERS74 (ORCPT
+        with ESMTP id S229662AbjERUo0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 May 2023 14:59:56 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0716E52
-        for <linux-security-module@vger.kernel.org>; Thu, 18 May 2023 11:59:39 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-561e5014336so17344957b3.1
-        for <linux-security-module@vger.kernel.org>; Thu, 18 May 2023 11:59:39 -0700 (PDT)
+        Thu, 18 May 2023 16:44:26 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64877E7D
+        for <linux-security-module@vger.kernel.org>; Thu, 18 May 2023 13:44:25 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id 98e67ed59e1d1-253520adb30so1327864a91.1
+        for <linux-security-module@vger.kernel.org>; Thu, 18 May 2023 13:44:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1684436378; x=1687028378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LtBOHOwmDp9SMINU5LAjPqVHhLD9SSVab8maKjIrOho=;
-        b=A/v5w98UE3b9NLHqHa2kzJa6P+se5gh5td7rb7BYIYiUOUTG1Wv0AcVKxHsDW7H+K+
-         6XKj5cAOfXxmbtOPX+F3Tjq3bDkj3diO56tw9wm0G6VUgd4BS20xaufxQ0a41b6rNl+d
-         f/DW0DhUADqSgG8xwEpvLkUrwB8Dlvp13NXTmkTpCK9LInNztd396SEydzKZrdACYcYj
-         IZYtm7fKaxr+7VNNZMM/ZHv3nH5MO/hEqkxvq6/oHBYzOb5sarsrnPP3h7WLkrlNGEmH
-         bKDX+2VcVpxI7MGOKFmuUrTevhd4a+4Rw4jh869yTsMoIDXPvRMhQBi5efq+wBuaaLEY
-         xJmw==
+        d=chromium.org; s=google; t=1684442665; x=1687034665;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ygU6GkDtTB7PyyCUUNjlAcOm8klFTM9An5KCSiAa+24=;
+        b=bc02NjX5vo5t3nm/ZE5yn+nghUpC5WHGWyIvB5npgis+MGSOLi6OBdaVqg0b8LPBsP
+         FQvHJk46Redn4J0FjH4mGSXnSuP7cd9gk6x6kCSZlvsSCv5ayzNofww3DiwnjSbuI8YT
+         U16DI3PnJorO9VVcFMRarMb2kP4YNJXwJGwvA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684436378; x=1687028378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LtBOHOwmDp9SMINU5LAjPqVHhLD9SSVab8maKjIrOho=;
-        b=LYDazUrzKutWbnnq8OYRmst50ZkvrMpgS5EqgDNMe5qwsKtZRhoH3RIOY6dOzsdJnT
-         cc+m+Khe+6rKE7Os0scBaH7YKy1nFnft5uOhgMaY1FndfkA3t3NA3Ydl3KpcRwLeSv8D
-         S6mVhd8PkHyxg9CJcJTRY7f/hOgSL94qMeiMExZMsYMuOCLeL5CZmKZXzHXp+s1p4E9B
-         NyjZHDxsj1pJM1DIac6aHyFDU/xVcpZYfDzvbihF/2iZP0PTQyF1ae3M3YfXg4jSWDUW
-         0UjIGNrtxWwk1ett3ItiJ/yddKIO/T0S9LdgfpijdslkqzNHf1tdv/9YBAxPg5LxqqLK
-         uvKA==
-X-Gm-Message-State: AC+VfDxxTcexYNj34DRbG8odkQySygumjE0Z/SnwjhfIWBUjqCl5Un3r
-        QQsaFhTHupHqn0Ng/1EgTk33rbQA4zMHESCt5++9
-X-Google-Smtp-Source: ACHHUZ74/iXoSHc+ftLq8tme01H36+JfSuO86ZpjAPbOWNnDVIUmF3ovPG3r9WymgIzJJWKqXQmBbqEXhqCl/FofgPY=
-X-Received: by 2002:a25:ac19:0:b0:b95:9b76:34a5 with SMTP id
- w25-20020a25ac19000000b00b959b7634a5mr1917345ybi.64.1684436378606; Thu, 18
- May 2023 11:59:38 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684442665; x=1687034665;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ygU6GkDtTB7PyyCUUNjlAcOm8klFTM9An5KCSiAa+24=;
+        b=gLDM50ivqX0ghbCAX6ivppCvnTxl6MRBlgclxxnnwsLYn1b9/98yygprNY1jNZNguI
+         NhSNUaMVdOl8ubezTpfhKt4BvhkY3YoAjTuihXBJDOUewqujCU85ktISfh9yDouW5Xee
+         r/T0soPK35fu0cKNPhthvvaGJjycRJH3An3sB+YMViNAvJqf+hzVzhnbdHD03J0eMCiL
+         MVPx5L7uugCTMRybo3m+EdF12w2+hbbaFGP72Jfz4fvH2piMh2DOzM5kdunhq+WYhlTa
+         iRj/o+QzbW+yihyeN7z+ZrUBgplFKKBvpUIk7mIYkFC3bPB5mHPTQ/k4ppvVhUipEZa3
+         ihlQ==
+X-Gm-Message-State: AC+VfDyG94Xt2k/nUL5pL1aNq+RIJD1NtUOtensfSmvEHDkpvd+DVaa7
+        ivy06gOBekiyYx8YFKDDoU/OTwt5NTmyf8uMxJehXQ==
+X-Google-Smtp-Source: ACHHUZ65Z8Z2+qYx24McVvidVeh7tlEKvhXvP6Lkwy3WnU+i5tH1SOo6OhiUFGotCqEK2B7/xiIp7AiOqP7leVO1Y0w=
+X-Received: by 2002:a17:90b:f91:b0:24e:e6c:794c with SMTP id
+ ft17-20020a17090b0f9100b0024e0e6c794cmr3990692pjb.38.1684442664911; Thu, 18
+ May 2023 13:44:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230503064344.45825-1-aleksandr.mikhalitsyn@canonical.com>
-In-Reply-To: <20230503064344.45825-1-aleksandr.mikhalitsyn@canonical.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 18 May 2023 14:59:27 -0400
-Message-ID: <CAHC9VhTx+6f8riuGOG40HZoaYx3F8Kf3Hm7Eb5k3-An91eMWgg@mail.gmail.com>
-Subject: Re: [PATCH v2] LSM: SafeSetID: fix UID printed instead of GID
-To:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-        mortonm@chromium.org
-Cc:     penguin-kernel@i-love.sakura.ne.jp,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230302185257.850681-1-enlightened@chromium.org>
+ <247f3194-2dd2-1414-0a4d-6e41addf5e64@digikod.net> <CAMb9sTir8Gde=DwZ9LnW2Hq7YmSZ13u_aX8AyR=JEQWGBhCvAQ@mail.gmail.com>
+ <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
+In-Reply-To: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
+From:   Shervin Oloumi <enlightened@chromium.org>
+Date:   Thu, 18 May 2023 13:44:13 -0700
+Message-ID: <CAMb9sThs2QXid0LZ3gwtfJoJUM3mpK0=nobOGpicde7jnuAJ5Q@mail.gmail.com>
+Subject: Re: [PATCH 0/1] process attribute support for Landlock
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org, jorgelo@chromium.org,
+        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
+        allenwebb@chromium.org,
+        =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+        Adrian Reber <areber@redhat.com>, criu@openvz.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 3, 2023 at 2:44=E2=80=AFAM Alexander Mikhalitsyn
-<aleksandr.mikhalitsyn@canonical.com> wrote:
->
-> pr_warn message clearly says that GID should be printed,
-> but we have UID there. Let's fix that.
->
-> Found accidentaly during the work on isolated user namespaces.
->
-> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com=
->
-> ---
-> v2: __kuid_val -> __kgid_val
-> ---
->  security/safesetid/lsm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry for the delay on this. I think there is a fundamental issue here
+that needs to be resolved first, and that is the limitation of the
+kernel that only one LSM's hook function can be called through the
+procfs attribute interface. This is a blocker for us (and I imagine
+for others), since implementing any LandLock attribute API would block
+the existing SELinux hook function, which is used to surface domain
+information. `ps` also uses it to display domain information when you
+pass `-Z`. Please note, this is independent of which path and filename
+we use for LandLock. Even when the "domain" file is placed under a
+different directory, for example `/proc/[pid]/attr/landlock/domain`
+the kernel only calls the Landlock hook function for any interaction
+with any files under attr (the kernel always calls only the hook
+function for the first loaded LSM in the kernel config). So if anyone
+in this thread has any information on whether there is work on
+progress for addressing this issue, that would be helpful.
 
-I'm assuming you're going to pick this up Micah?
+As for the patch, I will just provide what I have so far, which I
+think is more in line with the approach you suggested, so that it can
+perhaps at some point be useful, once the above limitation is
+resolved.
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
+> Yes, the approach I suggested, check the /proc/.../attr/landlock/domain
+> presence would enable you to check the landlocked state of a process. It
+> should not change much from your initial patch. In fact it will be
+> quicker to check because there is no need for the open/read/close
+> syscalls, but only faccessat2.
 
-> diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-> index e806739f7868..5be5894aa0ea 100644
-> --- a/security/safesetid/lsm.c
-> +++ b/security/safesetid/lsm.c
-> @@ -131,7 +131,7 @@ static int safesetid_security_capable(const struct cr=
-ed *cred,
->                  * set*gid() (e.g. setting up userns gid mappings).
->                  */
->                 pr_warn("Operation requires CAP_SETGID, which is not avai=
-lable to GID %u for operations besides approved set*gid transitions\n",
-> -                       __kuid_val(cred->uid));
-> +                       __kgid_val(cred->gid));
->                 return -EPERM;
->         default:
->                 /* Error, the only capabilities were checking for is CAP_=
-SETUID/GID */
-> --
-> 2.34.1
+I played around with this idea but ran into a problem; I'm not sure if
+it is possible to implement a behavior where the existence/viewability
+of the `/proc/.../attr/landlock/domain` is conditional. The `domain`
+file is predefined with set permissions in `fs/proc/base.c` (as done
+in the patch) and it is always present if landlock is enabled.
+Additionally, the `landlock_getprocattr` hook function only gets
+called when the file `/proc/.../attr/landlock/domain` is opened and
+read, so I'm not sure how the file visibility can be manipulated.
 
---=20
-paul-moore.com
+The closest way I can think of to imitate the suggested behavior is to
+return `EACCES` in the hook function if the checking process domain is
+not related to the target process domain and return "none" (indicating
+there is no Lanldock domain associated with this process) if the
+domain check passes and the target process is not landlocked. In cases
+where the access check passes (or when the checking process is not
+landlocked) and the target process is landlocked reading the file
+could just return nothing (maybe in the future this will return the
+domain ID...TBD).
