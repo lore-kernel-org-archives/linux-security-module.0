@@ -2,100 +2,110 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0C4C77B7D
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 May 2023 04:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22203C77B7D
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 May 2023 17:12:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229630AbjEREP1 (ORCPT
+        id S229601AbjERRMK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 May 2023 00:15:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35154 "EHLO
+        Thu, 18 May 2023 13:12:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229719AbjEREPZ (ORCPT
+        with ESMTP id S229558AbjERRMH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 May 2023 00:15:25 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D51CC35B6;
-        Wed, 17 May 2023 21:15:23 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id ca18e2360f4ac-76c5c806fc5so40733839f.1;
-        Wed, 17 May 2023 21:15:23 -0700 (PDT)
+        Thu, 18 May 2023 13:12:07 -0400
+Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23A24CE
+        for <linux-security-module@vger.kernel.org>; Thu, 18 May 2023 10:12:01 -0700 (PDT)
+Received: by mail-qk1-x72c.google.com with SMTP id af79cd13be357-759413d99afso744521685a.1
+        for <linux-security-module@vger.kernel.org>; Thu, 18 May 2023 10:12:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684383323; x=1686975323;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=spLvCUUdmWNpc0v6hAWkoP4Hs9NQAnjDoSHRo34PPBc=;
-        b=M+fgGI1KsN4uxP7OFN5eldgj9qwPE5yLctGM212bnqZJ66tHDWbnX0VABmANJefd7r
-         jWXEPdNsBtufCxE7OGcj7xNl+cG3qvHM1E5dVYx+jiX0Fgsp8npUOd0YXNeE2cLm4XG2
-         XglIIIA8l7GJuIrrU3pAsQVl9CAJxSrVlogZSQxABj39yx3syuUPlw+Q6A3TomcU1Bzc
-         o24ZOhvNIIEp+oZ/qqK1SKcy6Ip+BTgN55FXWXOrPIOUK0M4T8WF2UxsCHaq5Ns/+DST
-         EOsVNb1kuq4FFmj+JWhXZILXkLcyFHhPJuyRldk9yEPMWd9gM4szHuxWuddeXhStcjDO
-         /CPw==
+        d=paul-moore.com; s=google; t=1684429920; x=1687021920;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cecl9/VHNrUpwV+RdOSr5dFrFgITmiZdkzQ3/+k+0yQ=;
+        b=a2ydk4ldMY3LUl/eE5ctuLgxGkcOXHpcEF1REqj9U4oziCWpBY7+M1vl0aAg3jH8fD
+         Eh1j2EKiYtpxeu4ZuwGEJRyWSb8rVw3GkQtuSsnxjYE24+z5ChkSv3wZJLfgNGw0j18E
+         ktmjgCXabZREwUYoe7Gv5/MOihuM2iCS8awmKQPm/hZfXx1jW6Ws6KUYCsO0+3A8bfPV
+         mC4nwI8ApCqRevArqH7TLyOEMH/ILfHRICm0MD+qkRiCOSUpmipB2ajOA75f2KCVto8r
+         gH0OV0GJS+ksdWhZnnhvHGwj4IMBNrJCDeHg1FyxTWcuUbVXWeEzkh6FLvCVXOgUORAx
+         nkeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684383323; x=1686975323;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=spLvCUUdmWNpc0v6hAWkoP4Hs9NQAnjDoSHRo34PPBc=;
-        b=leTxfcdL0RWxxgaqSb9OaD5AIEPKxmISfFUSTv1cOiIYb2MroDEQSP+k1NHb3ORPpl
-         KjeLYh/NI17Ff5/FbhGRXlxRW98/JHd1pSYcZ1kSOivOKScWKMku86XKL/21WWBTWEvc
-         I7b6V04++kuKB3q0h8R6oHBga2mZUwGltPgSDPYCUNJc3vLln5YRZQ4wPYvlQYjDB41u
-         snSZtUsVJrxb0bDAMhJDTZE2IpNrlmZsAnCaqblPs2r+tbAkGPR4IGgxyj61uwnjAGWL
-         dnGw/feOQqGns08fceObK94cf5q0iAJZf4NFUL4UNoCInvooG2JM+CeFfuRfM/DrmHpj
-         3JeA==
-X-Gm-Message-State: AC+VfDxrVQxRuULO7AyyP7km+mRHlGwF9WBztZX445upsknqoUTmJyrz
-        P5SnNt805jlCUI3OXABGI8M2Hl3+sFsywQ==
-X-Google-Smtp-Source: ACHHUZ683AatBk2T4OWvGqlk312/OLg7GFAvJQQB5cy7mmf4aNJgDdnr+/se0OezGfs/M1idcGe3Fg==
-X-Received: by 2002:a05:6602:cb:b0:760:b591:e651 with SMTP id z11-20020a05660200cb00b00760b591e651mr5738160ioe.13.1684383322979;
-        Wed, 17 May 2023 21:15:22 -0700 (PDT)
-Received: from azeems-kspp.c.googlers.com.com (54.70.188.35.bc.googleusercontent.com. [35.188.70.54])
-        by smtp.gmail.com with ESMTPSA id o9-20020a5eda49000000b0076350d7c4b6sm158948iop.36.2023.05.17.21.15.22
+        d=1e100.net; s=20221208; t=1684429920; x=1687021920;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cecl9/VHNrUpwV+RdOSr5dFrFgITmiZdkzQ3/+k+0yQ=;
+        b=PQZTDUsRJNBaxngxD2JULcPU/Pu6N+TZ5YuRCPstwl9OtNyp9MQmhYm87hYJFc/Vkj
+         /H/GRtuqv2ApxpSHutkhcAP/rJ3R8mS/+GDKpO79xOQvBovVSRCqydpDvoVoQRMFGg9i
+         6+QRC0opYZNH30tvXlfZ+W1D2SEjR91g0tPI9Io1QuTEO9B/M16FFYp8fS/A7gnbx34I
+         gM+76HPyL+H0o2bvrcSCzZ0r6NK4aW2487GCztL7VP6ML0ARYYjMZTdxua0vDZoWuvVN
+         BsQH9QcMqYEdg4cTO/MrckhkR7sr02Nqyvw6ERdWsFH5XxMEZThE5PbnsV0oMDAwpHgJ
+         Wq2w==
+X-Gm-Message-State: AC+VfDyG6hWGMc09YeQNaS653nYVNQ51qvF1fczqKiN6+NamuPmOP8m6
+        05ps6JJDlimulQNacNMPYzO4
+X-Google-Smtp-Source: ACHHUZ4LsTB7q1F+LkU0VgKhIPV1d/23LQEAnPXa/KV2SBxXXGd78bsDIwfWZ/R5mwTiYrkpganOsg==
+X-Received: by 2002:ad4:5be5:0:b0:621:6804:b8c0 with SMTP id k5-20020ad45be5000000b006216804b8c0mr202874qvc.8.1684429920194;
+        Thu, 18 May 2023 10:12:00 -0700 (PDT)
+Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
+        by smtp.gmail.com with ESMTPSA id ep10-20020a05621418ea00b0062162d2c0d5sm648447qvb.68.2023.05.18.10.11.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 May 2023 21:15:22 -0700 (PDT)
-From:   Azeem Shaikh <azeemshaikh38@gmail.com>
-To:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-hardening@vger.kernel.org,
-        Azeem Shaikh <azeemshaikh38@gmail.com>,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
+        Thu, 18 May 2023 10:11:59 -0700 (PDT)
+Date:   Thu, 18 May 2023 13:11:58 -0400
+Message-ID: <2a3b77fc369dd3b3e611db00c992060d.paul@paul-moore.com>
+From:   Paul Moore <paul@paul-moore.com>
+To:     Matthieu Baerts <matthieu.baerts@tessares.net>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH] KEYS: Replace all non-returning strlcpy with strscpy
-Date:   Thu, 18 May 2023 04:15:13 +0000
-Message-ID: <20230518041513.1669386-1-azeemshaikh38@gmail.com>
-X-Mailer: git-send-email 2.40.1.606.ga4b1b128d6-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>
+Cc:     Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>, mptcp@lists.linux.dev,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Matthieu Baerts <matthieu.baerts@tessares.net>
+Subject: Re: [PATCH v2 1/2] security, lsm: Introduce  security_mptcp_add_subflow()
+References: <20230419-upstream-lsm-next-20230419-mptcp-sublows-user-ctx-v2-1-e7a3c8c15676@tessares.net>
+In-Reply-To: <20230419-upstream-lsm-next-20230419-mptcp-sublows-user-ctx-v2-1-e7a3c8c15676@tessares.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-strlcpy() reads the entire source buffer first.
-This read may exceed the destination size limit.
-This is both inefficient and can lead to linear read
-overflows if a source string is not NUL-terminated [1].
-In an effort to remove strlcpy() completely [2], replace
-strlcpy() here with strscpy().
-No return values were used, so direct replacement is safe.
+On Apr 20, 2023 Matthieu Baerts <matthieu.baerts@tessares.net> wrote:
+> 
+> MPTCP can create subflows in kernel context, and later indirectly
+> expose them to user-space, via the owning MPTCP socket.
+> 
+> As discussed in the reported link, the above causes unexpected failures
+> for server, MPTCP-enabled applications.
+> 
+> Let's introduce a new LSM hook to allow the security module to relabel
+> the subflow according to the owning user-space process, via the MPTCP
+> socket owning the subflow.
+> 
+> Note that the new hook requires both the MPTCP socket and the new
+> subflow. This could allow future extensions, e.g. explicitly validating
+> the MPTCP <-> subflow linkage.
+> 
+> Link: https://lore.kernel.org/mptcp/CAHC9VhTNh-YwiyTds=P1e3rixEDqbRTFj22bpya=+qJqfcaMfg@mail.gmail.com/
+> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+> Acked-by: Matthieu Baerts <matthieu.baerts@tessares.net>
+> Signed-off-by: Matthieu Baerts <matthieu.baerts@tessares.net>
+> ---
+> v2:
+>  - Address Paul's comments:
+>    - clarification around "the owning process" in the commit message
+>    - making it clear the hook has to be called after the sk init part
+>    - consistent capitalization of "MPTCP"
+> ---
+>  include/linux/lsm_hook_defs.h |  1 +
+>  include/linux/security.h      |  6 ++++++
+>  net/mptcp/subflow.c           |  6 ++++++
+>  security/security.c           | 17 +++++++++++++++++
+>  4 files changed, 30 insertions(+)
 
-[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strlcpy
-[2] https://github.com/KSPP/linux/issues/89
+This looks good to me, merged into selinux/next - thank you for all
+the work that went into this!
 
-Signed-off-by: Azeem Shaikh <azeemshaikh38@gmail.com>
----
- security/keys/request_key_auth.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-index 41e9735006d0..8f33cd170e42 100644
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -178,7 +178,7 @@ struct key *request_key_auth_new(struct key *target, const char *op,
- 	if (!rka->callout_info)
- 		goto error_free_rka;
- 	rka->callout_len = callout_len;
--	strlcpy(rka->op, op, sizeof(rka->op));
-+	strscpy(rka->op, op, sizeof(rka->op));
- 
- 	/* see if the calling process is already servicing the key request of
- 	 * another process */
-
+--
+paul-moore.com
