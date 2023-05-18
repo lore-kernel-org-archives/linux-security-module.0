@@ -2,218 +2,224 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B58ADC77B73
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 May 2023 20:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF6BC77B7A
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 May 2023 20:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230081AbjERUqF (ORCPT
+        id S229613AbjERUqr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 May 2023 16:46:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54788 "EHLO
+        Thu, 18 May 2023 16:46:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbjERUqF (ORCPT
+        with ESMTP id S229498AbjERUqq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 May 2023 16:46:05 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B444EE77
-        for <linux-security-module@vger.kernel.org>; Thu, 18 May 2023 13:46:03 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id 41be03b00d2f7-51f6461af24so1648882a12.2
-        for <linux-security-module@vger.kernel.org>; Thu, 18 May 2023 13:46:03 -0700 (PDT)
+        Thu, 18 May 2023 16:46:46 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01B83E77
+        for <linux-security-module@vger.kernel.org>; Thu, 18 May 2023 13:46:42 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-562191bcfb9so2007517b3.3
+        for <linux-security-module@vger.kernel.org>; Thu, 18 May 2023 13:46:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1684442763; x=1687034763;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1684442801; x=1687034801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=os7qSS/m4bQFZnkpMP/L7Wevy8wc/LYfrUdq+QtdCTg=;
-        b=hbz4jZakYkUHyJ3bH0I6LaTNC8GCU/1RjtSiOlyFcWLPRiM0C4zw97ggug6R30s+gx
-         lkkhZ1kzcfMVrKon/3D4upYuXicpFJn4uNbb2YSz4zFex+m9ZJYNbuplnm9O/kpNqty2
-         niA+gRwcR2TpbvR8rqIPCO6/k0oJjQ5I811Ek=
+        bh=ceRGVx/G/DIAtzoiWa4XydM/1i0e0FVfY4COrvhs3MU=;
+        b=f3lAmIY6pXJsw2oWtyM6mMS+jpx4Rl6M61SR+LixhHxuPTSkl55UpVUTtpqAtW3ECd
+         SkSHp6dsMUTIQRXyCa/VmIfIQde+Cblzk7shN4RTrv0X6+n3vGG+Rboae9GqEYkOzbRt
+         KgJC4j0T2KzDHYkhHZ05XlH1G54OSrIQTPu/TmiNKqM+2WhiNsqvxquIj/YfL2hni7Md
+         oLXb4ehJX/DBoA8ETkFhdpgb7nXMYkogVAbgvK9UgJAEoqNteYa2Z0jVmt37lwJAt8Nq
+         jT8MDtSQh8Fn9jZ8VpWQo29agACImh5m8pOaCUvbjB82agUALx82/JX/2CzsKZYI+Kzg
+         1NVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684442763; x=1687034763;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1684442801; x=1687034801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=os7qSS/m4bQFZnkpMP/L7Wevy8wc/LYfrUdq+QtdCTg=;
-        b=K+OSBQgaIYGMhq17BgBegrkEd77OuQ4w3jUO3RHlzlcIm5Ay5MxM+qbpAh0RCi4NJa
-         DG6Ai2+jw6rS6ZL2//fUDJtroLnMTBhwxBBDhItl5mWIn/9rdxLd9KDxuF0zl+YBeWgK
-         RdJkI5+RJQ79YCLvJ7Tl/T27yYBQDbyQZ8xrN1LaKtXWm5K9Wa/TbryKVhTfz2nY+CZX
-         t3W1ep6Sf9P0WWKTo7uaJJXO5Cl1/zYkUvdOh148GDCoIYClKfYUAIz31FtwwkjL4Ra0
-         Tek1KKZ/1kbUokzMSLyOQ+EI+4oqwo0JH1vX7rHG/JPJIAYqmdioDYADJQlK93O6Ymj3
-         4qHg==
-X-Gm-Message-State: AC+VfDwLrZNELjrBYtFy9wPjCiGeUfCux+q8JIaHz76PMjptalshdhRe
-        jdQLGdoS9JBmXDM708Q9xJkKcA==
-X-Google-Smtp-Source: ACHHUZ6ggR4soG8vb+luaw3zbN99oqAEaWuuBehqtbNYw2uEof6brxXzCArmM7sjiY322QPedXHD/w==
-X-Received: by 2002:a17:902:82c4:b0:1ae:72fc:a625 with SMTP id u4-20020a17090282c400b001ae72fca625mr325645plz.37.1684442763184;
-        Thu, 18 May 2023 13:46:03 -0700 (PDT)
-Received: from enlightened2.mtv.corp.google.com ([2620:15c:9d:6:1d0:be0c:577f:1a49])
-        by smtp.gmail.com with ESMTPSA id jj10-20020a170903048a00b001a2104d706fsm1859517plb.225.2023.05.18.13.46.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 May 2023 13:46:02 -0700 (PDT)
-From:   Shervin Oloumi <enlightened@chromium.org>
-To:     mic@digikod.net
-Cc:     linux-security-module@vger.kernel.org, jorgelo@chromium.org,
-        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
-        allenwebb@chromium.org, gnoack3000@gmail.com, areber@redhat.com,
-        criu@openvz.org, linux-api@vger.kernel.org, jannh@google.com,
-        brauner@kernel.org, Shervin Oloumi <enlightened@chromium.org>
-Subject: [PATCH v2] lsm: adds process attribute getter for Landlock
-Date:   Thu, 18 May 2023 13:45:28 -0700
-Message-ID: <20230518204549.3139044-1-enlightened@chromium.org>
-X-Mailer: git-send-email 2.40.1.698.g37aff9b760-goog
-In-Reply-To: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
-References: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
+        bh=ceRGVx/G/DIAtzoiWa4XydM/1i0e0FVfY4COrvhs3MU=;
+        b=QINPsr1BOvDp9KDBZK3sHL3YZOzsjKdWj3+reWxLV4qRmAK+xHdWSNP/BUnxRZ5dE1
+         9/WU4K+MnUJozmoJ/mL+bph15z+ve7xR6oKBqPZGmidqbTWm4k50wwCeGUVKXsO4JI59
+         iqAQt03Yn6pH1l2BUoJwCp8qPe8soewL+cXotboRK+hHK+v4+Fal+G8dW5VanRUafGPH
+         vpFcmzGQnVUZk6GhofWy5HiklqZD68QE104cZlGvCFEh9E5aZo/oUQpqXMy40m4GzQf7
+         glJvMvKoIMExM6Ny+wBmur3YoJhU1TljCt+42eYDPYded9C4IelzVkBZr6CrlglKRL2P
+         p3Pw==
+X-Gm-Message-State: AC+VfDyiQ5oRc15svh6ct2tQ/qUbmWbvgJW1P2yWm6m16Ki1Wko//DuW
+        HZ9AB9BOas048HVlzz4cDCcGa3krE8m7vijaGj3V
+X-Google-Smtp-Source: ACHHUZ4eL17jrcySmxt9X35Rh5Et3YQ+GGqU79cdnwTL2tIi9T9iIRnbebiNAOfzGfnlla+q/zh/RWedcu4H6IybIdI=
+X-Received: by 2002:a25:aba5:0:b0:ba8:1089:3338 with SMTP id
+ v34-20020a25aba5000000b00ba810893338mr264525ybi.39.1684442801146; Thu, 18 May
+ 2023 13:46:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+ <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org> <cbffa3dee65ecc0884dd16eb3af95c09a28f4297.camel@linux.ibm.com>
+In-Reply-To: <cbffa3dee65ecc0884dd16eb3af95c09a28f4297.camel@linux.ibm.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 18 May 2023 16:46:30 -0400
+Message-ID: <CAHC9VhSeBn-4UN48NcQWhJqLvQuydt4OvdyUsk9AXcviJ9Cqyw@mail.gmail.com>
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after writes
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Adds a new getprocattr hook function to the Landlock LSM, which tracks
-the landlocked state of the process. This is invoked when user-space
-reads /proc/[pid]/attr/domain to determine whether a given process is
-sand-boxed using Landlock. When the target process is not sand-boxed,
-the result is "none", otherwise the result is empty, as we still need to
-decide what kind of domain information is best to provide in "domain".
+On Fri, Apr 21, 2023 at 10:44=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> w=
+rote:
+> On Fri, 2023-04-07 at 09:29 -0400, Jeff Layton wrote:
+> > > > > >
+> > > > > > I would ditch the original proposal in favor of this 2-line pat=
+ch shown here:
+> > > > > >
+> > > > > > https://lore.kernel.org/linux-integrity/a95f62ed-8b8a-38e5-e468=
+-ecbde3b221af@linux.ibm.com/T/#m3bd047c6e5c8200df1d273c0ad551c645dd43232
+> > >
+> > > We should cool it with the quick hacks to fix things. :)
+> > >
+> >
+> > Yeah. It might fix this specific testcase, but I think the way it uses
+> > the i_version is "gameable" in other situations. Then again, I don't
+> > know a lot about IMA in this regard.
+> >
+> > When is it expected to remeasure? If it's only expected to remeasure on
+> > a close(), then that's one thing. That would be a weird design though.
+>
+> Historical background:
+>
+> Prior to IMA being upstreamed there was a lot of discussion about how
+> much/how frequently to measure files.  Re-measuring files after each
+> write would impact performance.  Instead of re-measuring files after
+> each write, if a file already opened for write was opened for read
+> (open writers) or a file already opened for read was opened for write
+> (Time of Measure/Time of Use) the IMA meausrement list was invalidated
+> by including a violation record in the measurement list.
+>
+> Only the BPRM hook prevents a file from being opened for write.
+>
+> >
+> > > > > >
+> > > > > >
+> > > > >
+> > > > > Ok, I think I get it. IMA is trying to use the i_version from the
+> > > > > overlayfs inode.
+> > > > >
+> > > > > I suspect that the real problem here is that IMA is just doing a =
+bare
+> > > > > inode_query_iversion. Really, we ought to make IMA call
+> > > > > vfs_getattr_nosec (or something like it) to query the getattr rou=
+tine in
+> > > > > the upper layer. Then overlayfs could just propagate the results =
+from
+> > > > > the upper layer in its response.
+> > > > >
+> > > > > That sort of design may also eventually help IMA work properly wi=
+th more
+> > > > > exotic filesystems, like NFS or Ceph.
+> > > > >
+> > > > >
+> > > > >
+> > > >
+> > > > Maybe something like this? It builds for me but I haven't tested it=
+. It
+> > > > looks like overlayfs already should report the upper layer's i_vers=
+ion
+> > > > in getattr, though I haven't tested that either:
+> > > >
+> > > > -----------------------8<---------------------------
+> > > >
+> > > > [PATCH] IMA: use vfs_getattr_nosec to get the i_version
+> > > >
+> > > > IMA currently accesses the i_version out of the inode directly when=
+ it
+> > > > does a measurement. This is fine for most simple filesystems, but c=
+an be
+> > > > problematic with more complex setups (e.g. overlayfs).
+> > > >
+> > > > Make IMA instead call vfs_getattr_nosec to get this info. This allo=
+ws
+> > > > the filesystem to determine whether and how to report the i_version=
+, and
+> > > > should allow IMA to work properly with a broader class of filesyste=
+ms in
+> > > > the future.
+> > > >
+> > > > Reported-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > ---
+> > >
+> > > So, I think we want both; we want the ovl_copyattr() and the
+> > > vfs_getattr_nosec() change:
+> > >
+> > > (1) overlayfs should copy up the inode version in ovl_copyattr(). Tha=
+t
+> > >     is in line what we do with all other inode attributes. IOW, the
+> > >     overlayfs inode's i_version counter should aim to mirror the
+> > >     relevant layer's i_version counter. I wouldn't know why that
+> > >     shouldn't be the case. Asking the other way around there doesn't
+> > >     seem to be any use for overlayfs inodes to have an i_version that
+> > >     isn't just mirroring the relevant layer's i_version.
+> >
+> > It's less than ideal to do this IMO, particularly with an IS_I_VERSION
+> > inode.
+> >
+> > You can't just copy up the value from the upper. You'll need to call
+> > inode_query_iversion(upper_inode), which will flag the upper inode for =
+a
+> > logged i_version update on the next write. IOW, this could create some
+> > (probably minor) metadata write amplification in the upper layer inode
+> > with IS_I_VERSION inodes.
+> >
+> >
+> > > (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
+> > >     Currently, ima assumes that it will get the correct i_version fro=
+m
+> > >     an inode but that just doesn't hold for stacking filesystem.
+> > >
+> > > While (1) would likely just fix the immediate bug (2) is correct and
+> > > _robust_. If we change how attributes are handled vfs_*() helpers wil=
+l
+> > > get updated and ima with it. Poking at raw inodes without using
+> > > appropriate helpers is much more likely to get ima into trouble.
+> >
+> > This will fix it the right way, I think (assuming it actually works),
+> > and should open the door for IMA to work properly with networked
+> > filesystems that support i_version as well.
+>
+> On a local filesystem, there are guarantees that the calculated file
+> hash is that of the file being used.  Reminder IMA reads a file, page
+> size chunk at a time into a single buffer, calculating the file hash.
+> Once the file hash is calculated, the memory is freed.
+>
+> There are no guarantees on a fuse filesystem, for example, that the
+> original file read and verified is the same as the one being executed.
+> I'm not sure that the integrity guarantees of a file on a remote
+> filesystem will be the same as those on a local file system.
+>
+> >
+> > Note that there Stephen is correct that calling getattr is probably
+> > going to be less efficient here since we're going to end up calling
+> > generic_fillattr unnecessarily, but I still think it's the right thing
+> > to do.
+> >
+> > If it turns out to cause measurable performance regressions though,
+> > maybe we can look at adding a something that still calls ->getattr if i=
+t
+> > exists but only returns the change_cookie value.
+>
+> Sure.  For now,
+>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-The hook function also performs an access check. The request is rejected
-if the tracing process is the same as the target process, or if the
-tracing process domain is not an ancestor to the target process domain.
+I'm going through my review queue to make sure I haven't missed
+anything and this thread popped up ... Stefan, Mimi, did you get a fix
+into an upstream tree somewhere?  If not, is it because you are
+waiting on a review/merge from me into the LSM tree?
 
-Adds a new directory for landlock under the process attribute
-filesystem, and defines "domain" as a read-only process attribute entry
-for landlock.
-
-Signed-off-by: Shervin Oloumi <enlightened@chromium.org>
----
- fs/proc/base.c             | 11 +++++++++++
- security/landlock/fs.c     | 38 ++++++++++++++++++++++++++++++++++++++
- security/landlock/fs.h     |  1 +
- security/landlock/ptrace.c |  4 ++--
- security/landlock/ptrace.h |  3 +++
- 5 files changed, 55 insertions(+), 2 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 9e479d7d202b..b257ea704666 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2851,6 +2851,13 @@ static const struct pid_entry apparmor_attr_dir_stuff[] = {
- LSM_DIR_OPS(apparmor);
- #endif
- 
-+#ifdef CONFIG_SECURITY_LANDLOCK
-+static const struct pid_entry landlock_attr_dir_stuff[] = {
-+	ATTR("landlock", "domain", 0444),
-+};
-+LSM_DIR_OPS(landlock);
-+#endif
-+
- static const struct pid_entry attr_dir_stuff[] = {
- 	ATTR(NULL, "current",		0666),
- 	ATTR(NULL, "prev",		0444),
-@@ -2866,6 +2873,10 @@ static const struct pid_entry attr_dir_stuff[] = {
- 	DIR("apparmor",			0555,
- 	    proc_apparmor_attr_dir_inode_ops, proc_apparmor_attr_dir_ops),
- #endif
-+#ifdef CONFIG_SECURITY_LANDLOCK
-+	DIR("landlock",                  0555,
-+	    proc_landlock_attr_dir_inode_ops, proc_landlock_attr_dir_ops),
-+#endif
- };
- 
- static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index adcea0fe7e68..2f8b0837a0fd 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1280,6 +1280,42 @@ static int hook_file_truncate(struct file *const file)
- 	return -EACCES;
- }
- 
-+/* process attribute interfaces */
-+
-+/**
-+ * landlock_getprocattr - Landlock process attribute getter
-+ * @task: the object task
-+ * @name: the name of the attribute in /proc/.../attr
-+ * @value: where to put the result
-+ *
-+ * Performs access checks and writes any applicable results to value
-+ *
-+ * Returns the length of the result inside value or an error code
-+ */
-+static int landlock_getprocattr(struct task_struct *task, const char *name,
-+				char **value)
-+{
-+	char *val = "";
-+	int slen;
-+
-+	// If the tracing process is landlocked, ensure its domain is an
-+	// ancestor to the target process domain.
-+	if (landlocked(current))
-+		if (current == task || !task_is_scoped(current, task))
-+			return -EACCES;
-+
-+	// The only supported attribute is "domain".
-+	if (strcmp(name, "domain") != 0)
-+		return -EINVAL;
-+
-+	if (!landlocked(task))
-+		val = "none";
-+
-+	slen = strlen(val);
-+	*value = val;
-+	return slen;
-+}
-+
- static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_free_security, hook_inode_free_security),
- 
-@@ -1302,6 +1338,8 @@ static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(file_alloc_security, hook_file_alloc_security),
- 	LSM_HOOK_INIT(file_open, hook_file_open),
- 	LSM_HOOK_INIT(file_truncate, hook_file_truncate),
-+
-+	LSM_HOOK_INIT(getprocattr, landlock_getprocattr),
- };
- 
- __init void landlock_add_fs_hooks(void)
-diff --git a/security/landlock/fs.h b/security/landlock/fs.h
-index 488e4813680a..64145e8b5537 100644
---- a/security/landlock/fs.h
-+++ b/security/landlock/fs.h
-@@ -13,6 +13,7 @@
- #include <linux/init.h>
- #include <linux/rcupdate.h>
- 
-+#include "ptrace.h"
- #include "ruleset.h"
- #include "setup.h"
- 
-diff --git a/security/landlock/ptrace.c b/security/landlock/ptrace.c
-index 4c5b9cd71286..de943f0f3899 100644
---- a/security/landlock/ptrace.c
-+++ b/security/landlock/ptrace.c
-@@ -47,8 +47,8 @@ static bool domain_scope_le(const struct landlock_ruleset *const parent,
- 	return false;
- }
- 
--static bool task_is_scoped(const struct task_struct *const parent,
--			   const struct task_struct *const child)
-+const bool task_is_scoped(const struct task_struct *const parent,
-+			  const struct task_struct *const child)
- {
- 	bool is_scoped;
- 	const struct landlock_ruleset *dom_parent, *dom_child;
-diff --git a/security/landlock/ptrace.h b/security/landlock/ptrace.h
-index 265b220ae3bf..c6eb08951fc1 100644
---- a/security/landlock/ptrace.h
-+++ b/security/landlock/ptrace.h
-@@ -11,4 +11,7 @@
- 
- __init void landlock_add_ptrace_hooks(void);
- 
-+const bool task_is_scoped(const struct task_struct *const parent,
-+			  const struct task_struct *const child);
-+
- #endif /* _SECURITY_LANDLOCK_PTRACE_H */
--- 
-2.40.1.698.g37aff9b760-goog
-
+--=20
+paul-moore.com
