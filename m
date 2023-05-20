@@ -2,103 +2,93 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0877FC77B7A
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 May 2023 09:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8794C7EE23
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 May 2023 19:45:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbjETJRo (ORCPT
+        id S229589AbjETTpj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 20 May 2023 05:17:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41142 "EHLO
+        Sat, 20 May 2023 15:45:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229654AbjETJRn (ORCPT
+        with ESMTP id S229576AbjETTpi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 20 May 2023 05:17:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B1E61A1;
-        Sat, 20 May 2023 02:17:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 079AF60FAF;
-        Sat, 20 May 2023 09:17:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B076C433D2;
-        Sat, 20 May 2023 09:17:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684574261;
-        bh=mowLDJSazBRR389uypvAnkZ6SteMSeKtNBJ9Du8HS5g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X4zhr8OReoYGWjCxyrnnJPmEBBPax2FUJlVJ6fON3YjXnloiSN8wGWlZgfC7Z9y0X
-         aYoR8THbEudStlUXj+9y10YshY3tcQRxcWsaV4fT9H+hKDsG717IEI6JqlvctuvyKt
-         OwsCbPBAzwNGUUmoS4pANmD//mFetFtlKIWKCKqFbNatHTd5/EUzNoWWgQJNGba7d1
-         jPFD0da4bqaDI0MrBApqwJaNUMqENuhEcHIKJoXuN1PdgI/A0HIB/Wsib+HutoTS7u
-         7Yl3qYyLOIJaqcoUKvQ1dXFsHTOD+PsKsS0NDTt9NEuslShts07XAaKrVR5B5ALwVL
-         u+6l3bPVS9UYA==
-Date:   Sat, 20 May 2023 11:17:35 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        Ignaz Forster <iforster@suse.de>, Petr Vorel <pvorel@suse.cz>
-Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after
- writes
-Message-ID: <20230520-angenehm-orangen-80fdce6f9012@brauner>
-References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
- <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
+        Sat, 20 May 2023 15:45:38 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B67D119
+        for <linux-security-module@vger.kernel.org>; Sat, 20 May 2023 12:45:37 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-563b1e5f701so15224457b3.3
+        for <linux-security-module@vger.kernel.org>; Sat, 20 May 2023 12:45:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1684611936; x=1687203936;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rZlVnEh//Bei2m+UVIdsQB+nBXgq06/R1aKG4StaR3o=;
+        b=FnzMU1aUoc7SgSOL/mPW53PZpJyW0QODMJwvVAOT79n7yp38qMGF2RSZosec1+4DrW
+         VoXtvBr1bP9na/mFACe3/fllqDJNSB3K6jxIpBoLyEDrObr8AiigD6BhVluWRMA8sZ9s
+         PngVEUPthGXg0sPG6MymZSxBUmlZXXo5ba1r+6DJ98uzH6oVx5zDvwXRqQnmToC/Juv4
+         QZGd+48avKflhCdQ22aS5msAbrdgWiVX0Jt2ujo4zF/VdNyjk3IWxwfCoJKK3UdAzPOS
+         Sfbt0vUIEU2ML4Jy5BTKEMXxNH+6ZlNf+WYmrLycmnV3O4WpQxYGb40rS4QaIS4qHE9w
+         yBBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684611936; x=1687203936;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rZlVnEh//Bei2m+UVIdsQB+nBXgq06/R1aKG4StaR3o=;
+        b=gMdTq59vwZ76xuLSseF8p03L0c9q5dV46luLG499MlZ72evLZGrLqtRoWUuzUL5yp3
+         lCVcSMQvFEwsx+KBfUIXziGokxMW1kQsb6exLriNcm3np8X8vmV5RnbMyrJF0jmszHHd
+         KUr17LbS6JUQJ0REvhUXNF+7pQW/oNC1CxY4IbnL7axuOymiMWEfIohPqv12RmrrV9BS
+         2lsYaQRwFywWksdbVr6VIwloJNtiLj0jhCA7MPtbfsvQm7TGiMOQwn8uUI21V6sN5unJ
+         stXynOctbA1sCPH3fjp14qyNjN8zaTR/IYqDPVZRIXV3hcmxJqB1j5n7olpxmcZRqsm0
+         I4BQ==
+X-Gm-Message-State: AC+VfDwm9gNUYMi2z+60jED0jd8l64F2nreiCXi0nEmGbD5OSiwPNcS9
+        fDwkTQhAH2T3y9Pijt02lmYLeoku8T5Vt6QdKOe8qmurShmLqC4=
+X-Google-Smtp-Source: ACHHUZ4ZOYYVm+bVl5KotfIu7KqaAHnx26WQXQgYT8zL+9I8uNyx4rKL3TydJ6mqeupD/aoI/ZdUkIvhrqrbKNMKmq8=
+X-Received: by 2002:a0d:d993:0:b0:556:b11e:ec34 with SMTP id
+ b141-20020a0dd993000000b00556b11eec34mr6451026ywe.50.1684611936390; Sat, 20
+ May 2023 12:45:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
+References: <CAHC9VhRPvkdk6t1zkx+Y-QVP_vJRSxp+wuOO0YjyppNDLTNg7g@mail.gmail.com>
+ <f5ada796-41ba-5cc8-b43d-efd639994f15@I-love.SAKURA.ne.jp>
+In-Reply-To: <f5ada796-41ba-5cc8-b43d-efd639994f15@I-love.SAKURA.ne.jp>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sat, 20 May 2023 15:45:25 -0400
+Message-ID: <CAHC9VhQxCqALs9z0++ANjwQ99imkrecivMWgx0YtgBVOid9J5w@mail.gmail.com>
+Subject: Re: Stable backport of de3004c874e7 ("ocfs2: Switch to security_inode_init_security()")
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     linux-security-module@vger.kernel.org,
+        Valentin Vidic <vvidic@valentin-vidic.from.hr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 19, 2023 at 03:42:38PM -0400, Mimi Zohar wrote:
-> On Fri, 2023-04-07 at 10:31 +0200, Christian Brauner wrote:
-> > So, I think we want both; we want the ovl_copyattr() and the
-> > vfs_getattr_nosec() change:
-> > 
-> > (1) overlayfs should copy up the inode version in ovl_copyattr(). That
-> >     is in line what we do with all other inode attributes. IOW, the
-> >     overlayfs inode's i_version counter should aim to mirror the
-> >     relevant layer's i_version counter. I wouldn't know why that
-> >     shouldn't be the case. Asking the other way around there doesn't
-> >     seem to be any use for overlayfs inodes to have an i_version that
-> >     isn't just mirroring the relevant layer's i_version.
-> > (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
-> >     Currently, ima assumes that it will get the correct i_version from
-> >     an inode but that just doesn't hold for stacking filesystem.
-> > 
-> > While (1) would likely just fix the immediate bug (2) is correct and
-> > _robust_. If we change how attributes are handled vfs_*() helpers will
-> > get updated and ima with it. Poking at raw inodes without using
-> > appropriate helpers is much more likely to get ima into trouble.
-> 
-> In addition to properly setting the i_version for IMA, EVM has a
-> similar issue with i_generation and s_uuid. Adding them to
-> ovl_copyattr() seems to resolve it.   Does that make sense?
-> 
-> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> index 923d66d131c1..cd0aeb828868 100644
-> --- a/fs/overlayfs/util.c
-> +++ b/fs/overlayfs/util.c
-> @@ -1118,5 +1118,8 @@ void ovl_copyattr(struct inode *inode)
->  	inode->i_atime = realinode->i_atime;
->  	inode->i_mtime = realinode->i_mtime;
->  	inode->i_ctime = realinode->i_ctime;
-> +	inode->i_generation = realinode->i_generation;
-> +	if (inode->i_sb)
-> +		uuid_copy(&inode->i_sb->s_uuid, &realinode->i_sb-
+On Sat, May 20, 2023 at 1:54=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2023/05/20 6:51, Paul Moore wrote:
+> >    Finally, since security_inode_init_security(), unlike
+> >    security_old_inode_init_security(), returns zero instead of -EOPNOTS=
+UPP if
+> >    no xattrs were provided by LSMs or if inodes are private, additional=
+ly
+> >    check in ocfs2_init_security_get() if the xattr name is set.
+> >
+> >    If not, act as if security_old_inode_init_security() returned -EOPNO=
+TSUPP,
+> >    and set si->enable to zero to notify to the functions following
+> >    ocfs2_init_security_get() that no xattrs are available.
+>
+> Regarding security_inode_init_security(), similar problem was found on re=
+iserfs ...
 
-Overlayfs can consist of multiple lower layers and each of those lower
-layers may have a different uuid. So everytime you trigger a
-ovl_copyattr() on a different layer this patch would alter the uuid of
-the overlayfs superblock.
+It is likely that reiserfs lhas other issues as well, which is why I
+didn't propose the similar reiserfs patch for backporting to stable.
+The request here is only for the ocfs2 patch, which has not seen any
+problem reports and does fix at least one reported bug/panic.
 
-In addition the uuid should be set when the filesystem is mounted.
-Unless the filesystem implements a dedicated ioctl() - like ext4 - to
-change the uuid.
+Let's discuss the reiserfs patches in the other, relevant threads and
+leave this thread dedicated to the ocfs2 backport to stable.
+
+--=20
+paul-moore.com
