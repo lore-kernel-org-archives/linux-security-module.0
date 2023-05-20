@@ -2,67 +2,121 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A47A7C77B7F
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 May 2023 05:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEA2C7EE2A
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 May 2023 09:15:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229672AbjETFyZ (ORCPT
+        id S229687AbjETJPt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 20 May 2023 01:54:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39942 "EHLO
+        Sat, 20 May 2023 05:15:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjETFyZ (ORCPT
+        with ESMTP id S229654AbjETJPs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 20 May 2023 01:54:25 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 753C2128
-        for <linux-security-module@vger.kernel.org>; Fri, 19 May 2023 22:54:23 -0700 (PDT)
-Received: from fsav415.sakura.ne.jp (fsav415.sakura.ne.jp [133.242.250.114])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 34K5sA3k056277;
-        Sat, 20 May 2023 14:54:10 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav415.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp);
- Sat, 20 May 2023 14:54:10 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 34K5s9Vm056274
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 20 May 2023 14:54:10 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <f5ada796-41ba-5cc8-b43d-efd639994f15@I-love.SAKURA.ne.jp>
-Date:   Sat, 20 May 2023 14:54:10 +0900
+        Sat, 20 May 2023 05:15:48 -0400
+Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C53FD1;
+        Sat, 20 May 2023 02:15:47 -0700 (PDT)
+Received: by mail-vk1-xa30.google.com with SMTP id 71dfb90a1353d-45702d3d92cso1096805e0c.1;
+        Sat, 20 May 2023 02:15:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684574146; x=1687166146;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wV9yWfObuGSHQhWaTGLjjFXmUxZwoyjiWs/RVOlCuDM=;
+        b=d6JXE8byoV/ctjNyc18kOYeOxyFA6BiZO9YZBbwXRuzCw4d0nK94uUkp9irX+ulNXJ
+         2QAzSwGms0PhPIabaDkOghie0ey1fXPUdqTNcYi63mEM4NsyNAbBsDhj5sSk591nEctH
+         dI6nbYuDoWBbxXTqTD0k+qNzb1mcLtZoYLqkIvjd+ZvFum07uH57Pflfnn6y9JscaQAq
+         6vF3uqK5Yk/2vFrW/oHOaT9zlwibNHqs8e/4krDHrKKb9MAINJs5IxOb/nx/1wJSR3oV
+         SrTbIl7Tq9TjZUUwbsoPQ4IWNUB4H7F8Ard0gpKPNqAH1z0KxKaeQLn/vxnzcYxRvaGO
+         wvUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684574146; x=1687166146;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wV9yWfObuGSHQhWaTGLjjFXmUxZwoyjiWs/RVOlCuDM=;
+        b=JT2c2v2tFZYtXEFgA260iWwjXwPNCbEXEILbBljIs/kWYrTrvdgjMxESE1vVLQlCqj
+         o5ErbxaD142rA1f7QOhaZ45X04hg2FoV9Pp/tmq+hL7AdMCR7AVRv4EnSlo7UbZMDT2Z
+         e9bgrQVQmHV7sAAFdxDosk3pkis1NruAcVwoi7w1STWZ9dO2fsPrk1IqIQX9G2exyAsz
+         PQ8uRas6J5agNWKkBx4nCboomSZISMjt6K8xkggP+max5vJgXQAqLtqT39W9gT6jET+Z
+         laTq1dV+f06NvHp4BHzimSa37EFh+UA6OycvLUMB3q0hsCHfo5K/I8kmHI5gyxKu+13a
+         WNHg==
+X-Gm-Message-State: AC+VfDx+VJFQ6MV/5w9km/3b5FHn9lkfqJot7Tr0uIGi1ICHx7rd98xK
+        JtegV2+JVVDz33TwigjxVtL9AooGcVeUwR4/YbTM2WTG
+X-Google-Smtp-Source: ACHHUZ7GpknK4R92DTbs5EeLc1EKcqsKoOxoIIVWwApmErvfgrUPqW8Xe3N7zUcDaoilpRzZ7CDFnYOHLewzsnuvIYM=
+X-Received: by 2002:a05:6102:cd:b0:42c:543a:ab2a with SMTP id
+ u13-20020a05610200cd00b0042c543aab2amr598510vsp.35.1684574146149; Sat, 20 May
+ 2023 02:15:46 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: Stable backport of de3004c874e7 ("ocfs2: Switch to
- security_inode_init_security()")
-Content-Language: en-US
-To:     linux-security-module@vger.kernel.org
-Cc:     Valentin Vidic <vvidic@valentin-vidic.from.hr>,
-        Paul Moore <paul@paul-moore.com>
-References: <CAHC9VhRPvkdk6t1zkx+Y-QVP_vJRSxp+wuOO0YjyppNDLTNg7g@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHC9VhRPvkdk6t1zkx+Y-QVP_vJRSxp+wuOO0YjyppNDLTNg7g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner> <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
+In-Reply-To: <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 20 May 2023 12:15:34 +0300
+Message-ID: <CAOQ4uxi7PFPPUuW9CZAZB9tvU2GWVpmpdBt=EUYyw60K=WX-Yg@mail.gmail.com>
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after writes
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Ignaz Forster <iforster@suse.de>, Petr Vorel <pvorel@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2023/05/20 6:51, Paul Moore wrote:
->    Finally, since security_inode_init_security(), unlike
->    security_old_inode_init_security(), returns zero instead of -EOPNOTSUPP if
->    no xattrs were provided by LSMs or if inodes are private, additionally
->    check in ocfs2_init_security_get() if the xattr name is set.
-> 
->    If not, act as if security_old_inode_init_security() returned -EOPNOTSUPP,
->    and set si->enable to zero to notify to the functions following
->    ocfs2_init_security_get() that no xattrs are available.
+On Fri, May 19, 2023 at 10:42=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> w=
+rote:
+>
+> On Fri, 2023-04-07 at 10:31 +0200, Christian Brauner wrote:
+> > So, I think we want both; we want the ovl_copyattr() and the
+> > vfs_getattr_nosec() change:
+> >
+> > (1) overlayfs should copy up the inode version in ovl_copyattr(). That
+> >     is in line what we do with all other inode attributes. IOW, the
+> >     overlayfs inode's i_version counter should aim to mirror the
+> >     relevant layer's i_version counter. I wouldn't know why that
+> >     shouldn't be the case. Asking the other way around there doesn't
+> >     seem to be any use for overlayfs inodes to have an i_version that
+> >     isn't just mirroring the relevant layer's i_version.
+> > (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
+> >     Currently, ima assumes that it will get the correct i_version from
+> >     an inode but that just doesn't hold for stacking filesystem.
+> >
+> > While (1) would likely just fix the immediate bug (2) is correct and
+> > _robust_. If we change how attributes are handled vfs_*() helpers will
+> > get updated and ima with it. Poking at raw inodes without using
+> > appropriate helpers is much more likely to get ima into trouble.
+>
+> In addition to properly setting the i_version for IMA, EVM has a
+> similar issue with i_generation and s_uuid. Adding them to
+> ovl_copyattr() seems to resolve it.   Does that make sense?
+>
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index 923d66d131c1..cd0aeb828868 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -1118,5 +1118,8 @@ void ovl_copyattr(struct inode *inode)
+>         inode->i_atime =3D realinode->i_atime;
+>         inode->i_mtime =3D realinode->i_mtime;
+>         inode->i_ctime =3D realinode->i_ctime;
+> +       inode->i_generation =3D realinode->i_generation;
+> +       if (inode->i_sb)
+> +               uuid_copy(&inode->i_sb->s_uuid, &realinode->i_sb-
+> >s_uuid);
 
-Regarding security_inode_init_security(), similar problem was found on reiserfs.
+That is not a possible solution Mimi.
 
-https://lkml.kernel.org/r/a800496b-cae9-81bf-c79e-d8342418c5be@I-love.SAKURA.ne.jp
+The i_gneration copy *may* be acceptable in "all layers on same fs"
+setup, but changing overlayfs s_uuid over and over is a non-starter.
 
-Is it really expected behavior that security_inode_init_security() returns 0 when
-initxattrs is provided but call_int_hook(inode_init_security) returned -EOPNOTSUPP ?
+If you explain the problem, I may be able to help you find a better solutio=
+n.
 
+Thanks,
+Amir.
