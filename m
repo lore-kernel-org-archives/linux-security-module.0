@@ -2,86 +2,101 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C48C7EE30
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 May 2023 19:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D2FC77B73
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 May 2023 19:56:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235078AbjEVTkJ (ORCPT
+        id S235521AbjEVT4e (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 May 2023 15:40:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34036 "EHLO
+        Mon, 22 May 2023 15:56:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235126AbjEVTjy (ORCPT
+        with ESMTP id S235517AbjEVT4c (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 May 2023 15:39:54 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40E3A188
-        for <linux-security-module@vger.kernel.org>; Mon, 22 May 2023 12:39:49 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id 98e67ed59e1d1-2553663f71eso1687853a91.3
-        for <linux-security-module@vger.kernel.org>; Mon, 22 May 2023 12:39:49 -0700 (PDT)
+        Mon, 22 May 2023 15:56:32 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8150695
+        for <linux-security-module@vger.kernel.org>; Mon, 22 May 2023 12:56:31 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-561c5b5e534so85501957b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 22 May 2023 12:56:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1684784388; x=1687376388;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1684785390; x=1687377390;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gfaqv2IW7j0ktP6l11yDGjlEMAVbqVfA7CnllaEK2Rs=;
-        b=ZRoUXeZmwyWzkn0eXCQdTEgaG/5JOaNMWRu5CALSkJ2ClASO5oVeRcfc/Pw0ZgbzhK
-         WgB6Lbi/XaCPOj+u0LOVQe+qc7i+tOCIlZE+G7tWpKqScZSS05qgEIUyNiFmaqQdbmhq
-         NdWRXcpcjuevxIjne0Fad+6PDzEmk3PG9QeKs=
+        bh=rRnMbGr+rJSuQK7vxXW3742k5RQT9jp89KAS7Rrs6jE=;
+        b=YC83y56uMjO9NZ+Ns8uWAYGqw3GlASiXMRShnch0d7g7x1+VLpQ98bwPI3DZSLQ6rG
+         ycpuhnXDQkvZ8GdQ6l+QhuJFQMeQ9zz31zYsJc9nTArtRIdUyZVnQAY/yPzMOMwqF09L
+         PB5IOq66kChe9/DC0xfCV5KLGIGJ79Lotm9nRTdTrVjYuu7hWVDDeidTvbYV0SwZOpcD
+         2omkv2i1ekuC+Vw4mg5isynrNGuzizylK4iArRQWJ6STkoLJLPwtM8vRdFcrh9gjlH2b
+         pkJjfsF8IY1vXfmFQ8pTZ6ies1LxwiZ/oiETIlD667HP0GuJwWPCar9wopgoPtjDMBlk
+         N7kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684784388; x=1687376388;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1684785390; x=1687377390;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gfaqv2IW7j0ktP6l11yDGjlEMAVbqVfA7CnllaEK2Rs=;
-        b=lMnRzUDEpclLEt/HnZZ+2vPnRm2l85c5FOO/86uRhs/ytXxpPQGfx8iA0qa/i36Qkx
-         JJwXsCLI1R+0fYvl02lXO0VgAqICXPtxR4a03RS+MpUio+g+i/91MaSqF2/tNP3EihO6
-         9If6is3T59QCgfSFRDKaIj+M0RVtilsrbeQSxiRVifWsbZrfMnip70epk5FxnrJMjkL6
-         yXW/AFXZdaQA2oIuE6N61LTuGE0xFHWdrC17SFlaAOrSWLZ0ig1EpjGDog47ahCHnmcW
-         4SoH2lAu8OfEaN61ZLLymxrLZAlYfqpe0y7pK5CpFLGhheJKM2MugiRN0v7EjknDj8b4
-         o04Q==
-X-Gm-Message-State: AC+VfDxU+DWh4WBKDlaOFHUQ3EQ0b85f/YRMH6ZVvtRM8n7CSS7O+a1w
-        S3axFUeRl1A7Wbul6m0OvBKsHA==
-X-Google-Smtp-Source: ACHHUZ4NYfF3iCEwTe4ycC+JoW8VPmMThArz1vR1M1V4rL/Npj8HuuJy+7FLa0RBPTgwstI9ecayWA==
-X-Received: by 2002:a17:90a:ea94:b0:255:2dfc:6c6f with SMTP id h20-20020a17090aea9400b002552dfc6c6fmr8179344pjz.24.1684784388625;
-        Mon, 22 May 2023 12:39:48 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id bf7-20020a17090b0b0700b00250bf8495b3sm6191495pjb.39.2023.05.22.12.39.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 May 2023 12:39:47 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     dhowells@redhat.com, jarkko@kernel.org, azeemshaikh38@gmail.com
-Cc:     Kees Cook <keescook@chromium.org>, serge@hallyn.com,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmorris@namei.org,
-        linux-hardening@vger.kernel.org, paul@paul-moore.com
-Subject: Re: [PATCH] KEYS: Replace all non-returning strlcpy with strscpy
-Date:   Mon, 22 May 2023 12:39:35 -0700
-Message-Id: <168478437622.244538.16496528769625155302.b4-ty@chromium.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230518041513.1669386-1-azeemshaikh38@gmail.com>
-References: <20230518041513.1669386-1-azeemshaikh38@gmail.com>
+        bh=rRnMbGr+rJSuQK7vxXW3742k5RQT9jp89KAS7Rrs6jE=;
+        b=lfb22toAVA9k4ook5jq08d7M6nVcaCiW1tCKm6L7ajspQmoZQiqHdnecDamfJXnPcH
+         CLg+9o0RdSRgCRAnfFM4zmqK/c15eU/ioO+i44hHmNnaA4LBm9vtfityktKoEtYcaCBK
+         s2+g4Lk1+nPflh31V8ty/tD7LQ2V4hNyg0QEg4Mq3lKS8OwvEsDLtfcAs+ogTmzYhD22
+         rSQXkGQchnaUsVRTFYelLQxxT71V2T8r4h/UTMLDOIZ512SYqJM+lB9YXkUy4LjNV3l8
+         nJ858gbD+nzo9OCnMHB64dHV3mqHtZY707aZDQgbVHe2fIdzie4CVIK7yOHR4YoqWI21
+         7WpA==
+X-Gm-Message-State: AC+VfDxSaQ094BsT9RY3WCHlUoUx6Zf7S8U38IYn7ZemRgGzWz2JbXz6
+        JNpMckekn1xnK42iiHna84yXZJLIrq6B1ND3Lhri
+X-Google-Smtp-Source: ACHHUZ5okAQF3r/hM9jwhRY2FCDkCNw1uKx07HtlO3Nvzg8he2TuYBgJkbx6w+pA4nCX1T3g6PgK2ACGEomOR10pkbA=
+X-Received: by 2002:a81:4e8b:0:b0:561:be3f:ae2c with SMTP id
+ c133-20020a814e8b000000b00561be3fae2cmr11435118ywb.40.1684785390612; Mon, 22
+ May 2023 12:56:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
+ <20230518204549.3139044-1-enlightened@chromium.org> <a42875a0-d4c5-e2ac-d115-d4222e229f7d@schaufler-ca.com>
+In-Reply-To: <a42875a0-d4c5-e2ac-d115-d4222e229f7d@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 22 May 2023 15:56:19 -0400
+Message-ID: <CAHC9VhTq0RgQ6xj86_BkZuAwy4kGy6eC8NVKFroEASNXP3uBxQ@mail.gmail.com>
+Subject: Re: [PATCH v2] lsm: adds process attribute getter for Landlock
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Shervin Oloumi <enlightened@chromium.org>, mic@digikod.net,
+        linux-security-module@vger.kernel.org, jorgelo@chromium.org,
+        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
+        allenwebb@chromium.org, gnoack3000@gmail.com, areber@redhat.com,
+        criu@openvz.org, linux-api@vger.kernel.org, jannh@google.com,
+        brauner@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 18 May 2023 04:15:13 +0000, Azeem Shaikh wrote:
-> strlcpy() reads the entire source buffer first.
-> This read may exceed the destination size limit.
-> This is both inefficient and can lead to linear read
-> overflows if a source string is not NUL-terminated [1].
-> In an effort to remove strlcpy() completely [2], replace
-> strlcpy() here with strscpy().
-> No return values were used, so direct replacement is safe.
-> 
-> [...]
+On Thu, May 18, 2023 at 5:26=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+> On 5/18/2023 1:45 PM, Shervin Oloumi wrote:
+> > Adds a new getprocattr hook function to the Landlock LSM, which tracks
+> > the landlocked state of the process. This is invoked when user-space
+> > reads /proc/[pid]/attr/domain
+>
+> Please don't add a Landlock specific entry directly in the attr/
+> directory. Add it only to attr/landlock.
+>
+> Also be aware that the LSM maintainer (Paul Moore) wants to move
+> away from the /proc/.../attr interfaces in favor of a new system call,
+> which is in review.
 
-Applied to for-next/hardening, thanks!
+What Casey said above.
 
-[1/1] KEYS: Replace all non-returning strlcpy with strscpy
-      https://git.kernel.org/kees/c/8d27fcac4a08
+There is still some uncertainty around timing, and if we're perfectly
+honest, acceptance of the new syscalls at the Linus level, but yes, I
+would very much like to see the LSM infrastructure move away from
+procfs and towards a syscall API.  Part of the reasoning is that the
+current procfs API is ill-suited to handle the multiple, stacked LSMs
+and the other part being the complexity of procfs in a namespaced
+system.  If the syscall API is ultimately rejected, we will need to
+revisit the idea of a procfs API, but even then I think we'll need to
+make some changes to the current approach.
 
--- 
-Kees Cook
+As I believe we are in the latter stages of review for the syscall
+API, perhaps you could take a look and ensure that the current
+proposed API works for what you are envisioning with Landlock?
 
+--=20
+paul-moore.com
