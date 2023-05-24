@@ -2,106 +2,133 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D6BC77B7C
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 May 2023 21:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D80C77B73
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 May 2023 21:57:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234659AbjEXVn6 (ORCPT
+        id S230504AbjEXV51 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 May 2023 17:43:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37262 "EHLO
+        Wed, 24 May 2023 17:57:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbjEXVn5 (ORCPT
+        with ESMTP id S232967AbjEXV50 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 May 2023 17:43:57 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C9C8C5
-        for <linux-security-module@vger.kernel.org>; Wed, 24 May 2023 14:43:55 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-513ea2990b8so2870a12.0
-        for <linux-security-module@vger.kernel.org>; Wed, 24 May 2023 14:43:55 -0700 (PDT)
+        Wed, 24 May 2023 17:57:26 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08320189
+        for <linux-security-module@vger.kernel.org>; Wed, 24 May 2023 14:57:25 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-ba71cd7ce7fso2201773276.1
+        for <linux-security-module@vger.kernel.org>; Wed, 24 May 2023 14:57:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1684964634; x=1687556634;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cOVTbGx45JvQe7bISLPr9dxfTGNroVmeLZqE3iaMIHE=;
-        b=kgvdR8dsXFc7L6OewJXKnWm7UljoC+7BF9kyTeeSAYcFUwAZwaPTybTncucn9F/g/S
-         pz47HB4iGqTKXa9DrD4tQz6tTQp7GSaQ7XrfTY+44J2/oFPvWZ/GhfgCs3d2HhVZu2JN
-         vw0PJIY3AFUGcaLUZspnCl1p9uLYasXydLqp/iU9onG/xEqCrq5+KKKRMyl1qUgUyr5o
-         0H3m3WPYLf4fZR4ynHqhQaKm+Xq6ejWJODzgGHL+2mV+saWzbAafuaRIb1ulvxf1+D8X
-         5bMPIlwsB0J/IrY+djx9swJIDkJpQKjoX07OymbZCpWUT7WM233lTZ3PhzPE1o2kA95B
-         V0yw==
+        d=paul-moore.com; s=google; t=1684965444; x=1687557444;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HnrQePs+guIncAtpR4LpewLTG9uJD1WVMzDg7x5+JnQ=;
+        b=MOJGgNeeZ2NTaZLOw5dLeQKOsSMdZuOUDLi4BpOvTiIWRhxlewpCkLWFm90AvCFDM0
+         dBbOiUgnwSF3tx2OCsfzW5pehrThLZTOsfw+byMilrUxH/Cj5v2axZNDxs+vrOsJ2N4v
+         IxXP53ZTgLR3muduWGVYPh1B5tWmAMwq4uWqW4WLkhKPpMI27Eee0C+v/cW+dzVTGCUZ
+         4A+99EiMuntUsoYNf+LzQB7aUOpYtEqfYo2C/g9I4lkOyTxkb7Zoy5dm+ieqK7BfUV0z
+         H7dMG4Is8HvC4rO8ie0Gg/xc9BXLT61Su2UirLdP/AoEm8mYapaDU29mprZAm7Yp+MSi
+         ymhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684964634; x=1687556634;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cOVTbGx45JvQe7bISLPr9dxfTGNroVmeLZqE3iaMIHE=;
-        b=O0g8z6hIseEREGHGd+8lb3mSWBCZL0qJPEwOWmwxYULQTnSoae8lHTYVE7LjGVysoz
-         fPvy3CHa7Y5LnXdJU6Yd1clDCQZY64R1cgnYTtosmCEFDgb+KucMvyJUiyUgacoplMSO
-         ce5fk1FNacn66jc5DJsveFp0Vb7ju1rJYpaSncoNV2rSBFDrkjsqL1M/0OrrefIsoquY
-         G00pZDV1tRFh2f8JFNtIl/KAsHjIwTKPH9oBSWzvJj1BwduFghUlFpRl7HzciA2qaOqx
-         aJAq3BrFr0N+2K6JtYkvhG3YT87lG04rhC9dCRQjIs2mt5xPXcT3hnqJcElnQAOHCGo8
-         Gf4A==
-X-Gm-Message-State: AC+VfDxLGFBrcYYtwDueJhJ1fw4CwSzQtmjC8z0gSna2GbXk9rNDFsSr
-        brvRmFD8weMfd7OfOJbizxes0QHvqliK05JHGG+IJA==
-X-Google-Smtp-Source: ACHHUZ5/wDbK7kIVQj6FIKSO8KY2BmJ8WZmL8dnGx2kkxVh+2/BWmwqPsgMw2hdMTdjNWBcwNXyLmVVS2P/GMOCCh1Q=
-X-Received: by 2002:a50:9e2a:0:b0:507:6632:bbbf with SMTP id
- z39-20020a509e2a000000b005076632bbbfmr42200ede.6.1684964633887; Wed, 24 May
- 2023 14:43:53 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684965444; x=1687557444;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HnrQePs+guIncAtpR4LpewLTG9uJD1WVMzDg7x5+JnQ=;
+        b=DJtdo+LqTwbAUjBA6pVu9bEAd01ajpyzLWO9TMwVmt9rBXk3XzHyOOg1iLYUuRezNI
+         7qV7fSBC+A0ifRTaOc3ztXYE9HYjbF+EVZkCEwyVmgZAkCQERcIijZBMfu7qZb5IukZM
+         XtJQ7Yecgea0FHbpHBW1+6gZ+ZuM+i2ZTGMDwohHy2cr3kdVETRLkQ6oeFr5lf0Ktke8
+         igpQ/jnbjvrBz5A79fEP7Yw06y4aroeV5v13yv98MwJbV6DPooSY8iy7vXJxfOn1hhAx
+         fPvdzL0L0uooVtIgfnb3Zxv2YouDpLhuQW/NTTdLMgMbFZIwPKY4xlIyiwnoGHoWX8Qn
+         FT5Q==
+X-Gm-Message-State: AC+VfDx/JUTbVYR2xp6U1R9B/uaRdxgIFwTND6JGlYF93P7+owSdD5xl
+        Kt9zIIGohPAirYhpn5DlQztPYVO+rjDr78l8ImIS
+X-Google-Smtp-Source: ACHHUZ6wwnRp26WVRb5bMlIwp5UO3NdT+DkO9QgYycHZoQNR88qp6I/wrFTyf14xwXWr/rrvRF6bugZWse9TXC6cuUE=
+X-Received: by 2002:a0d:e807:0:b0:55a:4ff4:f97d with SMTP id
+ r7-20020a0de807000000b0055a4ff4f97dmr19964058ywe.48.1684965444190; Wed, 24
+ May 2023 14:57:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230502171755.9788-1-gnoack3000@gmail.com> <1cb74c81-3c88-6569-5aff-154b8cf626fa@digikod.net>
- <20230510.c667268d844f@gnoack.org>
-In-Reply-To: <20230510.c667268d844f@gnoack.org>
-From:   Jeff Xu <jeffxu@google.com>
-Date:   Wed, 24 May 2023 14:43:18 -0700
-Message-ID: <CALmYWFv4f=YsRFHvj4LTog4GY9NmfSOE6hZnJNOpCzPM-5G06g@mail.gmail.com>
-Subject: Re: [RFC 0/4] Landlock: ioctl support
-To:     =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Jeff Xu <jeffxu@chromium.org>,
-        Dmitry Torokhov <dtor@google.com>
-Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        linux-security-module@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+References: <000000000000be039005fc540ed7@google.com> <00000000000018faf905fc6d9056@google.com>
+ <CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com> <813148798c14a49cbdf0f500fbbbab154929e6ed.camel@huaweicloud.com>
+In-Reply-To: <813148798c14a49cbdf0f500fbbbab154929e6ed.camel@huaweicloud.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 24 May 2023 17:57:13 -0400
+Message-ID: <CAHC9VhRoj3muyD0+pTwpJvCdmzz25C8k8eufWcjc8ZE4e2AOew@mail.gmail.com>
+Subject: Re: [syzbot] [reiserfs?] INFO: task hung in flush_old_commits
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
+        syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Sorry for the late reply.
+On Wed, May 24, 2023 at 11:50=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Wed, 2023-05-24 at 11:11 -0400, Paul Moore wrote:
+> > On Wed, May 24, 2023 at 5:59=E2=80=AFAM syzbot
+> > <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com> wrote:
+> > > syzbot has bisected this issue to:
+> > >
+> > > commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
+> > > Author: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Date:   Fri Mar 31 12:32:18 2023 +0000
+> > >
+> > >     reiserfs: Add security prefix to xattr name in reiserfs_security_=
+write()
+> > >
+> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D11c396=
+39280000
+> > > start commit:   421ca22e3138 Merge tag 'nfs-for-6.4-2' of git://git.l=
+inux-..
+> > > git tree:       upstream
+> > > final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D13c396=
+39280000
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D15c396392=
+80000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D7d8067683=
+055e3f5
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D0a684c06158=
+9dcc30e51
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1431279=
+1280000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12da86052=
+80000
+> > >
+> > > Reported-by: syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com
+> > > Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in =
+reiserfs_security_write()")
+> > >
+> > > For information about bisection process see: https://goo.gl/tpsmEJ#bi=
+section
+> >
+> > Roberto, I think we need to resolve this somehow.  As I mentioned
+> > earlier, I don't believe this to be a fault in your patch, rather that
+> > patch simply triggered a situation that had not been present before,
+> > likely because the reiserfs code always failed when writing LSM
+> > xattrs.  Regardless, we still need to fix the deadlocks that sysbot
+> > has been reporting.
 >
-> (Looking in the direction of Jeff Xu, who has inquired about Landlock
-> for Chromium in the past -- do you happen to know in which ways you'd
-> want to restrict ioctls, if you have that need? :))
+> Hi Paul
 >
+> ok, I will try.
 
-Regarding this patch, here is some feedback from ChromeOS:
- - In the short term: we are looking to integrate Landlock into our
-sandboxer, so the ability to restrict to a specific device is huge.
-- Fundamentally though, in the effort of bringing process expected
-behaviour closest to allowed behaviour, the ability to speak of
-ioctl() path access in Landlock would be huge -- at least we can
-continue to enumerate in policy what processes are allowed to do, even
-if we still lack the ability to restrict individual ioctl commands for
-a specific device node.
+Thanks Roberto.  If it gets to be too challenging, let us know and we
+can look into safely disabling the LSM xattrs for reiserfs, I'll be
+shocked if anyone is successfully using LSM xattrs on reiserfs.
 
-Regarding medium term:
-My thoughts are, from software architecture point of view, it would be
-nice to think in planes: i.e. Data plane / Control plane/ Signaling
-Plane/Normal User Plane/Privileged User Plane. Let the application
-define its planes, and assign operations to them. Landlock provides
-data structure and syscall to construct the planes.
+> > Has anyone dug into the reiserfs code to try and resolve the deadlock?
+> >  Considering the state of reiserfs, I'm guessing no one has, and I
+> > can't blame them; I personally would have a hard time justifying
+> > significant time spent on reiserfs at this point.  Unless someone has
+> > any better ideas, I'm wondering if we shouldn't just admit defeat with
+> > reiserfs and LSM xattrs and disable/remove the reiserfs LSM xattr
+> > support?  Given the bug that Roberto was fixing with the patch in
+> > question, it's unlikely this was working anyway.
 
-However, one thing I'm not sure is the third arg from ioctl:
-int ioctl(int fd, unsigned long request, ...);
-Is it possible for the driver to use the same request id, then put
-whatever into the third arg ? how to deal with that effectively ?
-
-For real world user cases, Dmitry Torokhov (added to list) can help.
-
-PS: There is also lwn article about SELinux implementation of ioctl: [1]
-[1] https://lwn.net/Articles/428140/
-
-Thanks!
--Jeff Xu
+--=20
+paul-moore.com
