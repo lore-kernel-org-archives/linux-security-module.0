@@ -2,121 +2,122 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E9DC77B7C
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 May 2023 15:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99305C77B7A
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 May 2023 15:40:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236051AbjEXPLl (ORCPT
+        id S237350AbjEXPkv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 May 2023 11:11:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53176 "EHLO
+        Wed, 24 May 2023 11:40:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235073AbjEXPLj (ORCPT
+        with ESMTP id S238449AbjEXPkY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 May 2023 11:11:39 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C7112F
-        for <linux-security-module@vger.kernel.org>; Wed, 24 May 2023 08:11:35 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-bab8f66d3a2so1561755276.3
-        for <linux-security-module@vger.kernel.org>; Wed, 24 May 2023 08:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1684941094; x=1687533094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HqqN7STJH2LoGCrwrill0kIUbhodoox7qSOdJoH92o8=;
-        b=EFehSwqT4xP3Dsgl9bmiZS3CIEPYx7oE8YP/dagGWOYw22jxpzPgKbLa+z/ZmWlOwX
-         sbDUYJK1SF3CUXwmwlypvEibDRI9nS0D2DX+1qVKP8T5GElGdyojL5b5LWCxsc3eJabx
-         TAQKujaM7/wvTwHsVvSiJVHxSnfB7NkBNEEEy0m67Z1moTU+gNl374iCNxVEG4RM6sZW
-         9VpQVnKwVC9ltwPttucugKAFTxlXCjokxJbv+TppvKl4cWmkpEiNAzPg+S0RLyaHL2T5
-         8746YxI3TCs5u9PRcnTlk2UxGUeRQTfCZaRTwVv3wIyHrEIF5SBSX4BfjZzx6oLbdaGJ
-         X1Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684941094; x=1687533094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HqqN7STJH2LoGCrwrill0kIUbhodoox7qSOdJoH92o8=;
-        b=HFso2jKAYxTs8BlrbBmYHKMu9FzeBfRn3naDhJf9hORKAWuqmFp/25PMuJMCWhaYij
-         zpr8uuTqzMm5D0aFTMVCJP6JPZtSXrqbbvT8QEzL9XQNIeKmPuQq373XUXldbmhZXBPy
-         Uo2//c+mz4l2iGMeF6acDQLBfWqm2mFpWAdUYlQIn1u8sexqeJyJpPHTMbBxZHonP3Rw
-         UhY1+Wir/QR+iVTOOu73+oYGNJX0yNrDMku4wX1/C2ipvJ0j0XQzPwDG9uccgykRdrCv
-         Kkk2dNPCZP3Ss2KdbC8PQZYt45xE7gjdPQEH0PDyu1Jp4Cj9PDCs3FSLLOJA8CzpcCIs
-         IW/Q==
-X-Gm-Message-State: AC+VfDzN4kC7wsmQ50dq0fOYSV5HaDxTc9SpBjWSIINxwR9MxG1s55Qh
-        alcUZjtXQ37RsvCBaXv9eAybTLDYswFLA00i/XDLCrwU63BtdBc=
-X-Google-Smtp-Source: ACHHUZ7h5ztNlZIBSemxHTQoG+pdx9LkR0k/enQ4NmhLwlTYFQsLUTSuCVlVruca0i0KPIlmFIwlSwu/781g1QjhNk8=
-X-Received: by 2002:a0d:cc95:0:b0:561:7ec:cf90 with SMTP id
- o143-20020a0dcc95000000b0056107eccf90mr18983019ywd.42.1684941094273; Wed, 24
- May 2023 08:11:34 -0700 (PDT)
+        Wed, 24 May 2023 11:40:24 -0400
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D032A10CC
+        for <linux-security-module@vger.kernel.org>; Wed, 24 May 2023 08:39:41 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QRFhY4n1BzMsC2r;
+        Wed, 24 May 2023 17:38:37 +0200 (CEST)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QRFhX1FqvzMq3kf;
+        Wed, 24 May 2023 17:38:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1684942717;
+        bh=VYmLTVCgSyQz1NM3vCHIOgTdrgkuGs7TqgxzYcQ9yjQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=1Lg2CbFIjwpKdZ1UKDgZpes0Y0RI+CogJ+Q3sYI5TKNJZrqfvf23HqPZn4v++KmHl
+         7XMFNJ0/vQhbxnx2yulPuANep+XsR4KfWy12Fw8Lu2Z3X2t8cTnvgNMmIKzhrF9ipK
+         LjX/12R3yhLGrHgYSjVWsrXCMnGVgWDwL44r2VwM=
+Message-ID: <1225a567-4ff5-462e-0db6-1a88a748d787@digikod.net>
+Date:   Wed, 24 May 2023 17:38:35 +0200
 MIME-Version: 1.0
-References: <000000000000be039005fc540ed7@google.com> <00000000000018faf905fc6d9056@google.com>
-In-Reply-To: <00000000000018faf905fc6d9056@google.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 24 May 2023 11:11:23 -0400
-Message-ID: <CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com>
-Subject: Re: [syzbot] [reiserfs?] INFO: task hung in flush_old_commits
-To:     linux-security-module@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: 
+Subject: Re: [PATCH v2] lsm: adds process attribute getter for Landlock
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>, Jeff Xu <jeffxu@chromium.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Shervin Oloumi <enlightened@chromium.org>,
+        linux-security-module@vger.kernel.org, jorgelo@chromium.org,
+        keescook@chromium.org, groeck@chromium.org, allenwebb@chromium.org,
+        gnoack3000@gmail.com, areber@redhat.com, criu@openvz.org,
+        linux-api@vger.kernel.org, jannh@google.com, brauner@kernel.org
+References: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
+ <20230518204549.3139044-1-enlightened@chromium.org>
+ <a42875a0-d4c5-e2ac-d115-d4222e229f7d@schaufler-ca.com>
+ <CAHC9VhTq0RgQ6xj86_BkZuAwy4kGy6eC8NVKFroEASNXP3uBxQ@mail.gmail.com>
+ <CABi2SkX0cqOMPeuw8CD28Q6UZihi0Hh7GT=dTmxaG-T_rayPfQ@mail.gmail.com>
+ <CAHC9VhRD8kfkHr2gfFp10txdDwE0NGSJQd08bRojeJKiKtqq6Q@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <CAHC9VhRD8kfkHr2gfFp10txdDwE0NGSJQd08bRojeJKiKtqq6Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 24, 2023 at 5:59=E2=80=AFAM syzbot
-<syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com> wrote:
->
-> syzbot has bisected this issue to:
->
-> commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
-> Author: Roberto Sassu <roberto.sassu@huawei.com>
-> Date:   Fri Mar 31 12:32:18 2023 +0000
->
->     reiserfs: Add security prefix to xattr name in reiserfs_security_writ=
-e()
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D11c3963928=
-0000
-> start commit:   421ca22e3138 Merge tag 'nfs-for-6.4-2' of git://git.linux=
--..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D13c3963928=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D15c3963928000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D7d8067683055e=
-3f5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D0a684c061589dcc=
-30e51
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14312791280=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12da860528000=
-0
->
-> Reported-by: syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com
-> Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reis=
-erfs_security_write()")
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
 
-Roberto, I think we need to resolve this somehow.  As I mentioned
-earlier, I don't believe this to be a fault in your patch, rather that
-patch simply triggered a situation that had not been present before,
-likely because the reiserfs code always failed when writing LSM
-xattrs.  Regardless, we still need to fix the deadlocks that sysbot
-has been reporting.
+On 23/05/2023 23:12, Paul Moore wrote:
+> On Tue, May 23, 2023 at 2:13 AM Jeff Xu <jeffxu@chromium.org> wrote:
+>> On Mon, May 22, 2023 at 12:56 PM Paul Moore <paul@paul-moore.com> wrote:
+>>> On Thu, May 18, 2023 at 5:26 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> On 5/18/2023 1:45 PM, Shervin Oloumi wrote:
+>>>>> Adds a new getprocattr hook function to the Landlock LSM, which tracks
+>>>>> the landlocked state of the process. This is invoked when user-space
+>>>>> reads /proc/[pid]/attr/domain
+>>>>
+>>>> Please don't add a Landlock specific entry directly in the attr/
+>>>> directory. Add it only to attr/landlock.
+>>>>
+>>>> Also be aware that the LSM maintainer (Paul Moore) wants to move
+>>>> away from the /proc/.../attr interfaces in favor of a new system call,
+>>>> which is in review.
+>>>
+>>> What Casey said above.
+>>>
+>>> There is still some uncertainty around timing, and if we're perfectly
+>>> honest, acceptance of the new syscalls at the Linus level, but yes, I
+>>> would very much like to see the LSM infrastructure move away from
+>>> procfs and towards a syscall API.  Part of the reasoning is that the
+>>> current procfs API is ill-suited to handle the multiple, stacked LSMs
+>>> and the other part being the complexity of procfs in a namespaced
+>>> system.  If the syscall API is ultimately rejected, we will need to
+>>> revisit the idea of a procfs API, but even then I think we'll need to
+>>> make some changes to the current approach.
+>>>
+>>> As I believe we are in the latter stages of review for the syscall
+>>> API, perhaps you could take a look and ensure that the current
+>>> proposed API works for what you are envisioning with Landlock?
 
-Has anyone dug into the reiserfs code to try and resolve the deadlock?
- Considering the state of reiserfs, I'm guessing no one has, and I
-can't blame them; I personally would have a hard time justifying
-significant time spent on reiserfs at this point.  Unless someone has
-any better ideas, I'm wondering if we shouldn't just admit defeat with
-reiserfs and LSM xattrs and disable/remove the reiserfs LSM xattr
-support?  Given the bug that Roberto was fixing with the patch in
-question, it's unlikely this was working anyway.
+I agree, and since the LSM syscalls are almost ready that should not 
+change much the timing. In fact, extending these syscalls might be 
+easier than tweaking the current procfs/attr API for Landlock specific 
+requirements (e.g. scoped visibility). We should ensure that these 
+syscalls would be a good fit to return file descriptors, but in the 
+short term we only need to know if a process is landlocked or not, so a 
+raw return value (0 or -errno) will be enough.
 
---
-paul-moore.com
+Mentioning in the LSM syscalls patch series that they may deal with (and 
+return) file descriptors could help API reviewers though.
+
+
+>>>
+>> Which review/patch to look for the proposed API ?
+> 
+> See Casey's reply if you haven't already.  You can also find the LSM
+> list archived on lore.kernel.org; that is probably the best way to
+> track LSM development if you don't want to subscribe to the list.
+> 
+> * https://lore.kernel.org/linux-security-module
+> 
+>> I guess ChromeOS will need to backport to 5.10 when the proposal is accepted.
+> 
+> Maybe?  Distro specific backports aren't generally on-topic for the
+> upstream Linux mailing lists, especially large commercial distros with
+> plenty of developers to take care of things like that.
+> 
+
+Backporting the LSM syscall patch series will create conflicts but they 
+should be manageable and the series should be quite standalone. You'll 
+need to understand the changes to get a clean backport, so reviewing the 
+current proposal is a good opportunity to be ready and to catch 
+potential future issues.
