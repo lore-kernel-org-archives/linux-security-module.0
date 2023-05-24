@@ -2,148 +2,106 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BABC77B7C
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 May 2023 21:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D6BC77B7C
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 May 2023 21:43:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229588AbjEXVF4 (ORCPT
+        id S234659AbjEXVn6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 May 2023 17:05:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51054 "EHLO
+        Wed, 24 May 2023 17:43:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjEXVFz (ORCPT
+        with ESMTP id S229482AbjEXVn5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 May 2023 17:05:55 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C57B3;
-        Wed, 24 May 2023 14:05:53 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34OKx7uq018706;
-        Wed, 24 May 2023 21:04:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=0IusaswoV4GMJ2krC0g9zaR7+NoenIcA9sZufP1qfbs=;
- b=Pn2tBz5Uml86ZbHPbF67KQqgCh73xR1i5yg3+TTBB9MLfOHQJBgnxJvGEGTnO1sjnbb5
- U3hN6SQPVGqczxdXEc5jZ3BsRuG4v1PjwOlJ+BUwBbaWu+Gb3kIhHgI2dJBJPsyyvDlc
- ARiZPVoxGryM9wKzC1smnDkbMLUTn0aGCjNLX7jJ+uzKz+02TGLf7WIxRqGxPINN1O7b
- H6OfnfxKsUpexRRPsIok/i/FsmrmmJJiNBeLOKhyCebYuCM7GoxBrHUKCD7zLJFN1tYw
- 9ScZ+UfUU+jIHpa/GwHnf1SHGoNE2ZSw01qWH55IQJ4A/JSEPQvbLCoS3Id3Q46OwxcM vQ== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qsqqj89sj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 May 2023 21:04:10 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34OL495t029551
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 May 2023 21:04:09 GMT
-Received: from [10.110.74.38] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 24 May
- 2023 14:04:07 -0700
-Message-ID: <1e10da25-5704-18ee-b0ce-6de704e6f0e1@quicinc.com>
-Date:   Wed, 24 May 2023 14:04:07 -0700
+        Wed, 24 May 2023 17:43:57 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C9C8C5
+        for <linux-security-module@vger.kernel.org>; Wed, 24 May 2023 14:43:55 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-513ea2990b8so2870a12.0
+        for <linux-security-module@vger.kernel.org>; Wed, 24 May 2023 14:43:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1684964634; x=1687556634;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cOVTbGx45JvQe7bISLPr9dxfTGNroVmeLZqE3iaMIHE=;
+        b=kgvdR8dsXFc7L6OewJXKnWm7UljoC+7BF9kyTeeSAYcFUwAZwaPTybTncucn9F/g/S
+         pz47HB4iGqTKXa9DrD4tQz6tTQp7GSaQ7XrfTY+44J2/oFPvWZ/GhfgCs3d2HhVZu2JN
+         vw0PJIY3AFUGcaLUZspnCl1p9uLYasXydLqp/iU9onG/xEqCrq5+KKKRMyl1qUgUyr5o
+         0H3m3WPYLf4fZR4ynHqhQaKm+Xq6ejWJODzgGHL+2mV+saWzbAafuaRIb1ulvxf1+D8X
+         5bMPIlwsB0J/IrY+djx9swJIDkJpQKjoX07OymbZCpWUT7WM233lTZ3PhzPE1o2kA95B
+         V0yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684964634; x=1687556634;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cOVTbGx45JvQe7bISLPr9dxfTGNroVmeLZqE3iaMIHE=;
+        b=O0g8z6hIseEREGHGd+8lb3mSWBCZL0qJPEwOWmwxYULQTnSoae8lHTYVE7LjGVysoz
+         fPvy3CHa7Y5LnXdJU6Yd1clDCQZY64R1cgnYTtosmCEFDgb+KucMvyJUiyUgacoplMSO
+         ce5fk1FNacn66jc5DJsveFp0Vb7ju1rJYpaSncoNV2rSBFDrkjsqL1M/0OrrefIsoquY
+         G00pZDV1tRFh2f8JFNtIl/KAsHjIwTKPH9oBSWzvJj1BwduFghUlFpRl7HzciA2qaOqx
+         aJAq3BrFr0N+2K6JtYkvhG3YT87lG04rhC9dCRQjIs2mt5xPXcT3hnqJcElnQAOHCGo8
+         Gf4A==
+X-Gm-Message-State: AC+VfDxLGFBrcYYtwDueJhJ1fw4CwSzQtmjC8z0gSna2GbXk9rNDFsSr
+        brvRmFD8weMfd7OfOJbizxes0QHvqliK05JHGG+IJA==
+X-Google-Smtp-Source: ACHHUZ5/wDbK7kIVQj6FIKSO8KY2BmJ8WZmL8dnGx2kkxVh+2/BWmwqPsgMw2hdMTdjNWBcwNXyLmVVS2P/GMOCCh1Q=
+X-Received: by 2002:a50:9e2a:0:b0:507:6632:bbbf with SMTP id
+ z39-20020a509e2a000000b005076632bbbfmr42200ede.6.1684964633887; Wed, 24 May
+ 2023 14:43:53 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [RFC PATCH v1 0/9] Hypervisor-Enforced Kernel Integrity
-Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>
-CC:     Alexander Graf <graf@amazon.com>,
-        Forrest Yuan Yu <yuanyu@google.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        John Andersen <john.s.andersen@intel.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Marian Rotariu <marian.c.rotariu@gmail.com>,
-        =?UTF-8?Q?Mihai_Don=c8=9bu?= <mdontu@bitdefender.com>,
-        =?UTF-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Thara Gopinath <tgopinath@microsoft.com>,
-        Will Deacon <will@kernel.org>,
-        Zahra Tarkhani <ztarkhani@microsoft.com>,
-        =?UTF-8?Q?=c8=98tefan_=c8=98icleru?= <ssicleru@bitdefender.com>,
-        <dev@lists.cloudhypervisor.org>, <kvm@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>, <linux-hyperv@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>, <qemu-devel@nongnu.org>,
-        <virtualization@lists.linux-foundation.org>, <x86@kernel.org>,
-        <xen-devel@lists.xenproject.org>
-References: <20230505152046.6575-1-mic@digikod.net>
-From:   Trilok Soni <quic_tsoni@quicinc.com>
-In-Reply-To: <20230505152046.6575-1-mic@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 05vNi3kgc2wfcP2iD9QY9INL0A2A4C1U
-X-Proofpoint-ORIG-GUID: 05vNi3kgc2wfcP2iD9QY9INL0A2A4C1U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-24_15,2023-05-24_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 bulkscore=0 adultscore=0 suspectscore=0 clxscore=1011
- lowpriorityscore=0 spamscore=0 phishscore=0 mlxscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305240176
+References: <20230502171755.9788-1-gnoack3000@gmail.com> <1cb74c81-3c88-6569-5aff-154b8cf626fa@digikod.net>
+ <20230510.c667268d844f@gnoack.org>
+In-Reply-To: <20230510.c667268d844f@gnoack.org>
+From:   Jeff Xu <jeffxu@google.com>
+Date:   Wed, 24 May 2023 14:43:18 -0700
+Message-ID: <CALmYWFv4f=YsRFHvj4LTog4GY9NmfSOE6hZnJNOpCzPM-5G06g@mail.gmail.com>
+Subject: Re: [RFC 0/4] Landlock: ioctl support
+To:     =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Jeff Xu <jeffxu@chromium.org>,
+        Dmitry Torokhov <dtor@google.com>
+Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/5/2023 8:20 AM, Mickaël Salaün wrote:
-> Hi,
-> 
-> This patch series is a proof-of-concept that implements new KVM features
-> (extended page tracking, MBEC support, CR pinning) and defines a new API to
-> protect guest VMs. No VMM (e.g., Qemu) modification is required.
-> 
-> The main idea being that kernel self-protection mechanisms should be delegated
-> to a more privileged part of the system, hence the hypervisor. It is still the
-> role of the guest kernel to request such restrictions according to its
+Sorry for the late reply.
+>
+> (Looking in the direction of Jeff Xu, who has inquired about Landlock
+> for Chromium in the past -- do you happen to know in which ways you'd
+> want to restrict ioctls, if you have that need? :))
+>
 
-Only for the guest kernel images here? Why not for the host OS kernel? 
-Embedded devices w/ Android you have mentioned below supports the host 
-OS as well it seems, right?
+Regarding this patch, here is some feedback from ChromeOS:
+ - In the short term: we are looking to integrate Landlock into our
+sandboxer, so the ability to restrict to a specific device is huge.
+- Fundamentally though, in the effort of bringing process expected
+behaviour closest to allowed behaviour, the ability to speak of
+ioctl() path access in Landlock would be huge -- at least we can
+continue to enumerate in policy what processes are allowed to do, even
+if we still lack the ability to restrict individual ioctl commands for
+a specific device node.
 
-Do we suggest that all the functionalities should be implemented in the 
-Hypervisor (NS-EL2 for ARM) or even at Secure EL like Secure-EL1 (ARM).
+Regarding medium term:
+My thoughts are, from software architecture point of view, it would be
+nice to think in planes: i.e. Data plane / Control plane/ Signaling
+Plane/Normal User Plane/Privileged User Plane. Let the application
+define its planes, and assign operations to them. Landlock provides
+data structure and syscall to construct the planes.
 
-I am hoping that whatever we suggest the interface here from the Guest 
-to the Hypervisor becomes the ABI right?
+However, one thing I'm not sure is the third arg from ioctl:
+int ioctl(int fd, unsigned long request, ...);
+Is it possible for the driver to use the same request id, then put
+whatever into the third arg ? how to deal with that effectively ?
 
+For real world user cases, Dmitry Torokhov (added to list) can help.
 
-> 
-> # Current limitations
-> 
-> The main limitation of this patch series is the statically enforced
-> permissions. This is not an issue for kernels without module but this needs to
-> be addressed.  Mechanisms that dynamically impact kernel executable memory are
-> not handled for now (e.g., kernel modules, tracepoints, eBPF JIT), and such
-> code will need to be authenticated.  Because the hypervisor is highly
-> privileged and critical to the security of all the VMs, we don't want to
-> implement a code authentication mechanism in the hypervisor itself but delegate
-> this verification to something much less privileged. We are thinking of two
-> ways to solve this: implement this verification in the VMM or spawn a dedicated
-> special VM (similar to Windows's VBS). There are pros on cons to each approach:
-> complexity, verification code ownership (guest's or VMM's), access to guest
-> memory (i.e., confidential computing).
+PS: There is also lwn article about SELinux implementation of ioctl: [1]
+[1] https://lwn.net/Articles/428140/
 
-Do you foresee the performance regressions due to lot of tracking here? 
-Production kernels do have lot of tracepoints and we use it as feature 
-in the GKI kernel for the vendor hooks implementation and in those cases 
-every vendor driver is a module. Separate VM further fragments this 
-design and delegates more of it to proprietary solutions?
-
-Do you have any performance numbers w/ current RFC?
-
----Trilok Soni
+Thanks!
+-Jeff Xu
