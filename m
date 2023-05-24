@@ -2,219 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DFDC77B7C
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 May 2023 16:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9939C7EE2E
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 May 2023 20:53:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230023AbjEXQtF (ORCPT
+        id S229469AbjEXUxY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 May 2023 12:49:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55056 "EHLO
+        Wed, 24 May 2023 16:53:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235021AbjEXQtE (ORCPT
+        with ESMTP id S229451AbjEXUxY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 May 2023 12:49:04 -0400
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34502F5
-        for <linux-security-module@vger.kernel.org>; Wed, 24 May 2023 09:49:02 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QRHFk6LNSzMqwn3;
-        Wed, 24 May 2023 18:48:58 +0200 (CEST)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4QRHFj3C5Vz1J4N;
-        Wed, 24 May 2023 18:48:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1684946938;
-        bh=UrDEkJbAFr+Rtur3DuzRcOGCf8EYOtMD0v7O1l+5mFI=;
+        Wed, 24 May 2023 16:53:24 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F141C12E;
+        Wed, 24 May 2023 13:53:22 -0700 (PDT)
+Received: from [192.168.4.26] (unknown [47.186.50.133])
+        by linux.microsoft.com (Postfix) with ESMTPSA id E7B6E20FBA6D;
+        Wed, 24 May 2023 13:53:19 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E7B6E20FBA6D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1684961602;
+        bh=jaoGaATWl6qH0LBuT7PMpFhq3wR8UB0SRjcinmr2MGw=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=sDxflh0uQittGRoCS/vasSrkDjEZX+uDSQ+kmB9PccyWYzTo1oSRam5cl3V2QLzdo
-         GCoqTYJZ32HrN6c827gCCwxJQ3+7pSrh7W/biVZ5R5j/iJ0ztJQ/4d5nHquUC9DrRR
-         I2td02oQP2fFSdtV1XRQep9pqzlqt/OZ/1es0iCQ=
-Message-ID: <d3839544-ddea-d913-6ad1-25811a560bbe@digikod.net>
-Date:   Wed, 24 May 2023 18:48:56 +0200
+        b=gdGCklkn+W2FG8nWXMknVmZRf7MOqfBXFQSg1XVTieJjYv2pZpbSK13nBh6SaoEhT
+         jcL639wc1nVXAHEnmQmaX6AIuaD25yFRRA9zSSEUAf6N/FK7V8PguD80UGHHcNbtZY
+         /rfQmT61JJHHOojvC0XgtjYl2COQYPXjTiszLZkM=
+Message-ID: <b1ffbf50-7728-64a1-5d46-10331a17530d@linux.microsoft.com>
+Date:   Wed, 24 May 2023 15:53:18 -0500
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v2] lsm: adds process attribute getter for Landlock
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v1 2/9] KVM: x86/mmu: Add support for prewrite page
+ tracking
+To:     Sean Christopherson <seanjc@google.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?= =?UTF-8?Q?n?= <mic@digikod.net>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Alexander Graf <graf@amazon.com>,
+        Forrest Yuan Yu <yuanyu@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        John Andersen <john.s.andersen@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Marian Rotariu <marian.c.rotariu@gmail.com>,
+        =?UTF-8?Q?Mihai_Don=c8=9bu?= <mdontu@bitdefender.com>,
+        =?UTF-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Thara Gopinath <tgopinath@microsoft.com>,
+        Will Deacon <will@kernel.org>,
+        Zahra Tarkhani <ztarkhani@microsoft.com>,
+        =?UTF-8?Q?=c8=98tefan_=c8=98icleru?= <ssicleru@bitdefender.com>,
+        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
+        virtualization@lists.linux-foundation.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+References: <20230505152046.6575-1-mic@digikod.net>
+ <20230505152046.6575-3-mic@digikod.net> <ZFUumGdZDNs1tkQA@google.com>
+ <6412bf27-4d05-eab8-3db1-d4efa44af3aa@digikod.net>
+ <ZFU9YzqG/T+Ty9gY@google.com>
 Content-Language: en-US
-To:     Shervin Oloumi <enlightened@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, jorgelo@chromium.org,
-        keescook@chromium.org, groeck@chromium.org, jeffxu@chromium.org,
-        allenwebb@chromium.org, gnoack3000@gmail.com, areber@redhat.com,
-        criu@openvz.org, linux-api@vger.kernel.org, jannh@google.com,
-        brauner@kernel.org
-References: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
- <20230518204549.3139044-1-enlightened@chromium.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230518204549.3139044-1-enlightened@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Infomaniak-Routing: alpha
+From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+In-Reply-To: <ZFU9YzqG/T+Ty9gY@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 18/05/2023 22:45, Shervin Oloumi wrote:
-> Adds a new getprocattr hook function to the Landlock LSM, which tracks
-> the landlocked state of the process. This is invoked when user-space
-> reads /proc/[pid]/attr/domain to determine whether a given process is
-> sand-boxed using Landlock. When the target process is not sand-boxed,
-> the result is "none", otherwise the result is empty, as we still need to
-> decide what kind of domain information is best to provide in "domain".
+
+On 5/5/23 12:31, Sean Christopherson wrote:
+> On Fri, May 05, 2023, Mickaï¿½l Salaï¿½n wrote:
+>>
+>> On 05/05/2023 18:28, Sean Christopherson wrote:
+>>> I have no doubt that we'll need to solve performance and scaling issues with the
+>>> memory attributes implementation, e.g. to utilize xarray multi-range support
+>>> instead of storing information on a per-4KiB-page basis, but AFAICT, the core
+>>> idea is sound.  And a very big positive from a maintenance perspective is that
+>>> any optimizations, fixes, etc. for one use case (CoCo vs. hardening) should also
+>>> benefit the other use case.
+>>>
+>>> [1] https://lore.kernel.org/all/20230311002258.852397-22-seanjc@google.com
+>>> [2] https://lore.kernel.org/all/Y2WB48kD0J4VGynX@google.com
+>>> [3] https://lore.kernel.org/all/Y1a1i9vbJ%2FpVmV9r@google.com
+>>
+>> I agree, I used this mechanism because it was easier at first to rely on a
+>> previous work, but while I was working on the MBEC support, I realized that
+>> it's not the optimal way to do it.
+>>
+>> I was thinking about using a new special EPT bit similar to
+>> EPT_SPTE_HOST_WRITABLE, but it may not be portable though. What do you
+>> think?
 > 
-> The hook function also performs an access check. The request is rejected
-> if the tracing process is the same as the target process, or if the
-> tracing process domain is not an ancestor to the target process domain.
+> On x86, SPTEs are even more ephemeral than memslots.  E.g. for historical reasons,
+> KVM zaps all SPTEs if _any_ memslot is deleted, which is problematic if the guest
+> is moving around BARs, using option ROMs, etc.
 > 
-> Adds a new directory for landlock under the process attribute
-> filesystem, and defines "domain" as a read-only process attribute entry
-> for landlock.
+> ARM's pKVM tracks metadata in its stage-2 PTEs, i.e. doesn't need an xarray to
+> otrack attributes, but that works only because pKVM is more privileged than the
+> host kernel, and the shared vs. private memory attribute that pKVM cares about
+> is very, very restricted in how it can be used and changed.
 > 
-> Signed-off-by: Shervin Oloumi <enlightened@chromium.org>
-> ---
->   fs/proc/base.c             | 11 +++++++++++
->   security/landlock/fs.c     | 38 ++++++++++++++++++++++++++++++++++++++
->   security/landlock/fs.h     |  1 +
->   security/landlock/ptrace.c |  4 ++--
->   security/landlock/ptrace.h |  3 +++
->   5 files changed, 55 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 9e479d7d202b..b257ea704666 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -2851,6 +2851,13 @@ static const struct pid_entry apparmor_attr_dir_stuff[] = {
->   LSM_DIR_OPS(apparmor);
->   #endif
->   
-> +#ifdef CONFIG_SECURITY_LANDLOCK
-> +static const struct pid_entry landlock_attr_dir_stuff[] = {
-> +	ATTR("landlock", "domain", 0444),
-> +};
-> +LSM_DIR_OPS(landlock);
-> +#endif
-> +
->   static const struct pid_entry attr_dir_stuff[] = {
->   	ATTR(NULL, "current",		0666),
->   	ATTR(NULL, "prev",		0444),
-> @@ -2866,6 +2873,10 @@ static const struct pid_entry attr_dir_stuff[] = {
->   	DIR("apparmor",			0555,
->   	    proc_apparmor_attr_dir_inode_ops, proc_apparmor_attr_dir_ops),
->   #endif
-> +#ifdef CONFIG_SECURITY_LANDLOCK
-> +	DIR("landlock",                  0555,
-> +	    proc_landlock_attr_dir_inode_ops, proc_landlock_attr_dir_ops),
-> +#endif
->   };
->   
->   static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index adcea0fe7e68..2f8b0837a0fd 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -1280,6 +1280,42 @@ static int hook_file_truncate(struct file *const file)
->   	return -EACCES;
->   }
->   
-> +/* process attribute interfaces */
-> +
-> +/**
-> + * landlock_getprocattr - Landlock process attribute getter
-> + * @task: the object task
-> + * @name: the name of the attribute in /proc/.../attr
-> + * @value: where to put the result
-> + *
-> + * Performs access checks and writes any applicable results to value
-> + *
-> + * Returns the length of the result inside value or an error code
-> + */
-> +static int landlock_getprocattr(struct task_struct *task, const char *name,
-> +				char **value)
-> +{
-> +	char *val = "";
-> +	int slen;
-> +
-> +	// If the tracing process is landlocked, ensure its domain is an
-> +	// ancestor to the target process domain.
-> +	if (landlocked(current))
-> +		if (current == task || !task_is_scoped(current, task))
+> I tried shoehorning private vs. shared metadata into x86's SPTEs in the past, and
+> it ended up being a constant battle with the kernel, e.g. page migration, and with
+> KVM itself, e.g. the above memslot mess.
 
-ptrace_may_access() checks more things than task_is_scoped(), but we 
-should also make sure that that the current domain is taken into account 
-(with a simple domain comparison). Tests should check these cases.
+Sorry for the delay in responding to this. I wanted to study the KVM code and fully
+understand your comment before responding.
 
+Yes, I quite agree with you. I will make an attempt to address this in the next version.
+I am working on it right now.
 
-> +			return -EACCES;
-> +
-> +	// The only supported attribute is "domain".
-> +	if (strcmp(name, "domain") != 0)
-> +		return -EINVAL;
-> +
-> +	if (!landlocked(task))
-> +		val = "none";
+Thanks.
 
-I think the return values, for a dedicated syscall, would be "unknown", 
-"unrestricted", "restricted". This could just be a returned enum.
-
-
-> +
-> +	slen = strlen(val);
-> +	*value = val;
-> +	return slen;
-> +}
-
-This should be part of the ptrace.c file, which would also avoid 
-exporting functions.
-
-
-> +
->   static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
->   	LSM_HOOK_INIT(inode_free_security, hook_inode_free_security),
->   
-> @@ -1302,6 +1338,8 @@ static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
->   	LSM_HOOK_INIT(file_alloc_security, hook_file_alloc_security),
->   	LSM_HOOK_INIT(file_open, hook_file_open),
->   	LSM_HOOK_INIT(file_truncate, hook_file_truncate),
-> +
-> +	LSM_HOOK_INIT(getprocattr, landlock_getprocattr),
->   };
->   
->   __init void landlock_add_fs_hooks(void)
-> diff --git a/security/landlock/fs.h b/security/landlock/fs.h
-> index 488e4813680a..64145e8b5537 100644
-> --- a/security/landlock/fs.h
-> +++ b/security/landlock/fs.h
-> @@ -13,6 +13,7 @@
->   #include <linux/init.h>
->   #include <linux/rcupdate.h>
->   
-> +#include "ptrace.h"
->   #include "ruleset.h"
->   #include "setup.h"
->   
-> diff --git a/security/landlock/ptrace.c b/security/landlock/ptrace.c
-> index 4c5b9cd71286..de943f0f3899 100644
-> --- a/security/landlock/ptrace.c
-> +++ b/security/landlock/ptrace.c
-> @@ -47,8 +47,8 @@ static bool domain_scope_le(const struct landlock_ruleset *const parent,
->   	return false;
->   }
->   
-> -static bool task_is_scoped(const struct task_struct *const parent,
-> -			   const struct task_struct *const child)
-> +const bool task_is_scoped(const struct task_struct *const parent,
-> +			  const struct task_struct *const child)
->   {
->   	bool is_scoped;
->   	const struct landlock_ruleset *dom_parent, *dom_child;
-> diff --git a/security/landlock/ptrace.h b/security/landlock/ptrace.h
-> index 265b220ae3bf..c6eb08951fc1 100644
-> --- a/security/landlock/ptrace.h
-> +++ b/security/landlock/ptrace.h
-> @@ -11,4 +11,7 @@
->   
->   __init void landlock_add_ptrace_hooks(void);
->   
-> +const bool task_is_scoped(const struct task_struct *const parent,
-> +			  const struct task_struct *const child);
-> +
->   #endif /* _SECURITY_LANDLOCK_PTRACE_H */
+Madhavan
