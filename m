@@ -2,113 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E620C77B7C
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 May 2023 15:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AD3C77B7C
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 May 2023 16:03:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235475AbjEXPui (ORCPT
+        id S230028AbjEXQDZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 May 2023 11:50:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48468 "EHLO
+        Wed, 24 May 2023 12:03:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbjEXPuh (ORCPT
+        with ESMTP id S238335AbjEXQDJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 May 2023 11:50:37 -0400
-Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B58D93;
-        Wed, 24 May 2023 08:50:36 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4QRFj419Ltz9xFZy;
-        Wed, 24 May 2023 23:39:04 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwDXVQEvMm5kDA3ZAg--.2184S2;
-        Wed, 24 May 2023 16:50:18 +0100 (CET)
-Message-ID: <813148798c14a49cbdf0f500fbbbab154929e6ed.camel@huaweicloud.com>
-Subject: Re: [syzbot] [reiserfs?] INFO: task hung in flush_old_commits
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com>
-Date:   Wed, 24 May 2023 17:50:03 +0200
-In-Reply-To: <CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com>
-References: <000000000000be039005fc540ed7@google.com>
-         <00000000000018faf905fc6d9056@google.com>
-         <CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Wed, 24 May 2023 12:03:09 -0400
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [IPv6:2001:1600:3:17::190b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F9B7E4F
+        for <linux-security-module@vger.kernel.org>; Wed, 24 May 2023 09:02:18 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QRGCh1ynQzMqVV9;
+        Wed, 24 May 2023 18:02:08 +0200 (CEST)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4QRGCf53VMz61Y;
+        Wed, 24 May 2023 18:02:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1684944128;
+        bh=QKeXn1MUDjfXzYsi/KAksyB4KJH4A/sQiHfYG9YE2/s=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=Orr3JHvz3NCXpkmyXKKXKW1h0WFInOrBE/uoLO7Y6KJwSEfVr/FJK0oDaqpcnDv/I
+         ztgiNadfBByZg8nciQu/Xu2WRPxRPbGGUi/61SjfvZyjbwo5kCgp7kYYiDabDXBSTL
+         5ffkjAv3H2LgYKRai/XUcbk4AXZGR41W9rV7PDmU=
+Message-ID: <b4825033-471c-ba32-530f-b0235356d55b@digikod.net>
+Date:   Wed, 24 May 2023 18:02:05 +0200
 MIME-Version: 1.0
+User-Agent: 
+Subject: Re: [PATCH v2] lsm: adds process attribute getter for Landlock
+Content-Language: en-US
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To:     Paul Moore <paul@paul-moore.com>, Jeff Xu <jeffxu@chromium.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Shervin Oloumi <enlightened@chromium.org>,
+        linux-security-module@vger.kernel.org, jorgelo@chromium.org,
+        keescook@chromium.org, groeck@chromium.org, allenwebb@chromium.org,
+        gnoack3000@gmail.com, areber@redhat.com, criu@openvz.org,
+        linux-api@vger.kernel.org, jannh@google.com, brauner@kernel.org
+References: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
+ <20230518204549.3139044-1-enlightened@chromium.org>
+ <a42875a0-d4c5-e2ac-d115-d4222e229f7d@schaufler-ca.com>
+ <CAHC9VhTq0RgQ6xj86_BkZuAwy4kGy6eC8NVKFroEASNXP3uBxQ@mail.gmail.com>
+ <CABi2SkX0cqOMPeuw8CD28Q6UZihi0Hh7GT=dTmxaG-T_rayPfQ@mail.gmail.com>
+ <CAHC9VhRD8kfkHr2gfFp10txdDwE0NGSJQd08bRojeJKiKtqq6Q@mail.gmail.com>
+ <1225a567-4ff5-462e-0db6-1a88a748d787@digikod.net>
+In-Reply-To: <1225a567-4ff5-462e-0db6-1a88a748d787@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwDXVQEvMm5kDA3ZAg--.2184S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFW7ZFW8GryfJryxArW3GFg_yoW8Kw18pr
-        WrGFnIkrsYvr1jyFn2vF1DWw1I9rZ5CrW7J3yDtryj9anaqrnrtrs29F4fW3yDCr4DCF90
-        v3W3uwn5Xwn5u37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-        AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
-        IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
-        KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBF1jj42dyAADso
-X-CFilter-Loop: Reflected
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2023-05-24 at 11:11 -0400, Paul Moore wrote:
-> On Wed, May 24, 2023 at 5:59 AM syzbot
-> <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com> wrote:
-> > syzbot has bisected this issue to:
-> > 
-> > commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
-> > Author: Roberto Sassu <roberto.sassu@huawei.com>
-> > Date:   Fri Mar 31 12:32:18 2023 +0000
-> > 
-> >     reiserfs: Add security prefix to xattr name in reiserfs_security_write()
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11c39639280000
-> > start commit:   421ca22e3138 Merge tag 'nfs-for-6.4-2' of git://git.linux-..
-> > git tree:       upstream
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=13c39639280000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=15c39639280000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=7d8067683055e3f5
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=0a684c061589dcc30e51
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14312791280000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12da8605280000
-> > 
-> > Reported-by: syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com
-> > Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reiserfs_security_write()")
-> > 
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+On 24/05/2023 17:38, Mickaël Salaün wrote:
 > 
-> Roberto, I think we need to resolve this somehow.  As I mentioned
-> earlier, I don't believe this to be a fault in your patch, rather that
-> patch simply triggered a situation that had not been present before,
-> likely because the reiserfs code always failed when writing LSM
-> xattrs.  Regardless, we still need to fix the deadlocks that sysbot
-> has been reporting.
-
-Hi Paul
-
-ok, I will try.
-
-Roberto
-
-> Has anyone dug into the reiserfs code to try and resolve the deadlock?
->  Considering the state of reiserfs, I'm guessing no one has, and I
-> can't blame them; I personally would have a hard time justifying
-> significant time spent on reiserfs at this point.  Unless someone has
-> any better ideas, I'm wondering if we shouldn't just admit defeat with
-> reiserfs and LSM xattrs and disable/remove the reiserfs LSM xattr
-> support?  Given the bug that Roberto was fixing with the patch in
-> question, it's unlikely this was working anyway.
+> On 23/05/2023 23:12, Paul Moore wrote:
+>> On Tue, May 23, 2023 at 2:13 AM Jeff Xu <jeffxu@chromium.org> wrote:
+>>> On Mon, May 22, 2023 at 12:56 PM Paul Moore <paul@paul-moore.com> wrote:
+>>>> On Thu, May 18, 2023 at 5:26 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>>> On 5/18/2023 1:45 PM, Shervin Oloumi wrote:
+>>>>>> Adds a new getprocattr hook function to the Landlock LSM, which tracks
+>>>>>> the landlocked state of the process. This is invoked when user-space
+>>>>>> reads /proc/[pid]/attr/domain
+>>>>>
+>>>>> Please don't add a Landlock specific entry directly in the attr/
+>>>>> directory. Add it only to attr/landlock.
+>>>>>
+>>>>> Also be aware that the LSM maintainer (Paul Moore) wants to move
+>>>>> away from the /proc/.../attr interfaces in favor of a new system call,
+>>>>> which is in review.
+>>>>
+>>>> What Casey said above.
+>>>>
+>>>> There is still some uncertainty around timing, and if we're perfectly
+>>>> honest, acceptance of the new syscalls at the Linus level, but yes, I
+>>>> would very much like to see the LSM infrastructure move away from
+>>>> procfs and towards a syscall API.  Part of the reasoning is that the
+>>>> current procfs API is ill-suited to handle the multiple, stacked LSMs
+>>>> and the other part being the complexity of procfs in a namespaced
+>>>> system.  If the syscall API is ultimately rejected, we will need to
+>>>> revisit the idea of a procfs API, but even then I think we'll need to
+>>>> make some changes to the current approach.
+>>>>
+>>>> As I believe we are in the latter stages of review for the syscall
+>>>> API, perhaps you could take a look and ensure that the current
+>>>> proposed API works for what you are envisioning with Landlock?
 > 
-> --
-> paul-moore.com
+> I agree, and since the LSM syscalls are almost ready that should not
+> change much the timing. In fact, extending these syscalls might be
+> easier than tweaking the current procfs/attr API for Landlock specific
+> requirements (e.g. scoped visibility). We should ensure that these
+> syscalls would be a good fit to return file descriptors, but in the
+> short term we only need to know if a process is landlocked or not, so a
+> raw return value (0 or -errno) will be enough.
+> 
+> Mentioning in the LSM syscalls patch series that they may deal with (and
+> return) file descriptors could help API reviewers though.
 
+It should be kept in mind that the current LSM syscalls only deal with 
+the calling task, whereas the goal of this Landlock patch series is to 
+inspect other tasks. A new LSM syscall would need to be created to 
+handle pidfd e.g., named lsm_get_proc_attr() or lsm_get_pid_attr().
+
+I'm not sure if this should be a generic LSM syscall or a Landlock 
+syscall though. I have plan to handle processes other than the caller 
+(e.g. to restrict an existing process hierarchy), so thinking about a 
+Landlock-specific syscall could make sense.
+
+To summarize, creating a new LSM syscall to deal with pidfd and to get 
+LSM process "status/attr" looks OK. However, Landlock-specific syscalls 
+to deal with Landlock specificities (e.g. ruleset or domain file 
+descriptor) make more sense.
+
+Having one LSM-generic syscall to get minimal Landlock attributes (i.e. 
+mainly to know if a process is sandboxed), and another Landlock-specific 
+syscall to do more things (e.g. get the domain file descriptor, restrict 
+a task) seems reasonable. The second one would overlap with the first 
+one though. What do you think?
