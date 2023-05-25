@@ -2,221 +2,125 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2186C7EE2D
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 May 2023 13:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AF5C77B7A
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 May 2023 15:00:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241182AbjEYN7y (ORCPT
+        id S239180AbjEYPAu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 May 2023 09:59:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39622 "EHLO
+        Thu, 25 May 2023 11:00:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241115AbjEYN7t (ORCPT
+        with ESMTP id S235299AbjEYPAt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 May 2023 09:59:49 -0400
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA046186
-        for <linux-security-module@vger.kernel.org>; Thu, 25 May 2023 06:59:47 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QRqS21ymJzMqR7q;
-        Thu, 25 May 2023 15:59:46 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QRqRs62HQzMrvhY;
-        Thu, 25 May 2023 15:59:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1685023186;
-        bh=dkxhZ1HkwQnup1ntsnpZMoLqXeEGTbS0hUQ4TXONwZM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=z7dLLPtoGNMkprHSpGt6xiWHcyKmtDBlHRXiVa8nrKOQpQVJaMTM9UlR6ArI194Tz
-         QXVWg9U8wg3ep4cqLdnYovLTDgvCD2x6qehmxK+0nYNikwoJuBw6oD50iugwe2xhqn
-         Gl2TgNvsZgLXncnPn3fvZ8S1jZ3eCH7T1FazAaIE=
-Message-ID: <facfd178-3157-80b4-243b-a5c8dabadbfb@digikod.net>
-Date:   Thu, 25 May 2023 15:59:35 +0200
-MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [RFC PATCH v1 0/9] Hypervisor-Enforced Kernel Integrity
-Content-Language: en-US
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        "Christopherson,, Sean" <seanjc@google.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>
-Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "yuanyu@google.com" <yuanyu@google.com>,
-        "jamorris@linux.microsoft.com" <jamorris@linux.microsoft.com>,
-        "marian.c.rotariu@gmail.com" <marian.c.rotariu@gmail.com>,
-        "Graf, Alexander" <graf@amazon.com>,
-        "Andersen, John S" <john.s.andersen@intel.com>,
-        "madvenka@linux.microsoft.com" <madvenka@linux.microsoft.com>,
-        "liran.alon@oracle.com" <liran.alon@oracle.com>,
-        "ssicleru@bitdefender.com" <ssicleru@bitdefender.com>,
-        "tgopinath@microsoft.com" <tgopinath@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "will@kernel.org" <will@kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "dev@lists.cloudhypervisor.org" <dev@lists.cloudhypervisor.org>,
-        "mdontu@bitdefender.com" <mdontu@bitdefender.com>,
-        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "nicu.citu@icloud.com" <nicu.citu@icloud.com>,
-        "ztarkhani@microsoft.com" <ztarkhani@microsoft.com>,
-        "x86@kernel.org" <x86@kernel.org>
-References: <20230505152046.6575-1-mic@digikod.net>
- <93726a7b9498ec66db21c5792079996d5fed5453.camel@intel.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <93726a7b9498ec66db21c5792079996d5fed5453.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Thu, 25 May 2023 11:00:49 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47188191;
+        Thu, 25 May 2023 08:00:44 -0700 (PDT)
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34PEuBK2013223;
+        Thu, 25 May 2023 15:00:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=HEaA0SnACFr+FUUA4vFdDc5HJuDhxRyje+Mm0nAY+ZM=;
+ b=p8Ye07mO8CTSu1WRW+JgiPjAYwph3UffmX0LQlbe9ujJvK82JkjkXIHgNMR/lgHL4CCt
+ eB1cg368Lc7VfnQi1aSajKLJsfCBn3KczawHxm1lCZKmrqiy2riw/RvXcDGzeqpb5pMr
+ zjSZTyg14AB/Auhumf0Bup/DqsFsNNifnusI9VdV2VYDtlYjvfROuCmRrLTBWq2ZC33n
+ RmOpc+gDd6EQAmx45jSDf2/WLA4a8rxs9AfVtsJyrnw5nqgb5/MBUZypQ3lzw//oBWcR
+ 3ztem2nX6pnaC1PiX3LMhf3exh8+duebJ3jYW9T0oy6l6XnkUf/P1UectOks+gzCWvle 5w== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qt9vdg2nk-4
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 May 2023 15:00:32 +0000
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34PEU9FY019836;
+        Thu, 25 May 2023 14:43:30 GMT
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qt9fngdq2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 May 2023 14:43:30 +0000
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34PCoFgv016415;
+        Thu, 25 May 2023 14:43:29 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([9.208.129.118])
+        by ppma01dal.us.ibm.com (PPS) with ESMTPS id 3qppdta0vr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 May 2023 14:43:29 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34PEhSCP60424648
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 May 2023 14:43:28 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4ED2C58055;
+        Thu, 25 May 2023 14:43:28 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B7D558059;
+        Thu, 25 May 2023 14:43:27 +0000 (GMT)
+Received: from wecm-9-67-23-194.wecm.ibm.com (unknown [9.67.23.194])
+        by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Thu, 25 May 2023 14:43:27 +0000 (GMT)
+Message-ID: <ba494e92990e520bd8660208b3cc10bb9af8dd26.camel@linux.ibm.com>
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM
+ after writes
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Stefan Berger <stefanb@linux.ibm.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Date:   Thu, 25 May 2023 10:43:26 -0400
+In-Reply-To: <CAHC9VhS7uMMgvwRRDzpZPUQDAeibdkLi0OCdp=j_Q-EcMHm0cw@mail.gmail.com>
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+         <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
+         <cbffa3dee65ecc0884dd16eb3af95c09a28f4297.camel@linux.ibm.com>
+         <CAHC9VhSeBn-4UN48NcQWhJqLvQuydt4OvdyUsk9AXcviJ9Cqyw@mail.gmail.com>
+         <49a31515666cb0ecf78909f09d40d29eb5528e0f.camel@linux.ibm.com>
+         <CAHC9VhS7uMMgvwRRDzpZPUQDAeibdkLi0OCdp=j_Q-EcMHm0cw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: uwPqM4NirCy91ZQJ05ShddySVI9qgyX1
+X-Proofpoint-GUID: 7QZbnswjjeRPFa_t9axwduAacG9ioe-q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-25_08,2023-05-25_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 lowpriorityscore=0
+ malwarescore=0 adultscore=0 clxscore=1015 priorityscore=1501 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305250119
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 25/05/2023 00:20, Edgecombe, Rick P wrote:
-> On Fri, 2023-05-05 at 17:20 +0200, Mickaël Salaün wrote:
->> # How does it work?
->>
->> This implementation mainly leverages KVM capabilities to control the
->> Second
->> Layer Address Translation (or the Two Dimensional Paging e.g.,
->> Intel's EPT or
->> AMD's RVI/NPT) and Mode Based Execution Control (Intel's MBEC)
->> introduced with
->> the Kaby Lake (7th generation) architecture. This allows to set
->> permissions on
->> memory pages in a complementary way to the guest kernel's managed
->> memory
->> permissions. Once these permissions are set, they are locked and
->> there is no
->> way back.
->>
->> A first KVM_HC_LOCK_MEM_PAGE_RANGES hypercall enables the guest
->> kernel to lock
->> a set of its memory page ranges with either the HEKI_ATTR_MEM_NOWRITE
->> or the
->> HEKI_ATTR_MEM_EXEC attribute. The first one denies write access to a
->> specific
->> set of pages (allow-list approach), and the second only allows kernel
->> execution
->> for a set of pages (deny-list approach).
->>
->> The current implementation sets the whole kernel's .rodata (i.e., any
->> const or
->> __ro_after_init variables, which includes critical security data such
->> as LSM
->> parameters) and .text sections as non-writable, and the .text section
->> is the
->> only one where kernel execution is allowed. This is possible thanks
->> to the new
->> MBEC support also brough by this series (otherwise the vDSO would
->> have to be
->> executable). Thanks to this hardware support (VT-x, EPT and MBEC),
->> the
->> performance impact of such guest protection is negligible.
->>
->> The second KVM_HC_LOCK_CR_UPDATE hypercall enables guests to pin some
->> of its
->> CPU control register flags (e.g., X86_CR0_WP, X86_CR4_SMEP,
->> X86_CR4_SMAP),
->> which is another complementary hardening mechanism.
->>
->> Heki can be enabled with the heki=1 boot command argument.
->>
->>
+On Fri, 2023-05-19 at 10:58 -0400, Paul Moore wrote:
+> On Thu, May 18, 2023 at 4:56 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Thu, 2023-05-18 at 16:46 -0400, Paul Moore wrote:
+> > > On Fri, Apr 21, 2023 at 10:44 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > > > On Fri, 2023-04-07 at 09:29 -0400, Jeff Layton wrote:
 > 
-> Can the guest kernel ask the host VMM's emulated devices to DMA into
-> the protected data? It should go through the host userspace mappings I
-> think, which don't care about EPT permissions. Or did I miss where you
-> are protecting that another way? There are a lot of easy ways to ask
-> the host to write to guest memory that don't involve the EPT. You
-> probably need to protect the host userspace mappings, and also the
-> places in KVM that kmap a GPA provided by the guest.
-
-Good point, I'll check this confused deputy attack. Extended KVM 
-protections should indeed handle all ways to map guests' memory. I'm 
-wondering if current VMMs would gracefully handle such new restrictions 
-though.
-
-
+> ...
 > 
-> [ snip ]
+> > > I'm going through my review queue to make sure I haven't missed
+> > > anything and this thread popped up ... Stefan, Mimi, did you get a fix
+> > > into an upstream tree somewhere?  If not, is it because you are
+> > > waiting on a review/merge from me into the LSM tree?
+> >
+> > Sorry for the delay.  Between vacation and LSS, I just started testing
+> > Jeff Layton's patch.
 > 
->>
->> # Current limitations
->>
->> The main limitation of this patch series is the statically enforced
->> permissions. This is not an issue for kernels without module but this
->> needs to
->> be addressed.  Mechanisms that dynamically impact kernel executable
->> memory are
->> not handled for now (e.g., kernel modules, tracepoints, eBPF JIT),
->> and such
->> code will need to be authenticated.  Because the hypervisor is highly
->> privileged and critical to the security of all the VMs, we don't want
->> to
->> implement a code authentication mechanism in the hypervisor itself
->> but delegate
->> this verification to something much less privileged. We are thinking
->> of two
->> ways to solve this: implement this verification in the VMM or spawn a
->> dedicated
->> special VM (similar to Windows's VBS). There are pros on cons to each
->> approach:
->> complexity, verification code ownership (guest's or VMM's), access to
->> guest
->> memory (i.e., confidential computing).
-> 
-> The kernel often creates writable aliases in order to write to
-> protected data (kernel text, etc). Some of this is done right as text
-> is being first written out (alternatives for example), and some happens
-> way later (jump labels, etc). So for verification, I wonder what stage
-> you would be verifying? If you want to verify the end state, you would
-> have to maintain knowledge in the verifier of all the touch-ups the
-> kernel does. I think it would get very tricky.
+> No worries, I'm a bit behind too, I just wanted to make sure I wasn't
+> blocking this thread :)
 
-For now, in the static kernel case, all rodata and text GPA is 
-restricted, so aliasing such memory in a writable way before or after 
-the KVM enforcement would still restrict write access to this memory, 
-which could be an issue but not a security one. Do you have such 
-examples in mind?
+FYI, Jeff Layton's patch is now queued in next-integrity.
 
+-- 
+thanks,
 
-> 
-> It also seems it will be a decent ask for the guest kernel to keep
-> track of GPA permissions as well as normal virtual memory pemirssions,
-> if this thing is not widely used.
+Mimi
 
-This would indeed be required to properly handle the dynamic cases.
-
-
-> 
-> So I wondering if you could go in two directions with this:
-> 1. Make this a feature only for super locked down kernels (no modules,
-> etc). Forbid any configurations that might modify text. But eBPF is
-> used for seccomp, so you might be turning off some security protections
-> to get this.
-
-Good idea. For "super locked down kernels" :) , we should disable all 
-kernel executable changes with the related kernel build configuration 
-(e.g. eBPF JIT, kernel module, kprobes…) to make sure there is no such 
-legitimate access. This looks like an acceptable initial feature.
-
-
-> 2. Loosen the rules to allow the protections to not be so one-way
-> enable. Get less security, but used more widely.
-
-This is our goal. I think both static and dynamic cases are legitimate 
-and have value according to the level of security sought. This should be 
-a build-time configuration.
-
-> 
-> There were similar dilemmas with the PV CR pinning stuff.
