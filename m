@@ -2,129 +2,80 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB3DC7EE29
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 May 2023 21:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC61C7EE29
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 May 2023 21:54:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241984AbjEYVuU (ORCPT
+        id S230290AbjEYVyF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 May 2023 17:50:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51528 "EHLO
+        Thu, 25 May 2023 17:54:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242313AbjEYVuG (ORCPT
+        with ESMTP id S241965AbjEYVyE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 May 2023 17:50:06 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B370173C
-        for <linux-security-module@vger.kernel.org>; Thu, 25 May 2023 14:49:41 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-ba6d024a196so143378276.2
-        for <linux-security-module@vger.kernel.org>; Thu, 25 May 2023 14:49:41 -0700 (PDT)
+        Thu, 25 May 2023 17:54:04 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D12183
+        for <linux-security-module@vger.kernel.org>; Thu, 25 May 2023 14:54:02 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-b9daef8681fso154253276.1
+        for <linux-security-module@vger.kernel.org>; Thu, 25 May 2023 14:54:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1685051379; x=1687643379;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=paul-moore.com; s=google; t=1685051642; x=1687643642;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OC+9NjL0irobHibDiO4Xj0w+axMGUz0a3YWUxzC5iGM=;
-        b=Xli9upD25QW3yaKVzMKeJym2HC6mDnRJ2oNlJGpRtJQwE+0RjgFyE9NaGRZl/KANmT
-         hqxJeSbWCtsnkz5POe4lDP5ZDSW+iz2uoBYWRnbQOZxpzeMMJ0S05Y32fG9dWgPm1Gjd
-         LG/Au3dHaY1f9YS5PEcLPsYE+UlHmQH+YtNM2kiwuVjctXfG8vNraS6leg7ZoqoS1HAH
-         sNPt7D1kLZ3XbX2Zp9+xHyW+DjX4cuP1mNAa5KGNeNtQiywsb1xh2PsgdnZ3kivM04x6
-         LXzXHOT6hFj2j7eGDlSygweyJb31DKXEO0OP7xcFeOiJcRu9bIHckRGXf8gpAwZqCV1c
-         VMLg==
+        bh=CD5qxy0Rx+9b9N3zzketlqcg16DNfdz3K8d9nltKurw=;
+        b=ToTTX1lWEmVjHekpk/vclY4Hv++wOfVB/KB2+Q0qSey+eQxeTN50xRn26Eu9PHbR9m
+         3NcHw00Yi0q/ikxKhHhZb7LbD4fx57smcJ0tBN6mPKYuSLjOigtgovOyXNK4LVb+2fuN
+         jgINqN/nZKoXnrLlIGcfd1fhqUexBH0Cw/uecEX1VP7s/vfxJ9BcWKq7x4sQgO4zsZ+c
+         9htG2Kp8HZdsFqbQh/f0ipsEZbwErAfNzB7wGSb0rwkQRyIwaXWm0Dn7UWGMHxBbudnA
+         wLOH9zlsuHXjuTW4VHg0FeGCfvhwL7IX6QTe/uQIw71fqbQqtXTtGtl2uTnfrIZiZjX7
+         ce6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685051379; x=1687643379;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20221208; t=1685051642; x=1687643642;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OC+9NjL0irobHibDiO4Xj0w+axMGUz0a3YWUxzC5iGM=;
-        b=BpzQPSK8K6n2FDjjghUMrQAIDuKRDu324SNl3W3SazFQwRu+0AgZtUGAtHje9MYwKI
-         xyHH7sIF39zGiwtbiVImEc/DIjQZxt/qsQZ56Za0L/mKFKw3cD7qZFZsYk4UWeWctvX9
-         5cEKLG12o+jhqkt22QSCR8kMYy88B3IQVmz5cCO/3+dMAHLk0Zf8rJS6gqka4a6G21eK
-         scVCyDul/BVyVYINSRlryApmvzEPft12ODnEJZJWT8TA58h1GIx3FNp9UPtdwSNTE/X9
-         Q2tqo3pOyfiiVfAOpLy37rPw9TajtS+bwM/4JU5v/kYrRtQNTyrotzU97m6XBQ6wJThY
-         Oncg==
-X-Gm-Message-State: AC+VfDypcIcoQ/RLhQBk51jAO4Clgxc+PiuREP897pb4bAWk49i3jt3r
-        UnU8ZBu7DNC5iXJDX6QlOUBQ191dWKJnbIhY6NK5
-X-Google-Smtp-Source: ACHHUZ6lpc0Ms3TflRcikKP9rQMUcNUUX12zKG6c7RupY5OQ+TBvP2H/Du0k5GoZMiQR8/JmxXHq1tN/wEo2i5a4DLc=
-X-Received: by 2002:a81:4e84:0:b0:55a:985e:8ad1 with SMTP id
- c126-20020a814e84000000b0055a985e8ad1mr798556ywb.33.1685051378870; Thu, 25
- May 2023 14:49:38 -0700 (PDT)
+        bh=CD5qxy0Rx+9b9N3zzketlqcg16DNfdz3K8d9nltKurw=;
+        b=SRWhAOWvOokVgci3GVX//vhE403Cxfh/S8OdxaWxfu0maP9LXAxKoG00OBiAJS+5qs
+         /aDgtFoni0OL6v7HSoC+kvShShwimvuuQRftL8NMTy+SNbFPtt0nG2w2o3q2jblEMnCX
+         fEgnJWHF7Ke5upjdWJCQ+xM6nHA/32f8xLxmtgwtapeEMHiJBTQtgyuj3ksgKXZ+luKc
+         C+ma5hk4TuSqvY1WnyLWZKaCE7NrIG/H2HOue8luhb5AlxCMlYiNkFr8P6GrAgz2l/oU
+         0rh2gUbzbsEFWX5U56TQFVasHFMtAg93l8P660rc+GJ6IjLUPx20RzORJ7E1ozyBepnQ
+         r5JQ==
+X-Gm-Message-State: AC+VfDyG4GjUcwlwHriLzwBbWXNu5mKwQC6PvEZGlDwScnzdUixoWNmu
+        3bU4u7ozKBZVAbZZkGRno5PuDSuPPuk2W5+zRNPc7GiIvryhtEE=
+X-Google-Smtp-Source: ACHHUZ7uXkBL8DB/AFcf1ECyyyqeL07x42Eo7/h2fGx7Sz3g4BKYIsdNajvxgHw+P1GogQRb8lUbAyyXnbiauOX9rVM=
+X-Received: by 2002:a0d:dc86:0:b0:55a:98ff:f077 with SMTP id
+ f128-20020a0ddc86000000b0055a98fff077mr1041561ywe.2.1685051641744; Thu, 25
+ May 2023 14:54:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <000000000000d368dd05fb5dd7d3@google.com> <a800496b-cae9-81bf-c79e-d8342418c5be@I-love.SAKURA.ne.jp>
- <CAHC9VhSEd5BK=ROaN7wMB4WtGMZ=vXz7gQk=xjjn1-mbp_RWSQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSEd5BK=ROaN7wMB4WtGMZ=vXz7gQk=xjjn1-mbp_RWSQ@mail.gmail.com>
+References: <20230525031953.105125-1-paul@paul-moore.com>
+In-Reply-To: <20230525031953.105125-1-paul@paul-moore.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 25 May 2023 17:49:28 -0400
-Message-ID: <CAHC9VhSGwM9VXshWwopr3d2epVksFNZUbS-mQyFOg9bVBOC1aA@mail.gmail.com>
-Subject: Re: [PATCH] reiserfs: Initialize sec->length in reiserfs_security_init().
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     syzbot <syzbot+00a3779539a23cbee38c@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        reiserfs-devel@vger.kernel.org, glider@google.com,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
+Date:   Thu, 25 May 2023 17:53:51 -0400
+Message-ID: <CAHC9VhQOz47T-5i3ztRt3U4dNRKoF2bTPWw+sejzq=rry4yFzQ@mail.gmail.com>
+Subject: Re: [PATCH] lsm: fix a number of misspellings
+To:     linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, May 20, 2023 at 3:47=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Thu, May 11, 2023 at 10:49=E2=80=AFAM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> >
-> > syzbot is reporting that sec->length is not initialized.
-> >
-> > Since security_inode_init_security() returns 0 when initxattrs is provi=
-ded
-> > but call_int_hook(inode_init_security) returned -EOPNOTSUPP, control wi=
-ll
-> > reach to "if (sec->length && ...) {" without initializing sec->length.
-> >
-> > Reported-by: syzbot <syzbot+00a3779539a23cbee38c@syzkaller.appspotmail.=
-com>
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D00a3779539a23cbee38c
-> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > Fixes: 52ca4b6435a4 ("reiserfs: Switch to security_inode_init_security(=
-)")
-> > ---
-> >  fs/reiserfs/xattr_security.c | 1 +
-> >  1 file changed, 1 insertion(+)
+On Wed, May 24, 2023 at 11:19=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
 >
-> Adding the LSM list to the CC line.
+> A random collection of spelling fixes for source files in the LSM
+> layer.
+>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  security/commoncap.c     | 20 ++++++++++----------
+>  security/device_cgroup.c |  2 +-
+>  security/lsm_audit.c     |  2 +-
+>  security/security.c      |  4 ++--
+>  4 files changed, 14 insertions(+), 14 deletions(-)
 
-I haven't seen any objections, and it looks reasonable to me so I've
-gone ahead and merged it into lsm/next.  This is arguably
-lsm/stable-6.4 material, but I'm going to stick with lsm/next in hopes
-that Roberto can resolve the other reiserfs issue and we can push all
-the reiser fixes up to Linus in one shot.
-
-The reality is that LSM xattrs have been broken on reiserfs for a long
-time and no one has complained, I figure a few more weeks isn't going
-to matter that much.
-
-Regardless, thanks for digging into this syzbot failure and sending a patch=
-.
-
-> > diff --git a/fs/reiserfs/xattr_security.c b/fs/reiserfs/xattr_security.=
-c
-> > index 6e0a099dd788..078dd8cc312f 100644
-> > --- a/fs/reiserfs/xattr_security.c
-> > +++ b/fs/reiserfs/xattr_security.c
-> > @@ -67,6 +67,7 @@ int reiserfs_security_init(struct inode *dir, struct =
-inode *inode,
-> >
-> >         sec->name =3D NULL;
-> >         sec->value =3D NULL;
-> > +       sec->length =3D 0;
-> >
-> >         /* Don't add selinux attributes on xattrs - they'll never get u=
-sed */
-> >         if (IS_PRIVATE(dir))
-> > --
-> > 2.18.4
+Merged into lsm/next.
 
 --=20
 paul-moore.com
