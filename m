@@ -2,172 +2,219 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C45C7EE29
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 May 2023 16:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CCAC77B7A
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 May 2023 17:13:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231934AbjEYQaP (ORCPT
+        id S231491AbjEYRNq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 May 2023 12:30:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40334 "EHLO
+        Thu, 25 May 2023 13:13:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231542AbjEYQaO (ORCPT
+        with ESMTP id S229672AbjEYRNp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 May 2023 12:30:14 -0400
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B03E69
-        for <linux-security-module@vger.kernel.org>; Thu, 25 May 2023 09:29:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685032117; bh=l24o/qZYPVsTdpLHbBO+tWrD6HMJA4puWzSK8ypba9M=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=QgFHlBvzuwsZF5ie+WmSCWbYdw0mWmRz7os1GgkQriIRDYjWZJbgWi9uu/ZzSclUmNXhrSLMXP7ZAALo6OtrxCb7jUrNIYg1dHj+jcZZMrWP/qJOA5/I8wUSaOHyBVQsIE+r2gfwz76ieeiA5jZY2j5YvG4YVxU55sPqnrk0JR3r/OXfrIsnbPDE/V+pUbrRPG5fy6+LN3PAQCd63fSwNJeNblUzWB096EoJ7+ARqWLZyoan2Qx8Hwovwm6SARZwu1yF1RbcWZI/RaJNbEDKFLopuhHmHGaYPqyJclg67iakzWSmnsF9ANmbNqjQWAr72G1zF+w4bS+g9zruu4InuQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685032117; bh=k/cr0IjcZadDtB49i4URWmIpoa8uaQYuvM22/a2e/bW=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=umP3+wKMN/pqsCUa99f18nJhpjgjqjF9T658zWfUk5uR1RYCM/QrSfrY6c/kyJHmcUFGd5MMhUa/APJmuKwHD9mL8jmvGpybjAlo/t5RL5sFlBIUr3IDzsBuHd4k6JS4wN1NOWCNli58gyGqHrxm4LaMEotRU7EgYsfws0CCqceQzye/00DXAHv9yiMl9KMhMmKF2KZRX09U/A9VR6jT9kOriIn5BD34SZuBEcQvMtn10/GlUhdsKfhfAayLZccvQpaIZlTL7Ivh9fjpntNoK0juDncKavfyf+D1Zii5XvTRCy76pbJ9gx+cq1aDDpyWpw0A24bzhu4pBy2wV3Ia6A==
-X-YMail-OSG: urHBNzMVM1kI2KSPFU3PCWu7l2A_rcbx1XzOiNVOmyiigznejw4fIrgtJhXysM6
- wYJyqq_9fLCfGUg2t0qtbi_COwxLWbxzQFxN.hBuDwZknEFmpexjUIzuEzPMeJWl9xeKKRWEpkrd
- ZE_0vQvT.i9mZ7nRB0JNWwvlfVm7x39GBG4kyvHllA4ZrY7TFvWtXaxUgMt5gcZhPt6MdFFl2ipf
- QZ66a3seiQQfvQSW4PoQRwwT8.yfMaYP8f0lFSR1KxlEGJyrmiaScfbRJ3XzSqmRMHQj2h4bjl93
- ROlD2Fipp0YVDhtb32qVGYFfug.2AkqlMClHyqsYfe5.1nOZsW0TrNPrOmuBP2vLpJ6cjFg3Y304
- DP79rgkCG9TO4n_LglnrR2EQYJRxbGg61vnEsNIl7FJ.lNUGnnbnMeuxUmxqhiSSzVOurq9TvU.v
- dPbyGkmykRI4MKJqQqITFbVX73ECzMUEcRf7ZuX6Fje15Jz95OQoD_vHjDTiDivKLH0RXduqc7vq
- K9BXQln1xIavoKIOyGB1tRVHBSQdymwOvqoXxFtFMIlP4YHEfLMW9AdmBq6V_hKBojF8azUOOuNS
- 374ZWucC1QZYgNQihl.qOcuynx5xRSTbMCfUenAXfvI98TVmrGn.w1ieHQ6LAkagpuE9gfmC9dcN
- HKobDPR1IY_5VCt_ezrxK7zD04aswlxnuI3gj4FgbWmk2oRFhmIaFl1zYHdERmq3GX5J_LdSdAXL
- Rm3VbxwiYRH03qLMlgiHFfz_vHFQo2eQm.ZQDGeehquiRSOckFDZwnMP5dBm4Ou5g4MlOQUYrBed
- qWr9GN.PtVWs4uzxE9fJXQiG5g0NT2wiTIMTxP52CX5ubbqXyWRi0n6kZiluLX0sNTTF7T_zY6nH
- vT4okzQZ0qhh.1wkXtW.NyLVadMVhEpDSPY1xYJCX5yI9L4W7oWanUMi2wmhhGJRhV_ZxyXlYryU
- aMT10zIIE2Jb9FI2A6KBV1GSE44FLQRT0iw2.eDgbV9IaD2OWXkJFcQhTnGYZ_OfXzzDLK9NAuJU
- HSv1xGh8RCDBhCzIK7HzmHe.k1Q.FjG8keMu6uwRM3CQq6bUX4LdtNvqlOFG4b7hpKgdwd9UFsVC
- V3XTqL_i0lcJm0aEZhtRI1HucbFYR0nuq3gyU8d6HavRQ3TuRW_525WA0BpYUnd5ChU6PV7kwU8n
- h03DbdWmQgBb05XXLF.th1o7RqG7RH2oGiiwznPWTap48ViqM7gbWrRZkrzjxKAc1IX.8MqQ63LM
- toP3HiDGj0YxUWKAQH5169wm_wtKGOcbzxajpdMkE3ShJdqdwruHHReo1UVKrdB8ouWiJvR2hyxU
- Uo.MzDg3zerVH7WHsDAyRWKQEMW8CYrlm8dURv5kKfo1UEXWcnnT2noPBbpFDmzQiwqjbQ8NsnZe
- JQJE5wN2uktSHFp_9AD.eVF4v5CY37VM8UFeDrmWZjVRLqxpZoo7OCpKYAkcsrD0cbHx4Cdm8wcQ
- riQUQj12kRejOIOUnBwnAZOECiCj38wLmWOZp71_EZvgU3x0TGfKpVySJ14h4d05D5zAPWUeESO8
- oc0MOOLmJf5V4iN30Hn6BlyAWjcbEKzowbCQEGXM8HRGAm6aALjbmmQ4ayTkw3928azz9gsRF6_n
- DaBg8OKIibFTH8NpTo_FvXY8TCO9qGUb2rUj1HfsJoa7PV_58564MqNrSglkAJnKEsnlQ0mZk7KD
- feJZnWkfVxAcSjXsuf_UtsDbiy1_aP39wqWoSiGCr7PYxebLnxFiiHTgI8hir3MAdjh.GSbRxfhP
- hBsfnsfNkPwzoFJfEDiEwViuyF_zjdDjViPoiumPE4819_yA6vYsqObyf6Jdsr_160TQSPG90M2o
- q4.nYeZLzXqhwkbXiPb8BgAHk5SraPFmIhDvQ02QwqTkecOHV3Hq9WVWz_Y6Sc_GLkoYKB4XH8Fm
- 3gAXCuQHkbQ7lMY3iSUTSJ687V1jmZ5UYFTT8bIf2sQnYWGsvfNEgMPs8zcr.rc_wwHFMmyDGVwl
- r4brB61.2zcuaKjR8jvGUL4L92Gx8a4_RG8V7_vUwEU_p5SnO4nN3yWlfe36LJTfpdIbCV7qFPmR
- .Bb7c7O5fpPwjTmShJ6ukb5hDo_GjI6.vnuzCHlo6.W1GPldeUififcOCUS5UEJ7e7p6g3NF0EBR
- 4LHPbZMZ9zbOfCypShl8QJFLIzQ3_OUk_elav95Rm50jf4HWN.Q9wlpgwyNXOkMvucfekLXzy3O4
- 1Dtc16LruWHDGCBrSTtzQ2B4BwG3F1t.mBU7aEy664ze0FBWs5miGSeY76U_zh5mLWvVZlsuIhgz
- XYXOXWXA4zu4-
+        Thu, 25 May 2023 13:13:45 -0400
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 349C2B6
+        for <linux-security-module@vger.kernel.org>; Thu, 25 May 2023 10:13:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685034822; bh=hs9ReKfTAT08nFeSUhxuaor94N253HxepERRtSwqFA0=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=BcSzE5+XO81tAE3FpCNABOeF6bCjaWHgycdawP5t7Li+0ODV7SvVkNIeu24taEQvOlGnbqZirKtMPKxJH9R6zds0Z3D1k+ujEtgfpqnMEBrFTc26c/JsfMfq9ACb7alA/CPs2mIa3W9B65hDBInwffVwCT2udxL5zxmIswKxCd7JnTU4QKzbwhECmDSENTXdExyZeXEGBYL0NoAoSdNal9r1XlmchY6rMsquYv1mPb86HAERatE2bG/QyPQgQEndwu4e1jYu/giw0c+KIEyaffKujREFvho2XIbz9PcQ4wEjF2guAs54bfsvtwG96h02TVy7FAcrRBU5AvIoNAyjBQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685034822; bh=R7OkZVrvQjCPD/fkC291GF0AKuc8SqqQG+yu0sERzm+=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZqTfns1145aPaqCFSfnG6EjF2PHYq+Aibr5KufWkGYdPrdqyh1u0c0CXep2YWuWnJxmbKTx/1On1vtEkaAVtf4QkqYQz7HTeuGmYrceg+exXFVRmnbkADlcusQOawXvuo3oalCNnZ69Dd1se+nIpCRo0JU5nVplwYbCCbGSS/64su1EfcB9RIAiJpfd9wYCG+NykU9/c2e3zdvyEvqUz1IxI9w0iQ07HmCOHrNUpcSzppik0PZAbHAx1+Cme/tEcHjZun8M/CoO/q81rDo4YRr5siUUXwYKjvytRhR+nQQr12Ubr6liTgKfojsNoFN6tf9S5A6D0oo+g8RbG+yhpMw==
+X-YMail-OSG: cjL07tgVM1nXmicf_J0tvl7Zmm4kW4e5b21Zv.7RpGKPvWuCvvcQ3wHloHfk.Y3
+ Ua5yqrGMGBKpHlgr7SPbjU5uzlSTZR06b4JIyEoqktzO8Ln.AjzESnHbSeQwDddjdxu6EX74HMJc
+ Qg3e6EOZtpJn7v8paqr.qwwLPk0mPnpvHPnQQpRXhfxA_jRcTV5oX9hNKLPPzzlSx7S_4XUkds9V
+ NkIC7owNC7fQBYgfDc7uwQv4XXPCXcm712SO9eoRmZ18_oqSEPk7HtgJuMZ8G1xuZy._ZCzHTWR6
+ YcSelQfoLnc7G84g7Fdb6vNglvg_BbowoYe91G4e1OrMswCoALbYR44.b7GtyxqBRvH76auFuImU
+ 9p.eT1ozdDSpsomZ7Uv9nCfLSNHHmbNy2v8ztcdnEH9pT388lz30c7tPbP3i2xlBaF9pkJiJNmMm
+ sMa2uiQm0.s9Xht5Vw8jmLCYW.nXwHf5aYW5MVJ7NIBRsrcZ29f9gmIrSHqpmo_UhT62AZIDcdwX
+ Vbfden.qfnD7pb.D3HJS6Xo3GyIQLseRhiXgt_.xD7_VFEGw0o5gU7uxU1JBx5y6PftJqe6A8yEd
+ iGHVSlZYxudQUwablJ5upM5XzjO0o6c65JFQ_5s6_6Ab1Wofuq9.o_fQFuvecKq2_sXeQRKRdiQ9
+ suQjTdrMZh0pY7lQ3lQvrUUtC3hLGr0NyGfDxFWkk_ViqQm_qUNfzYkFZyp5zItqvwWabjeUKJs.
+ uz1phPPifojm1XaZM4D.Oh9TdyrTiwG7rbhlQsCQ66t3O1Got3LW8PAflsjj6DhMiii1mmTnoXfP
+ d..h.tpN1I57RATIJe5cXZwA8jgFF1ZsKLCJx9wH9Bk9EcaoKGifaedCgLdcT4_mYSLpZCVkHuUT
+ 9bNdGcKlF6xEJ17QCRGIKaBgX0zjk8Zo6Vkp.S8YTV6C.dU.EpTZr5T.PLxyYn6jzPhIKZZsS3oQ
+ VVUuKcmuU16pBIUAzFAIOKyXFQdktdHwuOjtv7rZkZwePpEtbeYU1Wc5Bf1m6aMLaKZ8.1p.SKvY
+ 0Z.3VzdA3RlLsDRkapasKgelOoxkAuyi4filpyVg_uWxYsDZdKq3cnSE30re3Dtn.qlqnYR_RO2b
+ Fhfh4zd9.k3eBqhQRj.P6R1mY..w5vydTop0.MmdrH8EkR.oCB6i9yzW9nGsUROF_TWKNBsukeaU
+ Wz_yZpGuo0CxmMqZxID.QdeDqwNxMuJ.5JCwyDp1D.43gLrwab8m9fAzDmrIjlu1.S4GK_ln0VBM
+ _WPjAJksFdXWjm2Qhq8kMNgmGVopi4qhSPXNzuC54d38jKutD2rPHpWn.g6KFsp1Z8UPEhjTwpyD
+ WJnqtd72od86iFenWHo9gcSmB4hbbnYpetP6H86LpUuGRplQtzdYOEE1XNIGhKeK.P0nsLKB5jNw
+ ad3aVJND3dVQ_Gffj44jf92zZY9YZazihJSBYEo2AwR3_eJReekKQ9Ubf1e56U56k6FZBJ6A52ix
+ NgfrCJZfJXfbUpx2Af4ZsE.uLmgNScGacT4dSJ0qSw1nm6znP0VWQmcdaeWZtUUHL22oc9H.hI59
+ O1SYH8jhmYlJcNjHUblfp28AHUHAlHob9ewVN2dBtacti2WUy354G9brulfWUJ378nnZOhiXkW9G
+ LWZ9kBmC6XTe6dKP_fQrz_Bsp0vIpjXV9Q4C_k58vGiCzF6VUiKkWHJm2ELfWmveiOO7QeZDs.Fd
+ 98s14eRYoOxyIZBhLMUYLFQGPEi_hJ3WpZXSI5xmCwg0k7xPqNgkYoJgLzu7YM0qmxlVCSkJQ8A0
+ o.bYCvdxsFKpI2UyLH8d2TPtdMkStuY_MXzvE_seOCaZIQ35ziSRB.ujUB.dOP1uKGHTbFn.ZFTD
+ qUUD6DGcEZ1dS1n1_6fVvd.legWDsF445cxzNOEy1SdRx.iNRIFyRZ8zMBNymAhykQpH_JboE1d5
+ R5SBdMJ_Y13Ji4WDvQk72Kqlq5kkrGYwOGq2_M672fqD_ye9ikDXMgaRdhReTHG7mSzibUg351SS
+ qp4rj2mj4Nq16Nj1CYXX17LisFBciW4ZjCpo7Yzrcz_Tp6JmsZk01fRPf_4QbndVh_tL2esRtpvL
+ DQ4p0WIQFtzUzbQreHky6fGfQOwd1bsxo8zRUuGHfQZVLN2Yi_nyE4a06Qnl6sFWa0m.7Ogy8i1O
+ DWOU.vjXF9GNEcmbdhVjj5DdZ9qpz02jHzCaBasUG_kFWWo1GrXHAhkHTgJyoCfosZUp3xZv6qEO
+ VefqaBoLhcKYMb4zyFftgOjoMPlS6xqMI7W_Nt4ZFq1Y0mXoqWljBerHcc13UpU8q7GSoxyTwTwl
+ ggQsR74HbpFDIpA--
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 1c207c0a-8127-4861-8712-622a7af3df7a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Thu, 25 May 2023 16:28:37 +0000
-Received: by hermes--production-gq1-6db989bfb-7p67n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b082792b4f5488b0518e45c4d63fda79;
-          Thu, 25 May 2023 16:28:31 +0000 (UTC)
-Message-ID: <aa2e3c9c-eac4-237d-02d0-4574f602563d@schaufler-ca.com>
-Date:   Thu, 25 May 2023 09:28:29 -0700
+X-Sonic-ID: 76cd180e-75e0-46ce-aab8-4fd632e13bd6
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Thu, 25 May 2023 17:13:42 +0000
+Received: by hermes--production-gq1-6db989bfb-dbflh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b3f7ebd7169e40f5a3d2176e8a2b1697;
+          Thu, 25 May 2023 17:13:38 +0000 (UTC)
+Message-ID: <cfb03ccf-8d55-0290-0333-aa85dcc71a4f@schaufler-ca.com>
+Date:   Thu, 25 May 2023 10:13:36 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH v2] lsm: adds process attribute getter for Landlock
+Subject: Re: [PATCH] lsm: fix a number of misspellings
 Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Paul Moore <paul@paul-moore.com>, Jeff Xu <jeffxu@chromium.org>
-Cc:     Shervin Oloumi <enlightened@chromium.org>,
-        linux-security-module@vger.kernel.org, jorgelo@chromium.org,
-        keescook@chromium.org, groeck@chromium.org, allenwebb@chromium.org,
-        gnoack3000@gmail.com, areber@redhat.com, criu@openvz.org,
-        linux-api@vger.kernel.org, jannh@google.com, brauner@kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
- <20230518204549.3139044-1-enlightened@chromium.org>
- <a42875a0-d4c5-e2ac-d115-d4222e229f7d@schaufler-ca.com>
- <CAHC9VhTq0RgQ6xj86_BkZuAwy4kGy6eC8NVKFroEASNXP3uBxQ@mail.gmail.com>
- <CABi2SkX0cqOMPeuw8CD28Q6UZihi0Hh7GT=dTmxaG-T_rayPfQ@mail.gmail.com>
- <CAHC9VhRD8kfkHr2gfFp10txdDwE0NGSJQd08bRojeJKiKtqq6Q@mail.gmail.com>
- <1225a567-4ff5-462e-0db6-1a88a748d787@digikod.net>
- <b4825033-471c-ba32-530f-b0235356d55b@digikod.net>
+To:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org
+References: <20230525031953.105125-1-paul@paul-moore.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <b4825033-471c-ba32-530f-b0235356d55b@digikod.net>
+In-Reply-To: <20230525031953.105125-1-paul@paul-moore.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.21495 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/24/2023 9:02 AM, Mickaël Salaün wrote:
+On 5/24/2023 8:19 PM, Paul Moore wrote:
+> A random collection of spelling fixes for source files in the LSM
+> layer.
 >
-> On 24/05/2023 17:38, Mickaël Salaün wrote:
->>
->> On 23/05/2023 23:12, Paul Moore wrote:
->>> On Tue, May 23, 2023 at 2:13 AM Jeff Xu <jeffxu@chromium.org> wrote:
->>>> On Mon, May 22, 2023 at 12:56 PM Paul Moore <paul@paul-moore.com>
->>>> wrote:
->>>>> On Thu, May 18, 2023 at 5:26 PM Casey Schaufler
->>>>> <casey@schaufler-ca.com> wrote:
->>>>>> On 5/18/2023 1:45 PM, Shervin Oloumi wrote:
->>>>>>> Adds a new getprocattr hook function to the Landlock LSM, which
->>>>>>> tracks
->>>>>>> the landlocked state of the process. This is invoked when
->>>>>>> user-space
->>>>>>> reads /proc/[pid]/attr/domain
->>>>>>
->>>>>> Please don't add a Landlock specific entry directly in the attr/
->>>>>> directory. Add it only to attr/landlock.
->>>>>>
->>>>>> Also be aware that the LSM maintainer (Paul Moore) wants to move
->>>>>> away from the /proc/.../attr interfaces in favor of a new system
->>>>>> call,
->>>>>> which is in review.
->>>>>
->>>>> What Casey said above.
->>>>>
->>>>> There is still some uncertainty around timing, and if we're perfectly
->>>>> honest, acceptance of the new syscalls at the Linus level, but yes, I
->>>>> would very much like to see the LSM infrastructure move away from
->>>>> procfs and towards a syscall API.  Part of the reasoning is that the
->>>>> current procfs API is ill-suited to handle the multiple, stacked LSMs
->>>>> and the other part being the complexity of procfs in a namespaced
->>>>> system.  If the syscall API is ultimately rejected, we will need to
->>>>> revisit the idea of a procfs API, but even then I think we'll need to
->>>>> make some changes to the current approach.
->>>>>
->>>>> As I believe we are in the latter stages of review for the syscall
->>>>> API, perhaps you could take a look and ensure that the current
->>>>> proposed API works for what you are envisioning with Landlock?
->>
->> I agree, and since the LSM syscalls are almost ready that should not
->> change much the timing. In fact, extending these syscalls might be
->> easier than tweaking the current procfs/attr API for Landlock specific
->> requirements (e.g. scoped visibility). We should ensure that these
->> syscalls would be a good fit to return file descriptors, but in the
->> short term we only need to know if a process is landlocked or not, so a
->> raw return value (0 or -errno) will be enough.
->>
->> Mentioning in the LSM syscalls patch series that they may deal with (and
->> return) file descriptors could help API reviewers though.
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+
+> ---
+>  security/commoncap.c     | 20 ++++++++++----------
+>  security/device_cgroup.c |  2 +-
+>  security/lsm_audit.c     |  2 +-
+>  security/security.c      |  4 ++--
+>  4 files changed, 14 insertions(+), 14 deletions(-)
 >
-> It should be kept in mind that the current LSM syscalls only deal with
-> the calling task, whereas the goal of this Landlock patch series is to
-> inspect other tasks. A new LSM syscall would need to be created to
-> handle pidfd e.g., named lsm_get_proc_attr() or lsm_get_pid_attr().
-
-I think it would be lsm_get_pid_attr(). Yes, it's the obvious next step.
-
->
-> I'm not sure if this should be a generic LSM syscall or a Landlock
-> syscall though. I have plan to handle processes other than the caller
-> (e.g. to restrict an existing process hierarchy), so thinking about a
-> Landlock-specific syscall could make sense.
->
-> To summarize, creating a new LSM syscall to deal with pidfd and to get
-> LSM process "status/attr" looks OK. However, Landlock-specific
-> syscalls to deal with Landlock specificities (e.g. ruleset or domain
-> file descriptor) make more sense.
->
-> Having one LSM-generic syscall to get minimal Landlock attributes
-> (i.e. mainly to know if a process is sandboxed), and another
-> Landlock-specific syscall to do more things (e.g. get the domain file
-> descriptor, restrict a task) seems reasonable. The second one would
-> overlap with the first one though. What do you think?
-
-I find it difficult to think of a file descriptor as an attribute of
-a process. To my (somewhat unorthodox) thinking a file descriptor is
-a name for an object, not an attribute of the object. You can't access
-an object by its attributes, but you can by its name. An attribute is
-a description of the object. I'm perfectly happy with lsm_get_pid_attr()
-returning an attribute that is a file descriptor if it describes the
-process in some way, but not as a substitute for opening /proc/42.
-
-
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 0b3fc2f3afe7..ab5742ab4362 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -314,7 +314,7 @@ int cap_inode_need_killpriv(struct dentry *dentry)
+>   * the vfsmount must be passed through @idmap. This function will then
+>   * take care to map the inode according to @idmap before checking
+>   * permissions. On non-idmapped mounts or if permission checking is to be
+> - * performed on the raw inode simply passs @nop_mnt_idmap.
+> + * performed on the raw inode simply pass @nop_mnt_idmap.
+>   *
+>   * Return: 0 if successful, -ve on error.
+>   */
+> @@ -522,7 +522,7 @@ static bool validheader(size_t size, const struct vfs_cap_data *cap)
+>   * the vfsmount must be passed through @idmap. This function will then
+>   * take care to map the inode according to @idmap before checking
+>   * permissions. On non-idmapped mounts or if permission checking is to be
+> - * performed on the raw inode simply passs @nop_mnt_idmap.
+> + * performed on the raw inode simply pass @nop_mnt_idmap.
+>   *
+>   * Return: On success, return the new size; on error, return < 0.
+>   */
+> @@ -630,7 +630,7 @@ static inline int bprm_caps_from_vfs_caps(struct cpu_vfs_cap_data *caps,
+>   * the vfsmount must be passed through @idmap. This function will then
+>   * take care to map the inode according to @idmap before checking
+>   * permissions. On non-idmapped mounts or if permission checking is to be
+> - * performed on the raw inode simply passs @nop_mnt_idmap.
+> + * performed on the raw inode simply pass @nop_mnt_idmap.
+>   */
+>  int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
+>  			   const struct dentry *dentry,
+> @@ -1133,7 +1133,7 @@ int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
+>  		break;
+>  
+>  	case LSM_SETID_FS:
+> -		/* juggle the capabilties to follow FSUID changes, unless
+> +		/* juggle the capabilities to follow FSUID changes, unless
+>  		 * otherwise suppressed
+>  		 *
+>  		 * FIXME - is fsuser used for all CAP_FS_MASK capabilities?
+> @@ -1184,10 +1184,10 @@ static int cap_safe_nice(struct task_struct *p)
+>  }
+>  
+>  /**
+> - * cap_task_setscheduler - Detemine if scheduler policy change is permitted
+> + * cap_task_setscheduler - Determine if scheduler policy change is permitted
+>   * @p: The task to affect
+>   *
+> - * Detemine if the requested scheduler policy change is permitted for the
+> + * Determine if the requested scheduler policy change is permitted for the
+>   * specified task.
+>   *
+>   * Return: 0 if permission is granted, -ve if denied.
+> @@ -1198,11 +1198,11 @@ int cap_task_setscheduler(struct task_struct *p)
+>  }
+>  
+>  /**
+> - * cap_task_setioprio - Detemine if I/O priority change is permitted
+> + * cap_task_setioprio - Determine if I/O priority change is permitted
+>   * @p: The task to affect
+>   * @ioprio: The I/O priority to set
+>   *
+> - * Detemine if the requested I/O priority change is permitted for the specified
+> + * Determine if the requested I/O priority change is permitted for the specified
+>   * task.
+>   *
+>   * Return: 0 if permission is granted, -ve if denied.
+> @@ -1213,11 +1213,11 @@ int cap_task_setioprio(struct task_struct *p, int ioprio)
+>  }
+>  
+>  /**
+> - * cap_task_setnice - Detemine if task priority change is permitted
+> + * cap_task_setnice - Determine if task priority change is permitted
+>   * @p: The task to affect
+>   * @nice: The nice value to set
+>   *
+> - * Detemine if the requested task priority change is permitted for the
+> + * Determine if the requested task priority change is permitted for the
+>   * specified task.
+>   *
+>   * Return: 0 if permission is granted, -ve if denied.
+> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+> index 7507d14eacc7..41fca6487ca3 100644
+> --- a/security/device_cgroup.c
+> +++ b/security/device_cgroup.c
+> @@ -421,7 +421,7 @@ static bool verify_new_ex(struct dev_cgroup *dev_cgroup,
+>  		} else {
+>  			/*
+>  			 * new exception in the child will add more devices
+> -			 * that can be acessed, so it can't match any of
+> +			 * that can be accessed, so it can't match any of
+>  			 * parent's exceptions, even slightly
+>  			 */ 
+>  			match = match_exception_partial(&dev_cgroup->exceptions,
+> diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+> index 368e77ca43c4..849e832719e2 100644
+> --- a/security/lsm_audit.c
+> +++ b/security/lsm_audit.c
+> @@ -200,7 +200,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+>  	char comm[sizeof(current->comm)];
+>  
+>  	/*
+> -	 * To keep stack sizes in check force programers to notice if they
+> +	 * To keep stack sizes in check force programmers to notice if they
+>  	 * start making this union too large!  See struct lsm_network_audit
+>  	 * as an example of how to deal with large data.
+>  	 */
+> diff --git a/security/security.c b/security/security.c
+> index d5ff7ff45b77..ee4f1cc4902e 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2491,7 +2491,7 @@ int security_inode_copy_up_xattr(const char *name)
+>  	/*
+>  	 * The implementation can return 0 (accept the xattr), 1 (discard the
+>  	 * xattr), -EOPNOTSUPP if it does not know anything about the xattr or
+> -	 * any other error code incase of an error.
+> +	 * any other error code in case of an error.
+>  	 */
+>  	hlist_for_each_entry(hp,
+>  			     &security_hook_heads.inode_copy_up_xattr, list) {
+> @@ -4676,7 +4676,7 @@ EXPORT_SYMBOL(security_sctp_assoc_established);
+>   * @subnet_prefix: subnet prefix of the port
+>   * @pkey: IB pkey
+>   *
+> - * Check permission to access a pkey when modifing a QP.
+> + * Check permission to access a pkey when modifying a QP.
+>   *
+>   * Return: Returns 0 if permission is granted.
+>   */
