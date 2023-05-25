@@ -2,219 +2,246 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CCAC77B7A
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 May 2023 17:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC52CC7EE2F
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 May 2023 18:39:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231491AbjEYRNq (ORCPT
+        id S242128AbjEYSjS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 May 2023 13:13:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60448 "EHLO
+        Thu, 25 May 2023 14:39:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbjEYRNp (ORCPT
+        with ESMTP id S241815AbjEYSik (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 May 2023 13:13:45 -0400
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 349C2B6
-        for <linux-security-module@vger.kernel.org>; Thu, 25 May 2023 10:13:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685034822; bh=hs9ReKfTAT08nFeSUhxuaor94N253HxepERRtSwqFA0=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=BcSzE5+XO81tAE3FpCNABOeF6bCjaWHgycdawP5t7Li+0ODV7SvVkNIeu24taEQvOlGnbqZirKtMPKxJH9R6zds0Z3D1k+ujEtgfpqnMEBrFTc26c/JsfMfq9ACb7alA/CPs2mIa3W9B65hDBInwffVwCT2udxL5zxmIswKxCd7JnTU4QKzbwhECmDSENTXdExyZeXEGBYL0NoAoSdNal9r1XlmchY6rMsquYv1mPb86HAERatE2bG/QyPQgQEndwu4e1jYu/giw0c+KIEyaffKujREFvho2XIbz9PcQ4wEjF2guAs54bfsvtwG96h02TVy7FAcrRBU5AvIoNAyjBQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685034822; bh=R7OkZVrvQjCPD/fkC291GF0AKuc8SqqQG+yu0sERzm+=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZqTfns1145aPaqCFSfnG6EjF2PHYq+Aibr5KufWkGYdPrdqyh1u0c0CXep2YWuWnJxmbKTx/1On1vtEkaAVtf4QkqYQz7HTeuGmYrceg+exXFVRmnbkADlcusQOawXvuo3oalCNnZ69Dd1se+nIpCRo0JU5nVplwYbCCbGSS/64su1EfcB9RIAiJpfd9wYCG+NykU9/c2e3zdvyEvqUz1IxI9w0iQ07HmCOHrNUpcSzppik0PZAbHAx1+Cme/tEcHjZun8M/CoO/q81rDo4YRr5siUUXwYKjvytRhR+nQQr12Ubr6liTgKfojsNoFN6tf9S5A6D0oo+g8RbG+yhpMw==
-X-YMail-OSG: cjL07tgVM1nXmicf_J0tvl7Zmm4kW4e5b21Zv.7RpGKPvWuCvvcQ3wHloHfk.Y3
- Ua5yqrGMGBKpHlgr7SPbjU5uzlSTZR06b4JIyEoqktzO8Ln.AjzESnHbSeQwDddjdxu6EX74HMJc
- Qg3e6EOZtpJn7v8paqr.qwwLPk0mPnpvHPnQQpRXhfxA_jRcTV5oX9hNKLPPzzlSx7S_4XUkds9V
- NkIC7owNC7fQBYgfDc7uwQv4XXPCXcm712SO9eoRmZ18_oqSEPk7HtgJuMZ8G1xuZy._ZCzHTWR6
- YcSelQfoLnc7G84g7Fdb6vNglvg_BbowoYe91G4e1OrMswCoALbYR44.b7GtyxqBRvH76auFuImU
- 9p.eT1ozdDSpsomZ7Uv9nCfLSNHHmbNy2v8ztcdnEH9pT388lz30c7tPbP3i2xlBaF9pkJiJNmMm
- sMa2uiQm0.s9Xht5Vw8jmLCYW.nXwHf5aYW5MVJ7NIBRsrcZ29f9gmIrSHqpmo_UhT62AZIDcdwX
- Vbfden.qfnD7pb.D3HJS6Xo3GyIQLseRhiXgt_.xD7_VFEGw0o5gU7uxU1JBx5y6PftJqe6A8yEd
- iGHVSlZYxudQUwablJ5upM5XzjO0o6c65JFQ_5s6_6Ab1Wofuq9.o_fQFuvecKq2_sXeQRKRdiQ9
- suQjTdrMZh0pY7lQ3lQvrUUtC3hLGr0NyGfDxFWkk_ViqQm_qUNfzYkFZyp5zItqvwWabjeUKJs.
- uz1phPPifojm1XaZM4D.Oh9TdyrTiwG7rbhlQsCQ66t3O1Got3LW8PAflsjj6DhMiii1mmTnoXfP
- d..h.tpN1I57RATIJe5cXZwA8jgFF1ZsKLCJx9wH9Bk9EcaoKGifaedCgLdcT4_mYSLpZCVkHuUT
- 9bNdGcKlF6xEJ17QCRGIKaBgX0zjk8Zo6Vkp.S8YTV6C.dU.EpTZr5T.PLxyYn6jzPhIKZZsS3oQ
- VVUuKcmuU16pBIUAzFAIOKyXFQdktdHwuOjtv7rZkZwePpEtbeYU1Wc5Bf1m6aMLaKZ8.1p.SKvY
- 0Z.3VzdA3RlLsDRkapasKgelOoxkAuyi4filpyVg_uWxYsDZdKq3cnSE30re3Dtn.qlqnYR_RO2b
- Fhfh4zd9.k3eBqhQRj.P6R1mY..w5vydTop0.MmdrH8EkR.oCB6i9yzW9nGsUROF_TWKNBsukeaU
- Wz_yZpGuo0CxmMqZxID.QdeDqwNxMuJ.5JCwyDp1D.43gLrwab8m9fAzDmrIjlu1.S4GK_ln0VBM
- _WPjAJksFdXWjm2Qhq8kMNgmGVopi4qhSPXNzuC54d38jKutD2rPHpWn.g6KFsp1Z8UPEhjTwpyD
- WJnqtd72od86iFenWHo9gcSmB4hbbnYpetP6H86LpUuGRplQtzdYOEE1XNIGhKeK.P0nsLKB5jNw
- ad3aVJND3dVQ_Gffj44jf92zZY9YZazihJSBYEo2AwR3_eJReekKQ9Ubf1e56U56k6FZBJ6A52ix
- NgfrCJZfJXfbUpx2Af4ZsE.uLmgNScGacT4dSJ0qSw1nm6znP0VWQmcdaeWZtUUHL22oc9H.hI59
- O1SYH8jhmYlJcNjHUblfp28AHUHAlHob9ewVN2dBtacti2WUy354G9brulfWUJ378nnZOhiXkW9G
- LWZ9kBmC6XTe6dKP_fQrz_Bsp0vIpjXV9Q4C_k58vGiCzF6VUiKkWHJm2ELfWmveiOO7QeZDs.Fd
- 98s14eRYoOxyIZBhLMUYLFQGPEi_hJ3WpZXSI5xmCwg0k7xPqNgkYoJgLzu7YM0qmxlVCSkJQ8A0
- o.bYCvdxsFKpI2UyLH8d2TPtdMkStuY_MXzvE_seOCaZIQ35ziSRB.ujUB.dOP1uKGHTbFn.ZFTD
- qUUD6DGcEZ1dS1n1_6fVvd.legWDsF445cxzNOEy1SdRx.iNRIFyRZ8zMBNymAhykQpH_JboE1d5
- R5SBdMJ_Y13Ji4WDvQk72Kqlq5kkrGYwOGq2_M672fqD_ye9ikDXMgaRdhReTHG7mSzibUg351SS
- qp4rj2mj4Nq16Nj1CYXX17LisFBciW4ZjCpo7Yzrcz_Tp6JmsZk01fRPf_4QbndVh_tL2esRtpvL
- DQ4p0WIQFtzUzbQreHky6fGfQOwd1bsxo8zRUuGHfQZVLN2Yi_nyE4a06Qnl6sFWa0m.7Ogy8i1O
- DWOU.vjXF9GNEcmbdhVjj5DdZ9qpz02jHzCaBasUG_kFWWo1GrXHAhkHTgJyoCfosZUp3xZv6qEO
- VefqaBoLhcKYMb4zyFftgOjoMPlS6xqMI7W_Nt4ZFq1Y0mXoqWljBerHcc13UpU8q7GSoxyTwTwl
- ggQsR74HbpFDIpA--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 76cd180e-75e0-46ce-aab8-4fd632e13bd6
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Thu, 25 May 2023 17:13:42 +0000
-Received: by hermes--production-gq1-6db989bfb-dbflh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b3f7ebd7169e40f5a3d2176e8a2b1697;
-          Thu, 25 May 2023 17:13:38 +0000 (UTC)
-Message-ID: <cfb03ccf-8d55-0290-0333-aa85dcc71a4f@schaufler-ca.com>
-Date:   Thu, 25 May 2023 10:13:36 -0700
+        Thu, 25 May 2023 14:38:40 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69AB2E45;
+        Thu, 25 May 2023 11:36:51 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34PFGFcD001882;
+        Thu, 25 May 2023 18:34:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=YlvFsbEPrwbVAdxwxMbKnxn1gExf5XgZ9Xo7rbW6dUQ=;
+ b=Lzyf9aLPcAqinix9YfLlsRAGGN+gR2pGIMlP8b/TpYgMTdhl/3rPyJ97zvP/hy/rFL48
+ cqe4Pi8D360VWoL8sYMXdrz3fQmuqTWxk7EjcGsPO8A4qjig2fE0oOs8zCtvb5BhmMB9
+ sAdHk7SIWExI5l2C0Z5IPdzh1SSC8+UsT4WL8RiZ4aJdj3SoEqluyXexy6vivclVNQRp
+ xfywfC0GZvFljCxVu48w6+0GrjH6HI80FeJdCtLJPgWUaVFWinxGnDMoTThNWZaZkTrb
+ fqWNgaubCjXAnculU0WyTmLSQbSFozQhX9Eign2tg15P5DGaZoNtC7o225DL42lxfvDi MA== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qt27n1j61-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 May 2023 18:34:31 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34PIYDC6001496
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 May 2023 18:34:13 GMT
+Received: from [10.110.51.179] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Thu, 25 May
+ 2023 11:34:12 -0700
+Message-ID: <e17da8f4-4d5d-adb7-02c9-631ffdfc9037@quicinc.com>
+Date:   Thu, 25 May 2023 11:34:11 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] lsm: fix a number of misspellings
+ Thunderbird/102.9.0
+Subject: Re: [RFC PATCH v1 0/9] Hypervisor-Enforced Kernel Integrity
 Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org
-References: <20230525031953.105125-1-paul@paul-moore.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20230525031953.105125-1-paul@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21495 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>
+CC:     Alexander Graf <graf@amazon.com>,
+        Forrest Yuan Yu <yuanyu@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        John Andersen <john.s.andersen@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Marian Rotariu <marian.c.rotariu@gmail.com>,
+        =?UTF-8?Q?Mihai_Don=c8=9bu?= <mdontu@bitdefender.com>,
+        =?UTF-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Thara Gopinath <tgopinath@microsoft.com>,
+        Will Deacon <will@kernel.org>,
+        Zahra Tarkhani <ztarkhani@microsoft.com>,
+        =?UTF-8?Q?=c8=98tefan_=c8=98icleru?= <ssicleru@bitdefender.com>,
+        <dev@lists.cloudhypervisor.org>, <kvm@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>, <linux-hyperv@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>, <qemu-devel@nongnu.org>,
+        <virtualization@lists.linux-foundation.org>, <x86@kernel.org>,
+        <xen-devel@lists.xenproject.org>
+References: <20230505152046.6575-1-mic@digikod.net>
+ <1e10da25-5704-18ee-b0ce-6de704e6f0e1@quicinc.com>
+ <0b069bc3-0362-d8ec-fc2a-05dd65218c39@digikod.net>
+From:   Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <0b069bc3-0362-d8ec-fc2a-05dd65218c39@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uBbHTCakZngacL0OpkU9CBmNWESa7i53
+X-Proofpoint-GUID: uBbHTCakZngacL0OpkU9CBmNWESa7i53
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-25_10,2023-05-25_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ mlxlogscore=999 adultscore=0 priorityscore=1501 suspectscore=0
+ clxscore=1015 mlxscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305250156
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/24/2023 8:19 PM, Paul Moore wrote:
-> A random collection of spelling fixes for source files in the LSM
-> layer.
->
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+On 5/25/2023 6:25 AM, Mickaël Salaün wrote:
+> 
+> On 24/05/2023 23:04, Trilok Soni wrote:
+>> On 5/5/2023 8:20 AM, Mickaël Salaün wrote:
+>>> Hi,
+>>>
+>>> This patch series is a proof-of-concept that implements new KVM features
+>>> (extended page tracking, MBEC support, CR pinning) and defines a new 
+>>> API to
+>>> protect guest VMs. No VMM (e.g., Qemu) modification is required.
+>>>
+>>> The main idea being that kernel self-protection mechanisms should be 
+>>> delegated
+>>> to a more privileged part of the system, hence the hypervisor. It is 
+>>> still the
+>>> role of the guest kernel to request such restrictions according to its
+>>
+>> Only for the guest kernel images here? Why not for the host OS kernel?
+> 
+> As explained in the Future work section, protecting the host would be 
+> useful, but that doesn't really fit with the KVM model. The Protected 
+> KVM project is a first step to help in this direction [11].
+> 
+> In a nutshell, KVM is close to a type-2 hypervisor, and the host kernel 
+> is also part of the hypervisor.
+> 
+> 
+>> Embedded devices w/ Android you have mentioned below supports the host
+>> OS as well it seems, right?
+> 
+> What do you mean?
 
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+I think you have answered this above w/ pKVM and I was referring the 
+host protection as well w/ Heki. The link/references below refers to the 
+Android OS it seems and not guest VM.
 
-> ---
->  security/commoncap.c     | 20 ++++++++++----------
->  security/device_cgroup.c |  2 +-
->  security/lsm_audit.c     |  2 +-
->  security/security.c      |  4 ++--
->  4 files changed, 14 insertions(+), 14 deletions(-)
->
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 0b3fc2f3afe7..ab5742ab4362 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -314,7 +314,7 @@ int cap_inode_need_killpriv(struct dentry *dentry)
->   * the vfsmount must be passed through @idmap. This function will then
->   * take care to map the inode according to @idmap before checking
->   * permissions. On non-idmapped mounts or if permission checking is to be
-> - * performed on the raw inode simply passs @nop_mnt_idmap.
-> + * performed on the raw inode simply pass @nop_mnt_idmap.
->   *
->   * Return: 0 if successful, -ve on error.
->   */
-> @@ -522,7 +522,7 @@ static bool validheader(size_t size, const struct vfs_cap_data *cap)
->   * the vfsmount must be passed through @idmap. This function will then
->   * take care to map the inode according to @idmap before checking
->   * permissions. On non-idmapped mounts or if permission checking is to be
-> - * performed on the raw inode simply passs @nop_mnt_idmap.
-> + * performed on the raw inode simply pass @nop_mnt_idmap.
->   *
->   * Return: On success, return the new size; on error, return < 0.
->   */
-> @@ -630,7 +630,7 @@ static inline int bprm_caps_from_vfs_caps(struct cpu_vfs_cap_data *caps,
->   * the vfsmount must be passed through @idmap. This function will then
->   * take care to map the inode according to @idmap before checking
->   * permissions. On non-idmapped mounts or if permission checking is to be
-> - * performed on the raw inode simply passs @nop_mnt_idmap.
-> + * performed on the raw inode simply pass @nop_mnt_idmap.
->   */
->  int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
->  			   const struct dentry *dentry,
-> @@ -1133,7 +1133,7 @@ int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
->  		break;
->  
->  	case LSM_SETID_FS:
-> -		/* juggle the capabilties to follow FSUID changes, unless
-> +		/* juggle the capabilities to follow FSUID changes, unless
->  		 * otherwise suppressed
->  		 *
->  		 * FIXME - is fsuser used for all CAP_FS_MASK capabilities?
-> @@ -1184,10 +1184,10 @@ static int cap_safe_nice(struct task_struct *p)
->  }
->  
->  /**
-> - * cap_task_setscheduler - Detemine if scheduler policy change is permitted
-> + * cap_task_setscheduler - Determine if scheduler policy change is permitted
->   * @p: The task to affect
->   *
-> - * Detemine if the requested scheduler policy change is permitted for the
-> + * Determine if the requested scheduler policy change is permitted for the
->   * specified task.
->   *
->   * Return: 0 if permission is granted, -ve if denied.
-> @@ -1198,11 +1198,11 @@ int cap_task_setscheduler(struct task_struct *p)
->  }
->  
->  /**
-> - * cap_task_setioprio - Detemine if I/O priority change is permitted
-> + * cap_task_setioprio - Determine if I/O priority change is permitted
->   * @p: The task to affect
->   * @ioprio: The I/O priority to set
->   *
-> - * Detemine if the requested I/O priority change is permitted for the specified
-> + * Determine if the requested I/O priority change is permitted for the specified
->   * task.
->   *
->   * Return: 0 if permission is granted, -ve if denied.
-> @@ -1213,11 +1213,11 @@ int cap_task_setioprio(struct task_struct *p, int ioprio)
->  }
->  
->  /**
-> - * cap_task_setnice - Detemine if task priority change is permitted
-> + * cap_task_setnice - Determine if task priority change is permitted
->   * @p: The task to affect
->   * @nice: The nice value to set
->   *
-> - * Detemine if the requested task priority change is permitted for the
-> + * Determine if the requested task priority change is permitted for the
->   * specified task.
->   *
->   * Return: 0 if permission is granted, -ve if denied.
-> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-> index 7507d14eacc7..41fca6487ca3 100644
-> --- a/security/device_cgroup.c
-> +++ b/security/device_cgroup.c
-> @@ -421,7 +421,7 @@ static bool verify_new_ex(struct dev_cgroup *dev_cgroup,
->  		} else {
->  			/*
->  			 * new exception in the child will add more devices
-> -			 * that can be acessed, so it can't match any of
-> +			 * that can be accessed, so it can't match any of
->  			 * parent's exceptions, even slightly
->  			 */ 
->  			match = match_exception_partial(&dev_cgroup->exceptions,
-> diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-> index 368e77ca43c4..849e832719e2 100644
-> --- a/security/lsm_audit.c
-> +++ b/security/lsm_audit.c
-> @@ -200,7 +200,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
->  	char comm[sizeof(current->comm)];
->  
->  	/*
-> -	 * To keep stack sizes in check force programers to notice if they
-> +	 * To keep stack sizes in check force programmers to notice if they
->  	 * start making this union too large!  See struct lsm_network_audit
->  	 * as an example of how to deal with large data.
->  	 */
-> diff --git a/security/security.c b/security/security.c
-> index d5ff7ff45b77..ee4f1cc4902e 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2491,7 +2491,7 @@ int security_inode_copy_up_xattr(const char *name)
->  	/*
->  	 * The implementation can return 0 (accept the xattr), 1 (discard the
->  	 * xattr), -EOPNOTSUPP if it does not know anything about the xattr or
-> -	 * any other error code incase of an error.
-> +	 * any other error code in case of an error.
->  	 */
->  	hlist_for_each_entry(hp,
->  			     &security_hook_heads.inode_copy_up_xattr, list) {
-> @@ -4676,7 +4676,7 @@ EXPORT_SYMBOL(security_sctp_assoc_established);
->   * @subnet_prefix: subnet prefix of the port
->   * @pkey: IB pkey
->   *
-> - * Check permission to access a pkey when modifing a QP.
-> + * Check permission to access a pkey when modifying a QP.
->   *
->   * Return: Returns 0 if permission is granted.
->   */
+> 
+> 
+>>
+>> Do we suggest that all the functionalities should be implemented in the
+>> Hypervisor (NS-EL2 for ARM) or even at Secure EL like Secure-EL1 (ARM).
+> 
+> KVM runs in EL2. TrustZone is mainly used to enforce DRM, which means 
+> that we may not control the related code.
+> 
+> This patch series is dedicated to hypervisor-enforced kernel integrity, 
+> then KVM.
+> 
+>>
+>> I am hoping that whatever we suggest the interface here from the Guest
+>> to the Hypervisor becomes the ABI right?
+> 
+> Yes, hypercalls are part of the KVM ABI.
+
+Sure. I just hope that they are extensible enough to support for other 
+Hypervisors too. I am not sure if they are on this list like ACRN / Xen 
+and see if it fits their need too.
+
+Is there any other Hypervisor you plan to test this feature as well?
+
+> 
+>>
+>>
+>>>
+>>> # Current limitations
+>>>
+>>> The main limitation of this patch series is the statically enforced
+>>> permissions. This is not an issue for kernels without module but this 
+>>> needs to
+>>> be addressed.  Mechanisms that dynamically impact kernel executable 
+>>> memory are
+>>> not handled for now (e.g., kernel modules, tracepoints, eBPF JIT), 
+>>> and such
+>>> code will need to be authenticated.  Because the hypervisor is highly
+>>> privileged and critical to the security of all the VMs, we don't want to
+>>> implement a code authentication mechanism in the hypervisor itself 
+>>> but delegate
+>>> this verification to something much less privileged. We are thinking 
+>>> of two
+>>> ways to solve this: implement this verification in the VMM or spawn a 
+>>> dedicated
+>>> special VM (similar to Windows's VBS). There are pros on cons to each 
+>>> approach:
+>>> complexity, verification code ownership (guest's or VMM's), access to 
+>>> guest
+>>> memory (i.e., confidential computing).
+>>
+>> Do you foresee the performance regressions due to lot of tracking here?
+> 
+> The performance impact of execution prevention should be negligible 
+> because once configured the hypervisor do nothing except catch 
+> illegitimate access attempts.
+
+Yes, if you are using the static kernel only and not considering the 
+other dynamic patching features like explained. They need to be thought 
+upon differently to reduce the likely impact.
+
+> 
+> 
+>> Production kernels do have lot of tracepoints and we use it as feature
+>> in the GKI kernel for the vendor hooks implementation and in those cases
+>> every vendor driver is a module.
+> 
+> As explained in this section, dynamic kernel modifications such as 
+> tracepoints or modules are not currently supported by this patch series. 
+> Handling tracepoints is possible but requires more work to define and 
+> check legitimate changes. This proposal is still useful for static 
+> kernels though.
+> 
+> 
+>> Separate VM further fragments this
+>> design and delegates more of it to proprietary solutions?
+> 
+> What do you mean? KVM is not a proprietary solution.
+
+Ah, I was referring the VBS Windows VM mentioned in the above text. Is 
+it open-source? The reference of VM (or dedicated VM) didn't mention 
+that VM itself will be open-source running Linux kernel.
+
+> 
+> For dynamic checks, this would require code not run by KVM itself, but 
+> either the VMM or a dedicated VM. In this case, the dynamic 
+> authentication code could come from the guest VM or from the VMM itself. 
+> In the former case, it is more challenging from a security point of view 
+> but doesn't rely on external (proprietary) solution. In the latter case, 
+> open-source VMMs should implement the specification to provide the 
+> required service (e.g. check kernel module signature).
+> 
+> The goal of the common API layer provided by this RFC is to share code 
+> as much as possible between different hypervisor backends.
+> 
+> 
+>>
+>> Do you have any performance numbers w/ current RFC?
+> 
+> No, but the only hypervisor performance impact is at boot time and 
+> should be negligible. I'll try to get some numbers for the 
+> hardware-enforcement impact, but it should be negligible too.
+
+Thanks. Please share the data once you have it ready.
+
+---Trilok Soni
+
