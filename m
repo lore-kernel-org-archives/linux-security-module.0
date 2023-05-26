@@ -2,80 +2,83 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC61C7EE29
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 May 2023 21:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67549C7EE2F
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 May 2023 02:36:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230290AbjEYVyF (ORCPT
+        id S234575AbjEZCgX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 May 2023 17:54:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54374 "EHLO
+        Thu, 25 May 2023 22:36:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241965AbjEYVyE (ORCPT
+        with ESMTP id S233071AbjEZCgU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 May 2023 17:54:04 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D12183
-        for <linux-security-module@vger.kernel.org>; Thu, 25 May 2023 14:54:02 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-b9daef8681fso154253276.1
-        for <linux-security-module@vger.kernel.org>; Thu, 25 May 2023 14:54:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1685051642; x=1687643642;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CD5qxy0Rx+9b9N3zzketlqcg16DNfdz3K8d9nltKurw=;
-        b=ToTTX1lWEmVjHekpk/vclY4Hv++wOfVB/KB2+Q0qSey+eQxeTN50xRn26Eu9PHbR9m
-         3NcHw00Yi0q/ikxKhHhZb7LbD4fx57smcJ0tBN6mPKYuSLjOigtgovOyXNK4LVb+2fuN
-         jgINqN/nZKoXnrLlIGcfd1fhqUexBH0Cw/uecEX1VP7s/vfxJ9BcWKq7x4sQgO4zsZ+c
-         9htG2Kp8HZdsFqbQh/f0ipsEZbwErAfNzB7wGSb0rwkQRyIwaXWm0Dn7UWGMHxBbudnA
-         wLOH9zlsuHXjuTW4VHg0FeGCfvhwL7IX6QTe/uQIw71fqbQqtXTtGtl2uTnfrIZiZjX7
-         ce6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685051642; x=1687643642;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CD5qxy0Rx+9b9N3zzketlqcg16DNfdz3K8d9nltKurw=;
-        b=SRWhAOWvOokVgci3GVX//vhE403Cxfh/S8OdxaWxfu0maP9LXAxKoG00OBiAJS+5qs
-         /aDgtFoni0OL6v7HSoC+kvShShwimvuuQRftL8NMTy+SNbFPtt0nG2w2o3q2jblEMnCX
-         fEgnJWHF7Ke5upjdWJCQ+xM6nHA/32f8xLxmtgwtapeEMHiJBTQtgyuj3ksgKXZ+luKc
-         C+ma5hk4TuSqvY1WnyLWZKaCE7NrIG/H2HOue8luhb5AlxCMlYiNkFr8P6GrAgz2l/oU
-         0rh2gUbzbsEFWX5U56TQFVasHFMtAg93l8P660rc+GJ6IjLUPx20RzORJ7E1ozyBepnQ
-         r5JQ==
-X-Gm-Message-State: AC+VfDyG4GjUcwlwHriLzwBbWXNu5mKwQC6PvEZGlDwScnzdUixoWNmu
-        3bU4u7ozKBZVAbZZkGRno5PuDSuPPuk2W5+zRNPc7GiIvryhtEE=
-X-Google-Smtp-Source: ACHHUZ7uXkBL8DB/AFcf1ECyyyqeL07x42Eo7/h2fGx7Sz3g4BKYIsdNajvxgHw+P1GogQRb8lUbAyyXnbiauOX9rVM=
-X-Received: by 2002:a0d:dc86:0:b0:55a:98ff:f077 with SMTP id
- f128-20020a0ddc86000000b0055a98fff077mr1041561ywe.2.1685051641744; Thu, 25
- May 2023 14:54:01 -0700 (PDT)
+        Thu, 25 May 2023 22:36:20 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AD380BC;
+        Thu, 25 May 2023 19:36:18 -0700 (PDT)
+Received: by linux.microsoft.com (Postfix, from userid 1001)
+        id 1932320FBE98; Thu, 25 May 2023 19:36:18 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1932320FBE98
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1685068578;
+        bh=QsI2Tqrh7Dq8rATEw0dJAIe6Y8MEWIZaKj+0i4m1b94=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=rc/phama1ktXAiy+vs2NVCSXABwbcfYCYzvoNhWo6b4QznrBTZJyht2XFXGcOWpXT
+         eN3vRQ77IyNVtRNsEt3dUwkwOKfWmDDqOGFtsKRkzHP0DTyYh3PuCH9zyVE+5kTU93
+         rssQ3lVi3y4biGwhIuiBnmIaxdqEKLD8WYOLFyno=
+Received: from localhost (localhost [127.0.0.1])
+        by linux.microsoft.com (Postfix) with ESMTP id 1639D30013A9;
+        Thu, 25 May 2023 19:36:18 -0700 (PDT)
+Date:   Thu, 25 May 2023 19:36:18 -0700 (PDT)
+From:   James Morris <jamorris@linux.microsoft.com>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+cc:     Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Alexander Graf <graf@amazon.com>,
+        Forrest Yuan Yu <yuanyu@google.com>,
+        John Andersen <john.s.andersen@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Marian Rotariu <marian.c.rotariu@gmail.com>,
+        =?UTF-8?Q?Mihai_Don=C8=9Bu?= <mdontu@bitdefender.com>,
+        =?UTF-8?Q?Nicu=C8=99or_C=C3=AE=C8=9Bu?= <nicu.citu@icloud.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Thara Gopinath <tgopinath@microsoft.com>,
+        Will Deacon <will@kernel.org>,
+        Zahra Tarkhani <ztarkhani@microsoft.com>,
+        =?UTF-8?Q?=C8=98tefan_=C8=98icleru?= <ssicleru@bitdefender.com>,
+        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
+        virtualization@lists.linux-foundation.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [RFC PATCH v1 0/9] Hypervisor-Enforced Kernel Integrity
+In-Reply-To: <20230505152046.6575-1-mic@digikod.net>
+Message-ID: <17f62cb1-a5de-2020-2041-359b8e96b8c0@linux.microsoft.com>
+References: <20230505152046.6575-1-mic@digikod.net>
 MIME-Version: 1.0
-References: <20230525031953.105125-1-paul@paul-moore.com>
-In-Reply-To: <20230525031953.105125-1-paul@paul-moore.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 25 May 2023 17:53:51 -0400
-Message-ID: <CAHC9VhQOz47T-5i3ztRt3U4dNRKoF2bTPWw+sejzq=rry4yFzQ@mail.gmail.com>
-Subject: Re: [PATCH] lsm: fix a number of misspellings
-To:     linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 24, 2023 at 11:19=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> A random collection of spelling fixes for source files in the LSM
-> layer.
->
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  security/commoncap.c     | 20 ++++++++++----------
->  security/device_cgroup.c |  2 +-
->  security/lsm_audit.c     |  2 +-
->  security/security.c      |  4 ++--
->  4 files changed, 14 insertions(+), 14 deletions(-)
+[Side topic]
 
-Merged into lsm/next.
+Would folks be interested in a Linux Plumbers Conference MC on this 
+topic generally, across different hypervisors, VMMs, and architectures?
 
---=20
-paul-moore.com
+If so, please let me know who the key folk would be and we can try writing 
+up an MC proposal.
+
+
+
+-- 
+James Morris
+<jamorris@linux.microsoft.com>
