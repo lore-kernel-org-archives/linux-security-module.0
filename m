@@ -2,62 +2,73 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CA2C7EE23
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 May 2023 16:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53755C77B73
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 May 2023 16:49:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230004AbjEZQke (ORCPT
+        id S236898AbjEZQtZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 May 2023 12:40:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42788 "EHLO
+        Fri, 26 May 2023 12:49:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229935AbjEZQkd (ORCPT
+        with ESMTP id S237146AbjEZQtX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 May 2023 12:40:33 -0400
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33ECDD3
-        for <linux-security-module@vger.kernel.org>; Fri, 26 May 2023 09:40:31 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QSVz13cjDzMqfBn;
-        Fri, 26 May 2023 18:40:29 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QSVyz2XFlzMppDv;
-        Fri, 26 May 2023 18:40:27 +0200 (CEST)
+        Fri, 26 May 2023 12:49:23 -0400
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [IPv6:2001:1600:4:17::8faa])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C229412A
+        for <linux-security-module@vger.kernel.org>; Fri, 26 May 2023 09:49:19 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QSW9963HFzMqBk5;
+        Fri, 26 May 2023 18:49:17 +0200 (CEST)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QSW954GcnzMpq7x;
+        Fri, 26 May 2023 18:49:13 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1685119229;
-        bh=qgneZctsmZu9NYVEqwCZ63IYebRwqPZkfQJshIM+ino=;
+        s=20191114; t=1685119757;
+        bh=aghhZZz/jAHNei4obfycQdpoNYo23x/hMTO/WYvr+D4=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=g8vn7bbw22o6LUCPBxp8u7iUChoXbXrE80j7X4tDjpPDGZ0CJMqSE7T8+XlA+teCx
-         ImuLqBbgQ0molZYHgkbRsstgprjuS6zYERZMvEKj3KrStLFOhClSCU2A/jKXfrDii2
-         i+FZof4I6D1lcDjYLsiTvh8LNbXn8dOv0y65+dPw=
-Message-ID: <8249dd59-ce08-2253-1697-301ad082d905@digikod.net>
-Date:   Fri, 26 May 2023 18:40:26 +0200
+        b=aNpuEEhr3qfgoQBoABl/c/Soy37k/dWbg29l53qY084NrLE1aBB96NeIw1GJ+t33V
+         pd9trvFbpyUukW/iVPpk0eBX/Jwsza/CoS5PoumlcDlW/vnInB0QV0Wjo7cpI7eeQk
+         00f3/lqql1UIb9Yq02grk2akHYn3y+PAXnI212IM=
+Message-ID: <7671b432-569a-d176-315b-d5f66fe205ef@digikod.net>
+Date:   Fri, 26 May 2023 18:49:12 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v1 1/5] hostfs: Fix ephemeral inodes
+Subject: Re: [PATCH v1 6/9] KVM: x86: Add Heki hypervisor support
 Content-Language: en-US
-To:     Richard Weinberger <richard@nod.at>
-Cc:     anton ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        kuba <kuba@kernel.org>, James Morris <jmorris@namei.org>,
-        Jeff Xu <jeffxu@google.com>, Kees Cook <keescook@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Ritesh Raj Sarraf <ritesh@collabora.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sjoerd Simons <sjoerd@collabora.com>,
-        Willem de Bruijn <willemb@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-References: <20230309165455.175131-1-mic@digikod.net>
- <20230309165455.175131-2-mic@digikod.net>
- <133970354.9328381.1684703636966.JavaMail.zimbra@nod.at>
+To:     Wei Liu <wei.liu@kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Alexander Graf <graf@amazon.com>,
+        Forrest Yuan Yu <yuanyu@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        John Andersen <john.s.andersen@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Marian Rotariu <marian.c.rotariu@gmail.com>,
+        =?UTF-8?Q?Mihai_Don=c8=9bu?= <mdontu@bitdefender.com>,
+        =?UTF-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Thara Gopinath <tgopinath@microsoft.com>,
+        Will Deacon <will@kernel.org>,
+        Zahra Tarkhani <ztarkhani@microsoft.com>,
+        =?UTF-8?Q?=c8=98tefan_=c8=98icleru?= <ssicleru@bitdefender.com>,
+        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
+        virtualization@lists.linux-foundation.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+References: <20230505152046.6575-1-mic@digikod.net>
+ <20230505152046.6575-7-mic@digikod.net>
+ <ZFlnJRsJh2fX3IJb@liuwe-devbox-debian-v2>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <133970354.9328381.1684703636966.JavaMail.zimbra@nod.at>
+In-Reply-To: <ZFlnJRsJh2fX3IJb@liuwe-devbox-debian-v2>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
@@ -65,66 +76,48 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 21/05/2023 23:13, Richard Weinberger wrote:
-> ----- Ursprüngliche Mail -----
->> Von: "Mickaël Salaün" <mic@digikod.net>
->> hostfs creates a new inode for each opened or created file, which created
->> useless inode allocations and forbade identifying a host file with a kernel
->> inode.
+On 08/05/2023 23:18, Wei Liu wrote:
+> On Fri, May 05, 2023 at 05:20:43PM +0200, Mickaël Salaün wrote:
+>> From: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
 >>
->> Fix this uncommon filesystem behavior by tying kernel inodes to host
->> file's inode and device IDs.  Even if the host filesystem inodes may be
->> recycled, this cannot happen while a file referencing it is open, which
->> is the case with hostfs.  It should be noted that hostfs inode IDs may
->> not be unique for the same hostfs superblock because multiple host's
->> (backed) superblocks may be used.
+>> Each supported hypervisor in x86 implements a struct x86_hyper_init to
+>> define the init functions for the hypervisor.  Define a new init_heki()
+>> entry point in struct x86_hyper_init.  Hypervisors that support Heki
+>> must define this init_heki() function.  Call init_heki() of the chosen
+>> hypervisor in init_hypervisor_platform().
 >>
->> Delete inodes when dropping them to force backed host's file descriptors
->> closing.
+>> Create a heki_hypervisor structure that each hypervisor can fill
+>> with its data and functions. This will allow the Heki feature to work
+>> in a hypervisor agnostic way.
 >>
->> This enables to entirely remove ARCH_EPHEMERAL_INODES, and then makes
->> Landlock fully supported by UML.  This is very useful for testing
->> (ongoing and backported) changes.
-> 
-> Removing ARCH_EPHEMERAL_INODES should be a patch on its own, IMHO.
-
-OK, I'll do that in the next series.
-
-> 
->> These changes also factor out and simplify some helpers thanks to the
->> new hostfs_inode_update() and the hostfs_iget() revamp: read_name(),
->> hostfs_create(), hostfs_lookup(), hostfs_mknod(), and
->> hostfs_fill_sb_common().
+>> Declare and initialize a "heki_hypervisor" structure for KVM so KVM can
+>> support Heki.  Define the init_heki() function for KVM.  In init_heki(),
+>> set the hypervisor field in the generic "heki" structure to the KVM
+>> "heki_hypervisor".  After this point, generic Heki code can access the
+>> KVM Heki data and functions.
 >>
->> A following commit with new Landlock tests check this new hostfs inode
->> consistency.
->>
->> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
->> Cc: Johannes Berg <johannes@sipsolutions.net>
->> Cc: Richard Weinberger <richard@nod.at>
->> Cc: <stable@vger.kernel.org> # 5.15.x: ce72750f04d6: hostfs: Fix writeback of
->> dirty pages
->> Cc: <stable@vger.kernel.org> # 5.15+
+> [...]
+>> +static void kvm_init_heki(void)
+>> +{
+>> +	long err;
+>> +
+>> +	if (!kvm_para_available())
+>> +		/* Cannot make KVM hypercalls. */
+>> +		return;
+>> +
+>> +	err = kvm_hypercall3(KVM_HC_LOCK_MEM_PAGE_RANGES, -1, -1, -1);
 > 
-> I'm not sure whether this patch qualifies as stable material.
-> While I fully agree that the current behavoir is odd, nothing user visible
-> is really broken so far.
-I added the ARCH_EPHEMERAL_INODES knob to avoid unexpected behavior. 
-Thanks to that there is no regression for Landlock, but it's unfortunate 
-that we could not use UML to test old kernel versions. According to this 
-odd behavior, I guess some user space may not work with hostfs because 
-of this issue, hence this Cc. I can remove it if you think it is not the 
-case.
+> Why not do a proper version check or capability check here? If the ABI
+> or supported features ever change then we have something to rely on?
 
+The attributes will indeed get extended, but I wanted to have a simple 
+proposal for now.
 
-> 
->> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->> Link: https://lore.kernel.org/r/20230309165455.175131-2-mic@digikod.net
-> 
-> Other than that, patch looks good to me.
+Do you mean to get the version of this hypercall e.g., with a dedicated 
+flag, like with the 
+landlock_create_ruleset/LANDLOCK_CREATE_RULESET_VERSION syscall?
 
-Good, I'll send a new series with your suggestions.
 
 > 
 > Thanks,
-> //richard
+> Wei.
