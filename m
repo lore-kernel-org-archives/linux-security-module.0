@@ -2,190 +2,176 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7B3C7EE2C
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 May 2023 15:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E59FC77B73
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 May 2023 16:09:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243974AbjEZPgJ (ORCPT
+        id S230477AbjEZQJg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 May 2023 11:36:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40660 "EHLO
+        Fri, 26 May 2023 12:09:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244118AbjEZPfy (ORCPT
+        with ESMTP id S230298AbjEZQJg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 May 2023 11:35:54 -0400
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ac])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B42D713D
-        for <linux-security-module@vger.kernel.org>; Fri, 26 May 2023 08:35:51 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QSTXP6kHdzMqPDr;
-        Fri, 26 May 2023 17:35:49 +0200 (CEST)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4QSTXL3K3rz1Sjg;
-        Fri, 26 May 2023 17:35:46 +0200 (CEST)
+        Fri, 26 May 2023 12:09:36 -0400
+X-Greylist: delayed 170433 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 26 May 2023 09:09:33 PDT
+Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78B3513D
+        for <linux-security-module@vger.kernel.org>; Fri, 26 May 2023 09:09:33 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QSVHH60KKzMqG8D;
+        Fri, 26 May 2023 18:09:31 +0200 (CEST)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QSVHD3cfwzMpq8P;
+        Fri, 26 May 2023 18:09:28 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1685115349;
-        bh=IVLXl6zuTaxu1Zgxrh25RMUzIB63fNH4/OIZK2HDhZ0=;
+        s=20191114; t=1685117371;
+        bh=GWA0mFQb+8wMidUB9IFkGhraKuBAw7wtqDQzDAqbLj0=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=kVMTGpVqhamFd/35Tv8GgGxW+MQc9ut6C15rUQoLevvrCTeKGaS+bLkhx73UqS/CF
-         F+QUQYt6dTBHCqDv3OJzGYoC8livFVhydjlyIX+RYotxBnPtUyqUMczbhbmQDNz+Be
-         GJfCUWCNzFZiETlN+G79KrUNM0ssQag3MigoVxSk=
-Message-ID: <caa8c89c-cae4-5a40-d6a1-f93ba7045d83@digikod.net>
-Date:   Fri, 26 May 2023 17:35:45 +0200
+        b=SHueMjFNo3rqrLqDwx3uLeE8+X5tcivE1oEPiVsupYo6ZiLJ/vTPNLG6eFJuARjXz
+         EChyFftAMsPJ3se0xTmj43Dxi+ekN6Tb9V8ErOqv9uDvNm67z7yhPpfobsNkHwpj/z
+         M1TjsYiSKBpBQcpWBvcaYrXlssdnU8/pqhuOht+c=
+Message-ID: <4142c8dc-5385-fb1d-4f8b-2a98bb3f99af@digikod.net>
+Date:   Fri, 26 May 2023 18:09:14 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [RFC PATCH v1 0/9] Hypervisor-Enforced Kernel Integrity
+Subject: Re: [ANNOUNCE] KVM Microconference at LPC 2023
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Marc Zyngier <maz@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Alexander Graf <graf@amazon.com>,
+        Forrest Yuan Yu <yuanyu@google.com>,
+        John Andersen <john.s.andersen@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Marian Rotariu <marian.c.rotariu@gmail.com>,
+        =?UTF-8?Q?Mihai_Don=c8=9bu?= <mdontu@bitdefender.com>,
+        =?UTF-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Thara Gopinath <tgopinath@microsoft.com>,
+        Will Deacon <will@kernel.org>,
+        Zahra Tarkhani <ztarkhani@microsoft.com>,
+        =?UTF-8?Q?=c8=98tefan_=c8=98icleru?= <ssicleru@bitdefender.com>,
+        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
+        virtualization@lists.linux-foundation.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+References: <2f19f26e-20e5-8198-294e-27ea665b706f@redhat.com>
 Content-Language: en-US
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        "Christopherson,, Sean" <seanjc@google.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>
-Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "liran.alon@oracle.com" <liran.alon@oracle.com>,
-        "marian.c.rotariu@gmail.com" <marian.c.rotariu@gmail.com>,
-        "Graf, Alexander" <graf@amazon.com>,
-        "Andersen, John S" <john.s.andersen@intel.com>,
-        "madvenka@linux.microsoft.com" <madvenka@linux.microsoft.com>,
-        "ssicleru@bitdefender.com" <ssicleru@bitdefender.com>,
-        "yuanyu@google.com" <yuanyu@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tgopinath@microsoft.com" <tgopinath@microsoft.com>,
-        "jamorris@linux.microsoft.com" <jamorris@linux.microsoft.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "will@kernel.org" <will@kernel.org>,
-        "dev@lists.cloudhypervisor.org" <dev@lists.cloudhypervisor.org>,
-        "mdontu@bitdefender.com" <mdontu@bitdefender.com>,
-        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "nicu.citu@icloud.com" <nicu.citu@icloud.com>,
-        "ztarkhani@microsoft.com" <ztarkhani@microsoft.com>,
-        "x86@kernel.org" <x86@kernel.org>
-References: <20230505152046.6575-1-mic@digikod.net>
- <93726a7b9498ec66db21c5792079996d5fed5453.camel@intel.com>
- <facfd178-3157-80b4-243b-a5c8dabadbfb@digikod.net>
- <7cb6c4c28c077bb9f866c2d795e918610e77d49f.camel@intel.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <7cb6c4c28c077bb9f866c2d795e918610e77d49f.camel@intel.com>
+In-Reply-To: <2f19f26e-20e5-8198-294e-27ea665b706f@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+See James Morris's proposal here: 
+https://lore.kernel.org/all/17f62cb1-a5de-2020-2041-359b8e96b8c0@linux.microsoft.com/
 
-On 25/05/2023 17:52, Edgecombe, Rick P wrote:
-> On Thu, 2023-05-25 at 15:59 +0200, Mickaël Salaün wrote:
-> [ snip ]
+On 26/05/2023 04:36, James Morris wrote:
+ > [Side topic]
+ >
+ > Would folks be interested in a Linux Plumbers Conference MC on this
+ > topic generally, across different hypervisors, VMMs, and architectures?
+ >
+ > If so, please let me know who the key folk would be and we can try 
+writing
+ > up an MC proposal.
+
+The fine-grain memory management proposal from James Gowans looks 
+interesting, especially the "side-car" virtual machines: 
+https://lore.kernel.org/all/88db2d9cb42e471692ff1feb0b9ca855906a9d95.camel@amazon.com/
+
+
+On 09/05/2023 11:55, Paolo Bonzini wrote:
+> Hi all!
 > 
->>> The kernel often creates writable aliases in order to write to
->>> protected data (kernel text, etc). Some of this is done right as
->>> text
->>> is being first written out (alternatives for example), and some
->>> happens
->>> way later (jump labels, etc). So for verification, I wonder what
->>> stage
->>> you would be verifying? If you want to verify the end state, you
->>> would
->>> have to maintain knowledge in the verifier of all the touch-ups the
->>> kernel does. I think it would get very tricky.
->>
->> For now, in the static kernel case, all rodata and text GPA is
->> restricted, so aliasing such memory in a writable way before or after
->> the KVM enforcement would still restrict write access to this memory,
->> which could be an issue but not a security one. Do you have such
->> examples in mind?
->>
+> We are planning on submitting a CFP to host a KVM Microconference at
+> Linux Plumbers Conference 2023. To help justify the proposal, we would
+> like to gather a list of folks that would likely attend, and crowdsource
+> a list of topics to include in the proposal.
 > 
-> On x86, look at all the callers of the text_poke() family. In
-> arch/x86/include/asm/text-patching.h.
-
-OK, thanks!
-
-
+> For both this year and future years, the intent is that a KVM
+> Microconference will complement KVM Forum, *NOT* supplant it. As you
+> probably noticed, KVM Forum is going through a somewhat radical change in
+> how it's organized; the conference is now free and (with some help from
+> Red Hat) organized directly by the KVM and QEMU communities. Despite the
+> unexpected changes and some teething pains, community response to KVM
+> Forum continues to be overwhelmingly positive! KVM Forum will remain
+> the venue of choice for KVM/userspace collaboration, for educational
+> content covering both KVM and userspace, and to discuss new features in
+> QEMU and other userspace projects.
 > 
->>
->>>
->>> It also seems it will be a decent ask for the guest kernel to keep
->>> track of GPA permissions as well as normal virtual memory
->>> pemirssions,
->>> if this thing is not widely used.
->>
->> This would indeed be required to properly handle the dynamic cases.
->>
->>
->>>
->>> So I wondering if you could go in two directions with this:
->>> 1. Make this a feature only for super locked down kernels (no
->>> modules,
->>> etc). Forbid any configurations that might modify text. But eBPF is
->>> used for seccomp, so you might be turning off some security
->>> protections
->>> to get this.
->>
->> Good idea. For "super locked down kernels" :) , we should disable all
->> kernel executable changes with the related kernel build configuration
->> (e.g. eBPF JIT, kernel module, kprobes…) to make sure there is no
->> such
->> legitimate access. This looks like an acceptable initial feature.
+> At least on the x86 side, however, the success of KVM Forum led us
+> virtualization folks to operate in relative isolation. KVM depends on
+> and impacts multiple subsystems (MM, scheduler, perf) in profound ways,
+> and recently we’ve seen more and more ideas/features that require
+> non-trivial changes outside KVM and buy-in from stakeholders that
+> (typically) do not attend KVM Forum. Linux Plumbers Conference is a
+> natural place to establish such collaboration within the kernel.
 > 
-> How many users do you think will want this protection but not
-> protections that would have to be disabled? The main one that came to
-> mind for me is cBPF seccomp stuff.
+> Therefore, the aim of the KVM Microconference will be:
+> * to provide a setting in which to discuss KVM and kernel internals
+> * to increase collaboration and reduce friction with other subsystems
+> * to discuss system virtualization issues that require coordination with
+> other subsystems (such as VFIO, or guest support in arch/)
 > 
-> But also, the alternative to JITing cBPF is the eBPF interpreter which
-> AFAIU is considered a juicy enough target for speculative attacks that
-> they created an option to compile it out. And leaving an interpreter in
-> the kernel means any data could be "executed" in the normal non-
-> speculative scenario, kind of working around the hypervisor executable
-> protections. Dropping e/cBPF entirely would be an option, but then I
-> wonder how many users you have left. Hopefully that is all correct,
-> it's hard to keep track with the pace of BPF development.
-
-seccomp-bpf doesn't rely on JIT, so it is not an issue. For eBPF, JIT is 
-optional, but other text changes may be required according to the eBPF 
-program type (e.g. using kprobes).
-
-
+> Below is a rough draft of the planned CFP submission.
 > 
-> I wonder if it might be a good idea to POC the guest side before
-> settling on the KVM interface. Then you can also look at the whole
-> thing and judge how much usage it would get for the different options
-> of restrictions.
-
-The next step is to handle dynamic permissions, but it will be easier to 
-first implement that in KVM itself (which already has the required 
-authentication code). The current interface may be flexible enough 
-though, only new attribute flags should be required (and potentially an 
-async mode). Anyway, this will enable to look at the whole thing.
-
-
+> Thanks!
 > 
->>
->>
->>> 2. Loosen the rules to allow the protections to not be so one-way
->>> enable. Get less security, but used more widely.
->>
->> This is our goal. I think both static and dynamic cases are
->> legitimate
->> and have value according to the level of security sought. This should
->> be
->> a build-time configuration.
+> Paolo Bonzini (KVM Maintainer)
+> Sean Christopherson (KVM x86 Co-Maintainer)
+> Marc Zyngier (KVM ARM Co-Maintainer)
 > 
-> Yea, the proper way to do this is probably to move all text handling
-> stuff into a separate domain of some sort, like you mentioned
-> elsewhere. It would be quite a job.
-
-Not necessarily to move this code, but to make sure that the changes are 
-legitimate (e.g. text signatures, legitimate addresses). This doesn't 
-need to be perfect but it should improve the current state by increasing 
-the cost of attacks.
+> 
+> ===================
+> KVM Microconference
+> ===================
+> 
+> KVM (Kernel-based Virtual Machine) enables the use of hardware features
+> to improve the efficiency, performance, and security of virtual machines
+> created and managed by userspace.  KVM was originally developed to host
+> and accelerate "full" virtual machines running a traditional kernel and
+> operating system, but has long since expanded to cover a wide array of use
+> cases, e.g. hosting real time workloads, sandboxing untrusted workloads,
+> deprivileging third party code, reducing the trusted computed base of
+> security sensitive workloads, etc.  As KVM's use cases have grown, so too
+> have the requirements placed on KVM and the interactions between it and
+> other kernel subsystems.
+> 
+> The KVM Microconference will focus on how to evolve KVM and adjacent
+> subsystems in order to satisfy new and upcoming requirements: serving
+> guest memory that cannot be accessed by host userspace[1], providing
+> accurate, feature-rich PMU/perf virtualization in cloud VMs[2], etc.
+> 
+> 
+> Potential Topics:
+>     - Serving inaccessible/unmappable memory for KVM guests (protected VMs)
+>     - Optimizing mmu_notifiers, e.g. reducing TLB flushes and spurious zapping
+>     - Supporting multiple KVM modules (for non-disruptive upgrades)
+>     - Improving and hardening KVM+perf interactions
+>     - Implementing arch-agnostic abstractions in KVM (e.g. MMU)
+>     - Defining KVM requirements for hardware vendors
+>     - Utilizing "fault" injection to increase test coverage of edge cases
+>     - KVM vs VFIO (e.g. memory types, a rather hot topic on the ARM side)
+> 
+> 
+> Key Attendees:
+>     - Paolo Bonzini <pbonzini@redhat.com> (KVM Maintainer)
+>     - Sean Christopherson <seanjc@google.com>  (KVM x86 Co-Maintainer)
+>     - Your name could be here!
+> 
+> [1] https://lore.kernel.org/all/20221202061347.1070246-1-chao.p.peng@linux.intel.com
+> [2] https://lore.kernel.org/all/CALMp9eRBOmwz=mspp0m5Q093K3rMUeAsF3vEL39MGV5Br9wEQQ@mail.gmail.com
+> 
+> 
