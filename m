@@ -2,63 +2,73 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F159C77B7A
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 May 2023 14:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0856CC7EE2E
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 May 2023 16:03:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229867AbjE2O5V (ORCPT
+        id S229525AbjE2QDp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 May 2023 10:57:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48378 "EHLO
+        Mon, 29 May 2023 12:03:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjE2O5U (ORCPT
+        with ESMTP id S229519AbjE2QDo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 May 2023 10:57:20 -0400
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F3F0C4
-        for <linux-security-module@vger.kernel.org>; Mon, 29 May 2023 07:57:17 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QVJXW2WkFzMpyk5;
-        Mon, 29 May 2023 16:57:15 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QVJXS2kmszMq014;
-        Mon, 29 May 2023 16:57:12 +0200 (CEST)
+        Mon, 29 May 2023 12:03:44 -0400
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E619BF4
+        for <linux-security-module@vger.kernel.org>; Mon, 29 May 2023 09:03:36 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QVL131MNPzMqYfG;
+        Mon, 29 May 2023 18:03:35 +0200 (CEST)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4QVL0w4znNz3vb2;
+        Mon, 29 May 2023 18:03:28 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1685372235;
-        bh=k2yksphiVr17PfyANZFLI9Exwg8Jhb/+C2VCBIF3McU=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=vnqdvI7B2gcSPoa7xG8gAG2+wFvjlop8mh8W0i0AQQCQpGtFQWtCyZw5X1UmldqHK
-         tyXavk+wtMv7AztQ2Am3KJETPgAycVz0ahjWSwI3uyosYnEBM8/hQROg2eos2b6C+5
-         QIm1JmslgodAazXJaphzDWQX+cq57AuR2F6jmPDc=
-Message-ID: <a0c3e6d4-2827-d9b4-8f4e-aef25997fa8a@digikod.net>
-Date:   Mon, 29 May 2023 16:57:11 +0200
+        s=20191114; t=1685376215;
+        bh=n6vDyeLcnXuJ2e1Kx1oy6dfLDQBfFmEzNL/ERVZDqQU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=kQUNssi6VBi8KE2R5ANm9fpqaLV9V+BO/pl/pZOb+r07FAQvClXzKkx8C9t2Hytji
+         /4n7ba89FjY/Zfl8t2rhFg1o9pE4iawj/J1DIhc82vGXeZvlW/Z9zID2JwoJwYww3/
+         p8LCe3PI5P3tfO/+Mau3UxTlSDY6CLpnXs/pesiA=
+Message-ID: <90ca1173-4ec1-099f-5744-3d6dc29d919d@digikod.net>
+Date:   Mon, 29 May 2023 18:03:28 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v1 1/5] hostfs: Fix ephemeral inodes
+Subject: Re: [PATCH v1 3/9] virt: Implement Heki common code
 Content-Language: en-US
+To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Alexander Graf <graf@amazon.com>,
+        Forrest Yuan Yu <yuanyu@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        John Andersen <john.s.andersen@intel.com>,
+        Marian Rotariu <marian.c.rotariu@gmail.com>,
+        =?UTF-8?Q?Mihai_Don=c8=9bu?= <mdontu@bitdefender.com>,
+        =?UTF-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Thara Gopinath <tgopinath@microsoft.com>,
+        Will Deacon <will@kernel.org>,
+        Zahra Tarkhani <ztarkhani@microsoft.com>,
+        =?UTF-8?Q?=c8=98tefan_=c8=98icleru?= <ssicleru@bitdefender.com>,
+        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
+        virtualization@lists.linux-foundation.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+References: <20230505152046.6575-1-mic@digikod.net>
+ <20230505152046.6575-4-mic@digikod.net>
+ <ZFkxhWhjyIzrPkt8@liuwe-devbox-debian-v2>
+ <e8fcc1b8-6c0f-9556-a110-bd994d3fe3c6@linux.microsoft.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     anton ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        kuba <kuba@kernel.org>, James Morris <jmorris@namei.org>,
-        Jeff Xu <jeffxu@google.com>, Kees Cook <keescook@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Ritesh Raj Sarraf <ritesh@collabora.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sjoerd Simons <sjoerd@collabora.com>,
-        Willem de Bruijn <willemb@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-References: <20230309165455.175131-1-mic@digikod.net>
- <20230309165455.175131-2-mic@digikod.net>
- <133970354.9328381.1684703636966.JavaMail.zimbra@nod.at>
- <8249dd59-ce08-2253-1697-301ad082d905@digikod.net>
-In-Reply-To: <8249dd59-ce08-2253-1697-301ad082d905@digikod.net>
+In-Reply-To: <e8fcc1b8-6c0f-9556-a110-bd994d3fe3c6@linux.microsoft.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
@@ -66,84 +76,120 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 26/05/2023 18:40, Mickaël Salaün wrote:
+On 17/05/2023 14:47, Madhavan T. Venkataraman wrote:
+> Sorry for the delay. See inline...
 > 
-> On 21/05/2023 23:13, Richard Weinberger wrote:
->> ----- Ursprüngliche Mail -----
->>> Von: "Mickaël Salaün" <mic@digikod.net>
->>> hostfs creates a new inode for each opened or created file, which created
->>> useless inode allocations and forbade identifying a host file with a kernel
->>> inode.
+> On 5/8/23 12:29, Wei Liu wrote:
+>> On Fri, May 05, 2023 at 05:20:40PM +0200, Mickaël Salaün wrote:
+>>> From: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
 >>>
->>> Fix this uncommon filesystem behavior by tying kernel inodes to host
->>> file's inode and device IDs.  Even if the host filesystem inodes may be
->>> recycled, this cannot happen while a file referencing it is open, which
->>> is the case with hostfs.  It should be noted that hostfs inode IDs may
->>> not be unique for the same hostfs superblock because multiple host's
->>> (backed) superblocks may be used.
+>>> Hypervisor Enforced Kernel Integrity (Heki) is a feature that will use
+>>> the hypervisor to enhance guest virtual machine security.
 >>>
->>> Delete inodes when dropping them to force backed host's file descriptors
->>> closing.
+>>> Configuration
+>>> =============
 >>>
->>> This enables to entirely remove ARCH_EPHEMERAL_INODES, and then makes
->>> Landlock fully supported by UML.  This is very useful for testing
->>> (ongoing and backported) changes.
->>
->> Removing ARCH_EPHEMERAL_INODES should be a patch on its own, IMHO.
-> 
-> OK, I'll do that in the next series.
-
-Well, I added ARCH_EPHEMERAL_INODES for Landlock specifically because of 
-this hostfs inconsistency, and it is not used by anything else in the 
-kernel: https://git.kernel.org/torvalds/c/cb2c7d1a1776
-I then think it makes sense to remove this Kconfig option with the 
-hostfs change. Moreover, this protects against erroneously backporting 
-the ARCH_EPHEMERAL_INODES change, which would silently introduce a bug 
-for Landlock.
-
-
-> 
->>
->>> These changes also factor out and simplify some helpers thanks to the
->>> new hostfs_inode_update() and the hostfs_iget() revamp: read_name(),
->>> hostfs_create(), hostfs_lookup(), hostfs_mknod(), and
->>> hostfs_fill_sb_common().
+>>> Define the config variables for the feature. This feature depends on
+>>> support from the architecture as well as the hypervisor.
 >>>
->>> A following commit with new Landlock tests check this new hostfs inode
->>> consistency.
+>>> Enabling HEKI
+>>> =============
 >>>
->>> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
->>> Cc: Johannes Berg <johannes@sipsolutions.net>
->>> Cc: Richard Weinberger <richard@nod.at>
->>> Cc: <stable@vger.kernel.org> # 5.15.x: ce72750f04d6: hostfs: Fix writeback of
->>> dirty pages
->>> Cc: <stable@vger.kernel.org> # 5.15+
+>>> Define a kernel command line parameter "heki" to turn the feature on or
+>>> off. By default, Heki is on.
 >>
->> I'm not sure whether this patch qualifies as stable material.
->> While I fully agree that the current behavoir is odd, nothing user visible
->> is really broken so far.
-> I added the ARCH_EPHEMERAL_INODES knob to avoid unexpected behavior.
-> Thanks to that there is no regression for Landlock, but it's unfortunate
-> that we could not use UML to test old kernel versions. According to this
-> odd behavior, I guess some user space may not work with hostfs because
-> of this issue, hence this Cc. I can remove it if you think it is not the
-> case.
-> 
-> 
+>> For such a newfangled feature can we have it off by default? Especially
+>> when there are unsolved issues around dynamically loaded code.
 >>
->>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->>> Link: https://lore.kernel.org/r/20230309165455.175131-2-mic@digikod.net
->>
->> Other than that, patch looks good to me.
 > 
-> Good, I'll send a new series with your suggestions.
+> Yes. We can certainly do that.
 
-Can I add your Signed-off-by to this patch (without touching 
-ARCH_EPHEMERAL_INODES changes, but removing the Cc stable)?
+By default the Kconfig option should definitely be off. We also need to 
+change the Kconfig option to only be set if kernel module, JIT, kprobes 
+and other dynamic text change feature are disabled at build time  (see 
+discussion with Sean).
 
-Are you OK for me to push this patch (with the whole series) in the 
-Landlock and next tree?
+With this new Kconfig option for the static case, I think the boot 
+option should be on by default because otherwise it would not really be 
+possible to switch back to on later without taking the risk to silently 
+breaking users' machines. However, we should rename this option to 
+something like "heki_static" to be in line with the new Kconfig option.
 
-I'll send a new series splitting the Landlock tests to make a patch 
-dedicated to Landlock with hostfs tests (not backported), and with 
-another patch containing backportable and independent new Landlock FS tests.
+The goal of Heki is to improve and complement kernel self-protection 
+mechanisms (which don't have boot time options), and to make it 
+available to everyone, see 
+https://kernsec.org/wiki/index.php/Kernel_Self_Protection_Project/Recommended_Settings
+In practice, it would then be kind of useless to be required to set a 
+boot option to enable Heki (rather than to disable it).
+
+
+> 
+>>>
+>> [...]
+>>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>>> index 3604074a878b..5cf5a7a97811 100644
+>>> --- a/arch/x86/Kconfig
+>>> +++ b/arch/x86/Kconfig
+>>> @@ -297,6 +297,7 @@ config X86
+>>>   	select FUNCTION_ALIGNMENT_4B
+>>>   	imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
+>>>   	select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+>>> +	select ARCH_SUPPORTS_HEKI		if X86_64
+>>
+>> Why is there a restriction on X86_64?
+>>
+> 
+> We want to get the PoC working and reviewed on X64 first. We have tested this only on X64 so far.
+
+X86_64 includes Intel CPUs, which can support EPT and MBEC, which are a 
+requirement for Heki. ARM might have similar features but we're focused 
+on x86 for now.
+
+As a side note, I only have access to an Intel machine, which means that 
+I cannot work on AMD support. However, I'll be pleased to implement such 
+support if I get access to a machine with a recent AMD CPU.
+
+
+> 
+>>>   
+>>>   config INSTRUCTION_DECODER
+>>>   	def_bool y
+>>> diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
+>>> index a6e8373a5170..42ef1e33b8a5 100644
+>>> --- a/arch/x86/include/asm/sections.h
+>>> +++ b/arch/x86/include/asm/sections.h
+>> [...]
+>>>   
+>>> +#ifdef CONFIG_HEKI
+>>> +
+>>> +/*
+>>> + * Gather all of the statically defined sections so heki_late_init() can
+>>> + * protect these sections in the host page table.
+>>> + *
+>>> + * The sections are defined under "SECTIONS" in vmlinux.lds.S
+>>> + * Keep this array in sync with SECTIONS.
+>>> + */
+>>
+>> This seems a bit fragile, because it requires constant attention from
+>> people who care about this functionality. Can this table be
+>> automatically generated?
+>>
+> 
+> We realize that. But I don't know of a way this can be automatically generated. Also, the permissions for
+> each section is specific to the use of that section. The developer who introduces a new section is the
+> one who will know what the permissions should be.
+> 
+> If any one has any ideas of how we can generate this table automatically or even just add a build time check
+> of some sort, please let us know.
+
+One clean solution might be to parse the vmlinux.lds.S file, extract 
+section and their permission, and fill that into an automatically 
+generated header file.
+
+Another way to do it would be to extract sections and associated 
+permissions with objdump, but that could be an issue because of longer 
+build time.
+
+A better solution would be to extract such sections and associated 
+permissions at boot time. I guess the kernel already has such helpers 
+used in early boot.
