@@ -2,243 +2,237 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A15C77B7A
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 May 2023 09:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55309C77B7A
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 May 2023 11:22:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbjE3JzX (ORCPT
+        id S231839AbjE3LWH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 May 2023 05:55:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35948 "EHLO
+        Tue, 30 May 2023 07:22:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbjE3JzW (ORCPT
+        with ESMTP id S231834AbjE3LWF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 May 2023 05:55:22 -0400
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [IPv6:2001:1600:3:17::42a9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B0C7138
-        for <linux-security-module@vger.kernel.org>; Tue, 30 May 2023 02:54:54 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QVnn84WwTzMqW8D;
-        Tue, 30 May 2023 11:54:52 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QVnn45tdDzMptwh;
-        Tue, 30 May 2023 11:54:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1685440492;
-        bh=5ZmdG3yKx3sW/vBePa3RcoZacfn+S9kRY4DY3NdVPVQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=h4O+rX0i7QKKorWtjsx8mJ0onLcR/ElzKZ7tgeNnWZ2QuyLnqvL+j/z9Ef7HfLDJV
-         lLa7FoCZX6RPOVhgmpgBxsTMA5l1pV7MrAW4BE5zT3XXtq/2b4DJl4pJsUVwePUWqr
-         0SJDoyKVJy15X/pdAoU7Y1esqA0P8DJD36VJ+8Lc=
-Message-ID: <5a5454a1-9ef2-1100-aefd-bbb0267f5339@digikod.net>
-Date:   Tue, 30 May 2023 11:54:47 +0200
+        Tue, 30 May 2023 07:22:05 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 172FB10D;
+        Tue, 30 May 2023 04:21:48 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id B07471F8B9;
+        Tue, 30 May 2023 11:21:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1685445707; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1xqVALaFk7J72db8rlBEb4x/7TKicjRv29Wsom/dI7g=;
+        b=mZqWfB31guTjIKJ23uuU4VWi7KuL6RCIRXwXxfb7ceRja8Lz8dZ4sAxLIUboob0CkNUvaR
+        KXStA5O2wH7Eq15TcrH99NE89GcUHmtHHsNfXqbAeCXfqp0X3iv1/eXiD+EYYIrmDTgi8r
+        5yDoSCwf/HyKOzMYkbAcZ/N1qOko5uU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1685445707;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1xqVALaFk7J72db8rlBEb4x/7TKicjRv29Wsom/dI7g=;
+        b=JC03HezlcO95pQD3wb4zuZh7SlZE+qGcPKbexpCPcvoFkBdjvhzcO1mLYeImbFCRMT6cIn
+        wIIj0eLumXBMkXDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A0E4013597;
+        Tue, 30 May 2023 11:21:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id hRI/J0vcdWQFdwAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 30 May 2023 11:21:47 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 38105A0754; Tue, 30 May 2023 13:21:47 +0200 (CEST)
+Date:   Tue, 30 May 2023 13:21:47 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
+        syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com>,
+        Jan Kara <jack@suse.cz>, Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [syzbot] [reiserfs?] INFO: task hung in flush_old_commits
+Message-ID: <20230530112147.spvyjl7b4ss7re47@quack3>
+References: <000000000000be039005fc540ed7@google.com>
+ <00000000000018faf905fc6d9056@google.com>
+ <CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com>
+ <813148798c14a49cbdf0f500fbbbab154929e6ed.camel@huaweicloud.com>
+ <CAHC9VhRoj3muyD0+pTwpJvCdmzz25C8k8eufWcjc8ZE4e2AOew@mail.gmail.com>
+ <58cebdd9318bd4435df6c0cf45318abd3db0fff8.camel@huaweicloud.com>
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [RFC PATCH v1 0/9] Hypervisor-Enforced Kernel Integrity
-Content-Language: en-US
-To:     Trilok Soni <quic_tsoni@quicinc.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>
-Cc:     Alexander Graf <graf@amazon.com>,
-        Forrest Yuan Yu <yuanyu@google.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        John Andersen <john.s.andersen@intel.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Marian Rotariu <marian.c.rotariu@gmail.com>,
-        =?UTF-8?Q?Mihai_Don=c8=9bu?= <mdontu@bitdefender.com>,
-        =?UTF-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Thara Gopinath <tgopinath@microsoft.com>,
-        Will Deacon <will@kernel.org>,
-        Zahra Tarkhani <ztarkhani@microsoft.com>,
-        =?UTF-8?Q?=c8=98tefan_=c8=98icleru?= <ssicleru@bitdefender.com>,
-        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
-        virtualization@lists.linux-foundation.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20230505152046.6575-1-mic@digikod.net>
- <1e10da25-5704-18ee-b0ce-6de704e6f0e1@quicinc.com>
- <0b069bc3-0362-d8ec-fc2a-05dd65218c39@digikod.net>
- <e17da8f4-4d5d-adb7-02c9-631ffdfc9037@quicinc.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <e17da8f4-4d5d-adb7-02c9-631ffdfc9037@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+In-Reply-To: <58cebdd9318bd4435df6c0cf45318abd3db0fff8.camel@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 25/05/2023 20:34, Trilok Soni wrote:
-> On 5/25/2023 6:25 AM, Mickaël Salaün wrote:
->>
->> On 24/05/2023 23:04, Trilok Soni wrote:
->>> On 5/5/2023 8:20 AM, Mickaël Salaün wrote:
->>>> Hi,
->>>>
->>>> This patch series is a proof-of-concept that implements new KVM features
->>>> (extended page tracking, MBEC support, CR pinning) and defines a new
->>>> API to
->>>> protect guest VMs. No VMM (e.g., Qemu) modification is required.
->>>>
->>>> The main idea being that kernel self-protection mechanisms should be
->>>> delegated
->>>> to a more privileged part of the system, hence the hypervisor. It is
->>>> still the
->>>> role of the guest kernel to request such restrictions according to its
->>>
->>> Only for the guest kernel images here? Why not for the host OS kernel?
->>
->> As explained in the Future work section, protecting the host would be
->> useful, but that doesn't really fit with the KVM model. The Protected
->> KVM project is a first step to help in this direction [11].
->>
->> In a nutshell, KVM is close to a type-2 hypervisor, and the host kernel
->> is also part of the hypervisor.
->>
->>
->>> Embedded devices w/ Android you have mentioned below supports the host
->>> OS as well it seems, right?
->>
->> What do you mean?
+On Fri 26-05-23 11:45:57, Roberto Sassu wrote:
+> On Wed, 2023-05-24 at 17:57 -0400, Paul Moore wrote:
+> > On Wed, May 24, 2023 at 11:50 AM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > On Wed, 2023-05-24 at 11:11 -0400, Paul Moore wrote:
+> > > > On Wed, May 24, 2023 at 5:59 AM syzbot
+> > > > <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com> wrote:
+> > > > > syzbot has bisected this issue to:
+> > > > > 
+> > > > > commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
+> > > > > Author: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > > Date:   Fri Mar 31 12:32:18 2023 +0000
+> > > > > 
+> > > > >     reiserfs: Add security prefix to xattr name in reiserfs_security_write()
+> > > > > 
+> > > > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11c39639280000
+> > > > > start commit:   421ca22e3138 Merge tag 'nfs-for-6.4-2' of git://git.linux-..
+> > > > > git tree:       upstream
+> > > > > final oops:     https://syzkaller.appspot.com/x/report.txt?x=13c39639280000
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=15c39639280000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=7d8067683055e3f5
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=0a684c061589dcc30e51
+> > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14312791280000
+> > > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12da8605280000
+> > > > > 
+> > > > > Reported-by: syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com
+> > > > > Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reiserfs_security_write()")
+> > > > > 
+> > > > > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> > > > 
+> > > > Roberto, I think we need to resolve this somehow.  As I mentioned
+> > > > earlier, I don't believe this to be a fault in your patch, rather that
+> > > > patch simply triggered a situation that had not been present before,
+> > > > likely because the reiserfs code always failed when writing LSM
+> > > > xattrs.  Regardless, we still need to fix the deadlocks that sysbot
+> > > > has been reporting.
+> > > 
+> > > Hi Paul
+> > > 
+> > > ok, I will try.
+> > 
+> > Thanks Roberto.  If it gets to be too challenging, let us know and we
+> > can look into safely disabling the LSM xattrs for reiserfs, I'll be
+> > shocked if anyone is successfully using LSM xattrs on reiserfs.
 > 
-> I think you have answered this above w/ pKVM and I was referring the
-> host protection as well w/ Heki. The link/references below refers to the
-> Android OS it seems and not guest VM.
+> Ok, at least I know what happens...
 > 
->>
->>
->>>
->>> Do we suggest that all the functionalities should be implemented in the
->>> Hypervisor (NS-EL2 for ARM) or even at Secure EL like Secure-EL1 (ARM).
->>
->> KVM runs in EL2. TrustZone is mainly used to enforce DRM, which means
->> that we may not control the related code.
->>
->> This patch series is dedicated to hypervisor-enforced kernel integrity,
->> then KVM.
->>
->>>
->>> I am hoping that whatever we suggest the interface here from the Guest
->>> to the Hypervisor becomes the ABI right?
->>
->> Yes, hypercalls are part of the KVM ABI.
+> + Jan, Jeff
 > 
-> Sure. I just hope that they are extensible enough to support for other
-> Hypervisors too. I am not sure if they are on this list like ACRN / Xen
-> and see if it fits their need too.
+> I'm focusing on this reproducer, which works 100% of the times:
+> 
+> https://syzkaller.appspot.com/text?tag=ReproSyz&x=163079f9280000
 
-KVM, Hyper-V and Xen mailing lists are CCed. The KVM hypercalls are 
-specific to KVM, but this patch series also include a common guest API 
-intended to be used with all hypervisors.
+Well, the commit d82dcd9e21b ("reiserfs: Add security prefix to xattr name
+in reiserfs_security_write()") looks obviously broken to me. It does:
 
+char xattr_name[XATTR_NAME_MAX + 1] = XATTR_SECURITY_PREFIX;
+
+Which is not how we can initialize strings in C... ;)
+
+								Honza
 
 > 
-> Is there any other Hypervisor you plan to test this feature as well?
-
-We're also working on Hyper-V.
-
+> This is the last lock, before things go wrong:
 > 
->>
->>>
->>>
->>>>
->>>> # Current limitations
->>>>
->>>> The main limitation of this patch series is the statically enforced
->>>> permissions. This is not an issue for kernels without module but this
->>>> needs to
->>>> be addressed.  Mechanisms that dynamically impact kernel executable
->>>> memory are
->>>> not handled for now (e.g., kernel modules, tracepoints, eBPF JIT),
->>>> and such
->>>> code will need to be authenticated.  Because the hypervisor is highly
->>>> privileged and critical to the security of all the VMs, we don't want to
->>>> implement a code authentication mechanism in the hypervisor itself
->>>> but delegate
->>>> this verification to something much less privileged. We are thinking
->>>> of two
->>>> ways to solve this: implement this verification in the VMM or spawn a
->>>> dedicated
->>>> special VM (similar to Windows's VBS). There are pros on cons to each
->>>> approach:
->>>> complexity, verification code ownership (guest's or VMM's), access to
->>>> guest
->>>> memory (i.e., confidential computing).
->>>
->>> Do you foresee the performance regressions due to lot of tracking here?
->>
->> The performance impact of execution prevention should be negligible
->> because once configured the hypervisor do nothing except catch
->> illegitimate access attempts.
+> Thread 5 hit Breakpoint 2, reiserfs_write_lock (s=s@entry=0xffff888066e28000) at fs/reiserfs/lock.c:24
+> 24	{
+> (gdb) bt
+> #0  reiserfs_write_lock (s=s@entry=0xffff888066e28000) at fs/reiserfs/lock.c:24
+> #1  0xffffffff821a559a in reiserfs_get_block (inode=inode@entry=0xffff888069fd0190, block=block@entry=15, bh_result=bh_result@entry=0xffff888075940000, create=create@entry=1) at fs/reiserfs/inode.c:680
+> #2  0xffffffff81f50254 in __block_write_begin_int (folio=0xffffea00019a9180, pos=pos@entry=61440, len=len@entry=1, get_block=get_block@entry=0xffffffff821a5390 <reiserfs_get_block>, iomap=iomap@entry=0x0 <fixed_percpu_data>) at fs/buffer.c:2064
+> #3  0xffffffff81f5165a in __block_write_begin (page=page@entry=0xffffea00019a9180, pos=pos@entry=61440, len=len@entry=1, get_block=get_block@entry=0xffffffff821a5390 <reiserfs_get_block>) at ./arch/x86/include/asm/jump_label.h:27
+> #4  0xffffffff821a3e3d in reiserfs_write_begin (file=<optimized out>, mapping=<optimized out>, pos=61440, len=1, pagep=<optimized out>, fsdata=<optimized out>) at fs/reiserfs/inode.c:2779
+> #5  0xffffffff81aec252 in generic_perform_write (iocb=iocb@entry=0xffffc9002130fb60, i=i@entry=0xffffc9002130fd00) at mm/filemap.c:3923
+> #6  0xffffffff81b0604e in __generic_file_write_iter (iocb=iocb@entry=0xffffc9002130fb60, from=from@entry=0xffffc9002130fd00) at mm/filemap.c:4051
+> #7  0xffffffff81b06383 in generic_file_write_iter (iocb=0xffffc9002130fb60, from=0xffffc9002130fd00) at mm/filemap.c:4083
+> #8  0xffffffff81e3240b in call_write_iter (file=0xffff888012692d00, iter=0xffffc9002130fd00, kio=0xffffc9002130fb60) at ./include/linux/fs.h:1868
+> #9  do_iter_readv_writev (filp=filp@entry=0xffff888012692d00, iter=iter@entry=0xffffc9002130fd00, ppos=ppos@entry=0xffffc9002130fe90, type=type@entry=1, flags=flags@entry=0) at fs/read_write.c:735
+> #10 0xffffffff81e33da4 in do_iter_write (flags=0, pos=0xffffc9002130fe90, iter=0xffffc9002130fd00, file=0xffff888012692d00) at fs/read_write.c:860
+> #11 do_iter_write (file=0xffff888012692d00, iter=0xffffc9002130fd00, pos=0xffffc9002130fe90, flags=0) at fs/read_write.c:841
+> #12 0xffffffff81e34611 in vfs_writev (file=file@entry=0xffff888012692d00, vec=vec@entry=0x20000480, vlen=vlen@entry=1, pos=pos@entry=0xffffc9002130fe90, flags=flags@entry=0) at fs/read_write.c:933
+> #13 0xffffffff81e34fd6 in do_pwritev (fd=fd@entry=5, vec=vec@entry=0x20000480, vlen=vlen@entry=1, pos=pos@entry=61440, flags=flags@entry=0) at fs/read_write.c:1030
+> #14 0xffffffff81e3b61f in __do_sys_pwritev2 (pos_h=<optimized out>, flags=0, pos_l=61440, vlen=1, vec=0x20000480, fd=5) at fs/read_write.c:1089
+> #15 __se_sys_pwritev2 (pos_h=<optimized out>, flags=0, pos_l=61440, vlen=1, vec=536872064, fd=5) at fs/read_write.c:1080
+> #16 __x64_sys_pwritev2 (regs=0xffffc9002130ff58) at fs/read_write.c:1080
+> #17 0xffffffff880dd279 in do_syscall_x64 (nr=<optimized out>, regs=0xffffc9002130ff58) at arch/x86/entry/common.c:50
+> #18 do_syscall_64 (regs=0xffffc9002130ff58, nr=<optimized out>) at arch/x86/entry/common.c:80
+> #19 0xffffffff8820008b in entry_SYSCALL_64 () at arch/x86/entry/entry_64.S:120
+> #20 0x0000000000406e00 in ?? ()
+> #21 0x00007f99e21b5000 in ?? ()
+> #22 0x0000000000000000 in ?? ()
 > 
-> Yes, if you are using the static kernel only and not considering the
-> other dynamic patching features like explained. They need to be thought
-> upon differently to reduce the likely impact.
-
-What do you mean? We plan to support dynamic code, and performance is of 
-course part of the requirement.
-
-
+> After that, there is a very long loop doing:
 > 
->>
->>
->>> Production kernels do have lot of tracepoints and we use it as feature
->>> in the GKI kernel for the vendor hooks implementation and in those cases
->>> every vendor driver is a module.
->>
->> As explained in this section, dynamic kernel modifications such as
->> tracepoints or modules are not currently supported by this patch series.
->> Handling tracepoints is possible but requires more work to define and
->> check legitimate changes. This proposal is still useful for static
->> kernels though.
->>
->>
->>> Separate VM further fragments this
->>> design and delegates more of it to proprietary solutions?
->>
->> What do you mean? KVM is not a proprietary solution.
+> Thread 5 hit Breakpoint 3, reiserfs_read_bitmap_block (sb=sb@entry=0xffff888066e28000, bitmap=bitmap@entry=1) at fs/reiserfs/bitmap.c:1417
+> 1417	{
+> (gdb) c
+> Continuing.
 > 
-> Ah, I was referring the VBS Windows VM mentioned in the above text. Is
-> it open-source? The reference of VM (or dedicated VM) didn't mention
-> that VM itself will be open-source running Linux kernel.
-
-This patch series is dedicated to KVM. Windows VBS was only mentioned as 
-a comparable (but much more advanced) set of features. Everything 
-required to use this new KVM features is and will be open-source. There 
-is nothing to worry about licensing, the goal is to make it widely and 
-freely available to protect users.
-
-
+> Thread 5 hit Breakpoint 3, reiserfs_read_bitmap_block (sb=sb@entry=0xffff888066e28000, bitmap=bitmap@entry=2) at fs/reiserfs/bitmap.c:1417
+> 1417	{
+> (gdb) 
+> Continuing.
 > 
->>
->> For dynamic checks, this would require code not run by KVM itself, but
->> either the VMM or a dedicated VM. In this case, the dynamic
->> authentication code could come from the guest VM or from the VMM itself.
->> In the former case, it is more challenging from a security point of view
->> but doesn't rely on external (proprietary) solution. In the latter case,
->> open-source VMMs should implement the specification to provide the
->> required service (e.g. check kernel module signature).
->>
->> The goal of the common API layer provided by this RFC is to share code
->> as much as possible between different hypervisor backends.
->>
->>
->>>
->>> Do you have any performance numbers w/ current RFC?
->>
->> No, but the only hypervisor performance impact is at boot time and
->> should be negligible. I'll try to get some numbers for the
->> hardware-enforcement impact, but it should be negligible too.
+> and so on...
 > 
-> Thanks. Please share the data once you have it ready.
-
-It's on my todo list, but again, that should not be an issue and I even 
-doubt the difference to be measurable.
+> [  628.589974][ T6003] REISERFS warning (device loop0): sh-2029: %s: bitmap block (#%u) reading failed reiserfs_read_bitmap_block: reiserfs_read_bitmap_block
+> 
+> This message appears because we are here:
+> 
+> struct buffer_head *reiserfs_read_bitmap_block(struct super_block *sb,
+>                                                unsigned int bitmap)
+> {
+> 
+> [...]
+> 
+> 	bh = sb_bread(sb, block);
+> 	if (bh == NULL)
+> 		reiserfs_warning(sb, "sh-2029: %s: bitmap block (#%u) "
+> 		                 "reading failed", __func__, block);
+> 
+> The hanging task (kthread) is trying to hold the same lock, which
+> unfortunately is not going to be released soon:
+> 
+> static int reiserfs_sync_fs(struct super_block *s, int wait)
+> {
+> 
+> [...]
+> 
+> 	reiserfs_write_lock(s);
+> 
+> I didn't get yet if the reason of this long loop is because we cannot
+> flush at this point, or just because of the test. I tried to
+> synchronously flush, but didn't make any difference.
+> 
+> I did a very simple change, which can be totally wrong:
+> 
+> @@ -94,7 +96,7 @@ static void flush_old_commits(struct work_struct *work)
+>          * trylock as reiserfs_cancel_old_flush() may be waiting for this work
+>          * to complete with s_umount held.
+>          */
+> -       if (!down_read_trylock(&s->s_umount)) {
+> +       if (sbi->lock_owner || !down_read_trylock(&s->s_umount)) {
+>                 /* Requeue work if we are not cancelling it */
+>                 spin_lock(&sbi->old_work_lock);
+>                 if (sbi->work_queued == 1)
+> 
+> 
+> If the lock is held, instead of waiting, reschedule the flush.
+> 
+> Anyway, at least this report does not seem to be related to fixing
+> security xattrs.
+> 
+> Roberto
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
