@@ -2,147 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B67C7EE23
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 May 2023 23:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72CCC7EE24
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 May 2023 23:29:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233792AbjE3XQP (ORCPT
+        id S233871AbjE3X3g (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 May 2023 19:16:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45266 "EHLO
+        Tue, 30 May 2023 19:29:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231843AbjE3XQN (ORCPT
+        with ESMTP id S233753AbjE3X3e (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 May 2023 19:16:13 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 687AEEC
-        for <linux-security-module@vger.kernel.org>; Tue, 30 May 2023 16:16:11 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-64d2e8a842cso3835145b3a.3
-        for <linux-security-module@vger.kernel.org>; Tue, 30 May 2023 16:16:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1685488571; x=1688080571;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=q6wOdCsvPcfL1AGuKhq7si1i+l1tB9VGHRhgBuI4hFQ=;
-        b=A6P9MRUqWxltKJ9Zgwok7DSDRoOxoww2FWlF6WQO1tYgoM5+Hi0Ez2oEaQQjsD1m8R
-         d4fRiNfemEoHsLbKtPfU643qi1eTaIaRbZTrXG8PIKxDT7zOE/fxQqSHWBsVd7zxgsD9
-         9LmT/yPeVeEdIlXyQ0jganlgblNgnS7PESvrk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685488571; x=1688080571;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q6wOdCsvPcfL1AGuKhq7si1i+l1tB9VGHRhgBuI4hFQ=;
-        b=R1r1z3Nog1jY658P1BE9g8H8Mq+LcTR38ygDN5KmKFAInKVYkGwOzDJNqs6b8uPUlB
-         3yue8kohr2usdP++rem6CN1FoygqiiTSztCOzmM0m3Mf0Opakp+HFV78qz6C3fsV/a9/
-         N49Mx2FzAFhn0vxWI6rn8L2XFkt8R/gkZcjNhUB05KYwnunlUMer8R5ESbemXG2AIluj
-         xLvP3L2aThVpOEbyN2Ho2EUaudjtBdICy345tJKzLJ0/AYDPgOSGFyl7MjxuLnORJHoU
-         4bSs9fxKGTYijo4nYOLNvHWzI4veioaBTheS/pEVALxu4GGXP7FT+m5No8+1fKEINh0i
-         WMlA==
-X-Gm-Message-State: AC+VfDx3MdNLt6E8NOjzOa0u4S0WhFTXgEBmiOdOdW6DE0V0Rn/piIKR
-        U+LdEsFSw+O8s6/64u0gxnvhCg==
-X-Google-Smtp-Source: ACHHUZ5vUXK2I/pfuTav0TBfWy3DDrvFJsd+7uESTSUanu+Vl50RByVZpLds9PiU8F5GGbjiErQYOQ==
-X-Received: by 2002:a05:6a00:10c4:b0:646:663a:9d60 with SMTP id d4-20020a056a0010c400b00646663a9d60mr4308038pfu.10.1685488570875;
-        Tue, 30 May 2023 16:16:10 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id v22-20020aa78516000000b0063d3d776910sm2123773pfn.138.2023.05.30.16.16.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 May 2023 16:16:10 -0700 (PDT)
-Date:   Tue, 30 May 2023 16:16:09 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Wei Liu <wei.liu@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Alexander Graf <graf@amazon.com>,
-        Forrest Yuan Yu <yuanyu@google.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        John Andersen <john.s.andersen@intel.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Marian Rotariu <marian.c.rotariu@gmail.com>,
-        Mihai =?utf-8?B?RG9uyJt1?= <mdontu@bitdefender.com>,
-        =?utf-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Thara Gopinath <tgopinath@microsoft.com>,
-        Will Deacon <will@kernel.org>,
-        Zahra Tarkhani <ztarkhani@microsoft.com>,
-        =?utf-8?Q?=C8=98tefan_=C8=98icleru?= <ssicleru@bitdefender.com>,
-        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
-        virtualization@lists.linux-foundation.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v1 5/9] KVM: x86: Add new hypercall to lock control
- registers
-Message-ID: <202305301614.BF8D80D3D5@keescook>
-References: <20230505152046.6575-1-mic@digikod.net>
- <20230505152046.6575-6-mic@digikod.net>
- <ZFlllHjntehpthma@liuwe-devbox-debian-v2>
- <901ff104-215c-8e81-fbae-5ecd8fa94449@digikod.net>
+        Tue, 30 May 2023 19:29:34 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C16D3B2;
+        Tue, 30 May 2023 16:29:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=2DkCxac7yJ7TTpJrbvC4aJ9GEUlIf19GJMG2RCNYbhA=; b=jeHbujSluGut688450mAUhQVVb
+        tyqrByE3iKY/irqUq/PHyN/8gduxh2e1lxNVGDev/KOiX/FxEsmiwhsiXnU9Tln7zxOdOQSt6Aeup
+        DRltTHZbg0wtsi6wwis/abNrnQPjSPNqg/jyYXnAE25Nyt4LzdQQqTFQSg7E4OD+JZuorF/xQIQIF
+        z9NToC59ws913amKocI0bm7nXxKh2UA6Fn296mrCrKj0UcORwXFDgJrxNDXQq6YXephZX7qbke12C
+        s+UqI+nv7LhTxOVvSA8tB1MMjyq4FafNY6DmeR4bA/LIr4lQ770MRMwanHUkoC+k+cYesjVIsDWrU
+        wF3kb9oA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1q48mB-00FTrm-0z;
+        Tue, 30 May 2023 23:29:15 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     keescook@chromium.org, yzaikin@google.com, dhowells@redhat.com,
+        jarkko@kernel.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, j.granados@samsung.com, brauner@kernel.org
+Cc:     ebiederm@xmission.com, patches@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH 2/2] sysctl: move security keys sysctl registration to its own file
+Date:   Tue, 30 May 2023 16:29:14 -0700
+Message-Id: <20230530232914.3689712-3-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20230530232914.3689712-1-mcgrof@kernel.org>
+References: <20230530232914.3689712-1-mcgrof@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <901ff104-215c-8e81-fbae-5ecd8fa94449@digikod.net>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 29, 2023 at 06:48:03PM +0200, Mickaël Salaün wrote:
-> 
-> On 08/05/2023 23:11, Wei Liu wrote:
-> > On Fri, May 05, 2023 at 05:20:42PM +0200, Mickaël Salaün wrote:
-> > > This enables guests to lock their CR0 and CR4 registers with a subset of
-> > > X86_CR0_WP, X86_CR4_SMEP, X86_CR4_SMAP, X86_CR4_UMIP, X86_CR4_FSGSBASE
-> > > and X86_CR4_CET flags.
-> > > 
-> > > The new KVM_HC_LOCK_CR_UPDATE hypercall takes two arguments.  The first
-> > > is to identify the control register, and the second is a bit mask to
-> > > pin (i.e. mark as read-only).
-> > > 
-> > > These register flags should already be pinned by Linux guests, but once
-> > > compromised, this self-protection mechanism could be disabled, which is
-> > > not the case with this dedicated hypercall.
-> > > 
-> > > Cc: Borislav Petkov <bp@alien8.de>
-> > > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > > Cc: H. Peter Anvin <hpa@zytor.com>
-> > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > Cc: Kees Cook <keescook@chromium.org>
-> > > Cc: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
-> > > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > > Cc: Sean Christopherson <seanjc@google.com>
-> > > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > > Cc: Wanpeng Li <wanpengli@tencent.com>
-> > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > > Link: https://lore.kernel.org/r/20230505152046.6575-6-mic@digikod.net
-> > [...]
-> > >   	hw_cr4 = (cr4_read_shadow() & X86_CR4_MCE) | (cr4 & ~X86_CR4_MCE);
-> > >   	if (is_unrestricted_guest(vcpu))
-> > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > > index ffab64d08de3..a529455359ac 100644
-> > > --- a/arch/x86/kvm/x86.c
-> > > +++ b/arch/x86/kvm/x86.c
-> > > @@ -7927,11 +7927,77 @@ static unsigned long emulator_get_cr(struct x86_emulate_ctxt *ctxt, int cr)
-> > >   	return value;
-> > >   }
-> > > +#ifdef CONFIG_HEKI
-> > > +
-> > > +extern unsigned long cr4_pinned_mask;
-> > > +
-> > 
-> > Can this be moved to a header file?
-> 
-> Yep, but I'm not sure which one. Any preference Kees?
+The security keys sysctls are already declared on its own file,
+just move the sysctl registration to its own file to help avoid
+merge conflicts on sysctls.c, and help with clearing up sysctl.c
+further.
 
-Uh, er, I was never expecting that mask to be non-static. ;) To that
-end, how about putting it in arch/x86/kvm/x86.h ?
+This creates a small penalty of 23 bytes:
 
+./scripts/bloat-o-meter vmlinux.1 vmlinux.2
+add/remove: 2/0 grow/shrink: 0/1 up/down: 49/-26 (23)
+Function                                     old     new   delta
+init_security_keys_sysctls                     -      33     +33
+__pfx_init_security_keys_sysctls               -      16     +16
+sysctl_init_bases                             85      59     -26
+Total: Before=21256937, After=21256960, chg +0.00%
+
+But soon we'll be saving tons of bytes anyway, as we modify the
+sysctl registrations to use ARRAY_SIZE and so we get rid of all the
+empty array elements so let's just clean this up now.
+
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ include/linux/key.h    | 3 ---
+ kernel/sysctl.c        | 4 ----
+ security/keys/sysctl.c | 7 +++++++
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 8dc7f7c3088b..938d7ecfb495 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -490,9 +490,6 @@ do {									\
+ 	rcu_assign_pointer((KEY)->payload.rcu_data0, (PAYLOAD));	\
+ } while (0)
+ 
+-#ifdef CONFIG_SYSCTL
+-extern struct ctl_table key_sysctls[];
+-#endif
+ /*
+  * the userspace interface
+  */
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index caf4a91522a1..48046932d573 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2322,10 +2322,6 @@ static struct ctl_table vm_table[] = {
+ int __init sysctl_init_bases(void)
+ {
+ 	register_sysctl_init("kernel", kern_table);
+-#ifdef CONFIG_KEYS
+-	register_sysctl_init("kernel/keys", key_sysctls);
+-#endif
+-
+ 	register_sysctl_init("vm", vm_table);
+ 
+ 	return 0;
+diff --git a/security/keys/sysctl.c b/security/keys/sysctl.c
+index b46b651b3c4c..b72b82bb20c6 100644
+--- a/security/keys/sysctl.c
++++ b/security/keys/sysctl.c
+@@ -68,3 +68,10 @@ struct ctl_table key_sysctls[] = {
+ #endif
+ 	{ }
+ };
++
++static int __init init_security_keys_sysctls(void)
++{
++	register_sysctl_init("kernel/keys", key_sysctls);
++	return 0;
++}
++early_initcall(init_security_keys_sysctls);
 -- 
-Kees Cook
+2.39.2
+
