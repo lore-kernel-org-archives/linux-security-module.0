@@ -2,94 +2,72 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FB8C7EE32
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 May 2023 14:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EADC7EE23
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 May 2023 14:29:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232875AbjE3OF6 convert rfc822-to-8bit (ORCPT
+        id S231552AbjE3O3c (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 May 2023 10:05:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50144 "EHLO
+        Tue, 30 May 2023 10:29:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232892AbjE3OF4 (ORCPT
+        with ESMTP id S231836AbjE3O31 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 May 2023 10:05:56 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7C5FEA
-        for <linux-security-module@vger.kernel.org>; Tue, 30 May 2023 07:05:54 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-106-Am8f-XMVN6K4UDEwCA02rg-1; Tue, 30 May 2023 15:05:51 +0100
-X-MC-Unique: Am8f-XMVN6K4UDEwCA02rg-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 30 May
- 2023 15:05:48 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Tue, 30 May 2023 15:05:48 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Min-Hua Chen' <minhuadotchen@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>
-CC:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] capabilities: use logical OR
-Thread-Topic: [PATCH] capabilities: use logical OR
-Thread-Index: AQHZkoCZLKnbYMsJn0ez1CCVI83RJq9y2m1A
-Date:   Tue, 30 May 2023 14:05:48 +0000
-Message-ID: <db536b16e33648fdb44629fc9c1c1afc@AcuMS.aculab.com>
-References: <20230529225440.7315-1-minhuadotchen@gmail.com>
-In-Reply-To: <20230529225440.7315-1-minhuadotchen@gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 30 May 2023 10:29:27 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66716102;
+        Tue, 30 May 2023 07:29:05 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 277B268B05; Tue, 30 May 2023 16:28:27 +0200 (CEST)
+Date:   Tue, 30 May 2023 16:28:26 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        viro@zeniv.linux.org.uk, dhowells@redhat.com, code@tyhicks.com,
+        hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
+        sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
+        chuck.lever@oracle.com, jlayton@kernel.org, miklos@szeredi.hu,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, dchinner@redhat.com,
+        john.johansen@canonical.com, mcgrof@kernel.org,
+        mortonm@chromium.org, fred@cloudflare.com, mpe@ellerman.id.au,
+        nathanl@linux.ibm.com, gnoack3000@gmail.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        wangweiyang2@huawei.com, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH -next 0/2] lsm: Change inode_setattr() to take struct
+Message-ID: <20230530142826.GA9376@lst.de>
+References: <20230505081200.254449-1-xiujianfeng@huawei.com> <20230515-nutzen-umgekehrt-eee629a0101e@brauner> <75b4746d-d41e-7c9f-4bb0-42a46bda7f17@digikod.net> <20230530-mietfrei-zynisch-8b63a8566f66@brauner>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230530-mietfrei-zynisch-8b63a8566f66@brauner>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Min-Hua Chen <minhuadotchen@gmail.com>
-> Sent: 29 May 2023 23:55
-> 
-> Use logical OR to fix the following sparse warnings:
-> 
-> security/commoncap.c:1358:41: sparse: warning: dubious: !x | y
-> 
-> No functional changes intended.
+On Tue, May 30, 2023 at 03:58:35PM +0200, Christian Brauner wrote:
+> The main concern which was expressed on other patchsets before is that
+> modifying inode operations to take struct path is not the way to go.
+> Passing struct path into individual filesystems is a clear layering
+> violation for most inode operations, sometimes downright not feasible,
+> and in general exposing struct vfsmount to filesystems is a hard no. At
+> least as far as I'm concerned.
 
-Except it will run just that teeny, weeny bit slower.
+Agreed.  Passing struct path into random places is not how the VFS works.
 
-	David
+> So the best way to achieve the landlock goal might be to add new hooks
 
-> Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
-> ---
->  security/commoncap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 0b3fc2f3afe7..b8e34f6204b2 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -1355,7 +1355,7 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
->  			return commit_creds(new);
->  		}
-> 
-> -		if (((!cap_valid(arg3)) | arg4 | arg5))
-> +		if (((!cap_valid(arg3)) || arg4 || arg5))
->  			return -EINVAL;
-> 
->  		if (arg2 == PR_CAP_AMBIENT_IS_SET) {
-> --
-> 2.34.1
+What is "the landlock goal", and why does it matter?
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+> or not. And we keep adding new LSMs without deprecating older ones (A
+> problem we also face in the fs layer.) and then they sit around but
+> still need to be taken into account when doing changes.
 
+Yes, I'm really worried about th amount of LSMs we have, and the weird
+things they do.
