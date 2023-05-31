@@ -2,81 +2,85 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7E3C77B73
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 May 2023 11:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F2FC7EE2E
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 May 2023 12:21:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232489AbjEaLPQ (ORCPT
+        id S232803AbjEaMVs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 May 2023 07:15:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60940 "EHLO
+        Wed, 31 May 2023 08:21:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235453AbjEaLPO (ORCPT
+        with ESMTP id S229765AbjEaMVs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 May 2023 07:15:14 -0400
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A690135;
-        Wed, 31 May 2023 04:15:05 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.143])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4QWRW94B4qz4f4y4j;
-        Wed, 31 May 2023 19:15:01 +0800 (CST)
-Received: from ubuntu20.huawei.com (unknown [10.67.174.33])
-        by APP1 (Coremail) with SMTP id cCh0CgCX8RssLHdkQ1ILKA--.12369S2;
-        Wed, 31 May 2023 19:15:02 +0800 (CST)
-From:   "GONG, Ruiqi" <gongruiqi@huaweicloud.com>
-To:     John Johansen <john.johansen@canonical.com>,
+        Wed, 31 May 2023 08:21:48 -0400
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAF7A10F;
+        Wed, 31 May 2023 05:21:46 -0700 (PDT)
+Received: from [192.168.192.83] (unknown [50.47.134.245])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 568DC41E12;
+        Wed, 31 May 2023 12:21:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1685535704;
+        bh=2RCEej4K5XPwpOdjmGnUsEFbXkDnSBYDQGM0QVWDj1s=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=L5DSDLE/du/kQdCq1yNvvc3K4Gx6NmH+18ZvXkQ7sjp9P4es8/Q++47hs8diF+nVm
+         wjk7Y8VH3VTf/gbt8XDwXbkyfKiJpZvL26u6vQWVIIzmdg9z96gCw+MxolgGQIVJVo
+         Xw7O7DSXWwDF5W/wgNgxF0CfPBGk2UzvZnhooZukpTuPwuKBGqfDb9TWxbdUXkxjNq
+         jTYMMDOmPyooRTUgQtnpZore5X+A0hgQyLi64VrUEv491y107FUwtZ4KduESsupr75
+         ibLCUDtoTx3Sm41No/ec9i+cR2WuQMr41nsjlpTlOS/DdaCy6MHRfb7fMm/i/4jxYq
+         01Tu6BfbuVfrg==
+Message-ID: <1f35dbba-9344-75c5-e870-31bc3198dbe0@canonical.com>
+Date:   Wed, 31 May 2023 05:21:40 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] apparmor: aa_buffer: Convert 1-element array to flexible
+ array
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Gustavo A . R . Silva" <gustavoars@kernel.org>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Wang Weiyang <wangweiyang2@huawei.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>, gongruiqi1@huawei.com
-Subject: [PATCH] apparmor: remove unused macro
-Date:   Wed, 31 May 2023 19:18:33 +0800
-Message-Id: <20230531111833.144628-1-gongruiqi@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: cCh0CgCX8RssLHdkQ1ILKA--.12369S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKF43tF43Kr4kArW5ZFyxZrb_yoWxuFbEy3
-        ZxZr4ku34I9F1Syw4DKFyIya4vg34rJFWkuas5JrnrAas3KrW8JFyYqryIvry3G397XrWD
-        WFn3GrWjq34jgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb28YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_JFC_Wr1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-        67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-        j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-        kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY
-        0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
-        0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
-        cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
-        CF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
-        jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQzVbUUUUU=
-X-CM-SenderInfo: pjrqw2pxltxq5kxd4v5lfo033gof0z/
-X-CFilter-Loop: Reflected
+        "Serge E. Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20230511213441.never.401-kees@kernel.org>
+ <7085879d-4d21-b90a-c08d-60450d1c7d38@canonical.com>
+ <202305301555.102E1890@keescook>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <202305301555.102E1890@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-SOCK_ctx() doesn't seem to be used anywhere in the code, so remove it.
+On 5/30/23 15:55, Kees Cook wrote:
+> On Thu, May 11, 2023 at 02:48:29PM -0700, John Johansen wrote:
+>> On 5/11/23 14:34, Kees Cook wrote:
+>>> In the ongoing effort to convert all fake flexible arrays to proper
+>>> flexible arrays, replace aa_buffer's 1-element "buffer" member with a
+>>> flexible array.
+>>>
+>>> Cc: John Johansen <john.johansen@canonical.com>
+>>> Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
+>>> Cc: Paul Moore <paul@paul-moore.com>
+>>> Cc: James Morris <jmorris@namei.org>
+>>> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+>>> Cc: apparmor@lists.ubuntu.com
+>>> Cc: linux-security-module@vger.kernel.org
+>>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>>
+>> Acked-by: John Johansen <john.johansen@canonical.com>
+>>
+>> I have pulled this into my tree.
+> 
+> Just a quick ping: I haven't seen this show up in -next yet...
+> 
 
-Signed-off-by: GONG, Ruiqi <gongruiqi@huaweicloud.com>
----
- security/apparmor/include/net.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/security/apparmor/include/net.h b/security/apparmor/include/net.h
-index 6fa440b5daed..64a0112bf62d 100644
---- a/security/apparmor/include/net.h
-+++ b/security/apparmor/include/net.h
-@@ -52,7 +52,6 @@ struct aa_sk_ctx {
- };
- 
- #define SK_CTX(X) ((X)->sk_security)
--#define SOCK_ctx(X) SOCK_INODE(X)->i_security
- #define DEFINE_AUDIT_NET(NAME, OP, SK, F, T, P)				  \
- 	struct lsm_network_audit NAME ## _net = { .sk = (SK),		  \
- 						  .family = (F)};	  \
--- 
-2.25.1
+oop, sorry looks like I didn't push, it should be fixed now
 
