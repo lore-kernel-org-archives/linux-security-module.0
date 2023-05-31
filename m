@@ -2,84 +2,70 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26339C77B73
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 May 2023 13:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA805C7EE33
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 May 2023 13:22:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236120AbjEaNDL (ORCPT
+        id S236361AbjEaNWI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 May 2023 09:03:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58516 "EHLO
+        Wed, 31 May 2023 09:22:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235586AbjEaNDK (ORCPT
+        with ESMTP id S231651AbjEaNWG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 May 2023 09:03:10 -0400
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA0BE63
-        for <linux-security-module@vger.kernel.org>; Wed, 31 May 2023 06:02:39 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QWTsY3ZQvzMrfgS;
-        Wed, 31 May 2023 15:01:05 +0200 (CEST)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QWTsX0JRMzMpsR2;
-        Wed, 31 May 2023 15:01:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1685538065;
-        bh=CBQFEd038q47Nd01fBSEoyypq1IMm/2mHK3jcG5o/DM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ShQLnkRcaN5AyxMcyDjitgfJ38ZECABg2GXWbipOpy9w6dssjoM6HcGJxsVM2GIsP
-         nQbPwSAmBNTBkOxvuAG++4MCUtw0pui1FCXcYvkDsv6pGmgnDcD5RJy3gNGxTRRgK2
-         gQhwHrMVNVPCLqPxQ6jjmT1Z5nAI88gXNbjvo1NU=
-Message-ID: <9ee2bd8b-5150-1dc6-d845-733ca9b68d26@digikod.net>
-Date:   Wed, 31 May 2023 15:01:03 +0200
+        Wed, 31 May 2023 09:22:06 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C6DAB2;
+        Wed, 31 May 2023 06:22:05 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 4814868B05; Wed, 31 May 2023 15:22:00 +0200 (CEST)
+Date:   Wed, 31 May 2023 15:22:00 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <brauner@kernel.org>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        viro@zeniv.linux.org.uk, dhowells@redhat.com, code@tyhicks.com,
+        hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
+        sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
+        chuck.lever@oracle.com, jlayton@kernel.org, miklos@szeredi.hu,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        dchinner@redhat.com, john.johansen@canonical.com,
+        mcgrof@kernel.org, mortonm@chromium.org, fred@cloudflare.com,
+        mpe@ellerman.id.au, nathanl@linux.ibm.com, gnoack3000@gmail.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        wangweiyang2@huawei.com
+Subject: Re: [PATCH -next 0/2] lsm: Change inode_setattr() to take struct
+Message-ID: <20230531132200.GB30016@lst.de>
+References: <20230505081200.254449-1-xiujianfeng@huawei.com> <20230515-nutzen-umgekehrt-eee629a0101e@brauner> <75b4746d-d41e-7c9f-4bb0-42a46bda7f17@digikod.net> <20230530-mietfrei-zynisch-8b63a8566f66@brauner> <20230530142826.GA9376@lst.de> <301a58de-e03f-02fd-57c5-1267876eb2df@schaufler-ca.com>
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v2] lsm: adds process attribute getter for Landlock
-Content-Language: en-US
-To:     Jeff Xu <jeffxu@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     Shervin Oloumi <enlightened@chromium.org>,
-        linux-security-module@vger.kernel.org, jorgelo@chromium.org,
-        keescook@chromium.org, groeck@chromium.org, allenwebb@chromium.org,
-        gnoack3000@gmail.com, areber@redhat.com, criu@openvz.org,
-        linux-api@vger.kernel.org, jannh@google.com, brauner@kernel.org
-References: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
- <20230518204549.3139044-1-enlightened@chromium.org>
- <a42875a0-d4c5-e2ac-d115-d4222e229f7d@schaufler-ca.com>
- <CAHC9VhTq0RgQ6xj86_BkZuAwy4kGy6eC8NVKFroEASNXP3uBxQ@mail.gmail.com>
- <CABi2SkX0cqOMPeuw8CD28Q6UZihi0Hh7GT=dTmxaG-T_rayPfQ@mail.gmail.com>
- <7b8688f5-20bc-8130-2341-ff56bb365d5a@schaufler-ca.com>
- <CABi2SkUEUrwZ_HAVqX651iOQfXN6=Sdv4C=ihso5CSohXeo5uA@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <CABi2SkUEUrwZ_HAVqX651iOQfXN6=Sdv4C=ihso5CSohXeo5uA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <301a58de-e03f-02fd-57c5-1267876eb2df@schaufler-ca.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, May 30, 2023 at 07:55:17AM -0700, Casey Schaufler wrote:
+> Which LSM(s) do you think ought to be deprecated?
 
-On 30/05/2023 20:02, Jeff Xu wrote:
->>>>
->>>> As I believe we are in the latter stages of review for the syscall
->>>> API, perhaps you could take a look and ensure that the current
->>>> proposed API works for what you are envisioning with Landlock?
->>>>
->>> Which review/patch to look for the proposed API ?
->>
->> https://lore.kernel.org/lkml/20230428203417.159874-3-casey@schaufler-ca.com/T/
->>
->>
-> How easy is it to add a customized LSM with new APIs?
-> I'm asking because there are some hard-coded constant/macro, i.e.
+I have no idea.  But what I want is less weirdo things messing with
+VFS semantics.
 
-I guess this question is related to the Chromium OS LSM right? I think 
-this would be a good opportunity to think about mainlining this LSM to 
-avoid the hassle of dealing with LSM IDs.
+>
+> I only see one that I
+> might consider a candidate. As for weird behavior, that's what LSMs are
+> for, and the really weird ones proposed (e.g. pathname character set limitations)
+> (and excepting for BPF, of course) haven't gotten far.
+
+They haven't gotten far for a reason usually.  Trying to sneak things in
+through the back door is exactly what is the problem with LSMs.
 
 > 
-> +#define LSM_ID_LANDLOCK 111
-> (Do IDs need to be sequential ?)
-> 
-> + define LSM_CONFIG_COUNT
-> 
-> Today, only security/Kconfig change is needed to add a new LSM, I think ?
+---end quoted text---
