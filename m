@@ -2,70 +2,194 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA805C7EE33
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 May 2023 13:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EFFC77B73
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 May 2023 13:26:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236361AbjEaNWI (ORCPT
+        id S235951AbjEaN0L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 May 2023 09:22:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43144 "EHLO
+        Wed, 31 May 2023 09:26:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231651AbjEaNWG (ORCPT
+        with ESMTP id S234861AbjEaN0K (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 May 2023 09:22:06 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C6DAB2;
-        Wed, 31 May 2023 06:22:05 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 4814868B05; Wed, 31 May 2023 15:22:00 +0200 (CEST)
-Date:   Wed, 31 May 2023 15:22:00 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <brauner@kernel.org>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        viro@zeniv.linux.org.uk, dhowells@redhat.com, code@tyhicks.com,
-        hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
-        sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
-        chuck.lever@oracle.com, jlayton@kernel.org, miklos@szeredi.hu,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        dchinner@redhat.com, john.johansen@canonical.com,
-        mcgrof@kernel.org, mortonm@chromium.org, fred@cloudflare.com,
-        mpe@ellerman.id.au, nathanl@linux.ibm.com, gnoack3000@gmail.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        wangweiyang2@huawei.com
-Subject: Re: [PATCH -next 0/2] lsm: Change inode_setattr() to take struct
-Message-ID: <20230531132200.GB30016@lst.de>
-References: <20230505081200.254449-1-xiujianfeng@huawei.com> <20230515-nutzen-umgekehrt-eee629a0101e@brauner> <75b4746d-d41e-7c9f-4bb0-42a46bda7f17@digikod.net> <20230530-mietfrei-zynisch-8b63a8566f66@brauner> <20230530142826.GA9376@lst.de> <301a58de-e03f-02fd-57c5-1267876eb2df@schaufler-ca.com>
+        Wed, 31 May 2023 09:26:10 -0400
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [IPv6:2001:1600:4:17::1908])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47A0AA0
+        for <linux-security-module@vger.kernel.org>; Wed, 31 May 2023 06:26:09 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QWVQR0rFpzMtCVh;
+        Wed, 31 May 2023 15:26:07 +0200 (CEST)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QWVQP5vKXzMpsR0;
+        Wed, 31 May 2023 15:26:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1685539567;
+        bh=0Yoj+1GzHyjgLOGaFksBwRCey6eyoCC1JdEUHcwhlNg=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=JdOBdNQBa/PkcJMPOBeWLHznSQveenAenjcWmheVzP25jYh8h85rStTuT2I2F3zBo
+         ffhflnkYe2IaWfy04TP8xBViOFW9Vzb1qLp3dbggrDamv6Yjo4VexDBBdzAy9Drv1L
+         k1bQ/tk9EOOLM4D0k09vBOKS4n5iTmDSwIiWGzXo=
+Message-ID: <e7c8a996-d98c-efac-3b12-dd6d66e421c3@digikod.net>
+Date:   Wed, 31 May 2023 15:26:05 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <301a58de-e03f-02fd-57c5-1267876eb2df@schaufler-ca.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: 
+Subject: Re: [PATCH v2] lsm: adds process attribute getter for Landlock
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Xu <jeffxu@chromium.org>, Paul Moore <paul@paul-moore.com>
+Cc:     Shervin Oloumi <enlightened@chromium.org>,
+        linux-security-module@vger.kernel.org, jorgelo@chromium.org,
+        keescook@chromium.org, groeck@chromium.org, allenwebb@chromium.org,
+        gnoack3000@gmail.com, areber@redhat.com, criu@openvz.org,
+        linux-api@vger.kernel.org, jannh@google.com, brauner@kernel.org
+References: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
+ <20230518204549.3139044-1-enlightened@chromium.org>
+ <a42875a0-d4c5-e2ac-d115-d4222e229f7d@schaufler-ca.com>
+ <CAHC9VhTq0RgQ6xj86_BkZuAwy4kGy6eC8NVKFroEASNXP3uBxQ@mail.gmail.com>
+ <CABi2SkX0cqOMPeuw8CD28Q6UZihi0Hh7GT=dTmxaG-T_rayPfQ@mail.gmail.com>
+ <CAHC9VhRD8kfkHr2gfFp10txdDwE0NGSJQd08bRojeJKiKtqq6Q@mail.gmail.com>
+ <1225a567-4ff5-462e-0db6-1a88a748d787@digikod.net>
+ <b4825033-471c-ba32-530f-b0235356d55b@digikod.net>
+ <aa2e3c9c-eac4-237d-02d0-4574f602563d@schaufler-ca.com>
+ <CABi2SkWxZwLDfo=LjLA+cXGvpNfv26ZmD5dDm+AjgD5XgNfTmw@mail.gmail.com>
+ <e1db62f4-32c5-d784-ba4e-5acc242bc00c@schaufler-ca.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <e1db62f4-32c5-d784-ba4e-5acc242bc00c@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 30, 2023 at 07:55:17AM -0700, Casey Schaufler wrote:
-> Which LSM(s) do you think ought to be deprecated?
 
-I have no idea.  But what I want is less weirdo things messing with
-VFS semantics.
+On 30/05/2023 21:19, Casey Schaufler wrote:
+> On 5/30/2023 11:05 AM, Jeff Xu wrote:
+>> On Thu, May 25, 2023 at 9:28 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>> On 5/24/2023 9:02 AM, Mickaël Salaün wrote:
+>>>> On 24/05/2023 17:38, Mickaël Salaün wrote:
+>>>>> On 23/05/2023 23:12, Paul Moore wrote:
+>>>>>> On Tue, May 23, 2023 at 2:13 AM Jeff Xu <jeffxu@chromium.org> wrote:
+>>>>>>> On Mon, May 22, 2023 at 12:56 PM Paul Moore <paul@paul-moore.com>
+>>>>>>> wrote:
+>>>>>>>> On Thu, May 18, 2023 at 5:26 PM Casey Schaufler
+>>>>>>>> <casey@schaufler-ca.com> wrote:
+>>>>>>>>> On 5/18/2023 1:45 PM, Shervin Oloumi wrote:
+>>>>>>>>>> Adds a new getprocattr hook function to the Landlock LSM, which
+>>>>>>>>>> tracks
+>>>>>>>>>> the landlocked state of the process. This is invoked when
+>>>>>>>>>> user-space
+>>>>>>>>>> reads /proc/[pid]/attr/domain
+>>>>>>>>> Please don't add a Landlock specific entry directly in the attr/
+>>>>>>>>> directory. Add it only to attr/landlock.
+>>>>>>>>>
+>>>>>>>>> Also be aware that the LSM maintainer (Paul Moore) wants to move
+>>>>>>>>> away from the /proc/.../attr interfaces in favor of a new system
+>>>>>>>>> call,
+>>>>>>>>> which is in review.
+>>>>>>>> What Casey said above.
+>>>>>>>>
+>>>>>>>> There is still some uncertainty around timing, and if we're perfectly
+>>>>>>>> honest, acceptance of the new syscalls at the Linus level, but yes, I
+>>>>>>>> would very much like to see the LSM infrastructure move away from
+>>>>>>>> procfs and towards a syscall API.  Part of the reasoning is that the
+>>>>>>>> current procfs API is ill-suited to handle the multiple, stacked LSMs
+>>>>>>>> and the other part being the complexity of procfs in a namespaced
+>>>>>>>> system.  If the syscall API is ultimately rejected, we will need to
+>>>>>>>> revisit the idea of a procfs API, but even then I think we'll need to
+>>>>>>>> make some changes to the current approach.
+>>>>>>>>
+>>>>>>>> As I believe we are in the latter stages of review for the syscall
+>>>>>>>> API, perhaps you could take a look and ensure that the current
+>>>>>>>> proposed API works for what you are envisioning with Landlock?
+>>>>> I agree, and since the LSM syscalls are almost ready that should not
+>>>>> change much the timing. In fact, extending these syscalls might be
+>>>>> easier than tweaking the current procfs/attr API for Landlock specific
+>>>>> requirements (e.g. scoped visibility). We should ensure that these
+>>>>> syscalls would be a good fit to return file descriptors, but in the
+>>>>> short term we only need to know if a process is landlocked or not, so a
+>>>>> raw return value (0 or -errno) will be enough.
+>>>>>
+>>>>> Mentioning in the LSM syscalls patch series that they may deal with (and
+>>>>> return) file descriptors could help API reviewers though.
+>>>> It should be kept in mind that the current LSM syscalls only deal with
+>>>> the calling task, whereas the goal of this Landlock patch series is to
+>>>> inspect other tasks. A new LSM syscall would need to be created to
+>>>> handle pidfd e.g., named lsm_get_proc_attr() or lsm_get_pid_attr().
+>>> I think it would be lsm_get_pid_attr(). Yes, it's the obvious next step.
+>>>
+>>>> I'm not sure if this should be a generic LSM syscall or a Landlock
+>>>> syscall though. I have plan to handle processes other than the caller
+>>>> (e.g. to restrict an existing process hierarchy), so thinking about a
+>>>> Landlock-specific syscall could make sense.
+>>>>
+>>>> To summarize, creating a new LSM syscall to deal with pidfd and to get
+>>>> LSM process "status/attr" looks OK. However, Landlock-specific
+>>>> syscalls to deal with Landlock specificities (e.g. ruleset or domain
+>>>> file descriptor) make more sense.
+>>>>
+>>>> Having one LSM-generic syscall to get minimal Landlock attributes
+>>>> (i.e. mainly to know if a process is sandboxed), and another
+>>>> Landlock-specific syscall to do more things (e.g. get the domain file
+>>>> descriptor, restrict a task) seems reasonable. The second one would
+>>>> overlap with the first one though. What do you think?
+>>> I find it difficult to think of a file descriptor as an attribute of
+>>> a process. To my (somewhat unorthodox) thinking a file descriptor is
+>>> a name for an object, not an attribute of the object. You can't access
+>>> an object by its attributes, but you can by its name. An attribute is
+>>> a description of the object. I'm perfectly happy with lsm_get_pid_attr()
+>>> returning an attribute that is a file descriptor if it describes the
+>>> process in some way, but not as a substitute for opening /proc/42.
 
->
-> I only see one that I
-> might consider a candidate. As for weird behavior, that's what LSMs are
-> for, and the really weird ones proposed (e.g. pathname character set limitations)
-> (and excepting for BPF, of course) haven't gotten far.
+We're talking about two kind of file descriptor. First, pidfd which is a 
+file descriptor referring to a task, so yes pretty similar to /proc/42 . 
+Second, a Landlock domain file descriptor, referring to a Landlock 
+domain which contains a set of processes, similar to cgroups.
 
-They haven't gotten far for a reason usually.  Trying to sneak things in
-through the back door is exactly what is the problem with LSMs.
+A potential landlock_get_domain() syscall would take a pidfd as argument 
+and return a Landlock domain file descriptor. I think lsm_get_pid_attr() 
+would be better to always return raw data (current attribute values), 
+which is simpler and make sure a syscall only return the same types. 
+This would be type safe and avoid issues where file descriptors would be 
+leaked of misused.
+
+
+>>>
+>>>
+>> If I understand correctly:
+>> 1> A new lsm syscall - lsm_get_pid_attr():  Landlock will return the
+>> process's landlock sandbox status: true/false.
+> 
+> There would have to be a new LSM_ATTR_ENFORCMENT to query.
+> Each LSM could then report what, if any, value it choose to.
+> I can't say whether SELinux would take advantage of this.
+> I don't see that Smack would report this attribute.
+
+I think such returned status for LSM_ATTR_ENFORCMENT query would make 
+sense, but the syscall could also return -EPERM and other error codes.
+
 
 > 
----end quoted text---
+>>
+>> Is this a right fit for SELinux to also return the process's enforcing
+>> mode ? such as enforcing/permissive.
+
+Paul could answer that, but I think it would be simpler to have two 
+different queries, something like LSM_ATTR_ENFORCMENT and 
+LSM_ATTR_PERMISSIVE queries.
+
+
+>>
+>> 2> Landlock will have its own specific syscall to deal with Landlock
+>> specificities (e.g. ruleset or domain file descriptor).
+> 
+> I don't see how a syscall to load arbitrary LSM policy (e.g. landlock ruleset,
+> Smack rules) would behave, so each LSM is on it's own regarding that.
+
+I agree, Landlock-specific file descriptors should managed by 
+Landlock-specific syscalls.
+
+> I doubt
+> that the VFS crowd would be especially keen on an LSM creating file descriptors,
+> but stranger things have happened.
+
+This is already the case with Landlock rulesets, so no issue with that. 
+File descriptors are more and more used nowadays and it's a good thing.
