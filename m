@@ -2,85 +2,84 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F2FC7EE2E
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 May 2023 12:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26339C77B73
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 May 2023 13:03:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232803AbjEaMVs (ORCPT
+        id S236120AbjEaNDL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 May 2023 08:21:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60996 "EHLO
+        Wed, 31 May 2023 09:03:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229765AbjEaMVs (ORCPT
+        with ESMTP id S235586AbjEaNDK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 May 2023 08:21:48 -0400
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAF7A10F;
-        Wed, 31 May 2023 05:21:46 -0700 (PDT)
-Received: from [192.168.192.83] (unknown [50.47.134.245])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 568DC41E12;
-        Wed, 31 May 2023 12:21:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1685535704;
-        bh=2RCEej4K5XPwpOdjmGnUsEFbXkDnSBYDQGM0QVWDj1s=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=L5DSDLE/du/kQdCq1yNvvc3K4Gx6NmH+18ZvXkQ7sjp9P4es8/Q++47hs8diF+nVm
-         wjk7Y8VH3VTf/gbt8XDwXbkyfKiJpZvL26u6vQWVIIzmdg9z96gCw+MxolgGQIVJVo
-         Xw7O7DSXWwDF5W/wgNgxF0CfPBGk2UzvZnhooZukpTuPwuKBGqfDb9TWxbdUXkxjNq
-         jTYMMDOmPyooRTUgQtnpZore5X+A0hgQyLi64VrUEv491y107FUwtZ4KduESsupr75
-         ibLCUDtoTx3Sm41No/ec9i+cR2WuQMr41nsjlpTlOS/DdaCy6MHRfb7fMm/i/4jxYq
-         01Tu6BfbuVfrg==
-Message-ID: <1f35dbba-9344-75c5-e870-31bc3198dbe0@canonical.com>
-Date:   Wed, 31 May 2023 05:21:40 -0700
+        Wed, 31 May 2023 09:03:10 -0400
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA0BE63
+        for <linux-security-module@vger.kernel.org>; Wed, 31 May 2023 06:02:39 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QWTsY3ZQvzMrfgS;
+        Wed, 31 May 2023 15:01:05 +0200 (CEST)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QWTsX0JRMzMpsR2;
+        Wed, 31 May 2023 15:01:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1685538065;
+        bh=CBQFEd038q47Nd01fBSEoyypq1IMm/2mHK3jcG5o/DM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=ShQLnkRcaN5AyxMcyDjitgfJ38ZECABg2GXWbipOpy9w6dssjoM6HcGJxsVM2GIsP
+         nQbPwSAmBNTBkOxvuAG++4MCUtw0pui1FCXcYvkDsv6pGmgnDcD5RJy3gNGxTRRgK2
+         gQhwHrMVNVPCLqPxQ6jjmT1Z5nAI88gXNbjvo1NU=
+Message-ID: <9ee2bd8b-5150-1dc6-d845-733ca9b68d26@digikod.net>
+Date:   Wed, 31 May 2023 15:01:03 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] apparmor: aa_buffer: Convert 1-element array to flexible
- array
+User-Agent: 
+Subject: Re: [PATCH v2] lsm: adds process attribute getter for Landlock
 Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>
-Cc:     "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20230511213441.never.401-kees@kernel.org>
- <7085879d-4d21-b90a-c08d-60450d1c7d38@canonical.com>
- <202305301555.102E1890@keescook>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <202305301555.102E1890@keescook>
+To:     Jeff Xu <jeffxu@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     Shervin Oloumi <enlightened@chromium.org>,
+        linux-security-module@vger.kernel.org, jorgelo@chromium.org,
+        keescook@chromium.org, groeck@chromium.org, allenwebb@chromium.org,
+        gnoack3000@gmail.com, areber@redhat.com, criu@openvz.org,
+        linux-api@vger.kernel.org, jannh@google.com, brauner@kernel.org
+References: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
+ <20230518204549.3139044-1-enlightened@chromium.org>
+ <a42875a0-d4c5-e2ac-d115-d4222e229f7d@schaufler-ca.com>
+ <CAHC9VhTq0RgQ6xj86_BkZuAwy4kGy6eC8NVKFroEASNXP3uBxQ@mail.gmail.com>
+ <CABi2SkX0cqOMPeuw8CD28Q6UZihi0Hh7GT=dTmxaG-T_rayPfQ@mail.gmail.com>
+ <7b8688f5-20bc-8130-2341-ff56bb365d5a@schaufler-ca.com>
+ <CABi2SkUEUrwZ_HAVqX651iOQfXN6=Sdv4C=ihso5CSohXeo5uA@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <CABi2SkUEUrwZ_HAVqX651iOQfXN6=Sdv4C=ihso5CSohXeo5uA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/30/23 15:55, Kees Cook wrote:
-> On Thu, May 11, 2023 at 02:48:29PM -0700, John Johansen wrote:
->> On 5/11/23 14:34, Kees Cook wrote:
->>> In the ongoing effort to convert all fake flexible arrays to proper
->>> flexible arrays, replace aa_buffer's 1-element "buffer" member with a
->>> flexible array.
->>>
->>> Cc: John Johansen <john.johansen@canonical.com>
->>> Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
->>> Cc: Paul Moore <paul@paul-moore.com>
->>> Cc: James Morris <jmorris@namei.org>
->>> Cc: "Serge E. Hallyn" <serge@hallyn.com>
->>> Cc: apparmor@lists.ubuntu.com
->>> Cc: linux-security-module@vger.kernel.org
->>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>
->> Acked-by: John Johansen <john.johansen@canonical.com>
->>
->> I have pulled this into my tree.
-> 
-> Just a quick ping: I haven't seen this show up in -next yet...
-> 
 
-oop, sorry looks like I didn't push, it should be fixed now
+On 30/05/2023 20:02, Jeff Xu wrote:
+>>>>
+>>>> As I believe we are in the latter stages of review for the syscall
+>>>> API, perhaps you could take a look and ensure that the current
+>>>> proposed API works for what you are envisioning with Landlock?
+>>>>
+>>> Which review/patch to look for the proposed API ?
+>>
+>> https://lore.kernel.org/lkml/20230428203417.159874-3-casey@schaufler-ca.com/T/
+>>
+>>
+> How easy is it to add a customized LSM with new APIs?
+> I'm asking because there are some hard-coded constant/macro, i.e.
 
+I guess this question is related to the Chromium OS LSM right? I think 
+this would be a good opportunity to think about mainlining this LSM to 
+avoid the hassle of dealing with LSM IDs.
+
+> 
+> +#define LSM_ID_LANDLOCK 111
+> (Do IDs need to be sequential ?)
+> 
+> + define LSM_CONFIG_COUNT
+> 
+> Today, only security/Kconfig change is needed to add a new LSM, I think ?
