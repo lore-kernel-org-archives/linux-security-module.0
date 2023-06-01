@@ -2,124 +2,188 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0356C77B7E
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Jun 2023 21:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8854FC77B7A
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Jun 2023 21:52:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232689AbjFAVec (ORCPT
+        id S231520AbjFAVwa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Jun 2023 17:34:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51852 "EHLO
+        Thu, 1 Jun 2023 17:52:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232626AbjFAVea (ORCPT
+        with ESMTP id S229800AbjFAVw3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Jun 2023 17:34:30 -0400
-Received: from sonic303-28.consmr.mail.ne1.yahoo.com (sonic303-28.consmr.mail.ne1.yahoo.com [66.163.188.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBDE7196
-        for <linux-security-module@vger.kernel.org>; Thu,  1 Jun 2023 14:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685655269; bh=NCgW5WU/XNyE8jHskROTgS41hw62lYPlgQA2V+j//1w=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=A27aN1er6zJABpPg0KewCIX2Nc8+HcP18uwXWMoOploQJU1owmZRDnjuDmH0bmm3lnnDJ2f9NtTJrd/jHtzkXkGmnF2HJJKS2/6VSDw7zWkz3GxtwyYHbOnJA0sHk8VEgr4eOw/U9W6XtQr0dUz8PQ4q+PLSXFSMMJS7QYOP0bBjnThVHugG+LkDqt8uty3trizCpF/82Dlt+hIUmzLQglZsjshNlIooQOY2Mp0CpO2hxx1g41U6+PY+2HPaDl/JXtCryI0SWF79XtTrdolUo8PyP3PF0RwFRMWctf4K4rm6Q11t5WUEoep84jaWq6gGhJFgm+Tw8QSaMg6vIQTc1A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685655269; bh=oTm+/HpZRBYiOS/oLnRZ7rCCcVMq139XZZ9DN5GYQTh=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=m7FktovAhJFjyCJv6RFkPp8xOI+MLfhjcktkrG4rhKcWQUeQB/Ref6GP4Q1NdQKLYnnBuPIOOShFsbiKWnjS8oNIq7hzu0hucSBipGX/KjPnHBJmXX/hPydE/mUhpsPCM8WsKojpTU/S08+0uQPrzhu4NgHNSb9UxJz62Im5n9bvjUQq1ysDKWbB1C5WwEj0QMTcUiCmPhoLfmGiAeTJA4I6UqJ+PAzHRWLK5UKF931HV4l5e0emyU2qdGUx8tPc4OiJGqfPGIQpdGRTv1DxCqvvcoo7MXKnyULvfOtvy1Npi2BMdrRvIZeOaaZKv5ANj0OHWiqpvTwhwakg7+qRnQ==
-X-YMail-OSG: 76o.hcAVM1kwWEom9N00MW3VT.tW7TpXP8Z_hDZI4KiQYkItkzlBlJDLpw8dHRa
- AS_0o2lPrOuQFhrKkRXDdIdRoRt7qBY6ofGiJn2Y4BEuEm9YKYRCm81AMRhm1LV9wnE92pUApbdK
- TOAxYMc59y4ier_z7iTqMrtZtCEsZY_HRMsAznG1O0KrP2PjMKmkQ7zyFCDJW16AO0Ij.zqRXKr4
- GP3gtpcGyiLpd7sHNIR6x7La1Meb.mJC4ArSP_J_1Kc7Q0i2oUTQFVosV83GChAZS5eZoR20O2IK
- WyVU7Bh9qIObI3zoC7JcZUOLtotoJ4c5jHdoGt7IOAP3Dm4ImDxlsNLyl0rvDi14x9nIuAJbXf.i
- UB.EoX1TsF0yEEGx5y09_yAhSdhYgvAJSWAOk_zx3SMS1DCrJ0ykGYxqBrB0wrWOvKf37ll1nJrB
- 9nE.uqRsT6AOT_AhlUoYSBVPEw1aVy5JI7IjlDZsmEXjDMC55a2awbyQG.q2q1KWy0HfxgOy0X_g
- NU6htUlcvsjaqs1rZVXveuna4CF_t5kYQtMbSxpWuHUpcWjOWQug6lq7z5GzrEV6SCcEys7M4ux6
- vZ7906jrdCczfzJcodfEG4peroEqqWhJodD0RUNfn8FT8WAFn0LZCbps2phWLK3ZcZuTSReyAAik
- KNMVF95Qhvu6H9xdA6lzZJ3j5mJ43Pf4LQNOd3ibGDndC4sAu6i91ljkpneifXQfX9sJZ8mKZVZK
- XJxx3bwPtly9VEG1_lD_TyAng.EpaNX88XyeLpk1SG_1QIfJYFUpEm4nEvRTUtMjMsyfDAodQXN9
- tm4yXIe4kVhueX4Ub267P91k3lRKUPcUr3yhVc6kB_lTLJ9gCu3Do6wVm2SLNxYFM7MjbbGQQciB
- n2VDk3.owRzafteglOoV70ZNi7Bk6S3BZEV70prYdneTn8xStbyfCLX5MLjlZopmW6wIMB6otSKE
- 0k6jhSqyoVHf2QvGoxugsINBeVN6ArbRL69Mc_5Yp__6lswajfp2jCAfyDG7g2PfcwDZAB3X0Zea
- itYUYRMmm_2GUFC6ovy4kyB9omSb_K7j9q1Mt_HfCts0nkeyFkOH.tYJpN45A15uHkaBMcGPdvcR
- ubLeXetI6lJRMp2Qbh2qPkrndC1iTR8ajTY6piaQJoQxICRM1VlSrkkd3bcUDSGFJ.WK6ImvzANz
- rDjZNC5jr2am5Y2tq1RXkWOepQQ1ke5ZNUWX10ME0S.J_KZjiHrAzkFAL0naaskHYK5s2f9chtwd
- Eh0kWdihMau2Kru_Ejb2JXfqibPi42p_8yMyA88Kc86YS_lrRtwVG_bFExt2mm8DOvvokGAqIbVG
- or0kGAc28I_9cCBxBbftKx0az4bs7GMt1eYrFovwsdphLM1H2ikL_9DqWpSNXxQH_Snzr2UgQ7S3
- xekWeldEf8NOEdDd59PmLq.EDkN53FDMVYv9ojdRbZEhnhhChRb3I3swS1amUG06ncXawErfH1nR
- B3zlAA9Vy8V5lZcLCnsrKqYuPlh3RvxkOlLrwRRMrc4zeb7_PdEo0140raT8Jmo2d_OnUAYPCpMV
- 4P0R7ML4r_VhVHspdG1p3OS1qq9T3P00BHl6yBxJ6ftQQRmuJHdiFzGt3MMlW2DAmAVMeL01SpXG
- xAyFXoZ08OsFgDB6NVOZLE7DVkKos3doUMv5xsiAhlOm8ZCFxp6S09cjNhiehFdk4WTJoGTlmBL2
- bGP2FLS9_yJyXWKt_nNBAifSYpzVMIzRaJXTL3FsrEmiZ1W7JfS.xKXMwZckGkSLR86Oz7eXJLGX
- nlXy8z6.Ln6moTj_r1L4Xad2pcvoyT7zqSLuPlndfBF2ovbq_fIwBPs7oPn4DaG9_V3Gh2vyb8HR
- kfwQBLSY9cJC5kyF5dvuUnc6UFdxUzBKGoL5cXx3TpuMU1wKxGivmUc1fneeBfVAkvF4bk6Vj7BG
- fvBF7TDwhdZ.L3FbTZQHyQwSD8IwDtOk5LsCOhHAncukmlQrL9YXMddwWcmuzcPpwvC5K9Kqmucy
- c3qhwe12tKZ8nRv4FgZ.FdsDaJyi77DVqnAC6XeFGgIWj7ozOrTq75Tywi1OQH0Ud8FOKmr4sfgU
- Cr9blz__c.xC4gQXxer8m6QlVEGPPgYDKZ1jL1OZGUiKHnhTXENsxTZlEZLFgBHmWOPC5v3h2Npu
- bZvyvbRmo8J7fVroz8kRDQvetZuHT4O1XzHKhNrppLgTEeS_6gxGbCtfoUJ369YoNzpQX1POdY9d
- PJMaWezd.uhui6nmcTP6N5v9ZYNjfaF_DYrvDKtHzucd0WJXs_NxqDZdZl3Ksi1M4Ib5B1FJRHMU
- oy1eJ9OLSxWIfjp8OuL0Ycw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: ac71671f-ece0-4dfc-9555-2cc7c4704f6b
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Thu, 1 Jun 2023 21:34:29 +0000
-Received: by hermes--production-ne1-574d4b7954-wtfnl (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d3de0bf26e05d30f19b67b9529442c24;
-          Thu, 01 Jun 2023 21:34:26 +0000 (UTC)
-Message-ID: <e83ef047-42f3-260d-1ac1-07c576cce9f8@schaufler-ca.com>
-Date:   Thu, 1 Jun 2023 14:34:24 -0700
+        Thu, 1 Jun 2023 17:52:29 -0400
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46309195;
+        Thu,  1 Jun 2023 14:52:26 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QXKc77569zMqSL0;
+        Thu,  1 Jun 2023 23:52:23 +0200 (CEST)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QXKc326PxzMpyf6;
+        Thu,  1 Jun 2023 23:52:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1685656343;
+        bh=Y4IDHny7hGy+XnSKBvFZqlpnWAHCn1rWumxGCLA50bQ=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=H6zZL510qVdfzZeh/i5GoA9yME1fspu+DZZ0Oi5ZVA8yOwTq7CQKGpshOTn5FYk2m
+         fNE71TN9vpCm+pbkovBsqfYJ/zEMqsdW5HgzDcg4v5qxa6E4ngCPALSTCeNgrwWESi
+         5/j+zhczJVB0aePMSXY+seCsa5XOfmyxFayW64i8=
+Message-ID: <9a4edc66-a0a3-73e4-09c5-db68d4cfbb68@digikod.net>
+Date:   Thu, 1 Jun 2023 23:52:18 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2] lsm: adds process attribute getter for Landlock
+User-Agent: 
+Subject: Re: [ANNOUNCE] KVM Microconference at LPC 2023
 Content-Language: en-US
-To:     Jeff Xu <jeffxu@chromium.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Shervin Oloumi <enlightened@chromium.org>,
-        linux-security-module@vger.kernel.org, jorgelo@chromium.org,
-        keescook@chromium.org, groeck@chromium.org, allenwebb@chromium.org,
-        gnoack3000@gmail.com, areber@redhat.com, criu@openvz.org,
-        linux-api@vger.kernel.org, jannh@google.com, brauner@kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <ce44fc98-1234-fa53-5067-cd624866f44a@digikod.net>
- <20230518204549.3139044-1-enlightened@chromium.org>
- <a42875a0-d4c5-e2ac-d115-d4222e229f7d@schaufler-ca.com>
- <CAHC9VhTq0RgQ6xj86_BkZuAwy4kGy6eC8NVKFroEASNXP3uBxQ@mail.gmail.com>
- <CABi2SkX0cqOMPeuw8CD28Q6UZihi0Hh7GT=dTmxaG-T_rayPfQ@mail.gmail.com>
- <CAHC9VhRD8kfkHr2gfFp10txdDwE0NGSJQd08bRojeJKiKtqq6Q@mail.gmail.com>
- <1225a567-4ff5-462e-0db6-1a88a748d787@digikod.net>
- <b4825033-471c-ba32-530f-b0235356d55b@digikod.net>
- <aa2e3c9c-eac4-237d-02d0-4574f602563d@schaufler-ca.com>
- <CABi2SkWxZwLDfo=LjLA+cXGvpNfv26ZmD5dDm+AjgD5XgNfTmw@mail.gmail.com>
- <e1db62f4-32c5-d784-ba4e-5acc242bc00c@schaufler-ca.com>
- <e7c8a996-d98c-efac-3b12-dd6d66e421c3@digikod.net>
- <CABi2SkUFe7zOFi3Vr-A6bTGytOdeZkvsPfxxLq9+b0vHfa-bkA@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CABi2SkUFe7zOFi3Vr-A6bTGytOdeZkvsPfxxLq9+b0vHfa-bkA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Marc Zyngier <maz@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Alexander Graf <graf@amazon.com>,
+        Forrest Yuan Yu <yuanyu@google.com>,
+        John Andersen <john.s.andersen@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Marian Rotariu <marian.c.rotariu@gmail.com>,
+        =?UTF-8?Q?Mihai_Don=c8=9bu?= <mdontu@bitdefender.com>,
+        =?UTF-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Thara Gopinath <tgopinath@microsoft.com>,
+        Will Deacon <will@kernel.org>,
+        Zahra Tarkhani <ztarkhani@microsoft.com>,
+        =?UTF-8?Q?=c8=98tefan_=c8=98icleru?= <ssicleru@bitdefender.com>,
+        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
+        virtualization@lists.linux-foundation.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+References: <2f19f26e-20e5-8198-294e-27ea665b706f@redhat.com>
+ <4142c8dc-5385-fb1d-4f8b-2a98bb3f99af@digikod.net>
+In-Reply-To: <4142c8dc-5385-fb1d-4f8b-2a98bb3f99af@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21495 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/1/2023 1:48 PM, Jeff Xu wrote:
-> Hi Paul,
->
-> On Wed, May 31, 2023 at 6:26 AM Mickaël Salaün <mic@digikod.net> wrote:
->>>>>
->>>> If I understand correctly:
->>>> 1> A new lsm syscall - lsm_get_pid_attr():  Landlock will return the
->>>> process's landlock sandbox status: true/false.
->>> There would have to be a new LSM_ATTR_ENFORCMENT to query.
->>> Each LSM could then report what, if any, value it choose to.
->>> I can't say whether SELinux would take advantage of this.
->>> I don't see that Smack would report this attribute.
->> I think such returned status for LSM_ATTR_ENFORCMENT query would make
->> sense, but the syscall could also return -EPERM and other error codes.
->>
->>
->>>> Is this a right fit for SELinux to also return the process's enforcing
->>>> mode ? such as enforcing/permissive.
->> Paul could answer that, but I think it would be simpler to have two
->> different queries, something like LSM_ATTR_ENFORCMENT and
->> LSM_ATTR_PERMISSIVE queries.
->>
-> Hi Paul, what do you think ? Could SELinux have something like this.
+Hi,
 
-Not Paul, but answering anyway - No, those are system wide attributes, not
-process (task) attributes. You want some other syscall, say lsm_get_system_attr()
-for those.
+What is the status of this microconference proposal? We'd be happy to 
+talk about Heki [1] and potentially other hypervisor supports.
 
->
-> Thanks!
-> -Jeff
+Regards,
+  Mickaël
+
+
+[1] https://lore.kernel.org/all/20230505152046.6575-1-mic@digikod.net/
+
+
+On 26/05/2023 18:09, Mickaël Salaün wrote:
+> See James Morris's proposal here:
+> https://lore.kernel.org/all/17f62cb1-a5de-2020-2041-359b8e96b8c0@linux.microsoft.com/
+> 
+> On 26/05/2023 04:36, James Morris wrote:
+>   > [Side topic]
+>   >
+>   > Would folks be interested in a Linux Plumbers Conference MC on this
+>   > topic generally, across different hypervisors, VMMs, and architectures?
+>   >
+>   > If so, please let me know who the key folk would be and we can try
+> writing
+>   > up an MC proposal.
+> 
+> The fine-grain memory management proposal from James Gowans looks
+> interesting, especially the "side-car" virtual machines:
+> https://lore.kernel.org/all/88db2d9cb42e471692ff1feb0b9ca855906a9d95.camel@amazon.com/
+> 
+> 
+> On 09/05/2023 11:55, Paolo Bonzini wrote:
+>> Hi all!
+>>
+>> We are planning on submitting a CFP to host a KVM Microconference at
+>> Linux Plumbers Conference 2023. To help justify the proposal, we would
+>> like to gather a list of folks that would likely attend, and crowdsource
+>> a list of topics to include in the proposal.
+>>
+>> For both this year and future years, the intent is that a KVM
+>> Microconference will complement KVM Forum, *NOT* supplant it. As you
+>> probably noticed, KVM Forum is going through a somewhat radical change in
+>> how it's organized; the conference is now free and (with some help from
+>> Red Hat) organized directly by the KVM and QEMU communities. Despite the
+>> unexpected changes and some teething pains, community response to KVM
+>> Forum continues to be overwhelmingly positive! KVM Forum will remain
+>> the venue of choice for KVM/userspace collaboration, for educational
+>> content covering both KVM and userspace, and to discuss new features in
+>> QEMU and other userspace projects.
+>>
+>> At least on the x86 side, however, the success of KVM Forum led us
+>> virtualization folks to operate in relative isolation. KVM depends on
+>> and impacts multiple subsystems (MM, scheduler, perf) in profound ways,
+>> and recently we’ve seen more and more ideas/features that require
+>> non-trivial changes outside KVM and buy-in from stakeholders that
+>> (typically) do not attend KVM Forum. Linux Plumbers Conference is a
+>> natural place to establish such collaboration within the kernel.
+>>
+>> Therefore, the aim of the KVM Microconference will be:
+>> * to provide a setting in which to discuss KVM and kernel internals
+>> * to increase collaboration and reduce friction with other subsystems
+>> * to discuss system virtualization issues that require coordination with
+>> other subsystems (such as VFIO, or guest support in arch/)
+>>
+>> Below is a rough draft of the planned CFP submission.
+>>
+>> Thanks!
+>>
+>> Paolo Bonzini (KVM Maintainer)
+>> Sean Christopherson (KVM x86 Co-Maintainer)
+>> Marc Zyngier (KVM ARM Co-Maintainer)
+>>
+>>
+>> ===================
+>> KVM Microconference
+>> ===================
+>>
+>> KVM (Kernel-based Virtual Machine) enables the use of hardware features
+>> to improve the efficiency, performance, and security of virtual machines
+>> created and managed by userspace.  KVM was originally developed to host
+>> and accelerate "full" virtual machines running a traditional kernel and
+>> operating system, but has long since expanded to cover a wide array of use
+>> cases, e.g. hosting real time workloads, sandboxing untrusted workloads,
+>> deprivileging third party code, reducing the trusted computed base of
+>> security sensitive workloads, etc.  As KVM's use cases have grown, so too
+>> have the requirements placed on KVM and the interactions between it and
+>> other kernel subsystems.
+>>
+>> The KVM Microconference will focus on how to evolve KVM and adjacent
+>> subsystems in order to satisfy new and upcoming requirements: serving
+>> guest memory that cannot be accessed by host userspace[1], providing
+>> accurate, feature-rich PMU/perf virtualization in cloud VMs[2], etc.
+>>
+>>
+>> Potential Topics:
+>>      - Serving inaccessible/unmappable memory for KVM guests (protected VMs)
+>>      - Optimizing mmu_notifiers, e.g. reducing TLB flushes and spurious zapping
+>>      - Supporting multiple KVM modules (for non-disruptive upgrades)
+>>      - Improving and hardening KVM+perf interactions
+>>      - Implementing arch-agnostic abstractions in KVM (e.g. MMU)
+>>      - Defining KVM requirements for hardware vendors
+>>      - Utilizing "fault" injection to increase test coverage of edge cases
+>>      - KVM vs VFIO (e.g. memory types, a rather hot topic on the ARM side)
+>>
+>>
+>> Key Attendees:
+>>      - Paolo Bonzini <pbonzini@redhat.com> (KVM Maintainer)
+>>      - Sean Christopherson <seanjc@google.com>  (KVM x86 Co-Maintainer)
+>>      - Your name could be here!
+>>
+>> [1] https://lore.kernel.org/all/20221202061347.1070246-1-chao.p.peng@linux.intel.com
+>> [2] https://lore.kernel.org/all/CALMp9eRBOmwz=mspp0m5Q093K3rMUeAsF3vEL39MGV5Br9wEQQ@mail.gmail.com
+>>
+>>
