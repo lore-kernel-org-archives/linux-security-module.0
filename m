@@ -2,131 +2,151 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D62BAC7EE2D
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 17:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC1DC7EE29
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 18:48:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235723AbjFBRxN (ORCPT
+        id S235993AbjFBSr7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Jun 2023 13:53:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55914 "EHLO
+        Fri, 2 Jun 2023 14:47:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235208AbjFBRxM (ORCPT
+        with ESMTP id S235496AbjFBSr7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Jun 2023 13:53:12 -0400
-Received: from frasgout13.his.huawei.com (unknown [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44A829F;
-        Fri,  2 Jun 2023 10:53:11 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4QXr1k29Bfz9y3D6;
-        Sat,  3 Jun 2023 01:42:50 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwCX8NthLHpkNl4EAw--.3454S2;
-        Fri, 02 Jun 2023 18:52:46 +0100 (CET)
-Message-ID: <f097e95715f0ff43929a4cb56b1ad29c2f2b1c44.camel@huaweicloud.com>
-Subject: Re: [GIT PULL] Asymmetric keys fix for v6.4-rc5
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Stefan Berger <stefanb@linux.ibm.com>, davem@davemloft.net,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Date:   Fri, 02 Jun 2023 19:52:29 +0200
-In-Reply-To: <CAHk-=wj4S0t5RnJQmF_wYwv+oMTKggwdLnrA9D1uMNKq4H4byw@mail.gmail.com>
-References: <4d7e38ff5bbc496cb794b50e1c5c83bcd2317e69.camel@huaweicloud.com>
-         <CAHk-=wj4S0t5RnJQmF_wYwv+oMTKggwdLnrA9D1uMNKq4H4byw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Fri, 2 Jun 2023 14:47:59 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4E151A5;
+        Fri,  2 Jun 2023 11:47:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1685731677; x=1717267677;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GOtDdfsc2P2CR837OFCfK8rZd7DNtGjRdjWJhX8MhDI=;
+  b=m5Z6I6HxVFUV1Yp5WdNT9ghCRLpaSbcSeLKcy7CEAed7NcyKf0n6FMa0
+   lnDztt3z058ngK/gI8xQRvNq4oIfdxaExyYcvQ2YB4LKHXYkoCD/b4adK
+   P1GAuxmInznEmPrzLnLGuaB4+pfyjqEkEbioKOhKU3d3L620xqqXFFjkC
+   PYoBC/eHHbrkAvtpR+YiyAekmCcYTQ9IJ7jq81WMG4rAhI2sEoSDwg9f+
+   hd2eMfWq4LSAzq4Iip0VlffFLVZIt+YJPW07SdWxm75++v4rzbBw6W/Mu
+   hT06mAWD8RJWiblsqOOo7BCJOcTkYXVJBkg9WAJ1s/FnSNOfYb8lhBs8B
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10729"; a="335553728"
+X-IronPort-AV: E=Sophos;i="6.00,213,1681196400"; 
+   d="scan'208";a="335553728"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2023 11:47:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10729"; a="797690951"
+X-IronPort-AV: E=Sophos;i="6.00,213,1681196400"; 
+   d="scan'208";a="797690951"
+Received: from lkp-server01.sh.intel.com (HELO 15ab08e44a81) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 02 Jun 2023 11:47:54 -0700
+Received: from kbuild by 15ab08e44a81 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1q59oX-0000q1-3D;
+        Fri, 02 Jun 2023 18:47:53 +0000
+Date:   Sat, 3 Jun 2023 02:46:59 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
+        luto@kernel.org
+Subject: Re: [PATCH RESEND bpf-next 15/18] bpf: take into account BPF token
+ when fetching helper protos
+Message-ID: <202306030252.UOXkWZTK-lkp@intel.com>
+References: <20230602150011.1657856-16-andrii@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwCX8NthLHpkNl4EAw--.3454S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4Dtw4UJFW7Gr1DuF18Grg_yoW8uF45p3
-        yrKw4fKr1qgrZ2y34xGw4Uuay5Jws5JryUGrsxG34fu3Z8Xr9xCa4I9F43WFyakr4vga43
-        KrW0gws8CrW5Aa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-        AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU13rcDUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAQBF1jj4oO0gACsz
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230602150011.1657856-16-andrii@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2023-06-02 at 13:38 -0400, Linus Torvalds wrote:
-> On Fri, Jun 2, 2023 at 10:41 AM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > sorry for this unusual procedure of me requesting a patch to be pulled.
-> > I asked for several months the maintainers (David: asymmetric keys,
-> > Jarkko: key subsystem) to pick my patch but without any luck.
-> 
-> Hmm.
-> 
-> The patch behind that tag looks sane to me, but this is not code I am
-> hugely familiar with.
-> 
-> Who is the caller that passes in the public_key_signature data on the
-> stack to public_key_verify_signature()? This may well be the right
-> point to move it away from the stack in order to have a valid sg-list,
-> but even if this patch is all good, it would be nice to have the call
-> chain documented as part of the commit message.
+Hi Andrii,
 
-Oh, it seems it was only in the first version of the patch:
+kernel test robot noticed the following build errors:
 
-https://lore.kernel.org/linux-kernel/20221104122023.1750333-1-roberto.sassu@huaweicloud.com/
+[auto build test ERROR on bpf-next/master]
 
-Originally, the kernel panic was due to EVM, but I later found that IMA
-Appraisal could have caused the same.
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bpf-introduce-BPF-token-object/20230602-230448
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20230602150011.1657856-16-andrii%40kernel.org
+patch subject: [PATCH RESEND bpf-next 15/18] bpf: take into account BPF token when fetching helper protos
+config: um-x86_64_defconfig (https://download.01.org/0day-ci/archive/20230603/202306030252.UOXkWZTK-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/3d830ca845b075ab4132487aaaa69b70a467863c
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Andrii-Nakryiko/bpf-introduce-BPF-token-object/20230602-230448
+        git checkout 3d830ca845b075ab4132487aaaa69b70a467863c
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 O=build_dir ARCH=um SUBARCH=x86_64 olddefconfig
+        make W=1 O=build_dir ARCH=um SUBARCH=x86_64 SHELL=/bin/bash
 
-> > I signed the tag, but probably it would not matter, since my key is not
-> > among your trusted keys.
-> 
-> It does matter - I do pull from people even without full chains, I
-> just end up being a lot more careful, and I still want to see the
-> signature for any future reference...
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202306030252.UOXkWZTK-lkp@intel.com/
 
-Ok, then it makes sense to push my key to a key server.
+All errors (new ones prefixed by >>):
 
-Thanks
+   In file included from include/linux/bpf_verifier.h:7,
+                    from net/core/filter.c:21:
+   include/linux/bpf.h: In function 'bpf_token_new_fd':
+   include/linux/bpf.h:2475:16: warning: returning 'int' from a function with return type 'struct bpf_token *' makes pointer from integer without a cast [-Wint-conversion]
+    2475 |         return -EOPNOTSUPP;
+         |                ^
+   net/core/filter.c: In function 'bpf_sk_base_func_proto':
+>> net/core/filter.c:11653:14: error: implicit declaration of function 'bpf_token_capable'; did you mean 'bpf_token_put'? [-Werror=implicit-function-declaration]
+   11653 |         if (!bpf_token_capable(prog->aux->token, CAP_PERFMON))
+         |              ^~~~~~~~~~~~~~~~~
+         |              bpf_token_put
+   cc1: some warnings being treated as errors
 
-Roberto
 
-> DavidH, Herbert, please comment:
-> 
-> >   https://github.com/robertosassu/linux.git tags/asym-keys-fix-for-linus-v6.4-rc5
-> 
-> basically public_key_verify_signature() is passed that
-> 
->      const struct public_key_signature *sig
-> 
-> as an argument, and currently does
-> 
->         sg_init_table(src_sg, 2);
->         sg_set_buf(&src_sg[0], sig->s, sig->s_size);
->         sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
-> 
-> 
-> on it which is *not* ok if the s->s and s->digest points to stack data
-> that ends up not dma'able because of a virtually mapped stack.
-> 
-> The patch re-uses the allocation it already does for the key data, and
-> it seems sane.
-> 
-> But again, this is not code I look at normally, so...
-> 
->                Linus
+vim +11653 net/core/filter.c
 
+ 11619	
+ 11620	static const struct bpf_func_proto *
+ 11621	bpf_sk_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 11622	{
+ 11623		const struct bpf_func_proto *func;
+ 11624	
+ 11625		switch (func_id) {
+ 11626		case BPF_FUNC_skc_to_tcp6_sock:
+ 11627			func = &bpf_skc_to_tcp6_sock_proto;
+ 11628			break;
+ 11629		case BPF_FUNC_skc_to_tcp_sock:
+ 11630			func = &bpf_skc_to_tcp_sock_proto;
+ 11631			break;
+ 11632		case BPF_FUNC_skc_to_tcp_timewait_sock:
+ 11633			func = &bpf_skc_to_tcp_timewait_sock_proto;
+ 11634			break;
+ 11635		case BPF_FUNC_skc_to_tcp_request_sock:
+ 11636			func = &bpf_skc_to_tcp_request_sock_proto;
+ 11637			break;
+ 11638		case BPF_FUNC_skc_to_udp6_sock:
+ 11639			func = &bpf_skc_to_udp6_sock_proto;
+ 11640			break;
+ 11641		case BPF_FUNC_skc_to_unix_sock:
+ 11642			func = &bpf_skc_to_unix_sock_proto;
+ 11643			break;
+ 11644		case BPF_FUNC_skc_to_mptcp_sock:
+ 11645			func = &bpf_skc_to_mptcp_sock_proto;
+ 11646			break;
+ 11647		case BPF_FUNC_ktime_get_coarse_ns:
+ 11648			return &bpf_ktime_get_coarse_ns_proto;
+ 11649		default:
+ 11650			return bpf_base_func_proto(func_id, prog);
+ 11651		}
+ 11652	
+ 11653		if (!bpf_token_capable(prog->aux->token, CAP_PERFMON))
+ 11654			return NULL;
+ 11655	
+ 11656		return func;
+ 11657	}
+ 11658	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
