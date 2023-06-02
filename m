@@ -2,131 +2,151 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 411F6C7EE29
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 17:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A24C7EE24
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 17:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236931AbjFBRis (ORCPT
+        id S236908AbjFBRl6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Jun 2023 13:38:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50742 "EHLO
+        Fri, 2 Jun 2023 13:41:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236372AbjFBRir (ORCPT
+        with ESMTP id S236139AbjFBRl6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Jun 2023 13:38:47 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33A0A1B8
-        for <linux-security-module@vger.kernel.org>; Fri,  2 Jun 2023 10:38:46 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-96fab30d1e1so505910666b.0
-        for <linux-security-module@vger.kernel.org>; Fri, 02 Jun 2023 10:38:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1685727524; x=1688319524;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qPpIUifsrj3WhrOLcjmDKG+n28eYiyTfgghRaS6XkRs=;
-        b=UvCO7b36trGYA7jPwC4uUnaAo8v+TtUCL0eyfuINNpnEdHdEHS6eUmhhkP+WyhUdjn
-         Oxqh3nfxL/QQ7wnOazvNrAp+kr6eSrklf6VqYQSws208yzwJXB3ATpZelSTTnkN0CJK7
-         ILnk5hxIXlC3oknVRYnPQJqkz/MzEfFbg/l3k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685727524; x=1688319524;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qPpIUifsrj3WhrOLcjmDKG+n28eYiyTfgghRaS6XkRs=;
-        b=gbh8SkHz3cLQydOINIQxCpF9OzQIxyLIHYySTM1RCkeSH+QuvS+Oh/FwJDd1M3iwpD
-         mXIkSzcscq1ZhFr7snMPGnCs2KsnhxDj3pAXe8Dhx+NvREHHmxQA/LnP6AZg61io9jT4
-         UnHdzBroXQC25kGbtUYc7ejeh9XZWI2EOE5vFsXeVEeT4PtFjkNX+ZI/bhIi9DiL9E8O
-         qjzy6TyztaqkXTJRGjD0sRAHekDGY0dwePExP1HTKDGHZmybi8reKTcS9on0pjh7ERCB
-         WFZ9qfTgHV0RnCbqwglMgVuKy44b07uf7VYRCgXo0gaN98iGJJXrPWi1rWx6EqbeiQJM
-         wv1w==
-X-Gm-Message-State: AC+VfDw+T5ZZFjvfvao8Rjpc6mnYxibYtRfmA3+EKqysE0xBFOSnoprh
-        fC4dgCYo2RNU1Fy+qifYCg+09kujJAoBqb2lLbj/UtfL
-X-Google-Smtp-Source: ACHHUZ6JaxdOaxSniHBJflxP2HAEj1H1wkYbLB6hIOIPHElocvKbolTZPqYSaFCAVbpacUCW/f1ZDA==
-X-Received: by 2002:a17:907:da9:b0:94e:4b26:233c with SMTP id go41-20020a1709070da900b0094e4b26233cmr6116894ejc.16.1685727524509;
-        Fri, 02 Jun 2023 10:38:44 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id q19-20020a170906b29300b0094f23480619sm992677ejz.172.2023.06.02.10.38.43
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Jun 2023 10:38:44 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-514ab6cb529so7494334a12.1
-        for <linux-security-module@vger.kernel.org>; Fri, 02 Jun 2023 10:38:43 -0700 (PDT)
-X-Received: by 2002:a05:6402:202e:b0:505:d16:9374 with SMTP id
- ay14-20020a056402202e00b005050d169374mr3588912edb.9.1685727523436; Fri, 02
- Jun 2023 10:38:43 -0700 (PDT)
+        Fri, 2 Jun 2023 13:41:58 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADE45E4D;
+        Fri,  2 Jun 2023 10:41:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1685727715; x=1717263715;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T2Z+PRpXdrWfJ6V1xooWewzuG3GPNhnATyZhAlZ8sMk=;
+  b=Ai4bgAhI+OpOunQxAFsSQj87zuD9DA+qTb6IvE7cp+GhARpp7JigySB5
+   iDLOz+ULws9Hy5ZEquPY8e01uXMH2dmoABphA0W3/DlCwaBK9Z8mk0ggg
+   V3plO4MtsiWjroDGYhgG72foClq43g26pU2/rj6gUB0KlOQaXkhEXoCpf
+   t7ngkpFNzHnvw3BOl5nUzEgSeuZWqirYdeKfZPsgFfMW+ns9aq27KBC6h
+   CxyFAr82sCwnb4zI/du/xsNIO7Dgco9tc2frsJHJxHslMbkPl5mXVfPV0
+   SAh5BLhocqkGTdBtKQoZw8Gw2hg7CU6OeRLXdthwsEpXbA2OeN1mdE1HG
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10729"; a="345504647"
+X-IronPort-AV: E=Sophos;i="6.00,213,1681196400"; 
+   d="scan'208";a="345504647"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2023 10:41:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10729"; a="832051610"
+X-IronPort-AV: E=Sophos;i="6.00,213,1681196400"; 
+   d="scan'208";a="832051610"
+Received: from lkp-server01.sh.intel.com (HELO 15ab08e44a81) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 02 Jun 2023 10:41:52 -0700
+Received: from kbuild by 15ab08e44a81 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1q58md-0000mp-1B;
+        Fri, 02 Jun 2023 17:41:51 +0000
+Date:   Sat, 3 Jun 2023 01:41:18 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
+        luto@kernel.org
+Subject: Re: [PATCH RESEND bpf-next 01/18] bpf: introduce BPF token object
+Message-ID: <202306030138.u9AeNgUk-lkp@intel.com>
+References: <20230602150011.1657856-2-andrii@kernel.org>
 MIME-Version: 1.0
-References: <4d7e38ff5bbc496cb794b50e1c5c83bcd2317e69.camel@huaweicloud.com>
-In-Reply-To: <4d7e38ff5bbc496cb794b50e1c5c83bcd2317e69.camel@huaweicloud.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 2 Jun 2023 13:38:26 -0400
-X-Gmail-Original-Message-ID: <CAHk-=wj4S0t5RnJQmF_wYwv+oMTKggwdLnrA9D1uMNKq4H4byw@mail.gmail.com>
-Message-ID: <CAHk-=wj4S0t5RnJQmF_wYwv+oMTKggwdLnrA9D1uMNKq4H4byw@mail.gmail.com>
-Subject: Re: [GIT PULL] Asymmetric keys fix for v6.4-rc5
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Stefan Berger <stefanb@linux.ibm.com>, davem@davemloft.net,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230602150011.1657856-2-andrii@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 2, 2023 at 10:41=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> sorry for this unusual procedure of me requesting a patch to be pulled.
-> I asked for several months the maintainers (David: asymmetric keys,
-> Jarkko: key subsystem) to pick my patch but without any luck.
+Hi Andrii,
 
-Hmm.
+kernel test robot noticed the following build warnings:
 
-The patch behind that tag looks sane to me, but this is not code I am
-hugely familiar with.
+[auto build test WARNING on bpf-next/master]
 
-Who is the caller that passes in the public_key_signature data on the
-stack to public_key_verify_signature()? This may well be the right
-point to move it away from the stack in order to have a valid sg-list,
-but even if this patch is all good, it would be nice to have the call
-chain documented as part of the commit message.
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bpf-introduce-BPF-token-object/20230602-230448
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20230602150011.1657856-2-andrii%40kernel.org
+patch subject: [PATCH RESEND bpf-next 01/18] bpf: introduce BPF token object
+config: um-x86_64_defconfig (https://download.01.org/0day-ci/archive/20230603/202306030138.u9AeNgUk-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/59e6ef2000a056ce3386db8481e477e5abfbbe15
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Andrii-Nakryiko/bpf-introduce-BPF-token-object/20230602-230448
+        git checkout 59e6ef2000a056ce3386db8481e477e5abfbbe15
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 O=build_dir ARCH=um SUBARCH=x86_64 olddefconfig
+        make W=1 O=build_dir ARCH=um SUBARCH=x86_64 SHELL=/bin/bash kernel/ net/core/
 
-> I signed the tag, but probably it would not matter, since my key is not
-> among your trusted keys.
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202306030138.u9AeNgUk-lkp@intel.com/
 
-It does matter - I do pull from people even without full chains, I
-just end up being a lot more careful, and I still want to see the
-signature for any future reference...
+All warnings (new ones prefixed by >>):
 
-DavidH, Herbert, please comment:
+   In file included from kernel/fork.c:98:
+   include/linux/bpf.h: In function 'bpf_token_new_fd':
+>> include/linux/bpf.h:2465:16: warning: returning 'int' from a function with return type 'struct bpf_token *' makes pointer from integer without a cast [-Wint-conversion]
+    2465 |         return -EOPNOTSUPP;
+         |                ^
+   kernel/fork.c: At top level:
+   kernel/fork.c:164:13: warning: no previous prototype for 'arch_release_task_struct' [-Wmissing-prototypes]
+     164 | void __weak arch_release_task_struct(struct task_struct *tsk)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~
+   kernel/fork.c:991:20: warning: no previous prototype for 'arch_task_cache_init' [-Wmissing-prototypes]
+     991 | void __init __weak arch_task_cache_init(void) { }
+         |                    ^~~~~~~~~~~~~~~~~~~~
+   kernel/fork.c:1086:12: warning: no previous prototype for 'arch_dup_task_struct' [-Wmissing-prototypes]
+    1086 | int __weak arch_dup_task_struct(struct task_struct *dst,
+         |            ^~~~~~~~~~~~~~~~~~~~
+--
+   In file included from include/linux/filter.h:9,
+                    from kernel/sysctl.c:35:
+   include/linux/bpf.h: In function 'bpf_token_new_fd':
+>> include/linux/bpf.h:2465:16: warning: returning 'int' from a function with return type 'struct bpf_token *' makes pointer from integer without a cast [-Wint-conversion]
+    2465 |         return -EOPNOTSUPP;
+         |                ^
+--
+   In file included from include/linux/filter.h:9,
+                    from kernel/kallsyms.c:25:
+   include/linux/bpf.h: In function 'bpf_token_new_fd':
+>> include/linux/bpf.h:2465:16: warning: returning 'int' from a function with return type 'struct bpf_token *' makes pointer from integer without a cast [-Wint-conversion]
+    2465 |         return -EOPNOTSUPP;
+         |                ^
+   kernel/kallsyms.c: At top level:
+   kernel/kallsyms.c:662:12: warning: no previous prototype for 'arch_get_kallsym' [-Wmissing-prototypes]
+     662 | int __weak arch_get_kallsym(unsigned int symnum, unsigned long *value,
+         |            ^~~~~~~~~~~~~~~~
+--
+   In file included from include/linux/filter.h:9,
+                    from kernel/bpf/core.c:21:
+   include/linux/bpf.h: In function 'bpf_token_new_fd':
+>> include/linux/bpf.h:2465:16: warning: returning 'int' from a function with return type 'struct bpf_token *' makes pointer from integer without a cast [-Wint-conversion]
+    2465 |         return -EOPNOTSUPP;
+         |                ^
+   kernel/bpf/core.c: At top level:
+   kernel/bpf/core.c:1638:12: warning: no previous prototype for 'bpf_probe_read_kernel' [-Wmissing-prototypes]
+    1638 | u64 __weak bpf_probe_read_kernel(void *dst, u32 size, const void *unsafe_ptr)
+         |            ^~~~~~~~~~~~~~~~~~~~~
+   kernel/bpf/core.c:2075:6: warning: no previous prototype for 'bpf_patch_call_args' [-Wmissing-prototypes]
+    2075 | void bpf_patch_call_args(struct bpf_insn *insn, u32 stack_depth)
+         |      ^~~~~~~~~~~~~~~~~~~
 
->   https://github.com/robertosassu/linux.git tags/asym-keys-fix-for-linus-=
-v6.4-rc5
 
-basically public_key_verify_signature() is passed that
+vim +2465 include/linux/bpf.h
 
-     const struct public_key_signature *sig
+  2462	
+  2463	static inline struct bpf_token *bpf_token_new_fd(struct bpf_token *token)
+  2464	{
+> 2465		return -EOPNOTSUPP;
+  2466	}
+  2467	
 
-as an argument, and currently does
-
-        sg_init_table(src_sg, 2);
-        sg_set_buf(&src_sg[0], sig->s, sig->s_size);
-        sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
-
-
-on it which is *not* ok if the s->s and s->digest points to stack data
-that ends up not dma'able because of a virtually mapped stack.
-
-The patch re-uses the allocation it already does for the key data, and
-it seems sane.
-
-But again, this is not code I look at normally, so...
-
-               Linus
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
