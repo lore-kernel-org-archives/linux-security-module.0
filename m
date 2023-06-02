@@ -2,102 +2,95 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B58FEC77B7A
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 00:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FE6C77B7E
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 01:13:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229498AbjFBAX7 (ORCPT
+        id S231696AbjFBBNq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Jun 2023 20:23:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54158 "EHLO
+        Thu, 1 Jun 2023 21:13:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231279AbjFBAX5 (ORCPT
+        with ESMTP id S231259AbjFBBNq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Jun 2023 20:23:57 -0400
-Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E649193
-        for <linux-security-module@vger.kernel.org>; Thu,  1 Jun 2023 17:23:55 -0700 (PDT)
-Received: by mail-pg1-x54a.google.com with SMTP id 41be03b00d2f7-52857fc23b1so1341408a12.2
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Jun 2023 17:23:55 -0700 (PDT)
+        Thu, 1 Jun 2023 21:13:46 -0400
+Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 200B213E
+        for <linux-security-module@vger.kernel.org>; Thu,  1 Jun 2023 18:13:45 -0700 (PDT)
+Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-5664b14966bso16415907b3.1
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Jun 2023 18:13:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1685665435; x=1688257435;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kfVTz/MFdf1BdTl2DJtaA5MVU5d+x7qUPBQRynuzbEs=;
-        b=lsng6iSxrqz9R88Q59ewsOGcDaYkTH4vRqDXC5iFszzkH/L48SReX+ccLn2qqVohKu
-         SqRTT3wIMGLiTNYWwIKvQpUQy1rlArmCydKGFHXCUSm4HDybF/yCCEi4ngNdiHPHHIAO
-         IvE9MObzfShr0WlQx7CjRaOodhTuihevv7Kvb25V0NnX+aCj6e89Z3iKFeAL+lLhSweK
-         djWxmTAZR53Gd6ZwAEJJraDzBmWjEDJjAVLEUoTCsaFeXmgf0aQGIJKaiMkaQzmwqMTm
-         MDcuVqxl1ntCRLEQ+YYvdB2O6IC0xaDBz4EXjfHWwXcBoneakB4xjWXpWdEkTnS2DRwX
-         Al0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685665435; x=1688257435;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+        d=paul-moore.com; s=google; t=1685668424; x=1688260424;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=kfVTz/MFdf1BdTl2DJtaA5MVU5d+x7qUPBQRynuzbEs=;
-        b=QPEphtNPcyZiDRc8uAp33K17OgEqvRB8y/0MQR8hn4dQS29a2auSvwKsF+17LXYXTM
-         XF9iWj/e1jeVbnZZ4jmCvuDeGf7kDSzh/VnwFoqRa1Rwb0wMTzCOhq+4ybfJBUx2QeKf
-         WI6BChEu90ZqTCsLzFa53GiOj+pUb/elf1dwd09i9Y9ogu7qpQu3n1TlpIk5DJ3lNdGP
-         cPMJ6zlY+Jtk+rnfWxAk7uZCmPmvJjMQyP6JNc3x/j7PhQDtlTcDdfllzXjBGfOoINoX
-         lBbXIRkNPI0UDyTUor5KzzSSg7mo/MtaZkperM9naQsf3AyophfL3Vh1KaC9A4P1fSm8
-         aaxA==
-X-Gm-Message-State: AC+VfDy9nixYTnrYTr4GVsdxIre49E/PS+hCfTDBgvRKtOnoa29KJ0fL
-        xy7QkmrbLjliB32DXkbmDK6JdBPhBi4=
-X-Google-Smtp-Source: ACHHUZ4sKaezOgXXrB+dL2dh8BcQkqJaicrwtBGNqgWl2x1iGIzS7OMmnpETOlVJ/dFfp6qtQmgVV4r4kJ8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:fd47:0:b0:53f:5067:64ec with SMTP id
- m7-20020a63fd47000000b0053f506764ecmr2104111pgj.0.1685665434956; Thu, 01 Jun
- 2023 17:23:54 -0700 (PDT)
-Date:   Thu, 1 Jun 2023 17:23:53 -0700
-In-Reply-To: <9a4edc66-a0a3-73e4-09c5-db68d4cfbb68@digikod.net>
-Mime-Version: 1.0
-References: <2f19f26e-20e5-8198-294e-27ea665b706f@redhat.com>
- <4142c8dc-5385-fb1d-4f8b-2a98bb3f99af@digikod.net> <9a4edc66-a0a3-73e4-09c5-db68d4cfbb68@digikod.net>
-Message-ID: <ZHk2mVcBycjKCfGw@google.com>
-Subject: Re: [ANNOUNCE] KVM Microconference at LPC 2023
-From:   Sean Christopherson <seanjc@google.com>
-To:     "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Marc Zyngier <maz@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Alexander Graf <graf@amazon.com>,
-        Forrest Yuan Yu <yuanyu@google.com>,
-        John Andersen <john.s.andersen@intel.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Marian Rotariu <marian.c.rotariu@gmail.com>,
-        "Mihai =?utf-8?B?RG9uyJt1?=" <mdontu@bitdefender.com>,
-        "=?utf-8?B?TmljdciZb3IgQ8OuyJt1?=" <nicu.citu@icloud.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Thara Gopinath <tgopinath@microsoft.com>,
-        Will Deacon <will@kernel.org>,
-        Zahra Tarkhani <ztarkhani@microsoft.com>,
-        "=?utf-8?Q?=C8=98tefan_=C8=98icleru?=" <ssicleru@bitdefender.com>,
-        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
-        virtualization@lists.linux-foundation.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        bh=4nydeH8fGmYfEq//3RT6MGqc1Z4XWdWvcyC0fJTwhtM=;
+        b=JFBun+Pik8MgDtLxGed2bleSGjQCew45jQglAUHqtG3l9V53YpgjD3ZokHdpg2u95+
+         nR3woVnNJRgAcLxwgbda8dkLv7dMAMIbAlzoqLQJUEsKtUYBApsyTpqbc7P042Sygxxd
+         h7m4VmiGKxlLVAj7GLE9wuDHP+uMeFHB8rslF/yhflnSNcewswQICHjPdlKOn/CzSLi0
+         avgCmxnCuYQslsl6cyl+JmCfP2xp9u5BWKAuUdpiMomu6oGeT0n594nYyRhKfCj0ifuw
+         1UyLccigYVvCOx7oT453wNtRcR5Rgw1d1JSSharO0tegFGxPuP4VBIk6ifiO5wKy7r1+
+         T8jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685668424; x=1688260424;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4nydeH8fGmYfEq//3RT6MGqc1Z4XWdWvcyC0fJTwhtM=;
+        b=SSlbpf/maUlGKub4mpadlcLxGlc5cYGmSvpuMWcxlL2JGyGfriDxDKb5zWa1DQJZUi
+         5dYNbWRGtMtCwVmAESLeasDhVaQCwlaZ9rGyLVbJaKEV/vatcexwzINRcru2IIW8IbE2
+         HFUKTSBT8pCn+oCUDU4T4VMaLljnw79rh6ko4c2h/aM059qs8iU1IPAPlJoe5hoT7QOz
+         MqIkG6KapYFA92E34t7cdIYJVMqJAtxqyAe+ikkZDxGAHyXYpu7rbTG4sk3TH9BRQIPe
+         dkwutAHs5lwuohIkyn27MCb98lF/ACP4vpG4z4NlAV3k+UUWOkfQZaaK6NcofQqi0P3h
+         tu7A==
+X-Gm-Message-State: AC+VfDyf14AlSriE7dU/ik7iMyxqKrG5vJXrjCWz4nu393XafdVgA6vH
+        ZXTreCpZwesYq86lHGAMqvmbcdlWrblwxLb1xGTX+FprxwA3fGQZZQ==
+X-Google-Smtp-Source: ACHHUZ7orX0SaNZQ72ZLc51WkA3Dy6WwNhQoWx2L0nYgKXT4snf9ah6BwBrapuvf/G9Xsr9zVyKYPNl1JmUAZdSPl3g=
+X-Received: by 2002:a0d:e801:0:b0:561:e8d7:ac6b with SMTP id
+ r1-20020a0de801000000b00561e8d7ac6bmr10789383ywe.49.1685668424300; Thu, 01
+ Jun 2023 18:13:44 -0700 (PDT)
+MIME-Version: 1.0
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 1 Jun 2023 21:13:33 -0400
+Message-ID: <CAHC9VhQPMmWZwS-S9FQpU5rETcizcDPK0Nm1mwXeWpykUdDLFw@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v6.4 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 01, 2023, Micka=EF=BF=BDl Sala=EF=BF=BDn wrote:
-> Hi,
->=20
-> What is the status of this microconference proposal? We'd be happy to tal=
-k
-> about Heki [1] and potentially other hypervisor supports.
+Hi Linus,
 
-Proposal submitted (deadline is/was today), now we wait :-)  IIUC, we shoul=
-d find
-out rather quickly whether or not the KVM MC is a go.
+A small SELinux Makefile fix to resolve a problem seen when building
+the kernel with older versions of make.  The fix is pretty trivial and
+effectively reverts a patch that was merged during the last merge
+window.  As usual, the commit description has more information.
+
+Thanks,
+-Paul
+--
+The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
+
+ Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
+
+are available in the Git repository at:
+
+ https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20230601
+
+for you to fetch changes up to 42c4e97e06a839b07d834f640a10911ad84ec8b3:
+
+ selinux: don't use make's grouped targets feature yet
+   (2023-06-01 13:56:13 -0400)
+
+----------------------------------------------------------------
+selinux/stable-6.4 PR 20230601
+
+----------------------------------------------------------------
+Paul Moore (1):
+     selinux: don't use make's grouped targets feature yet
+
+security/selinux/Makefile | 6 +++++-
+1 file changed, 5 insertions(+), 1 deletion(-)
+
+-- 
+paul-moore.com
