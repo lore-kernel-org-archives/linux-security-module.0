@@ -2,171 +2,134 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 523DBC7EE29
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 15:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62035C7EE2A
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 15:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234989AbjFBPCD convert rfc822-to-8bit (ORCPT
+        id S236371AbjFBPIF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Jun 2023 11:02:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53398 "EHLO
+        Fri, 2 Jun 2023 11:08:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236413AbjFBPBZ (ORCPT
+        with ESMTP id S235410AbjFBPIF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Jun 2023 11:01:25 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD25110D0
-        for <linux-security-module@vger.kernel.org>; Fri,  2 Jun 2023 08:01:18 -0700 (PDT)
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 352BuSHF020100
-        for <linux-security-module@vger.kernel.org>; Fri, 2 Jun 2023 08:01:18 -0700
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3qxcvfnpj8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 02 Jun 2023 08:01:01 -0700
-Received: from ash-exhub204.TheFacebook.com (2620:10d:c0a8:83::4) by
- ash-exhub201.TheFacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Fri, 2 Jun 2023 08:00:24 -0700
-Received: from twshared40933.03.prn6.facebook.com (2620:10d:c0a8:1c::1b) by
- mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Fri, 2 Jun 2023 08:00:23 -0700
-Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id 3A31B31E04817; Fri,  2 Jun 2023 08:00:18 -0700 (PDT)
-From:   Andrii Nakryiko <andrii@kernel.org>
-To:     <bpf@vger.kernel.org>
-CC:     <linux-security-module@vger.kernel.org>, <keescook@chromium.org>,
-        <brauner@kernel.org>, <lennart@poettering.net>,
-        <cyphar@cyphar.com>, <luto@kernel.org>
-Subject: [PATCH RESEND bpf-next 03/18] selftests/bpf: add BPF_TOKEN_CREATE test
-Date:   Fri, 2 Jun 2023 07:59:56 -0700
-Message-ID: <20230602150011.1657856-4-andrii@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230602150011.1657856-1-andrii@kernel.org>
-References: <20230602150011.1657856-1-andrii@kernel.org>
+        Fri, 2 Jun 2023 11:08:05 -0400
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A1AE52
+        for <linux-security-module@vger.kernel.org>; Fri,  2 Jun 2023 08:08:00 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QXmb25PBRzMpvbm;
+        Fri,  2 Jun 2023 17:07:58 +0200 (CEST)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QXmZy6vrvzMqFLN;
+        Fri,  2 Jun 2023 17:07:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1685718478;
+        bh=yJE/Ib8CPqqu+pE7BkHIlxbJFGVwWpFIuzDHb02zjjk=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Y/lyrxGPo8c180stzPdCnGebpqaZr7guTmVJQXq4bERYM4B+j1lT37uiVerrU0Av9
+         75l0ubCibpTA3YwVLV/e32ZD5+ANNsE4cCxtQCdQgc16z+jTjh0iaoD9qUHXUYS4hO
+         bUNLdL5rf9ajSxeyAltPRwLo20RiTIQoinN2+7Mw=
+Message-ID: <97aabfe5-7f1a-8865-ab05-bf4af254e1b7@digikod.net>
+Date:   Fri, 2 Jun 2023 17:07:54 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: vO8Ey1xfI7qu2HOW2xEuEVlXmd9PzOGX
-X-Proofpoint-GUID: vO8Ey1xfI7qu2HOW2xEuEVlXmd9PzOGX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-02_11,2023-06-02_02,2023-05-22_02
+User-Agent: 
+Subject: Re: [RFC PATCH v1 0/9] Hypervisor-Enforced Kernel Integrity
+Content-Language: en-US
+To:     Sean Christopherson <seanjc@google.com>,
+        Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "liran.alon@oracle.com" <liran.alon@oracle.com>,
+        "marian.c.rotariu@gmail.com" <marian.c.rotariu@gmail.com>,
+        Alexander Graf <graf@amazon.com>,
+        John S Andersen <john.s.andersen@intel.com>,
+        "madvenka@linux.microsoft.com" <madvenka@linux.microsoft.com>,
+        "ssicleru@bitdefender.com" <ssicleru@bitdefender.com>,
+        "yuanyu@google.com" <yuanyu@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tgopinath@microsoft.com" <tgopinath@microsoft.com>,
+        "jamorris@linux.microsoft.com" <jamorris@linux.microsoft.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "will@kernel.org" <will@kernel.org>,
+        "dev@lists.cloudhypervisor.org" <dev@lists.cloudhypervisor.org>,
+        "mdontu@bitdefender.com" <mdontu@bitdefender.com>,
+        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "nicu.citu@icloud.com" <nicu.citu@icloud.com>,
+        "ztarkhani@microsoft.com" <ztarkhani@microsoft.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        James Gowans <jgowans@amazon.com>
+References: <20230505152046.6575-1-mic@digikod.net>
+ <93726a7b9498ec66db21c5792079996d5fed5453.camel@intel.com>
+ <facfd178-3157-80b4-243b-a5c8dabadbfb@digikod.net>
+ <58a803f6-c3de-3362-673f-767767a43f9c@digikod.net>
+ <fd1dd8bcc172093ad20243ac1e7bb8fce45b38ef.camel@intel.com>
+ <ZHes4a73Zg+6JuFB@google.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <ZHes4a73Zg+6JuFB@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a subtest validating BPF_TOKEN_CREATE command, pinning/getting BPF
-token in/from BPF FS, and creating derived BPF tokens using token_fd
-parameter.
 
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- .../testing/selftests/bpf/prog_tests/token.c  | 95 +++++++++++++++++++
- 1 file changed, 95 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
+On 31/05/2023 22:24, Sean Christopherson wrote:
+> On Tue, May 30, 2023, Rick P Edgecombe wrote:
+>> On Fri, 2023-05-26 at 17:22 +0200, Mickaï¿½l Salaï¿½n wrote:
+>>>>> Can the guest kernel ask the host VMM's emulated devices to DMA into
+>>>>> the protected data? It should go through the host userspace mappings I
+>>>>> think, which don't care about EPT permissions. Or did I miss where you
+>>>>> are protecting that another way? There are a lot of easy ways to ask
+>>>>> the host to write to guest memory that don't involve the EPT. You
+>>>>> probably need to protect the host userspace mappings, and also the
+>>>>> places in KVM that kmap a GPA provided by the guest.
+>>>>
+>>>> Good point, I'll check this confused deputy attack. Extended KVM
+>>>> protections should indeed handle all ways to map guests' memory.  I'm
+>>>> wondering if current VMMs would gracefully handle such new restrictions
+>>>> though.
+>>>
+>>> I guess the host could map arbitrary data to the guest, so that need to be
+>>> handled, but how could the VMM (not the host kernel) bypass/update EPT
+>>> initially used for the guest (and potentially later mapped to the host)?
+>>
+>> Well traditionally both QEMU and KVM accessed guest memory via host
+>> mappings instead of the EPT.ï¿½So I'm wondering what is stopping the
+>> guest from passing a protected gfn when setting up the DMA, and QEMU
+>> being enticed to write to it? The emulator as well would use these host
+>> userspace mappings and not consult the EPT IIRC.
+>>
+>> I think Sean was suggesting host userspace should be more involved in
+>> this process, so perhaps it could protect its own alias of the
+>> protected memory, for example mprotect() it as read-only.
+> 
+> Ya, though "suggesting" is really "demanding, unless someone provides super strong
+> justification for handling this directly in KVM".  It's basically the same argument
+> that led to Linux Security Modules: I'm all for KVM providing the framework and
+> plumbing, but I don't want KVM to get involved in defining policy, thread models, etc.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/testing/selftests/bpf/prog_tests/token.c
-new file mode 100644
-index 000000000000..fe78b558d697
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/token.c
-@@ -0,0 +1,95 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
-+#include "linux/bpf.h"
-+#include <test_progs.h>
-+#include <bpf/btf.h>
-+#include "cap_helpers.h"
-+
-+static int drop_priv_caps(__u64 *old_caps)
-+{
-+	return cap_disable_effective((1ULL << CAP_BPF) |
-+				     (1ULL << CAP_PERFMON) |
-+				     (1ULL << CAP_NET_ADMIN) |
-+				     (1ULL << CAP_SYS_ADMIN), old_caps);
-+}
-+
-+static int restore_priv_caps(__u64 old_caps)
-+{
-+	return cap_enable_effective(old_caps, NULL);
-+}
-+
-+#define TOKEN_PATH "/sys/fs/bpf/test_token"
-+
-+static void subtest_token_create(void)
-+{
-+	LIBBPF_OPTS(bpf_token_create_opts, opts);
-+	int token_fd = 0, limited_token_fd = 0, tmp_fd = 0, err;
-+	__u64 old_caps = 0;
-+
-+	/* create BPF token which allows creating derived BPF tokens */
-+	opts.allowed_cmds = 1ULL << BPF_TOKEN_CREATE;
-+	token_fd = bpf_token_create(&opts);
-+	if (!ASSERT_GT(token_fd, 0, "token_create"))
-+		return;
-+
-+	/* check that IGNORE_UNKNOWN_CMDS flag is respected */
-+	opts.flags = BPF_F_TOKEN_IGNORE_UNKNOWN_CMDS;
-+	opts.allowed_cmds = ~0ULL; /* any current and future cmd is allowed */
-+	tmp_fd = bpf_token_create(&opts);
-+	if (!ASSERT_GT(token_fd, 0, "token_create_future_proof"))
-+		return;
-+	close(tmp_fd);
-+	tmp_fd = 0;
-+
-+	/* validate pinning and getting works as expected */
-+	err = bpf_obj_pin(token_fd, TOKEN_PATH);
-+	if (!ASSERT_OK(err, "token_pin"))
-+		goto cleanup;
-+
-+	tmp_fd = bpf_obj_get(TOKEN_PATH);
-+	ASSERT_GT(tmp_fd, 0, "token_get");
-+	close(tmp_fd);
-+	tmp_fd = 0;
-+	unlink(TOKEN_PATH);
-+
-+	/* drop privileges to test token_fd passing */
-+	if (!ASSERT_OK(drop_priv_caps(&old_caps), "drop_caps"))
-+		goto cleanup;
-+
-+	/* unprivileged BPF_TOKEN_CREATE should fail */
-+	tmp_fd = bpf_token_create(NULL);
-+	if (!ASSERT_LT(tmp_fd, 0, "token_create_unpriv_fail"))
-+		goto cleanup;
-+
-+	/* unprivileged BPF_TOKEN_CREATE with associated BPF token succeeds */
-+	opts.flags = 0;
-+	opts.allowed_cmds = 0; /* ask for BPF token which doesn't allow new tokens */
-+	opts.token_fd = token_fd;
-+	limited_token_fd = bpf_token_create(&opts);
-+	if (!ASSERT_GT(limited_token_fd, 0, "token_create_limited"))
-+		goto cleanup;
-+
-+	/* creating yet another token using "limited" BPF token should fail */
-+	opts.flags = 0;
-+	opts.allowed_cmds = 0;
-+	opts.token_fd = limited_token_fd;
-+	tmp_fd = bpf_token_create(&opts);
-+	if (!ASSERT_LT(tmp_fd, 0, "token_create_from_lim_fail"))
-+		goto cleanup;
-+
-+cleanup:
-+	if (tmp_fd)
-+		close(tmp_fd);
-+	if (token_fd)
-+		close(token_fd);
-+	if (limited_token_fd)
-+		close(limited_token_fd);
-+	if (old_caps)
-+		ASSERT_OK(restore_priv_caps(old_caps), "restore_caps");
-+}
-+
-+void test_token(void)
-+{
-+	if (test__start_subtest("token_create"))
-+		subtest_token_create();
-+}
--- 
-2.34.1
+I agree that KVM should not provide its own policy but only the building 
+blocks to enforce one. There is two complementary points:
+- policy definition by the guest, provided to KVM and the host;
+- policy enforcement by KVM and the host.
 
+A potential extension of this framework could be to enable the host to 
+define it's own policy for guests, but this would be a different threat 
+model.
+
+To avoid too much latency because of the host being involved in policy 
+enforcement, I'd like to explore an asynchronous approach that would 
+especially fit well for dynamic restrictions.
