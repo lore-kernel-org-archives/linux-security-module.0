@@ -2,134 +2,220 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62035C7EE2A
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 15:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 285A0C7EE29
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 15:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236371AbjFBPIF (ORCPT
+        id S234350AbjFBPzs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Jun 2023 11:08:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57660 "EHLO
+        Fri, 2 Jun 2023 11:55:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235410AbjFBPIF (ORCPT
+        with ESMTP id S234143AbjFBPzr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Jun 2023 11:08:05 -0400
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A1AE52
-        for <linux-security-module@vger.kernel.org>; Fri,  2 Jun 2023 08:08:00 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QXmb25PBRzMpvbm;
-        Fri,  2 Jun 2023 17:07:58 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QXmZy6vrvzMqFLN;
-        Fri,  2 Jun 2023 17:07:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1685718478;
-        bh=yJE/Ib8CPqqu+pE7BkHIlxbJFGVwWpFIuzDHb02zjjk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Y/lyrxGPo8c180stzPdCnGebpqaZr7guTmVJQXq4bERYM4B+j1lT37uiVerrU0Av9
-         75l0ubCibpTA3YwVLV/e32ZD5+ANNsE4cCxtQCdQgc16z+jTjh0iaoD9qUHXUYS4hO
-         bUNLdL5rf9ajSxeyAltPRwLo20RiTIQoinN2+7Mw=
-Message-ID: <97aabfe5-7f1a-8865-ab05-bf4af254e1b7@digikod.net>
-Date:   Fri, 2 Jun 2023 17:07:54 +0200
+        Fri, 2 Jun 2023 11:55:47 -0400
+Received: from sonic313-14.consmr.mail.ne1.yahoo.com (sonic313-14.consmr.mail.ne1.yahoo.com [66.163.185.37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C069D197
+        for <linux-security-module@vger.kernel.org>; Fri,  2 Jun 2023 08:55:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685721344; bh=q6WwFCVO7qRZUnasicQku8i6DHbre6ufg1ifkYM0lKA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=XnUJEGyYLdfoMs0HN3VdYmtW0IufniYQkm1BTnUVy6jqTXTbedwCmiqQY0DnYnVnRC1OgA+TUDpC/GO1PRB+Xm9E6R57r8nOLgSlVA1tuVaFZoCnHThghNbIrHr0Ys+J7e4zZvll7cvtHog9C81kHB4fUc1KDYloREyD4SxmYCn3gDkd00v/v4Uy3iVNbcMAxYVcUIzZNCRsbUbrrd35E2/CKfs/TIsDqcmoTeNEdxSJ2N8irdnLuGjgLR1EeQgdoHJHxavfoqGDNBybnrU834LnZJc+b1QOgA2ZQsp5r/SS5gxwb2itzJSAoXtlrOUO022QBV0dfW18zg+IAw8Nag==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685721344; bh=c5Mg/P6cJSjmDMgjG4t0Rb/nM06KW4GUAm5MFmabDXK=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=szpGQJ7JIOScRpVHYKt/LWAbQAeV00jqBgU4Et3GpDGG60YmFCDa4zLaFJ04RCCBTlsyYX4CHnnGJSZuJ8kgNOskQ6VtuzOqOuUobMe6LhtlPKXfeVHgQ8BO0SdyEhvxwpllz/oYRx6qge+qAuLMnwU0QRtpx8VPpUn1WdJ+MSgZ+ZYUeD1Nhrt3Bkw9AvDKfwU9+8o//eiaaJpl3GKEJXDPymrNH2cE7JKtSnC+G/k80tsyfxJvwLTonn4kc3DNOS85qoIIvLTEjWiDCrlKeqS/n9mFqwKDvfikMOL5fxqACys0nb3g33/VVNNQlQEdTnvQ7XSCFM0y0asIpUXD5w==
+X-YMail-OSG: dZDOG_8VM1lO_2DnKweRRrAsVChjpO2yEnB4zUqBGv0SfgFU0PvZ3hUSKg4avq8
+ kzeUsy3vGIhTyhimnvzY2cjEPXUdh_T6kLirJ7W1.SE2BdfpgoibDHN.6jL7AwORC9gRebBNsNH0
+ PpgUiHDaXQMUD5U7.g_Qsc2S_iIX7oFlR4Yspn9DFmT6oiJfOLrBMIbG5PZ6CBtT99DhvWP0Kye8
+ dH6v63DVJjLhFmc3xv6NIQo2rxdroiRvwZSa_ealbsPVr3hEdxWAyAclu8GWSx152mEN.m.8OygU
+ 1_gs.fsKVTXvSt7KKamyLq2EbelkGVsA0J6Ds7s6SQjFTtP1RhcO8WHUJksvbxq7nHtHpsLgc9bi
+ Bwsb1gi86s3MP5SDxIXTY0zyl8Sx0gzRI3wejj_H0usq4T53QSsKx2IB2rMbJ3NtlJF7JABvS6TY
+ tahIcWbk3aAC0MmxhLjiePeGmzs2ZpT8Jd_f_ADW1MkN_H6RTdNccuH9pT0JzoyVpoi4mAnLkovy
+ N3XNv_xJCoJU0kK8GFeH5zWFNERrUJxznvbZhjkS56vGVFoJXd56ZaDhAuPmaYVQuWdxbJqxbtUq
+ 64B1Xkp8DKx9LcLU0qeEdDkl068cayLiwEnksz2EbXH0Cm_b6_9ZaTJt9FGlP9fGT802qXJoPSKS
+ tQl0ITAazbNyLS_96zYp6gOofswhMND334As9GcXrvHZ8iQveofQXGlwsIs44KYYkp7pWJwICN9T
+ mx99dehetzavfyNcCFFVS0qG1IhUVHxkbPFJ1lRz3bSmQhUgVGfmRaWfA_md8Ub4doEQxkdJxjHO
+ 18ff9Gwo_h8.zKH52v1F9Z7b1FhGAsYV3akftHeGRuGR.DgNXtyU8IE3iMQhct8U6U7Ol2Q5azLL
+ 22OIA.ir6Dyu8Q_eVxsuEGgn9fGAVtgEa.RM6wLoWHZK.WlqV5YP9D2hFuBTlsatrJbRrpdmPkmq
+ WNSHHLm1ZAiAhanD65wtS_47b2pY9Q7N3JOZVvnSvUB3Y_mSGCZD12xm16uFuv0uuFzdCkDW63Ka
+ 1cMSn3jemkrCqdqR7Cp.j2zRNIszmrhKwvuWSe75LkOIlQHwAf_fcz4NXLY8ujp.BFNSmI6d1RJf
+ nnlFEMeEeyXUtm4bRvAKM23SmWuy5pdslOb16.GvP6nwn7oKbneycfquFCtUmR0ffQk8GKm43ZpX
+ 20wTpeM3B.XVxMMgxR.8YfyzbId6mGOhq_Mztk5lLVBQmprsRq.UeGm3APW64XhApfdAF1h.wp6H
+ HDY6JR2xGKRJ4Uc2oIwohoCztbAoKugIzvAjm5azOy3hlxfzEtgrjrI.qPd9o6FTN15CwDYJ1Gvo
+ HME0nfD1MkF7gG9SDrKrZ5Aw7ciKwVYukdLB6fcMBMdkzqBWW1J.27YkMXdqfcLki4Gkv7Vdd59U
+ c.lanc9eQKVyu.V10_aEK5uctlFoOeZrCUYGuRnOntN5b9e8buyD.uPJBtLRdvYH1XQlkTvBELfL
+ IbDA9qRy4fagelv5EgwRwb4aHF6d42f47ziwqilSuttt_.zBe4CF0TQ9L92zqtvYhqKThVb79CLX
+ vvsK1o3GCGRj3hGW63b748PZuueiI77g1sc0h0uJ0VoS7zD8dXtU.qpKPBtaBYke._AQxdLh2zVI
+ 4_JJgew2IONhFRr.fGfL46JJ8p.9H6IOBa5EfHzxG.yaMmNdGUp3Ug36gaTx_vu3rIeiIafCqJbR
+ 8ptNiDKOgylyBOuJ48JAQ53e5FzOjNC2an2M.kA.46FZBKXSVznEkwGSsXtI5zkvlbsEvyGQAGcg
+ evwl7fhiA1jQnXFw_3JWTIRyduWQ6Sutzpbbpv7Ee.Cng7j6POmtiwjRpRwQhGEbtrJZovREr9o5
+ QcWrJ5RHaT3Sq5VQn2cpOhygKVBYLtpY6gWcTVd8LGXdyFe9ouu0ReCYmQtJ27cZnqHuYAIcw.8V
+ ka5Sm4j992i0BGxsaS0X_YlR4rjIZi7IcKVgZSnid6MSlW4WCl0iiVnWVWYq_pe435QarP0CN7BU
+ o__TsA8wbPQrlfPHCkvv1b531dXbJuA2op33WrhM5RL.NFUK8Y8Knb92v.XXrOqSqys4uLEQ7TVy
+ kOCGWgHObL_KUCo4QD7Ngc8kGuk4nGfZM6HNG2N5QEAXaHFfoV_tKMHpm60y6D6gF7ZmMwxbJhSP
+ qgfRFiCrKQJ6MWqclLjLG_BNfQvAWypqeNdTZ_FTf1arWPz8zGGbhbuR46sApP312qt.XhbavoG_
+ 0hb3Rr_ReDQ878iVPtKk8hTLbNMLplFmi9dNZUEC0DEEYAGE5D_qNFmnMQuVmWYFUcpfELQMIcj1
+ JxTInS.WQGxF0MvjFYg--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: d76b7721-fc76-47b7-9df4-7c7a55d236e8
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 2 Jun 2023 15:55:44 +0000
+Received: by hermes--production-ne1-574d4b7954-6q6hn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID eecbc8c67d9ddf2a1820f11501d996e1;
+          Fri, 02 Jun 2023 15:55:40 +0000 (UTC)
+Message-ID: <1930272b-cfbe-f366-21ca-e9e7a51347be@schaufler-ca.com>
+Date:   Fri, 2 Jun 2023 08:55:38 -0700
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [RFC PATCH v1 0/9] Hypervisor-Enforced Kernel Integrity
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH RESEND bpf-next 00/18] BPF token
 Content-Language: en-US
-To:     Sean Christopherson <seanjc@google.com>,
-        Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "liran.alon@oracle.com" <liran.alon@oracle.com>,
-        "marian.c.rotariu@gmail.com" <marian.c.rotariu@gmail.com>,
-        Alexander Graf <graf@amazon.com>,
-        John S Andersen <john.s.andersen@intel.com>,
-        "madvenka@linux.microsoft.com" <madvenka@linux.microsoft.com>,
-        "ssicleru@bitdefender.com" <ssicleru@bitdefender.com>,
-        "yuanyu@google.com" <yuanyu@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tgopinath@microsoft.com" <tgopinath@microsoft.com>,
-        "jamorris@linux.microsoft.com" <jamorris@linux.microsoft.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "will@kernel.org" <will@kernel.org>,
-        "dev@lists.cloudhypervisor.org" <dev@lists.cloudhypervisor.org>,
-        "mdontu@bitdefender.com" <mdontu@bitdefender.com>,
-        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "nicu.citu@icloud.com" <nicu.citu@icloud.com>,
-        "ztarkhani@microsoft.com" <ztarkhani@microsoft.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        James Gowans <jgowans@amazon.com>
-References: <20230505152046.6575-1-mic@digikod.net>
- <93726a7b9498ec66db21c5792079996d5fed5453.camel@intel.com>
- <facfd178-3157-80b4-243b-a5c8dabadbfb@digikod.net>
- <58a803f6-c3de-3362-673f-767767a43f9c@digikod.net>
- <fd1dd8bcc172093ad20243ac1e7bb8fce45b38ef.camel@intel.com>
- <ZHes4a73Zg+6JuFB@google.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <ZHes4a73Zg+6JuFB@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
+        luto@kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20230602150011.1657856-1-andrii@kernel.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20230602150011.1657856-1-andrii@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21495 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 6/2/2023 7:59 AM, Andrii Nakryiko wrote:
+> *Resending with trimmed CC list because original version didn't make it to
+> the mailing list.*
+>
+> This patch set introduces new BPF object, BPF token, which allows to delegate
+> a subset of BPF functionality from privileged system-wide daemon (e.g.,
+> systemd or any other container manager) to a *trusted* unprivileged
+> application. Trust is the key here. This functionality is not about allowing
+> unconditional unprivileged BPF usage. Establishing trust, though, is
+> completely up to the discretion of respective privileged application that
+> would create a BPF token.
 
-On 31/05/2023 22:24, Sean Christopherson wrote:
-> On Tue, May 30, 2023, Rick P Edgecombe wrote:
->> On Fri, 2023-05-26 at 17:22 +0200, Mickaï¿½l Salaï¿½n wrote:
->>>>> Can the guest kernel ask the host VMM's emulated devices to DMA into
->>>>> the protected data? It should go through the host userspace mappings I
->>>>> think, which don't care about EPT permissions. Or did I miss where you
->>>>> are protecting that another way? There are a lot of easy ways to ask
->>>>> the host to write to guest memory that don't involve the EPT. You
->>>>> probably need to protect the host userspace mappings, and also the
->>>>> places in KVM that kmap a GPA provided by the guest.
->>>>
->>>> Good point, I'll check this confused deputy attack. Extended KVM
->>>> protections should indeed handle all ways to map guests' memory.  I'm
->>>> wondering if current VMMs would gracefully handle such new restrictions
->>>> though.
->>>
->>> I guess the host could map arbitrary data to the guest, so that need to be
->>> handled, but how could the VMM (not the host kernel) bypass/update EPT
->>> initially used for the guest (and potentially later mapped to the host)?
->>
->> Well traditionally both QEMU and KVM accessed guest memory via host
->> mappings instead of the EPT.ï¿½So I'm wondering what is stopping the
->> guest from passing a protected gfn when setting up the DMA, and QEMU
->> being enticed to write to it? The emulator as well would use these host
->> userspace mappings and not consult the EPT IIRC.
->>
->> I think Sean was suggesting host userspace should be more involved in
->> this process, so perhaps it could protect its own alias of the
->> protected memory, for example mprotect() it as read-only.
-> 
-> Ya, though "suggesting" is really "demanding, unless someone provides super strong
-> justification for handling this directly in KVM".  It's basically the same argument
-> that led to Linux Security Modules: I'm all for KVM providing the framework and
-> plumbing, but I don't want KVM to get involved in defining policy, thread models, etc.
+Token based privilege has a number of well understood weaknesses,
+none of which I see addressed here. I also have a real problem with
+the notion of "trusted unprivileged" where trust is established by
+a user space application. Ignoring the possibility of malicious code
+for the moment, the opportunity for accidental privilege leakage is
+huge. It would be trivial (and tempting) to create a privileged BPF
+"shell" that would then be allowed to "trust" any application and
+run it with privilege by passing it a token.
 
-I agree that KVM should not provide its own policy but only the building 
-blocks to enforce one. There is two complementary points:
-- policy definition by the guest, provided to KVM and the host;
-- policy enforcement by KVM and the host.
-
-A potential extension of this framework could be to enable the host to 
-define it's own policy for guests, but this would be a different threat 
-model.
-
-To avoid too much latency because of the host being involved in policy 
-enforcement, I'd like to explore an asynchronous approach that would 
-especially fit well for dynamic restrictions.
+>
+> The main motivation for BPF token is a desire to enable containerized
+> BPF applications to be used together with user namespaces. This is currently
+> impossible, as CAP_BPF, required for BPF subsystem usage, cannot be namespaced
+> or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BPF
+> helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely read
+> arbitrary memory, and it's impossible to ensure that they only read memory of
+> processes belonging to any given namespace. This means that it's impossible to
+> have namespace-aware CAP_BPF capability, and as such another mechanism to
+> allow safe usage of BPF functionality is necessary. BPF token and delegation
+> of it to a trusted unprivileged applications is such mechanism. Kernel makes
+> no assumption about what "trusted" constitutes in any particular case, and
+> it's up to specific privileged applications and their surrounding
+> infrastructure to decide that. What kernel provides is a set of APIs to create
+> and tune BPF token, and pass it around to privileged BPF commands that are
+> creating new BPF objects like BPF programs, BPF maps, etc.
+>
+> Previous attempt at addressing this very same problem ([0]) attempted to
+> utilize authoritative LSM approach, but was conclusively rejected by upstream
+> LSM maintainers. BPF token concept is not changing anything about LSM
+> approach, but can be combined with LSM hooks for very fine-grained security
+> policy. Some ideas about making BPF token more convenient to use with LSM (in
+> particular custom BPF LSM programs) was briefly described in recent LSF/MM/BPF
+> 2023 presentation ([1]). E.g., an ability to specify user-provided data
+> (context), which in combination with BPF LSM would allow implementing a very
+> dynamic and fine-granular custom security policies on top of BPF token. In the
+> interest of minimizing API surface area discussions this is going to be
+> added in follow up patches, as it's not essential to the fundamental concept
+> of delegatable BPF token.
+>
+> It should be noted that BPF token is conceptually quite similar to the idea of
+> /dev/bpf device file, proposed by Song a while ago ([2]). The biggest
+> difference is the idea of using virtual anon_inode file to hold BPF token and
+> allowing multiple independent instances of them, each with its own set of
+> restrictions. BPF pinning solves the problem of exposing such BPF token
+> through file system (BPF FS, in this case) for cases where transferring FDs
+> over Unix domain sockets is not convenient. And also, crucially, BPF token
+> approach is not using any special stateful task-scoped flags. Instead, bpf()
+> syscall accepts token_fd parameters explicitly for each relevant BPF command.
+> This addresses main concerns brought up during the /dev/bpf discussion, and
+> fits better with overall BPF subsystem design.
+>
+> This patch set adds a basic minimum of functionality to make BPF token useful
+> and to discuss API and functionality. Currently only low-level libbpf APIs
+> support passing BPF token around, allowing to test kernel functionality, but
+> for the most part is not sufficient for real-world applications, which
+> typically use high-level libbpf APIs based on `struct bpf_object` type. This
+> was done with the intent to limit the size of patch set and concentrate on
+> mostly kernel-side changes. All the necessary plumbing for libbpf will be sent
+> as a separate follow up patch set kernel support makes it upstream.
+>
+> Another part that should happen once kernel-side BPF token is established, is
+> a set of conventions between applications (e.g., systemd), tools (e.g.,
+> bpftool), and libraries (e.g., libbpf) about sharing BPF tokens through BPF FS
+> at well-defined locations to allow applications take advantage of this in
+> automatic fashion without explicit code changes on BPF application's side.
+> But I'd like to postpone this discussion to after BPF token concept lands.
+>
+>   [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel.org/
+>   [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_BPF_LSFMM2023.pdf
+>   [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubraving@fb.com/
+>
+> Andrii Nakryiko (18):
+>   bpf: introduce BPF token object
+>   libbpf: add bpf_token_create() API
+>   selftests/bpf: add BPF_TOKEN_CREATE test
+>   bpf: move unprivileged checks into map_create() and bpf_prog_load()
+>   bpf: inline map creation logic in map_create() function
+>   bpf: centralize permissions checks for all BPF map types
+>   bpf: add BPF token support to BPF_MAP_CREATE command
+>   libbpf: add BPF token support to bpf_map_create() API
+>   selftests/bpf: add BPF token-enabled test for BPF_MAP_CREATE command
+>   bpf: add BPF token support to BPF_BTF_LOAD command
+>   libbpf: add BPF token support to bpf_btf_load() API
+>   selftests/bpf: add BPF token-enabled BPF_BTF_LOAD selftest
+>   bpf: keep BPF_PROG_LOAD permission checks clear of validations
+>   bpf: add BPF token support to BPF_PROG_LOAD command
+>   bpf: take into account BPF token when fetching helper protos
+>   bpf: consistenly use BPF token throughout BPF verifier logic
+>   libbpf: add BPF token support to bpf_prog_load() API
+>   selftests/bpf: add BPF token-enabled BPF_PROG_LOAD tests
+>
+>  drivers/media/rc/bpf-lirc.c                   |   2 +-
+>  include/linux/bpf.h                           |  66 ++-
+>  include/linux/filter.h                        |   2 +-
+>  include/uapi/linux/bpf.h                      |  74 +++
+>  kernel/bpf/Makefile                           |   2 +-
+>  kernel/bpf/arraymap.c                         |   2 +-
+>  kernel/bpf/bloom_filter.c                     |   3 -
+>  kernel/bpf/bpf_local_storage.c                |   3 -
+>  kernel/bpf/bpf_struct_ops.c                   |   3 -
+>  kernel/bpf/cgroup.c                           |   6 +-
+>  kernel/bpf/core.c                             |   3 +-
+>  kernel/bpf/cpumap.c                           |   4 -
+>  kernel/bpf/devmap.c                           |   3 -
+>  kernel/bpf/hashtab.c                          |   6 -
+>  kernel/bpf/helpers.c                          |   6 +-
+>  kernel/bpf/inode.c                            |  26 ++
+>  kernel/bpf/lpm_trie.c                         |   3 -
+>  kernel/bpf/queue_stack_maps.c                 |   4 -
+>  kernel/bpf/reuseport_array.c                  |   3 -
+>  kernel/bpf/stackmap.c                         |   3 -
+>  kernel/bpf/syscall.c                          | 429 ++++++++++++++----
+>  kernel/bpf/token.c                            | 141 ++++++
+>  kernel/bpf/verifier.c                         |  13 +-
+>  kernel/trace/bpf_trace.c                      |   2 +-
+>  net/core/filter.c                             |  36 +-
+>  net/core/sock_map.c                           |   4 -
+>  net/ipv4/bpf_tcp_ca.c                         |   2 +-
+>  net/netfilter/nf_bpf_link.c                   |   2 +-
+>  net/xdp/xskmap.c                              |   4 -
+>  tools/include/uapi/linux/bpf.h                |  74 +++
+>  tools/lib/bpf/bpf.c                           |  32 +-
+>  tools/lib/bpf/bpf.h                           |  24 +-
+>  tools/lib/bpf/libbpf.map                      |   1 +
+>  .../selftests/bpf/prog_tests/libbpf_probes.c  |   4 +
+>  .../selftests/bpf/prog_tests/libbpf_str.c     |   6 +
+>  .../testing/selftests/bpf/prog_tests/token.c  | 282 ++++++++++++
+>  .../bpf/prog_tests/unpriv_bpf_disabled.c      |   6 +-
+>  37 files changed, 1098 insertions(+), 188 deletions(-)
+>  create mode 100644 kernel/bpf/token.c
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
+>
