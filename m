@@ -2,100 +2,57 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5590BC7EE24
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 05:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B29BC7EE24
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 07:31:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233661AbjFBFmU (ORCPT
+        id S234208AbjFBHbs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Jun 2023 01:42:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56248 "EHLO
+        Fri, 2 Jun 2023 03:31:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233346AbjFBFmS (ORCPT
+        with ESMTP id S234092AbjFBHbr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Jun 2023 01:42:18 -0400
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ED9B1A1;
-        Thu,  1 Jun 2023 22:42:17 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.153])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4QXX2C6thPz4f3mVg;
-        Fri,  2 Jun 2023 13:42:11 +0800 (CST)
-Received: from ubuntu20.huawei.com (unknown [10.67.174.33])
-        by APP4 (Coremail) with SMTP id gCh0CgBHsLMkgXlkIMb+Kg--.35696S2;
-        Fri, 02 Jun 2023 13:42:13 +0800 (CST)
-From:   "GONG, Ruiqi" <gongruiqi@huaweicloud.com>
-To:     Serge Hallyn <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Wang Weiyang <wangweiyang2@huawei.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>, gongruiqi1@huawei.com
-Subject: [PATCH] capability: erase checker warnings about struct __user_cap_data_struct
-Date:   Fri,  2 Jun 2023 13:45:27 +0800
-Message-Id: <20230602054527.290696-1-gongruiqi@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 2 Jun 2023 03:31:47 -0400
+Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2D23128
+        for <linux-security-module@vger.kernel.org>; Fri,  2 Jun 2023 00:31:46 -0700 (PDT)
+Received: by mail.lokoho.com (Postfix, from userid 1001)
+        id 4298E84F4E; Fri,  2 Jun 2023 08:31:43 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
+        t=1685691104; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
+        h=Date:From:To:Subject:From;
+        b=KByZM6JNu6u9yl+kXJPmQmGOMiK/YMYm20NZJ1QeLJZknAYd7YPxIvl6r5EbsXOYc
+         nE9xw0IbCa7M2s2eZaf9F9Z66eYHJ+3mZ7yZKnKWRZOG4d6AdNOaopWIRNlx9zqHxY
+         PiIP2nlkeHNWvLWMREJNaAuQe6FnJNoMIrozC8YpDtEujf7dBWyLpBAO1gitmIhk18
+         tc8utSlID/HmegKIJtMR/o54awWsXONHPrwBbpsJ6EjIoEuL7G1MWuUi3Ch9kF/3TX
+         6nDXOjzCkP1eb9ZBveB48XHn2MDdTd1Bgx4igJF9Hulbv3PuvS0FkZC+mQN+ofhUA6
+         73WJ/zovafevw==
+Received: by mail.lokoho.com for <linux-security-module@vger.kernel.org>; Fri,  2 Jun 2023 07:30:56 GMT
+Message-ID: <20230602074504-0.1.6d.2gtdg.0.rmjmctpd12@lokoho.com>
+Date:   Fri,  2 Jun 2023 07:30:56 GMT
+From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
+To:     <linux-security-module@vger.kernel.org>
+Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
+X-Mailer: mail.lokoho.com
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: gCh0CgBHsLMkgXlkIMb+Kg--.35696S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7trW7Cr4UKrWkJFW3Jr43ZFb_yoW8CF1rpF
-        18Gw4fGFZ7Ar4xCw4kCa12yr1FqrWDJFy7tFy7Gw1Fyr4Fk3W8WF1jka40yF1Fvrs7KrW3
-        X392grWF934DC3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-        0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCj
-        c4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-        CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
-        MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJV
-        Cq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
-        CTnIWIevJa73UjIFyTuYvjxUzsqWUUUUU
-X-CM-SenderInfo: pjrqw2pxltxq5kxd4v5lfo033gof0z/
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Currently Sparse warns the following when compiling kernel/capability.c:
+Dzie=C5=84 dobry,
 
-kernel/capability.c:191:35: warning: incorrect type in argument 2 (different address spaces)
-kernel/capability.c:191:35:    expected void const *from
-kernel/capability.c:191:35:    got struct __user_cap_data_struct [noderef] __user *
-kernel/capability.c:168:14: warning: dereference of noderef expression
-...... (multiple noderef warnings on different locations)
-kernel/capability.c:244:29: warning: incorrect type in argument 1 (different address spaces)
-kernel/capability.c:244:29:    expected void *to
-kernel/capability.c:244:29:    got struct __user_cap_data_struct [noderef] __user ( * )[2]
-kernel/capability.c:247:42: warning: dereference of noderef expression
-...... (multiple noderef warnings on different locations)
+zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
+=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
+o dalszych rozm=C3=B3w.=20
 
-It seems that defining `struct __user_cap_data_struct` together with
-`cap_user_data_t` make Sparse believe that the struct is `noderef` as
-well. Separate their definitions to clarify their respective attributes.
+Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
+=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
+=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
+strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
 
-Signed-off-by: GONG, Ruiqi <gongruiqi@huaweicloud.com>
----
- include/uapi/linux/capability.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
 
-diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
-index 3d61a0ae055d..5bb906098697 100644
---- a/include/uapi/linux/capability.h
-+++ b/include/uapi/linux/capability.h
-@@ -41,11 +41,12 @@ typedef struct __user_cap_header_struct {
- 	int pid;
- } __user *cap_user_header_t;
- 
--typedef struct __user_cap_data_struct {
-+struct __user_cap_data_struct {
-         __u32 effective;
-         __u32 permitted;
-         __u32 inheritable;
--} __user *cap_user_data_t;
-+};
-+typedef struct __user_cap_data_struct __user *cap_user_data_t;
- 
- 
- #define VFS_CAP_REVISION_MASK	0xFF000000
--- 
-2.25.1
 
+Pozdrawiam
+Adam Charachuta
