@@ -2,119 +2,258 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 087B7C7EE2D
-	for <linux-security-module@archiver.kernel.org>; Sat,  3 Jun 2023 00:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBFAC77B7A
+	for <linux-security-module@archiver.kernel.org>; Sat,  3 Jun 2023 01:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236190AbjFCACr (ORCPT
+        id S236029AbjFCBcQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Jun 2023 20:02:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54764 "EHLO
+        Fri, 2 Jun 2023 21:32:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234452AbjFCACr (ORCPT
+        with ESMTP id S235959AbjFCBcP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Jun 2023 20:02:47 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6DA3E42
-        for <linux-security-module@vger.kernel.org>; Fri,  2 Jun 2023 17:02:44 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2b1badb8f9bso1698501fa.1
-        for <linux-security-module@vger.kernel.org>; Fri, 02 Jun 2023 17:02:44 -0700 (PDT)
+        Fri, 2 Jun 2023 21:32:15 -0400
+Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D93F19B
+        for <linux-security-module@vger.kernel.org>; Fri,  2 Jun 2023 18:32:14 -0700 (PDT)
+Received: by mail-pg1-x54a.google.com with SMTP id 41be03b00d2f7-5428d1915acso924978a12.0
+        for <linux-security-module@vger.kernel.org>; Fri, 02 Jun 2023 18:32:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1685750563; x=1688342563;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UIfddwJGgEUnwUCFA5IlnKSK6V7h4JvROQevxAQzNhk=;
-        b=Xc3AyBTCKjaXrHR7Xn+gWHTG8qM31jMYo97046Wrqhe1Py0EkfgorGVdl7O+h8+E9L
-         PaAZsESnLNkgwnMUxef6YPVRCpRivyvhVZ9fm2NvVOB11vXsyRO5P1OwgQUU1H/h8ieT
-         aWMFYcJc91CVBIsodU5Pk+AT3AzlbRWZyKPhA=
+        d=google.com; s=20221208; t=1685755933; x=1688347933;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9P2zYhIgiG5QVeJRMC9AaPeuQnm90z1jI3S+SIGbKu8=;
+        b=tLk/Ps6vhMuiExVzI0hFwvqRkDt+QhCb1NIGsW7imqORzoMNC3rUUbo5yIeFcLo9q1
+         sqd6hwpoRYRl+feL2ZDeedYkFrB6Tulhde2Quy2Tp7sybiVlVtK2PcZn+aL3PCq3vC33
+         WgRGmLF6gj7yMOyCxiwcYsmdPR05n2cG8AMcOlpkBDr9GM9p837wn7OZBuR6fvW60165
+         fksUSYSWBhPyM9U/6z4yB3SfldKi3VjnTJ+VSX26yZeTHjW+TR7qnQPlSi0RVG5JrKL9
+         zYJgl8KzmGNRsHanvyu6S4Ehk2wBliNym0zUjNjhwCOtDX8AGEmTINlkUAeLPsEFkJ81
+         Z4Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685750563; x=1688342563;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UIfddwJGgEUnwUCFA5IlnKSK6V7h4JvROQevxAQzNhk=;
-        b=EvckR1cOYIscc7BWeY1mzfs38cRRHKDMMNHAmQOQ41QquDICiq/qZT0asAUZWAd6Y+
-         xMWo88Y6kW9klnS+zKZ9JMJO5I5GRndOXdjpkZOl47+5IUQzmzaBO4QHL5JaB0DyC1Wa
-         sViNSF+6moFxT/7wqR4HeUEB5XrVnIdf14ZI/d1vie+zwQgkdUM1wpO5q0ZoB/PuvhgT
-         J/21keOTCfF/qHu9tKHucm8vPiPHcpzMIKkeEWTLIrkIJVSwrLTIL9A9jb0MKbPiIqF+
-         d2d834i15zHY/yHVwyJZfl/XgMJZQ2oPN8f6QvmjsGS6RDNLQhCGOLJKC5V+XeO4gh/Y
-         uO7g==
-X-Gm-Message-State: AC+VfDytYkL+Qkhusw4yCX12G9Z/KtHpK1G4CsbwV+kUw9rSIt4pBa12
-        tShVAUsrrI4kBUiMVkJsoLaZ1Rqic3cwcfKvTRW2YVbt
-X-Google-Smtp-Source: ACHHUZ5kKrY+GLfEpO78sVigDYW/BA+tzxs3cE68jnEQ8ngF06EEnfMRZZBq3f9Z79NYjPDIMK/m6g==
-X-Received: by 2002:a2e:9f4f:0:b0:299:a7be:5775 with SMTP id v15-20020a2e9f4f000000b00299a7be5775mr853445ljk.35.1685750563017;
-        Fri, 02 Jun 2023 17:02:43 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id w13-20020a2e300d000000b002af25598f07sm394940ljw.78.2023.06.02.17.02.40
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Jun 2023 17:02:41 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-4f4b80bf93aso3613590e87.0
-        for <linux-security-module@vger.kernel.org>; Fri, 02 Jun 2023 17:02:40 -0700 (PDT)
-X-Received: by 2002:ac2:52ba:0:b0:4f2:7b65:baeb with SMTP id
- r26-20020ac252ba000000b004f27b65baebmr2458573lfm.53.1685750560415; Fri, 02
- Jun 2023 17:02:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <4d7e38ff5bbc496cb794b50e1c5c83bcd2317e69.camel@huaweicloud.com> <CAHk-=wj4S0t5RnJQmF_wYwv+oMTKggwdLnrA9D1uMNKq4H4byw@mail.gmail.com>
-In-Reply-To: <CAHk-=wj4S0t5RnJQmF_wYwv+oMTKggwdLnrA9D1uMNKq4H4byw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 2 Jun 2023 20:02:23 -0400
-X-Gmail-Original-Message-ID: <CAHk-=wgCUzRNTg4fC8DF=UFnznK0M=mNUBDcsnLt7D4+HP2_1Q@mail.gmail.com>
-Message-ID: <CAHk-=wgCUzRNTg4fC8DF=UFnznK0M=mNUBDcsnLt7D4+HP2_1Q@mail.gmail.com>
-Subject: Re: [GIT PULL] Asymmetric keys fix for v6.4-rc5
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Stefan Berger <stefanb@linux.ibm.com>, davem@davemloft.net,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        d=1e100.net; s=20221208; t=1685755933; x=1688347933;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9P2zYhIgiG5QVeJRMC9AaPeuQnm90z1jI3S+SIGbKu8=;
+        b=i4qzqpzGDEeXqTDn2RgXg1yDG/6fVIcOvs+0iCGF+SgG1ZZK5SbKOxOhLvEMQSxDpm
+         SruWVFov8zWVHZ7ooF8Hv26Y4YEMDzx4h0J+Hpgpl52L44ESnY0Sl36mVGIq2LytWDWO
+         Ja0zJQIgPtis+ygmad3qrGco9uynjTloi3IYqmk9xoqUIrMWnkF1E8r9FPyX9fLGxF8W
+         EwJ8aNW7TdZ4KoLRTzm2feTZC5EI9dxOxJ1jmqjR9V/Tk2iuAXSvw0FPCyVveGPCnAdn
+         RMXQCsCpqMvx+x2vLQDXsFNoRaRV7JC6NTrTYs4nlmvR6OlrWSEaZNP35oJ/3nEr8sQ9
+         9txQ==
+X-Gm-Message-State: AC+VfDw7WRpJCz0H1ObNIJFsghNQ9XUNi8tbvTT+r8TNcnpE7ZEWn6F3
+        tvsvwdYcA5paP3H79Jg4OB+obxA=
+X-Google-Smtp-Source: ACHHUZ6WBX989vx15nCw3ucm0hcWhDiiypVgXJyFq+fktqceAS2mVzdZLH3y2Auf3eUGS9bdzl8F19U=
+X-Received: from sdf.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5935])
+ (user=sdf job=sendgmr) by 2002:a65:6956:0:b0:521:3c29:6055 with SMTP id
+ w22-20020a656956000000b005213c296055mr1391989pgq.6.1685755933524; Fri, 02 Jun
+ 2023 18:32:13 -0700 (PDT)
+Date:   Fri, 2 Jun 2023 18:32:11 -0700
+In-Reply-To: <20230602150011.1657856-2-andrii@kernel.org>
+Mime-Version: 1.0
+References: <20230602150011.1657856-1-andrii@kernel.org> <20230602150011.1657856-2-andrii@kernel.org>
+Message-ID: <ZHqYG3q34nnt99pM@google.com>
+Subject: Re: [PATCH RESEND bpf-next 01/18] bpf: introduce BPF token object
+From:   Stanislav Fomichev <sdf@google.com>
+To:     Andrii Nakryiko <andrii@kernel.org>
+Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        keescook@chromium.org, brauner@kernel.org, lennart@poettering.net,
+        cyphar@cyphar.com, luto@kernel.org
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 2, 2023 at 1:38=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> The patch re-uses the allocation it already does for the key data, and
-> it seems sane.
+On 06/02, Andrii Nakryiko wrote:
+> Add new kind of BPF kernel object, BPF token. BPF token is meant to to
+> allow delegating privileged BPF functionality, like loading a BPF
+> program or creating a BPF map, from privileged process to a *trusted*
+> unprivileged process, all while have a good amount of control over which
+> privileged operation could be done using provided BPF token.
+> 
+> This patch adds new BPF_TOKEN_CREATE command to bpf() syscall, which
+> allows to create a new BPF token object along with a set of allowed
+> commands. Currently only BPF_TOKEN_CREATE command itself can be
+> delegated, but other patches gradually add ability to delegate
+> BPF_MAP_CREATE, BPF_BTF_LOAD, and BPF_PROG_LOAD commands.
+> 
+> The above means that BPF token creation can be allowed by another
+> existing BPF token, if original privileged creator allowed that. New
+> derived BPF token cannot be more powerful than the original BPF token.
+> 
+> BPF_F_TOKEN_IGNORE_UNKNOWN_CMDS flag is added to allow application to do
+> express "all supported BPF commands should be allowed" without worrying
+> about which subset of desired commands is actually supported by
+> potentially outdated kernel. Allowing this semantics doesn't seem to
+> introduce any backwards compatibility issues and doesn't introduce any
+> risk of abusing or misusing bit set field, but makes backwards
+> compatibility story for various applications and tools much more
+> straightforward, making it unnecessary to probe support for each
+> individual possible bit. This is especially useful in follow up patches
+> where we add BPF map types and prog types bit sets.
+> 
+> Lastly, BPF token can be pinned in and retrieved from BPF FS, just like
+> progs, maps, BTFs, and links. This allows applications (like container
+> managers) to share BPF token with other applications through file system
+> just like any other BPF object, and further control access to it using
+> file system permissions, if desired.
+> 
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  include/linux/bpf.h            |  34 +++++++++
+>  include/uapi/linux/bpf.h       |  42 ++++++++++++
+>  kernel/bpf/Makefile            |   2 +-
+>  kernel/bpf/inode.c             |  26 +++++++
+>  kernel/bpf/syscall.c           |  74 ++++++++++++++++++++
+>  kernel/bpf/token.c             | 122 +++++++++++++++++++++++++++++++++
+>  tools/include/uapi/linux/bpf.h |  40 +++++++++++
+>  7 files changed, 339 insertions(+), 1 deletion(-)
+>  create mode 100644 kernel/bpf/token.c
+> 
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index f58895830ada..fe6d51c3a5b1 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -51,6 +51,7 @@ struct module;
+>  struct bpf_func_state;
+>  struct ftrace_ops;
+>  struct cgroup;
+> +struct bpf_token;
+>  
+>  extern struct idr btf_idr;
+>  extern spinlock_t btf_idr_lock;
+> @@ -1533,6 +1534,12 @@ struct bpf_link_primer {
+>  	u32 id;
+>  };
+>  
+> +struct bpf_token {
+> +	struct work_struct work;
+> +	atomic64_t refcnt;
+> +	u64 allowed_cmds;
+> +};
+> +
+>  struct bpf_struct_ops_value;
+>  struct btf_member;
+>  
+> @@ -2077,6 +2084,15 @@ struct file *bpf_link_new_file(struct bpf_link *link, int *reserved_fd);
+>  struct bpf_link *bpf_link_get_from_fd(u32 ufd);
+>  struct bpf_link *bpf_link_get_curr_or_next(u32 *id);
+>  
+> +void bpf_token_inc(struct bpf_token *token);
+> +void bpf_token_put(struct bpf_token *token);
+> +struct bpf_token *bpf_token_alloc(void);
+> +int bpf_token_new_fd(struct bpf_token *token);
+> +struct bpf_token *bpf_token_get_from_fd(u32 ufd);
+> +
+> +bool bpf_token_capable(const struct bpf_token *token, int cap);
+> +bool bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd);
+> +
+>  int bpf_obj_pin_user(u32 ufd, int path_fd, const char __user *pathname);
+>  int bpf_obj_get_user(int path_fd, const char __user *pathname, int flags);
+>  
+> @@ -2436,6 +2452,24 @@ static inline int bpf_obj_get_user(const char __user *pathname, int flags)
+>  	return -EOPNOTSUPP;
+>  }
+>  
+> +static inline void bpf_token_inc(struct bpf_token *token)
+> +{
+> +}
+> +
+> +static inline void bpf_token_put(struct bpf_token *token)
+> +{
+> +}
+> +
+> +static inline struct bpf_token *bpf_token_new_fd(struct bpf_token *token)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static inline struct bpf_token *bpf_token_get_from_fd(u32 ufd)
+> +{
+> +	return ERR_PTR(-EOPNOTSUPP);
+> +}
+> +
+>  static inline void __dev_flush(void)
+>  {
+>  }
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index 9273c654743c..01ab79f2ad9f 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
+> @@ -846,6 +846,16 @@ union bpf_iter_link_info {
+>   *		Returns zero on success. On error, -1 is returned and *errno*
+>   *		is set appropriately.
+>   *
+> + * BPF_TOKEN_CREATE
+> + *	Description
+> + *		Create BPF token with embedded information about what
+> + *		BPF-related functionality is allowed. This BPF token can be
+> + *		passed as an extra parameter to various bpf() syscall command.
+> + *
+> + *	Return
+> + *		A new file descriptor (a nonnegative integer), or -1 if an
+> + *		error occurred (in which case, *errno* is set appropriately).
+> + *
+>   * NOTES
+>   *	eBPF objects (maps and programs) can be shared between processes.
+>   *
+> @@ -900,6 +910,7 @@ enum bpf_cmd {
+>  	BPF_ITER_CREATE,
+>  	BPF_LINK_DETACH,
+>  	BPF_PROG_BIND_MAP,
+> +	BPF_TOKEN_CREATE,
+>  };
+>  
+>  enum bpf_map_type {
+> @@ -1169,6 +1180,24 @@ enum bpf_link_type {
+>   */
+>  #define BPF_F_KPROBE_MULTI_RETURN	(1U << 0)
+>  
+> +/* BPF_TOKEN_CREATE command flags
+> + */
+> +enum {
+> +	/* Ignore unrecognized bits in token_create.allowed_cmds bit set.  If
+> +	 * this flag is set, kernel won't return -EINVAL for a bit
+> +	 * corresponding to a non-existing command or the one that doesn't
+> +	 * support BPF token passing. This flags allows application to request
+> +	 * BPF token creation for a desired set of commands without worrying
+> +	 * about older kernels not supporting some of the commands.
+> +	 * Presumably, deployed applications will do separate feature
+> +	 * detection and will avoid calling not-yet-supported bpf() commands,
+> +	 * so this BPF token will work equally well both on older and newer
+> +	 * kernels, even if some of the requested commands won't be BPF
+> +	 * token-enabled.
+> +	 */
+> +	BPF_F_TOKEN_IGNORE_UNKNOWN_CMDS		  = 1U << 0,
+> +};
+> +
+>  /* When BPF ldimm64's insn[0].src_reg != 0 then this can have
+>   * the following extensions:
+>   *
+> @@ -1621,6 +1650,19 @@ union bpf_attr {
+>  		__u32		flags;		/* extra flags */
+>  	} prog_bind_map;
+>  
+> +	struct { /* struct used by BPF_TOKEN_CREATE command */
+> +		__u32		flags;
+> +		__u32		token_fd;
+> +		/* a bit set of allowed bpf() syscall commands,
+> +		 * e.g., (1ULL << BPF_TOKEN_CREATE) | (1ULL << BPF_PROG_LOAD)
+> +		 * will allow creating derived BPF tokens and loading new BPF
+> +		 * programs;
+> +		 * see also BPF_F_TOKEN_IGNORE_UNKNOWN_CMDS for its effect on
+> +		 * validity checking of this set
+> +		 */
+> +		__u64		allowed_cmds;
+> +	} token_create;
 
-Ugh. I had to check that it was ok to re-use the key buffer, but it
-does seem to be the case that you can just re-use the buffer after
-you've done that crypto_akcipher_set_priv/pub_key() call, and the
-crypto layer has to copy it into its own data structures.
+Do you think this might eventually grow into something like
+"allow only lookup operation for this specific map"? If yes, maybe it
+makes sense to separate token-create vs token-add-capability operations?
 
-I absolutely abhor the crypto interfaces. They all seem designed for
-that "external DMA engine" case that seems so horrendously pointless
-and slow.  In practice so few of them are that, and we have all those
-optimized routines for doing it all on the CPU - but have in the
-meantime wasted all that time and effort into copying everything,
-turning simple buffers into sg-bufs etc etc. The amount of indirection
-and "set this state in the state machine" is just nasty, and this
-seems to all be a prime example of it all. With some of it then
-randomly going through some kthread too.
+BPF_TOKEN_CREATE would create a token that can't do anything. Then you
+would call a bunch of BPF_TOKEN_ALLOW with maybe op=SYSCALL_CMD
+value=BPF_TOKEN_CREATE.
 
-I still think that patch is probably fine, but was also going "maybe
-the real problem is in that library helper function
-(asymmetric_verify(), in this case), which takes those (sig, siglen,
-digest, digestlen) arguments and turns it into a 'struct
-public_key_signature' without marshalling them.
-
-Just looking at this mess of indirection and different "helper"
-functions makes me second-guess myself about where the actual
-conversion should be - while also feeling like it should never have
-been done as a scatter-gather entry in the first place.
-
-Anyway, I don't feel competent to decide if that pull request is the
-right fix or not.
-
-But it clearly is *a* fix.
-
-            Linus
+This will be more future-proof plus won't really depend on having a
+bitmask in the uapi. Then the users will be able to handle
+BPF_TOKEN_ALLOW{op=SYSCALL_CMD value=SOME_VALUE_NOT_SUPPORTED_ON_THIS_KERNEL}
+themselves (IOW, BPF_F_TOKEN_IGNORE_UNKNOWN_CMDS won't be needed).
