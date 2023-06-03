@@ -2,64 +2,94 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 878E9C7EE2C
-	for <linux-security-module@archiver.kernel.org>; Sat,  3 Jun 2023 10:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 964FEC77B73
+	for <linux-security-module@archiver.kernel.org>; Sat,  3 Jun 2023 16:02:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229753AbjFCKuc (ORCPT
+        id S229471AbjFCQCZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 3 Jun 2023 06:50:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55136 "EHLO
+        Sat, 3 Jun 2023 12:02:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229953AbjFCKub (ORCPT
+        with ESMTP id S229437AbjFCQCW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 3 Jun 2023 06:50:31 -0400
-X-Greylist: delayed 4205 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 03 Jun 2023 03:49:57 PDT
-Received: from mail.webtopbits.pl (mail.webtopbits.pl [195.231.64.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62B5410CB
-        for <linux-security-module@vger.kernel.org>; Sat,  3 Jun 2023 03:49:57 -0700 (PDT)
-Received: by mail.webtopbits.pl (Postfix, from userid 1001)
-        id ADB19A395F; Fri,  2 Jun 2023 10:00:33 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=webtopbits.pl;
-        s=mail; t=1685696434;
-        bh=Eh8ECMiYd4baGAwPAzhz8mhJACXX7NSRkYjh+plaY18=;
-        h=Date:From:To:Subject:From;
-        b=r8BcdIKVIiHUksbgoXSQmM8aDrKLsQK2ZD/N+ZjTY4m1VVf9N9LfLgWs6HHGZhbX2
-         r5DAiOhtduCqMrxwWClqbJv/A3RoTZysJZSHTqDEIrjVOyiMic0Ey7bBHlmxF916lo
-         w4+zYu9Qlzm8txKvmsKvp90gfYBe+94xpP/gZ0clo+VZVV/2ynFIi5MkxNJgVmhbKW
-         HyToMq74f1d9U4d45UEgOyHifDbzHwcAfBfPxLXIeBGJZD9K6XJqZZ6ed4A8lYtNYX
-         gSiuLyExoD2cj8Q70mT2QJbozygK3Gg9MQecQJzH44lfW1SNmBdQTd+HUeTnpdhQc5
-         rQunQ/Pf15jFw==
-Received: by mail.webtopbits.pl for <linux-security-module@vger.kernel.org>; Fri,  2 Jun 2023 09:00:32 GMT
-Message-ID: <20230602085530-0.1.8w.5l60.0.z4g4u6b1w7@webtopbits.pl>
-Date:   Fri,  2 Jun 2023 09:00:32 GMT
-From:   "Kamil Durjasz" <kamil.durjasz@webtopbits.pl>
-To:     <linux-security-module@vger.kernel.org>
-Subject: =?UTF-8?Q?Wy=C5=BCsza_konwersja_w_e-sklepie_?=
-X-Mailer: mail.webtopbits.pl
+        Sat, 3 Jun 2023 12:02:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81FBECA;
+        Sat,  3 Jun 2023 09:02:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1DE3860B55;
+        Sat,  3 Jun 2023 16:02:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C41EC433D2;
+        Sat,  3 Jun 2023 16:02:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685808140;
+        bh=hbhcJ5+vvPHCu2gKyrTxiCQZ7fSTFNJM9grhrnn5tuI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DGnhST4IJztKxzCVRT90P4/F0w+b4KpmpzWT+8PmL3azyMo9KMAcM3qttHI/2JxyZ
+         uWO6SIr3pVSl5fjgOssogoh6q/RYvyTkI7aTXeOPN6VnzOAHimQ2ZUNlCJ0G3E7BqA
+         pQHUtEV9SqQb+fA+Fc+8+NTEaZzoVPlHFwgMHgvpUhDrD3gDTX9D4lxigkZMiwa8BO
+         vntotnnwUDV3UAxJUAo6yipuuSU6HHbY97rXjt5+5CqrzFTsdIomunihWepHhe/GBx
+         qynxR5Q4FVVPsvxStI1w31ZLlGH7KyySdkH95V4NQwhQakbx1S7ZkijGRy6Y0WlVxh
+         XGtdCPnQfE10Q==
+Date:   Sat, 3 Jun 2023 09:02:08 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stefan Berger <stefanb@linux.ibm.com>, davem@davemloft.net,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [GIT PULL] Asymmetric keys fix for v6.4-rc5
+Message-ID: <20230603160208.GA677@quark.localdomain>
+References: <4d7e38ff5bbc496cb794b50e1c5c83bcd2317e69.camel@huaweicloud.com>
+ <CAHk-=wj4S0t5RnJQmF_wYwv+oMTKggwdLnrA9D1uMNKq4H4byw@mail.gmail.com>
+ <CAHk-=wgCUzRNTg4fC8DF=UFnznK0M=mNUBDcsnLt7D4+HP2_1Q@mail.gmail.com>
+ <97fd9066-9afc-9faa-a604-46110ed1268c@huaweicloud.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <97fd9066-9afc-9faa-a604-46110ed1268c@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dzie=C5=84 dobry,
+On Sat, Jun 03, 2023 at 12:41:00PM +0200, Roberto Sassu wrote:
+> On 6/3/2023 2:02 AM, Linus Torvalds wrote:
+> > On Fri, Jun 2, 2023 at 1:38 PM Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > > 
+> > > The patch re-uses the allocation it already does for the key data, and
+> > > it seems sane.
+> > 
+> > Ugh. I had to check that it was ok to re-use the key buffer, but it
+> > does seem to be the case that you can just re-use the buffer after
+> > you've done that crypto_akcipher_set_priv/pub_key() call, and the
+> > crypto layer has to copy it into its own data structures.
+> 
+> Yes, we could not do it if the set_pub_key/set_priv_key methods use
+> internally the passed pointer. I guess it depends on the methods, for RSA
+> and ECDSA it seems fine (they copy to a different location).
+> 
+> The doubt comes because the buffer is freed after crypto_wait_req() and not
+> after crypto_akcipher_set_*_key(), suggesting that it could be actually used
+> during the crypto operation.
+> 
+> Rechecked the thread, and the suggestion to reuse the buffer and not append
+> the signature and digest at the end was by Eric Biggers.
+> 
+> Eric, in light of this finding, should we still reuse the buffer?
+> 
 
-w jaki spos=C3=B3b docieraj=C4=85 Pa=C5=84stwo do odbiorc=C3=B3w?
+I don't think there was any "finding" here.  The setkey methods in the crypto
+API aren't allowed to reuse the buffer they are passed, so the patch is fine.
 
-Tworzymy pot=C4=99=C5=BCne narz=C4=99dzia sprzeda=C5=BCy, kt=C3=B3re pozw=
-alaj=C4=85 kompleksowo rozwi=C4=85za=C4=87 problemy potencjalnych klient=C3=
-=B3w i skutecznie wp=C5=82yn=C4=85=C4=87 na ich decyzje zakupowe.=20
-
-Skupiamy si=C4=99 na Pa=C5=84stwa potrzebach zwi=C4=85zanych z obs=C5=82u=
-g=C4=85 sklepu, oczekiwaniach i planach sprzeda=C5=BCowych. Szczeg=C3=B3=C5=
-=82owo dopasowujemy grafik=C4=99, funkcjonalno=C5=9Bci, struktur=C4=99 i =
-mikrointerakcje do Pa=C5=84stwa grupy docelowej, co przek=C5=82ada si=C4=99=
- na oczekiwane rezultaty.
-
-Ch=C4=99tnie przedstawi=C4=99 dotychczasowe realizacje, aby mogli Pa=C5=84=
-stwo przekona=C4=87 si=C4=99 o naszych mo=C5=BCliwo=C5=9Bciach. Mog=C4=99=
- si=C4=99 skontaktowa=C4=87?
-
-
-Pozdrawiam
-Kamil Durjasz
+- Eric
