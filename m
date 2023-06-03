@@ -2,114 +2,119 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA665C77B7A
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jun 2023 20:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 087B7C7EE2D
+	for <linux-security-module@archiver.kernel.org>; Sat,  3 Jun 2023 00:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235277AbjFBUmE (ORCPT
+        id S236190AbjFCACr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Jun 2023 16:42:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57160 "EHLO
+        Fri, 2 Jun 2023 20:02:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232032AbjFBUmE (ORCPT
+        with ESMTP id S234452AbjFCACr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Jun 2023 16:42:04 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A5FBE44;
-        Fri,  2 Jun 2023 13:42:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1685738523; x=1717274523;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DNGbOdRYD8XuQTnt+XBn8XRgskTE1kEgAMW34LP/Cs8=;
-  b=N8g+Eq5YSk1vDDGCDzmWim1C0bUQ1z+LZWsssXHKfXPYh6DUWLnwZAgO
-   u9Yqkl2iZc4tVI6H5zWay0QmEBv140y85EAlfnaKI7ib5W8ITSnwRVHbj
-   TLzCIRtEhxPZDT+PD/3BdbPvJfM9yQnh5VjLsbH/JIhKJbyK2rVLt8BaF
-   4w3dphvqSm1A34sffghchGqEzqESQow39acFhmUdIpReM2fLaiD+LiBX/
-   cgQxiVAiUnBfWMRvVx4f7ynSblOApFfqoUwnxYqreOr+iQCNEqjhJaKg3
-   FRDgr5kWuXZYz3k51YNELQIEu2khJ5F/74PGZ8RBtg5ffP3RiMrw7hIsv
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10729"; a="335580438"
-X-IronPort-AV: E=Sophos;i="6.00,214,1681196400"; 
-   d="scan'208";a="335580438"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2023 13:42:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10729"; a="852274695"
-X-IronPort-AV: E=Sophos;i="6.00,214,1681196400"; 
-   d="scan'208";a="852274695"
-Received: from lkp-server01.sh.intel.com (HELO 15ab08e44a81) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 02 Jun 2023 13:42:01 -0700
-Received: from kbuild by 15ab08e44a81 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1q5Bay-0000wR-1R;
-        Fri, 02 Jun 2023 20:42:00 +0000
-Date:   Sat, 3 Jun 2023 04:41:16 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
-        luto@kernel.org
-Subject: Re: [PATCH RESEND bpf-next 01/18] bpf: introduce BPF token object
-Message-ID: <202306030402.Nn38A6qD-lkp@intel.com>
-References: <20230602150011.1657856-2-andrii@kernel.org>
+        Fri, 2 Jun 2023 20:02:47 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6DA3E42
+        for <linux-security-module@vger.kernel.org>; Fri,  2 Jun 2023 17:02:44 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2b1badb8f9bso1698501fa.1
+        for <linux-security-module@vger.kernel.org>; Fri, 02 Jun 2023 17:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1685750563; x=1688342563;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UIfddwJGgEUnwUCFA5IlnKSK6V7h4JvROQevxAQzNhk=;
+        b=Xc3AyBTCKjaXrHR7Xn+gWHTG8qM31jMYo97046Wrqhe1Py0EkfgorGVdl7O+h8+E9L
+         PaAZsESnLNkgwnMUxef6YPVRCpRivyvhVZ9fm2NvVOB11vXsyRO5P1OwgQUU1H/h8ieT
+         aWMFYcJc91CVBIsodU5Pk+AT3AzlbRWZyKPhA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685750563; x=1688342563;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UIfddwJGgEUnwUCFA5IlnKSK6V7h4JvROQevxAQzNhk=;
+        b=EvckR1cOYIscc7BWeY1mzfs38cRRHKDMMNHAmQOQ41QquDICiq/qZT0asAUZWAd6Y+
+         xMWo88Y6kW9klnS+zKZ9JMJO5I5GRndOXdjpkZOl47+5IUQzmzaBO4QHL5JaB0DyC1Wa
+         sViNSF+6moFxT/7wqR4HeUEB5XrVnIdf14ZI/d1vie+zwQgkdUM1wpO5q0ZoB/PuvhgT
+         J/21keOTCfF/qHu9tKHucm8vPiPHcpzMIKkeEWTLIrkIJVSwrLTIL9A9jb0MKbPiIqF+
+         d2d834i15zHY/yHVwyJZfl/XgMJZQ2oPN8f6QvmjsGS6RDNLQhCGOLJKC5V+XeO4gh/Y
+         uO7g==
+X-Gm-Message-State: AC+VfDytYkL+Qkhusw4yCX12G9Z/KtHpK1G4CsbwV+kUw9rSIt4pBa12
+        tShVAUsrrI4kBUiMVkJsoLaZ1Rqic3cwcfKvTRW2YVbt
+X-Google-Smtp-Source: ACHHUZ5kKrY+GLfEpO78sVigDYW/BA+tzxs3cE68jnEQ8ngF06EEnfMRZZBq3f9Z79NYjPDIMK/m6g==
+X-Received: by 2002:a2e:9f4f:0:b0:299:a7be:5775 with SMTP id v15-20020a2e9f4f000000b00299a7be5775mr853445ljk.35.1685750563017;
+        Fri, 02 Jun 2023 17:02:43 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id w13-20020a2e300d000000b002af25598f07sm394940ljw.78.2023.06.02.17.02.40
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Jun 2023 17:02:41 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-4f4b80bf93aso3613590e87.0
+        for <linux-security-module@vger.kernel.org>; Fri, 02 Jun 2023 17:02:40 -0700 (PDT)
+X-Received: by 2002:ac2:52ba:0:b0:4f2:7b65:baeb with SMTP id
+ r26-20020ac252ba000000b004f27b65baebmr2458573lfm.53.1685750560415; Fri, 02
+ Jun 2023 17:02:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230602150011.1657856-2-andrii@kernel.org>
+References: <4d7e38ff5bbc496cb794b50e1c5c83bcd2317e69.camel@huaweicloud.com> <CAHk-=wj4S0t5RnJQmF_wYwv+oMTKggwdLnrA9D1uMNKq4H4byw@mail.gmail.com>
+In-Reply-To: <CAHk-=wj4S0t5RnJQmF_wYwv+oMTKggwdLnrA9D1uMNKq4H4byw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 2 Jun 2023 20:02:23 -0400
+X-Gmail-Original-Message-ID: <CAHk-=wgCUzRNTg4fC8DF=UFnznK0M=mNUBDcsnLt7D4+HP2_1Q@mail.gmail.com>
+Message-ID: <CAHk-=wgCUzRNTg4fC8DF=UFnznK0M=mNUBDcsnLt7D4+HP2_1Q@mail.gmail.com>
+Subject: Re: [GIT PULL] Asymmetric keys fix for v6.4-rc5
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Stefan Berger <stefanb@linux.ibm.com>, davem@davemloft.net,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Andrii,
+On Fri, Jun 2, 2023 at 1:38=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> The patch re-uses the allocation it already does for the key data, and
+> it seems sane.
 
-kernel test robot noticed the following build errors:
+Ugh. I had to check that it was ok to re-use the key buffer, but it
+does seem to be the case that you can just re-use the buffer after
+you've done that crypto_akcipher_set_priv/pub_key() call, and the
+crypto layer has to copy it into its own data structures.
 
-[auto build test ERROR on bpf-next/master]
+I absolutely abhor the crypto interfaces. They all seem designed for
+that "external DMA engine" case that seems so horrendously pointless
+and slow.  In practice so few of them are that, and we have all those
+optimized routines for doing it all on the CPU - but have in the
+meantime wasted all that time and effort into copying everything,
+turning simple buffers into sg-bufs etc etc. The amount of indirection
+and "set this state in the state machine" is just nasty, and this
+seems to all be a prime example of it all. With some of it then
+randomly going through some kthread too.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bpf-introduce-BPF-token-object/20230602-230448
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20230602150011.1657856-2-andrii%40kernel.org
-patch subject: [PATCH RESEND bpf-next 01/18] bpf: introduce BPF token object
-config: sparc-randconfig-r022-20230531 (https://download.01.org/0day-ci/archive/20230603/202306030402.Nn38A6qD-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 12.3.0
-reproduce (this is a W=1 build):
-        mkdir -p ~/bin
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/59e6ef2000a056ce3386db8481e477e5abfbbe15
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Andrii-Nakryiko/bpf-introduce-BPF-token-object/20230602-230448
-        git checkout 59e6ef2000a056ce3386db8481e477e5abfbbe15
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=sparc olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=sparc SHELL=/bin/bash arch/sparc/kernel/
+I still think that patch is probably fine, but was also going "maybe
+the real problem is in that library helper function
+(asymmetric_verify(), in this case), which takes those (sig, siglen,
+digest, digestlen) arguments and turns it into a 'struct
+public_key_signature' without marshalling them.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306030402.Nn38A6qD-lkp@intel.com/
+Just looking at this mess of indirection and different "helper"
+functions makes me second-guess myself about where the actual
+conversion should be - while also feeling like it should never have
+been done as a scatter-gather entry in the first place.
 
-All errors (new ones prefixed by >>):
+Anyway, I don't feel competent to decide if that pull request is the
+right fix or not.
 
-   In file included from include/linux/filter.h:9,
-                    from arch/sparc/kernel/sys_sparc32.c:29:
-   include/linux/bpf.h: In function 'bpf_token_new_fd':
->> include/linux/bpf.h:2465:16: error: returning 'int' from a function with return type 'struct bpf_token *' makes pointer from integer without a cast [-Werror=int-conversion]
-    2465 |         return -EOPNOTSUPP;
-         |                ^
-   cc1: all warnings being treated as errors
+But it clearly is *a* fix.
 
-
-vim +2465 include/linux/bpf.h
-
-  2462	
-  2463	static inline struct bpf_token *bpf_token_new_fd(struct bpf_token *token)
-  2464	{
-> 2465		return -EOPNOTSUPP;
-  2466	}
-  2467	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+            Linus
