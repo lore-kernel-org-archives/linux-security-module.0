@@ -2,82 +2,134 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A91C7EE3A
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Jun 2023 14:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F192AC77B73
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Jun 2023 15:02:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231292AbjFEOs4 (ORCPT
+        id S233576AbjFEPC1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Jun 2023 10:48:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35866 "EHLO
+        Mon, 5 Jun 2023 11:02:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234522AbjFEOsj (ORCPT
+        with ESMTP id S233630AbjFEPC0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Jun 2023 10:48:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0746AED
-        for <linux-security-module@vger.kernel.org>; Mon,  5 Jun 2023 07:47:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685976473;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GKnTrK6N8fyx8N4wY6ury0F8xx6HRQHrf6vLk5OPOl8=;
-        b=EJYdDwEYv/IqiT0/MSaJfc+W0wY+i2AOQhKP2kVjDxApezMuOvZ564wjkLiVKJPMEhhmHY
-        Ujrih3UizXseLESEuUWGt+vpUObQmoRMxDs+PkHYooWLzD5ZLUdH664gEty9Qc3vNwPZBY
-        PXaOxpgMChCDV3umCQC1kPfFHyutaQc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-314-3qv7PdMlP5-fXF9d25ZGlg-1; Mon, 05 Jun 2023 10:47:52 -0400
-X-MC-Unique: 3qv7PdMlP5-fXF9d25ZGlg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DE563101A55C;
-        Mon,  5 Jun 2023 14:47:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5292A1121314;
-        Mon,  5 Jun 2023 14:47:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <4d7e38ff5bbc496cb794b50e1c5c83bcd2317e69.camel@huaweicloud.com>
-References: <4d7e38ff5bbc496cb794b50e1c5c83bcd2317e69.camel@huaweicloud.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [GIT PULL] Asymmetric keys fix for v6.4-rc5
+        Mon, 5 Jun 2023 11:02:26 -0400
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AAF19C
+        for <linux-security-module@vger.kernel.org>; Mon,  5 Jun 2023 08:02:23 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QZcK92Hf0zMqYTR;
+        Mon,  5 Jun 2023 17:02:21 +0200 (CEST)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QZcK80Jb5zMrK3h;
+        Mon,  5 Jun 2023 17:02:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1685977341;
+        bh=8LypuOr5m5yp1T2kVIMo8zx5AGopO/50AfLfFNI9IN4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=GV+QlfYKG5GPSIziXgCRfwpuQRwlP414bzmpoP1sl0tm9vwznegS1NFMnLY5mTKZa
+         9DlM2goDlktzM/q/GFQEOxk8hZE5racUBGyTzDAvWWNHW1BKBSHmkBdL7+XeO2oiDh
+         +FvNXv88/gA1ptQeoSBeCXaZ1uQoC2epRpqEmLc0=
+Message-ID: <8f3d242a-c0ee-217e-8094-84093ce4e134@digikod.net>
+Date:   Mon, 5 Jun 2023 17:02:19 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1727998.1685976466.1@warthog.procyon.org.uk>
-Date:   Mon, 05 Jun 2023 15:47:46 +0100
-Message-ID: <1727999.1685976466@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+User-Agent: 
+Subject: Re: [PATCH v11 00/12] Network support for Landlock
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+Hi Konstantin,
 
-> Here is a small fix to make an unconditional copy of the buffer passed
-> to crypto operations, to take into account the case of the stack not in
-> the linear mapping area.
+The kernel code looks good. I found some issues in tests and 
+documentation, and I'm still reviewing the whole patches. In the 
+meantime, I've pushed it in -next, we'll see how it goes.
 
-I wonder if evm_verify_hmac() and other such callers of the signature
-verification service should be placing the data and crypto material in slab
-memory rather than it being on the stack.  But, for the moment:
+We need to have this new code covered by syzkaller. I'll work on that 
+unless you want to.
 
-Acked-by: David Howells <dhowells@redhat.com>
+Regards,
+  Mickaël
 
+
+On 15/05/2023 18:13, Konstantin Meskhidze wrote:
+> Hi,
+> This is a new V11 patch related to Landlock LSM network confinement.
+> It is based on the landlock's -next branch on top of v6.2-rc3+ kernel version:
+> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
+> 
+> It brings refactoring of previous patch version V10.
+> Mostly there are fixes of logic and typos, refactoring some selftests.
+> 
+> All test were run in QEMU evironment and compiled with
+>   -static flag.
+>   1. network_test: 36/36 tests passed.
+>   2. base_test: 7/7 tests passed.
+>   3. fs_test: 78/78 tests passed.
+>   4. ptrace_test: 8/8 tests passed.
+> 
+> Previous versions:
+> v10: https://lore.kernel.org/linux-security-module/20230323085226.1432550-1-konstantin.meskhidze@huawei.com/
+> v9: https://lore.kernel.org/linux-security-module/20230116085818.165539-1-konstantin.meskhidze@huawei.com/
+> v8: https://lore.kernel.org/linux-security-module/20221021152644.155136-1-konstantin.meskhidze@huawei.com/
+> v7: https://lore.kernel.org/linux-security-module/20220829170401.834298-1-konstantin.meskhidze@huawei.com/
+> v6: https://lore.kernel.org/linux-security-module/20220621082313.3330667-1-konstantin.meskhidze@huawei.com/
+> v5: https://lore.kernel.org/linux-security-module/20220516152038.39594-1-konstantin.meskhidze@huawei.com
+> v4: https://lore.kernel.org/linux-security-module/20220309134459.6448-1-konstantin.meskhidze@huawei.com/
+> v3: https://lore.kernel.org/linux-security-module/20220124080215.265538-1-konstantin.meskhidze@huawei.com/
+> v2: https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
+> v1: https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
+> 
+> Konstantin Meskhidze (11):
+>    landlock: Make ruleset's access masks more generic
+>    landlock: Refactor landlock_find_rule/insert_rule
+>    landlock: Refactor merge/inherit_ruleset functions
+>    landlock: Move and rename layer helpers
+>    landlock: Refactor layer helpers
+>    landlock: Refactor landlock_add_rule() syscall
+>    landlock: Add network rules and TCP hooks support
+>    selftests/landlock: Share enforce_ruleset()
+>    selftests/landlock: Add 11 new test suites dedicated to network
+>    samples/landlock: Add network demo
+>    landlock: Document Landlock's network support
+> 
+> Mickaël Salaün (1):
+>    landlock: Allow filesystem layout changes for domains without such
+>      rule type
+> 
+>   Documentation/userspace-api/landlock.rst     |   89 +-
+>   include/uapi/linux/landlock.h                |   48 +
+>   samples/landlock/sandboxer.c                 |  128 +-
+>   security/landlock/Kconfig                    |    1 +
+>   security/landlock/Makefile                   |    2 +
+>   security/landlock/fs.c                       |  232 +--
+>   security/landlock/limits.h                   |    7 +-
+>   security/landlock/net.c                      |  174 +++
+>   security/landlock/net.h                      |   26 +
+>   security/landlock/ruleset.c                  |  405 +++++-
+>   security/landlock/ruleset.h                  |  185 ++-
+>   security/landlock/setup.c                    |    2 +
+>   security/landlock/syscalls.c                 |  163 ++-
+>   tools/testing/selftests/landlock/base_test.c |    2 +-
+>   tools/testing/selftests/landlock/common.h    |   10 +
+>   tools/testing/selftests/landlock/config      |    4 +
+>   tools/testing/selftests/landlock/fs_test.c   |   74 +-
+>   tools/testing/selftests/landlock/net_test.c  | 1317 ++++++++++++++++++
+>   18 files changed, 2520 insertions(+), 349 deletions(-)
+>   create mode 100644 security/landlock/net.c
+>   create mode 100644 security/landlock/net.h
+>   create mode 100644 tools/testing/selftests/landlock/net_test.c
+> 
+> --
+> 2.25.1
+> 
