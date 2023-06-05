@@ -2,101 +2,149 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4ECC7EE23
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Jun 2023 11:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8819CC77B73
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Jun 2023 12:36:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233132AbjFEL6E (ORCPT
+        id S233451AbjFEMgc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Jun 2023 07:58:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37768 "EHLO
+        Mon, 5 Jun 2023 08:36:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233116AbjFEL6D (ORCPT
+        with ESMTP id S233165AbjFEMg3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Jun 2023 07:58:03 -0400
-Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D15EDF;
-        Mon,  5 Jun 2023 04:58:02 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4QZWyp36jXz9yLnk;
-        Mon,  5 Jun 2023 19:46:10 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwDHeUC0zX1kx38JAw--.3850S2;
-        Mon, 05 Jun 2023 12:57:48 +0100 (CET)
-Message-ID: <c2b7b5531660befc66a25477abc0cc069d08926c.camel@huaweicloud.com>
-Subject: Re: [PATCH] evm: Complete description of evm_inode_setattr()
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
+        Mon, 5 Jun 2023 08:36:29 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DAA71B6;
+        Mon,  5 Jun 2023 05:36:07 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 53E101F8B4;
+        Mon,  5 Jun 2023 12:36:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1685968565; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=HDPQJSax2y1DgqRa020Su1AOhWpgOXbpRl/eNtbLm/U=;
+        b=BnGESfhS5Uoh/nHZqR9YuTwAnw/vc25GK/VO71E5qsjPPVhRP1DwitnTOzn8izvfiQGj2X
+        6v87plSWQLpyvmQ0xQzzhpnpGfd2PLGDpP2AXb5X7OZT2uOF1cSyhUGjf9APFalaL507LO
+        6WGghS6QH0Ddt16lV0p+2wJLJrbkRGY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1685968565;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=HDPQJSax2y1DgqRa020Su1AOhWpgOXbpRl/eNtbLm/U=;
+        b=+JrFbW8MAz/F6iiHD4iP8Zs7ueFtOq7RjUNJH+W93QIWOpqAFEiKw8tAkvxL09Jii8gm+0
+        9YOWKbTwsIir78DQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 365F5139C8;
+        Mon,  5 Jun 2023 12:36:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id f48+DbXWfWRMFQAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 05 Jun 2023 12:36:05 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id A9A2FA0754; Mon,  5 Jun 2023 14:36:04 +0200 (CEST)
+Date:   Mon, 5 Jun 2023 14:36:04 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Mon, 05 Jun 2023 13:57:37 +0200
-In-Reply-To: <20230306104036.1298529-1-roberto.sassu@huaweicloud.com>
-References: <20230306104036.1298529-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
+        syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com>,
+        Jan Kara <jack@suse.cz>, Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [syzbot] [reiserfs?] INFO: task hung in flush_old_commits
+Message-ID: <20230605123604.7juo5siuooy2dip2@quack3>
+References: <000000000000be039005fc540ed7@google.com>
+ <00000000000018faf905fc6d9056@google.com>
+ <CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com>
+ <813148798c14a49cbdf0f500fbbbab154929e6ed.camel@huaweicloud.com>
+ <CAHC9VhRoj3muyD0+pTwpJvCdmzz25C8k8eufWcjc8ZE4e2AOew@mail.gmail.com>
+ <58cebdd9318bd4435df6c0cf45318abd3db0fff8.camel@huaweicloud.com>
+ <20230530112147.spvyjl7b4ss7re47@quack3>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwDHeUC0zX1kx38JAw--.3850S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ArWDJr4xKryrtr1kCw1kuFg_yoW8GF4kpa
-        yrta48Jr1rtryI9F98Ga1xZFyFgrWUWr1j9ws8Aw40vFn8Gr4q9ryxK34fWr98Gr18Gr1f
-        ta4av3W5Zw45ArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUglb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-        AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
-        IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVF
-        xhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBF1jj4o5ewADsv
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230530112147.spvyjl7b4ss7re47@quack3>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-03-06 at 11:40 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+On Tue 30-05-23 13:21:47, Jan Kara wrote:
+> On Fri 26-05-23 11:45:57, Roberto Sassu wrote:
+> > On Wed, 2023-05-24 at 17:57 -0400, Paul Moore wrote:
+> > > On Wed, May 24, 2023 at 11:50 AM Roberto Sassu
+> > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > On Wed, 2023-05-24 at 11:11 -0400, Paul Moore wrote:
+> > > > > On Wed, May 24, 2023 at 5:59 AM syzbot
+> > > > > <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com> wrote:
+> > > > > > syzbot has bisected this issue to:
+> > > > > > 
+> > > > > > commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
+> > > > > > Author: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > > > Date:   Fri Mar 31 12:32:18 2023 +0000
+> > > > > > 
+> > > > > >     reiserfs: Add security prefix to xattr name in reiserfs_security_write()
+> > > > > > 
+> > > > > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11c39639280000
+> > > > > > start commit:   421ca22e3138 Merge tag 'nfs-for-6.4-2' of git://git.linux-..
+> > > > > > git tree:       upstream
+> > > > > > final oops:     https://syzkaller.appspot.com/x/report.txt?x=13c39639280000
+> > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=15c39639280000
+> > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=7d8067683055e3f5
+> > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=0a684c061589dcc30e51
+> > > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14312791280000
+> > > > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12da8605280000
+> > > > > > 
+> > > > > > Reported-by: syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com
+> > > > > > Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reiserfs_security_write()")
+> > > > > > 
+> > > > > > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> > > > > 
+> > > > > Roberto, I think we need to resolve this somehow.  As I mentioned
+> > > > > earlier, I don't believe this to be a fault in your patch, rather that
+> > > > > patch simply triggered a situation that had not been present before,
+> > > > > likely because the reiserfs code always failed when writing LSM
+> > > > > xattrs.  Regardless, we still need to fix the deadlocks that sysbot
+> > > > > has been reporting.
+> > > > 
+> > > > Hi Paul
+> > > > 
+> > > > ok, I will try.
+> > > 
+> > > Thanks Roberto.  If it gets to be too challenging, let us know and we
+> > > can look into safely disabling the LSM xattrs for reiserfs, I'll be
+> > > shocked if anyone is successfully using LSM xattrs on reiserfs.
+> > 
+> > Ok, at least I know what happens...
+> > 
+> > + Jan, Jeff
+> > 
+> > I'm focusing on this reproducer, which works 100% of the times:
+> > 
+> > https://syzkaller.appspot.com/text?tag=ReproSyz&x=163079f9280000
 > 
-> Add the description for missing parameters of evm_inode_setattr() to
-> avoid the warning arising with W=n compile option.
+> Well, the commit d82dcd9e21b ("reiserfs: Add security prefix to xattr name
+> in reiserfs_security_write()") looks obviously broken to me. It does:
 > 
-> Fixes: 817b54aa45db ("evm: add evm_inode_setattr to prevent updating an invalid security.evm")
-> Fixes: c1632a0f1120 ("fs: port ->setattr() to pass mnt_idmap")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-
-Hi Mimi
-
-this probably got lost. It was also reviewed by Stefan:
-
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-
-Could you please take it?
-
-Thanks
-
-Roberto
-
-> ---
->  security/integrity/evm/evm_main.c | 2 ++
->  1 file changed, 2 insertions(+)
+> char xattr_name[XATTR_NAME_MAX + 1] = XATTR_SECURITY_PREFIX;
 > 
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> index cf24c525558..b1c2197473a 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -795,7 +795,9 @@ static int evm_attr_change(struct mnt_idmap *idmap,
->  
->  /**
->   * evm_inode_setattr - prevent updating an invalid EVM extended attribute
-> + * @idmap: idmap of the mount
->   * @dentry: pointer to the affected dentry
-> + * @attr: iattr structure containing the new file attributes
->   *
->   * Permit update of file attributes when files have a valid EVM signature,
->   * except in the case of them having an immutable portable signature.
+> Which is not how we can initialize strings in C... ;)
 
+I'm growing old or what but indeed string assignment in initializers in C
+works fine. It is only the assignment in code that would be problematic.
+I'm sorry for the noise.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
