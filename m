@@ -2,78 +2,81 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5855EC7EE24
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Jun 2023 15:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 021DEC7EE2A
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Jun 2023 20:06:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234435AbjFEPgc (ORCPT
+        id S231128AbjFEUGz convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Jun 2023 11:36:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40792 "EHLO
+        Mon, 5 Jun 2023 16:06:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234322AbjFEPgb (ORCPT
+        with ESMTP id S230121AbjFEUGu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Jun 2023 11:36:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C641F7;
-        Mon,  5 Jun 2023 08:36:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 25B0462720;
-        Mon,  5 Jun 2023 15:36:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 68998C4339B;
-        Mon,  5 Jun 2023 15:36:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685979384;
-        bh=YdamecFINNCEd7qN4wE3PtBR9T5k9xrbpuFxPFkqLHI=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=RMPY3LwpOCY/mrT9wYDvGsqbAzDaHm7CJni6fiO+keKHR+t1lU3wddmZo3zJE88N0
-         f37FVWCFdUAd4d6YyVWvelhsHEuCKBgwwh+LN8Ypu1rB8MTWfwX8Ow5IMA+NqcvmXR
-         4NqzTgdu2D8lS7AJ1cywCNZ+0CEbicumUnHhniMgThBlyKTgf0FiymizXeHS4co4GU
-         5emHEBNnyZSSDHiBISOAo3iKJ7PvcqNxFjiKO55Fu1Ku94gWzDgoNvg3PHqTio8DY4
-         V2486cTNYseo3PYmVQVDD/8ku/Pg4TzLoYqlEq/xnGGKAR95ALxt/+hgm1H+/LS1sg
-         JBlJnorf5jHeQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4C461E87231;
-        Mon,  5 Jun 2023 15:36:24 +0000 (UTC)
-Subject: Re: [GIT PULL] Asymmetric keys fix for v6.4-rc5
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <4d7e38ff5bbc496cb794b50e1c5c83bcd2317e69.camel@huaweicloud.com>
-References: <4d7e38ff5bbc496cb794b50e1c5c83bcd2317e69.camel@huaweicloud.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <4d7e38ff5bbc496cb794b50e1c5c83bcd2317e69.camel@huaweicloud.com>
-X-PR-Tracked-Remote: https://github.com/robertosassu/linux.git tags/asym-keys-fix-for-linus-v6.4-rc5
-X-PR-Tracked-Commit-Id: c3d03e8e35e005e1a614e51bb59053eeb5857f76
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f8dba31b0a826e691949cd4fdfa5c30defaac8c5
-Message-Id: <168597938430.2179.8103170042142681716.pr-tracker-bot@kernel.org>
-Date:   Mon, 05 Jun 2023 15:36:24 +0000
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Stefan Berger <stefanb@linux.ibm.com>, dhowells@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
+        Mon, 5 Jun 2023 16:06:50 -0400
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5198491;
+        Mon,  5 Jun 2023 13:06:47 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 6DD4363CC12F;
+        Mon,  5 Jun 2023 22:06:44 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id yjEGPY6tiAgF; Mon,  5 Jun 2023 22:06:44 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id F1ECA6081100;
+        Mon,  5 Jun 2023 22:06:43 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id zWWbem8M-Ve5; Mon,  5 Jun 2023 22:06:43 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id BFF0663CC12F;
+        Mon,  5 Jun 2023 22:06:43 +0200 (CEST)
+Date:   Mon, 5 Jun 2023 22:06:43 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc:     anton ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Christopher Obbard <chris.obbard@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>,
+        kuba <kuba@kernel.org>, James Morris <jmorris@namei.org>,
+        Jeff Xu <jeffxu@google.com>, Kees Cook <keescook@chromium.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Ritesh Raj Sarraf <ritesh@collabora.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Sjoerd Simons <sjoerd@collabora.com>,
+        Willem de Bruijn <willemb@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-kselftest <linux-kselftest@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Message-ID: <1324905118.3685909.1685995603629.JavaMail.zimbra@nod.at>
+In-Reply-To: <a0c3e6d4-2827-d9b4-8f4e-aef25997fa8a@digikod.net>
+References: <20230309165455.175131-1-mic@digikod.net> <20230309165455.175131-2-mic@digikod.net> <133970354.9328381.1684703636966.JavaMail.zimbra@nod.at> <8249dd59-ce08-2253-1697-301ad082d905@digikod.net> <a0c3e6d4-2827-d9b4-8f4e-aef25997fa8a@digikod.net>
+Subject: Re: [PATCH v1 1/5] hostfs: Fix ephemeral inodes
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
+Thread-Topic: hostfs: Fix ephemeral inodes
+Thread-Index: XBAxT/JtpH3OjQ/qxi7IxqxKKdqxXg==
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Fri, 02 Jun 2023 16:41:04 +0200:
+----- Ursprüngliche Mail -----
+>> Good, I'll send a new series with your suggestions.
+> 
+> Can I add your Signed-off-by to this patch (without touching
+> ARCH_EPHEMERAL_INODES changes, but removing the Cc stable)?
+> 
+> Are you OK for me to push this patch (with the whole series) in the
+> Landlock and next tree?
 
-> https://github.com/robertosassu/linux.git tags/asym-keys-fix-for-linus-v6.4-rc5
+Yes. Feel free to add:
+Acked-by: Richard Weinberger <richard@nod.at>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f8dba31b0a826e691949cd4fdfa5c30defaac8c5
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thanks,
+//richard
