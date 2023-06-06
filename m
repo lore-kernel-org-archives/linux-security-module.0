@@ -2,112 +2,143 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F92C7EE24
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jun 2023 07:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FECC7EE24
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jun 2023 09:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236479AbjFFHqV (ORCPT
+        id S230453AbjFFJK6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Jun 2023 03:46:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50438 "EHLO
+        Tue, 6 Jun 2023 05:10:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235318AbjFFHoU (ORCPT
+        with ESMTP id S229507AbjFFJK6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Jun 2023 03:44:20 -0400
-Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE68710EF;
-        Tue,  6 Jun 2023 00:41:49 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4Qb2Dj2D3Kz9xHM7;
-        Tue,  6 Jun 2023 15:29:57 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwDnkzof435kO04NAw--.3705S3;
-        Tue, 06 Jun 2023 08:41:36 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 2/2] ima: Fix build warnings
-Date:   Tue,  6 Jun 2023 09:41:13 +0200
-Message-Id: <20230606074113.2120632-2-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230606074113.2120632-1-roberto.sassu@huaweicloud.com>
-References: <20230606074113.2120632-1-roberto.sassu@huaweicloud.com>
+        Tue, 6 Jun 2023 05:10:58 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B71048F;
+        Tue,  6 Jun 2023 02:10:55 -0700 (PDT)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Qb4QX1kDtz67gyM;
+        Tue,  6 Jun 2023 17:08:36 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Tue, 6 Jun 2023 10:10:52 +0100
+Message-ID: <ea810d57-93fe-1724-4aab-5cbc1a35062f@huawei.com>
+Date:   Tue, 6 Jun 2023 12:10:51 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v11 00/12] Network support for Landlock
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>
+References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+ <8f3d242a-c0ee-217e-8094-84093ce4e134@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <8f3d242a-c0ee-217e-8094-84093ce4e134@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwDnkzof435kO04NAw--.3705S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFyrtr47Cw18Zw18Zw4ktFb_yoW8Kr47pa
-        nFgFy3Cr97WF92kF97Ca43uF4Fk3yUKryUGws8Z3Wvv3ZxZr18Zry8t3W29r15Jry5AFy0
-        vr4Fqrs8Aa1vv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
-        A2048vs2IY020Ec7CjxVAFwI0_JFI_Gr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-        w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-        WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-        Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ew
-        Av7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY
-        6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI4
-        8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-        wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-        v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k2
-        6cxKx2IYs7xG6r1I6r4UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-        AFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUI2-eUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABF1jj45CQAADs7
+X-Originating-IP: [10.123.123.126]
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Fix build warnings (function parameters description) for
-ima_collect_modsig(), ima_match_policy() and ima_parse_add_rule().
 
-Fixes: 15588227e086 ("ima: Collect modsig")
-Fixes: 2fe5d6def167 ("ima: integrity appraisal extension")
-Fixes: 4af4662fa4a9 ("integrity: IMA policy")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima_modsig.c | 3 +++
- security/integrity/ima/ima_policy.c | 3 ++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+6/5/2023 6:02 PM, Mickaël Salaün пишет:
+> Hi Konstantin,
+> 
+> The kernel code looks good. I found some issues in tests and
+> documentation, and I'm still reviewing the whole patches. In the
+> meantime, I've pushed it in -next, we'll see how it goes.
+> 
+> We need to have this new code covered by syzkaller. I'll work on that
+> unless you want to.
+> 
+> Regards,
+>    Mickaël
+> 
+   Hi, Mickaël!
+   I have never set up syzkaller. Do you have a syzkaller scenario for 
+Landlock code? I need some hints. I will give it a shot.
 
-diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-index fb25723c65b..3e7bee30080 100644
---- a/security/integrity/ima/ima_modsig.c
-+++ b/security/integrity/ima/ima_modsig.c
-@@ -89,6 +89,9 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
- 
- /**
-  * ima_collect_modsig - Calculate the file hash without the appended signature.
-+ * @modsig: parsed module signature
-+ * @buf: data to verify the signature on
-+ * @size: data size
-  *
-  * Since the modsig is part of the file contents, the hash used in its signature
-  * isn't the same one ordinarily calculated by IMA. Therefore PKCS7 code
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 3ca8b7348c2..c9b3bd8f1bb 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -721,6 +721,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
-  * @secid: LSM secid of the task to be validated
-  * @func: IMA hook identifier
-  * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
-+ * @flags: IMA actions to consider (e.g. IMA_MEASURE | IMA_APPRAISE)
-  * @pcr: set the pcr to extend
-  * @template_desc: the template that should be used for this rule
-  * @func_data: func specific data, may be NULL
-@@ -1915,7 +1916,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 
- /**
-  * ima_parse_add_rule - add a rule to ima_policy_rules
-- * @rule - ima measurement policy rule
-+ * @rule: ima measurement policy rule
-  *
-  * Avoid locking by allowing just one writer at a time in ima_write_policy()
-  * Returns the length of the rule parsed, an error code on failure
--- 
-2.25.1
-
+  Regards,
+     Konstantin.
+> 
+> On 15/05/2023 18:13, Konstantin Meskhidze wrote:
+>> Hi,
+>> This is a new V11 patch related to Landlock LSM network confinement.
+>> It is based on the landlock's -next branch on top of v6.2-rc3+ kernel version:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
+>> 
+>> It brings refactoring of previous patch version V10.
+>> Mostly there are fixes of logic and typos, refactoring some selftests.
+>> 
+>> All test were run in QEMU evironment and compiled with
+>>   -static flag.
+>>   1. network_test: 36/36 tests passed.
+>>   2. base_test: 7/7 tests passed.
+>>   3. fs_test: 78/78 tests passed.
+>>   4. ptrace_test: 8/8 tests passed.
+>> 
+>> Previous versions:
+>> v10: https://lore.kernel.org/linux-security-module/20230323085226.1432550-1-konstantin.meskhidze@huawei.com/
+>> v9: https://lore.kernel.org/linux-security-module/20230116085818.165539-1-konstantin.meskhidze@huawei.com/
+>> v8: https://lore.kernel.org/linux-security-module/20221021152644.155136-1-konstantin.meskhidze@huawei.com/
+>> v7: https://lore.kernel.org/linux-security-module/20220829170401.834298-1-konstantin.meskhidze@huawei.com/
+>> v6: https://lore.kernel.org/linux-security-module/20220621082313.3330667-1-konstantin.meskhidze@huawei.com/
+>> v5: https://lore.kernel.org/linux-security-module/20220516152038.39594-1-konstantin.meskhidze@huawei.com
+>> v4: https://lore.kernel.org/linux-security-module/20220309134459.6448-1-konstantin.meskhidze@huawei.com/
+>> v3: https://lore.kernel.org/linux-security-module/20220124080215.265538-1-konstantin.meskhidze@huawei.com/
+>> v2: https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
+>> v1: https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
+>> 
+>> Konstantin Meskhidze (11):
+>>    landlock: Make ruleset's access masks more generic
+>>    landlock: Refactor landlock_find_rule/insert_rule
+>>    landlock: Refactor merge/inherit_ruleset functions
+>>    landlock: Move and rename layer helpers
+>>    landlock: Refactor layer helpers
+>>    landlock: Refactor landlock_add_rule() syscall
+>>    landlock: Add network rules and TCP hooks support
+>>    selftests/landlock: Share enforce_ruleset()
+>>    selftests/landlock: Add 11 new test suites dedicated to network
+>>    samples/landlock: Add network demo
+>>    landlock: Document Landlock's network support
+>> 
+>> Mickaël Salaün (1):
+>>    landlock: Allow filesystem layout changes for domains without such
+>>      rule type
+>> 
+>>   Documentation/userspace-api/landlock.rst     |   89 +-
+>>   include/uapi/linux/landlock.h                |   48 +
+>>   samples/landlock/sandboxer.c                 |  128 +-
+>>   security/landlock/Kconfig                    |    1 +
+>>   security/landlock/Makefile                   |    2 +
+>>   security/landlock/fs.c                       |  232 +--
+>>   security/landlock/limits.h                   |    7 +-
+>>   security/landlock/net.c                      |  174 +++
+>>   security/landlock/net.h                      |   26 +
+>>   security/landlock/ruleset.c                  |  405 +++++-
+>>   security/landlock/ruleset.h                  |  185 ++-
+>>   security/landlock/setup.c                    |    2 +
+>>   security/landlock/syscalls.c                 |  163 ++-
+>>   tools/testing/selftests/landlock/base_test.c |    2 +-
+>>   tools/testing/selftests/landlock/common.h    |   10 +
+>>   tools/testing/selftests/landlock/config      |    4 +
+>>   tools/testing/selftests/landlock/fs_test.c   |   74 +-
+>>   tools/testing/selftests/landlock/net_test.c  | 1317 ++++++++++++++++++
+>>   18 files changed, 2520 insertions(+), 349 deletions(-)
+>>   create mode 100644 security/landlock/net.c
+>>   create mode 100644 security/landlock/net.h
+>>   create mode 100644 tools/testing/selftests/landlock/net_test.c
+>> 
+>> --
+>> 2.25.1
+>> 
+> .
