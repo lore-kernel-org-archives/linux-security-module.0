@@ -2,83 +2,93 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F76FC77B7A
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jun 2023 17:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E764C77B73
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jun 2023 18:46:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238704AbjFFRuK (ORCPT
+        id S238818AbjFFSqG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Jun 2023 13:50:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49668 "EHLO
+        Tue, 6 Jun 2023 14:46:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238684AbjFFRuI (ORCPT
+        with ESMTP id S233789AbjFFSqF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Jun 2023 13:50:08 -0400
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2C5610FF;
-        Tue,  6 Jun 2023 10:50:06 -0700 (PDT)
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 25CD34D1; Tue,  6 Jun 2023 12:50:05 -0500 (CDT)
-Date:   Tue, 6 Jun 2023 12:50:05 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
+        Tue, 6 Jun 2023 14:46:05 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83BE810CB;
+        Tue,  6 Jun 2023 11:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+        bh=p+0nLSoJG17KKuiydwKjkEWK72qSSTBX227sDUKnkMI=; b=K8PQtgjHzFM8DsR8pdTrGnhVD2
+        z/OYfEVC48yKut8wf6Nopa2FNs7aMyMSR1EpbfpI/r54+qbSB2Pw4GxeQxJaNXQClit6dBePXMvbv
+        SiWVAkmZuBZcHKLlad7NRqmVtc6k/3LvY2Q0oei4CWLvLZr82F+ikRzih/Z3KirO1b6M7PK87axeR
+        8bLPwahj/gRcWyWZHFvv23YgeMUyO7WGZXM6onH+v9iuibrPt52d1Rr4t/nZrIVOCk91CCVtUn5rd
+        0588ctSoNdj4cxSLilu1LKMGFtHsF5072LwMPxAm5kh/Ul0folqF4paXyeLdgqTAnQfnd9cqBxR9G
+        2Ye0363g==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1q6bgf-002nx4-2g;
+        Tue, 06 Jun 2023 18:45:45 +0000
+Date:   Tue, 6 Jun 2023 11:45:45 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     Paul Moore <paul@paul-moore.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        "GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Wang Weiyang <wangweiyang2@huawei.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>, gongruiqi1@huawei.com
-Subject: Re: [PATCH] capability: erase checker warnings about struct
- __user_cap_data_struct
-Message-ID: <20230606175005.GA639588@mail.hallyn.com>
-References: <20230602054527.290696-1-gongruiqi@huaweicloud.com>
- <20230606032844.GA628899@mail.hallyn.com>
- <CAHC9VhT8k87SdD4_JQFwXShwJeBb3KU7C+R5ABAOhDGvvC0X+w@mail.gmail.com>
+Cc:     keescook@chromium.org, yzaikin@google.com, dhowells@redhat.com,
+        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com,
+        j.granados@samsung.com, brauner@kernel.org, ebiederm@xmission.com,
+        patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] sysctl: move security keys sysctl registration to
+ its own file
+Message-ID: <ZH9+2WFsru1VMPqT@bombadil.infradead.org>
+References: <20230530232914.3689712-1-mcgrof@kernel.org>
+ <20230530232914.3689712-3-mcgrof@kernel.org>
+ <CAHC9VhRA_XkkiZpg=d1RiME+VUYe7bsuV6pOpsseDRWfwV+q9A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhT8k87SdD4_JQFwXShwJeBb3KU7C+R5ABAOhDGvvC0X+w@mail.gmail.com>
+In-Reply-To: <CAHC9VhRA_XkkiZpg=d1RiME+VUYe7bsuV6pOpsseDRWfwV+q9A@mail.gmail.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 06, 2023 at 12:45:00PM -0400, Paul Moore wrote:
-> On Mon, Jun 5, 2023 at 11:29 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > On Fri, Jun 02, 2023 at 01:45:27PM +0800, GONG, Ruiqi wrote:
-> > > Currently Sparse warns the following when compiling kernel/capability.c:
-> > >
-> > > kernel/capability.c:191:35: warning: incorrect type in argument 2 (different address spaces)
-> > > kernel/capability.c:191:35:    expected void const *from
-> > > kernel/capability.c:191:35:    got struct __user_cap_data_struct [noderef] __user *
-> > > kernel/capability.c:168:14: warning: dereference of noderef expression
-> > > ...... (multiple noderef warnings on different locations)
-> > > kernel/capability.c:244:29: warning: incorrect type in argument 1 (different address spaces)
-> > > kernel/capability.c:244:29:    expected void *to
-> > > kernel/capability.c:244:29:    got struct __user_cap_data_struct [noderef] __user ( * )[2]
-> > > kernel/capability.c:247:42: warning: dereference of noderef expression
-> > > ...... (multiple noderef warnings on different locations)
-> > >
-> > > It seems that defining `struct __user_cap_data_struct` together with
-> > > `cap_user_data_t` make Sparse believe that the struct is `noderef` as
-> > > well. Separate their definitions to clarify their respective attributes.
-> > >
-> > > Signed-off-by: GONG, Ruiqi <gongruiqi@huaweicloud.com>
+On Wed, May 31, 2023 at 05:20:46PM -0400, Paul Moore wrote:
+> On Tue, May 30, 2023 at 7:29 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
 > >
-> > Seems ok.
+> > The security keys sysctls are already declared on its own file,
+> > just move the sysctl registration to its own file to help avoid
+> > merge conflicts on sysctls.c, and help with clearing up sysctl.c
+> > further.
 > >
-> > There's still so much noise in the make C=2 output even just for
-> > kernel/capability.c that I'm not sure it's worth it, but no
-> > objection.
+> > This creates a small penalty of 23 bytes:
 > >
-> > Acked-by: Serge Hallyn <serge@hallyn.com>
+> > ./scripts/bloat-o-meter vmlinux.1 vmlinux.2
+> > add/remove: 2/0 grow/shrink: 0/1 up/down: 49/-26 (23)
+> > Function                                     old     new   delta
+> > init_security_keys_sysctls                     -      33     +33
+> > __pfx_init_security_keys_sysctls               -      16     +16
+> > sysctl_init_bases                             85      59     -26
+> > Total: Before=21256937, After=21256960, chg +0.00%
+> >
+> > But soon we'll be saving tons of bytes anyway, as we modify the
+> > sysctl registrations to use ARRAY_SIZE and so we get rid of all the
+> > empty array elements so let's just clean this up now.
+> >
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > ---
+> >  include/linux/key.h    | 3 ---
+> >  kernel/sysctl.c        | 4 ----
+> >  security/keys/sysctl.c | 7 +++++++
+> >  3 files changed, 7 insertions(+), 7 deletions(-)
 > 
-> I'm guessing you would prefer if I pulled this via the LSM tree Serge?
+> Ultimately I'll leave the ACK to David or Jarkko, but this looks
+> reasonable to me.
+> 
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-Yes, please.
+I've queued this onto sysctl-next as I haven't seen any complaints.
+I can drop it if there are complaints or regressions reported by
+folks on linux-next.
 
-> FWIW, if that is ever the case for future patches, just add a note
-> when you ACK something and I'll pick it up.
-
-Thanks, will do.
-
-If it starts happening more than once or twice a month, then I'll get my tree
-into shape and start cueing up patches...
+  Luis
