@@ -2,91 +2,107 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15061C7EE24
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jun 2023 03:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB17C7EE24
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jun 2023 07:46:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231268AbjFFD3A (ORCPT
+        id S236225AbjFFHqU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Jun 2023 23:29:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42702 "EHLO
+        Tue, 6 Jun 2023 03:46:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230499AbjFFD3A (ORCPT
+        with ESMTP id S236529AbjFFHo0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Jun 2023 23:29:00 -0400
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1708711B;
-        Mon,  5 Jun 2023 20:28:46 -0700 (PDT)
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id C18AD1D20; Mon,  5 Jun 2023 22:28:44 -0500 (CDT)
-Date:   Mon, 5 Jun 2023 22:28:44 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     "GONG, Ruiqi" <gongruiqi@huaweicloud.com>
-Cc:     Serge Hallyn <serge@hallyn.com>,
+        Tue, 6 Jun 2023 03:44:26 -0400
+Received: from frasgout13.his.huawei.com (unknown [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10C7710FD;
+        Tue,  6 Jun 2023 00:41:53 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Qb2G93sy9zB0trs;
+        Tue,  6 Jun 2023 15:31:13 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwDnkzof435kO04NAw--.3705S2;
+        Tue, 06 Jun 2023 08:41:25 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Wang Weiyang <wangweiyang2@huawei.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>, gongruiqi1@huawei.com
-Subject: Re: [PATCH] capability: erase checker warnings about struct
- __user_cap_data_struct
-Message-ID: <20230606032844.GA628899@mail.hallyn.com>
-References: <20230602054527.290696-1-gongruiqi@huaweicloud.com>
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH 1/2] evm: Fix build warnings
+Date:   Tue,  6 Jun 2023 09:41:12 +0200
+Message-Id: <20230606074113.2120632-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230602054527.290696-1-gongruiqi@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwDnkzof435kO04NAw--.3705S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFy7Aw1fGF17Zw17uryUZFb_yoW8tw4xpa
+        15KFW8Jr4kGFyUCrykAF4rCa4F9rWjgw1jgwsrAr1vvF98ZrWkXr1Ikr4jgr95Kryxtrn2
+        yayYvrn5Zwn0y3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI
+        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+        AIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxU4NB_UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABF1jj45CQAACs6
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 02, 2023 at 01:45:27PM +0800, GONG, Ruiqi wrote:
-> Currently Sparse warns the following when compiling kernel/capability.c:
-> 
-> kernel/capability.c:191:35: warning: incorrect type in argument 2 (different address spaces)
-> kernel/capability.c:191:35:    expected void const *from
-> kernel/capability.c:191:35:    got struct __user_cap_data_struct [noderef] __user *
-> kernel/capability.c:168:14: warning: dereference of noderef expression
-> ...... (multiple noderef warnings on different locations)
-> kernel/capability.c:244:29: warning: incorrect type in argument 1 (different address spaces)
-> kernel/capability.c:244:29:    expected void *to
-> kernel/capability.c:244:29:    got struct __user_cap_data_struct [noderef] __user ( * )[2]
-> kernel/capability.c:247:42: warning: dereference of noderef expression
-> ...... (multiple noderef warnings on different locations)
-> 
-> It seems that defining `struct __user_cap_data_struct` together with
-> `cap_user_data_t` make Sparse believe that the struct is `noderef` as
-> well. Separate their definitions to clarify their respective attributes.
-> 
-> Signed-off-by: GONG, Ruiqi <gongruiqi@huaweicloud.com>
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Seems ok.
+Fix build warnings (function parameters description) for
+evm_read_protected_xattrs(), evm_set_key() and evm_verifyxattr().
 
-There's still so much noise in the make C=2 output even just for
-kernel/capability.c that I'm not sure it's worth it, but no
-objection.
+Fixes: 7626676320f3 ("evm: provide a function to set the EVM key from the kernel")
+Fixes: 8314b6732ae4 ("ima: Define new template fields xattrnames, xattrlengths and xattrvalues")
+Fixes: 2960e6cb5f7c ("evm: additional parameter to pass integrity cache entry 'iint'")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/evm/evm_crypto.c | 2 +-
+ security/integrity/evm/evm_main.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 033804f5a5f..0dae649f374 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -40,7 +40,7 @@ static const char evm_hmac[] = "hmac(sha1)";
+ /**
+  * evm_set_key() - set EVM HMAC key from the kernel
+  * @key: pointer to a buffer with the key data
+- * @size: length of the key data
++ * @keylen: length of the key data
+  *
+  * This function allows setting the EVM HMAC key from the kernel
+  * without using the "encrypted" key subsystem keys. It can be used
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index b1c2197473a..c9b6e2a4347 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -318,7 +318,6 @@ int evm_protected_xattr_if_enabled(const char *req_xattr_name)
+ /**
+  * evm_read_protected_xattrs - read EVM protected xattr names, lengths, values
+  * @dentry: dentry of the read xattrs
+- * @inode: inode of the read xattrs
+  * @buffer: buffer xattr names, lengths or values are copied to
+  * @buffer_size: size of buffer
+  * @type: n: names, l: lengths, v: values
+@@ -390,6 +389,7 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+  * @xattr_name: requested xattr
+  * @xattr_value: requested xattr value
+  * @xattr_value_len: requested xattr value length
++ * @iint: inode integrity metadata
+  *
+  * Calculate the HMAC for the given dentry and verify it against the stored
+  * security.evm xattr. For performance, use the xattr value and length
+-- 
+2.25.1
 
-> ---
->  include/uapi/linux/capability.h | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
-> index 3d61a0ae055d..5bb906098697 100644
-> --- a/include/uapi/linux/capability.h
-> +++ b/include/uapi/linux/capability.h
-> @@ -41,11 +41,12 @@ typedef struct __user_cap_header_struct {
->  	int pid;
->  } __user *cap_user_header_t;
->  
-> -typedef struct __user_cap_data_struct {
-> +struct __user_cap_data_struct {
->          __u32 effective;
->          __u32 permitted;
->          __u32 inheritable;
-> -} __user *cap_user_data_t;
-> +};
-> +typedef struct __user_cap_data_struct __user *cap_user_data_t;
->  
->  
->  #define VFS_CAP_REVISION_MASK	0xFF000000
-> -- 
-> 2.25.1
