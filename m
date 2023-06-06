@@ -2,93 +2,128 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E764C77B73
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jun 2023 18:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72494C77B7A
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jun 2023 18:50:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238818AbjFFSqG (ORCPT
+        id S238221AbjFFSus (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Jun 2023 14:46:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55166 "EHLO
+        Tue, 6 Jun 2023 14:50:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233789AbjFFSqF (ORCPT
+        with ESMTP id S234770AbjFFSus (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Jun 2023 14:46:05 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83BE810CB;
-        Tue,  6 Jun 2023 11:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-        bh=p+0nLSoJG17KKuiydwKjkEWK72qSSTBX227sDUKnkMI=; b=K8PQtgjHzFM8DsR8pdTrGnhVD2
-        z/OYfEVC48yKut8wf6Nopa2FNs7aMyMSR1EpbfpI/r54+qbSB2Pw4GxeQxJaNXQClit6dBePXMvbv
-        SiWVAkmZuBZcHKLlad7NRqmVtc6k/3LvY2Q0oei4CWLvLZr82F+ikRzih/Z3KirO1b6M7PK87axeR
-        8bLPwahj/gRcWyWZHFvv23YgeMUyO7WGZXM6onH+v9iuibrPt52d1Rr4t/nZrIVOCk91CCVtUn5rd
-        0588ctSoNdj4cxSLilu1LKMGFtHsF5072LwMPxAm5kh/Ul0folqF4paXyeLdgqTAnQfnd9cqBxR9G
-        2Ye0363g==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q6bgf-002nx4-2g;
-        Tue, 06 Jun 2023 18:45:45 +0000
-Date:   Tue, 6 Jun 2023 11:45:45 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     keescook@chromium.org, yzaikin@google.com, dhowells@redhat.com,
-        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com,
-        j.granados@samsung.com, brauner@kernel.org, ebiederm@xmission.com,
-        patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] sysctl: move security keys sysctl registration to
- its own file
-Message-ID: <ZH9+2WFsru1VMPqT@bombadil.infradead.org>
-References: <20230530232914.3689712-1-mcgrof@kernel.org>
- <20230530232914.3689712-3-mcgrof@kernel.org>
- <CAHC9VhRA_XkkiZpg=d1RiME+VUYe7bsuV6pOpsseDRWfwV+q9A@mail.gmail.com>
+        Tue, 6 Jun 2023 14:50:48 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B501E83
+        for <linux-security-module@vger.kernel.org>; Tue,  6 Jun 2023 11:50:46 -0700 (PDT)
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 69E163F137
+        for <linux-security-module@vger.kernel.org>; Tue,  6 Jun 2023 18:50:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1686077444;
+        bh=ZBMK+DdZXFCRFi5Z/MVobjT4mwItd0TF7QfSBIyRNYM=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=Ahe4+ZB76jfNXrV8iwXte6j+FKe814hC7FwYR+Lsu/ugljxjLXb6GZQK2pwH7d4E1
+         iVXKIT/nHa/qpWJb24hz/UagXrg+9tYkTbx2nAgtE3gaCttTLu02A4oP1hx3+g347p
+         /Si6lbo0jHbgCZJBaEi5ZkDYw3nXb/YJQw5GyLvylQuJ6zlaQTx4GxIDgcmYEZdWpi
+         B2Z2bsZDM+DGfPPNwJPq86/LpUs0ieuh36+JaSoFMUwhGOz9yXIxRf2L6jEH78zOTf
+         d8R0HqtWL7K9/jSlLt07FitFtfQFt5QPBVRRAW14z+R8x0u/hnkFnqbY5Tzh9x3u9s
+         6SBkRC9LDNf2A==
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-5693861875fso96436407b3.1
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Jun 2023 11:50:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686077443; x=1688669443;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZBMK+DdZXFCRFi5Z/MVobjT4mwItd0TF7QfSBIyRNYM=;
+        b=M6sZ9jLZhRLy07oiAAX5iE4DHhPMeMF0NRnduGkdxpdvPkx1z5HS0fQTuGd83+NhC6
+         I1ThEhlYW6aDhcmXqaBRltfiemXuxlbsVqkZ3e5z1jsFX4T08/3qNgPGGbTIODOENkBF
+         gUxV2iXdyMx7kBUfZpE91yEEwxG/tW0JKrFOOTNhT9DRE1wrx2wZT/uiqZuNsi9b6A5X
+         VNEWh9FkM6V7xeJYVW8hy9Gff4HPFL/usNlXbgK8i3krsuzTRCjz6rWdFc61q+fR15sH
+         EVDc5PJITaYjFe5vkbTENDGqm5kYjcw4o7qfjFvnsy0sG+8FN6i9JVyS3RcFdUblix0E
+         Sxqg==
+X-Gm-Message-State: AC+VfDzg6SdIacN3iGtHfsrApng1aG+nr9C/Cdebgw8EJjJvVVzyi6tY
+        6f3K+LewsU0upGI+FX3412vixpaNsVzr/igO0zJjW+ibIUsq0ciRqc0hboMhxsJGvZDpndl3kdP
+        QBzIdCo1hiEYQCkcqBFnUtF7s4kaHtwuWB0DlID3qYY79JIS5dRJlZGCPuI6eIO58N0TZ/Q==
+X-Received: by 2002:a0d:df93:0:b0:567:2891:a2ec with SMTP id i141-20020a0ddf93000000b005672891a2ecmr2847091ywe.22.1686077443445;
+        Tue, 06 Jun 2023 11:50:43 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ7eG8FXdCtl3Jo2AHE6KMXFNu+4hALAAsTlXcmSnAR6Is4KRsx+SE5FovsuMWhsnejikrGXFCTSV6j866OLXwU=
+X-Received: by 2002:a0d:df93:0:b0:567:2891:a2ec with SMTP id
+ i141-20020a0ddf93000000b005672891a2ecmr2847070ywe.22.1686077443171; Tue, 06
+ Jun 2023 11:50:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRA_XkkiZpg=d1RiME+VUYe7bsuV6pOpsseDRWfwV+q9A@mail.gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+References: <20230503064344.45825-1-aleksandr.mikhalitsyn@canonical.com> <CAHC9VhTx+6f8riuGOG40HZoaYx3F8Kf3Hm7Eb5k3-An91eMWgg@mail.gmail.com>
+In-Reply-To: <CAHC9VhTx+6f8riuGOG40HZoaYx3F8Kf3Hm7Eb5k3-An91eMWgg@mail.gmail.com>
+From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date:   Tue, 6 Jun 2023 20:50:32 +0200
+Message-ID: <CAEivzxcVQoA9rN06BtHJzyHCaN60RG1-cyGEEw-P+dp-tCB=QA@mail.gmail.com>
+Subject: Re: [PATCH v2] LSM: SafeSetID: fix UID printed instead of GID
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     mortonm@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 31, 2023 at 05:20:46PM -0400, Paul Moore wrote:
-> On Tue, May 30, 2023 at 7:29 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+On Thu, May 18, 2023 at 8:59=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Wed, May 3, 2023 at 2:44=E2=80=AFAM Alexander Mikhalitsyn
+> <aleksandr.mikhalitsyn@canonical.com> wrote:
 > >
-> > The security keys sysctls are already declared on its own file,
-> > just move the sysctl registration to its own file to help avoid
-> > merge conflicts on sysctls.c, and help with clearing up sysctl.c
-> > further.
+> > pr_warn message clearly says that GID should be printed,
+> > but we have UID there. Let's fix that.
 > >
-> > This creates a small penalty of 23 bytes:
+> > Found accidentaly during the work on isolated user namespaces.
 > >
-> > ./scripts/bloat-o-meter vmlinux.1 vmlinux.2
-> > add/remove: 2/0 grow/shrink: 0/1 up/down: 49/-26 (23)
-> > Function                                     old     new   delta
-> > init_security_keys_sysctls                     -      33     +33
-> > __pfx_init_security_keys_sysctls               -      16     +16
-> > sysctl_init_bases                             85      59     -26
-> > Total: Before=21256937, After=21256960, chg +0.00%
-> >
-> > But soon we'll be saving tons of bytes anyway, as we modify the
-> > sysctl registrations to use ARRAY_SIZE and so we get rid of all the
-> > empty array elements so let's just clean this up now.
-> >
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
+om>
 > > ---
-> >  include/linux/key.h    | 3 ---
-> >  kernel/sysctl.c        | 4 ----
-> >  security/keys/sysctl.c | 7 +++++++
-> >  3 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> Ultimately I'll leave the ACK to David or Jarkko, but this looks
-> reasonable to me.
-> 
+> > v2: __kuid_val -> __kgid_val
+> > ---
+> >  security/safesetid/lsm.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> I'm assuming you're going to pick this up Micah?
+>
 > Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-I've queued this onto sysctl-next as I haven't seen any complaints.
-I can drop it if there are complaints or regressions reported by
-folks on linux-next.
+Dear Paul!
 
-  Luis
+Thanks for your review!
+
+Gentle ping to Micah Morton :-)
+
+Kind regards,
+Alex
+
+>
+> > diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
+> > index e806739f7868..5be5894aa0ea 100644
+> > --- a/security/safesetid/lsm.c
+> > +++ b/security/safesetid/lsm.c
+> > @@ -131,7 +131,7 @@ static int safesetid_security_capable(const struct =
+cred *cred,
+> >                  * set*gid() (e.g. setting up userns gid mappings).
+> >                  */
+> >                 pr_warn("Operation requires CAP_SETGID, which is not av=
+ailable to GID %u for operations besides approved set*gid transitions\n",
+> > -                       __kuid_val(cred->uid));
+> > +                       __kgid_val(cred->gid));
+> >                 return -EPERM;
+> >         default:
+> >                 /* Error, the only capabilities were checking for is CA=
+P_SETUID/GID */
+> > --
+> > 2.34.1
+>
+> --
+> paul-moore.com
