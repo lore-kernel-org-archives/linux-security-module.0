@@ -2,106 +2,384 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE81EC77B7A
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jun 2023 21:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D45C7EE23
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jun 2023 05:47:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231303AbjFFVNl (ORCPT
+        id S233861AbjFGFq7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Jun 2023 17:13:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36216 "EHLO
+        Wed, 7 Jun 2023 01:46:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237466AbjFFVNj (ORCPT
+        with ESMTP id S229603AbjFGFq5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Jun 2023 17:13:39 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 432DC1721
-        for <linux-security-module@vger.kernel.org>; Tue,  6 Jun 2023 14:13:38 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id 3f1490d57ef6-bacfb7acdb7so7953557276.0
-        for <linux-security-module@vger.kernel.org>; Tue, 06 Jun 2023 14:13:38 -0700 (PDT)
+        Wed, 7 Jun 2023 01:46:57 -0400
+Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 911C719B6
+        for <linux-security-module@vger.kernel.org>; Tue,  6 Jun 2023 22:46:55 -0700 (PDT)
+Received: by mail-oi1-x235.google.com with SMTP id 5614622812f47-39a95068c9cso2723385b6e.1
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Jun 2023 22:46:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1686086017; x=1688678017;
+        d=chromium.org; s=google; t=1686116815; x=1688708815;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=39uw5j5XuTGu9DjyN0cv5Al3Po6ZxhAFPhk3sdMi2Fw=;
-        b=DKJQTgOo05HezKqlZ9DS24TwMox0bUnFdDpVF3dgI7CN2ObBD3SaEYsbUktmTDW3nM
-         cHhKGrXhZu1KqsaCP9jnv0Bp34rx+PYS100YfKOKjM4mxA02CdLOte/kP9xZfzXsU7Jr
-         TVsk8/Y9qLEb8qdVpsBs1+1hJa/fIPVVsmVwSC5ndAVa7wzGueVULvzXn1GP/M9Y8MiN
-         qDmSp76aEitGo90Zj5XHY850+R8ZbbjUNosIBlhmd+7ntSi4yOLtYtjUq1hxRFx85V8u
-         f4aBwZg4fN7Z3DJuHteCJdtybkK6yfduBhNRkpMcRce73D+gy8uTl0/tRwQ7+GYiVlCC
-         vHzw==
+        bh=GyERF0RS7JY1jKOtadu+WV5iG7DwiHrgJtcnyQtVxBs=;
+        b=GlOMRdsW7+vgAflLBokBqQInqf2YvCY16X9F7c0oI8vzt5RrnAH0JABHIBuBY1W1eM
+         uO8Gz5eaHaY73kqV41aFZc7ygwYaAPKAUYPtbxB/gIv3p/rF0qCAe/jT/CsRsq0pDJt6
+         oy2OnS0/M3yFeSnWibgScbxQoNEsTapqvob48=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686086017; x=1688678017;
+        d=1e100.net; s=20221208; t=1686116815; x=1688708815;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=39uw5j5XuTGu9DjyN0cv5Al3Po6ZxhAFPhk3sdMi2Fw=;
-        b=BWTKoR2mL9IPjdeKtmUxWMFLNA5qtuJs2zc0c2a9/JauzLNgM5XGA5oQ1S/kB93WnV
-         1MecNL0BKITeCYS4nRmsoA+WPeeWtSgf7OCkyGTrZ9f6irm26AmqD/s/jYg01ECr4sC5
-         CDkImZpGJ+t7hYhVLb2MdqH35oBs5N182eMeG+Ssg0EWTXmAthTkLTCPm5cZUQ8krTa+
-         g6w1H+dPegxUMjlMh2o02auiAg+i/83FzJQ0lJx+Z5zBTUbzdQd1TAnNbnt8WlDJ01+Y
-         zm1+VtVRLXQnlswHblehkZP2Xv1poiv0r+Nq8GLYggYhpcofEOsMZeWr90sU2dTDOVsE
-         mqPQ==
-X-Gm-Message-State: AC+VfDyAjnTJG6ExdnTkWP1cAWGJZYhGnso6Rl4Gx3U2FYe/FTwasAoJ
-        kkm71i7XCrz/B0bmqzUNvPoHdH3qYjBmYPRSOYmS
-X-Google-Smtp-Source: ACHHUZ7Qa99BZOB/MZdSXvp3X6lxNXMZNKUrs6bg5e4zcI6VWeiSNpPtkZjfFbJkTd4DlqH77r4OYNrsM6vZLPMRQeg=
-X-Received: by 2002:a25:a007:0:b0:ba8:620b:38a7 with SMTP id
- x7-20020a25a007000000b00ba8620b38a7mr3428219ybh.53.1686086017436; Tue, 06 Jun
- 2023 14:13:37 -0700 (PDT)
+        bh=GyERF0RS7JY1jKOtadu+WV5iG7DwiHrgJtcnyQtVxBs=;
+        b=Y8OiDfJ081dlfp/6PIGxCbJo7I+v5agt3Cqs1FpGq5FycUGdDuE0yEn4bQJUwI7AZ1
+         Z/tWL6/5kKbbNYgUdX8PBX5rzVhLzrEVUE45/p0Tu3VDUuPcKu6zbFcj4XFUA93IucvX
+         BZKDtZ1VIvOQVjcFOxa42tGK8iIKZgh6Dgs17WJ18m1unq9OiKjqkGSkqFAQ3R44jiSA
+         raQrvhJvCqU4fdY23jFpH0a9WOxFrwbNNGxdOWqLs2IVDph25vPZck+tHx4vzy+EzIkn
+         94xd4ILrBcJkXEEe0sO9T+08fNmcjRHJ3yq7vDwO/SHjfOjGHn9hjW0FjPS3kVqdZvpR
+         8jdQ==
+X-Gm-Message-State: AC+VfDwG7J7QFuyMbViRE4i+vmMDgsGSfwp40jVG/pYsqPL9+mwSvgqS
+        rQUqfVLjj59bhTiQmRZ8TRwVfKmFQQGlCmq2UemXPQ==
+X-Google-Smtp-Source: ACHHUZ5zS5dgpa7YaYuHV2jJugHaYJIOv9d28BunL9wYs4BNz5uH8Cp/8zFK5xbtcki3Nii4xLGr3KpAncBsV1F6M2Y=
+X-Received: by 2002:a05:6808:4287:b0:397:ec35:f5a6 with SMTP id
+ dq7-20020a056808428700b00397ec35f5a6mr2109539oib.57.1686116814839; Tue, 06
+ Jun 2023 22:46:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230503064344.45825-1-aleksandr.mikhalitsyn@canonical.com>
- <CAHC9VhTx+6f8riuGOG40HZoaYx3F8Kf3Hm7Eb5k3-An91eMWgg@mail.gmail.com> <CAEivzxcVQoA9rN06BtHJzyHCaN60RG1-cyGEEw-P+dp-tCB=QA@mail.gmail.com>
-In-Reply-To: <CAEivzxcVQoA9rN06BtHJzyHCaN60RG1-cyGEEw-P+dp-tCB=QA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 6 Jun 2023 17:13:26 -0400
-Message-ID: <CAHC9VhQnOszTFaFVBZACQCDxsuD6JrxDffmmJ-wBudK2MJ2pUA@mail.gmail.com>
-Subject: Re: [PATCH v2] LSM: SafeSetID: fix UID printed instead of GID
-To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc:     mortonm@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+ <20230515161339.631577-13-konstantin.meskhidze@huawei.com> <ZH89Pi1QAqNW2QgG@google.com>
+In-Reply-To: <ZH89Pi1QAqNW2QgG@google.com>
+From:   Jeff Xu <jeffxu@chromium.org>
+Date:   Tue, 6 Jun 2023 22:46:43 -0700
+Message-ID: <CABi2SkWqHeLkmqONbmavcp2SCiwe6YeH_3dkBLZwSsk7neyPMw@mail.gmail.com>
+Subject: Re: [PATCH v11 12/12] landlock: Document Landlock's network support
+To:     =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+Cc:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        mic@digikod.net, willemdebruijn.kernel@gmail.com,
+        gnoack3000@gmail.com, linux-security-module@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        yusongping@huawei.com, artem.kuzin@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 6, 2023 at 2:50=E2=80=AFPM Aleksandr Mikhalitsyn
-<aleksandr.mikhalitsyn@canonical.com> wrote:
-> On Thu, May 18, 2023 at 8:59=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Wed, May 3, 2023 at 2:44=E2=80=AFAM Alexander Mikhalitsyn
-> > <aleksandr.mikhalitsyn@canonical.com> wrote:
-> > >
-> > > pr_warn message clearly says that GID should be printed,
-> > > but we have UID there. Let's fix that.
-> > >
-> > > Found accidentaly during the work on isolated user namespaces.
-> > >
-> > > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical=
-.com>
-> > > ---
-> > > v2: __kuid_val -> __kgid_val
-> > > ---
-> > >  security/safesetid/lsm.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Jun 6, 2023 at 7:09=E2=80=AFAM G=C3=BCnther Noack <gnoack@google.co=
+m> wrote:
+>
+> On Tue, May 16, 2023 at 12:13:39AM +0800, Konstantin Meskhidze wrote:
+> > Describe network access rules for TCP sockets. Add network access
+> > example in the tutorial. Add kernel configuration support for network.
 > >
-> > I'm assuming you're going to pick this up Micah?
+> > Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> > ---
 > >
-> > Reviewed-by: Paul Moore <paul@paul-moore.com>
+> > Changes since v10:
+> > * Fixes documentaion as Micka=D1=91l suggested:
+> > https://lore.kernel.org/linux-security-module/ec23be77-566e-c8fd-179e-f=
+50e025ac2cf@digikod.net/
+> >
+> > Changes since v9:
+> > * Minor refactoring.
+> >
+> > Changes since v8:
+> > * Minor refactoring.
+> >
+> > Changes since v7:
+> > * Fixes documentaion logic errors and typos as Micka=D1=91l suggested:
+> > https://lore.kernel.org/netdev/9f354862-2bc3-39ea-92fd-53803d9bbc21@dig=
+ikod.net/
+> >
+> > Changes since v6:
+> > * Adds network support documentaion.
+> >
+> > ---
+> >  Documentation/userspace-api/landlock.rst | 83 ++++++++++++++++++------
+> >  1 file changed, 62 insertions(+), 21 deletions(-)
+> >
+> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/u=
+serspace-api/landlock.rst
+> > index f6a7da21708a..f185dbaa726a 100644
+> > --- a/Documentation/userspace-api/landlock.rst
+> > +++ b/Documentation/userspace-api/landlock.rst
+> > @@ -11,10 +11,10 @@ Landlock: unprivileged access control
+> >  :Date: October 2022
+> >
+> >  The goal of Landlock is to enable to restrict ambient rights (e.g. glo=
+bal
+> > -filesystem access) for a set of processes.  Because Landlock is a stac=
+kable
+> > -LSM, it makes possible to create safe security sandboxes as new securi=
+ty layers
+> > -in addition to the existing system-wide access-controls. This kind of =
+sandbox
+> > -is expected to help mitigate the security impact of bugs or
+> > +filesystem or network access) for a set of processes.  Because Landloc=
+k
+> > +is a stackable LSM, it makes possible to create safe security sandboxe=
+s as new
+> > +security layers in addition to the existing system-wide access-control=
+s. This
+> > +kind of sandbox is expected to help mitigate the security impact of bu=
+gs or
+> >  unexpected/malicious behaviors in user space applications.  Landlock e=
+mpowers
+> >  any process, including unprivileged ones, to securely restrict themsel=
+ves.
+> >
+> > @@ -28,20 +28,24 @@ appropriately <kernel_support>`.
+> >  Landlock rules
+> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > -A Landlock rule describes an action on an object.  An object is curren=
+tly a
+> > -file hierarchy, and the related filesystem actions are defined with `a=
+ccess
+> > -rights`_.  A set of rules is aggregated in a ruleset, which can then r=
+estrict
+> > -the thread enforcing it, and its future children.
+> > +A Landlock rule describes an action on a kernel object.  Filesystem
+> > +objects can be defined with a file hierarchy.  Since the fourth ABI
+> > +version, TCP ports enable to identify inbound or outbound connections.
+> > +Actions on these kernel objects are defined according to `access
+> > +rights`_.  A set of rules is aggregated in a ruleset, which
+> > +can then restrict the thread enforcing it, and its future children.
 >
-> Dear Paul!
+> I feel that this paragraph is a bit long-winded to read when the
+> additional networking aspect is added on top as well.  Maybe it would
+> be clearer if we spelled it out in a more structured way, splitting up
+> the filesystem/networking aspects?
 >
-> Thanks for your review!
+> Suggestion:
 >
-> Gentle ping to Micah Morton :-)
+>   A Landlock rule describes an action on an object which the process
+>   intends to perform.  A set of rules is aggregated in a ruleset,
+>   which can then restrict the thread enforcing it, and its future
+>   children.
+>
+>   The two existing types of rules are:
+>
+>   Filesystem rules
+>       For these rules, the object is a file hierarchy,
+>       and the related filesystem actions are defined with
+>       `filesystem access rights`.
+>
+>   Network rules (since ABI v4)
+>       For these rules, the object is currently a TCP port,
+Remote port or local port ?
 
-Micah?
 
-The right thing would be for Micah to merge this via the SafeSetID
-tree, however, considering that it's been over a month with no
-response, and this patch looks trivially correct, I can pick this up
-via the LSM tree if we don't see anything from Micah this week.
-
---=20
-paul-moore.com
+>       and the related actions are defined with `network access rights`.
+>
+> Please note that the landlock(7) man page is in large parts using the
+> same phrasing as the kernel documentation.  It might be a good idea to
+> keep them in sync and structured similarly.  (On that mailing list,
+> the reviews are a bit more focused on good writing style.)
+>
+> The same reasoning applies to the example below as well.  Explaining
+> multiple aspects of a thing in a single example can muddy the message,
+> let's try to avoid that.  But I can also see that if we had two
+> separate examples, a large part of the example would be duplicated.
+>
+> >  Defining and enforcing a security policy
+> >  ----------------------------------------
+> >
+> >  We first need to define the ruleset that will contain our rules.  For =
+this
+> > -example, the ruleset will contain rules that only allow read actions, =
+but write
+> > -actions will be denied.  The ruleset then needs to handle both of thes=
+e kind of
+> > -actions.  This is required for backward and forward compatibility (i.e=
+. the
+> > -kernel and user space may not know each other's supported restrictions=
+), hence
+> > -the need to be explicit about the denied-by-default access rights.
+> > +example, the ruleset will contain rules that only allow filesystem rea=
+d actions
+> > +and establish a specific TCP connection, but filesystem write actions
+> > +and other TCP actions will be denied.  The ruleset then needs to handl=
+e both of
+> > +these kind of actions.  This is required for backward and forward comp=
+atibility
+> > +(i.e. the kernel and user space may not know each other's supported
+> > +restrictions), hence the need to be explicit about the denied-by-defau=
+lt access
+> > +rights.
+>
+> I think it became a bit long - I'd suggest to split it into multiple
+> paragraphs, one after "our rules." (in line with landlock(7)), and one
+> after "will be denied."
+>
+> Maybe the long sentence "For this example, ..." in the middle
+> paragraph could also be split up in two, to make it more readable?  I
+> think the point of that sentence is really just to give a brief
+> overview over what ruleset we are setting out to write.
+>
+> >
+> >  .. code-block:: c
+> >
+> > @@ -62,6 +66,9 @@ the need to be explicit about the denied-by-default a=
+ccess rights.
+> >              LANDLOCK_ACCESS_FS_MAKE_SYM |
+> >              LANDLOCK_ACCESS_FS_REFER |
+> >              LANDLOCK_ACCESS_FS_TRUNCATE,
+> > +        .handled_access_net =3D
+> > +            LANDLOCK_ACCESS_NET_BIND_TCP |
+> > +            LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> >      };
+> >
+> >  Because we may not know on which kernel version an application will be
+> > @@ -70,14 +77,18 @@ should try to protect users as much as possible wha=
+tever the kernel they are
+> >  using.  To avoid binary enforcement (i.e. either all security features=
+ or
+> >  none), we can leverage a dedicated Landlock command to get the current=
+ version
+> >  of the Landlock ABI and adapt the handled accesses.  Let's check if we=
+ should
+> > -remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCA=
+TE``
+> > -access rights, which are only supported starting with the second and t=
+hird
+> > -version of the ABI.
+> > +remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCA=
+TE`` or
+> > +network access rights, which are only supported starting with the seco=
+nd,
+> > +third and fourth version of the ABI.
+>
+> At some point it becomes too much to spell it out in one sentence; I'd re=
+commend
+>
+>   Let's check if we should remove access rights which are only supported
+>   in higher versions of the ABI.
+>
+> >
+> >  .. code-block:: c
+> >
+> >      int abi;
+> >
+> > +    #define ACCESS_NET_BIND_CONNECT ( \
+> > +        LANDLOCK_ACCESS_NET_BIND_TCP | \
+> > +        LANDLOCK_ACCESS_NET_CONNECT_TCP)
+> > +
+>
+> This #define does not seem to be used? -- Drop it?
+>
+>
+> >      abi =3D landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_V=
+ERSION);
+> >      if (abi < 0) {
+> >          /* Degrades gracefully if Landlock is not handled. */
+> > @@ -92,6 +103,11 @@ version of the ABI.
+> >      case 2:
+> >          /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
+> >          ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_TRUNCA=
+TE;
+> > +    case 3:
+> > +        /* Removes network support for ABI < 4 */
+> > +        ruleset_attr.handled_access_net &=3D
+> > +            ~(LANDLOCK_ACCESS_NET_BIND_TCP |
+> > +              LANDLOCK_ACCESS_NET_CONNECT_TCP);
+> >      }
+> >
+> >  This enables to create an inclusive ruleset that will contain our rule=
+s.
+> > @@ -143,10 +159,23 @@ for the ruleset creation, by filtering access rig=
+hts according to the Landlock
+> >  ABI version.  In this example, this is not required because all of the=
+ requested
+> >  ``allowed_access`` rights are already available in ABI 1.
+> >
+> > -We now have a ruleset with one rule allowing read access to ``/usr`` w=
+hile
+> > -denying all other handled accesses for the filesystem.  The next step =
+is to
+> > -restrict the current thread from gaining more privileges (e.g. thanks =
+to a SUID
+> > -binary).
+> > +For network access-control, we can add a set of rules that allow to us=
+e a port
+> > +number for a specific action: HTTPS connections.
+> > +
+> > +.. code-block:: c
+> > +
+> > +    struct landlock_net_service_attr net_service =3D {
+> > +        .allowed_access =3D NET_CONNECT_TCP,
+> > +        .port =3D 443,
+> > +    };
+> > +
+> > +    err =3D landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+> > +                            &net_service, 0);
+> > +
+> > +The next step is to restrict the current thread from gaining more priv=
+ileges
+> > +(e.g. through a SUID binary). We now have a ruleset with the first rul=
+e allowing
+> > +read access to ``/usr`` while denying all other handled accesses for t=
+he filesystem,
+> > +and a second rule allowing HTTPS connections.
+> >
+> >  .. code-block:: c
+> >
+> > @@ -355,7 +384,7 @@ Access rights
+> >  -------------
+> >
+> >  .. kernel-doc:: include/uapi/linux/landlock.h
+> > -    :identifiers: fs_access
+> > +    :identifiers: fs_access net_access
+> >
+> >  Creating a new ruleset
+> >  ----------------------
+> > @@ -374,6 +403,7 @@ Extending a ruleset
+> >
+> >  .. kernel-doc:: include/uapi/linux/landlock.h
+> >      :identifiers: landlock_rule_type landlock_path_beneath_attr
+> > +                  landlock_net_service_attr
+> >
+> >  Enforcing a ruleset
+> >  -------------------
+> > @@ -451,6 +481,12 @@ always allowed when using a kernel that only suppo=
+rts the first or second ABI.
+> >  Starting with the Landlock ABI version 3, it is now possible to secure=
+ly control
+> >  truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access ri=
+ght.
+> >
+> > +Network support (ABI < 4)
+> > +-------------------------
+> > +
+> > +Starting with the Landlock ABI version 4, it is now possible to restri=
+ct TCP
+> > +bind and connect actions to only a set of allowed ports.
+> > +
+> >  .. _kernel_support:
+> >
+> >  Kernel support
+> > @@ -469,6 +505,11 @@ still enable it by adding ``lsm=3Dlandlock,[...]``=
+ to
+> >  Documentation/admin-guide/kernel-parameters.rst thanks to the bootload=
+er
+> >  configuration.
+> >
+> > +To be able to explicitly allow TCP operations (e.g., adding a network =
+rule with
+> > +``LANDLOCK_ACCESS_NET_TCP_BIND``), the kernel must support TCP (``CONF=
+IG_INET=3Dy``).
+> > +Otherwise, sys_landlock_add_rule() returns an ``EAFNOSUPPORT`` error, =
+which can
+> > +safely be ignored because this kind of TCP operation is already not po=
+ssible.
+> > +
+> >  Questions and answers
+> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > --
+> > 2.25.1
+> >
+>
+> =E2=80=94G=C3=BCnther
+>
+> --
+> Sent using Mutt =F0=9F=90=95 Woof Woof
