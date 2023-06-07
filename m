@@ -2,150 +2,256 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 443E8C77B7A
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jun 2023 14:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF62C77B7A
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jun 2023 22:33:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241200AbjFGOxp (ORCPT
+        id S231126AbjFGWdD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Jun 2023 10:53:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42588 "EHLO
+        Wed, 7 Jun 2023 18:33:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241203AbjFGOxi (ORCPT
+        with ESMTP id S229641AbjFGWdC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Jun 2023 10:53:38 -0400
-Received: from sonic303-27.consmr.mail.ne1.yahoo.com (sonic303-27.consmr.mail.ne1.yahoo.com [66.163.188.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 539081702
-        for <linux-security-module@vger.kernel.org>; Wed,  7 Jun 2023 07:53:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1686149610; bh=z7WfrWLOqj/e0upze66XgMmqNTjW0KB/uXTWmgLmriE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=IwOD6iDEYKlTs53Gq2fKQ8K5sHGNPaGMeQCgOwP1ZEoT1/U5AZ7L7BYbyNl5CARVM5osQVjRDgx+ggxoSzhQBQqXD0haNk6xwyl/JcA8PlCiDc5jFyX5Cwy4k2HkM986vuhOa+4ejbqWk1EXQ6TEjIc2lFud292S5tWmObqsH3/RzcK7T4LR9IfpLHKM0pXUUt9C4B/tV2GOItQDCiMYz1r0FRcCfZKveN4911ooVXpXfP0+ozplhOguiCnSJ6HkQDXdfHou9iY5nSqqVbURFBZaBHnZEYnGbh5KJeLNKbXWmqmGJSKZVNDCR9pfCgp4pYDCOnKNVJyEVDUkeJn3CA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1686149610; bh=IhA1zhFnyTiBCtwiEK1UOksqddNI45WkDLitQEBFAgs=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=pPH1EsitPEbAPr1ZNrlBQdcAlA6S+Xa4ASbKHldv9IrzH3UbcsLLcKAssyD3SkpAe9w4nfFodtNx+UlkyS0cSUfuZhbdRKaRGsWHXp8gewGqQKwlvvd6uaQmE0eVWUxP8ygtOU+exo9LgqY+tOHQxlPcLECzk0hJ4diGHn/FHUVx51gar64neiEhm6R2/o9VhRq7OtpsTK18gR+INEK+idlD5nytO1mZJlycL6ud/D4N+guS6MxbmQfTUe1M443kSaq3SWbt3VsWIazrzElH0IPWjtQn0gLuAJtRy0kXmvMZptEu44h5DrF0Ql/qOIz0KasgJRXVO8GoyBxbCO+MBg==
-X-YMail-OSG: HZ8w05cVM1m3uCKwU.xgOV6FcbkpdEsE1AcpGau1kS6PSznjO7U6CxIU9W5ajuj
- FYRo3GGuP5SNHPTd5VQzfmK.QmHeIRRdBnp9Qk05sKdu75v1MR7RtSLlf7lXm9FUXfVjuf67xTIM
- xIHVSFXNbda8G.LYy9xHsMr8ClTqWAOVVPyUESxhDQqUStFN.RGg7vCLy0XjnxblZn3IWgsatLKW
- zq.g.slsNwexNPLQsz_fmRL3zMvv15bTA7cBlwYrQcNxU0VNf.2zJPafoUOS2DkH4eYil9KLgnuw
- 9_8rCvmApC4ZkUvVvAHJdGvNrXxWAdXQo7m20Z1yTYo7BcwPX.yhc1VPuiQMpVvFtFGYaOJQINok
- Z2aToE5SBXIcSnL09Rk9u_38TABmXEUxYXzx2iAW8eCZbhIYIxj70zakFtbPAQfL71jolqkdICYE
- t.ynv0hKEkrpdHrKEKNPdbd_SKqfvkJOHe1PG4YNd_lmA5v3vR0N2j5bt78VxkZqj5Axb74nZmJf
- 9vUaT4ziSWmEhjzrw3dK2V3wUC90EHwfEGMZ8hjRkgCPI0eLZVu5634u.wQ2111pR3f54r0JzrlP
- SBM5RrU2wr1xswRVKQzyhy23WM6MlAzPM9afyz1Gt8ccSl6VREy0GWab9Fo3NTLwyp4wCf30czzQ
- YfVODYY4pN0qTLnjslzG.ctngEhqf2EURqs88_tk3C3MG6Qpdt3eA1uxVk9gqvXpZgrDwDCh4pd.
- tFlKq8T7jLJgaq9kCxiKDP.vd_kjIwtBxWM0JzzAHZhMvsMEnl.ZZK7kzc0VkVNCzRrhHntb0Ai2
- YsxzvGiz2dFAPI5okHm2lCLAEQ5LiXaecjfjeFnqTndhKzvCA7c9c81NKttfT_0e67WqN5813eOe
- y6eanJGaL7bSGKDjV3r0vurW0pThhUNzVw4rZUaILqxMZi48wSjsn2OFR1Dnat.wja8w.L5Jsu9H
- 8zTGbkobt.A2afJcMW7Es_AX6zjpNILPStC6lF87qeCYqJK2cATBY.u1Uv7OBuo.6PBCKpoqkAg2
- hXCZN23f8Goyy_hfOWfTmPYbuKjnfrw9modscsH74mPyoG_11SZROCkw_Em7yqErVm0AiyMchuZX
- h2nxzhe.k5XZABs_aERkjlmr_cCyrIvMicbVYNWh6YAWvWJwJ.TrbB.P9CNTyxEpUXQ4SsEn2kW2
- 4NwMEo_lSb4lUlfySMKSqOkz5F50KKbqnyIfXTRNdTcO1AkyAJbueL.kXnARov7RQg8LELtPZQFa
- LugHaeityGYC5aNif_.B67lYh5dLgmqpN.YYJPMR5peeQqSMMuTgdQzqXUxkxou.JpXMzV7i.Q_8
- stdiirH7s6jRCH1IGL7i75rKLxhXpvEzi7vbNKF0ev29lps97ZNbFLurY.IBrEu6qe1HxqbntdGW
- CC4t3Yyk0pCyNETLMP0yaqC8SWfiPbg5kQnvpeW8fYo6EfdfX7O67WwEzya.FkxAS3E7luh1t8Ym
- JZrUiBukXyRrxDPTvKgqgj1vLHKMWYocUceLsUePRV0q2x1sJ_iCGzVY.NwzcM.rRmXk.rp0ZpDf
- VTcD2etxJUY9cxirt6hCCs11OB3Rvzixzd7ZOL47GQao8FsaFlRdsSqUNalkKGWjMlb2rx_GaPoj
- DqQaHY3rcfmbrKWUPh1ZpbnU8sRtmb_Hykhxty44acQwWgwW8Y8Yi0DbCkMvhjEIKXaYUhnD_9rr
- SK8YC._gQZ_BwazV14gGCwBx60IiDhqST1_v0baCjtEx0rTWhQz.IRwV5KTWzGOLlN2dDNl04v2d
- iJC6EWWrMpZ_juwPzdkMkv2hFaeTTZGz3p0z2UHaabysgDvTWJbJmOmt49lqof27Ua3Q6kaCNx35
- sHCUo27kBWucnSOT3YWPkKmaZPtsbJeon61JknIqBZjOd6XbbAWpnaMNWNHnE.XvsbmhcdkoEEOe
- k.JKl0m7lmip883pSuw0rp36ZQGo_SHz88kmJ_5y_MxD1l.AQdYqAEGCtDvTcyr_.L9366l7s1KM
- etNrmRf0e19Yo87RXseh5BG2ifoTCm9ifGkhjmO8p22d_qU92w3G35O6HFWcipmcVmHLbR.Heiqh
- w5eGl9NPOBDUPCsa8i0gN0N3rK_.CIccf5llwCF8D83xPvt4Hjgjzyrl5KgggWlRPMwqblNfGOpD
- eqDl0iGCiw0ytOyB2VLzAxpl7.1XrYFVQRhfsCXKdwwmlfJiPE0BysZOTXP7mRU74jmCIX8.7AkQ
- IVLdZOvlXbz97xy0GiAl.D2E2DybCSI4d5TE1FbYeRZcuLoBhQ6Y1uHea.kuIfbhXh.uY3l5T.Bh
- 8Toc-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 4431ee77-b22c-414a-a327-2407aa43a036
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Wed, 7 Jun 2023 14:53:30 +0000
-Received: by hermes--production-ne1-574d4b7954-scd6l (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 488c8e207d1d5833bf01dbe7d214ec9f;
-          Wed, 07 Jun 2023 14:53:29 +0000 (UTC)
-Message-ID: <91852af1-eb93-7740-850a-35e5dce9915d@schaufler-ca.com>
-Date:   Wed, 7 Jun 2023 07:53:27 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [RFC][PATCH 0/5] Smack transmute fixes
-Content-Language: en-US
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20230607123612.2791303-1-roberto.sassu@huaweicloud.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20230607123612.2791303-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21516 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+        Wed, 7 Jun 2023 18:33:02 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93C811725
+        for <linux-security-module@vger.kernel.org>; Wed,  7 Jun 2023 15:32:59 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id af79cd13be357-75ec541f933so2329185a.0
+        for <linux-security-module@vger.kernel.org>; Wed, 07 Jun 2023 15:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1686177178; x=1688769178;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hZXIJgO0yR4cIcee4w+UOn0ROi+cGZITxROBHRvLSZY=;
+        b=X/riXzpOF/e1z57/D1w9xWtuZFR8Os282CJJh2gLbfofZgnft5MCwx9btiFxP+SPXz
+         7EMWTmqedtsCzEOJ5t3SPnQMC4tKXzBhvAchmLqVwvd/tHSbJVnAtiStxoy/6Rg8/ZBs
+         SsLpQomYqNS0dZxyoOuDMMXFFYViM5VBTVjBO8jJghJylkLYhdE/fZzuxDB1HcL43z/d
+         udOGdC6ep/Aa0ZOctcsQDOZKtl164NB4MINCniJ5ALeyb1zkmXqvw2Kdb6cJgNoY3Z6n
+         3OlhfQFiJ74wn5kpJbFao1c06C6MFEQGLMJAnjh7iCYy/xGrKwB32vn/8Ff/rhGTBE+G
+         tqew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686177178; x=1688769178;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hZXIJgO0yR4cIcee4w+UOn0ROi+cGZITxROBHRvLSZY=;
+        b=OqPsuqngb5Y/zDKKTHIgcEi2zztYkjhl+DNTNxRffK32dogv5zBngzKGO93HKapTQQ
+         2XudU8dCwvu+ymbBzaun4ubO7KDbsx3Kl8WNwH23ssoiB2J6bDESHrLiNYjX73QrTG6D
+         5Bmq9AbiLqJI6FDB7slwghLcWs8CKVXrrb/TjWEwPA8yU74fTBWoNv/VIlgsXdfHIpfM
+         Y69PIDX1f50eNAKjyxEoAyj+AP9InMfHd5hYhKMk8AJ0HdTsnfEmEoiaidxxJGOFqiNA
+         hB3Y60Dc5Crz4NXpW2S0rpCv7syFJQSJe6iqXKeucVzdIzQFbvh4EFSLXC6NSYgHcVXe
+         yqSQ==
+X-Gm-Message-State: AC+VfDzrvzNURpvNllTfwf1wGAtFx1Xp1i24t5LIwSWMqDGkM0GKUGhL
+        ELqepbXF/73Zh4Y2fWZBrCT2
+X-Google-Smtp-Source: ACHHUZ4ljeQYPeMYOngSGH6rrRjK7lkZHuzETaiNhVR7vi0sls0jlJ5lAUXFvNAVKeJFtrXsOX5ZPQ==
+X-Received: by 2002:a05:620a:8c3:b0:75d:1145:8151 with SMTP id z3-20020a05620a08c300b0075d11458151mr611357qkz.12.1686177178558;
+        Wed, 07 Jun 2023 15:32:58 -0700 (PDT)
+Received: from localhost (static-96-237-115-254.bstnma.fios.verizon.net. [96.237.115.254])
+        by smtp.gmail.com with ESMTPSA id y8-20020a37e308000000b0075ecdc937ffsm221321qki.41.2023.06.07.15.32.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Jun 2023 15:32:58 -0700 (PDT)
+Date:   Wed, 07 Jun 2023 18:32:57 -0400
+Message-ID: <76f37cf7b20b8c63cf78d4ddca5a7375.paul@paul-moore.com>
+From:   Paul Moore <paul@paul-moore.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net
+Subject: Re: [PATCH v10 4/11] LSM: syscalls for current process attributes
+References: <20230428203417.159874-5-casey@schaufler-ca.com>
+In-Reply-To: <20230428203417.159874-5-casey@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/7/2023 5:36 AM, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> The first two patches are obvious fixes, the first restricts setting the
-> SMACK64TRANSMUTE xattr only for directories, and the second makes it
-> possible to set SMACK64TRANSMUTE if the filesystem does not support xattrs
-> (e.g. ramfs).
->
-> The remaining fixes are optional, and only required if we want filesystems
-> without xattr support behave like those with xattr support. Since we have
-> the inode_setsecurity and inode_getsecurity hooks to make the first group
-> work, it seems useful to fix inode creation too (SELinux should be fine).
->
-> The third patch is merely a code move out of the 'if (xattr)' condition.
-> The fourth updates the security field of the in-memory inode directly in
-> smack_inode_init_security() and marks the inode as instantiated, and the
-> fifth adds a security_inode_init_security() call in ramfs to initialize the
-> security field of the in-memory inodes (needed to test transmuting
-> directories).
->
-> Both the Smack (on xfs) and IMA test suite succeed with all patches
-> applied.
->
-> By setting the ROOT variable to a ramfs mountpoint, the results are:
->
-> Without the patches:
-> 86 Passed, 9 Failed, 90% Success rate
->
-> With the patches:
-> 93 Passed, 2 Failed, 97% Success rate
->
-> The remaining two failures are:
-> 2151  ioctl(4, BTRFS_IOC_CLONE or FICLONE, 3) = -1 EOPNOTSUPP (Operation not supported)
-> 2152  lsetxattr("./targets/proc-attr-Snap", "security.SMACK64EXEC", "Pop", 3, 0) = -1 EOPNOTSUPP (Operation not supported)
->
-> The first one is likely due ramfs lack of support for ioctl() while the
-> second could be fixed by handling SMACK64EXEC in smack_inode_setsecurity().
->
-> The patch set applies on top of:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/log/?h=next
->
-> plus:
->
-> https://github.com/cschaufler/smack-next/commits/next
->
-> plus:
->
-> https://lore.kernel.org/linux-integrity/20230603191518.1397490-1-roberto.sassu@huaweicloud.com/
->
-> The ramfs patch potentially could be useful to correctly initialize the
-> label of new inodes in the initramfs, assuming that it will be fully
-> labeled with support for xattrs in the cpio image:
->
-> https://lore.kernel.org/linux-integrity/20190523121803.21638-1-roberto.sassu@huawei.com/
->
-> Ramfs inode labels will be set from xattrs with the inode_setsecurity hook.
->
-> Roberto Sassu (5):
->   smack: Set SMACK64TRANSMUTE only for dirs in smack_inode_setxattr()
->   smack: Handle SMACK64TRANSMUTE in smack_inode_setsecurity()
->   smack: Always determine inode labels in smack_inode_init_security()
->   smack: Initialize the in-memory inode in smack_inode_init_security()
->   ramfs: Initialize security of in-memory inodes
->
->  fs/ramfs/inode.c           | 27 +++++++++++
->  security/smack/smack_lsm.c | 93 ++++++++++++++++++++++----------------
->  2 files changed, 82 insertions(+), 38 deletions(-)
+On Apr 28, 2023 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> 
+> Create a system call lsm_get_self_attr() to provide the security
+> module maintained attributes of the current process.
+> Create a system call lsm_set_self_attr() to set a security
+> module maintained attribute of the current process.
+> Historically these attributes have been exposed to user space via
+> entries in procfs under /proc/self/attr.
+> 
+> The attribute value is provided in a lsm_ctx structure. The structure
+> identifies the size of the attribute, and the attribute value. The format
+> of the attribute value is defined by the security module. A flags field
+> is included for LSM specific information. It is currently unused and must
+> be 0. The total size of the data, including the lsm_ctx structure and any
+> padding, is maintained as well.
+> 
+> struct lsm_ctx {
+>         __u64 id;
+>         __u64 flags;
+>         __u64 len;
+>         __u64 ctx_len;
+>         __u8 ctx[];
+> };
+> 
+> Two new LSM hooks are used to interface with the LSMs.
+> security_getselfattr() collects the lsm_ctx values from the
+> LSMs that support the hook, accounting for space requirements.
+> security_setselfattr() identifies which LSM the attribute is
+> intended for and passes it along.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> ---
+>  Documentation/userspace-api/lsm.rst |  15 ++++
+>  include/linux/lsm_hook_defs.h       |   4 +
+>  include/linux/lsm_hooks.h           |   9 +++
+>  include/linux/security.h            |  19 +++++
+>  include/linux/syscalls.h            |   5 ++
+>  include/uapi/linux/lsm.h            |  36 +++++++++
+>  kernel/sys_ni.c                     |   4 +
+>  security/Makefile                   |   1 +
+>  security/lsm_syscalls.c             |  55 ++++++++++++++
+>  security/security.c                 | 112 ++++++++++++++++++++++++++++
+>  10 files changed, 260 insertions(+)
+>  create mode 100644 security/lsm_syscalls.c
 
-I will run these through my test cycle, but they look good at first glance.
-Thank you.
+...
 
+> diff --git a/security/security.c b/security/security.c
+> index 5a48b1b539e5..94b78bfd06b9 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2176,6 +2176,118 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+>  }
+>  EXPORT_SYMBOL(security_d_instantiate);
+>  
+> +/**
+> + * security_getselfattr - Read an LSM attribute of the current process.
+> + * @attr: which attribute to return
+> + * @ctx: the user-space destination for the information, or NULL
+> + * @size: the size of space available to receive the data
+> + * @flags: special handling options. LSM_FLAG_SINGLE indicates that only
+> + * attributes associated with the LSM identified in the passed @ctx be
+> + * reported
+> + *
+> + * Returns the number of attributes found on success, negative value
+> + * on error. @size is reset to the total size of the data.
+> + * If @size is insufficient to contain the data -E2BIG is returned.
+> + */
+> +int security_getselfattr(unsigned int attr, struct lsm_ctx __user *ctx,
+> +			 size_t __user *size, u32 flags)
+> +{
+> +	struct security_hook_list *hp;
+> +	struct lsm_ctx lctx = { .id = LSM_ID_UNDEF, };
+> +	u8 __user *base = (u8 __user *)ctx;
+> +	size_t total = 0;
+> +	size_t entrysize;
+> +	size_t left;
+> +	bool toobig = false;
+> +	int count = 0;
+> +	int rc;
+> +
+> +	if (attr == 0)
+> +		return -EINVAL;
+> +	if (size == NULL)
+> +		return -EINVAL;
+> +	if (get_user(left, size))
+> +		return -EFAULT;
+> +
+> +	if ((flags & LSM_FLAG_SINGLE) == LSM_FLAG_SINGLE) {
+> +		if (!ctx)
+> +			return -EINVAL;
+> +		if (copy_struct_from_user(&lctx, sizeof(lctx), ctx, left))
+> +			return -EFAULT;
+> +		if (lctx.id == LSM_ID_UNDEF)
+> +			return -EINVAL;
+> +	} else if (flags) {
+> +		return -EINVAL;
+> +	}
+> +
+> +	hlist_for_each_entry(hp, &security_hook_heads.getselfattr, list) {
+> +		if (lctx.id != LSM_ID_UNDEF && lctx.id != hp->lsmid->id)
+> +			continue;
+
+I think we're missing a copy_struct_from_user() call somewhere; how
+does @lctx get populated in the non-LSM_FLAG_SINGLE case?  How does
+it move to the next entry in the buffer?
+
+Am I missing something obvious?  Was this code tested?
+
+> +		entrysize = left;
+> +		if (base)
+> +			ctx = (struct lsm_ctx __user *)(base + total);
+> +		rc = hp->hook.getselfattr(attr, ctx, &entrysize, flags);
+> +		if (rc == -EOPNOTSUPP) {
+> +			rc = 0;
+> +			continue;
+> +		}
+> +		if (rc == -E2BIG) {
+> +			toobig = true;
+> +			left = 0;
+> +			continue;
+> +		}
+> +		if (rc < 0)
+> +			return rc;
+> +
+> +		left -= entrysize;
+> +		total += entrysize;
+> +		count += rc;
+> +	}
+> +	if (put_user(total, size))
+> +		return -EFAULT;
+> +	if (toobig)
+> +		return -E2BIG;
+> +	if (count == 0)
+> +		return LSM_RET_DEFAULT(getselfattr);
+> +	return count;
+> +}
+> +
+> +/**
+> + * security_setselfattr - Set an LSM attribute on the current process.
+> + * @attr: which attribute to set
+> + * @ctx: the user-space source for the information
+> + * @size: the size of the data
+> + * @flags: reserved for future use, must be 0
+> + *
+> + * Set an LSM attribute for the current process. The LSM, attribute
+> + * and new value are included in @ctx.
+> + *
+> + * Returns 0 on success, -EINVAL if the input is inconsistent, -EFAULT
+> + * if the user buffer is inaccessible or an LSM specific failure.
+> + */
+> +int security_setselfattr(unsigned int attr, struct lsm_ctx __user *ctx,
+> +			 size_t size, u32 flags)
+> +{
+> +	struct security_hook_list *hp;
+> +	struct lsm_ctx lctx;
+> +
+> +	if (flags)
+> +		return -EINVAL;
+
+Once again, I don't see a reasonable way to support setting an
+attribute across multiple LSMs, but for the sake of consistency
+across both the getselfattr and setselfattr syscalls, what do
+people think about *requiring* the LSM_FLAG_SINGLE flag here in
+the setselfattr syscalls since it can only operate on a single
+LSM at a time?  A zero flag value would return -EINVAL.
+
+> +	if (size < sizeof(*ctx))
+> +		return -EINVAL;
+> +	if (copy_from_user(&lctx, ctx, sizeof(*ctx)))
+> +		return -EFAULT;
+> +	if (size < lctx.len || size < lctx.ctx_len + sizeof(ctx) ||
+> +	    lctx.len < lctx.ctx_len + sizeof(ctx))
+> +		return -EINVAL;
+> +
+> +	hlist_for_each_entry(hp, &security_hook_heads.setselfattr, list)
+> +		if ((hp->lsmid->id) == lctx.id)
+> +			return hp->hook.setselfattr(attr, ctx, size, flags);
+> +
+> +	return LSM_RET_DEFAULT(setselfattr);
+> +}
+> +
+>  int security_getprocattr(struct task_struct *p, int lsmid, const char *name,
+>  			 char **value)
+>  {
+> -- 
+> 2.39.2
+
+--
+paul-moore.com
