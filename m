@@ -2,88 +2,127 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 649DFC7EE29
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jun 2023 08:37:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 653D3C7EE25
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jun 2023 12:37:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235197AbjFGIhu (ORCPT
+        id S240951AbjFGMhU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Jun 2023 04:37:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42902 "EHLO
+        Wed, 7 Jun 2023 08:37:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234315AbjFGIhr (ORCPT
+        with ESMTP id S233977AbjFGMgs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Jun 2023 04:37:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD1B1706
-        for <linux-security-module@vger.kernel.org>; Wed,  7 Jun 2023 01:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686127019;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CGNGuZdb3YfUa/RgZYBAS20b4KQ6QaroF4WQ7qei7lo=;
-        b=g00XpsYu6hKespguJJy/MK1b2zmoUbfdIGUWlE785EZFdTp8chntqu1ZAp8ZTz2PNiaJ4N
-        VTYzIrrHyouPX5Q2cLl9XFjqY0ArNfT8vrXY5n5YFY+bYDc8Gj6IQrY7Vx2+WDyNnz4eqp
-        P+EzQtDrcDvpb3C46wxi71Wej9XQ8bU=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-321-GM9I-4gjMCKvH9c3tuCwwQ-1; Wed, 07 Jun 2023 04:36:54 -0400
-X-MC-Unique: GM9I-4gjMCKvH9c3tuCwwQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9674D3801FF5;
-        Wed,  7 Jun 2023 08:36:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 10C6EC1603B;
-        Wed,  7 Jun 2023 08:36:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20230530232914.3689712-3-mcgrof@kernel.org>
-References: <20230530232914.3689712-3-mcgrof@kernel.org> <20230530232914.3689712-1-mcgrof@kernel.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     dhowells@redhat.com, keescook@chromium.org, yzaikin@google.com,
-        jarkko@kernel.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, j.granados@samsung.com, brauner@kernel.org,
-        ebiederm@xmission.com, patches@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] sysctl: move security keys sysctl registration to its own file
+        Wed, 7 Jun 2023 08:36:48 -0400
+Received: from frasgout13.his.huawei.com (unknown [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF04710F8;
+        Wed,  7 Jun 2023 05:36:46 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4QbmmD4YpCz9y9xF;
+        Wed,  7 Jun 2023 20:26:20 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwCnJgLMeYBkSckaAw--.4176S2;
+        Wed, 07 Jun 2023 13:36:33 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     casey@schaufler-ca.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 0/5] Smack transmute fixes
+Date:   Wed,  7 Jun 2023 14:36:07 +0200
+Message-Id: <20230607123612.2791303-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2003476.1686127009.1@warthog.procyon.org.uk>
-Date:   Wed, 07 Jun 2023 09:36:49 +0100
-Message-ID: <2003477.1686127009@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: LxC2BwCnJgLMeYBkSckaAw--.4176S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF1fZw4DZr45KFyxCrWktFb_yoW5WFWxpr
+        sava43Kwn5tF97Cr9agw4UuF4fKayrGrWUJwsrJr1kAF1DZF10qr1Iva15CFyUXr9xAr9Y
+        qa17ZrnxW3Z8X37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUk2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x
+        0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02
+        F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4I
+        kC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IY
+        c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
+        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF
+        0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIx
+        AIcVCF04k26cxKx2IYs7xG6r4j6FyUMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
+        jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxU4NB_UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBF1jj45V2AAAs2
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Luis Chamberlain <mcgrof@kernel.org> wrote:
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-> The security keys sysctls are already declared on its own file,
-> just move the sysctl registration to its own file to help avoid
-> merge conflicts on sysctls.c, and help with clearing up sysctl.c
-> further.
-> 
-> This creates a small penalty of 23 bytes:
-> 
-> ./scripts/bloat-o-meter vmlinux.1 vmlinux.2
-> add/remove: 2/0 grow/shrink: 0/1 up/down: 49/-26 (23)
-> Function                                     old     new   delta
-> init_security_keys_sysctls                     -      33     +33
-> __pfx_init_security_keys_sysctls               -      16     +16
-> sysctl_init_bases                             85      59     -26
-> Total: Before=21256937, After=21256960, chg +0.00%
-> 
-> But soon we'll be saving tons of bytes anyway, as we modify the
-> sysctl registrations to use ARRAY_SIZE and so we get rid of all the
-> empty array elements so let's just clean this up now.
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+The first two patches are obvious fixes, the first restricts setting the
+SMACK64TRANSMUTE xattr only for directories, and the second makes it
+possible to set SMACK64TRANSMUTE if the filesystem does not support xattrs
+(e.g. ramfs).
 
-Acked-by: David Howells <dhowells@redhat.com>
+The remaining fixes are optional, and only required if we want filesystems
+without xattr support behave like those with xattr support. Since we have
+the inode_setsecurity and inode_getsecurity hooks to make the first group
+work, it seems useful to fix inode creation too (SELinux should be fine).
+
+The third patch is merely a code move out of the 'if (xattr)' condition.
+The fourth updates the security field of the in-memory inode directly in
+smack_inode_init_security() and marks the inode as instantiated, and the
+fifth adds a security_inode_init_security() call in ramfs to initialize the
+security field of the in-memory inodes (needed to test transmuting
+directories).
+
+Both the Smack (on xfs) and IMA test suite succeed with all patches
+applied.
+
+By setting the ROOT variable to a ramfs mountpoint, the results are:
+
+Without the patches:
+86 Passed, 9 Failed, 90% Success rate
+
+With the patches:
+93 Passed, 2 Failed, 97% Success rate
+
+The remaining two failures are:
+2151  ioctl(4, BTRFS_IOC_CLONE or FICLONE, 3) = -1 EOPNOTSUPP (Operation not supported)
+2152  lsetxattr("./targets/proc-attr-Snap", "security.SMACK64EXEC", "Pop", 3, 0) = -1 EOPNOTSUPP (Operation not supported)
+
+The first one is likely due ramfs lack of support for ioctl() while the
+second could be fixed by handling SMACK64EXEC in smack_inode_setsecurity().
+
+The patch set applies on top of:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/log/?h=next
+
+plus:
+
+https://github.com/cschaufler/smack-next/commits/next
+
+plus:
+
+https://lore.kernel.org/linux-integrity/20230603191518.1397490-1-roberto.sassu@huaweicloud.com/
+
+The ramfs patch potentially could be useful to correctly initialize the
+label of new inodes in the initramfs, assuming that it will be fully
+labeled with support for xattrs in the cpio image:
+
+https://lore.kernel.org/linux-integrity/20190523121803.21638-1-roberto.sassu@huawei.com/
+
+Ramfs inode labels will be set from xattrs with the inode_setsecurity hook.
+
+Roberto Sassu (5):
+  smack: Set SMACK64TRANSMUTE only for dirs in smack_inode_setxattr()
+  smack: Handle SMACK64TRANSMUTE in smack_inode_setsecurity()
+  smack: Always determine inode labels in smack_inode_init_security()
+  smack: Initialize the in-memory inode in smack_inode_init_security()
+  ramfs: Initialize security of in-memory inodes
+
+ fs/ramfs/inode.c           | 27 +++++++++++
+ security/smack/smack_lsm.c | 93 ++++++++++++++++++++++----------------
+ 2 files changed, 82 insertions(+), 38 deletions(-)
+
+-- 
+2.25.1
 
