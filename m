@@ -2,117 +2,151 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A22DAC7EE25
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Jun 2023 18:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A798C7EE25
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Jun 2023 18:49:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232508AbjFHSeh (ORCPT
+        id S233471AbjFHStP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Jun 2023 14:34:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46982 "EHLO
+        Thu, 8 Jun 2023 14:49:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231675AbjFHSeh (ORCPT
+        with ESMTP id S234936AbjFHStO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Jun 2023 14:34:37 -0400
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A96E12136
-        for <linux-security-module@vger.kernel.org>; Thu,  8 Jun 2023 11:34:35 -0700 (PDT)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-565c3aa9e82so8864557b3.2
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Jun 2023 11:34:35 -0700 (PDT)
+        Thu, 8 Jun 2023 14:49:14 -0400
+Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C69A02680
+        for <linux-security-module@vger.kernel.org>; Thu,  8 Jun 2023 11:49:12 -0700 (PDT)
+Received: by mail-pf1-x449.google.com with SMTP id d2e1a72fcca58-66227292952so839721b3a.3
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Jun 2023 11:49:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1686249275; x=1688841275;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NJKDvRBPgWVhhD01EiidiIAn4eRCDSE/e6f94myR/Cs=;
-        b=TqtZi9N0hEWsH0aEkWKDROw3M6m0P3GgE7tDwHz/SprtCX7eECP7Oiu78AObagVYzb
-         M6C+8gS/l0y0kKSxkrbktQGA2zJsxQwFPVrEn8OO6c7Dbu9Vd9YqQbBpoiXgpEHYVbgN
-         UgOWt2i5KS0MVt+6Szgxwrb0MTAYLW2fkHEmJejpbMyrPwUdS3sE3bh/nNMP/aRx8y/n
-         iq0IuLr80Va2IDON76hM63b+W+bJqJyMvc29JIJ/xyOo/bNhROsIhGA1Z8RSj7/f8bSX
-         MhD38afCyknAyMvVXxzEEHV+yb61tk8YBTwCTlW5XZrVMz2xiA/xvd+dLs92hXPu6Xod
-         FOxg==
+        d=google.com; s=20221208; t=1686250152; x=1688842152;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9X4Uo12NdQ70wxKCdJzisAzz7VwIv0m81ldSTLtM2/E=;
+        b=NkACu8QFig+zxCzj271zQ3eHgxDC9p1G7b8NrAhi4OCRVfWq/nBnnzonvgtz9J1/aF
+         j4gjbgMZ0CjCPrWNXVX3zu3+WTuamp8Boc+QJR0NsjMD5WrA6jdfhgiG86sSyyH7I9RD
+         LBXgzBcZjWrZEUpA/m78S0tMqYRgwgf3+d1tvf8UdwwbtGzoN1xoGs7/OF6ztKdyM29b
+         N1bqfMfRBVzEc17aszPi4X4uGMHLVUxl8xrfZBLpQX0lENG0EcfsoBBOkjuISKiTr7dX
+         os5DsHLJvyCgR7qp2a0EwPw9CPjAqoxkCvIErmGbAKGgvcdPOXUwBXgPrVaRlho3s5vD
+         V5zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686249275; x=1688841275;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NJKDvRBPgWVhhD01EiidiIAn4eRCDSE/e6f94myR/Cs=;
-        b=aiTuZxZP8pIsCua+fDCALfHLvi9q9pYygVwYEFX74KTYAaOozXCzU8XodFuM7fWFGt
-         /PqWIBNjazTtXhUT0YUPGR+eD0iQdekyzSmbwXsHJJGfL0f0ytg3MzubnW2re6MwomJ+
-         cZ+Rh2EDbw34D6Mbbo/j0jWNr6Z0jftmdLxXnEItjd/MCC4JcF3JnBgG5Pd3se1KKT5H
-         gCEWc9NvryOFjBVNB1wj01czYuAGS8iOUbuTrL2hwuDuY0spsx5rQENxFq9m/YLtvjRo
-         lcsQzOUVzW38lSYpT+LzhC+L/coEKR6eR0OAXzQTT5Y4WZ+Km1UjzHMMZwSCW30rI9a+
-         U5eQ==
-X-Gm-Message-State: AC+VfDx7u82dzaYXIuSd4sGTNArb0iI/w4J+nA+8PMXLkxuXsRkMDx/9
-        kXgTDe/4cXwpiY9w8y62fyP0sJMYRlbfoufplAvi
-X-Google-Smtp-Source: ACHHUZ7buDqkEHJqJNiXJlFHy+XAsZXMlNc0dNDi3yiyg7hf8P21IIMf7scrhGSRPVbvig4xPjs+HAwpfrgmzLJ6sMU=
-X-Received: by 2002:a0d:fb47:0:b0:561:d25b:672a with SMTP id
- l68-20020a0dfb47000000b00561d25b672amr455206ywf.21.1686249274860; Thu, 08 Jun
- 2023 11:34:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230503064344.45825-1-aleksandr.mikhalitsyn@canonical.com>
- <CAHC9VhTx+6f8riuGOG40HZoaYx3F8Kf3Hm7Eb5k3-An91eMWgg@mail.gmail.com>
- <CAEivzxcVQoA9rN06BtHJzyHCaN60RG1-cyGEEw-P+dp-tCB=QA@mail.gmail.com> <CAHC9VhQnOszTFaFVBZACQCDxsuD6JrxDffmmJ-wBudK2MJ2pUA@mail.gmail.com>
-In-Reply-To: <CAHC9VhQnOszTFaFVBZACQCDxsuD6JrxDffmmJ-wBudK2MJ2pUA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 8 Jun 2023 14:34:24 -0400
-Message-ID: <CAHC9VhSF+j=qFH4M9bt-Q8HUOwk7qLOEkCSve8onUMgADJ7+3A@mail.gmail.com>
-Subject: Re: [PATCH v2] LSM: SafeSetID: fix UID printed instead of GID
-To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc:     mortonm@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        d=1e100.net; s=20221208; t=1686250152; x=1688842152;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9X4Uo12NdQ70wxKCdJzisAzz7VwIv0m81ldSTLtM2/E=;
+        b=fGr/bSOdkUR6JbVIvs///KNXilCO+mt3LyWhclJbcKRJG7eZ8qziKROnmNHoxLlShU
+         LpoJO+1RUZoVXAVC5U/vLxQndZqGpK5RibqVt50AloYlgGdzWJZ/LHOfBUKaSfBQXSvP
+         OGGgLHm+L5FV6zUjmTV6TyGAMcaKeoR4tppVIX8hJlnBwWKnD4YyBQTlKG3bimSLQQcM
+         AkdpMtH/TxKI9H9kxjWImDZqOhE6S1AbKKt23Gh0Fb85375t7+wQZGHSrwfGKU3sduhp
+         G87If5RKQAwM8qcMgeoJrW2V0TdI9uT8S1iuyy0ykxGPKkNFpiG3bmhqQGUVBElaVAG9
+         Tx5w==
+X-Gm-Message-State: AC+VfDyWp3ZkMbxck3UViCLU0Jp6kNhTUQCQ4jFkqxftY0L5qFLG9e4A
+        ycT+m2/8IMbryV+4UsVz2Hp+qgQ=
+X-Google-Smtp-Source: ACHHUZ75keCeBlMTJ91lhRgvKzQFDPC6fBtVhljj+OEQpEOG5Ecze4/kAj8F+9yxnfyuYQZ9rR6wYaw=
+X-Received: from sdf.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5935])
+ (user=sdf job=sendgmr) by 2002:a05:6a00:13a6:b0:657:f26e:b025 with SMTP id
+ t38-20020a056a0013a600b00657f26eb025mr4000650pfg.6.1686250152318; Thu, 08 Jun
+ 2023 11:49:12 -0700 (PDT)
+Date:   Thu, 8 Jun 2023 11:49:11 -0700
+In-Reply-To: <20230607235352.1723243-1-andrii@kernel.org>
+Mime-Version: 1.0
+References: <20230607235352.1723243-1-andrii@kernel.org>
+Message-ID: <ZIIipx1NhKYQq7T/@google.com>
+Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
+From:   Stanislav Fomichev <sdf@google.com>
+To:     Andrii Nakryiko <andrii@kernel.org>
+Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        keescook@chromium.org, brauner@kernel.org, lennart@poettering.net,
+        cyphar@cyphar.com, luto@kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 6, 2023 at 5:13=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
-> On Tue, Jun 6, 2023 at 2:50=E2=80=AFPM Aleksandr Mikhalitsyn
-> <aleksandr.mikhalitsyn@canonical.com> wrote:
-> > On Thu, May 18, 2023 at 8:59=E2=80=AFPM Paul Moore <paul@paul-moore.com=
-> wrote:
-> > > On Wed, May 3, 2023 at 2:44=E2=80=AFAM Alexander Mikhalitsyn
-> > > <aleksandr.mikhalitsyn@canonical.com> wrote:
-> > > >
-> > > > pr_warn message clearly says that GID should be printed,
-> > > > but we have UID there. Let's fix that.
-> > > >
-> > > > Found accidentaly during the work on isolated user namespaces.
-> > > >
-> > > > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonic=
-al.com>
-> > > > ---
-> > > > v2: __kuid_val -> __kgid_val
-> > > > ---
-> > > >  security/safesetid/lsm.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > I'm assuming you're going to pick this up Micah?
-> > >
-> > > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> >
-> > Dear Paul!
-> >
-> > Thanks for your review!
-> >
-> > Gentle ping to Micah Morton :-)
->
-> Micah?
->
-> The right thing would be for Micah to merge this via the SafeSetID
-> tree, however, considering that it's been over a month with no
-> response, and this patch looks trivially correct, I can pick this up
-> via the LSM tree if we don't see anything from Micah this week.
+On 06/07, Andrii Nakryiko wrote:
+> This patch set introduces new BPF object, BPF token, which allows to delegate
+> a subset of BPF functionality from privileged system-wide daemon (e.g.,
+> systemd or any other container manager) to a *trusted* unprivileged
+> application. Trust is the key here. This functionality is not about allowing
+> unconditional unprivileged BPF usage. Establishing trust, though, is
+> completely up to the discretion of respective privileged application that
+> would create a BPF token.
+> 
+> The main motivation for BPF token is a desire to enable containerized
+> BPF applications to be used together with user namespaces. This is currently
+> impossible, as CAP_BPF, required for BPF subsystem usage, cannot be namespaced
+> or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BPF
+> helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely read
+> arbitrary memory, and it's impossible to ensure that they only read memory of
+> processes belonging to any given namespace. This means that it's impossible to
+> have namespace-aware CAP_BPF capability, and as such another mechanism to
+> allow safe usage of BPF functionality is necessary. BPF token and delegation
+> of it to a trusted unprivileged applications is such mechanism. Kernel makes
+> no assumption about what "trusted" constitutes in any particular case, and
+> it's up to specific privileged applications and their surrounding
+> infrastructure to decide that. What kernel provides is a set of APIs to create
+> and tune BPF token, and pass it around to privileged BPF commands that are
+> creating new BPF objects like BPF programs, BPF maps, etc.
+> 
+> Previous attempt at addressing this very same problem ([0]) attempted to
+> utilize authoritative LSM approach, but was conclusively rejected by upstream
+> LSM maintainers. BPF token concept is not changing anything about LSM
+> approach, but can be combined with LSM hooks for very fine-grained security
+> policy. Some ideas about making BPF token more convenient to use with LSM (in
+> particular custom BPF LSM programs) was briefly described in recent LSF/MM/BPF
+> 2023 presentation ([1]). E.g., an ability to specify user-provided data
+> (context), which in combination with BPF LSM would allow implementing a very
+> dynamic and fine-granular custom security policies on top of BPF token. In the
+> interest of minimizing API surface area discussions this is going to be
+> added in follow up patches, as it's not essential to the fundamental concept
+> of delegatable BPF token.
+> 
+> It should be noted that BPF token is conceptually quite similar to the idea of
+> /dev/bpf device file, proposed by Song a while ago ([2]). The biggest
+> difference is the idea of using virtual anon_inode file to hold BPF token and
+> allowing multiple independent instances of them, each with its own set of
+> restrictions. BPF pinning solves the problem of exposing such BPF token
+> through file system (BPF FS, in this case) for cases where transferring FDs
+> over Unix domain sockets is not convenient. And also, crucially, BPF token
+> approach is not using any special stateful task-scoped flags. Instead, bpf()
+> syscall accepts token_fd parameters explicitly for each relevant BPF command.
+> This addresses main concerns brought up during the /dev/bpf discussion, and
+> fits better with overall BPF subsystem design.
+> 
+> This patch set adds a basic minimum of functionality to make BPF token useful
+> and to discuss API and functionality. Currently only low-level libbpf APIs
+> support passing BPF token around, allowing to test kernel functionality, but
+> for the most part is not sufficient for real-world applications, which
+> typically use high-level libbpf APIs based on `struct bpf_object` type. This
+> was done with the intent to limit the size of patch set and concentrate on
+> mostly kernel-side changes. All the necessary plumbing for libbpf will be sent
+> as a separate follow up patch set kernel support makes it upstream.
+> 
+> Another part that should happen once kernel-side BPF token is established, is
+> a set of conventions between applications (e.g., systemd), tools (e.g.,
+> bpftool), and libraries (e.g., libbpf) about sharing BPF tokens through BPF FS
+> at well-defined locations to allow applications take advantage of this in
+> automatic fashion without explicit code changes on BPF application's side.
+> But I'd like to postpone this discussion to after BPF token concept lands.
+> 
+>   [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel.org/
+>   [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_BPF_LSFMM2023.pdf
+>   [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubraving@fb.com/
+> 
+> v1->v2:
+>   - fix build failures on Kconfig with CONFIG_BPF_SYSCALL unset;
+>   - drop BPF_F_TOKEN_UNKNOWN_* flags and simplify UAPI (Stanislav).
+ 
+I went through v2, everything makes sense, the only thing that is
+slightly confusing to me is the bpf_token_capable() call.
+The name somehow implies that the token is capable of something
+where in reality the function does "return token || capable(x)".
 
-Searching through all of the archives on lore I don't see any email
-from Micah past August of 2022.  I'll still stick to the plan of
-merging this via the LSM tree next week if we don't see any response
-from Micah, but beyond this patch we may need to consider the
-possibility that Micah has moved on from SafeSetID.
+IMO, it would be less confusing if we do something like the following,
+explicitly, instead of calling a function:
 
- * https://lore.kernel.org/all/?q=3Df%3Amortonm%40chromium.org
+if (token || {bpf_,perfmon_,}capable(x)) ...
 
---=20
-paul-moore.com
+(or rename to something like bpf_token_or_capable(x))
+
+Up to you on whether to take any action on that. OTOH, once you
+grasp what bpf_token_capable really does, it's not really a problem.
