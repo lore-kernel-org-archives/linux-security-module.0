@@ -2,78 +2,80 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B736AC7EE25
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 07:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4081DC7EE25
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 11:18:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238639AbjFIH0L (ORCPT
+        id S235894AbjFILSO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Jun 2023 03:26:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41940 "EHLO
+        Fri, 9 Jun 2023 07:18:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230257AbjFIH0K (ORCPT
+        with ESMTP id S239376AbjFILSB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Jun 2023 03:26:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B5F9172E;
-        Fri,  9 Jun 2023 00:26:09 -0700 (PDT)
+        Fri, 9 Jun 2023 07:18:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC41030D7
+        for <linux-security-module@vger.kernel.org>; Fri,  9 Jun 2023 04:17:46 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D7E7163C13;
-        Fri,  9 Jun 2023 07:26:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51386C433D2;
-        Fri,  9 Jun 2023 07:26:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5E8FA65717
+        for <linux-security-module@vger.kernel.org>; Fri,  9 Jun 2023 11:17:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A37C433D2;
+        Fri,  9 Jun 2023 11:17:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686295568;
-        bh=NlICh2LYArFyyDIk04t30ruq6pjEc3ONIT3pYa7ypiE=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=ANDEU18q7UCQthZ5DblcmPaYvHtJjKsbfDRJ4Gr6/G31wRvhwnoTLJzzIWxl47r/j
-         kPn7htSOVJOBpOc4yiPiPcC8y4Q1CzBD0AaOE2hXSaRHsgB57mkjrZeokIl85SQAPu
-         AVPSwu6LVC1i4P0X/gbbbWPBISznHGxT3Sfs33t4JTKau50ZW8ioGwdn0wS50X2zum
-         AoWJwi/GMjuhQz+Un/SxO8pBGVXo5qv8vv3P60BVSeP1MXYUa36A3vdiui7eDYoR3o
-         zcKO5Tgp+I8IHqZux4ubthpYpn1E4wZPqD21HDlAG4tNTTWiTE8/GVZNXiep+9Hxkf
-         qVVYEE3872LqA==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Fri, 09 Jun 2023 10:26:00 +0300
-Message-Id: <CT7XVY50ISCC.1I60H7POH94ES@suppilovahvero>
-Cc:     <miklos@szeredi.hu>, <linux-unionfs@vger.kernel.org>,
-        <kamatam@amazon.com>, <yoonjaeh@amazon.com>, <zohar@linux.ibm.com>,
-        <dmitry.kasatkin@gmail.com>, <paul@paul-moore.com>,
-        <jmorris@namei.org>, <serge@hallyn.com>,
-        <stephen.smalley.work@gmail.com>, <eparis@parisplace.org>,
-        <casey@schaufler-ca.com>, <linux-kernel@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>, <selinux@vger.kernel.org>,
-        <bpf@vger.kernel.org>, <kpsingh@kernel.org>,
-        <keescook@chromium.org>, <nicolas.bouchinet@clip-os.org>,
-        "Roberto Sassu" <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v11 2/4] smack: Set the SMACK64TRANSMUTE xattr in
- smack_inode_init_security()
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Roberto Sassu" <roberto.sassu@huaweicloud.com>,
-        "Mengchi Cheng" <mengcc@amazon.com>
-X-Mailer: aerc 0.14.0
-References: <20230603191518.1397490-1-roberto.sassu@huaweicloud.com>
- <20230603191518.1397490-3-roberto.sassu@huaweicloud.com>
- <9f4b7bef5d090da9de50ed1aa1e103abc19b125f.camel@huaweicloud.com>
-In-Reply-To: <9f4b7bef5d090da9de50ed1aa1e103abc19b125f.camel@huaweicloud.com>
+        s=k20201202; t=1686309465;
+        bh=iWMSUkwP8jqT1WeI2sUyI0XDZi814J9HOjsS1S4hhmw=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=upzuP6r+dDzuSqI7givQAjwL/enqTIGmRsCuk47Nb2iDZNZfifPYMMyqm8i6/poBp
+         K3gN9nSkh4fJHNeNTa4psZf0LAtK6XRMrv3bUuctzYM7fhYxdY01yinrtW7GRbczaJ
+         8CzsCjlTsQ6GrNnMI3YS3Rk/r3k19HJS9hIuJ9KkOAzVa7IS27keUdv57iV1UEZ24h
+         whMmJX5aQ8/p6oTIzzLX5OoeUkWNjU6joQIMuaqC98/GNby0kQab/q/T3dkgysPCuJ
+         C567OAEpX6fvXQE8wP6B2VFyVe9g4ESLyMXE3ZE6eaNZmu0ccUjpCaMWB+wNWh5bp1
+         y2pCqPjzPmFow==
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id 2EDE3BBE2E9; Fri,  9 Jun 2023 13:17:43 +0200 (CEST)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>
+To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
+        luto@kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
+In-Reply-To: <20230607235352.1723243-1-andrii@kernel.org>
+References: <20230607235352.1723243-1-andrii@kernel.org>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date:   Fri, 09 Jun 2023 13:17:43 +0200
+Message-ID: <871qik28bs.fsf@toke.dk>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon Jun 5, 2023 at 11:38 AM EEST, Roberto Sassu wrote:
-> On Sat, 2023-06-03 at 21:15 +0200, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > With the newly added ability of LSMs to supply multiple xattrs, set
-> > SMACK64TRASMUTE in smack_inode_init_security(), instead of d_instantiat=
-e().
+Andrii Nakryiko <andrii@kernel.org> writes:
 
-nit: TRANSMUTE
+> This patch set introduces new BPF object, BPF token, which allows to delegate
+> a subset of BPF functionality from privileged system-wide daemon (e.g.,
+> systemd or any other container manager) to a *trusted* unprivileged
+> application. Trust is the key here. This functionality is not about allowing
+> unconditional unprivileged BPF usage. Establishing trust, though, is
+> completely up to the discretion of respective privileged application that
+> would create a BPF token.
 
-Sorry, just hit into my eye. I skimmed it because I implemented original
-feature :-)
+I am not convinced that this token-based approach is a good way to solve
+this: having the delegation mechanism be one where you can basically
+only grant a perpetual delegation with no way to retract it, no way to
+check what exactly it's being used for, and that is transitive (can be
+passed on to others with no restrictions) seems like a recipe for
+disaster. I believe this was basically the point Casey was making as
+well in response to v1.
 
-BR, Jarkko
+If the goal is to enable a privileged application (such as a container
+manager) to grant another unprivileged application the permission to
+perform certain bpf() operations, why not just proxy the operations
+themselves over some RPC mechanism? That way the granting application
+can perform authentication checks on every operation and ensure its
+origins are sound at the time it is being made. Instead of just writing
+a blank check (in the form of a token) and hoping the receiver of it is
+not compromised...
 
+-Toke
