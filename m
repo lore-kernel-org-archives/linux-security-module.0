@@ -2,80 +2,114 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4081DC7EE25
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 11:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC12C87FDC
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 12:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235894AbjFILSO (ORCPT
+        id S240752AbjFIMuk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Jun 2023 07:18:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60026 "EHLO
+        Fri, 9 Jun 2023 08:50:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239376AbjFILSB (ORCPT
+        with ESMTP id S240758AbjFIMua (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Jun 2023 07:18:01 -0400
+        Fri, 9 Jun 2023 08:50:30 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC41030D7
-        for <linux-security-module@vger.kernel.org>; Fri,  9 Jun 2023 04:17:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1446E272A;
+        Fri,  9 Jun 2023 05:50:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5E8FA65717
-        for <linux-security-module@vger.kernel.org>; Fri,  9 Jun 2023 11:17:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A37C433D2;
-        Fri,  9 Jun 2023 11:17:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A053B65489;
+        Fri,  9 Jun 2023 12:50:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04CB9C433EF;
+        Fri,  9 Jun 2023 12:50:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686309465;
-        bh=iWMSUkwP8jqT1WeI2sUyI0XDZi814J9HOjsS1S4hhmw=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=upzuP6r+dDzuSqI7givQAjwL/enqTIGmRsCuk47Nb2iDZNZfifPYMMyqm8i6/poBp
-         K3gN9nSkh4fJHNeNTa4psZf0LAtK6XRMrv3bUuctzYM7fhYxdY01yinrtW7GRbczaJ
-         8CzsCjlTsQ6GrNnMI3YS3Rk/r3k19HJS9hIuJ9KkOAzVa7IS27keUdv57iV1UEZ24h
-         whMmJX5aQ8/p6oTIzzLX5OoeUkWNjU6joQIMuaqC98/GNby0kQab/q/T3dkgysPCuJ
-         C567OAEpX6fvXQE8wP6B2VFyVe9g4ESLyMXE3ZE6eaNZmu0ccUjpCaMWB+wNWh5bp1
-         y2pCqPjzPmFow==
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id 2EDE3BBE2E9; Fri,  9 Jun 2023 13:17:43 +0200 (CEST)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>
-To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
-        luto@kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-In-Reply-To: <20230607235352.1723243-1-andrii@kernel.org>
-References: <20230607235352.1723243-1-andrii@kernel.org>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Fri, 09 Jun 2023 13:17:43 +0200
-Message-ID: <871qik28bs.fsf@toke.dk>
+        s=k20201202; t=1686315028;
+        bh=gIZwlLvY4sTdkvZELuapNhoOFzzZExwAnWiPWsxbXHo=;
+        h=From:To:Subject:Date:From;
+        b=dcwqOrVfEIufAkx9HYctn0bCPuNyn/IoA3qeRLEf0QBZaM2ZxNK4fITHocjWjP+BS
+         ArXA2HvHcNMCbQoCJLgk3YNktWjq5smDP0btfPqHdZkDkaNlMvMKacJZXz5oGbyybS
+         Seh3kB1aYVkF1EaQIzj0KMYE2IM8/UE/RnW4K8gKxJc+5U/2OtM1xACvDi/T8P0Pdc
+         Xkm13/IgUo3Vr5PsmuoEohjK9wBWC2RLrPIKKbIGloomJhioPPXWTe43kEqN5X837K
+         nGxIOrekLqpwpPCILVczWkex/Sm2OoMe1QXBZj99WR32Ho0RhbyqroHBCWw41oCA3r
+         Vj6GOBo2c2fNw==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Brad Warrum <bwarrum@linux.ibm.com>,
+        Ritu Agarwal <rituagar@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ian Kent <raven@themaw.net>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Ruihan Li <lrh2000@pku.edu.cn>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
+Subject: [PATCH 0/9] fs: add some missing ctime updates
+Date:   Fri,  9 Jun 2023 08:50:14 -0400
+Message-Id: <20230609125023.399942-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Andrii Nakryiko <andrii@kernel.org> writes:
+While working on a patch series to change how we handle the ctime, I
+found a number of places that update the mtime without a corresponding
+ctime update. POSIX requires that when the mtime is updated that the
+ctime also be updated.
 
-> This patch set introduces new BPF object, BPF token, which allows to delegate
-> a subset of BPF functionality from privileged system-wide daemon (e.g.,
-> systemd or any other container manager) to a *trusted* unprivileged
-> application. Trust is the key here. This functionality is not about allowing
-> unconditional unprivileged BPF usage. Establishing trust, though, is
-> completely up to the discretion of respective privileged application that
-> would create a BPF token.
+Note that these are largely untested other than for compilation, so
+please review carefully. These are a preliminary set for the upcoming
+rework of how we handle the ctime.
 
-I am not convinced that this token-based approach is a good way to solve
-this: having the delegation mechanism be one where you can basically
-only grant a perpetual delegation with no way to retract it, no way to
-check what exactly it's being used for, and that is transitive (can be
-passed on to others with no restrictions) seems like a recipe for
-disaster. I believe this was basically the point Casey was making as
-well in response to v1.
+None of these seem to be very crucial, but it would be nice if
+various maintainers could pick these up for v6.5. Please let me know if
+you do.
 
-If the goal is to enable a privileged application (such as a container
-manager) to grant another unprivileged application the permission to
-perform certain bpf() operations, why not just proxy the operations
-themselves over some RPC mechanism? That way the granting application
-can perform authentication checks on every operation and ensure its
-origins are sound at the time it is being made. Instead of just writing
-a blank check (in the form of a token) and hoping the receiver of it is
-not compromised...
+Jeff Layton (9):
+  ibmvmc: update ctime in conjunction with mtime on write
+  usb: update the ctime as well when updating mtime after an ioctl
+  autofs: set ctime as well when mtime changes on a dir
+  bfs: update ctime in addition to mtime when adding entries
+  efivarfs: update ctime when mtime changes on a write
+  exfat: ensure that ctime is updated whenever the mtime is
+  gfs2: update ctime when quota is updated
+  apparmor: update ctime whenever the mtime changes on an inode
+  cifs: update the ctime on a partial page write
 
--Toke
+ drivers/misc/ibmvmc.c             |  2 +-
+ drivers/usb/core/devio.c          | 16 ++++++++--------
+ fs/autofs/root.c                  |  6 +++---
+ fs/bfs/dir.c                      |  2 +-
+ fs/efivarfs/file.c                |  2 +-
+ fs/exfat/namei.c                  |  8 ++++----
+ fs/gfs2/quota.c                   |  2 +-
+ fs/smb/client/file.c              |  2 +-
+ security/apparmor/apparmorfs.c    |  7 +++++--
+ security/apparmor/policy_unpack.c | 11 +++++++----
+ 10 files changed, 32 insertions(+), 26 deletions(-)
+
+-- 
+2.40.1
+
