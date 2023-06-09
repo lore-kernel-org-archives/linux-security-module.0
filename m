@@ -2,92 +2,180 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C276C7EE29
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 20:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5695C7EE25
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 21:21:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229817AbjFIUGN (ORCPT
+        id S230247AbjFIVVL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Jun 2023 16:06:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54914 "EHLO
+        Fri, 9 Jun 2023 17:21:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229678AbjFIUGM (ORCPT
+        with ESMTP id S229517AbjFIVVK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Jun 2023 16:06:12 -0400
-Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4BE63A81
-        for <linux-security-module@vger.kernel.org>; Fri,  9 Jun 2023 13:06:09 -0700 (PDT)
-Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-19f6211d4e1so1102877fac.1
-        for <linux-security-module@vger.kernel.org>; Fri, 09 Jun 2023 13:06:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1686341168; x=1688933168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HhgUZ/b6d8SyK6wuMhy/QUdrYEmRpokDPNLka3VEsFM=;
-        b=NMpC/mp9kDSPKq28g6LDQCDDNdNID/NGCD4PlXsPaupeI+dF9VZy9b2ejR281Q3k98
-         rb8B22FPmmZ0RD4boaJzVR/s13NgyWQkfTqCJpoiQvLGx/u6K2eDihPxJgpaWCTPN9M4
-         69YLB0faetThS7IigtDzx38Q/Cptxe1++JWyviikhxkBlY8rTQoVyr7EdInLRnwS+yoQ
-         2kIvx+KBDoNXPuvn3sR39ADkFEecwxizVPVYt7ZeAqP/Vtt31UlnUdu2P/AgAsHIkhM4
-         InASaCsWEX6YsVrMjZe4FIE5oVOrAfeLrdPnhopkUt4SfFhxVdvI4CaSbx4IB7fK6fJt
-         npig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686341168; x=1688933168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HhgUZ/b6d8SyK6wuMhy/QUdrYEmRpokDPNLka3VEsFM=;
-        b=YBd4FdW1VEVBWckWQuZw8Iri7WGbJ//vc41uyxayK+MNWN0icxqxh1IyMKwgsgoN7H
-         OIhY5OCZkcN49NvRNiJB3PWoQ2a8TN+bshydJR2G3wmmy9imkXXnbPI3hjj+jpRqlLpb
-         GvT3aup9WO7DV3hUajsA1rRtU61GXhUMgQCF2Toaev+WB5KEczZ7qnqwSpmeB9Hf/JOJ
-         lfei23GyXmVV/x9p22hGWio2zTk5mH5zQ/gBL/TUrgenVh5Hi3vhB95pSLOameaGa37h
-         MYvDptnBIRbf94NxNFfaF9ZtTMVnwUPVTJy43ChYmgxgTIP3P8v46qBVbJkIYZdecxWV
-         9Hzg==
-X-Gm-Message-State: AC+VfDzT8JTePLS7Nm7upy4I+QJP+xmEuoc/QkIAVno9HqJQn0lI7JnT
-        o4Z/YtFZ8OZ6Pqz4OJZyXAjWRnh4aPtwpTDIaWMA
-X-Google-Smtp-Source: ACHHUZ46O13fZRr5wz1JZPgAzoj3AsioK3u9YBoDpoGeFFr4WNUgRnEFS4DSXi6Tlfcrxs+oLK/wnZQXgEqZ/V9Vh+s=
-X-Received: by 2002:a05:6358:9f92:b0:129:bfd3:994 with SMTP id
- fy18-20020a0563589f9200b00129bfd30994mr1938185rwb.20.1686341168398; Fri, 09
- Jun 2023 13:06:08 -0700 (PDT)
+        Fri, 9 Jun 2023 17:21:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBE3635A7
+        for <linux-security-module@vger.kernel.org>; Fri,  9 Jun 2023 14:21:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6D80860ED3
+        for <linux-security-module@vger.kernel.org>; Fri,  9 Jun 2023 21:21:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D141C433D2;
+        Fri,  9 Jun 2023 21:21:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686345667;
+        bh=DyFNC7LIETj7edLx74ew7k5/9WVYaCVZtVt1+qeLBa4=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=aRLD0WGgVxhsJu0mfqkwObcAl+sxGkW0y4HxIaK/uUe9J0nw87d+tauy2eyKvEbiq
+         T8S8/cYEYx0K00YSe10lr11VLPwhM9o8K3jYM/zfdYpAw1K1c4QfJd5VUInx6rmaX0
+         paHatGjrKJKnOlpr0otw+KIH9J+sE6ydnk1eiach8nPY/PeeiliRBzSLl9hQdtJqok
+         QvvLvE/z20YrgVW4gtmWNe8I9y+VAYdKIRr3cmHjXVRACjG/3/jGqvs4nkuZTAUEzK
+         Wj8zQ7jTg9ZuLgTNV7jmBGbIejIXwgnozHzL7PmbNANEZnEkyHt84FqWPTtICA5GPR
+         JYllITpHOweQw==
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id 10116BBE3A5; Fri,  9 Jun 2023 23:21:05 +0200 (CEST)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
+        luto@kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
+In-Reply-To: <CAEf4BzYin==+WF27QBXoj23tHcr5BeezbPj2u9RW6qz4sLJsKw@mail.gmail.com>
+References: <20230607235352.1723243-1-andrii@kernel.org>
+ <871qik28bs.fsf@toke.dk>
+ <CAEf4BzYin==+WF27QBXoj23tHcr5BeezbPj2u9RW6qz4sLJsKw@mail.gmail.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date:   Fri, 09 Jun 2023 23:21:05 +0200
+Message-ID: <87h6rgz60u.fsf@toke.dk>
 MIME-Version: 1.0
-References: <20230603191518.1397490-1-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20230603191518.1397490-1-roberto.sassu@huaweicloud.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 9 Jun 2023 16:05:57 -0400
-Message-ID: <CAHC9VhSzC0zV31XrEz06HKp=NNbz0XPT24ja0O1sZtNM_aXqHg@mail.gmail.com>
-Subject: Re: [PATCH v11 0/4] evm: Do HMAC of multiple per LSM xattrs for new inodes
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jun 3, 2023 at 3:16=E2=80=AFPM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> One of the major goals of LSM stacking is to run multiple LSMs side by si=
-de
-> without interfering with each other. The ultimate decision will depend on
-> individual LSM decision.
->
-> Several changes need to be made to the LSM infrastructure to be able to
-> support that. This patch set tackles one of them: gives to each LSM the
-> ability to specify one or multiple xattrs to be set at inode creation
-> time and, at the same time, gives to EVM the ability to access all those
-> xattrs and calculate the HMAC on them ...
+Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
 
-Thanks for sticking with this Roberto, I see a few
-comments/suggestions on this patchset, but overall it is looking
-pretty good; I'm hopeful we will be able to merge the next revision.
+> On Fri, Jun 9, 2023 at 4:17=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgensen <=
+toke@kernel.org> wrote:
+>>
+>> Andrii Nakryiko <andrii@kernel.org> writes:
+>>
+>> > This patch set introduces new BPF object, BPF token, which allows to d=
+elegate
+>> > a subset of BPF functionality from privileged system-wide daemon (e.g.,
+>> > systemd or any other container manager) to a *trusted* unprivileged
+>> > application. Trust is the key here. This functionality is not about al=
+lowing
+>> > unconditional unprivileged BPF usage. Establishing trust, though, is
+>> > completely up to the discretion of respective privileged application t=
+hat
+>> > would create a BPF token.
+>>
+>> I am not convinced that this token-based approach is a good way to solve
+>> this: having the delegation mechanism be one where you can basically
+>> only grant a perpetual delegation with no way to retract it, no way to
+>> check what exactly it's being used for, and that is transitive (can be
+>> passed on to others with no restrictions) seems like a recipe for
+>> disaster. I believe this was basically the point Casey was making as
+>> well in response to v1.
+>
+> Most of this can be added, if we really need to. Ability to revoke BPF
+> token is easy to implement (though of course it will apply only for
+> subsequent operations). We can allocate ID for BPF token just like we
+> do for BPF prog/map/link and let tools iterate and fetch information
+> about it. As for controlling who's passing what and where, I don't
+> think the situation is different for any other FD-based mechanism. You
+> might as well create a BPF map/prog/link, pass it through SCM_RIGHTS
+> or BPF FS, and that application can keep doing the same to other
+> processes.
 
---=20
-paul-moore.com
+No, but every other fd-based mechanism is limited in scope. E.g., if you
+pass a map fd that's one specific map that can be passed around, with a
+token it's all operations (of a specific type) which is way broader.
+
+> Ultimately, currently we have root permissions for applications that
+> need BPF. That's already very dangerous. But just because something
+> might be misused or abused doesn't prevent us from making a good
+> practical use of it, right?
+
+That's not a given. It's always a trade-off, and if the mechanism is
+likely to open up the system to additional risk that's not a good
+trade-off even if it helps in some case. I basically worry that this is
+the case here.
+
+> Also, there is LSM on top of all of this to override and control how
+> the BPF subsystem is used, regardless of BPF token. It can override
+> any of the privileges mechanism, capabilities, BPF token, whatnot.
+
+If this mechanism needs an LSM to be used safely, that's not incredibly
+confidence-inspiring. Security mechanisms should fail safe, which this
+one does not.
+
+I'm also worried that an LSM policy is the only way to disable the
+ability to create a token; with this in the kernel, I suddenly have to
+trust not only that all applications with BPF privileges will not load
+malicious code, but also that they won't (accidentally or maliciously)
+conveys extra privileges on someone else. Seems a bit broad to have this
+ability (to issue tokens) available to everyone with access to the bpf()
+syscall, when (IIUC) it's only a single daemon in the system that would
+legitimately do this in the deployment you're envisioning.
+
+>> If the goal is to enable a privileged application (such as a container
+>> manager) to grant another unprivileged application the permission to
+>> perform certain bpf() operations, why not just proxy the operations
+>> themselves over some RPC mechanism? That way the granting application
+>
+> It's explicitly what we *do not* want to do, as it is a major problem
+> and logistical complication. Every single application will have to be
+> rewritten to use such a special daemon/service and its API, which is
+> completely different from bpf() syscall API. It invalidates the use of
+> all the libbpf (and other bpf libraries') APIs, BPF skeleton is
+> incompatible with this. It's a nightmare. I've got feedback from
+> people in another company that do have BPF service with just a tiny
+> subset of BPF functionality delegated to such service, and it's a pain
+> and definitely not a preferred way to do things.
+
+But weren't you proposing that libbpf should be able to transparently
+look for tokens and load them without any application changes? Why can't
+libbpf be taught to use an RPC socket in a similar fashion? It basically
+boils down to something like:
+
+static inline int sys_bpf(enum bpf_cmd cmd, union bpf_attr *attr,
+			  unsigned int size)
+{
+	if (!stat("/run/bpf.sock")) {
+		sock =3D open_socket("/run/bpf.sock");
+                write_to(sock, cmd, attr, size);
+                return read_response(sock);
+        } else {
+		return syscall(__NR_bpf, cmd, attr, size);
+        }
+}
+
+> Just think about having to mirror a big chunk of bpf() syscall as an
+> RPC. So no, BPF proxy is definitely not a good solution.
+
+The daemon at the other side of the socket in the example above doesn't
+*have* to be taught all the semantics of the syscall, it can just look
+at the command name and make a decision based on that and the identity
+of the socket peer, then just pass the whole thing to the kernel if the
+permission check passes.
+
+>> can perform authentication checks on every operation and ensure its
+>> origins are sound at the time it is being made. Instead of just writing
+>> a blank check (in the form of a token) and hoping the receiver of it is
+>> not compromised...
+>
+> All this could and should be done through LSM in much more decoupled
+> and transparent (to application) way. BPF token doesn't prevent this.
+> It actually helps with this, because organizations can actually
+> dictate that operations that do not provide BPF token are
+> automatically rejected, and those that do provide BPF token can be
+> further checked and granted or rejected based on specific BPF token
+> instance.
+
+See above re: needing an LSM policy to make this safe...
+
+-Toke
