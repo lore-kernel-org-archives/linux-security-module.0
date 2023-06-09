@@ -2,37 +2,37 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6017C88C98
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 12:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11DA7C88CB4
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 12:51:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240931AbjFIMvW (ORCPT
+        id S240899AbjFIMvZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Jun 2023 08:51:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52544 "EHLO
+        Fri, 9 Jun 2023 08:51:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240918AbjFIMut (ORCPT
+        with ESMTP id S240709AbjFIMuj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Jun 2023 08:50:49 -0400
+        Fri, 9 Jun 2023 08:50:39 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 077FB2D4A;
-        Fri,  9 Jun 2023 05:50:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7D6210A;
+        Fri,  9 Jun 2023 05:50:39 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 90EAB657D3;
-        Fri,  9 Jun 2023 12:50:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E991BC433D2;
-        Fri,  9 Jun 2023 12:50:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 95D58657CE;
+        Fri,  9 Jun 2023 12:50:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFCFFC4339B;
+        Fri,  9 Jun 2023 12:50:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686315048;
-        bh=qpwJ/0eyyRtkYU9Ul0XQiBvv7dvzUbKLdiWoj7QNPo0=;
+        s=k20201202; t=1686315038;
+        bh=LSV/nyUG8bcrL2oEySUmyLQ2HTPvjddC7F+/lUs3jEU=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=EhkPm7lBafsHhSFhdMWAxFnhVa1gg77E/3Y2FS3tY9wIdwn/Kwr3CLysnbK8Ttmdl
-         wfcVFnVEzMcrmn7bA7Fk31f1J2K3cBkZNMBm91VzYrjsotdZhnHnlm91sI8v1H4Bkp
-         ezIFcfoYKApARBpHpMyt7CTNbRj8lW6k1+aju+ldxXX4DA598P7evqkNx5BZm0wuRP
-         1UHDzndA7v8LopmkkAy6ORkAHm+m0fSHDPtR/sh6T3mnpVlIJSeno8qTZAA6oPpqe6
-         G//4wZi7SQ8GAtejpm0uKQUyHeCSSoUAKdKS3TYbVkGZ2/+EG584ZznVNq86u7C3yq
-         vgwdW20yudLdQ==
+        b=bVReiO8hTnvm8VGrn95dIHsOOPSUJZ8yz9Jc2I7oSveR9pcduDeqYC7J3MCwL0mKh
+         c7oGLr72mXGrKJMJlDzJ6kb3ko2jD5qJ5+jn0ss3X2YSDIv4R+YM/0jMeXi1d/kpew
+         Yv2azGxiKqZez+S/oE/51u+VLNyShKTAN+cKhd3GubmVXALno8rS6IrQURqI9eRE4o
+         o4Q0+JftweyHht3vESfSDB584px9d5fIw2xXaTNGxcixgI27n6XryQSISQrxgPM28w
+         wjMLSlExZFxWDbnW1EFP/RVPfJPqw4sNYJnfgyKbEEj7l/qqXv62+yTTX3FDLaifRq
+         OmgBrefuE7OCA==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Christian Brauner <brauner@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -65,9 +65,9 @@ To:     Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
         linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
         apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
-Subject: [PATCH 6/9] exfat: ensure that ctime is updated whenever the mtime is
-Date:   Fri,  9 Jun 2023 08:50:20 -0400
-Message-Id: <20230609125023.399942-7-jlayton@kernel.org>
+Subject: [PATCH 3/9] autofs: set ctime as well when mtime changes on a dir
+Date:   Fri,  9 Jun 2023 08:50:17 -0400
+Message-Id: <20230609125023.399942-4-jlayton@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230609125023.399942-1-jlayton@kernel.org>
 References: <20230609125023.399942-1-jlayton@kernel.org>
@@ -78,49 +78,40 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/exfat/namei.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/autofs/root.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index e0ff9d156f6f..d9b46fa36bff 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -817,7 +817,7 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
- 	ei->dir.dir = DIR_DELETED;
+diff --git a/fs/autofs/root.c b/fs/autofs/root.c
+index 6baf90b08e0e..93046c9dc461 100644
+--- a/fs/autofs/root.c
++++ b/fs/autofs/root.c
+@@ -600,7 +600,7 @@ static int autofs_dir_symlink(struct mnt_idmap *idmap,
+ 	p_ino = autofs_dentry_ino(dentry->d_parent);
+ 	p_ino->count++;
  
- 	inode_inc_iversion(dir);
--	dir->i_mtime = dir->i_atime = current_time(dir);
-+	dir->i_mtime = dir->i_atime = dir->i_ctime = current_time(dir);
- 	exfat_truncate_atime(&dir->i_atime);
- 	if (IS_DIRSYNC(dir))
- 		exfat_sync_inode(dir);
-@@ -825,7 +825,7 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
- 		mark_inode_dirty(dir);
+-	dir->i_mtime = current_time(dir);
++	dir->i_mtime = dir->i_ctime = current_time(dir);
  
- 	clear_nlink(inode);
--	inode->i_mtime = inode->i_atime = current_time(inode);
-+	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
- 	exfat_truncate_atime(&inode->i_atime);
- 	exfat_unhash_inode(inode);
- 	exfat_d_version_set(dentry, inode_query_iversion(dir));
-@@ -979,7 +979,7 @@ static int exfat_rmdir(struct inode *dir, struct dentry *dentry)
- 	ei->dir.dir = DIR_DELETED;
+ 	return 0;
+ }
+@@ -633,7 +633,7 @@ static int autofs_dir_unlink(struct inode *dir, struct dentry *dentry)
+ 	d_inode(dentry)->i_size = 0;
+ 	clear_nlink(d_inode(dentry));
  
- 	inode_inc_iversion(dir);
--	dir->i_mtime = dir->i_atime = current_time(dir);
-+	dir->i_mtime = dir->i_atime = dir->i_ctime = current_time(dir);
- 	exfat_truncate_atime(&dir->i_atime);
- 	if (IS_DIRSYNC(dir))
- 		exfat_sync_inode(dir);
-@@ -988,7 +988,7 @@ static int exfat_rmdir(struct inode *dir, struct dentry *dentry)
- 	drop_nlink(dir);
+-	dir->i_mtime = current_time(dir);
++	dir->i_mtime = dir->i_ctime = current_time(dir);
  
- 	clear_nlink(inode);
--	inode->i_mtime = inode->i_atime = current_time(inode);
-+	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
- 	exfat_truncate_atime(&inode->i_atime);
- 	exfat_unhash_inode(inode);
- 	exfat_d_version_set(dentry, inode_query_iversion(dir));
+ 	spin_lock(&sbi->lookup_lock);
+ 	__autofs_add_expiring(dentry);
+@@ -749,7 +749,7 @@ static int autofs_dir_mkdir(struct mnt_idmap *idmap,
+ 	p_ino = autofs_dentry_ino(dentry->d_parent);
+ 	p_ino->count++;
+ 	inc_nlink(dir);
+-	dir->i_mtime = current_time(dir);
++	dir->i_mtime = dir->i_ctime = current_time(dir);
+ 
+ 	return 0;
+ }
 -- 
 2.40.1
 
