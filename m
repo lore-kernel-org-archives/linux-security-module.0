@@ -2,132 +2,136 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0347CC7EE45
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 14:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4D1C7EE2F
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 16:46:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241221AbjFIOZM (ORCPT
+        id S229737AbjFIQqI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Jun 2023 10:25:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49150 "EHLO
+        Fri, 9 Jun 2023 12:46:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241383AbjFIOY7 (ORCPT
+        with ESMTP id S229883AbjFIQpx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Jun 2023 10:24:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FDA030F2;
-        Fri,  9 Jun 2023 07:24:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1DA83612DC;
-        Fri,  9 Jun 2023 14:24:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EFC0C433EF;
-        Fri,  9 Jun 2023 14:24:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686320697;
-        bh=lPZaYXwJNgQ8vlT2x3myxwgaKUg25CcT5sq/Ukhrut0=;
-        h=Date:Subject:From:To:References:In-Reply-To:From;
-        b=W8kTc9kAK3vwyM14HxhZNCGyCsgjneC7ZodooyfoMlG7QL799/YlXtnUntj2P8V5+
-         xbEXsW87sQ6wqEkEv0B8Dc0R35BsxwV0G25Hr3XSxtbJqI8SoF4lXD//yb9IT5gox8
-         fhF7ltXerFotqpYWdtd5KJwdnsqracFfgKWBV5ayFKoPeTpgrX5kYGtrXXjq9D/SxT
-         ycrghnTvCqOkt575AxkfxUiqHod9waGPwil9p3nJLPpRc7S0lYwv+SE7sOkvblIBHW
-         5aoTUbJHjz8pXitDcJjYjUVtf/qZHi/LgqHXCAYwhTOOq70KzaXOOv1s86EumoHGqj
-         W3IrXHGIYfxtg==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Fri, 09 Jun 2023 17:24:52 +0300
-Message-Id: <CT86SNGF201H.2UZF8SN2MEKZ6@suppilovahvero>
-Subject: Re: [PATCH v2] integrity: Fix possible multiple allocation in
- integrity_inode_get()
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Tianjia Zhang" <tianjia.zhang@linux.alibaba.com>,
-        "Mimi Zohar" <zohar@linux.ibm.com>,
-        "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
-        "Paul Moore" <paul@paul-moore.com>,
-        "James Morris" <jmorris@namei.org>,
+        Fri, 9 Jun 2023 12:45:53 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9641F3A97
+        for <linux-security-module@vger.kernel.org>; Fri,  9 Jun 2023 09:44:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686329097;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=lP5O6Y+WWlbHJraaUNqLEu0298uTs2XTBNqgvHhDjHo=;
+        b=GTQQd7l1Wz1r48CRd5HA1lJ3vVn9oh3zOYme4Yj4Iy1cbL3Dx8ihREKZEQBaBUJfcsMXD2
+        PVdtxVk7r+5eI1BxdY93iYvBoERwo79GpCxynjsMhaM5u8VZh0PZmgcJS6hirqz+SpkFmn
+        6FSVGcSLPVeNVLEWRhVCSP0r+d8864E=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-237-hbhaU2wEMHqddy75tkE5TQ-1; Fri, 09 Jun 2023 12:44:54 -0400
+X-MC-Unique: hbhaU2wEMHqddy75tkE5TQ-1
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1b03cfa7602so6733175ad.3
+        for <linux-security-module@vger.kernel.org>; Fri, 09 Jun 2023 09:44:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686329093; x=1688921093;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lP5O6Y+WWlbHJraaUNqLEu0298uTs2XTBNqgvHhDjHo=;
+        b=OrPv4atTrBh1CigvmAl5KugG+IxO4W1Lp418bp7O7nDbmAX7ut6btsFHIBsy0VdRje
+         jILj53CTHU0qnuv73N9TDMIWoi7tQBw6He58rGeDKQpqtSv3xXZHN/XHzhpwe6H0ZKKx
+         dtA/nRtp11Ez5+4G+kQklQWhTfweCTljHwt3ef3LuNxxz9QiVgVEUls1f8LYFZ/u3IrJ
+         kxTl+23K68Gm3vdvtKFjW2lcyTpmFlU57N1Gh6mlNAU7b52G1w/gVizui2TU/qKvom6+
+         SVVpcTVUJ8ct37Oq53QVeozpI9KCgXYCmLalPRHicU6Kxvii9WjTzASoZ9lRCB0A0JNg
+         ZRiA==
+X-Gm-Message-State: AC+VfDzsaqbFFB7BETGjr2iU8ZjB9TyfRfOpRJlyrziYOsDMSBe8UnyB
+        CBUHs8ciu3vzXw7uQwq+d7gMfGLCDxiXt7JcXAMAiHxdVJ/N0NBJ2bK1MWycSBlXS9+1K7U0JgR
+        +tjB5gh6AK7mymcuIL7HnlFcTXPDvFzbAAr37YQBoLhavwq80Gd0r
+X-Received: by 2002:a17:902:b905:b0:1af:e63f:5bb1 with SMTP id bf5-20020a170902b90500b001afe63f5bb1mr1282655plb.7.1686329092972;
+        Fri, 09 Jun 2023 09:44:52 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ7zDVq695OK7McLR4vzNBftl0R3SL21TRjXzZOuBBU36wjdeP/MVpNAkO6JcixIuhfY6AAHiytBnKwzWzUI7o8=
+X-Received: by 2002:a17:902:b905:b0:1af:e63f:5bb1 with SMTP id
+ bf5-20020a170902b90500b001afe63f5bb1mr1282622plb.7.1686329092671; Fri, 09 Jun
+ 2023 09:44:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230609125023.399942-1-jlayton@kernel.org> <20230609125023.399942-8-jlayton@kernel.org>
+In-Reply-To: <20230609125023.399942-8-jlayton@kernel.org>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Fri, 9 Jun 2023 18:44:41 +0200
+Message-ID: <CAHc6FU4wyfQT7T75j2Sd9WNp=ag7hpDZGYkR=m73h2nOaH+AqQ@mail.gmail.com>
+Subject: Re: [PATCH 7/9] gfs2: update ctime when quota is updated
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Brad Warrum <bwarrum@linux.ibm.com>,
+        Ritu Agarwal <rituagar@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ian Kent <raven@themaw.net>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.14.0
-References: <20230530121453.10249-1-tianjia.zhang@linux.alibaba.com>
- <20230601064244.33633-1-tianjia.zhang@linux.alibaba.com>
-In-Reply-To: <20230601064244.33633-1-tianjia.zhang@linux.alibaba.com>
+        Ruihan Li <lrh2000@pku.edu.cn>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu Jun 1, 2023 at 9:42 AM EEST, Tianjia Zhang wrote:
-> When integrity_inode_get() is querying and inserting the cache, there
-> is a conditional race in the concurrent environment.
->
-> The race condition is the result of not properly implementing
-> "double-checked locking". In this case, it first checks to see if the
-> iint cache record exists before taking the lock, but doesn't check
-> again after taking the integrity_iint_lock.
->
-> Fixes: bf2276d10ce5 ("ima: allocating iint improvements")
-> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: <stable@vger.kernel.org> # v3.10+
+Jeff,
 
-s/v3.10/v4.14/
-
-I.e. cover only currently maintained longterms, right?
-
-
+On Fri, Jun 9, 2023 at 2:50=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
+te:
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  security/integrity/iint.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
+>  fs/gfs2/quota.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index c73858e8c6d5..a462df827de2 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -43,12 +43,10 @@ static struct integrity_iint_cache *__integrity_iint_=
-find(struct inode *inode)
->  		else if (inode > iint->inode)
->  			n =3D n->rb_right;
->  		else
-> -			break;
-> +			return iint;
->  	}
-> -	if (!n)
-> -		return NULL;
-> =20
-> -	return iint;
-> +	return NULL;
->  }
-> =20
->  /*
-> @@ -113,10 +111,15 @@ struct integrity_iint_cache *integrity_inode_get(st=
-ruct inode *inode)
->  		parent =3D *p;
->  		test_iint =3D rb_entry(parent, struct integrity_iint_cache,
->  				     rb_node);
-> -		if (inode < test_iint->inode)
-> +		if (inode < test_iint->inode) {
->  			p =3D &(*p)->rb_left;
-> -		else
-> +		} else if (inode > test_iint->inode) {
->  			p =3D &(*p)->rb_right;
-> +		} else {
-> +			write_unlock(&integrity_iint_lock);
-> +			kmem_cache_free(iint_cache, iint);
-> +			return test_iint;
-> +		}
->  	}
-> =20
->  	iint->inode =3D inode;
-> --=20
-> 2.24.3 (Apple Git-128)
+> diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
+> index 1ed17226d9ed..6d283e071b90 100644
+> --- a/fs/gfs2/quota.c
+> +++ b/fs/gfs2/quota.c
+> @@ -869,7 +869,7 @@ static int gfs2_adjust_quota(struct gfs2_inode *ip, l=
+off_t loc,
+>                 size =3D loc + sizeof(struct gfs2_quota);
+>                 if (size > inode->i_size)
+>                         i_size_write(inode, size);
+> -               inode->i_mtime =3D inode->i_atime =3D current_time(inode)=
+;
+> +               inode->i_mtime =3D inode->i_atime =3D inode->i_ctime =3D =
+current_time(inode);
 
-Mimi, are you picking this?
+I don't think we need to worry about the ctime of the quota inode as
+that inode is internal to the filesystem only.
 
-Off-topic: how do you compile kernel on macOS, you're using VM right?
-I'm just interested because I recently bought Mac mini for both
-compiling and testing arm64. Optimal would be to be able to compile
-the kernel on bare metal and then deploy to a VM...
+>                 mark_inode_dirty(inode);
+>                 set_bit(QDF_REFRESH, &qd->qd_flags);
+>         }
+> --
+> 2.40.1
+>
 
+Thanks,
+Andreas
 
-BR, Jarkko
