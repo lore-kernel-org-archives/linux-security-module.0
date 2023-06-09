@@ -2,128 +2,132 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A4CC7EE29
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 13:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0347CC7EE45
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 14:25:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238767AbjFIN1n (ORCPT
+        id S241221AbjFIOZM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Jun 2023 09:27:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47892 "EHLO
+        Fri, 9 Jun 2023 10:25:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230413AbjFIN1m (ORCPT
+        with ESMTP id S241383AbjFIOY7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Jun 2023 09:27:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6876C270B;
-        Fri,  9 Jun 2023 06:27:41 -0700 (PDT)
+        Fri, 9 Jun 2023 10:24:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FDA030F2;
+        Fri,  9 Jun 2023 07:24:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0577A60E8D;
-        Fri,  9 Jun 2023 13:27:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7BCC433EF;
-        Fri,  9 Jun 2023 13:27:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1DA83612DC;
+        Fri,  9 Jun 2023 14:24:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EFC0C433EF;
+        Fri,  9 Jun 2023 14:24:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686317260;
-        bh=oSuiJiclTzvMA00+ishDDZSJ5F4CCgIPlxz3qberOkU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ctTfeKacHWo5l9K9DxzQOrtlTLoG85/EKA7MvHQ/F1/2q0zByBrbmyXzsM5xu9ZiB
-         z9wHdsdfD4pFeRxFcqVecbJ+Otm388ULgG+bsoled+ga5itRm8LLiC22OcTX19F+j+
-         6yIPcNN1B7m9Ur7wYkJS4IGiKr+2aBq5+dqDL6XT4Raq7b5xw0RxxqP1BRnkC/teoQ
-         1BBAFxOID86v/atOu3NX+L9wnqyt+99xF7OTaMcfAz05y5B3IH3bJDB665QOEe/kU6
-         AzdHw7nXRvFkJ5TMlrv7YVHd1aILHvSrpMhR/sNk7+XbKVcwqz4pHqjL+n9s6tGy8X
-         915cASV+pKXDw==
-Message-ID: <671ceeb2e019c11617a481739c2e17604456c48c.camel@kernel.org>
-Subject: Re: [PATCH 0/9] fs: add some missing ctime updates
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Brad Warrum <bwarrum@linux.ibm.com>,
-        Ritu Agarwal <rituagar@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Ian Kent <raven@themaw.net>,
-        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Ruihan Li <lrh2000@pku.edu.cn>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
-Date:   Fri, 09 Jun 2023 09:27:36 -0400
-In-Reply-To: <2023060931-magazine-nickname-f386@gregkh>
-References: <20230609125023.399942-1-jlayton@kernel.org>
-         <2023060931-magazine-nickname-f386@gregkh>
-Content-Type: text/plain; charset="ISO-8859-15"
+        s=k20201202; t=1686320697;
+        bh=lPZaYXwJNgQ8vlT2x3myxwgaKUg25CcT5sq/Ukhrut0=;
+        h=Date:Subject:From:To:References:In-Reply-To:From;
+        b=W8kTc9kAK3vwyM14HxhZNCGyCsgjneC7ZodooyfoMlG7QL799/YlXtnUntj2P8V5+
+         xbEXsW87sQ6wqEkEv0B8Dc0R35BsxwV0G25Hr3XSxtbJqI8SoF4lXD//yb9IT5gox8
+         fhF7ltXerFotqpYWdtd5KJwdnsqracFfgKWBV5ayFKoPeTpgrX5kYGtrXXjq9D/SxT
+         ycrghnTvCqOkt575AxkfxUiqHod9waGPwil9p3nJLPpRc7S0lYwv+SE7sOkvblIBHW
+         5aoTUbJHjz8pXitDcJjYjUVtf/qZHi/LgqHXCAYwhTOOq70KzaXOOv1s86EumoHGqj
+         W3IrXHGIYfxtg==
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Date:   Fri, 09 Jun 2023 17:24:52 +0300
+Message-Id: <CT86SNGF201H.2UZF8SN2MEKZ6@suppilovahvero>
+Subject: Re: [PATCH v2] integrity: Fix possible multiple allocation in
+ integrity_inode_get()
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Tianjia Zhang" <tianjia.zhang@linux.alibaba.com>,
+        "Mimi Zohar" <zohar@linux.ibm.com>,
+        "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
+        "Paul Moore" <paul@paul-moore.com>,
+        "James Morris" <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.14.0
+References: <20230530121453.10249-1-tianjia.zhang@linux.alibaba.com>
+ <20230601064244.33633-1-tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <20230601064244.33633-1-tianjia.zhang@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2023-06-09 at 15:10 +0200, Greg Kroah-Hartman wrote:
-> On Fri, Jun 09, 2023 at 08:50:14AM -0400, Jeff Layton wrote:
-> > While working on a patch series to change how we handle the ctime, I
-> > found a number of places that update the mtime without a corresponding
-> > ctime update. POSIX requires that when the mtime is updated that the
-> > ctime also be updated.
-> >=20
-> > Note that these are largely untested other than for compilation, so
-> > please review carefully. These are a preliminary set for the upcoming
-> > rework of how we handle the ctime.
-> >=20
-> > None of these seem to be very crucial, but it would be nice if
-> > various maintainers could pick these up for v6.5. Please let me know if
-> > you do.
-> >=20
-> > Jeff Layton (9):
-> >   ibmvmc: update ctime in conjunction with mtime on write
-> >   usb: update the ctime as well when updating mtime after an ioctl
-> >   autofs: set ctime as well when mtime changes on a dir
-> >   bfs: update ctime in addition to mtime when adding entries
-> >   efivarfs: update ctime when mtime changes on a write
-> >   exfat: ensure that ctime is updated whenever the mtime is
-> >   gfs2: update ctime when quota is updated
-> >   apparmor: update ctime whenever the mtime changes on an inode
-> >   cifs: update the ctime on a partial page write
-> >=20
-> >  drivers/misc/ibmvmc.c             |  2 +-
-> >  drivers/usb/core/devio.c          | 16 ++++++++--------
-> >  fs/autofs/root.c                  |  6 +++---
-> >  fs/bfs/dir.c                      |  2 +-
-> >  fs/efivarfs/file.c                |  2 +-
-> >  fs/exfat/namei.c                  |  8 ++++----
-> >  fs/gfs2/quota.c                   |  2 +-
-> >  fs/smb/client/file.c              |  2 +-
-> >  security/apparmor/apparmorfs.c    |  7 +++++--
-> >  security/apparmor/policy_unpack.c | 11 +++++++----
-> >  10 files changed, 32 insertions(+), 26 deletions(-)
-> >=20
-> > --=20
-> > 2.40.1
-> >=20
->=20
-> All of these need commit log messages, didn't checkpatch warn you about
-> that?
+On Thu Jun 1, 2023 at 9:42 AM EEST, Tianjia Zhang wrote:
+> When integrity_inode_get() is querying and inserting the cache, there
+> is a conditional race in the concurrent environment.
+>
+> The race condition is the result of not properly implementing
+> "double-checked locking". In this case, it first checks to see if the
+> iint cache record exists before taking the lock, but doesn't check
+> again after taking the integrity_iint_lock.
+>
+> Fixes: bf2276d10ce5 ("ima: allocating iint improvements")
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> Cc: <stable@vger.kernel.org> # v3.10+
 
-It did, once I ran it. ;)
+s/v3.10/v4.14/
 
-I'll repost the set with more elaborate changelogs.
---=20
-Jeff Layton <jlayton@kernel.org>
+I.e. cover only currently maintained longterms, right?
+
+
+> ---
+>  security/integrity/iint.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+>
+> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> index c73858e8c6d5..a462df827de2 100644
+> --- a/security/integrity/iint.c
+> +++ b/security/integrity/iint.c
+> @@ -43,12 +43,10 @@ static struct integrity_iint_cache *__integrity_iint_=
+find(struct inode *inode)
+>  		else if (inode > iint->inode)
+>  			n =3D n->rb_right;
+>  		else
+> -			break;
+> +			return iint;
+>  	}
+> -	if (!n)
+> -		return NULL;
+> =20
+> -	return iint;
+> +	return NULL;
+>  }
+> =20
+>  /*
+> @@ -113,10 +111,15 @@ struct integrity_iint_cache *integrity_inode_get(st=
+ruct inode *inode)
+>  		parent =3D *p;
+>  		test_iint =3D rb_entry(parent, struct integrity_iint_cache,
+>  				     rb_node);
+> -		if (inode < test_iint->inode)
+> +		if (inode < test_iint->inode) {
+>  			p =3D &(*p)->rb_left;
+> -		else
+> +		} else if (inode > test_iint->inode) {
+>  			p =3D &(*p)->rb_right;
+> +		} else {
+> +			write_unlock(&integrity_iint_lock);
+> +			kmem_cache_free(iint_cache, iint);
+> +			return test_iint;
+> +		}
+>  	}
+> =20
+>  	iint->inode =3D inode;
+> --=20
+> 2.24.3 (Apple Git-128)
+
+Mimi, are you picking this?
+
+Off-topic: how do you compile kernel on macOS, you're using VM right?
+I'm just interested because I recently bought Mac mini for both
+compiling and testing arm64. Optimal would be to be able to compile
+the kernel on bare metal and then deploy to a VM...
+
+
+BR, Jarkko
