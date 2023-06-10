@@ -2,250 +2,80 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9A3C77B7A
-	for <linux-security-module@archiver.kernel.org>; Sat, 10 Jun 2023 11:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27892C7EE2F
+	for <linux-security-module@archiver.kernel.org>; Sat, 10 Jun 2023 15:07:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231231AbjFJLWo (ORCPT
+        id S235068AbjFJPHr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 10 Jun 2023 07:22:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54590 "EHLO
+        Sat, 10 Jun 2023 11:07:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbjFJLWo (ORCPT
+        with ESMTP id S230265AbjFJPHr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 10 Jun 2023 07:22:44 -0400
-Received: from m126.mail.126.com (m126.mail.126.com [220.181.12.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AA1E33598;
-        Sat, 10 Jun 2023 04:22:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ejXHl
-        lPedew2zZARz5FSqiDrl9loQ6Y6ONdoRA6fE/c=; b=Wn+/JbFHJNpWrtizXkBrS
-        iEka2EspdeI7gqIKk3QbwQN5QH7MnodgVHLzKs++E6lwNNF1Eyqfn8wElY7c5Rjn
-        pg2sl54ceQjw367UNoX2/Qzn1ncUyy30l23qJrQU47M2puFz30yNYVrynbVnB2ZO
-        Db97JuUImjn2eiYGBg8p/g=
-Received: from localhost.localdomain (unknown [202.112.238.192])
-        by zwqz-smtp-mta-g2-1 (Coremail) with SMTP id _____wC3vTnyWIRktQIrAA--.13080S2;
-        Sat, 10 Jun 2023 19:05:23 +0800 (CST)
-From:   Yi He <clangllvm@126.com>
-To:     ast@kernel.org
-Cc:     daniel@iogearbox.net, andrii@kernel.org, song@kernel.org,
-        yhs@fb.com, john.fastabend@gmail.com, kpsingh@kernel.org,
-        sdf@google.com, haoluo@google.com, jolsa@kernel.org,
-        rostedt@goodmis.org, mhiramat@kernel.org, davem@davemloft.net,
-        kuba@kernel.org, hawk@kernel.org, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Yi He <clangllvm@126.com>
-Subject: [PATCH] Add a sysctl option to disable bpf offensive helpers.
-Date:   Sat, 10 Jun 2023 11:05:18 +0000
-Message-Id: <20230610110518.123183-1-clangllvm@126.com>
-X-Mailer: git-send-email 2.34.1
+        Sat, 10 Jun 2023 11:07:47 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D03603AA4
+        for <linux-security-module@vger.kernel.org>; Sat, 10 Jun 2023 08:07:45 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-652d1d3e040so2250656b3a.1
+        for <linux-security-module@vger.kernel.org>; Sat, 10 Jun 2023 08:07:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20221208.gappssmtp.com; s=20221208; t=1686409665; x=1689001665;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N+OwDas9lj8b/o3V8lkOk9a6MOfWBvvSjFJASd1oAkw=;
+        b=OOATwZuJz1XpIayU6qEWJsTjt3CY+4SMX0O0hFz4qhukDiqKsW+2HfODMVSjDY0PS8
+         dM86VQyjvRTSnncMd8NEQ1Y3ajqSyztqwK1L4AHsdyCggJCjMPhoHDYKqNNW/QTmsvkl
+         My6SqZzBK775E7qllyKf/D3HPM+CU0UogJlokXdyYcF3DIiOmW498DR8UJaYMOxa4taL
+         sO3cymRYwckFon9LanxHS8e9U/hC5GpwfPqq9UwNBxRTStvS4jMi3j+bn53NCB2HcAzM
+         zZwpBqsJYUp+qDWJUUO7vVRWb6hTATh/04CW99B7zboxr6WE5Dc4EPBPdzzm3JjPAp3M
+         PTTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686409665; x=1689001665;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N+OwDas9lj8b/o3V8lkOk9a6MOfWBvvSjFJASd1oAkw=;
+        b=OqOJw+yy5HfPZr8E0Srd8w1mhGV7cmPpDYqdYpEvsrsPoSdNoKn7IF2kjhGLu+yZzd
+         upEMezLGEyHGevA4ezBTCKdWuHHxwY06Z+iP4zEN7Z8rRctXHpnVJGBggoiaiXqrNzHC
+         6pM5wPmCLZEE3kmxwuRLdw1S4ZtcvzQyL0LvQb245ZYi3SkyNb3vdHaZlQXuTCGi3eCD
+         /R9ckyrsDEIjYlxt9BAD2E6l5IH9/M2QGubYKwbku0tOjiriImkcEnINlYAWTeOh9sqK
+         qBr6bPrUbY11k169em0Yj1eMfu2CrSDv/9HWONsF8tRtFe0V8Px+lqgFJ8lEw34Ajhyc
+         lKNA==
+X-Gm-Message-State: AC+VfDycNv6pWkOeSmXM1o/tPIimq3XDZS3prafQgrSVfOuEhNIoumYg
+        csnDTMVFl5/WceFxvubdJrWGVA==
+X-Google-Smtp-Source: ACHHUZ4r4eCGoy6iuu0IW9XAISMqoeXHH/Fv2bhIfewU3fQ3CD19OKfSes9kinrORhYOGStJ4RF3lw==
+X-Received: by 2002:a05:6a00:22c4:b0:646:b165:1b29 with SMTP id f4-20020a056a0022c400b00646b1651b29mr5033723pfj.23.1686409665296;
+        Sat, 10 Jun 2023 08:07:45 -0700 (PDT)
+Received: from hermes.local (204-195-120-218.wavecable.com. [204.195.120.218])
+        by smtp.gmail.com with ESMTPSA id 5-20020aa79145000000b0064cb6206463sm4231318pfi.85.2023.06.10.08.07.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Jun 2023 08:07:45 -0700 (PDT)
+Date:   Sat, 10 Jun 2023 08:07:42 -0700
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     Yi He <clangllvm@126.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        song@kernel.org, yhs@fb.com, john.fastabend@gmail.com,
+        kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
+        jolsa@kernel.org, rostedt@goodmis.org, mhiramat@kernel.org,
+        davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] Add a sysctl option to disable bpf offensive helpers.
+Message-ID: <20230610080742.5b51a721@hermes.local>
+In-Reply-To: <20230610110518.123183-1-clangllvm@126.com>
+References: <20230610110518.123183-1-clangllvm@126.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _____wC3vTnyWIRktQIrAA--.13080S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKrW3JryUGr4kXr43uw43GFg_yoW3tF18pF
-        97tryjyr40qF4IvrW7J3y8GryFkw4DXrW7Ca4kK3yfZF43XrZ2qr1kKF4agF1rZrZFg3ya
-        vws2vFW5ua1Ika7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRjFAdUUUUU=
-X-Originating-IP: [202.112.238.192]
-X-CM-SenderInfo: xfod0wpooyzqqrswhudrp/1tbiYBSKy1pELSXNFAAAs6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Some eBPF helper functions have been long regarded as problematic[1].
-More than just used for powerful rootkit, these features can also be 
-exploited to harm the containers by perform various attacks to the 
-processes outside the container in the enrtire VM, such as process 
-DoS, information theft, and container escape.  
+On Sat, 10 Jun 2023 11:05:18 +0000
+Yi He <clangllvm@126.com> wrote:
 
-When a container is granted to run eBPF tracing programs (which 
-need CAP_SYS_ADMIN), it can use the eBPF KProbe programs to hijack the 
-process outside the contianer and to escape the containers. This kind 
-of risks is limited as privieleged containers are warned and can hardly
- be accessed by the attackers.
+> Signed-off-by: fripSide <clangllvm@126.com>
 
-Even without CAP_SYS_ADMIN, since Linux 5.6, programs with with CAP_BPF + 
-CAP_PERFMON can use dangerous eBPF helpers such as bpf_read_user to steal 
-sensitive data (e.g., sshd/nginx private key) in other containers. 
-
-Currently, eBPF users just enable CAP_SYS_ADMIN and also enable the offensive
-features. Since lots of eBPF tools are distributed via containers, attackers 
-may perform supply chain attacks to create and spread their eBPF malware, 
-To prevent the abuse of these helpers, we introduce a new sysctl option 
-(sysctl_offensive_bpf_disabled) to cofine the usages of five dangerous 
-helpers:
-- bpf_probe_write_user
-- bpf_probe_read_user
-- bpf_probe_read_kernel
-- bpf_send_signal
-- bpf_override_return
-
-The default value of sysctl_offensive_bpf_disabled is 0, which means all the 
-five helpers are enabled. By setting sysctl_offensive_bpf_disabled to 1, 
-these helpers cannot be used util a reboot. By setting it to 2, these helpers
- cannot be used but privieleged users can modify this flag to 0.
-
-For benign eBPF programs such as Cillium, they do not need these features and 
-can set the sysctl_offensive_bpf_disabled to 1 after initialization.
-
-
-
-[1] https://embracethered.com/blog/posts/2021/offensive-bpf/
-
-
-Signed-off-by: fripSide <clangllvm@126.com>
----
- include/linux/bpf.h                       |  2 ++
- kernel/bpf/syscall.c                      | 33 +++++++++++++++++++++++
- kernel/configs/android-recommended.config |  1 +
- kernel/trace/bpf_trace.c                  | 21 ++++++++-------
- tools/testing/selftests/bpf/config        |  1 +
- 5 files changed, 48 insertions(+), 10 deletions(-)
-
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 456f33b9d205..61c723a589f8 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -2043,6 +2043,8 @@ bpf_map_alloc_percpu(const struct bpf_map *map, size_t size, size_t align,
- 
- extern int sysctl_unprivileged_bpf_disabled;
- 
-+extern int sysctl_offensive_bpf_disabled;
-+
- static inline bool bpf_allow_ptr_leaks(void)
- {
- 	return perfmon_capable();
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 14f39c1e573e..6b8c8ee1ea22 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -58,6 +58,9 @@ static DEFINE_SPINLOCK(link_idr_lock);
- int sysctl_unprivileged_bpf_disabled __read_mostly =
- 	IS_BUILTIN(CONFIG_BPF_UNPRIV_DEFAULT_OFF) ? 2 : 0;
- 
-+int sysctl_offensive_bpf_disabled __read_mostly =
-+	IS_BUILTIN(CONFIG_BPF_OFFENSIVE_BPF_OFF) ? 2 : 0;
-+
- static const struct bpf_map_ops * const bpf_map_types[] = {
- #define BPF_PROG_TYPE(_id, _name, prog_ctx_type, kern_ctx_type)
- #define BPF_MAP_TYPE(_id, _ops) \
-@@ -5385,6 +5388,27 @@ static int bpf_unpriv_handler(struct ctl_table *table, int write,
- 	return ret;
- }
- 
-+static int bpf_offensive_handler(struct ctl_table *table, int write,
-+			      void *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	int ret, offensive_enable = *(int *)table->data;
-+	bool locked_state = offensive_enable == 1;
-+	struct ctl_table tmp = *table;
-+
-+	if (write && !capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	tmp.data = &offensive_enable;
-+	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
-+	if (write && !ret) {
-+		if (locked_state && offensive_enable != 1)
-+			return -EPERM;
-+		*(int *)table->data = offensive_enable;
-+	}
-+
-+	return ret;
-+}
-+
- static struct ctl_table bpf_syscall_table[] = {
- 	{
- 		.procname	= "unprivileged_bpf_disabled",
-@@ -5395,6 +5419,15 @@ static struct ctl_table bpf_syscall_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_TWO,
- 	},
-+	{
-+		.procname	= "offensive_bpf_disabled",
-+		.data		= &sysctl_offensive_bpf_disabled,
-+		.maxlen		= sizeof(sysctl_offensive_bpf_disabled),
-+		.mode		= 0644,
-+		.proc_handler	= bpf_offensive_handler,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_TWO,
-+	},
- 	{
- 		.procname	= "bpf_stats_enabled",
- 		.data		= &bpf_stats_enabled_key.key,
-diff --git a/kernel/configs/android-recommended.config b/kernel/configs/android-recommended.config
-index e400fbbc8aba..cca75258af72 100644
---- a/kernel/configs/android-recommended.config
-+++ b/kernel/configs/android-recommended.config
-@@ -1,5 +1,6 @@
- #  KEEP ALPHABETICALLY SORTED
- # CONFIG_BPF_UNPRIV_DEFAULT_OFF is not set
-+# CONFIG_BPF_OFFENSIVE_BPF_OFF is not set
- # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
- # CONFIG_INPUT_MOUSE is not set
- # CONFIG_LEGACY_PTYS is not set
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 8deb22a99abe..5bdd0bee3e45 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -1432,17 +1432,18 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_get_prandom_u32:
- 		return &bpf_get_prandom_u32_proto;
- 	case BPF_FUNC_probe_write_user:
--		return security_locked_down(LOCKDOWN_BPF_WRITE_USER) < 0 ?
--		       NULL : bpf_get_probe_write_proto();
-+		return (security_locked_down(LOCKDOWN_BPF_WRITE_USER) < 0 ||
-+		       sysctl_offensive_bpf_disabled) ? NULL : bpf_get_probe_write_proto();
- 	case BPF_FUNC_probe_read_user:
--		return &bpf_probe_read_user_proto;
-+		return sysctl_offensive_bpf_disabled ? NULL : &bpf_probe_read_user_proto;
- 	case BPF_FUNC_probe_read_kernel:
--		return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ?
--		       NULL : &bpf_probe_read_kernel_proto;
-+		return (security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ||
-+		       sysctl_offensive_bpf_disabled) ? NULL : &bpf_probe_read_kernel_proto;
- 	case BPF_FUNC_probe_read_user_str:
--		return &bpf_probe_read_user_str_proto;
-+		return sysctl_offensive_bpf_disabled ? NULL : &bpf_probe_read_user_str_proto;
- 	case BPF_FUNC_probe_read_kernel_str:
--		return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ?
-+		return (security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ||
-+		       sysctl_offensive_bpf_disabled) ?
- 		       NULL : &bpf_probe_read_kernel_str_proto;
- #ifdef CONFIG_ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
- 	case BPF_FUNC_probe_read:
-@@ -1459,9 +1460,9 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_cgrp_storage_delete_proto;
- #endif
- 	case BPF_FUNC_send_signal:
--		return &bpf_send_signal_proto;
-+		return sysctl_offensive_bpf_disabled ? NULL : &bpf_send_signal_proto;
- 	case BPF_FUNC_send_signal_thread:
--		return &bpf_send_signal_thread_proto;
-+		return sysctl_offensive_bpf_disabled ? NULL : &bpf_send_signal_thread_proto;
- 	case BPF_FUNC_perf_event_read_value:
- 		return &bpf_perf_event_read_value_proto;
- 	case BPF_FUNC_get_ns_current_pid_tgid:
-@@ -1527,7 +1528,7 @@ kprobe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_get_stack_proto;
- #ifdef CONFIG_BPF_KPROBE_OVERRIDE
- 	case BPF_FUNC_override_return:
--		return &bpf_override_return_proto;
-+		return sysctl_offensive_bpf_disabled ? NULL : &bpf_override_return_proto;
- #endif
- 	case BPF_FUNC_get_func_ip:
- 		return prog->expected_attach_type == BPF_TRACE_KPROBE_MULTI ?
-diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
-index 63cd4ab70171..1a15d7451f19 100644
---- a/tools/testing/selftests/bpf/config
-+++ b/tools/testing/selftests/bpf/config
-@@ -9,6 +9,7 @@ CONFIG_BPF_LSM=y
- CONFIG_BPF_STREAM_PARSER=y
- CONFIG_BPF_SYSCALL=y
- # CONFIG_BPF_UNPRIV_DEFAULT_OFF is not set
-+# CONFIG_BPF_OFFENSIVE_BPF_OFF is not set
- CONFIG_CGROUP_BPF=y
- CONFIG_CRYPTO_HMAC=y
- CONFIG_CRYPTO_SHA256=y
--- 
-2.34.1
-
+You need to use your legal name not a hacker alias
+in DCO since DCO is intended to be a legally binding assertion.
