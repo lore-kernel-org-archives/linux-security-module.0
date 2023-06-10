@@ -2,130 +2,90 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DE1C88CB6
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 13:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA83C7EE2E
+	for <linux-security-module@archiver.kernel.org>; Sat, 10 Jun 2023 10:11:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235916AbjFLNwE (ORCPT
+        id S230130AbjFJKLY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 09:52:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40048 "EHLO
+        Sat, 10 Jun 2023 06:11:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236666AbjFLNwA (ORCPT
+        with ESMTP id S229483AbjFJKLX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 09:52:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A64E6F;
-        Mon, 12 Jun 2023 06:51:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2E84C62976;
-        Mon, 12 Jun 2023 13:51:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92EC5C433A1;
-        Mon, 12 Jun 2023 13:51:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686577915;
-        bh=N35u9HNcA2GE6O0RLNmO/H/bI7DFCPIb/J9WbCfp+7I=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=ObL7C8SEHs/LzGPrSxC74RrT9T2yAr7+1XglnX3EW1FZM90y7O6ormobkdpAWuZ0e
-         RdLzx900Hqpy9HE3EfCtu+74BEGhE/aZtEqml+3NJgQSzQx53YAlTOFBgpsZKSbcTh
-         +zXor8GIZ20+va1qDjHAfR3RyRUEaBOMhmjJ7l5g2lpz8/OpJX+h5I3T6nxDG8Q0Ct
-         vPS6mDUmgWbpb1+t3cmEUqFflpPCwKrf9+eWZ+e4rjAuOfKobUeruOpGBYBZ90Wbpa
-         C9ELvqhW19k3IAANYXAYjz0pZ8SMZZaeiSfoRUPDrDPMlZiF0tSo1r2eVMBMPNiBkq
-         +CwHQ9soLqvPA==
-Message-ID: <a6ca6c14a6b3727b7416198824b37bd7bd386180.camel@kernel.org>
-Subject: Re: [PATCH v2 8/8] cifs: update the ctime on a partial page write
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Tom Talpey <tom@talpey.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Brad Warrum <bwarrum@linux.ibm.com>,
-        Ritu Agarwal <rituagar@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ian Kent <raven@themaw.net>,
-        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Ruihan Li <lrh2000@pku.edu.cn>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org
-Date:   Mon, 12 Jun 2023 09:51:50 -0400
-In-Reply-To: <a34b598a-374b-5dbf-dd36-4b62e52fe36c@talpey.com>
-References: <20230612104524.17058-1-jlayton@kernel.org>
-         <20230612104524.17058-9-jlayton@kernel.org>
-         <a34b598a-374b-5dbf-dd36-4b62e52fe36c@talpey.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
+        Sat, 10 Jun 2023 06:11:23 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDF5B30D7;
+        Sat, 10 Jun 2023 03:11:22 -0700 (PDT)
+Received: from fsav415.sakura.ne.jp (fsav415.sakura.ne.jp [133.242.250.114])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 35AAAgjH002919;
+        Sat, 10 Jun 2023 19:10:42 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav415.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp);
+ Sat, 10 Jun 2023 19:10:42 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 35AA9QW1002648
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 10 Jun 2023 19:09:27 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <b45fa2fd-a19d-7507-726c-66a47f532bf4@I-love.SAKURA.ne.jp>
+Date:   Sat, 10 Jun 2023 19:09:26 +0900
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [syzbot] [tomoyo?] [fs?] INFO: rcu detected stall in newfstatat
+ (3)
+Content-Language: en-US
+To:     Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+References: <0000000000009752a005fdc2d114@google.com>
+Cc:     linux-usb@vger.kernel.org,
+        syzbot <syzbot+96127c74434e19e4609d@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <0000000000009752a005fdc2d114@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-06-12 at 09:41 -0400, Tom Talpey wrote:
-> On 6/12/2023 6:45 AM, Jeff Layton wrote:
-> > POSIX says:
-> >=20
-> >      "Upon successful completion, where nbyte is greater than 0, write(=
-)
-> >       shall mark for update the last data modification and last file st=
-atus
-> >       change timestamps of the file..."
-> >=20
-> > Add the missing ctime update.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >   fs/smb/client/file.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-> > index df88b8c04d03..a00038a326cf 100644
-> > --- a/fs/smb/client/file.c
-> > +++ b/fs/smb/client/file.c
-> > @@ -2596,7 +2596,7 @@ static int cifs_partialpagewrite(struct page *pag=
-e, unsigned from, unsigned to)
-> >   					   write_data, to - from, &offset);
-> >   		cifsFileInfo_put(open_file);
-> >   		/* Does mm or vfs already set times? */
-> > -		inode->i_atime =3D inode->i_mtime =3D current_time(inode);
-> > +		inode->i_atime =3D inode->i_mtime =3D inode->i_ctime =3D current_tim=
-e(inode);
->=20
-> Question. It appears that roughly half the filesystems in this series
-> don't touch the i_atime in this case. And the other half do. Which is
-> correct? Did they incorrectly set i_atime instead of i_ctime?
->=20
+Regarding drivers/media/rc/ directory, igorplugusb_callback() and irtoy_in_callback() and
+mceusb_dev_recv() are handling -EPROTO error, by calling usb_unlink_urb() and returning
+instead of calling usb_submit_urb() again. This indicates that lack of -EPROTO (and some
+other error codes) handling in usb_rx_callback_intf0() is causing infinite resubmit loop.
+So, which error codes does usb_rx_callback_intf0() need to handle?
 
-I noticed that too, and with this set, I decided to not make any atime
-changes since I wasn't sure.
+static void usb_rx_callback_intf0(struct urb *urb)
+{
+	dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
+		__func__, urb->status);
+	usb_submit_urb(ictx->rx_urb_intf0, GFP_ATOMIC);
+}
 
-I think the answer to your question is "it depends". atime is supposed
-to be updated on reads, not writes, but sometimes a write requires a RMW
-cycle of some flavor so one can imagine that in some cases we'd need to
-update all three.
+#syz set subsystems: usb
 
-In this case, I'm not sure that updating any of these times is the right
-thing to do. This is called from ->launder_folio, so the syscall that
-issued the write is long gone and we're in writeback here.
+On 2023/06/10 18:07, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    d37537a1f7cf Merge 6.4-rc5 into usb-next
+> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15d9b771280000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9e12d6d7f5296037
+> dashboard link: https://syzkaller.appspot.com/bug?extid=96127c74434e19e4609d
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=153d7959280000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15bcb6b5280000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/752b1860c3b6/disk-d37537a1.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/6f9c9f2751b2/vmlinux-d37537a1.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/bf7433b7dd12/bzImage-d37537a1.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+96127c74434e19e4609d@syzkaller.appspotmail.com
 
-With NFS, we generally leave timestamp updates to the server. Should any
-of these timestamps be updated by the (SMB1) client here?
---=20
-Jeff Layton <jlayton@kernel.org>
