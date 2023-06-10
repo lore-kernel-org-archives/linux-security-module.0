@@ -2,193 +2,98 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF26C7EE25
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jun 2023 22:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38671C7EE2E
+	for <linux-security-module@archiver.kernel.org>; Sat, 10 Jun 2023 07:02:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231294AbjFIW5P (ORCPT
+        id S233016AbjFJHC0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Jun 2023 18:57:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52800 "EHLO
+        Sat, 10 Jun 2023 03:02:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229587AbjFIW5O (ORCPT
+        with ESMTP id S232993AbjFJHCW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Jun 2023 18:57:14 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A20532D41;
-        Fri,  9 Jun 2023 15:57:13 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-51496f57e59so3276664a12.2;
-        Fri, 09 Jun 2023 15:57:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686351432; x=1688943432;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fCcFQvwlT5seqLJ1ulWZ3vRZZR2lvjPV8fCYXApwbH4=;
-        b=kH3tnEULzr4ab5xK56zG5MiR7jMvjp35Vm6yAwnXqS8KUszZB/S6ahaPjY60UDfYCx
-         VMQxdZC7td3Ctk78Ozyp9jBWDZYEFPob5IiYwPPBzqOx8hPAT4tAl8dYiSRpq8FQy8bD
-         LvyKi7O/OFoq+sOA2Zgwr4HW+rsRs+H6v1FWD/Hk4jYkY5fnnaQTiYhyumpFHfnpTZaw
-         9mw7WavU45gGYCIEOS+gxLfqlZBPtezqMoibJjxaMU5xdIzAyRMrcUExQFJVH7rFcu0R
-         gTqodlyO13xtZ52Lkn2JxZ5YVM/TTaJQDm+WgsC9mnn/M/5o0ds+5G7Q4Jy9Ceb+tqwe
-         YG5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686351432; x=1688943432;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fCcFQvwlT5seqLJ1ulWZ3vRZZR2lvjPV8fCYXApwbH4=;
-        b=fZQcXX2ESalHZfpWi/0wD/bCPAsFkW1pKDNCySv11IGigCULVaQVnlzPci22vV9W6Y
-         qJ6YRdxL7GZT63Cpdfqz9GUpTbBvEIVdpfXL24t3lbDdugOaVba4WP1GsuqYLiLkRkFJ
-         RNWDSn0Vgvjvq2S5or1yncnE80B7Tx4bw8B4uB5/emUH3OZBMvfZsV+i8hv9lxrT9ukW
-         x+/GAqDPglYbk9XJDvkD04getNtHfHp3LtZPri8eUF3y+Urls39sCGLEVYu/dMN90j1O
-         nczsnS+1j7IXwX+2lP9SwOQKqRynPf8JCsC+NeJjp+yBPUsMfLDMKk5RZ/PQuKMvQMzW
-         aAng==
-X-Gm-Message-State: AC+VfDwl7Z15DNRmICz+8Vj3ZuNGM8TC+UqZmVaTq+xDkA2IoFHsUKRF
-        I2F9eljdjYLWVu0WuxOGal8ZuYU/l/fl97iF/hk=
-X-Google-Smtp-Source: ACHHUZ5ce2sWlE9/G3bD6e/WfDXlMstl1ra1AbTaeM5u878zGGteHgPuD1xcQJjt3oqnIc6BFeoKYz+ZIjtUvpYl1i0=
-X-Received: by 2002:a17:907:25c4:b0:969:9fd0:7ce7 with SMTP id
- ae4-20020a17090725c400b009699fd07ce7mr2564053ejc.11.1686351432030; Fri, 09
- Jun 2023 15:57:12 -0700 (PDT)
+        Sat, 10 Jun 2023 03:02:22 -0400
+Received: from frasgout13.his.huawei.com (unknown [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 665A93A9B;
+        Sat, 10 Jun 2023 00:02:21 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4QdTBt3y1Sz9y5Yv;
+        Sat, 10 Jun 2023 14:51:50 +0800 (CST)
+Received: from [10.81.219.229] (unknown [10.81.219.229])
+        by APP1 (Coremail) with SMTP id LxC2BwDnSubSH4RkcgIoAw--.4557S2;
+        Sat, 10 Jun 2023 08:01:51 +0100 (CET)
+Message-ID: <34b72280-ab31-15a1-f37e-58eac34a0d37@huaweicloud.com>
+Date:   Sat, 10 Jun 2023 09:01:35 +0200
 MIME-Version: 1.0
-References: <20230607235352.1723243-1-andrii@kernel.org> <CAEiveUdNrHfVXzF_6ogChifKyje3kA07pd8mpP+s24AEbKD7Cg@mail.gmail.com>
-In-Reply-To: <CAEiveUdNrHfVXzF_6ogChifKyje3kA07pd8mpP+s24AEbKD7Cg@mail.gmail.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Fri, 9 Jun 2023 15:57:00 -0700
-Message-ID: <CAEf4BzaDDqfODPS9MM5twXiXdDCAMs2U2-XK+gGPuSpnGFh=pQ@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-To:     Djalal Harouni <tixxdz@gmail.com>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
-        luto@kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v11 2/4] smack: Set the SMACK64TRANSMUTE xattr in
+ smack_inode_init_security()
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Mengchi Cheng <mengcc@amazon.com>
+Cc:     miklos@szeredi.hu, linux-unionfs@vger.kernel.org,
+        kamatam@amazon.com, yoonjaeh@amazon.com, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20230603191518.1397490-1-roberto.sassu@huaweicloud.com>
+ <20230603191518.1397490-3-roberto.sassu@huaweicloud.com>
+ <9f4b7bef5d090da9de50ed1aa1e103abc19b125f.camel@huaweicloud.com>
+ <CT7XVY50ISCC.1I60H7POH94ES@suppilovahvero>
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+In-Reply-To: <CT7XVY50ISCC.1I60H7POH94ES@suppilovahvero>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwDnSubSH4RkcgIoAw--.4557S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFyUtrW5XrWfJF15KF4kWFg_yoWxAFX_Zr
+        40kwn3trZxXrs7urWv9Fy5Was2ga10kr1Yv3yUZ3W3C3Z5JayxWF4Yka4rZF95W3Z2ka9r
+        K3ZYqFyYy347KjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbxAYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+        AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+        j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+        kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI
+        1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+        8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+        XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+        0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE14v2
+        6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+        UWwZcUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAEBF1jj45+OQAAs5
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 9, 2023 at 3:30=E2=80=AFPM Djalal Harouni <tixxdz@gmail.com> wr=
-ote:
->
-> Hi Andrii,
->
-> On Thu, Jun 8, 2023 at 1:54=E2=80=AFAM Andrii Nakryiko <andrii@kernel.org=
-> wrote:
-> >
-> > This patch set introduces new BPF object, BPF token, which allows to de=
-legate
-> > a subset of BPF functionality from privileged system-wide daemon (e.g.,
-> > systemd or any other container manager) to a *trusted* unprivileged
-> > application. Trust is the key here. This functionality is not about all=
-owing
-> > unconditional unprivileged BPF usage. Establishing trust, though, is
-> > completely up to the discretion of respective privileged application th=
-at
-> > would create a BPF token.
-> >
-> > The main motivation for BPF token is a desire to enable containerized
-> > BPF applications to be used together with user namespaces. This is curr=
-ently
-> > impossible, as CAP_BPF, required for BPF subsystem usage, cannot be nam=
-espaced
-> > or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to =
-BPF
-> > helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safe=
-ly read
-> > arbitrary memory, and it's impossible to ensure that they only read mem=
-ory of
-> > processes belonging to any given namespace. This means that it's imposs=
-ible to
-> > have namespace-aware CAP_BPF capability, and as such another mechanism =
-to
-> > allow safe usage of BPF functionality is necessary. BPF token and deleg=
-ation
-> > of it to a trusted unprivileged applications is such mechanism. Kernel =
-makes
-> > no assumption about what "trusted" constitutes in any particular case, =
-and
-> > it's up to specific privileged applications and their surrounding
-> > infrastructure to decide that. What kernel provides is a set of APIs to=
- create
-> > and tune BPF token, and pass it around to privileged BPF commands that =
-are
-> > creating new BPF objects like BPF programs, BPF maps, etc.
->
-> Is there a reason for coupling this only with the userns?
+On 6/9/2023 9:26 AM, Jarkko Sakkinen wrote:
+> On Mon Jun 5, 2023 at 11:38 AM EEST, Roberto Sassu wrote:
+>> On Sat, 2023-06-03 at 21:15 +0200, Roberto Sassu wrote:
+>>> From: Roberto Sassu <roberto.sassu@huawei.com>
+>>>
+>>> With the newly added ability of LSMs to supply multiple xattrs, set
+>>> SMACK64TRASMUTE in smack_inode_init_security(), instead of d_instantiate().
+> 
+> nit: TRANSMUTE
+> 
+> Sorry, just hit into my eye. I skimmed it because I implemented original
+> feature :-)
 
-There is no coupling. Without userns it is at least possible to grant
-CAP_BPF and other capabilities from init ns. With user namespace that
-becomes impossible.
+Cool!
 
-> The "trusted unprivileged" assumed by systemd can be in init userns?
+Currently the transmute xattr is defined as:
 
-It doesn't have to be systemd, but yes, BPF token can be created only
-when you have CAP_SYS_ADMIN in init ns. It's in line with restrictions
-on a bunch of other bpf() syscall commands (like GET_FD_BY_ID family
-of commands).
+#define XATTR_SMACK_TRANSMUTE "SMACK64TRANSMUTE"
 
->
->
-> > Previous attempt at addressing this very same problem ([0]) attempted t=
-o
-> > utilize authoritative LSM approach, but was conclusively rejected by up=
-stream
-> > LSM maintainers. BPF token concept is not changing anything about LSM
-> > approach, but can be combined with LSM hooks for very fine-grained secu=
-rity
-> > policy. Some ideas about making BPF token more convenient to use with L=
-SM (in
-> > particular custom BPF LSM programs) was briefly described in recent LSF=
-/MM/BPF
-> > 2023 presentation ([1]). E.g., an ability to specify user-provided data
-> > (context), which in combination with BPF LSM would allow implementing a=
- very
-> > dynamic and fine-granular custom security policies on top of BPF token.=
- In the
-> > interest of minimizing API surface area discussions this is going to be
-> > added in follow up patches, as it's not essential to the fundamental co=
-ncept
-> > of delegatable BPF token.
-> >
-> > It should be noted that BPF token is conceptually quite similar to the =
-idea of
-> > /dev/bpf device file, proposed by Song a while ago ([2]). The biggest
-> > difference is the idea of using virtual anon_inode file to hold BPF tok=
-en and
-> > allowing multiple independent instances of them, each with its own set =
-of
-> > restrictions. BPF pinning solves the problem of exposing such BPF token
-> > through file system (BPF FS, in this case) for cases where transferring=
- FDs
-> > over Unix domain sockets is not convenient. And also, crucially, BPF to=
-ken
-> > approach is not using any special stateful task-scoped flags. Instead, =
-bpf()
->
-> What's the use case for transfering over unix domain sockets?
+so, should be good to say the full xattr name, right?
 
-I'm not sure I understand the question. Unix domain socket
-(specifically its SCM_RIGHTS ancillary message) allows to transfer
-files between processes, which is one way to pass BPF object (like
-prog/map/link, and now token). BPF FS is the other one. In practice
-it's usually BPF FS, but there is no presumption about how file
-reference is transferred.
+Thanks
 
->
-> Will BPF token translation happen if you cross the different namespaces?
+Roberto
 
-What does BPF token translation mean specifically? Currently it's a
-very simple kernel object with refcnt and a few flags, so there is
-nothing to translate?
-
->
-> If the token is pinned into different bpffs, will the token share the
-> same context?
-
-So I was planning to allow a user process creating a BPF token to
-specify custom user-provided data (context). This is not in this patch
-set, but is it what you are asking about?
-
-Regardless, pinning BPF object in BPF FS is just basically bumping a
-refcnt and exposes that object in a way that can be looked up through
-file system path (using bpf() syscall's BPF_OBJ_GET command).
-Underlying object isn't cloned or copied, it's exactly the same object
-with the same shared internal state.
