@@ -2,44 +2,45 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CC5C7EE45
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCC0C7EE25
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:58:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235957AbjFLJ5w (ORCPT
+        id S235971AbjFLJ5z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 05:57:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33538 "EHLO
+        Mon, 12 Jun 2023 05:57:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbjFLJyb (ORCPT
+        with ESMTP id S234230AbjFLJyw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 05:54:31 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F1F6185;
-        Mon, 12 Jun 2023 02:39:03 -0700 (PDT)
+        Mon, 12 Jun 2023 05:54:52 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 442CF135;
+        Mon, 12 Jun 2023 02:39:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=IwZQFShSV/PIl8fTfPc9l4QCHQp32ssy80H3iz5Si2g=; b=n2QBRERGYOTGa4H4UfPiQMxml4
-        DlIa7Bh+E0wy752HUyfCxpdFro63TOC2IKp9jPE5GAfa1mJYpUhJg7mXGYIHTeDn9BySpGXGbyVd3
-        IwJesqbM7Wb3W3h6YpQgJKi2jBSkPrZDWblalKMV6HQ84Jsy2sFXbKyI8rcW+nAOW3dJ/b920m92P
-        rah0RrnGqtwQsyYb1dXy9/e8D1odgIYC+fkV2EbyFFqvSqo9mCNLgutnfVUAg637Ma+mnkR77qzmE
-        PZQFREWg0jB+r3RJ1GGStrlIluYtwark33oMb5t5WyJikLV3GNXnRWJf6oZ44tLapABjEhnCdDKM9
-        42/wgNSw==;
+        bh=Xqf5W2yYJrVz/DQlZr8jQFSxQY35vT93yf3RiRPsU+E=; b=SEfMUFGLcxrsWLLqD4rqRZBdOB
+        DMO5LkBgWnb7vye/D7ZkfEdHNA4LQN6b5bn5RL58pOT0LP8Ukx+j7rtkbDL66kKKuWwzQP+0IzjuJ
+        AdEfjN1fLmHqDivsqL1q0OX0YaAfdn6s/zz1LJAh4NMZPXKCPKTrw61PW7pZt7bEWpZBjhknZF1Pu
+        rfeTs7IyGKdFRPRXNbUm16+QK2kGeQ4AWFVZtGzK5KzTe3Y1gWTmt95W3FGRtzT13/BNtcln9du7r
+        HSmORkIVWTlySqAFUGzgBWHME1IieCrv8NsH6CweYmH/tOmp7EBCw7d+LXsHQCoDcEPhMni22BNIN
+        vlnEfTKA==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q8e0l-002NBI-II; Mon, 12 Jun 2023 09:38:55 +0000
+        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1q8e0m-008kQh-0J;
+        Mon, 12 Jun 2023 09:39:23 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 23BBA303196;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2EC853032B4;
         Mon, 12 Jun 2023 11:38:53 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 8C04B30A77B63; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
-Message-ID: <20230612093539.371360635@infradead.org>
+        id B3A0A30A77B6B; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
+Message-ID: <20230612093539.895253662@infradead.org>
 User-Agent: quilt/0.66
-Date:   Mon, 12 Jun 2023 11:07:39 +0200
+Date:   Mon, 12 Jun 2023 11:07:46 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     torvalds@linux-foundation.org, keescook@chromium.org,
         gregkh@linuxfoundation.org, pbonzini@redhat.com
@@ -67,112 +68,59 @@ Cc:     masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
         rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
-Subject: [PATCH v3 26/57] perf: Simplify event_function*()
+Subject: [PATCH v3 33/57] perf: Simplify perf_adjust_freq_unthr_context()
 References: <20230612090713.652690195@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use guards to reduce gotos and simplify control flow.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/events/core.c |   39 ++++++++++++++++++++++++++-------------
- 1 file changed, 26 insertions(+), 13 deletions(-)
+ kernel/events/core.c |   10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -214,6 +214,25 @@ struct event_function_struct {
- 	void *data;
- };
+@@ -4100,7 +4100,7 @@ perf_adjust_freq_unthr_context(struct pe
+ 	if (!(ctx->nr_freq || unthrottle))
+ 		return;
  
-+typedef struct {
-+	struct perf_cpu_context *cpuctx;
-+	struct perf_event_context *ctx;
-+} class_perf_ctx_lock_t;
-+
-+static inline void class_perf_ctx_lock_destructor(class_perf_ctx_lock_t *_T)
-+{
-+	if (_T->cpuctx)
-+		perf_ctx_unlock(_T->cpuctx, _T->ctx);
-+}
-+
-+static inline class_perf_ctx_lock_t
-+class_perf_ctx_lock_constructor(struct perf_cpu_context *cpuctx,
-+				struct perf_event_context *ctx)
-+{
-+	perf_ctx_lock(cpuctx, ctx);
-+	return (class_perf_ctx_lock_t){ cpuctx, ctx };
-+}
-+
- static int event_function(void *info)
- {
- 	struct event_function_struct *efs = info;
-@@ -224,17 +243,15 @@ static int event_function(void *info)
- 	int ret = 0;
+-	raw_spin_lock(&ctx->lock);
++	guard(raw_spinlock)(&ctx->lock);
  
- 	lockdep_assert_irqs_disabled();
-+	guard(perf_ctx_lock)(cpuctx, task_ctx);
+ 	list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
+ 		if (event->state != PERF_EVENT_STATE_ACTIVE)
+@@ -4110,7 +4110,7 @@ perf_adjust_freq_unthr_context(struct pe
+ 		if (!event_filter_match(event))
+ 			continue;
  
--	perf_ctx_lock(cpuctx, task_ctx);
- 	/*
- 	 * Since we do the IPI call without holding ctx->lock things can have
- 	 * changed, double check we hit the task we set out to hit.
- 	 */
- 	if (ctx->task) {
--		if (ctx->task != current) {
--			ret = -ESRCH;
--			goto unlock;
--		}
-+		if (ctx->task != current)
-+			return -ESRCH;
+-		perf_pmu_disable(event->pmu);
++		guard(perf_pmu_disable)(event->pmu);
  
- 		/*
- 		 * We only use event_function_call() on established contexts,
-@@ -254,8 +271,6 @@ static int event_function(void *info)
- 	}
+ 		hwc = &event->hw;
  
- 	efs->func(event, cpuctx, ctx, efs->data);
--unlock:
--	perf_ctx_unlock(cpuctx, task_ctx);
- 
- 	return ret;
- }
-@@ -329,11 +344,11 @@ static void event_function_local(struct
- 		task_ctx = ctx;
- 	}
- 
--	perf_ctx_lock(cpuctx, task_ctx);
-+	guard(perf_ctx_lock)(cpuctx, task_ctx);
- 
- 	task = ctx->task;
- 	if (task == TASK_TOMBSTONE)
--		goto unlock;
-+		return;
- 
- 	if (task) {
- 		/*
-@@ -343,18 +358,16 @@ static void event_function_local(struct
- 		 */
- 		if (ctx->is_active) {
- 			if (WARN_ON_ONCE(task != current))
--				goto unlock;
-+				return;
- 
- 			if (WARN_ON_ONCE(cpuctx->task_ctx != ctx))
--				goto unlock;
-+				return;
+@@ -4121,7 +4121,7 @@ perf_adjust_freq_unthr_context(struct pe
  		}
- 	} else {
- 		WARN_ON_ONCE(&cpuctx->ctx != ctx);
- 	}
  
- 	func(event, cpuctx, ctx, data);
--unlock:
--	perf_ctx_unlock(cpuctx, task_ctx);
+ 		if (!event->attr.freq || !event->attr.sample_freq)
+-			goto next;
++			continue;
+ 
+ 		/*
+ 		 * stop the event and update event->count
+@@ -4143,11 +4143,7 @@ perf_adjust_freq_unthr_context(struct pe
+ 			perf_adjust_period(event, period, delta, false);
+ 
+ 		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
+-	next:
+-		perf_pmu_enable(event->pmu);
+ 	}
+-
+-	raw_spin_unlock(&ctx->lock);
  }
  
- #define PERF_FLAG_ALL (PERF_FLAG_FD_NO_GROUP |\
+ /*
 
 
