@@ -2,241 +2,221 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 199AFC7EE25
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 11:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5B2C7EE25
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 12:02:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237563AbjFLLCl (ORCPT
+        id S231631AbjFLMCl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 07:02:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38060 "EHLO
+        Mon, 12 Jun 2023 08:02:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236374AbjFLLCV (ORCPT
+        with ESMTP id S231555AbjFLMCl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 07:02:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A0F75FFA
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 03:49:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CBF6E624E8
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 10:49:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09D52C433D2;
-        Mon, 12 Jun 2023 10:49:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686566982;
-        bh=HJtw935erjIZTx/raLwvInUFUA3nIvHBgNeAp04GhFM=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=b3SN02j+1k6r/ecNTnFk9Cv/Nev15WDONY1mL17nOvyQE5C0AHmUkrHvt9HmKoMak
-         9gtLkjFj6Bd86nyLjOdkvaVSjSPrAuSCbe7uZvtX9Yv9SAB+qA1A+kshOiAzV9HfRw
-         DJOCG+6tlJFSaAB9rjiXNu17Myx963tG+Vgsz79EEZhCIdm+5L5B52nsDRSLbJSyY+
-         PXQqnR3xm64kGH2riWdl+ELwoAOHNAVa+Vr5qLAQHFl+ytgaugwJKS6jglo4BDdB70
-         NUWn7sDq311SvCAtBCziQdL/uiXeSYWaEvDiWFYwz8QLO7PsrVNVbYXqTk+Rf8ckkf
-         k6fzlEcoxCuNw==
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id CE9A6BBE7DC; Mon, 12 Jun 2023 12:49:39 +0200 (CEST)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>
+        Mon, 12 Jun 2023 08:02:41 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C25BE8F;
+        Mon, 12 Jun 2023 05:02:39 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-43b87490a27so1555904137.0;
+        Mon, 12 Jun 2023 05:02:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686571359; x=1689163359;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JzmVyjn5vqcrDgp5U5+cSMvgkE+waDiK4LR1OGbCtls=;
+        b=nAcSFnk3slfL242FmuSFKyE04/akLEbivoVWFXmQK8AMFaV2zbgK0eN6Zk5YwLKCAI
+         vu8/ULXAK6TsnSsMKQSDgwd3DQAI+U3jp6SA84gAAsVV47JLei9JadjgPzqC0GbtkbLo
+         5QX79jAuYN4nTQrzQPFvKWPpICOHyo/DhA4RKau66H0cNER/xTH1Gq1+RFBuI+reqNWP
+         5ITuA07EhnYFkKAnZ5yqg2meQpDLjSmyLRI+gHB0GPtL4HDeVzPB6pImrbwfbnh+qobt
+         Rm2Td9SFU/BVnz40zIHtSYRCoseFCcE1ZYytQzxruK3tpWWrv9luiM1J0tpsmnIWS9Bb
+         ydZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686571359; x=1689163359;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JzmVyjn5vqcrDgp5U5+cSMvgkE+waDiK4LR1OGbCtls=;
+        b=Nls8nSsIEjdZJf9b68fu1JEbE30dLw/HX4+itxBqM1YbGLCJDg6ujFhanyXxPSK70r
+         35LsMnCuiQqd8zsyEbGF2Ue+LaBpJFoyghOD68EkviX8X872jMmuEvd8JzzXCM97DxhZ
+         WrFdo9FIVijxu77R6jKB0qvjivej8qxp8Hc/M848zNn/i/uvI9TKnsq6Pe2QGoozWFiN
+         kXBybwo5tqExvmgEUJ8jpXbVOz+I74SgniXSEeaZUoraAYKaiK4Nj+AR2FrVDjTBICcU
+         2UdX7KyrbAGguTsnbyilcUPzd1TUd/zlYF+EhgbkZfoX5aNZtSkDJ3zo4A3TJBypQvSN
+         2flA==
+X-Gm-Message-State: AC+VfDwIHUZpTViCzSpvLYEhfNGyOrDA4yC0HrPjULGCWdDfx0DhZroF
+        pie+uNd70ywnnk8pFK3UmA+4h74u7CPWN4yAtD3ut/m3qPU=
+X-Google-Smtp-Source: ACHHUZ4a0nZ9N6l/W0Ol0b9j9BrwZrf4iQdnTfRY1JiOhz6o4r27FcdNCepcOJ+HkL6/JhvKdhAGKqRVp8MunZgQDiU=
+X-Received: by 2002:a05:6102:94:b0:43b:1f8a:d581 with SMTP id
+ t20-20020a056102009400b0043b1f8ad581mr3856074vsp.31.1686571358681; Mon, 12
+ Jun 2023 05:02:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230607235352.1723243-1-andrii@kernel.org> <CAEiveUdNrHfVXzF_6ogChifKyje3kA07pd8mpP+s24AEbKD7Cg@mail.gmail.com>
+ <CAEf4BzaDDqfODPS9MM5twXiXdDCAMs2U2-XK+gGPuSpnGFh=pQ@mail.gmail.com>
+In-Reply-To: <CAEf4BzaDDqfODPS9MM5twXiXdDCAMs2U2-XK+gGPuSpnGFh=pQ@mail.gmail.com>
+From:   Djalal Harouni <tixxdz@gmail.com>
+Date:   Mon, 12 Jun 2023 14:02:11 +0200
+Message-ID: <CAEiveUeDLr00SjyU=SMSc4XbHSA6LTn4U2DHr12760rbo5WqSw@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
 To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
 Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org, keescook@chromium.org,
         brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
         luto@kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-In-Reply-To: <CAEf4Bzasz_1qRXh4b7B8V1mOfyD++mVNYnhm6v__-cc7cU_33w@mail.gmail.com>
-References: <20230607235352.1723243-1-andrii@kernel.org>
- <871qik28bs.fsf@toke.dk>
- <CAEf4BzYin==+WF27QBXoj23tHcr5BeezbPj2u9RW6qz4sLJsKw@mail.gmail.com>
- <87h6rgz60u.fsf@toke.dk>
- <CAEf4Bzasz_1qRXh4b7B8V1mOfyD++mVNYnhm6v__-cc7cU_33w@mail.gmail.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Mon, 12 Jun 2023 12:49:39 +0200
-Message-ID: <87bkhlymyk.fsf@toke.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
-
-> On Fri, Jun 9, 2023 at 2:21=E2=80=AFPM Toke H=C3=B8iland-J=C3=B8rgensen <=
-toke@kernel.org> wrote:
->>
->> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
->>
->> > On Fri, Jun 9, 2023 at 4:17=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgense=
-n <toke@kernel.org> wrote:
->> >>
->> >> Andrii Nakryiko <andrii@kernel.org> writes:
->> >>
->> >> > This patch set introduces new BPF object, BPF token, which allows t=
-o delegate
->> >> > a subset of BPF functionality from privileged system-wide daemon (e=
-.g.,
->> >> > systemd or any other container manager) to a *trusted* unprivileged
->> >> > application. Trust is the key here. This functionality is not about=
- allowing
->> >> > unconditional unprivileged BPF usage. Establishing trust, though, is
->> >> > completely up to the discretion of respective privileged applicatio=
-n that
->> >> > would create a BPF token.
->> >>
->> >> I am not convinced that this token-based approach is a good way to so=
-lve
->> >> this: having the delegation mechanism be one where you can basically
->> >> only grant a perpetual delegation with no way to retract it, no way to
->> >> check what exactly it's being used for, and that is transitive (can be
->> >> passed on to others with no restrictions) seems like a recipe for
->> >> disaster. I believe this was basically the point Casey was making as
->> >> well in response to v1.
->> >
->> > Most of this can be added, if we really need to. Ability to revoke BPF
->> > token is easy to implement (though of course it will apply only for
->> > subsequent operations). We can allocate ID for BPF token just like we
->> > do for BPF prog/map/link and let tools iterate and fetch information
->> > about it. As for controlling who's passing what and where, I don't
->> > think the situation is different for any other FD-based mechanism. You
->> > might as well create a BPF map/prog/link, pass it through SCM_RIGHTS
->> > or BPF FS, and that application can keep doing the same to other
->> > processes.
->>
->> No, but every other fd-based mechanism is limited in scope. E.g., if you
->> pass a map fd that's one specific map that can be passed around, with a
->> token it's all operations (of a specific type) which is way broader.
+On Sat, Jun 10, 2023 at 12:57=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
 >
-> It's not black and white. Once you have a BPF program FD, you can
-> attach it many times, for example, and cause regressions. Sure, here
-> we are talking about creating multiple BPF maps or loading multiple
-> BPF programs, so it's wider in scope, but still, it's not that
-> fundamentally different.
-
-Right, but the difference is that a single BPF program is a known
-entity, so even if the application you pass the fd to can attach it
-multiple times, it can't make it do new things (e.g., bpf_probe_read()
-stuff it is not supposed to). Whereas with bpf_token you have no such
-guarantee.
-
->>
->> > Ultimately, currently we have root permissions for applications that
->> > need BPF. That's already very dangerous. But just because something
->> > might be misused or abused doesn't prevent us from making a good
->> > practical use of it, right?
->>
->> That's not a given. It's always a trade-off, and if the mechanism is
->> likely to open up the system to additional risk that's not a good
->> trade-off even if it helps in some case. I basically worry that this is
->> the case here.
->>
->> > Also, there is LSM on top of all of this to override and control how
->> > the BPF subsystem is used, regardless of BPF token. It can override
->> > any of the privileges mechanism, capabilities, BPF token, whatnot.
->>
->> If this mechanism needs an LSM to be used safely, that's not incredibly
->> confidence-inspiring. Security mechanisms should fail safe, which this
->> one does not.
+> On Fri, Jun 9, 2023 at 3:30=E2=80=AFPM Djalal Harouni <tixxdz@gmail.com> =
+wrote:
+> >
+> > Hi Andrii,
+> >
+> > On Thu, Jun 8, 2023 at 1:54=E2=80=AFAM Andrii Nakryiko <andrii@kernel.o=
+rg> wrote:
+> > >
+> > > ...
+> > > creating new BPF objects like BPF programs, BPF maps, etc.
+> >
+> > Is there a reason for coupling this only with the userns?
 >
-> I proposed to add authoritative LSM hooks that would selectively allow
-> some of BPF operations on a case-by-case basis. This was rejected,
-> claiming that the best approach is to give process privilege to do
-> whatever it needs to do and then restrict it with LSM.
+> There is no coupling. Without userns it is at least possible to grant
+> CAP_BPF and other capabilities from init ns. With user namespace that
+> becomes impossible.
+
+But these are not the same: delegate full cap vs delegate an fd mask?
+
+One can argue unprivileged in init userns is the same privileged in
+nested userns
+Getting to delegate fd in init userns, then in nested ones seems logical...
+
+> > The "trusted unprivileged" assumed by systemd can be in init userns?
 >
-> Ok, if not for user namespaces, that would mean giving application
-> CAP_BPF+CAP_PERFMON+CAP_NET_ADMIN+CAP_SYS_ADMIN, and then restrict it
-> with LSM. Except with user namespace that doesn't work. So that's
-> where BPF token comes in, but allows it to do it more safely by
-> allowing to coarsely tune what subset of BPF operations is granted.
-> And then LSM should be used to further restrict it.
+> It doesn't have to be systemd, but yes, BPF token can be created only
+> when you have CAP_SYS_ADMIN in init ns. It's in line with restrictions
+> on a bunch of other bpf() syscall commands (like GET_FD_BY_ID family
+> of commands).
 
-Right, I do understand the use case, my worry is that we're creating a
-privilege escalation model that is really broad if it is *not* coupled
-with an LSM to restrict it. Which will be the default outside of
-controlled environments that really know what they are doing.
+I'm more into getting fd delegation work also in the first init userns...
 
-So I dunno, maybe some way to restrict the token so it only grants
-privilege if there is *also* an explicit LSM verdict on it? I guess
-that's still too close to an authoritative LSM hook that it'll pass? I
-do think the "explicit grant" model of an authoritative LSM is a better
-fit for this kind of thing...
+I can't understand why it's not possible or doable?
 
->> I'm also worried that an LSM policy is the only way to disable the
->> ability to create a token; with this in the kernel, I suddenly have to
->> trust not only that all applications with BPF privileges will not load
->> malicious code, but also that they won't (accidentally or maliciously)
->> conveys extra privileges on someone else. Seems a bit broad to have this
->> ability (to issue tokens) available to everyone with access to the bpf()
->> syscall, when (IIUC) it's only a single daemon in the system that would
->> legitimately do this in the deployment you're envisioning.
+> >
+> >
+> > > Previous attempt at addressing this very same problem ([0]) attempted=
+ to
+> > > utilize authoritative LSM approach, but was conclusively rejected by =
+upstream
+> > > LSM maintainers. BPF token concept is not changing anything about LSM
+> > > approach, but can be combined with LSM hooks for very fine-grained se=
+curity
+> > > policy. Some ideas about making BPF token more convenient to use with=
+ LSM (in
+> > > particular custom BPF LSM programs) was briefly described in recent L=
+SF/MM/BPF
+> > > 2023 presentation ([1]). E.g., an ability to specify user-provided da=
+ta
+> > > (context), which in combination with BPF LSM would allow implementing=
+ a very
+> > > dynamic and fine-granular custom security policies on top of BPF toke=
+n. In the
+> > > interest of minimizing API surface area discussions this is going to =
+be
+> > > added in follow up patches, as it's not essential to the fundamental =
+concept
+> > > of delegatable BPF token.
+> > >
+> > > It should be noted that BPF token is conceptually quite similar to th=
+e idea of
+> > > /dev/bpf device file, proposed by Song a while ago ([2]). The biggest
+> > > difference is the idea of using virtual anon_inode file to hold BPF t=
+oken and
+> > > allowing multiple independent instances of them, each with its own se=
+t of
+> > > restrictions. BPF pinning solves the problem of exposing such BPF tok=
+en
+> > > through file system (BPF FS, in this case) for cases where transferri=
+ng FDs
+> > > over Unix domain sockets is not convenient. And also, crucially, BPF =
+token
+> > > approach is not using any special stateful task-scoped flags. Instead=
+, bpf()
+> >
+> > What's the use case for transfering over unix domain sockets?
 >
-> Note, any process with real CAP_SYS_ADMIN. Let's not forget that.
+> I'm not sure I understand the question. Unix domain socket
+> (specifically its SCM_RIGHTS ancillary message) allows to transfer
+> files between processes, which is one way to pass BPF object (like
+> prog/map/link, and now token). BPF FS is the other one. In practice
+> it's usually BPF FS, but there is no presumption about how file
+> reference is transferred.
+
+Got it.
+
+IIRC SCM_RIGHTS and SCM_CREDENTIALS are translated into the receiving
+userns, no ?
+
+I assume such which allows to set up things in a hierarchical way...
+
+If I set up the environment to lock things down the line, I find it
+strange if a received fd would allow me to do more things than what
+was planned when I created the environment: namespaces, mounts, etc
+
+I think you have to add the owning userns context to the fd or
+"token", and on the receiving part if the current userns is the same
+or a nested one of the current userns hierarchy then allow bpf
+operation, otherwise fail with -EACCESS or something similar...
+
+
+> >
+> > Will BPF token translation happen if you cross the different namespaces=
+?
 >
-> But would you feel better if BPF_TOKEN_CREATE was guarded behind
-> sysctl or Kconfig?
+> What does BPF token translation mean specifically? Currently it's a
+> very simple kernel object with refcnt and a few flags, so there is
+> nothing to translate?
 
-Hmm, yeah, some way to make sure it's off by default would be
-preferable, IMO.
+Please see above comment about the owning userns context
 
-> Ultimately, worrying is fine, but there are real problems that need to
-> be solved. And not doing anything isn't a great option.
-
-Right, it would be good if some of the security folks could chime in
-with their view of how this is best achieved without running into any of
-the "bad ideas" they are opposed to.
-
->> >> If the goal is to enable a privileged application (such as a container
->> >> manager) to grant another unprivileged application the permission to
->> >> perform certain bpf() operations, why not just proxy the operations
->> >> themselves over some RPC mechanism? That way the granting application
->> >
->> > It's explicitly what we *do not* want to do, as it is a major problem
->> > and logistical complication. Every single application will have to be
->> > rewritten to use such a special daemon/service and its API, which is
->> > completely different from bpf() syscall API. It invalidates the use of
->> > all the libbpf (and other bpf libraries') APIs, BPF skeleton is
->> > incompatible with this. It's a nightmare. I've got feedback from
->> > people in another company that do have BPF service with just a tiny
->> > subset of BPF functionality delegated to such service, and it's a pain
->> > and definitely not a preferred way to do things.
->>
->> But weren't you proposing that libbpf should be able to transparently
->> look for tokens and load them without any application changes? Why can't
->> libbpf be taught to use an RPC socket in a similar fashion? It basically
->> boils down to something like:
->>
->> static inline int sys_bpf(enum bpf_cmd cmd, union bpf_attr *attr,
->>                           unsigned int size)
->> {
->>         if (!stat("/run/bpf.sock")) {
->>                 sock =3D open_socket("/run/bpf.sock");
->>                 write_to(sock, cmd, attr, size);
->>                 return read_response(sock);
->>         } else {
->>                 return syscall(__NR_bpf, cmd, attr, size);
->>         }
->> }
->>
+> >
+> > If the token is pinned into different bpffs, will the token share the
+> > same context?
 >
-> Well, for one, Meta we'll use its own Thrift-based RPC protocol.
-> Google might use something internal for them using GRPC, someone else
-> would want to utilize systemd, yet others will use yet another
-> implementation. RPC introduces more failure modes. While with syscall
-> we know that operation either succeeded or failed, with RPC we'll have
-> to deal with "maybe", if it was some communication error.
->
-> Let's not trivialize adding, using, and supporting the RPC version of
-> bpf() syscall.
+> So I was planning to allow a user process creating a BPF token to
+> specify custom user-provided data (context). This is not in this patch
+> set, but is it what you are asking about?
 
-I am not trying to trivialise it, I am well aware that it is more
-complicated in practice than just adding a wrapper like the above. I am
-just arguing with your point that "all applications need to change, so
-we can't do RPC". Any mechanism we add along there lines will require
-application changes, including the BPF token. And if the way we're going
-to avoid that is by baking the support into libbpf, then that can be
-done regardless of the mechanism we choose.
+Exactly, define what you can access inside the container... this would
+align with Andy's suggestion "making BPF behave sensibly in that
+container seems like it should also be necessary." I do agree on this.
 
-Or to put it another way: as you say it may be more *complicated* to add
-an RPC-based path to libbpf, but it's not fundamentally impossible, it's
-just another technical problem to be solved. And if that added
-complexity buys us better security properties, maybe that is a good
-trade-off. At least we shouldn't dismiss it out of hand.
+Again I think LSM and bpf+lsm should have the final word on this too...
 
--Toke
+
+> Regardless, pinning BPF object in BPF FS is just basically bumping a
+> refcnt and exposes that object in a way that can be looked up through
+> file system path (using bpf() syscall's BPF_OBJ_GET command).
+> Underlying object isn't cloned or copied, it's exactly the same object
+> with the same shared internal state.
+
+This is the part I also find strange, I can understand pinning a bpf
+program, map, etc, but an fd that gives some access rights should be
+part of the filesystem from the start, I don't get the extra pinning.
+Also it seems bpffs is per superblock mount so why not allow
+privileged to mount bpffs with the corresponding information, then
+privileged can open the fd, set it up and pass it down the line when
+executing the main program?  or even allow unprivileged to open it on
+bpffs with some restrictive conditions?
+
+Then it would be the business of the privileged to bind mount bpffs in
+some other places, share it, etc
+
+Having the fd or "token" that gives access rights pinned in two
+separate bpffs mounts seems too much, it crosses namespaces (mount,
+userns etc), environments setup by privileged...
+
+I would just make it per bpffs mount and that's it, nothing more. If a
+program wants to bind mount it somewhere else then it's not a bpf
+problem.
