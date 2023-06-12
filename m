@@ -2,45 +2,45 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDB7C8300C
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E00F7C83005
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:58:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231877AbjFLJ6f (ORCPT
+        id S234659AbjFLJ6e (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 05:58:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33806 "EHLO
+        Mon, 12 Jun 2023 05:58:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232365AbjFLJyV (ORCPT
+        with ESMTP id S233960AbjFLJyt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 05:54:21 -0400
+        Mon, 12 Jun 2023 05:54:49 -0400
 Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B634D4C05;
-        Mon, 12 Jun 2023 02:38:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B766F10B;
+        Mon, 12 Jun 2023 02:39:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=8IwM37e642EshGkaM591nsICKeU24b96IU4dYucK72I=; b=dXBEmpz80b7hoderM45846w/8O
-        pNO8hpipMKRJ27niZQqDP/oZ7/BF1rbJvgcP4PNZOjA0/uy51im9efmFnxUQeqkaz8ERUeIMTVgbA
-        4VU+/qmkIVh9mruK1Kemd08wt+2YvNqj7iMBDIb55yjZBxdNbyYHd4vmkglhIRzn3VhbsO1g6kMNX
-        DPownbe5F7lKMEY9oMSiQbAsQ6Sq/LDRo6BH7dsjs/eLhKCTZkfWMRYDFaavzf9aNxmS0+JA4YiOd
-        d6r7PI/eGL4W69GpFhaxW3FPhqLQIpOokWmypJbsZsB0KhQzPHHjPZBSmrvaJDXXl2NqdZOvB1M89
-        9hb3DItQ==;
+        bh=ZQvmg1eOC4ujP8jeHKMUa0GcDNPOQum0WTJAKmNFtGA=; b=as17JFHf5X4sS4LnfYcat1PiC9
+        Ygl21SzRcEI+y+2s58m4VR+c7k+AqAwe8jlPtnzWmYl16IPdeW/wTda3t/Mn+GoaB6Ioy1Fvsxcy2
+        Yc7m5IWDLwQXyvHo1rqnA6Jd0Y/RCI4mTEKdvBgQKhW2SUqz6/ofm3f2FtyVL6QmqCFhXv+NfXBW9
+        jwT1Z54p5Lij0CfiCqCeWuIXPASZuIXQbi9qaYtAB9PxGVZuCAPJ0xBo+WgJ0/KwZTrb1lbhfQH4p
+        1LKUHGwtrRUZDPpZ0MI3ymQ1XUCHq292Bw25ogsKjYnaaZ9XHIUSkaTDUL7Zx23RRYEU3HshnTJui
+        hSQE7vqg==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
         by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q8e0g-008kPD-1r;
-        Mon, 12 Jun 2023 09:38:51 +0000
+        id 1q8e0n-008kRD-37;
+        Mon, 12 Jun 2023 09:39:06 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 226E43031CC;
-        Mon, 12 Jun 2023 11:38:49 +0200 (CEST)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 487FF3033CB;
+        Mon, 12 Jun 2023 11:38:53 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 5D3FD30A77B5B; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
-Message-ID: <20230612093538.792690687@infradead.org>
+        id DC80030A77B72; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
+Message-ID: <20230612093540.407316252@infradead.org>
 User-Agent: quilt/0.66
-Date:   Mon, 12 Jun 2023 11:07:31 +0200
+Date:   Mon, 12 Jun 2023 11:07:53 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     torvalds@linux-foundation.org, keescook@chromium.org,
         gregkh@linuxfoundation.org, pbonzini@redhat.com
@@ -68,76 +68,101 @@ Cc:     masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
         rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
-Subject: [PATCH v3 18/57] sched: Simplify sched_rr_get_interval()
+Subject: [PATCH v3 40/57] perf: Simplify perf_mmap_close()/perf_aux_sample_output()
 References: <20230612090713.652690195@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use guards to reduce gotos and simplify control flow.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/core.c |   40 ++++++++++++++++------------------------
- 1 file changed, 16 insertions(+), 24 deletions(-)
+ kernel/events/core.c |   20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -8941,38 +8941,30 @@ SYSCALL_DEFINE1(sched_get_priority_min,
- 
- static int sched_rr_get_interval(pid_t pid, struct timespec64 *t)
- {
--	struct task_struct *p;
--	unsigned int time_slice;
--	struct rq_flags rf;
--	struct rq *rq;
-+	unsigned int time_slice = 0;
- 	int retval;
- 
- 	if (pid < 0)
- 		return -EINVAL;
- 
--	retval = -ESRCH;
--	rcu_read_lock();
--	p = find_process_by_pid(pid);
--	if (!p)
--		goto out_unlock;
--
--	retval = security_task_getscheduler(p);
--	if (retval)
--		goto out_unlock;
--
--	rq = task_rq_lock(p, &rf);
--	time_slice = 0;
--	if (p->sched_class->get_rr_interval)
--		time_slice = p->sched_class->get_rr_interval(rq, p);
--	task_rq_unlock(rq, p, &rf);
-+	scoped_guard (rcu) {
-+		struct task_struct *p = find_process_by_pid(pid);
-+		if (!p)
-+			return -ESRCH;
-+
-+		retval = security_task_getscheduler(p);
-+		if (retval)
-+			return retval;
-+
-+		scoped_guard (task_rq_lock, p) {
-+			struct rq *rq = scope.rq;
-+			if (p->sched_class->get_rr_interval)
-+				time_slice = p->sched_class->get_rr_interval(rq, p);
-+		}
-+	}
- 
--	rcu_read_unlock();
- 	jiffies_to_timespec64(time_slice, t);
- 	return 0;
--
--out_unlock:
--	rcu_read_unlock();
--	return retval;
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6179,6 +6179,9 @@ void ring_buffer_put(struct perf_buffer
+ 	call_rcu(&rb->rcu_head, rb_free_rcu);
  }
  
- /**
++DEFINE_CLASS(ring_buffer_get, struct perf_buffer *, ring_buffer_put(_T),
++	     ring_buffer_get(event), struct perf_event *event)
++
+ static void perf_mmap_open(struct vm_area_struct *vma)
+ {
+ 	struct perf_event *event = vma->vm_file->private_data;
+@@ -6206,7 +6209,7 @@ static void perf_pmu_output_stop(struct
+ static void perf_mmap_close(struct vm_area_struct *vma)
+ {
+ 	struct perf_event *event = vma->vm_file->private_data;
+-	struct perf_buffer *rb = ring_buffer_get(event);
++	CLASS(ring_buffer_get, rb)(event);
+ 	struct user_struct *mmap_user = rb->mmap_user;
+ 	int mmap_locked = rb->mmap_locked;
+ 	unsigned long size = perf_data_size(rb);
+@@ -6245,14 +6248,14 @@ static void perf_mmap_close(struct vm_ar
+ 		detach_rest = true;
+ 
+ 	if (!atomic_dec_and_mutex_lock(&event->mmap_count, &event->mmap_mutex))
+-		goto out_put;
++		return;
+ 
+ 	ring_buffer_attach(event, NULL);
+ 	mutex_unlock(&event->mmap_mutex);
+ 
+ 	/* If there's still other mmap()s of this buffer, we're done. */
+ 	if (!detach_rest)
+-		goto out_put;
++		return;
+ 
+ 	/*
+ 	 * No other mmap()s, detach from all other events that might redirect
+@@ -6309,9 +6312,6 @@ static void perf_mmap_close(struct vm_ar
+ 			&mmap_user->locked_vm);
+ 	atomic64_sub(mmap_locked, &vma->vm_mm->pinned_vm);
+ 	free_uid(mmap_user);
+-
+-out_put:
+-	ring_buffer_put(rb); /* could be last */
+ }
+ 
+ static const struct vm_operations_struct perf_mmap_vmops = {
+@@ -6962,14 +6962,13 @@ static void perf_aux_sample_output(struc
+ 				   struct perf_sample_data *data)
+ {
+ 	struct perf_event *sampler = event->aux_event;
+-	struct perf_buffer *rb;
+ 	unsigned long pad;
+ 	long size;
+ 
+ 	if (WARN_ON_ONCE(!sampler || !data->aux_size))
+ 		return;
+ 
+-	rb = ring_buffer_get(sampler);
++	CLASS(ring_buffer_get, rb)(sampler);
+ 	if (!rb)
+ 		return;
+ 
+@@ -6982,7 +6981,7 @@ static void perf_aux_sample_output(struc
+ 	 * like to know.
+ 	 */
+ 	if (WARN_ON_ONCE(size < 0))
+-		goto out_put;
++		return;
+ 
+ 	/*
+ 	 * The pad comes from ALIGN()ing data->aux_size up to u64 in
+@@ -6996,9 +6995,6 @@ static void perf_aux_sample_output(struc
+ 		u64 zero = 0;
+ 		perf_output_copy(handle, &zero, pad);
+ 	}
+-
+-out_put:
+-	ring_buffer_put(rb);
+ }
+ 
+ /*
 
 
