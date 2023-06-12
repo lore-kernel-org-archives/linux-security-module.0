@@ -2,45 +2,44 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0010AC7EE2E
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B85C7EE45
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:58:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236116AbjFLJ61 (ORCPT
+        id S235368AbjFLJ63 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 05:58:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60832 "EHLO
+        Mon, 12 Jun 2023 05:58:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230025AbjFLJyV (ORCPT
+        with ESMTP id S231173AbjFLJyX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 05:54:21 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 059F24C0D;
+        Mon, 12 Jun 2023 05:54:23 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F3E55FF0;
         Mon, 12 Jun 2023 02:38:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=by7PPFcazB/pK+2FaRs+OdI6JGfC9WsBX82VOJ7mM6o=; b=Y9O0dNQIJUKlbjZtt4rxwr8Rv6
-        BevFAXrP1152xD7o/GddMsCg4tPJSIDp0cRHFpQZjBJvwythjmmoKl8IQGNgf1x1/9e+43fYWMJqz
-        sBca6vwafwE3K9qpMLJDwrRFibEGyiTjmyFg9Q/GYkE3Zg1mWJ11eKDdJ/+LPCwS+GUqSqRrWiYkG
-        0QVjxQGVtDJq1lpG2kA59EZhMgxt2zHPN6qItB5KHnuG5+qudT11EyJ6SbRHs4K8aDlVGtBnaU2GF
-        XuieTeZwR3eToElJB0vqlwQ9UdcuvS6R9ZY/l/O9ZJhrDgojoRHi5Uh+8R/BJOkRPZkJa+DWzn+eL
-        9gEWkzJw==;
+        bh=mq5JO2tPl8C7SILOfz/KwJIcnobnm9UFdJaARgXH410=; b=AMcWXrFAvQk7IooWq5vsQKOUpX
+        c+43fYmu8uTkx0XjpUhBb5rLhhZTpeo7fFtrFQ6gX1Ie/h4dDKHWEhenT13VsLCQtYF4J8qBvnqTN
+        Rb7fXamtrAdhJIYp7XX1thb9d5mecYu5DsgQSqMp7US340Et8Gvt1QM3WZU+8S6FEN+rhyMOUXAIr
+        zrgte1I7kA8l7tRuTCoT+JXSeh785ZZ203dX7QWjb/gjzrBXnKJDRygq4P+8awKyHb5qZx9laV/87
+        GV7BCj0gIl7rPXAFdcBqCQXcR9zo9IGdzN5vsPxOEsYOaEA/IqiNceS6vjnqf815nn9bTlK1cd3oY
+        AFlkOulA==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q8e0g-008kP9-1f;
-        Mon, 12 Jun 2023 09:38:51 +0000
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1q8e0f-002N8u-IH; Mon, 12 Jun 2023 09:38:49 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id ECD763031B0;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6C280302680;
         Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 4C66430A77B55; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
-Message-ID: <20230612093538.546520916@infradead.org>
+        id F111730A210B0; Mon, 12 Jun 2023 11:38:47 +0200 (CEST)
+Message-ID: <20230612093537.536441207@infradead.org>
 User-Agent: quilt/0.66
-Date:   Mon, 12 Jun 2023 11:07:28 +0200
+Date:   Mon, 12 Jun 2023 11:07:15 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     torvalds@linux-foundation.org, keescook@chromium.org,
         gregkh@linuxfoundation.org, pbonzini@redhat.com
@@ -68,257 +67,49 @@ Cc:     masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
         rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
-Subject: [PATCH v3 15/57] sched: Simplify syscalls
+Subject: [PATCH v3 02/57] apparmor: Free up __cleanup() name
 References: <20230612090713.652690195@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use guards to reduce gotos and simplify control flow.
+In order to use __cleanup for __attribute__((__cleanup__(func))) the
+name must not be used for anything else. Avoid the conflict.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/core.c |  154 ++++++++++++++++++++++------------------------------
- 1 file changed, 68 insertions(+), 86 deletions(-)
+ security/apparmor/include/lib.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7425,6 +7425,21 @@ static struct task_struct *find_process_
- 	return pid ? find_task_by_vpid(pid) : current;
- }
- 
-+static struct task_struct *find_get_task(pid_t pid)
-+{
-+	struct task_struct *p;
-+	guard(rcu)();
-+
-+	p = find_process_by_pid(pid);
-+	if (likely(p))
-+		get_task_struct(p);
-+
-+	return p;
-+}
-+
-+DEFINE_CLASS(find_get_task, struct task_struct *, if (_T) put_task_struct(_T),
-+	     find_get_task(pid), pid_t pid)
-+
- /*
-  * sched_setparam() passes in -1 for its policy, to let the functions
-  * it calls know not to change it.
-@@ -7462,14 +7477,11 @@ static void __setscheduler_params(struct
- static bool check_same_owner(struct task_struct *p)
- {
- 	const struct cred *cred = current_cred(), *pcred;
--	bool match;
-+	guard(rcu)();
- 
--	rcu_read_lock();
- 	pcred = __task_cred(p);
--	match = (uid_eq(cred->euid, pcred->euid) ||
--		 uid_eq(cred->euid, pcred->uid));
--	rcu_read_unlock();
--	return match;
-+	return (uid_eq(cred->euid, pcred->euid) ||
-+		uid_eq(cred->euid, pcred->uid));
- }
- 
- /*
-@@ -7873,27 +7885,17 @@ static int
- do_sched_setscheduler(pid_t pid, int policy, struct sched_param __user *param)
- {
- 	struct sched_param lparam;
--	struct task_struct *p;
--	int retval;
- 
- 	if (!param || pid < 0)
- 		return -EINVAL;
- 	if (copy_from_user(&lparam, param, sizeof(struct sched_param)))
- 		return -EFAULT;
- 
--	rcu_read_lock();
--	retval = -ESRCH;
--	p = find_process_by_pid(pid);
--	if (likely(p))
--		get_task_struct(p);
--	rcu_read_unlock();
--
--	if (likely(p)) {
--		retval = sched_setscheduler(p, policy, &lparam);
--		put_task_struct(p);
--	}
-+	CLASS(find_get_task, p)(pid);
-+	if (!p)
-+		return -ESRCH;
- 
--	return retval;
-+	return sched_setscheduler(p, policy, &lparam);
- }
- 
- /*
-@@ -7989,7 +7991,6 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pi
- 			       unsigned int, flags)
- {
- 	struct sched_attr attr;
--	struct task_struct *p;
- 	int retval;
- 
- 	if (!uattr || pid < 0 || flags)
-@@ -8004,21 +8005,14 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pi
- 	if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
- 		attr.sched_policy = SETPARAM_POLICY;
- 
--	rcu_read_lock();
--	retval = -ESRCH;
--	p = find_process_by_pid(pid);
--	if (likely(p))
--		get_task_struct(p);
--	rcu_read_unlock();
-+	CLASS(find_get_task, p)(pid);
-+	if (!p)
-+		return -ESRCH;
- 
--	if (likely(p)) {
--		if (attr.sched_flags & SCHED_FLAG_KEEP_PARAMS)
--			get_params(p, &attr);
--		retval = sched_setattr(p, &attr);
--		put_task_struct(p);
--	}
-+	if (attr.sched_flags & SCHED_FLAG_KEEP_PARAMS)
-+		get_params(p, &attr);
- 
--	return retval;
-+	return sched_setattr(p, &attr);
- }
- 
- /**
-@@ -8036,16 +8030,17 @@ SYSCALL_DEFINE1(sched_getscheduler, pid_
- 	if (pid < 0)
- 		return -EINVAL;
- 
--	retval = -ESRCH;
--	rcu_read_lock();
-+	guard(rcu)();
- 	p = find_process_by_pid(pid);
--	if (p) {
--		retval = security_task_getscheduler(p);
--		if (!retval)
--			retval = p->policy
--				| (p->sched_reset_on_fork ? SCHED_RESET_ON_FORK : 0);
-+	if (!p)
-+		return -ESRCH;
-+
-+	retval = security_task_getscheduler(p);
-+	if (!retval) {
-+		retval = p->policy;
-+		if (p->sched_reset_on_fork)
-+			retval |= SCHED_RESET_ON_FORK;
- 	}
--	rcu_read_unlock();
- 	return retval;
- }
- 
-@@ -8066,30 +8061,23 @@ SYSCALL_DEFINE2(sched_getparam, pid_t, p
- 	if (!param || pid < 0)
- 		return -EINVAL;
- 
--	rcu_read_lock();
--	p = find_process_by_pid(pid);
--	retval = -ESRCH;
--	if (!p)
--		goto out_unlock;
-+	scoped_guard (rcu) {
-+		p = find_process_by_pid(pid);
-+		if (!p)
-+			return -ESRCH;
- 
--	retval = security_task_getscheduler(p);
--	if (retval)
--		goto out_unlock;
-+		retval = security_task_getscheduler(p);
-+		if (retval)
-+			return retval;
- 
--	if (task_has_rt_policy(p))
--		lp.sched_priority = p->rt_priority;
--	rcu_read_unlock();
-+		if (task_has_rt_policy(p))
-+			lp.sched_priority = p->rt_priority;
-+	}
- 
- 	/*
- 	 * This one might sleep, we cannot do it with a spinlock held ...
- 	 */
--	retval = copy_to_user(param, &lp, sizeof(*param)) ? -EFAULT : 0;
--
--	return retval;
--
--out_unlock:
--	rcu_read_unlock();
--	return retval;
-+	return copy_to_user(param, &lp, sizeof(*param)) ? -EFAULT : 0;
- }
- 
- /*
-@@ -8149,39 +8137,33 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pi
- 	    usize < SCHED_ATTR_SIZE_VER0 || flags)
- 		return -EINVAL;
- 
--	rcu_read_lock();
--	p = find_process_by_pid(pid);
--	retval = -ESRCH;
--	if (!p)
--		goto out_unlock;
-+	scoped_guard (rcu) {
-+		p = find_process_by_pid(pid);
-+		if (!p)
-+			return -ESRCH;
- 
--	retval = security_task_getscheduler(p);
--	if (retval)
--		goto out_unlock;
-+		retval = security_task_getscheduler(p);
-+		if (retval)
-+			return retval;
- 
--	kattr.sched_policy = p->policy;
--	if (p->sched_reset_on_fork)
--		kattr.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
--	get_params(p, &kattr);
--	kattr.sched_flags &= SCHED_FLAG_ALL;
-+		kattr.sched_policy = p->policy;
-+		if (p->sched_reset_on_fork)
-+			kattr.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
-+		get_params(p, &kattr);
-+		kattr.sched_flags &= SCHED_FLAG_ALL;
- 
- #ifdef CONFIG_UCLAMP_TASK
--	/*
--	 * This could race with another potential updater, but this is fine
--	 * because it'll correctly read the old or the new value. We don't need
--	 * to guarantee who wins the race as long as it doesn't return garbage.
--	 */
--	kattr.sched_util_min = p->uclamp_req[UCLAMP_MIN].value;
--	kattr.sched_util_max = p->uclamp_req[UCLAMP_MAX].value;
-+		/*
-+		 * This could race with another potential updater, but this is fine
-+		 * because it'll correctly read the old or the new value. We don't need
-+		 * to guarantee who wins the race as long as it doesn't return garbage.
-+		 */
-+		kattr.sched_util_min = p->uclamp_req[UCLAMP_MIN].value;
-+		kattr.sched_util_max = p->uclamp_req[UCLAMP_MAX].value;
- #endif
--
--	rcu_read_unlock();
-+	}
- 
- 	return sched_attr_copy_to_user(uattr, &kattr, usize);
--
--out_unlock:
--	rcu_read_unlock();
--	return retval;
- }
- 
- #ifdef CONFIG_SMP
+--- a/security/apparmor/include/lib.h
++++ b/security/apparmor/include/lib.h
+@@ -232,7 +232,7 @@ void aa_policy_destroy(struct aa_policy
+  */
+ #define fn_label_build(L, P, GFP, FN)					\
+ ({									\
+-	__label__ __cleanup, __done;					\
++	__label__ __do_cleanup, __done;					\
+ 	struct aa_label *__new_;					\
+ 									\
+ 	if ((L)->size > 1) {						\
+@@ -250,7 +250,7 @@ void aa_policy_destroy(struct aa_policy
+ 			__new_ = (FN);					\
+ 			AA_BUG(!__new_);				\
+ 			if (IS_ERR(__new_))				\
+-				goto __cleanup;				\
++				goto __do_cleanup;			\
+ 			__lvec[__j++] = __new_;				\
+ 		}							\
+ 		for (__j = __count = 0; __j < (L)->size; __j++)		\
+@@ -272,7 +272,7 @@ void aa_policy_destroy(struct aa_policy
+ 			vec_cleanup(profile, __pvec, __count);		\
+ 		} else							\
+ 			__new_ = NULL;					\
+-__cleanup:								\
++__do_cleanup:								\
+ 		vec_cleanup(label, __lvec, (L)->size);			\
+ 	} else {							\
+ 		(P) = labels_profile(L);				\
 
 
