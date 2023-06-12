@@ -2,44 +2,45 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D0FC87FE2
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AB2C7EE43
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:57:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234977AbjFLJ5S (ORCPT
+        id S234999AbjFLJ5T (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 05:57:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34046 "EHLO
+        Mon, 12 Jun 2023 05:57:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231684AbjFLJy2 (ORCPT
+        with ESMTP id S231855AbjFLJyZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 05:54:28 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E735FFA;
-        Mon, 12 Jun 2023 02:39:01 -0700 (PDT)
+        Mon, 12 Jun 2023 05:54:25 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A25155FF3;
+        Mon, 12 Jun 2023 02:38:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=RF7AlZRmRPruwiE6WSJ8fgsVWKVvpbmYdppCd/KBEkQ=; b=gufB5guI2wjztq+YIlaWdjMhyv
-        3LYfsbSy4unkOyd2ugwudXuVbPkgYZFtkZVII3Xqay+tH7nkG1yTdrFKTcjUHvpAa8Cf37YLpt3E8
-        pDLxbYYLfAa1grWsAGwn5LQLL4FRD+9IBx4VEM4Gmq/oyW3fFf8dLVvIRA7oBGmGxTO7R049FIU1t
-        r4XaxNuX7StfRoeJQ7EQPUjJFlffCIlkZhBv+EjHy6R48CogNzg2OSLrwlw3rCqTLDkgHr+w7wF/Q
-        ZOTFC2+xYVUW9aU01AvEkNjTt06XQEZg/5knH9qw46D4tqiWNFnLETrbsKjwwTivhd6RHKFM2hAvf
-        JA52UjPw==;
+        bh=9sqy4wj1SuZG+E1ZOkNDiw8zR5F8T4bHRpYkByM8S6o=; b=HNjtc1kou6jUKrPa93YlSTKipB
+        VhOpXUPSBCgjriMwtuZYiFbSO92NjXbfCsFmRFtzO7yfFSXIVuY/yN+Yj7pGBcnBI5S0hv8fNdtcN
+        //wmbKzY575t4i5oKfCiWpecYl0rAG6BFfdMSjKIXuCRhpuWcyhO2gVcrMTipwAY6sjO79StTEAIQ
+        VC8/ybwDlXuWf1vL/cHd1fVTSgl2eqKrBrD54rFBuftQGd/gu653fosXknQhYF8Op6cNrlThojVpp
+        8VS39gvDd4GbsgBVynRhv46UkSxPgULiSAQIabpdcmA7w8/j+yhjfaJwXT+KXZjarghiosRq198gW
+        o3zyz1kQ==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q8e0l-002NBd-VJ; Mon, 12 Jun 2023 09:38:56 +0000
+        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1q8e0g-008kPB-1k;
+        Mon, 12 Jun 2023 09:38:51 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 27CCF3031BE;
-        Mon, 12 Jun 2023 11:38:53 +0200 (CEST)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0BFFE3031BE;
+        Mon, 12 Jun 2023 11:38:49 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id A1B8930A77B67; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
-Message-ID: <20230612093539.682563843@infradead.org>
+        id 5832930A77B57; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
+Message-ID: <20230612093538.712217968@infradead.org>
 User-Agent: quilt/0.66
-Date:   Mon, 12 Jun 2023 11:07:43 +0200
+Date:   Mon, 12 Jun 2023 11:07:30 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     torvalds@linux-foundation.org, keescook@chromium.org,
         gregkh@linuxfoundation.org, pbonzini@redhat.com
@@ -67,105 +68,109 @@ Cc:     masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
         rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
-Subject: [PATCH v3 30/57] perf: Simplify: *perf_event_{dis,en}able*()
+Subject: [PATCH v3 17/57] sched: Simplify yield_to()
 References: <20230612090713.652690195@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Use guards to reduce gotos and simplify control flow.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/events/core.c |   51 ++++++++++++++++++++++-----------------------------
- 1 file changed, 22 insertions(+), 29 deletions(-)
+ kernel/sched/core.c |   73 ++++++++++++++++++++++------------------------------
+ 1 file changed, 32 insertions(+), 41 deletions(-)
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2415,7 +2415,7 @@ static void __perf_event_disable(struct
- 		update_cgrp_time_from_event(event);
- 	}
- 
--	perf_pmu_disable(event->pmu_ctx->pmu);
-+	guard(perf_pmu_disable)(event->pmu_ctx->pmu);
- 
- 	if (event == event->group_leader)
- 		group_sched_out(event, ctx);
-@@ -2424,8 +2424,6 @@ static void __perf_event_disable(struct
- 
- 	perf_event_set_state(event, PERF_EVENT_STATE_OFF);
- 	perf_cgroup_event_disable(event, ctx);
--
--	perf_pmu_enable(event->pmu_ctx->pmu);
- }
- 
- /*
-@@ -2446,12 +2444,10 @@ static void _perf_event_disable(struct p
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -8799,55 +8799,46 @@ int __sched yield_to(struct task_struct
  {
- 	struct perf_event_context *ctx = event->ctx;
+ 	struct task_struct *curr = current;
+ 	struct rq *rq, *p_rq;
+-	unsigned long flags;
+ 	int yielded = 0;
  
--	raw_spin_lock_irq(&ctx->lock);
--	if (event->state <= PERF_EVENT_STATE_OFF) {
--		raw_spin_unlock_irq(&ctx->lock);
--		return;
-+	scoped_guard (raw_spinlock_irq, &ctx->lock) {
-+		if (event->state <= PERF_EVENT_STATE_OFF)
-+			return;
- 	}
--	raw_spin_unlock_irq(&ctx->lock);
+-	local_irq_save(flags);
+-	rq = this_rq();
++	scoped_guard (irqsave) {
++		rq = this_rq();
  
- 	event_function_call(event, __perf_event_disable, NULL);
- }
-@@ -2955,32 +2951,29 @@ static void _perf_event_enable(struct pe
- {
- 	struct perf_event_context *ctx = event->ctx;
- 
--	raw_spin_lock_irq(&ctx->lock);
--	if (event->state >= PERF_EVENT_STATE_INACTIVE ||
--	    event->state <  PERF_EVENT_STATE_ERROR) {
--out:
--		raw_spin_unlock_irq(&ctx->lock);
--		return;
--	}
-+	scoped_guard (raw_spinlock_irq, &ctx->lock) {
-+		if (event->state >= PERF_EVENT_STATE_INACTIVE ||
-+		    event->state <  PERF_EVENT_STATE_ERROR)
-+			return;
- 
+ again:
+-	p_rq = task_rq(p);
 -	/*
--	 * If the event is in error state, clear that first.
--	 *
--	 * That way, if we see the event in error state below, we know that it
--	 * has gone back into error state, as distinct from the task having
--	 * been scheduled away before the cross-call arrived.
+-	 * If we're the only runnable task on the rq and target rq also
+-	 * has only one task, there's absolutely no point in yielding.
 -	 */
--	if (event->state == PERF_EVENT_STATE_ERROR) {
+-	if (rq->nr_running == 1 && p_rq->nr_running == 1) {
+-		yielded = -ESRCH;
+-		goto out_irq;
+-	}
+-
+-	double_rq_lock(rq, p_rq);
+-	if (task_rq(p) != p_rq) {
+-		double_rq_unlock(rq, p_rq);
+-		goto again;
+-	}
+-
+-	if (!curr->sched_class->yield_to_task)
+-		goto out_unlock;
+-
+-	if (curr->sched_class != p->sched_class)
+-		goto out_unlock;
+-
+-	if (task_on_cpu(p_rq, p) || !task_is_running(p))
+-		goto out_unlock;
+-
+-	yielded = curr->sched_class->yield_to_task(rq, p);
+-	if (yielded) {
+-		schedstat_inc(rq->yld_count);
++		p_rq = task_rq(p);
  		/*
--		 * Detached SIBLING events cannot leave ERROR state.
-+		 * If the event is in error state, clear that first.
-+		 *
-+		 * That way, if we see the event in error state below, we know that it
-+		 * has gone back into error state, as distinct from the task having
-+		 * been scheduled away before the cross-call arrived.
+-		 * Make p's CPU reschedule; pick_next_entity takes care of
+-		 * fairness.
++		 * If we're the only runnable task on the rq and target rq also
++		 * has only one task, there's absolutely no point in yielding.
  		 */
--		if (event->event_caps & PERF_EV_CAP_SIBLING &&
--		    event->group_leader == event)
--			goto out;
-+		if (event->state == PERF_EVENT_STATE_ERROR) {
+-		if (preempt && rq != p_rq)
+-			resched_curr(p_rq);
+-	}
++		if (rq->nr_running == 1 && p_rq->nr_running == 1)
++			return -ESRCH;
+ 
+-out_unlock:
+-	double_rq_unlock(rq, p_rq);
+-out_irq:
+-	local_irq_restore(flags);
++		guard(double_rq_lock)(rq, p_rq);
++		if (task_rq(p) != p_rq)
++			goto again;
++
++		if (!curr->sched_class->yield_to_task)
++			return 0;
++
++		if (curr->sched_class != p->sched_class)
++			return 0;
++
++		if (task_on_cpu(p_rq, p) || !task_is_running(p))
++			return 0;
++
++		yielded = curr->sched_class->yield_to_task(rq, p);
++		if (yielded) {
++			schedstat_inc(rq->yld_count);
 +			/*
-+			 * Detached SIBLING events cannot leave ERROR state.
++			 * Make p's CPU reschedule; pick_next_entity
++			 * takes care of fairness.
 +			 */
-+			if (event->event_caps & PERF_EV_CAP_SIBLING &&
-+			    event->group_leader == event)
-+				return;
- 
--		event->state = PERF_EVENT_STATE_OFF;
-+			event->state = PERF_EVENT_STATE_OFF;
++			if (preempt && rq != p_rq)
++				resched_curr(p_rq);
 +		}
- 	}
--	raw_spin_unlock_irq(&ctx->lock);
++	}
  
- 	event_function_call(event, __perf_event_enable, NULL);
- }
+-	if (yielded > 0)
++	if (yielded)
+ 		schedule();
+ 
+ 	return yielded;
 
 
