@@ -2,32 +2,32 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88568C7EE2E
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 19:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5372C7EE43
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 19:14:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237981AbjFLTOn (ORCPT
+        id S238062AbjFLTOo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 15:14:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46266 "EHLO
+        Mon, 12 Jun 2023 15:14:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237299AbjFLTOm (ORCPT
+        with ESMTP id S237964AbjFLTOn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 15:14:42 -0400
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42646C7
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 12:14:40 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Qg1b23pH8zMq94q;
-        Mon, 12 Jun 2023 19:14:38 +0000 (UTC)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Qg1b12W4MzMqmsh;
-        Mon, 12 Jun 2023 21:14:37 +0200 (CEST)
+        Mon, 12 Jun 2023 15:14:43 -0400
+Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fae])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D4B7E57
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 12:14:41 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Qg1b4394NzMqDSp;
+        Mon, 12 Jun 2023 19:14:40 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Qg1b372g6z1WPQ;
+        Mon, 12 Jun 2023 21:14:39 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1686597278;
-        bh=IyGVL/IDfihrZ3aEmE9iwusUGzsJURKRriLT2zxWZro=;
-        h=From:To:Cc:Subject:Date:From;
-        b=e3g9IqhKw1rGaPe68hX+Rw5YNj1RnNxL/Vjdw6KjhQnt6JRteAcyfr8t0+nm5Qy7l
-         EWO1ML1nD0yHNjfeENmIWHjkBweHDdMqouRltkE5PwslyW1nacJ8yD+8oKW/DGeKeM
-         0f9bXfRiKckLQOkzzsojx8g85/jhF1LobJ5QoTvU=
+        s=20191114; t=1686597280;
+        bh=P+NG44GeB352YmZfkyCH+rwl59d+cokXdydyw6QtJEc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MBc1YY1v9bK7iX4/hxv685DlcNbdqJldO+DGaUT0J0IpHI0KzasE86xVEIpyqkc/S
+         zMVDMh/u8VdUL1DV9lVtv57ERDAFJ8R0MvhcyiJiXErJNO7XyRaWttBZxv4m2nxR0K
+         B2eoZZRMegrogXuBEw6gDZXiyFf9bzyxayW7BBy4=
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     Anton Ivanov <anton.ivanov@cambridgegreys.com>,
         Johannes Berg <johannes@sipsolutions.net>,
@@ -49,9 +49,11 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v2 0/6] Landlock support for UML
-Date:   Mon, 12 Jun 2023 21:14:24 +0200
-Message-ID: <20230612191430.339153-1-mic@digikod.net>
+Subject: [PATCH v2 2/6] selftests/landlock: Don't create useless file layouts
+Date:   Mon, 12 Jun 2023 21:14:26 +0200
+Message-ID: <20230612191430.339153-3-mic@digikod.net>
+In-Reply-To: <20230612191430.339153-1-mic@digikod.net>
+References: <20230612191430.339153-1-mic@digikod.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -59,63 +61,90 @@ X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+Add and use a layout0 test fixture to not populate the tmpfs filesystem
+if it is not required for tests: unknown_access_rights, proc_nsfs,
+unpriv and max_layers.
 
-Commit cb2c7d1a1776 ("landlock: Support filesystem access-control")
-introduced a new ARCH_EPHEMERAL_INODES configuration, only enabled for
-User-Mode Linux.  The reason was that UML's hostfs managed inodes in an
-ephemeral way: from the kernel point of view, the same inode struct
-could be created several times while being used by user space because
-the kernel didn't hold references to inodes.  Because Landlock (and
-probably other subsystems) ties properties (i.e. access rights) to inode
-objects, it wasn't possible to create rules that match inodes and then
-allow specific accesses.
+This doesn't change these tests but it speeds up their setup and makes
+them less prone to error.  This prepare the ground for a next commit.
 
-This patch series fixes the way UML manages inodes according to the
-underlying filesystem.  They are now properly handles as for other
-filesystems, which enables to support Landlock (and probably other
-features).
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ tools/testing/selftests/landlock/fs_test.c | 26 +++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 6 deletions(-)
 
-Changes since v1:
-https://lore.kernel.org/r/20230309165455.175131-1-mic@digikod.net
-- Remove Cc stable@ (suggested by Richard).
-- Add Acked-by: Richard Weinberger to the first patch.
-- Split the test patch into two patches: one for the common
-  pseudo-filesystems, and another patch dedicated to hostfs.
-- Remove CONFIG_SECURITY_PATH because it is useless for merge_config.sh
-- Move CONFIG_HOSTFS to a new config.um file.
-- Fix commit message spelling and test warnings.
-- Improve prepare_layout_opt() with remove_path() call to avoid
-  cascading errors when some tested filesystems are not supported.
-- Remove cgroup-v1 tests because this filesystem cannot really be
-  mounted several times.
-- Add test coverage with and without kernel debug code, according to
-  GCC 12 and GCC 13.
-
-Regards,
-
-Mickaël Salaün (6):
-  hostfs: Fix ephemeral inodes
-  selftests/landlock: Don't create useless file layouts
-  selftests/landlock: Add supports_filesystem() helper
-  selftests/landlock: Make mounts configurable
-  selftests/landlock: Add tests for pseudo filesystems
-  selftests/landlock: Add hostfs tests
-
- arch/Kconfig                               |   7 -
- arch/um/Kconfig                            |   1 -
- fs/hostfs/hostfs.h                         |   1 +
- fs/hostfs/hostfs_kern.c                    | 213 ++++++------
- fs/hostfs/hostfs_user.c                    |   1 +
- security/landlock/Kconfig                  |   2 +-
- tools/testing/selftests/landlock/config    |   9 +-
- tools/testing/selftests/landlock/config.um |   1 +
- tools/testing/selftests/landlock/fs_test.c | 387 +++++++++++++++++++--
- 9 files changed, 478 insertions(+), 144 deletions(-)
- create mode 100644 tools/testing/selftests/landlock/config.um
-
-
-base-commit: 858fd168a95c5b9669aac8db6c14a9aeab446375
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index b6c4be3faf7a..0438651f61d2 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -231,6 +231,20 @@ static void cleanup_layout(struct __test_metadata *const _metadata)
+ 	EXPECT_EQ(0, remove_path(TMP_DIR));
+ }
+ 
++/* clang-format off */
++FIXTURE(layout0) {};
++/* clang-format on */
++
++FIXTURE_SETUP(layout0)
++{
++	prepare_layout(_metadata);
++}
++
++FIXTURE_TEARDOWN(layout0)
++{
++	cleanup_layout(_metadata);
++}
++
+ static void create_layout1(struct __test_metadata *const _metadata)
+ {
+ 	create_file(_metadata, file1_s1d1);
+@@ -510,7 +524,7 @@ TEST_F_FORK(layout1, file_and_dir_access_rights)
+ 	ASSERT_EQ(0, close(ruleset_fd));
+ }
+ 
+-TEST_F_FORK(layout1, unknown_access_rights)
++TEST_F_FORK(layout0, unknown_access_rights)
+ {
+ 	__u64 access_mask;
+ 
+@@ -608,7 +622,7 @@ static void enforce_ruleset(struct __test_metadata *const _metadata,
+ 	}
+ }
+ 
+-TEST_F_FORK(layout1, proc_nsfs)
++TEST_F_FORK(layout0, proc_nsfs)
+ {
+ 	const struct rule rules[] = {
+ 		{
+@@ -657,11 +671,11 @@ TEST_F_FORK(layout1, proc_nsfs)
+ 	ASSERT_EQ(0, close(path_beneath.parent_fd));
+ }
+ 
+-TEST_F_FORK(layout1, unpriv)
++TEST_F_FORK(layout0, unpriv)
+ {
+ 	const struct rule rules[] = {
+ 		{
+-			.path = dir_s1d2,
++			.path = TMP_DIR,
+ 			.access = ACCESS_RO,
+ 		},
+ 		{},
+@@ -1301,12 +1315,12 @@ TEST_F_FORK(layout1, inherit_superset)
+ 	ASSERT_EQ(0, test_open(file1_s1d3, O_RDONLY));
+ }
+ 
+-TEST_F_FORK(layout1, max_layers)
++TEST_F_FORK(layout0, max_layers)
+ {
+ 	int i, err;
+ 	const struct rule rules[] = {
+ 		{
+-			.path = dir_s1d2,
++			.path = TMP_DIR,
+ 			.access = ACCESS_RO,
+ 		},
+ 		{},
 -- 
 2.41.0
 
