@@ -2,45 +2,45 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF36C7EE2E
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A4FCC7EE43
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:57:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229929AbjFLJ4x (ORCPT
+        id S231504AbjFLJ4y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 05:56:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32900 "EHLO
+        Mon, 12 Jun 2023 05:56:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233785AbjFLJys (ORCPT
+        with ESMTP id S231797AbjFLJy3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 05:54:48 -0400
+        Mon, 12 Jun 2023 05:54:29 -0400
 Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B1B96193;
-        Mon, 12 Jun 2023 02:39:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2F435FFB;
+        Mon, 12 Jun 2023 02:39:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To;
-        bh=u1PqToTv4tGu/wNo5qNbJmeSKvydQLpyPDESq1sFIz4=; b=mHcg7bsEVSqy84in9mzk14TWOQ
-        pUvBhruN8Ps4QU7UuXumepKGGKVTz/FqQ93C9z0RN9W8/VKYjDbgUgbBY3/hYg1MVwS8NQtUh+Xww
-        CynHYhgrEVuJvTSlRsgcVCBrRmckY/PSGTJojKVJLzgMoiN08hB1rnPRAI2jI27rXNxb+MIytDB8L
-        DnKzYQDZWDNXEVW7juyczQTLAGwCYM4mK+1HoLnrpThSbhUJZex38ZlRC9grt10V6FjhXAKdXPMZm
-        veFavMchJctFhw66K958zPJTPkM0N+TjTu3S9OTJzMVp9r9RRaE5dQ/R2ohI3MV52F1JIkwJGTg5z
-        XosuHW2w==;
+        d=infradead.org; s=desiato.20200630; h=Subject:Cc:To:From:Date:Message-ID:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=B0zTaY9KKPrZ1tK1qkRJnGUNtZfdXptR/HzHjs1+iS4=; b=XQZ4FGxflXtqrO54lLAdhO230P
+        0eX2jASHQqZyaZNrOmMoEAP3MzmJ1PuCQQZsDzJJBywGmqEPEQHqvhlhW6xpMkYIB7cscPsZnMTPl
+        wda/YRaaOhoccHxY9GPvcZrmpGt4nCDyqnVSaswXky246eD7cW64gEprJmzd0jxHJVUT0l9r//0Pk
+        si1QkPjlyyiXYTzocQuwfczKtYj0dLOHYdp/NLE/KEPazV26d+77/ruWNTca7LUqUMS4HC8k/lh1H
+        dX6E3O3gMC+cI3mUHbifWMBmIlu4IhoS0cvWd9D1DJFJDkJUmucMJXsZhbMU02ynkCiQnt/FdIvcn
+        A8w/NYnw==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
         by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q8e0p-008kRQ-2g;
-        Mon, 12 Jun 2023 09:39:06 +0000
+        id 1q8e0f-008kOl-0u;
+        Mon, 12 Jun 2023 09:38:49 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 51E713033FA;
-        Mon, 12 Jun 2023 11:38:53 +0200 (CEST)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 22C4F30058D;
+        Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id E65E130A77B74; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
-Message-ID: <20230612093540.564584285@infradead.org>
+        id E7CDA30A20814; Mon, 12 Jun 2023 11:38:47 +0200 (CEST)
+Message-ID: <20230612090713.652690195@infradead.org>
 User-Agent: quilt/0.66
-Date:   Mon, 12 Jun 2023 11:07:55 +0200
+Date:   Mon, 12 Jun 2023 11:07:13 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     torvalds@linux-foundation.org, keescook@chromium.org,
         gregkh@linuxfoundation.org, pbonzini@redhat.com
@@ -68,50 +68,63 @@ Cc:     masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
         rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
-Subject: [PATCH v3 42/57] perf: Simplify perf_iterate_sb()
-References: <20230612090713.652690195@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH v3 00/57] Scope-based Resource Management
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi,
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+After a wee bit of bike-shedding on the syntax/API of the thing I think we're
+in a reasonable shape.
+
+There's still the no_free_ptr() vs take_ptr() thing, but that can be easily
+sorted with a little script over the patches if we reach consensus.
+
+I've taken to converting kernel/sched/core.c and kernel/events/core.c to see
+how well this stuff actually works. Unlike last time, I've split them up into a
+gazillion little patches. Both for my sanity -- bisect is genius when you're
+trying to debug stuff in the middle of the night as well as reviewer sanity.
+
+These are by no means 'complete' convertions, I've mostly focussed on functions
+that had 'goto' in them. Since that's a large part of why I started on all this.
+
+x86_x64-defconfig boots and passes perf test. I'll go figure out how to point
+syzcaller at it.
+
+The patches have gone through a few cycles of 0day over the weekend, and mostly
+builds fine now.
+
+Dan Carpenter poked me about how sparse doesn't yet understand the __cleanup__
+attribute and seems to suffer from decl-after-stmt issues, so that might be
+something that needs attention.
+
+Anyway, does this look like something we can live with?
+
 ---
- kernel/events/core.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7871,8 +7871,8 @@ perf_iterate_sb(perf_iterate_f output, v
- {
- 	struct perf_event_context *ctx;
- 
--	rcu_read_lock();
--	preempt_disable();
-+	guard(rcu)();
-+	guard(preempt)();
- 
- 	/*
- 	 * If we have task_ctx != NULL we only notify the task context itself.
-@@ -7881,7 +7881,7 @@ perf_iterate_sb(perf_iterate_f output, v
- 	 */
- 	if (task_ctx) {
- 		perf_iterate_ctx(task_ctx, output, data, false);
--		goto done;
-+		return;
- 	}
- 
- 	perf_iterate_sb_cpu(output, data);
-@@ -7889,9 +7889,6 @@ perf_iterate_sb(perf_iterate_f output, v
- 	ctx = rcu_dereference(current->perf_event_ctxp);
- 	if (ctx)
- 		perf_iterate_ctx(ctx, output, data, false);
--done:
--	preempt_enable();
--	rcu_read_unlock();
- }
- 
- /*
-
+ Makefile                            |    6 +-
+ arch/arm64/kernel/vdso32/Makefile   |    2 -
+ drivers/dma/ioat/dma.c              |   12 +-
+ include/linux/cleanup.h             |  167 ++++
+ include/linux/compiler-clang.h      |    9 +
+ include/linux/compiler_attributes.h |    6 +
+ include/linux/cpu.h                 |    2 +
+ include/linux/device.h              |    7 +
+ include/linux/file.h                |   11 +
+ include/linux/irqflags.h            |    7 +
+ include/linux/mutex.h               |    4 +
+ include/linux/percpu.h              |    4 +
+ include/linux/perf_event.h          |   14 +-
+ include/linux/preempt.h             |    5 +
+ include/linux/rcupdate.h            |    3 +
+ include/linux/rwsem.h               |    8 +
+ include/linux/sched/task.h          |    2 +
+ include/linux/slab.h                |    3 +
+ include/linux/spinlock.h            |   31 +
+ include/linux/srcu.h                |    5 +
+ kernel/events/core.c                | 1642 +++++++++++++++--------------------
+ kernel/sched/core.c                 |  931 +++++++++-----------
+ kernel/sched/sched.h                |   40 +
+ scripts/checkpatch.pl               |    2 +-
+ security/apparmor/include/lib.h     |    6 +-
+ 25 files changed, 1433 insertions(+), 1496 deletions(-)
 
