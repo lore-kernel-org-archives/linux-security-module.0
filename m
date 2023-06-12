@@ -2,44 +2,45 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D675C7EE25
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6231C7EE2E
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:58:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236051AbjFLJ6O (ORCPT
+        id S235815AbjFLJ6Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 05:58:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33982 "EHLO
+        Mon, 12 Jun 2023 05:58:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229729AbjFLJyZ (ORCPT
+        with ESMTP id S230186AbjFLJyT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 05:54:25 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5A495FF4;
-        Mon, 12 Jun 2023 02:38:59 -0700 (PDT)
+        Mon, 12 Jun 2023 05:54:19 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C79749FA;
+        Mon, 12 Jun 2023 02:38:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=A6Nf2exxWEURXKIPC4PisBIYNsQ8WOBsy7I8/r8MB2I=; b=nlawFV4XolW6/iduWLySiShjYw
-        cln2JRO/L02dwlVuY9LVrR5dx3MlqGFfL3bXKejT47tvNXSnylMRfCYpkyOmvJTJzxX3Dkuu3+U9V
-        GON9orGticGtLHDO7XjCtQWBLjBGPxQx9TE4ZfwC71+0DHPT+U64tMKz4/QcVn7XKWdGmg/vEjHlw
-        a6B5ZSoGuDL/jumilYTnXf3s+pZg++UlLBOa2U4Jw+Tlp8Uwlu4DsCd/18pgblJOjSG6PcbHyR8eK
-        n4RIv+2T9+h3z8iLYj3qab8IwhKRiOAXKJ0t/9uLH9RGFqp6GhdoTGkppi9FY/jUA+IXOCEJtextC
-        T/wQMAMA==;
+        bh=iuKjwptMM283OkeCg3rHRYfDPMncNnTiTfZUlZvzjjw=; b=eQ6OsD4kYVKLafcm5zMaXykUrJ
+        t3Yx8a+byrZdB944/0aNdLOqAmoLeWSa1sowLg19pvZhRfEGH12EfjQizZN73l+Q2lmgWVTy/jEN2
+        66w/tSoR035EtMK1QJrtp16Z85OKpvfSl1I8OLy7JSDS0vEBXw8vGKRffU4u96Gz85h50NrSym32v
+        8aadmJp7+8xctTmftjzi5KRquTBd3yr6fYIYX7v7Rb7TZGAQFPvFwW5JY6GaXXShnDrDMfhQWRx/H
+        Hx6pFtrNHcKkz/xQw6bxea1nVgSbzWPnczzWWwxrD46aGrv+zXbaZt8xVprl8zZZmhqQuJnaVP8+3
+        u9+4lFQg==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q8e0l-002NB5-60; Mon, 12 Jun 2023 09:38:55 +0000
+        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1q8e0f-008kOo-0K;
+        Mon, 12 Jun 2023 09:38:49 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0E881302F75;
-        Mon, 12 Jun 2023 11:38:53 +0200 (CEST)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7FC1C302E28;
+        Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 725F830A77B5F; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
-Message-ID: <20230612093539.085862001@infradead.org>
+        id 0C29230A58077; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
+Message-ID: <20230612093537.693926033@infradead.org>
 User-Agent: quilt/0.66
-Date:   Mon, 12 Jun 2023 11:07:35 +0200
+Date:   Mon, 12 Jun 2023 11:07:17 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     torvalds@linux-foundation.org, keescook@chromium.org,
         gregkh@linuxfoundation.org, pbonzini@redhat.com
@@ -67,89 +68,61 @@ Cc:     masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
         rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
-Subject: [PATCH v3 22/57] perf: Fix cpuctx refcounting
+Subject: [PATCH v3 04/57] kbuild: Drop -Wdeclaration-after-statement
 References: <20230612090713.652690195@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+With the advent on scope-based resource management it comes really
+tedious to abide by the contraints of -Wdeclaration-after-statement.
 
+It will still be recommeneded to place declarations at the start of a
+scope where possible, but it will no longer be enforced.
 
-Fixes: bd2756811766 ("perf: Rewrite core context handling")
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- include/linux/perf_event.h |   13 ++++++++-----
- kernel/events/core.c       |   16 ++++++++++++++++
- 2 files changed, 24 insertions(+), 5 deletions(-)
+ Makefile                          |    6 +-----
+ arch/arm64/kernel/vdso32/Makefile |    2 --
+ 2 files changed, 1 insertion(+), 7 deletions(-)
 
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -841,11 +841,11 @@ struct perf_event {
- };
+--- a/Makefile
++++ b/Makefile
+@@ -447,8 +447,7 @@ HOSTRUSTC = rustc
+ HOSTPKG_CONFIG	= pkg-config
  
- /*
-- *           ,-----------------------[1:n]----------------------.
-- *           V                                                  V
-- * perf_event_context <-[1:n]-> perf_event_pmu_context <--- perf_event
-- *           ^                      ^     |                     |
-- *           `--------[1:n]---------'     `-[n:1]-> pmu <-[1:n]-'
-+ *           ,-----------------------[1:n]------------------------.
-+ *           V                                                    V
-+ * perf_event_context <-[1:n]-> perf_event_pmu_context <-[1:n]- perf_event
-+ *                                        |                       |
-+ *                                        `--[n:1]-> pmu <-[1:n]--'
-  *
-  *
-  * struct perf_event_pmu_context  lifetime is refcount based and RCU freed
-@@ -863,6 +863,9 @@ struct perf_event {
-  * ctx->mutex pinning the configuration. Since we hold a reference on
-  * group_leader (through the filedesc) it can't go away, therefore it's
-  * associated pmu_ctx must exist and cannot change due to ctx->mutex.
-+ *
-+ * perf_event holds a refcount on perf_event_context
-+ * perf_event holds a refcount on perf_event_pmu_context
-  */
- struct perf_event_pmu_context {
- 	struct pmu			*pmu;
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -4809,6 +4809,11 @@ find_get_pmu_context(struct pmu *pmu, st
- 	void *task_ctx_data = NULL;
+ KBUILD_USERHOSTCFLAGS := -Wall -Wmissing-prototypes -Wstrict-prototypes \
+-			 -O2 -fomit-frame-pointer -std=gnu11 \
+-			 -Wdeclaration-after-statement
++			 -O2 -fomit-frame-pointer -std=gnu11
+ KBUILD_USERCFLAGS  := $(KBUILD_USERHOSTCFLAGS) $(USERCFLAGS)
+ KBUILD_USERLDFLAGS := $(USERLDFLAGS)
  
- 	if (!ctx->task) {
-+		/*
-+		 * perf_pmu_migrate_context() / __perf_pmu_install_event()
-+		 * relies on the fact that find_get_pmu_context() cannot fail
-+		 * for CPU contexts.
-+		 */
- 		struct perf_cpu_pmu_context *cpc;
+@@ -1012,9 +1011,6 @@ endif
+ # arch Makefile may override CC so keep this after arch Makefile is included
+ NOSTDINC_FLAGS += -nostdinc
  
- 		cpc = per_cpu_ptr(pmu->cpu_pmu_context, event->cpu);
-@@ -12832,6 +12837,13 @@ static void __perf_pmu_install_event(str
- {
- 	struct perf_event_pmu_context *epc;
+-# warn about C99 declaration after statement
+-KBUILD_CFLAGS += -Wdeclaration-after-statement
+-
+ # Variable Length Arrays (VLAs) should not be used anywhere in the kernel
+ KBUILD_CFLAGS += -Wvla
  
-+	/*
-+	 * Now that the events are unused, put their old ctx and grab a
-+	 * reference on the new context.
-+	 */
-+	put_ctx(event->ctx);
-+	get_ctx(ctx);
-+
- 	event->cpu = cpu;
- 	epc = find_get_pmu_context(pmu, ctx, event);
- 	event->pmu_ctx = epc;
-@@ -12877,6 +12889,10 @@ void perf_pmu_migrate_context(struct pmu
- 	struct perf_event_context *src_ctx, *dst_ctx;
- 	LIST_HEAD(events);
- 
-+	/*
-+	 * Since per-cpu context is persistent, no need to grab an extra
-+	 * reference.
-+	 */
- 	src_ctx = &per_cpu_ptr(&perf_cpu_context, src_cpu)->ctx;
- 	dst_ctx = &per_cpu_ptr(&perf_cpu_context, dst_cpu)->ctx;
- 
+--- a/arch/arm64/kernel/vdso32/Makefile
++++ b/arch/arm64/kernel/vdso32/Makefile
+@@ -65,11 +65,9 @@ VDSO_CFLAGS += -Wall -Wundef -Wstrict-pr
+                -fno-strict-aliasing -fno-common \
+                -Werror-implicit-function-declaration \
+                -Wno-format-security \
+-               -Wdeclaration-after-statement \
+                -std=gnu11
+ VDSO_CFLAGS  += -O2
+ # Some useful compiler-dependent flags from top-level Makefile
+-VDSO_CFLAGS += $(call cc32-option,-Wdeclaration-after-statement,)
+ VDSO_CFLAGS += $(call cc32-option,-Wno-pointer-sign)
+ VDSO_CFLAGS += -fno-strict-overflow
+ VDSO_CFLAGS += $(call cc32-option,-Werror=strict-prototypes)
 
 
