@@ -2,66 +2,65 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC9CC88CBB
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 16:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB2A4C7EE2F
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 16:33:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235353AbjFLQUU (ORCPT
+        id S236294AbjFLQdj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 12:20:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57488 "EHLO
+        Mon, 12 Jun 2023 12:33:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237518AbjFLQUC (ORCPT
+        with ESMTP id S230077AbjFLQdf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 12:20:02 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B961A1
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:20:00 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-977d55ac17bso825770766b.3
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:20:00 -0700 (PDT)
+        Mon, 12 Jun 2023 12:33:35 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CBB3119
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:33:35 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9745d99cfccso795425666b.1
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:33:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1686586799; x=1689178799;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q/KCMaMkVpL2TvKmUhvddPCRbVA7+Ro9TFJ9/0bVSYQ=;
-        b=QS16iArfnEEo35M/dWzJydhjNvcABHoFw+HE/iMFYdMiZs3LAjibZnT5JngD2rvJ7S
-         y4TYOMP8SpGVlLUi8RdEcxXkR8UPsQdjx4I+qy6dZ1EARWnO5QVn9h+yefN2GTQd9DQ6
-         iiRYJVqOVLqmeL1OsUhw7QtbthLEKEagySCWQ=
+        d=linux-foundation.org; s=google; t=1686587614; x=1689179614;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XQ64AB6vFE2gCnLICKj93uVfxKBboA+BfLd8wCYY+0E=;
+        b=T8QmECP2E0ANcz2TPhf+TvZP4F7ce5R/zVPT5+xbiur7ADt4dDyVB8jqUqtjJ13W9a
+         cWavdlcLATQ7sMOU4IFjuusMvMlY+mOQ3pWNthRTZEQfIJFCLwRJYa4fBWPV1Ua0Y3aN
+         4ejLFiEVUki1hCCBYz8lsR27RVO0f4N0Ze+FQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686586799; x=1689178799;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q/KCMaMkVpL2TvKmUhvddPCRbVA7+Ro9TFJ9/0bVSYQ=;
-        b=Ul42uR4bvcdLcn8rpj0X5ds0m78i8Gqga0FN1lnt8by1Up/8fZC6JNgqRwvkduxPuW
-         At/FHf456g4lNzvjUNPOF7wQsxBhGq88PCRMEzXhWLLlVkGWfiAXqxkkeWb2A2uN714o
-         9Ppg7opSZOqLYPuoaC4AZxM0Ki3xkvy72kzNXE1ivoFwzgC4K9ZLOfka5OHXuTn+8J24
-         rssbxPJB1uayO0IVWGuZjU8aEOePWLS+gkvMLR/QbJ/4DCN/cdLRNc0ZrhQRnhRnzq4J
-         KV6+fyHvwI69xkr+Cas2Q9bo5KVaDvOpcG6AStdHgeM2AsipYgy4RDSAcnBH5kQ7XwiK
-         OuPg==
-X-Gm-Message-State: AC+VfDxxhz0vVZtUVK2TyVKDmAtT+IcpcV29Sd2Hjq5aL56VGeTgTRAL
-        09gnO0/HZlBG05iK5vwWQi7p6F1jvaaQII/4CCKe+IfD
-X-Google-Smtp-Source: ACHHUZ6cmhKSF1VkbVzFl9ER/GWYzGjEvkDvl5MCEFHyIuLOcW8qWa8+k2446f9zXqYGOH/jYPSLjw==
-X-Received: by 2002:a17:907:60cd:b0:982:26c4:e4b0 with SMTP id hv13-20020a17090760cd00b0098226c4e4b0mr1280138ejc.6.1686586798783;
-        Mon, 12 Jun 2023 09:19:58 -0700 (PDT)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com. [209.85.128.53])
-        by smtp.gmail.com with ESMTPSA id t16-20020a1709066bd000b009596e7e0dbasm5402162ejs.162.2023.06.12.09.19.57
+        d=1e100.net; s=20221208; t=1686587614; x=1689179614;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XQ64AB6vFE2gCnLICKj93uVfxKBboA+BfLd8wCYY+0E=;
+        b=KyYWiYyV9Ubr3VOVYnoqdB7XDHV9nkwRWRFR5iJpwrj6ZNqAfcvCaXGa8qBBqfx+Zl
+         F6cVzLkzv9vLOgzkwtpg9cNREYY/6AypqnYKo9auOzjm4mP6Y1KxdeDL0i8Bmy1ZzfpD
+         EepVe/vX+Pv/uDromxMa7bgEoKsjtFIqRjZbBnTR4MRVFV/F04+eRKo5c1AS2p20qDao
+         Nv/rs8zDBCXzGpcRk+ZaWbvubCmPj5lGS7BDXLx/vGhQGkn6xX2icMgZFi1R+nrCC4LC
+         rTi8tSweKFnFMXCmCUy7woEEGP1muNiAGc0HBHcNwhWOBhLVDOB6KGizL4ksM17uPiWp
+         UrDA==
+X-Gm-Message-State: AC+VfDxWJesNyWfvRySW/IycD1piIyY5JD+xVHFDjMHj7DbuHH6pZe5t
+        NQYbFc8ZhlvuWsMH2WBBbTWUWhbMkfZUczf8WG24Cod4
+X-Google-Smtp-Source: ACHHUZ4u3eBJgzJGardiicRunr3Fbi4zzUxEaW4sG+05VBCq36+7Oi+Pqh+AzaZNzwpZKYSYD72I9w==
+X-Received: by 2002:a17:907:80a:b0:965:9602:1f07 with SMTP id wv10-20020a170907080a00b0096596021f07mr10117448ejb.39.1686587614483;
+        Mon, 12 Jun 2023 09:33:34 -0700 (PDT)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com. [209.85.221.44])
+        by smtp.gmail.com with ESMTPSA id k13-20020a17090627cd00b0096f6647b5e8sm5419613ejc.64.2023.06.12.09.33.34
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jun 2023 09:19:58 -0700 (PDT)
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-3f7368126a6so32408985e9.0
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:19:57 -0700 (PDT)
-X-Received: by 2002:aa7:d14e:0:b0:50b:c3f0:fb9d with SMTP id
- r14-20020aa7d14e000000b0050bc3f0fb9dmr5534541edo.41.1686586776585; Mon, 12
- Jun 2023 09:19:36 -0700 (PDT)
+        Mon, 12 Jun 2023 09:33:34 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-30fbcfdc7b6so1053194f8f.3
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:33:34 -0700 (PDT)
+X-Received: by 2002:a05:6402:6d3:b0:514:93b2:f3b1 with SMTP id
+ n19-20020a05640206d300b0051493b2f3b1mr5343956edy.40.1686587246075; Mon, 12
+ Jun 2023 09:27:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230612090713.652690195@infradead.org> <20230612093541.598260416@infradead.org>
-In-Reply-To: <20230612093541.598260416@infradead.org>
+References: <20230612090713.652690195@infradead.org> <20230612093539.895253662@infradead.org>
+In-Reply-To: <20230612093539.895253662@infradead.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 12 Jun 2023 09:19:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh6JEk7wYECcMdbXHf5ST8PAkOyUXhE8x2kqT6to+Gn9Q@mail.gmail.com>
-Message-ID: <CAHk-=wh6JEk7wYECcMdbXHf5ST8PAkOyUXhE8x2kqT6to+Gn9Q@mail.gmail.com>
-Subject: Re: [PATCH v3 56/57] perf: Simplify perf_pmu_output_stop()
+Date:   Mon, 12 Jun 2023 09:27:09 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgPtj9Y+nkMe+s20sntBPoadKL7GLxTr=mhfdONMR=iZg@mail.gmail.com>
+Message-ID: <CAHk-=wgPtj9Y+nkMe+s20sntBPoadKL7GLxTr=mhfdONMR=iZg@mail.gmail.com>
+Subject: Re: [PATCH v3 33/57] perf: Simplify perf_adjust_freq_unthr_context()
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     keescook@chromium.org, gregkh@linuxfoundation.org,
         pbonzini@redhat.com, masahiroy@kernel.org, nathan@kernel.org,
@@ -89,53 +88,32 @@ Cc:     keescook@chromium.org, gregkh@linuxfoundation.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch looks completely broken to me.
+This seems to have the same pattern that I *think* it's entirely
+broken, ie you are doing that
 
-You now do
+                guard(perf_pmu_disable)(event->pmu);
 
-                if (err =3D=3D -EAGAIN)
-                        goto restart;
+inside a loop, and then you are randomly just removing the
 
-*within* the RCU-guarded section, and the "goto restart" will guard it agai=
-n.
+               perf_pmu_enable(event->pmu);
 
-So no. Sending out a series of 57 patches that can have these kinds of
-bugs in it is not ok. By patch 56 (which just happened to come in
-fairly early for me), all sane peoples eyes have glazed over and they
-don't react to this kind of breakage any more.
+at the end of the loop, or when you do a "continue"./
 
-                Linus
+That's not right.
 
-On Mon, Jun 12, 2023 at 2:39=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -7977,7 +7977,8 @@ static void perf_pmu_output_stop(struct
->         int err, cpu;
->
->  restart:
-> -       rcu_read_lock();
-> +       /* cannot have a label in front of a decl */;
-> +       guard(rcu)();
->         list_for_each_entry_rcu(iter, &event->rb->event_list, rb_entry) {
->                 /*
->                  * For per-CPU events, we need to make sure that neither =
-they
-> @@ -7993,12 +7994,9 @@ static void perf_pmu_output_stop(struct
->                         continue;
->
->                 err =3D cpu_function_call(cpu, __perf_pmu_output_stop, ev=
-ent);
-> -               if (err =3D=3D -EAGAIN) {
-> -                       rcu_read_unlock();
-> +               if (err =3D=3D -EAGAIN)
->                         goto restart;
-> -               }
->         }
-> -       rcu_read_unlock();
->  }
+The thing does not not go out of scope when the loop *iterates*.
+
+It only goes out of scope when the loop *ends*.
+
+Big difference as far as cleanup goes.
+
+So you have not "simplified" the unlocking code, you've broken it. Now
+it no longer locks and unlocks for each iteration, it tries to re-lock
+every time.
+
+Or have I mis-understood something completely?
+
+               Linus
