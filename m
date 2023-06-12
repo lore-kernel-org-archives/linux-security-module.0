@@ -2,65 +2,66 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB2A4C7EE2F
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 16:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82580C88CB2
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 16:38:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236294AbjFLQdj (ORCPT
+        id S237245AbjFLQii (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 12:33:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36506 "EHLO
+        Mon, 12 Jun 2023 12:38:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230077AbjFLQdf (ORCPT
+        with ESMTP id S234545AbjFLQih (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 12:33:35 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CBB3119
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:33:35 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9745d99cfccso795425666b.1
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:33:35 -0700 (PDT)
+        Mon, 12 Jun 2023 12:38:37 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67968E4E
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:38:36 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4f654d713c0so4946884e87.3
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1686587614; x=1689179614;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XQ64AB6vFE2gCnLICKj93uVfxKBboA+BfLd8wCYY+0E=;
-        b=T8QmECP2E0ANcz2TPhf+TvZP4F7ce5R/zVPT5+xbiur7ADt4dDyVB8jqUqtjJ13W9a
-         cWavdlcLATQ7sMOU4IFjuusMvMlY+mOQ3pWNthRTZEQfIJFCLwRJYa4fBWPV1Ua0Y3aN
-         4ejLFiEVUki1hCCBYz8lsR27RVO0f4N0Ze+FQ=
+        d=linux-foundation.org; s=google; t=1686587914; x=1689179914;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZkQkCR0zK+G1VvzG47ybOhl6nFuB5nGWY9v59LgjCEc=;
+        b=QfRYTQECfsBgMvyANysDt2RqPFsfrwgoAKZdmqX3rGzWsJ3gsg3tWM3BfT3YO28z7i
+         KO8y/9WDuNXKmWoTxT13cai/Wm7m4y6wPY83rl/OQK6dg+xMq3Nnii/t8HGOZfZRERRT
+         1ocjt3a3ZtBIwhfj1NR06ypynKgvg6npBjc6w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686587614; x=1689179614;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XQ64AB6vFE2gCnLICKj93uVfxKBboA+BfLd8wCYY+0E=;
-        b=KyYWiYyV9Ubr3VOVYnoqdB7XDHV9nkwRWRFR5iJpwrj6ZNqAfcvCaXGa8qBBqfx+Zl
-         F6cVzLkzv9vLOgzkwtpg9cNREYY/6AypqnYKo9auOzjm4mP6Y1KxdeDL0i8Bmy1ZzfpD
-         EepVe/vX+Pv/uDromxMa7bgEoKsjtFIqRjZbBnTR4MRVFV/F04+eRKo5c1AS2p20qDao
-         Nv/rs8zDBCXzGpcRk+ZaWbvubCmPj5lGS7BDXLx/vGhQGkn6xX2icMgZFi1R+nrCC4LC
-         rTi8tSweKFnFMXCmCUy7woEEGP1muNiAGc0HBHcNwhWOBhLVDOB6KGizL4ksM17uPiWp
-         UrDA==
-X-Gm-Message-State: AC+VfDxWJesNyWfvRySW/IycD1piIyY5JD+xVHFDjMHj7DbuHH6pZe5t
-        NQYbFc8ZhlvuWsMH2WBBbTWUWhbMkfZUczf8WG24Cod4
-X-Google-Smtp-Source: ACHHUZ4u3eBJgzJGardiicRunr3Fbi4zzUxEaW4sG+05VBCq36+7Oi+Pqh+AzaZNzwpZKYSYD72I9w==
-X-Received: by 2002:a17:907:80a:b0:965:9602:1f07 with SMTP id wv10-20020a170907080a00b0096596021f07mr10117448ejb.39.1686587614483;
-        Mon, 12 Jun 2023 09:33:34 -0700 (PDT)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com. [209.85.221.44])
-        by smtp.gmail.com with ESMTPSA id k13-20020a17090627cd00b0096f6647b5e8sm5419613ejc.64.2023.06.12.09.33.34
+        d=1e100.net; s=20221208; t=1686587914; x=1689179914;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZkQkCR0zK+G1VvzG47ybOhl6nFuB5nGWY9v59LgjCEc=;
+        b=lKxBhIDZVSZm6LjrcN7Zlh3s4lYgn8N6jyfmQcgj+IMzQ57+XpVOSrNRe1d4jN8ZCG
+         IPkQSyOhd93OXDtJByydi5h/FdymoApzcfGQUdZwJBOJjmBdCmwOfrwH4+F4XGXWiR2o
+         t20GqwjVN3Byw9ezReli/dq0PsWuCDEpfqzVATCnGRXryHlQfjce6JFIXZ1D3VnNt0v+
+         BR0B70vYLJQgK8QyqlKlo7zo1JjSZZuiWy1F8x4x4zSPknSO7JO7mcx7YFGoZ5EXlNC0
+         sCW01WRyV8NwW5PmpGcy74lhJ6Vthet0vqBRyOgPOxYhV4bO8pGBS4vUzIKsoQ/bjJc0
+         qmEA==
+X-Gm-Message-State: AC+VfDytV3JTIprAWIGTAKa2XAqsRLlF5y12Oa2TaXA2FEubs/iUBSji
+        /0fAm4XwMxMKUMX+AcbOkn+5L69cWeLwlK/flEL6h9MT
+X-Google-Smtp-Source: ACHHUZ7ISJ/ZjOwm4imUbyfk/HGVyyaHjVwVkVMcCfFILl3zcibBz9eh5B5Sb0YytW7AmMsKBYdsBA==
+X-Received: by 2002:a19:e34f:0:b0:4f6:1c08:e9bb with SMTP id c15-20020a19e34f000000b004f61c08e9bbmr3901217lfk.63.1686587914525;
+        Mon, 12 Jun 2023 09:38:34 -0700 (PDT)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id i9-20020ac25229000000b004f2b6a203aasm1485082lfl.224.2023.06.12.09.38.33
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jun 2023 09:33:34 -0700 (PDT)
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-30fbcfdc7b6so1053194f8f.3
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:33:34 -0700 (PDT)
-X-Received: by 2002:a05:6402:6d3:b0:514:93b2:f3b1 with SMTP id
- n19-20020a05640206d300b0051493b2f3b1mr5343956edy.40.1686587246075; Mon, 12
- Jun 2023 09:27:26 -0700 (PDT)
+        Mon, 12 Jun 2023 09:38:33 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-4f654d713c0so4946831e87.3
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:38:33 -0700 (PDT)
+X-Received: by 2002:a19:e30c:0:b0:4f6:1779:b1c1 with SMTP id
+ a12-20020a19e30c000000b004f61779b1c1mr5015246lfh.48.1686587892415; Mon, 12
+ Jun 2023 09:38:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230612090713.652690195@infradead.org> <20230612093539.895253662@infradead.org>
-In-Reply-To: <20230612093539.895253662@infradead.org>
+References: <20230612090713.652690195@infradead.org>
+In-Reply-To: <20230612090713.652690195@infradead.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 12 Jun 2023 09:27:09 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgPtj9Y+nkMe+s20sntBPoadKL7GLxTr=mhfdONMR=iZg@mail.gmail.com>
-Message-ID: <CAHk-=wgPtj9Y+nkMe+s20sntBPoadKL7GLxTr=mhfdONMR=iZg@mail.gmail.com>
-Subject: Re: [PATCH v3 33/57] perf: Simplify perf_adjust_freq_unthr_context()
+Date:   Mon, 12 Jun 2023 09:37:55 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj3jV+v63RA30eVpjHVyrGmmTF7d3ajdV=1wBU=5OHa=A@mail.gmail.com>
+Message-ID: <CAHk-=wj3jV+v63RA30eVpjHVyrGmmTF7d3ajdV=1wBU=5OHa=A@mail.gmail.com>
+Subject: Re: [PATCH v3 00/57] Scope-based Resource Management
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     keescook@chromium.org, gregkh@linuxfoundation.org,
         pbonzini@redhat.com, masahiroy@kernel.org, nathan@kernel.org,
@@ -88,32 +89,34 @@ Cc:     keescook@chromium.org, gregkh@linuxfoundation.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This seems to have the same pattern that I *think* it's entirely
-broken, ie you are doing that
+On Mon, Jun 12, 2023 at 2:39=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> These are by no means 'complete' convertions, I've mostly focussed on fun=
+ctions
+> that had 'goto' in them. Since that's a large part of why I started on al=
+l this.
 
-                guard(perf_pmu_disable)(event->pmu);
+So I found what looks like two patches being completely broken because
+the conversion was fundamentally misguided.
 
-inside a loop, and then you are randomly just removing the
+And honestly, by the end of walking through the patches I was just
+scanning so quickly that I might have missed some.
 
-               perf_pmu_enable(event->pmu);
+Let's make the rule be that
 
-at the end of the loop, or when you do a "continue"./
+ - max 10 patches in the series so that I think they were actually
+thought about, and people can actually review them
 
-That's not right.
+ - only clear "goto out of scope" conversions. When you see a
+"continue" or a "goto repeat", you TAKE A BIG STEP BACK.
 
-The thing does not not go out of scope when the loop *iterates*.
+Because this is all clever, and I am now happy with the syntax, but I
+am *not* happy with that 60-patch monster series with what looks like
+horrible bugs.
 
-It only goes out of scope when the loop *ends*.
-
-Big difference as far as cleanup goes.
-
-So you have not "simplified" the unlocking code, you've broken it. Now
-it no longer locks and unlocks for each iteration, it tries to re-lock
-every time.
-
-Or have I mis-understood something completely?
-
-               Linus
+             Linus
