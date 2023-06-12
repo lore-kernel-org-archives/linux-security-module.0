@@ -2,45 +2,44 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15282C7EE2E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6697C83005
 	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:57:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235924AbjFLJ5k (ORCPT
+        id S235070AbjFLJ5i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 05:57:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32890 "EHLO
+        Mon, 12 Jun 2023 05:57:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233586AbjFLJyp (ORCPT
+        with ESMTP id S231655AbjFLJy2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 05:54:45 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA9D56190;
-        Mon, 12 Jun 2023 02:39:09 -0700 (PDT)
+        Mon, 12 Jun 2023 05:54:28 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21E505FF9;
+        Mon, 12 Jun 2023 02:39:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=5KSqPesmPX08w8dWPEEw5Ll2e7FMQinOnTr3XW9NIYo=; b=otUSsXrkwDi6rVuLl90MM+76vL
-        cE6gp9EEa8Zpqqg9MG4CPJ7+wgAaw1DsHIj5puea/XbvsOxRyOFpyECLs24dRzQ6Sjol89f/EXqvQ
-        LChObBEVQXRBsTW4GZSlyTIrge2V5AXUII3ByKeNmerebPgKH0p6l5UMuFfc+5XpT1yAnuRwxbHT8
-        2TJtKzkAkK7oEDchq+KMZKfYnIVzQSIQ18PSNfOGRXZs26r2yqrAQzcGI/y/cuIBGiWJXVqpmFdO/
-        vnWMq8UVC4ZBmx1AVgqzGkpD1hMSd/tM7MGG2el0Wb3T3Cib/eS7vjoZ84B8P3FcOaWoCXC0PdTIv
-        Ssmk1qgw==;
+        bh=TyEqnNyUrGcTyQQqxTQ7FjrgTS2UCJUv6R0g2vbKlfY=; b=rHHDliBQ2Qfw4zPxTfBy8QXX52
+        G14E6gPiy22JcNYH/Q5ary0q0YX91rEsCLNUeF2er4snB00oi8Lc4f2MMJZUwwWFKvHVk7GQuK7Zl
+        3ahxPQrajWWxBclXKLGynYx8r2sGJlK3yDh9HWCO7kIqSmTRqHGJsywLA/mKXJqegwQvkdaMSNva2
+        uJVrXhoSZLISp+eyXn3YfK2inTs+lOPkrCnxRe7XnCJ3h8JknStPhu9xVH8GzIG76/K6R5JUG74zu
+        XsZmZNsMpz5Ycxrzfr+Z6QJ1Wis1vJw2il0uWR+vhha6EcQ+HD/j4wtxTmR7enXrzcACCcjOxcx3G
+        mOVdO+3w==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q8e0o-008kRF-02;
-        Mon, 12 Jun 2023 09:39:04 +0000
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1q8e0m-002NBu-ET; Mon, 12 Jun 2023 09:38:56 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 52D533033FC;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3B8233032D0;
         Mon, 12 Jun 2023 11:38:53 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id EBB5330A77B75; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
-Message-ID: <20230612093540.638818161@infradead.org>
+        id C402E30A77B6D; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
+Message-ID: <20230612093540.108251860@infradead.org>
 User-Agent: quilt/0.66
-Date:   Mon, 12 Jun 2023 11:07:56 +0200
+Date:   Mon, 12 Jun 2023 11:07:49 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     torvalds@linux-foundation.org, keescook@chromium.org,
         gregkh@linuxfoundation.org, pbonzini@redhat.com
@@ -68,7 +67,7 @@ Cc:     masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
         rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
-Subject: [PATCH v3 43/57] perf: Simplify perf_sw_event()
+Subject: [PATCH v3 36/57] perf: Simplify find_get_pmu_context()
 References: <20230612090713.652690195@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -78,96 +77,65 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/events/core.c |   37 ++++++++++++-------------------------
- 1 file changed, 12 insertions(+), 25 deletions(-)
+ kernel/events/core.c |   19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -9701,17 +9701,15 @@ static void do_perf_sw_event(enum perf_t
- 	struct perf_event *event;
- 	struct hlist_head *head;
- 
--	rcu_read_lock();
-+	guard(rcu)();
- 	head = find_swevent_head_rcu(swhash, type, event_id);
- 	if (!head)
--		goto end;
-+		return;
- 
- 	hlist_for_each_entry_rcu(event, head, hlist_entry) {
- 		if (perf_swevent_match(event, type, event_id, data, regs))
- 			perf_swevent_event(event, nr, data, regs);
- 	}
--end:
--	rcu_read_unlock();
+@@ -4757,11 +4757,14 @@ find_get_context(struct task_struct *tas
+ 	return ERR_PTR(err);
  }
  
- DEFINE_PER_CPU(struct pt_regs, __perf_regs[4]);
-@@ -9746,16 +9744,13 @@ void __perf_sw_event(u32 event_id, u64 n
++/*
++ * Returns a matching perf_event_pmu_context with elevated refcount or NULL.
++ */
+ static struct perf_event_pmu_context *
+ find_get_pmu_context(struct pmu *pmu, struct perf_event_context *ctx,
+ 		     struct perf_event *event)
  {
- 	int rctx;
+-	struct perf_event_pmu_context *new = NULL, *epc;
++	struct perf_event_pmu_context *epc;
+ 	void *task_ctx_data = NULL;
  
--	preempt_disable_notrace();
-+	guard(preempt_notrace)();
- 	rctx = perf_swevent_get_recursion_context();
- 	if (unlikely(rctx < 0))
--		goto fail;
-+		return;
+ 	if (!ctx->task) {
+@@ -4788,16 +4791,14 @@ find_get_pmu_context(struct pmu *pmu, st
+ 		return epc;
+ 	}
  
- 	___perf_sw_event(event_id, nr, regs, addr);
--
- 	perf_swevent_put_recursion_context(rctx);
--fail:
--	preempt_enable_notrace();
- }
+-	new = kzalloc(sizeof(*epc), GFP_KERNEL);
++	void *new __free(kfree) = kzalloc(sizeof(*epc), GFP_KERNEL);
+ 	if (!new)
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
  
- static void perf_swevent_read(struct perf_event *event)
-@@ -9844,21 +9839,17 @@ static int swevent_hlist_get_cpu(int cpu
- 	struct swevent_htable *swhash = &per_cpu(swevent_htable, cpu);
- 	int err = 0;
- 
--	mutex_lock(&swhash->hlist_mutex);
-+	guard(mutex)(&swhash->hlist_mutex);
- 	if (!swevent_hlist_deref(swhash) &&
- 	    cpumask_test_cpu(cpu, perf_online_mask)) {
- 		struct swevent_hlist *hlist;
- 
- 		hlist = kzalloc(sizeof(*hlist), GFP_KERNEL);
--		if (!hlist) {
--			err = -ENOMEM;
--			goto exit;
+ 	if (event->attach_state & PERF_ATTACH_TASK_DATA) {
+ 		task_ctx_data = alloc_task_ctx_data(pmu);
+-		if (!task_ctx_data) {
+-			kfree(new);
+-			return ERR_PTR(-ENOMEM);
 -		}
-+		if (!hlist)
-+			return -ENOMEM;
- 		rcu_assign_pointer(swhash->swevent_hlist, hlist);
++		if (!task_ctx_data)
++			return NULL;
  	}
- 	swhash->hlist_refcount++;
--exit:
--	mutex_unlock(&swhash->hlist_mutex);
  
- 	return err;
+ 	__perf_init_event_pmu_context(new, pmu);
+@@ -4820,8 +4821,7 @@ find_get_pmu_context(struct pmu *pmu, st
+ 		}
+ 	}
+ 
+-	epc = new;
+-	new = NULL;
++	epc = no_free_ptr(new);
+ 
+ 	list_add(&epc->pmu_ctx_entry, &ctx->pmu_ctx_list);
+ 	epc->ctx = ctx;
+@@ -4835,7 +4835,6 @@ find_get_pmu_context(struct pmu *pmu, st
+ 	raw_spin_unlock_irq(&ctx->lock);
+ 
+ 	free_task_ctx_data(pmu, task_ctx_data);
+-	kfree(new);
+ 
+ 	return epc;
  }
-@@ -10115,16 +10106,12 @@ void perf_tp_event(u16 event_type, u64 c
- 	if (task && task != current) {
- 		struct perf_event_context *ctx;
- 
--		rcu_read_lock();
-+		guard(rcu)();
- 		ctx = rcu_dereference(task->perf_event_ctxp);
--		if (!ctx)
--			goto unlock;
--
--		raw_spin_lock(&ctx->lock);
--		perf_tp_event_target_task(count, record, regs, &data, ctx);
--		raw_spin_unlock(&ctx->lock);
--unlock:
--		rcu_read_unlock();
-+		if (ctx) {
-+			guard(raw_spinlock)(&ctx->lock);
-+			perf_tp_event_target_task(count, record, regs, &data, ctx);
-+		}
- 	}
- 
- 	perf_swevent_put_recursion_context(rctx);
 
 
