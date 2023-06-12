@@ -2,169 +2,140 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74415C88CB2
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 15:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC9CC88CBB
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 16:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231319AbjFLPxR (ORCPT
+        id S235353AbjFLQUU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 11:53:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42408 "EHLO
+        Mon, 12 Jun 2023 12:20:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235028AbjFLPxP (ORCPT
+        with ESMTP id S237518AbjFLQUC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 11:53:15 -0400
-Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AC0DCA;
-        Mon, 12 Jun 2023 08:53:14 -0700 (PDT)
-Received: by mail-vs1-xe2a.google.com with SMTP id ada2fe7eead31-43c380dd87eso5582137.2;
-        Mon, 12 Jun 2023 08:53:14 -0700 (PDT)
+        Mon, 12 Jun 2023 12:20:02 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B961A1
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:20:00 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-977d55ac17bso825770766b.3
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:20:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686585193; x=1689177193;
+        d=linux-foundation.org; s=google; t=1686586799; x=1689178799;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9kHYwyjY2Mx4tPXnbNJmtEwG3++/AUQq9JXIgugccBI=;
-        b=LtKtLJVpq95dt/C283kO1r7ZtRR0DSsmoSp4hjDJ5ZFN9MdxREpZ5263PvFqFlLZ/k
-         puV859gRyww95qMYj3Mf5GJqNVagkE8eMQWaEcmwJTC294EoFRKQ3XgM3EDAJTsddxr6
-         WLyx2s/mkdpz4hBELiKJxS/e3uhZO87fIZ4KQAgG8lz2+Q2+KCKZWoYtx0xaC2KClCKS
-         tUsstxHtpuTyTa0DL8i2nzKsi8pGs1qiRsbnclBmgoUnMtdMmK2w8+WzcYY/3touX9ob
-         +DaPNgihrAJV8DckvVGnH9MDG273vdLgl4d6QueDrdt0RGXxj5sOe9H+yaNJfiMkifRn
-         8+OQ==
+        bh=q/KCMaMkVpL2TvKmUhvddPCRbVA7+Ro9TFJ9/0bVSYQ=;
+        b=QS16iArfnEEo35M/dWzJydhjNvcABHoFw+HE/iMFYdMiZs3LAjibZnT5JngD2rvJ7S
+         y4TYOMP8SpGVlLUi8RdEcxXkR8UPsQdjx4I+qy6dZ1EARWnO5QVn9h+yefN2GTQd9DQ6
+         iiRYJVqOVLqmeL1OsUhw7QtbthLEKEagySCWQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686585193; x=1689177193;
+        d=1e100.net; s=20221208; t=1686586799; x=1689178799;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9kHYwyjY2Mx4tPXnbNJmtEwG3++/AUQq9JXIgugccBI=;
-        b=EPQBiMmf2qnH9RA+Wxf1YqSwR1uWBnW3Kmz50OPmD8/v+tZFETzikM7kj2j4ACMENG
-         ttQJMU9FlSzHyAOpAdKASgOWRBo7XSb5PZFv+MSPA8DlmJaHXTj+5N3ISxhWg5nZlfo0
-         Lfh5K09TlWEwkHPKhK3oeUu3Bfl+BmpZC6pKyeSrFvTf52FuiEO7oj4ay+JEH2zeunZq
-         BZoEjbol9Yuh3XqzUEX804ASnFXOl5nuBTi4CrNmw+A6r7YLckNw8zPwJmUvtk4+DVG3
-         L5AzHxUjhRFMeH5P14hF0rpa/yMYBwqI7FcfY18KVf/kolE1H5OFh+J17UbJ9f0YsDAZ
-         SiZQ==
-X-Gm-Message-State: AC+VfDznjdlJUX/R9Wmbj6qXUjtrIqLo+FnH4jw0lvFqGVhMtAJ5z459
-        2G1CNM2Z7f6ujHQdQN2pnj2K6S3z3WP31+Qsk+V5SnW9nrs2jg==
-X-Google-Smtp-Source: ACHHUZ51V/dxMG1thd7OWRwa/l+D5ZEk7egdIMlAeWx6wrzceN8grCvuCGpVo3ousg4h2I54OEPfxOlK0GLSTF9prP8=
-X-Received: by 2002:a67:f490:0:b0:43b:1dfa:2534 with SMTP id
- o16-20020a67f490000000b0043b1dfa2534mr4382835vsn.10.1686585193230; Mon, 12
- Jun 2023 08:53:13 -0700 (PDT)
+        bh=q/KCMaMkVpL2TvKmUhvddPCRbVA7+Ro9TFJ9/0bVSYQ=;
+        b=Ul42uR4bvcdLcn8rpj0X5ds0m78i8Gqga0FN1lnt8by1Up/8fZC6JNgqRwvkduxPuW
+         At/FHf456g4lNzvjUNPOF7wQsxBhGq88PCRMEzXhWLLlVkGWfiAXqxkkeWb2A2uN714o
+         9Ppg7opSZOqLYPuoaC4AZxM0Ki3xkvy72kzNXE1ivoFwzgC4K9ZLOfka5OHXuTn+8J24
+         rssbxPJB1uayO0IVWGuZjU8aEOePWLS+gkvMLR/QbJ/4DCN/cdLRNc0ZrhQRnhRnzq4J
+         KV6+fyHvwI69xkr+Cas2Q9bo5KVaDvOpcG6AStdHgeM2AsipYgy4RDSAcnBH5kQ7XwiK
+         OuPg==
+X-Gm-Message-State: AC+VfDxxhz0vVZtUVK2TyVKDmAtT+IcpcV29Sd2Hjq5aL56VGeTgTRAL
+        09gnO0/HZlBG05iK5vwWQi7p6F1jvaaQII/4CCKe+IfD
+X-Google-Smtp-Source: ACHHUZ6cmhKSF1VkbVzFl9ER/GWYzGjEvkDvl5MCEFHyIuLOcW8qWa8+k2446f9zXqYGOH/jYPSLjw==
+X-Received: by 2002:a17:907:60cd:b0:982:26c4:e4b0 with SMTP id hv13-20020a17090760cd00b0098226c4e4b0mr1280138ejc.6.1686586798783;
+        Mon, 12 Jun 2023 09:19:58 -0700 (PDT)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com. [209.85.128.53])
+        by smtp.gmail.com with ESMTPSA id t16-20020a1709066bd000b009596e7e0dbasm5402162ejs.162.2023.06.12.09.19.57
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jun 2023 09:19:58 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-3f7368126a6so32408985e9.0
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 09:19:57 -0700 (PDT)
+X-Received: by 2002:aa7:d14e:0:b0:50b:c3f0:fb9d with SMTP id
+ r14-20020aa7d14e000000b0050bc3f0fb9dmr5534541edo.41.1686586776585; Mon, 12
+ Jun 2023 09:19:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230607235352.1723243-1-andrii@kernel.org> <1BEB36A1-9FE4-4552-B2FF-DE6DF74F3756@redhat.com>
-In-Reply-To: <1BEB36A1-9FE4-4552-B2FF-DE6DF74F3756@redhat.com>
-From:   Djalal Harouni <tixxdz@gmail.com>
-Date:   Mon, 12 Jun 2023 17:52:46 +0200
-Message-ID: <CAEiveUeUKi1dFmrfGuTh36=kgXRjQT=xNwTsi8fk_qrk6e-QJA@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-To:     Dave Tucker <datucker@redhat.com>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
-        luto@kernel.org, kernel-team@meta.com
+References: <20230612090713.652690195@infradead.org> <20230612093541.598260416@infradead.org>
+In-Reply-To: <20230612093541.598260416@infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 12 Jun 2023 09:19:19 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh6JEk7wYECcMdbXHf5ST8PAkOyUXhE8x2kqT6to+Gn9Q@mail.gmail.com>
+Message-ID: <CAHk-=wh6JEk7wYECcMdbXHf5ST8PAkOyUXhE8x2kqT6to+Gn9Q@mail.gmail.com>
+Subject: Re: [PATCH v3 56/57] perf: Simplify perf_pmu_output_stop()
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     keescook@chromium.org, gregkh@linuxfoundation.org,
+        pbonzini@redhat.com, masahiroy@kernel.org, nathan@kernel.org,
+        ndesaulniers@google.com, nicolas@fjasle.eu,
+        catalin.marinas@arm.com, will@kernel.org, vkoul@kernel.org,
+        trix@redhat.com, ojeda@kernel.org, mingo@redhat.com,
+        longman@redhat.com, boqun.feng@gmail.com, dennis@kernel.org,
+        tj@kernel.org, cl@linux.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
+        joel@joelfernandes.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        rientjes@google.com, vbabka@suse.cz, roman.gushchin@linux.dev,
+        42.hyeyoo@gmail.com, apw@canonical.com, joe@perches.com,
+        dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+        john.johansen@canonical.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        llvm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+        rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
+        tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
+        luc.vanoostenryck@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 12, 2023 at 2:45=E2=80=AFPM Dave Tucker <datucker@redhat.com> w=
-rote:
->
->
->
-> > On 8 Jun 2023, at 00:53, Andrii Nakryiko <andrii@kernel.org> wrote:
-> >
-> > This patch set introduces new BPF object, BPF token, which allows to de=
-legate
-> > a subset of BPF functionality from privileged system-wide daemon (e.g.,
-> > systemd or any other container manager) to a *trusted* unprivileged
-> > application. Trust is the key here. This functionality is not about all=
-owing
-> > unconditional unprivileged BPF usage. Establishing trust, though, is
-> > completely up to the discretion of respective privileged application th=
-at
-> > would create a BPF token.
->
->
-> Hello! Author of a bpfd[1] here.
->
-> > The main motivation for BPF token is a desire to enable containerized
-> > BPF applications to be used together with user namespaces. This is curr=
-ently
-> > impossible, as CAP_BPF, required for BPF subsystem usage, cannot be nam=
-espaced
-> > or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to =
-BPF
-> > helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safe=
-ly read
-> > arbitrary memory, and it's impossible to ensure that they only read mem=
-ory of
-> > processes belonging to any given namespace. This means that it's imposs=
-ible to
-> > have namespace-aware CAP_BPF capability, and as such another mechanism =
-to
-> > allow safe usage of BPF functionality is necessary. BPF token and deleg=
-ation
-> > of it to a trusted unprivileged applications is such mechanism. Kernel =
-makes
-> > no assumption about what "trusted" constitutes in any particular case, =
-and
-> > it's up to specific privileged applications and their surrounding
-> > infrastructure to decide that. What kernel provides is a set of APIs to=
- create
-> > and tune BPF token, and pass it around to privileged BPF commands that =
-are
-> > creating new BPF objects like BPF programs, BPF maps, etc.
->
-> You could do that=E2=80=A6 but the problem is created due to the pattern =
-of having a
-> single binary that is responsible for:
->
-> - Loading and attaching the BPF program in question
-> - Interacting with maps
->
-> Let=E2=80=99s set aside some of the other fun concerns of eBPF in contain=
-ers:
->  - Requiring mounting of vmlinux, bpffs, traces etc=E2=80=A6
->  - How fs permissions on host translate into permissions in containers
->
-> While your proposal lets you grant a subset of CAP_BPF to some other proc=
-ess,
-> which I imagine could also be done with SELinux, it doesn=E2=80=99t stop =
-you from needing
->
-> other required permissions for attaching tracing programs in such an
-> environment.
->
-> For example, say container A wants to attach a uprobe to a process in con=
-tainer B.
-> Container A needs to be able to nsenter into container B=E2=80=99s pidns =
-in order for attachment
-> to succeed=E2=80=A6 but then what I can do with CAP_BPF is the least of m=
-y concerns since
-> I=E2=80=99d wager I=E2=80=99d need to mount `/proc` from the host in cont=
-ainer A + have elevated privileges
-> much scarier than CAP_BPF in the first place.
->
-> If you move =E2=80=9CLoading and attaching=E2=80=9D away to somewhere els=
-e (i.e a daemon like bpfd)
-> then with recent kernels your container workload should be fine to run en=
-tirely unprivileged,
-> or worst case with only CAP_BPF since all you need to do is read/write ma=
-ps.
->
-> Policy control - which process can request to load programs that monitor =
-which other
-> processes - would happen within this system daemon and you wouldn=E2=80=
-=99t need tokens.
->
-> Since it=E2=80=99s easy enough to do this in userspace, I=E2=80=99d be st=
-rongly against adding more
-> complexity into BPF to support this usecase.
+This patch looks completely broken to me.
 
-For some cases complexity could be the other way, bpf by design are
-small programs that can be loaded/unloaded dynamically and work on
-their own... easily adaptable to dynamic workload... not all bpf are
-the same...
+You now do
 
-Stuffing *everything* together and performing round trips between main
-container and container transfering, loading and attaching bpf
-programs would question what's the advantage?
+                if (err =3D=3D -EAGAIN)
+                        goto restart;
+
+*within* the RCU-guarded section, and the "goto restart" will guard it agai=
+n.
+
+So no. Sending out a series of 57 patches that can have these kinds of
+bugs in it is not ok. By patch 56 (which just happened to come in
+fairly early for me), all sane peoples eyes have glazed over and they
+don't react to this kind of breakage any more.
+
+                Linus
+
+On Mon, Jun 12, 2023 at 2:39=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -7977,7 +7977,8 @@ static void perf_pmu_output_stop(struct
+>         int err, cpu;
+>
+>  restart:
+> -       rcu_read_lock();
+> +       /* cannot have a label in front of a decl */;
+> +       guard(rcu)();
+>         list_for_each_entry_rcu(iter, &event->rb->event_list, rb_entry) {
+>                 /*
+>                  * For per-CPU events, we need to make sure that neither =
+they
+> @@ -7993,12 +7994,9 @@ static void perf_pmu_output_stop(struct
+>                         continue;
+>
+>                 err =3D cpu_function_call(cpu, __perf_pmu_output_stop, ev=
+ent);
+> -               if (err =3D=3D -EAGAIN) {
+> -                       rcu_read_unlock();
+> +               if (err =3D=3D -EAGAIN)
+>                         goto restart;
+> -               }
+>         }
+> -       rcu_read_unlock();
+>  }
