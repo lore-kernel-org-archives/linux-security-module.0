@@ -2,32 +2,32 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB515C88CB8
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 19:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 558EBC88CBA
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 19:14:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237964AbjFLTOp (ORCPT
+        id S233757AbjFLTOp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Mon, 12 Jun 2023 15:14:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46286 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237961AbjFLTOn (ORCPT
+        with ESMTP id S238003AbjFLTOo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 15:14:43 -0400
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A33C0
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 12:14:41 -0700 (PDT)
+        Mon, 12 Jun 2023 15:14:44 -0400
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B50FC7
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 12:14:43 -0700 (PDT)
 Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Qg1b33kRDzMqVbX;
-        Mon, 12 Jun 2023 19:14:39 +0000 (UTC)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Qg1b26yJTzMrn6X;
-        Mon, 12 Jun 2023 21:14:38 +0200 (CEST)
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Qg1b53tgczMqF05;
+        Mon, 12 Jun 2023 19:14:41 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Qg1b46W9qzMrmKM;
+        Mon, 12 Jun 2023 21:14:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1686597279;
-        bh=/XiUILXknl7Tq5fVTyFMZ8ef9KhnNipO0k+d2WakpHk=;
+        s=20191114; t=1686597281;
+        bh=yM3ocDBO/Eg5sd6nYID1ic7x3D8b2b9Uxb3jAajmQN8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m6/atwWOEI+DkhozvfTaZuAmWCSNHd2pdHMmy45fMECf6Xw8v7ECku9Rul/P8nsNb
-         Qt7EHbPtI5Cc7UU3nJvEgYEaLBOzkSBLG6DcwXSJgHLLaGFde7l8JuqoV26QRfMwzp
-         9v3ETpzpuJEZEbl2zNA008YlZ/gUcaPXlJkTZxg4=
+        b=CcgqZnvDpDUbp/ClAitSSlsAmm3yM036dkWaRmUYjSfBKEModzzz2wGVVR2zlIp1T
+         PglReVajuDfG0mH04oJ2R/1W52+f+VcNGYQl/T3wR489vk+Zu0rF1/A0aLVeu3bVbV
+         xnzQ7SEbVlBcZE5n8loEuVcJrJbEupWyi0PPaz9Q=
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     Anton Ivanov <anton.ivanov@cambridgegreys.com>,
         Johannes Berg <johannes@sipsolutions.net>,
@@ -49,9 +49,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v2 1/6] hostfs: Fix ephemeral inodes
-Date:   Mon, 12 Jun 2023 21:14:25 +0200
-Message-ID: <20230612191430.339153-2-mic@digikod.net>
+Subject: [PATCH v2 3/6] selftests/landlock: Add supports_filesystem() helper
+Date:   Mon, 12 Jun 2023 21:14:27 +0200
+Message-ID: <20230612191430.339153-4-mic@digikod.net>
 In-Reply-To: <20230612191430.339153-1-mic@digikod.net>
 References: <20230612191430.339153-1-mic@digikod.net>
 MIME-Version: 1.0
@@ -61,459 +61,105 @@ X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-hostfs creates a new inode for each opened or created file, which
-created useless inode allocations and forbade identifying a host file
-with a kernel inode.
+Replace supports_overlayfs() with supports_filesystem() to be able to
+check several filesystems.  This will be useful in a following commit.
 
-Fix this uncommon filesystem behavior by tying kernel inodes to host
-file's inode and device IDs.  Even if the host filesystem inodes may be
-recycled, this cannot happen while a file referencing it is opened,
-which is the case with hostfs.  It should be noted that hostfs inode IDs
-may not be unique for the same hostfs superblock because multiple host's
-(backed) superblocks may be used.
+Only check for overlay filesystem once in the setup step, and then rely
+on self->skip_test.
 
-Delete inodes when dropping them to force backed host's file descriptors
-closing.
-
-This enables to entirely remove ARCH_EPHEMERAL_INODES, and then makes
-Landlock fully supported by UML.  This is very useful for testing
-changes.
-
-These changes also factor out and simplify some helpers thanks to the
-new hostfs_inode_update() and the hostfs_iget() revamp: read_name(),
-hostfs_create(), hostfs_lookup(), hostfs_mknod(), and
-hostfs_fill_sb_common().
-
-A following commit with new Landlock tests check this new hostfs inode
-consistency.
-
-Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Acked-by: Richard Weinberger <richard@nod.at>
+Cc: Guenter Roeck <groeck@chromium.org>
+Cc: Jeff Xu <jeffxu@google.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- arch/Kconfig              |   7 --
- arch/um/Kconfig           |   1 -
- fs/hostfs/hostfs.h        |   1 +
- fs/hostfs/hostfs_kern.c   | 213 +++++++++++++++++++-------------------
- fs/hostfs/hostfs_user.c   |   1 +
- security/landlock/Kconfig |   2 +-
- 6 files changed, 109 insertions(+), 116 deletions(-)
+ tools/testing/selftests/landlock/fs_test.c | 36 ++++++++++++++--------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 205fd23e0cad..49996ee9e33b 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -1188,13 +1188,6 @@ config COMPAT_32BIT_TIME
- config ARCH_NO_PREEMPT
- 	bool
- 
--config ARCH_EPHEMERAL_INODES
--	def_bool n
--	help
--	  An arch should select this symbol if it doesn't keep track of inode
--	  instances on its own, but instead relies on something else (e.g. the
--	  host kernel for an UML kernel).
--
- config ARCH_SUPPORTS_RT
- 	bool
- 
-diff --git a/arch/um/Kconfig b/arch/um/Kconfig
-index 541a9b18e343..4057d5267c6a 100644
---- a/arch/um/Kconfig
-+++ b/arch/um/Kconfig
-@@ -5,7 +5,6 @@ menu "UML-specific options"
- config UML
- 	bool
- 	default y
--	select ARCH_EPHEMERAL_INODES
- 	select ARCH_HAS_FORTIFY_SOURCE
- 	select ARCH_HAS_GCOV_PROFILE_ALL
- 	select ARCH_HAS_KCOV
-diff --git a/fs/hostfs/hostfs.h b/fs/hostfs/hostfs.h
-index 69cb796f6270..0239e3af3945 100644
---- a/fs/hostfs/hostfs.h
-+++ b/fs/hostfs/hostfs.h
-@@ -65,6 +65,7 @@ struct hostfs_stat {
- 	unsigned long long blocks;
- 	unsigned int maj;
- 	unsigned int min;
-+	dev_t dev;
- };
- 
- extern int stat_file(const char *path, struct hostfs_stat *p, int fd);
-diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-index 28b4f15c19eb..19496f732016 100644
---- a/fs/hostfs/hostfs_kern.c
-+++ b/fs/hostfs/hostfs_kern.c
-@@ -26,6 +26,7 @@ struct hostfs_inode_info {
- 	fmode_t mode;
- 	struct inode vfs_inode;
- 	struct mutex open_mutex;
-+	dev_t dev;
- };
- 
- static inline struct hostfs_inode_info *HOSTFS_I(struct inode *inode)
-@@ -182,14 +183,6 @@ static char *follow_link(char *link)
- 	return ERR_PTR(n);
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index 0438651f61d2..c1e655fc06bb 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -107,8 +107,10 @@ static bool fgrep(FILE *const inf, const char *const str)
+ 	return false;
  }
  
--static struct inode *hostfs_iget(struct super_block *sb)
--{
--	struct inode *inode = new_inode(sb);
--	if (!inode)
--		return ERR_PTR(-ENOMEM);
--	return inode;
--}
--
- static int hostfs_statfs(struct dentry *dentry, struct kstatfs *sf)
+-static bool supports_overlayfs(void)
++static bool supports_filesystem(const char *const filesystem)
  {
- 	/*
-@@ -228,6 +221,7 @@ static struct inode *hostfs_alloc_inode(struct super_block *sb)
- 		return NULL;
- 	hi->fd = -1;
- 	hi->mode = 0;
-+	hi->dev = 0;
- 	inode_init_once(&hi->vfs_inode);
- 	mutex_init(&hi->open_mutex);
- 	return &hi->vfs_inode;
-@@ -240,6 +234,7 @@ static void hostfs_evict_inode(struct inode *inode)
- 	if (HOSTFS_I(inode)->fd != -1) {
- 		close_file(&HOSTFS_I(inode)->fd);
- 		HOSTFS_I(inode)->fd = -1;
-+		HOSTFS_I(inode)->dev = 0;
- 	}
++	char str[32];
++	int len;
+ 	bool res;
+ 	FILE *const inf = fopen("/proc/filesystems", "r");
+ 
+@@ -119,7 +121,12 @@ static bool supports_overlayfs(void)
+ 	if (!inf)
+ 		return true;
+ 
+-	res = fgrep(inf, "nodev\toverlay\n");
++	len = snprintf(str, sizeof(str), "nodev\t%s\n", filesystem);
++	if (len >= sizeof(str))
++		/* Ignores too-long filesystem names. */
++		return true;
++
++	res = fgrep(inf, str);
+ 	fclose(inf);
+ 	return res;
  }
+@@ -4044,14 +4051,17 @@ static const char (*merge_sub_files[])[] = {
+  *         └── work
+  */
  
-@@ -265,6 +260,7 @@ static int hostfs_show_options(struct seq_file *seq, struct dentry *root)
- static const struct super_operations hostfs_sbops = {
- 	.alloc_inode	= hostfs_alloc_inode,
- 	.free_inode	= hostfs_free_inode,
-+	.drop_inode	= generic_delete_inode,
- 	.evict_inode	= hostfs_evict_inode,
- 	.statfs		= hostfs_statfs,
- 	.show_options	= hostfs_show_options,
-@@ -512,18 +508,31 @@ static const struct address_space_operations hostfs_aops = {
- 	.write_end	= hostfs_write_end,
- };
- 
--static int read_name(struct inode *ino, char *name)
-+static int hostfs_inode_update(struct inode *ino, const struct hostfs_stat *st)
+-/* clang-format off */
+-FIXTURE(layout2_overlay) {};
+-/* clang-format on */
++FIXTURE(layout2_overlay)
 +{
-+	set_nlink(ino, st->nlink);
-+	i_uid_write(ino, st->uid);
-+	i_gid_write(ino, st->gid);
-+	ino->i_atime =
-+		(struct timespec64){ st->atime.tv_sec, st->atime.tv_nsec };
-+	ino->i_mtime =
-+		(struct timespec64){ st->mtime.tv_sec, st->mtime.tv_nsec };
-+	ino->i_ctime =
-+		(struct timespec64){ st->ctime.tv_sec, st->ctime.tv_nsec };
-+	ino->i_size = st->size;
-+	ino->i_blocks = st->blocks;
-+	return 0;
-+}
-+
-+static int hostfs_inode_set(struct inode *ino, void *data)
++	bool skip_test;
++};
+ 
+ FIXTURE_SETUP(layout2_overlay)
  {
-+	struct hostfs_stat *st = data;
- 	dev_t rdev;
--	struct hostfs_stat st;
--	int err = stat_file(name, &st, -1);
--	if (err)
--		return err;
- 
- 	/* Reencode maj and min with the kernel encoding.*/
--	rdev = MKDEV(st.maj, st.min);
-+	rdev = MKDEV(st->maj, st->min);
- 
--	switch (st.mode & S_IFMT) {
-+	switch (st->mode & S_IFMT) {
- 	case S_IFLNK:
- 		ino->i_op = &hostfs_link_iops;
- 		break;
-@@ -535,7 +544,7 @@ static int read_name(struct inode *ino, char *name)
- 	case S_IFBLK:
- 	case S_IFIFO:
- 	case S_IFSOCK:
--		init_special_inode(ino, st.mode & S_IFMT, rdev);
-+		init_special_inode(ino, st->mode & S_IFMT, rdev);
- 		ino->i_op = &hostfs_iops;
- 		break;
- 	case S_IFREG:
-@@ -547,17 +556,42 @@ static int read_name(struct inode *ino, char *name)
- 		return -EIO;
- 	}
- 
--	ino->i_ino = st.ino;
--	ino->i_mode = st.mode;
--	set_nlink(ino, st.nlink);
--	i_uid_write(ino, st.uid);
--	i_gid_write(ino, st.gid);
--	ino->i_atime = (struct timespec64){ st.atime.tv_sec, st.atime.tv_nsec };
--	ino->i_mtime = (struct timespec64){ st.mtime.tv_sec, st.mtime.tv_nsec };
--	ino->i_ctime = (struct timespec64){ st.ctime.tv_sec, st.ctime.tv_nsec };
--	ino->i_size = st.size;
--	ino->i_blocks = st.blocks;
--	return 0;
-+	HOSTFS_I(ino)->dev = st->dev;
-+	ino->i_ino = st->ino;
-+	ino->i_mode = st->mode;
-+	return hostfs_inode_update(ino, st);
-+}
-+
-+static int hostfs_inode_test(struct inode *inode, void *data)
-+{
-+	const struct hostfs_stat *st = data;
-+
-+	return inode->i_ino == st->ino && HOSTFS_I(inode)->dev == st->dev;
-+}
-+
-+static struct inode *hostfs_iget(struct super_block *sb, char *name)
-+{
-+	struct inode *inode;
-+	struct hostfs_stat st;
-+	int err = stat_file(name, &st, -1);
-+
-+	if (err)
-+		return ERR_PTR(err);
-+
-+	inode = iget5_locked(sb, st.ino, hostfs_inode_test, hostfs_inode_set,
-+			     &st);
-+	if (!inode)
-+		return ERR_PTR(-ENOMEM);
-+
-+	if (inode->i_state & I_NEW) {
-+		unlock_new_inode(inode);
-+	} else {
-+		spin_lock(&inode->i_lock);
-+		hostfs_inode_update(inode, &st);
-+		spin_unlock(&inode->i_lock);
-+	}
-+
-+	return inode;
- }
- 
- static int hostfs_create(struct mnt_idmap *idmap, struct inode *dir,
-@@ -565,62 +599,48 @@ static int hostfs_create(struct mnt_idmap *idmap, struct inode *dir,
- {
- 	struct inode *inode;
- 	char *name;
--	int error, fd;
--
--	inode = hostfs_iget(dir->i_sb);
--	if (IS_ERR(inode)) {
--		error = PTR_ERR(inode);
--		goto out;
--	}
-+	int fd;
- 
--	error = -ENOMEM;
- 	name = dentry_name(dentry);
- 	if (name == NULL)
--		goto out_put;
-+		return -ENOMEM;
- 
- 	fd = file_create(name, mode & 0777);
--	if (fd < 0)
--		error = fd;
--	else
--		error = read_name(inode, name);
-+	if (fd < 0) {
-+		__putname(name);
-+		return fd;
+-	if (!supports_overlayfs())
+-		SKIP(return, "overlayfs is not supported");
++	if (!supports_filesystem("overlay")) {
++		self->skip_test = true;
++		SKIP(return, "overlayfs is not supported (setup)");
 +	}
  
-+	inode = hostfs_iget(dir->i_sb, name);
- 	__putname(name);
--	if (error)
--		goto out_put;
-+	if (IS_ERR(inode))
-+		return PTR_ERR(inode);
+ 	prepare_layout(_metadata);
  
- 	HOSTFS_I(inode)->fd = fd;
- 	HOSTFS_I(inode)->mode = FMODE_READ | FMODE_WRITE;
- 	d_instantiate(dentry, inode);
- 	return 0;
--
-- out_put:
--	iput(inode);
-- out:
--	return error;
- }
+@@ -4089,8 +4099,8 @@ FIXTURE_SETUP(layout2_overlay)
  
- static struct dentry *hostfs_lookup(struct inode *ino, struct dentry *dentry,
- 				    unsigned int flags)
+ FIXTURE_TEARDOWN(layout2_overlay)
  {
--	struct inode *inode;
-+	struct inode *inode = NULL;
- 	char *name;
--	int err;
--
--	inode = hostfs_iget(ino->i_sb);
--	if (IS_ERR(inode))
--		goto out;
+-	if (!supports_overlayfs())
+-		SKIP(return, "overlayfs is not supported");
++	if (self->skip_test)
++		SKIP(return, "overlayfs is not supported (teardown)");
  
--	err = -ENOMEM;
- 	name = dentry_name(dentry);
--	if (name) {
--		err = read_name(inode, name);
--		__putname(name);
--	}
--	if (err) {
--		iput(inode);
--		inode = (err == -ENOENT) ? NULL : ERR_PTR(err);
-+	if (name == NULL)
-+		return ERR_PTR(-ENOMEM);
-+
-+	inode = hostfs_iget(ino->i_sb, name);
-+	__putname(name);
-+	if (IS_ERR(inode)) {
-+		if (PTR_ERR(inode) == -ENOENT)
-+			inode = NULL;
-+		else
-+			return ERR_CAST(inode);
- 	}
-- out:
-+
- 	return d_splice_alias(inode, dentry);
- }
+ 	EXPECT_EQ(0, remove_path(lower_do1_fl3));
+ 	EXPECT_EQ(0, remove_path(lower_dl1_fl2));
+@@ -4123,8 +4133,8 @@ FIXTURE_TEARDOWN(layout2_overlay)
  
-@@ -704,35 +724,23 @@ static int hostfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	char *name;
- 	int err;
+ TEST_F_FORK(layout2_overlay, no_restriction)
+ {
+-	if (!supports_overlayfs())
+-		SKIP(return, "overlayfs is not supported");
++	if (self->skip_test)
++		SKIP(return, "overlayfs is not supported (test)");
  
--	inode = hostfs_iget(dir->i_sb);
--	if (IS_ERR(inode)) {
--		err = PTR_ERR(inode);
--		goto out;
--	}
--
--	err = -ENOMEM;
- 	name = dentry_name(dentry);
- 	if (name == NULL)
--		goto out_put;
-+		return -ENOMEM;
+ 	ASSERT_EQ(0, test_open(lower_fl1, O_RDONLY));
+ 	ASSERT_EQ(0, test_open(lower_dl1, O_RDONLY));
+@@ -4289,8 +4299,8 @@ TEST_F_FORK(layout2_overlay, same_content_different_file)
+ 	size_t i;
+ 	const char *path_entry;
  
- 	err = do_mknod(name, mode, MAJOR(dev), MINOR(dev));
--	if (err)
--		goto out_free;
-+	if (err) {
-+		__putname(name);
-+		return err;
-+	}
+-	if (!supports_overlayfs())
+-		SKIP(return, "overlayfs is not supported");
++	if (self->skip_test)
++		SKIP(return, "overlayfs is not supported (test)");
  
--	err = read_name(inode, name);
-+	inode = hostfs_iget(dir->i_sb, name);
- 	__putname(name);
--	if (err)
--		goto out_put;
-+	if (IS_ERR(inode))
-+		return PTR_ERR(inode);
- 
- 	d_instantiate(dentry, inode);
- 	return 0;
--
-- out_free:
--	__putname(name);
-- out_put:
--	iput(inode);
-- out:
--	return err;
- }
- 
- static int hostfs_rename2(struct mnt_idmap *idmap,
-@@ -929,49 +937,40 @@ static int hostfs_fill_sb_common(struct super_block *sb, void *d, int silent)
- 	sb->s_maxbytes = MAX_LFS_FILESIZE;
- 	err = super_setup_bdi(sb);
- 	if (err)
--		goto out;
-+		return err;
- 
- 	/* NULL is printed as '(null)' by printf(): avoid that. */
- 	if (req_root == NULL)
- 		req_root = "";
- 
--	err = -ENOMEM;
- 	sb->s_fs_info = host_root_path =
- 		kasprintf(GFP_KERNEL, "%s/%s", root_ino, req_root);
- 	if (host_root_path == NULL)
--		goto out;
--
--	root_inode = new_inode(sb);
--	if (!root_inode)
--		goto out;
-+		return -ENOMEM;
- 
--	err = read_name(root_inode, host_root_path);
--	if (err)
--		goto out_put;
-+	root_inode = hostfs_iget(sb, host_root_path);
-+	if (IS_ERR(root_inode))
-+		return PTR_ERR(root_inode);
- 
- 	if (S_ISLNK(root_inode->i_mode)) {
--		char *name = follow_link(host_root_path);
--		if (IS_ERR(name)) {
--			err = PTR_ERR(name);
--			goto out_put;
--		}
--		err = read_name(root_inode, name);
-+		char *name;
-+
-+		iput(root_inode);
-+		name = follow_link(host_root_path);
-+		if (IS_ERR(name))
-+			return PTR_ERR(name);
-+
-+		root_inode = hostfs_iget(sb, name);
- 		kfree(name);
--		if (err)
--			goto out_put;
-+		if (IS_ERR(root_inode))
-+			return PTR_ERR(root_inode);
- 	}
- 
--	err = -ENOMEM;
- 	sb->s_root = d_make_root(root_inode);
- 	if (sb->s_root == NULL)
--		goto out;
-+		return -ENOMEM;
- 
- 	return 0;
--
--out_put:
--	iput(root_inode);
--out:
--	return err;
- }
- 
- static struct dentry *hostfs_read_sb(struct file_system_type *type,
-diff --git a/fs/hostfs/hostfs_user.c b/fs/hostfs/hostfs_user.c
-index 5ecc4706172b..840619e39a1a 100644
---- a/fs/hostfs/hostfs_user.c
-+++ b/fs/hostfs/hostfs_user.c
-@@ -36,6 +36,7 @@ static void stat64_to_hostfs(const struct stat64 *buf, struct hostfs_stat *p)
- 	p->blocks = buf->st_blocks;
- 	p->maj = os_major(buf->st_rdev);
- 	p->min = os_minor(buf->st_rdev);
-+	p->dev = buf->st_dev;
- }
- 
- int stat_file(const char *path, struct hostfs_stat *p, int fd)
-diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
-index 8e33c4e8ffb8..c1e862a38410 100644
---- a/security/landlock/Kconfig
-+++ b/security/landlock/Kconfig
-@@ -2,7 +2,7 @@
- 
- config SECURITY_LANDLOCK
- 	bool "Landlock support"
--	depends on SECURITY && !ARCH_EPHEMERAL_INODES
-+	depends on SECURITY
- 	select SECURITY_PATH
- 	help
- 	  Landlock is a sandboxing mechanism that enables processes to restrict
+ 	/* Sets rules on base directories (i.e. outside overlay scope). */
+ 	ruleset_fd = create_ruleset(_metadata, ACCESS_RW, layer1_base);
 -- 
 2.41.0
 
