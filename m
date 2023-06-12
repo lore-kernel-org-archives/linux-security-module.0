@@ -2,105 +2,128 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9CDC88CB2
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 14:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1045C88CB7
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 14:47:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238513AbjFLOdh (ORCPT
+        id S235508AbjFLOrA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 10:33:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42954 "EHLO
+        Mon, 12 Jun 2023 10:47:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235464AbjFLOdY (ORCPT
+        with ESMTP id S237655AbjFLOq6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 10:33:24 -0400
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C51CA2D6B;
-        Mon, 12 Jun 2023 07:32:30 -0700 (PDT)
-Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-43b2c7d9b52so1108525137.3;
-        Mon, 12 Jun 2023 07:32:30 -0700 (PDT)
+        Mon, 12 Jun 2023 10:46:58 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 235B3CC
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 07:46:54 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f61530506aso46056655e9.1
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 07:46:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686580345; x=1689172345;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7GjAlexkK/LPJDcqg5PxGpC7NQi0Y5N1w3HwyDVEmMM=;
-        b=pekOE2Z0Ow1FSrGncEFrNfHoC49MOdwwYPV5ikKYB7aNIxlSEMao1jwbz51S820U5r
-         k1nBEH6Q7fhYaLQAFc8i6gIbfg3QqW6gGBZIoVI4KZJ7ymjtMET1dCcaSOVKrfze4dG+
-         EfUhdTHvwlTU0AH2VSMJ41vbIzrbjylIF0+2sP8/WAhl+k66Vm5F12J/mSw1WRQXRlig
-         d1eAyc7p1r3RTCJNLUxnySdov3EZttar/pyoxHwvMBHrZbSL0FL5EIxKBQ9RTrC91+G1
-         ZwVsQJWsXyzHFL1B6Yq6o8jPul6TebMsZQuX2Yj+ovpAfNmjZiACiHztwbIKuSzETdxz
-         UN+g==
+        d=linaro.org; s=google; t=1686581213; x=1689173213;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+6aoplpG2x3NvMW0KrqThwgqpWyRdB+MusqYxUHLi6I=;
+        b=dtMz/QN1CYDOXQu612tba/JwgKtA/+AuFMoJtVfDnmblF2dgFwXikdReeoXW35v1Zd
+         +50Q2WOSFuw/fcaN8dbMv35r5SHWWSW4PrQGK+6wxKFEErwFvEVp9V8nCPLxLwesIhQr
+         WEdF8glEoUs66sKTgE0D4afL24VuHMWTM9lpMFXE/DRX8IOYigrPJeLBymUn1Hal9dlD
+         r2K5G67fgqTNX19dmMcos/Kv7RcWobeswS2CAFr1YsO8TJ6qT6tUcJyGfHKzkwhJHLBK
+         vSIP3C7g/VM6N5T8xER37M9c1wJYZprjZ0GX5pUGBX/zTDXLNGqPr2QTGnH0Rh3RjGJB
+         tUKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686580345; x=1689172345;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7GjAlexkK/LPJDcqg5PxGpC7NQi0Y5N1w3HwyDVEmMM=;
-        b=RqUWqQQ7/2vPM/iK7ljM4gpOQnhQziUj2l4Sx6egsgsWqBiBmScabmTkx0Py7LdUoY
-         lSv1B9Vd9yDOfyQ0tVcPae/e1pdKWg0GRYPyyFKjTce+AEGgfeAF/6Nquwn8ktXQoR4J
-         GGPBFdZrsHGzYRj+0AThAWZ2iP4SbVo6t6PJWhLAsP9tznB/c3okS9nBeZEA4OzxhgP8
-         6dqjRMLtkTGPfdI6NAObnBCwEmBq1eOzR1k2C1QpsLKdqMwtRKbpyDAEUbjp749d4Kr5
-         XylxUR1F3k6jTofYJ3phkZrL8MJjF4iNDsr4JgCJ9FJW8vwPp1OhbSKdqMoXI1BLMQ8f
-         v8fw==
-X-Gm-Message-State: AC+VfDxqQeqJYK+5eCD0/J/NvQZPxk00FerJ2K2D6hb+eH0XV7Se+VsQ
-        9wjnwOpOr2SAi9jNcSVosO8+5sWvlJiHlgALmFA=
-X-Google-Smtp-Source: ACHHUZ6hZsvOqtQ1U34CdZxRSST0+YmSj9VUpNha1JZalPfHBi790GC1d1zytiz7euDI2tWQI7788PKLbkhg7fLrNWA=
-X-Received: by 2002:a67:ff0c:0:b0:43b:5823:6664 with SMTP id
- v12-20020a67ff0c000000b0043b58236664mr3649895vsp.3.1686580344827; Mon, 12 Jun
- 2023 07:32:24 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686581213; x=1689173213;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+6aoplpG2x3NvMW0KrqThwgqpWyRdB+MusqYxUHLi6I=;
+        b=M/zUX/zyJGymMJjWS0gw2GzRowvdB80xD6ggf2CGX5qfAXbfmr3K7ngwTBVkbS3Fk8
+         4asmHJbve7XFIgJJx/71WNyYISxqHB456TMND34DUyGhR5w4yss0ve7HRWAOXxHzC9HG
+         RlMZD3apeTsp6qIbMCCjCXtbdFxo4Fi8G9IttakaPotgLozp82kkTQe0B3j/OyWbHETX
+         P83rul631bU2ECxIeSsfC9rPXTCrvVLwc+AJdFwZ/2JHKwfWceKS1cGZJvezqlPTKHkj
+         xZdgnw4RPHX5THAN50+1IEpY5CX/y6ev5ZpOaBoStKx4uRxqgWJY0+WSn3HFCA+TrYpv
+         f7og==
+X-Gm-Message-State: AC+VfDyb/Vmq8JvRsYyIiN+80YKitSSQ0hgaXhzfNCPykv9AOelbpa6O
+        Bx+GtvJWPI1DXtl3jbkckCF8SQ==
+X-Google-Smtp-Source: ACHHUZ63nbk/eM9v9k5sduxB02wD7D7/aRDS/9wQD+tlE2DuPOPAwMPZwxopNt+s1fAYfP16HkiUEw==
+X-Received: by 2002:a05:600c:2147:b0:3f4:16bc:bd19 with SMTP id v7-20020a05600c214700b003f416bcbd19mr7514861wml.23.1686581213305;
+        Mon, 12 Jun 2023 07:46:53 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id f9-20020a7bc8c9000000b003f8140763c7sm6510830wml.30.2023.06.12.07.46.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jun 2023 07:46:51 -0700 (PDT)
+Date:   Mon, 12 Jun 2023 17:46:47 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     torvalds@linux-foundation.org, keescook@chromium.org,
+        gregkh@linuxfoundation.org, pbonzini@redhat.com,
+        masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
+        nicolas@fjasle.eu, catalin.marinas@arm.com, will@kernel.org,
+        vkoul@kernel.org, trix@redhat.com, ojeda@kernel.org,
+        mingo@redhat.com, longman@redhat.com, boqun.feng@gmail.com,
+        dennis@kernel.org, tj@kernel.org, cl@linux.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, namhyung@kernel.org, irogers@google.com,
+        adrian.hunter@intel.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, paulmck@kernel.org,
+        frederic@kernel.org, quic_neeraju@quicinc.com,
+        joel@joelfernandes.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        rientjes@google.com, vbabka@suse.cz, roman.gushchin@linux.dev,
+        42.hyeyoo@gmail.com, apw@canonical.com, joe@perches.com,
+        dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+        john.johansen@canonical.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        llvm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+        rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
+        tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
+        luc.vanoostenryck@gmail.com
+Subject: Re: [PATCH v3 26/57] perf: Simplify event_function*()
+Message-ID: <1cbdae4a-d6ad-4dd8-aa75-9e226c4416fe@kadam.mountain>
+References: <20230612090713.652690195@infradead.org>
+ <20230612093539.371360635@infradead.org>
 MIME-Version: 1.0
-References: <20230607235352.1723243-1-andrii@kernel.org> <CAEiveUdNrHfVXzF_6ogChifKyje3kA07pd8mpP+s24AEbKD7Cg@mail.gmail.com>
- <CAEf4BzaDDqfODPS9MM5twXiXdDCAMs2U2-XK+gGPuSpnGFh=pQ@mail.gmail.com> <CAEiveUeDLr00SjyU=SMSc4XbHSA6LTn4U2DHr12760rbo5WqSw@mail.gmail.com>
-In-Reply-To: <CAEiveUeDLr00SjyU=SMSc4XbHSA6LTn4U2DHr12760rbo5WqSw@mail.gmail.com>
-From:   Djalal Harouni <tixxdz@gmail.com>
-Date:   Mon, 12 Jun 2023 16:31:58 +0200
-Message-ID: <CAEiveUeG7FZy3AdzKQC-VPiT1mxYJtwaV6pHSxr5-BYSnW+X1w@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
-        luto@kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230612093539.371360635@infradead.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 12, 2023 at 2:02=E2=80=AFPM Djalal Harouni <tixxdz@gmail.com> w=
-rote:
->
-> On Sat, Jun 10, 2023 at 12:57=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-...
-> > I'm not sure I understand the question. Unix domain socket
-> > (specifically its SCM_RIGHTS ancillary message) allows to transfer
-> > files between processes, which is one way to pass BPF object (like
-> > prog/map/link, and now token). BPF FS is the other one. In practice
-> > it's usually BPF FS, but there is no presumption about how file
-> > reference is transferred.
->
-> Got it.
->
-> IIRC SCM_RIGHTS and SCM_CREDENTIALS are translated into the receiving
-> userns, no ?
->
-> I assume such which allows to set up things in a hierarchical way...
->
-> If I set up the environment to lock things down the line, I find it
-> strange if a received fd would allow me to do more things than what
-> was planned when I created the environment: namespaces, mounts, etc
->
-> I think you have to add the owning userns context to the fd or
-> "token", and on the receiving part if the current userns is the same
-> or a nested one of the current userns hierarchy then allow bpf
-> operation, otherwise fail with -EACCESS or something similar...
+On Mon, Jun 12, 2023 at 11:07:39AM +0200, Peter Zijlstra wrote:
+> @@ -224,17 +243,15 @@ static int event_function(void *info)
+>  	int ret = 0;
+>  
+>  	lockdep_assert_irqs_disabled();
+> +	guard(perf_ctx_lock)(cpuctx, task_ctx);
+>  
+> -	perf_ctx_lock(cpuctx, task_ctx);
+>  	/*
+>  	 * Since we do the IPI call without holding ctx->lock things can have
+>  	 * changed, double check we hit the task we set out to hit.
+>  	 */
+>  	if (ctx->task) {
+> -		if (ctx->task != current) {
+> -			ret = -ESRCH;
+> -			goto unlock;
+> -		}
+> +		if (ctx->task != current)
+> +			return -ESRCH;
+>  
+>  		/*
+>  		 * We only use event_function_call() on established contexts,
+> @@ -254,8 +271,6 @@ static int event_function(void *info)
+>  	}
+>  
+>  	efs->func(event, cpuctx, ctx, efs->data);
+> -unlock:
+> -	perf_ctx_unlock(cpuctx, task_ctx);
+>  
+>  	return ret;
 
-Andrii to make it clear: the owning userns that is owner/creator of
-the bpffs mount (better this one since you prevent the inherit fd and
-do bad things with it cases...) lets call it userns A,  and the
-receiving process is in userns B, so when transfering the fd if userns
-B =3D=3D userns A or if A is an ancestor of B then allow to do things with
-fd token, otherwise just deny it...
 
-At least that's how I see things now, but maybe there are corner cases...
+We can change this to a return 0; and get rid of the "ret" variable.
+
+regards,
+dan carpenter
+
