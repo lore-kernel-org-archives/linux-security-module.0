@@ -2,45 +2,44 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA8AC87FDC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D675C7EE25
 	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:58:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231254AbjFLJ6P (ORCPT
+        id S236051AbjFLJ6O (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 05:58:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33432 "EHLO
+        Mon, 12 Jun 2023 05:58:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234050AbjFLJyu (ORCPT
+        with ESMTP id S229729AbjFLJyZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 05:54:50 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE1DF9;
-        Mon, 12 Jun 2023 02:39:20 -0700 (PDT)
+        Mon, 12 Jun 2023 05:54:25 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5A495FF4;
+        Mon, 12 Jun 2023 02:38:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=/A/ePFAjeMC2GglceFED5TIbtUbkLmsSQSkhfQHRtFw=; b=kFbg2Jf4qYcn0XtHtKqR2yCbMd
-        H8amaE7vnYEWxcLgDO4zyoMl9/c1f9cvqTyiAU7MH8KX+IvKKJAqW9Sf8EIweVxdv6ScrGmGJyi0P
-        u8+kOhhR6xdwShh7mjg3MQDWp6nr/4UiMAukJyxwqHSwNzQ+PASFrxXd7QOcVveGNYd0JZPrR4N+g
-        EYGrvk4J11hBkeUPkxIvX/hhxL1jhGJmW4HO/81uJGpYfivRaZmHYneQuLRhD2D530TvYDj3B4wW5
-        K+uiqOt+PVGGlvAY8RwSAa0jFsZPi8DoURNPx2MXWp0DIkZGwYBfg4WMqhJzNkupmdNH+rBSU3Yul
-        4CLnKaUw==;
+        bh=A6Nf2exxWEURXKIPC4PisBIYNsQ8WOBsy7I8/r8MB2I=; b=nlawFV4XolW6/iduWLySiShjYw
+        cln2JRO/L02dwlVuY9LVrR5dx3MlqGFfL3bXKejT47tvNXSnylMRfCYpkyOmvJTJzxX3Dkuu3+U9V
+        GON9orGticGtLHDO7XjCtQWBLjBGPxQx9TE4ZfwC71+0DHPT+U64tMKz4/QcVn7XKWdGmg/vEjHlw
+        a6B5ZSoGuDL/jumilYTnXf3s+pZg++UlLBOa2U4Jw+Tlp8Uwlu4DsCd/18pgblJOjSG6PcbHyR8eK
+        n4RIv+2T9+h3z8iLYj3qab8IwhKRiOAXKJ0t/9uLH9RGFqp6GhdoTGkppi9FY/jUA+IXOCEJtextC
+        T/wQMAMA==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q8e0u-008kS3-2y;
-        Mon, 12 Jun 2023 09:39:11 +0000
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1q8e0l-002NB5-60; Mon, 12 Jun 2023 09:38:55 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6B9DF30613A;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0E881302F75;
         Mon, 12 Jun 2023 11:38:53 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 234A130A79084; Mon, 12 Jun 2023 11:38:49 +0200 (CEST)
-Message-ID: <20230612093541.240573885@infradead.org>
+        id 725F830A77B5F; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
+Message-ID: <20230612093539.085862001@infradead.org>
 User-Agent: quilt/0.66
-Date:   Mon, 12 Jun 2023 11:08:04 +0200
+Date:   Mon, 12 Jun 2023 11:07:35 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     torvalds@linux-foundation.org, keescook@chromium.org,
         gregkh@linuxfoundation.org, pbonzini@redhat.com
@@ -68,7 +67,7 @@ Cc:     masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
         rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
-Subject: [PATCH v3 51/57] perf: Simplify perf_event_create_kernel_counter()
+Subject: [PATCH v3 22/57] perf: Fix cpuctx refcounting
 References: <20230612090713.652690195@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -76,129 +75,81 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
+
+Fixes: bd2756811766 ("perf: Rewrite core context handling")
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/events/core.c |   79 ++++++++++++++++-----------------------------------
- 1 file changed, 26 insertions(+), 53 deletions(-)
+ include/linux/perf_event.h |   13 ++++++++-----
+ kernel/events/core.c       |   16 ++++++++++++++++
+ 2 files changed, 24 insertions(+), 5 deletions(-)
 
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -841,11 +841,11 @@ struct perf_event {
+ };
+ 
+ /*
+- *           ,-----------------------[1:n]----------------------.
+- *           V                                                  V
+- * perf_event_context <-[1:n]-> perf_event_pmu_context <--- perf_event
+- *           ^                      ^     |                     |
+- *           `--------[1:n]---------'     `-[n:1]-> pmu <-[1:n]-'
++ *           ,-----------------------[1:n]------------------------.
++ *           V                                                    V
++ * perf_event_context <-[1:n]-> perf_event_pmu_context <-[1:n]- perf_event
++ *                                        |                       |
++ *                                        `--[n:1]-> pmu <-[1:n]--'
+  *
+  *
+  * struct perf_event_pmu_context  lifetime is refcount based and RCU freed
+@@ -863,6 +863,9 @@ struct perf_event {
+  * ctx->mutex pinning the configuration. Since we hold a reference on
+  * group_leader (through the filedesc) it can't go away, therefore it's
+  * associated pmu_ctx must exist and cannot change due to ctx->mutex.
++ *
++ * perf_event holds a refcount on perf_event_context
++ * perf_event holds a refcount on perf_event_pmu_context
+  */
+ struct perf_event_pmu_context {
+ 	struct pmu			*pmu;
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -12569,12 +12569,6 @@ perf_event_create_kernel_counter(struct
- 				 perf_overflow_handler_t overflow_handler,
- 				 void *context)
+@@ -4809,6 +4809,11 @@ find_get_pmu_context(struct pmu *pmu, st
+ 	void *task_ctx_data = NULL;
+ 
+ 	if (!ctx->task) {
++		/*
++		 * perf_pmu_migrate_context() / __perf_pmu_install_event()
++		 * relies on the fact that find_get_pmu_context() cannot fail
++		 * for CPU contexts.
++		 */
+ 		struct perf_cpu_pmu_context *cpc;
+ 
+ 		cpc = per_cpu_ptr(pmu->cpu_pmu_context, event->cpu);
+@@ -12832,6 +12837,13 @@ static void __perf_pmu_install_event(str
  {
--	struct perf_event_pmu_context *pmu_ctx;
--	struct perf_event_context *ctx;
--	struct perf_event *event;
--	struct pmu *pmu;
--	int err;
--
- 	/*
- 	 * Grouping is not supported for kernel events, neither is 'AUX',
- 	 * make sure the caller's intentions are adjusted.
-@@ -12582,16 +12576,16 @@ perf_event_create_kernel_counter(struct
- 	if (attr->aux_output)
- 		return ERR_PTR(-EINVAL);
+ 	struct perf_event_pmu_context *epc;
  
--	event = perf_event_alloc(attr, cpu, task, NULL, NULL,
++	/*
++	 * Now that the events are unused, put their old ctx and grab a
++	 * reference on the new context.
++	 */
++	put_ctx(event->ctx);
++	get_ctx(ctx);
 +
-+	struct perf_event *event __free(free_event) =
-+		perf_event_alloc(attr, cpu, task, NULL, NULL,
- 				 overflow_handler, context, -1);
--	if (IS_ERR(event)) {
--		err = PTR_ERR(event);
--		goto err;
--	}
-+	if (IS_ERR(event))
-+		return event;
+ 	event->cpu = cpu;
+ 	epc = find_get_pmu_context(pmu, ctx, event);
+ 	event->pmu_ctx = epc;
+@@ -12877,6 +12889,10 @@ void perf_pmu_migrate_context(struct pmu
+ 	struct perf_event_context *src_ctx, *dst_ctx;
+ 	LIST_HEAD(events);
  
- 	/* Mark owner so we could distinguish it from user events. */
- 	event->owner = TASK_TOMBSTONE;
--	pmu = event->pmu;
-+	struct pmu *pmu = event->pmu;
- 
- 	if (pmu->task_ctx_nr == perf_sw_context)
- 		event->event_caps |= PERF_EV_CAP_SOFTWARE;
-@@ -12599,25 +12593,21 @@ perf_event_create_kernel_counter(struct
- 	/*
- 	 * Get the target context (task or percpu):
- 	 */
--	ctx = find_get_context(task, event);
--	if (IS_ERR(ctx)) {
--		err = PTR_ERR(ctx);
--		goto err_alloc;
--	}
-+	CLASS(find_get_ctx, ctx)(task, event);
-+	if (IS_ERR(ctx))
-+		return (void *)ctx;
- 
- 	WARN_ON_ONCE(ctx->parent_ctx);
--	mutex_lock(&ctx->mutex);
--	if (ctx->task == TASK_TOMBSTONE) {
--		err = -ESRCH;
--		goto err_unlock;
--	}
-+	guard(mutex)(&ctx->mutex);
- 
--	pmu_ctx = find_get_pmu_context(pmu, ctx, event);
--	if (IS_ERR(pmu_ctx)) {
--		err = PTR_ERR(pmu_ctx);
--		goto err_unlock;
--	}
--	event->pmu_ctx = pmu_ctx;
-+	if (ctx->task == TASK_TOMBSTONE)
-+		return ERR_PTR(-ESRCH);
-+
-+
-+	struct perf_event_pmu_context *pmu_ctx __free(put_pmu_ctx) =
-+		find_get_pmu_context(pmu, ctx, event);
-+	if (!pmu_ctx)
-+		return ERR_PTR(-ENOMEM);
- 
- 	if (!task) {
- 		/*
-@@ -12628,34 +12618,17 @@ perf_event_create_kernel_counter(struct
- 		 */
- 		struct perf_cpu_context *cpuctx =
- 			container_of(ctx, struct perf_cpu_context, ctx);
--		if (!cpuctx->online) {
--			err = -ENODEV;
--			goto err_pmu_ctx;
--		}
-+		if (!cpuctx->online)
-+			return ERR_PTR(-ENODEV);
- 	}
- 
--	if (!exclusive_event_installable(event, ctx)) {
--		err = -EBUSY;
--		goto err_pmu_ctx;
--	}
-+	if (!exclusive_event_installable(event, ctx))
-+		return ERR_PTR(-EBUSY);
-+
-+	event->pmu_ctx = no_free_ptr(pmu_ctx);
-+	perf_install_in_context(get_ctx(ctx), event, event->cpu);
- 
--	perf_install_in_context(ctx, event, event->cpu);
--	perf_unpin_context(ctx);
--	mutex_unlock(&ctx->mutex);
--
--	return event;
--
--err_pmu_ctx:
--	put_pmu_ctx(pmu_ctx);
--	event->pmu_ctx = NULL; /* _free_event() */
--err_unlock:
--	mutex_unlock(&ctx->mutex);
--	perf_unpin_context(ctx);
--	put_ctx(ctx);
--err_alloc:
--	free_event(event);
--err:
--	return ERR_PTR(err);
-+	return_ptr(event);
- }
- EXPORT_SYMBOL_GPL(perf_event_create_kernel_counter);
++	/*
++	 * Since per-cpu context is persistent, no need to grab an extra
++	 * reference.
++	 */
+ 	src_ctx = &per_cpu_ptr(&perf_cpu_context, src_cpu)->ctx;
+ 	dst_ctx = &per_cpu_ptr(&perf_cpu_context, dst_cpu)->ctx;
  
 
 
