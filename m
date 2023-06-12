@@ -2,124 +2,122 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D6CC7EE43
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 19:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B188C88CB6
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 20:02:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237782AbjFLTby (ORCPT
+        id S231379AbjFLUCk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 15:31:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56206 "EHLO
+        Mon, 12 Jun 2023 16:02:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232156AbjFLTbv (ORCPT
+        with ESMTP id S229974AbjFLUCj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 15:31:51 -0400
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [IPv6:2001:1600:3:17::42a9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C451B1;
-        Mon, 12 Jun 2023 12:31:50 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Qg1ys1TW9zMpnRX;
-        Mon, 12 Jun 2023 19:31:49 +0000 (UTC)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Qg1yq3Vpxz1WQ5;
-        Mon, 12 Jun 2023 21:31:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1686598309;
-        bh=GasM/PXAmdVQmu/wE7etpr/UWkPXIvJ3I4943s9ioxk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=AkpOP6gUurW0lypup7R9nHzfaSYxcp2Tcqu5RkaRVnjte7hc2hVjrPBac+pHpJrej
-         l9zmNJWb/uMOEGaE5QV+hGyI6cIY8qOzOYF6uyXR+50EXns+yi2OzI6WJYNEdSQAx8
-         bBHElHZ/k+/pZRMpSSz32d187kN2M7Sd+jzArugA=
-Message-ID: <06d7e926-87fe-af66-c612-39ea57d0238a@digikod.net>
-Date:   Mon, 12 Jun 2023 21:31:46 +0200
+        Mon, 12 Jun 2023 16:02:39 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62600118;
+        Mon, 12 Jun 2023 13:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=pxkiBpX/jKL5fDu+bPABhlXr0//9Lho2ZyF5gMf+wnU=; b=YE5cJbLdVZV9PIHrx4tBv08lZx
+        QSYHEJWO1MpAuhw42QCCjHt/VjPVWsDm9s+u55fqbBeABzUnQBVsSlh2L+ituWNyN3T46KWVD9vks
+        bbI8vIOnRcUIpyT/SDszF/Mi6utLS00YvmEtBFHbi+Lo2tFu+6BrCewpdECrJeO6RJwJiBZkWLNZl
+        OvgWWjDTIsQqesRzGliidqy3dPAYen6WPMvkkSyTqGz+/O3tItjrXDxIUUXuSbtg7lF6hfVS+TZQR
+        fdR4gQ2kcnekYTWSfwfK8uM/4Y+aX96zevoGSsdTz+GXLJ0gUd+CIgGmkrp59j/83fmqMK2G5dQBw
+        8Otb00PQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1q8nkF-008zpL-2Y;
+        Mon, 12 Jun 2023 20:02:32 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 860C130058D;
+        Mon, 12 Jun 2023 22:02:30 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id ED3042460EAE4; Mon, 12 Jun 2023 22:02:29 +0200 (CEST)
+Date:   Mon, 12 Jun 2023 22:02:29 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     torvalds@linux-foundation.org, keescook@chromium.org,
+        gregkh@linuxfoundation.org, pbonzini@redhat.com,
+        masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
+        nicolas@fjasle.eu, catalin.marinas@arm.com, will@kernel.org,
+        vkoul@kernel.org, trix@redhat.com, ojeda@kernel.org,
+        mingo@redhat.com, longman@redhat.com, dennis@kernel.org,
+        tj@kernel.org, cl@linux.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
+        joel@joelfernandes.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        rientjes@google.com, vbabka@suse.cz, roman.gushchin@linux.dev,
+        42.hyeyoo@gmail.com, apw@canonical.com, joe@perches.com,
+        dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+        john.johansen@canonical.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        llvm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+        rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
+        tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
+        luc.vanoostenryck@gmail.com
+Subject: Re: [PATCH v3 08/57] sched: Simplify wake_up_if_idle()
+Message-ID: <20230612200229.GN4253@hirez.programming.kicks-ass.net>
+References: <20230612090713.652690195@infradead.org>
+ <20230612093537.977924652@infradead.org>
+ <ZIddtMiTj8Kktq1z@boqun-archlinux>
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v2 0/6] Landlock support for UML
-Content-Language: en-US
-To:     Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Richard Weinberger <richard@nod.at>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     Christopher Obbard <chris.obbard@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        James Morris <jmorris@namei.org>, Jeff Xu <jeffxu@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Ritesh Raj Sarraf <ritesh@collabora.com>,
-        Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sjoerd Simons <sjoerd@collabora.com>,
-        Willem de Bruijn <willemb@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20230612191430.339153-1-mic@digikod.net>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230612191430.339153-1-mic@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZIddtMiTj8Kktq1z@boqun-archlinux>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I've push this series into -next. Thanks Richard!
+On Mon, Jun 12, 2023 at 11:02:28AM -0700, Boqun Feng wrote:
+> On Mon, Jun 12, 2023 at 11:07:21AM +0200, Peter Zijlstra wrote:
+> > Use guards to reduce gotos and simplify control flow.
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  kernel/sched/core.c  |   20 ++++++--------------
+> >  kernel/sched/sched.h |   15 +++++++++++++++
+> >  2 files changed, 21 insertions(+), 14 deletions(-)
+> > 
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -3872,21 +3872,13 @@ static void __ttwu_queue_wakelist(struct
+> >  void wake_up_if_idle(int cpu)
+> >  {
+> >  	struct rq *rq = cpu_rq(cpu);
+> > -	struct rq_flags rf;
+> >  
+> > -	rcu_read_lock();
+> > -
+> > -	if (!is_idle_task(rcu_dereference(rq->curr)))
+> > -		goto out;
+> > -
+> > -	rq_lock_irqsave(rq, &rf);
+> > -	if (is_idle_task(rq->curr))
+> > -		resched_curr(rq);
+> > -	/* Else CPU is not idle, do nothing here: */
+> > -	rq_unlock_irqrestore(rq, &rf);
+> > -
+> > -out:
+> > -	rcu_read_unlock();
+> > +	guard(rcu)();
+> > +	if (is_idle_task(rcu_dereference(rq->curr))) {
+> > +		guard(rq_lock)(rq);
+> 
+> We assume that irq must be disabled when this function called?
+> Otherwise, I don't understand why this is not
+> 
+> 	guard(rq_lock_irqsave)(rq);
+> 
 
-On 12/06/2023 21:14, Mickaël Salaün wrote:
-> Hi,
-> 
-> Commit cb2c7d1a1776 ("landlock: Support filesystem access-control")
-> introduced a new ARCH_EPHEMERAL_INODES configuration, only enabled for
-> User-Mode Linux.  The reason was that UML's hostfs managed inodes in an
-> ephemeral way: from the kernel point of view, the same inode struct
-> could be created several times while being used by user space because
-> the kernel didn't hold references to inodes.  Because Landlock (and
-> probably other subsystems) ties properties (i.e. access rights) to inode
-> objects, it wasn't possible to create rules that match inodes and then
-> allow specific accesses.
-> 
-> This patch series fixes the way UML manages inodes according to the
-> underlying filesystem.  They are now properly handles as for other
-> filesystems, which enables to support Landlock (and probably other
-> features).
-> 
-> Changes since v1:
-> https://lore.kernel.org/r/20230309165455.175131-1-mic@digikod.net
-> - Remove Cc stable@ (suggested by Richard).
-> - Add Acked-by: Richard Weinberger to the first patch.
-> - Split the test patch into two patches: one for the common
->    pseudo-filesystems, and another patch dedicated to hostfs.
-> - Remove CONFIG_SECURITY_PATH because it is useless for merge_config.sh
-> - Move CONFIG_HOSTFS to a new config.um file.
-> - Fix commit message spelling and test warnings.
-> - Improve prepare_layout_opt() with remove_path() call to avoid
->    cascading errors when some tested filesystems are not supported.
-> - Remove cgroup-v1 tests because this filesystem cannot really be
->    mounted several times.
-> - Add test coverage with and without kernel debug code, according to
->    GCC 12 and GCC 13.
-> 
-> Regards,
-> 
-> Mickaël Salaün (6):
->    hostfs: Fix ephemeral inodes
->    selftests/landlock: Don't create useless file layouts
->    selftests/landlock: Add supports_filesystem() helper
->    selftests/landlock: Make mounts configurable
->    selftests/landlock: Add tests for pseudo filesystems
->    selftests/landlock: Add hostfs tests
-> 
->   arch/Kconfig                               |   7 -
->   arch/um/Kconfig                            |   1 -
->   fs/hostfs/hostfs.h                         |   1 +
->   fs/hostfs/hostfs_kern.c                    | 213 ++++++------
->   fs/hostfs/hostfs_user.c                    |   1 +
->   security/landlock/Kconfig                  |   2 +-
->   tools/testing/selftests/landlock/config    |   9 +-
->   tools/testing/selftests/landlock/config.um |   1 +
->   tools/testing/selftests/landlock/fs_test.c | 387 +++++++++++++++++++--
->   9 files changed, 478 insertions(+), 144 deletions(-)
->   create mode 100644 tools/testing/selftests/landlock/config.um
-> 
-> 
-> base-commit: 858fd168a95c5b9669aac8db6c14a9aeab446375
+You're quite right, I messed that up.
+
