@@ -2,45 +2,45 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49913C7EE45
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA8AC87FDC
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:58:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236044AbjFLJ6O (ORCPT
+        id S231254AbjFLJ6P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 05:58:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32844 "EHLO
+        Mon, 12 Jun 2023 05:58:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233352AbjFLJyo (ORCPT
+        with ESMTP id S234050AbjFLJyu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 05:54:44 -0400
+        Mon, 12 Jun 2023 05:54:50 -0400
 Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEA0D4C1F;
-        Mon, 12 Jun 2023 02:39:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE1DF9;
+        Mon, 12 Jun 2023 02:39:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=oJyDWnF7S8lcaog4Xmhyr6vhDojPiq7m8dz3r+ZsZG4=; b=rdH9P5/MC3KcY+M1BubJnq2SDA
-        VDGeL/wvRJ516ylJciShUfk/lLKhhrHMf84ST4NUiKTy2ExpNVzaIsxOt0cQrm7+eX/8udNe5etuq
-        a8fdjA1aakVHh17wbvSw2yH8JlQoRaJkmSyuc03oqmoc7UOXpLHURSRxkh0dVmI/veHKlufAu0gpY
-        Ns3St7yJnjxp7C9LWCYQAjUcurSze2tx9FwQXkuQqZEP3Medv20JQgxJrWc9w8JIbLUqKZH2b4jfd
-        jiWzkPTbr4fSMmiKp/dav0iBFlH+nbdDr15ksYyL2JPyPxZmPbWGcP2XPV4+cHOFrrcX0V4f4DCw+
-        S6QpV56A==;
+        bh=/A/ePFAjeMC2GglceFED5TIbtUbkLmsSQSkhfQHRtFw=; b=kFbg2Jf4qYcn0XtHtKqR2yCbMd
+        H8amaE7vnYEWxcLgDO4zyoMl9/c1f9cvqTyiAU7MH8KX+IvKKJAqW9Sf8EIweVxdv6ScrGmGJyi0P
+        u8+kOhhR6xdwShh7mjg3MQDWp6nr/4UiMAukJyxwqHSwNzQ+PASFrxXd7QOcVveGNYd0JZPrR4N+g
+        EYGrvk4J11hBkeUPkxIvX/hhxL1jhGJmW4HO/81uJGpYfivRaZmHYneQuLRhD2D530TvYDj3B4wW5
+        K+uiqOt+PVGGlvAY8RwSAa0jFsZPi8DoURNPx2MXWp0DIkZGwYBfg4WMqhJzNkupmdNH+rBSU3Yul
+        4CLnKaUw==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
         by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q8e0l-008kQN-0e;
-        Mon, 12 Jun 2023 09:38:55 +0000
+        id 1q8e0u-008kS3-2y;
+        Mon, 12 Jun 2023 09:39:11 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0E854302EA7;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6B9DF30613A;
         Mon, 12 Jun 2023 11:38:53 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 67EF730A77B58; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
-Message-ID: <20230612093538.942686455@infradead.org>
+        id 234A130A79084; Mon, 12 Jun 2023 11:38:49 +0200 (CEST)
+Message-ID: <20230612093541.240573885@infradead.org>
 User-Agent: quilt/0.66
-Date:   Mon, 12 Jun 2023 11:07:33 +0200
+Date:   Mon, 12 Jun 2023 11:08:04 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     torvalds@linux-foundation.org, keescook@chromium.org,
         gregkh@linuxfoundation.org, pbonzini@redhat.com
@@ -68,106 +68,137 @@ Cc:     masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
         rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
-Subject: [PATCH v3 20/57] sched: Simplify tg_set_cfs_bandwidth()
+Subject: [PATCH v3 51/57] perf: Simplify perf_event_create_kernel_counter()
 References: <20230612090713.652690195@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use guards to reduce gotos and simplify control flow.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- include/linux/cpu.h |    2 ++
- kernel/sched/core.c |   42 +++++++++++++++++++++---------------------
- 2 files changed, 23 insertions(+), 21 deletions(-)
+ kernel/events/core.c |   79 ++++++++++++++++-----------------------------------
+ 1 file changed, 26 insertions(+), 53 deletions(-)
 
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -148,6 +148,8 @@ static inline int remove_cpu(unsigned in
- static inline void smp_shutdown_nonboot_cpus(unsigned int primary_cpu) { }
- #endif	/* !CONFIG_HOTPLUG_CPU */
- 
-+DEFINE_LOCK_GUARD_0(cpus_read_lock, cpus_read_lock(), cpus_read_unlock())
-+
- #ifdef CONFIG_PM_SLEEP_SMP
- extern int freeze_secondary_cpus(int primary);
- extern void thaw_secondary_cpus(void);
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10726,11 +10726,12 @@ static int tg_set_cfs_bandwidth(struct t
- 	 * Prevent race between setting of cfs_rq->runtime_enabled and
- 	 * unthrottle_offline_cfs_rqs().
- 	 */
--	cpus_read_lock();
--	mutex_lock(&cfs_constraints_mutex);
-+	guard(cpus_read_lock)();
-+	guard(mutex)(&cfs_constraints_mutex);
-+
- 	ret = __cfs_schedulable(tg, period, quota);
- 	if (ret)
--		goto out_unlock;
-+		return ret;
- 
- 	runtime_enabled = quota != RUNTIME_INF;
- 	runtime_was_enabled = cfs_b->quota != RUNTIME_INF;
-@@ -10740,39 +10741,38 @@ static int tg_set_cfs_bandwidth(struct t
- 	 */
- 	if (runtime_enabled && !runtime_was_enabled)
- 		cfs_bandwidth_usage_inc();
--	raw_spin_lock_irq(&cfs_b->lock);
--	cfs_b->period = ns_to_ktime(period);
--	cfs_b->quota = quota;
--	cfs_b->burst = burst;
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -12569,12 +12569,6 @@ perf_event_create_kernel_counter(struct
+ 				 perf_overflow_handler_t overflow_handler,
+ 				 void *context)
+ {
+-	struct perf_event_pmu_context *pmu_ctx;
+-	struct perf_event_context *ctx;
+-	struct perf_event *event;
+-	struct pmu *pmu;
+-	int err;
 -
--	__refill_cfs_bandwidth_runtime(cfs_b);
--
--	/* Restart the period timer (if active) to handle new period expiry: */
--	if (runtime_enabled)
--		start_cfs_bandwidth(cfs_b);
+ 	/*
+ 	 * Grouping is not supported for kernel events, neither is 'AUX',
+ 	 * make sure the caller's intentions are adjusted.
+@@ -12582,16 +12576,16 @@ perf_event_create_kernel_counter(struct
+ 	if (attr->aux_output)
+ 		return ERR_PTR(-EINVAL);
  
--	raw_spin_unlock_irq(&cfs_b->lock);
-+	scoped_guard (raw_spinlock_irq, &cfs_b->lock) {
-+		cfs_b->period = ns_to_ktime(period);
-+		cfs_b->quota = quota;
-+		cfs_b->burst = burst;
+-	event = perf_event_alloc(attr, cpu, task, NULL, NULL,
 +
-+		__refill_cfs_bandwidth_runtime(cfs_b);
++	struct perf_event *event __free(free_event) =
++		perf_event_alloc(attr, cpu, task, NULL, NULL,
+ 				 overflow_handler, context, -1);
+-	if (IS_ERR(event)) {
+-		err = PTR_ERR(event);
+-		goto err;
+-	}
++	if (IS_ERR(event))
++		return event;
+ 
+ 	/* Mark owner so we could distinguish it from user events. */
+ 	event->owner = TASK_TOMBSTONE;
+-	pmu = event->pmu;
++	struct pmu *pmu = event->pmu;
+ 
+ 	if (pmu->task_ctx_nr == perf_sw_context)
+ 		event->event_caps |= PERF_EV_CAP_SOFTWARE;
+@@ -12599,25 +12593,21 @@ perf_event_create_kernel_counter(struct
+ 	/*
+ 	 * Get the target context (task or percpu):
+ 	 */
+-	ctx = find_get_context(task, event);
+-	if (IS_ERR(ctx)) {
+-		err = PTR_ERR(ctx);
+-		goto err_alloc;
+-	}
++	CLASS(find_get_ctx, ctx)(task, event);
++	if (IS_ERR(ctx))
++		return (void *)ctx;
+ 
+ 	WARN_ON_ONCE(ctx->parent_ctx);
+-	mutex_lock(&ctx->mutex);
+-	if (ctx->task == TASK_TOMBSTONE) {
+-		err = -ESRCH;
+-		goto err_unlock;
+-	}
++	guard(mutex)(&ctx->mutex);
+ 
+-	pmu_ctx = find_get_pmu_context(pmu, ctx, event);
+-	if (IS_ERR(pmu_ctx)) {
+-		err = PTR_ERR(pmu_ctx);
+-		goto err_unlock;
+-	}
+-	event->pmu_ctx = pmu_ctx;
++	if (ctx->task == TASK_TOMBSTONE)
++		return ERR_PTR(-ESRCH);
 +
-+		/*
-+		 * Restart the period timer (if active) to handle new
-+		 * period expiry:
-+		 */
-+		if (runtime_enabled)
-+			start_cfs_bandwidth(cfs_b);
-+	}
++
++	struct perf_event_pmu_context *pmu_ctx __free(put_pmu_ctx) =
++		find_get_pmu_context(pmu, ctx, event);
++	if (!pmu_ctx)
++		return ERR_PTR(-ENOMEM);
  
- 	for_each_online_cpu(i) {
- 		struct cfs_rq *cfs_rq = tg->cfs_rq[i];
- 		struct rq *rq = cfs_rq->rq;
--		struct rq_flags rf;
- 
--		rq_lock_irq(rq, &rf);
-+		guard(rq_lock_irq)(rq);
- 		cfs_rq->runtime_enabled = runtime_enabled;
- 		cfs_rq->runtime_remaining = 0;
- 
- 		if (cfs_rq->throttled)
- 			unthrottle_cfs_rq(cfs_rq);
--		rq_unlock_irq(rq, &rf);
+ 	if (!task) {
+ 		/*
+@@ -12628,34 +12618,17 @@ perf_event_create_kernel_counter(struct
+ 		 */
+ 		struct perf_cpu_context *cpuctx =
+ 			container_of(ctx, struct perf_cpu_context, ctx);
+-		if (!cpuctx->online) {
+-			err = -ENODEV;
+-			goto err_pmu_ctx;
+-		}
++		if (!cpuctx->online)
++			return ERR_PTR(-ENODEV);
  	}
+ 
+-	if (!exclusive_event_installable(event, ctx)) {
+-		err = -EBUSY;
+-		goto err_pmu_ctx;
+-	}
++	if (!exclusive_event_installable(event, ctx))
++		return ERR_PTR(-EBUSY);
 +
- 	if (runtime_was_enabled && !runtime_enabled)
- 		cfs_bandwidth_usage_dec();
--out_unlock:
--	mutex_unlock(&cfs_constraints_mutex);
--	cpus_read_unlock();
++	event->pmu_ctx = no_free_ptr(pmu_ctx);
++	perf_install_in_context(get_ctx(ctx), event, event->cpu);
  
--	return ret;
-+	return 0;
+-	perf_install_in_context(ctx, event, event->cpu);
+-	perf_unpin_context(ctx);
+-	mutex_unlock(&ctx->mutex);
+-
+-	return event;
+-
+-err_pmu_ctx:
+-	put_pmu_ctx(pmu_ctx);
+-	event->pmu_ctx = NULL; /* _free_event() */
+-err_unlock:
+-	mutex_unlock(&ctx->mutex);
+-	perf_unpin_context(ctx);
+-	put_ctx(ctx);
+-err_alloc:
+-	free_event(event);
+-err:
+-	return ERR_PTR(err);
++	return_ptr(event);
  }
+ EXPORT_SYMBOL_GPL(perf_event_create_kernel_counter);
  
- static int tg_set_cfs_quota(struct task_group *tg, long cfs_quota_us)
 
 
