@@ -2,62 +2,68 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDECC88CB2
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 17:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7BDC7EE2E
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 17:51:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236761AbjFLRL4 (ORCPT
+        id S234143AbjFLRv0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 13:11:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55194 "EHLO
+        Mon, 12 Jun 2023 13:51:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233129AbjFLRLz (ORCPT
+        with ESMTP id S234475AbjFLRvZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 13:11:55 -0400
-Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55B301A7
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 10:11:54 -0700 (PDT)
-Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1b3bee64c45so15455815ad.1
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 10:11:54 -0700 (PDT)
+        Mon, 12 Jun 2023 13:51:25 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B02B8A1
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 10:51:24 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2b1b66a8fd5so54632871fa.0
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 10:51:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686589914; x=1689181914;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w/I8oU5lBx7O0AVCpvbGtKKitom6tdJ7McWrPGypDC4=;
-        b=wVF0xEYGM/V+zCU80xvyq4qwV0yj1hOdLFRqOeBG6rNq1mZS9axHGYBLeBI0WMdRIv
-         hkzXG+DQqyxUG3ZNJwhk4nvHa7dTDdVmUbtUbv0KonjLnpMhwIR++Zn+JYGYF4qpACy0
-         TBguC9jF/7RXSTOZFdVTFwDFoUFeZKO/TxKQvxwyOSfFBR1hlTDCsLQF3gJGrQKh0dM1
-         dnbBs1N9sWbWV7gnyAH3EvCgPH/tTgIbVrgHLUeG6DI/qTktPkH3U4iZQSPo6hQIH+Hn
-         C7b43aUeXSO/Vmzkm31QiJeIjfT3Lil1qVykh5WcPDzbPCKU8j1R2gFpw17raF0Nay2u
-         ptyA==
+        d=linux-foundation.org; s=google; t=1686592283; x=1689184283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pFrxTaZ+omQeBxjp+PSzN1QlslHiKSQMtm5xmMsMGf8=;
+        b=hBBoXRvA1cihAJDhyiMdjkwCFWLPAF9Df1Z1Anr0U8IF2+aJsIrPMddU1d8DDJQf6y
+         sHguGeozzaVG76GbFnOvYU6Lx9PeXjOB8BJO9GmIrspUGTdW13iQLy06QGTfgbmfC4hG
+         ai95/2T3VipxlfkR+FE/DPsquTqBr7B8b89GU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686589914; x=1689181914;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=w/I8oU5lBx7O0AVCpvbGtKKitom6tdJ7McWrPGypDC4=;
-        b=hxXoOZZAkmn+06a9e2H2dewvu6p1l5UxdXLVSbv43SVIQQyR7eCGV3tb4lIUfbXHp4
-         UDzcObdqMmRKisc1Lz5pC5do+eCbEOS4E+9A/lw3k5ljWDfzmnwi1uiXlDRvpnEUb989
-         HOXTuvRw4DM3j5tDUfpRkBC/3DeDL5wOpHXr8e19mAGWXSfOOfh8ZW8v9AK02Hj+9Hzs
-         +sTwIYZCzHLpQ5gBF5CI0h0Mox3N1QBhJH7cGobWMbB2HLJGzDK+8kBZvnZ653fOU9HA
-         3C2NtZjmFi8JKtK6ZZhyQ9w37S/6voIQGZz8DPygVZCUfN4yh42RWyt7cG8AklDZJV0I
-         g8uA==
-X-Gm-Message-State: AC+VfDwkNbjpubnUbKVRWE9ih8zUNuM+Llj+LOsUxRVTHHZOgQLnc5JH
-        iiaFpDtEeX9VBXqYSd6/o1S6J0aF1Vc=
-X-Google-Smtp-Source: ACHHUZ5v1c+CqyBwYivhK+DSqau5kQVmVjEZH0nAYmDaNR5inKzg30hD4xw/4ZnGEEzgZLpMXuBMN4uPSsY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:8d81:b0:1b3:95a9:3fc3 with SMTP id
- v1-20020a1709028d8100b001b395a93fc3mr1303122plo.10.1686589913639; Mon, 12 Jun
- 2023 10:11:53 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 10:11:51 -0700
-In-Reply-To: <CAHk-=wh6JEk7wYECcMdbXHf5ST8PAkOyUXhE8x2kqT6to+Gn9Q@mail.gmail.com>
-Mime-Version: 1.0
+        d=1e100.net; s=20221208; t=1686592283; x=1689184283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pFrxTaZ+omQeBxjp+PSzN1QlslHiKSQMtm5xmMsMGf8=;
+        b=XJ4ytygSsIk24ljn7TgmdmxO4MoYVEofqBnyR5DyRAHq8xlXYoCVSy2aC3WNzUHlGH
+         5N7Yp2+118dI12LEQ6xqtH2a30O3AumCtHWsI/b/B+1goYEGuzAcXGZusX21lETxcsoo
+         3o7T7E+U+7hv109/L/X5gViqPbVic5Fbv2BkY/ZWhJNLHl1WpweGZuPVfGEgb0ucza33
+         Raq4qnzlndeVv2ztMB/z12dLZFYZ90AlWv9sbIWdk0xqfhjsv8/d9jODLEZ2nHv6OClz
+         PNkKRazhhRUf2vufp++do9OQ798leDE/up+m1fNpbGxL5P0ngffK+QmmgUa1DnCl0zh0
+         CVNw==
+X-Gm-Message-State: AC+VfDwb2HlZnM/vkGGweBlqWTkQoKl9Z4nMibsMqjtcSJBvdjeMlYfJ
+        dQDtV5WlhWdfecPKL//07N/ZX9dKp+H/TS12KtAHJpGG
+X-Google-Smtp-Source: ACHHUZ7za3RWqYVNP69hrAgqFxV2+J1/7Ceaaf9kI3UXMkzH2wyRx7znVUNmNYsMpWuYs9CiX90gRQ==
+X-Received: by 2002:a05:651c:d2:b0:2ad:d2d1:bbae with SMTP id 18-20020a05651c00d200b002add2d1bbaemr3205036ljr.45.1686592282757;
+        Mon, 12 Jun 2023 10:51:22 -0700 (PDT)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id e8-20020a2e9e08000000b00295a96a0f6csm1796187ljk.102.2023.06.12.10.51.22
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jun 2023 10:51:22 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-4f658a17aa4so4596952e87.0
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jun 2023 10:51:22 -0700 (PDT)
+X-Received: by 2002:a05:6402:399:b0:516:afe9:f6f9 with SMTP id
+ o25-20020a056402039900b00516afe9f6f9mr5415434edv.35.1686591835245; Mon, 12
+ Jun 2023 10:43:55 -0700 (PDT)
+MIME-Version: 1.0
 References: <20230612090713.652690195@infradead.org> <20230612093541.598260416@infradead.org>
- <CAHk-=wh6JEk7wYECcMdbXHf5ST8PAkOyUXhE8x2kqT6to+Gn9Q@mail.gmail.com>
-Message-ID: <ZIdR18xG1jy8WdEp@google.com>
+ <CAHk-=wh6JEk7wYECcMdbXHf5ST8PAkOyUXhE8x2kqT6to+Gn9Q@mail.gmail.com> <ZIdR18xG1jy8WdEp@google.com>
+In-Reply-To: <ZIdR18xG1jy8WdEp@google.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 12 Jun 2023 10:43:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjGypJwDLvTVbYENicw85n0gbxO7JXjiv9_a+95Br+UTg@mail.gmail.com>
+Message-ID: <CAHk-=wjGypJwDLvTVbYENicw85n0gbxO7JXjiv9_a+95Br+UTg@mail.gmail.com>
 Subject: Re: [PATCH v3 56/57] perf: Simplify perf_pmu_output_stop()
-From:   Sean Christopherson <seanjc@google.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+To:     Sean Christopherson <seanjc@google.com>
 Cc:     Peter Zijlstra <peterz@infradead.org>, keescook@chromium.org,
         gregkh@linuxfoundation.org, pbonzini@redhat.com,
         masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
@@ -84,82 +90,91 @@ Cc:     Peter Zijlstra <peterz@infradead.org>, keescook@chromium.org,
         rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 12, 2023, Linus Torvalds wrote:
-> This patch looks completely broken to me.
->=20
-> You now do
->=20
->                 if (err =3D=3D -EAGAIN)
->                         goto restart;
->=20
-> *within* the RCU-guarded section, and the "goto restart" will guard it ag=
-ain.
+On Mon, Jun 12, 2023 at 10:12=E2=80=AFAM Sean Christopherson <seanjc@google=
+.com> wrote:
+>
+> What if we require that all guarded sections have explicit scoping?  E.g.=
+ drop
+> the current version of guard() and rename scoped_guard() =3D> guard().  A=
+nd then
+> figure out macro magic to guard an entire function?
 
-What if we require that all guarded sections have explicit scoping?  E.g. d=
-rop
-the current version of guard() and rename scoped_guard() =3D> guard().  And=
- then
-figure out macro magic to guard an entire function?  E.g. something like
+Hmm. I didn't love the excessive scoping, but most of the cases I was
+thinking about were for the freeing part, not the locking part.
 
-  static void perf_pmu_output_stop(struct perf_event *event) fn_guard(rcu)
-  {
-	...
-  }
+I agree that explicit scoping might be a good idea for locks as a
+rule, but that "entire function" case _is_ a special case, and I don't
+see how to do it sanely with a scoping guard.
 
-or just "guard(rcu)" if possible.  IIUC, function scopes like that will be =
-possible
-once -Wdeclaration-after-statement goes away.
+Unless you accept ugly syntax like
 
-Bugs aside, IMO guards that are buried in the middle of a function and impl=
-icitly
-scoped to the function are all too easy to overlook.  Requiring explicit sc=
-oping
-would make bugs like this easier to spot since the goto would jump out of s=
-cope
-(and I assume prematurely release the resource/lock?).  As a bonus, annotat=
-ing
-the function itself would also serve as documentation.
+    int fn(..)
+    { scoped_guard(rcu)() {
+         ...
+    }}
 
-The only downside is that the code for function-scoped locks that are acqui=
-red
-partway through the function would be more verbose and/or cumbersome to wri=
-te,
-but that can be mitigated to some extent, e.g. by moving the locked portion=
- to a
-separate helper.
+which is just a violation of our usual scoping indentation rules.
 
-> On Mon, Jun 12, 2023 at 2:39=E2=80=AFAM Peter Zijlstra <peterz@infradead.=
-org> wrote:
-> >
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -7977,7 +7977,8 @@ static void perf_pmu_output_stop(struct
-> >         int err, cpu;
-> >
-> >  restart:
-> > -       rcu_read_lock();
-> > +       /* cannot have a label in front of a decl */;
-> > +       guard(rcu)();
-> >         list_for_each_entry_rcu(iter, &event->rb->event_list, rb_entry)=
- {
-> >                 /*
-> >                  * For per-CPU events, we need to make sure that neithe=
-r they
-> > @@ -7993,12 +7994,9 @@ static void perf_pmu_output_stop(struct
-> >                         continue;
-> >
-> >                 err =3D cpu_function_call(cpu, __perf_pmu_output_stop, =
-event);
-> > -               if (err =3D=3D -EAGAIN) {
-> > -                       rcu_read_unlock();
-> > +               if (err =3D=3D -EAGAIN)
-> >                         goto restart;
-> > -               }
-> >         }
-> > -       rcu_read_unlock();
-> >  }
+Of course, at that point, the "scoped" part doesn't actually buy us
+anything either, so you'd probably just be better off listing all the
+guarding locks, and make it be
+
+    int fn(..)
+    { guard(rcu)(); guard(mutex)(&mymutex); {
+         ...
+    }}
+
+or whatever.
+
+Ugly, ugly.
+
+End result: I think the non-explicitly scoped syntax is pretty much
+required for sane use. The scoped version just causes too much
+indentation (or forces us to have the above kind of special "we don't
+indent this" rules).
+
+> IIUC, function scopes like that will be possible once
+> -Wdeclaration-after-statement goes away.
+
+Well, "-Wdeclaration-after-statement" already went away early in
+Peter's series, because without that you can't sanely do the normal
+"__free()" cleanup thng.
+
+But no, it doesn't help the C syntax case.
+
+If you were to wrap a whole function with a macro, you need to do some
+rather ugly things. They are ugly things that we already do: see our
+whole "SYSCALL_DEFINEx()" set of macros, so it's not *impossible*, but
+it's not possible with normal C syntax (and the normal C
+preprocessor).
+
+Of course, one way to do the "whole function scope" is to just do it
+in the caller, and not using the cleanup attribute at all.
+
+IOW, we could have things like
+
+   #define WRAP(a,b,c) \
+        ({ __typeof__(b) __ret; a; __ret =3D (b); c; __ret; })
+
+and then you can do things like
+
+   #define guard_fn_mutex(mutex, fn) \
+        WRAP(mutex_lock(mutex), fn, mutex_unlock(mutex))
+
+or
+
+   #define rcu_read_action(x) WRAP(rcu_read_lock(), x, rcu_read_unlock())
+
+and now you can easily guard the call-site (or any simple expression
+that doesn't include any non-local control flow). Nothing new and
+fancy required.
+
+But when you don't want to do the wrapping in the caller, you do want
+to have a non-scoping guard at the top of the function, I suspect.
+
+                 Linus
