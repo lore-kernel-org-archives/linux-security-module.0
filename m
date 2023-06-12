@@ -2,45 +2,45 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A9CC83005
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 317EDC7EE25
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jun 2023 09:58:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236152AbjFLJ6j (ORCPT
+        id S232312AbjFLJ6k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jun 2023 05:58:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33462 "EHLO
+        Mon, 12 Jun 2023 05:58:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232312AbjFLJyT (ORCPT
+        with ESMTP id S233804AbjFLJys (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jun 2023 05:54:19 -0400
+        Mon, 12 Jun 2023 05:54:48 -0400
 Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 476B449FD;
-        Mon, 12 Jun 2023 02:38:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07AB14C18;
+        Mon, 12 Jun 2023 02:39:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=drbNuL55DYuL5wiscrlTnGAb/cO6SeGIhgtGTiA6PhQ=; b=VSEjB2saA1r44d+t/vL6tc5EoG
-        xB4CG9CBZHIyB4zdQuRxzQ1Q7TJzwADvt7PtjKTLVENXxebGGeYnzeA/aNRsjwtBQcBhdw4FFc4IK
-        0+1KXg+b3RLYPmQQvXAuMTENNKt/wXQirviZsGNYMJsc8yMv6AgbvSWbtKsnbfSzEoEJrRcd+lkte
-        4b7/355f2S3PVCwS3IueHM4tNu6LtFu8YsWTsDpFO14hwHxbY8on3IDwGHEQAM0/61U1d4CsGZOmx
-        CEkY9pA/PvCBwARY6IQ+Op5jTjaOmySf1HLi3LEoDC/B3NJHx/W2kOF67517FH7LjugtEYLajl9zJ
-        Q4ROTiZg==;
+        bh=ICqqJG5l0sWCX8xrZRxbU0jefpCN2MYfe0yl/+VCRM4=; b=CKNAf/OLveGu3h4G35M1XEIV5u
+        NBuElad+1Cyz7hAjxLmdiofAlNZ59WVXwN3CrP9Gfl4Ccdi/+VZXviefm9IV8ZOsEiIAALkH+ZQeM
+        JSCshvWoOk2ye0l3PailK5L7O/HIe+rzqBLavcMqSUulNXyI0lqc5mlQE1RAC+EzaqyQPBUzKfid5
+        LYfkCZS8vnyRr2VmNLRD6E8uxxm0Qg99fQqc78oc6Bz3sD5VsR472rJ6vx1URMn7VGFn0WBGdm0KG
+        /Q43F20jOaH5vDTomYkIeci0EFi5Mfq3RUVPKf9bOojvjiudIa4EFwja6+7exCspONRew6SwRyHT0
+        wI+FO4zQ==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
         by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q8e0g-008kP0-13;
-        Mon, 12 Jun 2023 09:38:51 +0000
+        id 1q8e0n-008kR8-1I;
+        Mon, 12 Jun 2023 09:39:04 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id BE76330313F;
-        Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3F98B3033B5;
+        Mon, 12 Jun 2023 11:38:53 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 3207B30A70AC5; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
-Message-ID: <20230612093538.154498590@infradead.org>
+        id CA60630A77B6F; Mon, 12 Jun 2023 11:38:48 +0200 (CEST)
+Message-ID: <20230612093540.181605463@infradead.org>
 User-Agent: quilt/0.66
-Date:   Mon, 12 Jun 2023 11:07:23 +0200
+Date:   Mon, 12 Jun 2023 11:07:50 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     torvalds@linux-foundation.org, keescook@chromium.org,
         gregkh@linuxfoundation.org, pbonzini@redhat.com
@@ -68,54 +68,73 @@ Cc:     masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
         rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
-Subject: [PATCH v3 10/57] sched: Simplify sched_exec()
+Subject: [PATCH v3 37/57] perf: Simplify perf_read_group()
 References: <20230612090713.652690195@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use guards to reduce gotos and simplify control flow.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/core.c |   21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+ kernel/events/core.c |   30 +++++++++++-------------------
+ 1 file changed, 11 insertions(+), 19 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5431,23 +5431,20 @@ unsigned int nr_iowait(void)
- void sched_exec(void)
- {
- 	struct task_struct *p = current;
--	unsigned long flags;
-+	struct migration_arg arg;
- 	int dest_cpu;
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5472,11 +5472,10 @@ static int perf_read_group(struct perf_e
+ 	struct perf_event *leader = event->group_leader, *child;
+ 	struct perf_event_context *ctx = leader->ctx;
+ 	int ret;
+-	u64 *values;
  
--	raw_spin_lock_irqsave(&p->pi_lock, flags);
--	dest_cpu = p->sched_class->select_task_rq(p, task_cpu(p), WF_EXEC);
--	if (dest_cpu == smp_processor_id())
+ 	lockdep_assert_held(&ctx->mutex);
+ 
+-	values = kzalloc(event->read_size, GFP_KERNEL);
++	u64 *values __free(kfree) = kzalloc(event->read_size, GFP_KERNEL);
+ 	if (!values)
+ 		return -ENOMEM;
+ 
+@@ -5486,29 +5485,22 @@ static int perf_read_group(struct perf_e
+ 	 * By locking the child_mutex of the leader we effectively
+ 	 * lock the child list of all siblings.. XXX explain how.
+ 	 */
+-	mutex_lock(&leader->child_mutex);
+-
+-	ret = __perf_read_group_add(leader, read_format, values);
+-	if (ret)
 -		goto unlock;
-+	scoped_guard (raw_spinlock_irqsave, &p->pi_lock) {
-+		dest_cpu = p->sched_class->select_task_rq(p, task_cpu(p), WF_EXEC);
-+		if (dest_cpu == smp_processor_id())
-+			return;
+-
+-	list_for_each_entry(child, &leader->child_list, child_list) {
+-		ret = __perf_read_group_add(child, read_format, values);
++	scoped_guard (mutex, &leader->child_mutex) {
++		ret = __perf_read_group_add(leader, read_format, values);
+ 		if (ret)
+-			goto unlock;
+-	}
++			return ret;
  
--	if (likely(cpu_active(dest_cpu))) {
--		struct migration_arg arg = { p, dest_cpu };
-+		if (unlikely(!cpu_active(dest_cpu)))
-+			return;
+-	mutex_unlock(&leader->child_mutex);
++		list_for_each_entry(child, &leader->child_list, child_list) {
++			ret = __perf_read_group_add(child, read_format, values);
++			if (ret)
++				return ret;
++		}
++	}
  
--		raw_spin_unlock_irqrestore(&p->pi_lock, flags);
--		stop_one_cpu(task_cpu(p), migration_cpu_stop, &arg);
--		return;
-+		arg = (struct migration_arg){ p, dest_cpu };
- 	}
+ 	ret = event->read_size;
+ 	if (copy_to_user(buf, values, event->read_size))
+-		ret = -EFAULT;
+-	goto out;
++		return -EFAULT;
+ 
 -unlock:
--	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
-+	stop_one_cpu(task_cpu(p), migration_cpu_stop, &arg);
+-	mutex_unlock(&leader->child_mutex);
+-out:
+-	kfree(values);
+ 	return ret;
  }
  
- #endif
 
 
