@@ -2,124 +2,235 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 330BDEB64D0
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jun 2023 17:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB5AEB64D8
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jun 2023 18:42:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238247AbjFMRRB (ORCPT
+        id S231264AbjFMSml (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Jun 2023 13:17:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47256 "EHLO
+        Tue, 13 Jun 2023 14:42:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238498AbjFMRQv (ORCPT
+        with ESMTP id S229554AbjFMSmk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Jun 2023 13:16:51 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7D8819B9;
-        Tue, 13 Jun 2023 10:16:48 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-bc4ed01b5d4so2658243276.1;
-        Tue, 13 Jun 2023 10:16:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686676608; x=1689268608;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GjLD3Z65AFUlnzGeDipyFAWU3jGU3OlZnyaKrjFl94c=;
-        b=NJTC1I0w/bhJorLtWaQfWlvAtWyxNzM902NoozV2bocuew6IVQusNLYYsR92cHHh34
-         unbOiMyrOlD3s/F94VX5GDu2SQjvEyrkkCVvXZv0vCl4WevU6AQ6ZIdMUFLUnckMLnKh
-         1ggPVAdvsGV89dZLvZbdqcXLIhViqBG+eUvpfVmtpd9FUKi9KXDDsKu/A6ecBlK9bfFY
-         U+GH0IuIyae8Z6r5rUNf6HTxjNB2s069SP7thqFKZP/qBRTz2uFWG6P8hHn/f7Y3ASQv
-         h2+ET2Kjlc0MKvm5SWLSQbwT3w/z/0VybpT8padCUx9s5AgwciSPlOi/v4GahA52YR5P
-         jKtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686676608; x=1689268608;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GjLD3Z65AFUlnzGeDipyFAWU3jGU3OlZnyaKrjFl94c=;
-        b=OOPnGeAGuQO83JzkBIkaJVhXvgdr4B5xPEmqxjqtk2u+JIO57cjDHq/1pEpxOo+G9r
-         G4TT43m2QfT+XFZHAX/rfL11UXiJh5ONYefjkj7eS+uHu/gIz34GZh7p4MJHEnymKX4x
-         UDNJwaNgSsRj7a8iSBcxGplTo0u7OxL/UpKPzAJJsk4Cz4Mef0ZU+OwpmF9l43Zd7gQh
-         MyScbodXKxTtuDyGpzwtkiXbQRjWX9gjnP49E6QrLYpMMC+r4Hf12OfSpxqQMmAaOf6c
-         0eDZBa7FDCx3gGmEyv+7JDpXsabdGrKoZ52g3r/p4hlwx/HfauNRYBdXY+VR4x2sUVXL
-         8K4w==
-X-Gm-Message-State: AC+VfDx5Yyf1I5hqE5xKvjO7CCdjiYk1aUnLTWdpuMbcPG4atvnJpV7n
-        P3R7yPIRgzmYBsTk9PnyAWf0RUAqnqwtXAi+HxI=
-X-Google-Smtp-Source: ACHHUZ51FK9fEEG9Y7UGxjZoDZTvO/ng3orwCtq1nFE6ZDFpN49YC8tIKpnu/txR4noRhPPPOhU9rPNQ8Cv9H8lanlM=
-X-Received: by 2002:a25:8ca:0:b0:bc8:c035:cf4 with SMTP id 193-20020a2508ca000000b00bc8c0350cf4mr1912446ybi.17.1686676607731;
- Tue, 13 Jun 2023 10:16:47 -0700 (PDT)
+        Tue, 13 Jun 2023 14:42:40 -0400
+X-Greylist: delayed 422 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 13 Jun 2023 11:42:30 PDT
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E253F1BE7;
+        Tue, 13 Jun 2023 11:42:30 -0700 (PDT)
+Received: from jerom (99-112-204-245.lightspeed.hstntx.sbcglobal.net [99.112.204.245])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: serge)
+        by mail.hallyn.com (Postfix) with ESMTPSA id 9B9FF7BD;
+        Tue, 13 Jun 2023 13:35:23 -0500 (CDT)
+Date:   Tue, 13 Jun 2023 13:35:11 -0500
+From:   Serge Hallyn <serge@hallyn.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
+        jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v10 03/11] proc: Use lsmids instead of lsm names for attrs
+Message-ID: <ZIi2utcInNAbRfPu@jerom>
+References: <20230428203417.159874-1-casey@schaufler-ca.com>
+ <20230428203417.159874-4-casey@schaufler-ca.com>
 MIME-Version: 1.0
-References: <20230612090713.652690195@infradead.org> <20230612093537.614161713@infradead.org>
-In-Reply-To: <20230612093537.614161713@infradead.org>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Tue, 13 Jun 2023 19:16:36 +0200
-Message-ID: <CANiq72mTjNzLhfhax761CPDUHj=zC6qa6i3hobMWYaCvmgBAJQ@mail.gmail.com>
-Subject: Re: [PATCH v3 03/57] locking: Introduce __cleanup() based infrastructure
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     torvalds@linux-foundation.org, keescook@chromium.org,
-        gregkh@linuxfoundation.org, pbonzini@redhat.com,
-        masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
-        nicolas@fjasle.eu, catalin.marinas@arm.com, will@kernel.org,
-        vkoul@kernel.org, trix@redhat.com, ojeda@kernel.org,
-        mingo@redhat.com, longman@redhat.com, boqun.feng@gmail.com,
-        dennis@kernel.org, tj@kernel.org, cl@linux.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@kernel.org, namhyung@kernel.org, irogers@google.com,
-        adrian.hunter@intel.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, paulmck@kernel.org,
-        frederic@kernel.org, quic_neeraju@quicinc.com,
-        joel@joelfernandes.org, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        rientjes@google.com, vbabka@suse.cz, roman.gushchin@linux.dev,
-        42.hyeyoo@gmail.com, apw@canonical.com, joe@perches.com,
-        dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
-        john.johansen@canonical.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        llvm@lists.linux.dev, linux-perf-users@vger.kernel.org,
-        rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
-        tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
-        luc.vanoostenryck@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230428203417.159874-4-casey@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 12, 2023 at 11:39=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
->
-> --- a/include/linux/compiler_attributes.h
-> +++ b/include/linux/compiler_attributes.h
-> @@ -77,6 +77,12 @@
->  #define __attribute_const__             __attribute__((__const__))
->
+On Fri, Apr 28, 2023 at 01:34:09PM -0700, Casey Schaufler wrote:
+> Use the LSM ID number instead of the LSM name to identify which
+> security module's attibute data should be shown in /proc/self/attr.
+> The security_[gs]etprocattr() functions have been changed to expect
+> the LSM ID. The change from a string comparison to an integer comparison
+> in these functions will provide a minor performance improvement.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+
+for patches 1-3,
+
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
+
+> Cc: linux-fsdevel@vger.kernel.org
+> ---
+>  fs/proc/base.c           | 29 +++++++++++++++--------------
+>  fs/proc/internal.h       |  2 +-
+>  include/linux/security.h | 11 +++++------
+>  security/security.c      | 11 +++++------
+>  4 files changed, 26 insertions(+), 27 deletions(-)
+> 
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 5e0e0ccd47aa..cb6dec7473fe 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -96,6 +96,7 @@
+>  #include <linux/time_namespace.h>
+>  #include <linux/resctrl.h>
+>  #include <linux/cn_proc.h>
+> +#include <uapi/linux/lsm.h>
+>  #include <trace/events/oom.h>
+>  #include "internal.h"
+>  #include "fd.h"
+> @@ -145,10 +146,10 @@ struct pid_entry {
+>  	NOD(NAME, (S_IFREG|(MODE)),			\
+>  		NULL, &proc_single_file_operations,	\
+>  		{ .proc_show = show } )
+> -#define ATTR(LSM, NAME, MODE)				\
+> +#define ATTR(LSMID, NAME, MODE)				\
+>  	NOD(NAME, (S_IFREG|(MODE)),			\
+>  		NULL, &proc_pid_attr_operations,	\
+> -		{ .lsm = LSM })
+> +		{ .lsmid = LSMID })
+>  
 >  /*
-> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.=
-html#index-cleanup-variable-attribute
-> + * clang: https://clang.llvm.org/docs/AttributeReference.html#cleanup
-> + */
-> +#define __cleanup(func)                        __attribute__((__cleanup_=
-_(func)))
-> +
-> +/*
->   * Optional: only supported since gcc >=3D 9
->   * Optional: not supported by clang
->   *
-
-`cleanup` goes before `const`, but apart from that, for compiler attributes=
-:
-
-    Acked-by: Miguel Ojeda <ojeda@kernel.org>
-
-Thanks for bringing RAII/SBRM to the kernel!
-
-Rust also behaves like the `__cleanup__` attribute, e.g. iterating on
-a loop destroys and constructs the variables defined inside the loop.
-Also breaking to an outer label/scope.
-
-By the way, maybe some of the macros in `cleanup.h` read a bit better
-applying `clang-format` to it.
-
-Cheers,
-Miguel
+>   * Count the number of hardlinks for the pid_entry table, excluding the .
+> @@ -2730,7 +2731,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
+>  	if (!task)
+>  		return -ESRCH;
+>  
+> -	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
+> +	length = security_getprocattr(task, PROC_I(inode)->op.lsmid,
+>  				      file->f_path.dentry->d_name.name,
+>  				      &p);
+>  	put_task_struct(task);
+> @@ -2788,7 +2789,7 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+>  	if (rv < 0)
+>  		goto out_free;
+>  
+> -	rv = security_setprocattr(PROC_I(inode)->op.lsm,
+> +	rv = security_setprocattr(PROC_I(inode)->op.lsmid,
+>  				  file->f_path.dentry->d_name.name, page,
+>  				  count);
+>  	mutex_unlock(&current->signal->cred_guard_mutex);
+> @@ -2837,27 +2838,27 @@ static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
+>  
+>  #ifdef CONFIG_SECURITY_SMACK
+>  static const struct pid_entry smack_attr_dir_stuff[] = {
+> -	ATTR("smack", "current",	0666),
+> +	ATTR(LSM_ID_SMACK, "current",	0666),
+>  };
+>  LSM_DIR_OPS(smack);
+>  #endif
+>  
+>  #ifdef CONFIG_SECURITY_APPARMOR
+>  static const struct pid_entry apparmor_attr_dir_stuff[] = {
+> -	ATTR("apparmor", "current",	0666),
+> -	ATTR("apparmor", "prev",	0444),
+> -	ATTR("apparmor", "exec",	0666),
+> +	ATTR(LSM_ID_APPARMOR, "current",	0666),
+> +	ATTR(LSM_ID_APPARMOR, "prev",		0444),
+> +	ATTR(LSM_ID_APPARMOR, "exec",		0666),
+>  };
+>  LSM_DIR_OPS(apparmor);
+>  #endif
+>  
+>  static const struct pid_entry attr_dir_stuff[] = {
+> -	ATTR(NULL, "current",		0666),
+> -	ATTR(NULL, "prev",		0444),
+> -	ATTR(NULL, "exec",		0666),
+> -	ATTR(NULL, "fscreate",		0666),
+> -	ATTR(NULL, "keycreate",		0666),
+> -	ATTR(NULL, "sockcreate",	0666),
+> +	ATTR(LSM_ID_UNDEF, "current",	0666),
+> +	ATTR(LSM_ID_UNDEF, "prev",		0444),
+> +	ATTR(LSM_ID_UNDEF, "exec",		0666),
+> +	ATTR(LSM_ID_UNDEF, "fscreate",	0666),
+> +	ATTR(LSM_ID_UNDEF, "keycreate",	0666),
+> +	ATTR(LSM_ID_UNDEF, "sockcreate",	0666),
+>  #ifdef CONFIG_SECURITY_SMACK
+>  	DIR("smack",			0555,
+>  	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
+> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+> index 9dda7e54b2d0..a889d9ef9584 100644
+> --- a/fs/proc/internal.h
+> +++ b/fs/proc/internal.h
+> @@ -92,7 +92,7 @@ union proc_op {
+>  	int (*proc_show)(struct seq_file *m,
+>  		struct pid_namespace *ns, struct pid *pid,
+>  		struct task_struct *task);
+> -	const char *lsm;
+> +	int lsmid;
+>  };
+>  
+>  struct proc_inode {
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index e70fc863b04a..8faed81fc3b4 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -473,10 +473,9 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
+>  int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
+>  			unsigned nsops, int alter);
+>  void security_d_instantiate(struct dentry *dentry, struct inode *inode);
+> -int security_getprocattr(struct task_struct *p, const char *lsm, const char *name,
+> +int security_getprocattr(struct task_struct *p, int lsmid, const char *name,
+>  			 char **value);
+> -int security_setprocattr(const char *lsm, const char *name, void *value,
+> -			 size_t size);
+> +int security_setprocattr(int lsmid, const char *name, void *value, size_t size);
+>  int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+>  int security_ismaclabel(const char *name);
+>  int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+> @@ -1344,14 +1343,14 @@ static inline void security_d_instantiate(struct dentry *dentry,
+>  					  struct inode *inode)
+>  { }
+>  
+> -static inline int security_getprocattr(struct task_struct *p, const char *lsm,
+> +static inline int security_getprocattr(struct task_struct *p, int lsmid,
+>  				       const char *name, char **value)
+>  {
+>  	return -EINVAL;
+>  }
+>  
+> -static inline int security_setprocattr(const char *lsm, char *name,
+> -				       void *value, size_t size)
+> +static inline int security_setprocattr(int lsmid, char *name, void *value,
+> +				       size_t size)
+>  {
+>  	return -EINVAL;
+>  }
+> diff --git a/security/security.c b/security/security.c
+> index e390001a32c9..5a48b1b539e5 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2176,26 +2176,25 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+>  }
+>  EXPORT_SYMBOL(security_d_instantiate);
+>  
+> -int security_getprocattr(struct task_struct *p, const char *lsm,
+> -			 const char *name, char **value)
+> +int security_getprocattr(struct task_struct *p, int lsmid, const char *name,
+> +			 char **value)
+>  {
+>  	struct security_hook_list *hp;
+>  
+>  	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
+> -		if (lsm != NULL && strcmp(lsm, hp->lsmid->name))
+> +		if (lsmid != 0 && lsmid != hp->lsmid->id)
+>  			continue;
+>  		return hp->hook.getprocattr(p, name, value);
+>  	}
+>  	return LSM_RET_DEFAULT(getprocattr);
+>  }
+>  
+> -int security_setprocattr(const char *lsm, const char *name, void *value,
+> -			 size_t size)
+> +int security_setprocattr(int lsmid, const char *name, void *value, size_t size)
+>  {
+>  	struct security_hook_list *hp;
+>  
+>  	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
+> -		if (lsm != NULL && strcmp(lsm, hp->lsmid->name))
+> +		if (lsmid != 0 && lsmid != hp->lsmid->id)
+>  			continue;
+>  		return hp->hook.setprocattr(name, value, size);
+>  	}
+> -- 
+> 2.39.2
+> 
