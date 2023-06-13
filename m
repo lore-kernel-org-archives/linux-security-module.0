@@ -2,249 +2,179 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF78BEB64DA
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jun 2023 20:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B975EB64D7
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jun 2023 21:43:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238855AbjFMUiQ (ORCPT
+        id S232063AbjFMVna (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Jun 2023 16:38:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44162 "EHLO
+        Tue, 13 Jun 2023 17:43:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238983AbjFMUiJ (ORCPT
+        with ESMTP id S229559AbjFMVn2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Jun 2023 16:38:09 -0400
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E001B8
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 13:38:07 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QggNt2js4zMq7Hy;
-        Tue, 13 Jun 2023 20:38:06 +0000 (UTC)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QggNs3nTwzMrqy1;
-        Tue, 13 Jun 2023 22:38:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1686688686;
-        bh=MDXbqQMrGmj7AFcbDOpwLAhhsUlLbijiq4qmklUysz4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=kYXPXZGO6BWTbhpwVZCU23irT06yY03ejfp5y5rIw4Jenk0+bNySTVBg7SWzZaBJ9
-         9zJXO0mnq+i3KhVoYzhd+acmaBkbx5e76SxuZaoSE9NZobTxPR6OvoCIg7gfmnL6T7
-         SfHgYMuT2kG0eR+bWp3c2OerBh5tH1jMPaB0i8xQ=
-Message-ID: <8c09fc5a-e3a5-4792-65a8-b84c6044128a@digikod.net>
-Date:   Tue, 13 Jun 2023 22:38:04 +0200
+        Tue, 13 Jun 2023 17:43:28 -0400
+Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFCA7DE
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 14:43:26 -0700 (PDT)
+Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-56d1cb6a607so377597b3.2
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 14:43:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1686692606; x=1689284606;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HIVGrn2UG3gN2eNILh7fTseSDqg8knsp5sSLFqLEHtc=;
+        b=K82SWrC47y9svWfAJiRRS8RkXj5CtpYx2+cpvsF8vlQJOJBv9VTnZ/ZF406SGPZ/cQ
+         PuKnDklPjxR7CmsSTOtn3AHyoXAGnmO/yy0LFY35Wb/B3eU/8Qys5akTlIzlzgwWVy7f
+         LQ065Qd5k7eJtxGashEd4kJePL0vdixSMONX+InuGwDAe+n8dheiF7DLw+Nj9ydyMTrw
+         3hjMGnZr4qSfAoCERrgD36BGE654El3yt5+Md/NncaJLvnpXvcoWAxZ3pC7HjnPP43ta
+         043I7yLomJuEy6DomEryzFx3yuLAH4Wop1Gi3yGa4187w96gbNywecR8xGewSdy6Bi3S
+         +y8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686692606; x=1689284606;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HIVGrn2UG3gN2eNILh7fTseSDqg8knsp5sSLFqLEHtc=;
+        b=QFJhiDYS9AX2ScAbCJa7XfUek9wBUhSs8qQIo5DWSwqdllM1aikFmnylPdUw3cY66T
+         Cjpu8JYkOIxkJtTH2r7HfVuV+7XqHWOcq0whctZx+yOzptoGdp1SuGh8kAAJ2/6Ohdaw
+         ReHo+Cdy7b3QFXzgRTsgykg47XW+UCUAJZLtOGuZcSm5D73fkdFl3GkhELffU0Zkin/R
+         NjS1Bo3LjOxDm/qXGFERSZcEnFJwZa3FnkZ3XA/0EvsMiDtEx+UHv4wX34OwqvKY7QXG
+         j2rpGXgRj6b2x2mrRmJb+ENN3QEQ3aX0CyE6f5VkRah3Rycmdiridqmly6eKUCHKFUju
+         U8YA==
+X-Gm-Message-State: AC+VfDxxnp59sOA/e8Ntu55uFs3/DJIKuooqGuaEMV/u66ZqXBxc71cP
+        pmIYotzeMjg3nfgOmV7ZMSSbLUw7OQH9+5s6Xz4s
+X-Google-Smtp-Source: ACHHUZ48EzshYzKiXjopsdVfpagGQ7YaGMsS2CpO7ZtH3eZvHC8m7Pi+Jaw59xQX7oHZqQPBowjQ8wJAabBg1EOOml0=
+X-Received: by 2002:a25:add3:0:b0:ba5:ee5a:f41c with SMTP id
+ d19-20020a25add3000000b00ba5ee5af41cmr380926ybe.1.1686692605945; Tue, 13 Jun
+ 2023 14:43:25 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v11 11/12] samples/landlock: Add network demo
-Content-Language: en-US
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>
-Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
- <20230515161339.631577-12-konstantin.meskhidze@huawei.com>
- <ZH9OFyWZ1njI7VG9@google.com>
- <d9f07165-f589-13d4-6484-1272704f1de0@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <d9f07165-f589-13d4-6484-1272704f1de0@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20230120000818.1324170-1-kpsingh@kernel.org> <20230120000818.1324170-4-kpsingh@kernel.org>
+ <202301192004.777AEFFE@keescook> <CACYkzJ75nYnunhcAaE-20p9YHLzVynUEAA+uK1tmGeOWA83MjA@mail.gmail.com>
+ <db1fed31-0283-5401-cf55-d18a98ca33ae@schaufler-ca.com> <CAPhsuW4C8NU15mjetX8Ucp3R66xEgOGS6udiaauUtPg06Si93Q@mail.gmail.com>
+ <8b5f62f3-a2c4-9ba3-d1e4-af557047f44b@schaufler-ca.com> <CACYkzJ7=xPB-mzAq-GBszm2Q3NapVNbcrqBdSS0FZsTeTbL9QA@mail.gmail.com>
+ <63e14c10.170a0220.beb2a.bc4c@mx.google.com> <CACYkzJ4LX6Acxs0s-d2+hC0Zfx2CTL7_JpeWD9pGz4b9_0J29g@mail.gmail.com>
+In-Reply-To: <CACYkzJ4LX6Acxs0s-d2+hC0Zfx2CTL7_JpeWD9pGz4b9_0J29g@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 13 Jun 2023 17:43:15 -0400
+Message-ID: <CAHC9VhTQ_x=MccVU9gtndy3tW-SOdXpQoOa1RTd0jr4_iO1xZQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND bpf-next 3/4] security: Replace indirect LSM hook
+ calls with static calls
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Song Liu <song@kernel.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
+        renauld@google.com, revest@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Jun 7, 2023 at 10:48=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
+:
+> On Mon, Feb 6, 2023 at 7:51=E2=80=AFPM Kees Cook <keescook@chromium.org> =
+wrote:
+> > On Mon, Feb 06, 2023 at 07:41:04PM +0100, KP Singh wrote:
+> > > On Mon, Feb 6, 2023 at 7:29 PM Casey Schaufler <casey@schaufler-ca.co=
+m> wrote:
+> > > >
+> > > > On 2/6/2023 9:48 AM, Song Liu wrote:
+> > > > > On Mon, Feb 6, 2023 at 8:29 AM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+> > > > >> On 2/6/2023 5:04 AM, KP Singh wrote:
+> > > > >>> On Fri, Jan 20, 2023 at 5:36 AM Kees Cook <keescook@chromium.or=
+g> wrote:
+> > > > >>>> On Fri, Jan 20, 2023 at 01:08:17AM +0100, KP Singh wrote:
+> > > > >>>>> The indirect calls are not really needed as one knows the add=
+resses of
+> > > > >>> [...]
+> > > > >>>
+> > > > >>>>> +/*
+> > > > >>>>> + * Define static calls and static keys for each LSM hook.
+> > > > >>>>> + */
+> > > > >>>>> +
+> > > > >>>>> +#define DEFINE_LSM_STATIC_CALL(NUM, NAME, RET, ...)         =
+         \
+> > > > >>>>> +     DEFINE_STATIC_CALL_NULL(LSM_STATIC_CALL(NAME, NUM),    =
+         \
+> > > > >>>>> +                             *((RET(*)(__VA_ARGS__))NULL)); =
+         \
+> > > > >>>>> +     DEFINE_STATIC_KEY_FALSE(SECURITY_HOOK_ENABLED_KEY(NAME,=
+ NUM));
+> > > > >>>> Hm, another place where we would benefit from having separated=
+ logic for
+> > > > >>>> "is it built?" and "is it enabled by default?" and we could us=
+e
+> > > > >>>> DEFINE_STATIC_KEY_MAYBE(). But, since we don't, I think we nee=
+d to use
+> > > > >>>> DEFINE_STATIC_KEY_TRUE() here or else won't all the calls be
+> > > > >>>> out-of-line? (i.e. the default compiled state will be NOPs?) I=
+f we're
+> > > > >>>> trying to optimize for having LSMs, I think we should default =
+to inline
+> > > > >>>> calls. (The machine code in the commit log seems to indicate t=
+hat they
+> > > > >>>> are out of line -- it uses jumps.)
+> > > > >>>>
+> > > > >>> I should have added it in the commit description, actually we a=
+re
+> > > > >>> optimizing for "hot paths are less likely to have LSM hooks ena=
+bled"
+> > > > >>> (eg. socket_sendmsg).
+> > > > >> How did you come to that conclusion? Where is there a correlatio=
+n between
+> > > > >> "hot path" and "less likely to be enabled"?
+> > > > > I could echo KP's reasoning here. AFAICT, the correlation is that=
+ LSMs on
+> > > > > hot path will give more performance overhead. In our use cases (M=
+eta),
+> > > > > we are very careful with "small" performance hits. 0.25% is signi=
+ficant
+> > > > > overhead; 1% overhead will not fly without very good reasons (Do =
+we
+> > > > > have to do this? Are there any other alternatives?). If it is pos=
+sible to
+> > > > > achieve similar security on a different hook, we will not enable =
+the hook on
+> > > > > the hot path. For example, we may not enable socket_sendmsg, but =
+try
+> > > > > to disallow opening such sockets instead.
+> > > >
+> > > > I'm not asking about BPF. I'm asking about the impact on other LSMs=
+.
+> > > > If you're talking strictly about BPF you need to say that. I'm all =
+for
+> > > > performance improvement. But as I've said before, it should be for =
+all
+> > > > the security modules, not just BPF.
+> > >
+> > > It's a trade off that will work differently for different LSMs and
+> > > distros (based on the LSM they chose) and this the config option. I
+> > > even suggested this be behind CONFIG_EXPERT (which is basically says
+> > > this:
+> > >
+> > >  "This option allows certain base kernel options and settings
+> > >  to be disabled or tweaked. This is for specialized
+> > >  environments which can tolerate a "non-standard" kernel.
+> > >  Only use this if you really know what you are doing."
+> >
+> > Using the DEFINE_STATIC_KEY_MAYBE() and static_branch_maybe() macros
+> > tied to a new CONFIG seems like it can give us a reasonable knob for
+> > in-line vs out-of-line calls.
+>
+> Coming back to this after a while as I finally got time to work on
+> this. (work/personal downtime).
+>
+> I am changing it to DEFINE_STATIC_KEY_TRUE in this patch and
+> DEFINE_STATIC_KEY_MAYBE in a subsequent one and guarded by a config
+> called CONFIG_SECURITY_HOOK_LIKELY. I am letting it default to yes,
+> but distros can change it depending on their choice of LSM and
+> performance characteristics.
 
-On 13/06/2023 12:54, Konstantin Meskhidze (A) wrote:
-> 
-> 
-> 6/6/2023 6:17 PM, Günther Noack пишет:
->> Hi Konstantin!
->>
->> Apologies if some of this was discussed before, in this case,
->> Mickaël's review overrules my opinions from the sidelines ;)
->>
->> On Tue, May 16, 2023 at 12:13:38AM +0800, Konstantin Meskhidze wrote:
->>> This commit adds network demo. It's possible to allow a sandboxer to
->>> bind/connect to a list of particular ports restricting network
->>> actions to the rest of ports.
->>>
->>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>
->>
->>> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
->>> index e2056c8b902c..b0250edb6ccb 100644
->>> --- a/samples/landlock/sandboxer.c
->>> +++ b/samples/landlock/sandboxer.c
->>
->> ...
->>
->>> +static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->>> +				const __u64 allowed_access)
->>> +{
->>> +	int num_ports, i, ret = 1;
->>
->> I thought the convention was normally to set ret = 0 initially and to
->> override it in case of error, rather than the other way around?
+I'm still more curious about the correctness/isolation aspect that I
+mused about back in Jan/Feb on your original posting.
 
-Which convention? In this case, by default the return code is an error.
-
-
->>
->     Well, I just followed Mickaёl's way of logic here. >
-> 
->>> +	char *env_port_name;
->>> +	struct landlock_net_service_attr net_service = {
->>> +		.allowed_access = allowed_access,
->>> +		.port = 0,
->>> +	};
->>> +
->>> +	env_port_name = getenv(env_var);
->>> +	if (!env_port_name)
->>> +		return 0;
->>> +	env_port_name = strdup(env_port_name);
->>> +	unsetenv(env_var);
->>> +	num_ports = parse_port_num(env_port_name);
->>> +
->>> +	if (num_ports == 1 && (strtok(env_port_name, ENV_PATH_TOKEN) == NULL)) {
->>> +		ret = 0;
->>> +		goto out_free_name;
->>> +	}
->>
->> I don't understand why parse_port_num and strtok are necessary in this
->> program. The man-page for strsep(3) describes it as a replacement to
->> strtok(3) (in the HISTORY section), and it has a very short example
->> for how it is used.
->>
->> Wouldn't it work like this as well?
->>
->> while ((strport = strsep(&env_port_name, ":"))) {
->>     net_service.port = atoi(strport);
->>     /* etc */
->> }
-> 
->     Thanks for a tip. I think it's a better solution here. Now this
-> commit is in Mickaёl's -next branch. I could send a one-commit patch later.
-> Mickaёl, what do you think?
-
-I removed this series from -next because there is some issues (see the 
-bot's emails), but anyway, this doesn't mean these patches don't need to 
-be changed, they do. The goal of -next is to test more widely a patch 
-series and get more feedbacks, especially from bots. When this series 
-will be fully ready (and fuzzed with syzkaller), I'll push it to Linus 
-Torvalds.
-
-I'll review the remaining tests and sample code this week, but you can 
-still take into account the documentation review.
-
-
-> 
->>
->>> +
->>> +	for (i = 0; i < num_ports; i++) {
->>> +		net_service.port = atoi(strsep(&env_port_name, ENV_PATH_TOKEN));
->>
->> Naming of ENV_PATH_TOKEN:
->> This usage is not related to paths, maybe rename the variable?
->> It's also technically not the token, but the delimiter.
->>
->    What do you think of ENV_PORT_TOKEN or ENV_PORT_DELIMITER???
-
-You can rename ENV_PATH_TOKEN to ENV_DELIMITER for the FS and network parts.
-
-
-> 
->>> +		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
->>> +				      &net_service, 0)) {
->>> +			fprintf(stderr,
->>> +				"Failed to update the ruleset with port \"%lld\": %s\n",
->>> +				net_service.port, strerror(errno));
->>> +			goto out_free_name;
->>> +		}
->>> +	}
->>> +	ret = 0;
->>> +
->>> +out_free_name:
->>> +	free(env_port_name);
->>> +	return ret;
->>> +}
->>
->>
->>>   		fprintf(stderr,
->>>   			"Launch a command in a restricted environment.\n\n");
->>> -		fprintf(stderr, "Environment variables containing paths, "
->>> -				"each separated by a colon:\n");
->>> +		fprintf(stderr,
->>> +			"Environment variables containing paths and ports "
->>> +			"each separated by a colon:\n");
->>>   		fprintf(stderr,
->>>   			"* %s: list of paths allowed to be used in a read-only way.\n",
->>>   			ENV_FS_RO_NAME);
->>>   		fprintf(stderr,
->>> -			"* %s: list of paths allowed to be used in a read-write way.\n",
->>> +			"* %s: list of paths allowed to be used in a read-write way.\n\n",
->>>   			ENV_FS_RW_NAME);
->>> +		fprintf(stderr,
->>> +			"Environment variables containing ports are optional "
->>> +			"and could be skipped.\n");
->>
->> As it is, I believe the program does something different when I'm
->> setting these to the empty string (ENV_TCP_BIND_NAME=""), compared to
->> when I'm unsetting them?
->>
->> I think the case where we want to forbid all handle-able networking is
->> a legit and very common use case - it could be clearer in the
->> documentation how this is done with the tool. (And maybe the interface
->> could be something more explicit than setting the environment variable
->> to empty?)
-
-I'd like to keep it simple, and it should be seen as an example code, 
-not a full-feature sandboxer, but still a consistent and useful one. 
-What would you suggest?
-
-This sandboxer tool relies on environment variables for its 
-configuration. This is definitely not a good fit for all use cases, but 
-I think it is simple and flexible enough. One use case might be to 
-export a set of environment variables and simply call this tool. I'd 
-prefer to not deal with argument parsing, but maybe that was too 
-simplistic? We might want to revisit this approach but probably not with 
-this series.
-
-
->>
->>
->>> +	/* Removes bind access attribute if not supported by a user. */
->>> +	env_port_name = getenv(ENV_TCP_BIND_NAME);
->>> +	if (!env_port_name) {
->>> +		ruleset_attr.handled_access_net &=
->>> +			~LANDLOCK_ACCESS_NET_BIND_TCP;
->>> +	}
->>> +	/* Removes connect access attribute if not supported by a user. */
->>> +	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
->>> +	if (!env_port_name) {
->>> +		ruleset_attr.handled_access_net &=
->>> +			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
->>> +	}
->>
->> This is the code where the program does not restrict network usage,
->> if the corresponding environment variable is not set.
-> 
->     Yep. Right.
->>
->> It's slightly inconsistent with what this tool does for filesystem
->> paths. - If you don't specify any file paths, it will still restrict
->> file operations there, independent of whether that env variable was
->> set or not.  (Apologies if it was discussed before.)
-> 
->    Mickaёl wanted to make network ports optional here.
->    Please check:
->   
-> https://lore.kernel.org/linux-security-module/179ac2ee-37ff-92da-c381-c2c716725045@digikod.net/
-
-Right, the rationale is for compatibility with the previous version of 
-this tool. We should not break compatibility when possible. A comment 
-should explain the rationale though.
-
-> 
-> https://lore.kernel.org/linux-security-module/fe3bc928-14f8-5e2b-359e-9a87d6cf5b01@digikod.net/
->>
->> —Günther
->>
+--=20
+paul-moore.com
