@@ -2,52 +2,52 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94506EB64D8
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jun 2023 19:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1203EB64D8
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jun 2023 19:46:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239430AbjFMTnM (ORCPT
+        id S232939AbjFMTqd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Jun 2023 15:43:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42106 "EHLO
+        Tue, 13 Jun 2023 15:46:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231225AbjFMTnK (ORCPT
+        with ESMTP id S229642AbjFMTqb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Jun 2023 15:43:10 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8835F1BEA
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 12:43:05 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1b3a9eae57cso24947765ad.1
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 12:43:05 -0700 (PDT)
+        Tue, 13 Jun 2023 15:46:31 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56BBE12A
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 12:46:30 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-652d76be8c2so6288138b3a.3
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 12:46:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1686685385; x=1689277385;
+        d=chromium.org; s=google; t=1686685590; x=1689277590;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=++RlJEGBoYZZIYZsRHYoBMeQspkNZr4R3QmKZH+3SVM=;
-        b=H1q3jvV/pyh4iAygQto1xdexTU/nOQVTmlJXFt1V1I4T+zRrPD02k1089dAsxc1QZm
-         waIS8XBlYOTH6cQJ3o3yQVaXu3IFlTlHBQEFUUYp9JEwAcf9n+cAWiIML/6H11PZcjZA
-         keWtPgaY06BYpTYNOkXy5KeusVGGvYattkCMw=
+        bh=mxeuPCO3GTvztmCaqFwBCrXNFMyoav37TQYPe5N2X2Q=;
+        b=ZXwqdQSU/HiRRBmiMo0Q4BulnluPAh2ryLShUC8dzGZsPXV27BS3mYaNw52krhQxmi
+         FDxiku3oDSIq7ETXuQ8zuIR6vPTTTiy5Uh+q09OiBHP7jNeYHGe8a87/wG4jR/UkKFXO
+         m0LB4L/wA3k4VB+TGrW72v2AVbhniQkqNzr60=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686685385; x=1689277385;
+        d=1e100.net; s=20221208; t=1686685590; x=1689277590;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=++RlJEGBoYZZIYZsRHYoBMeQspkNZr4R3QmKZH+3SVM=;
-        b=bAXXELXCHUuxLMbuxBP4loTpreu0A8jsZk0gRmMlA/mSwnMFObCQ4t2IbRMcmXwRIU
-         N9AF1IX3fnyupJGz2qFPFZOJWwZmH0IagC6HNtEfKSXSlHZNk5JBPgXotXRpd2g4se3n
-         XP2zlso+gNCpmoZZMULx5DbWHo60oqwJKkk0qdwrZzXiH3lnMBPnbDa2/CvA1l4tUN4C
-         rCBsNsMOMp9NmlI6TQlzftfu8a+nanvkCBXIhyswGpVsi92GRN/e97dd3EMfEDzc5p36
-         +7XVjR3sniI13Qh131aDIQGC/Av+EIvBJWQWsZHZ4MjtRvsSjJiJqrodUjq9nHlqnvPO
-         UKlA==
-X-Gm-Message-State: AC+VfDzZ+jZmgVRoX2CS1IlOVUoV1EfvAQ4p4BDVpJQLk1cZCisKe9Tb
-        G6CYQiknbDgM/sSGnRuguQ3yjg==
-X-Google-Smtp-Source: ACHHUZ67L+Wg14yMTsPIsgdLxiqL5tLv4Kzz8WcDiTd8p65LBH+CQ9wRhLmwtBJbSj5CJ3as9czIMA==
-X-Received: by 2002:a17:903:1103:b0:1af:e302:123 with SMTP id n3-20020a170903110300b001afe3020123mr13915655plh.3.1686685385066;
-        Tue, 13 Jun 2023 12:43:05 -0700 (PDT)
+        bh=mxeuPCO3GTvztmCaqFwBCrXNFMyoav37TQYPe5N2X2Q=;
+        b=ej5VGdOTTZel3jdFPKKVDuKOhlb/PLiFrHor8xTsZRoWRyj1VciplC0Uuljh59/clC
+         dSzQKPh48ceq2Lu0MvdTXLqi8X3TVBxEubMyOBojxpF7UKBKd9iwWLksie5i9oviJB7b
+         MCZHLINWY6Jvm0xTd0TuneGFxzniTpNvhoWE60aEcsoWGJx4gg1n+l8rAxtERqDGO2mp
+         44llCLtxh5h0z/rYdqoAdB2H1XCW4MXjxm2DFBH7th5UpK3dCtxGp+tgNNENGZvpSnR8
+         saDZ9FQM0M16Hal9lAjz2nXeEQG4eIPdMeSKf1KqSCJnlE5pNsRq/kchYlMd29vpPLSd
+         5rEA==
+X-Gm-Message-State: AC+VfDwEj6xh1lIRWU2iT5CGOMGbZBXNSAV0JfvgWpG9LHUqk0ZT+1j/
+        jKOgHw0OFZbUbpdekispBI9TLA==
+X-Google-Smtp-Source: ACHHUZ7jZ3mi9XpzJyAKqWF/U6Ou18xsuMhGoP192JvILRSeeC4WqAi7Cv8VWP4EnGr6RjXn0fMPJw==
+X-Received: by 2002:a05:6a00:1783:b0:662:c48b:47e2 with SMTP id s3-20020a056a00178300b00662c48b47e2mr19702410pfg.19.1686685589881;
+        Tue, 13 Jun 2023 12:46:29 -0700 (PDT)
 Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id q5-20020a170902c74500b001ac591b0500sm10599222plq.134.2023.06.13.12.43.04
+        by smtp.gmail.com with ESMTPSA id t12-20020a62ea0c000000b00643355ff6a6sm9215426pfh.99.2023.06.13.12.46.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jun 2023 12:43:04 -0700 (PDT)
-Date:   Tue, 13 Jun 2023 12:43:03 -0700
+        Tue, 13 Jun 2023 12:46:29 -0700 (PDT)
+Date:   Tue, 13 Jun 2023 12:46:29 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
@@ -75,21 +75,66 @@ Cc:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
         rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
         tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
         luc.vanoostenryck@gmail.com
-Subject: Re: [PATCH v3 28/57] perf; Simplify event_sched_in()
-Message-ID: <202306131242.99E9B4A@keescook>
+Subject: Re: [PATCH v3 03/57] locking: Introduce __cleanup() based
+ infrastructure
+Message-ID: <202306131244.E8DF4CA166@keescook>
 References: <20230612090713.652690195@infradead.org>
- <20230612093539.537454913@infradead.org>
+ <20230612093537.614161713@infradead.org>
+ <20230613105522.GU4253@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230612093539.537454913@infradead.org>
+In-Reply-To: <20230613105522.GU4253@hirez.programming.kicks-ass.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 12, 2023 at 11:07:41AM +0200, Peter Zijlstra wrote:
-> Use guards to reduce gotos and simplify control flow.
+On Tue, Jun 13, 2023 at 12:55:22PM +0200, Peter Zijlstra wrote:
+> On Mon, Jun 12, 2023 at 11:07:16AM +0200, Peter Zijlstra wrote:
+> 
+> > --- /dev/null
+> > +++ b/include/linux/cleanup.h
+> > @@ -0,0 +1,167 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#ifndef __LINUX_GUARDS_H
+> > +#define __LINUX_GUARDS_H
+> > +
+> > +#include <linux/compiler.h>
+> > +
+> > +/*
+> > + * DEFINE_FREE(name, type, free):
+> > + *	simple helper macro that defines the required wrapper for a __free()
+> > + *	based cleanup function. @free is an expression using '_T' to access
+> > + *	the variable.
+> > + *
+> > + * __free(name):
+> > + *	variable attribute to add a scoped based cleanup to the variable.
+> > + *
+> 
+> 	no_free_ptr(var):
+> 	  like a non-atomic xchg(var, NULL), such that the cleanup
+> 	  function will be inhibited -- provided it sanely deals with a
+> 	  NULL value.
+> 
+> > + * return_ptr(p):
+> > + *	returns p while inhibiting the __free().
+> > + *
+> > + * Ex.
+> > + *
+> > + * DEFINE_FREE(kfree, void *, if (_T) kfree(_T))
+> > + *
+> > + *	struct obj *p = kmalloc(...);
+> 
+> That should obviously have been:
+> 
+> 	struct obj *p __free(kfree) = kmalloc(...);
 
-Typoe in Subject: ";" should be ":"
+Okay, good. I noticed that too. :)
+
+I also didn't see any users of the kfree helpers (maybe I missed them?)
+Maybe add at least one conversion just to have an example conversion for
+it too?
+
+-Kees
 
 -- 
 Kees Cook
