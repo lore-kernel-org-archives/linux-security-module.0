@@ -2,158 +2,94 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC442EB64D0
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jun 2023 19:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94506EB64D8
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jun 2023 19:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238666AbjFMTCz (ORCPT
+        id S239430AbjFMTnM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Jun 2023 15:02:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49450 "EHLO
+        Tue, 13 Jun 2023 15:43:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236112AbjFMTCy (ORCPT
+        with ESMTP id S231225AbjFMTnK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Jun 2023 15:02:54 -0400
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EEEB1BEE;
-        Tue, 13 Jun 2023 12:02:51 -0700 (PDT)
-Received: from jerom (99-112-204-245.lightspeed.hstntx.sbcglobal.net [99.112.204.245])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: serge)
-        by mail.hallyn.com (Postfix) with ESMTPSA id 9EAF77BD;
-        Tue, 13 Jun 2023 14:02:47 -0500 (CDT)
-Date:   Tue, 13 Jun 2023 14:02:45 -0500
-From:   Serge Hallyn <serge@hallyn.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
-Subject: Re: [PATCH v10 05/11] LSM: Create lsm_list_modules system call
-Message-ID: <ZIi9VUlrkT8fIMUj@jerom>
-References: <20230428203417.159874-1-casey@schaufler-ca.com>
- <20230428203417.159874-6-casey@schaufler-ca.com>
+        Tue, 13 Jun 2023 15:43:10 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8835F1BEA
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 12:43:05 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1b3a9eae57cso24947765ad.1
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 12:43:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1686685385; x=1689277385;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=++RlJEGBoYZZIYZsRHYoBMeQspkNZr4R3QmKZH+3SVM=;
+        b=H1q3jvV/pyh4iAygQto1xdexTU/nOQVTmlJXFt1V1I4T+zRrPD02k1089dAsxc1QZm
+         waIS8XBlYOTH6cQJ3o3yQVaXu3IFlTlHBQEFUUYp9JEwAcf9n+cAWiIML/6H11PZcjZA
+         keWtPgaY06BYpTYNOkXy5KeusVGGvYattkCMw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686685385; x=1689277385;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=++RlJEGBoYZZIYZsRHYoBMeQspkNZr4R3QmKZH+3SVM=;
+        b=bAXXELXCHUuxLMbuxBP4loTpreu0A8jsZk0gRmMlA/mSwnMFObCQ4t2IbRMcmXwRIU
+         N9AF1IX3fnyupJGz2qFPFZOJWwZmH0IagC6HNtEfKSXSlHZNk5JBPgXotXRpd2g4se3n
+         XP2zlso+gNCpmoZZMULx5DbWHo60oqwJKkk0qdwrZzXiH3lnMBPnbDa2/CvA1l4tUN4C
+         rCBsNsMOMp9NmlI6TQlzftfu8a+nanvkCBXIhyswGpVsi92GRN/e97dd3EMfEDzc5p36
+         +7XVjR3sniI13Qh131aDIQGC/Av+EIvBJWQWsZHZ4MjtRvsSjJiJqrodUjq9nHlqnvPO
+         UKlA==
+X-Gm-Message-State: AC+VfDzZ+jZmgVRoX2CS1IlOVUoV1EfvAQ4p4BDVpJQLk1cZCisKe9Tb
+        G6CYQiknbDgM/sSGnRuguQ3yjg==
+X-Google-Smtp-Source: ACHHUZ67L+Wg14yMTsPIsgdLxiqL5tLv4Kzz8WcDiTd8p65LBH+CQ9wRhLmwtBJbSj5CJ3as9czIMA==
+X-Received: by 2002:a17:903:1103:b0:1af:e302:123 with SMTP id n3-20020a170903110300b001afe3020123mr13915655plh.3.1686685385066;
+        Tue, 13 Jun 2023 12:43:05 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id q5-20020a170902c74500b001ac591b0500sm10599222plq.134.2023.06.13.12.43.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Jun 2023 12:43:04 -0700 (PDT)
+Date:   Tue, 13 Jun 2023 12:43:03 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+        pbonzini@redhat.com, masahiroy@kernel.org, nathan@kernel.org,
+        ndesaulniers@google.com, nicolas@fjasle.eu,
+        catalin.marinas@arm.com, will@kernel.org, vkoul@kernel.org,
+        trix@redhat.com, ojeda@kernel.org, mingo@redhat.com,
+        longman@redhat.com, boqun.feng@gmail.com, dennis@kernel.org,
+        tj@kernel.org, cl@linux.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
+        joel@joelfernandes.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        rientjes@google.com, vbabka@suse.cz, roman.gushchin@linux.dev,
+        42.hyeyoo@gmail.com, apw@canonical.com, joe@perches.com,
+        dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+        john.johansen@canonical.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        llvm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+        rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
+        tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
+        luc.vanoostenryck@gmail.com
+Subject: Re: [PATCH v3 28/57] perf; Simplify event_sched_in()
+Message-ID: <202306131242.99E9B4A@keescook>
+References: <20230612090713.652690195@infradead.org>
+ <20230612093539.537454913@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230428203417.159874-6-casey@schaufler-ca.com>
+In-Reply-To: <20230612093539.537454913@infradead.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 28, 2023 at 01:34:11PM -0700, Casey Schaufler wrote:
-> Create a system call to report the list of Linux Security Modules
-> that are active on the system. The list is provided as an array
-> of LSM ID numbers.
-> 
-> The calling application can use this list determine what LSM
-> specific actions it might take. That might include choosing an
-> output format, determining required privilege or bypassing
-> security module specific behavior.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+On Mon, Jun 12, 2023 at 11:07:41AM +0200, Peter Zijlstra wrote:
+> Use guards to reduce gotos and simplify control flow.
 
-One comment below, but
+Typoe in Subject: ";" should be ":"
 
-Reviewed-by: Serge E. Hallyn <serge@hallyn.com>
-
-> ---
->  Documentation/userspace-api/lsm.rst |  3 +++
->  include/linux/syscalls.h            |  1 +
->  kernel/sys_ni.c                     |  1 +
->  security/lsm_syscalls.c             | 39 +++++++++++++++++++++++++++++
->  4 files changed, 44 insertions(+)
-> 
-> diff --git a/Documentation/userspace-api/lsm.rst b/Documentation/userspace-api/lsm.rst
-> index e6c3f262addc..9edae18a2688 100644
-> --- a/Documentation/userspace-api/lsm.rst
-> +++ b/Documentation/userspace-api/lsm.rst
-> @@ -63,6 +63,9 @@ Get the specified security attributes of the current process
->  .. kernel-doc:: security/lsm_syscalls.c
->      :identifiers: sys_lsm_get_self_attr
->  
-> +.. kernel-doc:: security/lsm_syscalls.c
-> +    :identifiers: sys_lsm_list_modules
-> +
->  Additional documentation
->  ========================
->  
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index 9a94c31bf6b6..ddbcc333f3c3 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -1063,6 +1063,7 @@ asmlinkage long sys_lsm_get_self_attr(unsigned int attr, struct lsm_ctx *ctx,
->  				      size_t *size, __u32 flags);
->  asmlinkage long sys_lsm_set_self_attr(unsigned int attr, struct lsm_ctx *ctx,
->  				      size_t size, __u32 flags);
-> +asmlinkage long sys_lsm_list_modules(u64 *ids, size_t *size, u32 flags);
->  
->  /*
->   * Architecture-specific system calls
-> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-> index d03c78ef1562..ceb3d21a62d0 100644
-> --- a/kernel/sys_ni.c
-> +++ b/kernel/sys_ni.c
-> @@ -265,6 +265,7 @@ COND_SYSCALL(mremap);
->  /* security/lsm_syscalls.c */
->  COND_SYSCALL(lsm_get_self_attr);
->  COND_SYSCALL(lsm_set_self_attr);
-> +COND_SYSCALL(lsm_list_modules);
->  
->  /* security/keys/keyctl.c */
->  COND_SYSCALL(add_key);
-> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
-> index ee3881159241..b89cccb2f123 100644
-> --- a/security/lsm_syscalls.c
-> +++ b/security/lsm_syscalls.c
-> @@ -53,3 +53,42 @@ SYSCALL_DEFINE4(lsm_get_self_attr, unsigned int, attr, struct lsm_ctx __user *,
->  {
->  	return security_getselfattr(attr, ctx, size, flags);
->  }
-> +
-> +/**
-> + * sys_lsm_list_modules - Return a list of the active security modules
-> + * @ids: the LSM module ids
-
-Again, I would say "pointer to size"
-
-> + * @size: size of @ids, updated on return
-> + * @flags: reserved for future use, must be zero
-> + *
-> + * Returns a list of the active LSM ids. On success this function
-> + * returns the number of @ids array elements. This value may be zero
-> + * if there are no LSMs active. If @size is insufficient to contain
-> + * the return data -E2BIG is returned and @size is set to the minimum
-> + * required size. In all other cases a negative value indicating the
-> + * error is returned.
-> + */
-> +SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, size_t __user *, size,
-> +		u32, flags)
-> +{
-> +	size_t total_size = lsm_active_cnt * sizeof(*ids);
-> +	size_t usize;
-> +	int i;
-> +
-> +	if (flags)
-> +		return -EINVAL;
-> +
-> +	if (get_user(usize, size))
-> +		return -EFAULT;
-> +
-> +	if (put_user(total_size, size) != 0)
-> +		return -EFAULT;
-> +
-> +	if (usize < total_size)
-> +		return -E2BIG;
-> +
-> +	for (i = 0; i < lsm_active_cnt; i++)
-> +		if (put_user(lsm_idlist[i]->id, ids++))
-> +			return -EFAULT;
-> +
-> +	return lsm_active_cnt;
-> +}
-> -- 
-> 2.39.2
-> 
+-- 
+Kees Cook
