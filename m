@@ -2,156 +2,154 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C58E5EB64D7
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jun 2023 21:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B47EEB64D7
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jun 2023 22:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231179AbjFMVsm (ORCPT
+        id S232165AbjFMWDG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Jun 2023 17:48:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44478 "EHLO
+        Tue, 13 Jun 2023 18:03:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229559AbjFMVsl (ORCPT
+        with ESMTP id S229447AbjFMWDF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Jun 2023 17:48:41 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6212D1BCD
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 14:48:40 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-98220bb31c6so3943966b.3
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 14:48:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686692919; x=1689284919;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ADa1SrlhiNMb6mM/PE1kFqixN0opneYlqe0aSrO769s=;
-        b=o4Degcdc/aL9DMZAmBGzPHDQasFBke6nQDodix6WkxHDhBzU7EG/cZtLsZbjmzvbEk
-         1EcU4/iMybfDlGUBdbyYWtTgss5YM4BwLWHZKGAq5nvA9fGzA+ZCrhsB0Pi2C8d5KqbS
-         XVJBzGe+9py/K4L0/P8l1JgWzqXSk1p8UnumTP4wSipjx2snK6iEdYSFnscpCtPUIUlg
-         /EzisiIOM4DVRE+dhxCtFKaItFTjnobXcshVCfTkPUE+qJY8vcm+EXznHByDtYC3FtyU
-         31IlD7rzRTHpFEmzFVLNVCEegSnCtgFhEeC/DQY1CP0ZGqSJvPchamIzMo99FEEMKBae
-         rznw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686692919; x=1689284919;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ADa1SrlhiNMb6mM/PE1kFqixN0opneYlqe0aSrO769s=;
-        b=PU0/mN1sgJFcqo6jQQkQ1j7TfSfipiag08AUxhLpKzSGqFe28cLssrz8cVIT7lRWjk
-         Sw7d5xO9e/1vs4IPOhMub7T0S6+GrwrZvI1XALfY8w+PMWl/M7R19zOBnTNk+JElWgwS
-         mFXEZKTsm3jDjgdRnmClZBgV9dPFFadeEFchotzZnTsNEAjg9cQTLR/7EC9m1zHNcgyq
-         JN6ztf2hYKi8apzg7YWSTlXZn8AHiTB9NIzHfEKcTWMoo3Zb/ewHlGkizjg3vLoZQQl5
-         lYKb5MzrU2FskHppPckZMkfvegzwv9xdHj1O6+wWyjYlEDvwfH43qC/S3il6Eh9pnC8y
-         Yljg==
-X-Gm-Message-State: AC+VfDw/3AuMod12QAbV1ggmuFvTpEhIaLPO4K19OUu0aeS3CCEti6kR
-        cGbNIvfY2MaSEvKnZLDw8SU9uk5jkiZ3DD8TzC6vdQ==
-X-Google-Smtp-Source: ACHHUZ5nvDS7tFFD1Y+h6ks477R1i9ZZezfuYGnptfBOg5Dmsqh6HxA9eqBQev4y1f61OefF7jggxmLk/pcClQq4kLk=
-X-Received: by 2002:a17:907:9724:b0:979:7624:1f70 with SMTP id
- jg36-20020a170907972400b0097976241f70mr16868450ejc.18.1686692918707; Tue, 13
- Jun 2023 14:48:38 -0700 (PDT)
+        Tue, 13 Jun 2023 18:03:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5367F191
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 15:03:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D8274638EE
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 22:03:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4712AC433CA
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 22:03:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686693783;
+        bh=YE2OLlRjrJoJAPFKOj7F8Uj++jD+iQljN8/NDOKswSQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Mz9Rqfe30vJajOuqtICUjH7noYNgTHguDRQ4gMNCLIP9G5dk4ACpjESWKEyK18at7
+         PPXo+/I75ZosPfgYZZXDU0zr4JGax/ZrtFLZ36MqTMGi9JeLWa5gbQXLZ1WaQhCME3
+         cVGsBcfnygzRjB7rmEn+NyYBhVGkHfBHLv5Yg5tdmf2M9XlSYKEraAT3Yj0xSOjVUW
+         1jq7W/hJh5cPLU6auc+jI1blB3cCPBmszSUXS8Y2Dp6f4CeNuTrtNEKilHYY65Ye+S
+         gy9k9dyxlOkAL5suQoil2ZvGCcdr2PhhuKopveKOECrZN45QrIOYKk7rGxJq/4tPlF
+         RmpWfWiKGVkGg==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-4f64fb05a8aso7612453e87.0
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Jun 2023 15:03:03 -0700 (PDT)
+X-Gm-Message-State: AC+VfDzcgvLY+03jBkPKc9BP5N/419W/H+OjB9huZe3vpkNZUpupEVnM
+        MsBONbZP+5VM2I3Y0g4SVTVplCRb2NKlL2EQbvxmfw==
+X-Google-Smtp-Source: ACHHUZ6gjl930j2aon0qqXN2JouzYxRQohMBZOFjtZwenAgNBpVDiOJ227hITV4LX78UUwZG7PLMbfLzsvEb/Q3BoIw=
+X-Received: by 2002:a19:6445:0:b0:4f3:9868:bee4 with SMTP id
+ b5-20020a196445000000b004f39868bee4mr6858582lfj.32.1686693781181; Tue, 13 Jun
+ 2023 15:03:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230607235352.1723243-1-andrii@kernel.org> <871qik28bs.fsf@toke.dk>
- <CAEf4BzYin==+WF27QBXoj23tHcr5BeezbPj2u9RW6qz4sLJsKw@mail.gmail.com>
- <87h6rgz60u.fsf@toke.dk> <CAEf4Bzasz_1qRXh4b7B8V1mOfyD++mVNYnhm6v__-cc7cU_33w@mail.gmail.com>
- <87bkhlymyk.fsf@toke.dk> <CAEf4BzZRKgMjOQhxdC_fvn1SPwPh-GXhy_1TJVB6eVpZ8k04vw@mail.gmail.com>
-In-Reply-To: <CAEf4BzZRKgMjOQhxdC_fvn1SPwPh-GXhy_1TJVB6eVpZ8k04vw@mail.gmail.com>
-From:   Hao Luo <haoluo@google.com>
-Date:   Tue, 13 Jun 2023 14:48:27 -0700
-Message-ID: <CA+khW7h95RpurRL8qmKdSJQEXNYuqSWnP16o-uRZ9G0KqCfM4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
-        luto@kernel.org, kernel-team@meta.com
+References: <20230119231033.1307221-1-kpsingh@kernel.org> <CAHC9VhRpsXME9Wht_RuSACuU97k359dihye4hW15nWwSQpxtng@mail.gmail.com>
+ <63e525a8.170a0220.e8217.2fdb@mx.google.com> <CAHC9VhTCiCNjfQBZOq2DM7QteeiE1eRBxW77eVguj4=y7kS+eQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhTCiCNjfQBZOq2DM7QteeiE1eRBxW77eVguj4=y7kS+eQ@mail.gmail.com>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Wed, 14 Jun 2023 00:02:50 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4w3BKNaogHdgW8AKmS2O+wJuVZSpCVVTCKj5j5PPK-Vg@mail.gmail.com>
+Message-ID: <CACYkzJ4w3BKNaogHdgW8AKmS2O+wJuVZSpCVVTCKj5j5PPK-Vg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/4] Reduce overhead of LSMs with static calls
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
+        renauld@google.com, casey@schaufler-ca.com, song@kernel.org,
+        revest@chromium.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 12, 2023 at 3:08=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
+On Fri, Feb 10, 2023 at 9:03=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
 >
-> On Mon, Jun 12, 2023 at 3:49=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgensen =
-<toke@kernel.org> wrote:
+> On Thu, Feb 9, 2023 at 11:56 AM Kees Cook <keescook@chromium.org> wrote:
+> > On Fri, Jan 27, 2023 at 03:16:38PM -0500, Paul Moore wrote:
+> > > On Thu, Jan 19, 2023 at 6:10 PM KP Singh <kpsingh@kernel.org> wrote:
+> > > >
+> > > > # Background
+> > > >
+> > > > LSM hooks (callbacks) are currently invoked as indirect function ca=
+lls. These
+> > > > callbacks are registered into a linked list at boot time as the ord=
+er of the
+> > > > LSMs can be configured on the kernel command line with the "lsm=3D"=
+ command line
+> > > > parameter.
+> > >
+> > > Thanks for sending this KP.  I had hoped to make a proper pass throug=
+h
+> > > this patchset this week but I ended up getting stuck trying to wrap m=
+y
+> > > head around some network segmentation offload issues and didn't quite
+> > > make it here.  Rest assured it is still in my review queue.
+> > >
+> > > However, I did manage to take a quick look at the patches and one of
+> > > the first things that jumped out at me is it *looks* like this
+> > > patchset is attempting two things: fix a problem where one LSM could
+> > > trample another (especially problematic with the BPF LSM due to its
+> > > nature), and reduce the overhead of making LSM calls.  I realize that
+> > > in this patchset the fix and the optimization are heavily
+> > > intermingled, but I wonder what it would take to develop a standalone
+> > > fix using the existing indirect call approach?  I'm guessing that is
+> > > going to potentially be a pretty significant patch, but if we could
+> > > add a little standardization to the LSM hooks without adding too much
+> > > in the way of code complexity or execution overhead I think that migh=
+t
+> > > be a win independent of any changes to how we call the hooks.
+> > >
+> > > Of course this could be crazy too, but I'm the guy who has to ask
+> > > these questions :)
 > >
-<...>
-> > to avoid that is by baking the support into libbpf, then that can be
-> > done regardless of the mechanism we choose.
-> >
-> > Or to put it another way: as you say it may be more *complicated* to ad=
-d
-> > an RPC-based path to libbpf, but it's not fundamentally impossible, it'=
+> > Hm, I am expecting this patch series to _not_ change any semantics of
+> > the LSM "stack". I would agree: nothing should change in this series, a=
 s
-> > just another technical problem to be solved. And if that added
-> > complexity buys us better security properties, maybe that is a good
-> > trade-off. At least we shouldn't dismiss it out of hand.
->
-> You are oversimplifying this. There is a huge difference between
-> syscall and RPC and interfaces.
->
-> The former (syscall approach) will error out only on invalid inputs
-> (and highly improbable if kernel runs out of memory, which means your
-> app is dead anyways). You don't code against syscall interface with
-> expectation that it can fail at any point and you should be able to
-> recover it.
->
-> With RPC you have to bake in into your application that any RPC can
-> fail transiently, for many reasons. Service could be down, restarted,
-> slow, etc, etc. This changes *everything* in how you develop
-> application, how you write code, how you handle errors, how you
-> monitor stuff. Everything.
->
-> It's impossible to just swap out syscall with RPC transparently
-> without introducing horrible consequences. This is not some technical
-> difficulty, it's a fundamental impedance mismatch. One of the early
-> distributed systems mistakes was to pretend that remote procedure
-> calls could be reliable and assume errors are rare and could be
-> pretended to behave like syscalls or local in-process APIs. It has
-> been recognized many times over how bad such approaches were. It's
-> outside of the scope of this discussion to go into more details.
-> Suffice it to say that libbpf is not going to pretend that syscall and
-> some RPC are equivalent and can be interchangeable in a transparent
-> way.
->
-> And then, even if we were crazy enough to do the above, there is no
-> way everyone will settle on one single implementation and/or RPC
-> protocol and API such that libbpf could implement it in its upstream
-> version. Big companies most probably will go with their own internal
-> ones that would give them better integration with internal
-> infrastructure, better overvability, etc. And even in open-source
-> there probably won't be one single implementation everyone will be
-> happy with.
+> > it should be strictly a mechanical change from "iterate a list of
+> > indirect calls" to "make a series of direct calls". Perhaps I missed
+> > a logical change?
 >
 
-Hello Toke and Andrii,
+There is no logical change in the 2nd patch that introduces static
+calls. There is however a logical change in the fourth patch (as you
+noticed) which allows some hooks to register themselves as disabled by
+default. This reduces the buggy side effects we have currently with
+BPF LSM.
 
-I agree with Andrii here. In Google, we have several years of
-experience building and using BPF RPC service. We delegate BPF
-operations to this service. From our experience, the RPC approach is
-quite limiting and becomes impractical for many BPF use cases.
+> I might be missing something too, but I'm thinking of patch 4/4 in
+> this series that starts with this sentence:
 
-For programs that do not require much user interaction, it works just
-fine. It just loads and attaches the programs, that's all. The problem
-is the programs that require much user interaction, for example, the
-ones doing observability, which may often read maps or poll on bpf
-ringbuf. Overhead and reliability of RPC is one concern. Another
-problem is the BPF operations based on mmap, for example, directly
-updating/reading BPF global variables as used in skeleton. We still
-haven't figured out how to fully support bpf skeleton. We also haven't
-figured out how to support BPF ringbuf using RPC. There are also
-problems maintaining this service to catch up with some new features
-in libbpf.
+Patch 4/4 is the semantic change but we do need that for both a
+performant BPF LSM and eliminating the side effects.
 
-Anyway, I think the syscall interface has been heavily baked in libbpf
-and bpf kernel interfaces today. There are many BPF use cases where
-delegating all BPF operations to a service can't work well. IMHO, to
-achieve a good balance between flexibility and security, some
-abstraction that conveys controlled trust from priv to unpriv is
-necessary. The idea of BPF token makes sense to me. With token, libbpf
-interface requires only minimal change, unpriv user can call libbpf
-and bpf syscall natively, wins on efficiency and less maintenance
-burden for libbpf developers.
+>
+>  "BPF LSM hooks have side-effects (even when a default value is
+>   returned), as some hooks end up behaving differently due to
+>   the very presence of the hook."
+>
+> Ignoring the static call changes for a moment, I'm curious what it
+> would look like to have a better mechanism for handling things like
+> this.  What would it look like if we expanded the individual LSM error
+> reporting back to the LSM layer to have a bit more information, e.g.
+> "this LSM erred, but it is safe to continue evaluating other LSMs" and
+> "this LSM erred, and it was too severe to continue evaluating other
 
-Thanks,
-Hao
+I tried proposing an idea in
+https://patchwork.kernel.org/project/netdevbpf/patch/20220609234601.2026362=
+-1-kpsingh@kernel.org/
+ as an LSM_HOOK_NO_EFFECT but that did not seemed to have stuck.
+
+> LSMs"?  Similarly, would we want to expand the hook registration to
+> have more info, e.g. "run this hook even when other LSMs have failed"
+> and "if other LSMs have failed, do not run this hook"?
+>
+> I realize that loading a BPF LSM is a privileged operation so we've
+> largely mitigated the risk there, but with stacking on it's way to
+> being more full featured, and IMA slowly working its way to proper LSM
+> status, it seems to me like having a richer, and proper way to handle
+> individual LSM failures would be a good thing.  I feel like patch 4/4
+> definitely hints at this, but I could be mistaken.
+>
+> --
+> paul-moore.com
