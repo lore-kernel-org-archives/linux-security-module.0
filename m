@@ -2,185 +2,206 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79845C7EE29
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jun 2023 10:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8F8C7EE29
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jun 2023 10:54:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241285AbjFMKuZ (ORCPT
+        id S241601AbjFMKyK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Jun 2023 06:50:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41410 "EHLO
+        Tue, 13 Jun 2023 06:54:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234870AbjFMKuY (ORCPT
+        with ESMTP id S242012AbjFMKyI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Jun 2023 06:50:24 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 675F2E53;
-        Tue, 13 Jun 2023 03:50:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=t+702YjolGkCyiHa0l6OM91j5GcnA1zXDcpSBa22PVM=; b=cq3oZ+2UUoBW6Ayud8FUtqQcgF
-        8Vk9zP7UFBdd1d5LBwQwn2AkLSvaMfko2yWiv9XTV3anXy7DAOSeZQkgyVfeGKfahXGD+fkz+Tt9x
-        z2YrKk3GWFF7yvNhzjfGwd7uC2o/8XbL6zOGRyRohwqKELaQOpfHoEiGSrSNfQnPksAkvlXI+zUf2
-        dj9Sqph+JWkhUnsUxpvfxI6kDqHqJh5mnoP7BZzMEauf4WABiQTm/JqQV+CwrLy2ZqsJStDi7WZKS
-        ntMaSJ9nXSXZMcN0Xi0oz9dUtpl8UdLwensB313mHVTtQ2munRbB6PSLvGJ7IFwV5LUI3Ef3epYcJ
-        AVXfP0Aw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q91bK-009L0E-1d;
-        Tue, 13 Jun 2023 10:50:14 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 73AFC300322;
-        Tue, 13 Jun 2023 12:50:13 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 49B8524556031; Tue, 13 Jun 2023 12:50:13 +0200 (CEST)
-Date:   Tue, 13 Jun 2023 12:50:13 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     torvalds@linux-foundation.org, keescook@chromium.org,
-        pbonzini@redhat.com, masahiroy@kernel.org, nathan@kernel.org,
-        ndesaulniers@google.com, nicolas@fjasle.eu,
-        catalin.marinas@arm.com, will@kernel.org, vkoul@kernel.org,
-        trix@redhat.com, ojeda@kernel.org, mingo@redhat.com,
-        longman@redhat.com, boqun.feng@gmail.com, dennis@kernel.org,
-        tj@kernel.org, cl@linux.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
-        joel@joelfernandes.org, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        rientjes@google.com, vbabka@suse.cz, roman.gushchin@linux.dev,
-        42.hyeyoo@gmail.com, apw@canonical.com, joe@perches.com,
-        dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
-        john.johansen@canonical.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        llvm@lists.linux.dev, linux-perf-users@vger.kernel.org,
-        rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
-        tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
-        luc.vanoostenryck@gmail.com
-Subject: Re: [PATCH v3 46/57] perf: Simplify pmu_dev_alloc()
-Message-ID: <20230613105013.GT4253@hirez.programming.kicks-ass.net>
-References: <20230612090713.652690195@infradead.org>
- <20230612093540.850386350@infradead.org>
- <20230612094400.GG4253@hirez.programming.kicks-ass.net>
- <2023061226-grumpily-entire-f06a@gregkh>
- <20230612141322.GA83892@hirez.programming.kicks-ass.net>
- <2023061217-mutable-curry-c2ac@gregkh>
- <20230613073415.GP4253@hirez.programming.kicks-ass.net>
- <2023061333-imposing-shortly-6803@gregkh>
+        Tue, 13 Jun 2023 06:54:08 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E193E57;
+        Tue, 13 Jun 2023 03:54:07 -0700 (PDT)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4QgQNB2sKDz6J7VD;
+        Tue, 13 Jun 2023 18:51:38 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Tue, 13 Jun 2023 11:54:04 +0100
+Message-ID: <d9f07165-f589-13d4-6484-1272704f1de0@huawei.com>
+Date:   Tue, 13 Jun 2023 13:54:03 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2023061333-imposing-shortly-6803@gregkh>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v11 11/12] samples/landlock: Add network demo
+Content-Language: ru
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>
+CC:     <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
+        <gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+        <yusongping@huawei.com>, <artem.kuzin@huawei.com>
+References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+ <20230515161339.631577-12-konstantin.meskhidze@huawei.com>
+ <ZH9OFyWZ1njI7VG9@google.com>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <ZH9OFyWZ1njI7VG9@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.123.126]
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 13, 2023 at 09:50:28AM +0200, Greg KH wrote:
 
-> > DEFINE_FRERE(class_destroy, struct class *, if (!IS_ERR_OR_NULL(_T)) class_destroy(_T))
+
+6/6/2023 6:17 PM, Günther Noack пишет:
+> Hi Konstantin!
 > 
-> Nit, as class_destroy() handles this type of check within it, it can be
-> even simpler:
-> 	DEFINE_FREE(class_destroy, struct class *, class_destroy(_T));
-
-Note that that means there will be an unconditional call to
-class_destroy() in the success path. As long as that is never a hot-path
-this should be fine I suppose, but it is something Linus pointed out
-earlier.
-
-> or would that be:
-> 	DEFINE_CLASS(class_destroy, struct class *, class_destroy(_T));
-
-Has a slightly different syntax per the comment I did do write :-)
-
-DEFINE_CLASS(class, struct class *,
-	     if (!IS_ERR_OR_NULL(_T)) class_destroy(_T),
-	     class_create(cname), const char *name)
-
-static int __init misc_init(void)
-{
-	struct proc_dir_entry *ret __free(remove_proc) =
-		proc_create_seq("misc", 0, NULL, &misc_seq_ops);
-
-	CLASS(class, c)("misc");
-	if (IS_ERR(c))
-		return PTR_ERR(c);
-
-	if (register_chrdev(MISC_MAJOR, "misc", &misc_fops))
-		return -EIO;
-
-	c->devnode = misc_devnode;
-
-	misc_class = no_free_ptr(c);
-	no_free_ptr(ret);
-
-	return 0;
-}
-
-The no_free_ptr() should work with CLASS(), but I'm not sure that's
-recommended, lots of un-explored terretory here :-)
-
-Similarly I suppose you could do something like:
-
-DEFINE_CLASS(proc_dir, struct proc_dir_entry *,
-	     proc_remove(_T), proc_create(pname, mode, parent, proc_ops),
-	     const char *pname, umode_t mode, struct proc_dir_entry *parent,
-	     const struct proc_ops *proc_ops)
-
-EXTEND_CLASS(proc_dir, _seq, proc_create_seq(pname, mode, parent, ops, state_size, data),
-	     const char *pname, umode_t mode, struct proc_dir_entry *parent,
-	     const struct seq_operations *ops, unsigned int state_size, void *data)
-
-EXTEND_CLASS(proc_dir, _seq_private, .....)
-
-(urgh, C really needs better forwarding support)
-
-Then you could write it something like:
-
-static int __init misc_init(void)
-{
-	CLASS(proc_dir_seq, ret)("misc", 0, NULL, &misc_seq_ops);
-
-	CLASS(class, c)("misc");
-	if (IS_ERR(c))
-		return PTR_ERR(c);
-
-	if (register_chrdev(MISC_MAJOR, "misc", &misc_fops))
-		return -EIO;
-
-	c->devnode = misc_devnode;
-
-	misc_class = no_free_ptr(c);
-	no_free_ptr(ret);
-
-	return 0;
-}
-
-Is what what we want?
-
-(also, perhaps I should prefix the macro arguments with an '_', as is
-you can't use 'name' as a constructor argument because the thing would
-expand weird)
-
-> I have a ton of future patches coming that does a bunch of
-> class_create/destroy changes that would be made a LOT simpler with this
-> patchset, and I really don't want to have to hit the same codepaths
-> twice if at all possible.
+> Apologies if some of this was discussed before, in this case,
+> Mickaël's review overrules my opinions from the sidelines ;)
 > 
-> So what's the odds this can be reasonable enough to get into 6.5-rc1 so
-> we can rely on it there?
+> On Tue, May 16, 2023 at 12:13:38AM +0800, Konstantin Meskhidze wrote:
+>> This commit adds network demo. It's possible to allow a sandboxer to
+>> bind/connect to a list of particular ports restricting network
+>> actions to the rest of ports.
+>> 
+>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> 
+> 
+>> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+>> index e2056c8b902c..b0250edb6ccb 100644
+>> --- a/samples/landlock/sandboxer.c
+>> +++ b/samples/landlock/sandboxer.c
+> 
+> ...
+> 
+>> +static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+>> +				const __u64 allowed_access)
+>> +{
+>> +	int num_ports, i, ret = 1;
+> 
+> I thought the convention was normally to set ret = 0 initially and to
+> override it in case of error, rather than the other way around?
+> 
+   Well, I just followed Mickaёl's way of logic here.
 
-That's one for Linus I suppose.. the only remaining issue I still have
-is the no_free_*() naming. One suggestion that made sense had it called
-take_*().
 
-All we really need are the first 4 patches to land; thereafter we can
-gradually start converting things.
+>> +	char *env_port_name;
+>> +	struct landlock_net_service_attr net_service = {
+>> +		.allowed_access = allowed_access,
+>> +		.port = 0,
+>> +	};
+>> +
+>> +	env_port_name = getenv(env_var);
+>> +	if (!env_port_name)
+>> +		return 0;
+>> +	env_port_name = strdup(env_port_name);
+>> +	unsetenv(env_var);
+>> +	num_ports = parse_port_num(env_port_name);
+>> +
+>> +	if (num_ports == 1 && (strtok(env_port_name, ENV_PATH_TOKEN) == NULL)) {
+>> +		ret = 0;
+>> +		goto out_free_name;
+>> +	}
+> 
+> I don't understand why parse_port_num and strtok are necessary in this
+> program. The man-page for strsep(3) describes it as a replacement to
+> strtok(3) (in the HISTORY section), and it has a very short example
+> for how it is used.
+> 
+> Wouldn't it work like this as well?
+> 
+> while ((strport = strsep(&env_port_name, ":"))) {
+>    net_service.port = atoi(strport);
+>    /* etc */
+> }
+
+   Thanks for a tip. I think it's a better solution here. Now this 
+commit is in Mickaёl's -next branch. I could send a one-commit patch later.
+Mickaёl, what do you think?
+
+> 
+>> +
+>> +	for (i = 0; i < num_ports; i++) {
+>> +		net_service.port = atoi(strsep(&env_port_name, ENV_PATH_TOKEN));
+> 
+> Naming of ENV_PATH_TOKEN:
+> This usage is not related to paths, maybe rename the variable?
+> It's also technically not the token, but the delimiter.
+> 
+  What do you think of ENV_PORT_TOKEN or ENV_PORT_DELIMITER???
+
+>> +		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>> +				      &net_service, 0)) {
+>> +			fprintf(stderr,
+>> +				"Failed to update the ruleset with port \"%lld\": %s\n",
+>> +				net_service.port, strerror(errno));
+>> +			goto out_free_name;
+>> +		}
+>> +	}
+>> +	ret = 0;
+>> +
+>> +out_free_name:
+>> +	free(env_port_name);
+>> +	return ret;
+>> +}
+> 
+> 
+>>  		fprintf(stderr,
+>>  			"Launch a command in a restricted environment.\n\n");
+>> -		fprintf(stderr, "Environment variables containing paths, "
+>> -				"each separated by a colon:\n");
+>> +		fprintf(stderr,
+>> +			"Environment variables containing paths and ports "
+>> +			"each separated by a colon:\n");
+>>  		fprintf(stderr,
+>>  			"* %s: list of paths allowed to be used in a read-only way.\n",
+>>  			ENV_FS_RO_NAME);
+>>  		fprintf(stderr,
+>> -			"* %s: list of paths allowed to be used in a read-write way.\n",
+>> +			"* %s: list of paths allowed to be used in a read-write way.\n\n",
+>>  			ENV_FS_RW_NAME);
+>> +		fprintf(stderr,
+>> +			"Environment variables containing ports are optional "
+>> +			"and could be skipped.\n");
+> 
+> As it is, I believe the program does something different when I'm
+> setting these to the empty string (ENV_TCP_BIND_NAME=""), compared to
+> when I'm unsetting them?
+> 
+> I think the case where we want to forbid all handle-able networking is
+> a legit and very common use case - it could be clearer in the
+> documentation how this is done with the tool. (And maybe the interface
+> could be something more explicit than setting the environment variable
+> to empty?)
+> 
+> 
+>> +	/* Removes bind access attribute if not supported by a user. */
+>> +	env_port_name = getenv(ENV_TCP_BIND_NAME);
+>> +	if (!env_port_name) {
+>> +		ruleset_attr.handled_access_net &=
+>> +			~LANDLOCK_ACCESS_NET_BIND_TCP;
+>> +	}
+>> +	/* Removes connect access attribute if not supported by a user. */
+>> +	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
+>> +	if (!env_port_name) {
+>> +		ruleset_attr.handled_access_net &=
+>> +			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+>> +	}
+> 
+> This is the code where the program does not restrict network usage,
+> if the corresponding environment variable is not set.
+
+   Yep. Right.
+> 
+> It's slightly inconsistent with what this tool does for filesystem
+> paths. - If you don't specify any file paths, it will still restrict
+> file operations there, independent of whether that env variable was
+> set or not.  (Apologies if it was discussed before.)
+
+  Mickaёl wanted to make network ports optional here.
+  Please check:
+ 
+https://lore.kernel.org/linux-security-module/179ac2ee-37ff-92da-c381-c2c716725045@digikod.net/
+
+https://lore.kernel.org/linux-security-module/fe3bc928-14f8-5e2b-359e-9a87d6cf5b01@digikod.net/
+> 
+> —Günther
+> 
