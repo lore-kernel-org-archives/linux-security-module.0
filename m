@@ -2,118 +2,105 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9849EB64DA
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jun 2023 08:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B224EB64DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jun 2023 08:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243471AbjFNIZx (ORCPT
+        id S243594AbjFNIak (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Jun 2023 04:25:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54314 "EHLO
+        Wed, 14 Jun 2023 04:30:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243433AbjFNIZw (ORCPT
+        with ESMTP id S235121AbjFNIai (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Jun 2023 04:25:52 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92951A1;
-        Wed, 14 Jun 2023 01:25:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=xz5/VyeWvrJxvz7Vj1Bej8cUKvcRWi1AM/YLcdj+D/Y=; b=BRDdoKzwDzkGKB+A7e3ag/q8ah
-        OuIxesfxVQag4DfRTqhUekNoppHbkzvJkwCCICkhEf8dky95UyM5bzWwWxiNms2GIKgSietdNCacr
-        HKrpLs/0yU3FtQlwoH2plJxAxqyXuzokNnbLBzeUE9RSI7aVLHoO8WAyzDiPUNVNg7d4jKQdfqnkK
-        9h4Yy3POzOVCIIQ6n1ZFg5fvmffQFY8z1DLGdH80TK1X/ioX1bFq0p3iImYmiPCTfOGxyHwcnHVIe
-        dc1+v/iDoOcVsxc8xJStSr7UlxJxe/mokgVK6nXWCJOg+fkstoS29jdcRppL3KDo7lAMYq+k7jWOq
-        4GBG8M1g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q9Loz-00Abb2-0b;
-        Wed, 14 Jun 2023 08:25:41 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        Wed, 14 Jun 2023 04:30:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5E1811F;
+        Wed, 14 Jun 2023 01:30:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C65B930031B;
-        Wed, 14 Jun 2023 10:25:39 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 975E227F86A4E; Wed, 14 Jun 2023 10:25:39 +0200 (CEST)
-Date:   Wed, 14 Jun 2023 10:25:39 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     torvalds@linux-foundation.org, keescook@chromium.org,
-        gregkh@linuxfoundation.org, pbonzini@redhat.com, nathan@kernel.org,
-        ndesaulniers@google.com, nicolas@fjasle.eu,
-        catalin.marinas@arm.com, will@kernel.org, vkoul@kernel.org,
-        trix@redhat.com, ojeda@kernel.org, mingo@redhat.com,
-        longman@redhat.com, boqun.feng@gmail.com, dennis@kernel.org,
-        tj@kernel.org, cl@linux.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
-        joel@joelfernandes.org, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        rientjes@google.com, vbabka@suse.cz, roman.gushchin@linux.dev,
-        42.hyeyoo@gmail.com, apw@canonical.com, joe@perches.com,
-        dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
-        john.johansen@canonical.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        llvm@lists.linux.dev, linux-perf-users@vger.kernel.org,
-        rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
-        tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
-        luc.vanoostenryck@gmail.com
-Subject: Re: [PATCH v3 04/57] kbuild: Drop -Wdeclaration-after-statement
-Message-ID: <20230614082539.GB1639749@hirez.programming.kicks-ass.net>
-References: <20230612090713.652690195@infradead.org>
- <20230612093537.693926033@infradead.org>
- <CAK7LNARwAaw_22AjsheMtNwpVgF7FtKxh08mkg3cP=bY2016hw@mail.gmail.com>
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 489D163EEB;
+        Wed, 14 Jun 2023 08:30:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C3A5C433C8;
+        Wed, 14 Jun 2023 08:30:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686731436;
+        bh=5sOkTNkkHBdbRw2JX2dJi2tKIH7ENjxXYhVFqEgiEpg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IRZqPUqU0BwUN9jHEoglWuy0xEgoYyag/Ebn+rb0Vkv1pU4YIEbzbp79ipCyUrtxh
+         uu5SSmyKUoI1KIaFNYpCGmYHIXb2asmRHSE1NzBkLRpCt3Lk6SOguRjQnw2e7R7/RE
+         3jA20kzbdthCOfDkyHAr2RIu4FsSLyLI6XH8DA2HcU29jUMoC2mD9jrm9rg2mkUfCC
+         fiHIUATN1wcmkhYcliwSeMfAeYVI8hK2mr8m3NIMM3pMKtWaDqvzxe5VRX3IwZIRDp
+         k6p3K+ytT5NuIM6/QXPL9ncD1YxYtMcfr5ZIYEUleDDbnRtoLwM75vc9NwENqU3Y1d
+         e+ig0BIIgMwMg==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Brad Warrum <bwarrum@linux.ibm.com>,
+        Ritu Agarwal <rituagar@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ian Kent <raven@themaw.net>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Ruihan Li <lrh2000@pku.edu.cn>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 3/8] autofs: set ctime as well when mtime changes on a dir
+Date:   Wed, 14 Jun 2023 10:30:13 +0200
+Message-Id: <20230614-marmeladen-blechnapf-873c26e176cb@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230612104524.17058-4-jlayton@kernel.org>
+References: <20230612104524.17058-1-jlayton@kernel.org> <20230612104524.17058-4-jlayton@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=890; i=brauner@kernel.org; h=from:subject:message-id; bh=5sOkTNkkHBdbRw2JX2dJi2tKIH7ENjxXYhVFqEgiEpg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR0VvWrXuWb1qASt//kd4FHqU18By+ppS/RFud89ejpqjjT Z+/1O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACby5Bgjw7qZ1+/qxD5ZFinJah7vuf 6TQM5RjfV3nHf+b3iWcMttHxfDb9bHk9/X5L+18DmgM//eoU3cO9eIMDluPBbqbjtNMHa/Fg8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNARwAaw_22AjsheMtNwpVgF7FtKxh08mkg3cP=bY2016hw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 14, 2023 at 03:13:03PM +0900, Masahiro Yamada wrote:
-> On Mon, Jun 12, 2023 at 6:39 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > With the advent on scope-based resource management it comes really
-> > tedious to abide by the contraints of -Wdeclaration-after-statement.
-> 
-> Where is the context of Linus' suggested-by?
-> 
-> I do not know where this came from.
-> I suddenly got a huge v3 in my mailbox.
+On Mon, 12 Jun 2023 06:45:19 -0400, Jeff Layton wrote:
+> When adding entries to a directory, POSIX generally requires that the
+> ctime also be updated alongside the mtime.
 > 
 > 
-> I see an equivalent patch submitted last year:
-> https://lore.kernel.org/lkml/Y1w031iI6Ld29IVT@p183/
-> 
-> Linus rejected it. Did he change his mind?
 
-https://lkml.kernel.org/r/CAHk-%3Dwi-RyoUhbChiVaJZoZXheAwnJ7OO%3DGxe85BkPAd93TwDA%40mail.gmail.com
+Can't find a tree for this patch, so picking this patch up unless told otherwise.
 
-I'll add it as a Link tag to the Changelog.
+---
 
-> 
-> > It will still be recommeneded to place declarations at the start of a
-> > scope where possible, but it will no longer be enforced.
-> 
-> If you remove the warning, we will not be able to
-> detect code that opts out the recommendation
-> for no good reason.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-Yeah, so per that thread linked above I tried to play clever games with
-_Pragma() to get around this, but GCC hates on it (works fine with Clang
-though).
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Linus said to just give up and scrap the whole
--Wdeclaration-after-statement thing.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-I suppose it'll be up to reviewers and perhaps checkpatch like things to
-'enforce' the rules.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[3/8] autofs: set ctime as well when mtime changes on a dir
+      https://git.kernel.org/vfs/vfs/c/9b37b3342a98
