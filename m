@@ -2,66 +2,115 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD772EB64DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jun 2023 02:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCE5EB64DD
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jun 2023 06:14:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242184AbjFNCTN (ORCPT
+        id S243051AbjFNGOH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Jun 2023 22:19:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59270 "EHLO
+        Wed, 14 Jun 2023 02:14:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242221AbjFNCTI (ORCPT
+        with ESMTP id S243050AbjFNGOF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Jun 2023 22:19:08 -0400
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38BFA1BD2;
-        Tue, 13 Jun 2023 19:18:39 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0Vl4LWPN_1686709107;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0Vl4LWPN_1686709107)
-          by smtp.aliyun-inc.com;
-          Wed, 14 Jun 2023 10:18:36 +0800
-From:   Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To:     jejb@linux.ibm.com
-Cc:     jarkko@kernel.org, zohar@linux.ibm.com, dhowells@redhat.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] security: keys: Modify mismatched function name
-Date:   Wed, 14 Jun 2023 10:18:25 +0800
-Message-Id: <20230614021825.64333-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+        Wed, 14 Jun 2023 02:14:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEB581BE3;
+        Tue, 13 Jun 2023 23:14:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6421A63DBD;
+        Wed, 14 Jun 2023 06:14:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F5D6C433CD;
+        Wed, 14 Jun 2023 06:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686723241;
+        bh=gKtrtIqzZJoEk6ijfzdhgV+HQxM5jhk7xprFoURO0JM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=H2r0vx2LGQQyw19AhfkRLBx0RW0eL1OK9TtVh3CpZGktkKfPcWjNa9Kha87oDBHYJ
+         Zhz+1dlpE7DDMG5Rk9DPdEbCXbQjz3bl7RVN4MOS7uVarXb8B1sQySCZ7B2/9YBDYy
+         bWwKoJ/OXOR+I+kcLDX8GDODGFXdxmA0nWw5lm6S7BGbqYX1l4Ur5Di8DR63q4QUxL
+         3zvODZVMEkRqeYOGt+1x7Tv6mbJ+MxBc/TkMbJXHV/MNAwSBkaKAubU433Bu7zkjA8
+         am0zD+rwOSYPg+atIZFBO6SgL9tfErJKNXsPEqxIl79QJAcs2cl00cViWXdLU+xgyu
+         ta/KvDCLhzJ3A==
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-786e8de85c1so503991241.1;
+        Tue, 13 Jun 2023 23:14:01 -0700 (PDT)
+X-Gm-Message-State: AC+VfDykUL3Quwvwl/Ybfn/+B7+W+n6zypZ4D9y3G72B8BL9IApbJvxu
+        cY1RulrHMFm91oEx9Y58iH8JMGMQOXXO03nsTmk=
+X-Google-Smtp-Source: ACHHUZ4vqXimisQGWZrncZnp4O3Mb6P9lJW4fWcpmyBbfqrFix7TZ+nNTuq2mkhec+rZw/J5LGOYIIEVD09ISg0wZhM=
+X-Received: by 2002:a4a:c4c4:0:b0:558:bec2:c854 with SMTP id
+ g4-20020a4ac4c4000000b00558bec2c854mr8570147ooq.5.1686723220046; Tue, 13 Jun
+ 2023 23:13:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230612090713.652690195@infradead.org> <20230612093537.693926033@infradead.org>
+In-Reply-To: <20230612093537.693926033@infradead.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 14 Jun 2023 15:13:03 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARwAaw_22AjsheMtNwpVgF7FtKxh08mkg3cP=bY2016hw@mail.gmail.com>
+Message-ID: <CAK7LNARwAaw_22AjsheMtNwpVgF7FtKxh08mkg3cP=bY2016hw@mail.gmail.com>
+Subject: Re: [PATCH v3 04/57] kbuild: Drop -Wdeclaration-after-statement
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     torvalds@linux-foundation.org, keescook@chromium.org,
+        gregkh@linuxfoundation.org, pbonzini@redhat.com, nathan@kernel.org,
+        ndesaulniers@google.com, nicolas@fjasle.eu,
+        catalin.marinas@arm.com, will@kernel.org, vkoul@kernel.org,
+        trix@redhat.com, ojeda@kernel.org, mingo@redhat.com,
+        longman@redhat.com, boqun.feng@gmail.com, dennis@kernel.org,
+        tj@kernel.org, cl@linux.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
+        joel@joelfernandes.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        rientjes@google.com, vbabka@suse.cz, roman.gushchin@linux.dev,
+        42.hyeyoo@gmail.com, apw@canonical.com, joe@perches.com,
+        dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+        john.johansen@canonical.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        llvm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+        rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
+        tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
+        luc.vanoostenryck@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-No functional modification involved.
+On Mon, Jun 12, 2023 at 6:39=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> With the advent on scope-based resource management it comes really
+> tedious to abide by the contraints of -Wdeclaration-after-statement.
 
-security/keys/trusted-keys/trusted_tpm2.c:203: warning: expecting prototype for tpm_buf_append_auth(). Prototype was for tpm2_buf_append_auth() instead.
+Where is the context of Linus' suggested-by?
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=5524
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- security/keys/trusted-keys/trusted_tpm2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I do not know where this came from.
+I suddenly got a huge v3 in my mailbox.
 
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 2b2c8eb258d5..bc700f85f80b 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -186,7 +186,7 @@ int tpm2_key_priv(void *context, size_t hdrlen,
- }
- 
- /**
-- * tpm_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
-+ * tpm2_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
-  *
-  * @buf: an allocated tpm_buf instance
-  * @session_handle: session handle
--- 
-2.20.1.7.g153144c
 
+I see an equivalent patch submitted last year:
+https://lore.kernel.org/lkml/Y1w031iI6Ld29IVT@p183/
+
+Linus rejected it. Did he change his mind?
+
+
+
+> It will still be recommeneded to place declarations at the start of a
+> scope where possible, but it will no longer be enforced.
+
+If you remove the warning, we will not be able to
+detect code that opts out the recommendation
+for no good reason.
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
