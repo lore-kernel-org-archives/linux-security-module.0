@@ -2,87 +2,118 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E45A2EB64D8
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jun 2023 21:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F51EB64D9
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jun 2023 23:56:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235961AbjFNVwh (ORCPT
+        id S232288AbjFNX4X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Jun 2023 17:52:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50624 "EHLO
+        Wed, 14 Jun 2023 19:56:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233367AbjFNVwg (ORCPT
+        with ESMTP id S230298AbjFNX4W (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Jun 2023 17:52:36 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E1862695
-        for <linux-security-module@vger.kernel.org>; Wed, 14 Jun 2023 14:52:34 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-570002c9b38so13082787b3.1
-        for <linux-security-module@vger.kernel.org>; Wed, 14 Jun 2023 14:52:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1686779553; x=1689371553;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EZdhhM2WIyksS9SFgf4otvNoFB1EwxYBOF+gAHVPmG8=;
-        b=PXcQGsEt07YObxGudBvyTcBccv2Fq4xmvl5I8Pwzb6hW5+XL6GHtreR0xSZeiFk95+
-         1klsNd4sLvF6ujNQPsQJljmBXx8XNwsGmW/XLwPKhq3qlGWRQwZwNLlxQ5MmW33JF9Qj
-         ur1nzu6EdzzCxGNuFB7WMxNOmcYad8GBFCOD7LJ6Q96GjWg6BTQfWRiRKYMWPy3Zul9k
-         o15bIaLGmgcE+DqUAJ+zHsf8bnesjOZ8UoTwzmpzp16cH4jIO3xno6ET6xXlUkrce35G
-         m3SObnctwwIBp5WEJ4Dpnqc+oE+6qiGUrUfbCB93Tgra9QrWl8S+dClrreqAnVQ7Y1Ly
-         5xfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686779553; x=1689371553;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EZdhhM2WIyksS9SFgf4otvNoFB1EwxYBOF+gAHVPmG8=;
-        b=Uju0li6tV/lmMQX3gcqh73+rn6sjpisiRzyxbm5mh5JskS7L3NM7+WqtktX/wM0C0T
-         dHlQdUAmeKDae4sAWMNK53vJ3szgUDZNYLbK0Uoal8QSw63WgRoLjjneL5UhTUMR+YXw
-         HYT7x3Qx0kO8dIZkfOcUCZEzWcKVjedSiX3L+1retMeHKbkvfQ5xz7/UZXU7v76zqQce
-         JxUR0Ekc5cTBRq5okbY7iIQDY4P2YvAIDLFRX/G0Thetfn0beEfS0O6KPbr5JUA5ElNm
-         YpkmtcgaXVHF6FHigeXbLVXVG2JPM851NWMKjLHQbwhFowcYTT8JCYJ5hiQ9w8qCVcWB
-         AeJw==
-X-Gm-Message-State: AC+VfDzEl6uhnEXtevuokcz9CTo+FeQ9dUoLDCrMecqR56JEEsfMOBpm
-        hRcYA18cAGryVSI0AG6DlLhf32SPh0mMWlCm6YYs
-X-Google-Smtp-Source: ACHHUZ4sqJvwja7uZm1iFvMQmSoLOgVR1pgw6VNNtcCP2rOQqydJR0z8aPP5tWbHLjsYAPK9c1Y1duM2yF8XSfnLyQ8=
-X-Received: by 2002:a81:8205:0:b0:565:a081:a925 with SMTP id
- s5-20020a818205000000b00565a081a925mr3516080ywf.29.1686779553237; Wed, 14 Jun
- 2023 14:52:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230614021825.64333-1-jiapeng.chong@linux.alibaba.com>
-In-Reply-To: <20230614021825.64333-1-jiapeng.chong@linux.alibaba.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 14 Jun 2023 17:52:22 -0400
-Message-ID: <CAHC9VhSUz1zXBTFjaCDMzFCuAY6t3zG4WyXyKWBjNTwjLxZS+Q@mail.gmail.com>
-Subject: Re: [PATCH] security: keys: Modify mismatched function name
-To:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc:     jejb@linux.ibm.com, jarkko@kernel.org, zohar@linux.ibm.com,
-        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 14 Jun 2023 19:56:22 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B4231BF8;
+        Wed, 14 Jun 2023 16:56:21 -0700 (PDT)
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35ENkwqs010614;
+        Wed, 14 Jun 2023 23:55:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=Rp5y6wdKAFFhOp75eoI6smxrxPDGYZjPfkK3i0xfTgQ=;
+ b=YwT4r+U0KU1pqlgvUjY131SMKPYOq/pKOq/gGiE5Z6Z8R+nDtANd6XgCenQycufFpCbu
+ upL8D4p4kEQH5jPpyT73jTWPEoFUnpj3BJsCn8ghHVrt99BGXK1rgdOIFRIz5/uBRZ5H
+ dQxWdxSudqEOsRTKKvj3D4kssn8zD7FpFJP97ezTxNFp0JpBmmHftrm/WA2CicEfd/AW
+ 8hJ2VMFtaffzRCtUAEj0+xUpzLJXqi4X6LnYxh7kF3dyt+3Bg8aVW1q6GCEc+ZkRg0jV
+ d6Tl6vQzypTloZalgDAF3qlGL7OvOG5s5TE69CKzqv6OiAP71/x7JtySjdtYcRemX61m Pw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3r7qh783ug-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Jun 2023 23:55:46 +0000
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 35ENoGVo018069;
+        Wed, 14 Jun 2023 23:55:46 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3r7qh783u9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Jun 2023 23:55:46 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 35ELkAmE011857;
+        Wed, 14 Jun 2023 23:55:45 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([9.208.129.118])
+        by ppma04dal.us.ibm.com (PPS) with ESMTPS id 3r4gt65hkk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Jun 2023 23:55:45 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 35ENtild58786260
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Jun 2023 23:55:44 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 08C7D58054;
+        Wed, 14 Jun 2023 23:55:44 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E4FB58045;
+        Wed, 14 Jun 2023 23:55:42 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.19.215])
+        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 14 Jun 2023 23:55:42 +0000 (GMT)
+Message-ID: <8e59ce95a1cc100c41806ef72afe4265a1d43058.camel@linux.ibm.com>
+Subject: Re: [PATCH v12 3/4] evm: Align evm_inode_init_security() definition
+ with LSM infrastructure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 14 Jun 2023 19:55:41 -0400
+In-Reply-To: <20230610075738.3273764-4-roberto.sassu@huaweicloud.com>
+References: <20230610075738.3273764-1-roberto.sassu@huaweicloud.com>
+         <20230610075738.3273764-4-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9MmicGRGr_BY5jXpaH0qxroHoqQr9NWE
+X-Proofpoint-ORIG-GUID: MqKmAuuQ6av1wziaiH_Uwr-EakIm6oWy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-14_14,2023-06-14_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ impostorscore=0 mlxlogscore=999 malwarescore=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306140206
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 13, 2023 at 10:18=E2=80=AFPM Jiapeng Chong
-<jiapeng.chong@linux.alibaba.com> wrote:
->
-> No functional modification involved.
->
-> security/keys/trusted-keys/trusted_tpm2.c:203: warning: expecting prototy=
-pe for tpm_buf_append_auth(). Prototype was for tpm2_buf_append_auth() inst=
-ead.
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D5524
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->  security/keys/trusted-keys/trusted_tpm2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Sat, 2023-06-10 at 09:57 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Change the evm_inode_init_security() definition to align with the LSM
+> infrastructure. Keep the existing behavior of including in the HMAC
+> calculation only the first xattr provided by LSMs.
+> 
+> Changing the evm_inode_init_security() definition requires passing the
+> xattr array allocated by security_inode_init_security(), and the number of
+> xattrs filled by previously invoked LSMs.
+> 
+> Use the newly introduced lsm_get_xattr_slot() to position EVM correctly in
+> the xattrs array, like a regular LSM, and to increment the number of filled
+> slots. For now, the LSM infrastructure allocates enough xattrs slots to
+> store the EVM xattr, without using the reservation mechanism.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
+Thanks, Roberto!
 
---=20
-paul-moore.com
+Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+
