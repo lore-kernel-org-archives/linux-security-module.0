@@ -2,99 +2,87 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B25AEB64D8
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jun 2023 13:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E45A2EB64D8
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jun 2023 21:52:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244287AbjFNNCN (ORCPT
+        id S235961AbjFNVwh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Jun 2023 09:02:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55846 "EHLO
+        Wed, 14 Jun 2023 17:52:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236045AbjFNNCM (ORCPT
+        with ESMTP id S233367AbjFNVwg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Jun 2023 09:02:12 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E8C2A0
-        for <linux-security-module@vger.kernel.org>; Wed, 14 Jun 2023 06:02:11 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f8cec6641bso7776995e9.1
-        for <linux-security-module@vger.kernel.org>; Wed, 14 Jun 2023 06:02:10 -0700 (PDT)
+        Wed, 14 Jun 2023 17:52:36 -0400
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E1862695
+        for <linux-security-module@vger.kernel.org>; Wed, 14 Jun 2023 14:52:34 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-570002c9b38so13082787b3.1
+        for <linux-security-module@vger.kernel.org>; Wed, 14 Jun 2023 14:52:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686747729; x=1689339729;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z7T3D+U9Tv7RD5rlwhyON4ZX6lWyCUG2JeI56Mpz4QY=;
-        b=fiOcD3GIvmcxkkhumrwmL1Dx/vREL2TWO+wMhUCmVU2LjhZCa3T51wDWX8jSoB0yme
-         /G9uDrfhR7hiVi0+dKt8qhukzdlZtaLikPRJ9nriGS0PJjtL3AD0Z1uhSjQNvCF5TCmh
-         AXs8C/I/4CWWqLho94Vty4qntxnOjK/G7NdtyuQBrjD3/eO0X6+IlMO70aTfzX2Gh/v3
-         NCaDHeThx+px5y9rBIgVyOSxFUF8wUkz3/0rbcEAj6cTQtUcleUv1KCwdGvdlQ3CJnOu
-         38NLJQdfEgjNG5wobQVD8puPeoDH9HwpMIftbM5Sc14w0B0OKrM7mF17RV1WhXSU+JAI
-         oJpA==
+        d=paul-moore.com; s=google; t=1686779553; x=1689371553;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EZdhhM2WIyksS9SFgf4otvNoFB1EwxYBOF+gAHVPmG8=;
+        b=PXcQGsEt07YObxGudBvyTcBccv2Fq4xmvl5I8Pwzb6hW5+XL6GHtreR0xSZeiFk95+
+         1klsNd4sLvF6ujNQPsQJljmBXx8XNwsGmW/XLwPKhq3qlGWRQwZwNLlxQ5MmW33JF9Qj
+         ur1nzu6EdzzCxGNuFB7WMxNOmcYad8GBFCOD7LJ6Q96GjWg6BTQfWRiRKYMWPy3Zul9k
+         o15bIaLGmgcE+DqUAJ+zHsf8bnesjOZ8UoTwzmpzp16cH4jIO3xno6ET6xXlUkrce35G
+         m3SObnctwwIBp5WEJ4Dpnqc+oE+6qiGUrUfbCB93Tgra9QrWl8S+dClrreqAnVQ7Y1Ly
+         5xfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686747729; x=1689339729;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z7T3D+U9Tv7RD5rlwhyON4ZX6lWyCUG2JeI56Mpz4QY=;
-        b=DR6vOOkjnIqng/RImeGJYxcahH7hnv1v7l36f3sO7Bgr52m3+u6droEKWl1l3RgDom
-         8apTT7+L6hUZh0MmAACFxqtBTfyLW+rolcSfqZYc9MjvdeMxEu6cLzXRLNPB4QGwBsVS
-         OPfexLxPIV16h/0QB4IK3ygSpgxMWlecJ/Nj4UwBtVLxIEcQkjBm6ocjvWgNFABwgBsD
-         T/gPPT9AlvHoxEpWrJn8Y+diGzMFkv3yoJ/JZzXkVcvDDUWBExCnvU74ASXjwTywXLz5
-         kWAwnEjNyHaMp7mquyG3XCUZENbaDE3mUmqy7mzTc+nFJbsdBG0Ibv8W/vVpveYRactr
-         ZlHQ==
-X-Gm-Message-State: AC+VfDy4/WH0v3sviRmb/RdRF+5szVoe5/0W3WSnvlLTOR8/x21YUQ+B
-        QWtJcbDCIOTo/1ldSSELmqdZzA==
-X-Google-Smtp-Source: ACHHUZ6V6uwFBRhwQLKnYQL5hBOnhcEekAqbA/gVaO6DLEIlckv+ePm7LR9zaCegdOFXynCOex+zzQ==
-X-Received: by 2002:a1c:6a18:0:b0:3f7:e34d:33c4 with SMTP id f24-20020a1c6a18000000b003f7e34d33c4mr11481733wmc.10.1686747729569;
-        Wed, 14 Jun 2023 06:02:09 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id y22-20020a7bcd96000000b003f7f2a1484csm17493492wmj.5.2023.06.14.06.02.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 06:02:08 -0700 (PDT)
-Date:   Wed, 14 Jun 2023 16:02:04 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jon Tourville <jontourville@me.com>, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] apparmor: use passed in gfp flags in aa_alloc_null()
-Message-ID: <bf35a5d2-db9f-47cb-a2f0-ea23e407f36d@moroto.mountain>
+        d=1e100.net; s=20221208; t=1686779553; x=1689371553;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EZdhhM2WIyksS9SFgf4otvNoFB1EwxYBOF+gAHVPmG8=;
+        b=Uju0li6tV/lmMQX3gcqh73+rn6sjpisiRzyxbm5mh5JskS7L3NM7+WqtktX/wM0C0T
+         dHlQdUAmeKDae4sAWMNK53vJ3szgUDZNYLbK0Uoal8QSw63WgRoLjjneL5UhTUMR+YXw
+         HYT7x3Qx0kO8dIZkfOcUCZEzWcKVjedSiX3L+1retMeHKbkvfQ5xz7/UZXU7v76zqQce
+         JxUR0Ekc5cTBRq5okbY7iIQDY4P2YvAIDLFRX/G0Thetfn0beEfS0O6KPbr5JUA5ElNm
+         YpkmtcgaXVHF6FHigeXbLVXVG2JPM851NWMKjLHQbwhFowcYTT8JCYJ5hiQ9w8qCVcWB
+         AeJw==
+X-Gm-Message-State: AC+VfDzEl6uhnEXtevuokcz9CTo+FeQ9dUoLDCrMecqR56JEEsfMOBpm
+        hRcYA18cAGryVSI0AG6DlLhf32SPh0mMWlCm6YYs
+X-Google-Smtp-Source: ACHHUZ4sqJvwja7uZm1iFvMQmSoLOgVR1pgw6VNNtcCP2rOQqydJR0z8aPP5tWbHLjsYAPK9c1Y1duM2yF8XSfnLyQ8=
+X-Received: by 2002:a81:8205:0:b0:565:a081:a925 with SMTP id
+ s5-20020a818205000000b00565a081a925mr3516080ywf.29.1686779553237; Wed, 14 Jun
+ 2023 14:52:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <20230614021825.64333-1-jiapeng.chong@linux.alibaba.com>
+In-Reply-To: <20230614021825.64333-1-jiapeng.chong@linux.alibaba.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 14 Jun 2023 17:52:22 -0400
+Message-ID: <CAHC9VhSUz1zXBTFjaCDMzFCuAY6t3zG4WyXyKWBjNTwjLxZS+Q@mail.gmail.com>
+Subject: Re: [PATCH] security: keys: Modify mismatched function name
+To:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc:     jejb@linux.ibm.com, jarkko@kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-These allocations should use the gfp flags from the caller instead of
-GFP_KERNEL.  But from what I can see, all the callers pass in GFP_KERNEL
-so this does not affect runtime.
+On Tue, Jun 13, 2023 at 10:18=E2=80=AFPM Jiapeng Chong
+<jiapeng.chong@linux.alibaba.com> wrote:
+>
+> No functional modification involved.
+>
+> security/keys/trusted-keys/trusted_tpm2.c:203: warning: expecting prototy=
+pe for tpm_buf_append_auth(). Prototype was for tpm2_buf_append_auth() inst=
+ead.
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D5524
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+>  security/keys/trusted-keys/trusted_tpm2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixes: e31dd6e412f7 ("apparmor: fix: kzalloc perms tables for shared dfas")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- security/apparmor/policy.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index b38f7b2a5e1d..715fe1b66d12 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -589,12 +589,12 @@ struct aa_profile *aa_alloc_null(struct aa_profile *parent, const char *name,
- 	profile->label.flags |= FLAG_NULL;
- 	rules = list_first_entry(&profile->rules, typeof(*rules), list);
- 	rules->file.dfa = aa_get_dfa(nulldfa);
--	rules->file.perms = kcalloc(2, sizeof(struct aa_perms), GFP_KERNEL);
-+	rules->file.perms = kcalloc(2, sizeof(struct aa_perms), gfp);
- 	if (!rules->file.perms)
- 		goto fail;
- 	rules->file.size = 2;
- 	rules->policy.dfa = aa_get_dfa(nulldfa);
--	rules->policy.perms = kcalloc(2, sizeof(struct aa_perms), GFP_KERNEL);
-+	rules->policy.perms = kcalloc(2, sizeof(struct aa_perms), gfp);
- 	if (!rules->policy.perms)
- 		goto fail;
- 	rules->policy.size = 2;
--- 
-2.39.2
-
+--=20
+paul-moore.com
