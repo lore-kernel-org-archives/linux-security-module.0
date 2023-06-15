@@ -2,135 +2,147 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A53EB64DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Jun 2023 09:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB4D4C0015E
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Jun 2023 10:15:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245427AbjFOJIu (ORCPT
+        id S1343628AbjFOKPW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Jun 2023 05:08:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46440 "EHLO
+        Thu, 15 Jun 2023 06:15:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245385AbjFOJIp (ORCPT
+        with ESMTP id S1343512AbjFOKPV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Jun 2023 05:08:45 -0400
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A82741FE8;
-        Thu, 15 Jun 2023 02:08:37 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046051;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Vl9wwvH_1686820112;
-Received: from 30.240.108.67(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0Vl9wwvH_1686820112)
-          by smtp.aliyun-inc.com;
-          Thu, 15 Jun 2023 17:08:34 +0800
-Message-ID: <66c72938-912c-5167-fdb1-bffefe1db0c9@linux.alibaba.com>
-Date:   Thu, 15 Jun 2023 17:08:31 +0800
+        Thu, 15 Jun 2023 06:15:21 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C97C52710;
+        Thu, 15 Jun 2023 03:15:19 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 28C04320095B;
+        Thu, 15 Jun 2023 06:15:14 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 15 Jun 2023 06:15:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1686824113; x=1686910513; bh=jvOa0kUu39x3GQIUZew1mtO2AZHY76muWFu
+        JjSogrbo=; b=EPuJmmgzGiJ225PcqtobDHqYGSJ9FbMR2/HM25N5yJWC19vNsWc
+        Mc6g6a+7u+xOngvo9ql+gTvTIpzuGWBoP/5w/homxwocEszbS2BY66xEYK6rhU39
+        fKC/2J9A/tppqgMokw04lHq9ClAM1NidgPPF8XwPFb8brMaJ+yC9q3lx2oIXOqxk
+        NwLzZE/EEO50omOBh8TzBe3YSIduGwMWsqcNQv/QxRuOtVG1aQhGmfZDS7sPfd2L
+        ivZT6v6WRn+ar6/Ercj4MGKWKcxqfmYJxSQn9HNqtGrfvghNPb7RO/tPUhDvWwyc
+        AMWwvLlS+hTH2y5s8+UvqcROZ9GavRIlJjA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1686824113; x=1686910513; bh=jvOa0kUu39x3GQIUZew1mtO2AZHY76muWFu
+        JjSogrbo=; b=WQJvt4ZbovTVmVpd9nLF3ZaQUs0YTu6cciUQMWaCHlkUVtF3OXV
+        BWs4+jr1+AQmOje/HwT59Uc+gCIA11iaI+HKQgg1BQI7sTScTCZe5aMc5Lf00ImL
+        QDpPl/Z5yXuNtNsNhoruSIK8Cot14nLIGVBTkr3kM9F5w/zLjQQXCcCm3wqRDJm2
+        HeWiDlna/Wo0l7rNZ01teWvAvYCqAbsjWmH0BfmI4FUBZcNogxXmZuNoaQmWIcoC
+        YVUfDU4KdHqT7PrUPo6RaUGRnMnVFM5UYZZEwh9IGjmkuLSVwVR7KWHfNcqZIgQY
+        s3tbtsbhHV1NfiIcQHLDi22Z7h98FbB3k5w==
+X-ME-Sender: <xms:ruSKZG5KTXG0gmtGtJo7uRZjEP9L2uA8FceNvEHEUY_HEFxS_vSg6w>
+    <xme:ruSKZP6gJfjPCPkDZxO7P2yfKxqgVshVYIO-BFUqG9gza_kFyrirnLzCAdWBYHHOA
+    rtssRT4dgHj>
+X-ME-Received: <xmr:ruSKZFcYMhzp3p4dVxc0s3Vl51XeTu7AHuu5VgqpTZEpWG00hrQLFYFShS57T4NXamlitnOlpunBaAkLolifmc7XM9J10LAESfQWDhF-ssSeVx6A_CQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedvvddgvdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
+    epueegveehueejjedvgeeiheekueduhffgueejgfevgedujeeiieegteehkeehvdeknecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:ruSKZDLzSSqLt02FBEIUzHHY4xZZ_TZ_PWC8bGUEs42QZiREyLJTGA>
+    <xmx:ruSKZKI8VzziHd8Su9M3RxLVJW6wU6YgqTLPVAMD4bEXZRsXqShSfg>
+    <xmx:ruSKZEz53POS86abZ0ETHQjNStkncFA38huo4bMy2_h8V5Cw8AqPbg>
+    <xmx:seSKZBjFa-W9fp3GjiPZn6ETCEsVPgY-xM4OpQEnsiOh_w7YUlORjg>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 15 Jun 2023 06:14:59 -0400 (EDT)
+Message-ID: <ebad4167-6fec-b603-9be8-54457b2a32fd@themaw.net>
+Date:   Thu, 15 Jun 2023 18:14:55 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.10.0
-Subject: Re: [PATCH v2] integrity: Fix possible multiple allocation in
- integrity_inode_get()
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: (subset) [PATCH v2 3/8] autofs: set ctime as well when mtime
+ changes on a dir
+To:     Christian Brauner <brauner@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Brad Warrum <bwarrum@linux.ibm.com>,
+        Ritu Agarwal <rituagar@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        John Johansen <john.johansen@canonical.com>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230530121453.10249-1-tianjia.zhang@linux.alibaba.com>
- <20230601064244.33633-1-tianjia.zhang@linux.alibaba.com>
- <CT86SNGF201H.2UZF8SN2MEKZ6@suppilovahvero>
+        Ruihan Li <lrh2000@pku.edu.cn>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org
+References: <20230612104524.17058-1-jlayton@kernel.org>
+ <20230612104524.17058-4-jlayton@kernel.org>
+ <20230614-marmeladen-blechnapf-873c26e176cb@brauner>
 Content-Language: en-US
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-In-Reply-To: <CT86SNGF201H.2UZF8SN2MEKZ6@suppilovahvero>
+From:   Ian Kent <raven@themaw.net>
+In-Reply-To: <20230614-marmeladen-blechnapf-873c26e176cb@brauner>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jarkko,
-
-On 6/9/23 10:24 PM, Jarkko Sakkinen wrote:
-> On Thu Jun 1, 2023 at 9:42 AM EEST, Tianjia Zhang wrote:
->> When integrity_inode_get() is querying and inserting the cache, there
->> is a conditional race in the concurrent environment.
+On 14/6/23 16:30, Christian Brauner wrote:
+> On Mon, 12 Jun 2023 06:45:19 -0400, Jeff Layton wrote:
+>> When adding entries to a directory, POSIX generally requires that the
+>> ctime also be updated alongside the mtime.
 >>
->> The race condition is the result of not properly implementing
->> "double-checked locking". In this case, it first checks to see if the
->> iint cache record exists before taking the lock, but doesn't check
->> again after taking the integrity_iint_lock.
 >>
->> Fixes: bf2276d10ce5 ("ima: allocating iint improvements")
->> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
->> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
->> Cc: <stable@vger.kernel.org> # v3.10+
-> 
-> s/v3.10/v4.14/
-> 
-> I.e. cover only currently maintained longterms, right?
-> 
+> Can't find a tree for this patch, so picking this patch up unless told otherwise.
 
-Yes, the race condition was indeed introduced in 3.10, but the fix is
-estimated to only cover the LTS version.
+There's relatively few changes to autofs and Linus asked me to send
 
-> 
->> ---
->>   security/integrity/iint.c | 15 +++++++++------
->>   1 file changed, 9 insertions(+), 6 deletions(-)
->>
->> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
->> index c73858e8c6d5..a462df827de2 100644
->> --- a/security/integrity/iint.c
->> +++ b/security/integrity/iint.c
->> @@ -43,12 +43,10 @@ static struct integrity_iint_cache *__integrity_iint_find(struct inode *inode)
->>   		else if (inode > iint->inode)
->>   			n = n->rb_right;
->>   		else
->> -			break;
->> +			return iint;
->>   	}
->> -	if (!n)
->> -		return NULL;
->>   
->> -	return iint;
->> +	return NULL;
->>   }
->>   
->>   /*
->> @@ -113,10 +111,15 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
->>   		parent = *p;
->>   		test_iint = rb_entry(parent, struct integrity_iint_cache,
->>   				     rb_node);
->> -		if (inode < test_iint->inode)
->> +		if (inode < test_iint->inode) {
->>   			p = &(*p)->rb_left;
->> -		else
->> +		} else if (inode > test_iint->inode) {
->>   			p = &(*p)->rb_right;
->> +		} else {
->> +			write_unlock(&integrity_iint_lock);
->> +			kmem_cache_free(iint_cache, iint);
->> +			return test_iint;
->> +		}
->>   	}
->>   
->>   	iint->inode = inode;
->> -- 
->> 2.24.3 (Apple Git-128)
-> 
-> Mimi, are you picking this?
+changes via. Al or Andrew so there's no point in maintaining a tree
 
-Mimi has picked this patch in next-integrity.
+anyway.
 
-> 
-> Off-topic: how do you compile kernel on macOS, you're using VM right?
-> I'm just interested because I recently bought Mac mini for both
-> compiling and testing arm64. Optimal would be to be able to compile
-> the kernel on bare metal and then deploy to a VM...
-> 
 
-I am currently only coding and sending the final patch on a Mac.
-Compilation and testing are still carried out in the linux environment.
-If you have experience in launching a linux VM on macOS, please share it
-with me, thanks.
+Ian
 
-Best regards,
-Tianjia
+>
+> ---
+>
+> Applied to the vfs.misc branch of the vfs/vfs.git tree.
+> Patches in the vfs.misc branch should appear in linux-next soon.
+>
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+>
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.misc
+>
+> [3/8] autofs: set ctime as well when mtime changes on a dir
+>        https://git.kernel.org/vfs/vfs/c/9b37b3342a98
