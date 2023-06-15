@@ -2,147 +2,202 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB4D4C0015E
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Jun 2023 10:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A0EEB64DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Jun 2023 13:20:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343628AbjFOKPW (ORCPT
+        id S241019AbjFONUY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Jun 2023 06:15:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34782 "EHLO
+        Thu, 15 Jun 2023 09:20:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343512AbjFOKPV (ORCPT
+        with ESMTP id S1343896AbjFONTz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Jun 2023 06:15:21 -0400
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C97C52710;
-        Thu, 15 Jun 2023 03:15:19 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 28C04320095B;
-        Thu, 15 Jun 2023 06:15:14 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 15 Jun 2023 06:15:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1686824113; x=1686910513; bh=jvOa0kUu39x3GQIUZew1mtO2AZHY76muWFu
-        JjSogrbo=; b=EPuJmmgzGiJ225PcqtobDHqYGSJ9FbMR2/HM25N5yJWC19vNsWc
-        Mc6g6a+7u+xOngvo9ql+gTvTIpzuGWBoP/5w/homxwocEszbS2BY66xEYK6rhU39
-        fKC/2J9A/tppqgMokw04lHq9ClAM1NidgPPF8XwPFb8brMaJ+yC9q3lx2oIXOqxk
-        NwLzZE/EEO50omOBh8TzBe3YSIduGwMWsqcNQv/QxRuOtVG1aQhGmfZDS7sPfd2L
-        ivZT6v6WRn+ar6/Ercj4MGKWKcxqfmYJxSQn9HNqtGrfvghNPb7RO/tPUhDvWwyc
-        AMWwvLlS+hTH2y5s8+UvqcROZ9GavRIlJjA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1686824113; x=1686910513; bh=jvOa0kUu39x3GQIUZew1mtO2AZHY76muWFu
-        JjSogrbo=; b=WQJvt4ZbovTVmVpd9nLF3ZaQUs0YTu6cciUQMWaCHlkUVtF3OXV
-        BWs4+jr1+AQmOje/HwT59Uc+gCIA11iaI+HKQgg1BQI7sTScTCZe5aMc5Lf00ImL
-        QDpPl/Z5yXuNtNsNhoruSIK8Cot14nLIGVBTkr3kM9F5w/zLjQQXCcCm3wqRDJm2
-        HeWiDlna/Wo0l7rNZ01teWvAvYCqAbsjWmH0BfmI4FUBZcNogxXmZuNoaQmWIcoC
-        YVUfDU4KdHqT7PrUPo6RaUGRnMnVFM5UYZZEwh9IGjmkuLSVwVR7KWHfNcqZIgQY
-        s3tbtsbhHV1NfiIcQHLDi22Z7h98FbB3k5w==
-X-ME-Sender: <xms:ruSKZG5KTXG0gmtGtJo7uRZjEP9L2uA8FceNvEHEUY_HEFxS_vSg6w>
-    <xme:ruSKZP6gJfjPCPkDZxO7P2yfKxqgVshVYIO-BFUqG9gza_kFyrirnLzCAdWBYHHOA
-    rtssRT4dgHj>
-X-ME-Received: <xmr:ruSKZFcYMhzp3p4dVxc0s3Vl51XeTu7AHuu5VgqpTZEpWG00hrQLFYFShS57T4NXamlitnOlpunBaAkLolifmc7XM9J10LAESfQWDhF-ssSeVx6A_CQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedvvddgvdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    epueegveehueejjedvgeeiheekueduhffgueejgfevgedujeeiieegteehkeehvdeknecu
-    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:ruSKZDLzSSqLt02FBEIUzHHY4xZZ_TZ_PWC8bGUEs42QZiREyLJTGA>
-    <xmx:ruSKZKI8VzziHd8Su9M3RxLVJW6wU6YgqTLPVAMD4bEXZRsXqShSfg>
-    <xmx:ruSKZEz53POS86abZ0ETHQjNStkncFA38huo4bMy2_h8V5Cw8AqPbg>
-    <xmx:seSKZBjFa-W9fp3GjiPZn6ETCEsVPgY-xM4OpQEnsiOh_w7YUlORjg>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 15 Jun 2023 06:14:59 -0400 (EDT)
-Message-ID: <ebad4167-6fec-b603-9be8-54457b2a32fd@themaw.net>
-Date:   Thu, 15 Jun 2023 18:14:55 +0800
+        Thu, 15 Jun 2023 09:19:55 -0400
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 641E71FEF;
+        Thu, 15 Jun 2023 06:19:52 -0700 (PDT)
+Received: from jerom (unknown [12.133.101.138])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: serge)
+        by mail.hallyn.com (Postfix) with ESMTPSA id 146E75F8;
+        Thu, 15 Jun 2023 08:19:47 -0500 (CDT)
+Date:   Thu, 15 Jun 2023 08:19:42 -0500
+From:   Serge Hallyn <serge@hallyn.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
+        jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net
+Subject: Re: [PATCH v10 07/11] LSM: Helpers for attribute names and filling
+ lsm_ctx
+Message-ID: <ZIsP7rkD1MscMqQ3@jerom>
+References: <20230428203417.159874-1-casey@schaufler-ca.com>
+ <20230428203417.159874-8-casey@schaufler-ca.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: (subset) [PATCH v2 3/8] autofs: set ctime as well when mtime
- changes on a dir
-To:     Christian Brauner <brauner@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Brad Warrum <bwarrum@linux.ibm.com>,
-        Ritu Agarwal <rituagar@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Ruihan Li <lrh2000@pku.edu.cn>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org
-References: <20230612104524.17058-1-jlayton@kernel.org>
- <20230612104524.17058-4-jlayton@kernel.org>
- <20230614-marmeladen-blechnapf-873c26e176cb@brauner>
-Content-Language: en-US
-From:   Ian Kent <raven@themaw.net>
-In-Reply-To: <20230614-marmeladen-blechnapf-873c26e176cb@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230428203417.159874-8-casey@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 14/6/23 16:30, Christian Brauner wrote:
-> On Mon, 12 Jun 2023 06:45:19 -0400, Jeff Layton wrote:
->> When adding entries to a directory, POSIX generally requires that the
->> ctime also be updated alongside the mtime.
->>
->>
-> Can't find a tree for this patch, so picking this patch up unless told otherwise.
+On Fri, Apr 28, 2023 at 01:34:13PM -0700, Casey Schaufler wrote:
+> Add lsm_name_to_attr(), which translates a text string to a
+> LSM_ATTR value if one is available.
+> 
+> Add lsm_fill_user_ctx(), which fills a struct lsm_ctx, including
+> the trailing attribute value. The .len value is padded to a multiple
+> of 64 bits for alignment.
+> 
+> All are used in module specific components of LSM system calls.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-There's relatively few changes to autofs and Linus asked me to send
+Reviewed-by: Serge E. Hallyn <serge@hallyn.com>
 
-changes via. Al or Andrew so there's no point in maintaining a tree
-
-anyway.
-
-
-Ian
-
->
 > ---
->
-> Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs.misc branch should appear in linux-next soon.
->
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.misc
->
-> [3/8] autofs: set ctime as well when mtime changes on a dir
->        https://git.kernel.org/vfs/vfs/c/9b37b3342a98
+>  include/linux/security.h | 13 ++++++++++++
+>  security/lsm_syscalls.c  | 24 ++++++++++++++++++++++
+>  security/security.c      | 44 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 81 insertions(+)
+> 
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 806bff425af9..36ace59f9171 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -263,6 +263,7 @@ int unregister_blocking_lsm_notifier(struct notifier_block *nb);
+>  /* prototypes */
+>  extern int security_init(void);
+>  extern int early_security_init(void);
+> +extern u64 lsm_name_to_attr(const char *name);
+>  
+>  /* Security operations */
+>  int security_binder_set_context_mgr(const struct cred *mgr);
+> @@ -491,6 +492,8 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+>  int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
+>  int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
+>  int security_locked_down(enum lockdown_reason what);
+> +int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
+> +		      size_t context_size, u64 id, u64 flags);
+>  #else /* CONFIG_SECURITY */
+>  
+>  static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
+> @@ -508,6 +511,11 @@ static inline  int unregister_blocking_lsm_notifier(struct notifier_block *nb)
+>  	return 0;
+>  }
+>  
+> +static inline u64 lsm_name_to_attr(const char *name)
+> +{
+> +	return LSM_ATTR_UNDEF;
+> +}
+> +
+>  static inline void security_free_mnt_opts(void **mnt_opts)
+>  {
+>  }
+> @@ -1420,6 +1428,11 @@ static inline int security_locked_down(enum lockdown_reason what)
+>  {
+>  	return 0;
+>  }
+> +static inline int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
+> +				    size_t context_size, u64 id, u64 flags)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+>  #endif	/* CONFIG_SECURITY */
+>  
+>  #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
+> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
+> index b89cccb2f123..0b225adfe5f7 100644
+> --- a/security/lsm_syscalls.c
+> +++ b/security/lsm_syscalls.c
+> @@ -17,6 +17,30 @@
+>  #include <linux/lsm_hooks.h>
+>  #include <uapi/linux/lsm.h>
+>  
+> +/**
+> + * lsm_name_to_attr - map an LSM attribute name to its ID
+> + * @name: name of the attribute
+> + *
+> + * Returns the LSM attribute value associated with @name, or 0 if
+> + * there is no mapping.
+> + */
+> +u64 lsm_name_to_attr(const char *name)
+> +{
+> +	if (!strcmp(name, "current"))
+> +		return LSM_ATTR_CURRENT;
+> +	if (!strcmp(name, "exec"))
+> +		return LSM_ATTR_EXEC;
+> +	if (!strcmp(name, "fscreate"))
+> +		return LSM_ATTR_FSCREATE;
+> +	if (!strcmp(name, "keycreate"))
+> +		return LSM_ATTR_KEYCREATE;
+> +	if (!strcmp(name, "prev"))
+> +		return LSM_ATTR_PREV;
+> +	if (!strcmp(name, "sockcreate"))
+> +		return LSM_ATTR_SOCKCREATE;
+> +	return LSM_ATTR_UNDEF;
+> +}
+> +
+>  /**
+>   * sys_lsm_set_self_attr - Set current task's security module attribute
+>   * @attr: which attribute to set
+> diff --git a/security/security.c b/security/security.c
+> index 94b78bfd06b9..8c877d639cae 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -761,6 +761,50 @@ static int lsm_superblock_alloc(struct super_block *sb)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * lsm_fill_user_ctx - Fill a user space lsm_ctx structure
+> + * @ctx: an LSM context to be filled
+> + * @context: the new context value
+> + * @context_size: the size of the new context value
+> + * @id: LSM id
+> + * @flags: LSM defined flags
+> + *
+> + * Fill all of the fields in a user space lsm_ctx structure.
+> + * Caller is assumed to have verified that @ctx has enough space
+> + * for @context.
+> + *
+> + * The total length is padded to a multiple of 64 bits to
+> + * accomodate possible alignment issues.
+> + *
+> + * Returns 0 on success, -EFAULT on a copyout error, -ENOMEM
+> + * if memory can't be allocated.
+> + */
+> +int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
+> +		      size_t context_size, u64 id, u64 flags)
+> +{
+> +	struct lsm_ctx *lctx;
+> +	size_t locallen = ALIGN(struct_size(lctx, ctx, context_size), 8);
+> +	int rc = 0;
+> +
+> +	lctx = kzalloc(locallen, GFP_KERNEL);
+> +	if (lctx == NULL)
+> +		return -ENOMEM;
+> +
+> +	lctx->id = id;
+> +	lctx->flags = flags;
+> +	lctx->ctx_len = context_size;
+> +	lctx->len = locallen;
+> +
+> +	memcpy(lctx->ctx, context, context_size);
+> +
+> +	if (copy_to_user(ctx, lctx, locallen))
+> +		rc = -EFAULT;
+> +
+> +	kfree(lctx);
+> +
+> +	return rc;
+> +}
+> +
+>  /*
+>   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
+>   * can be accessed with:
+> -- 
+> 2.39.2
+> 
