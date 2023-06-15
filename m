@@ -2,119 +2,135 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E56EB64DC
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jun 2023 23:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A53EB64DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Jun 2023 09:08:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236296AbjFNX4Y (ORCPT
+        id S245427AbjFOJIu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Jun 2023 19:56:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41308 "EHLO
+        Thu, 15 Jun 2023 05:08:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230303AbjFNX4W (ORCPT
+        with ESMTP id S245385AbjFOJIp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Jun 2023 19:56:22 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 241071FD4;
-        Wed, 14 Jun 2023 16:56:22 -0700 (PDT)
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35ENlh3V026988;
-        Wed, 14 Jun 2023 23:55:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=em1Oy/ZXJogHXMF15eFq+xLsfAk1Tg9tnkKe6mZVrbk=;
- b=KDKzgmlYEHwwvkRA5T771c4ageC8lnPTLK4j/zQ7Uaacd9fu1Q3Vk4OYyUxjx6IyucgG
- YfZAWkCOz/Na90oFKgmJg20XYd+oAPpCugMMfOZ5NWvBiX3PpImHqEN70gjpARaZDDGc
- zqy+SXe7JSrR1p1V3UEVmsAA6GSfbDnfEcM927tYRU6/HLoZKV3ARvtCwfwBA2KFzQa+
- 3omZAsIjMd6/VjazBWEP8/lpqnRHvX5CChsXfsZu9AxL4YjUX0D4VSUH29LhXCWxHFvC
- KiMRHNoQdAKJseWFhXTDruihxH12pZTgF2/WqIqf+cdBSL3FxlGIdDqecuFLRpoSQFMp ZA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3r7qhf847m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Jun 2023 23:55:51 +0000
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 35ENnFtF030725;
-        Wed, 14 Jun 2023 23:55:51 GMT
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3r7qhf847a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Jun 2023 23:55:51 +0000
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 35EKfiFC002759;
-        Wed, 14 Jun 2023 23:55:50 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([9.208.130.102])
-        by ppma01wdc.us.ibm.com (PPS) with ESMTPS id 3r4gt5g4qe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Jun 2023 23:55:49 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-        by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 35ENtmjS56295736
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Jun 2023 23:55:49 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CB5B958053;
-        Wed, 14 Jun 2023 23:55:48 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E82FA58043;
-        Wed, 14 Jun 2023 23:55:46 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.19.215])
-        by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 14 Jun 2023 23:55:46 +0000 (GMT)
-Message-ID: <6af688eba06f6a89632fbf4afcd47cbb8c790183.camel@linux.ibm.com>
-Subject: Re: [PATCH v12 4/4] evm: Support multiple LSMs providing an xattr
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
-        nicolas.bouchinet@clip-os.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 14 Jun 2023 19:55:46 -0400
-In-Reply-To: <20230610075738.3273764-5-roberto.sassu@huaweicloud.com>
-References: <20230610075738.3273764-1-roberto.sassu@huaweicloud.com>
-         <20230610075738.3273764-5-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
+        Thu, 15 Jun 2023 05:08:45 -0400
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A82741FE8;
+        Thu, 15 Jun 2023 02:08:37 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046051;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Vl9wwvH_1686820112;
+Received: from 30.240.108.67(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0Vl9wwvH_1686820112)
+          by smtp.aliyun-inc.com;
+          Thu, 15 Jun 2023 17:08:34 +0800
+Message-ID: <66c72938-912c-5167-fdb1-bffefe1db0c9@linux.alibaba.com>
+Date:   Thu, 15 Jun 2023 17:08:31 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.10.0
+Subject: Re: [PATCH v2] integrity: Fix possible multiple allocation in
+ integrity_inode_get()
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230530121453.10249-1-tianjia.zhang@linux.alibaba.com>
+ <20230601064244.33633-1-tianjia.zhang@linux.alibaba.com>
+ <CT86SNGF201H.2UZF8SN2MEKZ6@suppilovahvero>
+Content-Language: en-US
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <CT86SNGF201H.2UZF8SN2MEKZ6@suppilovahvero>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 2rTFnRN5fpu42bPG-G4_Qq-LcYHFpQSx
-X-Proofpoint-GUID: 72iNxXHhB3aam4APkdBzXTGgPwL2_OO5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-14_14,2023-06-14_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0
- adultscore=0 clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0
- priorityscore=1501 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2305260000 definitions=main-2306140206
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 2023-06-10 at 09:57 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Currently, evm_inode_init_security() processes a single LSM xattr from the
-> array passed by security_inode_init_security(), and calculates the HMAC on
-> it and other inode metadata.
-> 
-> As the LSM infrastructure now can pass to EVM an array with multiple
-> xattrs, scan them until the terminator (xattr name NULL), and calculate the
-> HMAC on all of them.
-> 
-> Also, double check that the xattrs array terminator is the first non-filled
-> slot (obtained with lsm_get_xattr_slot()). Consumers of the xattrs array,
-> such as the initxattrs() callbacks, rely on the terminator.
-> 
-> Finally, change the name of the lsm_xattr parameter of evm_init_hmac() to
-> xattrs, to reflect the new type of information passed.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Hi Jarkko,
 
-Thanks, Roberto!
+On 6/9/23 10:24 PM, Jarkko Sakkinen wrote:
+> On Thu Jun 1, 2023 at 9:42 AM EEST, Tianjia Zhang wrote:
+>> When integrity_inode_get() is querying and inserting the cache, there
+>> is a conditional race in the concurrent environment.
+>>
+>> The race condition is the result of not properly implementing
+>> "double-checked locking". In this case, it first checks to see if the
+>> iint cache record exists before taking the lock, but doesn't check
+>> again after taking the integrity_iint_lock.
+>>
+>> Fixes: bf2276d10ce5 ("ima: allocating iint improvements")
+>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+>> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+>> Cc: <stable@vger.kernel.org> # v3.10+
+> 
+> s/v3.10/v4.14/
+> 
+> I.e. cover only currently maintained longterms, right?
+> 
 
-Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+Yes, the race condition was indeed introduced in 3.10, but the fix is
+estimated to only cover the LTS version.
 
+> 
+>> ---
+>>   security/integrity/iint.c | 15 +++++++++------
+>>   1 file changed, 9 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+>> index c73858e8c6d5..a462df827de2 100644
+>> --- a/security/integrity/iint.c
+>> +++ b/security/integrity/iint.c
+>> @@ -43,12 +43,10 @@ static struct integrity_iint_cache *__integrity_iint_find(struct inode *inode)
+>>   		else if (inode > iint->inode)
+>>   			n = n->rb_right;
+>>   		else
+>> -			break;
+>> +			return iint;
+>>   	}
+>> -	if (!n)
+>> -		return NULL;
+>>   
+>> -	return iint;
+>> +	return NULL;
+>>   }
+>>   
+>>   /*
+>> @@ -113,10 +111,15 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
+>>   		parent = *p;
+>>   		test_iint = rb_entry(parent, struct integrity_iint_cache,
+>>   				     rb_node);
+>> -		if (inode < test_iint->inode)
+>> +		if (inode < test_iint->inode) {
+>>   			p = &(*p)->rb_left;
+>> -		else
+>> +		} else if (inode > test_iint->inode) {
+>>   			p = &(*p)->rb_right;
+>> +		} else {
+>> +			write_unlock(&integrity_iint_lock);
+>> +			kmem_cache_free(iint_cache, iint);
+>> +			return test_iint;
+>> +		}
+>>   	}
+>>   
+>>   	iint->inode = inode;
+>> -- 
+>> 2.24.3 (Apple Git-128)
+> 
+> Mimi, are you picking this?
+
+Mimi has picked this patch in next-integrity.
+
+> 
+> Off-topic: how do you compile kernel on macOS, you're using VM right?
+> I'm just interested because I recently bought Mac mini for both
+> compiling and testing arm64. Optimal would be to be able to compile
+> the kernel on bare metal and then deploy to a VM...
+> 
+
+I am currently only coding and sending the final patch on a Mac.
+Compilation and testing are still carried out in the linux environment.
+If you have experience in launching a linux VM on macOS, please share it
+with me, thanks.
+
+Best regards,
+Tianjia
