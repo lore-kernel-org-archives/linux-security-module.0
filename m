@@ -2,276 +2,223 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5CBEB64D9
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Jun 2023 01:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE49EB64D7
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Jun 2023 03:42:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229486AbjFPBPK (ORCPT
+        id S236191AbjFPDmQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Jun 2023 21:15:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51836 "EHLO
+        Thu, 15 Jun 2023 23:42:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231332AbjFPBPI (ORCPT
+        with ESMTP id S230414AbjFPDmN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Jun 2023 21:15:08 -0400
-Received: from sonic313-16.consmr.mail.ne1.yahoo.com (sonic313-16.consmr.mail.ne1.yahoo.com [66.163.185.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2830C296E
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Jun 2023 18:15:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1686878105; bh=HGwnpOucEWlvUG4zfmWlVllruBXwes6EOI79jM/EmR8=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=NWvaoROvrlajrz2bGb883WyCn7fu9HL7RUL+1blnd/+tXqpe+N+Kvw7v7hmoQu6ii9qLBCgk+pgGtqj+tj/A2y6LTFNj+2vll+ZOjyjXx7KuCoW8uISjfNBJ0K1eTTn51dbzG+aT9kViGv3MIYymI9GQ5QMM2kf6dVuSQ+WbvrXt5SNvTIYMLsXhbrDfuS6v+Te/Q+SAP+nAlq+CL0yuXJ3/UjUfKr7PpARPbrYF1jdr/QuMMkqKsfhq8v5gCun65YSMsViG/xDb1O8m8CDeBi5KnrzB5XeLq47mNJAuq6SEcwtyWeBR8b7YGl5CNR095lvDSMu0BVmLE4k4M/qOQw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1686878105; bh=qJEYcaz7zusAVf8S85Oe7RlkOIXoxpTVd1TGs6kQO2U=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=m/cW3g3v7R6VDo1YHa4dZEXCU11rPx64xC+AenNqP4Ht/PmkbCUHWQNTGXPWCuaiNSDGOh9SdvhNWrGSM8RmjAop6Tqnz2dAta48XxyOuZGFCYQRKXbN09/kGAQHcaqIgwyk+qlcBhxtp8TwMRekxWpGumtP22sEaaXyqvLV0fgAckpc9g1YoVWi5ZGHDZ5I8vZyFwMH/KtngyxXK4V5qCXxwqN9s0kHpkTBRAEJEmutyWCtP9Xyk3CylS9VcES1LgcpYNHrgtuPK0C+JrfI0bSv+qnhgQCA5gUxwY/kD/2pP2MUHsogld6VGl8CYrbp3q4AQ1eMPh1UoURCfWbUWQ==
-X-YMail-OSG: R.rM5aAVM1m.fq5t2qs1Xejg3QqUto.ThIcalQ1Cq07EDCjJsm5WD9I7jr84F7X
- qUQ9SpmNB0svEW6Ug_hC9WSJOxIU6GxYVeZzGus5QivekCiq5XR403pRoYc3SyZoadw4BxMJ0oUk
- maqS.vS7HrfOHa2nZLNzm4VCjvroiVo.cr4mM9G1ktL4rBybbe9Oo6ZYgW9ys_JRnXhzNXHwZE38
- 5eEVPwJeK4ZVxMqE0KBzg7iopbRGNkOV6238wlHKgsFM8AH9CgJzv1yEM2yPy44agd3jz_FIZedR
- .o6aWwcJt2gXI3huz8gyzvdCQJCqGL871H5Pthjxoz33CZb4ULhYX.3DXGNlTm0YaDGKgulWOw.W
- D7tARJlHBdwlLvSay92MOtKoSEL70.6uQmfPTlKlGNLTfQhZHOhyqYkfRwFL02KRZ.lqVbOVBVot
- BX9B1pXxNfkF.pQItykjHmt8cjyn53fNzLMRS54aBTRLid60Bc93JjW_BvSfH8pV5TJXmyXh0HQz
- t0QPSQhkCNs2amEmpl_..48X.TIWuVzrzQbWBRBTtkCoJuvXWwgFNvfBRw.ku8fjggvxN2Av2i2U
- NlbN45Ev.su9HJ0tCu295xLYUng9puqNLB69sZ3OmlG9P5r6Q1hn85QfIHkxSkKhLNhUmL5orjLu
- y9hvWo75bWEoMKNo9KyKig3Iy.s3E7joyhqc46TtiQJk8YAG_97DE_5sa46SlvwPMQqJBR0NDTof
- 8EKmUKab1qH8zo8DxIvyMBCCCZEnYwpAnwl43SIaWmxjHNJboDFZnTbTAW1_cqECwIYxk4WdjS0s
- avcV5yfoQB5wdCxl0rKQarSZwOKuRSFsaxh9qLFc0DntWViW24G.Nrf8gOW.PGARMLpIIYlWizxX
- n5WC7WvOrbl7F_oDyGx5euduQFRp3XKLJmtXcEeOJdfRrYKi_dnH2V07HRbj72FYF38AupOArwLE
- wjTeNxxZNKmOCRnRtYiSx7UuaK4LZ_CJWfOdnMzmdpu82QKwZXGYzmhBGovBbLQ.1rGSOXgMJSbO
- JsWsiLroK0Y9.DTaniUcnMD8z1.WwO5pcIGIcpBmrHG4nRuOYiSrPx6S9snbmowViWEvgL8FllNq
- UtHE7DjIt465hKZieYMdWCKTGMYzlci9DuCz9oOGpDZzWX_Cny1Vx15gsnu1Po9pQtHAszfenNlu
- HlXZc2nMPnW8g1ndJvR_FExPOo5I44fogEkoMvszc2B1YFwfecwC6I5.38kEgw9Blppdo4UhpylC
- NtAfklmpQluLp6Z96_I4fd.e.jhAfFd50LpsEOifXf3me4C9OKkMt6HOBe4PAC02XuAxTOcqGSnO
- SJ6BAc6wowN9Ah5qCqS8hLvjLhOCEvbkpNe3QfZggAXXAZwb_9QAoH9p5aPJ652M2L9FqS5ge2af
- kwu57dlJereHB_zI2nVnBAJz060q0kTq0uczIEczIX4ZZrKWOUOA_oQEX9s30G02JCDz0IW.03jK
- K5DX3jYNTlV1WD.F9nlKyJ0nuyhU3HMrVpCiPMJBiZaZwxC187M62dMgt_FQt2emeXrSrt0S6QUN
- QDps0.D88f99vpV4woDTdewsc1Xd8haquR5bRx9xx3xWVdjIf9nC_G.koOI0b_m2V0eIro3iF0EC
- X9V0fnR_O.Rlwt6GJFES5qDGNZrWjXFNp4qEDMgFC7G0JEJT4lg98IcTAobnfKeYy5oePnjM71aK
- AExDK.CLwQmA4FOOT7P_MJLJWwHV54VCRFrsbzr4HboMkh87PUTdtGuOPTBdY01tTAkIWQSEMZkp
- A7w1CEuYEl1F8jc_aKVuOc2r.i.XxHW78ZCK3xMjoM1SKqj_V03o1U5t_lfr0Lp9GBYo8AShO27q
- ImV2IBUr1XNumS3oQYLLRXde60TBPm6egBeMU7XlN2PionRm2YxN0StwZMf3_Fi7tniaT.VoKi2g
- 57lXSbr6_soVZyrx0TmThlb5dZEXW16vpXi4yU1RXcpSjQcpvEAutIGeCHBiq2FT0K_PkxOfoDiM
- LbVfynG8kASexIuRzQ27Zr29BE26QHjo0W8iiCqBx83cOcKlPxQKnCMZKXR7SzQsz_ULUkwhwnDf
- Hevow5hOlmkylJw9GuxS3DmOCOBMB1M0gn4eR6NFWX6cGNkm3OHRImjSc4jJR8D85ga9njfva_MK
- Z3WL93NFr0gMvspV.yPtp7qzmVWQVl_K8l4UxprMKLZsQf0tiB5T74MxTPyzwSBJ4puudYraSNlL
- ZXtnUmhgjWXSVvEgYeEoulZN6EUH3Kos2n5sSmfmoJIb8UTO40YeYqGHS_nVoScrJzT9CoJfO.iN
- d4cupX1P3ECCSfpxk
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 55bd0c2d-87e2-4313-9c2d-07a1b25eff9a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 16 Jun 2023 01:15:05 +0000
-Received: by hermes--production-bf1-54475bbfff-xh8w9 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 78a28526a973406a89010d0bbac67dc3;
-          Fri, 16 Jun 2023 01:14:59 +0000 (UTC)
-Message-ID: <578a54c4-8d62-12b2-1a6b-0e242da9fcab@schaufler-ca.com>
-Date:   Thu, 15 Jun 2023 18:14:58 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v2 5/5] security: Add CONFIG_SECURITY_HOOK_LIKELY
-Content-Language: en-US
+        Thu, 15 Jun 2023 23:42:13 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28AEE171F;
+        Thu, 15 Jun 2023 20:42:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686886931; x=1718422931;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NTvG5ctWBX4OunZFs++KWo1lWVv7MlP+75F3gJ11Noo=;
+  b=EM2QXTrQ3Y/KNlDiBdNwY6z37UZ+QmifOYwLdRxT6ixZ3t0dYbyW6hVf
+   VrpMq3D1Zcz1SomxOkRPFrF9lAZPEbMrTnQoQWDV3v3jocJrj3nRd5tsH
+   dhuTKGhdfpruzbO6gdGXEsow9YVnXq05OHIojY6sYKJC+PXiVZudmIfmv
+   Cjg6LGFXnrYH5KTbQh9a0JQpTBnxvYyoGJKR5u8Cfcl/pVq5BUFtY+MbQ
+   5LZqdo6gAyodPvBJrcyJx0O040uzex4JOjhAAs/0RUKze5SFJ7y/R2oxH
+   e5gLrl1JKVbAzdtG+vuaDk6v14VfkIvX6zlX+Gly0cEfSYfbFdk+lgyDP
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="425039553"
+X-IronPort-AV: E=Sophos;i="6.00,246,1681196400"; 
+   d="scan'208";a="425039553"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2023 20:42:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="777988481"
+X-IronPort-AV: E=Sophos;i="6.00,246,1681196400"; 
+   d="scan'208";a="777988481"
+Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 15 Jun 2023 20:42:06 -0700
+Received: from kbuild by 783282924a45 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qA0Le-0000lz-0R;
+        Fri, 16 Jun 2023 03:42:06 +0000
+Date:   Fri, 16 Jun 2023 11:41:34 +0800
+From:   kernel test robot <lkp@intel.com>
 To:     KP Singh <kpsingh@kernel.org>,
         linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Cc:     paul@paul-moore.com, keescook@chromium.org, song@kernel.org,
+Cc:     oe-kbuild-all@lists.linux.dev, paul@paul-moore.com,
+        keescook@chromium.org, casey@schaufler-ca.com, song@kernel.org,
         daniel@iogearbox.net, ast@kernel.org, jannh@google.com,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20230616000441.3677441-1-kpsingh@kernel.org>
- <20230616000441.3677441-6-kpsingh@kernel.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20230616000441.3677441-6-kpsingh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21557 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+        KP Singh <kpsingh@kernel.org>
+Subject: Re: [PATCH v2 3/5] security: Replace indirect LSM hook calls with
+ static calls
+Message-ID: <202306161110.9jeDpzVN-lkp@intel.com>
+References: <20230616000441.3677441-4-kpsingh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230616000441.3677441-4-kpsingh@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/15/2023 5:04 PM, KP Singh wrote:
-> This config influences the nature of the static key that guards the
-> static call for LSM hooks.
->
-> When enabled, it indicates that an LSM static call slot is more likely
-> to be initialized. When disabled, it optimizes for the case when static
-> call slot is more likely to be not initialized.
->
-> When a major LSM like (SELinux, AppArmor, Smack etc) is active on a
-> system the system would benefit from enabling the config. However there
-> are other cases which would benefit from the config being disabled
-> (e.g. a system with a BPF LSM with no hooks enabled by default, or an
-> LSM like loadpin / yama). Ultimately, there is no one-size fits all
-> solution.
->
-> with CONFIG_SECURITY_HOOK_LIKELY enabled, the inactive /
-> uninitialized case is penalized with a direct jmp (still better than
-> an indirect jmp):
->
-> function security_file_ioctl:
->    0xffffffff818f0c80 <+0>:	endbr64
->    0xffffffff818f0c84 <+4>:	nopl   0x0(%rax,%rax,1)
->    0xffffffff818f0c89 <+9>:	push   %rbp
->    0xffffffff818f0c8a <+10>:	push   %r14
->    0xffffffff818f0c8c <+12>:	push   %rbx
->    0xffffffff818f0c8d <+13>:	mov    %rdx,%rbx
->    0xffffffff818f0c90 <+16>:	mov    %esi,%ebp
->    0xffffffff818f0c92 <+18>:	mov    %rdi,%r14
->    0xffffffff818f0c95 <+21>:	jmp    0xffffffff818f0ca8 <security_file_ioctl+40>
->
->    jump to skip the inactive BPF LSM hook.
->
->    0xffffffff818f0c97 <+23>:	mov    %r14,%rdi
->    0xffffffff818f0c9a <+26>:	mov    %ebp,%esi
->    0xffffffff818f0c9c <+28>:	mov    %rbx,%rdx
->    0xffffffff818f0c9f <+31>:	call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
->    0xffffffff818f0ca4 <+36>:	test   %eax,%eax
->    0xffffffff818f0ca6 <+38>:	jne    0xffffffff818f0cbf <security_file_ioctl+63>
->    0xffffffff818f0ca8 <+40>:	endbr64
->    0xffffffff818f0cac <+44>:	jmp    0xffffffff818f0ccd <security_file_ioctl+77>
->
->    jump to skip the empty slot.
->
->    0xffffffff818f0cae <+46>:	mov    %r14,%rdi
->    0xffffffff818f0cb1 <+49>:	mov    %ebp,%esi
->    0xffffffff818f0cb3 <+51>:	mov    %rbx,%rdx
->    0xffffffff818f0cb6 <+54>:	nopl   0x0(%rax,%rax,1)
->   				^^^^^^^^^^^^^^^^^^^^^^^
-> 				Empty slot
->
->    0xffffffff818f0cbb <+59>:	test   %eax,%eax
->    0xffffffff818f0cbd <+61>:	je     0xffffffff818f0ccd <security_file_ioctl+77>
->    0xffffffff818f0cbf <+63>:	endbr64
->    0xffffffff818f0cc3 <+67>:	pop    %rbx
->    0xffffffff818f0cc4 <+68>:	pop    %r14
->    0xffffffff818f0cc6 <+70>:	pop    %rbp
->    0xffffffff818f0cc7 <+71>:	cs jmp 0xffffffff82c00000 <__x86_return_thunk>
->    0xffffffff818f0ccd <+77>:	endbr64
->    0xffffffff818f0cd1 <+81>:	xor    %eax,%eax
->    0xffffffff818f0cd3 <+83>:	jmp    0xffffffff818f0cbf <security_file_ioctl+63>
->    0xffffffff818f0cd5 <+85>:	mov    %r14,%rdi
->    0xffffffff818f0cd8 <+88>:	mov    %ebp,%esi
->    0xffffffff818f0cda <+90>:	mov    %rbx,%rdx
->    0xffffffff818f0cdd <+93>:	pop    %rbx
->    0xffffffff818f0cde <+94>:	pop    %r14
->    0xffffffff818f0ce0 <+96>:	pop    %rbp
->    0xffffffff818f0ce1 <+97>:	ret
->
-> When the config is disabled, the case optimizes the scenario above.
->
-> security_file_ioctl:
->    0xffffffff818f0e30 <+0>:	endbr64
->    0xffffffff818f0e34 <+4>:	nopl   0x0(%rax,%rax,1)
->    0xffffffff818f0e39 <+9>:	push   %rbp
->    0xffffffff818f0e3a <+10>:	push   %r14
->    0xffffffff818f0e3c <+12>:	push   %rbx
->    0xffffffff818f0e3d <+13>:	mov    %rdx,%rbx
->    0xffffffff818f0e40 <+16>:	mov    %esi,%ebp
->    0xffffffff818f0e42 <+18>:	mov    %rdi,%r14
->    0xffffffff818f0e45 <+21>:	xchg   %ax,%ax
->    0xffffffff818f0e47 <+23>:	xchg   %ax,%ax
->
->    The static keys in their disabled state do not create jumps leading
->    to faster code.
->
->    0xffffffff818f0e49 <+25>:	xor    %eax,%eax
->    0xffffffff818f0e4b <+27>:	xchg   %ax,%ax
->    0xffffffff818f0e4d <+29>:	pop    %rbx
->    0xffffffff818f0e4e <+30>:	pop    %r14
->    0xffffffff818f0e50 <+32>:	pop    %rbp
->    0xffffffff818f0e51 <+33>:	cs jmp 0xffffffff82c00000 <__x86_return_thunk>
->    0xffffffff818f0e57 <+39>:	endbr64
->    0xffffffff818f0e5b <+43>:	mov    %r14,%rdi
->    0xffffffff818f0e5e <+46>:	mov    %ebp,%esi
->    0xffffffff818f0e60 <+48>:	mov    %rbx,%rdx
->    0xffffffff818f0e63 <+51>:	call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
->    0xffffffff818f0e68 <+56>:	test   %eax,%eax
->    0xffffffff818f0e6a <+58>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
->    0xffffffff818f0e6c <+60>:	jmp    0xffffffff818f0e47 <security_file_ioctl+23>
->    0xffffffff818f0e6e <+62>:	endbr64
->    0xffffffff818f0e72 <+66>:	mov    %r14,%rdi
->    0xffffffff818f0e75 <+69>:	mov    %ebp,%esi
->    0xffffffff818f0e77 <+71>:	mov    %rbx,%rdx
->    0xffffffff818f0e7a <+74>:	nopl   0x0(%rax,%rax,1)
->    0xffffffff818f0e7f <+79>:	test   %eax,%eax
->    0xffffffff818f0e81 <+81>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
->    0xffffffff818f0e83 <+83>:	jmp    0xffffffff818f0e49 <security_file_ioctl+25>
->    0xffffffff818f0e85 <+85>:	endbr64
->    0xffffffff818f0e89 <+89>:	mov    %r14,%rdi
->    0xffffffff818f0e8c <+92>:	mov    %ebp,%esi
->    0xffffffff818f0e8e <+94>:	mov    %rbx,%rdx
->    0xffffffff818f0e91 <+97>:	pop    %rbx
->    0xffffffff818f0e92 <+98>:	pop    %r14
->    0xffffffff818f0e94 <+100>:	pop    %rbp
->    0xffffffff818f0e95 <+101>:	ret
->
-> Signed-off-by: KP Singh <kpsingh@kernel.org>
-> ---
->  security/Kconfig    | 11 +++++++++++
->  security/security.c | 13 ++++++++-----
->  2 files changed, 19 insertions(+), 5 deletions(-)
->
-> diff --git a/security/Kconfig b/security/Kconfig
-> index 52c9af08ad35..bd2a0dff991a 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -32,6 +32,17 @@ config SECURITY
->  
->  	  If you are unsure how to answer this question, answer N.
->  
-> +config SECURITY_HOOK_LIKELY
-> +	bool "LSM hooks are likely to be initialized"
-> +	depends on SECURITY
-> +	default y
-> +	help
-> +	  This controls the behaviour of the static keys that guard LSM hooks.
-> +	  If LSM hooks are likely to be initialized by LSMs, then one gets
-> +	  better performance by enabling this option. However, if the system is
-> +	  using an LSM where hooks are much likely to be disabled, one gets
-> +	  better performance by disabling this config.
-> +
->  config SECURITYFS
->  	bool "Enable the securityfs filesystem"
->  	help
-> diff --git a/security/security.c b/security/security.c
-> index 4aec25949212..da80a8918e7d 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -99,9 +99,9 @@ static __initdata struct lsm_info *exclusive;
->   * Define static calls and static keys for each LSM hook.
->   */
->  
-> -#define DEFINE_LSM_STATIC_CALL(NUM, NAME, RET, ...)			\
-> -	DEFINE_STATIC_CALL_NULL(LSM_STATIC_CALL(NAME, NUM),		\
-> -				*((RET(*)(__VA_ARGS__))NULL));		\
-> +#define DEFINE_LSM_STATIC_CALL(NUM, NAME, RET, ...)               \
-> +	DEFINE_STATIC_CALL_NULL(LSM_STATIC_CALL(NAME, NUM),       \
-> +				*((RET(*)(__VA_ARGS__))NULL));    \
+Hi KP,
 
-This is just a cosmetic change, right? Please fix it in the original
-patch when you respin, not here. I spent way to long trying to figure out
-why you had to make a change.
+kernel test robot noticed the following build errors:
 
->  	DEFINE_STATIC_KEY_FALSE(SECURITY_HOOK_ACTIVE_KEY(NAME, NUM));
->  
->  #define LSM_HOOK(RET, DEFAULT, NAME, ...)				\
-> @@ -110,6 +110,9 @@ static __initdata struct lsm_info *exclusive;
->  #undef LSM_HOOK
->  #undef DEFINE_LSM_STATIC_CALL
->  
-> +#define security_hook_active(n, h) \
-> +	static_branch_maybe(CONFIG_SECURITY_HOOK_LIKELY, &SECURITY_HOOK_ACTIVE_KEY(h, n))
-> +
+[auto build test ERROR on next-20230615]
+[also build test ERROR on v6.4-rc6]
+[cannot apply to bpf-next/master bpf/master pcmoore-selinux/next linus/master v6.4-rc6 v6.4-rc5 v6.4-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Please don't use the security_ prefix here. It's a local macro, use hook_active()
-or, if you must, lsm_hook_active().
+url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/kernel-Add-helper-macros-for-loop-unrolling/20230616-080708
+base:   next-20230615
+patch link:    https://lore.kernel.org/r/20230616000441.3677441-4-kpsingh%40kernel.org
+patch subject: [PATCH v2 3/5] security: Replace indirect LSM hook calls with static calls
+config: m68k-randconfig-r001-20230615 (https://download.01.org/0day-ci/archive/20230616/202306161110.9jeDpzVN-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 12.3.0
+reproduce (this is a W=1 build):
+        mkdir -p ~/bin
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        git checkout next-20230615
+        b4 shazam https://lore.kernel.org/r/20230616000441.3677441-4-kpsingh@kernel.org
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=m68k olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash
 
->  /*
->   * Initialise a table of static calls for each LSM hook.
->   * DEFINE_STATIC_CALL_NULL invocation above generates a key (STATIC_CALL_KEY)
-> @@ -816,7 +819,7 @@ static int lsm_superblock_alloc(struct super_block *sb)
->   */
->  #define __CALL_STATIC_VOID(NUM, HOOK, ...)				     \
->  do {									     \
-> -	if (static_branch_unlikely(&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM))) {    \
-> +	if (security_hook_active(NUM, HOOK)) {    			     \
->  		static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);	     \
->  	}								     \
->  } while (0);
-> @@ -828,7 +831,7 @@ do {									     \
->  
->  #define __CALL_STATIC_INT(NUM, R, HOOK, LABEL, ...)			     \
->  do {									     \
-> -	if (static_branch_unlikely(&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM))) {  \
-> +	if (security_hook_active(NUM, HOOK)) {    \
->  		R = static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);    \
->  		if (R != 0)						     \
->  			goto LABEL;					     \
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202306161110.9jeDpzVN-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x20): undefined reference to `__SCT__lsm_static_call_binder_set_context_mgr_0'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x30): undefined reference to `__SCT__lsm_static_call_binder_set_context_mgr_1'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x40): undefined reference to `__SCT__lsm_static_call_binder_transaction_0'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x50): undefined reference to `__SCT__lsm_static_call_binder_transaction_1'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x60): undefined reference to `__SCT__lsm_static_call_binder_transfer_binder_0'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x70): undefined reference to `__SCT__lsm_static_call_binder_transfer_binder_1'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x80): undefined reference to `__SCT__lsm_static_call_binder_transfer_file_0'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x90): undefined reference to `__SCT__lsm_static_call_binder_transfer_file_1'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0xa0): undefined reference to `__SCT__lsm_static_call_ptrace_access_check_0'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0xb0): undefined reference to `__SCT__lsm_static_call_ptrace_access_check_1'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0xc0): undefined reference to `__SCT__lsm_static_call_ptrace_traceme_0'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0xd0): undefined reference to `__SCT__lsm_static_call_ptrace_traceme_1'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0xe0): undefined reference to `__SCT__lsm_static_call_capget_0'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0xf0): undefined reference to `__SCT__lsm_static_call_capget_1'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x100): undefined reference to `__SCT__lsm_static_call_capset_0'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x110): undefined reference to `__SCT__lsm_static_call_capset_1'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x120): undefined reference to `__SCT__lsm_static_call_capable_0'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x130): undefined reference to `__SCT__lsm_static_call_capable_1'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x140): undefined reference to `__SCT__lsm_static_call_quotactl_0'
+>> m68k-linux-ld: security/security.o:(.data..ro_after_init+0x150): undefined reference to `__SCT__lsm_static_call_quotactl_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x160): undefined reference to `__SCT__lsm_static_call_quota_on_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x170): undefined reference to `__SCT__lsm_static_call_quota_on_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x180): undefined reference to `__SCT__lsm_static_call_syslog_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x190): undefined reference to `__SCT__lsm_static_call_syslog_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x1a0): undefined reference to `__SCT__lsm_static_call_settime_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x1b0): undefined reference to `__SCT__lsm_static_call_settime_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x1c0): undefined reference to `__SCT__lsm_static_call_vm_enough_memory_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x1d0): undefined reference to `__SCT__lsm_static_call_vm_enough_memory_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x1e0): undefined reference to `__SCT__lsm_static_call_bprm_creds_for_exec_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x1f0): undefined reference to `__SCT__lsm_static_call_bprm_creds_for_exec_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x200): undefined reference to `__SCT__lsm_static_call_bprm_creds_from_file_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x210): undefined reference to `__SCT__lsm_static_call_bprm_creds_from_file_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x220): undefined reference to `__SCT__lsm_static_call_bprm_check_security_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x230): undefined reference to `__SCT__lsm_static_call_bprm_check_security_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x240): undefined reference to `__SCT__lsm_static_call_bprm_committing_creds_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x250): undefined reference to `__SCT__lsm_static_call_bprm_committing_creds_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x260): undefined reference to `__SCT__lsm_static_call_bprm_committed_creds_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x270): undefined reference to `__SCT__lsm_static_call_bprm_committed_creds_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x280): undefined reference to `__SCT__lsm_static_call_fs_context_dup_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x290): undefined reference to `__SCT__lsm_static_call_fs_context_dup_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x2a0): undefined reference to `__SCT__lsm_static_call_fs_context_parse_param_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x2b0): undefined reference to `__SCT__lsm_static_call_fs_context_parse_param_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x2c0): undefined reference to `__SCT__lsm_static_call_sb_alloc_security_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x2d0): undefined reference to `__SCT__lsm_static_call_sb_alloc_security_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x2e0): undefined reference to `__SCT__lsm_static_call_sb_delete_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x2f0): undefined reference to `__SCT__lsm_static_call_sb_delete_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x300): undefined reference to `__SCT__lsm_static_call_sb_free_security_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x310): undefined reference to `__SCT__lsm_static_call_sb_free_security_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x320): undefined reference to `__SCT__lsm_static_call_sb_free_mnt_opts_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x330): undefined reference to `__SCT__lsm_static_call_sb_free_mnt_opts_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x340): undefined reference to `__SCT__lsm_static_call_sb_eat_lsm_opts_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x350): undefined reference to `__SCT__lsm_static_call_sb_eat_lsm_opts_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x360): undefined reference to `__SCT__lsm_static_call_sb_mnt_opts_compat_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x370): undefined reference to `__SCT__lsm_static_call_sb_mnt_opts_compat_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x380): undefined reference to `__SCT__lsm_static_call_sb_remount_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x390): undefined reference to `__SCT__lsm_static_call_sb_remount_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x3a0): undefined reference to `__SCT__lsm_static_call_sb_kern_mount_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x3b0): undefined reference to `__SCT__lsm_static_call_sb_kern_mount_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x3c0): undefined reference to `__SCT__lsm_static_call_sb_show_options_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x3d0): undefined reference to `__SCT__lsm_static_call_sb_show_options_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x3e0): undefined reference to `__SCT__lsm_static_call_sb_statfs_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x3f0): undefined reference to `__SCT__lsm_static_call_sb_statfs_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x400): undefined reference to `__SCT__lsm_static_call_sb_mount_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x410): undefined reference to `__SCT__lsm_static_call_sb_mount_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x420): undefined reference to `__SCT__lsm_static_call_sb_umount_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x430): undefined reference to `__SCT__lsm_static_call_sb_umount_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x440): undefined reference to `__SCT__lsm_static_call_sb_pivotroot_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x450): undefined reference to `__SCT__lsm_static_call_sb_pivotroot_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x460): undefined reference to `__SCT__lsm_static_call_sb_set_mnt_opts_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x470): undefined reference to `__SCT__lsm_static_call_sb_set_mnt_opts_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x480): undefined reference to `__SCT__lsm_static_call_sb_clone_mnt_opts_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x490): undefined reference to `__SCT__lsm_static_call_sb_clone_mnt_opts_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x4a0): undefined reference to `__SCT__lsm_static_call_move_mount_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x4b0): undefined reference to `__SCT__lsm_static_call_move_mount_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x4c0): undefined reference to `__SCT__lsm_static_call_dentry_init_security_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x4d0): undefined reference to `__SCT__lsm_static_call_dentry_init_security_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x4e0): undefined reference to `__SCT__lsm_static_call_dentry_create_files_as_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x4f0): undefined reference to `__SCT__lsm_static_call_dentry_create_files_as_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x500): undefined reference to `__SCT__lsm_static_call_path_unlink_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x510): undefined reference to `__SCT__lsm_static_call_path_unlink_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x520): undefined reference to `__SCT__lsm_static_call_path_mkdir_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x530): undefined reference to `__SCT__lsm_static_call_path_mkdir_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x540): undefined reference to `__SCT__lsm_static_call_path_rmdir_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x550): undefined reference to `__SCT__lsm_static_call_path_rmdir_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x560): undefined reference to `__SCT__lsm_static_call_path_mknod_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x570): undefined reference to `__SCT__lsm_static_call_path_mknod_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x580): undefined reference to `__SCT__lsm_static_call_path_truncate_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x590): undefined reference to `__SCT__lsm_static_call_path_truncate_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x5a0): undefined reference to `__SCT__lsm_static_call_path_symlink_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x5b0): undefined reference to `__SCT__lsm_static_call_path_symlink_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x5c0): undefined reference to `__SCT__lsm_static_call_path_link_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x5d0): undefined reference to `__SCT__lsm_static_call_path_link_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x5e0): undefined reference to `__SCT__lsm_static_call_path_rename_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x5f0): undefined reference to `__SCT__lsm_static_call_path_rename_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x600): undefined reference to `__SCT__lsm_static_call_path_chmod_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x610): undefined reference to `__SCT__lsm_static_call_path_chmod_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x620): undefined reference to `__SCT__lsm_static_call_path_chown_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x630): undefined reference to `__SCT__lsm_static_call_path_chown_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x640): undefined reference to `__SCT__lsm_static_call_path_chroot_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x650): undefined reference to `__SCT__lsm_static_call_path_chroot_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x660): undefined reference to `__SCT__lsm_static_call_path_notify_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x670): undefined reference to `__SCT__lsm_static_call_path_notify_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x680): undefined reference to `__SCT__lsm_static_call_inode_alloc_security_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x690): undefined reference to `__SCT__lsm_static_call_inode_alloc_security_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x6a0): undefined reference to `__SCT__lsm_static_call_inode_free_security_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x6b0): undefined reference to `__SCT__lsm_static_call_inode_free_security_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x6c0): undefined reference to `__SCT__lsm_static_call_inode_init_security_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x6d0): undefined reference to `__SCT__lsm_static_call_inode_init_security_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x6e0): undefined reference to `__SCT__lsm_static_call_inode_init_security_anon_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x6f0): undefined reference to `__SCT__lsm_static_call_inode_init_security_anon_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x700): undefined reference to `__SCT__lsm_static_call_inode_create_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x710): undefined reference to `__SCT__lsm_static_call_inode_create_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x720): undefined reference to `__SCT__lsm_static_call_inode_link_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x730): undefined reference to `__SCT__lsm_static_call_inode_link_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x740): undefined reference to `__SCT__lsm_static_call_inode_unlink_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x750): undefined reference to `__SCT__lsm_static_call_inode_unlink_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x760): undefined reference to `__SCT__lsm_static_call_inode_symlink_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x770): undefined reference to `__SCT__lsm_static_call_inode_symlink_1'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x780): undefined reference to `__SCT__lsm_static_call_inode_mkdir_0'
+   m68k-linux-ld: security/security.o:(.data..ro_after_init+0x790): undefined reference to `__SCT__lsm_static_call_inode_mkdir_1'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
