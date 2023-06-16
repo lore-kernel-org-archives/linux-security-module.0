@@ -2,645 +2,214 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C5FFEB64D7
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Jun 2023 16:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0761FEB64DA
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Jun 2023 21:10:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346067AbjFPQ6F (ORCPT
+        id S229535AbjFPVKA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Jun 2023 12:58:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43796 "EHLO
+        Fri, 16 Jun 2023 17:10:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343594AbjFPQ5n (ORCPT
+        with ESMTP id S1344628AbjFPVJ7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Jun 2023 12:57:43 -0400
-Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBD0E468A
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Jun 2023 09:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1686934557; bh=DKeEkj8ly1FqNoGt8EcMyRH/A0S4Wx+vordwNsS8AI8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=P2rO/j5QhZeH7Pbr5fYbKMwqVTW4/r5NdmM1RUA4zbkwPTe10nPrAdpEipKqwUnE32cBzi6VMSZj4n/vEq7ycFW8KgnZJ12EzuP2sb+kxv4CH+sHC09X8f2BGkM+mZ4bYRmbODsQio0zY5mdwe/adlAwnxlYqMAsOWpNhR2ooF/aTO/Utyks+FO5pbNQR1ZSmJwFaHIf542YRxFZs4rO3wFGaQAxc3KqUevFHQDmM3Qdfhdf51FLmVsfYdLezIEPd32DlGvEChJgVzfz3SzT/LZcaMiY4xfL4bhj0m0bONOOm3GnSwaCZkhPzrWv2iiDbr3mOLdsXf8SKUOKqgk9cA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1686934557; bh=+dJCeVqDOZom3NyNCMpdGrNX4EJxe609uqAgJzmF/o2=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=jAmNOMBoUCH/hFreQi9RcL2OFuKrr1+Mpui6VQnD1yuDobj0loNQg3yRh5Stws1Wc+qRWY9sFX05YLvgM8f6hBqZHFWKddacvlZijuL2U1b+1BFM0VScqSmVhUNZqCxt2uboW0A5FNQof39xOek9f8ohFP3FVmVX0ujv812HQb+pbUexkEt40rpoKHEkdmUx5zTe3JeDMeL5ZgPJywyxqXtWB+/Cjkq5Cl6d0e5ebb/TximX4uPF3eiIhxPgENZzdJ5LMXJRjeEC7ZnZVU1vSi47zreCrQR0AK/GOk1GfZKhJrzJc2B48Vhn1Hg5+XfrKqh+2tx3ZjB+F/v2vQVoRg==
-X-YMail-OSG: Ohs6QeAVM1lTbF8Jw0rV20k64JcLJt1skAV8uUWL8zITK6jv77KvUbUJLneybtK
- vfXm0v6vhTM9lc2qyw6aNJvwKPfMzFIJ.8CRPbOZ7T94mkKPkNLCZdHEtODjk1DjMdWNcSuzf2CW
- scLzqAij1KatRsT7LrUjPw8nCaQPlfUZKpv4LB_IXBqs4_upskPTOTmMTrFS0nU3PiwHJUsYCA9B
- pcmUNwvP62FhCsc.j3m15QUIwZElvSOb7ceV0zSRIs9SPGuVZE1HOE2WdtKU8Exxz5wr42yQCYw7
- Wa5aQMp5foCArjqqBy8palpXp5mYc6PuotMMhdbkfYnNBMV1EnDF2bmh.G7Oj.nEcdZATwsbeGRE
- _7.uUd61OMEQnGAstmnNRwQWCBEdlPw7aHnAmZ19I.p1as2dI62dx7EjgPfCG_Lg5.bbTylAKFvH
- FUL3WzHN23PASe1w1zMxHBiFWpFfMkJzrGrQ9.CxNy_9ZbPN2K8UllK8vZI5abQtBTV2b_2m61_B
- Pt9u0.12yQZpvNKWLZ0qkua7GPzi_BUfMp8UXcna0ajcqSzmitFP4SsV7rowncxfrdl3c8UEPnyY
- nvIPK12Y3R0Q18ql2YhHXcNuHNC3VcK0kSeKOxxvFBmr1E2tjCEjvgteJPMypFCC7ltGTE4jYtIP
- h5DJ0HL4TjhZZEkeiRuXvHRlJowT5Ei_jyACqiEpNQlBUcWh0LsJxFmV3mjKl2ODY59_2ZfzJkvB
- Tf78fW2TPZMbKP3itCquhLT32ceYWxuCBQK5Xgg6j8qW5E_nt9q17kgENASvo5.SuMCRsEDSNvZi
- fMjc75T7TfpRDq_aNrT4Dcta4AuWxgY3vvEIeHjOImrIVAXHOMDnNOCS9DQ_lh9w08dFiJL.pko.
- 7tnXt.cL58kI0xXSNfAwY4BWClD203atlB3O.0VZhV9D.WJMzURb23Mcrkd7BbWLpQGEZ_F_mZkR
- NFJbygcDb2tTyv9AJY1pD0Kvanqztkgt55i_GzAZVGGnyJSFVQZEpZ8XhHAiZUfZEGyoo2jSvY_d
- TQ3GK9Lw8SFvZHa2pBf0LP4uGrsZnWcSbQPE3kMr.khz.Hpb4jtsHaXNfuZYpShn5INr9yhb44KM
- bVLOVBOfKKp83.062xeg4qxLRd0fWqhVkC_qKvJGMHRbQkpYCP4kLSK17OIuKxS5duHXS.w2IlA7
- 175dR6H4RIqOKPExf0Y_SMJmnZ2rJ72RcRxhPBwkOY3ei.5pbjB1RghEfXWjlkGD4l.y1Y4mUnG_
- Z1WcY699Nfkxz9KXDmQZ0Q4g97b9wg9wZ885c65n78z36ALC4jr6shcGJcVKT4ttU6g.fekS2eJl
- 7lSbqnYPAQUHJV3fDrBDGlNWft7CDmpXb6l9t2nqusjQAZdZhHue7SuAHnaZ7PsRG2A8HBFpCpLz
- 5ujdkAn_uSh0uSSZZu6yvYxUNSNaTT.EZOvj8T5cq5x9qXc4Ed7icodGnKAfdyVjmw841aSLHKPJ
- 9ma4PXQPt.FUnjhzSImpaik5wzA4h1xXQWCIu6yqGhs4D9ym1ri954A8Khex3v_SsBnACqlw3Z6k
- ig7we1qd.BVX0EPvn_L5eg4fxtlNwIhlmPU8DYy2e0McBbry9RIK0A2.Vf3dYLwPf_Q7WF9DFy2R
- C_yRFSBC3NkDnAiaS2IvK_lUjZypu88Md.nMytNApM4Qwm50cJ.GLCPN0mIiR1Sxy3PXFWaDKaDU
- Iht.2MEtpPXRr0HjMBsdVVGzAEWeqv7Mwxf3Mry1FhVdKmByt4hoWiPshd2_XUQautmpzxMA0jBg
- zRe1S6zyoGKwzFfG66JA6xll69v008dJ7M2UhKDPWfKVaDp0Gb9Gm0bywiSEVn24EMyUjIMFsVdk
- a44Yxs0VBBMbmiE26FRhT96ujcauiRa_KXExOmk9PygR_yldvMIXa1JrtqeknACOWjDFwuW734.G
- nlJUwNQPiUf02BvaKHGS4qf.lRzsueX_Z2sGUDaXGGKlj55BuVhB7TewdiDBxcqgB7N1Ud0sWb3D
- v.nT86BHKEbGoF7EJXzfYeJjousPUddghzKZVFl_arc4swf_t5Hc9ztvpmKHPMwvPg8H5CYyBlAq
- inUybHrDPhYonUmp.PDPY3bsxGICQCfvFh7sEWKAc8IqI0pE4RXiuvMFpIUACyFMYj.3cRFJakuC
- 9JRVbOb4l_TfGK9baSKvZnXDLbdzkajb0vKkn7IC2FI9K.esRvsIz2XfSImGB.Z6UD64HZux2pFL
- I0fCE9Y2cVZjk7A9m0iVIUSbOFICYRyomnSFLP0693jC5mUaGTqbH_Wzr9ugYCcPAhxeSNcswrkx
- sEdbYoLF27PJTz8kbzl6vKoWAIH4-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 45070aca-a207-409e-808a-bd05ac5e6327
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Fri, 16 Jun 2023 16:55:57 +0000
-Received: by hermes--production-ne1-574d4b7954-tvjss (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8aab4ebac04292db835fd6d81244177c;
-          Fri, 16 Jun 2023 16:55:54 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     casey@schaufler-ca.com, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
-Subject: [PATCH v11 11/11] LSM: selftests for Linux Security Module syscalls
-Date:   Fri, 16 Jun 2023 09:50:55 -0700
-Message-Id: <20230616165055.4705-12-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230616165055.4705-1-casey@schaufler-ca.com>
-References: <20230616165055.4705-1-casey@schaufler-ca.com>
+        Fri, 16 Jun 2023 17:09:59 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C67B0D8;
+        Fri, 16 Jun 2023 14:09:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686949797; x=1718485797;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MGvblgTiM/nU8S83WbvkzafTeQ3MttQEJKhdcqTmHXA=;
+  b=cC/P13p8D+JtG7AGB1tD9maM7qkDok4qvcVI/xt2JbVnElNDeKXbl1Y1
+   0ugPrHah7SMB2LlZC/zCfD+i9RI/oCe2jL+TnrVRcmW8PuGxeD+Gatr6i
+   hlG+REsA26uG0/supS8hedr3QiCAuwqk2o6lgpbHFuGLhgQReAwiCmTye
+   ROC6eUwlwmvK62Nyi99Ez7+FP1iax60wB/QVUHDGKQxzHxeZaPZj85XHq
+   dQKOAlYCfDZMGW/jUH0LDu3Q7166mrYD7Dx+pIbnYAlGNEthRZMysbAZ6
+   +MHiBPSrCaddG48b8wsG9/u+YyqpmjNd8/Szyg1OYJCFchffw7MGz758Q
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10743"; a="344052164"
+X-IronPort-AV: E=Sophos;i="6.00,248,1681196400"; 
+   d="scan'208";a="344052164"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2023 14:09:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10743"; a="802970275"
+X-IronPort-AV: E=Sophos;i="6.00,248,1681196400"; 
+   d="scan'208";a="802970275"
+Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jun 2023 14:09:54 -0700
+Received: from kbuild by 783282924a45 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qAGhd-0001ok-2j;
+        Fri, 16 Jun 2023 21:09:53 +0000
+Date:   Sat, 17 Jun 2023 05:09:45 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     KP Singh <kpsingh@kernel.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, paul@paul-moore.com,
+        keescook@chromium.org, casey@schaufler-ca.com, song@kernel.org,
+        daniel@iogearbox.net, ast@kernel.org, jannh@google.com,
+        KP Singh <kpsingh@kernel.org>
+Subject: Re: [PATCH v2 3/5] security: Replace indirect LSM hook calls with
+ static calls
+Message-ID: <202306170414.br6e1YPW-lkp@intel.com>
+References: <20230616000441.3677441-4-kpsingh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230616000441.3677441-4-kpsingh@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add selftests for the three system calls supporting the LSM
-infrastructure.
+Hi KP,
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- tools/testing/selftests/Makefile              |   1 +
- tools/testing/selftests/lsm/Makefile          |  12 +
- tools/testing/selftests/lsm/config            |   2 +
- .../selftests/lsm/lsm_get_self_attr_test.c    | 270 ++++++++++++++++++
- .../selftests/lsm/lsm_list_modules_test.c     | 153 ++++++++++
- .../selftests/lsm/lsm_set_self_attr_test.c    |  70 +++++
- 6 files changed, 508 insertions(+)
- create mode 100644 tools/testing/selftests/lsm/Makefile
- create mode 100644 tools/testing/selftests/lsm/config
- create mode 100644 tools/testing/selftests/lsm/lsm_get_self_attr_test.c
- create mode 100644 tools/testing/selftests/lsm/lsm_list_modules_test.c
- create mode 100644 tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+kernel test robot noticed the following build errors:
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 90a62cf75008..2b91df264ada 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -38,6 +38,7 @@ TARGETS += landlock
- TARGETS += lib
- TARGETS += livepatch
- TARGETS += lkdtm
-+TARGETS += lsm
- TARGETS += membarrier
- TARGETS += memfd
- TARGETS += memory-hotplug
-diff --git a/tools/testing/selftests/lsm/Makefile b/tools/testing/selftests/lsm/Makefile
-new file mode 100644
-index 000000000000..f39a75212b78
---- /dev/null
-+++ b/tools/testing/selftests/lsm/Makefile
-@@ -0,0 +1,12 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# First run: make -C ../../../.. headers_install
-+
-+CFLAGS += -Wall -O2 $(KHDR_INCLUDES)
-+
-+TEST_GEN_PROGS := lsm_get_self_attr_test lsm_list_modules_test \
-+		  lsm_set_self_attr_test
-+
-+include ../lib.mk
-+
-+$(TEST_GEN_PROGS):
-diff --git a/tools/testing/selftests/lsm/config b/tools/testing/selftests/lsm/config
-new file mode 100644
-index 000000000000..afb887715f64
---- /dev/null
-+++ b/tools/testing/selftests/lsm/config
-@@ -0,0 +1,2 @@
-+CONFIG_SYSFS=y
-+CONFIG_SECURITY=y
-diff --git a/tools/testing/selftests/lsm/lsm_get_self_attr_test.c b/tools/testing/selftests/lsm/lsm_get_self_attr_test.c
-new file mode 100644
-index 000000000000..a62524b17bf7
---- /dev/null
-+++ b/tools/testing/selftests/lsm/lsm_get_self_attr_test.c
-@@ -0,0 +1,270 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Linux Security Module infrastructure tests
-+ * Tests for the lsm_get_self_attr system call
-+ *
-+ * Copyright © 2022 Casey Schaufler <casey@schaufler-ca.com>
-+ * Copyright © 2022 Intel Corporation
-+ */
-+
-+#define _GNU_SOURCE
-+#include <linux/lsm.h>
-+#include <fcntl.h>
-+#include <string.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <sys/types.h>
-+#include "../kselftest_harness.h"
-+
-+#define PROCATTR	"/proc/self/attr/"
-+
-+static int read_proc_attr(const char *attr, char *value, __kernel_size_t size)
-+{
-+	int fd;
-+	int len;
-+	char *path;
-+
-+	len = strlen(PROCATTR) + strlen(attr) + 1;
-+	path = calloc(len, 1);
-+	if (path == NULL)
-+		return -1;
-+	sprintf(path, "%s%s", PROCATTR, attr);
-+
-+	fd = open(path, O_RDONLY);
-+	free(path);
-+
-+	if (fd < 0)
-+		return -1;
-+	len = read(fd, value, size);
-+	if (len <= 0)
-+		return -1;
-+	close(fd);
-+
-+	path = strchr(value, '\n');
-+	if (path)
-+		*path = '\0';
-+
-+	return 0;
-+}
-+
-+static struct lsm_ctx *next_ctx(struct lsm_ctx *ctxp)
-+{
-+	void *vp;
-+
-+	vp = (void *)ctxp + sizeof(*ctxp) + ctxp->ctx_len;
-+	return (struct lsm_ctx *)vp;
-+}
-+
-+TEST(size_null_lsm_get_self_attr)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	char *ctx = calloc(page_size, 1);
-+
-+	ASSERT_NE(NULL, ctx);
-+	errno = 0;
-+	ASSERT_EQ(-1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, ctx,
-+			      NULL, 0));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	free(ctx);
-+}
-+
-+TEST(ctx_null_lsm_get_self_attr)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	__kernel_size_t size = page_size;
-+
-+	ASSERT_NE(-1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, NULL,
-+			      &size, 0));
-+	ASSERT_NE(1, size);
-+}
-+
-+TEST(size_too_small_lsm_get_self_attr)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	char *ctx = calloc(page_size, 1);
-+	__kernel_size_t size = 1;
-+
-+	ASSERT_NE(NULL, ctx);
-+	errno = 0;
-+	ASSERT_EQ(-1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, ctx,
-+			      &size, 0));
-+	ASSERT_EQ(E2BIG, errno);
-+	ASSERT_NE(1, size);
-+
-+	free(ctx);
-+}
-+
-+TEST(flags_zero_lsm_get_self_attr)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	char *ctx = calloc(page_size, 1);
-+	__kernel_size_t size = page_size;
-+
-+	ASSERT_NE(NULL, ctx);
-+	errno = 0;
-+	ASSERT_EQ(-1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, ctx,
-+			      &size, 1));
-+	ASSERT_EQ(EINVAL, errno);
-+	ASSERT_EQ(page_size, size);
-+
-+	free(ctx);
-+}
-+
-+TEST(flags_overset_lsm_get_self_attr)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	char *ctx = calloc(page_size, 1);
-+	__kernel_size_t size = page_size;
-+
-+	ASSERT_NE(NULL, ctx);
-+	errno = 0;
-+	ASSERT_EQ(-1, syscall(__NR_lsm_get_self_attr,
-+			      LSM_ATTR_CURRENT | LSM_ATTR_PREV, ctx, &size, 0));
-+	ASSERT_EQ(EOPNOTSUPP, errno);
-+
-+	free(ctx);
-+}
-+
-+TEST(basic_lsm_get_self_attr)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	__kernel_size_t size = page_size;
-+	struct lsm_ctx *ctx = calloc(page_size, 1);
-+	struct lsm_ctx *tctx = NULL;
-+	__u64 *syscall_lsms = calloc(page_size, 1);
-+	char *attr = calloc(page_size, 1);
-+	int cnt_current = 0;
-+	int cnt_exec = 0;
-+	int cnt_fscreate = 0;
-+	int cnt_keycreate = 0;
-+	int cnt_prev = 0;
-+	int cnt_sockcreate = 0;
-+	int lsmcount;
-+	int count;
-+	int i;
-+
-+	ASSERT_NE(NULL, ctx);
-+	ASSERT_NE(NULL, syscall_lsms);
-+
-+	lsmcount = syscall(__NR_lsm_list_modules, syscall_lsms, &size, 0);
-+	ASSERT_LE(1, lsmcount);
-+
-+	for (i = 0; i < lsmcount; i++) {
-+		switch (syscall_lsms[i]) {
-+		case LSM_ID_SELINUX:
-+			cnt_current++;
-+			cnt_exec++;
-+			cnt_fscreate++;
-+			cnt_keycreate++;
-+			cnt_prev++;
-+			cnt_sockcreate++;
-+			break;
-+		case LSM_ID_SMACK:
-+			cnt_current++;
-+			break;
-+		case LSM_ID_APPARMOR:
-+			cnt_current++;
-+			cnt_exec++;
-+			cnt_prev++;
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+
-+	if (cnt_current) {
-+		size = page_size;
-+		count = syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, ctx,
-+				&size, 0);
-+		ASSERT_EQ(cnt_current, count);
-+		tctx = ctx;
-+		ASSERT_EQ(0, read_proc_attr("current", attr, page_size));
-+		ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-+		for (i = 1; i < count; i++) {
-+			tctx = next_ctx(tctx);
-+			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-+		}
-+	}
-+	if (cnt_exec) {
-+		size = page_size;
-+		count = syscall(__NR_lsm_get_self_attr, LSM_ATTR_EXEC, ctx,
-+				&size, 0);
-+		ASSERT_GE(cnt_exec, count);
-+		if (count > 0) {
-+			tctx = ctx;
-+			if (read_proc_attr("exec", attr, page_size) == 0)
-+				ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-+		}
-+		for (i = 1; i < count; i++) {
-+			tctx = next_ctx(tctx);
-+			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-+		}
-+	}
-+	if (cnt_fscreate) {
-+		size = page_size;
-+		count = syscall(__NR_lsm_get_self_attr, LSM_ATTR_FSCREATE, ctx,
-+				&size, 0);
-+		ASSERT_GE(cnt_fscreate, count);
-+		if (count > 0) {
-+			tctx = ctx;
-+			if (read_proc_attr("fscreate", attr, page_size) == 0)
-+				ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-+		}
-+		for (i = 1; i < count; i++) {
-+			tctx = next_ctx(tctx);
-+			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-+		}
-+	}
-+	if (cnt_keycreate) {
-+		size = page_size;
-+		count = syscall(__NR_lsm_get_self_attr, LSM_ATTR_KEYCREATE, ctx,
-+				&size, 0);
-+		ASSERT_GE(cnt_keycreate, count);
-+		if (count > 0) {
-+			tctx = ctx;
-+			if (read_proc_attr("keycreate", attr, page_size) == 0)
-+				ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-+		}
-+		for (i = 1; i < count; i++) {
-+			tctx = next_ctx(tctx);
-+			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-+		}
-+	}
-+	if (cnt_prev) {
-+		size = page_size;
-+		count = syscall(__NR_lsm_get_self_attr, LSM_ATTR_PREV, ctx,
-+				&size, 0);
-+		ASSERT_GE(cnt_prev, count);
-+		if (count > 0) {
-+			tctx = ctx;
-+			ASSERT_EQ(0, read_proc_attr("prev", attr, page_size));
-+			ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-+			for (i = 1; i < count; i++) {
-+				tctx = next_ctx(tctx);
-+				ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-+			}
-+		}
-+	}
-+	if (cnt_sockcreate) {
-+		size = page_size;
-+		count = syscall(__NR_lsm_get_self_attr, LSM_ATTR_SOCKCREATE,
-+				ctx, &size, 0);
-+		ASSERT_GE(cnt_sockcreate, count);
-+		if (count > 0) {
-+			tctx = ctx;
-+			if (read_proc_attr("sockcreate", attr, page_size) == 0)
-+				ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-+		}
-+		for (i = 1; i < count; i++) {
-+			tctx = next_ctx(tctx);
-+			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-+		}
-+	}
-+
-+	free(ctx);
-+	free(attr);
-+	free(syscall_lsms);
-+}
-+
-+TEST_HARNESS_MAIN
-diff --git a/tools/testing/selftests/lsm/lsm_list_modules_test.c b/tools/testing/selftests/lsm/lsm_list_modules_test.c
-new file mode 100644
-index 000000000000..871d516a7d7d
---- /dev/null
-+++ b/tools/testing/selftests/lsm/lsm_list_modules_test.c
-@@ -0,0 +1,153 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Linux Security Module infrastructure tests
-+ * Tests for the lsm_list_modules system call
-+ *
-+ * Copyright © 2022 Casey Schaufler <casey@schaufler-ca.com>
-+ * Copyright © 2022 Intel Corporation
-+ */
-+
-+#define _GNU_SOURCE
-+#include <linux/lsm.h>
-+#include <string.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <sys/types.h>
-+#include "../kselftest_harness.h"
-+
-+static int read_sysfs_lsms(char *lsms, __kernel_size_t size)
-+{
-+	FILE *fp;
-+
-+	fp = fopen("/sys/kernel/security/lsm", "r");
-+	if (fp == NULL)
-+		return -1;
-+	if (fread(lsms, 1, size, fp) <= 0)
-+		return -1;
-+	fclose(fp);
-+	return 0;
-+}
-+
-+TEST(size_null_lsm_list_modules)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	char *syscall_lsms = calloc(page_size, 1);
-+
-+	ASSERT_NE(NULL, syscall_lsms);
-+	errno = 0;
-+	ASSERT_EQ(-1, syscall(__NR_lsm_list_modules, syscall_lsms, NULL, 0));
-+	ASSERT_EQ(EFAULT, errno);
-+
-+	free(syscall_lsms);
-+}
-+
-+TEST(ids_null_lsm_list_modules)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	__kernel_size_t size = page_size;
-+
-+	errno = 0;
-+	ASSERT_EQ(-1, syscall(__NR_lsm_list_modules, NULL, &size, 0));
-+	ASSERT_EQ(EFAULT, errno);
-+	ASSERT_NE(1, size);
-+}
-+
-+TEST(size_too_small_lsm_list_modules)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	char *syscall_lsms = calloc(page_size, 1);
-+	__kernel_size_t size = 1;
-+
-+	ASSERT_NE(NULL, syscall_lsms);
-+	errno = 0;
-+	ASSERT_EQ(-1, syscall(__NR_lsm_list_modules, syscall_lsms, &size, 0));
-+	ASSERT_EQ(E2BIG, errno);
-+	ASSERT_NE(1, size);
-+
-+	free(syscall_lsms);
-+}
-+
-+TEST(flags_set_lsm_list_modules)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	char *syscall_lsms = calloc(page_size, 1);
-+	__kernel_size_t size = page_size;
-+
-+	ASSERT_NE(NULL, syscall_lsms);
-+	errno = 0;
-+	ASSERT_EQ(-1, syscall(__NR_lsm_list_modules, syscall_lsms, &size, 7));
-+	ASSERT_EQ(EINVAL, errno);
-+	ASSERT_EQ(page_size, size);
-+
-+	free(syscall_lsms);
-+}
-+
-+TEST(correct_lsm_list_modules)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	__kernel_size_t size = page_size;
-+	__u64 *syscall_lsms = calloc(page_size, 1);
-+	char *sysfs_lsms = calloc(page_size, 1);
-+	char *name;
-+	char *cp;
-+	int count;
-+	int i;
-+
-+	ASSERT_NE(NULL, sysfs_lsms);
-+	ASSERT_NE(NULL, syscall_lsms);
-+	ASSERT_EQ(0, read_sysfs_lsms(sysfs_lsms, page_size));
-+
-+	count = syscall(__NR_lsm_list_modules, syscall_lsms, &size, 0);
-+	ASSERT_LE(1, count);
-+	cp = sysfs_lsms;
-+	for (i = 0; i < count; i++) {
-+		switch (syscall_lsms[i]) {
-+		case LSM_ID_CAPABILITY:
-+			name = "capability";
-+			break;
-+		case LSM_ID_SELINUX:
-+			name = "selinux";
-+			break;
-+		case LSM_ID_SMACK:
-+			name = "smack";
-+			break;
-+		case LSM_ID_TOMOYO:
-+			name = "tomoyo";
-+			break;
-+		case LSM_ID_IMA:
-+			name = "ima";
-+			break;
-+		case LSM_ID_APPARMOR:
-+			name = "apparmor";
-+			break;
-+		case LSM_ID_YAMA:
-+			name = "yama";
-+			break;
-+		case LSM_ID_LOADPIN:
-+			name = "loadpin";
-+			break;
-+		case LSM_ID_SAFESETID:
-+			name = "safesetid";
-+			break;
-+		case LSM_ID_LOCKDOWN:
-+			name = "lockdown";
-+			break;
-+		case LSM_ID_BPF:
-+			name = "bpf";
-+			break;
-+		case LSM_ID_LANDLOCK:
-+			name = "landlock";
-+			break;
-+		default:
-+			name = "INVALID";
-+			break;
-+		}
-+		ASSERT_EQ(0, strncmp(cp, name, strlen(name)));
-+		cp += strlen(name) + 1;
-+	}
-+
-+	free(sysfs_lsms);
-+	free(syscall_lsms);
-+}
-+
-+TEST_HARNESS_MAIN
-diff --git a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
-new file mode 100644
-index 000000000000..ca538a703168
---- /dev/null
-+++ b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
-@@ -0,0 +1,70 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Linux Security Module infrastructure tests
-+ * Tests for the lsm_set_self_attr system call
-+ *
-+ * Copyright © 2022 Casey Schaufler <casey@schaufler-ca.com>
-+ * Copyright © 2022 Intel Corporation
-+ */
-+
-+#define _GNU_SOURCE
-+#include <linux/lsm.h>
-+#include <string.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <sys/types.h>
-+#include "../kselftest_harness.h"
-+
-+TEST(ctx_null_lsm_set_self_attr)
-+{
-+	ASSERT_EQ(-1, syscall(__NR_lsm_set_self_attr, LSM_ATTR_CURRENT, NULL,
-+			      sizeof(struct lsm_ctx), 0));
-+}
-+
-+TEST(size_too_small_lsm_set_self_attr)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	struct lsm_ctx *ctx = calloc(page_size, 1);
-+	__kernel_size_t size = page_size;
-+
-+	ASSERT_NE(NULL, ctx);
-+	ASSERT_GE(1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, ctx,
-+			     &size, 0));
-+	ASSERT_EQ(-1, syscall(__NR_lsm_set_self_attr, LSM_ATTR_CURRENT, ctx, 1,
-+			      0));
-+
-+	free(ctx);
-+}
-+
-+TEST(flags_zero_lsm_set_self_attr)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	char *ctx = calloc(page_size, 1);
-+	__kernel_size_t size = page_size;
-+
-+	ASSERT_NE(NULL, ctx);
-+	ASSERT_GE(1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, ctx,
-+			     &size, 0));
-+	ASSERT_EQ(-1, syscall(__NR_lsm_set_self_attr, LSM_ATTR_CURRENT, ctx,
-+			      size, 1));
-+
-+	free(ctx);
-+}
-+
-+TEST(flags_overset_lsm_set_self_attr)
-+{
-+	const long page_size = sysconf(_SC_PAGESIZE);
-+	char *ctx = calloc(page_size, 1);
-+	__kernel_size_t size = page_size;
-+	struct lsm_ctx *tctx = (struct lsm_ctx *)ctx;
-+
-+	ASSERT_NE(NULL, ctx);
-+	ASSERT_GE(1, syscall(__NR_lsm_get_self_attr, LSM_ATTR_CURRENT, tctx,
-+			     &size, 0));
-+	ASSERT_EQ(-1, syscall(__NR_lsm_set_self_attr,
-+			      LSM_ATTR_CURRENT | LSM_ATTR_PREV, tctx, size, 0));
-+
-+	free(ctx);
-+}
-+
-+TEST_HARNESS_MAIN
+[auto build test ERROR on next-20230615]
+[also build test ERROR on v6.4-rc6]
+[cannot apply to bpf-next/master bpf/master pcmoore-selinux/next linus/master v6.4-rc6 v6.4-rc5 v6.4-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/kernel-Add-helper-macros-for-loop-unrolling/20230616-080708
+base:   next-20230615
+patch link:    https://lore.kernel.org/r/20230616000441.3677441-4-kpsingh%40kernel.org
+patch subject: [PATCH v2 3/5] security: Replace indirect LSM hook calls with static calls
+config: s390-defconfig (https://download.01.org/0day-ci/archive/20230617/202306170414.br6e1YPW-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 12.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20230617/202306170414.br6e1YPW-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202306170414.br6e1YPW-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x28): undefined reference to `__SCT__lsm_static_call_binder_set_context_mgr_0'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x48): undefined reference to `__SCT__lsm_static_call_binder_set_context_mgr_1'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x68): undefined reference to `__SCT__lsm_static_call_binder_set_context_mgr_2'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x88): undefined reference to `__SCT__lsm_static_call_binder_set_context_mgr_3'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0xa8): undefined reference to `__SCT__lsm_static_call_binder_set_context_mgr_4'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0xc8): undefined reference to `__SCT__lsm_static_call_binder_transaction_0'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0xe8): undefined reference to `__SCT__lsm_static_call_binder_transaction_1'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x108): undefined reference to `__SCT__lsm_static_call_binder_transaction_2'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x128): undefined reference to `__SCT__lsm_static_call_binder_transaction_3'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x148): undefined reference to `__SCT__lsm_static_call_binder_transaction_4'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x168): undefined reference to `__SCT__lsm_static_call_binder_transfer_binder_0'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x188): undefined reference to `__SCT__lsm_static_call_binder_transfer_binder_1'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x1a8): undefined reference to `__SCT__lsm_static_call_binder_transfer_binder_2'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x1c8): undefined reference to `__SCT__lsm_static_call_binder_transfer_binder_3'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x1e8): undefined reference to `__SCT__lsm_static_call_binder_transfer_binder_4'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x208): undefined reference to `__SCT__lsm_static_call_binder_transfer_file_0'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x228): undefined reference to `__SCT__lsm_static_call_binder_transfer_file_1'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x248): undefined reference to `__SCT__lsm_static_call_binder_transfer_file_2'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x268): undefined reference to `__SCT__lsm_static_call_binder_transfer_file_3'
+>> s390-linux-ld: security/security.o:(.data..ro_after_init+0x288): undefined reference to `__SCT__lsm_static_call_binder_transfer_file_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x2a8): undefined reference to `__SCT__lsm_static_call_ptrace_access_check_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x2c8): undefined reference to `__SCT__lsm_static_call_ptrace_access_check_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x2e8): undefined reference to `__SCT__lsm_static_call_ptrace_access_check_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x308): undefined reference to `__SCT__lsm_static_call_ptrace_access_check_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x328): undefined reference to `__SCT__lsm_static_call_ptrace_access_check_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x348): undefined reference to `__SCT__lsm_static_call_ptrace_traceme_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x368): undefined reference to `__SCT__lsm_static_call_ptrace_traceme_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x388): undefined reference to `__SCT__lsm_static_call_ptrace_traceme_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x3a8): undefined reference to `__SCT__lsm_static_call_ptrace_traceme_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x3c8): undefined reference to `__SCT__lsm_static_call_ptrace_traceme_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x3e8): undefined reference to `__SCT__lsm_static_call_capget_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x408): undefined reference to `__SCT__lsm_static_call_capget_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x428): undefined reference to `__SCT__lsm_static_call_capget_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x448): undefined reference to `__SCT__lsm_static_call_capget_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x468): undefined reference to `__SCT__lsm_static_call_capget_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x488): undefined reference to `__SCT__lsm_static_call_capset_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x4a8): undefined reference to `__SCT__lsm_static_call_capset_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x4c8): undefined reference to `__SCT__lsm_static_call_capset_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x4e8): undefined reference to `__SCT__lsm_static_call_capset_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x508): undefined reference to `__SCT__lsm_static_call_capset_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x528): undefined reference to `__SCT__lsm_static_call_capable_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x548): undefined reference to `__SCT__lsm_static_call_capable_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x568): undefined reference to `__SCT__lsm_static_call_capable_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x588): undefined reference to `__SCT__lsm_static_call_capable_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x5a8): undefined reference to `__SCT__lsm_static_call_capable_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x5c8): undefined reference to `__SCT__lsm_static_call_quotactl_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x5e8): undefined reference to `__SCT__lsm_static_call_quotactl_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x608): undefined reference to `__SCT__lsm_static_call_quotactl_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x628): undefined reference to `__SCT__lsm_static_call_quotactl_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x648): undefined reference to `__SCT__lsm_static_call_quotactl_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x668): undefined reference to `__SCT__lsm_static_call_quota_on_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x688): undefined reference to `__SCT__lsm_static_call_quota_on_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x6a8): undefined reference to `__SCT__lsm_static_call_quota_on_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x6c8): undefined reference to `__SCT__lsm_static_call_quota_on_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x6e8): undefined reference to `__SCT__lsm_static_call_quota_on_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x708): undefined reference to `__SCT__lsm_static_call_syslog_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x728): undefined reference to `__SCT__lsm_static_call_syslog_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x748): undefined reference to `__SCT__lsm_static_call_syslog_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x768): undefined reference to `__SCT__lsm_static_call_syslog_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x788): undefined reference to `__SCT__lsm_static_call_syslog_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x7a8): undefined reference to `__SCT__lsm_static_call_settime_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x7c8): undefined reference to `__SCT__lsm_static_call_settime_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x7e8): undefined reference to `__SCT__lsm_static_call_settime_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x808): undefined reference to `__SCT__lsm_static_call_settime_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x828): undefined reference to `__SCT__lsm_static_call_settime_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x848): undefined reference to `__SCT__lsm_static_call_vm_enough_memory_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x868): undefined reference to `__SCT__lsm_static_call_vm_enough_memory_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x888): undefined reference to `__SCT__lsm_static_call_vm_enough_memory_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x8a8): undefined reference to `__SCT__lsm_static_call_vm_enough_memory_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x8c8): undefined reference to `__SCT__lsm_static_call_vm_enough_memory_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x8e8): undefined reference to `__SCT__lsm_static_call_bprm_creds_for_exec_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x908): undefined reference to `__SCT__lsm_static_call_bprm_creds_for_exec_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x928): undefined reference to `__SCT__lsm_static_call_bprm_creds_for_exec_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x948): undefined reference to `__SCT__lsm_static_call_bprm_creds_for_exec_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x968): undefined reference to `__SCT__lsm_static_call_bprm_creds_for_exec_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x988): undefined reference to `__SCT__lsm_static_call_bprm_creds_from_file_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x9a8): undefined reference to `__SCT__lsm_static_call_bprm_creds_from_file_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x9c8): undefined reference to `__SCT__lsm_static_call_bprm_creds_from_file_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0x9e8): undefined reference to `__SCT__lsm_static_call_bprm_creds_from_file_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xa08): undefined reference to `__SCT__lsm_static_call_bprm_creds_from_file_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xa28): undefined reference to `__SCT__lsm_static_call_bprm_check_security_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xa48): undefined reference to `__SCT__lsm_static_call_bprm_check_security_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xa68): undefined reference to `__SCT__lsm_static_call_bprm_check_security_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xa88): undefined reference to `__SCT__lsm_static_call_bprm_check_security_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xaa8): undefined reference to `__SCT__lsm_static_call_bprm_check_security_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xac8): undefined reference to `__SCT__lsm_static_call_bprm_committing_creds_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xae8): undefined reference to `__SCT__lsm_static_call_bprm_committing_creds_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xb08): undefined reference to `__SCT__lsm_static_call_bprm_committing_creds_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xb28): undefined reference to `__SCT__lsm_static_call_bprm_committing_creds_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xb48): undefined reference to `__SCT__lsm_static_call_bprm_committing_creds_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xb68): undefined reference to `__SCT__lsm_static_call_bprm_committed_creds_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xb88): undefined reference to `__SCT__lsm_static_call_bprm_committed_creds_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xba8): undefined reference to `__SCT__lsm_static_call_bprm_committed_creds_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xbc8): undefined reference to `__SCT__lsm_static_call_bprm_committed_creds_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xbe8): undefined reference to `__SCT__lsm_static_call_bprm_committed_creds_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xc08): undefined reference to `__SCT__lsm_static_call_fs_context_dup_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xc28): undefined reference to `__SCT__lsm_static_call_fs_context_dup_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xc48): undefined reference to `__SCT__lsm_static_call_fs_context_dup_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xc68): undefined reference to `__SCT__lsm_static_call_fs_context_dup_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xc88): undefined reference to `__SCT__lsm_static_call_fs_context_dup_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xca8): undefined reference to `__SCT__lsm_static_call_fs_context_parse_param_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xcc8): undefined reference to `__SCT__lsm_static_call_fs_context_parse_param_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xce8): undefined reference to `__SCT__lsm_static_call_fs_context_parse_param_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xd08): undefined reference to `__SCT__lsm_static_call_fs_context_parse_param_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xd28): undefined reference to `__SCT__lsm_static_call_fs_context_parse_param_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xd48): undefined reference to `__SCT__lsm_static_call_sb_alloc_security_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xd68): undefined reference to `__SCT__lsm_static_call_sb_alloc_security_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xd88): undefined reference to `__SCT__lsm_static_call_sb_alloc_security_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xda8): undefined reference to `__SCT__lsm_static_call_sb_alloc_security_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xdc8): undefined reference to `__SCT__lsm_static_call_sb_alloc_security_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xde8): undefined reference to `__SCT__lsm_static_call_sb_delete_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xe08): undefined reference to `__SCT__lsm_static_call_sb_delete_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xe28): undefined reference to `__SCT__lsm_static_call_sb_delete_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xe48): undefined reference to `__SCT__lsm_static_call_sb_delete_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xe68): undefined reference to `__SCT__lsm_static_call_sb_delete_4'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xe88): undefined reference to `__SCT__lsm_static_call_sb_free_security_0'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xea8): undefined reference to `__SCT__lsm_static_call_sb_free_security_1'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xec8): undefined reference to `__SCT__lsm_static_call_sb_free_security_2'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xee8): undefined reference to `__SCT__lsm_static_call_sb_free_security_3'
+   s390-linux-ld: security/security.o:(.data..ro_after_init+0xf08): undefined reference to `__SCT__lsm_static_call_sb_free_security_4'
+
 -- 
-2.40.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
