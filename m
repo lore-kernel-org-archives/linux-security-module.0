@@ -2,385 +2,124 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B69EB64D9
-	for <linux-security-module@archiver.kernel.org>; Sat, 17 Jun 2023 15:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3813EB64D7
+	for <linux-security-module@archiver.kernel.org>; Sun, 18 Jun 2023 10:24:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbjFQPjg (ORCPT
+        id S229611AbjFRKYT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 17 Jun 2023 11:39:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37128 "EHLO
+        Sun, 18 Jun 2023 06:24:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229675AbjFQPjf (ORCPT
+        with ESMTP id S229489AbjFRKYS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 17 Jun 2023 11:39:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71FE1BE
-        for <linux-security-module@vger.kernel.org>; Sat, 17 Jun 2023 08:39:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F03C3604EF
-        for <linux-security-module@vger.kernel.org>; Sat, 17 Jun 2023 15:39:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FCCC433CC
-        for <linux-security-module@vger.kernel.org>; Sat, 17 Jun 2023 15:39:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687016372;
-        bh=yls5FG8rNuC31hxJeDEoLXC+oEyCGDZjCJ7zAyhONK4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=d+ULHEuHRomChr1h7WMOhOlI70lwBfM6vx2GwBmXtWLZtB7qc1M1FOtWxBm8Kew5y
-         Dcu4d2ECPjwHS7LCqgRAcH35N2NZrojzndzp3Q+HhsmgTRX2/EJHrq2y8WWwvYZIG9
-         P+CEeNMPeRddTR4SE6IL9Uv4HnZIrf0GXPL27rSc0pmIrSggo0ALHtJviGJe4wcsbO
-         eD3twWmh0QuZ6qjXRkoWIxraZVJGss/eAs671ofFzFwuGbSDcKqSOFQdz4xa74AZq9
-         72W1k4TKOvqeRwGpuHp4Jy3L6y6JnnaEgdtRXMN0uj6FXFGRxz8RLXmryxHkoiAu91
-         BdcLUpd9bZ9pQ==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-4f866a3d8e4so372345e87.0
-        for <linux-security-module@vger.kernel.org>; Sat, 17 Jun 2023 08:39:32 -0700 (PDT)
-X-Gm-Message-State: AC+VfDwl+5jbnulSzTQ5V5zjfNsIRzmU3s0r+yVUurUs4gnHjH8i7R2Y
-        tC3wjI0oaBSmtpBZ24Stpw40QXnPVOYduWLfvLp7TQ==
-X-Google-Smtp-Source: ACHHUZ4jOngs+qGpr4MtAEWJxGeqKVeNYr9lBTv43Ss+RpMZt9t1SzYAA1/ii03ETXlbzTmwZ61naQrJodpY3MiqmiA=
-X-Received: by 2002:a19:911d:0:b0:4f6:1f5a:60d6 with SMTP id
- t29-20020a19911d000000b004f61f5a60d6mr3175766lfd.44.1687016370036; Sat, 17
- Jun 2023 08:39:30 -0700 (PDT)
+        Sun, 18 Jun 2023 06:24:18 -0400
+X-Greylist: delayed 450 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 18 Jun 2023 03:24:17 PDT
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A727F13D
+        for <linux-security-module@vger.kernel.org>; Sun, 18 Jun 2023 03:24:17 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id ApScqyYPQhQKVApScqcNqL; Sun, 18 Jun 2023 12:16:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1687083404;
+        bh=DSknnbdi6ETR4gXl9xkSuTonkqso7NbmO9NcHs49YUM=;
+        h=From:To:Cc:Subject:Date;
+        b=oUN9wnGrAcXdub/3VYK2AdRcF/0yznYc5OEJ/3kjtVQlGrOA/H1dqj7zFj7ehR5RK
+         5bg6ZqB62JhYgTEVsuSv4iUSpSD3znp7a3L8BAFHhfZ/Gai78XX4LklQRZ15pBmYct
+         XLupCOx4xWMyzxqosNKnPHmZ+bDtMtOt4+wqG3k109/31LmqYoioF+d+oRZBLULoMp
+         jD3FbBVm6WuT6zL2Mn9B1/f7rAO6vt27wMSaVc8d39w9sw4REIyiB0zFnE9UrfB2ey
+         Dx09kEEC4DeLn9MUTX2NX1gb5+o5JYLh8xo8814zzjl8qKlMJ/IFh2PUkuCjOcl2zc
+         nhfjEZYWhhXFg==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 18 Jun 2023 12:16:44 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Paul Moore <paul@paul-moore.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netdev@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH net-next] netlabel: Reorder fields in 'struct netlbl_domaddr6_map'
+Date:   Sun, 18 Jun 2023 12:16:41 +0200
+Message-Id: <aa109847260e51e174c823b6d1441f75be370f01.1687083361.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230616000441.3677441-4-kpsingh@kernel.org> <202306170414.br6e1YPW-lkp@intel.com>
-In-Reply-To: <202306170414.br6e1YPW-lkp@intel.com>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Sat, 17 Jun 2023 17:39:19 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ4d9pQECEY+pyVDO42caqVHG33jUbKw5xF4ME=66rjVgQ@mail.gmail.com>
-Message-ID: <CACYkzJ4d9pQECEY+pyVDO42caqVHG33jUbKw5xF4ME=66rjVgQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] security: Replace indirect LSM hook calls with
- static calls
-To:     kernel test robot <lkp@intel.com>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        oe-kbuild-all@lists.linux.dev, paul@paul-moore.com,
-        keescook@chromium.org, casey@schaufler-ca.com, song@kernel.org,
-        daniel@iogearbox.net, ast@kernel.org, jannh@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 16, 2023 at 11:10=E2=80=AFPM kernel test robot <lkp@intel.com> =
-wrote:
->
-> Hi KP,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on next-20230615]
-> [also build test ERROR on v6.4-rc6]
-> [cannot apply to bpf-next/master bpf/master pcmoore-selinux/next linus/ma=
-ster v6.4-rc6 v6.4-rc5 v6.4-rc4]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/kernel-Ad=
-d-helper-macros-for-loop-unrolling/20230616-080708
-> base:   next-20230615
-> patch link:    https://lore.kernel.org/r/20230616000441.3677441-4-kpsingh=
-%40kernel.org
-> patch subject: [PATCH v2 3/5] security: Replace indirect LSM hook calls w=
-ith static calls
-> config: s390-defconfig (https://download.01.org/0day-ci/archive/20230617/=
-202306170414.br6e1YPW-lkp@intel.com/config)
-> compiler: s390-linux-gcc (GCC) 12.3.0
-> reproduce: (https://download.01.org/0day-ci/archive/20230617/202306170414=
-.br6e1YPW-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202306170414.br6e1YPW-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x28): undefi=
-ned reference to `__SCT__lsm_static_call_binder_set_context_mgr_0'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x48): undefi=
-ned reference to `__SCT__lsm_static_call_binder_set_context_mgr_1'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x68): undefi=
-ned reference to `__SCT__lsm_static_call_binder_set_context_mgr_2'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x88): undefi=
-ned reference to `__SCT__lsm_static_call_binder_set_context_mgr_3'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0xa8): undefi=
-ned reference to `__SCT__lsm_static_call_binder_set_context_mgr_4'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0xc8): undefi=
-ned reference to `__SCT__lsm_static_call_binder_transaction_0'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0xe8): undefi=
-ned reference to `__SCT__lsm_static_call_binder_transaction_1'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x108): undef=
-ined reference to `__SCT__lsm_static_call_binder_transaction_2'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x128): undef=
-ined reference to `__SCT__lsm_static_call_binder_transaction_3'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x148): undef=
-ined reference to `__SCT__lsm_static_call_binder_transaction_4'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x168): undef=
-ined reference to `__SCT__lsm_static_call_binder_transfer_binder_0'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x188): undef=
-ined reference to `__SCT__lsm_static_call_binder_transfer_binder_1'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x1a8): undef=
-ined reference to `__SCT__lsm_static_call_binder_transfer_binder_2'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x1c8): undef=
-ined reference to `__SCT__lsm_static_call_binder_transfer_binder_3'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x1e8): undef=
-ined reference to `__SCT__lsm_static_call_binder_transfer_binder_4'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x208): undef=
-ined reference to `__SCT__lsm_static_call_binder_transfer_file_0'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x228): undef=
-ined reference to `__SCT__lsm_static_call_binder_transfer_file_1'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x248): undef=
-ined reference to `__SCT__lsm_static_call_binder_transfer_file_2'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x268): undef=
-ined reference to `__SCT__lsm_static_call_binder_transfer_file_3'
-> >> s390-linux-ld: security/security.o:(.data..ro_after_init+0x288): undef=
-ined reference to `__SCT__lsm_static_call_binder_transfer_file_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x2a8): undef=
-ined reference to `__SCT__lsm_static_call_ptrace_access_check_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x2c8): undef=
-ined reference to `__SCT__lsm_static_call_ptrace_access_check_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x2e8): undef=
-ined reference to `__SCT__lsm_static_call_ptrace_access_check_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x308): undef=
-ined reference to `__SCT__lsm_static_call_ptrace_access_check_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x328): undef=
-ined reference to `__SCT__lsm_static_call_ptrace_access_check_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x348): undef=
-ined reference to `__SCT__lsm_static_call_ptrace_traceme_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x368): undef=
-ined reference to `__SCT__lsm_static_call_ptrace_traceme_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x388): undef=
-ined reference to `__SCT__lsm_static_call_ptrace_traceme_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x3a8): undef=
-ined reference to `__SCT__lsm_static_call_ptrace_traceme_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x3c8): undef=
-ined reference to `__SCT__lsm_static_call_ptrace_traceme_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x3e8): undef=
-ined reference to `__SCT__lsm_static_call_capget_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x408): undef=
-ined reference to `__SCT__lsm_static_call_capget_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x428): undef=
-ined reference to `__SCT__lsm_static_call_capget_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x448): undef=
-ined reference to `__SCT__lsm_static_call_capget_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x468): undef=
-ined reference to `__SCT__lsm_static_call_capget_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x488): undef=
-ined reference to `__SCT__lsm_static_call_capset_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x4a8): undef=
-ined reference to `__SCT__lsm_static_call_capset_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x4c8): undef=
-ined reference to `__SCT__lsm_static_call_capset_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x4e8): undef=
-ined reference to `__SCT__lsm_static_call_capset_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x508): undef=
-ined reference to `__SCT__lsm_static_call_capset_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x528): undef=
-ined reference to `__SCT__lsm_static_call_capable_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x548): undef=
-ined reference to `__SCT__lsm_static_call_capable_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x568): undef=
-ined reference to `__SCT__lsm_static_call_capable_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x588): undef=
-ined reference to `__SCT__lsm_static_call_capable_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x5a8): undef=
-ined reference to `__SCT__lsm_static_call_capable_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x5c8): undef=
-ined reference to `__SCT__lsm_static_call_quotactl_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x5e8): undef=
-ined reference to `__SCT__lsm_static_call_quotactl_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x608): undef=
-ined reference to `__SCT__lsm_static_call_quotactl_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x628): undef=
-ined reference to `__SCT__lsm_static_call_quotactl_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x648): undef=
-ined reference to `__SCT__lsm_static_call_quotactl_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x668): undef=
-ined reference to `__SCT__lsm_static_call_quota_on_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x688): undef=
-ined reference to `__SCT__lsm_static_call_quota_on_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x6a8): undef=
-ined reference to `__SCT__lsm_static_call_quota_on_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x6c8): undef=
-ined reference to `__SCT__lsm_static_call_quota_on_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x6e8): undef=
-ined reference to `__SCT__lsm_static_call_quota_on_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x708): undef=
-ined reference to `__SCT__lsm_static_call_syslog_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x728): undef=
-ined reference to `__SCT__lsm_static_call_syslog_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x748): undef=
-ined reference to `__SCT__lsm_static_call_syslog_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x768): undef=
-ined reference to `__SCT__lsm_static_call_syslog_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x788): undef=
-ined reference to `__SCT__lsm_static_call_syslog_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x7a8): undef=
-ined reference to `__SCT__lsm_static_call_settime_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x7c8): undef=
-ined reference to `__SCT__lsm_static_call_settime_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x7e8): undef=
-ined reference to `__SCT__lsm_static_call_settime_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x808): undef=
-ined reference to `__SCT__lsm_static_call_settime_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x828): undef=
-ined reference to `__SCT__lsm_static_call_settime_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x848): undef=
-ined reference to `__SCT__lsm_static_call_vm_enough_memory_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x868): undef=
-ined reference to `__SCT__lsm_static_call_vm_enough_memory_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x888): undef=
-ined reference to `__SCT__lsm_static_call_vm_enough_memory_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x8a8): undef=
-ined reference to `__SCT__lsm_static_call_vm_enough_memory_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x8c8): undef=
-ined reference to `__SCT__lsm_static_call_vm_enough_memory_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x8e8): undef=
-ined reference to `__SCT__lsm_static_call_bprm_creds_for_exec_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x908): undef=
-ined reference to `__SCT__lsm_static_call_bprm_creds_for_exec_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x928): undef=
-ined reference to `__SCT__lsm_static_call_bprm_creds_for_exec_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x948): undef=
-ined reference to `__SCT__lsm_static_call_bprm_creds_for_exec_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x968): undef=
-ined reference to `__SCT__lsm_static_call_bprm_creds_for_exec_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x988): undef=
-ined reference to `__SCT__lsm_static_call_bprm_creds_from_file_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x9a8): undef=
-ined reference to `__SCT__lsm_static_call_bprm_creds_from_file_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x9c8): undef=
-ined reference to `__SCT__lsm_static_call_bprm_creds_from_file_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0x9e8): undef=
-ined reference to `__SCT__lsm_static_call_bprm_creds_from_file_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xa08): undef=
-ined reference to `__SCT__lsm_static_call_bprm_creds_from_file_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xa28): undef=
-ined reference to `__SCT__lsm_static_call_bprm_check_security_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xa48): undef=
-ined reference to `__SCT__lsm_static_call_bprm_check_security_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xa68): undef=
-ined reference to `__SCT__lsm_static_call_bprm_check_security_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xa88): undef=
-ined reference to `__SCT__lsm_static_call_bprm_check_security_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xaa8): undef=
-ined reference to `__SCT__lsm_static_call_bprm_check_security_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xac8): undef=
-ined reference to `__SCT__lsm_static_call_bprm_committing_creds_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xae8): undef=
-ined reference to `__SCT__lsm_static_call_bprm_committing_creds_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xb08): undef=
-ined reference to `__SCT__lsm_static_call_bprm_committing_creds_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xb28): undef=
-ined reference to `__SCT__lsm_static_call_bprm_committing_creds_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xb48): undef=
-ined reference to `__SCT__lsm_static_call_bprm_committing_creds_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xb68): undef=
-ined reference to `__SCT__lsm_static_call_bprm_committed_creds_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xb88): undef=
-ined reference to `__SCT__lsm_static_call_bprm_committed_creds_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xba8): undef=
-ined reference to `__SCT__lsm_static_call_bprm_committed_creds_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xbc8): undef=
-ined reference to `__SCT__lsm_static_call_bprm_committed_creds_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xbe8): undef=
-ined reference to `__SCT__lsm_static_call_bprm_committed_creds_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xc08): undef=
-ined reference to `__SCT__lsm_static_call_fs_context_dup_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xc28): undef=
-ined reference to `__SCT__lsm_static_call_fs_context_dup_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xc48): undef=
-ined reference to `__SCT__lsm_static_call_fs_context_dup_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xc68): undef=
-ined reference to `__SCT__lsm_static_call_fs_context_dup_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xc88): undef=
-ined reference to `__SCT__lsm_static_call_fs_context_dup_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xca8): undef=
-ined reference to `__SCT__lsm_static_call_fs_context_parse_param_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xcc8): undef=
-ined reference to `__SCT__lsm_static_call_fs_context_parse_param_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xce8): undef=
-ined reference to `__SCT__lsm_static_call_fs_context_parse_param_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xd08): undef=
-ined reference to `__SCT__lsm_static_call_fs_context_parse_param_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xd28): undef=
-ined reference to `__SCT__lsm_static_call_fs_context_parse_param_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xd48): undef=
-ined reference to `__SCT__lsm_static_call_sb_alloc_security_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xd68): undef=
-ined reference to `__SCT__lsm_static_call_sb_alloc_security_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xd88): undef=
-ined reference to `__SCT__lsm_static_call_sb_alloc_security_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xda8): undef=
-ined reference to `__SCT__lsm_static_call_sb_alloc_security_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xdc8): undef=
-ined reference to `__SCT__lsm_static_call_sb_alloc_security_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xde8): undef=
-ined reference to `__SCT__lsm_static_call_sb_delete_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xe08): undef=
-ined reference to `__SCT__lsm_static_call_sb_delete_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xe28): undef=
-ined reference to `__SCT__lsm_static_call_sb_delete_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xe48): undef=
-ined reference to `__SCT__lsm_static_call_sb_delete_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xe68): undef=
-ined reference to `__SCT__lsm_static_call_sb_delete_4'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xe88): undef=
-ined reference to `__SCT__lsm_static_call_sb_free_security_0'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xea8): undef=
-ined reference to `__SCT__lsm_static_call_sb_free_security_1'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xec8): undef=
-ined reference to `__SCT__lsm_static_call_sb_free_security_2'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xee8): undef=
-ined reference to `__SCT__lsm_static_call_sb_free_security_3'
->    s390-linux-ld: security/security.o:(.data..ro_after_init+0xf08): undef=
-ined reference to `__SCT__lsm_static_call_sb_free_security_4'
->
+Group some variables based on their sizes to reduce hole and avoid padding.
+On x86_64, this shrinks the size of 'struct netlbl_domaddr6_map'
+from 72 to 64 bytes.
 
-We ended up leaking the STATIC_CALL_TRAMP (__SCT__) which is not used
-on architectures that don't have static call support. A simple change
-fixes this:
+It saves a few bytes of memory and is more cache-line friendly.
 
-diff --git a/security/security.c b/security/security.c
-index da80a8918e7d..f6ea028dbc7e 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -95,6 +95,14 @@ static __initconst const char *const
-builtin_lsm_order =3D CONFIG_LSM;
- static __initdata struct lsm_info **ordered_lsms;
- static __initdata struct lsm_info *exclusive;
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Using pahole
 
-+
-+#ifdef CONFIG_HAVE_STATIC_CALL
-+#define LSM_HOOK_TRAMP(NAME, NUM) \
-+       &STATIC_CALL_TRAMP(LSM_STATIC_CALL(NAME, NUM))
-+#else
-+#define LSM_HOOK_TRAMP(NAME, NUM) NULL
-+#endif
-+
- /*
-  * Define static calls and static keys for each LSM hook.
-  */
-@@ -123,7 +131,7 @@ struct lsm_static_calls_table static_calls_table
-__ro_after_init =3D {
- #define INIT_LSM_STATIC_CALL(NUM, NAME)
-         \
-        (struct lsm_static_call) {                                      \
-                .key =3D &STATIC_CALL_KEY(LSM_STATIC_CALL(NAME, NUM)),    \
--               .trampoline =3D &STATIC_CALL_TRAMP(LSM_STATIC_CALL(NAME, NU=
-M)),\
-+               .trampoline =3D LSM_HOOK_TRAMP(NAME, NUM),                \
-                .active =3D &SECURITY_HOOK_ACTIVE_KEY(NAME, NUM),         \
-        },
- #define LSM_HOOK(RET, DEFAULT, NAME, ...)                              \
+Before:
+======
+struct netlbl_dom_map {
+	char *                     domain;               /*     0     8 */
+	u16                        family;               /*     8     2 */
 
-The trampoline is not used as the static call just ends up being an
-indirect call. I will fix this in the next revision.
+	/* XXX 6 bytes hole, try to pack */
+
+	struct netlbl_dommap_def   def;                  /*    16    16 */
+	u32                        valid;                /*    32     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	struct list_head           list;                 /*    40    16 */
+	struct callback_head       rcu __attribute__((__aligned__(8))); /*    56    16 */
+
+	/* size: 72, cachelines: 2, members: 6 */
+	/* sum members: 62, holes: 2, sum holes: 10 */
+	/* forced alignments: 1 */
+	/* last cacheline: 8 bytes */
+} __attribute__((__aligned__(8)));
 
 
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+After:
+=====
+struct netlbl_dom_map {
+	char *                     domain;               /*     0     8 */
+	struct netlbl_dommap_def   def;                  /*     8    16 */
+	u16                        family;               /*    24     2 */
+
+	/* XXX 2 bytes hole, try to pack */
+
+	u32                        valid;                /*    28     4 */
+	struct list_head           list;                 /*    32    16 */
+	struct callback_head       rcu __attribute__((__aligned__(8))); /*    48    16 */
+
+	/* size: 64, cachelines: 1, members: 6 */
+	/* sum members: 62, holes: 1, sum holes: 2 */
+	/* forced alignments: 1 */
+} __attribute__((__aligned__(8)));
+---
+ net/netlabel/netlabel_domainhash.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/netlabel/netlabel_domainhash.h b/net/netlabel/netlabel_domainhash.h
+index 9f80972ae39b..7eaa35fdd9bd 100644
+--- a/net/netlabel/netlabel_domainhash.h
++++ b/net/netlabel/netlabel_domainhash.h
+@@ -57,8 +57,8 @@ struct netlbl_domaddr6_map {
+ 
+ struct netlbl_dom_map {
+ 	char *domain;
+-	u16 family;
+ 	struct netlbl_dommap_def def;
++	u16 family;
+ 
+ 	u32 valid;
+ 	struct list_head list;
+-- 
+2.34.1
+
