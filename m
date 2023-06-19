@@ -2,124 +2,91 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3813EB64D7
-	for <linux-security-module@archiver.kernel.org>; Sun, 18 Jun 2023 10:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FE3EB64D9
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jun 2023 12:35:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbjFRKYT (ORCPT
+        id S229584AbjFSMfn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 18 Jun 2023 06:24:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47368 "EHLO
+        Mon, 19 Jun 2023 08:35:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjFRKYS (ORCPT
+        with ESMTP id S229481AbjFSMfm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 18 Jun 2023 06:24:18 -0400
-X-Greylist: delayed 450 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 18 Jun 2023 03:24:17 PDT
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A727F13D
-        for <linux-security-module@vger.kernel.org>; Sun, 18 Jun 2023 03:24:17 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id ApScqyYPQhQKVApScqcNqL; Sun, 18 Jun 2023 12:16:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1687083404;
-        bh=DSknnbdi6ETR4gXl9xkSuTonkqso7NbmO9NcHs49YUM=;
-        h=From:To:Cc:Subject:Date;
-        b=oUN9wnGrAcXdub/3VYK2AdRcF/0yznYc5OEJ/3kjtVQlGrOA/H1dqj7zFj7ehR5RK
-         5bg6ZqB62JhYgTEVsuSv4iUSpSD3znp7a3L8BAFHhfZ/Gai78XX4LklQRZ15pBmYct
-         XLupCOx4xWMyzxqosNKnPHmZ+bDtMtOt4+wqG3k109/31LmqYoioF+d+oRZBLULoMp
-         jD3FbBVm6WuT6zL2Mn9B1/f7rAO6vt27wMSaVc8d39w9sw4REIyiB0zFnE9UrfB2ey
-         Dx09kEEC4DeLn9MUTX2NX1gb5+o5JYLh8xo8814zzjl8qKlMJ/IFh2PUkuCjOcl2zc
-         nhfjEZYWhhXFg==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 18 Jun 2023 12:16:44 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Paul Moore <paul@paul-moore.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH net-next] netlabel: Reorder fields in 'struct netlbl_domaddr6_map'
-Date:   Sun, 18 Jun 2023 12:16:41 +0200
-Message-Id: <aa109847260e51e174c823b6d1441f75be370f01.1687083361.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 19 Jun 2023 08:35:42 -0400
+Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C55FDB;
+        Mon, 19 Jun 2023 05:35:39 -0700 (PDT)
+Received: from [167.98.27.226] (helo=rainbowdash)
+        by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+        id 1qBE6a-00AyAW-F4; Mon, 19 Jun 2023 13:35:37 +0100
+Received: from ben by rainbowdash with local (Exim 4.96)
+        (envelope-from <ben@rainbowdash>)
+        id 1qBE6b-001MTk-07;
+        Mon, 19 Jun 2023 13:35:37 +0100
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     linux-security-module@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, serge@hallyn.com,
+        Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [PATCH] capabilities: fix sparse warning about __user access
+Date:   Mon, 19 Jun 2023 13:35:35 +0100
+Message-Id: <20230619123535.324632-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Group some variables based on their sizes to reduce hole and avoid padding.
-On x86_64, this shrinks the size of 'struct netlbl_domaddr6_map'
-from 72 to 64 bytes.
+The two syscalls for capget and capset are producing sparse warnings
+as sparse is thinking that the "struct __user_cap_data_struct" is marked
+user, which seems to be down to the declaration and typedef at the same
+time.
 
-It saves a few bytes of memory and is more cache-line friendly.
+Fix the following warnings by splutting the struct declaration and then
+the user typedef into two:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+kernel/capability.c:191:35: warning: incorrect type in argument 2 (different address spaces)
+kernel/capability.c:191:35:    expected void const *from
+kernel/capability.c:191:35:    got struct __user_cap_data_struct [noderef] __user *
+kernel/capability.c:168:14: warning: dereference of noderef expression
+kernel/capability.c:168:45: warning: dereference of noderef expression
+kernel/capability.c:169:14: warning: dereference of noderef expression
+kernel/capability.c:169:45: warning: dereference of noderef expression
+kernel/capability.c:170:14: warning: dereference of noderef expression
+kernel/capability.c:170:45: warning: dereference of noderef expression
+kernel/capability.c:244:29: warning: incorrect type in argument 1 (different address spaces)
+kernel/capability.c:244:29:    expected void *to
+kernel/capability.c:244:29:    got struct __user_cap_data_struct [noderef] __user ( * )[2]
+kernel/capability.c:247:42: warning: dereference of noderef expression
+kernel/capability.c:247:64: warning: dereference of noderef expression
+kernel/capability.c:248:42: warning: dereference of noderef expression
+kernel/capability.c:248:64: warning: dereference of noderef expression
+kernel/capability.c:249:42: warning: dereference of noderef expression
+kernel/capability.c:249:64: warning: dereference of noderef expression
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
-Using pahole
+ include/uapi/linux/capability.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Before:
-======
-struct netlbl_dom_map {
-	char *                     domain;               /*     0     8 */
-	u16                        family;               /*     8     2 */
-
-	/* XXX 6 bytes hole, try to pack */
-
-	struct netlbl_dommap_def   def;                  /*    16    16 */
-	u32                        valid;                /*    32     4 */
-
-	/* XXX 4 bytes hole, try to pack */
-
-	struct list_head           list;                 /*    40    16 */
-	struct callback_head       rcu __attribute__((__aligned__(8))); /*    56    16 */
-
-	/* size: 72, cachelines: 2, members: 6 */
-	/* sum members: 62, holes: 2, sum holes: 10 */
-	/* forced alignments: 1 */
-	/* last cacheline: 8 bytes */
-} __attribute__((__aligned__(8)));
-
-
-After:
-=====
-struct netlbl_dom_map {
-	char *                     domain;               /*     0     8 */
-	struct netlbl_dommap_def   def;                  /*     8    16 */
-	u16                        family;               /*    24     2 */
-
-	/* XXX 2 bytes hole, try to pack */
-
-	u32                        valid;                /*    28     4 */
-	struct list_head           list;                 /*    32    16 */
-	struct callback_head       rcu __attribute__((__aligned__(8))); /*    48    16 */
-
-	/* size: 64, cachelines: 1, members: 6 */
-	/* sum members: 62, holes: 1, sum holes: 2 */
-	/* forced alignments: 1 */
-} __attribute__((__aligned__(8)));
----
- net/netlabel/netlabel_domainhash.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/netlabel/netlabel_domainhash.h b/net/netlabel/netlabel_domainhash.h
-index 9f80972ae39b..7eaa35fdd9bd 100644
---- a/net/netlabel/netlabel_domainhash.h
-+++ b/net/netlabel/netlabel_domainhash.h
-@@ -57,8 +57,8 @@ struct netlbl_domaddr6_map {
+diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+index 3d61a0ae055d..5bb906098697 100644
+--- a/include/uapi/linux/capability.h
++++ b/include/uapi/linux/capability.h
+@@ -41,11 +41,12 @@ typedef struct __user_cap_header_struct {
+ 	int pid;
+ } __user *cap_user_header_t;
  
- struct netlbl_dom_map {
- 	char *domain;
--	u16 family;
- 	struct netlbl_dommap_def def;
-+	u16 family;
+-typedef struct __user_cap_data_struct {
++struct __user_cap_data_struct {
+         __u32 effective;
+         __u32 permitted;
+         __u32 inheritable;
+-} __user *cap_user_data_t;
++};
++typedef struct __user_cap_data_struct __user *cap_user_data_t;
  
- 	u32 valid;
- 	struct list_head list;
+ 
+ #define VFS_CAP_REVISION_MASK	0xFF000000
 -- 
-2.34.1
+2.39.2
 
