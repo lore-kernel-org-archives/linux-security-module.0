@@ -2,147 +2,104 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FEDEB64D9
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jun 2023 17:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF345EB64D9
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jun 2023 17:57:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbjFSRko (ORCPT
+        id S229662AbjFSR5Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Jun 2023 13:40:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38820 "EHLO
+        Mon, 19 Jun 2023 13:57:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229506AbjFSRkn (ORCPT
+        with ESMTP id S229537AbjFSR5P (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Jun 2023 13:40:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19490198
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Jun 2023 10:40:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A2A1A60DFF
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Jun 2023 17:40:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5CF9C433C8;
-        Mon, 19 Jun 2023 17:40:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687196442;
-        bh=sH9kiOaU4wCIs4WeyFId3eU6qGRkP8/+BEpkEEZLIgM=;
-        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-        b=ooXDrBwOmWjxnX0vCA/nNLDqzeKQSY5gecC2l8TYj4AeLZ08S7IDhhI+4V3gwxyqJ
-         svFHFq53ECZwC3sL7Mo92JWVcdumAfCpgR2UWUaOt+wDX91eUSEPjUVWnxSW+KWl/C
-         FtsHBRy+2jxN5GmGbH0073EYBc2t3D76LLmNvlgK6bvW/oYPQiME98tY3ZRJKXAw+0
-         fX8wrRcEqJUaa3qfX8UqFzNaQ3kscczKPXrynPXbMOkLhroECgYaqUSw8iEqMEehms
-         gwQEBIzrgeoi2dqFgEafIIZVaUx1wxHk4aLglO1e66yG9esU5dJii7ylu13By/RGil
-         X9j9lAnvHMJhQ==
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailauth.nyi.internal (Postfix) with ESMTP id C199927C0054;
-        Mon, 19 Jun 2023 13:40:40 -0400 (EDT)
-Received: from imap48 ([10.202.2.98])
-  by compute3.internal (MEProxy); Mon, 19 Jun 2023 13:40:40 -0400
-X-ME-Sender: <xms:GJOQZDrFjQBSLD8v6l9jlNxQCcDAuUFaC8_myq-N9ys3ILPbyOl-xA>
-    <xme:GJOQZNox_QBqGJHtm912hiJzLlimwFL50VRMOvsDnHiR3661XgMt5YUaLjkCSy_gZ
-    gAe31es-NbzZK7gf2E>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeefvddguddufecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
-    tehnugihucfnuhhtohhmihhrshhkihdfuceolhhuthhosehkvghrnhgvlhdrohhrgheqne
-    cuggftrfgrthhtvghrnhepudevffdvgedvfefhgeejjeelgfdtffeukedugfekuddvtedv
-    udeileeugfejgefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomheprghnugihodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduudei
-    udekheeifedvqddvieefudeiiedtkedqlhhuthhopeepkhgvrhhnvghlrdhorhhgsehlih
-    hnuhigrdhluhhtohdruhhs
-X-ME-Proxy: <xmx:GJOQZANu8N4m1mMAuS4yamMLNs4I5uZVHLYGY7fCqq71dlyTQC6RPA>
-    <xmx:GJOQZG713DhZxFOdgeDSXB_jyWz5SK6ItuebDBY3Fkg8PEoWyU24Eg>
-    <xmx:GJOQZC4YQZyH3UkH01n7t2xuqvgNurSFXrDKUTJjhMH8f8PF5XhALQ>
-    <xmx:GJOQZPvsPgkpLn9Ahdtqp6FPC3_4ZUUqIUT70MhAfBlzx5OFPYZDOQ>
-Feedback-ID: ieff94742:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 30FF031A0063; Mon, 19 Jun 2023 13:40:40 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-496-g8c46984af0-fm-20230615.001-g8c46984a
-Mime-Version: 1.0
-Message-Id: <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com>
-In-Reply-To: <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
-References: <20230607235352.1723243-1-andrii@kernel.org>
- <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
- <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
-Date:   Mon, 19 Jun 2023 10:40:19 -0700
-From:   "Andy Lutomirski" <luto@kernel.org>
-To:     "Andrii Nakryiko" <andrii.nakryiko@gmail.com>
-Cc:     "Andrii Nakryiko" <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        "Kees Cook" <keescook@chromium.org>,
-        "Christian Brauner" <brauner@kernel.org>, lennart@poettering.net,
-        cyphar@cyphar.com, kernel-team@meta.com
-Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        Mon, 19 Jun 2023 13:57:15 -0400
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6989312A;
+        Mon, 19 Jun 2023 10:57:12 -0700 (PDT)
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 808C4518; Mon, 19 Jun 2023 12:57:10 -0500 (CDT)
+Date:   Mon, 19 Jun 2023 12:57:10 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Ben Dooks <ben.dooks@codethink.co.uk>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, serge@hallyn.com,
+        Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH] capabilities: fix sparse warning about __user access
+Message-ID: <20230619175710.GA200481@mail.hallyn.com>
+References: <20230619123535.324632-1-ben.dooks@codethink.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230619123535.324632-1-ben.dooks@codethink.co.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Jun 19, 2023 at 01:35:35PM +0100, Ben Dooks wrote:
+> The two syscalls for capget and capset are producing sparse warnings
+> as sparse is thinking that the "struct __user_cap_data_struct" is marked
+> user, which seems to be down to the declaration and typedef at the same
+> time.
+> 
+> Fix the following warnings by splutting the struct declaration and then
+> the user typedef into two:
 
+I'm not a fan of making code changes to work around scanners'
+shortcomings, mainly because eventually I assume the scanners
+will learn to deal with it.
 
-On Fri, Jun 9, 2023, at 12:08 PM, Andrii Nakryiko wrote:
-> On Fri, Jun 9, 2023 at 11:32=E2=80=AFAM Andy Lutomirski <luto@kernel.o=
-rg> wrote:
->>
->> On Wed, Jun 7, 2023, at 4:53 PM, Andrii Nakryiko wrote:
->> > This patch set introduces new BPF object, BPF token, which allows t=
-o delegate
->> > a subset of BPF functionality from privileged system-wide daemon (e=
-.g.,
->> > systemd or any other container manager) to a *trusted* unprivileged
->> > application. Trust is the key here. This functionality is not about=
- allowing
->> > unconditional unprivileged BPF usage. Establishing trust, though, is
->> > completely up to the discretion of respective privileged applicatio=
-n that
->> > would create a BPF token.
->> >
->>
->> I skimmed the description and the LSFMM slides.
->>
->> Years ago, I sent out a patch set to start down the path of making th=
-e bpf() API make sense when used in less-privileged contexts (regarding =
-access control of BPF objects and such).  It went nowhere.
->>
->> Where does BPF token fit in?  Does a kernel with these patches applie=
-d actually behave sensibly if you pass a BPF token into a container?
->
-> Yes?.. In the sense that it is possible to create BPF programs and BPF
-> maps from inside the container (with BPF token). Right now under user
-> namespace it's impossible no matter what you do.
+However, I don't like the all-in-one typedef+struct definition
+either, so let's go with it :)
 
-I have no problem with creating BPF maps inside a container, but I think=
- the maps should *be in the container*.
+Paul, do you mind picking this up?
 
-My series wasn=E2=80=99t about unprivileged BPF per se.  It was about up=
-dating the existing BPF permission model so that it made sense in a cont=
-ext in which it had multiple users that didn=E2=80=99t trust each other.
+thanks,
+-serge
 
->
->> Giving a way to enable BPF in a container is only a small part of the=
- overall task -- making BPF behave sensibly in that container seems like=
- it should also be necessary.
->
-> BPF is still a privileged thing. You can't just say that any
-> unprivileged application should be able to use BPF. That's why BPF
-> token is about trusting unpriv application in a controlled environment
-> (production) to not do something crazy. It can be enforced further
-> through LSM usage, but in a lot of cases, when dealing with internal
-> production applications it's enough to have a proper application
-> design and rely on code review process to avoid any negative effects.
+> kernel/capability.c:191:35: warning: incorrect type in argument 2 (different address spaces)
+> kernel/capability.c:191:35:    expected void const *from
+> kernel/capability.c:191:35:    got struct __user_cap_data_struct [noderef] __user *
+> kernel/capability.c:168:14: warning: dereference of noderef expression
+> kernel/capability.c:168:45: warning: dereference of noderef expression
+> kernel/capability.c:169:14: warning: dereference of noderef expression
+> kernel/capability.c:169:45: warning: dereference of noderef expression
+> kernel/capability.c:170:14: warning: dereference of noderef expression
+> kernel/capability.c:170:45: warning: dereference of noderef expression
+> kernel/capability.c:244:29: warning: incorrect type in argument 1 (different address spaces)
+> kernel/capability.c:244:29:    expected void *to
+> kernel/capability.c:244:29:    got struct __user_cap_data_struct [noderef] __user ( * )[2]
+> kernel/capability.c:247:42: warning: dereference of noderef expression
+> kernel/capability.c:247:64: warning: dereference of noderef expression
+> kernel/capability.c:248:42: warning: dereference of noderef expression
+> kernel/capability.c:248:64: warning: dereference of noderef expression
+> kernel/capability.c:249:42: warning: dereference of noderef expression
+> kernel/capability.c:249:64: warning: dereference of noderef expression
+> 
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-We really shouldn=E2=80=99t be creating new kinds of privileged containe=
-rs that do uncontained things.
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-If you actually want to go this route, I think you would do much better =
-to introduce a way for a container manager to usefully proxy BPF on beha=
-lf of the container.
-
->
-> So privileged daemon (container manager) will be configured with the
-> knowledge of which services/containers are allowed to use BPF, and
-> will grant BPF token only to those that were explicitly allowlisted.
-
+> ---
+>  include/uapi/linux/capability.h | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+> index 3d61a0ae055d..5bb906098697 100644
+> --- a/include/uapi/linux/capability.h
+> +++ b/include/uapi/linux/capability.h
+> @@ -41,11 +41,12 @@ typedef struct __user_cap_header_struct {
+>  	int pid;
+>  } __user *cap_user_header_t;
+>  
+> -typedef struct __user_cap_data_struct {
+> +struct __user_cap_data_struct {
+>          __u32 effective;
+>          __u32 permitted;
+>          __u32 inheritable;
+> -} __user *cap_user_data_t;
+> +};
+> +typedef struct __user_cap_data_struct __user *cap_user_data_t;
+>  
+>  
+>  #define VFS_CAP_REVISION_MASK	0xFF000000
+> -- 
+> 2.39.2
