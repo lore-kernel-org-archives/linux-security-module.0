@@ -2,104 +2,276 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF345EB64D9
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jun 2023 17:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDD3EB64D9
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jun 2023 18:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbjFSR5Q (ORCPT
+        id S232304AbjFSSTt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Jun 2023 13:57:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41994 "EHLO
+        Mon, 19 Jun 2023 14:19:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbjFSR5P (ORCPT
+        with ESMTP id S230270AbjFSSTt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Jun 2023 13:57:15 -0400
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6989312A;
-        Mon, 19 Jun 2023 10:57:12 -0700 (PDT)
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 808C4518; Mon, 19 Jun 2023 12:57:10 -0500 (CDT)
-Date:   Mon, 19 Jun 2023 12:57:10 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Ben Dooks <ben.dooks@codethink.co.uk>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, serge@hallyn.com,
-        Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH] capabilities: fix sparse warning about __user access
-Message-ID: <20230619175710.GA200481@mail.hallyn.com>
-References: <20230619123535.324632-1-ben.dooks@codethink.co.uk>
+        Mon, 19 Jun 2023 14:19:49 -0400
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [IPv6:2001:1600:3:17::190f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5504E91;
+        Mon, 19 Jun 2023 11:19:46 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QlJ2R3CbvzMpnqh;
+        Mon, 19 Jun 2023 18:19:43 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QlJ2Q3thpzMq93t;
+        Mon, 19 Jun 2023 20:19:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1687198783;
+        bh=iWv+eVL1CNQoKwhLaN0n+7CtOdblEkckUdLFaKna81U=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=yoPnSEDVyDXggBf8gvRDQoqDxoAi08gavp2OXPK8jJ68Jzcg7GVoQcdmycLnMIOyf
+         1HyX7Mupk1UnE1MFrCwhRorB9NAqNRbWGcV4EL9EesLnCrjQdsRGE+s5/TsVgAt7ky
+         vy1cyCrgPwMHyIKG8K0ozRSl8kjrRhpHb7o3ELX8=
+Message-ID: <fb1d9351-355c-feb8-c2a2-419e24000049@digikod.net>
+Date:   Mon, 19 Jun 2023 20:19:41 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230619123535.324632-1-ben.dooks@codethink.co.uk>
+User-Agent: 
+Subject: Re: [PATCH v11 11/12] samples/landlock: Add network demo
+Content-Language: en-US
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+ <20230515161339.631577-12-konstantin.meskhidze@huawei.com>
+ <ZH9OFyWZ1njI7VG9@google.com>
+ <d9f07165-f589-13d4-6484-1272704f1de0@huawei.com>
+ <8c09fc5a-e3a5-4792-65a8-b84c6044128a@digikod.net>
+ <c0713bf1-a65e-c4cd-08b9-c60bd79fc86f@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <c0713bf1-a65e-c4cd-08b9-c60bd79fc86f@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 19, 2023 at 01:35:35PM +0100, Ben Dooks wrote:
-> The two syscalls for capget and capset are producing sparse warnings
-> as sparse is thinking that the "struct __user_cap_data_struct" is marked
-> user, which seems to be down to the declaration and typedef at the same
-> time.
+
+On 19/06/2023 16:24, Konstantin Meskhidze (A) wrote:
 > 
-> Fix the following warnings by splutting the struct declaration and then
-> the user typedef into two:
-
-I'm not a fan of making code changes to work around scanners'
-shortcomings, mainly because eventually I assume the scanners
-will learn to deal with it.
-
-However, I don't like the all-in-one typedef+struct definition
-either, so let's go with it :)
-
-Paul, do you mind picking this up?
-
-thanks,
--serge
-
-> kernel/capability.c:191:35: warning: incorrect type in argument 2 (different address spaces)
-> kernel/capability.c:191:35:    expected void const *from
-> kernel/capability.c:191:35:    got struct __user_cap_data_struct [noderef] __user *
-> kernel/capability.c:168:14: warning: dereference of noderef expression
-> kernel/capability.c:168:45: warning: dereference of noderef expression
-> kernel/capability.c:169:14: warning: dereference of noderef expression
-> kernel/capability.c:169:45: warning: dereference of noderef expression
-> kernel/capability.c:170:14: warning: dereference of noderef expression
-> kernel/capability.c:170:45: warning: dereference of noderef expression
-> kernel/capability.c:244:29: warning: incorrect type in argument 1 (different address spaces)
-> kernel/capability.c:244:29:    expected void *to
-> kernel/capability.c:244:29:    got struct __user_cap_data_struct [noderef] __user ( * )[2]
-> kernel/capability.c:247:42: warning: dereference of noderef expression
-> kernel/capability.c:247:64: warning: dereference of noderef expression
-> kernel/capability.c:248:42: warning: dereference of noderef expression
-> kernel/capability.c:248:64: warning: dereference of noderef expression
-> kernel/capability.c:249:42: warning: dereference of noderef expression
-> kernel/capability.c:249:64: warning: dereference of noderef expression
 > 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
-
-> ---
->  include/uapi/linux/capability.h | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> 6/13/2023 11:38 PM, Mickaël Salaün пишет:
+>>
+>> On 13/06/2023 12:54, Konstantin Meskhidze (A) wrote:
+>>>
+>>>
+>>> 6/6/2023 6:17 PM, Günther Noack пишет:
+>>>> Hi Konstantin!
+>>>>
+>>>> Apologies if some of this was discussed before, in this case,
+>>>> Mickaël's review overrules my opinions from the sidelines ;)
+>>>>
+>>>> On Tue, May 16, 2023 at 12:13:38AM +0800, Konstantin Meskhidze wrote:
+>>>>> This commit adds network demo. It's possible to allow a sandboxer to
+>>>>> bind/connect to a list of particular ports restricting network
+>>>>> actions to the rest of ports.
+>>>>>
+>>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>>>>
+>>>>
+>>>>> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+>>>>> index e2056c8b902c..b0250edb6ccb 100644
+>>>>> --- a/samples/landlock/sandboxer.c
+>>>>> +++ b/samples/landlock/sandboxer.c
+>>>>
+>>>> ...
+>>>>
+>>>>> +static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+>>>>> +				const __u64 allowed_access)
+>>>>> +{
+>>>>> +	int num_ports, i, ret = 1;
+>>>>
+>>>> I thought the convention was normally to set ret = 0 initially and to
+>>>> override it in case of error, rather than the other way around?
+>>
+>> Which convention? In this case, by default the return code is an error.
+>>
+>>
+>>>>
+>>>      Well, I just followed Mickaёl's way of logic here. >
+>>>
+>>>>> +	char *env_port_name;
+>>>>> +	struct landlock_net_service_attr net_service = {
+>>>>> +		.allowed_access = allowed_access,
+>>>>> +		.port = 0,
+>>>>> +	};
+>>>>> +
+>>>>> +	env_port_name = getenv(env_var);
+>>>>> +	if (!env_port_name)
+>>>>> +		return 0;
+>>>>> +	env_port_name = strdup(env_port_name);
+>>>>> +	unsetenv(env_var);
+>>>>> +	num_ports = parse_port_num(env_port_name);
+>>>>> +
+>>>>> +	if (num_ports == 1 && (strtok(env_port_name, ENV_PATH_TOKEN) == NULL)) {
+>>>>> +		ret = 0;
+>>>>> +		goto out_free_name;
+>>>>> +	}
+>>>>
+>>>> I don't understand why parse_port_num and strtok are necessary in this
+>>>> program. The man-page for strsep(3) describes it as a replacement to
+>>>> strtok(3) (in the HISTORY section), and it has a very short example
+>>>> for how it is used.
+>>>>
+>>>> Wouldn't it work like this as well?
+>>>>
+>>>> while ((strport = strsep(&env_port_name, ":"))) {
+>>>>      net_service.port = atoi(strport);
+>>>>      /* etc */
+>>>> }
+>>>
+>>>      Thanks for a tip. I think it's a better solution here. Now this
+>>> commit is in Mickaёl's -next branch. I could send a one-commit patch later.
+>>> Mickaёl, what do you think?
+>>
+>> I removed this series from -next because there is some issues (see the
+>> bot's emails), but anyway, this doesn't mean these patches don't need to
+>> be changed, they do. The goal of -next is to test more widely a patch
+>> series and get more feedbacks, especially from bots. When this series
+>> will be fully ready (and fuzzed with syzkaller), I'll push it to Linus
+>> Torvalds.
+>>
+>> I'll review the remaining tests and sample code this week, but you can
+>> still take into account the documentation review.
 > 
-> diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
-> index 3d61a0ae055d..5bb906098697 100644
-> --- a/include/uapi/linux/capability.h
-> +++ b/include/uapi/linux/capability.h
-> @@ -41,11 +41,12 @@ typedef struct __user_cap_header_struct {
->  	int pid;
->  } __user *cap_user_header_t;
->  
-> -typedef struct __user_cap_data_struct {
-> +struct __user_cap_data_struct {
->          __u32 effective;
->          __u32 permitted;
->          __u32 inheritable;
-> -} __user *cap_user_data_t;
-> +};
-> +typedef struct __user_cap_data_struct __user *cap_user_data_t;
->  
->  
->  #define VFS_CAP_REVISION_MASK	0xFF000000
-> -- 
-> 2.39.2
+>    Hi, Mickaёl.
+> 
+>    I have a few quetions?
+>     - Are you going to fix warnings for bots, meanwhile I run syzcaller?
+
+No, you need to fix that with the next series (except the Signed-off-by 
+warnings).
+
+What is your status on syzkaller? Do you need some help? I can write the 
+tests if it's too much.
+
+
+>     - I will fix documentation and sandbox demo and sent patch v12?
+
+Yes please. Let me a few days to send more reviews.
+
+> 
+>>
+>>
+>>>
+>>>>
+>>>>> +
+>>>>> +	for (i = 0; i < num_ports; i++) {
+>>>>> +		net_service.port = atoi(strsep(&env_port_name, ENV_PATH_TOKEN));
+>>>>
+>>>> Naming of ENV_PATH_TOKEN:
+>>>> This usage is not related to paths, maybe rename the variable?
+>>>> It's also technically not the token, but the delimiter.
+>>>>
+>>>     What do you think of ENV_PORT_TOKEN or ENV_PORT_DELIMITER???
+>>
+>> You can rename ENV_PATH_TOKEN to ENV_DELIMITER for the FS and network parts.
+>>
+>      Ok. Got it.
+>>
+>>>
+>>>>> +		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>>>>> +				      &net_service, 0)) {
+>>>>> +			fprintf(stderr,
+>>>>> +				"Failed to update the ruleset with port \"%lld\": %s\n",
+>>>>> +				net_service.port, strerror(errno));
+>>>>> +			goto out_free_name;
+>>>>> +		}
+>>>>> +	}
+>>>>> +	ret = 0;
+>>>>> +
+>>>>> +out_free_name:
+>>>>> +	free(env_port_name);
+>>>>> +	return ret;
+>>>>> +}
+>>>>
+>>>>
+>>>>>    		fprintf(stderr,
+>>>>>    			"Launch a command in a restricted environment.\n\n");
+>>>>> -		fprintf(stderr, "Environment variables containing paths, "
+>>>>> -				"each separated by a colon:\n");
+>>>>> +		fprintf(stderr,
+>>>>> +			"Environment variables containing paths and ports "
+>>>>> +			"each separated by a colon:\n");
+>>>>>    		fprintf(stderr,
+>>>>>    			"* %s: list of paths allowed to be used in a read-only way.\n",
+>>>>>    			ENV_FS_RO_NAME);
+>>>>>    		fprintf(stderr,
+>>>>> -			"* %s: list of paths allowed to be used in a read-write way.\n",
+>>>>> +			"* %s: list of paths allowed to be used in a read-write way.\n\n",
+>>>>>    			ENV_FS_RW_NAME);
+>>>>> +		fprintf(stderr,
+>>>>> +			"Environment variables containing ports are optional "
+>>>>> +			"and could be skipped.\n");
+>>>>
+>>>> As it is, I believe the program does something different when I'm
+>>>> setting these to the empty string (ENV_TCP_BIND_NAME=""), compared to
+>>>> when I'm unsetting them?
+>>>>
+>>>> I think the case where we want to forbid all handle-able networking is
+>>>> a legit and very common use case - it could be clearer in the
+>>>> documentation how this is done with the tool. (And maybe the interface
+>>>> could be something more explicit than setting the environment variable
+>>>> to empty?)
+>>
+>> I'd like to keep it simple, and it should be seen as an example code,
+>> not a full-feature sandboxer, but still a consistent and useful one.
+>> What would you suggest?
+>>
+>> This sandboxer tool relies on environment variables for its
+>> configuration. This is definitely not a good fit for all use cases, but
+>> I think it is simple and flexible enough. One use case might be to
+>> export a set of environment variables and simply call this tool. I'd
+>> prefer to not deal with argument parsing, but maybe that was too
+>> simplistic? We might want to revisit this approach but probably not with
+>> this series.
+>>
+>>
+>>>>
+>>>>
+>>>>> +	/* Removes bind access attribute if not supported by a user. */
+>>>>> +	env_port_name = getenv(ENV_TCP_BIND_NAME);
+>>>>> +	if (!env_port_name) {
+>>>>> +		ruleset_attr.handled_access_net &=
+>>>>> +			~LANDLOCK_ACCESS_NET_BIND_TCP;
+>>>>> +	}
+>>>>> +	/* Removes connect access attribute if not supported by a user. */
+>>>>> +	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
+>>>>> +	if (!env_port_name) {
+>>>>> +		ruleset_attr.handled_access_net &=
+>>>>> +			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+>>>>> +	}
+>>>>
+>>>> This is the code where the program does not restrict network usage,
+>>>> if the corresponding environment variable is not set.
+>>>
+>>>      Yep. Right.
+>>>>
+>>>> It's slightly inconsistent with what this tool does for filesystem
+>>>> paths. - If you don't specify any file paths, it will still restrict
+>>>> file operations there, independent of whether that env variable was
+>>>> set or not.  (Apologies if it was discussed before.)
+>>>
+>>>     Mickaёl wanted to make network ports optional here.
+>>>     Please check:
+>>>    
+>>> https://lore.kernel.org/linux-security-module/179ac2ee-37ff-92da-c381-c2c716725045@digikod.net/
+>>
+>> Right, the rationale is for compatibility with the previous version of
+>> this tool. We should not break compatibility when possible. A comment
+>> should explain the rationale though.
+>>
+>>>
+>>> https://lore.kernel.org/linux-security-module/fe3bc928-14f8-5e2b-359e-9a87d6cf5b01@digikod.net/
+>>>>
+>>>> —Günther
+>>>>
+>> .
