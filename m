@@ -2,91 +2,113 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8029EB64D9
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jun 2023 21:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71558EB64D7
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Jun 2023 20:59:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229660AbjFSVsJ (ORCPT
+        id S229597AbjFTU7B (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Jun 2023 17:48:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56248 "EHLO
+        Tue, 20 Jun 2023 16:59:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjFSVsI (ORCPT
+        with ESMTP id S229576AbjFTU7A (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Jun 2023 17:48:08 -0400
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9F308F
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Jun 2023 14:48:05 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id d75a77b69052e-3f9b1f43bd0so41336531cf.0
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Jun 2023 14:48:05 -0700 (PDT)
+        Tue, 20 Jun 2023 16:59:00 -0400
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E05941726
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Jun 2023 13:58:58 -0700 (PDT)
+Received: by mail-oi1-x236.google.com with SMTP id 5614622812f47-39eab4bcee8so3130054b6e.0
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Jun 2023 13:58:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1687211285; x=1689803285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g/a28Txpe/xFs8OvL2UdzPa0B/lrYB+pe8A6lGyR9n4=;
-        b=TnZqaiebwtv85kvXU8LPXr9Lq0kIs8D666fZOLzE3PdnavwHA2nl7Nr2ZEycZj18rx
-         B8zajBi68rQcoStusHu7uobaROlnt20ZGJ90mJWEW2Aa04bCRmNE9BGBSgwDjUjAqR2X
-         pNmwY5LMR/WCovjvvhcVNtZLrCfb9qevRM6mfgEDSOmiVcI7MHD7PqWqQ2NyN/sY8Sme
-         HT26rb8XvbdXo3Uj+zoB2EHI6y7JJ9sZnFEbvMk3MgQJOCjwHr48Gug+tX7KyURynK5l
-         vSSxrV4Ugb8rEsjJwH/CCmdI3vB6goj0kr2YPT2yfg5GBTyCEr5m3W5aCRACEGaJvjaU
-         Mu7w==
+        d=chromium.org; s=google; t=1687294738; x=1689886738;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RyHaRq0HBfQqVo5s8buEN7LujzAfgb9I0SYf36k6c18=;
+        b=gjpIAjNi0q26w85xbhx99EmvN7R5nLOdLbIyyNpHc/kPJZF1GdVg5ao/8mmRQk4KP2
+         kbt+Q1mqU0Wp90KhCHzRb2hp9TadaSkyoankHAdYn2YpmNQDHJwP04B8+x7Dad2xF+wZ
+         AmZQDdEcLYZ/ugQLWaaRrD7spqzmS05ZYSZ0s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687211285; x=1689803285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g/a28Txpe/xFs8OvL2UdzPa0B/lrYB+pe8A6lGyR9n4=;
-        b=Ij20gl1qSM3Prf8nQKdX2rDXZYuDHCZAfTSJTQXdIE46LAOQ2CH6vng0vpnY0/+vvL
-         VAiOOnMGBuX3A3UkQbHj1lBJiSo2aGhzjJmcZKn9bkGt7AE8nqIRxjOAz+bwvvbZ+/Co
-         u8osS/GhVIPwka90wiaYii7ijNmxjjP3ws5ruAOtGTGg6n1hYsidKELpVXu8fXAq5DNE
-         WPwljyiYbZN5p0MSaJ30nZbDQA+l/XG5urcP/3BKhceAJvCthoiqIkvCylRJuvB/oI/k
-         R0UyX2DjnRSgYDre5E43Vu2blVLUMNeXV8d1RMsPp6j5CzE+jUZzZmFvzJZPqAsxwlhp
-         W55Q==
-X-Gm-Message-State: AC+VfDz8FeszRx2krNOSs64n16aEgSLQ9y0SVyi3Qf0NLv3VKNHUGTlN
-        K6GMEDZrA60FN1UCfCD8j55QAVaCa7ILuLUQwFjC
-X-Google-Smtp-Source: ACHHUZ5WUVtPyLbh1y+BwzvrAZDSSn9X8cX4a4Ec+I0knJvwMXFOqtcF3hUpiZd+SxA9vRfFHQ2b+1dKBuq7XaPQt3Q=
-X-Received: by 2002:a05:622a:34b:b0:3f6:b823:f2af with SMTP id
- r11-20020a05622a034b00b003f6b823f2afmr2394470qtw.1.1687211284960; Mon, 19 Jun
- 2023 14:48:04 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687294738; x=1689886738;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RyHaRq0HBfQqVo5s8buEN7LujzAfgb9I0SYf36k6c18=;
+        b=IrYYTwnMsqDLb/NoD56fqBK2cMdxpR6C3paCLtTYLOTNuBnUXCmudJXf4asOgqkPpe
+         cBKyjkE3zaCTVlngHGS/jZETuz2ZpVdV3UB0AsbwRnoaVR7OjHVOaEx34/mrGZA+QI69
+         VaqHMo0iDr/g4VhQE5RjSRX2V8jXL/ijMbacNe1XvfwyfU4QqTiXEaKDqhTeImjRbWuM
+         1fIt3iGW7Hsl00Ydr3Me8HhRJ3kwnjRp9ZtP5qFNO/GXD+epvn5Ht56dWVg1HeDLJR6o
+         VgxmNkDSe9irf8XemUpyFd2aEudLURUMMtn8WMRaS12cf2Eh/cK9upBB8UfoyQAgJndj
+         oEfQ==
+X-Gm-Message-State: AC+VfDzAho9mNbJbnS/VruvHTujvvANJpFWVYUOPksow0M9NdxjDOw7R
+        pKpYhEJnqmRRNC4Hfxy5alZBJw==
+X-Google-Smtp-Source: ACHHUZ7IrFPQw4q1ooChD8KSBhUJhW14oI0ZPD00EolniJ7S6GpF+9CBIyAM2unv/zFTrCh0/X8bwA==
+X-Received: by 2002:a05:6808:1143:b0:3a0:333e:1f4a with SMTP id u3-20020a056808114300b003a0333e1f4amr6239433oiu.15.1687294738245;
+        Tue, 20 Jun 2023 13:58:58 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id q136-20020a632a8e000000b00553dcfc2179sm1806811pgq.52.2023.06.20.13.58.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jun 2023 13:58:57 -0700 (PDT)
+Date:   Tue, 20 Jun 2023 13:58:56 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, casey@schaufler-ca.com, song@kernel.org,
+        daniel@iogearbox.net, ast@kernel.org, jannh@google.com
+Subject: Re: [PATCH v2 5/5] security: Add CONFIG_SECURITY_HOOK_LIKELY
+Message-ID: <202306201356.CF454506@keescook>
+References: <20230616000441.3677441-1-kpsingh@kernel.org>
+ <20230616000441.3677441-6-kpsingh@kernel.org>
 MIME-Version: 1.0
-References: <20230619123535.324632-1-ben.dooks@codethink.co.uk> <20230619175710.GA200481@mail.hallyn.com>
-In-Reply-To: <20230619175710.GA200481@mail.hallyn.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 19 Jun 2023 17:47:54 -0400
-Message-ID: <CAHC9VhRz0Y_D1Q=8xPKVJemYf=KUziC9s1TUJ86F+Lw+OrXdVg@mail.gmail.com>
-Subject: Re: [PATCH] capabilities: fix sparse warning about __user access
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230616000441.3677441-6-kpsingh@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 19, 2023 at 1:57=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com> =
-wrote:
->
-> On Mon, Jun 19, 2023 at 01:35:35PM +0100, Ben Dooks wrote:
-> > The two syscalls for capget and capset are producing sparse warnings
-> > as sparse is thinking that the "struct __user_cap_data_struct" is marke=
-d
-> > user, which seems to be down to the declaration and typedef at the same
-> > time.
-> >
-> > Fix the following warnings by splutting the struct declaration and then
-> > the user typedef into two:
->
-> I'm not a fan of making code changes to work around scanners'
-> shortcomings, mainly because eventually I assume the scanners
-> will learn to deal with it.
->
-> However, I don't like the all-in-one typedef+struct definition
-> either, so let's go with it :)
->
-> Paul, do you mind picking this up?
+On Fri, Jun 16, 2023 at 02:04:41AM +0200, KP Singh wrote:
+> [...]
+> @@ -110,6 +110,9 @@ static __initdata struct lsm_info *exclusive;
+>  #undef LSM_HOOK
+>  #undef DEFINE_LSM_STATIC_CALL
+>  
+> +#define security_hook_active(n, h) \
+> +	static_branch_maybe(CONFIG_SECURITY_HOOK_LIKELY, &SECURITY_HOOK_ACTIVE_KEY(h, n))
+> +
+>  /*
+>   * Initialise a table of static calls for each LSM hook.
+>   * DEFINE_STATIC_CALL_NULL invocation above generates a key (STATIC_CALL_KEY)
+> @@ -816,7 +819,7 @@ static int lsm_superblock_alloc(struct super_block *sb)
+>   */
+>  #define __CALL_STATIC_VOID(NUM, HOOK, ...)				     \
+>  do {									     \
+> -	if (static_branch_unlikely(&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM))) {    \
+> +	if (security_hook_active(NUM, HOOK)) {    			     \
+>  		static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);	     \
+>  	}								     \
+>  } while (0);
+> @@ -828,7 +831,7 @@ do {									     \
+>  
+>  #define __CALL_STATIC_INT(NUM, R, HOOK, LABEL, ...)			     \
+>  do {									     \
+> -	if (static_branch_unlikely(&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM))) {  \
+> +	if (security_hook_active(NUM, HOOK)) {    \
+>  		R = static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);    \
+>  		if (R != 0)						     \
+>  			goto LABEL;					     \
 
-Sure, no problem.  Since we are at -rc7, I'm assuming this can wait
-until after the merge window?
+I actually think I'd prefer there be no macro wrapping
+static_branch_maybe(), just for reading it more easily. i.e. people
+reading this code are going to expect the static_branch/static_call code
+patterns, and seeing "security_hook_active" only slows them down in
+understanding it. I don't think it's _that_ ugly to have it all typed
+out. e.g.:
 
---=20
-paul-moore.com
+	if (static_branch_maybe(CONFIG_SECURITY_HOOK_LIKELY,		     \
+				&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM)) {	     \
+  		R = static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);    \
+  		if (R != 0)						     \
+  			goto LABEL;					     \
+
+
+
+-- 
+Kees Cook
