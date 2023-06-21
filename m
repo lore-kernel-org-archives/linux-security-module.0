@@ -2,42 +2,42 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 096EEEB64DC
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jun 2023 23:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C75EB64DC
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jun 2023 23:38:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229920AbjFUXiq convert rfc822-to-8bit (ORCPT
+        id S229988AbjFUXis convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Jun 2023 19:38:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33444 "EHLO
+        Wed, 21 Jun 2023 19:38:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229988AbjFUXio (ORCPT
+        with ESMTP id S229810AbjFUXiq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Jun 2023 19:38:44 -0400
+        Wed, 21 Jun 2023 19:38:46 -0400
 Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CDA01BD3
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 16:38:41 -0700 (PDT)
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35LJeNPQ010602
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 16:38:40 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E02D61721
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 16:38:45 -0700 (PDT)
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35LIe3R6008064
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 16:38:45 -0700
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3rbw1y6py8-2
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3rc05hwta7-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 16:38:40 -0700
-Received: from twshared66906.03.prn6.facebook.com (2620:10d:c0a8:1c::1b) by
- mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 16:38:45 -0700
+Received: from twshared34392.14.frc2.facebook.com (2620:10d:c0a8:1c::1b) by
+ mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Wed, 21 Jun 2023 16:38:39 -0700
+ 15.1.2507.23; Wed, 21 Jun 2023 16:38:44 -0700
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id 69AB9333E88BE; Wed, 21 Jun 2023 16:38:26 -0700 (PDT)
+        id BBDE2333E8915; Wed, 21 Jun 2023 16:38:36 -0700 (PDT)
 From:   Andrii Nakryiko <andrii@kernel.org>
 To:     <bpf@vger.kernel.org>
 CC:     <linux-security-module@vger.kernel.org>, <keescook@chromium.org>,
         <brauner@kernel.org>, <lennart@poettering.net>,
         <cyphar@cyphar.com>, <luto@kernel.org>, <kernel-team@meta.com>,
         <sargun@sargun.me>
-Subject: [PATCH v3 bpf-next 08/14] libbpf: add BPF token support to bpf_btf_load() API
-Date:   Wed, 21 Jun 2023 16:38:03 -0700
-Message-ID: <20230621233809.1941811-9-andrii@kernel.org>
+Subject: [PATCH v3 bpf-next 13/14] libbpf: add BPF token support to bpf_prog_load() API
+Date:   Wed, 21 Jun 2023 16:38:08 -0700
+Message-ID: <20230621233809.1941811-14-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230621233809.1941811-1-andrii@kernel.org>
 References: <20230621233809.1941811-1-andrii@kernel.org>
@@ -45,63 +45,82 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: mwApv2Wn7FH4ofz_3mLehw3IDpIRyhI2
-X-Proofpoint-ORIG-GUID: mwApv2Wn7FH4ofz_3mLehw3IDpIRyhI2
+X-Proofpoint-GUID: eJI5if62UlEE8XTvYYQbyFO5t3q9Yq0_
+X-Proofpoint-ORIG-GUID: eJI5if62UlEE8XTvYYQbyFO5t3q9Yq0_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-21_13,2023-06-16_01,2023-05-22_02
+ definitions=2023-06-21_12,2023-06-16_01,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Allow user to specify token_fd for bpf_btf_load() API that wraps
-kernel's BPF_BTF_LOAD command. This allows loading BTF from unprivileged
-process as long as it has BPF token allowing BPF_BTF_LOAD command, which
-can be created and delegated by privileged process.
+Wire through token_fd into bpf_prog_load(). Also make sure to pass
+allowed_{prog,attach}_types to kernel in bpf_token_create().
 
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- tools/lib/bpf/bpf.c | 4 +++-
- tools/lib/bpf/bpf.h | 3 ++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ tools/lib/bpf/bpf.c | 5 ++++-
+ tools/lib/bpf/bpf.h | 7 +++++--
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index 882297b1e136..6fb915069be7 100644
+index 6fb915069be7..5f331bbf1ad2 100644
 --- a/tools/lib/bpf/bpf.c
 +++ b/tools/lib/bpf/bpf.c
-@@ -1098,7 +1098,7 @@ int bpf_raw_tracepoint_open(const char *name, int prog_fd)
- 
- int bpf_btf_load(const void *btf_data, size_t btf_size, struct bpf_btf_load_opts *opts)
+@@ -234,7 +234,7 @@ int bpf_prog_load(enum bpf_prog_type prog_type,
+ 		  const struct bpf_insn *insns, size_t insn_cnt,
+ 		  struct bpf_prog_load_opts *opts)
  {
--	const size_t attr_sz = offsetofend(union bpf_attr, btf_log_true_size);
-+	const size_t attr_sz = offsetofend(union bpf_attr, btf_token_fd);
- 	union bpf_attr attr;
- 	char *log_buf;
- 	size_t log_size;
-@@ -1123,6 +1123,8 @@ int bpf_btf_load(const void *btf_data, size_t btf_size, struct bpf_btf_load_opts
+-	const size_t attr_sz = offsetofend(union bpf_attr, log_true_size);
++	const size_t attr_sz = offsetofend(union bpf_attr, prog_token_fd);
+ 	void *finfo = NULL, *linfo = NULL;
+ 	const char *func_info, *line_info;
+ 	__u32 log_size, log_level, attach_prog_fd, attach_btf_obj_fd;
+@@ -263,6 +263,7 @@ int bpf_prog_load(enum bpf_prog_type prog_type,
+ 	attr.prog_flags = OPTS_GET(opts, prog_flags, 0);
+ 	attr.prog_ifindex = OPTS_GET(opts, prog_ifindex, 0);
+ 	attr.kern_version = OPTS_GET(opts, kern_version, 0);
++	attr.prog_token_fd = OPTS_GET(opts, token_fd, 0);
  
- 	attr.btf = ptr_to_u64(btf_data);
- 	attr.btf_size = btf_size;
-+	attr.btf_token_fd = OPTS_GET(opts, token_fd, 0);
-+
- 	/* log_level == 0 and log_buf != NULL means "try loading without
- 	 * log_buf, but retry with log_buf and log_level=1 on error", which is
- 	 * consistent across low-level and high-level BTF and program loading
+ 	if (prog_name && kernel_supports(NULL, FEAT_PROG_NAME))
+ 		libbpf_strlcpy(attr.prog_name, prog_name, sizeof(attr.prog_name));
+@@ -1223,6 +1224,8 @@ int bpf_token_create(int pin_path_fd, const char *pin_pathname, struct bpf_token
+ 	attr.token_create.pin_flags = OPTS_GET(opts, pin_flags, 0);
+ 	attr.token_create.allowed_cmds = OPTS_GET(opts, allowed_cmds, 0);
+ 	attr.token_create.allowed_map_types = OPTS_GET(opts, allowed_map_types, 0);
++	attr.token_create.allowed_prog_types = OPTS_GET(opts, allowed_prog_types, 0);
++	attr.token_create.allowed_attach_types = OPTS_GET(opts, allowed_attach_types, 0);
+ 
+ 	ret = sys_bpf(BPF_TOKEN_CREATE, &attr, attr_sz);
+ 	return libbpf_err_errno(ret);
 diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
-index cd3fb5ce6fe2..dc7c4af21ad9 100644
+index dc7c4af21ad9..2ac56fba6027 100644
 --- a/tools/lib/bpf/bpf.h
 +++ b/tools/lib/bpf/bpf.h
-@@ -132,9 +132,10 @@ struct bpf_btf_load_opts {
+@@ -104,9 +104,10 @@ struct bpf_prog_load_opts {
  	 * If kernel doesn't support this feature, log_size is left unchanged.
  	 */
  	__u32 log_true_size;
 +	__u32 token_fd;
  	size_t :0;
  };
--#define bpf_btf_load_opts__last_field log_true_size
-+#define bpf_btf_load_opts__last_field token_fd
+-#define bpf_prog_load_opts__last_field log_true_size
++#define bpf_prog_load_opts__last_field token_fd
  
- LIBBPF_API int bpf_btf_load(const void *btf_data, size_t btf_size,
- 			    struct bpf_btf_load_opts *opts);
+ LIBBPF_API int bpf_prog_load(enum bpf_prog_type prog_type,
+ 			     const char *prog_name, const char *license,
+@@ -561,9 +562,11 @@ struct bpf_token_create_opts {
+ 	__u32 pin_flags;
+ 	__u64 allowed_cmds;
+ 	__u64 allowed_map_types;
++	__u64 allowed_prog_types;
++	__u64 allowed_attach_types;
+ 	size_t :0;
+ };
+-#define bpf_token_create_opts__last_field allowed_map_types
++#define bpf_token_create_opts__last_field allowed_attach_types
+ 
+ /**
+  * @brief **bpf_token_create()** creates a new instance of BPF token, pinning
 -- 
 2.34.1
 
