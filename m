@@ -2,82 +2,84 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D61BEB64D8
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jun 2023 13:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 299AEEB64D8
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jun 2023 13:33:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbjFUNb7 (ORCPT
+        id S231406AbjFUNdm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Jun 2023 09:31:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59734 "EHLO
+        Wed, 21 Jun 2023 09:33:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230217AbjFUNb5 (ORCPT
+        with ESMTP id S231478AbjFUNdl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Jun 2023 09:31:57 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EBDCE59
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 06:31:51 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-bffcd3cd3f1so428861276.3
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 06:31:51 -0700 (PDT)
+        Wed, 21 Jun 2023 09:33:41 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5141998
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 06:33:40 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-5704fce0f23so62638997b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 06:33:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1687354311; x=1689946311;
+        d=paul-moore.com; s=google; t=1687354419; x=1689946419;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lxfsUugMBYcIOsGuQu6JwBoanrGO3rsZrRGg4MZWgyY=;
-        b=INVoaQVRowSXFMdEkw5cqhZQf8sAX/E8EsT7/QKbzfW1FdCpsLAs2cDwf0yK+iDFo9
-         AoXF94/RtdnfEVCexO2o8UZRlBeSc0I3we3rGhjJjTMoAXzjvlU5YLqV9i36FtpyQ8cN
-         KTv58M+Es7TeKzDrrVa9Ngw18hvSDsT2qwx+cR8JZ/efqHjwtjU7mZ/RYMlUnL8aiUwC
-         SXHsJa+wBHuxiy/+s5RwsxLvlbUJgokrnMwh97Pi2TuKVAQl0n9pW8DM/yxInCFgbTLv
-         vRD2+cDwOeXOEOuqAK+LkWNYK9vuQTTiizedHQzSb2TWx6dCsJqsjVOBTyA5FhDllqRP
-         ahOA==
+        bh=Ji1YtGnThMF/zK8VE191zTAcogOENfq1V0tkk/VUYjo=;
+        b=V4UxPnFH4ln6ZGyjuNoc+Oiw9Llx7pQaTjerMTMYgKBgjAthksT2JZul3yFIoXpFed
+         D9AM1Ytxmzvee9vRBqU8mrSNF+rq5rfNQcmoWKKNXccz0gHziMDPiMi3lp6quiWUMNnv
+         ZFMPV4NgDRbAYepkwjlwduVRG57siJkUMAqL9gJW/TbnkklnwGUlYqfvQWR4LlHhEL+H
+         CWF32HN6kDZGpTv0RxEzIdslnxABH6MlOv3HVelLWk6eRLFzzBJTT6XalAIvjOldBuuj
+         cogCNVekHntmmXlR7eBaehrzty4tQovc+FuFYqJJPIVf8odLznZXqNSQgXBRM7ajn8d9
+         XtYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687354311; x=1689946311;
+        d=1e100.net; s=20221208; t=1687354419; x=1689946419;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lxfsUugMBYcIOsGuQu6JwBoanrGO3rsZrRGg4MZWgyY=;
-        b=ODwRSFLFy9bKtNMkgtFOoiZjCTcGC0IpNQ+MfNC+pI/DrhXsoisPkcj/Zb4Z4Bm+mA
-         NTPom5Tz9bJe2wz0JsoZZgBBXKLzX78hw44XQW4BoS63p2MQkcyhRvhhKsjDg37a8ugj
-         nuCa5K38ydH/xVSxzd5nw22EqayTRulW2i/Zl402YYJVB3jEI9o6vciF/k4a05YuAJzW
-         qpkufqHx+4jVTNtblyY/3q0oUWm+frzu71oUFLQ63J2ZzafcmNM9Nzw3xtxwGokTSg7O
-         WVZr0de3f1ryEBcCm7W3wF/nHHonu2LjdOf3y18oTBIqtYuHfpqjRX8YNsZ2Lknf0tg2
-         p+gQ==
-X-Gm-Message-State: AC+VfDzh8MCeV7mtJ7w8wKG7NHrPiXT7oCt/2InkKyrIxVFmWTYIJGHK
-        hNymWSJxifvEM8pNr4M0h5/YROfp+7WdFXqYfUdIhbhTpy6ijMU=
-X-Google-Smtp-Source: ACHHUZ6H7BwzOeBZ5HHBikhghKIBlc0YzD3ldBJbWs4n2/YE2Kthbs0BLKFkb/v8wuWQjt2QKxMoues4/+Z6iRj69b0=
-X-Received: by 2002:a5b:c6:0:b0:bc8:6354:5fb1 with SMTP id d6-20020a5b00c6000000b00bc863545fb1mr9912884ybp.46.1687354310801;
- Wed, 21 Jun 2023 06:31:50 -0700 (PDT)
+        bh=Ji1YtGnThMF/zK8VE191zTAcogOENfq1V0tkk/VUYjo=;
+        b=e0eOckMKUKWWI4YtRms3ZOBONrcL9riYxZQnu5o8r3dMYih0Ml7KF9tQ7Qv9l7jhzp
+         YDpPj9m1IcqjPKW35MpmEJQAwtCCLRpwDGKAqsqmOe5W4srBMzHCh9+ryJyqFzrkqNw9
+         qAurfeJHGk0D2ysM8ZrYpSTRaW1NWeziXY71zRc5RK3J8yUaK3s3aWbyMlS7/7WamJq5
+         rK2o0DvT2yFv7li/GGLLqxgi583B656rUZ/Wui5LaKRKPNJPjZtwgoTOnar8Iz97X2eY
+         GZXnHvvKCsqdNV/mVE32Ondfx+XbR7hHEdxHnT6/5ObNnjLqAk2T0+UzIGq/tmY9NLqs
+         OyMg==
+X-Gm-Message-State: AC+VfDyXe5cPHA62PUsAxTG9aCIbMsY4z2iqPmYmd1IlxdZMAoceCuJd
+        Bdys4cpbdjbwWXtdT0uEZgFBLPse/cFL/kqZQJz6
+X-Google-Smtp-Source: ACHHUZ4RWLGRYMd7PHbOgAOEUWtpyPoSAYyOCqPLHCtz3P0sTH7ZfdCDYrjMQpuiS8azCZQsq+wmZs2eh8KvNrIbnvw=
+X-Received: by 2002:a81:8496:0:b0:56f:ff70:dbb7 with SMTP id
+ u144-20020a818496000000b0056fff70dbb7mr14302548ywf.12.1687354419650; Wed, 21
+ Jun 2023 06:33:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230621074418.497564-1-cuigaosheng1@huawei.com>
-In-Reply-To: <20230621074418.497564-1-cuigaosheng1@huawei.com>
+References: <20230621074623.498647-1-cuigaosheng1@huawei.com>
+In-Reply-To: <20230621074623.498647-1-cuigaosheng1@huawei.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 21 Jun 2023 09:31:40 -0400
-Message-ID: <CAHC9VhRT2q85gV31-a5SP3-Qz9Vnnqsn4snqRtkyE7YoTAj-nQ@mail.gmail.com>
-Subject: Re: [PATCH -next] device_cgroup: Fix kernel-doc warnings in device_cgroup
+Date:   Wed, 21 Jun 2023 09:33:28 -0400
+Message-ID: <CAHC9VhQzZYg1HH_Q6OYytkp-uYOmCAnpzHb9tiRA-YC0VNha9A@mail.gmail.com>
+Subject: Re: [PATCH -next] trusted-keys: Fix kernel-doc warnings in trusted-keys
 To:     Gaosheng Cui <cuigaosheng1@huawei.com>
-Cc:     jmorris@namei.org, serge@hallyn.com,
+Cc:     jejb@linux.ibm.com, jarkko@kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 21, 2023 at 3:44=E2=80=AFAM Gaosheng Cui <cuigaosheng1@huawei.c=
+On Wed, Jun 21, 2023 at 3:46=E2=80=AFAM Gaosheng Cui <cuigaosheng1@huawei.c=
 om> wrote:
 >
-> Fix kernel-doc warnings in device_cgroup:
+> Fix kernel-doc warnings in trusted-keys:
 >
-> security/device_cgroup.c:835: warning: Excess function parameter
-> 'dev_cgroup' description in 'devcgroup_legacy_check_permission'.
+> security/keys/trusted-keys/trusted_tpm2.c:203: warning: expecting
+> prototype for tpm_buf_append_auth(). Prototype was for
+> tpm2_buf_append_auth() instead.
 >
 > Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
 > ---
->  security/device_cgroup.c | 1 -
->  1 file changed, 1 deletion(-)
+>  security/keys/trusted-keys/trusted_tpm2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This looks fine to me, and considering that it is both trivial and
-does not contain any code changes, I've gone ahead and merged it into
-lsm/next.
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
 --=20
 paul-moore.com
