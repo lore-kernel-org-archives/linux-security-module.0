@@ -2,42 +2,42 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E8FEB64D7
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jun 2023 23:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F44EB64D7
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jun 2023 23:41:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229655AbjFUXlM convert rfc822-to-8bit (ORCPT
+        id S229656AbjFUXlQ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Jun 2023 19:41:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34250 "EHLO
+        Wed, 21 Jun 2023 19:41:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbjFUXlL (ORCPT
+        with ESMTP id S229593AbjFUXlN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Jun 2023 19:41:11 -0400
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2D83198
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 16:41:10 -0700 (PDT)
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.17.1.19/8.17.1.19) with ESMTP id 35LG4xWJ019410
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 16:41:10 -0700
+        Wed, 21 Jun 2023 19:41:13 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED871198
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 16:41:12 -0700 (PDT)
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35LJeN2v010647
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 16:41:12 -0700
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0089730.ppops.net (PPS) with ESMTPS id 3rbnmp1nhx-3
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3rbw1y6qk4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 16:41:09 -0700
-Received: from twshared24695.38.frc1.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c085:21d::5) with Microsoft SMTP Server
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jun 2023 16:41:12 -0700
+Received: from twshared58712.02.prn6.facebook.com (2620:10d:c085:108::8) by
+ mail.thefacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Wed, 21 Jun 2023 16:41:07 -0700
+ 15.1.2507.23; Wed, 21 Jun 2023 16:41:10 -0700
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id 241AB333E8896; Wed, 21 Jun 2023 16:38:19 -0700 (PDT)
+        id 4AE7B333E88A8; Wed, 21 Jun 2023 16:38:22 -0700 (PDT)
 From:   Andrii Nakryiko <andrii@kernel.org>
 To:     <bpf@vger.kernel.org>
 CC:     <linux-security-module@vger.kernel.org>, <keescook@chromium.org>,
         <brauner@kernel.org>, <lennart@poettering.net>,
         <cyphar@cyphar.com>, <luto@kernel.org>, <kernel-team@meta.com>,
         <sargun@sargun.me>
-Subject: [PATCH v3 bpf-next 05/14] libbpf: add BPF token support to bpf_map_create() API
-Date:   Wed, 21 Jun 2023 16:38:00 -0700
-Message-ID: <20230621233809.1941811-6-andrii@kernel.org>
+Subject: [PATCH v3 bpf-next 06/14] selftests/bpf: add BPF token-enabled test for BPF_MAP_CREATE command
+Date:   Wed, 21 Jun 2023 16:38:01 -0700
+Message-ID: <20230621233809.1941811-7-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230621233809.1941811-1-andrii@kernel.org>
 References: <20230621233809.1941811-1-andrii@kernel.org>
@@ -45,84 +45,92 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: _kbSatPh66x8JbKIHM3fJijJKM47LMnj
-X-Proofpoint-ORIG-GUID: _kbSatPh66x8JbKIHM3fJijJKM47LMnj
+X-Proofpoint-GUID: hm5-24SbGZ5gA3S_jyezq-v38mhcokla
+X-Proofpoint-ORIG-GUID: hm5-24SbGZ5gA3S_jyezq-v38mhcokla
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-06-21_13,2023-06-16_01,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add ability to provide token_fd for BPF_MAP_CREATE command through
-bpf_map_create() API.
-
-Also wire through token_create.allowed_map_types param for
-BPF_TOKEN_CREATE command.
+Add test for creating BPF token with support for BPF_MAP_CREATE
+delegation. And validate that its allowed_map_types filter works as
+expected and allows to create privileged BPF maps through delegated
+token, as long as they are allowed by privileged creator of a token.
 
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- tools/lib/bpf/bpf.c | 5 ++++-
- tools/lib/bpf/bpf.h | 7 +++++--
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ .../testing/selftests/bpf/prog_tests/token.c  | 55 +++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index a247a1612f29..882297b1e136 100644
---- a/tools/lib/bpf/bpf.c
-+++ b/tools/lib/bpf/bpf.c
-@@ -169,7 +169,7 @@ int bpf_map_create(enum bpf_map_type map_type,
- 		   __u32 max_entries,
- 		   const struct bpf_map_create_opts *opts)
- {
--	const size_t attr_sz = offsetofend(union bpf_attr, map_extra);
-+	const size_t attr_sz = offsetofend(union bpf_attr, map_token_fd);
- 	union bpf_attr attr;
- 	int fd;
- 
-@@ -198,6 +198,8 @@ int bpf_map_create(enum bpf_map_type map_type,
- 	attr.numa_node = OPTS_GET(opts, numa_node, 0);
- 	attr.map_ifindex = OPTS_GET(opts, map_ifindex, 0);
- 
-+	attr.map_token_fd = OPTS_GET(opts, token_fd, 0);
-+
- 	fd = sys_bpf_fd(BPF_MAP_CREATE, &attr, attr_sz);
- 	return libbpf_err_errno(fd);
+diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/testing/selftests/bpf/prog_tests/token.c
+index 153c4e26ef6b..0f832f9178a2 100644
+--- a/tools/testing/selftests/bpf/prog_tests/token.c
++++ b/tools/testing/selftests/bpf/prog_tests/token.c
+@@ -89,8 +89,63 @@ static void subtest_token_create(void)
+ 		ASSERT_OK(restore_priv_caps(old_caps), "restore_caps");
  }
-@@ -1218,6 +1220,7 @@ int bpf_token_create(int pin_path_fd, const char *pin_pathname, struct bpf_token
- 	attr.token_create.token_flags = OPTS_GET(opts, token_flags, 0);
- 	attr.token_create.pin_flags = OPTS_GET(opts, pin_flags, 0);
- 	attr.token_create.allowed_cmds = OPTS_GET(opts, allowed_cmds, 0);
-+	attr.token_create.allowed_map_types = OPTS_GET(opts, allowed_map_types, 0);
  
- 	ret = sys_bpf(BPF_TOKEN_CREATE, &attr, attr_sz);
- 	return libbpf_err_errno(ret);
-diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
-index ab0355d90a2c..cd3fb5ce6fe2 100644
---- a/tools/lib/bpf/bpf.h
-+++ b/tools/lib/bpf/bpf.h
-@@ -51,8 +51,10 @@ struct bpf_map_create_opts {
- 
- 	__u32 numa_node;
- 	__u32 map_ifindex;
++static void subtest_map_token(void)
++{
++	LIBBPF_OPTS(bpf_token_create_opts, token_opts);
++	LIBBPF_OPTS(bpf_map_create_opts, map_opts);
++	int token_fd = 0, map_fd = 0, err;
++	__u64 old_caps = 0;
 +
-+	__u32 token_fd;
- };
--#define bpf_map_create_opts__last_field map_ifindex
-+#define bpf_map_create_opts__last_field token_fd
- 
- LIBBPF_API int bpf_map_create(enum bpf_map_type map_type,
- 			      const char *map_name,
-@@ -557,9 +559,10 @@ struct bpf_token_create_opts {
- 	__u32 token_flags;
- 	__u32 pin_flags;
- 	__u64 allowed_cmds;
-+	__u64 allowed_map_types;
- 	size_t :0;
- };
--#define bpf_token_create_opts__last_field allowed_cmds
-+#define bpf_token_create_opts__last_field allowed_map_types
- 
- /**
-  * @brief **bpf_token_create()** creates a new instance of BPF token, pinning
++	/* check that it's ok to allow any map type */
++	token_opts.allowed_map_types = ~0ULL; /* any current and future map types is allowed */
++	err = bpf_token_create(-EBADF, TOKEN_PATH, &token_opts);
++	if (!ASSERT_OK(err, "token_create_future_proof"))
++		return;
++	unlink(TOKEN_PATH);
++
++	/* create BPF token allowing STACK, but not QUEUE map */
++	token_opts.allowed_cmds = 1ULL << BPF_MAP_CREATE;
++	token_opts.allowed_map_types = 1ULL << BPF_MAP_TYPE_STACK; /* but not QUEUE */
++	err = bpf_token_create(-EBADF, TOKEN_PATH, &token_opts);
++	if (!ASSERT_OK(err, "token_create"))
++		return;
++
++	/* drop privileges to test token_fd passing */
++	if (!ASSERT_OK(drop_priv_caps(&old_caps), "drop_caps"))
++		goto cleanup;
++
++	token_fd = bpf_obj_get(TOKEN_PATH);
++	if (!ASSERT_GT(token_fd, 0, "token_get"))
++		goto cleanup;
++
++	/* BPF_MAP_TYPE_STACK is privileged, but with given token_fd should succeed */
++	map_opts.token_fd = token_fd;
++	map_fd = bpf_map_create(BPF_MAP_TYPE_STACK, "token_stack", 0, 8, 1, &map_opts);
++	if (!ASSERT_GT(map_fd, 0, "stack_map_fd"))
++		goto cleanup;
++	close(map_fd);
++	map_fd = 0;
++
++	/* BPF_MAP_TYPE_QUEUE is privileged, and token doesn't allow it, so should fail */
++	map_opts.token_fd = token_fd;
++	map_fd = bpf_map_create(BPF_MAP_TYPE_QUEUE, "token_queue", 0, 8, 1, &map_opts);
++	if (!ASSERT_EQ(map_fd, -EPERM, "queue_map_fd"))
++		goto cleanup;
++
++cleanup:
++	if (map_fd > 0)
++		close(map_fd);
++	if (token_fd)
++		close(token_fd);
++	unlink(TOKEN_PATH);
++	if (old_caps)
++		ASSERT_OK(restore_priv_caps(old_caps), "restore_caps");
++}
++
+ void test_token(void)
+ {
+ 	if (test__start_subtest("token_create"))
+ 		subtest_token_create();
++	if (test__start_subtest("map_token"))
++		subtest_map_token();
+ }
 -- 
 2.34.1
 
