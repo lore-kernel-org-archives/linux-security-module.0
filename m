@@ -2,141 +2,173 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC79EB64DA
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 14:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9290BEB64D8
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 16:50:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231726AbjFVOpH (ORCPT
+        id S229927AbjFVQuT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Jun 2023 10:45:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49474 "EHLO
+        Thu, 22 Jun 2023 12:50:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231895AbjFVOoY (ORCPT
+        with ESMTP id S231382AbjFVQuS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Jun 2023 10:44:24 -0400
-Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BEB52708;
-        Thu, 22 Jun 2023 07:44:00 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4Qn2qB6Gy2z9xFr8;
-        Thu, 22 Jun 2023 22:31:02 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwDHTQngXZRkeCaRAw--.29682S2;
-        Thu, 22 Jun 2023 15:42:54 +0100 (CET)
-Message-ID: <eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com>
-Subject: [QUESTION] Full user space process isolation?
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Oleg Nesterov <oleg@redhat.com>, Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        LuisChamberlain <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Petr Tesarik <petrtesarik@huaweicloud.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Tejun Heo <tj@kernel.org>
-Cc:     linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org
-Date:   Thu, 22 Jun 2023 16:42:37 +0200
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwDHTQngXZRkeCaRAw--.29682S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr4xtw1rXFyUGF4UJF13urg_yoW8Zw1fpF
-        9akFZ8GFn5GF429as7Wr48J3yrurZ3Xay3Gr9rKry3X34Y9Fy2yry3t3WrXF1DKrsY9a4j
-        vwsxtrWjya1DZa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-        4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-        c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-        v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkG
-        c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-        0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
-        Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7
-        UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAQBF1jj4sbAQABs3
-X-CFilter-Loop: Reflected
+        Thu, 22 Jun 2023 12:50:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E43FB1B4
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Jun 2023 09:50:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 737BC618C4
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Jun 2023 16:50:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9E3C433C0;
+        Thu, 22 Jun 2023 16:50:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687452615;
+        bh=W5B1EoieuFITn7VHZ5d47xW7gpUpfyKhprvwWti/EZQ=;
+        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
+        b=c8hNyHt5HJbKVyWN9tIHLGLU3FzWVV6jEybouRn0u6xcHVD5UXGRQ4k+eyY1M8Btt
+         uIdbrd0bwDbr2LMQLnHNWBtOGKrCzGeSuVq2Np/pW1PM7CjN080JOx8oFXFJ68AiS6
+         ZG8zIvi3vrd+4xtTPlYez+jMsFRsAUJErtHuBRThV/uiNSIQ7HX0iJKwL3Td4Eu5U+
+         zmS6iReRued9On6c46db4YLE4NNyDXyjNai7jHW6jNGKRbp2Qvd2sCfVNU2ZkgmRYP
+         Ta/62mSy0vakTotMQDWrEMxNo3rRbESwlOH7EwjZRHK7PYTcbrx5CCeFMpAR7rbZks
+         O3DXerUa+tGOw==
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 6274827C0054;
+        Thu, 22 Jun 2023 12:50:14 -0400 (EDT)
+Received: from imap48 ([10.202.2.98])
+  by compute3.internal (MEProxy); Thu, 22 Jun 2023 12:50:14 -0400
+X-ME-Sender: <xms:xXuUZPPvN1Fit3S_cC-7mb5s4ztTGzZxHyCre3Cx8mh0X5MtI39xYA>
+    <xme:xXuUZJ-YXwxrTVLTw6bhJmlafzLawIkAYxjperneH7JIJJpG98c3Ca1FdoYXapqDt
+    fVD8RaJPqjcN7SHlv4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeeguddguddtgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
+    tehnugihucfnuhhtohhmihhrshhkihdfuceolhhuthhosehkvghrnhgvlhdrohhrgheqne
+    cuggftrfgrthhtvghrnhepteeggedtfeejteekueejieetleehteduvefhuefgvefftdet
+    hfeugfekueefjefhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdphhhtthhpthhorg
+    hmrghgihgtihhprghnughpohhrthdrhihouhenucevlhhushhtvghrufhiiigvpedtnecu
+    rfgrrhgrmhepmhgrihhlfhhrohhmpegrnhguhidomhgvshhmthhprghuthhhphgvrhhsoh
+    hnrghlihhthidqudduiedukeehieefvddqvdeifeduieeitdekqdhluhhtoheppehkvghr
+    nhgvlhdrohhrgheslhhinhhugidrlhhuthhordhush
+X-ME-Proxy: <xmx:xXuUZOQtx7O8nk3a3PkpXH200fEB5CD-dMg7X7j8-2C_v0xz3kj1iw>
+    <xmx:xXuUZDvOHMrXRzb3BgzjudsV1m1xfiMknDWmsIM0hfuijC6OrASGwA>
+    <xmx:xXuUZHeVNHQX6_cdQpv-udWds47gmzqylCHaAaNzgrvBKtlFHpJSxw>
+    <xmx:xnuUZJuI7J3CchXjGuARcNxxFHJY9XTqmJzIBhR3ChhNt1ibo9Z5Gw>
+Feedback-ID: ieff94742:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id BFBBA31A0063; Thu, 22 Jun 2023 12:50:13 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-499-gf27bbf33e2-fm-20230619.001-gf27bbf33
+Mime-Version: 1.0
+Message-Id: <bc4f99af-0c46-49b2-9f2d-9a01e6a03af3@app.fastmail.com>
+In-Reply-To: <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com>
+References: <20230607235352.1723243-1-andrii@kernel.org>
+ <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
+ <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
+ <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com>
+ <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
+ <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com>
+Date:   Thu, 22 Jun 2023 09:49:40 -0700
+From:   "Andy Lutomirski" <luto@kernel.org>
+To:     "Maryam Tahhan" <mtahhan@redhat.com>,
+        "Andrii Nakryiko" <andrii.nakryiko@gmail.com>
+Cc:     "Andrii Nakryiko" <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        "Kees Cook" <keescook@chromium.org>,
+        "Christian Brauner" <brauner@kernel.org>, lennart@poettering.net,
+        cyphar@cyphar.com, kernel-team@meta.com
+Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi everyone
-
-I briefly discussed this topic at LSS NA 2023, but I wanted to have an
-opinion from a broader audience.
 
 
-In short:
+On Thu, Jun 22, 2023, at 1:22 AM, Maryam Tahhan wrote:
+> On 22/06/2023 00:48, Andrii Nakryiko wrote:
+>>
+>>>>> Giving a way to enable BPF in a container is only a small part of =
+the overall task -- making BPF behave sensibly in that container seems l=
+ike it should also be necessary.
+>>>> BPF is still a privileged thing. You can't just say that any
+>>>> unprivileged application should be able to use BPF. That's why BPF
+>>>> token is about trusting unpriv application in a controlled environm=
+ent
+>>>> (production) to not do something crazy. It can be enforced further
+>>>> through LSM usage, but in a lot of cases, when dealing with internal
+>>>> production applications it's enough to have a proper application
+>>>> design and rely on code review process to avoid any negative effect=
+s.
+>>> We really shouldn=E2=80=99t be creating new kinds of privileged cont=
+ainers that do uncontained things.
+>>>
+>>> If you actually want to go this route, I think you would do much bet=
+ter to introduce a way for a container manager to usefully proxy BPF on =
+behalf of the container.
+>> Please see Hao's reply ([0]) about his and Google's (not so rosy)
+>> experiences with building and using such BPF proxy. We (Meta)
+>> internally didn't go this route at all and strongly prefer not to.
+>> There are lots of downsides and complications to having a BPF proxy.
+>> In the end, this is just shuffling around where the decision about
+>> trusting a given application with BPF access is being made. BPF proxy
+>> adds lots of unnecessary logistical, operational, and development
+>> complexity, but doesn't magically make anything safer.
+>>
+>>    [0] https://lore.kernel.org/bpf/CA+khW7h95RpurRL8qmKdSJQEXNYuqSWnP=
+16o-uRZ9G0KqCfM4Q@mail.gmail.com/
+>>
+> Apologies for being blunt, but=C2=A0 the token approach to me seems to=
+ be a=20
+> work around providing the right level/classification for a pod/contain=
+er=20
+> in order to say you support unprivileged containers using eBPF. I thin=
+k=20
+> if your container needs to do privileged things it should have and be=20
+> classified with the right permissions (privileges) to do what it needs=20
+> to do.
 
-I wanted to execute some kernel workloads in a fully isolated user
-space process, started from a binary statically linked with klibc,
-connected to the kernel only through a pipe.
+Bluntness is great.
 
-I also wanted that, for the root user, tampering with that process is
-as hard as if the same code runs in kernel space.
+I think that this whole level/classification thing is utterly wrong.  Re=
+place "BPF" with basically anything else, and you'll see how absurd it i=
+s.
 
-I would use the fully isolated process to parse and convert unsupported
-data formats to a supported one, after the kernel verified the
-authenticity of the original format (that already exists and cannot
-change).
+"the token approach to me seems like a work around providing the right l=
+evel/classification for a pod/container in order to say you support unpr=
+ivileged containers using files on disk"
 
-Preventing tampering of the process ensures that the conversion goes as
-expected. Also, the integrity of the binary needs to be verified.
+That's very 1990's.  Maybe 1980's.  Of *course* giving access to a files=
+ystem has some inherent security exposure.  So we can give containers ac=
+cess to *different* filesystems.  Or we can use ACLs.  Or MAC policy.  O=
+r whatever.  We have many solutions, none of which are perfect, and we'r=
+e doing okay.
 
+"the token approach to me seems like a work around providing the right l=
+evel/classification for a pod/container in order to say you support unpr=
+ivileged containers using the network"
 
-List of wished data formats:
+The network is a big deal.  For some reason, it's cool these days to tre=
+at TCP as highly privileged.  You can get secrets from your favorite (or=
+ least favorite) cloud provider with unauthenticated HTTP to a magic IP =
+and port.  You can bypass a whole lot of authenticating/authorizing prox=
+ies with unauthenticated HTTP (no TLS!) if you're on the right network.
 
-PGP: verify the authenticity of RPM/DEB/... headers
-RPM/DEB/... headers: extract reference file checksums for
-                    (kernel-based) file integrity check (e.g. with IMA)
+This is IMO obnoxious, but we deal with it by having network namespaces =
+and firewalls and rather outdated port <=3D 1024 rules.
 
+"the token approach to me seems like a work around providing the right l=
+evel/classification for a pod/container in order to say you support unpr=
+ivileged containers using BPF"
 
-Alternative #1:
+My response is: what's wrong with BPF?  BPF has maps and programs and su=
+ch, and we could easily apply 1990's style ownership and DAC rules to th=
+em.  I even *wrote the code*.  But for some reason, the BPF community wa=
+nts to bury its head in the sand, pretend it's 1980, declare that BPF is=
+ too privileged to have access control, and instead just have a complica=
+ted switch to turn it on and off in different contexts.
 
-Write the parsers to run in kernel space. That was rejected due to
-security and scalability concerns. If that changed, please let me know.
-
-
-Alternative #2:
-
-Linux distributions could provide what the kernel supports. However,
-from personal experience, the effort seems orders of magnitude higher
-than just writing a tiny component to support the original format. And
-there is no guarantee that all Linux distributions will do it.
-
-
-Full process isolation could be achieved in this way:
-
-process -> outside: set seccomp strict profile at process creation
-                    so that the process can only read/write/close the
-                    pipe and exit, no other system calls are allowed
-
-outside -> process: deny ptrace/kill with the process as target
-
-Anything else?
-
-
-The only risk I see is that a new feature allowing to interact with
-another process is added to the kernel, without the ptrace permission
-being asked.
-
-With the restrictions above, can we say that the code inside the
-process is as safe (against tampering) to execute as if it runs in
-kernel space?
-
-Thanks
-
-Roberto
-
+Please try harder.
