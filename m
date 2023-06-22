@@ -2,289 +2,132 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30189EB64D8
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 08:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1613EB64D8
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 08:23:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229852AbjFVIAw (ORCPT
+        id S229971AbjFVIXv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Jun 2023 04:00:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58454 "EHLO
+        Thu, 22 Jun 2023 04:23:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230112AbjFVIAv (ORCPT
+        with ESMTP id S229776AbjFVIXu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Jun 2023 04:00:51 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED3D1FDD;
-        Thu, 22 Jun 2023 01:00:30 -0700 (PDT)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Qmt5R5j9Vz6DB43;
-        Thu, 22 Jun 2023 15:57:47 +0800 (CST)
-Received: from [10.123.123.126] (10.123.123.126) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Thu, 22 Jun 2023 09:00:26 +0100
-Message-ID: <60e5f0ea-39fa-9f76-35bd-ec88fc489922@huawei.com>
-Date:   Thu, 22 Jun 2023 11:00:25 +0300
+        Thu, 22 Jun 2023 04:23:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7722B1BE6
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Jun 2023 01:23:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687422180;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=cOdV54lATHdQofNik3EiTT9JXn7/yOoqOYzJfK/2WMg=;
+        b=LFq6Z5HhcELIQmFR2PbMwW2FPmQFwdjQCYC7aA2Zt2p8lvjxXrr87+2byD3+xhLNtswfDA
+        xTjoaevdPFzlwrVzCkj8/9K8qe34AVYBhvJ8nZOtx59qlYrpduP0fXbPGRQVJDyEB2rQDM
+        4MuM4QHQaiegrKkpCOPg+HXwIwkRZnY=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-493-efxUL-FWO3KW66dkA7OJrA-1; Thu, 22 Jun 2023 04:22:58 -0400
+X-MC-Unique: efxUL-FWO3KW66dkA7OJrA-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2b479d12b31so38768391fa.3
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Jun 2023 01:22:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687422177; x=1690014177;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cOdV54lATHdQofNik3EiTT9JXn7/yOoqOYzJfK/2WMg=;
+        b=a8+F5aasPQrLru+Qgjd4gId4G5EBklzL5ot4wXY8Ai5dWgXbri4/7sTVehXvx2BiEm
+         QHNxz4NEPnwmE2RsTnSkt+wRBehTP47p+YD7J8GH7UJjKvNwZ6oAfWdnlZ0oiHvRO7JE
+         xwJFcXIW9rR3BjEIr+aWSWZkCsBzy26LVHExLGdjyAbe+tdUI1R8gF6D5K98hYHp10s8
+         rN6e5DGjSWTHVzZYkIFIvj0PDpW0bU6bNKq90wu0DRjVl3O0oMYveP1hU1uPGGR6kKwJ
+         sCSbwipaiOMocquePBg14llWt4HFLlXvjTmSf5SAHo0Aki4w7q4ATNoCFIk5V4vfAE+x
+         vSlg==
+X-Gm-Message-State: AC+VfDyZ3T6dWfczKOorOkOPGl2gFqw9w4+5opgSRRkBvlnHh4Xups+Q
+        33GaGY/RSrbke0DVnrK3EQwjSeY4oGT+R683Ub3IBzcN5bYdGf6jaWMDWA47sblQl79dX11XKE3
+        X5H34tf0E1evX+8OSN3fxfUipYZmrkhaHOylg
+X-Received: by 2002:a2e:9e1a:0:b0:2b4:6994:4758 with SMTP id e26-20020a2e9e1a000000b002b469944758mr7793316ljk.49.1687422177190;
+        Thu, 22 Jun 2023 01:22:57 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6kL9nO6pSEzVdwiJ9K31Wh1ZkYByiwgzdl6D/jER5AVvmXPVS2TihUDhRl1icluMBU6YPxow==
+X-Received: by 2002:a2e:9e1a:0:b0:2b4:6994:4758 with SMTP id e26-20020a2e9e1a000000b002b469944758mr7793302ljk.49.1687422176807;
+        Thu, 22 Jun 2023 01:22:56 -0700 (PDT)
+Received: from [192.168.0.12] ([78.18.22.70])
+        by smtp.gmail.com with ESMTPSA id z7-20020a7bc7c7000000b003f90067880esm15439072wmk.47.2023.06.22.01.22.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Jun 2023 01:22:56 -0700 (PDT)
+Message-ID: <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com>
+Date:   Thu, 22 Jun 2023 09:22:55 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v11 11/12] samples/landlock: Add network demo
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
- <20230515161339.631577-12-konstantin.meskhidze@huawei.com>
- <ZH9OFyWZ1njI7VG9@google.com>
- <d9f07165-f589-13d4-6484-1272704f1de0@huawei.com>
- <8c09fc5a-e3a5-4792-65a8-b84c6044128a@digikod.net>
- <c0713bf1-a65e-c4cd-08b9-c60bd79fc86f@huawei.com>
- <fb1d9351-355c-feb8-c2a2-419e24000049@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <fb1d9351-355c-feb8-c2a2-419e24000049@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.12.0
+Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <brauner@kernel.org>, lennart@poettering.net,
+        cyphar@cyphar.com, kernel-team@meta.com
+References: <20230607235352.1723243-1-andrii@kernel.org>
+ <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
+ <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
+ <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com>
+ <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
+From:   Maryam Tahhan <mtahhan@redhat.com>
+In-Reply-To: <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.123.126]
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 22/06/2023 00:48, Andrii Nakryiko wrote:
+>
+>>>> Giving a way to enable BPF in a container is only a small part of the overall task -- making BPF behave sensibly in that container seems like it should also be necessary.
+>>> BPF is still a privileged thing. You can't just say that any
+>>> unprivileged application should be able to use BPF. That's why BPF
+>>> token is about trusting unpriv application in a controlled environment
+>>> (production) to not do something crazy. It can be enforced further
+>>> through LSM usage, but in a lot of cases, when dealing with internal
+>>> production applications it's enough to have a proper application
+>>> design and rely on code review process to avoid any negative effects.
+>> We really shouldn’t be creating new kinds of privileged containers that do uncontained things.
+>>
+>> If you actually want to go this route, I think you would do much better to introduce a way for a container manager to usefully proxy BPF on behalf of the container.
+> Please see Hao's reply ([0]) about his and Google's (not so rosy)
+> experiences with building and using such BPF proxy. We (Meta)
+> internally didn't go this route at all and strongly prefer not to.
+> There are lots of downsides and complications to having a BPF proxy.
+> In the end, this is just shuffling around where the decision about
+> trusting a given application with BPF access is being made. BPF proxy
+> adds lots of unnecessary logistical, operational, and development
+> complexity, but doesn't magically make anything safer.
+>
+>    [0] https://lore.kernel.org/bpf/CA+khW7h95RpurRL8qmKdSJQEXNYuqSWnP16o-uRZ9G0KqCfM4Q@mail.gmail.com/
+>
+Apologies for being blunt, but  the token approach to me seems to be a 
+work around providing the right level/classification for a pod/container 
+in order to say you support unprivileged containers using eBPF. I think 
+if your container needs to do privileged things it should have and be 
+classified with the right permissions (privileges) to do what it needs 
+to do.
+
+The  proxy BPF on behalf of the container approach works for containers 
+that don't need to do privileged BPF operations.
+
+I have to say that  the `proxy BPF on behalf of the container` meets the 
+needs of unprivileged pods and at the same time giving CAP_BPF to the 
+applications meets the needs of these PODs that need to do 
+privileged/bpf things without any tokens. Ultimately you are trusting 
+these apps in the same way as if you were granting a token.
 
 
-6/19/2023 9:19 PM, Mickaël Salaün пишет:
-> 
-> On 19/06/2023 16:24, Konstantin Meskhidze (A) wrote:
->> 
->> 
->> 6/13/2023 11:38 PM, Mickaël Salaün пишет:
->>>
->>> On 13/06/2023 12:54, Konstantin Meskhidze (A) wrote:
->>>>
->>>>
->>>> 6/6/2023 6:17 PM, Günther Noack пишет:
->>>>> Hi Konstantin!
->>>>>
->>>>> Apologies if some of this was discussed before, in this case,
->>>>> Mickaël's review overrules my opinions from the sidelines ;)
->>>>>
->>>>> On Tue, May 16, 2023 at 12:13:38AM +0800, Konstantin Meskhidze wrote:
->>>>>> This commit adds network demo. It's possible to allow a sandboxer to
->>>>>> bind/connect to a list of particular ports restricting network
->>>>>> actions to the rest of ports.
->>>>>>
->>>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>>>>
->>>>>
->>>>>> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
->>>>>> index e2056c8b902c..b0250edb6ccb 100644
->>>>>> --- a/samples/landlock/sandboxer.c
->>>>>> +++ b/samples/landlock/sandboxer.c
->>>>>
->>>>> ...
->>>>>
->>>>>> +static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->>>>>> +				const __u64 allowed_access)
->>>>>> +{
->>>>>> +	int num_ports, i, ret = 1;
->>>>>
->>>>> I thought the convention was normally to set ret = 0 initially and to
->>>>> override it in case of error, rather than the other way around?
->>>
->>> Which convention? In this case, by default the return code is an error.
->>>
->>>
->>>>>
->>>>      Well, I just followed Mickaёl's way of logic here. >
->>>>
->>>>>> +	char *env_port_name;
->>>>>> +	struct landlock_net_service_attr net_service = {
->>>>>> +		.allowed_access = allowed_access,
->>>>>> +		.port = 0,
->>>>>> +	};
->>>>>> +
->>>>>> +	env_port_name = getenv(env_var);
->>>>>> +	if (!env_port_name)
->>>>>> +		return 0;
->>>>>> +	env_port_name = strdup(env_port_name);
->>>>>> +	unsetenv(env_var);
->>>>>> +	num_ports = parse_port_num(env_port_name);
->>>>>> +
->>>>>> +	if (num_ports == 1 && (strtok(env_port_name, ENV_PATH_TOKEN) == NULL)) {
->>>>>> +		ret = 0;
->>>>>> +		goto out_free_name;
->>>>>> +	}
->>>>>
->>>>> I don't understand why parse_port_num and strtok are necessary in this
->>>>> program. The man-page for strsep(3) describes it as a replacement to
->>>>> strtok(3) (in the HISTORY section), and it has a very short example
->>>>> for how it is used.
->>>>>
->>>>> Wouldn't it work like this as well?
->>>>>
->>>>> while ((strport = strsep(&env_port_name, ":"))) {
->>>>>      net_service.port = atoi(strport);
->>>>>      /* etc */
->>>>> }
->>>>
->>>>      Thanks for a tip. I think it's a better solution here. Now this
->>>> commit is in Mickaёl's -next branch. I could send a one-commit patch later.
->>>> Mickaёl, what do you think?
->>>
->>> I removed this series from -next because there is some issues (see the
->>> bot's emails), but anyway, this doesn't mean these patches don't need to
->>> be changed, they do. The goal of -next is to test more widely a patch
->>> series and get more feedbacks, especially from bots. When this series
->>> will be fully ready (and fuzzed with syzkaller), I'll push it to Linus
->>> Torvalds.
->>>
->>> I'll review the remaining tests and sample code this week, but you can
->>> still take into account the documentation review.
->> 
->>    Hi, Mickaёl.
->> 
->>    I have a few quetions?
->>     - Are you going to fix warnings for bots, meanwhile I run syzcaller?
-> 
-> No, you need to fix that with the next series (except the Signed-off-by
-> warnings).
+>>> So privileged daemon (container manager) will be configured with the
+>>> knowledge of which services/containers are allowed to use BPF, and
+>>> will grant BPF token only to those that were explicitly allowlisted.
 
-  Hi, Mickaёl.
-   As I understand its possible to check bots warnings just after you 
-push the next V12 series again into your -next branch???
 
-> 
-> What is your status on syzkaller? Do you need some help? I can write the
-> tests if it's too much.
-> 
-   Sorry. To be honest I'm busy with another project. I dont know how 
-much time it will take for me to set up and run syzkaller. I need your 
-help here please, how you do this, some roadmap.
-> 
->>     - I will fix documentation and sandbox demo and sent patch v12?
-> 
-> Yes please. Let me a few days to send more reviews.
-> 
-   Ok. Sure.
->> 
->>>
->>>
->>>>
->>>>>
->>>>>> +
->>>>>> +	for (i = 0; i < num_ports; i++) {
->>>>>> +		net_service.port = atoi(strsep(&env_port_name, ENV_PATH_TOKEN));
->>>>>
->>>>> Naming of ENV_PATH_TOKEN:
->>>>> This usage is not related to paths, maybe rename the variable?
->>>>> It's also technically not the token, but the delimiter.
->>>>>
->>>>     What do you think of ENV_PORT_TOKEN or ENV_PORT_DELIMITER???
->>>
->>> You can rename ENV_PATH_TOKEN to ENV_DELIMITER for the FS and network parts.
->>>
->>      Ok. Got it.
->>>
->>>>
->>>>>> +		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
->>>>>> +				      &net_service, 0)) {
->>>>>> +			fprintf(stderr,
->>>>>> +				"Failed to update the ruleset with port \"%lld\": %s\n",
->>>>>> +				net_service.port, strerror(errno));
->>>>>> +			goto out_free_name;
->>>>>> +		}
->>>>>> +	}
->>>>>> +	ret = 0;
->>>>>> +
->>>>>> +out_free_name:
->>>>>> +	free(env_port_name);
->>>>>> +	return ret;
->>>>>> +}
->>>>>
->>>>>
->>>>>>    		fprintf(stderr,
->>>>>>    			"Launch a command in a restricted environment.\n\n");
->>>>>> -		fprintf(stderr, "Environment variables containing paths, "
->>>>>> -				"each separated by a colon:\n");
->>>>>> +		fprintf(stderr,
->>>>>> +			"Environment variables containing paths and ports "
->>>>>> +			"each separated by a colon:\n");
->>>>>>    		fprintf(stderr,
->>>>>>    			"* %s: list of paths allowed to be used in a read-only way.\n",
->>>>>>    			ENV_FS_RO_NAME);
->>>>>>    		fprintf(stderr,
->>>>>> -			"* %s: list of paths allowed to be used in a read-write way.\n",
->>>>>> +			"* %s: list of paths allowed to be used in a read-write way.\n\n",
->>>>>>    			ENV_FS_RW_NAME);
->>>>>> +		fprintf(stderr,
->>>>>> +			"Environment variables containing ports are optional "
->>>>>> +			"and could be skipped.\n");
->>>>>
->>>>> As it is, I believe the program does something different when I'm
->>>>> setting these to the empty string (ENV_TCP_BIND_NAME=""), compared to
->>>>> when I'm unsetting them?
->>>>>
->>>>> I think the case where we want to forbid all handle-able networking is
->>>>> a legit and very common use case - it could be clearer in the
->>>>> documentation how this is done with the tool. (And maybe the interface
->>>>> could be something more explicit than setting the environment variable
->>>>> to empty?)
->>>
->>> I'd like to keep it simple, and it should be seen as an example code,
->>> not a full-feature sandboxer, but still a consistent and useful one.
->>> What would you suggest?
->>>
->>> This sandboxer tool relies on environment variables for its
->>> configuration. This is definitely not a good fit for all use cases, but
->>> I think it is simple and flexible enough. One use case might be to
->>> export a set of environment variables and simply call this tool. I'd
->>> prefer to not deal with argument parsing, but maybe that was too
->>> simplistic? We might want to revisit this approach but probably not with
->>> this series.
->>>
->>>
->>>>>
->>>>>
->>>>>> +	/* Removes bind access attribute if not supported by a user. */
->>>>>> +	env_port_name = getenv(ENV_TCP_BIND_NAME);
->>>>>> +	if (!env_port_name) {
->>>>>> +		ruleset_attr.handled_access_net &=
->>>>>> +			~LANDLOCK_ACCESS_NET_BIND_TCP;
->>>>>> +	}
->>>>>> +	/* Removes connect access attribute if not supported by a user. */
->>>>>> +	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
->>>>>> +	if (!env_port_name) {
->>>>>> +		ruleset_attr.handled_access_net &=
->>>>>> +			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
->>>>>> +	}
->>>>>
->>>>> This is the code where the program does not restrict network usage,
->>>>> if the corresponding environment variable is not set.
->>>>
->>>>      Yep. Right.
->>>>>
->>>>> It's slightly inconsistent with what this tool does for filesystem
->>>>> paths. - If you don't specify any file paths, it will still restrict
->>>>> file operations there, independent of whether that env variable was
->>>>> set or not.  (Apologies if it was discussed before.)
->>>>
->>>>     Mickaёl wanted to make network ports optional here.
->>>>     Please check:
->>>>    
->>>> https://lore.kernel.org/linux-security-module/179ac2ee-37ff-92da-c381-c2c716725045@digikod.net/
->>>
->>> Right, the rationale is for compatibility with the previous version of
->>> this tool. We should not break compatibility when possible. A comment
->>> should explain the rationale though.
->>>
->>>>
->>>> https://lore.kernel.org/linux-security-module/fe3bc928-14f8-5e2b-359e-9a87d6cf5b01@digikod.net/
->>>>>
->>>>> —Günther
->>>>>
->>> .
-> .
