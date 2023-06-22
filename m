@@ -2,61 +2,62 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A146EB64D8
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 18:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1E3EB64D8
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 18:40:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229645AbjFVSVO (ORCPT
+        id S229840AbjFVSkX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Jun 2023 14:21:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54242 "EHLO
+        Thu, 22 Jun 2023 14:40:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjFVSVN (ORCPT
+        with ESMTP id S229743AbjFVSkW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Jun 2023 14:21:13 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 847BF1FF1;
-        Thu, 22 Jun 2023 11:21:12 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fa798cf204so3109375e9.0;
-        Thu, 22 Jun 2023 11:21:12 -0700 (PDT)
+        Thu, 22 Jun 2023 14:40:22 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77681A3;
+        Thu, 22 Jun 2023 11:40:20 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4f883420152so5446851e87.1;
+        Thu, 22 Jun 2023 11:40:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687458071; x=1690050071;
+        d=gmail.com; s=20221208; t=1687459218; x=1690051218;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pC4RE0qzdyYrTcJ76s8eLsJIMG1aIPWgpxvZBfxllaE=;
-        b=Td2jfDE7J7HurJvOlC6S6Anz5/qvmTAXrOCsgTStonimoxnFKTNsHPnOSotYN1SD3f
-         3Y/8T4j29txwSHQ0BxsrZoZqa1Oe24SCY27D/l63RG7SHiYCUyf9RxVD4E8JR4CYhWsq
-         FlWliXLzjzXOQHW0raUnwm/OQ4KzjDr67qvrSAYJ+omZ02Si3YxsTKBAGADbfsde5cEQ
-         B0lpZz5WOcA4AI9RHM867LU/j2zUE0+xJcUvbAsVBnHxEPoBNMZRa5hUKmTOPG5+WRiq
-         A7w4RNtwrENg3Dt9PMyPBTCI54fu8/FKeoB+oQ5WdBbKn/d3KM8JXFgWRYOby4+U6I41
-         NxSw==
+        bh=pgNOmKn8cKbknqRSul61vlPJmFXW+ZDy44yXXLuHMmE=;
+        b=LF6TIBO++eDh68rTQsEob9ADZkh5vWI4lpWS7p7KkNb8Hwixmd9V8Mh0/6LZ4KIKqJ
+         fc54Yt4ph2fbyZ+CUMZIuwj6R2qS7b8jkhrwodCz33BHYiz0WYSvFltf+ciGZPkPkOUe
+         KHr3IFlsduj4SPkn+Y/G6CmOl3EhmAAiszPuqYSJacSUmFHLINQwZInSw8ONXKenEWqf
+         lWQ5pPr2weaawY2fQlfKOs4Hbzho0hgpSy0ejywVHsy5GsYP/dRAVSI19gfcwvcbawIG
+         XIh7Cw7b/CjkzNw5LXdC25TT0LuYRqAF0hNrNkkj3pa4dkrK9EBmBTtajwUmR6FCUBlj
+         VJpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687458071; x=1690050071;
+        d=1e100.net; s=20221208; t=1687459218; x=1690051218;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pC4RE0qzdyYrTcJ76s8eLsJIMG1aIPWgpxvZBfxllaE=;
-        b=G8P0NiXyLY20dHnZQUd3WoHM+aqZwBP7awVUQgRk5N+2lxPRFmhufZw2euX86M/6ij
-         9m6PwE5rsUPb1kVKFniH0zaSwoMK8aRdX1fVOOfgkx5X8n39PRb0VYHW4s67l4oGGyZ3
-         xJ982q+i9gPLRB5H0JdV6B7VKrCfYxSDPw2AbTxAHbxx44v3X4yUF5uQLRrpA3ZsUqti
-         nxLR9RcBQ/8Y/zntxJBRCxepQC/XvqLcQT06tsVgk/KKSnDH91Y4+7fa71PA73xrmXz1
-         CHQSECDvNeWMgiw8Pin8CTcZVrxJBr/CITo6WnYLIR1BJTqAydt7ps0LwpV8zAcTGGi5
-         GWGg==
-X-Gm-Message-State: AC+VfDwv3gSYfUsJLqg7v7tVprv82SrrRfpPCcGZnLWCiwfPbacXpYV7
-        uC0nzl2w1g4n3Zs8GAG1IM66L6ZQ/DaHmqFuqQOFOkzC/L2ICw==
-X-Google-Smtp-Source: ACHHUZ7W6EIHOy9y1GppAOPEO2F+mBJBur3bQ00/u7JwHBBNGR+cyuaaBk2n3OjHANzBpcoNX2RYFj93aSEBUJJzp3g=
-X-Received: by 2002:a7b:cc8d:0:b0:3f7:33cf:707e with SMTP id
- p13-20020a7bcc8d000000b003f733cf707emr20044761wma.18.1687458070648; Thu, 22
- Jun 2023 11:21:10 -0700 (PDT)
+        bh=pgNOmKn8cKbknqRSul61vlPJmFXW+ZDy44yXXLuHMmE=;
+        b=HG/BReE5kR3AViXR5w+fHYBIF4HXf86wmaGpkyvP26Qm44c3pmzSaZKqsDmpkgFh7p
+         VrHUh3Ap22N1N5fcXy+NLKqxtcokiTVze+ALQYeul76sN7NR2K5uO0gHmk/oIIiQvGUd
+         VFIAULwwtDtOWF007iyaRKhca9tZLEJV7ozH26XUQIpERZBbCtDjijlRDmF/Yb89eGmQ
+         FN/iWR87S63DDgN9MRgZ1ySzlzDZIJyIzIWUGrIXz4/BP+BxA9hxtxziwU3jr5FYeSBm
+         kf4N+Um66lwGib61xNQbcqesMDkpt9KqVkzKmWBmWCBzzIOTJC6SQgGFCLg07aCV1XqP
+         SAiw==
+X-Gm-Message-State: AC+VfDw9JzBi/6hk8X6L9yuRXcT7Wo7yHot6NKgIZCLtmQNc3TOuQm6d
+        nRfHPSyAh6znp1tc3/bkvlKewR9BsbRUjb0zPVo=
+X-Google-Smtp-Source: ACHHUZ5Kgc4f77IyAEBBdaI/JojQJUZH5gkn/+Q4Phbs2WDvF3QWBWeVi1Fk61L7EeStDRs5KP8J9WTyrJPxkydbzx0=
+X-Received: by 2002:a19:5e0b:0:b0:4f8:72fd:ed95 with SMTP id
+ s11-20020a195e0b000000b004f872fded95mr7130722lfb.22.1687459218246; Thu, 22
+ Jun 2023 11:40:18 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230607235352.1723243-1-andrii@kernel.org> <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
  <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
  <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com> <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
- <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com>
-In-Reply-To: <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com>
+ <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com> <bc4f99af-0c46-49b2-9f2d-9a01e6a03af3@app.fastmail.com>
+ <5a75d1f0-4ed9-399c-4851-2df0755de9b5@redhat.com>
+In-Reply-To: <5a75d1f0-4ed9-399c-4851-2df0755de9b5@redhat.com>
 From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Thu, 22 Jun 2023 11:20:58 -0700
-Message-ID: <CAEf4BzY2dKvMk_Mg2oLnD5a8aOhXCmU-0QD6sWGNZqkjbMrhBA@mail.gmail.com>
+Date:   Thu, 22 Jun 2023 11:40:06 -0700
+Message-ID: <CAEf4Bza9GvJ0vw2-0M8GKSXmOQ8VQCmeqEiQpMuZBjwqpA03vw@mail.gmail.com>
 Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
 To:     Maryam Tahhan <mtahhan@redhat.com>
 Cc:     Andy Lutomirski <luto@kernel.org>,
@@ -70,100 +71,166 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 22, 2023 at 1:23=E2=80=AFAM Maryam Tahhan <mtahhan@redhat.com> =
-wrote:
+On Thu, Jun 22, 2023 at 10:38=E2=80=AFAM Maryam Tahhan <mtahhan@redhat.com>=
+ wrote:
 >
-> On 22/06/2023 00:48, Andrii Nakryiko wrote:
-> >
-> >>>> Giving a way to enable BPF in a container is only a small part of th=
-e overall task -- making BPF behave sensibly in that container seems like i=
-t should also be necessary.
-> >>> BPF is still a privileged thing. You can't just say that any
-> >>> unprivileged application should be able to use BPF. That's why BPF
-> >>> token is about trusting unpriv application in a controlled environmen=
-t
-> >>> (production) to not do something crazy. It can be enforced further
-> >>> through LSM usage, but in a lot of cases, when dealing with internal
-> >>> production applications it's enough to have a proper application
-> >>> design and rely on code review process to avoid any negative effects.
-> >> We really shouldn=E2=80=99t be creating new kinds of privileged contai=
-ners that do uncontained things.
-> >>
-> >> If you actually want to go this route, I think you would do much bette=
-r to introduce a way for a container manager to usefully proxy BPF on behal=
-f of the container.
-> > Please see Hao's reply ([0]) about his and Google's (not so rosy)
-> > experiences with building and using such BPF proxy. We (Meta)
-> > internally didn't go this route at all and strongly prefer not to.
-> > There are lots of downsides and complications to having a BPF proxy.
-> > In the end, this is just shuffling around where the decision about
-> > trusting a given application with BPF access is being made. BPF proxy
-> > adds lots of unnecessary logistical, operational, and development
-> > complexity, but doesn't magically make anything safer.
-> >
-> >    [0] https://lore.kernel.org/bpf/CA+khW7h95RpurRL8qmKdSJQEXNYuqSWnP16=
-o-uRZ9G0KqCfM4Q@mail.gmail.com/
-> >
+
+Please avoid replying in HTML.
+
+> On 22/06/2023 17:49, Andy Lutomirski wrote:
+>
 > Apologies for being blunt, but  the token approach to me seems to be a
 > work around providing the right level/classification for a pod/container
 > in order to say you support unprivileged containers using eBPF. I think
 > if your container needs to do privileged things it should have and be
 > classified with the right permissions (privileges) to do what it needs
 > to do.
+>
+> Bluntness is great.
+>
+> I think that this whole level/classification thing is utterly wrong.  Rep=
+lace "BPF" with basically anything else, and you'll see how absurd it is.
+>
+> "the token approach to me seems like a work around providing the right le=
+vel/classification for a pod/container in order to say you support unprivil=
+eged containers using files on disk"
+>
+> That's very 1990's.  Maybe 1980's.  Of *course* giving access to a filesy=
+stem has some inherent security exposure.  So we can give containers access=
+ to *different* filesystems.  Or we can use ACLs.  Or MAC policy.  Or whate=
+ver.  We have many solutions, none of which are perfect, and we're doing ok=
+ay.
+>
+> "the token approach to me seems like a work around providing the right le=
+vel/classification for a pod/container in order to say you support unprivil=
+eged containers using the network"
+>
+> The network is a big deal.  For some reason, it's cool these days to trea=
+t TCP as highly privileged.  You can get secrets from your favorite (or lea=
+st favorite) cloud provider with unauthenticated HTTP to a magic IP and por=
+t.  You can bypass a whole lot of authenticating/authorizing proxies with u=
+nauthenticated HTTP (no TLS!) if you're on the right network.
+>
+> This is IMO obnoxious, but we deal with it by having network namespaces a=
+nd firewalls and rather outdated port <=3D 1024 rules.
+>
+> "the token approach to me seems like a work around providing the right le=
+vel/classification for a pod/container in order to say you support unprivil=
+eged containers using BPF"
+>
+> My response is: what's wrong with BPF?  BPF has maps and programs and suc=
+h, and we could easily apply 1990's style ownership and DAC rules to them. =
+ I even *wrote the code*.  But for some reason, the BPF community wants to =
+bury its head in the sand, pretend it's 1980, declare that BPF is too privi=
+leged to have access control, and instead just have a complicated switch to=
+ turn it on and off in different contexts.
+>
+> Please try harder.
+>
+> I'm going to be honest, I can't tell if we are in agreement or not :). I'=
+m also going to use pod and container interchangeably throughout my respons=
+e (bear with me)
+>
+>
+> So just to clarify a few things on my end.  When I said "level/classifica=
+tion" I meant privileges --> A container should have the right level of pri=
+vileges assigned to it for what it's trying to do in the K8s scenario throu=
+gh it's pod spec. To me it seems like BPF token is a way to work around the=
+ permissions assigned to a container in K8s for example: with bpf_token I'm=
+ marking a pod as unprivileged but then under the hood, through another ser=
+vice I'm giving it a token to do more than what it was specified in it's po=
+d spec. Yeah I have a separate service controlling the tokens but something=
+ about it just seems not right (to me). If CAP_BPF is too broad, can we bre=
+ak it down further into something more granular. Something that can be assi=
+gned to the container through the pod spec rather than a separate service t=
+hat seems to be doing things under the hood? This doesn't even start to
+solve the problem I know...
 
-For one, when user namespaces are involved, there is no BPF use at
-all, no matter how privileged you want to mark the container. I
-mentioned this in the cover letter. Now, the claim is that user
-namespaces are indeed useful and necessary, and yet we also want such
-user-namespaced applications to be able to use BPF.
+Disclaimer: I don't know anything about Kubernetes, so don't expect me
+reply with correct terminology or detailed understanding of
+configuration of containers.
 
-Currently there is no solution to that. And external BPF service is
-not a great one, see [0], for real world users' feedback.
+But on a more generic and conceptual level, it seems like you are
+making some implementation assumptions and arguing based on that.
 
-  [0] https://lore.kernel.org/bpf/CA+khW7h95RpurRL8qmKdSJQEXNYuqSWnP16o-uRZ=
-9G0KqCfM4Q@mail.gmail.com/
+Like, why container spec cannot have native support for "granted BPF
+functionality"? Why would BPF token have to be granted through some
+separate service and not integrated into whatever Kubernetes'
+"container manager" functionality and just be a natural extension of
+the spec?
+
+For CAP_BPF too broad. It is broad, yes. If you have good ideas how to
+break it down some more -- please propose. But this is all orthogonal,
+because the blocking problem is fundamental incompatibility of user
+namespaces (and their implied isolation and sandboxing of workloads)
+and BPF functionality, which is global by its very nature. The latter
+is unavoidable in principle.
+
+No matter how much you break down CAP_BPF, you can't enforce that BPF
+program won't interfere with applications in other containers. Or that
+it won't "spy" on them. It's just not what BPF can enforce in
+principle.
+
+So that comes back down to a question of trust and then controlled
+delegation of BPF functionality. You trust workload with BPF usage
+because you reviewed the BPF code, workload, testing, etc? Grant BPF
+token and let that container use limited subset of BPF. Employ BPF LSM
+to further restrict it beyond what BPF token can control.
+
+You cannot trust an application to not do something harmful? You
+shouldn't grant it either CAP_BPF in init namespace, nor BPF token in
+user namespace. That's it. Pick your poison.
+
+But all this cannot be mechanically decided or enforced. There has to
+be some humans involved in making these decisions. Kernel's job is to
+provide building blocks to grant and control BPF functionality to the
+extent that it is technically possible.
 
 
 >
-> The  proxy BPF on behalf of the container approach works for containers
-> that don't need to do privileged BPF operations.
+> I understand the difficulties with trying to deploy BPF in K8s and the co=
+ncerns around privilege escalation for the containers. I understand not all=
+ use cases are created equally but I think this falls into at least 2 categ=
+ories:
+>
+> - Pods/Containers that need to do privileged BPF ops but not under a CAP_=
+BPF umbrella --> sure we need something for this.
+> - Pods/Containers that don't need to do any privileged BPF ops but still =
+use BPF --> these are happy with a proxy service loading/unloading the bpf =
+progs, creating maps and pinning them... But even in this scenario we need =
+something to isolate the pinned maps/progs by different apps (why not DAC r=
+ules?), even better if the maps are in the container...
 
-BPF usage *is privileged* in all but some tiny use cases that are ok
-with heavily limited unprivileged BPF functionality (and even then
-recommendation is to disable unprivileged BPF altogether). Whether you
-proxy such privileged BPF usage through an external application or you
-are granting BPF token to such application is in the same category:
-someone has to decide to trust the application to perform privileged
-BPF operations.
+The above doesn't make much sense to me, sorry. If the application is
+ok using unprivileged BPF, there is no problem there. They can today
+already and there is no BPF proxy or BPF token involved.
 
-And the only debatable thing here is whether the application itself
-should do bpf() syscalls directly and be able to use the entire BPF
-ecosystem of libraries, tools, techniques, and approaches. Or we go
-and rewrite the world to use some RPC-based proxy to bpf() syscall?
+As for "something to isolate the pinned maps/progs by different apps
+(why not DAC rules?)", there is no such thing, as I've explained
+already.
 
-And to put it bluntly, the latter is not a realistic (or even good) option.
+I can install sched_switch raw_tracepoint BPF program (if I'm allowed
+to), and that program has system-wide observability. It cannot be
+bound to an application. You can't just say "trigger this sched_switch
+program only for scheduler decisions within my container". When you
+actually start thinking about just that one example, even assuming we
+add some per-container filter in the kernel to not trigger your
+program, then what do we do when we switch from process A in container
+X to process B in container Y? Is that event belonging to container X?
+Or container Y? How can you prevent a program from reading a task's
+data that doesn't belong to your container, when both are inputs to
+this single tracepoint event?
+
+Hopefully you can see where I'm going with this. And this is just one
+random tiny example. We can think up tons of other cases to prove BPF
+is not isolatable to any sort of "container".
 
 >
-> I have to say that  the `proxy BPF on behalf of the container` meets the
-> needs of unprivileged pods and at the same time giving CAP_BPF to the
+> Anyway - I hope this clarifies my original intent - which is proxy at lea=
+st starts to solve one part of the puzzle. Whatever approach(es) we take to=
+ solve the rest of these problems the more we can stick to tried and truste=
+d mechanisms the better.
 
-I tried to make it very clear in the cover letter, but granting
-CAP_BPF under user namespace means precisely nothing. CAP_BPF is only
-useful in the init namespace.
-
-> applications meets the needs of these PODs that need to do
-> privileged/bpf things without any tokens. Ultimately you are trusting
-> these apps in the same way as if you were granting a token.
-
-Yes, absolutely. As I mentioned very explicitly, it's the question of
-trusting application. Service vs token is implementation details, but
-the one that has huge implications in how applications are built,
-tested, versioned, deployed, etc.
-
->
->
-> >>> So privileged daemon (container manager) will be configured with the
-> >>> knowledge of which services/containers are allowed to use BPF, and
-> >>> will grant BPF token only to those that were explicitly allowlisted.
->
->
+I disagree. BPF proxy complicates logistics, operations, and developer
+experience, without resolving the issue of determining trust and the
+need to delegate or proxy BPF functionality.
