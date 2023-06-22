@@ -2,276 +2,303 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA578C001DE
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 10:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D09EB64DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 10:18:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231208AbjFVKO5 (ORCPT
+        id S229593AbjFVKS2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Jun 2023 06:14:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36808 "EHLO
+        Thu, 22 Jun 2023 06:18:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230009AbjFVKOw (ORCPT
+        with ESMTP id S230523AbjFVKSZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Jun 2023 06:14:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73FA2DD;
-        Thu, 22 Jun 2023 03:14:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F2EBF617C7;
-        Thu, 22 Jun 2023 10:14:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2888C433C9;
-        Thu, 22 Jun 2023 10:14:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687428888;
-        bh=7+cabg86v1cYpPv8vDJOW5RfunjhlSEWXfJLwIkmtqs=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=bash4qEoN8ysoF4HTnLUBoIb4R/VvEf+WW/D9VIwZ7IkIbfsRZHAuo5DrHgU3mESQ
-         YV3L6vJlJ5RLoTi5/71VkN5rQAydrP7yy38zcSGGfwasNdQxjqfQEDJO2KhRfaS72P
-         L3pOkZCMNStmacczTh8Bxts4KstAt3iUVQoAzfNq5O0qEkTp/AQ/ZxnvFiOtuM8Rrh
-         hGFigQvIDdzAyY8j4H2gTF58blmQ8XCJxFBrtJ8bp21DHjiO/HINP7f4QOOgCaaZnm
-         wPOh/3PFD9MITyv48Pm3mcErp57QuFgfhsUJhmJROqlUtadgwIZDzlw31/avwVXFpE
-         VwFt0TPP5toFA==
-Message-ID: <ad4bfb630128709588164db6f1fd2ef39c31d2a5.camel@kernel.org>
-Subject: Re: [PATCH 01/79] fs: add ctime accessors infrastructure
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Damien Le Moal <dlemoal@kernel.org>, Jeremy Kerr <jk@ozlabs.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arve =?ISO-8859-1?Q?Hj=F8nnev=E5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Carlos Llamas <cmllamas@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Brad Warrum <bwarrum@linux.ibm.com>,
-        Ritu Agarwal <rituagar@linux.ibm.com>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Sterba <dsterba@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ian Kent <raven@themaw.net>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Salah Triki <salah.triki@gmail.com>,
-        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Joel Becker <jlbec@evilplan.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Tyler Hicks <code@tyhicks.com>,
-        Ard Biesheuvel <ardb@kernel.org>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <muchun.song@linux.dev>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Dave Kleikamp <shaggy@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Bob Copeland <me@bobcopeland.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        Anders Larsen <al@alarsen.net>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Evgeniy Dushistov <dushistov@mail.ru>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Juergen Gross <jgross@suse.com>,
-        Ruihan Li <lrh2000@pku.edu.cn>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Udipto Goswami <quic_ugoswami@quicinc.com>,
-        Linyu Yuan <quic_linyyuan@quicinc.com>,
-        John Keeping <john@keeping.me.uk>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Dan Carpenter <error27@gmail.com>,
-        Yuta Hayama <hayama@lineo.co.jp>,
-        Jozef Martiniak <jomajm@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Sandeep Dhavale <dhavale@google.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        ZhangPeng <zhangpeng362@huawei.com>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Aditya Garg <gargaditya08@live.com>,
-        Erez Zadok <ezk@cs.stonybrook.edu>,
-        Yifei Liu <yifeliu@cs.stonybrook.edu>,
-        Yu Zhe <yuzhe@nfschina.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Oleg Kanatov <okanatov@gmail.com>,
-        "Dr. David Alan Gilbert" <linux@treblig.org>,
-        Jiangshan Yi <yijiangshan@kylinos.cn>,
-        xu xin <cgel.zte@gmail.com>, Stefan Roesch <shr@devkernel.io>,
-        Zhihao Cheng <chengzhihao1@huawei.com>,
-        "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Seth Forshee <sforshee@digitalocean.com>,
-        Zeng Jingxiang <linuszeng@tencent.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Zhang Yi <yi.zhang@huawei.com>, Tom Rix <trix@redhat.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Chen Zhongjin <chenzhongjin@huawei.com>,
-        Zhengchao Shao <shaozhengchao@huawei.com>,
-        Rik van Riel <riel@surriel.com>,
-        Jingyu Wang <jingyuwang_vip@163.com>,
-        Hangyu Hua <hbh25y@gmail.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-usb@vger.kernel.org,
-        v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, autofs@vger.kernel.org,
-        linux-mm@kvack.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu,
-        ecryptfs@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
-        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com,
-        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
-        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Date:   Thu, 22 Jun 2023 06:14:30 -0400
-In-Reply-To: <99b3c749-23d9-6f09-fb75-6a84f3d1b066@kernel.org>
-References: <20230621144507.55591-1-jlayton@kernel.org>
-         <20230621144507.55591-2-jlayton@kernel.org>
-         <99b3c749-23d9-6f09-fb75-6a84f3d1b066@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
+        Thu, 22 Jun 2023 06:18:25 -0400
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64932107;
+        Thu, 22 Jun 2023 03:18:21 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QmxCY6bYCzMpxDH;
+        Thu, 22 Jun 2023 10:18:17 +0000 (UTC)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4QmxCY0HH8zMppDP;
+        Thu, 22 Jun 2023 12:18:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1687429097;
+        bh=TKvVDRK40pmL3DAdWUP/FN4uWV05D4Vkf67P6sywwMo=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=HKXNXsEHnWLQhZK6/UNpjqzPeVCRqCrG6Vx3192qU1vIk9DQreCq8jgHCEGxduAlo
+         D9qEvGd1H3snHZ/BGM8+LO///8TdV3Eiap9YGW2N33M8O2iSdvZfS2Mvc1lYD7u+Gn
+         jC4bayJH46Gu9D/4NpCJiV1Kr889VOBIDgjGWMwQ=
+Message-ID: <1ee25561-96b8-67a6-77ca-475d12ea244d@digikod.net>
+Date:   Thu, 22 Jun 2023 12:18:15 +0200
 MIME-Version: 1.0
+User-Agent: 
+Subject: Re: [PATCH v11 11/12] samples/landlock: Add network demo
+Content-Language: en-US
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+ <20230515161339.631577-12-konstantin.meskhidze@huawei.com>
+ <ZH9OFyWZ1njI7VG9@google.com>
+ <d9f07165-f589-13d4-6484-1272704f1de0@huawei.com>
+ <8c09fc5a-e3a5-4792-65a8-b84c6044128a@digikod.net>
+ <c0713bf1-a65e-c4cd-08b9-c60bd79fc86f@huawei.com>
+ <fb1d9351-355c-feb8-c2a2-419e24000049@digikod.net>
+ <60e5f0ea-39fa-9f76-35bd-ec88fc489922@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <60e5f0ea-39fa-9f76-35bd-ec88fc489922@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2023-06-22 at 09:46 +0900, Damien Le Moal wrote:
-> On 6/21/23 23:45, Jeff Layton wrote:
-> > struct timespec64 has unused bits in the tv_nsec field that can be used
-> > for other purposes. In future patches, we're going to change how the
-> > inode->i_ctime is accessed in certain inodes in order to make use of
-> > them. In order to do that safely though, we'll need to eradicate raw
-> > accesses of the inode->i_ctime field from the kernel.
-> >=20
-> > Add new accessor functions for the ctime that we can use to replace the=
-m.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
->=20
-> [...]
->=20
-> > +/**
-> > + * inode_ctime_peek - fetch the current ctime from the inode
-> > + * @inode: inode from which to fetch ctime
-> > + *
-> > + * Grab the current ctime from the inode and return it.
-> > + */
-> > +static inline struct timespec64 inode_ctime_peek(const struct inode *i=
-node)
->=20
-> To be consistent with inode_ctime_set(), why not call this one inode_ctim=
-e_get()
 
-In later patches fetching the ctime for presentation may have side
-effects on certain filesystems. Using "peek" here is a hint that we want
-to avoid those side effects in these calls.
+On 22/06/2023 10:00, Konstantin Meskhidze (A) wrote:
+> 
+> 
+> 6/19/2023 9:19 PM, Mickaël Salaün пишет:
+>>
+>> On 19/06/2023 16:24, Konstantin Meskhidze (A) wrote:
+>>>
+>>>
+>>> 6/13/2023 11:38 PM, Mickaël Salaün пишет:
+>>>>
+>>>> On 13/06/2023 12:54, Konstantin Meskhidze (A) wrote:
+>>>>>
+>>>>>
+>>>>> 6/6/2023 6:17 PM, Günther Noack пишет:
+>>>>>> Hi Konstantin!
+>>>>>>
+>>>>>> Apologies if some of this was discussed before, in this case,
+>>>>>> Mickaël's review overrules my opinions from the sidelines ;)
+>>>>>>
+>>>>>> On Tue, May 16, 2023 at 12:13:38AM +0800, Konstantin Meskhidze wrote:
+>>>>>>> This commit adds network demo. It's possible to allow a sandboxer to
+>>>>>>> bind/connect to a list of particular ports restricting network
+>>>>>>> actions to the rest of ports.
+>>>>>>>
+>>>>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>>>>>>
+>>>>>>
+>>>>>>> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+>>>>>>> index e2056c8b902c..b0250edb6ccb 100644
+>>>>>>> --- a/samples/landlock/sandboxer.c
+>>>>>>> +++ b/samples/landlock/sandboxer.c
+>>>>>>
+>>>>>> ...
+>>>>>>
+>>>>>>> +static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+>>>>>>> +				const __u64 allowed_access)
+>>>>>>> +{
+>>>>>>> +	int num_ports, i, ret = 1;
+>>>>>>
+>>>>>> I thought the convention was normally to set ret = 0 initially and to
+>>>>>> override it in case of error, rather than the other way around?
+>>>>
+>>>> Which convention? In this case, by default the return code is an error.
+>>>>
+>>>>
+>>>>>>
+>>>>>       Well, I just followed Mickaёl's way of logic here. >
+>>>>>
+>>>>>>> +	char *env_port_name;
+>>>>>>> +	struct landlock_net_service_attr net_service = {
+>>>>>>> +		.allowed_access = allowed_access,
+>>>>>>> +		.port = 0,
+>>>>>>> +	};
+>>>>>>> +
+>>>>>>> +	env_port_name = getenv(env_var);
+>>>>>>> +	if (!env_port_name)
+>>>>>>> +		return 0;
+>>>>>>> +	env_port_name = strdup(env_port_name);
+>>>>>>> +	unsetenv(env_var);
+>>>>>>> +	num_ports = parse_port_num(env_port_name);
+>>>>>>> +
+>>>>>>> +	if (num_ports == 1 && (strtok(env_port_name, ENV_PATH_TOKEN) == NULL)) {
+>>>>>>> +		ret = 0;
+>>>>>>> +		goto out_free_name;
+>>>>>>> +	}
+>>>>>>
+>>>>>> I don't understand why parse_port_num and strtok are necessary in this
+>>>>>> program. The man-page for strsep(3) describes it as a replacement to
+>>>>>> strtok(3) (in the HISTORY section), and it has a very short example
+>>>>>> for how it is used.
+>>>>>>
+>>>>>> Wouldn't it work like this as well?
+>>>>>>
+>>>>>> while ((strport = strsep(&env_port_name, ":"))) {
+>>>>>>       net_service.port = atoi(strport);
+>>>>>>       /* etc */
+>>>>>> }
+>>>>>
+>>>>>       Thanks for a tip. I think it's a better solution here. Now this
+>>>>> commit is in Mickaёl's -next branch. I could send a one-commit patch later.
+>>>>> Mickaёl, what do you think?
+>>>>
+>>>> I removed this series from -next because there is some issues (see the
+>>>> bot's emails), but anyway, this doesn't mean these patches don't need to
+>>>> be changed, they do. The goal of -next is to test more widely a patch
+>>>> series and get more feedbacks, especially from bots. When this series
+>>>> will be fully ready (and fuzzed with syzkaller), I'll push it to Linus
+>>>> Torvalds.
+>>>>
+>>>> I'll review the remaining tests and sample code this week, but you can
+>>>> still take into account the documentation review.
+>>>
+>>>     Hi, Mickaёl.
+>>>
+>>>     I have a few quetions?
+>>>      - Are you going to fix warnings for bots, meanwhile I run syzcaller?
+>>
+>> No, you need to fix that with the next series (except the Signed-off-by
+>> warnings).
+> 
+>    Hi, Mickaёl.
+>     As I understand its possible to check bots warnings just after you
+> push the next V12 series again into your -next branch???
 
-> ? Also, inode_set_ctime() & inode_get_ctime() may be a little more natura=
-l. But
-> no strong opinion about that though.
->=20
+Yes, we get bot warnings on the -next tree, but the command that 
+generate it should be reproducible.
 
-I like the consistency of the inode_ctime_* prefix. It makes it simpler
-to find these calls when grepping, etc.
 
-That said, my opinions on naming are pretty loosely-held, so if the
-consensus is that the names should as you suggest, I'll go along with
-it.
---=20
-Jeff Layton <jlayton@kernel.org>
+> 
+>>
+>> What is your status on syzkaller? Do you need some help? I can write the
+>> tests if it's too much.
+>>
+>     Sorry. To be honest I'm busy with another project. I dont know how
+> much time it will take for me to set up and run syzkaller. I need your
+> help here please, how you do this, some roadmap.
+
+Ok, no worries, I have it set up so I'll take care of it and keep you in 
+the loop with your GitHub account.
+
+
+>>
+>>>      - I will fix documentation and sandbox demo and sent patch v12?
+>>
+>> Yes please. Let me a few days to send more reviews.
+>>
+>     Ok. Sure.
+>>>
+>>>>
+>>>>
+>>>>>
+>>>>>>
+>>>>>>> +
+>>>>>>> +	for (i = 0; i < num_ports; i++) {
+>>>>>>> +		net_service.port = atoi(strsep(&env_port_name, ENV_PATH_TOKEN));
+>>>>>>
+>>>>>> Naming of ENV_PATH_TOKEN:
+>>>>>> This usage is not related to paths, maybe rename the variable?
+>>>>>> It's also technically not the token, but the delimiter.
+>>>>>>
+>>>>>      What do you think of ENV_PORT_TOKEN or ENV_PORT_DELIMITER???
+>>>>
+>>>> You can rename ENV_PATH_TOKEN to ENV_DELIMITER for the FS and network parts.
+>>>>
+>>>       Ok. Got it.
+>>>>
+>>>>>
+>>>>>>> +		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>>>>>>> +				      &net_service, 0)) {
+>>>>>>> +			fprintf(stderr,
+>>>>>>> +				"Failed to update the ruleset with port \"%lld\": %s\n",
+>>>>>>> +				net_service.port, strerror(errno));
+>>>>>>> +			goto out_free_name;
+>>>>>>> +		}
+>>>>>>> +	}
+>>>>>>> +	ret = 0;
+>>>>>>> +
+>>>>>>> +out_free_name:
+>>>>>>> +	free(env_port_name);
+>>>>>>> +	return ret;
+>>>>>>> +}
+>>>>>>
+>>>>>>
+>>>>>>>     		fprintf(stderr,
+>>>>>>>     			"Launch a command in a restricted environment.\n\n");
+>>>>>>> -		fprintf(stderr, "Environment variables containing paths, "
+>>>>>>> -				"each separated by a colon:\n");
+>>>>>>> +		fprintf(stderr,
+>>>>>>> +			"Environment variables containing paths and ports "
+>>>>>>> +			"each separated by a colon:\n");
+>>>>>>>     		fprintf(stderr,
+>>>>>>>     			"* %s: list of paths allowed to be used in a read-only way.\n",
+>>>>>>>     			ENV_FS_RO_NAME);
+>>>>>>>     		fprintf(stderr,
+>>>>>>> -			"* %s: list of paths allowed to be used in a read-write way.\n",
+>>>>>>> +			"* %s: list of paths allowed to be used in a read-write way.\n\n",
+>>>>>>>     			ENV_FS_RW_NAME);
+>>>>>>> +		fprintf(stderr,
+>>>>>>> +			"Environment variables containing ports are optional "
+>>>>>>> +			"and could be skipped.\n");
+>>>>>>
+>>>>>> As it is, I believe the program does something different when I'm
+>>>>>> setting these to the empty string (ENV_TCP_BIND_NAME=""), compared to
+>>>>>> when I'm unsetting them?
+>>>>>>
+>>>>>> I think the case where we want to forbid all handle-able networking is
+>>>>>> a legit and very common use case - it could be clearer in the
+>>>>>> documentation how this is done with the tool. (And maybe the interface
+>>>>>> could be something more explicit than setting the environment variable
+>>>>>> to empty?)
+>>>>
+>>>> I'd like to keep it simple, and it should be seen as an example code,
+>>>> not a full-feature sandboxer, but still a consistent and useful one.
+>>>> What would you suggest?
+>>>>
+>>>> This sandboxer tool relies on environment variables for its
+>>>> configuration. This is definitely not a good fit for all use cases, but
+>>>> I think it is simple and flexible enough. One use case might be to
+>>>> export a set of environment variables and simply call this tool. I'd
+>>>> prefer to not deal with argument parsing, but maybe that was too
+>>>> simplistic? We might want to revisit this approach but probably not with
+>>>> this series.
+>>>>
+>>>>
+>>>>>>
+>>>>>>
+>>>>>>> +	/* Removes bind access attribute if not supported by a user. */
+>>>>>>> +	env_port_name = getenv(ENV_TCP_BIND_NAME);
+>>>>>>> +	if (!env_port_name) {
+>>>>>>> +		ruleset_attr.handled_access_net &=
+>>>>>>> +			~LANDLOCK_ACCESS_NET_BIND_TCP;
+>>>>>>> +	}
+>>>>>>> +	/* Removes connect access attribute if not supported by a user. */
+>>>>>>> +	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
+>>>>>>> +	if (!env_port_name) {
+>>>>>>> +		ruleset_attr.handled_access_net &=
+>>>>>>> +			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+>>>>>>> +	}
+>>>>>>
+>>>>>> This is the code where the program does not restrict network usage,
+>>>>>> if the corresponding environment variable is not set.
+>>>>>
+>>>>>       Yep. Right.
+>>>>>>
+>>>>>> It's slightly inconsistent with what this tool does for filesystem
+>>>>>> paths. - If you don't specify any file paths, it will still restrict
+>>>>>> file operations there, independent of whether that env variable was
+>>>>>> set or not.  (Apologies if it was discussed before.)
+>>>>>
+>>>>>      Mickaёl wanted to make network ports optional here.
+>>>>>      Please check:
+>>>>>     
+>>>>> https://lore.kernel.org/linux-security-module/179ac2ee-37ff-92da-c381-c2c716725045@digikod.net/
+>>>>
+>>>> Right, the rationale is for compatibility with the previous version of
+>>>> this tool. We should not break compatibility when possible. A comment
+>>>> should explain the rationale though.
+>>>>
+>>>>>
+>>>>> https://lore.kernel.org/linux-security-module/fe3bc928-14f8-5e2b-359e-9a87d6cf5b01@digikod.net/
+>>>>>>
+>>>>>> —Günther
+>>>>>>
+>>>> .
+>> .
