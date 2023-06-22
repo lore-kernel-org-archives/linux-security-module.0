@@ -2,173 +2,146 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9290BEB64D8
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 16:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A54EB64D8
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 16:50:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229927AbjFVQuT (ORCPT
+        id S231327AbjFVQuY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Jun 2023 12:50:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40466 "EHLO
+        Thu, 22 Jun 2023 12:50:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231382AbjFVQuS (ORCPT
+        with ESMTP id S230281AbjFVQuU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Jun 2023 12:50:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E43FB1B4
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Jun 2023 09:50:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 737BC618C4
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Jun 2023 16:50:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9E3C433C0;
+        Thu, 22 Jun 2023 12:50:20 -0400
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C179E48
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Jun 2023 09:50:18 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Qn5vq1J0dzMqTCw;
         Thu, 22 Jun 2023 16:50:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687452615;
-        bh=W5B1EoieuFITn7VHZ5d47xW7gpUpfyKhprvwWti/EZQ=;
-        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-        b=c8hNyHt5HJbKVyWN9tIHLGLU3FzWVV6jEybouRn0u6xcHVD5UXGRQ4k+eyY1M8Btt
-         uIdbrd0bwDbr2LMQLnHNWBtOGKrCzGeSuVq2Np/pW1PM7CjN080JOx8oFXFJ68AiS6
-         ZG8zIvi3vrd+4xtTPlYez+jMsFRsAUJErtHuBRThV/uiNSIQ7HX0iJKwL3Td4Eu5U+
-         zmS6iReRued9On6c46db4YLE4NNyDXyjNai7jHW6jNGKRbp2Qvd2sCfVNU2ZkgmRYP
-         Ta/62mSy0vakTotMQDWrEMxNo3rRbESwlOH7EwjZRHK7PYTcbrx5CCeFMpAR7rbZks
-         O3DXerUa+tGOw==
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 6274827C0054;
-        Thu, 22 Jun 2023 12:50:14 -0400 (EDT)
-Received: from imap48 ([10.202.2.98])
-  by compute3.internal (MEProxy); Thu, 22 Jun 2023 12:50:14 -0400
-X-ME-Sender: <xms:xXuUZPPvN1Fit3S_cC-7mb5s4ztTGzZxHyCre3Cx8mh0X5MtI39xYA>
-    <xme:xXuUZJ-YXwxrTVLTw6bhJmlafzLawIkAYxjperneH7JIJJpG98c3Ca1FdoYXapqDt
-    fVD8RaJPqjcN7SHlv4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeeguddguddtgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
-    tehnugihucfnuhhtohhmihhrshhkihdfuceolhhuthhosehkvghrnhgvlhdrohhrgheqne
-    cuggftrfgrthhtvghrnhepteeggedtfeejteekueejieetleehteduvefhuefgvefftdet
-    hfeugfekueefjefhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdphhhtthhpthhorg
-    hmrghgihgtihhprghnughpohhrthdrhihouhenucevlhhushhtvghrufhiiigvpedtnecu
-    rfgrrhgrmhepmhgrihhlfhhrohhmpegrnhguhidomhgvshhmthhprghuthhhphgvrhhsoh
-    hnrghlihhthidqudduiedukeehieefvddqvdeifeduieeitdekqdhluhhtoheppehkvghr
-    nhgvlhdrohhrgheslhhinhhugidrlhhuthhordhush
-X-ME-Proxy: <xmx:xXuUZOQtx7O8nk3a3PkpXH200fEB5CD-dMg7X7j8-2C_v0xz3kj1iw>
-    <xmx:xXuUZDvOHMrXRzb3BgzjudsV1m1xfiMknDWmsIM0hfuijC6OrASGwA>
-    <xmx:xXuUZHeVNHQX6_cdQpv-udWds47gmzqylCHaAaNzgrvBKtlFHpJSxw>
-    <xmx:xnuUZJuI7J3CchXjGuARcNxxFHJY9XTqmJzIBhR3ChhNt1ibo9Z5Gw>
-Feedback-ID: ieff94742:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id BFBBA31A0063; Thu, 22 Jun 2023 12:50:13 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-499-gf27bbf33e2-fm-20230619.001-gf27bbf33
-Mime-Version: 1.0
-Message-Id: <bc4f99af-0c46-49b2-9f2d-9a01e6a03af3@app.fastmail.com>
-In-Reply-To: <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com>
-References: <20230607235352.1723243-1-andrii@kernel.org>
- <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
- <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
- <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com>
- <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
- <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com>
-Date:   Thu, 22 Jun 2023 09:49:40 -0700
-From:   "Andy Lutomirski" <luto@kernel.org>
-To:     "Maryam Tahhan" <mtahhan@redhat.com>,
-        "Andrii Nakryiko" <andrii.nakryiko@gmail.com>
-Cc:     "Andrii Nakryiko" <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        "Kees Cook" <keescook@chromium.org>,
-        "Christian Brauner" <brauner@kernel.org>, lennart@poettering.net,
-        cyphar@cyphar.com, kernel-team@meta.com
-Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Qn5vp15ZPzMpnPr;
+        Thu, 22 Jun 2023 18:50:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1687452615;
+        bh=i0pWvByrW9z0B0qMC2EGfccJ5CDeD/5G1+nmhQ+uLRQ=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=bf+SX6SEXNbj7+3UQcRll0nP8zIfs+HTxGji3zM9psenwaqcoysWTSkgeG8wvYK+k
+         sqiAP5yg7acByGYwPHqjNYJj4yZA9/gsKobZbMxHzvtz9ZEz0U1v7tSmG8AVyhRLQH
+         lPmC8KkVfJcBqtZwEdhYCPiZc7KQlbLZsp+7wDxQ=
+Message-ID: <00a03f2c-892d-683e-96a0-c0ba8f293831@digikod.net>
+Date:   Thu, 22 Jun 2023 18:50:13 +0200
+MIME-Version: 1.0
+User-Agent: 
+Subject: Re: [PATCH v11 12/12] landlock: Document Landlock's network support
+Content-Language: en-US
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
+        Jeff Xu <jeffxu@chromium.org>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+ <20230515161339.631577-13-konstantin.meskhidze@huawei.com>
+ <ZH89Pi1QAqNW2QgG@google.com>
+ <CABi2SkWqHeLkmqONbmavcp2SCiwe6YeH_3dkBLZwSsk7neyPMw@mail.gmail.com>
+ <86108314-de87-5342-e0fb-a07feee457a5@huawei.com>
+ <97c15e23-8a89-79f2-4413-580153827ade@digikod.net>
+In-Reply-To: <97c15e23-8a89-79f2-4413-580153827ade@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-
-On Thu, Jun 22, 2023, at 1:22 AM, Maryam Tahhan wrote:
-> On 22/06/2023 00:48, Andrii Nakryiko wrote:
+On 13/06/2023 22:12, Mickaël Salaün wrote:
+> 
+> On 13/06/2023 12:13, Konstantin Meskhidze (A) wrote:
 >>
->>>>> Giving a way to enable BPF in a container is only a small part of =
-the overall task -- making BPF behave sensibly in that container seems l=
-ike it should also be necessary.
->>>> BPF is still a privileged thing. You can't just say that any
->>>> unprivileged application should be able to use BPF. That's why BPF
->>>> token is about trusting unpriv application in a controlled environm=
-ent
->>>> (production) to not do something crazy. It can be enforced further
->>>> through LSM usage, but in a lot of cases, when dealing with internal
->>>> production applications it's enough to have a proper application
->>>> design and rely on code review process to avoid any negative effect=
-s.
->>> We really shouldn=E2=80=99t be creating new kinds of privileged cont=
-ainers that do uncontained things.
+>>
+>> 6/7/2023 8:46 AM, Jeff Xu пишет:
+>>> On Tue, Jun 6, 2023 at 7:09 AM Günther Noack <gnoack@google.com> wrote:
+>>>>
+>>>> On Tue, May 16, 2023 at 12:13:39AM +0800, Konstantin Meskhidze wrote:
+>>>>> Describe network access rules for TCP sockets. Add network access
+>>>>> example in the tutorial. Add kernel configuration support for network.
+>>>>>
+>>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+
+[...]
+
+>>>>> @@ -28,20 +28,24 @@ appropriately <kernel_support>`.
+>>>>>    Landlock rules
+>>>>>    ==============
+>>>>>
+>>>>> -A Landlock rule describes an action on an object.  An object is currently a
+>>>>> -file hierarchy, and the related filesystem actions are defined with `access
+>>>>> -rights`_.  A set of rules is aggregated in a ruleset, which can then restrict
+>>>>> -the thread enforcing it, and its future children.
+>>>>> +A Landlock rule describes an action on a kernel object.  Filesystem
+>>>>> +objects can be defined with a file hierarchy.  Since the fourth ABI
+>>>>> +version, TCP ports enable to identify inbound or outbound connections.
+>>>>> +Actions on these kernel objects are defined according to `access
+>>>>> +rights`_.  A set of rules is aggregated in a ruleset, which
+>>>>> +can then restrict the thread enforcing it, and its future children.
+>>>>
+>>>> I feel that this paragraph is a bit long-winded to read when the
+>>>> additional networking aspect is added on top as well.  Maybe it would
+>>>> be clearer if we spelled it out in a more structured way, splitting up
+>>>> the filesystem/networking aspects?
+>>>>
+>>>> Suggestion:
+>>>>
+>>>>     A Landlock rule describes an action on an object which the process
+>>>>     intends to perform.  A set of rules is aggregated in a ruleset,
+>>>>     which can then restrict the thread enforcing it, and its future
+>>>>     children.
+>>>>
+>>>>     The two existing types of rules are:
+>>>>
+>>>>     Filesystem rules
+>>>>         For these rules, the object is a file hierarchy,
+>>>>         and the related filesystem actions are defined with
+>>>>         `filesystem access rights`.
+>>>>
+>>>>     Network rules (since ABI v4)
+>>>>         For these rules, the object is currently a TCP port,
+>>> Remote port or local port ?
 >>>
->>> If you actually want to go this route, I think you would do much bet=
-ter to introduce a way for a container manager to usefully proxy BPF on =
-behalf of the container.
->> Please see Hao's reply ([0]) about his and Google's (not so rosy)
->> experiences with building and using such BPF proxy. We (Meta)
->> internally didn't go this route at all and strongly prefer not to.
->> There are lots of downsides and complications to having a BPF proxy.
->> In the end, this is just shuffling around where the decision about
->> trusting a given application with BPF access is being made. BPF proxy
->> adds lots of unnecessary logistical, operational, and development
->> complexity, but doesn't magically make anything safer.
->>
->>    [0] https://lore.kernel.org/bpf/CA+khW7h95RpurRL8qmKdSJQEXNYuqSWnP=
-16o-uRZ9G0KqCfM4Q@mail.gmail.com/
->>
-> Apologies for being blunt, but=C2=A0 the token approach to me seems to=
- be a=20
-> work around providing the right level/classification for a pod/contain=
-er=20
-> in order to say you support unprivileged containers using eBPF. I thin=
-k=20
-> if your container needs to do privileged things it should have and be=20
-> classified with the right permissions (privileges) to do what it needs=20
-> to do.
+>>      Both ports - remote or local.
+> 
+> Hmm, at first I didn't think it was worth talking about remote or local,
+> but I now think it could be less confusing to specify a bit:
+> "For these rules, the object is the socket identified with a TCP (bind
+> or connect) port according to the related `network access rights`."
+> 
+> A port is not a kernel object per see, so I tried to tweak a bit the
+> sentence. I'm not sure such detail (object vs. data) would not confuse
+> users. Any thought?
 
-Bluntness is great.
+Well, here is a more accurate and generic definition (using "scope"):
 
-I think that this whole level/classification thing is utterly wrong.  Re=
-place "BPF" with basically anything else, and you'll see how absurd it i=
-s.
+A Landlock rule describes a set of actions intended by a task on a scope 
+of objects.  A set of rules is aggregated in a ruleset, which can then 
+restrict the thread enforcing it, and its future children.
 
-"the token approach to me seems like a work around providing the right l=
-evel/classification for a pod/container in order to say you support unpr=
-ivileged containers using files on disk"
+The two existing types of rules are:
 
-That's very 1990's.  Maybe 1980's.  Of *course* giving access to a files=
-ystem has some inherent security exposure.  So we can give containers ac=
-cess to *different* filesystems.  Or we can use ACLs.  Or MAC policy.  O=
-r whatever.  We have many solutions, none of which are perfect, and we'r=
-e doing okay.
+Filesystem rules
+     For these rules, the scope of objects is a file hierarchy,
+     and the related filesystem actions are defined with
+     `filesystem access rights`.
 
-"the token approach to me seems like a work around providing the right l=
-evel/classification for a pod/container in order to say you support unpr=
-ivileged containers using the network"
+Network rules (since ABI v4)
+     For these rules, the scope of objects is the sockets identified
+     with a TCP (bind or connect) port according to the related
+     `network access rights`.
 
-The network is a big deal.  For some reason, it's cool these days to tre=
-at TCP as highly privileged.  You can get secrets from your favorite (or=
- least favorite) cloud provider with unauthenticated HTTP to a magic IP =
-and port.  You can bypass a whole lot of authenticating/authorizing prox=
-ies with unauthenticated HTTP (no TLS!) if you're on the right network.
 
-This is IMO obnoxious, but we deal with it by having network namespaces =
-and firewalls and rather outdated port <=3D 1024 rules.
+What do you think?
 
-"the token approach to me seems like a work around providing the right l=
-evel/classification for a pod/container in order to say you support unpr=
-ivileged containers using BPF"
 
-My response is: what's wrong with BPF?  BPF has maps and programs and su=
-ch, and we could easily apply 1990's style ownership and DAC rules to th=
-em.  I even *wrote the code*.  But for some reason, the BPF community wa=
-nts to bury its head in the sand, pretend it's 1980, declare that BPF is=
- too privileged to have access control, and instead just have a complica=
-ted switch to turn it on and off in different contexts.
-
-Please try harder.
+>>>
+>>>>         and the related actions are defined with `network access rights`.
