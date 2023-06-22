@@ -2,156 +2,146 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F6EEB64D7
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jun 2023 23:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA504EB64DC
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 04:22:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbjFUXsZ (ORCPT
+        id S230335AbjFVEWI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Jun 2023 19:48:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35924 "EHLO
+        Thu, 22 Jun 2023 00:22:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbjFUXsY (ORCPT
+        with ESMTP id S230417AbjFVEWF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Jun 2023 19:48:24 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7085910C1;
-        Wed, 21 Jun 2023 16:48:23 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f9c88ac077so10155015e9.1;
-        Wed, 21 Jun 2023 16:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687391302; x=1689983302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AqEKp9bQYWmAKZa3rwdeFo/lgg6mgIscvQDEfZjWMBg=;
-        b=dXT85QQkOMgdFy57PmVWRFub89ilW0nNDc7pJgRrudjm6YNsK0lu1XoF9QNiL/GeTS
-         8a7BwS9d0Wa2WOx5wZIvfLUbz0X5rvgTXG6k9d0WUxWHxw9uJtqs8d/sgbrRM8xzqGHC
-         cBETyo6T9LWsexIGZ7/i4YtBgsLpEulCnTYYMDYRdrJ9Ifir5XL8g+Qzylq8qBhmKcP3
-         Jwr5DAlYFQsiyYQ4vMybF4TeQGVF8UgTH66IzG/LfNsIM+dH32Y0xsw5qkkkitKMl0uA
-         CQikKw80yqc/o3hebcyNeDsafXys5HXzZhictbHHFhgByRjpP4n2wvNs5vZwmEt+u1r3
-         xlKg==
+        Thu, 22 Jun 2023 00:22:05 -0400
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 421F61BE3;
+        Wed, 21 Jun 2023 21:21:54 -0700 (PDT)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-311394406d0so4220831f8f.2;
+        Wed, 21 Jun 2023 21:21:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687391302; x=1689983302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AqEKp9bQYWmAKZa3rwdeFo/lgg6mgIscvQDEfZjWMBg=;
-        b=Rd25WNAp0czkUZLkorkiQyx80n5Vy38kHnG4tVre5JHxHCuXkS27JcDLOyrpUCd7Ef
-         QLrnfMhb/r6oSsv5rgVTT3GT7v/sB2zW9hH6Qv4m975hk6MlBP2XiVmCREXpA2ae0eoh
-         wWy9dVb4p5hhjXRnrFIyS0LwjyELbsbRAkmHPTBbAbS+MNdooPBDo87/HsGrMlGVY2TU
-         EbbGUVycRTqZwwY3R1d9elbZBg12DGqf+TdajwBSZ+6CfFdt1SStBisDe135VrH1pRa6
-         ejkd5AZNN4O4qSRUJ58f8mE+WeUf8PIkqbQPQuRRzwI3VImV4ULho8HFljTt+FW+6oQn
-         BZ7w==
-X-Gm-Message-State: AC+VfDxbvsWTNKmzKfEBWNgBE0p7Tcv/wB2FNri8jQPwflX7nxhONbQK
-        WvzLA4AyMFX7LVFy1YTPj41WpH7adaeEfyXA+FQ=
-X-Google-Smtp-Source: ACHHUZ6BReKIdqyB1h/cq7FH63WU+CPflfAK13B12wrNfpq/J6ecEYZ0KsT9t3OnevSzZ1OV0DVP0oh8QRgxKSn5wfs=
-X-Received: by 2002:a1c:f718:0:b0:3f7:e65b:5252 with SMTP id
- v24-20020a1cf718000000b003f7e65b5252mr376000wmh.1.1687391301612; Wed, 21 Jun
- 2023 16:48:21 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687407713; x=1689999713;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ECnfbr1yMldiaqGJ4AwBQXH8Qu2uEGTBBXNGiQr9KY=;
+        b=JdM4u+HlPkJEwG2PTTdNk6gkZLEAipSkMuxkwuy29Nswu7Rv6kci/ZauLKY5zfJoye
+         F2sDO0PLowady/RMAVVpVdh/7lJ5Z2W+d7N4xJ6zyt9zd8S3dGvzrehGAWNVr6ATYJKg
+         c5Fbbcs5IFsGpQr7gnERMMjwunT3Q3+V6IXwvbb4Igf6IyTSVLTi5npSDK8ZU/796eOD
+         8dFfe0zPPP34IqOG86+nn7chj5/Tvhsy/00jGSw6CMv/lqEX49Rjn2QqHcBwR1ZiGMGe
+         TCkCuP9xP7zKWHk/u23csS43ipN2qov8LqhWcIy5DaU00mmQHo1KH/AF7SvvLK2sUJDn
+         W9yQ==
+X-Gm-Message-State: AC+VfDzl+QuYSxQQ+2TgzOp5M1c576ipciyMyO+wRvhKvjU32phktY1D
+        A72Xtc9Jy0QYfc4VwnXf8VY=
+X-Google-Smtp-Source: ACHHUZ6noBUR8iTvT8VR1EETx/SJbcA6a56KL+Jlcz/+OUxvfjHqkrQVqSA29+PLsepDYKMNhlEycQ==
+X-Received: by 2002:a05:6000:10ce:b0:312:9eb6:33da with SMTP id b14-20020a05600010ce00b003129eb633damr17577wrx.20.1687407712404;
+        Wed, 21 Jun 2023 21:21:52 -0700 (PDT)
+Received: from [192.168.1.58] (185-219-167-24-static.vivo.cz. [185.219.167.24])
+        by smtp.gmail.com with ESMTPSA id j10-20020a5d604a000000b0031272fced4dsm5942680wrt.52.2023.06.21.21.21.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Jun 2023 21:21:51 -0700 (PDT)
+Message-ID: <fc37eccc-b9b3-d888-6b57-78cd61986a11@kernel.org>
+Date:   Thu, 22 Jun 2023 06:21:48 +0200
 MIME-Version: 1.0
-References: <20230607235352.1723243-1-andrii@kernel.org> <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
- <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com> <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com>
-In-Reply-To: <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Wed, 21 Jun 2023 16:48:09 -0700
-Message-ID: <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 08/11] sysctl: Add size to register_sysctl_init
+Content-Language: en-US
+To:     Joel Granados <j.granados@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     mcgrof@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
         Kees Cook <keescook@chromium.org>,
-        Christian Brauner <brauner@kernel.org>, lennart@poettering.net,
-        cyphar@cyphar.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Iurii Zaikin <yzaikin@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <muchun.song@linux.dev>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        John Ogness <john.ogness@linutronix.de>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, bpf@vger.kernel.org, kexec@lists.infradead.org,
+        linux-trace-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20230621091000.424843-1-j.granados@samsung.com>
+ <CGME20230621091037eucas1p188e11d8064526a5a0549217d5a419647@eucas1p1.samsung.com>
+ <20230621091000.424843-9-j.granados@samsung.com>
+ <2023062150-outbound-quiet-2609@gregkh>
+ <20230621131552.pqsordxcjmiopciq@localhost>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <20230621131552.pqsordxcjmiopciq@localhost>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 19, 2023 at 10:40=E2=80=AFAM Andy Lutomirski <luto@kernel.org> =
-wrote:
->
->
->
-> On Fri, Jun 9, 2023, at 12:08 PM, Andrii Nakryiko wrote:
-> > On Fri, Jun 9, 2023 at 11:32=E2=80=AFAM Andy Lutomirski <luto@kernel.or=
-g> wrote:
-> >>
-> >> On Wed, Jun 7, 2023, at 4:53 PM, Andrii Nakryiko wrote:
-> >> > This patch set introduces new BPF object, BPF token, which allows to=
- delegate
-> >> > a subset of BPF functionality from privileged system-wide daemon (e.=
-g.,
-> >> > systemd or any other container manager) to a *trusted* unprivileged
-> >> > application. Trust is the key here. This functionality is not about =
-allowing
-> >> > unconditional unprivileged BPF usage. Establishing trust, though, is
-> >> > completely up to the discretion of respective privileged application=
- that
-> >> > would create a BPF token.
-> >> >
-> >>
-> >> I skimmed the description and the LSFMM slides.
-> >>
-> >> Years ago, I sent out a patch set to start down the path of making the=
- bpf() API make sense when used in less-privileged contexts (regarding acce=
-ss control of BPF objects and such).  It went nowhere.
-> >>
-> >> Where does BPF token fit in?  Does a kernel with these patches applied=
- actually behave sensibly if you pass a BPF token into a container?
-> >
-> > Yes?.. In the sense that it is possible to create BPF programs and BPF
-> > maps from inside the container (with BPF token). Right now under user
-> > namespace it's impossible no matter what you do.
->
-> I have no problem with creating BPF maps inside a container, but I think =
-the maps should *be in the container*.
->
-> My series wasn=E2=80=99t about unprivileged BPF per se.  It was about upd=
-ating the existing BPF permission model so that it made sense in a context =
-in which it had multiple users that didn=E2=80=99t trust each other.
+On 21. 06. 23, 15:15, Joel Granados wrote:
+> On Wed, Jun 21, 2023 at 12:47:58PM +0200, Greg Kroah-Hartman wrote:
+>> On Wed, Jun 21, 2023 at 11:09:57AM +0200, Joel Granados wrote:
+>>>   static int __init random_sysctls_init(void)
+>>>   {
+>>> -	register_sysctl_init("kernel/random", random_table);
+>>> +	register_sysctl_init("kernel/random", random_table,
+>>> +			     ARRAY_SIZE(random_table));
+>>
+>> As mentioned before, why not just do:
+>>
+>> #define register_sysctl_init(string, table)	\
+>> 	__register_sysctl_init(string, table, ARRAY_SIZE(table);
+> Answered you in the original mail where you suggested it.
 
-I don't think it's possible with BPF, in principle, as I mentioned in
-the cover letter. Even if some particular types of programs could be
-"contained" in some sense, in general BPF is too global by its nature
-(it observes everything in kernel memory, it can influence system-wide
-behaviors, etc).
+I am curious what that was, do you have a link?
 
->
-> >
-> >> Giving a way to enable BPF in a container is only a small part of the =
-overall task -- making BPF behave sensibly in that container seems like it =
-should also be necessary.
-> >
-> > BPF is still a privileged thing. You can't just say that any
-> > unprivileged application should be able to use BPF. That's why BPF
-> > token is about trusting unpriv application in a controlled environment
-> > (production) to not do something crazy. It can be enforced further
-> > through LSM usage, but in a lot of cases, when dealing with internal
-> > production applications it's enough to have a proper application
-> > design and rely on code review process to avoid any negative effects.
->
-> We really shouldn=E2=80=99t be creating new kinds of privileged container=
-s that do uncontained things.
->
-> If you actually want to go this route, I think you would do much better t=
-o introduce a way for a container manager to usefully proxy BPF on behalf o=
-f the container.
+-- 
+js
+suse labs
 
-Please see Hao's reply ([0]) about his and Google's (not so rosy)
-experiences with building and using such BPF proxy. We (Meta)
-internally didn't go this route at all and strongly prefer not to.
-There are lots of downsides and complications to having a BPF proxy.
-In the end, this is just shuffling around where the decision about
-trusting a given application with BPF access is being made. BPF proxy
-adds lots of unnecessary logistical, operational, and development
-complexity, but doesn't magically make anything safer.
-
-  [0] https://lore.kernel.org/bpf/CA+khW7h95RpurRL8qmKdSJQEXNYuqSWnP16o-uRZ=
-9G0KqCfM4Q@mail.gmail.com/
-
->
-> >
-> > So privileged daemon (container manager) will be configured with the
-> > knowledge of which services/containers are allowed to use BPF, and
-> > will grant BPF token only to those that were explicitly allowlisted.
->
