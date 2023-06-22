@@ -2,170 +2,212 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CD9EB64DA
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 21:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B54EFEB64DA
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jun 2023 23:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229944AbjFVVKd (ORCPT
+        id S230218AbjFVXfT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Jun 2023 17:10:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53972 "EHLO
+        Thu, 22 Jun 2023 19:35:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230503AbjFVVJb (ORCPT
+        with ESMTP id S229934AbjFVXfS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Jun 2023 17:09:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E4E6F1
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Jun 2023 14:06:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687467868;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lX1SvHOIArwqc8jRFEPHXwp7AFuFWsZq7swPt5WqaFA=;
-        b=bcc+bPORVXIAuYwg3MMJopAFRPFOHhGoQPTqKGJOLNubvi+LadocBNpTy+PF8XFabpstdQ
-        /VlSuZJ31F3xWGWkEJdwTFTO7np2DLXrpE7QLWhoe5qFf2n+PLv7HFvT9HjcLhrvRncoy4
-        egVnmxfkqx6n5pZma/nb4U4/rGfvp0Y=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-61-iQ615TguOHm1ZT0mMxbaGw-1; Thu, 22 Jun 2023 17:04:27 -0400
-X-MC-Unique: iQ615TguOHm1ZT0mMxbaGw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-3f9068f47ceso115889535e9.3
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Jun 2023 14:04:26 -0700 (PDT)
+        Thu, 22 Jun 2023 19:35:18 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF9B62101;
+        Thu, 22 Jun 2023 16:35:16 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f8fcaa31c7so1427775e9.3;
+        Thu, 22 Jun 2023 16:35:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687476915; x=1690068915;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zJGBxgcrp8RzuCC4+LR2+tCev35qdHuOMegldNw87J4=;
+        b=V9HGgWu+FXu9VJlJzhEDPqI6jOgjMrdEX1vVhH9iLdNFj98xRAVkrWBuCql+VMmCiZ
+         jOxLkbwiZgNdqb9CFwJyQrALJQAfd0Diz6I3RtuWSMOmtkhdYGHrxSe3ss0G6NDSdYQr
+         H8IZgJDf1jdXG/smEfPGBFpYdE5qZfDWiAOLr8TTTRfATgDPh5/0nts5XWOWrV9nqimW
+         B8IFPkbaFXN+bE4QeV975ADZq779RZOuJyztontxVp6NliEP0RYfKSvTwHOtgpAkWPk4
+         nXnJFpor31pZ2E6T8EmNO7B/sTDzLkNGhA3VwBzOrXUpGHwBRsx7RPJuRMI4tuWw+OK6
+         V/3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687467866; x=1690059866;
+        d=1e100.net; s=20221208; t=1687476915; x=1690068915;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lX1SvHOIArwqc8jRFEPHXwp7AFuFWsZq7swPt5WqaFA=;
-        b=kXtPHLCAzT5Xaczp+ORX8HIhpCF0mP8FSAJYLoJ3Vt9I6RUiICoHdAPciFBW4F8aAj
-         rIqX1S6D1+nlsbEUiGg1Qi5eRyYFfSeGh+055NCvoLlo2lh5j8GlGZF5Gh11jm+kAPwi
-         jNmPWFxbUC5v76TD4ks4pyZIJebqaTdGvvWlBVSKOnalobK4KGIT6YkjyPnatClwoxq7
-         VGtyhtCUW2ZH4ABBvNUvZa0+KF/Ljtdlpfj8wYUTQ5+A+89fM2bCX7Uah0dfqL4Fabkp
-         dbPiDwi/miasupi4mqEPI0C0MBvc1yC265qcilWFNpZ+4Ex/a8rNXDa0odktb8rOH9N3
-         LjbQ==
-X-Gm-Message-State: AC+VfDwNjKj4cyANMRxd5UFuqWf6SoCrlCO1v0b3m9tz7SxACpaHpjv8
-        ea574/4cD7JhMleKhinVqxDtdb+E8vxZSy640x2H7nD+S/RhmW43WO7bqQxUbxoaRjlF7Y6STRB
-        DT/GKRndTX12fNC9UPc8rr0wnhQ7R17aOUnuwF2u5jgAvgf7AxGNF
-X-Received: by 2002:a05:600c:21c6:b0:3fa:7516:baa with SMTP id x6-20020a05600c21c600b003fa75160baamr2687621wmj.13.1687467865848;
-        Thu, 22 Jun 2023 14:04:25 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6ffZnbzGgCIO/encZy3DdfUA7A2BLcol4LKXgTrzNDMV64YSRhKhkBOThfc80Lx6QhLRibI4omWToh2K0k3cY=
-X-Received: by 2002:a05:600c:21c6:b0:3fa:7516:baa with SMTP id
- x6-20020a05600c21c600b003fa75160baamr2687588wmj.13.1687467865462; Thu, 22 Jun
- 2023 14:04:25 -0700 (PDT)
+        bh=zJGBxgcrp8RzuCC4+LR2+tCev35qdHuOMegldNw87J4=;
+        b=LFc53V8Ihr02dpWypvVu7407j7IISXLfm+WsSZWl/WMH1oEZPgwBnHjF0yPW4mTwdc
+         /tDXSjSg/7atv5s03tcBTtZ7KTfQQDQnSNm/FXQca2SpbZGuXCJiTldHpVsDjsimJxPt
+         +IFdc5zekAaEeOLrKMqsirsVMEdoVAIB4H0JHZm8f3ROpUVrE3NbO0fFEBEcOY+t0ylG
+         1OqOPlvbr88PfNJ89FHlLrcdEgwieVQTBvjpCDNf2NfKayBMvbWCtCnMnBczvRYlZYu8
+         jxsHY4jdwnjZPjvDQyOXE5CQ1CzmyooTKgQ0mjVMIYd71JU0vUQUkBG6O5POdCJWeokm
+         t/Ug==
+X-Gm-Message-State: AC+VfDxongA1SKgjFA+7lPB2noTwPwhpLxyCUU1WIPloBsBF/0dhSUQ3
+        GgARktBg8jqrK8QHXNbDYpcKiKy0S61NklYbqC8=
+X-Google-Smtp-Source: ACHHUZ6ASiwFYbcSz0FFNMofWJjbhqQo8ZjVLAStNNUsE8bI3CFZDa78DQCr6q7FltVO4dM9UJ6jLNPPwxPZ3Jw4b0E=
+X-Received: by 2002:a1c:7c13:0:b0:3f8:fe21:b754 with SMTP id
+ x19-20020a1c7c13000000b003f8fe21b754mr18517717wmc.6.1687476915102; Thu, 22
+ Jun 2023 16:35:15 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230607235352.1723243-1-andrii@kernel.org> <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
  <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
  <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com> <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
  <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com> <bc4f99af-0c46-49b2-9f2d-9a01e6a03af3@app.fastmail.com>
  <5a75d1f0-4ed9-399c-4851-2df0755de9b5@redhat.com> <CAEf4Bza9GvJ0vw2-0M8GKSXmOQ8VQCmeqEiQpMuZBjwqpA03vw@mail.gmail.com>
-In-Reply-To: <CAEf4Bza9GvJ0vw2-0M8GKSXmOQ8VQCmeqEiQpMuZBjwqpA03vw@mail.gmail.com>
-From:   Maryam Tahhan <mtahhan@redhat.com>
-Date:   Thu, 22 Jun 2023 22:04:14 +0100
-Message-ID: <CAFdtZitYhOK4TzAJVbFPMfup_homxSSu3Q8zjJCCiHCf22eJvQ@mail.gmail.com>
+ <CAFdtZitYhOK4TzAJVbFPMfup_homxSSu3Q8zjJCCiHCf22eJvQ@mail.gmail.com>
+In-Reply-To: <CAFdtZitYhOK4TzAJVbFPMfup_homxSSu3Q8zjJCCiHCf22eJvQ@mail.gmail.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Thu, 22 Jun 2023 16:35:02 -0700
+Message-ID: <CAEf4BzYheYSuEyaRExODDa4F46A9nOeb-KJ13xrKqQKpXVjXsw@mail.gmail.com>
 Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+To:     Maryam Tahhan <mtahhan@redhat.com>
 Cc:     Andy Lutomirski <luto@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Kees Cook <keescook@chromium.org>,
         Christian Brauner <brauner@kernel.org>, lennart@poettering.net,
         cyphar@cyphar.com, kernel-team@meta.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 22, 2023 at 7:40=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
+On Thu, Jun 22, 2023 at 2:04=E2=80=AFPM Maryam Tahhan <mtahhan@redhat.com> =
+wrote:
 >
-> On Thu, Jun 22, 2023 at 10:38=E2=80=AFAM Maryam Tahhan <mtahhan@redhat.co=
-m> wrote:
+> On Thu, Jun 22, 2023 at 7:40=E2=80=AFPM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Thu, Jun 22, 2023 at 10:38=E2=80=AFAM Maryam Tahhan <mtahhan@redhat.=
+com> wrote:
+> > >
+> >
+> > Please avoid replying in HTML.
 > >
 >
-> Please avoid replying in HTML.
+> Sorry.
+
+No worries, the problem is that the mailing list filters out such
+messages. So if you go to [0] and scroll to the bottom of the page,
+you'll see that your email is not in the lore archive. People not
+CC'ed directly will only see what you wrote through my reply quoting
+your email.
+
+  [0] https://lore.kernel.org/bpf/CAFdtZitYhOK4TzAJVbFPMfup_homxSSu3Q8zjJCC=
+iHCf22eJvQ@mail.gmail.com/#t
+
 >
-
-Sorry.
-
-[...]
-
->
-> Disclaimer: I don't know anything about Kubernetes, so don't expect me
-> reply with correct terminology or detailed understanding of
-> configuration of containers.
->
-> But on a more generic and conceptual level, it seems like you are
-> making some implementation assumptions and arguing based on that.
->
-
-Firstly, thank you for taking the time to respond and explain. I can see
-where you are coming from.
-
-Yeah, admittedly I did make a few assumptions. I was thrown by the referenc=
-e
-to `unprivileged` processes in the cover letter. It seems like this is a wa=
-y to
-grant namespaced BPF permissions to a process (my gross
-oversimplification - sorry).
-Looking back throughout your responses there's nothing unprivileged here.
-
-[...]
-
-
-> Hopefully you can see where I'm going with this. And this is just one
-> random tiny example. We can think up tons of other cases to prove BPF
-> is not isolatable to any sort of "container".
+> [...]
 >
 > >
-> > Anyway - I hope this clarifies my original intent - which is proxy at l=
-east starts to solve one part of the puzzle. Whatever approach(es) we take =
-to solve the rest of these problems the more we can stick to tried and trus=
-ted mechanisms the better.
+> > Disclaimer: I don't know anything about Kubernetes, so don't expect me
+> > reply with correct terminology or detailed understanding of
+> > configuration of containers.
+> >
+> > But on a more generic and conceptual level, it seems like you are
+> > making some implementation assumptions and arguing based on that.
+> >
 >
-> I disagree. BPF proxy complicates logistics, operations, and developer
-> experience, without resolving the issue of determining trust and the
-> need to delegate or proxy BPF functionality.
+> Firstly, thank you for taking the time to respond and explain. I can see
+> where you are coming from.
+>
+> Yeah, admittedly I did make a few assumptions. I was thrown by the refere=
+nce
+> to `unprivileged` processes in the cover letter. It seems like this is a =
+way to
+> grant namespaced BPF permissions to a process (my gross
+> oversimplification - sorry).
 
-I appreciate your viewpoint. I just don't think that this is a one
-solution fits every
-scenario situation. For example in the case of AF_XDP, I'd like to be
-able to run
-my containers without any additional privileges. I've been working on a dev=
-ice
-plugin for Kubernetes whose job is to provision netdevs with an XDP redirec=
-t
-program (then later there's a CNI that moves the netdev into the pod networ=
-k
-namespace).  Originally I was using bpf locally in the device plugin
-(to load the
-bpf program and get the XSK map fd) and SCM rights to pass the XSK_MAP over
-UDS but honestly it was relatively cumbersome from an app development POV, =
-very
-easy to get wrong, and trying to keep up with the latest bpf api
-changes started to
-become an issue. If I wanted to add more interesting bpf programs I
-had to do a full
-recompile...
+Yep, with the caveat that BPF functionality itself cannot be
+namespaced (i.e., contained within the container), so this has to be
+granted by a fully privileged process/proxy based on trusting the
+workload to not do anything harmful.
 
-I've now moved to using bpfd, for the loading and unloading of the bpf
-program on my behalf,
-it also comes with a bunch of other advantages including being able to
-update my trusted bpf
-program transparently to both the device plugin my application (I
-don't have to respin this either
-when I write/want to add a new bpf prog), but mainly I have a trusted
-proxy managing bpffs, bpf progs and maps for me. There's still more
-work to do here...
 
-I understand this is a much simplified scenario. and I'm sure I can
-think of several more where
-proxy is useful. All I'm trying to say is, I'm not sure there's just a
-one size fits all soln for these issues.
+> Looking back throughout your responses there's nothing unprivileged here.
+>
+> [...]
+>
+>
+> > Hopefully you can see where I'm going with this. And this is just one
+> > random tiny example. We can think up tons of other cases to prove BPF
+> > is not isolatable to any sort of "container".
+> >
+> > >
+> > > Anyway - I hope this clarifies my original intent - which is proxy at=
+ least starts to solve one part of the puzzle. Whatever approach(es) we tak=
+e to solve the rest of these problems the more we can stick to tried and tr=
+usted mechanisms the better.
+> >
+> > I disagree. BPF proxy complicates logistics, operations, and developer
+> > experience, without resolving the issue of determining trust and the
+> > need to delegate or proxy BPF functionality.
+>
+> I appreciate your viewpoint. I just don't think that this is a one
+> solution fits every
+> scenario situation.
 
-Thanks
-Maryam
+Absolutely. It's also not my intent or goal to kill any sort of BPF
+proxy. What I'm trying to convey is that the BPF proxy approach has
+severe downsides, depending on application, deployment practices, etc,
+etc. It's not always a (good) answer. So I just want to avoid having
+the dichotomy of "BPF token or BPF proxy, there could be only one".
 
+> For example in the case of AF_XDP, I'd like to be
+> able to run
+> my containers without any additional privileges. I've been working on a d=
+evice
+> plugin for Kubernetes whose job is to provision netdevs with an XDP redir=
+ect
+> program (then later there's a CNI that moves the netdev into the pod netw=
+ork
+> namespace).  Originally I was using bpf locally in the device plugin
+> (to load the
+> bpf program and get the XSK map fd) and SCM rights to pass the XSK_MAP ov=
+er
+> UDS but honestly it was relatively cumbersome from an app development POV=
+, very
+> easy to get wrong, and trying to keep up with the latest bpf api
+> changes started to
+> become an issue. If I wanted to add more interesting bpf programs I
+> had to do a full
+> recompile...
+>
+> I've now moved to using bpfd, for the loading and unloading of the bpf
+> program on my behalf,
+> it also comes with a bunch of other advantages including being able to
+> update my trusted bpf
+> program transparently to both the device plugin my application (I
+> don't have to respin this either
+> when I write/want to add a new bpf prog), but mainly I have a trusted
+> proxy managing bpffs, bpf progs and maps for me. There's still more
+> work to do here...
+>
+
+It's a spectrum, and from my observations networking BPF programs lend
+themselves more easily to this model of BPF proxy (at least until they
+become complicated ensembles of networking and tracing BPF programs).
+Very often networking applications can indeed load BPF program
+completely independently from user-space parts, keep them "persisted"
+in kernel, occasionally control them through pinned BPF maps, etc.
+
+But the further you go towards tracing applications where BPF parts
+are integral part of overall user-space application, this model
+doesn't work very well. It's much simple to have BPF parts embedded,
+loaded, versioned, initialized and interacted with from inside the
+same process. And we have lots of such applications. BPF proxy
+approach is a massive complication for such use cases with a bunch of
+downsides.
+
+> I understand this is a much simplified scenario. and I'm sure I can
+> think of several more where
+> proxy is useful. All I'm trying to say is, I'm not sure there's just a
+> one size fits all soln for these issues.
+
+100% agree. BPF token won't fit all use cases. And BPF proxy won't fit
+all use cases either. Both approaches can and should coexist.
+
+>
+> Thanks
+> Maryam
+>
