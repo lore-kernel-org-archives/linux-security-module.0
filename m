@@ -2,62 +2,62 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F870C0015E
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 14:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21647C0015E
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 14:44:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232069AbjFWOod (ORCPT
+        id S232097AbjFWOou (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Jun 2023 10:44:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39802 "EHLO
+        Fri, 23 Jun 2023 10:44:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231888AbjFWOoG (ORCPT
+        with ESMTP id S231228AbjFWOoJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Jun 2023 10:44:06 -0400
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 200AE2711
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:43:45 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5704e551e8bso10399187b3.3
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:43:45 -0700 (PDT)
+        Fri, 23 Jun 2023 10:44:09 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F03294D
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:43:49 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-beb64c0d603so1162722276.1
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:43:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687531425; x=1690123425;
+        d=google.com; s=20221208; t=1687531428; x=1690123428;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UzVf4AQ2Gj+vEw9k0OpeO1MnttP8JRzBxK8284Th/Bs=;
-        b=Rz5mgT4t49UyyDXzm7g/diB2I5T3vJPW+XLqYYgq1VHa8Ft9nKOc7ri3YoHMXsYOhL
-         F7kSW9wSNEWe8BEIleC+ZdwGAeE+zVvdOVXxl26FTioHggOFiFVSp396I8xJgO76VBB4
-         05knMdp8g3p2lxXlevvRuha8DaJ1mx8V+A9oIZh59e7rD3A9zyqy3fV4LWRRwTQLMkqX
-         pOgPgJpVlDRYSGWWa18nAaZqY+sBmL283PQMvbQ04lQF3MZBu2CajuRmuHcpE36EjsZ4
-         e6b60gddjQv2U95AXgXS6kdGDz8yJh3PhYnsmmRjlKOtkWrsUWcIwb5AVTTSiC+0zrzN
-         RtqA==
+        bh=SP+6dk3xB1XlJuOJxY1FrVHQ3rRmrxh3vILamkrvgf8=;
+        b=j+3NUH4LJriS6po9aPjHeXdGyCfXXDMbiZ5Rp712V9Z9ssFjBzyB3/Rov0F376qy7Y
+         kTHw7zZRryFXk8RAfi3LfPPIDOqcHJRBNHVAh9+e9sodnpwIjIppFrpzvm+cuPZ+5IWs
+         EBsFJiY74SZoiYStECb/TXOYUmr+nE9cCuZ/hTvtLTCt9PocKKEmGPJGZDukW4pAyaD7
+         YJ7F5ZRwlF8UH11Yz4UKZwzRp2wAM02Q2/UhiypDyAeSxAKKAXk1TICz0WKeybFZHPaG
+         sCywh97r/35ngGLov82Fl0ILqfTYh0ruZbxGCrRW8WOusqhiVN/XtOnqtq907JHNhIeQ
+         ZQqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687531425; x=1690123425;
+        d=1e100.net; s=20221208; t=1687531428; x=1690123428;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=UzVf4AQ2Gj+vEw9k0OpeO1MnttP8JRzBxK8284Th/Bs=;
-        b=TJjdqDVL24uumGv+xRhpTbTtFN3EI5eTKRBSLY4VZv9UorMi8sFJdI5w28IIJHVZa5
-         M1bSy8PjDVwOZPTe+ZpuGdaYg9lihtrh8Wjk+WrmetB1m7ZQCSBOAdmaFvop/JRkqadu
-         oTGTvNtA/s3/pXJZyW0s9c5m90CMFOcw5V1V4hLBhkEaucMtLOLsaY49z1Rmrlgyhs6B
-         UM8frBYPWlOAGshdgW7ugNFtI2qXqtkAQGyERIo0kNg0X3bGB1kz4buBwma9c9ASgcyl
-         J+v1lj/dqEAynK0oipigeEIJaOKFU5lDL+rqKWf1+J8yASoICWCmMI+LobXQwN6Rnppz
-         7jxA==
-X-Gm-Message-State: AC+VfDyHTM+2jFLqPsqew/5EjQzou4qoVXQjmMk7FtuzoZr/ydU3Z3y+
-        bTwNlMMFoDyrBLofzTaQlLksEKCVnGHq3nI4qCZPYgYUdWye5/0rOuHtH2hF/mMVGWsKM7UJAJo
-        ssQvzm214HzIjW9yHG56DUV9P9MRKolXOsh5/6ELZubWGm1SVkru1MKOqdSRi8dZD3NblKabUgt
-        PjQtLTpw==
-X-Google-Smtp-Source: ACHHUZ5L1Rbyg5OV+PIAv1YSaAvjSV37tCLvlzItTQR5LJBllU3DnqDdfuYMp/9i72ghGwmqJMPeNPRq05Y=
+        bh=SP+6dk3xB1XlJuOJxY1FrVHQ3rRmrxh3vILamkrvgf8=;
+        b=dSWDJgzcxwhcGNOt3AoF7cU2MjSEZeCX0UYIAYzr+mDgZdZyQUkOF+tbJcSsuGKBKi
+         fhDz2/NjtzEzwsbF83hpxPZAJum2d55cBd8Ky8sQGI5JIPPCiD687AH883iLe4HLc2Ce
+         xNTL32f/O89KVOmSsETqA/NGk0LtG0kZQmqjjL42aF9gDlSxP/YeKV5iP3llluGXnkwy
+         lL806w20hCNqsWQ0eYi6ks6pKzp62feN6XmeXk64clySX1NNoG1K/l4da61OxTQh3B06
+         3WLAHN9ijla4bHo4ZMwjjUWWhFN8qUPq9TzOjrpNPkGTLuGEUjk8HWXS6icZLk+LuSpV
+         V32g==
+X-Gm-Message-State: AC+VfDwUb4Z6Ys8T5SkwLuVc4tcAb/Mz4wI7jfRr6JZP7URj3jjMyObA
+        jD5WkBkqi4qlkRBOHn9BhQvtEIeumfjHTat+ocA8PcwcguAkDPBbZq+3b9XgGxNocrGdpQV83Xs
+        yYEI3ErXH2OtGCmSK+JXzFp2KOe1oZdvvOoRtdWLOxpmKKKZEEXU00Bz99vkR0BCcp0O29X1hxL
+        6RFxQ/tA==
+X-Google-Smtp-Source: ACHHUZ7aQ74QGDcNmrQ1N+LygwBLvUtpw67QHb8jFWORcyo2oGPmcfBIwwYBF2t6+Y/TOO3wDaSyX7XPfuI=
 X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:8b55:dee0:6991:c318])
- (user=gnoack job=sendgmr) by 2002:a81:ca0c:0:b0:559:e97a:cb21 with SMTP id
- p12-20020a81ca0c000000b00559e97acb21mr8800943ywi.9.1687531425115; Fri, 23 Jun
- 2023 07:43:45 -0700 (PDT)
-Date:   Fri, 23 Jun 2023 16:43:26 +0200
+ (user=gnoack job=sendgmr) by 2002:a05:6902:86:b0:bc7:4714:182e with SMTP id
+ h6-20020a056902008600b00bc74714182emr3685630ybs.3.1687531428196; Fri, 23 Jun
+ 2023 07:43:48 -0700 (PDT)
+Date:   Fri, 23 Jun 2023 16:43:27 +0200
 In-Reply-To: <20230623144329.136541-1-gnoack@google.com>
-Message-Id: <20230623144329.136541-4-gnoack@google.com>
+Message-Id: <20230623144329.136541-5-gnoack@google.com>
 Mime-Version: 1.0
 References: <20230623144329.136541-1-gnoack@google.com>
 X-Mailer: git-send-email 2.41.0.162.gfafddb0af9-goog
-Subject: [PATCH v2 3/6] selftests/landlock: Test ioctl support
+Subject: [PATCH v2 4/6] selftests/landlock: Test ioctl with memfds
 From:   "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To:     linux-security-module@vger.kernel.org,
         "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
@@ -74,89 +74,46 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Exercise the use of Landlock's ioctl restriction: If ioctl is
-restricted, the use of ioctl fails with a freshly opened /dev/tty
-file.
+Because the ioctl right is associated with the opened file,
+we expect that it will work with files which are opened by means
+other than open(2).
 
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- tools/testing/selftests/landlock/fs_test.c | 62 ++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ tools/testing/selftests/landlock/fs_test.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
 ftests/landlock/fs_test.c
-index 09dd1eaac8a9..0f0899768fe7 100644
+index 0f0899768fe7..ebd93e895775 100644
 --- a/tools/testing/selftests/landlock/fs_test.c
 +++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -3732,6 +3732,68 @@ TEST(memfd_ftruncate)
- 	ASSERT_EQ(0, close(fd));
+@@ -3716,18 +3716,20 @@ TEST_F_FORK(ftruncate, open_and_ftruncate_in_differ=
+ent_processes)
+ 	ASSERT_EQ(0, close(socket_fds[1]));
  }
 =20
-+/*
-+ * Invokes ioctl(2) and returns its errno or 0.
-+ * The provided fd needs to be a tty for this to work.
-+ */
-+static int test_tty_ioctl(int fd)
-+{
-+	struct winsize ws;
-+
-+	if (ioctl(fd, TIOCGWINSZ, &ws) < 0)
-+		return errno;
-+	return 0;
-+}
-+
-+/*
-+ * Attempt ioctl on /dev/tty0 and /dev/tty1,
-+ * with file descriptors opened before and after landlocking.
-+ */
-+TEST_F_FORK(layout0, ioctl)
-+{
-+	const struct rule rules[] =3D {
-+		{
-+			.path =3D "/dev/tty1",
-+			.access =3D LANDLOCK_ACCESS_FS_IOCTL,
-+		},
-+		/* Implicitly: No ioctl access on /dev/tty0. */
-+		{},
-+	};
-+	const __u64 handled =3D LANDLOCK_ACCESS_FS_IOCTL;
-+	int ruleset_fd;
-+	int old_tty0_fd, tty0_fd, tty1_fd;
-+
-+	old_tty0_fd =3D open("/dev/tty0", O_RDWR);
-+	ASSERT_LE(0, old_tty0_fd);
-+
-+	/* Checks that ioctl works before landlocking. */
-+	EXPECT_EQ(0, test_tty_ioctl(old_tty0_fd));
-+
-+	/* Enable Landlock. */
-+	ruleset_fd =3D create_ruleset(_metadata, handled, rules);
-+	ASSERT_LE(0, ruleset_fd);
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	/* Checks that ioctl with existing FD works after landlocking. */
-+	EXPECT_EQ(0, test_tty_ioctl(old_tty0_fd));
-+
-+	/* Checks that same ioctl fails when file is opened after landlocking. */
-+	tty0_fd =3D open("/dev/tty0", O_RDWR);
-+	ASSERT_LE(0, tty0_fd);
-+	EXPECT_EQ(EACCES, test_tty_ioctl(tty0_fd));
-+
-+	/* Checks that same ioctl fails when file is opened after landlocking. */
-+	tty1_fd =3D open("/dev/tty1", O_RDWR);
-+	ASSERT_LE(0, tty1_fd);
-+	EXPECT_EQ(0, test_tty_ioctl(tty1_fd));
-+
-+	/* Close all TTY file descriptors. */
-+	ASSERT_EQ(0, close(old_tty0_fd));
-+	ASSERT_EQ(0, close(tty0_fd));
-+	ASSERT_EQ(0, close(tty1_fd));
-+}
-+
- /* clang-format off */
- FIXTURE(layout1_bind) {};
- /* clang-format on */
+-TEST(memfd_ftruncate)
++TEST(memfd_ftruncate_and_ioctl)
+ {
+-	int fd;
++	int fd, n;
+=20
+ 	fd =3D memfd_create("name", MFD_CLOEXEC);
+ 	ASSERT_LE(0, fd);
+=20
+ 	/*
+-	 * Checks that ftruncate is permitted on file descriptors that are
+-	 * created in ways other than open(2).
++	 * Checks that operations associated with the opened file
++	 * (ftruncate, ioctl) are permitted on file descriptors that
++	 * are created in ways other than open(2).
+ 	 */
+ 	EXPECT_EQ(0, test_ftruncate(fd));
++	EXPECT_EQ(0, ioctl(fd, FIONREAD, &n));
+=20
+ 	ASSERT_EQ(0, close(fd));
+ }
 --=20
 2.41.0.162.gfafddb0af9-goog
 
