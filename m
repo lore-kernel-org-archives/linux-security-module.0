@@ -2,59 +2,62 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AB4EB64D7
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 14:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3FBEB64DD
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 14:44:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232322AbjFWOoJ (ORCPT
+        id S231572AbjFWOoJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Fri, 23 Jun 2023 10:44:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40276 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232270AbjFWOnv (ORCPT
+        with ESMTP id S231769AbjFWOoE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Jun 2023 10:43:51 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 797B4E7E
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:43:36 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-573d70da28fso9762917b3.3
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:43:36 -0700 (PDT)
+        Fri, 23 Jun 2023 10:44:04 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68FEB1BD6
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:43:39 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-bd5059e5347so4309923276.0
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:43:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687531415; x=1690123415;
-        h=content-transfer-encoding:cc:to:from:subject:mime-version
-         :message-id:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cAAFffNo5n7JO9asv2/EjTz77Q8bdKCTYdHhFz9jqbk=;
-        b=w8OUSYv2sPOqw/SZj4Fu0+C7CcU5elCykdgSTzKDfTFcj6I/Q3AGnnyOxpWaCiUZPG
-         UaH+k2FGrnNmj83RBIyeD5V05QNYvNIWyHFwYN0TWh2Bo3xR5+CgGesmgFxwkagAa4mK
-         mokpUzC3BZuDkW/SzpoEHI5cKtFPLHG2jB1M98Lbktmh6CDycQb7TAhaZgOyAWrGcZLw
-         kM9pJQrvJHOlogB2AI+yPWJfLkwihq4qBUu4ZBxt8tco/nDJF9ArQlPzqkomdPeVGQm/
-         ieoW3/k39a77M91v/227CXLlV7LfCi+AW2w5aSlDw7t3w2yl9TUkirjyo9sLIRvke4mj
-         dLTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687531415; x=1690123415;
-        h=content-transfer-encoding:cc:to:from:subject:mime-version
-         :message-id:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20221208; t=1687531418; x=1690123418;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cAAFffNo5n7JO9asv2/EjTz77Q8bdKCTYdHhFz9jqbk=;
-        b=TthQyok0aiBOiixefEXgTM2ezs8RdWZGwTbfw0wKQqNwpHbxgdMkIbpOxxIFAkUUsb
-         nhnKLPiZlfSL0aUm7KpdJFnbUYx+pfX8YvqWk8Qbu48Ma8yBaHqKx1w5GUtFpWIeIiQ3
-         dZBjnMdO+Crucst9uQ0oNL0FvkXghBCLrLbCA14VCBZtqCRcRd3PEHqiB1TJ5ZIxpJL6
-         RPcaxb9djTh02RFvIhEQktC5UP/A8Jjp/3TGbXAI+sHHjXXFmkYtUDvt/m0Zasa1ZDsm
-         W7A44FBciehWim34GMRCdOqSWN+dxYec97EQO4NYRvIUTJlU1H0QF8osmNbqX57V79wC
-         bXgA==
-X-Gm-Message-State: AC+VfDxvyFHLKfF1jwu+1wCyEu5bomkZm3fVGrgdAqnwBMbE9ITIS5JY
-        4xro5eqCyFUYOTHZE6jqu1HN9zhEKizNmT0TrEmnhXLkYZaGo+rDgH06hNJOM7QSrck2TyHEYBm
-        qwTb2Bks7RsULe/AyZ4eHFbMCqZlerqP34OEopmWCeZ98f/iGOCDJw1snf8vChPrSVMK8mJb5Ex
-        5Q3si2Lw==
-X-Google-Smtp-Source: ACHHUZ6jIe8yLLFFywqjCie14gjNnE2bQMF+pAbJG96LJQF0Z6Re5SaQWD+3ax1Xz9vy5tCXqS8mC5uAAYQ=
+        bh=9/UqCyxOi6pEB3p/clvC6xeYuOhn2xyeOxUnD9vu6fo=;
+        b=53rKp8DijAsW4TqdCjoN2CvS+aiuSzosjOmYzfruYzsQfwHMUSVtNTUgMs8U1bvdnR
+         F8bMluZYKh2cagi7HXdZ6G5i6i7fBbBcko7hiUFiXKrOU90/44YvEx4xXzl5VNLdGnQK
+         Zx0UH4rcXvFN03Bzbp2UUWngVzHKJqg9Qa+mAm0l38jBZjVuRuhxCe3XhHvgTXslGzIN
+         hWIhC2FDKKNA8aQaqVO/XbfSWc/IUIzgUuF0c8QlTZbpdp9xw76yD5mbFhpVSSDplR7D
+         IyMK/Beuu8CO5Ok7Rgmap0dbrAjHmwRWgrPkJ/u1jiDMBg1AzXpqYp3YY1ul9qnGdrwU
+         FH8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687531418; x=1690123418;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9/UqCyxOi6pEB3p/clvC6xeYuOhn2xyeOxUnD9vu6fo=;
+        b=kU0ZEEoTXWGuKtkDo02K/+5qAYIlCZIVXgZ/HTxXce8xi77tI7OyYRa06YZqNJ9cdC
+         LxGgIubFzX2nKnJR4CYOvCbRLiDGZDHQUw8zvjCi3Ckcpvm3ShPV04HXqIi4fb5yIB9b
+         b3+ZmKtYrHAydxTdOv9thCSBPiWvaPAPgpy8MoOi6Cisrzd2CpftEOTGAYTMsNK6ye9x
+         grTGUjJ1QfyFDiRXmFHArcuRrwrxRNwi5CHfAzXj2DT17ZGTqDhjfYvdKOxdAmoYYFQ9
+         Pb2Wa8WaxLEA+8cJ1/Z8AAtkJVw+HaYTnm0b53hbR0VWgvD0VKS2N0FU6eGLhBpqz/jU
+         7LWg==
+X-Gm-Message-State: AC+VfDyzgjqG7OALms+Tzjd5U/fyjSpFQkiJb/KGWiZmlkOYuOS+MFAh
+        Vp0comPP+qQLNW0OKnd7I2EO/nYP0lAwSqVLfZkd4242fQFP9F/2S0Xu3eKOeKncAhS3MOnnOEC
+        kaO+AVw6bbpsftrHTAwJ9C9YjJwqVsc4bjQe/k3Ao6LqG3GQ2CaaFQdQjxazlO30ZBTgpuKsAHR
+        /haLDj3w==
+X-Google-Smtp-Source: ACHHUZ64N3w6ZZi29DfV91ESEl4ZVypB3pvaFdMa1FuMx2QW8kAHMBMdRLl+WH+5BU1teFxsX/KIqwrFPNY=
 X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:8b55:dee0:6991:c318])
- (user=gnoack job=sendgmr) by 2002:a81:ac42:0:b0:56d:ca1:cd6c with SMTP id
- z2-20020a81ac42000000b0056d0ca1cd6cmr5524779ywj.2.1687531415477; Fri, 23 Jun
- 2023 07:43:35 -0700 (PDT)
-Date:   Fri, 23 Jun 2023 16:43:23 +0200
-Message-Id: <20230623144329.136541-1-gnoack@google.com>
+ (user=gnoack job=sendgmr) by 2002:a05:6902:561:b0:bad:2b06:da3 with SMTP id
+ a1-20020a056902056100b00bad2b060da3mr9361801ybt.3.1687531418465; Fri, 23 Jun
+ 2023 07:43:38 -0700 (PDT)
+Date:   Fri, 23 Jun 2023 16:43:24 +0200
+In-Reply-To: <20230623144329.136541-1-gnoack@google.com>
+Message-Id: <20230623144329.136541-2-gnoack@google.com>
 Mime-Version: 1.0
+References: <20230623144329.136541-1-gnoack@google.com>
 X-Mailer: git-send-email 2.41.0.162.gfafddb0af9-goog
-Subject: [PATCH v2 0/6] Landlock: ioctl support
+Subject: [PATCH v2 1/6] landlock: Increment Landlock ABI version to 4
 From:   "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To:     linux-security-module@vger.kernel.org,
         "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
@@ -71,128 +74,42 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello!
+Increment the Landlock ABI version in preparation for the ioctl
+feature.
 
-These patches add simple ioctl(2) support to Landlock.
-
-Objective
-~~~~~~~~~
-
-Make ioctl(2) requests restrictable with Landlock,
-in a way that is useful for real-world applications.
-
-Proposed approach
-~~~~~~~~~~~~~~~~~
-
-Introduce the LANDLOCK_ACCESS_FS_IOCTL right, which restricts the use
-of ioctl(2) on file descriptors.
-
-We attach the LANDLOCK_ACCESS_FS_IOCTL right to opened file
-descriptors, as we already do for LANDLOCK_ACCESS_FS_TRUNCATE.
-
-I believe that this approach works for the majority of use cases, and
-offers a good trade-off between Landlock API and implementation
-complexity and flexibility when the feature is used.
-
-Current limitations
-~~~~~~~~~~~~~~~~~~~
-
-With this patch set, ioctl(2) requests can *not* be filtered based on
-file type, device number (dev_t) or on the ioctl(2) request number.
-
-On the initial RFC patch set [1], we have reached consensus to start
-with this simpler coarse-grained approach, and build additional ioctl
-restriction capabilities on top in subsequent steps.
-
-[1] https://lore.kernel.org/linux-security-module/d4f1395c-d2d4-1860-3a02-2=
-a0c023dd761@digikod.net/
-
-Notable implications of this approach
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-* Existing inherited file descriptors stay unaffected
-  when a program enables Landlock.
-
-  This means in particular that in common scenarios,
-  the terminal's ioctls (ioctl_tty(2)) continue to work.
-
-* ioctl(2) continues to be available for file descriptors acquired
-  through means other than open(2).  Example: Network sockets,
-  memfd_create(2), file descriptors that are already open before the
-  Landlock ruleset is enabled.
-
-Examples
-~~~~~~~~
-
-Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
-
-  LL_FS_RO=3D/ LL_FS_RW=3D. ./sandboxer /bin/bash
-
-The LANDLOCK_ACCESS_FS_IOCTL right is part of the "read-write" rights
-here, so we expect that newly opened files outside of $HOME don't work
-with ioctl(2).
-
-  * "stty" works: It probes terminal properties
-
-  * "stty </dev/tty" fails: /dev/tty can be reopened, but the ioctl is
-    denied.
-
-  * "eject" fails: ioctls to use CD-ROM drive are denied.
-
-  * "ls /dev" works: It uses ioctl to get the terminal size for
-    columnar layout
-
-  * The text editors "vim" and "mg" work.  (GNU Emacs fails because it
-    attempts to reopen /dev/tty.)
-
-Related Work
-~~~~~~~~~~~~
-
-OpenBSD's pledge(2) [2] restricts ioctl(2) independent of the file
-descriptor which is used.  The implementers maintain multiple
-allow-lists of predefined ioctl(2) operations required for different
-application domains such as "audio", "bpf", "tty" and "inet".
-
-OpenBSD does not guarantee ABI backwards compatibility to the same
-extent as Linux does, so it's easier for them to update these lists in
-later versions.  It might not be a feasible approach for Linux though.
-
-[2] https://man.openbsd.org/OpenBSD-7.3/pledge.2
-
-Changes
-~~~~~~~
-
-V2:
- * rebased on mic-next
- * added documentation
- * exercise ioctl in the memfd test
- * test: Use layout0 for the test
-
+Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
+ security/landlock/syscalls.c                 | 2 +-
+ tools/testing/selftests/landlock/base_test.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-V1: https://lore.kernel.org/linux-security-module/20230502171755.9788-1-gno=
-ack3000@gmail.com/
-
-G=C3=BCnther Noack (6):
-  landlock: Increment Landlock ABI version to 4
-  landlock: Add LANDLOCK_ACCESS_FS_IOCTL access right
-  selftests/landlock: Test ioctl support
-  selftests/landlock: Test ioctl with memfds
-  samples/landlock: Add support for LANDLOCK_ACCESS_FS_IOCTL
-  landlock: Document ioctl support
-
- Documentation/userspace-api/landlock.rst     | 52 ++++++++-----
- include/uapi/linux/landlock.h                | 19 +++--
- samples/landlock/sandboxer.c                 | 12 ++-
- security/landlock/fs.c                       | 21 +++++-
- security/landlock/limits.h                   |  2 +-
- security/landlock/syscalls.c                 |  2 +-
- tools/testing/selftests/landlock/base_test.c |  2 +-
- tools/testing/selftests/landlock/fs_test.c   | 77 ++++++++++++++++++--
- 8 files changed, 149 insertions(+), 38 deletions(-)
-
-
-base-commit: 35ca4239929737bdc021ee923f97ebe7aff8fcc4
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 245cc650a4dc..c70fc9e6fe9e 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -129,7 +129,7 @@ static const struct file_operations ruleset_fops =3D {
+ 	.write =3D fop_dummy_write,
+ };
+=20
+-#define LANDLOCK_ABI_VERSION 3
++#define LANDLOCK_ABI_VERSION 4
+=20
+ /**
+  * sys_landlock_create_ruleset - Create a new ruleset
+diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/s=
+elftests/landlock/base_test.c
+index 792c3f0a59b4..646f778dfb1e 100644
+--- a/tools/testing/selftests/landlock/base_test.c
++++ b/tools/testing/selftests/landlock/base_test.c
+@@ -75,7 +75,7 @@ TEST(abi_version)
+ 	const struct landlock_ruleset_attr ruleset_attr =3D {
+ 		.handled_access_fs =3D LANDLOCK_ACCESS_FS_READ_FILE,
+ 	};
+-	ASSERT_EQ(3, landlock_create_ruleset(NULL, 0,
++	ASSERT_EQ(4, landlock_create_ruleset(NULL, 0,
+ 					     LANDLOCK_CREATE_RULESET_VERSION));
+=20
+ 	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
 --=20
 2.41.0.162.gfafddb0af9-goog
 
