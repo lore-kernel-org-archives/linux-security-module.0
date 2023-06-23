@@ -2,217 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08989EB64D7
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 14:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 985A7C001B3
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 15:12:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232261AbjFWOpE (ORCPT
+        id S232530AbjFWPMJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Jun 2023 10:45:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40692 "EHLO
+        Fri, 23 Jun 2023 11:12:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232290AbjFWOod (ORCPT
+        with ESMTP id S232538AbjFWPLZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Jun 2023 10:44:33 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E34022D68
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:43:55 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-56ff7b4feefso9581157b3.0
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:43:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687531435; x=1690123435;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kdm54Rz+m33IoLUpgO0/e3RXUFPHZ/9x2zIzUzsArVc=;
-        b=Kr3FDs0egiiiEEbnbbgw5lSNj+XGC+p9j3WLq8sOjyGZFkHbO55x3dyQF+46jtJChl
-         TUlaNKL1WzrisX/prUZwLqPvayhtV4oV3vpduFD5zYkfyWAbH0urMGQ4T2gJVwyOkYb3
-         bC5GP3eaYsjB9XbKGGlUOygrN8N3juknr8os2HkBr5zBI9hx7Vd2QSWdv3ewgNO48BEC
-         hsVIxKFdSSKbgnDSKf5K4SO5B0MIIbuN2yXnRLQLnOsg3T79uWlChPbzoh7N9ALf7Vgx
-         YpGTIW0C/xuwv+N53YPuEmdX9BPZIwFW+zOKbGS83JJWOkOzlO5nAjCmSQNktF/Fy+py
-         +ErA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687531435; x=1690123435;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Kdm54Rz+m33IoLUpgO0/e3RXUFPHZ/9x2zIzUzsArVc=;
-        b=PUpsEYj23PsAUUJq495C+OxItzLLlpyk3+NEfGTz2Z1h+vV/WA0FUbuu2cn2OfVZN8
-         BIKQCCyVW54R9uMr01PIzJUoa+fqVwQGkA4JkWdKJ3JQlybRcEcc5wOtcOdGvC7NDYMD
-         CFXO3aYZJHpg0s5xOscZ8C7YVEADgUrUVcTtlU0rpITQWAfAn4ESYr4hn3RlrKBS5cFm
-         eHxySiKTchHG7q7N1qT/Ji9qI0D51AQsf/mVpfTNsKlNgSm2jL/pAy5gdnPnWmhPabRt
-         my+WFv77zdpVnChlqaVgyhcNeNKYzQgEQvWs1VHnj8tM+r5Q3oGKqIrCecUOe0ozRVq+
-         PIbA==
-X-Gm-Message-State: AC+VfDzEESmSluanxV+0YJcPCsnPJkmXGnE6MgjhWXkfKAT7KMqhpCEN
-        aAKN+7oxxJwiQ9L1TLThxwPDpWM2kRAvbkF4pYnivot8qDgokPm7KnIFXOy39I4cbKL19sfCGHH
-        BLu9w22UH3k+CiKnzxeoxlX5TswPeF239+yMgMKATIVK1Dy0hgkr8k/mmvD0Zigy6UF7oH1pTQb
-        prwaVHYA==
-X-Google-Smtp-Source: ACHHUZ4wlB7BEjXlcYwmQHZSRL6PB3Q3JUhNMlPeWL9i6Xz1QRVALBzXJTcQBYnS7rXYAzhngYDhtxkzZHs=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:8b55:dee0:6991:c318])
- (user=gnoack job=sendgmr) by 2002:a81:bd11:0:b0:54f:b56a:cd0f with SMTP id
- b17-20020a81bd11000000b0054fb56acd0fmr9747144ywi.3.1687531434911; Fri, 23 Jun
- 2023 07:43:54 -0700 (PDT)
-Date:   Fri, 23 Jun 2023 16:43:29 +0200
-In-Reply-To: <20230623144329.136541-1-gnoack@google.com>
-Message-Id: <20230623144329.136541-7-gnoack@google.com>
+        Fri, 23 Jun 2023 11:11:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14215270E
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 08:11:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 11E0B61A98
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 15:10:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF50CC433BB;
+        Fri, 23 Jun 2023 15:10:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687533055;
+        bh=QBE/kH9Q80W4WJgITS8+fO0pjyCVTYSsyr+2jnkMnpU=;
+        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
+        b=ZVPko1/injThMSOKx4LYVq42w7G4RXDkA3YrJ69K9WBDDKioNw+ni3s+kEsKQWBPR
+         17WtdzZsKuiYv/zwoFPNpgOd3QG0o5919aJBYDcxivGA1T7NgRbutPsrr2CmqT1xqX
+         T+6U9Ei82rc/YvYfcYniL+gPOxcFDZ7sebOqYTDP1s58gH53bH/kkJJjup4Qr/IGCQ
+         kAehtGjo7v5wg6kXkgajRN2aqPmhJRoJ833Dn+EcOk/lpLQnMkhf7qSe0MZ78JR2+S
+         xYyctu9KMab4P3CMdY5upz8uHxNTHKBHe5JrF7jvFrXw6aSnM+nEThUNKnZKTV0prb
+         lKwcsihgjv/qA==
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 8D9C327C005B;
+        Fri, 23 Jun 2023 11:10:53 -0400 (EDT)
+Received: from imap48 ([10.202.2.98])
+  by compute3.internal (MEProxy); Fri, 23 Jun 2023 11:10:53 -0400
+X-ME-Sender: <xms:_bWVZBDpLFg3qKAQdsRgRE2kSK41_YU9fsMuDt-PQOto4yDZBiRxvg>
+    <xme:_bWVZPi3OeePMktmI2FFLOMFy0x0rT4MiEYubXA737O3J-2O-g8tEm1CqYKLQEU7h
+    7g_8BQNnW9OnHyp5y8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeeggedgkeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehn
+    ugihucfnuhhtohhmihhrshhkihdfuceolhhuthhosehkvghrnhgvlhdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepvdfhuedvtdfhudffhfekkefftefghfeltdelgeffteehueegjeff
+    udehgfetiefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homheprghnugihodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduudeiudek
+    heeifedvqddvieefudeiiedtkedqlhhuthhopeepkhgvrhhnvghlrdhorhhgsehlihhnuh
+    igrdhluhhtohdruhhs
+X-ME-Proxy: <xmx:_bWVZMl83O41PIIoJ_aQGs4GF8z0dEzLtYzo3VTqa9bUEZoeheS0Ug>
+    <xmx:_bWVZLwjLWjaxFmsj-1i4MdnZW1bi3yQugItIDfdsjjLI6ZMbIK-Cg>
+    <xmx:_bWVZGTj5h6QEngz8WgDmCzIOMH73u_wrIw7xj3iqfEsnh5U9UOHcQ>
+    <xmx:_bWVZDQw4XdIDDmcQWLpETLFOofa1qvqop1hvO_eq2KbxFMAqD__OA>
+Feedback-ID: ieff94742:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id F34CE31A0063; Fri, 23 Jun 2023 11:10:52 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-499-gf27bbf33e2-fm-20230619.001-gf27bbf33
 Mime-Version: 1.0
-References: <20230623144329.136541-1-gnoack@google.com>
-X-Mailer: git-send-email 2.41.0.162.gfafddb0af9-goog
-Subject: [PATCH v2 6/6] landlock: Document ioctl support
-From:   "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To:     linux-security-module@vger.kernel.org,
-        "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc:     Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        linux-fsdevel@vger.kernel.org,
-        "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <9b0e9227-4cf4-4acb-ba88-52f65b099709@app.fastmail.com>
+In-Reply-To: <82b79e57-a0ad-4559-abc9-858e0f51fbba@app.fastmail.com>
+References: <20230607235352.1723243-1-andrii@kernel.org>
+ <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
+ <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
+ <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com>
+ <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
+ <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com>
+ <bc4f99af-0c46-49b2-9f2d-9a01e6a03af3@app.fastmail.com>
+ <5a75d1f0-4ed9-399c-4851-2df0755de9b5@redhat.com>
+ <CAEf4Bza9GvJ0vw2-0M8GKSXmOQ8VQCmeqEiQpMuZBjwqpA03vw@mail.gmail.com>
+ <82b79e57-a0ad-4559-abc9-858e0f51fbba@app.fastmail.com>
+Date:   Fri, 23 Jun 2023 08:10:32 -0700
+From:   "Andy Lutomirski" <luto@kernel.org>
+To:     "Andrii Nakryiko" <andrii.nakryiko@gmail.com>,
+        "Maryam Tahhan" <mtahhan@redhat.com>
+Cc:     "Andrii Nakryiko" <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        "Kees Cook" <keescook@chromium.org>,
+        "Christian Brauner" <brauner@kernel.org>, lennart@poettering.net,
+        cyphar@cyphar.com, kernel-team@meta.com
+Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In the paragraph above the fallback logic, use the shorter phrasing
-from the landlock(7) man page.
 
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
----
- Documentation/userspace-api/landlock.rst | 52 ++++++++++++++++--------
- 1 file changed, 35 insertions(+), 17 deletions(-)
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
-pace-api/landlock.rst
-index d8cd8cd9ce25..bff3b4a9df3d 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -61,18 +61,17 @@ the need to be explicit about the denied-by-default acc=
-ess rights.
-             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
-             LANDLOCK_ACCESS_FS_REFER |
--            LANDLOCK_ACCESS_FS_TRUNCATE,
-+            LANDLOCK_ACCESS_FS_TRUNCATE |
-+            LANDLOCK_ACCESS_FS_IOCTL,
-     };
-=20
- Because we may not know on which kernel version an application will be
- executed, it is safer to follow a best-effort security approach.  Indeed, =
-we
- should try to protect users as much as possible whatever the kernel they a=
-re
--using.  To avoid binary enforcement (i.e. either all security features or
--none), we can leverage a dedicated Landlock command to get the current ver=
-sion
--of the Landlock ABI and adapt the handled accesses.  Let's check if we sho=
-uld
--remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
--access rights, which are only supported starting with the second and third
--version of the ABI.
-+using.
-+
-+To be compatible with older Linux versions, we detect the available Landlo=
-ck ABI
-+version, and only use the available subset of access rights:
-=20
- .. code-block:: c
-=20
-@@ -92,6 +91,9 @@ version of the ABI.
-     case 2:
-         /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-         ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_TRUNCATE;
-+    case 3:
-+        /* Removes LANDLOCK_ACCESS_FS_IOCTL for ABI < 4 */
-+        ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_IOCTL;
-     }
-=20
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -190,6 +192,7 @@ access rights per directory enables to change the locat=
-ion of such directory
- without relying on the destination directory access rights (except those t=
-hat
- are required for this operation, see ``LANDLOCK_ACCESS_FS_REFER``
- documentation).
-+
- Having self-sufficient hierarchies also helps to tighten the required acce=
-ss
- rights to the minimal set of data.  This also helps avoid sinkhole directo=
-ries,
- i.e.  directories where data can be linked to but not linked from.  Howeve=
-r,
-@@ -283,18 +286,24 @@ It should also be noted that truncating files does no=
-t require the
- system call, this can also be done through :manpage:`open(2)` with the fla=
-gs
- ``O_RDONLY | O_TRUNC``.
-=20
--When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
-``
--right is associated with the newly created file descriptor and will be use=
-d for
--subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavio=
-r is
--similar to opening a file for reading or writing, where permissions are ch=
-ecked
--during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)=
-` and
-+The truncate right is associated with the opened file (see below).
-+
-+Rights associated with file descriptors
-+---------------------------------------
-+
-+When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
-`` and
-+``LANDLOCK_ACCESS_FS_IOCTL`` rights is associated with the newly created f=
-ile
-+descriptor and will be used for subsequent truncation and ioctl attempts u=
-sing
-+:manpage:`ftruncate(2)` and :manpage:`ioctl(2)`.  The behavior is similar =
-to
-+opening a file for reading or writing, where permissions are checked durin=
-g
-+:manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
- :manpage:`write(2)` calls.
-=20
--As a consequence, it is possible to have multiple open file descriptors fo=
-r the
--same file, where one grants the right to truncate the file and the other d=
-oes
--not.  It is also possible to pass such file descriptors between processes,
--keeping their Landlock properties, even when these processes do not have a=
-n
--enforced Landlock ruleset.
-+As a consequence, it is possible to have multiple open file descriptors
-+referring to the same file, where one grants the truncate or ioctl right a=
-nd the
-+other does not.  It is also possible to pass such file descriptors between
-+processes, keeping their Landlock properties, even when these processes do=
- not
-+have an enforced Landlock ruleset.
-=20
- Compatibility
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-@@ -451,6 +460,15 @@ always allowed when using a kernel that only supports =
-the first or second ABI.
- Starting with the Landlock ABI version 3, it is now possible to securely c=
-ontrol
- truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
-=20
-+Ioctl (ABI < 4)
-+---------------
-+
-+Ioctl operations could not be denied before the fourth Landlock ABI, so io=
-ctl is
-+always allowed when using a kernel that only supports an earlier ABI.
-+
-+Starting with the Landlock ABI version 4, it is possible to restrict the u=
-se of
-+ioctl using the new ``LANDLOCK_ACCESS_FS_IOCTL`` access right.
-+
- .. _kernel_support:
-=20
- Kernel support
---=20
-2.41.0.162.gfafddb0af9-goog
+On Thu, Jun 22, 2023, at 6:02 PM, Andy Lutomirski wrote:
+> On Thu, Jun 22, 2023, at 11:40 AM, Andrii Nakryiko wrote:
+>
+>> Hopefully you can see where I'm going with this. And this is just one
+>> random tiny example. We can think up tons of other cases to prove BPF
+>> is not isolatable to any sort of "container".
+>
+> No.  You have not come up with an example of why BPF is not isolatable 
+> to a container.  You have come up with an example of why binding to a 
+> sched_switch raw tracepoint does not make sense in a container without 
+> additional mechanisms to give it well defined functionality and 
+> appropriate security.
 
+Thinking about this some more:
+
+Suppose the goal is to allow a workload in a container to monitor itself by attaching to a tracepoint (something in the scheduler, for example).  The workload is in the container.  The tracepoint is global.  Kernel memory is global unless something that is trusted and understands the containers is doing the reading.  And proxying BPF is a mess.
+
+So here are a couple of possible solutions:
+
+(a) Improve BPF maps a bit so that BPF maps work well in containers.  It should be possible to create a map and share it (the file descriptor!) between the outside and the container without running into various snags.  (IIRC my patch series was a decent step in this direction,)  Now load the BPF program and attach it to the tracepoint outside the container but have it write its gathered data to the map that's in the container.  So you end up with a daemon outside the container that gets a request like "help me monitor such-and-such by running BPF program such-and-such (where the BPF program code presumably comes from a library outside the container", and the daemon arranges for the requesting container to have access to the map it needs to get the data.
+
+(b) Make a way to pass a pre-approved program into a container.  So a daemon outside loads the program and does some new magic to say "make an fd that can be used to attach this particular program to this particular tracepoint" and pass that into the container.
+
+I think (a) is better.  In particular, if you have a workload with many containers, and they all want to monitor the same tracepoint as it relates to their container, you will get much better performance if a single BPF program does the monitoring and sends the data out to each container as needed instead of having one copy of the program per container.
+
+For what it's worth, BPF tokens seem like they'll have the same performance problem -- without coordination, you can end up with N containers generating N hooks all targeting the same global resource, resulting in overhead that scales linearly with the number of containers.
+
+And, again, I'm not an XDP expert, but if you have one NIC, and you attach N XDP programs to it, and each one is inspecting packets and sending some to one particular container's AF_XDP socket, you are not going to get good performance.  You want *one* XDP program fanning the packets out to the relevant containers.
+
+If this is hard right now, perhaps you could add new kernel mechanisms as needed to improve the situation.
+
+--Andy
