@@ -2,108 +2,196 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E4EC001B0
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 14:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A2BEB64D7
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 14:35:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231336AbjFWOPs (ORCPT
+        id S231689AbjFWOfz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Jun 2023 10:15:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48282 "EHLO
+        Fri, 23 Jun 2023 10:35:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231138AbjFWOPr (ORCPT
+        with ESMTP id S229712AbjFWOfy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Jun 2023 10:15:47 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDDDA1BDF
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:15:45 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-bad0c4f6f50so1129807276.1
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:15:45 -0700 (PDT)
+        Fri, 23 Jun 2023 10:35:54 -0400
+Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A2E826A1
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:35:44 -0700 (PDT)
+Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1ad1d53beadso555960fac.1
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 07:35:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1687529745; x=1690121745;
+        d=chromium.org; s=google; t=1687530943; x=1690122943;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oZ40BfK4CnBhJx25kfzQB13i0/OJA6zciMTT5kdfKAo=;
-        b=RFGTdVVW8Yhc1LfhCKoT7tZJjAg0vl/TG5mdh0fIXb1uQ/8Poj4XX3LsFrlUaZ3kky
-         7IYnhcO5ruEmyR7utuCqLftUJ8mM1GPbHPNYS+DKKja1eh/OlXTYiBj5d+UtB74c+/JQ
-         3ABB2RUM2UoIZKgFjCxsPzMFvzKLARCxWCbuK/Zk2fCsuN+KiuPjS79i0eDs/xNNGhAT
-         1ixK1E5TNM4nfJEPZU3kCWXCJwP95O1WkHREf+kVnuU2jEJgVkX829HklEaFYS2/ANXE
-         B6EU4ViRGvHnPAsPvkE/PHd6ClGnXdCkc+ROm4h3HH6ewVZuQvWGtnsxKkH4eQF7gyfm
-         k5wg==
+        bh=2SEBPStKVcWuK0U9+o4k9p1pZNT3HD7OxhCSF6G1cNQ=;
+        b=lBwO2RYXA1FbofoshpI3lj93tY3ca60z4/PmDkydo4xoYcFMNeuPHdNBF1PhvE7mF5
+         x+B9+fyQaWDspUByK4Dd38a763lzJM93zzmupkYVMv8Qtrs8STGdUMpu3gwqKlRdO4zf
+         mDjg+/i0MeO7gX8VsR37GE7UxxozyYayG5JOk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687529745; x=1690121745;
+        d=1e100.net; s=20221208; t=1687530943; x=1690122943;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oZ40BfK4CnBhJx25kfzQB13i0/OJA6zciMTT5kdfKAo=;
-        b=d5o1UlCTx5eto/HL6Z90d8sj0geWT7VOufG0EZtimacrwZhjLJI0VqdMWWMc8yMBAa
-         IyaBOu/xCCuLi9lQQA4+Zqa+tpvP/I28g26jrFvc2a/V8VmSrM/++u13LGe9QmNSoEY1
-         atd6lposejSxIXXH37DP2lx+lVUJWV4Fr+is1OYZULuDjT+Kbg0jelxupjUKN8eFx2od
-         7CARrC1OYSgJhO+h7l/4I3appWKRQ73vwAE6Z4F3+Cpn0zGtVPvU07v+V1xHV4bzCa+t
-         mSFo97cHpdHK6lYGUPxRcC11gEs3sNDUEQmCITud59ZQ3I3OLE84/6NWQRP9ZwJzb8yd
-         bnzg==
-X-Gm-Message-State: AC+VfDxSXBJRmzSg2z7hFWB2QhfkWBpuyL303Z2UrV+KdFuIXobjJPa8
-        RrBTfJYvuAxRMYT/PpQSqzsK5dXEq8y+0PsfDehZ
-X-Google-Smtp-Source: ACHHUZ4MXZenIaH7vCged36otPESh2P7/JdhFqDKhEbuyEnzoZAuU0ZxX/YyXDxCpmkkhp356crSA6yGZRW42lvEdzs=
-X-Received: by 2002:a25:609:0:b0:c01:e1c0:3c70 with SMTP id
- 9-20020a250609000000b00c01e1c03c70mr5873869ybg.25.1687529745019; Fri, 23 Jun
- 2023 07:15:45 -0700 (PDT)
+        bh=2SEBPStKVcWuK0U9+o4k9p1pZNT3HD7OxhCSF6G1cNQ=;
+        b=VlqaulcxbCWo/MYRX7uSXp2fxo9G2Cnq8OZUx7Toevu5OkWsH70WFGpTpKLq0Kq5ad
+         hM4RI0KJ7pW/nIPfC5rsqZW4VtbDDB4oqQhn3t5acDEWYo8BaE6UDwb795OA079kiZIB
+         z2Wc+IELCPmQWXTkWlEpiNxJYFlj0ET5ukfh8+3Wdqa5XD/NJZm+/SbA89CZSM9e+EMS
+         Ubkiibd5rGQcXvA2DtEAr40o1H7EuyOq8zmdKq8Yrpprq0PgFIRDRantbgaz+r+XWJhM
+         lblXfG/cTWzBI93fOIsXjI8Y13z0mlORS5j2gZqqAyQ3ROZ6zMZ7gy9NCVr9GHxvMC00
+         GOiA==
+X-Gm-Message-State: AC+VfDw975q+4iQC1IEfjyfvkmS0omL81KNwZikCvXDnQ3+1YEShA32S
+        jj7F8ostneoK8vtiOdd5UHJPB6RV29AZuoJkEbLhgQ==
+X-Google-Smtp-Source: ACHHUZ41ySHwYAnHtH61CA+4dnkZdBqUtd5tQsOOy4llzFrD6Whs2u9HXzuxuQst1L9jHxAm1lQplvzBBmykSYenq/w=
+X-Received: by 2002:a05:6870:e896:b0:196:8dc3:4e16 with SMTP id
+ q22-20020a056870e89600b001968dc34e16mr17947005oan.39.1687530943485; Fri, 23
+ Jun 2023 07:35:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230621144507.55591-1-jlayton@kernel.org> <20230621144735.55953-1-jlayton@kernel.org>
- <20230621144735.55953-76-jlayton@kernel.org>
-In-Reply-To: <20230621144735.55953-76-jlayton@kernel.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 23 Jun 2023 10:15:34 -0400
-Message-ID: <CAHC9VhQEvq2MFRyj0HCDBT0+5mnbnqN_DDgrHhwPK+e+nx_xdg@mail.gmail.com>
-Subject: Re: [PATCH 77/79] security: switch to new ctime accessors
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+ <20230515161339.631577-13-konstantin.meskhidze@huawei.com>
+ <ZH89Pi1QAqNW2QgG@google.com> <CABi2SkWqHeLkmqONbmavcp2SCiwe6YeH_3dkBLZwSsk7neyPMw@mail.gmail.com>
+ <86108314-de87-5342-e0fb-a07feee457a5@huawei.com> <97c15e23-8a89-79f2-4413-580153827ade@digikod.net>
+ <00a03f2c-892d-683e-96a0-c0ba8f293831@digikod.net>
+In-Reply-To: <00a03f2c-892d-683e-96a0-c0ba8f293831@digikod.net>
+From:   Jeff Xu <jeffxu@chromium.org>
+Date:   Fri, 23 Jun 2023 07:35:33 -0700
+Message-ID: <CABi2SkWJT5xmjBvudEc725uN8iAMCKf5BBOppzgmRJRc2M4nrg@mail.gmail.com>
+Subject: Re: [PATCH v11 12/12] landlock: Document Landlock's network support
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
+        =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+        willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 21, 2023 at 10:49=E2=80=AFAM Jeff Layton <jlayton@kernel.org> w=
-rote:
+On Thu, Jun 22, 2023 at 9:50=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
 >
-> In later patches, we're going to change how the ctime.tv_nsec field is
-> utilized. Switch to using accessor functions instead of raw accesses of
-> inode->i_ctime.
 >
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  security/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On 13/06/2023 22:12, Micka=C3=ABl Sala=C3=BCn wrote:
+> >
+> > On 13/06/2023 12:13, Konstantin Meskhidze (A) wrote:
+> >>
+> >>
+> >> 6/7/2023 8:46 AM, Jeff Xu =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> On Tue, Jun 6, 2023 at 7:09=E2=80=AFAM G=C3=BCnther Noack <gnoack@goo=
+gle.com> wrote:
+> >>>>
+> >>>> On Tue, May 16, 2023 at 12:13:39AM +0800, Konstantin Meskhidze wrote=
+:
+> >>>>> Describe network access rules for TCP sockets. Add network access
+> >>>>> example in the tutorial. Add kernel configuration support for netwo=
+rk.
+> >>>>>
+> >>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.co=
+m>
 >
-> diff --git a/security/inode.c b/security/inode.c
-> index 6c326939750d..086280390793 100644
-> --- a/security/inode.c
-> +++ b/security/inode.c
-> @@ -145,7 +145,7 @@ static struct dentry *securityfs_create_dentry(const =
-char *name, umode_t mode,
+> [...]
 >
->         inode->i_ino =3D get_next_ino();
->         inode->i_mode =3D mode;
-> -       inode->i_atime =3D inode->i_mtime =3D inode->i_ctime =3D current_=
-time(inode);
-> +       inode->i_atime =3D inode->i_mtime =3D inode_ctime_set_current(ino=
-de);
+> >>>>> @@ -28,20 +28,24 @@ appropriately <kernel_support>`.
+> >>>>>    Landlock rules
+> >>>>>    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>>
+> >>>>> -A Landlock rule describes an action on an object.  An object is cu=
+rrently a
+> >>>>> -file hierarchy, and the related filesystem actions are defined wit=
+h `access
+> >>>>> -rights`_.  A set of rules is aggregated in a ruleset, which can th=
+en restrict
+> >>>>> -the thread enforcing it, and its future children.
+> >>>>> +A Landlock rule describes an action on a kernel object.  Filesyste=
+m
+> >>>>> +objects can be defined with a file hierarchy.  Since the fourth AB=
+I
+> >>>>> +version, TCP ports enable to identify inbound or outbound connecti=
+ons.
+> >>>>> +Actions on these kernel objects are defined according to `access
+> >>>>> +rights`_.  A set of rules is aggregated in a ruleset, which
+> >>>>> +can then restrict the thread enforcing it, and its future children=
+.
+> >>>>
+> >>>> I feel that this paragraph is a bit long-winded to read when the
+> >>>> additional networking aspect is added on top as well.  Maybe it woul=
+d
+> >>>> be clearer if we spelled it out in a more structured way, splitting =
+up
+> >>>> the filesystem/networking aspects?
+> >>>>
+> >>>> Suggestion:
+> >>>>
+> >>>>     A Landlock rule describes an action on an object which the proce=
+ss
+> >>>>     intends to perform.  A set of rules is aggregated in a ruleset,
+> >>>>     which can then restrict the thread enforcing it, and its future
+> >>>>     children.
+> >>>>
+> >>>>     The two existing types of rules are:
+> >>>>
+> >>>>     Filesystem rules
+> >>>>         For these rules, the object is a file hierarchy,
+> >>>>         and the related filesystem actions are defined with
+> >>>>         `filesystem access rights`.
+> >>>>
+> >>>>     Network rules (since ABI v4)
+> >>>>         For these rules, the object is currently a TCP port,
+> >>> Remote port or local port ?
+> >>>
+> >>      Both ports - remote or local.
+> >
+> > Hmm, at first I didn't think it was worth talking about remote or local=
+,
+> > but I now think it could be less confusing to specify a bit:
+> > "For these rules, the object is the socket identified with a TCP (bind
+> > or connect) port according to the related `network access rights`."
+> >
+> > A port is not a kernel object per see, so I tried to tweak a bit the
+> > sentence. I'm not sure such detail (object vs. data) would not confuse
+> > users. Any thought?
+>
+> Well, here is a more accurate and generic definition (using "scope"):
+>
+> A Landlock rule describes a set of actions intended by a task on a scope
+> of objects.  A set of rules is aggregated in a ruleset, which can then
+> restrict the thread enforcing it, and its future children.
+>
+> The two existing types of rules are:
+>
+> Filesystem rules
+>      For these rules, the scope of objects is a file hierarchy,
+>      and the related filesystem actions are defined with
+>      `filesystem access rights`.
+>
+> Network rules (since ABI v4)
+>      For these rules, the scope of objects is the sockets identified
+>      with a TCP (bind or connect) port according to the related
+>      `network access rights`.
+>
+>
+> What do you think?
+>
+I found this is clearer to me (mention of bind/connect port).
 
-In the process of looking at inode_ctime_set_current() I ran into the
-same bug others noticed regarding inode_set_ctime()/inode_ctime_set();
-assuming that gets fixed this looks fine to me.
+In networking, "5-tuple" is a well-known term for connection, which is
+src/dest ip, src/dest port, protocol. That is why I asked about
+src/dest port.  It seems that we only support src/dest port at this
+moment, right ?
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+Another feature we could consider is restricting a process to "no
+network access, allow out-going , allow incoming", this might overlap
+with seccomp, but I think it is convenient to have it in Landlock.
 
->         inode->i_private =3D data;
->         if (S_ISDIR(mode)) {
->                 inode->i_op =3D &simple_dir_inode_operations;
-> --
-> 2.41.0
+Adding protocol restriction is a low hanging fruit also, for example,
+a process might be restricted to UDP only (for RTP packet), and
+another process for TCP (for signaling) , etc.
 
---=20
-paul-moore.com
+Thanks!
+-Jeff Xu
+
+>
+> >>>
+> >>>>         and the related actions are defined with `network access rig=
+hts`.
