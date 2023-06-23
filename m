@@ -2,148 +2,220 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A87C001B3
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 16:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7608DC0015E
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 19:32:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232296AbjFWQht (ORCPT
+        id S231714AbjFWTct (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Jun 2023 12:37:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47206 "EHLO
+        Fri, 23 Jun 2023 15:32:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231978AbjFWQhq (ORCPT
+        with ESMTP id S231742AbjFWTcr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Jun 2023 12:37:46 -0400
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [IPv6:2001:1600:4:17::8faa])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20B392950
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 09:37:30 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QnjZc06rrzMq32R;
-        Fri, 23 Jun 2023 16:37:28 +0000 (UTC)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4QnjZZ1wx8zMpnPl;
-        Fri, 23 Jun 2023 18:37:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1687538247;
-        bh=NUnmcWSTTZt7eIqedPc0vDhEW1R152+j3rJCyoMrDTo=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=oGcrsAqZWWOJ+U00oFpn+r2lwbUpMB2vFtlwJyvMivLpdsFoNT4lQKpLdnbd+flfC
-         0tr4XiZWSIT0QU0AIRFRS0x2oS/cl3FFznrXu/Issul/L+yEZvVr3x/3rsPiuzSG8H
-         n8weT2YgmrClL/EwirWVq+g4Fc+nQVHyeledpolo=
-Message-ID: <77ec6e6c-7fb0-01ab-26c5-e9c9da392e2a@digikod.net>
-Date:   Fri, 23 Jun 2023 18:37:25 +0200
+        Fri, 23 Jun 2023 15:32:47 -0400
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C51192711;
+        Fri, 23 Jun 2023 12:32:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1687548766; x=1719084766;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=MXGjsQVBbUEfugTyhqtLOg34xJrVsEnXiFXbx+PaHRY=;
+  b=UeBmqFaRBZo0LDtqdhDP+Lx7Igt3lPCiaclNEshFzFYa8pq9OAvmbg5x
+   BNrQDx/bcCJCOm36lZsIE7QQCmf9uNwu01CVUwrsnGDUxIMzt3bcNxYsy
+   DJhuAbGuZbBKHzzhqg0Y+zHXN6qCFCy82o2PrKhTb32avjKZPVAr5tGzh
+   A=;
+X-IronPort-AV: E=Sophos;i="6.01,152,1684800000"; 
+   d="scan'208";a="222788639"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO email-inbound-relay-iad-1e-m6i4x-a65ebc6e.us-east-1.amazon.com) ([10.25.36.214])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2023 19:32:42 +0000
+Received: from EX19MTAUWA002.ant.amazon.com (iad12-ws-svc-p26-lb9-vlan3.iad.amazon.com [10.40.163.38])
+        by email-inbound-relay-iad-1e-m6i4x-a65ebc6e.us-east-1.amazon.com (Postfix) with ESMTPS id E6DAB66811;
+        Fri, 23 Jun 2023 19:32:35 +0000 (UTC)
+Received: from EX19D028UWA002.ant.amazon.com (10.13.138.248) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 23 Jun 2023 19:32:35 +0000
+Received: from uda95858fd22f53.ant.amazon.com (10.88.166.238) by
+ EX19D028UWA002.ant.amazon.com (10.13.138.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 23 Jun 2023 19:32:34 +0000
+From:   Mengchi Cheng <mengcc@amazon.com>
+To:     <roberto.sassu@huaweicloud.com>
+CC:     <bpf@vger.kernel.org>, <casey@schaufler-ca.com>,
+        <dmitry.kasatkin@gmail.com>, <eparis@parisplace.org>,
+        <jmorris@namei.org>, <kamatam@amazon.com>, <keescook@chromium.org>,
+        <kpsingh@kernel.org>, <linux-integrity@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-unionfs@vger.kernel.org>, <mengcc@amazon.com>,
+        <miklos@szeredi.hu>, <nicolas.bouchinet@clip-os.org>,
+        <paul@paul-moore.com>, <roberto.sassu@huawei.com>,
+        <selinux@vger.kernel.org>, <serge@hallyn.com>,
+        <stephen.smalley.work@gmail.com>, <yoonjaeh@amazon.com>,
+        <zohar@linux.ibm.com>
+Subject: Re: [PATCH v11 2/4] smack: Set the SMACK64TRANSMUTE xattr in smack_inode_init_security()
+Date:   Fri, 23 Jun 2023 12:32:22 -0700
+Message-ID: <20230623193222.2326429-1-mengcc@amazon.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <9f4b7bef5d090da9de50ed1aa1e103abc19b125f.camel@huaweicloud.com>
+References: <9f4b7bef5d090da9de50ed1aa1e103abc19b125f.camel@huaweicloud.com>
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v2 0/6] Landlock: ioctl support
-Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>,
-        linux-security-module@vger.kernel.org
-Cc:     Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Simon Brand <simon.brand@postadigitale.de>,
-        linux-hardening@vger.kernel.org
-References: <20230623144329.136541-1-gnoack@google.com>
- <ZJW4O+HVymf4nB6A@google.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <ZJW4O+HVymf4nB6A@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain
+X-Originating-IP: [10.88.166.238]
+X-ClientProxiedBy: EX19D044UWA001.ant.amazon.com (10.13.139.100) To
+ EX19D028UWA002.ant.amazon.com (10.13.138.248)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi, thanks for the patches!
+On Mon, 2023-06-05 08:38:29 +0000, Roberto Sassu wrote:
+>
+> On Sat, 2023-06-03 at 21:15 +0200, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > With the newly added ability of LSMs to supply multiple xattrs, set
+> > SMACK64TRASMUTE in smack_inode_init_security(), instead of d_instantiate().
+> > Do it by incrementing SMACK_INODE_INIT_XATTRS to 2 and by calling
+> > lsm_get_xattr_slot() a second time, if the transmuting conditions are met.
+> > 
+> > The LSM infrastructure passes all xattrs provided by LSMs to the
+> > filesystems through the initxattrs() callback, so that filesystems can
+> > store xattrs in the disk.
+> > 
+> > After the change, the SMK_INODE_TRANSMUTE inode flag is always set by
+> > d_instantiate() after fetching SMACK64TRANSMUTE from the disk. Before it
+> > was done by smack_inode_post_setxattr() as result of the __vfs_setxattr()
+> > call.
+> > 
+> > Removing __vfs_setxattr() also prevents invalidating the EVM HMAC, by
+> > adding a new xattr without checking and updating the existing HMAC.
+> 
+> Hi Mengchi
+> 
+> could you please redo your tests with this patch set applied?
+> 
+> https://lore.kernel.org/linux-integrity/20230603191518.1397490-1-roberto.sassu@huaweicloud.com/
+> 
+> You need:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/log/?h=next
+> 
+> https://github.com/cschaufler/smack-next/commits/next
+> 
+> Thanks
+> 
+> Roberto
 
+Sorry for the later reply. It turned out lsm.git repo needs your previous
+two overlay fs fixes before applying these four patches.
+With v12 I did not see the issue I reported anymore.
 
-On 23/06/2023 17:20, Günther Noack wrote:
-> Hello!
-> 
-> On Fri, Jun 23, 2023 at 04:43:23PM +0200, Günther Noack wrote:
->> Proposed approach
->> ~~~~~~~~~~~~~~~~~
->>
->> Introduce the LANDLOCK_ACCESS_FS_IOCTL right, which restricts the use
->> of ioctl(2) on file descriptors.
->>
->> We attach the LANDLOCK_ACCESS_FS_IOCTL right to opened file
->> descriptors, as we already do for LANDLOCK_ACCESS_FS_TRUNCATE.
->>
->> I believe that this approach works for the majority of use cases, and
->> offers a good trade-off between Landlock API and implementation
->> complexity and flexibility when the feature is used.
->>
->> Current limitations
->> ~~~~~~~~~~~~~~~~~~~
->>
->> With this patch set, ioctl(2) requests can *not* be filtered based on
->> file type, device number (dev_t) or on the ioctl(2) request number.
->>
->> On the initial RFC patch set [1], we have reached consensus to start
->> with this simpler coarse-grained approach, and build additional ioctl
->> restriction capabilities on top in subsequent steps.
-> 
-> We *could* use this opportunity to blanket disable the TIOCSTI ioctl, if a
-> Landlock policy gets enabled and ioctls are handled.
-> 
-> TIOCSTI is a TTY ioctl which is commonly used as a sandbox escape, if the
-> sandboxes system can get a hold on a TTY file descriptor from outside the
-> sandbox (like STDOUT, hah).
-> 
-> An excellent summary of these problems was already written by Kees Cook on the
-> Linux patch which removes TIOCSTI depending on a kernel config option:
-> https://lore.kernel.org/lkml/20221022182828.give.717-kees@kernel.org/
-> 
-> Unfortunately on the distributions I have tested so far (Debian and Arch Linux),
-> TIOCSTI is still enabled.
-> 
-> ***Proposal***:
-> 
->    I am in favor of *disabling* TIOCSTI in all Landlocked processes,
->    if the Landlock policy handles the LANDLOCK_ACCESS_FS_IOCTL right.
-> 
-> If we want to do it in a backwards-compatible way, now would be the time to add
-> it to the patch set. :)
-
-What would that not be backward compatible?
+Best,
+Mengchi
 
 > 
-> As far as I can tell, there are no good legitimate use cases for TIOCSTI, and it
-> would fix the aforementioned sandbox escaping trick for a Landlocked process.
-> With the patch set as it is now, the only way to prevent that sandbox escape is
-> unfortunately to either (1) close the TTY file descriptors when enabling
-> Landlock, or (2) rely on an outside process to pass something else than a TTY
-> for FDs 0, 1 and 2.
-
-What about calling setsid()?
-
-Alternatively, seccomp could be used, even if it could block overlapping 
-IOCTLs as well…
-
-
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  security/smack/smack.h     |  2 +-
+> >  security/smack/smack_lsm.c | 43 +++++++++++++++++++++++---------------
+> >  2 files changed, 27 insertions(+), 18 deletions(-)
+> > 
+> > diff --git a/security/smack/smack.h b/security/smack/smack.h
+> > index aa15ff56ed6..041688e5a77 100644
+> > --- a/security/smack/smack.h
+> > +++ b/security/smack/smack.h
+> > @@ -128,7 +128,7 @@ struct task_smack {
+> >  
+> >  #define	SMK_INODE_INSTANT	0x01	/* inode is instantiated */
+> >  #define	SMK_INODE_TRANSMUTE	0x02	/* directory is transmuting */
+> > -#define	SMK_INODE_CHANGED	0x04	/* smack was transmuted */
+> > +#define	SMK_INODE_CHANGED	0x04	/* smack was transmuted (unused) */
+> >  #define	SMK_INODE_IMPURE	0x08	/* involved in an impure transaction */
+> >  
+> >  /*
+> > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> > index a1c30275692..b67d901ee74 100644
+> > --- a/security/smack/smack_lsm.c
+> > +++ b/security/smack/smack_lsm.c
+> > @@ -52,7 +52,14 @@
+> >  #define SMK_RECEIVING	1
+> >  #define SMK_SENDING	2
+> >  
+> > -#define SMACK_INODE_INIT_XATTRS 1
+> > +/*
+> > + * Smack uses multiple xattrs.
+> > + * SMACK64 - for access control,
+> > + * SMACK64TRANSMUTE - label initialization,
+> > + * Not saved on files - SMACK64IPIN and SMACK64IPOUT,
+> > + * Must be set explicitly - SMACK64EXEC and SMACK64MMAP
+> > + */
+> > +#define SMACK_INODE_INIT_XATTRS 2
+> >  
+> >  #ifdef SMACK_IPV6_PORT_LABELING
+> >  static DEFINE_MUTEX(smack_ipv6_lock);
+> > @@ -935,7 +942,6 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+> >  				     struct xattr *xattrs, int *xattr_count)
+> >  {
+> >  	struct task_smack *tsp = smack_cred(current_cred());
+> > -	struct inode_smack *issp = smack_inode(inode);
+> >  	struct smack_known *skp = smk_of_task(tsp);
+> >  	struct smack_known *isp = smk_of_inode(inode);
+> >  	struct smack_known *dsp = smk_of_inode(dir);
+> > @@ -963,6 +969,8 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+> >  		if ((tsp->smk_task == tsp->smk_transmuted) ||
+> >  		    (may > 0 && ((may & MAY_TRANSMUTE) != 0) &&
+> >  		     smk_inode_transmutable(dir))) {
+> > +			struct xattr *xattr_transmute;
+> > +
+> >  			/*
+> >  			 * The caller of smack_dentry_create_files_as()
+> >  			 * should have overridden the current cred, so the
+> > @@ -971,7 +979,16 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+> >  			 */
+> >  			if (tsp->smk_task != tsp->smk_transmuted)
+> >  				isp = dsp;
+> > -			issp->smk_flags |= SMK_INODE_CHANGED;
+> > +			xattr_transmute = lsm_get_xattr_slot(xattrs, xattr_count);
+> > +			if (xattr_transmute) {
+> > +				xattr_transmute->value = kmemdup(TRANS_TRUE,
+> > +						TRANS_TRUE_SIZE, GFP_NOFS);
+> > +				if (xattr_transmute->value == NULL)
+> > +					return -ENOMEM;
+> > +
+> > +				xattr_transmute->value_len = TRANS_TRUE_SIZE;
+> > +				xattr_transmute->name = XATTR_SMACK_TRANSMUTE;
+> > +			}
+> >  		}
+> >  
+> >  		xattr->value = kstrdup(isp->smk_known, GFP_NOFS);
+> > @@ -3518,20 +3535,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+> >  			 * If there is a transmute attribute on the
+> >  			 * directory mark the inode.
+> >  			 */
+> > -			if (isp->smk_flags & SMK_INODE_CHANGED) {
+> > -				isp->smk_flags &= ~SMK_INODE_CHANGED;
+> > -				rc = __vfs_setxattr(&nop_mnt_idmap, dp, inode,
+> > -					XATTR_NAME_SMACKTRANSMUTE,
+> > -					TRANS_TRUE, TRANS_TRUE_SIZE,
+> > -					0);
+> > -			} else {
+> > -				rc = __vfs_getxattr(dp, inode,
+> > -					XATTR_NAME_SMACKTRANSMUTE, trattr,
+> > -					TRANS_TRUE_SIZE);
+> > -				if (rc >= 0 && strncmp(trattr, TRANS_TRUE,
+> > -						       TRANS_TRUE_SIZE) != 0)
+> > -					rc = -EINVAL;
+> > -			}
+> > +			rc = __vfs_getxattr(dp, inode,
+> > +					    XATTR_NAME_SMACKTRANSMUTE, trattr,
+> > +					    TRANS_TRUE_SIZE);
+> > +			if (rc >= 0 && strncmp(trattr, TRANS_TRUE,
+> > +					       TRANS_TRUE_SIZE) != 0)
+> > +				rc = -EINVAL;
+> >  			if (rc >= 0)
+> >  				transflag = SMK_INODE_TRANSMUTE;
+> >  		}
 > 
-> Does that sound reasonable?  If yes, I'd send an update to this patch set which
-> forbids TIOCSTI.
-
-I agree that TIOCSTI is dangerous, but I don't see the rationale to add 
-an exception for this specific IOCTL. I'm sure there are a lot of 
-potentially dangerous IOCTLs out there, but from a kernel point of view, 
-why should Landlock handle this one in a specific way?
-
-Landlock should not define specific policies itself but let users manage 
-that. Landlock should only restrict kernel features that *directly* 
-enable to bypass its own restrictions (e.g. ptrace scope, FS topology 
-changes when FS restrictions are in place).
-
-I think we should instead focus on adding something like a 
-landlock_inode_attr rule type to restrict IOCTLs defined by 
-users/developers, and then extend it to make it possible to restrict 
-already opened FDs as well.
-
-> 
-> Thanks,
-> —Günther
 > 
