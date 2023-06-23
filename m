@@ -2,123 +2,179 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 985A7C001B3
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 15:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7103EB64DD
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 15:20:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232530AbjFWPMJ (ORCPT
+        id S232023AbjFWPUj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Jun 2023 11:12:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58262 "EHLO
+        Fri, 23 Jun 2023 11:20:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232538AbjFWPLZ (ORCPT
+        with ESMTP id S232747AbjFWPUb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Jun 2023 11:11:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14215270E
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 08:11:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Fri, 23 Jun 2023 11:20:31 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 238FC10C1;
+        Fri, 23 Jun 2023 08:20:29 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id D24151F45F;
+        Fri, 23 Jun 2023 15:20:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1687533627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1mTZQB6E8gpW9xyv3IdX7kwRMApo1npl8Ta69cylcgI=;
+        b=cw+6g9R2o/Umv74/BGjs0HZFU73NXkDTjRhAwElwD9yLjkG2loVWkX98zsq+Jw9f7GWEbv
+        1LhcZAdPyuPlH6OaETf856CLkRN01mJSpFOO8X/jovaGWHnPkt2fDQYbq4M0K8/oavd3Ir
+        XsYDO2FS6i0HJDFn6EWyGK6+OhLducU=
+Received: from suse.cz (pmladek.udp.ovpn2.prg.suse.de [10.100.201.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 11E0B61A98
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 15:10:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF50CC433BB;
-        Fri, 23 Jun 2023 15:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687533055;
-        bh=QBE/kH9Q80W4WJgITS8+fO0pjyCVTYSsyr+2jnkMnpU=;
-        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-        b=ZVPko1/injThMSOKx4LYVq42w7G4RXDkA3YrJ69K9WBDDKioNw+ni3s+kEsKQWBPR
-         17WtdzZsKuiYv/zwoFPNpgOd3QG0o5919aJBYDcxivGA1T7NgRbutPsrr2CmqT1xqX
-         T+6U9Ei82rc/YvYfcYniL+gPOxcFDZ7sebOqYTDP1s58gH53bH/kkJJjup4Qr/IGCQ
-         kAehtGjo7v5wg6kXkgajRN2aqPmhJRoJ833Dn+EcOk/lpLQnMkhf7qSe0MZ78JR2+S
-         xYyctu9KMab4P3CMdY5upz8uHxNTHKBHe5JrF7jvFrXw6aSnM+nEThUNKnZKTV0prb
-         lKwcsihgjv/qA==
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 8D9C327C005B;
-        Fri, 23 Jun 2023 11:10:53 -0400 (EDT)
-Received: from imap48 ([10.202.2.98])
-  by compute3.internal (MEProxy); Fri, 23 Jun 2023 11:10:53 -0400
-X-ME-Sender: <xms:_bWVZBDpLFg3qKAQdsRgRE2kSK41_YU9fsMuDt-PQOto4yDZBiRxvg>
-    <xme:_bWVZPi3OeePMktmI2FFLOMFy0x0rT4MiEYubXA737O3J-2O-g8tEm1CqYKLQEU7h
-    7g_8BQNnW9OnHyp5y8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeeggedgkeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehn
-    ugihucfnuhhtohhmihhrshhkihdfuceolhhuthhosehkvghrnhgvlhdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepvdfhuedvtdfhudffhfekkefftefghfeltdelgeffteehueegjeff
-    udehgfetiefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homheprghnugihodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduudeiudek
-    heeifedvqddvieefudeiiedtkedqlhhuthhopeepkhgvrhhnvghlrdhorhhgsehlihhnuh
-    igrdhluhhtohdruhhs
-X-ME-Proxy: <xmx:_bWVZMl83O41PIIoJ_aQGs4GF8z0dEzLtYzo3VTqa9bUEZoeheS0Ug>
-    <xmx:_bWVZLwjLWjaxFmsj-1i4MdnZW1bi3yQugItIDfdsjjLI6ZMbIK-Cg>
-    <xmx:_bWVZGTj5h6QEngz8WgDmCzIOMH73u_wrIw7xj3iqfEsnh5U9UOHcQ>
-    <xmx:_bWVZDQw4XdIDDmcQWLpETLFOofa1qvqop1hvO_eq2KbxFMAqD__OA>
-Feedback-ID: ieff94742:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id F34CE31A0063; Fri, 23 Jun 2023 11:10:52 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-499-gf27bbf33e2-fm-20230619.001-gf27bbf33
-Mime-Version: 1.0
-Message-Id: <9b0e9227-4cf4-4acb-ba88-52f65b099709@app.fastmail.com>
-In-Reply-To: <82b79e57-a0ad-4559-abc9-858e0f51fbba@app.fastmail.com>
-References: <20230607235352.1723243-1-andrii@kernel.org>
- <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
- <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
- <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com>
- <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
- <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com>
- <bc4f99af-0c46-49b2-9f2d-9a01e6a03af3@app.fastmail.com>
- <5a75d1f0-4ed9-399c-4851-2df0755de9b5@redhat.com>
- <CAEf4Bza9GvJ0vw2-0M8GKSXmOQ8VQCmeqEiQpMuZBjwqpA03vw@mail.gmail.com>
- <82b79e57-a0ad-4559-abc9-858e0f51fbba@app.fastmail.com>
-Date:   Fri, 23 Jun 2023 08:10:32 -0700
-From:   "Andy Lutomirski" <luto@kernel.org>
-To:     "Andrii Nakryiko" <andrii.nakryiko@gmail.com>,
-        "Maryam Tahhan" <mtahhan@redhat.com>
-Cc:     "Andrii Nakryiko" <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        "Kees Cook" <keescook@chromium.org>,
-        "Christian Brauner" <brauner@kernel.org>, lennart@poettering.net,
-        cyphar@cyphar.com, kernel-team@meta.com
-Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-Content-Type: text/plain
+        by relay2.suse.de (Postfix) with ESMTPS id 1AE602C141;
+        Fri, 23 Jun 2023 15:20:22 +0000 (UTC)
+Date:   Fri, 23 Jun 2023 17:20:17 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Joel Granados <j.granados@samsung.com>
+Cc:     Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        mcgrof@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <muchun.song@linux.dev>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        John Ogness <john.ogness@linutronix.de>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, bpf@vger.kernel.org, kexec@lists.infradead.org,
+        linux-trace-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 08/11] sysctl: Add size to register_sysctl_init
+Message-ID: <ZJW4MdIvrWjbKtVy@alley>
+References: <20230621091000.424843-1-j.granados@samsung.com>
+ <CGME20230621091037eucas1p188e11d8064526a5a0549217d5a419647@eucas1p1.samsung.com>
+ <20230621091000.424843-9-j.granados@samsung.com>
+ <2023062150-outbound-quiet-2609@gregkh>
+ <20230621131552.pqsordxcjmiopciq@localhost>
+ <fc37eccc-b9b3-d888-6b57-78cd61986a11@kernel.org>
+ <20230622140021.g3odhui75ybwuai5@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230622140021.g3odhui75ybwuai5@localhost>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu 2023-06-22 16:00:21, Joel Granados wrote:
+> On Thu, Jun 22, 2023 at 06:21:48AM +0200, Jiri Slaby wrote:
+> > On 21. 06. 23, 15:15, Joel Granados wrote:
+> > > On Wed, Jun 21, 2023 at 12:47:58PM +0200, Greg Kroah-Hartman wrote:
+> > > > On Wed, Jun 21, 2023 at 11:09:57AM +0200, Joel Granados wrote:
+> > > > >   static int __init random_sysctls_init(void)
+> > > > >   {
+> > > > > -	register_sysctl_init("kernel/random", random_table);
+> > > > > +	register_sysctl_init("kernel/random", random_table,
+> > > > > +			     ARRAY_SIZE(random_table));
+> > > > 
+> > > > As mentioned before, why not just do:
+> > > > 
+> > > > #define register_sysctl_init(string, table)	\
+> > > > 	__register_sysctl_init(string, table, ARRAY_SIZE(table);
+> > > Answered you in the original mail where you suggested it.
+> > 
+> > I am curious what that was, do you have a link?
+> of course. I think you will find it here https://lore.kernel.org/all/20230621123816.ufqbob6qthz4hujx@localhost/
+
+Let me to copy the answer here:
+
+<paste>
+I considered this at the outset, but it will not work with callers that
+use a pointer instead of the actual array.
+Additionally, we would not avoid big commits as we would have to go
+looking in all the files where register is called directly or indirectly
+and make sure the logic is sound.
+</paste>
+
+For the callers using a pointer. A solution would be to create another
+wrapper which would take the array size, e.g.
+
+#define register_sysctl_init_limited(string, table, size)	\
+	__register_sysctl_init(string, table, size);
 
 
-On Thu, Jun 22, 2023, at 6:02 PM, Andy Lutomirski wrote:
-> On Thu, Jun 22, 2023, at 11:40 AM, Andrii Nakryiko wrote:
->
->> Hopefully you can see where I'm going with this. And this is just one
->> random tiny example. We can think up tons of other cases to prove BPF
->> is not isolatable to any sort of "container".
->
-> No.  You have not come up with an example of why BPF is not isolatable 
-> to a container.  You have come up with an example of why binding to a 
-> sched_switch raw tracepoint does not make sense in a container without 
-> additional mechanisms to give it well defined functionality and 
-> appropriate security.
+And ARRAY_SIZE() is defined in include/linux/kernel.h as:
 
-Thinking about this some more:
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
 
-Suppose the goal is to allow a workload in a container to monitor itself by attaching to a tracepoint (something in the scheduler, for example).  The workload is in the container.  The tracepoint is global.  Kernel memory is global unless something that is trusted and understands the containers is doing the reading.  And proxying BPF is a mess.
+It will create a compiler error when either an array[] or *array is
+passed.
 
-So here are a couple of possible solutions:
+When using this:
 
-(a) Improve BPF maps a bit so that BPF maps work well in containers.  It should be possible to create a map and share it (the file descriptor!) between the outside and the container without running into various snags.  (IIRC my patch series was a decent step in this direction,)  Now load the BPF program and attach it to the tracepoint outside the container but have it write its gathered data to the map that's in the container.  So you end up with a daemon outside the container that gets a request like "help me monitor such-and-such by running BPF program such-and-such (where the BPF program code presumably comes from a library outside the container", and the daemon arranges for the requesting container to have access to the map it needs to get the data.
+1. The compiler will tell us where the other wrapper is needed.
 
-(b) Make a way to pass a pre-approved program into a container.  So a daemon outside loads the program and does some new magic to say "make an fd that can be used to attach this particular program to this particular tracepoint" and pass that into the container.
+2. Some locations might need the @size parameter even when a static
+   array is passed. For example, neigh_sysctl_register() terminates
+   the array early.
 
-I think (a) is better.  In particular, if you have a workload with many containers, and they all want to monitor the same tracepoint as it relates to their container, you will get much better performance if a single BPF program does the monitoring and sends the data out to each container as needed instead of having one copy of the program per container.
+   But this will work when __register_sysctl_init() supports
+   both ways.I mean that it will stop either on @size or empty
+   element, as discussed in the other subthread.
 
-For what it's worth, BPF tokens seem like they'll have the same performance problem -- without coordination, you can end up with N containers generating N hooks all targeting the same global resource, resulting in overhead that scales linearly with the number of containers.
+   This should be caught when the final "empty" is removed
+   from the particular caller.
 
-And, again, I'm not an XDP expert, but if you have one NIC, and you attach N XDP programs to it, and each one is inspecting packets and sending some to one particular container's AF_XDP socket, you are not going to get good performance.  You want *one* XDP program fanning the packets out to the relevant containers.
-
-If this is hard right now, perhaps you could add new kernel mechanisms as needed to improve the situation.
-
---Andy
+Best Regards,
+Petr
