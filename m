@@ -2,220 +2,190 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7608DC0015E
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 19:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2117BEB64D7
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Jun 2023 22:18:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231714AbjFWTct (ORCPT
+        id S230237AbjFWWS0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Jun 2023 15:32:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33206 "EHLO
+        Fri, 23 Jun 2023 18:18:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231742AbjFWTcr (ORCPT
+        with ESMTP id S229543AbjFWWSZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Jun 2023 15:32:47 -0400
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C51192711;
-        Fri, 23 Jun 2023 12:32:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1687548766; x=1719084766;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=MXGjsQVBbUEfugTyhqtLOg34xJrVsEnXiFXbx+PaHRY=;
-  b=UeBmqFaRBZo0LDtqdhDP+Lx7Igt3lPCiaclNEshFzFYa8pq9OAvmbg5x
-   BNrQDx/bcCJCOm36lZsIE7QQCmf9uNwu01CVUwrsnGDUxIMzt3bcNxYsy
-   DJhuAbGuZbBKHzzhqg0Y+zHXN6qCFCy82o2PrKhTb32avjKZPVAr5tGzh
-   A=;
-X-IronPort-AV: E=Sophos;i="6.01,152,1684800000"; 
-   d="scan'208";a="222788639"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO email-inbound-relay-iad-1e-m6i4x-a65ebc6e.us-east-1.amazon.com) ([10.25.36.214])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2023 19:32:42 +0000
-Received: from EX19MTAUWA002.ant.amazon.com (iad12-ws-svc-p26-lb9-vlan3.iad.amazon.com [10.40.163.38])
-        by email-inbound-relay-iad-1e-m6i4x-a65ebc6e.us-east-1.amazon.com (Postfix) with ESMTPS id E6DAB66811;
-        Fri, 23 Jun 2023 19:32:35 +0000 (UTC)
-Received: from EX19D028UWA002.ant.amazon.com (10.13.138.248) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 23 Jun 2023 19:32:35 +0000
-Received: from uda95858fd22f53.ant.amazon.com (10.88.166.238) by
- EX19D028UWA002.ant.amazon.com (10.13.138.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 23 Jun 2023 19:32:34 +0000
-From:   Mengchi Cheng <mengcc@amazon.com>
-To:     <roberto.sassu@huaweicloud.com>
-CC:     <bpf@vger.kernel.org>, <casey@schaufler-ca.com>,
-        <dmitry.kasatkin@gmail.com>, <eparis@parisplace.org>,
-        <jmorris@namei.org>, <kamatam@amazon.com>, <keescook@chromium.org>,
-        <kpsingh@kernel.org>, <linux-integrity@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-unionfs@vger.kernel.org>, <mengcc@amazon.com>,
-        <miklos@szeredi.hu>, <nicolas.bouchinet@clip-os.org>,
-        <paul@paul-moore.com>, <roberto.sassu@huawei.com>,
-        <selinux@vger.kernel.org>, <serge@hallyn.com>,
-        <stephen.smalley.work@gmail.com>, <yoonjaeh@amazon.com>,
-        <zohar@linux.ibm.com>
-Subject: Re: [PATCH v11 2/4] smack: Set the SMACK64TRANSMUTE xattr in smack_inode_init_security()
-Date:   Fri, 23 Jun 2023 12:32:22 -0700
-Message-ID: <20230623193222.2326429-1-mengcc@amazon.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <9f4b7bef5d090da9de50ed1aa1e103abc19b125f.camel@huaweicloud.com>
-References: <9f4b7bef5d090da9de50ed1aa1e103abc19b125f.camel@huaweicloud.com>
+        Fri, 23 Jun 2023 18:18:25 -0400
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E5B6172C;
+        Fri, 23 Jun 2023 15:18:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+        bh=XtULKguSVpdmkKV3+iJ4SzMacgpYrSQRmcI9xhs0U2k=; b=cNtnaZ1JBPeKNPmADijtyiZzmC
+        l9HdzSRROXNXYT23UXuCv6B8/eSCxGs1XMudrtYV8qJOyQwn7Fso5j06z16v/UyhpKA+06cn14IHE
+        3q2IwtuQ+55oB/3XzZQ66yuDHCnY57ZJ4WdfPR3ur0XUc2Xr5614iNKsPVHlCXnRuSJz+/1uzJNbh
+        suCx2kfQhXUAX+f6cwxDvWdYHHfu+y5iR1mPP9rDVrI16CLmqxGsrh/RVQ0uq2F+7SviYOMcCZfzS
+        csU3PjHha2Rh46KP4KCir31opF2S4v5ijbU+B4Di6rYkSbAS5BLIypBMQamYJ8RtVjmduqEUiw03e
+        GeXpt/gA==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+        by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1qCp6h-000Cfv-Db; Sat, 24 Jun 2023 00:18:19 +0200
+Received: from [85.1.206.226] (helo=linux.home)
+        by sslproxy01.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1qCp6g-000TlB-W1; Sat, 24 Jun 2023 00:18:19 +0200
+Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Djalal Harouni <tixxdz@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        lennart@poettering.net, cyphar@cyphar.com, luto@kernel.org,
+        kernel-team@meta.com, Sargun Dhillon <sargun@sargun.me>
+References: <20230607235352.1723243-1-andrii@kernel.org>
+ <CAEiveUdNrHfVXzF_6ogChifKyje3kA07pd8mpP+s24AEbKD7Cg@mail.gmail.com>
+ <CAEf4BzaDDqfODPS9MM5twXiXdDCAMs2U2-XK+gGPuSpnGFh=pQ@mail.gmail.com>
+ <CAEiveUeDLr00SjyU=SMSc4XbHSA6LTn4U2DHr12760rbo5WqSw@mail.gmail.com>
+ <CAEf4BzaQSKBJ_+8HaHdBHa9_guL_QCVgHZHb6jpCqv6CboCniQ@mail.gmail.com>
+ <CAEiveUdU7On9c27iek2rRmqSLFTKduNUtjEAD0iaCPQ4wZoH6Q@mail.gmail.com>
+ <20230614-geruch-verzug-db3903a52383@brauner>
+ <CAEf4BzawogpzENKC=KYk+mvc375ZF8Rs0gnu5grOywUsM0AV+Q@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <8f291af1-a91f-4c6f-ee19-1998cdb7ce1d@iogearbox.net>
+Date:   Sat, 24 Jun 2023 00:18:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <CAEf4BzawogpzENKC=KYk+mvc375ZF8Rs0gnu5grOywUsM0AV+Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.88.166.238]
-X-ClientProxiedBy: EX19D044UWA001.ant.amazon.com (10.13.139.100) To
- EX19D028UWA002.ant.amazon.com (10.13.138.248)
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.8/26948/Fri Jun 23 09:28:15 2023)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-06-05 08:38:29 +0000, Roberto Sassu wrote:
->
-> On Sat, 2023-06-03 at 21:15 +0200, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > With the newly added ability of LSMs to supply multiple xattrs, set
-> > SMACK64TRASMUTE in smack_inode_init_security(), instead of d_instantiate().
-> > Do it by incrementing SMACK_INODE_INIT_XATTRS to 2 and by calling
-> > lsm_get_xattr_slot() a second time, if the transmuting conditions are met.
-> > 
-> > The LSM infrastructure passes all xattrs provided by LSMs to the
-> > filesystems through the initxattrs() callback, so that filesystems can
-> > store xattrs in the disk.
-> > 
-> > After the change, the SMK_INODE_TRANSMUTE inode flag is always set by
-> > d_instantiate() after fetching SMACK64TRANSMUTE from the disk. Before it
-> > was done by smack_inode_post_setxattr() as result of the __vfs_setxattr()
-> > call.
-> > 
-> > Removing __vfs_setxattr() also prevents invalidating the EVM HMAC, by
-> > adding a new xattr without checking and updating the existing HMAC.
+On 6/16/23 12:48 AM, Andrii Nakryiko wrote:
+> On Wed, Jun 14, 2023 at 2:39 AM Christian Brauner <brauner@kernel.org> wrote:
+>> On Wed, Jun 14, 2023 at 02:23:02AM +0200, Djalal Harouni wrote:
+>>> On Tue, Jun 13, 2023 at 12:27 AM Andrii Nakryiko
+>>> <andrii.nakryiko@gmail.com> wrote:
+>>>> On Mon, Jun 12, 2023 at 5:02 AM Djalal Harouni <tixxdz@gmail.com> wrote:
+>>>>> On Sat, Jun 10, 2023 at 12:57 AM Andrii Nakryiko
+>>>>> <andrii.nakryiko@gmail.com> wrote:
+>>>>>> On Fri, Jun 9, 2023 at 3:30 PM Djalal Harouni <tixxdz@gmail.com> wrote:
+>>>>>>>
+>>>>>>> Hi Andrii,
+>>>>>>>
+>>>>>>> On Thu, Jun 8, 2023 at 1:54 AM Andrii Nakryiko <andrii@kernel.org> wrote:
+>>>>>>>>
+>>>>>>>> ...
+>>>>>>>> creating new BPF objects like BPF programs, BPF maps, etc.
+>>>>>>>
+>>>>>>> Is there a reason for coupling this only with the userns?
+>>>>>>
+>>>>>> There is no coupling. Without userns it is at least possible to grant
+>>>>>> CAP_BPF and other capabilities from init ns. With user namespace that
+>>>>>> becomes impossible.
+>>>>>
+>>>>> But these are not the same: delegate full cap vs delegate an fd mask?
+>>>>
+>>>> What FD mask are we talking about here? I don't recall us talking
+>>>> about any FD masks, so this one is a bit confusing without more
+>>>> context.
+>>>
+>>> Ah err, sorry yes referring to fd token (which I assumed is a mask of
+>>> allowed operations or something like that).
+>>>
+>>> So I want the possibility to delegate the fd token in the init userns.
+>>>
+>>>>>
+>>>>> One can argue unprivileged in init userns is the same privileged in
+>>>>> nested userns
+>>>>> Getting to delegate fd in init userns, then in nested ones seems logical...
+>>>>
+>>>> Again, sorry, I'm not following. Can you please elaborate what you mean?
+>>>
+>>> I mean can we use the fd token in the init user namespace too? not
+>>> only in the nested user namespaces but in the first one? Sorry I
+>>> didn't check the code.
+>>>
 > 
-> Hi Mengchi
+> [...]
 > 
-> could you please redo your tests with this patch set applied?
+>>>
+>>>>> Having the fd or "token" that gives access rights pinned in two
+>>>>> separate bpffs mounts seems too much, it crosses namespaces (mount,
+>>>>> userns etc), environments setup by privileged...
+>>>>
+>>>> See above, there is nothing namespaceable about BPF itself, and BPF
+>>>> token as well. If some production setup benefits from pinning one BPF
+>>>> token in multiple places, I don't see the problem with that.
+>>>>
+>>>>>
+>>>>> I would just make it per bpffs mount and that's it, nothing more. If a
+>>>>> program wants to bind mount it somewhere else then it's not a bpf
+>>>>> problem.
+>>>>
+>>>> And if some application wants to pin BPF token, why would that be BPF
+>>>> subsystem's problem as well?
+>>>
+>>> The credentials, capabilities, keyring, different namespaces, etc are
+>>> all attached to the owning user namespace, if the BPF subsystem goes
+>>> its own way and creates a token to split up CAP_BPF without following
+>>> that model, then it's definitely a BPF subsystem problem...  I don't
+>>> recommend that.
+>>>
+>>> Feels it's going more of a system-wide approach opening BPF
+>>> functionality where ultimately it clashes with the argument: delegate
+>>> a subset of BPF functionality to a *trusted* unprivileged application.
+>>> My reading of delegation is within a container/service hierarchy
+>>> nothing more.
+>>
+>> You're making the exact arguments that Lennart, Aleksa, and I have been
+>> making in the LSFMM presentation about this topic. It's even recorded:
 > 
-> https://lore.kernel.org/linux-integrity/20230603191518.1397490-1-roberto.sassu@huaweicloud.com/
-> 
-> You need:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/log/?h=next
-> 
-> https://github.com/cschaufler/smack-next/commits/next
-> 
-> Thanks
-> 
-> Roberto
+> Alright, so (I think) I get a pretty good feel now for what the main
+> concerns are, and why people are trying to push this to be an FS. And
+> it's not so much that BPF token grants bpf() syscall usage to unpriv
+> (but trusted) workloads or that BPF itself is not namespaceable. The
+> main worry is that BPF token, once issues, could be
+> illegally/uncontrollably passed outside of container, intentionally or
+> not. And by having this association with mount namespace (through BPF
+> FS) we automatically limit the sharing to only contain that has access
+> to that BPF FS.
 
-Sorry for the later reply. It turned out lsm.git repo needs your previous
-two overlay fs fixes before applying these four patches.
-With v12 I did not see the issue I reported anymore.
++1
 
-Best,
-Mengchi
+> So I agree that it makes sense to have this mount namespace
+> association, but I also would like to keep BPF token to be a separate
+> entity from BPF FS itself, and have the ability to have multiple
+> different BPF tokens exposed in a single BPF FS instance. I think the
+> latter is important.
+> 
+> So how about this slight modification: when a BPF token is created
+> using BPF_TOKEN_CREATE command, the user has to provide an FD for
+> "associated" BPF FS instance (superblock). What that does is allows
+> BPF token to be created with BPF FS and/or mount namespace association
+> set in stone. After that BPF token can only be pinned in that BPF FS
+> instance and cannot leave the boundaries of that mount namespace
+> (specific details to be worked out, this is new area for me, so I'm
+> sorry if I'm missing nuances).
 
-> 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  security/smack/smack.h     |  2 +-
-> >  security/smack/smack_lsm.c | 43 +++++++++++++++++++++++---------------
-> >  2 files changed, 27 insertions(+), 18 deletions(-)
-> > 
-> > diff --git a/security/smack/smack.h b/security/smack/smack.h
-> > index aa15ff56ed6..041688e5a77 100644
-> > --- a/security/smack/smack.h
-> > +++ b/security/smack/smack.h
-> > @@ -128,7 +128,7 @@ struct task_smack {
-> >  
-> >  #define	SMK_INODE_INSTANT	0x01	/* inode is instantiated */
-> >  #define	SMK_INODE_TRANSMUTE	0x02	/* directory is transmuting */
-> > -#define	SMK_INODE_CHANGED	0x04	/* smack was transmuted */
-> > +#define	SMK_INODE_CHANGED	0x04	/* smack was transmuted (unused) */
-> >  #define	SMK_INODE_IMPURE	0x08	/* involved in an impure transaction */
-> >  
-> >  /*
-> > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> > index a1c30275692..b67d901ee74 100644
-> > --- a/security/smack/smack_lsm.c
-> > +++ b/security/smack/smack_lsm.c
-> > @@ -52,7 +52,14 @@
-> >  #define SMK_RECEIVING	1
-> >  #define SMK_SENDING	2
-> >  
-> > -#define SMACK_INODE_INIT_XATTRS 1
-> > +/*
-> > + * Smack uses multiple xattrs.
-> > + * SMACK64 - for access control,
-> > + * SMACK64TRANSMUTE - label initialization,
-> > + * Not saved on files - SMACK64IPIN and SMACK64IPOUT,
-> > + * Must be set explicitly - SMACK64EXEC and SMACK64MMAP
-> > + */
-> > +#define SMACK_INODE_INIT_XATTRS 2
-> >  
-> >  #ifdef SMACK_IPV6_PORT_LABELING
-> >  static DEFINE_MUTEX(smack_ipv6_lock);
-> > @@ -935,7 +942,6 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
-> >  				     struct xattr *xattrs, int *xattr_count)
-> >  {
-> >  	struct task_smack *tsp = smack_cred(current_cred());
-> > -	struct inode_smack *issp = smack_inode(inode);
-> >  	struct smack_known *skp = smk_of_task(tsp);
-> >  	struct smack_known *isp = smk_of_inode(inode);
-> >  	struct smack_known *dsp = smk_of_inode(dir);
-> > @@ -963,6 +969,8 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
-> >  		if ((tsp->smk_task == tsp->smk_transmuted) ||
-> >  		    (may > 0 && ((may & MAY_TRANSMUTE) != 0) &&
-> >  		     smk_inode_transmutable(dir))) {
-> > +			struct xattr *xattr_transmute;
-> > +
-> >  			/*
-> >  			 * The caller of smack_dentry_create_files_as()
-> >  			 * should have overridden the current cred, so the
-> > @@ -971,7 +979,16 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
-> >  			 */
-> >  			if (tsp->smk_task != tsp->smk_transmuted)
-> >  				isp = dsp;
-> > -			issp->smk_flags |= SMK_INODE_CHANGED;
-> > +			xattr_transmute = lsm_get_xattr_slot(xattrs, xattr_count);
-> > +			if (xattr_transmute) {
-> > +				xattr_transmute->value = kmemdup(TRANS_TRUE,
-> > +						TRANS_TRUE_SIZE, GFP_NOFS);
-> > +				if (xattr_transmute->value == NULL)
-> > +					return -ENOMEM;
-> > +
-> > +				xattr_transmute->value_len = TRANS_TRUE_SIZE;
-> > +				xattr_transmute->name = XATTR_SMACK_TRANSMUTE;
-> > +			}
-> >  		}
-> >  
-> >  		xattr->value = kstrdup(isp->smk_known, GFP_NOFS);
-> > @@ -3518,20 +3535,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
-> >  			 * If there is a transmute attribute on the
-> >  			 * directory mark the inode.
-> >  			 */
-> > -			if (isp->smk_flags & SMK_INODE_CHANGED) {
-> > -				isp->smk_flags &= ~SMK_INODE_CHANGED;
-> > -				rc = __vfs_setxattr(&nop_mnt_idmap, dp, inode,
-> > -					XATTR_NAME_SMACKTRANSMUTE,
-> > -					TRANS_TRUE, TRANS_TRUE_SIZE,
-> > -					0);
-> > -			} else {
-> > -				rc = __vfs_getxattr(dp, inode,
-> > -					XATTR_NAME_SMACKTRANSMUTE, trattr,
-> > -					TRANS_TRUE_SIZE);
-> > -				if (rc >= 0 && strncmp(trattr, TRANS_TRUE,
-> > -						       TRANS_TRUE_SIZE) != 0)
-> > -					rc = -EINVAL;
-> > -			}
-> > +			rc = __vfs_getxattr(dp, inode,
-> > +					    XATTR_NAME_SMACKTRANSMUTE, trattr,
-> > +					    TRANS_TRUE_SIZE);
-> > +			if (rc >= 0 && strncmp(trattr, TRANS_TRUE,
-> > +					       TRANS_TRUE_SIZE) != 0)
-> > +				rc = -EINVAL;
-> >  			if (rc >= 0)
-> >  				transflag = SMK_INODE_TRANSMUTE;
-> >  		}
-> 
-> 
+Given bpffs is not a singleton and there can be multiple bpffs instances
+in a container, couldn't we make the token a special bpffs mount/mode?
+Something like single .token file in that mount (for example) which can
+be opened and the fd then passed along for prog/map creation? And given
+the multiple mounts, this also allows potentially for multiple tokens?
+In other words, this is already set up by the container manager when it
+sets up mounts rather than later, and the regular bpffs instance is sth
+separate from all that. Meaning, in your container you get the usual
+bpffs instance and then one or more special bpffs instances as tokens
+at different paths (and in future they could unlock different subset of
+bpf functionality for example).
+
+Thanks,
+Daniel
