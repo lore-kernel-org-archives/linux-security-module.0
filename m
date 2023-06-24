@@ -2,156 +2,251 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76667EB64DD
-	for <linux-security-module@archiver.kernel.org>; Sat, 24 Jun 2023 01:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A3EEB64DA
+	for <linux-security-module@archiver.kernel.org>; Sat, 24 Jun 2023 14:00:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231784AbjFXBmk (ORCPT
+        id S231804AbjFXOAO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Jun 2023 21:42:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59430 "EHLO
+        Sat, 24 Jun 2023 10:00:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230478AbjFXBmj (ORCPT
+        with ESMTP id S230461AbjFXOAN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Jun 2023 21:42:39 -0400
-Received: from sonic303-28.consmr.mail.ne1.yahoo.com (sonic303-28.consmr.mail.ne1.yahoo.com [66.163.188.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D39532728
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Jun 2023 18:42:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1687570957; bh=HkrT9Fdmy+qWou3tHhwSEBWddayVUBpp9wbKnyKY8fU=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=USWWTjdV3jh4b9pQettCYE2n5Og2UfFDStah6fb9LnKMZNqF2H+dXlbfMqR3bm1dBPl2ebvs6Hh2UKsLdwHp1GjPq63fGwFBmobZveEDfJcxZJAZAtMgYBsUtn2N5t8b2YWXDXtP6OTvIaP1ZYIz2lzKG4C07IErYvhW7ZMt7W1Hp6QInWAI5pRrzurrXDFMPAnVgzCgkIUE2WqmjGp7chB2Q0/SXJGOThgmKjnDHz90ixv3zgHubGn8TCcBa+yHFxl7vNr+47rORbUqpY7ksSpZtNu3kwTl0yZ79BnaTcMSEWZDPiGRXLya3gl27tAyagf6gaDSRj4LnKMvcqJmQQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1687570957; bh=CeLCKH16mMqssmyEmAog7k2MNIax60ZTu+WhbtYdBAL=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=HPI+poAHRUtanOx3K6HQUh5qvewgPXOa4HpACZlRhXj18p+wXoeu3ps8E1yINXx0/yseEjsPTrrm7tl2BNdeggiM9d3pYvsztGNGLGS2BQL8eyqbbn9YXzh0WQNfN1Zzzls8MMmKoDujzVc1Tk3mReKpfcOc7F6rfTMxd7YePNxFZdXPbZEbjBzjmYPcD7+kdc1eaQ000V+KPi4NK0Hog/u5m4dcQGA6HLUhGXSCiJKDFjODvBqCFmLn53SkjHmTuzrM6UT43bImewMKMdScVDjDpZY4LGOukhr/u2YCKdxSe3aE1AYRuRjuo+Tqj/XrfWLy/k7OEbrxMO/wTQXVMQ==
-X-YMail-OSG: qW7rQtQVM1n7hsYNKm5Z_VF3GZbIFgBZE5U7QSf.1zruWqhSYFfT8ml5Q0d3fNb
- qJmO0YnXaC5tYNQkyj5..Uaj4hnWk8EEHKIWKYNeq7DwmwWNzMQMmh53jfuoKjozKqRKuSSdgebn
- uMaWeQl_x84e_4jLp93UJJcEkCR60SUz6iiZTo9wlJRZO5KtJe.bEAprtC2UPmG_zo1qZogamjYm
- I5_Mcp5CI3qcOKU3eBrFV9h7W5n46i_SoQRe6Ik5bY2HanPiT35pOKf0PEuXin2IsA5wHTPZUOdP
- f4Td13vBVL73frDYzJ17uQy1GwUP.YEkM6K0ovFMc8.gCwMi9ON5zCjO.vjorb7.8stSWwIQyWJg
- 9HIaI2SCvlEEtBE6_s4KVPWA863pRglQzuwSE.yF1t4EBBp1BeOcHpr6Zcex5Ff_GftGcWq71w56
- rsBE020d7H60fSFEW4GDtrCtluEqzg94oVfIFFhTOS5bAOR6yJL1RC6mLImYzicDAOXYVopeYZVn
- CH64OnXrzE_QejkanhICKRiAH7daJY2Upk1X2fcwKxgOxjsCHLEZXuWwn.G6mbTnh.5QARCThNG7
- mQ_zxA.E_Vqwa6e8NFIGZX7urfLkZ8gkklEKCaL1vQVZpxANxzHBD2nn2R1dk3TEyPc0kHIq_elB
- 82G0eoOQtbiO3jKLaXcWwnNAiDMMg_eLz_K73EPWfdlDpEoZFuENKz_OimAUoz997MUDEUbS8K.Q
- mtzvfQFbT4hYb9UL_pQ8hPpf6vvqz53WU.50aF2eCcUwOwlc7iJ9L9Ht0TUaLLzm_eOFdKPaKBdV
- _FnwaEGJbgkLkEfKv29P0KTIz1nb9mrOQKyO0xqmaGAVzNQEjWEi9sFTRvmL09cqK_kTrJ9nLi1U
- ZonTnCP5LGRsHzLp1.RLwt3d8VZbwYrfx_VI5x5Apxxz.qwDU7fmZC675mrMVPUkyFZ.YJgIEJUZ
- 7f2L05U0l2AtO5mkxVMs_5MzbroyHdl8LEa7RNoyQRvCn8i5nqTRmOFYzTrIBsLaol7Yy_xES4Wn
- ULJITu8_X_VQvX7OzfaWNwb4i1EEJm7Vdq2OHBexBRtJqeO6eXNWfj4RxNT_16DFiCEFN_NXolgT
- Ia5KBcHM8GYowcFjE4277KMOBf1Oyb8zvBJuZzES4QMcrN8LqjAGzWXj2JZqOquD1bsgDcBEcL5k
- trH1GR2GiEKL6.ZAahsOPxUdWqah2j5FygyUKOuSMuLbAzp..PpUANUWD_dxCBsxVyynLKIFoqeq
- 1V9taISaAQN9KwzfWaKypF.mjEZKfDI8voSNN3W5dXTE.6jw7DDzhdBks0.bPNTrjK_ECwdHGHt1
- .T_3zn_6TYjWBjn7p8FltV00icX7_ixda8oLX3VMuf3DwCs9IpUa7nnTrSQiThU_hTlDVeePCAqR
- POe.TEUK2t2AvJNUEl9XyXdbNu77CL6eXuVyEqr576n.TF9tdopNfOmr_YbGp7H8Db4m406EV7O4
- VhwkQd.pJ.1KeW28rRQvnk85QyMoNmAdxbscPf5Rmr.mjqqDatzUEKB.PkOTqQwstVSgbOUtdriR
- 9VhInXUW3GTecIjYOh_FikwokytW4AB7mbX8swjSIMhDHjilPrs6FZNTOFCZB6hPHC_.2opFAjSs
- 8g4k8ApZWGPvwL5KdQaXjOBmHLzTP1eG6RKcozwsumWAMWdmV55Zi5RGu0_JjefyN9HzdYaArHj1
- UzIa6XF1qJlrP_7xZtxrLZA_.CRKdA64JnT7GCLxPpyRjGnB6gsT5595iLW1BmY6H.aJ2BBhg56S
- 976wwazaHHN2ZTM9AxvXadzSEL7..PCbaLqWyLh9QY5x0KyMd5WajJ1qOf1xgb3ALfP1HkPEQDkI
- .paif7kf7NNKeueZEwTCNx1W423V1JH9GIu67IhzjSO9TmrvlJpW3pQT.dhWP9QZduOLEJiM6Ok_
- IS2TXHp94_RhM4F6xYMf7Pmg6FVmgNS9kH0FJIdaZlGOYiBAAG7umC_nVqJ.eE2ZJr6QWWSzljIy
- Sw_t.DXXx9xVjAPaczrWIQ_CF16gtEh9gDwHtYE0oGY53EYeO1.O3S8WJCao1v5jEU1hfsGUj5bG
- GsWYotvzJ6WL5.oC0qTvbj24m5ZPIznSnIH.h5729oHSbATzV7KtOXSO_lolCwtA_oOvbUKTZ4WX
- yXPaIEABfl1KZh8mizgqqzQkGNMm1ieOxcfF3i12Fb4g6zPIG06niCHdFCSGCUCr2auow5msDFE3
- MfbZfbmJnTTQUCVCgfVLpCqOgk3EgXbaIBJFBnKhH8g7ajJt4L8b9ErT2mnkY.f6TZSL_V3weE.O
- vINmoIkDZZ.bn.N2Rrg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: b1e5ffb0-6d22-4ed8-9be6-2d92a064b5c5
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Sat, 24 Jun 2023 01:42:37 +0000
-Received: by hermes--production-bf1-54475bbfff-wwb88 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c7030251031f4739a0ee64d6090003c6;
-          Sat, 24 Jun 2023 01:42:32 +0000 (UTC)
-Message-ID: <55ffce53-077c-1766-af83-594b788dbd99@schaufler-ca.com>
-Date:   Fri, 23 Jun 2023 18:42:28 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v11 00/11] LSM: Three basic syscalls
-Content-Language: en-US
-To:     Jay Freyensee <why2jjj.linux@gmail.com>, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20230616165055.4705-1-casey.ref@schaufler-ca.com>
- <20230616165055.4705-1-casey@schaufler-ca.com>
- <403108b1-5600-bb5e-a0ad-6f802b4b296f@gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <403108b1-5600-bb5e-a0ad-6f802b4b296f@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21557 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+        Sat, 24 Jun 2023 10:00:13 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C80579D
+        for <linux-security-module@vger.kernel.org>; Sat, 24 Jun 2023 07:00:10 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4F614603F6
+        for <linux-security-module@vger.kernel.org>; Sat, 24 Jun 2023 14:00:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AA63C433C0;
+        Sat, 24 Jun 2023 14:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687615209;
+        bh=YTgGwjlRROUEiwgL3LEzShyv2rN/A0tvlo3LJxPJgCY=;
+        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
+        b=tgihjA2YblyCE6CCHd5Wj+LusbWgBOOOUI6qVLpJGzKq6RWuOVdr6NqKqprcwLyz7
+         KfeG+zTancWoiH5sBp8itOcuYnBpCg8JOiZxjjnVtU9Q+wgJxexfj7db+Kb6awQlub
+         h3+ybvgZiI25YBKDg6CxvBzYPRLNoBbE2luqSu7WGkD+eLl+K79dxKM+KFNsjD+XrD
+         lhIn6DfMhUZQc6COKw0LDZscITXC1LDkt9Qd7CnivJ/VLvnZBXlWiEhKVkC6AzHoDX
+         gf+Ey4R95Oa3pNkX+5Xf4JDiGLrAkuc7B7kEjbedoHCdW2vPmxPcXWtLDwvu5BxDPu
+         7ZJKGfU3usSSA==
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 0F68227C0054;
+        Sat, 24 Jun 2023 10:00:08 -0400 (EDT)
+Received: from imap48 ([10.202.2.98])
+  by compute3.internal (MEProxy); Sat, 24 Jun 2023 10:00:08 -0400
+X-ME-Sender: <xms:5_aWZF2OgP91lIkC2ujz6GWwNo_7ibPyYqHzBV-sil_r_0PXv0OuZw>
+    <xme:5_aWZMFHVnVys-ce5A51GLueqOUNUO7_vaGbepyLGfPChAc1uq4oQVlQaecH3h3sv
+    RAxiHWU-xO4DHBrbqI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeegjedgjedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    nhguhicunfhuthhomhhirhhskhhifdcuoehluhhtoheskhgvrhhnvghlrdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpeefgefghfevvdehgeeuteelvdehkeehtdefhfdukedufeehueel
+    geethffhiedtjeenucffohhmrghinhepshhighhplhgrnhdrohhrghenucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhguhidomhgvshhmthhp
+    rghuthhhphgvrhhsohhnrghlihhthidqudduiedukeehieefvddqvdeifeduieeitdekqd
+    hluhhtoheppehkvghrnhgvlhdrohhrgheslhhinhhugidrlhhuthhordhush
+X-ME-Proxy: <xmx:5_aWZF5LgPVdM1Xo6t38Pf3G17vr6GcITEltZyk61IpZ6cIBVqC5yA>
+    <xmx:5_aWZC334Q518tPzVPQ1ekkpgLyozE89iaqZYS-XZNZuVZjpsTfX8Q>
+    <xmx:5_aWZIFwCHrqLSqNOY_JQ3_ts93x_8_gYXiysh23dqiZRItBjMZJxg>
+    <xmx:6PaWZGbHcPTtI8lFB_x3KrUGuFXu6UpPVFjJthjdMFB3stoxwAr3MA>
+Feedback-ID: ieff94742:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 61BF631A0063; Sat, 24 Jun 2023 10:00:07 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-499-gf27bbf33e2-fm-20230619.001-gf27bbf33
+Mime-Version: 1.0
+Message-Id: <fe47aeb6-dae8-43a6-bcb0-ada2ebf62e08@app.fastmail.com>
+In-Reply-To: <173f0af7-e6e1-f4b7-e0a6-a91b7a4da5d7@iogearbox.net>
+References: <20230607235352.1723243-1-andrii@kernel.org>
+ <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
+ <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
+ <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com>
+ <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
+ <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com>
+ <bc4f99af-0c46-49b2-9f2d-9a01e6a03af3@app.fastmail.com>
+ <5a75d1f0-4ed9-399c-4851-2df0755de9b5@redhat.com>
+ <CAEf4Bza9GvJ0vw2-0M8GKSXmOQ8VQCmeqEiQpMuZBjwqpA03vw@mail.gmail.com>
+ <82b79e57-a0ad-4559-abc9-858e0f51fbba@app.fastmail.com>
+ <9b0e9227-4cf4-4acb-ba88-52f65b099709@app.fastmail.com>
+ <173f0af7-e6e1-f4b7-e0a6-a91b7a4da5d7@iogearbox.net>
+Date:   Sat, 24 Jun 2023 06:59:46 -0700
+From:   "Andy Lutomirski" <luto@kernel.org>
+To:     "Daniel Borkmann" <daniel@iogearbox.net>,
+        "Andrii Nakryiko" <andrii.nakryiko@gmail.com>,
+        "Maryam Tahhan" <mtahhan@redhat.com>
+Cc:     "Andrii Nakryiko" <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        "Kees Cook" <keescook@chromium.org>,
+        "Christian Brauner" <brauner@kernel.org>, lennart@poettering.net,
+        cyphar@cyphar.com, kernel-team@meta.com
+Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/23/2023 6:10 PM, Jay Freyensee wrote:
->
-> On 6/16/23 9:50 AM, Casey Schaufler wrote:
->> Add three system calls for the Linux Security Module ABI.
->>
->> lsm_get_self_attr() provides the security module specific attributes
->> that have previously been visible in the /proc/self/attr directory.
->> For each security module that uses the specified attribute on the
->> current process the system call will return an LSM identifier and
->> the value of the attribute. The LSM and attribute identifier values
->> are defined in include/uapi/linux/lsm.h
->>
->> LSM identifiers are simple integers and reflect the order in which
->> the LSM was added to the mainline kernel. This is a convention, not
->> a promise of the API. LSM identifiers below the value of 100 are
->> reserved for unspecified future uses. That could include information
->> about the security infrastructure itself, or about how multiple LSMs
->> might interact with each other.
->>
->> A new LSM hook security_getselfattr() is introduced to get the
->> required information from the security modules. This is similar
->> to the existing security_getprocattr() hook, but specifies the
->> format in which string data is returned and requires the module
->> to put the information into a userspace destination.
->>
->> lsm_set_self_attr() changes the specified LSM attribute. Only one
->> attribute can be changed at a time, and then only if the specified
->> security module allows the change.
->>
->> A new LSM hook security_setselfattr() is introduced to set the
->> required information in the security modules. This is similar
->> to the existing security_setprocattr() hook, but specifies the
->> format in which string data is presented and requires the module
->> to get the information from a userspace destination.
->>
->> lsm_list_modules() provides the LSM identifiers, in order, of the
->> security modules that are active on the system. This has been
->> available in the securityfs file /sys/kernel/security/lsm.
-> Active or available?
 
-Active. Security modules are registered during init time.
-There isn't really a notion of "available" since you can't
-enable or disable them dynamically.
 
+On Fri, Jun 23, 2023, at 4:23 PM, Daniel Borkmann wrote:
+> On 6/23/23 5:10 PM, Andy Lutomirski wrote:
+>> On Thu, Jun 22, 2023, at 6:02 PM, Andy Lutomirski wrote:
+>>> On Thu, Jun 22, 2023, at 11:40 AM, Andrii Nakryiko wrote:
+>>>
+>>>> Hopefully you can see where I'm going with this. And this is just o=
+ne
+>>>> random tiny example. We can think up tons of other cases to prove B=
+PF
+>>>> is not isolatable to any sort of "container".
+>>>
+>>> No.  You have not come up with an example of why BPF is not isolatab=
+le
+>>> to a container.  You have come up with an example of why binding to a
+>>> sched_switch raw tracepoint does not make sense in a container witho=
+ut
+>>> additional mechanisms to give it well defined functionality and
+>>> appropriate security.
 >
-> If I use landlock's documentation example:
+> One big blocker for the case of BPF is not isolatable to a container a=
+re
+> CPU hardware bugs. There has been plenty of mitigation effort so that =
+the
+> flexibility cannot be abused as a tool e.g. discussed in [0], but ulti=
+mately
+> it's a cat and mouse game and vendors are also not really transparent.=
+ So
+> actual reasonable discussion can be resumed once CPU vendors gets their
+> stuff fixed.
 >
-> Jun 07 10:37:11 fedora kernel: LSM: initializing
-> lsm=lockdown,capability,yama,integrity,selinux,bpf>
-> Jun 07 10:37:11 fedora kernel: landlock: Up and running.
+>    [0]=20
+> https://popl22.sigplan.org/details/prisc-2022-papers/11/BPF-and-Spectr=
+e-Mitigating-transient-execution-attacks
 >
-> My interpretation of the two log lines is the first line tells me
-> landlock is available on the distro (fedora this case), but the second
-> line tells me landlock is now active. Thus the lsm available list may
-> be different than the lsm active list.
 
-Your "available" list would depend on which modules are compiled in.
-There is no explicit mechanism provided to get that list. There isn't
-anything interesting you could do with it on a running system.
+By this standard, shouldn=E2=80=99t we just give up?  Let everyone map /=
+dev/mem readonly and stop pretending we can implement any form of access=
+ control.
 
->
-> So is lsm_list_modules() going to tell me just what lsm's are
-> available in a distro for use, or is it going to tell me what lsm's
-> are available _and_ active?
+Of course, we don=E2=80=99t do this. We try pretty hard to squash bugs a=
+nd keep programs from doing an end run around OS security.
 
-As documented, its going to tell you which are active.
-You can infer that a module is available if it is active.
-You cannot infer that a module isn't "available", that is,
-isn't compiled in, if it isn't active.
+>> Thinking about this some more:
+>>=20
+>> Suppose the goal is to allow a workload in a container to monitor its=
+elf by attaching to a tracepoint (something in the scheduler, for exampl=
+e).  The workload is in the container.  The tracepoint is global.  Kerne=
+l memory is global unless something that is trusted and understands the =
+containers is doing the reading.  And proxying BPF is a mess.
+>
+> Agree that proxy is a mess for various reasons stated earlier.
+>
+>> So here are a couple of possible solutions:
+>>=20
+>> (a) Improve BPF maps a bit so that BPF maps work well in containers. =
+ It should be possible to create a map and share it (the file descriptor=
+!) between the outside and the container without running into various sn=
+ags.  (IIRC my patch series was a decent step in this direction,)  Now l=
+oad the BPF program and attach it to the tracepoint outside the containe=
+r but have it write its gathered data to the map that's in the container=
+.  So you end up with a daemon outside the container that gets a request=
+ like "help me monitor such-and-such by running BPF program such-and-suc=
+h (where the BPF program code presumably comes from a library outside th=
+e container", and the daemon arranges for the requesting container to ha=
+ve access to the map it needs to get the data.
+>
+> I don't think it's very practical, meaning the vast majority of applic=
+ations
+> out there today are tightly coupled BPF code + user space application,=
+ and in
+> a lot of cases programs are dynamically created. This would require so=
+mehow
+> splitting up parts of your application to run outside the container in=
+ hostns
+> and other parts inside the container.. for the sake of the mentioned e=
+xample
+> it's something fairly static, but real-world applications look differe=
+nt and
+> are much more complex.
+>
 
+It sounds like you are describing a situation where there is a workload =
+in a container, where the *entire container* is part of the TCB, but the=
+ part of the workload that has the explicit right to read all of kernel =
+memory (e.g. bpf_probe_read_kernel) is so tightly coupled to the contain=
+er that no one outside the container wants to audit it.
+
+And yet someone still wants to run it in a userns.
+=20
+This is IMO a rather bizarre situation.
+
+If I were operating a large fleet, and I had teams developing software t=
+o run in a container, I would not want to grant those containers this ri=
+ght without strict controls, and I don=E2=80=99t mean on/off controls. I=
+ would want strict auditing of *what exact BPF code* (including source) =
+was run, and why, and who wrote it, and what the intended results are, a=
+nd what limits access to the results, etc.  After all, we=E2=80=99re tal=
+king about the right, BY DESIGN, to access PII, payment card information=
+, medical information, information protected by any jurisdiction=E2=80=99=
+s data control rights, etc. Literally everything.  This ability, as desc=
+ribed, isn=E2=80=99t =E2=80=9Cthe right to use BPF.=E2=80=9D  It is the =
+right to *read all secrets*, intentionally.  (And modify them, with bpf_=
+probe_write_user, possibly subject to some constraints.)
+
+
+If this series was about passing a =E2=80=9Cmay load kernel modules=E2=80=
+=9D token around, I think it would get an extremely chilly reception, ev=
+en though we have module signatures.  I don=E2=80=99t see anything about=
+ BPF that makes BPF tokens more reasonable unless a real security model =
+is developed first.
+
+>> (b) Make a way to pass a pre-approved program into a container.  So a=
+ daemon outside loads the program and does some new magic to say "make a=
+n fd that can beused to attach this particular program to this particula=
+r tracepoint" and pass that into the container.
 >
-> Thanks,
+> Same as above. Programs are in most cases very tightly coupled to the=20
+> application
+> itself. I'm not sure if the ask is to redesign/implement all the=20
+> existing user
+> space infra.
 >
-> Jay
+>> I think (a) is better.  In particular, if you have a workload with ma=
+ny containers, and they all want to monitor the same tracepoint as it re=
+lates to their container, you will get much better performance if a sing=
+le BPF program does the monitoring and sends the data out to each contai=
+ner as needed instead of having one copy of the program per container.
+>>=20
+>> For what it's worth, BPF tokens seem like they'll have the same perfo=
+rmance problem -- without coordination, you can end up with N containers=
+ generating N hooks all targeting the same global resource, resulting in=
+ overhead that scales linearly with the number of containers.
 >
+> Worst case, sure, but it's not the point. These containers which would=20
+> receive
+> the tokens are part of your trusted compute base.. so its up to the=20
+> specific
+> applications and their surrounding infrastructure with regards to what=20
+> problem
+> they solve where and approved by operators/platform engs to deploy in=20
+> your cluster.
+> I don't particularly see that there's a performance problem. Andrii=20
+> specifically
+> mentioned /trusted unprivileged applications/.
+>
+>> And, again, I'm not an XDP expert, but if you have one NIC, and you a=
+ttach N XDP programs to it, and each one is inspecting packets and sendi=
+ng some to one particular container's AF_XDP socket, you are not going t=
+o get good performance.  You want *one* XDP program fanning the packets =
+out to the relevant containers.
+>>=20
+>> If this is hard right now, perhaps you could add new kernel mechanism=
+s as needed to improve the situation.
+>>=20
+>> --Andy
+>>
