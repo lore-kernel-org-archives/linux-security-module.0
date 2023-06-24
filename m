@@ -2,68 +2,68 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A3EEB64DA
-	for <linux-security-module@archiver.kernel.org>; Sat, 24 Jun 2023 14:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBF5EB64DA
+	for <linux-security-module@archiver.kernel.org>; Sat, 24 Jun 2023 15:28:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231804AbjFXOAO (ORCPT
+        id S229991AbjFXP2a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 24 Jun 2023 10:00:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35886 "EHLO
+        Sat, 24 Jun 2023 11:28:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230461AbjFXOAN (ORCPT
+        with ESMTP id S229575AbjFXP23 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 24 Jun 2023 10:00:13 -0400
+        Sat, 24 Jun 2023 11:28:29 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C80579D
-        for <linux-security-module@vger.kernel.org>; Sat, 24 Jun 2023 07:00:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7FB61715
+        for <linux-security-module@vger.kernel.org>; Sat, 24 Jun 2023 08:28:27 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4F614603F6
-        for <linux-security-module@vger.kernel.org>; Sat, 24 Jun 2023 14:00:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AA63C433C0;
-        Sat, 24 Jun 2023 14:00:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 55D366097A
+        for <linux-security-module@vger.kernel.org>; Sat, 24 Jun 2023 15:28:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 717BEC433C0;
+        Sat, 24 Jun 2023 15:28:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687615209;
-        bh=YTgGwjlRROUEiwgL3LEzShyv2rN/A0tvlo3LJxPJgCY=;
+        s=k20201202; t=1687620506;
+        bh=ky4bwl+Jvhzuw604b2TcsXkBxuI4T4UZ0oC38KWIYNw=;
         h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-        b=tgihjA2YblyCE6CCHd5Wj+LusbWgBOOOUI6qVLpJGzKq6RWuOVdr6NqKqprcwLyz7
-         KfeG+zTancWoiH5sBp8itOcuYnBpCg8JOiZxjjnVtU9Q+wgJxexfj7db+Kb6awQlub
-         h3+ybvgZiI25YBKDg6CxvBzYPRLNoBbE2luqSu7WGkD+eLl+K79dxKM+KFNsjD+XrD
-         lhIn6DfMhUZQc6COKw0LDZscITXC1LDkt9Qd7CnivJ/VLvnZBXlWiEhKVkC6AzHoDX
-         gf+Ey4R95Oa3pNkX+5Xf4JDiGLrAkuc7B7kEjbedoHCdW2vPmxPcXWtLDwvu5BxDPu
-         7ZJKGfU3usSSA==
+        b=NWtT+22xu74D8CHktttctBao6ukEuNlh92yeAFupS4NPX1CQGhJOthGfKJdHiIwhA
+         QFXJs3SwXd2llmVu9oI5UhiecTWhYFZPjRi6P6yhRIx4a2kOv8szcJm4aD63eNdJRR
+         OyLlEx+b85wfbp/nw3KAfn/Dha5p2diyKDQQ5mSYiP2FPNFuVy79OTey9IYNbkeeTu
+         iZuujR5wvUyeN4eJnzrRV3hjLvECtJoO5aXt+B26xVW7SWHvlz6PGX+5lxmxjPHkDE
+         sxGqW4riPXb8CXXCRHvZZ6FeV01xpsLJwe4v0TVETLp3SKlaT+jXMQQzssFRm5412r
+         AU2TANcCpR3uQ==
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 0F68227C0054;
-        Sat, 24 Jun 2023 10:00:08 -0400 (EDT)
+        by mailauth.nyi.internal (Postfix) with ESMTP id 580C627C0054;
+        Sat, 24 Jun 2023 11:28:25 -0400 (EDT)
 Received: from imap48 ([10.202.2.98])
-  by compute3.internal (MEProxy); Sat, 24 Jun 2023 10:00:08 -0400
-X-ME-Sender: <xms:5_aWZF2OgP91lIkC2ujz6GWwNo_7ibPyYqHzBV-sil_r_0PXv0OuZw>
-    <xme:5_aWZMFHVnVys-ce5A51GLueqOUNUO7_vaGbepyLGfPChAc1uq4oQVlQaecH3h3sv
-    RAxiHWU-xO4DHBrbqI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeegjedgjedtucetufdoteggodetrfdotf
+  by compute3.internal (MEProxy); Sat, 24 Jun 2023 11:28:25 -0400
+X-ME-Sender: <xms:mAuXZMSQ44gUknqi7yPhZymNBRJ6NOPgOtvxLCzBireM0uu6fV7vOA>
+    <xme:mAuXZJzXmnHUftm-EzkA2Rx780XdkY4W3meGOpv9WxwUMeFT9ilqEv3l7S2I_WVNb
+    kRJnVOpIrKUCr7eAXA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeegjedgkeekucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
     nhguhicunfhuthhomhhirhhskhhifdcuoehluhhtoheskhgvrhhnvghlrdhorhhgqeenuc
-    ggtffrrghtthgvrhhnpeefgefghfevvdehgeeuteelvdehkeehtdefhfdukedufeehueel
-    geethffhiedtjeenucffohhmrghinhepshhighhplhgrnhdrohhrghenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhguhidomhgvshhmthhp
-    rghuthhhphgvrhhsohhnrghlihhthidqudduiedukeehieefvddqvdeifeduieeitdekqd
-    hluhhtoheppehkvghrnhgvlhdrohhrgheslhhinhhugidrlhhuthhordhush
-X-ME-Proxy: <xmx:5_aWZF5LgPVdM1Xo6t38Pf3G17vr6GcITEltZyk61IpZ6cIBVqC5yA>
-    <xmx:5_aWZC334Q518tPzVPQ1ekkpgLyozE89iaqZYS-XZNZuVZjpsTfX8Q>
-    <xmx:5_aWZIFwCHrqLSqNOY_JQ3_ts93x_8_gYXiysh23dqiZRItBjMZJxg>
-    <xmx:6PaWZGbHcPTtI8lFB_x3KrUGuFXu6UpPVFjJthjdMFB3stoxwAr3MA>
+    ggtffrrghtthgvrhhnpeduveffvdegvdefhfegjeejlefgtdffueekudfgkeduvdetvddu
+    ieeluefgjeeggfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpegrnhguhidomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudduiedu
+    keehieefvddqvdeifeduieeitdekqdhluhhtoheppehkvghrnhgvlhdrohhrgheslhhinh
+    hugidrlhhuthhordhush
+X-ME-Proxy: <xmx:mAuXZJ1N1H-icH1Hfv0nWxqsk70PhdQmAgF91u9juQ4wzR05wx3QWA>
+    <xmx:mAuXZACGvyKn21kNAf7watbksqrdmwCHXRTt6j7izJ6XvutVshZK5w>
+    <xmx:mAuXZFjSM6L63lZTvdeAM7KrCpC0V7MvctICtiKWcsZYryiCfX0T0g>
+    <xmx:mQuXZGXXVWBZqOlPKq8w-0aEmnaNQlsfen5HvF2Ljs27qg2zR28SAw>
 Feedback-ID: ieff94742:Fastmail
 Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 61BF631A0063; Sat, 24 Jun 2023 10:00:07 -0400 (EDT)
+        id DBBC531A0063; Sat, 24 Jun 2023 11:28:24 -0400 (EDT)
 X-Mailer: MessagingEngine.com Webmail Interface
 User-Agent: Cyrus-JMAP/3.9.0-alpha0-499-gf27bbf33e2-fm-20230619.001-gf27bbf33
 Mime-Version: 1.0
-Message-Id: <fe47aeb6-dae8-43a6-bcb0-ada2ebf62e08@app.fastmail.com>
-In-Reply-To: <173f0af7-e6e1-f4b7-e0a6-a91b7a4da5d7@iogearbox.net>
+Message-Id: <8340aaf2-8b4c-4f7d-8eed-f72f615f6fd0@app.fastmail.com>
+In-Reply-To: <fe47aeb6-dae8-43a6-bcb0-ada2ebf62e08@app.fastmail.com>
 References: <20230607235352.1723243-1-andrii@kernel.org>
  <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
  <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
@@ -76,7 +76,8 @@ References: <20230607235352.1723243-1-andrii@kernel.org>
  <82b79e57-a0ad-4559-abc9-858e0f51fbba@app.fastmail.com>
  <9b0e9227-4cf4-4acb-ba88-52f65b099709@app.fastmail.com>
  <173f0af7-e6e1-f4b7-e0a6-a91b7a4da5d7@iogearbox.net>
-Date:   Sat, 24 Jun 2023 06:59:46 -0700
+ <fe47aeb6-dae8-43a6-bcb0-ada2ebf62e08@app.fastmail.com>
+Date:   Sat, 24 Jun 2023 08:28:04 -0700
 From:   "Andy Lutomirski" <luto@kernel.org>
 To:     "Daniel Borkmann" <daniel@iogearbox.net>,
         "Andrii Nakryiko" <andrii.nakryiko@gmail.com>,
@@ -94,159 +95,42 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 
 
-On Fri, Jun 23, 2023, at 4:23 PM, Daniel Borkmann wrote:
-> On 6/23/23 5:10 PM, Andy Lutomirski wrote:
->> On Thu, Jun 22, 2023, at 6:02 PM, Andy Lutomirski wrote:
->>> On Thu, Jun 22, 2023, at 11:40 AM, Andrii Nakryiko wrote:
->>>
->>>> Hopefully you can see where I'm going with this. And this is just o=
-ne
->>>> random tiny example. We can think up tons of other cases to prove B=
-PF
->>>> is not isolatable to any sort of "container".
->>>
->>> No.  You have not come up with an example of why BPF is not isolatab=
-le
->>> to a container.  You have come up with an example of why binding to a
->>> sched_switch raw tracepoint does not make sense in a container witho=
-ut
->>> additional mechanisms to give it well defined functionality and
->>> appropriate security.
+On Sat, Jun 24, 2023, at 6:59 AM, Andy Lutomirski wrote:
+> On Fri, Jun 23, 2023, at 4:23 PM, Daniel Borkmann wrote:
+
 >
-> One big blocker for the case of BPF is not isolatable to a container a=
-re
-> CPU hardware bugs. There has been plenty of mitigation effort so that =
-the
-> flexibility cannot be abused as a tool e.g. discussed in [0], but ulti=
-mately
-> it's a cat and mouse game and vendors are also not really transparent.=
- So
-> actual reasonable discussion can be resumed once CPU vendors gets their
-> stuff fixed.
->
->    [0]=20
-> https://popl22.sigplan.org/details/prisc-2022-papers/11/BPF-and-Spectr=
-e-Mitigating-transient-execution-attacks
+> If this series was about passing a =E2=80=9Cmay load kernel modules=E2=
+=80=9D token=20
+> around, I think it would get an extremely chilly reception, even thoug=
+h=20
+> we have module signatures.  I don=E2=80=99t see anything about BPF tha=
+t makes=20
+> BPF tokens more reasonable unless a real security model is developed=20
+> first.
 >
 
-By this standard, shouldn=E2=80=99t we just give up?  Let everyone map /=
-dev/mem readonly and stop pretending we can implement any form of access=
- control.
+To be clear, I'm not saying that there should not be a mechanism to use =
+BPF from a user namespace.  I'm saying the mechanism should have explici=
+t access control.  It wouldn't need to solve all problems right away, bu=
+t it should allow incrementally more features to be enabled as the acces=
+s control solution gets more powerful over time.
 
-Of course, we don=E2=80=99t do this. We try pretty hard to squash bugs a=
-nd keep programs from doing an end run around OS security.
+BPF, unlike kernel modules, has a verifier.  While it would be a departu=
+re from current practice, permission to use BPF could come with an expli=
+cit list of allowed functions and allowed hooks.
 
->> Thinking about this some more:
->>=20
->> Suppose the goal is to allow a workload in a container to monitor its=
-elf by attaching to a tracepoint (something in the scheduler, for exampl=
-e).  The workload is in the container.  The tracepoint is global.  Kerne=
-l memory is global unless something that is trusted and understands the =
-containers is doing the reading.  And proxying BPF is a mess.
->
-> Agree that proxy is a mess for various reasons stated earlier.
->
->> So here are a couple of possible solutions:
->>=20
->> (a) Improve BPF maps a bit so that BPF maps work well in containers. =
- It should be possible to create a map and share it (the file descriptor=
-!) between the outside and the container without running into various sn=
-ags.  (IIRC my patch series was a decent step in this direction,)  Now l=
-oad the BPF program and attach it to the tracepoint outside the containe=
-r but have it write its gathered data to the map that's in the container=
-.  So you end up with a daemon outside the container that gets a request=
- like "help me monitor such-and-such by running BPF program such-and-suc=
-h (where the BPF program code presumably comes from a library outside th=
-e container", and the daemon arranges for the requesting container to ha=
-ve access to the map it needs to get the data.
->
-> I don't think it's very practical, meaning the vast majority of applic=
-ations
-> out there today are tightly coupled BPF code + user space application,=
- and in
-> a lot of cases programs are dynamically created. This would require so=
-mehow
-> splitting up parts of your application to run outside the container in=
- hostns
-> and other parts inside the container.. for the sake of the mentioned e=
-xample
-> it's something fairly static, but real-world applications look differe=
-nt and
-> are much more complex.
->
+(The hooks wouldn't just be a list, presumably -- premission to install =
+an XDP program would be scoped to networks over which one has CAP_NET_AD=
+MIN, presumably.  Other hooks would have their own scoping.  Attaching t=
+o a cgroup should (and maybe already does?) require some kind of permiss=
+ion on the cgroup.  Etc.)
 
-It sounds like you are describing a situation where there is a workload =
-in a container, where the *entire container* is part of the TCB, but the=
- part of the workload that has the explicit right to read all of kernel =
-memory (e.g. bpf_probe_read_kernel) is so tightly coupled to the contain=
-er that no one outside the container wants to audit it.
-
-And yet someone still wants to run it in a userns.
-=20
-This is IMO a rather bizarre situation.
-
-If I were operating a large fleet, and I had teams developing software t=
-o run in a container, I would not want to grant those containers this ri=
-ght without strict controls, and I don=E2=80=99t mean on/off controls. I=
- would want strict auditing of *what exact BPF code* (including source) =
-was run, and why, and who wrote it, and what the intended results are, a=
-nd what limits access to the results, etc.  After all, we=E2=80=99re tal=
-king about the right, BY DESIGN, to access PII, payment card information=
-, medical information, information protected by any jurisdiction=E2=80=99=
-s data control rights, etc. Literally everything.  This ability, as desc=
-ribed, isn=E2=80=99t =E2=80=9Cthe right to use BPF.=E2=80=9D  It is the =
-right to *read all secrets*, intentionally.  (And modify them, with bpf_=
-probe_write_user, possibly subject to some constraints.)
+If new, more restrictive functions are needed, they could be added.
 
 
-If this series was about passing a =E2=80=9Cmay load kernel modules=E2=80=
-=9D token around, I think it would get an extremely chilly reception, ev=
-en though we have module signatures.  I don=E2=80=99t see anything about=
- BPF that makes BPF tokens more reasonable unless a real security model =
-is developed first.
-
->> (b) Make a way to pass a pre-approved program into a container.  So a=
- daemon outside loads the program and does some new magic to say "make a=
-n fd that can beused to attach this particular program to this particula=
-r tracepoint" and pass that into the container.
->
-> Same as above. Programs are in most cases very tightly coupled to the=20
-> application
-> itself. I'm not sure if the ask is to redesign/implement all the=20
-> existing user
-> space infra.
->
->> I think (a) is better.  In particular, if you have a workload with ma=
-ny containers, and they all want to monitor the same tracepoint as it re=
-lates to their container, you will get much better performance if a sing=
-le BPF program does the monitoring and sends the data out to each contai=
-ner as needed instead of having one copy of the program per container.
->>=20
->> For what it's worth, BPF tokens seem like they'll have the same perfo=
-rmance problem -- without coordination, you can end up with N containers=
- generating N hooks all targeting the same global resource, resulting in=
- overhead that scales linearly with the number of containers.
->
-> Worst case, sure, but it's not the point. These containers which would=20
-> receive
-> the tokens are part of your trusted compute base.. so its up to the=20
-> specific
-> applications and their surrounding infrastructure with regards to what=20
-> problem
-> they solve where and approved by operators/platform engs to deploy in=20
-> your cluster.
-> I don't particularly see that there's a performance problem. Andrii=20
-> specifically
-> mentioned /trusted unprivileged applications/.
->
->> And, again, I'm not an XDP expert, but if you have one NIC, and you a=
-ttach N XDP programs to it, and each one is inspecting packets and sendi=
-ng some to one particular container's AF_XDP socket, you are not going t=
-o get good performance.  You want *one* XDP program fanning the packets =
-out to the relevant containers.
->>=20
->> If this is hard right now, perhaps you could add new kernel mechanism=
-s as needed to improve the situation.
->>=20
->> --Andy
->>
+Alternatively, people could try a limited form of BPF proxying.  It woul=
+dn't need to be a full proxy -- an outside daemon really could approve t=
+he attachment of a BPF program, and it could parse the program, examine =
+the list of function it uses and what the proposed attachment is to, and=
+ make an educated decision.  This would need some API changes (maybe), b=
+ut it seems eminently doable.
