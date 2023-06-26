@@ -2,123 +2,135 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF8DEB64DD
-	for <linux-security-module@archiver.kernel.org>; Sun, 25 Jun 2023 01:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4235CC04A6A
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jun 2023 06:56:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229449AbjFYBOQ (ORCPT
+        id S229741AbjFZG4p (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 24 Jun 2023 21:14:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33168 "EHLO
+        Mon, 26 Jun 2023 02:56:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230045AbjFYBN6 (ORCPT
+        with ESMTP id S229647AbjFZG4m (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 24 Jun 2023 21:13:58 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE3EB10F1
-        for <linux-security-module@vger.kernel.org>; Sat, 24 Jun 2023 18:13:55 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.54])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4QpXwx2ZxFztQVt;
-        Sun, 25 Jun 2023 09:11:13 +0800 (CST)
-Received: from cgs.huawei.com (10.244.148.83) by
- kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Sun, 25 Jun 2023 09:13:53 +0800
-From:   Gaosheng Cui <cuigaosheng1@huawei.com>
-To:     <john.johansen@canonical.com>, <paul@paul-moore.com>,
-        <jmorris@namei.org>, <serge@hallyn.com>, <cuigaosheng1@huawei.com>
-CC:     <apparmor@lists.ubuntu.com>,
-        <linux-security-module@vger.kernel.org>
-Subject: [PATCH -next 11/11] apparmor: Fix kernel-doc warnings in apparmor/policy.c
-Date:   Sun, 25 Jun 2023 09:13:49 +0800
-Message-ID: <20230625011349.1457810-12-cuigaosheng1@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230625011349.1457810-1-cuigaosheng1@huawei.com>
-References: <20230625011349.1457810-1-cuigaosheng1@huawei.com>
+        Mon, 26 Jun 2023 02:56:42 -0400
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 173B9AC;
+        Sun, 25 Jun 2023 23:56:42 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1b7fb1a82c4so3799195ad.1;
+        Sun, 25 Jun 2023 23:56:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687762601; x=1690354601;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u58j1CoFhNAAP0kPknc/GhPhE9N5OmJCD1ZWCCtRRgc=;
+        b=WDPKuhXalnGPckp2TpIKynsO8ZnokkfdhiarQXI1U9VrqORX/RqI+YQ6iOzudxuYfh
+         4q6XXJOoyqqR6QwbktPcLn3j/Hia6cNtm2Nrhm3yJiWc7JcKmjD3tVjEuADNSmK2GgDV
+         xk8ovnwV1ONicO1yc5JYu90NJCKD2g0I+aPJlJcB+YR5HHSFgftpBca8XhiVusEZTmu+
+         +qlUGGQiGJiMT1OVUk9z8yv0fpOv85eDrKiCyXaOhKgjcvScYC6P8FrVEMhdjE7n32Sn
+         iHlKwHWwvll89VW7GKPNxJvK15XueSQ8E1WR4TpisHG4FV0/OHjFbqUI8/raDxp23ahg
+         j18A==
+X-Gm-Message-State: AC+VfDzH7/LQdst87G9Hu9Qbm2z58jPxCzQv6It28ppNG805JMr6LwXE
+        0lNQtVHRiUvsINC/V/q86Hk=
+X-Google-Smtp-Source: ACHHUZ6OtbsuuY2aXoeHYGi4XSA3mdaoGOU6p/4pXML9TF8F1ADk58bPj18ptJOfaGu5YjoBFEMRig==
+X-Received: by 2002:a17:903:1250:b0:1b5:3c7f:1b3b with SMTP id u16-20020a170903125000b001b53c7f1b3bmr5150508plh.35.1687762601317;
+        Sun, 25 Jun 2023 23:56:41 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id jg3-20020a17090326c300b001a2104d706fsm2559571plb.225.2023.06.25.23.56.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Jun 2023 23:56:40 -0700 (PDT)
+Date:   Mon, 26 Jun 2023 15:56:39 +0900
+From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Helge Deller <deller@gmx.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Daniel Bristot de Oliveira <bristot@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Evgeniy Polyakov <zbr@ioremap.net>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>, coresight@lists.linaro.org,
+        dri-devel@lists.freedesktop.org, keyrings@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-sgx@vger.kernel.org, linux-trace-devel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, linux-mm@kvack.org,
+        openrisc@lists.librecores.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH 00/24 v2] Documentation: correct lots of spelling errors
+ (series 1)
+Message-ID: <20230626065639.GA3403711@rocinante>
+References: <20230209071400.31476-1-rdunlap@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.244.148.83]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemi500012.china.huawei.com (7.221.188.12)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230209071400.31476-1-rdunlap@infradead.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Fix kernel-doc warnings:
+Hello,
 
-security/apparmor/policy.c:294: warning: Function parameter or
-member 'proxy' not described in 'aa_alloc_profile'
-security/apparmor/policy.c:785: warning: Function parameter or
-member 'label' not described in 'aa_policy_view_capable'
-security/apparmor/policy.c:785: warning: Function parameter or
-member 'ns' not described in 'aa_policy_view_capable'
-security/apparmor/policy.c:847: warning: Function parameter or
-member 'ns' not described in 'aa_may_manage_policy'
-security/apparmor/policy.c:964: warning: Function parameter or
-member 'hname' not described in '__lookup_replace'
-security/apparmor/policy.c:964: warning: Function parameter or
-member 'info' not described in '__lookup_replace'
-security/apparmor/policy.c:964: warning: Function parameter or
-member 'noreplace' not described in '__lookup_replace'
-security/apparmor/policy.c:964: warning: Function parameter or
-member 'ns' not described in '__lookup_replace'
-security/apparmor/policy.c:964: warning: Function parameter or
-member 'p' not described in '__lookup_replace'
+> Correct many spelling errors in Documentation/ as reported by codespell.
+> 
+> Maintainers of specific kernel subsystems are only Cc-ed on their
+> respective patches, not the entire series.
+> 
+> These patches are based on linux-next-20230209.
+> 
+[...]
+>  [PATCH 13/24] Documentation: PCI: correct spelling
+[...]
 
-Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
----
- security/apparmor/policy.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+Applied to misc, thank you!
 
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index 715fe1b66d12..4817c1b30105 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -285,6 +285,7 @@ void aa_free_profile(struct aa_profile *profile)
- /**
-  * aa_alloc_profile - allocate, initialize and return a new profile
-  * @hname: name of the profile  (NOT NULL)
-+ * @proxy: proxy to use OR null if to allocate a new one
-  * @gfp: allocation type
-  *
-  * Returns: refcount profile or NULL on failure
-@@ -774,8 +775,9 @@ static int policy_ns_capable(struct aa_label *label,
- 
- /**
-  * aa_policy_view_capable - check if viewing policy in at @ns is allowed
-- * label: label that is trying to view policy in ns
-- * ns: namespace being viewed by @label (may be NULL if @label's ns)
-+ * @label: label that is trying to view policy in ns
-+ * @ns: namespace being viewed by @label (may be NULL if @label's ns)
-+ *
-  * Returns: true if viewing policy is allowed
-  *
-  * If @ns is NULL then the namespace being viewed is assumed to be the
-@@ -839,6 +841,7 @@ bool aa_current_policy_admin_capable(struct aa_ns *ns)
- /**
-  * aa_may_manage_policy - can the current task manage policy
-  * @label: label to check if it can manage policy
-+ * @ns: namespace being managed by @label (may be NULL if @label's ns)
-  * @mask: contains the policy manipulation operation being done
-  *
-  * Returns: 0 if the task is allowed to manipulate policy else error
-@@ -950,11 +953,11 @@ static void __replace_profile(struct aa_profile *old, struct aa_profile *new)
- 
- /**
-  * __lookup_replace - lookup replacement information for a profile
-- * @ns - namespace the lookup occurs in
-- * @hname - name of profile to lookup
-- * @noreplace - true if not replacing an existing profile
-- * @p - Returns: profile to be replaced
-- * @info - Returns: info string on why lookup failed
-+ * @ns: namespace the lookup occurs in
-+ * @hname: name of profile to lookup
-+ * @noreplace: true if not replacing an existing profile
-+ * @p: Returns - profile to be replaced
-+ * @info: Returns - info string on why lookup failed
-  *
-  * Returns: profile to replace (no ref) on success else ptr error
-  */
--- 
-2.25.1
+[1/1] Documentation: PCI: correct spelling
+      https://git.kernel.org/pci/pci/c/b58d6d89ae02
 
+	Krzysztof
