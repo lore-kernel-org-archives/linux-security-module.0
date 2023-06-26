@@ -2,65 +2,66 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFABEB64DC
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jun 2023 22:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39533EB64DC
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jun 2023 22:12:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232025AbjFZWL7 (ORCPT
+        id S232417AbjFZWMq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Jun 2023 18:11:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58702 "EHLO
+        Mon, 26 Jun 2023 18:12:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231196AbjFZWLn (ORCPT
+        with ESMTP id S231772AbjFZWLo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Jun 2023 18:11:43 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AFEE46B5;
-        Mon, 26 Jun 2023 15:08:59 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3128fcd58f3so4630657f8f.1;
-        Mon, 26 Jun 2023 15:08:59 -0700 (PDT)
+        Mon, 26 Jun 2023 18:11:44 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 122EC46BA;
+        Mon, 26 Jun 2023 15:09:13 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fa8cd4a113so17208495e9.2;
+        Mon, 26 Jun 2023 15:09:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687817338; x=1690409338;
+        d=gmail.com; s=20221208; t=1687817351; x=1690409351;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9JpDk0lWO2yYjsZuHqFqE08SzkepMeXcw7Z60u7yj8g=;
-        b=UClIZo+wdy5Sqc+Ob687Vwm81vcEgcYk1hAT4/fauFWg6vxZ2wr2pdvO/R1tHx0Q/x
-         RuhNjIZMnOJo5qGlNqz30H7FwN80yy66s0QnlTfUOs66A4Lh5XfwfWduVwATE6lW3IB2
-         nQ81U3wcbmJ3rmzSLcHE+D2LWYeGIboEB2+2qZXy5m/RYzRKMP475M955hqBH77L9U4p
-         FpepTbubX4/OeLMHqBwXuyhThG0pjZwXrGD7siMWu1rtl/UVqmxF84ENpBwR0bzkqQlG
-         b2GjF9Nj9KWFWrDAVInhITet1lL/x2iR3qeIIRIsBoEto6UqEpVMHhAJdDatzhlRixVy
-         xspw==
+        bh=dW5N5d/pwV7Vw3ZMYdLzRSCMPWGvIjPnCehAk85Dpvs=;
+        b=IO19dlqtIIVgsyeENJrgE9E3aFRAShlcgwxGMnLRuvmZgO7ZMM3zG3C1zzwMzS5W09
+         yfTvAphRgn08TGviftuTOpevw3iVXsH8ybHbqEsU35D+Ew8nsqZ/k3IlrpczqC3+2gH7
+         qdzpyMYg3ZOAFlMwtm7PaNaJmvSa+OoXjrzG07dvW8bkNvxvrQBDPpYWTZ7GOLU5Z+Ia
+         cXSKyPnQHZfLHsoopSx2M5skKkiszd0xOfGPnh4Hs09MLqbg50jxIBairkoNztXOdnBe
+         vvo+N7wy/tRoNQwAdIpWlJU2ERPywftqZVv+BXDfLqEnixXwyDRnpE8c1LTtP6h0cIPp
+         FZ0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687817338; x=1690409338;
+        d=1e100.net; s=20221208; t=1687817351; x=1690409351;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9JpDk0lWO2yYjsZuHqFqE08SzkepMeXcw7Z60u7yj8g=;
-        b=NYxXNxg4P5KONSx7LfIUVe8jYmxOdF2ltJsgkq6lWEp1diQzWGeS9uYsazyhaKAtAz
-         CXWfT9dSgC4YgafslyjBep+akGodYoJF+weJq0QX2WK5TwI0on/mgKofNEmjdC28myBc
-         CsIII8Znjp34W732Tb38jVxnm8H0r/4z/4qw4bLCoHoCm/P+B9uPuUYX+qYXw9tdUMQp
-         78C1apdLbH7gzuagJ4+PqwPmFzP4xJuYHS8uxqkgNqSb54RKi+pL9S71cVXkdo5sh8ud
-         KmKfTP3OtOYP2IhpCKrw7VewX2+5PNm/TJH9hvp4LK/YqAdInYgKs4R3IV3EFkuTuMzi
-         VOpQ==
-X-Gm-Message-State: AC+VfDwFD1bBRnKVYqsWY/GCZyODSrLAr9XBYqji8EvLzO1t0WLt3VjI
-        HInOg26FYNZXhkTitMdyvxLoiw2lms62x1OvYCQ=
-X-Google-Smtp-Source: ACHHUZ6r7C0G7l9NXEurASmnJLYYI31K9n68x/o5tsLD5LWlyBe0zo1KIs6AkMd8w+kL8etsBlaIv9HrGLzeemdPXcc=
-X-Received: by 2002:a1c:7212:0:b0:3f5:146a:c79d with SMTP id
- n18-20020a1c7212000000b003f5146ac79dmr24609196wmc.15.1687817337810; Mon, 26
- Jun 2023 15:08:57 -0700 (PDT)
+        bh=dW5N5d/pwV7Vw3ZMYdLzRSCMPWGvIjPnCehAk85Dpvs=;
+        b=UjXE+Jo7YTku0h+9Z/Lf6TjJ+MGaWJrrF4jjGHToa68vnmAyOj9hX7iWBonmrP1AKC
+         bwGPNQaih2sidS1JEzYrLroyOA1UJEmRSFZ1ZCAbeKMxGBpVukJjvNDt/J0qFfPXMtxh
+         4gpMTHpUFLnFwM4zXv91CUR+YHrOVd+ee7N5h2pgU7Y9F82YtbgAJ3/xvZtFR7O5m3wj
+         OcD1wbGyHcPcLTrNIw+JxSSfKhVFhJpxINS2EP3hPOWSiSRNAlACIwc3yiYVnnIu4g/y
+         E2rRMxaZ/Sa41vtwWOfZ5iHvbOUPUZwM4qfNIy4uWadMcJDZGq/19K/bRWxE4nLsWiy+
+         3aUA==
+X-Gm-Message-State: AC+VfDx0hEbodxeHik0bvLpnziok88gp+p1LqiakdO7xoVWOTRrysmGM
+        PUZ1hfecWrPbs7UjgI/D/sFigvipnOgOV2rt+LM=
+X-Google-Smtp-Source: ACHHUZ76H4iru1ocJGddHJk+H++r9APm3LnR7R7bfrf0JKCqJ3dA0faBEIVUSfHL5pddsW66qkJg+QoyyvHB4l3bBAU=
+X-Received: by 2002:a05:600c:b4b:b0:3fa:8219:9166 with SMTP id
+ k11-20020a05600c0b4b00b003fa82199166mr5713158wmr.15.1687817351262; Mon, 26
+ Jun 2023 15:09:11 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230607235352.1723243-1-andrii@kernel.org> <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
  <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
  <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com> <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
- <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com> <bc4f99af-0c46-49b2-9f2d-9a01e6a03af3@app.fastmail.com>
- <CAEf4BzZz2yOkHZSuzpYd2Hv_6pxDJt2GdGVnd3yG8AUj0tSudw@mail.gmail.com> <56ede337-4370-44c7-b461-806dabc6feee@app.fastmail.com>
-In-Reply-To: <56ede337-4370-44c7-b461-806dabc6feee@app.fastmail.com>
+ <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com> <CAEf4BzY2dKvMk_Mg2oLnD5a8aOhXCmU-0QD6sWGNZqkjbMrhBA@mail.gmail.com>
+ <87wmztixr0.fsf@toke.dk>
+In-Reply-To: <87wmztixr0.fsf@toke.dk>
 From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Mon, 26 Jun 2023 15:08:45 -0700
-Message-ID: <CAEf4BzYKUhA2syLTsAR9rn_QQqi+gkgW_-dPK2Z57xFqcDusrg@mail.gmail.com>
+Date:   Mon, 26 Jun 2023 15:08:59 -0700
+Message-ID: <CAEf4BzZ1cJDb2esPSMgEB7SsBm7e7tNQ69sPn7JuVkhqWsTSJw@mail.gmail.com>
 Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-To:     Andy Lutomirski <luto@kernel.org>
+To:     =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
 Cc:     Maryam Tahhan <mtahhan@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Kees Cook <keescook@chromium.org>,
@@ -71,219 +72,49 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 22, 2023 at 8:29=E2=80=AFPM Andy Lutomirski <luto@kernel.org> w=
-rote:
+On Fri, Jun 23, 2023 at 4:07=E2=80=AFPM Toke H=C3=B8iland-J=C3=B8rgensen <t=
+oke@redhat.com> wrote:
 >
-> On Thu, Jun 22, 2023, at 12:05 PM, Andrii Nakryiko wrote:
-> > On Thu, Jun 22, 2023 at 9:50=E2=80=AFAM Andy Lutomirski <luto@kernel.or=
-g> wrote:
-> >>
-> >>
-> >>
-> >> On Thu, Jun 22, 2023, at 1:22 AM, Maryam Tahhan wrote:
-> >> > On 22/06/2023 00:48, Andrii Nakryiko wrote:
-> >> >>
-> >> >>>>> Giving a way to enable BPF in a container is only a small part o=
-f the overall task -- making BPF behave sensibly in that container seems li=
-ke it should also be necessary.
-> >> >>>> BPF is still a privileged thing. You can't just say that any
-> >> >>>> unprivileged application should be able to use BPF. That's why BP=
-F
-> >> >>>> token is about trusting unpriv application in a controlled enviro=
-nment
-> >> >>>> (production) to not do something crazy. It can be enforced furthe=
-r
-> >> >>>> through LSM usage, but in a lot of cases, when dealing with inter=
-nal
-> >> >>>> production applications it's enough to have a proper application
-> >> >>>> design and rely on code review process to avoid any negative effe=
-cts.
-> >> >>> We really shouldn=E2=80=99t be creating new kinds of privileged co=
-ntainers that do uncontained things.
-> >> >>>
-> >> >>> If you actually want to go this route, I think you would do much b=
-etter to introduce a way for a container manager to usefully proxy BPF on b=
-ehalf of the container.
-> >> >> Please see Hao's reply ([0]) about his and Google's (not so rosy)
-> >> >> experiences with building and using such BPF proxy. We (Meta)
-> >> >> internally didn't go this route at all and strongly prefer not to.
-> >> >> There are lots of downsides and complications to having a BPF proxy=
-.
-> >> >> In the end, this is just shuffling around where the decision about
-> >> >> trusting a given application with BPF access is being made. BPF pro=
-xy
-> >> >> adds lots of unnecessary logistical, operational, and development
-> >> >> complexity, but doesn't magically make anything safer.
-> >> >>
-> >> >>    [0] https://lore.kernel.org/bpf/CA+khW7h95RpurRL8qmKdSJQEXNYuqSW=
-nP16o-uRZ9G0KqCfM4Q@mail.gmail.com/
-> >> >>
-> >> > Apologies for being blunt, but  the token approach to me seems to be=
- a
-> >> > work around providing the right level/classification for a pod/conta=
-iner
-> >> > in order to say you support unprivileged containers using eBPF. I th=
-ink
-> >> > if your container needs to do privileged things it should have and b=
-e
-> >> > classified with the right permissions (privileges) to do what it nee=
-ds
-> >> > to do.
-> >>
-> >> Bluntness is great.
-> >>
-> >> I think that this whole level/classification thing is utterly wrong.  =
-Replace "BPF" with basically anything else, and you'll see how absurd it is=
-.
+> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+>
+> >> applications meets the needs of these PODs that need to do
+> >> privileged/bpf things without any tokens. Ultimately you are trusting
+> >> these apps in the same way as if you were granting a token.
 > >
-> > BPF is not "anything else", it's important to understand that BPF is
-> > inherently not compratmentalizable. And it's vast and generic in its
-> > capabilities. This changes everything. So your analogies are
-> > misleading.
-> >
+> > Yes, absolutely. As I mentioned very explicitly, it's the question of
+> > trusting application. Service vs token is implementation details, but
+> > the one that has huge implications in how applications are built,
+> > tested, versioned, deployed, etc.
 >
-> file descriptors are "vast and generic" -- you can open sockets, files, t=
-hings in /proc, things in /sys, device nodes, etc.  They are infinitely ext=
-ensible.  They work in containers.
->
-> What is so special about BPF?
+> So one thing that I don't really get is why such a "trusted application"
+> needs to be run in a user namespace in the first place? If it's trusted,
+> why not simply run it as a privileged container (without the user
+> namespace) and grant it the right system-level capabilities, instead of
+> going to all this trouble just to punch a hole in the user namespace
+> isolation?
 
-Socket with a well-defined and constrained interface that defines what
-you can do with it (send and receive bytes, in a controlled fashion),
-and BPF programs that intentionally are allowed to have an almost
-arbitrarily complex control flow *controlled by user*, and can combine
-dozens if not hundreds of "building blocks" (BPF helpers, kfuncs,
-various BPF maps, etc) and that could be activated at various points
-deep in the kernel (and run that custom user-provided code in kernel
-space). I'd say that yeah, BPF is on another level as far as
-genericity goes, compared to other interfaces.
+Because it's still useful to provide isolation that user namespace
+provides in all other aspects besides BPF usage.
 
-And that's BPF's goal and appeal, nothing wrong with it. But I do
-think BPF and sockets, files, things in /proc, etc are pretty
-different in terms of how they can be proved and enforced to be
-sandboxed.
+The fact that it's a trusted application doesn't mean that bugs don't
+happen, or that some action that was not intended might be attempted
+(due to a bug, some deep unintended library "feature", or just because
+someone didn't anticipate some interaction).
 
->
-> >>
-> >> "the token approach to me seems like a work around providing the right=
- level/classification for a pod/container in order to say you support unpri=
-vileged containers using files on disk"
-> >>
-> >> That's very 1990's.  Maybe 1980's.  Of *course* giving access to a fil=
-esystem has some inherent security exposure.  So we can give containers acc=
-ess to *different* filesystems.  Or we can use ACLs.  Or MAC policy.  Or wh=
-atever.  We have many solutions, none of which are perfect, and we're doing=
- okay.
-> >>
-> >> "the token approach to me seems like a work around providing the right=
- level/classification for a pod/container in order to say you support unpri=
-vileged containers using the network"
-> >>
-> >> The network is a big deal.  For some reason, it's cool these days to t=
-reat TCP as highly privileged.  You can get secrets from your favorite (or =
-least favorite) cloud provider with unauthenticated HTTP to a magic IP and =
-port.  You can bypass a whole lot of authenticating/authorizing proxies wit=
-h unauthenticated HTTP (no TLS!) if you're on the right network.
-> >>
-> >> This is IMO obnoxious, but we deal with it by having network namespace=
-s and firewalls and rather outdated port <=3D 1024 rules.
-> >>
-> >> "the token approach to me seems like a work around providing the right=
- level/classification for a pod/container in order to say you support unpri=
-vileged containers using BPF"
-> >>
-> >> My response is: what's wrong with BPF?  BPF has maps and programs and =
-such, and we could easily apply 1990's style ownership and DAC rules to the=
-m.
-> >
-> > Can you apply DAC rules to which kernel events BPF program can be run
-> > on? Can you apply DAC rules to which in-kernel data structures a BPF
-> > program can look at and make sure that it doesn't access a
-> > task/socket/etc that "belongs" to some other container/user/etc?
->
-> No, of course.
->
-> If you have a BPF program that is granted the ability to read kernel data=
- structures or to run in response to global events like this, it's basicall=
-y a kernel module.  It may be subject to a verifier that imposes much stron=
-ger type safety than a kernel module is subject to, but it's still effectiv=
-ely a kernel module.
->
-> We don't give containers special tokens that let them load arbitrary modu=
-les.  We should not give them special tokens that let them do things with B=
-PF that are functionally equivalent to loading arbitrary kernel modules.
->
-> But we do have ways that kernel modules (which are "vast and generic", to=
-o) can expose their functionality safely to containers.  BPF can learn to d=
-o this.
->
-> >
-> > Can we limit XDP or AF_XDP BPF programs from seeing and controlling
-> > network traffic that will be eventually routed to a container that XDP
-> > program "should not" have access to? Without making everything so slow
-> > that it's useless?
->
-> Of course you can -- assign an entire NIC or virtual function to a contai=
-ner, and let the XDP program handle that.  Or a vlan or a macvlan or whatev=
-er.  (I'm assuming XDP can be scoped like this.  I'm not that familiar with=
- the details.)
->
-> >
-> >> I even *wrote the code*.
-> >
-> > Did you submit it upstream for review and wide discussion?
->
-> Yes.
->
-> > Did you
-> > test it and integrate it with production workloads to prove that your
-> > solution is actually a viable real-world solution and not a toy?
->
-> I did test it.  I did not integrate it with production workloads.
->
+Trusted here means we believe our BPF usage is not going to spy on
+sensitive data, or attempt to disrupt other workloads, because of
+design and code reviews, and we intend to maintain that property. But
+people are still involved, of course, and bugs do happen. We'd like to
+get as much protection as possible, and that's what the user namespace
+is offering.
 
-Real-world use cases are the ultimate test of APIs and features. No
-matter how brilliant and elegant the solution is, if it doesn't work
-with real-world applications, it's pretty useless.
-
-It's not that hard to allow only a very limited and very restrictive
-subset of BPF to be allowed to be loaded and attached from containers
-without privileged permissions. But the point is to find a solution
-that works for complicated (and sometimes very messy) real
-applications that were validated by humans (to the best of their
-abilities), but can't be proven to be contained within some container.
+For BPF-side of things, we have to trust the process because there is
+no technical solution. Running outside the user namespace we also
+don't have any guarantees about BPF. We just have even less protection
+in all other aspects outside of BPF. We are trying to improve our
+story with user namespace to mitigate what's mitigatable.
 
 
-> > Writing the code doesn't mean solving the problem.
 >
-> Of course not.  My code was a little step in the right direction.  The BP=
-F community was apparently not interested in it.
+> -Toke
 >
-> >
-> >> But for some reason, the BPF community wants to bury its head in the s=
-and, pretend it's 1980, declare that BPF is too privileged to have access c=
-ontrol, and instead just have a complicated switch to turn it on and off in=
- different contexts.
-> >
-> > I won't speak on behalf of the entire BPF community, but I'm trying to
-> > explain that BPF cannot be reasonably sandboxed and has to be
-> > privileged due to its global nature. And I haven't yet seen any
-> > realistic counter-proposal to change that. And it's not about
-> > ownership of the BPF map or BPF program, it's way beyond that..
-> >
->
-> It's really really hard to have a useful discussion about a security mode=
-l when have, as what appears to be an axiom, that a security model can't be=
- created.
->
-> If you actually feel this way, then I think you should not be advocating =
-for allowing unprivileged containers to do the things that you think can't =
-have a security model.
->
-> I'm saying that I think there *can* be a security model.  But until the m=
-aintainers start to believe that, there won't be one.
-
-See above, whatever security model you have in mind, it should be
-workable with real-world applications. Building some elegant system
-that will work for just a (rather small) subset of use cases isn't
-appealing.
