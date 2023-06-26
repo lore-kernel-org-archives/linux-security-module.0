@@ -2,88 +2,226 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73250EB64D9
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jun 2023 21:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A696EEB64D7
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jun 2023 22:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231998AbjFZV45 (ORCPT
+        id S232148AbjFZWL6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Jun 2023 17:56:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40804 "EHLO
+        Mon, 26 Jun 2023 18:11:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232142AbjFZVzX (ORCPT
+        with ESMTP id S232149AbjFZWLm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Jun 2023 17:55:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65A7B3C13;
-        Mon, 26 Jun 2023 14:52:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C3A0D60F79;
-        Mon, 26 Jun 2023 21:51:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11FB4C433C8;
-        Mon, 26 Jun 2023 21:51:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687816269;
-        bh=pHx28e+t/THsLVmMcAyCtSXYbf++yJVnrB+rJRRiExk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=p7nXdoL9YPle0EihfnFaIgVK5IMdrlP88DBz0ACj9UvrQQJxwVrNx88i1CmTdQC/A
-         gwEICeYIeSE7RIi5zl+KDttr3Tq2UL83L+3FZpbt2AzB0aff6cBeSDROMtmkFstfsP
-         U0uZtBN8f5l/cqN7aApdS4e0keKL8CM1Rt1KGmmkhTPB/8jgc3/MHf/obRe+GyfNqJ
-         gLJEZzPkwcktl/uCrIxnodQRmzHafzCmxIcvxIZCI3EbpZxVsv7uzgDn7B1QeiFrrN
-         VD5KRmYjQ6v6/ik991BG9RJqj+dSpKIo7WNGdt96MqSiw++R0+iz5OKNkR/A5CajUL
-         NE0V6GKRWVv1A==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Mastykin <dmastykin@astralinux.ru>,
-        Paul Moore <paul@paul-moore.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 1/7] netlabel: fix shift wrapping bug in netlbl_catmap_setlong()
-Date:   Mon, 26 Jun 2023 17:51:01 -0400
-Message-Id: <20230626215108.179483-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.2
+        Mon, 26 Jun 2023 18:11:42 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 002F63C00;
+        Mon, 26 Jun 2023 15:08:55 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f9b0f139feso53384405e9.3;
+        Mon, 26 Jun 2023 15:08:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687817334; x=1690409334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pie2BR0RZlocTFwDH7xiMxbIV/j8++CJbN95WHJ3210=;
+        b=nHATfCg4JeFPL2nwc6PTC7yvBoNLv0g6D8/rlf8X9Z5CWTs7v8JxhvrHhI32puI+V9
+         l+zXh6HKqW0RvIPDWXH0Reb6yTHj1+gQ/OT2wm4EBjDAKmA8Yei8Z9qeDDMjqMtOF8kp
+         F5PQKrNBLqkMOpw6hBbzQIzPf11Fr4BCwIeu+rmW91S9pRdAt5c5IFXiRvuJ3PKKN3KB
+         z+m1O58vnIKZjnmoQcceyEUjlOiNadlUYZfampxRUes8jaP4kFuLb6GczrXznpARDn3l
+         QgMyVZcOm844ZKN0N8RIrmzcFexRZz6FeHFl6oqc1S5zZ57TxAffezgGiFASnVOFMDsN
+         rxuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687817334; x=1690409334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pie2BR0RZlocTFwDH7xiMxbIV/j8++CJbN95WHJ3210=;
+        b=McfaKbinupJXe+OSpWpgr1skAyj1H000/njpeL1OyFJEKA0QXAPT44DibtVS4A7j+p
+         7za/bHuC+dfDPmvCn5ZKwcT/Npw0ouFWRRnvdj1UhCanLt0adHATSeXOF69xmXgTOqco
+         mevD0vn371X1nKoH3+XSK1M6wdoG5lyeg994TV9EAR+aAsTSbCmLJd2VPjEi8+H/LE9R
+         8gzJiEtt2S+Pwl8FWgAiFbns+X1ytBko6WRSaWMYLMnCIlH9Lomtf0MuWMnZkAf+214I
+         kbmryvpf6qo61qQkAxiqkHG0ldhVwRbUJWF7hosBrmRxd25wEG1OdLdFL4F0sU0BZN9B
+         cwiA==
+X-Gm-Message-State: AC+VfDza53E9t5qnh3mQuwkYfgmpSPJ35rBkioZew6j4FGq7kBmpZ2g3
+        oRksj2HbbcLexTuWYNvS3ZYWxpj63xT+sZ6AZvsV18OOjPs=
+X-Google-Smtp-Source: ACHHUZ5RzmoIfh4GMa3viOj81/FjCkIQldQudO6j7GuG/CQvZyvvi6rH10FGecSCy3K8Q3qA6ly6j5Re2ZS1DJqwM1A=
+X-Received: by 2002:a7b:ce8d:0:b0:3fb:40ff:1cba with SMTP id
+ q13-20020a7bce8d000000b003fb40ff1cbamr1289097wmj.6.1687817333816; Mon, 26 Jun
+ 2023 15:08:53 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.185
-Content-Transfer-Encoding: 8bit
+References: <20230607235352.1723243-1-andrii@kernel.org> <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
+ <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
+ <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com> <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
+ <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com> <bc4f99af-0c46-49b2-9f2d-9a01e6a03af3@app.fastmail.com>
+ <5a75d1f0-4ed9-399c-4851-2df0755de9b5@redhat.com> <CAEf4Bza9GvJ0vw2-0M8GKSXmOQ8VQCmeqEiQpMuZBjwqpA03vw@mail.gmail.com>
+ <82b79e57-a0ad-4559-abc9-858e0f51fbba@app.fastmail.com>
+In-Reply-To: <82b79e57-a0ad-4559-abc9-858e0f51fbba@app.fastmail.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Mon, 26 Jun 2023 15:08:41 -0700
+Message-ID: <CAEf4BzbwZ0uxfNjDcJspuzhTh3MUDBn_BYen-mNhkrGK7pA_Tg@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Maryam Tahhan <mtahhan@redhat.com>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <brauner@kernel.org>, lennart@poettering.net,
+        cyphar@cyphar.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Dmitry Mastykin <dmastykin@astralinux.ru>
+On Thu, Jun 22, 2023 at 6:03=E2=80=AFPM Andy Lutomirski <luto@kernel.org> w=
+rote:
+>
+>
+>
+> On Thu, Jun 22, 2023, at 11:40 AM, Andrii Nakryiko wrote:
+> > On Thu, Jun 22, 2023 at 10:38=E2=80=AFAM Maryam Tahhan <mtahhan@redhat.=
+com> wrote:
+> >
+> > For CAP_BPF too broad. It is broad, yes. If you have good ideas how to
+> > break it down some more -- please propose. But this is all orthogonal,
+> > because the blocking problem is fundamental incompatibility of user
+> > namespaces (and their implied isolation and sandboxing of workloads)
+> > and BPF functionality, which is global by its very nature. The latter
+> > is unavoidable in principle.
+>
+> How, exactly, is BPF global by its very nature?
+>
+> The *implementation* has some issues with globalness.  Much of it should =
+be fixable.
+>
 
-[ Upstream commit b403643d154d15176b060b82f7fc605210033edd ]
+bpf_probe_read_kernel() is widely used and required for real-world
+applications. It's global by its nature and in principle not
+restrictable. We can say that we'll just disable applications that use
+bpf_probe_read_kernel(), but the goal is to enable applications that
+are *practically useful*, not just some restricted set of programs
+that are provably contained.
 
-There is a shift wrapping bug in this code on 32-bit architectures.
-NETLBL_CATMAP_MAPTYPE is u64, bitmap is unsigned long.
-Every second 32-bit word of catmap becomes corrupted.
+> >
+> > No matter how much you break down CAP_BPF, you can't enforce that BPF
+> > program won't interfere with applications in other containers. Or that
+> > it won't "spy" on them. It's just not what BPF can enforce in
+> > principle.
+>
+> The WHOLE POINT of the verifier is to attempt to constrain what BPF progr=
+ams can and can't do.  There are bugs -- I get that.  There are helper func=
+tions that are fundamentally global.  But, in the absence of verifier bugs,=
+ BPF has actual boundaries to its functionality.
 
-Signed-off-by: Dmitry Mastykin <dmastykin@astralinux.ru>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/netlabel/netlabel_kapi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+looking at your other replies, I think you realized yourself that
+there are valid use cases where it's impossible to statically validate
+boundaries
 
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index 91b35b7c80d82..96059c99b915e 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -857,7 +857,8 @@ int netlbl_catmap_setlong(struct netlbl_lsm_catmap **catmap,
- 
- 	offset -= iter->startbit;
- 	idx = offset / NETLBL_CATMAP_MAPSIZE;
--	iter->bitmap[idx] |= bitmap << (offset % NETLBL_CATMAP_MAPSIZE);
-+	iter->bitmap[idx] |= (NETLBL_CATMAP_MAPTYPE)bitmap
-+			     << (offset % NETLBL_CATMAP_MAPSIZE);
- 
- 	return 0;
- }
--- 
-2.39.2
+>
+> >
+> > So that comes back down to a question of trust and then controlled
+> > delegation of BPF functionality. You trust workload with BPF usage
+> > because you reviewed the BPF code, workload, testing, etc? Grant BPF
+> > token and let that container use limited subset of BPF. Employ BPF LSM
+> > to further restrict it beyond what BPF token can control.
+> >
+> > You cannot trust an application to not do something harmful? You
+> > shouldn't grant it either CAP_BPF in init namespace, nor BPF token in
+> > user namespace. That's it. Pick your poison.
+>
+> I think what's lost here is hardening vs restricting intended functionali=
+ty.
+>
+> We have access control to restrict intended functionality.  We have other=
+ (and generally fairly ad-hoc and awkward) ways to flip off functionality b=
+ecause we want to reduce exposure to any bugs in it.
+>
+> BPF needs hardening -- this is well established.  Right now, this is acco=
+mplished by restricting it to global root (effectively).  It should have ac=
+cess controls, too, but it doesn't.
+>
+> >
+> > But all this cannot be mechanically decided or enforced. There has to
+> > be some humans involved in making these decisions. Kernel's job is to
+> > provide building blocks to grant and control BPF functionality to the
+> > extent that it is technically possible.
+> >
+>
+> Exactly.  And it DOES NOT.  bpf maps, etc do not have sensible access con=
+trols.  Things that should not be global are global.  I'm saying the kernel=
+ should fix THAT.  Once it's in a state that it's at least credible to allo=
+w BPF in a user namespace, than come up with a way to allow it.
+>
+> > As for "something to isolate the pinned maps/progs by different apps
+> > (why not DAC rules?)", there is no such thing, as I've explained
+> > already.
+> >
+> > I can install sched_switch raw_tracepoint BPF program (if I'm allowed
+> > to), and that program has system-wide observability. It cannot be
+> > bound to an application.
+>
+> Great, a real example!
+>
+> Either:
+>
+> (a) don't run this in a container.  Have a service for the container to r=
+equest the help of this program.
+>
+> (b) have a way to have root approve a particular program and expose *that=
+* program to the container, and let the program have its own access control=
+s internally (e.g. only output info that belongs to that container).
+>
+> > then what do we do when we switch from process A in container
+> > X to process B in container Y? Is that event belonging to container X?
+> > Or container Y?
+>
+> I don't know, but you had better answer this question before you run this=
+ thing in a container, not just for security but for basic functionality.  =
+If you haven't defined what your program is even supposed to do in a contai=
+ner, don't run it there.
 
+I think you are missing the point I'm making. A specific BPF program
+that will use sched_switch is doing correct and right thing (for
+whatever that means in a specific case). We as humans designed,
+implemented, validated, reviewed it and are confident enough (as much
+as we can be with software) that it does the right thing. It doesn't
+try to spy on things, doesn't try to disrupt things.
+
+We know this as humans thanks to our internal development process.
+
+But this is not *provable* in a mechanical sense such that the kernel
+can validate and enforce this. And yet it's a practically useful
+application which we'd like to be able to launch from inside the
+container without rearchitecting and rewriting the entire world and
+proxying everything through some external root service.
+
+>
+>
+> > Hopefully you can see where I'm going with this. And this is just one
+> > random tiny example. We can think up tons of other cases to prove BPF
+> > is not isolatable to any sort of "container".
+>
+> No.  You have not come up with an example of why BPF is not isolatable to=
+ a container.  You have come up with an example of why binding to a sched_s=
+witch raw tracepoint does not make sense in a container without additional =
+mechanisms to give it well defined functionality and appropriate security.
+>
+> Please stop conflating BPF (programs, maps, etc) with *attachments* of BP=
+F programs to systemwide things.  They're both under the BPF umbrella.  The=
+y're not the same thing.
+
+I'm not conflating things. Thinking about BPF maps and BPF programs in
+isolation from them being attached somewhere in the kernel and doing
+actual and useful work is not useful.
+
+It's the end-to-end functionality including attaching and running BPF
+programs is what matters.
+
+Pedantically drawing the line at the BPF program load step and saying
+"this is BPF and everything else is not BPF" isn't really helpful. No
+one cares about just loading and validating BPF programs. Developers
+care about attaching and running them, that's what it all is about.
+
+>
+> Passing a token into a container that allow that container to do things l=
+ike loading its own programs *and attaching them to raw tracepoints* is IMO=
+ a complete nonstarter.  It makes no sense.
