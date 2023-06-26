@@ -2,224 +2,164 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4BB8EB64DC
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jun 2023 18:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B505EB64D7
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jun 2023 18:40:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230185AbjFZSOU (ORCPT
+        id S232476AbjFZSkS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Jun 2023 14:14:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56530 "EHLO
+        Mon, 26 Jun 2023 14:40:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230096AbjFZSON (ORCPT
+        with ESMTP id S232471AbjFZSkR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Jun 2023 14:14:13 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE116130;
-        Mon, 26 Jun 2023 11:14:06 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fb4146e8fcso5064715e9.0;
-        Mon, 26 Jun 2023 11:14:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687803245; x=1690395245;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/hc7Igig2hnS9scknbx0R0/Ks5IqVXjHHneOtwGiGts=;
-        b=nGARiJ7oJHkEIyhm/JrTF2Tcsl6mzXkrIVNkHXvBs0elXDCO1h5VTLEsG4CE8iclhB
-         f42yDrh3GursluajYlqcVpa5BEzEVD7N0F/cAZhZM/LxM+VkVuSbSM+c7v76vUjnXv3T
-         xGObGvqY04UE//V2ImKFtpNYvQjz2WXbgksWzhKeeKNXrxrB+j2i04aloHX6mSIKsEJD
-         +T0gL8KMACP+LnNsZWn0TGLHaTpq5/aLt+eUHqEQy1FSzgHu+3KkfpJ4bz0MXX6k/1uk
-         PwB/c/HXcmNCplYwE/yzxxei6jFKLPl5MZ1IWDm8HgLXX56zYQ0urqKMbWC3xp/Kg1cX
-         QCGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687803245; x=1690395245;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/hc7Igig2hnS9scknbx0R0/Ks5IqVXjHHneOtwGiGts=;
-        b=QzGgNZIaPnbkyMxPscaqOatA5MR3/pBikEApg42PFeVD3V/JWMwSFjEvJFRIvO4MlT
-         j/zQFVtxOuPFsQo1UM8mJQxa0N/6b9UYjae/VC0XcJUrsSq8t85oynfA36VfMQrTLDmQ
-         PjmzYmAVVMVCUg2BYQksNDnC9CNZgc5YgRwSadmhN0fyqMuv10sRDpNWs18yMveQKxY3
-         cpSzZfSI4DyvoubLFmXw1e1dlh4gDvElIQZjp50dqzczdJ3jz9xAJBrJpcjjWVtXxP9z
-         VpfnRZJork8nqa5buOJOlYc3FdAuhzUXE/s2D21jBpqMdwYBiZ75n3n+N2ce1o1bk0S6
-         ef+g==
-X-Gm-Message-State: AC+VfDycacWZJcUggpQyf5pBJRYJskqvKQKNX9/UdQwZdfQ/jNNwhKLE
-        1zzth8NghCoP2r3A3uJ8jBg/dueUuGA=
-X-Google-Smtp-Source: ACHHUZ7y6JJ+0zoaNRoC01SVwuWTRfwo+AdiBHMtqP5iGGNv5ExkuoK8H3YMr77QRSCw1q95t4r4eg==
-X-Received: by 2002:a7b:cb04:0:b0:3f7:ecdf:ab2d with SMTP id u4-20020a7bcb04000000b003f7ecdfab2dmr28763497wmj.20.1687803244999;
-        Mon, 26 Jun 2023 11:14:04 -0700 (PDT)
-Received: from localhost ([2a02:168:633b:1:9d6a:15a4:c7d1:a0f0])
-        by smtp.gmail.com with ESMTPSA id m24-20020a7bcb98000000b003f727764b10sm8493123wmi.4.2023.06.26.11.14.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 11:14:04 -0700 (PDT)
-Date:   Mon, 26 Jun 2023 20:13:59 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-        linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Simon Brand <simon.brand@postadigitale.de>,
-        linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Landlock: ioctl support
-Message-ID: <20230626.0a8f70d4228e@gnoack.org>
-References: <20230623144329.136541-1-gnoack@google.com>
- <ZJW4O+HVymf4nB6A@google.com>
- <77ec6e6c-7fb0-01ab-26c5-e9c9da392e2a@digikod.net>
+        Mon, 26 Jun 2023 14:40:17 -0400
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79F44DA
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Jun 2023 11:40:15 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Qqc8s6HNHzMq6Tp;
+        Mon, 26 Jun 2023 18:40:13 +0000 (UTC)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Qqc8s0mlGzMpqLq;
+        Mon, 26 Jun 2023 20:40:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1687804813;
+        bh=1lsc72iy6ST9mPJPeVB5zyv/6hjrSVWAcBML9Eit0II=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=FUtUSqnlRlIyxj5gsiRsVZGGbuvPVYz5sEh2XUIIzsDeMqGIt0MSNEcz4aL+dNBuY
+         txxCGyKxbRDKp8NNaaC0IsCVG1RCIXHhNT5Ed5ln8pi/u4ODhBZMaYOaQsNV/VdO1q
+         LBLy6o0htmp+vEDsbPiv7STwQ+qEaTyF51vLAqLk=
+Message-ID: <7ccd6600-c171-136d-82b5-8555b81ea7ba@digikod.net>
+Date:   Mon, 26 Jun 2023 20:40:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: 
+Subject: Re: [PATCH v11 03/12] landlock: Refactor
+ landlock_find_rule/insert_rule
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+ <20230515161339.631577-4-konstantin.meskhidze@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230515161339.631577-4-konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <77ec6e6c-7fb0-01ab-26c5-e9c9da392e2a@digikod.net>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello!
 
-On Fri, Jun 23, 2023 at 06:37:25PM +0200, Mickaël Salaün wrote:
-> On 23/06/2023 17:20, Günther Noack wrote:
-> > ***Proposal***:
-> > 
-> >    I am in favor of *disabling* TIOCSTI in all Landlocked processes,
-> >    if the Landlock policy handles the LANDLOCK_ACCESS_FS_IOCTL right.
-> > 
-> > If we want to do it in a backwards-compatible way, now would be the time to add
-> > it to the patch set. :)
+On 15/05/2023 18:13, Konstantin Meskhidze wrote:
+> Add a new landlock_key union and landlock_id structure to support
+> a socket port rule type. A struct landlock_id identifies a unique entry
+> in a ruleset: either a kernel object (e.g inode) or typed data (e.g TCP
+> port). There is one red-black tree per key type.
 > 
-> What would that not be backward compatible?
-
-What I meant is that disabling TIOCSTI for Landlocked processes would
-only be backwards compatible for Landlock users if they did a
-conscious step for opting in to that feature, such as specifying that
-"ioctl" should be a handled right.
-
-
-> > As far as I can tell, there are no good legitimate use cases for TIOCSTI, and it
-> > would fix the aforementioned sandbox escaping trick for a Landlocked process.
-> > With the patch set as it is now, the only way to prevent that sandbox escape is
-> > unfortunately to either (1) close the TTY file descriptors when enabling
-> > Landlock, or (2) rely on an outside process to pass something else than a TTY
-> > for FDs 0, 1 and 2.
+> This patch also adds is_object_pointer() and get_root() helpers.
+> is_object_pointer() returns true if key type is LANDLOCK_KEY_INODE.
+> get_root() helper returns a red_black tree root pointer according to
+> a key type.
 > 
-> What about calling setsid()?
+> Refactor landlock_insert_rule() and landlock_find_rule() to support coming
+> network modifications. Adding or searching a rule in ruleset can now be
+> done thanks to a Landlock ID argument passed to these helpers.
 > 
-> Alternatively, seccomp could be used, even if it could block overlapping
-> IOCTLs as well…
-
-The possible approaches that I have seen kicked around are:
-
-setsid()
-
-  This does not work reliably from all processes, unfortunately.
-  In particular, it does not work in the common case where a process
-  gets started from a shell, without pipes or other bells and
-  whistles.
-  
-  From the man page:
-
-    setsid() creates a new session if the calling process is not a
-    process group leader.
-
-  Shells run subprocesses in their own process groups and if it is
-  only one, it is its own process group leader (see credentials(7)).
-
-  Such a process *could* of course run a subprocess and do it there,
-  but it would potentially require architectural changes in some
-  programs to do that, which de
-
-seccomp-bpf
-
-  That's a fallback solution, yes, although I am still hoping in the
-  long run that we can get away without it.  The problem of tracking
-  the available syscall numbers as I previously discussed it at [1]
-  still exists: If the compiled program runs on a new kernel with a
-  new syscall number, and is linked against a new version of glibc,
-  that program might start doing this syscall but it can't tell apart
-  in the seccomp filter whether this is to be blocked or not.
-
-  It's a fundamentally flawed approach when linking against shared
-  objects and running on unknown (future) Linux versions.
-
-  [1] https://blog.gnoack.org/post/pledge-on-linux/
-
-creating a new pseudo-terminal
-
-  The cleaner solution suggested by Alan Cox in [2] is to create a new
-  pseudo terminal and run the program within that pseudo terminal.
-
-  This is also the technique used by programs like su (with the --pty
-  flag) and sudo.  The man pages of both programs talk about it.
-
-  Implementing this approach unfortunately also requires some
-  architectural changes to the program doing that - it would also
-  involve two processes again, one which keeps a reference to the tty
-  which shovels data between the old and new terminal, and one which
-  is sandboxed which only sees the pseudo-terminal.  The details are
-  described in "Advanced Programming in the UNIX Environment", Chapter
-  11.
-
-  [2] https://lore.kernel.org/all/20170510212920.7f6bc5e6@alans-desktop/
-
-
-I dislike all three of them for the Landlock use case:
-
- - Involving additional processes is a bigger change that the programs
-   using Landlock would have to deal with.
-
- - Seccomp-BPF is a hack as well, due to the problem of having to
-   track syscall numbers across platforms.
-
-It might not be worth doing these things just to bridge the gap until
-we have a more proper solution in Landlock.
-
-For more entertaining/scary background reading, this search query in
-the CVE database has links where you can see how the issue has been
-dealt with in the past:
-
-https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=TIOCSTI
-
-The most recent one of these is in opendoas, the discussion in that
-thread also has some interesting pointers (and the team ended up stuck
-with the same three potential fixes which have similar problems for
-them and which they have not implemented so far):
-https://github.com/Duncaen/OpenDoas/issues/106
-
-
-
-> > Does that sound reasonable?  If yes, I'd send an update to this patch set which
-> > forbids TIOCSTI.
+> Co-developed-by: Mickaël Salaün <mic@digikod.net>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
 > 
-> I agree that TIOCSTI is dangerous, but I don't see the rationale to add an
-> exception for this specific IOCTL. I'm sure there are a lot of potentially
-> dangerous IOCTLs out there, but from a kernel point of view, why should
-> Landlock handle this one in a specific way?
+> Changes since v10:
+> * None.
 > 
-> Landlock should not define specific policies itself but let users manage
-> that. Landlock should only restrict kernel features that *directly* enable
-> to bypass its own restrictions (e.g. ptrace scope, FS topology changes when
-> FS restrictions are in place).
+> Changes since v9:
+> * Splits commit.
+> * Refactors commit message.
+> * Minor fixes.
 > 
-> I think we should instead focus on adding something like a
-> landlock_inode_attr rule type to restrict IOCTLs defined by
-> users/developers, and then extend it to make it possible to restrict already
-> opened FDs as well.
+> Changes since v8:
+> * Refactors commit message.
+> * Removes inlining.
+> * Minor fixes.
+> 
+> Changes since v7:
+> * Completes all the new field descriptions landlock_key,
+>    landlock_key_type, landlock_id.
+> * Refactors commit message, adds a co-developer.
+> 
+> Changes since v6:
+> * Adds union landlock_key, enum landlock_key_type, and struct
+>    landlock_id.
+> * Refactors ruleset functions and improves switch/cases: create_rule(),
+>    insert_rule(), get_root(), is_object_pointer(), free_rule(),
+>    landlock_find_rule().
+> * Refactors landlock_append_fs_rule() functions to support new
+>    landlock_id type.
+> 
+> Changes since v5:
+> * Formats code with clang-format-14.
+> 
+> Changes since v4:
+> * Refactors insert_rule() and create_rule() functions by deleting
+> rule_type from their arguments list, it helps to reduce useless code.
+> 
+> Changes since v3:
+> * Splits commit.
+> * Refactors landlock_insert_rule and landlock_find_rule functions.
+> * Rename new_ruleset->root_inode.
+> 
+> ---
+>   security/landlock/fs.c      |  21 +++---
+>   security/landlock/ruleset.c | 134 ++++++++++++++++++++++++++----------
+>   security/landlock/ruleset.h |  65 ++++++++++++++---
+>   3 files changed, 166 insertions(+), 54 deletions(-)
 
-After researching all the stuff above, I believe you are right - it's
-better to leave this up to userspace and let them define the ioctls
-that they actually need with an allow-listing approach, to reduce the
-risk from obscure TTY ioctls.
+[...]
 
-Another point that also came up in the mail thread in [2] above was:
-TIOCSTI is not the only way to do harm through the tty FD.  Another
-one is TIOCLINUX (ioctl_console(2)) through its cut&paste
-functionality, and who knows what other ioctls there might be.
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index 1f3188b4e313..deab37838f5b 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
 
-So in that sense, I'm coming around to your approach of letting the
-user define it in the next iteration of this ioctl patch set -- but
-it will really be necessary to do that. o_O
+[...]
 
-–Günther
+> @@ -316,21 +368,29 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
+>   			   struct landlock_ruleset *const child)
+>   {
+>   	struct landlock_rule *walker_rule, *next_rule;
+> +	struct rb_root *parent_root;
+>   	int err = 0;
+> 
+>   	might_sleep();
+>   	if (!parent)
+>   		return 0;
+> 
+> +	parent_root = get_root(parent, LANDLOCK_KEY_INODE);
+> +	if (IS_ERR(parent_root))
+> +		return PTR_ERR(parent_root);
+> +
+>   	/* Locks @child first because we are its only owner. */
+>   	mutex_lock(&child->lock);
+>   	mutex_lock_nested(&parent->lock, SINGLE_DEPTH_NESTING);
+> 
+>   	/* Copies the @parent tree. */
+>   	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
+> -					     &parent->root, node) {
+> -		err = insert_rule(child, walker_rule->object,
+> -				  &walker_rule->layers,
+> +					     parent_root, node) {
+> +		const struct landlock_id id = {
+> +			.key = walker_rule->key,
+> +			.type = LANDLOCK_KEY_INODE,
+> +		};
+
+Please add a line break here instead of in a the following refactoring 
+commit.
+
+
+> +		err = insert_rule(child, id, &walker_rule->layers,
+>   				  walker_rule->num_layers);
+>   		if (err)
+>   			goto out_unlock;
