@@ -2,108 +2,121 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D538AEB64D7
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jun 2023 08:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40FE3EB64DA
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jun 2023 15:23:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231426AbjFZIv5 (ORCPT
+        id S229619AbjFZPXa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Jun 2023 04:51:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41440 "EHLO
+        Mon, 26 Jun 2023 11:23:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230051AbjFZIvl (ORCPT
+        with ESMTP id S229825AbjFZPX3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Jun 2023 04:51:41 -0400
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [IPv6:2001:1600:3:17::190f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 519CB3584
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Jun 2023 01:49:32 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QqM2M0mHtzMpqsT;
-        Mon, 26 Jun 2023 08:48:43 +0000 (UTC)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QqM2L1jyXzMpvVT;
-        Mon, 26 Jun 2023 10:48:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1687769323;
-        bh=aEhUEFjlWBzIziOJJuCpxbJR2jQcCyx7meGNZnSvhvk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MZ7Nlj8eZb95HPTOedrkSDfhjlo2sRy4yuyIQMydvoqcfNvedTf3b8bIzBMun4lJ1
-         VtzLHyotWl8rHCLzSE9oT2lbpGtyjenJjAWryvZQttYBXTRLb4HfLl836g8K0x4cVH
-         LFdChgyxRi3Zi+H5y11/TQQRLq5/N2C+qhfgJqf8=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Richard Weinberger <richard@nod.at>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-um@lists.infradead.org
-Subject: [GIT PULL] Landlock updates for v6.5
-Date:   Mon, 26 Jun 2023 10:48:30 +0200
-Message-ID: <20230626084830.717289-1-mic@digikod.net>
+        Mon, 26 Jun 2023 11:23:29 -0400
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FFA311D;
+        Mon, 26 Jun 2023 08:23:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:Subject:From:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+        bh=iMBHjiX13Jx2K+DUN0zShMC0AlcRS4tKjEDHKV4mywk=; b=UAtm1cxFQMpuZX6cTGkMWX6y8b
+        nV/4ausApWc8hcwfgl5hDowvfngHesjWHzni65gu4oQoe6ZZBhp+o9s4jHTrSTM/27UgDlS4dz5z7
+        OMcB9DUHy2qCG+W01Pc3qT6K6HHbTbuz+m6v7D1Vfsr5cdHjRnGvN5E6EU6bcE3uDhqUb63jmmw8/
+        toSNystTez3MUqRPMdzgzZfm+LzK7Vwxj6rKG8M0FETa/TuhRQKgZshREGFIKJBCsOJMrVBO2J8Xo
+        q/7tE99Rc5eKUByu+xyHniPYJ/3Dag32HRoxfHMgSsUSd7SYb1+TDX/GIyvd0B/f/jp1n+FxgBgOl
+        7y4hdKSQ==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+        by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1qDo3i-0005Kz-0c; Mon, 26 Jun 2023 17:23:18 +0200
+Received: from [85.1.206.226] (helo=linux.home)
+        by sslproxy01.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1qDo3h-000H7M-KP; Mon, 26 Jun 2023 17:23:17 +0200
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
+To:     Andy Lutomirski <luto@kernel.org>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Maryam Tahhan <mtahhan@redhat.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <brauner@kernel.org>, lennart@poettering.net,
+        cyphar@cyphar.com, kernel-team@meta.com
+References: <20230607235352.1723243-1-andrii@kernel.org>
+ <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
+ <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
+ <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com>
+ <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
+ <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com>
+ <bc4f99af-0c46-49b2-9f2d-9a01e6a03af3@app.fastmail.com>
+ <5a75d1f0-4ed9-399c-4851-2df0755de9b5@redhat.com>
+ <CAEf4Bza9GvJ0vw2-0M8GKSXmOQ8VQCmeqEiQpMuZBjwqpA03vw@mail.gmail.com>
+ <82b79e57-a0ad-4559-abc9-858e0f51fbba@app.fastmail.com>
+ <9b0e9227-4cf4-4acb-ba88-52f65b099709@app.fastmail.com>
+ <173f0af7-e6e1-f4b7-e0a6-a91b7a4da5d7@iogearbox.net>
+ <fe47aeb6-dae8-43a6-bcb0-ada2ebf62e08@app.fastmail.com>
+ <8340aaf2-8b4c-4f7d-8eed-f72f615f6fd0@app.fastmail.com>
+Message-ID: <77fc8c9b-220f-da93-c6b8-a8f36eb1086f@iogearbox.net>
+Date:   Mon, 26 Jun 2023 17:23:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <8340aaf2-8b4c-4f7d-8eed-f72f615f6fd0@app.fastmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.8/26951/Mon Jun 26 09:29:31 2023)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On 6/24/23 5:28 PM, Andy Lutomirski wrote:
+> On Sat, Jun 24, 2023, at 6:59 AM, Andy Lutomirski wrote:
+>> On Fri, Jun 23, 2023, at 4:23 PM, Daniel Borkmann wrote:
+>>
+>> If this series was about passing a “may load kernel modules” token
+>> around, I think it would get an extremely chilly reception, even though
+>> we have module signatures.  I don’t see anything about BPF that makes
+>> BPF tokens more reasonable unless a real security model is developed
+>> first.
+> 
+> To be clear, I'm not saying that there should not be a mechanism to use BPF from a user namespace.  I'm saying the mechanism should have explicit access control.  It wouldn't need to solve all problems right away, but it should allow incrementally more features to be enabled as the access control solution gets more powerful over time.
+> 
+> BPF, unlike kernel modules, has a verifier.  While it would be a departure from current practice, permission to use BPF could come with an explicit list of allowed functions and allowed hooks.
+> 
+> (The hooks wouldn't just be a list, presumably -- premission to install an XDP program would be scoped to networks over which one has CAP_NET_ADMIN, presumably.  Other hooks would have their own scoping.  Attaching to a cgroup should (and maybe already does?) require some kind of permission on the cgroup.  Etc.)
+> 
+> If new, more restrictive functions are needed, they could be added.
 
-This PR adds support for Landlock to UML.  In fact, this fixes the way
-hostfs manages inodes according to the underlying filesystem [1].  They
-are now properly handled as for other filesystems, which enables to
-support Landlock (and probably other features).  This PR also extends
-Landlock's tests with 6 pseudo filesystems, including hostfs.
+Wasn't this the idea of the BPF tokens proposal, meaning you could create them with
+restricted access as you mentioned - allowing an explicit subset of program types to
+be loaded, subset of helpers/kfuncs, map types, etc.. Given you pass in this token
+context upon program load-time (resp. map creation), the verifier is then extended
+for restricted access. For example, see the bpf_token_allow_{cmd,map_type,prog_type}()
+in this series. The user namespace relation was part of the use cases, but not strictly
+part of the mechanism itself in this series.
 
-This PR can lead to a trivial merge conflict with tip [2] where one of
-Thomas's commit adds ARCH_HAS_CPU_FINALIZE_INIT and one of mine removes
-ARCH_EPHEMERAL_INODES in arch/um/Kconfig.
+With regards to the scoping, are you saying that the current design with the bitmasks
+in the token create uapi is not flexible enough? If yes, what concrete alternative do
+you propose?
 
-Please pull these changes for v6.5-rc1 .  These commits merged cleanly
-with v6.4, and have been successfully tested in the latest linux-next
-releases for a few weeks.
+> Alternatively, people could try a limited form of BPF proxying.  It wouldn't need to be a full proxy -- an outside daemon really could approve the attachment of a BPF program, and it could parse the program, examine the list of function it uses and what the proposed attachment is to, and make an educated decision.  This would need some API changes (maybe), but it seems eminently doable.
 
-[1] https://lore.kernel.org/all/20230612191430.339153-1-mic@digikod.net/
-[2] https://lore.kernel.org/all/b57481af-5824-72f7-d20f-cfd78fcde519@digikod.net/
+Thinking about this from an k8s environment angle, I think this wouldn't really be
+practical for various reasons.. you now need to maintain two implementations for your
+container images which ships BPF one which loads programs as today, and another one
+which talks to this proxy if available, then you also need to standardize and support
+the various loader libraries for this, you need to deal with yet one more component
+in your cluster which could fail (compared to talking to kernel directly), and being
+dependent on new proxy functionality becomes similar as with waiting for new kernels
+to hit mainstream, it could potentially take a very long time until production upgrades.
+What is being proposed here in this regard is less complex given no extra proxy is
+involved. I would certainly prefer a kernel-based solution.
 
-Regards,
- Mickaël
-
---
-The following changes since commit 858fd168a95c5b9669aac8db6c14a9aeab446375:
-
-  Linux 6.4-rc6 (2023-06-11 14:35:30 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.5-rc1
-
-for you to fetch changes up to 35ca4239929737bdc021ee923f97ebe7aff8fcc4:
-
-  selftests/landlock: Add hostfs tests (2023-06-12 21:26:23 +0200)
-
-----------------------------------------------------------------
-Landlock updates for v6.5-rc1
-
-----------------------------------------------------------------
-Mickaël Salaün (6):
-      hostfs: Fix ephemeral inodes
-      selftests/landlock: Don't create useless file layouts
-      selftests/landlock: Add supports_filesystem() helper
-      selftests/landlock: Make mounts configurable
-      selftests/landlock: Add tests for pseudo filesystems
-      selftests/landlock: Add hostfs tests
-
- arch/Kconfig                               |   7 -
- arch/um/Kconfig                            |   1 -
- fs/hostfs/hostfs.h                         |   1 +
- fs/hostfs/hostfs_kern.c                    | 213 ++++++++--------
- fs/hostfs/hostfs_user.c                    |   1 +
- security/landlock/Kconfig                  |   2 +-
- tools/testing/selftests/landlock/config    |   9 +-
- tools/testing/selftests/landlock/config.um |   1 +
- tools/testing/selftests/landlock/fs_test.c | 387 +++++++++++++++++++++++++++--
- 9 files changed, 478 insertions(+), 144 deletions(-)
- create mode 100644 tools/testing/selftests/landlock/config.um
+Thanks,
+Daniel
