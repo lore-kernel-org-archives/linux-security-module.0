@@ -2,212 +2,81 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A6DC001B1
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jul 2023 15:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0CFEB64D9
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jun 2023 10:09:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231231AbjGCPjK convert rfc822-to-8bit (ORCPT
+        id S232090AbjF0KJn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jul 2023 11:39:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33852 "EHLO
+        Tue, 27 Jun 2023 06:09:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229980AbjGCPjJ (ORCPT
+        with ESMTP id S231889AbjF0KJM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jul 2023 11:39:09 -0400
-Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC4BE58;
-        Mon,  3 Jul 2023 08:39:08 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4QvqX441y1z9xFr7;
-        Mon,  3 Jul 2023 23:26:28 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwA39kxs66JkU3IEBA--.51187S2;
-        Mon, 03 Jul 2023 16:38:34 +0100 (CET)
-Message-ID: <6526255a4e30f0222b3469975d6a7537c2d69e41.camel@huaweicloud.com>
-Subject: Re: [QUESTION] Full user space process isolation?
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        "Dr. Greg" <greg@enjellic.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        David Howells <dhowells@redhat.com>,
-        LuisChamberlain <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Petr Tesarik <petrtesarik@huaweicloud.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Date:   Mon, 03 Jul 2023 17:38:18 +0200
-In-Reply-To: <2939cc00-2b8b-bf9a-45bc-b9a2d8d8def1@schaufler-ca.com>
-References: <eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com>
-         <20230629021000.GA368825@mail.hallyn.com>
-         <14599d8216f1b7520ff5f6cfb27377fa79709f13.camel@huaweicloud.com>
-         <20230702175542.GA25867@wind.enjellic.com>
-         <0870d82571d1075433a2b81b2953cf8b4afcd415.camel@huaweicloud.com>
-         <2939cc00-2b8b-bf9a-45bc-b9a2d8d8def1@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu1 
+        Tue, 27 Jun 2023 06:09:12 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD4E63593;
+        Tue, 27 Jun 2023 03:07:07 -0700 (PDT)
+Received: from fsav116.sakura.ne.jp (fsav116.sakura.ne.jp [27.133.134.243])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 35RA65lu033475;
+        Tue, 27 Jun 2023 19:06:05 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav116.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp);
+ Tue, 27 Jun 2023 19:06:05 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 35RA65wO033472
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 27 Jun 2023 19:06:05 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <ecb32549-8b6f-4b8d-b832-4f86adb95183@I-love.SAKURA.ne.jp>
+Date:   Tue, 27 Jun 2023 19:06:04 +0900
 MIME-Version: 1.0
-X-CM-TRANSID: GxC2BwA39kxs66JkU3IEBA--.51187S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuFW5ArykZw47Jr47KF4DJwb_yoW7WF4rpF
-        W3tay3KF4ktF13Ar1qqw48uFWYy393Jry7XrnYq34rJwn0vrn3Cr1xtF1fuFyDGrWxJw1j
-        vFWUt3sxXw1qvFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUv014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-        6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JV
-        W8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-        2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-        W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-        0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-        AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
-        rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-        v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_
-        Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1
-        VOJ5UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBF1jj4+y0QABse
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [syzbot] [tomoyo?] [bpf?] INFO: rcu detected stall in
+ security_file_open (6)
+Content-Language: en-US
+To:     Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+References: <0000000000001526c405ff196bc1@google.com>
+Cc:     syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+bb11ad7bb33b56ca4d4b@syzkaller.appspotmail.com>,
+        USB list <linux-usb@vger.kernel.org>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <0000000000001526c405ff196bc1@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-07-03 at 07:43 -0700, Casey Schaufler wrote:
-> On 7/3/2023 12:57 AM, Roberto Sassu wrote:
-> > On Sun, 2023-07-02 at 12:55 -0500, Dr. Greg wrote:
-> > > On Thu, Jun 29, 2023 at 10:11:26AM +0200, Roberto Sassu wrote:
-> > > 
-> > > Good morning, I hope the weekend is going well for everyone, greetings
-> > > to Roberto and everyone copied.
-> > > 
-> > > > On Wed, 2023-06-28 at 21:10 -0500, Serge E. Hallyn wrote:
-> > > > > On Thu, Jun 22, 2023 at 04:42:37PM +0200, Roberto Sassu wrote:
-> > > > > > Hi everyone
-> > > > > > 
-> > > > > > I briefly discussed this topic at LSS NA 2023, but I wanted to have an
-> > > > > > opinion from a broader audience.
-> > > > > > 
-> > > > > > In short:
-> > > > > > 
-> > > > > > I wanted to execute some kernel workloads in a fully isolated user
-> > > > > > space process, started from a binary statically linked with klibc,
-> > > > > > connected to the kernel only through a pipe.
-> > > > > > 
-> > > > > > I also wanted that, for the root user, tampering with that process is
-> > > > > > as hard as if the same code runs in kernel space.
-> > > > > > 
-> > > > > > I would use the fully isolated process to parse and convert unsupported
-> > > > > > data formats to a supported one, after the kernel verified the
-> > > > > Can you give some examples here of supported and unsupported data
-> > > > > formats?  ext2 is supported, but we sadly don't trust the sb parser
-> > > > > to read a an ext2fs coming from unknown source.  So I'm not quite
-> > > > > clear what problem you're trying to solve.
-> > > > + eBPF guys (as I'm talking about eBPF)
-> > > If the week goes well, we will be submitting the second version of our
-> > > TSEM LSM for review.  It incorporates a significant number of changes
-> > > and enhancements, based on both initial review comments, and
-> > > importantly, feedback from our collaborators in the critical
-> > > infrastructure community.
-> > > 
-> > > Just as a levelset.  TSEM provides kernel infrastructure to implement
-> > > security controls based on either deterministic or machine learning
-> > > models.  Quixote is the userspace infrastructure that enables use of
-> > > the TSEM kernel infrastructure.
-> > > 
-> > > Based on your description Roberto, TSEM may be of assistance in
-> > > addressesing your issues at two different levels.
-> > > 
-> > > First with respect to protection of an isolated workload.
-> > > 
-> > > TSEM is inherently workload based, given that it is based on an
-> > > architecture that implements security modeling namespaces that a
-> > > process heirarchy can be placed into.  This reduces model complexity
-> > > and provides the implementation of very specific and targeted security
-> > > controls based on the needs of a proposed workload.
-> > > 
-> > > The security controls are prospective rather than retrospective,
-> > > ie. TSEM will pro-actively block any security behaviors that are not
-> > > in a security model that has been defined for the workload.
-> > > 
-> > > For example, with respect to the concerns you had previously mentioned
-> > > about ptrace.  If the security model definition does not include a
-> > > security state coefficient for a ptrace_traceme security event, it
-> > > will be disallowed, regardless of what goes on with respect to kernel
-> > > development, modulo of course the ptrace_traceme LSM hook being
-> > > discontinued.
-> > Hi Greg
-> > 
-> > thanks for your insights.
-> > 
-> > The policy is quite simple:
-> > 
-> > 
-> >      r/w  ^                             kernel space
-> > ----------|-----------------------------------------
-> >           v (pipe)                        user space
-> >  +-----------------+       +-----------------------+
-> >  | trustworthy UMD |---X---| rest of the processes |
-> >  +-----------------+       +-----------------------+
-> > 
-> > The question was more, is the LSM infrastructure complete enough that
-> > the X can be really enforced?
+Ping?
+
+How do you plan to avoid printk() flooding?
+
+#syz dup: INFO: rcu detected stall in newfstatat (3)
+
+On 2023/06/27 18:51, syzbot wrote:
+> Hello,
 > 
-> I believe that it is. SELinux and Smack, users of the LSM infrastructure,
-> enforce "X". They also require netlabel for IP communications, and Smack
-> falls short on newer protocols, but that's not the fault of LSM.
+> syzbot found the following issue on:
 > 
-> > 
-> > Could there be other implicit information flows that the LSM
-> > infrastructure is not able/does not yet mediate, that could break the
-> > policy above?
+> HEAD commit:    8a28a0b6f1a1 Merge tag 'net-6.4-rc8' of git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1335a9db280000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2cbd298d0aff1140
+> dashboard link: https://syzkaller.appspot.com/bug?extid=bb11ad7bb33b56ca4d4b
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16841cc0a80000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16fc6e1f280000
 > 
-> Sure. Every so often something pops into the kernel (e.g. io_uring)
-> without proper LSM integration. We try to discourage that, and correct
-> it when we find it.
-
-Well, ok. I guess Paul's point was that it is better to write code in
-the kernel to be sure, than running in this kind of risk. Maybe for
-certain workloads, it is a much better choice.
-
-For example, if the trustworthy UMD had the task to extract the crypto
-material from X.509 certificates an PKCS#7 signatures, and pass it to
-the kernel, breaking the isolation almost certainly would mean that the
-kernel accepts more kernel modules than it should.
-
-The question would be, if we restrict the scope of data processed by
-trustworthy UMDs, would that make the solution more acceptable?
-
-An idea for example would be: if we do appraisal with the traditional
-methods (signature in the xattr, HMAC, etc.) the trustworthy UMD would
-not have any impact.
-
-Only if the IMA policy says, allow appraisal based on what the
-trustworthy UMD provides, maybe it is ok? (Mimi?)
-
-Thanks
-
-Roberto
-
-> > 
-> > I guess TSEM could be for more elaborated security models, but in this
-> > case the policy is quite straithforward. Also, your TSEM would be as
-> > limited as mine by the LSM hooks available.
-> > 
-> > Thanks
-> > 
-> > Roberto
-> > 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/d02009a9822d/disk-8a28a0b6.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/f33ad4ef1182/vmlinux-8a28a0b6.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/f795a8ae7a8c/bzImage-8a28a0b6.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+bb11ad7bb33b56ca4d4b@syzkaller.appspotmail.com
 
