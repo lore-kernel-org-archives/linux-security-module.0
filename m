@@ -2,109 +2,210 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4F7EB64DD
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jun 2023 15:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 394B2EB64D9
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jun 2023 16:14:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232110AbjF0PB5 (ORCPT
+        id S230520AbjF0QOQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Jun 2023 11:01:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60594 "EHLO
+        Tue, 27 Jun 2023 12:14:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232099AbjF0PBy (ORCPT
+        with ESMTP id S231246AbjF0QOP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Jun 2023 11:01:54 -0400
-Received: from sonic309-26.consmr.mail.ne1.yahoo.com (sonic309-26.consmr.mail.ne1.yahoo.com [66.163.184.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8177619A8
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Jun 2023 08:01:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1687878112; bh=0wQW92aBn4Q9AlflvtKChiLu5LDrqG5d2oWf83D3xo8=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=SM7A1j0xIGWSdZopyZQrNvj9+vTzjIXUDof2SpOHB+zJ7bHUuzB6lc39Ok70zqk/D23/1OiHOCZDq9xvuux9PIVpiKXDPhNYgIdXk9FgFZuZrO0A/HIeNMLMKRrQUjEoquA69anGSMtN8csQxR08M0KzyZoAfAHrUjkebpRQwL5BWUCQxJbKEHLAAYMOX/SfF5HBvmPRnQG+mVGqKTn/JaWA275ka8R2iBzyA17RasvfQMNkDPMu+0mCRr56rNf7dXS3AHarT/uFqkctVhhh9K6xCXi9A42MkW6Nxuh6bqK96eC5ZS0gZWKSMVkHh1FyhydVbP8TPfax2yx+n7KvLg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1687878112; bh=CJU03iMc3QL4K5Vkypa36galTOe2yr32vKH8Xxp4ZF9=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=tt2WXj+2hcaGA+uAXSNUywoBwYLIe3kndmID+E3xznMph7TTZYKMOuXBbh/wyvSWrG75kDL8Z05m0cFlStijojESSHmBxTjJbdwYR/nSC/XmEO43nOmuDJj8+l1dnh21eH+/C/6gGXq4cvGfastaoe3vLexGRj4FAYg3SvJwZjiyLGeq3UW0GI8MKs6FNyCZpY4KhW+sYzwXp6T4ocaKyk12zjnBSGux92Ia/YtRZgwZySdp3a7/1T4PNk+RrhxBl2GSFgNLLG//7tnWY9sIJH5MZJU3BL9jp5e13xHlE2HZnBZmS2rTym4bn2ownf8Qfm5yGXfE1kHnFu6QYDsJww==
-X-YMail-OSG: 1uM7e7IVM1ltyDakbVBwKiR2_UapmpeQMYH_TCtYehHAFI3Zp1CfBYzHsrQReqo
- XI0Wtx5uZ.8OdvxN0.1woBaYiu66cPAGUA68qEoY1oansQ9ZK2k9hGw3Bj802WtB93osYYlnQI.I
- llU5_5FHNb6jwL9qF9taBQpU2pIiW5pWRKMO64ZtdRkmF_TbyCI2uI_LUzXCHl4oDQWykPAood4f
- Xl3q81s3Mhww4tlo99jexQj2eQ5L2gDwCnCFXOE.ZwGfcwqs7fuebrcnhHqpLSPzZKNjWmm8b9UY
- 1HxgvB9YB5oOgqUuKsAZ1uq4pRrhcLLdyWfFJkFaZT2B54eonKmyg_G2u4NwuohQOC9_rUXmFkeY
- Yk6ff7sJX0L4Nj9R3LNnEsp.CjIypGlSk65di.aT_RFHIH03HXbTr0YLlYmguAsVgHpyPWb750oA
- Ii01kujpROX9ybVDfQ4EAtQRrQY3hFe_Cb5KmoR7plPG2ZcXaI73XRaUJBifekHqbr75sveJ.rAa
- .5K2hjC2VCh21KgFDYCcW.cLuBKd8PiA48nL4Nu26yYUJTTXSjMau45xFx6X_8fsDrIEMxrSa89a
- gqpu8kJzGRPFJvjRlk70J3KjIZDGdZfiWRnn79_mw13g.BVV9knVVqsyFO6pdsS8HNvXNpTkqi_S
- d4bh8AsqKUmZSDL9.rESM0UkB7XroLYsFkBQOBDFgac8uOhLMDm1yIC7bjocDWUeqiAV9bLSFZbN
- pNDFcvNo6mEHzbQhodsf2KTwrxgXK7pa3ouVsPuayLc0ekyYsm_U_yvStofaDSLVEy4.gYY0tbA6
- msNnS46wXJUIYG1nYSBPN3uljBvVRgApViwnFd8EbpDK0BGknOVYp5ss1BBh9KJMsd9LrsjlwF1P
- AW8GplYSmBlJPo4PEsM2TFDJFUQomqG2WkeBu3rpUs0cQkiDFY.YZPtctdfoNvDHdrP3.RzZeVuX
- abhnPAU1BT2nrSwFgsRaSLFFoJz3RtemdyghTJspgz4HJPIQIA74xS_ktFRPPVhUuTPZgvy0U641
- Xj34Qu1dvP1dpozbq_UXs3VE.7ovo4vcpJhwYjwlf7nSMNjVCbsJ.PcRACyuNWxA_YFbjF4U3Kjd
- NPHAfCYx3tdrOb3H051jIfmmVb7Tc5.CBMt6zuaaXKcXUbO6ktn7HREvIc.0fRb9NaqTatnCeJPE
- 0AjeHuVkqaU0J3Hhlg68Pvz90iRAQj3KJ_Mt_oYrTZbjUQRXsknLxr3BtFj9c5BLW08whxcrMDfu
- ohGPZvN3piLzy6dBe7QW_RxgGXMi2TK48b8QaZxryFmukzRL5uPkSyzwfyCmDe6iWk8YgWvIMyzh
- C35sTq9YXd3sN3z_vJzTFPHgdtlwAc1AbrFC2xpRblGbUDd.cDlcVLetr7X549cLSD9b944kh7tB
- Fyib6g7eaF.PrJt8NZiFuJ8fAvkA0UjUG95hUA7EdyHHNFrap1F3TUBApUfUEF73Huz0UEzBHck8
- hJRYkbeNm6VHC3xBdGiYkYb9TTQUpaiJYm1twZrdqt9Bwu6874krnQ91vQuf4zpIpJ3aLyNZ2MoQ
- CCrtacnjnl7EY1QubNMc0nwe.PbF7gTFvHi5lay1VRj1edI75BSE45wRYKG_M0zxLQyNIpb1K_aY
- OGhF8jkBaRdw9aZwAO6E2qHjoXdEnUjH8R6iDT9RwVGU6jPtReEYymANmkL0V8rAg5pEcMlpWdkA
- cTkocXsQidNPAzFoXuqDJkQC5yvlkp7d5ci_ItnPR62s9eBk.6dFJQajyj7ikgx5.obf_WRmjgEn
- UR9Kt1863ZPbR9EHJAcHxDVdBbS9AfiV5JaohT2zhU8zjQ5cxMlY_H0Q3tABNAA2QnBojfTCSgIT
- gbf4fX6UHhK8VQlLeKWIR5pEdprtJQ_ZXmincwu0_p7nfEJ1WsziEp6oXgvrRbUm0GQrVwyiy7lw
- dvd9xO.7.qO5Cxf5RcWY8ob78sYTa4oiPQkAyZ1HPtnNVgN2iKxou9kFdB7Av0zk4pQj6oEOpG0Y
- tKfPqeto9u08OT4JodA_rIPfWaBVDLbS52dHiV9vegQc.MxRhE_GMEz1MNwI6ZfRMuiRrZxZz1NE
- rlfDdJ.9xF72rz_AfMGda5.TnIBwflqA_HjQuafvvpHYFIlWWKTZgNFRPVEqC1bNxqZsWX5zf2V2
- qK2qUXRnk_1r6YtcvVWJWg0q31sk4f8l7W9Mvq408IBWD0ug5Va23bgZzkR16hYxs9O_mm4bIbQB
- zniRVWAkq1ZUkt13pO1ZvU3Kx6DYHsrWb4.2Flp.wKYlc1h3YWL7A78.fDyOHJ8gSOKYW
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 9bcb62f4-e2ec-4f03-864e-8043eb9c62f5
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Tue, 27 Jun 2023 15:01:52 +0000
-Received: by hermes--production-bf1-54475bbfff-gh86g (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7943ef10e253e9d3bdc38850640bba40;
-          Tue, 27 Jun 2023 15:01:47 +0000 (UTC)
-Message-ID: <3b1107c2-77c1-28ce-3413-bec589eae083@schaufler-ca.com>
-Date:   Tue, 27 Jun 2023 08:01:44 -0700
+        Tue, 27 Jun 2023 12:14:15 -0400
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 224C230DF;
+        Tue, 27 Jun 2023 09:14:09 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Qr8sq04jszMqN1J;
+        Tue, 27 Jun 2023 16:14:07 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Qr8sn63VPz3Y;
+        Tue, 27 Jun 2023 18:14:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1687882446;
+        bh=Yg0KfM1iR2/QRwbQzzpHFvLUdwy1soimluoZk9JrzsM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=zyxurIKP4rMveeqXsq1BdFQ5dtryxGpiG79aSrqs9dG2uh8XIP8ebTDnZBF2YnTxP
+         3G2FsO4V3uInOtvmm8YRp7xIt5TGizCLmxwUuxKDSh/Y2nyKEFXGCdKYdAhW7C7ee1
+         hIVvu7grhhnHH8QbU2kK8hn58iRyBMmgBbpWaTfc=
+Message-ID: <167413e7-c69a-3030-cd72-4c198158622e@digikod.net>
+Date:   Tue, 27 Jun 2023 18:14:04 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
+User-Agent: 
+Subject: Re: [PATCH v11 08/12] landlock: Add network rules and TCP hooks
+ support
 Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LSM List <linux-security-module@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: [GIT PULL] Smack patches for 6.5
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <3b1107c2-77c1-28ce-3413-bec589eae083.ref@schaufler-ca.com>
-X-Mailer: WebService/1.1.21557 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+ <20230515161339.631577-9-konstantin.meskhidze@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230515161339.631577-9-konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Linus,
 
-Here is the Smack pull request for v6.5.
+On 15/05/2023 18:13, Konstantin Meskhidze wrote:
+> This commit adds network rules support in the ruleset management
+> helpers and the landlock_create_ruleset syscall.
+> Refactor user space API to support network actions. Add new network
+> access flags, network rule and network attributes. Increment Landlock
+> ABI version. Expand access_masks_t to u32 to be sure network access
+> rights can be stored. Implement socket_bind() and socket_connect()
+> LSM hooks, which enables to restrict TCP socket binding and connection
+> to specific ports.
+> 
+> Co-developed-by: Mickaël Salaün <mic@digikod.net>
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
+> 
+> Changes since v10:
+> * Removes "packed" attribute.
+> * Applies Mickaёl's patch with some refactoring.
+> * Deletes get_port() and check_addrlen() helpers.
+> * Refactors check_socket_access() by squashing get_port() and
+> check_addrlen() helpers into it.
+> * Fixes commit message.
+> 
+> Changes since v9:
+> * Changes UAPI port field to __u64.
+> * Moves shared code into check_socket_access().
+> * Adds get_raw_handled_net_accesses() and
+> get_current_net_domain() helpers.
+> * Minor fixes.
+> 
+> Changes since v8:
+> * Squashes commits.
+> * Refactors commit message.
+> * Changes UAPI port field to __be16.
+> * Changes logic of bind/connect hooks with AF_UNSPEC families.
+> * Adds address length checking.
+> * Minor fixes.
+> 
+> Changes since v7:
+> * Squashes commits.
+> * Increments ABI version to 4.
+> * Refactors commit message.
+> * Minor fixes.
+> 
+> Changes since v6:
+> * Renames landlock_set_net_access_mask() to landlock_add_net_access_mask()
+>    because it OR values.
+> * Makes landlock_add_net_access_mask() more resilient incorrect values.
+> * Refactors landlock_get_net_access_mask().
+> * Renames LANDLOCK_MASK_SHIFT_NET to LANDLOCK_SHIFT_ACCESS_NET and use
+>    LANDLOCK_NUM_ACCESS_FS as value.
+> * Updates access_masks_t to u32 to support network access actions.
+> * Refactors landlock internal functions to support network actions with
+>    landlock_key/key_type/id types.
+> 
+> Changes since v5:
+> * Gets rid of partial revert from landlock_add_rule
+> syscall.
+> * Formats code with clang-format-14.
+> 
+> Changes since v4:
+> * Refactors landlock_create_ruleset() - splits ruleset and
+> masks checks.
+> * Refactors landlock_create_ruleset() and landlock mask
+> setters/getters to support two rule types.
+> * Refactors landlock_add_rule syscall add_rule_path_beneath
+> function by factoring out get_ruleset_from_fd() and
+> landlock_put_ruleset().
+> 
+> Changes since v3:
+> * Splits commit.
+> * Adds network rule support for internal landlock functions.
+> * Adds set_mask and get_mask for network.
+> * Adds rb_root root_net_port.
+> 
+> ---
+>   include/uapi/linux/landlock.h                |  48 +++++
+>   security/landlock/Kconfig                    |   1 +
+>   security/landlock/Makefile                   |   2 +
+>   security/landlock/limits.h                   |   6 +-
+>   security/landlock/net.c                      | 174 +++++++++++++++++++
+>   security/landlock/net.h                      |  26 +++
+>   security/landlock/ruleset.c                  |  52 +++++-
+>   security/landlock/ruleset.h                  |  63 +++++--
+>   security/landlock/setup.c                    |   2 +
+>   security/landlock/syscalls.c                 |  72 +++++++-
+>   tools/testing/selftests/landlock/base_test.c |   2 +-
+>   11 files changed, 425 insertions(+), 23 deletions(-)
+>   create mode 100644 security/landlock/net.c
+>   create mode 100644 security/landlock/net.h
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 81d09ef9aa50..93794759dad4 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -31,6 +31,13 @@ struct landlock_ruleset_attr {
+>   	 * this access right.
+>   	 */
+>   	__u64 handled_access_fs;
+> +
+> +	/**
+> +	 * @handled_access_net: Bitmask of actions (cf. `Network flags`_)
+> +	 * that is handled by this ruleset and should then be forbidden if no
+> +	 * rule explicitly allow them.
+> +	 */
+> +	__u64 handled_access_net;
+>   };
+> 
+>   /*
+> @@ -54,6 +61,11 @@ enum landlock_rule_type {
+>   	 * landlock_path_beneath_attr .
+>   	 */
+>   	LANDLOCK_RULE_PATH_BENEATH = 1,
+> +	/**
+> +	 * @LANDLOCK_RULE_NET_SERVICE: Type of a &struct
+> +	 * landlock_net_service_attr .
+> +	 */
+> +	LANDLOCK_RULE_NET_SERVICE = 2,
+>   };
+> 
+>   /**
+> @@ -79,6 +91,23 @@ struct landlock_path_beneath_attr {
+>   	 */
+>   } __attribute__((packed));
+> 
+> +/**
+> + * struct landlock_net_service_attr - TCP subnet definition
+> + *
+> + * Argument of sys_landlock_add_rule().
+> + */
+> +struct landlock_net_service_attr {
+> +	/**
+> +	 * @allowed_access: Bitmask of allowed access network for services
+> +	 * (cf. `Network flags`_).
+> +	 */
+> +	__u64 allowed_access;
+> +	/**
+> +	 * @port: Network port.
+> +	 */
+> +	__u64 port;
+> +};
 
-There are two patches, both of which change how Smack initializes
-the SMACK64TRANSMUTE extended attribute. The first corrects the
-behavior of overlayfs, which creates inodes differently from other
-filesystems. The second ensures that transmute attributes specified
-by mount options are correctly assigned. These updates have been in
-the next branch and pass all tests. Thank you.
+The "net service" name reflects the semantic but it doesn't fit well 
+with the data type. It works with TCP, UDP and other protocols such as 
+VSOCK, but not unix sockets. I think it makes more sense to rename 
+LANDLOCK_RULE_NET_SERVICE to LANDLOCK_RULE_NET_PORT and 
+landlock_net_service_attr to landlock_net_port_attr. Please be careful 
+with the documentation, non-kernel code, and comments as well.
 
-The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
+In the future, we could add a landlock_net_path_attr to identify a unix 
+abstract path, which would also be a network service, but it would not 
+accept the TCP access rights.
 
-  Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
+The access right names (LANDLOCK_ACCESS_NET_{BIND,CONNECT}_TCP) are 
+still good.
 
-are available in the Git repository at:
 
-  https://github.com/cschaufler/smack-next tags/Smack-for-6.5
-
-for you to fetch changes up to 2c085f3a8f23c9b444e8b99d93c15d7ce870fc4e:
-
-  smack: Record transmuting in smk_transmuted (2023-05-11 10:05:39 -0700)
-
-----------------------------------------------------------------
-Two patches that improve inode attribute initialization.
-
-----------------------------------------------------------------
-Roberto Sassu (2):
-      smack: Retrieve transmuting information in smack_inode_getsecurity()
-      smack: Record transmuting in smk_transmuted
-
- security/smack/smack.h     |  1 +
- security/smack/smack_lsm.c | 63 ++++++++++++++++++++++++++++++++++------------
- 2 files changed, 48 insertions(+), 16 deletions(-)
-
+I'm still improving tests, so you might wait a bit before renaming the 
+related files.
