@@ -2,150 +2,140 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0EC0EB64D7
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jun 2023 00:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE7A2EB64D7
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jun 2023 00:47:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229500AbjF0Abq (ORCPT
+        id S229571AbjF0ArQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Jun 2023 20:31:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47348 "EHLO
+        Mon, 26 Jun 2023 20:47:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbjF0Abp (ORCPT
+        with ESMTP id S229788AbjF0ArO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Jun 2023 20:31:45 -0400
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BE5F1703;
-        Mon, 26 Jun 2023 17:31:44 -0700 (PDT)
-Received: from [10.8.192.2] (unknown [50.47.134.245])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 298E53F25A;
-        Tue, 27 Jun 2023 00:31:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1687825901;
-        bh=ZJuKj+u/iaHfpnToK3Hjz8WAqXefP5JdPosEoq9MmW4=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=hboEUQu9s70yZcXCgpqK7RsTvsmD1KKk6A42+uK2cx4xuDA16YR2zAprJexV4ERKq
-         bg4NTT5XrXrUkS6miJy88A3SP7ANqZKZzxJqRAhp5mcKjWpUJpGxXWZoz/anMbmy8k
-         VpPdPGpNLeo4MwC5Fdj5SgiaC3SgF6TSONL4PHzj213BbaW45q15YeF3wNH8L6vOEX
-         /3FngaWH7uvmGm9ADjtt9wu2L0XwLgisu5JEBZoP9NjesrnO9V0MAb1Km0Pen5HWuA
-         YDc8oxJn39tJmdBKy8TrB7dUoj+8MYL7TCksiCVI5yRjle7CN1G/n1SF/KPEzhMgzF
-         +lNHe2xdaFynw==
-Message-ID: <31d6e8d6-0747-a282-746b-5c144a9970bb@canonical.com>
-Date:   Mon, 26 Jun 2023 17:31:37 -0700
+        Mon, 26 Jun 2023 20:47:14 -0400
+Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 820AB172A
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Jun 2023 17:47:12 -0700 (PDT)
+Received: by mail-ot1-x32e.google.com with SMTP id 46e09a7af769-6b72c4038b6so2530299a34.0
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Jun 2023 17:47:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1687826832; x=1690418832;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=e88+wboWnpMpH6cRUOXCkMh4VlwTjhZruz0PtShif3w=;
+        b=GzpLaR5yt3TFL68xa3HQ1HAbRj9kgRzvQwgzhhGS31MKZMXh5aizRW8zbYtc1Y6ePk
+         VVEYy8bHxb3f+XpjoJjs3wE7FWRRdTBYjV3LhwvQKsfvDw2c18q8x8OrkAvI1KOdJrs1
+         MWAk3cZeKGHlC7GzZioJ6OfSRk6XkVwXEfBPN1DCb2fTcdlu/adCGMHqf2mWE9KW6SQB
+         Tceb4x5YdWqmjCn365rDnNVwOPxhk6fkCi2lN5/x7TN9fnCKMhIy/ypoPqV9HywzNS5P
+         hnxJM9zpiqpxdtTq9ZCMo+5MUGFOaRiYpv3AbannClk5H647SivO73AeJ/1pbEId1LST
+         kD2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687826832; x=1690418832;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e88+wboWnpMpH6cRUOXCkMh4VlwTjhZruz0PtShif3w=;
+        b=EHdXBpAWaFfheWxn9Bmb9zusTvoPmDdTFf6oktpVP5QO93UKFl+4D/pYsXhs+igttV
+         XPAAH2WfNsxQOYf6RVv1BttyaE3x55isdnrV6vKnaFGgFLbwxb7U0q/3EpJNR7JpoQbN
+         dl7gCBaZcUD7Xi2TXtqHvxc0Uj9OPGq0f3X83oyPFy7pGXlsjeP7czAQf/DFBpbFl3Gx
+         AdfjggDdwf+sgNQ0tzn2IRUYKjgPuFwyneMkEDQtDeueQo7S3xyFMGA0RQ6niatfwa8T
+         A/1GcsyodG6ucR1kCeIp4TvXkWIzBcN5MlvQmEgb9rDrhixNaf+l6TBZQOXxw16Kkiqn
+         ew8w==
+X-Gm-Message-State: AC+VfDwPaWCY+JY8EcSGD7O/FE7RHaLUXSRE4WWQzik+QCACb711t4nG
+        EcBtyPeLv6gW8DAM0qYeilsiY8EMa0xXoM66zkYl+c2WBgkvHD//SA==
+X-Google-Smtp-Source: ACHHUZ552VbcNwq6Y7vNbyGQaEcaIWiOeq+QEElxaKMvr0iJ0bRsbphcS3QF79Q3bP6EuEt3w9pBrz0iHw/jCq+1Rco=
+X-Received: by 2002:a05:6358:cb22:b0:132:d6e6:53ba with SMTP id
+ gr34-20020a056358cb2200b00132d6e653bamr7319742rwb.25.1687826831753; Mon, 26
+ Jun 2023 17:47:11 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v3] apparmor: global buffers spin lock may get contended
-Content-Language: en-US
-To:     Anil Altinay <aaltinay@google.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        linux-security-module@vger.kernel.org
-References: <YO2S+C7Cw7AS7bsg@google.com>
- <cfd5cc6f-5943-2e06-1dbe-f4b4ad5c1fa1@canonical.com>
- <Y19GhTg8Q/3ym/VD@google.com>
- <dac1c2d5-367f-c8a7-c61e-c1774d98d602@canonical.com>
- <4595e7b4-ea31-5b01-f636-259e84737dfc@canonical.com>
- <Y+9aoFjrYkpFSvuE@linutronix.de>
- <f3fd5dd8-9d78-43be-fc5c-bf990ad3a64d@canonical.com>
- <CACCxZWOK6=mHNQrWEhjw4pC2i3qBKYdn9joiaaCNE7ge8FAz0A@mail.gmail.com>
- <CACCxZWO-+M-J_enENr7q1WDcu1U8vYFoytqJxAh=x-nuP268zA@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <CACCxZWO-+M-J_enENr7q1WDcu1U8vYFoytqJxAh=x-nuP268zA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 26 Jun 2023 20:47:01 -0400
+Message-ID: <CAHC9VhRdEE58-hOXFGQmO5BV5gCNv0+bLx-GrLogR8uVAhaUqg@mail.gmail.com>
+Subject: [GIT PULL] LSM patches for v6.5
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/26/23 16:33, Anil Altinay wrote:
-> Hi John,
-> 
-> I was wondering if you get a chance to work on patch v4. Please let me know if you need help with testing.
-> 
+Hi Linus,
 
-yeah, testing help is always much appreciated. I have a v4, and I am working on 3 alternate version to compare against, to help give a better sense if we can get away with simplifying or tweak the scaling. I should be able to post them out some time tonight.
+Seven patches in the LSM pull request for v6.5, all relatively small,
+here is a quick summary:
 
-> Best,
-> Anil
-> 
-> On Tue, Feb 21, 2023 at 1:27 PM Anil Altinay <aaltinay@google.com <mailto:aaltinay@google.com>> wrote:
-> 
->     I can test the patch with 5.10 and 5.15 kernels in different machines.
->     Just let me know which machine types you would like me to test.
-> 
->     On Mon, Feb 20, 2023 at 12:42 AM John Johansen
->     <john.johansen@canonical.com <mailto:john.johansen@canonical.com>> wrote:
->      >
->      > On 2/17/23 02:44, Sebastian Andrzej Siewior wrote:
->      > > On 2023-02-16 16:08:10 [-0800], John Johansen wrote:
->      > >> --- a/security/apparmor/lsm.c
->      > >> +++ b/security/apparmor/lsm.c
->      > >> @@ -49,12 +49,19 @@ union aa_buffer {
->      > >>      char buffer[1];
->      > >>   };
->      > >> +struct aa_local_cache {
->      > >> +    unsigned int contention;
->      > >> +    unsigned int hold;
->      > >> +    struct list_head head;
->      > >> +};
->      > >
->      > > if you stick a local_lock_t into that struct, then you could replace
->      > >       cache = get_cpu_ptr(&aa_local_buffers);
->      > > with
->      > >       local_lock(&aa_local_buffers.lock);
->      > >       cache = this_cpu_ptr(&aa_local_buffers);
->      > >
->      > > You would get the preempt_disable() based locking for the per-CPU
->      > > variable (as with get_cpu_ptr()) and additionally some lockdep
->      > > validation which would warn if it is used outside of task context (IRQ).
->      > >
->      > I did look at local_locks and there was a reason I didn't use them. I
->      > can't recall as the original iteration of this is over a year old now.
->      > I will have to dig into it again.
->      >
->      > > I didn't parse completely the hold/contention logic but it seems to work
->      > > ;)
->      > > You check "cache->count >=  2" twice but I don't see an inc/ dec of it
->      > > nor is it part of aa_local_cache.
->      > >
->      > sadly I messed up the reordering of this and the debug patch. This will be
->      > fixed in v4.
->      >
->      > > I can't parse how many items can end up on the local list if the global
->      > > list is locked. My guess would be more than 2 due the ->hold parameter.
->      > >
->      > So this iteration, forces pushing back to global list if there are already
->      > two on the local list. The hold parameter just affects how long the
->      > buffers remain on the local list, before trying to place them back on
->      > the global list.
->      >
->      > Originally before the count was added more than 2 buffers could end up
->      > on the local list, and having too many local buffers is a waste of
->      > memory. The count got added to address this. The value of 2 (which should
->      > be switched to a define) was chosen because no mediation routine currently
->      > uses more than 2 buffers.
->      >
->      > Note that this doesn't mean that more than two buffers can be allocated
->      > to a tasks on a cpu. Its possible in some cases to have a task have
->      > allocated buffers and to still have buffers on the local cache list.
->      >
->      > > Do you have any numbers on the machine and performance it improved? It
->      > > sure will be a good selling point.
->      > >
->      >
->      > I can include some supporting info, for a 16 core machine. But it will
->      > take some time to for me to get access to a bigger machine, where this
->      > is much more important. Hence the call for some of the other people
->      > on this thread to test.
->      >
->      > thanks for the feedback
->      >
-> 
+- A SafeSetID patch to correct what appears to be a cut-n-paste typo
+in the code causing a UID to be printed where a GID was desired.  This
+is coming via the LSM tree because we haven't been able to get a
+response from the SafeSetID maintainer (Micah Morton) in several
+months.  Hopefully we are able to get in touch with Micah, but until
+we do I'm going to pick them up in the LSM tree.
 
+- A small fix to the reiserfs LSM xattr code.  We're continuing to
+work through some issues with the reiserfs code as we try to fixup the
+LSM xattr handling, but in the process we're uncovering some ugly
+problems in reiserfs and we may just end up removing the LSM xattr
+support in reiserfs prior to reiserfs' removal.  For better or worse,
+this shouldn't impact any of the reiserfs users, as we discovered that
+LSM xattrs on reiserfs were completely broken, meaning no one is
+currently using the combo of reiserfs and a file labeling LSM.
+
+- A tweak to how the cap_user_data_t struct/typedef is declared in the
+header file to appease the Sparse gods.
+
+- In the process of trying to sort out the SafeSetID lost-maintainer
+problem I realized that I needed to update the labeled networking
+entry to "Supported".
+
+- Minor comment/documentation and spelling fixes.
+
+Thanks,
+-Paul
+
+--
+The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
+
+ Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
+
+are available in the Git repository at:
+
+ https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+   tags/lsm-pr-20230626
+
+for you to fetch changes up to 4be22f16a4a1a1667e79b52b56cca2c64b3747e2:
+
+ device_cgroup: Fix kernel-doc warnings in device_cgroup
+   (2023-06-21 09:30:49 -0400)
+
+----------------------------------------------------------------
+lsm/stable-6.5 PR 20230626
+
+----------------------------------------------------------------
+Alexander Mikhalitsyn (1):
+     SafeSetID: fix UID printed instead of GID
+
+GONG, Ruiqi (1):
+     capability: erase checker warnings about struct __user_cap_data_struct
+
+Gaosheng Cui (2):
+     capability: fix kernel-doc warnings in capability.c
+     device_cgroup: Fix kernel-doc warnings in device_cgroup
+
+Paul Moore (2):
+     lsm: fix a number of misspellings
+     MAINTAINERS: move labeled networking to "supported"
+
+Tetsuo Handa (1):
+     reiserfs: Initialize sec->length in reiserfs_security_init().
+
+MAINTAINERS                     |  2 +-
+fs/reiserfs/xattr_security.c    |  1 +
+include/uapi/linux/capability.h |  5 +++--
+kernel/capability.c             |  2 ++
+security/commoncap.c            | 20 ++++++++++----------
+security/device_cgroup.c        |  3 +--
+security/lsm_audit.c            |  2 +-
+security/safesetid/lsm.c        |  2 +-
+security/security.c             |  4 ++--
+9 files changed, 22 insertions(+), 19 deletions(-)
+
+-- 
+paul-moore.com
