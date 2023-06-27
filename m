@@ -2,121 +2,505 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC0A7EB64D7
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jun 2023 02:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0AB8EB64D9
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jun 2023 09:52:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229703AbjF0CDh (ORCPT
+        id S229638AbjF0Jww (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Jun 2023 22:03:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47770 "EHLO
+        Tue, 27 Jun 2023 05:52:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229605AbjF0CDg (ORCPT
+        with ESMTP id S231307AbjF0Jwd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Jun 2023 22:03:36 -0400
-Received: from AUS01-ME3-obe.outbound.protection.outlook.com (mail-me3aus01olkn2152.outbound.protection.outlook.com [40.92.63.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 681F21720
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Jun 2023 19:03:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jXsT7rNWy/wKkz07j4C65ESwc+f2vVhpP6fNuhTqO/grO4mfe2ybtc03p36CnRsaeCEsxGi680Jxkxmt/gtjGLG4wDF7WjSjcWROKkWP7GaV1W8FOIyd/g2w1HdHNc7Ukvde0i7K+blx5a1Zm6Xh8yRZF+iW1khN/PNLMED85nk/igEyx6usLTWPhsg61E/K0PscaWcfhqQlC18MO6Nm8N3mHVrSp+FbRvPTYMo2UP4Dq7/okY2UnzoxNQN2z5oNkP0lBU93HQwm5itLCfAux+nkTDtJ8zt+yrSgHKSXcuTkHxcgPHOes7bHEkHTScnByHV6age+Y2+JpVicf0FQVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bi9M8N7Yvhuyuvzk+3sjOURuNSoEaYJwOQtHtMop05w=;
- b=GeLAB/hFUFDzPW3qBi1Byb05S2Iwlk7PA5EYBO8Uny5DaWaqYnfYD7YvxZtilglSNACuqqVkrp+htu6Kgigh4xo81mqPHF2mHw55wYnm9rL1O3ZpVG0oCmEVX+EJEx6jFjr+8sqSeLu1vgkIfau9Tc8UvourxBFv3S32gMeiNoUJQEIO2uCfJMHJyssZ1Wvp8o2AFO3nJOxfQgxYE+YHuZJIHgToexg4PsDlQFXieqUSca0QhZ45GqHgz94VfET2EAliYWb4dsZjkpjV69VFlYS0CQyaQoUCEg2W7HgppAj36BzO8V261p0JYX8OuKP4FvMeknoGQh0C3hQJwjLSvg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bi9M8N7Yvhuyuvzk+3sjOURuNSoEaYJwOQtHtMop05w=;
- b=KmLzXJ6D7coNH00lMu/A2zTs8iYgH1wWH7OPx6Z/CygA625EeHK0KjwseIrGG5A7Pe4wNqgVXDJRdkRX8rLjnFWTw5GEWLhoRLHfC9cvi93V1Rj4DivRSBnsNopvMORtSAphXO74vs7oxXhRh6V/AzRSt0gtTzIIBd9086jJlFvxB7riN81S6yflA2vl+W63lw1/MafX3i0i4PoLrDglUDPVPrB9GUAm60X0b8nFXwYOSE8vkFu+6qeGPv8EgiDClXhNuM7A7bD1owPHcqsvhclWMW80krznEPj1GFIuRc1vG1LNTufUAk0oQuA7o5iOkZAiSDNcckHWnDXTIqtomw==
-Received: from MEYP282MB1623.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:bf::10)
- by MEAP282MB0374.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:6c::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.26; Tue, 27 Jun
- 2023 02:03:31 +0000
-Received: from MEYP282MB1623.AUSP282.PROD.OUTLOOK.COM
- ([fe80::b288:55ae:d59e:c3ff]) by MEYP282MB1623.AUSP282.PROD.OUTLOOK.COM
- ([fe80::b288:55ae:d59e:c3ff%5]) with mapi id 15.20.6521.026; Tue, 27 Jun 2023
- 02:03:31 +0000
-From:   chao liu <liuzgyid@outlook.com>
-To:     john.johansen@canonical.com
-Cc:     linux-security-module@vger.kernel.org,
-        chao liu <liuzgyid@outlook.com>
-Subject: [PATCH] apparmor: fix 'Do simple duplicate message elimination'
-Date:   Tue, 27 Jun 2023 10:03:16 +0800
-Message-ID: <MEYP282MB1623FD643831C9B85EF45064C527A@MEYP282MB1623.AUSP282.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN:  [fD4al7dBJ3Xgit4hUFsBuZUZx4LTGEka]
-X-ClientProxiedBy: TYAPR01CA0123.jpnprd01.prod.outlook.com
- (2603:1096:404:2d::15) To MEYP282MB1623.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:220:bf::10)
-X-Microsoft-Original-Message-ID: <20230627020316.6190-1-liuzgyid@outlook.com>
+        Tue, 27 Jun 2023 05:52:33 -0400
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5420235A7
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Jun 2023 02:52:00 -0700 (PDT)
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-77ac4aa24eeso269283239f.1
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Jun 2023 02:52:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687859519; x=1690451519;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y0tIqaORmJmU7z2UPPlx/oOuuumIv3OuEFInhj266iI=;
+        b=Y7ZJok4K+N3XBvUWp0bbuKynzMxnvqTfiETQEdDznZWlfyYrql+QRDQrTSUvUkIQHA
+         I9ivzxyJochonU2w91hn9Fh4xL/FGQmeYV891NIaxdg2+YQs7VNX2/wpKz345U05Jb74
+         sxWQ6LMMOZ8YBf8T0uXOkZpvPJ9JLe834ZqlDD7geLRyRNhH4zjEbIF9BOb/TvFVFQSx
+         6OerpOsD1jyXfObr+4l/ba3/DOXKcCqUvS0jIaskt9aQDOYbOoaxCT6QcubRFf8JrD3m
+         lxDNBS60P2eDGaFXu2+jTtUkfBvGrT0s6XPTLlwX0xuswx8b0FPNe9U5yE/eDQHuqA+7
+         5cdw==
+X-Gm-Message-State: AC+VfDy1VkggCzAxP/lSC0xVG67xHXyKCyGXfFMUF4hczvWq5Yi8IZmm
+        WTd01MY+f9GaNtLfSc563D7Oq9VGV8aIAGL2aqVs5uK7NeHu
+X-Google-Smtp-Source: ACHHUZ7T3xmOxKvdS/k/j/oIoEuY5mgCte14Sxig08Mc2pMq9sOCGnE17xOsBYVcNiKIHGga2PKC26RofIyA3MqyOVygW2wD7XvG
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MEYP282MB1623:EE_|MEAP282MB0374:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1266e17d-7127-4706-ee88-08db76b2b4a9
-X-MS-Exchange-SLBlob-MailProps: laRBL560oLSfarW7hZiU+12j2+vqO2xOy199D2ld44RnOJBVAjRgwP3CVwc20U+Z4OagB+Sd7Bwt3HGovr22ORbR/iaJVXr8EcKIBpjrfHsc8AbtRqaZQED6GEN7kby2Zw4/bQ/Di3qfMQVwBHFNgYLdSNVRJLRfHjwo6SFXFoTIxws/TsU+/ZBQctX3N7cYDRuSjMP8feFf2H8LmLca+65zINpoioyg5u+pgHtZDLi16/lFayciFsofqbKS3K6PYbQZS/cF1ogT18GvNVOeWkoQ2KwhQ/eaQdcnNasrz0orzWe7cpDKvOklaybHylaapZG1Oih8yFccDCgD5ksL7jtNSVkqguorsQjPQsqMkdUnZrTGmZi4dC/aI5NjJJTsLL4StWM/mpwd43NfbCiAvTSOIKNNt6UB1OrD0c/OXNiiuwMQZ/rlOW4iPTQMsHWcmNt10JL5SYKGGHsThfCGQ8W/DGhbKRN2U1dnrCMJik8MIx26kACfQ+Env1Cdg0sAX3HuXCjzw/ZiPZiIousrTrnmswRpTh1YKj6dfcYpdR1g4f8L7RxWN1qacSHjhcID0ek0/deK5SDbtHf6tVtb8JoY9HpAaBk6H5g5vnOQRGOwBKBXR3eWNPa7sGBlvXdRSarx4lRdqoyNxJfxcTiMz+DimMfkK2suWlPMrgK/8lsH/FT6LPV3kOm6Sh5OuPFpCN3ESmJ2rJN46HQzCeQvNpMpcNTlZ0Be5VHGbYsXNnDB5QUOBjKQJ39sCHREf6qeNsJChjWRsYBXkU4TmqMjTOC/CHSkUAvr
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: j28BItZPClwcszF25uGb8I3gNs9inK1JJyPK6PbjrKeLcPKQ0OcTD/xn5fujF7MQWc01wx3/uTuMFfeYfpCUaJY8rSy6ciqYU+pZ7BNPb9nEinHb2T2VEOqtZziQKBSf2RTl1z/Tb2IB6+Okr0H62PmXSqvIu21qbnma5KpVdFU23G9IsZVcSzystOfp+hWjbxfvWRkInInJf0hcO3Sbi57bx6FA/wx14eCVXFoNbitG9w/uTmMDQUYjebWUMh6+xluhRf/xo/CG7py96GKXtEV/SEKGIQBkEp+3cUtkNsxm53qxFkacrA2ZRXiycCdoUvkApXJwK8M9BLVN72hV+QKK4agSP3gr4ssBTBViJlPgeF7CzBCuN3gMoP0mzUxiwG+2J6IsqRzx7yvcVU1kQaLnj/eiH1ap00tLE9lz5wR0Vw8Dqwb7LV2aif8dOOJ2kXoECvEdJ/lUFeBKH0OidsctN2+e97qDt6fzF+OMcUEs44OWWBfSxRuDMZ8YEmoQY0MnxMvq8s8iiPJlMl2N1DeFu/pD97xxA8piPWXwRJN2sFaA9yNUQyApVo7QdOrRN81KruOHlRK97N9Jit8mh7Arhg+L2fPWFYrk+a9RYys=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qxaE60Nt+keb1b29R9gbGq2pT1FZkVls6dnst6/Wk73fs3OO7+Q0Wm8o10Qc?=
- =?us-ascii?Q?CNHH5wDV+D5zqE/K4jwOBlvNpj3PpzbLrbtnYG7WnPmqddEaF2D/hqDqgqLW?=
- =?us-ascii?Q?/f+5+P5dVWjrl4exV/JYtbegkDmhMFYmNElXg5uJZ5/cVuGpL2GX3YxWjCBZ?=
- =?us-ascii?Q?Lo5daRBdSQ2eDJfGOmpRsWNxxq+imnM8nFIgfvjMTUiTmVjb/1s/S9vOiNI7?=
- =?us-ascii?Q?114qm+Nhpnlorib7m26N7cAajJFEuwGBkTwikUHF465GTwVzcMvSNz4nD/iT?=
- =?us-ascii?Q?tB9a1/xO6GqpxDNFEmjZREg5GLuWFEiStm8C+Eb0h2pgBYURAgwHMUm+FP43?=
- =?us-ascii?Q?dnEWDtNlhbIfph5Hz6D4qyEQNrf4/gUx+wq3oWHmzffhTTPFUbdoX4yKgT3I?=
- =?us-ascii?Q?dEjmqZzkE+Z6OOTNhON/d4r0WVZkg2RtNfHBtq+4eWWyIUOwLd3rzFU7LW6s?=
- =?us-ascii?Q?HDr9iiAHXpvxW/lBKdCXwmKhk/63ivZrIEifpnWkeXcZB/XQoBiuwipy0/eL?=
- =?us-ascii?Q?Bz10eAkd8zgqICCFvxYOvRs+Diwv85zG/d9sI5/lyIAojOr3HFMPI/LGazWj?=
- =?us-ascii?Q?/6G7CUYl4v3WW5BIW1wL0+oVF80CFmxvuGhaXkzGqYFLdgbkqNLR3rYJHc3S?=
- =?us-ascii?Q?ENluN/O3GkxVCzwOnVxXDrHrrRmnT/D0PzDMi/Xx3dTxX4BLbdd2QeW8ADWd?=
- =?us-ascii?Q?tJop1diEe4nOlWWrGwLo466jN3eEZsbXiYWVzOEk0u0Qg0J6ycY+oDeSu0DW?=
- =?us-ascii?Q?gllb8t4VjeFVlTMghGMJAzDdtNpOQwM3nZ5/77BA5ARKvb0uIOdst0mnussC?=
- =?us-ascii?Q?pj1QFGa5vK8aYv2ZDmkGG5inHeybiptc/rFlLPy5vsLdKJrVQtHXOSpDaT+R?=
- =?us-ascii?Q?04La0sgRBUXlr4DQThvQUWuEgRO3wWNII/rnnV+XDwDbrzfjYsEFc0DzOa0p?=
- =?us-ascii?Q?Uba8LYDgStkiBVppQFzKjAFJEpb/oroVDOmFaVo8c1GUqFQvflnGbSiIbumZ?=
- =?us-ascii?Q?jAj/MUmVbtBEczXj6EtAebdVx0/Wc5btNUpVT9yk6F2TV26D15L7rrvw+AVK?=
- =?us-ascii?Q?9S6zrBWkfCndsEhy3wWL1OvlWNi5W81eEd9q9lWlg/K6i2zBVFPM+Zc/EuER?=
- =?us-ascii?Q?4S1xea9uNcN5OSWz+gzr95psDMmu3qlBToJ258ETLxlVRIfYbrNUde/zqKK/?=
- =?us-ascii?Q?6ScvUEJYfpdgO12zjH2izZ5RH8xdxhRNfi7BvA=3D=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1266e17d-7127-4706-ee88-08db76b2b4a9
-X-MS-Exchange-CrossTenant-AuthSource: MEYP282MB1623.AUSP282.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2023 02:03:31.4147
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MEAP282MB0374
+X-Received: by 2002:a02:85c6:0:b0:429:bfc:7db5 with SMTP id
+ d64-20020a0285c6000000b004290bfc7db5mr2152173jai.5.1687859519364; Tue, 27 Jun
+ 2023 02:51:59 -0700 (PDT)
+Date:   Tue, 27 Jun 2023 02:51:59 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001526c405ff196bc1@google.com>
+Subject: [syzbot] [tomoyo?] [bpf?] INFO: rcu detected stall in
+ security_file_open (6)
+From:   syzbot <syzbot+bb11ad7bb33b56ca4d4b@syzkaller.appspotmail.com>
+To:     andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, jmorris@namei.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, paul@paul-moore.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+        tomoyo-dev-en@lists.osdn.me
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Multiple profiles shared 'ent->caps', so some logs missed.
+Hello,
 
-Signed-off-by: chao liu <liuzgyid@outlook.com>
+syzbot found the following issue on:
+
+HEAD commit:    8a28a0b6f1a1 Merge tag 'net-6.4-rc8' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1335a9db280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2cbd298d0aff1140
+dashboard link: https://syzkaller.appspot.com/bug?extid=bb11ad7bb33b56ca4d4b
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16841cc0a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16fc6e1f280000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d02009a9822d/disk-8a28a0b6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f33ad4ef1182/vmlinux-8a28a0b6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f795a8ae7a8c/bzImage-8a28a0b6.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bb11ad7bb33b56ca4d4b@syzkaller.appspotmail.com
+
+imon 2-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 6-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 4-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	0-....: (7435 ticks this GP) idle=b9b4/1/0x4000000000000000 softirq=8258/8258 fqs=2193
+rcu: 	         hardirqs   softirqs   csw/system
+rcu: 	 number:        0          0            0
+rcu: 	cputime:      160      52287         1450   ==> 52450(ms)
+rcu: 	(t=10500 jiffies g=3745 q=548 ncpus=2)
+CPU: 0 PID: 4453 Comm: udevd Not tainted 6.4.0-rc7-syzkaller-00194-g8a28a0b6f1a1 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
+RIP: 0010:_raw_spin_unlock_irqrestore+0x3c/0x70 kernel/locking/spinlock.c:194
+Code: 74 24 10 e8 66 8f 51 f7 48 89 ef e8 8e fd 51 f7 81 e3 00 02 00 00 75 25 9c 58 f6 c4 02 75 2d 48 85 db 74 01 fb bf 01 00 00 00 <e8> ff d2 43 f7 65 8b 05 60 61 ef 75 85 c0 74 0a 5b 5d c3 e8 9c 8c
+RSP: 0018:ffffc90000007b18 EFLAGS: 00000206
+RAX: 0000000000000006 RBX: 0000000000000200 RCX: 1ffffffff22af18e
+RDX: 0000000000000000 RSI: 0000000000000101 RDI: 0000000000000001
+RBP: ffff888021d68000 R08: 0000000000000001 R09: ffffffff9152bdcf
+R10: 0000000000000001 R11: 0000000000094001 R12: ffff888021de9440
+R13: ffff88801771d000 R14: dffffc0000000000 R15: ffff88801eaedd00
+FS:  00007ff685e95c80(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555b2efca778 CR3: 0000000029bdf000 CR4: 0000000000350ef0
+Call Trace:
+ <IRQ>
+ spin_unlock_irqrestore include/linux/spinlock.h:405 [inline]
+ dummy_timer+0x1519/0x3400 drivers/usb/gadget/udc/dummy_hcd.c:2002
+ call_timer_fn+0x1a0/0x580 kernel/time/timer.c:1700
+ expire_timers+0x29b/0x4b0 kernel/time/timer.c:1751
+ __run_timers kernel/time/timer.c:2022 [inline]
+ __run_timers kernel/time/timer.c:1995 [inline]
+ run_timer_softirq+0x326/0x910 kernel/time/timer.c:2035
+ __do_softirq+0x1d4/0x905 kernel/softirq.c:571
+ invoke_softirq kernel/softirq.c:445 [inline]
+ __irq_exit_rcu+0x114/0x190 kernel/softirq.c:650
+ irq_exit_rcu+0x9/0x20 kernel/softirq.c:662
+ sysvec_apic_timer_interrupt+0x97/0xc0 arch/x86/kernel/apic/apic.c:1106
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:645
+RIP: 0010:__sanitizer_cov_trace_const_cmp2+0x8/0x20 kernel/kcov.c:297
+Code: 00 00 f3 0f 1e fa 48 8b 0c 24 40 0f b6 d6 40 0f b6 f7 bf 01 00 00 00 e9 d6 fe ff ff 66 0f 1f 44 00 00 f3 0f 1e fa 48 8b 0c 24 <0f> b7 d6 0f b7 f7 bf 03 00 00 00 e9 b8 fe ff ff 0f 1f 84 00 00 00
+RSP: 0018:ffffc9000311f770 EFLAGS: 00000206
+RAX: 0000000000000000 RBX: 0000000000000044 RCX: ffffffff83d0673a
+RDX: ffff88807d6fbb80 RSI: 0000000000000044 RDI: 00000000000000ff
+RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000094001 R12: ffffc9000311f868
+R13: ffff88802ad9cb00 R14: ffff88802ad9cbb0 R15: 0000000000000044
+ tomoyo_check_acl+0x31a/0x440 security/tomoyo/domain.c:183
+ tomoyo_path_permission security/tomoyo/file.c:586 [inline]
+ tomoyo_path_permission+0x1ff/0x3a0 security/tomoyo/file.c:573
+ tomoyo_check_open_permission+0x337/0x3a0 security/tomoyo/file.c:780
+ tomoyo_file_open security/tomoyo/tomoyo.c:332 [inline]
+ tomoyo_file_open+0xa1/0xc0 security/tomoyo/tomoyo.c:327
+ security_file_open+0x49/0xb0 security/security.c:2797
+ do_dentry_open+0x575/0x13f0 fs/open.c:907
+ do_open fs/namei.c:3636 [inline]
+ path_openat+0x1baa/0x2750 fs/namei.c:3791
+ do_filp_open+0x1ba/0x410 fs/namei.c:3818
+ do_sys_openat2+0x16d/0x4c0 fs/open.c:1356
+ do_sys_open fs/open.c:1372 [inline]
+ __do_sys_openat fs/open.c:1388 [inline]
+ __se_sys_openat fs/open.c:1383 [inline]
+ __x64_sys_openat+0x143/0x1f0 fs/open.c:1383
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7ff685f609a4
+Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007fff03a42790 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000555b2d993040 RCX: 00007ff685f609a4
+RDX: 0000000000080141 RSI: 0000555b2d9760d8 RDI: 00000000ffffff9c
+RBP: 0000555b2d9760d8 R08: 00000000ffffffff R09: 0000000000000000
+R10: 00000000000001a4 R11: 0000000000000246 R12: 0000000000080141
+R13: ffffffffffffffff R14: 00000000ffffffff R15: 00000000ffffffff
+ </TASK>
+imon 6-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 2-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 4-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 5-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+imon 3-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+
+
 ---
- security/apparmor/capability.c | 2 ++
- 1 file changed, 2 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/security/apparmor/capability.c b/security/apparmor/capability.c
-index deccea865..1b13fd89d 100644
---- a/security/apparmor/capability.c
-+++ b/security/apparmor/capability.c
-@@ -94,6 +94,8 @@ static int audit_caps(struct common_audit_data *sa, struct aa_profile *profile,
- 		return error;
- 	} else {
- 		aa_put_profile(ent->profile);
-+		if (profile != ent->profile)
-+			cap_clear(ent->caps);
- 		ent->profile = aa_get_profile(profile);
- 		cap_raise(ent->caps, cap);
- 	}
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
