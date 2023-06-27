@@ -2,165 +2,109 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2790AEB64D9
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jun 2023 10:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4F7EB64DD
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jun 2023 15:01:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229819AbjF0KZN (ORCPT
+        id S232110AbjF0PB5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Jun 2023 06:25:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43882 "EHLO
+        Tue, 27 Jun 2023 11:01:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231963AbjF0KYH (ORCPT
+        with ESMTP id S232099AbjF0PBy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Jun 2023 06:24:07 -0400
-Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AAA72711;
-        Tue, 27 Jun 2023 03:23:19 -0700 (PDT)
-Received: by mail-vs1-xe29.google.com with SMTP id ada2fe7eead31-440ad406bc8so1132160137.3;
-        Tue, 27 Jun 2023 03:23:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687861398; x=1690453398;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YVcCh4vtuM/z1A3XiNDqF8oXRsUQ3XFCOYJzOB8usD0=;
-        b=q7T+7nVhUcQhsi+iZd0Mp95Vj44gjOHwG1yMF5ynq+6LqhgR0jcmulMgMO7kcAqnT1
-         pac3zzOjEqKnISXVZBQLpWk6AasVXTTSkSsLS284qCqSWMrC2uLTnRte1gIKAyoua6p4
-         YrkdZ5m83DiQPcR0zOYjRvA7izUbLxJl73hSMDhKMwvyXk89QAJT6wdrCSn8TiYjdN+n
-         Zq60cDRN3WAWGbHWZbZUbOuWXOZaP8OxCS7TwJdoVsHGY37MhKelV0tyW4vsOfjiOJe6
-         ycumLIVFnaSo6wnCNJ867aZqYhYqKxiMfMaFS2ZMuyPU799N441FIl3zxkLP7Yt/CPPr
-         +XDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687861398; x=1690453398;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YVcCh4vtuM/z1A3XiNDqF8oXRsUQ3XFCOYJzOB8usD0=;
-        b=YUMp+cvw8xcJfyv6GKhwwAkXDmVlaGl6Plh4ETEhMAyp0Z29sYGCzML5gxPKhdKH1l
-         liPx72Iq3VgZwfuklorRv8AupJYB5MkdQhPExaJ9zukcIpvQIVKIXX2RooG4Cjg+wXoE
-         BMn/MH3RXBrftDBfZbonI1VvqqgQcXC1yvU3fx269o2YZsA4SJWgdQrYKY5elBFW3B+6
-         8BbG7vzep6grSDe1xhWGs+XHm0A+hmACWEQQhIlPFVOkMWJOTTs53KgFI8JphhMjgo7z
-         m9h+PjS7Xv2CWuHac76neL+570ehrlpZDniEQlppY0ryU1mWJ3IOp8Hq4ctdrZ5o38T1
-         UBWA==
-X-Gm-Message-State: AC+VfDwY++BEx2DOohki7po7X+JbWIiuHz6012XWCc4QlMSPglTrYs6h
-        mCa8rBIv2sMt+LC3hKlvLHjGG2Jglke6CkWEJaA=
-X-Google-Smtp-Source: ACHHUZ7g7D3K9ej5vJ0pPLMavpFMAjxeNYamH+wpFt6VXqOuS5/GOvMWUg3KjHxQNM1WlLl7X4xiLYjtqjlgfjzaf4w=
-X-Received: by 2002:a05:6102:2847:b0:443:59e3:f4f6 with SMTP id
- az7-20020a056102284700b0044359e3f4f6mr1805500vsb.22.1687861397948; Tue, 27
- Jun 2023 03:23:17 -0700 (PDT)
+        Tue, 27 Jun 2023 11:01:54 -0400
+Received: from sonic309-26.consmr.mail.ne1.yahoo.com (sonic309-26.consmr.mail.ne1.yahoo.com [66.163.184.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8177619A8
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Jun 2023 08:01:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1687878112; bh=0wQW92aBn4Q9AlflvtKChiLu5LDrqG5d2oWf83D3xo8=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=SM7A1j0xIGWSdZopyZQrNvj9+vTzjIXUDof2SpOHB+zJ7bHUuzB6lc39Ok70zqk/D23/1OiHOCZDq9xvuux9PIVpiKXDPhNYgIdXk9FgFZuZrO0A/HIeNMLMKRrQUjEoquA69anGSMtN8csQxR08M0KzyZoAfAHrUjkebpRQwL5BWUCQxJbKEHLAAYMOX/SfF5HBvmPRnQG+mVGqKTn/JaWA275ka8R2iBzyA17RasvfQMNkDPMu+0mCRr56rNf7dXS3AHarT/uFqkctVhhh9K6xCXi9A42MkW6Nxuh6bqK96eC5ZS0gZWKSMVkHh1FyhydVbP8TPfax2yx+n7KvLg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1687878112; bh=CJU03iMc3QL4K5Vkypa36galTOe2yr32vKH8Xxp4ZF9=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=tt2WXj+2hcaGA+uAXSNUywoBwYLIe3kndmID+E3xznMph7TTZYKMOuXBbh/wyvSWrG75kDL8Z05m0cFlStijojESSHmBxTjJbdwYR/nSC/XmEO43nOmuDJj8+l1dnh21eH+/C/6gGXq4cvGfastaoe3vLexGRj4FAYg3SvJwZjiyLGeq3UW0GI8MKs6FNyCZpY4KhW+sYzwXp6T4ocaKyk12zjnBSGux92Ia/YtRZgwZySdp3a7/1T4PNk+RrhxBl2GSFgNLLG//7tnWY9sIJH5MZJU3BL9jp5e13xHlE2HZnBZmS2rTym4bn2ownf8Qfm5yGXfE1kHnFu6QYDsJww==
+X-YMail-OSG: 1uM7e7IVM1ltyDakbVBwKiR2_UapmpeQMYH_TCtYehHAFI3Zp1CfBYzHsrQReqo
+ XI0Wtx5uZ.8OdvxN0.1woBaYiu66cPAGUA68qEoY1oansQ9ZK2k9hGw3Bj802WtB93osYYlnQI.I
+ llU5_5FHNb6jwL9qF9taBQpU2pIiW5pWRKMO64ZtdRkmF_TbyCI2uI_LUzXCHl4oDQWykPAood4f
+ Xl3q81s3Mhww4tlo99jexQj2eQ5L2gDwCnCFXOE.ZwGfcwqs7fuebrcnhHqpLSPzZKNjWmm8b9UY
+ 1HxgvB9YB5oOgqUuKsAZ1uq4pRrhcLLdyWfFJkFaZT2B54eonKmyg_G2u4NwuohQOC9_rUXmFkeY
+ Yk6ff7sJX0L4Nj9R3LNnEsp.CjIypGlSk65di.aT_RFHIH03HXbTr0YLlYmguAsVgHpyPWb750oA
+ Ii01kujpROX9ybVDfQ4EAtQRrQY3hFe_Cb5KmoR7plPG2ZcXaI73XRaUJBifekHqbr75sveJ.rAa
+ .5K2hjC2VCh21KgFDYCcW.cLuBKd8PiA48nL4Nu26yYUJTTXSjMau45xFx6X_8fsDrIEMxrSa89a
+ gqpu8kJzGRPFJvjRlk70J3KjIZDGdZfiWRnn79_mw13g.BVV9knVVqsyFO6pdsS8HNvXNpTkqi_S
+ d4bh8AsqKUmZSDL9.rESM0UkB7XroLYsFkBQOBDFgac8uOhLMDm1yIC7bjocDWUeqiAV9bLSFZbN
+ pNDFcvNo6mEHzbQhodsf2KTwrxgXK7pa3ouVsPuayLc0ekyYsm_U_yvStofaDSLVEy4.gYY0tbA6
+ msNnS46wXJUIYG1nYSBPN3uljBvVRgApViwnFd8EbpDK0BGknOVYp5ss1BBh9KJMsd9LrsjlwF1P
+ AW8GplYSmBlJPo4PEsM2TFDJFUQomqG2WkeBu3rpUs0cQkiDFY.YZPtctdfoNvDHdrP3.RzZeVuX
+ abhnPAU1BT2nrSwFgsRaSLFFoJz3RtemdyghTJspgz4HJPIQIA74xS_ktFRPPVhUuTPZgvy0U641
+ Xj34Qu1dvP1dpozbq_UXs3VE.7ovo4vcpJhwYjwlf7nSMNjVCbsJ.PcRACyuNWxA_YFbjF4U3Kjd
+ NPHAfCYx3tdrOb3H051jIfmmVb7Tc5.CBMt6zuaaXKcXUbO6ktn7HREvIc.0fRb9NaqTatnCeJPE
+ 0AjeHuVkqaU0J3Hhlg68Pvz90iRAQj3KJ_Mt_oYrTZbjUQRXsknLxr3BtFj9c5BLW08whxcrMDfu
+ ohGPZvN3piLzy6dBe7QW_RxgGXMi2TK48b8QaZxryFmukzRL5uPkSyzwfyCmDe6iWk8YgWvIMyzh
+ C35sTq9YXd3sN3z_vJzTFPHgdtlwAc1AbrFC2xpRblGbUDd.cDlcVLetr7X549cLSD9b944kh7tB
+ Fyib6g7eaF.PrJt8NZiFuJ8fAvkA0UjUG95hUA7EdyHHNFrap1F3TUBApUfUEF73Huz0UEzBHck8
+ hJRYkbeNm6VHC3xBdGiYkYb9TTQUpaiJYm1twZrdqt9Bwu6874krnQ91vQuf4zpIpJ3aLyNZ2MoQ
+ CCrtacnjnl7EY1QubNMc0nwe.PbF7gTFvHi5lay1VRj1edI75BSE45wRYKG_M0zxLQyNIpb1K_aY
+ OGhF8jkBaRdw9aZwAO6E2qHjoXdEnUjH8R6iDT9RwVGU6jPtReEYymANmkL0V8rAg5pEcMlpWdkA
+ cTkocXsQidNPAzFoXuqDJkQC5yvlkp7d5ci_ItnPR62s9eBk.6dFJQajyj7ikgx5.obf_WRmjgEn
+ UR9Kt1863ZPbR9EHJAcHxDVdBbS9AfiV5JaohT2zhU8zjQ5cxMlY_H0Q3tABNAA2QnBojfTCSgIT
+ gbf4fX6UHhK8VQlLeKWIR5pEdprtJQ_ZXmincwu0_p7nfEJ1WsziEp6oXgvrRbUm0GQrVwyiy7lw
+ dvd9xO.7.qO5Cxf5RcWY8ob78sYTa4oiPQkAyZ1HPtnNVgN2iKxou9kFdB7Av0zk4pQj6oEOpG0Y
+ tKfPqeto9u08OT4JodA_rIPfWaBVDLbS52dHiV9vegQc.MxRhE_GMEz1MNwI6ZfRMuiRrZxZz1NE
+ rlfDdJ.9xF72rz_AfMGda5.TnIBwflqA_HjQuafvvpHYFIlWWKTZgNFRPVEqC1bNxqZsWX5zf2V2
+ qK2qUXRnk_1r6YtcvVWJWg0q31sk4f8l7W9Mvq408IBWD0ug5Va23bgZzkR16hYxs9O_mm4bIbQB
+ zniRVWAkq1ZUkt13pO1ZvU3Kx6DYHsrWb4.2Flp.wKYlc1h3YWL7A78.fDyOHJ8gSOKYW
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 9bcb62f4-e2ec-4f03-864e-8043eb9c62f5
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Tue, 27 Jun 2023 15:01:52 +0000
+Received: by hermes--production-bf1-54475bbfff-gh86g (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7943ef10e253e9d3bdc38850640bba40;
+          Tue, 27 Jun 2023 15:01:47 +0000 (UTC)
+Message-ID: <3b1107c2-77c1-28ce-3413-bec589eae083@schaufler-ca.com>
+Date:   Tue, 27 Jun 2023 08:01:44 -0700
 MIME-Version: 1.0
-References: <20230607235352.1723243-1-andrii@kernel.org> <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
- <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
- <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com> <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
- <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com> <bc4f99af-0c46-49b2-9f2d-9a01e6a03af3@app.fastmail.com>
- <5a75d1f0-4ed9-399c-4851-2df0755de9b5@redhat.com> <CAEf4Bza9GvJ0vw2-0M8GKSXmOQ8VQCmeqEiQpMuZBjwqpA03vw@mail.gmail.com>
- <82b79e57-a0ad-4559-abc9-858e0f51fbba@app.fastmail.com> <9b0e9227-4cf4-4acb-ba88-52f65b099709@app.fastmail.com>
- <173f0af7-e6e1-f4b7-e0a6-a91b7a4da5d7@iogearbox.net> <fe47aeb6-dae8-43a6-bcb0-ada2ebf62e08@app.fastmail.com>
- <8340aaf2-8b4c-4f7d-8eed-f72f615f6fd0@app.fastmail.com>
-In-Reply-To: <8340aaf2-8b4c-4f7d-8eed-f72f615f6fd0@app.fastmail.com>
-From:   Djalal Harouni <tixxdz@gmail.com>
-Date:   Tue, 27 Jun 2023 12:22:51 +0200
-Message-ID: <CAEiveUcwi8Sqz0MZm2k3d7uesZai4B738CJxDEd_=h8fPCc+ow@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Maryam Tahhan <mtahhan@redhat.com>,
-        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Christian Brauner <brauner@kernel.org>, lennart@poettering.net,
-        cyphar@cyphar.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Subject: [GIT PULL] Smack patches for 6.5
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <3b1107c2-77c1-28ce-3413-bec589eae083.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.21557 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jun 24, 2023 at 5:28=E2=80=AFPM Andy Lutomirski <luto@kernel.org> w=
-rote:
->
->
->
-> On Sat, Jun 24, 2023, at 6:59 AM, Andy Lutomirski wrote:
-> > On Fri, Jun 23, 2023, at 4:23 PM, Daniel Borkmann wrote:
->
-> >
-> > If this series was about passing a =E2=80=9Cmay load kernel modules=E2=
-=80=9D token
-> > around, I think it would get an extremely chilly reception, even though
-> > we have module signatures.  I don=E2=80=99t see anything about BPF that=
- makes
-> > BPF tokens more reasonable unless a real security model is developed
-> > first.
-> >
->
-> To be clear, I'm not saying that there should not be a mechanism to use B=
-PF from a user namespace.  I'm saying the mechanism should have explicit ac=
-cess control.  It wouldn't need to solve all problems right away, but it sh=
-ould allow incrementally more features to be enabled as the access control =
-solution gets more powerful over time.
->
-> BPF, unlike kernel modules, has a verifier.  While it would be a departur=
-e from current practice, permission to use BPF could come with an explicit =
-list of allowed functions and allowed hooks.
->
-> (The hooks wouldn't just be a list, presumably -- premission to install a=
-n XDP program would be scoped to networks over which one has CAP_NET_ADMIN,=
- presumably.  Other hooks would have their own scoping.  Attaching to a cgr=
-oup should (and maybe already does?) require some kind of permission on the=
- cgroup.  Etc.)
->
-> If new, more restrictive functions are needed, they could be added.
->
+Hello Linus,
 
-This seems to align with BPF fd/token delegation. I asked in another
-thread if more context/policies could be provided from user space when
-configuring the fd and the answer: it can be on top as a follow up...
+Here is the Smack pull request for v6.5.
 
-The user namespace is just one single use case of many, also confirmed
-in this reply [0] . Getting it to work in init userns should be the
-first logical step anyway, then once you have an fd you can delegate
-it or pass it around to childs that create nested user namespaces, etc
-as it is currently done within container managers when they setup the
-environments including the uid mapping... and of course there should
-be some sort of mechanism to ensure that the delegated fd comes say
-from a parent user namespace before using it and deny any cross
-namespaces usage...
+There are two patches, both of which change how Smack initializes
+the SMACK64TRANSMUTE extended attribute. The first corrects the
+behavior of overlayfs, which creates inodes differently from other
+filesystems. The second ensures that transmute attributes specified
+by mount options are correctly assigned. These updates have been in
+the next branch and pass all tests. Thank you.
 
+The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
 
-> Alternatively, people could try a limited form of BPF proxying.  It would=
-n't need to be a full proxy -- an outside daemon really could approve the a=
-ttachment of a BPF program, and it could parse the program, examine the lis=
-t of function it uses and what the proposed attachment is to, and make an e=
-ducated decision.  This would need some API changes (maybe), but it seems e=
-minently doable.
->
+  Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
 
-Even a *limited* BPF proxying seems more in the opposite direction of
-what you are suggesting above?
+are available in the Git repository at:
 
-If I have an fd or the bpffs mount with a token properly setup by the
-manager I can directly use it inside my containers, load small bpf
-programs without talking to another external API of another
-container... I assume the manager passed me the rights or already
-pre-approved the operation...
+  https://github.com/cschaufler/smack-next tags/Smack-for-6.5
 
-Of course there is also the case of approving the attachment of bpf
-programs without passing an fd/token which I assume is your point or
-in other words denying it which makes perfectly sense indeed, then
-yes: an outside daemon could do this, systemd / container managers etc
-with the help of LSMs could *deny* attachment of BPF programs without
-any external API changes (they already support LSMs), IIRC there is
-already a hook part of bpf() syscall to restrict some program types
-maybe, so future cases of bpf token should add in kernel and LSMs +
-bpf-lsm hooks, ensure they are properly called with the full context
-and restrict further...
+for you to fetch changes up to 2c085f3a8f23c9b444e8b99d93c15d7ce870fc4e:
 
-So for the "limited form of BPF proxying... to approve attachment..."
-I think with fd delegation of bpffs mount (that requires privileges to
-set it up) then an in kernel LSM hooks on top to tighten this up is
-the way to go
+  smack: Record transmuting in smk_transmuted (2023-05-11 10:05:39 -0700)
 
+----------------------------------------------------------------
+Two patches that improve inode attribute initialization.
 
-[0] https://lore.kernel.org/bpf/CAEf4BzbjGBY2=3DXGmTBWX3Vrgkc7h0FRQMTbB-SeK=
-Ef28h6OhAQ@mail.gmail.com/
+----------------------------------------------------------------
+Roberto Sassu (2):
+      smack: Retrieve transmuting information in smack_inode_getsecurity()
+      smack: Record transmuting in smk_transmuted
+
+ security/smack/smack.h     |  1 +
+ security/smack/smack_lsm.c | 63 ++++++++++++++++++++++++++++++++++------------
+ 2 files changed, 48 insertions(+), 16 deletions(-)
+
