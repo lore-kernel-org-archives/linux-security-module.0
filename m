@@ -2,174 +2,199 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B262FEB64D7
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jun 2023 09:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FA2EB64DD
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jun 2023 11:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234494AbjF1JJD (ORCPT
+        id S229930AbjF1LnM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Jun 2023 05:09:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44706 "EHLO
+        Wed, 28 Jun 2023 07:43:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233833AbjF1IuA (ORCPT
+        with ESMTP id S229626AbjF1LnL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Jun 2023 04:50:00 -0400
-Received: from mail-ej1-x64a.google.com (mail-ej1-x64a.google.com [IPv6:2a00:1450:4864:20::64a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4E5A3594
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Jun 2023 01:44:13 -0700 (PDT)
-Received: by mail-ej1-x64a.google.com with SMTP id a640c23a62f3a-98890dda439so361111166b.1
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Jun 2023 01:44:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687941852; x=1690533852;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZWTqCvFpynWTlr/Bk92iOqs3pjlY33xJu502WZFArtk=;
-        b=UnvCFZ/EgQbu70Y9apDAdm3fGUANFW7baJOiol9kVU4gg8MzL0NvBQ4N+uz59HpJBD
-         Fu/K/Bl+SVXqDeGoY953GcgyRwp10adeUJnAPz/jplWe6B9ByXOk0vRZTtu2sBfV6q/p
-         k6muKnqjRICLiplZOwWzys0XQgB+5hirUmUZWd/ER1+Bdxh1BaVRXykAnUnIL2oQzV2Z
-         rMtb0P3ZLVZjxUCaGIOvsXqVX293QeYdE8vaPm+af3Ma4rNMLF5KmWv3xiOVte9Ci6GI
-         q9mUE47mr0U1FHLKV6rjAPDNhZ68JnLsbpNNPFckvM2kFdJu6bvjlp0X+1LYUbfwqy+W
-         Ki3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687941852; x=1690533852;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZWTqCvFpynWTlr/Bk92iOqs3pjlY33xJu502WZFArtk=;
-        b=Vmk1WgaxoMTn1mRlWy1gZ8CPKbGQmD54Ev1H9gZGK7qlV9zmHCiya7W3EdE70bgKnq
-         WxQ4kKPDAVlnXMHBQfwC7b1gD5GYdiK22RVxCt9055ocoCOaOhO0Xb0pyCyj6aEa96FW
-         rXXSx7tTYryJoEEjR1l8VMsvc4TLlDx0EAm0OaHTkvp/247AZrQAoK37+dTW36LnlUFo
-         K/pC+vn3pzBM0s0X2deFmSQReQ02CfeHNU+iveA0hgSI6DdtgKZyGv6ASkRXhWj4yIXo
-         kTEY7K5aVK5PikDaM/QoSTWRW3LbuY2f6FHTKovPYxEnbw3DO+JOKRGw7r5G45hUwNL3
-         q8nw==
-X-Gm-Message-State: AC+VfDwxyNadUDqAR7bjgsqQuSeiKyRKI/qX0jQTIj4n5eqQwBmWL5y5
-        kyX9ecm8DyrjvNQAAjY5LDTh4RoYiYo=
-X-Google-Smtp-Source: ACHHUZ48bJmWPrFTeXuhN8e5LgW2WQwXoMrKiJFt9QSGXTD6rf+TwxQIlh+D0GOycpKRQ7zKqM/tpJttpJA=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:21dc:82c2:282f:ee82])
- (user=gnoack job=sendgmr) by 2002:a17:907:7605:b0:98e:46f:bda7 with SMTP id
- jx5-20020a170907760500b0098e046fbda7mr1651554ejc.11.1687941852182; Wed, 28
- Jun 2023 01:44:12 -0700 (PDT)
-Date:   Wed, 28 Jun 2023 10:44:09 +0200
-In-Reply-To: <b8a2045a-e7e8-d141-7c01-bf47874c7930@digikod.net>
-Message-Id: <ZJvy2SViorgc+cZI@google.com>
-Mime-Version: 1.0
-References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
- <Y/fl5iEbkL5Pj5cJ@galopp> <c20fc9eb-518e-84b4-0dd5-7b97c0825259@huawei.com>
- <3e113e1c-4c7b-af91-14c2-11b6ffb4d3ef@digikod.net> <b8a2045a-e7e8-d141-7c01-bf47874c7930@digikod.net>
-Subject: Re: [PATCH v9 00/12] Network support for Landlock - allowed list of protocols
-From:   "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
-To:     "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
-Cc:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
-        "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack3000@gmail.com>,
-        willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 28 Jun 2023 07:43:11 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03AC51FE0;
+        Wed, 28 Jun 2023 04:43:08 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 14827C020; Wed, 28 Jun 2023 13:43:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1687952587; bh=0WN8XsDGTRKDo6/ITLTj6m/cxiiek/G6u+FK4mhH5tw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Gx4AJQyPcZtb7aI/TykWXoADzXo4bdOvVJjyQ+Cb7zPtfJwZrSDLZM/q7usRdrtog
+         FGQX2XjDpmyFls+QpV1tjeFplk/f8Mv2PypH+kgQmluS++wWM1Jk4xsG910vpF0ZHb
+         xfyxxB9Z51Yf4vzbEc5VpkGfigeF4+jr6nxREoQHxJJZFxpjkqAsLaHlkgm6Taefk3
+         05a9qf1lIsr0F9cQ+whwGIEyGAArCfDuQ2P2wRagOTsl2P2GEVE+7mLi78tGHI45XZ
+         kyhynML2tCWVqI7OKmGe+VDvEJlBRMR1LKHmoJXqT+9CZtBGCmtFHeAmY7YZlf3LW/
+         sBrJCnU4VSiGg==
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 28BC5C009;
+        Wed, 28 Jun 2023 13:43:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1687952585; bh=0WN8XsDGTRKDo6/ITLTj6m/cxiiek/G6u+FK4mhH5tw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jvZ0TWI1KCV5Hc+MvIv/ZKAp0wL4fpBdccuM0cFUe0TFf+X6gYr9CDJd7QsRqmqG4
+         4YgnIfYF0sW7oFSn/jDjP6Uxo6MeXPqmEfiA1NPx2a4J4w2yM8x7NuuoZflv9h/9Y4
+         7p7dxCWhVcETdtOmMvlK7vbu32Umo3+ITlWpJzuvDeOmVrp+gAI/H2+RyVb8DbqCvN
+         e2BI3hh2HsD88feDgPMaHDYDcp+8hf6rETpXY9DD5JU77lb88PlAYN9u9cSjhLD0xb
+         RpjCi4BTEZ8N3Hkf8CmGuIOm7SEN6m26emULCkRXfrotBmD9pC5dBc1IYAax/a0P6V
+         aGEE7u5dhH38Q==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id f3a75d01;
+        Wed, 28 Jun 2023 11:42:56 +0000 (UTC)
+Date:   Wed, 28 Jun 2023 20:42:41 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     jeffxu@chromium.org
+Cc:     skhan@linuxfoundation.org, keescook@chromium.org,
+        akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
+        dverkamp@chromium.org, hughd@google.com, jeffxu@google.com,
+        jorgelo@chromium.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        jannh@google.com, linux-hardening@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v8 3/5] mm/memfd: add MFD_NOEXEC_SEAL and MFD_EXEC
+Message-ID: <ZJwcsU0vI-nzgOB_@codewreck.org>
+References: <20221215001205.51969-1-jeffxu@google.com>
+ <20221215001205.51969-4-jeffxu@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20221215001205.51969-4-jeffxu@google.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello!
+jeffxu@chromium.org wrote on Thu, Dec 15, 2022 at 12:12:03AM +0000:
+> From: Jeff Xu <jeffxu@google.com>
+> 
+> The new MFD_NOEXEC_SEAL and MFD_EXEC flags allows application to
+> set executable bit at creation time (memfd_create).
+> 
+> When MFD_NOEXEC_SEAL is set, memfd is created without executable bit
+> (mode:0666), and sealed with F_SEAL_EXEC, so it can't be chmod to
+> be executable (mode: 0777) after creation.
+> 
+> when MFD_EXEC flag is set, memfd is created with executable bit
+> (mode:0777), this is the same as the old behavior of memfd_create.
+> 
+> The new pid namespaced sysctl vm.memfd_noexec has 3 values:
+> 0: memfd_create() without MFD_EXEC nor MFD_NOEXEC_SEAL acts like
+>         MFD_EXEC was set.
+> 1: memfd_create() without MFD_EXEC nor MFD_NOEXEC_SEAL acts like
+>         MFD_NOEXEC_SEAL was set.
+> 2: memfd_create() without MFD_NOEXEC_SEAL will be rejected.
 
-On Mon, Jun 26, 2023 at 05:29:34PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> Here is a design to be able to only allow a set of network protocols and
-> deny everything else. This would be complementary to Konstantin's patch
-> series which addresses fine-grained access control.
->=20
-> First, I want to remind that Landlock follows an allowed list approach wi=
-th
-> a set of (growing) supported actions (for compatibility reasons), which i=
-s
-> kind of an allow-list-on-a-deny-list. But with this proposal, we want to =
-be
-> able to deny everything, which means: supported, not supported, known and
-> unknown protocols.
->=20
-> We could add a new "handled_access_socket" field to the landlock_ruleset
-> struct, which could contain a LANDLOCK_ACCESS_SOCKET_CREATE flag.
->=20
-> If this field is set, users could add a new type of rules:
-> struct landlock_socket_attr {
->     __u64 allowed_access;
->     int domain; // see socket(2)
->     int type; // see socket(2)
-> }
->=20
-> The allowed_access field would only contain LANDLOCK_ACCESS_SOCKET_CREATE=
- at
-> first, but it could grow with other actions (which cannot be handled with
-> seccomp):
-> - use: walk through all opened FDs and mark them as allowed or denied
-> - receive: hook on received FDs
-> - send: hook on sent FDs
->=20
-> We might also use the same approach for non-socket objects that can be
-> identified with some meaningful properties.
->=20
-> What do you think?
+So, erm, I'm a bit late to the party but I was just looking at a way of
+blocking memfd_create+exec in a container and this sounded perfect: my
+reading is that this is a security feature meant to be set for
+container's namespaces that'd totally disable something like
+memfd_create followed by fexecve (because we don't want weird binaries
+coming from who knows where to be executed on a shiny secure system),
+but. . . is this actually supposed to work?
+(see below)
 
-This sounds like a good plan to me - it would make it possible to restrict =
-new
-socket creation using protocols that were not intended to be used, and I al=
-so
-think it would fit the Landlock model nicely.
+> [...]
+> --- a/mm/memfd.c
+> +++ b/mm/memfd.c
+> @@ -263,12 +264,14 @@ long memfd_fcntl(struct file *file, unsigned int cmd, unsigned long arg)
+>  #define MFD_NAME_PREFIX_LEN (sizeof(MFD_NAME_PREFIX) - 1)
+>  #define MFD_NAME_MAX_LEN (NAME_MAX - MFD_NAME_PREFIX_LEN)
+>  
+> -#define MFD_ALL_FLAGS (MFD_CLOEXEC | MFD_ALLOW_SEALING | MFD_HUGETLB)
+> +#define MFD_ALL_FLAGS (MFD_CLOEXEC | MFD_ALLOW_SEALING | MFD_HUGETLB | MFD_NOEXEC_SEAL | MFD_EXEC)
+>  
+>  SYSCALL_DEFINE2(memfd_create,
+>  		const char __user *, uname,
+>  		unsigned int, flags)
+>  {
+> +	char comm[TASK_COMM_LEN];
+> +	struct pid_namespace *ns;
+>  	unsigned int *file_seals;
+>  	struct file *file;
+>  	int fd, error;
+> @@ -285,6 +288,39 @@ SYSCALL_DEFINE2(memfd_create,
+>  			return -EINVAL;
+>  	}
+>  
+> +	/* Invalid if both EXEC and NOEXEC_SEAL are set.*/
+> +	if ((flags & MFD_EXEC) && (flags & MFD_NOEXEC_SEAL))
+> +		return -EINVAL;
+> +
+> +	if (!(flags & (MFD_EXEC | MFD_NOEXEC_SEAL))) {
+> +		[code that checks the sysctl]
 
-Small remark on the side: The security_socket_create() hook does not only g=
-et
-invoked as a result of socket(2), but also as a part of accept(2) - so this
-approach might already prevent new connections very effectively.
+If flags already has either MFD_EXEC or MFD_NOEXEC_SEAL, you don't check
+the sysctl at all.
 
-Spelling out some scenarios, so that we are sure that we are on the same pa=
-ge:
+This can be verified easily:
+-----
+$ cat > memfd_exec.c <<'EOF'
+#define _GNU_SOURCE
 
-A)
+#include <errno.h>
+#include <stdio.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
-A program that does not need networking could specify a ruleset where
-LANDLOCK_ACCESS_SOCKET_CREATE is handled, and simply not permit anything.
+#ifndef MFD_EXEC
+#define MFD_EXEC                0x0010U
+#endif
 
-B)
+int main() { 
+    int fd = memfd_create("script", MFD_EXEC);
+    if (fd == -1)l
+        perror("memfd");
+    
+    char prog[] = "#!/bin/sh\necho Ran script\n";
+    if (write(fd, prog, sizeof(prog)-1) != sizeof(prog)-1)
+            perror("write");
+    
+    char *const argv[] = { "script", NULL };
+    char *const envp[] = { NULL };
+    fexecve(fd, argv, envp);
+    perror("fexecve");
+}   
+EOF
+$ gcc -o memfd_exec memfd_exec.c
+$ ./memfd_exec
+Ran script
+$ sysctl vm.memfd_noexec
+vm.memfd_noexec = 2
+-----
+(as opposed to failing hard on memfd_create if flag unset on sysctl=2,
+and failing on fexecve with flag unset and sysctl=1)
 
-A program that runs a TCP server could specify a ruleset where
-LANDLOCK_NET_BIND_TCP, LANDLOCK_NET_CONNECT_TCP and
-LANDLOCK_ACCESS_SOCKET_CREATE are handled, and where the following rules ar=
-e added:
+What am I missing?
 
-  /* From Konstantin's patch set */
-  struct landlock_net_service_attr bind_attr =3D {
-    .allowed_access =3D LANDLOCK_NET_BIND_TCP,
-    .port =3D 8080,
-  };
 
-  /* From Micka=C3=ABl's proposal */
-  struct landlock_socket_attr sock_inet_attr =3D {
-    .allowed_access =3D LANDLOCK_ACCESS_SOCKET_CREATE,
-    .domain =3D AF_INET,
-    .type =3D SOCK_STREAM,
-  }
 
-  struct landlock_socket_attr sock_inet6_attr =3D {
-    .allowed_access =3D LANDLOCK_ACCESS_SOCKET_CREATE,
-    .domain =3D AF_INET6,
-     .type =3D SOCK_STREAM,
-  }
+BTW I find the current behaviour rather hard to use: setting this to 2
+should still set NOEXEC by default in my opinion, just refuse anything
+that explicitly requested EXEC.
 
-That should then be enough to bind and listen on ports, whereas outgoing
-connections with TCP and anything using other network protocols would not b=
-e
-permitted.
+Sure there's a warn_once that memfd_create was used without seal, but
+right now on my system it's "used up" 5 seconds after boot by systemd:
+[    5.854378] memfd_create() without MFD_EXEC nor MFD_NOEXEC_SEAL, pid=1 'systemd'
 
-(Alternatively, it could bind() the socket early, *then enable Landlock* an=
-d
-leave out the rule for BIND_TCP, only permitting SOCKET_CREATE for IPv4 and
-IPv6, so that listen() and accept() work on the already-bound socket.)
+And anyway, older kernels will barf up EINVAL when calling memfd_create
+with MFD_NOEXEC_SEAL, so even if userspace will want to adapt they'll
+need to try calling memfd_create with the flag once and retry on EINVAL,
+which let's face it is going to take a while to happen.
+(Also, the flag has been added to glibc, but not in any release yet)
 
-Overall, this sounds like an excellent approach to me. =F0=9F=91=8D
+Making calls default to noexec AND refuse exec does what you want
+(forbid use of exec in an app that wasn't in a namespace that allows
+exec) while allowing apps that require it to work; that sounds better
+than making all applications that haven't taken the pain of adding the
+new flag to me.
+Well, I guess an app that did require exec without setting the flag will
+fail in a weird place instead of failing at memfd_create and having a
+chance to fallback, so it's not like it doesn't make any sense;
+I don't have such strong feelings about this if the sysctl works, but
+for my use case I'm more likely to want to take a chance at memfd_create
+not needing exec than having the flag set. Perhaps a third value if I
+cared enough...
 
-=E2=80=94G=C3=BCnther
-
---=20
-Sent using Mutt =F0=9F=90=95 Woof Woof
+-- 
+Dominique Martinet | Asmadeus
