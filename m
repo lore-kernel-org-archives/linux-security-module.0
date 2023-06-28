@@ -2,67 +2,74 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 313B7C0015E
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jun 2023 01:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5B4C001DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jun 2023 01:01:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230444AbjF1BB0 (ORCPT
+        id S230465AbjF1BB3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Jun 2023 21:01:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38584 "EHLO
+        Tue, 27 Jun 2023 21:01:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230421AbjF1BBW (ORCPT
+        with ESMTP id S230422AbjF1BBW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 27 Jun 2023 21:01:22 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83B5D296D;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4C2A2975;
         Tue, 27 Jun 2023 18:01:21 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DBC7A61244;
-        Wed, 28 Jun 2023 01:01:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4B887C433C8;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4A5896124A;
+        Wed, 28 Jun 2023 01:01:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AC2C2C433C9;
         Wed, 28 Jun 2023 01:01:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1687914080;
-        bh=vbcUCSLeYDz5ymA5Wr7I6xs6/fKMMskt1UXc55IPG00=;
+        bh=kcxmWFSqu/rIIej6l4AfxdR5n+4Ee1nLq/EBD4SeM24=;
         h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=Yi8ERP/96UlYB1lg9QSxpqT8GVPOvHND46iH1lrUqwF3sEXqHKI2+Gyy3LtrkwoR/
-         0/9m1Qr8WsyKswjTDqLkpMEPKyro8ytn319bXMNv/xYHFHPMTp4rr3Jeb9v0iTyuzq
-         3ffVqzTh9XmAd2NEVinvTyePd0x9XFO6/clxlEym+88hpkc3lnJ6YuFubl1kXHVciT
-         4B4cqngMkomcpYGda9UJeVTavEAx/ksSGHHztfw9e7Q3gBe6EpUKaurd27KITS85g/
-         A87NY/XpZSXHYd1QrYBgw3pE3miuI5sQh1He0bLeyT3nqveKiO5diXaiNycM4eRNV0
-         OLmKYRHIyyRXg==
+        b=dkHDQK2fkSkcTyY/J4+PazHmOkmghV7dEB9j1Tx7+kg2vUoKnBuwdzPs/sfusbNbp
+         4Ta3QBQfi9iNx3MiF2n7i2I6WcGUzRMPd7Zgau7v2HcL6jRdYVlECKE1SyUAKzYJKZ
+         BLk1E/CKwp+bLo9C9imtweYzL4OWyKLhfmp1Xp15/I9iqzohg/YB/SR8Uh0JabKt3i
+         xomkgQ3sVYBuriyEzDaAG9FdnuqgfGHXMR5TvFqvHO44ssAZ1mVSDAlGXRo+AOSPz2
+         nTp4VYRYmk/WrW4fWXT0egZKftXqBadhy9GT14ZAXDEyyIsOxsa9yz+p7Fb4cyNANu
+         0VNslvb8U+aBg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 38827E53800;
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 980F2E53807;
         Wed, 28 Jun 2023 01:01:20 +0000 (UTC)
-Subject: Re: [GIT PULL] SELinux patches for v6.5
+Subject: Re: [GIT PULL] Landlock updates for v6.5
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAHC9VhTC6s-_Q+5+evrgHHdE=wHLP0VXACzfsWSTLQ1ipyFRaw@mail.gmail.com>
-References: <CAHC9VhTC6s-_Q+5+evrgHHdE=wHLP0VXACzfsWSTLQ1ipyFRaw@mail.gmail.com>
-X-PR-Tracked-List-Id: <selinux.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAHC9VhTC6s-_Q+5+evrgHHdE=wHLP0VXACzfsWSTLQ1ipyFRaw@mail.gmail.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20230626
-X-PR-Tracked-Commit-Id: 447a5688005e5b789633bd080016517a08f9fd8d
+In-Reply-To: <20230626084830.717289-1-mic@digikod.net>
+References: <20230626084830.717289-1-mic@digikod.net>
+X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20230626084830.717289-1-mic@digikod.net>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.5-rc1
+X-PR-Tracked-Commit-Id: 35ca4239929737bdc021ee923f97ebe7aff8fcc4
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 729b39ec1bdb7e1ca594e14069d05f682d9ab868
-Message-Id: <168791408022.14121.11101174619013240499.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 26642864f8b212964f80fbd69685eb850ced5f45
+Message-Id: <168791408061.14121.7780809571829106804.pr-tracker-bot@kernel.org>
 Date:   Wed, 28 Jun 2023 01:01:20 +0000
-To:     Paul Moore <paul@paul-moore.com>
+To:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Richard Weinberger <richard@nod.at>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-um@lists.infradead.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Mon, 26 Jun 2023 17:28:15 -0400:
+The pull request you sent on Mon, 26 Jun 2023 10:48:30 +0200:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20230626
+> git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.5-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/729b39ec1bdb7e1ca594e14069d05f682d9ab868
+https://git.kernel.org/torvalds/c/26642864f8b212964f80fbd69685eb850ced5f45
 
 Thank you!
 
