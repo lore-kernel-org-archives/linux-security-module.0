@@ -2,27 +2,27 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CBEC2FC11
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jun 2023 21:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32235C2FC13
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jun 2023 21:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232713AbjF1VKa (ORCPT
+        id S232731AbjF1VKd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Jun 2023 17:10:30 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:39546 "EHLO
+        Wed, 28 Jun 2023 17:10:33 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:39272 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232420AbjF1VJx (ORCPT
+        with ESMTP id S232301AbjF1VJt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Jun 2023 17:09:53 -0400
+        Wed, 28 Jun 2023 17:09:49 -0400
 Received: by linux.microsoft.com (Postfix, from userid 1052)
-        id D8E6D20ABD96; Wed, 28 Jun 2023 14:09:48 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D8E6D20ABD96
+        id 38B3720C08FE; Wed, 28 Jun 2023 14:09:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 38B3720C08FE
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1687986588;
-        bh=cx0zv6rR+qzo8WdhaKLiuQH3326nVtVkIr6dzCROEXU=;
+        bh=LHnS3KBCE9CXxf/tUzfRiFyBlBvtWWxrCNQ8gimP4Os=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DiV9Ntwt+GUlRXrcGO6hXlexvEbI5y/bymVGJXcdBLUCZrPmJtXWaUUzgACXqxtT+
-         /Qron7rAqmkKiXX0oacBwtEqsVMZSdULXQHwLdj7sjLVY9ooawvnG+2foyxH5T+e6M
-         nkx/f+oDRZONJ0+OVs0NsYqQ8zy3gzauHzaZOrz4=
+        b=Cp6ytnenRVVtbqo4U+QJESf/vIZQgWIMk0BCw0HV6jbQUyblfIrrKLT5w/s01rA3x
+         E0c3/cnQQlUuxwXTbvIBh/Vbzfke3rSOzphSni1KgevmSqsNOWXIFOGQ0wjHl5Ri5Y
+         W+D7KSn0AKfvX0GUxPJEpLfIz8rg4YnZK/TqLZ5k=
 From:   Fan Wu <wufan@linux.microsoft.com>
 To:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
         serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
@@ -35,9 +35,9 @@ Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
         roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
         Deven Bowers <deven.desai@linux.microsoft.com>,
         Fan Wu <wufan@linux.microsoft.com>
-Subject: [RFC PATCH v10 15/17] scripts: add boot policy generation program
-Date:   Wed, 28 Jun 2023 14:09:29 -0700
-Message-Id: <1687986571-16823-16-git-send-email-wufan@linux.microsoft.com>
+Subject: [RFC PATCH v10 04/17] ipe: add LSM hooks on execution and kernel read
+Date:   Wed, 28 Jun 2023 14:09:18 -0700
+Message-Id: <1687986571-16823-5-git-send-email-wufan@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1687986571-16823-1-git-send-email-wufan@linux.microsoft.com>
 References: <1687986571-16823-1-git-send-email-wufan@linux.microsoft.com>
@@ -46,388 +46,351 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-Enables an IPE policy to be enforced from kernel start, enabling access
-control based on trust from kernel startup. This is accomplished by
-transforming an IPE policy indicated by CONFIG_IPE_BOOT_POLICY into a
-c-string literal that is parsed at kernel startup as an unsigned policy.
+IPE's initial goal is to control both execution and the loading of
+kernel modules based on the system's definition of trust. It
+accomplishes this by plugging into the security hooks for
+bprm_check_security, file_mprotect, mmap_file, kernel_load_data,
+and kernel_read_data.
 
 Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 ---
 v2:
-  + No Changes
+  + Split evaluation loop, access control hooks,
+    and evaluation loop from policy parser and userspace
+    interface to pass mailing list character limit
 
 v3:
-  + No Changes
+  + Move ipe_load_properties to patch 04.
+  + Remove useless 0-initializations
+  + Prefix extern variables with ipe_
+  + Remove kernel module parameters, as these are
+    exposed through sysctls.
+  + Add more prose to the IPE base config option
+    help text.
+  + Use GFP_KERNEL for audit_log_start.
+  + Remove unnecessary caching system.
+  + Remove comments from headers
+  + Use rcu_access_pointer for rcu-pointer null check
+  + Remove usage of reqprot; use prot only.
+  + Move policy load and activation audit event to 03/12
 
 v4:
-  + No Changes
+  + Remove sysctls in favor of securityfs nodes
+  + Re-add kernel module parameters, as these are now
+    exposed through securityfs.
+  + Refactor property audit loop to a separate function.
 
 v5:
-  + No Changes
+  + fix minor grammatical errors
+  + do not group rule by curly-brace in audit record,
+    reconstruct the exact rule.
 
 v6:
-  + No Changes
+  + No changes
 
 v7:
-  + Move from 01/11 to 14/16
-  + Don't return errno directly.
-  + Make output of script more user-friendly
-  + Add escaping for tab and '?'
-  + Mark argv pointer const
-  + Invert return code check in the boot policy parsing code path.
+  + Further split lsm creation, the audit system, the evaluation loop
+    and access control hooks into separate commits.
 
 v8:
-  + No significant changes.
+  + Rename hook functions to follow the lsmname_hook_name convention
+  + Remove ipe_hook enumeration, can be derived from correlation with
+    syscall audit record.
 
 v9:
-  + no changes
+  + Minor changes for adapting to the new parser
 
 v10:
-  + Update the init part code for rcu changes in the eval loop patch
+  + Remove @reqprot part
 ---
- MAINTAINERS                   |   1 +
- scripts/Makefile              |   1 +
- scripts/ipe/Makefile          |   2 +
- scripts/ipe/polgen/.gitignore |   1 +
- scripts/ipe/polgen/Makefile   |   6 ++
- scripts/ipe/polgen/polgen.c   | 145 ++++++++++++++++++++++++++++++++++
- security/ipe/.gitignore       |   1 +
- security/ipe/Kconfig          |  10 +++
- security/ipe/Makefile         |  11 +++
- security/ipe/fs.c             |   8 ++
- security/ipe/ipe.c            |  17 ++++
- 11 files changed, 203 insertions(+)
- create mode 100644 scripts/ipe/Makefile
- create mode 100644 scripts/ipe/polgen/.gitignore
- create mode 100644 scripts/ipe/polgen/Makefile
- create mode 100644 scripts/ipe/polgen/polgen.c
- create mode 100644 security/ipe/.gitignore
+ security/ipe/eval.c  |  14 ++++
+ security/ipe/eval.h  |   1 +
+ security/ipe/hooks.c | 182 +++++++++++++++++++++++++++++++++++++++++++
+ security/ipe/hooks.h |  25 ++++++
+ security/ipe/ipe.c   |   6 ++
+ 5 files changed, 228 insertions(+)
+ create mode 100644 security/ipe/hooks.c
+ create mode 100644 security/ipe/hooks.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ad00887d38ea..fb8d6a16f2a6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10283,6 +10283,7 @@ M:	Fan Wu <wufan@linux.microsoft.com>
- L:	linux-security-module@vger.kernel.org
- S:	Supported
- T:	git git://github.com/microsoft/ipe.git
-+F:	scripts/ipe/
- F:	security/ipe/
+diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+index 59144b2ecdda..8d0ec7c80f8f 100644
+--- a/security/ipe/eval.c
++++ b/security/ipe/eval.c
+@@ -17,6 +17,20 @@
  
- INTEL 810/815 FRAMEBUFFER DRIVER
-diff --git a/scripts/Makefile b/scripts/Makefile
-index 32b6ba722728..18baecdada01 100644
---- a/scripts/Makefile
-+++ b/scripts/Makefile
-@@ -46,6 +46,7 @@ targets += module.lds
- subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
- subdir-$(CONFIG_MODVERSIONS) += genksyms
- subdir-$(CONFIG_SECURITY_SELINUX) += selinux
-+subdir-$(CONFIG_SECURITY_IPE) += ipe
+ struct ipe_policy __rcu *ipe_active_policy;
  
- # Let clean descend into subdirs
- subdir-	+= basic dtc gdb kconfig mod
-diff --git a/scripts/ipe/Makefile b/scripts/ipe/Makefile
-new file mode 100644
-index 000000000000..e87553fbb8d6
---- /dev/null
-+++ b/scripts/ipe/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+subdir-y := polgen
-diff --git a/scripts/ipe/polgen/.gitignore b/scripts/ipe/polgen/.gitignore
-new file mode 100644
-index 000000000000..80f32f25d200
---- /dev/null
-+++ b/scripts/ipe/polgen/.gitignore
-@@ -0,0 +1 @@
-+polgen
-diff --git a/scripts/ipe/polgen/Makefile b/scripts/ipe/polgen/Makefile
-new file mode 100644
-index 000000000000..066060c22b4a
---- /dev/null
-+++ b/scripts/ipe/polgen/Makefile
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0
-+hostprogs-always-y	:= polgen
-+HOST_EXTRACFLAGS += \
-+	-I$(srctree)/include \
-+	-I$(srctree)/include/uapi \
++/**
++ * build_eval_ctx - Build an evaluation context.
++ * @ctx: Supplies a pointer to the context to be populdated.
++ * @file: Supplies a pointer to the file to associated with the evaluation.
++ * @op: Supplies the IPE policy operation associated with the evaluation.
++ */
++void build_eval_ctx(struct ipe_eval_ctx *ctx,
++		    const struct file *file,
++		    enum ipe_op_type op)
++{
++	ctx->file = file;
++	ctx->op = op;
++}
 +
-diff --git a/scripts/ipe/polgen/polgen.c b/scripts/ipe/polgen/polgen.c
+ /**
+  * evaluate_property - Analyze @ctx against a property.
+  * @ctx: Supplies a pointer to the context to be evaluated.
+diff --git a/security/ipe/eval.h b/security/ipe/eval.h
+index 972580dfec15..5abb845d5c4e 100644
+--- a/security/ipe/eval.h
++++ b/security/ipe/eval.h
+@@ -20,6 +20,7 @@ struct ipe_eval_ctx {
+ 	const struct file *file;
+ };
+ 
++void build_eval_ctx(struct ipe_eval_ctx *ctx, const struct file *file, enum ipe_op_type op);
+ int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx);
+ 
+ #endif /* _IPE_EVAL_H */
+diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
 new file mode 100644
-index 000000000000..40b6fe07f47b
+index 000000000000..d896a5a474bc
 --- /dev/null
-+++ b/scripts/ipe/polgen/polgen.c
-@@ -0,0 +1,145 @@
++++ b/security/ipe/hooks.c
+@@ -0,0 +1,182 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) Microsoft Corporation. All rights reserved.
 + */
 +
-+#include <stdlib.h>
-+#include <stddef.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <errno.h>
++#include <linux/fs.h>
++#include <linux/types.h>
++#include <linux/binfmts.h>
++#include <linux/mman.h>
 +
-+static void usage(const char *const name)
++#include "ipe.h"
++#include "hooks.h"
++#include "eval.h"
++
++/**
++ * ipe_bprm_check_security - ipe security hook function for bprm check.
++ * @bprm: Supplies a pointer to a linux_binprm structure to source the file
++ *	  being evaluated.
++ *
++ * This LSM hook is called when a binary is loaded through the exec
++ * family of system calls.
++ * Return:
++ * *0	- OK
++ * *!0	- Error
++ */
++int ipe_bprm_check_security(struct linux_binprm *bprm)
 +{
-+	printf("Usage: %s OutputFile (PolicyFile)\n", name);
-+	exit(EINVAL);
++	struct ipe_eval_ctx ctx = { 0 };
++
++	build_eval_ctx(&ctx, bprm->file, __IPE_OP_EXEC);
++	return ipe_evaluate_event(&ctx);
 +}
 +
-+static int policy_to_buffer(const char *pathname, char **buffer, size_t *size)
++/**
++ * ipe_mmap_file - ipe security hook function for mmap check.
++ * @f: File being mmap'd. Can be NULL in the case of anonymous memory.
++ * @reqprot: The requested protection on the mmap, passed from usermode.
++ * @prot: The effective protection on the mmap, resolved from reqprot and
++ *	  system configuration.
++ * @flags: Unused.
++ *
++ * This hook is called when a file is loaded through the mmap
++ * family of system calls.
++ *
++ * Return:
++ * * 0	- OK
++ * * !0	- Error
++ */
++int ipe_mmap_file(struct file *f, unsigned long reqprot, unsigned long prot,
++		  unsigned long flags)
 +{
-+	int rc = 0;
-+	FILE *fd;
-+	char *lbuf;
-+	size_t fsize;
-+	size_t read;
++	struct ipe_eval_ctx ctx = { 0 };
 +
-+	fd = fopen(pathname, "r");
-+	if (!fd) {
-+		rc = errno;
-+		goto out;
++	if (prot & PROT_EXEC) {
++		build_eval_ctx(&ctx, f, __IPE_OP_EXEC);
++		return ipe_evaluate_event(&ctx);
 +	}
-+
-+	fseek(fd, 0, SEEK_END);
-+	fsize = ftell(fd);
-+	rewind(fd);
-+
-+	lbuf = malloc(fsize);
-+	if (!lbuf) {
-+		rc = ENOMEM;
-+		goto out_close;
-+	}
-+
-+	read = fread((void *)lbuf, sizeof(*lbuf), fsize, fd);
-+	if (read != fsize) {
-+		rc = -1;
-+		goto out_free;
-+	}
-+
-+	*buffer = lbuf;
-+	*size = fsize;
-+	fclose(fd);
-+
-+	return rc;
-+
-+out_free:
-+	free(lbuf);
-+out_close:
-+	fclose(fd);
-+out:
-+	return rc;
-+}
-+
-+static int write_boot_policy(const char *pathname, const char *buf, size_t size)
-+{
-+	int rc = 0;
-+	FILE *fd;
-+	size_t i;
-+
-+	fd = fopen(pathname, "w");
-+	if (!fd) {
-+		rc = errno;
-+		goto err;
-+	}
-+
-+	fprintf(fd, "/* This file is automatically generated.");
-+	fprintf(fd, " Do not edit. */\n");
-+	fprintf(fd, "#include <linux/stddef.h>\n");
-+	fprintf(fd, "\nextern const char *const ipe_boot_policy;\n\n");
-+	fprintf(fd, "const char *const ipe_boot_policy =\n");
-+
-+	if (!buf || size == 0) {
-+		fprintf(fd, "\tNULL;\n");
-+		fclose(fd);
-+		return 0;
-+	}
-+
-+	fprintf(fd, "\t\"");
-+
-+	for (i = 0; i < size; ++i) {
-+		switch (buf[i]) {
-+		case '"':
-+			fprintf(fd, "\\\"");
-+			break;
-+		case '\'':
-+			fprintf(fd, "'");
-+			break;
-+		case '\n':
-+			fprintf(fd, "\\n\"\n\t\"");
-+			break;
-+		case '\\':
-+			fprintf(fd, "\\\\");
-+			break;
-+		case '\t':
-+			fprintf(fd, "\\t");
-+			break;
-+		case '\?':
-+			fprintf(fd, "\\?");
-+			break;
-+		default:
-+			fprintf(fd, "%c", buf[i]);
-+		}
-+	}
-+	fprintf(fd, "\";\n");
-+	fclose(fd);
 +
 +	return 0;
-+
-+err:
-+	if (fd)
-+		fclose(fd);
-+	return rc;
 +}
 +
-+int main(int argc, const char *const argv[])
++/**
++ * ipe_file_mprotect - ipe security hook function for mprotect check.
++ * @vma: Existing virtual memory area created by mmap or similar.
++ * @reqprot: The requested protection on the mmap, passed from usermode.
++ * @prot: The effective protection on the mmap, resolved from reqprot and
++ *	  system configuration.
++ *
++ * This LSM hook is called when a mmap'd region of memory is changing
++ * its protections via mprotect.
++ *
++ * Return:
++ * * 0	- OK
++ * * !0	- Error
++ */
++int ipe_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
++		      unsigned long prot)
 +{
-+	int rc = 0;
-+	size_t len = 0;
-+	char *policy = NULL;
++	struct ipe_eval_ctx ctx = { 0 };
 +
-+	if (argc < 2)
-+		usage(argv[0]);
++	/* Already Executable */
++	if (vma->vm_flags & VM_EXEC)
++		return 0;
 +
-+	if (argc > 2) {
-+		rc = policy_to_buffer(argv[2], &policy, &len);
-+		if (rc != 0)
-+			goto cleanup;
++	if (prot & PROT_EXEC) {
++		build_eval_ctx(&ctx, vma->vm_file, __IPE_OP_EXEC);
++		return ipe_evaluate_event(&ctx);
 +	}
 +
-+	rc = write_boot_policy(argv[1], policy, len);
-+cleanup:
-+	if (policy)
-+		free(policy);
-+	if (rc != 0)
-+		perror("An error occurred during policy conversion: ");
-+	return rc;
++	return 0;
 +}
-diff --git a/security/ipe/.gitignore b/security/ipe/.gitignore
-new file mode 100644
-index 000000000000..eca22ad5ed22
---- /dev/null
-+++ b/security/ipe/.gitignore
-@@ -0,0 +1 @@
-+boot-policy.c
-\ No newline at end of file
-diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
-index 9dd5c4769d79..a6c5d48dd0a3 100644
---- a/security/ipe/Kconfig
-+++ b/security/ipe/Kconfig
-@@ -18,6 +18,16 @@ menuconfig SECURITY_IPE
- 	  If unsure, answer N.
- 
- if SECURITY_IPE
-+config IPE_BOOT_POLICY
-+	string "Integrity policy to apply on system startup"
-+	help
-+	  This option specifies a filepath to a IPE policy that is compiled
-+	  into the kernel. This policy will be enforced until a policy update
-+	  is deployed via the $securityfs/ipe/policies/$policy_name/active
-+	  interface.
 +
-+	  If unsure, leave blank.
++/**
++ * ipe_kernel_read_file - ipe security hook function for kernel read.
++ * @file: Supplies a pointer to the file structure being read in from disk.
++ * @id: Supplies the enumeration identifying the purpose of the read.
++ * @contents: Unused.
++ *
++ * This LSM hook is called when a file is being read in from disk from
++ * the kernel.
++ *
++ * Return:
++ * 0 - OK
++ * !0 - Error
++ */
++int ipe_kernel_read_file(struct file *file, enum kernel_read_file_id id,
++			 bool contents)
++{
++	enum ipe_op_type op;
++	struct ipe_eval_ctx ctx;
 +
- menu "IPE Trust Providers"
- 
- config IPE_PROP_DM_VERITY
-diff --git a/security/ipe/Makefile b/security/ipe/Makefile
-index ec7f69c34735..b7f0118215da 100644
---- a/security/ipe/Makefile
-+++ b/security/ipe/Makefile
-@@ -5,7 +5,16 @@
- # Makefile for building the IPE module as part of the kernel tree.
- #
- 
-+quiet_cmd_polgen = IPE_POL $(2)
-+      cmd_polgen = scripts/ipe/polgen/polgen security/ipe/boot-policy.c $(2)
-+
-+targets += boot-policy.c
-+
-+$(obj)/boot-policy.c: scripts/ipe/polgen/polgen $(CONFIG_IPE_BOOT_POLICY) FORCE
-+	$(call if_changed,polgen,$(CONFIG_IPE_BOOT_POLICY))
-+
- obj-$(CONFIG_SECURITY_IPE) += \
-+	boot-policy.o \
- 	digest.o \
- 	eval.o \
- 	fs.o \
-@@ -15,3 +24,5 @@ obj-$(CONFIG_SECURITY_IPE) += \
- 	policy_fs.o \
- 	policy_parser.o \
- 	audit.o \
-+
-+clean-files := boot-policy.c \
-diff --git a/security/ipe/fs.c b/security/ipe/fs.c
-index 1761d39e4d04..31d30a58a662 100644
---- a/security/ipe/fs.c
-+++ b/security/ipe/fs.c
-@@ -192,6 +192,7 @@ static const struct file_operations enforce_fops = {
- static int __init ipe_init_securityfs(void)
- {
- 	int rc = 0;
-+	struct ipe_policy *ap;
- 
- 	if (!ipe_enabled)
- 		return -EOPNOTSUPP;
-@@ -222,6 +223,13 @@ static int __init ipe_init_securityfs(void)
- 		goto err;
- 	}
- 
-+	ap = rcu_access_pointer(ipe_active_policy);
-+	if (ap) {
-+		rc = ipe_new_policyfs_node(ap);
-+		if (rc)
-+			goto err;
++	switch (id) {
++	case READING_FIRMWARE:
++		op = __IPE_OP_FIRMWARE;
++		break;
++	case READING_MODULE:
++		op = __IPE_OP_KERNEL_MODULE;
++		break;
++	case READING_KEXEC_INITRAMFS:
++		op = __IPE_OP_KEXEC_INITRAMFS;
++		break;
++	case READING_KEXEC_IMAGE:
++		op = __IPE_OP_KEXEC_IMAGE;
++		break;
++	case READING_POLICY:
++		op = __IPE_OP_IMA_POLICY;
++		break;
++	case READING_X509_CERTIFICATE:
++		op = __IPE_OP_IMA_X509;
++		break;
++	default:
++		op = __IPE_OP_INVALID;
++		WARN(op == __IPE_OP_INVALID, "no rule setup for enum %d", id);
 +	}
 +
- 	np = securityfs_create_file("new_policy", 0200, root, NULL, &np_fops);
- 	if (IS_ERR(np)) {
- 		rc = PTR_ERR(np);
++	build_eval_ctx(&ctx, file, op);
++	return ipe_evaluate_event(&ctx);
++}
++
++/**
++ * ipe_kernel_load_data - ipe security hook function for kernel load data.
++ * @id: Supplies the enumeration identifying the purpose of the read.
++ * @contents: Unused.
++ *
++ * This LSM hook is called when a buffer is being read in from disk.
++ *
++ * Return:
++ * * 0	- OK
++ * * !0	- Error
++ */
++int ipe_kernel_load_data(enum kernel_load_data_id id, bool contents)
++{
++	enum ipe_op_type op;
++	struct ipe_eval_ctx ctx = { 0 };
++
++	switch (id) {
++	case LOADING_FIRMWARE:
++		op = __IPE_OP_FIRMWARE;
++		break;
++	case LOADING_MODULE:
++		op = __IPE_OP_KERNEL_MODULE;
++		break;
++	case LOADING_KEXEC_INITRAMFS:
++		op = __IPE_OP_KEXEC_INITRAMFS;
++		break;
++	case LOADING_KEXEC_IMAGE:
++		op = __IPE_OP_KEXEC_IMAGE;
++		break;
++	case LOADING_POLICY:
++		op = __IPE_OP_IMA_POLICY;
++		break;
++	case LOADING_X509_CERTIFICATE:
++		op = __IPE_OP_IMA_X509;
++		break;
++	default:
++		op = __IPE_OP_INVALID;
++		WARN(op == __IPE_OP_INVALID, "no rule setup for enum %d", id);
++	}
++
++	build_eval_ctx(&ctx, NULL, op);
++	return ipe_evaluate_event(&ctx);
++}
+diff --git a/security/ipe/hooks.h b/security/ipe/hooks.h
+new file mode 100644
+index 000000000000..23205452f758
+--- /dev/null
++++ b/security/ipe/hooks.h
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++#ifndef _IPE_HOOKS_H
++#define _IPE_HOOKS_H
++
++#include <linux/fs.h>
++#include <linux/binfmts.h>
++#include <linux/security.h>
++
++int ipe_bprm_check_security(struct linux_binprm *bprm);
++
++int ipe_mmap_file(struct file *f, unsigned long reqprot, unsigned long prot,
++		  unsigned long flags);
++
++int ipe_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
++		      unsigned long prot);
++
++int ipe_kernel_read_file(struct file *file, enum kernel_read_file_id id,
++			 bool contents);
++
++int ipe_kernel_load_data(enum kernel_load_data_id id, bool contents);
++
++#endif /* _IPE_HOOKS_H */
 diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-index 1d3d66e1623b..8110fa5ff203 100644
+index 2ee0f5de29d7..29bedc0b2ad6 100644
 --- a/security/ipe/ipe.c
 +++ b/security/ipe/ipe.c
-@@ -7,6 +7,7 @@
- #include "hooks.h"
- #include "eval.h"
+@@ -4,11 +4,17 @@
+  */
  
-+extern const char *const ipe_boot_policy;
- bool ipe_enabled;
+ #include "ipe.h"
++#include "hooks.h"
  
  static struct lsm_blob_sizes ipe_blobs __ro_after_init = {
-@@ -61,11 +62,27 @@ static struct security_hook_list ipe_hooks[] __ro_after_init = {
- static int __init ipe_init(void)
- {
- 	int rc = 0;
-+	struct ipe_policy *p = NULL;
+ };
  
- 	security_add_hooks(ipe_hooks, ARRAY_SIZE(ipe_hooks), "ipe");
- 	ipe_enabled = true;
+ static struct security_hook_list ipe_hooks[] __ro_after_init = {
++	LSM_HOOK_INIT(bprm_check_security, ipe_bprm_check_security),
++	LSM_HOOK_INIT(mmap_file, ipe_mmap_file),
++	LSM_HOOK_INIT(file_mprotect, ipe_file_mprotect),
++	LSM_HOOK_INIT(kernel_read_file, ipe_kernel_read_file),
++	LSM_HOOK_INIT(kernel_load_data, ipe_kernel_load_data),
+ };
  
-+	if (ipe_boot_policy) {
-+		p = ipe_new_policy(ipe_boot_policy, strlen(ipe_boot_policy),
-+				   NULL, 0);
-+		if (IS_ERR(p)) {
-+			rc = PTR_ERR(p);
-+			goto err;
-+		}
-+
-+		rcu_assign_pointer(ipe_active_policy, p);
-+	}
-+
-+out:
- 	return rc;
-+err:
-+	ipe_free_policy(p);
-+	goto out;
- }
- 
- DEFINE_LSM(ipe) = {
+ /**
 -- 
 2.25.1
 
