@@ -2,27 +2,27 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 616E5C27C5E
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jun 2023 21:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F88BC10F1A
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jun 2023 21:10:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232681AbjF1VK0 (ORCPT
+        id S232696AbjF1VK2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Jun 2023 17:10:26 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:39516 "EHLO
+        Wed, 28 Jun 2023 17:10:28 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:39224 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232353AbjF1VJw (ORCPT
+        with ESMTP id S232296AbjF1VJt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Jun 2023 17:09:52 -0400
+        Wed, 28 Jun 2023 17:09:49 -0400
 Received: by linux.microsoft.com (Postfix, from userid 1052)
-        id 6619820ABD67; Wed, 28 Jun 2023 14:09:48 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6619820ABD67
+        id 1B74C20C08E7; Wed, 28 Jun 2023 14:09:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1B74C20C08E7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1687986588;
-        bh=7CokesB1QtM4CsK/nfv1mgOEfwKTMNYnFdczELRuEBA=;
+        bh=NSOzgT7OAIOx+cXEPfVCwZdnk7/WxxXstKpG2TKIisA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GkFjlkI0A4QoxB7/eI1M0HpT3S/5B9CcUseOz/3DzdODIKPzbZ4lkkk2dl4UairJi
-         hVwj8X/tyTn3XbM5kG6Gd7rXoWuw4cAWdLBITG8/+1GV7aLfyYm9ZwqK2WzFbTUi1Z
-         Te4FRqv54XiQX1Ns8XNFt+JUmYJGmz400JdXWGEY=
+        b=l2v2On+TWFVXoA5ciiaf1tlAL7EkZ5vLOZ1yq7CGwctkcLyyv2x4kjOh7LRjXZj/5
+         JrQ2MJOsfh4wYfKdQxGr4MHUZ4XqZ66+xjEjLCrxLb12WHeuzSMJJbMKK0ym7vO/3A
+         x60hhz+m1jNcmEBOBVmzgXQQMt/R3T7kDMQMhXDE=
 From:   Fan Wu <wufan@linux.microsoft.com>
 To:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
         serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
@@ -35,9 +35,9 @@ Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
         roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
         Deven Bowers <deven.desai@linux.microsoft.com>,
         Fan Wu <wufan@linux.microsoft.com>
-Subject: [RFC PATCH v10 07/17] ipe: add userspace interface
-Date:   Wed, 28 Jun 2023 14:09:21 -0700
-Message-Id: <1687986571-16823-8-git-send-email-wufan@linux.microsoft.com>
+Subject: [RFC PATCH v10 02/17] ipe: add policy parser
+Date:   Wed, 28 Jun 2023 14:09:16 -0700
+Message-Id: <1687986571-16823-3-git-send-email-wufan@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1687986571-16823-1-git-send-email-wufan@linux.microsoft.com>
 References: <1687986571-16823-1-git-send-email-wufan@linux.microsoft.com>
@@ -46,10 +46,14 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-As is typical with LSMs, IPE uses securityfs as its interface with
-userspace. for a complete list of the interfaces and the respective
-inputs/outputs, please see the documentation under
-admin-guide/LSM/ipe.rst
+IPE's interpretation of the what the user trusts is accomplished through
+its policy. IPE's design is to not provide support for a single trust
+provider, but to support multiple providers to enable the end-user to
+choose the best one to seek their needs.
+
+This requires the policy to be rather flexible and modular so that
+integrity providers, like fs-verity, dm-verity, dm-integrity, or
+some other system, can plug into the policy with minimal code changes.
 
 Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
@@ -95,878 +99,749 @@ v6:
   + No changes
 
 v7:
-  + Propagating changes to support the new ipe_context structure in the
-    evaluation loop.
-
-  + Further split the parser and userspace interface changes into
-    separate commits.
-
-  + "raw" was renamed to "pkcs7" and made read only
-  + "raw"'s write functionality (update a policy) moved to "update"
-  + introduced "version", "policy_name" nodes.
-  + "content" renamed to "policy"
-  + changes to allow the compiled-in policy to be treated
-    identical to deployed-after-the-fact policies.
+  + Further split parser and userspace interface into two
+    separate commits, for easier review.
+  + Refactor policy parser to make code cleaner via introducing a
+    more modular design, for easier extension of policy, and
+    easier review.
 
 v8:
-  + Prevent securityfs initialization if the LSM is disabled
+  + remove unnecessary pr_info emission on parser loading
+  + add explicit newline to the pr_err emitted when a parser
+    fails to load.
 
 v9:
-  + Switch to securityfs_recursive_remove for policy folder deletion
+  + switch to match table to parse policy
+  + remove quote syntax and KERNEL_READ operation
 
 v10:
-  + Simplify and correct concurrency
-  + Fix typos
+  + Fix memory leaks in parser
+  + Fix typos and change code styles
 ---
- security/ipe/Makefile    |   2 +
- security/ipe/fs.c        | 101 ++++++++
- security/ipe/fs.h        |  16 ++
- security/ipe/ipe.c       |   3 +
- security/ipe/ipe.h       |   2 +
- security/ipe/policy.c    | 111 +++++++++
- security/ipe/policy.h    |   9 +
- security/ipe/policy_fs.c | 481 +++++++++++++++++++++++++++++++++++++++
- 8 files changed, 725 insertions(+)
- create mode 100644 security/ipe/fs.c
- create mode 100644 security/ipe/fs.h
- create mode 100644 security/ipe/policy_fs.c
+ security/ipe/Makefile        |   2 +
+ security/ipe/policy.c        |  97 +++++++
+ security/ipe/policy.h        |  83 ++++++
+ security/ipe/policy_parser.c | 488 +++++++++++++++++++++++++++++++++++
+ security/ipe/policy_parser.h |  11 +
+ 5 files changed, 681 insertions(+)
+ create mode 100644 security/ipe/policy.c
+ create mode 100644 security/ipe/policy.h
+ create mode 100644 security/ipe/policy_parser.c
+ create mode 100644 security/ipe/policy_parser.h
 
 diff --git a/security/ipe/Makefile b/security/ipe/Makefile
-index d7f2870d7c09..8602d71250b4 100644
+index 571648579991..16bbe80991f1 100644
 --- a/security/ipe/Makefile
 +++ b/security/ipe/Makefile
-@@ -7,7 +7,9 @@
- 
+@@ -8,3 +8,5 @@
  obj-$(CONFIG_SECURITY_IPE) += \
- 	eval.o \
-+	fs.o \
  	hooks.o \
  	ipe.o \
- 	policy.o \
-+	policy_fs.o \
- 	policy_parser.o \
-diff --git a/security/ipe/fs.c b/security/ipe/fs.c
++	policy.o \
++	policy_parser.o \
+diff --git a/security/ipe/policy.c b/security/ipe/policy.c
 new file mode 100644
-index 000000000000..522162af741a
+index 000000000000..4069ff075093
 --- /dev/null
-+++ b/security/ipe/fs.c
-@@ -0,0 +1,101 @@
++++ b/security/ipe/policy.c
+@@ -0,0 +1,97 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) Microsoft Corporation. All rights reserved.
 + */
 +
-+#include <linux/dcache.h>
-+#include <linux/security.h>
++#include <linux/errno.h>
++#include <linux/verification.h>
 +
 +#include "ipe.h"
-+#include "fs.h"
 +#include "policy.h"
-+
-+static struct dentry *np __ro_after_init;
-+static struct dentry *root __ro_after_init;
-+struct dentry *policy_root __ro_after_init;
++#include "policy_parser.h"
 +
 +/**
-+ * new_policy - Write handler for the securityfs node, "ipe/new_policy".
-+ * @f: Supplies a file structure representing the securityfs node.
-+ * @data: Suppleis a buffer passed to the write syscall.
-+ * @len: Supplies the length of @data.
-+ * @offset: unused.
++ * ipe_free_policy - Deallocate a given IPE policy.
++ * @p: Supplies the policy to free.
 + *
-+ * Return:
-+ * * >0	- Success, Length of buffer written
-+ * * <0	- Error
++ * Safe to call on IS_ERR/NULL.
 + */
-+static ssize_t new_policy(struct file *f, const char __user *data,
-+			  size_t len, loff_t *offset)
++void ipe_free_policy(struct ipe_policy *p)
 +{
-+	int rc = 0;
-+	char *copy = NULL;
-+	struct ipe_policy *p = NULL;
++	if (IS_ERR_OR_NULL(p))
++		return;
 +
-+	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
-+		return -EPERM;
-+
-+	copy = memdup_user_nul(data, len);
-+	if (IS_ERR(copy))
-+		return PTR_ERR(copy);
-+
-+	p = ipe_new_policy(NULL, 0, copy, len);
-+	if (IS_ERR(p)) {
-+		rc = PTR_ERR(p);
-+		goto out;
-+	}
-+
-+	rc = ipe_new_policyfs_node(p);
-+
-+out:
-+	if (rc < 0 && !IS_ERR(p))
-+		ipe_free_policy(p);
-+	kfree(copy);
-+	return (rc < 0) ? rc : len;
++	free_parsed_policy(p->parsed);
++	if (!p->pkcs7)
++		kfree(p->text);
++	kfree(p->pkcs7);
++	kfree(p);
 +}
 +
-+static const struct file_operations np_fops = {
-+	.write = new_policy,
-+};
-+
-+/**
-+ * ipe_init_securityfs - Initialize IPE's securityfs tree at fsinit.
-+ *
-+ * Return:
-+ * * !0	- Error
-+ * * 0	- OK
-+ */
-+static int __init ipe_init_securityfs(void)
++static int set_pkcs7_data(void *ctx, const void *data, size_t len,
++			  size_t asn1hdrlen)
 +{
-+	int rc = 0;
++	struct ipe_policy *p = ctx;
 +
-+	if (!ipe_enabled)
-+		return -EOPNOTSUPP;
-+
-+	root = securityfs_create_dir("ipe", NULL);
-+	if (IS_ERR(root)) {
-+		rc = PTR_ERR(root);
-+		goto err;
-+	}
-+
-+	policy_root = securityfs_create_dir("policies", root);
-+	if (IS_ERR(policy_root)) {
-+		rc = PTR_ERR(policy_root);
-+		goto err;
-+	}
-+
-+	np = securityfs_create_file("new_policy", 0200, root, NULL, &np_fops);
-+	if (IS_ERR(np)) {
-+		rc = PTR_ERR(np);
-+		goto err;
-+	}
++	p->text = (const char *)data;
++	p->textlen = len;
 +
 +	return 0;
-+err:
-+	securityfs_remove(np);
-+	securityfs_remove(policy_root);
-+	securityfs_remove(root);
-+	return rc;
 +}
 +
-+fs_initcall(ipe_init_securityfs);
-diff --git a/security/ipe/fs.h b/security/ipe/fs.h
-new file mode 100644
-index 000000000000..c1fc0ca4ae93
---- /dev/null
-+++ b/security/ipe/fs.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
-+ */
-+
-+#ifndef _IPE_FS_H
-+#define _IPE_FS_H
-+
-+#include "policy.h"
-+
-+extern struct dentry *policy_root __ro_after_init;
-+
-+int ipe_new_policyfs_node(struct ipe_policy *p);
-+void ipe_del_policyfs_node(struct ipe_policy *p);
-+
-+#endif /* _IPE_FS_H */
-diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-index 8f98ee7b8025..6f063d51b2af 100644
---- a/security/ipe/ipe.c
-+++ b/security/ipe/ipe.c
-@@ -6,6 +6,8 @@
- #include "ipe.h"
- #include "hooks.h"
- 
-+bool ipe_enabled;
-+
- static struct lsm_blob_sizes ipe_blobs __ro_after_init = {
- };
- 
-@@ -33,6 +35,7 @@ static int __init ipe_init(void)
- 	int rc = 0;
- 
- 	security_add_hooks(ipe_hooks, ARRAY_SIZE(ipe_hooks), "ipe");
-+	ipe_enabled = true;
- 
- 	return rc;
- }
-diff --git a/security/ipe/ipe.h b/security/ipe/ipe.h
-index a1c68d0fc2e0..6dec06403eee 100644
---- a/security/ipe/ipe.h
-+++ b/security/ipe/ipe.h
-@@ -13,4 +13,6 @@
- 
- #include <linux/lsm_hooks.h>
- 
-+extern bool ipe_enabled;
-+
- #endif /* _IPE_H */
-diff --git a/security/ipe/policy.c b/security/ipe/policy.c
-index 4069ff075093..3e8e4a06a044 100644
---- a/security/ipe/policy.c
-+++ b/security/ipe/policy.c
-@@ -7,9 +7,36 @@
- #include <linux/verification.h>
- 
- #include "ipe.h"
-+#include "eval.h"
-+#include "fs.h"
- #include "policy.h"
- #include "policy_parser.h"
- 
-+/* lock for synchronizing writers across ipe policy */
-+DEFINE_MUTEX(ipe_policy_lock);
-+
 +/**
-+ * ver_to_u64 - Convert an internal ipe_policy_version to a u64.
-+ * @p: Policy to extract the version from.
++ * ipe_new_policy - Allocate and parse an ipe_policy structure.
 + *
-+ * Bits (LSB is index 0):
-+ *	[48,32] -> Major
-+ *	[32,16] -> Minor
-+ *	[16, 0] -> Revision
-+ *
-+ * Return: u64 version of the embedded version structure.
-+ */
-+static inline u64 ver_to_u64(const struct ipe_policy *const p)
-+{
-+	u64 r;
-+
-+	r = (((u64)p->parsed->version.major) << 32)
-+	  | (((u64)p->parsed->version.minor) << 16)
-+	  | ((u64)(p->parsed->version.rev));
-+
-+	return r;
-+}
-+
- /**
-  * ipe_free_policy - Deallocate a given IPE policy.
-  * @p: Supplies the policy to free.
-@@ -21,6 +48,7 @@ void ipe_free_policy(struct ipe_policy *p)
- 	if (IS_ERR_OR_NULL(p))
- 		return;
- 
-+	ipe_del_policyfs_node(p);
- 	free_parsed_policy(p->parsed);
- 	if (!p->pkcs7)
- 		kfree(p->text);
-@@ -39,6 +67,65 @@ static int set_pkcs7_data(void *ctx, const void *data, size_t len,
- 	return 0;
- }
- 
-+/**
-+ * ipe_update_policy - parse a new policy and replace @old with it.
-+ * @root: Supplies a pointer to the securityfs inode saved the policy.
-+ * @text: Supplies a pointer to the plain text policy.
++ * @text: Supplies a pointer to the plain-text policy to parse.
 + * @textlen: Supplies the length of @text.
-+ * @pkcs7: Supplies a pointer to a buffer containing a pkcs7 message.
-+ * @pkcs7len: Supplies the length of @pkcs7len.
++ * @pkcs7: Supplies a pointer to a pkcs7-signed IPE policy.
++ * @pkcs7len: Supplies the length of @pkcs7.
 + *
-+ * @text/@textlen is mutually exclusive with @pkcs7/@pkcs7len - see
-+ * ipe_new_policy.
-+ *
-+ * Return:
-+ * * !IS_ERR	- The old policy
-+ * * -ENOENT	- Policy doesn't exist
-+ * * -EINVAL	- New policy is invalid
-+ */
-+struct ipe_policy *ipe_update_policy(struct inode *root,
-+				     const char *text, size_t textlen,
-+				     const char *pkcs7, size_t pkcs7len)
-+{
-+	int rc = 0;
-+	struct ipe_policy *old, *ap, *new = NULL;
-+
-+	lockdep_assert_held(&ipe_policy_lock);
-+
-+	old = (struct ipe_policy *)root->i_private;
-+	if (!old)
-+		return ERR_PTR(-ENOENT);
-+
-+	new = ipe_new_policy(text, textlen, pkcs7, pkcs7len);
-+	if (IS_ERR(new))
-+		return new;
-+
-+	if (strcmp(new->parsed->name, old->parsed->name)) {
-+		rc = -EINVAL;
-+		goto err;
-+	}
-+
-+	if (ver_to_u64(old) > ver_to_u64(new)) {
-+		rc = -EINVAL;
-+		goto err;
-+	}
-+
-+	root->i_private = new;
-+
-+	ap = rcu_dereference_protected(ipe_active_policy,
-+				       lockdep_is_held(&ipe_policy_lock));
-+	if (old == ap)
-+		rcu_assign_pointer(ipe_active_policy, new);
-+
-+	swap(new->policyfs, old->policyfs);
-+
-+out:
-+	return (rc < 0) ? ERR_PTR(rc) : old;
-+err:
-+	ipe_free_policy(new);
-+	goto out;
-+}
-+
- /**
-  * ipe_new_policy - Allocate and parse an ipe_policy structure.
-  *
-@@ -95,3 +182,27 @@ struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
- 	ipe_free_policy(new);
- 	return ERR_PTR(rc);
- }
-+
-+/**
-+ * ipe_set_active_pol - Make @p the active policy.
-+ * @p: Supplies a pointer to the policy to make active.
++ * @text/@textlen Should be NULL/0 if @pkcs7/@pkcs7len is set.
 + *
 + * Return:
 + * * !IS_ERR	- Success
-+ * * -EINVAL	- New active policy version is invalid
++ * * -EBADMSG	- Policy is invalid
++ * * -ENOMEM	- Out of memory
 + */
-+int ipe_set_active_pol(const struct ipe_policy *p)
-+{
-+	struct ipe_policy *ap = NULL;
-+
-+	lockdep_assert_held(&ipe_policy_lock);
-+
-+	ap = rcu_dereference_protected(ipe_active_policy,
-+				       lockdep_is_held(&ipe_policy_lock));
-+	if (ap && ver_to_u64(ap) > ver_to_u64(p))
-+		return -EINVAL;
-+
-+	rcu_assign_pointer(ipe_active_policy, p);
-+
-+	return 0;
-+}
-diff --git a/security/ipe/policy.h b/security/ipe/policy.h
-index a74856b9966c..94bcbbf79b05 100644
---- a/security/ipe/policy.h
-+++ b/security/ipe/policy.h
-@@ -7,6 +7,7 @@
- 
- #include <linux/list.h>
- #include <linux/types.h>
-+#include <linux/fs.h>
- 
- enum ipe_op_type {
- 	__IPE_OP_EXEC = 0,
-@@ -76,10 +77,18 @@ struct ipe_policy {
- 	size_t textlen;
- 
- 	struct ipe_parsed_policy *parsed;
-+
-+	struct dentry *policyfs;
- };
- 
- struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
- 				  const char *pkcs7, size_t pkcs7len);
- void ipe_free_policy(struct ipe_policy *pol);
-+struct ipe_policy *ipe_update_policy(struct inode *root,
-+				     const char *text,
-+				     size_t textlen, const char *pkcs7,
-+				     size_t pkcs7len);
-+int ipe_set_active_pol(const struct ipe_policy *p);
-+extern struct mutex ipe_policy_lock;
- 
- #endif /* _IPE_POLICY_H */
-diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
-new file mode 100644
-index 000000000000..52a120118cda
---- /dev/null
-+++ b/security/ipe/policy_fs.c
-@@ -0,0 +1,481 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
-+ */
-+#include <linux/fs.h>
-+#include <linux/namei.h>
-+#include <linux/types.h>
-+#include <linux/dcache.h>
-+#include <linux/security.h>
-+
-+#include "ipe.h"
-+#include "policy.h"
-+#include "eval.h"
-+#include "fs.h"
-+
-+#define MAX_VERSION_SIZE ARRAY_SIZE("65535.65535.65535")
-+
-+/**
-+ * ipefs_file - defines a file in securityfs.
-+ */
-+struct ipefs_file {
-+	const char *name;
-+	umode_t access;
-+	const struct file_operations *fops;
-+};
-+
-+/**
-+ * read_pkcs7 - Read handler for "ipe/policies/$name/pkcs7".
-+ * @f: Supplies a file structure representing the securityfs node.
-+ * @data: Suppleis a buffer passed to the write syscall.
-+ * @len: Supplies the length of @data.
-+ * @offset: unused.
-+ *
-+ * @data will be populated with the pkcs7 blob representing the policy
-+ * on success. If the policy is unsigned (like the boot policy), this
-+ * will return -ENOENT.
-+ *
-+ * Return:
-+ * * >0	- Success, Length of buffer written
-+ * * <0	- Error
-+ */
-+static ssize_t read_pkcs7(struct file *f, char __user *data,
-+			  size_t len, loff_t *offset)
++struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
++				  const char *pkcs7, size_t pkcs7len)
 +{
 +	int rc = 0;
-+	struct inode *root = NULL;
-+	const struct ipe_policy *p = NULL;
-+
-+	root = d_inode(f->f_path.dentry->d_parent);
-+
-+	inode_lock_shared(root);
-+	p = (struct ipe_policy *)root->i_private;
-+	if (!p) {
-+		rc = -ENOENT;
-+		goto out;
-+	}
-+
-+	if (!p->pkcs7) {
-+		rc = -ENOENT;
-+		goto out;
-+	}
-+
-+	rc = simple_read_from_buffer(data, len, offset, p->pkcs7, p->pkcs7len);
-+
-+out:
-+	inode_unlock_shared(root);
-+
-+	return rc;
-+}
-+
-+/**
-+ * read_policy - Read handler for "ipe/policies/$name/policy".
-+ * @f: Supplies a file structure representing the securityfs node.
-+ * @data: Suppleis a buffer passed to the write syscall.
-+ * @len: Supplies the length of @data.
-+ * @offset: unused.
-+ *
-+ * @data will be populated with the plain-text version of the policy
-+ * on success.
-+ *
-+ * Return:
-+ * * >0	- Success, Length of buffer written
-+ * * <0	- Error
-+ */
-+static ssize_t read_policy(struct file *f, char __user *data,
-+			   size_t len, loff_t *offset)
-+{
-+	int rc = 0;
-+	struct inode *root = NULL;
-+	const struct ipe_policy *p = NULL;
-+
-+	root = d_inode(f->f_path.dentry->d_parent);
-+
-+	inode_lock_shared(root);
-+	p = (struct ipe_policy *)root->i_private;
-+	if (!p) {
-+		rc = -ENOENT;
-+		goto out;
-+	}
-+
-+	rc = simple_read_from_buffer(data, len, offset, p->text, p->textlen);
-+
-+out:
-+	inode_unlock_shared(root);
-+
-+	return rc;
-+}
-+
-+/**
-+ * read_name: Read handler for "ipe/policies/$name/name".
-+ * @f: Supplies a file structure representing the securityfs node.
-+ * @data: Suppleis a buffer passed to the write syscall.
-+ * @len: Supplies the length of @data.
-+ * @offset: unused.
-+ *
-+ * @data will be populated with the policy_name attribute on success.
-+ *
-+ * Return:
-+ * * >0	- Success, Length of buffer written
-+ * * <0	- Error
-+ */
-+static ssize_t read_name(struct file *f, char __user *data,
-+			 size_t len, loff_t *offset)
-+{
-+	int rc = 0;
-+	struct inode *root = NULL;
-+	const struct ipe_policy *p = NULL;
-+
-+	root = d_inode(f->f_path.dentry->d_parent);
-+
-+	inode_lock_shared(root);
-+	p = (struct ipe_policy *)root->i_private;
-+	if (!p) {
-+		rc = -ENOENT;
-+		goto out;
-+	}
-+
-+	rc = simple_read_from_buffer(data, len, offset, p->parsed->name,
-+				     strlen(p->parsed->name));
-+
-+out:
-+	inode_unlock_shared(root);
-+
-+	return rc;
-+}
-+
-+/**
-+ * read_version - Read handler for "ipe/policies/$name/version".
-+ * @f: Supplies a file structure representing the securityfs node.
-+ * @data: Suppleis a buffer passed to the write syscall.
-+ * @len: Supplies the length of @data.
-+ * @offset: unused.
-+ *
-+ * @data will be populated with the version string on success.
-+ *
-+ * Return:
-+ * * >0	- Success, Length of buffer written
-+ * * <0	- Error
-+ */
-+static ssize_t read_version(struct file *f, char __user *data,
-+			    size_t len, loff_t *offset)
-+{
-+	ssize_t rc = 0;
-+	size_t bufsize = 0;
-+	struct inode *root = NULL;
-+	const struct ipe_policy *p = NULL;
-+	char buffer[MAX_VERSION_SIZE] = { 0 };
-+
-+	root = d_inode(f->f_path.dentry->d_parent);
-+
-+	inode_lock_shared(root);
-+	p = (struct ipe_policy *)root->i_private;
-+	if (!p) {
-+		rc = -ENOENT;
-+		goto out;
-+	}
-+
-+	bufsize = scnprintf(buffer, ARRAY_SIZE(buffer), "%hu.%hu.%hu",
-+			    p->parsed->version.major, p->parsed->version.minor,
-+			    p->parsed->version.rev);
-+
-+	rc = simple_read_from_buffer(data, len, offset, buffer, bufsize);
-+
-+out:
-+	inode_unlock_shared(root);
-+
-+	return rc;
-+}
-+
-+/**
-+ * setactive - Write handler for "ipe/policies/$name/active".
-+ * @f: Supplies a file structure representing the securityfs node.
-+ * @data: Supplies a buffer passed to the write syscall.
-+ * @len: Supplies the length of @data.
-+ * @offset: unused.
-+ *
-+ * Return:
-+ * * >0	- Success, Length of buffer written
-+ * * <0	- Error
-+ */
-+static ssize_t setactive(struct file *f, const char __user *data,
-+			 size_t len, loff_t *offset)
-+{
-+	int rc = 0;
-+	bool value = false;
-+	struct inode *root = NULL;
-+	const struct ipe_policy *p = NULL;
-+
-+	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
-+		return -EPERM;
-+
-+	rc = kstrtobool_from_user(data, len, &value);
-+	if (rc)
-+		return rc;
-+
-+	if (!value)
-+		return -EINVAL;
-+
-+	root = d_inode(f->f_path.dentry->d_parent);
-+	inode_lock(root);
-+	mutex_lock(&ipe_policy_lock);
-+
-+	p = (struct ipe_policy *)root->i_private;
-+	if (!p) {
-+		rc = -ENOENT;
-+		goto out;
-+	}
-+
-+	rc = ipe_set_active_pol(p);
-+
-+out:
-+	mutex_unlock(&ipe_policy_lock);
-+	inode_unlock(root);
-+	synchronize_rcu();
-+	return (rc < 0) ? rc : len;
-+}
-+
-+/**
-+ * getactive - Read handler for "ipe/policies/$name/active".
-+ * @f: Supplies a file structure representing the securityfs node.
-+ * @data: Suppleis a buffer passed to the write syscall.
-+ * @len: Supplies the length of @data.
-+ * @offset: unused.
-+ *
-+ * @data will be populated with the 1 or 0 depending on if the
-+ * corresponding policy is active.
-+ *
-+ * Return:
-+ * * >0	- Success, Length of buffer written
-+ * * <0	- Error
-+ */
-+static ssize_t getactive(struct file *f, char __user *data,
-+			 size_t len, loff_t *offset)
-+{
-+	int rc = 0;
-+	const char *str;
-+	struct inode *root = NULL;
-+	const struct ipe_policy *p = NULL;
-+
-+	root = d_inode(f->f_path.dentry->d_parent);
-+
-+	inode_lock_shared(root);
-+	p = (struct ipe_policy *)root->i_private;
-+	if (!p) {
-+		inode_unlock_shared(root);
-+		return -ENOENT;
-+	}
-+	inode_unlock_shared(root);
-+
-+	str = (p == rcu_access_pointer(ipe_active_policy)) ? "1" : "0";
-+	rc = simple_read_from_buffer(data, len, offset, str, 1);
-+
-+	return rc;
-+}
-+
-+/**
-+ * update_policy - Write handler for "ipe/policies/$name/update".
-+ * @f: Supplies a file structure representing the securityfs node.
-+ * @data: Supplies a buffer passed to the write syscall.
-+ * @len: Supplies the length of @data.
-+ * @offset: unused.
-+ *
-+ * On success this updates the policy represented by $name,
-+ * in-place.
-+ *
-+ * Return:
-+ * * >0	- Success, Length of buffer written
-+ * * <0	- Error
-+ */
-+static ssize_t update_policy(struct file *f, const char __user *data,
-+			     size_t len, loff_t *offset)
-+{
-+	char *copy = NULL;
-+	struct inode *root = NULL;
-+	struct ipe_policy *old = NULL;
-+
-+	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
-+		return -EPERM;
-+
-+	copy = memdup_user(data, len);
-+	if (IS_ERR(copy))
-+		return PTR_ERR(copy);
-+
-+	root = d_inode(f->f_path.dentry->d_parent);
-+	inode_lock(root);
-+	mutex_lock(&ipe_policy_lock);
-+	old = ipe_update_policy(root, NULL, 0, copy, len);
-+	mutex_unlock(&ipe_policy_lock);
-+	inode_unlock(root);
-+	synchronize_rcu();
-+
-+	kfree(copy);
-+	if (IS_ERR(old))
-+		return PTR_ERR(old);
-+	ipe_free_policy(old);
-+
-+	return len;
-+}
-+
-+/**
-+ * delete_policy - write handler for  "ipe/policies/$name/delete".
-+ * @f: Supplies a file structure representing the securityfs node.
-+ * @data: Supplies a buffer passed to the write syscall.
-+ * @len: Supplies the length of @data.
-+ * @offset: unused.
-+ *
-+ * On success this deletes the policy represented by $name.
-+ *
-+ * Return:
-+ * * >0	- Success, Length of buffer written
-+ * * <0	- Error
-+ */
-+static ssize_t delete_policy(struct file *f, const char __user *data,
-+			     size_t len, loff_t *offset)
-+{
-+	int rc = 0;
-+	bool value = false;
-+	struct inode *root = NULL;
-+	struct ipe_policy *p = NULL;
-+	struct ipe_policy *ap = NULL;
-+
-+	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
-+		return -EPERM;
-+
-+	rc = kstrtobool_from_user(data, len, &value);
-+	if (rc)
-+		return rc;
-+
-+	if (!value)
-+		return -EINVAL;
-+
-+	root = d_inode(f->f_path.dentry->d_parent);
-+	inode_lock(root);
-+	mutex_lock(&ipe_policy_lock);
-+	p = (struct ipe_policy *)root->i_private;
-+	if (!p) {
-+		mutex_unlock(&ipe_policy_lock);
-+		inode_unlock(root);
-+		return -ENOENT;
-+	}
-+
-+	ap = rcu_dereference_protected(ipe_active_policy,
-+				       lockdep_is_held(&ipe_policy_lock));
-+	if (p == ap) {
-+		mutex_unlock(&ipe_policy_lock);
-+		inode_unlock(root);
-+		return -EPERM;
-+	}
-+	root->i_private = NULL;
-+
-+	mutex_unlock(&ipe_policy_lock);
-+	inode_unlock(root);
-+	synchronize_rcu();
-+
-+	ipe_free_policy(p);
-+	return len;
-+}
-+
-+static const struct file_operations content_fops = {
-+	.read = read_policy,
-+};
-+
-+static const struct file_operations pkcs7_fops = {
-+	.read = read_pkcs7,
-+};
-+
-+static const struct file_operations name_fops = {
-+	.read = read_name,
-+};
-+
-+static const struct file_operations ver_fops = {
-+	.read = read_version,
-+};
-+
-+static const struct file_operations active_fops = {
-+	.write = setactive,
-+	.read = getactive,
-+};
-+
-+static const struct file_operations update_fops = {
-+	.write = update_policy,
-+};
-+
-+static const struct file_operations delete_fops = {
-+	.write = delete_policy,
-+};
-+
-+/**
-+ * policy_subdir - files under a policy subdirectory
-+ */
-+static const struct ipefs_file policy_subdir[] = {
-+	{ "pkcs7", 0444, &pkcs7_fops },
-+	{ "policy", 0444, &content_fops },
-+	{ "name", 0444, &name_fops },
-+	{ "version", 0444, &ver_fops },
-+	{ "active", 0600, &active_fops },
-+	{ "update", 0200, &update_fops },
-+	{ "delete", 0200, &delete_fops },
-+};
-+
-+/**
-+ * ipe_del_policyfs_node - Delete a securityfs entry for @p.
-+ * @p: Supplies a pointer to the policy to delete a securityfs entry for.
-+ */
-+void ipe_del_policyfs_node(struct ipe_policy *p)
-+{
-+	securityfs_recursive_remove(p->policyfs);
-+	p->policyfs = NULL;
-+}
-+
-+/**
-+ * ipe_new_policyfs_node - Create a securityfs entry for @p.
-+ * @p: Supplies a pointer to the policy to create a securityfs entry for.
-+ *
-+ * Return:
-+ * * 0	- OK
-+ * * !0	- Error
-+ */
-+int ipe_new_policyfs_node(struct ipe_policy *p)
-+{
-+	int rc = 0;
-+	size_t i = 0;
-+	struct dentry *d = NULL;
-+	struct dentry *policyfs = NULL;
-+	struct inode *root = NULL;
-+	const struct ipefs_file *f = NULL;
-+
-+	if (p->policyfs)
-+		return 0;
-+
-+	policyfs = securityfs_create_dir(p->parsed->name, policy_root);
-+	if (IS_ERR(policyfs)) {
-+		rc = PTR_ERR(policyfs);
-+		goto err;
-+	}
-+
-+	root = d_inode(policyfs);
-+
-+	for (i = 0; i < ARRAY_SIZE(policy_subdir); ++i) {
-+		f = &policy_subdir[i];
-+
-+		d = securityfs_create_file(f->name, f->access, policyfs,
-+					   NULL, f->fops);
-+		if (IS_ERR(d)) {
-+			rc = PTR_ERR(d);
++	struct ipe_policy *new = NULL;
++
++	new = kzalloc(sizeof(*new), GFP_KERNEL);
++	if (!new)
++		return ERR_PTR(-ENOMEM);
++
++	if (!text) {
++		new->pkcs7len = pkcs7len;
++		new->pkcs7 = kmemdup(pkcs7, pkcs7len, GFP_KERNEL);
++		if (!new->pkcs7) {
++			rc = -ENOMEM;
++			goto err;
++		}
++
++		rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len, NULL,
++					    VERIFYING_UNSPECIFIED_SIGNATURE,
++					    set_pkcs7_data, new);
++		if (rc)
++			goto err;
++	} else {
++		new->textlen = textlen;
++		new->text = kstrdup(text, GFP_KERNEL);
++		if (!new->text) {
++			rc = -ENOMEM;
 +			goto err;
 +		}
 +	}
 +
-+	inode_lock(root);
-+	mutex_lock(&ipe_policy_lock);
-+	p->policyfs = policyfs;
-+	root->i_private = p;
-+	mutex_unlock(&ipe_policy_lock);
-+	inode_unlock(root);
++	rc = parse_policy(new);
++	if (rc)
++		goto err;
 +
-+	return 0;
++	return new;
 +err:
-+	securityfs_recursive_remove(policyfs);
++	ipe_free_policy(new);
++	return ERR_PTR(rc);
++}
+diff --git a/security/ipe/policy.h b/security/ipe/policy.h
+new file mode 100644
+index 000000000000..113a037f0d71
+--- /dev/null
++++ b/security/ipe/policy.h
+@@ -0,0 +1,83 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++#ifndef _IPE_POLICY_H
++#define _IPE_POLICY_H
++
++#include <linux/list.h>
++#include <linux/types.h>
++
++enum ipe_op_type {
++	__IPE_OP_EXEC = 0,
++	__IPE_OP_FIRMWARE,
++	__IPE_OP_KERNEL_MODULE,
++	__IPE_OP_KEXEC_IMAGE,
++	__IPE_OP_KEXEC_INITRAMFS,
++	__IPE_OP_IMA_POLICY,
++	__IPE_OP_IMA_X509,
++	__IPE_OP_MAX
++};
++
++#define __IPE_OP_INVALID __IPE_OP_MAX
++
++enum ipe_action_type {
++	__IPE_ACTION_ALLOW = 0,
++	__IPE_ACTION_DENY,
++	__IPE_ACTION_MAX
++};
++
++#define __IPE_ACTION_INVALID __IPE_ACTION_MAX
++
++enum ipe_prop_type {
++	__IPE_PROP_MAX
++};
++
++#define __IPE_PROP_INVALID __IPE_PROP_MAX
++
++struct ipe_prop {
++	struct list_head next;
++	enum ipe_prop_type type;
++	void *value;
++};
++
++struct ipe_rule {
++	enum ipe_op_type op;
++	enum ipe_action_type action;
++	struct list_head props;
++	struct list_head next;
++};
++
++struct ipe_op_table {
++	struct list_head rules;
++	enum ipe_action_type default_action;
++};
++
++struct ipe_parsed_policy {
++	const char *name;
++	struct {
++		u16 major;
++		u16 minor;
++		u16 rev;
++	} version;
++
++	enum ipe_action_type global_default_action;
++
++	struct ipe_op_table rules[__IPE_OP_MAX];
++};
++
++struct ipe_policy {
++	const char *pkcs7;
++	size_t pkcs7len;
++
++	const char *text;
++	size_t textlen;
++
++	struct ipe_parsed_policy *parsed;
++};
++
++struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
++				  const char *pkcs7, size_t pkcs7len);
++void ipe_free_policy(struct ipe_policy *pol);
++
++#endif /* _IPE_POLICY_H */
+diff --git a/security/ipe/policy_parser.c b/security/ipe/policy_parser.c
+new file mode 100644
+index 000000000000..27e5767480b0
+--- /dev/null
++++ b/security/ipe/policy_parser.c
+@@ -0,0 +1,488 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#include <linux/types.h>
++#include <linux/parser.h>
++
++#include "policy.h"
++#include "policy_parser.h"
++
++#define START_COMMENT	'#'
++
++/**
++ * new_parsed_policy - Allocate and initialize a parsed policy.
++ *
++ * Return:
++ * * !IS_ERR	- OK
++ * * -ENOMEM	- Out of memory
++ */
++static struct ipe_parsed_policy *new_parsed_policy(void)
++{
++	size_t i = 0;
++	struct ipe_parsed_policy *p = NULL;
++	struct ipe_op_table *t = NULL;
++
++	p = kzalloc(sizeof(*p), GFP_KERNEL);
++	if (!p)
++		return ERR_PTR(-ENOMEM);
++
++	p->global_default_action = __IPE_ACTION_INVALID;
++
++	for (i = 0; i < ARRAY_SIZE(p->rules); ++i) {
++		t = &p->rules[i];
++
++		t->default_action = __IPE_ACTION_INVALID;
++		INIT_LIST_HEAD(&t->rules);
++	}
++
++	return p;
++}
++
++/**
++ * remove_comment - Truncate all chars following START_COMMENT in a string.
++ *
++ * @line: Supplies a poilcy line string for preprocessing.
++ */
++static void remove_comment(char *line)
++{
++	line = strchr(line, START_COMMENT);
++
++	if (line)
++		*line = '\0';
++}
++
++/**
++ * remove_trailing_spaces - Truncate all trailing spaces in a string.
++ *
++ * @line: Supplies a poilcy line string for preprocessing.
++ *
++ * Return: The length of truncated string.
++ */
++static size_t remove_trailing_spaces(char *line)
++{
++	size_t i = 0;
++
++	for (i = strlen(line); i > 0 && (line[i - 1] == ' ' || line[i - 1] == '\t'); --i)
++		;
++
++	line[i] = '\0';
++
++	return i;
++}
++
++/**
++ * parse_version - Parse policy version.
++ * @ver: Supplies a version string to be parsed.
++ * @p: Supplies the partial parsed policy.
++ *
++ * Return:
++ * * 0	- OK
++ * * !0	- Standard errno
++ */
++static int parse_version(char *ver, struct ipe_parsed_policy *p)
++{
++	int rc = 0;
++	size_t sep_count = 0;
++	char *token;
++	u16 *const cv[] = { &p->version.major, &p->version.minor, &p->version.rev };
++
++	while ((token = strsep(&ver, ".")) != NULL) {
++		/* prevent overflow */
++		if (sep_count >= ARRAY_SIZE(cv))
++			return -EBADMSG;
++
++		rc = kstrtou16(token, 10, cv[sep_count]);
++		if (rc)
++			return rc;
++
++		++sep_count;
++	}
++
++	/* prevent underflow */
++	if (sep_count != ARRAY_SIZE(cv))
++		rc = -EBADMSG;
++
 +	return rc;
 +}
++
++enum header_opt {
++	__IPE_HEADER_POLICY_NAME = 0,
++	__IPE_HEADER_POLICY_VERSION,
++	__IPE_HEADER_MAX
++};
++
++static const match_table_t header_tokens = {
++	{__IPE_HEADER_POLICY_NAME,	"policy_name=%s"},
++	{__IPE_HEADER_POLICY_VERSION,	"policy_version=%s"},
++	{__IPE_HEADER_MAX,		NULL}
++};
++
++/**
++ * parse_header - Parse policy header information.
++ * @line: Supplies header line to be parsed.
++ * @p: Supplies the partial parsed policy.
++ *
++ * Return:
++ * * 0	- OK
++ * * !0	- Standard errno
++ */
++static int parse_header(char *line, struct ipe_parsed_policy *p)
++{
++	int rc = 0;
++	char *t, *ver = NULL;
++	substring_t args[MAX_OPT_ARGS];
++	size_t idx = 0;
++
++	while ((t = strsep(&line, " \t")) != NULL) {
++		int token;
++
++		if (*t == '\0')
++			continue;
++		if (idx >= __IPE_HEADER_MAX) {
++			rc = -EBADMSG;
++			goto err;
++		}
++
++		token = match_token(t, header_tokens, args);
++		if (token != idx) {
++			rc = -EBADMSG;
++			goto err;
++		}
++
++		switch (token) {
++		case __IPE_HEADER_POLICY_NAME:
++			p->name = match_strdup(&args[0]);
++			if (!p->name)
++				rc = -ENOMEM;
++			break;
++		case __IPE_HEADER_POLICY_VERSION:
++			ver = match_strdup(&args[0]);
++			if (!ver) {
++				rc = -ENOMEM;
++				break;
++			}
++			rc = parse_version(ver, p);
++			break;
++		default:
++			rc = -EBADMSG;
++		}
++		if (rc)
++			goto err;
++		++idx;
++	}
++
++	if (idx != __IPE_HEADER_MAX) {
++		rc = -EBADMSG;
++		goto err;
++	}
++
++out:
++	kfree(ver);
++	return rc;
++err:
++	kfree(p->name);
++	p->name = NULL;
++	goto out;
++}
++
++/**
++ * token_default - Determine if the given token is "DEFAULT".
++ * @token: Supplies the token string to be compared.
++ *
++ * Return:
++ * * 0	- The token is not "DEFAULT"
++ * * !0	- The token is "DEFAULT"
++ */
++static bool token_default(char *token)
++{
++	return !strcmp(token, "DEFAULT");
++}
++
++/**
++ * free_rule - Free the supplied ipe_rule struct.
++ * @r: Supplies the ipe_rule struct to be freed.
++ *
++ * Free a ipe_rule struct @r. Note @r must be removed from any lists before
++ * calling this function.
++ */
++static void free_rule(struct ipe_rule *r)
++{
++	struct ipe_prop *p, *t;
++
++	if (IS_ERR_OR_NULL(r))
++		return;
++
++	list_for_each_entry_safe(p, t, &r->props, next) {
++		list_del(&p->next);
++		kfree(p);
++	}
++
++	kfree(r);
++}
++
++static const match_table_t operation_tokens = {
++	{__IPE_OP_EXEC,			"op=EXECUTE"},
++	{__IPE_OP_FIRMWARE,		"op=FIRMWARE"},
++	{__IPE_OP_KERNEL_MODULE,	"op=KMODULE"},
++	{__IPE_OP_KEXEC_IMAGE,		"op=KEXEC_IMAGE"},
++	{__IPE_OP_KEXEC_INITRAMFS,	"op=KEXEC_INITRAMFS"},
++	{__IPE_OP_IMA_POLICY,		"op=IMA_POLICY"},
++	{__IPE_OP_IMA_X509,		"op=IMA_X509_CERT"},
++	{__IPE_OP_INVALID,		NULL}
++};
++
++/**
++ * parse_operation - Parse the operation type given a token string.
++ * @t: Supplies the token string to be parsed.
++ *
++ * Return: The parsed operation type.
++ */
++static enum ipe_op_type parse_operation(char *t)
++{
++	substring_t args[MAX_OPT_ARGS];
++
++	return match_token(t, operation_tokens, args);
++}
++
++static const match_table_t action_tokens = {
++	{__IPE_ACTION_ALLOW,	"action=ALLOW"},
++	{__IPE_ACTION_DENY,	"action=DENY"},
++	{__IPE_ACTION_INVALID,	NULL}
++};
++
++/**
++ * parse_action - Parse the action type given a token string.
++ * @t: Supplies the token string to be parsed.
++ *
++ * Return: The parsed action type.
++ */
++static enum ipe_action_type parse_action(char *t)
++{
++	substring_t args[MAX_OPT_ARGS];
++
++	return match_token(t, action_tokens, args);
++}
++
++/**
++ * parse_property - Parse the property type given a token string.
++ * @t: Supplies the token string to be parsed.
++ * @r: Supplies the ipe_rule the parsed property will be associated with.
++ *
++ * Return:
++ * * !IS_ERR	- OK
++ * * -ENOMEM	- Out of memory
++ * * -EBADMSG	- The supplied token cannot be parsed
++ */
++static int parse_property(char *t, struct ipe_rule *r)
++{
++	return -EBADMSG;
++}
++
++/**
++ * parse_rule - parse a policy rule line.
++ * @line: Supplies rule line to be parsed.
++ * @p: Supplies the partial parsed policy.
++ *
++ * Return:
++ * * !IS_ERR	- OK
++ * * -ENOMEM	- Out of memory
++ * * -EBADMSG	- Policy syntax error
++ */
++static int parse_rule(char *line, struct ipe_parsed_policy *p)
++{
++	int rc = 0;
++	bool first_token = true, is_default_rule = false;
++	bool op_parsed = false;
++	enum ipe_op_type op = __IPE_OP_INVALID;
++	enum ipe_action_type action = __IPE_ACTION_INVALID;
++	struct ipe_rule *r = NULL;
++	char *t;
++
++	r = kzalloc(sizeof(*r), GFP_KERNEL);
++	if (!r)
++		return -ENOMEM;
++
++	INIT_LIST_HEAD(&r->next);
++	INIT_LIST_HEAD(&r->props);
++
++	while (t = strsep(&line, " \t"), line) {
++		if (*t == '\0')
++			continue;
++		if (first_token && token_default(t)) {
++			is_default_rule = true;
++		} else {
++			if (!op_parsed) {
++				op = parse_operation(t);
++				if (op == __IPE_OP_INVALID)
++					rc = -EBADMSG;
++				else
++					op_parsed = true;
++			} else {
++				rc = parse_property(t, r);
++			}
++		}
++
++		if (rc)
++			goto err;
++		first_token = false;
++	}
++
++	action = parse_action(t);
++	if (action == __IPE_ACTION_INVALID) {
++		rc = -EBADMSG;
++		goto err;
++	}
++
++	if (is_default_rule) {
++		if (!list_empty(&r->props)) {
++			rc = -EBADMSG;
++		} else if (op == __IPE_OP_INVALID) {
++			if (p->global_default_action != __IPE_ACTION_INVALID)
++				rc = -EBADMSG;
++			else
++				p->global_default_action = action;
++		} else {
++			if (p->rules[op].default_action != __IPE_ACTION_INVALID)
++				rc = -EBADMSG;
++			else
++				p->rules[op].default_action = action;
++		}
++	} else if (op != __IPE_OP_INVALID && action != __IPE_ACTION_INVALID) {
++		r->op = op;
++		r->action = action;
++	} else {
++		rc = -EBADMSG;
++	}
++
++	if (rc)
++		goto err;
++	if (!is_default_rule)
++		list_add_tail(&r->next, &p->rules[op].rules);
++	else
++		free_rule(r);
++
++out:
++	return rc;
++err:
++	free_rule(r);
++	goto out;
++}
++
++/**
++ * free_parsed_policy - free a parsed policy structure.
++ * @p: Supplies the parsed policy.
++ */
++void free_parsed_policy(struct ipe_parsed_policy *p)
++{
++	size_t i = 0;
++	struct ipe_rule *pp, *t;
++
++	if (IS_ERR_OR_NULL(p))
++		return;
++
++	for (i = 0; i < ARRAY_SIZE(p->rules); ++i)
++		list_for_each_entry_safe(pp, t, &p->rules[i].rules, next) {
++			list_del(&pp->next);
++			free_rule(pp);
++		}
++
++	kfree(p->name);
++	kfree(p);
++}
++
++/**
++ * validate_policy - validate a parsed policy.
++ * @p: Supplies the fully parsed policy.
++ *
++ * Given a policy structure that was just parsed, validate that all
++ * necessary fields are present, initialized correctly.
++ *
++ * A parsed policy can be in an invalid state for use (a default was
++ * undefined) by just parsing the policy.
++ *
++ * Return:
++ * * 0		- OK
++ * * -EBADMSG	- Policy is invalid
++ */
++static int validate_policy(const struct ipe_parsed_policy *p)
++{
++	int i = 0;
++
++	if (p->global_default_action != __IPE_ACTION_INVALID)
++		return 0;
++
++	for (i = 0; i < ARRAY_SIZE(p->rules); ++i) {
++		if (p->rules[i].default_action == __IPE_ACTION_INVALID)
++			return -EBADMSG;
++	}
++
++	return 0;
++}
++
++/**
++ * parse_policy - Given a string, parse the string into an IPE policy.
++ * @p: partially filled ipe_policy structure to populate with the result.
++ *     it must have text and textlen set.
++ *
++ * Return:
++ * * 0		- OK
++ * * -EBADMSG	- Policy is invalid
++ * * -ENOMEM	- Out of Memory
++ */
++int parse_policy(struct ipe_policy *p)
++{
++	int rc = 0;
++	size_t len;
++	char *policy = NULL, *dup = NULL;
++	char *line = NULL;
++	bool header_parsed = false;
++	struct ipe_parsed_policy *pp = NULL;
++
++	if (!p->textlen)
++		return -EBADMSG;
++
++	policy = kmemdup_nul(p->text, p->textlen, GFP_KERNEL);
++	if (!policy)
++		return -ENOMEM;
++	dup = policy;
++
++	pp = new_parsed_policy();
++	if (IS_ERR(pp)) {
++		rc = PTR_ERR(pp);
++		goto out;
++	}
++
++	while ((line = strsep(&policy, "\n\r")) != NULL) {
++		remove_comment(line);
++		len = remove_trailing_spaces(line);
++		if (!len)
++			continue;
++
++		if (!header_parsed) {
++			rc = parse_header(line, pp);
++			if (rc)
++				goto err;
++			header_parsed = true;
++		} else {
++			rc = parse_rule(line, pp);
++			if (rc)
++				goto err;
++		}
++	}
++
++	if (!header_parsed || validate_policy(pp)) {
++		rc = -EBADMSG;
++		goto err;
++	}
++
++	p->parsed = pp;
++
++out:
++	kfree(dup);
++	return rc;
++err:
++	free_parsed_policy(pp);
++	goto out;
++}
+diff --git a/security/ipe/policy_parser.h b/security/ipe/policy_parser.h
+new file mode 100644
+index 000000000000..2b744103d06a
+--- /dev/null
++++ b/security/ipe/policy_parser.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++#ifndef _IPE_POLICY_PARSER_H
++#define _IPE_POLICY_PARSER_H
++
++int parse_policy(struct ipe_policy *p);
++void free_parsed_policy(struct ipe_parsed_policy *p);
++
++#endif /* _IPE_POLICY_PARSER_H */
 -- 
 2.25.1
 
