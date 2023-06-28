@@ -2,117 +2,349 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF5EEB64DD
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jun 2023 19:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0065C27C52
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jun 2023 21:10:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231483AbjF1Tbl (ORCPT
+        id S232616AbjF1VKY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Jun 2023 15:31:41 -0400
-Received: from nautica.notk.org ([91.121.71.147]:38782 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231751AbjF1Tbb (ORCPT
+        Wed, 28 Jun 2023 17:10:24 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:39496 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232328AbjF1VJv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Jun 2023 15:31:31 -0400
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 83007C01F; Wed, 28 Jun 2023 21:31:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1687980689; bh=kq+Cd3ze4IdymcmcbBkmObHA4RqjoJ5x5Sn/8OiQZFM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fLAUaL3zge/w0oyouSmSkjTKt4CPQh1/XcyOrs000ItkQlF5pJXSZAeQeO6S8YfFk
-         FZnS3VHrFKvpzVvlebSpbtZT6JeRO6YGvIFH5oAzlGMvBV9R1OCtw3mFvj1uNO97lz
-         C/08VbTIzlXtW2+3NUjk+M0zue7dwsWn0SjJPfC6WhH5B0lDCIFsWU0p5GOq/FxbgN
-         8IlqzOhCjU2Zb2VHLTMVLzesAArWsD1HSyxX2Q3LkDKFMvpp5uhe/GG5QiSq4o9PEr
-         XnYYdUEWHJx3fhKmocRcbKwLcM17Gi+pIm6/9UOpNQkhDVe3BaEF01J2RvrAmx6YQW
-         jd97PAO36/OHw==
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id ECF89C009;
-        Wed, 28 Jun 2023 21:31:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1687980688; bh=kq+Cd3ze4IdymcmcbBkmObHA4RqjoJ5x5Sn/8OiQZFM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EMNt9hc06DX1WRZOck1lTPJyOqIRq9yDZk7fUqoltSw8y+VnEhMBu4TKwazeDtCO1
-         +l+FT3MgGR99zwdb/VjlTSTdob2EnGmbDOKDLaTKkqLDoPQiMbjInagFrVuc5VRbP5
-         2rPzy6I1H4vB1GhtUJU3PhwpShEdJrNhVkgwLc7c5qt9OEh0wcCzBfPb5yXI9YO8c0
-         SDT9K9Rkk6UjwbejplGA1QTjnGRz87ur7z4SbqcGp2BvnxYU5dqPIujFl/23AKcS0K
-         SsTzEOX/VTG9PfBZdx0P+sG5UGOf65DUx7iHfe2EytyNFSd4gI8l5ccR/H3IHBiUvv
-         rY9Ebd/9RROPg==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 4821f3bd;
-        Wed, 28 Jun 2023 19:31:21 +0000 (UTC)
-Date:   Thu, 29 Jun 2023 04:31:05 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     jeffxu@chromium.org
-Cc:     skhan@linuxfoundation.org, keescook@chromium.org,
-        akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
-        dverkamp@chromium.org, hughd@google.com, jeffxu@google.com,
-        jorgelo@chromium.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        jannh@google.com, linux-hardening@vger.kernel.org,
+        Wed, 28 Jun 2023 17:09:51 -0400
+Received: by linux.microsoft.com (Postfix, from userid 1052)
+        id 46F1520C091F; Wed, 28 Jun 2023 14:09:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 46F1520C091F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1687986588;
+        bh=tYKTZZ4ACs74d1+CwxCZmCa7aIYoM5+NPKaACYNqbuE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=LcUCo1A4B5OwC608I7Vv5HEf3wQ1QWLuTa53J2gNeHsetxXGroM9pZJm6zxGX1CTo
+         beJ1jmYmdi+yIiY0r+pkr9XxrdC5fRBnIAxHlWWJ78nErV+P+WL5XTpH8NFdx7zuGt
+         bbIt6PgEJCAhRT60FIbSb30EaJHig0A7hhWQ6OgM=
+From:   Fan Wu <wufan@linux.microsoft.com>
+To:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+        eparis@redhat.com, paul@paul-moore.com
+Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v8 3/5] mm/memfd: add MFD_NOEXEC_SEAL and MFD_EXEC
-Message-ID: <ZJyKeeqRJxzwlMhk@codewreck.org>
-References: <20221215001205.51969-1-jeffxu@google.com>
- <20221215001205.51969-4-jeffxu@google.com>
- <ZJwcsU0vI-nzgOB_@codewreck.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZJwcsU0vI-nzgOB_@codewreck.org>
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, audit@vger.kernel.org,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Fan Wu <wufan@linux.microsoft.com>
+Subject: [RFC PATCH v10 05/17] ipe: introduce 'boot_verified' as a trust provider
+Date:   Wed, 28 Jun 2023 14:09:19 -0700
+Message-Id: <1687986571-16823-6-git-send-email-wufan@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1687986571-16823-1-git-send-email-wufan@linux.microsoft.com>
+References: <1687986571-16823-1-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dominique Martinet wrote on Wed, Jun 28, 2023 at 08:42:41PM +0900:
-> If flags already has either MFD_EXEC or MFD_NOEXEC_SEAL, you don't check
-> the sysctl at all.
-> [...repro snipped..]
-> 
-> What am I missing?
+From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-(Perhaps the intent is just to force people to use the flag so it is
-easier to check for memfd_create in seccomp or other LSM?
-But I don't see why such a check couldn't consider the absence of a flag
-as well, so I don't see the point.)
+IPE is designed to provide system level trust guarantees, this usually
+implies that trust starts from bootup with a hardware root of trust,
+which validates the bootloader. After this, the bootloader verifies the
+kernel and the initramfs.
 
+As there's no currently supported integrity method for initramfs, and
+it's typically already verified by the bootloader, introduce a property
+that causes the first superblock to have an execution to be "pinned",
+which is typically initramfs.
 
-> BTW I find the current behaviour rather hard to use: setting this to 2
-> should still set NOEXEC by default in my opinion, just refuse anything
-> that explicitly requested EXEC.
+When the "pinned" device is unmounted, it will be "unpinned" and
+`boot_verified` property will always evaluate to false afterward.
 
-And I just noticed it's not possible to lower the value despite having
-CAP_SYS_ADMIN: what the heck?! I have never seen such a sysctl and it
-just forced me to reboot because I willy-nilly tested in the init pid
-namespace, and quite a few applications that don't require exec broke
-exactly as I described below.
+We use a pointer with a spin_lock to "pin" the device instead of rcu
+because rcu synchronization may sleep, which is not allowed when
+unmounting a device.
 
-If the user has CAP_SYS_ADMIN there are more container escape methods
-than I can count, this is basically free pass to root on main namespace
-anyway, you're not protecting anything. Please let people set the sysctl
-to what they want.
+Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
-> Sure there's a warn_once that memfd_create was used without seal, but
-> right now on my system it's "used up" 5 seconds after boot by systemd:
-> [    5.854378] memfd_create() without MFD_EXEC nor MFD_NOEXEC_SEAL, pid=1 'systemd'
-> 
-> And anyway, older kernels will barf up EINVAL when calling memfd_create
-> with MFD_NOEXEC_SEAL, so even if userspace will want to adapt they'll
-> need to try calling memfd_create with the flag once and retry on EINVAL,
-> which let's face it is going to take a while to happen.
-> (Also, the flag has been added to glibc, but not in any release yet)
-> 
-> Making calls default to noexec AND refuse exec does what you want
-> (forbid use of exec in an app that wasn't in a namespace that allows
-> exec) while allowing apps that require it to work; that sounds better
-> than making all applications that haven't taken the pain of adding the
-> new flag to me.
-> Well, I guess an app that did require exec without setting the flag will
-> fail in a weird place instead of failing at memfd_create and having a
-> chance to fallback, so it's not like it doesn't make any sense;
-> I don't have such strong feelings about this if the sysctl works, but
-> for my use case I'm more likely to want to take a chance at memfd_create
-> not needing exec than having the flag set. Perhaps a third value if I
-> cared enough...
+---
+v2:
++No Changes
+
+v3:
++ Remove useless caching system
++ Move ipe_load_properties to this match
++ Minor changes from checkpatch --strict warnings
+
+v4:
++ Remove comments from headers that was missed previously.
++ Grammatical corrections.
+
+v5:
++ No significant changes
+
+v6:
++ No changes
+
+v7:
++ Reword and refactor patch 04/12 to [09/16], based on changes in the underlying system.
++ Add common audit function for boolean values
++ Use common audit function as implementation.
+
+v8:
++ No changes
+
+v9:
++ No changes
+
+v10:
++ Replace struct file with struct super_block
+---
+ security/ipe/eval.c          | 72 +++++++++++++++++++++++++++++++++++-
+ security/ipe/eval.h          |  2 +
+ security/ipe/hooks.c         | 12 ++++++
+ security/ipe/hooks.h         |  2 +
+ security/ipe/ipe.c           |  1 +
+ security/ipe/policy.h        |  2 +
+ security/ipe/policy_parser.c | 37 +++++++++++++++++-
+ 7 files changed, 126 insertions(+), 2 deletions(-)
+
+diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+index 8d0ec7c80f8f..f19a641535c4 100644
+--- a/security/ipe/eval.c
++++ b/security/ipe/eval.c
+@@ -9,6 +9,7 @@
+ #include <linux/file.h>
+ #include <linux/sched.h>
+ #include <linux/rcupdate.h>
++#include <linux/spinlock.h>
  
-
+ #include "ipe.h"
+ #include "eval.h"
+@@ -17,6 +18,44 @@
+ 
+ struct ipe_policy __rcu *ipe_active_policy;
+ 
++static const struct super_block *pinned_sb;
++static DEFINE_SPINLOCK(pin_lock);
++#define FILE_SUPERBLOCK(f) ((f)->f_path.mnt->mnt_sb)
++
++/**
++ * pin_sb - Pin the underlying superblock of @f, marking it as trusted.
++ * @sb: Supplies a super_block structure to be pinned.
++ */
++static void pin_sb(const struct super_block *sb)
++{
++	if (!sb)
++		return;
++	spin_lock(&pin_lock);
++	if (!pinned_sb)
++		pinned_sb = sb;
++	spin_unlock(&pin_lock);
++}
++
++/**
++ * from_pinned - Determine whether @sb is the pinned super_block.
++ * @sb: Supplies a super_block to check against the pinned super_block.
++ *
++ * Return:
++ * * true	- @sb is the pinned super_block
++ * * false	- @sb is not the pinned super_block
++ */
++static bool from_pinned(const struct super_block *sb)
++{
++	bool rv;
++
++	if (!sb)
++		return false;
++	spin_lock(&pin_lock);
++	rv = !IS_ERR_OR_NULL(pinned_sb) && pinned_sb == sb;
++	spin_unlock(&pin_lock);
++	return rv;
++}
++
+ /**
+  * build_eval_ctx - Build an evaluation context.
+  * @ctx: Supplies a pointer to the context to be populdated.
+@@ -27,8 +66,14 @@ void build_eval_ctx(struct ipe_eval_ctx *ctx,
+ 		    const struct file *file,
+ 		    enum ipe_op_type op)
+ {
++	if (op == __IPE_OP_EXEC && file)
++		pin_sb(FILE_SUPERBLOCK(file));
++
+ 	ctx->file = file;
+ 	ctx->op = op;
++
++	if (file)
++		ctx->from_init_sb = from_pinned(FILE_SUPERBLOCK(file));
+ }
+ 
+ /**
+@@ -43,7 +88,14 @@ void build_eval_ctx(struct ipe_eval_ctx *ctx,
+ static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
+ 			      struct ipe_prop *p)
+ {
+-	return false;
++	switch (p->type) {
++	case __IPE_PROP_BOOT_VERIFIED_FALSE:
++		return !ctx->from_init_sb;
++	case __IPE_PROP_BOOT_VERIFIED_TRUE:
++		return ctx->from_init_sb;
++	default:
++		return false;
++	}
+ }
+ 
+ /**
+@@ -106,3 +158,21 @@ int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
+ 
+ 	return rc;
+ }
++
++/**
++ * ipe_invalidate_pinned_sb - invalidate the ipe pinned super_block.
++ * @mnt_sb: super_block to check against the pinned super_block.
++ *
++ * This function is called a super_block like the initramfs's is freed,
++ * if the super_block is currently pinned by ipe it will be invalided,
++ * so ipe won't consider the block device is boot verified afterward.
++ */
++void ipe_invalidate_pinned_sb(const struct super_block *mnt_sb)
++{
++	spin_lock(&pin_lock);
++
++	if (mnt_sb == pinned_sb)
++		pinned_sb = ERR_PTR(-EIO);
++
++	spin_unlock(&pin_lock);
++}
+diff --git a/security/ipe/eval.h b/security/ipe/eval.h
+index 5abb845d5c4e..88c625d6af97 100644
+--- a/security/ipe/eval.h
++++ b/security/ipe/eval.h
+@@ -18,9 +18,11 @@ struct ipe_eval_ctx {
+ 	enum ipe_op_type op;
+ 
+ 	const struct file *file;
++	bool from_init_sb;
+ };
+ 
+ void build_eval_ctx(struct ipe_eval_ctx *ctx, const struct file *file, enum ipe_op_type op);
+ int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx);
++void ipe_invalidate_pinned_sb(const struct super_block *mnt_sb);
+ 
+ #endif /* _IPE_EVAL_H */
+diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
+index d896a5a474bc..6f94f5c8a0c3 100644
+--- a/security/ipe/hooks.c
++++ b/security/ipe/hooks.c
+@@ -180,3 +180,15 @@ int ipe_kernel_load_data(enum kernel_load_data_id id, bool contents)
+ 	build_eval_ctx(&ctx, NULL, op);
+ 	return ipe_evaluate_event(&ctx);
+ }
++
++/**
++ * ipe_sb_free_security - ipe security hook function for super_block.
++ * @mnt_sb: Supplies a pointer to a super_block is about to be freed.
++ *
++ * IPE does not have any structures with mnt_sb, but uses this hook to
++ * invalidate a pinned super_block.
++ */
++void ipe_sb_free_security(struct super_block *mnt_sb)
++{
++	ipe_invalidate_pinned_sb(mnt_sb);
++}
+diff --git a/security/ipe/hooks.h b/security/ipe/hooks.h
+index 23205452f758..ac0cdfd9877f 100644
+--- a/security/ipe/hooks.h
++++ b/security/ipe/hooks.h
+@@ -22,4 +22,6 @@ int ipe_kernel_read_file(struct file *file, enum kernel_read_file_id id,
+ 
+ int ipe_kernel_load_data(enum kernel_load_data_id id, bool contents);
+ 
++void ipe_sb_free_security(struct super_block *mnt_sb);
++
+ #endif /* _IPE_HOOKS_H */
+diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
+index 29bedc0b2ad6..8f98ee7b8025 100644
+--- a/security/ipe/ipe.c
++++ b/security/ipe/ipe.c
+@@ -15,6 +15,7 @@ static struct security_hook_list ipe_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(file_mprotect, ipe_file_mprotect),
+ 	LSM_HOOK_INIT(kernel_read_file, ipe_kernel_read_file),
+ 	LSM_HOOK_INIT(kernel_load_data, ipe_kernel_load_data),
++	LSM_HOOK_INIT(sb_free_security, ipe_sb_free_security),
+ };
+ 
+ /**
+diff --git a/security/ipe/policy.h b/security/ipe/policy.h
+index 113a037f0d71..a74856b9966c 100644
+--- a/security/ipe/policy.h
++++ b/security/ipe/policy.h
+@@ -30,6 +30,8 @@ enum ipe_action_type {
+ #define __IPE_ACTION_INVALID __IPE_ACTION_MAX
+ 
+ enum ipe_prop_type {
++	__IPE_PROP_BOOT_VERIFIED_FALSE,
++	__IPE_PROP_BOOT_VERIFIED_TRUE,
+ 	__IPE_PROP_MAX
+ };
+ 
+diff --git a/security/ipe/policy_parser.c b/security/ipe/policy_parser.c
+index 27e5767480b0..28c14adfe6d2 100644
+--- a/security/ipe/policy_parser.c
++++ b/security/ipe/policy_parser.c
+@@ -265,6 +265,12 @@ static enum ipe_action_type parse_action(char *t)
+ 	return match_token(t, action_tokens, args);
+ }
+ 
++static const match_table_t property_tokens = {
++	{__IPE_PROP_BOOT_VERIFIED_FALSE,	"boot_verified=FALSE"},
++	{__IPE_PROP_BOOT_VERIFIED_TRUE,		"boot_verified=TRUE"},
++	{__IPE_PROP_INVALID,			NULL}
++};
++
+ /**
+  * parse_property - Parse the property type given a token string.
+  * @t: Supplies the token string to be parsed.
+@@ -277,7 +283,36 @@ static enum ipe_action_type parse_action(char *t)
+  */
+ static int parse_property(char *t, struct ipe_rule *r)
+ {
+-	return -EBADMSG;
++	substring_t args[MAX_OPT_ARGS];
++	struct ipe_prop *p = NULL;
++	int rc = 0;
++	int token;
++
++	p = kzalloc(sizeof(*p), GFP_KERNEL);
++	if (!p)
++		return -ENOMEM;
++
++	token = match_token(t, property_tokens, args);
++
++	switch (token) {
++	case __IPE_PROP_BOOT_VERIFIED_FALSE:
++	case __IPE_PROP_BOOT_VERIFIED_TRUE:
++		p->type = token;
++		break;
++	case __IPE_PROP_INVALID:
++	default:
++		rc = -EBADMSG;
++		break;
++	}
++	if (rc)
++		goto err;
++	list_add_tail(&p->next, &r->props);
++
++out:
++	return rc;
++err:
++	kfree(p);
++	goto out;
+ }
+ 
+ /**
 -- 
-Dominique Martinet | Asmadeus
+2.25.1
+
