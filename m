@@ -2,208 +2,115 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 641E5C001DD
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jun 2023 08:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D098EB64DD
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jun 2023 10:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232129AbjF2ISw convert rfc822-to-8bit (ORCPT
+        id S231834AbjF2Kao (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Jun 2023 04:18:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45162 "EHLO
+        Thu, 29 Jun 2023 06:30:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232528AbjF2ISF (ORCPT
+        with ESMTP id S231835AbjF2Kaa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Jun 2023 04:18:05 -0400
-Received: from frasgout13.his.huawei.com (unknown [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C50CE35AF;
-        Thu, 29 Jun 2023 01:12:24 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Qs9rX0XNWz9xGn5;
-        Thu, 29 Jun 2023 16:01:32 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwB34+6xPJ1kmC3dAw--.43057S2;
-        Thu, 29 Jun 2023 09:11:46 +0100 (CET)
-Message-ID: <14599d8216f1b7520ff5f6cfb27377fa79709f13.camel@huaweicloud.com>
-Subject: Re: [QUESTION] Full user space process isolation?
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>, Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        LuisChamberlain <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Petr Tesarik <petrtesarik@huaweicloud.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
+        Thu, 29 Jun 2023 06:30:30 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 433F82D5B;
+        Thu, 29 Jun 2023 03:30:12 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id A808FC020; Thu, 29 Jun 2023 12:30:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1688034610; bh=if9qbAJfyLZr3BzQNxYrgUhfEv4hP+9JnW2xBmEgwCY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KEfVaX0t2OTlde6Nd3qey+ECr1O+nYrxhyKKZOCmXh/2Kgcop7vRZZGfXcxSCkW9O
+         vWBrQHO6EdSwboCUulup2O1xup6vfcwAA2DqiKe4OyYvd6TS6wbKjx41Lx5ZQxmYFv
+         zxl6hIZ+F/OljOeiV/hZ0rKO9KXNX19gdAieVTBhnlRlqRIKPe4znCamk91RyWjpgd
+         Zo4wwqIiqmylUaGksQz3sONpgxlJcMR0v+5kLVORcCl+zKCict7j3FOqPvvQYM5ZGL
+         SeG9xnU8RQs8NhqFGuZ8Ohh+FQRrWzJa8NGmufRUwA7LHNGGXMMOSq8i7/cS3aUDfk
+         62Jh4ql10yc5A==
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 3F9D1C009;
+        Thu, 29 Jun 2023 12:30:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1688034609; bh=if9qbAJfyLZr3BzQNxYrgUhfEv4hP+9JnW2xBmEgwCY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tCJfaWg5ag2BGOgbHK7s89C2ekhrviQD8tcS4Twse5JOBeKNyoTJCAq6SGCTf3SSf
+         X1jwKdSvMnpNmpynUzepZLjmFnIxPK19pPmpvR+qjvvhZ2fvVcq/pmCh2GawrhqyeQ
+         b3QDV4VSIrSfZZ9w4doi9uyaaNanBZZZr+x/38T/xBOZaW9oDALteGq0rBLMZse75m
+         9Y++q6QRmQUnN8ijUoIV+bhbSd2BmwuIs4tjSf6bVKI0ogoVMNhVoYuu2VuWHmpuba
+         xjGs0VygsedMgSD2vLPool/GcdCoTQXjq0M3iwsj7gCkkDAMpgfqC87vJrtjrgn7mn
+         s5NXJ8uUYen7A==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 9e8fd47c;
+        Thu, 29 Jun 2023 10:30:01 +0000 (UTC)
+Date:   Thu, 29 Jun 2023 19:29:46 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Jeff Xu <jeffxu@chromium.org>
+Cc:     skhan@linuxfoundation.org, keescook@chromium.org,
+        akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
+        dverkamp@chromium.org, hughd@google.com, jeffxu@google.com,
+        jorgelo@chromium.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        jannh@google.com, linux-hardening@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Date:   Thu, 29 Jun 2023 10:11:26 +0200
-In-Reply-To: <20230629021000.GA368825@mail.hallyn.com>
-References: <eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com>
-         <20230629021000.GA368825@mail.hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu1 
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v8 3/5] mm/memfd: add MFD_NOEXEC_SEAL and MFD_EXEC
+Message-ID: <ZJ1dGvWkJVAbBPn7@codewreck.org>
+References: <20221215001205.51969-1-jeffxu@google.com>
+ <20221215001205.51969-4-jeffxu@google.com>
+ <ZJwcsU0vI-nzgOB_@codewreck.org>
+ <ZJyKeeqRJxzwlMhk@codewreck.org>
+ <CABi2SkWnAgHK1i6iqSqPMYuNEhtHBkO8jUuCvmG3RmUB5TKHJw@mail.gmail.com>
 MIME-Version: 1.0
-X-CM-TRANSID: LxC2BwB34+6xPJ1kmC3dAw--.43057S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuF1xCry7WF1rZw15Cr1Dtrb_yoW7Gr15pF
-        WqkFW5GFn8trs7CFZFqw4UGayFyrZ3JFW7Xrn3GryfZ34Y9FyIkrySkF13WFnIgrsY934j
-        vrs8JrW2kan8ZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-        4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-        c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-        v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkG
-        c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-        0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
-        Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbJ73D
-        UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj4+H0QACss
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CABi2SkWnAgHK1i6iqSqPMYuNEhtHBkO8jUuCvmG3RmUB5TKHJw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2023-06-28 at 21:10 -0500, Serge E. Hallyn wrote:
-> On Thu, Jun 22, 2023 at 04:42:37PM +0200, Roberto Sassu wrote:
-> > Hi everyone
-> > 
-> > I briefly discussed this topic at LSS NA 2023, but I wanted to have an
-> > opinion from a broader audience.
-> > 
-> > 
-> > In short:
-> > 
-> > I wanted to execute some kernel workloads in a fully isolated user
-> > space process, started from a binary statically linked with klibc,
-> > connected to the kernel only through a pipe.
-> > 
-> > I also wanted that, for the root user, tampering with that process is
-> > as hard as if the same code runs in kernel space.
-> > 
-> > I would use the fully isolated process to parse and convert unsupported
-> > data formats to a supported one, after the kernel verified the
+Jeff Xu wrote on Wed, Jun 28, 2023 at 09:33:27PM -0700:
+> > > BTW I find the current behaviour rather hard to use: setting this to 2
+> > > should still set NOEXEC by default in my opinion, just refuse anything
+> > > that explicitly requested EXEC.
+> >
+> > And I just noticed it's not possible to lower the value despite having
+> > CAP_SYS_ADMIN: what the heck?! I have never seen such a sysctl and it
+> > just forced me to reboot because I willy-nilly tested in the init pid
+> > namespace, and quite a few applications that don't require exec broke
+> > exactly as I described below.
+> >
+> > If the user has CAP_SYS_ADMIN there are more container escape methods
+> > than I can count, this is basically free pass to root on main namespace
+> > anyway, you're not protecting anything. Please let people set the sysctl
+> > to what they want.
+>
+> Yama has a similar setting,  for example, 3 (YAMA_SCOPE_NO_ATTACH)
+> will not allow downgrading at runtime.
 > 
-> Can you give some examples here of supported and unsupported data
-> formats?  ext2 is supported, but we sadly don't trust the sb parser
-> to read a an ext2fs coming from unknown source.  So I'm not quite
-> clear what problem you're trying to solve.
+> Since this is a security feature, not allowing downgrading at run time
+> is part of the security consideration. I hope you understand.
 
-+ eBPF guys (as I'm talking about eBPF)
+I didn't remember yama had this stuck bit; that still strikes me as
+unusual, and if you require a custom LSM rule for memfd anyway I don't
+see why it couldn't enforce that the sysctl is unchanged, but sure.
 
-File digests are distributed in a multitude of formats: RPM packages
-provide them in RPMTAG_FILEDIGESTS, DEB packages in md5sum (now
-sha256sum), containers I guess they have a manifest.
+Please, though:
+ - I have a hard time thinking of 1 as a security flag in general (even
+if I do agree a sloppy LSM rule could require it); I would only lock 2
+ - please make it clear, I don't see any entry in the sysctl
+documentation[1] about memfd_noexec, there should be one and you can
+copy the wording from yama's doc[2]: "Once set, this sysctl value cannot
+be changed"
+[1] Documentation/admin-guide/sysctl/vm.rst
+[2] Documentation/admin-guide/LSM/Yama.rst
 
-File digests would be used as reference values for IMA Appraisal and
-IMA Measurement (to have a predictable PCR).
 
-If we manage to write a tiny parser for RPM headers (I'm talking about
-something like 200 lines) to extract the file digests, basically we
-have all the information we need to do IMA Appraisal on current, past
-and future RPM-based Linux distributions.
+Either way as it stands I still don't think one can expect most
+userspace applications to be converted until some libc wrapper takes
+care of the retry logic and a couple of years, so I'll go look for
+another way of filtering this (and eventually setting this to 1) as you
+suggested.
+I'll leave the follow-up up to you and won't bother you more.
 
-If we do the same for DEB (ok, well, when they switch from MD5 to
-SHA256), we can support all DEB-based Linux distributions too.
-
-On the opposite side, yes, we can change the RPM format, ask the
-distributions to sign per-file. If it was that easy, we would not be
-(still) waiting for the first distribution (Fedora 38) to support file
-signatures since 2016, when the feature was proposed (sorry if it looks
-like diminishing what Mimi and IBM proposed, I'm trying to convey the
-idea of how difficult is to realize that architecture).
-
-What about other formats? How long it could take for them to be adapted
-to store file signatures?
-
-Immediate support for IMA Appraisal is as far as looping into the RPM
-header sections to obtain the data offset of RPMTAG_FILEDIGESTS and
-converting the digests at that offset from hex to bin (we need also to
-verify the PGP signature of the RPM header, but I would leave it for
-later).
-
-You probably also see how close we are to accomplish the goal. I'm open
-to suggestions: if this idea of an isolated process doing the parsing
-is not suitable, I could implement it in a different way.
-
-So far I proposed:
-
-- In-kernel parser (dangerous, not scalable)
-https://lore.kernel.org/linux-integrity/20210914163401.864635-1-roberto.sassu@huawei.com/
-- eBPF (no program signatures, not compliant with the LSM conventions,
-  unsolved security issues)
-https://github.com/robertosassu/diglim-ebpf/commit/693745cb388bca7354233cadae1fe2d23d47ff9d
-- Isolated user space process (not enough isolation guarantees)
-https://lore.kernel.org/linux-kernel//20230317145240.363908-1-roberto.sassu@huaweicloud.com/
-https://lore.kernel.org/linux-kernel//20230425173557.724688-1-roberto.sassu@huaweicloud.com/
-
-Thanks
-
-Roberto
-
-> > authenticity of the original format (that already exists and cannot
-> > change).
-> > 
-> > Preventing tampering of the process ensures that the conversion goes as
-> > expected. Also, the integrity of the binary needs to be verified.
-> > 
-> > 
-> > List of wished data formats:
-> > 
-> > PGP: verify the authenticity of RPM/DEB/... headers
-> > RPM/DEB/... headers: extract reference file checksums for
-> >                     (kernel-based) file integrity check (e.g. with IMA)
-> > 
-> > 
-> > Alternative #1:
-> > 
-> > Write the parsers to run in kernel space. That was rejected due to
-> > security and scalability concerns. If that changed, please let me know.
-> > 
-> > 
-> > Alternative #2:
-> > 
-> > Linux distributions could provide what the kernel supports. However,
-> > from personal experience, the effort seems orders of magnitude higher
-> > than just writing a tiny component to support the original format. And
-> > there is no guarantee that all Linux distributions will do it.
-> > 
-> > 
-> > Full process isolation could be achieved in this way:
-> > 
-> > process -> outside: set seccomp strict profile at process creation
-> >                     so that the process can only read/write/close the
-> >                     pipe and exit, no other system calls are allowed
-> > 
-> > outside -> process: deny ptrace/kill with the process as target
-> > 
-> > Anything else?
-> > 
-> > 
-> > The only risk I see is that a new feature allowing to interact with
-> > another process is added to the kernel, without the ptrace permission
-> > being asked.
-> > 
-> > With the restrictions above, can we say that the code inside the
-> > process is as safe (against tampering) to execute as if it runs in
-> > kernel space?
-> > 
-> > Thanks
-> > 
-> > Roberto
-
+Thanks,
+-- 
+Dominique Martinet | Asmadeus
